@@ -10,6 +10,7 @@ def hello():
     nodes_json = '[{"id":0, "parent":"", "text":"Hello World!"}]'
     return render_template('node.html', nodes_json=nodes_json, links_json='[]')
 
+
 if __name__ == "__main__":
     app.debug = True
     app.run()
