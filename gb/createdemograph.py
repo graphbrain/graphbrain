@@ -14,3 +14,4 @@ if __name__ == '__main__':
     u = User().get_by_email(email)
     g = Graph().create('Demo', u)
     root = Node().create('Graphbrain', g)
+    g.set_root(root)
