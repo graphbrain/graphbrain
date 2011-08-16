@@ -17,3 +17,11 @@ class Node(DbObj):
         self.commit()
 
         return self
+
+    def get_by_id(self, node_id):
+        self.id = node_id
+        self.cur.execute("SELECT data FROM node WHERE id=%s", (node_id,))
+        row = self.cur.fetchone()
+        self.data = row[0]
+
+        return self
