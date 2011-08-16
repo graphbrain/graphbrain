@@ -2,11 +2,12 @@ import MySQLdb as mdb
 import bcrypt
 
 import db
+from dbobj import DbObj
 
 
-class User:
+class User(DbObj):
     def __init__(self):
-        pass
+        DbObj.__init__(self)
 
     def create(self, email, name, password, role):
         self.email = email
@@ -14,22 +15,16 @@ class User:
         self.role = role
         self.pwdhash = bcrypt.hashpw(password, bcrypt.gensalt(12))
 
-        cur = db.cursor()
-
-        cur.execute("INSERT INTO user (name, email, pwdhash, role) VALUES (%s, %s, %s, %s)",
+        self.cur.execute("INSERT INTO user (name, email, pwdhash, role) VALUES (%s, %s, %s, %s)",
                         (name, email, self.pwdhash, role))
-
-        self.id = db.connection().insert_id
-
-        db.connection().commit()
-        cur.close()
+        self.id = self.insert_id()
+        self.commit()
 
         return self
 
     def get_by_email(email):
-        cur = db.cursor
-        cur.excute("SELECT id, name, pwdhash, role, creation_ts, session, session_ts FROM user WHERE email=%s", (email,))
-        row = cur.fetchone()
+        self.cur.excute("SELECT id, name, pwdhash, role, creation_ts, session, session_ts FROM user WHERE email=%s", (email,))
+        row = self.cur.fetchone()
         self.id = row[0]
         self.name = row[1]
         self.pwdhash = row[2]
@@ -37,6 +32,5 @@ class User:
         self.creation_ts = row[4]
         self.session = row[5]
         self.session_ts = row[6]
-        cur.close()
 
         return self
