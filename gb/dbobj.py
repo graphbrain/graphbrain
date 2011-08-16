@@ -11,7 +11,7 @@ class DbObj:
         self.cur.close()
 
     def commit(self):
-        db.connection.commit()
+        db.connection().commit()
 
     def insert_id(self):
-        return db.connection().insert_id
+        return db.connection().insert_id()

@@ -22,8 +22,8 @@ class User(DbObj):
 
         return self
 
-    def get_by_email(email):
-        self.cur.excute("SELECT id, name, pwdhash, role, creation_ts, session, session_ts FROM user WHERE email=%s", (email,))
+    def get_by_email(self, email):
+        self.cur.execute("SELECT id, name, pwdhash, role, creation_ts, session, session_ts FROM user WHERE email=%s", (email,))
         row = self.cur.fetchone()
         self.id = row[0]
         self.name = row[1]
