@@ -2,6 +2,7 @@ import MySQLdb as mdb
 
 import db
 from dbobj import DbObj
+from node import Node
 
 
 class Graph(DbObj):
@@ -21,3 +22,11 @@ class Graph(DbObj):
     def set_root(self, root):
         self.cur.execute("UPDATE graph SET root=%s WHERE id=%s", (root.id, self.id))
         self.commit()
+
+    def get_by_owner_and_name(self, owner, name):
+        self.cur.execute("SELECT id, root FROM graph WHERE owner=%s AND name=%s", (owner.id, name))
+        row = self.cur.fetchone()
+        self.id = row[0]
+        self.root = Node().get_by_id(row[1])
+
+        return self

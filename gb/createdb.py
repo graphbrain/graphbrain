@@ -18,7 +18,7 @@ if __name__ == '__main__':
 
     # graph table
     db.execute("CREATE TABLE graph(id INT PRIMARY KEY AUTO_INCREMENT)")
-    db.execute("ALTER TABLE user ADD COLUMN name VARCHAR(100)")
+    db.execute("ALTER TABLE graph ADD COLUMN name VARCHAR(100)")
     db.execute("ALTER TABLE graph ADD COLUMN owner INT")
     db.execute("ALTER TABLE graph ADD COLUMN root INT")
     
