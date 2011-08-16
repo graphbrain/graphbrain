@@ -19,4 +19,5 @@ class Graph(DbObj):
         return self
 
     def set_root(self, root):
-        pass
+        self.cur.execute("UPDATE graph SET root=%s WHERE id=%s", (root.id, self.id))
+        self.commit()
