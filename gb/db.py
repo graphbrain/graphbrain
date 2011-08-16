@@ -9,7 +9,7 @@ def _connect():
 
     try:
         if _conn is None:
-            _conn = mdb.connect('localhost', 'root', '', 'graphbrain');
+            _conn = mdb.connect('localhost', 'root', '', 'gb');
     except mdb.Error, e:
         print "Error %d: %s" % (e.args[0],e.args[1])
 

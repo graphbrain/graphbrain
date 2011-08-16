@@ -9,8 +9,8 @@ class Node(DbObj):
         DbObj.__init__(self)
 
     def create(self, data, graph):
-        self.name = name
-        self.owner = owner
+        self.data = data
+        self.graph = graph
 
         self.cur.execute("INSERT INTO node (data, graph) VALUES (%s, %s)", (data, graph.id))
         self.id = self.insert_id()
