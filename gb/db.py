@@ -1,34 +1,34 @@
 import MySQLdb as mdb
 
 
-__conn = None
+_conn = None
 
 
-def __connect():
-    global __conn
+def _connect():
+    global _conn
 
     try:
-        if __conn is None:
-            __conn = mdb.connect('localhost', 'root', '', 'graphbrain');
+        if _conn is None:
+            _conn = mdb.connect('localhost', 'root', '', 'graphbrain');
     except mdb.Error, e:
         print "Error %d: %s" % (e.args[0],e.args[1])
 
 
 def cursor():
-    global __conn
-    __connect()
-    return __conn.cursor()
+    global _conn
+    _connect()
+    return _conn.cursor()
     
     
 def connection():
-    global __conn
-    __connect()
-    return __conn
+    global _conn
+    _connect()
+    return _conn
 
 
 def execute(query):
-    global __conn
-    __connect()
+    global _conn
+    _connect()
     cur = cursor()
    
     try:

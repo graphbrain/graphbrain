@@ -5,15 +5,16 @@ import db
 
 
 if __name__ == '__main__':
-
     # user table
     db.execute("CREATE TABLE user(id INT PRIMARY KEY AUTO_INCREMENT)")
     db.execute("ALTER TABLE user ADD COLUMN name VARCHAR(100)")
     db.execute("ALTER TABLE user ADD COLUMN email VARCHAR(100)")
-    db.execute("ALTER TABLE user ADD COLUMN creation_ts INT")
+    db.execute("ALTER TABLE user ADD COLUMN creation_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     db.execute("ALTER TABLE user ADD COLUMN pwdhash VARCHAR(60)")
-    db.execute("ALTER TABLE user ADD COLUMN session VARCHAR(60)")
-    db.execute("ALTER TABLE user ADD COLUMN session_ts INT")
+    db.execute("ALTER TABLE user ADD COLUMN role INT")
+    # 0: user; 1: admin
+    db.execute("ALTER TABLE user ADD COLUMN session VARCHAR(60) DEFAULT 'none'")
+    db.execute("ALTER TABLE user ADD COLUMN session_ts INT DEFAULT -1")
 
     # graph table
     db.execute("CREATE TABLE graph(id INT PRIMARY KEY AUTO_INCREMENT)")
