@@ -15,3 +15,5 @@ if __name__ == '__main__':
     g = Graph().create('Demo', u)
     root = Node().create('Graphbrain', g)
     g.set_root(root)
+    n = Node().create('Computer Program', g)
+    l = Link().create(root, n, 'is')
