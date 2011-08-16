@@ -37,3 +37,4 @@ class User:
         self.creation_ts = row[4]
         self.session = row[5]
         self.session_ts = row[6]
+        cur.close()
