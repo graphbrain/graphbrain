@@ -1,23 +1,22 @@
 import MySQLdb as mdb
 
 import db
+from dbobj import DbObj
 
 
-class Graph:
+class Graph(DbObj):
     def __init__(self):
-        pass
+        DbObj.__init__(self)
 
     def create(self, name, owner):
         self.name = name
         self.owner = owner
 
-        cur = db.cursor()
-
-        cur.execute("INSERT INTO graph (name, owner) VALUES (%s, %s)", (name, owner.id))
-
-        self.id = db.connection().insert_id
-
-        db.connection().commit()
-        cur.close()
+        self.cur.execute("INSERT INTO graph (name, owner) VALUES (%s, %s)", (name, owner.id))
+        self.id = self.insert_id()
+        self.commit()
 
         return self
+
+    def set_root(self, root):
+        pass
