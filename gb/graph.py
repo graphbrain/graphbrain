@@ -13,7 +13,7 @@ class Graph:
 
         cur = db.cursor()
 
-        cur.execute("INSERT INTO graph (name, owner) VALUES (%s, %s)", (name, owner))
+        cur.execute("INSERT INTO graph (name, owner) VALUES (%s, %s)", (name, owner.id))
 
         self.id = db.connection().insert_id
 
