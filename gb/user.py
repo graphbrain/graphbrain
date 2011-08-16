@@ -24,7 +24,7 @@ class User:
         db.connection().commit()
         cur.close()
 
-        return self.id
+        return self
 
     def get_by_email(email):
         cur = db.cursor
@@ -38,3 +38,5 @@ class User:
         self.session = row[5]
         self.session_ts = row[6]
         cur.close()
+
+        return self
