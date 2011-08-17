@@ -18,3 +18,13 @@ class Link(DbObj):
         self.commit()
 
         return self
+
+    def get_by_id(self, link_id):
+        self.id = link_id
+        self.cur.execute("SELECT orig, targ, relation FROM link WHERE id=%s", (link_id,))
+        row = self.cur.fetchone()
+        self.orig = row[0]
+        self.targ = row[1]
+        self.relation = row[2]
+
+        return self
