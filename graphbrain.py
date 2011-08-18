@@ -3,6 +3,7 @@
 
 from flask import Flask
 from flask import render_template
+from flask import request
 
 from gb.user import User
 from gb.graph import Graph
@@ -21,7 +22,24 @@ def main():
 
     nodes_json, links_json = root.neighbours_json()
 
-    return render_template('node.html', nodes_json=nodes_json, links_json=links_json)
+    r = app.make_response(render_template('node.html', nodes_json=nodes_json, links_json=links_json))
+    return r
+
+
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    else:
+        email = request.form['email']
+        password = request.form['password']
+
+        u = User().get_by_email(email)
+        if u.check_password(password):
+            pass
+        else:
+            pass
+        return email
 
 
 if __name__ == "__main__":

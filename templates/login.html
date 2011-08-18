@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Graph Brain - Login{% endblock %}
+
+{% block content %}
+
+<form action="/login" method="post" id="login_form">
+Email: <input type="text" name="email" size="15" /><br />
+Password: <input type="password" name="password" size="15" /><br />
+<input type="submit" value="Login" />
+</form>
+
+{% endblock %}
