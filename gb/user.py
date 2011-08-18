@@ -53,3 +53,7 @@ class User(DbObj):
             return True
         else:
             return False
+
+    def logout(self):
+        self.cur.execute("UPDATE user SET session='none' WHERE id=%s", (self.id, ))
+        self.commit()
