@@ -3,6 +3,7 @@ import bcrypt
 
 import db
 from dbobj import DbObj
+from utils import random_string, timestamp
 
 
 class User(DbObj):
@@ -34,3 +35,21 @@ class User(DbObj):
         self.session_ts = row[6]
 
         return self
+
+    def check_password(self, password):
+        if self.pwdhash == bcrypt.hashpw(password, self.pwdhash):
+            return True
+        else:
+            return False
+
+    def create_session(self):
+        session_str = random_string(60)
+        self.cur.execute("UPDATE user SET session=%s, session_ts=%s WHERE id=%s", (session_str, timestamp(), self.id))
+        self.commit()
+        return session_str
+
+    def check_session(self, session_str):
+        if session_str == self.session:
+            return True
+        else:
+            return False
