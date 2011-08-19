@@ -23,9 +23,24 @@ class User(DbObj):
 
         return self
 
+    def get_by_id(self, user_id):
+        self.cur.execute("SELECT email, name, pwdhash, role, creation_ts, session, session_ts FROM user WHERE id=%s", (user_id,))
+        row = self.cur.fetchone()
+        self.id = user_id
+        self.email = row[0]
+        self.name = row[1]
+        self.pwdhash = row[2]
+        self.role = row[3]
+        self.creation_ts = row[4]
+        self.session = row[5]
+        self.session_ts = row[6]
+
+        return self
+
     def get_by_email(self, email):
         self.cur.execute("SELECT id, name, pwdhash, role, creation_ts, session, session_ts FROM user WHERE email=%s", (email,))
         row = self.cur.fetchone()
+        self.email = email
         self.id = row[0]
         self.name = row[1]
         self.pwdhash = row[2]
