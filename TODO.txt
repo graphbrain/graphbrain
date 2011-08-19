@@ -4,3 +4,9 @@ SECURITY
 * Max session age
 * Delays after failed login attempts
 * Hashed session string?
+
+
+DB
+==
+
+* Indexes
