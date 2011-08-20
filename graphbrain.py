@@ -30,17 +30,18 @@ def requirelogin(f):
             return redirect2login()
         u = User().get_by_id(user_id)
         if u.check_session(session):
-            return f()
+            return f(u)
         else:
             return redirect2login()
+    fun.__name__ = f.__name__
     return fun
 
 
 @app.route("/")
 @requirelogin
-def main():
+def main(u):
     # TODO: these values are just temporary
-    u = User().get_by_email('telmo@telmomenezes.com')
+    #u = User().get_by_email('telmo@telmomenezes.com')
     g = Graph().get_by_owner_and_name(u, 'Demo')
     root = g.root
 
@@ -63,12 +64,22 @@ def login():
             session = u.create_session()
             redirect_to_index = redirect('/')
             response = app.make_response(redirect_to_index)  
-            response.set_cookie('user_id',value=u.id)
-            response.set_cookie('session',value=session)
+            response.set_cookie('user_id', value=u.id)
+            response.set_cookie('session', value=session)
             return response
         else:
             return render_template('login.html', message='Sorry, wrong username and/or password.')
         return email
+
+
+@app.route("/logout")
+@requirelogin
+def logout(u):
+    redirect_to_index = redirect('/')
+    response = app.make_response(redirect_to_index)  
+    response.delete_cookie('user_id')
+    response.delete_cookie('session')
+    return response
 
 
 if __name__ == "__main__":
