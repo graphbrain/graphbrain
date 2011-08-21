@@ -1,25 +1,3 @@
-// Auxiliary functions
-CanvasRenderingContext2D.prototype.roundRect = function(sx, sy, ex, ey, r) {
-    var r2d = Math.PI / 180;
-    if ((ex - sx) - (2 * r) < 0) {
-        r = ((ex - sx) / 2 );
-    }
-    if ((ey - sy) - (2 * r) < 0) {
-        r = ((ey - sy) / 2);
-    }
-    this.beginPath();
-    this.moveTo(sx + r, sy);
-    this.lineTo(ex - r, sy);
-    this.arc(ex - r, sy + r, r, r2d * 270, r2d * 360, false);
-    this.lineTo(ex, ey - r);
-    this.arc(ex - r, ey - r, r, r2d * 0, r2d * 90, false);
-    this.lineTo(sx + r, ey);
-    this.arc(sx + r, ey - r, r, r2d * 90, r2d * 180, false);
-    this.lineTo(sx, sy + r);
-    this.arc(sx + r, sy + r, r, r2d * 180, r2d * 270, false);
-    this.closePath();
-}
-
 // Node
 var Node = function(id, text) {
     this.id = id;
@@ -120,46 +98,6 @@ var Graph = function(context) {
     this.newNodeActive = false;
 }
 
-Graph.prototype.startNewNode = function(sourceID, x, y) {
-    this.newNode = new Node('-1', '?');
-    this.newNode.x = x;
-    this.newNode.y = y;
-    this.newLink = new Link(g.nodes[sourceID], this.newNode, '?');
-}
-
-Graph.prototype.dropNewNode = function() {
-    if (this.newNodeActive) {
-        document.getElementById('newOrigLabel').innerHTML = this.newLink.orig.text;
-        $('#newOrigNode').hide()
-        $('#newOrigLabel').show()
-        $('#newTargNode').show()
-        $('#newTargLabel').hide()
-        $('#newOrigNode').val(this.newLink.orig.id);
-        $('#addNodeDialog').dialog('open');
-    }
-}
-
-Graph.prototype.stopNewNode = function() {
-    this.newNode = false;
-    this.newLink = false;
-    this.newNodeActive = false;
-    this.drawLinks();
-}
-
-Graph.prototype.activateNewNode = function(x, y) {
-    if (this.newNode) {
-        this.newNodeActive = true;
-    }
-}
-
-Graph.prototype.moveNewNode = function(x, y) {
-    if (this.newNodeActive) {
-        this.newNode.x = x;
-        this.newNode.y = y;
-        this.drawLinks();
-    }
-}
-
 Graph.prototype.drawLinks = function() {
     var i;
     for (i = 0; i < this.links.length; i++) {
@@ -211,45 +149,6 @@ Graph.prototype.layout = function(node, depth, cx, cy, px, py, ang0, ang1) {
 
 // Entry point functions & global variables
 var g;
-
-$(document).ready(function(){
-   $('.node').bind('mousedown', nodeMouseDown);
-   $('.node').bind('mouseout', nodeMouseOut);
-   $('#main').bind('mouseup', graphMouseUp);
-
-   $('#addNodeDialog').dialog({autoOpen: false, buttons: [
-       {
-           text: "Add",
-           click: function() {$('#addForm').submit();}
-       },
-       {
-           text: "Cancel",
-           click: function(){$(this).dialog("close");}
-       }
-   ]});
-   $("#addNodeDialog").dialog({
-        close: function(event, ui) {g.stopNewNode();}
-   });
-})
-
-var nodeMouseDown = function(event) {
-    event.preventDefault();
-    $('#main').bind('mousemove', graphMouseMove);
-    g.startNewNode(event.target.id, event.pageX, event.pageY);
-}
-
-var nodeMouseOut = function(event) {
-    g.activateNewNode(event.pageX, event.pageY);
-}
-
-var graphMouseUp = function(event) {
-    $('#main').unbind('mousemove', graphMouseMove);
-    g.dropNewNode();
-}
-
-var graphMouseMove = function(event) {
-    g.moveNewNode(event.pageX, event.pageY);
-}
 
 var initGraph = function(nodes, links) {
     var elem = document.getElementById('graphCanvas');
