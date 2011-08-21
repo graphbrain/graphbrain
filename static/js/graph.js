@@ -78,7 +78,7 @@ Link.prototype.draw = function(context) {
     context.lineTo(x1, y1);
     context.stroke();
 
-    context.font = "13pt Sans-Serif";
+    context.font = "12pt Sans-Serif";
     var dim = context.measureText(this.type);
     var width = dim.width + 6;
     var height = 18;
