@@ -9,10 +9,19 @@
 
 {% block content %}
 <div id="main">
-<canvas id="graphCanvas">
-Sorry, your browser does not support canvas.
-</canvas>
-<div id="nodesDiv" style="position:fixed; top:0px; left:0px;"></div>
+    <canvas id="graphCanvas">
+        Sorry, your browser does not support canvas.
+    </canvas>
+
+    <div id="nodesDiv" />
+
+    <div id="topDiv">
+        <div id="inputDiv">
+            <form action="/input" method="post" id="inputForm">
+                <input type="text" name="input" id="inputField" size="60"/>
+            </form>
+        </div>
+    </div>
 
 <div id="addNodeDialog" title="Add Node">
 <p id="newOrigLabel"></p>

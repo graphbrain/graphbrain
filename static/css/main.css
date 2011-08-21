@@ -1,0 +1,42 @@
+html, body {
+    width:  100%;
+    height: 100%;
+    margin: 0px;
+}
+
+.node {
+    color:#FFF;
+    background: rgba(70, 100, 200, 0.9);
+    position:fixed;
+    font-family: Sans-Serif;
+    font-size: 12px;
+    padding: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.node a {
+    color:#FFF;
+}
+
+#nodesDiv {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+}
+
+#topDiv {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+}
+
+#inputDiv {
+    text-align:center;
+    padding: 25px;
+}
+
+#inputField {
+    font-size: 18px;
+}
