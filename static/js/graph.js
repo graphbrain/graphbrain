@@ -66,7 +66,7 @@ Link.prototype.draw = function(context) {
     if (this.type == 'likes')
         color = '#F55';
     else if (this.type == 'is')
-        color = '#55F';
+        color = '#F00';
     else if (this.type == '?')
         color = '#FFF';
 
@@ -78,9 +78,10 @@ Link.prototype.draw = function(context) {
     context.lineTo(x1, y1);
     context.stroke();
 
+    context.font = "13pt Sans-Serif";
     var dim = context.measureText(this.type);
     var width = dim.width + 6;
-    var height = 12;
+    var height = 18;
     context.save();
     context.translate(cx, cy);
     context.rotate(angle);
@@ -103,7 +104,7 @@ Link.prototype.draw = function(context) {
     context.closePath();
     context.fill();
 
-    context.fillStyle = '#000';
+    context.fillStyle = '#FFF';
     context.textAlign = "center";
     context.textBaseline = "middle";
     context.fillText(this.type, 0, 0);
@@ -160,15 +161,6 @@ Graph.prototype.moveNewNode = function(x, y) {
 }
 
 Graph.prototype.drawLinks = function() {
-    var halfWidth = window.innerWidth / 2;
-    var halfHeight = window.innerHeight / 2;
-    var radgrad = this.context.createRadialGradient(halfWidth, halfHeight, 5, halfWidth, halfHeight, halfWidth);
-    radgrad.addColorStop(0, '#444444');
-    radgrad.addColorStop(0.5, '#202020');
-    radgrad.addColorStop(1, '#000000');
-    this.context.fillStyle = radgrad;
-    this.context.fillRect(0, 0, window.innerWidth, window.innerHeight);
-    
     var i;
     for (i = 0; i < this.links.length; i++) {
         this.links[i].draw(this.context);
