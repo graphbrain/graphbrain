@@ -3,6 +3,7 @@ import MySQLdb as mdb
 import db
 from dbobj import DbObj
 from node import Node
+from link import Link
 
 
 class Graph(DbObj):
@@ -31,7 +32,7 @@ class Graph(DbObj):
 
         return self
 
-    def add_rel(orig_str, rel, targ_str):
+    def add_rel(self, orig_str, rel, targ_str):
         orig = Node().get_by_data(orig_str, self)
         targ = Node().get_by_data(targ_str, self)
 

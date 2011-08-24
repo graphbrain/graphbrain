@@ -9,6 +9,7 @@ from flask import redirect
 from gb.user import User
 from gb.graph import Graph
 from gb.node import Node
+from gb.parser import parse
 
 
 app = Flask(__name__)
@@ -47,7 +48,7 @@ def main(u):
 
     nodes_json, links_json = root.neighbours_json()
 
-    r = app.make_response(render_template('node.html', nodes_json=nodes_json, links_json=links_json))
+    r = app.make_response(render_template('node.html', nodes_json=nodes_json, links_json=links_json, graph_id=root.id))
     return r
 
 
@@ -79,6 +80,22 @@ def logout(u):
     response = app.make_response(redirect_to_index)  
     response.delete_cookie('user_id')
     response.delete_cookie('session')
+    return response
+
+
+@app.route("/input", methods=['POST',])
+@requirelogin
+def input(u):
+    input_str = request.form['input']
+    graph_id = request.form['graph_id']
+
+    orig, rel, targ = parse(input_str)
+    g = Graph()
+    g.id = graph_id
+    g.add_rel(orig, rel, targ)
+
+    redirect_to_index = redirect('/')
+    response = app.make_response(redirect_to_index)  
     return response
 
 

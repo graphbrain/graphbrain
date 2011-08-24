@@ -28,7 +28,7 @@ class Node(DbObj):
         return self
 
     def get_by_data(self, data, graph):
-        self.cur.execute("SELECT id FROM node WHERE graph_id=%s AND data=%s", (graph.id, data))
+        self.cur.execute("SELECT id FROM node WHERE graph=%s AND data=%s", (graph.id, data))
         row = self.cur.fetchone()
         if row is None:
             self.id = -1
