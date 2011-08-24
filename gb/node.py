@@ -27,6 +27,18 @@ class Node(DbObj):
 
         return self
 
+    def get_by_data(self, data, graph):
+        self.cur.execute("SELECT id FROM node WHERE graph_id=%s AND data=%s", (graph.id, data))
+        row = self.cur.fetchone()
+        if row is None:
+            self.id = -1
+            self.data = ''
+        else:
+            self.id = row[0]
+            self.data = data
+
+        return self
+
     def _neighbors(self, nodes, depth=0):
         if self.id not in nodes.keys():
             nodes[self.id] = self
