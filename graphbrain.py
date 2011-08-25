@@ -48,7 +48,17 @@ def main(u):
 
     nodes_json, links_json = root.neighbours_json()
 
-    r = app.make_response(render_template('node.html', nodes_json=nodes_json, links_json=links_json, graph_id=root.id))
+    r = app.make_response(render_template('node.html', nodes_json=nodes_json, links_json=links_json, graph_id=g.id))
+    return r
+
+
+@app.route('/node/<node_id>')
+def node(node_id):
+    n = Node().get_by_id(int(node_id))
+
+    nodes_json, links_json = n.neighbours_json()
+
+    r = app.make_response(render_template('node.html', nodes_json=nodes_json, links_json=links_json, graph_id=n.graph))
     return r
 
 

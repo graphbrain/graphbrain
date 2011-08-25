@@ -21,9 +21,10 @@ class Node(DbObj):
 
     def get_by_id(self, node_id):
         self.id = node_id
-        self.cur.execute("SELECT data FROM node WHERE id=%s", (node_id,))
+        self.cur.execute("SELECT data, graph FROM node WHERE id=%s", (node_id,))
         row = self.cur.fetchone()
         self.data = row[0]
+        self.graph = row[1]
 
         return self
 
