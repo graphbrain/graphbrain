@@ -47,6 +47,6 @@ class Graph(DbObj):
             targ.create(r['targ'], self)
 
         # create new link between nodes
-        Link().create(orig, targ, r)
+        Link().create(orig, targ, r['rel'], r['rel_raw'], r['sentence'])
 
         return True
