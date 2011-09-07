@@ -15,8 +15,8 @@ class Link(DbObj):
         self.relation_raw = rel_raw
         self.sentence = sentence
 
-        self.cur.execute("INSERT INTO link (orig, targ, relation, relation_raw, sentence) VALUES (%s, %s, %s)",
-            (orig.id, targ.id, self.relation, self.relation_raw, self.sentence))
+        self.cur.execute("INSERT INTO link (orig, targ, relation, relation_raw, sentence) VALUES (%s, %s, %s, %s, %s)",
+                         (orig.id, targ.id, self.relation, self.relation_raw, self.sentence))
         self.id = self.insert_id()
         self.commit()
 
