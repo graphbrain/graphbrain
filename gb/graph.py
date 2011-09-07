@@ -32,9 +32,9 @@ class Graph(DbObj):
 
         return self
 
-    def add_rel(self, orig_str, rel, targ_str):
-        orig = Node().get_by_data(orig_str, self)
-        targ = Node().get_by_data(targ_str, self)
+    def add_rel(self, r):
+        orig = Node().get_by_data(r['orig'], self)
+        targ = Node().get_by_data(r['targ'], self)
 
         # one of the nodes has to exist in the graph
         if (orig.id < 0) and (targ.id < 0):
@@ -42,11 +42,11 @@ class Graph(DbObj):
 
         # create one of the nodes if it does not exist
         if orig.id < 0:
-            orig.create(orig_str, self)
+            orig.create(r['orig'], self)
         elif targ.id < 0:
-            targ.create(targ_str, self)
+            targ.create(r['targ'], self)
 
         # create new link between nodes
-        Link().create(orig, targ, rel)
+        Link().create(orig, targ, r)
 
         return True
