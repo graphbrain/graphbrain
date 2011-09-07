@@ -8,12 +8,15 @@ class Link(DbObj):
     def __init__(self):
         DbObj.__init__(self)
 
-    def create(self, orig, targ, relation):
+    def create(self, orig, targ, rel, rel_raw, sentence):
         self.orig = orig
         self.targ = targ
-        self.relation = relation
+        self.relation = rel
+        self.relation_raw = rel_raw
+        self.sentence = sentence
 
-        self.cur.execute("INSERT INTO link (orig, targ, relation) VALUES (%s, %s, %s)", (orig.id, targ.id, relation))
+        self.cur.execute("INSERT INTO link (orig, targ, relation, relation_raw, sentence) VALUES (%s, %s, %s)",
+            (orig.id, targ.id, self.relation, self.relation_raw, self.sentence))
         self.id = self.insert_id()
         self.commit()
 

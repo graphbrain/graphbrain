@@ -109,10 +109,10 @@ def input():
     input_str = request.form['input']
     graph_id = request.form['graph_id']
 
-    orig, rel, targ = parse(input_str)
+    result = parse(input_str)
     g = Graph()
     g.id = graph_id
-    g.add_rel(orig, rel, targ)
+    g.add_rel(result)
 
     redirect_to_index = redirect('/')
     response = app.make_response(redirect_to_index)  
