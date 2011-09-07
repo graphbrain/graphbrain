@@ -27,11 +27,12 @@ def parse_predicate(tokens):
     phrase = ''
     first = True
     for t in tokens:
-        if first:
-            first = False
-        else:
-            phrase += ' '
-        phrase += t[0]
+        if t[1][:2] != 'DT':
+            if first:
+                first = False
+            else:
+                phrase += ' '
+            phrase += t[0]
 
     return phrase
 
@@ -86,7 +87,7 @@ def parse(sentence):
             pos += 1
             quoted = True
             break
-        if tagged_tokens[pos][1][:2] == 'NN':
+        if (tagged_tokens[pos][1][:2] == 'NN') or (tagged_tokens[pos][1][:2] == 'JJ'):
             break
         rel_tokens.append(tagged_tokens[pos])
         pos += 1
@@ -103,11 +104,24 @@ def parse(sentence):
     if (len(orig_tokens) == 0) or (len(rel_tokens) == 0) or (len(targ_tokens) == 0):
         raise ParseError('Could not understand sentence.')
 
-    orig = parse_argument(orig_tokens)
-    rel = parse_predicate(rel_tokens)
-    targ = parse_argument(targ_tokens)
+    # raw relationshipt
+    rel_raw = ''
+    first = True
+    for t in rel_tokens:
+        if first:
+            first = False
+        else:
+            rel_raw += ' '
+        rel_raw += t[0]
 
-    return orig, rel, targ
+    result = {}
+    result['orig'] = parse_argument(orig_tokens)
+    result['rel'] = parse_predicate(rel_tokens)
+    result['targ'] = parse_argument(targ_tokens)
+    result['rel_raw'] = rel_raw
+    result['sentence'] = sentence
+
+    return result
 
 
 if __name__ == '__main__':
@@ -115,8 +129,9 @@ if __name__ == '__main__':
         print '?'
         line = sys.stdin.readline()
         try:
-            orig, rel, targ = parse(line)
+            r = parse(line)
         except ParseError, p:
             print p
             continue
-        print "'%s' [%s] '%s'" % (orig, rel, targ)
+        print "'%s' [%s] '%s'" % (r['orig'], r['rel'], r['targ'])
+        print "raw predicate: %s" % r['rel_raw']
