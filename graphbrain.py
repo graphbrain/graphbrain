@@ -50,8 +50,8 @@ def main():
         return redirect2login()
 
     # TODO: these values are just temporary
-    #u = User().get_by_email('telmo@telmomenezes.com')
-    g = Graph().get_by_owner_and_name(u, 'Demo')
+    telmo = User().get_by_email('telmo@telmomenezes.com')
+    g = Graph().get_by_owner_and_name(telmo, 'Demo')
     root = g.root
 
     nodes_json, links_json = root.neighbours_json()
