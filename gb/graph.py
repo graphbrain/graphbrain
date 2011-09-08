@@ -50,3 +50,12 @@ class Graph(DbObj):
         Link().create(orig, targ, r['rel'], r['rel_raw'], r['sentence'])
 
         return True
+
+    def graph_list_for_user(self, u):
+        graphs = []
+
+        # TODO: only graphs that user has access to
+        self.cur.execute("SELECT root, name FROM graph")
+        for row in self.cur:
+            graphs.append({'root':row[0], 'name':row[1]})
+        return graphs

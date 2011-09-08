@@ -19,9 +19,9 @@
             Brains:
             <form action="/selbrain" method="post" id="selbrainForm">
                 <select>
-                    <option>Milk</option>
-                    <option>Coffee</option>
-                    <option>Tea</option>
+                    {% for g in graphs %}
+                        <option>{{ g.name }}</option>
+                    {% endfor %}
                 </select>
             </form>
         </div>
