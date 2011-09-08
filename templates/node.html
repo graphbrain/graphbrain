@@ -14,6 +14,17 @@
     <div id="nodesDiv" />
 
     <div id="topDiv">
+        <div id="topBar">
+            <a href="/logout">Logout</a> |
+            Brains:
+            <form action="/selbrain" method="post" id="selbrainForm">
+                <select>
+                    <option>Milk</option>
+                    <option>Coffee</option>
+                    <option>Tea</option>
+                </select>
+            </form>
+        </div>
         <div id="inputDiv">
             <form action="/input" method="post" id="inputForm">
                 <input type="text" name="input" id="inputField" size="60"/>

@@ -35,6 +35,15 @@ html, body {
 #inputDiv {
     text-align:center;
     padding: 25px;
+    width: 100%;
+}
+
+#topBar {
+    text-align:right;
+}
+
+#selbrainForm {
+    float:right;
 }
 
 #inputField {
