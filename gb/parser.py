@@ -50,8 +50,6 @@ def parse(sentence):
     tokens = nltk.word_tokenize(sentence)
     tagged_tokens = nltk.pos_tag(tokens)
 
-    print tagged_tokens
-
     tagged_tokens = remove_ponctuation(tagged_tokens)
 
     if len(tagged_tokens) == 0:
