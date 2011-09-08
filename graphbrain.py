@@ -5,14 +5,22 @@ from flask import Flask
 from flask import render_template
 from flask import request
 from flask import redirect
+from jinja2 import FileSystemLoader
 
 from gb.user import User
 from gb.graph import Graph
 from gb.node import Node
 from gb.parser import parse
+from gb.config import *
 
 
 application = Flask(__name__)
+
+
+# setting templates directory
+if TEMPLATE_DIR != '':
+    template_path = TEMPLATE_DIR
+    application.jinja_loader = FileSystemLoader(template_path)
 
 
 def redirect2login():
