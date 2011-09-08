@@ -12,12 +12,12 @@ from gb.node import Node
 from gb.parser import parse
 
 
-app = Flask(__name__)
+application = Flask(__name__)
 
 
 def redirect2login():
     redirect_to_index = redirect('/login')
-    response = app.make_response(redirect_to_index)   
+    response = application.make_response(redirect_to_index)   
     return response
 
 
@@ -35,7 +35,7 @@ def curuser():
         return None
 
 
-@app.route("/")
+@application.route("/")
 def main():
     u = curuser()
     if u is None:
@@ -48,11 +48,11 @@ def main():
 
     nodes_json, links_json = root.neighbours_json()
 
-    r = app.make_response(render_template('node.html', nodes_json=nodes_json, links_json=links_json, graph_id=g.id))
+    r = application.make_response(render_template('node.html', nodes_json=nodes_json, links_json=links_json, graph_id=g.id))
     return r
 
 
-@app.route('/node/<node_id>')
+@application.route('/node/<node_id>')
 def node(node_id):
     u = curuser()
     if u is None:
@@ -62,11 +62,11 @@ def node(node_id):
 
     nodes_json, links_json = n.neighbours_json()
 
-    r = app.make_response(render_template('node.html', nodes_json=nodes_json, links_json=links_json, graph_id=n.graph))
+    r = application.make_response(render_template('node.html', nodes_json=nodes_json, links_json=links_json, graph_id=n.graph))
     return r
 
 
-@app.route("/login", methods=['GET', 'POST'])
+@application.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         return render_template('login.html')
@@ -78,7 +78,7 @@ def login():
         if u.check_password(password):
             session = u.create_session()
             redirect_to_index = redirect('/')
-            response = app.make_response(redirect_to_index)  
+            response = application.make_response(redirect_to_index)  
             response.set_cookie('user_id', value=u.id)
             response.set_cookie('session', value=session)
             return response
@@ -87,20 +87,20 @@ def login():
         return email
 
 
-@app.route("/logout")
+@application.route("/logout")
 def logout():
     u = curuser()
     if u is None:
         return redirect2login()
     
     redirect_to_index = redirect('/')
-    response = app.make_response(redirect_to_index)  
+    response = application.make_response(redirect_to_index)  
     response.delete_cookie('user_id')
     response.delete_cookie('session')
     return response
 
 
-@app.route("/input", methods=['POST',])
+@application.route("/input", methods=['POST',])
 def input():
     u = curuser()
     if u is None:
@@ -115,12 +115,12 @@ def input():
     g.add_rel(result)
 
     redirect_to_index = redirect('/')
-    response = app.make_response(redirect_to_index)  
+    response = application.make_response(redirect_to_index)  
     return response
 
 
 if __name__ == "__main__":
     #TODO: make this configurable
-    app.debug = True
+    application.debug = True
     
-    app.run()
+    application.run()
