@@ -3,7 +3,7 @@
 
 import sys
 
-import user
+import gb.user as user
 
 
 if __name__ == '__main__':
