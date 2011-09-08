@@ -51,6 +51,7 @@ def parse(sentence):
     tagged_tokens = nltk.pos_tag(tokens)
 
     tagged_tokens = remove_ponctuation(tagged_tokens)
+    #print tagged_tokens
 
     if len(tagged_tokens) == 0:
         raise ParseError('Empty sentence.')
@@ -80,13 +81,18 @@ def parse(sentence):
 
     # parsing relationship
     quoted = False
+    quotes_ahead = False
+    for t in tagged_tokens[pos:]:
+        if t[0] == '"':
+            quotes_ahead = True
     while pos < len(tagged_tokens):
         if tagged_tokens[pos][0] == '"':
             pos += 1
             quoted = True
             break
-        if (tagged_tokens[pos][1][:2] == 'NN') or (tagged_tokens[pos][1][:2] == 'JJ'):
-            break
+        if not quotes_ahead:
+            if (tagged_tokens[pos][1][:2] == 'NN') or (tagged_tokens[pos][1][:2] == 'JJ'):
+                break
         rel_tokens.append(tagged_tokens[pos])
         pos += 1
 
