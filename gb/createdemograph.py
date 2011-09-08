@@ -16,4 +16,4 @@ if __name__ == '__main__':
     root = Node().create('Graphbrain', g)
     g.set_root(root)
     n = Node().create('Computer Program', g)
-    l = Link().create(root, n, 'is')
+    l = Link().create(root, n, 'is a', 'is', 'Graphbrain is a Computer Program.')
