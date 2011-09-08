@@ -70,7 +70,13 @@ def node(node_id):
 
     nodes_json, links_json = n.neighbours_json()
 
-    r = application.make_response(render_template('node.html', nodes_json=nodes_json, links_json=links_json, graph_id=n.graph))
+    graphs = Graph().graph_list_for_user(u)
+
+    r = application.make_response(render_template('node.html',
+                                                  nodes_json=nodes_json,
+                                                  links_json=links_json,
+                                                  graph_id=n.graph,
+                                                  graphs=graphs))
     return r
 
 
