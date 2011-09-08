@@ -1,4 +1,5 @@
 import MySQLdb as mdb
+from config import *
 
 
 _conn = None
@@ -9,7 +10,7 @@ def _connect():
 
     try:
         if _conn is None:
-            _conn = mdb.connect('localhost', 'root', '', 'gb');
+            _conn = mdb.connect('localhost', DB_USER, DB_PASSWORD, DB_NAME);
     except mdb.Error, e:
         print "Error %d: %s" % (e.args[0],e.args[1])
 
