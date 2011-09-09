@@ -20,7 +20,7 @@
             <form action="/selbrain" method="post" id="selbrainForm">
                 <select name="brainDropDown" onChange="this.form.submit()">
                     {% for g in graphs %}
-                        <option value="{{ g.root }}">{{ g.name }}</option>
+                        <option value="{{ g.root }}" {% if g.id == graph_id %}selected{% endif %}>{{ g.name }}</option>
                     {% endfor %}
                 </select>
             </form>

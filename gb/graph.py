@@ -55,9 +55,9 @@ class Graph(DbObj):
         graphs = []
 
         # TODO: only graphs that user has access to
-        self.cur.execute("SELECT root, name FROM graph")
+        self.cur.execute("SELECT id, root, name FROM graph")
         for row in self.cur:
-            graphs.append({'root':row[0], 'name':row[1]})
+            graphs.append({'id':row[0], 'root':row[1], 'name':row[2]})
         return graphs
 
     def set_permission(self, u, perm):
