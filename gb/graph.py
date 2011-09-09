@@ -32,6 +32,15 @@ class Graph(DbObj):
 
         return self
 
+    def get_by_id(self, graph_id):
+        self.cur.execute("SELECT name, root FROM graph WHERE id=%s", (graph_id,))
+        row = self.cur.fetchone()
+        self.id = graph_id
+        self.name = row[0]
+        self.root = Node().get_by_id(row[1])
+
+        return self
+
     def add_rel(self, r):
         orig = Node().get_by_data(r['orig'], self)
         targ = Node().get_by_data(r['targ'], self)
