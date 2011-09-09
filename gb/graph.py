@@ -68,3 +68,4 @@ class Graph(DbObj):
         else:
             if perm != row[1]:
                 self.cur.execute("UPDATE graph_user SET perm=%s WHERE id=%s", (perm, row[0]))
+        self.commit()

@@ -18,7 +18,7 @@
             <a href="/logout">Logout</a> |
             Brains:
             <form action="/selbrain" method="post" id="selbrainForm">
-                <select name="brainDropDown">
+                <select name="brainDropDown" onChange="this.form.submit()">
                     {% for g in graphs %}
                         <option value="{{ g.root }}">{{ g.name }}</option>
                     {% endfor %}
