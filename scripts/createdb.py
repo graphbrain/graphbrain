@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-import db
+import gb.db as db
 
 
 if __name__ == '__main__':
@@ -27,6 +27,7 @@ if __name__ == '__main__':
     db.execute("ALTER TABLE graph_user ADD COLUMN graph INT")
     db.execute("ALTER TABLE graph_user ADD COLUMN user INT")
     db.execute("ALTER TABLE graph_user ADD COLUMN perm INT")
+    # 0: admin; 1: editor; 2: reader
     
     # node table
     db.execute("CREATE TABLE node(id INT PRIMARY KEY AUTO_INCREMENT)")

@@ -59,3 +59,12 @@ class Graph(DbObj):
         for row in self.cur:
             graphs.append({'root':row[0], 'name':row[1]})
         return graphs
+
+    def set_permission(self, u, g, perm):
+        self.cur.execute("SELECT id, perm FROM graph_user WHERE user=%s AND graph=%s", (u.id, g.id))
+        row = self.cur.fetchone()
+        if row is None:
+            self.cur.execute("INSERT INTO graph_user (graph, user, perm) VALUES (%s, %s, %s)", (g.id, u.id, perm))
+        else:
+            if perm != row[1]:
+                self.cur.execute("UPDATE graph_user SET perm=%s WHERE id=%s", (perm, row[0]))
