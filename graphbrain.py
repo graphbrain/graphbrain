@@ -124,9 +124,9 @@ def input():
     result = parse(input_str)
     g = Graph()
     g.id = graph_id
-    g.add_rel(result)
+    orig_id = g.add_rel(result)
 
-    redirect_to_index = redirect('/')
+    redirect_to_index = redirect('/node/%d' % orig_id)
     response = application.make_response(redirect_to_index)  
     return response
 
