@@ -18,3 +18,6 @@ if __name__ == '__main__':
     g = Graph().create(graph_name, u)
     root = Node().create(root_node, g)
     g.set_root(root)
+
+    # set admin permission for owner
+    g.set_permission(u, g, 0)
