@@ -52,12 +52,10 @@ def main():
     # TODO: these values are just temporary
     telmo = User().get_by_email('telmo@telmomenezes.com')
     g = Graph().get_by_owner_and_name(telmo, 'Demo')
-    root = g.root
 
-    nodes_json, links_json = root.neighbours_json()
-
-    r = application.make_response(render_template('node.html', nodes_json=nodes_json, links_json=links_json, graph_id=g.id))
-    return r
+    redirect_to_index = redirect('/node/%d' % g.root.id)
+    response = application.make_response(redirect_to_index)   
+    return response
 
 
 @application.route('/node/<node_id>')

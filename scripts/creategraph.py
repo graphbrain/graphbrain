@@ -20,4 +20,4 @@ if __name__ == '__main__':
     g.set_root(root)
 
     # set admin permission for owner
-    g.set_permission(u, g, 0)
+    g.set_permission(u, 0)
