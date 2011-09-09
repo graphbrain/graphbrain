@@ -54,10 +54,12 @@ class Graph(DbObj):
     def graph_list_for_user(self, u):
         graphs = []
 
-        # TODO: only graphs that user has access to
-        self.cur.execute("SELECT id, root, name FROM graph")
+        cur2 = db.cursor()
+        self.cur.execute("SELECT graph FROM graph_user WHERE user=%s", (u.id,))
         for row in self.cur:
-            graphs.append({'id':row[0], 'root':row[1], 'name':row[2]})
+            cur2.execute("SELECT id, root, name FROM graph WHERE id=%s", (row[0],))
+            for row2 in cur2:
+                graphs.append({'id':row2[0], 'root':row2[1], 'name':row2[2]})
         return graphs
 
     def set_permission(self, u, perm):
