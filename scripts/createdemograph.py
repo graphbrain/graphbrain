@@ -17,3 +17,6 @@ if __name__ == '__main__':
     g.set_root(root)
     n = Node().create('Computer Program', g)
     l = Link().create(root, n, 'is a', 'is', 'Graphbrain is a Computer Program.')
+
+    # set admin permission for ownwer
+    g.set_permission(u, g, 0)
