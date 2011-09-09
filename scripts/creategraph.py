@@ -3,10 +3,10 @@
 
 import sys
 
-from user import User
-from graph import Graph
-from node import Node
-from link import Link
+from gb.user import User
+from gb.graph import Graph
+from gb.node import Node
+from gb.link import Link
 
 
 if __name__ == '__main__':
