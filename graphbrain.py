@@ -131,6 +131,15 @@ def input():
     return response
 
 
+@application.route("/selbrain", methods=['POST',])
+def selbrain():
+    node_id = request.form['brainDropDown']
+
+    redirect_to_index = redirect('/node/%s' % node_id)
+    response = application.make_response(redirect_to_index)  
+    return response
+
+
 if __name__ == "__main__":
     #TODO: make this configurable
     application.debug = True
