@@ -38,7 +38,7 @@ class Graph(DbObj):
 
         # one of the nodes has to exist in the graph
         if (orig.id < 0) and (targ.id < 0):
-            return False
+            return -1
 
         # create one of the nodes if it does not exist
         if orig.id < 0:
@@ -49,7 +49,7 @@ class Graph(DbObj):
         # create new link between nodes
         Link().create(orig, targ, r['rel'], r['rel_raw'], r['sentence'])
 
-        return True
+        return orig.id
 
     def graph_list_for_user(self, u):
         graphs = []
