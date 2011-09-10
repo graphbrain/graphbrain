@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}GraphBrain - Create new brain{% endblock %}
+
+{% block content %}
+
+<form action="/createbrain" method="post" id="newBrainForm">
+Name: <input type="text" name="name" size="50" /><br />
+First item: <input type="text" name="item" size="50" /><br />
+<input type="submit" value="Create" />
+</form>
+
+<br />
+<div class="error">{{ message }}</div>
+
+{% endblock %}
