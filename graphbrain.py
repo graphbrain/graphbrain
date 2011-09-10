@@ -140,6 +140,30 @@ def selbrain():
     return response
 
 
+@application.route("/createbrain", methods=['GET', 'POST'])
+def createbrain():
+    u = curuser()
+    if u is None:
+        return redirect2login()
+    
+    if request.method == 'GET':
+        return render_template('createbrain.html')
+    else:
+        graph_name = request.form['name']
+        root_data = request.form['item']
+
+        g = Graph().create(graph_name, u)
+        root = Node().create(root_data, g)
+        g.set_root(root)
+
+        # set admin permission for owner
+        g.set_permission(u, 0)
+
+        redirect_to_index = redirect('/node/%d' % root.id)
+        response = application.make_response(redirect_to_index)  
+        return response
+
+
 if __name__ == "__main__":
     #TODO: make this configurable
     application.debug = True
