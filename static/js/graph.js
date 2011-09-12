@@ -1,3 +1,50 @@
+// Aux
+var rotateAndTranslate = function(point, angle, tx, ty) {
+    var x = point[0];
+    var y = point[1];
+
+    var rx = Math.cos(angle) * x - Math.sin(angle) * y;
+    var ry = Math.sin(angle) * x + Math.cos(angle) * y;
+
+    x = rx + tx;
+    y = ry + ty;
+
+    point[0] = x;
+    point[1] = y;
+}
+
+
+var dotProduct = function(p0, p1) {
+    return (p0[0] * p1[0]) + (p0[1] * p1[1]);
+}
+
+
+var pointInTriangle = function(A, B, C, P) {
+    var v0 = [0, 0];
+    var v1 = [0, 0];
+    var v2 = [0, 0];
+    
+    v0[0] = C[0] - A[0];
+    v0[1] = C[1] - A[1];
+    v1[0] = B[0] - A[0];
+    v1[1] = B[1] - A[1];
+    v2[0] = P[0] - A[0];
+    v2[1] = P[1] - A[1];
+
+    var dot00 = dotProduct(v0, v0);
+    var dot01 = dotProduct(v0, v1);
+    var dot02 = dotProduct(v0, v2);
+    var dot11 = dotProduct(v1, v1);
+    var dot12 = dotProduct(v1, v2);
+
+    var invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+    var u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+    var v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+    return (u > 0) && (v > 0) && (u + v < 1);
+}
+
+
 // Node
 var Node = function(id, text) {
     this.id = id;
@@ -21,7 +68,8 @@ Node.prototype.place = function() {
 }
 
 // Link
-var Link = function(orig, targ, type) {
+var Link = function(id, orig, targ, type) {
+    this.id = id;
     this.orig = orig;
     this.targ = targ;
     this.type = type;
@@ -60,33 +108,52 @@ Link.prototype.draw = function(context) {
     var dim = context.measureText(this.type);
     var width = dim.width + 6;
     var height = 18;
-    context.save();
-    context.translate(cx, cy);
-    context.rotate(angle);
+    
+    var p = [[0, 0], [0, 0], [0, 0], [0,0], [0,0]];
+    this.points = p;
 
     context.beginPath();
     if ((x0 < x1) || ((x0 == x1) && (y0 < y1))) {
-        context.moveTo(-(width / 2), -(height / 2));
-        context.lineTo(-(width / 2), (height / 2));
-        context.lineTo((width / 2), (height / 2));
-        context.lineTo((width / 2) + 6, 0);
-        context.lineTo((width / 2), -(height / 2));
+        p[0][0] = -(width / 2);     p[0][1] = -(height / 2);
+        p[1][0] = -(width / 2);     p[1][1] = (height / 2);
+        p[2][0] = (width / 2);      p[2][1] = (height / 2);
+        p[3][0] = (width / 2) + 6;  p[3][1] = 0;
+        p[4][0] = (width / 2);      p[4][1] = -(height / 2);
     }
     else {
-        context.moveTo(-(width / 2), -(height / 2));
-        context.lineTo(-(width / 2) - 6, 0);
-        context.lineTo(-(width / 2), (height / 2));
-        context.lineTo((width / 2), (height / 2));
-        context.lineTo((width / 2), -(height / 2));
+        p[0][0] = -(width / 2);     p[0][1] = -(height / 2);
+        p[1][0] = -(width / 2) - 6; p[1][1] = 0;
+        p[2][0] = -(width / 2);     p[2][1] = (height / 2);
+        p[3][0] = (width / 2);      p[3][1] = (height / 2);
+        p[4][0] = (width / 2);      p[4][1] = -(height / 2);
     }
+
+    for (i = 0; i < 5; i++) {
+        rotateAndTranslate(p[i], angle, cx, cy);
+    }
+
+    context.moveTo(p[0][0], p[0][1]);
+    for (i = 1; i < 5; i++) {
+        context.lineTo(p[i][0], p[i][1]);
+    }
+    
     context.closePath();
     context.fill();
 
+    context.save();
+    context.translate(cx, cy);
+    context.rotate(angle);
     context.fillStyle = '#FFF';
     context.textAlign = "center";
     context.textBaseline = "middle";
     context.fillText(this.type, 0, 0);
     context.restore();
+}
+
+Link.prototype.pointInLabel = function(p) {
+    return (pointInTriangle(this.points[0], this.points[1], this.points[2], p)
+        || pointInTriangle(this.points[2], this.points[3], this.points[4], p)
+        || pointInTriangle(this.points[0], this.points[2], this.points[4], p));
 }
 
 // Graph
@@ -147,10 +214,34 @@ Graph.prototype.layout = function(node, depth, cx, cy, px, py, ang0, ang1) {
     }
 }
 
+Graph.prototype.labelAtPoint = function(x, y) {
+    var p = [x, y];
+    for (i = this.links.length - 1; i >= 0; i--) {
+        if (this.links[i].pointInLabel(p)) {
+            return this.links[i];
+        }
+    }
+
+    return -1;
+}
+
+
 // Entry point functions & global variables
 var g;
 
 var initGraph = function(nodes, links) {
+
+    $("#graphCanvas").bind("click", (function(event) {
+        l = g.labelAtPoint(event.pageX, event.pageY);
+        if (l != -1) {
+            if (confirm('Do you want to delete connection:\n"' + l.orig.text + ' ' + l.type + ' ' + l.targ.text + '"?')) {
+                document.forms["delinkForm"].elements["link_id"].value = l.id;
+                $("#delinkForm").submit();
+            }
+        }
+    }));
+
+
     var elem = document.getElementById('graphCanvas');
     var context = elem.getContext('2d');
 
@@ -184,7 +275,7 @@ var initGraph = function(nodes, links) {
 
     for (i = 0; i < links.length; i++) {
         var l = links[i];
-        var link = new Link(g.nodes[l['orig']], g.nodes[l['targ']], l['type']);
+        var link = new Link(l['id'], g.nodes[l['orig']], g.nodes[l['targ']], l['type']);
         g.links.push(link);
     }
     

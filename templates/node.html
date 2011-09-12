@@ -35,6 +35,10 @@
     <div id="nodesDiv" />
 </div>
 
+<form action="/delink" method="post" id="delinkForm">
+    <input type="hidden" name="link_id">
+</form>
+
 <script language="javascript">
 
 var nodes =  {{ nodes_json|safe }};
