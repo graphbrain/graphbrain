@@ -11,7 +11,7 @@ from gb.user import User
 from gb.graph import Graph
 from gb.node import Node
 from gb.link import Link
-from gb.parser import parse
+from gb.parser import parse, ParseError
 from gb.config import *
 
 
@@ -64,13 +64,10 @@ def node(node_id):
     u = curuser()
     if u is None:
         return redirect2login()
-    
+   
     n = Node().get_by_id(int(node_id))
-
     nodes_json, links_json = n.neighbours_json()
-
     graphs = Graph().graph_list_for_user(u)
-
     r = application.make_response(render_template('node.html',
                                                   nodes_json=nodes_json,
                                                   links_json=links_json,
@@ -122,7 +119,14 @@ def input():
     input_str = request.form['input']
     graph_id = request.form['graph_id']
 
-    result = parse(input_str)
+    try:
+        result = parse(input_str)
+    except ParseError, p:
+        # TODO: temporary way of dealing with parse exceptions
+        redirect_to_index = redirect('/')
+        response = application.make_response(redirect_to_index)  
+        return response
+
     g = Graph()
     g.id = graph_id
     orig_id = g.add_rel(result)
