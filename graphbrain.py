@@ -10,6 +10,7 @@ from jinja2 import FileSystemLoader
 from gb.user import User
 from gb.graph import Graph
 from gb.node import Node
+from gb.link import Link
 from gb.parser import parse
 from gb.config import *
 
@@ -162,6 +163,22 @@ def createbrain():
         redirect_to_index = redirect('/node/%d' % root.id)
         response = application.make_response(redirect_to_index)  
         return response
+
+
+@application.route("/delink", methods=['POST'])
+def delink():
+    u = curuser()
+    if u is None:
+        return redirect2login()
+    
+    link_id = request.form['link_id']
+    link = Link().get_by_id(link_id)
+    node_id = link.orig
+    link.delete()
+
+    redirect_to_index = redirect('/node/%d' % node_id)
+    response = application.make_response(redirect_to_index)  
+    return response
 
 
 if __name__ == "__main__":

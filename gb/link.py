@@ -31,3 +31,6 @@ class Link(DbObj):
         self.relation = row[2]
 
         return self
+        
+    def delete(self):
+        self.cur.execute("DELETE FROM link WHERE id=%s", (self.id,))

@@ -86,7 +86,7 @@ class Node(DbObj):
 
         links_json = '['
         for link in links:
-            links_json = '%s{"orig": "%s", "targ":"%s", "type":"%s"},' % (links_json, link.orig, link.targ, link.relation)
+            links_json = '%s{"id":"%s", "orig": "%s", "targ":"%s", "type":"%s"},' % (links_json, link.id, link.orig, link.targ, link.relation)
         links_json = '%s]' % links_json
 
         return nodes_json, links_json
