@@ -8,6 +8,10 @@ _conn = None
 def _connect():
     global _conn
 
+    # HACK: reopen connection everytime to avoid "MySQL server has gone" errors
+    # TODO: solve this properly
+    _conn = None
+
     try:
         if _conn is None:
             _conn = mdb.connect('localhost', DB_USER, DB_PASSWORD, DB_NAME);
