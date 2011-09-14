@@ -105,8 +105,8 @@ def parse(sentence):
         targ_tokens.append(tagged_tokens[pos])
         pos += 1
 
-    #if (len(orig_tokens) == 0) or (len(rel_tokens) == 0) or (len(targ_tokens) == 0):
-    #    raise ParseError('Could not understand sentence.')
+    if (len(orig_tokens) == 0) or (len(rel_tokens) == 0) or (len(targ_tokens) == 0):
+        raise ParseError('Could not understand sentence.')
 
     # raw relationshipt
     rel_raw = ''
