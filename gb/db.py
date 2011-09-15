@@ -42,7 +42,7 @@ def execute(query, params=(), cur=None):
             c = cursor()
         c.execute(query, params)
     # deal with "MySQL server is gone" errors
-    except (AttributeError, MySQLdb.OperationalError): 
+    except (AttributeError, mdb.OperationalError): 
         try:
             c = cursor(reconnect=True)
             c.execute(query, params)
