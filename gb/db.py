@@ -5,12 +5,11 @@ from config import *
 _conn = None
 
 
-def _connect():
+def _connect(reconnect=False):
     global _conn
 
-    # HACK: reopen connection everytime to avoid "MySQL server has gone" errors
-    # TODO: solve this properly
-    _conn = None
+    if reconnect:
+        _conn = None
 
     try:
         if _conn is None:
@@ -19,9 +18,9 @@ def _connect():
         print "Error %d: %s" % (e.args[0],e.args[1])
 
 
-def cursor():
+def cursor(reconnect=False):
     global _conn
-    _connect()
+    _connect(reconnect)
     return _conn.cursor()
     
     
@@ -31,14 +30,29 @@ def connection():
     return _conn
 
 
-def execute(query):
-    global _conn
-    _connect()
-    cur = cursor()
-   
+def commit():
+    connection().commit()
+
+
+def execute(query, params=(), cur=None):
+    c = cur
+
     try:
-        cur.execute(query)
-        connection().commit()
+        if c is None:
+            c = cursor()
+        c.execute(query, params)
+    # deal with "MySQL server is gone" errors
+    except (AttributeError, MySQLdb.OperationalError): 
+        try:
+            c = cursor(reconnect=True)
+            c.execute(query, params)
+        except mdb.Error, e:
+            print "Error %d: %s" % (e.args[0],e.args[1])
     except mdb.Error, e:
         print "Error %d: %s" % (e.args[0],e.args[1])
-    cur.close()
+
+    return c
+
+
+def insert_id():
+    return connection().insert_id()

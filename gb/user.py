@@ -16,7 +16,7 @@ class User(DbObj):
         self.role = role
         self.pwdhash = bcrypt.hashpw(password, bcrypt.gensalt(12))
 
-        self.cur.execute("INSERT INTO user (name, email, pwdhash, role) VALUES (%s, %s, %s, %s)",
+        self.execute("INSERT INTO user (name, email, pwdhash, role) VALUES (%s, %s, %s, %s)",
                         (name, email, self.pwdhash, role))
         self.id = self.insert_id()
         self.commit()
@@ -24,7 +24,7 @@ class User(DbObj):
         return self
 
     def get_by_id(self, user_id):
-        self.cur.execute("SELECT email, name, pwdhash, role, creation_ts, session, session_ts FROM user WHERE id=%s", (user_id,))
+        self.execute("SELECT email, name, pwdhash, role, creation_ts, session, session_ts FROM user WHERE id=%s", (user_id,))
         row = self.cur.fetchone()
         self.id = user_id
         self.email = row[0]
@@ -38,7 +38,7 @@ class User(DbObj):
         return self
 
     def get_by_email(self, email):
-        self.cur.execute("SELECT id, name, pwdhash, role, creation_ts, session, session_ts FROM user WHERE email=%s", (email,))
+        self.execute("SELECT id, name, pwdhash, role, creation_ts, session, session_ts FROM user WHERE email=%s", (email,))
         row = self.cur.fetchone()
         self.email = email
         self.id = row[0]
@@ -59,7 +59,7 @@ class User(DbObj):
 
     def create_session(self):
         session_str = random_string(60)
-        self.cur.execute("UPDATE user SET session=%s, session_ts=%s WHERE id=%s", (session_str, timestamp(), self.id))
+        self.execute("UPDATE user SET session=%s, session_ts=%s WHERE id=%s", (session_str, timestamp(), self.id))
         self.commit()
         return session_str
 
@@ -70,5 +70,5 @@ class User(DbObj):
             return False
 
     def logout(self):
-        self.cur.execute("UPDATE user SET session='none' WHERE id=%s", (self.id, ))
+        self.execute("UPDATE user SET session='none' WHERE id=%s", (self.id, ))
         self.commit()

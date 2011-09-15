@@ -47,4 +47,5 @@ if __name__ == '__main__':
     db.execute("ALTER TABLE link ADD COLUMN sentence VARCHAR(500)")
     db.execute("ALTER TABLE link ADD COLUMN directed INT DEFAULT 1")
 
+    db.commit()
     db.connection().close()

@@ -13,7 +13,7 @@ class Node(DbObj):
         self.data = data
         self.graph = graph
 
-        self.cur.execute("INSERT INTO node (data, graph) VALUES (%s, %s)", (data, graph.id))
+        self.execute("INSERT INTO node (data, graph) VALUES (%s, %s)", (data, graph.id))
         self.id = self.insert_id()
         self.commit()
 
@@ -21,7 +21,7 @@ class Node(DbObj):
 
     def get_by_id(self, node_id):
         self.id = node_id
-        self.cur.execute("SELECT data, graph FROM node WHERE id=%s", (node_id,))
+        self.execute("SELECT data, graph FROM node WHERE id=%s", (node_id,))
         row = self.cur.fetchone()
         self.data = row[0]
         self.graph = row[1]
@@ -29,7 +29,7 @@ class Node(DbObj):
         return self
 
     def get_by_data(self, data, graph):
-        self.cur.execute("SELECT id FROM node WHERE graph=%s AND data=%s", (graph.id, data))
+        self.execute("SELECT id FROM node WHERE graph=%s AND data=%s", (graph.id, data))
         row = self.cur.fetchone()
         if row is None:
             self.id = -1
@@ -45,14 +45,14 @@ class Node(DbObj):
             nodes[self.id] = self
 
         if (depth < 2):
-            self.cur.execute("SELECT targ FROM link WHERE orig=%s", (self.id,))
+            self.execute("SELECT targ FROM link WHERE orig=%s", (self.id,))
             rows = self.cur.fetchall()
             for row in rows:
                 nnode = Node().get_by_id(row[0])
                 nnode.parent = self.id
                 nnode._neighbors(nodes, depth + 1)
 
-            self.cur.execute("SELECT orig FROM link WHERE targ=%s", (self.id,))
+            self.execute("SELECT orig FROM link WHERE targ=%s", (self.id,))
             rows = self.cur.fetchall()
             for row in rows:
                 nnode = Node().get_by_id(row[0])
@@ -63,7 +63,7 @@ class Node(DbObj):
         ilinks = []
 
         for node_id in nodes.keys():
-            self.cur.execute("SELECT id FROM link WHERE orig=%s", (node_id,))
+            self.execute("SELECT id FROM link WHERE orig=%s", (node_id,))
             rows = self.cur.fetchall()
             for row in rows:
                 link = Link().get_by_id(row[0])
