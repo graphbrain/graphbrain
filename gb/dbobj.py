@@ -15,3 +15,6 @@ class DbObj:
 
     def insert_id(self):
         return db.connection().insert_id()
+
+    def execute(self, query, params=()):
+        self.cur = db.execute(query, params=params, cur=self.cur)

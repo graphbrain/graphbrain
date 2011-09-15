@@ -16,7 +16,7 @@ class Link(DbObj):
         self.sentence = sentence
         self.directed = directed
 
-        self.cur.execute("INSERT INTO link (orig, targ, relation, relation_raw, sentence, directed) VALUES (%s, %s, %s, %s, %s, %s)",
+        self.execute("INSERT INTO link (orig, targ, relation, relation_raw, sentence, directed) VALUES (%s, %s, %s, %s, %s, %s)",
                          (orig.id, targ.id, self.relation, self.relation_raw, self.sentence, self.directed))
         self.id = self.insert_id()
         self.commit()
@@ -25,7 +25,7 @@ class Link(DbObj):
 
     def get_by_id(self, link_id):
         self.id = link_id
-        self.cur.execute("SELECT orig, targ, relation, directed FROM link WHERE id=%s", (link_id,))
+        self.execute("SELECT orig, targ, relation, directed FROM link WHERE id=%s", (link_id,))
         row = self.cur.fetchone()
         self.orig = row[0]
         self.targ = row[1]
@@ -35,4 +35,5 @@ class Link(DbObj):
         return self
         
     def delete(self):
-        self.cur.execute("DELETE FROM link WHERE id=%s", (self.id,))
+        self.execute("DELETE FROM link WHERE id=%s", (self.id,))
+        self.commit()
