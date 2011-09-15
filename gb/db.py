@@ -42,13 +42,27 @@ def execute(query, params=(), cur=None):
             c = cursor()
         c.execute(query, params)
     # deal with "MySQL server is gone" errors
-    except mdb.OperationalError: 
+    except (AttributeError, mdb.OperationalError): 
         c = cursor(reconnect=True)
         c.execute(query, params)
     except mdb.Error, e:
         print "Error %d: %s" % (e.args[0],e.args[1])
 
     return c
+
+
+# Used only for createdb type stuff - NOT for production system
+def safe_execute(query, params=()):
+    c = None
+
+    try:
+        c = cursor()
+        c.execute(query, params)
+    except mdb.Error, e:
+        print "Error %d: %s" % (e.args[0],e.args[1])
+
+    commit()
+    c.close()
 
 
 def insert_id():
