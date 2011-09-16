@@ -1,5 +1,7 @@
 import nltk
 import sys
+import cPickle as pickle
+from config import *
 
 
 class ParseError(Exception):
@@ -8,6 +10,21 @@ class ParseError(Exception):
 
     def __str__(self):
         return 'Parse error: %s' % self.msg
+
+
+global _tagger
+_tagger = None
+
+
+def get_tagger():
+    global _tagger
+
+    # unpickle tagger
+    if _tagger is None:
+        f = open(TAGGER_DIR + '/tagger.pickle', 'r')
+        _tagger = pickle.load(f)
+        f.close()
+    return _tagger
 
 
 def parse_argument(tokens):
@@ -47,8 +64,20 @@ def remove_ponctuation(tagged_tokens):
 
 
 def parse(sentence):
+    tagger = get_tagger()
+
     tokens = nltk.word_tokenize(sentence)
-    tagged_tokens = nltk.pos_tag(tokens)
+    #tagged_tokens = nltk.pos_tag(tokens)
+    tagged_tokens = tagger.tag(tokens)
+
+    # assume all unkown tokens are nouns
+    tagged_tokens2 = []
+    for tt in tagged_tokens:
+        tag = tt[1]
+        if tag is None:
+            tag = 'NN'
+        tagged_tokens2.append([tt[0], tag])
+    tagged_tokens = tagged_tokens2
 
     tagged_tokens = remove_ponctuation(tagged_tokens)
     #print tagged_tokens
@@ -73,7 +102,7 @@ def parse(sentence):
                 pos += 1
                 break
         else:
-            if tagged_tokens[pos][1][:2] == 'VB':
+            if (tagged_tokens[pos][1][:2] == 'VB') or (tagged_tokens[pos][1][:2] == 'BE') or (tagged_tokens[pos][1][:2] == 'HV'):
                 break
         
         orig_tokens.append(tagged_tokens[pos])
