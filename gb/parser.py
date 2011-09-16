@@ -120,7 +120,7 @@ def parse(sentence):
             quoted = True
             break
         if not quotes_ahead:
-            if (tagged_tokens[pos][1][:2] == 'NN') or (tagged_tokens[pos][1][:2] == 'JJ'):
+            if (tagged_tokens[pos][1][:2] == 'NN') or (tagged_tokens[pos][1][:2] == 'NP') or (tagged_tokens[pos][1][:2] == 'JJ'):
                 break
         rel_tokens.append(tagged_tokens[pos])
         pos += 1
