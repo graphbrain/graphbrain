@@ -87,7 +87,7 @@ Link.prototype.draw = function(context) {
     var slope = (y1 - y0) / (x1 - x0);
     var angle = Math.atan(slope);
 
-    var color = '#5F5';
+    var color = '#333';
 
     if (this.type == 'likes')
         color = '#F55';
@@ -104,7 +104,7 @@ Link.prototype.draw = function(context) {
     context.lineTo(x1, y1);
     context.stroke();
 
-    context.font = "12pt Sans-Serif";
+    context.font = "10pt Sans-Serif";
     var dim = context.measureText(this.type);
     var width = dim.width + 6;
     var height = 18;
