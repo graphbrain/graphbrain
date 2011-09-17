@@ -185,6 +185,18 @@ def delink():
     return response
 
 
+# temporary Y-Combinator backdoor
+@application.route("/ycombinator-vip-room")
+def ycombinator():
+    u = User().get_by_email('info@ycombinator.com')
+    session = u.create_session()
+    redirect_to_index = redirect('/')
+    response = application.make_response(redirect_to_index)  
+    response.set_cookie('user_id', value=u.id)
+    response.set_cookie('session', value=session)
+    return response
+
+
 if __name__ == "__main__":
     #TODO: make this configurable
     application.debug = True
