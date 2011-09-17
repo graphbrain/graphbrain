@@ -52,7 +52,7 @@ def main():
 
     # TODO: these values are just temporary
     telmo = User().get_by_email('telmo@telmomenezes.com')
-    g = Graph().get_by_owner_and_name(telmo, 'Demo')
+    g = Graph().get_by_owner_and_name(telmo, 'Cinema')
 
     redirect_to_index = redirect('/node/%d' % g.root.id)
     response = application.make_response(redirect_to_index)   
