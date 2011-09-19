@@ -7,7 +7,7 @@ html, body {
 }
 
 .node {
-    color:#FFF;
+    color:#000;
     background: #E0E4CC;
     position:fixed;
     font-family: Sans-Serif;
@@ -18,7 +18,7 @@ html, body {
 }
 
 .node a {
-    color:#FFF;
+    color:#000;
 }
 
 #nodesDiv {
