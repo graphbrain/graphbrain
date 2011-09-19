@@ -87,16 +87,16 @@ Link.prototype.draw = function(context) {
     var slope = (y1 - y0) / (x1 - x0);
     var angle = Math.atan(slope);
 
-    var color = '#FFB519';
+    var color = '#FFD326';
 
     if (~this.type.indexOf('direct'))
-        color = '#FF77A3';
-    else if (~this.type.indexOf('char'))
-        color = '#09E6F2';
-    else if (~this.type.indexOf('play'))
-        color = '#FFFB19';
-    else if (~this.type.indexOf('is'))
         color = '#BEE512';
+    else if (~this.type.indexOf('char'))
+        color = '#DFFD59';
+    else if (~this.type.indexOf('play'))
+        color = '#FFFC26';
+    else if (~this.type.indexOf('is'))
+        color = '#ED9107';
 
     context.strokeStyle = color;
     context.fillStyle = color;
