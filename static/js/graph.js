@@ -145,7 +145,7 @@ Link.prototype.draw = function(context) {
     context.save();
     context.translate(cx, cy);
     context.rotate(angle);
-    context.fillStyle = '#FFF';
+    context.fillStyle = '#000';
     context.textAlign = "center";
     context.textBaseline = "middle";
     context.fillText(this.type, 0, 0);
