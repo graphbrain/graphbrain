@@ -185,6 +185,11 @@ def delink():
     return response
 
 
+@application.route("/help", methods=['GET',])
+def help():
+    return render_template('help.html')
+
+
 # temporary Y-Combinator backdoor
 @application.route("/ycombinator-vip-room")
 def ycombinator():
