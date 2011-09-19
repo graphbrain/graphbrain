@@ -88,6 +88,7 @@ Link.prototype.draw = function(context) {
     var angle = Math.atan(slope);
 
     var color = '#FFD326';
+    var textcolor = '#000'
 
     if (~this.type.indexOf('direct'))
         color = '#BEE512';
@@ -95,8 +96,10 @@ Link.prototype.draw = function(context) {
         color = '#DFFD59';
     else if (~this.type.indexOf('play'))
         color = '#FFFC26';
-    else if (~this.type.indexOf('is'))
+    else if (~this.type.indexOf('is')) {
         color = '#ED9107';
+        textcolor = '#FFF'
+    }
 
     context.strokeStyle = color;
     context.fillStyle = color;
@@ -145,7 +148,7 @@ Link.prototype.draw = function(context) {
     context.save();
     context.translate(cx, cy);
     context.rotate(angle);
-    context.fillStyle = '#000';
+    context.fillStyle = textcolor;
     context.textAlign = "center";
     context.textBaseline = "middle";
     context.fillText(this.type, 0, 0);
