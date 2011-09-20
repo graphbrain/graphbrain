@@ -29,15 +29,25 @@ def get_tagger():
 
 def parse_argument(tokens):
     phrase = ''
-    first = True
-    for t in tokens:
-        if first:
-            first = False
-        else:
-            phrase += ' '
-        phrase += t[0]
+    node_type = 0
 
-    return phrase
+    # VERY naive way to detect images...
+    # temporary hack
+    words = [t[0] for t in tokens]
+    s = ''.join(words)
+    if s[:7] == 'http://':
+        type = 1
+        phrase = s
+    else:
+        first = True
+        for t in tokens:
+            if first:
+                first = False
+            else:
+                phrase += ' '
+            phrase += t[0]
+
+    return phrase, node_type
 
 
 def parse_predicate(tokens):
@@ -148,9 +158,9 @@ def parse(sentence):
         rel_raw += t[0]
 
     result = {}
-    result['orig'] = parse_argument(orig_tokens)
+    result['orig'], result['orig_type'] = parse_argument(orig_tokens)
     result['rel'] = parse_predicate(rel_tokens)
-    result['targ'] = parse_argument(targ_tokens)
+    result['targ'], result['targ_type'] = parse_argument(targ_tokens)
     result['rel_raw'] = rel_raw
     result['sentence'] = sentence
 
