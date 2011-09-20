@@ -50,9 +50,9 @@ class Graph(DbObj):
 
         # create one of the nodes if it does not exist
         if orig.id < 0:
-            orig.create(r['orig'], self)
+            orig.create(r['orig'], self, r['orig_type'])
         elif targ.id < 0:
-            targ.create(r['targ'], self)
+            targ.create(r['targ'], self, r['targ_type'])
 
         # create new link between nodes
         Link().create(orig, targ, r['rel'], r['rel_raw'], r['sentence'])

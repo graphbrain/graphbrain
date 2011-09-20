@@ -36,7 +36,7 @@ def parse_argument(tokens):
     words = [t[0] for t in tokens]
     s = ''.join(words)
     if s[:7] == 'http://':
-        type = 1
+        node_type = 1
         phrase = s
     else:
         first = True
