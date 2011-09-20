@@ -36,6 +36,8 @@ if __name__ == '__main__':
     db.safe_execute("ALTER TABLE node ADD COLUMN creation_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     db.safe_execute("ALTER TABLE node ADD COLUMN data VARCHAR(250)")
     db.safe_execute("ALTER TABLE node ADD COLUMN graph INT")
+    db.safe_execute("ALTER TABLE node ADD COLUMN type INT DEFAULT 0")
+    # 0: text; 1: image
 
     # link table
     db.safe_execute("CREATE TABLE link(id INT PRIMARY KEY AUTO_INCREMENT)")
