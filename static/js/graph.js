@@ -46,9 +46,10 @@ var pointInTriangle = function(A, B, C, P) {
 
 
 // Node
-var Node = function(id, text) {
+var Node = function(id, text, type) {
     this.id = id;
     this.text = text;
+    this.type = type;
     this.x = 0;
     this.y = 0;
     this.subNodes = [];
@@ -58,12 +59,20 @@ Node.prototype.place = function() {
     var node = document.createElement('div');
     node.setAttribute('class', 'node');
     node.setAttribute('id', this.id);
-    node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.id + '">' + this.text + '</a>';
+    if (this.type == 0) {
+        node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.id + '">' + this.text + '</a>';
+    }
+    else if (this.type == 1) {
+        node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.id + '"><img src="' + this.text + '" width="50px" /></a>';
+    }
     var nodesDiv = document.getElementById("nodesDiv");
     nodesDiv.appendChild(node);
 
     var width = $('div#' + this.id).width();
     var height = $('div#' + this.id).height();
+    if (this.type == 1) {
+        height = 55;
+    }
     node.setAttribute('style', 'left:' + (this.x - (width / 2)) + 'px; top:' + (this.y - (height / 2)) + 'px;');
 }
 
@@ -259,7 +268,8 @@ var initGraph = function(nodes, links) {
         var n = nodes[i];
         var id = n['id'];
         var text = n['text'];
-        var node = new Node(id, text);
+        var type = n['type'];
+        var node = new Node(id, text, type);
         g.nodes[id] = node;
     }   
 
