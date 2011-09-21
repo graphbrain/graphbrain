@@ -55,6 +55,14 @@ var Node = function(id, text, type) {
     this.subNodes = [];
 }
 
+Node.prototype.moveTo = function(x, y) {
+    this.x = x;
+    this.y = y;
+    $('div#' + this.id).css('left', (this.x - (this.width / 2)) + 'px');
+    $('div#' + this.id).css('top', (this.y - (this.height / 2)) + 'px');
+    g.drawLinks();
+}
+
 Node.prototype.place = function() {
     var node = document.createElement('div');
     node.setAttribute('class', 'node');
@@ -74,6 +82,16 @@ Node.prototype.place = function() {
         height = 55;
     }
     node.setAttribute('style', 'left:' + (this.x - (width / 2)) + 'px; top:' + (this.y - (height / 2)) + 'px;');
+    this.width = width;
+    this.height = height;
+    
+    var nodeObj = this;
+    $('div#' + this.id).draggable({drag: function(event, ui) { nodeObj.moveTo(event.pageX, event.pageY); return true;}});
+            
+    $('div#' + this.id).bind("dragstart", function(e) {
+        return false;
+    });
+
 }
 
 // Link
@@ -180,6 +198,7 @@ var Graph = function(context) {
 }
 
 Graph.prototype.drawLinks = function() {
+    this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
     var i;
     for (i = 0; i < this.links.length; i++) {
         this.links[i].draw(this.context);
@@ -242,8 +261,10 @@ Graph.prototype.labelAtPoint = function(x, y) {
 
 // Entry point functions & global variables
 var g;
+var dragging;
 
 var initGraph = function(nodes, links) {
+    dragging = -1;
 
     $("#graphCanvas").bind("click", (function(event) {
         l = g.labelAtPoint(event.pageX, event.pageY);
@@ -254,6 +275,17 @@ var initGraph = function(nodes, links) {
             }
         }
     }));
+    
+    $('#graphCanvas').mouseup(function() {
+        dragging = -1;
+    });
+    
+    $('#graphCanvas').mousemove(function(event) {
+        if (dragging >= 0) {
+            var node = g.nodes[dragging];
+            node.moveTo(event.pageX, event.pageY);
+        }
+    });
 
 
     var elem = document.getElementById('graphCanvas');
