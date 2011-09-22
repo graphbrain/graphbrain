@@ -7,25 +7,12 @@
 {% endblock %}
 
 {% block content %}
-<table width="100%" border="0">
-<tr valign="top" align="center">
-<td colspan="3">
-<img src="images/GB_logo_M.png" alt="graphbrain"/>
-</td>
-</tr>
-
-
-
-<tr>
-<td style="width:1px;textalign:top">
-</td>
-<td style="textalign:center">
 <div id="main">
     <div id="topDiv">
         <div id="topBar">
-            <a href="/logout"><big>Logout</big></a> |
-            <a href="/createbrain"><big>Create Brain</big></a> |
-            <big>Brains:</big>
+            <a href="/logout">Logout</a> |
+            <a href="/createbrain">Create Brain</a> |
+            Brains:
             <form action="/selbrain" method="post" id="selbrainForm">
                 <select name="brainDropDown" onChange="this.form.submit()">
                     {% for g in graphs %}
@@ -42,17 +29,8 @@
             <a href="/help">Help, what should I write here?</a>
         </div>
     </div>
-
-</td>
-<td style="width:1px;textalign:top">
-</td>
-</tr>
-
-<tr>
-<td style="width:1px;textalign:top">
-</td>
-<td style="textalign:top">
-<canvas id="graphCanvas">
+    
+    <canvas id="graphCanvas">
         Sorry, your browser does not support canvas.
     </canvas>
 
@@ -63,8 +41,6 @@
     <input type="hidden" name="link_id">
 </form>
 
-
-
 <script language="javascript">
 
 var nodes =  {{ nodes_json|safe }};
@@ -72,11 +48,5 @@ var links = {{ links_json|safe }};
 
 initGraph(nodes, links);
 </script>
-
-</td>
-<td style="width:1px;textalign:top">
-</td>
-</tr>
-</table>
 
 {% endblock %}
