@@ -28,6 +28,13 @@ html, body {
     z-index:0;
 }
 
+#graphCanvas {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index:0;
+}
+
 #topDiv {
     position: fixed;
     top: 0px;
