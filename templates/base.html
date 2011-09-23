@@ -8,6 +8,23 @@
 {% block js %}{% endblock %}
 </head>
 <body>
-{% block content %}{% endblock %}</div>
+<table width="100%" border="0">
+<tr valign="top" align="center">
+<td colspan="3" style="background-color:#FFFFFF;">
+<img src="images/GB_logo_M.png" alt="graphbrain"/>
+</td>
+</tr>
+
+
+<tr>
+<td style="background-color:#EEEEEE;width:1px;textalign:top">
+</td>
+<td style="background-color:#EEEEEE;textalign:top">
+{% block content %}{% endblock %}
+</td>
+<td style="background-color:#EEEEEE;width:1px;textalign:top">
+</td>
+</tr>
+</table>
 </body>
 </html>
