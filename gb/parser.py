@@ -90,7 +90,7 @@ def parse(sentence):
     tagged_tokens = tagged_tokens2
 
     tagged_tokens = remove_ponctuation(tagged_tokens)
-    #print tagged_tokens
+    print tagged_tokens
 
     if len(tagged_tokens) == 0:
         raise ParseError('Empty sentence.')
