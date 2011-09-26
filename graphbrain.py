@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 
 
-import os
-
 from flask import Flask
 from flask import render_template
 from flask import request
 from flask import redirect
-from flask import send_from_directory
 from jinja2 import FileSystemLoader
 
 from gb.user import User
@@ -191,14 +188,6 @@ def delink():
 @application.route("/help", methods=['GET',])
 def help():
     return render_template('help.html')
-
-
-@application.route('/favicon.ico')
-def favicon():
-    #return send_from_directory(ICO_DIR, 'GB_ico.ico', mimetype='image/vnd.microsoft.icon')
-    redirect_to_index = redirect('/static/images/GB_ico.ico')
-    response = application.make_response(redirect_to_index)  
-    return response
 
 
 # temporary Y-Combinator backdoor
