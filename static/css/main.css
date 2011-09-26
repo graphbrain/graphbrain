@@ -25,55 +25,61 @@ html, body {
     position: fixed;
     top: 0px;
     left: 0px;
-    z-index:0;
+    z-index:1;
 }
 
 #graphCanvas {
     position: fixed;
     top: 0px;
     left: 0px;
-    z-index:0;
+    z-index:1;
 }
 
 #topDiv {
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    vertical-align: top;
-    z-index:1;
-    padding: 5px;
+    top:0px;
+    left:0px;
+    width:100%;
+    padding:5px;
 }
 
-#inputDiv {
-    position: fixed;
+#logo { 
+	position:relative;
+	top:-10px;
+	left:0px;
+	float:left;
+	width:220px;  /* for IE5/WIN */
+	voice-family: "\"}\"";
+	voice-family:inherit;
+	width:200px; /* actual value */
+	margin:0 0 -10px 0;
+	padding:10px;
+	z-index:100;
+}
+
+#topRight {
+	position:relative;
+	top:-10px;
+	right:10px;
+	float:right;
+	width:220px;  /* for IE5/WIN */
+	voice-family: "\"}\"";
+	voice-family:inherit;
+	width:200px; /* actual value */
+	margin:0 0 -10px 0;
+	padding:10px;
+	z-index:99;
+    font-family: Sans-Serif;
+    font-size: 15px;
+    text-align:right;
+}
+
+#topCentre {
+	position:relative;
+	padding:0 240px;
     text-align:center;
     font-family: Sans-Serif;
     font-size: 15px;
-    right: 20px;
-    width: 100%;
-}
-
-#topBar {
-    text-align:right;
-    position:fixed;
-    vertical-align: top;
-    font-family: Sans-Serif;
-    font-size: 15px;
-    top: 5px;
-    right: 50px;
-    z-index:1;
-}
-
-#logo{
-    
-    position: fixed;
-    vertical-align: top;
-    top: 0px;
-    left: 50px;
-    padding: 5px;
-    
-    
+	z-index:98;
 }
 
 #selbrainForm {
@@ -81,5 +87,5 @@ html, body {
 }
 
 #inputField {
-    font-size: 18px;
+    font-size: 16px;
 }

@@ -190,6 +190,12 @@ def help():
     return render_template('help.html')
 
 
+@application.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static/images'),
+                               'GB_ico.ico', mimetype='image/vnd.microsoft.icon')
+
+
 # temporary Y-Combinator backdoor
 @application.route("/ycombinator-vip-room")
 def ycombinator():
