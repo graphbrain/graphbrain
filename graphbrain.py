@@ -195,8 +195,7 @@ def help():
 
 @application.route('/favicon.ico')
 def favicon():
-    return send_from_directory(os.path.join(application.root_path, 'static/images'),
-                               'GB_ico.ico', mimetype='image/vnd.microsoft.icon')
+    return send_from_directory(ICO_DIR, 'GB_ico.ico', mimetype='image/vnd.microsoft.icon')
 
 
 # temporary Y-Combinator backdoor
