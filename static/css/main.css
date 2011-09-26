@@ -55,7 +55,6 @@ html, body {
 }
 
 #topBar {
-    
     text-align:right;
     position:fixed;
     vertical-align: top;
@@ -63,8 +62,7 @@ html, body {
     font-size: 15px;
     top: 5px;
     right: 50px;
-
-    
+    z-index:1;
 }
 
 #logo{
