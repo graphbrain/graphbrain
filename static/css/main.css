@@ -40,17 +40,42 @@ html, body {
     top: 0px;
     left: 0px;
     width: 100%;
+    vertical-align: top;
     z-index:1;
+    padding: 5px;
 }
 
 #inputDiv {
+    position: fixed;
     text-align:center;
-    padding: 25px;
+    font-family: Sans-Serif;
+    font-size: 15px;
+    right: 20px;
     width: 100%;
 }
 
 #topBar {
+    
     text-align:right;
+    position:fixed;
+    vertical-align: top;
+    font-family: Sans-Serif;
+    font-size: 15px;
+    top: 5px;
+    right: 50px;
+
+    
+}
+
+#logo{
+    
+    position: fixed;
+    vertical-align: top;
+    top: 0px;
+    left: 50px;
+    padding: 5px;
+    
+    
 }
 
 #selbrainForm {
