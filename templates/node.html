@@ -6,37 +6,32 @@
 <script src="/static/js/graph210911.js" type="text/javascript" ></script>
 {% endblock %}
 
+{% block top_centre %}
+<form action="/input" method="post" id="inputForm">
+    <input type="text" name="input" id="inputField" size="60"/>
+    <input type="hidden" name="graph_id" value="{{ graph_id }}">
+</form>
+<a href="/help">Help, what should I write here?</a>
+{% endblock %}
+
+{% block top_right %}
+<a href="/logout">Logout</a> |
+<a href="/createbrain">Create Brain</a> <br />
+<form action="/selbrain" method="post" id="selbrainForm">
+    <select name="brainDropDown" onChange="this.form.submit()">
+        {% for g in graphs %}
+            <option value="{{ g.root }}" {% if g.id == graph_id %}selected{% endif %}>{{ g.name }}</option>
+        {% endfor %}
+    </select>
+</form>
+{% endblock %}
+        
 {% block content %}
-<div id="main">
-    <div id="topDiv">
-        <div id="topBar">
-            <a href="/logout">Logout</a> |
-            <a href="/createbrain">Create Brain</a> |
-            Brains:
-            <form action="/selbrain" method="post" id="selbrainForm">
-                <select name="brainDropDown" onChange="this.form.submit()">
-                    {% for g in graphs %}
-                        <option value="{{ g.root }}" {% if g.id == graph_id %}selected{% endif %}>{{ g.name }}</option>
-                    {% endfor %}
-                </select>
-            </form>
-        </div>
-        <div id="inputDiv">
-            <form action="/input" method="post" id="inputForm">
-                <input type="text" name="input" id="inputField" size="60"/>
-                <input type="hidden" name="graph_id" value="{{ graph_id }}">
-            </form>
-            <a href="/help">Help, what should I write here?</a>
-        </div>
-    </div>
+<canvas id="graphCanvas">
+    Sorry, your browser does not support canvas.
+</canvas>
 
-    <canvas id="graphCanvas">
-        Sorry, your browser does not support canvas.
-    </canvas>
-
-    <div id="nodesDiv" />
-
-</div>
+<div id="nodesDiv" />
 
 <form action="/delink" method="post" id="delinkForm">
     <input type="hidden" name="link_id">
