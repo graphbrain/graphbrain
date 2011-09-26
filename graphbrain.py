@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 
 
+import os
+
 from flask import Flask
 from flask import render_template
 from flask import request
 from flask import redirect
+from flask import send_from_directory
 from jinja2 import FileSystemLoader
 
 from gb.user import User
@@ -192,7 +195,7 @@ def help():
 
 @application.route('/favicon.ico')
 def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static/images'),
+    return send_from_directory(os.path.join(application.root_path, 'static/images'),
                                'GB_ico.ico', mimetype='image/vnd.microsoft.icon')
 
 
