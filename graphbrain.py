@@ -52,6 +52,7 @@ def node_response(node_id, user):
                                                   nodes_json=nodes_json,
                                                   links_json=links_json,
                                                   graph_id=n.graph,
+                                                  node_id=n.id,
                                                   graphs=graphs))
     return r
 
@@ -122,14 +123,13 @@ def input():
     
     input_str = request.form['input']
     graph_id = request.form['graph_id']
+    node_id = request.form['node_id']
 
     try:
         result = parse(input_str)
     except ParseError, p:
         # TODO: temporary way of dealing with parse exceptions
-        redirect_to_index = redirect('/')
-        response = application.make_response(redirect_to_index)  
-        return response
+        return node_response(node_id, u)
 
     g = Graph()
     g.id = graph_id
