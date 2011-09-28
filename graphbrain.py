@@ -44,6 +44,18 @@ def curuser():
         return None
 
 
+def node_response(node_id, user):
+    n = Node().get_by_id(int(node_id))
+    nodes_json, links_json = n.neighbours_json()
+    graphs = Graph().graph_list_for_user(user)
+    r = application.make_response(render_template('node.html',
+                                                  nodes_json=nodes_json,
+                                                  links_json=links_json,
+                                                  graph_id=n.graph,
+                                                  graphs=graphs))
+    return r
+
+
 @application.route("/")
 def main():
     u = curuser()
@@ -65,15 +77,7 @@ def node(node_id):
     if u is None:
         return redirect2login()
    
-    n = Node().get_by_id(int(node_id))
-    nodes_json, links_json = n.neighbours_json()
-    graphs = Graph().graph_list_for_user(u)
-    r = application.make_response(render_template('node.html',
-                                                  nodes_json=nodes_json,
-                                                  links_json=links_json,
-                                                  graph_id=n.graph,
-                                                  graphs=graphs))
-    return r
+    return node_response(node_id, u)
 
 
 @application.route("/login", methods=['GET', 'POST'])
@@ -131,9 +135,7 @@ def input():
     g.id = graph_id
     orig_id = g.add_rel(result)
 
-    redirect_to_index = redirect('/node/%d' % orig_id)
-    response = application.make_response(redirect_to_index)  
-    return response
+    return node_response(orig_id, u)
 
 
 @application.route("/selbrain", methods=['POST',])
