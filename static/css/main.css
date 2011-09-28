@@ -89,3 +89,7 @@ html, body {
 #inputField {
     font-size: 16px;
 }
+
+.error {
+    color: #FF0000;
+}

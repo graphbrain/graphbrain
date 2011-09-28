@@ -44,7 +44,7 @@ def curuser():
         return None
 
 
-def node_response(node_id, user):
+def node_response(node_id, user, error=''):
     n = Node().get_by_id(int(node_id))
     nodes_json, links_json = n.neighbours_json()
     graphs = Graph().graph_list_for_user(user)
@@ -53,7 +53,8 @@ def node_response(node_id, user):
                                                   links_json=links_json,
                                                   graph_id=n.graph,
                                                   node_id=n.id,
-                                                  graphs=graphs))
+                                                  graphs=graphs,
+                                                  error=error))
     return r
 
 
@@ -121,21 +122,27 @@ def input():
     if u is None:
         return redirect2login()
     
+    error_msg = 'Sorry, could not understand the sentence. Want some <a href="/help">help</a>?'
+    
     input_str = request.form['input']
     graph_id = request.form['graph_id']
     node_id = request.form['node_id']
 
     try:
         result = parse(input_str)
-    except ParseError, p:
-        # TODO: temporary way of dealing with parse exceptions
-        return node_response(node_id, u)
+    except:
+        return node_response(node_id, u, error_msg)
 
     g = Graph()
     g.id = graph_id
     orig_id = g.add_rel(result)
 
-    return node_response(orig_id, u)
+    if (orig_id is None) or (orig_id == -1):
+        return node_response(node_id, u, error_msg)
+
+    redirect_to_index = redirect('/node/%d' % orig_id)
+    response = application.make_response(redirect_to_index)   
+    return response
 
 
 @application.route("/selbrain", methods=['POST',])

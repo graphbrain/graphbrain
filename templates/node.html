@@ -12,7 +12,11 @@
     <input type="hidden" name="graph_id" value="{{ graph_id }}">
     <input type="hidden" name="node_id" value="{{ node_id }}">
 </form>
+{% if error == '' %}
 <a href="/help">Help, what should I write here?</a>
+{% else %}
+<div class="error">{{ error|safe }}</div>
+{% endif %}
 {% endblock %}
 
 {% block top_right %}
