@@ -49,4 +49,12 @@ if __name__ == '__main__':
     db.safe_execute("ALTER TABLE link ADD COLUMN sentence VARCHAR(500)")
     db.safe_execute("ALTER TABLE link ADD COLUMN directed INT DEFAULT 1")
 
+    # log table
+    db.safe_execute("CREATE TABLE log(id INT PRIMARY KEY AUTO_INCREMENT)")
+    db.safe_execute("ALTER TABLE log ADD COLUMN msg VARCHAR(500)")
+    db.safe_execute("ALTER TABLE log ADD COLUMN ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    db.safe_execute("ALTER TABLE log ADD COLUMN user INT")
+    db.safe_execute("ALTER TABLE log ADD COLUMN ip_addr VARCHAR(15)")
+    db.safe_execute("ALTER TABLE log ADD COLUMN color VARCHAR(7)")
+
     db.connection().close()
