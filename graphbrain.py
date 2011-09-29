@@ -13,7 +13,7 @@ from gb.node import Node
 from gb.link import Link
 from gb.parser import parse, ParseError
 from gb.config import *
-from gb.log import log
+from gb.log import log, get_logs
 
 
 application = Flask(__name__)
@@ -210,6 +210,16 @@ def delink():
 @application.route("/help", methods=['GET',])
 def help():
     return render_template('help.html')
+
+
+@application.route("/log", methods=['GET',])
+def help():
+    u = curuser()
+    if u is None:
+        return redirect2login()
+    
+    logs = get_logs()
+    return render_template('log.html', logs=logs)
 
 
 # temporary Y-Combinator backdoor
