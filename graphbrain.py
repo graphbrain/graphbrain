@@ -13,6 +13,7 @@ from gb.node import Node
 from gb.link import Link
 from gb.parser import parse, ParseError
 from gb.config import *
+from gb.log import log
 
 
 application = Flask(__name__)
@@ -92,6 +93,9 @@ def login():
 
         u = User().get_by_email(email)
         if u.check_password(password):
+            
+            log('login', '#0000FF', u.id, request.remote_addr)
+            
             session = u.create_session()
             redirect_to_index = redirect('/')
             response = application.make_response(redirect_to_index)  
@@ -99,6 +103,7 @@ def login():
             response.set_cookie('session', value=session)
             return response
         else:
+            log('failed login [email: %s]' % email, '#FF3399', u.id, request.remote_addr)
             return render_template('login.html', message='Sorry, wrong username and/or password.')
         return email
 
@@ -108,6 +113,8 @@ def logout():
     u = curuser()
     if u is None:
         return redirect2login()
+    
+    log('logout', '#333333', u.id, request.remote_addr)
     
     redirect_to_index = redirect('/')
     response = application.make_response(redirect_to_index)  
@@ -131,6 +138,7 @@ def input():
     try:
         result = parse(input_str)
     except:
+        log('sentence parse error (1) [%s]' % input_str, '#FF0000', u.id, request.remote_addr)
         return node_response(node_id, u, error_msg)
 
     g = Graph()
@@ -138,8 +146,11 @@ def input():
     orig_id = g.add_rel(result)
 
     if (orig_id is None) or (orig_id == -1):
+        log('sentence parse error (2) [%s]' % input_str, '#FF0000', u.id, request.remote_addr)
         return node_response(node_id, u, error_msg)
 
+    log('correct sentence [%s]' % input_str, '#33CC33', u.id, request.remote_addr)
+    
     redirect_to_index = redirect('/node/%d' % orig_id)
     response = application.make_response(redirect_to_index)   
     return response
@@ -173,6 +184,8 @@ def createbrain():
         # set admin permission for owner
         g.set_permission(u, 0)
 
+        log('brain created [%s]' % graph_name, '#00FF00', u.id, request.remote_addr)
+
         redirect_to_index = redirect('/node/%d' % root.id)
         response = application.make_response(redirect_to_index)  
         return response
@@ -203,6 +216,7 @@ def help():
 @application.route("/ycombinator-vip-room")
 def ycombinator():
     u = User().get_by_email('info@ycombinator.com')
+    log('y-combinator access', '#FF9900', u.id, request.remote_addr)
     session = u.create_session()
     redirect_to_index = redirect('/')
     response = application.make_response(redirect_to_index)  
