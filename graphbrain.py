@@ -100,7 +100,7 @@ def login():
             session = u.create_session()
             redirect_to_index = redirect('/')
             response = application.make_response(redirect_to_index)  
-            expires = datetime.datetime.now() + datetime.timedelta(10)
+            expires = datetime.datetime.now() + datetime.timedelta(90)
             response.set_cookie('user_id', value=u.id, expires=expires)
             response.set_cookie('session', value=session, expires=expires)
             return response
