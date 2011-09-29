@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import datetime
 
 from flask import Flask
 from flask import render_template
@@ -99,8 +100,9 @@ def login():
             session = u.create_session()
             redirect_to_index = redirect('/')
             response = application.make_response(redirect_to_index)  
-            response.set_cookie('user_id', value=u.id)
-            response.set_cookie('session', value=session)
+            expires = datetime.datetime.now() + datetime.timedelta(10)
+            response.set_cookie('user_id', value=u.id, expires=expires)
+            response.set_cookie('session', value=session, expires=expires)
             return response
         else:
             log('failed login [email: %s]' % email, '#FF3399', u.id, request.remote_addr)
