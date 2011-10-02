@@ -36,16 +36,13 @@ def curuser():
     user_id = request.cookies.get('user_id')
     session = request.cookies.get('session')
     if user_id is None:
-        log('no session [1]', '#0033CC', -1, request.remote_addr)
         return None
     if session is None:
-        log('no session [2]', '#0033CC', -1, request.remote_addr)
         return None
     u = User().get_by_id(user_id)
     if u.check_session(session):
         return u
     else:
-        log('no session [3]', '#0033CC', -1, request.remote_addr)
         return None
 
 
@@ -104,8 +101,8 @@ def login():
             redirect_to_index = redirect('/')
             response = application.make_response(redirect_to_index)  
             expires = datetime.datetime.now() + datetime.timedelta(90)
-            response.set_cookie('user_id', value=u.id, expires=expires)
-            response.set_cookie('session', value=session, expires=expires)
+            response.set_cookie('user_id', value=u.id, expires=expires, domain='.graphbrain.com')
+            response.set_cookie('session', value=session, expires=expires, domain='.graphbrain.com')
             return response
         else:
             log('failed login [email: %s]' % email, '#FF3399', u.id, request.remote_addr)
