@@ -125,8 +125,7 @@ def logout():
     
     redirect_to_index = redirect('/')
     response = application.make_response(redirect_to_index)  
-    response.delete_cookie('user_id')
-    response.delete_cookie('session')
+    response.set_cookie('session', value='', domain=COOKIES_DOMAIN)
     return response
 
 
