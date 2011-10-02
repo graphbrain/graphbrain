@@ -46,6 +46,12 @@ def curuser():
         return None
 
 
+def set_session(response, user_id, session):
+    expires = datetime.datetime.now() + datetime.timedelta(90)
+    response.set_cookie('user_id', value=user_id, expires=expires, domain=COOKIES_DOMAIN)
+    response.set_cookie('session', value=session, expires=expires, domain=COOKIES_DOMAIN)
+
+
 def node_response(node_id, user, error=''):
     n = Node().get_by_id(int(node_id))
     nodes_json, links_json = n.neighbours_json()
@@ -101,8 +107,7 @@ def login():
             redirect_to_index = redirect('/')
             response = application.make_response(redirect_to_index)  
             expires = datetime.datetime.now() + datetime.timedelta(90)
-            response.set_cookie('user_id', value=u.id, expires=expires, domain='.graphbrain.com')
-            response.set_cookie('session', value=session, expires=expires, domain='.graphbrain.com')
+            set_session(response, u.id, session)
             return response
         else:
             log('failed login [email: %s]' % email, '#FF3399', u.id, request.remote_addr)
@@ -232,8 +237,7 @@ def ycombinator():
     session = u.create_session()
     redirect_to_index = redirect('/')
     response = application.make_response(redirect_to_index)  
-    response.set_cookie('user_id', value=u.id)
-    response.set_cookie('session', value=session)
+    set_session(response, u.id, session)
     return response
 
 
