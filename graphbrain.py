@@ -36,13 +36,16 @@ def curuser():
     user_id = request.cookies.get('user_id')
     session = request.cookies.get('session')
     if user_id is None:
+        log('no session [1]', '#0033CC', -1, request.remote_addr)
         return None
     if session is None:
+        log('no session [2]', '#0033CC', -1, request.remote_addr)
         return None
     u = User().get_by_id(user_id)
     if u.check_session(session):
         return u
     else:
+        log('no session [3]', '#0033CC', -1, request.remote_addr)
         return None
 
 
