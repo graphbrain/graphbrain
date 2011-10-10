@@ -88,7 +88,26 @@ Node.prototype.place = function() {
     var nodeObj = this;
 
     $("div#" + this.id).bind("mousedown", function(e) {
-        draggedNode = nodeObj;
+        if (uiMode === 'drag') {
+            draggedNode = nodeObj;
+            return false;
+        }
+        else {
+            newLink = new Link(0, nodeObj, false, '...');
+            newLink.tx = e.pageX;
+            newLink.ty = e.pageY;
+            return false;
+        }
+    });
+
+    $("div#" + this.id).bind("click", function(e) {
+        if (dragging) {
+            dragging = false;
+            return false;
+        }
+        else {
+            return true;
+        }
     });
 }
 
@@ -98,13 +117,19 @@ var Link = function(id, orig, targ, type) {
     this.orig = orig;
     this.targ = targ;
     this.type = type;
+    this.tx = 0;
+    this.ty = 0;
 }
 
 Link.prototype.draw = function(context) {
     var x0 = this.orig.x;
-    var x1 = this.targ.x;
     var y0 = this.orig.y;
-    var y1 = this.targ.y;
+    var x1 = this.tx;
+    var y1 = this.ty;
+    if (this.targ) {
+        x1 = this.targ.x;
+        y1 = this.targ.y;
+    }
 
     var cx = x0 + ((x1 - x0) / 2)
     var cy = y0 + ((y1 - y0) / 2)
@@ -202,8 +227,8 @@ Graph.prototype.drawLinks = function() {
         this.links[i].draw(this.context);
     }
 
-    if (this.newLink) {
-        this.newLink.draw(this.context);
+    if (newLink) {
+        newLink.draw(this.context);
     }
 }
 
@@ -273,23 +298,53 @@ var addMode = function(event) {
 var g;
 var uiMode;
 var draggedNode;
+var dragging;
+var newLink;
 
 var initGraph = function(nodes, links) {
 
+    newLink = false;
     draggedNode = false;
+    dragging = false;
+
     $("#nodesDiv").bind("mousemove", (function(e) {
-        if (draggedNode) {
-            draggedNode.moveTo(e.pageX, e.pageY);
+        if (uiMode === 'drag') {
+            if (draggedNode) {
+                draggedNode.moveTo(e.pageX, e.pageY);
+                dragging = true;
+            }
+        }
+        else {
+            if (newLink) {
+                newLink.tx = e.pageX;
+                newLink.ty = e.pageY;
+                g.drawLinks();
+                return false;
+            }
         }
     }));
     $("#nodesDiv").bind("mouseup", (function(e) {
-        draggedNode = false;
+        if (uiMode === 'drag') {
+            draggedNode = false;
+        }
+        else {
+            newLink = false;
+            g.drawLinks();
+            $('#overlay').fadeIn(80, (function(e) {
+                $('#box').animate({'top':'160px'}, 0);
+            }));
+        }
     }));
+
+    $('#boxclose').click(function(){
+        $('#overlay').fadeOut(80, (function(e) {
+            $('#box').animate({'top':'-200px'}, 0);
+        }));
+    });
 
     dragMode();
     $("#dragModeButton").bind("click", dragMode);
     $("#addModeButton").bind("click", addMode);
-
 
     $("#graphCanvas").bind("click", (function(event) {
         l = g.labelAtPoint(event.pageX, event.pageY);
