@@ -84,14 +84,12 @@ Node.prototype.place = function() {
     node.setAttribute('style', 'left:' + (this.x - (width / 2)) + 'px; top:' + (this.y - (height / 2)) + 'px;');
     this.width = width;
     this.height = height;
-    
+   
     var nodeObj = this;
-    $('div#' + this.id).draggable({drag: function(event, ui) { nodeObj.moveTo(event.pageX, event.pageY); return true;}});
-            
-    $('div#' + this.id).bind("dragstart", function(e) {
-        return false;
-    });
 
+    $("div#" + this.id).bind("mousedown", function(e) {
+        draggedNode = nodeObj;
+    });
 }
 
 // Link
@@ -274,8 +272,19 @@ var addMode = function(event) {
 // Entry point functions & global variables
 var g;
 var uiMode;
+var draggedNode;
 
 var initGraph = function(nodes, links) {
+
+    draggedNode = false;
+    $("#nodesDiv").bind("mousemove", (function(e) {
+        if (draggedNode) {
+            draggedNode.moveTo(e.pageX, e.pageY);
+        }
+    }));
+    $("#nodesDiv").bind("mouseup", (function(e) {
+        draggedNode = false;
+    }));
 
     dragMode();
     $("#dragModeButton").bind("click", dragMode);
