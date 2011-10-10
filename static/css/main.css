@@ -91,5 +91,21 @@ html, body {
 }
 
 .error {
-    color: #FF0000;
+    color:#FF0000;
+}
+
+.modeButton,
+.selModeButton {
+    float:left;
+    color:#FFFFFF;
+    background:#909090;
+    margin:5px;
+    padding:5px;
+    width:50px;
+    -moz-border-radius:7px;
+    border-radius:7px;
+}
+
+.selModeButton {
+    background:#FF0000;
 }

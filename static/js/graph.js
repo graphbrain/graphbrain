@@ -258,11 +258,30 @@ Graph.prototype.labelAtPoint = function(x, y) {
     return -1;
 }
 
+// UI modes
+var dragMode = function(event) {
+    uiMode = 'drag';
+    $("#dragModeButton").addClass("selModeButton");
+    $("#addModeButton").removeClass("selModeButton");
+}
+
+var addMode = function(event) {
+    uiMode = 'add';
+    $("#dragModeButton").removeClass("selModeButton");
+    $("#addModeButton").addClass("selModeButton");
+}
 
 // Entry point functions & global variables
 var g;
+var uiMode;
 
 var initGraph = function(nodes, links) {
+
+    dragMode();
+    $("#dragModeButton").bind("click", dragMode);
+    $("#addModeButton").bind("click", addMode);
+
+
     $("#graphCanvas").bind("click", (function(event) {
         l = g.labelAtPoint(event.pageX, event.pageY);
         if (l != -1) {
