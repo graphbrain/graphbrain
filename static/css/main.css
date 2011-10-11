@@ -158,6 +158,10 @@ html, body {
     margin:0px 0px 10px 20px;
 }
 
+.box form{
+    width:100%;
+}
+
 .box input{
     font-size: 15px;
     margin:0px 0px 10px 20px;

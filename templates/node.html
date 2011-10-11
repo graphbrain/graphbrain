@@ -49,11 +49,12 @@
     <h1>Add Relationship</h1>
     <form action="/add" method="post" id="selbrainForm">
     <div class="dlabel">Origin:</div><h2 id="dNode1"></h2>
-    <div class="dlabel">Relationship:</div><input type="text" name="rel" id="dRel" size="50"/>
-    <div class="dlabel">Target:</div><input type="text" name="targ_text" id="dNode2" size="50"/>
+    <div class="dlabel">Relationship:</div><input type="text" name="rel" id="dRel" size="40" />
+    <div class="dlabel">Target:</div><input type="text" name="targ_text" id="dNode2" size="40" />
     <input type="hidden" name="orig_id" id="dNode1_id" />
     <input type="hidden" name="graph_id" value="{{ graph_id }}">
     <input type="hidden" name="node_id" value="{{ node_id }}">
+    <br />
     <input type="submit" value="Add" />
     </form>
 </form>
