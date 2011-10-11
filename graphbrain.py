@@ -245,7 +245,7 @@ def help():
 
 
 @application.route("/log", methods=['GET',])
-def log():
+def logpage():
     u = curuser()
     if u is None:
         return redirect2login()
