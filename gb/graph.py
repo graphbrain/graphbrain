@@ -3,6 +3,7 @@ from dbobj import DbObj
 import db
 from node import Node
 from link import Link
+import urlparser
 
 
 class Graph(DbObj):
@@ -40,7 +41,32 @@ class Graph(DbObj):
 
         return self
 
-    def add_rel(self, r):
+    def add_rel(self, rel, orig_text='', targ_text='', orig_id=-1, targ_id=-1):
+        orig = Node()
+        targ = Node()
+        
+        if orig_id >= 0:
+            orig.get_by_id(orig_id)
+        elif orig_text != '':
+            ntype = urlparser.nodetype(orig_text)
+            orig.create(orig_text, self, ntype)
+        else:
+            return False
+        
+        if targ_id >= 0:
+            targ.get_by_id(targ_id)
+        elif targ_text != '':
+            ntype = urlparser.nodetype(targ_text)
+            targ.create(targ_text, self, ntype)
+        else:
+            return False
+
+        # create new link between nodes
+        Link().create(orig, targ, rel, rel)
+
+        return True
+    
+    def add_rel_from_parser(self, r):
         orig = Node().get_by_data(r['orig'], self)
         targ = Node().get_by_data(r['targ'], self)
 

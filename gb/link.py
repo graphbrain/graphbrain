@@ -8,7 +8,7 @@ class Link(DbObj):
     def __init__(self):
         DbObj.__init__(self)
 
-    def create(self, orig, targ, rel, rel_raw, sentence, directed=1):
+    def create(self, orig, targ, rel, rel_raw, sentence='', directed=1):
         self.orig = orig
         self.targ = targ
         self.relation = rel
