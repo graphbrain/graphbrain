@@ -349,7 +349,7 @@ var initGraph = function(nodes, links) {
     $("#dragModeButton").bind("click", dragMode);
     $("#addModeButton").bind("click", addMode);
 
-    $("#graphCanvas").bind("click", (function(event) {
+    $("#nodesDiv").bind("click", (function(event) {
         l = g.labelAtPoint(event.pageX, event.pageY);
         if (l != -1) {
             if (confirm('Do you want to delete connection:\n"' + l.orig.text + ' ' + l.type + ' ' + l.targ.text + '"?')) {
