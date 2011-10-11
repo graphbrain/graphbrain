@@ -149,7 +149,7 @@ def input():
 
     g = Graph()
     g.id = graph_id
-    orig_id = g.add_rel(result)
+    orig_id = g.add_rel_from_parser(result)
 
     if (orig_id is None) or (orig_id == -1):
         log('sentence parse error (2) [%s]' % input_str, '#FF0000', u.id, request.remote_addr)
@@ -168,19 +168,20 @@ def add():
     if u is None:
         return redirect2login()
     
-    orig_id = request.form['dNode1_id']
-    graph_id = request.form['graph_id']
-    node_id = request.form['node_id']
+    orig_id = int(request.form['orig_id'])
+    graph_id = int(request.form['graph_id'])
+    node_id = int(request.form['node_id'])
+    rel = request.form['rel']
+    targ_text = request.form['targ_text']
 
     g = Graph()
     g.id = graph_id
-    orig_id = g.add_rel(result)
-
-    if (orig_id is None) or (orig_id == -1):
-        log('sentence parse error (2) [%s]' % input_str, '#FF0000', u.id, request.remote_addr)
+    if not g.add_rel(rel, orig_id=orig_id, targ_text=targ_text):
+        error_msg = 'Error adding relationship. Want some <a href="/help">help</a>?'
+        log('error adding relationship %d->[%s]->%s' % (orig_id, rel, targ_text), '#FF0000', u.id, request.remote_addr)
         return node_response(node_id, u, error_msg)
 
-    log('correct sentence [%s]' % input_str, '#33CC33', u.id, request.remote_addr)
+    log('relationship added through UI %d->[%s]->%s' % (orig_id, rel, targ_text), '#33CC33', u.id, request.remote_addr)
     
     redirect_to_index = redirect('/node/%d' % node_id)
     response = application.make_response(redirect_to_index)   
