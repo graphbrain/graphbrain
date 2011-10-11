@@ -162,6 +162,31 @@ def input():
     return response
 
 
+@application.route("/add", methods=['POST',])
+def add():
+    u = curuser()
+    if u is None:
+        return redirect2login()
+    
+    orig_id = request.form['dNode1_id']
+    graph_id = request.form['graph_id']
+    node_id = request.form['node_id']
+
+    g = Graph()
+    g.id = graph_id
+    orig_id = g.add_rel(result)
+
+    if (orig_id is None) or (orig_id == -1):
+        log('sentence parse error (2) [%s]' % input_str, '#FF0000', u.id, request.remote_addr)
+        return node_response(node_id, u, error_msg)
+
+    log('correct sentence [%s]' % input_str, '#33CC33', u.id, request.remote_addr)
+    
+    redirect_to_index = redirect('/node/%d' % node_id)
+    response = application.make_response(redirect_to_index)   
+    return response
+
+
 @application.route("/selbrain", methods=['POST',])
 def selbrain():
     node_id = request.form['brainDropDown']

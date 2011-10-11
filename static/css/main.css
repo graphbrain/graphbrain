@@ -143,7 +143,6 @@ html, body {
 }
 
 .box h1{
-    border-bottom: 1px dashed #7F7F7F;
     margin:-20px -20px 0px -20px;
     padding:10px;
     -moz-border-radius:20px 20px 0px 0px;

@@ -328,8 +328,8 @@ var initGraph = function(nodes, links) {
             draggedNode = false;
         }
         else {
-            newLink = false;
-            g.drawLinks();
+            $('#dNode1').html(newLink.orig.text);
+            $('#dNode1_id').val(newLink.orig.id);
             $('#overlay').fadeIn(80, (function(e) {
                 $('#box').animate({'top':'160px'}, 0);
             }));
@@ -337,8 +337,11 @@ var initGraph = function(nodes, links) {
     }));
 
     $('#boxclose').click(function(){
+        
         $('#overlay').fadeOut(80, (function(e) {
             $('#box').animate({'top':'-200px'}, 0);
+            newLink = false;
+            g.drawLinks();
         }));
     });
 

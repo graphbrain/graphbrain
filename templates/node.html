@@ -7,7 +7,7 @@
 
 {% block top_centre %}
 <form action="/input" method="post" id="inputForm">
-    <div class="modeButton" id="dragModeButton">Drag</div>
+    <div class="modeButton" id="dragModeButton">Move</div>
     <div class="modeButton" id="addModeButton">Add</div>
     <input type="text" name="input" id="inputField" size="60"/>
     <input type="hidden" name="graph_id" value="{{ graph_id }}">
@@ -46,8 +46,15 @@
 <div class="overlay" id="overlay" style="display:none;"></div>
 <div class="box" id="box">
     <a class="boxclose" id="boxclose"></a>
-    <h1>Add Stuff</h1>
-    <p>Hello World.</p>
+    <h1>Add Relationship</h1>
+    <form action="/add" method="post" id="selbrainForm">
+    <p id="dNode1"></p>
+    <input type="text" name="dRel" id="dRel" size="60"/>
+    <input type="text" name="dNode2" id="dNode2" size="60"/>
+    <input type="hidden" name="dNode1_id" id="dNode1_id" />
+    <input type="submit" value="Add" />
+    </form>
+</form>
 </div>
 
 
