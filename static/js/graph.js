@@ -331,7 +331,7 @@ var initGraph = function(nodes, links) {
             $('#dNode1').html(newLink.orig.text);
             $('#dNode1_id').val(newLink.orig.id);
             $('#overlay').fadeIn(80, (function(e) {
-                $('#box').animate({'top':'160px'}, 0);
+                $('#box').css({visibility:'visible'});
             }));
         }
     }));
@@ -339,7 +339,7 @@ var initGraph = function(nodes, links) {
     $('#boxclose').click(function(){
         
         $('#overlay').fadeOut(80, (function(e) {
-            $('#box').animate({'top':'-200px'}, 0);
+            $('#box').css({visibility:'hidden'});
             newLink = false;
             g.drawLinks();
         }));
