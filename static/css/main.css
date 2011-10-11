@@ -127,11 +127,11 @@ html, body {
 
 .box{
     position:fixed;
-    top:-200px;
+    top:160px;
     left:30%;
     right:30%;
     background-color:#fff;
-    color:#7F7F7F;
+    color:#505050;
     padding:20px;
     border:1px solid #000;
     -moz-border-radius: 20px;
@@ -140,6 +140,7 @@ html, body {
     -moz-box-shadow: 0 1px 5px #333;
     -webkit-box-shadow: 0 1px 5px #333;
     z-index:101;
+    visibility:hidden;
 }
 
 .box h1{
@@ -150,6 +151,20 @@ html, body {
     -webkit-border-top-right-radius: 20px;
     -khtml-border-top-left-radius: 20px;
     -khtml-border-top-right-radius: 20px;
+}
+
+.box h2{
+    font-size: 15px;
+    margin:0px 0px 10px 20px;
+}
+
+.box input{
+    font-size: 15px;
+    margin:0px 0px 10px 20px;
+}
+
+.dlabel {
+    margin:0px 0px 0px 20px;
 }
 
 a.boxclose{
