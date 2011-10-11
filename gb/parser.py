@@ -1,7 +1,8 @@
-import nltk
 import sys
 import cPickle as pickle
+import nltk
 from config import *
+import urlparser
 
 
 class ParseError(Exception):
@@ -29,14 +30,11 @@ def get_tagger():
 
 def parse_argument(tokens):
     phrase = ''
-    node_type = 0
 
-    # VERY naive way to detect images...
-    # temporary hack
     words = [t[0] for t in tokens]
     s = ''.join(words)
-    if s[:7] == 'http://':
-        node_type = 1
+    node_type = urlparser.nodetype(s)
+    if node_type == 1:
         phrase = s
     else:
         first = True
