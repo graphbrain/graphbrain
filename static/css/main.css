@@ -88,16 +88,24 @@ html, body {
 .selModeButton {
     float:left;
     color:#FFFFFF;
-    background:#909090;
-    margin:5px;
+    background:#A0A0A0;
     padding:5px;
+    margin: 5px 0px 5px 0px;
     width:50px;
-    -moz-border-radius:7px;
-    border-radius:7px;
 }
 
 .selModeButton {
-    background:#FF0000;
+    background:#BEE512;
+}
+
+#dragModeButton {
+    -moz-border-radius:7px 0px 0px 7px;
+    border-radius:7px 0px 0px 7px;
+}
+
+#addModeButton {
+    -moz-border-radius:0px 7px 7px 0px;
+    border-radius:0px 7px 7px 0px;
 }
 
 /* Style for overlay and box */
