@@ -47,12 +47,10 @@ html, body {
 
 #logo { 
 	position:relative;
-	top:-10px;
-	left:-10px;
+	top:5px;
+	left:0px;
 	float:left;
 	width:200px;
-	margin:0 0 -10px 0;
-	padding:10px;
 	z-index:2;
 }
 
