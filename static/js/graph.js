@@ -116,11 +116,7 @@ Node.prototype.place = function() {
             newLink.targ = nodeObj;
         }
     },
-    function(e) {
-        if (newLink) {
-            newLink.targ = false;
-        }
-    });
+    function(e) {});
 }
 
 // Link
@@ -310,6 +306,8 @@ var addMode = function(event) {
     uiMode = 'add';
     $("#dragModeButton").removeClass("selModeButton");
     $("#addModeButton").addClass("selModeButton");
+    $(".tip").fadeIn("slow", function(){tipVisible = true;});
+    
 }
 
 // Entry point functions & global variables
@@ -318,6 +316,7 @@ var uiMode;
 var draggedNode;
 var dragging;
 var newLink;
+var tipVisible;
 
 var initGraph = function(nodes, links) {
 
@@ -325,6 +324,7 @@ var initGraph = function(nodes, links) {
     draggedNode = false;
     dragging = false;
     curTargNode = false;
+    tipVisible = false;
 
     $("#nodesDiv").bind("mousemove", (function(e) {
         if (uiMode === 'drag') {
@@ -348,6 +348,9 @@ var initGraph = function(nodes, links) {
         }
         else { 
             if ((newLink.orig) || (newLink.targ)) {
+                if (tipVisible) {
+                    $(".tip").fadeOut("slow", function(){tipVisible = false;});
+                }
                 $('#overlay').fadeIn(80, (function(e) {
                     $('#box').css({visibility:'visible'});
                     if (newLink.orig) {
@@ -357,8 +360,8 @@ var initGraph = function(nodes, links) {
                         $('#dNode1In').css({display:'none'});
                     }
                     else {
-                        $('#dNode1').css({display:'block'});
-                        $('#dNode1In').css({display:'inline'});
+                        $('#dNode1').css({display:'none'});
+                        $('#dNode1In').css({display:'block'});
                         $('#dNode1_id').val(-1);
                     }
                     if (newLink.targ) {
