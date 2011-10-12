@@ -6,16 +6,9 @@
 {% endblock %}
 
 {% block top_centre %}
-<form action="/input" method="post" id="inputForm">
-    <div class="modeButton" id="dragModeButton">Move</div>
-    <div class="modeButton" id="addModeButton">Add</div>
-    <input type="text" name="input" id="inputField" size="60"/>
-    <input type="hidden" name="graph_id" value="{{ graph_id }}">
-    <input type="hidden" name="node_id" value="{{ node_id }}">
-</form>
-{% if error == '' %}
-<a href="/help">Help, what should I write here?</a>
-{% else %}
+<div class="modeButton" id="dragModeButton">Move</div>
+<div class="modeButton" id="addModeButton">Add</div>
+{% if error != '' %}
 <div class="error">{{ error|safe }}</div>
 {% endif %}
 {% endblock %}
