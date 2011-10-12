@@ -109,6 +109,18 @@ Node.prototype.place = function() {
             return true;
         }
     });
+
+    $("div#" + this.id).hover(
+    function(e) {
+        if (newLink) {
+            newLink.targ = nodeObj;
+        }
+    },
+    function(e) {
+        if (newLink) {
+            newLink.targ = false;
+        }
+    });
 }
 
 // Link
@@ -117,13 +129,19 @@ var Link = function(id, orig, targ, type) {
     this.orig = orig;
     this.targ = targ;
     this.type = type;
+    this.ox = 0;
+    this.oy = 0;
     this.tx = 0;
     this.ty = 0;
 }
 
 Link.prototype.draw = function(context) {
-    var x0 = this.orig.x;
-    var y0 = this.orig.y;
+    var x0 = this.ox;
+    var y0 = this.oy;
+    if (this.orig) {
+        x0 = this.orig.x;
+        y0 = this.orig.y;
+    }
     var x1 = this.tx;
     var y1 = this.ty;
     if (this.targ) {
@@ -306,6 +324,7 @@ var initGraph = function(nodes, links) {
     newLink = false;
     draggedNode = false;
     dragging = false;
+    curTargNode = false;
 
     $("#nodesDiv").bind("mousemove", (function(e) {
         if (uiMode === 'drag') {
@@ -327,17 +346,43 @@ var initGraph = function(nodes, links) {
         if (uiMode === 'drag') {
             draggedNode = false;
         }
-        else {
-            $('#dNode1').html(newLink.orig.text);
-            $('#dNode1_id').val(newLink.orig.id);
-            $('#overlay').fadeIn(80, (function(e) {
-                $('#box').css({visibility:'visible'});
-            }));
+        else { 
+            if ((newLink.orig) || (newLink.targ)) {
+                $('#overlay').fadeIn(80, (function(e) {
+                    $('#box').css({visibility:'visible'});
+                    if (newLink.orig) {
+                        $('#dNode1').html(newLink.orig.text);
+                        $('#dNode1_id').val(newLink.orig.id);
+                        $('#dNode1').css({display:'block'});
+                        $('#dNode1In').css({display:'none'});
+                    }
+                    else {
+                        $('#dNode1').css({display:'block'});
+                        $('#dNode1In').css({display:'inline'});
+                        $('#dNode1_id').val(-1);
+                    }
+                    if (newLink.targ) {
+                        $('#dNode2').html(newLink.targ.text);
+                        $('#dNode2_id').val(newLink.targ.id);
+                        $('#dNode2').css({display:'block'});
+                        $('#dNode2In').css({display:'none'});
+                    }
+                    else {
+                        $('#dNode2').css({display:'none'});
+                        $('#dNode2In').css({display:'block'});
+                        $('#dNode2_id').val(-1);
+                    }
+                    newLink.targ = false;
+                }));
+            }
+            else {
+                newLink = false;
+                g.drawLinks();
+            }
         }
     }));
 
     $('#boxclose').click(function(){
-        
         $('#overlay').fadeOut(80, (function(e) {
             $('#box').css({visibility:'hidden'});
             newLink = false;
@@ -348,6 +393,20 @@ var initGraph = function(nodes, links) {
     dragMode();
     $("#dragModeButton").bind("click", dragMode);
     $("#addModeButton").bind("click", addMode);
+
+    $("#nodesDiv").bind("mousedown", function(e) {
+        if (uiMode === 'drag') {
+            return false;
+        }
+        else {
+            newLink = new Link(0, false, false, '...');
+            newLink.ox = e.pageX;
+            newLink.oy = e.pageY;
+            newLink.tx = e.pageX;
+            newLink.ty = e.pageY;
+            return false;
+        }
+    });
 
     $("#nodesDiv").bind("click", (function(event) {
         l = g.labelAtPoint(event.pageX, event.pageY);

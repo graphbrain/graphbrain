@@ -42,48 +42,34 @@ html, body {
     top:0px;
     left:0px;
     width:100%;
-    padding:5px;
     z-index:2;
 }
 
 #logo { 
 	position:relative;
 	top:-10px;
-	left:0px;
+	left:-10px;
 	float:left;
-	width:220px;  /* for IE5/WIN */
-	voice-family: "\"}\"";
-	voice-family:inherit;
-	width:200px; /* actual value */
+	width:200px;
 	margin:0 0 -10px 0;
 	padding:10px;
+	z-index:2;
+}
+
+#topCentre {
+	float:left;
+    text-align:center;
+    font-family:Sans-Serif;
+    font-size:15px;
 	z-index:2;
 }
 
 #topRight {
-	position:relative;
-	top:-10px;
-	right:10px;
 	float:right;
-	width:220px;  /* for IE5/WIN */
-	voice-family: "\"}\"";
-	voice-family:inherit;
-	width:200px; /* actual value */
-	margin:0 0 -10px 0;
-	padding:10px;
 	z-index:2;
     font-family: Sans-Serif;
     font-size: 15px;
     text-align:right;
-}
-
-#topCentre {
-	position:relative;
-	padding:0 240px;
-    text-align:center;
-    font-family: Sans-Serif;
-    font-size: 15px;
-	z-index:2;
 }
 
 #selbrainForm {
