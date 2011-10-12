@@ -8,9 +8,7 @@
 {% block top_centre %}
 <div class="modeButton" id="dragModeButton">Move</div>
 <div class="modeButton" id="addModeButton">Add</div>
-{% if error != '' %}
-<div class="error">{{ error|safe }}</div>
-{% endif %}
+<div class="tip">Try clicking & dragging!</div>
 {% endblock %}
 
 {% block top_right %}
