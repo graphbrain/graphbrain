@@ -84,14 +84,39 @@ Node.prototype.place = function() {
     node.setAttribute('style', 'left:' + (this.x - (width / 2)) + 'px; top:' + (this.y - (height / 2)) + 'px;');
     this.width = width;
     this.height = height;
-    
+   
     var nodeObj = this;
-    $('div#' + this.id).draggable({drag: function(event, ui) { nodeObj.moveTo(event.pageX, event.pageY); return true;}});
-            
-    $('div#' + this.id).bind("dragstart", function(e) {
-        return false;
+
+    $("div#" + this.id).bind("mousedown", function(e) {
+        if (uiMode === 'drag') {
+            draggedNode = nodeObj;
+            return false;
+        }
+        else {
+            newLink = new Link(0, nodeObj, false, '...');
+            newLink.tx = e.pageX;
+            newLink.ty = e.pageY;
+            return false;
+        }
     });
 
+    $("div#" + this.id).bind("click", function(e) {
+        if (dragging) {
+            dragging = false;
+            return false;
+        }
+        else {
+            return true;
+        }
+    });
+
+    $("div#" + this.id).hover(
+    function(e) {
+        if (newLink) {
+            newLink.targ = nodeObj;
+        }
+    },
+    function(e) {});
 }
 
 // Link
@@ -100,13 +125,25 @@ var Link = function(id, orig, targ, type) {
     this.orig = orig;
     this.targ = targ;
     this.type = type;
+    this.ox = 0;
+    this.oy = 0;
+    this.tx = 0;
+    this.ty = 0;
 }
 
 Link.prototype.draw = function(context) {
-    var x0 = this.orig.x;
-    var x1 = this.targ.x;
-    var y0 = this.orig.y;
-    var y1 = this.targ.y;
+    var x0 = this.ox;
+    var y0 = this.oy;
+    if (this.orig) {
+        x0 = this.orig.x;
+        y0 = this.orig.y;
+    }
+    var x1 = this.tx;
+    var y1 = this.ty;
+    if (this.targ) {
+        x1 = this.targ.x;
+        y1 = this.targ.y;
+    }
 
     var cx = x0 + ((x1 - x0) / 2)
     var cy = y0 + ((y1 - y0) / 2)
@@ -204,8 +241,8 @@ Graph.prototype.drawLinks = function() {
         this.links[i].draw(this.context);
     }
 
-    if (this.newLink) {
-        this.newLink.draw(this.context);
+    if (newLink) {
+        newLink.draw(this.context);
     }
 }
 
@@ -258,12 +295,123 @@ Graph.prototype.labelAtPoint = function(x, y) {
     return -1;
 }
 
+// UI modes
+var dragMode = function(event) {
+    uiMode = 'drag';
+    $("#dragModeButton").addClass("selModeButton");
+    $("#addModeButton").removeClass("selModeButton");
+}
+
+var addMode = function(event) {
+    uiMode = 'add';
+    $("#dragModeButton").removeClass("selModeButton");
+    $("#addModeButton").addClass("selModeButton");
+    $(".tip").fadeIn("slow", function(){tipVisible = true;});
+    
+}
 
 // Entry point functions & global variables
 var g;
+var uiMode;
+var draggedNode;
+var dragging;
+var newLink;
+var tipVisible;
 
 var initGraph = function(nodes, links) {
-    $("#graphCanvas").bind("click", (function(event) {
+
+    newLink = false;
+    draggedNode = false;
+    dragging = false;
+    curTargNode = false;
+    tipVisible = false;
+
+    $("#nodesDiv").bind("mousemove", (function(e) {
+        if (uiMode === 'drag') {
+            if (draggedNode) {
+                draggedNode.moveTo(e.pageX, e.pageY);
+                dragging = true;
+            }
+        }
+        else {
+            if (newLink) {
+                newLink.tx = e.pageX;
+                newLink.ty = e.pageY;
+                g.drawLinks();
+                return false;
+            }
+        }
+    }));
+    $("#nodesDiv").bind("mouseup", (function(e) {
+        if (uiMode === 'drag') {
+            draggedNode = false;
+        }
+        else { 
+            if ((newLink.orig) || (newLink.targ)) {
+                if (tipVisible) {
+                    $(".tip").fadeOut("slow", function(){tipVisible = false;});
+                }
+                $('#overlay').fadeIn(80, (function(e) {
+                    $('#box').css({visibility:'visible'});
+                    if (newLink.orig) {
+                        $('#dNode1').html(newLink.orig.text);
+                        $('#dNode1_id').val(newLink.orig.id);
+                        $('#dNode1').css({display:'block'});
+                        $('#dNode1In').css({display:'none'});
+                    }
+                    else {
+                        $('#dNode1').css({display:'none'});
+                        $('#dNode1In').css({display:'block'});
+                        $('#dNode1_id').val(-1);
+                    }
+                    if (newLink.targ) {
+                        $('#dNode2').html(newLink.targ.text);
+                        $('#dNode2_id').val(newLink.targ.id);
+                        $('#dNode2').css({display:'block'});
+                        $('#dNode2In').css({display:'none'});
+                    }
+                    else {
+                        $('#dNode2').css({display:'none'});
+                        $('#dNode2In').css({display:'block'});
+                        $('#dNode2_id').val(-1);
+                    }
+                    newLink.targ = false;
+                }));
+            }
+            else {
+                newLink = false;
+                g.drawLinks();
+            }
+        }
+    }));
+
+    $('#boxclose').click(function(){
+        $('#overlay').fadeOut(80, (function(e) {
+            $('#box').css({visibility:'hidden'});
+            newLink = false;
+            g.drawLinks();
+        }));
+    });
+
+    dragMode();
+    $("#dragModeButton").bind("click", dragMode);
+    $("#addModeButton").bind("click", addMode);
+
+    $("#nodesDiv").bind("mousedown", function(e) {
+        if (uiMode === 'drag') {
+            return false;
+        }
+        else {
+            newLink = new Link(0, false, false, '...');
+            newLink.ox = e.pageX;
+            newLink.oy = e.pageY;
+            newLink.tx = e.pageX;
+            newLink.ty = e.pageY;
+            return false;
+        }
+    });
+
+    $("#nodesDiv").bind("click", (function(event) {
         l = g.labelAtPoint(event.pageX, event.pageY);
         if (l != -1) {
             if (confirm('Do you want to delete connection:\n"' + l.orig.text + ' ' + l.type + ' ' + l.targ.text + '"?')) {
