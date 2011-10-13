@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import MySQLdb as mdb
 from config import *
 
@@ -13,7 +15,7 @@ def _connect(reconnect=False):
 
     try:
         if _conn is None:
-            _conn = mdb.connect('localhost', DB_USER, DB_PASSWORD, DB_NAME);
+            _conn = mdb.connect('localhost', DB_USER, DB_PASSWORD, DB_NAME, use_unicode=True);
     except mdb.Error, e:
         print "Error %d: %s" % (e.args[0],e.args[1])
 
