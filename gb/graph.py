@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import MySQLdb as mdb
 from dbobj import DbObj
 import db
