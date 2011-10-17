@@ -10,3 +10,18 @@ DB
 ==
 
 * Indexes
+
+
+HTML PARSING
+==
+
+* List, graphic and heading tag handling
+* Nested lists
+
+
+LOGICAL INFERENCE
+==
+
+* Predicate logic operators
+* Detection of nested structure
+* Set membership
