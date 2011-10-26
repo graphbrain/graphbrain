@@ -267,7 +267,7 @@ def ycombinator():
     session = u.create_session()
     redirect_to_index = redirect('/')
     response = application.make_response(redirect_to_index)  
-    set_session(response, u['_id'], session)
+    set_session(response, u.d['_id'], session)
     return response
 
 
