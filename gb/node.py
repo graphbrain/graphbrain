@@ -1,80 +1,60 @@
 # -*- coding: utf-8 -*-
 
-import MySQLdb as mdb
 
-import db
+from datetime import datetime
+
 from dbobj import DbObj
-from link import Link
 
 
 class Node(DbObj):
     def __init__(self):
         DbObj.__init__(self)
+        self.collection = 'nodes'
 
-    def create(self, data, graph, node_type=0):
-        self.data = data
-        self.graph = graph
-        self.node_type = node_type
+    def create(self, label, graph, node_type='text'):
+        self.d['label'] = label
+        self.d['type'] = node_type
+        self.d['graph'] = graph.d['_id']
+        self.d['creation_ts'] = datetime.now()
+        self.d['origs'] = []
+        self.d['targs'] = {}
 
-        self.execute("INSERT INTO node (data, graph, node_type) VALUES (%s, %s, %s)", (data, graph.id, node_type))
-        self.id = self.insert_id()
-        self.commit()
-
-        return self
-
-    def get_by_id(self, node_id):
-        self.id = node_id
-        self.execute("SELECT data, graph, node_type FROM node WHERE id=%s", (node_id,))
-        row = self.cur.fetchone()
-        self.data = row[0]
-        self.graph = row[1]
-        self.node_type = row[2]
+        self._insert()
 
         return self
 
-    def get_by_data(self, data, graph):
-        self.execute("SELECT id, node_type FROM node WHERE graph=%s AND data=%s", (graph.id, data))
-        row = self.cur.fetchone()
-        if row is None:
-            self.id = -1
-            self.data = ''
-            self.node_type = -1
-        else:
-            self.id = row[0]
-            self.data = data
-            self.node_type = row[1]
-
+    def get_by_label(self, label, graph_id):
+        self.d = self.db.nodes.find_one({'label': label, 'graph': graph_id})
+        if self.d is None:
+            self.d = {'_id': -1}
         return self
 
     def _neighbors(self, nodes, depth=0):
-        if self.id not in nodes.keys():
-            nodes[self.id] = self
+        if str(self.d['_id']) not in nodes.keys():
+            nodes[str(self.d['_id'])] = self
 
         if (depth < 2):
-            self.execute("SELECT targ FROM link WHERE orig=%s", (self.id,))
-            rows = self.cur.fetchall()
-            for row in rows:
-                nnode = Node().get_by_id(row[0])
-                nnode.parent = self.id
+            for n in self.d['targs'].keys():
+                nnode = Node().get_by_id(n)
+                nnode.parent = self.d['_id']
                 nnode._neighbors(nodes, depth + 1)
 
-            self.execute("SELECT orig FROM link WHERE targ=%s", (self.id,))
-            rows = self.cur.fetchall()
-            for row in rows:
-                nnode = Node().get_by_id(row[0])
-                nnode.parent = self.id
+            for n in self.d['origs']:
+                nnode = Node().get_by_id(n)
+                nnode.parent = self.d['_id']
                 nnode._neighbors(nodes, depth + 1)
 
     def _internal_links(self, nodes):
-        ilinks = []
-
-        for node_id in nodes.keys():
-            self.execute("SELECT id FROM link WHERE orig=%s", (node_id,))
-            rows = self.cur.fetchall()
-            for row in rows:
-                link = Link().get_by_id(row[0])
-                if link.targ in nodes.keys():
-                    ilinks.append(link)
+        ilinks = {}
+        for key, node in nodes.items():
+            ilinks[node.d['_id']] = []
+    
+        for key, orig in nodes.items():
+            targs = orig.d['targs']
+            for targ_id, targ_list in targs.items():
+                if targ_id in nodes.keys():
+                    for targ in targ_list:
+                        ilinks[orig.d['_id']].append({'_id': targ_id, 'relation': targ['relation'], 'directed': targ['directed']})
 
         return ilinks
 
@@ -87,13 +67,17 @@ class Node(DbObj):
         nodes_json = '['
         for node_id in nodes.keys():
             node = nodes[node_id]
-            nodes_json = '%s{"id":"%d", "parent":"%s", "text":"%s", "type":"%s"},' % (nodes_json, node.id, node.parent, node.data, node.node_type)
+            nodes_json = '%s{"id":"%s", "parent":"%s", "text":"%s", "type":"%s"},' % (
+                nodes_json, str(node.d['_id']), str(node.parent), node.d['label'], node.d['type'])
         nodes_json = '%s]' % nodes_json
 
+        link_id = 0
         links_json = '['
-        for link in links:
-            links_json = '%s{"id":"%s", "orig": "%s", "targ":"%s", "type":"%s", "dir":"%s"},' % (
-                         links_json, link.id, link.orig, link.targ, link.relation, link.directed)
+        for orig_id in links.keys():
+            for targ in links[orig_id]:
+                links_json = '%s{"id":"%d", "orig": "%s", "targ":"%s", "type":"%s", "dir":"%s"},' % (
+                            links_json, link_id, str(orig_id), str(targ['_id']), targ['relation'], targ['directed'])
+                link_id += 1
         links_json = '%s]' % links_json
 
         return nodes_json, links_json
