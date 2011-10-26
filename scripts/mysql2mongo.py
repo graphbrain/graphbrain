@@ -129,6 +129,6 @@ if __name__ == '__main__':
         ip_addr = row[4]
         color = row[5]
 
-        mlogs.insert({'msg': name, 'user': user_emails[user], 'ts': ts, 'ip_addr': ip_addr, 'color': color})
+        mlogs.insert({'msg': msg, 'user': user_emails[user], 'ts': ts, 'ip_addr': ip_addr, 'color': color})
 
     db.connection().close()
