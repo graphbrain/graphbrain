@@ -40,7 +40,11 @@ def curuser():
         return None
     if session is None:
         return None
-    u = User().get_by_id(user_id)
+    u = None
+    try:
+        u = User().get_by_id(user_id)
+    except:
+        return None
     if u.check_session(session):
         return u
     else:
