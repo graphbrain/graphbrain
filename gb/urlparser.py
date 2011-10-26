@@ -5,12 +5,12 @@ from config import *
 
 
 def nodetype(text):
-    ntype = 0
+    ntype = 'text'
 
     # VERY naive way to detect images...
     # temporary hack
     if text[:7] == 'http://':
-        ntype = 1
+        ntype = 'image'
 
     return ntype
 

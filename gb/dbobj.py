@@ -1,22 +1,26 @@
 # -*- coding: utf-8 -*-
 
-import MySQLdb as mdb
 
-import db
+from bson.objectid import ObjectId
+import mongodb
 
 
 class DbObj:
     def __init__(self):
-        self.cur = db.cursor()
+        self.db = mongodb.getdb()
+        self.d = {}
+        self.collection = ''
 
-    def __del__(self):
-        self.cur.close()
+    def get_by_id(self, obj_id):
+        self.d = self.db[self.collection].find_one({'_id': ObjectId(obj_id)})
+        return self
+    
+    def _insert(self):
+        self.d['_id'] = self.db[self.collection].insert(self.d)
 
-    def commit(self):
-        db.connection().commit()
-
-    def insert_id(self):
-        return db.connection().insert_id()
-
-    def execute(self, query, params=()):
-        self.cur = db.execute(query, params=params, cur=self.cur)
+    def _update_field(self, field):
+        self.db[self.collection].update({'_id': self.d['_id']}, {'$set': {field: self.d[field]}})
+        
+    def _set_field(self, field, val):
+        self.d[field] = val
+        self._update_field(field)
