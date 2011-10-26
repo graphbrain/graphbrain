@@ -67,10 +67,10 @@ Node.prototype.place = function() {
     var node = document.createElement('div');
     node.setAttribute('class', 'node');
     node.setAttribute('id', this.id);
-    if (this.type == 0) {
+    if (this.type == 'text') {
         node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.id + '">' + this.text + '</a>';
     }
-    else if (this.type == 1) {
+    else if (this.type == 'image') {
         node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.id + '"><img src="' + this.text + '" width="50px" /></a>';
     }
     var nodesDiv = document.getElementById("nodesDiv");
@@ -78,7 +78,7 @@ Node.prototype.place = function() {
 
     var width = $('div#' + this.id).width();
     var height = $('div#' + this.id).height();
-    if (this.type == 1) {
+    if (this.type == 'image') {
         height = 55;
     }
     node.setAttribute('style', 'left:' + (this.x - (width / 2)) + 'px; top:' + (this.y - (height / 2)) + 'px;');
@@ -362,7 +362,7 @@ var initGraph = function(nodes, links) {
                     else {
                         $('#dNode1').css({display:'none'});
                         $('#dNode1In').css({display:'block'});
-                        $('#dNode1_id').val(-1);
+                        $('#dNode1_id').val('none');
                     }
                     if (newLink.targ) {
                         $('#dNode2').html(newLink.targ.text);
@@ -373,7 +373,7 @@ var initGraph = function(nodes, links) {
                     else {
                         $('#dNode2').css({display:'none'});
                         $('#dNode2In').css({display:'block'});
-                        $('#dNode2_id').val(-1);
+                        $('#dNode2_id').val('none');
                     }
                     newLink.targ = false;
                 }));
