@@ -64,16 +64,20 @@ class Graph(DbObj):
         if orig_id != 'none':
             orig.get_by_id(orig_id)
         elif orig_text != '':
-            ntype = urlparser.nodetype(orig_text)
-            orig.create(orig_text, self, ntype)
+            orig.get_by_label(orig_text, self.d['_id'])
+            if orig.d is None:
+                ntype = urlparser.nodetype(orig_text)
+                orig.create(orig_text, self, ntype)
         else:
             return False
         
         if targ_id != 'none':
             targ.get_by_id(targ_id)
         elif targ_text != '':
-            ntype = urlparser.nodetype(targ_text)
-            targ.create(targ_text, self, ntype)
+            targ.get_by_label(targ_text, self.d['_id'])
+            if targ.d is None:
+                ntype = urlparser.nodetype(targ_text)
+                targ.create(targ_text, self, ntype)
         else:
             return False
 

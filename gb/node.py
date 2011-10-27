@@ -25,8 +25,6 @@ class Node(DbObj):
 
     def get_by_label(self, label, graph_id):
         self.d = self.db.nodes.find_one({'label': label, 'graph': graph_id})
-        if self.d is None:
-            self.d = {'_id': -1}
         return self
 
     def _neighbors(self, nodes, depth=0):
