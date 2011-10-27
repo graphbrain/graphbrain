@@ -19,8 +19,11 @@ class DbObj:
         self.d['_id'] = self.db[self.collection].insert(self.d)
 
     def _update_field(self, field):
-        self.db[self.collection].update({'_id': self.d['_id']}, {'$set': {field: self.d[field]}})
-        
+        if self.d[field]:
+            self.db[self.collection].update({'_id': self.d['_id']}, {'$set': {field: self.d[field]}})
+        else:
+            self.db[self.collection].update({'_id': self.d['_id']}, {'$unset': {field: 1}})
+
     def _set_field(self, field, val):
         self.d[field] = val
         self._update_field(field)

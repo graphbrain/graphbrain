@@ -39,20 +39,23 @@ class Graph(DbObj):
         orig = Node().get_by_id(orig_id)
         targ = Node().get_by_id(targ_id)
 
-        targs = orig.d['targs.%s' % targ.d['_id']]
+        targs = orig.d['targs'][str(targ.d['_id'])]
         todel = None
         for t in targs:
-            if t['rel'] == rel:
+            if t['relation'] == rel:
                 todel = t
                 targs.remove(todel)
                 break
+
+        if len(targs) == 0:
+            del orig.d['targs'][str(targ.d['_id'])]
                 
         if todel is not None:
-            orig._update_field('targs.%s' % targ.d['_id'], targs)
+            orig._update_field('targs')
 
         if len(targs) == 0:
             targ.d['origs'].remove(orig.d['_id'])
-            targ._update_field('origs', orig.d['origs'])
+            targ._update_field('origs')
 
     def add_rel(self, rel, orig_text='', targ_text='', orig_id='none', targ_id='none'):
         orig = Node()

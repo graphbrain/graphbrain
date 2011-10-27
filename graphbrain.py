@@ -233,12 +233,12 @@ def delink():
     if u is None:
         return redirect2login()
     
-    link_id = request.form['link_id']
-    link = Link().get_by_id(link_id)
-    node_id = link.orig
-    link.delete()
+    link_orig = request.form['link_orig']
+    link_targ = request.form['link_targ']
+    link_type = request.form['link_type']
+    Graph().del_link(link_orig, link_targ, link_type)
 
-    redirect_to_index = redirect('/node/%d' % node_id)
+    redirect_to_index = redirect('/node/%s' % link_orig)
     response = application.make_response(redirect_to_index)  
     return response
 

@@ -34,15 +34,17 @@ class Node(DbObj):
             nodes[str(self.d['_id'])] = self
 
         if (depth < 2):
-            for n in self.d['targs'].keys():
-                nnode = Node().get_by_id(n)
-                nnode.parent = self.d['_id']
-                nnode._neighbors(nodes, depth + 1)
+            if 'targs' in self.d:
+                for n in self.d['targs'].keys():
+                    nnode = Node().get_by_id(n)
+                    nnode.parent = self.d['_id']
+                    nnode._neighbors(nodes, depth + 1)
 
-            for n in self.d['origs']:
-                nnode = Node().get_by_id(n)
-                nnode.parent = self.d['_id']
-                nnode._neighbors(nodes, depth + 1)
+            if 'origs' in self.d:
+                for n in self.d['origs']:
+                    nnode = Node().get_by_id(n)
+                    nnode.parent = self.d['_id']
+                    nnode._neighbors(nodes, depth + 1)
 
     def _internal_links(self, nodes):
         ilinks = {}
@@ -50,11 +52,12 @@ class Node(DbObj):
             ilinks[node.d['_id']] = []
     
         for key, orig in nodes.items():
-            targs = orig.d['targs']
-            for targ_id, targ_list in targs.items():
-                if targ_id in nodes.keys():
-                    for targ in targ_list:
-                        ilinks[orig.d['_id']].append({'_id': targ_id, 'relation': targ['relation'], 'directed': targ['directed']})
+            if 'targs' in orig.d:
+                targs = orig.d['targs']
+                for targ_id, targ_list in targs.items():
+                    if targ_id in nodes.keys():
+                        for targ in targ_list:
+                            ilinks[orig.d['_id']].append({'_id': targ_id, 'relation': targ['relation'], 'directed': targ['directed']})
 
         return ilinks
 
