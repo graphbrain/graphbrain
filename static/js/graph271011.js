@@ -415,7 +415,9 @@ var initGraph = function(nodes, links) {
         l = g.labelAtPoint(event.pageX, event.pageY);
         if (l != -1) {
             if (confirm('Do you want to delete connection:\n"' + l.orig.text + ' ' + l.type + ' ' + l.targ.text + '"?')) {
-                document.forms["delinkForm"].elements["link_id"].value = l.id;
+                document.forms["delinkForm"].elements["link_orig"].value = l.orig.id;
+                document.forms["delinkForm"].elements["link_targ"].value = l.targ.id;
+                document.forms["delinkForm"].elements["link_type"].value = l.type;
                 $("#delinkForm").submit();
             }
         }
