@@ -35,6 +35,8 @@ class User(DbObj):
         return self
         
     def check_password(self, password):
+        if self.d is None:
+            return False
         if self.d['pwdhash'] == bcrypt.hashpw(password, self.d['pwdhash']):
             return True
         else:

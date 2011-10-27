@@ -105,7 +105,6 @@ def login():
 
         u = User().get_by_email(email)
         if u.check_password(password):
-            
             log('login', '#0000FF', u.d['email'], request.remote_addr)
             
             session = u.create_session()
@@ -115,7 +114,7 @@ def login():
             set_session(response, u.d['_id'], session)
             return response
         else:
-            log('failed login [email: %s]' % email, '#FF3399', u.d['email'], request.remote_addr)
+            log('failed login [email: %s]' % email, '#FF3399', 'none', request.remote_addr)
             return render_template('login.html', message='Sorry, wrong username and/or password.')
         return email
 
