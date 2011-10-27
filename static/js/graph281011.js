@@ -272,6 +272,7 @@ Graph.prototype.layout = function(node, depth, cx, cy, px, py, ang0, ang1) {
         }
         else {
             deltaAng = (ang1 - ang0) / (count - 1);
+            deltaAng *= 0.75;
         }
     }
 
