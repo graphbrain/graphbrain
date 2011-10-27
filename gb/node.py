@@ -28,6 +28,9 @@ class Node(DbObj):
         return self
 
     def _neighbors(self, nodes, depth=0):
+        if self.d is None:
+            return
+
         if str(self.d['_id']) not in nodes.keys():
             nodes[str(self.d['_id'])] = self
 
