@@ -12,6 +12,7 @@ class Node(DbObj):
         self.collection = 'nodes'
 
     def create(self, label, graph, node_type='text'):
+        self.d = {}
         self.d['label'] = label
         self.d['type'] = node_type
         self.d['graph'] = graph.d['_id']
