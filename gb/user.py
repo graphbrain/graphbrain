@@ -16,8 +16,8 @@ class User(DbObj):
 
     def create(self, email, name, password, role):
         self.d['label'] = name
-        seld.d['type'] = 'user'
-        seld.d['graph'] = 'users'
+        self.d['type'] = 'user'
+        self.d['graph'] = 'users'
         self.d['creation_ts'] = datetime.now()
         self.d['email'] = email
         self.d['role'] = role
