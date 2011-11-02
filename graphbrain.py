@@ -258,18 +258,6 @@ def logpage():
     return render_template('log.html', logs=logs)
 
 
-# temporary Y-Combinator backdoor
-@application.route("/ycombinator-vip-room")
-def ycombinator():
-    u = User().get_by_email('info@ycombinator.com')
-    log('y-combinator access', '#FF9900', u.d['email'], request.remote_addr)
-    session = u.create_session()
-    redirect_to_index = redirect('/')
-    response = application.make_response(redirect_to_index)  
-    set_session(response, u.d['_id'], session)
-    return response
-
-
 if __name__ == "__main__":
     #TODO: make this configurable
     application.debug = True
