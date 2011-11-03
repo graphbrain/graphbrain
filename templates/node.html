@@ -34,7 +34,7 @@
             </select>
         </form>
     </div>
-    <div id="tip">Try clicking & dragging!</div>
+    <div id="tip"></div>
 </div>
 
 <canvas id="graphCanvas">
@@ -76,6 +76,7 @@
 
 var nodes =  {{ nodes_json|safe }};
 var links = {{ links_json|safe }};
+var error = '{{ error|safe }}';
 
 initGraph(nodes, links);
 </script>

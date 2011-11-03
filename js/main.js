@@ -9,8 +9,8 @@ var addMode = function(event) {
     uiMode = 'add';
     $("#dragModeButton").removeClass("selModeButton");
     $("#addModeButton").addClass("selModeButton");
-    $("#tip").fadeIn("slow", function(){tipVisible = true;});
-    
+    $("#tip").html('Try clicking & dragging!');
+    $("#tip").fadeIn("slow", function(){tipVisible = true;});    
 }
 
 // Entry point functions & global variables
@@ -22,6 +22,11 @@ var newLink;
 var tipVisible;
 
 var initGraph = function(nodes, links) {
+
+    if (error != '') {
+        $("#tip").html('<div class="error">' + error + '</div>');
+        $("#tip").fadeIn("slow", function(){tipVisible = true;});       
+    }
 
     newLink = false;
     draggedNode = false;
