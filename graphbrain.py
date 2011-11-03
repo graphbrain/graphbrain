@@ -152,15 +152,13 @@ def input():
         return node_response(node_id, u, error_msg)
 
     g = Graph().get_by_id(graph_id)
-    orig_id = g.add_rel_from_parser(result)
-
-    if (orig_id is None) or (orig_id == -1):
+    if not g.add_rel_from_parser(result):
         log('sentence parse error (2) [%s]' % input_str, '#FF0000', u.d['email'], request.remote_addr)
         return node_response(node_id, u, error_msg)
 
     log('correct sentence [%s]' % input_str, '#33CC33', u.d['email'], request.remote_addr)
     
-    redirect_to_index = redirect('/node/%s' % orig_id)
+    redirect_to_index = redirect('/node/%s' % node_id)
     response = application.make_response(redirect_to_index)   
     return response
 

@@ -87,20 +87,20 @@ class Graph(DbObj):
         return True
     
     def add_rel_from_parser(self, r):
-        orig = Node().get_by_data(r['orig'], self)
-        targ = Node().get_by_data(r['targ'], self)
+        orig = Node().get_by_label(r['orig'], self.d['_id'])
+        targ = Node().get_by_label(r['targ'], self.d['_id'])
 
         # one of the nodes has to exist in the graph
-        if (orig.id < 0) and (targ.id < 0):
-            return -1
+        if (orig.d is None) and (targ.d is None):
+            return False
 
         # create one of the nodes if it does not exist
-        if orig.d['_id'] == -1:
+        if orig.d is None:
             orig.create(r['orig'], self, r['orig_type'])
-        elif targ.d['_id'] == -1:
+        elif targ.d is None:
             targ.create(r['targ'], self, r['targ_type'])
 
         # create new link between nodes
         self.add_link(orig, targ, r['rel'], r['rel_raw'], r['sentence'])
 
-        return orig.d['_id']
+        return True

@@ -9,7 +9,7 @@ var addMode = function(event) {
     uiMode = 'add';
     $("#dragModeButton").removeClass("selModeButton");
     $("#addModeButton").addClass("selModeButton");
-    $(".tip").fadeIn("slow", function(){tipVisible = true;});
+    $("#tip").fadeIn("slow", function(){tipVisible = true;});
     
 }
 
