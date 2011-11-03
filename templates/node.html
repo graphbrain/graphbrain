@@ -5,25 +5,31 @@
 <script src="/static/js/gb.min.js?311011" type="text/javascript" ></script>
 {% endblock %}
 
-{% block top_centre %}
-<div class="modeButton" id="dragModeButton">Move</div>
-<div class="modeButton" id="addModeButton">Add</div>
-<div class="tip">Try clicking & dragging!</div>
-{% endblock %}
+{% block body %}
+<div id="topDiv">
+    <div id="logo">
+        <img src="../static/images/GB_logo_M.png" alt="graphbrain"/>
+    </div>
+    <div id="topCentre">
+        {% block top_centre %}{% endblock %}
+        <div class="modeButton" id="dragModeButton">Move</div>
+        <div class="modeButton" id="addModeButton">Add</div>
+        <div class="tip">Try clicking & dragging!</div>
+    </div>
+    <div id="topRight">
+        {% block top_right %}{% endblock %}
+        <a href="/logout">Logout</a> |
+        <a href="/createbrain">Create Brain</a> <br />
+        <form action="/selbrain" method="post" id="selbrainForm">
+            <select name="brainDropDown" onChange="this.form.submit()">
+            {% for g in graphs %}
+                <option value="{{ g['root'] }}" {% if g['_id'] == graph_id %}selected{% endif %}>{{ g['label'] }}</option>
+            {% endfor %}
+            </select>
+        </form>
+    </div>
+</div>
 
-{% block top_right %}
-<a href="/logout">Logout</a> |
-<a href="/createbrain">Create Brain</a> <br />
-<form action="/selbrain" method="post" id="selbrainForm">
-    <select name="brainDropDown" onChange="this.form.submit()">
-        {% for g in graphs %}
-            <option value="{{ g['root'] }}" {% if g['_id'] == graph_id %}selected{% endif %}>{{ g['label'] }}</option>
-        {% endfor %}
-    </select>
-</form>
-{% endblock %}
-        
-{% block content %}
 <canvas id="graphCanvas">
     Sorry, your browser does not support canvas.
 </canvas>
