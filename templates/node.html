@@ -10,14 +10,20 @@
     <div id="logo">
         <img src="../static/images/GB_logo_M.png" alt="graphbrain"/>
     </div>
-    <div id="topCentre">
-        {% block top_centre %}{% endblock %}
+    <div id="modeButtons">
         <div class="modeButton" id="dragModeButton">Move</div>
         <div class="modeButton" id="addModeButton">Add</div>
-        <div class="tip">Try clicking & dragging!</div>
+    </div>
+    <div id="inputArea">
+        <form action="/input" method="post">
+            <input type="text" name="input" id="inputField" size="50" />
+            <input type="hidden" name="graph_id" value="{{ graph_id }}">
+            <input type="hidden" name="node_id" value="{{ node_id }}">
+            <button type="submit" id="inputFieldButton">Say it!</button>
+        </form>
     </div>
     <div id="topRight">
-        {% block top_right %}{% endblock %}
+        
         <a href="/logout">Logout</a> |
         <a href="/createbrain">Create Brain</a> <br />
         <form action="/selbrain" method="post" id="selbrainForm">
@@ -28,6 +34,7 @@
             </select>
         </form>
     </div>
+    <div id="tip">Try clicking & dragging!</div>
 </div>
 
 <canvas id="graphCanvas">

@@ -54,12 +54,42 @@ html, body {
 	z-index:2;
 }
 
-#topCentre {
+#modeButtons {
 	float:left;
     text-align:center;
     font-family:Sans-Serif;
     font-size:15px;
 	z-index:2;
+}
+
+#inputArea {
+    float:left;
+    text-align:center;
+    font-family:Sans-Serif;
+    z-index:2;
+    margin: 5px 0px 0px 50px;
+}
+
+#inputField {
+    font-size: 16px;
+    border: 1px solid #888;
+    line-height: 30px;
+    -moz-border-radius:7px;
+    border-radius:7px;
+    margin: 0px;
+    padding: 0px;
+}
+
+#inputFieldButton {
+    font-size: 14px;
+    color:#59cef1;
+    background:#FFF;
+    border: 1px solid #888;
+    line-height: 30px;
+    -moz-border-radius:7px;
+    border-radius:7px;
+    margin: 0px;
+    padding: 0px 5px 0px 5px;
 }
 
 #topRight {
@@ -74,8 +104,16 @@ html, body {
     float:right;
 }
 
-#inputField {
-    font-size: 16px;
+#tip{
+    clear:both;
+    text-align:center;
+    display:none;
+    color:#555;
+    background:#FAFAD2;
+    padding:5px;
+    margin: 5px 5px 5px 5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
 }
 
 .error {
@@ -87,9 +125,10 @@ html, body {
     float:left;
     color:#FFFFFF;
     background:#CCC;
-    padding:5px;
+    padding:0px;
     margin: 5px 0px 5px 0px;
     width:50px;
+    line-height:30px;
     border:1px solid #CCC;
 }
 
@@ -174,15 +213,4 @@ a.boxclose{
     margin-top:-30px;
     margin-right:-30px;
     cursor:pointer;
-}
-
-.tip{
-    display:none;
-    float:right;
-    color:#555;
-    background:#FAFAD2;
-    padding:5px;
-    margin: 5px 0px 5px 20px;
-    -moz-border-radius:5px;
-    border-radius:5px;
 }
