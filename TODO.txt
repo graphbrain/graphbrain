@@ -1,6 +1,40 @@
-SECURITY
-========
+UI
+==
 
+* Reactivate natural language input
+* Search functionality on text input
+* Improve graph layout
+* Embed node by dragging
+* Visual indicator of further connections
+* Collapse n nodes linked by same relationship into list
+* Pass node divs on HTML for SEO purposes
+* Text summary for SEO purposes
+* Go to "home page" when logo clicked
+* Access "graphs" and "users" special graphs from UI
+* Animate transitions
+* Visual cue when new link created (glowing?)
+* Keyboard shortcuts
+* Node size decreases with distance to current root
+* Current node name on page title
+* Support other media types: web page, video, pdf, geographic location, ...
+* JavasScript "bookmarklet" to insert stuff easily while navigating other sites
+* Email notifications for various events
+
+
+DEMO GRAPHS
+===========
+
+* Cinema
+* ...
+
+
+SECURITY / USER MANAGEMENT
+==========================
+
+* Several sessions for same user (logged in from different devices)
+* User registration
+* Invite system
+* Password recovery
 * Max session age
 * Delays after failed login attempts
 * Hashed session string?
@@ -25,3 +59,9 @@ LOGICAL INFERENCE
 * Predicate logic operators
 * Detection of nested structure
 * Set membership
+
+
+MISC
+====
+
+* Make it work on iDevices
