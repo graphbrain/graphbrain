@@ -19,6 +19,7 @@ UI
 * Support other media types: web page, video, pdf, geographic location, ...
 * JavasScript "bookmarklet" to insert stuff easily while navigating other sites
 * Email notifications for various events
+* Correct small movement glitch when dragging
 
 
 DEMO GRAPHS
