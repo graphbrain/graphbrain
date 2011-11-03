@@ -20,6 +20,7 @@ UI
 * JavasScript "bookmarklet" to insert stuff easily while navigating other sites
 * Email notifications for various events
 * Correct small movement glitch when dragging
+* Edit relationship types (color, behavior, ...)
 
 
 DEMO GRAPHS
