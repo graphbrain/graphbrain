@@ -40,20 +40,22 @@ class Node(DbObj):
                     n = str(n)
                     if n not in nodeids:
                         nnode = Node().get_by_id(n)
-                        nnode.parent = self.d['_id']
-                        nodes.append(nnode)
-                        nodeids.append(n)
-                        next_nodes.append(nnode)
+                        if not nnode.d is None:
+                            nnode.parent = self.d['_id']
+                            nodes.append(nnode)
+                            nodeids.append(n)
+                            next_nodes.append(nnode)
 
             if 'origs' in self.d:
                 for n in self.d['origs']:
                     n = str(n)
                     if n not in nodeids:
                         nnode = Node().get_by_id(n)
-                        nnode.parent = self.d['_id']
-                        nodes.append(nnode)
-                        nodeids.append(n)
-                        next_nodes.append(nnode)
+                        if not nnode.d is None:
+                            nnode.parent = self.d['_id']
+                            nodes.append(nnode)
+                            nodeids.append(n)
+                            next_nodes.append(nnode)
 
             for n in next_nodes:
                 n._neighbors(nodes, nodeids, depth + 1) 
