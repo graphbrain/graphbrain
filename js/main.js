@@ -144,6 +144,7 @@ var initGraph = function(nodes, links) {
         var id = n['id'];
         var text = n['text'];
         var type = n['type'];
+        var parentID = n['parent'];
         var node = new Node(id, text, type);
         g.nodes[id] = node;
     }   

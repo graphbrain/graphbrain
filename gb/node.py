@@ -28,36 +28,47 @@ class Node(DbObj):
         self.d = self.db.nodes.find_one({'label': label, 'graph': graph_id})
         return self
 
-    def _neighbors(self, nodes, depth=0):
+    def _neighbors(self, nodes, nodeids, depth=0):
         if self.d is None:
             return
 
-        if str(self.d['_id']) not in nodes.keys():
-            nodes[str(self.d['_id'])] = self
+        next_nodes = []
 
         if (depth < 2):
             if 'targs' in self.d:
                 for n in self.d['targs'].keys():
-                    nnode = Node().get_by_id(n)
-                    nnode.parent = self.d['_id']
-                    nnode._neighbors(nodes, depth + 1)
+                    n = str(n)
+                    if n not in nodeids:
+                        nnode = Node().get_by_id(n)
+                        nnode.parent = self.d['_id']
+                        nodes.append(nnode)
+                        nodeids.append(n)
+                        next_nodes.append(nnode)
 
             if 'origs' in self.d:
                 for n in self.d['origs']:
-                    nnode = Node().get_by_id(n)
-                    nnode.parent = self.d['_id']
-                    nnode._neighbors(nodes, depth + 1)
+                    n = str(n)
+                    if n not in nodeids:
+                        nnode = Node().get_by_id(n)
+                        nnode.parent = self.d['_id']
+                        nodes.append(nnode)
+                        nodeids.append(n)
+                        next_nodes.append(nnode)
 
-    def _internal_links(self, nodes):
+            for n in next_nodes:
+                n._neighbors(nodes, nodeids, depth + 1) 
+
+
+    def _internal_links(self, nodes, nodeids):
         ilinks = {}
-        for key, node in nodes.items():
+        for node in nodes:
             ilinks[node.d['_id']] = []
     
-        for key, orig in nodes.items():
+        for orig in nodes:
             if 'targs' in orig.d:
                 targs = orig.d['targs']
                 for targ_id, targ_list in targs.items():
-                    if targ_id in nodes.keys():
+                    if targ_id in nodeids:
                         for targ in targ_list:
                             ilinks[orig.d['_id']].append({'_id': targ_id, 'relation': targ['relation'], 'directed': targ['directed']})
 
@@ -65,13 +76,13 @@ class Node(DbObj):
 
     def neighbours_json(self):
         self.parent = ''
-        nodes = {}
-        self._neighbors(nodes)
-        links = self._internal_links(nodes)
+        nodes = [self,]
+        nodeids = [str(self.d['_id']),]
+        self._neighbors(nodes, nodeids)
+        links = self._internal_links(nodes, nodeids)
 
         nodes_json = '['
-        for node_id in nodes.keys():
-            node = nodes[node_id]
+        for node in nodes:
             nodes_json = '%s{"id":"%s", "parent":"%s", "text":"%s", "type":"%s"},' % (
                 nodes_json, str(node.d['_id']), str(node.parent), node.d['label'], node.d['type'])
         nodes_json = '%s]' % nodes_json

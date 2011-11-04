@@ -32,14 +32,16 @@ Graph.prototype.layout = function(node, depth, cx, cy, px, py, ang0, ang1) {
     node.y = py + ((Math.random() * 50) - 25);
 
     var count = node.subNodes.length;
+
     var ang = ang0;
     var rad = depth * 150;
 
     var deltaAng = 0;
     if (count == 1) {
         ang += (ang1 - ang0) / 2;
+        deltaAng = Math.PI;
     }
-    else if (count > 1) {
+    else {
         if (depth == 1) {
             deltaAng = (ang1 - ang0) / count;
         }
