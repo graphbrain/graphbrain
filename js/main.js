@@ -6,8 +6,8 @@ var dragging;
 var newLink;
 var tipVisible;
 
-var initGraph = function(nodes, links) {
 
+$(function() {
     if (error != '') {
         $("#tip").html('<div class="error">' + error + '</div>');
         $("#tip").fadeIn("slow", function(){tipVisible = true;});       
@@ -165,4 +165,4 @@ var initGraph = function(nodes, links) {
 
     g.drawLinks();
     g.placeNodes();
-}
+});
