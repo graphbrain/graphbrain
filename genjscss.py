@@ -10,6 +10,7 @@ SCRIPTS = [
     'js/node.js',
     'js/link.js',
     'js/graph.js',
+    'js/uimodes.js',
     'js/main.js',
     ]
 
