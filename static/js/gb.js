@@ -310,7 +310,6 @@ var addMode = function(event) {
     $("#tip").html('Try clicking & dragging!');
     $("#tip").fadeIn("slow", function(){tipVisible = true;});    
 }
-
 // Entry point functions & global variables
 var g;
 var uiMode;
