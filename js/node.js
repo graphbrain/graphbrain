@@ -5,15 +5,20 @@ var Node = function(id, text, type) {
     this.type = type;
     this.x = 0;
     this.y = 0;
+    this.vX = 0;
+    this.vY = 0;
     this.subNodes = [];
 }
 
-Node.prototype.moveTo = function(x, y) {
+Node.prototype.moveTo = function(x, y, redraw) {
+    redraw = typeof(redraw) !== 'undefined' ? redraw : true;
     this.x = x;
     this.y = y;
     $('div#' + this.id).css('left', (this.x - (this.width / 2)) + 'px');
     $('div#' + this.id).css('top', (this.y - (this.height / 2)) + 'px');
-    g.drawLinks();
+    if (redraw) {
+        g.drawLinks();
+    }
 }
 
 Node.prototype.place = function() {

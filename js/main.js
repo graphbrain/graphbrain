@@ -6,6 +6,24 @@ var dragging;
 var newLink;
 var tipVisible;
 
+var cycle = 0;
+var ga = 0;
+
+var graphAnim = function() {
+    for (var i = 0; i < 20; i++) {
+        g.forceStep();
+    }
+
+    for (var key in g.nodes) {
+        var node = g.nodes[key];
+        node.moveTo(node.x, node.y, false);
+    }
+    g.drawLinks();
+    cycle += 1;
+    if (cycle < 5) {
+        setTimeout('graphAnim()', 100);
+    }
+}
 
 $(function() {
     if (error != '') {
@@ -148,6 +166,7 @@ $(function() {
             g.nodes[parentID].subNodes[g.nodes[parentID].subNodes.length] = g.nodes[id];
         }
     }
+    g.genNodeKeys();
 
     for (i = 0; i < links.length; i++) {
         var l = links[i];
@@ -159,10 +178,21 @@ $(function() {
     var halfHeight = window.innerHeight / 2;
 
     g.layout(g.root, 1, halfWidth, halfHeight, halfWidth, halfHeight, 0, Math.PI * 2);
+    /*for (var key in g.nodes) {
+        var node = g.nodes[key];
+        node.x = halfWidth + ((Math.random() * 50) - 25);
+        node.y = halfHeight + ((Math.random() * 50) - 25);
+    }*/
+
+    /*for (i = 0; i < 100; i++) {
+        g.forceStep();
+    }*/
 
     context.canvas.width  = window.innerWidth;
     context.canvas.height = window.innerHeight;
 
     g.drawLinks();
     g.placeNodes();
+
+    graphAnim();
 });

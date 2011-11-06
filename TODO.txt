@@ -1,7 +1,6 @@
 UI
 ==
 
-* Reactivate natural language input
 * Search functionality on text input
 * Improve graph layout
 * Embed node by dragging
