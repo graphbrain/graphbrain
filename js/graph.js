@@ -20,10 +20,8 @@ Graph.prototype.drawLinks = function() {
 }
 
 Graph.prototype.placeNodes = function() {
-    for (var key in g.nodes) {
-        if (g.nodes.hasOwnProperty(key)) {
-            g.nodes[key].place();
-        }
+    for (var key in this.nodes) {
+        this.nodes[key].place();
     }
 }
 
@@ -52,7 +50,7 @@ Graph.prototype.layout = function(node, depth, cx, cy, px, py, ang0, ang1) {
     }
 
     var i;
-    for (i = 0; i < count; i++) {
+    for (var i = 0; i < count; i++) {
         var npx = cx + (Math.sin(ang) * rad);
         var npy = cy + (Math.cos(ang) * rad);
         this.layout(node.subNodes[i], depth + 1, cx, cy, npx, npy, ang - (deltaAng / 2), ang + (deltaAng / 2));
@@ -62,11 +60,75 @@ Graph.prototype.layout = function(node, depth, cx, cy, px, py, ang0, ang1) {
 
 Graph.prototype.labelAtPoint = function(x, y) {
     var p = [x, y];
-    for (i = this.links.length - 1; i >= 0; i--) {
+    for (var i = this.links.length - 1; i >= 0; i--) {
         if (this.links[i].pointInLabel(p)) {
             return this.links[i];
         }
     }
 
     return -1;
+}
+
+Graph.prototype.genNodeKeys = function() {
+    this.nodeKeys = []
+    for (var key in this.nodes) {
+        this.nodeKeys.push(key);
+    }
+}
+
+Graph.prototype.forceStep = function() {
+    var drag = 0.85;
+    var coulombConst = 200;
+    var hookeConst = 0.06;
+
+    // Init forces
+    for (var key in this.nodes) {
+        var node = this.nodes[key];
+        node.fX = 0;
+        node.fY = 0;
+    }
+
+    // Coulomb repulsion
+    for (var i = 0; i < this.nodeKeys.length; i++) {
+        var orig = this.nodes[this.nodeKeys[i]];
+        for (var j = i + 1; j < this.nodeKeys.length; j++) {
+            var targ = this.nodes[this.nodeKeys[j]];
+
+            var deltaX = orig.x - targ.x;
+            var deltaY = orig.y - targ.y;
+            var d2 = (deltaX * deltaX) + (deltaY * deltaY);
+            var fX = (deltaX / d2) * coulombConst;
+            var fY = (deltaY / d2) * coulombConst;
+            orig.fX += fX;
+            orig.fY += fY;
+            targ.fX -= fX;
+            targ.fY -= fY;
+        }
+    }
+
+    // Hooke attraction
+    for (var i = 0; i < this.links.length; i++) {
+        var link = this.links[i];
+        var orig = link.orig;
+        var targ = link.targ;
+
+        var deltaX = orig.x - targ.x;
+        var deltaY = orig.y - targ.y;
+        //var d2 = (deltaX * deltaX) + (deltaY * deltaY);
+        var fX = deltaX * hookeConst;
+        var fY = deltaY * hookeConst;
+        orig.fX -= fX;
+        orig.fY -= fY;
+        targ.fX += fX;
+        targ.fY += fY;
+    }
+
+    // Update velocities and positions
+    for (var key in this.nodes) {
+        var node = this.nodes[key];
+        node.vX = (node.vX + node.fX) * drag;
+        node.vY = (node.vY + node.fY) * drag;
+        node.x = node.x + node.vX;
+        node.y = node.y + node.vY;
+    }
 }
