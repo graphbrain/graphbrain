@@ -11,6 +11,7 @@ SCRIPTS = [
     'js/link.js',
     'js/graph.js',
     'js/uimodes.js',
+    'js/anim.js',
     'js/main.js',
     ]
 

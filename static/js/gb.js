@@ -377,16 +377,9 @@ var addMode = function(event) {
     $("#tip").html('Try clicking & dragging!');
     $("#tip").fadeIn("slow", function(){tipVisible = true;});    
 }
-// Entry point functions & global variables
-var g;
-var uiMode;
-var draggedNode;
-var dragging;
-var newLink;
-var tipVisible;
+// Graph animation cycle
 
 var cycle = 0;
-var ga = 0;
 
 var graphAnim = function() {
     for (var i = 0; i < 20; i++) {
@@ -403,8 +396,15 @@ var graphAnim = function() {
         setTimeout('graphAnim()', 100);
     }
 }
+// Entry point functions & global variables
+var g;
+var uiMode;
+var draggedNode;
+var dragging;
+var newLink;
+var tipVisible;
 
-$(function() {
+var initInterface = function() {
     if (error != '') {
         $("#tip").html('<div class="error">' + error + '</div>');
         $("#tip").fadeIn("slow", function(){tipVisible = true;});       
@@ -511,8 +511,10 @@ $(function() {
                 $("#delinkForm").submit();
             }
         }
-    }));
-    
+    }));    
+}
+
+var initGraph = function() {
     var elem = document.getElementById('graphCanvas');
     var context = elem.getContext('2d');
 
@@ -574,4 +576,9 @@ $(function() {
     g.placeNodes();
 
     graphAnim();
+}
+
+$(function() {
+    initInterface();
+    initGraph(); 
 });
