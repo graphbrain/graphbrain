@@ -6,26 +6,7 @@ var dragging;
 var newLink;
 var tipVisible;
 
-var cycle = 0;
-var ga = 0;
-
-var graphAnim = function() {
-    for (var i = 0; i < 20; i++) {
-        g.forceStep();
-    }
-
-    for (var key in g.nodes) {
-        var node = g.nodes[key];
-        node.moveTo(node.x, node.y, false);
-    }
-    g.drawLinks();
-    cycle += 1;
-    if (cycle < 5) {
-        setTimeout('graphAnim()', 100);
-    }
-}
-
-$(function() {
+var initInterface = function() {
     if (error != '') {
         $("#tip").html('<div class="error">' + error + '</div>');
         $("#tip").fadeIn("slow", function(){tipVisible = true;});       
@@ -132,8 +113,10 @@ $(function() {
                 $("#delinkForm").submit();
             }
         }
-    }));
-    
+    }));    
+}
+
+var initGraph = function() {
     var elem = document.getElementById('graphCanvas');
     var context = elem.getContext('2d');
 
@@ -195,4 +178,9 @@ $(function() {
     g.placeNodes();
 
     graphAnim();
+}
+
+$(function() {
+    initInterface();
+    initGraph(); 
 });
