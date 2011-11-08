@@ -256,6 +256,18 @@ def logpage():
     return render_template('log.html', logs=logs)
 
 
+# temporary demo area
+@application.route("/demoroom")
+def demoroom():
+    u = User().get_by_email('demo@graphbrain.com')
+    log('demoroom access', '#6A5ACD', u.d['email'], request.remote_addr)
+    session = u.create_session('thism0nkeysgonetoh3aven')
+    redirect_to_index = redirect('/')
+    response = application.make_response(redirect_to_index)  
+    set_session(response, u.d['_id'], session)
+    return response
+
+
 if __name__ == "__main__":
     #TODO: make this configurable
     application.debug = True
