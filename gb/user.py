@@ -42,8 +42,11 @@ class User(DbObj):
         else:
             return False
 
-    def create_session(self):
-        self._set_field('session', random_string(60))
+    def create_session(self, session_string=None):
+        ss = session_string
+        if ss is None:
+            ss = random_string(60)
+        self._set_field('session', ss)
         return self.d['session']
 
     def check_session(self, session_str):
