@@ -76,7 +76,7 @@ def node_response(node_id, user, error=''):
 def main():
     u = curuser()
     if u is None:
-        return redirect2login()
+        return render_template('login.html')
 
     # TODO: these values are just temporary
     telmo = User().get_by_email('telmo@telmomenezes.com')
