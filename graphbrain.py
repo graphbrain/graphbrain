@@ -16,6 +16,7 @@ from gb.node import Node
 from gb.parser import parse, ParseError
 from gb.config import *
 from gb.log import log, get_logs
+from gb.emails import add_email
 
 
 application = Flask(__name__)
@@ -115,7 +116,7 @@ def login():
             return response
         else:
             log('failed login [email: %s]' % email, '#FF3399', 'none', request.remote_addr)
-            return render_template('login.html', message='Sorry, wrong username and/or password.')
+            return render_template('login.html', login_error='Sorry, wrong username and/or password.')
         return email
 
 
@@ -254,6 +255,13 @@ def logpage():
     
     logs = get_logs()
     return render_template('log.html', logs=logs)
+
+
+@application.route("/addemail", methods=['POST',])
+def addemail():
+    email = request.form['email']
+    add_email(email, request.remote_addr)
+    return render_template('login.html', email_message="Thank you, we'll be in touch.")
 
 
 # temporary demo area
