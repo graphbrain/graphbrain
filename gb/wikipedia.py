@@ -19,6 +19,29 @@ def getpage(title):
     return ''.join(s)
 
 
+def page2sections(page):
+    sections = {}
+    cur_section = ''
+    cur_text = ''
+
+    lines = page.split('\n')
+    for l in lines:
+        if (len(l) > 4) and (l[:2] == '=='):
+            if len(cur_text) > 0:
+                sections[cur_section] = cur_text
+            section = l.strip(' =')
+            section = section.lower()
+            cur_section = section
+            cur_text = ''
+        else:
+            cur_text += l + '\n'
+
+    if len(cur_text) > 0:
+        sections[cur_section] = cur_text
+
+    return sections
+
+
 def text_and_or_link(s):
     text = ''
     link = ''

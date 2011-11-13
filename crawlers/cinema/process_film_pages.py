@@ -11,33 +11,26 @@ from pymongo import Connection
 from gb import wikipedia 
 
 
-def page2sections(page):
-    sections = {}
-    cur_section = ''
-    cur_text = ''
+def person_id(db, name, wptitle):
+    pid = None
+    mpeople = db.people
+    d = {}
+    d['name'] = name
+    if len(wptitle) > 0:
+        d['wptitle'] = wptitle
+    person = mpeople.find_one(d)
+    if person is None:
+        pid = mpeople.insert(d)
+    else:
+        pid = person['_id']
 
-    lines = page.split('\n')
-    for l in lines:
-        if (len(l) > 4) and (l[:2] == '=='):
-            if len(cur_text) > 0:
-                sections[cur_section] = cur_text
-            section = l.strip(' =')
-            section = section.lower()
-            cur_section = section
-            cur_text = ''
-        else:
-            cur_text += l + '\n'
-
-    if len(cur_text) > 0:
-                sections[cur_section] = cur_text
-
-    return sections
+    return pid
 
 
-def process_page(wptitle):
+def process_page(db, wptitle, film):
     print 'Processing: ', wptitle
     wpage = wikipedia.getpage(wptitle)
-    sections = page2sections(wpage)
+    sections = wikipedia.page2sections(wpage)
 
     # process infobox
     properties = {}
@@ -65,6 +58,7 @@ def process_page(wptitle):
                 role = l.split(' as ')
                 text, link = wikipedia.text_and_or_link(role[0])
                 print '%s [%s]' % (text, link)
+                print person_id(db, text, link)
 
 
 def main():
@@ -74,7 +68,7 @@ def main():
     q = mfilms.find()
     for film in q:
         wptitle = film['wptitle']
-        process_page(wptitle)
+        process_page(db, wptitle, film)
 
 
 if __name__=='__main__':
