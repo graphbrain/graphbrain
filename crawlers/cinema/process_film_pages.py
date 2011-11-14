@@ -31,7 +31,7 @@ def people_list(db, s):
     result = []
     items = wikipedia.br_list(s)
     for i in items:
-        name, wptitle = wikipedia.text_and_or_link(i)
+        name,  wptitle = wikipedia.text_and_or_link(i)
         result.append(person_id(db, name, wptitle))
     return result
 
@@ -74,10 +74,11 @@ def process_page(db, wptitle, film):
                         poster = wikipedia.get_image_url(value.strip())
                     elif key == 'poster':
                         poster = wikipedia.get_image_url(value.strip())
-                    properties[key] = value
+                    #properties[key] = value
     #print properties
 
     # process cast
+    cast = []
     if 'cast' in sections:
         print '->Cast'
         lines = sections['cast'].split('\n')
@@ -87,9 +88,28 @@ def process_page(db, wptitle, film):
                 l = l.strip('* ')
                 role = l.split(' as ')
                 text, link = wikipedia.text_and_or_link(role[0])
-                print '%s [%s]' % (text, link)
-                print person_id(db, text, link)
+                #print '%s [%s]' % (text, link)
+                cast.append(person_id(db, text, link))
 
+    # actors = cast + starring
+
+    # update db
+    mfilms = db.films
+    film = mfilms.find_one({'wptitle': wptitle})
+    d = {}
+    if len(actors) > 0:
+        d['actors'] = actors
+    if len(producers) > 0:
+        d['producers'] = producers
+    if len(writers) > 0:
+        d['writers'] = writers
+    if len(directors) > 0:
+        d['directors'] = directors
+    if len(musicians) > 0:
+        d['musicians'] = musicians
+    if len(poster) > 0:
+        d['poster'] = poster
+    self.db[self.collection].update({'_id': film['_id']}, {'$set': d})
 
 def main():
     db = Connection().cinema
