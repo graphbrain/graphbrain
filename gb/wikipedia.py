@@ -57,3 +57,11 @@ def text_and_or_link(s):
         text = s.strip()
 
     return text, link
+
+
+def br_list(s):
+    result = []
+    items = s.split('<br />')
+    for i in items:
+        result.append(i.strip())
+    return result
