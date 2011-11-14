@@ -91,7 +91,10 @@ def process_page(db, wptitle, film):
                 #print '%s [%s]' % (text, link)
                 cast.append(person_id(db, text, link))
 
-    # actors = cast + starring
+    actors = cast
+    for s in starring:
+        if not s in actors:
+            actors.append(s)
 
     # update db
     mfilms = db.films
@@ -109,7 +112,7 @@ def process_page(db, wptitle, film):
         d['musicians'] = musicians
     if len(poster) > 0:
         d['poster'] = poster
-    self.db[self.collection].update({'_id': film['_id']}, {'$set': d})
+    mfilms.update({'_id': film['_id']}, {'$set': d})
 
 def main():
     db = Connection().cinema
