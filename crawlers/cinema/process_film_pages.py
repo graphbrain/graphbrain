@@ -70,10 +70,12 @@ def process_page(db, wptitle, film):
                         musicians = people_list(db, value)
                     elif key == 'starring':
                         starring = people_list(db, value)
+                    elif key == 'image':
+                        poster = wikipedia.get_image_url(value.strip())
                     elif key == 'poster':
-                        poster = value.strip()
+                        poster = wikipedia.get_image_url(value.strip())
                     properties[key] = value
-    print properties
+    #print properties
 
     # process cast
     if 'cast' in sections:
