@@ -27,10 +27,26 @@ def person_id(db, name, wptitle):
     return pid
 
 
+def people_list(db, s):
+    result = []
+    items = wikipedia.br_list(s)
+    for i in items:
+        name, wptitle = wikipedia.text_and_or_link(i)
+        result.append(person_id(db, name, wptitle))
+    return result
+
+
 def process_page(db, wptitle, film):
     print 'Processing: ', wptitle
     wpage = wikipedia.getpage(wptitle)
     sections = wikipedia.page2sections(wpage)
+
+    producers = []
+    writers = []
+    directors = []
+    musicians = []
+    starring = []
+    poster = ''
 
     # process infobox
     properties = {}
@@ -42,9 +58,21 @@ def process_page(db, wptitle, film):
                 l = l.strip('|')
                 prop = l.split('=')
                 if len(prop) > 1:
-                    prop[0] = prop[0].strip()
-                    prop[1] = prop[1].strip()
-                    properties[prop[0]] = prop[1]
+                    key = prop[0].strip()
+                    value = prop[1].strip()
+                    if key == 'producer':
+                        producers = people_list(db, value)
+                    elif key == 'writer':
+                        writers = people_list(db, value)
+                    elif key == 'director':
+                        directors = people_list(db, value)
+                    elif key == 'music':
+                        musicians = people_list(db, value)
+                    elif key == 'starring':
+                        starring = people_list(db, value)
+                    elif key == 'poster':
+                        poster = value.strip()
+                    properties[key] = value
     print properties
 
     # process cast
