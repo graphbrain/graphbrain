@@ -100,5 +100,8 @@ def get_image_url(name):
     html = get_image_html(name)
     m = re.findall('upload.wikimedia.org/wikipedia/en/([^/]*)/([^/]*)', html)
     if len(m) > 0:
-        url = u'http://upload.wikimedia.org/wikipedia/en/%s/%s/%s' % (m[0][0], m[0][1], encodetitle(name))
+        try:
+            url = u'http://upload.wikimedia.org/wikipedia/en/%s/%s/%s' % (m[0][0], m[0][1], encodetitle(name))
+        except:
+            print "ERROR - get_image_url(): couldn't generate url"
     return url
