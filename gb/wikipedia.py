@@ -14,17 +14,14 @@ def encodetitle(title):
 
 
 def getpage(title):
-    try:
-        opener = urllib2.build_opener()
-        opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-        title = encodetitle(title)
-        url = 'http://en.wikipedia.org/w/index.php?title=' + title + '&action=raw';
-        infile = opener.open(url)
-        s = infile.read()
+    opener = urllib2.build_opener()
+    opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+    title = encodetitle(title)
+    url = 'http://en.wikipedia.org/w/index.php?title=' + title + '&action=raw';
+    infile = opener.open(url)
+    s = infile.read()
 
-        return ''.join(s)
-    except:
-        return ''
+    return ''.join(s)
 
 
 def page2sections(page):
