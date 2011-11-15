@@ -85,7 +85,7 @@ def get_image_html(title):
     try:
         infile = opener.open(url)
     except:
-        print "ERROR - get_image_html(): couldn't open url"
+        print "ERROR - get_image_html(): couldn't open url:", url
         return ''
     s = infile.read()
 
