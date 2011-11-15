@@ -19,7 +19,11 @@ def getpage(title, encode=True):
     if encode:
         title = encodetitle(title)
     url = 'http://en.wikipedia.org/w/index.php?title=' + title + '&action=raw';
-    infile = opener.open(url)
+    try:
+        infile = opener.open(url)
+    except:
+        print "ERROR - getpage(): couldn't open url"
+        return ''
     s = infile.read()
 
     return ''.join(s)
