@@ -80,7 +80,7 @@ def br_list(s):
 def get_image_html(title):
     opener = urllib2.build_opener()
     opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-    #title = encodetitle(title)
+    title = encodetitle(title)
     url = 'http://en.wikipedia.org/wiki/File:' + title;
     try:
         infile = opener.open(url)
@@ -97,5 +97,5 @@ def get_image_url(name):
     html = get_image_html(name)
     m = re.findall('upload.wikimedia.org/wikipedia/en/([^/]*)/([^/]*)', html)
     if len(m) > 0:
-        url = 'http://upload.wikimedia.org/wikipedia/en/%s/%s/%s' % (m[0][0], m[0][1], name)
+        url = u'http://upload.wikimedia.org/wikipedia/en/%s/%s/%s' % (m[0][0], m[0][1], encodetitle(name))
     return url
