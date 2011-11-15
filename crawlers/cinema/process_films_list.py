@@ -45,7 +45,7 @@ def main():
     for l in list_pages:
         title = 'List_of_films:_%s' % l
         print title
-        page = wikipedia.getpage(title)
+        page = wikipedia.getpage(title, encode=False)
         films = film_list(page)
         for f in films:
             mfilms = db.films
