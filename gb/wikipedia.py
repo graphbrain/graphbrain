@@ -82,7 +82,11 @@ def get_image_html(title):
     opener.addheaders = [('User-agent', 'Mozilla/5.0')]
     title = encodetitle(title)
     url = 'http://en.wikipedia.org/wiki/File:' + title;
-    infile = opener.open(url)
+    try:
+        infile = opener.open(url)
+    except:
+        print "ERROR - get_image_html(): couldn't open url"
+        return ''
     s = infile.read()
 
     return ''.join(s)
