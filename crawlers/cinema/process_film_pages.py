@@ -37,7 +37,6 @@ def people_list(db, s):
 
 
 def process_page(db, wptitle, film):
-    print 'Processing: ', wptitle
     wpage = wikipedia.getpage(wptitle)
     sections = wikipedia.page2sections(wpage)
 
@@ -80,7 +79,7 @@ def process_page(db, wptitle, film):
     # process cast
     cast = []
     if 'cast' in sections:
-        print '->Cast'
+        #print '->Cast'
         lines = sections['cast'].split('\n')
         for l in lines:
             l = l.strip()
@@ -118,10 +117,14 @@ def main():
     db = Connection().cinema
 
     mfilms = db.films
+    total = mfilms.count()
+    count = 1
     q = mfilms.find()
     for film in q:
         wptitle = film['wptitle']
+        print 'Processing: %s [%d/%d] (%f%%)' % (wptitle, count, total, (float(count) / float(total)) * 100)
         process_page(db, wptitle, film)
+        count += 1
 
 
 if __name__=='__main__':
