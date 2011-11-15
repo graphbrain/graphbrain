@@ -13,10 +13,11 @@ def encodetitle(title):
     return title
 
 
-def getpage(title):
+def getpage(title, encode=True):
     opener = urllib2.build_opener()
     opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-    title = encodetitle(title)
+    if encode:
+        title = encodetitle(title)
     url = 'http://en.wikipedia.org/w/index.php?title=' + title + '&action=raw';
     infile = opener.open(url)
     s = infile.read()
