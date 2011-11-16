@@ -36,7 +36,7 @@ def people_list(db, s):
     return result
 
 
-def process_page(db, wptitle, album):
+def process_album_page(db, wptitle, album):
     print 'Processing: ', wptitle
     wpage = wikipedia.getpage(wptitle)
     sections = wikipedia.page2sections(wpage)
@@ -62,7 +62,7 @@ def process_page(db, wptitle, album):
                     elif key == 'Producer':
                         producer = people_list(db, value)
                     elif key == 'Cover':
-                        cover = value.strip()
+                        cover = wikipedia.get_image_url(value.strip())
                     properties[key] = value
     print properties
 
@@ -82,12 +82,12 @@ def process_page(db, wptitle, album):
 
 
 def main():
-    db = Connection().composers
+    db = Connection().albums
 
-    mcomposers = db.composers
-    q = mcomposers.find()
-    for composer in q:
-        wptitle = composer['wptitle']
+    mcomposers = db.albums
+    q = malbums.find()
+    for album in q:
+        wptitle = album['wptitle']
         process_page(db, wptitle, composer)
 
 
