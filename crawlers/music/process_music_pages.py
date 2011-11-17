@@ -56,7 +56,7 @@ def process_album_page(db, wptitle, album):
                 prop = l.split('=')
                 if len(prop) > 1:
                     key = prop[0].strip()
-                    value = prop[1].strip()
+                    value = prop[1].strip('[[]]')
                     if key == 'Artist':
                         artist = people_list(db, value)
                     elif key == 'Producer':
@@ -64,31 +64,22 @@ def process_album_page(db, wptitle, album):
                     elif key == 'Cover':
                         cover = wikipedia.get_image_url(value.strip())
                     properties[key] = value
-    print properties
+    #print properties
 
-    # process band members
-    if 'Personnel' in sections:
-        print '->Personnel'
-        lines = sections['Personnel'].split('\n')
-
-        for l in lines:
-            l = l.strip()
-            if (len(l) > 1) and (l[0] == '*'):
-                l = l.strip('* ')
-                member=l.split('&nbsp;-')
-                text, link = wikipedia.text_and_or_link(member[0])
-                print '%s [%s]' % (text, link)
-                print person_id(db, text, link)
-
+   
 
 def main():
     db = Connection().albums
-
-    mcomposers = db.albums
+    malbums = db.albums
+    total = malbums.count()
+    count=1
     q = malbums.find()
     for album in q:
         wptitle = album['wptitle']
-        process_page(db, wptitle, composer)
+        print 'Processing: %s [%d/%d] (%f%%)' % (wptitle, count, total, (float(count) / float(total)) * 100)
+        process_album_page(db, wptitle, album)
+        count+=1
+
 
 
 if __name__=='__main__':
