@@ -46,7 +46,7 @@ def main():
     mpeople = db.people
     total = mpeople.count()
     count = 1
-    q = mpeople.find()
+    q = mpeople.find(timeout=False)
     for person in q:
         print 'Processing: %s [%d/%d] (%f%%)' % (person['name'], count, total, (float(count) / float(total)) * 100)
         if 'wptitle' in person.keys():
