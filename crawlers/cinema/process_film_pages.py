@@ -119,7 +119,7 @@ def main():
     mfilms = db.films
     total = mfilms.count()
     count = 1
-    q = mfilms.find()
+    q = mfilms.find(timeout=False)
     for film in q:
         wptitle = film['wptitle']
         print 'Processing: %s [%d/%d] (%f%%)' % (wptitle, count, total, (float(count) / float(total)) * 100)

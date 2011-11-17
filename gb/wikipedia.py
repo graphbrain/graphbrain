@@ -73,7 +73,7 @@ def br_list(s):
     result = []
     items = s.split('<br />')
     for i in items:
-        result.append(i.strip())
+        result.append(i.strip() )
     return result
 
 

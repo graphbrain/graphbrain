@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 
-
 import sys
 from pymongo import Connection
 from gb.node import Node
