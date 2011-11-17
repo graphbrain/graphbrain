@@ -20,17 +20,17 @@ def album_list(markup):
             if(len(aa)>1):
                 artist_matches=re.findall('\[\[([^\]]*)\]\]', aa[0])
                 album_matches=re.findall('\[\[([^\]]*)\]\]', aa[1])
-                if(len(album_matches>0)):
+                if(len(album_matches)>0):
                     s = album_matches[0].split('|')
-                if(len(artist_matches)>0)
+                if(len(artist_matches)>0):
                     artist=artist_matches[0].split('|')
                 else:
                     artist=aa[0].strip('* ')
                 wptitle = s[0]
                 title = wptitle        
             
-            a = {'title': title, 'wptitle': wptitle, 'artist': artist}
-            albums.append(a)
+                a = {'title': title, 'wptitle': wptitle, 'artist': artist}
+                albums.append(a)
 
     return albums
 
@@ -51,12 +51,12 @@ def main():
         albums = album_list(page)
         for a in albums:
             malbums = db.albums
-            if malbums.find_one({'title': a['Name']}) is None:
+            if malbums.find_one({'title': a['title']}) is None:
                 malbums.insert(a)
                 inserted += 1
-                print '"%s" inserted' % a['Name']
+                print '"%s" inserted' % a['title']
             else:
-                print 'NOT INSERTED: "%s"' % c['Name']
+                print 'NOT INSERTED: "%s"' % a['title']
         count += len(albums)
 
     print '%d albums found, %d inserted.' % (count, inserted)
