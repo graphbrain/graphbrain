@@ -11,7 +11,7 @@ class Node(DbObj):
         DbObj.__init__(self)
         self.collection = 'nodes'
 
-    def create(self, label, graph, node_type='text'):
+    def create(self, label, graph, node_type='text', eid='', crawler=''):
         self.d = {}
         self.d['label'] = label
         self.d['type'] = node_type
@@ -19,9 +19,17 @@ class Node(DbObj):
         self.d['creation_ts'] = datetime.now()
         self.d['origs'] = []
         self.d['targs'] = {}
+        self.d['eid'] = eid
+        self.d['crawler'] = crawler
 
         self._insert()
 
+        return self
+
+    def create_or_get_by_eid(self, label, graph, node_type='text', eid='', crawler=''):
+        self.d = self.db.nodes.find_one({'eid': eid, 'graph': graph.d['_id']})
+        if self.d is None:
+            self.create(label, graph, node_type=node_type, eid=eid, crawler=crawler)
         return self
 
     def get_by_label(self, label, graph_id):
