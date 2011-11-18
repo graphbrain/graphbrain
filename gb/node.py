@@ -42,7 +42,7 @@ class Node(DbObj):
 
         next_nodes = []
 
-        if (depth < 2):
+        if (depth < 1):
             if 'targs' in self.d:
                 for n in self.d['targs'].keys():
                     n = str(n)
