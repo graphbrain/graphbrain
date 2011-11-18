@@ -22,7 +22,7 @@ def getpage(title, encode=True):
     try:
         infile = opener.open(url)
     except:
-        print "ERROR - getpage(): couldn't open url"
+        print "ERROR - getpage(): couldn't open url: ", url
         return ''
     s = infile.read()
 
