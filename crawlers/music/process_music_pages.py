@@ -42,7 +42,7 @@ def process_album_page(db, wptitle, album):
     sections = wikipedia.page2sections(wpage)
 
     artists = []
-    producer=[]
+    producers=[]
     cover = ''
 
     # process infobox
@@ -58,14 +58,23 @@ def process_album_page(db, wptitle, album):
                     key = prop[0].strip()
                     value = prop[1].strip('[[]]')
                     if key == 'Artist':
-                        artist = people_list(db, value)
+                        artists = people_list(db, value)
                     elif key == 'Producer':
-                        producer = people_list(db, value)
+                        producers = people_list(db, value)
                     elif key == 'Cover':
                         cover = wikipedia.get_image_url(value.strip())
                     properties[key] = value
     #print properties
-
+    malbums = db.albums
+    album = malbums.find_one({'wptitle': wptitle})
+    d = {}
+    if len(artists) > 0:
+        d['artists'] = artists
+    if len(producers) > 0:
+        d['producers'] = producers
+    if len(cover) > 0:
+        d['cover'] = cover
+    malbums.update({'_id': album['_id']}, {'$set': d})
    
 
 def main():

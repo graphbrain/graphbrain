@@ -41,7 +41,7 @@ def process_person(db, wptitle):
     mpeople.update({'_id': person['_id']}, {'$set': d})
 
 def main():
-    db = Connection().cinema
+    db = Connection().albums
 
     mpeople = db.people
     total = mpeople.count()
