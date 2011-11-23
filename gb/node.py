@@ -84,7 +84,7 @@ class Node(DbObj):
                 for targ_id, targ_list in targs.items():
                     if targ_id in nodeids:
                         for targ in targ_list:
-                            ilinks.append({'orig': orig.d['_id'], 'targ': targ_id, 'relation': targ['relation'], 'directed': targ['directed']})
+                            ilinks.append({'orig': str(orig.d['_id']), 'targ': targ_id, 'relation': targ['relation'], 'directed': targ['directed']})
 
         return ilinks
 
@@ -156,12 +156,12 @@ class Node(DbObj):
             # adjust links
             auxlinks = []
             if direction:
-                for l in links:
+                for l in newlinks:
                     if (l['orig'] != orig_id) or (l['relation'] != rel):
                         auxlinks.append(l)
                 auxlinks.append({'orig': orig_id, 'targ': superkey, 'relation': rel, 'directed': '1'})
             else:
-                for l in links:
+                for l in newlinks:
                     if (l['targ'] != targ_id) or (l['relation'] != rel):
                         auxlinks.append(l)
                 auxlinks.append({'orig': superkey, 'targ': targ_id, 'relation': rel, 'directed': '1'})
@@ -169,6 +169,8 @@ class Node(DbObj):
 
             self._delrel(rd, key)
             key = self._maxrel(rd)
+
+            super_id += 1
 
         return snodes, newlinks
 
@@ -182,6 +184,7 @@ class Node(DbObj):
         #snodes, newlinks = self._supernodes(links)
         #print snodes
         #print newlinks
+        #print len(links), len(newlinks)
 
         nodes_json = '['
         for node in nodes:
