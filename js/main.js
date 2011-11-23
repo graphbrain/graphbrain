@@ -153,7 +153,7 @@ var initGraph = function() {
 
     for (i = 0; i < links.length; i++) {
         var l = links[i];
-        var link = new Link(l['id'], g.nodes[l['orig']], g.nodes[l['targ']], l['type']);
+        var link = new Link(l['id'], g.nodes[l['orig']], g.nodes[l['targ']], l['relation']);
         g.links.push(link);
     }
     
