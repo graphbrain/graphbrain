@@ -2,6 +2,7 @@
 
 
 from datetime import datetime
+import json
 
 from dbobj import DbObj
 
@@ -78,13 +79,16 @@ class Node(DbObj):
 
     def _internal_links(self, nodes, nodeids):
         ilinks = []
+        link_id = 0
         for orig in nodes:
             if 'targs' in orig.d:
                 targs = orig.d['targs']
                 for targ_id, targ_list in targs.items():
                     if targ_id in nodeids:
                         for targ in targ_list:
-                            ilinks.append({'orig': str(orig.d['_id']), 'targ': targ_id, 'relation': targ['relation'], 'directed': targ['directed']})
+                            ilinks.append({'id':link_id, 'orig': str(orig.d['_id']), 'targ': targ_id,
+                                'relation': targ['relation'], 'directed': targ['directed']})
+                            link_id += 1
 
         return ilinks
 
@@ -186,18 +190,11 @@ class Node(DbObj):
         #print newlinks
         #print len(links), len(newlinks)
 
-        nodes_json = '['
+        nodes_list = []
         for node in nodes:
-            nodes_json = '%s{"id":"%s", "parent":"%s", "text":"%s", "type":"%s"},' % (
-                nodes_json, str(node.d['_id']), str(node.parent), node.d['label'], node.d['type'])
-        nodes_json = '%s]' % nodes_json
+            nodes_list.append({'id':str(node.d['_id']), 'parent':str(node.parent), 'text':node.d['label'], 'type':node.d['type']})
+        nodes_json = json.dumps(nodes_list, separators=(',',':'))
 
-        link_id = 0
-        links_json = '['
-        for l in links:
-            links_json = '%s{"id":"%d", "orig": "%s", "targ":"%s", "type":"%s", "dir":"%s"},' % (
-                            links_json, link_id, str(l['orig']), str(l['targ']), l['relation'], l['directed'])
-            link_id += 1
-        links_json = '%s]' % links_json
+        links_json = json.dumps(links, separators=(',',':'))
 
         return nodes_json, links_json
