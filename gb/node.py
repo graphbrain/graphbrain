@@ -185,16 +185,15 @@ class Node(DbObj):
         self._neighbors(nodes, nodeids)
         links = self._internal_links(nodes, nodeids)
 
-        #snodes, newlinks = self._supernodes(links)
-        #print snodes
-        #print newlinks
-        #print len(links), len(newlinks)
+        snodes, links = self._supernodes(links)
 
         nodes_list = []
         for node in nodes:
             nodes_list.append({'id':str(node.d['_id']), 'parent':str(node.parent), 'text':node.d['label'], 'type':node.d['type']})
         nodes_json = json.dumps(nodes_list, separators=(',',':'))
 
+        snodes_json = json.dumps(snodes, separators=(',',':'))
+
         links_json = json.dumps(links, separators=(',',':'))
 
-        return nodes_json, links_json
+        return nodes_json, snodes_json, links_json

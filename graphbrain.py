@@ -60,10 +60,11 @@ def set_session(response, user_id, session):
 
 def node_response(node_id, user, error=''):
     n = Node().get_by_id(node_id)
-    nodes_json, links_json = n.neighbours_json()
+    nodes_json, snodes_json, links_json = n.neighbours_json()
     graphs = user.graph_list_for_user(user)
     r = application.make_response(render_template('node.html',
                                                   nodes_json=nodes_json,
+                                                  snodes_json=snodes_json,
                                                   links_json=links_json,
                                                   graph_id=n.d['graph'],
                                                   node_id=n.d['_id'],
