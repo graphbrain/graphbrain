@@ -110,5 +110,28 @@ var interRect = function(x1, y1, x2, y2, rleft, rtop, rright, rbottom) {
 
 
 var rectsOverlap = function(r1_x1, r1_y1, r1_x2, r1_y2, r2_x1, r2_y1, r2_x2, r2_y2) {
-    return (r1_x1 < r2_x2 && r1_x2 > r2_x1 && r1_y1 < r2_y2 && r1_y2 > r2_y1)
+    return (r1_x1 < r2_x2 && r1_x2 > r2_x1 && r1_y1 < r2_y2 && r1_y2 > r2_y1);
+}
+
+
+var rectsDist = function(r1_x1, r1_y1, r1_x2, r1_y2, r2_x1, r2_y1, r2_x2, r2_y2) {
+    if (rectsOverlap(r1_x1, r1_y1, r1_x2, r1_y2, r2_x1, r2_y1, r2_x2, r2_y2)) {
+        return 0;
+    }
+
+    var c1_x = r1_x1 + ((r1_x2 - r1_x1) / 2);
+    var c1_y = r1_y1 + ((r1_y2 - r1_y1) / 2);
+    var c2_x = r2_x1 + ((r2_x2 - r2_x1) / 2);
+    var c2_y = r2_y1 + ((r2_y2 - r2_y1) / 2);
+
+    var p1 = interRect(c1_x, c1_y, c2_x, c2_y, r1_x1, r1_y1, r1_x2, r1_y2);
+    var p2 = interRect(c2_x, c2_y, c1_x, c1_y, r2_x1, r2_y1, r2_x2, r2_y2);
+
+    var deltaX = p1[0] - p2[0];
+    var deltaY = p1[1] - p2[1];
+
+    var dist = (deltaX * deltaX) + (deltaY * deltaY);
+    dist = Math.sqrt(dist);
+
+    return dist;
 }
