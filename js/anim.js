@@ -7,9 +7,9 @@ var graphAnim = function() {
         g.forceStep();
     }
 
-    for (var key in g.nodes) {
-        var node = g.nodes[key];
-        node.moveTo(node.x, node.y, false);
+    for (var key in g.snodes) {
+        var snode = g.snodes[key];
+        snode.moveTo(snode.x, snode.y, false);
     }
     g.drawLinks();
     cycle += 1;

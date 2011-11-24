@@ -8,6 +8,7 @@ import os, os.path, shutil
 SCRIPTS = [
     'js/aux.js',
     'js/node.js',
+    'js/snode.js',
     'js/link.js',
     'js/graph.js',
     'js/uimodes.js',

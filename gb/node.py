@@ -136,7 +136,7 @@ class Node(DbObj):
                 del rd[k]
 
     def _supernodes(self, links):
-        snodes = {}
+        snodes = []
         newlinks = links
         rd = self._reldict(links)
         key = self._maxrel(rd)
@@ -155,20 +155,20 @@ class Node(DbObj):
                 targ_id = key[2]
             
             superkey = 'sn%d' % super_id
-            snodes[superkey] = nodes
+            snodes.append({'id': superkey, 'nodes': nodes})
 
             # adjust links
             auxlinks = []
             if direction:
                 for l in newlinks:
-                    if (l['orig'] != orig_id) or (l['relation'] != rel):
+                    if (not 'orig' in l) or (('orig' in l) and (l['orig'] != orig_id)) or (l['relation'] != rel):
                         auxlinks.append(l)
-                auxlinks.append({'orig': orig_id, 'targ': superkey, 'relation': rel, 'directed': '1'})
+                auxlinks.append({'orig': orig_id, 'starg': superkey, 'relation': rel, 'directed': '1'})
             else:
                 for l in newlinks:
-                    if (l['targ'] != targ_id) or (l['relation'] != rel):
+                    if (not 'targ' in l) or (('targ' in l) and (l['targ'] != targ_id)) or (l['relation'] != rel):
                         auxlinks.append(l)
-                auxlinks.append({'orig': superkey, 'targ': targ_id, 'relation': rel, 'directed': '1'})
+                auxlinks.append({'sorig': superkey, 'targ': targ_id, 'relation': rel, 'directed': '1'})
             newlinks = auxlinks
 
             self._delrel(rd, key)
@@ -187,10 +187,10 @@ class Node(DbObj):
 
         snodes, links = self._supernodes(links)
 
-        nodes_list = []
+        node_dict = {}
         for node in nodes:
-            nodes_list.append({'id':str(node.d['_id']), 'parent':str(node.parent), 'text':node.d['label'], 'type':node.d['type']})
-        nodes_json = json.dumps(nodes_list, separators=(',',':'))
+            node_dict[str(node.d['_id'])] = {'parent':str(node.parent), 'text':node.d['label'], 'type':node.d['type']}
+        nodes_json = json.dumps(node_dict, separators=(',',':'))
 
         snodes_json = json.dumps(snodes, separators=(',',':'))
 

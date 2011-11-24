@@ -1,39 +1,46 @@
-// Node
-var Node = function(id, text, type, snode) {
+// Super node
+var SNode = function(id) {
     this.id = id;
-    this.text = text;
-    this.type = type;
     this.x = 0;
     this.y = 0;
     this.vX = 0;
     this.vY = 0;
+    this.nodes = [];
     this.subNodes = [];
-    this.snode = snode;
+    this.parent = 'unknown';
 }
 
-Node.prototype.place = function() {
-    var node = document.createElement('div');
-    node.setAttribute('class', 'node');
-    node.setAttribute('id', this.id);
-    if (this.type == 'text') {
-        node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.id + '">' + this.text + '</a>';
+SNode.prototype.moveTo = function(x, y, redraw) {
+    redraw = typeof(redraw) !== 'undefined' ? redraw : true;
+    this.x = x;
+    this.y = y;
+    $('div#' + this.id).css('left', (this.x - (this.width / 2)) + 'px');
+    $('div#' + this.id).css('top', (this.y - (this.height / 2)) + 'px');
+    if (redraw) {
+        g.drawLinks();
     }
-    else if (this.type == 'image') {
-        node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.id + '"><img src="' + this.text + '" width="50px" /></a>';
+}
+
+SNode.prototype.place = function() {
+    var snode = document.createElement('div');
+    snode.setAttribute('class', 'snode');
+    snode.setAttribute('id', this.id);
+    
+    var nodesDiv = document.getElementById("nodesDiv");
+    nodesDiv.appendChild(snode);
+
+    // place nodes contained in this suoer node
+    for (var key in this.nodes) {
+        this.nodes[key].place();
     }
-    var snodeDiv = document.getElementById(this.snode.id);
-    snodeDiv.appendChild(node);
 
     var width = $('div#' + this.id).width();
     var height = $('div#' + this.id).height();
-    if (this.type == 'image') {
-        height = 55;
-    }
     
+    snode.setAttribute('style', 'left:' + (this.x - (width / 2)) + 'px; top:' + (this.y - (height / 2)) + 'px;');
     this.width = width;
     this.height = height;
    
-    /*
     var nodeObj = this;
 
     $("div#" + this.id).bind("mousedown", function(e) {
@@ -66,5 +73,4 @@ Node.prototype.place = function() {
         }
     },
     function(e) {});
-    */
 }

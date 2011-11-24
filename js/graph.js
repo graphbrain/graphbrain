@@ -1,6 +1,7 @@
 // Graph
 var Graph = function(context) {
     this.context = context;
+    this.snodes = {}
     this.nodes = {};
     this.links = [];
     this.newNode = false;
@@ -20,8 +21,8 @@ Graph.prototype.drawLinks = function() {
 }
 
 Graph.prototype.placeNodes = function() {
-    for (var key in this.nodes) {
-        this.nodes[key].place();
+    for (var key in this.snodes) {
+        this.snodes[key].place();
     }
 }
 
@@ -69,10 +70,10 @@ Graph.prototype.labelAtPoint = function(x, y) {
     return -1;
 }
 
-Graph.prototype.genNodeKeys = function() {
-    this.nodeKeys = []
-    for (var key in this.nodes) {
-        this.nodeKeys.push(key);
+Graph.prototype.genSNodeKeys = function() {
+    this.snodeKeys = []
+    for (var key in this.snodes) {
+        this.snodeKeys.push(key);
     }
 }
 
@@ -82,17 +83,17 @@ Graph.prototype.forceStep = function() {
     var hookeConst = 0.06;
 
     // Init forces
-    for (var key in this.nodes) {
-        var node = this.nodes[key];
-        node.fX = 0;
-        node.fY = 0;
+    for (var key in this.snodes) {
+        var snode = this.snodes[key];
+        snode.fX = 0;
+        snode.fY = 0;
     }
 
     // Coulomb repulsion
-    for (var i = 0; i < this.nodeKeys.length; i++) {
-        var orig = this.nodes[this.nodeKeys[i]];
-        for (var j = i + 1; j < this.nodeKeys.length; j++) {
-            var targ = this.nodes[this.nodeKeys[j]];
+    for (var i = 0; i < this.snodeKeys.length; i++) {
+        var orig = this.snodes[this.snodeKeys[i]];
+        for (var j = i + 1; j < this.snodeKeys.length; j++) {
+            var targ = this.snodes[this.snodeKeys[j]];
 
             var deltaX = orig.x - targ.x;
             var deltaY = orig.y - targ.y;
@@ -109,8 +110,8 @@ Graph.prototype.forceStep = function() {
     // Hooke attraction
     for (var i = 0; i < this.links.length; i++) {
         var link = this.links[i];
-        var orig = link.orig;
-        var targ = link.targ;
+        var orig = link.sorig;
+        var targ = link.starg;
 
         var deltaX = orig.x - targ.x;
         var deltaY = orig.y - targ.y;
@@ -124,11 +125,13 @@ Graph.prototype.forceStep = function() {
     }
 
     // Update velocities and positions
-    for (var key in this.nodes) {
-        var node = this.nodes[key];
-        node.vX = (node.vX + node.fX) * drag;
-        node.vY = (node.vY + node.fY) * drag;
-        node.x = node.x + node.vX;
-        node.y = node.y + node.vY;
+    for (var key in this.snodes) {
+        var node = this.snodes[key];
+        if (node.parent != '') {
+            node.vX = (node.vX + node.fX) * drag;
+            node.vY = (node.vY + node.fY) * drag;
+            node.x = node.x + node.vX;
+            node.y = node.y + node.vY;
+        }
     }
 }

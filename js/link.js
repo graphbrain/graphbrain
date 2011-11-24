@@ -1,8 +1,10 @@
 // Link
-var Link = function(id, orig, targ, type) {
+var Link = function(id, orig, sorig, targ, starg, type) {
     this.id = id;
     this.orig = orig;
+    this.sorig = sorig;
     this.targ = targ;
+    this.starg = starg;
     this.type = type;
     this.ox = 0;
     this.oy = 0;
@@ -13,15 +15,15 @@ var Link = function(id, orig, targ, type) {
 Link.prototype.draw = function(context) {
     var x0 = this.ox;
     var y0 = this.oy;
-    if (this.orig) {
-        x0 = this.orig.x;
-        y0 = this.orig.y;
+    if (this.sorig) {
+        x0 = this.sorig.x;
+        y0 = this.sorig.y;
     }
     var x1 = this.tx;
     var y1 = this.ty;
-    if (this.targ) {
-        x1 = this.targ.x;
-        y1 = this.targ.y;
+    if (this.starg) {
+        x1 = this.starg.x;
+        y1 = this.starg.y;
     }
 
     var cx = x0 + ((x1 - x0) / 2)

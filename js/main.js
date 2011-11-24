@@ -124,36 +124,70 @@ var initGraph = function() {
 
     context.translate(0.5, 0.5)
 
-    var i;
-    for (i = 0; i < nodes.length; i++) {
-        var n = nodes[i];
-        var id = n['id'];
-        var text = n['text'];
-        var type = n['type'];
-        var parentID = n['parent'];
-        var node = new Node(id, text, type);
-        g.nodes[id] = node;
+    // process super nodes and associated nodes
+    var i, j;
+    for (i = 0; i < snodes.length; i++) {
+        var sn = snodes[i];
+        var sid = sn['id'];
+        var nlist = sn['nodes'];
+        
+        var snode = new SNode(sid)
+
+        for (j = 0; j < nlist.length; j++) {
+            var nid = nlist[j];
+            var nod = nodes[nid];
+            var text = nod['text'];
+            var type = nod['type'];
+            var parentID = nod['parent'];
+            var node = new Node(nid, text, type, snode);
+            snode.nodes[nid] = node;
+            g.nodes[nid] = node;
+
+            if ((snode.parent == 'unknown') || (parentID == '')) {
+                snode.parent = parentID;
+            }
+        }
+        g.snodes[sid] = snode;
     }   
 
-    // Assign root, parents and subNodes
-    for (i = 0; i < nodes.length; i++) {
-        var n = nodes[i];
-        var id = n['id'];
-        var parentID = n['parent'];
+    // assign root, parents and subNodes
+    for (i = 0; i < snodes.length; i++) {
+        var sid = snodes[i]['id'];
+        var snode = g.snodes[sid];
+        var parentID = snode.parent;
         if (parentID == '') {
-            g.root = g.nodes[id];
-            g.nodes[id].parent = false;
+            g.root = snode;
+            snode.parent = false;
         }
         else {
-            g.nodes[id].parent = g.nodes[parentID];
-            g.nodes[parentID].subNodes[g.nodes[parentID].subNodes.length] = g.nodes[id];
+            snode.parent = g.nodes[parentID].snode;
+            g.nodes[parentID].snode.subNodes[g.nodes[parentID].snode.subNodes.length] = snode;
         }
     }
-    g.genNodeKeys();
+    g.genSNodeKeys();
 
+    // process links
     for (i = 0; i < links.length; i++) {
         var l = links[i];
-        var link = new Link(l['id'], g.nodes[l['orig']], g.nodes[l['targ']], l['relation']);
+        var orig = '';
+        var targ = '';
+        var sorig = '';
+        var starg = '';
+        if ('orig' in l) {
+            orig  = g.nodes[l['orig']];
+            sorig = orig.snode;
+        }
+        else {
+            sorig  = g.snodes[l['sorig']];
+        }
+        if ('targ' in l) {
+            targ  = g.nodes[l['targ']];
+            starg = targ.snode;
+        }
+        else {
+            starg  = g.snodes[l['starg']]
+        }
+        var link = new Link(l['id'], orig, sorig, targ, starg, l['relation']);
         g.links.push(link);
     }
     
@@ -161,15 +195,6 @@ var initGraph = function() {
     var halfHeight = window.innerHeight / 2;
 
     g.layout(g.root, 1, halfWidth, halfHeight, halfWidth, halfHeight, 0, Math.PI * 2);
-    /*for (var key in g.nodes) {
-        var node = g.nodes[key];
-        node.x = halfWidth + ((Math.random() * 50) - 25);
-        node.y = halfHeight + ((Math.random() * 50) - 25);
-    }*/
-
-    /*for (i = 0; i < 100; i++) {
-        g.forceStep();
-    }*/
 
     context.canvas.width  = window.innerWidth;
     context.canvas.height = window.innerHeight;

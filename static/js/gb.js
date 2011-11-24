@@ -45,7 +45,7 @@ var pointInTriangle = function(A, B, C, P) {
 }
 
 // Node
-var Node = function(id, text, type) {
+var Node = function(id, text, type, snode) {
     this.id = id;
     this.text = text;
     this.type = type;
@@ -54,17 +54,7 @@ var Node = function(id, text, type) {
     this.vX = 0;
     this.vY = 0;
     this.subNodes = [];
-}
-
-Node.prototype.moveTo = function(x, y, redraw) {
-    redraw = typeof(redraw) !== 'undefined' ? redraw : true;
-    this.x = x;
-    this.y = y;
-    $('div#' + this.id).css('left', (this.x - (this.width / 2)) + 'px');
-    $('div#' + this.id).css('top', (this.y - (this.height / 2)) + 'px');
-    if (redraw) {
-        g.drawLinks();
-    }
+    this.snode = snode;
 }
 
 Node.prototype.place = function() {
@@ -77,15 +67,93 @@ Node.prototype.place = function() {
     else if (this.type == 'image') {
         node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.id + '"><img src="' + this.text + '" width="50px" /></a>';
     }
-    var nodesDiv = document.getElementById("nodesDiv");
-    nodesDiv.appendChild(node);
+    var snodeDiv = document.getElementById(this.snode.id);
+    snodeDiv.appendChild(node);
 
     var width = $('div#' + this.id).width();
     var height = $('div#' + this.id).height();
     if (this.type == 'image') {
         height = 55;
     }
-    node.setAttribute('style', 'left:' + (this.x - (width / 2)) + 'px; top:' + (this.y - (height / 2)) + 'px;');
+    
+    this.width = width;
+    this.height = height;
+   
+    /*
+    var nodeObj = this;
+
+    $("div#" + this.id).bind("mousedown", function(e) {
+        if (uiMode === 'drag') {
+            draggedNode = nodeObj;
+            return false;
+        }
+        else {
+            newLink = new Link(0, nodeObj, false, '...');
+            newLink.tx = e.pageX;
+            newLink.ty = e.pageY;
+            return false;
+        }
+    });
+
+    $("div#" + this.id).bind("click", function(e) {
+        if (dragging) {
+            dragging = false;
+            return false;
+        }
+        else {
+            return true;
+        }
+    });
+
+    $("div#" + this.id).hover(
+    function(e) {
+        if (newLink) {
+            newLink.targ = nodeObj;
+        }
+    },
+    function(e) {});
+    */
+}
+// Super node
+var SNode = function(id) {
+    this.id = id;
+    this.x = 0;
+    this.y = 0;
+    this.vX = 0;
+    this.vY = 0;
+    this.nodes = [];
+    this.subNodes = [];
+    this.parent = 'unknown';
+}
+
+SNode.prototype.moveTo = function(x, y, redraw) {
+    redraw = typeof(redraw) !== 'undefined' ? redraw : true;
+    this.x = x;
+    this.y = y;
+    $('div#' + this.id).css('left', (this.x - (this.width / 2)) + 'px');
+    $('div#' + this.id).css('top', (this.y - (this.height / 2)) + 'px');
+    if (redraw) {
+        g.drawLinks();
+    }
+}
+
+SNode.prototype.place = function() {
+    var snode = document.createElement('div');
+    snode.setAttribute('class', 'snode');
+    snode.setAttribute('id', this.id);
+    
+    var nodesDiv = document.getElementById("nodesDiv");
+    nodesDiv.appendChild(snode);
+
+    // place nodes contained in this suoer node
+    for (var key in this.nodes) {
+        this.nodes[key].place();
+    }
+
+    var width = $('div#' + this.id).width();
+    var height = $('div#' + this.id).height();
+    
+    snode.setAttribute('style', 'left:' + (this.x - (width / 2)) + 'px; top:' + (this.y - (height / 2)) + 'px;');
     this.width = width;
     this.height = height;
    
@@ -124,10 +192,12 @@ Node.prototype.place = function() {
 }
 
 // Link
-var Link = function(id, orig, targ, type) {
+var Link = function(id, orig, sorig, targ, starg, type) {
     this.id = id;
     this.orig = orig;
+    this.sorig = sorig;
     this.targ = targ;
+    this.starg = starg;
     this.type = type;
     this.ox = 0;
     this.oy = 0;
@@ -138,15 +208,15 @@ var Link = function(id, orig, targ, type) {
 Link.prototype.draw = function(context) {
     var x0 = this.ox;
     var y0 = this.oy;
-    if (this.orig) {
-        x0 = this.orig.x;
-        y0 = this.orig.y;
+    if (this.sorig) {
+        x0 = this.sorig.x;
+        y0 = this.sorig.y;
     }
     var x1 = this.tx;
     var y1 = this.ty;
-    if (this.targ) {
-        x1 = this.targ.x;
-        y1 = this.targ.y;
+    if (this.starg) {
+        x1 = this.starg.x;
+        y1 = this.starg.y;
     }
 
     var cx = x0 + ((x1 - x0) / 2)
@@ -232,6 +302,7 @@ Link.prototype.pointInLabel = function(p) {
 // Graph
 var Graph = function(context) {
     this.context = context;
+    this.snodes = {}
     this.nodes = {};
     this.links = [];
     this.newNode = false;
@@ -251,8 +322,8 @@ Graph.prototype.drawLinks = function() {
 }
 
 Graph.prototype.placeNodes = function() {
-    for (var key in this.nodes) {
-        this.nodes[key].place();
+    for (var key in this.snodes) {
+        this.snodes[key].place();
     }
 }
 
@@ -300,10 +371,10 @@ Graph.prototype.labelAtPoint = function(x, y) {
     return -1;
 }
 
-Graph.prototype.genNodeKeys = function() {
-    this.nodeKeys = []
-    for (var key in this.nodes) {
-        this.nodeKeys.push(key);
+Graph.prototype.genSNodeKeys = function() {
+    this.snodeKeys = []
+    for (var key in this.snodes) {
+        this.snodeKeys.push(key);
     }
 }
 
@@ -313,17 +384,17 @@ Graph.prototype.forceStep = function() {
     var hookeConst = 0.06;
 
     // Init forces
-    for (var key in this.nodes) {
-        var node = this.nodes[key];
-        node.fX = 0;
-        node.fY = 0;
+    for (var key in this.snodes) {
+        var snode = this.snodes[key];
+        snode.fX = 0;
+        snode.fY = 0;
     }
 
     // Coulomb repulsion
-    for (var i = 0; i < this.nodeKeys.length; i++) {
-        var orig = this.nodes[this.nodeKeys[i]];
-        for (var j = i + 1; j < this.nodeKeys.length; j++) {
-            var targ = this.nodes[this.nodeKeys[j]];
+    for (var i = 0; i < this.snodeKeys.length; i++) {
+        var orig = this.snodes[this.snodeKeys[i]];
+        for (var j = i + 1; j < this.snodeKeys.length; j++) {
+            var targ = this.snodes[this.snodeKeys[j]];
 
             var deltaX = orig.x - targ.x;
             var deltaY = orig.y - targ.y;
@@ -340,8 +411,8 @@ Graph.prototype.forceStep = function() {
     // Hooke attraction
     for (var i = 0; i < this.links.length; i++) {
         var link = this.links[i];
-        var orig = link.orig;
-        var targ = link.targ;
+        var orig = link.sorig;
+        var targ = link.starg;
 
         var deltaX = orig.x - targ.x;
         var deltaY = orig.y - targ.y;
@@ -355,12 +426,14 @@ Graph.prototype.forceStep = function() {
     }
 
     // Update velocities and positions
-    for (var key in this.nodes) {
-        var node = this.nodes[key];
-        node.vX = (node.vX + node.fX) * drag;
-        node.vY = (node.vY + node.fY) * drag;
-        node.x = node.x + node.vX;
-        node.y = node.y + node.vY;
+    for (var key in this.snodes) {
+        var node = this.snodes[key];
+        if (node.parent != '') {
+            node.vX = (node.vX + node.fX) * drag;
+            node.vY = (node.vY + node.fY) * drag;
+            node.x = node.x + node.vX;
+            node.y = node.y + node.vY;
+        }
     }
 }
 // UI modes
@@ -386,9 +459,9 @@ var graphAnim = function() {
         g.forceStep();
     }
 
-    for (var key in g.nodes) {
-        var node = g.nodes[key];
-        node.moveTo(node.x, node.y, false);
+    for (var key in g.snodes) {
+        var snode = g.snodes[key];
+        snode.moveTo(snode.x, snode.y, false);
     }
     g.drawLinks();
     cycle += 1;
@@ -522,36 +595,70 @@ var initGraph = function() {
 
     context.translate(0.5, 0.5)
 
-    var i;
-    for (i = 0; i < nodes.length; i++) {
-        var n = nodes[i];
-        var id = n['id'];
-        var text = n['text'];
-        var type = n['type'];
-        var parentID = n['parent'];
-        var node = new Node(id, text, type);
-        g.nodes[id] = node;
+    // process super nodes and associated nodes
+    var i, j;
+    for (i = 0; i < snodes.length; i++) {
+        var sn = snodes[i];
+        var sid = sn['id'];
+        var nlist = sn['nodes'];
+        
+        var snode = new SNode(sid)
+
+        for (j = 0; j < nlist.length; j++) {
+            var nid = nlist[j];
+            var nod = nodes[nid];
+            var text = nod['text'];
+            var type = nod['type'];
+            var parentID = nod['parent'];
+            var node = new Node(nid, text, type, snode);
+            snode.nodes[nid] = node;
+            g.nodes[nid] = node;
+
+            if ((snode.parent == 'unknown') || (parentID == '')) {
+                snode.parent = parentID;
+            }
+        }
+        g.snodes[sid] = snode;
     }   
 
-    // Assign root, parents and subNodes
-    for (i = 0; i < nodes.length; i++) {
-        var n = nodes[i];
-        var id = n['id'];
-        var parentID = n['parent'];
+    // assign root, parents and subNodes
+    for (i = 0; i < snodes.length; i++) {
+        var sid = snodes[i]['id'];
+        var snode = g.snodes[sid];
+        var parentID = snode.parent;
         if (parentID == '') {
-            g.root = g.nodes[id];
-            g.nodes[id].parent = false;
+            g.root = snode;
+            snode.parent = false;
         }
         else {
-            g.nodes[id].parent = g.nodes[parentID];
-            g.nodes[parentID].subNodes[g.nodes[parentID].subNodes.length] = g.nodes[id];
+            snode.parent = g.nodes[parentID].snode;
+            g.nodes[parentID].snode.subNodes[g.nodes[parentID].snode.subNodes.length] = snode;
         }
     }
-    g.genNodeKeys();
+    g.genSNodeKeys();
 
+    // process links
     for (i = 0; i < links.length; i++) {
         var l = links[i];
-        var link = new Link(l['id'], g.nodes[l['orig']], g.nodes[l['targ']], l['relation']);
+        var orig = '';
+        var targ = '';
+        var sorig = '';
+        var starg = '';
+        if ('orig' in l) {
+            orig  = g.nodes[l['orig']];
+            sorig = orig.snode;
+        }
+        else {
+            sorig  = g.snodes[l['sorig']];
+        }
+        if ('targ' in l) {
+            targ  = g.nodes[l['targ']];
+            starg = targ.snode;
+        }
+        else {
+            starg  = g.snodes[l['starg']]
+        }
+        var link = new Link(l['id'], orig, sorig, targ, starg, l['relation']);
         g.links.push(link);
     }
     
@@ -559,15 +666,6 @@ var initGraph = function() {
     var halfHeight = window.innerHeight / 2;
 
     g.layout(g.root, 1, halfWidth, halfHeight, halfWidth, halfHeight, 0, Math.PI * 2);
-    /*for (var key in g.nodes) {
-        var node = g.nodes[key];
-        node.x = halfWidth + ((Math.random() * 50) - 25);
-        node.y = halfHeight + ((Math.random() * 50) - 25);
-    }*/
-
-    /*for (i = 0; i < 100; i++) {
-        g.forceStep();
-    }*/
 
     context.canvas.width  = window.innerWidth;
     context.canvas.height = window.innerHeight;
