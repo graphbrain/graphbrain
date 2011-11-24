@@ -97,9 +97,14 @@ class Node(DbObj):
         for l in links:
             orig_id = str(l['orig'])
             targ_id = str(l['targ'])
+            root_id = str(self.d['_id'])
+
+            orig_root = (orig_id == root_id)
+            targ_root = (targ_id == root_id)
+
             rel = l['relation']
-            dkey = (True, orig_id, rel)
-            rkey = (False, rel, targ_id)
+            dkey = (True, orig_id, rel, targ_root)
+            rkey = (False, rel, targ_id, orig_root)
             if dkey in rd:
                 rd[dkey].append(targ_id)
             else:
