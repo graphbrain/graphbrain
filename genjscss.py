@@ -6,7 +6,7 @@ import os, os.path, shutil
 
 
 SCRIPTS = [
-    'js/aux.js',
+    'js/geom.js',
     'js/node.js',
     'js/snode.js',
     'js/link.js',

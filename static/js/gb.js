@@ -1,4 +1,5 @@
-// Aux
+// Geom
+
 var rotateAndTranslate = function(point, angle, tx, ty) {
     var x = point[0];
     var y = point[1];
@@ -44,6 +45,68 @@ var pointInTriangle = function(A, B, C, P) {
     return (u > 0) && (v > 0) && (u + v < 1);
 }
 
+
+/*
+Return the intersection point between the line segment defined by (x1, y1) and (x2, y2)
+and a rectangle defined by (rleft, rtop, rright, rbottom)
+
+(x1, y1) is assumed to be inside the rectangle and (x2, y2) outside 
+*/
+var interRect = function(x1, y1, x2, y2, rleft, rtop, rright, rbottom) {
+    var t, tx, ty, edge;
+    
+    var dx = x2 - x1;
+    var dy = y2 - y1;
+    
+    if ((dx == 0) && (dy == 0)) {
+        return 0;
+    }
+
+    // Let x = x1 + dx * t  and calculate t at the intersection point with a vertical border.
+    if (dx != 0) {
+        var edge;
+        if (dx > 0) {
+            edge = rright;
+        }
+        else {
+            edge = rleft;
+        }
+        tx = (edge - x1) / dx;
+    }
+
+    // Let y = y1 + dy * t and calculate t for the vertical border.
+    if (dy != 0) {
+        var edge;
+        if (dy > 0) {
+            edge = rbottom;
+        }
+        else {
+            edge = rtop;
+        }
+        ty = (edge - y1) / dy;
+    }
+
+    // Then take the shorter one.
+    if (dx == 0) {
+        t = ty;
+    }
+    else if (dy == 0) {
+        t = tx;
+    }
+    else {
+        if (tx < ty) {
+            t = tx;
+        }
+        else {
+            t = ty;
+        }
+    }
+
+    // Calculate the coordinates of the intersection point.
+    var ix = x1 + dx * t;
+    var iy = y1 + dy * t;
+    return [ix, iy];
+}
 // Node
 var Node = function(id, text, type, snode) {
     this.id = id;
@@ -703,6 +766,8 @@ var initGraph = function() {
 }
 
 $(function() {
+    console.log(interRect(5, 5, 20, 7.6, 0, 0, 11, 11));
+
     initInterface();
     initGraph(); 
 });
