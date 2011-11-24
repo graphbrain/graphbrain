@@ -107,3 +107,8 @@ var interRect = function(x1, y1, x2, y2, rleft, rtop, rright, rbottom) {
     var iy = y1 + dy * t;
     return [ix, iy];
 }
+
+
+var rectsOverlap = function(r1_x1, r1_y1, r1_x2, r1_y2, r2_x1, r2_y1, r2_x2, r2_y2) {
+    return (r1_x1 < r2_x2 && r1_x2 > r2_x1 && r1_y1 < r2_y2 && r1_y2 > r2_y1)
+}
