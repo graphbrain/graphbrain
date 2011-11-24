@@ -9,7 +9,6 @@ html, body {
 .node {
     color:#000;
     background: #E0E4CC;
-    position:fixed;
     font-family: Sans-Serif;
     font-size: 12px;
     padding: 5px;
@@ -19,6 +18,13 @@ html, body {
 
 .node a {
     color:#000;
+}
+
+.snode {
+    position:fixed;
+    padding: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 
 #nodesDiv {
