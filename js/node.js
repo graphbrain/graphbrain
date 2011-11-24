@@ -11,6 +11,13 @@ var Node = function(id, text, type, snode) {
     this.snode = snode;
 }
 
+Node.prototype.updatePos = function() {
+    var nodeDiv = $('#' + this.id)
+    var offset = nodeDiv.offset();
+    this.x = offset.left + (this.width / 2);
+    this.y = offset.top + (this.height / 2);
+}
+
 Node.prototype.place = function() {
     var node = document.createElement('div');
     node.setAttribute('class', 'node');
@@ -24,8 +31,9 @@ Node.prototype.place = function() {
     var snodeDiv = document.getElementById(this.snode.id);
     snodeDiv.appendChild(node);
 
-    var width = $('div#' + this.id).width();
-    var height = $('div#' + this.id).height();
+    var nodeDiv = $('#' + this.id)
+    var width = nodeDiv.width();
+    var height = nodeDiv.height();
     if (this.type == 'image') {
         height = 55;
     }
@@ -33,6 +41,8 @@ Node.prototype.place = function() {
     this.width = width;
     this.height = height;
    
+    this.updatePos();
+
     /*
     var nodeObj = this;
 

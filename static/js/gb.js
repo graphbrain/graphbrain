@@ -57,6 +57,13 @@ var Node = function(id, text, type, snode) {
     this.snode = snode;
 }
 
+Node.prototype.updatePos = function() {
+    var nodeDiv = $('#' + this.id)
+    var offset = nodeDiv.offset();
+    this.x = offset.left + (this.width / 2);
+    this.y = offset.top + (this.height / 2);
+}
+
 Node.prototype.place = function() {
     var node = document.createElement('div');
     node.setAttribute('class', 'node');
@@ -70,8 +77,9 @@ Node.prototype.place = function() {
     var snodeDiv = document.getElementById(this.snode.id);
     snodeDiv.appendChild(node);
 
-    var width = $('div#' + this.id).width();
-    var height = $('div#' + this.id).height();
+    var nodeDiv = $('#' + this.id)
+    var width = nodeDiv.width();
+    var height = nodeDiv.height();
     if (this.type == 'image') {
         height = 55;
     }
@@ -79,6 +87,8 @@ Node.prototype.place = function() {
     this.width = width;
     this.height = height;
    
+    this.updatePos();
+
     /*
     var nodeObj = this;
 
@@ -132,6 +142,12 @@ SNode.prototype.moveTo = function(x, y, redraw) {
     this.y = y;
     $('div#' + this.id).css('left', (this.x - (this.width / 2)) + 'px');
     $('div#' + this.id).css('top', (this.y - (this.height / 2)) + 'px');
+    
+    // update positions for nodes contained in this super node
+    for (var key in this.nodes) {
+        this.nodes[key].updatePos();
+    }
+
     if (redraw) {
         g.drawLinks();
     }
@@ -145,7 +161,7 @@ SNode.prototype.place = function() {
     var nodesDiv = document.getElementById("nodesDiv");
     nodesDiv.appendChild(snode);
 
-    // place nodes contained in this suoer node
+    // place nodes contained in this super node
     for (var key in this.nodes) {
         this.nodes[key].place();
     }
@@ -208,13 +224,21 @@ var Link = function(id, orig, sorig, targ, starg, type) {
 Link.prototype.draw = function(context) {
     var x0 = this.ox;
     var y0 = this.oy;
-    if (this.sorig) {
+    if (this.orig) {
+        x0 = this.orig.x;
+        y0 = this.orig.y;
+    }
+    else if (this.sorig) {
         x0 = this.sorig.x;
         y0 = this.sorig.y;
     }
     var x1 = this.tx;
     var y1 = this.ty;
-    if (this.starg) {
+    if (this.targ) {
+        x1 = this.targ.x;
+        y1 = this.targ.y;
+    }
+    else if (this.starg) {
         x1 = this.starg.x;
         y1 = this.starg.y;
     }
@@ -649,13 +673,15 @@ var initGraph = function() {
             sorig = orig.snode;
         }
         else {
-            sorig  = g.snodes[l['sorig']];
+            orig = false;
+            sorig = g.snodes[l['sorig']];
         }
         if ('targ' in l) {
             targ  = g.nodes[l['targ']];
             starg = targ.snode;
         }
         else {
+            targ = false;
             starg  = g.snodes[l['starg']]
         }
         var link = new Link(l['id'], orig, sorig, targ, starg, l['relation']);
