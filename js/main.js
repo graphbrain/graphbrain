@@ -178,13 +178,15 @@ var initGraph = function() {
             sorig = orig.snode;
         }
         else {
-            sorig  = g.snodes[l['sorig']];
+            orig = false;
+            sorig = g.snodes[l['sorig']];
         }
         if ('targ' in l) {
             targ  = g.nodes[l['targ']];
             starg = targ.snode;
         }
         else {
+            targ = false;
             starg  = g.snodes[l['starg']]
         }
         var link = new Link(l['id'], orig, sorig, targ, starg, l['relation']);

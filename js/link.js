@@ -15,13 +15,21 @@ var Link = function(id, orig, sorig, targ, starg, type) {
 Link.prototype.draw = function(context) {
     var x0 = this.ox;
     var y0 = this.oy;
-    if (this.sorig) {
+    if (this.orig) {
+        x0 = this.orig.x;
+        y0 = this.orig.y;
+    }
+    else if (this.sorig) {
         x0 = this.sorig.x;
         y0 = this.sorig.y;
     }
     var x1 = this.tx;
     var y1 = this.ty;
-    if (this.starg) {
+    if (this.targ) {
+        x1 = this.targ.x;
+        y1 = this.targ.y;
+    }
+    else if (this.starg) {
         x1 = this.starg.x;
         y1 = this.starg.y;
     }

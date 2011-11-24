@@ -16,6 +16,12 @@ SNode.prototype.moveTo = function(x, y, redraw) {
     this.y = y;
     $('div#' + this.id).css('left', (this.x - (this.width / 2)) + 'px');
     $('div#' + this.id).css('top', (this.y - (this.height / 2)) + 'px');
+    
+    // update positions for nodes contained in this super node
+    for (var key in this.nodes) {
+        this.nodes[key].updatePos();
+    }
+
     if (redraw) {
         g.drawLinks();
     }
@@ -29,7 +35,7 @@ SNode.prototype.place = function() {
     var nodesDiv = document.getElementById("nodesDiv");
     nodesDiv.appendChild(snode);
 
-    // place nodes contained in this suoer node
+    // place nodes contained in this super node
     for (var key in this.nodes) {
         this.nodes[key].place();
     }
