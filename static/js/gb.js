@@ -107,6 +107,43 @@ var interRect = function(x1, y1, x2, y2, rleft, rtop, rright, rbottom) {
     var iy = y1 + dy * t;
     return [ix, iy];
 }
+
+
+var rectsOverlap = function(r1_x1, r1_y1, r1_x2, r1_y2, r2_x1, r2_y1, r2_x2, r2_y2) {
+    if (r1_x1 < r2_x2 && r1_x2 > r2_x1 && r1_y1 < r2_y2 && r1_y2 > r2_y1) {
+        return true;
+    }
+    return false;
+}
+
+
+var rectsDist2 = function(r1_x1, r1_y1, r1_x2, r1_y2, r2_x1, r2_y1, r2_x2, r2_y2) {
+    if (rectsOverlap(r1_x1, r1_y1, r1_x2, r1_y2, r2_x1, r2_y1, r2_x2, r2_y2)) {
+        return 0;
+    }
+
+    var c1_x = r1_x1 + ((r1_x2 - r1_x1) / 2);
+    var c1_y = r1_y1 + ((r1_y2 - r1_y1) / 2);
+    var c2_x = r2_x1 + ((r2_x2 - r2_x1) / 2);
+    var c2_y = r2_y1 + ((r2_y2 - r2_y1) / 2);
+
+    var p1 = interRect(c1_x, c1_y, c2_x, c2_y, r1_x1, r1_y1, r1_x2, r1_y2);
+    var p2 = interRect(c2_x, c2_y, c1_x, c1_y, r2_x1, r2_y1, r2_x2, r2_y2);
+
+    var deltaX = p1[0] - p2[0];
+    var deltaY = p1[1] - p2[1];
+
+    var dist = (deltaX * deltaX) + (deltaY * deltaY);
+
+    return dist;
+}
+
+
+var rectsDist = function(r1_x1, r1_y1, r1_x2, r1_y2, r2_x1, r2_y1, r2_x2, r2_y2) {
+    var dist = rectsDist2(r1_x1, r1_y1, r1_x2, r1_y2, r2_x1, r2_y1, r2_x2, r2_y2);
+    dist = Math.sqrt(dist);
+    return dist;
+}
 // Node
 var Node = function(id, text, type, snode) {
     this.id = id;
@@ -203,6 +240,10 @@ SNode.prototype.moveTo = function(x, y, redraw) {
     redraw = typeof(redraw) !== 'undefined' ? redraw : true;
     this.x = x;
     this.y = y;
+    this.x1 = this.x - (this.width / 2);
+    this.y1 = this.y - (this.height / 2);
+    this.x2 = this.x + (this.width / 2);
+    this.y2 = this.y + (this.height / 2);
     $('div#' + this.id).css('left', (this.x - (this.width / 2)) + 'px');
     $('div#' + this.id).css('top', (this.y - (this.height / 2)) + 'px');
     
@@ -232,10 +273,10 @@ SNode.prototype.place = function() {
     var width = $('div#' + this.id).width();
     var height = $('div#' + this.id).height();
     
-    snode.setAttribute('style', 'left:' + (this.x - (width / 2)) + 'px; top:' + (this.y - (height / 2)) + 'px;');
     this.width = width;
     this.height = height;
-   
+    this.moveTo(this.x, this.y);
+
     var nodeObj = this;
 
     $("div#" + this.id).bind("mousedown", function(e) {
@@ -486,6 +527,10 @@ Graph.prototype.forceStep = function() {
             var deltaX = orig.x - targ.x;
             var deltaY = orig.y - targ.y;
             var d2 = (deltaX * deltaX) + (deltaY * deltaY);
+            /*var d2 = rectsDist2(orig.x1, orig.y1, orig.x2, orig.y2, targ.x1, targ.y1, targ.x2, targ.y2);
+            if (d2 == 0) {
+                d2 = 10000;
+            }*/
             var fX = (deltaX / d2) * coulombConst;
             var fY = (deltaY / d2) * coulombConst;
             orig.fX += fX;
@@ -762,12 +807,10 @@ var initGraph = function() {
     g.drawLinks();
     g.placeNodes();
 
-    graphAnim();
+    //graphAnim();
 }
 
 $(function() {
-    console.log(interRect(5, 5, 20, 7.6, 0, 0, 11, 11));
-
     initInterface();
     initGraph(); 
 });

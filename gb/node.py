@@ -99,20 +99,19 @@ class Node(DbObj):
             targ_id = str(l['targ'])
             root_id = str(self.d['_id'])
 
-            orig_root = (orig_id == root_id)
-            targ_root = (targ_id == root_id)
-
             rel = l['relation']
-            dkey = (True, orig_id, rel, targ_root)
-            rkey = (False, rel, targ_id, orig_root)
-            if dkey in rd:
-                rd[dkey].append(targ_id)
-            else:
-                rd[dkey] = [targ_id,]
-            if rkey in rd:
-                rd[rkey].append(orig_id)
-            else:
-                rd[rkey] = [orig_id,]
+            dkey = (True, orig_id, rel)
+            rkey = (False, rel, targ_id)
+            if targ_id != root_id:
+                if dkey in rd:
+                    rd[dkey].append(targ_id)
+                else:
+                    rd[dkey] = [targ_id,]
+            if orig_id != root_id:
+                if rkey in rd:
+                    rd[rkey].append(orig_id)
+                else:
+                    rd[rkey] = [orig_id,]
         return rd
 
     def _maxrel(self, rd):
@@ -146,8 +145,34 @@ class Node(DbObj):
         rd = self._reldict(links)
         key = self._maxrel(rd)
         super_id = 0
+
+        root_id = str(self.d['_id'])
+
+        snodes_keys = {}
+
+        # create root supernode
+        superkey = 'sn%d' % super_id
+        snodes.append({'id': superkey, 'nodes': [root_id,]})
+        super_id += 1
+
+        # create supernodes
         while not key is None:
             nodes = rd[key]
+            superkey = 'sn%d' % super_id
+            snodes.append({'id': superkey, 'nodes': nodes})
+            snodes_keys[superkey] = key
+
+            self._delrel(rd, key)
+
+            key = self._maxrel(rd)
+            super_id += 1
+
+        # adjust links
+        for sn in snodes:
+            if len(sn['nodes']) <= 1:
+                continue
+            superkey = sn['id']
+            key = snodes_keys[superkey]
             direction = key[0]
             orig_id = -1
             targ_id = -1
@@ -158,28 +183,19 @@ class Node(DbObj):
             else:
                 rel = key[1]
                 targ_id = key[2]
-            
-            superkey = 'sn%d' % super_id
-            snodes.append({'id': superkey, 'nodes': nodes})
 
-            # adjust links
             auxlinks = []
             if direction:
                 for l in newlinks:
-                    if (not 'orig' in l) or (('orig' in l) and (l['orig'] != orig_id)) or (l['relation'] != rel):
+                    if (not 'orig' in l) or (('orig' in l) and (l['orig'] != orig_id)) or (l['relation'] != rel) or (('targ' in l) and (l['targ'] == root_id)):
                         auxlinks.append(l)
                 auxlinks.append({'orig': orig_id, 'starg': superkey, 'relation': rel, 'directed': '1'})
             else:
                 for l in newlinks:
-                    if (not 'targ' in l) or (('targ' in l) and (l['targ'] != targ_id)) or (l['relation'] != rel):
+                    if (not 'targ' in l) or (('targ' in l) and (l['targ'] != targ_id)) or (l['relation'] != rel) or (('orig' in l) and (l['orig'] == root_id)):
                         auxlinks.append(l)
                 auxlinks.append({'sorig': superkey, 'targ': targ_id, 'relation': rel, 'directed': '1'})
             newlinks = auxlinks
-
-            self._delrel(rd, key)
-            key = self._maxrel(rd)
-
-            super_id += 1
 
         return snodes, newlinks
 
@@ -190,11 +206,17 @@ class Node(DbObj):
         self._neighbors(nodes, nodeids)
         links = self._internal_links(nodes, nodeids)
 
+        #for l in links:
+        #    on = Node().get_by_id(l['orig'])
+        #    tn = Node().get_by_id(l['targ'])
+        #    print '%s -[%s]-> %s' % (on.d['label'], l['relation'], tn.d['label'])
+
         snodes, links = self._supernodes(links)
 
         node_dict = {}
         for node in nodes:
             node_dict[str(node.d['_id'])] = {'parent':str(node.parent), 'text':node.d['label'], 'type':node.d['type']}
+        
         nodes_json = json.dumps(node_dict, separators=(',',':'))
 
         snodes_json = json.dumps(snodes, separators=(',',':'))
