@@ -14,6 +14,10 @@ SNode.prototype.moveTo = function(x, y, redraw) {
     redraw = typeof(redraw) !== 'undefined' ? redraw : true;
     this.x = x;
     this.y = y;
+    this.x1 = this.x - (this.width / 2);
+    this.y1 = this.y - (this.height / 2);
+    this.x2 = this.x + (this.width / 2);
+    this.y2 = this.y + (this.height / 2);
     $('div#' + this.id).css('left', (this.x - (this.width / 2)) + 'px');
     $('div#' + this.id).css('top', (this.y - (this.height / 2)) + 'px');
     
@@ -43,10 +47,10 @@ SNode.prototype.place = function() {
     var width = $('div#' + this.id).width();
     var height = $('div#' + this.id).height();
     
-    snode.setAttribute('style', 'left:' + (this.x - (width / 2)) + 'px; top:' + (this.y - (height / 2)) + 'px;');
     this.width = width;
     this.height = height;
-   
+    this.moveTo(this.x, this.y);
+
     var nodeObj = this;
 
     $("div#" + this.id).bind("mousedown", function(e) {

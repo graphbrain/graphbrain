@@ -98,6 +98,10 @@ Graph.prototype.forceStep = function() {
             var deltaX = orig.x - targ.x;
             var deltaY = orig.y - targ.y;
             var d2 = (deltaX * deltaX) + (deltaY * deltaY);
+            /*var d2 = rectsDist2(orig.x1, orig.y1, orig.x2, orig.y2, targ.x1, targ.y1, targ.x2, targ.y2);
+            if (d2 == 0) {
+                d2 = 10000;
+            }*/
             var fX = (deltaX / d2) * coulombConst;
             var fY = (deltaY / d2) * coulombConst;
             orig.fX += fX;
