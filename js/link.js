@@ -13,26 +13,39 @@ var Link = function(id, orig, sorig, targ, starg, type) {
 }
 
 Link.prototype.draw = function(context) {
-    var x0 = this.ox;
-    var y0 = this.oy;
+    var orig = false;
+    var targ = false;
+    var origSuper = false;
+    var targSuper = false;
+
     if (this.orig) {
-        x0 = this.orig.x;
-        y0 = this.orig.y;
+        orig = this.orig;
     }
     else if (this.sorig) {
-        x0 = this.sorig.x;
-        y0 = this.sorig.y;
+        orig = this.sorig;
+        origSuper = true;
     }
-    var x1 = this.tx;
-    var y1 = this.ty;
+    
     if (this.targ) {
-        x1 = this.targ.x;
-        y1 = this.targ.y;
+        targ = this.targ;
     }
     else if (this.starg) {
-        x1 = this.starg.x;
-        y1 = this.starg.y;
+        targ = this.starg;
+        targSuper = true;
     }
+
+    var x0 = orig.x;
+    var y0 = orig.y;
+    var x1 = targ.x;
+    var y1 = targ.y;
+
+    p0 = interRect(x0, y0, x1, y1, orig.x0, orig.y0, orig.x1, orig.y1);
+    p1 = interRect(x1, y1, x0, y0, targ.x0, targ.y0, targ.x1, targ.y1);
+
+    x0 = p0[0];
+    y0 = p0[1];
+    x1 = p1[0];
+    y1 = p1[1];
 
     var cx = x0 + ((x1 - x0) / 2)
     var cy = y0 + ((y1 - y0) / 2)
@@ -57,10 +70,40 @@ Link.prototype.draw = function(context) {
     context.strokeStyle = color;
     context.fillStyle = color;
     context.lineWidth = 0.7;
+
     context.beginPath();
     context.moveTo(x0, y0);
     context.lineTo(x1, y1);
     context.stroke();
+
+    context.beginPath();
+    var radius = 7;
+    context.arc(x0, y0, radius, 0, 2 * Math.PI, false);
+    context.fill();
+    context.beginPath();
+    context.arc(x1, y1, radius, 0, 2 * Math.PI, false);
+    context.fill();
+
+    if (origSuper) {
+        context.fillStyle = '#505050';
+    }
+    else {
+        context.fillStyle = '#E0E4CC';   
+    }
+    context.beginPath();
+    var radius = 4;
+    context.arc(x0, y0, radius, 0, 2 * Math.PI, false);
+    context.fill();
+    if (targSuper) {
+        context.fillStyle = '#505050';
+    }
+    else {
+        context.fillStyle = '#E0E4CC';   
+    }
+    context.beginPath();
+    context.arc(x1, y1, radius, 0, 2 * Math.PI, false);
+    context.fill();
+    context.fillStyle = color;
 
     context.font = "10pt Sans-Serif";
     var dim = context.measureText(this.type);
