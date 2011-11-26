@@ -14,10 +14,11 @@ SNode.prototype.moveTo = function(x, y, redraw) {
     redraw = typeof(redraw) !== 'undefined' ? redraw : true;
     this.x = x;
     this.y = y;
-    this.x1 = this.x - (this.width / 2);
-    this.y1 = this.y - (this.height / 2);
-    this.x2 = this.x + (this.width / 2);
-    this.y2 = this.y + (this.height / 2);
+    this.x0 = this.x - (this.width / 2);
+    this.y0 = this.y - (this.height / 2);
+    this.x1 = this.x + (this.width / 2);
+    this.y1 = this.y + (this.height / 2);
+
     $('div#' + this.id).css('left', (this.x - (this.width / 2)) + 'px');
     $('div#' + this.id).css('top', (this.y - (this.height / 2)) + 'px');
     
@@ -33,7 +34,18 @@ SNode.prototype.moveTo = function(x, y, redraw) {
 
 SNode.prototype.place = function() {
     var snode = document.createElement('div');
-    snode.setAttribute('class', 'snode');
+    
+    var nodesCount = 0;
+    for (var key in this.nodes) {
+        if (this.nodes.hasOwnProperty(key))
+            nodesCount++;
+    }
+    if (nodesCount > 1) {
+        snode.setAttribute('class', 'snode');
+    }
+    else {
+        snode.setAttribute('class', 'snode1');   
+    }
     snode.setAttribute('id', this.id);
     
     var nodesDiv = document.getElementById("nodesDiv");
@@ -44,8 +56,8 @@ SNode.prototype.place = function() {
         this.nodes[key].place();
     }
 
-    var width = $('div#' + this.id).width();
-    var height = $('div#' + this.id).height();
+    var width = $('div#' + this.id).outerWidth();
+    var height = $('div#' + this.id).outerHeight();
     
     this.width = width;
     this.height = height;

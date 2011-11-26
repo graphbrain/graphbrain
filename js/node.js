@@ -16,6 +16,10 @@ Node.prototype.updatePos = function() {
     var offset = nodeDiv.offset();
     this.x = offset.left + (this.width / 2);
     this.y = offset.top + (this.height / 2);
+    this.x0 = this.x - (this.width / 2);
+    this.y0 = this.y - (this.height / 2);
+    this.x1 = this.x + (this.width / 2);
+    this.y1 = this.y + (this.height / 2);
 }
 
 Node.prototype.place = function() {
@@ -32,8 +36,8 @@ Node.prototype.place = function() {
     snodeDiv.appendChild(node);
 
     var nodeDiv = $('#' + this.id)
-    var width = nodeDiv.width();
-    var height = nodeDiv.height();
+    var width = nodeDiv.outerWidth();
+    var height = nodeDiv.outerHeight();
     if (this.type == 'image') {
         height = 55;
     }

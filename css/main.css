@@ -8,12 +8,13 @@ html, body {
 
 .node {
     color:#000;
-    background: #E0E4CC;
+    background:#E0E4CC;
     font-family: Sans-Serif;
     font-size: 12px;
     padding: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
+    margin:5px;
 }
 
 .node a {
@@ -21,10 +22,17 @@ html, body {
 }
 
 .snode {
+    border-style:solid;
+    border-width:1px;
+    border-color:#505050;
     position:fixed;
-    padding: 5px;
+    padding: 0px;
     -moz-border-radius: 5px;
     border-radius: 5px;
+}
+
+.snode1 {
+    position:fixed;
 }
 
 #nodesDiv {

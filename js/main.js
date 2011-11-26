@@ -209,5 +209,5 @@ var initGraph = function() {
 
 $(function() {
     initInterface();
-    initGraph(); 
+    initGraph();
 });
