@@ -204,7 +204,7 @@ var initGraph = function() {
     g.drawLinks();
     g.placeNodes();
 
-    //graphAnim();
+    graphAnim();
 }
 
 $(function() {

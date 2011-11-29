@@ -82,4 +82,4 @@ def synch(graph_owner, graph_name):
 if __name__ == '__main__':
     graph_owner = 'gb@graphbrain.com'
     graph_name = 'Main'
-    synch(graph_owner, graph_name)
+    synch(graph_owner, gra ph_name)
