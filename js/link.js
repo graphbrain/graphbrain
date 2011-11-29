@@ -76,19 +76,11 @@ Link.prototype.draw = function(context) {
     context.lineTo(x1, y1);
     context.stroke();
 
-    context.beginPath();
-    var radius = 7;
-    context.arc(x0, y0, radius, 0, 2 * Math.PI, false);
-    context.fill();
-    context.beginPath();
-    context.arc(x1, y1, radius, 0, 2 * Math.PI, false);
-    context.fill();
-
     if (origSuper) {
         context.fillStyle = '#505050';
     }
     else {
-        context.fillStyle = '#E0E4CC';   
+        context.fillStyle = color;   
     }
     context.beginPath();
     var radius = 4;
@@ -98,7 +90,7 @@ Link.prototype.draw = function(context) {
         context.fillStyle = '#505050';
     }
     else {
-        context.fillStyle = '#E0E4CC';   
+        context.fillStyle = color;   
     }
     context.beginPath();
     context.arc(x1, y1, radius, 0, 2 * Math.PI, false);

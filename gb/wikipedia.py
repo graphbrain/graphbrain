@@ -73,7 +73,13 @@ def br_list(s):
     result = []
     items = s.split('<br />')
     for i in items:
-        result.append(i.strip() )
+        items2 = i.split('<br/>')
+        for i2 in items2:
+            items3 = i2.split('<br>')
+            for i3 in items3:
+                items4 = i3.split('\n')
+                for i4 in items4:
+                    result.append(i4.strip())
     return result
 
 
@@ -98,10 +104,10 @@ def get_image_html(title):
 def get_image_url(name):
     url = ''
     html = get_image_html(name)
-    m = re.findall('upload.wikimedia.org/wikipedia/en/([^/]*)/([^/]*)', html)
+    m = re.findall('\<div class="fullMedia"\>\<a href="([^"]*)', html)
     if len(m) > 0:
         try:
-            url = u'http://upload.wikimedia.org/wikipedia/en/%s/%s/%s' % (m[0][0], m[0][1], encodetitle(name))
+            url = u'http:%s' % m[0]
         except:
             print "ERROR - get_image_url(): couldn't generate url"
     return url

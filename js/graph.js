@@ -79,7 +79,7 @@ Graph.prototype.genSNodeKeys = function() {
 
 Graph.prototype.forceStep = function() {
     var drag = 0.85;
-    var coulombConst = 200;
+    var coulombConst = 300;
     var hookeConst = 0.06;
 
     // Init forces
