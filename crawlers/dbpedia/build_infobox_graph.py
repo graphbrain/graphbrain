@@ -29,10 +29,10 @@ def getDBPediaTriple(rawtriple):
 
         rel=elements.group(2)
         rel=re.split('<http://(.+)/(.+?)>', rel)
-        two_part=re.search('([a-z]+?)([A-Z]{1}[a-z]+)+?')
+        two_part=re.search('([a-z]+?)([A-Z]{1}[a-z]+)+?', rel[2])
         if(two_part is None or len(two_part.groups())!=2):
             rel=rel[2]
-        else (two_part):
+        else:
             rel = two_part.group(1) + '' + two_part.group(2).lower();
 
         to_node=elements.group(3)
