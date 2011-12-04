@@ -14,14 +14,12 @@ var Node = function(id, text, type, snode) {
 Node.prototype.updatePos = function() {
     var nodeDiv = $('#' + this.id)
     var offset = nodeDiv.offset();
-    this.x = offset.left + (this.width / 2);
-    this.y = offset.top + (this.height / 2);
-    this.x0 = this.x - (this.width / 2);
-    this.y0 = this.y - (this.height / 2);
-    this.x1 = this.x + (this.width / 2);
-    this.y1 = this.y + (this.height / 2);
-
-    
+    this.x = offset.left + this.halfWidth;
+    this.y = offset.top + this.halfHeight;
+    this.x0 = this.x - this.halfWidth;
+    this.y0 = this.y - this.halfHeight;
+    this.x1 = this.x + this.halfWidth;
+    this.y1 = this.y + this.halfHeight;
 }
 
 Node.prototype.place = function() {
@@ -46,6 +44,8 @@ Node.prototype.place = function() {
     
     this.width = width;
     this.height = height;
+    this.halfWidth = width / 2;
+    this.halfHeight = height / 2;
    
     this.updatePos();
 
