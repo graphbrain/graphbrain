@@ -8,6 +8,9 @@ var SNode = function(id) {
     this.nodes = [];
     this.subNodes = [];
     this.parent = 'unknown';
+
+    // add common VisualObj capabilities
+    makeVisualObj(this);
 }
 
 SNode.prototype.moveTo = function(x, y, redraw) {
@@ -23,12 +26,6 @@ SNode.prototype.moveTo = function(x, y, redraw) {
     $('div#' + this.id).css('top', (this.y - this.halfHeight) + 'px');
     
     // calc bounding rectangle
-    this.rect = [];
-    this.rect.v1 = [];
-    this.rect.v2 = [];
-    this.rect.v3 = [];
-    this.rect.v4 = [];
-
     this.rect.v1.x = this.x - this.halfWidth;
     this.rect.v1.y = this.y - this.halfHeight;
     this.rect.v2.x = this.x - this.halfWidth;
