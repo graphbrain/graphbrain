@@ -20,6 +20,8 @@ Node.prototype.updatePos = function() {
     this.y0 = this.y - (this.height / 2);
     this.x1 = this.x + (this.width / 2);
     this.y1 = this.y + (this.height / 2);
+
+    
 }
 
 Node.prototype.place = function() {
