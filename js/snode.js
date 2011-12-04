@@ -14,14 +14,30 @@ SNode.prototype.moveTo = function(x, y, redraw) {
     redraw = typeof(redraw) !== 'undefined' ? redraw : true;
     this.x = x;
     this.y = y;
-    this.x0 = this.x - (this.width / 2);
-    this.y0 = this.y - (this.height / 2);
-    this.x1 = this.x + (this.width / 2);
-    this.y1 = this.y + (this.height / 2);
+    this.x0 = this.x - this.halfWidth;
+    this.y0 = this.y - this.halfHeight;
+    this.x1 = this.x + this.halfWidth;
+    this.y1 = this.y + this.halfHeight;
 
-    $('div#' + this.id).css('left', (this.x - (this.width / 2)) + 'px');
-    $('div#' + this.id).css('top', (this.y - (this.height / 2)) + 'px');
+    $('div#' + this.id).css('left', (this.x - this.halfWidth) + 'px');
+    $('div#' + this.id).css('top', (this.y - this.halfHeight) + 'px');
     
+    // calc bounding rectangle
+    this.rect = [];
+    this.rect.v1 = [];
+    this.rect.v2 = [];
+    this.rect.v3 = [];
+    this.rect.v4 = [];
+
+    this.rect.v1.x = this.x - this.halfWidth;
+    this.rect.v1.y = this.y - this.halfHeight;
+    this.rect.v2.x = this.x - this.halfWidth;
+    this.rect.v2.y = this.y + this.halfHeight;
+    this.rect.v3.x = this.x + this.halfWidth;
+    this.rect.v3.y = this.y + this.halfHeight;
+    this.rect.v4.x = this.x + this.halfWidth;
+    this.rect.v4.y = this.y - this.halfHeight;
+
     // update positions for nodes contained in this super node
     for (var key in this.nodes) {
         this.nodes[key].updatePos();
@@ -61,6 +77,8 @@ SNode.prototype.place = function() {
     
     this.width = width;
     this.height = height;
+    this.halfWidth = width / 2;
+    this.halfHeight = height / 2;
     this.moveTo(this.x, this.y);
 
     var nodeObj = this;
