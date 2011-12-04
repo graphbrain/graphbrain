@@ -1,5 +1,6 @@
 // Entry point functions & global variables
 var g;
+var context;
 var uiMode;
 var draggedNode;
 var dragging;
@@ -118,9 +119,9 @@ var initInterface = function() {
 
 var initGraph = function() {
     var elem = document.getElementById('graphCanvas');
-    var context = elem.getContext('2d');
+    context = elem.getContext('2d');
 
-    g = new Graph(context);
+    g = new Graph();
 
     context.translate(0.5, 0.5)
 
@@ -208,9 +209,6 @@ var initGraph = function() {
 }
 
 $(function() { 
-    var overlap = rotRectsOverlap(r1, r2);
-    console.log(overlap);
-
     initInterface();
     initGraph();
 });
