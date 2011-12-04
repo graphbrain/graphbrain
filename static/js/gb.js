@@ -197,6 +197,27 @@ var rectsDist = function(r1_x1, r1_y1, r1_x2, r1_y2, r2_x1, r2_y1, r2_x2, r2_y2)
     dist = Math.sqrt(dist);
     return dist;
 }
+// VisualObj
+var makeVisualObj = function(that) {
+	that.rect = [];
+    that.rect.v1 = [];
+    that.rect.v2 = [];
+    that.rect.v3 = [];
+    that.rect.v4 = [];
+
+    that.rect.v1.x = 0;
+    that.rect.v1.y = 0;
+    that.rect.v2.x = 0;
+    that.rect.v2.y = 0;
+    that.rect.v3.x = 0;
+    that.rect.v3.y = 0;
+    that.rect.v4.x = 0;
+    that.rect.v4.y = 0;
+
+	that.overlaps = function(obj) {
+		return rotRectsOverlap(this.rect, obj.rect);
+	}
+}
 // Node
 var Node = function(id, text, type, snode) {
     this.id = id;
@@ -293,6 +314,9 @@ var SNode = function(id) {
     this.nodes = [];
     this.subNodes = [];
     this.parent = 'unknown';
+
+    // add common VisualObj capabilities
+    makeVisualObj(this);
 }
 
 SNode.prototype.moveTo = function(x, y, redraw) {
@@ -308,12 +332,6 @@ SNode.prototype.moveTo = function(x, y, redraw) {
     $('div#' + this.id).css('top', (this.y - this.halfHeight) + 'px');
     
     // calc bounding rectangle
-    this.rect = [];
-    this.rect.v1 = [];
-    this.rect.v2 = [];
-    this.rect.v3 = [];
-    this.rect.v4 = [];
-
     this.rect.v1.x = this.x - this.halfWidth;
     this.rect.v1.y = this.y - this.halfHeight;
     this.rect.v2.x = this.x - this.halfWidth;
@@ -420,6 +438,9 @@ var Link = function(id, orig, sorig, targ, starg, label) {
     this.height = 18;
     this.halfWidth = this.width / 2;
     this.halfHeight = this.height / 2;
+
+    // add common VisualObj capabilities
+    makeVisualObj(this);
 }
 
 Link.prototype.updatePos = function() {
@@ -487,12 +508,6 @@ Link.prototype.updatePos = function() {
     this.points = p;
 
     // calc bounding rectangle
-    this.rect = [];
-    this.rect.v1 = [];
-    this.rect.v2 = [];
-    this.rect.v3 = [];
-    this.rect.v4 = [];
-
     this.rect.v1.x = p[0][0];
     this.rect.v1.y = p[0][1];
     this.rect.v2.x = p[1][0];
@@ -965,7 +980,8 @@ var initGraph = function() {
     graphAnim();
 }
 
-$(function() { 
+$(function() {
+    console.log("Hello world!");
     initInterface();
     initGraph();
 });

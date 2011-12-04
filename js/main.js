@@ -208,7 +208,7 @@ var initGraph = function() {
     graphAnim();
 }
 
-$(function() { 
+$(function() {
     initInterface();
     initGraph();
 });

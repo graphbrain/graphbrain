@@ -18,6 +18,9 @@ var Link = function(id, orig, sorig, targ, starg, label) {
     this.height = 18;
     this.halfWidth = this.width / 2;
     this.halfHeight = this.height / 2;
+
+    // add common VisualObj capabilities
+    makeVisualObj(this);
 }
 
 Link.prototype.updatePos = function() {
@@ -85,12 +88,6 @@ Link.prototype.updatePos = function() {
     this.points = p;
 
     // calc bounding rectangle
-    this.rect = [];
-    this.rect.v1 = [];
-    this.rect.v2 = [];
-    this.rect.v3 = [];
-    this.rect.v4 = [];
-
     this.rect.v1.x = p[0][0];
     this.rect.v1.y = p[0][1];
     this.rect.v2.x = p[1][0];
