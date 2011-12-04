@@ -208,6 +208,36 @@ var initGraph = function() {
 }
 
 $(function() {
+    var r1 = [];
+    var r2 = [];
+    r1.v1 = [];
+    r1.v2 = [];
+    r1.v3 = [];
+    r1.v4 = [];
+    r2.v1 = [];
+    r2.v2 = [];
+    r2.v3 = [];
+    r2.v4 = [];
+    r1.v1.x = 10;
+    r1.v1.y = 10;
+    r1.v2.x = 10;
+    r1.v2.y = 20;
+    r1.v3.x = 20;
+    r1.v3.y = 20;
+    r1.v4.x = 20;
+    r1.v4.y = 10;
+    
+    r2.v1.x = 100;
+    r2.v1.y = 100;
+    r2.v2.x = 100;
+    r2.v2.y = 200;
+    r2.v3.x = 200;
+    r2.v3.y = 200;
+    r2.v4.x = 200;
+    r2.v4.y = 100; 
+    var overlap = rotRectsOverlap(r1, r2);
+    console.log(overlap);
+
     initInterface();
     initGraph();
 });
