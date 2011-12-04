@@ -1,6 +1,5 @@
 // Graph
-var Graph = function(context) {
-    this.context = context;
+var Graph = function() {
     this.snodes = {}
     this.nodes = {};
     this.links = [];
@@ -9,14 +8,14 @@ var Graph = function(context) {
 }
 
 Graph.prototype.drawLinks = function() {
-    this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     var i;
     for (i = 0; i < this.links.length; i++) {
-        this.links[i].draw(this.context);
+        this.links[i].draw();
     }
 
     if (newLink) {
-        newLink.draw(this.context);
+        newLink.draw();
     }
 }
 

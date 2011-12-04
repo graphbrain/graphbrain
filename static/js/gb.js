@@ -219,22 +219,6 @@ Node.prototype.updatePos = function() {
     this.y0 = this.y - this.halfHeight;
     this.x1 = this.x + this.halfWidth;
     this.y1 = this.y + this.halfHeight;
-
-    // calc bounding rectangle
-    this.rect = [];
-    this.rect.v1 = [];
-    this.rect.v2 = [];
-    this.rect.v3 = [];
-    this.rect.v4 = [];
-
-    this.rect.v1.x = this.x - this.halfWidth;
-    this.rect.v1.y = this.y - this.halfHeight;
-    this.rect.v2.x = this.x - this.halfWidth;
-    this.rect.v2.y = this.y + this.halfHeight;
-    this.rect.v3.x = this.x + this.halfWidth;
-    this.rect.v3.y = this.y + this.halfHeight;
-    this.rect.v4.x = this.x + this.halfWidth;
-    this.rect.v4.y = this.y - this.halfHeight;
 }
 
 Node.prototype.place = function() {
@@ -315,14 +299,30 @@ SNode.prototype.moveTo = function(x, y, redraw) {
     redraw = typeof(redraw) !== 'undefined' ? redraw : true;
     this.x = x;
     this.y = y;
-    this.x0 = this.x - (this.width / 2);
-    this.y0 = this.y - (this.height / 2);
-    this.x1 = this.x + (this.width / 2);
-    this.y1 = this.y + (this.height / 2);
+    this.x0 = this.x - this.halfWidth;
+    this.y0 = this.y - this.halfHeight;
+    this.x1 = this.x + this.halfWidth;
+    this.y1 = this.y + this.halfHeight;
 
-    $('div#' + this.id).css('left', (this.x - (this.width / 2)) + 'px');
-    $('div#' + this.id).css('top', (this.y - (this.height / 2)) + 'px');
+    $('div#' + this.id).css('left', (this.x - this.halfWidth) + 'px');
+    $('div#' + this.id).css('top', (this.y - this.halfHeight) + 'px');
     
+    // calc bounding rectangle
+    this.rect = [];
+    this.rect.v1 = [];
+    this.rect.v2 = [];
+    this.rect.v3 = [];
+    this.rect.v4 = [];
+
+    this.rect.v1.x = this.x - this.halfWidth;
+    this.rect.v1.y = this.y - this.halfHeight;
+    this.rect.v2.x = this.x - this.halfWidth;
+    this.rect.v2.y = this.y + this.halfHeight;
+    this.rect.v3.x = this.x + this.halfWidth;
+    this.rect.v3.y = this.y + this.halfHeight;
+    this.rect.v4.x = this.x + this.halfWidth;
+    this.rect.v4.y = this.y - this.halfHeight;
+
     // update positions for nodes contained in this super node
     for (var key in this.nodes) {
         this.nodes[key].updatePos();
@@ -362,6 +362,8 @@ SNode.prototype.place = function() {
     
     this.width = width;
     this.height = height;
+    this.halfWidth = width / 2;
+    this.halfHeight = height / 2;
     this.moveTo(this.x, this.y);
 
     var nodeObj = this;
@@ -399,20 +401,28 @@ SNode.prototype.place = function() {
 }
 
 // Link
-var Link = function(id, orig, sorig, targ, starg, type) {
+var Link = function(id, orig, sorig, targ, starg, label) {
     this.id = id;
     this.orig = orig;
     this.sorig = sorig;
     this.targ = targ;
     this.starg = starg;
-    this.type = type;
+    this.label = label;
     this.ox = 0;
     this.oy = 0;
     this.tx = 0;
     this.ty = 0;
+
+    // calc width & height
+    context.font = "10pt Sans-Serif";
+    var dim = context.measureText(this.label);
+    this.width = dim.width + 6;
+    this.height = 18;
+    this.halfWidth = this.width / 2;
+    this.halfHeight = this.height / 2;
 }
 
-Link.prototype.draw = function(context) {
+Link.prototype.updatePos = function() {
     var orig = false;
     var targ = false;
     var origSuper = false;
@@ -423,7 +433,7 @@ Link.prototype.draw = function(context) {
     }
     else if (this.sorig) {
         orig = this.sorig;
-        origSuper = true;
+        this.origSuper = true;
     }
     
     if (this.targ) {
@@ -431,7 +441,7 @@ Link.prototype.draw = function(context) {
     }
     else if (this.starg) {
         targ = this.starg;
-        targSuper = true;
+        this.targSuper = true;
     }
 
     var x0 = orig.x;
@@ -442,41 +452,88 @@ Link.prototype.draw = function(context) {
     p0 = interRect(x0, y0, x1, y1, orig.x0, orig.y0, orig.x1, orig.y1);
     p1 = interRect(x1, y1, x0, y0, targ.x0, targ.y0, targ.x1, targ.y1);
 
-    x0 = p0[0];
-    y0 = p0[1];
-    x1 = p1[0];
-    y1 = p1[1];
+    this.x0 = p0[0];
+    this.y0 = p0[1];
+    this.x1 = p1[0];
+    this.y1 = p1[1];
 
-    var cx = x0 + ((x1 - x0) / 2)
-    var cy = y0 + ((y1 - y0) / 2)
+    this.cx = this.x0 + ((this.x1 - this.x0) / 2)
+    this.cy = this.y0 + ((this.y1 - this.y0) / 2)
 
-    var slope = (y1 - y0) / (x1 - x0);
-    var angle = Math.atan(slope);
+    var slope = (this.y1 - this.y0) / (this.x1 - this.x0);
+    this.angle = Math.atan(slope);
 
+    var p = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
+
+    if ((this.x0 < this.x1) || ((this.x0 == this.x1) && (this.y0 < this.y1))) {
+        p[0][0] = -this.halfWidth;     p[0][1] = -this.halfHeight;
+        p[1][0] = -this.halfWidth;     p[1][1] = this.halfHeight;
+        p[2][0] = this.halfWidth;      p[2][1] = this.halfHeight;
+        p[3][0] = this.halfWidth + 6;  p[3][1] = 0;
+        p[4][0] = this.halfWidth;      p[4][1] = -this.halfHeight;
+    }
+    else {
+        p[0][0] = -this.halfWidth;     p[0][1] = -this.halfHeight;
+        p[1][0] = -this.halfWidth - 6; p[1][1] = 0;
+        p[2][0] = -this.halfWidth;     p[2][1] = this.halfHeight;
+        p[3][0] = this.halfWidth;      p[3][1] = this.halfHeight;
+        p[4][0] = this.halfWidth;      p[4][1] = -this.halfHeight;
+    }
+
+    for (i = 0; i < 5; i++) {
+        rotateAndTranslate(p[i], this.angle, this.cx, this.cy);
+    }
+
+    this.points = p;
+
+    // calc bounding rectangle
+    this.rect = [];
+    this.rect.v1 = [];
+    this.rect.v2 = [];
+    this.rect.v3 = [];
+    this.rect.v4 = [];
+
+    this.rect.v1.x = p[0][0];
+    this.rect.v1.y = p[0][1];
+    this.rect.v2.x = p[1][0];
+    this.rect.v2.y = p[1][1];
+    this.rect.v3.x = p[2][0];
+    this.rect.v3.y = p[2][1];
+    this.rect.v4.x = p[4][0];
+    this.rect.v4.y = p[4][1];
+}
+
+Link.prototype.draw = function() {
+    this.updatePos();
+
+    // set link color according to label text
+    // TODO: this should be server side 
     var color = '#FFD326';
     var textcolor = '#000'
 
-    if (~this.type.indexOf('direct'))
+    if (~this.label.indexOf('direct'))
         color = '#BEE512';
-    else if (~this.type.indexOf('char'))
+    else if (~this.label.indexOf('char'))
         color = '#DFFD59';
-    else if (~this.type.indexOf('play'))
+    else if (~this.label.indexOf('play'))
         color = '#FFFC26';
-    else if (~this.type.indexOf('is')) {
+    else if (~this.label.indexOf('is')) {
         color = '#ED9107';
         textcolor = '#FFF'
     }
 
+    // draw line
     context.strokeStyle = color;
     context.fillStyle = color;
     context.lineWidth = 0.7;
 
     context.beginPath();
-    context.moveTo(x0, y0);
-    context.lineTo(x1, y1);
+    context.moveTo(this.x0, this.y0);
+    context.lineTo(this.x1, this.y1);
     context.stroke();
 
-    if (origSuper) {
+    // draw circles at both ends of line
+    if (this.origSuper) {
         context.fillStyle = '#505050';
     }
     else {
@@ -484,62 +541,38 @@ Link.prototype.draw = function(context) {
     }
     context.beginPath();
     var radius = 4;
-    context.arc(x0, y0, radius, 0, 2 * Math.PI, false);
+    context.arc(this.x0, this.y0, radius, 0, 2 * Math.PI, false);
     context.fill();
-    if (targSuper) {
+    if (this.targSuper) {
         context.fillStyle = '#505050';
     }
     else {
         context.fillStyle = color;   
     }
     context.beginPath();
-    context.arc(x1, y1, radius, 0, 2 * Math.PI, false);
+    context.arc(this.x1, this.y1, radius, 0, 2 * Math.PI, false);
     context.fill();
     context.fillStyle = color;
 
-    context.font = "10pt Sans-Serif";
-    var dim = context.measureText(this.type);
-    var width = dim.width + 6;
-    var height = 18;
-    
-    var p = [[0, 0], [0, 0], [0, 0], [0,0], [0,0]];
-    this.points = p;
-
+    // draw label area
     context.beginPath();
-    if ((x0 < x1) || ((x0 == x1) && (y0 < y1))) {
-        p[0][0] = -(width / 2);     p[0][1] = -(height / 2);
-        p[1][0] = -(width / 2);     p[1][1] = (height / 2);
-        p[2][0] = (width / 2);      p[2][1] = (height / 2);
-        p[3][0] = (width / 2) + 6;  p[3][1] = 0;
-        p[4][0] = (width / 2);      p[4][1] = -(height / 2);
-    }
-    else {
-        p[0][0] = -(width / 2);     p[0][1] = -(height / 2);
-        p[1][0] = -(width / 2) - 6; p[1][1] = 0;
-        p[2][0] = -(width / 2);     p[2][1] = (height / 2);
-        p[3][0] = (width / 2);      p[3][1] = (height / 2);
-        p[4][0] = (width / 2);      p[4][1] = -(height / 2);
-    }
-
-    for (i = 0; i < 5; i++) {
-        rotateAndTranslate(p[i], angle, cx, cy);
-    }
-
-    context.moveTo(p[0][0], p[0][1]);
+    context.moveTo(this.points[0][0], this.points[0][1]);
     for (i = 1; i < 5; i++) {
-        context.lineTo(p[i][0], p[i][1]);
+        context.lineTo(this.points[i][0], this.points[i][1]);
     }
     
     context.closePath();
     context.fill();
 
+    // draw label text
     context.save();
-    context.translate(cx, cy);
-    context.rotate(angle);
+    context.translate(this.cx, this.cy);
+    context.rotate(this.angle);
+    context.font = "10pt Sans-Serif";
     context.fillStyle = textcolor;
     context.textAlign = "center";
     context.textBaseline = "middle";
-    context.fillText(this.type, 0, 0);
+    context.fillText(this.label, 0, 0);
     context.restore();
 }
 
@@ -550,8 +583,7 @@ Link.prototype.pointInLabel = function(p) {
 }
 
 // Graph
-var Graph = function(context) {
-    this.context = context;
+var Graph = function() {
     this.snodes = {}
     this.nodes = {};
     this.links = [];
@@ -560,14 +592,14 @@ var Graph = function(context) {
 }
 
 Graph.prototype.drawLinks = function() {
-    this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     var i;
     for (i = 0; i < this.links.length; i++) {
-        this.links[i].draw(this.context);
+        this.links[i].draw();
     }
 
     if (newLink) {
-        newLink.draw(this.context);
+        newLink.draw();
     }
 }
 
@@ -725,6 +757,7 @@ var graphAnim = function() {
 }
 // Entry point functions & global variables
 var g;
+var context;
 var uiMode;
 var draggedNode;
 var dragging;
@@ -843,9 +876,9 @@ var initInterface = function() {
 
 var initGraph = function() {
     var elem = document.getElementById('graphCanvas');
-    var context = elem.getContext('2d');
+    context = elem.getContext('2d');
 
-    g = new Graph(context);
+    g = new Graph();
 
     context.translate(0.5, 0.5)
 
@@ -932,37 +965,7 @@ var initGraph = function() {
     graphAnim();
 }
 
-$(function() {
-    var r1 = [];
-    var r2 = [];
-    r1.v1 = [];
-    r1.v2 = [];
-    r1.v3 = [];
-    r1.v4 = [];
-    r2.v1 = [];
-    r2.v2 = [];
-    r2.v3 = [];
-    r2.v4 = [];
-    r1.v1.x = 10;
-    r1.v1.y = 10;
-    r1.v2.x = 10;
-    r1.v2.y = 20;
-    r1.v3.x = 20;
-    r1.v3.y = 20;
-    r1.v4.x = 20;
-    r1.v4.y = 10;
-    
-    r2.v1.x = 100;
-    r2.v1.y = 100;
-    r2.v2.x = 100;
-    r2.v2.y = 200;
-    r2.v3.x = 200;
-    r2.v3.y = 200;
-    r2.v4.x = 200;
-    r2.v4.y = 100; 
-    var overlap = rotRectsOverlap(r1, r2);
-    console.log(overlap);
-
+$(function() { 
     initInterface();
     initGraph();
 });
