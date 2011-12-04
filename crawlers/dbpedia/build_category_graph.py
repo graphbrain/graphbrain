@@ -8,94 +8,91 @@ import urllib
 import urllib2
 import sys
 from pymongo import Connection
+import process_nodelinknode as pnln
 
 
 def getDBPediaTriple(rawtriple):
     tagPattern="(<http:.+?>)\s(<http:.+?>)\s(<http:.+?>)"
-    elements=re.match(tagPattern, triple)
+    elements=re.match(tagPattern, rawtriple)
+    
     thing=elements.group(1)
-    thing=re.split('<http://dbpedia.org/resource/(.+?)>', thing)
-    thing=thing[1]
+    thing=re.split('<http://(.+)/(.+?)>', thing)
+    
+    thing=thing[2]
     namespace=elements.group(2)
-    namespace=re.split('<http://www.w3.org/(.+?)rdf-syntax-ns#(.+?)>', namespace)
+    namespace=re.split('<http://(.+)/(.+?)>', namespace)
+    
     namespace=namespace[2]
     category=elements.group(3)
-    category=re.split('<http://schema.org/(.+)>', category);
-    category=category[1]
+    category=re.split('<http://(.+)/(.+?)>', category);
+    
+    category=category[2]
     return (thing, namespace, category)
 
 
-def create(nodes, name):
-    
-    if(name in nodes):
-        return '';
-    else:
-        nodes[name]={'name':name, 'subtypes':[]};
-        return name;
 
-def add_subtype(nodes, parent, subtype)
-    if(parent in nodes):
-        currentsubtypes=nodes[parent]['subtype'];
-        if(subtype in currentsubtypes):
-            return '';
-        else:
-            nodes[parent]['subtype'].append(subtype);
-            create(nodes, subtype);
-            return subtype;
-    else:
-        create(nodes, parent);
-        add_subtype(nodes, parent, subtype);
+def add_subtype(nodes, parent, subtype):
+    pnln.add_link(nodes, subtype, parent, 'is a')
 
-
-def process_line(db, line, previouslines, nodes):
+def process_line(line, previouslines, nodes):
     
     print 'Processing: ', line
     triple=getDBPediaTriple(line); 
 
     
     #Check whether it is a top level category.
-    if(category=='owl#Thing'):
+    if(triple[2]=='owl#Thing'):
         subcats=[];    
         #Process entire preceding hierarchy in reverse order since this gives the hierarchy.
-        for(pl in previouslines):
+        for pl in previouslines:
             #The thing:
-            create(things, pl[0])
+            pnln.create(nodes, pl[0])
             #The category:
-            create(things, pl[2])
-            add_subtype(things, pl[2], pl[0]);
+            pnln.create(nodes, pl[2])
+            add_subtype(nodes, pl[2], pl[0]);
             for subcat in subcats:
-                add_subtype(things, pl[2], subcat);
+                add_subtype(nodes, pl[2], subcat);
 
             subcats.append(pl[2])
         previouslines=[]
+
     else:
         previouslines.append(triple)
             
    
 
-def main():
+def build_category_tree(file_loc):
+
+
     db = Connection().things
 
-    type_file = open('instance_types_en.nt');
+    type_file = open(file_loc);
     p_list=[]
-    nodes=[]
+    nodes={}
     for line in type_file:
-        process_line(db, line, p_list, nodes)
+        process_line(line, p_list, nodes)
     
-    count=0;
-    inserted=0;
-
-    for thing in nodes:
-        mthings=db.items
-        if mthings.find_one({'name': thing, 'subtypes': nodes[thing]['subtypes']}) in None:
-            mthings.insert(nodes[thing])
-            inserted+=1;
-            print '"%s" inserted' % thing
-        else:
-            print 'NOT INSERTED.' "%s" % thing
-        count+=1;
-    print '%d items, %d inserted. ' % (count, inserted)
+    pnln.buildgraph(nodes, db)
          
 
+
+def list_test(file_loc):
+
+    type_file = open(file_loc);
+    p_list=[]
+    nodes={}
+    counter=0
+    while counter<20:
+        line=type_file.readline();
+        process_line(line, p_list, nodes)
+        counter+=1;
+    
+    print(nodes)
+    print(len(nodes))
+
+
 if __name__=='__main__':
-    main()
+    type_floc='instance_types_en.nt'
+    #type_floc=sys.stdin;
+    #build_category_tree(type_floc)
+    list_test(type_floc);
