@@ -1,10 +1,11 @@
-def create(nodes, name):
-    
-    if(name in nodes):
-        return '';
-    else:
-        nodes[name]={'name':name, 'relations':{}};
-        return name;
+def create(nodes, name, node_type='text'):
+	if(name in nodes):
+		return '';
+	else:
+		nodes[name]={'name':name, 'relations':{}, 'type':node_type, 'content': name};
+		return name;
+	
+	 
 
 def add_relationship(nodes, name, rel_name):
     if(name in nodes):
