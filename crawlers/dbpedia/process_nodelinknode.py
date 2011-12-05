@@ -37,6 +37,9 @@ def add_link(nodes, from_node, to_node, rel_type):
         add_link(nodes, from_node, to_node, rel_type)
 
 def build_graph(entries, db):
+
+	
+
     count=0;
     inserted=0;
     mthings=db.items
