@@ -11,6 +11,8 @@ var Link = function(id, orig, sorig, targ, starg, label) {
     this.tx = 0;
     this.ty = 0;
 
+    this.len = 0;
+
     // calc width & height
     context.font = "10pt Sans-Serif";
     var dim = context.measureText(this.label);
@@ -58,6 +60,15 @@ Link.prototype.updatePos = function() {
     this.x1 = p1[0];
     this.y1 = p1[1];
 
+    // calc length
+    var dx = this.x1 - this.x0;
+    var dy = this.y1 - this.y0;
+    this.len = (dx * dx) + (dy * dy);
+    this.len = Math.sqrt(this.len);
+
+    //console.log("x0: " + this.x0 + "; y0: " + this.y0 + "; x1: " + this.x1 + "; y1: " + this.y1 + "; len: " + this.len);
+
+    // calc center
     this.cx = this.x0 + ((this.x1 - this.x0) / 2)
     this.cy = this.y0 + ((this.y1 - this.y0) / 2)
 
@@ -88,14 +99,26 @@ Link.prototype.updatePos = function() {
     this.points = p;
 
     // calc bounding rectangle
-    this.rect.v1.x = p[0][0];
-    this.rect.v1.y = p[0][1];
-    this.rect.v2.x = p[1][0];
-    this.rect.v2.y = p[1][1];
-    this.rect.v3.x = p[2][0];
-    this.rect.v3.y = p[2][1];
-    this.rect.v4.x = p[4][0];
-    this.rect.v4.y = p[4][1];
+    if ((this.x0 < this.x1) || ((this.x0 == this.x1) && (this.y0 < this.y1))) {
+        this.rect.v1.x = p[0][0];
+        this.rect.v1.y = p[0][1];
+        this.rect.v2.x = p[1][0];
+        this.rect.v2.y = p[1][1];
+        this.rect.v3.x = p[2][0];
+        this.rect.v3.y = p[2][1];
+        this.rect.v4.x = p[4][0];
+        this.rect.v4.y = p[4][1];
+    }
+    else {
+        this.rect.v1.x = p[0][0];
+        this.rect.v1.y = p[0][1];
+        this.rect.v2.x = p[2][0];
+        this.rect.v2.y = p[2][1];
+        this.rect.v3.x = p[3][0];
+        this.rect.v3.y = p[3][1];
+        this.rect.v4.x = p[4][0];
+        this.rect.v4.y = p[4][1];   
+    }
 }
 
 Link.prototype.draw = function() {
