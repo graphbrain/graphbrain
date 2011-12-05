@@ -118,10 +118,12 @@ var rectsOverlap = function(r1_x1, r1_y1, r1_x2, r1_y2, r2_x1, r2_y1, r2_x2, r2_
 
 
 var sepAxisSide = function(a1, a2, point) {
-    var rx = -a1.y;
-    var ry = a1.x;
+    //var rx = -a1.y;
+    //var ry = a1.x;
 
-    var dp = rx * (point.x - a2.x) + ry * (point.y - a2.y);
+    //var dp = rx * (point.x - a2.x) + ry * (point.y - a2.y);
+
+    var dp = ((a2.x - a1.x) * (point.y - a1.y)) - ((a2.y - a1.y) * (point.x - a1.x));
 
     if (dp < 0)
         return -1;

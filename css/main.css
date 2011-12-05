@@ -14,7 +14,7 @@ html, body {
     padding: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
-    margin:15px;
+    margin: 5px;
 }
 
 .node a {
@@ -26,7 +26,7 @@ html, body {
     border-width:1px;
     border-color:#505050;
     position:fixed;
-    padding: 0px;
+    padding: 10px;
     -moz-border-radius: 5px;
     border-radius: 5px;
 }

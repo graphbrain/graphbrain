@@ -138,3 +138,95 @@ Graph.prototype.forceStep = function() {
         }
     }
 }
+
+Graph.prototype.layoutSNode = function(snode, fixedSNodes, width, height) {
+    var iters = 100;
+
+    snode.fixed = true;
+
+    var bestPenalty = 99999999;
+    var bestX, bestY;
+    
+    for (var i = 0; i < iters; i++) {
+        var penalty = 0;
+
+        var x = Math.random() * width;
+        var y = Math.random() * height;
+        snode.updatePos(x, y);
+
+        for (var j = 0; j < fixedSNodes.length; j++) {
+            var snode2 = fixedSNodes[j];
+
+            // node - node overlap penalty
+            if (snode.overlaps(snode2)) {
+                penalty += 1000000;
+            }
+
+            // label - node overlap penalty
+            for (var k = 0; k < snode.links.length; k++) {
+                var link = snode.links[k];
+                if (link.overlaps(snode2)) {
+                    penalty += 10000;
+                }
+            }
+        }
+
+        // node-label overlap penalty
+        for (var k = 0; k < this.links.length; k++) {
+            var link = this.links[k];
+            if (link.sorig.fixed && link.starg.fixed)
+                if (snode.overlaps(link))
+                    penalty += 10000;
+        }
+
+        // link length penalty
+        for (var k = 0; k < snode.links.length; k++) {
+            var link = snode.links[k];
+            if (link.sorig.fixed && link.starg.fixed)
+                penalty += link.len;
+        }
+
+        //console.log("p: " + penalty + "; count:" + snode.links.length);
+
+        if (penalty < bestPenalty) {
+            bestPenalty = penalty;
+            bestX = x;
+            bestY = y;
+        }
+    }
+
+    console.log("best: " + bestPenalty);
+
+    snode.moveTo(bestX, bestY);
+}
+
+Graph.prototype.layout2 = function(width, height) {
+    // set all super nodes non-fixed
+    for (var key in this.snodes) {
+        var snode = this.snodes[key];
+        snode.fixed = false;
+    }
+
+    // layout root node
+    var fixedSNodes = [g.root];
+    g.root.moveTo(width / 2, height / 2);
+    g.root.fixed = true;
+    
+    // layout tier 1 nodes
+    for (var key in this.snodes) {
+        var snode = this.snodes[key];
+        if (snode.parent == g.root) {
+            this.layoutSNode(snode, fixedSNodes, width, height);
+            fixedSNodes.push(snode);
+        }
+    }
+
+    // layout tier 2 nodes
+    for (var key in this.snodes) {
+        var snode = this.snodes[key];
+        if ((snode.parent != g.root) && (snode.parent != '')){
+            this.layoutSNode(snode, fixedSNodes, width, height);
+            fixedSNodes.push(snode);
+        }
+    }
+}

@@ -16,6 +16,6 @@ var makeVisualObj = function(that) {
     that.rect.v4.y = 0;
 
 	that.overlaps = function(obj) {
-		return rotRectsOverlap(this.rect, obj.rect);
+		return rotRectsOverlap(that.rect, obj.rect);
 	}
 }

@@ -118,10 +118,12 @@ var rectsOverlap = function(r1_x1, r1_y1, r1_x2, r1_y2, r2_x1, r2_y1, r2_x2, r2_
 
 
 var sepAxisSide = function(a1, a2, point) {
-    var rx = -a1.y;
-    var ry = a1.x;
+    //var rx = -a1.y;
+    //var ry = a1.x;
 
-    var dp = rx * (point.x - a2.x) + ry * (point.y - a2.y);
+    //var dp = rx * (point.x - a2.x) + ry * (point.y - a2.y);
+
+    var dp = ((a2.x - a1.x) * (point.y - a1.y)) - ((a2.y - a1.y) * (point.x - a1.x));
 
     if (dp < 0)
         return -1;
@@ -215,7 +217,7 @@ var makeVisualObj = function(that) {
     that.rect.v4.y = 0;
 
 	that.overlaps = function(obj) {
-		return rotRectsOverlap(this.rect, obj.rect);
+		return rotRectsOverlap(that.rect, obj.rect);
 	}
 }
 // Node
@@ -229,6 +231,10 @@ var Node = function(id, text, type, snode) {
     this.vY = 0;
     this.subNodes = [];
     this.snode = snode;
+
+    // position in relation to super node
+    this.sx = 0;
+    this.sy = 0;
 }
 
 Node.prototype.updatePos = function() {
@@ -240,6 +246,20 @@ Node.prototype.updatePos = function() {
     this.y0 = this.y - this.halfHeight;
     this.x1 = this.x + this.halfWidth;
     this.y1 = this.y + this.halfHeight;
+
+    this.sx = this.x - this.snode.x;
+    this.sy = this.y - this.snode.y;
+}
+
+Node.prototype.estimatePos = function() {
+    this.x = this.snode.x + this.sx;
+    this.y = this.snode.y + this.sy;
+
+    this.x0 = this.x - this.halfWidth;
+    this.y0 = this.y - this.halfHeight;
+    this.x1 = this.x + this.halfWidth;
+    this.y1 = this.y + this.halfHeight;
+    //console.log('nx: ' + this.x + '; ny: ' + this.y);
 }
 
 Node.prototype.place = function() {
@@ -314,22 +334,19 @@ var SNode = function(id) {
     this.nodes = [];
     this.subNodes = [];
     this.parent = 'unknown';
+    this.links = [];
 
     // add common VisualObj capabilities
     makeVisualObj(this);
 }
 
-SNode.prototype.moveTo = function(x, y, redraw) {
-    redraw = typeof(redraw) !== 'undefined' ? redraw : true;
+SNode.prototype.updatePos = function(x, y) {
     this.x = x;
     this.y = y;
     this.x0 = this.x - this.halfWidth;
     this.y0 = this.y - this.halfHeight;
     this.x1 = this.x + this.halfWidth;
     this.y1 = this.y + this.halfHeight;
-
-    $('div#' + this.id).css('left', (this.x - this.halfWidth) + 'px');
-    $('div#' + this.id).css('top', (this.y - this.halfHeight) + 'px');
     
     // calc bounding rectangle
     this.rect.v1.x = this.x - this.halfWidth;
@@ -340,6 +357,26 @@ SNode.prototype.moveTo = function(x, y, redraw) {
     this.rect.v3.y = this.y + this.halfHeight;
     this.rect.v4.x = this.x + this.halfWidth;
     this.rect.v4.y = this.y - this.halfHeight;
+
+    // update position of contained nodes
+    for (var key in this.nodes) {
+        this.nodes[key].estimatePos();
+    }
+
+    // update position of connected links
+    for (var i = 0; i < this.links.length; i++) {
+        var link = this.links[i];
+        link.updatePos();
+    }
+}
+
+SNode.prototype.moveTo = function(x, y, redraw) {
+    redraw = typeof(redraw) !== 'undefined' ? redraw : true;
+    
+    this.updatePos(x, y);
+
+    $('div#' + this.id).css('left', (this.x - this.halfWidth) + 'px');
+    $('div#' + this.id).css('top', (this.y - this.halfHeight) + 'px');
 
     // update positions for nodes contained in this super node
     for (var key in this.nodes) {
@@ -431,6 +468,8 @@ var Link = function(id, orig, sorig, targ, starg, label) {
     this.tx = 0;
     this.ty = 0;
 
+    this.len = 0;
+
     // calc width & height
     context.font = "10pt Sans-Serif";
     var dim = context.measureText(this.label);
@@ -478,6 +517,15 @@ Link.prototype.updatePos = function() {
     this.x1 = p1[0];
     this.y1 = p1[1];
 
+    // calc length
+    var dx = this.x1 - this.x0;
+    var dy = this.y1 - this.y0;
+    this.len = (dx * dx) + (dy * dy);
+    this.len = Math.sqrt(this.len);
+
+    //console.log("x0: " + this.x0 + "; y0: " + this.y0 + "; x1: " + this.x1 + "; y1: " + this.y1 + "; len: " + this.len);
+
+    // calc center
     this.cx = this.x0 + ((this.x1 - this.x0) / 2)
     this.cy = this.y0 + ((this.y1 - this.y0) / 2)
 
@@ -508,14 +556,26 @@ Link.prototype.updatePos = function() {
     this.points = p;
 
     // calc bounding rectangle
-    this.rect.v1.x = p[0][0];
-    this.rect.v1.y = p[0][1];
-    this.rect.v2.x = p[1][0];
-    this.rect.v2.y = p[1][1];
-    this.rect.v3.x = p[2][0];
-    this.rect.v3.y = p[2][1];
-    this.rect.v4.x = p[4][0];
-    this.rect.v4.y = p[4][1];
+    if ((this.x0 < this.x1) || ((this.x0 == this.x1) && (this.y0 < this.y1))) {
+        this.rect.v1.x = p[0][0];
+        this.rect.v1.y = p[0][1];
+        this.rect.v2.x = p[1][0];
+        this.rect.v2.y = p[1][1];
+        this.rect.v3.x = p[2][0];
+        this.rect.v3.y = p[2][1];
+        this.rect.v4.x = p[4][0];
+        this.rect.v4.y = p[4][1];
+    }
+    else {
+        this.rect.v1.x = p[0][0];
+        this.rect.v1.y = p[0][1];
+        this.rect.v2.x = p[2][0];
+        this.rect.v2.y = p[2][1];
+        this.rect.v3.x = p[3][0];
+        this.rect.v3.y = p[3][1];
+        this.rect.v4.x = p[4][0];
+        this.rect.v4.y = p[4][1];   
+    }
 }
 
 Link.prototype.draw = function() {
@@ -734,6 +794,98 @@ Graph.prototype.forceStep = function() {
             node.vY = (node.vY + node.fY) * drag;
             node.x = node.x + node.vX;
             node.y = node.y + node.vY;
+        }
+    }
+}
+
+Graph.prototype.layoutSNode = function(snode, fixedSNodes, width, height) {
+    var iters = 100;
+
+    snode.fixed = true;
+
+    var bestPenalty = 99999999;
+    var bestX, bestY;
+    
+    for (var i = 0; i < iters; i++) {
+        var penalty = 0;
+
+        var x = Math.random() * width;
+        var y = Math.random() * height;
+        snode.updatePos(x, y);
+
+        for (var j = 0; j < fixedSNodes.length; j++) {
+            var snode2 = fixedSNodes[j];
+
+            // node - node overlap penalty
+            if (snode.overlaps(snode2)) {
+                penalty += 1000000;
+            }
+
+            // label - node overlap penalty
+            for (var k = 0; k < snode.links.length; k++) {
+                var link = snode.links[k];
+                if (link.overlaps(snode2)) {
+                    penalty += 10000;
+                }
+            }
+        }
+
+        // node-label overlap penalty
+        for (var k = 0; k < this.links.length; k++) {
+            var link = this.links[k];
+            if (link.sorig.fixed && link.starg.fixed)
+                if (snode.overlaps(link))
+                    penalty += 10000;
+        }
+
+        // link length penalty
+        for (var k = 0; k < snode.links.length; k++) {
+            var link = snode.links[k];
+            if (link.sorig.fixed && link.starg.fixed)
+                penalty += link.len;
+        }
+
+        //console.log("p: " + penalty + "; count:" + snode.links.length);
+
+        if (penalty < bestPenalty) {
+            bestPenalty = penalty;
+            bestX = x;
+            bestY = y;
+        }
+    }
+
+    console.log("best: " + bestPenalty);
+
+    snode.moveTo(bestX, bestY);
+}
+
+Graph.prototype.layout2 = function(width, height) {
+    // set all super nodes non-fixed
+    for (var key in this.snodes) {
+        var snode = this.snodes[key];
+        snode.fixed = false;
+    }
+
+    // layout root node
+    var fixedSNodes = [g.root];
+    g.root.moveTo(width / 2, height / 2);
+    g.root.fixed = true;
+    
+    // layout tier 1 nodes
+    for (var key in this.snodes) {
+        var snode = this.snodes[key];
+        if (snode.parent == g.root) {
+            this.layoutSNode(snode, fixedSNodes, width, height);
+            fixedSNodes.push(snode);
+        }
+    }
+
+    // layout tier 2 nodes
+    for (var key in this.snodes) {
+        var snode = this.snodes[key];
+        if ((snode.parent != g.root) && (snode.parent != '')){
+            this.layoutSNode(snode, fixedSNodes, width, height);
+            fixedSNodes.push(snode);
         }
     }
 }
@@ -964,24 +1116,27 @@ var initGraph = function() {
         }
         var link = new Link(l['id'], orig, sorig, targ, starg, l['relation']);
         g.links.push(link);
+        sorig.links.push(link);
+        starg.links.push(link);
     }
     
     var halfWidth = window.innerWidth / 2;
     var halfHeight = window.innerHeight / 2;
 
-    g.layout(g.root, 1, halfWidth, halfHeight, halfWidth, halfHeight, 0, Math.PI * 2);
+    //g.layout(g.root, 1, halfWidth, halfHeight, halfWidth, halfHeight, 0, Math.PI * 2);
+    g.placeNodes();
+    g.layout2(window.innerWidth, window.innerHeight);
 
     context.canvas.width  = window.innerWidth;
     context.canvas.height = window.innerHeight;
 
     g.drawLinks();
-    g.placeNodes();
+    //g.placeNodes();
 
-    graphAnim();
+    //graphAnim();
 }
 
 $(function() {
-    console.log("Hello world!");
     initInterface();
     initGraph();
 });

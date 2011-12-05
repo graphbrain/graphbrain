@@ -192,20 +192,24 @@ var initGraph = function() {
         }
         var link = new Link(l['id'], orig, sorig, targ, starg, l['relation']);
         g.links.push(link);
+        sorig.links.push(link);
+        starg.links.push(link);
     }
     
     var halfWidth = window.innerWidth / 2;
     var halfHeight = window.innerHeight / 2;
 
-    g.layout(g.root, 1, halfWidth, halfHeight, halfWidth, halfHeight, 0, Math.PI * 2);
+    //g.layout(g.root, 1, halfWidth, halfHeight, halfWidth, halfHeight, 0, Math.PI * 2);
+    g.placeNodes();
+    g.layout2(window.innerWidth, window.innerHeight);
 
     context.canvas.width  = window.innerWidth;
     context.canvas.height = window.innerHeight;
 
     g.drawLinks();
-    g.placeNodes();
+    //g.placeNodes();
 
-    graphAnim();
+    //graphAnim();
 }
 
 $(function() {

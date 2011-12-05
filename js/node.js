@@ -9,6 +9,10 @@ var Node = function(id, text, type, snode) {
     this.vY = 0;
     this.subNodes = [];
     this.snode = snode;
+
+    // position in relation to super node
+    this.sx = 0;
+    this.sy = 0;
 }
 
 Node.prototype.updatePos = function() {
@@ -20,6 +24,20 @@ Node.prototype.updatePos = function() {
     this.y0 = this.y - this.halfHeight;
     this.x1 = this.x + this.halfWidth;
     this.y1 = this.y + this.halfHeight;
+
+    this.sx = this.x - this.snode.x;
+    this.sy = this.y - this.snode.y;
+}
+
+Node.prototype.estimatePos = function() {
+    this.x = this.snode.x + this.sx;
+    this.y = this.snode.y + this.sy;
+
+    this.x0 = this.x - this.halfWidth;
+    this.y0 = this.y - this.halfHeight;
+    this.x1 = this.x + this.halfWidth;
+    this.y1 = this.y + this.halfHeight;
+    //console.log('nx: ' + this.x + '; ny: ' + this.y);
 }
 
 Node.prototype.place = function() {

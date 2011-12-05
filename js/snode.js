@@ -8,22 +8,19 @@ var SNode = function(id) {
     this.nodes = [];
     this.subNodes = [];
     this.parent = 'unknown';
+    this.links = [];
 
     // add common VisualObj capabilities
     makeVisualObj(this);
 }
 
-SNode.prototype.moveTo = function(x, y, redraw) {
-    redraw = typeof(redraw) !== 'undefined' ? redraw : true;
+SNode.prototype.updatePos = function(x, y) {
     this.x = x;
     this.y = y;
     this.x0 = this.x - this.halfWidth;
     this.y0 = this.y - this.halfHeight;
     this.x1 = this.x + this.halfWidth;
     this.y1 = this.y + this.halfHeight;
-
-    $('div#' + this.id).css('left', (this.x - this.halfWidth) + 'px');
-    $('div#' + this.id).css('top', (this.y - this.halfHeight) + 'px');
     
     // calc bounding rectangle
     this.rect.v1.x = this.x - this.halfWidth;
@@ -34,6 +31,26 @@ SNode.prototype.moveTo = function(x, y, redraw) {
     this.rect.v3.y = this.y + this.halfHeight;
     this.rect.v4.x = this.x + this.halfWidth;
     this.rect.v4.y = this.y - this.halfHeight;
+
+    // update position of contained nodes
+    for (var key in this.nodes) {
+        this.nodes[key].estimatePos();
+    }
+
+    // update position of connected links
+    for (var i = 0; i < this.links.length; i++) {
+        var link = this.links[i];
+        link.updatePos();
+    }
+}
+
+SNode.prototype.moveTo = function(x, y, redraw) {
+    redraw = typeof(redraw) !== 'undefined' ? redraw : true;
+    
+    this.updatePos(x, y);
+
+    $('div#' + this.id).css('left', (this.x - this.halfWidth) + 'px');
+    $('div#' + this.id).css('top', (this.y - this.halfHeight) + 'px');
 
     // update positions for nodes contained in this super node
     for (var key in this.nodes) {
