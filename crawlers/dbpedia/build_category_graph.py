@@ -61,15 +61,15 @@ def process_line(line, previouslines, nodes):
             
    
 
-def build_category_tree(file_loc):
+def process_categories():
 
-
+    inputdoc=sys.stdin
     db = Connection().things
 
-    type_file = open(file_loc);
+    
     p_list=[]
     nodes={}
-    for line in type_file:
+    for line in inputdoc:
         process_line(line, p_list, nodes)
     
     pnln.buildgraph(nodes, db)
@@ -93,6 +93,5 @@ def list_test(file_loc):
 
 if __name__=='__main__':
     type_floc='instance_types_en.nt'
-    #type_floc=sys.stdin;
-    #build_category_tree(type_floc)
     list_test(type_floc);
+    #process_categories()
