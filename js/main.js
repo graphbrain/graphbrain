@@ -165,6 +165,29 @@ var initGraph = function() {
             g.nodes[parentID].snode.subNodes[g.nodes[parentID].snode.subNodes.length] = snode;
         }
     }
+
+    // assign depth and weight
+    for (var key in g.snodes) {
+        if (g.snodes.hasOwnProperty(key)) {
+            var snode = g.snodes[key];
+            snode.weight = snode.nodes.size();
+            if (snode.parent == '') {
+                snode.depth = 0;
+            }
+            else if (snode.parent == g.root) {
+                snode.depth = 1;
+
+                for (var i = 0; i < snode.subNodes.length; i++) {
+                    var subNode = snode.subNodes[i];              
+                    snode.weight += subNode.nodes.size(); 
+                }
+            }
+            else {
+                snode.depth = 2;
+            }
+        }
+    }
+
     g.genSNodeKeys();
 
     // process links
@@ -199,17 +222,13 @@ var initGraph = function() {
     var halfWidth = window.innerWidth / 2;
     var halfHeight = window.innerHeight / 2;
 
-    //g.layout(g.root, 1, halfWidth, halfHeight, halfWidth, halfHeight, 0, Math.PI * 2);
     g.placeNodes();
-    g.layout2(window.innerWidth, window.innerHeight);
+    g.layout(window.innerWidth, window.innerHeight);
 
     context.canvas.width  = window.innerWidth;
     context.canvas.height = window.innerHeight;
 
     g.drawLinks();
-    //g.placeNodes();
-
-    //graphAnim();
 }
 
 $(function() {

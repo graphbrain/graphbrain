@@ -1,3 +1,10 @@
+// extending Object to return size (useful for dictionaries)
+Object.prototype.size = function () {
+    var len = this.length ? --this.length : -1;
+    for (var k in this)
+        len++;
+    return len;
+}
 // Geom
 
 var rotateAndTranslate = function(point, angle, tx, ty) {
@@ -199,6 +206,40 @@ var rectsDist = function(r1_x1, r1_y1, r1_x2, r1_y2, r2_x1, r2_y1, r2_x2, r2_y2)
     dist = Math.sqrt(dist);
     return dist;
 }
+
+
+var lineSegsOverlap = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+    var denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+
+    var ua = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
+    var ub = (x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3);
+
+    // lines are parallel
+    if (denom == 0) {
+        // coincident?
+        if ((ua == 0) && (ub == 0))
+            return true;
+        else
+            return false;
+    }
+
+    ua /= denom;
+    ub /= denom;
+
+    if ((ua >= 0) && (ua <= 1) && (ub >= 0) && (ub <= 1))
+        return true;
+    else
+        return false;
+}
+
+
+var lineRectOverlap = function(x1, y1, x2, y2, rect) {
+    if (lineSegsOverlap(x1, y1, x2, y2, rect.v1.x, rect.v1.y, rect.v2.x, rect.v2.y)) return true;
+    if (lineSegsOverlap(x1, y1, x2, y2, rect.v2.x, rect.v2.y, rect.v3.x, rect.v3.y)) return true;
+    if (lineSegsOverlap(x1, y1, x2, y2, rect.v3.x, rect.v3.y, rect.v4.x, rect.v4.y)) return true;
+    if (lineSegsOverlap(x1, y1, x2, y2, rect.v4.x, rect.v4.y, rect.v1.x, rect.v1.y)) return true;
+    return false;
+}
 // VisualObj
 var makeVisualObj = function(that) {
 	that.rect = [];
@@ -264,7 +305,7 @@ Node.prototype.estimatePos = function() {
 
 Node.prototype.place = function() {
     var node = document.createElement('div');
-    node.setAttribute('class', 'node');
+    node.setAttribute('class', 'node_' + this.snode.depth);
     node.setAttribute('id', this.id);
     if (this.type == 'text') {
         node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.id + '">' + this.text + '</a>';
@@ -278,8 +319,10 @@ Node.prototype.place = function() {
     var nodeDiv = $('#' + this.id)
     var width = nodeDiv.outerWidth();
     var height = nodeDiv.outerHeight();
+    // TODO: temporary hack
     if (this.type == 'image') {
-        height = 55;
+        width = 50;
+        height = 80;
     }
     
     this.width = width;
@@ -331,10 +374,11 @@ var SNode = function(id) {
     this.y = 0;
     this.vX = 0;
     this.vY = 0;
-    this.nodes = [];
+    this.nodes = {};
     this.subNodes = [];
     this.parent = 'unknown';
     this.links = [];
+    this.weight = 0;
 
     // add common VisualObj capabilities
     makeVisualObj(this);
@@ -360,7 +404,8 @@ SNode.prototype.updatePos = function(x, y) {
 
     // update position of contained nodes
     for (var key in this.nodes) {
-        this.nodes[key].estimatePos();
+        if (this.nodes.hasOwnProperty(key))
+            this.nodes[key].estimatePos();
     }
 
     // update position of connected links
@@ -380,7 +425,8 @@ SNode.prototype.moveTo = function(x, y, redraw) {
 
     // update positions for nodes contained in this super node
     for (var key in this.nodes) {
-        this.nodes[key].updatePos();
+        if (this.nodes.hasOwnProperty(key))
+            this.nodes[key].updatePos();
     }
 
     if (redraw) {
@@ -397,10 +443,10 @@ SNode.prototype.place = function() {
             nodesCount++;
     }
     if (nodesCount > 1) {
-        snode.setAttribute('class', 'snode');
+        snode.setAttribute('class', 'snode_' + this.depth);
     }
     else {
-        snode.setAttribute('class', 'snode1');   
+        snode.setAttribute('class', 'snode1_' + this.depth);
     }
     snode.setAttribute('id', this.id);
     
@@ -409,7 +455,8 @@ SNode.prototype.place = function() {
 
     // place nodes contained in this super node
     for (var key in this.nodes) {
-        this.nodes[key].place();
+        if (this.nodes.hasOwnProperty(key))
+            this.nodes[key].place();
     }
 
     var width = $('div#' + this.id).outerWidth();
@@ -657,6 +704,95 @@ Link.prototype.pointInLabel = function(p) {
         || pointInTriangle(this.points[0], this.points[2], this.points[4], p));
 }
 
+
+Link.prototype.intersectsLink = function(link2) {
+    return lineSegsOverlap(this.x0, this.y0, this.x1, this.y1, link2.x0, link2.y0, link2.x1, link2.y1);
+}
+
+
+Link.prototype.intersectsSNode = function(snode) {
+    return lineRectOverlap(this.x0, this.y0, this.x1, this.y1, snode.rect);
+}
+// GraphPos is an auxliary class used to layout snodes
+var GraphPos = function(snode, width, height) {
+    this.angDivs = 12;
+    this.radDivs = 10;
+    this.ang2 = Math.PI * 0.5;
+
+    this.snode = snode;
+    this.halfWidth = width / 2;
+    this.halfHeight = height / 2;
+
+    this.done = false;
+    this.angStep = 0;
+    this.radStep = 1;
+    this.x = this.halfWidth;
+    this.y = this.halfHeight;
+
+    if (this.snode.depth > 1) {
+        var deltaX = this.snode.parent.x - this.halfWidth;
+        var deltaY = this.snode.parent.y - this.halfHeight;
+        this.baseAngle = Math.atan2(deltaY, deltaX);
+        this.minRadius = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
+        this.maxRadius = Math.sqrt((this.halfWidth * this.halfWidth) + (this.halfHeight * this.halfHeight));
+    }
+
+    this.next();
+}
+
+GraphPos.prototype.next = function() {
+    if (this.snode.depth == 1)
+        this.next1();
+    else
+        this.next2();
+}
+
+GraphPos.prototype.next1 = function() {
+    if (this.angStep >= this.angDivs) {
+        this.radStep++;
+        this.angStep = 0;
+    }
+
+    if (this.radStep > this.radDivs) {
+        this.done = true;
+        return;
+    }
+
+    var angle = Math.PI * 2 * (this.angStep / this.angDivs);
+    var a = this.halfWidth * (this.radStep / this.radDivs);
+    var b = this.halfHeight * (this.radStep / this.radDivs);
+
+    this.x = this.halfWidth + (a * Math.cos(angle));
+    this.y = this.halfHeight + (b * Math.sin(angle));
+
+    this.angStep++;
+}
+
+GraphPos.prototype.next2 = function() {
+    if (this.angStep >= this.angDivs) {
+        this.radStep++;
+        this.angStep = 0;
+    }
+
+    if (this.radStep >= this.radDivs) {
+        this.done = true;
+        return;
+    }
+
+    var angle = (this.ang2 * (this.angStep / this.angDivs)) - (this.ang2 / 2);
+    angle += this.baseAngle;
+
+    var r = this.radStep / this.radDivs;
+    r *= this.maxRadius - this.minRadius;
+    r += this.minRadius;
+
+    this.x = this.halfWidth + (r * Math.cos(angle));
+    this.y = this.halfHeight + (r * Math.sin(angle));
+
+    this.angStep++;
+}
+
+
 // Graph
 var Graph = function() {
     this.snodes = {}
@@ -680,40 +816,8 @@ Graph.prototype.drawLinks = function() {
 
 Graph.prototype.placeNodes = function() {
     for (var key in this.snodes) {
-        this.snodes[key].place();
-    }
-}
-
-Graph.prototype.layout = function(node, depth, cx, cy, px, py, ang0, ang1) {
-    node.x = px + ((Math.random() * 50) - 25);
-    node.y = py + ((Math.random() * 50) - 25);
-
-    var count = node.subNodes.length;
-
-    var ang = ang0;
-    var rad = depth * 150;
-
-    var deltaAng = 0;
-    if (count == 1) {
-        ang += (ang1 - ang0) / 2;
-        deltaAng = Math.PI;
-    }
-    else {
-        if (depth == 1) {
-            deltaAng = (ang1 - ang0) / count;
-        }
-        else {
-            deltaAng = (ang1 - ang0) / (count - 1);
-            deltaAng *= 0.75;
-        }
-    }
-
-    var i;
-    for (var i = 0; i < count; i++) {
-        var npx = cx + (Math.sin(ang) * rad);
-        var npy = cy + (Math.cos(ang) * rad);
-        this.layout(node.subNodes[i], depth + 1, cx, cy, npx, npy, ang - (deltaAng / 2), ang + (deltaAng / 2));
-        ang += deltaAng;
+        if (this.snodes.hasOwnProperty(key))
+            this.snodes[key].place();
     }
 }
 
@@ -735,69 +839,6 @@ Graph.prototype.genSNodeKeys = function() {
     }
 }
 
-Graph.prototype.forceStep = function() {
-    var drag = 0.85;
-    var coulombConst = 300;
-    var hookeConst = 0.06;
-
-    // Init forces
-    for (var key in this.snodes) {
-        var snode = this.snodes[key];
-        snode.fX = 0;
-        snode.fY = 0;
-    }
-
-    // Coulomb repulsion
-    for (var i = 0; i < this.snodeKeys.length; i++) {
-        var orig = this.snodes[this.snodeKeys[i]];
-        for (var j = i + 1; j < this.snodeKeys.length; j++) {
-            var targ = this.snodes[this.snodeKeys[j]];
-
-            var deltaX = orig.x - targ.x;
-            var deltaY = orig.y - targ.y;
-            var d2 = (deltaX * deltaX) + (deltaY * deltaY);
-            /*var d2 = rectsDist2(orig.x1, orig.y1, orig.x2, orig.y2, targ.x1, targ.y1, targ.x2, targ.y2);
-            if (d2 == 0) {
-                d2 = 10000;
-            }*/
-            var fX = (deltaX / d2) * coulombConst;
-            var fY = (deltaY / d2) * coulombConst;
-            orig.fX += fX;
-            orig.fY += fY;
-            targ.fX -= fX;
-            targ.fY -= fY;
-        }
-    }
-
-    // Hooke attraction
-    for (var i = 0; i < this.links.length; i++) {
-        var link = this.links[i];
-        var orig = link.sorig;
-        var targ = link.starg;
-
-        var deltaX = orig.x - targ.x;
-        var deltaY = orig.y - targ.y;
-        //var d2 = (deltaX * deltaX) + (deltaY * deltaY);
-        var fX = deltaX * hookeConst;
-        var fY = deltaY * hookeConst;
-        orig.fX -= fX;
-        orig.fY -= fY;
-        targ.fX += fX;
-        targ.fY += fY;
-    }
-
-    // Update velocities and positions
-    for (var key in this.snodes) {
-        var node = this.snodes[key];
-        if (node.parent != '') {
-            node.vX = (node.vX + node.fX) * drag;
-            node.vY = (node.vY + node.fY) * drag;
-            node.x = node.x + node.vX;
-            node.y = node.y + node.vY;
-        }
-    }
-}
-
 Graph.prototype.layoutSNode = function(snode, fixedSNodes, width, height) {
     var iters = 100;
 
@@ -806,11 +847,13 @@ Graph.prototype.layoutSNode = function(snode, fixedSNodes, width, height) {
     var bestPenalty = 99999999;
     var bestX, bestY;
     
-    for (var i = 0; i < iters; i++) {
+    var gp = new GraphPos(snode, width, height);
+
+    while (!gp.done) {
         var penalty = 0;
 
-        var x = Math.random() * width;
-        var y = Math.random() * height;
+        var x = gp.x;
+        var y = gp.y;
         snode.updatePos(x, y);
 
         for (var j = 0; j < fixedSNodes.length; j++) {
@@ -828,6 +871,14 @@ Graph.prototype.layoutSNode = function(snode, fixedSNodes, width, height) {
                     penalty += 10000;
                 }
             }
+
+            // link-node intersection penalty
+            /*for (var k = 0; k < snode.links.length; k++) {
+                var link = snode.links[k];
+                if (link.sorig.fixed && link.starg.fixed)
+                    if (link.intersectsSNode(snode2))
+                        penalty += 10000;
+            }*/
         }
 
         // node-label overlap penalty
@@ -836,6 +887,21 @@ Graph.prototype.layoutSNode = function(snode, fixedSNodes, width, height) {
             if (link.sorig.fixed && link.starg.fixed)
                 if (snode.overlaps(link))
                     penalty += 10000;
+        }
+
+        // link-link intersection penalty
+        for (var k = 0; k < this.links.length; k++) {
+            var link = this.links[k];
+            if (link.sorig.fixed && link.starg.fixed) {
+                for (var l = 0; l < snode.links.length; l++) {
+                    var slink = snode.links[l];
+                    if (slink.sorig.fixed && slink.starg.fixed) {
+                        if (link.intersectsLink(slink)) {
+                            penalty += 10000;
+                        }
+                    }
+                }
+            }
         }
 
         // link length penalty
@@ -852,18 +918,40 @@ Graph.prototype.layoutSNode = function(snode, fixedSNodes, width, height) {
             bestX = x;
             bestY = y;
         }
+
+        gp.next();
     }
 
-    console.log("best: " + bestPenalty);
+    //console.log("best: " + bestPenalty);
 
     snode.moveTo(bestX, bestY);
 }
 
-Graph.prototype.layout2 = function(width, height) {
+Graph.prototype.nextByWeight = function(depth) {
+    var bestWeight = -1;
+    var bestSNode = false;
+    for (var key in this.snodes) {
+        if (this.snodes.hasOwnProperty(key)) {
+            var snode = this.snodes[key];
+            if ((!snode.fixed) && (snode.depth == depth)) {
+                if (snode.weight > bestWeight) {
+                    bestWeight = snode.weight;
+                    bestSNode = snode;
+                }
+            }
+        }
+    }
+
+    return bestSNode;
+}
+
+Graph.prototype.layout = function(width, height) {
     // set all super nodes non-fixed
     for (var key in this.snodes) {
-        var snode = this.snodes[key];
-        snode.fixed = false;
+        if (this.snodes.hasOwnProperty(key)) {
+            var snode = this.snodes[key];
+            snode.fixed = false;
+        }
     }
 
     // layout root node
@@ -871,21 +959,79 @@ Graph.prototype.layout2 = function(width, height) {
     g.root.moveTo(width / 2, height / 2);
     g.root.fixed = true;
     
+    var snodeCount = this.snodes.size();
+
+    // special cases
+    if (snodeCount > 1) {
+        var snode = this.nextByWeight(1);
+        var x = width / 2;
+        x -= g.root.width / 2;
+        x -= snode.width / 2;
+        x -= 100;
+        var y = height / 2;
+        snode.moveTo(x, y);
+        snode.fixed = true;
+        fixedSNodes.push(snode);
+    }
+    if (snodeCount > 2) {
+        var snode = this.nextByWeight(1);
+        if (snode) {
+            var x = width / 2;
+            x += g.root.width / 2;
+            x += snode.width / 2;
+            x += 100;
+            var y = height / 2;
+            snode.moveTo(x, y);
+            snode.fixed = true;
+            fixedSNodes.push(snode);
+        }
+    }
+    if (snodeCount > 3) {
+        var snode = this.nextByWeight(1);
+        if (snode) {
+            var x = width / 2;
+            var y = height / 2;
+            y -= g.root.height / 2;
+            y -= snode.height / 2;
+            y -= 100;
+            snode.moveTo(x, y);
+            snode.fixed = true;
+            fixedSNodes.push(snode);
+        }
+    }
+    if (snodeCount > 4) {
+        var snode = this.nextByWeight(1);
+        if (snode) {
+            var x = width / 2;
+            var y = height / 2;
+            y += g.root.height / 2;
+            y += snode.height / 2;
+            y += 100;
+            snode.moveTo(x, y);
+            snode.fixed = true;
+            fixedSNodes.push(snode);
+        }
+    }
+
     // layout tier 1 nodes
     for (var key in this.snodes) {
-        var snode = this.snodes[key];
-        if (snode.parent == g.root) {
-            this.layoutSNode(snode, fixedSNodes, width, height);
-            fixedSNodes.push(snode);
+        if (this.snodes.hasOwnProperty(key)) {
+            var snode = this.snodes[key];
+            if ((snode.depth == 1) && (!snode.fixed)) {
+                this.layoutSNode(snode, fixedSNodes, width, height);
+                fixedSNodes.push(snode);
+            }
         }
     }
 
     // layout tier 2 nodes
     for (var key in this.snodes) {
-        var snode = this.snodes[key];
-        if ((snode.parent != g.root) && (snode.parent != '')){
-            this.layoutSNode(snode, fixedSNodes, width, height);
-            fixedSNodes.push(snode);
+        if (this.snodes.hasOwnProperty(key)) {
+            var snode = this.snodes[key];
+            if (snode.depth == 2) {
+                this.layoutSNode(snode, fixedSNodes, width, height);
+                fixedSNodes.push(snode);
+            }
         }
     }
 }
@@ -902,25 +1048,6 @@ var addMode = function(event) {
     $("#addModeButton").addClass("selModeButton");
     $("#tip").html('Try clicking & dragging!');
     $("#tip").fadeIn("slow", function(){tipVisible = true;});    
-}
-// Graph animation cycle
-
-var cycle = 0;
-
-var graphAnim = function() {
-    for (var i = 0; i < 20; i++) {
-        g.forceStep();
-    }
-
-    for (var key in g.snodes) {
-        var snode = g.snodes[key];
-        snode.moveTo(snode.x, snode.y, false);
-    }
-    g.drawLinks();
-    cycle += 1;
-    if (cycle < 5) {
-        setTimeout('graphAnim()', 100);
-    }
 }
 // Entry point functions & global variables
 var g;
@@ -1089,6 +1216,29 @@ var initGraph = function() {
             g.nodes[parentID].snode.subNodes[g.nodes[parentID].snode.subNodes.length] = snode;
         }
     }
+
+    // assign depth and weight
+    for (var key in g.snodes) {
+        if (g.snodes.hasOwnProperty(key)) {
+            var snode = g.snodes[key];
+            snode.weight = snode.nodes.size();
+            if (snode.parent == '') {
+                snode.depth = 0;
+            }
+            else if (snode.parent == g.root) {
+                snode.depth = 1;
+
+                for (var i = 0; i < snode.subNodes.length; i++) {
+                    var subNode = snode.subNodes[i];              
+                    snode.weight += subNode.nodes.size(); 
+                }
+            }
+            else {
+                snode.depth = 2;
+            }
+        }
+    }
+
     g.genSNodeKeys();
 
     // process links
@@ -1123,17 +1273,13 @@ var initGraph = function() {
     var halfWidth = window.innerWidth / 2;
     var halfHeight = window.innerHeight / 2;
 
-    //g.layout(g.root, 1, halfWidth, halfHeight, halfWidth, halfHeight, 0, Math.PI * 2);
     g.placeNodes();
-    g.layout2(window.innerWidth, window.innerHeight);
+    g.layout(window.innerWidth, window.innerHeight);
 
     context.canvas.width  = window.innerWidth;
     context.canvas.height = window.innerHeight;
 
     g.drawLinks();
-    //g.placeNodes();
-
-    //graphAnim();
 }
 
 $(function() {
