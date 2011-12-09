@@ -5,10 +5,11 @@ var SNode = function(id) {
     this.y = 0;
     this.vX = 0;
     this.vY = 0;
-    this.nodes = [];
+    this.nodes = {};
     this.subNodes = [];
     this.parent = 'unknown';
     this.links = [];
+    this.weight = 0;
 
     // add common VisualObj capabilities
     makeVisualObj(this);
@@ -34,7 +35,8 @@ SNode.prototype.updatePos = function(x, y) {
 
     // update position of contained nodes
     for (var key in this.nodes) {
-        this.nodes[key].estimatePos();
+        if (this.nodes.hasOwnProperty(key))
+            this.nodes[key].estimatePos();
     }
 
     // update position of connected links
@@ -54,7 +56,8 @@ SNode.prototype.moveTo = function(x, y, redraw) {
 
     // update positions for nodes contained in this super node
     for (var key in this.nodes) {
-        this.nodes[key].updatePos();
+        if (this.nodes.hasOwnProperty(key))
+            this.nodes[key].updatePos();
     }
 
     if (redraw) {
@@ -71,10 +74,10 @@ SNode.prototype.place = function() {
             nodesCount++;
     }
     if (nodesCount > 1) {
-        snode.setAttribute('class', 'snode');
+        snode.setAttribute('class', 'snode_' + this.depth);
     }
     else {
-        snode.setAttribute('class', 'snode1');   
+        snode.setAttribute('class', 'snode1_' + this.depth);
     }
     snode.setAttribute('id', this.id);
     
@@ -83,7 +86,8 @@ SNode.prototype.place = function() {
 
     // place nodes contained in this super node
     for (var key in this.nodes) {
-        this.nodes[key].place();
+        if (this.nodes.hasOwnProperty(key))
+            this.nodes[key].place();
     }
 
     var width = $('div#' + this.id).outerWidth();

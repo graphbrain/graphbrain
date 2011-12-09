@@ -199,3 +199,13 @@ Link.prototype.pointInLabel = function(p) {
         || pointInTriangle(this.points[2], this.points[3], this.points[4], p)
         || pointInTriangle(this.points[0], this.points[2], this.points[4], p));
 }
+
+
+Link.prototype.intersectsLink = function(link2) {
+    return lineSegsOverlap(this.x0, this.y0, this.x1, this.y1, link2.x0, link2.y0, link2.x1, link2.y1);
+}
+
+
+Link.prototype.intersectsSNode = function(snode) {
+    return lineRectOverlap(this.x0, this.y0, this.x1, this.y1, snode.rect);
+}

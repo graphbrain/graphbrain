@@ -42,7 +42,7 @@ Node.prototype.estimatePos = function() {
 
 Node.prototype.place = function() {
     var node = document.createElement('div');
-    node.setAttribute('class', 'node');
+    node.setAttribute('class', 'node_' + this.snode.depth);
     node.setAttribute('id', this.id);
     if (this.type == 'text') {
         node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.id + '">' + this.text + '</a>';
@@ -56,8 +56,10 @@ Node.prototype.place = function() {
     var nodeDiv = $('#' + this.id)
     var width = nodeDiv.outerWidth();
     var height = nodeDiv.outerHeight();
+    // TODO: temporary hack
     if (this.type == 'image') {
-        height = 55;
+        width = 50;
+        height = 80;
     }
     
     this.width = width;

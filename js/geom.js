@@ -199,3 +199,37 @@ var rectsDist = function(r1_x1, r1_y1, r1_x2, r1_y2, r2_x1, r2_y1, r2_x2, r2_y2)
     dist = Math.sqrt(dist);
     return dist;
 }
+
+
+var lineSegsOverlap = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+    var denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+
+    var ua = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
+    var ub = (x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3);
+
+    // lines are parallel
+    if (denom == 0) {
+        // coincident?
+        if ((ua == 0) && (ub == 0))
+            return true;
+        else
+            return false;
+    }
+
+    ua /= denom;
+    ub /= denom;
+
+    if ((ua >= 0) && (ua <= 1) && (ub >= 0) && (ub <= 1))
+        return true;
+    else
+        return false;
+}
+
+
+var lineRectOverlap = function(x1, y1, x2, y2, rect) {
+    if (lineSegsOverlap(x1, y1, x2, y2, rect.v1.x, rect.v1.y, rect.v2.x, rect.v2.y)) return true;
+    if (lineSegsOverlap(x1, y1, x2, y2, rect.v2.x, rect.v2.y, rect.v3.x, rect.v3.y)) return true;
+    if (lineSegsOverlap(x1, y1, x2, y2, rect.v3.x, rect.v3.y, rect.v4.x, rect.v4.y)) return true;
+    if (lineSegsOverlap(x1, y1, x2, y2, rect.v4.x, rect.v4.y, rect.v1.x, rect.v1.y)) return true;
+    return false;
+}

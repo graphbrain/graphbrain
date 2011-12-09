@@ -1,3 +1,83 @@
+// GraphPos is an auxliary class used to layout snodes
+var GraphPos = function(snode, width, height) {
+    this.angDivs = 12;
+    this.radDivs = 10;
+    this.ang2 = Math.PI * 0.5;
+
+    this.snode = snode;
+    this.halfWidth = width / 2;
+    this.halfHeight = height / 2;
+
+    this.done = false;
+    this.angStep = 0;
+    this.radStep = 1;
+    this.x = this.halfWidth;
+    this.y = this.halfHeight;
+
+    if (this.snode.depth > 1) {
+        var deltaX = this.snode.parent.x - this.halfWidth;
+        var deltaY = this.snode.parent.y - this.halfHeight;
+        this.baseAngle = Math.atan2(deltaY, deltaX);
+        this.minRadius = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
+        this.maxRadius = Math.sqrt((this.halfWidth * this.halfWidth) + (this.halfHeight * this.halfHeight));
+    }
+
+    this.next();
+}
+
+GraphPos.prototype.next = function() {
+    if (this.snode.depth == 1)
+        this.next1();
+    else
+        this.next2();
+}
+
+GraphPos.prototype.next1 = function() {
+    if (this.angStep >= this.angDivs) {
+        this.radStep++;
+        this.angStep = 0;
+    }
+
+    if (this.radStep > this.radDivs) {
+        this.done = true;
+        return;
+    }
+
+    var angle = Math.PI * 2 * (this.angStep / this.angDivs);
+    var a = this.halfWidth * (this.radStep / this.radDivs);
+    var b = this.halfHeight * (this.radStep / this.radDivs);
+
+    this.x = this.halfWidth + (a * Math.cos(angle));
+    this.y = this.halfHeight + (b * Math.sin(angle));
+
+    this.angStep++;
+}
+
+GraphPos.prototype.next2 = function() {
+    if (this.angStep >= this.angDivs) {
+        this.radStep++;
+        this.angStep = 0;
+    }
+
+    if (this.radStep >= this.radDivs) {
+        this.done = true;
+        return;
+    }
+
+    var angle = (this.ang2 * (this.angStep / this.angDivs)) - (this.ang2 / 2);
+    angle += this.baseAngle;
+
+    var r = this.radStep / this.radDivs;
+    r *= this.maxRadius - this.minRadius;
+    r += this.minRadius;
+
+    this.x = this.halfWidth + (r * Math.cos(angle));
+    this.y = this.halfHeight + (r * Math.sin(angle));
+
+    this.angStep++;
+}
+
+
 // Graph
 var Graph = function() {
     this.snodes = {}
@@ -21,40 +101,8 @@ Graph.prototype.drawLinks = function() {
 
 Graph.prototype.placeNodes = function() {
     for (var key in this.snodes) {
-        this.snodes[key].place();
-    }
-}
-
-Graph.prototype.layout = function(node, depth, cx, cy, px, py, ang0, ang1) {
-    node.x = px + ((Math.random() * 50) - 25);
-    node.y = py + ((Math.random() * 50) - 25);
-
-    var count = node.subNodes.length;
-
-    var ang = ang0;
-    var rad = depth * 150;
-
-    var deltaAng = 0;
-    if (count == 1) {
-        ang += (ang1 - ang0) / 2;
-        deltaAng = Math.PI;
-    }
-    else {
-        if (depth == 1) {
-            deltaAng = (ang1 - ang0) / count;
-        }
-        else {
-            deltaAng = (ang1 - ang0) / (count - 1);
-            deltaAng *= 0.75;
-        }
-    }
-
-    var i;
-    for (var i = 0; i < count; i++) {
-        var npx = cx + (Math.sin(ang) * rad);
-        var npy = cy + (Math.cos(ang) * rad);
-        this.layout(node.subNodes[i], depth + 1, cx, cy, npx, npy, ang - (deltaAng / 2), ang + (deltaAng / 2));
-        ang += deltaAng;
+        if (this.snodes.hasOwnProperty(key))
+            this.snodes[key].place();
     }
 }
 
@@ -76,69 +124,6 @@ Graph.prototype.genSNodeKeys = function() {
     }
 }
 
-Graph.prototype.forceStep = function() {
-    var drag = 0.85;
-    var coulombConst = 300;
-    var hookeConst = 0.06;
-
-    // Init forces
-    for (var key in this.snodes) {
-        var snode = this.snodes[key];
-        snode.fX = 0;
-        snode.fY = 0;
-    }
-
-    // Coulomb repulsion
-    for (var i = 0; i < this.snodeKeys.length; i++) {
-        var orig = this.snodes[this.snodeKeys[i]];
-        for (var j = i + 1; j < this.snodeKeys.length; j++) {
-            var targ = this.snodes[this.snodeKeys[j]];
-
-            var deltaX = orig.x - targ.x;
-            var deltaY = orig.y - targ.y;
-            var d2 = (deltaX * deltaX) + (deltaY * deltaY);
-            /*var d2 = rectsDist2(orig.x1, orig.y1, orig.x2, orig.y2, targ.x1, targ.y1, targ.x2, targ.y2);
-            if (d2 == 0) {
-                d2 = 10000;
-            }*/
-            var fX = (deltaX / d2) * coulombConst;
-            var fY = (deltaY / d2) * coulombConst;
-            orig.fX += fX;
-            orig.fY += fY;
-            targ.fX -= fX;
-            targ.fY -= fY;
-        }
-    }
-
-    // Hooke attraction
-    for (var i = 0; i < this.links.length; i++) {
-        var link = this.links[i];
-        var orig = link.sorig;
-        var targ = link.starg;
-
-        var deltaX = orig.x - targ.x;
-        var deltaY = orig.y - targ.y;
-        //var d2 = (deltaX * deltaX) + (deltaY * deltaY);
-        var fX = deltaX * hookeConst;
-        var fY = deltaY * hookeConst;
-        orig.fX -= fX;
-        orig.fY -= fY;
-        targ.fX += fX;
-        targ.fY += fY;
-    }
-
-    // Update velocities and positions
-    for (var key in this.snodes) {
-        var node = this.snodes[key];
-        if (node.parent != '') {
-            node.vX = (node.vX + node.fX) * drag;
-            node.vY = (node.vY + node.fY) * drag;
-            node.x = node.x + node.vX;
-            node.y = node.y + node.vY;
-        }
-    }
-}
-
 Graph.prototype.layoutSNode = function(snode, fixedSNodes, width, height) {
     var iters = 100;
 
@@ -147,11 +132,13 @@ Graph.prototype.layoutSNode = function(snode, fixedSNodes, width, height) {
     var bestPenalty = 99999999;
     var bestX, bestY;
     
-    for (var i = 0; i < iters; i++) {
+    var gp = new GraphPos(snode, width, height);
+
+    while (!gp.done) {
         var penalty = 0;
 
-        var x = Math.random() * width;
-        var y = Math.random() * height;
+        var x = gp.x;
+        var y = gp.y;
         snode.updatePos(x, y);
 
         for (var j = 0; j < fixedSNodes.length; j++) {
@@ -169,6 +156,14 @@ Graph.prototype.layoutSNode = function(snode, fixedSNodes, width, height) {
                     penalty += 10000;
                 }
             }
+
+            // link-node intersection penalty
+            /*for (var k = 0; k < snode.links.length; k++) {
+                var link = snode.links[k];
+                if (link.sorig.fixed && link.starg.fixed)
+                    if (link.intersectsSNode(snode2))
+                        penalty += 10000;
+            }*/
         }
 
         // node-label overlap penalty
@@ -177,6 +172,21 @@ Graph.prototype.layoutSNode = function(snode, fixedSNodes, width, height) {
             if (link.sorig.fixed && link.starg.fixed)
                 if (snode.overlaps(link))
                     penalty += 10000;
+        }
+
+        // link-link intersection penalty
+        for (var k = 0; k < this.links.length; k++) {
+            var link = this.links[k];
+            if (link.sorig.fixed && link.starg.fixed) {
+                for (var l = 0; l < snode.links.length; l++) {
+                    var slink = snode.links[l];
+                    if (slink.sorig.fixed && slink.starg.fixed) {
+                        if (link.intersectsLink(slink)) {
+                            penalty += 10000;
+                        }
+                    }
+                }
+            }
         }
 
         // link length penalty
@@ -193,18 +203,40 @@ Graph.prototype.layoutSNode = function(snode, fixedSNodes, width, height) {
             bestX = x;
             bestY = y;
         }
+
+        gp.next();
     }
 
-    console.log("best: " + bestPenalty);
+    //console.log("best: " + bestPenalty);
 
     snode.moveTo(bestX, bestY);
 }
 
-Graph.prototype.layout2 = function(width, height) {
+Graph.prototype.nextByWeight = function(depth) {
+    var bestWeight = -1;
+    var bestSNode = false;
+    for (var key in this.snodes) {
+        if (this.snodes.hasOwnProperty(key)) {
+            var snode = this.snodes[key];
+            if ((!snode.fixed) && (snode.depth == depth)) {
+                if (snode.weight > bestWeight) {
+                    bestWeight = snode.weight;
+                    bestSNode = snode;
+                }
+            }
+        }
+    }
+
+    return bestSNode;
+}
+
+Graph.prototype.layout = function(width, height) {
     // set all super nodes non-fixed
     for (var key in this.snodes) {
-        var snode = this.snodes[key];
-        snode.fixed = false;
+        if (this.snodes.hasOwnProperty(key)) {
+            var snode = this.snodes[key];
+            snode.fixed = false;
+        }
     }
 
     // layout root node
@@ -212,21 +244,79 @@ Graph.prototype.layout2 = function(width, height) {
     g.root.moveTo(width / 2, height / 2);
     g.root.fixed = true;
     
+    var snodeCount = this.snodes.size();
+
+    // special cases
+    if (snodeCount > 1) {
+        var snode = this.nextByWeight(1);
+        var x = width / 2;
+        x -= g.root.width / 2;
+        x -= snode.width / 2;
+        x -= 100;
+        var y = height / 2;
+        snode.moveTo(x, y);
+        snode.fixed = true;
+        fixedSNodes.push(snode);
+    }
+    if (snodeCount > 2) {
+        var snode = this.nextByWeight(1);
+        if (snode) {
+            var x = width / 2;
+            x += g.root.width / 2;
+            x += snode.width / 2;
+            x += 100;
+            var y = height / 2;
+            snode.moveTo(x, y);
+            snode.fixed = true;
+            fixedSNodes.push(snode);
+        }
+    }
+    if (snodeCount > 3) {
+        var snode = this.nextByWeight(1);
+        if (snode) {
+            var x = width / 2;
+            var y = height / 2;
+            y -= g.root.height / 2;
+            y -= snode.height / 2;
+            y -= 100;
+            snode.moveTo(x, y);
+            snode.fixed = true;
+            fixedSNodes.push(snode);
+        }
+    }
+    if (snodeCount > 4) {
+        var snode = this.nextByWeight(1);
+        if (snode) {
+            var x = width / 2;
+            var y = height / 2;
+            y += g.root.height / 2;
+            y += snode.height / 2;
+            y += 100;
+            snode.moveTo(x, y);
+            snode.fixed = true;
+            fixedSNodes.push(snode);
+        }
+    }
+
     // layout tier 1 nodes
     for (var key in this.snodes) {
-        var snode = this.snodes[key];
-        if (snode.parent == g.root) {
-            this.layoutSNode(snode, fixedSNodes, width, height);
-            fixedSNodes.push(snode);
+        if (this.snodes.hasOwnProperty(key)) {
+            var snode = this.snodes[key];
+            if ((snode.depth == 1) && (!snode.fixed)) {
+                this.layoutSNode(snode, fixedSNodes, width, height);
+                fixedSNodes.push(snode);
+            }
         }
     }
 
     // layout tier 2 nodes
     for (var key in this.snodes) {
-        var snode = this.snodes[key];
-        if ((snode.parent != g.root) && (snode.parent != '')){
-            this.layoutSNode(snode, fixedSNodes, width, height);
-            fixedSNodes.push(snode);
+        if (this.snodes.hasOwnProperty(key)) {
+            var snode = this.snodes[key];
+            if (snode.depth == 2) {
+                this.layoutSNode(snode, fixedSNodes, width, height);
+                fixedSNodes.push(snode);
+            }
         }
     }
 }
