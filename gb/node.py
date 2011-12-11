@@ -62,7 +62,7 @@ class Node(DbObj):
 
             if 'origs' in self.d:
                 for n in self.d['origs']:
-                    n = str(n)
+                    #n = str(n)
                     if n not in nodeids:
                         nnode = Node().get_by_id(n)
                         if not nnode.d is None:
@@ -86,7 +86,7 @@ class Node(DbObj):
                 for targ_id, targ_list in targs.items():
                     if targ_id in nodeids:
                         for targ in targ_list:
-                            ilinks.append({'id':link_id, 'orig': str(orig.d['_id']), 'targ': targ_id,
+                            ilinks.append({'id':link_id, 'orig': orig.d['_id'], 'targ': targ_id,
                                 'relation': targ['relation'], 'directed': targ['directed']})
                             link_id += 1
 
@@ -95,9 +95,9 @@ class Node(DbObj):
     def _reldict(self, links):
         rd = {}
         for l in links:
-            orig_id = str(l['orig'])
-            targ_id = str(l['targ'])
-            root_id = str(self.d['_id'])
+            orig_id = l['orig']
+            targ_id = l['targ']
+            root_id = self.d['_id']
 
             rel = l['relation']
             dkey = (True, orig_id, rel)
@@ -215,7 +215,7 @@ class Node(DbObj):
 
         node_dict = {}
         for node in nodes:
-            node_dict[str(node.d['_id'])] = {'parent':str(node.parent), 'text':node.d['label'], 'type':node.d['type']}
+            node_dict[node.d['_id']] = {'parent':str(node.parent), 'text':node.d['label'], 'type':node.d['type']}
         
         nodes_json = json.dumps(node_dict, separators=(',',':'))
 
