@@ -63,7 +63,7 @@ class User(DbObj):
     def graph_list_for_user(self, u):
         graphs = []
         for g in self.d['graph_perms']:
-            graphs.append(Graph().get_by_id(g['graph']).d)
+            graphs.append(Graph().get_by_obj_id(g['graph']).d)
 
         return graphs
 

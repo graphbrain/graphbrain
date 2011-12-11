@@ -20,7 +20,7 @@ def get_person_node(db, graph, person_id):
     person_node = Node().create_or_get_by_id(label=person['name'], graph=graph, _id=_id, crawler='cinema')
     if 'image' in person.keys():
         _id = url_id(person['image'])
-        image_node = Node().create_or_get_by_eid(label=person['image'], graph=graph, _id=_id, crawler='cinema', node_type='image')
+        image_node = Node().create_or_get_by_id(label=person['image'], graph=graph, _id=_id, crawler='cinema', node_type='image')
         graph.add_link(image_node, person_node, 'photo of', 'photo of')
     return person_node
 
@@ -61,7 +61,7 @@ def process_film(db, graph, film):
 
     if 'poster' in film.keys():
         _id = url_id(film['poster'])
-        poster_node = Node().create_or_get_by_eid(label=film['poster'], graph=graph, _id=_id, crawler='cinema', node_type='image')
+        poster_node = Node().create_or_get_by_id(label=film['poster'], graph=graph, _id=_id, crawler='cinema', node_type='image')
         graph.add_link(poster_node, film_node, 'poster of', 'poster of')
 
 
@@ -86,4 +86,4 @@ def synch(graph_owner, graph_name):
 if __name__ == '__main__':
     graph_owner = 'gb@graphbrain.com'
     graph_name = 'Main'
-    synch(graph_owner, gra ph_name)
+    synch(graph_owner, graph_name)
