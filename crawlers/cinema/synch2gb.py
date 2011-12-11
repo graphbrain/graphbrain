@@ -7,18 +7,20 @@ from pymongo import Connection
 from gb.node import Node
 from gb.graph import Graph
 from gb.user import User
+from gb.ids import url_id, wikipedia_id, gb_id
 
 
 def get_person_node(db, graph, person_id):
     person = db.people.find_one({'_id': person_id})
-    eid = ''
+    _id = ''
     if 'wptitle' in person:
-        eid = person['wptitle']
+        _id = wikipedia_id(person['wptitle'])
     else:
-        eid = 'cinema:person:%s' % person['name']
-    person_node = Node().create_or_get_by_eid(label=person['name'], graph=graph, eid=eid, crawler='cinema')
+        _id = gb_id(person['name'], 'cinema')
+    person_node = Node().create_or_get_by_id(label=person['name'], graph=graph, _id=_id, crawler='cinema')
     if 'image' in person.keys():
-        image_node = Node().create_or_get_by_eid(label=person['image'], graph=graph, eid=person['image'], crawler='cinema', node_type='image')
+        _id = url_id(person['image'])
+        image_node = Node().create_or_get_by_eid(label=person['image'], graph=graph, _id=_id, crawler='cinema', node_type='image')
         graph.add_link(image_node, person_node, 'photo of', 'photo of')
     return person_node
 
@@ -30,7 +32,8 @@ def link_film_to_people(db, graph, film_node, people, rel):
 
 
 def process_film(db, graph, film):
-    film_node = Node().create_or_get_by_eid(label=film['title'], graph=graph, eid=film['wptitle'], crawler='cinema')
+    _id = wikipedia_id(film['wptitle'])
+    film_node = Node().create_or_get_by_id(label=film['title'], graph=graph, _id=_id, crawler='cinema')
 
     actors = []
     producers = []
@@ -57,7 +60,8 @@ def process_film(db, graph, film):
     link_film_to_people(db, graph, film_node, musicians, 'musician for')
 
     if 'poster' in film.keys():
-        poster_node = Node().create_or_get_by_eid(label=film['poster'], graph=graph, eid=film['poster'], crawler='cinema', node_type='image')
+        _id = url_id(film['poster'])
+        poster_node = Node().create_or_get_by_eid(label=film['poster'], graph=graph, _id=_id, crawler='cinema', node_type='image')
         graph.add_link(poster_node, film_node, 'poster of', 'poster of')
 
 
