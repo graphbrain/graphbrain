@@ -261,9 +261,12 @@ var makeVisualObj = function(that) {
 		return rotRectsOverlap(that.rect, obj.rect);
 	}
 }
+var nodeCount = 0;
+
 // Node
 var Node = function(id, text, type, snode) {
     this.id = id;
+    this.divid = 'n' + nodeCount++;
     this.text = text;
     this.type = type;
     this.x = 0;
@@ -279,7 +282,7 @@ var Node = function(id, text, type, snode) {
 }
 
 Node.prototype.updatePos = function() {
-    var nodeDiv = $('#' + this.id)
+    var nodeDiv = $('#' + this.divid)
     var offset = nodeDiv.offset();
     this.x = offset.left + this.halfWidth;
     this.y = offset.top + this.halfHeight;
@@ -306,17 +309,17 @@ Node.prototype.estimatePos = function() {
 Node.prototype.place = function() {
     var node = document.createElement('div');
     node.setAttribute('class', 'node_' + this.snode.depth);
-    node.setAttribute('id', this.id);
+    node.setAttribute('id', this.divid);
     if (this.type == 'text') {
-        node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.id + '">' + this.text + '</a>';
+        node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a>';
     }
     else if (this.type == 'image') {
-        node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.id + '"><img src="' + this.text + '" width="50px" /></a>';
+        node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.divid + '"><img src="' + this.text + '" width="50px" /></a>';
     }
     var snodeDiv = document.getElementById(this.snode.id);
     snodeDiv.appendChild(node);
 
-    var nodeDiv = $('#' + this.id)
+    var nodeDiv = $('#' + this.divid)
     var width = nodeDiv.outerWidth();
     var height = nodeDiv.outerHeight();
     // TODO: temporary hack

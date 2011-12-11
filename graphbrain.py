@@ -43,7 +43,7 @@ def curuser():
         return None
     u = None
     try:
-        u = User().get_by_id(user_id)
+        u = User().get_by_obj_id(user_id)
     except:
         return None
     if u.check_session(session):
@@ -79,17 +79,14 @@ def main():
     if u is None:
         return render_template('login.html')
 
-    # TODO: these values are just temporary
-    telmo = User().get_by_email('telmo@telmomenezes.com')
-    g = Graph().get_by_owner_and_name(telmo, 'Cinema')
-
-    redirect_to_index = redirect('/node/%s' % g.d['root'])
+    # TODO: temporary entry point
+    redirect_to_index = redirect('/node/wikipedia/american_beauty_(film)')
     response = application.make_response(redirect_to_index)   
     return response
 
 
 @application.route('/node/<n1>/<n2>/<n3>')
-def node(n1, n2, n3):
+def node3(n1, n2, n3):
     u = curuser()
     if u is None:
         return redirect2login()
@@ -99,7 +96,7 @@ def node(n1, n2, n3):
 
 
 @application.route('/node/<n1>/<n2>')
-def node(n1, n2):
+def node2(n1, n2):
     u = curuser()
     if u is None:
         return redirect2login()

@@ -11,13 +11,18 @@ class DbObj:
         self.d = {}
         self.collection = ''
 
-    def get_by_id(self, obj_id):
-        self.d = self.db[self.collection].find_one({'_id': ObjectId(obj_id)})
+    def get_by_id(self, _id):
+        self.d = self.db[self.collection].find_one({'_id': _id})
         return self
     
+    def get_by_obj_id(self, obj_id):
+        self.d = self.db[self.collection].find_one({'_id': ObjectId(obj_id)})
+        return self
+
     def _insert_or_get_by_id(self):
-        self.d = self.db.nodes.find_one({'_id': self.d['_id']})
-        if not self.d is None:
+        d = self.db.nodes.find_one({'_id': self.d['_id']})
+        if not d is None:
+            self.d = d
             return
 
         self._insert()
