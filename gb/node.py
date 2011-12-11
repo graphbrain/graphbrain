@@ -12,7 +12,7 @@ class Node(DbObj):
         DbObj.__init__(self)
         self.collection = 'nodes'
 
-    def create(self, label, graph, node_type='text', eid='', crawler=''):
+    def create(self, label, graph, node_type='text', _id='', crawler=''):
         self.d = {}
         self.d['label'] = label
         self.d['type'] = node_type
@@ -20,18 +20,18 @@ class Node(DbObj):
         self.d['creation_ts'] = datetime.now()
         self.d['origs'] = []
         self.d['targs'] = {}
-        self.d['eid'] = eid
         self.d['crawler'] = crawler
 
-        self._insert()
+        if (_id != ''):
+            self.d['_id'] = _id
+
+        self._insert_or_get_by_id()
 
         return self
 
-    def create_or_get_by_eid(self, label, graph, node_type='text', eid='', crawler=''):
-        self.d = self.db.nodes.find_one({'eid': eid, 'graph': graph.d['_id']})
-        if self.d is None:
-            self.create(label, graph, node_type=node_type, eid=eid, crawler=crawler)
-        return self
+    # does the same thing as create to maintain compatibility with old code
+    def create_or_get_by_id(self, label, graph, node_type='text', _id='', crawler=''):
+        return self.create(label, graph, node_type, _id, crawler)
 
     def get_by_label(self, label, graph_id):
         self.d = self.db.nodes.find_one({'label': label, 'graph': graph_id})

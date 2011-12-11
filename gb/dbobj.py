@@ -15,6 +15,13 @@ class DbObj:
         self.d = self.db[self.collection].find_one({'_id': ObjectId(obj_id)})
         return self
     
+    def _insert_or_get_by_id(self):
+        self.d = self.db.nodes.find_one({'_id': self.d['_id']})
+        if not self.d is None:
+            return
+
+        self._insert()
+
     def _insert(self):
         self.d['_id'] = self.db[self.collection].insert(self.d)
 
