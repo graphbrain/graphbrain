@@ -88,12 +88,13 @@ def main():
     return response
 
 
-@application.route('/node/<node_id>')
-def node(node_id):
+@application.route('/node/<n1>/<n2>/<n3>')
+def node(n1, n2, n3):
     u = curuser()
     if u is None:
         return redirect2login()
    
+    node_id = '%s/%s/%s' % (n1, n2, n3)
     return node_response(node_id, u)
 
 
@@ -107,13 +108,12 @@ def node(n1, n2):
     return node_response(node_id, u)
 
 
-@application.route('/node/<n1>/<n2>/<n3>')
-def node(n1, n2, n3):
+@application.route('/node/<node_id>')
+def node(node_id):
     u = curuser()
     if u is None:
         return redirect2login()
    
-    node_id = '%s/%s/%s' % (n1, n2, n3)
     return node_response(node_id, u)
 
 
