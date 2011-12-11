@@ -97,6 +97,26 @@ def node(node_id):
     return node_response(node_id, u)
 
 
+@application.route('/node/<n1>/<n2>')
+def node(n1, n2):
+    u = curuser()
+    if u is None:
+        return redirect2login()
+   
+    node_id = '%s/%s' % (n1, n2)
+    return node_response(node_id, u)
+
+
+@application.route('/node/<n1>/<n2>/<n3>')
+def node(n1, n2, n3):
+    u = curuser()
+    if u is None:
+        return redirect2login()
+   
+    node_id = '%s/%s/%s' % (n1, n2, n3)
+    return node_response(node_id, u)
+
+
 @application.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
