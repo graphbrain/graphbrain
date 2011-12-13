@@ -48,7 +48,6 @@ class Node(DbObj):
         if (depth < 2):
             if 'targs' in self.d:
                 for n in self.d['targs'].keys():
-                    n = str(n)
                     if n not in nodeids:
                         nnode = Node().get_by_id(n)
                         if not nnode.d is None:
@@ -62,7 +61,6 @@ class Node(DbObj):
 
             if 'origs' in self.d:
                 for n in self.d['origs']:
-                    #n = str(n)
                     if n not in nodeids:
                         nnode = Node().get_by_id(n)
                         if not nnode.d is None:
