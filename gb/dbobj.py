@@ -19,6 +19,12 @@ class DbObj:
         self.d = self.db[self.collection].find_one({'_id': ObjectId(obj_id)})
         return self
 
+    def getall(self):
+        cur = self.db[self.collection].find()
+        for d in cur:
+            self.d = d
+            yield self
+
     def _insert_or_get_by_id(self):
         d = self.db.nodes.find_one({'_id': self.d['_id']})
         if not d is None:
