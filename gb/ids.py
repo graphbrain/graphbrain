@@ -23,28 +23,7 @@ def gb_id(name, crawler):
 
 def encode_id(in_id):
     return urllib.quote(in_id.encode('utf8'), '')
-    #out_id = in_id.replace('$', '$$')
-    #out_id = out_id.replace('/', '$!')
-    #return out_id
 
 
 def decode_id(in_id):
     return urllib.unquote(in_id).decode('utf8')
-    #out_id = u''
-
-    #escaped = False
-
-    #for c in in_id:
-    #    if escaped:
-    #        if c == '$':
-    #            out_id += '$'
-    #        else:
-    #            out_id += '/'
-    #        escaped = False
-    #    else:
-    #        if c == '$':
-    #            escaped = True
-    #        else:
-    #            out_id += c
-
-    #return out_id
