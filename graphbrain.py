@@ -17,6 +17,7 @@ from gb.parser import parse, ParseError
 from gb.config import *
 from gb.log import log, get_logs
 from gb.emails import add_email
+from gb.search import first_hit
 
 
 application = Flask(__name__)
@@ -152,8 +153,38 @@ def logout():
     return response
 
 
+@application.route("/search", methods=['POST',])
+def search():
+    """
+    Handles search queries.
+    """
+    u = curuser()
+    if u is None:
+        return redirect2login()
+    
+    error_msg = 'Sorry, could not find any matches.'
+    
+    search_term = request.form['input']
+    graph_id = request.form['graph_id']
+    node_id = request.form['node_id']
+
+    res_id = first_hit(search_term)
+
+    if res_id == '':
+        return node_response(node_id, u, error_msg)
+    
+    redirect_to_index = redirect('/node/%s' % res_id)
+    response = application.make_response(redirect_to_index)   
+    return response
+
+
 @application.route("/input", methods=['POST',])
 def input():
+    """
+    Handles natural language input, including ability
+    to insert new facts.
+    NOTE: inactive for now
+    """
     u = curuser()
     if u is None:
         return redirect2login()
