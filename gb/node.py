@@ -213,7 +213,7 @@ class Node(DbObj):
 
         node_dict = {}
         for node in nodes:
-            node_dict[node.d['_id']] = {'parent':str(node.parent), 'text':node.d['label'], 'type':node.d['type']}
+            node_dict[node.d['_id']] = {'parent':node.parent, 'text':node.d['label'], 'type':node.d['type']}
         
         nodes_json = json.dumps(node_dict, separators=(',',':'))
 
