@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}GraphBrain{% endblock %}
+
+{% block body %}
+<div id="topDiv">
+    <div id="topRight">
+        <a href="/logout">Logout</a>&nbsp;
+    </div>
+</div>
+
+<div style="text-align:center">
+    <br /><br /><br /><br /><br /><br />
+    <img src="/static/images/GB_logo_L.png" alt="graphbrain" />
+    <br /><br /><br /><br /><br /><br />
+    <form action="/search" method="post">
+        <input type="text" name="input" id="inputField" size="50" />
+        <input type="hidden" name="node_id" value="">
+        <button type="submit" id="inputFieldButton">Search</button>
+    </form>
+</div>
+
+{% endblock %}

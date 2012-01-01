@@ -80,10 +80,7 @@ def main():
     if u is None:
         return render_template('login.html')
 
-    # TODO: temporary entry point
-    redirect_to_index = redirect('/node/wikipedia/american_beauty_(film)')
-    response = application.make_response(redirect_to_index)   
-    return response
+    return render_template('search.html')
 
 
 @application.route('/node/<n1>/<n2>/<n3>')
@@ -165,7 +162,6 @@ def search():
     error_msg = 'Sorry, could not find any matches.'
     
     search_term = request.form['input']
-    graph_id = request.form['graph_id']
     node_id = request.form['node_id']
 
     res_id = first_hit(search_term)
