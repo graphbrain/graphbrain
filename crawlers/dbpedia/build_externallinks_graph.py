@@ -15,6 +15,39 @@ TAG_HOMEPAGE_LINK='<http://xmlns.com/foaf/0.1/homepage>'
 TAG_WIKIPEDIA_PAGE='<http://xmlns.com/foaf/0.1/page>'
 TAG_IMAGE_LINK='<http://xmlns.com/foaf/0.1/depiction>'
 
+def getDBPediaTuple(rawqtuple):
+    #Only get valid tuples:
+    tagPattern="(<http:.+?>)\s(<http:.+?>)\s(<http:.+?>)\s(<http:.+?>)"
+    elements=re.match(tagPattern, rawqtuple)
+    triple=[]
+    rel=''
+
+    if(elements==None or len(elements.groups())!=4):
+        return None;
+
+    else:
+        
+        from_node=elements.group(3)
+        
+        if(elements.group(2)==TAG_EXTERNAL_LINK):
+            rel='tells you more about';
+        elif(elements.group(2)==TAG_HOMEPAGE_LINK):
+            rel='is the homepage of'
+        elif(elements.group(2)==TAG_WIKIPEDIA_PAGE):
+            rel='is Wikipedia entry for';
+        elif(elements.group(2)==TAG_IMAGE_LINK):
+            rel='is image of';
+        else:
+            return None;
+
+        to_node=elements.group(1)
+        to_node=re.split('<http://(.+)/(.+?)>', to_node);
+        to_node=to_node[2]
+
+        wiki_source=elements.group(3)
+               
+        return (from_node, rel, to_node, wiki_source)
+
 def getDBPediaTriple(rawtriple):
     #Only get valid tuples:
     tagPattern="(<http:.+?>)\s(<http:.+?>)\s(<http:.+?>)"
@@ -43,22 +76,24 @@ def getDBPediaTriple(rawtriple):
         to_node=elements.group(1)
         to_node=re.split('<http://(.+)/(.+?)>', to_node);
         to_node=to_node[2]
+
+        wiki_source=elements.group(3)
                
         return (from_node, rel, to_node)
 
 def process_line(line, previouslines, nodes):
     node_type='url'
     print 'Processing: ', line
-    triple=getDBPediaTriple(line); 
-    if(triple==None):
+    qtuple=getDBPediaTuple(line); 
+    if(qtuple==None):
         return;
     else:
-        if(triple[1]=='is image of'):
+        if(qtuple[1]=='is image of'):
             node_type='image';
 
-        pnln.create(nodes, triple[0], node_type);
-        pnln.create(nodes, triple[2], 'text');
-        pnln.add_link(nodes, triple[0], triple[2], triple[1]);
+        pnln.create(nodes, qtuple[0], node_type, qtuple[3]);
+        pnln.create(nodes, qtuple[2], 'text');
+        pnln.add_link(nodes, qtuple[0], qtuple[2], qtuple[1], qtuple[3]);
     
 def process_externallinks():
     inputdoc=sys.stdin
@@ -88,6 +123,6 @@ def list_test(file_loc):
 
 
 if __name__=='__main__':
-    floc='external_links_en.nt'
+    floc='external_links_en.nq'
     list_test(floc);
     #process_externallinks();
