@@ -3,6 +3,7 @@ var SNode = function(id) {
     this.id = id;
     this.x = 0;
     this.y = 0;
+    this.z = 0;
     this.vX = 0;
     this.vY = 0;
     this.nodes = {};
@@ -51,8 +52,17 @@ SNode.prototype.moveTo = function(x, y, redraw) {
     
     this.updatePos(x, y);
 
-    $('div#' + this.id).css('left', (this.x - this.halfWidth) + 'px');
-    $('div#' + this.id).css('top', (this.y - this.halfHeight) + 'px');
+    var a = g.viewAngleX;
+    var tx = this.x - g.halfWidth;
+    var ty = this.y - g.halfHeight;
+    var rx = Math.round(tx * Math.cos(a));
+    var ry = Math.round(ty);
+    var rz = Math.round(-tx * Math.sin(a));
+    rx += g.halfWidth;
+    ry += g.halfHeight;
+
+    var transformStr = 'translate3d(' + (rx - this.halfWidth) + 'px,' + (ry - this.halfHeight) + 'px,' + rz + 'px)';
+    $('div#' + this.id).css('-webkit-transform', transformStr);
 
     // update positions for nodes contained in this super node
     for (var key in this.nodes) {
@@ -60,9 +70,9 @@ SNode.prototype.moveTo = function(x, y, redraw) {
             this.nodes[key].updatePos();
     }
 
-    if (redraw) {
+    /*if (redraw) {
         g.drawLinks();
-    }
+    }*/
 }
 
 SNode.prototype.place = function() {

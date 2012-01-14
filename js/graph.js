@@ -85,6 +85,8 @@ var Graph = function() {
     this.links = [];
     this.newNode = false;
     this.newNodeActive = false;
+    this.viewAngleX = 0;
+    this.viewAngleY = 0;
 }
 
 Graph.prototype.drawLinks = function() {
@@ -103,6 +105,15 @@ Graph.prototype.placeNodes = function() {
     for (var key in this.snodes) {
         if (this.snodes.hasOwnProperty(key))
             this.snodes[key].place();
+    }
+}
+
+Graph.prototype.updateView = function() {
+    for (var key in this.snodes) {
+        if (this.snodes.hasOwnProperty(key)) {
+            var sn = this.snodes[key];
+            sn.moveTo(sn.x, sn.y);
+        }
     }
 }
 
@@ -231,6 +242,9 @@ Graph.prototype.nextByWeight = function(depth) {
 }
 
 Graph.prototype.layout = function(width, height) {
+    this.halfWidth = width / 2;
+    this.halfHeight = height / 2;
+
     // set all super nodes non-fixed
     for (var key in this.snodes) {
         if (this.snodes.hasOwnProperty(key)) {
