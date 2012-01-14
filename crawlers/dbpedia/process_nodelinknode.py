@@ -1,24 +1,25 @@
-def create(nodes, name, node_type='text'):
+def create(nodes, name, node_type='text', source=''):
 	if(name in nodes):
 		return '';
 	else:
-		nodes[name]={'name':name, 'relations':{}, 'type':node_type, 'content': name};
+		nodes[name]={'name':name, 'relations':{}, 'type':node_type, 'content': name, 'source': source};
 		return name;
 	
 	 
 
 def add_relationship(nodes, name, rel_name):
     if(name in nodes):
-        if(rel_name in nodes[name]):
+        if(rel_name in nodes[name]['relations']):
             return '';
         else:
             nodes[name]['relations'][rel_name]=[]
     else:
         create(nodes, name);
 
-def add_link(nodes, from_node, to_node, rel_type):
+def add_link(nodes, from_node, to_node, rel_type, from_source):
 	
 	if(from_node in nodes):
+		
 		if(rel_type in nodes[from_node]['relations']):
 			currentcats=nodes[from_node]['relations'][rel_type]
 			if(to_node in currentcats):
@@ -29,12 +30,12 @@ def add_link(nodes, from_node, to_node, rel_type):
 				return to_node;
 		else:         
 			add_relationship(nodes, from_node, rel_type);
-			add_link(nodes, from_node, to_node, rel_type);
+			add_link(nodes, from_node, to_node, rel_type, from_source);
 
 	else:
-		create(nodes, from_node)
+		create(nodes, from_node, from_source)
 		add_relationship(nodes, from_node, rel_type)
-        add_link(nodes, from_node, to_node, rel_type)
+        add_link(nodes, from_node, to_node, rel_type, from_source)
 
 def build_graph(entries, db):
 
@@ -45,8 +46,8 @@ def build_graph(entries, db):
     mthings=db.items
 
     for thing in entries:
-    	if mthings.findone({'name': thing, 'relations': entries[thing]['relations']}) is None:
-    		mthings.insert(nodes[thing]);
+    	if mthings.find_one({'name': thing, 'relations': entries[thing]['relations']}) is None:
+    		mthings.insert(entries[thing]);
     		inserted+=1;
     		print '"%s" inserted' % thing
     	else:
