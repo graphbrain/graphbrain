@@ -1,3 +1,7 @@
+/**
+ * (c) 2012 GraphBrain Ltd. All rigths reserved.
+ */
+
 // UI modes
 var dragMode = function(event) {
     uiMode = 'drag';
