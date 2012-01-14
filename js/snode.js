@@ -1,3 +1,7 @@
+/**
+ * (c) 2012 GraphBrain Ltd. All rigths reserved.
+ */
+
 // Super node
 var SNode = function(id) {
     this.id = id;

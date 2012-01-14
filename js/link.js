@@ -1,3 +1,7 @@
+/**
+ * (c) 2012 GraphBrain Ltd. All rigths reserved.
+ */
+
 // Link
 var Link = function(id, orig, sorig, targ, starg, label) {
     this.id = id;

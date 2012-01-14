@@ -1,3 +1,7 @@
+/**
+ * (c) 2012 GraphBrain Ltd. All rigths reserved.
+ */
+
 // VisualObj
 var makeVisualObj = function(that) {
 	that.rect = [];

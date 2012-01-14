@@ -1,3 +1,7 @@
+/**
+ * (c) 2012 GraphBrain Ltd. All rigths reserved.
+ */
+
 // GraphPos is an auxliary class used to layout snodes
 var GraphPos = function(snode, width, height) {
     this.angDivs = 12;
