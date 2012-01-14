@@ -423,8 +423,17 @@ SNode.prototype.moveTo = function(x, y, redraw) {
     
     this.updatePos(x, y);
 
-    $('div#' + this.id).css('left', (this.x - this.halfWidth) + 'px');
-    $('div#' + this.id).css('top', (this.y - this.halfHeight) + 'px');
+    var a = g.viewAngleX;
+    var tx = this.x - g.halfWidth;
+    var ty = this.y - g.halfHeight;
+    var rx = Math.round(tx * Math.cos(a));
+    var ry = Math.round(ty);
+    var rz = Math.round(-tx * Math.sin(a));
+    rx += g.halfWidth;
+    ry += g.halfHeight;
+
+    var transformStr = 'translate3d(' + (rx - this.halfWidth) + 'px,' + (ry - this.halfHeight) + 'px,' + rz + 'px)';
+    $('div#' + this.id).css('-webkit-transform', transformStr);
 
     // update positions for nodes contained in this super node
     for (var key in this.nodes) {
@@ -432,9 +441,9 @@ SNode.prototype.moveTo = function(x, y, redraw) {
             this.nodes[key].updatePos();
     }
 
-    if (redraw) {
+    /*if (redraw) {
         g.drawLinks();
-    }
+    }*/
 }
 
 SNode.prototype.place = function() {
@@ -803,6 +812,8 @@ var Graph = function() {
     this.links = [];
     this.newNode = false;
     this.newNodeActive = false;
+    this.viewAngleX = 0;
+    this.viewAngleY = 0;
 }
 
 Graph.prototype.drawLinks = function() {
@@ -821,6 +832,15 @@ Graph.prototype.placeNodes = function() {
     for (var key in this.snodes) {
         if (this.snodes.hasOwnProperty(key))
             this.snodes[key].place();
+    }
+}
+
+Graph.prototype.updateView = function() {
+    for (var key in this.snodes) {
+        if (this.snodes.hasOwnProperty(key)) {
+            var sn = this.snodes[key];
+            sn.moveTo(sn.x, sn.y);
+        }
     }
 }
 
@@ -949,6 +969,9 @@ Graph.prototype.nextByWeight = function(depth) {
 }
 
 Graph.prototype.layout = function(width, height) {
+    this.halfWidth = width / 2;
+    this.halfHeight = height / 2;
+
     // set all super nodes non-fixed
     for (var key in this.snodes) {
         if (this.snodes.hasOwnProperty(key)) {
@@ -1073,23 +1096,10 @@ var initInterface = function() {
     curTargNode = false;
     tipVisible = false;
 
-    $("#nodesDiv").bind("mousemove", (function(e) {
-        if (uiMode === 'drag') {
-            if (draggedNode) {
-                draggedNode.moveTo(e.pageX, e.pageY);
-                dragging = true;
-            }
-        }
-        else {
-            if (newLink) {
-                newLink.tx = e.pageX;
-                newLink.ty = e.pageY;
-                g.drawLinks();
-                return false;
-            }
-        }
-    }));
     $("#nodesDiv").bind("mouseup", (function(e) {
+        g.viewAngleX += 0.1;
+        g.updateView();
+        
         if (uiMode === 'drag') {
             draggedNode = false;
         }
@@ -1132,18 +1142,6 @@ var initInterface = function() {
         }
     }));
 
-    $('#boxclose').click(function(){
-        $('#overlay').fadeOut(80, (function(e) {
-            $('#box').css({visibility:'hidden'});
-            newLink = false;
-            g.drawLinks();
-        }));
-    });
-
-    dragMode();
-    $("#dragModeButton").bind("click", dragMode);
-    $("#addModeButton").bind("click", addMode);
-
     $("#nodesDiv").bind("mousedown", function(e) {
         if (uiMode === 'drag') {
             return false;
@@ -1157,6 +1155,36 @@ var initInterface = function() {
             return false;
         }
     });
+
+    $("#nodesDiv").bind("mousemove", (function(e) {
+        if (uiMode === 'drag') {
+            if (draggedNode) {
+                draggedNode.moveTo(e.pageX, e.pageY);
+                dragging = true;
+            }
+        }
+        else {
+            if (newLink) {
+                newLink.tx = e.pageX;
+                newLink.ty = e.pageY;
+                g.drawLinks();
+                return false;
+            }
+        }
+    }));
+
+    $('#boxclose').click(function(){
+        $('#overlay').fadeOut(80, (function(e) {
+            $('#box').css({visibility:'hidden'});
+            newLink = false;
+            g.drawLinks();
+        }));
+    });
+
+    dragMode();
+    $("#dragModeButton").bind("click", dragMode);
+    $("#addModeButton").bind("click", addMode);
+
 
     $("#nodesDiv").bind("click", (function(event) {
         l = g.labelAtPoint(event.pageX, event.pageY);
