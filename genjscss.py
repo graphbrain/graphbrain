@@ -8,7 +8,8 @@ import os, os.path, shutil
 SCRIPTS = [
     'js/aux.js',
     'js/geom.js',
-    'js/quart.js',
+    'js/vec3mat4x4.js',
+    'js/quat.js',
     'js/visualobj.js',
     'js/node.js',
     'js/snode.js',

@@ -93,7 +93,7 @@ html, body {
     position:fixed;
 }
 
-#nodesDiv {
+#nodesView {
     position:fixed;
     top: 0px;
     left: 0px;
@@ -101,6 +101,11 @@ html, body {
     width:100%;
     height:100%;
     -webkit-perspective:600;
+}
+
+#nodesDiv {
+    width:100%;
+    height:100%;
 }
 
 #graphCanvas {
