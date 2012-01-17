@@ -55,17 +55,19 @@ SNode.prototype.moveTo = function(x, y, redraw) {
     redraw = typeof(redraw) !== 'undefined' ? redraw : true;
     
     this.updatePos(x, y);
+    
+    var vec = new Array(3);
+    var r = new Array(3);
+    vec[0] = this.x - g.halfWidth;
+    vec[1] = this.y - g.halfHeight;
+    vec[2] = 0;
 
-    var a = g.viewAngleX;
-    var tx = this.x - g.halfWidth;
-    var ty = this.y - g.halfHeight;
-    var rx = Math.round(tx * Math.cos(a));
-    var ry = Math.round(ty);
-    var rz = Math.round(-tx * Math.sin(a));
-    rx += g.halfWidth;
-    ry += g.halfHeight;
+    m4x4mulv3(g.affinMat, vec, r);
+    
+    r[0] += g.halfWidth;
+    r[1] += g.halfHeight;
 
-    var transformStr = 'translate3d(' + (rx - this.halfWidth) + 'px,' + (ry - this.halfHeight) + 'px,' + rz + 'px)';
+    var transformStr = 'translate3d(' + (r[0] - this.halfWidth) + 'px,' + (r[1] - this.halfHeight) + 'px,' + r[2] + 'px)';
     $('div#' + this.id).css('-webkit-transform', transformStr);
 
     // update positions for nodes contained in this super node

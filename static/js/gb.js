@@ -283,22 +283,22 @@ var v3dotv3 = function(a, b)
 var m4x4mulv3 = function(m, v, r)
 {
     var w;
-    tmp[0] = m[3];
-    tmp[1] = m[7];
-    tmp[2] = m[11];
-    w = v3dotv3(v, tmp) + m[15];
-    tmp[0] = m[0];
-    tmp[1] = m[4];
-    tmp[2] = m[8];
-    r[0] = (v3dotv3(v, tmp) + m[12]) / w;
-    tmp[0] = m[1];
-    tmp[1] = m[5];
-    tmp[2] = m[9];
-    r[1] = (v3dotv3(v, tmp) + m[13]) / w;
-    tmp[0] = m[2];
-    tmp[1] = m[6];
-    tmp[2] = m[10];
-    r[2] = (v3dotv3(v, tmp) + m[14]) / w;
+    tmpVec[0] = m[3];
+    tmpVec[1] = m[7];
+    tmpVec[2] = m[11];
+    w = v3dotv3(v, tmpVec) + m[15];
+    tmpVec[0] = m[0];
+    tmpVec[1] = m[4];
+    tmpVec[2] = m[8];
+    r[0] = (v3dotv3(v, tmpVec) + m[12]) / w;
+    tmpVec[0] = m[1];
+    tmpVec[1] = m[5];
+    tmpVec[2] = m[9];
+    r[1] = (v3dotv3(v, tmpVec) + m[13]) / w;
+    tmpVec[0] = m[2];
+    tmpVec[1] = m[6];
+    tmpVec  [2] = m[10];
+    r[2] = (v3dotv3(v, tmpVec) + m[14]) / w;
 };
 /**
  * (c) 2012 GraphBrain Ltd. All rigths reserved.
@@ -606,17 +606,19 @@ SNode.prototype.moveTo = function(x, y, redraw) {
     redraw = typeof(redraw) !== 'undefined' ? redraw : true;
     
     this.updatePos(x, y);
+    
+    var vec = new Array(3);
+    var r = new Array(3);
+    vec[0] = this.x - g.halfWidth;
+    vec[1] = this.y - g.halfHeight;
+    vec[2] = 0;
 
-    var a = g.viewAngleX;
-    var tx = this.x - g.halfWidth;
-    var ty = this.y - g.halfHeight;
-    var rx = Math.round(tx * Math.cos(a));
-    var ry = Math.round(ty);
-    var rz = Math.round(-tx * Math.sin(a));
-    rx += g.halfWidth;
-    ry += g.halfHeight;
+    m4x4mulv3(g.affinMat, vec, r);
+    
+    r[0] += g.halfWidth;
+    r[1] += g.halfHeight;
 
-    var transformStr = 'translate3d(' + (rx - this.halfWidth) + 'px,' + (ry - this.halfHeight) + 'px,' + rz + 'px)';
+    var transformStr = 'translate3d(' + (r[0] - this.halfWidth) + 'px,' + (r[1] - this.halfHeight) + 'px,' + r[2] + 'px)';
     $('div#' + this.id).css('-webkit-transform', transformStr);
 
     // update positions for nodes contained in this super node
@@ -1004,8 +1006,26 @@ var Graph = function() {
     this.links = [];
     this.newNode = false;
     this.newNodeActive = false;
-    this.viewAngleX = 0;
-    this.viewAngleY = 0;
+
+    // auxiliary quaternions and matrices for 3D rotation
+    this.quat = new Quaternion();
+    this.deltaQuat = new Quaternion();
+    this.affinMat = new Array(16);
+    this.quat.getMatrix(this.affinMat);
+}
+
+Graph.prototype.rotateX = function(angle) {
+    this.deltaQuat.fromEuler(angle, 0, 0);
+    this.quat.mul(this.deltaQuat);
+    this.quat.normalise();
+    this.quat.getMatrix(this.affinMat);
+}
+
+Graph.prototype.rotateY = function(angle) {
+    this.deltaQuat.fromEuler(0, 0, angle);
+    this.quat.mul(this.deltaQuat);
+    this.quat.normalise();
+    this.quat.getMatrix(this.affinMat);
 }
 
 Graph.prototype.drawLinks = function() {
@@ -1283,16 +1303,8 @@ var draggedNode;
 var dragging;
 var newLink;
 var tipVisible;
-var quat;
-var deltaQuat;
-var affinMat;
 
 var initInterface = function() {
-    quat = new Quaternion();
-    deltaQuat = new Quaternion();
-    deltaQuat.fromEuler(0, 0, 0.1);
-    affinMat = new Array(16);
-
     if (error != '') {
         $("#tip").html('<div class="error">' + error + '</div>');
         $("#tip").fadeIn("slow", function(){tipVisible = true;});       
@@ -1305,30 +1317,8 @@ var initInterface = function() {
     tipVisible = false;
 
     $("#nodesDiv").bind("mouseup", (function(e) {
-        //g.viewAngleX += 0.1;
-        //g.updateView();
-
-        quat.mul(deltaQuat);
-        quat.normalise();
-        quat.getMatrix(affinMat);
-        var transformStr = 'matrix3d(' +
-            affinMat[0] + ',' +
-            affinMat[1] + ',' +
-            affinMat[2] + ',' +
-            affinMat[3] + ',' +
-            affinMat[4] + ',' +
-            affinMat[5] + ',' +
-            affinMat[6] + ',' +
-            affinMat[7] + ',' +
-            affinMat[8] + ',' +
-            affinMat[9] + ',' +
-            affinMat[10] + ',' +
-            affinMat[11] + ',' +
-            affinMat[12] + ',' +
-            affinMat[13] + ',' +
-            affinMat[14] + ',' +
-            affinMat[15] + ')';
-        $('#nodesDiv').css('-webkit-transform', transformStr);
+        g.rotateY(0.1);
+        g.updateView();
         
         if (uiMode === 'drag') {
             draggedNode = false;

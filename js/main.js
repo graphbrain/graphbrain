@@ -10,16 +10,8 @@ var draggedNode;
 var dragging;
 var newLink;
 var tipVisible;
-var quat;
-var deltaQuat;
-var affinMat;
 
 var initInterface = function() {
-    quat = new Quaternion();
-    deltaQuat = new Quaternion();
-    deltaQuat.fromEuler(0, 0, 0.1);
-    affinMat = new Array(16);
-
     if (error != '') {
         $("#tip").html('<div class="error">' + error + '</div>');
         $("#tip").fadeIn("slow", function(){tipVisible = true;});       
@@ -32,30 +24,8 @@ var initInterface = function() {
     tipVisible = false;
 
     $("#nodesDiv").bind("mouseup", (function(e) {
-        //g.viewAngleX += 0.1;
-        //g.updateView();
-
-        quat.mul(deltaQuat);
-        quat.normalise();
-        quat.getMatrix(affinMat);
-        var transformStr = 'matrix3d(' +
-            affinMat[0] + ',' +
-            affinMat[1] + ',' +
-            affinMat[2] + ',' +
-            affinMat[3] + ',' +
-            affinMat[4] + ',' +
-            affinMat[5] + ',' +
-            affinMat[6] + ',' +
-            affinMat[7] + ',' +
-            affinMat[8] + ',' +
-            affinMat[9] + ',' +
-            affinMat[10] + ',' +
-            affinMat[11] + ',' +
-            affinMat[12] + ',' +
-            affinMat[13] + ',' +
-            affinMat[14] + ',' +
-            affinMat[15] + ')';
-        $('#nodesDiv').css('-webkit-transform', transformStr);
+        g.rotateY(0.1);
+        g.updateView();
         
         if (uiMode === 'drag') {
             draggedNode = false;

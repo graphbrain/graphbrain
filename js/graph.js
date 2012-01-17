@@ -89,8 +89,26 @@ var Graph = function() {
     this.links = [];
     this.newNode = false;
     this.newNodeActive = false;
-    this.viewAngleX = 0;
-    this.viewAngleY = 0;
+
+    // auxiliary quaternions and matrices for 3D rotation
+    this.quat = new Quaternion();
+    this.deltaQuat = new Quaternion();
+    this.affinMat = new Array(16);
+    this.quat.getMatrix(this.affinMat);
+}
+
+Graph.prototype.rotateX = function(angle) {
+    this.deltaQuat.fromEuler(angle, 0, 0);
+    this.quat.mul(this.deltaQuat);
+    this.quat.normalise();
+    this.quat.getMatrix(this.affinMat);
+}
+
+Graph.prototype.rotateY = function(angle) {
+    this.deltaQuat.fromEuler(0, 0, angle);
+    this.quat.mul(this.deltaQuat);
+    this.quat.normalise();
+    this.quat.getMatrix(this.affinMat);
 }
 
 Graph.prototype.drawLinks = function() {
