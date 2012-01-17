@@ -33,20 +33,20 @@ var v3dotv3 = function(a, b)
 var m4x4mulv3 = function(m, v, r)
 {
     var w;
-    tmp[0] = m[3];
-    tmp[1] = m[7];
-    tmp[2] = m[11];
-    w = v3dotv3(v, tmp) + m[15];
-    tmp[0] = m[0];
-    tmp[1] = m[4];
-    tmp[2] = m[8];
-    r[0] = (v3dotv3(v, tmp) + m[12]) / w;
-    tmp[0] = m[1];
-    tmp[1] = m[5];
-    tmp[2] = m[9];
-    r[1] = (v3dotv3(v, tmp) + m[13]) / w;
-    tmp[0] = m[2];
-    tmp[1] = m[6];
-    tmp[2] = m[10];
-    r[2] = (v3dotv3(v, tmp) + m[14]) / w;
+    tmpVec[0] = m[3];
+    tmpVec[1] = m[7];
+    tmpVec[2] = m[11];
+    w = v3dotv3(v, tmpVec) + m[15];
+    tmpVec[0] = m[0];
+    tmpVec[1] = m[4];
+    tmpVec[2] = m[8];
+    r[0] = (v3dotv3(v, tmpVec) + m[12]) / w;
+    tmpVec[0] = m[1];
+    tmpVec[1] = m[5];
+    tmpVec[2] = m[9];
+    r[1] = (v3dotv3(v, tmpVec) + m[13]) / w;
+    tmpVec[0] = m[2];
+    tmpVec[1] = m[6];
+    tmpVec  [2] = m[10];
+    r[2] = (v3dotv3(v, tmpVec) + m[14]) / w;
 };
