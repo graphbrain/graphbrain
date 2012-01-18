@@ -108,13 +108,6 @@ html, body {
     height:100%;
 }
 
-#graphCanvas {
-    position:fixed;
-    top: 0px;
-    left: 0px;
-    z-index:1;
-}
-
 #topDiv {
     position:fixed;
     top:0px;

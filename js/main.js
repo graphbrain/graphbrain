@@ -125,7 +125,7 @@ var initInterface = function() {
 
     dragMode();
     $("#dragModeButton").bind("click", dragMode);
-    $("#addModeButton").bind("click", addMode);    
+    $("#addModeButton").bind("click", addMode);
 }
 
 var initGraph = function() {
