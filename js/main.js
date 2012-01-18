@@ -10,6 +10,8 @@ var draggedNode;
 var dragging;
 var newLink;
 var tipVisible;
+var lastX;
+var lastY;
 
 var initInterface = function() {
     if (error != '') {
@@ -24,9 +26,8 @@ var initInterface = function() {
     tipVisible = false;
 
     $("#nodesDiv").bind("mouseup", (function(e) {
-        g.rotateY(0.1);
-        g.updateView();
-        
+        dragging = false;
+
         if (uiMode === 'drag') {
             draggedNode = false;
         }
@@ -70,6 +71,10 @@ var initInterface = function() {
     }));
 
     $("#nodesDiv").bind("mousedown", function(e) {
+        dragging = true;
+        lastX = e.pageX;
+        lastY = e.pageY;
+
         if (uiMode === 'drag') {
             return false;
         }
@@ -84,6 +89,16 @@ var initInterface = function() {
     });
 
     $("#nodesDiv").bind("mousemove", (function(e) {
+        if (dragging) {
+            var deltaX = e.pageX - lastX;
+            var deltaY = e.pageY - lastY;
+            lastX = e.pageX;
+            lastY = e.pageY;
+            g.rotateX(deltaX * 0.001);
+            g.rotateY(deltaY * 0.001);
+            g.updateView();
+        }
+
         if (uiMode === 'drag') {
             if (draggedNode) {
                 draggedNode.moveTo(e.pageX, e.pageY);

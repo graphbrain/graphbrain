@@ -2,6 +2,7 @@
  * (c) 2012 GraphBrain Ltd. All rigths reserved.
  */
 
+
 /**
  * Collection of linear algebra functions for vectors with 3 elements
  * and 4x4 matrices.
@@ -9,7 +10,7 @@
  */
 
 
-// Auxiliary vector to be used in calculation
+// Auxiliary vector to be used in calculations
 tmpVec = new Array(3);
 
 
