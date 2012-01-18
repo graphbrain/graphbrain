@@ -205,3 +205,13 @@ Link.prototype.intersectsLink = function(link2) {
 Link.prototype.intersectsSNode = function(snode) {
     return lineRectOverlap(this.x0, this.y0, this.x1, this.y1, snode.rect);
 }
+
+Link.prototype.place = function() {
+    var line = document.createElement('div');
+    
+    snode.setAttribute('class', 'linkLine');
+    snode.setAttribute('id', 'linkline' + this.id);
+    
+    var nodesDiv = document.getElementById("nodesDiv");
+    nodesDiv.appendChild(snode);
+}
