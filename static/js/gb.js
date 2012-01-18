@@ -720,14 +720,6 @@ var Link = function(id, orig, sorig, targ, starg, label) {
 
     this.len = 0;
 
-    // calc width & height
-    context.font = "10pt Sans-Serif";
-    var dim = context.measureText(this.label);
-    this.width = dim.width + 6;
-    this.height = 18;
-    this.halfWidth = this.width / 2;
-    this.halfHeight = this.height / 2;
-
     // add common VisualObj capabilities
     makeVisualObj(this);
 }
@@ -1030,7 +1022,7 @@ Graph.prototype.rotateY = function(angle) {
 }
 
 Graph.prototype.drawLinks = function() {
-    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+    /*context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     var i;
     for (i = 0; i < this.links.length; i++) {
         this.links[i].draw();
@@ -1038,7 +1030,7 @@ Graph.prototype.drawLinks = function() {
 
     if (newLink) {
         newLink.draw();
-    }
+    }*/
 }
 
 Graph.prototype.placeNodes = function() {
@@ -1388,8 +1380,8 @@ var initInterface = function() {
             var deltaY = e.pageY - lastY;
             lastX = e.pageX;
             lastY = e.pageY;
-            g.rotateX(deltaX * 0.001);
-            g.rotateY(deltaY * 0.001);
+            g.rotateX(deltaX * 0.0015);
+            g.rotateY(deltaY * 0.0015);
             g.updateView();
         }
 
@@ -1436,12 +1428,7 @@ var initInterface = function() {
 }
 
 var initGraph = function() {
-    var elem = document.getElementById('graphCanvas');
-    context = elem.getContext('2d');
-
     g = new Graph();
-
-    context.translate(0.5, 0.5)
 
     // process super nodes and associated nodes
     var i, j;
@@ -1542,11 +1529,6 @@ var initGraph = function() {
 
     g.placeNodes();
     g.layout(window.innerWidth, window.innerHeight);
-
-    context.canvas.width  = window.innerWidth;
-    context.canvas.height = window.innerHeight;
-
-    g.drawLinks();
 }
 
 $(function() {

@@ -112,7 +112,7 @@ Graph.prototype.rotateY = function(angle) {
 }
 
 Graph.prototype.drawLinks = function() {
-    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+    /*context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     var i;
     for (i = 0; i < this.links.length; i++) {
         this.links[i].draw();
@@ -120,7 +120,7 @@ Graph.prototype.drawLinks = function() {
 
     if (newLink) {
         newLink.draw();
-    }
+    }*/
 }
 
 Graph.prototype.placeNodes = function() {
