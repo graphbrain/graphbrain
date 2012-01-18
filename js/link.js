@@ -17,14 +17,6 @@ var Link = function(id, orig, sorig, targ, starg, label) {
 
     this.len = 0;
 
-    // calc width & height
-    context.font = "10pt Sans-Serif";
-    var dim = context.measureText(this.label);
-    this.width = dim.width + 6;
-    this.height = 18;
-    this.halfWidth = this.width / 2;
-    this.halfHeight = this.height / 2;
-
     // add common VisualObj capabilities
     makeVisualObj(this);
 }
