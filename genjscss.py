@@ -24,6 +24,9 @@ SCRIPTS_OUT = 'static/js/gb.min.js'
 
 STYLESHEETS = [
     'css/main.css',
+    'css/interface.css',
+    'css/nodes.css',
+    'css/dialog.css',
     ]
 
 STYLESHEETS_OUT = 'static/css/main.min.css'
