@@ -111,22 +111,24 @@ Graph.prototype.rotateY = function(angle) {
     this.quat.getMatrix(this.affinMat);
 }
 
-Graph.prototype.drawLinks = function() {
-    /*context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-    var i;
-    for (i = 0; i < this.links.length; i++) {
-        this.links[i].draw();
-    }
-
-    if (newLink) {
-        newLink.draw();
-    }*/
-}
-
 Graph.prototype.placeNodes = function() {
     for (var key in this.snodes) {
         if (this.snodes.hasOwnProperty(key))
             this.snodes[key].place();
+    }
+}
+
+Graph.prototype.placeLinks = function() {
+    var i;
+    for (i = 0; i < this.links.length; i++) {
+        this.links[i].place();
+    }
+}
+
+Graph.prototype.updateViewLinks = function() {
+    var i;
+    for (i = 0; i < this.links.length; i++) {
+        this.links[i].visualUpdate();
     }
 }
 
@@ -137,6 +139,8 @@ Graph.prototype.updateView = function() {
             sn.moveTo(sn.x, sn.y);
         }
     }
+
+    this.updateViewLinks();
 }
 
 Graph.prototype.labelAtPoint = function(x, y) {

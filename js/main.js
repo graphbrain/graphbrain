@@ -94,7 +94,7 @@ var initInterface = function() {
             var deltaY = e.pageY - lastY;
             lastX = e.pageX;
             lastY = e.pageY;
-            g.rotateX(deltaX * 0.0015);
+            g.rotateX(-deltaX * 0.0015);
             g.rotateY(deltaY * 0.0015);
             g.updateView();
         }
@@ -197,6 +197,7 @@ var initGraph = function() {
     g.genSNodeKeys();
 
     // process links
+    var linkID = 0;
     for (i = 0; i < links.length; i++) {
         var l = links[i];
         var orig = '';
@@ -219,7 +220,7 @@ var initGraph = function() {
             targ = false;
             starg  = g.snodes[l['starg']]
         }
-        var link = new Link(l['id'], orig, sorig, targ, starg, l['relation']);
+        var link = new Link(linkID++, orig, sorig, targ, starg, l['relation']);
         g.links.push(link);
         sorig.links.push(link);
         starg.links.push(link);
@@ -229,7 +230,9 @@ var initGraph = function() {
     var halfHeight = window.innerHeight / 2;
 
     g.placeNodes();
+    g.placeLinks();
     g.layout(window.innerWidth, window.innerHeight);
+    g.updateView();
 }
 
 $(function() {

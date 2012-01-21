@@ -394,7 +394,6 @@ Quaternion.prototype.getMatrix = function(m)
     var wy = this.w * this.y;
     var wz = this.w * this.z;
  
-    // Constructs the matrix in column-major format as required by css transform (and OpenGL)
     m[0] = 1 - (2 * (y2 + z2));
     m[1] = 2 * (xy - wz);
     m[2] = 2 * (xz + wy);
@@ -603,9 +602,7 @@ SNode.prototype.updatePos = function(x, y) {
     }
 }
 
-SNode.prototype.moveTo = function(x, y, redraw) {
-    redraw = typeof(redraw) !== 'undefined' ? redraw : true;
-    
+SNode.prototype.moveTo = function(x, y) {
     this.updatePos(x, y);
     
     var vec = new Array(3);
@@ -627,10 +624,6 @@ SNode.prototype.moveTo = function(x, y, redraw) {
         if (this.nodes.hasOwnProperty(key))
             this.nodes[key].updatePos();
     }
-
-    /*if (redraw) {
-        g.drawLinks();
-    }*/
 }
 
 SNode.prototype.place = function() {
@@ -701,6 +694,13 @@ SNode.prototype.place = function() {
     function(e) {});
 }
 
+SNode.prototype.toString = function() {
+    var key;
+    for (key in this.nodes) {
+        if (this.nodes.hasOwnProperty(key))
+            return '{' + this.nodes[key].text + ', ...}';
+    }
+}
 /**
  * (c) 2012 GraphBrain Ltd. All rigths reserved.
  */
@@ -762,6 +762,8 @@ Link.prototype.updatePos = function() {
     // calc length
     var dx = this.x1 - this.x0;
     var dy = this.y1 - this.y0;
+    this.dx = dx;
+    this.dy = dy;
     this.len = (dx * dx) + (dy * dy);
     this.len = Math.sqrt(this.len);
 
@@ -899,11 +901,9 @@ Link.prototype.pointInLabel = function(p) {
         || pointInTriangle(this.points[0], this.points[2], this.points[4], p));
 }
 
-
 Link.prototype.intersectsLink = function(link2) {
     return lineSegsOverlap(this.x0, this.y0, this.x1, this.y1, link2.x0, link2.y0, link2.x1, link2.y1);
 }
-
 
 Link.prototype.intersectsSNode = function(snode) {
     return lineRectOverlap(this.x0, this.y0, this.x1, this.y1, snode.rect);
@@ -912,11 +912,46 @@ Link.prototype.intersectsSNode = function(snode) {
 Link.prototype.place = function() {
     var line = document.createElement('div');
     
-    snode.setAttribute('class', 'linkLine');
-    snode.setAttribute('id', 'linkline' + this.id);
+    line.setAttribute('class', 'linkLine');
+    line.setAttribute('id', 'linkLine' + this.id);
     
     var nodesDiv = document.getElementById("nodesDiv");
-    nodesDiv.appendChild(snode);
+    nodesDiv.appendChild(line);
+}
+
+Link.prototype.visualUpdate = function() {
+    /*
+    var origStr;
+    var targStr;
+    if (this.orig) {
+        origStr = this.orig.text;
+    }
+    else {
+        origStr = this.sorig.toString();
+    }
+    if (this.targ) {
+        targStr = this.targ.text;
+    }
+    else {
+        targStr = this.starg.toString();
+    }
+    console.log(origStr + ' -[' + this.label + ']->' + targStr + ' id:' + this.id);
+    console.log('(' + this.x0 + ', ' + this.y0 + ') -> (' + this.x1 + ', ' + this.y1 + ')' + ' angle: ' + this.angle);
+    */
+
+    $('#linkLine' + this.id).css('width', '' + this.len + 'px');
+    $('#linkLine' + this.id).css('height', '1px');
+    
+    var rot = this.angle;
+
+    // apply translation
+    var tx = this.cx - (this.len / 2);
+    var ty = this.cy;
+    var tz = 0;
+
+    var transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px) rotateZ(' + rot + 'rad)';
+
+    $('#linkLine' + this.id).css('-webkit-transform', transformStr);
 }
 /**
  * (c) 2012 GraphBrain Ltd. All rigths reserved.
@@ -1031,22 +1066,24 @@ Graph.prototype.rotateY = function(angle) {
     this.quat.getMatrix(this.affinMat);
 }
 
-Graph.prototype.drawLinks = function() {
-    /*context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-    var i;
-    for (i = 0; i < this.links.length; i++) {
-        this.links[i].draw();
-    }
-
-    if (newLink) {
-        newLink.draw();
-    }*/
-}
-
 Graph.prototype.placeNodes = function() {
     for (var key in this.snodes) {
         if (this.snodes.hasOwnProperty(key))
             this.snodes[key].place();
+    }
+}
+
+Graph.prototype.placeLinks = function() {
+    var i;
+    for (i = 0; i < this.links.length; i++) {
+        this.links[i].place();
+    }
+}
+
+Graph.prototype.updateViewLinks = function() {
+    var i;
+    for (i = 0; i < this.links.length; i++) {
+        this.links[i].visualUpdate();
     }
 }
 
@@ -1057,6 +1094,8 @@ Graph.prototype.updateView = function() {
             sn.moveTo(sn.x, sn.y);
         }
     }
+
+    this.updateViewLinks();
 }
 
 Graph.prototype.labelAtPoint = function(x, y) {
@@ -1390,7 +1429,7 @@ var initInterface = function() {
             var deltaY = e.pageY - lastY;
             lastX = e.pageX;
             lastY = e.pageY;
-            g.rotateX(deltaX * 0.0015);
+            g.rotateX(-deltaX * 0.0015);
             g.rotateY(deltaY * 0.0015);
             g.updateView();
         }
@@ -1493,6 +1532,7 @@ var initGraph = function() {
     g.genSNodeKeys();
 
     // process links
+    var linkID = 0;
     for (i = 0; i < links.length; i++) {
         var l = links[i];
         var orig = '';
@@ -1515,7 +1555,7 @@ var initGraph = function() {
             targ = false;
             starg  = g.snodes[l['starg']]
         }
-        var link = new Link(l['id'], orig, sorig, targ, starg, l['relation']);
+        var link = new Link(linkID++, orig, sorig, targ, starg, l['relation']);
         g.links.push(link);
         sorig.links.push(link);
         starg.links.push(link);
@@ -1525,7 +1565,9 @@ var initGraph = function() {
     var halfHeight = window.innerHeight / 2;
 
     g.placeNodes();
+    g.placeLinks();
     g.layout(window.innerWidth, window.innerHeight);
+    g.updateView();
 }
 
 $(function() {

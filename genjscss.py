@@ -26,6 +26,7 @@ STYLESHEETS = [
     'css/main.css',
     'css/interface.css',
     'css/nodes.css',
+    'css/links.css',
     'css/dialog.css',
     ]
 

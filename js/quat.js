@@ -91,7 +91,6 @@ Quaternion.prototype.getMatrix = function(m)
     var wy = this.w * this.y;
     var wz = this.w * this.z;
  
-    // Constructs the matrix in column-major format as required by css transform (and OpenGL)
     m[0] = 1 - (2 * (y2 + z2));
     m[1] = 2 * (xy - wz);
     m[2] = 2 * (xz + wy);
