@@ -59,6 +59,8 @@ Link.prototype.updatePos = function() {
     // calc length
     var dx = this.x1 - this.x0;
     var dy = this.y1 - this.y0;
+    this.dx = dx;
+    this.dy = dy;
     this.len = (dx * dx) + (dy * dy);
     this.len = Math.sqrt(this.len);
 
@@ -196,11 +198,9 @@ Link.prototype.pointInLabel = function(p) {
         || pointInTriangle(this.points[0], this.points[2], this.points[4], p));
 }
 
-
 Link.prototype.intersectsLink = function(link2) {
     return lineSegsOverlap(this.x0, this.y0, this.x1, this.y1, link2.x0, link2.y0, link2.x1, link2.y1);
 }
-
 
 Link.prototype.intersectsSNode = function(snode) {
     return lineRectOverlap(this.x0, this.y0, this.x1, this.y1, snode.rect);
@@ -209,9 +209,44 @@ Link.prototype.intersectsSNode = function(snode) {
 Link.prototype.place = function() {
     var line = document.createElement('div');
     
-    snode.setAttribute('class', 'linkLine');
-    snode.setAttribute('id', 'linkline' + this.id);
+    line.setAttribute('class', 'linkLine');
+    line.setAttribute('id', 'linkLine' + this.id);
     
     var nodesDiv = document.getElementById("nodesDiv");
-    nodesDiv.appendChild(snode);
+    nodesDiv.appendChild(line);
+}
+
+Link.prototype.visualUpdate = function() {
+    /*
+    var origStr;
+    var targStr;
+    if (this.orig) {
+        origStr = this.orig.text;
+    }
+    else {
+        origStr = this.sorig.toString();
+    }
+    if (this.targ) {
+        targStr = this.targ.text;
+    }
+    else {
+        targStr = this.starg.toString();
+    }
+    console.log(origStr + ' -[' + this.label + ']->' + targStr + ' id:' + this.id);
+    console.log('(' + this.x0 + ', ' + this.y0 + ') -> (' + this.x1 + ', ' + this.y1 + ')' + ' angle: ' + this.angle);
+    */
+
+    $('#linkLine' + this.id).css('width', '' + this.len + 'px');
+    $('#linkLine' + this.id).css('height', '1px');
+    
+    var rot = this.angle;
+
+    // apply translation
+    var tx = this.cx - (this.len / 2);
+    var ty = this.cy;
+    var tz = 0;
+
+    var transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px) rotateZ(' + rot + 'rad)';
+
+    $('#linkLine' + this.id).css('-webkit-transform', transformStr);
 }

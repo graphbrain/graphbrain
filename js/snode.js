@@ -51,9 +51,7 @@ SNode.prototype.updatePos = function(x, y) {
     }
 }
 
-SNode.prototype.moveTo = function(x, y, redraw) {
-    redraw = typeof(redraw) !== 'undefined' ? redraw : true;
-    
+SNode.prototype.moveTo = function(x, y) {
     this.updatePos(x, y);
     
     var vec = new Array(3);
@@ -75,10 +73,6 @@ SNode.prototype.moveTo = function(x, y, redraw) {
         if (this.nodes.hasOwnProperty(key))
             this.nodes[key].updatePos();
     }
-
-    /*if (redraw) {
-        g.drawLinks();
-    }*/
 }
 
 SNode.prototype.place = function() {
@@ -147,4 +141,12 @@ SNode.prototype.place = function() {
         }
     },
     function(e) {});
+}
+
+SNode.prototype.toString = function() {
+    var key;
+    for (key in this.nodes) {
+        if (this.nodes.hasOwnProperty(key))
+            return '{' + this.nodes[key].text + ', ...}';
+    }
 }
