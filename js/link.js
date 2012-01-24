@@ -43,18 +43,20 @@ Link.prototype.updatePos = function() {
         this.targSuper = true;
     }
 
-    var x0 = orig.x;
-    var y0 = orig.y;
-    var x1 = targ.x;
-    var y1 = targ.y;
+    var x0 = orig.rpos[0];
+    var y0 = orig.rpos[1];
+    var x1 = targ.rpos[0];
+    var y1 = targ.rpos[1];
 
     p0 = interRect(x0, y0, x1, y1, orig.x0, orig.y0, orig.x1, orig.y1);
     p1 = interRect(x1, y1, x0, y0, targ.x0, targ.y0, targ.x1, targ.y1);
 
     this.x0 = p0[0];
     this.y0 = p0[1];
+    this.z0 = orig.rpos[2];
     this.x1 = p1[0];
     this.y1 = p1[1];
+    this.z1 = targ.rpos[2];
 
     // calc length
     var dx = this.x1 - this.x0;
@@ -63,8 +65,6 @@ Link.prototype.updatePos = function() {
     this.dy = dy;
     this.len = (dx * dx) + (dy * dy);
     this.len = Math.sqrt(this.len);
-
-    //console.log("x0: " + this.x0 + "; y0: " + this.y0 + "; x1: " + this.x1 + "; y1: " + this.y1 + "; len: " + this.len);
 
     // calc center
     this.cx = this.x0 + ((this.x1 - this.x0) / 2)
@@ -217,36 +217,35 @@ Link.prototype.place = function() {
 }
 
 Link.prototype.visualUpdate = function() {
-    /*
-    var origStr;
-    var targStr;
-    if (this.orig) {
-        origStr = this.orig.text;
-    }
-    else {
-        origStr = this.sorig.toString();
-    }
-    if (this.targ) {
-        targStr = this.targ.text;
-    }
-    else {
-        targStr = this.starg.toString();
-    }
-    console.log(origStr + ' -[' + this.label + ']->' + targStr + ' id:' + this.id);
-    console.log('(' + this.x0 + ', ' + this.y0 + ') -> (' + this.x1 + ', ' + this.y1 + ')' + ' angle: ' + this.angle);
-    */
-
-    $('#linkLine' + this.id).css('width', '' + this.len + 'px');
-    $('#linkLine' + this.id).css('height', '1px');
+    var deltaX = this.x1 - this.x0;
+    var deltaY = this.y1 - this.y0;
+    var deltaZ = this.z1 - this.z0;
     
-    var rot = this.angle;
+    var cx = this.x0 + (deltaX / 2);
+    var cy = this.y0 + (deltaY / 2);
+    var cz = this.z0 + (deltaZ / 2);
+
+    var len = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ));
+
+    var rotz = Math.atan2(deltaY, deltaX);
+    var roty;
+    if (deltaX >= 0) {
+        roty = -Math.atan2(deltaZ * Math.cos(rotz), deltaX);
+    }
+    else {
+        roty = Math.atan2(deltaZ * Math.cos(rotz), -deltaX);
+    }
+
+    $('#linkLine' + this.id).css('width', '' + len + 'px');
+    $('#linkLine' + this.id).css('height', '1px');
 
     // apply translation
-    var tx = this.cx - (this.len / 2);
-    var ty = this.cy;
-    var tz = 0;
-
-    var transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px) rotateZ(' + rot + 'rad)';
-
+    var tx = cx - (len / 2);
+    var ty = cy;
+    var tz = cz;
+    
+    var transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px)'
+        + ' rotateZ(' + rotz + 'rad)'
+        + ' rotateY(' + roty + 'rad)';
     $('#linkLine' + this.id).css('-webkit-transform', transformStr);
 }

@@ -12,12 +12,16 @@ var makeVisualObj = function(that) {
 
     that.rect.v1.x = 0;
     that.rect.v1.y = 0;
+    that.rect.v1.z = 0;
     that.rect.v2.x = 0;
     that.rect.v2.y = 0;
+    that.rect.v2.z = 0;
     that.rect.v3.x = 0;
     that.rect.v3.y = 0;
+    that.rect.v3.z = 0;
     that.rect.v4.x = 0;
     that.rect.v4.y = 0;
+    that.rect.v4.z = 0;
 
 	that.overlaps = function(obj) {
 		return rotRectsOverlap(that.rect, obj.rect);
