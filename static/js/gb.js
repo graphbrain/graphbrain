@@ -425,12 +425,16 @@ var makeVisualObj = function(that) {
 
     that.rect.v1.x = 0;
     that.rect.v1.y = 0;
+    that.rect.v1.z = 0;
     that.rect.v2.x = 0;
     that.rect.v2.y = 0;
+    that.rect.v2.z = 0;
     that.rect.v3.x = 0;
     that.rect.v3.y = 0;
+    that.rect.v3.z = 0;
     that.rect.v4.x = 0;
     that.rect.v4.y = 0;
+    that.rect.v4.z = 0;
 
 	that.overlaps = function(obj) {
 		return rotRectsOverlap(that.rect, obj.rect);
@@ -448,10 +452,9 @@ var Node = function(id, text, type, snode) {
     this.divid = 'n' + nodeCount++;
     this.text = text;
     this.type = type;
-    this.x = 0;
-    this.y = 0;
-    this.vX = 0;
-    this.vY = 0;
+    
+    this.rpos = Array(3);
+    
     this.subNodes = [];
     this.snode = snode;
 
@@ -460,29 +463,30 @@ var Node = function(id, text, type, snode) {
     this.sy = 0;
 }
 
-Node.prototype.updatePos = function() {
+Node.prototype.calcPos = function() {
     var nodeDiv = $('#' + this.divid)
     var offset = nodeDiv.offset();
-    this.x = offset.left + this.halfWidth;
-    this.y = offset.top + this.halfHeight;
-    this.x0 = this.x - this.halfWidth;
-    this.y0 = this.y - this.halfHeight;
-    this.x1 = this.x + this.halfWidth;
-    this.y1 = this.y + this.halfHeight;
+    this.rpos[0] = offset.left + this.halfWidth;
+    this.rpos[1] = offset.top + this.halfHeight;
+    this.rpos[2] = 0;
+    this.x0 = this.rpos[0] - this.halfWidth;
+    this.y0 = this.rpos[1] - this.halfHeight;
+    this.x1 = this.rpos[0] + this.halfWidth;
+    this.y1 = this.rpos[1] + this.halfHeight;
 
-    this.sx = this.x - this.snode.x;
-    this.sy = this.y - this.snode.y;
+    this.sx = this.rpos[0] - this.snode.x - this.snode.halfWidth;
+    this.sy = this.rpos[1] - this.snode.y - this.snode.halfHeight;
 }
 
 Node.prototype.estimatePos = function() {
-    this.x = this.snode.x + this.sx;
-    this.y = this.snode.y + this.sy;
+    this.rpos[0] = this.snode.rpos[0] + this.sx;
+    this.rpos[1] = this.snode.rpos[1] + this.sy;
+    this.rpos[2] = this.snode.rpos[2];
 
-    this.x0 = this.x - this.halfWidth;
-    this.y0 = this.y - this.halfHeight;
-    this.x1 = this.x + this.halfWidth;
-    this.y1 = this.y + this.halfHeight;
-    //console.log('nx: ' + this.x + '; ny: ' + this.y);
+    this.x0 = this.rpos[0] - this.halfWidth;
+    this.y0 = this.rpos[1] - this.halfHeight;
+    this.x1 = this.rpos[0] + this.halfWidth;
+    this.y1 = this.rpos[1] + this.halfHeight;
 }
 
 Node.prototype.place = function() {
@@ -511,8 +515,6 @@ Node.prototype.place = function() {
     this.height = height;
     this.halfWidth = width / 2;
     this.halfHeight = height / 2;
-   
-    this.updatePos();
 
     /*
     var nodeObj = this;
@@ -556,11 +558,17 @@ Node.prototype.place = function() {
 // Super node
 var SNode = function(id) {
     this.id = id;
+    
+    // position before rotation
     this.x = 0;
     this.y = 0;
     this.z = 0;
-    this.vX = 0;
-    this.vY = 0;
+    // position after rotation
+    this.rpos = Array(3);
+
+    // auxiliary vector for rotation calcs
+    this.auxVec = new Array(3);
+
     this.nodes = {};
     this.subNodes = [];
     this.parent = 'unknown';
@@ -574,20 +582,33 @@ var SNode = function(id) {
 SNode.prototype.updatePos = function(x, y) {
     this.x = x;
     this.y = y;
-    this.x0 = this.x - this.halfWidth;
-    this.y0 = this.y - this.halfHeight;
-    this.x1 = this.x + this.halfWidth;
-    this.y1 = this.y + this.halfHeight;
+    this.z = 0;
+
+    // rotation
+    this.auxVec[0] = this.x - g.halfWidth;
+    this.auxVec[1] = this.y - g.halfHeight;
+    this.auxVec[2] = 0;
+
+    m4x4mulv3(g.affinMat, this.auxVec, this.rpos);
+    
+    this.rpos[0] += g.halfWidth;
+    this.rpos[1] += g.halfHeight;
+
+    // limits used to place links
+    this.x0 = this.rpos[0] - this.halfWidth;
+    this.y0 = this.rpos[1] - this.halfHeight;
+    this.x1 = this.rpos[0] + this.halfWidth;
+    this.y1 = this.rpos[1] + this.halfHeight;
     
     // calc bounding rectangle
-    this.rect.v1.x = this.x - this.halfWidth;
-    this.rect.v1.y = this.y - this.halfHeight;
-    this.rect.v2.x = this.x - this.halfWidth;
-    this.rect.v2.y = this.y + this.halfHeight;
-    this.rect.v3.x = this.x + this.halfWidth;
-    this.rect.v3.y = this.y + this.halfHeight;
-    this.rect.v4.x = this.x + this.halfWidth;
-    this.rect.v4.y = this.y - this.halfHeight;
+    this.rect.v1.x = this.rpos[0] - this.halfWidth;
+    this.rect.v1.y = this.rpos[1] - this.halfHeight;
+    this.rect.v2.x = this.rpos[0] - this.halfWidth;
+    this.rect.v2.y = this.rpos[1] + this.halfHeight;
+    this.rect.v3.x = this.rpos[0] + this.halfWidth;
+    this.rect.v3.y = this.rpos[1] + this.halfHeight;
+    this.rect.v4.x = this.rpos[0] + this.halfWidth;
+    this.rect.v4.y = this.rpos[1] - this.halfHeight;
 
     // update position of contained nodes
     for (var key in this.nodes) {
@@ -604,26 +625,10 @@ SNode.prototype.updatePos = function(x, y) {
 
 SNode.prototype.moveTo = function(x, y) {
     this.updatePos(x, y);
-    
-    var vec = new Array(3);
-    var r = new Array(3);
-    vec[0] = this.x - g.halfWidth;
-    vec[1] = this.y - g.halfHeight;
-    vec[2] = 0;
 
-    m4x4mulv3(g.affinMat, vec, r);
-    
-    r[0] += g.halfWidth;
-    r[1] += g.halfHeight;
-
-    var transformStr = 'translate3d(' + (r[0] - this.halfWidth) + 'px,' + (r[1] - this.halfHeight) + 'px,' + r[2] + 'px)';
+    var transformStr = 'translate3d(' + (this.rpos[0] - this.halfWidth)
+        + 'px,' + (this.rpos[1] - this.halfHeight) + 'px,' + this.rpos[2] + 'px)';
     $('div#' + this.id).css('-webkit-transform', transformStr);
-
-    // update positions for nodes contained in this super node
-    for (var key in this.nodes) {
-        if (this.nodes.hasOwnProperty(key))
-            this.nodes[key].updatePos();
-    }
 }
 
 SNode.prototype.place = function() {
@@ -659,6 +664,12 @@ SNode.prototype.place = function() {
     this.halfWidth = width / 2;
     this.halfHeight = height / 2;
     this.moveTo(this.x, this.y);
+
+    // calc relative positions of nodes contained in this super node
+    for (var key in this.nodes) {
+        if (this.nodes.hasOwnProperty(key))
+            this.nodes[key].calcPos();
+    }
 
     var nodeObj = this;
 
@@ -746,18 +757,20 @@ Link.prototype.updatePos = function() {
         this.targSuper = true;
     }
 
-    var x0 = orig.x;
-    var y0 = orig.y;
-    var x1 = targ.x;
-    var y1 = targ.y;
+    var x0 = orig.rpos[0];
+    var y0 = orig.rpos[1];
+    var x1 = targ.rpos[0];
+    var y1 = targ.rpos[1];
 
     p0 = interRect(x0, y0, x1, y1, orig.x0, orig.y0, orig.x1, orig.y1);
     p1 = interRect(x1, y1, x0, y0, targ.x0, targ.y0, targ.x1, targ.y1);
 
     this.x0 = p0[0];
     this.y0 = p0[1];
+    this.z0 = orig.rpos[2];
     this.x1 = p1[0];
     this.y1 = p1[1];
+    this.z1 = targ.rpos[2];
 
     // calc length
     var dx = this.x1 - this.x0;
@@ -766,8 +779,6 @@ Link.prototype.updatePos = function() {
     this.dy = dy;
     this.len = (dx * dx) + (dy * dy);
     this.len = Math.sqrt(this.len);
-
-    //console.log("x0: " + this.x0 + "; y0: " + this.y0 + "; x1: " + this.x1 + "; y1: " + this.y1 + "; len: " + this.len);
 
     // calc center
     this.cx = this.x0 + ((this.x1 - this.x0) / 2)
@@ -920,37 +931,36 @@ Link.prototype.place = function() {
 }
 
 Link.prototype.visualUpdate = function() {
-    /*
-    var origStr;
-    var targStr;
-    if (this.orig) {
-        origStr = this.orig.text;
-    }
-    else {
-        origStr = this.sorig.toString();
-    }
-    if (this.targ) {
-        targStr = this.targ.text;
-    }
-    else {
-        targStr = this.starg.toString();
-    }
-    console.log(origStr + ' -[' + this.label + ']->' + targStr + ' id:' + this.id);
-    console.log('(' + this.x0 + ', ' + this.y0 + ') -> (' + this.x1 + ', ' + this.y1 + ')' + ' angle: ' + this.angle);
-    */
-
-    $('#linkLine' + this.id).css('width', '' + this.len + 'px');
-    $('#linkLine' + this.id).css('height', '1px');
+    var deltaX = this.x1 - this.x0;
+    var deltaY = this.y1 - this.y0;
+    var deltaZ = this.z1 - this.z0;
     
-    var rot = this.angle;
+    var cx = this.x0 + (deltaX / 2);
+    var cy = this.y0 + (deltaY / 2);
+    var cz = this.z0 + (deltaZ / 2);
+
+    var len = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ));
+
+    var rotz = Math.atan2(deltaY, deltaX);
+    var roty;
+    if (deltaX >= 0) {
+        roty = -Math.atan2(deltaZ * Math.cos(rotz), deltaX);
+    }
+    else {
+        roty = Math.atan2(deltaZ * Math.cos(rotz), -deltaX);
+    }
+
+    $('#linkLine' + this.id).css('width', '' + len + 'px');
+    $('#linkLine' + this.id).css('height', '1px');
 
     // apply translation
-    var tx = this.cx - (this.len / 2);
-    var ty = this.cy;
-    var tz = 0;
-
-    var transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px) rotateZ(' + rot + 'rad)';
-
+    var tx = cx - (len / 2);
+    var ty = cy;
+    var tz = cz;
+    
+    var transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px)'
+        + ' rotateZ(' + rotz + 'rad)'
+        + ' rotateY(' + roty + 'rad)';
     $('#linkLine' + this.id).css('-webkit-transform', transformStr);
 }
 /**

@@ -5,11 +5,17 @@
 // Super node
 var SNode = function(id) {
     this.id = id;
+    
+    // position before rotation
     this.x = 0;
     this.y = 0;
     this.z = 0;
-    this.vX = 0;
-    this.vY = 0;
+    // position after rotation
+    this.rpos = Array(3);
+
+    // auxiliary vector for rotation calcs
+    this.auxVec = new Array(3);
+
     this.nodes = {};
     this.subNodes = [];
     this.parent = 'unknown';
@@ -23,20 +29,33 @@ var SNode = function(id) {
 SNode.prototype.updatePos = function(x, y) {
     this.x = x;
     this.y = y;
-    this.x0 = this.x - this.halfWidth;
-    this.y0 = this.y - this.halfHeight;
-    this.x1 = this.x + this.halfWidth;
-    this.y1 = this.y + this.halfHeight;
+    this.z = 0;
+
+    // rotation
+    this.auxVec[0] = this.x - g.halfWidth;
+    this.auxVec[1] = this.y - g.halfHeight;
+    this.auxVec[2] = 0;
+
+    m4x4mulv3(g.affinMat, this.auxVec, this.rpos);
+    
+    this.rpos[0] += g.halfWidth;
+    this.rpos[1] += g.halfHeight;
+
+    // limits used to place links
+    this.x0 = this.rpos[0] - this.halfWidth;
+    this.y0 = this.rpos[1] - this.halfHeight;
+    this.x1 = this.rpos[0] + this.halfWidth;
+    this.y1 = this.rpos[1] + this.halfHeight;
     
     // calc bounding rectangle
-    this.rect.v1.x = this.x - this.halfWidth;
-    this.rect.v1.y = this.y - this.halfHeight;
-    this.rect.v2.x = this.x - this.halfWidth;
-    this.rect.v2.y = this.y + this.halfHeight;
-    this.rect.v3.x = this.x + this.halfWidth;
-    this.rect.v3.y = this.y + this.halfHeight;
-    this.rect.v4.x = this.x + this.halfWidth;
-    this.rect.v4.y = this.y - this.halfHeight;
+    this.rect.v1.x = this.rpos[0] - this.halfWidth;
+    this.rect.v1.y = this.rpos[1] - this.halfHeight;
+    this.rect.v2.x = this.rpos[0] - this.halfWidth;
+    this.rect.v2.y = this.rpos[1] + this.halfHeight;
+    this.rect.v3.x = this.rpos[0] + this.halfWidth;
+    this.rect.v3.y = this.rpos[1] + this.halfHeight;
+    this.rect.v4.x = this.rpos[0] + this.halfWidth;
+    this.rect.v4.y = this.rpos[1] - this.halfHeight;
 
     // update position of contained nodes
     for (var key in this.nodes) {
@@ -53,26 +72,10 @@ SNode.prototype.updatePos = function(x, y) {
 
 SNode.prototype.moveTo = function(x, y) {
     this.updatePos(x, y);
-    
-    var vec = new Array(3);
-    var r = new Array(3);
-    vec[0] = this.x - g.halfWidth;
-    vec[1] = this.y - g.halfHeight;
-    vec[2] = 0;
 
-    m4x4mulv3(g.affinMat, vec, r);
-    
-    r[0] += g.halfWidth;
-    r[1] += g.halfHeight;
-
-    var transformStr = 'translate3d(' + (r[0] - this.halfWidth) + 'px,' + (r[1] - this.halfHeight) + 'px,' + r[2] + 'px)';
+    var transformStr = 'translate3d(' + (this.rpos[0] - this.halfWidth)
+        + 'px,' + (this.rpos[1] - this.halfHeight) + 'px,' + this.rpos[2] + 'px)';
     $('div#' + this.id).css('-webkit-transform', transformStr);
-
-    // update positions for nodes contained in this super node
-    for (var key in this.nodes) {
-        if (this.nodes.hasOwnProperty(key))
-            this.nodes[key].updatePos();
-    }
 }
 
 SNode.prototype.place = function() {
@@ -108,6 +111,12 @@ SNode.prototype.place = function() {
     this.halfWidth = width / 2;
     this.halfHeight = height / 2;
     this.moveTo(this.x, this.y);
+
+    // calc relative positions of nodes contained in this super node
+    for (var key in this.nodes) {
+        if (this.nodes.hasOwnProperty(key))
+            this.nodes[key].calcPos();
+    }
 
     var nodeObj = this;
 

@@ -10,10 +10,9 @@ var Node = function(id, text, type, snode) {
     this.divid = 'n' + nodeCount++;
     this.text = text;
     this.type = type;
-    this.x = 0;
-    this.y = 0;
-    this.vX = 0;
-    this.vY = 0;
+    
+    this.rpos = Array(3);
+    
     this.subNodes = [];
     this.snode = snode;
 
@@ -22,29 +21,30 @@ var Node = function(id, text, type, snode) {
     this.sy = 0;
 }
 
-Node.prototype.updatePos = function() {
+Node.prototype.calcPos = function() {
     var nodeDiv = $('#' + this.divid)
     var offset = nodeDiv.offset();
-    this.x = offset.left + this.halfWidth;
-    this.y = offset.top + this.halfHeight;
-    this.x0 = this.x - this.halfWidth;
-    this.y0 = this.y - this.halfHeight;
-    this.x1 = this.x + this.halfWidth;
-    this.y1 = this.y + this.halfHeight;
+    this.rpos[0] = offset.left + this.halfWidth;
+    this.rpos[1] = offset.top + this.halfHeight;
+    this.rpos[2] = 0;
+    this.x0 = this.rpos[0] - this.halfWidth;
+    this.y0 = this.rpos[1] - this.halfHeight;
+    this.x1 = this.rpos[0] + this.halfWidth;
+    this.y1 = this.rpos[1] + this.halfHeight;
 
-    this.sx = this.x - this.snode.x;
-    this.sy = this.y - this.snode.y;
+    this.sx = this.rpos[0] - this.snode.x - this.snode.halfWidth;
+    this.sy = this.rpos[1] - this.snode.y - this.snode.halfHeight;
 }
 
 Node.prototype.estimatePos = function() {
-    this.x = this.snode.x + this.sx;
-    this.y = this.snode.y + this.sy;
+    this.rpos[0] = this.snode.rpos[0] + this.sx;
+    this.rpos[1] = this.snode.rpos[1] + this.sy;
+    this.rpos[2] = this.snode.rpos[2];
 
-    this.x0 = this.x - this.halfWidth;
-    this.y0 = this.y - this.halfHeight;
-    this.x1 = this.x + this.halfWidth;
-    this.y1 = this.y + this.halfHeight;
-    //console.log('nx: ' + this.x + '; ny: ' + this.y);
+    this.x0 = this.rpos[0] - this.halfWidth;
+    this.y0 = this.rpos[1] - this.halfHeight;
+    this.x1 = this.rpos[0] + this.halfWidth;
+    this.y1 = this.rpos[1] + this.halfHeight;
 }
 
 Node.prototype.place = function() {
@@ -73,8 +73,6 @@ Node.prototype.place = function() {
     this.height = height;
     this.halfWidth = width / 2;
     this.halfHeight = height / 2;
-   
-    this.updatePos();
 
     /*
     var nodeObj = this;
