@@ -921,13 +921,23 @@ Link.prototype.intersectsSNode = function(snode) {
 }
 
 Link.prototype.place = function() {
-    var line = document.createElement('div');
-    
-    line.setAttribute('class', 'linkLine');
-    line.setAttribute('id', 'linkLine' + this.id);
+    // create link div
+    var linkDiv = document.createElement('div');
+    linkDiv.setAttribute('class', 'link');
+    linkDiv.setAttribute('id', 'link' + this.id);
     
     var nodesDiv = document.getElementById("nodesDiv");
-    nodesDiv.appendChild(line);
+    nodesDiv.appendChild(linkDiv);
+
+    $('#link' + this.id).append('<div class="linkLine" id="linkLine' + this.id + '"></div>');
+    $('#link' + this.id).append('<div class="linkLabel" id="linkLabel' + this.id + '">' + this.label + '</div>');
+
+    var height = $('#link' + this.id).outerHeight();
+    this.halfHeight = height / 2;
+    var labelWidth = $('#linkLabel' + this.id).outerWidth();
+    this.halfLabelWidth = labelWidth / 2;
+
+    $('#linkLine' + this.id).css('top', '' + this.halfHeight + 'px');
 }
 
 Link.prototype.visualUpdate = function() {
@@ -950,18 +960,19 @@ Link.prototype.visualUpdate = function() {
         roty = Math.atan2(deltaZ * Math.cos(rotz), -deltaX);
     }
 
-    $('#linkLine' + this.id).css('width', '' + len + 'px');
+    $('#link' + this.id).css('width', '' + len + 'px');
     $('#linkLine' + this.id).css('height', '1px');
+    $('#linkLabel' + this.id).css('left', '' + ((len / 2) - this.halfLabelWidth) + 'px');
 
     // apply translation
     var tx = cx - (len / 2);
-    var ty = cy;
+    var ty = cy - this.halfHeight;
     var tz = cz;
     
     var transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px)'
         + ' rotateZ(' + rotz + 'rad)'
         + ' rotateY(' + roty + 'rad)';
-    $('#linkLine' + this.id).css('-webkit-transform', transformStr);
+    $('#link' + this.id).css('-webkit-transform', transformStr);
 }
 /**
  * (c) 2012 GraphBrain Ltd. All rigths reserved.
