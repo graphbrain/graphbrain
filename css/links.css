@@ -1,6 +1,21 @@
-.linkLine {
-    background:#59cef1;
+.link {
     position:fixed;
     margin:0px;
-    z-index:-1;
+    text-align:center;
+}
+
+.linkLine {
+	position:relative;
+    /*background:#59cef1;*/
+    background:#FFD326;
+    margin:0px;
+}
+
+.linkLabel {
+	position:relative;
+    margin:0px;
+    padding:2px;
+    color:#000;
+    background:#FFD326;
+    width:50px;
 }
