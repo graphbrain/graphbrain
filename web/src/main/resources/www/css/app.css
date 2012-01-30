@@ -1,0 +1,13 @@
+* { margin:0; padding:0; }
+body, input {
+    font-family:helvetica, arial, sans-serif;
+    font-size:24px;
+    color:#333;
+    line-height:1.5em;
+}
+input[type="text"] { width: 100%; margin-bottom:.5em; }
+input[type="submit"] { font-size:36px; }
+#container {
+    width:400px;
+    margin:1em auto;
+}
