@@ -1,11 +1,12 @@
-package com.example
+package com.graphbrain
+
 
 import unfiltered.request._
 import unfiltered.response._
 
 import org.clapper.avsl.Logger
 
-/** unfiltered plan */
+
 class App extends unfiltered.filter.Plan {
   import QParams._
 
@@ -32,7 +33,9 @@ class App extends unfiltered.filter.Plan {
         vw(<ul> { fails.map { f => <li>{f.error} </li> } } </ul>)
       }
   }
+
   def palindrome(s: String) = s.toLowerCase.reverse == s.toLowerCase
+  
   def view(params: Map[String, Seq[String]])(body: scala.xml.NodeSeq) = {
     def p(k: String) = params.get(k).flatMap { _.headOption } getOrElse("")
     Html(
