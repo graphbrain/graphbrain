@@ -1,4 +1,4 @@
-organization := "com.graphbrain"
+organization := "com.graphbrain.web"
 
 name := "gb-web"
 
