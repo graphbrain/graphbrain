@@ -1,6 +1,6 @@
-organization := "com.example"
+organization := "com.graphbrain"
 
-name := "unfiltered_test"
+name := "gb-web"
 
 version := "0.1.0-SNAPSHOT"
 
