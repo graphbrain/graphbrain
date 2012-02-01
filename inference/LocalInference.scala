@@ -112,7 +112,7 @@ object LocalInference
 		var relations:List[String]=List()
 		for(entry <- graph)
 		{
-			val edges=entry._2::relations
+			relations=entry._2::relations
 
 		}
 		return relations.distinct
@@ -146,7 +146,7 @@ object LocalInference
 		 
       	for(relation <- relations)
       	{
-      		//START HERE
+      		
       		val current=getAllNodesForRelation(graph, relation);
       		relationRoles.put(relation, current)
       	
@@ -155,22 +155,5 @@ object LocalInference
 	}
 
 
-    def testRandomGraph(numRelationships: Int) 
-    {
-    	val objects=List("David Lynch", "graphbrain", "london", "film", "book", "city", "Blue Velvet", "person", "dog", "director", "mammal")
-    	val relationships=List("likes", "made", "is a", "likes", "hates", "dreams of")
-      	val graph=generateRandomGraph(relationships, objects, numRelationships)
-      	println(graph)
-      	println(getNodeIndexedRelations(graph))
-      	println(getRelationIndexedNodes(graph))
-      	println(getAllNodes(graph))
-      	println(getAllRelations(graph))
-      	
-
-
-    }
-    def main(args: Array[String])
-    {
-    	testRandomGraph(args(0).toInt)
-    }
+    
 }
