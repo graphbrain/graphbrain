@@ -11,10 +11,9 @@ class MainPlan extends Plan {
   //val logger = Logger(classOf[UserPlan])
   
   def intent = {
-    case req @ GET(Path(Seg("node" :: node :: Nil))) => {
+    case req @ GET(Path(Seg("node" :: name :: Nil))) => {
       //logger.debug("GET /users/%s" format name)
-      //ResponseString("""<html>Hello GraphBrain!</html>""")
-      Ok ~> Scalate(req, "templates/hello.ssp")
+      Ok ~> Scalate(req, "templates/hello.mustache", ("name", name))
     }
   }
 }
