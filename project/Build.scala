@@ -9,5 +9,5 @@ object GraphbrainBuild extends Build {
                            base = file("inference"))
 
     lazy val web = Project(id = "gb-web",
-                           base = file("web"))
+                           base = file("web")) dependsOn(RootProject(uri("git://github.com/unfiltered/unfiltered-scalate.git")))
 }
