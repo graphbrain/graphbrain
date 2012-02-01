@@ -1,6 +1,6 @@
 organization := "com.graphbrain.web"
 
-name := "gb-web"
+name := "web"
 
 version := "0.1.0-SNAPSHOT"
 
