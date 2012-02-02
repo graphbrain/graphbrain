@@ -1,0 +1,11 @@
+js/aux.js
+js/geom.js
+js/vec3mat4x4.js
+js/quat.js
+js/visualobj.js
+js/node.js
+js/snode.js
+js/link.js
+js/graph.js
+js/uimodes.js
+js/main.js
