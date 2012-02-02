@@ -19,6 +19,7 @@ object WebServer {
       ctx.resources(new java.net.URL("file:web/src/main/resources/www"))
     }.filter(unfiltered.filter.Planify {
       case req @ GET(Path(Seg(Nil))) => {
+        logger.debug("GET /login")
         Ok ~> Scalate(req, "templates/login.mustache")
       }
       case req @ GET(Path(Seg("node" :: nodeId :: Nil))) => {
