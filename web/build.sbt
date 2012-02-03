@@ -15,8 +15,4 @@ resolvers ++= Seq(
   "java m2" at "http://download.java.net/maven/2"
 )
 
-seq(jsSettings : _*)
-
-(resourceManaged in (Compile, JsKeys.js)) <<= (sourceDirectory in Compile)(_ / "resources" / "www" / "js")
-
-//(sourceDirectory in (Compile, JsKeys.js)) <<= (sourceDirectory in Compile)(_ / "src" / "main")
+seq(org.scala_tools.sbt.yuiCompressor.Plugin.yuiSettings: _*)
