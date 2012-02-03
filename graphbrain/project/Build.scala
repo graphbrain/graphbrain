@@ -12,7 +12,7 @@ object ApplicationBuild extends Build {
     )
 
     val webapp = PlayProject(
-    	appName + "-common", appVersion, path = file("webapp")
+    	appName + "-webapp", appVersion, path = file("webapp")
   	)
   
   	val main = PlayProject(appName, appVersion, appDependencies).settings(
