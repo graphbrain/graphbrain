@@ -1,5 +1,7 @@
-resolvers += "Untyped Public Repo" at "http://repo.untyped.com"
+resolvers ++= Seq(
+    DefaultMavenRepository,
+    Resolver.url("Play", url("http://download.playframework.org/ivy-releases/"))(Resolver.ivyStylePatterns),
+    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+)
 
-addSbtPlugin("untyped" %% "sbt-js" % "0.1-SNAPSHOT")
-
-addSbtPlugin("untyped" %% "sbt-less" % "0.2-SNAPSHOT")
+libraryDependencies += "play" %% "play" % "2.0-beta"
