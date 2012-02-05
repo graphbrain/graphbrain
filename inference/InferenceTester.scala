@@ -1,6 +1,7 @@
 import scala.util.Random;
 import scala.io._
 
+
 object InferenceTester 
 {
 	def generateRandomGraph(relations: List[String], objects: List[String], numRelated: Int): List[(String, String, String)]=
@@ -12,9 +13,6 @@ object InferenceTester
 		{
 			val related=(objects(r.nextInt(objects.length)), relations(r.nextInt(relations.length)), objects(r.nextInt(objects.length)))
 			graph=related::graph
-
-					
-
 		}
 		return graph;
 		
@@ -42,18 +40,16 @@ object InferenceTester
     	val file=Source.fromFile(fileName).getLines()
     	for(line <- file)
     	{
-    		
-    		
-    		val r = line.split(", ")
+    		    		
+      	val r = line.split(", ")
     		val related=(r(0), r(1), r(2))
     		graph=related::graph
     	}
-
-    	return graph
-    	
+    	return graph    	
     	
     }
-	def main(args: Array[String])
+	
+    def main(args: Array[String])
     {
     	print(generateGraphFromFile(args(0)))
     	//testRandomGraph(args(0).toInt)

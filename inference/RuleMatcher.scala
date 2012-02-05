@@ -1,9 +1,9 @@
 import java.net.URL
 import scala.io.Source
 import scala.util.matching.Regex
-import scala.util.
-import scala.xml._
 import scala.collection.mutable;
+import scala.collection.immutable;
+import scala.collection.mutable
 
 
 object RuleMatcher {
@@ -66,28 +66,39 @@ object RuleMatcher {
   //e.g. replace("Hello hello", "hello", "goodbye") returns "Hello goodbye"
   def replace(inString:String, replaceSegment:String, outSegment:String) : String = {
     val regex=new Regex(replaceSegment)
-    val matches=regex.findAllIn(inString)
     return regex.replaceAllIn(inString, outSegment)
 
   }
 
-
-  def reverse(sourceNode:String, targetNode:String, oldRelation:String, newRelation:String): (String, String, String) = {
-      
+  //Reverses the source-relation-target and replaces the relation with the reverse relation.
+  def reverse(sourceNode:String, targetNode:String, oldRelation:String, newRelation:String):(String, String, String) = {
       return (targetNode, newRelation, sourceNode)
+  }
+  
+
+  //Expands the node or edge by making the substring before the relation the
+  //source node and the substring after the relation the target using only the leftmost match
+  //so that if another instance of the relaton string appears later, it is merged in the target node.
+  def expand(nodeOrEdge:String, relationText:String):(String, String, String)={
+      
+      val splits=nodeOrEdge.split(relationText)
+      return (splits(0), relationText, iterConcat(splits, relationText, 1))
+
+  }
+
+  def iterConcat(strArray:Array[String], toInsert:String, startIndex:Int):String={
+    var returnString=strArray(startIndex)
+    for(i <- startIndex+1 until strArray.length)
+    {      
+      returnString=returnString.concat(toInsert+strArray(i));
     }
-
-
+    return returnString
   }
 
 
 
-  def main(args : Array[String]) : Unit = {
-
-  	println(checkMatch(args(0), args(1)))
-    println(replace(args(0), args(1), args(2)))
-
-  		
-  	
+  def main(args : Array[String]) : Unit = 
+  {
+  	 		print("hello")  	
   }
 }
