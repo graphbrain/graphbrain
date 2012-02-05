@@ -4,22 +4,7 @@ import scala.collection.mutable;
 
 object LocalInference 
 {
-	def generateRandomGraph(relations: List[String], objects: List[String], numRelated: Int): List[(String, String, String)]=
-	{
-		val r = new Random()
-		var graph:List[(String, String, String)]=List()
-
-		for(i<-0 until numRelated)
-		{
-			val related=(objects(r.nextInt(objects.length)), relations(r.nextInt(relations.length)), objects(r.nextInt(objects.length)))
-			graph=related::graph
-
-					
-
-		}
-		return graph;
-		
-	}
+	
 
 	/**
 	*Finds the relations in which the root node participates in a list of orig-rel-targ and returns a list of relation-role tuples (in the binary case only orig and target but later may have other roles in n-ary relations).
