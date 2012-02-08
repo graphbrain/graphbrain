@@ -1,0 +1,2 @@
+.*(isa\s).*, isa, is a
+.*(is\sa\s)[a|e|i|o|u].*, is a, is an
