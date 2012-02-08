@@ -16,7 +16,10 @@ object Store {
   def get(_id: String) = {
     val query = new BasicDBObject();
     query.put("_id", _id);
-    coll.findOne(query).asInstanceOf[java.util.Map[String, Any]].toMap
+    coll.findOne(query) match {
+      case x: BasicDBObject => x.asInstanceOf[java.util.Map[String, Any]].toMap
+      case _ => Map[String, Any]()
+    }
   }
 
   def put(doc: Map[String, Any]) = {
