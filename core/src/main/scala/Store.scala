@@ -24,7 +24,11 @@ object Store {
 
   def put(doc: Map[String, Any]) = {
     val dbobj = new BasicDBObject()
-    for ((key, value) <- doc) dbobj.put(key, value)
+    for ((key, value) <- doc) value match {
+      case value: String => dbobj.put(key, value)
+      case value: Array[String] => dbobj.put(key, value)
+      case _ =>
+    }
     coll.insert(dbobj)
   }
 }
