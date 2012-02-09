@@ -1,8 +1,0 @@
-[0m[[0mdebug[0m] [0mOther repositories:[0m
-[0m[[0mdebug[0m] [0mDefault repositories:[0m
-[0m[[0mdebug[0m] [0m	Raw(ProjectResolver(inter-project, mapped: ))[0m
-[0m[[0mdebug[0m] [0m	FileRepository(local,FileConfiguration(true,None),sbt.Patterns@b9d9f0f)[0m
-[0m[[0mdebug[0m] [0m	public: http://repo1.maven.org/maven2/[0m
-[0m[[0mdebug[0m] [0m	Scala-Tools Maven2 Repository: http://scala-tools.org/repo-releases[0m
-[0m[[0mdebug[0m] [0mUsing inline dependencies specified in Scala.[0m
-[0m[[0minfo[0m] [0mResolving org.scala-lang#scala-library;2.9.1 ...[0m

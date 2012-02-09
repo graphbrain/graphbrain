@@ -30,6 +30,12 @@ class Store(dbName: String, collName: String) {
     coll.update(query, mapToBasicDBObj(doc))
   }
 
+  def remove(_id: String) = {
+    val query = new BasicDBObject();
+    query.put("_id", _id);
+    coll.remove(query)
+  }
+
   private def mapToBasicDBObj(doc: Map[String, Any]) = {
     val dbobj = new BasicDBObject()
     for ((key, value) <- doc) value match {
