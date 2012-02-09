@@ -4,7 +4,7 @@ object HGDB extends App{
   def get(_id: String) = {
     val map = Store.get(_id)
     val rid = map.getOrElse("_id", "").toString
-    val links: List[String] = map.getOrElse("links", List[String]()).asInstanceOf[List[String]]
+    val links: Set[String] = map.getOrElse("links", List[String]()).asInstanceOf[List[String]].toSet
     map("vtype") match {
       case "vertex" => Vertex(rid, links)
       case "node" => Node(rid, links)
@@ -27,8 +27,8 @@ object HGDB extends App{
   }
 
   override def main(args: Array[String]) = {
-    println(update(Edge("e44", List[String](), "gis3")))
-    println(get("e44"))
+    println(put(Edge("edgy", Set[String](), "says")))
+    println(get("edgy"))
     //println(Vertex("wikipedia/alan_ball_(screenwriter)"))
   }
 }

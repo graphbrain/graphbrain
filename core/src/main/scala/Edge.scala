@@ -1,6 +1,6 @@
 package com.graphbrain
 
-class Edge(_id: String, links: List[String], val etype: String) extends Vertex(_id, links) {
+class Edge(_id: String, links: Set[String], val etype: String) extends Vertex(_id, links) {
   override val vtype = "edge"
 
   override def toMap = super.toMap ++ Map(("etype" -> etype))
@@ -9,5 +9,5 @@ class Edge(_id: String, links: List[String], val etype: String) extends Vertex(_
 }
 
 object Edge {
-  def apply(_id: String, links: List[String], etype:String) = new Edge(_id, links, etype) 
+  def apply(_id: String, links: Set[String], etype:String) = new Edge(_id, links, etype) 
 }
