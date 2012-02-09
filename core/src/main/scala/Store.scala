@@ -8,10 +8,10 @@ import com.mongodb.DBObject
 import com.mongodb.DBCursor
 import scala.collection.JavaConversions._
 
-object Store {
+class Store(dbName: String, collName: String) {
 	val conn = new Mongo()
-  val db = conn.getDB("gb")
-  val coll = db.getCollection("ver")
+  val db = conn.getDB(dbName)
+  val coll = db.getCollection(collName)
 
   def get(_id: String) = {
     val query = new BasicDBObject();

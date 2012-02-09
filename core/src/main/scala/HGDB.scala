@@ -1,14 +1,16 @@
 package com.graphbrain
 
-object HGDB extends App{ 
+class HGDB(dbName: String) {
+  val store = new Store(dbName, "hgdb")
+
   def get(_id: String) = {
-    val map = Store.get(_id)
+    val map = store.get(_id)
     val rid = map.getOrElse("_id", "").toString
     map("vtype") match {
       case "vertex" => Vertex(rid)
       case "node" => {
-        val links: Set[String] = map.getOrElse("links", List[String]()).asInstanceOf[List[String]].toSet
-        Node(rid, links)
+        val edges: Set[String] = map.getOrElse("edges", List[String]()).asInstanceOf[List[String]].toSet
+        Node(rid, edges)
       }
       case "edge" => {
         val etype = map.getOrElse("etype", "").toString
@@ -19,18 +21,31 @@ object HGDB extends App{
   }
 
   def put(vertex: Vertex) = {
-    Store.put(vertex.toMap)
+    store.put(vertex.toMap)
     vertex
   }
 
   def update(vertex: Vertex) = {
-    Store.update(vertex._id, vertex.toMap)
+    store.update(vertex._id, vertex.toMap)
     vertex
   }
 
+  def addEdge(edgeType: String, participants: Array[Node]) = {
+    val eid = edgeType + (for (node <- participants) yield (" " + node._id))
+    val edge = Edge(eid, edgeType)
+    put(edge)
+
+    for (node <- participants) node.addEdge(edge)
+
+    edge
+  }
+}
+
+object HGDB extends App {
   override def main(args: Array[String]) = {
-    println(put(Edge("edgz", "sayz")))
-    println(get("edgz"))
+    val hgdb = new HGDB("gb")
+    println(hgdb.put(Edge("edgz", "sayz")))
+    println(hgdb.get("edgz"))
     //println(Vertex("wikipedia/alan_ball_(screenwriter)"))
   }
 }
