@@ -1,0 +1,3 @@
+vim Build.scala
+exit;
+test
