@@ -22,13 +22,21 @@ object Store {
     }
   }
 
-  def put(doc: Map[String, Any]) = {
+  def put(doc: Map[String, Any]) = coll.insert(mapToBasicDBObj(doc))
+
+  def update(_id: String, doc: Map[String, Any]) = {
+    val query = new BasicDBObject();
+    query.put("_id", _id);
+    coll.update(query, mapToBasicDBObj(doc))
+  }
+
+  private def mapToBasicDBObj(doc: Map[String, Any]) = {
     val dbobj = new BasicDBObject()
     for ((key, value) <- doc) value match {
       case value: String => dbobj.put(key, value)
       case value: Array[String] => dbobj.put(key, value)
       case _ =>
     }
-    coll.insert(dbobj)
+    dbobj
   }
 }
