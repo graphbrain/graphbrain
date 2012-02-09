@@ -1,6 +1,6 @@
 package com.graphbrain
 
-object HGDB { 
+object HGDB extends App{ 
   def get(_id: String) = {
     val map = Store.get(_id)
     val rid = map.getOrElse("_id", "").toString
@@ -16,14 +16,19 @@ object HGDB {
     }
   }
 
-  def store(vertex: Vertex) = {
+  def put(vertex: Vertex) = {
     Store.put(vertex.toMap)
     vertex
   }
 
-  def main(args: Array[String]) = {
-    println(store(Edge("e14", List[String](), "is")))
-    println(get("e14"))
+  def update(vertex: Vertex) = {
+    Store.update(vertex._id, vertex.toMap)
+    vertex
+  }
+
+  override def main(args: Array[String]) = {
+    println(update(Edge("e44", List[String](), "gis3")))
+    println(get("e44"))
     //println(Vertex("wikipedia/alan_ball_(screenwriter)"))
   }
 }
