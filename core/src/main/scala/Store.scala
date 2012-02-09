@@ -40,3 +40,7 @@ class Store(dbName: String, collName: String) {
     dbobj
   }
 }
+
+object Store {
+  def apply(dbName: String, collName: String) = new Store(dbName, collName)
+}
