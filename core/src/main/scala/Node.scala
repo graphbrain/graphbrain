@@ -1,7 +1,9 @@
 package com.graphbrain
 
-class Node(_id: String, links: Set[String]) extends Vertex(_id, links) {
+class Node(_id: String, val links: Set[String]) extends Vertex(_id) {
   override val vtype = "node"
+
+  override def toMap: Map[String, Any] = super.toMap ++ Map(("links" -> links))
 }
 
 object Node {

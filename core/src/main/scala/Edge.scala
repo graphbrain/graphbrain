@@ -1,13 +1,13 @@
 package com.graphbrain
 
-class Edge(_id: String, links: Set[String], val etype: String) extends Vertex(_id, links) {
+class Edge(_id: String, val etype: String) extends Vertex(_id) {
   override val vtype = "edge"
 
-  override def toMap = super.toMap ++ Map(("etype" -> etype))
+  override def toMap: Map[String, Any] = super.toMap ++ Map(("etype" -> etype))
 
   override def toString: String = super.toString + " " + etype
 }
 
 object Edge {
-  def apply(_id: String, links: Set[String], etype:String) = new Edge(_id, links, etype) 
+  def apply(_id: String, etype:String) = new Edge(_id, etype) 
 }
