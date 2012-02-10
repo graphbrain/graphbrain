@@ -16,6 +16,7 @@ class HGDB(storeName: String) {
         val etype = map.getOrElse("etype", "").toString
         Edge(rid, etype)
       }
+      case "edgeType" => EdgeType(rid)
       case _  => Vertex(rid)
     }
   }
@@ -30,6 +31,8 @@ class HGDB(storeName: String) {
     vertex
   }
 
+  def remove(vertex: Vertex) = store.remove(vertex._id)
+
   def addEdge(edgeType: String, participants: Array[Node]) = {
     val eid = edgeType + (for (node <- participants) yield (" " + node._id))
     val edge = Edge(eid, edgeType)
@@ -41,11 +44,6 @@ class HGDB(storeName: String) {
   }
 }
 
-object HGDB extends App {
-  override def main(args: Array[String]) = {
-    val hgdb = new HGDB("gb")
-    println(hgdb.put(Edge("edgz", "sayz")))
-    println(hgdb.get("edgz"))
-    //println(Vertex("wikipedia/alan_ball_(screenwriter)"))
-  }
+object HGDB {
+  def apply(storeName: String) = new HGDB(storeName)
 }
