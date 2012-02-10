@@ -8,6 +8,11 @@ import com.mongodb.DBObject
 import com.mongodb.DBCursor
 import scala.collection.JavaConversions._
 
+/** Interface to a simple key/value store.
+  *
+  * An underalying distributed database (currently MongoDB) is abstracted to expose a very
+  * simple key/value store interface. 
+  */
 class Store(storeName: String) {
 	val nameParts = storeName.split('.')
   val dbName = nameParts(0)
@@ -17,6 +22,7 @@ class Store(storeName: String) {
   val db = conn.getDB(dbName)
   val coll = db.getCollection(collName)
 
+  /** Gets a document by it's _id in the form of a Map[String, Any] */
   def get(_id: String) = {
     val query = new BasicDBObject();
     query.put("_id", _id);
@@ -26,14 +32,17 @@ class Store(storeName: String) {
     }
   }
 
+  /** Puts a document represented by a Map[String, Any] into the store */
   def put(doc: Map[String, Any]) = coll.insert(mapToBasicDBObj(doc))
 
+  /** Updates a document identified by it's _id with the information contained in the Map[String, Any] */
   def update(_id: String, doc: Map[String, Any]) = {
     val query = new BasicDBObject();
     query.put("_id", _id);
     coll.update(query, mapToBasicDBObj(doc))
   }
 
+  /** Removes document identified by _id */
   def remove(_id: String) = {
     val query = new BasicDBObject();
     query.put("_id", _id);
