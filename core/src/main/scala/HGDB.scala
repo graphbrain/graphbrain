@@ -1,8 +1,13 @@
 package com.graphbrain
 
+/** Hypergraph Data Base.
+  *
+  * Implements and hypergraph database on top of a simple key/value store. 
+  */
 class HGDB(storeName: String) {
   val store = new Store(storeName)
 
+  /** Gets Vertex by it's _id */
   def get(_id: String) = {
     val map = store.get(_id)
     val rid = map.getOrElse("_id", "").toString
@@ -21,19 +26,27 @@ class HGDB(storeName: String) {
     }
   }
 
+  /** Adds Vertex to database */
   def put(vertex: Vertex) = {
     store.put(vertex.toMap)
     vertex
   }
 
+  /** Updates vertex on database */
   def update(vertex: Vertex) = {
     store.update(vertex._id, vertex.toMap)
     vertex
   }
 
+  /** Removes vertex from database */
   def remove(vertex: Vertex) = store.remove(vertex._id)
 
-  def addEdge(edgeType: String, participants: Array[Node]) = {
+  /** Adds relationship to database
+    * 
+    * An edge is creted and participant nodes are updated with a reference to that edge
+    * in order to represent a new relationship on the database.
+    */
+  def addrel(edgeType: String, participants: Array[Node]) = {
     val eid = edgeType + (for (node <- participants) yield (" " + node._id))
     val edge = Edge(eid, edgeType)
     put(edge)
