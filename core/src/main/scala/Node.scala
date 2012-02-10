@@ -7,7 +7,7 @@ class Node(_id: String, val edges: Set[String]) extends Vertex(_id) {
 
   def addEdge(edge: Edge): Node = Node(_id, edges + edge._id)
 
-  def removeEdge(edge: Edge): Node = Node(_id, edges - edge._id)
+  def delEdge(edge: Edge): Node = Node(_id, edges - edge._id)
 
   /*
   def neighbors(nodes: Map[String, Node] = Map[String, Node](), depth: Int = 0, maxDepth: Int = 2):

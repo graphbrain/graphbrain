@@ -24,7 +24,7 @@ class HGDBTest extends FunSuite {
     assert(node._id == nodeOut._id)
   }
 
-  test("two node relationship") {
+  test("add two node relationship") {
     val node0 = Node("node0")
     val node1 = Node("node1")
     hgdb.remove(node0)
@@ -36,5 +36,16 @@ class HGDBTest extends FunSuite {
     val eid = "test " + node0._id + " " + node1._id
     val edge = hgdb.get(eid)
     assert(edge._id == eid)
+  }
+
+  test("delete two node relationship") {
+    val node0 = Node("node0")
+    val node1 = Node("node1")
+    hgdb.remove(node0)
+    hgdb.remove(node1)
+    hgdb.put(node0)
+    hgdb.put(node1)
+    hgdb.addrel("test", Array[Node](node0, node1))
+    hgdb.delrel("test", Array[Node](node0, node1))
   }
 }

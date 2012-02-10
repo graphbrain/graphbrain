@@ -57,6 +57,20 @@ class HGDB(storeName: String) {
 
     edge
   }
+
+  /** Deletes relationship from database
+    * 
+    * The edge defining the relationship is removed and participant nodes are updated 
+    * to drop the reference to that edge.
+    */
+  def delrel(edgeType: String, participants: Array[Node]) = {
+    val edge = Edge(edgeType, participants)
+    remove(edge)
+
+    for (node <- participants) node.delEdge(edge)
+
+    edge
+  }
 }
 
 object HGDB {
