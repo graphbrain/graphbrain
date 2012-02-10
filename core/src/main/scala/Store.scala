@@ -8,8 +8,12 @@ import com.mongodb.DBObject
 import com.mongodb.DBCursor
 import scala.collection.JavaConversions._
 
-class Store(dbName: String, collName: String) {
-	val conn = new Mongo()
+class Store(storeName: String) {
+	val nameParts = storeName.split('.')
+  val dbName = nameParts(0)
+  val collName = nameParts(1)
+
+  val conn = new Mongo()
   val db = conn.getDB(dbName)
   val coll = db.getCollection(collName)
 
@@ -48,5 +52,5 @@ class Store(dbName: String, collName: String) {
 }
 
 object Store {
-  def apply(dbName: String, collName: String) = new Store(dbName, collName)
+  def apply(storeName: String) = new Store(storeName)
 }

@@ -1,7 +1,7 @@
 package com.graphbrain
 
-class HGDB(dbName: String) {
-  val store = new Store(dbName, "hgdb")
+class HGDB(storeName: String) {
+  val store = new Store(storeName)
 
   def get(_id: String) = {
     val map = store.get(_id)
