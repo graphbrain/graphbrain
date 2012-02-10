@@ -21,7 +21,10 @@ class HGDB(storeName: String) {
         val etype = map.getOrElse("etype", "").toString
         Edge(rid, etype)
       }
-      case "edgeType" => EdgeType(rid)
+      case "edgeType" => {
+        val label = map.getOrElse("label", "").toString
+        EdgeType(rid, label)
+      }
       case _  => Vertex(rid)
     }
   }
@@ -47,8 +50,7 @@ class HGDB(storeName: String) {
     * in order to represent a new relationship on the database.
     */
   def addrel(edgeType: String, participants: Array[Node]) = {
-    val eid = edgeType + (for (node <- participants) yield (" " + node._id))
-    val edge = Edge(eid, edgeType)
+    val edge = Edge(edgeType, participants)
     put(edge)
 
     for (node <- participants) node.addEdge(edge)
