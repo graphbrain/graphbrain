@@ -8,13 +8,17 @@ import scala.collection.mutable
 
 object RuleMatcher {
 
-  //Reverse rules have oldRelation as the source, newRelation as the target and type relation rule.
-  //Text and POS rules replace a segment of text and can apply to both nodes and relations. 
-  //In text rules, the source is a regex expression or string that is being searched for and the target is the replacement expression.
-  //In POS rules, the source is a POS expression or string that must be matched and the target is a text rule or another POS rule. The 
-  //POS expression can also be a regular expression with missing/optional values.
-  
+  //Text rules are the base level primitives and simply replace a segment of text (which can be the label for a node or link, or simply a sentence). These are stored in graph form, with the source as the expression (string or regex) string to be replaced, the target is the replacement expression, and the relation "replaces".
+  //TextMatch and POS rules replace a segment of text and can apply to both nodes and relations. 
+  //In TextMatch rules, the source is a string or regex expression that must be matched and the target is another rule.
+  //In POS rules, the source is a POS expression or string that must be matched and the target is another rule. 
 
+
+  //Structural rules change the structure of nodes and links. For example, "expand" relations define conversions from text into node-link-nodes (expression identifying the relation as the source, "expands to" as the source, which occurrence of the expression to segment by as the target) while "reverse" rules reverse the node-link-node relation by replacing it with a new relation in the opposite direction (oldRelation as the source, newRelation as the target).
+  //TODO: Change expand and iterConcat
+
+  //Composite rules are defined using the standard logical operators as relations. Two rules linked by an OR relationship generate are both subtypes of this rule, whereas two rules linked by an AND relationship give rise to a subtype. If A and B are linked by the subtype relationship such that A is_subtype_of B, then we know that if rule node A is activated, then B must also be activated. 
+  
 
 
   //Returns true if str_to_match matches the regex_condition.
@@ -76,7 +80,7 @@ object RuleMatcher {
   }
   
 
-  //Expands the node or edge by making the substring before the relation the
+  //Expands a string (which could be a node or edge) making the substring before the relation the
   //source node and the substring after the relation the target using only the leftmost match
   //so that if another instance of the relaton string appears later, it is merged in the target node.
   def expand(nodeOrEdge:String, relationText:String):(String, String, String)={
@@ -86,6 +90,7 @@ object RuleMatcher {
 
   }
 
+  //Concatenates the set of strings strArray with toInsert as the delimiter starting from the element indexed by startIndex.
   def iterConcat(strArray:Array[String], toInsert:String, startIndex:Int):String={
     var returnString=strArray(startIndex)
     for(i <- startIndex+1 until strArray.length)
@@ -99,6 +104,6 @@ object RuleMatcher {
 
   def main(args : Array[String]) : Unit = 
   {
-  	 		print("hello")  	
+  	 		
   }
 }

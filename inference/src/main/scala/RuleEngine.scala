@@ -23,10 +23,9 @@ object RuleEngine {
   }
 
   def checkMatch(posExpression:POS, str_to_match:String):Boolean={
-    val pos = new Regex(posExpression.exp)
-
-    str_to_match match {
-      case pos(a) => return true;
+    val tags = POSTagger.getTokenSequence(str_to_match)
+    (posExpression.exp, tags) match {
+      case (a, b) if a==b => return true;
       case _ => return false;
     }
   }
@@ -38,6 +37,13 @@ object RuleEngine {
     }
   }
 
+  def checkMatch(expression:COMPOSITE, input_to_match:RuleExpression):Boolean={
+    //Recursively check each relation
+    case (expression.exp1, "AND", expression.exp2) => return checkMatch(expression.exp1, input_to_match)&&checkMatch(expression.exp2, input_to_match)
+    case (expression.exp1, "OR", expression.exp2) => return checkMatch(expression.exp1, input_to_match)|checkMatch(expression.exp2, input_to_match)
+    case _ => return false;
+
+  }
 
   def transform(inExp:POS, outExp:REGEX, input:String):String={
     return ""
@@ -61,8 +67,38 @@ object RuleEngine {
     return ("","","")
   }
 
+
+
+  def GRAPH_REVERSE(inExp:GRAPH2, outExp:GRAPH2):Boolean={return inExp.source==outExp.target&&inExp.target==outExp.source}
+
+  def GRAPH_NO_REVERSE(inExp:GRAPH2, outExp:GRAPH2):Boolean = {return (!(GRAPH_REVERSE(inExp, outExp)))}
+
+  def GRAPH_RELATION_REPLACE(inExp:GRAPH2, outExp:GRAPH2):Boolean={return (inExp.relation!=outExp.relation)}
+
+  def GRAPH_RELATION_KEEP(inExp:GRAPH2, outExp:GRAPH2):Boolean={return (!(GRAPH_RELATION_REPLACE(inExp, outExp)))}
+
+  //Applies graph transformations depending on the patterns in the rule input and output expressions.
   def transform(inExp:GRAPH2, outExp:GRAPH2, input:GRAPH2):(String, String, String)={
-    return ("","","")
+
+    if(GRAPH_NO_REVERSE(inExp, outExp)&&GRAPH_RELATION_REPLACE(inExp, outExp))
+    { 
+      //Simply replace relation name (used for synonyms or type inferred relations)
+      return (input.source, outExp.relation, input.target)
+    }
+    else if(GRAPH_REVERSE(inExp, outExp)&&GRAPH_RELATION_KEEP(inExp, outExp))
+    { 
+      //Reverse without changing the name of the relation (used to symmetrise relations)
+      return (input.target, input.relation, input.source)
+    }
+    else if(GRAPH_REVERSE(inExp, outExp)&&GRAPH_RELATION_REPLACE(inExp, outExp))
+    { 
+      //Reverse and replace relation name with new name given by outExp.relation:
+      return (input.target, outExp.relation, input.source)  
+    }
+    else 
+    {
+      return (input.source, input.relation, input.target)
+    }
   }
 
 
