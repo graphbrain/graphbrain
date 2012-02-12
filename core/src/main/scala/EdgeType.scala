@@ -1,11 +1,11 @@
 package com.graphbrain
 
-class EdgeType(_id: String, val label: String) extends Vertex(_id) {
+class EdgeType(id: String, val label: String) extends Vertex(id) {
   override val vtype = "edgeType"
 
   override def toMap: Map[String, Any] = super.toMap ++ Map(("label" -> label))
 }
 
 object EdgeType {
-  def apply(_id: String, label: String) = new EdgeType(_id, label) 
+  def apply(id: String, label: String) = new EdgeType(id, label) 
 }
