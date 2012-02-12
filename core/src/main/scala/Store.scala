@@ -1,63 +1,54 @@
 package com.graphbrain
 
-import com.mongodb.Mongo
-import com.mongodb.DB
-import com.mongodb.DBCollection
-import com.mongodb.BasicDBObject
-import com.mongodb.DBObject
-import com.mongodb.DBCursor
-import scala.collection.JavaConversions._
+import com.basho.riak.client.raw.http.HTTPClientConfig
+import com.basho.riak.client.IRiakClient
+import com.basho.riak.client.RiakFactory
+import com.basho.riak.client.IRiakObject
+import com.basho.riak.client.bucket.Bucket
 
-/** Interface to a simple key/value store.
-  *
-  * An underalying distributed database (currently MongoDB) is abstracted to expose a very
-  * simple key/value store interface. 
-  */
-class Store(storeName: String) {
-	val nameParts = storeName.split('.')
-  val dbName = nameParts(0)
-  val collName = nameParts(1)
+/** Interface to Riak, a distributed key/value store. */
+class Store(val storeName: String) {
+  case class Doc(params: Map[String, Any])
 
-  val conn = new Mongo()
-  val db = conn.getDB(dbName)
-  val coll = db.getCollection(collName)
+	val conf = new HTTPClientConfig.Builder().withHost("127.0.0.1").withPort(8098).build()
+  val client = RiakFactory.newClient(conf)
+  val bucket = client.createBucket(storeName).execute()
 
-  /** Gets a document by it's _id in the form of a Map[String, Any] */
-  def get(_id: String) = {
-    val query = new BasicDBObject();
-    query.put("_id", _id);
-    coll.findOne(query) match {
-      case x: BasicDBObject => x.asInstanceOf[java.util.Map[String, Any]].toMap
+  /** Gets a document by it's id in the form of a Map[String, Any] */
+  def get(id: String) = {
+    val value = bucket.fetch(id).execute()
+    value match {
+      case s: IRiakObject => str2map(s.getValueAsString)
       case _ => Map[String, Any]()
     }
   }
 
   /** Puts a document represented by a Map[String, Any] into the store */
-  def put(doc: Map[String, Any]) = coll.insert(mapToBasicDBObj(doc))
+  def put(id: String, doc: Map[String, Any]) = bucket.store(id, map2str(doc)).execute()
 
-  /** Updates a document identified by it's _id with the information contained in the Map[String, Any] */
-  def update(_id: String, doc: Map[String, Any]) = {
-    val query = new BasicDBObject();
-    query.put("_id", _id);
-    coll.update(query, mapToBasicDBObj(doc))
+  /** Updates a document identified by it's id with the information contained in the Map[String, Any] */
+  def update(id: String, doc: Map[String, Any]) = {
+    remove(id)
+    put(id, doc)
   }
 
-  /** Removes document identified by _id */
-  def remove(_id: String) = {
-    val query = new BasicDBObject();
-    query.put("_id", _id);
-    coll.remove(query)
+  /** Removes document identified by id */
+  def remove(id: String) = bucket.delete(id).execute()
+
+  private def map2str(map: Map[String, Any]) = {
+    val paramList = for (item <- map) yield item._1.toString + " " + encodeValue(item._2.toString)
+    paramList.reduceLeft(_ + "|" + _)
   }
 
-  private def mapToBasicDBObj(doc: Map[String, Any]) = {
-    val dbobj = new BasicDBObject()
-    for ((key, value) <- doc) value match {
-      case value: String => dbobj.put(key, value)
-      case value: Array[String] => dbobj.put(key, value)
-      case _ =>
-    }
-    dbobj
+  private def str2map(str: String): Map[String, Any] = {
+    val strItems = str.split('|')
+    val items = for (i <- strItems) yield i.split(" ", 2)
+    items map { i => (i(0), decodeValue(i(1))) } toMap
   }
+
+  private def encodeValue(value: String) = value.replace("#", "#1").replace("|", "#2")
+
+  private def decodeValue(value: String) = value.replace("#2", "|").replace("#1", "#")
 }
 
 object Store {

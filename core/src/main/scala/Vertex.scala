@@ -1,13 +1,13 @@
 package com.graphbrain
 
-class Vertex(val _id: String) {
+class Vertex(val id: String) {
   val vtype = "vertex"
 
-  def toMap: Map[String, Any] = Map(("_id" -> _id), ("vtype" -> vtype))
+  def toMap: Map[String, Any] = Map(("vtype" -> vtype))
 
-  override def toString: String = vtype + " [" + _id + "]"
+  override def toString: String = vtype + " [" + id + "]"
 }
 
 object Vertex {
-  def apply(_id: String) = new Vertex(_id) 
+  def apply(id: String) = new Vertex(id) 
 }

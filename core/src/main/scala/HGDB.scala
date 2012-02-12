@@ -8,41 +8,40 @@ class HGDB(storeName: String) {
   val store = new Store(storeName)
 
   /** Gets Vertex by it's _id */
-  def get(_id: String) = {
-    val map = store.get(_id)
-    val rid = map.getOrElse("_id", "").toString
+  def get(id: String) = {
+    val map = store.get(id)
     map("vtype") match {
-      case "vertex" => Vertex(rid)
+      case "vertex" => Vertex(id)
       case "node" => {
-        val edges: Set[String] = map.getOrElse("edges", List[String]()).asInstanceOf[List[String]].toSet
-        Node(rid, edges)
+        val edges = map.getOrElse("edges", "").toString
+        Node(id, edges)
       }
       case "edge" => {
         val etype = map.getOrElse("etype", "").toString
-        Edge(rid, etype)
+        Edge(id, etype)
       }
       case "edgeType" => {
         val label = map.getOrElse("label", "").toString
-        EdgeType(rid, label)
+        EdgeType(id, label)
       }
-      case _  => Vertex(rid)
+      case _  => Vertex(id)
     }
   }
 
   /** Adds Vertex to database */
   def put(vertex: Vertex) = {
-    store.put(vertex.toMap)
+    store.put(vertex.id, vertex.toMap)
     vertex
   }
 
   /** Updates vertex on database */
   def update(vertex: Vertex) = {
-    store.update(vertex._id, vertex.toMap)
+    store.update(vertex.id, vertex.toMap)
     vertex
   }
 
   /** Removes vertex from database */
-  def remove(vertex: Vertex) = store.remove(vertex._id)
+  def remove(vertex: Vertex) = store.remove(vertex.id)
 
   /** Adds relationship to database
     * 
