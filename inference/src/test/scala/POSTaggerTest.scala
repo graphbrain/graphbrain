@@ -5,6 +5,7 @@ class POSTaggerTest extends FunSuite {
 
 	val testSentence="I am a person"
 	
+	
 
 	test("tag string") {
 		val tagged = POSTagger.tagText(testSentence)
@@ -23,7 +24,7 @@ class POSTaggerTest extends FunSuite {
 	}
 
 	test("token sequence"){
-		
+
 		assert(POSTagger.getTokenSequence(testSentence)=="PRP VBP DT NN")
 	}
 

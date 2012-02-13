@@ -18,14 +18,17 @@ object RuleEngine {
 
     str_to_match match {
       case regex(a) => return true;
+      case b if b==regexExpression.exp => true
       case _ => return false;
     }
   }
 
   def checkMatch(posExpression:POS, str_to_match:String):Boolean={
     val tags = POSTagger.getTokenSequence(str_to_match)
-    (posExpression.exp, tags) match {
-      case (a, b) if a==b => return true;
+    val regexPOS = new Regex(posExpression.exp)
+    tags match {
+      case regexPOS(a) => return true;
+      case t if t==posExpression.exp => true;
       case _ => return false;
     }
   }
@@ -37,13 +40,41 @@ object RuleEngine {
     }
   }
 
-  def checkMatch(expression:COMPOSITE, input_to_match:RuleExpression):Boolean={
-    //Recursively check each relation
-    case (expression.exp1, "AND", expression.exp2) => return checkMatch(expression.exp1, input_to_match)&&checkMatch(expression.exp2, input_to_match)
-    case (expression.exp1, "OR", expression.exp2) => return checkMatch(expression.exp1, input_to_match)|checkMatch(expression.exp2, input_to_match)
-    case _ => return false;
-
+  def checkMatch(expression:RuleExpression, graph2_to_match:(String, String, String)):Boolean={
+    expression match{
+      case a:GRAPH2 => return checkMatch(expression, graph2_to_match)
+      case _ => return false
+    }
   }
+
+  def checkMatch(expression:RuleExpression, string_to_match:String):Boolean={
+    expression match{
+      case a:REGEX => return checkMatch(expression, string_to_match)
+      case a:POS => return checkMatch(expression, string_to_match)
+      case _ => return false
+    }
+  }
+
+  def checkMatch(expression:COMPOSITE, input_to_match:String):Boolean={
+
+    expression match{
+     //Recursively check each relation
+      case COMPOSITE(a, "AND", b) => return checkMatch(a, input_to_match)&&checkMatch(b, input_to_match)
+      case COMPOSITE(a, "OR", b) => return checkMatch(a, input_to_match)|checkMatch(b, input_to_match)
+      case _ => return false;
+    }
+  }
+
+  def checkMatch(expression:COMPOSITE, input_to_match:(String, String, String)):Boolean={
+
+    expression match{
+     //Recursively check each relation
+      case COMPOSITE(a, "AND", b) => return checkMatch(a, input_to_match)&&checkMatch(b, input_to_match)
+      case COMPOSITE(a, "OR", b) => return checkMatch(a, input_to_match)|checkMatch(b, input_to_match)
+      case _ => return false;
+    }
+  }
+
 
   def transform(inExp:POS, outExp:REGEX, input:String):String={
     return ""
@@ -60,13 +91,38 @@ object RuleEngine {
   }
 
   def transform(inExp:POS, outExp:GRAPH2, input:String):(String, String, String)={
-    return ("","","")
+    val taggedTokens=POSTagger.tagText(input)
+    var pre=""
+    var post=""
+    var rel=""
+    var found=false;
+    for(tt <- taggedTokens)
+    {
+      tt match{
+        case (word, tag) if tag==inExp.exp => rel=outExp.relation; found=true; 
+        case (word, tag) if found => post=post+word;
+        case (word, tag) if found==false => pre=pre+word
+      }
+    }
+    if(outExp.source < outExp.target)
+    {
+
+      return (pre, rel, post)  
+    }
+    else
+    {
+      return (post, rel, pre)
+    }
+    
   }
 
   def transform(inExp:REGEX, outExp:GRAPH2, input:String):(String, String, String)={
     return ("","","")
   }
 
+  def transform(inExp:COMPOSITE, outexp:GRAPH2, input1:GRAPH2, input2:GRAPH2):(String, String, String)={
+    return ("", "", "")
+  }
 
 
   def GRAPH_REVERSE(inExp:GRAPH2, outExp:GRAPH2):Boolean={return inExp.source==outExp.target&&inExp.target==outExp.source}
