@@ -47,7 +47,8 @@ object POSTagger {
 	def main(args: Array[String])
   	{
 
-    	val taggedToks=tagText("I am a person")
+    	val taggedToks=tagText("John's dog")
+
 
     	for(tag <- taggedToks)
     	{
@@ -55,6 +56,7 @@ object POSTagger {
     			case (a,b) => println (a + ", " +  b)
     		}
     	}
+    	println(getTokenSequence("John's dog"))
 
 
 	}

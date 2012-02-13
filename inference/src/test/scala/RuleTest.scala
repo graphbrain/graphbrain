@@ -31,12 +31,13 @@ class RuleTest extends FunSuite {
 		val replaceBy = REGEX("is an")
 
 
-
 		val testSentence = "Tom is a apple"
 		val expectedOutput="Tom is an apple"
 		assert(RuleEngine.transform(toReplace, replaceBy, testSentence)==expectedOutput)
 
 	}
+
+
 
 	test("graph reciprocate transform") {
 		//"A", "is colleagues with", "B", "B", "is colleagues with", "A"
@@ -70,5 +71,21 @@ class RuleTest extends FunSuite {
 		assert(RuleEngine.transform(inGraphExp, outGraphExp, testInGraph)==expectedOutGraph)
 
 	}
+
+	test("POS->(String->(String, String, String)) rule") {
+		//A's B -> A has a B
+		val posCondition=POS(".*(\\sPOS\\s).*")
+		val inPOSExp=POS("POS")
+		val outGraphExp1=GRAPH2("A", "has a", "B")
+		val outGraphExp2=GRAPH2("B", "belongs to", "A")
+		val testInString="John's dog"
+		val expectedOutGraph1=("John", "has a", "dog")
+		val expectedOutGraph2=("dog", "belongs to", "John")
+		assert(RuleEngine.checkMatch(posCondition, testInString))
+		assert(RuleEngine.transform(inPOSExp, outGraphExp1, testInString)==expectedOutGraph1)
+		assert(RuleEngine.transform(inPOSExp, outGraphExp2, testInString)==expectedOutGraph2)
+
+	}
+
 
 }
