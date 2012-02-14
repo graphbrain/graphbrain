@@ -1,13 +1,13 @@
 package com.graphbrain
 
-/** Hypergraph Data Base.
+/** Vertex store.
   *
-  * Implements and hypergraph database on top of a simple key/value store. 
+  * Implements and hypergraph database on top of a key/Map store. 
   */
-class HGDB(storeName: String) {
-  val store = new Store(storeName)
+class VertexStore(storeName: String) {
+  val store = new MapStore(storeName)
 
-  /** Gets Vertex by it's _id */
+  /** Gets Vertex by it's id */
   def get(id: String) = {
     val map = store.get(id)
     map("vtype") match {
@@ -72,6 +72,6 @@ class HGDB(storeName: String) {
   }
 }
 
-object HGDB {
-  def apply(storeName: String) = new HGDB(storeName)
+object VertexStore {
+  def apply(storeName: String) = new VertexStore(storeName)
 }
