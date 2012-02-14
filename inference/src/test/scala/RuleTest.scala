@@ -21,14 +21,14 @@ class RuleTest extends FunSuite {
 		
 		assert(RuleEngine.checkMatch(posExpression, "I am a person"))
 		assert(RuleEngine.checkMatch(regexExpression, "Tom is a apple"))
-		assert(RuleEngine.checkMatch(graph2Expression, ("source", "relation", "target")))
+		assert(RuleEngine.checkMatch(graph2Expression, ("any1", "relation", "any2")))
 
 	}
 
 	test("text replacement transform"){
 		val condition = REGEX(".*(is\\sa).*")
 		val toReplace = REGEX("is a")
-		val replaceBy = REGEX("is an")
+		val replaceBy = "is an"
 
 
 		val testSentence = "Tom is a apple"
@@ -86,6 +86,25 @@ class RuleTest extends FunSuite {
 		assert(RuleEngine.transform(inPOSExp, outGraphExp2, testInString)==expectedOutGraph2)
 
 	}
+
+	test("Composite rules") {
+		val condExp1=GRAPH2("A", "is a", "B")
+		val condExp2=GRAPH2("B", "is a", "C")
+		val condExp3=GRAPH2("C", "is a", "D")
+		val outExp=GRAPH2("A", "is a", "C")
+		val compositeExp=COMPOSITE(condExp1, "AND", condExp2)
+		val graphPair=GRAPH2Pair(condExp1, condExp2)
+		val testGraph1=("John", "is a", "surgeon")
+		val testGraph2=("surgeon", "is a", "human")
+		val testGraph3=("John", "is a", "human")
+
+		assert(RuleEngine.checkMatch(condExp1, condExp2, testGraph1, testGraph2))
+		assert(RuleEngine.checkMatch(condExp1, condExp3, testGraph1, testGraph2)==false)
+		assert(RuleEngine.transform(graphPair, outExp, testGraph1, testGraph2)==testGraph3)
+
+	}
+
+
 
 
 }
