@@ -1,5 +1,5 @@
 import org.scalatest.FunSuite
-import com.graphbrain.MapStore
+import com.graphbrain.hgdb.MapStore
 
 class MapStoreTest extends FunSuite {
 	val store = MapStore("testdb")

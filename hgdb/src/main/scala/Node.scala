@@ -1,4 +1,4 @@
-package com.graphbrain
+package com.graphbrain.hgdb
 
 class Node(id: String, val edges: Set[String]) extends Vertex(id) {
   override val vtype = "node"

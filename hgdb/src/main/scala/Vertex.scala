@@ -1,4 +1,4 @@
-package com.graphbrain
+package com.graphbrain.hgdb
 
 class Vertex(val id: String) {
   val vtype = "vertex"

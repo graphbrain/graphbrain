@@ -1,6 +1,6 @@
 import org.scalatest.FunSuite
-import com.graphbrain.Edge
-import com.graphbrain.Node
+import com.graphbrain.hgdb.Edge
+import com.graphbrain.hgdb.Node
 
 class NodeTest extends FunSuite {
 	test("add Edge") {
