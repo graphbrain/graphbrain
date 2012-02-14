@@ -11,7 +11,9 @@ object RuleEngine {
   
 
 
-    //Returns true if str_to_match matches the regex_condition.
+  /**
+  Returns true if str_to_match matches the regex_condition defined in regexExpression.
+  */
   def checkMatch(regexExpression:REGEX, str_to_match:String):Boolean={
     
     val regex = new Regex(regexExpression.exp)
@@ -23,6 +25,9 @@ object RuleEngine {
     }
   }
 
+  /**
+  Returns true if the POS tags in str_to_match match the POS expression defined in posExpression, e.g. if str_to_match is "I am a person", it would match with the POS expressions "(PRP VBP DT NN)", ".*(NN).*" and ".*(PRP VBP).*".
+  */
   def checkMatch(posExpression:POS, str_to_match:String):Boolean={
     val tags = POSTagger.getTokenSequence(str_to_match)
     val regexPOS = new Regex(posExpression.exp)
@@ -33,63 +38,126 @@ object RuleEngine {
     }
   }
 
-  def checkMatch(graph2Expression:GRAPH2, graph2_to_match:(String, String, String)):Boolean={
-    graph2_to_match match{
-      case (graph2Expression.source, graph2Expression.relation, graph2Expression.target) => return true;
+  /**
+  Returns true if the (String, String, String) in graph_to_match representing (source, relation, target) matches the GRAPH2 expression i.e. the relation in graph_to_match is the same as that in graph2Expression. 
+  */
+  def checkMatch(graph2Expression:GRAPH2, graph_to_match:(String, String, String)):Boolean={
+    graph_to_match match{
+      case (a, graph2Expression.relation, b) => return true;
       case _ => return false
     }
   }
 
-  def checkMatch(expression:RuleExpression, graph2_to_match:(String, String, String)):Boolean={
+  
+
+  /*Checks match for rule given input. If the rule is intended for the wrong data type, the method returns false.*/
+  def checkMatch(expression:RuleExpression, input_to_match:Any):Boolean={
     expression match{
-      case a:GRAPH2 => return checkMatch(expression, graph2_to_match)
+      case a:REGEX => input_to_match match{
+        case b:String => return checkMatch(a, b)
+      }
+      case a:POS => input_to_match match{
+        case b:String => return checkMatch(a, b)
+      }
+      case a:GRAPH2 => input_to_match match{
+        case (b:String, c:String, d:String) => return checkMatch(a, (b, c, d))
+      }
       case _ => return false
-    }
+    } 
   }
 
-  def checkMatch(expression:RuleExpression, string_to_match:String):Boolean={
-    expression match{
-      case a:REGEX => return checkMatch(expression, string_to_match)
-      case a:POS => return checkMatch(expression, string_to_match)
-      case _ => return false
-    }
-  }
 
-  def checkMatch(expression:COMPOSITE, input_to_match:String):Boolean={
+  /**
+  Checks match for a composite expression for graph expression. If the rule is intended for another data type, the method returns false.
+  */
+  def checkMatch(expression:COMPOSITE, input_to_match:Any):Boolean={
 
-    expression match{
+    (expression.exp1, expression.operator, expression.exp2) match{
      //Recursively check each relation
-      case COMPOSITE(a, "AND", b) => return checkMatch(a, input_to_match)&&checkMatch(b, input_to_match)
-      case COMPOSITE(a, "OR", b) => return checkMatch(a, input_to_match)|checkMatch(b, input_to_match)
-      case _ => return false;
+      case (a:RuleExpression, "AND", b:RuleExpression) => input_to_match match{
+        case c:String => return checkMatch(a, c)&&checkMatch(b, c)
+        case (d:String, e:String, f:String) => return checkMatch(a, (d,e,f))&&checkMatch(b, (d,e,f))
+        case _ => return false;
+      }      
+      case (a:RuleExpression, "OR", b:RuleExpression) => input_to_match match{
+        case c:String => return checkMatch(a, c)|checkMatch(b, c)
+        case (d:String, e:String, f:String) => return checkMatch(a, (d,e,f))|checkMatch(b, (d,e,f))
+        case _ => return false;
+      } 
+      case _=> return false 
+      
     }
   }
 
-  def checkMatch(expression:COMPOSITE, input_to_match:(String, String, String)):Boolean={
+  def checkMatch(expression1:GRAPH2, expression2:GRAPH2, input1:(String, String, String), input2:(String, String, String)):Boolean={
 
-    expression match{
+    //Check if relations match
+    if(checkMatch(expression1, input1)&&checkMatch(expression2, input2))
+    {
+      (input1, input2) match {
+        case ((a, b, c) , (d, e, f)) if ((a==d)==(expression1.source==expression2.source))&&((c==f)==(expression1.target==expression2.target))&&((a==c)==(expression1.source==expression1.target))&&((d==f)==(expression2.source==expression2.target))&&((a==f)==(expression1.source==expression2.target))&&((c==d)==(expression1.target==expression2.source)) => return true
+          case _ => return false;
+        }              
+    }
+    else
+    {
+      return false
+    }
+  }
+
+  /**
+  Checks match for two inputs to see whether the composite relation holds. Both the components of the composite relation need to be satisfied exactly once by one of the inputs (input_to_match1 and input_to_match2).
+  */
+  def checkMatch(expression:COMPOSITE, input_to_match1:Any, input_to_match2:Any):Boolean={
+
+    (expression.exp1, expression.operator, expression.exp2) match{
      //Recursively check each relation
-      case COMPOSITE(a, "AND", b) => return checkMatch(a, input_to_match)&&checkMatch(b, input_to_match)
-      case COMPOSITE(a, "OR", b) => return checkMatch(a, input_to_match)|checkMatch(b, input_to_match)
-      case _ => return false;
+      case (a:GRAPH2, "AND", b:GRAPH2) => (input_to_match1, input_to_match2) match{
+        case ((f:String, g:String, h:String), (i:String, j:String, k:String)) => return (checkMatch(a, b, (f,g,h), (i,j,k))|checkMatch(a, b, (i,j,k), (f,g,h)));
+        case _ => return false;
+      }
+      case (a:RuleExpression, "AND", b:RuleExpression) => (input_to_match1, input_to_match2) match{
+        case (c:String, d:String) => return (checkMatch(a, c)&&checkMatch(b, d))|(checkMatch(a, d)&&checkMatch(b, c))
+        case _ => return false;
+      }
+      case _=> return false      
+      
     }
   }
 
 
-  def transform(inExp:POS, outExp:REGEX, input:String):String={
-    return ""
-  }
-
-  def transform(inExp:REGEX, outExp:REGEX, input:String):String={
+  def transform(inExp:REGEX, outExp:String, input:String):String={
     val regex=new Regex(inExp.exp)
-    return regex.replaceAllIn(input, outExp.exp)
+    return regex.replaceAllIn(input, outExp)
 
   }
 
-  def transform(inExp:GRAPH2, outExp:REGEX, input:GRAPH2):String={
+  def transform(inExp:GRAPH2, outExp:String, input:GRAPH2):String={
     return ""
   }
 
+  /**
+  Replaces the word associated with the inExp POS with the string in outExp.
+  */
+
+  def transform(inExp:POS, outExp:String, input:String):String={
+    val taggedTokens=POSTagger.tagText(input)
+    
+    var outString=""
+    for(tt <- taggedTokens)
+    {
+      tt match{
+        case (word, tag) if tag==inExp.exp => outString += outExp;
+        case (word, tag) => outString += word;
+        
+      }
+    }
+    return outString
+  }
+
+  /**
+  * Makes the word associated with the inExp POS the relation and the substrings either end the source and target (which becomes the source and which the target depends on the GRAPH2 expression - e.g. ('A', relation 'B') makes the preceding string the source, while ('B' relation 'A' makes the preceding string the target))
+  */
   def transform(inExp:POS, outExp:GRAPH2, input:String):(String, String, String)={
     val taggedTokens=POSTagger.tagText(input)
     var pre=""
@@ -120,10 +188,43 @@ object RuleEngine {
     return ("","","")
   }
 
-  def transform(inExp:COMPOSITE, outexp:GRAPH2, input1:GRAPH2, input2:GRAPH2):(String, String, String)={
+  def transform(inExp:GRAPH2Pair, outExp:GRAPH2, input1:(String, String, String), input2:(String, String, String)):(String, String, String)={
+    
+    //Brute force checking for role matches
+    if(checkMatch(inExp.g1, inExp.g2, input1, input2))
+    {
+        return mergeGraphs(inExp, outExp, input1, input2)
+
+    }
+    if(checkMatch(inExp.g1, inExp.g2, input2, input1))
+    {
+      return mergeGraphs(inExp, outExp, input2, input1)
+    }
     return ("", "", "")
   }
 
+  private def mergeGraphs(inExp:GRAPH2Pair, outExp:GRAPH2, input1:(String, String, String), input2:(String, String, String)):(String, String, String)=
+  {
+    (input1, input2) match{
+        //Brute force checjing of role matches to return the correct output. Very ugly code but works.
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g1.source)&&(outExp.target==inExp.g1.source) => return (a, outExp.relation, a)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g1.source)&&(outExp.target==inExp.g1.target) => return (a, outExp.relation, c)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g1.source)&&(outExp.target==inExp.g2.source) => return (a, outExp.relation, d)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g1.source)&&(outExp.target==inExp.g2.target) => return (a, outExp.relation, f)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g1.target)&&(outExp.target==inExp.g1.source) => return (c, outExp.relation, a)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g1.target)&&(outExp.target==inExp.g1.target) => return (c, outExp.relation, c)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g1.target)&&(outExp.target==inExp.g2.source) => return (c, outExp.relation, d)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g1.target)&&(outExp.target==inExp.g2.target) => return (c, outExp.relation, f)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g2.source)&&(outExp.target==inExp.g1.source) => return (d, outExp.relation, a)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g2.source)&&(outExp.target==inExp.g1.target) => return (d, outExp.relation, c)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g2.source)&&(outExp.target==inExp.g2.source) => return (d, outExp.relation, d)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g2.source)&&(outExp.target==inExp.g2.target) => return (d, outExp.relation, f)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g2.target)&&(outExp.target==inExp.g1.source) => return (f, outExp.relation, a)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g2.target)&&(outExp.target==inExp.g1.target) => return (f, outExp.relation, c)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g2.target)&&(outExp.target==inExp.g2.source) => return (f, outExp.relation, d)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g2.target)&&(outExp.target==inExp.g2.target) => return (f, outExp.relation, f)
+      }
+  }
 
   def GRAPH_REVERSE(inExp:GRAPH2, outExp:GRAPH2):Boolean={return inExp.source==outExp.target&&inExp.target==outExp.source}
 
@@ -158,6 +259,9 @@ object RuleEngine {
   }
 
 
+  def graph2String(source:String, relation:String, target:String):String={
+    return source + " " + relation + " " + target;
+  }
   
   //Returns the parts of speech of the text (indexed by the tagged fragments).
   private def getPOS(stringInput:String):immutable.HashMap[String, String]={
@@ -173,48 +277,6 @@ object RuleEngine {
     return pos.mkString(" ");
   }
 
-
-//Returns the output of applying the rule (content string is immutable)
-  private def process_text_rule(textRule:(String, String), content:String): String = {
-    textRule match {
-      case (replaceSubstring, replacement) => return replaceText(content, replaceSubstring, replacement)
-    }
-    return content;
-  }
-
-  //Replaces the all substring matches of replaceSegment in inString with outSegment
-  //e.g. replace("Hello hello", "hello", "goodbye") returns "Hello goodbye"
-  private def replaceText(inString:String, replaceSegment:String, outSegment:String) : String = {
-    val regex=new Regex(replaceSegment)
-    return regex.replaceAllIn(inString, outSegment)
-
-  }
-
-  //Reverses the source-relation-target and replaces the relation with the reverse relation.
-  def reverseGraph(sourceNode:String, targetNode:String, oldRelation:String, newRelation:String):(String, String, String) = {
-      return (targetNode, newRelation, sourceNode)
-  }
-  
-
-  //Expands a string (which could be a node or edge) making the substring before the relation the
-  //source node and the substring after the relation the target using only the leftmost match
-  //so that if another instance of the relaton string appears later, it is merged in the target node.
-  def expand2Graph(nodeOrEdge:String, relationText:String):(String, String, String)={
-      
-      val splits=nodeOrEdge.split(relationText)
-      return (splits(0), relationText, iterConcatString(splits, relationText, 1))
-
-  }
-
-  //Concatenates the set of strings strArray with toInsert as the delimiter starting from the element indexed by startIndex.
-  def iterConcatString(strArray:Array[String], toInsert:String, startIndex:Int):String={
-    var returnString=strArray(startIndex)
-    for(i <- startIndex+1 until strArray.length)
-    {      
-      returnString=returnString.concat(toInsert+strArray(i));
-    }
-    return returnString
-  }
 
 
   
