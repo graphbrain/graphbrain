@@ -1,8 +1,8 @@
 import org.scalatest.FunSuite
-import com.graphbrain.Store
+import com.graphbrain.MapStore
 
-class StoreTest extends FunSuite {
-	val store = Store("testdb")
+class MapStoreTest extends FunSuite {
+	val store = MapStore("testdb")
 
 	test("put Map with a few Strings") {
 		store.remove("test0")

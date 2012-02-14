@@ -7,7 +7,7 @@ import com.basho.riak.client.IRiakObject
 import com.basho.riak.client.bucket.Bucket
 
 /** Interface to Riak, a distributed key/value store. */
-class Store(val storeName: String) {
+class MapStore(val storeName: String) {
   case class Doc(params: Map[String, Any])
 
 	val conf = new HTTPClientConfig.Builder().withHost("127.0.0.1").withPort(8098).build()
@@ -51,6 +51,6 @@ class Store(val storeName: String) {
   private def decodeValue(value: String) = value.replace("#2", "|").replace("#1", "#")
 }
 
-object Store {
-  def apply(storeName: String) = new Store(storeName)
+object MapStore {
+  def apply(storeName: String) = new MapStore(storeName)
 }
