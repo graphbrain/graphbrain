@@ -1,4 +1,4 @@
-package com.graphbrain
+package com.graphbrain.hgdb
 
 /** Vertex store.
   *

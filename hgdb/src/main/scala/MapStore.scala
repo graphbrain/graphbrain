@@ -1,4 +1,4 @@
-package com.graphbrain
+package com.graphbrain.hgdb
 
 import com.basho.riak.client.raw.http.HTTPClientConfig
 import com.basho.riak.client.IRiakClient

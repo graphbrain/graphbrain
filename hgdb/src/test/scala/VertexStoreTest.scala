@@ -1,7 +1,7 @@
 import org.scalatest.FunSuite
-import com.graphbrain.VertexStore
-import com.graphbrain.Vertex
-import com.graphbrain.Node
+import com.graphbrain.hgdb.VertexStore
+import com.graphbrain.hgdb.Vertex
+import com.graphbrain.hgdb.Node
 
 class VertexStoreTest extends FunSuite {
   val store = VertexStore("testhgdb")
