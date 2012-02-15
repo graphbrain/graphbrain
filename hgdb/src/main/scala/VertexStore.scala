@@ -80,14 +80,23 @@ class VertexStore(storeName: String) {
     case _ => Node("", "")
   }
 
+  /** Gets neighbors of a Node specified by id
+    * 
+    * maxDepth is the maximum distance from the original node that will be considered
+    */
   def neighbors(nodeId: String, maxDepth: Int): List[String] = neighbors(getNode(nodeId), maxDepth)
 
+  /** Gets neighbors of a Node
+    * 
+    * maxDepth is the maximum distance from the original node that will be considered
+    */
   def neighbors(node: Node, maxDepth: Int): List[String] = {
     val nset = MSet[String]()
     neighbors(node, maxDepth, 0, nset)
     nset.toList
   }
 
+  /** Auxiliary recursive method to get neighbors of a Node */
   private def neighbors(node: Node, maxDepth: Int, depth: Int, nset: MSet[String]): Unit = {
     nset += node.id
     if (depth < maxDepth)
