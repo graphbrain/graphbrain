@@ -31,7 +31,7 @@ class VertexStoreTest extends FunSuite {
     store.remove(node1)
     store.put(node0)
     store.put(node1)
-    store.addrel("test", Array[Node](node0, node1))
+    store.addrel("test", Array[String]("node0", "node1"))
 
     val eid = "test " + node0.id + " " + node1.id
     val edge = store.get(eid)
@@ -45,8 +45,8 @@ class VertexStoreTest extends FunSuite {
     store.remove(node1)
     store.put(node0)
     store.put(node1)
-    store.addrel("test", Array[Node](node0, node1))
-    store.delrel("test", Array[Node](node0, node1))
+    store.addrel("test", Array[String]("node0", "node1"))
+    store.delrel("test", Array[String]("node0", "node1"))
   }
 
   test("two neighbors") {
@@ -56,11 +56,27 @@ class VertexStoreTest extends FunSuite {
     store.remove(node1)
     store.put(node0)
     store.put(node1)
-    store.addrel("test", Array[Node](node0, node1))
+    store.addrel("test", Array[String]("node0", "node1"))
 
     assert(store.neighbors(store.getNode("node0"), 2).toSet == Set[String]("node0", "node1"))
     assert(store.neighbors(store.getNode("node1"), 2).toSet == Set[String]("node0", "node1"))
     assert(store.neighbors("node0", 2).toSet == Set[String]("node0", "node1"))
     assert(store.neighbors("node1", 2).toSet == Set[String]("node0", "node1"))
+  }
+
+  test("a few neighbors") {
+    val node0 = Node("node0"); store.remove(node0); store.put(node0)
+    val node1 = Node("node1"); store.remove(node1); store.put(node1)
+    val node2 = Node("node2"); store.remove(node2); store.put(node2)
+    val node3 = Node("node3"); store.remove(node3); store.put(node3)
+    val node4 = Node("node4"); store.remove(node4); store.put(node4)
+    val node5 = Node("node5"); store.remove(node5); store.put(node5)
+    
+    store.addrel("test", Array[String]("node0", "node1"))
+    store.addrel("test", Array[String]("node0", "node2"))
+    store.addrel("test", Array[String]("node0", "node3"))
+    store.addrel("test", Array[String]("node0", "node4", "node5"))
+
+    assert(store.neighbors("node0", 2).toSet == Set[String]("node0", "node1", "node2", "node3", "node4", "node5"))
   }
 }

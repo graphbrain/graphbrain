@@ -50,11 +50,11 @@ class VertexStore(storeName: String) {
     * An edge is creted and participant nodes are updated with a reference to that edge
     * in order to represent a new relationship on the database.
     */
-  def addrel(edgeType: String, participants: Array[Node]) = {
+  def addrel(edgeType: String, participants: Array[String]) = {
     val edge = Edge(edgeType, participants)
     put(edge)
 
-    for (node <- participants) update(node.addEdge(edge))
+    for (nodeId <- participants) update(getNode(nodeId).addEdge(edge))
 
     edge
   }
@@ -64,11 +64,11 @@ class VertexStore(storeName: String) {
     * The edge defining the relationship is removed and participant nodes are updated 
     * to drop the reference to that edge.
     */
-  def delrel(edgeType: String, participants: Array[Node]) = {
+  def delrel(edgeType: String, participants: Array[String]) = {
     val edge = Edge(edgeType, participants)
     remove(edge)
 
-    for (node <- participants) update(node.delEdge(edge))
+    for (nodeId <- participants) update(getNode(nodeId).delEdge(edge))
 
     edge
   }

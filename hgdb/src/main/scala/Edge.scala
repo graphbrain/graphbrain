@@ -13,10 +13,10 @@ class Edge(id: String, val etype: String) extends Vertex(id) {
 object Edge {
   def apply(id: String, etype:String) = new Edge(id, etype)
 
-  def apply(edgeType:String, participants: Array[Node]) = {
-  	val tokens = List[String](edgeType) ++ (for (node <- participants) yield node.id)
+  def apply(etype:String, participants: Array[String]) = {
+  	val tokens = List[String](etype) ++ participants
   	val eid = tokens.reduceLeft(_ + " " + _)
-  	new Edge(eid, edgeType)
+  	new Edge(eid, etype)
   }
 
   def participantIds(id: String) = {
