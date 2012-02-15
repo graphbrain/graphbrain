@@ -1,5 +1,6 @@
 package com.graphbrain.hgdb
 
+
 class Node(id: String, val edges: Set[String]) extends Vertex(id) {
   override val vtype = "node"
 
@@ -9,15 +10,7 @@ class Node(id: String, val edges: Set[String]) extends Vertex(id) {
 
   def delEdge(edge: Edge): Node = Node(id, edges - edge.id)
 
-  def neighbors(nodes: Map[String, Node] = Map[String, Node](), depth: Int = 0, maxDepth: Int = 2) = {
-  	if (depth < maxDepth) {
-  		val coedgeIds = (for (edgeId <- edges) yield Edge.participantIds(edgeId)).reduceLeft(_ ++ _)
-  		nodes
-  	}
-  	else {
-  		nodes
-  	}
-  }
+  override def toString: String = super.toString + "; edges: " + Node.set2str(edges)
 }
 
 object Node {
@@ -25,7 +18,16 @@ object Node {
 
   def apply(id: String, edgesStr: String) = new Node(id, str2set(edgesStr))
 
-  def set2str(set: Set[String]) = if (set.size == 0) "" else set.reduceLeft(_ + " " + _)
+  private def set2str(set: Set[String]) = {
+    if (set.size == 0)
+      ""
+    else
+      (for (str <- set)
+        yield str.replace("$", "$1").replace(",", "$2")).reduceLeft(_ + "," + _)
+  }
 
-  def str2set(str: String) = str.split(' ').toSet
+  private def str2set(str: String) = {
+    (for (str <- str.split(','))
+      yield str.replace("$2", ",").replace("$1", "$")).toSet
+  }
 }
