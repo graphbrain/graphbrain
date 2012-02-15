@@ -1,5 +1,7 @@
 package com.graphbrain.hgdb
 
+import scala.collection.mutable.{Set => MSet}
+
 /** Vertex store.
   *
   * Implements and hypergraph database on top of a key/Map store. 
@@ -52,7 +54,7 @@ class VertexStore(storeName: String) {
     val edge = Edge(edgeType, participants)
     put(edge)
 
-    for (node <- participants) node.addEdge(edge)
+    for (node <- participants) update(node.addEdge(edge))
 
     edge
   }
@@ -66,9 +68,34 @@ class VertexStore(storeName: String) {
     val edge = Edge(edgeType, participants)
     remove(edge)
 
-    for (node <- participants) node.delEdge(edge)
+    for (node <- participants) update(node.delEdge(edge))
 
     edge
+  }
+
+  /** Gets Node by it's id */
+  def getNode(nodeId: String): Node = get(nodeId) match {
+    case n: Node => n
+    // TODO: throw exception if it's not a Node
+    case _ => Node("", "")
+  }
+
+  def neighbors(nodeId: String, maxDepth: Int): List[String] = neighbors(getNode(nodeId), maxDepth)
+
+  def neighbors(node: Node, maxDepth: Int): List[String] = {
+    val nset = MSet[String]()
+    neighbors(node, maxDepth, 0, nset)
+    nset.toList
+  }
+
+  private def neighbors(node: Node, maxDepth: Int, depth: Int, nset: MSet[String]): Unit = {
+    nset += node.id
+    if (depth < maxDepth)
+      for (edgeId <- node.edges)
+        for (pid <- Edge.participantIds(edgeId)) {
+          nset += pid
+          if (!nset.contains(pid)) neighbors(getNode(pid), maxDepth, depth + 1, nset)
+        }
   }
 }
 
