@@ -18,6 +18,16 @@ class VertexStore(storeName: String) {
         val edges = map.getOrElse("edges", "").toString
         Node(id, edges)
       }
+      case "textnode" => {
+        val edges = map.getOrElse("edges", "").toString
+        val text = map.getOrElse("text", "").toString
+        TextNode(id, text, edges)
+      }
+      case "imagenode" => {
+        val edges = map.getOrElse("edges", "").toString
+        val url = map.getOrElse("url", "").toString
+        ImageNode(id, url, edges)
+      }
       case "edge" => {
         val etype = map.getOrElse("etype", "").toString
         Edge(id, etype)
@@ -26,6 +36,7 @@ class VertexStore(storeName: String) {
         val label = map.getOrElse("label", "").toString
         EdgeType(id, label)
       }
+      // TODO: throw exception
       case _  => Vertex(id)
     }
   }
