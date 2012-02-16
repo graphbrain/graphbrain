@@ -105,6 +105,22 @@ class VertexStore(storeName: String) {
 
     nset.toSet
   }
+
+  /** Gets all Edges that are internal to a neighborhood 
+    * 
+    * An Edge is considered inernal if all it's participating Nodes are containes in the
+    * neighborhood.
+    */
+  def neighborEdges(nhood: Set[String]): Set[String] = {
+    val eset = MSet[String]()
+    for (nodeId <- nhood) {
+      val node = getNode(nodeId)
+      for (edgeId <- node.edges)
+        if (Edge.participantIds(edgeId).forall(nhood.contains(_)))
+          eset += edgeId
+    }
+    eset.toSet
+  }
 }
 
 object VertexStore {
