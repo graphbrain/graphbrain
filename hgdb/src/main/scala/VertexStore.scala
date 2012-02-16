@@ -54,7 +54,7 @@ class VertexStore(storeName: String) {
     val edge = Edge(edgeType, participants)
     put(edge)
 
-    for (nodeId <- participants) update(getNode(nodeId).addEdge(edge))
+    for (nodeId <- participants) update(getNode(nodeId).addEdge(edge.id))
 
     edge
   }
@@ -68,7 +68,7 @@ class VertexStore(storeName: String) {
     val edge = Edge(edgeType, participants)
     remove(edge)
 
-    for (nodeId <- participants) update(getNode(nodeId).delEdge(edge))
+    for (nodeId <- participants) update(getNode(nodeId).delEdge(edge.id))
 
     edge
   }

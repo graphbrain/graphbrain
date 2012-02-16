@@ -9,7 +9,7 @@ class NodeTest extends FunSuite {
 		
 		val edge = Edge("test", Array[String]("node0", "node1"))
 
-		val node = node0.addEdge(edge)
+		val node = node0.addEdge(edge.id)
 
 		assert(node.edges == Set[String](edge.id))
 	}
