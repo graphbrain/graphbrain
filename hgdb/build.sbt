@@ -1,3 +1,5 @@
+organization := "com.graphbrain"
+
 name := "hgdb"
 
 version := "0.1.0-SNAPSHOT"

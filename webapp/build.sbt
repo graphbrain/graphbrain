@@ -1,8 +1,10 @@
-organization := "com.example"
+organization := "com.graphbrain"
 
-name := "nettyplayin"
+name := "webapp"
 
 version := "0.1.0-SNAPSHOT"
+
+scalaVersion := "2.9.1"
 
 libraryDependencies ++= Seq(
    "net.databinder" %% "unfiltered-netty-server" % "0.5.3",
