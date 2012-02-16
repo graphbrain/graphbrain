@@ -58,8 +58,6 @@ class VertexStoreTest extends FunSuite {
     store.put(node1)
     store.addrel("test", Array[String]("node0", "node1"))
 
-    assert(store.neighbors(store.getNode("node0"), 2).toSet == Set[String]("node0", "node1"))
-    assert(store.neighbors(store.getNode("node1"), 2).toSet == Set[String]("node0", "node1"))
     assert(store.neighbors("node0", 2).toSet == Set[String]("node0", "node1"))
     assert(store.neighbors("node1", 2).toSet == Set[String]("node0", "node1"))
   }
@@ -71,12 +69,20 @@ class VertexStoreTest extends FunSuite {
     val node3 = Node("node3"); store.remove(node3); store.put(node3)
     val node4 = Node("node4"); store.remove(node4); store.put(node4)
     val node5 = Node("node5"); store.remove(node5); store.put(node5)
+    val node6 = Node("node6"); store.remove(node6); store.put(node6)
+    val node7 = Node("node7"); store.remove(node7); store.put(node7)
     
     store.addrel("test", Array[String]("node0", "node1"))
     store.addrel("test", Array[String]("node0", "node2"))
     store.addrel("test", Array[String]("node0", "node3"))
     store.addrel("test", Array[String]("node0", "node4", "node5"))
+    store.addrel("test", Array[String]("node5", "node6"))
+    store.addrel("test", Array[String]("node6", "node7"))
 
-    assert(store.neighbors("node0", 2).toSet == Set[String]("node0", "node1", "node2", "node3", "node4", "node5"))
+    assert(store.neighbors("node0", 0).toSet == Set[String]("node0"))
+    assert(store.neighbors("node0", 1).toSet == Set[String]("node0", "node1", "node2", "node3", "node4", "node5"))
+    assert(store.neighbors("node0", 2).toSet == Set[String]("node0", "node1", "node2", "node3", "node4", "node5", "node6"))
+    assert(store.neighbors("node0", 3).toSet == Set[String]("node0", "node1", "node2", "node3", "node4", "node5", "node6", "node7"))
+    assert(store.neighbors("node5", 2).toSet == Set[String]("node0", "node1", "node2", "node3", "node4", "node5", "node6", "node7"))
   }
 }

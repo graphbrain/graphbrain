@@ -82,32 +82,31 @@ class VertexStore(storeName: String) {
 
   /** Gets neighbors of a Node specified by id
     * 
-    * maxDepth is the maximum distance from the original node that will be considered
+    * maxDepth is the maximum distance from the original node that will be considered (default is 2)
     */
-  def neighbors(nodeId: String, maxDepth: Int): List[String] = neighbors(getNode(nodeId), maxDepth)
-
-  /** Gets neighbors of a Node
-    * 
-    * maxDepth is the maximum distance from the original node that will be considered
-    */
-  def neighbors(node: Node, maxDepth: Int): List[String] = {
+  def neighbors(nodeId: String, maxDepth: Int = 2): Set[String] = {
     val nset = MSet[String]()
-    neighbors(node, maxDepth, 0, nset)
-    nset.toList
-  }
 
-  /** Auxiliary recursive method to get neighbors of a Node */
-  private def neighbors(node: Node, maxDepth: Int, depth: Int, nset: MSet[String]): Unit = {
-    nset += node.id
-    if (depth < maxDepth)
-      for (edgeId <- node.edges)
-        for (pid <- Edge.participantIds(edgeId)) {
-          nset += pid
-          if (!nset.contains(pid)) neighbors(getNode(pid), maxDepth, depth + 1, nset)
-        }
+    var queue = (nodeId, 0) :: Nil
+    while (!queue.isEmpty) {
+      val curId = queue.head._1
+      val depth = queue.head._2
+      queue = queue.tail
+
+      if (!nset.contains(curId)) {
+        nset += curId
+        val node = getNode(curId)
+
+        if (depth < maxDepth)
+          for (edgeId <- node.edges)
+            queue = queue ::: (for (pid <- Edge.participantIds(edgeId)) yield (pid, depth + 1)).toList
+      }
+    }
+
+    nset.toSet
   }
 }
 
 object VertexStore {
   def apply(storeName: String) = new VertexStore(storeName)
-}
+} 
