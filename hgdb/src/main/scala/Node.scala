@@ -6,9 +6,9 @@ class Node(id: String, val edges: Set[String]) extends Vertex(id) {
 
   override def toMap: Map[String, Any] = super.toMap ++ Map(("edges" -> Node.set2str(edges)))
 
-  def addEdge(edge: Edge): Node = Node(id, edges + edge.id)
+  def addEdge(edgeId: String): Node = Node(id, edges + edgeId)
 
-  def delEdge(edge: Edge): Node = Node(id, edges - edge.id)
+  def delEdge(edgeId: String): Node = Node(id, edges - edgeId)
 
   override def toString: String = super.toString + "; edges: " + Node.set2str(edges)
 }
