@@ -15,10 +15,9 @@ class Node(id: String, val edges: Set[String]) extends Vertex(id) {
 
 object Node {
   def apply(id: String, edges: Set[String] = Set[String]()) = new Node(id, edges)
-
   def apply(id: String, edgesStr: String) = new Node(id, str2set(edgesStr))
 
-  private def set2str(set: Set[String]) = {
+  def set2str(set: Set[String]) = {
     if (set.size == 0)
       ""
     else
@@ -26,7 +25,7 @@ object Node {
         yield str.replace("$", "$1").replace(",", "$2")).reduceLeft(_ + "," + _)
   }
 
-  private def str2set(str: String) = {
+  def str2set(str: String) = {
     (for (str <- str.split(',') if str != "")
       yield str.replace("$2", ",").replace("$1", "$")).toSet
   }
