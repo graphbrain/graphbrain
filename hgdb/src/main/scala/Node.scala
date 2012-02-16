@@ -27,7 +27,7 @@ object Node {
   }
 
   private def str2set(str: String) = {
-    (for (str <- str.split(','))
+    (for (str <- str.split(',') if str != "")
       yield str.replace("$2", ",").replace("$1", "$")).toSet
   }
 }
