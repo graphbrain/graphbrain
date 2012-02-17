@@ -1,4 +1,4 @@
-package com.example
+package com.graphbrain.webapp
 
 import unfiltered.request._
 import unfiltered.response._

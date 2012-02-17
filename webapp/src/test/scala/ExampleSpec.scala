@@ -1,8 +1,6 @@
-package com.example
-
 import org.specs._
-
 import dispatch._
+import com.graphbrain.webapp._
 
 object ExampleSpec extends Specification with unfiltered.spec.netty.Served {
   
