@@ -1,6 +1,5 @@
-package com.example
+package com.graphbrain.webapp
 
-/** embedded server */
 object Server {
   val logger = org.clapper.avsl.Logger(Server.getClass)
   val http = new dispatch.nio.Http
