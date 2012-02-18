@@ -6,6 +6,8 @@ version := "0.1.0-SNAPSHOT"
 
 scalaVersion := "2.9.1"
 
+scalacOptions += "-deprecation"
+
 libraryDependencies ++= Seq(
    "net.databinder" %% "unfiltered-netty-server" % "0.5.3",
    "net.databinder" %% "dispatch-nio" % "0.8.5",
