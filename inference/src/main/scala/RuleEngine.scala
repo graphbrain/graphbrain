@@ -3,7 +3,7 @@ import scala.io.Source
 import scala.util.matching.Regex
 import scala.collection.mutable;
 import scala.collection.immutable;
-import scala.collection.mutable
+
 
 
 object RuleEngine {
@@ -185,7 +185,29 @@ object RuleEngine {
   }
 
   def transform(inExp:REGEX, outExp:GRAPH2, input:String):(String, String, String)={
-    return ("","","")
+    val regex=new Regex(inExp.exp)
+    val strings = regex.split(input)
+    var pre=""
+    var rel=""
+    var post=""
+    if(strings.length>=2)
+    {
+      pre=strings(0)  
+      val r=regex.findFirstIn(input)
+      r match {
+        case Some(a)=>rel=a.trim
+        case None => rel
+      }
+      for(i<-1 to strings.length-1){post+=strings(i)}
+    }    
+    if(outExp.source < outExp.target)
+    {
+      return (pre, rel, post)
+    }
+    else
+    {
+      return (post, rel, pre)
+    }
   }
 
   def transform(inExp:GRAPH2Pair, outExp:GRAPH2, input1:(String, String, String), input2:(String, String, String)):(String, String, String)={
