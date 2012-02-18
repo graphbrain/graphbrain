@@ -18,3 +18,9 @@ libraryDependencies ++= Seq(
 resolvers ++= Seq(
   "jboss repo" at "http://repository.jboss.org/nexus/content/groups/public-jboss/"
 )
+
+seq(jsSettings : _*)
+
+(resourceManaged in (Compile, JsKeys.js)) <<= (resourceManaged in Compile)(_ / ".." / ".." / ".." / ".." / "src" / "main" / "resources")
+
+(compile in Compile) <<= compile in Compile dependsOn (JsKeys.js in Compile)
