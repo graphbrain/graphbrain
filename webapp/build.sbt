@@ -21,6 +21,10 @@ resolvers ++= Seq(
 
 seq(jsSettings : _*)
 
-(resourceManaged in (Compile, JsKeys.js)) <<= (resourceManaged in Compile)(_ / ".." / ".." / ".." / ".." / "src" / "main" / "resources")
+(sourceDirectory in (Compile, JsKeys.js)) <<= (sourceDirectory in Compile)(_ / "js")
+
+(resourceManaged in (Compile, JsKeys.js)) <<= (sourceDirectory in Compile)(_  / "resources" / "js")
 
 (compile in Compile) <<= compile in Compile dependsOn (JsKeys.js in Compile)
+
+(compile in Compile) <<= compile in Compile dependsOn (CSS.css in Compile)
