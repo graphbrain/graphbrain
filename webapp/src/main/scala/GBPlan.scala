@@ -15,5 +15,8 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
     case GET(Path("/search")) => 
       logger.debug("GET /search")
       SearchPage()
+    case GET(Path("/node")) => 
+      logger.debug("GET /node")
+      NodePage()
   }
 }
