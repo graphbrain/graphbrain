@@ -11,3 +11,7 @@ scalacOptions += "-unchecked"
 libraryDependencies += "org.scalatest" %% "scalatest" % "1.7.1" % "test"
 
 libraryDependencies += "com.basho.riak" % "riak-client" % "1.0.3"
+
+//testOptions in Test += Tests.Argument("-oF")
+
+parallelExecution in Test := false 
