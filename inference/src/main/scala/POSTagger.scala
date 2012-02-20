@@ -1,3 +1,4 @@
+package com.graphbrain.inference
 
 import edu.stanford.nlp.ling.Sentence;
 import edu.stanford.nlp.ling.TaggedWord;

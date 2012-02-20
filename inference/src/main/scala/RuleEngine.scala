@@ -1,3 +1,5 @@
+package com.graphbrain.inference
+
 import java.net.URL
 import scala.io.Source
 import scala.util.matching.Regex
@@ -8,8 +10,61 @@ import scala.collection.immutable;
 
 object RuleEngine {
 
-  
+  def applyRules(rules:List[RULE], input:Any, output:mutable.ListBuffer[Any]):mutable.ListBuffer[Any]=
+  {
+    for(rule <- rules)
+    {
+      applyRule(rule, input) match{
+        case Nil => //don't add
+        case a:Any =>  output.appendAll(applyRules(rules, a, output))
+      }
+    }
+    return output;
+      
+  }
 
+  def applyRule(rule:RULE, input:Any):Any=
+  {
+    if(checkMatch(rule.condition, input)) 
+    {
+      return transform(rule.input, rule.output, input)
+    }
+    return Nil;
+  }
+
+  /*Checks match for rule given input. If the rule is intended for the wrong data type, the method returns false.*/
+  def checkMatch(expression:Any, input_to_match:Any):Boolean={
+    expression match{
+      case a:REGEX => input_to_match match{
+        case b:String => return checkMatch(a, b)
+      }
+      case a:POS => input_to_match match{
+        case b:String => return checkMatch(a, b)
+      }
+      case a:GRAPH2 => input_to_match match{
+        case (b:String, c:String, d:String) => return checkMatch(a, (b, c, d))
+      }
+      case a:COMPOSITE =>  return checkMatch(a, input_to_match)
+      case (a:GRAPH2, b:GRAPH2) => input_to_match match{
+        case ((c:String,d:String,e:String), (f:String,g:String,h:String)) => return checkMatch((a, b), ((c,d,e),(f,g,h)))
+      }
+      
+      case _ => return false
+    } 
+  }
+
+  def transform(inExp:Any, outExp:Any, input:Any):Any={
+    (inExp, outExp, input) match{
+      case (i:REGEX, o:String, in:String) => return transform(i, o, in)
+      case (i:GRAPH2, o:String, in:String) => return transform(i, o, in)
+      case (i:POS, o:String, in:String) => return transform(i, o, in)
+      case (i:POS, o:GRAPH2, in:String) => return transform(i, o, in)
+      case (i:REGEX, o:GRAPH2, in:String) => return transform(i, o, in)
+      case (i:GRAPH2, o:GRAPH2, (in1:String, in2:String, in3:String)) => return transform(i, o, (in1, in2, in3))
+      case ((i1:GRAPH2,i2:GRAPH2), o:GRAPH2, ((in1:String, in2:String, in3:String), (in4:String, in5:String, in6:String))) => return transform((i1, i2), o, ((in1, in2, in3), (in4, in5, in6)))
+      case _ => return false
+    }
+  }
 
   /**
   Returns true if str_to_match matches the regex_condition defined in regexExpression.
@@ -50,22 +105,7 @@ object RuleEngine {
 
   
 
-  /*Checks match for rule given input. If the rule is intended for the wrong data type, the method returns false.*/
-  def checkMatch(expression:RuleExpression, input_to_match:Any):Boolean={
-    expression match{
-      case a:REGEX => input_to_match match{
-        case b:String => return checkMatch(a, b)
-      }
-      case a:POS => input_to_match match{
-        case b:String => return checkMatch(a, b)
-      }
-      case a:GRAPH2 => input_to_match match{
-        case (b:String, c:String, d:String) => return checkMatch(a, (b, c, d))
-      }
-      case _ => return false
-    } 
-  }
-
+  
 
   /**
   Checks match for a composite expression for graph expression. If the rule is intended for another data type, the method returns false.
@@ -89,13 +129,16 @@ object RuleEngine {
     }
   }
 
-  def checkMatch(expression1:GRAPH2, expression2:GRAPH2, input1:(String, String, String), input2:(String, String, String)):Boolean={
+  /**
+  Checks for an exact match such that expression1 matches with the first input tuple and expression2 matches with the second input tuple.
+  */
+  def checkMatch(expressions:(GRAPH2, GRAPH2), twoGraphInput:((String, String, String), (String, String, String))):Boolean={
 
     //Check if relations match
-    if(checkMatch(expression1, input1)&&checkMatch(expression2, input2))
+    if(checkMatch(expressions._1, twoGraphInput._1)&&checkMatch(expressions._2, twoGraphInput._2))
     {
-      (input1, input2) match {
-        case ((a, b, c) , (d, e, f)) if ((a==d)==(expression1.source==expression2.source))&&((c==f)==(expression1.target==expression2.target))&&((a==c)==(expression1.source==expression1.target))&&((d==f)==(expression2.source==expression2.target))&&((a==f)==(expression1.source==expression2.target))&&((c==d)==(expression1.target==expression2.source)) => return true
+      twoGraphInput match {
+        case ((a, b, c) , (d, e, f)) if ((a==d)==(expressions._1.source==expressions._2.source))&&((c==f)==(expressions._1.target==expressions._2.target))&&((a==c)==(expressions._1.source==expressions._1.target))&&((d==f)==(expressions._2.source==expressions._2.target))&&((a==f)==(expressions._1.source==expressions._2.target))&&((c==d)==(expressions._1.target==expressions._2.source)) => return true
           case _ => return false;
         }              
     }
@@ -108,15 +151,15 @@ object RuleEngine {
   /**
   Checks match for two inputs to see whether the composite relation holds. Both the components of the composite relation need to be satisfied exactly once by one of the inputs (input_to_match1 and input_to_match2).
   */
-  def checkMatch(expression:COMPOSITE, input_to_match1:Any, input_to_match2:Any):Boolean={
+  def checkMatch(expression:COMPOSITE, twoInputs_to_match:(Any, Any)):Boolean={
 
     (expression.exp1, expression.operator, expression.exp2) match{
      //Recursively check each relation
-      case (a:GRAPH2, "AND", b:GRAPH2) => (input_to_match1, input_to_match2) match{
-        case ((f:String, g:String, h:String), (i:String, j:String, k:String)) => return (checkMatch(a, b, (f,g,h), (i,j,k))|checkMatch(a, b, (i,j,k), (f,g,h)));
+      case (a:GRAPH2, "AND", b:GRAPH2) => (twoInputs_to_match._1, twoInputs_to_match._2) match{
+        case ((f:String, g:String, h:String), (i:String, j:String, k:String)) => return (checkMatch((a, b), ((f,g,h), (i,j,k)))|checkMatch((a, b), ((i,j,k), (f,g,h))));
         case _ => return false;
       }
-      case (a:RuleExpression, "AND", b:RuleExpression) => (input_to_match1, input_to_match2) match{
+      case (a:RuleExpression, "AND", b:RuleExpression) => (twoInputs_to_match._1, twoInputs_to_match._2) match{
         case (c:String, d:String) => return (checkMatch(a, c)&&checkMatch(b, d))|(checkMatch(a, d)&&checkMatch(b, c))
         case _ => return false;
       }
@@ -125,6 +168,7 @@ object RuleEngine {
     }
   }
 
+  
 
   def transform(inExp:REGEX, outExp:String, input:String):String={
     val regex=new Regex(inExp.exp)
@@ -132,9 +176,6 @@ object RuleEngine {
 
   }
 
-  def transform(inExp:GRAPH2, outExp:String, input:GRAPH2):String={
-    return ""
-  }
 
   /**
   Replaces the word associated with the inExp POS with the string in outExp.
@@ -210,41 +251,64 @@ object RuleEngine {
     }
   }
 
-  def transform(inExp:GRAPH2Pair, outExp:GRAPH2, input1:(String, String, String), input2:(String, String, String)):(String, String, String)={
+  def transform(inExp:(GRAPH2, GRAPH2), outExp:GRAPH2, inputPair:((String, String, String), (String, String, String))):(String, String, String)={
     
     //Brute force checking for role matches
-    if(checkMatch(inExp.g1, inExp.g2, input1, input2))
+    if(checkMatch((inExp._1, inExp._2), inputPair))
     {
-        return mergeGraphs(inExp, outExp, input1, input2)
+        return mergeGraphs(inExp, outExp, inputPair)
 
     }
-    if(checkMatch(inExp.g1, inExp.g2, input2, input1))
+    if(checkMatch((inExp._1, inExp._2), inputPair))
     {
-      return mergeGraphs(inExp, outExp, input2, input1)
+      return mergeGraphs(inExp, outExp, inputPair)
     }
     return ("", "", "")
   }
 
-  private def mergeGraphs(inExp:GRAPH2Pair, outExp:GRAPH2, input1:(String, String, String), input2:(String, String, String)):(String, String, String)=
+  //Applies graph transformations depending on the patterns in the rule input and output expressions.
+  def transform(inExp:GRAPH2, outExp:GRAPH2, input:(String, String, String)):(String, String, String)={
+
+    if(GRAPH_NO_REVERSE(inExp, outExp)&&GRAPH_RELATION_REPLACE(inExp, outExp))
+    { 
+      //Simply replace relation name (used for synonyms or type inferred relations)
+      return (input._1, outExp.relation, input._3)
+    }
+    else if(GRAPH_REVERSE(inExp, outExp)&&GRAPH_RELATION_KEEP(inExp, outExp))
+    { 
+      //Reverse without changing the name of the relation (used to symmetrise relations)
+      return (input._3, input._2, input._1)
+    }
+    else if(GRAPH_REVERSE(inExp, outExp)&&GRAPH_RELATION_REPLACE(inExp, outExp))
+    { 
+      //Reverse and replace relation name with new name given by outExp.relation:
+      return (input._3, outExp.relation, input._1)  
+    }
+    else 
+    {
+      return (input._1, input._2, input._3)
+    }
+  }
+  private def mergeGraphs(inExp:(GRAPH2, GRAPH2), outExp:GRAPH2, inputPair:((String, String, String), (String, String, String))):(String, String, String)=
   {
-    (input1, input2) match{
+    inputPair match{
         //Brute force checjing of role matches to return the correct output. Very ugly code but works.
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g1.source)&&(outExp.target==inExp.g1.source) => return (a, outExp.relation, a)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g1.source)&&(outExp.target==inExp.g1.target) => return (a, outExp.relation, c)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g1.source)&&(outExp.target==inExp.g2.source) => return (a, outExp.relation, d)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g1.source)&&(outExp.target==inExp.g2.target) => return (a, outExp.relation, f)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g1.target)&&(outExp.target==inExp.g1.source) => return (c, outExp.relation, a)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g1.target)&&(outExp.target==inExp.g1.target) => return (c, outExp.relation, c)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g1.target)&&(outExp.target==inExp.g2.source) => return (c, outExp.relation, d)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g1.target)&&(outExp.target==inExp.g2.target) => return (c, outExp.relation, f)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g2.source)&&(outExp.target==inExp.g1.source) => return (d, outExp.relation, a)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g2.source)&&(outExp.target==inExp.g1.target) => return (d, outExp.relation, c)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g2.source)&&(outExp.target==inExp.g2.source) => return (d, outExp.relation, d)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g2.source)&&(outExp.target==inExp.g2.target) => return (d, outExp.relation, f)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g2.target)&&(outExp.target==inExp.g1.source) => return (f, outExp.relation, a)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g2.target)&&(outExp.target==inExp.g1.target) => return (f, outExp.relation, c)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g2.target)&&(outExp.target==inExp.g2.source) => return (f, outExp.relation, d)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.g2.target)&&(outExp.target==inExp.g2.target) => return (f, outExp.relation, f)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp._1.source)&&(outExp.target==inExp._1.source) => return (a, outExp.relation, a)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp._1.source)&&(outExp.target==inExp._1.target) => return (a, outExp.relation, c)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp._1.source)&&(outExp.target==inExp._2.source) => return (a, outExp.relation, d)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp._1.source)&&(outExp.target==inExp._2.target) => return (a, outExp.relation, f)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp._1.target)&&(outExp.target==inExp._1.source) => return (c, outExp.relation, a)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp._1.target)&&(outExp.target==inExp._1.target) => return (c, outExp.relation, c)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp._1.target)&&(outExp.target==inExp._2.source) => return (c, outExp.relation, d)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp._1.target)&&(outExp.target==inExp._2.target) => return (c, outExp.relation, f)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp._2.source)&&(outExp.target==inExp._1.source) => return (d, outExp.relation, a)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp._2.source)&&(outExp.target==inExp._1.target) => return (d, outExp.relation, c)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp._2.source)&&(outExp.target==inExp._2.source) => return (d, outExp.relation, d)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp._2.source)&&(outExp.target==inExp._2.target) => return (d, outExp.relation, f)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp._2.target)&&(outExp.target==inExp._1.source) => return (f, outExp.relation, a)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp._2.target)&&(outExp.target==inExp._1.target) => return (f, outExp.relation, c)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp._2.target)&&(outExp.target==inExp._2.source) => return (f, outExp.relation, d)
+        case ((a,b,c),(d,e,f)) if (outExp.source==inExp._2.target)&&(outExp.target==inExp._2.target) => return (f, outExp.relation, f)
       }
   }
 
@@ -256,29 +320,7 @@ object RuleEngine {
 
   def GRAPH_RELATION_KEEP(inExp:GRAPH2, outExp:GRAPH2):Boolean={return (!(GRAPH_RELATION_REPLACE(inExp, outExp)))}
 
-  //Applies graph transformations depending on the patterns in the rule input and output expressions.
-  def transform(inExp:GRAPH2, outExp:GRAPH2, input:GRAPH2):(String, String, String)={
-
-    if(GRAPH_NO_REVERSE(inExp, outExp)&&GRAPH_RELATION_REPLACE(inExp, outExp))
-    { 
-      //Simply replace relation name (used for synonyms or type inferred relations)
-      return (input.source, outExp.relation, input.target)
-    }
-    else if(GRAPH_REVERSE(inExp, outExp)&&GRAPH_RELATION_KEEP(inExp, outExp))
-    { 
-      //Reverse without changing the name of the relation (used to symmetrise relations)
-      return (input.target, input.relation, input.source)
-    }
-    else if(GRAPH_REVERSE(inExp, outExp)&&GRAPH_RELATION_REPLACE(inExp, outExp))
-    { 
-      //Reverse and replace relation name with new name given by outExp.relation:
-      return (input.target, outExp.relation, input.source)  
-    }
-    else 
-    {
-      return (input.source, input.relation, input.target)
-    }
-  }
+  
 
 
   def graph2String(source:String, relation:String, target:String):String={
