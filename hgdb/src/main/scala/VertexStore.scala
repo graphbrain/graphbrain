@@ -7,11 +7,11 @@ import scala.collection.mutable.{Set => MSet}
   * Implements and hypergraph database on top of a key/Map store. 
   */
 class VertexStore(storeName: String) extends VertexStoreInterface{
-  val store = new MapStore(storeName)
+  val backend = new RiakBackend(storeName)
 
   /** Gets Vertex by it's id */
   override def get(id: String): Vertex = {
-    val map = store.get(id)
+    val map = backend.get(id)
     map("vtype") match {
       case "vertex" => Vertex(id)
       case "node" => {
@@ -43,19 +43,19 @@ class VertexStore(storeName: String) extends VertexStoreInterface{
 
   /** Adds Vertex to database */
   override def put(vertex: Vertex): Vertex = {
-    store.put(vertex.id, vertex.toMap)
+    backend.put(vertex.id, vertex.toMap)
     vertex
   }
 
   /** Updates vertex on database */
   override def update(vertex: Vertex): Vertex = {
-    store.update(vertex.id, vertex.toMap)
+    backend.update(vertex.id, vertex.toMap)
     vertex
   }
 
   /** Removes vertex from database */
   override def remove(vertex: Vertex): Vertex = {
-    store.remove(vertex.id)
+    backend.remove(vertex.id)
     vertex
   }
 
