@@ -7,7 +7,7 @@ import scala.collection.mutable.{Set => MSet}
   * Implements and hypergraph database on top of a key/Map store. 
   */
 class VertexStore(storeName: String) extends VertexStoreInterface{
-  val backend = new RiakBackend(storeName)
+  val backend: Backend = new RiakBackend(storeName)
 
   /** Gets Vertex by it's id */
   override def get(id: String): Vertex = {
