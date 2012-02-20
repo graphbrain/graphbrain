@@ -138,7 +138,7 @@ object WikiListCrawler {
   // main(args)
   //Enter URL, otherwise default is used:
   //"http://en.wikipedia.org/wiki/List_of_lists_of_lists"
-  //
+  //To demo a shorted list: set the pagename to "Lists of cities" 
   //
   def main(args : Array[String]) : Unit = {
     args match
@@ -146,9 +146,5 @@ object WikiListCrawler {
       case a:Array[String] if(a.length==2) => print(getFlatListTree(args(0), new ListBuffer(), maxNumEntries=args(1).toInt))
       case _ => print(getFlatListTree(listPage, new ListBuffer(), maxNumEntries=100)) 
     }
-  	//val seedPage=getPage(listPage)
-    //val seedPage=getPage("Lists of cities")
-    //print(getLinks(seedPage))
-    
   }
 }
