@@ -12,35 +12,32 @@ class VertexStore(storeName: String) extends VertexStoreInterface{
   /** Gets Vertex by it's id */
   override def get(id: String): Vertex = {
     val map = backend.get(id)
+    val edges = map.getOrElse("edges", "").toString
     map("vtype") match {
-      case "vertex" => Vertex(id)
+      case "vertex" => Vertex(id, edges)
       case "edge" => {
         val etype = map.getOrElse("etype", "").toString
-        Edge(id, etype)
+        Edge(id, etype, edges)
       }
       case "node" => {
-        val edges = map.getOrElse("edges", "").toString
         Node(id, edges)
       }
       case "textnode" => {
-        val edges = map.getOrElse("edges", "").toString
         val text = map.getOrElse("text", "").toString
         TextNode(id, text, edges)
       }
       case "imagenode" => {
-        val edges = map.getOrElse("edges", "").toString
         val url = map.getOrElse("url", "").toString
         ImageNode(id, url, edges)
       }
       case "edgeType" => {
-        val edges = map.getOrElse("edges", "").toString
         val label = map.getOrElse("label", "").toString
         val roles = map.getOrElse("roles", "").toString
         val rolen = map.getOrElse("rolen", "").toString
         EdgeType(id, label, roles, rolen, edges)
       }
       // TODO: throw exception
-      case _  => Vertex(id)
+      case _  => Vertex(id, edges)
     }
   }
 

@@ -1,6 +1,6 @@
 package com.graphbrain.hgdb
 
-class Edge(id: String, val etype: String) extends Vertex(id) {
+class Edge(id: String, val etype: String, edges: Set[String]) extends Vertex(id, edges) {
   override val vtype = "edge"
 
   override def toMap: Map[String, Any] = super.toMap ++ Map(("etype" -> etype))
@@ -11,12 +11,12 @@ class Edge(id: String, val etype: String) extends Vertex(id) {
 }
 
 object Edge {
-  def apply(id: String, etype:String) = new Edge(id, etype)
+  def apply(id: String, etype:String, edgesStr: String) = new Edge(id, etype, Vertex.str2iter(edgesStr).toSet)
 
   def apply(etype:String, participants: Array[String]) = {
   	val tokens = List[String](etype) ++ participants
   	val eid = tokens.reduceLeft(_ + " " + _)
-  	new Edge(eid, etype)
+  	new Edge(eid, etype, Set[String]())
   }
 
   def participantIds(id: String) = {
