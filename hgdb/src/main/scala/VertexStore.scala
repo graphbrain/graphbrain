@@ -35,7 +35,9 @@ class VertexStore(storeName: String) extends VertexStoreInterface{
       case "edgeType" => {
         val edges = map.getOrElse("edges", "").toString
         val label = map.getOrElse("label", "").toString
-        EdgeType(id, label, edges)
+        val roles = map.getOrElse("roles", "").toString
+        val rolen = map.getOrElse("rolen", "").toString
+        EdgeType(id, label, roles, rolen, edges)
       }
       // TODO: throw exception
       case _  => Vertex(id)
