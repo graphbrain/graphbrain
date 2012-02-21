@@ -15,6 +15,9 @@ object GraphbrainBuild extends Build {
                            base = file("webapp"),
                            settings = Defaults.defaultSettings ++ Seq(cssTask))
 
+  lazy val brain_generators = Project(id="brain-generators",
+  							base=file("brain-generators")) dependsOn(hgdb)
+
   lazy val root = Project(id = "gb",
                             base = file(".")) aggregate(hgdb, inference, webapp)
 }

@@ -54,49 +54,38 @@ object DBPediaGraphFromInfobox {
   }
 
 
-  def processFile(filename:String, output:Output=new OutputScreenPrinter()):Unit=
+  def processFile(filename:String, output:OutputDBWriter, limit:Int=10):Unit=
   {
     
     val reader = new InputFileReader(filename);
     var counter=1
-    while(counter<100000)
-    //while(true)
+    var inserted=0;
+
+    while(counter<limit)
     {
       val line = reader.readLine()
-      
+
       line match{
         case ""=> return 
         case a:String => processQTuple(a) match {
           case ("", "", "", "") => //Don't output  
-          case (b:String, c:String, d:String, e:String) => output.writeOut(b+","+c+","+d+","+e)
-
+          case (b:String, c:String, d:String, e:String) => output.writeOut(b, c, d, e); inserted+=1
         }
       } 
       counter+=1     
     }
+
     return
 
   }
-  def processFileSTDIN(output:Output=new OutputScreenPrinter()):Unit=
-  {
-    
-     for( line <- io.Source.stdin.getLines)
-     {
-        processQTuple(line) match {
-          case ("", "", "", "") => //Don't output  
-          case (a:String, b:String, c:String, d:String) => output.writeOut(a+","+b+","+c+","+d);
-
-        }
-     } 
      
-    }
 
   def main(args : Array[String]) : Unit = {
     args match
     {
       
-      case a:Array[String] if(a.length==2) => processFile(args(0), new OutputScreenPrinter())
-      case _ =>  processFile("data-files/mappingbased_properties_en.nq")
+      case a:Array[String] if(a.length==2) => processFile(args(0), new OutputDBWriter(args(1)))
+      case _ =>  processFile("brain-generators/data-files/mappingbased_properties_en.nq", new OutputDBWriter("testgbdb"))
       //case _ =>  processFileSTDIN()
     }
     
