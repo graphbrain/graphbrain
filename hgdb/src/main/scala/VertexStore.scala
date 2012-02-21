@@ -13,7 +13,7 @@ class VertexStore(storeName: String) extends VertexStoreInterface{
   override def get(id: String): Vertex = {
     val map = backend.get(id)
     val edges = map.getOrElse("edges", "").toString
-    map("vtype") match {
+    map.getOrElse("vtype", "") match {
       case "vertex" => Vertex(id, edges)
       case "edge" => {
         val etype = map.getOrElse("etype", "").toString
@@ -36,7 +36,6 @@ class VertexStore(storeName: String) extends VertexStoreInterface{
         val rolen = map.getOrElse("rolen", "").toString
         EdgeType(id, label, roles, rolen, edges)
       }
-      // TODO: throw exception
       case _  => Vertex(id, edges)
     }
   }
