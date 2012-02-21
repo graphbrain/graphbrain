@@ -1,7 +1,5 @@
 import sbt._
 import Keys._
-import CSS._
-
 
 object GraphbrainBuild extends Build {
 
@@ -12,8 +10,7 @@ object GraphbrainBuild extends Build {
                            base = file("inference"))
 
   lazy val webapp = Project(id = "webapp",
-                           base = file("webapp"),
-                           settings = Defaults.defaultSettings ++ Seq(cssTask))
+                           base = file("webapp"))
 
   lazy val brain_generators = Project(id="brain-generators",
   							base=file("brain-generators")) dependsOn(hgdb)
