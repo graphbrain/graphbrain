@@ -19,6 +19,10 @@ resolvers ++= Seq(
   "jboss repo" at "http://repository.jboss.org/nexus/content/groups/public-jboss/"
 )
 
+seq(coffeeSettings: _*)
+
+(resourceManaged in (Compile, CoffeeKeys.coffee)) <<= (sourceDirectory in Compile)(_ / "resources" / "js")
+
 //seq(jsSettings : _*)
 
 //(sourceDirectory in (Compile, JsKeys.js)) <<= (sourceDirectory in Compile)(_ / "js")
@@ -27,4 +31,4 @@ resolvers ++= Seq(
 
 //(compile in Compile) <<= compile in Compile dependsOn (JsKeys.js in Compile)
 
-//(compile in Compile) <<= compile in Compile dependsOn (CSS.css in Compile)
+(compile in Compile) <<= compile in Compile dependsOn (CSS.css in Compile)
