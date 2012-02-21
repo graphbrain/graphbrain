@@ -11,5 +11,5 @@ class TextNode(id: String, val text: String, edges: Set[String]) extends Node(id
 
 object TextNode {
   def apply(id: String, text: String, edges: Set[String] = Set[String]()) = new TextNode(id, text, edges)
-  def apply(id: String, text: String, edgesStr: String) = new TextNode(id, text, Node.str2set(edgesStr))
+  def apply(id: String, text: String, edgesStr: String) = new TextNode(id, text, Node.str2iter(edgesStr).toSet)
 }

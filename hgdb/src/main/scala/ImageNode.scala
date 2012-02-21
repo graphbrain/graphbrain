@@ -11,5 +11,5 @@ class ImageNode(id: String, val url: String, edges: Set[String]) extends Node(id
 
 object ImageNode {
   def apply(id: String, url: String, edges: Set[String] = Set[String]()) = new TextNode(id, url, edges)
-  def apply(id: String, url: String, edgesStr: String) = new TextNode(id, url, Node.str2set(edgesStr))
+  def apply(id: String, url: String, edgesStr: String) = new TextNode(id, url, Node.str2iter(edgesStr).toSet)
 }
