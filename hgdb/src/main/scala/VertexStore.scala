@@ -14,6 +14,10 @@ class VertexStore(storeName: String) extends VertexStoreInterface{
     val map = backend.get(id)
     map("vtype") match {
       case "vertex" => Vertex(id)
+      case "edge" => {
+        val etype = map.getOrElse("etype", "").toString
+        Edge(id, etype)
+      }
       case "node" => {
         val edges = map.getOrElse("edges", "").toString
         Node(id, edges)
@@ -28,13 +32,10 @@ class VertexStore(storeName: String) extends VertexStoreInterface{
         val url = map.getOrElse("url", "").toString
         ImageNode(id, url, edges)
       }
-      case "edge" => {
-        val etype = map.getOrElse("etype", "").toString
-        Edge(id, etype)
-      }
       case "edgeType" => {
+        val edges = map.getOrElse("edges", "").toString
         val label = map.getOrElse("label", "").toString
-        EdgeType(id, label)
+        EdgeType(id, label, edges)
       }
       // TODO: throw exception
       case _  => Vertex(id)
