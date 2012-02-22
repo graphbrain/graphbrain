@@ -54,27 +54,29 @@ object DBPediaGraphFromInfobox {
   }
 
 
-  def processFile(filename:String, output:OutputDBWriter, limit:Int=10):Unit=
+  def processFile(filename:String, output:OutputDBWriter, limit:Int=0-1):Unit=
   {
     
     val reader = new InputFileReader(filename);
-    var counter=1
+    var counter=0
     var inserted=0;
 
-    while(counter<limit)
+    while(counter<limit||limit<0)
     {
+
       val line = reader.readLine()
 
       line match{
-        case ""=> return 
+        case ""=> println("Total: "+ counter.toString); println("Inserted: "+ inserted.toString); return 
         case a:String => processQTuple(a) match {
           case ("", "", "", "") => //Don't output  
-          case (b:String, c:String, d:String, e:String) => output.writeOut(b, c, d, e); inserted+=1
+          case (b:String, c:String, d:String, e:String) => output.writeOutDBInfo(b, c, d, e); inserted+=1
         }
       } 
       counter+=1     
     }
-
+    println("Total: "+ counter.toString); 
+    println("Inserted: "+ inserted.toString); 
     return
 
   }
