@@ -230,7 +230,5 @@ class Link extends VisualObj
         ty = cy - @halfHeight
         tz = cz
         
-        transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px)'
-        + ' rotateZ(' + rotz + 'rad)'
-        + ' rotateY(' + roty + 'rad)';
+        transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px)' + ' rotateZ(' + rotz + 'rad)' + ' rotateY(' + roty + 'rad)'
         $('#link' + @id).css('-webkit-transform', transformStr)
