@@ -13,7 +13,8 @@ object DBPediaGraphFromInfobox {
   val thingRegex="""(<http:\/\/dbpedia.org\/resource\/.+?>)""".r
   val predicateRegex = """(<http:\/\/dbpedia.org\/ontology\/.+?>)""".r
   val wikiRegex = """(<http:\/\/en.wikipedia.org\/wiki\/.+?>)""".r
-
+  val sourceName = "DBPediaMappingProperties.nq"
+  val dataFile = "brain-generators/data-files/mappingbased_properties_en.nq"
 
   /*
   Gets a qtuple and returns a 4-tuple with (node, relation, node, source)
@@ -24,14 +25,21 @@ object DBPediaGraphFromInfobox {
     var things = thingRegex.findAllIn(qTuple).toArray
     val predicate = predicateRegex.findAllIn(qTuple).toArray
     val wikiSource = wikiRegex.findAllIn(qTuple).toArray
-    if(things.length==2&&predicate.length==1&&wikiSource.length==1)
+    if(things.length==2&&predicate.length==1)
     {
-      val subj=WikiListCrawler.normalizeWikiTitle(things(0).replace("<http://dbpedia.org/resource/", "").replace(">", ""))
-      val obj = WikiListCrawler.normalizeWikiTitle(things(1).replace("<http://dbpedia.org/resource/", "").replace(">", ""))
+      val subj=Formatting.normalizeWikiTitle(things(0).replace("<http://dbpedia.org/resource/", "").replace(">", ""))
+      val obj = Formatting.normalizeWikiTitle(things(1).replace("<http://dbpedia.org/resource/", "").replace(">", ""))
+      if(Formatting.isList(subj)||Formatting.isList(obj)){return ("","","","")}
       val pred = separateWords(predicate(0).replace("<http://dbpedia.org/ontology/", "").replace(">", ""))
-      
-      return (subj, pred, obj, wikiSource(0));
+      if(wikiSource.length==1)
+      {
+        return (subj, pred, obj, wikiSource(0));
+      }
+      else{
+        return (subj,pred,obj,"")
+      }
     }
+
     else
     {
       return ("", "", "", "")
@@ -86,8 +94,8 @@ object DBPediaGraphFromInfobox {
     args match
     {
       
-      case a:Array[String] if(a.length==2) => processFile(args(0), new OutputDBWriter(args(1)))
-      case _ =>  processFile("brain-generators/data-files/mappingbased_properties_en.nq", new OutputDBWriter("testgbdb"))
+      case a:Array[String] if(a.length==3) => processFile(args(0), new OutputDBWriter(args(1), args(2)))
+      case _ =>  processFile(DBPediaGraphFromInfobox.dataFile, new OutputDBWriter("testgbdb", DBPediaGraphFromInfobox.sourceName))
       //case _ =>  processFileSTDIN()
     }
     
