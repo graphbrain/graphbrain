@@ -1,4 +1,5 @@
 fs = require 'fs'
+exec = require('child_process').exec
 
 {print} = require 'util'
 {spawn} = require 'child_process'
@@ -22,5 +23,15 @@ build = (callback) ->
   coffee.on 'exit', (code) ->
     callback?() if code is 0
 
-task 'build', 'Build lib/ from src/', ->
+css = (callback) ->
+  cat = exec 'cat css/main.css css/dialog.css css/interface.css css/links.css css/nodes.css > resources/css/main.css', (error, stdout, stderr) =>
+    print stdout
+    process.stderr.write stderr
+    if error isnt null
+      console log error
+
+task 'build', 'Compile CoffeeScript files', ->
   build()
+
+task 'css', 'Concatenate CSS files', ->
+  css()
