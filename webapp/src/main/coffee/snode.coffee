@@ -21,6 +21,7 @@ class SNode extends VisualObj
         @links = []
         @weight = 0
 
+
     updatePos: (_x, _y) ->
         @x = _x;
         @y = _y;
@@ -53,7 +54,7 @@ class SNode extends VisualObj
         @rect.v4.y = @rpos[1] - @halfHeight
 
         # update position of contained nodes
-        @nodes[key].estimatePos() for key in @nodes when @nodes.hasOwnProperty(key) 
+        @nodes[key].estimatePos() for key of @nodes when @nodes.hasOwnProperty(key) 
 
         # update position of connected links
         link.updatePos() for link in @links
@@ -70,7 +71,7 @@ class SNode extends VisualObj
         snode = document.createElement('div')
     
         nodesCount = 0
-        nodesCount++ for key in @nodes when @nodes.hasOwnProperty(key)
+        nodesCount++ for key of @nodes when @nodes.hasOwnProperty(key)
         if nodesCount > 1
             snode.setAttribute('class', 'snode_' + @depth)
         else
@@ -81,7 +82,7 @@ class SNode extends VisualObj
         nodesDiv.appendChild(snode)
 
         # place nodes contained in this super node
-        @nodes[key].place() for key in @nodes when @nodes.hasOwnProperty(key)
+        @nodes[key].place() for key of @nodes when @nodes.hasOwnProperty(key)
 
         _width = $('div#' + @id).outerWidth()
         _height = $('div#' + @id).outerHeight()
@@ -93,7 +94,7 @@ class SNode extends VisualObj
         @moveTo(@x, @y)
 
         # calc relative positions of nodes contained in this super node
-        @nodes[key].calcPos() for key in @nodes when @nodes.hasOwnProperty(key) 
+        @nodes[key].calcPos() for key of @nodes when @nodes.hasOwnProperty(key) 
 
         nodeObj = this
 
@@ -119,4 +120,4 @@ class SNode extends VisualObj
         , (e) =>
 
     toString: ->
-        return '{' + @nodes[key].text + ', ...}' for key in @nodes when @nodes.hasOwnProperty(key)
+        return '{' + @nodes[key].text + ', ...}' for key of @nodes when @nodes.hasOwnProperty(key)

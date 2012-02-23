@@ -104,20 +104,19 @@ class Graph
         @quat.getMatrix(@affinMat)
 
 
-    placeNodes: -> @snodes[key].place() for key in @snodes when @snodes.hasOwnProperty(key)
+    placeNodes: -> @snodes[key].place() for key of @snodes when @snodes.hasOwnProperty(key)
 
 
-    placeLinks: -> link.place() for link in links
+    placeLinks: -> link.place() for link in @links
 
 
-    updateViewLinks: -> link.visualUpdate() for link in links
+    updateViewLinks: -> link.visualUpdate() for link in @links
 
 
     updateView: -> 
-        for key in @snodes when @snodes.hasOwnProperty(key)
-            do (key) ->
-                sn = @snodes[key]
-                sn.moveTo(sn.x, sn.y)
+        for key of @snodes when @snodes.hasOwnProperty(key)
+            sn = @snodes[key]
+            sn.moveTo(sn.x, sn.y)
 
         @updateViewLinks()
 
@@ -154,28 +153,26 @@ class Graph
             snode.updatePos(x, y)
 
             for snode2 in fixedSNodes
-                do (snode2) ->
-                    # node - node overlap penalty
-                    if snode.overlaps(snode2) then penalty += 1000000
+                # node - node overlap penalty
+                if snode.overlaps(snode2) then penalty += 1000000
 
-                    # label - node overlap penalty
-                    penalty += 10000 for link in snode.links when link.overlaps(snode2)
+                # label - node overlap penalty
+                penalty += 10000 for link in snode.links when link.overlaps(snode2)
 
-                    # link-node intersection penalty
-                    #for (var k = 0; k < snode.links.length; k++) {
-                    #    var link = snode.links[k];
-                    #    if (link.sorig.fixed && link.starg.fixed)
-                    #        if (link.intersectsSNode(snode2))
-                    #            penalty += 10000;
-                    #}
+                # link-node intersection penalty
+                #for (var k = 0; k < snode.links.length; k++) {
+                #    var link = snode.links[k];
+                #    if (link.sorig.fixed && link.starg.fixed)
+                #        if (link.intersectsSNode(snode2))
+                #            penalty += 10000;
+                #}
 
             # node-label overlap penalty
             penalty += 10000 for link in @links when link.sorig.fixed and link.starg.fixed and snode.overlaps(link)
 
             # link-link intersection penalty
             for link in @links when link.sorig.fixed and link.starg.fixed
-                do (link) ->
-                    penalty += 10000 for slink in snode.links when slink.sorig.fixed and slink.starg.fixed and link.intersectsLink(slink)
+                penalty += 10000 for slink in snode.links when slink.sorig.fixed and slink.starg.fixed and link.intersectsLink(slink)
 
             # link length penalty
             penalty += link.len for link in snode.links when link.sorig.fixed and link.starg.fixed
@@ -198,13 +195,12 @@ class Graph
         bestWeight = -1
         bestSNode = false
         
-        for key in @snodes when @snodes.hasOwnProperty(key)
-            do (key) ->
-                snode = @snodes[key]
-                if (not snode.fixed) and (snode.depth == depth)
-                    if snode.weight > bestWeight
-                        bestWeight = snode.weight
-                        bestSNode = snode
+        for key of @snodes when @snodes.hasOwnProperty(key)
+            snode = @snodes[key]
+            if (not snode.fixed) and (snode.depth == depth)
+                if snode.weight > bestWeight
+                    bestWeight = snode.weight
+                    bestSNode = snode
 
         bestSNode
 
@@ -214,13 +210,13 @@ class Graph
         @halfHeight = height / 2
 
         # set all super nodes non-fixed
-        @snodes[key] = false for key in @snodes when @snodes.hasOwnProperty(key)
+        @snodes[key].fixed = false for key of @snodes when @snodes.hasOwnProperty(key)
 
         # layout root node
         fixedSNodes = [g.root]
         g.root.moveTo(width / 2, height / 2)
         g.root.fixed = true
-        
+
         snodeCount = @snodes.size()
 
         # special cases
@@ -269,17 +265,15 @@ class Graph
                 fixedSNodes.push(snode)
 
         # layout tier 1 nodes
-        for key in @snodes when @snodes.hasOwnProperty(key)
-            do (key) ->
-                snode = @snodes[key]
-                if (snode.depth == 1) and (not snode.fixed)
-                    @layoutSNode(snode, fixedSNodes, width, height)
-                    fixedSNodes.push(snode)
+        for key of @snodes when @snodes.hasOwnProperty(key)
+            snode = @snodes[key]
+            if (snode.depth == 1) and (not snode.fixed)
+                @layoutSNode(snode, fixedSNodes, width, height)
+                fixedSNodes.push(snode)
 
         # layout tier 2 nodes
-        for key in @snodes when @snodes.hasOwnProperty(key)
-            do (key) ->
-                snode = @snodes[key]
-                if snode.depth == 2
-                    @layoutSNode(snode, fixedSNodes, width, height)
-                    fixedSNodes.push(snode)
+        for key of @snodes when @snodes.hasOwnProperty(key)
+            snode = @snodes[key]
+            if snode.depth == 2
+                @layoutSNode(snode, fixedSNodes, width, height)
+                fixedSNodes.push(snode)

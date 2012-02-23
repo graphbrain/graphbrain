@@ -28,7 +28,7 @@ class Quaternion
         @z = cosr * cosp * siny - sinr * sinp * cosy
         @w = cosr * cosp * cosy + sinr * sinp * siny
  
-        normalise()
+        @normalise()
 
     ###
     Normalise the quaternion so that it's length is 1
