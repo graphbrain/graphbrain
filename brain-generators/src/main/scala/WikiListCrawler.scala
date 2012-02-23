@@ -74,10 +74,10 @@ object WikiListCrawler {
         {
           link match
           {
-            case a:String if(isList(a)) => list.appendAll(getFlatListTree(a, list, maxNumEntries))
-            case a:String if(isCategory(a)) => //list.append((getListCategory(page_name), getListCategory(a)))
-            case a:String if(isIrregular(a)) => 
-            case a:String if(isList(a)==false) => list.append((normalizeWikiTitle(getListCategory(a)), normalizeWikiTitle(getListCategory(page_name))))
+            case a:String if(Formatting.isList(a)) => list.appendAll(getFlatListTree(a, list, maxNumEntries))
+            case a:String if(Formatting.isCategory(a)) => //list.append((getListCategory(page_name), getListCategory(a)))
+            case a:String if(Formatting.isIrregular(a)) => 
+            case a:String if(Formatting.isList(a)==false) => list.append((Formatting.normalizeWikiTitle(getListCategory(a)), Formatting.normalizeWikiTitle(getListCategory(page_name))))
             case _ =>  
           }    
         }
@@ -105,32 +105,7 @@ object WikiListCrawler {
     return cat
   }
 
-  def isCategory(titleString:String):Boolean=
-  {
-    return CategoryRegex.findAllIn(titleString).hasNext
-  }
-  def isList(titleString:String):Boolean=
-  {
-    return ListRegex.findAllIn(titleString).hasNext
-
-  }
-  def isIrregular(titleString:String):Boolean=
-  {
-    return IrregularTitleRegex.findAllIn(titleString).hasNext
-  }
-
-  def normalizeWikiTitle(rawTitle:String):String={
-    var title=rawTitle.trim
-    title=rawTitle.stripLineEnd
-    var norm_title="";
-    if(title.length>0) {norm_title+=(title(0).toString().toUpperCase)}
-    
-    if(title.length>1){
-      norm_title+=title.substring(1, title.length)
-    }
-    norm_title=norm_title.replace("_", " ")
-    return norm_title
-  }
+  
 
 
 
