@@ -7,10 +7,10 @@ case class NodePage() extends Page {
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>Graphbrain</title>
-<link href="/css/main.css?311011" type="text/css" rel="Stylesheet" />  
+<link href="/css/main.css?311011" type="text/css" rel="Stylesheet" />
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 <script src="/js/jquery-1.6.4.min.js" type="text/javascript" ></script>
-<script src="/js/gb.js?081211" type="text/javascript" ></script>
+<script src="/js/gb.js?220212f" type="text/javascript" ></script>
 </head>
 
 <body>
