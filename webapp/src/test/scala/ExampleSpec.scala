@@ -8,9 +8,9 @@ object ExampleSpec extends Specification with unfiltered.spec.netty.Served {
   
   def setup = { _.handler(GBPlan) }
   
-  "The example app" should {
+  /*"The example app" should {
     "serve unfiltered text" in {
       Http(host as_str) must beMatching("What say you")
     }
-  }
+  }*/
 }

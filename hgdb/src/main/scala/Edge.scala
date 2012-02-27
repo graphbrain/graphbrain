@@ -11,7 +11,7 @@ class Edge(id: String, val etype: String, edges: Set[String]) extends Vertex(id,
 }
 
 object Edge {
-  def apply(id: String, etype:String, edgesStr: String) = new Edge(id, etype, Vertex.str2iter(edgesStr).toSet)
+  def apply(id: String, etype: String, edgesStr: String) = new Edge(id, etype, Vertex.str2iter(edgesStr).toSet)
 
   def apply(etype:String, participants: Array[String]) = {
   	val tokens = List[String](etype) ++ participants

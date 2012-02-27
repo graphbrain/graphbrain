@@ -10,7 +10,7 @@ object GraphbrainBuild extends Build {
                            base = file("inference"))
 
   lazy val webapp = Project(id = "webapp",
-                           base = file("webapp"))
+                           base = file("webapp")) dependsOn(hgdb)
 
   lazy val brain_generators = Project(id="brain-generators",
   							base=file("brain-generators")) dependsOn(hgdb)
