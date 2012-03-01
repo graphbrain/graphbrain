@@ -26,13 +26,13 @@ class VertexStore(storeName: String) extends VertexStoreInterface {
         val text = map.getOrElse("text", "").toString
         TextNode(id, text, edges)
       }
-      /*case "urlnode" => {
+      case "urlnode" => {
         val url = map.getOrElse("url", "").toString
         URLNode(id, url, edges)
       }
       case "sourcenode" => {
         SourceNode(id, edges)
-      }*/
+      }
       case "imagenode" => {
         val url = map.getOrElse("url", "").toString
         ImageNode(id, url, edges)
