@@ -100,26 +100,35 @@ class VertexStore(storeName: String) extends VertexStoreInterface {
     case _ => Node("", "")
   }
 
+  /** Gets Edge by it's id */
+  def getEdge(edgeId: String): Edge = get(edgeId) match {
+    case e: Edge => e
+    // TODO: throw exception if it's not a Node
+    case _ => Edge("", "", "")
+  }
+
   /** Gets neighbors of a Node specified by id
     * 
     * maxDepth is the maximum distance from the original node that will be considered (default is 2)
+    * return value is a set of tuples (nodeId, parentId)
     */
-  def neighbors(nodeId: String, maxDepth: Int = 2): Set[String] = {
-    val nset = MSet[String]()
+  def neighbors(nodeId: String, maxDepth: Int = 2): Set[(String, String)] = {
+    val nset = MSet[(String, String)]()
 
-    var queue = (nodeId, 0) :: Nil
+    var queue = (nodeId, 0, "") :: Nil
     while (!queue.isEmpty) {
       val curId = queue.head._1
       val depth = queue.head._2
+      val parent = queue.head._3
       queue = queue.tail
 
-      if (!nset.contains(curId)) {
-        nset += curId
+      if (!nset.exists(n => n._1 == curId)) {
+        nset += ((curId, parent))
         val node = getNode(curId)
 
         if (depth < maxDepth)
           for (edgeId <- node.edges)
-            queue = queue ::: (for (pid <- Edge.participantIds(edgeId)) yield (pid, depth + 1)).toList
+            queue = queue ::: (for (pid <- Edge.participantIds(edgeId)) yield (pid, depth + 1, curId)).toList
       }
     }
 
@@ -131,12 +140,13 @@ class VertexStore(storeName: String) extends VertexStoreInterface {
     * An Edge is considered inernal if all it's participating Nodes are containes in the
     * neighborhood.
     */
-  def neighborEdges(nhood: Set[String]): Set[String] = {
+  def neighborEdges(nhood: Set[(String, String)]): Set[String] = {
+    val nhoodIds = for (n <- nhood) yield n._1
     val eset = MSet[String]()
-    for (nodeId <- nhood) {
-      val node = getNode(nodeId)
+    for (n <- nhood) {
+      val node = getNode(n._1)
       for (edgeId <- node.edges)
-        if (Edge.participantIds(edgeId).forall(nhood.contains(_)))
+        if (Edge.participantIds(edgeId).forall(nhoodIds.contains(_)))
           eset += edgeId
     }
     eset.toSet
