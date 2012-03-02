@@ -15,6 +15,7 @@ object DBPediaGraphFromCategories {
   val owlString="""<http:.*owl#Thing>""".r
   val wikiRegex = """(<http:\/\/en.wikipedia.org\/wiki\/.+?>)""".r
   val sourceName = "dbpedia/instancetypes"
+  val sourceURL = "http://downloads.dbpedia.org/3.7/en/instance_types_en.nq.bz2"
   val dataFile = "brain-generators/data-files/instance_types_en.nq"
 
   /*
@@ -58,13 +59,15 @@ object DBPediaGraphFromCategories {
     return ""
   }
 
-  def processFile(filename:String, output:OutputDBWriter, limit:Int=20):Unit=
+  def processFile(filename:String, output:OutputDBWriter, limit:Int):Unit=
   
   {
     
     val reader = new InputFileReader(filename);
     var counter=0
     var inserted=0;
+    output.writeGeneratorSource(DBPediaGraphFromCategories.sourceName, DBPediaGraphFromCategories.sourceURL, output)
+    inserted+=1
 
     var items = new ListBuffer[(String, String, String, String)]
 
@@ -72,9 +75,10 @@ object DBPediaGraphFromCategories {
     {
 
       val line = reader.readLine()
+      println("Line: " + counter.toString + " Inserted: " + inserted.toString +  line);
 
       line match{
-        case ""=> println("Total: "+ counter.toString); println("Inserted: "+ inserted.toString); return 
+        case ""=> return 
         case a:String => processQTuple(a) match {
           case ("", "", "", "") => //Don't output  
           case (b:String, c:String, d:String, e:String) => d match {
@@ -86,7 +90,7 @@ object DBPediaGraphFromCategories {
       } 
       counter+=1     
     }
-    println("Total: "+ counter.toString); 
+    println("Total lines: "+ counter.toString); 
     println("Inserted: "+ inserted.toString); 
     return
 
@@ -112,8 +116,8 @@ object DBPediaGraphFromCategories {
     args match
     {
       
-      case a:Array[String] if(a.length==3) => processFile(args(0), new OutputDBWriter(args(1), args(2)))
-      case _ =>  processFile(DBPediaGraphFromCategories.dataFile, new OutputDBWriter("testgbdb", DBPediaGraphFromCategories.sourceName))
+      case a:Array[String] if(a.length==3) => processFile(args(0), new OutputDBWriter(args(1), args(2)), 0-1)
+      case _ =>  processFile(DBPediaGraphFromCategories.dataFile, new OutputDBWriter("testgbdb", DBPediaGraphFromCategories.sourceName), 100)
       
     }
     
