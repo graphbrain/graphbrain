@@ -21,6 +21,10 @@ object GraphbrainBuild extends Build {
   							base=file("brain-generators"),
                 settings = standardSettings ++ SbtOneJar.oneJarSettings) dependsOn(hgdb)
 
+  lazy val tools = Project(id="tools",
+                base=file("tools"),
+                settings = standardSettings ++ SbtOneJar.oneJarSettings) dependsOn(hgdb)
+
   lazy val root = Project(id = "gb",
-                            base = file(".")) aggregate(hgdb, inference, webapp, brain_generators)
+                            base = file(".")) aggregate(hgdb, inference, webapp, brain_generators, tools)
 }
