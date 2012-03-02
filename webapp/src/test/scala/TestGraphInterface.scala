@@ -25,38 +25,24 @@ class TestGraphInterface extends FunSuite {
     store.addrel("is", Array[String]("f", "b"))
     store.addrel("is", Array[String]("g", "b"))
   }
-    
-  /*
-  test("supernodes") {
-    val edge1 = Edge("is", Array[String]("a", "b"))
-    val edge2 = Edge("is", Array[String]("a", "c"))
-    val edge3 = Edge("is", Array[String]("a", "d"))
-    val edge4 = Edge("is", Array[String]("d", "e"))
-    val edgeSet = Set[Edge](edge1, edge2, edge3, edge4)
-    val sn = GraphInterface.supernodes(edgeSet, "c")
 
-    val expected = MSet(
-      Map("id" -> "sn0", "key" -> ("", -1, ""), "nodes" -> Set("c")),
-      Map("id" -> "sn1", "key" -> ("is", 0, "a"), "nodes" -> Set("b", "d")),
-      Map("id" -> "sn2", "key" -> ("is", 1, "e"), "nodes" -> Set("d")))
-    assert(sn == expected)
-  }*/
-
-  test("visualLink") {
+  test("super nodes") {
     val store = new VertexStore("testhgdb") with SimpleCaching
     createGraph(store)
     val gi = new GraphInterface("a", store)
 
-    println(">>> nodesJSON")
-    println(gi.nodesJSON)
-    println(".............")
-    println(">>> snodesJSON")
-    println(gi.snodesJSON)
-    println(".............")
-    println(">>> linksJSON")
-    println(gi.linksJSON)
+    val expected = Set(Map("id" -> "sn0", "key" -> ("", -1, ""), "nodes" -> Set("a")),
+      Map("id" -> "sn1", "key" -> ("is", 0, "a"), "nodes" -> Set("c", "d", "e", "b")),
+      Map("id" -> "sn2", "key" -> ("is", 1, "b"), "nodes" -> Set("g", "f")))
+    assert(gi.snodes == expected)
+  }
 
-    //val expected = Set(("is", "a", "c"), ("is", "a", "sn1"))
-    //assert(vl == expected)
+  test("visual links") {
+    val store = new VertexStore("testhgdb") with SimpleCaching
+    createGraph(store)
+    val gi = new GraphInterface("a", store)
+
+    val expected = Set(("is", "a", "sn1"), ("is", "sn2", "b"))
+    assert(gi.links == expected)
   }
 }
