@@ -1,12 +1,25 @@
 package com.graphbrain.webapp
 
 import com.graphbrain.hgdb.VertexStore
+import com.graphbrain.hgdb.Vertex
 import com.graphbrain.hgdb.Edge
+import com.graphbrain.hgdb.TextNode
+import com.graphbrain.hgdb.ImageNode
 import scala.collection.mutable.{Map => MMap}
 import scala.collection.mutable.{Set => MSet}
+import net.liftweb.json._
+import net.liftweb.json.JsonDSL._
 
 
-object GraphInterface {
+class GraphInterface (val rootId: String, val store: VertexStore) {
+  val neighbors = store.neighbors(rootId)
+  val edgeIds = store.neighborEdges(neighbors)
+  val edges = edgeIds.map(e => store.getEdge(e))
+  val snodes = supernodes
+  val links = visualLinks
+  val nodesJSON = nodes2json
+  val snodesJSON = snodes2json
+  val linksJSON = links2json
 
   /** Generates relationship Map
     * 
@@ -14,7 +27,7 @@ object GraphInterface {
     * kind of relationship are grouped.
     */
   // NOTE: We only consider the first two participants for now
-  private def relmap(edges: Set[Edge], rootId: String) = {
+  private def relmap = {
     val rm = MMap[(String, Int, String), Set[String]]()
     for (edge <- edges) {
       val participants = edge.participantIds.slice(0, 2)
@@ -45,19 +58,19 @@ object GraphInterface {
     * 
     * Deletes key and it's value and removes node in key from all other node lists.
     */
-  private def delrel(relmap: MMap[(String, Int, String), Set[String]], key: (String, Int, String)) {
-    val nodes = relmap(key)
-    relmap -= key
-    for (k <- relmap) {
-      relmap(k._1) = k._2.filter(_ != key._3)
-      if (relmap(k._1).size == 0) relmap -= k._1
+  private def delrel(rm: MMap[(String, Int, String), Set[String]], key: (String, Int, String)) {
+    val nodes = rm(key)
+    rm -= key
+    for (k <- rm) {
+      rm(k._1) = k._2.filter(_ != key._3)
+      if (rm(k._1).size == 0) rm -= k._1
     }
   }
 
   /** Generates supernodes Map */
-  def supernodes(edges: Set[Edge], rootId: String) = {
+  private def supernodes = {
     var snodes = MSet[Map[String, Any]]()
-    val rd = relmap(edges, rootId)
+    val rm = relmap
     var superId = 0
 
     // create root supernode
@@ -67,13 +80,13 @@ object GraphInterface {
     superId += 1
 
     // create supernodes
-    var key = maxrel(rd)
+    var key = maxrel(rm)
     while (key != null) {
-      val nodes = rd(key)
+      val nodes = rm(key)
       superkey = "sn" + superId
       snodes += Map[String, Any](("id" -> superkey), ("key" -> key), ("nodes" -> nodes))
-      delrel(rd, key)
-      key = maxrel(rd)
+      delrel(rm, key)
+      key = maxrel(rm)
       superId += 1
     }
     snodes
@@ -92,8 +105,8 @@ object GraphInterface {
     false
   }
 
-  /** Generates list o links to be displayed */
-  def visualLinks(snodes: MSet[Map[String, Any]], edges: Set[Edge]) = {
+  /** Generates list of links to be displayed */
+  private def visualLinks = {
     val nodeLinks = (for (e <- edges if (!redundantEdge(snodes, e))) yield {
       val pids = e.participantIds
       (e.etype, pids(0), pids(1))
@@ -107,7 +120,35 @@ object GraphInterface {
       else
         (key._1, superkey, key._3)
     }).toSet.filter(_._1 != "")
-      
+
     nodeLinks ++ snodeLinks
+  }
+
+  private def node2json(node: Vertex, parentId: String) = {
+    ("id" -> node.id) ~ (node match {
+      case tn: TextNode => ("type" -> "text") ~ ("text" -> tn.text)
+      case in: ImageNode => ("type" -> "image") ~ ("text" -> in.url)
+      case _ => ("type" -> "text") ~ ("text" -> node.id)
+    }) ~ ("parent" -> parentId)
+  }
+
+  private def nodes2json = {
+    val json = for (n <- neighbors) yield node2json(store.get(n._1), n._2)
+    compact(render(json))
+  }
+
+  private def snodes2json = {
+    val json = (for (snode <- snodes) yield
+      ("id" -> snode("id").toString) ~ ("node" -> snode("nodes").asInstanceOf[Set[String]]))
+    compact(render(json))
+  }
+
+  private def links2json = {
+    var lid = 0
+    val json = for (l <- links) yield {
+      lid += 1
+      ("id" -> lid) ~ ("directed" -> 1) ~ ("relation" -> l._1) ~ ("orig" -> l._2.toString) ~ ("targ" -> l._3.toString)
+    }
+    compact(render(json))
   }
 }
