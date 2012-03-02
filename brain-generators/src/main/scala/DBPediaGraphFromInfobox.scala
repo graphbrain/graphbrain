@@ -13,7 +13,7 @@ object DBPediaGraphFromInfobox {
   val thingRegex="""(<http:\/\/dbpedia.org\/resource\/.+?>)""".r
   val predicateRegex = """(<http:\/\/dbpedia.org\/ontology\/.+?>)""".r
   val wikiRegex = """(<http:\/\/en.wikipedia.org\/wiki\/.+?>)""".r
-  val sourceName = "DBPediaMappingProperties.nq"
+  val sourceName = "dbpedia/mappingproperties"
   val dataFile = "brain-generators/data-files/mappingbased_properties_en.nq"
 
   /*
@@ -30,7 +30,7 @@ object DBPediaGraphFromInfobox {
       val subj=Formatting.normalizeWikiTitle(things(0).replace("<http://dbpedia.org/resource/", "").replace(">", ""))
       val obj = Formatting.normalizeWikiTitle(things(1).replace("<http://dbpedia.org/resource/", "").replace(">", ""))
       if(Formatting.isList(subj)||Formatting.isList(obj)){return ("","","","")}
-      val pred = separateWords(predicate(0).replace("<http://dbpedia.org/ontology/", "").replace(">", ""))
+      val pred = Formatting.separateWords(predicate(0).replace("<http://dbpedia.org/ontology/", "").replace(">", ""))
       if(wikiSource.length==1)
       {
         return (subj, pred, obj, wikiSource(0));
@@ -46,23 +46,10 @@ object DBPediaGraphFromInfobox {
     }
   }
 
-  def separateWords(stringToSep:String):String=
-  {
-     
-     val wordRegex="""[a-z]+|[A-Z][a-z]+""".r
-     val words=wordRegex.findAllIn(stringToSep)
-     
-     var returnString=""
-     while(words.hasNext)
-     {
-       returnString+=" " + words.next.toLowerCase.trim;
-       
-     }
-     return returnString;
-  }
+  
 
 
-  def processFile(filename:String, output:OutputDBWriter, limit:Int=0-1):Unit=
+  def processFile(filename:String, output:OutputDBWriter, limit:Int=100):Unit=
   {
     
     val reader = new InputFileReader(filename);
@@ -96,7 +83,7 @@ object DBPediaGraphFromInfobox {
       
       case a:Array[String] if(a.length==3) => processFile(args(0), new OutputDBWriter(args(1), args(2)))
       case _ =>  processFile(DBPediaGraphFromInfobox.dataFile, new OutputDBWriter("testgbdb", DBPediaGraphFromInfobox.sourceName))
-      //case _ =>  processFileSTDIN()
+  
     }
     
   }
