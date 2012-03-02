@@ -15,5 +15,6 @@ libraryDependencies ++= Seq(
   "net.databinder" %% "dispatch-nio" % "0.8.5",
   "org.clapper" %% "avsl" % "0.3.6",
   "net.databinder" %% "unfiltered-spec" % "0.5.3" % "test",
-  "org.scalatest" %% "scalatest" % "1.7.1" % "test"
+  "org.scalatest" %% "scalatest" % "1.7.1" % "test",
+  "net.liftweb" %% "lift-json" % "2.4"
 )
