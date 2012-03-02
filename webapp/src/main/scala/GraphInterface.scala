@@ -125,17 +125,15 @@ class GraphInterface (val rootId: String, val store: VertexStore) {
   }
 
   private def node2json(node: Vertex, parentId: String) = {
-    (node match {
+    ("id" -> node.id) ~ (node match {
       case tn: TextNode => ("type" -> "text") ~ ("text" -> tn.text)
-      case in: ImageNode => ("image" -> "text") ~ ("text" -> in.url)
+      case in: ImageNode => ("type" -> "image") ~ ("text" -> in.url)
       case _ => ("type" -> "text") ~ ("text" -> node.id)
     }) ~ ("parent" -> parentId)
   }
 
   private def nodes2json = {
-    val json = (for (n <- neighbors) yield {
-      val node = store.get(n._1)
-      (node.id -> node2json(node, n._2))})
+    val json = for (n <- neighbors) yield node2json(store.get(n._1), n._2)
     compact(render(json))
   }
 
