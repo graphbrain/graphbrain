@@ -14,9 +14,9 @@ object GenerateDBPedia {
 
 	
 	def main(args : Array[String]) : Unit = {
-		val testStoreName = "testgbdb"
-		DBPediaGraphFromInfobox.processFile("mappingbased_properties_en.nq", new OutputDBWriter("testgbdb", DBPediaGraphFromInfobox.sourceName), 0-1)
-		DBPediaGraphFromCategories.processFile("instance_types_en.nq", new OutputDBWriter("testgbdb", DBPediaGraphFromCategories.sourceName), 0-1)
+		val testStoreName = "gb"
+		DBPediaGraphFromInfobox.processFile("mappingbased_properties_en.nq", new OutputDBWriter(testStoreName, DBPediaGraphFromInfobox.sourceName), 0-1)
+		DBPediaGraphFromCategories.processFile("instance_types_en.nq", new OutputDBWriter(testStoreName, DBPediaGraphFromCategories.sourceName), 0-1)
 		
 			
 	}

@@ -117,7 +117,7 @@ object DBPediaGraphFromCategories {
     {
       
       case a:Array[String] if(a.length==3) => processFile(args(0), new OutputDBWriter(args(1), args(2)), 0-1)
-      case _ =>  processFile(DBPediaGraphFromCategories.dataFile, new OutputDBWriter("testgbdb", DBPediaGraphFromCategories.sourceName), 100)
+      case _ =>  processFile(DBPediaGraphFromCategories.dataFile, new OutputDBWriter("gb", DBPediaGraphFromCategories.sourceName), 100)
       
     }
     
