@@ -1,6 +1,7 @@
 package com.graphbrain.tools
 
 import welcome.Welcome
+import showvertex.ShowVertex
 
 
 object Tools { 
@@ -12,6 +13,7 @@ object Tools {
       val toolArgs = args.slice(1, args.size)
       args(0) match {
         case "welcome" => Welcome(toolArgs)
+        case "showvertex" => ShowVertex(toolArgs)
         case _ => println("Error: unkown tool.")
       }
     }
