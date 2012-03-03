@@ -15,9 +15,13 @@ object GenerateDBPedia {
 	
 	def main(args : Array[String]) : Unit = {
 		val testStoreName = "gb"
-		DBPediaGraphFromInfobox.processFile("mappingbased_properties_en.nq", new OutputDBWriter(testStoreName, DBPediaGraphFromInfobox.sourceName), 0-1)
-		DBPediaGraphFromCategories.processFile("instance_types_en.nq", new OutputDBWriter(testStoreName, DBPediaGraphFromCategories.sourceName), 0-1)
-		
+		try {
+      DBPediaGraphFromInfobox.processFile("mappingbased_properties_en.nq", new OutputDBWriter(testStoreName, DBPediaGraphFromInfobox.sourceName), 0-1)
+		  DBPediaGraphFromCategories.processFile("instance_types_en.nq", new OutputDBWriter(testStoreName, DBPediaGraphFromCategories.sourceName), 0-1)
+		}
+    catch {
+      case e: Exception => println(e.getStackTrace())
+    }
 			
 	}
 
