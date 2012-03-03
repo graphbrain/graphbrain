@@ -1,6 +1,6 @@
 package com.graphbrain.tools
 
-import demograph.DemoGraph
+import welcome.Welcome
 
 
 object Tools { 
@@ -11,7 +11,7 @@ object Tools {
     else {
       val toolArgs = args.slice(1, args.size)
       args(0) match {
-        case "demograph" => DemoGraph.run(toolArgs)
+        case "welcome" => Welcome(toolArgs)
         case _ => println("Error: unkown tool.")
       }
     }
