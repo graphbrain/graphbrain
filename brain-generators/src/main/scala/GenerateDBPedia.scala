@@ -20,7 +20,7 @@ object GenerateDBPedia {
 		  DBPediaGraphFromCategories.processFile("instance_types_en.nq", new OutputDBWriter(testStoreName, DBPediaGraphFromCategories.sourceName), 0-1)
 		}
     catch {
-      case e: Exception => println(e.getStackTrace())
+      case e: Exception => e.printStackTrace
     }
 			
 	}
