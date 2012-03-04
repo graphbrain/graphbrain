@@ -7,8 +7,7 @@ import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.ImageNode
 import scala.collection.mutable.{Map => MMap}
 import scala.collection.mutable.{Set => MSet}
-import net.liftweb.json._
-import net.liftweb.json.JsonDSL._
+import com.codahale.jerkson.Json._
 
 
 class GraphInterface (val rootId: String, val store: VertexStore) {
@@ -124,31 +123,33 @@ class GraphInterface (val rootId: String, val store: VertexStore) {
     nodeLinks ++ snodeLinks
   }
 
-  private def node2json(node: Vertex, parentId: String) = {
-    ("id" -> node.id) ~ (node match {
-      case tn: TextNode => ("type" -> "text") ~ ("text" -> tn.text)
-      case in: ImageNode => ("type" -> "image") ~ ("text" -> in.url)
-      case _ => ("type" -> "text") ~ ("text" -> node.id)
-    }) ~ ("parent" -> parentId)
+  private def node2map(nodeId: String, parentId: String) = {
+    val node = store.get(nodeId)
+    node match {
+      case tn: TextNode => Map(("type" -> "text"), ("text" -> tn.text), ("parent" -> parentId))
+      case in: ImageNode => Map(("type" -> "image"), ("text" -> in.url), ("parent" -> parentId))
+      case _ => Map(("type" -> "text"), ("text" -> node.id), ("parent" -> parentId))
+    }
   }
 
   private def nodes2json = {
-    val json = for (n <- neighbors) yield node2json(store.get(n._1), n._2)
-    compact(render(json))
+    val json = (for (n <- neighbors) yield
+      (n._1 -> node2map(n._1, n._2))).toMap
+    generate(json)
   }
 
   private def snodes2json = {
-    val json = (for (snode <- snodes) yield
-      ("id" -> snode("id").toString) ~ ("node" -> snode("nodes").asInstanceOf[Set[String]]))
-    compact(render(json))
+    val json = for (snode <- snodes) yield
+      Map(("id" -> snode("id").toString), ("node" -> snode("nodes").asInstanceOf[Set[String]]))
+    generate(json)
   }
 
   private def links2json = {
     var lid = 0
     val json = for (l <- links) yield {
       lid += 1
-      ("id" -> lid) ~ ("directed" -> 1) ~ ("relation" -> l._1) ~ ("orig" -> l._2.toString) ~ ("targ" -> l._3.toString)
+      Map(("id" -> lid), ("directed" -> 1), ("relation" -> l._1), ("orig" -> l._2.toString), ("targ" -> l._3.toString))
     }
-    compact(render(json))
+    generate(json)
   }
 }
