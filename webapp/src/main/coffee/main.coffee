@@ -103,6 +103,7 @@ initGraph = ->
         sorig = ''
         starg = ''
         if 'orig' of l
+            console.log('orig:' + l['orig'])
             orig  = g.nodes[l['orig']]
             sorig = orig.snode
         else

@@ -2,9 +2,11 @@ package com.graphbrain.hgdb
 
 
 class URLNode(id: String, val url: String, edges: Set[String]) extends Node(id, edges) {
-  override val vtype = "urlnode"
+  override def toMap: Map[String, Any] = Map(("vtype" -> "urlnode")) ++ toMapBase
+  override def toMapBase: Map[String, Any] = super.toMapBase ++ Map(("url" -> url))
 
-  override def toMap: Map[String, Any] = super.toMap ++ Map(("url" -> url))
+  override def addEdge(edgeId: String): Vertex = new URLNode(id, url, edges + edgeId)
+  override def delEdge(edgeId: String): Vertex = new URLNode(id, url, edges - edgeId)
 
   override def toString: String = super.toString + "; url: " + url
 }

@@ -17,6 +17,6 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       SearchPage()
     case GET(Path("/node")) => 
       logger.debug("GET /node")
-      NodePage()
+      NodePage("welcome/graphbrain")
   }
 }

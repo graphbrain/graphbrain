@@ -1,15 +1,13 @@
 package com.graphbrain.hgdb
 
 class Vertex(val id: String, val edges: Set[String]) {
-  val vtype = "vertex"
+  def toMap: Map[String, Any] = Map(("vtype" -> "vertex")) ++ toMapBase
+  def toMapBase: Map[String, Any] = Map(("edges" -> Vertex.iter2str(edges)))
+  
+  def addEdge(edgeId: String): Vertex = new Vertex(id, edges + edgeId)
+  def delEdge(edgeId: String): Vertex = new Vertex(id, edges - edgeId)
 
-  def toMap: Map[String, Any] = Map(("vtype" -> vtype), ("edges" -> Vertex.iter2str(edges)))
-
-  def addEdge(edgeId: String): Node = Node(id, edges + edgeId)
-
-  def delEdge(edgeId: String): Node = Node(id, edges - edgeId)
-
-  override def toString: String = vtype + " [" + id + "]; edges: " + Vertex.iter2str(edges)
+  override def toString: String = "[" + id + "]; edges: " + Vertex.iter2str(edges)
 }
 
 object Vertex {

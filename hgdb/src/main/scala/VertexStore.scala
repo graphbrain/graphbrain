@@ -43,7 +43,7 @@ class VertexStore(storeName: String) extends VertexStoreInterface {
         val rolen = map.getOrElse("rolen", "").toString
         EdgeType(id, label, roles, rolen, edges)
       }
-      case _  => Vertex(id, edges)
+      case _  => Vertex("", edges)
     }
   }
 
