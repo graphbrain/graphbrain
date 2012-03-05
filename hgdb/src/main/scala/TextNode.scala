@@ -2,11 +2,13 @@ package com.graphbrain.hgdb
 
 
 class TextNode(id: String, val text: String, edges: Set[String]) extends Node(id, edges) {
-  override val vtype = "textnode"
+  override def toMap: Map[String, Any] = Map(("vtype" -> "textnode")) ++ toMapBase
+  override def toMapBase: Map[String, Any] = super.toMapBase ++ Map(("text" -> text))
 
-  override def toMap: Map[String, Any] = super.toMap ++ Map(("text" -> text))
+  override def addEdge(edgeId: String): Vertex = new TextNode(id, text, edges + edgeId)
+  override def delEdge(edgeId: String): Vertex = new TextNode(id, text, edges - edgeId)
 
-  override def toString: String = super.toString + "; text: " + text
+  override def toString: String = "textnode " + super.toString + "; text: " + text
 }
 
 object TextNode {

@@ -27,6 +27,7 @@ class RiakBackend(val bucketName: String) extends Backend {
 
   /** Updates a document identified by it's id with the information contained in the Map[String, Any] */
   def update(id: String, doc: Map[String, Any]) = {
+    //println("id: " + id + "; doc: " + doc)
     remove(id)
     put(id, doc)
   }

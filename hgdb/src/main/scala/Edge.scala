@@ -1,9 +1,11 @@
 package com.graphbrain.hgdb
 
 class Edge(id: String, val etype: String, edges: Set[String]) extends Vertex(id, edges) {
-  override val vtype = "edge"
+  override def toMap: Map[String, Any] = Map(("vtype" -> "edge")) ++ toMapBase
+  override def toMapBase: Map[String, Any] = super.toMapBase ++ Map(("etype" -> etype))
 
-  override def toMap: Map[String, Any] = super.toMap ++ Map(("etype" -> etype))
+  override def addEdge(edgeId: String): Vertex = new Edge(id, etype, edges + edgeId)
+  override def delEdge(edgeId: String): Vertex = new Edge(id, etype, edges - edgeId)
 
   override def toString: String = super.toString + " " + etype
 

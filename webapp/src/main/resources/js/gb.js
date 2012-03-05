@@ -1185,6 +1185,7 @@
       sorig = '';
       starg = '';
       if ('orig' in l) {
+        console.log('orig:' + l['orig']);
         orig = g.nodes[l['orig']];
         sorig = orig.snode;
       } else {

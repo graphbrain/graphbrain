@@ -55,13 +55,14 @@ class GraphInterface (val rootId: String, val store: VertexStore) {
 
   /** Deletes key and related relationships from relationship map
     * 
-    * Deletes key and it's value and removes node in key from all other node lists.
+    * Deletes key and it's value and removes node in key 
+    * and nodes corresponding to that key from all other node lists.
     */
   private def delrel(rm: MMap[(String, Int, String), Set[String]], key: (String, Int, String)) {
     val nodes = rm(key)
     rm -= key
     for (k <- rm) {
-      rm(k._1) = k._2.filter(_ != key._3)
+      rm(k._1) = k._2.filter(id => (id != key._3) && !nodes.exists(_ == id))
       if (rm(k._1).size == 0) rm -= k._1
     }
   }
@@ -88,6 +89,17 @@ class GraphInterface (val rootId: String, val store: VertexStore) {
       key = maxrel(rm)
       superId += 1
     }
+
+    // create unitary supernodes for remaining nodes
+    for (n <- neighbors) {
+      val nodeId = n._1
+      if (!snodes.exists(sn => sn("nodes").asInstanceOf[Set[String]].exists(_ == nodeId))) {
+        superkey = "sn" + superId
+        snodes += Map[String, Any](("id" -> superkey), ("key" -> ("", -1, "")), ("nodes" -> Set(nodeId)))
+        superId += 1
+      }
+    }
+
     snodes
   }
 
@@ -108,21 +120,22 @@ class GraphInterface (val rootId: String, val store: VertexStore) {
   private def visualLinks = {
     val nodeLinks = (for (e <- edges if (!redundantEdge(snodes, e))) yield {
       val pids = e.participantIds
-      (e.etype, pids(0), pids(1))
+      (e.etype, pids(0), pids(1), true, true)
     }).toSet
 
     val snodeLinks = (for (sn <- snodes) yield {
       val superkey = sn("id")
       val key: (String, Int, String) = sn("key").asInstanceOf[(String, Int, String)]
       if (key._2 == 0)
-        (key._1, key._3, superkey)
+        (key._1, key._3, superkey, true, false)
       else
-        (key._1, superkey, key._3)
+        (key._1, superkey, key._3, false, true)
     }).toSet.filter(_._1 != "")
 
     nodeLinks ++ snodeLinks
   }
 
+  /** Generates a JSON friendly map from node */
   private def node2map(nodeId: String, parentId: String) = {
     val node = store.get(nodeId)
     node match {
@@ -132,23 +145,31 @@ class GraphInterface (val rootId: String, val store: VertexStore) {
     }
   }
 
+  /** Generates JSON string from nodes */
   private def nodes2json = {
     val json = (for (n <- neighbors) yield
       (n._1 -> node2map(n._1, n._2))).toMap
     generate(json)
   }
 
+  /** Generates JSON string from supernodes */
   private def snodes2json = {
     val json = for (snode <- snodes) yield
-      Map(("id" -> snode("id").toString), ("node" -> snode("nodes").asInstanceOf[Set[String]]))
+      Map(("id" -> snode("id").toString), ("nodes" -> snode("nodes").asInstanceOf[Set[String]]))
     generate(json)
   }
 
+  /** Generates JSON string from links */
   private def links2json = {
     var lid = 0
     val json = for (l <- links) yield {
       lid += 1
-      Map(("id" -> lid), ("directed" -> 1), ("relation" -> l._1), ("orig" -> l._2.toString), ("targ" -> l._3.toString))
+      if (l._4 && l._5)
+        Map(("id" -> lid), ("directed" -> 1), ("relation" -> l._1), ("orig" -> l._2.toString), ("targ" -> l._3.toString))
+      else if (l._4)
+        Map(("id" -> lid), ("directed" -> 1), ("relation" -> l._1), ("orig" -> l._2.toString), ("starg" -> l._3.toString))
+      else if (l._5)
+        Map(("id" -> lid), ("directed" -> 1), ("relation" -> l._1), ("sorig" -> l._2.toString), ("targ" -> l._3.toString))
     }
     generate(json)
   }
