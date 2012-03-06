@@ -1,13 +1,13 @@
 import org.scalatest.FunSuite
 import com.graphbrain.hgdb.Edge
-import com.graphbrain.hgdb.Node
+import com.graphbrain.hgdb.TextNode
 
 class NodeTest extends FunSuite {
 	test("add Edge") {
-		val node0 = Node("node0")
-		val node1 = Node("node1")
+		val node0 = TextNode("node0", "")
+		val node1 = TextNode("node1", "")
 		
-		val edge = Edge("test", Array[String]("node0", "node1"))
+		val edge = new Edge("test", Array[String]("node0", "node1"))
 
 		val node = node0.addEdge(edge.id)
 
@@ -16,12 +16,12 @@ class NodeTest extends FunSuite {
 	}
 
 	test("add two Edge") {
-		val node0 = Node("node0")
-		val node1 = Node("node1")
-		val node2 = Node("node2")
+		val node0 = TextNode("node0", "")
+		val node1 = TextNode("node1", "")
+		val node2 = TextNode("node2", "")
 		
-		val edge01 = Edge("test", Array[String]("node0", "node1"))
-		val edge02 = Edge("test", Array[String]("node0", "node2"))
+		val edge01 = new Edge("test", Array[String]("node0", "node1"))
+		val edge02 = new Edge("test", Array[String]("node0", "node2"))
 
 		val node = node0.addEdge(edge01.id).addEdge(edge02.id)
 
@@ -29,12 +29,12 @@ class NodeTest extends FunSuite {
 	}
 
 	test("delete Edge") {
-		val node0 = Node("node0")
-		val node1 = Node("node1")
-		val node2 = Node("node2")
+		val node0 = TextNode("node0", "")
+		val node1 = TextNode("node1", "")
+		val node2 = TextNode("node2", "")
 		
-		val edge01 = Edge("test", Array[String]("node0", "node1"))
-		val edge02 = Edge("test", Array[String]("node0", "node2"))
+		val edge01 = new Edge("test", Array[String]("node0", "node1"))
+		val edge02 = new Edge("test", Array[String]("node0", "node2"))
 
 		val node = node0.addEdge(edge01.id).addEdge(edge02.id)
 		val nodeDel1 = node.delEdge(edge01.id)

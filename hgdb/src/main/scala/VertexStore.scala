@@ -12,38 +12,35 @@ class VertexStore(storeName: String) extends VertexStoreInterface {
   /** Gets Vertex by it's id */
   override def get(id: String): Vertex = {
     val map = backend.get(id)
-    val edges = map.getOrElse("edges", "").toString
-    map.getOrElse("vtype", "") match {
-      case "vertex" => Vertex(id, edges)
+    val edges = str2iter(map.getOrElse("edges", "").toString).toSet
+    val vtype = map.getOrElse("vtype", "")
+    vtype match {
       case "edge" => {
         val etype = map.getOrElse("etype", "").toString
         Edge(id, etype, edges)
       }
-      case "node" => {
-        Node(id, edges)
-      }
-      case "textnode" => {
-        val text = map.getOrElse("text", "").toString
-        TextNode(id, text, edges)
-      }
-      case "urlnode" => {
-        val url = map.getOrElse("url", "").toString
-        URLNode(id, url, edges)
-      }
-      case "sourcenode" => {
-        SourceNode(id, edges)
-      }
-      case "imagenode" => {
-        val url = map.getOrElse("url", "").toString
-        ImageNode(id, url, edges)
-      }
-      case "edgeType" => {
+      case "etype" => {
         val label = map.getOrElse("label", "").toString
-        val roles = map.getOrElse("roles", "").toString
+        val roles = str2iter(map.getOrElse("roles", "").toString).toList
         val rolen = map.getOrElse("rolen", "").toString
         EdgeType(id, label, roles, rolen, edges)
       }
-      case _  => Vertex("", edges)
+      case "text" => {
+        val text = map.getOrElse("text", "").toString
+        TextNode(id, text, edges)
+      }
+      case "url" => {
+        val url = map.getOrElse("url", "").toString
+        URLNode(id, url, edges)
+      }
+      case "source" => {
+        SourceNode(id, edges)
+      }
+      case "image" => {
+        val url = map.getOrElse("url", "").toString
+        ImageNode(id, url, edges)
+      }
+      case _  => ErrorVertex("unkown vtype: " + vtype)
     }
   }
 
@@ -71,7 +68,7 @@ class VertexStore(storeName: String) extends VertexStoreInterface {
     * in order to represent a new relationship on the database.
     */
   def addrel(edgeType: String, participants: Array[String]) = {
-    val edge = Edge(edgeType, participants)
+    val edge = new Edge(edgeType, participants)
     put(edge)
 
     for (nodeId <- participants) update(get(nodeId).addEdge(edge.id))
@@ -85,33 +82,15 @@ class VertexStore(storeName: String) extends VertexStoreInterface {
     * to drop the reference to that edge.
     */
   def delrel(edgeType: String, participants: Array[String]) = {
-    val edge = Edge(edgeType, participants)
+    val edge = new Edge(edgeType, participants)
     remove(edge)
 
-    for (nodeId <- participants) update(getNode(nodeId).delEdge(edge.id))
+    for (nodeId <- participants) update(get(nodeId).delEdge(edge.id))
 
     edge
   }
 
-  /** Gets Node by it's id */
-  def getNode(nodeId: String): Node = get(nodeId) match {
-    case n: Node => n
-    // TODO: throw exception if it's not a Node
-    case _ => Node("", "")
-  }
-
-  /** Gets Edge by it's id */
-  def getEdge(edgeId: String): Edge = get(edgeId) match {
-    case e: Edge => e
-    // TODO: throw exception if it's not a Node
-    case _ => Edge("", "", "")
-  }
-
-  /** Gets neighbors of a Node specified by id
-    * 
-    * maxDepth is the maximum distance from the original node that will be considered (default is 2)
-    * return value is a set of tuples (nodeId, parentId)
-    */
+  
   def neighbors(nodeId: String, maxDepth: Int = 2): Set[(String, String)] = {
     val nset = MSet[(String, String)]()
 
@@ -124,7 +103,7 @@ class VertexStore(storeName: String) extends VertexStoreInterface {
 
       if (!nset.exists(n => n._1 == curId)) {
         nset += ((curId, parent))
-        val node = getNode(curId)
+        val node = get(curId)
 
         if (depth < maxDepth)
           for (edgeId <- node.edges)
@@ -144,12 +123,17 @@ class VertexStore(storeName: String) extends VertexStoreInterface {
     val nhoodIds = for (n <- nhood) yield n._1
     val eset = MSet[String]()
     for (n <- nhood) {
-      val node = getNode(n._1)
+      val node = get(n._1)
       for (edgeId <- node.edges)
         if (Edge.participantIds(edgeId).forall(nhoodIds.contains(_)))
           eset += edgeId
     }
     eset.toSet
+  }
+
+  private def str2iter(str: String) = {
+    (for (str <- str.split(',') if str != "")
+      yield str.replace("$2", ",").replace("$1", "$")).toIterable
   }
 }
 
