@@ -17,7 +17,7 @@ class OutputDBWriter(storeName:String, source:String) {
 
 	def writeOutDBInfo(node1: String, rel: String, node2: String, resource: String):Unit=
 	{
-		val sourceNode=store.get(ID.source_id(source))
+		val sourceNode=store.getSourceNode(ID.source_id(source))
 		val N1Wiki=ID.wikipedia_id(node1)
 		val N2Wiki=ID.wikipedia_id(node2)
 		val n1 = TextNode(id=N1Wiki, text=node1);
