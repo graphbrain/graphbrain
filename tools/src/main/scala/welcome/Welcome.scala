@@ -17,19 +17,13 @@ class Welcome(val store: VertexStore) {
     nodes += 1
   }
 
-  def addEdgeType(id: String, text:String) = {
-    val edgeType = EdgeType(id, text, List[String](text))
-    store.update(edgeType)
-    addBinaryRel("source/welcome", "source", id)
-  }
-
   def addBinaryRel(node1: String, rel:String, node2: String) = {
     store.addrel(rel, Array(node1, node2))
     edges += 1
   }
 
   def createGraph() = {
-    store.put(SourceNode("source/welcome"))
+    store.update(SourceNode("source/welcome"))
 
     // root node
     addTextNode("welcome/graphbrain", "GraphBrain")
