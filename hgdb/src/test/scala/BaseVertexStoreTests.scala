@@ -24,7 +24,7 @@ trait BaseVertexStoreTests { this: FunSuite =>
     store.put(inVertex)
     
     val outVertex = store.getTextNode("textnode/0")
-    assert(outVertex.vtype == "text")
+    assert(outVertex.vtype == "txt")
     assert(inVertex.id == outVertex.id)
     assert(inVertex.text == outVertex.text)
   }
@@ -46,7 +46,7 @@ trait BaseVertexStoreTests { this: FunSuite =>
     store.put(inVertex)
     
     val outVertex = store.getImageNode("imagenode/0")
-    assert(outVertex.vtype == "image")
+    assert(outVertex.vtype == "img")
     assert(inVertex.id == outVertex.id)
     assert(inVertex.url == outVertex.url)
   }
@@ -57,7 +57,7 @@ trait BaseVertexStoreTests { this: FunSuite =>
     store.put(inVertex)
     
     val outVertex = store.getSourceNode("sourcenode/0")
-    assert(outVertex.vtype == "source")
+    assert(outVertex.vtype == "src")
     assert(inVertex.id == outVertex.id)
   }
 
