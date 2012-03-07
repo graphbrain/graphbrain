@@ -6,13 +6,24 @@ trait BaseVertexStoreTests { this: FunSuite =>
 
   def baseTests(store: VertexStore, label: String) {
 
-  test("put Vertex [" + label + "]") {
+  test("put/get Vertex [" + label + "]") {
     val vertex = TextNode("vertex0", "vertex0")
     store.remove(vertex)
     store.put(vertex)
     
     val vertexOut = store.get("vertex0")
     assert(vertex.id == vertexOut.id)
+  }
+
+  test("getTextNode [" + label + "]") {
+    val inVertex = TextNode("textnode/0", "testing TextNode")
+    store.remove(inVertex)
+    store.put(inVertex)
+    
+    val outVertex = store.getTextNode("textnode/0")
+    assert(outVertex.vtype == "text")
+    assert(inVertex.id == outVertex.id)
+    assert(inVertex.text == outVertex.text)
   }
 
   test("add two node relationship [" + label + "]") {
