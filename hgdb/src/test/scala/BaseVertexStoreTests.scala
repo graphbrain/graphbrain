@@ -1,6 +1,9 @@
 import org.scalatest.FunSuite
 import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.TextNode
+import com.graphbrain.hgdb.URLNode
+import com.graphbrain.hgdb.ImageNode
+import com.graphbrain.hgdb.SourceNode
 
 trait BaseVertexStoreTests { this: FunSuite =>
 
@@ -24,6 +27,38 @@ trait BaseVertexStoreTests { this: FunSuite =>
     assert(outVertex.vtype == "text")
     assert(inVertex.id == outVertex.id)
     assert(inVertex.text == outVertex.text)
+  }
+
+  test("getURLNode [" + label + "]") {
+    val inVertex = URLNode("urlnode/0", "http://graphbrain.com")
+    store.remove(inVertex)
+    store.put(inVertex)
+    
+    val outVertex = store.getURLNode("urlnode/0")
+    assert(outVertex.vtype == "url")
+    assert(inVertex.id == outVertex.id)
+    assert(inVertex.url == outVertex.url)
+  }
+
+  test("getImageNode [" + label + "]") {
+    val inVertex = ImageNode("imagenode/0", "http://graphbrain.com/test.jpg")
+    store.remove(inVertex)
+    store.put(inVertex)
+    
+    val outVertex = store.getImageNode("imagenode/0")
+    assert(outVertex.vtype == "image")
+    assert(inVertex.id == outVertex.id)
+    assert(inVertex.url == outVertex.url)
+  }
+
+  test("getSourceNode [" + label + "]") {
+    val inVertex = SourceNode("sourcenode/0")
+    store.remove(inVertex)
+    store.put(inVertex)
+    
+    val outVertex = store.getSourceNode("sourcenode/0")
+    assert(outVertex.vtype == "source")
+    assert(inVertex.id == outVertex.id)
   }
 
   test("add two node relationship [" + label + "]") {
