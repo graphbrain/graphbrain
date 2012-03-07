@@ -25,7 +25,7 @@ abstract class Vertex {
 
 
 case class Edge(id: String, etype: String, edges: Set[String]=Set[String]()) extends Vertex {
-  override val vtype: String = "edge"
+  override val vtype: String = "edg"
 
   def this(etype:String, participants: Array[String]) =
     this((List[String](etype) ++ participants).reduceLeft(_ + " " + _),
@@ -49,7 +49,7 @@ object Edge {
 case class EdgeType(id: String, label: String, roles: List[String],
   rolen: String, edges: Set[String]=Set[String]()) extends Vertex {
 
-  override val vtype: String = "etype"
+  override val vtype: String = "edgt"
   
   override def toMap: Map[String, Any] = toMapBase ++
     Map(("label" -> label), ("roles" -> iter2str(roles)), ("rolen" -> rolen))
@@ -59,7 +59,7 @@ case class EdgeType(id: String, label: String, roles: List[String],
 
 
 case class TextNode(id: String, text: String, edges: Set[String]=Set[String]()) extends Vertex {
-  override val vtype: String = "text"
+  override val vtype: String = "txt"
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("text" -> text))
 
@@ -77,7 +77,7 @@ case class URLNode(id: String, url: String, edges: Set[String]=Set[String]()) ex
 
 
 case class ImageNode(id: String, url: String, edges: Set[String]=Set[String]()) extends Vertex {
-  override val vtype: String = "image"
+  override val vtype: String = "img"
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("url" -> url))
 
@@ -86,7 +86,7 @@ case class ImageNode(id: String, url: String, edges: Set[String]=Set[String]()) 
 
 
 case class SourceNode(id: String, edges: Set[String]=Set[String]()) extends Vertex {
-  override val vtype: String = "source"
+  override val vtype: String = "src"
 
   override def toMap: Map[String, Any] = toMapBase
 

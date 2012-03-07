@@ -15,17 +15,17 @@ class VertexStore(storeName: String) extends VertexStoreInterface {
     val edges = str2iter(map.getOrElse("edges", "").toString).toSet
     val vtype = map.getOrElse("vtype", "")
     vtype match {
-      case "edge" => {
+      case "edg" => {
         val etype = map.getOrElse("etype", "").toString
         Edge(id, etype, edges)
       }
-      case "etype" => {
+      case "edgt" => {
         val label = map.getOrElse("label", "").toString
         val roles = str2iter(map.getOrElse("roles", "").toString).toList
         val rolen = map.getOrElse("rolen", "").toString
         EdgeType(id, label, roles, rolen, edges)
       }
-      case "text" => {
+      case "txt" => {
         val text = map.getOrElse("text", "").toString
         TextNode(id, text, edges)
       }
@@ -33,10 +33,10 @@ class VertexStore(storeName: String) extends VertexStoreInterface {
         val url = map.getOrElse("url", "").toString
         URLNode(id, url, edges)
       }
-      case "source" => {
+      case "src" => {
         SourceNode(id, edges)
       }
-      case "image" => {
+      case "img" => {
         val url = map.getOrElse("url", "").toString
         ImageNode(id, url, edges)
       }
