@@ -6,7 +6,7 @@ import scala.collection.mutable.{Set => MSet}
   *
   * Implements and hypergraph database on top of a key/Map store. 
   */
-class VertexStore(storeName: String) extends VertexStoreInterface {
+class VertexStore(storeName: String, val maxEdges: Int = 1000) extends VertexStoreInterface {
   val backend: Backend = new RiakBackend(storeName)
 
   /** Gets Vertex by it's id */
@@ -14,31 +14,32 @@ class VertexStore(storeName: String) extends VertexStoreInterface {
     val map = backend.get(id)
     val edges = str2iter(map.getOrElse("edges", "").toString).toSet
     val vtype = map.getOrElse("vtype", "")
+    val extra = map.getOrElse("extra", "-1").toString.toInt
     vtype match {
       case "edg" => {
         val etype = map.getOrElse("etype", "").toString
-        Edge(id, etype, edges)
+        Edge(id, etype, edges, extra)
       }
       case "edgt" => {
         val label = map.getOrElse("label", "").toString
         val roles = str2iter(map.getOrElse("roles", "").toString).toList
         val rolen = map.getOrElse("rolen", "").toString
-        EdgeType(id, label, roles, rolen, edges)
+        EdgeType(id, label, roles, rolen, edges, extra)
       }
       case "txt" => {
         val text = map.getOrElse("text", "").toString
-        TextNode(id, text, edges)
+        TextNode(id, text, edges, extra)
       }
       case "url" => {
         val url = map.getOrElse("url", "").toString
-        URLNode(id, url, edges)
+        URLNode(id, url, edges, extra)
       }
       case "src" => {
-        SourceNode(id, edges)
+        SourceNode(id, edges, extra)
       }
       case "img" => {
         val url = map.getOrElse("url", "").toString
-        ImageNode(id, url, edges)
+        ImageNode(id, url, edges, extra)
       }
       case _  => ErrorVertex("unkown vtype: " + vtype)
     }
@@ -71,7 +72,16 @@ class VertexStore(storeName: String) extends VertexStoreInterface {
     val edge = new Edge(edgeType, participants)
     put(edge)
 
-    for (nodeId <- participants) update(get(nodeId).addEdge(edge.id))
+    for (id <- participants) {
+      val vertex = get(id)
+      val extra = if (vertex.extra >= 0) vertex.extra else 0
+      var done = false
+      while (!done) {
+        val tryId = if (extra == 0) edge.id else edge.id + "/" + extra 
+        update(vertex.addEdge(edge.id))
+        done = true
+      }
+    }
 
     edge
   }
