@@ -15,17 +15,33 @@ object WikiCinemaCrawler {
   
   val film_list_stub = "List_of_films:_"
   val list_pages = List[String]("numbers", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J-K", "L", "M", "N-O", "P", "Q-R", "S", "T", "U-W", "X-Z")
+  val producerRegex=""".*(producer).*=""".r
   
   
+
   def process_page(wptitle:String):Unit={
     val wpage = Wikipedia.getPage(wptitle)
-    val sections = Wikipedia.page2sections(wpage)
-
-    
-    val lines = sections("").split("\n");
+    val infoBoxItems = Wikipedia.getInfobox(wpage)
+    val iterKeys=infoBoxItems.keys
+    for(key <- iterKeys)
+    {
+      key match{
+            case "producer" => println("producer: "+ infoBoxItems.get(key))
+            case "writer" => println("writer: "+ infoBoxItems.get(key))
+            case "director" => println("director: "+ infoBoxItems.get(key))
+            case "music" => println("musician: " + infoBoxItems.get(key))
+            case "starring" => println("starring: " + infoBoxItems.get(key))
+            case "image" => println("image: " + infoBoxItems.get(key))
+            case "poster" => println("poster: " + infoBoxItems.get(key))
+          }
+    }
+        
+   /* val lines = sections("").split("\n");
     for(ln <- lines)
     {
+
       val l = ln.trim;
+
       if(l.length>1&&l(0)=='|')
       {
         val prop = l.replace("|", "").split("=");
@@ -65,7 +81,7 @@ object WikiCinemaCrawler {
         }
 
       }
-    }
+    }*/
   }
 
   
@@ -74,26 +90,27 @@ object WikiCinemaCrawler {
     var count = 0
     var inserted = 0
     
-
+  
     for(l <- WikiCinemaCrawler.list_pages){
         val title = film_list_stub+l;
         val page = Wikipedia.getPage(title)
 
         val films = Wikipedia.getLinks(page)
         for(f <- films){
+          while(count<10){
           try{
-              val film_page = Wikipedia.getPage(Formatting.wikiLink(f))
-              
-              process_page(film_page)
+        
+              process_page(Formatting.wikiLink(f))
               count+=1;
               inserted+=1      
           }
           catch {
-            case _ => println(f); count+=1
+            case _ => println("Exception: " + f); count+=1
           }
         }
       }
-      println("Total: "+ count.toString + ", Inserted: " + inserted.toString)
+    }
+    println("Total: "+ count.toString + ", Inserted: " + inserted.toString)
   }
 
 }

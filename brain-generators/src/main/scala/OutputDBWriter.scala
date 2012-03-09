@@ -25,23 +25,28 @@ class OutputDBWriter(storeName:String, source:String) {
 		
 		val n1RNode = URLNode(ID.url_id(wikiURL+N1Wiki), wikiURL+N1Wiki)
 		val n2RNode = URLNode(ID.url_id(wikiURL+N2Wiki), wikiURL+N2Wiki)
+		store.put(n1)
+		store.put(n2)
+		store.put(n1RNode)
+		store.put(n2RNode)
+
 		store.addrel("en_wikipage", Array[String](n1RNode.id, n1.id))
-		
 		store.addrel("en_wikipage", Array[String](n2RNode.id, n2.id))
-		
 		store.addrel("source", Array[String](sourceNode.id, n1.id))
-		
 		store.addrel("source", Array[String](sourceNode.id, n2.id))
 		
 		
 						
 		//The id for the relationship between two nodes
 		val relID = getRelID(rel, n1.id, n2.id)
+		
+
 		store.addrel(rel, Array[String](ID.wikipedia_id(node1), ID.wikipedia_id(node2)))
 		
 		if(resource!="")
 		{
 			val resourceNode = URLNode(ID.url_id(resource), resource)	
+			store.put(resourceNode)
 			//Only the explicit reference in the DBPedia record is included - the Wikipedia pages to the nodes are not.
 			store.addrel("source", Array[String](sourceNode.id, resourceNode.id))
 			store.addrel("en_wikipage_line", Array[String](resourceNode.id, relID))
@@ -54,6 +59,8 @@ class OutputDBWriter(storeName:String, source:String) {
   	{
   		val sourceNode=SourceNode(id=ID.source_id(sourceID))
 	    val urlNode=URLNode(ID.url_id(sourceURL), sourceURL)
+	    store.put(sourceNode)
+	    store.put(urlNode)
 	    store.addrel("source", Array[String](sourceNode.id, urlNode.id))
   	}
 

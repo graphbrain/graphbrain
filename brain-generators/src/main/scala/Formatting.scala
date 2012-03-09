@@ -19,13 +19,13 @@ object Formatting {
     	norm_title=norm_title.replace("_", " ")
       
     	return norm_title
-  	}
+  }
 
-  	def wikiLink(title:String):String ={
-  		return title.replace(" ", "_").toLowerCase
-  	}
+  def wikiLink(title:String):String ={
+  		return title.replace(" ", "_")
+  }
 
-    def isCategory(titleString:String):Boolean=
+  def isCategory(titleString:String):Boolean=
   {
     return CategoryRegex.findAllIn(titleString).hasNext
   }

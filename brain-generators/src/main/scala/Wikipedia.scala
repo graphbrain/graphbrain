@@ -15,6 +15,7 @@ object Wikipedia {
 	val WikiLinkRegex="""\[\[([^\]]*)\]\]""".r
   	val CategoryRegex="""category\:.*""".r
   	val IrregularTitleRegex=""".*\:.*""".r
+    val infoboxRegex="""\{\{Infobox.*\}\}""".r
 
   def getPage(title:String, baseURL:String=wikipediaBaseURL, getRaw:Boolean=true):String={
     	var pageURL = baseURL +title.replace(" ", "_")
@@ -69,6 +70,38 @@ object Wikipedia {
   	else
   		text = s.trim
   	return(text, link)
+  }
+
+  def br_list(s:String):Array[String]=
+  {
+
+    return s.split("<br>")
+  }
+    
+
+  def getInfobox(content:String):HashMap[String, Array[String]]=
+  {
+    var infoItems:HashMap[String, Array[String]]= new HashMap
+    val infobox=infoboxRegex.findAllIn(content);
+    if(infobox.hasNext)
+    {
+      val items = infobox.next.split('|')
+      for(item <- items)
+      {
+        if(item.contains('='))
+        {
+          val splitItems = item.split('=')
+          val fieldname=splitItems(0)
+          val values = splitItems(1)
+          infoItems.update(fieldname, values.split("<br>"))
+
+        }
+        
+      }
+      
+    }
+    return infoItems
+    
   }
 
   def page2sections(content:String):HashMap[String, String]=
