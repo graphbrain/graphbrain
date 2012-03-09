@@ -18,5 +18,24 @@ class ExtraVerticesTest extends FunSuite {
     val newNode0 = store.getTextNode("node0")
     assert(newNode0.extra == 9)
     assert(newNode0.edges.size == 10)
+    assert(newNode0.edges.contains("test node0 node1"))
+    assert(newNode0.edges.contains("test node0 node10"))
+    assert(!newNode0.edges.contains("test node0 node11"))
+
+    val extra1 = store.getExtraEdges("node0/1")
+    assert(extra1.id != "")
+    assert(!extra1.edges.contains("test node0 node10"))
+    assert(extra1.edges.contains("test node0 node11"))
+    assert(extra1.edges.contains("test node0 node20"))
+    assert(!extra1.edges.contains("test node0 node21"))
+
+    val extra9 = store.getExtraEdges("node0/9")
+    assert(extra9.id != "")
+    assert(!extra9.edges.contains("test node0 node90"))
+    assert(extra9.edges.contains("test node0 node91"))
+    assert(extra9.edges.contains("test node0 node100"))
+
+    val extra10 = store.getExtraEdges("node0/10")
+    assert(extra10.id == "")
   }
 }

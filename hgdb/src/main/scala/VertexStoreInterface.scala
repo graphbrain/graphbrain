@@ -13,6 +13,13 @@ abstract trait VertexStoreInterface {
   	}
   }
 
+  def getExtraEdges(id: String): ExtraEdges = {
+    get(id) match {
+      case x: ExtraEdges => x
+      case _ => ExtraEdges()
+    }
+  }
+
   def getEdgeType(id: String): EdgeType = {
   	get(id) match {
   		case x: EdgeType => x
