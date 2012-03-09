@@ -12,7 +12,7 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000) extends VertexSto
   /** Gets Vertex by it's id */
   override def get(id: String): Vertex = {
     val map = backend.get(id)
-    val edges = str2iter(map.getOrElse("edges", "").toString).toSet
+    val edges = VertexStore.str2iter(map.getOrElse("edges", "").toString).toSet
     val vtype = map.getOrElse("vtype", "")
     val extra = map.getOrElse("extra", "-1").toString.toInt
     vtype match {
@@ -20,9 +20,12 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000) extends VertexSto
         val etype = map.getOrElse("etype", "").toString
         Edge(id, etype, edges, extra)
       }
+      case "ext" => {
+        ExtraEdges(id, edges, extra)
+      }
       case "edgt" => {
         val label = map.getOrElse("label", "").toString
-        val roles = str2iter(map.getOrElse("roles", "").toString).toList
+        val roles = VertexStore.str2iter(map.getOrElse("roles", "").toString).toList
         val rolen = map.getOrElse("rolen", "").toString
         EdgeType(id, label, roles, rolen, edges, extra)
       }
@@ -41,6 +44,7 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000) extends VertexSto
         val url = map.getOrElse("url", "").toString
         ImageNode(id, url, edges, extra)
       }
+      case ""  => ErrorVertex("vertex does not exist")
       case _  => ErrorVertex("unkown vtype: " + vtype)
     }
   }
@@ -57,9 +61,24 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000) extends VertexSto
     vertex
   }
 
+  /** Chech if vertex exists on database */
+  def exists(id: String): Boolean = get(id).id != ""
+
   /** Removes vertex from database */
   override def remove(vertex: Vertex): Vertex = {
     backend.remove(vertex.id)
+    var extra = 1
+    var done = false
+    while (!done){
+      val extraId = VertexStore.extraId(vertex.id, extra)
+      if (exists(extraId)) {
+        backend.remove(extraId)
+        extra += 1
+      }
+      else {
+        done = true
+      }
+    }
     vertex
   }
 
@@ -74,12 +93,38 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000) extends VertexSto
 
     for (id <- participants) {
       val vertex = get(id)
-      val extra = if (vertex.extra >= 0) vertex.extra else 0
+      val origExtra = if (vertex.extra >= 0) vertex.extra else 0
+      var extra = origExtra
       var done = false
       while (!done) {
-        val tryId = if (extra == 0) edge.id else edge.id + "/" + extra 
-        update(vertex.addEdge(edge.id))
-        done = true
+        if (extra == 0) {
+          if (vertex.edges.size < maxEdges) {
+            done = true;
+            update(vertex.setEdges(vertex.edges + edge.id).setExtra(extra))
+          }
+          else {
+            extra += 1
+          }
+        }
+        else {
+          val extraId = VertexStore.extraId(id, extra)
+          val extraEdges = get(extraId)
+          if (extraEdges.id == "") {
+            done = true
+            put(ExtraEdges(extraId, Set[String](edge.id)))
+            update(vertex.setExtra(extra))
+          }
+          else if (extraEdges.edges.size < maxEdges) {
+            done = true;
+            update(extraEdges.setEdges(extraEdges.edges + edge.id))
+            if (origExtra != extra) {
+              update(vertex.setExtra(extra))
+            }
+          }
+          else {
+            extra += 1
+          }
+        }
       }
     }
 
@@ -95,7 +140,10 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000) extends VertexSto
     val edge = new Edge(edgeType, participants)
     remove(edge)
 
-    for (nodeId <- participants) update(get(nodeId).delEdge(edge.id))
+    for (nodeId <- participants) {
+      val node = get(nodeId)
+      update(node.setEdges(node.edges - edge.id))
+    }
 
     edge
   }
@@ -140,13 +188,15 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000) extends VertexSto
     }
     eset.toSet
   }
+}
+
+object VertexStore {
+  def apply(storeName: String) = new VertexStore(storeName)
 
   private def str2iter(str: String) = {
     (for (str <- str.split(',') if str != "")
       yield str.replace("$2", ",").replace("$1", "$")).toIterable
   }
-}
 
-object VertexStore {
-  def apply(storeName: String) = new VertexStore(storeName)
+  private def extraId(id: String, pos: Int) =  id + "/" + pos
 } 

@@ -8,12 +8,10 @@ abstract class Vertex {
   val extra: Int
   
   def toMap: Map[String, Any]
-  protected def toMapBase: Map[String, Any] = Map(("vtype" -> vtype), ("edges" -> iter2str(edges)))
+  protected def toMapBase: Map[String, Any] = Map(("vtype" -> vtype), ("edges" -> iter2str(edges)), ("extra" -> extra))
   
   def setEdges(newEdges: Set[String]): Vertex
-
-  def addEdge(edgeId: String): Vertex = setEdges(edges + edgeId)
-  def delEdge(edgeId: String): Vertex = setEdges(edges - edgeId)
+  def setExtra(newExtra: Int): Vertex
 
   protected def iter2str(iter: Iterable[String]) = {
     if (iter.size == 0)
@@ -25,7 +23,7 @@ abstract class Vertex {
 }
 
 
-case class Edge(id: String, etype: String, edges: Set[String]=Set[String](), extra: Int = -1) extends Vertex {
+case class Edge(id: String="", etype: String="", edges: Set[String]=Set[String](), extra: Int = -1) extends Vertex {
   override val vtype: String = "edg"
 
   def this(etype:String, participants: Array[String]) =
@@ -34,7 +32,8 @@ case class Edge(id: String, etype: String, edges: Set[String]=Set[String](), ext
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("etype" -> etype))
 
-  def setEdges(newEdges: Set[String]) = Edge(id, etype, newEdges)
+  def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
+  def setExtra(newExtra: Int) = copy(extra=newExtra)
 
   def participantIds = Edge.participantIds(id)
 }
@@ -44,54 +43,67 @@ object Edge {
     val tokens = edgeId.split(' ')
     for (i <- 1 until tokens.length) yield tokens(i)
   } 
+}
+
+case class ExtraEdges(id: String="", edges: Set[String]=Set[String](), extra: Int = -1) extends Vertex {
+  override val vtype: String = "ext"
+
+  override def toMap: Map[String, Any] = toMapBase
+
+  def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
+  def setExtra(newExtra: Int) = copy(extra=newExtra)
 } 
 
-
-case class EdgeType(id: String, label: String, roles: List[String],
-  rolen: String, edges: Set[String]=Set[String](), extra: Int = -1) extends Vertex {
+case class EdgeType(id: String="", label: String="", roles: List[String]=List[String](),
+  rolen: String="", edges: Set[String]=Set[String](), extra: Int = -1) extends Vertex {
 
   override val vtype: String = "edgt"
   
   override def toMap: Map[String, Any] = toMapBase ++
     Map(("label" -> label), ("roles" -> iter2str(roles)), ("rolen" -> rolen))
 
-  def setEdges(newEdges: Set[String]) = EdgeType(id, label, roles, rolen, newEdges)
+  def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
+  def setExtra(newExtra: Int) = copy(extra=newExtra)
 }
 
 
-case class TextNode(id: String, text: String, edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
+case class TextNode(id: String="", text: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
   override val vtype: String = "txt"
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("text" -> text))
 
-  def setEdges(newEdges: Set[String]) = TextNode(id, text, newEdges)
+  def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
+  def setExtra(newExtra: Int) = copy(extra=newExtra)
 }
 
 
-case class URLNode(id: String, url: String, edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
+case class URLNode(id: String="", url: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
   override val vtype: String = "url"
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("url" -> url))
 
-  def setEdges(newEdges: Set[String]) = URLNode(id, url, newEdges)
+  def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
+  def setExtra(newExtra: Int) = copy(extra=newExtra)
 }
 
 
-case class ImageNode(id: String, url: String, edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
+case class ImageNode(id: String="", url: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
   override val vtype: String = "img"
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("url" -> url))
 
-  def setEdges(newEdges: Set[String]) = ImageNode(id, url, newEdges)
+  def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
+  def setExtra(newExtra: Int) = copy(extra=newExtra)
 }
 
 
-case class SourceNode(id: String, edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
+case class SourceNode(id: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
   override val vtype: String = "src"
 
   override def toMap: Map[String, Any] = toMapBase
 
-  def setEdges(newEdges: Set[String]) = SourceNode(id, newEdges)
+  def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
+  def setExtra(newExtra: Int) = copy(extra=newExtra)
 }
 
 
@@ -105,4 +117,5 @@ case class ErrorVertex(message: String) extends Vertex {
   override def toMap: Map[String, Any] = null
 
   def setEdges(newEdges: Set[String]) = ErrorVertex(message)
+  def setExtra(newExtra: Int) = ErrorVertex(message)
 }
