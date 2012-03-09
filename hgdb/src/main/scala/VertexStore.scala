@@ -86,6 +86,8 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000) extends VertexSto
     * 
     * An edge is creted and participant nodes are updated with a reference to that edge
     * in order to represent a new relationship on the database.
+    * maxEdges limit is respected. If the number of edges stored in a participant reaches
+    * this value, ExtraEdges vertices are created and updaed to store the edges.
     */
   def addrel(edgeType: String, participants: Array[String]) = {
     val edge = new Edge(edgeType, participants)
@@ -142,7 +144,34 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000) extends VertexSto
 
     for (nodeId <- participants) {
       val node = get(nodeId)
-      update(node.setEdges(node.edges - edge.id))
+      // vertex never had extra edges if edges == -1
+      if (node.extra < 0) {
+        update(node.setEdges(node.edges - edge.id))
+      }
+      else {
+        var done = false
+        var extra = 0
+        if (node.edges.contains(edge.id)) {
+          done = true
+          update(node.setEdges(node.edges - edge.id))
+        }
+        while (!done) {
+          extra += 1
+          val extraEdges = get(VertexStore.extraId(nodeId, extra))
+          // this should now happen
+          if (extraEdges.id == "") {
+
+          }
+          else if (extraEdges.edges.contains(edge.id)) {
+            done = true
+            update(extraEdges.setEdges(extraEdges.edges - edge.id))
+          }
+        }
+
+        // update extra on participant if needed
+        // this idea is to reuse slots that get released on ExtraEdges associated with vertices
+        if (node.extra != extra) update(get(nodeId).setExtra(extra))
+      }
     }
 
     edge
