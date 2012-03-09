@@ -9,42 +9,42 @@ abstract trait VertexStoreInterface {
   def getEdge(id: String): Edge = {
   	get(id) match {
   		case x: Edge => x
-  		case _ => null
+  		case _ => Edge()
   	}
   }
 
   def getEdgeType(id: String): EdgeType = {
   	get(id) match {
   		case x: EdgeType => x
-  		case _ => null
+  		case _ => EdgeType()
   	}
   }
 
   def getTextNode(id: String): TextNode = {
   	get(id) match {
   		case x: TextNode => x
-  		case _ => null
+  		case _ => TextNode()
   	}
   }
 
   def getURLNode(id: String): URLNode = {
   	get(id) match {
   		case x: URLNode => x
-  		case _ => null
+  		case _ => URLNode()
   	}
   }
 
   def getSourceNode(id: String): SourceNode = {
   	get(id) match {
   		case x: SourceNode => x
-  		case _ => null
+  		case _ => SourceNode()
   	}
   }
 
   def getImageNode(id: String): ImageNode = {
   	get(id) match {
   		case x: ImageNode => x
-  		case _ => null
+  		case _ => ImageNode()
   	}
   }
 }

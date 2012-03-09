@@ -18,6 +18,41 @@ trait BaseVertexStoreTests { this: FunSuite =>
     assert(vertex.id == vertexOut.id)
   }
 
+  test("get Vertex that does not exist [" + label + "]") {
+    val outVertex = store.get("sdfh89g89gdf")
+    assert(outVertex.id == "")
+  }
+
+  test("get Edge that does not exist [" + label + "]") {
+    val outVertex = store.getEdge("sdfh89g89gdf")
+    assert(outVertex.id == "")
+  }
+
+  test("get EdgeType that does not exist [" + label + "]") {
+    val outVertex = store.getEdgeType("sdfh89g89gdf")
+    assert(outVertex.id == "")
+  }
+
+  test("get TextNode that does not exist [" + label + "]") {
+    val outVertex = store.getTextNode("sdfh89g89gdf")
+    assert(outVertex.id == "")
+  }
+
+  test("get URLNode that does not exist [" + label + "]") {
+    val outVertex = store.getURLNode("sdfh89g89gdf")
+    assert(outVertex.id == "")
+  }
+
+  test("get ImageNode that does not exist [" + label + "]") {
+    val outVertex = store.getImageNode("sdfh89g89gdf")
+    assert(outVertex.id == "")
+  }
+
+  test("get SourceNode that does not exist [" + label + "]") {
+    val outVertex = store.getSourceNode("sdfh89g89gdf")
+    assert(outVertex.id == "")
+  }
+
   test("getTextNode [" + label + "]") {
     val inVertex = TextNode("textnode/0", "testing TextNode")
     store.remove(inVertex)
