@@ -2,6 +2,11 @@ package com.graphbrain.hgdb
 
 import scala.collection.mutable.{Set => MSet}
 
+
+class VertexStoreException(val message: String) extends Exception {
+  override def toString = {"VertexStoreException: " + message}
+}
+
 /** Vertex store.
   *
   * Implements and hypergraph database on top of a key/Map store. 
@@ -95,6 +100,7 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000) extends VertexSto
 
     for (id <- participants) {
       val vertex = get(id)
+      if (vertex.id == "") throw new VertexStoreException("vertex " + id + " does not exist. (addrel)")
       val origExtra = if (vertex.extra >= 0) vertex.extra else 0
       var extra = origExtra
       var done = false

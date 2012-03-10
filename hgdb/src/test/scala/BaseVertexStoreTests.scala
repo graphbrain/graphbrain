@@ -9,6 +9,10 @@ trait BaseVertexStoreTests { this: FunSuite =>
 
   def baseTests(store: VertexStore, label: String) {
 
+  test("addrel with inexistant vertex [" + label + "]") {
+    //store.addrel("test", Array("dummy1", "dummy2"))
+  }  
+
   test("put/get Vertex [" + label + "]") {
     val vertex = TextNode("vertex0", "vertex0")
     store.remove(vertex)
