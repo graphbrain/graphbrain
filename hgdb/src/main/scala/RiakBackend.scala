@@ -8,8 +8,8 @@ import com.basho.riak.client.bucket.Bucket
 
 /** Interface to Riak, a distributed key/value store. */
 class RiakBackend(val bucketName: String) extends Backend {
-	val conf = new HTTPClientConfig.Builder().withHost("127.0.0.1").withPort(8098).build()
-  //val conf = new HTTPClientConfig.Builder().withHost("192.168.129.4").withPort(8098).build()
+	//val conf = new HTTPClientConfig.Builder().withHost("127.0.0.1").withPort(8098).build()
+  val conf = new HTTPClientConfig.Builder().withHost("192.168.129.4").withPort(8098).build()
   val client = RiakFactory.newClient(conf)
   val bucket = client.createBucket(bucketName).execute()
 
