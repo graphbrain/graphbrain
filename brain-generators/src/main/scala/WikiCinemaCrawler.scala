@@ -31,13 +31,13 @@ object WikiCinemaCrawler {
     {
       println(key)
       key match{
-            case "producer" => processField("producer", infoBoxItems.getOrElse("producer", Array()), Formatting.normalizeWikiTitle(wptitle))
-            case "writer" => processField("writer", infoBoxItems.getOrElse("writer", Array()), Formatting.normalizeWikiTitle(wptitle))
-            case "director" => processField("director", infoBoxItems.getOrElse("director", Array()), Formatting.normalizeWikiTitle(wptitle))
-            case "music" => processField("music", infoBoxItems.getOrElse("music", Array()), Formatting.normalizeWikiTitle(wptitle))
-            case "starring" => processField("starring", infoBoxItems.getOrElse("starring", Array()), Formatting.normalizeWikiTitle(wptitle))
-            case "image" => processField("image", infoBoxItems.getOrElse("image", Array()), Formatting.normalizeWikiTitle(wptitle))
-            case "poster" => processField("poster", infoBoxItems.getOrElse("poster", Array()), Formatting.normalizeWikiTitle(wptitle))
+            case "producer" => processField("producer", infoBoxItems.getOrElse("producer", Array[String]()), Formatting.normalizeWikiTitle(wptitle))
+            case "writer" => processField("writer", infoBoxItems.getOrElse("writer", Array[String]()), Formatting.normalizeWikiTitle(wptitle))
+            case "director" => processField("director", infoBoxItems.getOrElse("director", Array[String]()), Formatting.normalizeWikiTitle(wptitle))
+            case "music" => processField("music", infoBoxItems.getOrElse("music", Array[String]()), Formatting.normalizeWikiTitle(wptitle))
+            case "starring" => processField("starring", infoBoxItems.getOrElse("starring", Array[String]()), Formatting.normalizeWikiTitle(wptitle))
+            case "image" => processField("image", infoBoxItems.getOrElse("image", Array[String]()), Formatting.normalizeWikiTitle(wptitle))
+            case "poster" => processField("poster", infoBoxItems.getOrElse("poster", Array[String]()), Formatting.normalizeWikiTitle(wptitle))
             case _ => 
           }
     }
@@ -79,7 +79,7 @@ object WikiCinemaCrawler {
         val films = Wikipedia.getLinks(page)
         
         for(f <- films){
-          while(count<1){
+          
           
           try{
         
@@ -91,7 +91,7 @@ object WikiCinemaCrawler {
             case _ => println("Exception: " + f); count+=1
           }
         }
-      }
+      
     }
     println("Total: "+ count.toString + ", Inserted: " + inserted.toString)
   }
