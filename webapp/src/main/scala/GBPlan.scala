@@ -12,11 +12,33 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
     case GET(Path("/")) => 
       logger.debug("GET /")
       ComingSoon()
-    case GET(Path("/search")) => 
-      logger.debug("GET /search")
-      SearchPage()
-    case GET(Path("/node")) => 
-      logger.debug("GET /node")
-      NodePage("welcome/graphbrain")
+    case GET(Path("/secret")) => 
+      logger.debug("GET /secret")
+      Redirect("/node/welcome/graphbrain")
+    case GET(Path(Seg("node" :: n1 :: Nil))) => {
+      val id = n1 
+      logger.debug("GET " + id)
+      NodePage(id)
+    }
+    case GET(Path(Seg("node" :: n1 :: n2 :: Nil))) => {
+      val id = n1 + "/" + n2 
+      logger.debug("GET " + id)
+      NodePage(id)
+    }
+    case GET(Path(Seg("node" :: n1 :: n2 :: n3 :: Nil))) => {
+      val id = n1 + "/" + n2 + "/" + n3
+      logger.debug("GET " + id)
+      NodePage(id)
+    }
+    case GET(Path(Seg("node" :: n1 :: n2 :: n3 :: n4 :: Nil))) => {
+      val id = n1 + "/" + n2 + "/" + n3 + "/" + n4
+      logger.debug("GET " + id)
+      NodePage(id)
+    }
+    case GET(Path(Seg("node" :: n1 :: n2 :: n3 :: n4 :: n5 :: Nil))) => {
+      val id = n1 + "/" + n2 + "/" + n3 + "/" + n4 + "/" + n5
+      logger.debug("GET " + id)
+      NodePage(id)
+    }
   }
 }
