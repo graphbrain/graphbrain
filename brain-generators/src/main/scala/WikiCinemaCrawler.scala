@@ -15,73 +15,52 @@ object WikiCinemaCrawler {
   
   val film_list_stub = "List_of_films:_"
   val list_pages = List[String]("numbers", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J-K", "L", "M", "N-O", "P", "Q-R", "S", "T", "U-W", "X-Z")
-  val producerRegex=""".*(producer).*=""".r
-  
-  
+  val fields = List[String]("producer", "writer", "director", "music", "starring", "image", "poster")
+  val fieldRelationMap=Map("producer"->"produced", "director"->"directed", "writer"->"wrote", "music"->"music", "starring"->"starred in", "image"->"image", "poster"->"poster")
+  val personFields=List[String]("image", "birth_place")
 
   def process_page(wptitle:String):Unit={
+   
     val wpage = Wikipedia.getPage(wptitle)
-    val infoBoxItems = Wikipedia.getInfobox(wpage)
+    println(wpage.length)
+    val infoBoxItems=Wikipedia.getInfobox(wpage, WikiCinemaCrawler.fields)
     val iterKeys=infoBoxItems.keys
+    
+
     for(key <- iterKeys)
     {
+      println(key)
       key match{
-            case "producer" => println("producer: "+ infoBoxItems.get(key))
-            case "writer" => println("writer: "+ infoBoxItems.get(key))
-            case "director" => println("director: "+ infoBoxItems.get(key))
-            case "music" => println("musician: " + infoBoxItems.get(key))
-            case "starring" => println("starring: " + infoBoxItems.get(key))
-            case "image" => println("image: " + infoBoxItems.get(key))
-            case "poster" => println("poster: " + infoBoxItems.get(key))
+            case "producer" => processField("producer", infoBoxItems.getOrElse("producer", Array()), Formatting.normalizeWikiTitle(wptitle))
+            case "writer" => processField("writer", infoBoxItems.getOrElse("writer", Array()), Formatting.normalizeWikiTitle(wptitle))
+            case "director" => processField("director", infoBoxItems.getOrElse("director", Array()), Formatting.normalizeWikiTitle(wptitle))
+            case "music" => processField("music", infoBoxItems.getOrElse("music", Array()), Formatting.normalizeWikiTitle(wptitle))
+            case "starring" => processField("starring", infoBoxItems.getOrElse("starring", Array()), Formatting.normalizeWikiTitle(wptitle))
+            case "image" => processField("image", infoBoxItems.getOrElse("image", Array()), Formatting.normalizeWikiTitle(wptitle))
+            case "poster" => processField("poster", infoBoxItems.getOrElse("poster", Array()), Formatting.normalizeWikiTitle(wptitle))
+            case _ => 
           }
     }
         
-   /* val lines = sections("").split("\n");
-    for(ln <- lines)
+  
+  }
+
+  def processField(field:String, values:Array[String], filmname:String):Unit=
+  {
+    println(field)
+    for(value<-values)
     {
-
-      val l = ln.trim;
-
-      if(l.length>1&&l(0)=='|')
+      value match
       {
-        val prop = l.replace("|", "").split("=");
-        if(prop.length>1)
-        {
-          val key = prop(0).trim
-          val value = prop(1).trim
-
-          key match{
-            case "producer" => println("producer: "+ value)
-            case "writer" => println("writer: "+ value)
-            case "director" => println("director: "+ value)
-            case "music" => println("musician: " + value)
-            case "starring" => println("starring: " + value)
-            case "image" => println("image: " + value)
-            case "poster" => println("poster: " + value)
-          }
-        }
+        case a:String => println(a+","+WikiCinemaCrawler.fieldRelationMap(field)+","+ filmname);
+        case _ =>
       }
     }
+  }
 
-    val castlist = sections.getOrElse("cast", None);
-
-    if(castlist!=None)
-    {
-      val lines = sections("cast").split("\n")
-      for(ln <- lines)
-      {
-        val l=ln.trim
-        if(l.length>1&&l(0)=='*')
-        {
-          val role = l.replace("*", "").split(" as ");
-          val text_link = Wikipedia.text_and_or_link(role(0))
-          println("Role: "+role+", Text: " + text_link._1 + "Link: "+ text_link._2)
-
-
-        }
-
-      }
-    }*/
+  def processPerson():Unit=
+  {
+    
   }
 
   
@@ -89,6 +68,8 @@ object WikiCinemaCrawler {
   def main(args : Array[String]) : Unit = {
     var count = 0
     var inserted = 0
+
+    //val output = new OutputDBWriter("gb", sourceName)
     
   
     for(l <- WikiCinemaCrawler.list_pages){
@@ -96,8 +77,10 @@ object WikiCinemaCrawler {
         val page = Wikipedia.getPage(title)
 
         val films = Wikipedia.getLinks(page)
+        
         for(f <- films){
-          while(count<10){
+          while(count<1){
+          
           try{
         
               process_page(Formatting.wikiLink(f))
