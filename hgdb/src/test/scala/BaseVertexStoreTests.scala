@@ -1,5 +1,6 @@
 import org.scalatest.FunSuite
 import com.graphbrain.hgdb.VertexStore
+import com.graphbrain.hgdb.VertexStoreException
 import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.ImageNode
@@ -7,11 +8,7 @@ import com.graphbrain.hgdb.SourceNode
 
 trait BaseVertexStoreTests { this: FunSuite =>
 
-  def baseTests(store: VertexStore, label: String) {
-
-  test("addrel with inexistant vertex [" + label + "]") {
-    store.addrel("test", Array("dummy1", "dummy2"))
-  }  
+  def baseTests(store: VertexStore, label: String) {  
 
   test("put/get Vertex [" + label + "]") {
     val vertex = TextNode("vertex0", "vertex0")
@@ -201,5 +198,12 @@ trait BaseVertexStoreTests { this: FunSuite =>
     assert(store.neighborEdges(store.neighbors("node0", 3)) == Set[String](e01, e02, e03, e045, e56, e67))
     assert(store.neighborEdges(store.neighbors("node5", 2)) == Set[String](e01, e02, e03, e045, e56, e67))
   }
+
+  test("addrel with inexistant vertex [" + label + "]") {
+    intercept[VertexStoreException] {
+      store.addrel("test", Array("dummy1", "dummy2"))
+    }
+  }
+
   }
 }
