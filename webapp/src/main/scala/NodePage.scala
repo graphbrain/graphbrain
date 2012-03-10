@@ -29,24 +29,12 @@ case class NodePage(nodeId: String) extends Page {
     <div id="logo">
         <a href="/"><img src="/images/GB_logo_M.png" alt="graphbrain"/></a>
     </div>
-    <div id="modeButtons">
-        <div class="modeButton" id="dragModeButton">Move</div>
-        <div class="modeButton" id="addModeButton">Add</div>
-    </div>
     <div id="inputArea">
         <form action="/search" method="post">
             <input type="text" name="input" id="inputField" size="50" />
             <input type="hidden" name="graph_id" value="{{ graph_id }}" />
             <input type="hidden" name="node_id" value="{{ node_id }}" />
             <button type="submit" id="inputFieldButton">Search</button>
-        </form>
-    </div>
-    <div id="topRight">
-        
-        <a href="/logout">Logout</a> |
-        <a href="/createbrain">Create Brain</a> <br />
-        <form action="/selbrain" method="post" id="selbrainForm">
-            <select name="brainDropDown" onChange="this.form.submit()" />
         </form>
     </div>
     <div id="tip"></div>
