@@ -11,7 +11,7 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
   def intent = {
     case GET(Path("/")) => 
       logger.debug("GET /")
-      LoginPage()
+      ComingSoon()
     case GET(Path("/search")) => 
       logger.debug("GET /search")
       SearchPage()
