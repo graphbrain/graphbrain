@@ -100,7 +100,10 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000) extends VertexSto
 
     for (id <- participants) {
       val vertex = get(id)
-      if (vertex.id == "") throw new VertexStoreException("vertex " + id + " does not exist. (addrel)")
+      if (vertex.id == "") {
+        println("vertex " + id + " does not exist. (addrel)")
+        throw new VertexStoreException("vertex " + id + " does not exist. (addrel)")
+      }
       val origExtra = if (vertex.extra >= 0) vertex.extra else 0
       var extra = origExtra
       var done = false
