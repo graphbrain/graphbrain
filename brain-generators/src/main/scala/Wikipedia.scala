@@ -12,10 +12,11 @@ object Wikipedia {
   	val enWikiPath="en.wikipedia.org/wiki/"
   	val raw="&action=raw"
   	val ListRegex = """List(s?)\sof\s""".r
-	val WikiLinkRegex="""\[\[([^\]]*)\]\]""".r
+	 val WikiLinkRegex="""\[\[([^\]]*)\]\]""".r
   	val CategoryRegex="""category\:.*""".r
   	val IrregularTitleRegex=""".*\:.*""".r
-    val infoboxRegex="""\{\{Infobox.*\}\}""".r
+    val pipe="""\|""".r
+    
 
   def getPage(title:String, baseURL:String=wikipediaBaseURL, getRaw:Boolean=true):String={
     	var pageURL = baseURL +title.replace(" ", "_")
@@ -30,7 +31,7 @@ object Wikipedia {
     	{
       		val line=reader.readLine()
       		line match{
-        		case a:String => input+=line; 
+        		case a:String => input+=line+"\n"; 
         		case _ => return input;
       		}
 
@@ -79,25 +80,26 @@ object Wikipedia {
   }
     
 
-  def getInfobox(content:String):HashMap[String, Array[String]]=
+  def getInfobox(content:String, fields:List[String]):HashMap[String, Array[String]]=
   {
-    var infoItems:HashMap[String, Array[String]]= new HashMap
-    val infobox=infoboxRegex.findAllIn(content);
-    if(infobox.hasNext)
+    var infoItems:HashMap[String, Array[String]] = new HashMap
+    val lines = content.split('\n')
+    for(line <- lines)
     {
-      val items = infobox.next.split('|')
-      for(item <- items)
-      {
-        if(item.contains('='))
-        {
-          val splitItems = item.split('=')
-          val fieldname=splitItems(0)
-          val values = splitItems(1)
-          infoItems.update(fieldname, values.split("<br>"))
 
+      if(line.contains('='))
+      {
+        
+        val splitItems = line.split('=')
+        val fieldname=pipe.replaceAllIn(splitItems(0), "").trim
+        if(fields.contains(fieldname))
+        {
+          val values = splitItems(1)
+          infoItems.update(fieldname, values.split("<br>"))  
         }
         
-      }
+
+      } 
       
     }
     return infoItems
