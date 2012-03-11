@@ -67,7 +67,7 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000) extends VertexSto
       get(id)
     }
     catch {
-      case _ => false
+      case _ => return false
     }
     true
   }
@@ -117,8 +117,8 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000) extends VertexSto
         }
         else {
           val extraId = VertexStore.extraId(id, extra)
-          val extraEdges = get(extraId)
-          if (extraEdges.id == "") {
+          val extraEdges = getOrNull(extraId)
+          if (extraEdges == null) {
             done = true
             put(ExtraEdges(extraId, Set[String](edge.id)))
             update(vertex.setExtra(extra))

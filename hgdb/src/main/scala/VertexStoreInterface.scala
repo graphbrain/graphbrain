@@ -6,6 +6,15 @@ abstract trait VertexStoreInterface {
   def update(vertex: Vertex): Vertex
   def remove(vertex: Vertex): Vertex
 
+  def getOrNull(id: String): Vertex = {
+    try {
+      get(id)
+    }
+    catch {
+      case e: KeyNotFound => null
+    }
+  }
+
   def getEdge(id: String): Edge = {
   	get(id) match {
   		case x: Edge => x
