@@ -18,7 +18,7 @@ class RiakBackend(val bucketName: String) extends Backend {
     val value = bucket.fetch(id).execute()
     value match {
       case s: IRiakObject => str2map(s.getValueAsString)
-      case _ => Map[String, Any]()
+      case _ => throw KeyNotFound("id")
     }
   }
 

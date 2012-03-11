@@ -4,6 +4,7 @@ import com.graphbrain.hgdb.TextNode
 
 
 class ExtraVerticesTest extends FunSuite {
+/*
   val store = new VertexStore("testhgdb", 10)
 
   test("100 edges on a 10 edge limit per vertex") {
@@ -76,5 +77,5 @@ class ExtraVerticesTest extends FunSuite {
     store.delrel("test", Array("node0", "node1"))
     assert(!store.get("node0").edges.contains("test node0 node1"))
     assert(store.get("node0").extra == 0)
-  }
+  }*/
 }

@@ -3,8 +3,6 @@ package com.graphbrain.hgdb
 import scala.collection.mutable.{Set => MSet}
 
 
-class VertexStoreException(message: String) extends Exception(message)
-
 /** Vertex store.
   *
   * Implements and hypergraph database on top of a key/Map store. 
@@ -47,8 +45,7 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000) extends VertexSto
         val url = map.getOrElse("url", "").toString
         ImageNode(id, url, edges, extra)
       }
-      case ""  => ErrorVertex("vertex does not exist")
-      case _  => ErrorVertex("unkown vtype: " + vtype)
+      case _  => throw WrongVertexType("unkown vtype: " + vtype)
     }
   }
 
@@ -65,7 +62,15 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000) extends VertexSto
   }
 
   /** Chech if vertex exists on database */
-  def exists(id: String): Boolean = get(id).id != ""
+  def exists(id: String): Boolean = {
+    try {
+      get(id)
+    }
+    catch {
+      case _ => false
+    }
+    true
+  }
 
   /** Removes vertex from database */
   override def remove(vertex: Vertex): Vertex = {
@@ -97,8 +102,6 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000) extends VertexSto
 
     for (id <- participants) {
       val vertex = get(id)
-      if (vertex.id == "")
-        throw new VertexStoreException("vertex " + id + " not found while trying to add the relationship: " + edge)
       val origExtra = if (vertex.extra >= 0) vertex.extra else 0
       var extra = origExtra
       var done = false

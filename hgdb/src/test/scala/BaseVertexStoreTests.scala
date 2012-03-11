@@ -1,6 +1,6 @@
 import org.scalatest.FunSuite
 import com.graphbrain.hgdb.VertexStore
-import com.graphbrain.hgdb.VertexStoreException
+import com.graphbrain.hgdb.KeyNotFound
 import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.ImageNode
@@ -200,7 +200,7 @@ trait BaseVertexStoreTests { this: FunSuite =>
   }
 
   test("addrel with inexistant vertex [" + label + "]") {
-    intercept[VertexStoreException] {
+    intercept[KeyNotFound] {
       store.addrel("test", Array("dummy1", "dummy2"))
     }
   }

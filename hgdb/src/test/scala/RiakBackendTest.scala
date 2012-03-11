@@ -1,5 +1,6 @@
 import org.scalatest.FunSuite
 import com.graphbrain.hgdb.RiakBackend
+import com.graphbrain.hgdb.KeyNotFound
 
 class MapStoreTest extends FunSuite {
 	val backend = new RiakBackend("testdb")
@@ -27,7 +28,8 @@ class MapStoreTest extends FunSuite {
 
 		backend.remove("test0")
 		
-		val map = backend.get("test0")
-		assert(map == Map[String, Any]())
+		intercept[KeyNotFound] {
+		  backend.get("test0")
+		}
 	}
 }
