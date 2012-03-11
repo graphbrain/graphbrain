@@ -19,7 +19,7 @@ object WikiCinemaCrawler {
   val fieldRelationMap=Map("producer"->"produced", "director"->"directed", "writer"->"wrote", "music"->"music", "starring"->"starred in", "image"->"image", "poster"->"poster")
   val personFields=List[String]("image", "birth_place")
 
-  def process_page(wptitle:String):Unit={
+  def process_page(wptitle:String, output:OutputDBWriter):Unit={
    
     val wpage = Wikipedia.getPage(wptitle)
     println(wpage.length)
@@ -31,13 +31,13 @@ object WikiCinemaCrawler {
     {
       println(key)
       key match{
-            case "producer" => processField("producer", infoBoxItems.getOrElse("producer", Array[String]()), Formatting.normalizeWikiTitle(wptitle))
-            case "writer" => processField("writer", infoBoxItems.getOrElse("writer", Array[String]()), Formatting.normalizeWikiTitle(wptitle))
-            case "director" => processField("director", infoBoxItems.getOrElse("director", Array[String]()), Formatting.normalizeWikiTitle(wptitle))
-            case "music" => processField("music", infoBoxItems.getOrElse("music", Array[String]()), Formatting.normalizeWikiTitle(wptitle))
-            case "starring" => processField("starring", infoBoxItems.getOrElse("starring", Array[String]()), Formatting.normalizeWikiTitle(wptitle))
-            case "image" => processField("image", infoBoxItems.getOrElse("image", Array[String]()), Formatting.normalizeWikiTitle(wptitle))
-            case "poster" => processField("poster", infoBoxItems.getOrElse("poster", Array[String]()), Formatting.normalizeWikiTitle(wptitle))
+            case "producer" => processField("producer", infoBoxItems.getOrElse("producer", Array[String]()), Formatting.normalizeWikiTitle(wptitle), output)
+            case "writer" => processField("writer", infoBoxItems.getOrElse("writer", Array[String]()), Formatting.normalizeWikiTitle(wptitle), output)
+            case "director" => processField("director", infoBoxItems.getOrElse("director", Array[String]()), Formatting.normalizeWikiTitle(wptitle), output)
+            case "music" => processField("music", infoBoxItems.getOrElse("music", Array[String]()), Formatting.normalizeWikiTitle(wptitle), output)
+            case "starring" => processField("starring", infoBoxItems.getOrElse("starring", Array[String]()), Formatting.normalizeWikiTitle(wptitle), output)
+            case "image" => processField("image", infoBoxItems.getOrElse("image", Array[String]()), Formatting.normalizeWikiTitle(wptitle), output)
+            case "poster" => processField("poster", infoBoxItems.getOrElse("poster", Array[String]()), Formatting.normalizeWikiTitle(wptitle), output)
             case _ => 
           }
     }
@@ -45,14 +45,15 @@ object WikiCinemaCrawler {
   
   }
 
-  def processField(field:String, values:Array[String], filmname:String):Unit=
+  def processField(field:String, values:Array[String], filmname:String, output:OutputDBWriter):Unit=
   {
     println(field)
     for(value<-values)
     {
       value match
       {
-        case a:String => println(a+","+WikiCinemaCrawler.fieldRelationMap(field)+","+ filmname);
+        case a:String => output.writeOutDBInfo(a, WikiCinemaCrawler.fieldRelationMap(field), filmname, "")
+        println(a+","+WikiCinemaCrawler.fieldRelationMap(field)+","+ filmname);
         case _ =>
       }
     }
@@ -69,7 +70,7 @@ object WikiCinemaCrawler {
     var count = 0
     var inserted = 0
 
-    //val output = new OutputDBWriter("gb", sourceName)
+    val output = new OutputDBWriter("gb", sourceName)
     
   
     for(l <- WikiCinemaCrawler.list_pages){
@@ -83,7 +84,7 @@ object WikiCinemaCrawler {
           
           try{
         
-              process_page(Formatting.wikiLink(f))
+              process_page(Formatting.wikiLink(f), output)
               count+=1;
               inserted+=1      
           }

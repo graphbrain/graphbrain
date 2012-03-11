@@ -8,6 +8,7 @@ import com.graphbrain.hgdb.ImageNode
 import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.SourceNode
 import com.graphbrain.hgdb.URLNode
+import com.graphbrain.hgdb.Vertex
 
 class OutputDBWriter(storeName:String, source:String) {
 	
@@ -28,10 +29,10 @@ class OutputDBWriter(storeName:String, source:String) {
 		
 			val n1RNode = URLNode(ID.url_id(wikiURL+N1Wiki), wikiURL+N1Wiki)
 			val n2RNode = URLNode(ID.url_id(wikiURL+N2Wiki), wikiURL+N2Wiki)
-			store.put(n1)
-			store.put(n2)
-			store.put(n1RNode)
-			store.put(n2RNode)
+			getOrInsert(n1)
+			getOrInsert(n2)
+			getOrInsert(n1RNode)
+			getOrInsert(n2RNode)			
 
 			store.addrel("en_wikipage", Array[String](n1RNode.id, n1.id))
 			store.addrel("en_wikipage", Array[String](n2RNode.id, n2.id))
@@ -49,7 +50,7 @@ class OutputDBWriter(storeName:String, source:String) {
 			if(resource!="")
 			{
 				val resourceNode = URLNode(ID.url_id(resource), resource)	
-				store.put(resourceNode)
+				getOrInsert(resourceNode)
 				//Only the explicit reference in the DBPedia record is included - the Wikipedia pages to the nodes are not.
 				store.addrel("source", Array[String](sourceNode.id, resourceNode.id))
 				store.addrel("en_wikipage_line", Array[String](resourceNode.id, relID))
@@ -61,6 +62,16 @@ class OutputDBWriter(storeName:String, source:String) {
 		
 		
 
+	}
+
+	def getOrInsert(node:Vertex)
+	{
+		try{
+			store.get(node.id)
+		}
+		catch{
+			case e => store.put(node)
+		}
 	}
 
 	def writeGeneratorSource(sourceID:String, sourceURL:String, output:OutputDBWriter)
