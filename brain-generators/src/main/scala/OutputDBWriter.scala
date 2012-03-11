@@ -64,7 +64,7 @@ class OutputDBWriter(storeName:String, source:String) {
 
 	}
 
-	def getOrInsert(node:Vertex):Vertex
+	def getOrInsert(node:Vertex):Vertex =
 	{
 		try{
 			return store.get(node.id)
