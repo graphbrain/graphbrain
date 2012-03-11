@@ -23,7 +23,7 @@ class RiakBackend(val bucketName: String) extends Backend {
   }
 
   /** Puts a document represented by a Map[String, Any] into the store */
-  def put(id: String, doc: Map[String, Any]) = bucket.store(id, map2str(doc)).execute()
+  def put(id: String, doc: Map[String, Any]) = bucket.store(id, map2str(doc)).w(1).returnBody(false).execute()
 
   /** Updates a document identified by it's id with the information contained in the Map[String, Any] */
   def update(id: String, doc: Map[String, Any]) = {
