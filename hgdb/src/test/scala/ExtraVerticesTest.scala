@@ -1,10 +1,11 @@
 import org.scalatest.FunSuite
 import com.graphbrain.hgdb.VertexStore
+import com.graphbrain.hgdb.KeyNotFound
 import com.graphbrain.hgdb.TextNode
 
 
 class ExtraVerticesTest extends FunSuite {
-/*
+
   val store = new VertexStore("testhgdb", 10)
 
   test("100 edges on a 10 edge limit per vertex") {
@@ -36,8 +37,9 @@ class ExtraVerticesTest extends FunSuite {
     assert(extra9.edges.contains("test node0 node91"))
     assert(extra9.edges.contains("test node0 node100"))
 
-    val extra10 = store.getExtraEdges("node0/10")
-    assert(extra10.id == "")
+    intercept[KeyNotFound] {
+        store.getExtraEdges("node0/10")
+    }
   }
 
   test("delrel with extra vertices") {
@@ -77,5 +79,5 @@ class ExtraVerticesTest extends FunSuite {
     store.delrel("test", Array("node0", "node1"))
     assert(!store.get("node0").edges.contains("test node0 node1"))
     assert(store.get("node0").extra == 0)
-  }*/
+  }
 }

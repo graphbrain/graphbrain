@@ -14,26 +14,6 @@
 [0m[[0mdebug[0m] [0msbt-chain: no namespace defined: using system[0m
 [0m[[0mdebug[0m] [0mNo entry is found in the ModuleDescriptorCache : /Users/telmo/.ivy2/cache/org.scala-lang/scala-library/ivy-2.9.1.xml[0m
 [0m[[0mdebug[0m] [0mpost 1.3 ivy file: using exact as default matcher[0m
-[0m[[0mdebug[0m] [0msetting 'ivy.default.settings.dir' to 'jar:file:/Users/telmo/.sbt/boot/scala-2.9.1/org.scala-tools.sbt/sbt/0.11.2/ivy-2.2.0.jar!/org/apache/ivy/core/settings'[0m
-[0m[[0mdebug[0m] [0msetting 'ivy.basedir' to '/Users/telmo/projects/graphbrain/.'[0m
-[0m[[0mdebug[0m] [0msetting 'ivy.default.conf.dir' to 'jar:file:/Users/telmo/.sbt/boot/scala-2.9.1/org.scala-tools.sbt/sbt/0.11.2/ivy-2.2.0.jar!/org/apache/ivy/core/settings'[0m
-[0m[[0mdebug[0m] [0msetting 'java.runtime.name' to 'Java(TM) SE Runtime Environment'[0m
-[0m[[0mdebug[0m] [0msetting 'sun.boot.library.path' to '/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Libraries'[0m
-[0m[[0mdebug[0m] [0msetting 'java.vm.version' to '20.4-b02-402'[0m
-[0m[[0mdebug[0m] [0msetting 'awt.nativeDoubleBuffering' to 'true'[0m
-[0m[[0mdebug[0m] [0msetting 'gopherProxySet' to 'false'[0m
-[0m[[0mdebug[0m] [0msetting 'mrj.build' to '10M3527'[0m
-[0m[[0mdebug[0m] [0msetting 'java.vm.vendor' to 'Apple Inc.'[0m
-[0m[[0mdebug[0m] [0msetting 'java.vendor.url' to 'http://www.apple.com/'[0m
-[0m[[0mdebug[0m] [0msetting 'path.separator' to ':'[0m
-[0m[[0mdebug[0m] [0msetting 'java.vm.name' to 'Java HotSpot(TM) 64-Bit Server VM'[0m
-[0m[[0mdebug[0m] [0msetting 'file.encoding.pkg' to 'sun.io'[0m
-[0m[[0mdebug[0m] [0msetting 'sun.java.launcher' to 'SUN_STANDARD'[0m
-[0m[[0mdebug[0m] [0msetting 'user.country' to 'US'[0m
-[0m[[0mdebug[0m] [0msetting 'sun.os.patch.level' to 'unknown'[0m
-[0m[[0mdebug[0m] [0msetting 'java.vm.specification.name' to 'Java Virtual Machine Specification'[0m
-[0m[[0mdebug[0m] [0msetting 'user.dir' to '/Users/telmo/projects/graphbrain'[0m
-[0m[[0mdebug[0m] [0msetting 'java.runtime.version' to '1.6.0_29-b11-402-10M3527'[0m
 [0m[[0mdebug[0m] [0m	found ivy file in cache for org.scala-lang#scala-library;2.9.1 (resolved by sbt-chain): /Users/telmo/.ivy2/cache/org.scala-lang/scala-library/ivy-2.9.1.xml[0m
 [0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scala-lang#scala-library;2.9.1[0m
 [0m[[0mdebug[0m] [0msbt-chain: no latest strategy defined: using default[0m
@@ -54,88 +34,13 @@
 [0m[[0mdebug[0m] [0mloadData of org.mongodb#mongo-java-driver;2.7.2 of rootConf=compile[0m
 [0m[[0mdebug[0m] [0m	using sbt-chain to resolve org.mongodb#mongo-java-driver;2.7.2[0m
 [0m[[0mdebug[0m] [0msbt-chain: Checking cache for: dependency: org.mongodb#mongo-java-driver;2.7.2 {compile=[default(compile)]}[0m
-[0m[[0mdebug[0m] [0m	no ivy file in cache for org.mongodb#mongo-java-driver;2.7.2: tried /Users/telmo/.ivy2/cache/org.mongodb/mongo-java-driver/ivy-2.7.2.xml[0m
-[0m[[0mdebug[0m] [0m	no ivy file in cache for org.mongodb#mongo-java-driver;2.7.2: tried /Users/telmo/.ivy2/cache/org.mongodb/mongo-java-driver/ivy-2.7.2.xml[0m
-[0m[[0mdebug[0m] [0m	 trying /Users/telmo/.ivy2/local/org.mongodb/mongo-java-driver/2.7.2/ivys/ivy.xml[0m
-[0m[[0mdebug[0m] [0m		tried /Users/telmo/.ivy2/local/org.mongodb/mongo-java-driver/2.7.2/ivys/ivy.xml[0m
-[0m[[0mdebug[0m] [0m	local: resource not reachable for org.mongodb#mongo-java-driver;2.7.2: res=/Users/telmo/.ivy2/local/org.mongodb/mongo-java-driver/2.7.2/ivys/ivy.xml[0m
-[0m[[0mdebug[0m] [0m	local: no ivy file found for org.mongodb#mongo-java-driver;2.7.2[0m
-[0m[[0mdebug[0m] [0mpublic: no namespace defined: using system[0m
-[0m[[0mdebug[0m] [0m	no ivy file in cache for org.mongodb#mongo-java-driver;2.7.2: tried /Users/telmo/.ivy2/cache/org.mongodb/mongo-java-driver/ivy-2.7.2.xml[0m
-[0m[[0mdebug[0m] [0m	 trying http://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/2.7.2/mongo-java-driver-2.7.2.pom[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/2.7.2/mongo-java-driver-2.7.2.pom[0m
-[0m[[0mdebug[0m] [0msetting 'java.awt.graphicsenv' to 'apple.awt.CGraphicsEnvironment'[0m
-[0m[[0mdebug[0m] [0msetting 'java.endorsed.dirs' to '/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/endorsed'[0m
-[0m[[0mdebug[0m] [0msetting 'os.arch' to 'x86_64'[0m
-[0m[[0mdebug[0m] [0msetting 'apple.awt.graphics.UseOpenGL' to 'false'[0m
-[0m[[0mdebug[0m] [0msetting 'java.io.tmpdir' to '/var/folders/rk/rkR9U1slH6C-CyPuM9WBr++++TI/-Tmp-/'[0m
-[0m[[0mdebug[0m] [0msetting 'line.separator' to '[0m
-[0m[[0mdebug[0m] [0m'[0m
-[0m[[0mdebug[0m] [0msetting 'java.vm.specification.vendor' to 'Sun Microsystems Inc.'[0m
-[0m[[0mdebug[0m] [0msetting 'os.name' to 'Mac OS X'[0m
-[0m[[0mdebug[0m] [0msetting 'sun.jnu.encoding' to 'MacRoman'[0m
-[0m[[0mdebug[0m] [0msetting 'java.library.path' to '.:/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java'[0m
-[0m[[0mdebug[0m] [0msetting 'java.specification.name' to 'Java Platform API Specification'[0m
-[0m[[0mdebug[0m] [0msetting 'java.class.version' to '50.0'[0m
-[0m[[0mdebug[0m] [0msetting 'sun.management.compiler' to 'HotSpot 64-Bit Tiered Compilers'[0m
-[0m[[0mdebug[0m] [0msetting 'os.version' to '10.6.8'[0m
-[0m[[0mdebug[0m] [0msetting 'http.nonProxyHosts' to 'local|*.local|169.254/16|*.169.254/16'[0m
-[0m[[0mdebug[0m] [0msetting 'user.home' to '/Users/telmo'[0m
-[0m[[0mdebug[0m] [0msetting 'user.timezone' to 'Europe/Paris'[0m
-[0m[[0mdebug[0m] [0msetting 'java.awt.printerjob' to 'apple.awt.CPrinterJob'[0m
-[0m[[0mdebug[0m] [0msetting 'file.encoding' to 'MacRoman'[0m
-[0m[[0mdebug[0m] [0msetting 'java.specification.version' to '1.6'[0m
-[0m[[0mdebug[0m] [0msetting 'java.class.path' to '/usr/local/Cellar/sbt/0.11.2/libexec/sbt-launch.jar'[0m
-[0m[[0mdebug[0m] [0msetting 'user.name' to 'telmo'[0m
-[0m[[0mdebug[0m] [0msetting 'apple.awt.graphics.UseQuartz' to 'false'[0m
-[0m[[0mdebug[0m] [0msetting 'java.vm.specification.version' to '1.0'[0m
-[0m[[0mdebug[0m] [0msetting 'sun.java.command' to '/usr/local/Cellar/sbt/0.11.2/libexec/sbt-launch.jar'[0m
-[0m[[0mdebug[0m] [0msetting 'java.home' to '/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home'[0m
-[0m[[0mdebug[0m] [0msetting 'sun.arch.data.model' to '64'[0m
-[0m[[0mdebug[0m] [0msetting 'user.language' to 'en'[0m
-[0m[[0mdebug[0m] [0msetting 'java.specification.vendor' to 'Sun Microsystems Inc.'[0m
-[0m[[0mdebug[0m] [0msetting 'awt.toolkit' to 'apple.awt.CToolkit'[0m
-[0m[[0mdebug[0m] [0msetting 'java.vm.info' to 'mixed mode'[0m
-[0m[[0mdebug[0m] [0msetting 'java.version' to '1.6.0_29'[0m
-[0m[[0mdebug[0m] [0msetting 'java.ext.dirs' to '/Library/Java/Extensions:/System/Library/Java/Extensions:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/ext'[0m
-[0m[[0mdebug[0m] [0msetting 'sun.boot.class.path' to '/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/jsfd.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Frameworks/JavaRuntimeSupport.framework/Resources/Java/JavaRuntimeSupport.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/ui.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/laf.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/sunrsasign.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/jsse.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/jce.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/charsets.jar'[0m
-[0m[[0mdebug[0m] [0msetting 'java.vendor' to 'Apple Inc.'[0m
-[0m[[0mdebug[0m] [0msetting 'file.separator' to '/'[0m
-[0m[[0mdebug[0m] [0msetting 'java.vendor.url.bug' to 'http://bugreport.apple.com/'[0m
-[0m[[0mdebug[0m] [0msetting 'sun.io.unicode.encoding' to 'UnicodeLittle'[0m
-[0m[[0mdebug[0m] [0msetting 'sun.cpu.endian' to 'little'[0m
-[0m[[0mdebug[0m] [0msetting 'mrj.version' to '1060.1.6.0_29-402'[0m
-[0m[[0mdebug[0m] [0msetting 'socksNonProxyHosts' to 'local|*.local|169.254/16|*.169.254/16'[0m
-[0m[[0mdebug[0m] [0msetting 'ftp.nonProxyHosts' to 'local|*.local|169.254/16|*.169.254/16'[0m
-[0m[[0mdebug[0m] [0msetting 'sun.awt.exception.handler' to 'apple.awt.CToolkit$EventQueueExceptionHandler'[0m
-[0m[[0mdebug[0m] [0msetting 'sun.cpu.isalist' to ''[0m
-[0m[[0mdebug[0m] [0msetting 'ivy.basedir' to '/Users/telmo/projects/graphbrain'[0m
-[0m[[0mdebug[0m] [0msetting 'basedir' to '/Users/telmo/projects/graphbrain'[0m
-[0m[[0mdebug[0m] [0msetting 'ivy.checksums' to 'sha1,md5'[0m
-[0m[[0mdebug[0m] [0msetting 'ivy.default.ivy.user.dir' to '/Users/telmo/.ivy2'[0m
-[0m[[0mdebug[0m] [0msetting 'ivy.home' to '/Users/telmo/.ivy2'[0m
-[0m[[0mdebug[0m] [0msetting 'ivy.cache.dir' to '/Users/telmo/.ivy2/cache'[0m
-[0m[[0mdebug[0m] [0mno default cache defined: set to /Users/telmo/.ivy2/cache[0m
-[0m[[0mdebug[0m] [0m	public: found md file for org.mongodb#mongo-java-driver;2.7.2[0m
-[0m[[0mdebug[0m] [0m		=> http://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/2.7.2/mongo-java-driver-2.7.2.pom (2.7.2)[0m
-[0m[[0mdebug[0m] [0m	parser = sbt.CustomPomParser@744611ae[0m
-[0m[[0mdebug[0m] [0m	no ivy file in cache for org.mongodb#mongo-java-driver;2.7.2: tried /Users/telmo/.ivy2/cache/org.mongodb/mongo-java-driver/ivy-2.7.2.xml[0m
-[0m[[0mdebug[0m] [0mdownloading http://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/2.7.2/mongo-java-driver-2.7.2.pom ...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/2.7.2/mongo-java-driver-2.7.2.pom[0m
-[0m[[0mdebug[0m] [0m		to /Users/telmo/.ivy2/cache/org.mongodb/mongo-java-driver/ivy-2.7.2.xml.original.part[0m
-[0m[[0mdebug[0m] [0msha1 file found for http://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/2.7.2/mongo-java-driver-2.7.2.pom: checking...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/2.7.2/mongo-java-driver-2.7.2.pom.sha1[0m
-[0m[[0mdebug[0m] [0m		to /var/folders/rk/rkR9U1slH6C-CyPuM9WBr++++TI/-Tmp-/ivytmp4024447367260357690sha1[0m
-[0m[[0mdebug[0m] [0msha1 OK for http://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/2.7.2/mongo-java-driver-2.7.2.pom[0m
-[0m[[0mdebug[0m] [0m	[SUCCESSFUL ] org.mongodb#mongo-java-driver;2.7.2!mongo-java-driver.pom(pom.original) (1933ms)[0m
-[0m[[0mdebug[0m] [0m	 trying /Users/telmo/.ivy2/local/org.mongodb/mongo-java-driver/2.7.2/jars/mongo-java-driver.jar[0m
-[0m[[0mdebug[0m] [0m		tried /Users/telmo/.ivy2/local/org.mongodb/mongo-java-driver/2.7.2/jars/mongo-java-driver.jar[0m
-[0m[[0mdebug[0m] [0m	local: resource not reachable for org.mongodb#mongo-java-driver;2.7.2: res=/Users/telmo/.ivy2/local/org.mongodb/mongo-java-driver/2.7.2/jars/mongo-java-driver.jar[0m
-[0m[[0mdebug[0m] [0m	 trying http://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/2.7.2/mongo-java-driver-2.7.2.jar[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/2.7.2/mongo-java-driver-2.7.2.jar[0m
-[0m[[0mdebug[0m] [0mno source artifact found for org.mongodb#mongo-java-driver;2.7.2[0m
-[0m[[0mdebug[0m] [0mno javadoc artifact found for org.mongodb#mongo-java-driver;2.7.2[0m
-[0m[[0mdebug[0m] [0m	default-cache: parsed downloaded md file for org.mongodb#mongo-java-driver;2.7.2; parsed=org.mongodb#mongo-java-driver;2.7.2[0m
+[0m[[0mdebug[0m] [0mNo entry is found in the ModuleDescriptorCache : /Users/telmo/.ivy2/cache/org.mongodb/mongo-java-driver/ivy-2.7.2.xml[0m
+[0m[[0mdebug[0m] [0mpost 1.3 ivy file: using exact as default matcher[0m
+[0m[[0mdebug[0m] [0m	found ivy file in cache for org.mongodb#mongo-java-driver;2.7.2 (resolved by public): /Users/telmo/.ivy2/cache/org.mongodb/mongo-java-driver/ivy-2.7.2.xml[0m
+[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.mongodb#mongo-java-driver;2.7.2[0m
+[0m[[0mdebug[0m] [0mEntry is found in the ModuleDescriptorCache : /Users/telmo/.ivy2/cache/org.mongodb/mongo-java-driver/ivy-2.7.2.xml[0m
+[0m[[0mdebug[0m] [0m	found ivy file in cache for org.mongodb#mongo-java-driver;2.7.2 (resolved by public): /Users/telmo/.ivy2/cache/org.mongodb/mongo-java-driver/ivy-2.7.2.xml[0m
+[0m[[0mdebug[0m] [0m	local: revision in cache: org.mongodb#mongo-java-driver;2.7.2[0m
 [0m[[0mdebug[0m] [0m	checking org.mongodb#mongo-java-driver;2.7.2 from public against [none][0m
 [0m[[0mdebug[0m] [0m	module revision kept as first found: org.mongodb#mongo-java-driver;2.7.2 from public[0m
 [0m[[0mdebug[0m] [0m	found org.mongodb#mongo-java-driver;2.7.2 in public[0m
@@ -410,18 +315,9 @@
 [0m[[0mdebug[0m] [0morg.scala-lang#scala-library;2.9.1 in runtime: excluding org.scala-lang#scala-library;2.9.1!scala-library.jar[0m
 [0m[[0mdebug[0m] [0morg.scala-lang#scala-library;2.9.1 in runtime-internal: excluding org.scala-lang#scala-library;2.9.1!scala-library.jar[0m
 [0m[[0mdebug[0m] [0morg.scala-lang#scala-library;2.9.1 in compile-internal: excluding org.scala-lang#scala-library;2.9.1!scala-library.jar[0m
-[0m[[0mdebug[0m] [0m	 trying http://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/2.7.2/mongo-java-driver-2.7.2.jar[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/2.7.2/mongo-java-driver-2.7.2.jar[0m
-[0m[[0minfo[0m] [0mdownloading http://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/2.7.2/mongo-java-driver-2.7.2.jar ...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/2.7.2/mongo-java-driver-2.7.2.jar[0m
-[0m[[0mdebug[0m] [0m		to /Users/telmo/.ivy2/cache/org.mongodb/mongo-java-driver/jars/mongo-java-driver-2.7.2.jar.part[0m
-[0m[[0mdebug[0m] [0msha1 file found for http://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/2.7.2/mongo-java-driver-2.7.2.jar: checking...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/2.7.2/mongo-java-driver-2.7.2.jar.sha1[0m
-[0m[[0mdebug[0m] [0m		to /var/folders/rk/rkR9U1slH6C-CyPuM9WBr++++TI/-Tmp-/ivytmp6717437655626890901sha1[0m
-[0m[[0mdebug[0m] [0msha1 OK for http://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/2.7.2/mongo-java-driver-2.7.2.jar[0m
-[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.mongodb#mongo-java-driver;2.7.2!mongo-java-driver.jar (2518ms)[0m
+[0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.mongodb#mongo-java-driver;2.7.2!mongo-java-driver.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scalatest#scalatest_2.9.1;1.7.1!scalatest_2.9.1.jar[0m
-[0m[[0mdebug[0m] [0m:: resolution report :: resolve 2526ms :: artifacts dl 2521ms[0m
+[0m[[0mdebug[0m] [0m:: resolution report :: resolve 176ms :: artifacts dl 3ms[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 2[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : org.scala-lang#scala-library;2.9.1 / Number of dependencies = 0[0m
 [0m[[0mdebug[0m] [0mSort done for : org.scala-lang#scala-library;2.9.1[0m
@@ -476,5 +372,5 @@
 [0m[[0mdebug[0m] [0m	report for inference#inference_2.9.1;0.1.0-SNAPSHOT docs produced in /Users/telmo/.ivy2/cache/inference-inference_2.9.1-docs.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 0[0m
 [0m[[0mdebug[0m] [0m	report for inference#inference_2.9.1;0.1.0-SNAPSHOT pom produced in /Users/telmo/.ivy2/cache/inference-inference_2.9.1-pom.xml[0m
-[0m[[0mdebug[0m] [0m	resolve done (2526ms resolve - 2521ms download)[0m
+[0m[[0mdebug[0m] [0m	resolve done (176ms resolve - 3ms download)[0m
 [0m[[0minfo[0m] [0mDone updating.[0m

@@ -20,38 +20,45 @@ trait BaseVertexStoreTests { this: FunSuite =>
   }
 
   test("get Vertex that does not exist [" + label + "]") {
-    val outVertex = store.get("sdfh89g89gdf")
-    assert(outVertex.id == "")
+    intercept[KeyNotFound] {
+      store.get("sdfh89g89gdf")
+    }
   }
 
   test("get Edge that does not exist [" + label + "]") {
-    val outVertex = store.getEdge("sdfh89g89gdf")
-    assert(outVertex.id == "")
+    intercept[KeyNotFound] {
+      store.getEdge("sdfh89g89gdf")
+    }
   }
 
   test("get EdgeType that does not exist [" + label + "]") {
-    val outVertex = store.getEdgeType("sdfh89g89gdf")
-    assert(outVertex.id == "")
+    intercept[KeyNotFound] {
+      store.getEdgeType("sdfh89g89gdf")
+    }
   }
 
   test("get TextNode that does not exist [" + label + "]") {
-    val outVertex = store.getTextNode("sdfh89g89gdf")
-    assert(outVertex.id == "")
+    intercept[KeyNotFound] {
+      store.getTextNode("sdfh89g89gdf")
+    }
   }
 
   test("get URLNode that does not exist [" + label + "]") {
-    val outVertex = store.getURLNode("sdfh89g89gdf")
-    assert(outVertex.id == "")
+    intercept[KeyNotFound] {
+      store.getURLNode("sdfh89g89gdf")
+    }
   }
 
   test("get ImageNode that does not exist [" + label + "]") {
-    val outVertex = store.getImageNode("sdfh89g89gdf")
-    assert(outVertex.id == "")
+    intercept[KeyNotFound] {
+      store.getImageNode("sdfh89g89gdf")
+    }
   }
 
   test("get SourceNode that does not exist [" + label + "]") {
-    val outVertex = store.getSourceNode("sdfh89g89gdf")
-    assert(outVertex.id == "")
+    intercept[KeyNotFound] {
+      store.getSourceNode("sdfh89g89gdf")
+    }
   }
 
   test("getTextNode [" + label + "]") {
