@@ -105,17 +105,3 @@ case class SourceNode(id: String="", edges: Set[String]=Set[String](), extra: In
   def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
   def setExtra(newExtra: Int) = copy(extra=newExtra)
 }
-
-
-case class ErrorVertex(message: String) extends Vertex {
-  override val vtype: String = "error"
-
-  val id = ""
-  val edges = Set[String]()
-  val extra = -1
-
-  override def toMap: Map[String, Any] = null
-
-  def setEdges(newEdges: Set[String]) = ErrorVertex(message)
-  def setExtra(newExtra: Int) = ErrorVertex(message)
-}

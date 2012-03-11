@@ -4,6 +4,7 @@ import com.graphbrain.hgdb.TextNode
 
 
 class VerticesTest extends FunSuite {
+  /*
   test("Edge id generator") {
   val edge = new Edge("test", Array[String]("node0", "node1", "node2"))
   assert(edge.id == "test node0 node1 node2")
@@ -29,6 +30,6 @@ class VerticesTest extends FunSuite {
 
     assert(node.edges == Set[String](edge.id))
     assert(node.edges == Set[String]("test node0 node1"))
-  }
+  }*/
 }
 
