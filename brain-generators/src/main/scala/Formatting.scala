@@ -21,6 +21,10 @@ object Formatting {
     	return norm_title
   }
 
+  def stripLink(link:String):String={
+    return link.replaceAll("""(\[\[)""", "").replaceAll("""\]\]""", "")
+  }
+
   def wikiLink(title:String):String ={
   		return title.replace(" ", "_")
   }

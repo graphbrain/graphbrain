@@ -64,23 +64,25 @@ class OutputDBWriter(storeName:String, source:String) {
 
 	}
 
-	def getOrInsert(node:Vertex)
+	def getOrInsert(node:Vertex):Vertex
 	{
 		try{
-			store.get(node.id)
+			return store.get(node.id)
 		}
 		catch{
 			case e => store.put(node)
+			return store.get(node.id)
 		}
 	}
 
 	def writeGeneratorSource(sourceID:String, sourceURL:String, output:OutputDBWriter)
   	{
-  		val sourceNode=SourceNode(id=ID.source_id(sourceID))
-	    val urlNode=URLNode(ID.url_id(sourceURL), sourceURL)
-	    try{
-	    	store.put(sourceNode)
-	    	store.put(urlNode)
+  		try{
+  			val sourceNode=SourceNode(id=ID.source_id(sourceID))
+	    	val urlNode=URLNode(ID.url_id(sourceURL), sourceURL)
+	    
+	    	getOrInsert(sourceNode)
+	    	getOrInsert(urlNode)
 	    	store.addrel("source", Array[String](sourceNode.id, urlNode.id))
 	    }
 	    catch{
@@ -88,6 +90,34 @@ class OutputDBWriter(storeName:String, source:String) {
 	    }
   	}
 
+  	def writeURLNode(node:Vertex, url:String)
+  	{
+  		try{
+  			val sourceNode=store.getSourceNode(ID.source_id(source))
+  			val urlNode = URLNode(ID.url_id(url), url)	
+  			getOrInsert(node)
+  			getOrInsert(urlNode);
+  			getOrInsert(sourceNode)
+  			store.addrel("en_wikipage", Array[String](urlNode.id, node.id)); 
+  			store.addrel("source", Array[String](sourceNode.id, urlNode.id))
+  			
+  		}
+  		catch {
+  			case e => e.printStackTrace()
+
+  		}
+  		
+
+  	}
+
+  	def addWikiPageToDB(pageTitle:String):Unit=
+  	{
+    	val pageURL = Wikipedia.wikipediaBaseURL+pageTitle.replace(" ", "_")
+    	val id=ID.wikipedia_id(pageTitle)
+    	val pageNode = TextNode(id, pageTitle);
+    	writeURLNode(pageNode, pageURL)
+
+  	}
 
 	def getRelID(rel:String, node1ID:String, node2ID:String):String=
 	{
