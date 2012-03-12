@@ -1,11 +1,10 @@
 package com.graphbrain.webapp
 
 import com.graphbrain.hgdb.VertexStore
-import com.graphbrain.hgdb.SimpleCaching
 
 
-case class NodePage(nodeId: String) extends Page {
-    val store = new VertexStore("gb") with SimpleCaching
+case class NodePage(store: VertexStore, nodeId: String) extends Page {
+    
     val gi = new GraphInterface(nodeId, store)
     val js = "var nodes = " + gi.nodesJSON + ";\n" +
         "var snodes = " + gi.snodesJSON + ";\n" +

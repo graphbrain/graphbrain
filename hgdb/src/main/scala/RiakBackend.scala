@@ -1,16 +1,16 @@
 package com.graphbrain.hgdb
 
-import com.basho.riak.client.raw.http.HTTPClientConfig
-import com.basho.riak.client.IRiakClient
+import com.basho.riak.client.raw.pbc.PBClientConfig
 import com.basho.riak.client.RiakFactory
 import com.basho.riak.client.IRiakObject
-import com.basho.riak.client.bucket.Bucket
+
 
 /** Interface to Riak, a distributed key/value store. */
-class RiakBackend(val bucketName: String) extends Backend {
-	val conf = new HTTPClientConfig.Builder().withHost("127.0.0.1").withPort(8098).build()
-  //val conf = new HTTPClientConfig.Builder().withHost("192.168.129.4").withPort(8098).build()
+class RiakBackend(val bucketName: String, ip: String="127.0.0.1", port: Int=8098) extends Backend {
+  //val conf = new PBClientConfig.Builder().withHost("192.168.129.4").build()
+  val conf = new PBClientConfig.Builder().withHost("127.0.0.1").build()
   val client = RiakFactory.newClient(conf)
+
   val bucket = client.createBucket(bucketName).execute()
 
   /** Gets a document by it's id in the form of a Map[String, Any] */
