@@ -16,29 +16,31 @@ class OutputDBWriter(storeName:String, source:String) {
 	val store = new VertexStore(storeName)
 	val wikiURL = "http://en.wikipedia.org/wiki/"
 
-	def writeOutDBInfo(node1: String, rel: String, node2: String, resource: String):Unit=
+	def writeOutDBInfo(node1: String, relin: String, node2: String, resource: String):Unit=
 	{
 		
 
 		try{
+			val rel=ID.relation_id(relin);
 			val sourceNode=store.getSourceNode(ID.source_id(source))
 			val N1Wiki=ID.wikipedia_id(node1)
 			val N2Wiki=ID.wikipedia_id(node2)
+			
 			val n1 = TextNode(id=N1Wiki, text=node1);
 			val n2 = TextNode(id=N2Wiki, text=node2);
-		
-			val n1RNode = URLNode(ID.url_id(wikiURL+N1Wiki), wikiURL+N1Wiki)
-			val n2RNode = URLNode(ID.url_id(wikiURL+N2Wiki), wikiURL+N2Wiki)
 			getOrInsert(n1)
 			getOrInsert(n2)
-			getOrInsert(n1RNode)
-			getOrInsert(n2RNode)			
-
-			store.addrel("en_wikipage", Array[String](n1RNode.id, n1.id))
-			store.addrel("en_wikipage", Array[String](n2RNode.id, n2.id))
+		
+			
+			//val n1RNode = URLNode(ID.url_id(wikiURL+N1Wiki), wikiURL+N1Wiki)
+			//val n2RNode = URLNode(ID.url_id(wikiURL+N2Wiki), wikiURL+N2Wiki)
+			
+			//getOrInsert(n1RNode)
+			//getOrInsert(n2RNode)			
+			//store.addrel("en_wikipage", Array[String](n1RNode.id, n1.id))
+			//store.addrel("en_wikipage", Array[String](n2RNode.id, n2.id))
 			store.addrel("source", Array[String](sourceNode.id, n1.id))
 			store.addrel("source", Array[String](sourceNode.id, n2.id))
-		
 		
 						
 			//The id for the relationship between two nodes

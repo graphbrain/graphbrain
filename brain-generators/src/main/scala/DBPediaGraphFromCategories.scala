@@ -101,10 +101,10 @@ object DBPediaGraphFromCategories {
     var inserted=0;
     items match{
       case x::Nil => x match{
-        case (a:String, b:String, c:String, d:String) => output.writeOutDBInfo(Formatting.normalizeWikiTitle(a), "is a", Formatting.normalizeWikiTitle(c), d); inserted+=1; println(Formatting.normalizeWikiTitle(a) + "," + "is a" + "," + Formatting.normalizeWikiTitle(c) + "," + d ); return inserted
+        case (a:String, b:String, c:String, d:String) => output.writeOutDBInfo(Formatting.normalizeWikiTitle(a), "is_a", Formatting.normalizeWikiTitle(c), d); inserted+=1; println(Formatting.normalizeWikiTitle(a) + "," + "is_a" + "," + Formatting.normalizeWikiTitle(c) + "," + d ); return inserted
       }
       case x::y::xs => (x,y) match {
-        case ((a:String, b:String, c:String, d:String),(f:String, g:String, h:String, i:String)) => output.writeOutDBInfo(Formatting.normalizeWikiTitle(h), "is a", Formatting.normalizeWikiTitle(c), ""); inserted+=1; println(Formatting.normalizeWikiTitle(h) + "," + "is a" + "," + Formatting.normalizeWikiTitle(c) + "," + "" ); addTypes(y::xs, output);  
+        case ((a:String, b:String, c:String, d:String),(f:String, g:String, h:String, i:String)) => output.writeOutDBInfo(Formatting.normalizeWikiTitle(h), "is_a", Formatting.normalizeWikiTitle(c), ""); inserted+=1; println(Formatting.normalizeWikiTitle(h) + "," + "is_a" + "," + Formatting.normalizeWikiTitle(c) + "," + "" ); addTypes(y::xs, output);  
       }
       case Nil => return inserted
     }
