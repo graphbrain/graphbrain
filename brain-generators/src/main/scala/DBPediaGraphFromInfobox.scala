@@ -32,7 +32,7 @@ object DBPediaGraphFromInfobox {
       val subj=Formatting.normalizeWikiTitle(things(0).replace("<http://dbpedia.org/resource/", "").replace(">", ""))
       val obj = Formatting.normalizeWikiTitle(things(1).replace("<http://dbpedia.org/resource/", "").replace(">", ""))
       if(Formatting.isList(subj)||Formatting.isList(obj)){return ("","","","")}
-      val pred = Formatting.separateWords(predicate(0).replace("<http://dbpedia.org/ontology/", "").replace(">", ""))
+      val pred = predicate(0).replace("<http://dbpedia.org/ontology/", "").replace(">", "")
       if(wikiSource.length==1)
       {
         return (subj, pred, obj, wikiSource(0));

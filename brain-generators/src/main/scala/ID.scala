@@ -12,8 +12,12 @@ def wikipedia_id(wptitle:String):String={
 }
 
 def source_id(source:String):String={
-	
+	val sanitized_source=source.replace(" ", "_")
 	return "source/"+source;	
+}
+
+def relation_id(relation:String):String={
+	return relation.replace(" ", "_")
 }
 
 }
