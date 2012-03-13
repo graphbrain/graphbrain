@@ -2,7 +2,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import scala.collection.immutable.HashMap
 import com.graphbrain.hgdb.VertexStore
-import com.graphbrain.hgdb.SimpleCaching
+import com.graphbrain.hgdb.BurstCaching
+import com.graphbrain.hgdb.OpLogging
 import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.ImageNode
 import com.graphbrain.hgdb.Edge
@@ -13,7 +14,7 @@ import com.graphbrain.hgdb.Vertex
 class OutputDBWriter(storeName:String, source:String) {
 	
 
-	val store = new VertexStore(storeName)
+	val store = new VertexStore(storeName) with BurstCaching
 	val wikiURL = "http://en.wikipedia.org/wiki/"
 
 	def writeOutDBInfo(node1: String, relin: String, node2: String, resource: String):Unit=
