@@ -3,18 +3,45 @@ import java.io.InputStreamReader
 import java.io.FileInputStream
 
 
+
 class InputFileReader(fileName:String, sep:String=",") {
 	
 	val reader:BufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
+	var lineNum=1;
 
 	def readLine():String=
 	{
 		val line = reader.readLine();
+		lineNum+=1;
 		line match{
 			case a:String => return a;
 			case _ => return "";
 		}
 		
+	}
+
+	def getLineNum():Int=
+	{
+		return lineNum;
+	}
+
+	def initAtLine(line:Int):Unit=
+	{
+		readLine(line)
+	}
+
+	def readLine(startLine:Int):String=
+	{
+		for(i<-1 to startLine-1){
+			reader.readLine()
+			lineNum+=1
+		}
+		val line=reader.readLine()
+		lineNum+=1;
+		line match{
+			case a:String => return a;
+			case _ => return "";
+		}
 	}
 
 	def readItems():Array[String]=
@@ -33,4 +60,7 @@ class InputFileReader(fileName:String, sep:String=",") {
 		reader.close()
 		
 	}
+
+        
 }
+
