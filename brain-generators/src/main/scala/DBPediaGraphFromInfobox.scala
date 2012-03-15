@@ -48,11 +48,15 @@ object DBPediaGraphFromInfobox {
   }
 
 
-  def processFile(filename:String, output:OutputDBWriter, limit:Int):Unit=
+  def processFile(filename:String, output:OutputDBWriter, limit:Int, readerLine:Int=1):Unit=
   {
     
      
     val reader = new InputFileReader(filename);
+    if(readerLine>1)
+    {
+      reader.initAtLine(readerLine)
+    }
     var counter=0
     var inserted=0;
     output.writeGeneratorSource(DBPediaGraphFromInfobox.sourceName, DBPediaGraphFromInfobox.sourceURL, output)
@@ -61,10 +65,8 @@ object DBPediaGraphFromInfobox {
     while(counter<limit||limit<0)
     {
     
-
+      println("Line: " + counter.toString + " Inserted: " + inserted.toString +  line + " File line: " + reader.getLineNum());
       val line = reader.readLine()
-      println("Line: " + counter.toString + " Inserted: " + inserted.toString +  line);
-
       line match{
         case ""=> return;
         case a:String => processQTuple(a) match {
