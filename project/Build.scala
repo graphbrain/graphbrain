@@ -30,6 +30,10 @@ object GraphbrainBuild extends Build {
                 base=file("tools"),
                 settings = standardSettings ++ SbtOneJar.oneJarSettings) dependsOn(hgdb)
 
+  lazy val searchengine = Project(id = "searchengine",
+                base=file("searchengine"),
+                settings = standardSettings ++ SbtOneJar.oneJarSettings) dependsOn(hgdb)
+
   lazy val root = Project(id = "gb",
-                            base = file(".")) aggregate(hgdb, inference, webapp, brain_generators, tools)
+                base = file(".")) aggregate(hgdb, inference, webapp, brain_generators, tools, searchengine)
 }
