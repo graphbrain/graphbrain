@@ -64,9 +64,9 @@ object DBPediaGraphFromInfobox {
 
     while(counter<limit||limit<0)
     {
-    
-      println("Line: " + counter.toString + " Inserted: " + inserted.toString +  line + " File line: " + reader.getLineNum());
       val line = reader.readLine()
+      println("Line: " + counter.toString + " Inserted: " + inserted.toString +  line + " File line: " + reader.getLineNum());
+      
       line match{
         case ""=> return;
         case a:String => processQTuple(a) match {
