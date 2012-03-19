@@ -2,6 +2,7 @@ package com.graphbrain.searchengine
 
 import dispatch._
 import scala.xml._
+import java.net.URLEncoder
 
 
 class RiakSearchInterface(val index: String,
@@ -16,7 +17,8 @@ class RiakSearchInterface(val index: String,
   }
 
   def index(key: String, text: String): Unit = {
-    val req = :/(host, port) / "buckets" / index / "keys" / key <<< text
+    val safeKey = URLEncoder.encode(key, "UTF-8")
+    val req = :/(host, port) / "buckets" / index / "keys" / safeKey <<< text
     Http(req >|)
   }
 
