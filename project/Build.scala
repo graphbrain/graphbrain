@@ -1,19 +1,14 @@
 import sbt._
 import Keys._
 
-import com.github.retronym.SbtOneJar
 
 import sbtassembly.Plugin._
 import AssemblyKeys._
 
 object GraphbrainBuild extends Build {
-  def standardSettings = Seq(
-    exportJars := true
-  ) ++ Defaults.defaultSettings
-
   lazy val hgdb = Project(id = "hgdb",
                            base = file("hgdb"),
-                           settings = standardSettings ++ SbtOneJar.oneJarSettings)
+                           settings = Defaults.defaultSettings ++ assemblySettings)
 
   lazy val inference = Project(id = "inference",
                            base = file("inference"))
@@ -24,15 +19,15 @@ object GraphbrainBuild extends Build {
 
   lazy val brain_generators = Project(id = "brain-generators",
   							base = file("brain-generators"),
-                settings = standardSettings ++ SbtOneJar.oneJarSettings) dependsOn(hgdb)
+                settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(hgdb)
 
   lazy val tools = Project(id = "tools",
                 base=file("tools"),
-                settings = standardSettings ++ SbtOneJar.oneJarSettings) dependsOn(hgdb)
+                settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(hgdb)
 
   lazy val searchengine = Project(id = "searchengine",
                 base=file("searchengine"),
-                settings = standardSettings ++ SbtOneJar.oneJarSettings) dependsOn(hgdb)
+                settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(hgdb)
 
   lazy val root = Project(id = "gb",
                 base = file(".")) aggregate(hgdb, inference, webapp, brain_generators, tools, searchengine)
