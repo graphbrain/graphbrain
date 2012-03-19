@@ -22,7 +22,7 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         Edge(id, etype, edges, extra)
       }
       case "ext" => {
-        ExtraEdges(id, edges, extra)
+        ExtraEdges(id, edges, extra) 
       }
       case "edgt" => {
         val label = map.getOrElse("label", "").toString
@@ -196,12 +196,19 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
       queue = queue.tail
 
       if (!nset.exists(n => n._1 == curId)) {
-        nset += ((curId, parent))
-        val node = get(curId)
+        try {
+          val node = get(curId)
+          nset += ((curId, parent))
 
-        if (depth < maxDepth)
-          for (edgeId <- node.edges)
-            queue = queue ::: (for (pid <- Edge.participantIds(edgeId)) yield (pid, depth + 1, curId)).toList
+          if (depth < maxDepth)
+            for (edgeId <- node.edges)
+              // TODO: temporary hack
+              if (Edge.edgeType(edgeId) != "source")
+                queue = queue ::: (for (pid <- Edge.participantIds(edgeId)) yield (pid, depth + 1, curId)).toList
+        }
+        catch {
+          case _ =>
+        }
       }
     }
 
