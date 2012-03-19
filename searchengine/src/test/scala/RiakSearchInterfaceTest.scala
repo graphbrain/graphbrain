@@ -7,8 +7,13 @@ class RiakSearchInterfaceTest extends FunSuite {
 
 	test("indexing a few documents and searching") {
 		rsi.initIndex()
-    	rsi.index("searchtest_1", "GraphBrain is searchable")
-    	rsi.index("searchtest_2", "Wikipedia is searchable")
-    	println(rsi.query("searchable"))
+    	rsi.index("searchtest/1", "GraphBrain is searchable")
+    	rsi.index("searchtest/2", "Wikipedia is searchable")
+    	rsi.index("searchtest/3", "Herp Derp")
+    	val results = rsi.query("searchable")
+		assert(results.numResults >= 2)
+		assert(results.ids.contains("searchtest/1"))
+		assert(results.ids.contains("searchtest/2"))
+		assert(!results.ids.contains("searchtest/3"))
 	}
 }
