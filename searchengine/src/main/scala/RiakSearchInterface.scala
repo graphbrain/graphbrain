@@ -1,4 +1,4 @@
-package com.graphbrain.hgdb
+package com.graphbrain.searchengine
 
 import dispatch._
 import scala.xml._
@@ -38,6 +38,12 @@ class RiakSearchInterface(val index: String,
 }
 
 object RiakSearchInterface {
+  def apply(index: String,
+              host: String="127.0.0.1",
+              port: Int=8098) = {
+    new RiakSearchInterface(index, host, port)
+  }
+
   def main(args: Array[String]): Unit = {
   	val rsi = new RiakSearchInterface("gbsearch3")
     rsi.initIndex()

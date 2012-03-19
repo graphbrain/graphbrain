@@ -14,7 +14,7 @@ import com.graphbrain.hgdb.Vertex
 class OutputDBWriter(storeName:String, source:String) {
 	
 
-	val store = new VertexStore(storeName) with BurstCaching
+	val store = new VertexStore(storeName) with BurstCaching with OpLogging
 	val wikiURL = "http://en.wikipedia.org/wiki/"
 
 	def writeOutDBInfo(node1: String, relin: String, node2: String, resource: String):Unit=

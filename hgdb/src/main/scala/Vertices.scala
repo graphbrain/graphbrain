@@ -42,6 +42,14 @@ object Edge {
   def participantIds(edgeId: String) = {
     val tokens = edgeId.split(' ')
     for (i <- 1 until tokens.length) yield tokens(i)
+  }
+
+  def edgeType(edgeId: String) = {
+    val tokens = edgeId.split(' ')
+    if (tokens.length > 0)
+      tokens(0)
+    else
+      ""
   } 
 }
 

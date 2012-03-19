@@ -13,7 +13,7 @@ import com.codahale.jerkson.Json._
 class GraphInterface (val rootId: String, val store: VertexStore) {
   val neighbors = store.neighbors(rootId)
   val edgeIds = store.neighborEdges(neighbors)
-  val edges = edgeIds.map(e => store.getEdge(e))
+  //val edges = edgeIds.map(e => store.getEdge(e))
   val snodes = supernodes
   val links = visualLinks
   val nodesJSON = nodes2json
@@ -28,10 +28,10 @@ class GraphInterface (val rootId: String, val store: VertexStore) {
   // NOTE: We only consider the first two participants for now
   private def relmap = {
     val rm = MMap[(String, Int, String), Set[String]]()
-    for (edge <- edges) {
-      val participants = edge.participantIds.slice(0, 2)
+    for (edge <- edgeIds) {
+      val participants = Edge.participantIds(edge).slice(0, 2)
       for (i <- 0 until participants.size) {
-        val key = (edge.etype, i, participants(i))
+        val key = (Edge.edgeType(edge), i, participants(i))
         val others = participants.filter(p => (p != participants(i)) && (p != rootId)).toSet
         if (rm contains key)
           rm(key) ++= others
@@ -104,12 +104,12 @@ class GraphInterface (val rootId: String, val store: VertexStore) {
   }
 
   /** Determines if an Edge is redundant in realtion to supernode links */
-  private def redundantEdge(snodes: MSet[Map[String, Any]], edge: Edge): Boolean = {
+  private def redundantEdge(snodes: MSet[Map[String, Any]], edge: String): Boolean = {
     for (sn <- snodes) {
       val key: (String, Int, String) = sn("key").asInstanceOf[(String, Int, String)]
-      val otherParticipants = edge.participantIds.toSet - key._3
-      if ((edge.etype == key._1) &&
-        (edge.participantIds(key._2) == key._3) && 
+      val otherParticipants = Edge.participantIds(edge).toSet - key._3
+      if ((Edge.edgeType(edge) == key._1) &&
+        (Edge.participantIds(edge)(key._2) == key._3) && 
         otherParticipants.subsetOf(sn("nodes").asInstanceOf[Set[String]]))
         return true
     }
@@ -118,9 +118,9 @@ class GraphInterface (val rootId: String, val store: VertexStore) {
 
   /** Generates list of links to be displayed */
   private def visualLinks = {
-    val nodeLinks = (for (e <- edges if (!redundantEdge(snodes, e))) yield {
-      val pids = e.participantIds
-      (e.etype, pids(0), pids(1), true, true)
+    val nodeLinks = (for (e <- edgeIds if (!redundantEdge(snodes, e))) yield {
+      val pids = Edge.participantIds(e)
+      (Edge.edgeType(e), pids(0), pids(1), true, true)
     }).toSet
 
     val snodeLinks = (for (sn <- snodes) yield {

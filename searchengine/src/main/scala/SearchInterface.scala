@@ -1,4 +1,7 @@
-package com.graphbrain.hgdb
+package com.graphbrain.searchengine
+
+import com.graphbrain.hgdb.Vertex
+import com.graphbrain.hgdb.TextNode
 
 
 abstract trait SearchInterface {
