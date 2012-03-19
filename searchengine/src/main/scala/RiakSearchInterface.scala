@@ -43,11 +43,4 @@ object RiakSearchInterface {
               port: Int=8098) = {
     new RiakSearchInterface(index, host, port)
   }
-
-  def main(args: Array[String]): Unit = {
-  	val rsi = new RiakSearchInterface("gbsearch3")
-    rsi.initIndex()
-    rsi.index("name5", "Xpto Menezes")
-    println(rsi.query("Menezes"))
-  }
 }
