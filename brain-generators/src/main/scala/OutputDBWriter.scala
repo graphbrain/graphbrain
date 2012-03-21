@@ -1,3 +1,5 @@
+package com.graphbrain.brain-generators
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import scala.collection.immutable.HashMap
