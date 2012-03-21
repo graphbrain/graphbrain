@@ -59,7 +59,7 @@ object DBPediaGraphFromCategories {
     return ""
   }
 
-  def processFile(filename:String, output:OutputDBWriter, limit:Int, readerLine:Int=1):Unit=
+  def processFile(filename:String, output:OutputDBWriter, limit:Int, readerLine:Int=0):Unit=
   
   {
     
@@ -68,7 +68,7 @@ object DBPediaGraphFromCategories {
     {
       reader.initAtLine(readerLine)
     }
-    var counter=0
+    var counter=reader.getLineNum();
     var inserted=0;
     output.writeGeneratorSource(DBPediaGraphFromCategories.sourceName, DBPediaGraphFromCategories.sourceURL, output)
     inserted+=1
@@ -78,7 +78,7 @@ object DBPediaGraphFromCategories {
     while(counter<limit||limit<0)
     {
       val line = reader.readLine()
-      println("Line: " + counter.toString + " Inserted: " + inserted.toString + line + " File line: " + reader.getLineNum());
+      println("Processed Line: " + counter.toString + " Inserted: " + inserted.toString + line + " File line: " + reader.getLineNum());
       
       line match{
         case ""=> return 
@@ -93,7 +93,8 @@ object DBPediaGraphFromCategories {
       } 
       counter+=1     
     }
-    println("Total lines: "+ counter.toString); 
+    println("Start line: "+readerLine.toString)
+    println("End line: "+ counter.toString); 
     println("Inserted: "+ inserted.toString); 
     return
 
@@ -119,8 +120,8 @@ object DBPediaGraphFromCategories {
     args match
     {
       
-      case a:Array[String] if(a.length==3) => processFile(args(0), new OutputDBWriter(args(1), args(2)), 0-1)
-      case _ =>  processFile(DBPediaGraphFromCategories.dataFile, new OutputDBWriter("gb", DBPediaGraphFromCategories.sourceName), 100)
+      case a:Array[String] if(a.length==3) => processFile(args(0), new OutputDBWriter(args(1), args(2)), 0-1, args(3).toInt)
+      case _ =>  processFile(DBPediaGraphFromCategories.dataFile, new OutputDBWriter("gb", DBPediaGraphFromCategories.sourceName), 100, 95)
       
     }
     

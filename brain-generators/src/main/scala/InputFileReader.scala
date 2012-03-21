@@ -7,7 +7,7 @@ import java.io.FileInputStream
 class InputFileReader(fileName:String, sep:String=",") {
 	
 	val reader:BufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
-	var lineNum=1;
+	var lineNum=0;
 
 	def readLine():String=
 	{
@@ -27,12 +27,16 @@ class InputFileReader(fileName:String, sep:String=",") {
 
 	def initAtLine(line:Int):Unit=
 	{
-		readLine(line)
+		for(i<-0 to line-1){
+			readLine()
+
+		}
+		
 	}
 
-	def readLine(startLine:Int):String=
+	/*def readLine(startLine:Int):String=
 	{
-		for(i<-1 to startLine-1){
+		for(i<-0 to startLine-1){
 			reader.readLine()
 			lineNum+=1
 		}
@@ -42,7 +46,7 @@ class InputFileReader(fileName:String, sep:String=",") {
 			case a:String => return a;
 			case _ => return "";
 		}
-	}
+	}*/
 
 	def readItems():Array[String]=
 	{
