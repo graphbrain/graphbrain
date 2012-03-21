@@ -18,7 +18,7 @@ class RiakSearchInterface(val index: String,
 
   def index(key: String, text: String): Unit = {
     val safeKey = URLEncoder.encode(key, "UTF-8")
-    val req = :/(host, port) / "buckets" / index / "keys" / safeKey <<< text
+    val req = :/(host, port) / "buckets" / index / "keys" / safeKey <<< text.toLowerCase
     Http(req >|)
   }
 
