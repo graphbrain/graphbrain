@@ -1,4 +1,4 @@
-package com.graphbrain.tools.showvertex
+package com.graphbrain.tools
 
 import com.graphbrain.hgdb.VertexStore
 

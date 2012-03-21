@@ -1,10 +1,5 @@
 package com.graphbrain.tools
 
-import welcome.Welcome
-import showvertex.ShowVertex
-import neighbors.Neighbors
-import search.Search
-
 
 object Tools { 
   def main(args: Array[String]) : Unit = {

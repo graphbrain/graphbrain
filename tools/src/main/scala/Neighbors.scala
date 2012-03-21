@@ -1,4 +1,4 @@
-package com.graphbrain.tools.neighbors
+package com.graphbrain.tools
 
 import com.graphbrain.hgdb.VertexStore
 
