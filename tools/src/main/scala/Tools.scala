@@ -3,6 +3,7 @@ package com.graphbrain.tools
 import welcome.Welcome
 import showvertex.ShowVertex
 import neighbors.Neighbors
+import search.Search
 
 
 object Tools { 
@@ -16,6 +17,7 @@ object Tools {
         case "welcome" => Welcome(toolArgs)
         case "showvertex" => ShowVertex(toolArgs)
         case "neighbors" => Neighbors(toolArgs)
+        case "search" => Search(toolArgs)
         case _ => println("Error: unkown tool.")
       }
     }
