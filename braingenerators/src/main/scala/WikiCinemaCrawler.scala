@@ -78,7 +78,7 @@ object WikiCinemaCrawler {
     var inserted = 0
 
     val output = new OutputDBWriter("gb", sourceName)
-    
+    output.writeGeneratorSource(WikiCinemaCrawler.sourceName, WikiCinemaCrawler.sourceURL, output)
   
     for(l <- WikiCinemaCrawler.list_pages){
         val title = film_list_stub+l;
