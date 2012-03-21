@@ -1,4 +1,4 @@
-package com.graphbrain.tools.search
+package com.graphbrain.tools
 
 import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.searchengine.RiakSearchInterface

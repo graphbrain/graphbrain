@@ -1,4 +1,4 @@
-package com.graphbrain.tools.welcome
+package com.graphbrain.tools
 
 import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.TextNode
