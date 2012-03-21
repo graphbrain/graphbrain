@@ -1,3 +1,5 @@
+package com.graphbrain.brain-generators
+
 import java.net.URL
 import scala.io.Source
 import scala.util.matching.Regex

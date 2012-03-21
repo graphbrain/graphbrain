@@ -1,3 +1,5 @@
+package com.graphbrain.brain-generators
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader
 import java.io.FileInputStream
