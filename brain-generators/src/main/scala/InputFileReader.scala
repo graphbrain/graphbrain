@@ -1,4 +1,4 @@
-package com.graphbrain.brain-generators
+package com.graphbrain.braingenerators
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader
