@@ -1,4 +1,4 @@
-package com.graphbrain.brain-generators
+package com.graphbrain.braingenerators
 
 object Formatting {
 

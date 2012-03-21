@@ -3,7 +3,7 @@ import AssemblyKeys._
 
 organization := "com.graphbrain"
 
-name := "brain-generators"
+name := "braingenerators"
 
 version := "0.1.0-SNAPSHOT"
 
