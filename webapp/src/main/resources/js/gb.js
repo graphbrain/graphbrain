@@ -462,14 +462,14 @@
       this.weight = 0;
     }
 
-    SNode.prototype.updatePos = function(_x, _y) {
+    SNode.prototype.updatePos = function(_x, _y, _z) {
       var key, link, _i, _len, _ref, _results;
       this.x = _x;
       this.y = _y;
-      this.z = 0;
+      this.z = _z;
       this.auxVec[0] = this.x - g.halfWidth;
       this.auxVec[1] = this.y - g.halfHeight;
-      this.auxVec[2] = 0;
+      this.auxVec[2] = this.z;
       m4x4mulv3(g.affinMat, this.auxVec, this.rpos);
       this.rpos[0] += g.halfWidth;
       this.rpos[1] += g.halfHeight;
@@ -497,9 +497,9 @@
       return _results;
     };
 
-    SNode.prototype.moveTo = function(x, y) {
+    SNode.prototype.moveTo = function(x, y, z) {
       var transformStr;
-      this.updatePos(x, y);
+      this.updatePos(x, y, z);
       transformStr = 'translate3d(' + (this.rpos[0] - this.halfWidth) + 'px,' + (this.rpos[1] - this.halfHeight) + 'px,' + this.rpos[2] + 'px)';
       return $('div#' + this.id).css('-webkit-transform', transformStr);
     };
@@ -529,7 +529,7 @@
       this.height = _height;
       this.halfWidth = _width / 2;
       this.halfHeight = _height / 2;
-      this.moveTo(this.x, this.y);
+      this.moveTo(this.x, this.y, this.z);
       for (key in this.nodes) {
         if (this.nodes.hasOwnProperty(key)) this.nodes[key].calcPos();
       }
@@ -884,7 +884,7 @@
       for (key in this.snodes) {
         if (!(this.snodes.hasOwnProperty(key))) continue;
         sn = this.snodes[key];
-        sn.moveTo(sn.x, sn.y);
+        sn.moveTo(sn.x, sn.y, sn.z);
       }
       return this.updateViewLinks();
     };
@@ -964,7 +964,7 @@
         }
         gp.next();
       }
-      return snode.moveTo(bestX, bestY);
+      return snode.moveTo(bestX, bestY, 0);
     };
 
     Graph.prototype.nextByWeight = function(depth) {
@@ -984,85 +984,48 @@
       return bestSNode;
     };
 
+    Graph.prototype.signal = function(value) {
+      if (value >= 0) {
+        return 1.0;
+      } else {
+        return -1.0;
+      }
+    };
+
     Graph.prototype.layout = function(width, height) {
-      var fixedSNodes, key, snode, snodeCount, x, y, _results;
+      var coords, i, key, snode, snodeCount, x, y, z, _ref, _results;
+      coords = {
+        0: [-0.7, 0, 0],
+        1: [0.7, 0, 0],
+        2: [0, 0.7, 0],
+        3: [0, -0.7, 0],
+        4: [-0.5, -0.5, -0.5],
+        5: [0.5, 0.5, -0.5],
+        6: [-0.5, 0.5, -0.5],
+        7: [0.5, -0.5, -0.5]
+      };
       this.halfWidth = width / 2;
       this.halfHeight = height / 2;
       for (key in this.snodes) {
         if (this.snodes.hasOwnProperty(key)) this.snodes[key].fixed = false;
       }
-      fixedSNodes = [g.root];
-      g.root.moveTo(width / 2, height / 2);
+      g.root.moveTo(width / 2, height / 2, 0);
       g.root.fixed = true;
       snodeCount = this.snodes.size();
-      if (snodeCount > 1) {
-        snode = this.nextByWeight(1);
-        x = width / 2;
-        x -= g.root.width / 2;
-        x -= snode.width / 2;
-        x -= 100;
-        y = height / 2;
-        snode.moveTo(x, y);
-        snode.fixed = true;
-        fixedSNodes.push(snode);
-      }
-      if (snodeCount > 2) {
-        snode = this.nextByWeight(1);
-        if (snode) {
-          x = width / 2;
-          x += g.root.width / 2;
-          x += snode.width / 2;
-          x += 100;
-          y = height / 2;
-          snode.moveTo(x, y);
-          snode.fixed = true;
-          fixedSNodes.push(snode);
-        }
-      }
-      if (snodeCount > 3) {
-        snode = this.nextByWeight(1);
-        if (snode) {
-          x = width / 2;
-          y = height / 2;
-          y -= g.root.height / 2;
-          y -= snode.height / 2;
-          y -= 100;
-          snode.moveTo(x, y);
-          snode.fixed = true;
-          fixedSNodes.push(snode);
-        }
-      }
-      if (snodeCount > 4) {
-        snode = this.nextByWeight(1);
-        if (snode) {
-          x = width / 2;
-          y = height / 2;
-          y += g.root.height / 2;
-          y += snode.height / 2;
-          y += 100;
-          snode.moveTo(x, y);
-          snode.fixed = true;
-          fixedSNodes.push(snode);
-        }
-      }
-      for (key in this.snodes) {
-        if (!(this.snodes.hasOwnProperty(key))) continue;
-        snode = this.snodes[key];
-        if ((snode.depth === 1) && (!snode.fixed)) {
-          this.layoutSNode(snode, fixedSNodes, width, height);
-          fixedSNodes.push(snode);
-        }
-      }
       _results = [];
-      for (key in this.snodes) {
-        if (!(this.snodes.hasOwnProperty(key))) continue;
-        snode = this.snodes[key];
-        if (snode.depth === 2) {
-          this.layoutSNode(snode, fixedSNodes, width, height);
-          _results.push(fixedSNodes.push(snode));
-        } else {
-          _results.push(void 0);
+      for (i = 0, _ref = snodeCount - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
+        snode = this.nextByWeight(1);
+        if (!snode) break;
+        x = width / 2;
+        y = height / 2;
+        z = 0;
+        if (i < coords.size()) {
+          x += coords[i][0] * (width / 2);
+          y += coords[i][1] * (height / 2);
+          z += coords[i][2] * (height / 2);
         }
+        snode.moveTo(x, y, z);
+        _results.push(snode.fixed = true);
       }
       return _results;
     };

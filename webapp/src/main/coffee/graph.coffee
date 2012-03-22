@@ -116,7 +116,7 @@ class Graph
     updateView: -> 
         for key of @snodes when @snodes.hasOwnProperty(key)
             sn = @snodes[key]
-            sn.moveTo(sn.x, sn.y)
+            sn.moveTo(sn.x, sn.y, sn.z)
 
         @updateViewLinks()
 
@@ -188,7 +188,7 @@ class Graph
 
         #console.log("best: " + bestPenalty)
 
-        snode.moveTo(bestX, bestY)
+        snode.moveTo(bestX, bestY, 0)
 
 
     nextByWeight: (depth) ->
@@ -204,8 +204,24 @@ class Graph
 
         bestSNode
 
+    signal: (value) ->
+        if value >= 0
+            1.0
+        else
+            -1.0
 
     layout: (width, height) ->
+        coords = {
+            0: [-0.7, 0, 0],
+            1: [0.7, 0, 0],
+            2: [0, 0.7, 0],
+            3: [0, -0.7, 0],
+            4: [-0.5, -0.5, -0.5],
+            5: [0.5, 0.5, -0.5],
+            6: [-0.5, 0.5, -0.5],
+            7: [0.5, -0.5, -0.5]
+        }
+
         @halfWidth = width / 2
         @halfHeight = height / 2
 
@@ -213,67 +229,23 @@ class Graph
         @snodes[key].fixed = false for key of @snodes when @snodes.hasOwnProperty(key)
 
         # layout root node
-        fixedSNodes = [g.root]
-        g.root.moveTo(width / 2, height / 2)
+        g.root.moveTo(width / 2, height / 2, 0)
         g.root.fixed = true
 
         snodeCount = @snodes.size()
 
-        # special cases
-        if snodeCount > 1
+        for i in [0..(snodeCount-1)]
             snode = @nextByWeight(1)
+            if !snode
+                break
+
             x = width / 2
-            x -= g.root.width / 2
-            x -= snode.width / 2
-            x -= 100
             y = height / 2
-            snode.moveTo(x, y)
+            z = 0
+
+            if i < coords.size()
+                x += coords[i][0] * (width / 2)
+                y += coords[i][1] * (height / 2)
+                z += coords[i][2] * (height / 2)
+            snode.moveTo(x, y, z)
             snode.fixed = true
-            fixedSNodes.push(snode)
-        if snodeCount > 2
-            snode = @nextByWeight(1)
-            if snode
-                x = width / 2
-                x += g.root.width / 2
-                x += snode.width / 2
-                x += 100
-                y = height / 2
-                snode.moveTo(x, y)
-                snode.fixed = true
-                fixedSNodes.push(snode)
-        if snodeCount > 3
-            snode = @nextByWeight(1)
-            if snode
-                x = width / 2
-                y = height / 2
-                y -= g.root.height / 2
-                y -= snode.height / 2
-                y -= 100
-                snode.moveTo(x, y)
-                snode.fixed = true
-                fixedSNodes.push(snode)
-        if snodeCount > 4
-            snode = @nextByWeight(1)
-            if snode
-                x = width / 2
-                y = height / 2
-                y += g.root.height / 2
-                y += snode.height / 2
-                y += 100
-                snode.moveTo(x, y)
-                snode.fixed = true
-                fixedSNodes.push(snode)
-
-        # layout tier 1 nodes
-        for key of @snodes when @snodes.hasOwnProperty(key)
-            snode = @snodes[key]
-            if (snode.depth == 1) and (not snode.fixed)
-                @layoutSNode(snode, fixedSNodes, width, height)
-                fixedSNodes.push(snode)
-
-        # layout tier 2 nodes
-        for key of @snodes when @snodes.hasOwnProperty(key)
-            snode = @snodes[key]
-            if snode.depth == 2
-                @layoutSNode(snode, fixedSNodes, width, height)
-                fixedSNodes.push(snode)

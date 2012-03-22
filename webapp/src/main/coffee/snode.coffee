@@ -22,15 +22,15 @@ class SNode extends VisualObj
         @weight = 0
 
 
-    updatePos: (_x, _y) ->
+    updatePos: (_x, _y, _z) ->
         @x = _x;
         @y = _y;
-        @z = 0;
+        @z = _z;
 
         # rotation
         @auxVec[0] = @x - g.halfWidth
         @auxVec[1] = @y - g.halfHeight
-        @auxVec[2] = 0
+        @auxVec[2] = @z
 
         m4x4mulv3(g.affinMat, @auxVec, @rpos)
     
@@ -60,8 +60,8 @@ class SNode extends VisualObj
         link.updatePos() for link in @links
 
 
-    moveTo: (x, y) ->
-        @updatePos(x, y)
+    moveTo: (x, y, z) ->
+        @updatePos(x, y, z)
 
         transformStr = 'translate3d(' + (@rpos[0] - @halfWidth) + 'px,' + (@rpos[1] - @halfHeight) + 'px,' + @rpos[2] + 'px)'
         $('div#' + @id).css('-webkit-transform', transformStr)
@@ -91,7 +91,7 @@ class SNode extends VisualObj
         @height = _height
         @halfWidth = _width / 2
         @halfHeight = _height / 2
-        @moveTo(@x, @y)
+        @moveTo(@x, @y, @z)
 
         # calc relative positions of nodes contained in this super node
         @nodes[key].calcPos() for key of @nodes when @nodes.hasOwnProperty(key) 
