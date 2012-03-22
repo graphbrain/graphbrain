@@ -25,7 +25,7 @@ object WikiCinemaCrawler {
   def process_page(wptitle:String, output:OutputDBWriter):Unit={
    
     val wpage = Wikipedia.getPage(wptitle)
-    println(wpage.length)
+   
     val infoBoxItems=Wikipedia.getInfobox(wpage, WikiCinemaCrawler.fields)
     val iterKeys=infoBoxItems.keys
 

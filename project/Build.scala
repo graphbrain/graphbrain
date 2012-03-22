@@ -17,8 +17,8 @@ object GraphbrainBuild extends Build {
                            base = file("webapp"),
                            settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(hgdb)
 
-  lazy val brain_generators = Project(id = "brain-generators",
-  							base = file("brain-generators"),
+  lazy val brain_generators = Project(id = "braingenerators",
+  							base = file("braingenerators"),
                 settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(hgdb, searchengine)
 
   lazy val tools = Project(id = "tools",
