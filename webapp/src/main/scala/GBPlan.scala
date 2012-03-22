@@ -16,6 +16,11 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
   val databaseName = System.getProperty("myapp.db.name")
 
   def intent = {
+    // TODO: deactive in production
+    case GET(Path("/exit")) => 
+      System.exit(0)
+      ComingSoon()
+
     case GET(Path("/")) => 
       logger.debug("GET /")
       ComingSoon()
