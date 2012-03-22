@@ -1,15 +1,25 @@
 package com.graphbrain.webapp
 
+import scala.util.Random
 import com.graphbrain.hgdb.VertexStore
 
 
 case class NodePage(store: VertexStore, nodeId: String) extends Page {
     
+    //val version = "040312"
+    val version = NodePage.randomVersion
+
     val gi = new GraphInterface(nodeId, store)
     val js = "var nodes = " + gi.nodesJSON + ";\n" +
         "var snodes = " + gi.snodesJSON + ";\n" +
         "var links = " + gi.linksJSON + ";\n" +
         "var error = '';\n"
+
+    def cssAndJs = {
+        """<link href="/css/main.css?""" + version + """" type="text/css" rel="Stylesheet" />""" +
+        '\n' +
+        """<script src="/js/gb.js?""" + version + """" type="text/javascript" ></script>"""
+    }
 
 	override def html = {
 
@@ -17,10 +27,9 @@ case class NodePage(store: VertexStore, nodeId: String) extends Page {
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>Graphbrain</title>
-<link href="/css/main.css?040312" type="text/css" rel="Stylesheet" />
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 <script src="/js/jquery-1.6.4.min.js" type="text/javascript" ></script>
-<script src="/js/gb.js" type="text/javascript" ></script>
+{scala.xml.Unparsed(cssAndJs)}
 </head>
 
 <body>
@@ -81,4 +90,10 @@ case class NodePage(store: VertexStore, nodeId: String) extends Page {
 </html>
 
   }
+}
+
+object NodePage {
+    val rand = new Random
+
+    def randomVersion: String = rand.nextInt(999999999).toString
 }

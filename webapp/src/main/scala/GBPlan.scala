@@ -17,7 +17,7 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
 
   def intent = {
     // TODO: deactive in production
-    case GET(Path("/exit")) => 
+    case GET(Path("/exit")) =>
       System.exit(0)
       ComingSoon()
 
