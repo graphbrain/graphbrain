@@ -10,6 +10,8 @@ scalacOptions += "-deprecation"
 
 scalacOptions += "-unchecked"
 
+fork in run := true
+
 resolvers ++= Seq("Coda Hales Repository" at "http://repo.codahale.com")
 
 libraryDependencies ++= Seq(
