@@ -46,17 +46,6 @@ class Graph
         @updateViewLinks()
 
 
-    labelAtPoint: (x, y) ->
-        p = [x, y]
-        
-        i = @links.length - 1
-        while i >= 0
-            if @links[i].pointInLabel(p) then return @links[i]
-            i--
-
-        return -1;
-
-
     genSNodeKeys: -> key for key in @snodes
 
     nextByWeight: (depth) ->
