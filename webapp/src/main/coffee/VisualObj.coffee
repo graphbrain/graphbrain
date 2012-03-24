@@ -22,6 +22,3 @@ class VisualObj
         @rect.v4.x = 0
         @rect.v4.y = 0
         @rect.v4.z = 0
-
-    overlaps: (obj) ->
-        rotRectsOverlap(@rect, obj.rect)

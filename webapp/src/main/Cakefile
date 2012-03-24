@@ -9,12 +9,12 @@ build = (callback) ->
     'coffee/aux.coffee',
     'coffee/geom.coffee',
     'coffee/vec3mat4x4.coffee',
-    'coffee/quat.coffee',
-    'coffee/visualobj.coffee',
-    'coffee/node.coffee',
-    'coffee/snode.coffee',
-    'coffee/link.coffee',
-    'coffee/graph.coffee',
+    'coffee/Quaternion.coffee',
+    'coffee/VisualObj.coffee',
+    'coffee/Node.coffee',
+    'coffee/SNode.coffee',
+    'coffee/Link.coffee',
+    'coffee/Graph.coffee',
     'coffee/main.coffee']
   coffee.stderr.on 'data', (data) ->
     process.stderr.write data.toString()
@@ -24,7 +24,7 @@ build = (callback) ->
     callback?() if code is 0
 
 css = (callback) ->
-  cat = exec 'cat css/main.css css/dialog.css css/interface.css css/links.css css/nodes.css > resources/css/main.css', (error, stdout, stderr) =>
+  cat = exec 'cat css/main.css css/interface.css css/links.css css/nodes.css > resources/css/main.css', (error, stdout, stderr) =>
     print stdout
     process.stderr.write stderr
     if error isnt null
