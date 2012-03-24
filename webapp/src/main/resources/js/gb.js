@@ -703,7 +703,7 @@
       nodesDiv = document.getElementById("nodesDiv");
       nodesDiv.appendChild(linkDiv);
       $('#link' + this.id).append('<div class="linkLine" id="linkLine' + this.id + '"></div>');
-      $('#link' + this.id).append('<div class="linkLabel" id="linkLabel' + this.id + '">' + this.label + '</div>');
+      $('#link' + this.id).append('<div class="linkLabel" id="linkLabel' + this.id + '"><div class="linkText">' + this.label + '</div><div class="linkArrow" /></div>');
       _height = $('#link' + this.id).outerHeight();
       this.halfHeight = _height / 2;
       labelWidth = $('#linkLabel' + this.id).outerWidth();

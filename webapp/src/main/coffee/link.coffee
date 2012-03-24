@@ -193,7 +193,7 @@ class Link extends VisualObj
         nodesDiv.appendChild(linkDiv)
 
         $('#link' + @id).append('<div class="linkLine" id="linkLine' + @id + '"></div>')
-        $('#link' + @id).append('<div class="linkLabel" id="linkLabel' + @id + '">' + @label + '</div>')
+        $('#link' + @id).append('<div class="linkLabel" id="linkLabel' + @id + '"><div class="linkText">' + @label + '</div><div class="linkArrow" /></div>')
 
         _height = $('#link' + @id).outerHeight()
         @halfHeight = _height / 2;
