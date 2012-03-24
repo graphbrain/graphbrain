@@ -747,17 +747,6 @@
       return this.updateViewLinks();
     };
 
-    Graph.prototype.labelAtPoint = function(x, y) {
-      var i, p;
-      p = [x, y];
-      i = this.links.length - 1;
-      while (i >= 0) {
-        if (this.links[i].pointInLabel(p)) return this.links[i];
-        i--;
-      }
-      return -1;
-    };
-
     Graph.prototype.genSNodeKeys = function() {
       var key, _i, _len, _ref, _results;
       _ref = this.snodes;
