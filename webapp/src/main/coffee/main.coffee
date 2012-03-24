@@ -4,21 +4,12 @@
 
 
 g = false
-newLink = false
-draggedNode = false
 dragging = false
-curTargNode = false
-tipVisible = false
 lastX = 0
 lastY = 0
 
 
 initInterface = ->
-    if error != ''
-        $("#tip").html('<div class="error">' + error + '</div>')
-        $("#tip").fadeIn "slow", () => 
-            tipVisible = true
-
     $("#nodesDiv").bind "mouseup", (e) =>
         dragging = false
         draggedNode = false
@@ -38,10 +29,6 @@ initInterface = ->
             g.rotateX(-deltaX * 0.0015)
             g.rotateY(deltaY * 0.0015)
             g.updateView()
-
-        if draggedNode
-            draggedNode.moveTo(e.pageX, e.pageY)
-            dragging = true
 
 
 initGraph = ->
