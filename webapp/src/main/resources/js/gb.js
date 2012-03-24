@@ -5,7 +5,7 @@
         len++;
     return len;
 };
-  var Graph, GraphPos, Link, Node, Quaternion, SNode, VisualObj, dotProduct, dragging, g, initGraph, initInterface, interRect, lastX, lastY, lineRectOverlap, lineSegsOverlap, m4x4mulv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, rotRectsOverlap, rotateAndTranslate, sepAxis, sepAxisSide, tmpVec, v3dotv3,
+  var Graph, Link, Node, Quaternion, SNode, VisualObj, dotProduct, dragging, g, initGraph, initInterface, interRect, lastX, lastY, lineRectOverlap, lineSegsOverlap, m4x4mulv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, rotRectsOverlap, rotateAndTranslate, sepAxis, sepAxisSide, tmpVec, v3dotv3,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
     _this = this;
@@ -365,10 +365,6 @@
       this.rect.v4.z = 0;
     }
 
-    VisualObj.prototype.overlaps = function(obj) {
-      return rotRectsOverlap(this.rect, obj.rect);
-    };
-
     return VisualObj;
 
   })();
@@ -593,7 +589,7 @@
     }
 
     Link.prototype.updatePos = function() {
-      var i, origSuper, p, p0, p1, slope, targSuper, x0, x1, y0, y1, _dx, _dy, _orig, _targ;
+      var origSuper, p0, p1, slope, targSuper, x0, x1, y0, y1, _dx, _dy, _orig, _targ;
       _orig = false;
       _targ = false;
       origSuper = false;
@@ -631,68 +627,7 @@
       this.cx = this.x0 + ((this.x1 - this.x0) / 2);
       this.cy = this.y0 + ((this.y1 - this.y0) / 2);
       slope = (this.y1 - this.y0) / (this.x1 - this.x0);
-      this.angle = Math.atan(slope);
-      p = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
-      if ((this.x0 < this.x1) || ((this.x0 === this.x1) && (this.y0 < this.y1))) {
-        p[0][0] = -this.halfWidth;
-        p[0][1] = -this.halfHeight;
-        p[1][0] = -this.halfWidth;
-        p[1][1] = this.halfHeight;
-        p[2][0] = this.halfWidth;
-        p[2][1] = this.halfHeight;
-        p[3][0] = this.halfWidth + 6;
-        p[3][1] = 0;
-        p[4][0] = this.halfWidth;
-        p[4][1] = -this.halfHeight;
-      } else {
-        p[0][0] = -this.halfWidth;
-        p[0][1] = -this.halfHeight;
-        p[1][0] = -this.halfWidth - 6;
-        p[1][1] = 0;
-        p[2][0] = -this.halfWidth;
-        p[2][1] = this.halfHeight;
-        p[3][0] = this.halfWidth;
-        p[3][1] = this.halfHeight;
-        p[4][0] = this.halfWidth;
-        p[4][1] = -this.halfHeight;
-      }
-      i = 0;
-      while (i < 5) {
-        rotateAndTranslate(p[i], this.angle, this.cx, this.cy);
-        i++;
-      }
-      this.points = p;
-      if ((this.x0 < this.x1) || ((this.x0 === this.x1) && (this.y0 < this.y1))) {
-        this.rect.v1.x = p[0][0];
-        this.rect.v1.y = p[0][1];
-        this.rect.v2.x = p[1][0];
-        this.rect.v2.y = p[1][1];
-        this.rect.v3.x = p[2][0];
-        this.rect.v3.y = p[2][1];
-        this.rect.v4.x = p[4][0];
-        return this.rect.v4.y = p[4][1];
-      } else {
-        this.rect.v1.x = p[0][0];
-        this.rect.v1.y = p[0][1];
-        this.rect.v2.x = p[2][0];
-        this.rect.v2.y = p[2][1];
-        this.rect.v3.x = p[3][0];
-        this.rect.v3.y = p[3][1];
-        this.rect.v4.x = p[4][0];
-        return this.rect.v4.y = p[4][1];
-      }
-    };
-
-    Link.prototype.pointInLabel = function() {
-      return pointInTriangle(this.points[0], this.points[1], this.points[2], p) || pointInTriangle(this.points[2], this.points[3], this.points[4], p) || pointInTriangle(this.points[0], this.points[2], this.points[4], p);
-    };
-
-    Link.prototype.intersectsLink = function(link2) {
-      return lineSegsOverlap(this.x0, this.y0, this.x1, this.y1, link2.x0, link2.y0, link2.x1, link2.y1);
-    };
-
-    Link.prototype.intersectsSNode = function(snode) {
-      return lineRectOverlap(this.x0, this.y0, this.x1, this.y1, snode.rect);
+      return this.angle = Math.atan(slope);
     };
 
     Link.prototype.place = function() {
@@ -740,83 +675,6 @@
     return Link;
 
   })(VisualObj);
-
-  GraphPos = (function() {
-
-    function GraphPos(snode, width, height) {
-      var deltaX, deltaY;
-      this.snode = snode;
-      this.width = width;
-      this.height = height;
-      this.angDivs = 12;
-      this.radDivs = 10;
-      this.ang2 = Math.PI * 0.5;
-      this.halfWidth = this.width / 2;
-      this.halfHeight = this.height / 2;
-      this.done = false;
-      this.angStep = 0;
-      this.radStep = 1;
-      this.x = this.halfWidth;
-      this.y = this.halfHeight;
-      if (this.snode.depth > 1) {
-        deltaX = this.snode.parent.x - this.halfWidth;
-        deltaY = this.snode.parent.y - this.halfHeight;
-        this.baseAngle = Math.atan2(deltaY, deltaX);
-        this.minRadius = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
-        this.maxRadius = Math.sqrt((this.halfWidth * this.halfWidth) + (this.halfHeight * this.halfHeight));
-      }
-      this.next();
-    }
-
-    GraphPos.prototype.next = function() {
-      if (this.snode.depth === 1) {
-        return this.next1();
-      } else {
-        return this.next2();
-      }
-    };
-
-    GraphPos.prototype.next1 = function() {
-      var a, angle, b;
-      if (this.angStep >= this.angDivs) {
-        this.radStep++;
-        this.angStep = 0;
-      }
-      if (this.radStep > this.radDivs) {
-        this.done = true;
-        return;
-      }
-      angle = Math.PI * 2 * (this.angStep / this.angDivs);
-      a = this.halfWidth * (this.radStep / this.radDivs);
-      b = this.halfHeight * (this.radStep / this.radDivs);
-      this.x = this.halfWidth + (a * Math.cos(angle));
-      this.y = this.halfHeight + (b * Math.sin(angle));
-      return this.angStep++;
-    };
-
-    GraphPos.prototype.next2 = function() {
-      var angle, r;
-      if (this.angStep >= this.angDivs) {
-        this.radStep++;
-        this.angStep = 0;
-      }
-      if (this.radStep >= this.radDivs) {
-        this.done = true;
-        return;
-      }
-      angle = (this.ang2 * (this.angStep / this.angDivs)) - (this.ang2 / 2);
-      angle += this.baseAngle;
-      r = this.radStep / this.radDivs;
-      r *= this.maxRadius - this.minRadius;
-      r += this.minRadius;
-      this.x = this.halfWidth + (r * Math.cos(angle));
-      this.y = this.halfHeight + (r * Math.sin(angle));
-      return this.angStep++;
-    };
-
-    return GraphPos;
-
-  })();
 
   Graph = (function() {
 
@@ -909,62 +767,6 @@
         _results.push(key);
       }
       return _results;
-    };
-
-    Graph.prototype.layoutSNode = function(snode, fixedSNodes, width, height) {
-      var bestPenalty, bestX, bestY, gp, iters, link, penalty, slink, snode2, x, y, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _len6, _m, _n, _ref, _ref2, _ref3, _ref4, _ref5;
-      iters = 100;
-      snode.fixed = true;
-      bestPenalty = 99999999;
-      bestX = bestY = 0;
-      gp = new GraphPos(snode, width, height);
-      while (!gp.done) {
-        penalty = 0;
-        x = gp.x;
-        y = gp.y;
-        snode.updatePos(x, y);
-        for (_i = 0, _len = fixedSNodes.length; _i < _len; _i++) {
-          snode2 = fixedSNodes[_i];
-          if (snode.overlaps(snode2)) penalty += 1000000;
-          _ref = snode.links;
-          for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
-            link = _ref[_j];
-            if (link.overlaps(snode2)) penalty += 10000;
-          }
-        }
-        _ref2 = this.links;
-        for (_k = 0, _len3 = _ref2.length; _k < _len3; _k++) {
-          link = _ref2[_k];
-          if (link.sorig.fixed && link.starg.fixed && snode.overlaps(link)) {
-            penalty += 10000;
-          }
-        }
-        _ref3 = this.links;
-        for (_l = 0, _len4 = _ref3.length; _l < _len4; _l++) {
-          link = _ref3[_l];
-          if (link.sorig.fixed && link.starg.fixed) {
-            _ref4 = snode.links;
-            for (_m = 0, _len5 = _ref4.length; _m < _len5; _m++) {
-              slink = _ref4[_m];
-              if (slink.sorig.fixed && slink.starg.fixed && link.intersectsLink(slink)) {
-                penalty += 10000;
-              }
-            }
-          }
-        }
-        _ref5 = snode.links;
-        for (_n = 0, _len6 = _ref5.length; _n < _len6; _n++) {
-          link = _ref5[_n];
-          if (link.sorig.fixed && link.starg.fixed) penalty += link.len;
-        }
-        if (penalty < bestPenalty) {
-          bestPenalty = penalty;
-          bestX = x;
-          bestY = y;
-        }
-        gp.next();
-      }
-      return snode.moveTo(bestX, bestY, 0);
     };
 
     Graph.prototype.nextByWeight = function(depth) {
