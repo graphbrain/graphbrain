@@ -5,7 +5,7 @@
         len++;
     return len;
 };
-  var Graph, GraphPos, Link, Node, Quaternion, SNode, VisualObj, curTargNode, dotProduct, draggedNode, dragging, g, initGraph, initInterface, interRect, lastX, lastY, lineRectOverlap, lineSegsOverlap, m4x4mulv3, newLink, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, rotRectsOverlap, rotateAndTranslate, sepAxis, sepAxisSide, tipVisible, tmpVec, v3dotv3,
+  var Graph, GraphPos, Link, Node, Quaternion, SNode, VisualObj, dotProduct, dragging, g, initGraph, initInterface, interRect, lastX, lastY, lineRectOverlap, lineSegsOverlap, m4x4mulv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, rotRectsOverlap, rotateAndTranslate, sepAxis, sepAxisSide, tmpVec, v3dotv3,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
     _this = this;
@@ -1036,15 +1036,7 @@
 
   g = false;
 
-  newLink = false;
-
-  draggedNode = false;
-
   dragging = false;
-
-  curTargNode = false;
-
-  tipVisible = false;
 
   lastX = 0;
 
@@ -1052,13 +1044,8 @@
 
   initInterface = function() {
     var _this = this;
-    if (error !== '') {
-      $("#tip").html('<div class="error">' + error + '</div>');
-      $("#tip").fadeIn("slow", function() {
-        return tipVisible = true;
-      });
-    }
     $("#nodesDiv").bind("mouseup", function(e) {
+      var draggedNode;
       dragging = false;
       return draggedNode = false;
     });
@@ -1077,11 +1064,7 @@
         lastY = e.pageY;
         g.rotateX(-deltaX * 0.0015);
         g.rotateY(deltaY * 0.0015);
-        g.updateView();
-      }
-      if (draggedNode) {
-        draggedNode.moveTo(e.pageX, e.pageY);
-        return dragging = true;
+        return g.updateView();
       }
     });
   };
