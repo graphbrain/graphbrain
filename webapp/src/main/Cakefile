@@ -15,6 +15,7 @@ build = (callback) ->
     'coffee/SNode.coffee',
     'coffee/Link.coffee',
     'coffee/Graph.coffee',
+    'coffee/interface.coffee',
     'coffee/main.coffee']
   coffee.stderr.on 'data', (data) ->
     process.stderr.write data.toString()

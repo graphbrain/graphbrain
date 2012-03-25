@@ -45,9 +45,9 @@ case class NodePage(store: VertexStore, nodeId: String) extends Page {
     </div>
 </div>
 
-<div id="nodesView">
-    <div id="nodesDiv"></div>
-</div>
+<div id="overlay"></div>
+
+<div id="nodesDiv"></div>
 
 <script language="javascript">
 

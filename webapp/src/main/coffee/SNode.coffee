@@ -63,7 +63,11 @@ class SNode extends VisualObj
     moveTo: (x, y, z) ->
         @updatePos(x, y, z)
 
-        transformStr = 'translate3d(' + (@rpos[0] - @halfWidth) + 'px,' + (@rpos[1] - @halfHeight) + 'px,' + @rpos[2] + 'px)'
+        _x = @rpos[0]
+        _y = @rpos[1]
+        _z = @rpos[2] + g.zOffset
+
+        transformStr = 'translate3d(' + (_x - @halfWidth) + 'px,' + (_y - @halfHeight) + 'px,' + _z + 'px)'
         $('div#' + @id).css('-webkit-transform', transformStr)
 
 
