@@ -5,7 +5,7 @@
         len++;
     return len;
 };
-  var Graph, Link, Node, Quaternion, SNode, VisualObj, dotProduct, dragging, g, initGraph, initInterface, interRect, lastX, lastY, lineRectOverlap, lineSegsOverlap, m4x4mulv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, rotRectsOverlap, rotateAndTranslate, sepAxis, sepAxisSide, tmpVec, v3dotv3,
+  var Graph, Link, Node, Quaternion, SNode, VisualObj, dotProduct, dragging, g, initGraph, initInterface, interRect, lastX, lastY, lineRectOverlap, lineSegsOverlap, m4x4mulv3, mouseDown, mouseMove, mouseUp, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, rotRectsOverlap, rotateAndTranslate, sepAxis, sepAxisSide, tmpVec, v3dotv3,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
     _this = this;
@@ -386,11 +386,10 @@
     }
 
     Node.prototype.calcPos = function() {
-      var nodeDiv, offset;
+      var nodeDiv;
       nodeDiv = $('#' + this.divid);
-      offset = nodeDiv.offset();
-      this.rpos[0] = offset.left + this.halfWidth;
-      this.rpos[1] = offset.top + this.halfHeight;
+      this.rpos[0] = this.halfWidth;
+      this.rpos[1] = this.halfHeight;
       this.rpos[2] = 0;
       this.x0 = this.rpos[0] - this.halfWidth;
       this.y0 = this.rpos[1] - this.halfHeight;
@@ -494,9 +493,12 @@
     };
 
     SNode.prototype.moveTo = function(x, y, z) {
-      var transformStr;
+      var transformStr, _x, _y, _z;
       this.updatePos(x, y, z);
-      transformStr = 'translate3d(' + (this.rpos[0] - this.halfWidth) + 'px,' + (this.rpos[1] - this.halfHeight) + 'px,' + this.rpos[2] + 'px)';
+      _x = this.rpos[0];
+      _y = this.rpos[1];
+      _z = this.rpos[2] + g.zOffset;
+      transformStr = 'translate3d(' + (_x - this.halfWidth) + 'px,' + (_y - this.halfHeight) + 'px,' + _z + 'px)';
       return $('div#' + this.id).css('-webkit-transform', transformStr);
     };
 
@@ -667,7 +669,7 @@
       $('#linkLabel' + this.id).css('left', '' + ((len / 2) - this.halfLabelWidth) + 'px');
       tx = cx - (len / 2);
       ty = cy - this.halfHeight;
-      tz = cz;
+      tz = cz + g.zOffset;
       transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px)' + ' rotateZ(' + rotz + 'rad)' + ' rotateY(' + roty + 'rad)';
       return $('#link' + this.id).css('-webkit-transform', transformStr);
     };
@@ -682,13 +684,20 @@
       this.snodes = {};
       this.nodes = {};
       this.links = [];
-      this.newNode = false;
-      this.newNodeActive = false;
+      this.scale = 0.4;
+      this.zOffset = 300;
       this.quat = new Quaternion();
       this.deltaQuat = new Quaternion();
       this.affinMat = new Array(16);
       this.quat.getMatrix(this.affinMat);
     }
+
+    Graph.prototype.setScale = function(scale) {
+      var transformStr;
+      this.scale = scale;
+      transformStr = "scale3d(" + scale + "," + scale + "," + scale + ")";
+      return $('#nodesDiv').css('-webkit-transform', transformStr);
+    };
 
     Graph.prototype.rotateX = function(angle) {
       this.deltaQuat.fromEuler(angle, 0, 0);
@@ -825,44 +834,64 @@
 
   })();
 
-  g = false;
-
   dragging = false;
 
   lastX = 0;
 
   lastY = 0;
 
-  initInterface = function() {
-    var _this = this;
-    $("#nodesDiv").bind("mouseup", function(e) {
-      var draggedNode;
-      dragging = false;
-      return draggedNode = false;
-    });
-    $("#nodesDiv").bind("mousedown", function(e) {
-      dragging = true;
+  mouseUp = function(e) {
+    return dragging = false;
+  };
+
+  mouseDown = function(e) {
+    dragging = true;
+    lastX = e.pageX;
+    lastY = e.pageY;
+    return false;
+  };
+
+  mouseMove = function(e) {
+    var deltaX, deltaY;
+    if (dragging) {
+      deltaX = e.pageX - lastX;
+      deltaY = e.pageY - lastY;
       lastX = e.pageX;
       lastY = e.pageY;
-      return false;
-    });
-    return $("#nodesDiv").bind("mousemove", function(e) {
-      var deltaX, deltaY;
-      if (dragging) {
-        deltaX = e.pageX - lastX;
-        deltaY = e.pageY - lastY;
-        lastX = e.pageX;
-        lastY = e.pageY;
-        g.rotateX(-deltaX * 0.0015);
-        g.rotateY(deltaY * 0.0015);
-        return g.updateView();
-      }
-    });
+      g.rotateX(-deltaX * 0.0015);
+      g.rotateY(deltaY * 0.0015);
+      g.updateView();
+    }
+    return true;
   };
+
+  initInterface = function() {
+    $("#overlay").bind("mouseup", mouseUp);
+    $(".snode_0").bind("mouseup", mouseUp);
+    $(".snode_1").bind("mouseup", mouseUp);
+    $(".snode1_0").bind("mouseup", mouseUp);
+    $(".snode1_1").bind("mouseup", mouseUp);
+    $(".link").bind("mouseup", mouseUp);
+    $("#overlay").bind("mousedown", mouseDown);
+    $(".snode_0").bind("mousedown", mouseDown);
+    $(".snode_1").bind("mousedown", mouseDown);
+    $(".snode1_0").bind("mousedown", mouseDown);
+    $(".snode1_1").bind("mousedown", mouseDown);
+    $(".link").bind("mousedown", mouseDown);
+    $("#overlay").bind("mousemove", mouseMove);
+    $(".snode_0").bind("mousemove", mouseMove);
+    $(".snode_1").bind("mousemove", mouseMove);
+    $(".snode1_0").bind("mousemove", mouseMove);
+    $(".snode1_1").bind("mousemove", mouseMove);
+    return $(".link").bind("mousemove", mouseMove);
+  };
+
+  g = false;
 
   initGraph = function() {
     var halfHeight, halfWidth, key, l, link, linkID, nid, nlist, nod, node, orig, parentID, sid, sn, snode, sorig, starg, subNode, targ, text, type, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref;
     g = new Graph();
+    g.setScale(0.5);
     for (_i = 0, _len = snodes.length; _i < _len; _i++) {
       sn = snodes[_i];
       sid = sn['id'];
@@ -950,8 +979,8 @@
   };
 
   $(function() {
-    initInterface();
-    return initGraph();
+    initGraph();
+    return initInterface();
   });
 
 }).call(this);

@@ -15,9 +15,9 @@ class Node
 
     calcPos: ->
         nodeDiv = $('#' + this.divid)
-        offset = nodeDiv.offset()
-        @rpos[0] = offset.left + @halfWidth
-        @rpos[1] = offset.top + @halfHeight
+        #offset = nodeDiv.offset()
+        @rpos[0] = @halfWidth
+        @rpos[1] = @halfHeight
         @rpos[2] = 0
         @x0 = @rpos[0] - @halfWidth
         @y0 = @rpos[1] - @halfHeight

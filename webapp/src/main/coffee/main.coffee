@@ -1,38 +1,11 @@
 # (c) 2012 GraphBrain Ltd. All rigths reserved.
 
 # Entry point functions & global variables
-
-
 g = false
-dragging = false
-lastX = 0
-lastY = 0
-
-
-initInterface = ->
-    $("#nodesDiv").bind "mouseup", (e) =>
-        dragging = false
-        draggedNode = false
-
-    $("#nodesDiv").bind "mousedown", (e) =>
-        dragging = true
-        lastX = e.pageX
-        lastY = e.pageY
-        false
-
-    $("#nodesDiv").bind "mousemove", (e) =>
-        if dragging
-            deltaX = e.pageX - lastX
-            deltaY = e.pageY - lastY
-            lastX = e.pageX
-            lastY = e.pageY
-            g.rotateX(-deltaX * 0.0015)
-            g.rotateY(deltaY * 0.0015)
-            g.updateView()
-
 
 initGraph = ->
     g = new Graph()
+    g.setScale(0.5)
 
     # process super nodes and associated nodes
     for sn in snodes
@@ -117,5 +90,5 @@ initGraph = ->
 
 
 $ =>
-    initInterface()
     initGraph()
+    initInterface()

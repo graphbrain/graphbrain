@@ -5,8 +5,8 @@ class Graph
         @snodes = {}
         @nodes = {}
         @links = []
-        @newNode = false
-        @newNodeActive = false
+        @scale = 0.4
+        @zOffset = 300
 
         # auxiliary quaternions and matrices for 3D rotation
         @quat = new Quaternion()
@@ -14,6 +14,10 @@ class Graph
         @affinMat = new Array(16)
         @quat.getMatrix(@affinMat)
 
+    setScale: (scale) ->
+        @scale = scale
+        transformStr = "scale3d(" + scale + "," + scale + "," + scale + ")"
+        $('#nodesDiv').css('-webkit-transform', transformStr)
 
     rotateX: (angle) ->
         @deltaQuat.fromEuler(angle, 0, 0)
