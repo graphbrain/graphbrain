@@ -341,7 +341,29 @@ object RuleEngine {
     return pos.mkString(" ");
   }
 
+  def main(args : Array[String]) : Unit = 
+  {
+      val inGraphExp=GRAPH2("A", "is colleagues with", "B")
+      val outGraphExp=GRAPH2("B", "is colleagues with", "A")
 
+      val testInGraph=("John", "is colleagues with", "Mary")
+      val expectedOutGraph=("Mary", "is colleagues with", "John")
+
+      val condExp1=GRAPH2("A", "is a", "B")
+      val condExp2=GRAPH2("B", "is a", "C")
+      val condExp3=GRAPH2("C", "is a", "D")
+      val outExp=GRAPH2("A", "is a", "C")
+      val compositeExp=COMPOSITE(condExp1, "AND", condExp2)
+      val graphPair=(condExp1, condExp2)
+      val testGraph1=("John", "is a", "surgeon")
+      val testGraph2=("surgeon", "is a", "human")
+      val testGraph3=("John", "is a", "human")
+
+    
+      println(RuleEngine.transform(inGraphExp, outGraphExp, testInGraph))
+      println(RuleEngine.checkMatch(compositeExp, (testGraph1, testGraph2)))
+      println(RuleEngine.transform(graphPair, outExp, (testGraph1, testGraph2)))
+  }
 
   
 }
