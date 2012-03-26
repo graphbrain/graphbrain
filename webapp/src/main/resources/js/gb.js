@@ -1,11 +1,95 @@
 (function() {
+  /*! Copyright (c) 2011 Brandon Aaron (http://brandonaaron.net)
+ * Licensed under the MIT License (LICENSE.txt).
+ *
+ * Thanks to: http://adomas.org/javascript-mouse-wheel/ for some pointers.
+ * Thanks to: Mathias Bank(http://www.mathias-bank.de) for a scope bug fix.
+ * Thanks to: Seamus Leahy for adding deltaX and deltaY
+ *
+ * Version: 3.0.6
+ * 
+ * Requires: 1.2.2+
+ */
+
+(function($) {
+
+var types = ['DOMMouseScroll', 'mousewheel'];
+
+if ($.event.fixHooks) {
+    for ( var i=types.length; i; ) {
+        $.event.fixHooks[ types[--i] ] = $.event.mouseHooks;
+    }
+}
+
+$.event.special.mousewheel = {
+    setup: function() {
+        if ( this.addEventListener ) {
+            for ( var i=types.length; i; ) {
+                this.addEventListener( types[--i], handler, false );
+            }
+        } else {
+            this.onmousewheel = handler;
+        }
+    },
+    
+    teardown: function() {
+        if ( this.removeEventListener ) {
+            for ( var i=types.length; i; ) {
+                this.removeEventListener( types[--i], handler, false );
+            }
+        } else {
+            this.onmousewheel = null;
+        }
+    }
+};
+
+$.fn.extend({
+    mousewheel: function(fn) {
+        return fn ? this.bind("mousewheel", fn) : this.trigger("mousewheel");
+    },
+    
+    unmousewheel: function(fn) {
+        return this.unbind("mousewheel", fn);
+    }
+});
+
+
+function handler(event) {
+    var orgEvent = event || window.event, args = [].slice.call( arguments, 1 ), delta = 0, returnValue = true, deltaX = 0, deltaY = 0;
+    event = $.event.fix(orgEvent);
+    event.type = "mousewheel";
+    
+    // Old school scrollwheel delta
+    if ( orgEvent.wheelDelta ) { delta = orgEvent.wheelDelta/120; }
+    if ( orgEvent.detail     ) { delta = -orgEvent.detail/3; }
+    
+    // New school multidimensional scroll (touchpads) deltas
+    deltaY = delta;
+    
+    // Gecko
+    if ( orgEvent.axis !== undefined && orgEvent.axis === orgEvent.HORIZONTAL_AXIS ) {
+        deltaY = 0;
+        deltaX = -1*delta;
+    }
+    
+    // Webkit
+    if ( orgEvent.wheelDeltaY !== undefined ) { deltaY = orgEvent.wheelDeltaY/120; }
+    if ( orgEvent.wheelDeltaX !== undefined ) { deltaX = -1*orgEvent.wheelDeltaX/120; }
+    
+    // Add event and delta to the front of the arguments
+    args.unshift(event, delta, deltaX, deltaY);
+    
+    return ($.event.dispatch || $.event.handle).apply(this, args);
+}
+
+})(jQuery);;
   Object.prototype.size = function () {
     var len = this.length ? --this.length : -1;
     for (var k in this)
         len++;
     return len;
 };
-  var Graph, Link, Node, Quaternion, SNode, VisualObj, dotProduct, dragging, g, initGraph, initInterface, interRect, lastX, lastY, lineRectOverlap, lineSegsOverlap, m4x4mulv3, mouseDown, mouseMove, mouseUp, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, rotRectsOverlap, rotateAndTranslate, sepAxis, sepAxisSide, tmpVec, v3dotv3,
+  var Graph, Link, Node, Quaternion, SNode, VisualObj, dotProduct, dragging, fullBind, g, initGraph, initInterface, interRect, lastX, lastY, lineRectOverlap, lineSegsOverlap, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, rotRectsOverlap, rotateAndTranslate, sepAxis, sepAxisSide, tmpVec, v3dotv3,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
     _this = this;
@@ -861,8 +945,28 @@
       g.rotateX(-deltaX * 0.0015);
       g.rotateY(deltaY * 0.0015);
       g.updateView();
+      return false;
+    } else {
+      return true;
     }
-    return true;
+  };
+
+  mouseWheel = function(event, delta, deltaX, deltaY) {
+    var scale;
+    console.log(delta, deltaX, deltaY);
+    scale = g.scale;
+    scale += deltaY * 0.3;
+    if (scale < 0.1) scale = 0.1;
+    return g.setScale(scale);
+  };
+
+  fullBind = function(eventName, f) {
+    $("#overlay").bind(eventName, f);
+    $(".snode_0").bind(eventName, f);
+    $(".snode_1").bind(eventName, f);
+    $(".snode1_0").bind(eventName, f);
+    $(".snode1_1").bind(eventName, f);
+    return $(".link").bind(eventName, f);
   };
 
   initInterface = function() {
@@ -883,7 +987,11 @@
     $(".snode_1").bind("mousemove", mouseMove);
     $(".snode1_0").bind("mousemove", mouseMove);
     $(".snode1_1").bind("mousemove", mouseMove);
-    return $(".link").bind("mousemove", mouseMove);
+    $(".link").bind("mousemove", mouseMove);
+    fullBind("mouseup", mouseUp);
+    fullBind("mousedown", mouseDown);
+    fullBind("mousemove", mouseMove);
+    return fullBind("mousewheel", mouseWheel);
   };
 
   g = false;

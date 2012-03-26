@@ -21,7 +21,25 @@ mouseMove = (e) ->
         g.rotateX(-deltaX * 0.0015)
         g.rotateY(deltaY * 0.0015)
         g.updateView()
-    true
+        false
+    else
+        true
+
+mouseWheel = (event, delta, deltaX, deltaY) ->
+    console.log(delta, deltaX, deltaY)
+    scale = g.scale
+    scale += deltaY * 0.3
+    if scale < 0.1
+        scale = 0.1
+    g.setScale(scale)
+
+fullBind = (eventName, f) ->
+    $("#overlay").bind eventName, f
+    $(".snode_0").bind eventName, f
+    $(".snode_1").bind eventName, f
+    $(".snode1_0").bind eventName, f
+    $(".snode1_1").bind eventName, f
+    $(".link").bind eventName, f
 
 initInterface = ->
     $("#overlay").bind "mouseup", mouseUp
@@ -44,3 +62,8 @@ initInterface = ->
     $(".snode1_0").bind "mousemove", mouseMove
     $(".snode1_1").bind "mousemove", mouseMove
     $(".link").bind "mousemove", mouseMove
+
+    fullBind("mouseup", mouseUp)
+    fullBind("mousedown", mouseDown)
+    fullBind("mousemove", mouseMove)
+    fullBind("mousewheel", mouseWheel)
