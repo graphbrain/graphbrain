@@ -1,3 +1,5 @@
+package com.graphbrain.inference
+
 import java.net.URL
 import scala.io.Source
 import scala.util.matching.Regex

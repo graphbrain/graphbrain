@@ -1,3 +1,5 @@
+package com.graphbrain.inference
+
 import org.scalatest.FunSuite
 
 
@@ -44,8 +46,9 @@ class RuleTest extends FunSuite {
 		val inGraphExp=GRAPH2("A", "is colleagues with", "B")
 		val outGraphExp=GRAPH2("B", "is colleagues with", "A")
 
-		val testInGraph=GRAPH2("John", "is colleagues with", "Mary")
+		val testInGraph=("John", "is colleagues with", "Mary")
 		val expectedOutGraph=("Mary", "is colleagues with", "John")
+
 		assert(RuleEngine.transform(inGraphExp, outGraphExp, testInGraph)==expectedOutGraph)
 
 	}
@@ -55,7 +58,7 @@ class RuleTest extends FunSuite {
 		val inGraphExp=GRAPH2("A", "has a", "B")
 		val outGraphExp=GRAPH2("B", "belongs to", "A")
 
-		val testInGraph=GRAPH2("John", "has a", "motorbike")
+		val testInGraph=("John", "has a", "motorbike")
 		val expectedOutGraph=("motorbike", "belongs to", "John")
 		assert(RuleEngine.transform(inGraphExp, outGraphExp, testInGraph)==expectedOutGraph)
 
@@ -66,7 +69,7 @@ class RuleTest extends FunSuite {
 		val inGraphExp=GRAPH2("A", "hates", "B")
 		val outGraphExp=GRAPH2("A", "does not like", "B")
 
-		val testInGraph=GRAPH2("John", "hates", "Mary")
+		val testInGraph=("John", "hates", "Mary")
 		val expectedOutGraph=("John", "does not like", "Mary")
 		assert(RuleEngine.transform(inGraphExp, outGraphExp, testInGraph)==expectedOutGraph)
 
@@ -93,14 +96,15 @@ class RuleTest extends FunSuite {
 		val condExp3=GRAPH2("C", "is a", "D")
 		val outExp=GRAPH2("A", "is a", "C")
 		val compositeExp=COMPOSITE(condExp1, "AND", condExp2)
-		val graphPair=GRAPH2Pair(condExp1, condExp2)
+		val orderedExp=(condExp1, condExp3)
+		val graphPair=(condExp1, condExp2)
 		val testGraph1=("John", "is a", "surgeon")
 		val testGraph2=("surgeon", "is a", "human")
 		val testGraph3=("John", "is a", "human")
 
-		assert(RuleEngine.checkMatch(condExp1, condExp2, testGraph1, testGraph2))
-		assert(RuleEngine.checkMatch(condExp1, condExp3, testGraph1, testGraph2)==false)
-		assert(RuleEngine.transform(graphPair, outExp, testGraph1, testGraph2)==testGraph3)
+		assert(RuleEngine.checkMatch(compositeExp, (testGraph1, testGraph2)))
+		assert(RuleEngine.checkMatch(orderedExp, (testGraph1, testGraph2))==false)
+		assert(RuleEngine.transform(graphPair, outExp, (testGraph1, testGraph2))==testGraph3)
 
 	}
 
