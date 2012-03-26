@@ -1,3 +1,5 @@
+package com.graphbrain.inference
+
 import org.scalatest.FunSuite
 
 
