@@ -109,10 +109,10 @@ html, body {
     background:#E0E4CC;
     font-family: Sans-Serif;
     font-size: 20px;
-    padding: 5px;
+    padding: 0px;
     -moz-border-radius: 5px;
     border-radius: 5px;
-    margin: 5px;
+    margin: 0px;
 }
 
 .node_0 a {
@@ -154,8 +154,6 @@ html, body {
     border-color:#505050;
     position:fixed;
     padding: 10px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
 }
 
 .snode1_1 {
