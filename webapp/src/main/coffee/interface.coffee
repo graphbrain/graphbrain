@@ -30,32 +30,24 @@ mouseWheel = (e, delta, deltaX, deltaY) ->
 
 fullBind = (eventName, f) ->
     $("#overlay").bind eventName, f
-    $(".snode_0").bind eventName, f
-    $(".snode_1").bind eventName, f
-    $(".snode1_0").bind eventName, f
-    $(".snode1_1").bind eventName, f
+    $(".snode1").bind eventName, f
+    $(".snodeN").bind eventName, f
     $(".link").bind eventName, f
 
 initInterface = ->
     $("#overlay").bind "mouseup", mouseUp
-    $(".snode_0").bind "mouseup", mouseUp
-    $(".snode_1").bind "mouseup", mouseUp
-    $(".snode1_0").bind "mouseup", mouseUp
-    $(".snode1_1").bind "mouseup", mouseUp
+    $(".snode1").bind "mouseup", mouseUp
+    $(".snodeN").bind "mouseup", mouseUp
     $(".link").bind "mouseup", mouseUp
 
     $("#overlay").bind "mousedown", mouseDown
-    $(".snode_0").bind "mousedown", mouseDown
-    $(".snode_1").bind "mousedown", mouseDown
-    $(".snode1_0").bind "mousedown", mouseDown
-    $(".snode1_1").bind "mousedown", mouseDown
+    $(".snode1").bind "mousedown", mouseDown
+    $(".snodeN").bind "mousedown", mouseDown
     $(".link").bind "mousedown", mouseDown
 
     $("#overlay").bind "mousemove", mouseMove
-    $(".snode_0").bind "mousemove", mouseMove
-    $(".snode_1").bind "mousemove", mouseMove
-    $(".snode1_0").bind "mousemove", mouseMove
-    $(".snode1_1").bind "mousemove", mouseMove
+    $(".snode1").bind "mousemove", mouseMove
+    $(".snodeN").bind "mousemove", mouseMove
     $(".link").bind "mousemove", mouseMove
 
     fullBind("mouseup", mouseUp)

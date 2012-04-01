@@ -71,23 +71,7 @@ class SNode extends VisualObj
         $('div#' + @id).css('-webkit-transform', transformStr)
 
 
-    place: ->
-        snode = document.createElement('div')
-    
-        nodesCount = 0
-        nodesCount++ for key of @nodes when @nodes.hasOwnProperty(key)
-        if nodesCount > 1
-            snode.setAttribute('class', 'snode_' + @depth)
-        else
-            snode.setAttribute('class', 'snode1_' + @depth)
-        snode.setAttribute('id', @id)
-    
-        nodesDiv = document.getElementById("nodesDiv")
-        nodesDiv.appendChild(snode)
-
-        # place nodes contained in this super node
-        @nodes[key].place() for key of @nodes when @nodes.hasOwnProperty(key)
-
+    updateDimensions: ->
         _width = $('div#' + @id).outerWidth()
         _height = $('div#' + @id).outerHeight()
     
@@ -98,30 +82,30 @@ class SNode extends VisualObj
         @moveTo(@x, @y, @z)
 
         # calc relative positions of nodes contained in this super node
-        @nodes[key].calcPos() for key of @nodes when @nodes.hasOwnProperty(key) 
+        @nodes[key].calcPos() for key of @nodes when @nodes.hasOwnProperty(key)
+
+
+    place: ->
+        snode = document.createElement('div')
+    
+        nodesCount = 0
+        nodesCount++ for key of @nodes when @nodes.hasOwnProperty(key)
+        if nodesCount > 1
+            snode.setAttribute('class', 'snode1')
+        else
+            snode.setAttribute('class', 'snodeN')
+        snode.setAttribute('id', @id)
+    
+        nodesDiv = document.getElementById("nodesDiv")
+        nodesDiv.appendChild(snode)
+
+        # place nodes contained in this super node
+        @nodes[key].place() for key of @nodes when @nodes.hasOwnProperty(key)
+
+        @updateDimensions()
 
         nodeObj = this
 
-        $('div#' + @id).bind 'mousedown', (e) =>
-            if uiMode is 'drag'
-                draggedNode = nodeObj
-                false
-            else
-                newLink = new Link(0, nodeObj, false, '...')
-                newLink.tx = e.pageX
-                newLink.ty = e.pageY
-                false
-
-        $('div#' + @id).bind 'click', (e) =>
-            if dragging
-                dragging = false
-                false
-            else
-                true
-
-        $("div#" + @id).hover (e) =>
-            if (newLink) then newLink.targ = nodeObj
-        , (e) =>
 
     toString: ->
         return '{' + @nodes[key].text + ', ...}' for key of @nodes when @nodes.hasOwnProperty(key)

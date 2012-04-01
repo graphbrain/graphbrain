@@ -76,7 +76,7 @@ html, body {
 
 .linkLine {
 	position:relative;
-    background:#333;
+    background:#299ec1;
     margin:0px;
 }
 
@@ -90,7 +90,7 @@ html, body {
     padding:2px;
     color:#FFF;
     /*background:#FFD326;*/
-    background:#333;
+    background:#299ec1;
     width:100px;
     overflow:hidden;
     text-overflow:ellipsis;
@@ -102,92 +102,32 @@ html, body {
     height: 0;
     border-top: 9px solid transparent;
     border-bottom: 9px solid transparent;
-    border-left: 9px solid #333;
+    border-left: 9px solid #299ec1;
     float:right;
 }
-.node_0 {
+.node {
     color:#000;
-    background:#E0E4CC;
-    font-family: Sans-Serif;
-    font-size: 20px;
-    padding: 0px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    margin: 0px;
-}
-
-.node_0 a {
-    color:#000;
-}
-
-.snode_0 {
-    border-style:solid;
-    border-width:1px;
-    border-color:#505050;
-    position:fixed;
-    padding: 10px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-}
-
-.snode1_0 {
-    position:fixed;   
-}
-
-.node_1 {
-    color:#000;
-    background:#E0E4CC;
+    background:#eee;
     font-family: Sans-Serif;
     font-size: 12px;
-    padding: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    margin: 5px;
+    margin: 3px;
+    padding: 3px;
 }
 
-.node_1 a {
+.node a {
     color:#000;
 }
 
-.snode_1 {
-    border-style:solid;
-    border-width:2px;
-    border-color:#505050;
+.snode1 {
     position:fixed;
-    padding: 10px;
-}
-
-.snode1_1 {
-    position:fixed;
-}
-
-.node_2 {
-    color:#000;
-    background:#E0E4CC;
-    font-family: Sans-Serif;
-    font-size: 8px;
-    padding: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    margin: 5px;
-}
-
-.node_2 a {
-    color:#000;
-}
-
-.snode_2 {
     border-style:solid;
     border-width:1px;
     border-color:#505050;
-    position:fixed;
-    padding: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
+    padding: 10px;
 }
 
-.snode1_2 {
-    position:fixed;
+.snodeN {
+    position:fixed;   
 }
 
 #overlay {

@@ -7,7 +7,7 @@
 
 .linkLine {
 	position:relative;
-    background:#333;
+    background:#299ec1;
     margin:0px;
 }
 
@@ -21,7 +21,7 @@
     padding:2px;
     color:#FFF;
     /*background:#FFD326;*/
-    background:#333;
+    background:#299ec1;
     width:100px;
     overflow:hidden;
     text-overflow:ellipsis;
@@ -33,6 +33,6 @@
     height: 0;
     border-top: 9px solid transparent;
     border-bottom: 9px solid transparent;
-    border-left: 9px solid #333;
+    border-left: 9px solid #299ec1;
     float:right;
 }

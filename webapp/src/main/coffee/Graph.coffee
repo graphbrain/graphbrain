@@ -5,7 +5,7 @@ class Graph
         @snodes = {}
         @nodes = {}
         @links = []
-        @scale = 0.4
+        @scale = 0.7
         @offsetX = 0
         @offsetY = 0
         @zOffset = 300
@@ -35,6 +35,7 @@ class Graph
         @quat.mul(@deltaQuat)
         @quat.normalise()
         @quat.getMatrix(@affinMat)
+
 
     zoom: (deltaZoom, x, y) ->
         newScale = @scale + (0.3 * deltaZoom) 
