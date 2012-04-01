@@ -5,7 +5,7 @@ g = false
 
 initGraph = ->
     g = new Graph()
-    g.setScale(0.5)
+    g.updateTransform()
 
     # process super nodes and associated nodes
     for sn in snodes
@@ -63,7 +63,6 @@ initGraph = ->
         sorig = ''
         starg = ''
         if 'orig' of l
-            console.log('orig:' + l['orig'])
             orig  = g.nodes[l['orig']]
             sorig = orig.snode
         else

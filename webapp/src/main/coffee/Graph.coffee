@@ -6,6 +6,8 @@ class Graph
         @nodes = {}
         @links = []
         @scale = 0.4
+        @offsetX = 0
+        @offsetY = 0
         @zOffset = 300
 
         # auxiliary quaternions and matrices for 3D rotation
@@ -14,9 +16,11 @@ class Graph
         @affinMat = new Array(16)
         @quat.getMatrix(@affinMat)
 
-    setScale: (scale) ->
-        @scale = scale
-        transformStr = "scale3d(" + scale + "," + scale + "," + scale + ")"
+    updateTransform: ->
+        transformStr = "translate(" + @offsetX + "px," + @offsetY + "px)" +
+            " scale(" + @scale + "," + @scale + ")"
+        #transformStr = "scale(" + @scale + "," + @scale + ")" +
+        #    " translate(" + @offsetX + "px," + @offsetY + "px)"
         $('#nodesDiv').css('-webkit-transform', transformStr)
 
     rotateX: (angle) ->
@@ -31,6 +35,26 @@ class Graph
         @quat.mul(@deltaQuat)
         @quat.normalise()
         @quat.getMatrix(@affinMat)
+
+    zoom: (deltaZoom, x, y) ->
+        newScale = @scale + (0.3 * deltaZoom) 
+        if newScale < 0.4
+            newScale = 0.4
+
+        if deltaZoom >= 0
+            rx = x - @halfWidth
+            @offsetX = rx - (((rx - @offsetX) / @scale) * newScale)
+            ry = y - @halfHeight
+            @offsetY = ry - (((ry - @offsetY) / @scale) * newScale)
+        else
+            if (@scale - 0.4) > 0
+                r = (newScale - 0.4) / (@scale - 0.4)
+                @offsetX *= r
+                @offsetY *= r
+
+        @scale = newScale
+
+        @updateTransform()
 
 
     placeNodes: -> @snodes[key].place() for key of @snodes when @snodes.hasOwnProperty(key)
