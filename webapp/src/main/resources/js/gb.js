@@ -769,6 +769,8 @@ function handler(event) {
       this.nodes = {};
       this.links = [];
       this.scale = 0.4;
+      this.offsetX = 0;
+      this.offsetY = 0;
       this.zOffset = 300;
       this.quat = new Quaternion();
       this.deltaQuat = new Quaternion();
@@ -776,10 +778,9 @@ function handler(event) {
       this.quat.getMatrix(this.affinMat);
     }
 
-    Graph.prototype.setScale = function(scale) {
+    Graph.prototype.updateTransform = function() {
       var transformStr;
-      this.scale = scale;
-      transformStr = "scale3d(" + scale + "," + scale + "," + scale + ")";
+      transformStr = "translate(" + this.offsetX + "px," + this.offsetY + "px)" + " scale(" + this.scale + "," + this.scale + ")";
       return $('#nodesDiv').css('-webkit-transform', transformStr);
     };
 
@@ -795,6 +796,27 @@ function handler(event) {
       this.quat.mul(this.deltaQuat);
       this.quat.normalise();
       return this.quat.getMatrix(this.affinMat);
+    };
+
+    Graph.prototype.zoom = function(deltaZoom, x, y) {
+      var newScale, r, rx, ry;
+      newScale = this.scale + (0.3 * deltaZoom);
+      if (newScale < 0.4) newScale = 0.4;
+      if (deltaZoom >= 0) {
+        rx = x - this.halfWidth;
+        this.offsetX = rx - (((rx - this.offsetX) / this.scale) * newScale);
+        ry = y - this.halfHeight;
+        this.offsetY = ry - (((ry - this.offsetY) / this.scale) * newScale);
+      } else {
+        if ((this.scale - 0.4) > 0) {
+          r = (newScale - 0.4) / (this.scale - 0.4);
+          this.offsetX *= r;
+          this.offsetY *= r;
+          console.log("ox: " + this.offsetX + "; oy: " + this.offsetY);
+        }
+      }
+      this.scale = newScale;
+      return this.updateTransform();
     };
 
     Graph.prototype.placeNodes = function() {
@@ -951,13 +973,8 @@ function handler(event) {
     }
   };
 
-  mouseWheel = function(event, delta, deltaX, deltaY) {
-    var scale;
-    console.log(delta, deltaX, deltaY);
-    scale = g.scale;
-    scale += deltaY * 0.3;
-    if (scale < 0.1) scale = 0.1;
-    return g.setScale(scale);
+  mouseWheel = function(e, delta, deltaX, deltaY) {
+    return g.zoom(deltaY, e.pageX, e.pageY);
   };
 
   fullBind = function(eventName, f) {
@@ -999,7 +1016,7 @@ function handler(event) {
   initGraph = function() {
     var halfHeight, halfWidth, key, l, link, linkID, nid, nlist, nod, node, orig, parentID, sid, sn, snode, sorig, starg, subNode, targ, text, type, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref;
     g = new Graph();
-    g.setScale(0.5);
+    g.updateTransform();
     for (_i = 0, _len = snodes.length; _i < _len; _i++) {
       sn = snodes[_i];
       sid = sn['id'];
@@ -1059,7 +1076,6 @@ function handler(event) {
       sorig = '';
       starg = '';
       if ('orig' in l) {
-        console.log('orig:' + l['orig']);
         orig = g.nodes[l['orig']];
         sorig = orig.snode;
       } else {

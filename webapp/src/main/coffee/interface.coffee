@@ -25,13 +25,8 @@ mouseMove = (e) ->
     else
         true
 
-mouseWheel = (event, delta, deltaX, deltaY) ->
-    console.log(delta, deltaX, deltaY)
-    scale = g.scale
-    scale += deltaY * 0.3
-    if scale < 0.1
-        scale = 0.1
-    g.setScale(scale)
+mouseWheel = (e, delta, deltaX, deltaY) ->
+    g.zoom(deltaY, e.pageX, e.pageY)
 
 fullBind = (eventName, f) ->
     $("#overlay").bind eventName, f
