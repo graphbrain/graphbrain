@@ -20,3 +20,14 @@ test
 run
 test
 exit
+test
+run
+test
+test-only RuleTest
+test-only RuleTest.scala
+test-compile
+test-compile test
+test
+run
+test
+exit

@@ -81,6 +81,8 @@ class RuleTest extends FunSuite {
 		val inPOSExp=POS("POS")
 		val outGraphExp1=GRAPH2("A", "has a", "B")
 		val outGraphExp2=GRAPH2("B", "belongs to", "A")
+
+
 		val testInString="John's dog"
 		val expectedOutGraph1=("John", "has a", "dog")
 		val expectedOutGraph2=("dog", "belongs to", "John")
@@ -96,15 +98,19 @@ class RuleTest extends FunSuite {
 		val condExp3=GRAPH2("C", "is a", "D")
 		val outExp=GRAPH2("A", "is a", "C")
 		val compositeExp=COMPOSITE(condExp1, "AND", condExp2)
-		val orderedExp=(condExp1, condExp3)
-		val graphPair=(condExp1, condExp2)
+		val orderedExp=GRAPH2PAIR(condExp1, condExp3)
+		val graphPair=GRAPH2PAIR(condExp1, condExp2)
+		val rule1=RULE(compositeExp, graphPair, outExp);
+
 		val testGraph1=("John", "is a", "surgeon")
 		val testGraph2=("surgeon", "is a", "human")
 		val testGraph3=("John", "is a", "human")
 
 		assert(RuleEngine.checkMatch(compositeExp, (testGraph1, testGraph2)))
 		assert(RuleEngine.checkMatch(orderedExp, (testGraph1, testGraph2))==false)
+		assert(RuleEngine.checkMatch(graphPair, (testGraph1, testGraph2)))
 		assert(RuleEngine.transform(graphPair, outExp, (testGraph1, testGraph2))==testGraph3)
+		assert(RuleEngine.applyRule(rule1, (testGraph1, testGraph2))==testGraph3)
 
 	}
 
