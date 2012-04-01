@@ -39,7 +39,7 @@ class Node
 
     place: ->
         node = document.createElement('div')
-        node.setAttribute('class', 'node_' + @snode.depth)
+        node.setAttribute('class', 'node')
         node.setAttribute('id', @divid)
         if @type == 'text'
             node.innerHTML = '<a href="/node/' + @id + '" id="' + @divid + '">' + @text + '</a>'

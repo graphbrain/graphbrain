@@ -496,7 +496,7 @@ function handler(event) {
     Node.prototype.place = function() {
       var node, nodeDiv, snodeDiv, _height, _width;
       node = document.createElement('div');
-      node.setAttribute('class', 'node_' + this.snode.depth);
+      node.setAttribute('class', 'node');
       node.setAttribute('id', this.divid);
       if (this.type === 'text') {
         node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a>';
@@ -586,25 +586,8 @@ function handler(event) {
       return $('div#' + this.id).css('-webkit-transform', transformStr);
     };
 
-    SNode.prototype.place = function() {
-      var key, nodeObj, nodesCount, nodesDiv, snode, _height, _width,
-        _this = this;
-      snode = document.createElement('div');
-      nodesCount = 0;
-      for (key in this.nodes) {
-        if (this.nodes.hasOwnProperty(key)) nodesCount++;
-      }
-      if (nodesCount > 1) {
-        snode.setAttribute('class', 'snode_' + this.depth);
-      } else {
-        snode.setAttribute('class', 'snode1_' + this.depth);
-      }
-      snode.setAttribute('id', this.id);
-      nodesDiv = document.getElementById("nodesDiv");
-      nodesDiv.appendChild(snode);
-      for (key in this.nodes) {
-        if (this.nodes.hasOwnProperty(key)) this.nodes[key].place();
-      }
+    SNode.prototype.updateDimensions = function() {
+      var key, _height, _results, _width;
       _width = $('div#' + this.id).outerWidth();
       _height = $('div#' + this.id).outerHeight();
       this.width = _width;
@@ -612,34 +595,35 @@ function handler(event) {
       this.halfWidth = _width / 2;
       this.halfHeight = _height / 2;
       this.moveTo(this.x, this.y, this.z);
+      _results = [];
       for (key in this.nodes) {
-        if (this.nodes.hasOwnProperty(key)) this.nodes[key].calcPos();
+        if (this.nodes.hasOwnProperty(key)) {
+          _results.push(this.nodes[key].calcPos());
+        }
       }
-      nodeObj = this;
-      $('div#' + this.id).bind('mousedown', function(e) {
-        var draggedNode, newLink;
-        if (uiMode === 'drag') {
-          draggedNode = nodeObj;
-          return false;
-        } else {
-          newLink = new Link(0, nodeObj, false, '...');
-          newLink.tx = e.pageX;
-          newLink.ty = e.pageY;
-          return false;
-        }
-      });
-      $('div#' + this.id).bind('click', function(e) {
-        var dragging;
-        if (dragging) {
-          dragging = false;
-          return false;
-        } else {
-          return true;
-        }
-      });
-      return $("div#" + this.id).hover(function(e) {
-        if (newLink) return newLink.targ = nodeObj;
-      }, function(e) {});
+      return _results;
+    };
+
+    SNode.prototype.place = function() {
+      var key, nodeObj, nodesCount, nodesDiv, snode;
+      snode = document.createElement('div');
+      nodesCount = 0;
+      for (key in this.nodes) {
+        if (this.nodes.hasOwnProperty(key)) nodesCount++;
+      }
+      if (nodesCount > 1) {
+        snode.setAttribute('class', 'snode1');
+      } else {
+        snode.setAttribute('class', 'snodeN');
+      }
+      snode.setAttribute('id', this.id);
+      nodesDiv = document.getElementById("nodesDiv");
+      nodesDiv.appendChild(snode);
+      for (key in this.nodes) {
+        if (this.nodes.hasOwnProperty(key)) this.nodes[key].place();
+      }
+      this.updateDimensions();
+      return nodeObj = this;
     };
 
     SNode.prototype.toString = function() {
@@ -768,7 +752,7 @@ function handler(event) {
       this.snodes = {};
       this.nodes = {};
       this.links = [];
-      this.scale = 0.4;
+      this.scale = 0.7;
       this.offsetX = 0;
       this.offsetY = 0;
       this.zOffset = 300;
@@ -812,7 +796,6 @@ function handler(event) {
           r = (newScale - 0.4) / (this.scale - 0.4);
           this.offsetX *= r;
           this.offsetY *= r;
-          console.log("ox: " + this.offsetX + "; oy: " + this.offsetY);
         }
       }
       this.scale = newScale;
@@ -979,31 +962,23 @@ function handler(event) {
 
   fullBind = function(eventName, f) {
     $("#overlay").bind(eventName, f);
-    $(".snode_0").bind(eventName, f);
-    $(".snode_1").bind(eventName, f);
-    $(".snode1_0").bind(eventName, f);
-    $(".snode1_1").bind(eventName, f);
+    $(".snode1").bind(eventName, f);
+    $(".snodeN").bind(eventName, f);
     return $(".link").bind(eventName, f);
   };
 
   initInterface = function() {
     $("#overlay").bind("mouseup", mouseUp);
-    $(".snode_0").bind("mouseup", mouseUp);
-    $(".snode_1").bind("mouseup", mouseUp);
-    $(".snode1_0").bind("mouseup", mouseUp);
-    $(".snode1_1").bind("mouseup", mouseUp);
+    $(".snode1").bind("mouseup", mouseUp);
+    $(".snodeN").bind("mouseup", mouseUp);
     $(".link").bind("mouseup", mouseUp);
     $("#overlay").bind("mousedown", mouseDown);
-    $(".snode_0").bind("mousedown", mouseDown);
-    $(".snode_1").bind("mousedown", mouseDown);
-    $(".snode1_0").bind("mousedown", mouseDown);
-    $(".snode1_1").bind("mousedown", mouseDown);
+    $(".snode1").bind("mousedown", mouseDown);
+    $(".snodeN").bind("mousedown", mouseDown);
     $(".link").bind("mousedown", mouseDown);
     $("#overlay").bind("mousemove", mouseMove);
-    $(".snode_0").bind("mousemove", mouseMove);
-    $(".snode_1").bind("mousemove", mouseMove);
-    $(".snode1_0").bind("mousemove", mouseMove);
-    $(".snode1_1").bind("mousemove", mouseMove);
+    $(".snode1").bind("mousemove", mouseMove);
+    $(".snodeN").bind("mousemove", mouseMove);
     $(".link").bind("mousemove", mouseMove);
     fullBind("mouseup", mouseUp);
     fullBind("mousedown", mouseDown);
