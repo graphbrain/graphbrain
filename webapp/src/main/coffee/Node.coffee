@@ -13,6 +13,8 @@ class Node
         @sx = 0
         @sy = 0
 
+        @dlevel = 0
+
     calcPos: ->
         nodeDiv = $('#' + this.divid)
         #offset = nodeDiv.offset()
@@ -60,3 +62,22 @@ class Node
         @height = _height
         @halfWidth = _width / 2
         @halfHeight = _height / 2
+
+    updateDetailLevel: (scale, z, depth) ->
+        k = scale * (z + 500)
+        _dlevel = 1
+        if k < 1000
+            _dlevel = 0
+        #console.log(@text + '>> scale: ' + scale + '; z: ' + z + '; dlevel: ' + dlevel)
+        
+        if _dlevel == @dlevel
+            return false
+
+        @dlevel = _dlevel
+
+        if @dlevel == 0
+            $('div#' + @divid).css('font-size', '12px')
+        else if @dlevel == 1
+            $('div#' + @divid).css('font-size', '24px')
+
+        return true
