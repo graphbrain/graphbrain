@@ -16,20 +16,6 @@ class Node
         @dlevel = 0
 
 
-    calcPos: ->
-        nodeDiv = $('#' + this.divid)
-        @rpos[0] = @halfWidth
-        @rpos[1] = @halfHeight
-        @rpos[2] = 0
-        @x0 = @rpos[0] - @halfWidth
-        @y0 = @rpos[1] - @halfHeight
-        @x1 = @rpos[0] + @halfWidth
-        @y1 = @rpos[1] + @halfHeight
-
-        @sx = @rpos[0] - @snode.x - @snode.halfWidth
-        @sy = @rpos[1] - @snode.y - @snode.halfHeight
-
-
     estimatePos: ->
         @rpos[0] = @snode.rpos[0] + @sx
         @rpos[1] = @snode.rpos[1] + @sy
@@ -41,6 +27,13 @@ class Node
         @y1 = @rpos[1] + @halfHeight
 
 
+    updateDimensions: ->
+        nodeDiv = $('#' + @divid) 
+        @width = nodeDiv.outerWidth()
+        @height = nodeDiv.outerHeight()
+        @halfWidth = @width / 2
+        @halfHeight = @height / 2
+
     place: ->
         node = document.createElement('div')
         node.setAttribute('class', 'node')
@@ -50,14 +43,7 @@ class Node
         snodeDiv = document.getElementById(@snode.id)
         snodeDiv.appendChild(node)
 
-        nodeDiv = $('#' + @divid)
-        _width = nodeDiv.outerWidth()
-        _height = nodeDiv.outerHeight()
-    
-        @width = _width
-        @height = _height
-        @halfWidth = _width / 2
-        @halfHeight = _height / 2
+        @updateDimensions()
 
 
     updateDetailLevel: (scale, z, depth) ->

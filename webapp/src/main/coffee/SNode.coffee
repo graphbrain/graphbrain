@@ -93,7 +93,7 @@ class SNode extends VisualObj
         @updateTransform()
 
         # calc relative positions of nodes contained in this super node
-        @nodes[key].calcPos() for key of @nodes when @nodes.hasOwnProperty(key)
+        @nodes[key].updateDimensions() for key of @nodes when @nodes.hasOwnProperty(key)
 
 
     place: ->

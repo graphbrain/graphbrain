@@ -470,20 +470,6 @@ function handler(event) {
       this.dlevel = 0;
     }
 
-    Node.prototype.calcPos = function() {
-      var nodeDiv;
-      nodeDiv = $('#' + this.divid);
-      this.rpos[0] = this.halfWidth;
-      this.rpos[1] = this.halfHeight;
-      this.rpos[2] = 0;
-      this.x0 = this.rpos[0] - this.halfWidth;
-      this.y0 = this.rpos[1] - this.halfHeight;
-      this.x1 = this.rpos[0] + this.halfWidth;
-      this.y1 = this.rpos[1] + this.halfHeight;
-      this.sx = this.rpos[0] - this.snode.x - this.snode.halfWidth;
-      return this.sy = this.rpos[1] - this.snode.y - this.snode.halfHeight;
-    };
-
     Node.prototype.estimatePos = function() {
       this.rpos[0] = this.snode.rpos[0] + this.sx;
       this.rpos[1] = this.snode.rpos[1] + this.sy;
@@ -494,21 +480,24 @@ function handler(event) {
       return this.y1 = this.rpos[1] + this.halfHeight;
     };
 
+    Node.prototype.updateDimensions = function() {
+      var nodeDiv;
+      nodeDiv = $('#' + this.divid);
+      this.width = nodeDiv.outerWidth();
+      this.height = nodeDiv.outerHeight();
+      this.halfWidth = this.width / 2;
+      return this.halfHeight = this.height / 2;
+    };
+
     Node.prototype.place = function() {
-      var node, nodeDiv, snodeDiv, _height, _width;
+      var node, snodeDiv;
       node = document.createElement('div');
       node.setAttribute('class', 'node');
       node.setAttribute('id', this.divid);
       node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a>';
       snodeDiv = document.getElementById(this.snode.id);
       snodeDiv.appendChild(node);
-      nodeDiv = $('#' + this.divid);
-      _width = nodeDiv.outerWidth();
-      _height = nodeDiv.outerHeight();
-      this.width = _width;
-      this.height = _height;
-      this.halfWidth = _width / 2;
-      return this.halfHeight = _height / 2;
+      return this.updateDimensions();
     };
 
     Node.prototype.updateDetailLevel = function(scale, z, depth) {
@@ -617,7 +606,7 @@ function handler(event) {
       _results = [];
       for (key in this.nodes) {
         if (this.nodes.hasOwnProperty(key)) {
-          _results.push(this.nodes[key].calcPos());
+          _results.push(this.nodes[key].updateDimensions());
         }
       }
       return _results;
