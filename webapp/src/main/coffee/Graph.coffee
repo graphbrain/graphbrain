@@ -19,8 +19,6 @@ class Graph
     updateTransform: ->
         transformStr = "translate(" + @offsetX + "px," + @offsetY + "px)" +
             " scale(" + @scale + "," + @scale + ")"
-        #transformStr = "scale(" + @scale + "," + @scale + ")" +
-        #    " translate(" + @offsetX + "px," + @offsetY + "px)"
         $('#nodesDiv').css('-webkit-transform', transformStr)
 
     rotateX: (angle) ->
@@ -56,6 +54,7 @@ class Graph
         @scale = newScale
 
         @updateTransform()
+        @updateDetailLevel()
 
 
     placeNodes: -> @snodes[key].place() for key of @snodes when @snodes.hasOwnProperty(key)
@@ -74,6 +73,7 @@ class Graph
 
         @updateViewLinks()
 
+    updateDetailLevel: -> @snodes[key].updateDetailLevel(@scale) for key of @snodes when @snodes.hasOwnProperty(key)
 
     genSNodeKeys: -> key for key in @snodes
 

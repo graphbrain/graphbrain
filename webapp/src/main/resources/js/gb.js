@@ -467,6 +467,7 @@ function handler(event) {
       this.subNodes = [];
       this.sx = 0;
       this.sy = 0;
+      this.dlevel = 0;
     }
 
     Node.prototype.calcPos = function() {
@@ -518,6 +519,21 @@ function handler(event) {
       return this.halfHeight = _height / 2;
     };
 
+    Node.prototype.updateDetailLevel = function(scale, z, depth) {
+      var k, _dlevel;
+      k = scale * (z + 500);
+      _dlevel = 1;
+      if (k < 1000) _dlevel = 0;
+      if (_dlevel === this.dlevel) return false;
+      this.dlevel = _dlevel;
+      if (this.dlevel === 0) {
+        $('div#' + this.divid).css('font-size', '12px');
+      } else if (this.dlevel === 1) {
+        $('div#' + this.divid).css('font-size', '24px');
+      }
+      return true;
+    };
+
     return Node;
 
   })();
@@ -539,6 +555,13 @@ function handler(event) {
       this.parent = 'unknown';
       this.links = [];
       this.weight = 0;
+      this.depth = 0;
+      this.width = 0;
+      this.height = 0;
+      this.halfWidth = 0;
+      this.halfHeight = 0;
+      this.initalWidth = -1;
+      this.scale = 1;
     }
 
     SNode.prototype.updatePos = function(_x, _y, _z) {
@@ -576,25 +599,29 @@ function handler(event) {
       return _results;
     };
 
-    SNode.prototype.moveTo = function(x, y, z) {
+    SNode.prototype.updateTransform = function() {
       var transformStr, _x, _y, _z;
-      this.updatePos(x, y, z);
       _x = this.rpos[0];
       _y = this.rpos[1];
       _z = this.rpos[2] + g.zOffset;
       transformStr = 'translate3d(' + (_x - this.halfWidth) + 'px,' + (_y - this.halfHeight) + 'px,' + _z + 'px)';
+      transformStr += ' scale(' + this.scale + ',' + this.scale + ')';
       return $('div#' + this.id).css('-webkit-transform', transformStr);
     };
 
+    SNode.prototype.moveTo = function(x, y, z) {
+      this.updatePos(x, y, z);
+      return this.updateTransform();
+    };
+
     SNode.prototype.updateDimensions = function() {
-      var key, _height, _results, _width;
-      _width = $('div#' + this.id).outerWidth();
-      _height = $('div#' + this.id).outerHeight();
-      this.width = _width;
-      this.height = _height;
-      this.halfWidth = _width / 2;
-      this.halfHeight = _height / 2;
-      this.moveTo(this.x, this.y, this.z);
+      var key, _results;
+      this.width = $('div#' + this.id).outerWidth();
+      this.height = $('div#' + this.id).outerHeight();
+      this.halfWidth = this.width / 2;
+      this.halfHeight = this.height / 2;
+      if (this.initalWidth < 0) this.initialWidth = this.width;
+      this.updateTransform();
       _results = [];
       for (key in this.nodes) {
         if (this.nodes.hasOwnProperty(key)) {
@@ -624,6 +651,24 @@ function handler(event) {
       }
       this.updateDimensions();
       return nodeObj = this;
+    };
+
+    SNode.prototype.updateDetailLevel = function(scale) {
+      var key, updated;
+      updated = false;
+      for (key in this.nodes) {
+        if (this.nodes.hasOwnProperty(key)) {
+          if (this.nodes[key].updateDetailLevel(scale, this.rpos[2], this.depth)) {
+            updated = true;
+          }
+        }
+      }
+      if (updated) {
+        this.updateDimensions();
+        this.scale = this.initialWidth / this.width;
+        console.log('initialWidth: ' + this.initialWidth + '; width: ' + this.width + '; scale: ' + this.scale);
+        return this.updateTransform();
+      }
     };
 
     SNode.prototype.toString = function() {
@@ -799,7 +844,8 @@ function handler(event) {
         }
       }
       this.scale = newScale;
-      return this.updateTransform();
+      this.updateTransform();
+      return this.updateDetailLevel();
     };
 
     Graph.prototype.placeNodes = function() {
@@ -843,6 +889,17 @@ function handler(event) {
         sn.moveTo(sn.x, sn.y, sn.z);
       }
       return this.updateViewLinks();
+    };
+
+    Graph.prototype.updateDetailLevel = function() {
+      var key, _results;
+      _results = [];
+      for (key in this.snodes) {
+        if (this.snodes.hasOwnProperty(key)) {
+          _results.push(this.snodes[key].updateDetailLevel(this.scale));
+        }
+      }
+      return _results;
     };
 
     Graph.prototype.genSNodeKeys = function() {
@@ -950,6 +1007,7 @@ function handler(event) {
       g.rotateX(-deltaX * 0.0015);
       g.rotateY(deltaY * 0.0015);
       g.updateView();
+      g.updateDetailLevel();
       return false;
     } else {
       return true;

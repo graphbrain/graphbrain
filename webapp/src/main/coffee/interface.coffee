@@ -21,6 +21,7 @@ mouseMove = (e) ->
         g.rotateX(-deltaX * 0.0015)
         g.rotateY(deltaY * 0.0015)
         g.updateView()
+        g.updateDetailLevel()
         false
     else
         true

@@ -20,7 +20,14 @@ class SNode extends VisualObj
         @parent = 'unknown'
         @links = []
         @weight = 0
+        @depth = 0
 
+        @width = 0
+        @height = 0
+        @halfWidth = 0
+        @halfHeight = 0
+        @initalWidth = -1
+        @scale = 1
 
     updatePos: (_x, _y, _z) ->
         @x = _x;
@@ -60,26 +67,30 @@ class SNode extends VisualObj
         link.updatePos() for link in @links
 
 
-    moveTo: (x, y, z) ->
-        @updatePos(x, y, z)
-
+    updateTransform: ->
         _x = @rpos[0]
         _y = @rpos[1]
         _z = @rpos[2] + g.zOffset
-
         transformStr = 'translate3d(' + (_x - @halfWidth) + 'px,' + (_y - @halfHeight) + 'px,' + _z + 'px)'
+        transformStr += ' scale(' + @scale + ',' + @scale + ')'
         $('div#' + @id).css('-webkit-transform', transformStr)
 
 
+    moveTo: (x, y, z) ->
+        @updatePos(x, y, z)
+        @updateTransform()
+
+
     updateDimensions: ->
-        _width = $('div#' + @id).outerWidth()
-        _height = $('div#' + @id).outerHeight()
-    
-        @width = _width
-        @height = _height
-        @halfWidth = _width / 2
-        @halfHeight = _height / 2
-        @moveTo(@x, @y, @z)
+        @width = $('div#' + @id).outerWidth()
+        @height = $('div#' + @id).outerHeight()
+        @halfWidth = @width / 2
+        @halfHeight = @height / 2
+
+        if @initalWidth < 0
+            @initialWidth = @width
+
+        @updateTransform()
 
         # calc relative positions of nodes contained in this super node
         @nodes[key].calcPos() for key of @nodes when @nodes.hasOwnProperty(key)
@@ -105,6 +116,20 @@ class SNode extends VisualObj
         @updateDimensions()
 
         nodeObj = this
+
+
+    updateDetailLevel: (scale) ->
+        updated = false
+        for key of @nodes
+            if @nodes.hasOwnProperty(key)
+                if @nodes[key].updateDetailLevel(scale, @rpos[2], @depth)
+                    updated = true
+
+        if updated
+            @updateDimensions()
+            @scale = @initialWidth / @width
+            console.log('initialWidth: ' + @initialWidth + '; width: ' + @width + '; scale: ' + @scale)
+            @updateTransform()
 
 
     toString: ->
