@@ -28,7 +28,7 @@ case class NodePage(store: VertexStore, nodeId: String) extends Page {
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>Graphbrain</title>
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-<script src="/js/jquery-1.7.2.min.js" type="text/javascript" ></script>
+<script src="/js/jquery-1.6.4.min.js" type="text/javascript" ></script>
 {scala.xml.Unparsed(cssAndJs)}
 </head>
 

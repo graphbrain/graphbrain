@@ -26,7 +26,7 @@ class SNode extends VisualObj
         @height = 0
         @halfWidth = 0
         @halfHeight = 0
-        @initalWidth = -1
+        @initialWidth = -1
         @scale = 1
 
     updatePos: (_x, _y, _z) ->
@@ -87,7 +87,7 @@ class SNode extends VisualObj
         @halfWidth = @width / 2
         @halfHeight = @height / 2
 
-        if @initalWidth < 0
+        if @initialWidth < 0
             @initialWidth = @width
 
         @updateTransform()
@@ -128,7 +128,7 @@ class SNode extends VisualObj
         if updated
             @updateDimensions()
             @scale = @initialWidth / @width
-            console.log('initialWidth: ' + @initialWidth + '; width: ' + @width + '; scale: ' + @scale)
+            #console.log('initialWidth: ' + @initialWidth + '; width: ' + @width + '; scale: ' + @scale)
             @updateTransform()
 
 

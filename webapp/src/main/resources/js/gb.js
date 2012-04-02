@@ -499,20 +499,12 @@ function handler(event) {
       node = document.createElement('div');
       node.setAttribute('class', 'node');
       node.setAttribute('id', this.divid);
-      if (this.type === 'text') {
-        node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a>';
-      } else if (this.type === 'image') {
-        node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.divid + '"><img src="' + this.text + '" width="50px" /></a>';
-      }
+      node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a>';
       snodeDiv = document.getElementById(this.snode.id);
       snodeDiv.appendChild(node);
       nodeDiv = $('#' + this.divid);
       _width = nodeDiv.outerWidth();
       _height = nodeDiv.outerHeight();
-      if (this.type === 'image') {
-        _width = 50;
-        _height = 80;
-      }
       this.width = _width;
       this.height = _height;
       this.halfWidth = _width / 2;
@@ -560,7 +552,7 @@ function handler(event) {
       this.height = 0;
       this.halfWidth = 0;
       this.halfHeight = 0;
-      this.initalWidth = -1;
+      this.initialWidth = -1;
       this.scale = 1;
     }
 
@@ -620,7 +612,7 @@ function handler(event) {
       this.height = $('div#' + this.id).outerHeight();
       this.halfWidth = this.width / 2;
       this.halfHeight = this.height / 2;
-      if (this.initalWidth < 0) this.initialWidth = this.width;
+      if (this.initialWidth < 0) this.initialWidth = this.width;
       this.updateTransform();
       _results = [];
       for (key in this.nodes) {
@@ -666,7 +658,6 @@ function handler(event) {
       if (updated) {
         this.updateDimensions();
         this.scale = this.initialWidth / this.width;
-        console.log('initialWidth: ' + this.initialWidth + '; width: ' + this.width + '; scale: ' + this.scale);
         return this.updateTransform();
       }
     };
