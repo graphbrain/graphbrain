@@ -490,13 +490,23 @@ function handler(event) {
     };
 
     Node.prototype.place = function() {
-      var node, snodeDiv;
-      node = document.createElement('div');
-      node.setAttribute('class', 'node');
-      node.setAttribute('id', this.divid);
-      node.innerHTML = '<a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a>';
+      var detDiv, html, nodeDiv, snodeDiv, titleDiv;
+      nodeDiv = document.createElement('div');
+      nodeDiv.setAttribute('class', 'node');
+      nodeDiv.setAttribute('id', this.divid);
       snodeDiv = document.getElementById(this.snode.id);
-      snodeDiv.appendChild(node);
+      snodeDiv.appendChild(nodeDiv);
+      titleDiv = document.createElement('div');
+      titleDiv.setAttribute('id', 't' + this.divid);
+      html = '<a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a>';
+      titleDiv.innerHTML = html;
+      nodeDiv.appendChild(titleDiv);
+      detDiv = document.createElement('div');
+      detDiv.setAttribute('id', 'd' + this.divid);
+      detDiv.setAttribute('class', 'nodeDetail');
+      html = 'Some more text about this node.';
+      detDiv.innerHTML = html;
+      nodeDiv.appendChild(detDiv);
       return this.updateDimensions();
     };
 
@@ -509,8 +519,10 @@ function handler(event) {
       this.dlevel = _dlevel;
       if (this.dlevel === 0) {
         $('div#' + this.divid).css('font-size', '12px');
+        $('div#d' + this.divid).css('display', 'none');
       } else if (this.dlevel === 1) {
         $('div#' + this.divid).css('font-size', '24px');
+        $('div#d' + this.divid).css('display', 'block');
       }
       return true;
     };
