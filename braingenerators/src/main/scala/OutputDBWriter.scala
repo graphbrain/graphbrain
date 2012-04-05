@@ -36,13 +36,13 @@ class OutputDBWriter(storeName:String, source:String) {
 			getOrInsert(n2)
 		
 			
-			//val n1RNode = URLNode(ID.url_id(wikiURL+N1Wiki), wikiURL+N1Wiki)
-			//val n2RNode = URLNode(ID.url_id(wikiURL+N2Wiki), wikiURL+N2Wiki)
+			val n1RNode = URLNode(ID.url_id(wikiURL+N1Wiki), wikiURL+N1Wiki)
+			val n2RNode = URLNode(ID.url_id(wikiURL+N2Wiki), wikiURL+N2Wiki)
 			
-			//getOrInsert(n1RNode)
-			//getOrInsert(n2RNode)			
-			//store.addrel("en_wikipage", Array[String](n1RNode.id, n1.id))
-			//store.addrel("en_wikipage", Array[String](n2RNode.id, n2.id))
+			getOrInsert(n1RNode)
+			getOrInsert(n2RNode)			
+			store.addrel("en_wikipage", Array[String](n1RNode.id, n1.id))
+			store.addrel("en_wikipage", Array[String](n2RNode.id, n2.id))
 			store.addrel("source", Array[String](sourceNode.id, n1.id))
 			store.addrel("source", Array[String](sourceNode.id, n2.id))
 		
@@ -81,6 +81,18 @@ class OutputDBWriter(storeName:String, source:String) {
 		}
 	}
 
+	def nodeExists(node:Vertex):Boolean=
+	{
+		try{
+			store.get(node.id);
+			return true			
+		}
+		catch{
+			case e => return false
+
+		}	
+	}
+
 	def writeGeneratorSource(sourceID:String, sourceURL:String, output:OutputDBWriter)
   	{
   		try{
@@ -114,6 +126,45 @@ class OutputDBWriter(storeName:String, source:String) {
   		}
   		
 
+  	}
+
+  	def writeImageNode(imagename:String, url:String, image:String="")
+  	{
+  		try{
+  			//Tries to find an existing Wiki node.
+  			val WikiID=ID.wikipedia_id(imagename)
+			val node = TextNode(id=WikiID, text=imagename);
+			
+
+  			val sourceNode=store.getSourceNode(ID.source_id(source));
+  			val imageNode=ImageNode(ID.image_id(imagename), url)
+			getOrInsert(imageNode);
+			getOrInsert(sourceNode);
+			store.addrel("source", Array[String](sourceNode.id, imageNode.id))
+			if(nodeExists(node)) 
+			{
+				store.addrel("image of", Array[String](imageNode.id, node.id))
+			}
+			else{
+				//If no wikipedia, create new non-wikipedia node:
+				val newNode=TextNode(id=ID.text_id(imagename, "noun"), text=imagename)
+				getOrInsert(newNode);
+				store.addrel("image of", Array[String](imageNode.id, newNode.id))
+				
+			}
+				
+			if(image=="")
+			{
+				return;
+			}
+			image match{
+				case a:String => val imageLocal=TextNode(id=ID.local_id(url), text=a)
+					getOrInsert(imageLocal);
+					store.addrel("localcopy", Array[String](imageLocal.id, imageNode.id))
+
+			}
+
+  		}
   	}
 
   	def addWikiPageToDB(pageTitle:String):Unit=

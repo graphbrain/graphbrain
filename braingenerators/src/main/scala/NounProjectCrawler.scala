@@ -1,3 +1,4 @@
+package com.graphbrain.braingenerators
 import java.net.URL
 import scala.io.Source
 import scala.util.matching.Regex
@@ -13,6 +14,8 @@ object NounProjectCrawler {
   val nounProjectURL = "http://thenounproject.com/noun/"
   val svgRegex="""[^\s^\']+(\.(?i)(svg))""".r
   val nounRegex="""(<a\sclass=\"group\"\shref=\"\/noun\/.+?\/)""".r
+  val sourceName = "thenounproject"
+  val sourceURL = "http://thenounproject.com/"
 
 
   //There seem to 8 noun list pages:
@@ -66,19 +69,36 @@ object NounProjectCrawler {
       return input;
   }
 
-  def main(args : Array[String]) : Unit = {
+  def getAllImages(output:OutputDBWriter):Unit={
+    var inserted=0;
+    output.writeGeneratorSource(NounProjectCrawler.sourceName, NounProjectCrawler.sourceURL, output);
+    inserted+=1;
+
     for(i <- 1 to NounProjectCrawler.nounListPages)
     {
-      val nouns=NounProjectCrawler.getNounList(i); 
-      println(i) 
+      val nouns=NounProjectCrawler.getNounList(i)
       for(noun <- nouns)
       {
+        val imageResource=NounImageQuery.getImageResource(noun); 
+        val image = NounImageQuery.getSVGImage(imageResource)
 
-        println(noun)
+        output.writeImageNode(noun, imageResource, image)
+        println("Inserted "+inserted.toString+": " +noun + ", " + imageResource + ", " + image);
+        inserted+=1;
       }
-
     }
-    
+  }
+
+  def main(args : Array[String]) : Unit = {
+
+    args match
+    {
+      
+      case a:Array[String] if(a.length==2) => getAllImages(new OutputDBWriter(args(1), args(2)))
+      case _ =>  getAllImages(new OutputDBWriter("gb", NounProjectCrawler.sourceName))
+  
+    }
+
     
   }
 }
