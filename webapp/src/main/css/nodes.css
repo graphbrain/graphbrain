@@ -11,6 +11,10 @@
     color:#000;
 }
 
+.nodeDetail {
+    display:none;
+}
+
 .snode1 {
     position:fixed;
     border-style:solid;

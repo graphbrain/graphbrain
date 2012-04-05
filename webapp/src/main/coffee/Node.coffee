@@ -35,13 +35,27 @@ class Node
         @halfHeight = @height / 2
 
     place: ->
-        node = document.createElement('div')
-        node.setAttribute('class', 'node')
-        node.setAttribute('id', @divid)
-        
-        node.innerHTML = '<a href="/node/' + @id + '" id="' + @divid + '">' + @text + '</a>'
+        # create node div
+        nodeDiv = document.createElement('div')
+        nodeDiv.setAttribute('class', 'node')
+        nodeDiv.setAttribute('id', @divid)
         snodeDiv = document.getElementById(@snode.id)
-        snodeDiv.appendChild(node)
+        snodeDiv.appendChild(nodeDiv)
+
+        # create title div
+        titleDiv = document.createElement('div')
+        titleDiv.setAttribute('id', 't' + @divid)
+        html = '<a href="/node/' + @id + '" id="' + @divid + '">' + @text + '</a>'
+        titleDiv.innerHTML = html
+        nodeDiv.appendChild(titleDiv)
+
+        # create detail div
+        detDiv = document.createElement('div')
+        detDiv.setAttribute('id', 'd' + @divid)
+        detDiv.setAttribute('class', 'nodeDetail')
+        html = 'Some more text about this node.'
+        detDiv.innerHTML = html
+        nodeDiv.appendChild(detDiv)
 
         @updateDimensions()
 
@@ -60,7 +74,9 @@ class Node
 
         if @dlevel == 0
             $('div#' + @divid).css('font-size', '12px')
+            $('div#d' + @divid).css('display', 'none')
         else if @dlevel == 1
             $('div#' + @divid).css('font-size', '24px')
+            $('div#d' + @divid).css('display', 'block')
 
         return true
