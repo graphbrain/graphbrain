@@ -21,6 +21,19 @@ def relation_id(relation:String):String={
 	return relation.replace(" ", "_")
 }
 
+def image_id(image_name:String):String={
+	return "image/"+image_name;
+}
+
+def text_id(thing:String, prefix:String):String={
+	
+	return prefix+"/"+thing;
+}
+
+def local_id(url:String):String={
+	val sanitized_url = url.toLowerCase.replace("/", "_")
+	return "localversion/"+sanitized_url;
+}
 }
 
 
