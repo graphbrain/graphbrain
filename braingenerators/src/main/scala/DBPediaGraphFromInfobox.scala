@@ -17,7 +17,7 @@ object DBPediaGraphFromInfobox {
   val predicateRegex = """(<http:\/\/dbpedia.org\/ontology\/.+?>)""".r
   val wikiRegex = """(<http:\/\/en.wikipedia.org\/wiki\/.+?>)""".r
   val sourceName = "dbpedia/mappingproperties"
-  val dataFile = "brain-generators/data-files/mappingbased_properties_en.nq"
+  val dataFile = "mappingbased_properties_en.nq"
   val sourceURL = "http://downloads.dbpedia.org/3.7/en/mappingbased_properties_en.nq.bz2"
 
   /*
@@ -93,7 +93,7 @@ object DBPediaGraphFromInfobox {
     {
       
       case a:Array[String] if(a.length==3) => processFile(args(0), new OutputDBWriter(args(1), args(2)), 0-1, args(3).toInt)
-      case _ =>  processFile(DBPediaGraphFromInfobox.dataFile, new OutputDBWriter("gb", DBPediaGraphFromInfobox.sourceName), 100,95)
+      case _ =>  processFile(DBPediaGraphFromInfobox.dataFile, new OutputDBWriter("gb", DBPediaGraphFromInfobox.sourceName), -1)
   
     }
     
