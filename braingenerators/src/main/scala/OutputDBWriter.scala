@@ -129,7 +129,7 @@ class OutputDBWriter(storeName:String, source:String) {
 
   	}
 
-  	def writeImageNode(imagename:String, url:String, image:String="")
+  	def writeNounProjectImageNode(imagename:String, url:String, image:String="", contributorName:String="", contributorURL:String="")
   	{
   		try{
   			//Tries to find an existing Wiki node.
@@ -138,14 +138,11 @@ class OutputDBWriter(storeName:String, source:String) {
 			
 
   			val sourceNode=store.getSourceNode(ID.source_id(source));
-  			val urlNode=URLNode(ID.url_id(url), url)
+  			val urlNode=URLNode(id=ID.url_id(url), url=url)
 			
 			getOrInsert(sourceNode);
 			getOrInsert(urlNode);
-			store.addrel("source", Array[String](sourceNode.id, urlNode.id))
-
-			
-
+			store.addrel("source", Array[String](sourceNode.id, urlNode.id))			
 				
 			if(image=="")
 			{
@@ -156,11 +153,21 @@ class OutputDBWriter(storeName:String, source:String) {
 					getOrInsert(imageLocal)
 					store.addrel("image_page", Array[String](urlNode.id,imageLocal.id))
 					store.addrel("source", Array[String](sourceNode.id, imageLocal.id))
+					val attribution = imagename + NounProjectCrawler.attributionText + contributorName;
+					val contributorNode = TextNode(id=ID.nounproject_id(contributorName), text=contributorName);
+					val contURLNode = URLNode(id=ID.url_id(contributorURL), url=contributorURL);
+
+					getOrInsert(contributorNode)
+					getOrInsert(contURLNode)
+					store.addrel("attribute_as", Array[String](imageLocal.id, contributorNode.id))
+					store.addrel("contributor_page", Array[String](contURLNode.id, contributorNode.id))
+
 
 					getOrInsert(imageLocal);
+
 					if(nodeExists(wikinode)) 
 					{
-						store.addrel("image of", Array[String](imageLocal.id, wikinode.id))
+						store.addrel("image_of", Array[String](imageLocal.id, wikinode.id))
 
 					
 					}
@@ -168,7 +175,7 @@ class OutputDBWriter(storeName:String, source:String) {
 					//If no wikipedia, create new non-wikipedia node:
 						val newNode=TextNode(id=ID.text_id(imagename, "noun"), text=imagename)
 						getOrInsert(newNode);
-						store.addrel("image of", Array[String](imageLocal.id, newNode.id))
+						store.addrel("image_of", Array[String](imageLocal.id, newNode.id))
 				
 					}
 

@@ -21,6 +21,7 @@ object NounProjectCrawler {
   val nounRegex="""(<a\sclass=\"group\"\shref=\"\/noun\/.+?\/)""".r
   val sourceName = "thenounproject"
   val sourceURL = "http://thenounproject.com/"
+  val attributionText=" symbol by "
 
 
   //There seem to 8 noun list pages:
@@ -84,11 +85,13 @@ object NounProjectCrawler {
       val nouns=NounProjectCrawler.getNounList(i)
       for(noun <- nouns)
       {
-        val imageResource=NounImageQuery.getImageResource(noun); 
-        val image = NounImageQuery.getSVGImage(imageResource)
+        val image=NounImageQuery.getImage(noun); 
+        val contributorData=NounImageQuery.getContributor(noun)
+        val imageURL = NounImageQuery.getImageURL(noun)
 
-        output.writeImageNode(noun, imageResource, image)
-        println("Inserted "+inserted.toString+": " +noun + ", " + imageResource + ", " + image);
+
+        output.writeNounProjectImageNode(noun, imageURL, image, contributorData._1, contributorData._2)
+        println("Inserted "+inserted.toString+": " +noun + ", " + imageURL + ", " + image + "," + contributorData._1 + "," + contributorData._2);
         inserted+=1;
       }
     }

@@ -17,6 +17,7 @@ object NounImageQuery {
   val contRegex="""(<a href=)(.+?)(>)(.+?)(</a>)""".r
   val contURLRegex="""(<a href=.+?>)""".r
   val contTagRegex="""(<a href=.+?>)(.+?)(</a>)"""
+  
 
   def getContributor(noun:String):(String, String)={
     try{
@@ -36,12 +37,32 @@ object NounImageQuery {
     
   }
 
-  def getImageResource(noun:String):String={
+  def getImageURL(noun:String):String={
     val imageURL = NounImageQuery.nounProjectURL + noun + "/";
     val result=NounImageQuery.readPage(imageURL)
     val svgImage=svgRegex.findFirstIn(result);
+    val found = svgImage.getOrElse("Not found")
+    if(found=="Not found")
+    {
+      return "Not found"
+    }
+    else{
+      return found
+    }
 
-    return(svgImage.getOrElse("Not found"))
+  }
+
+  def getImage(noun:String):String={
+    val imageURL = NounImageQuery.getImageURL(noun)
+    if(imageURL=="Not found")
+    {
+      return "Not found"
+    }
+    else
+    {
+      return(getSVGImagePage(imageURL))  
+    }
+    
     
   }
 
@@ -80,7 +101,7 @@ object NounImageQuery {
       //println(NounImageQuery.getContributor("tree"));
     args(0) match
     {
-      case a:String => val imageResource=NounImageQuery.getImageResource(a); 
+      case a:String => val imageResource=NounImageQuery.getImageURL(a); 
       println(imageResource); 
       println(NounImageQuery.getSVGImagePage(imageResource));
       println(NounImageQuery.getContributor(a));
