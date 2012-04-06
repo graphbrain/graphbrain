@@ -34,6 +34,10 @@ def local_id(url:String):String={
 	val sanitized_url = url.toLowerCase.replace("/", "_")
 	return "localversion/"+sanitized_url;
 }
+
+def nounproject_id(noun:String):String={
+	return "nounproject/"+noun;
+}
 }
 
 

@@ -113,3 +113,12 @@ case class SourceNode(id: String="", edges: Set[String]=Set[String](), extra: In
   def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
   def setExtra(newExtra: Int) = copy(extra=newExtra)
 }
+
+case class SVGNode(id: String="", svg:String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
+  override val vtype: String = "svg"
+
+  override def toMap: Map[String, Any] = toMapBase ++ Map(("svg" -> svg))
+
+  def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
+  def setExtra(newExtra: Int) = copy(extra=newExtra)
+}

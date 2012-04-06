@@ -63,4 +63,11 @@ abstract trait VertexStoreInterface {
   		case v: Vertex => throw WrongVertexType("on vertex: " + id + " (expected 'img', found : '" + v.vtype + "')")
   	}
   }
+
+  def getSVGNode(id: String): SVGNode = {
+    get(id) match {
+      case x: SVGNode => x
+      case v: Vertex => throw WrongVertexType("on vertex: " + id + " (expected 'svg', found : '" + v.vtype + "')")
+    }
+  }
 }
