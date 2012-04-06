@@ -17,7 +17,7 @@ object NounImageQuery {
   val contRegex="""(<a href=)(.+?)(>)(.+?)(</a>)""".r
   val contURLRegex="""(<a href=.+?>)""".r
   val contTagRegex="""(<a href=.+?>)(.+?)(</a>)"""
-  
+
 
   def getContributor(noun:String):(String, String)={
     try{
@@ -80,18 +80,23 @@ object NounImageQuery {
 
   def readPage(pageURL:String):String=
   {
-    val reader=getPageReader(pageURL)  
-    var input="";
-      while(true)
-      {
-          val line=reader.readLine()
-          line match{
-            case a:String => input+=line+"\n"; 
-            case _ => return input;
-          }
+    try{
+      val reader=getPageReader(pageURL)  
+      var input="";
+        while(true)
+        {
+            val line=reader.readLine()
+            line match{
+              case a:String => input+=line+"\n"; 
+              case _ => return input;
+            }
 
+        }
+        return input;
       }
-      return input;
+    catch{
+      case e => e.printStackTrace(); return ""
+    }
   }
 
   def main(args : Array[String]) : Unit = {
