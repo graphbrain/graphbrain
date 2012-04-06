@@ -79,6 +79,9 @@ object DBPediaGraphFromInfobox {
       counter+=1     
       
     }
+
+    output.finish()
+
     println("Start line: "+readerLine.toString)
     println("End line: "+ counter.toString); 
     println("Inserted: "+ inserted.toString); 

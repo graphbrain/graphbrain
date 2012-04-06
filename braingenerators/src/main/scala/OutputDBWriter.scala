@@ -199,5 +199,7 @@ class OutputDBWriter(storeName:String, source:String) {
 		return pageTokens.reduceLeft(_+ " " +_)
 	}
 
-
+	def finish() = {
+		store.finish()
+	}
 }
