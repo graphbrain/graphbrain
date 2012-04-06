@@ -160,7 +160,7 @@ class OutputDBWriter(storeName:String, source:String) {
 					getOrInsert(contributorNode)
 					getOrInsert(contURLNode)
 					store.addrel("attribute_as", Array[String](imageLocal.id, contributorNode.id))
-					store.addrel(imageLocal.id+"_contributor_page", Array[String](contURLNode.id, contributorNode.id))
+					store.addrel("contributor_page", Array[String](contURLNode.id, contributorNode.id, imageLocal.id))
 
 
 					getOrInsert(imageLocal);
