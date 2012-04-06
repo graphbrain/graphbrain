@@ -11,6 +11,7 @@ import com.graphbrain.hgdb.ImageNode
 import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.SourceNode
 import com.graphbrain.hgdb.URLNode
+import com.graphbrain.hgdb.SVGNode
 import com.graphbrain.hgdb.Vertex
 import com.graphbrain.searchengine.Indexing
 
@@ -133,34 +134,43 @@ class OutputDBWriter(storeName:String, source:String) {
   		try{
   			//Tries to find an existing Wiki node.
   			val WikiID=ID.wikipedia_id(imagename)
-			val node = TextNode(id=WikiID, text=imagename);
+			val wikinode = TextNode(id=WikiID, text=imagename);
 			
 
   			val sourceNode=store.getSourceNode(ID.source_id(source));
-  			val imageNode=ImageNode(ID.image_id(imagename), url)
-			getOrInsert(imageNode);
+  			val urlNode=URLNode(ID.url_id(url), url)
+			
 			getOrInsert(sourceNode);
-			store.addrel("source", Array[String](sourceNode.id, imageNode.id))
-			if(nodeExists(node)) 
-			{
-				store.addrel("image of", Array[String](imageNode.id, node.id))
-			}
-			else{
-				//If no wikipedia, create new non-wikipedia node:
-				val newNode=TextNode(id=ID.text_id(imagename, "noun"), text=imagename)
-				getOrInsert(newNode);
-				store.addrel("image of", Array[String](imageNode.id, newNode.id))
-				
-			}
+			getOrInsert(urlNode);
+			store.addrel("source", Array[String](sourceNode.id, urlNode.id))
+
+			
+
 				
 			if(image=="")
 			{
 				return;
 			}
 			image match{
-				case a:String => val imageLocal=TextNode(id=ID.local_id(url), text=a)
+				case a:String => val imageLocal=SVGNode(id=ID.nounproject_id(imagename), svg=a)
+					getOrInsert(imageLocal)
+					store.addrel("image_page", Array[String](urlNode.id,imageLocal.id))
+					store.addrel("source", Array[String](sourceNode.id, imageLocal.id))
+
 					getOrInsert(imageLocal);
-					store.addrel("localcopy", Array[String](imageLocal.id, imageNode.id))
+					if(nodeExists(wikinode)) 
+					{
+						store.addrel("image of", Array[String](imageLocal.id, wikinode.id))
+
+					
+					}
+					else{
+					//If no wikipedia, create new non-wikipedia node:
+						val newNode=TextNode(id=ID.text_id(imagename, "noun"), text=imagename)
+						getOrInsert(newNode);
+						store.addrel("image of", Array[String](imageLocal.id, newNode.id))
+				
+					}
 
 			}
 

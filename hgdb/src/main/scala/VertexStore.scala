@@ -45,6 +45,10 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         val url = map.getOrElse("url", "").toString
         ImageNode(id, url, edges, extra)
       }
+      case "svg" => {
+        val svg = map.getOrElse("svg", "").toString
+        SVGNode(id, svg, edges, extra)
+      }
       case _  => throw WrongVertexType("unkown vtype: " + vtype)
     }
   }
