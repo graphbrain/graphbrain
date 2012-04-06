@@ -51,6 +51,10 @@ trait BurstCaching extends VertexStoreInterface {
     }
   }
 
+  def finish() = {
+    writeCache foreach (item => super.put(item._2))
+  }
+
   private def updateWriteCache() = {
     if (writeCache.size > 10000) {
       writeCache foreach (item => super.put(item._2))
