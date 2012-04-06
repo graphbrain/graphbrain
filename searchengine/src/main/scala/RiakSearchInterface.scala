@@ -13,18 +13,18 @@ class RiakSearchInterface(val index: String,
 	  val req = :/(host, port) / "riak" / index <<< 
   	  """{"props":{"precommit":[{"mod":"riak_search_kv_hook","fun":"precommit"}]}}""" <:<
   	  Map("content-type" -> "application/json")
-  	Http(req >|)
+  	CustomHttp(req >|)
   }
 
   def index(key: String, text: String): Unit = {
     val safeKey = URLEncoder.encode(key, "UTF-8")
     val req = :/(host, port) / "buckets" / index / "keys" / safeKey <<< text.toLowerCase
-    Http(req >|)
+    CustomHttp(req >|)
   }
 
   def query(text: String): SearchResults = {
     val req = :/(host, port) / "solr" / index / "select" <<? Map(("q" -> text))
-    val response = Http(req as_str)
+    val response = CustomHttp(req as_str)
 
     val ns = XML.loadString(response)
 
