@@ -1,4 +1,9 @@
-package com.graphbrain.braingenerators
+package com.graphbrain.braingenerators;
+
+import java.io._
+import scala.collection.mutable
+import java.io.BufferedReader;
+import java.io.FileInputStream
 import java.net.URL
 import scala.io.Source
 import scala.util.matching.Regex
