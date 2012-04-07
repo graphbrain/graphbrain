@@ -37,13 +37,13 @@ class OutputDBWriter(storeName:String, source:String) {
 			getOrInsert(n2)
 		
 			
-			val n1RNode = URLNode(ID.url_id(wikiURL+N1Wiki), wikiURL+N1Wiki)
-			val n2RNode = URLNode(ID.url_id(wikiURL+N2Wiki), wikiURL+N2Wiki)
+			//val n1RNode = URLNode(ID.url_id(wikiURL+N1Wiki), wikiURL+N1Wiki)
+			//val n2RNode = URLNode(ID.url_id(wikiURL+N2Wiki), wikiURL+N2Wiki)
 			
-			getOrInsert(n1RNode)
-			getOrInsert(n2RNode)			
-			store.addrel("en_wikipage", Array[String](n1RNode.id, n1.id))
-			store.addrel("en_wikipage", Array[String](n2RNode.id, n2.id))
+			//getOrInsert(n1RNode)
+			//getOrInsert(n2RNode)			
+			//store.addrel("en_wikipage", Array[String](n1RNode.id, n1.id))
+			//store.addrel("en_wikipage", Array[String](n2RNode.id, n2.id))
 			store.addrel("source", Array[String](sourceNode.id, n1.id))
 			store.addrel("source", Array[String](sourceNode.id, n2.id))
 		
@@ -54,6 +54,7 @@ class OutputDBWriter(storeName:String, source:String) {
 
 			store.addrel(rel, Array[String](ID.wikipedia_id(node1), ID.wikipedia_id(node2)))
 		
+			/*
 			if(resource!="")
 			{
 				val resourceNode = URLNode(ID.url_id(resource), resource)	
@@ -61,7 +62,7 @@ class OutputDBWriter(storeName:String, source:String) {
 				//Only the explicit reference in the DBPedia record is included - the Wikipedia pages to the nodes are not.
 				store.addrel("source", Array[String](sourceNode.id, resourceNode.id))
 				store.addrel("en_wikipage_line", Array[String](resourceNode.id, relID))
-			}	
+			}*/	
 		}
 		catch {
 			case e => e.printStackTrace()
@@ -200,6 +201,6 @@ class OutputDBWriter(storeName:String, source:String) {
 	}
 
 	def finish() = {
-		store.finish()
+		store.finish();
 	}
 }

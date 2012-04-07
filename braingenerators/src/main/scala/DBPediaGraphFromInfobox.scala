@@ -96,7 +96,7 @@ object DBPediaGraphFromInfobox {
     {
       
       case a:Array[String] if(a.length==3) => processFile(args(0), new OutputDBWriter(args(1), args(2)), 0-1, args(3).toInt)
-      case _ =>  processFile(DBPediaGraphFromInfobox.dataFile, new OutputDBWriter("gb", DBPediaGraphFromInfobox.sourceName), -1)
+      case _ =>  processFile(DBPediaGraphFromInfobox.dataFile, new OutputDBWriter("gb", DBPediaGraphFromInfobox.sourceName), 100, 0)
   
     }
     
