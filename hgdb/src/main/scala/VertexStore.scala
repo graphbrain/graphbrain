@@ -140,8 +140,6 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         }
       }
     }
-
-    put(edge)
   }
 
   /** Deletes relationship from database
@@ -151,7 +149,6 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
     */
   def delrel(edgeType: String, participants: Array[String]) = {
     val edge = new Edge(edgeType, participants)
-    remove(edge)
 
     for (nodeId <- participants) {
       val node = get(nodeId)

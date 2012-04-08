@@ -111,11 +111,17 @@ trait BaseVertexStoreTests { this: FunSuite =>
     store.remove(node1)
     store.put(node0)
     store.put(node1)
+
     store.addrel("test", Array[String]("node0", "node1"))
 
     val eid = "test " + node0.id + " " + node1.id
-    val edge = store.get(eid)
-    assert(edge.id == eid)
+    val node0_ = store.getTextNode("node0")
+    val node1_ = store.getTextNode("node1")
+
+    assert(node0.edges == Set[String]())
+    assert(node1.edges == Set[String]())
+    assert(node0_.edges == Set[String](eid))
+    assert(node1_.edges == Set[String](eid))
   }
 
   test("delete two node relationship [" + label + "]") {
