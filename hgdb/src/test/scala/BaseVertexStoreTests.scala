@@ -124,6 +124,18 @@ trait BaseVertexStoreTests { this: FunSuite =>
     assert(node1_.edges == Set[String](eid))
   }
 
+  test("add relationship twice [" + label + "]") {
+    val node0 = TextNode("node0", "node0")
+    val node1 = TextNode("node1", "node1")
+    store.remove(node0)
+    store.remove(node1)
+    store.put(node0)
+    store.put(node1)
+
+    assert(store.addrel("test", Array[String]("node0", "node1")))
+    assert(!store.addrel("test", Array[String]("node0", "node1")))
+  }
+
   test("delete two node relationship [" + label + "]") {
     val node0 = TextNode("node0", "node0")
     val node1 = TextNode("node1", "node1")
