@@ -12,8 +12,7 @@ import com.codahale.jerkson.Json._
 
 class GraphInterface (val rootId: String, val store: VertexStore) {
   val neighbors = store.neighbors(rootId)
-  val edgeIds = store.neighborEdges(rootId, neighbors)
-  //val edges = edgeIds.map(e => store.getEdge(e))
+  val edgeIds = store.rootNeighborEdges(rootId, neighbors)
   val snodes = supernodes
   val links = visualLinks
   val nodesJSON = nodes2json
