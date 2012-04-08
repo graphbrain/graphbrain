@@ -94,15 +94,59 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
     vertex
   }
 
+  def relExistsOnVertex(vertex: Vertex, edge: Edge): Boolean = {
+    if (vertex.edges.contains(edge.id))
+      return true
+    // if extra < 0, no extra vertices exist
+    if (vertex.extra < 0)
+      return false
+
+    // else let's start from extra = 1
+    var extra = 1
+    while (true) {
+      val testVertex = try {
+        get(VertexStore.extraId(vertex.id, extra))
+      }
+      catch {
+        case _ => null
+      }
+      if (testVertex == null)
+        return false
+      if (testVertex.edges.contains(edge.id))
+        return true
+
+      extra += 1
+    }
+
+    false
+  }
+
+  def relExists(edge: Edge): Boolean = {
+    var bestExtra = Int.MaxValue
+    var bestVertex: Vertex = null
+    for (id <- edge.participantIds) {
+      val vertex = get(id)
+      if (vertex.extra < bestExtra) {
+        bestExtra = vertex.extra
+        bestVertex = vertex
+      }
+    }
+
+    return relExistsOnVertex(bestVertex, edge)
+  }
+
   /** Adds relationship to database
     * 
-    * An edge is creted and participant nodes are updated with a reference to that edge
+    * Participant nodes are updated with a reference to the edge
     * in order to represent a new relationship on the database.
     * maxEdges limit is respected. If the number of edges stored in a participant reaches
     * this value, ExtraEdges vertices are created and updaed to store the edges.
     */
-  def addrel(edgeType: String, participants: Array[String]) = {
+  def addrel(edgeType: String, participants: Array[String]): Boolean = {
     val edge = new Edge(edgeType, participants)
+
+    if (relExists(edge))
+      return false
 
     for (id <- participants) {
       val vertex = get(id)
@@ -140,12 +184,13 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         }
       }
     }
+
+    true
   }
 
   /** Deletes relationship from database
     * 
-    * The edge defining the relationship is removed and participant nodes are updated 
-    * to drop the reference to that edge.
+    * Participant nodes are updated to drop the reference to the edge.
     */
   def delrel(edgeType: String, participants: Array[String]) = {
     val edge = new Edge(edgeType, participants)
@@ -166,7 +211,7 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         while (!done) {
           extra += 1
           val extraEdges = get(VertexStore.extraId(nodeId, extra))
-          // this should now happen
+          // this should not happen
           if (extraEdges.id == "") {
 
           }
@@ -262,5 +307,10 @@ object VertexStore {
       yield str.replace("$2", ",").replace("$1", "$")).toIterable
   }
 
-  private def extraId(id: String, pos: Int) =  id + "/" + pos
-} 
+  private def extraId(id: String, pos: Int) = {
+    if (pos == 0)
+      id
+    else
+      id + "/" + pos
+  }
+}
