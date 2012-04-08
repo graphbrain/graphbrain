@@ -205,8 +205,6 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
           val node = get(curId)
           nset += ((curId, parent))
           count += 1
-          //if (count > 25)
-            //return nset.toSet
 
           if (depth < maxDepth)
             for (edgeId <- node.edges)
@@ -228,7 +226,24 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
     * An Edge is considered inernal if all it's participating Nodes are containes in the
     * neighborhood.
     */
-  def neighborEdges(rootId: String, nhood: Set[(String, String)]): Set[String] = {
+  def neighborEdges(nhood: Set[(String, String)]): Set[String] = {
+    val nhoodIds = for (n <- nhood) yield n._1
+    val eset = MSet[String]()
+    for (n <- nhood) {
+      val node = get(n._1)
+      for (edgeId <- node.edges)
+        if ((Edge.participantIds(edgeId).forall(nhoodIds.contains(_))))
+          eset += edgeId
+    }
+    eset.toSet
+  }
+
+  /** Gets all Edges that are internal to a neighborhood and connected to the root 
+    * 
+    * An Edge is considered inernal if all it's participating Nodes are containes in the
+    * neighborhood.
+    */
+  def rootNeighborEdges(rootId: String, nhood: Set[(String, String)]): Set[String] = {
     val nhoodIds = for (n <- nhood) yield n._1
     val eset = MSet[String]()
     for (n <- nhood) {
