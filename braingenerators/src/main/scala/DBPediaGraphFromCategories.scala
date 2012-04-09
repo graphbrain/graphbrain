@@ -18,7 +18,7 @@ object DBPediaGraphFromCategories {
   val wikiRegex = """(<http:\/\/en.wikipedia.org\/wiki\/.+?>)""".r
   val sourceName = "dbpedia/instancetypes"
   val sourceURL = "http://downloads.dbpedia.org/3.7/en/instance_types_en.nq.bz2"
-  val dataFile = "brain-generators/data-files/instance_types_en.nq"
+  val dataFile = "instance_types_en.nq"
 
   /*
   Gets a qtuple and returns a 4-tuple with (node, relation, node, source)
@@ -126,7 +126,7 @@ object DBPediaGraphFromCategories {
     {
       
       case a:Array[String] if(a.length==3) => processFile(args(0), new OutputDBWriter(args(1), args(2)), 0-1, args(3).toInt)
-      case _ =>  processFile(DBPediaGraphFromCategories.dataFile, new OutputDBWriter("gb", DBPediaGraphFromCategories.sourceName), 100, 95)
+      case _ =>  processFile(DBPediaGraphFromCategories.dataFile, new OutputDBWriter("gb", DBPediaGraphFromCategories.sourceName), -1)
       
     }
     
