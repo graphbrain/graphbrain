@@ -3,8 +3,9 @@
     top:0px;
     left:0px;
     width:100%;
-    z-index:2;
-    background:rgba(255,255,255,0.5);
+    padding-bottom:4px;
+    z-index:10;
+    background:rgba(200,255,255,0.5);
 }
 
 #logo { 
@@ -13,22 +14,12 @@
 	left:0px;
 	float:left;
 	width:200px;
-	z-index:2;
-}
-
-#modeButtons {
-	float:left;
-    text-align:center;
-    font-family:Sans-Serif;
-    font-size:15px;
-	z-index:2;
 }
 
 #inputArea {
     float:left;
     text-align:center;
     font-family:Sans-Serif;
-    z-index:2;
     margin: 5px 0px 0px 50px;
 }
 
@@ -36,8 +27,7 @@
     font-size: 16px;
     border: 1px solid #888;
     line-height: 30px;
-    -moz-border-radius:7px;
-    border-radius:7px;
+    border-radius:3px;
     margin: 0px;
     padding: 0px;
 }
@@ -48,16 +38,7 @@
     background:#FFF;
     border: 1px solid #888;
     line-height: 30px;
-    -moz-border-radius:7px;
-    border-radius:7px;
+    border-radius:3px;
     margin: 0px;
     padding: 0px 5px 0px 5px;
-}
-
-#topRight {
-	float:right;
-	z-index:2;
-    font-family: Sans-Serif;
-    font-size: 15px;
-    text-align:right;
 }
