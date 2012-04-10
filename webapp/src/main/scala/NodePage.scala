@@ -33,6 +33,7 @@ case class NodePage(store: VertexStore, nodeId: String) extends Page {
 </head>
 
 <body>
+
 <div id="topDiv">
     <div id="logo">
         <a href="/"><img src="/images/GB_logo_M.png" alt="graphbrain"/></a>
