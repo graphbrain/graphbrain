@@ -28,13 +28,15 @@ case class NodePage(store: VertexStore, nodeId: String) extends Page {
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>Graphbrain</title>
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link href="/css/bootstrap.min.css" type="text/css" rel="Stylesheet" />
 <script src="/js/jquery-1.7.2.min.js" type="text/javascript" ></script>
+<script src="/js/bootstrap.min.js" type="text/javascript" ></script>
 {scala.xml.Unparsed(cssAndJs)}
 </head>
 
 <body>
 
-<div id="topDiv">
+<!-- <div id="topDiv">
     <div id="logo">
         <a href="/"><img src="/images/GB_logo_M.png" alt="graphbrain"/></a>
     </div>
@@ -44,6 +46,29 @@ case class NodePage(store: VertexStore, nodeId: String) extends Page {
             <button type="submit" id="inputFieldButton">Search</button>
         </form>
     </div>
+</div> -->
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#"><img src="/images/GB_logo_S.png" alt="graphbrain"/></a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+              <li><form class="navbar-search">
+                <input type="text" class="search-query" placeholder="Search" />
+              </form></li>
+            </ul>
+            <p class="navbar-text pull-right">Logged in as <a href="#">username</a></p>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
 </div>
 
 <div id="overlay"></div>
