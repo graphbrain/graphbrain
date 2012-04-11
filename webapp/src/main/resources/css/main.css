@@ -62,7 +62,7 @@ html, body {
 
 .linkLabel {
     position:relative;
-    width:113px;
+    width:115px;
 }
 
 .linkText {
@@ -80,9 +80,9 @@ html, body {
 .linkArrow {
     width: 0;
     height: 0;
-    border-top: 9px solid transparent;
-    border-bottom: 9px solid transparent;
-    border-left: 9px solid #299ec1;
+    border-top: 11px solid transparent;
+    border-bottom: 11px solid transparent;
+    border-left: 11px solid #299ec1;
     float:right;
 }
 .node {
