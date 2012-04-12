@@ -974,7 +974,7 @@ function handler(event) {
 
   showSearchDialog = function(msg) {
     var dialogHtml;
-    dialogHtml = $("<div class=\"modal\" id=\"searchResultsModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Search Results</h3>\n  </div>\n  <div class=\"modal-body\">\n    <p>" + msg + "</p>\n</div>\n<div class=\"modal-footer\">\n  <a href=\"#\" class=\"btn btn-primary\">Close</a>\n</div>\n</div>");
+    dialogHtml = $("<div class=\"modal\" id=\"searchResultsModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Search Results</h3>\n  </div>\n  <div class=\"modal-body\">" + msg + "</div>\n<div class=\"modal-footer\">\n  <a class=\"btn btn-primary\" data-dismiss=\"modal\">Close</a>\n</div>\n</div>");
     dialogHtml.appendTo('body');
     $('#searchResultsModal').on('hidden', function() {
       return $('#searchResultsModal').remove();

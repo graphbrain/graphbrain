@@ -6,10 +6,10 @@ showSearchDialog = (msg) ->
     <h3>Search Results</h3>
   </div>
   <div class="modal-body">
-    <p>""" + msg + """</p>
+    """ + msg + """
   </div>
   <div class="modal-footer">
-    <a href="#" class="btn btn-primary">Close</a>
+    <a class="btn btn-primary" data-dismiss="modal">Close</a>
   </div>
 </div>
         """)

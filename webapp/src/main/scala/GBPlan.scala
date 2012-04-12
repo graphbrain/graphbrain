@@ -56,8 +56,7 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
     }
     case POST(Path("/search") & Params(params)) => {
       logger.debug("POST /search")
-      println("search POST" + params("q"))
-      SearchResponse(params("q")(0))
+      SearchResponse(store, params("q")(0))
     }
   }
 }

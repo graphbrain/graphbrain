@@ -20,6 +20,8 @@ abstract class Vertex {
       (for (str <- iter)
         yield str.replace("$", "$1").replace(",", "$2")).reduceLeft(_ + "," + _)
   }
+
+  override def toString: String = id
 }
 
 
@@ -82,6 +84,8 @@ case class TextNode(id: String="", text: String="", edges: Set[String]=Set[Strin
 
   def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
   def setExtra(newExtra: Int) = copy(extra=newExtra)
+
+  override def toString: String = text
 }
 
 
