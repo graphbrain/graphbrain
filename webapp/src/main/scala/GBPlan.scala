@@ -21,12 +21,14 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       System.exit(0)
       ComingSoon()
 
-    case GET(Path("/")) => 
+    case GET(Path("/")) => {
       logger.debug("GET /")
       ComingSoon()
-    case GET(Path("/secret")) => 
+    }
+    case GET(Path("/secret")) => { 
       logger.debug("GET /secret")
       Redirect("/node/welcome/graphbrain")
+    }
     case GET(Path(Seg("node" :: n1 :: Nil))) => {
       val id = n1 
       logger.debug("GET " + id)
@@ -51,6 +53,11 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val id = n1 + "/" + n2 + "/" + n3 + "/" + n4 + "/" + n5
       logger.debug("GET " + id)
       NodePage(store, id)
+    }
+    case POST(Path("/search") & Params(params)) => {
+      logger.debug("POST /search")
+      println("search POST" + params("q"))
+      SearchResponse(params("q")(0))
     }
   }
 }

@@ -1,3 +1,4 @@
+# Graph interface
 dragging = false
 lastX = 0
 lastY = 0
@@ -35,6 +36,7 @@ fullBind = (eventName, f) ->
     $(".snodeN").bind eventName, f
     $(".link").bind eventName, f
 
+# init
 initInterface = ->
     $("#overlay").bind "mouseup", mouseUp
     $(".snode1").bind "mouseup", mouseUp
@@ -55,3 +57,5 @@ initInterface = ->
     fullBind("mousedown", mouseDown)
     fullBind("mousemove", mouseMove)
     fullBind("mousewheel", mouseWheel)
+
+    $('#search-field').submit(searchQuery)
