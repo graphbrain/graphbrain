@@ -25,7 +25,7 @@ case class NodePage(store: VertexStore, nodeId: String) extends Page {
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Graphbrain</title>
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 <link href="/css/bootstrap.min.css" type="text/css" rel="Stylesheet" />
@@ -35,18 +35,6 @@ case class NodePage(store: VertexStore, nodeId: String) extends Page {
 </head>
 
 <body>
-
-<!-- <div id="topDiv">
-    <div id="logo">
-        <a href="/"><img src="/images/GB_logo_M.png" alt="graphbrain"/></a>
-    </div>
-    <div id="inputArea">
-        <form action="/search" method="post">
-            <input type="text" name="input" id="inputField" size="50" />
-            <button type="submit" id="inputFieldButton">Search</button>
-        </form>
-    </div>
-</div> -->
 
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
@@ -61,8 +49,8 @@ case class NodePage(store: VertexStore, nodeId: String) extends Page {
             <ul class="nav">
               <li><a href="#about">About</a></li>
               <li><a href="#contact">Contact</a></li>
-              <li><form class="navbar-search">
-                <input type="text" class="search-query" placeholder="Search" />
+              <li><form class="navbar-search" id="search-field">
+                <input type="text" id="search-input-field" class="search-query" placeholder="Search" />
               </form></li>
             </ul>
             <p class="navbar-text pull-right">Logged in as <a href="#">username</a></p>

@@ -89,7 +89,7 @@ function handler(event) {
         len++;
     return len;
 };
-  var Graph, Link, Node, Quaternion, SNode, VisualObj, dotProduct, dragging, fullBind, g, initGraph, initInterface, interRect, lastX, lastY, lineRectOverlap, lineSegsOverlap, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, rotRectsOverlap, rotateAndTranslate, sepAxis, sepAxisSide, tmpVec, v3dotv3,
+  var Graph, Link, Node, Quaternion, SNode, VisualObj, dotProduct, dragging, fullBind, g, initGraph, initInterface, interRect, lastX, lastY, lineRectOverlap, lineSegsOverlap, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, searchQuery, sepAxis, sepAxisSide, showSearchDialog, tmpVec, v3dotv3,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
     _this = this;
@@ -972,6 +972,30 @@ function handler(event) {
 
   })();
 
+  showSearchDialog = function(msg) {
+    var dialogHtml;
+    dialogHtml = $("<div class=\"modal\" id=\"searchResultsModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Search Results</h3>\n  </div>\n  <div class=\"modal-body\">\n    <p>" + msg + "</p>\n</div>\n<div class=\"modal-footer\">\n  <a href=\"#\" class=\"btn btn-primary\">Close</a>\n</div>\n</div>");
+    dialogHtml.appendTo('body');
+    $('#searchResultsModal').on('hidden', function() {
+      return $('#searchResultsModal').remove();
+    });
+    return $('#searchResultsModal').modal();
+  };
+
+  resultsReceived = function(msg) {
+    return showSearchDialog(msg);
+  };
+
+  searchQuery = function() {
+    $.ajax({
+      type: "POST",
+      url: "/search",
+      data: "q=" + $("#search-input-field").val(),
+      success: resultsReceived
+    });
+    return false;
+  };
+
   dragging = false;
 
   lastX = 0;
@@ -1033,7 +1057,8 @@ function handler(event) {
     fullBind("mouseup", mouseUp);
     fullBind("mousedown", mouseDown);
     fullBind("mousemove", mouseMove);
-    return fullBind("mousewheel", mouseWheel);
+    fullBind("mousewheel", mouseWheel);
+    return $('#search-field').submit(searchQuery);
   };
 
   g = false;
