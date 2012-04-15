@@ -18,7 +18,7 @@ class Graph
 
     updateTransform: ->
         transformStr = "translate(" + @offsetX + "px," + @offsetY + "px)" +
-            " scale(" + @scale + "," + @scale + ")"
+            " scale(" + @scale + ")"
         $('#nodesDiv').css('-webkit-transform', transformStr)
         $('#nodesDiv').css('-moz-transform', transformStr)
 

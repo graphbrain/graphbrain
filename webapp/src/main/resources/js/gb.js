@@ -597,10 +597,12 @@ function handler(event) {
       _x = this.rpos[0];
       _y = this.rpos[1];
       _z = this.rpos[2] + g.zOffset;
-      transformStr = 'translate3d(' + (_x - this.halfWidth) + 'px,' + (_y - this.halfHeight) + 'px,' + _z + 'px)';
-      transformStr += ' scale(' + this.scale + ',' + this.scale + ')';
-      $('div#' + this.id).css('-webkit-transform', transformStr);
-      return $('div#' + this.id).css('-moz-transform', transformStr);
+      if (!isNaN(_x) && !isNaN(_y) && !isNaN(_z)) {
+        transformStr = 'translate3d(' + (_x - this.halfWidth) + 'px,' + (_y - this.halfHeight) + 'px,' + _z + 'px)';
+        transformStr += ' scale(' + this.scale + ')';
+        $('div#' + this.id).css('-webkit-transform', transformStr);
+        return $('div#' + this.id).css('-moz-transform', transformStr);
+      }
     };
 
     SNode.prototype.moveTo = function(x, y, z) {
@@ -803,7 +805,7 @@ function handler(event) {
 
     Graph.prototype.updateTransform = function() {
       var transformStr;
-      transformStr = "translate(" + this.offsetX + "px," + this.offsetY + "px)" + " scale(" + this.scale + "," + this.scale + ")";
+      transformStr = "translate(" + this.offsetX + "px," + this.offsetY + "px)" + " scale(" + this.scale + ")";
       $('#nodesDiv').css('-webkit-transform', transformStr);
       return $('#nodesDiv').css('-moz-transform', transformStr);
     };

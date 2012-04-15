@@ -71,10 +71,11 @@ class SNode extends VisualObj
         _x = @rpos[0]
         _y = @rpos[1]
         _z = @rpos[2] + g.zOffset
-        transformStr = 'translate3d(' + (_x - @halfWidth) + 'px,' + (_y - @halfHeight) + 'px,' + _z + 'px)'
-        transformStr += ' scale(' + @scale + ',' + @scale + ')'
-        $('div#' + @id).css('-webkit-transform', transformStr)
-        $('div#' + @id).css('-moz-transform', transformStr)
+        if (!isNaN(_x) && !isNaN(_y) && !isNaN(_z))
+            transformStr = 'translate3d(' + (_x - @halfWidth) + 'px,' + (_y - @halfHeight) + 'px,' + _z + 'px)'
+            transformStr += ' scale(' + @scale + ')'
+            $('div#' + @id).css('-webkit-transform', transformStr)
+            $('div#' + @id).css('-moz-transform', transformStr)
 
 
     moveTo: (x, y, z) ->

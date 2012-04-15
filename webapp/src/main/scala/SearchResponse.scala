@@ -14,12 +14,12 @@ case class SearchResponse(store: VertexStore, query: String) extends ResponseWri
       	if (results.numResults == 0)
       		results = si.query(query + "*")
       	
-      	var html = ""
+      	var html = "<div>"
       	if (results.numResults == 0) {
-      		html = "<p>Sorry, no results found.</p>"
+      		html += "<p>Sorry, no results found.</p>"
       	}
       	else {
-      		html="<p>" + results.numResults + " results found.</p>"
+      		html += "<p>" + results.numResults + " results found.</p>"
       		for (id <- results.ids) {
       			val vertex = store.get(id)
       			if (vertex.toString != "") {
@@ -27,6 +27,7 @@ case class SearchResponse(store: VertexStore, query: String) extends ResponseWri
       			}
       		}
       	}
+            html += "</div>"
 
 		writer.write(html)
 	} 
