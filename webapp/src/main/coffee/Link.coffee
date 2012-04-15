@@ -107,3 +107,4 @@ class Link extends VisualObj
         
         transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px)' + ' rotateZ(' + rotz + 'rad)' + ' rotateY(' + roty + 'rad)'
         $('#link' + @id).css('-webkit-transform', transformStr)
+        $('#link' + @id).css('-moz-transform', transformStr)

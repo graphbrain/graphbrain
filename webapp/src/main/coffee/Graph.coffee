@@ -20,6 +20,7 @@ class Graph
         transformStr = "translate(" + @offsetX + "px," + @offsetY + "px)" +
             " scale(" + @scale + "," + @scale + ")"
         $('#nodesDiv').css('-webkit-transform', transformStr)
+        $('#nodesDiv').css('-moz-transform', transformStr)
 
     rotateX: (angle) ->
         @deltaQuat.fromEuler(angle, 0, 0)
