@@ -5,10 +5,10 @@ class Graph
         @snodes = {}
         @nodes = {}
         @links = []
-        @scale = 0.7
+        @scale = 1
         @offsetX = 0
         @offsetY = 0
-        @zOffset = 300
+        @zOffset = 0
 
         # auxiliary quaternions and matrices for 3D rotation
         @quat = new Quaternion()
@@ -64,7 +64,6 @@ class Graph
 
 
     updateViewLinks: -> link.visualUpdate() for link in @links
-
 
     updateView: -> 
         for key of @snodes when @snodes.hasOwnProperty(key)
