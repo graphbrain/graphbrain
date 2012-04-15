@@ -599,7 +599,8 @@ function handler(event) {
       _z = this.rpos[2] + g.zOffset;
       transformStr = 'translate3d(' + (_x - this.halfWidth) + 'px,' + (_y - this.halfHeight) + 'px,' + _z + 'px)';
       transformStr += ' scale(' + this.scale + ',' + this.scale + ')';
-      return $('div#' + this.id).css('-webkit-transform', transformStr);
+      $('div#' + this.id).css('-webkit-transform', transformStr);
+      return $('div#' + this.id).css('-moz-transform', transformStr);
     };
 
     SNode.prototype.moveTo = function(x, y, z) {
@@ -776,7 +777,8 @@ function handler(event) {
       ty = cy - this.halfHeight;
       tz = cz + g.zOffset;
       transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px)' + ' rotateZ(' + rotz + 'rad)' + ' rotateY(' + roty + 'rad)';
-      return $('#link' + this.id).css('-webkit-transform', transformStr);
+      $('#link' + this.id).css('-webkit-transform', transformStr);
+      return $('#link' + this.id).css('-moz-transform', transformStr);
     };
 
     return Link;
@@ -802,7 +804,8 @@ function handler(event) {
     Graph.prototype.updateTransform = function() {
       var transformStr;
       transformStr = "translate(" + this.offsetX + "px," + this.offsetY + "px)" + " scale(" + this.scale + "," + this.scale + ")";
-      return $('#nodesDiv').css('-webkit-transform', transformStr);
+      $('#nodesDiv').css('-webkit-transform', transformStr);
+      return $('#nodesDiv').css('-moz-transform', transformStr);
     };
 
     Graph.prototype.rotateX = function(angle) {

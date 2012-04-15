@@ -74,6 +74,7 @@ class SNode extends VisualObj
         transformStr = 'translate3d(' + (_x - @halfWidth) + 'px,' + (_y - @halfHeight) + 'px,' + _z + 'px)'
         transformStr += ' scale(' + @scale + ',' + @scale + ')'
         $('div#' + @id).css('-webkit-transform', transformStr)
+        $('div#' + @id).css('-moz-transform', transformStr)
 
 
     moveTo: (x, y, z) ->
