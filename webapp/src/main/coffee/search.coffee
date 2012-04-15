@@ -25,7 +25,7 @@ searchQuery = ->
   $.ajax({
     type: "POST",
     url: "/search",
-    data: "q=" + $("#search-input-field").val(),
+    data: "q=" + $("#search-input-field").val().toLowerCase(),
     dataType: "text",
     success: resultsReceived
   })
