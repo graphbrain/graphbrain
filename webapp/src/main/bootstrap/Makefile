@@ -10,7 +10,6 @@ WATCHR ?= `which watchr`
 #
 
 docs: bootstrap
-	rm docs/assets/bootstrap.zip
 	cp bootstrap/css/* ../resources/css
 	cp bootstrap/js/* ../resources/js
 	cp bootstrap/img/* ../resources/img

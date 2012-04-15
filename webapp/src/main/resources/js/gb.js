@@ -89,7 +89,7 @@ function handler(event) {
         len++;
     return len;
 };
-  var Graph, Link, Node, Quaternion, SNode, VisualObj, dotProduct, dragging, fullBind, g, initGraph, initInterface, interRect, lastX, lastY, lineRectOverlap, lineSegsOverlap, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, searchQuery, sepAxis, sepAxisSide, showSearchDialog, tmpVec, v3dotv3,
+  var Graph, Link, Node, Quaternion, SNode, VisualObj, dotProduct, dragging, fullBind, g, initGraph, initInterface, initSearchDialog, interRect, lastX, lastY, lineRectOverlap, lineSegsOverlap, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, searchQuery, sepAxis, sepAxisSide, showSearchDialog, tmpVec, v3dotv3,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
     _this = this;
@@ -789,10 +789,10 @@ function handler(event) {
       this.snodes = {};
       this.nodes = {};
       this.links = [];
-      this.scale = 0.7;
+      this.scale = 1;
       this.offsetX = 0;
       this.offsetY = 0;
-      this.zOffset = 300;
+      this.zOffset = 0;
       this.quat = new Quaternion();
       this.deltaQuat = new Quaternion();
       this.affinMat = new Array(16);
@@ -972,17 +972,21 @@ function handler(event) {
 
   })();
 
-  showSearchDialog = function(msg) {
+  initSearchDialog = function() {
     var dialogHtml;
-    dialogHtml = $("<div class=\"modal\" id=\"searchResultsModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Search Results</h3>\n  </div>\n  <div class=\"modal-body\">" + msg + "</div>\n<div class=\"modal-footer\">\n  <a class=\"btn btn-primary\" data-dismiss=\"modal\">Close</a>\n</div>\n</div>");
+    dialogHtml = $("<div class=\"modal hide\" id=\"searchResultsModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Search Results</h3>\n  </div>\n  <div class=\"modal-body\" id=\"searchResultsBody\" />\n  <div class=\"modal-footer\">\n    <a class=\"btn btn-primary\" data-dismiss=\"modal\">Close</a>\n  </div>\n</div>");
     dialogHtml.appendTo('body');
-    $('#searchResultsModal').on('hidden', function() {
-      return $('#searchResultsModal').remove();
+    return $('#searchResultsModal').modal({
+      show: false
     });
-    return $('#searchResultsModal').modal();
+  };
+
+  showSearchDialog = function(msg) {
+    return $('#searchResultsModal').modal('show');
   };
 
   resultsReceived = function(msg) {
+    $('#searchResultsBody').html(msg);
     return showSearchDialog(msg);
   };
 
@@ -1003,7 +1007,8 @@ function handler(event) {
   lastY = 0;
 
   mouseUp = function(e) {
-    return dragging = false;
+    dragging = false;
+    return false;
   };
 
   mouseDown = function(e) {
@@ -1024,10 +1029,8 @@ function handler(event) {
       g.rotateY(deltaY * 0.0015);
       g.updateView();
       g.updateDetailLevel();
-      return false;
-    } else {
-      return true;
     }
+    return false;
   };
 
   mouseWheel = function(e, delta, deltaX, deltaY) {
@@ -1035,30 +1038,19 @@ function handler(event) {
   };
 
   fullBind = function(eventName, f) {
-    $("#overlay").bind(eventName, f);
+    $("#graphDiv").bind(eventName, f);
     $(".snode1").bind(eventName, f);
     $(".snodeN").bind(eventName, f);
     return $(".link").bind(eventName, f);
   };
 
   initInterface = function() {
-    $("#overlay").bind("mouseup", mouseUp);
-    $(".snode1").bind("mouseup", mouseUp);
-    $(".snodeN").bind("mouseup", mouseUp);
-    $(".link").bind("mouseup", mouseUp);
-    $("#overlay").bind("mousedown", mouseDown);
-    $(".snode1").bind("mousedown", mouseDown);
-    $(".snodeN").bind("mousedown", mouseDown);
-    $(".link").bind("mousedown", mouseDown);
-    $("#overlay").bind("mousemove", mouseMove);
-    $(".snode1").bind("mousemove", mouseMove);
-    $(".snodeN").bind("mousemove", mouseMove);
-    $(".link").bind("mousemove", mouseMove);
     fullBind("mouseup", mouseUp);
     fullBind("mousedown", mouseDown);
     fullBind("mousemove", mouseMove);
     fullBind("mousewheel", mouseWheel);
-    return $('#search-field').submit(searchQuery);
+    $('#search-field').submit(searchQuery);
+    return initSearchDialog();
   };
 
   g = false;

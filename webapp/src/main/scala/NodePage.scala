@@ -28,7 +28,7 @@ case class NodePage(store: VertexStore, nodeId: String) extends Page {
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Graphbrain</title>
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-<link href="/css/bootstrap.min.css" type="text/css" rel="Stylesheet" />
+<link href="/css/bootstrap.min.css?13042012" type="text/css" rel="Stylesheet" />
 <script src="/js/jquery-1.7.2.min.js" type="text/javascript" ></script>
 <script src="/js/bootstrap.min.js" type="text/javascript" ></script>
 {scala.xml.Unparsed(cssAndJs)}
@@ -59,9 +59,9 @@ case class NodePage(store: VertexStore, nodeId: String) extends Page {
       </div>
 </div>
 
-<div id="overlay"></div>
-
-<div id="nodesDiv"></div>
+<div id="graphDiv">
+  <div id="nodesDiv"></div>
+</div>
 
 <script language="javascript">
 
