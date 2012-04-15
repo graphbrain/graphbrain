@@ -998,6 +998,7 @@ function handler(event) {
       type: "POST",
       url: "/search",
       data: "q=" + $("#search-input-field").val(),
+      dataType: "text",
       success: resultsReceived
     });
     return false;
