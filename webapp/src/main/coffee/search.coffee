@@ -26,6 +26,7 @@ searchQuery = ->
     type: "POST",
     url: "/search",
     data: "q=" + $("#search-input-field").val(),
+    dataType: "text",
     success: resultsReceived
   })
   false

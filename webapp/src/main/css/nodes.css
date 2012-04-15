@@ -44,8 +44,8 @@
     left: 0px;
     width:100%;
     height:100%;
-    -webkit-perspective:1000;
-    -moz-perspective:1000;
+    -webkit-perspective:1000px;
+    -moz-perspective:1000px;
     -webkit-transform-style:preserve-3d;
     -moz-transform-style:preserve-3d;
     background: rgba(0, 0, 0, 0);
