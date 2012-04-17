@@ -66,11 +66,9 @@ html, body {
 .snodeN {
     position:fixed;
     border-style:solid;
-    border-width:1px;
-    border-color:#505050;
+    border-width:2px;
+    border-color:#AAA;
     padding: 10px;
-    /*max-height: 150px;
-    overflow-y:hidden;*/
 }
 
 #graphDiv {
