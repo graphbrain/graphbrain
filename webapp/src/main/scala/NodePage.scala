@@ -48,7 +48,7 @@ case class NodePage(store: VertexStore, nodeId: String) extends Page {
           <a class="brand" href="#"><img src="/images/GB_logo_S.png" alt="graphbrain"/></a>
           <div class="nav-collapse">
             <ul class="nav">
-              <li><a href="#about">About</a></li>
+              <li><a href="/node/welcome/graphbrain">About</a></li>
               <li><a href="#contact">Contact</a></li>
               <li><form class="navbar-search" id="search-field">
                 <input type="text" id="search-input-field" class="search-query" placeholder="Search" />
