@@ -15,7 +15,6 @@ class Node
 
         @dlevel = 0
 
-
     estimatePos: ->
         @rpos[0] = @snode.rpos[0] + @sx
         @rpos[1] = @snode.rpos[1] + @sy
@@ -26,7 +25,6 @@ class Node
         @x1 = @rpos[0] + @halfWidth
         @y1 = @rpos[1] + @halfHeight
 
-
     updateDimensions: ->
         nodeDiv = $('#' + @divid) 
         @width = nodeDiv.outerWidth()
@@ -36,29 +34,17 @@ class Node
 
     place: ->
         # create node div
-        nodeDiv = document.createElement('div')
-        nodeDiv.setAttribute('class', 'node')
-        nodeDiv.setAttribute('id', @divid)
-        snodeDiv = document.getElementById(@snode.id)
-        snodeDiv.appendChild(nodeDiv)
+        $('#' + @snode.id + ' .viewport').append('<div id="' + @divid + '" class="node" />')
 
         # create title div
-        titleDiv = document.createElement('div')
-        titleDiv.setAttribute('id', 't' + @divid)
-        html = '<a href="/node/' + @id + '" id="' + @divid + '">' + @text + '</a>'
-        titleDiv.innerHTML = html
-        nodeDiv.appendChild(titleDiv)
+        html = '<div id="t' + @divid + '"><a href="/node/' + @id + '" id="' + @divid + '">' + @text + '</a></div>'
+        $('#' + @divid).append(html)
 
         # create detail div
-        detDiv = document.createElement('div')
-        detDiv.setAttribute('id', 'd' + @divid)
-        detDiv.setAttribute('class', 'nodeDetail')
-        html = 'Some more text about this node.'
-        detDiv.innerHTML = html
-        nodeDiv.appendChild(detDiv)
+        html = '<div id="d' + @divid + '" class="nodeDetail">Some more text about this node.</div>'
+        $('#' + @divid).append(html)
 
         @updateDimensions()
-
 
     updateDetailLevel: (scale, z, depth) ->
         k = scale * (z + 500)

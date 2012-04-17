@@ -30,6 +30,7 @@ case class NodePage(store: VertexStore, nodeId: String) extends Page {
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 <link href="/css/bootstrap.min.css?13042012" type="text/css" rel="Stylesheet" />
 <script src="/js/jquery-1.7.2.min.js" type="text/javascript" ></script>
+<script src="/js/jquery-ui-1.8.18.custom.min.js" type="text/javascript" ></script>
 <script src="/js/bootstrap.min.js" type="text/javascript" ></script>
 {scala.xml.Unparsed(cssAndJs)}
 </head>

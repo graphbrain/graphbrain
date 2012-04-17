@@ -122,7 +122,7 @@ class Graph
         g.root.moveTo(width / 2, height / 2, 0)
         g.root.fixed = true
 
-        snodeCount = @snodes.size()
+        snodeCount = Object.keys(@snodes).length
 
         for i in [0..(snodeCount-1)]
             snode = @nextByWeight(1)
@@ -133,7 +133,7 @@ class Graph
             y = height / 2
             z = 0
 
-            if i < coords.size()
+            if i < Object.keys(coords).length
                 x += coords[i][0] * (width / 2)
                 y += coords[i][1] * (height / 2)
                 z += coords[i][2] * (height / 2)
