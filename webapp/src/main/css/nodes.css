@@ -17,14 +17,16 @@
 
 .snode1 {
     position:fixed;
-    border-style:solid;
-    border-width:1px;
-    border-color:#505050;
-    padding: 10px;
 }
 
 .snodeN {
     position:fixed;
+    border-style:solid;
+    border-width:1px;
+    border-color:#505050;
+    padding: 10px;
+    /*max-height: 150px;
+    overflow-y:hidden;*/
 }
 
 #graphDiv {

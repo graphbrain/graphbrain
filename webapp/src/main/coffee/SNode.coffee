@@ -99,21 +99,22 @@ class SNode extends VisualObj
 
 
     place: ->
-        snode = document.createElement('div')
-    
+        html = '<div id="' + @id + '"><div class="viewport" /></div>'
+        $('#nodesDiv').append(html)
+
         nodesCount = 0
         nodesCount++ for key of @nodes when @nodes.hasOwnProperty(key)
         if nodesCount > 1
-            snode.setAttribute('class', 'snode1')
+            $('#' + @id).addClass('snodeN')
         else
-            snode.setAttribute('class', 'snodeN')
-        snode.setAttribute('id', @id)
-    
-        nodesDiv = document.getElementById("nodesDiv")
-        nodesDiv.appendChild(snode)
+            $('#' + @id).addClass('snode1')
 
         # place nodes contained in this super node
         @nodes[key].place() for key of @nodes when @nodes.hasOwnProperty(key)
+
+        # scrollbar
+        if (nodesCount > 1) && ($('div#' + @id).outerHeight() > 250)
+            $('#' + @id + ' .viewport').slimScroll({height: '250px'})
 
         @updateDimensions()
 

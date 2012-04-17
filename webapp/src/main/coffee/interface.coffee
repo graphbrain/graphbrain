@@ -28,6 +28,7 @@ mouseMove = (e) ->
 
 mouseWheel = (e, delta, deltaX, deltaY) ->
     g.zoom(deltaY, e.pageX, e.pageY)
+    true
 
 fullBind = (eventName, f) ->
     $("#graphDiv").bind eventName, f

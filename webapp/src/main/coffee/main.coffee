@@ -44,7 +44,7 @@ initGraph = ->
     # assign depth and weight
     for key of g.snodes when g.snodes.hasOwnProperty(key)
         snode = g.snodes[key]
-        snode.weight = snode.nodes.size()
+        snode.weight = Object.keys(snode.nodes).length
         if not snode.parent
             snode.depth = 0
         else if snode.parent == g.root
@@ -88,6 +88,6 @@ initGraph = ->
     g.updateView()
 
 
-$ =>
+$ ->
     initGraph()
     initInterface()
