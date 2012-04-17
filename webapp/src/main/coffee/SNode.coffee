@@ -115,6 +115,7 @@ class SNode extends VisualObj
         # scrollbar
         if (nodesCount > 1) && ($('div#' + @id).outerHeight() > 250)
             $('#' + @id + ' .viewport').slimScroll({height: '250px'})
+            $('#' + @id).hover scrollOn, scrollOff
 
         @updateDimensions()
 
