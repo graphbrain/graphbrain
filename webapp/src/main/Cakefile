@@ -11,13 +11,13 @@ build = (callback) ->
     'coffee/geom.coffee',
     'coffee/vec3mat4x4.coffee',
     'coffee/Quaternion.coffee',
+    'coffee/interface.coffee',
     'coffee/VisualObj.coffee',
     'coffee/Node.coffee',
     'coffee/SNode.coffee',
     'coffee/Link.coffee',
     'coffee/Graph.coffee',
     'coffee/search.coffee',
-    'coffee/interface.coffee',
     'coffee/main.coffee']
   coffee.stderr.on 'data', (data) ->
     process.stderr.write data.toString()

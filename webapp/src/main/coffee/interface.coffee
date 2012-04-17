@@ -2,7 +2,13 @@
 dragging = false
 lastX = 0
 lastY = 0
+scroll = false
 
+scrollOn = (e) ->
+    scroll = true
+
+scrollOff = (e) ->
+    scroll = false
 
 mouseUp = (e) ->
     dragging = false
@@ -27,7 +33,8 @@ mouseMove = (e) ->
     false
 
 mouseWheel = (e, delta, deltaX, deltaY) ->
-    g.zoom(deltaY, e.pageX, e.pageY)
+    if (!scroll)
+        g.zoom(deltaY, e.pageX, e.pageY)
     true
 
 fullBind = (eventName, f) ->

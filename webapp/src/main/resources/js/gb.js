@@ -403,7 +403,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, VisualObj, dotProduct, dragging, fullBind, g, initGraph, initInterface, initSearchDialog, interRect, lastX, lastY, lineRectOverlap, lineSegsOverlap, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, searchQuery, sepAxis, sepAxisSide, showSearchDialog, tmpVec, v3dotv3,
+  var Graph, Link, Node, Quaternion, SNode, VisualObj, dotProduct, dragging, fullBind, g, initGraph, initInterface, initSearchDialog, interRect, lastX, lastY, lineRectOverlap, lineSegsOverlap, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, sepAxis, sepAxisSide, showSearchDialog, tmpVec, v3dotv3,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -740,6 +740,70 @@ function handler(event) {
 
   })();
 
+  dragging = false;
+
+  lastX = 0;
+
+  lastY = 0;
+
+  scroll = false;
+
+  scrollOn = function(e) {
+    return scroll = true;
+  };
+
+  scrollOff = function(e) {
+    return scroll = false;
+  };
+
+  mouseUp = function(e) {
+    dragging = false;
+    return false;
+  };
+
+  mouseDown = function(e) {
+    dragging = true;
+    lastX = e.pageX;
+    lastY = e.pageY;
+    return false;
+  };
+
+  mouseMove = function(e) {
+    var deltaX, deltaY;
+    if (dragging) {
+      deltaX = e.pageX - lastX;
+      deltaY = e.pageY - lastY;
+      lastX = e.pageX;
+      lastY = e.pageY;
+      g.rotateX(-deltaX * 0.0015);
+      g.rotateY(deltaY * 0.0015);
+      g.updateView();
+      g.updateDetailLevel();
+    }
+    return false;
+  };
+
+  mouseWheel = function(e, delta, deltaX, deltaY) {
+    if (!scroll) g.zoom(deltaY, e.pageX, e.pageY);
+    return true;
+  };
+
+  fullBind = function(eventName, f) {
+    $("#graphDiv").bind(eventName, f);
+    $(".snode1").bind(eventName, f);
+    $(".snodeN").bind(eventName, f);
+    return $(".link").bind(eventName, f);
+  };
+
+  initInterface = function() {
+    fullBind("mouseup", mouseUp);
+    fullBind("mousedown", mouseDown);
+    fullBind("mousemove", mouseMove);
+    fullBind("mousewheel", mouseWheel);
+    $('#search-field').submit(searchQuery);
+    return initSearchDialog();
+  };
+
   VisualObj = (function() {
 
     function VisualObj() {
@@ -949,6 +1013,7 @@ function handler(event) {
         $('#' + this.id + ' .viewport').slimScroll({
           height: '250px'
         });
+        $('#' + this.id).hover(scrollOn, scrollOff);
       }
       this.updateDimensions();
       return nodeObj = this;
@@ -1313,60 +1378,6 @@ function handler(event) {
       success: resultsReceived
     });
     return false;
-  };
-
-  dragging = false;
-
-  lastX = 0;
-
-  lastY = 0;
-
-  mouseUp = function(e) {
-    dragging = false;
-    return false;
-  };
-
-  mouseDown = function(e) {
-    dragging = true;
-    lastX = e.pageX;
-    lastY = e.pageY;
-    return false;
-  };
-
-  mouseMove = function(e) {
-    var deltaX, deltaY;
-    if (dragging) {
-      deltaX = e.pageX - lastX;
-      deltaY = e.pageY - lastY;
-      lastX = e.pageX;
-      lastY = e.pageY;
-      g.rotateX(-deltaX * 0.0015);
-      g.rotateY(deltaY * 0.0015);
-      g.updateView();
-      g.updateDetailLevel();
-    }
-    return false;
-  };
-
-  mouseWheel = function(e, delta, deltaX, deltaY) {
-    g.zoom(deltaY, e.pageX, e.pageY);
-    return true;
-  };
-
-  fullBind = function(eventName, f) {
-    $("#graphDiv").bind(eventName, f);
-    $(".snode1").bind(eventName, f);
-    $(".snodeN").bind(eventName, f);
-    return $(".link").bind(eventName, f);
-  };
-
-  initInterface = function() {
-    fullBind("mouseup", mouseUp);
-    fullBind("mousedown", mouseDown);
-    fullBind("mousemove", mouseMove);
-    fullBind("mousewheel", mouseWheel);
-    $('#search-field').submit(searchQuery);
-    return initSearchDialog();
   };
 
   g = false;
