@@ -2,6 +2,7 @@ package com.graphbrain.braingenerators
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.net.URLDecoder;
 import scala.collection.immutable.HashMap
 import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.BurstCaching
@@ -31,8 +32,8 @@ class OutputDBWriter(storeName:String, source:String) {
 			val N1Wiki=ID.wikipedia_id(node1)
 			val N2Wiki=ID.wikipedia_id(node2)
 			
-			val n1 = TextNode(id=N1Wiki, text=node1);
-			val n2 = TextNode(id=N2Wiki, text=node2);
+			val n1 = TextNode(id=N1Wiki, text=URLDecoder.decode(node1, "UTF-8"));
+			val n2 = TextNode(id=N2Wiki, text=URLDecoder.decode(node2, "UTF-8"));
 			getOrInsert(n1)
 			getOrInsert(n2)
 		
