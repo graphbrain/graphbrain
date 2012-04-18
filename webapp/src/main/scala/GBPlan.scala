@@ -2,61 +2,69 @@ package com.graphbrain.webapp
 
 import unfiltered.request._
 import unfiltered.response._
-
 import unfiltered.netty._
+
+import com.codahale.logula.Logging
 
 import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.SimpleCaching
+import com.graphbrain.searchengine.RiakSearchInterface
 
 
-object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse {
-  val logger = org.clapper.avsl.Logger(getClass)
+object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse with Logging {
   val store = new VertexStore("gb") with SimpleCaching
 
   val databaseName = System.getProperty("myapp.db.name")
 
   def intent = {
     // TODO: deactive in production
-    case GET(Path("/exit")) =>
+    case req@GET(Path("/exit")) =>
+      log.info(req.remoteAddr + " EXIT")
       System.exit(0)
       ComingSoon()
 
-    case GET(Path("/")) => {
-      logger.debug("GET /")
+    case req@GET(Path("/")) => {
+      log.info(req.remoteAddr + " GET /")
       ComingSoon()
     }
-    case GET(Path("/secret")) => { 
-      logger.debug("GET /secret")
+    case req@GET(Path("/secret")) => { 
+      log.info(req.remoteAddr + " GET /secret")
       Redirect("/node/welcome/graphbrain")
     }
-    case GET(Path(Seg("node" :: n1 :: Nil))) => {
+    case req@GET(Path(Seg("node" :: n1 :: Nil))) => {
       val id = n1 
-      logger.debug("GET " + id)
+      log.info(req.remoteAddr + " NODE " + id)
       NodePage(store, id)
     }
-    case GET(Path(Seg("node" :: n1 :: n2 :: Nil))) => {
+    case req@GET(Path(Seg("node" :: n1 :: n2 :: Nil))) => {
       val id = n1 + "/" + n2 
-      logger.debug("GET " + id)
+      log.info(req.remoteAddr + " NODE " + id)
       NodePage(store, id)
     }
-    case GET(Path(Seg("node" :: n1 :: n2 :: n3 :: Nil))) => {
+    case req@GET(Path(Seg("node" :: n1 :: n2 :: n3 :: Nil))) => {
       val id = n1 + "/" + n2 + "/" + n3
-      logger.debug("GET " + id)
+      log.info(req.remoteAddr + " NODE " + id)
       NodePage(store, id)
     }
-    case GET(Path(Seg("node" :: n1 :: n2 :: n3 :: n4 :: Nil))) => {
+    case req@GET(Path(Seg("node" :: n1 :: n2 :: n3 :: n4 :: Nil))) => {
       val id = n1 + "/" + n2 + "/" + n3 + "/" + n4
-      logger.debug("GET " + id)
+      log.info(req.remoteAddr + " NODE " + id)
       NodePage(store, id)
     }
-    case GET(Path(Seg("node" :: n1 :: n2 :: n3 :: n4 :: n5 :: Nil))) => {
+    case req@GET(Path(Seg("node" :: n1 :: n2 :: n3 :: n4 :: n5 :: Nil))) => {
       val id = n1 + "/" + n2 + "/" + n3 + "/" + n4 + "/" + n5
-      logger.debug("GET " + id)
+      log.info(req.remoteAddr + " NODE " + id)
       NodePage(store, id)
     }
-    case POST(Path("/search") & Params(params)) => {
-      logger.debug("POST /search")
-      SearchResponse(store, params("q")(0))
+    case req@POST(Path("/search") & Params(params)) => {
+      val query = params("q")(0)
+      val si = RiakSearchInterface("gbsearch")
+      var results = si.query(query)
+      // if not results are found for exact match, try fuzzier
+      if (results.numResults == 0)
+        results = si.query(query + "*")
+      log.info(req.remoteAddr + " SEARCH " + query + "; results: " + results.numResults)
+      SearchResponse(store, results)
     }
   }
 }

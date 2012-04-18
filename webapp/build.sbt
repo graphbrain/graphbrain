@@ -20,5 +20,6 @@ libraryDependencies ++= Seq(
   "org.clapper" %% "avsl" % "0.3.6",
   "net.databinder" %% "unfiltered-spec" % "0.5.3" % "test",
   "org.scalatest" %% "scalatest" % "1.7.1" % "test",
-  "com.codahale" %% "jerkson" % "0.5.0"
+  "com.codahale" %% "jerkson" % "0.5.0",
+  "com.codahale" %% "logula" % "2.1.3"
 )
