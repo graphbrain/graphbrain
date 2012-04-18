@@ -34,27 +34,27 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
     case req@GET(Path(Seg("node" :: n1 :: Nil))) => {
       val id = n1 
       log.info(req.remoteAddr + " NODE " + id)
-      NodePage(store, id)
+      NodePage(store, id, Server.prod)
     }
     case req@GET(Path(Seg("node" :: n1 :: n2 :: Nil))) => {
       val id = n1 + "/" + n2 
       log.info(req.remoteAddr + " NODE " + id)
-      NodePage(store, id)
+      NodePage(store, id, Server.prod)
     }
     case req@GET(Path(Seg("node" :: n1 :: n2 :: n3 :: Nil))) => {
       val id = n1 + "/" + n2 + "/" + n3
       log.info(req.remoteAddr + " NODE " + id)
-      NodePage(store, id)
+      NodePage(store, id, Server.prod)
     }
     case req@GET(Path(Seg("node" :: n1 :: n2 :: n3 :: n4 :: Nil))) => {
       val id = n1 + "/" + n2 + "/" + n3 + "/" + n4
       log.info(req.remoteAddr + " NODE " + id)
-      NodePage(store, id)
+      NodePage(store, id, Server.prod)
     }
     case req@GET(Path(Seg("node" :: n1 :: n2 :: n3 :: n4 :: n5 :: Nil))) => {
       val id = n1 + "/" + n2 + "/" + n3 + "/" + n4 + "/" + n5
       log.info(req.remoteAddr + " NODE " + id)
-      NodePage(store, id)
+      NodePage(store, id, Server.prod)
     }
     case req@POST(Path("/search") & Params(params)) => {
       val query = params("q")(0)
