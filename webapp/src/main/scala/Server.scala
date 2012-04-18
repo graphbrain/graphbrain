@@ -8,16 +8,15 @@ import org.apache.log4j.Level
 object Server {
   val logger = org.clapper.avsl.Logger(Server.getClass)
   var http: unfiltered.netty.Http = null
+  var prod: Boolean = false
 
-  def start() = {
+  def start(prod: Boolean) = {
+    this.prod = prod
     http = unfiltered.netty.Http(8080)
       .handler(GBPlan)
       .resources(new URL(getClass().getResource("/robots.txt"), "."))
       
-      http.run { s =>
-        logger.info("starting GraphBrain webapp at localhost on port %s".format(s.port))
-        //unfiltered.util.Browser.open("http://127.0.0.1:%d/".format(s.port))
-      }
+    http.run
   }
 
   def main(args: Array[String]) {
@@ -38,6 +37,6 @@ object Server {
       log.syslog.enabled = false
     }
 
-    start()
+    start((args.length > 0) && (args(0) == "prod"))
   }
 }
