@@ -17,7 +17,7 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
   val databaseName = System.getProperty("myapp.db.name")
 
   def realIp(req: HttpRequest[Any]) = {
-    val headers = req.headers("X-Real-IP")
+    val headers = req.headers("X-Forwarded-For")
     if (headers.hasNext)
       headers.next
     else
