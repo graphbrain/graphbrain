@@ -16,44 +16,53 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
 
   val databaseName = System.getProperty("myapp.db.name")
 
+  def realIp(req: HttpRequest[Any]) = {
+    val headers = req.headers("X-Real-IP")
+    if (headers.hasNext)
+      headers.next
+    else
+      req.remoteAddr
+  }
+
   def intent = {
     // TODO: deactive in production
     case req@GET(Path("/exit")) =>
-      log.info(req.remoteAddr + " EXIT")
-      System.exit(0)
-      ComingSoon()
+      log.info(realIp(req) + " EXIT")
+      if (!Server.prod)
+        System.exit(0)
+      ComingSoon(Server.prod)
 
     case req@GET(Path("/")) => {
-      log.info(req.remoteAddr + " GET /")
-      ComingSoon()
+      log.info(realIp(req) + " GET /")
+      ComingSoon(Server.prod)
     }
     case req@GET(Path("/secret")) => { 
-      log.info(req.remoteAddr + " GET /secret")
+      log.info(realIp(req) + " GET /secret")
       Redirect("/node/welcome/graphbrain")
     }
     case req@GET(Path(Seg("node" :: n1 :: Nil))) => {
       val id = n1 
-      log.info(req.remoteAddr + " NODE " + id)
+      log.info(realIp(req) + " NODE " + id)
       NodePage(store, id, Server.prod)
     }
     case req@GET(Path(Seg("node" :: n1 :: n2 :: Nil))) => {
       val id = n1 + "/" + n2 
-      log.info(req.remoteAddr + " NODE " + id)
+      log.info(realIp(req) + " NODE " + id)
       NodePage(store, id, Server.prod)
     }
     case req@GET(Path(Seg("node" :: n1 :: n2 :: n3 :: Nil))) => {
       val id = n1 + "/" + n2 + "/" + n3
-      log.info(req.remoteAddr + " NODE " + id)
+      log.info(realIp(req) + " NODE " + id)
       NodePage(store, id, Server.prod)
     }
     case req@GET(Path(Seg("node" :: n1 :: n2 :: n3 :: n4 :: Nil))) => {
       val id = n1 + "/" + n2 + "/" + n3 + "/" + n4
-      log.info(req.remoteAddr + " NODE " + id)
+      log.info(realIp(req) + " NODE " + id)
       NodePage(store, id, Server.prod)
     }
     case req@GET(Path(Seg("node" :: n1 :: n2 :: n3 :: n4 :: n5 :: Nil))) => {
       val id = n1 + "/" + n2 + "/" + n3 + "/" + n4 + "/" + n5
-      log.info(req.remoteAddr + " NODE " + id)
+      log.info(realIp(req) + " NODE " + id)
       NodePage(store, id, Server.prod)
     }
     case req@POST(Path("/search") & Params(params)) => {
@@ -63,7 +72,7 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       // if not results are found for exact match, try fuzzier
       if (results.numResults == 0)
         results = si.query(query + "*")
-      log.info(req.remoteAddr + " SEARCH " + query + "; results: " + results.numResults)
+      log.info(realIp(req) + " SEARCH " + query + "; results: " + results.numResults)
       SearchResponse(store, results)
     }
   }
