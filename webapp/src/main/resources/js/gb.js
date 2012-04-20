@@ -959,7 +959,7 @@ function handler(event) {
     };
 
     SNode.prototype.updateTransform = function() {
-      var transformStr, _x, _y, _z;
+      var opacity, transformStr, _x, _y, _z;
       _x = this.rpos[0];
       _y = this.rpos[1];
       _z = this.rpos[2] + g.zOffset;
@@ -967,7 +967,13 @@ function handler(event) {
         transformStr = 'translate3d(' + (_x - this.halfWidth) + 'px,' + (_y - this.halfHeight) + 'px,' + _z + 'px)';
         transformStr += ' scale(' + this.scale + ')';
         $('div#' + this.id).css('-webkit-transform', transformStr);
-        return $('div#' + this.id).css('-moz-transform', transformStr);
+        $('div#' + this.id).css('-moz-transform', transformStr);
+        if (_z < 0) {
+          opacity = -1 / (_z * 0.007);
+          return $('div#' + this.id).css('opacity', opacity);
+        } else {
+          return $('div#' + this.id).css('opacity', 1);
+        }
       }
     };
 
