@@ -76,6 +76,11 @@ class SNode extends VisualObj
             transformStr += ' scale(' + @scale + ')'
             $('div#' + @id).css('-webkit-transform', transformStr)
             $('div#' + @id).css('-moz-transform', transformStr)
+            if _z < 0
+                opacity = -1 / (_z * 0.007)
+                $('div#' + @id).css('opacity', opacity)
+            else
+                $('div#' + @id).css('opacity', 1)
 
 
     moveTo: (x, y, z) ->

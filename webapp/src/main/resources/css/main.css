@@ -69,6 +69,7 @@ html, body {
     border-width:2px;
     border-color:#AAA;
     padding: 10px;
+    background: rgba(255, 255, 255, 0.7);
 }
 
 #graphDiv {
