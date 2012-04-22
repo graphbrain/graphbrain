@@ -403,9 +403,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, VisualObj, dotProduct, dragging, fullBind, g, initGraph, initInterface, initSearchDialog, interRect, lastX, lastY, lineRectOverlap, lineSegsOverlap, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, sepAxis, sepAxisSide, showSearchDialog, tmpVec, v3dotv3,
-    __hasProp = Object.prototype.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  var Graph, Link, Node, Quaternion, SNode, dotProduct, dragging, fullBind, g, initGraph, initInterface, initSearchDialog, interRect, lastX, lastY, lineRectOverlap, lineSegsOverlap, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, sepAxis, sepAxisSide, showSearchDialog, tmpVec, v3dotv3;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -804,32 +802,6 @@ function handler(event) {
     return initSearchDialog();
   };
 
-  VisualObj = (function() {
-
-    function VisualObj() {
-      this.rect = [];
-      this.rect.v1 = [];
-      this.rect.v2 = [];
-      this.rect.v3 = [];
-      this.rect.v4 = [];
-      this.rect.v1.x = 0;
-      this.rect.v1.y = 0;
-      this.rect.v1.z = 0;
-      this.rect.v2.x = 0;
-      this.rect.v2.y = 0;
-      this.rect.v2.z = 0;
-      this.rect.v3.x = 0;
-      this.rect.v3.y = 0;
-      this.rect.v3.z = 0;
-      this.rect.v4.x = 0;
-      this.rect.v4.y = 0;
-      this.rect.v4.z = 0;
-    }
-
-    return VisualObj;
-
-  })();
-
   nodeCount = 0;
 
   Node = (function() {
@@ -897,13 +869,10 @@ function handler(event) {
 
   })();
 
-  SNode = (function(_super) {
-
-    __extends(SNode, _super);
+  SNode = (function() {
 
     function SNode(id) {
       this.id = id;
-      SNode.__super__.constructor.call(this);
       this.x = 0;
       this.y = 0;
       this.z = 0;
@@ -921,6 +890,23 @@ function handler(event) {
       this.halfHeight = 0;
       this.initialWidth = -1;
       this.scale = 1;
+      this.rect = [];
+      this.rect.v1 = [];
+      this.rect.v2 = [];
+      this.rect.v3 = [];
+      this.rect.v4 = [];
+      this.rect.v1.x = 0;
+      this.rect.v1.y = 0;
+      this.rect.v1.z = 0;
+      this.rect.v2.x = 0;
+      this.rect.v2.y = 0;
+      this.rect.v2.z = 0;
+      this.rect.v3.x = 0;
+      this.rect.v3.y = 0;
+      this.rect.v3.z = 0;
+      this.rect.v4.x = 0;
+      this.rect.v4.y = 0;
+      this.rect.v4.z = 0;
     }
 
     SNode.prototype.updatePos = function(_x, _y, _z) {
@@ -1053,11 +1039,9 @@ function handler(event) {
 
     return SNode;
 
-  })(VisualObj);
+  })();
 
-  Link = (function(_super) {
-
-    __extends(Link, _super);
+  Link = (function() {
 
     function Link(id, orig, sorig, targ, starg, label) {
       this.id = id;
@@ -1066,7 +1050,6 @@ function handler(event) {
       this.targ = targ;
       this.starg = starg;
       this.label = label;
-      Link.__super__.constructor.call(this);
       this.ox = 0;
       this.oy = 0;
       this.tx = 0;
@@ -1161,7 +1144,7 @@ function handler(event) {
 
     return Link;
 
-  })(VisualObj);
+  })();
 
   Graph = (function() {
 
