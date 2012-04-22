@@ -1,9 +1,8 @@
 # (c) 2012 GraphBrain Ltd. All rigths reserved.
 
 # Link
-class Link extends VisualObj
+class Link
     constructor: (@id, @orig, @sorig, @targ, @starg, @label) ->
-        super()
         @ox = 0
         @oy = 0
         @tx = 0

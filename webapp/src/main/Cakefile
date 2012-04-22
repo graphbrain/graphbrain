@@ -12,7 +12,6 @@ build = (callback) ->
     'coffee/vec3mat4x4.coffee',
     'coffee/Quaternion.coffee',
     'coffee/interface.coffee',
-    'coffee/VisualObj.coffee',
     'coffee/Node.coffee',
     'coffee/SNode.coffee',
     'coffee/Link.coffee',
