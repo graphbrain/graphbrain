@@ -403,7 +403,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, dotProduct, dragging, fullBind, g, initGraph, initInterface, initSearchDialog, interRect, lastX, lastY, lineRectOverlap, lineSegsOverlap, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, sepAxis, sepAxisSide, showSearchDialog, tmpVec, v3dotv3;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, angleDiff, dotProduct, dragging, frand, fullBind, g, getCoulombEnergy, getForces, initGraph, initInterface, initSearchDialog, interRect, lastX, lastY, layout3, lineRectOverlap, lineSegsOverlap, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, normalizeAngle, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, sepAxis, sepAxisSide, showSearchDialog, tmpVec, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -594,6 +594,10 @@ function handler(event) {
 
   tmpVec = new Array(3);
 
+  newv3 = function() {
+    return new Array(3);
+  };
+
   /*
   Caluculates the dot product of a and b,
   where a and b are vectors with 3 elements.
@@ -601,6 +605,19 @@ function handler(event) {
 
   v3dotv3 = function(a, b) {
     return (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[2]);
+  };
+
+  v3length = function(v) {
+    return Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+  };
+
+  v3diffLength = function(v1, v2) {
+    var v;
+    v = newv3();
+    v[0] = v2[0] - v1[0];
+    v[1] = v2[1] - v1[1];
+    v[2] = v2[2] - v1[2];
+    return v3length(v);
   };
 
   /*
@@ -869,15 +886,92 @@ function handler(event) {
 
   })();
 
+  normalizeAngle = function(ang) {
+    while (ang > Math.PI) {
+      ang -= Math.PI * 2;
+    }
+    while (ang <= -Math.PI) {
+      ang += Math.PI * 2;
+    }
+    return ang;
+  };
+
+  angleDiff = function(a1, a2) {
+    var diff;
+    diff = Math.atan2(Math.sin(a1 - a2), Math.cos(a1 - a2));
+    return diff;
+  };
+
+  SphericalCoords = (function() {
+
+    function SphericalCoords() {
+      this.theta = 0;
+      this.phi = 0;
+      this.r = 0;
+      this.scx = 0;
+      this.scy = 0;
+      this.scz = 0;
+      this.vtheta = 0;
+      this.vphi = 0;
+    }
+
+    SphericalCoords.prototype.sphericalToCartesian = function() {
+      this.scx = this.r * Math.cos(this.theta) * Math.sin(this.phi);
+      this.scy = this.r * Math.sin(this.theta) * Math.sin(this.phi);
+      return this.scz = this.r * Math.cos(this.phi);
+    };
+
+    SphericalCoords.prototype.cartesianToSpherical = function() {
+      this.theta = Math.atan2(this.scy, this.scx);
+      this.phi = Math.acos(this.scz / this.r);
+      this.r = Math.sqrt(this.scx * this.scx + this.scy * this.scy + this.scz * this.scz);
+      return this.normalize();
+    };
+
+    SphericalCoords.prototype.randomSpherical = function() {
+      this.theta = (Math.random() * Math.PI * 2) - Math.PI;
+      return this.phi = (Math.random() * Math.PI * 2) - Math.PI;
+    };
+
+    SphericalCoords.prototype.normalize = function() {
+      this.theta = normalizeAngle(this.theta);
+      return this.phi = normalizeAngle(this.phi);
+    };
+
+    SphericalCoords.prototype.repulsion = function(other, strength) {
+      var ang, dphi, dtheta, f;
+      dtheta = angleDiff(this.theta, other.theta);
+      dphi = angleDiff(this.phi, other.theta);
+      ang = Math.atan2(dphi, dtheta);
+      f = (1 / (dtheta * dtheta + dphi * dphi)) * strength;
+      this.vtheta -= f * Math.sin(ang);
+      return this.vphi -= f * Math.cos(ang);
+    };
+
+    SphericalCoords.prototype.simulationStep = function(drag) {
+      this.theta += this.vtheta;
+      this.phi += this.vphi;
+      this.normalize();
+      this.vtheta *= 1 - drag;
+      return this.vphi *= 1 - drag;
+    };
+
+    return SphericalCoords;
+
+  })();
+
   SNode = (function() {
 
     function SNode(id) {
       this.id = id;
+      this.pos = newv3();
       this.x = 0;
       this.y = 0;
       this.z = 0;
       this.rpos = Array(3);
       this.auxVec = new Array(3);
+      this.f = newv3();
+      this.tpos = newv3();
       this.nodes = {};
       this.subNodes = [];
       this.parent = 'unknown';
@@ -909,11 +1003,11 @@ function handler(event) {
       this.rect.v4.z = 0;
     }
 
-    SNode.prototype.updatePos = function(_x, _y, _z) {
+    SNode.prototype.updatePos = function(x, y, z) {
       var key, link, _i, _len, _ref, _results;
-      this.x = _x;
-      this.y = _y;
-      this.z = _z;
+      this.x = x;
+      this.y = y;
+      this.z = z;
       this.auxVec[0] = this.x - g.halfWidth;
       this.auxVec[1] = this.y - g.halfHeight;
       this.auxVec[2] = this.z;
@@ -945,17 +1039,17 @@ function handler(event) {
     };
 
     SNode.prototype.updateTransform = function() {
-      var opacity, transformStr, _x, _y, _z;
-      _x = this.rpos[0];
-      _y = this.rpos[1];
-      _z = this.rpos[2] + g.zOffset;
-      if (!isNaN(_x) && !isNaN(_y) && !isNaN(_z)) {
-        transformStr = 'translate3d(' + (_x - this.halfWidth) + 'px,' + (_y - this.halfHeight) + 'px,' + _z + 'px)';
+      var opacity, transformStr, x, y, z;
+      x = this.rpos[0];
+      y = this.rpos[1];
+      z = this.rpos[2] + g.zOffset;
+      if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
+        transformStr = 'translate3d(' + (x - this.halfWidth) + 'px,' + (y - this.halfHeight) + 'px,' + z + 'px)';
         transformStr += ' scale(' + this.scale + ')';
         $('div#' + this.id).css('-webkit-transform', transformStr);
         $('div#' + this.id).css('-moz-transform', transformStr);
-        if (_z < 0) {
-          opacity = -1 / (_z * 0.007);
+        if (z < 0) {
+          opacity = -1 / (z * 0.007);
           return $('div#' + this.id).css('opacity', opacity);
         } else {
           return $('div#' + this.id).css('opacity', 1);
@@ -966,6 +1060,13 @@ function handler(event) {
     SNode.prototype.moveTo = function(x, y, z) {
       this.updatePos(x, y, z);
       return this.updateTransform();
+    };
+
+    SNode.prototype.applyPos = function() {
+      this.x = this.pos[0] * (g.halfWidth * 0.8) + g.halfWidth;
+      this.y = this.pos[1] * (g.halfHeight * 0.8) + g.halfHeight;
+      this.z = this.pos[2] * Math.min(g.halfWidth, g.halfHeight) * 0.8;
+      return this.moveTo(this.x, this.y, this.z);
     };
 
     SNode.prototype.updateDimensions = function() {
@@ -1146,10 +1247,132 @@ function handler(event) {
 
   })();
 
+  frand = function() {
+    return Math.random() - 0.5;
+  };
+
+  getCoulombEnergy = function() {
+    var N, e, i, j, _ref, _ref2, _ref3;
+    e = 0;
+    N = g.snodeArray.length;
+    for (i = 0, _ref = N - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
+      if (i < N - 1) {
+        for (j = _ref2 = i + 1, _ref3 = N - 1; _ref2 <= _ref3 ? j <= _ref3 : j >= _ref3; _ref2 <= _ref3 ? j++ : j--) {
+          e += 1 / v3diffLength(g.snodeArray[i].tpos, g.snodeArray[j].tpos);
+        }
+      }
+    }
+    return e;
+  };
+
+  getForces = function() {
+    var N, ff, i, j, l, posi, posj, r, _ref, _ref2, _results;
+    N = g.snodeArray.length;
+    r = newv3;
+    for (i = 0, _ref = N - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
+      g.snodeArray[i].f[0] = 0;
+      g.snodeArray[i].f[1] = 0;
+      g.snodeArray[i].f[2] = 0;
+    }
+    _results = [];
+    for (i = 0, _ref2 = N - 1; 0 <= _ref2 ? i <= _ref2 : i >= _ref2; 0 <= _ref2 ? i++ : i--) {
+      posi = g.snodeArray[i].pos;
+      if (i < N - 1) {
+        _results.push((function() {
+          var _ref3, _ref4, _results2;
+          _results2 = [];
+          for (j = _ref3 = i + 1, _ref4 = N - 1; _ref3 <= _ref4 ? j <= _ref4 : j >= _ref4; _ref3 <= _ref4 ? j++ : j--) {
+            posj = g.snodeArray[j].pos;
+            r[0] = posi[0] - posj[0];
+            r[1] = posi[1] - posj[1];
+            r[2] = posi[2] - posj[2];
+            l = v3length(r);
+            l = 1 / (l * l * l);
+            ff = l * r[0];
+            g.snodeArray[i].f[0] += ff;
+            g.snodeArray[j].f[0] -= ff;
+            ff = l * r[1];
+            g.snodeArray[i].f[1] += ff;
+            g.snodeArray[j].f[1] -= ff;
+            ff = l * r[2];
+            g.snodeArray[i].f[2] += ff;
+            _results2.push(g.snodeArray[j].f[2] -= ff);
+          }
+          return _results2;
+        })());
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
+  };
+
+  layout3 = function() {
+    var N, Nstep, d, e, e0, f, i, k, l, minimalStep, pos, step, tpos, _ref, _ref2, _ref3, _ref4;
+    N = g.snodeArray.length;
+    Nstep = 1000;
+    step = 0.01;
+    minimalStep = 1e-10;
+    for (i = 0, _ref = N - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
+      g.snodeArray[i].pos[0] = 2 * frand();
+      g.snodeArray[i].pos[1] = 2 * frand();
+      g.snodeArray[i].pos[2] = 2 * frand();
+      l = v3length(g.snodeArray[i].pos);
+      if (l !== 0.0) {
+        g.snodeArray[i].pos[0] /= l;
+        g.snodeArray[i].pos[1] /= l;
+        g.snodeArray[i].pos[2] /= l;
+        g.snodeArray[i].tpos[0] = g.snodeArray[i].pos[0];
+        g.snodeArray[i].tpos[1] = g.snodeArray[i].pos[1];
+        g.snodeArray[i].tpos[2] = g.snodeArray[i].pos[2];
+      } else {
+        i -= 1;
+      }
+    }
+    e0 = getCoulombEnergy();
+    for (k = 0, _ref2 = Nstep - 1; 0 <= _ref2 ? k <= _ref2 : k >= _ref2; 0 <= _ref2 ? k++ : k--) {
+      getForces();
+      for (i = 0, _ref3 = N - 1; 0 <= _ref3 ? i <= _ref3 : i >= _ref3; 0 <= _ref3 ? i++ : i--) {
+        f = g.snodeArray[i].f;
+        pos = g.snodeArray[i].pos;
+        tpos = g.snodeArray[i].tpos;
+        d = v3dotv3(f, pos);
+        f[0] -= pos[0] * d;
+        f[1] -= pos[1] * d;
+        f[2] -= pos[2] * d;
+        tpos[0] = pos[0] + f[0] * step;
+        tpos[1] = pos[1] + f[1] * step;
+        tpos[2] = pos[2] + f[2] * step;
+        l = v3length(tpos);
+        tpos[0] /= l;
+        tpos[1] /= l;
+        tpos[2] /= l;
+      }
+      e = getCoulombEnergy();
+      if (e >= e0) {
+        step /= 2;
+        if (step < minimalStep) return;
+      } else {
+        for (i = 0, _ref4 = N - 1; 0 <= _ref4 ? i <= _ref4 : i >= _ref4; 0 <= _ref4 ? i++ : i--) {
+          g.snodeArray[i].pos[0] = g.snodeArray[i].tpos[0];
+          g.snodeArray[i].pos[1] = g.snodeArray[i].tpos[1];
+          g.snodeArray[i].pos[2] = g.snodeArray[i].tpos[2];
+        }
+        e0 = e;
+        step *= 2;
+      }
+    }
+  };
+
   Graph = (function() {
 
-    function Graph() {
+    function Graph(width, height) {
+      this.width = width;
+      this.height = height;
+      this.halfWidth = width / 2;
+      this.halfHeight = height / 2;
       this.snodes = {};
+      this.snodeArray = [];
       this.nodes = {};
       this.links = [];
       this.scale = 1;
@@ -1294,7 +1517,27 @@ function handler(event) {
       }
     };
 
-    Graph.prototype.layout = function(width, height) {
+    Graph.prototype.layout = function() {
+      var i, key, _ref, _results;
+      for (key in this.snodes) {
+        if (this.snodes.hasOwnProperty(key)) this.snodes[key].fixed = false;
+      }
+      this.root.moveTo(this.halfWidth, this.halfHeight, 0);
+      this.root.fixed = true;
+      for (key in this.snodes) {
+        if (this.snodes.hasOwnProperty(key) && !this.snodes[key].fixed) {
+          this.snodeArray.push(this.snodes[key]);
+        }
+      }
+      layout3();
+      _results = [];
+      for (i = 0, _ref = this.snodeArray.length - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
+        _results.push(this.snodeArray[i].applyPos());
+      }
+      return _results;
+    };
+
+    Graph.prototype.layout2 = function() {
       var coords, i, key, snode, snodeCount, x, y, z, _ref, _results;
       coords = {
         0: [-0.7, 0, 0],
@@ -1310,13 +1553,11 @@ function handler(event) {
         10: [-0.5, 0.5, 0.5],
         11: [0.5, -0.5, 0.5]
       };
-      this.halfWidth = width / 2;
-      this.halfHeight = height / 2;
       for (key in this.snodes) {
         if (this.snodes.hasOwnProperty(key)) this.snodes[key].fixed = false;
       }
-      g.root.moveTo(width / 2, height / 2, 0);
-      g.root.fixed = true;
+      this.root.moveTo(width / 2, height / 2, 0);
+      this.root.fixed = true;
       snodeCount = Object.keys(this.snodes).length;
       _results = [];
       for (i = 0, _ref = snodeCount - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
@@ -1372,8 +1613,8 @@ function handler(event) {
   g = false;
 
   initGraph = function() {
-    var halfHeight, halfWidth, key, l, link, linkID, nid, nlist, nod, node, orig, parentID, sid, sn, snode, sorig, starg, subNode, targ, text, type, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref;
-    g = new Graph();
+    var key, l, link, linkID, nid, nlist, nod, node, orig, parentID, sid, sn, snode, sorig, starg, subNode, targ, text, type, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref;
+    g = new Graph(window.innerWidth, window.innerHeight);
     g.updateTransform();
     for (_i = 0, _len = snodes.length; _i < _len; _i++) {
       sn = snodes[_i];
@@ -1452,11 +1693,9 @@ function handler(event) {
       sorig.links.push(link);
       starg.links.push(link);
     }
-    halfWidth = window.innerWidth / 2;
-    halfHeight = window.innerHeight / 2;
     g.placeNodes();
     g.placeLinks();
-    g.layout(window.innerWidth, window.innerHeight);
+    g.layout();
     return g.updateView();
   };
 

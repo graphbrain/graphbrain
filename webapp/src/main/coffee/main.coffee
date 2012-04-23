@@ -4,7 +4,7 @@
 g = false
 
 initGraph = ->
-    g = new Graph()
+    g = new Graph(window.innerWidth, window.innerHeight)
     g.updateTransform()
 
     # process super nodes and associated nodes
@@ -26,7 +26,7 @@ initGraph = ->
             if (snode.parent == 'unknown') or (parentID == '')
                 snode.parent = parentID
 
-        g.snodes[sid] = snode   
+        g.snodes[sid] = snode
 
     # assign root, parents and subNodes
     for sn in snodes
@@ -78,13 +78,10 @@ initGraph = ->
         g.links.push(link)
         sorig.links.push(link)
         starg.links.push(link)
-    
-    halfWidth = window.innerWidth / 2
-    halfHeight = window.innerHeight / 2
 
     g.placeNodes()
     g.placeLinks()
-    g.layout(window.innerWidth, window.innerHeight)
+    g.layout()
     g.updateView()
 
 

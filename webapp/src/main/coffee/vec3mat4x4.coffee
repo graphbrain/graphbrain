@@ -9,12 +9,27 @@ Useful for 3D calculations.
 # Auxiliary vector to be used in calculations
 tmpVec = new Array(3)
 
+newv3 = ->
+  new Array(3)
 
 ###
 Caluculates the dot product of a and b,
 where a and b are vectors with 3 elements.
 ###
 v3dotv3 = (a, b) -> (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[2])
+
+
+v3length = (v) -> 
+  Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2])
+
+
+v3diffLength = (v1, v2) ->
+  v = newv3()
+  v[0] = v2[0] - v1[0]
+  v[1] = v2[1] - v1[1]
+  v[2] = v2[2] - v1[2]
+  v3length(v)
+
 
 ###
 r = m * v

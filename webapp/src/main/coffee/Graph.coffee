@@ -1,8 +1,15 @@
 # (c) 2012 GraphBrain Ltd. All rigths reserved.
 
+
 class Graph
-    constructor: ->
+    constructor: (width, height) ->
+        @width = width
+        @height = height
+        @halfWidth = width / 2
+        @halfHeight = height / 2
+
         @snodes = {}
+        @snodeArray = []
         @nodes = {}
         @links = []
         @scale = 1
@@ -96,7 +103,23 @@ class Graph
         else
             -1.0
 
-    layout: (width, height) ->
+    layout: ->
+        # set all super nodes non-fixed
+        @snodes[key].fixed = false for key of @snodes when @snodes.hasOwnProperty(key)
+
+        # layout root node
+        @root.moveTo(@halfWidth, @halfHeight, 0)
+        @root.fixed = true
+
+        # create snode array
+        @snodeArray.push(@snodes[key]) for key of @snodes when @snodes.hasOwnProperty(key) and !@snodes[key].fixed
+
+        layout3()
+
+        for i in [0..(@snodeArray.length - 1)]
+            @snodeArray[i].applyPos()
+
+    layout2: ->
         coords = {
             0: [-0.7, 0, 0],
             1: [0.7, 0, 0],
@@ -112,15 +135,12 @@ class Graph
             11: [0.5, -0.5, 0.5]
         }
 
-        @halfWidth = width / 2
-        @halfHeight = height / 2
-
         # set all super nodes non-fixed
         @snodes[key].fixed = false for key of @snodes when @snodes.hasOwnProperty(key)
 
         # layout root node
-        g.root.moveTo(width / 2, height / 2, 0)
-        g.root.fixed = true
+        @root.moveTo(width / 2, height / 2, 0)
+        @root.fixed = true
 
         snodeCount = Object.keys(@snodes).length
 

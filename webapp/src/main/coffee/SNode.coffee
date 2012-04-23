@@ -4,6 +4,7 @@
 class SNode
     constructor: (@id) ->
         #position before rotation
+        @pos = newv3()
         @x = 0
         @y = 0
         @z = 0
@@ -12,6 +13,10 @@ class SNode
 
         # auxiliary vector for rotation calcs
         @auxVec = new Array(3)
+
+        # layout
+        @f = newv3()    # force
+        @tpos = newv3() # temporary position
 
         @nodes = {}
         @subNodes = []
@@ -47,10 +52,10 @@ class SNode
         @rect.v4.y = 0
         @rect.v4.z = 0
 
-    updatePos: (_x, _y, _z) ->
-        @x = _x;
-        @y = _y;
-        @z = _z;
+    updatePos: (x, y, z) ->
+        @x = x
+        @y = y
+        @z = z
 
         # rotation
         @auxVec[0] = @x - g.halfWidth
@@ -86,16 +91,16 @@ class SNode
 
 
     updateTransform: ->
-        _x = @rpos[0]
-        _y = @rpos[1]
-        _z = @rpos[2] + g.zOffset
-        if (!isNaN(_x) && !isNaN(_y) && !isNaN(_z))
-            transformStr = 'translate3d(' + (_x - @halfWidth) + 'px,' + (_y - @halfHeight) + 'px,' + _z + 'px)'
+        x = @rpos[0]
+        y = @rpos[1]
+        z = @rpos[2] + g.zOffset
+        if (!isNaN(x) && !isNaN(y) && !isNaN(z))
+            transformStr = 'translate3d(' + (x - @halfWidth) + 'px,' + (y - @halfHeight) + 'px,' + z + 'px)'
             transformStr += ' scale(' + @scale + ')'
             $('div#' + @id).css('-webkit-transform', transformStr)
             $('div#' + @id).css('-moz-transform', transformStr)
-            if _z < 0
-                opacity = -1 / (_z * 0.007)
+            if z < 0
+                opacity = -1 / (z * 0.007)
                 $('div#' + @id).css('opacity', opacity)
             else
                 $('div#' + @id).css('opacity', 1)
@@ -104,6 +109,13 @@ class SNode
     moveTo: (x, y, z) ->
         @updatePos(x, y, z)
         @updateTransform()
+
+
+    applyPos: ->
+        @x = @pos[0] * (g.halfWidth * 0.8) + g.halfWidth
+        @y = @pos[1] * (g.halfHeight * 0.8) + g.halfHeight
+        @z = @pos[2] * Math.min(g.halfWidth, g.halfHeight) * 0.8
+        @moveTo(@x, @y, @z)
 
 
     updateDimensions: ->

@@ -13,8 +13,10 @@ build = (callback) ->
     'coffee/Quaternion.coffee',
     'coffee/interface.coffee',
     'coffee/Node.coffee',
+    'coffee/SphericalCoords.coffee',
     'coffee/SNode.coffee',
     'coffee/Link.coffee',
+    'coffee/layout.coffee',
     'coffee/Graph.coffee',
     'coffee/search.coffee',
     'coffee/main.coffee']
