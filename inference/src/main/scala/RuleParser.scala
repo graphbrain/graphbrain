@@ -2,7 +2,7 @@ package com.graphbrain.inference
 
 object RuleParser{
 
-	/*val RuleRegex=""".+\(.+\):.+\(.+\)>.+\(.+\)""".r
+	val RuleRegex=""".+\(.+\):.+\(.+\)>.+\(.+\)""".r
 	val POSRegex="""POS\(.+\)""".r
 	val StringExpressionRegex="""STRING\(.+\)""".r
 	val REGEXRegex="""REGEX\(.+\)""".r
@@ -15,76 +15,97 @@ object RuleParser{
 	
 	def parse(expString:String):RuleExpression={
 		
-		if(RuleRegex.findAllIn(ruleString).length==1){
+	  if(RuleRegex.findAllIn(expString).length==1) {
 			return parseRule(expString);
 		}
-		else if(POSRegex.findAllIn(ruleString).length==1){
+		else if(POSRegex.findAllIn(expString).length==1){
 			return parsePOS(expString);
 		}
-		else if(StringExpressionRegex.findAllIn(ruleString).length==1){
+		else if(StringExpressionRegex.findAllIn(expString).length==1){
 			return parseString(expString);
 		}
-		else if(REGEXRegex.findAllIn(ruleString).length==1){
+		else if(REGEXRegex.findAllIn(expString).length==1){
 			return parseREGEX(expString);
 		}
-		else if(PLACEHOLDERRegex.findAllIn(ruleString).length==1){
+		else if (PLACEHOLDERRegex.findAllIn(expString).length==1){
 			return parsePLACEHOLDER(expString);
 		}
-		else if(GRAPH2Regex.findAllIn(ruleString).length==1){
+		else if (GRAPH2Regex.findAllIn(expString).length==1){
 			return parseGRAPH2(expString);
 		}
-		else if(COMPOSITERegex.findAllIn(ruleString).length==1){
+		else if (COMPOSITERegex.findAllIn(expString).length == 1) {
 			return parseCOMPOSITE(expString);
 		}
-		else if(GRAPH2PAIRRegex.findAllIn(ruleString).length==1){
+		else if (GRAPH2PAIRRegex.findAllIn(expString).length==1) {
 			return parseGRAPH2PAIR(expString);
+		}
+		else {
+			return StringExpression("FAILED")
 		}
 
 	}
 
-	def parseRule(ruleString:String):Rule={
+	def parseRule(ruleString:String):RULE={
 		
-		
-		
-		val rule = ruleString.next;
-		val condString = rule.split(":")(0)
-		val sourceString = rule.split(":")(1).split(">")(0)
-		val targetString = rule.split(":")(1).split(">")(1)	
-		val condition =
-		val source = 
-		val target =
-		return Rule(condition, source, target)
+		val condString = ruleString.split(":")(0)
+		val sourceString = ruleString.split(":")(1).split(">")(0)
+		val targetString = ruleString.split(":")(1).split(">")(1)	
+		val condition = parse(condString)
+		val source = parse(sourceString)
+		val target =parse(targetString)
+		return RULE(condition, source, target)
 
   }
 
   def parseREGEX(expString:String):REGEX={
   	
+  	return REGEX(expString.split("REGEX\\(")(1).split("\\)")(0))
   }
 
   def parsePOS(expString:String):POS={
-  	
+  	return POS(expString.split("POS\\(")(1).split("\\)")(0))	
   }
 
   def parseGRAPH2(expString:String):GRAPH2={
-  	
+  	val graph2=expString.split("GRAPH2")(1).drop(1).dropRight(1).split(",")
+  	val source = graph2(0).trim
+  	val relation = graph2(1).trim
+  	val target = graph2(2).trim
+  	return GRAPH2(parse(source), parse(relation), parse(target))
   }
 
   def parsePLACEHOLDER(expString:String):PLACEHOLDER={
-  	
+  	return PLACEHOLDER(expString.split("PLACEHOLDER\\(")(1).split("\\)")(0))
   }
 
-  def parseCOMPOSITE(expString:String):COMPOSITE={
-  	
+  def parseCOMPOSITE(expString: String):COMPOSITE={
+  	val composite = expString.split("COMPOSITE")(1).drop(1).dropRight(1).split(",")
+  	val exp1 = composite(0).trim
+  	val rel = composite(1).trim
+  	val exp2 = composite(2).trim
+  	return COMPOSITE(parse(exp1), rel, parse(exp2))
   }
 
-  def parseString(expString:String):StringExpression={
-  	
+  def parseString(expString:String):StringExpression = {
+  	return StringExpression(expString.split("STRING\\(")(1).split("\\)")(0))
   }
 
-  def parseGRAPH2PAIR(expString:String):GRAPH2PAIR={
-  	
-  }*/
+  def parseGRAPH2PAIR(expString: String):GRAPH2PAIR={
+  	val composite = expString.split("GRAPH2PAIR")(1).drop(1).dropRight(1).split(",")
+  	val g1=composite(0).trim
+  	val g2=composite(1).trim
+  	return GRAPH2PAIR(parseGRAPH2(g1), parseGRAPH2(g2))
+  }
+
+ 
 
 
+	def main(args: Array[String])
+  	{
+  		//val test="POS(ABC): STRING(Hello)>STRING(GOODBYE)"
+    	println(parse(args(0)))
+
+
+	}
 	
 }
