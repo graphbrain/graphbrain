@@ -8,8 +8,8 @@ object RuleParser{
 	val REGEXRegex="""REGEX\(.+\)""".r
 	val PLACEHOLDERRegex="""PLACEHOLDER\(.+\)""".r
 	val GRAPH2Regex="""GRAPH2\(.+\)""".r
-	val COMPOSITERegex="""\(.+\)""".r
-	val GRAPH2PAIRRegex="""\(.+\)""".r
+	val COMPOSITERegex="""COMPOSITE\(.+\)""".r
+	val GRAPH2PAIRRegex="""GRAPH2PAIR\(.+\)""".r
 
 
 	
