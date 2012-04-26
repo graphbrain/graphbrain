@@ -10,8 +10,31 @@ object RuleParser{
 	val GRAPH2Regex="""GRAPH2\(.+\)""".r
 	val COMPOSITERegex="""COMPOSITE\(.+\)""".r
 	val GRAPH2PAIRRegex="""GRAPH2PAIR\(.+\)""".r
+	val graphRegex="""\(?.+\)""".r
+	val twoGraphRegex="""\(.+\),\s*\(.+\)""".r
 
 
+	def parseInput(inString:String):Any = {
+
+		if (twoGraphRegex.findAllIn(inString).length==1) {
+			val graphs=inString.drop(1).dropRight.(1).split(",");
+			return (parseInGraph(graphs(0).trim), parseInGraph(graphs(1).trim))
+		}
+		if (graphRegex.findAllIn(inString).length==1) {
+			return parseInGraph(inString)
+		}
+		else {
+			return inString;
+		}
+	}
+
+	def parseInGraph(inString:String):(String, String, String) = {
+		val parts = inString.drop(1).dropRight(1).split(",");
+		val in = parts(0).trim
+		val rel = parts(1).trim
+		val out = parts(2).trim
+		return (in, rel, out)
+	}
 	
 	def parse(expString:String):RuleExpression={
 		
@@ -103,7 +126,17 @@ object RuleParser{
 	def main(args: Array[String])
   	{
   		//val test="POS(ABC): STRING(Hello)>STRING(GOODBYE)"
-    	println(parse(args(0)))
+    	println("Rule expressions: " + parse(args(0)))
+
+    	if(args.length==2)
+    	{
+    		println("Input: " + args(1))
+    		val input = parseInput(args(1))
+    		val rule = parse(args(0)
+    		println("Parsed input: " + input);
+    		println("Rule expresssions: " + rule)
+    		println("Output: " + RuleEngine.applyRule(rule, input))
+    	}
 
 
 	}
