@@ -41,31 +41,6 @@ class GraphInterface (val rootId: String, val store: VertexStore) {
     rm
   }
 
-  /** Key with highest numer of nodes
-    * 
-    * Returns the key from the relationsip map with the highest number
-    * of associated nodes, or null if relationship map is empty.
-    */
-  private def maxrel(relmap: MMap[(String, Int, String), Set[String]]) =
-    if (relmap.size == 0)
-      null
-    else
-      (relmap max Ordering[Int].on[(_, Set[String])](_._2.size))._1
-
-  /** Deletes key and related relationships from relationship map
-    * 
-    * Deletes key and it's value and removes node in key 
-    * and nodes corresponding to that key from all other node lists.
-    */
-  private def delrel(rm: MMap[(String, Int, String), Set[String]], key: (String, Int, String)) {
-    val nodes = rm(key)
-    rm -= key
-    for (k <- rm) {
-      rm(k._1) = k._2.filter(id => (id != key._3) && !nodes.exists(_ == id))
-      if (rm(k._1).size == 0) rm -= k._1
-    }
-  }
-
   /** Generates supernodes Map */
   private def supernodes = {
     var snodes = MSet[Map[String, Any]]()
@@ -79,22 +54,10 @@ class GraphInterface (val rootId: String, val store: VertexStore) {
     superId += 1
 
     // create supernodes
-    var key = maxrel(rm)
-    while (key != null) {
-      val nodes = rm(key)
-      superkey = "sn" + superId
-      snodes += Map[String, Any](("id" -> superkey), ("key" -> key), ("nodes" -> nodes))
-      delrel(rm, key)
-      key = maxrel(rm)
-      superId += 1
-    }
-
-    // create unitary supernodes for remaining nodes
-    for (n <- neighbors) {
-      val nodeId = n._1
-      if (!snodes.exists(sn => sn("nodes").asInstanceOf[Set[String]].exists(_ == nodeId))) {
+    for ((key, nodes) <- rm) {
+      if (nodes.size > 0) {
         superkey = "sn" + superId
-        snodes += Map[String, Any](("id" -> superkey), ("key" -> ("", -1, "")), ("nodes" -> Set(nodeId)))
+        snodes += Map[String, Any](("id" -> superkey), ("key" -> key), ("nodes" -> nodes))
         superId += 1
       }
     }
