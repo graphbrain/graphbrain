@@ -88,7 +88,7 @@ class SNode
         sc.z = @rpos[2]
         sc.cartesianToSpherical()
         sc.viewMapping()
-        console.log(@toString() + '; r: ' + sc.r +  '; theta: ' + sc.theta + '; phi: ' + sc.phi)
+        #console.log(@toString() + '; r: ' + sc.r +  '; theta: ' + sc.theta + '; phi: ' + sc.phi)
         sc.sphericalToCartesian()
         @rpos[0] = sc.x
         @rpos[1] = sc.y

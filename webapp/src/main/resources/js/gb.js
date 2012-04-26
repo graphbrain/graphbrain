@@ -1029,7 +1029,6 @@ function handler(event) {
       sc.z = this.rpos[2];
       sc.cartesianToSpherical();
       sc.viewMapping();
-      console.log(this.toString() + '; r: ' + sc.r + '; theta: ' + sc.theta + '; phi: ' + sc.phi);
       sc.sphericalToCartesian();
       this.rpos[0] = sc.x;
       this.rpos[1] = sc.y;
