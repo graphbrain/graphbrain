@@ -31,3 +31,16 @@ test
 run
 test
 exit
+test
+project webapp
+run
+exec RuleParser
+test-run RuleParser
+test-run
+run
+console
+ls
+console-project
+run
+run POS(Hello)
+exit

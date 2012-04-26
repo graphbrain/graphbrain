@@ -7,7 +7,7 @@ class RuleTest extends FunSuite {
 
 	val posExpression = new POS("PRP VBP DT NN") 
 	val regexExpression = new REGEX(".*(is\\sa).*")
-	val graph2Expression = new GRAPH2("source", "relation", "target")
+	val graph2Expression = new GRAPH2(PLACEHOLDER("source"), StringExpression("relation"), PLACEHOLDER("target"))
 	val pos_regex_graph2 = new RULE(posExpression, regexExpression, graph2Expression)
 	
 	
@@ -43,8 +43,8 @@ class RuleTest extends FunSuite {
 
 	test("graph reciprocate transform") {
 		//"A", "is colleagues with", "B", "B", "is colleagues with", "A"
-		val inGraphExp=GRAPH2("A", "is colleagues with", "B")
-		val outGraphExp=GRAPH2("B", "is colleagues with", "A")
+		val inGraphExp=GRAPH2(PLACEHOLDER("A"), StringExpression("is colleagues with"), PLACEHOLDER("B"))
+		val outGraphExp=GRAPH2(PLACEHOLDER("B"), StringExpression("is colleagues with"), PLACEHOLDER("A"))
 
 		val testInGraph=("John", "is colleagues with", "Mary")
 		val expectedOutGraph=("Mary", "is colleagues with", "John")
@@ -55,8 +55,8 @@ class RuleTest extends FunSuite {
 
 	test("graph reverse and replace transform") {
 		//"A", "has a", "B", "B", "belongs to", "A"
-		val inGraphExp=GRAPH2("A", "has a", "B")
-		val outGraphExp=GRAPH2("B", "belongs to", "A")
+		val inGraphExp=GRAPH2(PLACEHOLDER("A"), StringExpression("has a"), PLACEHOLDER("B"))
+		val outGraphExp=GRAPH2(PLACEHOLDER("B"), StringExpression("belongs to"), PLACEHOLDER("A"))
 
 		val testInGraph=("John", "has a", "motorbike")
 		val expectedOutGraph=("motorbike", "belongs to", "John")
@@ -66,8 +66,8 @@ class RuleTest extends FunSuite {
 
 	test("graph simple replace transform") {
 		//"A", "hates", "B", "A", "does not like", "B"
-		val inGraphExp=GRAPH2("A", "hates", "B")
-		val outGraphExp=GRAPH2("A", "does not like", "B")
+		val inGraphExp=GRAPH2(PLACEHOLDER("A"), StringExpression("hates"), PLACEHOLDER("B"))
+		val outGraphExp=GRAPH2(PLACEHOLDER("A"), StringExpression("does not like"), PLACEHOLDER("B"))
 
 		val testInGraph=("John", "hates", "Mary")
 		val expectedOutGraph=("John", "does not like", "Mary")
@@ -79,8 +79,8 @@ class RuleTest extends FunSuite {
 		//A's B -> A has a B
 		val posCondition=POS(".*(\\sPOS\\s).*")
 		val inPOSExp=POS("POS")
-		val outGraphExp1=GRAPH2("A", "has a", "B")
-		val outGraphExp2=GRAPH2("B", "belongs to", "A")
+		val outGraphExp1=GRAPH2(PLACEHOLDER("A"), StringExpression("has a"), PLACEHOLDER("B"))
+		val outGraphExp2=GRAPH2(PLACEHOLDER("B"), StringExpression("belongs to"), PLACEHOLDER("A"))
 
 
 		val testInString="John's dog"
@@ -93,10 +93,10 @@ class RuleTest extends FunSuite {
 	}
 
 	test("Composite rules") {
-		val condExp1=GRAPH2("A", "is a", "B")
-		val condExp2=GRAPH2("B", "is a", "C")
-		val condExp3=GRAPH2("C", "is a", "D")
-		val outExp=GRAPH2("A", "is a", "C")
+		val condExp1=GRAPH2(PLACEHOLDER("A"), StringExpression("is a"), PLACEHOLDER("B"))
+		val condExp2=GRAPH2(PLACEHOLDER("B"), StringExpression("is a"), PLACEHOLDER("C"))
+		val condExp3=GRAPH2(PLACEHOLDER("C"), StringExpression("is a"), PLACEHOLDER("D"))
+		val outExp=GRAPH2(PLACEHOLDER("A"), StringExpression("is a"), PLACEHOLDER("C"))
 		val compositeExp=COMPOSITE(condExp1, "AND", condExp2)
 		val orderedExp=GRAPH2PAIR(condExp1, condExp3)
 		val graphPair=GRAPH2PAIR(condExp1, condExp2)

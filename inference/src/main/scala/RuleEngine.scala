@@ -102,9 +102,12 @@ object RuleEngine {
   */
   def checkMatch(graph2Expression:GRAPH2, graph_to_match:(String, String, String)):Boolean={
     graph_to_match match{
-      case (a, graph2Expression.relation, b) => return true;
+      case (a:String, b:String, c:String) => (graph2Expression.source, graph2Expression.relation, graph2Expression.target) match{
+        case (d:PLACEHOLDER, e:StringExpression, f:PLACEHOLDER) => if(((a==b&&d.exp==f.exp)|(a!=b&&d.exp!=f.exp))&&(b==e.exp)) return true;
+      }
       case _ => return false
     }
+    return false
   }
 
   
@@ -214,23 +217,27 @@ object RuleEngine {
     var post=""
     var rel=""
     var found=false;
-    for(tt <- taggedTokens)
-    {
-      tt match{
-        case (word, tag) if tag==inExp.exp => rel=outExp.relation; found=true; 
-        case (word, tag) if found => post=post+word;
-        case (word, tag) if found==false => pre=pre+word
-      }
-    }
-    if(outExp.source < outExp.target)
-    {
+    (outExp.source, outExp.relation, outExp.target) match {
+      case (a:PLACEHOLDER, b:StringExpression, c:PLACEHOLDER) =>
+          for(tt <- taggedTokens)
+          {
+          tt match{
+            case (word, tag) if tag==inExp.exp => rel=b.exp; found=true; 
+            case (word, tag) if found => post=post+word;
+            case (word, tag) if found==false => pre=pre+word
+            }
+          }
+          if(a.exp < c.exp)
+          {
 
-      return (pre, rel, post)  
-    }
-    else
-    {
-      return (post, rel, pre)
-    }
+            return (pre, rel, post)  
+          }
+          else
+          {
+            return (post, rel, pre)
+          }
+
+      }
     
   }
 
@@ -240,24 +247,29 @@ object RuleEngine {
     var pre=""
     var rel=""
     var post=""
-    if(strings.length>=2)
-    {
-      pre=strings(0)  
-      val r=regex.findFirstIn(input)
-      r match {
-        case Some(a)=>rel=a.trim
-        case None => rel
+    (outExp.source, outExp.relation, outExp.target) match {
+      case (a:PLACEHOLDER, b:StringExpression, c:PLACEHOLDER) =>
+      if(strings.length>=2)
+      {
+        pre=strings(0)  
+        val r=regex.findFirstIn(input)
+        r match {
+          case Some(a)=> rel=a.trim
+          case None => rel
+        }
+        for(i<-1 to strings.length-1){post+=strings(i)}
+        if(a.exp < c.exp)
+        {
+          return (pre, rel, post)
+        }
+        else
+        {
+          return (post, rel, pre)
+        }
       }
-      for(i<-1 to strings.length-1){post+=strings(i)}
-    }    
-    if(outExp.source < outExp.target)
-    {
-      return (pre, rel, post)
+
     }
-    else
-    {
-      return (post, rel, pre)
-    }
+    return ("","","")
   }
 
   def transform(inExp:GRAPH2PAIR, outExp:GRAPH2, inputPair:((String, String, String), (String, String, String))):(String, String, String)={
@@ -265,6 +277,7 @@ object RuleEngine {
     //Brute force checking for role matches
     if(checkMatch(inExp, inputPair))
     {
+
         return mergeGraphs(inExp, outExp, inputPair)
 
     }
@@ -276,8 +289,11 @@ object RuleEngine {
 
     if(GRAPH_NO_REVERSE(inExp, outExp)&&GRAPH_RELATION_REPLACE(inExp, outExp))
     { 
+      (outExp.source, outExp.relation, outExp.target) match{
+        case (a:PLACEHOLDER, b:StringExpression, c:PLACEHOLDER) =>
       //Simply replace relation name (used for synonyms or type inferred relations)
-      return (input._1, outExp.relation, input._3)
+       return (input._1, b.exp, input._3)
+      }
     }
     else if(GRAPH_REVERSE(inExp, outExp)&&GRAPH_RELATION_KEEP(inExp, outExp))
     { 
@@ -286,35 +302,44 @@ object RuleEngine {
     }
     else if(GRAPH_REVERSE(inExp, outExp)&&GRAPH_RELATION_REPLACE(inExp, outExp))
     { 
-      //Reverse and replace relation name with new name given by outExp.relation:
-      return (input._3, outExp.relation, input._1)  
+      (outExp.source, outExp.relation, outExp.target) match{
+        case (a:PLACEHOLDER, b:StringExpression, c:PLACEHOLDER) => return (input._3, b.exp, input._1);
+          //Reverse and replace relation name with new name given by outExp.relation:
+
+      }
+      
     }
     else 
     {
       return (input._1, input._2, input._3)
     }
   }
+
   private def mergeGraphs(inExp:GRAPH2PAIR, outExp:GRAPH2, inputPair:((String, String, String), (String, String, String))):(String, String, String)=
   {
-    inputPair match{
+    println((inputPair, ((inExp.exp1.source, inExp.exp1.relation, inExp.exp1.target),(inExp.exp2.source, inExp.exp2.relation, inExp.exp2.target)), (outExp.source, outExp.relation, outExp.target)))
+    (inputPair, ((inExp.exp1.source, inExp.exp1.relation, inExp.exp1.target),(inExp.exp2.source, inExp.exp2.relation, inExp.exp2.target)), (outExp.source, outExp.relation, outExp.target)) match{
         //Brute force checjing of role matches to return the correct output. Very ugly code but works.
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.exp1.source)&&(outExp.target==inExp.exp1.source) => return (a, outExp.relation, a)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.exp1.source)&&(outExp.target==inExp.exp1.target) => return (a, outExp.relation, c)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.exp1.source)&&(outExp.target==inExp.exp2.source) => return (a, outExp.relation, d)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.exp1.source)&&(outExp.target==inExp.exp2.target) => return (a, outExp.relation, f)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.exp1.target)&&(outExp.target==inExp.exp1.source) => return (c, outExp.relation, a)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.exp1.target)&&(outExp.target==inExp.exp1.target) => return (c, outExp.relation, c)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.exp1.target)&&(outExp.target==inExp.exp2.source) => return (c, outExp.relation, d)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.exp1.target)&&(outExp.target==inExp.exp2.target) => return (c, outExp.relation, f)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.exp2.source)&&(outExp.target==inExp.exp1.source) => return (d, outExp.relation, a)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.exp2.source)&&(outExp.target==inExp.exp1.target) => return (d, outExp.relation, c)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.exp2.source)&&(outExp.target==inExp.exp2.source) => return (d, outExp.relation, d)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.exp2.source)&&(outExp.target==inExp.exp2.target) => return (d, outExp.relation, f)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.exp2.target)&&(outExp.target==inExp.exp1.source) => return (f, outExp.relation, a)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.exp2.target)&&(outExp.target==inExp.exp1.target) => return (f, outExp.relation, c)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.exp2.target)&&(outExp.target==inExp.exp2.source) => return (f, outExp.relation, d)
-        case ((a,b,c),(d,e,f)) if (outExp.source==inExp.exp2.target)&&(outExp.target==inExp.exp2.target) => return (f, outExp.relation, f)
+        case (((a:String,b:String,c:String),(d:String,e:String,f:String)), ((in1A:PLACEHOLDER,in1B:StringExpression,in1C:PLACEHOLDER), (in2A:PLACEHOLDER,in2B:StringExpression,in2C:PLACEHOLDER)), (outA:PLACEHOLDER,outB:StringExpression,outC:PLACEHOLDER)) => println("MATCH")
+          if ((outA==in1A)&&(outC==in1A)) return (a, outB.exp, a)
+          else if(outA==in1A&&outC==in1C) return (a, outB.exp, c)
+          else if(outA==in1A&&outC==in2A) return (a, outB.exp, d)
+          else if(outA==in1A&&outC==in2C) return (a, outB.exp, f)
+          else if(outA==in1C&&outC==in1A) return (c, outB.exp, a)
+          else if(outA==in1C&&outC==in1C) return (c, outB.exp, c)
+          else if(outA==in1C&&outC==in2A) return (c, outB.exp, d)
+          else if(outA==in1C&&outC==in2C) return (c, outB.exp, f)
+          else if(outA==in2A&&outC==in1A) return (d, outB.exp, a)
+          else if(outA==in2A&&outC==in1C) return (d, outB.exp, c)
+          else if(outA==in2A&&outC==in2A) return (d, outB.exp, d)
+          else if(outA==in2A&&outC==in2C) return (d, outB.exp, f)
+          else if(outA==in2C&&outC==in1A) return (f, outB.exp, a)
+          else if(outA==in2C&&outC==in1C) return (f, outB.exp, a)
+          else if(outA==in2C&&outC==in2A) return (f, outB.exp, d)
+          else if(outA==in2C&&outC==in2C) return (f, outB.exp, f)
+          
       }
+      return ("","","")
   }
 
   def GRAPH_REVERSE(inExp:GRAPH2, outExp:GRAPH2):Boolean={return inExp.source==outExp.target&&inExp.target==outExp.source}
@@ -348,16 +373,16 @@ object RuleEngine {
 
   def main(args : Array[String]) : Unit = 
   {
-      val inGraphExp=GRAPH2("A", "is colleagues with", "B")
-      val outGraphExp=GRAPH2("B", "is colleagues with", "A")
+      val inGraphExp=GRAPH2(PLACEHOLDER("A"), StringExpression("is colleagues with"), PLACEHOLDER("B"))
+      val outGraphExp=GRAPH2(PLACEHOLDER("B"), StringExpression("is colleagues with"), PLACEHOLDER("A"))
 
       val testInGraph=("John", "is colleagues with", "Mary")
       val expectedOutGraph=("Mary", "is colleagues with", "John")
 
-      val condExp1=GRAPH2("A", "is a", "B")
-      val condExp2=GRAPH2("B", "is a", "C")
-      val condExp3=GRAPH2("C", "is a", "D")
-      val outExp=GRAPH2("A", "is a", "C")
+      val condExp1=GRAPH2(PLACEHOLDER("A"), StringExpression("is a"), PLACEHOLDER("B"))
+      val condExp2=GRAPH2(PLACEHOLDER("B"), StringExpression("is a"), PLACEHOLDER("C"))
+      val condExp3=GRAPH2(PLACEHOLDER("C"), StringExpression("is a"), PLACEHOLDER("D"))
+      val outExp=GRAPH2(PLACEHOLDER("A"), StringExpression("is a"), PLACEHOLDER("C"))
       val compositeExp=COMPOSITE(condExp1, "AND", condExp2)
       val graphPair=(condExp1, condExp2)
       val testGraph1=("John", "is a", "surgeon")
