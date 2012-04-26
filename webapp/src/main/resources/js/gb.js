@@ -403,7 +403,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, angleDiff, dotProduct, dragging, frand, fullBind, g, getCoulombEnergy, getForces, initGraph, initInterface, initSearchDialog, interRect, lastX, lastY, layout3, lineRectOverlap, lineSegsOverlap, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, normalizeAngle, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, sepAxis, sepAxisSide, showSearchDialog, tmpVec, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, dotProduct, dragging, frand, fullBind, g, getCoulombEnergy, getForces, initGraph, initInterface, initSearchDialog, interRect, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, sepAxis, sepAxisSide, showSearchDialog, tmpVec, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -886,74 +886,66 @@ function handler(event) {
 
   })();
 
-  normalizeAngle = function(ang) {
-    while (ang > Math.PI) {
-      ang -= Math.PI * 2;
-    }
-    while (ang <= -Math.PI) {
-      ang += Math.PI * 2;
-    }
-    return ang;
-  };
-
-  angleDiff = function(a1, a2) {
-    var diff;
-    diff = Math.atan2(Math.sin(a1 - a2), Math.cos(a1 - a2));
-    return diff;
-  };
-
   SphericalCoords = (function() {
 
     function SphericalCoords() {
       this.theta = 0;
       this.phi = 0;
       this.r = 0;
-      this.scx = 0;
-      this.scy = 0;
-      this.scz = 0;
-      this.vtheta = 0;
-      this.vphi = 0;
+      this.x = 0;
+      this.y = 0;
+      this.z = 0;
+      this.negativeStretch = 5;
+      this.mappingPower = 2;
     }
 
     SphericalCoords.prototype.sphericalToCartesian = function() {
-      this.scx = this.r * Math.cos(this.theta) * Math.sin(this.phi);
-      this.scy = this.r * Math.sin(this.theta) * Math.sin(this.phi);
-      return this.scz = this.r * Math.cos(this.phi);
+      var phi, theta;
+      if (this.r === 0) {
+        this.x = 0;
+        this.y = 0;
+        return this.z = 0;
+      } else {
+        theta = this.theta + (Math.PI / 2);
+        phi = this.phi + (Math.PI / 2);
+        this.x = this.r * Math.cos(theta) * Math.sin(phi);
+        this.y = this.r * Math.cos(phi);
+        this.z = this.r * Math.sin(theta) * Math.sin(phi);
+        if (this.z < 0) return this.z *= this.negativeStretch;
+      }
     };
 
     SphericalCoords.prototype.cartesianToSpherical = function() {
-      this.theta = Math.atan2(this.scy, this.scx);
-      this.phi = Math.acos(this.scz / this.r);
-      this.r = Math.sqrt(this.scx * this.scx + this.scy * this.scy + this.scz * this.scz);
-      return this.normalize();
+      this.r = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+      this.theta = Math.atan2(this.z, this.x) - (Math.PI / 2);
+      if (this.theta < -Math.PI) this.theta += 2 * Math.PI;
+      return this.phi = Math.acos(this.y / this.r) - (Math.PI / 2);
     };
 
-    SphericalCoords.prototype.randomSpherical = function() {
-      this.theta = (Math.random() * Math.PI * 2) - Math.PI;
-      return this.phi = (Math.random() * Math.PI * 2) - Math.PI;
-    };
-
-    SphericalCoords.prototype.normalize = function() {
-      this.theta = normalizeAngle(this.theta);
-      return this.phi = normalizeAngle(this.phi);
-    };
-
-    SphericalCoords.prototype.repulsion = function(other, strength) {
-      var ang, dphi, dtheta, f;
-      dtheta = angleDiff(this.theta, other.theta);
-      dphi = angleDiff(this.phi, other.theta);
-      ang = Math.atan2(dphi, dtheta);
-      f = (1 / (dtheta * dtheta + dphi * dphi)) * strength;
-      this.vtheta -= f * Math.sin(ang);
-      return this.vphi -= f * Math.cos(ang);
-    };
-
-    SphericalCoords.prototype.simulationStep = function(drag) {
-      this.theta += this.vtheta;
-      this.phi += this.vphi;
-      this.normalize();
-      this.vtheta *= 1 - drag;
-      return this.vphi *= 1 - drag;
+    SphericalCoords.prototype.viewMapping = function() {
+      var d;
+      if (this.theta > 0) {
+        d = (Math.PI - this.theta) / Math.PI;
+        d = d * d;
+        d *= Math.PI;
+        this.theta = Math.PI - d;
+      } else if (this.theta < 0) {
+        d = (-Math.PI - this.theta) / Math.PI;
+        d = Math.abs(Math.pow(d, this.mappingPower));
+        d *= -Math.PI;
+        this.theta = -Math.PI - d;
+      }
+      if (this.phi > 0) {
+        d = ((Math.PI / 2) - this.phi) / (Math.PI / 2);
+        d = d * d;
+        d *= Math.PI / 2;
+        return this.phi = (Math.PI / 2) - d;
+      } else if (this.phi < 0) {
+        d = (-(Math.PI / 2) - this.phi) / (Math.PI / 2);
+        d = Math.abs(Math.pow(d, this.mappingPower));
+        d *= -(Math.PI / 2);
+        return this.phi = -(Math.PI / 2) - d;
+      }
     };
 
     return SphericalCoords;
@@ -1003,41 +995,6 @@ function handler(event) {
       this.rect.v4.z = 0;
     }
 
-    SNode.prototype.updatePos = function(x, y, z) {
-      var key, link, _i, _len, _ref, _results;
-      this.x = x;
-      this.y = y;
-      this.z = z;
-      this.auxVec[0] = this.x - g.halfWidth;
-      this.auxVec[1] = this.y - g.halfHeight;
-      this.auxVec[2] = this.z;
-      m4x4mulv3(g.affinMat, this.auxVec, this.rpos);
-      this.rpos[0] += g.halfWidth;
-      this.rpos[1] += g.halfHeight;
-      this.x0 = this.rpos[0] - this.halfWidth;
-      this.y0 = this.rpos[1] - this.halfHeight;
-      this.x1 = this.rpos[0] + this.halfWidth;
-      this.y1 = this.rpos[1] + this.halfHeight;
-      this.rect.v1.x = this.rpos[0] - this.halfWidth;
-      this.rect.v1.y = this.rpos[1] - this.halfHeight;
-      this.rect.v2.x = this.rpos[0] - this.halfWidth;
-      this.rect.v2.y = this.rpos[1] + this.halfHeight;
-      this.rect.v3.x = this.rpos[0] + this.halfWidth;
-      this.rect.v3.y = this.rpos[1] + this.halfHeight;
-      this.rect.v4.x = this.rpos[0] + this.halfWidth;
-      this.rect.v4.y = this.rpos[1] - this.halfHeight;
-      for (key in this.nodes) {
-        if (this.nodes.hasOwnProperty(key)) this.nodes[key].estimatePos();
-      }
-      _ref = this.links;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        link = _ref[_i];
-        _results.push(link.updatePos());
-      }
-      return _results;
-    };
-
     SNode.prototype.updateTransform = function() {
       var opacity, transformStr, x, y, z;
       x = this.rpos[0];
@@ -1058,15 +1015,53 @@ function handler(event) {
     };
 
     SNode.prototype.moveTo = function(x, y, z) {
-      this.updatePos(x, y, z);
+      var key, link, sc, _i, _len, _ref;
+      this.x = x;
+      this.y = y;
+      this.z = z;
+      this.auxVec[0] = this.x;
+      this.auxVec[1] = this.y;
+      this.auxVec[2] = this.z;
+      m4x4mulv3(g.affinMat, this.auxVec, this.rpos);
+      sc = new SphericalCoords;
+      sc.x = this.rpos[0];
+      sc.y = this.rpos[1];
+      sc.z = this.rpos[2];
+      sc.cartesianToSpherical();
+      sc.viewMapping();
+      console.log(this.toString() + '; r: ' + sc.r + '; theta: ' + sc.theta + '; phi: ' + sc.phi);
+      sc.sphericalToCartesian();
+      this.rpos[0] = sc.x;
+      this.rpos[1] = sc.y;
+      this.rpos[2] = sc.z;
+      this.rpos[0] = this.rpos[0] * g.halfWidth * 0.8 + g.halfWidth;
+      this.rpos[1] += this.rpos[1] * g.halfHeight * 0.8 + g.halfHeight;
+      this.rpos[2] += this.rpos[2] * Math.min(g.halfWidth, g.halfHeight) * 0.8;
+      this.x0 = this.rpos[0] - this.halfWidth;
+      this.y0 = this.rpos[1] - this.halfHeight;
+      this.x1 = this.rpos[0] + this.halfWidth;
+      this.y1 = this.rpos[1] + this.halfHeight;
+      this.rect.v1.x = this.rpos[0] - this.halfWidth;
+      this.rect.v1.y = this.rpos[1] - this.halfHeight;
+      this.rect.v2.x = this.rpos[0] - this.halfWidth;
+      this.rect.v2.y = this.rpos[1] + this.halfHeight;
+      this.rect.v3.x = this.rpos[0] + this.halfWidth;
+      this.rect.v3.y = this.rpos[1] + this.halfHeight;
+      this.rect.v4.x = this.rpos[0] + this.halfWidth;
+      this.rect.v4.y = this.rpos[1] - this.halfHeight;
+      for (key in this.nodes) {
+        if (this.nodes.hasOwnProperty(key)) this.nodes[key].estimatePos();
+      }
+      _ref = this.links;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        link = _ref[_i];
+        link.updatePos();
+      }
       return this.updateTransform();
     };
 
     SNode.prototype.applyPos = function() {
-      this.x = this.pos[0] * (g.halfWidth * 0.8) + g.halfWidth;
-      this.y = this.pos[1] * (g.halfHeight * 0.8) + g.halfHeight;
-      this.z = this.pos[2] * Math.min(g.halfWidth, g.halfHeight) * 0.8;
-      return this.moveTo(this.x, this.y, this.z);
+      return this.moveTo(this.pos[0], this.pos[1], this.pos[2]);
     };
 
     SNode.prototype.updateDimensions = function() {
@@ -1307,7 +1302,7 @@ function handler(event) {
     return _results;
   };
 
-  layout3 = function() {
+  layout = function() {
     var N, Nstep, d, e, e0, f, i, k, l, minimalStep, pos, step, tpos, _ref, _ref2, _ref3, _ref4;
     N = g.snodeArray.length;
     Nstep = 1000;
@@ -1522,14 +1517,14 @@ function handler(event) {
       for (key in this.snodes) {
         if (this.snodes.hasOwnProperty(key)) this.snodes[key].fixed = false;
       }
-      this.root.moveTo(this.halfWidth, this.halfHeight, 0);
+      this.root.moveTo(0, 0, 0);
       this.root.fixed = true;
       for (key in this.snodes) {
         if (this.snodes.hasOwnProperty(key) && !this.snodes[key].fixed) {
           this.snodeArray.push(this.snodes[key]);
         }
       }
-      layout3();
+      layout();
       _results = [];
       for (i = 0, _ref = this.snodeArray.length - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
         _results.push(this.snodeArray[i].applyPos());

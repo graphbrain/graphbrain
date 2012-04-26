@@ -108,13 +108,13 @@ class Graph
         @snodes[key].fixed = false for key of @snodes when @snodes.hasOwnProperty(key)
 
         # layout root node
-        @root.moveTo(@halfWidth, @halfHeight, 0)
+        @root.moveTo(0, 0, 0)
         @root.fixed = true
 
         # create snode array
         @snodeArray.push(@snodes[key]) for key of @snodes when @snodes.hasOwnProperty(key) and !@snodes[key].fixed
 
-        layout3()
+        layout()
 
         for i in [0..(@snodeArray.length - 1)]
             @snodeArray[i].applyPos()

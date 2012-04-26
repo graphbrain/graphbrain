@@ -52,43 +52,6 @@ class SNode
         @rect.v4.y = 0
         @rect.v4.z = 0
 
-    updatePos: (x, y, z) ->
-        @x = x
-        @y = y
-        @z = z
-
-        # rotation
-        @auxVec[0] = @x - g.halfWidth
-        @auxVec[1] = @y - g.halfHeight
-        @auxVec[2] = @z
-
-        m4x4mulv3(g.affinMat, @auxVec, @rpos)
-    
-        @rpos[0] += g.halfWidth
-        @rpos[1] += g.halfHeight
-
-        # limits used to place links
-        @x0 = @rpos[0] - @halfWidth
-        @y0 = @rpos[1] - @halfHeight
-        @x1 = @rpos[0] + @halfWidth
-        @y1 = @rpos[1] + @halfHeight
-    
-        # calc bounding rectangle
-        @rect.v1.x = @rpos[0] - @halfWidth
-        @rect.v1.y = @rpos[1] - @halfHeight
-        @rect.v2.x = @rpos[0] - @halfWidth
-        @rect.v2.y = @rpos[1] + @halfHeight
-        @rect.v3.x = @rpos[0] + @halfWidth
-        @rect.v3.y = @rpos[1] + @halfHeight
-        @rect.v4.x = @rpos[0] + @halfWidth
-        @rect.v4.y = @rpos[1] - @halfHeight
-
-        # update position of contained nodes
-        @nodes[key].estimatePos() for key of @nodes when @nodes.hasOwnProperty(key) 
-
-        # update position of connected links
-        link.updatePos() for link in @links
-
 
     updateTransform: ->
         x = @rpos[0]
@@ -107,15 +70,61 @@ class SNode
 
 
     moveTo: (x, y, z) ->
-        @updatePos(x, y, z)
+        @x = x
+        @y = y
+        @z = z
+
+        # rotation
+        @auxVec[0] = @x
+        @auxVec[1] = @y
+        @auxVec[2] = @z
+
+        m4x4mulv3(g.affinMat, @auxVec, @rpos)
+    
+        # sphere mapping
+        sc = new SphericalCoords
+        sc.x = @rpos[0]
+        sc.y = @rpos[1]
+        sc.z = @rpos[2]
+        sc.cartesianToSpherical()
+        sc.viewMapping()
+        console.log(@toString() + '; r: ' + sc.r +  '; theta: ' + sc.theta + '; phi: ' + sc.phi)
+        sc.sphericalToCartesian()
+        @rpos[0] = sc.x
+        @rpos[1] = sc.y
+        @rpos[2] = sc.z
+
+        # convert to screen coordinates
+        @rpos[0] = @rpos[0] * g.halfWidth * 0.8 + g.halfWidth
+        @rpos[1] += @rpos[1] * g.halfHeight * 0.8 + g.halfHeight
+        @rpos[2] += @rpos[2] * Math.min(g.halfWidth, g.halfHeight) * 0.8
+
+        # limits used to place links
+        @x0 = @rpos[0] - @halfWidth
+        @y0 = @rpos[1] - @halfHeight
+        @x1 = @rpos[0] + @halfWidth
+        @y1 = @rpos[1] + @halfHeight
+
+        # calc bounding rectangle
+        @rect.v1.x = @rpos[0] - @halfWidth
+        @rect.v1.y = @rpos[1] - @halfHeight
+        @rect.v2.x = @rpos[0] - @halfWidth
+        @rect.v2.y = @rpos[1] + @halfHeight
+        @rect.v3.x = @rpos[0] + @halfWidth
+        @rect.v3.y = @rpos[1] + @halfHeight
+        @rect.v4.x = @rpos[0] + @halfWidth
+        @rect.v4.y = @rpos[1] - @halfHeight
+
+        # update position of contained nodes
+        @nodes[key].estimatePos() for key of @nodes when @nodes.hasOwnProperty(key) 
+
+        # update position of connected links
+        link.updatePos() for link in @links
         @updateTransform()
 
 
     applyPos: ->
-        @x = @pos[0] * (g.halfWidth * 0.8) + g.halfWidth
-        @y = @pos[1] * (g.halfHeight * 0.8) + g.halfHeight
-        @z = @pos[2] * Math.min(g.halfWidth, g.halfHeight) * 0.8
-        @moveTo(@x, @y, @z)
+        @moveTo(@pos[0], @pos[1], @pos[2])
 
 
     updateDimensions: ->

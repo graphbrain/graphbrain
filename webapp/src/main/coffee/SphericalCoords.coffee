@@ -1,67 +1,62 @@
 # (c) 2012 GraphBrain Ltd. All rigths reserved.
 
 
-normalizeAngle = (ang) ->
-    while ang > Math.PI
-    	ang -= (Math.PI * 2)
-    while ang <= -Math.PI
-    	ang += (Math.PI * 2)
-    ang
-
-
-angleDiff = (a1, a2) ->
-	diff = Math.atan2(Math.sin(a1 - a2), Math.cos(a1 - a2))
-	#console.log("a1: " + a1 + "; a2: " + a2 + "; diff: " + diff)
-	diff
-
-
 class SphericalCoords
     constructor: ->
-    	# spherical coords
+        # spherical coords
         @theta = 0
         @phi = 0
         @r = 0
 
         # Cartesian coords
-        @scx = 0
-        @scy = 0
-        @scz = 0
+        @x = 0
+        @y = 0
+        @z = 0
 
-        # velocities
-        @vtheta = 0
-        @vphi = 0
+        # eccentricity
+        @negativeStretch = 5
+        @mappingPower = 2
 
     sphericalToCartesian: ->
-    	@scx = @r * Math.cos(@theta) * Math.sin(@phi)
-    	@scy = @r * Math.sin(@theta) * Math.sin(@phi)
-    	@scz = @r * Math.cos(@phi)
+        if @r == 0
+            @x = 0
+            @y = 0
+            @z = 0
+        else
+            theta= @theta + (Math.PI / 2)
+            phi  = @phi + (Math.PI / 2)
+            @x = @r * Math.cos(theta) * Math.sin(phi)
+            @y = @r * Math.cos(phi)
+            @z = @r * Math.sin(theta) * Math.sin(phi)
+            if @z < 0
+                @z *= @negativeStretch
 
     cartesianToSpherical: ->
-    	@theta = Math.atan2(@scy, @scx)
-    	@phi = Math.acos(@scz / @r)
-    	@r = Math.sqrt(@scx * @scx + @scy * @scy + @scz * @scz)
-    	@normalize()
+        @r = Math.sqrt(@x * @x + @y * @y + @z * @z)
+        @theta = Math.atan2(@z, @x) - (Math.PI / 2) 
+        if @theta < -Math.PI
+            @theta += 2 * Math.PI
+        @phi = Math.acos(@y / @r) - (Math.PI / 2)
 
-    randomSpherical: ->
-    	@theta = (Math.random() * Math.PI * 2) - Math.PI
-    	@phi = (Math.random() * Math.PI * 2) - Math.PI
+    viewMapping: ->
+        if @theta > 0
+            d = (Math.PI - @theta) / Math.PI
+            d = d * d
+            d *= Math.PI
+            @theta = Math.PI - d
+        else if @theta < 0
+            d = (-Math.PI - @theta) / Math.PI
+            d = Math.abs(Math.pow(d, @mappingPower))
+            d *= -Math.PI
+            @theta = -Math.PI - d
 
-    normalize: ->
-    	@theta = normalizeAngle(@theta)
-    	@phi = normalizeAngle(@phi)
-
-    repulsion: (other, strength) ->
-    	dtheta = angleDiff(@theta, other.theta)
-    	dphi = angleDiff(@phi, other.theta) 
-    	ang = Math.atan2(dphi, dtheta)
-    	f = (1 / (dtheta * dtheta + dphi * dphi)) * strength
-
-    	@vtheta -= f * Math.sin(ang)
-    	@vphi -= f * Math.cos(ang)
-
-   	simulationStep: (drag) ->
-   		@theta += @vtheta
-   		@phi += @vphi
-   		@normalize()
-   		@vtheta *= (1 - drag)
-   		@vphi *= (1 - drag)
+        if @phi > 0
+            d = ((Math.PI / 2) - @phi) / (Math.PI / 2)
+            d = d * d
+            d *= (Math.PI / 2)
+            @phi = (Math.PI / 2) - d
+        else if @phi < 0
+            d = (-(Math.PI / 2) - @phi) / (Math.PI / 2)
+            d = Math.abs(Math.pow(d, @mappingPower))
+            d *= -(Math.PI / 2)
+            @phi = -(Math.PI / 2) - d
