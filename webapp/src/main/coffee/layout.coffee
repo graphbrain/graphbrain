@@ -42,7 +42,7 @@ getForces = ->
         g.snodeArray[j].f[2] -= ff
 
 
-layout3 = ->
+layout = ->
   N = g.snodeArray.length
   Nstep = 1000
   step = 0.01
