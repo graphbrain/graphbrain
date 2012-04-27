@@ -1679,7 +1679,7 @@ function handler(event) {
         targ = false;
         starg = g.snodes[l['starg']];
       }
-      link = new Link(linkID++, orig, sorig, targ, starg, l['relation']);
+      link = new Link(linkID++, false, sorig, false, starg, l['relation']);
       g.links.push(link);
       sorig.links.push(link);
       starg.links.push(link);
