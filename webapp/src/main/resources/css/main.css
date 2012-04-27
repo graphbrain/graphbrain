@@ -26,8 +26,8 @@ html, body {
     margin:0px;
     padding:2px;
     color:#FFF;
-    /*background:#FFD326;*/
-    background:#299ec1;
+    background:#097ea1;
+    /*background:#299ec1;*/
     width:100px;
     overflow:hidden;
     text-overflow:ellipsis;
@@ -39,7 +39,7 @@ html, body {
     height: 0;
     border-top: 11px solid transparent;
     border-bottom: 11px solid transparent;
-    border-left: 11px solid #299ec1;
+    border-left: 11px solid #097ea1;
     float:right;
 }
 .node {
