@@ -922,30 +922,19 @@ function handler(event) {
       return this.phi = Math.acos(this.y / this.r) - (Math.PI / 2);
     };
 
+    SphericalCoords.prototype.scoordMapping = function(ang, maxAng) {
+      var d, _maxAng;
+      _maxAng = maxAng;
+      if (ang < 0) _maxAng = -maxAng;
+      d = (_maxAng - ang) / maxAng;
+      d = Math.abs(Math.pow(d, this.mappingPower));
+      d *= _maxAng;
+      return _maxAng - d;
+    };
+
     SphericalCoords.prototype.viewMapping = function() {
-      var d;
-      if (this.theta > 0) {
-        d = (Math.PI - this.theta) / Math.PI;
-        d = d * d;
-        d *= Math.PI;
-        this.theta = Math.PI - d;
-      } else if (this.theta < 0) {
-        d = (-Math.PI - this.theta) / Math.PI;
-        d = Math.abs(Math.pow(d, this.mappingPower));
-        d *= -Math.PI;
-        this.theta = -Math.PI - d;
-      }
-      if (this.phi > 0) {
-        d = ((Math.PI / 2) - this.phi) / (Math.PI / 2);
-        d = d * d;
-        d *= Math.PI / 2;
-        return this.phi = (Math.PI / 2) - d;
-      } else if (this.phi < 0) {
-        d = (-(Math.PI / 2) - this.phi) / (Math.PI / 2);
-        d = Math.abs(Math.pow(d, this.mappingPower));
-        d *= -(Math.PI / 2);
-        return this.phi = -(Math.PI / 2) - d;
-      }
+      this.theta = this.scoordMapping(this.theta, Math.PI);
+      return this.phi = this.scoordMapping(this.phi, Math.PI / 2);
     };
 
     return SphericalCoords;

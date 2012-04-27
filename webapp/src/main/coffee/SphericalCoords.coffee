@@ -1,6 +1,7 @@
 # (c) 2012 GraphBrain Ltd. All rigths reserved.
 
 
+
 class SphericalCoords
     constructor: ->
         # spherical coords
@@ -38,25 +39,16 @@ class SphericalCoords
             @theta += 2 * Math.PI
         @phi = Math.acos(@y / @r) - (Math.PI / 2)
 
-    viewMapping: ->
-        if @theta > 0
-            d = (Math.PI - @theta) / Math.PI
-            d = d * d
-            d *= Math.PI
-            @theta = Math.PI - d
-        else if @theta < 0
-            d = (-Math.PI - @theta) / Math.PI
-            d = Math.abs(Math.pow(d, @mappingPower))
-            d *= -Math.PI
-            @theta = -Math.PI - d
+    scoordMapping: (ang, maxAng) ->
+        _maxAng = maxAng
+        if ang < 0
+            _maxAng = -maxAng
 
-        if @phi > 0
-            d = ((Math.PI / 2) - @phi) / (Math.PI / 2)
-            d = d * d
-            d *= (Math.PI / 2)
-            @phi = (Math.PI / 2) - d
-        else if @phi < 0
-            d = (-(Math.PI / 2) - @phi) / (Math.PI / 2)
-            d = Math.abs(Math.pow(d, @mappingPower))
-            d *= -(Math.PI / 2)
-            @phi = -(Math.PI / 2) - d
+        d = (_maxAng - ang) / maxAng
+        d = Math.abs(Math.pow(d, @mappingPower))
+        d *= _maxAng
+        _maxAng - d
+
+    viewMapping: ->
+        @theta = @scoordMapping(@theta, Math.PI)
+        @phi = @scoordMapping(@phi, Math.PI / 2)
