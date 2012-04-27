@@ -23,6 +23,10 @@ class Graph
         @affinMat = new Array(16)
         @quat.getMatrix(@affinMat)
 
+        # view eccentricity
+        @negativeStretch = 1
+        @mappingPower = 1
+
     updateTransform: ->
         transformStr = "translate(" + @offsetX + "px," + @offsetY + "px)" +
             " scale(" + @scale + ")"
@@ -73,7 +77,7 @@ class Graph
 
     updateViewLinks: -> link.visualUpdate() for link in @links
 
-    updateView: -> 
+    updateView: ->
         for key of @snodes when @snodes.hasOwnProperty(key)
             sn = @snodes[key]
             sn.moveTo(sn.x, sn.y, sn.z)
@@ -115,6 +119,17 @@ class Graph
         @snodeArray.push(@snodes[key]) for key of @snodes when @snodes.hasOwnProperty(key) and !@snodes[key].fixed
 
         layout()
+
+        # calc eccentricity params
+        @negativeStretch = 1
+        @mappingPower = 1
+
+        N = @snodeArray.length
+        Nt = 8
+
+        if (N > (Nt * 2))
+            @mappingPower = Math.log(Math.asin(Nt / (N / 2)) / Math.PI) * (1 / Math.log(0.5))
+            @negativeStretch = @mappingPower * 2
 
         for i in [0..(@snodeArray.length - 1)]
             @snodeArray[i].applyPos()

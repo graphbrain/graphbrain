@@ -895,8 +895,6 @@ function handler(event) {
       this.x = 0;
       this.y = 0;
       this.z = 0;
-      this.negativeStretch = 5;
-      this.mappingPower = 2;
     }
 
     SphericalCoords.prototype.sphericalToCartesian = function() {
@@ -911,7 +909,7 @@ function handler(event) {
         this.x = this.r * Math.cos(theta) * Math.sin(phi);
         this.y = this.r * Math.cos(phi);
         this.z = this.r * Math.sin(theta) * Math.sin(phi);
-        if (this.z < 0) return this.z *= this.negativeStretch;
+        if (this.z < 0) return this.z *= g.negativeStretch;
       }
     };
 
@@ -927,7 +925,7 @@ function handler(event) {
       _maxAng = maxAng;
       if (ang < 0) _maxAng = -maxAng;
       d = (_maxAng - ang) / maxAng;
-      d = Math.abs(Math.pow(d, this.mappingPower));
+      d = Math.abs(Math.pow(d, g.mappingPower));
       d *= _maxAng;
       return _maxAng - d;
     };
@@ -1366,6 +1364,8 @@ function handler(event) {
       this.deltaQuat = new Quaternion();
       this.affinMat = new Array(16);
       this.quat.getMatrix(this.affinMat);
+      this.negativeStretch = 1;
+      this.mappingPower = 1;
     }
 
     Graph.prototype.updateTransform = function() {
@@ -1501,7 +1501,7 @@ function handler(event) {
     };
 
     Graph.prototype.layout = function() {
-      var i, key, _ref, _results;
+      var N, Nt, i, key, _ref, _results;
       for (key in this.snodes) {
         if (this.snodes.hasOwnProperty(key)) this.snodes[key].fixed = false;
       }
@@ -1513,6 +1513,14 @@ function handler(event) {
         }
       }
       layout();
+      this.negativeStretch = 1;
+      this.mappingPower = 1;
+      N = this.snodeArray.length;
+      Nt = 8;
+      if (N > (Nt * 2)) {
+        this.mappingPower = Math.log(Math.asin(Nt / (N / 2)) / Math.PI) * (1 / Math.log(0.5));
+        this.negativeStretch = this.mappingPower * 2;
+      }
       _results = [];
       for (i = 0, _ref = this.snodeArray.length - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
         _results.push(this.snodeArray[i].applyPos());

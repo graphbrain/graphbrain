@@ -14,10 +14,6 @@ class SphericalCoords
         @y = 0
         @z = 0
 
-        # eccentricity
-        @negativeStretch = 5
-        @mappingPower = 2
-
     sphericalToCartesian: ->
         if @r == 0
             @x = 0
@@ -30,7 +26,7 @@ class SphericalCoords
             @y = @r * Math.cos(phi)
             @z = @r * Math.sin(theta) * Math.sin(phi)
             if @z < 0
-                @z *= @negativeStretch
+                @z *= g.negativeStretch
 
     cartesianToSpherical: ->
         @r = Math.sqrt(@x * @x + @y * @y + @z * @z)
@@ -45,7 +41,7 @@ class SphericalCoords
             _maxAng = -maxAng
 
         d = (_maxAng - ang) / maxAng
-        d = Math.abs(Math.pow(d, @mappingPower))
+        d = Math.abs(Math.pow(d, g.mappingPower))
         d *= _maxAng
         _maxAng - d
 
