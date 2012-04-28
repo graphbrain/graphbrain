@@ -125,11 +125,15 @@ class Graph
         @mappingPower = 1
 
         N = @snodeArray.length
-        Nt = 8
+        Nt = 7
 
         if (N > (Nt * 2))
             @mappingPower = Math.log(Math.asin(Nt / (N / 2)) / Math.PI) * (1 / Math.log(0.5))
             @negativeStretch = @mappingPower * 2
+            #console.log('N: ' + N)
+            #console.log('Nt: ' + Nt)
+            #console.log('mappingPower: ' + @mappingPower)
+            #console.log('negativeStretch: ' + @negativeStretch)
 
         for i in [0..(@snodeArray.length - 1)]
             @snodeArray[i].applyPos()
