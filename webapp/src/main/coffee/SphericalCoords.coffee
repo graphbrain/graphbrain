@@ -40,7 +40,7 @@ class SphericalCoords
         if ang < 0
             _maxAng = -maxAng
 
-        d = (_maxAng - ang) / maxAng
+        d = Math.abs((_maxAng - ang) / maxAng)
         d = Math.abs(Math.pow(d, g.mappingPower))
         d *= _maxAng
         _maxAng - d

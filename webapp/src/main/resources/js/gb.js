@@ -975,7 +975,7 @@ function handler(event) {
       var d, _maxAng;
       _maxAng = maxAng;
       if (ang < 0) _maxAng = -maxAng;
-      d = (_maxAng - ang) / maxAng;
+      d = Math.abs((_maxAng - ang) / maxAng);
       d = Math.abs(Math.pow(d, g.mappingPower));
       d *= _maxAng;
       return _maxAng - d;
@@ -1249,7 +1249,7 @@ function handler(event) {
     };
 
     Link.prototype.visualUpdate = function() {
-      var cx, cy, cz, deltaX, deltaY, deltaZ, len, roty, rotz, transformStr, tx, ty, tz;
+      var cx, cy, cz, deltaX, deltaY, deltaZ, len, opacity, roty, rotz, transformStr, tx, ty, tz, z;
       deltaX = this.x1 - this.x0;
       deltaY = this.y1 - this.y0;
       deltaZ = this.z1 - this.z0;
@@ -1272,7 +1272,14 @@ function handler(event) {
       tz = cz + g.zOffset;
       transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px)' + ' rotateZ(' + rotz + 'rad)' + ' rotateY(' + roty + 'rad)';
       $('#link' + this.id).css('-webkit-transform', transformStr);
-      return $('#link' + this.id).css('-moz-transform', transformStr);
+      $('#link' + this.id).css('-moz-transform', transformStr);
+      z = cz;
+      if (z < 0) {
+        opacity = -1 / (z * 0.007);
+        return $('#link' + this.id).css('opacity', opacity);
+      } else {
+        return $('#link' + this.id).css('opacity', 0.9);
+      }
     };
 
     return Link;
@@ -1567,7 +1574,7 @@ function handler(event) {
       this.negativeStretch = 1;
       this.mappingPower = 1;
       N = this.snodeArray.length;
-      Nt = 8;
+      Nt = 7;
       if (N > (Nt * 2)) {
         this.mappingPower = Math.log(Math.asin(Nt / (N / 2)) / Math.PI) * (1 / Math.log(0.5));
         this.negativeStretch = this.mappingPower * 2;
