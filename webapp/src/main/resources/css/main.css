@@ -44,6 +44,7 @@ html, body {
     border-bottom: 11px solid transparent;
     border-left: 11px solid #097ea1;
     float:right;
+    left:-1px;
 }
 .node {
     color:#000;
