@@ -107,3 +107,10 @@ class Link
         transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px)' + ' rotateZ(' + rotz + 'rad)' + ' rotateY(' + roty + 'rad)'
         $('#link' + @id).css('-webkit-transform', transformStr)
         $('#link' + @id).css('-moz-transform', transformStr)
+
+        z = cz
+        if z < 0
+            opacity = -1 / (z * 0.007)
+            $('#link' + @id).css('opacity', opacity)
+        else
+            $('#link' + @id).css('opacity', 0.9)

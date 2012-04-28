@@ -4,6 +4,7 @@ html, body {
     margin: 0px;
     font-family: Sans-Serif;
     font-size: 12px;
+    background: #FFF;
 }.link {
     position:fixed;
     margin:0px;
