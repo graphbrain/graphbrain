@@ -17,6 +17,7 @@
 }
 
 .linkText {
+    position:relative;
     margin:0px;
     padding:2px;
     color:#FFF;
@@ -29,6 +30,7 @@
 }
 
 .linkArrow {
+    position:relative;
     width: 0;
     height: 0;
     border-top: 11px solid transparent;
