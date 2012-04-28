@@ -49,7 +49,7 @@ class Node
     updateDetailLevel: (scale, z, depth) ->
         k = scale * (z + 500)
         _dlevel = 1
-        if k < 1000
+        if k < 99999999 #1000
             _dlevel = 0
         #console.log(@text + '>> scale: ' + scale + '; z: ' + z + '; dlevel: ' + dlevel)
         

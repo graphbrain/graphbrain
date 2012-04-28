@@ -920,7 +920,7 @@ function handler(event) {
       var k, _dlevel;
       k = scale * (z + 500);
       _dlevel = 1;
-      if (k < 1000) _dlevel = 0;
+      if (k < 99999999) _dlevel = 0;
       if (_dlevel === this.dlevel) return false;
       this.dlevel = _dlevel;
       if (this.dlevel === 0) {
