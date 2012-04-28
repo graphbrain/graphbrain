@@ -403,7 +403,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, dotProduct, dragging, frand, fullBind, g, getCoulombEnergy, getForces, initGraph, initInterface, initSearchDialog, interRect, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, sepAxis, sepAxisSide, showSearchDialog, tmpVec, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, dotProduct, dragging, frand, fullBind, g, getCoulombEnergy, getForces, initGraph, initInterface, initSearchDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, sepAxis, sepAxisSide, showSearchDialog, tmpVec, touchEnd, touchMove, touchStart, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -761,6 +761,8 @@ function handler(event) {
 
   lastY = 0;
 
+  lastScale = -1;
+
   scroll = false;
 
   scrollOn = function(e) {
@@ -798,6 +800,52 @@ function handler(event) {
     return false;
   };
 
+  touchStart = function(e) {
+    var touch;
+    if (e.touches.length === 1) {
+      touch = e.touches[0];
+      lastX = touch.pageX;
+      lastY = touch.pageY;
+    }
+    return true;
+  };
+
+  touchEnd = function(e) {
+    lastScale = -1;
+    return true;
+  };
+
+  touchMove = function(e) {
+    var deltaScale, deltaX, deltaY, dx, dy, scale, touch, x, y;
+    if (e.touches.length === 1) {
+      e.preventDefault();
+      touch = e.touches[0];
+      deltaX = touch.pageX - lastX;
+      deltaY = touch.pageY - lastY;
+      lastX = touch.pageX;
+      lastY = touch.pageY;
+      g.rotateX(-deltaX * 0.0015);
+      g.rotateY(deltaY * 0.0015);
+      g.updateView();
+      g.updateDetailLevel();
+      false;
+    } else if (e.touches.length === 2) {
+      e.preventDefault();
+      dx = e.touches[0].pageX - e.touches[1].pageX;
+      dy = e.touches[0].pageY - e.touches[1].pageY;
+      scale = Math.sqrt(dx * dx + dy * dy);
+      if (lastScale >= 0) {
+        x = (e.touches[0].pageX + e.touches[1].pageX) / 2;
+        y = (e.touches[0].pageY + e.touches[1].pageY) / 2;
+        deltaScale = (scale - lastScale) * 0.025;
+        g.zoom(deltaScale, x, y);
+      }
+      lastScale = scale;
+      false;
+    }
+    return true;
+  };
+
   mouseWheel = function(e, delta, deltaX, deltaY) {
     if (!scroll) g.zoom(deltaY, e.pageX, e.pageY);
     return true;
@@ -815,6 +863,9 @@ function handler(event) {
     fullBind("mousedown", mouseDown);
     fullBind("mousemove", mouseMove);
     fullBind("mousewheel", mouseWheel);
+    document.addEventListener('touchstart', touchStart);
+    document.addEventListener('touchend', touchEnd);
+    document.addEventListener('touchmove', touchMove);
     $('#search-field').submit(searchQuery);
     return initSearchDialog();
   };
