@@ -1162,13 +1162,14 @@ function handler(event) {
 
   Link = (function() {
 
-    function Link(id, orig, sorig, targ, starg, label) {
+    function Link(id, orig, sorig, targ, starg, label, color) {
       this.id = id;
       this.orig = orig;
       this.sorig = sorig;
       this.targ = targ;
       this.starg = starg;
       this.label = label;
+      this.color = color;
       this.ox = 0;
       this.oy = 0;
       this.tx = 0;
@@ -1220,8 +1221,13 @@ function handler(event) {
     };
 
     Link.prototype.place = function() {
-      var height, labelWidth;
-      $('#nodesDiv').append('<div class="linkLabel" id="linkLabel' + this.id + '"><div class="linkText">' + this.label + '</div><div class="linkArrow" /></div>');
+      var height, labelWidth, snode;
+      $('#nodesDiv').append('<div class="linkLabel" id="linkLabel' + this.id + '"><div class="linkText" id="linkText' + this.id + '">' + this.label + '</div><div class="linkArrow" id="linkArrow' + this.id + '" /></div>');
+      $('#linkText' + this.id).css('background', this.color);
+      $('#linkArrow' + this.id).css('border-left', '11px solid ' + this.color);
+      snode = this.starg;
+      if (snode === g.root) snode = this.sorig;
+      snode.jqDiv.css('border-color', this.color);
       this.jqLabel = $('#linkLabel' + this.id);
       height = this.jqLabel.outerHeight();
       this.halfHeight = height / 2;
@@ -1721,7 +1727,7 @@ function handler(event) {
         targ = false;
         starg = g.snodes[l['starg']];
       }
-      link = new Link(linkID++, false, sorig, false, starg, l['relation']);
+      link = new Link(linkID++, false, sorig, false, starg, l['relation'], l['color']);
       g.links.push(link);
       sorig.links.push(link);
       starg.links.push(link);

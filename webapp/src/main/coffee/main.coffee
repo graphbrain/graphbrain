@@ -74,7 +74,7 @@ initGraph = ->
         else
             targ = false
             starg  = g.snodes[l['starg']]
-        link = new Link(linkID++, false, sorig, false, starg, l['relation'])
+        link = new Link(linkID++, false, sorig, false, starg, l['relation'], l['color'])
         g.links.push(link)
         sorig.links.push(link)
         starg.links.push(link)

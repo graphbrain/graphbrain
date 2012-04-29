@@ -2,7 +2,7 @@
 
 # Link
 class Link
-    constructor: (@id, @orig, @sorig, @targ, @starg, @label) ->
+    constructor: (@id, @orig, @sorig, @targ, @starg, @label, @color) ->
         @ox = 0
         @oy = 0
         @tx = 0
@@ -61,7 +61,14 @@ class Link
         @angle = Math.atan(slope)
 
     place: ->
-        $('#nodesDiv').append('<div class="linkLabel" id="linkLabel' + @id + '"><div class="linkText">' + @label + '</div><div class="linkArrow" /></div>')
+        $('#nodesDiv').append('<div class="linkLabel" id="linkLabel' + @id + '"><div class="linkText" id="linkText' + @id + '">' + @label + '</div><div class="linkArrow" id="linkArrow' + @id + '" /></div>')
+
+        $('#linkText' + @id).css('background', @color)
+        $('#linkArrow' + @id).css('border-left', '11px solid ' + @color)
+        snode = @starg
+        if snode == g.root
+            snode = @sorig
+        snode.jqDiv.css('border-color', @color)
 
         @jqLabel = $('#linkLabel' + @id)
 
