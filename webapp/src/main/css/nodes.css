@@ -5,6 +5,7 @@
     font-size: 12px;
     margin: 3px;
     padding: 3px;
+    max-width: 100px;
 }
 
 .node a {

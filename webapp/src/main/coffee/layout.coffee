@@ -44,7 +44,7 @@ getForces = ->
 
 layout = ->
   N = g.snodeArray.length
-  Nstep = 1000
+  Nstep = 20
   step = 0.01
   minimalStep = 1e-10
   

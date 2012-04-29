@@ -9,6 +9,9 @@ class Link
         @ty = 0
         @len = 0
 
+        # jquery objects
+        @jqLabel = false
+
     updatePos: ->
         _orig = false
         _targ = false
@@ -58,24 +61,14 @@ class Link
         @angle = Math.atan(slope)
 
     place: ->
-        # create link div
-        linkDiv = document.createElement('div')
-        linkDiv.setAttribute('class', 'link')
-        linkDiv.setAttribute('id', 'link' + @id)
-        
-        nodesDiv = document.getElementById("nodesDiv")
-        nodesDiv.appendChild(linkDiv)
+        $('#nodesDiv').append('<div class="linkLabel" id="linkLabel' + @id + '"><div class="linkText">' + @label + '</div><div class="linkArrow" /></div>')
 
-        $('#link' + @id).append('<div class="linkLine" id="linkLine' + @id + '"></div>')
-        $('#link' + @id).append('<div class="linkLabel" id="linkLabel' + @id + '"><div class="linkText">' + @label + '</div><div class="linkArrow" /></div>')
+        @jqLabel = $('#linkLabel' + @id)
 
-        _height = $('#link' + @id).outerHeight()
-        @halfHeight = _height / 2;
-        labelWidth = $('#linkLabel' + @id).outerWidth()
+        height = @jqLabel.outerHeight()
+        @halfHeight = height / 2;
+        labelWidth = @jqLabel.outerWidth()
         @halfLabelWidth = labelWidth / 2
-
-        $('#linkLine' + @id).css('top', '' + @halfHeight + 'px')
-
 
     visualUpdate: ->
         deltaX = @x1 - @x0
@@ -95,22 +88,19 @@ class Link
         else
             roty = Math.atan2(deltaZ * Math.cos(rotz), -deltaX)
 
-        $('#link' + @id).css('width', '' + len + 'px')
-        $('#linkLine' + @id).css('height', '1px')
-        $('#linkLabel' + @id).css('left', '' + ((len / 2) - @halfLabelWidth) + 'px')
+        @jqLabel.css('left', '' + ((len / 2) - @halfLabelWidth) + 'px')
 
         # apply translation
         tx = cx - (len / 2)
         ty = cy - @halfHeight
         tz = cz + g.zOffset
-        
         transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px)' + ' rotateZ(' + rotz + 'rad)' + ' rotateY(' + roty + 'rad)'
-        $('#link' + @id).css('-webkit-transform', transformStr)
-        $('#link' + @id).css('-moz-transform', transformStr)
+        @jqLabel.css('-webkit-transform', transformStr)
+        @jqLabel.css('-moz-transform', transformStr)
 
         z = cz
         if z < 0
             opacity = -1 / (z * 0.007)
-            $('#link' + @id).css('opacity', opacity)
+            @jqLabel.css('opacity', opacity)
         else
-            $('#link' + @id).css('opacity', 0.9)
+            @jqLabel.css('opacity', 0.9)
