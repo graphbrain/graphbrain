@@ -8,6 +8,34 @@ import com.graphbrain.hgdb.ImageNode
 import scala.collection.mutable.{Map => MMap}
 import scala.collection.mutable.{Set => MSet}
 import com.codahale.jerkson.Json._
+import scala.math
+
+
+class PoorLong (val l:Long) {
+    /** a "mathematical" modulo that always maps to 0...n-1 (for positive n)
+    */
+    def mod(n:Long) = {
+        val m = l % n
+        if (m<0) m+n else m
+    }
+}
+
+class PoorDouble (val d:Double) {
+    /**the "decimals" of this double
+    */
+    def fraction:Double = d - d.floor
+
+    /** a "pseudo-mod", 7.5 mod 5 would map to 2.5, -0.5 mod 5 would map to 4.5
+    */
+    def mod(n:Long) = new PoorLong(d.floor.longValue).mod(n).toDouble + fraction
+}
+
+object Conversions {
+    implicit def longToPoorLong(l:Long) = new PoorLong(l)
+    implicit def doubleToPoorDouble(d:Double) = new PoorDouble(d)
+} 
+
+import Conversions._ //put this import before your hsv converter code
 
 
 class GraphInterface (val rootId: String, val store: VertexStore) {
@@ -121,17 +149,51 @@ class GraphInterface (val rootId: String, val store: VertexStore) {
     generate(json)
   }
 
+  /** Converts an hsv triplet in the range ([0,360],[0,1],[0,1])
+   *  to an rgb triplet in the range ([0,1],[0,1],[0,1])
+   */
+  private def hsvToRgb(h:Double, s:Double, v:Double): (Double, Double, Double) = {
+    val c = s * v
+    val h1 = h / 60.0
+    val x  = c * (1.0 - ((h1 mod 2) - 1.0).abs) 
+    val (r,g,b) = if (h1 < 1.0) (c, x, 0.0)
+                else if (h1 < 2.0) (x, c, 0.0)
+                else if (h1 < 3.0) (0.0, c, x)
+                else if (h1 < 4.0) (0.0, x, c)
+                else if (h1 < 5.0) (x, 0.0, c)
+                else (c, 0.0, x) 
+    val m = v - c
+    (r + m, g + m, b + m)
+  }
+
+  private def linkColor(label: String) = {
+    val code = math.abs(label.hashCode) % 99
+    var hue: Double = code.toDouble / 99.0
+    val hue1 = 0
+    val hue2 = 360
+    val deltaHue = hue2 - hue1
+    hue *= deltaHue
+    hue += hue1
+    // println("label: " + label + "; hue: " + hue)
+    val rgb = hsvToRgb(hue, 0.75, 1.0)
+    val r: Int = (rgb._1 * 255).toInt
+    val g: Int = (rgb._2 * 255).toInt
+    val b: Int = (rgb._3 * 255).toInt
+    "rgb(" + r + "," + g + "," + b + ")"
+  }
+
   /** Generates JSON string from links */
   private def links2json = {
     var lid = 0
     val json = for (l <- links) yield {
       lid += 1
+      val color = linkColor(l._1)
       if (l._4 && l._5)
-        Map(("id" -> lid), ("directed" -> 1), ("relation" -> l._1), ("orig" -> l._2.toString), ("targ" -> l._3.toString))
+        Map(("id" -> lid), ("directed" -> 1), ("relation" -> l._1), ("orig" -> l._2.toString), ("targ" -> l._3.toString), ("color" -> color))
       else if (l._4)
-        Map(("id" -> lid), ("directed" -> 1), ("relation" -> l._1), ("orig" -> l._2.toString), ("starg" -> l._3.toString))
+        Map(("id" -> lid), ("directed" -> 1), ("relation" -> l._1), ("orig" -> l._2.toString), ("starg" -> l._3.toString), ("color" -> color))
       else if (l._5)
-        Map(("id" -> lid), ("directed" -> 1), ("relation" -> l._1), ("sorig" -> l._2.toString), ("targ" -> l._3.toString))
+        Map(("id" -> lid), ("directed" -> 1), ("relation" -> l._1), ("sorig" -> l._2.toString), ("targ" -> l._3.toString), ("color" -> color))
     }
     generate(json)
   }
