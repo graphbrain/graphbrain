@@ -52,6 +52,9 @@ class SNode
         @rect.v4.y = 0
         @rect.v4.z = 0
 
+        # jquery objects
+        @jqDiv = false
+
 
     updateTransform: ->
         x = @rpos[0]
@@ -60,13 +63,13 @@ class SNode
         if (!isNaN(x) && !isNaN(y) && !isNaN(z))
             transformStr = 'translate3d(' + (x - @halfWidth) + 'px,' + (y - @halfHeight) + 'px,' + z + 'px)'
             transformStr += ' scale(' + @scale + ')'
-            $('div#' + @id).css('-webkit-transform', transformStr)
-            $('div#' + @id).css('-moz-transform', transformStr)
+            @jqDiv.css('-webkit-transform', transformStr)
+            @jqDiv.css('-moz-transform', transformStr)
             if z < 0
                 opacity = -1 / (z * 0.007)
-                $('div#' + @id).css('opacity', opacity)
+                @jqDiv.css('opacity', opacity)
             else
-                $('div#' + @id).css('opacity', 1)
+                @jqDiv.css('opacity', 1)
 
 
     moveTo: (x, y, z) ->
@@ -116,10 +119,9 @@ class SNode
         @rect.v4.y = @rpos[1] - @halfHeight
 
         # update position of contained nodes
-        @nodes[key].estimatePos() for key of @nodes when @nodes.hasOwnProperty(key) 
+        #@nodes[key].estimatePos() for key of @nodes when @nodes.hasOwnProperty(key) 
 
         # update position of connected links
-        link.updatePos() for link in @links
         @updateTransform()
 
 
@@ -128,8 +130,8 @@ class SNode
 
 
     updateDimensions: ->
-        @width = $('div#' + @id).outerWidth()
-        @height = $('div#' + @id).outerHeight()
+        @width = @jqDiv.outerWidth()
+        @height = @jqDiv.outerHeight()
         @halfWidth = @width / 2
         @halfHeight = @height / 2
 
@@ -139,27 +141,29 @@ class SNode
         @updateTransform()
 
         # calc relative positions of nodes contained in this super node
-        @nodes[key].updateDimensions() for key of @nodes when @nodes.hasOwnProperty(key)
+        #@nodes[key].updateDimensions() for key of @nodes when @nodes.hasOwnProperty(key)
 
 
     place: ->
         html = '<div id="' + @id + '"><div class="viewport" /></div>'
         $('#nodesDiv').append(html)
 
+        @jqDiv = $('#' + @id)
+
         nodesCount = 0
         nodesCount++ for key of @nodes when @nodes.hasOwnProperty(key)
         if nodesCount > 1
-            $('#' + @id).addClass('snodeN')
+            @jqDiv.addClass('snodeN')
         else
-            $('#' + @id).addClass('snode1')
+            @jqDiv.addClass('snode1')
 
         # place nodes contained in this super node
         @nodes[key].place() for key of @nodes when @nodes.hasOwnProperty(key)
 
         # scrollbar
-        if (nodesCount > 1) && ($('div#' + @id).outerHeight() > 250)
+        if (nodesCount > 1) && (@jqDiv.outerHeight() > 250)
             $('#' + @id + ' .viewport').slimScroll({height: '250px'})
-            $('#' + @id).hover scrollOn, scrollOff
+            @jqDiv.hover scrollOn, scrollOff
 
         @updateDimensions()
 

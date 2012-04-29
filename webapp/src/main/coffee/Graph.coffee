@@ -75,7 +75,9 @@ class Graph
     placeLinks: -> link.place() for link in @links
 
 
-    updateViewLinks: -> link.visualUpdate() for link in @links
+    updateViewLinks: ->
+        link.updatePos() for link in @links
+        link.visualUpdate() for link in @links
 
     updateView: ->
         for key of @snodes when @snodes.hasOwnProperty(key)

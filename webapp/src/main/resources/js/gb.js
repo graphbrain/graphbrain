@@ -1031,6 +1031,7 @@ function handler(event) {
       this.rect.v4.x = 0;
       this.rect.v4.y = 0;
       this.rect.v4.z = 0;
+      this.jqDiv = false;
     }
 
     SNode.prototype.updateTransform = function() {
@@ -1041,19 +1042,19 @@ function handler(event) {
       if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
         transformStr = 'translate3d(' + (x - this.halfWidth) + 'px,' + (y - this.halfHeight) + 'px,' + z + 'px)';
         transformStr += ' scale(' + this.scale + ')';
-        $('div#' + this.id).css('-webkit-transform', transformStr);
-        $('div#' + this.id).css('-moz-transform', transformStr);
+        this.jqDiv.css('-webkit-transform', transformStr);
+        this.jqDiv.css('-moz-transform', transformStr);
         if (z < 0) {
           opacity = -1 / (z * 0.007);
-          return $('div#' + this.id).css('opacity', opacity);
+          return this.jqDiv.css('opacity', opacity);
         } else {
-          return $('div#' + this.id).css('opacity', 1);
+          return this.jqDiv.css('opacity', 1);
         }
       }
     };
 
     SNode.prototype.moveTo = function(x, y, z) {
-      var key, link, sc, _i, _len, _ref;
+      var sc;
       this.x = x;
       this.y = y;
       this.z = z;
@@ -1086,14 +1087,6 @@ function handler(event) {
       this.rect.v3.y = this.rpos[1] + this.halfHeight;
       this.rect.v4.x = this.rpos[0] + this.halfWidth;
       this.rect.v4.y = this.rpos[1] - this.halfHeight;
-      for (key in this.nodes) {
-        if (this.nodes.hasOwnProperty(key)) this.nodes[key].estimatePos();
-      }
-      _ref = this.links;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        link = _ref[_i];
-        link.updatePos();
-      }
       return this.updateTransform();
     };
 
@@ -1102,43 +1095,36 @@ function handler(event) {
     };
 
     SNode.prototype.updateDimensions = function() {
-      var key, _results;
-      this.width = $('div#' + this.id).outerWidth();
-      this.height = $('div#' + this.id).outerHeight();
+      this.width = this.jqDiv.outerWidth();
+      this.height = this.jqDiv.outerHeight();
       this.halfWidth = this.width / 2;
       this.halfHeight = this.height / 2;
       if (this.initialWidth < 0) this.initialWidth = this.width;
-      this.updateTransform();
-      _results = [];
-      for (key in this.nodes) {
-        if (this.nodes.hasOwnProperty(key)) {
-          _results.push(this.nodes[key].updateDimensions());
-        }
-      }
-      return _results;
+      return this.updateTransform();
     };
 
     SNode.prototype.place = function() {
       var html, key, nodeObj, nodesCount;
       html = '<div id="' + this.id + '"><div class="viewport" /></div>';
       $('#nodesDiv').append(html);
+      this.jqDiv = $('#' + this.id);
       nodesCount = 0;
       for (key in this.nodes) {
         if (this.nodes.hasOwnProperty(key)) nodesCount++;
       }
       if (nodesCount > 1) {
-        $('#' + this.id).addClass('snodeN');
+        this.jqDiv.addClass('snodeN');
       } else {
-        $('#' + this.id).addClass('snode1');
+        this.jqDiv.addClass('snode1');
       }
       for (key in this.nodes) {
         if (this.nodes.hasOwnProperty(key)) this.nodes[key].place();
       }
-      if ((nodesCount > 1) && ($('div#' + this.id).outerHeight() > 250)) {
+      if ((nodesCount > 1) && (this.jqDiv.outerHeight() > 250)) {
         $('#' + this.id + ' .viewport').slimScroll({
           height: '250px'
         });
-        $('#' + this.id).hover(scrollOn, scrollOff);
+        this.jqDiv.hover(scrollOn, scrollOff);
       }
       this.updateDimensions();
       return nodeObj = this;
@@ -1188,6 +1174,7 @@ function handler(event) {
       this.tx = 0;
       this.ty = 0;
       this.len = 0;
+      this.jqLabel = false;
     }
 
     Link.prototype.updatePos = function() {
@@ -1233,19 +1220,13 @@ function handler(event) {
     };
 
     Link.prototype.place = function() {
-      var labelWidth, linkDiv, nodesDiv, _height;
-      linkDiv = document.createElement('div');
-      linkDiv.setAttribute('class', 'link');
-      linkDiv.setAttribute('id', 'link' + this.id);
-      nodesDiv = document.getElementById("nodesDiv");
-      nodesDiv.appendChild(linkDiv);
-      $('#link' + this.id).append('<div class="linkLine" id="linkLine' + this.id + '"></div>');
-      $('#link' + this.id).append('<div class="linkLabel" id="linkLabel' + this.id + '"><div class="linkText">' + this.label + '</div><div class="linkArrow" /></div>');
-      _height = $('#link' + this.id).outerHeight();
-      this.halfHeight = _height / 2;
-      labelWidth = $('#linkLabel' + this.id).outerWidth();
-      this.halfLabelWidth = labelWidth / 2;
-      return $('#linkLine' + this.id).css('top', '' + this.halfHeight + 'px');
+      var height, labelWidth;
+      $('#nodesDiv').append('<div class="linkLabel" id="linkLabel' + this.id + '"><div class="linkText">' + this.label + '</div><div class="linkArrow" /></div>');
+      this.jqLabel = $('#linkLabel' + this.id);
+      height = this.jqLabel.outerHeight();
+      this.halfHeight = height / 2;
+      labelWidth = this.jqLabel.outerWidth();
+      return this.halfLabelWidth = labelWidth / 2;
     };
 
     Link.prototype.visualUpdate = function() {
@@ -1264,21 +1245,19 @@ function handler(event) {
       } else {
         roty = Math.atan2(deltaZ * Math.cos(rotz), -deltaX);
       }
-      $('#link' + this.id).css('width', '' + len + 'px');
-      $('#linkLine' + this.id).css('height', '1px');
-      $('#linkLabel' + this.id).css('left', '' + ((len / 2) - this.halfLabelWidth) + 'px');
+      this.jqLabel.css('left', '' + ((len / 2) - this.halfLabelWidth) + 'px');
       tx = cx - (len / 2);
       ty = cy - this.halfHeight;
       tz = cz + g.zOffset;
       transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px)' + ' rotateZ(' + rotz + 'rad)' + ' rotateY(' + roty + 'rad)';
-      $('#link' + this.id).css('-webkit-transform', transformStr);
-      $('#link' + this.id).css('-moz-transform', transformStr);
+      this.jqLabel.css('-webkit-transform', transformStr);
+      this.jqLabel.css('-moz-transform', transformStr);
       z = cz;
       if (z < 0) {
         opacity = -1 / (z * 0.007);
-        return $('#link' + this.id).css('opacity', opacity);
+        return this.jqLabel.css('opacity', opacity);
       } else {
-        return $('#link' + this.id).css('opacity', 0.9);
+        return this.jqLabel.css('opacity', 0.9);
       }
     };
 
@@ -1349,7 +1328,7 @@ function handler(event) {
   layout = function() {
     var N, Nstep, d, e, e0, f, i, k, l, minimalStep, pos, step, tpos, _ref, _ref2, _ref3, _ref4;
     N = g.snodeArray.length;
-    Nstep = 1000;
+    Nstep = 20;
     step = 0.01;
     minimalStep = 1e-10;
     for (i = 0, _ref = N - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
@@ -1491,11 +1470,16 @@ function handler(event) {
     };
 
     Graph.prototype.updateViewLinks = function() {
-      var link, _i, _len, _ref, _results;
+      var link, _i, _j, _len, _len2, _ref, _ref2, _results;
       _ref = this.links;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         link = _ref[_i];
+        link.updatePos();
+      }
+      _ref2 = this.links;
+      _results = [];
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        link = _ref2[_j];
         _results.push(link.visualUpdate());
       }
       return _results;
