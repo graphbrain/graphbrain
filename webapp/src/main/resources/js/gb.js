@@ -1223,8 +1223,16 @@ function handler(event) {
     Link.prototype.place = function() {
       var height, labelWidth, snode;
       $('#nodesDiv').append('<div class="linkLabel" id="linkLabel' + this.id + '"><div class="linkText" id="linkText' + this.id + '">' + this.label + '</div><div class="linkArrow" id="linkArrow' + this.id + '" /></div>');
+      $('#nodesDiv').append('<div class="linkPoint" id="linkPoint1' + this.id + '"></div>');
+      $('#nodesDiv').append('<div class="linkPoint" id="linkPoint2' + this.id + '"></div>');
+      $('#nodesDiv').append('<div class="linkPoint" id="linkPoint3' + this.id + '"></div>');
+      $('#nodesDiv').append('<div class="linkPoint" id="linkPoint4' + this.id + '"></div>');
       $('#linkText' + this.id).css('background', this.color);
       $('#linkArrow' + this.id).css('border-left', '11px solid ' + this.color);
+      $('#linkPoint1' + this.id).css('background', this.color);
+      $('#linkPoint2' + this.id).css('background', this.color);
+      $('#linkPoint3' + this.id).css('background', this.color);
+      $('#linkPoint4' + this.id).css('background', this.color);
       snode = this.starg;
       if (snode === g.root) snode = this.sorig;
       snode.jqDiv.css('border-color', this.color);
@@ -1233,6 +1241,21 @@ function handler(event) {
       this.halfHeight = height / 2;
       labelWidth = this.jqLabel.outerWidth();
       return this.halfLabelWidth = labelWidth / 2;
+    };
+
+    Link.prototype.updatePoint = function(pointId, pos) {
+      var deltaX, deltaY, deltaZ, transformStr, tx, ty, tz;
+      deltaX = this.x1 - this.x0;
+      deltaY = this.y1 - this.y0;
+      deltaZ = this.z1 - this.z0;
+      tx = this.x0 + deltaX * pos;
+      ty = this.y0 + deltaY * pos;
+      tz = this.z0 + deltaZ * pos;
+      tx -= 1.5;
+      ty -= 1.5;
+      transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px)';
+      $(pointId).css('-webkit-transform', transformStr);
+      return $(pointId).css('-moz-transform', transformStr);
     };
 
     Link.prototype.visualUpdate = function() {
@@ -1258,12 +1281,24 @@ function handler(event) {
       transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px)' + ' rotateZ(' + rotz + 'rad)' + ' rotateY(' + roty + 'rad)';
       this.jqLabel.css('-webkit-transform', transformStr);
       this.jqLabel.css('-moz-transform', transformStr);
+      this.updatePoint('#linkPoint1' + this.id, 0.1);
+      this.updatePoint('#linkPoint2' + this.id, 0.2);
+      this.updatePoint('#linkPoint3' + this.id, 0.8);
+      this.updatePoint('#linkPoint4' + this.id, 0.9);
       z = cz;
       if (z < 0) {
         opacity = -1 / (z * 0.007);
-        return this.jqLabel.css('opacity', opacity);
+        this.jqLabel.css('opacity', opacity);
+        $('#linkPoint1' + this.id).css('opacity', opacity);
+        $('#linkPoint2' + this.id).css('opacity', opacity);
+        $('#linkPoint3' + this.id).css('opacity', opacity);
+        return $('#linkPoint4' + this.id).css('opacity', opacity);
       } else {
-        return this.jqLabel.css('opacity', 0.9);
+        this.jqLabel.css('opacity', 0.9);
+        $('#linkPoint1' + this.id).css('opacity', 0.7);
+        $('#linkPoint2' + this.id).css('opacity', 0.7);
+        $('#linkPoint3' + this.id).css('opacity', 0.7);
+        return $('#linkPoint4' + this.id).css('opacity', 0.7);
       }
     };
 

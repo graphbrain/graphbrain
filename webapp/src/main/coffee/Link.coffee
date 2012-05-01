@@ -62,9 +62,17 @@ class Link
 
     place: ->
         $('#nodesDiv').append('<div class="linkLabel" id="linkLabel' + @id + '"><div class="linkText" id="linkText' + @id + '">' + @label + '</div><div class="linkArrow" id="linkArrow' + @id + '" /></div>')
+        $('#nodesDiv').append('<div class="linkPoint" id="linkPoint1' + @id + '"></div>')
+        $('#nodesDiv').append('<div class="linkPoint" id="linkPoint2' + @id + '"></div>')
+        $('#nodesDiv').append('<div class="linkPoint" id="linkPoint3' + @id + '"></div>')
+        $('#nodesDiv').append('<div class="linkPoint" id="linkPoint4' + @id + '"></div>')
 
         $('#linkText' + @id).css('background', @color)
         $('#linkArrow' + @id).css('border-left', '11px solid ' + @color)
+        $('#linkPoint1' + @id).css('background', @color)
+        $('#linkPoint2' + @id).css('background', @color)
+        $('#linkPoint3' + @id).css('background', @color)
+        $('#linkPoint4' + @id).css('background', @color)
         snode = @starg
         if snode == g.root
             snode = @sorig
@@ -76,6 +84,19 @@ class Link
         @halfHeight = height / 2;
         labelWidth = @jqLabel.outerWidth()
         @halfLabelWidth = labelWidth / 2
+
+    updatePoint: (pointId, pos) ->
+        deltaX = @x1 - @x0
+        deltaY = @y1 - @y0
+        deltaZ = @z1 - @z0
+        tx = @x0 + deltaX * pos
+        ty = @y0 + deltaY * pos
+        tz = @z0 + deltaZ * pos
+        tx -= 1.5
+        ty -= 1.5
+        transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px)'
+        $(pointId).css('-webkit-transform', transformStr)
+        $(pointId).css('-moz-transform', transformStr)
 
     visualUpdate: ->
         deltaX = @x1 - @x0
@@ -97,7 +118,7 @@ class Link
 
         @jqLabel.css('left', '' + ((len / 2) - @halfLabelWidth) + 'px')
 
-        # apply translation
+        # apply translation to label
         tx = cx - (len / 2)
         ty = cy - @halfHeight
         tz = cz + g.zOffset
@@ -105,9 +126,23 @@ class Link
         @jqLabel.css('-webkit-transform', transformStr)
         @jqLabel.css('-moz-transform', transformStr)
 
+        # apply translation to points
+        @updatePoint('#linkPoint1' + @id, 0.1)
+        @updatePoint('#linkPoint2' + @id, 0.2)
+        @updatePoint('#linkPoint3' + @id, 0.8)
+        @updatePoint('#linkPoint4' + @id, 0.9)
+
         z = cz
         if z < 0
             opacity = -1 / (z * 0.007)
             @jqLabel.css('opacity', opacity)
+            $('#linkPoint1' + @id).css('opacity', opacity)
+            $('#linkPoint2' + @id).css('opacity', opacity)
+            $('#linkPoint3' + @id).css('opacity', opacity)
+            $('#linkPoint4' + @id).css('opacity', opacity)
         else
             @jqLabel.css('opacity', 0.9)
+            $('#linkPoint1' + @id).css('opacity', 0.7)
+            $('#linkPoint2' + @id).css('opacity', 0.7)
+            $('#linkPoint3' + @id).css('opacity', 0.7)
+            $('#linkPoint4' + @id).css('opacity', 0.7)

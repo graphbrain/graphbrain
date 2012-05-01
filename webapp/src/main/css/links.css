@@ -27,3 +27,11 @@
     float:right;
     left:-1px;
 }
+
+.linkPoint {
+    position:fixed;
+    text-align:center;
+    background:#097ea1;
+    width:3px;
+    height:3px;
+}
