@@ -126,3 +126,26 @@ case class SVGNode(id: String="", svg:String="", edges: Set[String]=Set[String](
   def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
   def setExtra(newExtra: Int) = copy(extra=newExtra)
 }
+
+case class UserNode(id: String="", username: String="", name: String="", email: String="",
+  pwdhash: String="", role: String="", session: String="", creationTs: Long= -1, sessionTs: Long= -1,
+  lastSeen: Long= -1, edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
+  
+  override val vtype: String = "usr"
+
+  override def toMap: Map[String, Any] = toMapBase ++ Map(("username" -> username), ("name" -> name),
+    ("email" -> email), ("pwdhash" -> pwdhash), ("role" -> role), ("session" -> session), ("creationTs" -> creationTs)
+    , ("sessionTs" -> sessionTs), ("lastSeen" -> lastSeen))
+
+  def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
+  def setExtra(newExtra: Int) = copy(extra=newExtra)
+}
+
+case class UserEmailNode(id: String="", username: String="", email: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
+  override val vtype: String = "usre"
+
+  override def toMap: Map[String, Any] = toMapBase ++ Map(("username" -> username), ("email" -> email))
+
+  def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
+  def setExtra(newExtra: Int) = copy(extra=newExtra)
+}
