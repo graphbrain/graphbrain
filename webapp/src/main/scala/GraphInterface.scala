@@ -12,8 +12,7 @@ import scala.math
 
 
 class PoorLong (val l:Long) {
-    /** a "mathematical" modulo that always maps to 0...n-1 (for positive n)
-    */
+    /** a "mathematical" modulo that always maps to 0...n-1 (for positive n) */
     def mod(n:Long) = {
         val m = l % n
         if (m<0) m+n else m
@@ -21,12 +20,10 @@ class PoorLong (val l:Long) {
 }
 
 class PoorDouble (val d:Double) {
-    /**the "decimals" of this double
-    */
+    /**the "decimals" of this double */
     def fraction:Double = d - d.floor
 
-    /** a "pseudo-mod", 7.5 mod 5 would map to 2.5, -0.5 mod 5 would map to 4.5
-    */
+    /** a "pseudo-mod", 7.5 mod 5 would map to 2.5, -0.5 mod 5 would map to 4.5 */
     def mod(n:Long) = new PoorLong(d.floor.longValue).mod(n).toDouble + fraction
 }
 

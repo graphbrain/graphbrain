@@ -49,6 +49,23 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         val svg = map.getOrElse("svg", "").toString
         SVGNode(id, svg, edges, extra)
       }
+      case "usr" => {
+        val username = map.getOrElse("username", "").toString
+        val name = map.getOrElse("name", "").toString
+        val email = map.getOrElse("email", "").toString
+        val pwdhash = map.getOrElse("pwdhash", "").toString
+        val role = map.getOrElse("role", "").toString
+        val session = map.getOrElse("session", "").toString
+        val creationTs = map.getOrElse("creationTs", "").toString.toLong
+        val sessionTs = map.getOrElse("sessionTs", "").toString.toLong
+        val lastSeen = map.getOrElse("lastSeen", "").toString.toLong
+        UserNode(id, username, name, email, pwdhash, role, session, creationTs, sessionTs, lastSeen, edges, extra)
+      }
+      case "usre" => {
+        val username = map.getOrElse("username", "").toString
+        val email = map.getOrElse("email", "").toString
+        UserEmailNode(id, username, email, edges, extra)
+      }
       case _  => throw WrongVertexType("unkown vtype: " + vtype)
     }
   }

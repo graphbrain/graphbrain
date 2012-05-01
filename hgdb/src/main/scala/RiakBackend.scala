@@ -27,12 +27,6 @@ class RiakBackend(val bucketName: String, ip: String="127.0.0.1", port: Int=8098
 
   /** Updates a document identified by it's id with the information contained in the Map[String, Any] */
   def update(id: String, doc: Map[String, Any]) = {
-    try {
-      remove(id)
-    }
-    catch {
-      case _ =>
-    }
     put(id, doc)
   }
 

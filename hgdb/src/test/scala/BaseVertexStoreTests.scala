@@ -5,6 +5,8 @@ import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.ImageNode
 import com.graphbrain.hgdb.SourceNode
+import com.graphbrain.hgdb.UserNode
+import com.graphbrain.hgdb.UserEmailNode
 
 trait BaseVertexStoreTests { this: FunSuite =>
 
@@ -61,6 +63,18 @@ trait BaseVertexStoreTests { this: FunSuite =>
     }
   }
 
+  test("get UserNode that does not exist [" + label + "]") {
+    intercept[KeyNotFound] {
+      store.getUserNode("sdfh89g89gdf")
+    }
+  }
+
+  test("get UserEmailNode that does not exist [" + label + "]") {
+    intercept[KeyNotFound] {
+      store.getUserEmailNode("sdfh89g89gdf")
+    }
+  }
+
   test("getTextNode [" + label + "]") {
     val inVertex = TextNode("textnode/0", "testing TextNode")
     store.remove(inVertex)
@@ -101,6 +115,16 @@ trait BaseVertexStoreTests { this: FunSuite =>
     
     val outVertex = store.getSourceNode("sourcenode/0")
     assert(outVertex.vtype == "src")
+    assert(inVertex.id == outVertex.id)
+  }
+
+  test("getUserNode [" + label + "]") {
+    val inVertex = UserNode("usernode/0")
+    store.remove(inVertex)
+    store.put(inVertex)
+    
+    val outVertex = store.getUserNode("usernode/0")
+    assert(outVertex.vtype == "usr")
     assert(inVertex.id == outVertex.id)
   }
 

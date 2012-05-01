@@ -5,6 +5,8 @@ abstract trait VertexStoreInterface {
   def put(vertex: Vertex): Vertex
   def update(vertex: Vertex): Vertex
   def remove(vertex: Vertex): Vertex
+  def exists(id: String): Boolean
+  def addrel(edgeType: String, participants: Array[String]): Boolean
 
   def getOrNull(id: String): Vertex = {
     try {
@@ -68,6 +70,20 @@ abstract trait VertexStoreInterface {
     get(id) match {
       case x: SVGNode => x
       case v: Vertex => throw WrongVertexType("on vertex: " + id + " (expected 'svg', found : '" + v.vtype + "')")
+    }
+  }
+
+  def getUserNode(id: String): UserNode = {
+    get(id) match {
+      case x: UserNode => x
+      case v: Vertex => throw WrongVertexType("on vertex: " + id + " (expected 'usr', found : '" + v.vtype + "')")
+    }
+  }
+
+  def getUserEmailNode(id: String): UserEmailNode = {
+    get(id) match {
+      case x: UserEmailNode => x
+      case v: Vertex => throw WrongVertexType("on vertex: " + id + " (expected 'usre', found : '" + v.vtype + "')")
     }
   }
 }
