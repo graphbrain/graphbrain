@@ -2,7 +2,7 @@ package com.graphbrain.inference
 
 object RuleParser{
 
-	val RuleRegex=""".+\(.+\):.+\(.+\)>.+\(.+\)""".r
+	val RuleRegex=""".+\(.+\):\s*.+\(.+\)\s*>\s*.+\(.+\)""".r
 	val POSRegex="""POS\(.+\)""".r
 	val StringExpressionRegex="""STRING\(.+\)""".r
 	val REGEXRegex="""REGEX\(.+\)""".r
@@ -17,7 +17,7 @@ object RuleParser{
 	def parseInput(inString:String):Any = {
 
 		if (twoGraphRegex.findAllIn(inString).length==1) {
-			val graphs=inString.drop(1).dropRight.(1).split(",");
+			val graphs=inString.drop(1).dropRight(1).split(",");
 			return (parseInGraph(graphs(0).trim), parseInGraph(graphs(1).trim))
 		}
 		if (graphRegex.findAllIn(inString).length==1) {
@@ -41,6 +41,16 @@ object RuleParser{
 	  if(RuleRegex.findAllIn(expString).length==1) {
 			return parseRule(expString);
 		}
+		else if (COMPOSITERegex.findAllIn(expString).length == 1) {
+			return parseCOMPOSITE(expString);
+		}
+		else if (GRAPH2PAIRRegex.findAllIn(expString).length==1) {
+			return parseGRAPH2PAIR(expString);
+		}
+
+		else if (GRAPH2Regex.findAllIn(expString).length==1){
+			return parseGRAPH2(expString);
+		}
 		else if(POSRegex.findAllIn(expString).length==1){
 			return parsePOS(expString);
 		}
@@ -52,15 +62,6 @@ object RuleParser{
 		}
 		else if (PLACEHOLDERRegex.findAllIn(expString).length==1){
 			return parsePLACEHOLDER(expString);
-		}
-		else if (GRAPH2Regex.findAllIn(expString).length==1){
-			return parseGRAPH2(expString);
-		}
-		else if (COMPOSITERegex.findAllIn(expString).length == 1) {
-			return parseCOMPOSITE(expString);
-		}
-		else if (GRAPH2PAIRRegex.findAllIn(expString).length==1) {
-			return parseGRAPH2PAIR(expString);
 		}
 		else {
 			return StringExpression("FAILED")
@@ -82,7 +83,8 @@ object RuleParser{
 
   def parseREGEX(expString:String):REGEX={
   	
-  	return REGEX(expString.split("REGEX\\(")(1).split("\\)")(0))
+  	return REGEX(expString.split("REGEX")(1).drop(1).dropRight(1))
+
   }
 
   def parsePOS(expString:String):POS={
@@ -126,16 +128,22 @@ object RuleParser{
 	def main(args: Array[String])
   	{
   		//val test="POS(ABC): STRING(Hello)>STRING(GOODBYE)"
-    	println("Rule expressions: " + parse(args(0)))
+  		//val test = parse(args(0));
+  		val test="POS(PRP VBP DT NN): REGEX(.*(is\\sa).*)>GRAPH2(PLACEHOLDER(source), StringExpression(relation), PLACEHOLDER(target))"
+
+    	println("Rule expressions: " + parse(test))
 
     	if(args.length==2)
     	{
     		println("Input: " + args(1))
     		val input = parseInput(args(1))
-    		val rule = parse(args(0)
+    		val rule = parse(test)
     		println("Parsed input: " + input);
     		println("Rule expresssions: " + rule)
-    		println("Output: " + RuleEngine.applyRule(rule, input))
+    		rule match {
+    			case r:RULE => println("Output: " + RuleEngine.applyRule(r, input))
+    		}
+    		
     	}
 
 
