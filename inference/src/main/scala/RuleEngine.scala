@@ -58,9 +58,10 @@ object RuleEngine {
 
   def transform(inExp:Any, outExp:Any, input:Any):Any={
     (inExp, outExp, input) match{
-      case (i:REGEX, o:String, in:String) => return transform(i, o, in)
-      case (i:GRAPH2, o:String, in:String) => return transform(i, o, in)
-      case (i:POS, o:String, in:String) => return transform(i, o, in)
+      case (i:REGEX, o:StringExpression, in:String) => return transform(i, o, in)
+      case (i:REGEX, o:REGEX, in:String) => return transform(i, o, in)
+      case (i:GRAPH2, o:StringExpression, in:String) => return transform(i, o, in)
+      case (i:POS, o:StringExpression, in:String) => return transform(i, o, in)
       case (i:POS, o:GRAPH2, in:String) => return transform(i, o, in)
       case (i:REGEX, o:GRAPH2, in:String) => return transform(i, o, in)
       case (i:GRAPH2, o:GRAPH2, (in1:String, in2:String, in3:String)) => return transform(i, o, (in1, in2, in3))
@@ -182,25 +183,33 @@ object RuleEngine {
 
   
 
-  def transform(inExp:REGEX, outExp:String, input:String):String={
+  def transform(inExp:REGEX, outExp:StringExpression, input:String):String={
     val regex=new Regex(inExp.exp)
-    return regex.replaceAllIn(input, outExp)
+    return regex.replaceAllIn(input, outExp.exp)
 
   }
+
+  def transform(inExp:REGEX, outExp:REGEX, input:String):String={
+    val regex=new Regex(inExp.exp)
+    return regex.replaceAllIn(input, outExp.exp)
+
+  }
+
+
 
 
   /**
   Replaces the word associated with the inExp POS with the string in outExp.
   */
 
-  def transform(inExp:POS, outExp:String, input:String):String={
+  def transform(inExp:POS, outExp:StringExpression, input:String):String={
     val taggedTokens=POSTagger.tagText(input)
     
     var outString=""
     for(tt <- taggedTokens)
     {
       tt match{
-        case (word, tag) if tag==inExp.exp => outString += outExp;
+        case (word, tag) if tag==inExp.exp => outString += outExp.exp;
         case (word, tag) => outString += word;
         
       }
