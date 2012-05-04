@@ -78,11 +78,12 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
     }
     case req@POST(Path("/signup") & Params(params)) => {
       val name = params("name")(0)
+      val username = params("username")(0)
       val email = params("email")(0)
       val password = params("password")(0)
-      println("name: " + name + "; email: " + email + "; password: " + password)
-      log.info(realIp(req) + " SIGNUP")
-      ComingSoon(Server.prod)
+      store.createUser(username, name, email, password, "user")
+      log.info(realIp(req) + " SIGNUP name: " + name + "; username: " + username + "; email:" + email)
+      ResponseString("ok")
     }
     case req@POST(Path("/checkusername") & Params(params)) => {
       val username = params("username")(0)
@@ -90,7 +91,7 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
         ResponseString("exists " + username)
       }
       else {
-        ResponseString("ok " + username) 
+        ResponseString("ok " + username)
       }
     }
     case req@POST(Path("/checkemail") & Params(params)) => {
