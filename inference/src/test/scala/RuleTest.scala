@@ -30,7 +30,7 @@ class RuleTest extends FunSuite {
 	test("text replacement transform"){
 		val condition = REGEX(".*(is\\sa).*")
 		val toReplace = REGEX("is a")
-		val replaceBy = "is an"
+		val replaceBy = REGEX("is an")
 
 
 		val testSentence = "Tom is a apple"

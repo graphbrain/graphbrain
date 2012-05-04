@@ -5,55 +5,78 @@ import org.scalatest.FunSuite
 
 class RuleParserTest extends FunSuite {
 
+
 	val posExpression = POS("PRP VBP DT NN") 
+	val stringExpression = StringExpression("John Smith")
 	val regexExpression = REGEX(".*(is\\sa).*")
+	val placeholderExpression = PLACEHOLDER("A")
 	val graph2Expression = GRAPH2(PLACEHOLDER("source"), StringExpression("relation"), PLACEHOLDER("target"))
 	val test="POS(PRP VBP DT NN): REGEX(.*(is\\sa).*)>GRAPH2(PLACEHOLDER(source), STRING(relation), PLACEHOLDER(target))"
 	val pos_regex_graph2 = RuleParser.parse(test);
 
+
 	
 
-  test("Initialise POS:REGEX->GRAPH2 rule"){		
+  test("Parse POS:REGEX->GRAPH2 rule"){		
 
     pos_regex_graph2 match {
       case prg:RULE => 
         prg.condition match {
-      	  case a:POS => assert(a==posExpression);
+      	  case a:POS => assert(a == posExpression);
         }
         prg.input match {
-          case a:REGEX => assert(a==regexExpression);
+          case a:REGEX => assert(a == regexExpression);
         }
         prg.output match {
-          case a:GRAPH2 => assert(a==graph2Expression);
+          case a:GRAPH2 => assert(a == graph2Expression);
         }
 
     }	
 		
   }
 
-/*	test("checkMatch for different rule expression types"){
+	test("Parse POS, REGEX, GRAPH2"){
 		
-		assert(RuleEngine.checkMatch(posExpression, "I am a person"))
-		assert(RuleEngine.checkMatch(regexExpression, "Tom is a apple"))
-		assert(RuleEngine.checkMatch(graph2Expression, ("any1", "relation", "any2")))
+		val parsedPOS = RuleParser.parse("POS(PRP VBP DT NN)")
+		val parsedRegex = RuleParser.parse("REGEX(.*(is\\sa).*)")
+		val parsedGRAPH2 = RuleParser.parse("GRAPH2(PLACEHOLDER(source), STRING(relation), PLACEHOLDER(target))")
+
+		assert(RuleEngine.checkMatch(parsedPOS, "I am a person"))
+		assert(RuleEngine.checkMatch(parsedRegex, "Tom is a apple"))
+		assert(RuleEngine.checkMatch(parsedGRAPH2, ("any1", "relation", "any2")))
 
 	}
 
-	test("text replacement transform"){
+	test("text replacement rule"){
+		val parsedRule=RuleParser.parse("REGEX(.*(is\\sa).*):STRING(is a)>STRING(is an)")
+
 		val condition = REGEX(".*(is\\sa).*")
-		val toReplace = REGEX("is a")
-		val replaceBy = "is an"
+		val toReplace = StringExpression("is a")
+		val replaceBy = StringExpression("is an")
 
 
 		val testSentence = "Tom is a apple"
 		val expectedOutput="Tom is an apple"
-		assert(RuleEngine.transform(toReplace, replaceBy, testSentence)==expectedOutput)
+
+		parsedRule match {
+
+		  case a:RULE => println(a);
+		  	assert(a.condition==condition)
+		  	assert(a.input==toReplace)
+		  	assert(a.output==replaceBy)
+		  	assert(RuleEngine.checkMatch(a.condition, testSentence))
+
+			println(RuleEngine.applyRule(a, testSentence));
+			//assert(RuleEngine.applyRule(a, testSentence)==expectedOutput)	
+		}
+
+
 
 	}
 
 
 
-	test("graph reciprocate transform") {
+/*	test("graph reciprocate transform") {
 		//"A", "is colleagues with", "B", "B", "is colleagues with", "A"
 		val inGraphExp=GRAPH2(PLACEHOLDER("A"), StringExpression("is colleagues with"), PLACEHOLDER("B"))
 		val outGraphExp=GRAPH2(PLACEHOLDER("B"), StringExpression("is colleagues with"), PLACEHOLDER("A"))
