@@ -75,5 +75,13 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       log.info(realIp(req) + " SEARCH " + query + "; results: " + results.numResults)
       SearchResponse(store, results)
     }
+    case req@POST(Path("/signup") & Params(params)) => {
+      val name = params("name")(0)
+      val email = params("email")(0)
+      val password = params("password")(0)
+      println("name: " + name + "; email: " + email + "; password: " + password)
+      log.info(realIp(req) + " SIGNUP")
+      ComingSoon(Server.prod)
+    }
   }
 }
