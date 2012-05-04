@@ -4,6 +4,7 @@
 
 
 autoUpdateUsername = true
+usernameStatus = 'unknown'
 
 
 initSignUpDialog = () ->
@@ -74,6 +75,7 @@ initLoginDialog = () ->
     $('#loginButton').click(login)
     $('#suName').keyup(updateUsername)
     $('#suUsername').keyup(stopUpdatingUsername)
+    $('#suUsername').blur(checkUsername)
     
 
 showSignUpDialog = () ->
@@ -164,3 +166,26 @@ updateUsername = (msg) ->
   if autoUpdateUsername
     username = $("#suName").val().toLowerCase().replaceAll(" ", "_")
     $("#suUsername").val(username)
+
+checkUsername = ->
+  $.ajax({
+    type: "POST",
+    url: "/checkusername",
+    data: "username=" + $("#suUsername").val(),
+    dataType: "text",
+    success: checkUsernameReply
+  })
+
+checkUsernameReply = (msg) ->
+  response = msg.split(' ')
+  status = response[0]
+  username = response[1]
+  if username == $("#suUsername").val()
+    if status == 'ok'
+      usernameStatus = 'ok'
+      $('#usernameFieldSet').addClass('control-group success')
+      $('#usernameErrMsg').html('Nice, this username is available.')
+    else
+      usernameStatus = 'exists'
+      $('#usernameFieldSet').addClass('control-group error')
+      $('#usernameErrMsg').html('Sorry, this username is already in use.')

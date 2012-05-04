@@ -403,7 +403,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, autoUpdateUsername, clearSignupErrors, dotProduct, dragging, frand, fullBind, g, getCoulombEnergy, getForces, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, sepAxis, sepAxisSide, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopUpdatingUsername, tmpVec, touchEnd, touchMove, touchStart, updateUsername, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, autoUpdateUsername, checkUsername, checkUsernameReply, clearSignupErrors, dotProduct, dragging, frand, fullBind, g, getCoulombEnergy, getForces, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, sepAxis, sepAxisSide, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopUpdatingUsername, tmpVec, touchEnd, touchMove, touchStart, updateUsername, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -1694,6 +1694,8 @@ function handler(event) {
 
   autoUpdateUsername = true;
 
+  usernameStatus = 'unknown';
+
   initSignUpDialog = function() {
     var dialogHtml;
     dialogHtml = $("<div class=\"modal hide\" id=\"signUpModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Sign Up</h3>\n  </div>\n  <form class=\"signupForm\">\n    <div class=\"modal-body\" id=\"registerLoginBody\">\n      <fieldset id=\"nameFieldSet\">\n        <label>Name</label>\n        <input id=\"suName\" type=\"text\" class=\"span3\" placeholder=\"Or an alias if you prefer\">\n        <span id=\"nameErrMsg\" class=\"help-inline\" />\n      </fieldset>\n      <fieldset id=\"usernameFieldSet\">\n        <label>Username</label>\n        <input id=\"suUsername\" type=\"text\" class=\"span3\" placeholder=\"Unique identifier\">\n        <span id=\"usernameErrMsg\" class=\"help-inline\" />\n      </fieldset>\n      <fieldset id=\"emailFieldSet\">\n        <label>Email</label>\n        <input id=\"suEmail\" type=\"text\" class=\"span3\" placeholder=\"Will not be seen by other members\">\n        <span id=\"emailErrMsg\" class=\"help-inline\" />\n        <span class=\"help-block\">We will never give or sell it to third-parties.</span>\n      </fieldset>\n      <fieldset id=\"passFieldSet\">\n        <label>Password</label>\n        <input id=\"suPassword\" type=\"password\" class=\"span3\" placeholder=\"A good password\">\n        <input id=\"suPassword2\" type=\"password\" class=\"span3\" placeholder=\"Confirm password\">\n        <span id=\"passErrMsg\" class=\"help-inline\" />\n      </fieldset>\n    </div>\n    <div class=\"modal-footer\">\n      </form>\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"signupButton\" class=\"btn btn-primary\">Sign Up</a>\n    </div>\n  </form>\n</div>");
@@ -1707,7 +1709,8 @@ function handler(event) {
     dialogHtml.appendTo('body');
     $('#loginButton').click(login);
     $('#suName').keyup(updateUsername);
-    return $('#suUsername').keyup(stopUpdatingUsername);
+    $('#suUsername').keyup(stopUpdatingUsername);
+    return $('#suUsername').blur(checkUsername);
   };
 
   showSignUpDialog = function() {
@@ -1806,6 +1809,34 @@ function handler(event) {
     if (autoUpdateUsername) {
       username = $("#suName").val().toLowerCase().replaceAll(" ", "_");
       return $("#suUsername").val(username);
+    }
+  };
+
+  checkUsername = function() {
+    return $.ajax({
+      type: "POST",
+      url: "/checkusername",
+      data: "username=" + $("#suUsername").val(),
+      dataType: "text",
+      success: checkUsernameReply
+    });
+  };
+
+  checkUsernameReply = function(msg) {
+    var response, status, username;
+    response = msg.split(' ');
+    status = response[0];
+    username = response[1];
+    if (username === $("#suUsername").val()) {
+      if (status === 'ok') {
+        usernameStatus = 'ok';
+        $('#usernameFieldSet').addClass('control-group success');
+        return $('#usernameErrMsg').html('Nice, this username is available.');
+      } else {
+        usernameStatus = 'exists';
+        $('#usernameFieldSet').addClass('control-group error');
+        return $('#usernameErrMsg').html('Sorry, this username is already in use.');
+      }
     }
   };
 

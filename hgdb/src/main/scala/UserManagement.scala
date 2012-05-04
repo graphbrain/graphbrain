@@ -16,6 +16,10 @@ trait UserManagement extends VertexStoreInterface {
   	"email/" + URLEncoder.encode(email, "UTF-8")
   }
 
+  def usernameExists(username: String): Boolean = exists(idFromUsername(username))
+
+  def emailExists(email: String): Boolean = exists(idFromEmail(email))
+
   def findUser(login: String): UserNode = {
   	if (exists(idFromUsername(login))) {
   	  getUserNode(idFromUsername(login))
