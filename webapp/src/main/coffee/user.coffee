@@ -5,6 +5,8 @@
 
 autoUpdateUsername = true
 usernameStatus = 'unknown'
+emailStatus = 'unknown'
+submitting = false
 
 
 initSignUpDialog = () ->
@@ -74,8 +76,11 @@ initLoginDialog = () ->
     dialogHtml.appendTo('body')
     $('#loginButton').click(login)
     $('#suName').keyup(updateUsername)
-    $('#suUsername').keyup(stopUpdatingUsername)
+    $('#suName').blur(checkUsername)
+    $('#suUsername').keyup(usernameChanged)
     $('#suUsername').blur(checkUsername)
+    $('#suEmail').keyup(emailChanged)
+    $('#suEmail').blur(checkEmail)
     
 
 showSignUpDialog = () ->
@@ -134,10 +139,24 @@ signup = ->
     $('#passErrMsg').html('Passwords do not match.')
     return false
 
+  if usernameStatus == 'exists'
+    return false
+  else if usernameStatus == 'unknown'
+    submitting = true
+    checkUsername()
+    return false
+
+  if emailStatus == 'exists'
+    return false
+  else if emailStatus == 'unknown'
+    submitting = true
+    checkEmail()
+    return false
+
   $.ajax({
     type: "POST",
     url: "/signup",
-    data: "name=" + name + "&email=" + email + "&password=" + password,
+    data: "name=" + name + "&username=" + username + "&email=" + email + "&password=" + password,
     dataType: "text",
     success: signupReply
   })
@@ -154,27 +173,33 @@ login = ->
   false
 
 signupReply = (msg) ->
-  console.log('signup reply')
+  $('#signUpModal').modal('hide')
 
 loginReply = (msg) ->
   console.log('login reply')
 
-stopUpdatingUsername = (msg) ->
+usernameChanged = (msg) ->
   autoUpdateUsername = false
+  usernameStatus = 'unknown'
 
 updateUsername = (msg) ->
   if autoUpdateUsername
     username = $("#suName").val().toLowerCase().replaceAll(" ", "_")
     $("#suUsername").val(username)
+    usernameStatus = 'unknown'
+
+emailChanged = (msg) ->
+  emailStatus = 'unknown'
 
 checkUsername = ->
-  $.ajax({
-    type: "POST",
-    url: "/checkusername",
-    data: "username=" + $("#suUsername").val(),
-    dataType: "text",
-    success: checkUsernameReply
-  })
+  if $("#suUsername").val() != ''
+    $.ajax({
+      type: "POST",
+      url: "/checkusername",
+      data: "username=" + $("#suUsername").val(),
+      dataType: "text",
+      success: checkUsernameReply
+    })
 
 checkUsernameReply = (msg) ->
   response = msg.split(' ')
@@ -183,9 +208,43 @@ checkUsernameReply = (msg) ->
   if username == $("#suUsername").val()
     if status == 'ok'
       usernameStatus = 'ok'
+      $('#usernameFieldSet').removeClass('control-group error')
       $('#usernameFieldSet').addClass('control-group success')
       $('#usernameErrMsg').html('Nice, this username is available.')
+      if submitting
+        signup()
     else
       usernameStatus = 'exists'
+      $('#usernameFieldSet').removeClass('control-group success')
       $('#usernameFieldSet').addClass('control-group error')
       $('#usernameErrMsg').html('Sorry, this username is already in use.')
+      submitting = false
+
+checkEmail = ->
+  if $("#suEmail").val() != ''
+    $.ajax({
+      type: "POST",
+      url: "/checkemail",
+      data: "email=" + $("#suEmail").val(),
+      dataType: "text",
+      success: checkEmailReply
+    })
+
+checkEmailReply = (msg) ->
+  response = msg.split(' ')
+  status = response[0]
+  email = response[1]
+  if email == $("#suEmail").val()
+    if status == 'ok'
+      emailStatus = 'ok'
+      $('#emailFieldSet').removeClass('control-group error')
+      $('#emailFieldSet').addClass('control-group success')
+      $('#emailErrMsg').html('')
+      if submitting
+        signup()
+    else
+      emailStatus = 'exists'
+      $('#emailFieldSet').removeClass('control-group success')
+      $('#emailFieldSet').addClass('control-group error')
+      $('#emailErrMsg').html('Sorry, this email is already in use.')
+      submitting = false
