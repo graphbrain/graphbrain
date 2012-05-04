@@ -8,11 +8,12 @@ import com.codahale.logula.Logging
 
 import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.SimpleCaching
+import com.graphbrain.hgdb.UserManagement
 import com.graphbrain.searchengine.RiakSearchInterface
 
 
 object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse with Logging {
-  val store = new VertexStore("gb") with SimpleCaching
+  val store = new VertexStore("gb") with SimpleCaching with UserManagement
 
   val databaseName = System.getProperty("myapp.db.name")
 
@@ -82,6 +83,24 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       println("name: " + name + "; email: " + email + "; password: " + password)
       log.info(realIp(req) + " SIGNUP")
       ComingSoon(Server.prod)
+    }
+    case req@POST(Path("/checkusername") & Params(params)) => {
+      val username = params("username")(0)
+      if (store.usernameExists(username)) {
+        ResponseString("exists " + username)
+      }
+      else {
+        ResponseString("ok " + username) 
+      }
+    }
+    case req@POST(Path("/checkemail") & Params(params)) => {
+      val email = params("email")(0)
+      if (store.emailExists(email)) {
+        ResponseString("exists " + email)
+      }
+      else {
+        ResponseString("ok " + email) 
+      }
     }
   }
 }
