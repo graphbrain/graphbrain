@@ -63,7 +63,13 @@ case class NodePage(store: VertexStore, nodeId: String, prod: Boolean) extends P
                 <input type="text" id="search-input-field" class="search-query" placeholder="Search" />
               </form></li>
             </ul>
-          </div><!--/.nav-collapse -->
+          </div>
+          <div class="pull-right">
+            <ul class="nav">
+              <li><a id="signupLink" href="#">Sign Up</a></li>
+              <li><a id="loginLink" href="#">Login</a></li>
+            </ul>
+          </div>
         </div>
       </div>
 </div>

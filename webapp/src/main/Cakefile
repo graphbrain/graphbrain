@@ -19,6 +19,7 @@ build = (callback) ->
     'coffee/layout.coffee',
     'coffee/Graph.coffee',
     'coffee/search.coffee',
+    'coffee/user.coffee',
     'coffee/main.coffee']
   coffee.stderr.on 'data', (data) ->
     process.stderr.write data.toString()

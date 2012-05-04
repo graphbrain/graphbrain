@@ -403,7 +403,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, dotProduct, dragging, frand, fullBind, g, getCoulombEnergy, getForces, initGraph, initInterface, initSearchDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, sepAxis, sepAxisSide, showSearchDialog, tmpVec, touchEnd, touchMove, touchStart, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, autoUpdateUsername, clearSignupErrors, dotProduct, dragging, frand, fullBind, g, getCoulombEnergy, getForces, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, sepAxis, sepAxisSide, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopUpdatingUsername, tmpVec, touchEnd, touchMove, touchStart, updateUsername, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -867,7 +867,11 @@ function handler(event) {
     document.addEventListener('touchend', touchEnd);
     document.addEventListener('touchmove', touchMove);
     $('#search-field').submit(searchQuery);
-    return initSearchDialog();
+    initSearchDialog();
+    initSignUpDialog();
+    initLoginDialog();
+    $('#signupLink').bind('click', showSignUpDialog);
+    return $('#loginLink').bind('click', showLoginDialog);
   };
 
   nodeCount = 0;
@@ -1682,6 +1686,127 @@ function handler(event) {
       success: resultsReceived
     });
     return false;
+  };
+
+  String.prototype.replaceAll = function(str1, str2, ignore) {
+  return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),(ignore?"gi":"g")),(typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
+};
+
+  autoUpdateUsername = true;
+
+  initSignUpDialog = function() {
+    var dialogHtml;
+    dialogHtml = $("<div class=\"modal hide\" id=\"signUpModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Sign Up</h3>\n  </div>\n  <form class=\"signupForm\">\n    <div class=\"modal-body\" id=\"registerLoginBody\">\n      <fieldset id=\"nameFieldSet\">\n        <label>Name</label>\n        <input id=\"suName\" type=\"text\" class=\"span3\" placeholder=\"Or an alias if you prefer\">\n        <span id=\"nameErrMsg\" class=\"help-inline\" />\n      </fieldset>\n      <fieldset id=\"usernameFieldSet\">\n        <label>Username</label>\n        <input id=\"suUsername\" type=\"text\" class=\"span3\" placeholder=\"Unique identifier\">\n        <span id=\"usernameErrMsg\" class=\"help-inline\" />\n      </fieldset>\n      <fieldset id=\"emailFieldSet\">\n        <label>Email</label>\n        <input id=\"suEmail\" type=\"text\" class=\"span3\" placeholder=\"Will not be seen by other members\">\n        <span id=\"emailErrMsg\" class=\"help-inline\" />\n        <span class=\"help-block\">We will never give or sell it to third-parties.</span>\n      </fieldset>\n      <fieldset id=\"passFieldSet\">\n        <label>Password</label>\n        <input id=\"suPassword\" type=\"password\" class=\"span3\" placeholder=\"A good password\">\n        <input id=\"suPassword2\" type=\"password\" class=\"span3\" placeholder=\"Confirm password\">\n        <span id=\"passErrMsg\" class=\"help-inline\" />\n      </fieldset>\n    </div>\n    <div class=\"modal-footer\">\n      </form>\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"signupButton\" class=\"btn btn-primary\">Sign Up</a>\n    </div>\n  </form>\n</div>");
+    dialogHtml.appendTo('body');
+    return $('#signupButton').click(signup);
+  };
+
+  initLoginDialog = function() {
+    var dialogHtml;
+    dialogHtml = $("<div class=\"modal hide\" id=\"loginModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Login</h3>\n  </div>\n  <form class=\"loginForm\">\n    <div class=\"modal-body\" id=\"registerLoginBody\">\n      <label>Email</label>\n      <input id=\"logEmail\" type=\"text\" class=\"span3\">\n      <label>Password</label>\n      <input id=\"logPassword\" type=\"password\" class=\"span3\">\n    </div>\n    <div class=\"modal-footer\">\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"loginButton\" class=\"btn btn-primary\" data-dismiss=\"modal\">Login</a>\n    </div>\n  </form>\n</div>");
+    dialogHtml.appendTo('body');
+    $('#loginButton').click(login);
+    $('#suName').keyup(updateUsername);
+    return $('#suUsername').keyup(stopUpdatingUsername);
+  };
+
+  showSignUpDialog = function() {
+    return $('#signUpModal').modal('show');
+  };
+
+  showLoginDialog = function() {
+    return $('#loginModal').modal('show');
+  };
+
+  clearSignupErrors = function() {
+    $('#nameFieldSet').removeClass('control-group error');
+    $('#usernameFieldSet').removeClass('control-group error');
+    $('#emailFieldSet').removeClass('control-group error');
+    $('#passFieldSet').removeClass('control-group error');
+    $('#nameErrMsg').html('');
+    $('#usernameErrMsg').html('');
+    $('#emailErrMsg').html('');
+    return $('#passErrMsg').html('');
+  };
+
+  signup = function() {
+    var email, filter, name, password, password2, username;
+    clearSignupErrors();
+    name = $("#suName").val();
+    username = $("#suUsername").val();
+    email = $("#suEmail").val();
+    password = $("#suPassword").val();
+    password2 = $("#suPassword2").val();
+    if (name === '') {
+      $('#nameFieldSet').addClass('control-group error');
+      $('#nameErrMsg').html('Name cannot be empty.');
+      return false;
+    }
+    if (username === '') {
+      $('#usernameFieldSet').addClass('control-group error');
+      $('#usernameErrMsg').html('Username cannot be empty.');
+      return false;
+    }
+    if (email === '') {
+      $('#emailFieldSet').addClass('control-group error');
+      $('#emailErrMsg').html('Email cannot be empty.');
+      return false;
+    }
+    filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    if (!filter.test(email)) {
+      $('#emailFieldSet').addClass('control-group error');
+      $('#emailErrMsg').html('Not a valid email address.');
+      return false;
+    }
+    if (password === '') {
+      $('#passFieldSet').addClass('control-group error');
+      $('#passErrMsg').html('You must specify a password.');
+      return false;
+    }
+    if (password !== password2) {
+      $('#passFieldSet').addClass('control-group error');
+      $('#passErrMsg').html('Passwords do not match.');
+      return false;
+    }
+    $.ajax({
+      type: "POST",
+      url: "/signup",
+      data: "name=" + name + "&email=" + email + "&password=" + password,
+      dataType: "text",
+      success: signupReply
+    });
+    return false;
+  };
+
+  login = function() {
+    $.ajax({
+      type: "POST",
+      url: "/login",
+      data: "email=" + $("#logEmail").val() + "&password=" + $("#logPassword").val(),
+      dataType: "text",
+      success: loginReply
+    });
+    return false;
+  };
+
+  signupReply = function(msg) {
+    return console.log('signup reply');
+  };
+
+  loginReply = function(msg) {
+    return console.log('login reply');
+  };
+
+  stopUpdatingUsername = function(msg) {
+    return autoUpdateUsername = false;
+  };
+
+  updateUsername = function(msg) {
+    var username;
+    if (autoUpdateUsername) {
+      username = $("#suName").val().toLowerCase().replaceAll(" ", "_");
+      return $("#suUsername").val(username);
+    }
   };
 
   g = false;
