@@ -99,3 +99,4 @@ initInterface = ->
     initLoginDialog()
     $('#signupLink').bind 'click', showSignUpDialog
     $('#loginLink').bind 'click', showLoginDialog
+    $('#logoutLink').bind 'click', logout

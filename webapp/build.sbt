@@ -16,7 +16,7 @@ resolvers ++= Seq("Coda Hales Repository" at "http://repo.codahale.com")
 
 libraryDependencies ++= Seq(
   "net.databinder" %% "unfiltered-netty-server" % "0.5.3",
-  "net.databinder" %% "dispatch-nio" % "0.8.5",
+  "net.databinder" %% "dispatch-nio" % "0.8.8",
   "org.clapper" %% "avsl" % "0.3.6",
   "net.databinder" %% "unfiltered-spec" % "0.5.3" % "test",
   "org.scalatest" %% "scalatest" % "1.7.1" % "test",

@@ -2,14 +2,16 @@ package com.graphbrain.webapp
 
 import scala.util.Random
 import com.graphbrain.hgdb.VertexStore
+import com.graphbrain.hgdb.UserNode
 
 
-case class NodePage(store: VertexStore, nodeId: String, prod: Boolean) extends Page {
+case class NodePage(store: VertexStore, nodeId: String, user: UserNode, prod: Boolean) extends Page {
     
     //val version = "040312"
     val version = NodePage.randomVersion
 
     val gi = new GraphInterface(nodeId, store)
+    
     val js = "var nodes = " + gi.nodesJSON + ";\n" +
         "var snodes = " + gi.snodesJSON + ";\n" +
         "var links = " + gi.linksJSON + ";\n" +
@@ -32,6 +34,21 @@ case class NodePage(store: VertexStore, nodeId: String, prod: Boolean) extends P
         """<script src="/js/jquery-ui-1.8.18.custom.min.js" type="text/javascript" ></script>""" +
         """<script src="/js/bootstrap.min.js" type="text/javascript" ></script>""" +
         """<script src="/js/gb.js?""" + version + """" type="text/javascript" ></script>"""
+      }
+    }
+
+    def userStuff = {
+      if (user == null) {
+        """<ul class="nav">""" +
+        """<li><a id="signupLink" href="#">Sign Up</a></li>""" +
+        """<li><a id="loginLink" href="#">Login</a></li>""" +
+        """</ul>"""
+      }
+      else {
+        """<ul class="nav">""" +
+        "<li>" + user.name + "</li>" +
+        """<li><a id="logoutLink" href="#">Logout</a></li>""" +
+        """</ul>"""
       }
     }
 
@@ -65,10 +82,7 @@ case class NodePage(store: VertexStore, nodeId: String, prod: Boolean) extends P
             </ul>
           </div>
           <div class="pull-right">
-            <ul class="nav">
-              <li><a id="signupLink" href="#">Sign Up</a></li>
-              <li><a id="loginLink" href="#">Login</a></li>
-            </ul>
+            {scala.xml.Unparsed(userStuff)}
           </div>
         </div>
       </div>

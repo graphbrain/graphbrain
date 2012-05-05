@@ -6,6 +6,7 @@ exec = require('child_process').exec
 
 build = (callback) ->
   coffee = spawn 'coffee', ['--join', 'resources/js/gb.js', '--compile',
+    'coffee/jquery.cookie.js',
     'coffee/jquery.mousewheel.js',
     'coffee/slimScroll.js',
     'coffee/geom.coffee',

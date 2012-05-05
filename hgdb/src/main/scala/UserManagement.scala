@@ -2,11 +2,18 @@ package com.graphbrain.hgdb
 
 
 import java.net.URLEncoder
+import java.security.SecureRandom
+import java.math.BigInteger
+
 import org.mindrot.BCrypt
 
 
 trait UserManagement extends VertexStoreInterface {
   
+  private val random: SecureRandom = new SecureRandom
+
+  def genSessionId: String = new BigInteger(130, random).toString(32)
+
   def idFromUsername(username: String) = {
   	val usernameNoSpaces = username.replace(' ', '_')
   	"user/" + URLEncoder.encode(usernameNoSpaces, "UTF-8")
@@ -33,7 +40,18 @@ trait UserManagement extends VertexStoreInterface {
     }
   }
 
+  def getUserNodeByUsername(username: String): UserNode = {
+    if (exists(idFromUsername(username))) {
+      getUserNode(idFromUsername(username))
+    }
+    else {
+      null
+    }
+  }
+
   def checkPassword(user: UserNode, candidate: String): Boolean = BCrypt.checkpw(candidate, user.pwdhash)
+
+  def checkSession(user: UserNode, candidate: String): Boolean = user.session == candidate
 
   def createUser(username: String, name: String, email: String, password: String, role: String): UserNode = {
   	val id = idFromUsername(username)
@@ -49,5 +67,25 @@ trait UserManagement extends VertexStoreInterface {
   	}
   	addrel("is", Array(id, "user"))
   	userNode.asInstanceOf[UserNode]
+  }
+
+  def attemptLogin(login: String, password: String): UserNode = {
+    val userNode = findUser(login)
+
+    // user does not exist
+    if (userNode == null) {
+      return null
+    }
+    
+    // password is incorrect
+    if (!checkPassword(userNode, password)) {
+      return null
+    }
+
+    // ok, create new session and return it
+    val session = genSessionId
+    val updatedUser = userNode.copy(session=session)
+    update(updatedUser)
+    updatedUser
   }
 }
