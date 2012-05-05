@@ -61,10 +61,19 @@ initLoginDialog = () ->
   </div>
   <form class="loginForm">
     <div class="modal-body" id="registerLoginBody">
-      <label>Email</label>
-      <input id="logEmail" type="text" class="span3">
-      <label>Password</label>
-      <input id="logPassword" type="password" class="span3">
+      <fieldset id="logEmailFieldSet">
+        <label>Email or Username</label>
+        <input id="logEmail" type="text" class="span3">
+        <span id="logEmailErrMsg" class="help-inline" />
+      </fieldset>
+      <fieldset id="logPassFieldSet">
+        <label>Password</label>
+        <input id="logPassword" type="password" class="span3">
+        <span id="logPassErrMsg" class="help-inline" />
+      </fieldset>
+      <fieldset id="loginMessageFieldSet" class="control-group error">
+        <span id="loginMessage" class="help-inline" />
+      </fieldset>
     </div>
     <div class="modal-footer">
       <a class="btn" data-dismiss="modal">Close</a>
@@ -81,7 +90,6 @@ initLoginDialog = () ->
     $('#suUsername').blur(checkUsername)
     $('#suEmail').keyup(emailChanged)
     $('#suEmail').blur(checkEmail)
-    
 
 showSignUpDialog = () ->
   $('#signUpModal').modal('show')
@@ -98,6 +106,13 @@ clearSignupErrors = ->
   $('#usernameErrMsg').html('')
   $('#emailErrMsg').html('')
   $('#passErrMsg').html('')
+
+clearLoginErrors = ->
+  $('#logEmailFieldSet').removeClass('control-group error')
+  $('#logPassFieldSet').removeClass('control-group error')
+  $('#logEmailErrMsg').html('')
+  $('#logPassErrMsg').html('')
+  $('#loginMessage').html('')
 
 signup = ->
   clearSignupErrors()
@@ -163,10 +178,25 @@ signup = ->
   false
 
 login = ->
+  clearLoginErrors()
+
+  logEmail = $("#logEmail").val()
+  password = $("#logPassword").val()
+
+  if logEmail == ''
+    $('#logEmailFieldSet').addClass('control-group error')
+    $('#logEmailErrMsg').html('Email / Username cannot be empty.')
+    return false
+
+  if password == ''
+    $('#logPassFieldSet').addClass('control-group error')
+    $('#logPassErrMsg').html('Password cannot be empty.')
+    return false
+
   $.ajax({
     type: "POST",
     url: "/login",
-    data: "email=" + $("#logEmail").val() + "&password=" + $("#logPassword").val(),
+    data: "login=" + logEmail + "&password=" + password,
     dataType: "text",
     success: loginReply
   })
@@ -176,7 +206,19 @@ signupReply = (msg) ->
   $('#signUpModal').modal('hide')
 
 loginReply = (msg) ->
-  console.log('login reply')
+  if msg == "failed"
+    $('#loginMessage').html('Wrong username / email or password.')
+  else
+    response = msg.split(' ')
+    $.cookie('username', response[0], { path: '/' })
+    $.cookie('session', response[1], { path: '/' })  
+    #$('#loginModal').modal('hide')
+    location.reload()
+
+logout = ->
+  $.cookie('username', '', { path: '/' })
+  $.cookie('session', '', { path: '/' })
+  location.reload()
 
 usernameChanged = (msg) ->
   autoUpdateUsername = false

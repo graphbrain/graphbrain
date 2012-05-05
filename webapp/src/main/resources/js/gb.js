@@ -1,4 +1,51 @@
 (function() {
+  /*!
+ * jQuery Cookie Plugin
+ * https://github.com/carhartl/jquery-cookie
+ *
+ * Copyright 2011, Klaus Hartl
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://www.opensource.org/licenses/mit-license.php
+ * http://www.opensource.org/licenses/GPL-2.0
+ */
+(function($) {
+    $.cookie = function(key, value, options) {
+
+        // key and at least value given, set cookie...
+        if (arguments.length > 1 && (!/Object/.test(Object.prototype.toString.call(value)) || value === null || value === undefined)) {
+            options = $.extend({}, options);
+
+            if (value === null || value === undefined) {
+                options.expires = -1;
+            }
+
+            if (typeof options.expires === 'number') {
+                var days = options.expires, t = options.expires = new Date();
+                t.setDate(t.getDate() + days);
+            }
+
+            value = String(value);
+
+            return (document.cookie = [
+                encodeURIComponent(key), '=', options.raw ? value : encodeURIComponent(value),
+                options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
+                options.path    ? '; path=' + options.path : '',
+                options.domain  ? '; domain=' + options.domain : '',
+                options.secure  ? '; secure' : ''
+            ].join(''));
+        }
+
+        // key and possibly options given, get cookie...
+        options = value || {};
+        var decode = options.raw ? function(s) { return s; } : decodeURIComponent;
+
+        var pairs = document.cookie.split('; ');
+        for (var i = 0, pair; pair = pairs[i] && pairs[i].split('='); i++) {
+            if (decode(pair[0]) === key) return decode(pair[1] || ''); // IE saves cookies with empty string as "c; ", e.g. without "=" as opposed to EOMB, thus pair[1] may be undefined
+        }
+        return null;
+    };
+})(jQuery);;
   /*! Copyright (c) 2011 Brandon Aaron (http://brandonaaron.net)
  * Licensed under the MIT License (LICENSE.txt).
  *
@@ -403,7 +450,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, sepAxis, sepAxisSide, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, sepAxis, sepAxisSide, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -871,7 +918,8 @@ function handler(event) {
     initSignUpDialog();
     initLoginDialog();
     $('#signupLink').bind('click', showSignUpDialog);
-    return $('#loginLink').bind('click', showLoginDialog);
+    $('#loginLink').bind('click', showLoginDialog);
+    return $('#logoutLink').bind('click', logout);
   };
 
   nodeCount = 0;
@@ -1709,7 +1757,7 @@ function handler(event) {
 
   initLoginDialog = function() {
     var dialogHtml;
-    dialogHtml = $("<div class=\"modal hide\" id=\"loginModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Login</h3>\n  </div>\n  <form class=\"loginForm\">\n    <div class=\"modal-body\" id=\"registerLoginBody\">\n      <label>Email</label>\n      <input id=\"logEmail\" type=\"text\" class=\"span3\">\n      <label>Password</label>\n      <input id=\"logPassword\" type=\"password\" class=\"span3\">\n    </div>\n    <div class=\"modal-footer\">\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"loginButton\" class=\"btn btn-primary\" data-dismiss=\"modal\">Login</a>\n    </div>\n  </form>\n</div>");
+    dialogHtml = $("<div class=\"modal hide\" id=\"loginModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Login</h3>\n  </div>\n  <form class=\"loginForm\">\n    <div class=\"modal-body\" id=\"registerLoginBody\">\n      <fieldset id=\"logEmailFieldSet\">\n        <label>Email or Username</label>\n        <input id=\"logEmail\" type=\"text\" class=\"span3\">\n        <span id=\"logEmailErrMsg\" class=\"help-inline\" />\n      </fieldset>\n      <fieldset id=\"logPassFieldSet\">\n        <label>Password</label>\n        <input id=\"logPassword\" type=\"password\" class=\"span3\">\n        <span id=\"logPassErrMsg\" class=\"help-inline\" />\n      </fieldset>\n      <fieldset id=\"loginMessageFieldSet\" class=\"control-group error\">\n        <span id=\"loginMessage\" class=\"help-inline\" />\n      </fieldset>\n    </div>\n    <div class=\"modal-footer\">\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"loginButton\" class=\"btn btn-primary\" data-dismiss=\"modal\">Login</a>\n    </div>\n  </form>\n</div>");
     dialogHtml.appendTo('body');
     $('#loginButton').click(login);
     $('#suName').keyup(updateUsername);
@@ -1737,6 +1785,14 @@ function handler(event) {
     $('#usernameErrMsg').html('');
     $('#emailErrMsg').html('');
     return $('#passErrMsg').html('');
+  };
+
+  clearLoginErrors = function() {
+    $('#logEmailFieldSet').removeClass('control-group error');
+    $('#logPassFieldSet').removeClass('control-group error');
+    $('#logEmailErrMsg').html('');
+    $('#logPassErrMsg').html('');
+    return $('#loginMessage').html('');
   };
 
   signup = function() {
@@ -1803,10 +1859,24 @@ function handler(event) {
   };
 
   login = function() {
+    var logEmail, password;
+    clearLoginErrors();
+    logEmail = $("#logEmail").val();
+    password = $("#logPassword").val();
+    if (logEmail === '') {
+      $('#logEmailFieldSet').addClass('control-group error');
+      $('#logEmailErrMsg').html('Email / Username cannot be empty.');
+      return false;
+    }
+    if (password === '') {
+      $('#logPassFieldSet').addClass('control-group error');
+      $('#logPassErrMsg').html('Password cannot be empty.');
+      return false;
+    }
     $.ajax({
       type: "POST",
       url: "/login",
-      data: "email=" + $("#logEmail").val() + "&password=" + $("#logPassword").val(),
+      data: "login=" + logEmail + "&password=" + password,
       dataType: "text",
       success: loginReply
     });
@@ -1818,7 +1888,29 @@ function handler(event) {
   };
 
   loginReply = function(msg) {
-    return console.log('login reply');
+    var response;
+    if (msg === "failed") {
+      return $('#loginMessage').html('Wrong username / email or password.');
+    } else {
+      response = msg.split(' ');
+      $.cookie('username', response[0], {
+        path: '/'
+      });
+      $.cookie('session', response[1], {
+        path: '/'
+      });
+      return location.reload();
+    }
+  };
+
+  logout = function() {
+    $.cookie('username', '', {
+      path: '/'
+    });
+    $.cookie('session', '', {
+      path: '/'
+    });
+    return location.reload();
   };
 
   usernameChanged = function(msg) {
