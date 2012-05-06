@@ -47,7 +47,7 @@ class RuleParserTest extends FunSuite {
 
 	}
 
-	test("text replacement rule"){
+	test("Parse text replacement rule"){
 		val parsedRule=RuleParser.parse("REGEX(.*(is\\sa).*):STRING(is a)>STRING(is an)")
 
 		val condition = REGEX(".*(is\\sa).*")
@@ -67,28 +67,34 @@ class RuleParserTest extends FunSuite {
 		  	assert(RuleEngine.checkMatch(a.condition, testSentence))
 
 			println(RuleEngine.applyRule(a, testSentence));
-			//assert(RuleEngine.applyRule(a, testSentence)==expectedOutput)	
+			assert(RuleEngine.transform(a.input, a.output, testSentence)==expectedOutput)
+			assert(RuleEngine.applyRule(a, testSentence)==expectedOutput)	
 		}
 
-
-
 	}
 
 
 
-/*	test("graph reciprocate transform") {
-		//"A", "is colleagues with", "B", "B", "is colleagues with", "A"
-		val inGraphExp=GRAPH2(PLACEHOLDER("A"), StringExpression("is colleagues with"), PLACEHOLDER("B"))
-		val outGraphExp=GRAPH2(PLACEHOLDER("B"), StringExpression("is colleagues with"), PLACEHOLDER("A"))
+  test("Parse graph reciprocate rule") {
+  	val parsedRule=RuleParser.parse("GRAPH2(PLACEHOLDER(A), STRING(is colleagues with), PLACEHOLDER(B)): GRAPH2(PLACEHOLDER(A), STRING(is colleagues with), PLACEHOLDER(B)) > GRAPH2(PLACEHOLDER(B), STRING(is colleagues with), PLACEHOLDER(A))")
+	val inGraphExp=GRAPH2(PLACEHOLDER("A"), StringExpression("is colleagues with"), PLACEHOLDER("B"))
+	val outGraphExp=GRAPH2(PLACEHOLDER("B"), StringExpression("is colleagues with"), PLACEHOLDER("A"))
+	val testInGraph=("John", "is colleagues with", "Mary")
+	val expectedOutGraph=("Mary", "is colleagues with", "John")
 
-		val testInGraph=("John", "is colleagues with", "Mary")
-		val expectedOutGraph=("Mary", "is colleagues with", "John")
 
-		assert(RuleEngine.transform(inGraphExp, outGraphExp, testInGraph)==expectedOutGraph)
-
+	parsedRule match {
+		case a:RULE => println(a)
+		  assert(a.condition == inGraphExp)
+		  assert(a.input == inGraphExp)
+		  assert(a.output == outGraphExp)
+		  assert(RuleEngine.transform(a.input, a.output, testInGraph)==expectedOutGraph)
+		  assert(RuleEngine.applyRule(a, testInGraph)==expectedOutGraph)
 	}
 
-	test("graph reverse and replace transform") {
+  }
+
+	/*test("graph reverse and replace transform") {
 		//"A", "has a", "B", "B", "belongs to", "A"
 		val inGraphExp=GRAPH2(PLACEHOLDER("A"), StringExpression("has a"), PLACEHOLDER("B"))
 		val outGraphExp=GRAPH2(PLACEHOLDER("B"), StringExpression("belongs to"), PLACEHOLDER("A"))
@@ -125,9 +131,12 @@ class RuleParserTest extends FunSuite {
 		assert(RuleEngine.transform(inPOSExp, outGraphExp1, testInString)==expectedOutGraph1)
 		assert(RuleEngine.transform(inPOSExp, outGraphExp2, testInString)==expectedOutGraph2)
 
-	}
+	}*/
 
-	test("Composite rules") {
+  test("Parse Composite rules") {
+
+  	val compRuleExp1 = RuleParser.parse("COMPOSITE(GRAPH2(PLACEHOLDER(A), STRING(is a), PLACEHOLDER(B)) AND GRAPH2(PLACEHOLDER(B), StringExpression(is a), PLACEHOLDER(C))): GRAPH2PAIR(GRAPH2(PLACEHOLDER(A), STRING(is a), PLACEHOLDER(B)), GRAPH2(PLACEHOLDER(B), StringExpression(is a), PLACEHOLDER(C))) > GRAPH2(PLACEHOLDER(A), StringExpression(is a), PLACEHOLDER(C))");
+
 		val condExp1=GRAPH2(PLACEHOLDER("A"), StringExpression("is a"), PLACEHOLDER("B"))
 		val condExp2=GRAPH2(PLACEHOLDER("B"), StringExpression("is a"), PLACEHOLDER("C"))
 		val condExp3=GRAPH2(PLACEHOLDER("C"), StringExpression("is a"), PLACEHOLDER("D"))
@@ -141,13 +150,22 @@ class RuleParserTest extends FunSuite {
 		val testGraph2=("surgeon", "is a", "human")
 		val testGraph3=("John", "is a", "human")
 
+	compRuleExp1 match {
+		case a:RULE => println(a)
+		  //assert(a.condition == compositeExp)
+		  //assert(a.input == graphPair)
+		  assert(a.output == outExp)
+		  //assert(RuleEngine.transform(a.input, a.output, testInGraph)==expectedOutGraph)
+		  //assert(RuleEngine.applyRule(a, testInGraph)==expectedOutGraph)
+	}
+
 		assert(RuleEngine.checkMatch(compositeExp, (testGraph1, testGraph2)))
 		assert(RuleEngine.checkMatch(orderedExp, (testGraph1, testGraph2))==false)
 		assert(RuleEngine.checkMatch(graphPair, (testGraph1, testGraph2)))
 		assert(RuleEngine.transform(graphPair, outExp, (testGraph1, testGraph2))==testGraph3)
 		assert(RuleEngine.applyRule(rule1, (testGraph1, testGraph2))==testGraph3)
 
-	}*/
+	}
 
 
 
