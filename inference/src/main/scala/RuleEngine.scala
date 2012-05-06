@@ -59,6 +59,8 @@ object RuleEngine {
   def transform(inExp:Any, outExp:Any, input:Any):Any={
     (inExp, outExp, input) match{
       case (i:REGEX, o:StringExpression, in:String) => return transform(i, o, in)
+      case (i:StringExpression, o:REGEX, in:String) => return transform(i, o, in)
+      case (i:StringExpression, o:StringExpression, in:String) => return transform(i, o, in)
       case (i:REGEX, o:REGEX, in:String) => return transform(i, o, in)
       case (i:GRAPH2, o:StringExpression, in:String) => return transform(i, o, in)
       case (i:POS, o:StringExpression, in:String) => return transform(i, o, in)
@@ -195,6 +197,17 @@ object RuleEngine {
 
   }
 
+  def transform(inExp:StringExpression, outExp:StringExpression, input:String):String={
+    val regex=new Regex(inExp.exp)
+    return regex.replaceAllIn(input, outExp.exp)
+
+  }
+
+  def transform(inExp:StringExpression, outExp:REGEX, input:String):String={
+    val regex=new Regex(inExp.exp)
+    return regex.replaceAllIn(input, outExp.exp)
+
+  }
 
 
 

@@ -7,11 +7,12 @@ object RuleParser{
 	val StringExpressionRegex="""STRING\(.+\)""".r
 	val REGEXRegex="""REGEX\(.+\)""".r
 	val PLACEHOLDERRegex="""PLACEHOLDER\(.+\)""".r
-	val GRAPH2Regex="""GRAPH2\(.+\)""".r
-	val COMPOSITERegex="""COMPOSITE\(.+\)""".r
-	val GRAPH2PAIRRegex="""GRAPH2PAIR\(.+\)""".r
+	val GRAPH2Regex="""(GRAPH2\((.+\(.+?\))?,\s*(.+\(.+?\))?,\s*(.+\(.+?\))?\)){1,1}""".r
+	val COMPOSITERegex="""COMPOSITE\(\s*.+\s*(AND|OR)\s*.+\s*\)""".r
+	val GRAPH2PAIRRegex="""GRAPH2PAIR\(GRAPH2\(?.+\s*,\s*?.+\s*,\s*?.+\s*\)\s*,\s*GRAPH2\(?.+\s*,\s*?.+\s*,\s*?.+\s*\)\)[^>|:|\s]""".r
 	val graphRegex="""\(?.+\)""".r
 	val twoGraphRegex="""\(.+\),\s*\(.+\)""".r
+	val graph2SepRegex = """.+\(.+\),""".r
 
 
 	def parseInput(inString:String):Any = {
@@ -104,11 +105,24 @@ object RuleParser{
   }
 
   def parseCOMPOSITE(expString: String):COMPOSITE={
-  	val composite = expString.split("COMPOSITE")(1).drop(1).dropRight(1).split(",")
-  	val exp1 = composite(0).trim
-  	val rel = composite(1).trim
-  	val exp2 = composite(2).trim
-  	return COMPOSITE(parse(exp1), rel, parse(exp2))
+  	var composite = expString.split("COMPOSITE")(1).drop(1).dropRight(1).split("OR")
+  	if(composite.length == 2) {
+	  val exp1 = composite(0).trim
+  	  val exp2 = composite(1).trim
+  	  return COMPOSITE(parse(exp1), "OR", parse(exp2))  		
+  	}
+  	composite = expString.split("COMPOSITE")(1).drop(1).dropRight(1).split("AND")
+  	if(composite.length == 2) {
+  		val exp1 = composite(0).trim
+  		val exp2 = composite(1).trim
+  		return COMPOSITE(parse(exp1), "AND", parse(exp2))
+  	}
+  	else {
+  		return COMPOSITE(StringExpression("FAILED"), "AND", StringExpression("FAILED"))
+  	}
+  
+
+
   }
 
   def parseString(expString:String):StringExpression = {
@@ -116,10 +130,19 @@ object RuleParser{
   }
 
   def parseGRAPH2PAIR(expString: String):GRAPH2PAIR={
-  	val composite = expString.split("GRAPH2PAIR")(1).drop(1).dropRight(1).split(",")
-  	val g1=composite(0).trim
-  	val g2=composite(1).trim
-  	return GRAPH2PAIR(parseGRAPH2(g1), parseGRAPH2(g2))
+	
+  	val pair = expString.replace("GRAPH2PAIR(", "").dropRight(1)
+  	val graph2s = pair.split("GRAPH2");
+  	if(graph2s.length==3){
+  	  val g1 = GRAPH2Regex.findAllIn(graph2s(1)).next
+  	  val g2 = GRAPH2Regex.findAllIn(graph2s(2)).next
+  	  return GRAPH2PAIR(parseGRAPH2(g1), parseGRAPH2(g2))
+  	}
+  	else {
+  		return GRAPH2PAIR(GRAPH2(StringExpression("FAILED"), StringExpression("FAILED"), StringExpression("FAILED")), GRAPH2(StringExpression("FAILED"), StringExpression("FAILED"), StringExpression("FAILED")))
+  	}
+  	
+  	
   }
 
  
