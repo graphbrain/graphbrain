@@ -5,6 +5,7 @@ import com.graphbrain.hgdb.Vertex
 import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.ImageNode
+import com.graphbrain.hgdb.UserNode
 import scala.collection.mutable.{Map => MMap}
 import scala.collection.mutable.{Set => MSet}
 import com.codahale.jerkson.Json._
@@ -128,6 +129,7 @@ class GraphInterface (val rootId: String, val store: VertexStore) {
     node match {
       case tn: TextNode => Map(("type" -> "text"), ("text" -> tn.text), ("parent" -> parentId))
       case in: ImageNode => Map(("type" -> "image"), ("text" -> in.url), ("parent" -> parentId))
+      case un: UserNode => Map(("type" -> "text"), ("text" -> un.name), ("parent" -> parentId))
       case _ => Map(("type" -> "text"), ("text" -> node.id), ("parent" -> parentId))
     }
   }
