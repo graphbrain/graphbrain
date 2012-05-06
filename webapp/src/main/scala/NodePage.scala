@@ -39,16 +39,29 @@ case class NodePage(store: VertexStore, nodeId: String, user: UserNode, prod: Bo
 
     def userStuff = {
       if (user == null) {
-        """<ul class="nav">""" +
-        """<li><a id="signupLink" href="#">Sign Up</a></li>""" +
-        """<li><a id="loginLink" href="#">Login</a></li>""" +
-        """</ul>"""
+        """
+        <div class="pull-right">
+          <ul class="nav">
+            <li><a id="signupLink" href="#">Sign Up</a></li>
+            <li><a id="loginLink" href="#">Login</a></li>
+          </ul>
+        </div>
+        """
       }
       else {
-        """<ul class="nav">""" +
-        "<li>" + user.name + "</li>" +
-        """<li><a id="logoutLink" href="#">Logout</a></li>""" +
-        """</ul>"""
+        """
+        <ul class="nav pull-right">
+            <li><a href="#"><i class="icon-plus icon-white"></i> Add</a></li>
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-white"></i> """ + user.name + """ <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="/node/user/""" + user.username +  """">Home</a></li>
+                <li><a href="#" id="logoutLink">Logout</a></li>
+              </ul>
+            </li>
+          </ul>
+        """
       }
     }
 
@@ -81,9 +94,7 @@ case class NodePage(store: VertexStore, nodeId: String, user: UserNode, prod: Bo
               </form></li>
             </ul>
           </div>
-          <div class="pull-right">
-            {scala.xml.Unparsed(userStuff)}
-          </div>
+          {scala.xml.Unparsed(userStuff)}
         </div>
       </div>
 </div>
