@@ -51,7 +51,7 @@ case class NodePage(store: VertexStore, nodeId: String, user: UserNode, prod: Bo
       else {
         """
         <ul class="nav pull-right">
-            <li><a href="#"><i class="icon-plus icon-white"></i> Add</a></li>
+            <li><a href="#" id="addLink"><i class="icon-plus icon-white"></i> Add</a></li>
             <li class="divider-vertical"></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-white"></i> """ + user.name + """ <b class="caret"></b></a>

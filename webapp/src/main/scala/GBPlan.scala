@@ -5,6 +5,8 @@ import unfiltered.response._
 import unfiltered.netty._
 import unfiltered.Cookie
 
+import com.codahale.jerkson.Json._
+
 import com.codahale.logula.Logging
 
 import com.graphbrain.searchengine.RiakSearchInterface
@@ -35,7 +37,12 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       if (results.numResults == 0)
         results = si.query(query + "*")
       log.info(Server.realIp(req) + " SEARCH " + query + "; results: " + results.numResults)
-      SearchResponse(Server.store, results)
+      
+      val resultsMap: Map[String, String] = (for (id <- results.ids)
+        yield (id -> Server.store.get(id).toString)).toMap
+      
+      val json = Map(("count" -> results.numResults), ("results" -> resultsMap))
+      ResponseString(generate(json))
     }
     case req@POST(Path("/signup") & Params(params)) => {
       val name = params("name")(0)
