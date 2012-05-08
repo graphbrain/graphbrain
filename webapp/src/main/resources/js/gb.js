@@ -450,7 +450,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, sepAxis, sepAxisSide, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SentenceParser, SphericalCoords, add, addReply, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, initAddDialog, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, sentenceParser, sepAxis, sepAxisSide, showAddDialog, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, trim, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -917,9 +917,11 @@ function handler(event) {
     initSearchDialog();
     initSignUpDialog();
     initLoginDialog();
+    initAddDialog();
     $('#signupLink').bind('click', showSignUpDialog);
     $('#loginLink').bind('click', showLoginDialog);
-    return $('#logoutLink').bind('click', logout);
+    $('#logoutLink').bind('click', logout);
+    return $('#addLink').bind('click', showAddDialog);
   };
 
   nodeCount = 0;
@@ -1721,7 +1723,25 @@ function handler(event) {
   };
 
   resultsReceived = function(msg) {
-    $('#searchResultsBody').html(msg);
+    var html, json, key, numResults, results;
+    json = JSON.parse(msg);
+    html = '<div>';
+    numResults = json['count'];
+    results = json['results'];
+    if (numResults === '0') {
+      html += '<p>Sorry, no results found.</p>';
+    } else {
+      html += '<p>' + numResults + ' results found.</p>';
+      for (key in results) {
+        if (results.hasOwnProperty(key)) {
+          if (results[key] !== '') {
+            html += '<p><a href="/node/' + key + '">' + results[key] + '</a></p>';
+          }
+        }
+      }
+    }
+    html += '</div>';
+    $('#searchResultsBody').html(html);
     return showSearchDialog(msg);
   };
 
@@ -1997,6 +2017,51 @@ function handler(event) {
         return submitting = false;
       }
     }
+  };
+
+  trim = function(str) {
+    return str.replace(/^\s+/g, '').replace(/\s+$/g, '');
+  };
+
+  SentenceParser = (function() {
+
+    function SentenceParser() {}
+
+    SentenceParser.prototype.setSentence = function(sentence) {
+      this.parts = sentence.split(":");
+      this.orig = trim(this.parts[0]);
+      this.rel = trim(this.parts[1]);
+      return this.targ = trim(this.parts[2]);
+    };
+
+    SentenceParser.prototype.print = function() {
+      return console.log(this.orig + " [" + this.rel + "]-> " + this.targ);
+    };
+
+    return SentenceParser;
+
+  })();
+
+  sentenceParser = new SentenceParser();
+
+  initAddDialog = function() {
+    var dialogHtml;
+    dialogHtml = $("<div class=\"modal hide\" id=\"addModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Add Connection</h3>\n  </div>\n  <form class=\"signupForm\">\n    <div class=\"modal-body\" id=\"registerLoginBody\">\n        <input id=\"addInput\" type=\"text\" value=\"Aristotle \" style=\"width:90%\">\n        <span id=\"nameErrMsg\" class=\"help-inline\" />\n    </div>\n    <div class=\"modal-footer\">\n      </form>\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"addButton\" class=\"btn btn-primary\">Add</a>\n    </div>\n  </form>\n</div>");
+    dialogHtml.appendTo('body');
+    return $('#addButton').click(add);
+  };
+
+  showAddDialog = function() {
+    return $('#addModal').modal('show');
+  };
+
+  add = function() {
+    sentenceParser.setSentence($('#addInput').val());
+    return sentenceParser.print();
+  };
+
+  addReply = function(msg) {
+    return $('#signUpModal').modal('hide');
   };
 
   g = false;

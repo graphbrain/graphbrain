@@ -18,7 +18,19 @@ showSearchDialog = (msg) ->
   $('#searchResultsModal').modal('show')
 
 resultsReceived = (msg) ->
-  $('#searchResultsBody').html(msg)
+  json = JSON.parse(msg);
+  html = '<div>'
+  numResults = json['count']
+  results = json['results']
+  if numResults == '0'
+    html += '<p>Sorry, no results found.</p>'
+  else
+    html += '<p>' + numResults + ' results found.</p>'
+    for key of results when results.hasOwnProperty(key)
+      if results[key] != ''
+        html += '<p><a href="/node/' + key + '">' + results[key] + '</a></p>'
+  html += '</div>'
+  $('#searchResultsBody').html(html)
   showSearchDialog(msg)
 
 searchQuery = ->

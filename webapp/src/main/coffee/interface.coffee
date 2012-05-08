@@ -97,6 +97,8 @@ initInterface = ->
     initSearchDialog()
     initSignUpDialog()
     initLoginDialog()
+    initAddDialog()
     $('#signupLink').bind 'click', showSignUpDialog
     $('#loginLink').bind 'click', showLoginDialog
     $('#logoutLink').bind 'click', logout
+    $('#addLink').bind 'click', showAddDialog
