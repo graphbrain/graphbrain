@@ -66,7 +66,6 @@ class RuleParserTest extends FunSuite {
 		  	assert(a.output==replaceBy)
 		  	assert(RuleEngine.checkMatch(a.condition, testSentence))
 
-			println(RuleEngine.applyRule(a, testSentence));
 			assert(RuleEngine.transform(a.input, a.output, testSentence)==expectedOutput)
 			assert(RuleEngine.applyRule(a, testSentence)==expectedOutput)	
 		}
@@ -135,7 +134,8 @@ class RuleParserTest extends FunSuite {
 
   test("Parse Composite rules") {
 
-  	val compRuleExp1 = RuleParser.parse("COMPOSITE(GRAPH2(PLACEHOLDER(A), STRING(is a), PLACEHOLDER(B)) AND GRAPH2(PLACEHOLDER(B), StringExpression(is a), PLACEHOLDER(C))): GRAPH2PAIR(GRAPH2(PLACEHOLDER(A), STRING(is a), PLACEHOLDER(B)), GRAPH2(PLACEHOLDER(B), StringExpression(is a), PLACEHOLDER(C))) > GRAPH2(PLACEHOLDER(A), StringExpression(is a), PLACEHOLDER(C))");
+  	val compRuleExp1 = RuleParser.parse("COMPOSITE(GRAPH2(PLACEHOLDER(A), STRING(is a), PLACEHOLDER(B)) AND GRAPH2(PLACEHOLDER(B), STRING(is a), PLACEHOLDER(C))): GRAPH2PAIR(GRAPH2(PLACEHOLDER(A), STRING(is a), PLACEHOLDER(B)), GRAPH2(PLACEHOLDER(B), STRING(is a), PLACEHOLDER(C))) > GRAPH2(PLACEHOLDER(A), STRING(is a), PLACEHOLDER(C))");
+  	println("Exp: " + compRuleExp1)
 
 		val condExp1=GRAPH2(PLACEHOLDER("A"), StringExpression("is a"), PLACEHOLDER("B"))
 		val condExp2=GRAPH2(PLACEHOLDER("B"), StringExpression("is a"), PLACEHOLDER("C"))
