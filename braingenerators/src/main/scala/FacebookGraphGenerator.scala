@@ -1,3 +1,5 @@
+package com.graphbrain.braingenerators
+
 import scala.util.parsing.json._
 import java.net.URL
 import scala.io.Source
@@ -20,7 +22,6 @@ object FacebookGraphGenerator {
     //Get map of details from JSON
     val jsonProfile:Option[Any] = JSON.parseFull(profileDetails)
     val profileMap:Map[String, Any] = jsonProfile.get.asInstanceOf[Map[String, Any]] 
-    println(profileMap.get("name"))
     val name = profileMap.get("name")
     val firstName = profileMap.get("first_name")
     val lastName = profileMap.get("last_name")
@@ -36,6 +37,14 @@ object FacebookGraphGenerator {
     val aboutPageText = profileMap.get("about")
     val checkIns = profileMap.get("checkins")
     val talkingAboutCount = profileMap.get("talking_about_count")
+    val startTime = profileMap.get("start_time")
+    val endTime = profileMap.get("endTime")
+    val location = profileMap.get("location")
+    val privacy = profileMap.get("privacy")
+    val updatedTime = profileMap.get("updatedTime")
+    val owner = profileMap.get("owner")
+    var venue = profileMap.get("venue")
+
 
     name match {
     	case a:Some[Any] => println("name: " + a.get.asInstanceOf[String].toString)
@@ -82,89 +91,71 @@ object FacebookGraphGenerator {
     	case a:Some[Any] => println("talking about count: " + a.get.asInstanceOf[Double].toString)
     	case None =>
     }
+    startTime match {
+        case a:Some[Any] => println("start_time: " + a.get.asInstanceOf[String].toString)
+        case None =>
+    }
+    endTime match {
+        case a:Some[Any] => println("end_time: " + a.get.asInstanceOf[String].toString)
+        case None =>
+    }
+    //TODO: Sort out location since different for events (just one) and pages (with longitude and lattitude)
+    location match {
+        case a:Some[Any] => try {println("location: " + a.get.asInstanceOf[String].toString)} catch {
+            case e => if(venue==None) {venue = location}
+        }
+        case None =>
+    }
+    privacy match {
+        case a:Some[Any] => println("privacy: " + a.get.asInstanceOf[String].toString)
+        case None =>
+    }
+    updatedTime match {
+        case a:Some[Any] => println("updated_time: " + a.get.asInstanceOf[String].toString)
+        case None =>
+    }
 
-
-    /*println("name: " + name)
-    println("first name: " + firstName)
-    println("last name: " + lastName)
-    println("gender: " + gender)
-    println("locale: " + locale)
-	println("username: " + username)
-    println("picture: " + pictureURL)
-    println("link: " + link)
-    println("likes: " + likes)
-    println("category: " + category)
-    println("founded date: " + foundedDate)
-    println("description: " + descriptionText)
-    println("about page: " + aboutPageText)
-    println("check ins: " + checkIns)
-    println("talking about count: " + talkingAboutCount)*/
-
-
-		
-  }
-
-  def generatePageBasic(pageName:String, authCode:String):Unit={
-  	val url = fbGraphBaseURL + pageName + "?access_token=" + authCode
-    val pageDetails = Web.getPage(url);
+    owner match {
+        case a:Some[Any] => val ownerDetails = a.get.asInstanceOf[Map[String, Any]];
+          
+            val ownerName:String = ownerDetails.get("name").get.asInstanceOf[String]
+            println("Owner name: "+ ownerName)
+            val ownerID:String = ownerDetails.get("id").get.asInstanceOf[String] 
+            println("Owner id: " + ownerID)
+            
+          
+        case None =>
+    }
     
-    //Get map of details from JSON
-    val jsonProfile:Option[Any] = JSON.parseFull(pageDetails)
-    val profileMap:Map[String, Any] = jsonProfile.get.asInstanceOf[Map[String, Any]] 
+    venue match {
+        case a:Some[Any] => val venueDetails = a.get.asInstanceOf[Map[String, Any]];
+          try{val street:String = venueDetails.get("street").get.asInstanceOf[String]; 
+          println("Street: " + street)}catch{case e =>}
+          try{val city:String = venueDetails.get("city").get.asInstanceOf[String];
+          println("City: " + city)}catch{case e =>}
+          try{val state:String = venueDetails.get("state").get.asInstanceOf[String]
+          println("State: " + state)}catch{case e =>}
+          try{val country:String = venueDetails.get("country").get.asInstanceOf[String]; 
+          println("Country: " + country)}catch{case e =>}
+          try{val latitude:String = venueDetails.get("latitude").get.asInstanceOf[Double].toString; 
+          println("Latitude: " + latitude)}catch{case e =>}
+          try{val longitude:String = venueDetails.get("longitude").get.asInstanceOf[Double].toString
+          println("Longitude: " + longitude)}catch{case e =>}
+        case None =>
+    }
 
-    val name = profileMap.get("name").get.asInstanceOf[String]
-    val username = profileMap.get("username").get.asInstanceOf[String]
-    val pictureURL = profileMap.get("picture").get.asInstanceOf[String]
-    val link = profileMap.get("link").get.asInstanceOf[String]
-    val likes = profileMap.get("likes").get.asInstanceOf[String]
-    val category = profileMap.get("category").get.asInstanceOf[String]
-    val foundedDate = profileMap.get("founded").get.asInstanceOf[String]
-    val descriptionText = profileMap.get("description").get.asInstanceOf[String]
-    val aboutPageText = profileMap.get("about").get.asInstanceOf[String]
-    val checkIns = profileMap.get("checkins").get.asInstanceOf[String]
-    val talkingAboutCount = profileMap.get("talking_about_count").get.asInstanceOf[String]
-
-    name match {
-    	case a:String => println("name: " + name)
-    }
-    username match {
-    	case a:String => println("username: " + username)
-    }
-    pictureURL match {
-    	case a:String => println("picture: " + pictureURL)	
-    }
-	link match {
-		case a:String => println("link: " + link)
-	}
-    likes match {
-    	case a:String => println("likes: " + likes)
-    }
-    category match {
-    	case a:String => println("category: " + category)
-    }
-    foundedDate match {
-    	case a:String => println("founded date: " + foundedDate)
-    }
-    descriptionText match {
-    	case a:String => println("description: " + descriptionText)
-    }
-    aboutPageText match {
-    	case a:String => println("about page: " + aboutPageText)
-    }
-    checkIns match {
-    	case a:String => println("check ins: " + checkIns)	
-    }
-    talkingAboutCount match {
-    	case a:String => println("talking about count: " + talkingAboutCount)
-    }
 		
   }
 
   
 
   def main(args : Array[String]) : Unit = {
+    //User
   	FacebookGraphGenerator.generateBasic("chihchun.chen", "")
+    //Page
   	FacebookGraphGenerator.generateBasic("cocacola", "")
+    //Event:
+    FacebookGraphGenerator.generateBasic("331218348435", "")
 	
   }
 }
