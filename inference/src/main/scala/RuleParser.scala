@@ -129,19 +129,26 @@ object RuleParser{
   	return StringExpression(expString.split("STRING\\(")(1).split("\\)")(0))
   }
 
+  
   def parseGRAPH2PAIR(expString: String):GRAPH2PAIR={
-	
+	println("expression: " + expString)
   	val pair = expString.replace("GRAPH2PAIR(", "").dropRight(1)
   	val graph2s = pair.split("GRAPH2");
+  	println("Pair: " + pair)
+  	println("All: " + graph2s.length)
   	if(graph2s.length==3){
-  	  val g1 = GRAPH2Regex.findAllIn(graph2s(1)).next
-  	  val g2 = GRAPH2Regex.findAllIn(graph2s(2)).next
+
+  	  val g1 = GRAPH2Regex.findAllIn("GRAPH2"+graph2s(1)).next
+  	  val g2 = GRAPH2Regex.findAllIn("GRAPH2"+graph2s(2)).next
+  	  println("First: " + g1)
+  	  println("Second: " + g2)
+  	
   	  return GRAPH2PAIR(parseGRAPH2(g1), parseGRAPH2(g2))
   	}
   	else {
   		return GRAPH2PAIR(GRAPH2(StringExpression("FAILED"), StringExpression("FAILED"), StringExpression("FAILED")), GRAPH2(StringExpression("FAILED"), StringExpression("FAILED"), StringExpression("FAILED")))
   	}
-  	
+  	//return GRAPH2PAIR(GRAPH2(StringExpression("FAILED"), StringExpression("FAILED"), StringExpression("FAILED")), GRAPH2(StringExpression("FAILED"), StringExpression("FAILED"), StringExpression("FAILED")))
   	
   }
 
@@ -152,9 +159,9 @@ object RuleParser{
   	{
   		//val test="POS(ABC): STRING(Hello)>STRING(GOODBYE)"
   		//val test = parse(args(0));
-  		val test="POS(PRP VBP DT NN): REGEX(.*(is\\sa).*)>GRAPH2(PLACEHOLDER(source), StringExpression(relation), PLACEHOLDER(target))"
-
-    	println("Rule expressions: " + parse(test))
+  		//val test="POS(PRP VBP DT NN): REGEX(.*(is\\sa).*)>GRAPH2(PLACEHOLDER(source), StringExpression(relation), PLACEHOLDER(target))"
+  		val test="GRAPH2(PLACEHOLDER(A), STRING(is colleagues with), PLACEHOLDER(B)): GRAPH2(PLACEHOLDER(A), STRING(is colleagues with), PLACEHOLDER(B)) > GRAPH2(PLACEHOLDER(B), STRING(is colleagues with), PLACEHOLDER(A))"
+    	println("Rule expressions: " + RuleParser.parse(test))
 
     	if(args.length==2)
     	{

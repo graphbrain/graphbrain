@@ -1,3 +1,5 @@
+package com.graphbrain.braingenerators
+
 import scala.util.parsing.json._
 import java.net.URL
 import scala.io.Source
