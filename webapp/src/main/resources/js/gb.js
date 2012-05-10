@@ -450,7 +450,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SentenceParser, SphericalCoords, add, addReply, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, initAddDialog, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, sentenceParser, sepAxis, sepAxisSide, showAddDialog, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, trim, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SentenceParser, SphericalCoords, add, addReply, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, initAddDialog, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sentenceParser, sepAxis, sepAxisSide, showAddDialog, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, trim, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -1745,14 +1745,18 @@ function handler(event) {
     return showSearchDialog(msg);
   };
 
-  searchQuery = function() {
-    $.ajax({
+  searchRequest = function(query, callback) {
+    return $.ajax({
       type: "POST",
       url: "/search",
-      data: "q=" + $("#search-input-field").val().toLowerCase(),
+      data: "q=" + query.toLowerCase(),
       dataType: "text",
-      success: resultsReceived
+      success: callback
     });
+  };
+
+  searchQuery = function() {
+    searchRequest($("#search-input-field").val(), resultsReceived);
     return false;
   };
 
@@ -2025,24 +2029,130 @@ function handler(event) {
 
   SentenceParser = (function() {
 
-    function SentenceParser() {}
+    function SentenceParser(root) {
+      this.root = root;
+    }
+
+    SentenceParser.prototype.parseQuotes = function() {
+      var acc, c, inQuote, quotes, _i, _len, _ref;
+      inQuote = false;
+      quotes = false;
+      acc = '';
+      _ref = this.parseTree.text;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        c = _ref[_i];
+        if (c === '"') {
+          if (inQuote) {
+            this.parseTree.sub.push({
+              'text': trim(acc),
+              'sub': [],
+              'final': true
+            });
+            acc = '';
+            quotes = true;
+            inQuote = false;
+          } else {
+            if (acc !== '') {
+              this.parseTree.sub.push({
+                'text': trim(acc),
+                'sub': [],
+                'final': false
+              });
+              acc = '';
+            }
+            inQuote = true;
+          }
+        } else {
+          acc += c;
+        }
+      }
+      if (quotes && acc !== '') {
+        return this.parseTree.sub.push({
+          'text': trim(acc),
+          'sub': [],
+          'final': false
+        });
+      }
+    };
+
+    SentenceParser.prototype.parseRoot = function() {
+      var curTree, subStr;
+      curTree = this.parseTree;
+      while (curTree.sub.length > 0) {
+        curTree = curTree.sub[0];
+      }
+      if (curTree.text.indexOf(this.root) === 0) {
+        curTree.sub.push({
+          'text': this.root,
+          'sub': [],
+          'final': true
+        });
+        subStr = curTree.text.substring(this.root.length);
+        if (subStr !== '') {
+          curTree.sub.push({
+            'text': trim(subStr),
+            'sub': [],
+            'final': false
+          });
+        }
+      }
+      curTree = this.parseTree;
+      while (curTree.sub.length > 0) {
+        curTree = curTree.sub[curTree.sub.length - 1];
+      }
+      if (('' + curTree.text.match(this.root + "$")) === this.root) {
+        subStr = curTree.text.substring(0, curTree.text.length - this.root.length);
+        if (subStr !== '') {
+          curTree.sub.push({
+            'text': trim(subStr),
+            'sub': [],
+            'final': false
+          });
+        }
+        return curTree.sub.push({
+          'text': this.root,
+          'sub': [],
+          'final': true
+        });
+      }
+    };
 
     SentenceParser.prototype.setSentence = function(sentence) {
-      this.parts = sentence.split(":");
-      this.orig = trim(this.parts[0]);
-      this.rel = trim(this.parts[1]);
-      return this.targ = trim(this.parts[2]);
+      this.parseTree = {
+        'text': trim(sentence),
+        'sub': []
+      };
+      this.parseQuotes();
+      return this.parseRoot();
+    };
+
+    SentenceParser.prototype.treeToStr = function(tree, depth) {
+      var prev, str, sub, _i, _len, _ref;
+      if (tree.sub.length === 0) {
+        return tree.text;
+      } else {
+        str = '';
+        prev = false;
+        _ref = tree.sub;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          sub = _ref[_i];
+          if (prev) str += ',';
+          prev = true;
+          str += this.treeToStr(sub, depth + 1);
+        }
+        return str;
+      }
     };
 
     SentenceParser.prototype.print = function() {
-      return console.log(this.orig + " [" + this.rel + "]-> " + this.targ);
+      return console.log(this.treeToStr(this.parseTree, 0));
     };
 
     return SentenceParser;
 
   })();
 
-  sentenceParser = new SentenceParser();
+  sentenceParser = new SentenceParser('Aristotle');
 
   initAddDialog = function() {
     var dialogHtml;

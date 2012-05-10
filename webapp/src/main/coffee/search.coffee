@@ -18,7 +18,7 @@ showSearchDialog = (msg) ->
   $('#searchResultsModal').modal('show')
 
 resultsReceived = (msg) ->
-  json = JSON.parse(msg);
+  json = JSON.parse(msg)
   html = '<div>'
   numResults = json['count']
   results = json['results']
@@ -33,12 +33,15 @@ resultsReceived = (msg) ->
   $('#searchResultsBody').html(html)
   showSearchDialog(msg)
 
-searchQuery = ->
+searchRequest = (query, callback) ->
   $.ajax({
     type: "POST",
     url: "/search",
-    data: "q=" + $("#search-input-field").val().toLowerCase(),
+    data: "q=" + query.toLowerCase(),
     dataType: "text",
-    success: resultsReceived
+    success: callback
   })
+
+searchQuery = ->
+  searchRequest($("#search-input-field").val(), resultsReceived)
   false
