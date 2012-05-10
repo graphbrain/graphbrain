@@ -23,7 +23,7 @@ class RiakSearchInterface(val index: String,
   }
 
   def query(text: String): SearchResults = {
-    val req = :/(host, port) / "solr" / index / "select" <<? Map(("q" -> text))
+    val req = :/(host, port) / "solr" / index / "select" <<? Map(("q" -> text), ("rows" -> "100"))
     val response = CustomHttp(req as_str)
 
     val ns = XML.loadString(response)

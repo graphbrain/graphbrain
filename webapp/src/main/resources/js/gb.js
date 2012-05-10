@@ -450,7 +450,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SentenceParser, SphericalCoords, add, addReply, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, initAddDialog, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sentenceParser, sepAxis, sepAxisSide, showAddDialog, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, trim, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, add, addReply, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, initAddDialog, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, showAddDialog, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -1723,7 +1723,7 @@ function handler(event) {
   };
 
   resultsReceived = function(msg) {
-    var html, json, key, numResults, results;
+    var html, json, numResults, r, results, _i, _len;
     json = JSON.parse(msg);
     html = '<div>';
     numResults = json['count'];
@@ -1732,12 +1732,9 @@ function handler(event) {
       html += '<p>Sorry, no results found.</p>';
     } else {
       html += '<p>' + numResults + ' results found.</p>';
-      for (key in results) {
-        if (results.hasOwnProperty(key)) {
-          if (results[key] !== '') {
-            html += '<p><a href="/node/' + key + '">' + results[key] + '</a></p>';
-          }
-        }
+      for (_i = 0, _len = results.length; _i < _len; _i++) {
+        r = results[_i];
+        html += '<p><a href="/node/' + r[0] + '">' + r[1] + '</a></p>';
       }
     }
     html += '</div>';
@@ -2023,137 +2020,6 @@ function handler(event) {
     }
   };
 
-  trim = function(str) {
-    return str.replace(/^\s+/g, '').replace(/\s+$/g, '');
-  };
-
-  SentenceParser = (function() {
-
-    function SentenceParser(root) {
-      this.root = root;
-    }
-
-    SentenceParser.prototype.parseQuotes = function() {
-      var acc, c, inQuote, quotes, _i, _len, _ref;
-      inQuote = false;
-      quotes = false;
-      acc = '';
-      _ref = this.parseTree.text;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        c = _ref[_i];
-        if (c === '"') {
-          if (inQuote) {
-            this.parseTree.sub.push({
-              'text': trim(acc),
-              'sub': [],
-              'final': true
-            });
-            acc = '';
-            quotes = true;
-            inQuote = false;
-          } else {
-            if (acc !== '') {
-              this.parseTree.sub.push({
-                'text': trim(acc),
-                'sub': [],
-                'final': false
-              });
-              acc = '';
-            }
-            inQuote = true;
-          }
-        } else {
-          acc += c;
-        }
-      }
-      if (quotes && acc !== '') {
-        return this.parseTree.sub.push({
-          'text': trim(acc),
-          'sub': [],
-          'final': false
-        });
-      }
-    };
-
-    SentenceParser.prototype.parseRoot = function() {
-      var curTree, subStr;
-      curTree = this.parseTree;
-      while (curTree.sub.length > 0) {
-        curTree = curTree.sub[0];
-      }
-      if (curTree.text.indexOf(this.root) === 0) {
-        curTree.sub.push({
-          'text': this.root,
-          'sub': [],
-          'final': true
-        });
-        subStr = curTree.text.substring(this.root.length);
-        if (subStr !== '') {
-          curTree.sub.push({
-            'text': trim(subStr),
-            'sub': [],
-            'final': false
-          });
-        }
-      }
-      curTree = this.parseTree;
-      while (curTree.sub.length > 0) {
-        curTree = curTree.sub[curTree.sub.length - 1];
-      }
-      if (('' + curTree.text.match(this.root + "$")) === this.root) {
-        subStr = curTree.text.substring(0, curTree.text.length - this.root.length);
-        if (subStr !== '') {
-          curTree.sub.push({
-            'text': trim(subStr),
-            'sub': [],
-            'final': false
-          });
-        }
-        return curTree.sub.push({
-          'text': this.root,
-          'sub': [],
-          'final': true
-        });
-      }
-    };
-
-    SentenceParser.prototype.setSentence = function(sentence) {
-      this.parseTree = {
-        'text': trim(sentence),
-        'sub': []
-      };
-      this.parseQuotes();
-      return this.parseRoot();
-    };
-
-    SentenceParser.prototype.treeToStr = function(tree, depth) {
-      var prev, str, sub, _i, _len, _ref;
-      if (tree.sub.length === 0) {
-        return tree.text;
-      } else {
-        str = '';
-        prev = false;
-        _ref = tree.sub;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          sub = _ref[_i];
-          if (prev) str += ',';
-          prev = true;
-          str += this.treeToStr(sub, depth + 1);
-        }
-        return str;
-      }
-    };
-
-    SentenceParser.prototype.print = function() {
-      return console.log(this.treeToStr(this.parseTree, 0));
-    };
-
-    return SentenceParser;
-
-  })();
-
-  sentenceParser = new SentenceParser('Aristotle');
-
   initAddDialog = function() {
     var dialogHtml;
     dialogHtml = $("<div class=\"modal hide\" id=\"addModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Add Connection</h3>\n  </div>\n  <form class=\"signupForm\">\n    <div class=\"modal-body\" id=\"registerLoginBody\">\n        <input id=\"addInput\" type=\"text\" value=\"Aristotle \" style=\"width:90%\">\n        <span id=\"nameErrMsg\" class=\"help-inline\" />\n    </div>\n    <div class=\"modal-footer\">\n      </form>\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"addButton\" class=\"btn btn-primary\">Add</a>\n    </div>\n  </form>\n</div>");
@@ -2165,10 +2031,7 @@ function handler(event) {
     return $('#addModal').modal('show');
   };
 
-  add = function() {
-    sentenceParser.setSentence($('#addInput').val());
-    return sentenceParser.print();
-  };
+  add = function() {};
 
   addReply = function(msg) {
     return $('#signUpModal').modal('hide');
