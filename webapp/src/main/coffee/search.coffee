@@ -26,9 +26,8 @@ resultsReceived = (msg) ->
     html += '<p>Sorry, no results found.</p>'
   else
     html += '<p>' + numResults + ' results found.</p>'
-    for key of results when results.hasOwnProperty(key)
-      if results[key] != ''
-        html += '<p><a href="/node/' + key + '">' + results[key] + '</a></p>'
+    for r in results
+      html += '<p><a href="/node/' + r[0] + '">' + r[1] + '</a></p>'
   html += '</div>'
   $('#searchResultsBody').html(html)
   showSearchDialog(msg)

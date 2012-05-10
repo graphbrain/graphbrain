@@ -38,10 +38,10 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
         results = si.query(query + "*")
       log.info(Server.realIp(req) + " SEARCH " + query + "; results: " + results.numResults)
       
-      val resultsMap: Map[String, String] = (for (id <- results.ids)
-        yield (id -> Server.store.get(id).toString)).toMap
+      val resultsList: Seq[List[String]] = (for (id <- results.ids)
+        yield List(id, Server.store.get(id).toString))
       
-      val json = Map(("count" -> results.numResults), ("results" -> resultsMap))
+      val json = Map(("count" -> results.numResults), ("results" -> resultsList))
       ResponseString(generate(json))
     }
     case req@POST(Path("/signup") & Params(params)) => {
