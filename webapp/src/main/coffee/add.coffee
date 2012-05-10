@@ -1,6 +1,3 @@
-sentenceParser = new SentenceParser()
-
-
 initAddDialog = () ->
     dialogHtml = $("""
 <div class="modal hide" id="addModal">
@@ -28,8 +25,6 @@ showAddDialog = () ->
   $('#addModal').modal('show')
 
 add = ->
-  sentenceParser.setSentence($('#addInput').val())
-  sentenceParser.print()
 
 addReply = (msg) ->
   $('#signUpModal').modal('hide')

@@ -85,7 +85,7 @@ case class NodePage(store: VertexStore, nodeId: String, user: UserNode, prod: Bo
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="/"><img src="/images/GB_logo_S.png" alt="graphbrain"/></a>
+          <a class="brand" style="padding:7px 20px 7px" href="/"><img src="/images/GB_logo_S.png" alt="graphbrain"/></a>
           <div class="nav-collapse">
             <ul class="nav">
               <li><a href="/node/welcome/graphbrain">About</a></li>
