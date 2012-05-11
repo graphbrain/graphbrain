@@ -1,11 +1,14 @@
-package com.graphbrain.inference
+package com.graphbrain.nlp
 
 import edu.stanford.nlp.ling.Sentence;
 import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 
-object POSTagger {
+class POSTagger {
+
+
+	
 
 	def tagText(stringToTag:String):List[(String, String)]=
 	{
@@ -45,10 +48,16 @@ object POSTagger {
 
 
   
+	
+
+}
+
+object POSTagger {
 	def main(args: Array[String])
   	{
+  	  val taggerTest = new POSTagger()
 
-    	val taggedToks=tagText("John's dog")
+    	val taggedToks=taggerTest.tagText("John's dog")
 
 
     	for(tag <- taggedToks)
@@ -57,11 +66,10 @@ object POSTagger {
     			case (a,b) => println (a + ", " +  b)
     		}
     	}
-    	println(getTokenSequence("John's dog"))
+    	println(taggerTest.getTokenSequence("John's dog"))
 
 
 	}
-
 }
 
 

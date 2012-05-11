@@ -44,7 +44,13 @@ object FacebookGraphGenerator {
     val updatedTime = profileMap.get("updatedTime")
     val owner = profileMap.get("owner")
     var venue = profileMap.get("venue")
-
+    val iconURL = profileMap.get("icon")
+    val appIconURL = profileMap.get("icon_url")
+    val appLogoURL = profileMap.get("logo_url")
+    val appDailyActive = profileMap.get("daily_active_users")
+    val appWeeklyActive = profileMap.get("weekly_active_users")
+    val appMonthlyActive = profileMap.get("monthly_active_users")
+    val appNamespace = profileMap.get("namespace")
 
     name match {
     	case a:Some[Any] => println("name: " + a.get.asInstanceOf[String].toString)
@@ -59,6 +65,19 @@ object FacebookGraphGenerator {
     	case a:Some[Any] => println("picture: " + a.get.asInstanceOf[String].toString)	
     	case None =>
     }
+    iconURL match {
+        case a:Some[Any] => println("icon: " + a.get.asInstanceOf[String].toString)  
+        case None =>
+    }
+    appIconURL match {
+        case a:Some[Any] => println("app icon: " + a.get.asInstanceOf[String].toString)  
+        case None =>
+    }
+    appLogoURL match {
+        case a:Some[Any] => println("app icon: " + a.get.asInstanceOf[String].toString)  
+        case None =>
+    }
+
 	link match {
 		case a:Some[Any] => println("link: " + a.get.asInstanceOf[String].toString)
 		case None =>
@@ -114,6 +133,23 @@ object FacebookGraphGenerator {
         case a:Some[Any] => println("updated_time: " + a.get.asInstanceOf[String].toString)
         case None =>
     }
+    appDailyActive match {
+        case a:Some[Any] => println("app daily active: " + a.get.asInstanceOf[String].toString)
+        case None =>
+    }
+    appWeeklyActive match {
+        case a:Some[Any] => println("app weekly active: " + a.get.asInstanceOf[String].toString)
+        case None =>
+    }
+    appMonthlyActive match {
+        case a:Some[Any] => println("app monthly active: " + a.get.asInstanceOf[String].toString)
+        case None =>
+    }
+    appNamespace match {
+        case a:Some[Any] => println("app namespace: " + a.get.asInstanceOf[String].toString)
+        case None =>
+    }
+
 
     owner match {
         case a:Some[Any] => val ownerDetails = a.get.asInstanceOf[Map[String, Any]];
@@ -151,11 +187,20 @@ object FacebookGraphGenerator {
 
   def main(args : Array[String]) : Unit = {
     //User
+    println("===USER===")
   	FacebookGraphGenerator.generateBasic("chihchun.chen", "")
     //Page
+    println("===PAGE===")
   	FacebookGraphGenerator.generateBasic("cocacola", "")
     //Event:
+    println("===EVENT===")
     FacebookGraphGenerator.generateBasic("331218348435", "")
+    //Group:
+    println("===GROUP===")
+    FacebookGraphGenerator.generateBasic("195466193802264", "")
+    //App:
+    println("===APP===")
+    FacebookGraphGenerator.generateBasic("2439131959", "")
 	
   }
 }
