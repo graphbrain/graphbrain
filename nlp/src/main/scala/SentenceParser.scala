@@ -33,18 +33,29 @@ class SentenceParser (storeName:String = "gb") {
   val store = new VertexStore(storeName) with Indexing with BurstCaching
 
 
-  def parseSentence(sentence: String, root: Vertex = TextNode(id="None", text="None"), parseType: String = "graph"): List[(List[Vertex], Edge)]={
-  	var possibleGraphs: List[(List[Vertex], Edge)] = List()//Convert to Vertex at end when all searches complete
+  def parseSentence(sentence: String, root: Vertex = TextNode(id="None", text="None"), parseType: String = "graph", numResults: Int = 10): List[(List[Vertex], Edge)]={
+  	
     if(parseType == "graph") {
-      parseToGraph(sentence, root);
+      return parseToGraph(sentence, root, numResults);
     }
-    return possibleGraphs
+    else {
+    	return Nil
+    }
   }
 
-  def parseToGraph(sentence: String, root: Vertex): List[(List[String], String)]={
-  	var possibleParses: List[(List[String], String)] = List()
-    possibleParses ++= posChunk(sentence, root)	
-    return possibleParses
+  def parseToGraph(sentence: String, root: Vertex, numResults: Int): List[(List[Vertex], Edge)]={
+  	var possibleGraphs:List[(List[Vertex], Edge)] = List()
+
+  	var possibleParses = quoteChunk(sentence, root) ++ posChunk(sentence, root);
+  	possibleGraphs = findOrConvertToVertices(possibleParses, root) ++ possibleGraphs;
+  	
+
+  	
+  	
+  	//Highest likelihood is the quote chunk, then the parse option that has the root node as one of the nodes. 
+  	//If there is more than one parse option that has the root node as one of the options, the one that has the highest number of positive searches is returned.
+
+    return possibleGraphs.take(numResults);
   }
 
 
@@ -84,19 +95,19 @@ class SentenceParser (storeName:String = "gb") {
 
   }
 
-  def graphChunk(sentence: String, root: Vertex, possibleParses: List[(List[String], String)]): List[(List[Vertex], Edge)]={
+  /*def findOrConvertToVertices(possibleParses: List[(List[String], String)], maxPossiblePerParse: Int = 5, userID:String="gb_anon", rootNode: Vertex): List[(List[Vertex], Edge)]={
 
   	//possibleParses contains the parses that are consistent with the root being a node from a linguistic point of view
   	var possibleGraphs: List[(List[Vertex], Edge)] = List()
 
-  	root match {
+  	rootNode match {
   		case a: TextNode => val rootText = a.text.r;
   		for (g <- possibleParses) {
 		    			
   		}
   	}
   	return possibleGraphs
-  }
+  }*/
 
 
 
@@ -148,36 +159,50 @@ class SentenceParser (storeName:String = "gb") {
     	  }
     }
     return possibleParses.reverse;
-    //Node[Non-verb], Edge[verb/two verbs of different tenses], Node[non-verb/verb of same tense as previous verb] 
-    //> 
-
-    //
   }
-  def findOrConvertToVertices(possibleParses: List[(List[String], String)], maxPossiblePerParse: Int = 5, userID:String="gb_anon"): List[(List[Vertex], Edge)]={
+
+
+  def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: Vertex, maxPossiblePerParse: Int = 5, userID:String="gb_anon"): List[(List[Vertex], Edge)]={
 	var possibleGraphs:List[(List[Vertex], Edge)] = List()
 	for (pp <- possibleParses) {
 		pp match {
 			case (nodeTexts: List[String], edgeText: String) => 
 			var nodesForEachNodeText = new Array[List[Vertex]](nodeTexts.length)
+			val edge = Edge(edgeText)
 			var edgesForEdgeText: List[Edge] = List()
 			var textNum = 0;
 			for (nodeText <- nodeTexts) {
 				var searchResults = si.query(nodeText);
+				var fuzzySearchResults = si.query(nodeText+"*");
+				val results = searchResults.ids ++ fuzzySearchResults.ids
+				//fuzzy search results are second in priority
 				var currentNodesForNodeText:List[Vertex] = List() 
 				for(i <- 0 to math.min(maxPossiblePerParse, searchResults.numResults)-1) {
-				  val result = try {searchResults.ids(i) } catch { case e => ""}
+				  val result = try {results(i) } catch { case e => ""}
 				  val resultNode = getOrCreateTextNode(id=result, userID=userID, textString=nodeText)
+
 				  currentNodesForNodeText = resultNode :: currentNodesForNodeText;
 				}
 				nodesForEachNodeText(textNum) = currentNodesForNodeText;
 				textNum += 1;
 
 			}
-
-
+		for (i <- 0 to maxPossiblePerParse-1) {
+			//i indexes the search result
+			var entryNodes:List[Vertex] = List();
+			for(j <- 0 to nodesForEachNodeText.length-1) {
+				//j indexes the node text
+				val resultSet = nodesForEachNodeText(j)
+				entryNodes = resultSet(i) :: entryNodes;
+			}
+			val entry = (entryNodes, edge)
+			possibleGraphs = entry :: possibleGraphs
 		}
+
+
+	  }
 	}
-	return possibleGraphs
+	return possibleGraphs.reverse
   }
   
 
@@ -190,10 +215,6 @@ def getOrCreateTextNode(id:String, userID:String, textString:String):Vertex={
 	  return newNode;
   }
 }
-
-/*def getOrCreateEdge(id:String="", textString:String, userID:String="gb_anon"):Edge={
-	
-}*/
 
 }
 
