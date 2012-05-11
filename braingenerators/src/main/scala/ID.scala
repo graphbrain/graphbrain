@@ -38,6 +38,10 @@ def local_id(url:String):String={
 def nounproject_id(noun:String):String={
 	return "nounproject/"+noun;
 }
+
+def usergenerated_id(userID:String): String={
+	return "usergenerated/" + userID;
+}
 }
 
 
