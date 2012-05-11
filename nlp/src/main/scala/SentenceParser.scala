@@ -1,5 +1,6 @@
 package com.graphbrain.nlp
 
+import com.graphbrain.braingenerators.ID
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.net.URLDecoder;
@@ -15,9 +16,9 @@ import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.SVGNode
 import com.graphbrain.hgdb.Vertex
 import com.graphbrain.searchengine.Indexing
+import com.graphbrain.searchengine.RiakSearchInterface
 
-
-class SentenceParser {
+class SentenceParser (storeName:String = "gb") {
 
   val quoteRegex = """\".+\"""".r
   val urlRegex = """http:\/\/.+""".r
@@ -27,6 +28,9 @@ class SentenceParser {
   val propositionRegex = """IN[A-Z]?""".r
   val nounRegex = """NN[A-Z]?""".r
 
+  val si = RiakSearchInterface("gbsearch")
+  
+  val store = new VertexStore(storeName) with Indexing with BurstCaching
 
 
   def parseSentence(sentence: String, root: Vertex = TextNode(id="None", text="None"), parseType: String = "graph"): List[(List[Vertex], Edge)]={
@@ -42,6 +46,7 @@ class SentenceParser {
     possibleParses ++= posChunk(sentence, root)	
     return possibleParses
   }
+
 
   def quoteChunk(sentence: String, root: Vertex): List[(List[String], String)]={
   	//Find the quotes:
@@ -79,10 +84,22 @@ class SentenceParser {
 
   }
 
-  def graphChunk(sentence: String, root: Vertex): List[(List[String], String)]={
-  	var possibleParses: List[(List[String], String)] = List()
-  	return possibleParses
+  def graphChunk(sentence: String, root: Vertex, possibleParses: List[(List[String], String)]): List[(List[Vertex], Edge)]={
+
+  	//possibleParses contains the parses that are consistent with the root being a node from a linguistic point of view
+  	var possibleGraphs: List[(List[Vertex], Edge)] = List()
+
+  	root match {
+  		case a: TextNode => val rootText = a.text.r;
+  		for (g <- possibleParses) {
+		    			
+  		}
+  	}
+  	return possibleGraphs
   }
+
+
+
 
   def posChunk(sentence: String, root: Vertex): List[(List[String], String)]={
     val taggedSentence = posTagger.tagText(sentence)
@@ -136,14 +153,49 @@ class SentenceParser {
 
     //
   }
-  def findOrConvertToVertices(possibleParses: List[(List[String], String)]): List[(List[Vertex], Edge)]={
+  def findOrConvertToVertices(possibleParses: List[(List[String], String)], maxPossiblePerParse: Int = 5, userID:String="gb_anon"): List[(List[Vertex], Edge)]={
 	var possibleGraphs:List[(List[Vertex], Edge)] = List()
+	for (pp <- possibleParses) {
+		pp match {
+			case (nodeTexts: List[String], edgeText: String) => 
+			var nodesForEachNodeText = new Array[List[Vertex]](nodeTexts.length)
+			var edgesForEdgeText: List[Edge] = List()
+			var textNum = 0;
+			for (nodeText <- nodeTexts) {
+				var searchResults = si.query(nodeText);
+				var currentNodesForNodeText:List[Vertex] = List() 
+				for(i <- 0 to math.min(maxPossiblePerParse, searchResults.numResults)-1) {
+				  val result = try {searchResults.ids(i) } catch { case e => ""}
+				  val resultNode = getOrCreateTextNode(id=result, userID=userID, textString=nodeText)
+				  currentNodesForNodeText = resultNode :: currentNodesForNodeText;
+				}
+				nodesForEachNodeText(textNum) = currentNodesForNodeText;
+				textNum += 1;
+
+			}
+
+
+		}
+	}
 	return possibleGraphs
   }
   
+
+def getOrCreateTextNode(id:String, userID:String, textString:String):Vertex={
+  try{
+	  return store.get(id);
+  }
+  catch{
+  	  case e => val newNode = TextNode(id=ID.usergenerated_id(userID), text=textString);
+	  return newNode;
+  }
 }
 
+/*def getOrCreateEdge(id:String="", textString:String, userID:String="gb_anon"):Edge={
+	
+}*/
 
+}
 
 
 object SentenceParser {
