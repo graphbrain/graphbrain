@@ -1,8 +1,6 @@
 package com.graphbrain.nlp
 
 import com.graphbrain.braingenerators.ID
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.net.URLDecoder;
 import scala.collection.immutable.HashMap
 import com.graphbrain.hgdb.VertexStore
@@ -20,7 +18,7 @@ import com.graphbrain.searchengine.RiakSearchInterface
 
 class SentenceParser (storeName:String = "gb") {
 
-  val quoteRegex = """\".+\"""".r
+  val quoteRegex = """(\")(.+?)(\")""".r
   val urlRegex = """http:\/\/.+""".r
   val posTagger = new POSTagger();
   val verbRegex = """VB[A-Z]?""".r
@@ -33,8 +31,10 @@ class SentenceParser (storeName:String = "gb") {
   val store = new VertexStore(storeName) with Indexing with BurstCaching
 
 
-  def parseSentence(sentence: String, root: Vertex = TextNode(id="None", text="None"), parseType: String = "graph", numResults: Int = 10): List[(List[Vertex], Edge)]={
-  	
+  def parseSentence(inSentence: String, root: Vertex = TextNode(id="None", text="None"), parseType: String = "graph", numResults: Int = 10): List[(List[Vertex], Edge)]={
+  	val sentence = inSentence.trim;
+  	//I'm envisioning that in the future we may have other parsing purposes where we might have other parsing rules 
+  	//(e.g. ignoring non-rootparses, different rule precedences) so I've kept the graph creation parsing as just one option.
     if(parseType == "graph") {
       return parseToGraph(sentence, root, numResults);
     }
@@ -44,17 +44,10 @@ class SentenceParser (storeName:String = "gb") {
   }
 
   def parseToGraph(sentence: String, root: Vertex, numResults: Int): List[(List[Vertex], Edge)]={
-  	var possibleGraphs:List[(List[Vertex], Edge)] = List()
 
   	var possibleParses = quoteChunk(sentence, root) ++ posChunk(sentence, root);
-  	possibleGraphs = findOrConvertToVertices(possibleParses, root) ++ possibleGraphs;
+  	var possibleGraphs = findOrConvertToVertices(possibleParses, root, numResults);
   	
-
-  	
-  	
-  	//Highest likelihood is the quote chunk, then the parse option that has the root node as one of the nodes. 
-  	//If there is more than one parse option that has the root node as one of the options, the one that has the highest number of positive searches is returned.
-
     return possibleGraphs.take(numResults);
   }
 
@@ -63,51 +56,50 @@ class SentenceParser (storeName:String = "gb") {
   	//Find the quotes:
   	var possibleParses: List[(List[String], String)] = List()
 
-  	//Make sure the quotation marks are not around the whole string:
+  	
   	quoteRegex.findFirstIn(sentence) match {
+
   		case Some(exp) => 
-  		//I'm assigning these in case we want to do something with them later, e.g. infer hypergraphs vs. multi-bi-graphs
-  		val numQuotes = quoteRegex.findAllIn(sentence).length;
-  		val numNonQuotes = quoteRegex.split(sentence).length;
-
-  		if (exp.length == sentence.length) {
-	  	  return possibleParses;
-	  	}
-	  	
   		
-  		else if (numQuotes >=2 && numNonQuotes == numNonQuotes-1) {
-  		  val nodes = quoteRegex.findAllIn(sentence);
-  		  val edges = quoteRegex.split(sentence);
-  		  var nodeTexts:List[String] = List();
-  		  for(i <- 0 to nodes.length-2) {
-  		  	val current = nodes.next;
-  		  	val next = nodes.next;
-  		  	val edge = edges(i);
-  		  	possibleParses = (List(current, next), edge) :: possibleParses; 
-
+  		//Make sure the quotation marks are not around the whole string:
+  		  //I'm assigning these in case we want to do something with them later, e.g. infer hypergraphs vs. multi-bi-graphs
+  		  val numQuotes = quoteRegex.findAllIn(sentence).length;
+  		  
+  		  var nonQuotes = quoteRegex.split(sentence);
+  		  var nqEdges:List[String] = List()
+  		  var numNonQuotes = 0;
+  		  
+  		  for (i <- 0 to nonQuotes.length-1) {
+  		  	val nq = nonQuotes(i)
+  		  	if(nq!="") {
+  		  		numNonQuotes+=1;
+  		  		nqEdges = nq::nqEdges;
+  		  	}
   		  }
-  		  return possibleParses;
+  		  
+  		  if (exp.length == sentence.length) {
+	  	    return Nil;
+	  	  }
+  		  else if (numQuotes >=2 && numNonQuotes == numQuotes-1) {
+  		    val nodes = quoteRegex.findAllIn(sentence).toArray;
+  		    val edges = nqEdges.reverse.toArray
+  		    
+  		    for(i <- 0 to nodes.length-2) {
+  		  	  val current = nodes(i);
+  		  	  val next = nodes(i+1);
+  		  	  val edge = edges(i);
+  		  	  possibleParses = (List(current, next), edge) :: possibleParses; 
+  		  	  //println("Quote Chunk: " + current + ", " + edge + ", " + next)
+
+  		    }
+  		    return possibleParses;
 		} 
   		case None => return possibleParses;
   	}
-
-  	return possibleParses
+    return possibleParses
 
   }
 
-  /*def findOrConvertToVertices(possibleParses: List[(List[String], String)], maxPossiblePerParse: Int = 5, userID:String="gb_anon", rootNode: Vertex): List[(List[Vertex], Edge)]={
-
-  	//possibleParses contains the parses that are consistent with the root being a node from a linguistic point of view
-  	var possibleGraphs: List[(List[Vertex], Edge)] = List()
-
-  	rootNode match {
-  		case a: TextNode => val rootText = a.text.r;
-  		for (g <- possibleParses) {
-		    			
-  		}
-  	}
-  	return possibleGraphs
-  }*/
 
 
 
@@ -125,9 +117,9 @@ class SentenceParser (storeName:String = "gb") {
       
       (current, lookahead1, lookahead2) match{
     		  case ((word1, tag1), (word2, tag2), (word3, tag3)) => 
-    		  println(word2 + ", " + tag2)
+    		  //println(word2 + ", " + tag2)
     		  if(verbRegex.findAllIn(tag2).length == 1) {
-    		  	println("verb: " + word2)
+    		  	//println("verb: " + word2)
     		  
     		  if(verbRegex.findAllIn(tag1).length == 0 && verbRegex.findAllIn(tag3).length == 0 && adverbRegex.findAllIn(tag3).length == 0) {
     		  	  val edgeindex = i+1
@@ -137,20 +129,21 @@ class SentenceParser (storeName:String = "gb") {
     		  	  var node2Text = ""
     		  	  for (j <- 0 to i) {
     		  	  	taggedSentence(j) match {
-    		  	  		case (word, tag) => node1Text = node1Text + word + " "
+    		  	  		case (word, tag) => node1Text = node1Text + " " + word
 
     		  	  	}
 
     		  	  }
     		  	  for (j <- i+2 to taggedSentence.length-1) {
     		  		taggedSentence(j) match {
-    		  	  		case (word, tag) => node2Text = node2Text + word + " "
+    		  	  		case (word, tag) => node2Text = node2Text + " " + word 
 
     		  	  	}
     		  	  }
-    		  	  println(node1Text + " ," + edgeText + " ," + node2Text)
+    		  	  //println("POS Chunk: " + node1Text + " ," + edgeText + " ," + node2Text)
     		  	  val nodes = List(node1Text, node2Text)
     		  	  possibleParses = (nodes, edgeText) :: possibleParses
+
     		  	}
 				    		  	
     		  }
@@ -162,24 +155,31 @@ class SentenceParser (storeName:String = "gb") {
   }
 
 
-  def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: Vertex, maxPossiblePerParse: Int = 5, userID:String="gb_anon"): List[(List[Vertex], Edge)]={
+  def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: Vertex, maxPossiblePerParse: Int = 10, userID:String="gb_anon"): List[(List[Vertex], Edge)]={
+
 	var possibleGraphs:List[(List[Vertex], Edge)] = List()
-	for (pp <- possibleParses) {
+	val sortedParses = sortRootParsesPriority(possibleParses, root)
+	
+	for (pp <- sortedParses) {
 		pp match {
 			case (nodeTexts: List[String], edgeText: String) => 
 			var nodesForEachNodeText = new Array[List[Vertex]](nodeTexts.length)
-			val edge = Edge(edgeText)
+			
 			var edgesForEdgeText: List[Edge] = List()
 			var textNum = 0;
 			for (nodeText <- nodeTexts) {
+
 				var searchResults = si.query(nodeText);
 				var fuzzySearchResults = si.query(nodeText+"*");
 				val results = searchResults.ids ++ fuzzySearchResults.ids
+				
 				//fuzzy search results are second in priority
 				var currentNodesForNodeText:List[Vertex] = List() 
-				for(i <- 0 to math.min(maxPossiblePerParse, searchResults.numResults)-1) {
+				val limit = if (maxPossiblePerParse < results.length) maxPossiblePerParse else results.length + 1;
+				for(i <- 0 to limit-1) {
 				  val result = try {results(i) } catch { case e => ""}
 				  val resultNode = getOrCreateTextNode(id=result, userID=userID, textString=nodeText)
+				  println("Node: " + resultNode.id)
 
 				  currentNodesForNodeText = resultNode :: currentNodesForNodeText;
 				}
@@ -187,31 +187,74 @@ class SentenceParser (storeName:String = "gb") {
 				textNum += 1;
 
 			}
-		for (i <- 0 to maxPossiblePerParse-1) {
-			//i indexes the search result
-			var entryNodes:List[Vertex] = List();
-			for(j <- 0 to nodesForEachNodeText.length-1) {
-				//j indexes the node text
-				val resultSet = nodesForEachNodeText(j)
-				entryNodes = resultSet(i) :: entryNodes;
-			}
-			val entry = (entryNodes, edge)
-			possibleGraphs = entry :: possibleGraphs
-		}
 
+		    for (i <- 0 to nodesForEachNodeText(0).length-1) {
+		      var entryNodes:List[Vertex] = List();
+			  var entryIDs:List[String] = List();
+			  entryNodes = nodesForEachNodeText(0)(i) :: entryNodes;
+			  entryNodes = nodesForEachNodeText(1)(i) :: entryNodes;
+			  entryIDs = nodesForEachNodeText(0)(i).id :: entryIDs
+			  entryIDs = nodesForEachNodeText(1)(i).id :: entryIDs
 
-	  }
+			  val edge = new Edge(ID.relation_id(edgeText), entryIDs.reverse.toArray)
+			  println("Edge: " + edge.id)
+			  val entry = (entryNodes, edge)
+			  
+			  possibleGraphs = entry :: possibleGraphs
+			 }
+			  
+			  
+		   }
+
+	    }
+	    return possibleGraphs.reverse
 	}
-	return possibleGraphs.reverse
-  }
+	
   
+  
+  /**
+Sorts the parses so that only the ones consistent with the root node being one of the nodes is returned
+If returnAll is false, only return the ones that satisfy the root as node constraint, if true, return all results sorted
+*/
+  def sortRootParsesPriority(possibleParses: List[(List[String], String)], rootNode: Vertex, returnAll: Boolean = true): List[(List[String], String)]={
+
+  	//possibleParses contains the parses that are consistent with the root being a node from a linguistic point of view
+  	var rootParses: List[(List[String], String)] = List()
+  	var optionalParses: List[(List[String], String)] = List()
+  	rootNode match {
+  		case a: TextNode => val rootText = a.text.r;
+  		for (g <- possibleParses) {
+  			g match {
+  				case (nodeTexts: List[String], edgeText: String) => 
+  				  for(nodeText <- nodeTexts) {
+  				  	if (nodeText==rootText) {
+  				  		rootParses = g::rootParses
+  				  	}
+  				  	else {
+  				  		 optionalParses = g::optionalParses
+  				  	}
+  				  }
+  			}
+		  //Check whether rootText matches one of the node texts:
+		  	    			
+  		}
+  	  
+  	}
+  	if(returnAll) {
+  	    return rootParses.reverse++optionalParses.reverse
+  	  }
+  	  else {
+  		return rootParses.reverse;
+  	  }
+  }
+
 
 def getOrCreateTextNode(id:String, userID:String, textString:String):Vertex={
   try{
 	  return store.get(id);
   }
   catch{
-  	  case e => val newNode = TextNode(id=ID.usergenerated_id(userID), text=textString);
+  	  case e => val newNode = TextNode(id=ID.usergenerated_id(userID, textString), text=textString);
 	  return newNode;
   }
 }
@@ -222,8 +265,12 @@ def getOrCreateTextNode(id:String, userID:String, textString:String):Vertex={
 object SentenceParser {
   def main(args: Array[String]) {
   	  val sentenceParser = new SentenceParser()
-  	  val sentence = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
-      sentenceParser.parseSentence(sentence)
+  	  val sentence1 = "\"Chih-Chun\" is a \"toad\""
+  	  val sentence2 = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
+  	  println("From main: " + sentence1)
+      val results1 = sentenceParser.parseSentence(sentence1)
+      println("From command line: " + sentence2)
+      val results2 = sentenceParser.parseSentence(sentence2)
 
 
 	}

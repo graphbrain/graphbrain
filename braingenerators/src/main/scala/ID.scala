@@ -39,8 +39,8 @@ def nounproject_id(noun:String):String={
 	return "nounproject/"+noun;
 }
 
-def usergenerated_id(userID:String): String={
-	return "usergenerated/" + userID;
+def usergenerated_id(userID:String, thing:String): String={
+	return "usergenerated/" + userID + "/" + thing.replace("\"", "").replace("`", "").replace("'", "").trim.replace(" ", "_");
 }
 }
 
