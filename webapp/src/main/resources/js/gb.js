@@ -1725,7 +1725,7 @@ function handler(event) {
   resultsReceived = function(msg) {
     var html, json, numResults, r, results, _i, _len;
     json = JSON.parse(msg);
-    html = '<div>';
+    html = '';
     numResults = json['count'];
     results = json['results'];
     if (numResults === '0') {
@@ -1737,7 +1737,6 @@ function handler(event) {
         html += '<p><a href="/node/' + r[0] + '">' + r[1] + '</a></p>';
       }
     }
-    html += '</div>';
     $('#searchResultsBody').html(html);
     return showSearchDialog(msg);
   };
@@ -2031,7 +2030,15 @@ function handler(event) {
     return $('#addModal').modal('show');
   };
 
-  add = function() {};
+  add = function() {
+    return $.ajax({
+      type: "POST",
+      url: "/add",
+      data: "s=" + $('#addInput').val(),
+      dataType: "text",
+      success: this.addReply
+    });
+  };
 
   addReply = function(msg) {
     return $('#signUpModal').modal('hide');

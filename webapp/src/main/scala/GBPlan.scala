@@ -44,6 +44,13 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val json = Map(("count" -> results.numResults), ("results" -> resultsList))
       ResponseString(generate(json))
     }
+    case req@POST(Path("/add") & Params(params)) => {
+      val sentence = params("s")(0)
+      println("sentence: " + sentence)
+      //val results = Server.sparser.parseSentence(sentence)
+      //println(results)
+      ResponseString("ok")
+    }
     case req@POST(Path("/signup") & Params(params)) => {
       val name = params("name")(0)
       val username = params("username")(0)

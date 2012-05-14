@@ -19,7 +19,7 @@ showSearchDialog = (msg) ->
 
 resultsReceived = (msg) ->
   json = JSON.parse(msg)
-  html = '<div>'
+  html = ''
   numResults = json['count']
   results = json['results']
   if numResults == '0'
@@ -28,7 +28,7 @@ resultsReceived = (msg) ->
     html += '<p>' + numResults + ' results found.</p>'
     for r in results
       html += '<p><a href="/node/' + r[0] + '">' + r[1] + '</a></p>'
-  html += '</div>'
+  #html += '</div>'
   $('#searchResultsBody').html(html)
   showSearchDialog(msg)
 
