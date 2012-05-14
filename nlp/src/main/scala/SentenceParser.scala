@@ -9,9 +9,7 @@ import com.graphbrain.hgdb.OpLogging
 import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.ImageNode
 import com.graphbrain.hgdb.Edge
-import com.graphbrain.hgdb.SourceNode
 import com.graphbrain.hgdb.URLNode
-import com.graphbrain.hgdb.SVGNode
 import com.graphbrain.hgdb.Vertex
 import com.graphbrain.searchengine.Indexing
 import com.graphbrain.searchengine.RiakSearchInterface
@@ -169,9 +167,9 @@ class SentenceParser (storeName:String = "gb") {
 			var textNum = 0;
 			for (nodeText <- nodeTexts) {
 
-				var searchResults = si.query(nodeText);
-				var fuzzySearchResults = si.query(nodeText+"*");
-				val results = searchResults.ids ++ fuzzySearchResults.ids
+				var searchResults = try{si.query(nodeText).ids} catch {case e => Nil};
+				var fuzzySearchResults = try{si.query(nodeText+"*").ids} catch{case e => Nil};
+				val results = try{searchResults ++ fuzzySearchResults} catch {case e => Nil}
 				
 				//fuzzy search results are second in priority
 				var currentNodesForNodeText:List[Vertex] = List() 
