@@ -10,6 +10,8 @@ import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.SimpleCaching
 import com.graphbrain.hgdb.UserManagement
 import com.graphbrain.hgdb.UserNode
+import com.graphbrain.nlp.SentenceParser
+import com.graphbrain.nlp.POSTagger
 
 
 object Server {
@@ -82,6 +84,10 @@ object Server {
 
       log.syslog.enabled = false
     }
+
+    val sparser = new SentenceParser()
+    val results = sparser.parseSentence("\"Chih-Chun\" is a \"toad\"")
+    println(results)
 
     start((args.length > 0) && (args(0) == "prod"))
   }

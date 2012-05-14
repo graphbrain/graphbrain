@@ -15,7 +15,7 @@ object GraphbrainBuild extends Build {
 
   lazy val webapp = Project(id = "webapp",
                            base = file("webapp"),
-                           settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(hgdb, searchengine)
+                           settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(hgdb, searchengine, nlp)
 
   lazy val braingenerators = Project(id = "braingenerators",
   							base = file("braingenerators"),
@@ -34,5 +34,5 @@ object GraphbrainBuild extends Build {
                 settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(hgdb)
 
   lazy val root = Project(id = "gb",
-                base = file(".")) aggregate(hgdb, inference, webapp, braingenerators, tools, searchengine)
+                base = file(".")) aggregate(hgdb, inference, webapp, braingenerators, tools, searchengine, nlp)
 }

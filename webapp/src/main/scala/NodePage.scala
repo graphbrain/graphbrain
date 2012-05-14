@@ -20,11 +20,11 @@ case class NodePage(store: VertexStore, nodeId: String, user: UserNode, prod: Bo
     def cssAndJs = {
       if (prod) {
         """<link href="/css/bootstrap.min.css" type="text/css" rel="Stylesheet" />""" +
-        """<link href="/css/main.css?01052012" type="text/css" rel="Stylesheet" />""" +
+        """<link href="/css/main.css?11052012" type="text/css" rel="Stylesheet" />""" +
         """<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>""" +
         """<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.js" type="text/javascript"></script>""" +
         """<script src="/js/bootstrap.min.js" type="text/javascript" ></script>""" +
-        """<script src="/js/gb.js?01052012" type="text/javascript" ></script>""" +
+        """<script src="/js/gb.js?11052012" type="text/javascript" ></script>""" +
         analyticsJs
       }
       else {
@@ -51,7 +51,17 @@ case class NodePage(store: VertexStore, nodeId: String, user: UserNode, prod: Bo
       else {
         """
         <ul class="nav pull-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-eye-open icon-white"></i> Public <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#"><i class="icon-eye-open icon-black"></i> Public</a></li>
+                <li><a href="#"><i class="icon-lock icon-black"></i> Private</a></li>
+                <li><a href="#"><i class="icon-lock icon-asterisk"></i> Group</a></li>
+              </ul>
+            </li>
+            <li class="divider-vertical"></li>
             <li><a href="#" id="addLink"><i class="icon-plus icon-white"></i> Add</a></li>
+            <li><a href="#" id="goHome"><i class="icon-home icon-white"></i> Home</a></li>
             <li class="divider-vertical"></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-white"></i> """ + user.name + """ <b class="caret"></b></a>

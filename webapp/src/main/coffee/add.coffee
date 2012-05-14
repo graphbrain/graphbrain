@@ -25,6 +25,13 @@ showAddDialog = () ->
   $('#addModal').modal('show')
 
 add = ->
+  $.ajax({
+    type: "POST",
+    url: "/add",
+    data: "s=" + $('#addInput').val(),
+    dataType: "text",
+    success: @addReply
+  })
 
 addReply = (msg) ->
   $('#signUpModal').modal('hide')
