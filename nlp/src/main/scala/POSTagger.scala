@@ -8,7 +8,7 @@ import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 class POSTagger {
 
 
-	
+	val tagger = new MaxentTagger("pos_models/english-left3words-distsim.tagger");
 
 	def tagText(stringToTag:String):List[(String, String)]=
 	{
@@ -42,7 +42,7 @@ class POSTagger {
 
 	private def addTagToText(stringToTag:String):String=
 	{
-		val tagger = new MaxentTagger("pos_models/english-left3words-distsim.tagger");
+		
 		return(tagger.tagString(stringToTag))
 	}
 
