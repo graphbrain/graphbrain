@@ -21,6 +21,8 @@ object Server {
 
   val store = new VertexStore("gb") with SimpleCaching with UserManagement
 
+  val sparser = new SentenceParser()
+
   def realIp(req: HttpRequest[Any]) = {
     val headers = req.headers("X-Forwarded-For")
     if (headers.hasNext)
@@ -31,11 +33,11 @@ object Server {
 
   def getUser(cookies: Map[String, Any]): UserNode = {
     val username = cookies("username") match {
-      case Some(Cookie(_, value, _, _, _, _)) => value
+      case Some(Cookie(_, value, _, _, _, _, _, _)) => value
       case _ => null
     } 
     val session = cookies("session") match {
-      case Some(Cookie(_, value, _, _, _, _)) => value
+      case Some(Cookie(_, value, _, _, _, _, _, _)) => value
       case _ => null
     }
     if ((username == null) || (session == null)) {
@@ -63,7 +65,6 @@ object Server {
       .handler(GBPlan)
       .handler(NodePlan)
       .resources(new URL(getClass().getResource("/robots.txt"), "."))
-      
     http.run
   }
 
@@ -84,10 +85,6 @@ object Server {
 
       log.syslog.enabled = false
     }
-
-    val sparser = new SentenceParser()
-    val results = sparser.parseSentence("\"Chih-Chun\" is a \"toad\"")
-    println(results)
 
     start((args.length > 0) && (args(0) == "prod"))
   }

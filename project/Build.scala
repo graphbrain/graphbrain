@@ -1,9 +1,9 @@
 import sbt._
 import Keys._
-
-
 import sbtassembly.Plugin._
 import AssemblyKeys._
+import cc.spray.revolver.RevolverPlugin._
+
 
 object GraphbrainBuild extends Build {
   lazy val hgdb = Project(id = "hgdb",
@@ -15,7 +15,7 @@ object GraphbrainBuild extends Build {
 
   lazy val webapp = Project(id = "webapp",
                            base = file("webapp"),
-                           settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(hgdb, searchengine, nlp)
+                           settings = Defaults.defaultSettings ++ assemblySettings ++ Revolver.settings) dependsOn(hgdb, searchengine, nlp)
 
   lazy val braingenerators = Project(id = "braingenerators",
   							base = file("braingenerators"),
@@ -27,7 +27,7 @@ object GraphbrainBuild extends Build {
 
   lazy val tools = Project(id = "tools",
                 base=file("tools"),
-                settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(hgdb, searchengine)
+                settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(hgdb, searchengine, nlp)
 
   lazy val searchengine = Project(id = "searchengine",
                 base=file("searchengine"),
