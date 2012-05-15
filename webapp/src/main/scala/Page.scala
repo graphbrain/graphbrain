@@ -1,7 +1,7 @@
 package com.graphbrain.webapp
 
 import unfiltered.response._
-import java.io.Writer
+import java.io.OutputStreamWriter
 
 abstract class Page extends ResponseWriter {
 	val analyticsJs = """
@@ -21,7 +21,7 @@ abstract class Page extends ResponseWriter {
 	"""
 
 	def html: scala.xml.NodeSeq
-	def write(writer: Writer) {
+	def write(writer: OutputStreamWriter) {
 		val content = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">""" + "\n" + html
 		writer.write(content)

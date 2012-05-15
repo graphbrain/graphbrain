@@ -47,8 +47,8 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
     case req@POST(Path("/add") & Params(params)) => {
       val sentence = params("s")(0)
       println("sentence: " + sentence)
-      //val results = Server.sparser.parseSentence(sentence)
-      //println(results)
+      val results = Server.sparser.parseSentence(sentence)
+      println(results)
       ResponseString("ok")
     }
     case req@POST(Path("/signup") & Params(params)) => {
