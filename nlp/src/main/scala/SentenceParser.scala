@@ -11,6 +11,7 @@ import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.ImageNode
 import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.URLNode
+import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.Vertex
 import com.graphbrain.searchengine.Indexing
 import com.graphbrain.searchengine.RiakSearchInterface
@@ -28,25 +29,30 @@ class SentenceParser (storeName:String = "gb") {
   val si = RiakSearchInterface("gbsearch")
   
   val store = new VertexStore(storeName) with Indexing with BurstCaching
+  val anon_username = "gb_anon"
 
-
-  def parseSentence(inSentence: String, root: Vertex = TextNode(id="None", text="None"), parseType: String = "graph", numResults: Int = 10): List[(List[Vertex], Edge)]={
+  def parseSentence(inSentence: String, root: Vertex = TextNode(id="None", text="None"), parseType: String = "graph", numResults: Int = 10, user:Option[UserNode]=None): List[(List[Vertex], Edge)]={
   	val sentence = inSentence.trim;
   	//I'm envisioning that in the future we may have other parsing purposes where we might have other parsing rules 
   	//(e.g. ignoring non-rootparses, different rule precedences) so I've kept the graph creation parsing as just one option.
     if(parseType == "graph") {
-      return parseToGraph(sentence, root, numResults);
+      var userName = anon_username
+      user match {
+        case Some(u:UserNode) => userName = u.username;
+        case _ => 
+      }
+      return parseToGraph(sentence, root, numResults, userName);
     }
     else {
     	return Nil
     }
   }
 
-  def parseToGraph(sentence: String, root: Vertex, numResults: Int): List[(List[Vertex], Edge)]={
+  def parseToGraph(sentence: String, root: Vertex, numResults: Int, userID: String): List[(List[Vertex], Edge)]={
 
   	var possibleParses = quoteChunk(sentence, root) ++ posChunk(sentence, root);
     println("Possible parses: " + possibleParses.length)
-  	var possibleGraphs = findOrConvertToVertices(possibleParses, root, numResults);
+  	var possibleGraphs = findOrConvertToVertices(possibleParses, root, userID, numResults);
   	println("Possible graphs: " + possibleGraphs.length)
     return possibleGraphs.take(numResults);
   }
@@ -155,10 +161,10 @@ class SentenceParser (storeName:String = "gb") {
   }
 
 
-  def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: Vertex, maxPossiblePerParse: Int = 10, userID:String="gb_anon"): List[(List[Vertex], Edge)]={
+  def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: Vertex, userID:String, maxPossiblePerParse: Int = 10): List[(List[Vertex], Edge)]={
 
 	var possibleGraphs:List[(List[Vertex], Edge)] = List()
-	val sortedParses = sortRootParsesPriority(removeDeterminers(possibleParses, root), root)
+	val sortedParses = removeDeterminers(sortRootParsesPriority(possibleParses, root), root)
 
   println("Sorted parses: " + sortedParses.length)
 
@@ -267,7 +273,7 @@ If returnAll is false, only return the ones that satisfy the root as node constr
   	}
   }
 
-def removeDeterminers(possibleParses: List[(List[String], String)], rootNode: Vertex, returnAll: Boolean = true): List[(List[String], String)]={
+def removeDeterminers(possibleParses: List[(List[String], String)], rootNode: Vertex, returnAll: Boolean = false): List[(List[String], String)]={
     var removedParses: List[(List[String], String)] = List()
     var optionalParses: List[(List[String], String)] = List()
     for (g <- possibleParses) {
@@ -336,17 +342,23 @@ object SentenceParser {
   def main(args: Array[String]) {
   	  val sentenceParser = new SentenceParser()
       val rootNode = TextNode(id=ID.usergenerated_id("chihchun_chen", "toad"), text="toad")
+      val userNode = UserNode("chihchun_chen", "chihchun_chen", "Chih-Chun Chen")
   	  val sentence1 = "\"Chih-Chun\" is a \"toad\""
   	  val sentence2 = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
   	  println("From main: " + sentence1)
-      val results1 = sentenceParser.parseSentence(sentence1)
+      sentenceParser.parseSentence(sentence1)
       println("From main with root: " + sentence1)
-      val results3 = sentenceParser.parseSentence(sentence1, rootNode)
+      sentenceParser.parseSentence(sentence1, rootNode)
+      println("From main with root with user: " + sentence1)
+      sentenceParser.parseSentence(sentence1, rootNode, user=Some(userNode))
+
 
       println("From command line: " + sentence2)
-      val results2 = sentenceParser.parseSentence(sentence2)
-      println("From command line with root: " + sentence1)
-      val results4 = sentenceParser.parseSentence(sentence2, rootNode)
+      sentenceParser.parseSentence(sentence2)
+      println("From command line with root: " + sentence2)
+      sentenceParser.parseSentence(sentence2, rootNode)
+      println("From command line with root with user: " + sentence2)
+      sentenceParser.parseSentence(sentence2, rootNode, user=Some(userNode))
 
 
 
