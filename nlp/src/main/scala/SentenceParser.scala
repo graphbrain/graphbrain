@@ -158,7 +158,8 @@ class SentenceParser (storeName:String = "gb") {
   def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: Vertex, maxPossiblePerParse: Int = 10, userID:String="gb_anon"): List[(List[Vertex], Edge)]={
 
 	var possibleGraphs:List[(List[Vertex], Edge)] = List()
-	val sortedParses = sortRootParsesPriority(possibleParses, root)
+	val sortedParses = sortRootParsesPriority(removeDeterminers(possibleParses, root), root)
+
   println("Sorted parses: " + sortedParses.length)
 
 	for (pp <- sortedParses) {
@@ -265,6 +266,46 @@ If returnAll is false, only return the ones that satisfy the root as node constr
   		return rootParses.reverse;
   	}
   }
+
+def removeDeterminers(possibleParses: List[(List[String], String)], rootNode: Vertex, returnAll: Boolean = true): List[(List[String], String)]={
+    var removedParses: List[(List[String], String)] = List()
+    var optionalParses: List[(List[String], String)] = List()
+    for (g <- possibleParses) {
+      g match {
+        case (nodeTexts: List[String], edgeText: String) => 
+        var optComplete = false;
+        for(i <- 0 to nodeTexts.length-1) {
+          val nodeText = nodeTexts(i)
+          val posTagged = posTagger.tagText(nodeText);
+          var done = false
+          for(tag <- posTagged)
+          {
+            tag match{
+              case (a,b) => 
+                if(b=="DT" && done==false) {
+                  var newNodes = nodeTexts.toArray;
+                  newNodes(i)=nodeText.replace(a+" ", "").trim;
+                  val newParse = (newNodes.toList,edgeText)
+                  removedParses = newParse::removedParses;
+                  done = true //Rmoves only first determiner
+                }
+              }
+          }
+        }
+        optionalParses = g::optionalParses;
+        
+      }
+      
+    }
+    if(returnAll) {
+      
+     return removedParses.reverse++optionalParses.reverse
+    }
+    else {
+      return removedParses.reverse;
+    }
+
+}
 
 
 def getOrCreateTextNode(id:String, userID:String, textString:String):Vertex={
