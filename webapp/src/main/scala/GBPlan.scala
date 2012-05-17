@@ -44,10 +44,15 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val json = Map(("count" -> results.numResults), ("results" -> resultsList))
       ResponseString(generate(json))
     }
-    case req@POST(Path("/add") & Params(params)) => {
+    case req@POST(Path("/add") & Params(params) & Cookies(cookies)) => {
+      val userNode = Server.getUser(cookies)
       val sentence = params("s")(0)
+      val rootId = params("r")(0)
+      var rootNode = Server.store.get(rootId)
       println("sentence: " + sentence)
-      val results = Server.sparser.parseSentence(sentence)
+      println("rootId: " + rootId)
+      println("rootNode: " + rootNode)
+      val results = Server.sparser.parseSentence(sentence, user=Option(userNode), root=rootNode)
       println(results)
       ResponseString("ok")
     }

@@ -2034,7 +2034,7 @@ function handler(event) {
     return $.ajax({
       type: "POST",
       url: "/add",
-      data: "s=" + $('#addInput').val(),
+      data: "s=" + $('#addInput').val() + "&r=" + rootNodeId,
       dataType: "text",
       success: this.addReply
     });

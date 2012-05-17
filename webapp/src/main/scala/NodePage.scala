@@ -15,7 +15,7 @@ case class NodePage(store: VertexStore, nodeId: String, user: UserNode, prod: Bo
     val js = "var nodes = " + gi.nodesJSON + ";\n" +
         "var snodes = " + gi.snodesJSON + ";\n" +
         "var links = " + gi.linksJSON + ";\n" +
-        "var error = '';\n"
+        "var rootNodeId = '" + nodeId + "';\n"
 
     def cssAndJs = {
       if (prod) {
