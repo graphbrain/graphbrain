@@ -21,8 +21,12 @@ def relation_id(relation:String):String={
 	return relation.replace(" ", "_")
 }
 
-def image_id(image_name:String):String={
-	return "image/"+image_name;
+def image_id(image_name:String, image_url:String=""):String={
+	return "image/" + image_name + "/" + image_url.toLowerCase.replace("/", "_");
+}
+
+def video_id(video_name:String, video_url:String=""):String={
+	return "video/" + video_name + "/" + video_url.toLowerCase.replace("/", "_");
 }
 
 def text_id(thing:String, prefix:String):String={
