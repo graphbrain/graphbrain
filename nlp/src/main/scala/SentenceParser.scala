@@ -9,6 +9,7 @@ import com.graphbrain.hgdb.BurstCaching
 import com.graphbrain.hgdb.OpLogging
 import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.ImageNode
+import com.graphbrain.hgdb.VideoNode
 import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.UserNode
@@ -25,13 +26,15 @@ class SentenceParser (storeName:String = "gb") {
   val adverbRegex = """RB[A-Z]?""".r
   val propositionRegex = """IN[A-Z]?""".r
   val nounRegex = """NN[A-Z]?""".r
+  val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r, """http://www.flickr.com/photos/.+""".r)
+  val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
 
   val si = RiakSearchInterface("gbsearch")
   
   val store = new VertexStore(storeName) with Indexing with BurstCaching
   val anon_username = "gb_anon"
 
-  def parseSentence(inSentence: String, root: Vertex = TextNode(id="None", text="None"), parseType: String = "graph", numResults: Int = 10, user:Option[UserNode]=None): List[(List[Vertex], Edge)]={
+  def parseSentence(inSentence: String, root: Vertex = TextNode(id="GBNoneGB", text="GBNoneGB"), parseType: String = "graph", numResults: Int = 10, user:Option[UserNode]=None): List[(List[Vertex], Edge)]={
   	val sentence = inSentence.trim;
   	//I'm envisioning that in the future we may have other parsing purposes where we might have other parsing rules 
   	//(e.g. ignoring non-rootparses, different rule precedences) so I've kept the graph creation parsing as just one option.
@@ -46,6 +49,45 @@ class SentenceParser (storeName:String = "gb") {
     else {
     	return Nil
     }
+  }
+
+  def textToNode(text:String, root: Vertex= TextNode(id="GBNoneGB", text="GBNoneGB"), user:Option[UserNode]=None): List[Vertex] = {
+    var userName = anon_username;
+    
+    user match {
+        case Some(u:UserNode) => userName = u.username;
+        case _ => 
+
+    }
+
+    var results: List[Vertex] = List()
+
+    //Only make special content types with respect to a "thing" (TextNode)
+    root match {
+      case r: TextNode => 
+        
+        for (imageE <- imageExt) {
+          if (imageE.findAllIn(text).hasNext && r.id != "GBNoneGB") {             
+            val imageID = ID.image_id(image_name = r.text, image_url = text); 
+            results =  ImageNode(id = ID.usergenerated_id(userName, imageID), url = text) :: results;
+          }
+        }
+
+        for (videoE <- videoExt) {
+          if (videoE.findAllIn(text).hasNext && r.text != "GBNoneGB") {
+            val videoID = ID.video_id(video_name = r.text, video_url = text)
+            results = VideoNode(id = ID.usergenerated_id(userName, videoID), url = text) :: results;
+          }
+        }
+      case _ =>
+      }
+
+    if (urlRegex.findAllIn(text).hasNext) {
+      val urlID = ID.url_id(url = text)
+      results = URLNode(id = ID.usergenerated_id(userName, urlID)) :: results
+    }
+    results = TextNode(id = ID.usergenerated_id(userName, text)) :: results;
+    return results.reverse;
   }
 
   def parseToGraph(sentence: String, root: Vertex, numResults: Int, userID: String): List[(List[Vertex], Edge)]={
@@ -181,6 +223,7 @@ class SentenceParser (storeName:String = "gb") {
 
 				var searchResults = try{si.query(nodeText).ids} catch {case e => Nil};
 				var fuzzySearchResults = try{si.query(nodeText+"*").ids} catch{case e => Nil};
+
 				val results = try{searchResults ++ fuzzySearchResults} catch {case e => Nil}
 				
 				//fuzzy search results are second in priority
@@ -345,12 +388,30 @@ object SentenceParser {
       val userNode = UserNode("chihchun_chen", "chihchun_chen", "Chih-Chun Chen")
   	  val sentence1 = "\"Chih-Chun\" is a \"toad\""
   	  val sentence2 = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
+      val videoURL1 = "http://www.youtube.com/watch?v=_e_zcoDDiwc&feature=related"
+      val videoURL2 = "http://vimeo.com/34948855"
+      val videoURL3 = "http://www.dailymotion.com/video/xmehe4_millenium-tv_videogames"
+      val imageURL1 = "http://www.flickr.com/photos/londonmummy/471232270/"
+      val imageURL2 = "http://en.wikipedia.org/wiki/File:Crohook.jpg"
   	  println("From main: " + sentence1)
       sentenceParser.parseSentence(sentence1)
       println("From main with root: " + sentence1)
       sentenceParser.parseSentence(sentence1, rootNode)
       println("From main with root with user: " + sentence1)
       sentenceParser.parseSentence(sentence1, rootNode, user=Some(userNode))
+
+      println("Video with root with user: " + videoURL1)
+      println(sentenceParser.textToNode(videoURL1, rootNode, user=Some(userNode)))
+      println("Video with root with user: " + videoURL2)
+      println(sentenceParser.textToNode(videoURL2, rootNode, user=Some(userNode)))
+      println("Video with root with user: " + videoURL3)
+      println(sentenceParser.textToNode(videoURL3, rootNode, user=Some(userNode)))
+
+      println("Image with root with user: " + imageURL1)
+      println(sentenceParser.textToNode(imageURL1, rootNode, user=Some(userNode)))
+      println("Image with root with user: " + imageURL2)
+      println(sentenceParser.textToNode(imageURL2, rootNode, user=Some(userNode)))
+      
 
 
       println("From command line: " + sentence2)
@@ -359,8 +420,6 @@ object SentenceParser {
       sentenceParser.parseSentence(sentence2, rootNode)
       println("From command line with root with user: " + sentence2)
       sentenceParser.parseSentence(sentence2, rootNode, user=Some(userNode))
-
-
 
 
 

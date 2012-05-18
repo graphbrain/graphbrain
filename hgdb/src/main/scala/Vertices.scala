@@ -108,6 +108,15 @@ case class ImageNode(id: String="", url: String="", edges: Set[String]=Set[Strin
   def setExtra(newExtra: Int) = copy(extra=newExtra)
 }
 
+case class VideoNode(id: String="", url: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
+  override val vtype: String = "video"
+
+  override def toMap: Map[String, Any] = toMapBase ++ Map(("url" -> url))
+
+  def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
+  def setExtra(newExtra: Int) = copy(extra=newExtra)
+}
+
 
 case class SourceNode(id: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
   override val vtype: String = "src"
