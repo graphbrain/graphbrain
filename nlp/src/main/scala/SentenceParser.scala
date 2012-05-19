@@ -17,11 +17,11 @@ import com.graphbrain.hgdb.Vertex
 import com.graphbrain.searchengine.Indexing
 import com.graphbrain.searchengine.RiakSearchInterface
 
-class SentenceParser (storeName:String = "gb") {
+class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
 
   val quoteRegex = """(\")(.+?)(\")""".r
   val urlRegex = """http:\/\/.+""".r
-  val posTagger = new POSTagger();
+  val posTagger = if (tagger) new POSTagger() else null
   val verbRegex = """VB[A-Z]?""".r
   val adverbRegex = """RB[A-Z]?""".r
   val propositionRegex = """IN[A-Z]?""".r
@@ -86,7 +86,7 @@ class SentenceParser (storeName:String = "gb") {
       val urlID = ID.url_id(url = text)
       results = URLNode(id = ID.usergenerated_id(userName, urlID)) :: results
     }
-    results = TextNode(id = ID.usergenerated_id(userName, text)) :: results;
+    results = TextNode(id = ID.usergenerated_id(userName, text), text=text) :: results;
     return results.reverse;
   }
 

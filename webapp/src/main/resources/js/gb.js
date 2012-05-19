@@ -450,7 +450,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, add, addReply, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, initAddDialog, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, showAddDialog, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, add, addReply, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, initAddDialog, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, showAddDialog, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateAddInput, updateAddRelation, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -2021,9 +2021,11 @@ function handler(event) {
 
   initAddDialog = function() {
     var dialogHtml;
-    dialogHtml = $("<div class=\"modal hide\" id=\"addModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Add Connection</h3>\n  </div>\n  <form class=\"signupForm\">\n    <div class=\"modal-body\" id=\"registerLoginBody\">\n        <input id=\"addInput\" type=\"text\" value=\"Aristotle \" style=\"width:90%\">\n        <span id=\"nameErrMsg\" class=\"help-inline\" />\n    </div>\n    <div class=\"modal-footer\">\n      </form>\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"addButton\" class=\"btn btn-primary\">Add</a>\n    </div>\n  </form>\n</div>");
+    dialogHtml = $("<div class=\"modal hide\" id=\"addModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Add Connection</h3>\n  </div>\n  <form class=\"addForm\">\n    <div class=\"modal-body\" id=\"addBody\">\n        <div class=\"node\" style=\"display:inline; float:left\">Aristotle</div>\n        <div class=\"linkLabel\" style=\"position:relative; float:left\"><div class=\"linkText\" id=\"relation\">...</div><div class=\"linkArrow\" /></div>\n        <div class=\"node\" id=\"newNode\" style=\"display:inline; float:left\">?</div>\n        <br /><br />\n        <label>Enter text or URL</label>\n        <input id=\"addInput\" type=\"text\" placeholder=\"?\" style=\"width:90%\">\n        <label>Relation</label>\n        <input id=\"addRelation\" type=\"text\" placeholder=\"...\" style=\"width:90%\">\n    </div>\n    <div class=\"modal-footer\">\n      </form>\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"addButton\" class=\"btn btn-primary\">Add</a>\n    </div>\n  </form>\n</div>");
     dialogHtml.appendTo('body');
-    return $('#addButton').click(add);
+    $('#addButton').click(add);
+    $('#addInput').keyup(updateAddInput);
+    return $('#addRelation').keyup(updateAddRelation);
   };
 
   showAddDialog = function() {
@@ -2033,7 +2035,7 @@ function handler(event) {
   add = function() {
     return $.ajax({
       type: "POST",
-      url: "/add",
+      url: "/nodetxt",
       data: "s=" + $('#addInput').val() + "&r=" + rootNodeId,
       dataType: "text",
       success: this.addReply
@@ -2042,6 +2044,14 @@ function handler(event) {
 
   addReply = function(msg) {
     return $('#signUpModal').modal('hide');
+  };
+
+  updateAddInput = function(msg) {
+    return $("#newNode").html($("#addInput").val());
+  };
+
+  updateAddRelation = function(msg) {
+    return $("#relation").html($("#addRelation").val());
   };
 
   g = false;

@@ -44,7 +44,8 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val json = Map(("count" -> results.numResults), ("results" -> resultsList))
       ResponseString(generate(json))
     }
-    case req@POST(Path("/add") & Params(params) & Cookies(cookies)) => {
+    /*
+    case req@POST(Path("/addsentence") & Params(params) & Cookies(cookies)) => {
       val userNode = Server.getUser(cookies)
       val sentence = params("s")(0)
       val rootId = params("r")(0)
@@ -53,6 +54,18 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       println("rootId: " + rootId)
       println("rootNode: " + rootNode)
       val results = Server.sparser.parseSentence(sentence, user=Option(userNode), root=rootNode)
+      println(results)
+      ResponseString("ok")
+    }*/
+    case req@POST(Path("/nodetxt") & Params(params) & Cookies(cookies)) => {
+      val userNode = Server.getUser(cookies)
+      val str = params("s")(0)
+      val rootId = params("r")(0)
+      var rootNode = Server.store.get(rootId)
+      println("str: " + str)
+      println("rootId: " + rootId)
+      println("rootNode: " + rootNode)
+      val results = Server.sparser.textToNode(str, user=Option(userNode))
       println(results)
       ResponseString("ok")
     }
