@@ -1,9 +1,11 @@
 import org.scalatest.FunSuite
 import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.KeyNotFound
+import com.graphbrain.hgdb.Brain
 import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.ImageNode
+import com.graphbrain.hgdb.VideoNode
 import com.graphbrain.hgdb.SourceNode
 import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.UserEmailNode
@@ -39,6 +41,12 @@ trait BaseVertexStoreTests { this: FunSuite =>
     }
   }
 
+  test("get Brain that does not exist [" + label + "]") {
+    intercept[KeyNotFound] {
+      store.getBrain("sdfh89g89gdf")
+    }
+  }
+
   test("get TextNode that does not exist [" + label + "]") {
     intercept[KeyNotFound] {
       store.getTextNode("sdfh89g89gdf")
@@ -54,6 +62,12 @@ trait BaseVertexStoreTests { this: FunSuite =>
   test("get ImageNode that does not exist [" + label + "]") {
     intercept[KeyNotFound] {
       store.getImageNode("sdfh89g89gdf")
+    }
+  }
+
+  test("get VideoNode that does not exist [" + label + "]") {
+    intercept[KeyNotFound] {
+      store.getVideoNode("sdfh89g89gdf")
     }
   }
 
@@ -73,6 +87,18 @@ trait BaseVertexStoreTests { this: FunSuite =>
     intercept[KeyNotFound] {
       store.getUserEmailNode("sdfh89g89gdf")
     }
+  }
+
+  test("getBrainNode [" + label + "]") {
+    val inVertex = Brain("brain/0", "testing Brain")
+    store.remove(inVertex)
+    store.put(inVertex)
+    
+    val outVertex = store.getBrain("brain/0")
+    assert(outVertex.vtype == "brn")
+    assert(inVertex.id == outVertex.id)
+    assert(inVertex.name == outVertex.name)
+    assert(inVertex.access == "public")
   }
 
   test("getTextNode [" + label + "]") {
@@ -104,6 +130,17 @@ trait BaseVertexStoreTests { this: FunSuite =>
     
     val outVertex = store.getImageNode("imagenode/0")
     assert(outVertex.vtype == "img")
+    assert(inVertex.id == outVertex.id)
+    assert(inVertex.url == outVertex.url)
+  }
+
+  test("getVideoNode [" + label + "]") {
+    val inVertex = VideoNode("videonode/0", "http://graphbrain.com/video.mp3")
+    store.remove(inVertex)
+    store.put(inVertex)
+    
+    val outVertex = store.getVideoNode("videonode/0")
+    assert(outVertex.vtype == "vid")
     assert(inVertex.id == outVertex.id)
     assert(inVertex.url == outVertex.url)
   }

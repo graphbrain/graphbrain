@@ -30,6 +30,11 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         val rolen = map.getOrElse("rolen", "").toString
         EdgeType(id, label, roles, rolen, edges, extra)
       }
+      case "brn" => {
+        val name = map.getOrElse("name", "").toString
+        val access = map.getOrElse("access", "public").toString
+        Brain(id, name, access, edges, extra)
+      }
       case "txt" => {
         val text = map.getOrElse("text", "").toString
         TextNode(id, text, edges, extra)
@@ -45,6 +50,10 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         val url = map.getOrElse("url", "").toString
         ImageNode(id, url, edges, extra)
       }
+      case "vid" => {
+        val url = map.getOrElse("url", "").toString
+        VideoNode(id, url, edges, extra)
+      }
       case "svg" => {
         val svg = map.getOrElse("svg", "").toString
         SVGNode(id, svg, edges, extra)
@@ -59,7 +68,8 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         val creationTs = map.getOrElse("creationTs", "").toString.toLong
         val sessionTs = map.getOrElse("sessionTs", "").toString.toLong
         val lastSeen = map.getOrElse("lastSeen", "").toString.toLong
-        UserNode(id, username, name, email, pwdhash, role, session, creationTs, sessionTs, lastSeen, edges, extra)
+        val brains = VertexStore.str2iter(map.getOrElse("brains", "").toString).toSet
+        UserNode(id, username, name, email, pwdhash, role, session, creationTs, sessionTs, lastSeen, brains, edges, extra)
       }
       case "usre" => {
         val username = map.getOrElse("username", "").toString
