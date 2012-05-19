@@ -98,7 +98,11 @@ initInterface = ->
     initSignUpDialog()
     initLoginDialog()
     initAddDialog()
+    initAddBrainDialog()
+    initAddFriendDialog()
     $('#signupLink').bind 'click', showSignUpDialog
     $('#loginLink').bind 'click', showLoginDialog
     $('#logoutLink').bind 'click', logout
     $('#addLink').bind 'click', showAddDialog
+    $('#addFriendLink').bind 'click', showAddFriendDialog
+    $('#addBrainLink').bind 'click', showAddBrainDialog
