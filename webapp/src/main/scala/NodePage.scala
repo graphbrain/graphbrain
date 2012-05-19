@@ -52,9 +52,9 @@ case class NodePage(store: VertexStore, nodeId: String, user: UserNode, prod: Bo
         """
         <ul class="nav pull-right">
             <li class="divider-vertical"></li>
-            <li><a href="#" id="addBrain"><i class="icon-plus icon-white"></i> Brain</a></li>
-            <li><a href="#" id="addFriend"><i class="icon-plus icon-white"></i> Friend</a></li>
             <li><a href="#" id="addLink"><i class="icon-plus icon-white"></i> Add</a></li>
+            <li><a href="#" id="addBrainLink"><i class="icon-plus icon-white"></i> Brain</a></li>
+            <li><a href="#" id="addFriendLink"><i class="icon-plus icon-white"></i> Friend</a></li>
             <li class="divider-vertical"></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-white"></i> """ + user.name + """ <b class="caret"></b></a>

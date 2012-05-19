@@ -450,7 +450,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, add, addReply, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, initAddDialog, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, showAddDialog, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateAddInput, updateAddRelation, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, add, addBrain, addFriend, addReply, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, initAddBrainDialog, initAddDialog, initAddFriendDialog, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, showAddBrainDialog, showAddDialog, showAddFriendDialog, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateAddInput, updateAddRelation, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -918,10 +918,14 @@ function handler(event) {
     initSignUpDialog();
     initLoginDialog();
     initAddDialog();
+    initAddBrainDialog();
+    initAddFriendDialog();
     $('#signupLink').bind('click', showSignUpDialog);
     $('#loginLink').bind('click', showLoginDialog);
     $('#logoutLink').bind('click', logout);
-    return $('#addLink').bind('click', showAddDialog);
+    $('#addLink').bind('click', showAddDialog);
+    $('#addFriendLink').bind('click', showAddFriendDialog);
+    return $('#addBrainLink').bind('click', showAddBrainDialog);
   };
 
   nodeCount = 0;
@@ -2053,6 +2057,32 @@ function handler(event) {
   updateAddRelation = function(msg) {
     return $("#relation").html($("#addRelation").val());
   };
+
+  initAddBrainDialog = function() {
+    var dialogHtml;
+    dialogHtml = $("<div class=\"modal hide\" id=\"addBrainModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Add Brain</h3>\n  </div>\n  <form class=\"addForm\">\n    <div class=\"modal-body\" id=\"addBrainBody\">\n        <label>Brain name</label>\n        <input id=\"brainNameInput\" type=\"text\" style=\"width:90%\">\n    </div>\n    <div class=\"modal-footer\">\n      </form>\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"addBrainButton\" class=\"btn btn-primary\">Add</a>\n    </div>\n  </form>\n</div>");
+    dialogHtml.appendTo('body');
+    return $('#addBrainButton').click(add);
+  };
+
+  showAddBrainDialog = function() {
+    return $('#addBrainModal').modal('show');
+  };
+
+  addBrain = function() {};
+
+  initAddFriendDialog = function() {
+    var dialogHtml;
+    dialogHtml = $("<div class=\"modal hide\" id=\"addFriendModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Add Connection</h3>\n  </div>\n  <form class=\"addFriendForm\">\n    <div class=\"modal-body\" id=\"addBody\">\n        <label>Name</label>\n        <input id=\"addInput\" type=\"text\" placeholder=\"\" style=\"width:90%\">\n        <label>Email</label>\n        <input id=\"addRelation\" type=\"text\" placeholder=\"\" style=\"width:90%\">\n    </div>\n    <div class=\"modal-footer\">\n      </form>\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"addFriendButton\" class=\"btn btn-primary\">Add</a>\n    </div>\n  </form>\n</div>");
+    dialogHtml.appendTo('body');
+    return $('#addFriend').click(add);
+  };
+
+  showAddFriendDialog = function() {
+    return $('#addFriendModal').modal('show');
+  };
+
+  addFriend = function() {};
 
   g = false;
 

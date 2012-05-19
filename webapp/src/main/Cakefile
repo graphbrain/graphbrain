@@ -22,6 +22,8 @@ build = (callback) ->
     'coffee/search.coffee',
     'coffee/user.coffee',
     'coffee/add.coffee',
+    'coffee/brain.coffee',
+    'coffee/friend.coffee',
     'coffee/main.coffee']
   coffee.stderr.on 'data', (data) ->
     process.stderr.write data.toString()
