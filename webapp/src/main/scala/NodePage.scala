@@ -51,17 +51,10 @@ case class NodePage(store: VertexStore, nodeId: String, user: UserNode, prod: Bo
       else {
         """
         <ul class="nav pull-right">
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-eye-open icon-white"></i> Public <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="#"><i class="icon-eye-open icon-black"></i> Public</a></li>
-                <li><a href="#"><i class="icon-lock icon-black"></i> Private</a></li>
-                <li><a href="#"><i class="icon-lock icon-asterisk"></i> Group</a></li>
-              </ul>
-            </li>
             <li class="divider-vertical"></li>
+            <li><a href="#" id="addBrain"><i class="icon-plus icon-white"></i> Brain</a></li>
+            <li><a href="#" id="addFriend"><i class="icon-plus icon-white"></i> Friend</a></li>
             <li><a href="#" id="addLink"><i class="icon-plus icon-white"></i> Add</a></li>
-            <li><a href="#" id="goHome"><i class="icon-home icon-white"></i> Home</a></li>
             <li class="divider-vertical"></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-white"></i> """ + user.name + """ <b class="caret"></b></a>

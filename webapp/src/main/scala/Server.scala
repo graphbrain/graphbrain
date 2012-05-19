@@ -21,7 +21,7 @@ object Server {
 
   val store = new VertexStore("gb") with SimpleCaching with UserManagement
 
-  val sparser = new SentenceParser()
+  val sparser = new SentenceParser(tagger=false)
 
   def realIp(req: HttpRequest[Any]) = {
     val headers = req.headers("X-Forwarded-For")
