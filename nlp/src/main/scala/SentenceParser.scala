@@ -39,19 +39,19 @@ class SentenceParser (storeName:String = "gb") {
   	//I'm envisioning that in the future we may have other parsing purposes where we might have other parsing rules 
   	//(e.g. ignoring non-rootparses, different rule precedences) so I've kept the graph creation parsing as just one option.
     if(parseType == "graph") {
-      var userName = anon_username
+      var userIn = UserNode(anon_username, anon_username)
       user match {
-        case Some(u:UserNode) => userName = u.username;
+        case Some(u:UserNode) => userIn = u;
         case _ => 
       }
-      return parseToGraph(sentence, root, numResults, userName);
+      return parseToGraph(sentence, root, numResults, userIn);
     }
     else {
     	return Nil
     }
   }
 
-  def textToNode(text:String, root: Vertex= TextNode(id="GBNoneGB", text="GBNoneGB"), user:Option[UserNode]=None): List[Vertex] = {
+  def textToNode(text:String, node: Vertex= TextNode(id="GBNoneGB", text="GBNoneGB"), user:Option[Vertex]=None): List[Vertex] = {
     var userName = anon_username;
     
     user match {
@@ -63,7 +63,7 @@ class SentenceParser (storeName:String = "gb") {
     var results: List[Vertex] = List()
 
     //Only make special content types with respect to a "thing" (TextNode)
-    root match {
+    node match {
       case r: TextNode => 
         
         for (imageE <- imageExt) {
@@ -90,11 +90,11 @@ class SentenceParser (storeName:String = "gb") {
     return results.reverse;
   }
 
-  def parseToGraph(sentence: String, root: Vertex, numResults: Int, userID: String): List[(List[Vertex], Edge)]={
+  def parseToGraph(sentence: String, root: Vertex, numResults: Int, user: UserNode): List[(List[Vertex], Edge)]={
 
   	var possibleParses = quoteChunk(sentence, root) ++ posChunk(sentence, root);
     println("Possible parses: " + possibleParses.length)
-  	var possibleGraphs = findOrConvertToVertices(possibleParses, root, userID, numResults);
+  	var possibleGraphs = findOrConvertToVertices(possibleParses, root, user, numResults);
   	println("Possible graphs: " + possibleGraphs.length)
     return possibleGraphs.take(numResults);
   }
@@ -203,8 +203,14 @@ class SentenceParser (storeName:String = "gb") {
   }
 
 
-  def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: Vertex, userID:String, maxPossiblePerParse: Int = 10): List[(List[Vertex], Edge)]={
+  def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: Vertex, user:UserNode, maxPossiblePerParse: Int = 10): List[(List[Vertex], Edge)]={
+    
+    var userID = user.username
+    /*user match {
+        case u:UserNode => userID = u.username;
+        case _ => 
 
+    }*/
 	var possibleGraphs:List[(List[Vertex], Edge)] = List()
 	val sortedParses = removeDeterminers(sortRootParsesPriority(possibleParses, root), root)
 
@@ -232,13 +238,13 @@ class SentenceParser (storeName:String = "gb") {
         println("Limit: " + limit)
 				for(i <- 0 to limit-1) {
 				  val result = try {results(i) } catch { case e => ""}
-				  val resultNode = getOrCreateTextNode(id=result, userID=userID, textString=nodeText)
+				  val resultNode = getOrCreate(result, user, nodeText, root)
 				  println("Node: " + resultNode.id)
 
 				  currentNodesForNodeText = resultNode :: currentNodesForNodeText;
 				}
         //Result for a new node to be created
-        val resultNode = getOrCreateTextNode(id="", userID=userID, textString=nodeText)
+        val resultNode = getOrCreate("", user, nodeText, root)
         currentNodesForNodeText = resultNode :: currentNodesForNodeText;
 				nodesForEachNodeText(textNum) = currentNodesForNodeText;
         countsForEachNodeText(textNum) = currentNodesForNodeText.length;
@@ -357,18 +363,19 @@ def removeDeterminers(possibleParses: List[(List[String], String)], rootNode: Ve
 }
 
 
-def getOrCreateTextNode(id:String, userID:String, textString:String):Vertex={
+def getOrCreate(id:String, user:Vertex, textString:String, root:Vertex):Vertex={
   if(id != "") {
     try{
       return store.get(id);
     }
     catch{
-      case e => val newNode = TextNode(id=ID.usergenerated_id(userID, textString), text=textString);
+      case e => val newNode = textToNode(textString, root, Some(user))(0);
+      //TextNode(id=ID.usergenerated_id(userID, textString), text=textString);
       return newNode;
     }
   }
   else {
-    val newNode = TextNode(id=ID.usergenerated_id(userID, textString), text=textString);
+    val newNode = textToNode(textString, root, Some(user))(0);
     return newNode;
   }
 
