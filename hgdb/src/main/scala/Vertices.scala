@@ -25,6 +25,13 @@ abstract class Vertex {
 }
 
 
+abstract class Node extends Vertex{
+  val brain: String
+  
+  protected override def toMapBase: Map[String, Any] = super.toMapBase ++ Map(("brain" -> brain))
+}
+
+
 case class Edge(id: String="", etype: String="", edges: Set[String]=Set[String](), extra: Int = -1) extends Vertex {
   override val vtype: String = "edg"
 
@@ -77,7 +84,19 @@ case class EdgeType(id: String="", label: String="", roles: List[String]=List[St
 }
 
 
-case class TextNode(id: String="", text: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
+case class Brain(id: String="", name: String="", access: String = "public", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
+  override val vtype: String = "brn"
+
+  override def toMap: Map[String, Any] = toMapBase ++ Map(("name" -> name), ("access" -> access))
+
+  def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
+  def setExtra(newExtra: Int) = copy(extra=newExtra)
+
+  override def toString: String = name
+}
+
+
+case class TextNode(id: String="", text: String="", edges: Set[String]=Set[String](), extra: Int= -1, brain: String = "") extends Node {
   override val vtype: String = "txt"
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("text" -> text))
@@ -89,7 +108,7 @@ case class TextNode(id: String="", text: String="", edges: Set[String]=Set[Strin
 }
 
 
-case class URLNode(id: String="", url: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
+case class URLNode(id: String="", url: String="", edges: Set[String]=Set[String](), extra: Int= -1, brain: String = "") extends Node {
   override val vtype: String = "url"
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("url" -> url))
@@ -99,7 +118,7 @@ case class URLNode(id: String="", url: String="", edges: Set[String]=Set[String]
 }
 
 
-case class ImageNode(id: String="", url: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
+case class ImageNode(id: String="", url: String="", edges: Set[String]=Set[String](), extra: Int= -1, brain: String = "") extends Node {
   override val vtype: String = "img"
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("url" -> url))
@@ -108,10 +127,21 @@ case class ImageNode(id: String="", url: String="", edges: Set[String]=Set[Strin
   def setExtra(newExtra: Int) = copy(extra=newExtra)
 }
 
-case class VideoNode(id: String="", url: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
-  override val vtype: String = "video"
+
+case class VideoNode(id: String="", url: String="", edges: Set[String]=Set[String](), extra: Int= -1, brain: String = "") extends Node {
+  override val vtype: String = "vid"
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("url" -> url))
+
+  def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
+  def setExtra(newExtra: Int) = copy(extra=newExtra)
+}
+
+
+case class SVGNode(id: String="", svg:String="", edges: Set[String]=Set[String](), extra: Int= -1, brain: String = "") extends Node {
+  override val vtype: String = "svg"
+
+  override def toMap: Map[String, Any] = toMapBase ++ Map(("svg" -> svg))
 
   def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
   def setExtra(newExtra: Int) = copy(extra=newExtra)
@@ -127,24 +157,16 @@ case class SourceNode(id: String="", edges: Set[String]=Set[String](), extra: In
   def setExtra(newExtra: Int) = copy(extra=newExtra)
 }
 
-case class SVGNode(id: String="", svg:String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
-  override val vtype: String = "svg"
-
-  override def toMap: Map[String, Any] = toMapBase ++ Map(("svg" -> svg))
-
-  def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
-  def setExtra(newExtra: Int) = copy(extra=newExtra)
-}
 
 case class UserNode(id: String="", username: String="", name: String="", email: String="",
   pwdhash: String="", role: String="", session: String="", creationTs: Long= -1, sessionTs: Long= -1,
-  lastSeen: Long= -1, edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
+  lastSeen: Long= -1, brains: Set[String]=Set[String](), edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
   
   override val vtype: String = "usr"
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("username" -> username), ("name" -> name),
     ("email" -> email), ("pwdhash" -> pwdhash), ("role" -> role), ("session" -> session), ("creationTs" -> creationTs)
-    , ("sessionTs" -> sessionTs), ("lastSeen" -> lastSeen))
+    , ("sessionTs" -> sessionTs), ("lastSeen" -> lastSeen), ("brains" -> brains))
 
   def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
   def setExtra(newExtra: Int) = copy(extra=newExtra)

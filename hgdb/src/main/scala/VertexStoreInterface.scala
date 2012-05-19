@@ -38,6 +38,13 @@ abstract trait VertexStoreInterface {
   	}
   }
 
+  def getBrain(id: String): Brain = {
+    get(id) match {
+      case x: Brain => x
+      case v: Vertex => throw WrongVertexType("on vertex: " + id + " (expected 'brn', found : '" + v.vtype + "')")
+    }
+  }
+
   def getTextNode(id: String): TextNode = {
   	get(id) match {
   		case x: TextNode => x
@@ -64,6 +71,13 @@ abstract trait VertexStoreInterface {
   		case x: ImageNode => x
   		case v: Vertex => throw WrongVertexType("on vertex: " + id + " (expected 'img', found : '" + v.vtype + "')")
   	}
+  }
+
+  def getVideoNode(id: String): VideoNode = {
+    get(id) match {
+      case x: VideoNode => x
+      case v: Vertex => throw WrongVertexType("on vertex: " + id + " (expected 'vid', found : '" + v.vtype + "')")
+    }
   }
 
   def getSVGNode(id: String): SVGNode = {
