@@ -9,6 +9,7 @@ import unfiltered.Cookie
 import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.SimpleCaching
 import com.graphbrain.hgdb.UserManagement
+import com.graphbrain.hgdb.NodeManagement
 import com.graphbrain.hgdb.UserNode
 import com.graphbrain.nlp.SentenceParser
 import com.graphbrain.nlp.POSTagger
@@ -19,7 +20,7 @@ object Server {
   var http: unfiltered.netty.Http = null
   var prod: Boolean = false
 
-  val store = new VertexStore("gb") with SimpleCaching with UserManagement
+  val store = new VertexStore("gb") with SimpleCaching with UserManagement with NodeManagement
 
   val sparser = new SentenceParser(tagger=false)
 

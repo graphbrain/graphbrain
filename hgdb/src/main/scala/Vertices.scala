@@ -25,7 +25,7 @@ abstract class Vertex {
 }
 
 
-abstract class Node extends Vertex{
+abstract class Node extends Vertex {
   val brain: String
   
   protected override def toMapBase: Map[String, Any] = super.toMapBase ++ Map(("brain" -> brain))
@@ -170,6 +170,7 @@ case class UserNode(id: String="", username: String="", name: String="", email: 
 
   def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
   def setExtra(newExtra: Int) = copy(extra=newExtra)
+  def setBrains(newBrains: Set[String]) = copy(brains=newBrains)
 }
 
 case class UserEmailNode(id: String="", username: String="", email: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {

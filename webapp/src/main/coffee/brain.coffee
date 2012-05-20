@@ -5,13 +5,12 @@ initAddBrainDialog = () ->
     <a class="close" data-dismiss="modal">×</a>
     <h3>Add Brain</h3>
   </div>
-  <form class="addForm">
+  <form id="addBrainForm" action="/addbrain" method="post">
     <div class="modal-body" id="addBrainBody">
         <label>Brain name</label>
-        <input id="brainNameInput" type="text" style="width:90%">
+        <input id="brainNameInput" type="text" name="name" style="width:90%">
     </div>
     <div class="modal-footer">
-      </form>
       <a class="btn" data-dismiss="modal">Close</a>
       <a id="addBrainButton" class="btn btn-primary">Add</a>
     </div>
@@ -19,9 +18,10 @@ initAddBrainDialog = () ->
 </div>
     """)
     dialogHtml.appendTo('body')
-    $('#addBrainButton').click(add)
+    $('#addBrainButton').click(addBrain)
 
 showAddBrainDialog = () ->
   $('#addBrainModal').modal('show')
 
 addBrain = ->
+  $('#addBrainForm').submit()
