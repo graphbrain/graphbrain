@@ -2060,16 +2060,18 @@ function handler(event) {
 
   initAddBrainDialog = function() {
     var dialogHtml;
-    dialogHtml = $("<div class=\"modal hide\" id=\"addBrainModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Add Brain</h3>\n  </div>\n  <form class=\"addForm\">\n    <div class=\"modal-body\" id=\"addBrainBody\">\n        <label>Brain name</label>\n        <input id=\"brainNameInput\" type=\"text\" style=\"width:90%\">\n    </div>\n    <div class=\"modal-footer\">\n      </form>\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"addBrainButton\" class=\"btn btn-primary\">Add</a>\n    </div>\n  </form>\n</div>");
+    dialogHtml = $("<div class=\"modal hide\" id=\"addBrainModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Add Brain</h3>\n  </div>\n  <form id=\"addBrainForm\" action=\"/addbrain\" method=\"post\">\n    <div class=\"modal-body\" id=\"addBrainBody\">\n        <label>Brain name</label>\n        <input id=\"brainNameInput\" type=\"text\" name=\"name\" style=\"width:90%\">\n    </div>\n    <div class=\"modal-footer\">\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"addBrainButton\" class=\"btn btn-primary\">Add</a>\n    </div>\n  </form>\n</div>");
     dialogHtml.appendTo('body');
-    return $('#addBrainButton').click(add);
+    return $('#addBrainButton').click(addBrain);
   };
 
   showAddBrainDialog = function() {
     return $('#addBrainModal').modal('show');
   };
 
-  addBrain = function() {};
+  addBrain = function() {
+    return $('#addBrainForm').submit();
+  };
 
   initAddFriendDialog = function() {
     var dialogHtml;
