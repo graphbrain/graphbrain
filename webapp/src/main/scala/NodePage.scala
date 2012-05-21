@@ -2,20 +2,21 @@ package com.graphbrain.webapp
 
 import scala.util.Random
 import com.graphbrain.hgdb.VertexStore
+import com.graphbrain.hgdb.Vertex
 import com.graphbrain.hgdb.UserNode
 
 
-case class NodePage(store: VertexStore, nodeId: String, user: UserNode, prod: Boolean) extends Page {
+case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Boolean) extends Page {
     
     //val version = "040312"
     val version = NodePage.randomVersion
 
-    val gi = new GraphInterface(nodeId, store)
+    val gi = new GraphInterface(node.id, store)
     
     val js = "var nodes = " + gi.nodesJSON + ";\n" +
         "var snodes = " + gi.snodesJSON + ";\n" +
         "var links = " + gi.linksJSON + ";\n" +
-        "var rootNodeId = '" + nodeId + "';\n"
+        "var rootNodeId = '" + node.id + "';\n"
 
     def cssAndJs = {
       if (prod) {

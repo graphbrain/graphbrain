@@ -11,8 +11,9 @@ import com.codahale.logula.Logging
 object NodePlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse with Logging {
   def nodeResponse(id: String, cookies: Map[String, Any], req: HttpRequest[Any]) = {
     val userNode = Server.getUser(cookies)
+    val node = Server.store.get(id)
     log.info(Server.realIp(req) + " NODE " + id)
-    NodePage(Server.store, id, userNode, Server.prod)
+    NodePage(Server.store, node, userNode, Server.prod)
   }
 
   def intent = {

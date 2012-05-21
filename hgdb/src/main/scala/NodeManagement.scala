@@ -22,4 +22,12 @@ trait NodeManagement extends VertexStoreInterface {
 
     id
   }
+
+  def brainId(vertex: Vertex): String = {
+    vertex match {
+      case b: Brain => b.id
+      case n: Node => n.brain
+      case _ => ""
+    }
+  }
 }
