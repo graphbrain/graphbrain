@@ -7,7 +7,7 @@ initAddDialog = () ->
   </div>
   <form class="addForm">
     <div class="modal-body" id="addBody">
-        <div class="node" style="display:inline; float:left">Aristotle</div>
+        <div class="node" style="display:inline; float:left">""" + nodes[rootNodeId]['text'] + """</div>
         <div class="linkLabel" style="position:relative; float:left"><div class="linkText" id="relation">...</div><div class="linkArrow" /></div>
         <div class="node" id="newNode" style="display:inline; float:left">?</div>
         <br /><br />
