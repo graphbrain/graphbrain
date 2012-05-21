@@ -166,7 +166,7 @@ case class UserNode(id: String="", username: String="", name: String="", email: 
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("username" -> username), ("name" -> name),
     ("email" -> email), ("pwdhash" -> pwdhash), ("role" -> role), ("session" -> session), ("creationTs" -> creationTs)
-    , ("sessionTs" -> sessionTs), ("lastSeen" -> lastSeen), ("brains" -> brains))
+    , ("sessionTs" -> sessionTs), ("lastSeen" -> lastSeen), ("brains" -> iter2str(brains)))
 
   def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
   def setExtra(newExtra: Int) = copy(extra=newExtra)
