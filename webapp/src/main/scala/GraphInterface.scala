@@ -37,7 +37,7 @@ object Conversions {
 import Conversions._ //put this import before your hsv converter code
 
 
-class GraphInterface (val rootId: String, val store: VertexStore) {
+class GraphInterface (val rootId: String, val store: VertexStore, val user: UserNode) {
   val neighbors = store.neighbors(rootId)
   val edgeIds = store.rootNeighborEdges(rootId, neighbors)
   val snodes = supernodes
@@ -45,6 +45,7 @@ class GraphInterface (val rootId: String, val store: VertexStore) {
   val nodesJSON = nodes2json
   val snodesJSON = snodes2json
   val linksJSON = links2json
+  val brainsJSON = if (user == null) "" else brains2json
 
   /** Generates relationship Map
     * 
@@ -197,5 +198,12 @@ class GraphInterface (val rootId: String, val store: VertexStore) {
         Map(("id" -> lid), ("directed" -> 1), ("relation" -> l._1), ("sorig" -> l._2.toString), ("targ" -> l._3.toString), ("color" -> color))
     }
     generate(json)
+  }
+
+  private def brains2json = {
+    val brains = for (brainId <- user.brains if Server.store.exists(brainId)) yield Server.store.getBrain(brainId)
+    val brainMaps = for (brain <- brains)
+      yield Map(("id" -> brain.id), ("name" -> brain.name), ("access" -> brain.access))
+    generate(brainMaps)
   }
 }

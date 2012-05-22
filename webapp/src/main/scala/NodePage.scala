@@ -11,12 +11,13 @@ case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Bool
     //val version = "040312"
     val version = NodePage.randomVersion
 
-    val gi = new GraphInterface(node.id, store)
+    val gi = new GraphInterface(node.id, store, user)
     
     val js = "var nodes = " + gi.nodesJSON + ";\n" +
         "var snodes = " + gi.snodesJSON + ";\n" +
         "var links = " + gi.linksJSON + ";\n" +
-        "var rootNodeId = '" + node.id + "';\n"
+        "var rootNodeId = '" + node.id + "';\n" + 
+        "var brains = '" + gi.brainsJSON + "';\n"
 
     def cssAndJs = {
       if (prod) {
