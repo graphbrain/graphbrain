@@ -44,30 +44,18 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val json = Map(("count" -> results.numResults), ("results" -> resultsList))
       ResponseString(generate(json))
     }
-    /*
-    case req@POST(Path("/addsentence") & Params(params) & Cookies(cookies)) => {
+    case req@POST(Path("/add") & Params(params) & Cookies(cookies)) => {
       val userNode = Server.getUser(cookies)
-      val sentence = params("s")(0)
-      val rootId = params("r")(0)
-      var rootNode = Server.store.get(rootId)
-      println("sentence: " + sentence)
-      println("rootId: " + rootId)
-      println("rootNode: " + rootNode)
-      val results = Server.sparser.parseSentence(sentence, user=Option(userNode), root=rootNode)
-      println(results)
-      ResponseString("ok")
-    }*/
-    case req@POST(Path("/nodetxt") & Params(params) & Cookies(cookies)) => {
-      val userNode = Server.getUser(cookies)
-      val str = params("s")(0)
-      val rootId = params("r")(0)
-      var rootNode = Server.store.get(rootId)
-      println("str: " + str)
-      println("rootId: " + rootId)
-      println("rootNode: " + rootNode)
-      val results = Server.sparser.textToNode(str, user=Option(userNode))
-      println(results)
-      ResponseString("ok")
+      val textUrl = params("textUrl")(0)
+      val relation = params("relation")(0)
+      val brainId = params("curBrainId")(0)
+      val rootId = params("rootId")(0)
+      val root = Server.store.get(rootId)
+      val results = Server.sparser.textToNode(textUrl, brainId)
+      val node = results(0)
+      println(node.id)
+      Server.store.createAndConnectVertices(relation, Array(root, node))
+      Redirect("/node/" + node.id)
     }
     case req@POST(Path("/addbrain") & Params(params) & Cookies(cookies)) => {
       val userNode = Server.getUser(cookies)

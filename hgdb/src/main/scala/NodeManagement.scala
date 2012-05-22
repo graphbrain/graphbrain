@@ -27,7 +27,19 @@ trait NodeManagement extends VertexStoreInterface {
     vertex match {
       case b: Brain => b.id
       case n: Node => n.brain
+      case u: UserNode => u.id
       case _ => ""
     }
+  }
+
+  def createAndConnectVertices(edgeType: String, participants: Array[Vertex]) = {
+    for (v <- participants) {
+      if (!exists(v.id)) {
+        put(v)
+      }
+    }
+
+    val ids = for (v <- participants) yield v.id
+    addrel(edgeType, ids)
   }
 }

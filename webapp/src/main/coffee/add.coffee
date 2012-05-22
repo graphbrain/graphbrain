@@ -5,16 +5,22 @@ initAddDialog = () ->
     <a class="close" data-dismiss="modal">×</a>
     <h3>Add Connection</h3>
   </div>
-  <form class="addForm">
+  <form id="addForm" action="/add" method="post">
     <div class="modal-body" id="addBody">
         <div class="node" style="display:inline; float:left">""" + nodes[rootNodeId]['text'] + """</div>
         <div class="linkLabel" style="position:relative; float:left"><div class="linkText" id="relation">...</div><div class="linkArrow" /></div>
         <div class="node" id="newNode" style="display:inline; float:left">?</div>
         <br /><br />
         <label>Enter text or URL</label>
-        <input id="addInput" type="text" placeholder="?" style="width:90%">
+        <input id="addInput" name="textUrl" type="text" placeholder="?" style="width:90%">
         <label>Relation</label>
-        <input id="addRelation" type="text" placeholder="..." style="width:90%">
+        <input id="addRelation" name="relation" type="text" placeholder="..." style="width:90%">
+        <label>Brain</label>
+        <div class="controls">
+          <select id="addDialogSelectBrain" name="brainId"></select>
+        </div>
+        <input name="curBrainId" type="hidden" value='""" + curBrainId + """' />
+        <input name="rootId" type="hidden" value='""" + rootNodeId + """' />
     </div>
     <div class="modal-footer">
       </form>
@@ -33,13 +39,7 @@ showAddDialog = () ->
   $('#addModal').modal('show')
 
 add = ->
-  $.ajax({
-    type: "POST",
-    url: "/nodetxt",
-    data: "s=" + $('#addInput').val() + "&r=" + rootNodeId,
-    dataType: "text",
-    success: @addReply
-  })
+  $('#addForm').submit()
 
 addReply = (msg) ->
   $('#signUpModal').modal('hide')
