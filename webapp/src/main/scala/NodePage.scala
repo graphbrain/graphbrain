@@ -17,7 +17,9 @@ case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Bool
         "var snodes = " + gi.snodesJSON + ";\n" +
         "var links = " + gi.linksJSON + ";\n" +
         "var rootNodeId = '" + node.id + "';\n" + 
-        "var brains = '" + gi.brainsJSON + "';\n"
+        "var brains = " + gi.brainsJSON + ";\n" +
+        "var curBrainId = '" + Server.store.brainId(node) + "';\n" +
+        "var userId = '" + user.id + "';\n"
 
     def cssAndJs = {
       if (prod) {
@@ -57,6 +59,11 @@ case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Bool
             <li><a href="#" id="addLink"><i class="icon-plus icon-white"></i> Add</a></li>
             <li><a href="#" id="addBrainLink"><i class="icon-plus icon-white"></i> Brain</a></li>
             <li><a href="#" id="addFriendLink"><i class="icon-plus icon-white"></i> Friend</a></li>
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="curBrain"></b></a>
+              <ul class="dropdown-menu" id="brainDropdown"></ul>
+            </li>
             <li class="divider-vertical"></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-white"></i> """ + user.name + """ <b class="caret"></b></a>

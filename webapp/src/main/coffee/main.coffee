@@ -88,3 +88,4 @@ initGraph = ->
 $ ->
     initGraph()
     initInterface()
+    initBrains()
