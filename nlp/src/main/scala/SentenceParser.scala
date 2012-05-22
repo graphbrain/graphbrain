@@ -75,11 +75,11 @@ def textToNode(text:String, brainID: String): List[Vertex] = {
     
     if(results.length>=1) return results.reverse;
 
-    val textID = ID.text_id(removeDeterminers(text))
-    results = TextNode(id = brainID + "/" + textID, text=removeDeterminers(text)) :: results;
+    //val textID = ID.text_id(removeDeterminers(text))
+    //results = TextNode(id = brainID + "/" + textID, text=removeDeterminers(text)) :: results;
     val textPureID = ID.text_id(text)
 
-    if(text!=textPureID) {results = TextNode(id = brainID + "/" + textPureID, text=text) :: results;}
+    results = TextNode(id = brainID + "/" + textPureID, text=text) :: results;
 
     return results.reverse;
   }
@@ -360,6 +360,7 @@ If returnAll is false, only return the ones that satisfy the root as node constr
   }
 
 def removeDeterminers(text: String): String={
+  if(posTagger==null) return null
   val posTagged = posTagger.tagText(text);
   
   var newText = ""
@@ -377,6 +378,7 @@ def removeDeterminers(text: String): String={
 def removeDeterminers(possibleParses: List[(List[String], String)], rootNode: Vertex, returnAll: Boolean = false): List[(List[String], String)]={
     var removedParses: List[(List[String], String)] = List()
     var optionalParses: List[(List[String], String)] = List()
+    if(posTagger==null) return null
     for (g <- possibleParses) {
       g match {
         case (nodeTexts: List[String], edgeText: String) => 
@@ -481,7 +483,7 @@ object SentenceParser {
       val text = "Some Magic Cookies"
       println("Text: " + text)
       println(sentenceParser.textToNode(text, brainID)(0).id)
-      println(sentenceParser.textToNode(text, brainID)(1).id)
+      
       
       val videoURL = "http://www.youtube.com/watch?v=_e_zcoDDiwc&feature=related"
       println("Video: " + videoURL)
