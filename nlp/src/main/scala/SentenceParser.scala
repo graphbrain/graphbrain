@@ -78,7 +78,8 @@ def textToNode(text:String, brainID: String): List[Vertex] = {
     val textID = ID.text_id(removeDeterminers(text))
     results = TextNode(id = brainID + "/" + textID, text=removeDeterminers(text)) :: results;
     val textPureID = ID.text_id(text)
-    results = TextNode(id = brainID + "/" + textPureID, text=text) :: results;
+
+    if(text!=textPureID) {results = TextNode(id = brainID + "/" + textPureID, text=text) :: results;}
 
     return results.reverse;
   }
@@ -122,7 +123,7 @@ def textToNode(text:String, brainID: String): List[Vertex] = {
     val textID = ID.text_id(removeDeterminers(text))
     results = TextNode(id = ID.usergenerated_id(userName, textID, brainName), text=removeDeterminers(text)) :: results;
     val textPureID = ID.text_id(text)
-    results = TextNode(id = ID.usergenerated_id(userName, textPureID, brainName), text=text) :: results;
+    if(text!=textPureID) {results = TextNode(id = ID.usergenerated_id(userName, textPureID, brainName), text=text) :: results;}
     return results.reverse;
   }
 
@@ -475,9 +476,9 @@ object SentenceParser {
       sentenceParser.parseSentence(sentence2, rootNode)
       println("From command line with root with user: " + sentence2)
       sentenceParser.parseSentence(sentence2, rootNode, user=Some(userNode))
-      val brainID = "brain/chihchun/animals"
+      val brainID = "brain/telmo/stuff"
       
-      val text = "a toad"
+      val text = "Some Magic Cookies"
       println("Text: " + text)
       println(sentenceParser.textToNode(text, brainID)(0).id)
       println(sentenceParser.textToNode(text, brainID)(1).id)
