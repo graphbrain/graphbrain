@@ -1,6 +1,5 @@
 package com.graphbrain.nlp
 
-import com.graphbrain.braingenerators.ID
 import java.net.URLDecoder;
 import scala.collection.immutable.HashMap
 import scala.util.Sorting
@@ -16,6 +15,7 @@ import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.Vertex
 import com.graphbrain.searchengine.Indexing
 import com.graphbrain.searchengine.RiakSearchInterface
+import com.graphbrain.hgdb.ID
 
 class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
 
@@ -51,7 +51,36 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
     }
   }
 
-  def textToNode(text:String, node: Vertex= TextNode(id="GBNoneGB", text="GBNoneGB"), user:Option[Vertex]=None): List[Vertex] = {
+def textToNode(text:String, brainID: String): List[Vertex] = {
+    var results: List[Vertex] = List()
+
+    for (imageE <- imageExt) {
+      if (imageE.findAllIn(text).hasNext) {             
+        val imageID = ID.image_id(image_name = text, image_url = text); 
+        results =  ImageNode(id = brainID + "/" +  imageID, url = text) :: results;
+      }
+    }
+
+    for (videoE <- videoExt) {
+      if (videoE.findAllIn(text).hasNext) {
+        val videoID = ID.video_id(video_name = text, video_url = text)
+        results = VideoNode(id = brainID + "/" + videoID, url = text) :: results;
+      }
+    }
+      
+    if (urlRegex.findAllIn(text).hasNext) {
+      val urlID = ID.url_id(url = text)
+      results = URLNode(id = brainID + "/" + urlID, url=text) :: results
+    }
+    
+    if(results.length>=1) return results.reverse;
+
+    val textID = ID.text_id(text)
+    results = TextNode(id = brainID + "/" + textID, text=text) :: results;
+    return results.reverse;
+  }
+
+  def textToNode(text:String, node: Vertex= TextNode(id="GBNoneGB", text="GBNoneGB"), brainName: String, user:Option[Vertex]=None): List[Vertex] = {
     var userName = anon_username;
     
     user match {
@@ -69,14 +98,14 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
         for (imageE <- imageExt) {
           if (imageE.findAllIn(text).hasNext && r.id != "GBNoneGB") {             
             val imageID = ID.image_id(image_name = r.text, image_url = text); 
-            results =  ImageNode(id = ID.usergenerated_id(userName, imageID), url = text) :: results;
+            results =  ImageNode(id = ID.usergenerated_id(userName, imageID, brainName), url = text) :: results;
           }
         }
 
         for (videoE <- videoExt) {
           if (videoE.findAllIn(text).hasNext && r.text != "GBNoneGB") {
             val videoID = ID.video_id(video_name = r.text, video_url = text)
-            results = VideoNode(id = ID.usergenerated_id(userName, videoID), url = text) :: results;
+            results = VideoNode(id = ID.usergenerated_id(userName, videoID, brainName), url = text) :: results;
           }
         }
       case _ =>
@@ -84,9 +113,10 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
 
     if (urlRegex.findAllIn(text).hasNext) {
       val urlID = ID.url_id(url = text)
-      results = URLNode(id = ID.usergenerated_id(userName, urlID)) :: results
+      results = URLNode(id = ID.usergenerated_id(userName, urlID, brainName)) :: results
     }
-    results = TextNode(id = ID.usergenerated_id(userName, text), text=text) :: results;
+    val textID = ID.text_id(text)
+    results = TextNode(id = ID.usergenerated_id(userName, textID, brainName), text=text) :: results;
     return results.reverse;
   }
 
@@ -369,19 +399,15 @@ def getOrCreate(id:String, user:Vertex, textString:String, root:Vertex):Vertex={
       return store.get(id);
     }
     catch{
-      case e => val newNode = textToNode(textString, root, Some(user))(0);
+      case e => val newNode = textToNode(textString, root, "stuff", Some(user))(0);
       //TextNode(id=ID.usergenerated_id(userID, textString), text=textString);
       return newNode;
     }
   }
   else {
-    val newNode = textToNode(textString, root, Some(user))(0);
+    val newNode = textToNode(textString, root, "stuff", Some(user))(0);
     return newNode;
   }
-
-}
-
-def terminate(): Unit={
 
 }
 
@@ -391,7 +417,8 @@ def terminate(): Unit={
 object SentenceParser {
   def main(args: Array[String]) {
   	  val sentenceParser = new SentenceParser()
-      val rootNode = TextNode(id=ID.usergenerated_id("chihchun_chen", "toad"), text="toad")
+      
+      val rootNode = TextNode(id=ID.usergenerated_id("chihchun_chen", "toad", "animals"), text="toad")
       val userNode = UserNode("chihchun_chen", "chihchun_chen", "Chih-Chun Chen")
   	  val sentence1 = "\"Chih-Chun\" is a \"toad\""
   	  val sentence2 = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
@@ -408,16 +435,16 @@ object SentenceParser {
       sentenceParser.parseSentence(sentence1, rootNode, user=Some(userNode))
 
       println("Video with root with user: " + videoURL1)
-      println(sentenceParser.textToNode(videoURL1, rootNode, user=Some(userNode)))
+      println(sentenceParser.textToNode(videoURL1, rootNode, "animals", user=Some(userNode)))
       println("Video with root with user: " + videoURL2)
-      println(sentenceParser.textToNode(videoURL2, rootNode, user=Some(userNode)))
+      println(sentenceParser.textToNode(videoURL2, rootNode, "animals", user=Some(userNode)))
       println("Video with root with user: " + videoURL3)
-      println(sentenceParser.textToNode(videoURL3, rootNode, user=Some(userNode)))
+      println(sentenceParser.textToNode(videoURL3, rootNode, "animals", user=Some(userNode)))
 
       println("Image with root with user: " + imageURL1)
-      println(sentenceParser.textToNode(imageURL1, rootNode, user=Some(userNode)))
+      println(sentenceParser.textToNode(imageURL1, rootNode, "animals", user=Some(userNode)))
       println("Image with root with user: " + imageURL2)
-      println(sentenceParser.textToNode(imageURL2, rootNode, user=Some(userNode)))
+      println(sentenceParser.textToNode(imageURL2, rootNode, "animals", user=Some(userNode)))
       
 
 
@@ -427,6 +454,26 @@ object SentenceParser {
       sentenceParser.parseSentence(sentence2, rootNode)
       println("From command line with root with user: " + sentence2)
       sentenceParser.parseSentence(sentence2, rootNode, user=Some(userNode))
+      val brainID = "brain/chihchun/animals"
+      
+      val text = "toad"
+      println("Text: " + text)
+      println(sentenceParser.textToNode(text, brainID)(0).id)
+      
+      val videoURL = "http://www.youtube.com/watch?v=_e_zcoDDiwc&feature=related"
+      println("Video: " + videoURL)
+      println(sentenceParser.textToNode(videoURL, brainID))
+
+
+      val imageURL = "http://www.flickr.com/photos/londonmummy/471232270/"
+      println("Image: " + imageURL)
+      println(sentenceParser.textToNode(imageURL, brainID))
+
+
+      val url = "http://www.google.com"
+      println("Image: " + url)
+      println(sentenceParser.textToNode(url, brainID))
+
 
 
 
