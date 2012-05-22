@@ -118,8 +118,11 @@ def textToNode(text:String, brainID: String): List[Vertex] = {
       val urlID = ID.url_id(url = text)
       results = URLNode(id = ID.usergenerated_id(userName, urlID, brainName)) :: results
     }
-    val textID = ID.text_id(text)
-    results = TextNode(id = ID.usergenerated_id(userName, textID, brainName), text=text) :: results;
+
+    val textID = ID.text_id(removeDeterminers(text))
+    results = TextNode(id = ID.usergenerated_id(userName, textID, brainName), text=removeDeterminers(text)) :: results;
+    val textPureID = ID.text_id(text)
+    results = TextNode(id = ID.usergenerated_id(userName, textPureID, brainName), text=text) :: results;
     return results.reverse;
   }
 
@@ -169,7 +172,7 @@ def textToNode(text:String, brainID: String): List[Vertex] = {
   		  	  val current = nodes(i);
   		  	  val next = nodes(i+1);
   		  	  val edge = edges(i);
-  		  	  possibleParses = (List(current, next), edge) :: possibleParses; 
+  		  	  possibleParses = (List(current.replace("\"", "").trim, next.replace("\"", "").trim), edge) :: possibleParses; 
   		  	  println("Quote Chunk: " + current + ", " + edge + ", " + next)
 
   		    }
@@ -222,7 +225,7 @@ def textToNode(text:String, brainID: String): List[Vertex] = {
     		  	  	}
     		  	  }
     		  	  println("POS Chunk: " + node1Text + " ," + edgeText + " ," + node2Text)
-    		  	  val nodes = List(node1Text, node2Text)
+    		  	  val nodes = List(node1Text.replace("`", "").replace("'", "").trim, node2Text.replace("`", "").replace("'", "").trim)
     		  	  possibleParses = (nodes, edgeText) :: possibleParses
 
     		  	}
@@ -362,9 +365,10 @@ def removeDeterminers(text: String): String={
   for (tag <- posTagged) {
     tag match{
       case (a,b) => 
-        if(b=="DT") return text.replace(a + " ", "").trim
+        if(b=="DT") return text.replace(a + " ", "").replace("`", "").replace("'", "").trim
+        //only first determiner is removed
     }
-}
+  }
   text
  
 }
@@ -375,7 +379,7 @@ def removeDeterminers(possibleParses: List[(List[String], String)], rootNode: Ve
     for (g <- possibleParses) {
       g match {
         case (nodeTexts: List[String], edgeText: String) => 
-        var optComplete = false;
+        var newNodes = nodeTexts.toArray;
         for(i <- 0 to nodeTexts.length-1) {
           val nodeText = nodeTexts(i)
           val posTagged = posTagger.tagText(nodeText);
@@ -385,9 +389,9 @@ def removeDeterminers(possibleParses: List[(List[String], String)], rootNode: Ve
             tag match{
               case (a,b) => 
                 if(b=="DT" && done==false) {
-                  var newNodes = nodeTexts.toArray;
-                  newNodes(i)=nodeText.replace(a+" ", "").trim;
-                  val newParse = (newNodes.toList,edgeText)
+                  
+                  newNodes(i)=nodeText.replace(a+" ", "").trim.replace("`", "").replace("'", "");
+                  val newParse = (newNodes.toList, edgeText)
                   removedParses = newParse::removedParses;
                   done = true //Rmoves only first determiner
                 }
