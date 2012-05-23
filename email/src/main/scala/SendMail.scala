@@ -1,3 +1,4 @@
+package com.graphbrain.email
 import java.lang._
 
 import scala.io.Source._
