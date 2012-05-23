@@ -1,4 +1,3 @@
-import net.mxm.connector._;
 import java.lang._
 
 import scala.io.Source._
