@@ -24,14 +24,6 @@ abstract class Vertex {
   override def toString: String = id
 }
 
-
-abstract class Node extends Vertex {
-  val brain: String
-  
-  protected override def toMapBase: Map[String, Any] = super.toMapBase ++ Map(("brain" -> brain))
-}
-
-
 case class Edge(id: String="", etype: String="", edges: Set[String]=Set[String](), extra: Int = -1) extends Vertex {
   override val vtype: String = "edg"
 
@@ -96,7 +88,7 @@ case class Brain(id: String="", name: String="", access: String = "public", edge
 }
 
 
-case class TextNode(id: String="", text: String="", edges: Set[String]=Set[String](), extra: Int= -1, brain: String = "") extends Node {
+case class TextNode(id: String="", text: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
   override val vtype: String = "txt"
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("text" -> text))
@@ -108,7 +100,7 @@ case class TextNode(id: String="", text: String="", edges: Set[String]=Set[Strin
 }
 
 
-case class URLNode(id: String="", url: String="", edges: Set[String]=Set[String](), extra: Int= -1, brain: String = "") extends Node {
+case class URLNode(id: String="", url: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
   override val vtype: String = "url"
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("url" -> url))
@@ -118,7 +110,7 @@ case class URLNode(id: String="", url: String="", edges: Set[String]=Set[String]
 }
 
 
-case class ImageNode(id: String="", url: String="", edges: Set[String]=Set[String](), extra: Int= -1, brain: String = "") extends Node {
+case class ImageNode(id: String="", url: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
   override val vtype: String = "img"
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("url" -> url))
@@ -128,7 +120,7 @@ case class ImageNode(id: String="", url: String="", edges: Set[String]=Set[Strin
 }
 
 
-case class VideoNode(id: String="", url: String="", edges: Set[String]=Set[String](), extra: Int= -1, brain: String = "") extends Node {
+case class VideoNode(id: String="", url: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
   override val vtype: String = "vid"
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("url" -> url))
@@ -138,7 +130,7 @@ case class VideoNode(id: String="", url: String="", edges: Set[String]=Set[Strin
 }
 
 
-case class SVGNode(id: String="", svg:String="", edges: Set[String]=Set[String](), extra: Int= -1, brain: String = "") extends Node {
+case class SVGNode(id: String="", svg:String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
   override val vtype: String = "svg"
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("svg" -> svg))

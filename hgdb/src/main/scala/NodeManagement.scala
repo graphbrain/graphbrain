@@ -26,8 +26,19 @@ trait NodeManagement extends VertexStoreInterface {
   def brainId(vertex: Vertex): String = {
     vertex match {
       case b: Brain => b.id
-      case n: Node => n.brain
       case u: UserNode => u.id
+      case v: Vertex => {
+        val tokens = v.id.split("/")
+        if (tokens.size < 3) {
+          ""
+        }
+        else if (tokens(0) == "brain") {
+          tokens(0) + "/" + tokens(1) + "/" + tokens(2)
+        }
+        else {
+          ""
+        }
+      }
       case _ => ""
     }
   }
