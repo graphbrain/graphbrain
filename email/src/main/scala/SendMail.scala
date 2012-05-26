@@ -51,6 +51,32 @@ class SendMail (uname:String, pwd:String, apiKey:String) {
 
 		}
 	}
+
+	//For marketing campaigns:
+	def sendEmails(recipientEmails: List[String], subject:String, messageBaseText: String, from:String = "contact@graphbrain.com", recipientNames: List[String]=Nil, senderNames: List[String] = Nil): Boolean = {
+		var success = 0;
+		
+		for(i <- 0 to recipientEmails.length-1) {
+			var messageText = messageBaseText;
+			if(recipientNames != Nil) {
+				messageText = messageText.replace("r_e_c_i_p_i_e_n_t", recipientNames(i))
+			}
+			else {
+				messageText = messageText.replace("r_e_c_i_p_i_e_n_t", "")	
+			}
+			if(senderNames != Nil) {
+				messageText = messageText.replace("s_e_n_d_e_r", senderNames(i))
+			}
+			else {
+				messageText = messageText.replace("s_e_n_d_e_r", "")
+			}
+
+			if(sendEmail(recipientEmails(i), subject, messageText, from)) {success +=1}
+		}
+		println("Emails attempted: " + recipientEmails.length.toString)
+		println("Successful attempts: " + success.toString)
+		return true;
+	}
 }
 
 object SendMail {
@@ -66,9 +92,13 @@ object SendMail {
       println("Pwd: " + pwd)	   
       println("APIKey: " + apiKey)
       val m = new SendMail(uname, pwd, apiKey);
-      m.sendEmail("telmo@telmomenezes", "testing from scala code", "If this gets to you, it's working. \n")
+      //m.sendEmail("chihchun_chen@yahoo.co.uk", "testing from scala code", "If this gets to you, it's working. \n")
       
-      
+      val recipients = List("chihchun_chen@yahoo.co.uk", "c.chen@abmcet.net")
+      val recipientNames = List("Aliana Hepwood", "Chih-Chun")
+      val senderNames = List("Ch-Ch", "Ali Hepwood")
+      val message = fromFile("TestMessage.txt").mkString
+      m.sendEmails(recipients, "testing", message, "contact@graphbrain.com", recipientNames, senderNames)
       
         
     }
