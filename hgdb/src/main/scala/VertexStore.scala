@@ -41,7 +41,8 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
       }
       case "url" => {
         val url = map.getOrElse("url", "").toString
-        URLNode(id, url, edges, extra)
+        val title = map.getOrElse("title", "").toString
+        URLNode(id, url, title, edges, extra)
       }
       case "src" => {
         SourceNode(id, edges, extra)

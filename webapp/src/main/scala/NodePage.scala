@@ -13,22 +13,27 @@ case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Bool
 
     val gi = new GraphInterface(node.id, store, user)
     
+    val userId = if (user == null) "" else user.id
+
     val js = "var nodes = " + gi.nodesJSON + ";\n" +
         "var snodes = " + gi.snodesJSON + ";\n" +
         "var links = " + gi.linksJSON + ";\n" +
-        "var rootNodeId = '" + node.id + "';\n" + 
-        "var brains = " + gi.brainsJSON + ";\n" +
+        "var rootNodeId = '" + node.id + "';\n" +
+        (if (user == null)
+          "var brains = [];"
+        else
+          "var brains = " + gi.brainsJSON + ";\n") +
         "var curBrainId = '" + Server.store.brainId(node) + "';\n" +
-        "var userId = '" + user.id + "';\n"
+        "var userId = '" + userId + "';\n"
 
     def cssAndJs = {
       if (prod) {
         """<link href="/css/bootstrap.min.css" type="text/css" rel="Stylesheet" />""" +
-        """<link href="/css/main.css?11052012" type="text/css" rel="Stylesheet" />""" +
+        """<link href="/css/main.css?26052012" type="text/css" rel="Stylesheet" />""" +
         """<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>""" +
         """<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.js" type="text/javascript"></script>""" +
         """<script src="/js/bootstrap.min.js" type="text/javascript" ></script>""" +
-        """<script src="/js/gb.js?11052012" type="text/javascript" ></script>""" +
+        """<script src="/js/gb.js?26052012" type="text/javascript" ></script>""" +
         analyticsJs
       }
       else {
