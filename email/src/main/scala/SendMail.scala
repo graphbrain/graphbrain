@@ -55,8 +55,9 @@ class SendMail (uname:String, pwd:String, apiKey:String) {
 	//For marketing campaigns:
 	def sendEmails(recipientEmails: List[String], subject:String, messageBaseText: String, from:String = "contact@graphbrain.com", recipientNames: List[String]=Nil, senderNames: List[String] = Nil): Boolean = {
 		var success = 0;
-		var messageText = messageBaseText;
+		
 		for(i <- 0 to recipientEmails.length-1) {
+			var messageText = messageBaseText;
 			if(recipientNames != Nil) {
 				messageText = messageText.replace("r_e_c_i_p_i_e_n_t", recipientNames(i))
 			}
@@ -95,7 +96,7 @@ object SendMail {
       
       val recipients = List("chihchun_chen@yahoo.co.uk", "c.chen@abmcet.net")
       val recipientNames = List("Aliana Hepwood", "Chih-Chun")
-      val senderNames = List("Chih-Chun", "Aliana Hepwood")
+      val senderNames = List("Ch-Ch", "Ali Hepwood")
       val message = fromFile("TestMessage.txt").mkString
       m.sendEmails(recipients, "testing", message, "contact@graphbrain.com", recipientNames, senderNames)
       
