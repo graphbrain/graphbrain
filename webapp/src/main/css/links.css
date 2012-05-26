@@ -4,6 +4,14 @@
     width:115px;
 }
 
+.linkDialog {
+    position:relative;
+    float:left;
+    text-align:center;
+    width:115px;
+    margin:15px;
+}
+
 .linkText {
     position:relative;
     margin:0px;
@@ -26,6 +34,17 @@
     border-left: 11px solid #097ea1;
     float:right;
     left:-1px;
+}
+
+.linkArrowLeft {
+    position:relative;
+    width: 0;
+    height: 0;
+    border-top: 11px solid transparent;
+    border-bottom: 11px solid transparent;
+    border-right: 11px solid #097ea1;
+    float:left;
+    right:0px;
 }
 
 .linkPoint {

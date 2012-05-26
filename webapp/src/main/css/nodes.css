@@ -6,6 +6,7 @@
     margin: 3px;
     padding: 3px;
     max-width: 100px;
+    text-overflow:ellipsis;
 }
 
 .node a {
@@ -32,6 +33,15 @@
     border-color:#AAA;
     padding: 10px;
     background: rgba(255, 255, 255, 0.7);
+}
+
+.snodeDialog {
+    display:inline;
+    float:left;
+    border-style:solid;
+    border-width:2px;
+    border-color:#AAA;
+    padding: 10px;
 }
 
 #graphDiv {

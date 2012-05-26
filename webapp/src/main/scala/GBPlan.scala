@@ -50,17 +50,28 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val relation = params("relation")(0)
       val brainId = params("curBrainId")(0)
       val rootId = params("rootId")(0)
+      val direction = params("direction")(0)
+      
       val root = Server.store.get(rootId)
       val results = Server.sparser.textToNode(textUrl, brainId)
       val node = results(0)
-      println(node.id)
-      Server.store.createAndConnectVertices(relation, Array(root, node))
+      
+      if (direction == "right") {
+        Server.store.createAndConnectVertices(relation, Array(root, node))
+      }
+      else {
+        Server.store.createAndConnectVertices(relation, Array(node, root)) 
+      }
+      
+      log.info(Server.realIp(req) + " ADD username: " + userNode.username + "; nodeId: " + node.id + "; rootId: " + rootId + "; relation: " + relation)
+
       Redirect("/node/" + node.id)
     }
     case req@POST(Path("/addbrain") & Params(params) & Cookies(cookies)) => {
       val userNode = Server.getUser(cookies)
       val name = params("name")(0)
       val brainId = Server.store.createBrain(name, userNode, "public")
+      log.info(Server.realIp(req) + " CREATE BRAIN username: " + userNode.username + "; brain: " + name)
       Redirect("/node/" + brainId)
     }
     case req@POST(Path("/signup") & Params(params)) => {
