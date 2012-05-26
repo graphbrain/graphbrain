@@ -100,13 +100,14 @@ case class TextNode(id: String="", text: String="", edges: Set[String]=Set[Strin
 }
 
 
-case class URLNode(id: String="", url: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
+case class URLNode(id: String="", url: String="", title: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
   override val vtype: String = "url"
 
-  override def toMap: Map[String, Any] = toMapBase ++ Map(("url" -> url))
+  override def toMap: Map[String, Any] = toMapBase ++ Map(("url" -> url), ("title" -> title))
 
   def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
   def setExtra(newExtra: Int) = copy(extra=newExtra)
+  def setTitle(newTitle: String) = copy(title=newTitle)
 }
 
 

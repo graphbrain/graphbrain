@@ -4,6 +4,7 @@ import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.Vertex
 import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.TextNode
+import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.ImageNode
 import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.Brain
@@ -130,6 +131,7 @@ class GraphInterface (val rootId: String, val store: VertexStore, val user: User
     val node = store.get(nodeId)
     node match {
       case tn: TextNode => Map(("type" -> "text"), ("text" -> tn.text), ("parent" -> parentId))
+      case un: URLNode => Map(("type" -> "text"), ("text" -> un.url), ("parent" -> parentId))
       case in: ImageNode => Map(("type" -> "image"), ("text" -> in.url), ("parent" -> parentId))
       case un: UserNode => Map(("type" -> "text"), ("text" -> un.name), ("parent" -> parentId))
       case br: Brain => Map(("type" -> "text"), ("text" -> br.name), ("parent" -> parentId))
