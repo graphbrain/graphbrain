@@ -10,6 +10,7 @@ import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.SimpleCaching
 import com.graphbrain.hgdb.UserManagement
 import com.graphbrain.hgdb.NodeManagement
+import com.graphbrain.hgdb.URLManagement
 import com.graphbrain.hgdb.UserNode
 import com.graphbrain.nlp.SentenceParser
 import com.graphbrain.nlp.POSTagger
@@ -20,7 +21,7 @@ object Server {
   var http: unfiltered.netty.Http = null
   var prod: Boolean = false
 
-  val store = new VertexStore("gb") with SimpleCaching with UserManagement with NodeManagement
+  val store = new VertexStore("gb") with SimpleCaching with UserManagement with NodeManagement with URLManagement
 
   val sparser = new SentenceParser(tagger=false)
 
