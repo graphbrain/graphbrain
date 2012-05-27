@@ -20,7 +20,8 @@ import com.graphbrain.hgdb.ID
 class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
 
   val quoteRegex = """(\")(.+?)(\")""".r
-  val urlRegex = """http:\/\/.+""".r
+  val urlRegex = """(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?""".r
+  //"""http:\/\/.+""".r
   val posTagger = if (tagger) new POSTagger() else null
   val verbRegex = """VB[A-Z]?""".r
   val adverbRegex = """RB[A-Z]?""".r
@@ -495,7 +496,7 @@ object SentenceParser {
       println(sentenceParser.textToNode(imageURL, brainID))
 
 
-      val url = "http://www.google.com"
+      val url = "https://github.com/graphbrain/graphbrain"
       println("Image: " + url)
       println(sentenceParser.textToNode(url, brainID))
 

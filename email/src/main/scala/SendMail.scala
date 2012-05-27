@@ -86,7 +86,7 @@ class SendMail (uname:String, pwd:String, apiKey:String) {
 	}
 
 	def sendReferralEmail(recipientEmails: List[String], recipientNames: List[String], senderNames: List[String]): Boolean = {
-		return sendEmails(recipientEmails, subject = "Welcome to GraphBrain", messageBaseText = fromFile(referralEmailFile).mkString, defaultRecipientName = "", defaultSenderName = "", recipientNames = recipientNames, senderNames = senderNames)
+		return sendEmails(recipientEmails, subject = "Invitation to GraphBrain", messageBaseText = fromFile(referralEmailFile).mkString, defaultRecipientName = "", defaultSenderName = "", recipientNames = recipientNames, senderNames = senderNames)
 	}
 }
 
