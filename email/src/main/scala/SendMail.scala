@@ -16,7 +16,8 @@ import javax.mail.internet.MimeMessage;
 
 class SendMail (uname:String, pwd:String, apiKey:String) {
 	
-
+	val registrationEmailFile = "RegistrationMessage.txt";
+	val referralEmailFile = "ReferralMessage.txt";
 
 	def sendEmail(recipient: String, subject: String, messageText: String, from:String = "contact@graphbrain.com"):Boolean= {
 
@@ -53,7 +54,7 @@ class SendMail (uname:String, pwd:String, apiKey:String) {
 	}
 
 	//For marketing campaigns:
-	def sendEmails(recipientEmails: List[String], subject:String, messageBaseText: String, from:String = "contact@graphbrain.com", recipientNames: List[String]=Nil, senderNames: List[String] = Nil): Boolean = {
+	def sendEmails(recipientEmails: List[String], subject:String, messageBaseText: String, from:String = "contact@graphbrain.com", defaultRecipientName: String = "", defaultSenderName: String = "", recipientNames: List[String]=Nil, senderNames: List[String] = Nil): Boolean = {
 		var success = 0;
 		
 		for(i <- 0 to recipientEmails.length-1) {
@@ -62,13 +63,13 @@ class SendMail (uname:String, pwd:String, apiKey:String) {
 				messageText = messageText.replace("r_e_c_i_p_i_e_n_t", recipientNames(i))
 			}
 			else {
-				messageText = messageText.replace("r_e_c_i_p_i_e_n_t", "")	
+				messageText = messageText.replace("r_e_c_i_p_i_e_n_t", defaultRecipientName)	
 			}
 			if(senderNames != Nil) {
 				messageText = messageText.replace("s_e_n_d_e_r", senderNames(i))
 			}
 			else {
-				messageText = messageText.replace("s_e_n_d_e_r", "")
+				messageText = messageText.replace("s_e_n_d_e_r", defaultSenderName)
 			}
 
 			if(sendEmail(recipientEmails(i), subject, messageText, from)) {success +=1}
@@ -76,6 +77,16 @@ class SendMail (uname:String, pwd:String, apiKey:String) {
 		println("Emails attempted: " + recipientEmails.length.toString)
 		println("Successful attempts: " + success.toString)
 		return true;
+	}
+
+	def sendRegistrationEmail(recipientEmails: List[String], recipientNames: List[String]): Boolean = {
+
+		return sendEmails(recipientEmails, subject = "Welcome to GraphBrain", messageBaseText = fromFile(registrationEmailFile).mkString, defaultRecipientName = "", defaultSenderName = "", recipientNames = recipientNames)
+
+	}
+
+	def sendReferralEmail(recipientEmails: List[String], recipientNames: List[String], senderNames: List[String]): Boolean = {
+		return sendEmails(recipientEmails, subject = "Welcome to GraphBrain", messageBaseText = fromFile(referralEmailFile).mkString, defaultRecipientName = "", defaultSenderName = "", recipientNames = recipientNames, senderNames = senderNames)
 	}
 }
 
@@ -98,7 +109,9 @@ object SendMail {
       val recipientNames = List("Aliana Hepwood", "Chih-Chun")
       val senderNames = List("Ch-Ch", "Ali Hepwood")
       val message = fromFile("TestMessage.txt").mkString
-      m.sendEmails(recipients, "testing", message, "contact@graphbrain.com", recipientNames, senderNames)
+      //m.sendEmails(recipients, "testing", message, "contact@graphbrain.com", recipientNames, senderNames)
+      m.sendRegistrationEmail(recipients, recipientNames);
+      //m.sendReferralEmail(recipients, recipientNames, senderNames);
       
         
     }
