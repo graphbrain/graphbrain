@@ -4,32 +4,51 @@ package com.graphbrain.hgdb
 import dispatch._
 import dispatch.tagsoup.TagSoupHttp._
 
-import java.io.DataInputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.net.URL
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.client.methods.HttpGet
+import java.io.Reader
+import java.io.InputStreamReader
+import java.io.IOException
+
 
 trait URLManagement extends VertexStoreInterface {
 
   def getTitle(urlStr: String): String = {
-    val url: URL = new URL(urlStr)
-    val urlConnection: URLConnection = url.openConnection()
-    val dis: DataInputStream = new DataInputStream(urlConnection.getInputStream())
+    val url = new URL(urlStr)
+
+
+    val client = new DefaultHttpClient()
+    val request = new HttpGet(url.toURI())
+    val response = client.execute(request)
+
+    var reader: Reader = null
     var html = ""
-    var tmp = dis.readUTF()
-    while (tmp != null) {
-      html += " " + tmp
-      try {
-        tmp = dis.readUTF()
+    try {
+      reader = new InputStreamReader(response.getEntity().getContent())
+
+      val sb = new StringBuffer()
+      val cbuf = new Array[Char](1024)
+      var read = reader.read(cbuf)
+      while (read != -1) {
+        sb.append(cbuf, 0, read)
+        read = reader.read(cbuf)
       }
-      catch {
-        case _ => tmp = null
+
+      html = sb.toString()
+    }
+    finally {
+      if (reader != null) {
+        try {
+          reader.close()
+        }
+        catch {
+          case e: IOException => e.printStackTrace()
+        }
       }
     }
-    dis.close()
-
-    //var html: String = Http(url(urlStr) as_str)
 
     html = html.replaceAll("\\s+", " ")
     val p: Pattern = Pattern.compile("<title>(.*?)</title>")
