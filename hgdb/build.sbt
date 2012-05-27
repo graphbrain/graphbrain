@@ -14,4 +14,17 @@ libraryDependencies += "com.basho.riak" % "riak-client" % "1.0.4"
 
 //testOptions in Test += Tests.Argument("-oF")
 
+libraryDependencies ~= { seq =>
+  val vers = "0.8.8"
+  seq ++ Seq(
+    "net.databinder" %% "dispatch-core" % vers,
+    "net.databinder" %% "dispatch-oauth" % vers,
+    "net.databinder" %% "dispatch-nio" % vers,
+    //
+    "net.databinder" %% "dispatch-http" % vers,
+    "net.databinder" %% "dispatch-tagsoup" % vers,
+    "net.databinder" %% "dispatch-jsoup" % vers
+  )
+}
+
 parallelExecution in Test := false 

@@ -19,7 +19,11 @@ initGraph = ->
             text = nod['text']
             type = nod['type']
             parentID = nod['parent']
-            node = new Node(nid, text, type, snode)
+            node = false
+            if type == 'url'
+                node = new Node(nid, text, type, snode, nod['url'])
+            else
+                node = new Node(nid, text, type, snode)
             snode.nodes[nid] = node
             g.nodes[nid] = node
 

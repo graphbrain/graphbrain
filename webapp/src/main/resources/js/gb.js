@@ -930,13 +930,19 @@ function handler(event) {
 
   nodeCount = 0;
 
+  function getHostname(url) {
+    var m = ((url||'')+'').match(/^http:\/\/([^/]+)/);
+    return m ? m[1] : null;
+};
+
   Node = (function() {
 
-    function Node(id, text, type, snode) {
+    function Node(id, text, type, snode, url) {
       this.id = id;
       this.text = text;
       this.type = type;
       this.snode = snode;
+      this.url = url != null ? url : '';
       this.divid = 'n' + nodeCount++;
       this.rpos = Array(3);
       this.subNodes = [];
@@ -967,8 +973,16 @@ function handler(event) {
     Node.prototype.place = function() {
       var html;
       $('#' + this.snode.id + ' .viewport').append('<div id="' + this.divid + '" class="node" />');
-      html = '<div id="t' + this.divid + '"><a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a></div>';
-      $('#' + this.divid).append(html);
+      if (this.type === 'url') {
+        console.log(this.url);
+        console.log(getHostname(this.url));
+        html = '<div class="nodeTitle" id="t' + this.divid + '"><a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a></div>';
+        html += '<div><img src="http://www.google.com/s2/u/0/favicons?domain=' + getHostname(this.url) + '" class="nodeIco" /><div class="nodeUrl"><a href="' + this.url + '">' + this.url + '</a></div></div>';
+        $('#' + this.divid).append(html);
+      } else {
+        html = '<div class="nodeTitle" id="t' + this.divid + '"><a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a></div>';
+        $('#' + this.divid).append(html);
+      }
       html = '<div id="d' + this.divid + '" class="nodeDetail">Some more text about this node.</div>';
       $('#' + this.divid).append(html);
       return this.updateDimensions();
@@ -2173,7 +2187,12 @@ function handler(event) {
         text = nod['text'];
         type = nod['type'];
         parentID = nod['parent'];
-        node = new Node(nid, text, type, snode);
+        node = false;
+        if (type === 'url') {
+          node = new Node(nid, text, type, snode, nod['url']);
+        } else {
+          node = new Node(nid, text, type, snode);
+        }
         snode.nodes[nid] = node;
         g.nodes[nid] = node;
         if ((snode.parent === 'unknown') || (parentID === '')) {

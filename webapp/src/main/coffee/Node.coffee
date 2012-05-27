@@ -2,9 +2,14 @@
 
 nodeCount = 0
 
+`function getHostname(url) {
+    var m = ((url||'')+'').match(/^http:\/\/([^/]+)/);
+    return m ? m[1] : null;
+}`
+
 # Node
 class Node
-    constructor: (@id, @text, @type, @snode) ->
+    constructor: (@id, @text, @type, @snode, @url='') ->
         @divid = 'n' + nodeCount++
         @rpos = Array(3)
         @subNodes = []
@@ -36,9 +41,16 @@ class Node
         # create node div
         $('#' + @snode.id + ' .viewport').append('<div id="' + @divid + '" class="node" />')
 
-        # create title div
-        html = '<div id="t' + @divid + '"><a href="/node/' + @id + '" id="' + @divid + '">' + @text + '</a></div>'
-        $('#' + @divid).append(html)
+        # create url div
+        if @type == 'url'
+            console.log(@url)
+            console.log(getHostname(@url))
+            html = '<div class="nodeTitle" id="t' + @divid + '"><a href="/node/' + @id + '" id="' + @divid + '">' + @text + '</a></div>'
+            html += '<div><img src="http://www.google.com/s2/u/0/favicons?domain=' + getHostname(@url) + '" class="nodeIco" /><div class="nodeUrl"><a href="' + @url + '">' + @url + '</a></div></div>'
+            $('#' + @divid).append(html)
+        else
+            html = '<div class="nodeTitle" id="t' + @divid + '"><a href="/node/' + @id + '" id="' + @divid + '">' + @text + '</a></div>'
+            $('#' + @divid).append(html)
 
         # create detail div
         html = '<div id="d' + @divid + '" class="nodeDetail">Some more text about this node.</div>'

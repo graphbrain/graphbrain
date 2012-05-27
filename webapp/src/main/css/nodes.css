@@ -5,7 +5,7 @@
     font-size: 12px;
     margin: 3px;
     padding: 3px;
-    max-width: 100px;
+    max-width: 200px;
     text-overflow:ellipsis;
 }
 
@@ -15,6 +15,27 @@
 
 .nodeDetail {
     display:none;
+}
+
+.nodeTitle {
+    max-height: 70px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.nodeUrl {
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width: 170px;
+}
+
+.nodeUrl a {
+    color:rgb(0, 0, 255);
+}
+
+.nodeIco {
+    margin-right:5px;
+    float:left;
 }
 
 .snode1 {
