@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>GraphBrain</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="/css/gb_bootstrap.css" type="text/css" rel="Stylesheet" />
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+    <link href="/css/gb_bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png">
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a href="#">
+  <img src="/images/GB_logo_S.png" style="width:500px:height:500px;vertical-align:middle;" alt="graphbrain_logo" class="brand"/>
+  </a>
+          <div class="btn-group pull-right">
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="icon-user"></i> Username
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Profile</a></li>
+              <li class="divider"></li>
+              <li><a href="#">Sign Out</a></li>
+            </ul>
+          </div>
+
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">home</a></li>
+              <li><a href="#intro">create brain</a></li>
+              <li><a href="/about">learn more</a></li>
+              <li><a href="/contact">contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="hero-unit">
+        <img src="/images/GB_logo_L.png" style="float:middle;width:500px:height:500px;vertical-align:middle;border:5px" alt="graphbrain_logo" class="brand"/>
+        <h2>a beautiful way to organize and explore information</h2>
+        <p>Use GraphBrain to build relationships between concepts in your brain and content on the web.</p>
+        <p>GraphBrain is still under development but we think it's too good not to share.</p>
+        
+        <p><a class="btn btn-primary btn-large">sign up for free &raquo;</a></p>
+        
+      </div>
+
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="span4">
+          <h2>explore & learn</h2>
+           <p><strong>Search</strong> for anything you would find on Wikipedia and <strong>discover new connections</strong>. Connections are semantic so you can <strong>learn new facts visually</strong> by simply following connections in the network.</p>
+           <p><a class="btn" href="/about">more &raquo;</a></p>
+       </div>
+               <div class="span4">
+          <h2>organize & navigate</h2>
+           <p><strong>Create</strong> your own semantic network of concepts and web content. Specify <strong>how things are related</strong>, and not simply which things are related. Navigate web content the way <strong>you</strong> think about it.</p>
+          <p><a class="btn" href="/not_just_facts">more &raquo;</a></p>
+        </div>
+
+        <div class="span4">
+          <h2>contribute & collaborate</h2>
+          <p><strong>Contribute</strong> knowledge by adding semantic connections and new nodes (web content, concepts). <strong>Collaborate</strong> with others by <strong>collectively editing</strong> a brain.</p>
+          <p><a class="btn" href="/not_just_you">more &raquo;</a></p>
+        </div>
+      </div>
+
+      <hr>
+
+      <footer>
+        <p>&copy; GraphBrain Ltd 2012</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../assets/js/jquery.js"></script>
+    <script src="../assets/js/bootstrap-transition.js"></script>
+    <script src="../assets/js/bootstrap-alert.js"></script>
+    <script src="../assets/js/bootstrap-modal.js"></script>
+    <script src="../assets/js/bootstrap-dropdown.js"></script>
+    <script src="../assets/js/bootstrap-scrollspy.js"></script>
+    <script src="../assets/js/bootstrap-tab.js"></script>
+    <script src="../assets/js/bootstrap-tooltip.js"></script>
+    <script src="../assets/js/bootstrap-popover.js"></script>
+    <script src="../assets/js/bootstrap-button.js"></script>
+    <script src="../assets/js/bootstrap-collapse.js"></script>
+    <script src="../assets/js/bootstrap-carousel.js"></script>
+    <script src="../assets/js/bootstrap-typeahead.js"></script>
+
+  </body>
+</html>

@@ -65,6 +65,7 @@ object Server {
     this.prod = prod
     http = unfiltered.netty.Http(8080)
       .handler(GBPlan)
+      .handler(LandingPlan)
       .handler(NodePlan)
       .resources(new URL(getClass().getResource("/robots.txt"), "."))
     http.run
