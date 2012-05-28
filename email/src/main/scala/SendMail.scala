@@ -18,7 +18,7 @@ class SendMail (uname:String, pwd:String, apiKey:String) {
 	
 	val registrationEmailFile = "RegistrationMessage.txt";
 	val referralEmailFile = "ReferralMessage.txt";
-	val registrationEmail = "Welcome #r_e_c_i_p_i_e_n_t,\n \n You've successuly registered as a member of GraphBrain! You can create as many brains as you like. Simply log in with your username: #u_s_e_r_n_a_m_e and password.\n \n As GraphBrain is still very much in its infancy, we would be grateful for any feedback or suggestions. E-mail us at: contact@graphbrain.com\n \n Happy brain-building,\n \n The GraphBrain team\n \n GraphBrain: a beautiful way to organise, explore and share information";
+	val registrationEmail = "Welcome #r_e_c_i_p_i_e_n_t,\n \n Your GraphBrain registration has been successful! You can now create as many brains as you like. Simply log in with your username: #u_s_e_r_n_a_m_e and password.\n \n As GraphBrain is still very much in its infancy, we would be grateful for any feedback or suggestions. E-mail us at: contact@graphbrain.com\n \n Happy brain-building,\n \n The GraphBrain team\n \n GraphBrain: a beautiful way to organise, explore and share information";
 	val referralEmail = "Hello #r_e_c_i_p_i_e_n_t, \n \n #s_e_n_d_e_r would like to invite you to use GraphBrain, a beautiful way to organize and explore information. To find out more and register, simply go to http://graphbrain.com and sign up! \n \n Looking forward to having you in GraphBrain,\n \n The GraphBrain team";
 
 	def sendEmail(recipient: String, subject: String, messageText: String, from:String = "contact@graphbrain.com"):Boolean= {
