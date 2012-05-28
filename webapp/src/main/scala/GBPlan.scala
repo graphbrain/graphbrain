@@ -14,21 +14,6 @@ import com.graphbrain.searchengine.RiakSearchInterface
 
 object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse with Logging {
   def intent = {
-    // TODO: deactive in production
-    case req@GET(Path("/exit")) =>
-      log.info(Server.realIp(req) + " EXIT")
-      if (!Server.prod)
-        System.exit(0)
-      ComingSoon(Server.prod)
-
-    case req@GET(Path("/")) => {
-      log.info(Server.realIp(req) + " GET /")
-      ComingSoon(Server.prod)
-    }
-    case req@GET(Path("/secret")) => { 
-      log.info(Server.realIp(req) + " GET /secret")
-      Redirect("/node/welcome/graphbrain")
-    }
     case req@POST(Path("/search") & Params(params)) => {
       val query = params("q")(0)
       val si = RiakSearchInterface("gbsearch")

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>GraphBrain</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="/css/gb_bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+    <link href="/css/gb_bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png">
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a href="/">
+  <img src="/images/GB_logo_S.png" style="width:500px:height:500px;vertical-align:middle;" alt="graphbrain_logo" class="brand"/>
+  </a>
+          <div class="btn-group pull-right">
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="icon-user"></i> Username
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Profile</a></li>
+              <li class="divider"></li>
+              <li><a href="#">Sign Out</a></li>
+            </ul>
+          </div>
+
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li><a href="/">home</a></li>
+              <li><a href="#intro">create brain</a></li>
+              <li class="active"><a href="#">learn more</a></li>
+              <li><a href="/contact">contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+              <li class="nav-header"></li>
+              <li><a href="about.html">meaningful relationships</a></li>
+              <li class="nav-header"></li>
+              <li class="active"><a href="/not_just_facts">it's not just about facts</a></li>
+              <li class="nav-header"></li>
+              <li><a href="/not_just_you">it's not just about you</a></li>
+              <li class="nav-header"></li>
+              <li><a href="/about_creators">the brains behind GraphBrain</a></li>
+              <li class="nav-header"></li>
+              <li><a href="/contact">get in touch</a></li>
+              <li class="nav-header"></li>
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+
+      
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="span9">
+      <div class="hero-unit">
+        <h2>it's not just about facts</h2>
+        <p></p>
+        
+        <p>As well as allowing you to share your wisdom (and cash in on other people's) by editing the global GraphBrain, you can also create as many <strong>personal brains</strong> as you like. This gives you an extremely powerful bookmarking tool to organize content in a way that makes sense to you, or with respect to a task or event. 
+        <p></p>
+        <p>For example, imagine there is a public image of a dog that is of the same breed as a dog you are writing a story about (let's call him Snowy for now). In your personal <i>dog story brain</i>, you would simply connect the [image of the dog] to the [Snowy] node with the relationship [<i>is the same breed as</i>].</p>
+        <p></p>
+        <p>Although personal brains allow you to specify how you want content organized, you still remain connected to <strong>global GraphBrain</strong>. This means that you benefit from the wisdom of others within the context of a content structure you have defined yourself. So, as well as capturing the image's significance with respect to your dog protagonist, you can also easily navigate to any other information that other users have added about the image (for example, a dog-breeding expert may have contributed some advice as to how to look after this breed of dog). </p>
+        <p></p>
+        <p><a class="btn" href="not_just_you.html">&laquo; organising information</a> <a class="btn" href="/not_just_you">share your brains &raquo;</a></p>
+      </div>
+    </div>
+
+      <!-- Example row of columns -->
+      <div class="row">
+    
+      </div>
+
+      <hr>
+
+      <footer>
+        <p>&copy; GraphBrain 2012</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../assets/js/jquery.js"></script>
+    <script src="../assets/js/bootstrap-transition.js"></script>
+    <script src="../assets/js/bootstrap-alert.js"></script>
+    <script src="../assets/js/bootstrap-modal.js"></script>
+    <script src="../assets/js/bootstrap-dropdown.js"></script>
+    <script src="../assets/js/bootstrap-scrollspy.js"></script>
+    <script src="../assets/js/bootstrap-tab.js"></script>
+    <script src="../assets/js/bootstrap-tooltip.js"></script>
+    <script src="../assets/js/bootstrap-popover.js"></script>
+    <script src="../assets/js/bootstrap-button.js"></script>
+    <script src="../assets/js/bootstrap-collapse.js"></script>
+    <script src="../assets/js/bootstrap-carousel.js"></script>
+    <script src="../assets/js/bootstrap-typeahead.js"></script>
+
+  </body>
+</html>

@@ -13,9 +13,12 @@ object GraphbrainBuild extends Build {
   lazy val inference = Project(id = "inference",
                            base = file("inference"))
 
+  lazy val unfilteredScalate = Project(id = "unfiltered-scalate",
+                base=file("unfiltered-scalate"))
+
   lazy val webapp = Project(id = "webapp",
                            base = file("webapp"),
-                           settings = Defaults.defaultSettings ++ assemblySettings ++ Revolver.settings) dependsOn(hgdb, searchengine, nlp)
+                           settings = Defaults.defaultSettings ++ assemblySettings ++ Revolver.settings) dependsOn(hgdb, searchengine, nlp, unfilteredScalate)
 
   lazy val braingenerators = Project(id = "braingenerators",
   							base = file("braingenerators"),
@@ -38,5 +41,5 @@ object GraphbrainBuild extends Build {
                 settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(hgdb)
 
   lazy val root = Project(id = "gb",
-                base = file(".")) aggregate(hgdb, inference, webapp, braingenerators, tools, searchengine, nlp)
+                base = file(".")) aggregate(hgdb, inference, webapp, braingenerators, tools, searchengine, nlp, unfilteredScalate)
 }
