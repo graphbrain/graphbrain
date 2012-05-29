@@ -1,12 +1,17 @@
 package com.graphbrain.webapp
 
 import scala.util.Random
+
+import unfiltered.scalate._
+import unfiltered.request._
+import unfiltered.response._
+
 import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.Vertex
 import com.graphbrain.hgdb.UserNode
 
 
-case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Boolean) extends Page {
+case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Boolean, req: HttpRequest[Any]) {
     
     //val version = "040312"
     val version = NodePage.randomVersion
@@ -14,6 +19,22 @@ case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Bool
     val gi = new GraphInterface(node.id, store, user)
     
     val userId = if (user == null) "" else user.id
+
+    val analyticsJs = """
+      <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-30917836-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+    """
 
     val js = "var nodes = " + gi.nodesJSON + ";\n" +
         "var snodes = " + gi.snodesJSON + ";\n" +
@@ -28,7 +49,6 @@ case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Bool
 
     def cssAndJs = {
       if (prod) {
-        """<link href="/css/bootstrap.min.css" type="text/css" rel="Stylesheet" />""" +
         """<link href="/css/main.css?27052012" type="text/css" rel="Stylesheet" />""" +
         """<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>""" +
         """<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.js" type="text/javascript"></script>""" +
@@ -37,7 +57,6 @@ case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Bool
         analyticsJs
       }
       else {
-        """<link href="/css/bootstrap.min.css?13042012" type="text/css" rel="Stylesheet" />""" +
         """<link href="/css/main.css?""" + version + """" type="text/css" rel="Stylesheet" />""" +
         """<script src="/js/jquery-1.7.2.min.js" type="text/javascript" ></script>""" +
         """<script src="/js/jquery-ui-1.8.18.custom.min.js" type="text/javascript" ></script>""" +
@@ -82,53 +101,7 @@ case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Bool
       }
     }
 
-	override def html = {
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Graphbrain</title>
-<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-{scala.xml.Unparsed(cssAndJs)}
-</head>
-
-<body>
-
-<div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-        <div class="container-fluid">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="brand" style="padding:7px 20px 7px" href="/"><img src="/images/GB_logo_S.png" alt="graphbrain"/></a>
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li><a href="/node/welcome/graphbrain">About</a></li>
-              <li><form class="navbar-search" id="search-field">
-                <input type="text" id="search-input-field" class="search-query" placeholder="Search" />
-              </form></li>
-            </ul>
-          </div>
-          {scala.xml.Unparsed(userStuff)}
-        </div>
-      </div>
-</div>
-
-<div id="graphDiv">
-  <div id="nodesDiv"></div>
-</div>
-
-<script language="javascript">
-
-{scala.xml.Unparsed(js)}
-
-</script>
-</body>
-</html>
-
-  }
+	def response = Ok ~> Scalate(req, "node.ssp", ("cssAndJs", cssAndJs), ("navBar", NavBar(user, "node").html), ("js", js))
 }
 
 object NodePage {
