@@ -1,47 +1,6 @@
 <% layout("page.ssp") {%>
 
-    <div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-        <div class="container-fluid">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a href="#">
-  <img src="/images/GB_logo_S.png" style="width:500px:height:500px;vertical-align:middle;" alt="graphbrain_logo" class="brand"/>
-  </a>
-          <div class="btn-group pull-right">
-            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-              <i class="icon-user"></i> Username
-              <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-              <li><a href="#">Profile</a></li>
-              <li class="divider"></li>
-              <li><a href="#">Sign Out</a></li>
-            </ul>
-          </div>
-
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li class="active"><a href="#">home</a></li>
-              <li><a href="#intro">create brain</a></li>
-              <li><a href="/about">learn more</a></li>
-              <li><a href="/contact">contact</a></li>
-            </ul>
-          </div><!--/.nav-collapse -->
-        </div>
-      </div>
-    </div>
-
-    <div class="container">
+    <div class="container" style="padding-top: 60px; padding-bottom: 40px">
 
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="hero-unit">

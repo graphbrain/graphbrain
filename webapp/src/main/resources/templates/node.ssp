@@ -1,0 +1,11 @@
+<% escapeMarkup = false %>
+<%@ val userStuff: String="" %>
+<%@ val js: String="" %>
+
+<% layout("page.ssp") {%>
+
+<div id="graphDiv">
+  <div id="nodesDiv"></div>
+</div>
+
+<%}%>
