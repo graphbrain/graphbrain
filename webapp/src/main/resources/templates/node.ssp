@@ -4,6 +4,10 @@
 
 <% layout("page.ssp") {%>
 
+<style type="text/css">
+  body {background:#FFF;}
+</style>
+
 <div id="graphDiv">
   <div id="nodesDiv"></div>
 </div>

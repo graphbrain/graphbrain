@@ -450,7 +450,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, add, addBrain, addFriend, addReply, autoUpdateUsername, brainMap, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, initAddBrainDialog, initAddDialog, initAddFriendDialog, initBrains, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setCurBrain, setLeftRight, setRightLeft, showAddBrainDialog, showAddDialog, showAddFriendDialog, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateAddInput, updateAddInput1, updateAddInput2, updateAddRelation, updateAddRelation1, updateAddRelation2, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, add, addBrain, addFriend, addReply, autoUpdateUsername, brainMap, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, initAddBrainDialog, initAddDialog, initAddFriendDialog, initBrains, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setCurBrain, setLeftRight, setRightLeft, showAddBrainDialog, showAddDialog, showAddFriendDialog, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateAddInput, updateAddInput1, updateAddInput2, updateAddRelation, updateAddRelation1, updateAddRelation2, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -906,25 +906,27 @@ function handler(event) {
   };
 
   initInterface = function() {
-    fullBind("mouseup", mouseUp);
-    fullBind("mousedown", mouseDown);
-    fullBind("mousemove", mouseMove);
-    fullBind("mousewheel", mouseWheel);
-    document.addEventListener('touchstart', touchStart);
-    document.addEventListener('touchend', touchEnd);
-    document.addEventListener('touchmove', touchMove);
     $('#search-field').submit(searchQuery);
     initSearchDialog();
     initSignUpDialog();
     initLoginDialog();
-    initAddDialog();
-    initAddBrainDialog();
-    initAddFriendDialog();
-    $('#signupLink').bind('click', showSignUpDialog);
+    $('.signupLink').bind('click', showSignUpDialog);
     $('#loginLink').bind('click', showLoginDialog);
     $('#logoutLink').bind('click', logout);
-    $('#addLink').bind('click', showAddDialog);
-    $('#addFriendLink').bind('click', showAddFriendDialog);
+    if (nodeView) {
+      fullBind("mouseup", mouseUp);
+      fullBind("mousedown", mouseDown);
+      fullBind("mousemove", mouseMove);
+      fullBind("mousewheel", mouseWheel);
+      document.addEventListener('touchstart', touchStart);
+      document.addEventListener('touchend', touchEnd);
+      document.addEventListener('touchmove', touchMove);
+      initAddDialog();
+      initAddBrainDialog();
+      initAddFriendDialog();
+      $('#addLink').bind('click', showAddDialog);
+      $('#addFriendLink').bind('click', showAddFriendDialog);
+    }
     return $('#addBrainLink').bind('click', showAddBrainDialog);
   };
 
@@ -1493,6 +1495,100 @@ function handler(event) {
         step *= 2;
       }
     }
+  };
+
+  g = false;
+
+  initGraph = function() {
+    var key, l, link, linkID, nid, nlist, nod, node, orig, parentID, sid, sn, snode, sorig, starg, subNode, targ, text, type, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref;
+    g = new Graph(window.innerWidth, window.innerHeight);
+    g.updateTransform();
+    for (_i = 0, _len = snodes.length; _i < _len; _i++) {
+      sn = snodes[_i];
+      sid = sn['id'];
+      nlist = sn['nodes'];
+      snode = new SNode(sid);
+      for (_j = 0, _len2 = nlist.length; _j < _len2; _j++) {
+        nid = nlist[_j];
+        nod = nodes[nid];
+        text = nod['text'];
+        type = nod['type'];
+        parentID = nod['parent'];
+        node = false;
+        if (type === 'url') {
+          node = new Node(nid, text, type, snode, nod['url']);
+        } else {
+          node = new Node(nid, text, type, snode);
+        }
+        snode.nodes[nid] = node;
+        g.nodes[nid] = node;
+        if ((snode.parent === 'unknown') || (parentID === '')) {
+          snode.parent = parentID;
+        }
+      }
+      g.snodes[sid] = snode;
+    }
+    for (_k = 0, _len3 = snodes.length; _k < _len3; _k++) {
+      sn = snodes[_k];
+      sid = sn['id'];
+      snode = g.snodes[sid];
+      parentID = snode.parent;
+      if (parentID === '') {
+        g.root = snode;
+        snode.parent = false;
+      } else {
+        snode.parent = g.nodes[parentID].snode;
+        g.nodes[parentID].snode.subNodes[g.nodes[parentID].snode.subNodes.length] = snode;
+      }
+    }
+    for (key in g.snodes) {
+      if (!(g.snodes.hasOwnProperty(key))) continue;
+      snode = g.snodes[key];
+      snode.weight = Object.keys(snode.nodes).length;
+      if (!snode.parent) {
+        snode.depth = 0;
+      } else if (snode.parent === g.root) {
+        snode.depth = 1;
+        _ref = snode.subNodes;
+        for (_l = 0, _len4 = _ref.length; _l < _len4; _l++) {
+          subNode = _ref[_l];
+          snode.weight += subNode.nodes.size();
+        }
+      } else {
+        snode.depth = 2;
+      }
+    }
+    g.genSNodeKeys();
+    linkID = 0;
+    for (_m = 0, _len5 = links.length; _m < _len5; _m++) {
+      l = links[_m];
+      orig = '';
+      targ = '';
+      sorig = '';
+      starg = '';
+      if ('orig' in l) {
+        orig = g.nodes[l['orig']];
+        sorig = orig.snode;
+      } else {
+        orig = false;
+        sorig = g.snodes[l['sorig']];
+      }
+      if ('targ' in l) {
+        targ = g.nodes[l['targ']];
+        starg = targ.snode;
+      } else {
+        targ = false;
+        starg = g.snodes[l['starg']];
+      }
+      link = new Link(linkID++, false, sorig, false, starg, l['relation'], l['color']);
+      g.links.push(link);
+      sorig.links.push(link);
+      starg.links.push(link);
+    }
+    g.placeNodes();
+    g.placeLinks();
+    g.layout();
+    return g.updateView();
   };
 
   Graph = (function() {
@@ -2170,104 +2266,13 @@ function handler(event) {
 
   addFriend = function() {};
 
-  g = false;
-
-  initGraph = function() {
-    var key, l, link, linkID, nid, nlist, nod, node, orig, parentID, sid, sn, snode, sorig, starg, subNode, targ, text, type, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref;
-    g = new Graph(window.innerWidth, window.innerHeight);
-    g.updateTransform();
-    for (_i = 0, _len = snodes.length; _i < _len; _i++) {
-      sn = snodes[_i];
-      sid = sn['id'];
-      nlist = sn['nodes'];
-      snode = new SNode(sid);
-      for (_j = 0, _len2 = nlist.length; _j < _len2; _j++) {
-        nid = nlist[_j];
-        nod = nodes[nid];
-        text = nod['text'];
-        type = nod['type'];
-        parentID = nod['parent'];
-        node = false;
-        if (type === 'url') {
-          node = new Node(nid, text, type, snode, nod['url']);
-        } else {
-          node = new Node(nid, text, type, snode);
-        }
-        snode.nodes[nid] = node;
-        g.nodes[nid] = node;
-        if ((snode.parent === 'unknown') || (parentID === '')) {
-          snode.parent = parentID;
-        }
-      }
-      g.snodes[sid] = snode;
-    }
-    for (_k = 0, _len3 = snodes.length; _k < _len3; _k++) {
-      sn = snodes[_k];
-      sid = sn['id'];
-      snode = g.snodes[sid];
-      parentID = snode.parent;
-      if (parentID === '') {
-        g.root = snode;
-        snode.parent = false;
-      } else {
-        snode.parent = g.nodes[parentID].snode;
-        g.nodes[parentID].snode.subNodes[g.nodes[parentID].snode.subNodes.length] = snode;
-      }
-    }
-    for (key in g.snodes) {
-      if (!(g.snodes.hasOwnProperty(key))) continue;
-      snode = g.snodes[key];
-      snode.weight = Object.keys(snode.nodes).length;
-      if (!snode.parent) {
-        snode.depth = 0;
-      } else if (snode.parent === g.root) {
-        snode.depth = 1;
-        _ref = snode.subNodes;
-        for (_l = 0, _len4 = _ref.length; _l < _len4; _l++) {
-          subNode = _ref[_l];
-          snode.weight += subNode.nodes.size();
-        }
-      } else {
-        snode.depth = 2;
-      }
-    }
-    g.genSNodeKeys();
-    linkID = 0;
-    for (_m = 0, _len5 = links.length; _m < _len5; _m++) {
-      l = links[_m];
-      orig = '';
-      targ = '';
-      sorig = '';
-      starg = '';
-      if ('orig' in l) {
-        orig = g.nodes[l['orig']];
-        sorig = orig.snode;
-      } else {
-        orig = false;
-        sorig = g.snodes[l['sorig']];
-      }
-      if ('targ' in l) {
-        targ = g.nodes[l['targ']];
-        starg = targ.snode;
-      } else {
-        targ = false;
-        starg = g.snodes[l['starg']];
-      }
-      link = new Link(linkID++, false, sorig, false, starg, l['relation'], l['color']);
-      g.links.push(link);
-      sorig.links.push(link);
-      starg.links.push(link);
-    }
-    g.placeNodes();
-    g.placeLinks();
-    g.layout();
-    return g.updateView();
-  };
+  nodeView = false;
 
   $(function() {
-    initGraph();
+    if (typeof snodes !== 'undefined') nodeView = true;
+    if (nodeView) initGraph();
     initInterface();
-    return initBrains();
+    if (nodeView) return initBrains();
   });
 
 }).call(this);
