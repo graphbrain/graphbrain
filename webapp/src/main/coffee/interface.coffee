@@ -104,7 +104,7 @@ initInterface = ->
 
         initAddDialog()
         initAddBrainDialog()
-        initAddFriendDialog()
+        #initAddFriendDialog()
         $('#addLink').bind 'click', showAddDialog
         $('#addFriendLink').bind 'click', showAddFriendDialog
     $('#addBrainLink').bind 'click', showAddBrainDialog

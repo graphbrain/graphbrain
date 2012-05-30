@@ -923,7 +923,6 @@ function handler(event) {
       document.addEventListener('touchmove', touchMove);
       initAddDialog();
       initAddBrainDialog();
-      initAddFriendDialog();
       $('#addLink').bind('click', showAddDialog);
       $('#addFriendLink').bind('click', showAddFriendDialog);
     }
