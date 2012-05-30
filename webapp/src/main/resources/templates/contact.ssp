@@ -1,10 +1,10 @@
 <% layout("page.ssp") {%>
 
     <div class="container"  style="padding-top: 60px; padding-bottom: 40px">
-      <h3>a beautiful way to organise and explore information</h3>
+      
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="hero-unit">
-        
+      <p>to share your thoughts, e-mail: <strong>contact@graphbrain.com</strong></p>    
         
         
         
