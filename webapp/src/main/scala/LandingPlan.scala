@@ -12,8 +12,9 @@ import com.codahale.logula.Logging
 object LandingPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse with Logging {
   def pageResponse(template: String, page: String, cookies: Map[String, Any], req: HttpRequest[Any]) = {
     val userNode = Server.getUser(cookies)
+    val loggedIn = userNode != null
     log.info(Server.realIp(req) + " PAGE " + page)
-    Ok ~> Scalate(req, template, ("navBar", NavBar(userNode, page).html))
+    Ok ~> Scalate(req, template, ("navBar", NavBar(userNode, page).html), ("cssAndJs", (new CssAndJs()).cssAndJs), ("loggedIn", loggedIn))
   }
 
   def intent = {

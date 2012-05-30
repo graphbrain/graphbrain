@@ -71,7 +71,7 @@ case class NavBar(user: UserNode, page: String) {
       """
       <div class="pull-right">
         <ul class="nav">
-          <li><a id="signupLink" href="#">Sign Up</a></li>
+          <li><a class="signupLink" href="#">Sign Up</a></li>
           <li><a id="loginLink" href="#">Login</a></li>
         </ul>
       </div>

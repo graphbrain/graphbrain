@@ -84,25 +84,27 @@ fullBind = (eventName, f) ->
 
 # init
 initInterface = ->
-    fullBind("mouseup", mouseUp)
-    fullBind("mousedown", mouseDown)
-    fullBind("mousemove", mouseMove)
-    fullBind("mousewheel", mouseWheel)
-    
-    document.addEventListener('touchstart', touchStart)
-    document.addEventListener('touchend', touchEnd)
-    document.addEventListener('touchmove', touchMove)
-
     $('#search-field').submit(searchQuery)
     initSearchDialog()
     initSignUpDialog()
     initLoginDialog()
-    initAddDialog()
-    initAddBrainDialog()
-    initAddFriendDialog()
-    $('#signupLink').bind 'click', showSignUpDialog
+    $('.signupLink').bind 'click', showSignUpDialog
     $('#loginLink').bind 'click', showLoginDialog
     $('#logoutLink').bind 'click', logout
-    $('#addLink').bind 'click', showAddDialog
-    $('#addFriendLink').bind 'click', showAddFriendDialog
+
+    if nodeView
+        fullBind("mouseup", mouseUp)
+        fullBind("mousedown", mouseDown)
+        fullBind("mousemove", mouseMove)
+        fullBind("mousewheel", mouseWheel)
+    
+        document.addEventListener('touchstart', touchStart)
+        document.addEventListener('touchend', touchEnd)
+        document.addEventListener('touchmove', touchMove)
+
+        initAddDialog()
+        initAddBrainDialog()
+        initAddFriendDialog()
+        $('#addLink').bind 'click', showAddDialog
+        $('#addFriendLink').bind 'click', showAddFriendDialog
     $('#addBrainLink').bind 'click', showAddBrainDialog
