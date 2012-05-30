@@ -53,7 +53,6 @@ case class NavBar(user: UserNode, page: String) {
       <li class="divider-vertical"></li>
       <li><a href="#" id="addLink"><i class="icon-plus icon-white"></i> Add</a></li>
       <li><a href="#" id="addBrainLink"><i class="icon-plus icon-white"></i> Brain</a></li>
-      <li><a href="#" id="addFriendLink"><i class="icon-plus icon-white"></i> Friend</a></li>
       <li class="divider-vertical"></li>
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="curBrain"></b></a>
