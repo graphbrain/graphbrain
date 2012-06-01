@@ -48,6 +48,8 @@ class GraphInterface (val rootId: String, val store: VertexStore, val user: User
   val linksJSON = links2json
   val brainsJSON = if (user == null) "" else brains2json
 
+  Server.store.clear()
+
   /** Generates relationship Map
     * 
     * Generates a Map where all nodeIds that participate in the same
