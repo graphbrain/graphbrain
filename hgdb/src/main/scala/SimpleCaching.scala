@@ -29,5 +29,11 @@ trait SimpleCaching extends VertexStoreInterface {
   abstract override def remove(vertex: Vertex): Vertex = {
     cache -= vertex.id
     super.remove(vertex)
-  } 
+  }
+
+  def clear(limit: Int=99999) = {
+    if (cache.size > limit) {
+      cache.clear()
+    }
+  }
 }
