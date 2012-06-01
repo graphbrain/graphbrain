@@ -3,8 +3,11 @@ package com.graphbrain.webapp
 import java.net.URL
 import com.codahale.logula.Logging
 import org.apache.log4j.Level
+import unfiltered.scalate._
 import unfiltered.request._
+import unfiltered.response._
 import unfiltered.Cookie
+import org.fusesource.scalate.TemplateEngine
 
 import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.SimpleCaching
@@ -24,6 +27,21 @@ object Server {
   val store = new VertexStore("gb") with SimpleCaching with UserManagement with NodeManagement with URLManagement
 
   val sparser = new SentenceParser(tagger=false)
+
+  val templateDirs = List(new java.io.File("/var/www/templates"))
+  val scalateMode = "production"
+  val engine = new TemplateEngine(templateDirs, scalateMode)
+
+  def scalateResponse(template: String, page: String, cookies: Map[String, Any], req: HttpRequest[Any], js: String="") = {
+    val userNode = getUser(cookies)
+    val loggedIn = userNode != null
+    if (prod) {
+      Ok ~> Scalate(req, template, ("navBar", NavBar(userNode, page).html), ("cssAndJs", (new CssAndJs()).cssAndJs), ("loggedIn", loggedIn), ("js", js))(engine)
+    }
+    else {
+      Ok ~> Scalate(req, template, ("navBar", NavBar(userNode, page).html), ("cssAndJs", (new CssAndJs()).cssAndJs), ("loggedIn", loggedIn), ("js", js))
+    }
+  }
 
   def realIp(req: HttpRequest[Any]) = {
     val headers = req.headers("X-Forwarded-For")

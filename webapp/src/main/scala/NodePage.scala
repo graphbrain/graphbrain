@@ -10,7 +10,7 @@ import com.graphbrain.hgdb.Vertex
 import com.graphbrain.hgdb.UserNode
 
 
-case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Boolean, req: HttpRequest[Any]) {
+case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Boolean, req: HttpRequest[Any], cookies: Map[String, Any]) {
 	val gi = new GraphInterface(node.id, store, user)
 
   val userId = if (user == null) "" else user.id
@@ -26,9 +26,7 @@ case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Bool
       "var curBrainId = '" + Server.store.brainId(node) + "';\n" +
       "var userId = '" + userId + "';\n"
 
-  val cssAndJs = (new CssAndJs()).cssAndJs
-
-  def response = Ok ~> Scalate(req, "node.ssp", ("cssAndJs", cssAndJs), ("navBar", NavBar(user, "node").html), ("js", js))
+  def response = Server.scalateResponse("node.ssp", "node", cookies, req, js)
 }
 
 object NodePage {    
