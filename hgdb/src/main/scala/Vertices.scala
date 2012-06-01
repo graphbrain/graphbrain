@@ -51,7 +51,9 @@ object Edge {
       tokens(0)
     else
       ""
-  } 
+  }
+
+  def valid(edgeId: String) = participantIds(edgeId).size > 1
 }
 
 case class ExtraEdges(id: String="", edges: Set[String]=Set[String](), extra: Int = -1) extends Vertex {
