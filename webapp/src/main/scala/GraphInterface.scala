@@ -96,17 +96,23 @@ class GraphInterface (val rootId: String, val store: VertexStore, val user: User
     snodes
   }
 
-  /** Determines if an Edge is redundant in realtion to supernode links */
+  /** Determines if an Edge is redundant in relation to supernode links */
   private def redundantEdge(snodes: MSet[Map[String, Any]], edge: String): Boolean = {
-    for (sn <- snodes) {
-      val key: (String, Int, String) = sn("key").asInstanceOf[(String, Int, String)]
-      val otherParticipants = Edge.participantIds(edge).toSet - key._3
-      if ((Edge.edgeType(edge) == key._1) &&
-        (Edge.participantIds(edge)(key._2) == key._3) && 
-        otherParticipants.subsetOf(sn("nodes").asInstanceOf[Set[String]]))
-        return true
+    try {
+      for (sn <- snodes) {
+        val key: (String, Int, String) = sn("key").asInstanceOf[(String, Int, String)]
+        val otherParticipants = Edge.participantIds(edge).toSet - key._3
+        if ((Edge.edgeType(edge) == key._1) &&
+          (Edge.participantIds(edge)(key._2) == key._3) && 
+          otherParticipants.subsetOf(sn("nodes").asInstanceOf[Set[String]]))
+          return true
+      }
+      false
     }
-    false
+    catch {
+      // if something goes wrong, assume redundant
+      case _ => true
+    }
   }
 
   /** Generates list of links to be displayed */

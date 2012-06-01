@@ -279,7 +279,7 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
           if (depth < maxDepth)
             for (edgeId <- node.edges)
               // TODO: temporary hack
-              if (Edge.edgeType(edgeId) != "source")
+              if (Edge.valid(edgeId) && (Edge.edgeType(edgeId) != "source"))
                 queue = queue ::: (for (pid <- Edge.participantIds(edgeId)) yield (pid, depth + 1, curId)).toList
         }
         catch {
@@ -302,8 +302,9 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
     for (n <- nhood) {
       val node = get(n._1)
       for (edgeId <- node.edges)
-        if ((Edge.participantIds(edgeId).forall(nhoodIds.contains(_))))
-          eset += edgeId
+        if (Edge.valid(edgeId))
+          if ((Edge.participantIds(edgeId).forall(nhoodIds.contains(_))))
+            eset += edgeId
     }
     eset.toSet
   }
