@@ -5,6 +5,10 @@ object ID {
 
   def sanitize(str: String): String = str.toLowerCase.replace("/", "_").replace(" ", "_")
 
+  def parts(id: String) = id.split('/').size
+
+  def systemId(id: String) = parts(id) == 1
+
   def brainId(name: String, userName: String) =
     "brain/" + userName + "/" + sanitize(name)
 
