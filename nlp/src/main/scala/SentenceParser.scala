@@ -29,6 +29,7 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
   val nounRegex = """NN[A-Z]?""".r
   val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r, """http://www.flickr.com/photos/.+""".r)
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
+  val gbNodeExt = """(http://)?graphbrain.com/node/""".r
 
   val si = RiakSearchInterface("gbsearch")
   
@@ -54,6 +55,22 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
 
 def textToNode(text:String, brainID: String): List[Vertex] = {
     var results: List[Vertex] = List()
+    if(nodeExists(text)) {
+      try{
+        results = store.get(text) :: results;        
+      }
+      catch {case e =>}
+
+    }
+
+    if(gbNodeExt.split(text).length==2) {
+      val gbID = gbNodeExt.split(text)(1)
+      if(nodeExists(gbID)) {
+        try {
+          results = store.get(gbID) :: results;
+        }
+      }
+    }
 
     for (imageE <- imageExt) {
       if (imageE.findAllIn(text).hasNext) {             
@@ -95,6 +112,26 @@ def textToNode(text:String, brainID: String): List[Vertex] = {
     }
 
     var results: List[Vertex] = List()
+    if(nodeExists(text)) {
+      try{
+        results = store.get(text) :: results;        
+      }
+      catch {case e =>}
+
+    }
+
+    if(gbNodeExt.split(text).length==2) {
+      val gbID = gbNodeExt.split(text)(1)
+      
+      if(nodeExists(gbID)) {
+        
+        try {
+          results = store.get(gbID) :: results;
+        }
+      }
+    }
+
+
 
     //Only make special content types with respect to a "thing" (TextNode)
     node match {
@@ -435,6 +472,24 @@ def getOrCreate(id:String, user:Vertex, textString:String, root:Vertex):Vertex={
   }
 
 }
+def nodeExists(id:String):Boolean =
+  {
+    try{
+
+      val v = store.get(id)
+      if(v.id==id) {
+
+        return true
+      }
+      else {
+        return false
+      }
+
+    }
+    catch{
+      case e => return false
+    }
+  }
 
 }
 
@@ -499,6 +554,14 @@ object SentenceParser {
       val url = "https://github.com/graphbrain/graphbrain"
       println("Image: " + url)
       println(sentenceParser.textToNode(url, brainID))
+
+      val existing = "wikipedia/aristotle"
+      println("Existing: " + existing)
+      println(sentenceParser.textToNode(existing, brainID)(0).id)
+
+      val existingURL = "graphbrain.com/node/wikipedia/aristotle";
+      println("Existing URL: " + existingURL)
+      println(sentenceParser.textToNode(existingURL, brainID)(0).id)
 
 
 
