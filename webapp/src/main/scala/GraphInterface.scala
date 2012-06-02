@@ -115,7 +115,10 @@ class GraphInterface (val rootId: String, val store: VertexStore, val user: User
     val node = store.get(nodeId)
     node match {
       case tn: TextNode => Map(("type" -> "text"), ("text" -> tn.text), ("parent" -> parentId))
-      case un: URLNode => Map(("type" -> "url"), ("text" -> un.title), ("url" -> un.url), ("parent" -> parentId))
+      case un: URLNode => {
+        val title = if (un.title == "") un.url else un.title
+        Map(("type" -> "url"), ("text" -> title), ("url" -> un.url), ("parent" -> parentId))
+      }
       case in: ImageNode => Map(("type" -> "image"), ("text" -> in.url), ("parent" -> parentId))
       case un: UserNode => Map(("type" -> "text"), ("text" -> un.name), ("parent" -> parentId))
       case br: Brain => Map(("type" -> "text"), ("text" -> br.name), ("parent" -> parentId))
