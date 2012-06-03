@@ -51,6 +51,6 @@ trait NodeManagement extends VertexStoreInterface {
     }
 
     val ids = for (v <- participants) yield v.id
-    addrel(edgeType, ids)
+    addrel(edgeType.replace(" ", "_"), ids)
   }
 }
