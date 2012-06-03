@@ -450,7 +450,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, add, addBrain, addFriend, addReply, autoUpdateUsername, brainMap, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, initAddBrainDialog, initAddDialog, initAddFriendDialog, initBrains, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setCurBrain, setLeftRight, setRightLeft, showAddBrainDialog, showAddDialog, showAddFriendDialog, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateAddInput, updateAddInput1, updateAddInput2, updateAddRelation, updateAddRelation1, updateAddRelation2, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, add, addBrain, addFriend, addReply, autoUpdateUsername, brainMap, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, initAddBrainDialog, initAddDialog, initAddFriendDialog, initBrains, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setLeftRight, setRightLeft, showAddBrainDialog, showAddDialog, showAddFriendDialog, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateAddInput, updateAddInput1, updateAddInput2, updateAddRelation, updateAddRelation1, updateAddRelation2, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -924,9 +924,8 @@ function handler(event) {
       initAddDialog();
       initAddBrainDialog();
       $('#addLink').bind('click', showAddDialog);
-      $('#addFriendLink').bind('click', showAddFriendDialog);
+      return $('#addFriendLink').bind('click', showAddFriendDialog);
     }
-    return $('#addBrainLink').bind('click', showAddBrainDialog);
   };
 
   nodeCount = 0;
@@ -2204,17 +2203,14 @@ function handler(event) {
 
   brainMap = {};
 
-  setCurBrain = function(name, access) {
-    var html;
-    html = '<i class="icon-eye-open icon-white"></i> ' + name + ' <b class="caret">';
-    return $('#curBrain').html(html);
-  };
-
   initBrains = function() {
     var brain, html, selectHtml, _i, _len;
-    html = '<li><a href="/node/' + userId + '">Home</a></li>';
+    html = '<i class="icon-eye-open icon-white"></i> ' + curBrainName + ' <b class="caret">';
+    $('#curBrain').html(html);
+    html = '<li><a href="#" id="addBrainLink">Create Brain</a></li>';
+    html += '<li class="divider"></li>';
+    html += '<li><a href="/node/' + userId + '">Home</a></li>';
     selectHtml = '<option>Home</option>';
-    if (curBrainId === userId) setCurBrain('Home', 'home');
     brainMap[userId] = {
       'name': 'Home',
       'access': 'home'
@@ -2227,14 +2223,14 @@ function handler(event) {
       };
       html += '<li><a href="/node/' + brain['id'] + '">' + brain['name'] + '</a></li>';
       if (curBrainId === brain['id']) {
-        setCurBrain(brain['name'], brain['access']);
         selectHtml += '<option selected>' + brain['name'] + '</option>';
       } else {
         selectHtml += '<option>' + brain['name'] + '</option>';
       }
     }
     $('#brainDropdown').html(html);
-    return $('#addDialogSelectBrain').html(selectHtml);
+    $('#addDialogSelectBrain').html(selectHtml);
+    return $('#addBrainLink').bind('click', showAddBrainDialog);
   };
 
   initAddBrainDialog = function() {
