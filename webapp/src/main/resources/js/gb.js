@@ -450,7 +450,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, add, addBrain, addFriend, addReply, autoUpdateUsername, brainMap, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, initAddBrainDialog, initAddDialog, initAddFriendDialog, initBrains, initGraph, initInterface, initLoginDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setLeftRight, setRightLeft, showAddBrainDialog, showAddDialog, showAddFriendDialog, showLoginDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateAddInput, updateAddInput1, updateAddInput2, updateAddRelation, updateAddRelation1, updateAddRelation2, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, add, addBrain, addFriend, addReply, autoUpdateUsername, brainMap, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAlert, initAddBrainDialog, initAddDialog, initAddFriendDialog, initBrains, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeMode, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setInfoAlert, setLeftRight, setRightLeft, showAddBrainDialog, showAddDialog, showAddFriendDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateAddInput, updateAddInput1, updateAddInput2, updateAddRelation, updateAddRelation1, updateAddRelation2, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -802,6 +802,15 @@ function handler(event) {
 
   })();
 
+  setInfoAlert = function(msg) {
+    $('#alert').css('visibility', 'visible');
+    return $('#alertMsg').html(msg);
+  };
+
+  hideAlert = function() {
+    return $('#alert').css('visibility', 'hidden');
+  };
+
   dragging = false;
 
   lastX = 0;
@@ -923,8 +932,10 @@ function handler(event) {
       document.addEventListener('touchmove', touchMove);
       initAddDialog();
       initAddBrainDialog();
+      initRemoveDialog();
       $('#addLink').bind('click', showAddDialog);
-      return $('#addFriendLink').bind('click', showAddFriendDialog);
+      $('#addFriendLink').bind('click', showAddFriendDialog);
+      return $('#removeButton').bind('click', removeButtonPressed);
     }
   };
 
@@ -934,6 +945,15 @@ function handler(event) {
     var m = ((url||'')+'').match(/^http:\/\/([^/]+)/);
     return m ? m[1] : null;
 };
+
+  nodeClicked = function(msg) {
+    if (removeMode) {
+      showRemoveDialog(msg.data.node, msg.data.orig, msg.data.link, msg.data.targ);
+      return false;
+    } else {
+      return true;
+    }
+  };
 
   Node = (function() {
 
@@ -971,18 +991,34 @@ function handler(event) {
     };
 
     Node.prototype.place = function() {
-      var html;
+      var html, nodeData;
       $('#' + this.snode.id + ' .viewport').append('<div id="' + this.divid + '" class="node" />');
+      nodeData = {};
+      if (this.snode.linkDirection === 'in') {
+        nodeData = {
+          'node': this.id,
+          'orig': rootNodeId,
+          'link': this.snode.linkLabel,
+          'targ': this.id
+        };
+      } else {
+        nodeData = {
+          'node': this.id,
+          'targ': rootNodeId,
+          'link': this.snode.linkLabel,
+          'orig': this.id
+        };
+      }
       if (this.type === 'url') {
-        console.log(this.url);
-        console.log(getHostname(this.url));
         html = '<div class="nodeTitle" id="t' + this.divid + '"><a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a></div>';
-        html += '<div><img src="http://www.google.com/s2/u/0/favicons?domain=' + getHostname(this.url) + '" class="nodeIco" /><div class="nodeUrl"><a href="' + this.url + '">' + this.url + '</a></div></div>';
+        html += '<div><img src="http://www.google.com/s2/u/0/favicons?domain=' + getHostname(this.url) + '" class="nodeIco" /><div class="nodeUrl"><a href="' + this.url + '" id="url' + this.divid + '">' + this.url + '</a></div></div>';
         $('#' + this.divid).append(html);
+        $('#url' + this.divid).click(nodeData, nodeClicked);
       } else {
         html = '<div class="nodeTitle" id="t' + this.divid + '"><a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a></div>';
         $('#' + this.divid).append(html);
       }
+      $('#t' + this.divid).click(nodeData, nodeClicked);
       html = '<div id="d' + this.divid + '" class="nodeDetail">Some more text about this node.</div>';
       $('#' + this.divid).append(html);
       return this.updateDimensions();
@@ -1104,6 +1140,7 @@ function handler(event) {
       this.rect.v4.y = 0;
       this.rect.v4.z = 0;
       this.jqDiv = false;
+      this.linkLabel = "";
     }
 
     SNode.prototype.updateTransform = function() {
@@ -1582,6 +1619,13 @@ function handler(event) {
       g.links.push(link);
       sorig.links.push(link);
       starg.links.push(link);
+      if (sorig.parent === false) {
+        starg.linkLabel = l['relation'];
+        starg.linkDirection = 'in';
+      } else {
+        sorig.linkLabel = l['relation'];
+        sorig.linkDirection = 'out';
+      }
     }
     g.placeNodes();
     g.placeLinks();
@@ -2199,6 +2243,40 @@ function handler(event) {
   updateAddRelation2 = function(msg) {
     $("#addRelation").val($("#addRelation2").val());
     return updateAddRelation();
+  };
+
+  removeMode = false;
+
+  removeButtonPressed = function(msg) {
+    if (removeMode) {
+      hideAlert();
+      removeMode = false;
+    } else {
+      setInfoAlert('<strong>Click on the item</strong> you want to remove.');
+      removeMode = true;
+    }
+    return true;
+  };
+
+  initRemoveDialog = function() {
+    var dialogHtml;
+    dialogHtml = $("<div class=\"modal hide\" id=\"removeModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Remove</h3>\n  </div>\n  <form id=\"removeForm\" action=\"/remove\" method=\"post\">\n    <input id=\"removeNodeField\" type=\"hidden\" name=\"node\">\n    <input id=\"removeOrigField\" type=\"hidden\" name=\"orig\">\n    <input id=\"removeLinkField\" type=\"hidden\" name=\"link\">\n    <input id=\"removeTargField\" type=\"hidden\" name=\"targ\">\n    <div class=\"modal-body\" id=\"addBrainBody\">\n        <div id=\"linkDesc\"></div>\n        <label class=\"radio\">\n            <input type=\"radio\" name=\"linkOrNode\" value=\"link\" checked>\n            Just remove this connection\n        </label>\n        <br />\n        <div id=\"itemDesc\">Item</div>\n        <label class=\"radio\">\n            <input type=\"radio\" name=\"linkOrNode\" value=\"node\">\n            Remove this item and all associated connections\n        </label>\n    </div>\n    <div class=\"modal-footer\">\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"removeDlgButton\" class=\"btn btn-primary\">Remove</a>\n    </div>\n  </form>\n</div>");
+    dialogHtml.appendTo('body');
+    return $('#removeDlgButton').click(removeAction);
+  };
+
+  showRemoveDialog = function(node, orig, link, targ) {
+    $('#removeNodeField').val(node);
+    $('#removeOrigField').val(orig);
+    $('#removeLinkField').val(link);
+    $('#removeTargField').val(targ);
+    $('#linkDesc').html(nodes[orig].text + ' <strong>' + link + '</strong> ' + nodes[targ].text);
+    $('#itemDesc').html(nodes[node].text);
+    return $('#removeModal').modal('show');
+  };
+
+  removeAction = function() {
+    return $('#removeForm').submit();
   };
 
   brainMap = {};

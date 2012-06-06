@@ -59,6 +59,19 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       log.info(Server.realIp(req) + " CREATE BRAIN username: " + userNode.username + "; brain: " + name)
       Redirect("/node/" + brainId)
     }
+    case req@POST(Path("/remove") & Params(params) & Cookies(cookies)) => {
+      val userNode = Server.getUser(cookies)
+      val nodeId = params("node")(0)
+      val origId = params("orig")(0)
+      val link = params("link")(0).replace(" ", "_")
+      val targId = params("targ")(0)
+      val linkOrNode = params("linkOrNode")(0)
+      Server.store.delrel(link, Array(origId, targId))
+      //log.info(Server.realIp(req) + " REMOVE username: " + userNode.username + "; brain: " + name)
+      
+      val redirId = if (nodeId == origId) targId else origId
+      Redirect("/node/" + redirId)
+    }
     case req@POST(Path("/signup") & Params(params)) => {
       val name = params("name")(0)
       val username = params("username")(0)

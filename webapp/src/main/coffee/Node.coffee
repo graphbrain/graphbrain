@@ -7,6 +7,13 @@ nodeCount = 0
     return m ? m[1] : null;
 }`
 
+nodeClicked = (msg) ->
+    if removeMode
+        showRemoveDialog(msg.data.node, msg.data.orig, msg.data.link, msg.data.targ)
+        false
+    else
+        true
+
 # Node
 class Node
     constructor: (@id, @text, @type, @snode, @url='') ->
@@ -41,16 +48,24 @@ class Node
         # create node div
         $('#' + @snode.id + ' .viewport').append('<div id="' + @divid + '" class="node" />')
 
+        nodeData = {}
+        if @snode.linkDirection == 'in'
+            nodeData = {'node': @id, 'orig': rootNodeId, 'link': @snode.linkLabel, 'targ': @id}
+        else
+            nodeData = {'node': @id, 'targ': rootNodeId, 'link': @snode.linkLabel, 'orig': @id}
+
         # create url div
         if @type == 'url'
-            console.log(@url)
-            console.log(getHostname(@url))
             html = '<div class="nodeTitle" id="t' + @divid + '"><a href="/node/' + @id + '" id="' + @divid + '">' + @text + '</a></div>'
-            html += '<div><img src="http://www.google.com/s2/u/0/favicons?domain=' + getHostname(@url) + '" class="nodeIco" /><div class="nodeUrl"><a href="' + @url + '">' + @url + '</a></div></div>'
+            html += '<div><img src="http://www.google.com/s2/u/0/favicons?domain=' + getHostname(@url) + '" class="nodeIco" /><div class="nodeUrl"><a href="' + @url + '" id="url' + @divid + '">' + @url + '</a></div></div>'
             $('#' + @divid).append(html)
+            $('#url' + @divid).click(nodeData, nodeClicked)
         else
             html = '<div class="nodeTitle" id="t' + @divid + '"><a href="/node/' + @id + '" id="' + @divid + '">' + @text + '</a></div>'
             $('#' + @divid).append(html)
+
+
+        $('#t' + @divid).click(nodeData, nodeClicked)
 
         # create detail div
         html = '<div id="d' + @divid + '" class="nodeDetail">Some more text about this node.</div>'
