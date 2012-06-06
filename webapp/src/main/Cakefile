@@ -12,6 +12,7 @@ build = (callback) ->
     'coffee/geom.coffee',
     'coffee/vec3mat4x4.coffee',
     'coffee/Quaternion.coffee',
+    'coffee/alerts.coffee',
     'coffee/interface.coffee',
     'coffee/Node.coffee',
     'coffee/SphericalCoords.coffee',
@@ -22,6 +23,7 @@ build = (callback) ->
     'coffee/search.coffee',
     'coffee/user.coffee',
     'coffee/add.coffee',
+    'coffee/remove.coffee',
     'coffee/brain.coffee',
     'coffee/friend.coffee',
     'coffee/main.coffee']

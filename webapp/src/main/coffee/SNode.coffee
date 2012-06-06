@@ -55,6 +55,9 @@ class SNode
         # jquery objects
         @jqDiv = false
 
+        # main associated link label
+        @linkLabel = ""
+
 
     updateTransform: ->
         x = @rpos[0]

@@ -104,5 +104,7 @@ initInterface = ->
 
         initAddDialog()
         initAddBrainDialog()
+        initRemoveDialog()
         $('#addLink').bind 'click', showAddDialog
         $('#addFriendLink').bind 'click', showAddFriendDialog
+        $('#removeButton').bind 'click', removeButtonPressed

@@ -51,7 +51,8 @@ case class NavBar(user: UserNode, page: String) {
     if (page == "node") {
       """
       <li class="divider-vertical"></li>
-      <li><a href="#" id="addLink"><i class="icon-plus icon-white"></i> Add</a></li>
+      <li><button class="btn btn-inverse" id="addLink"><i class="icon-plus icon-white"></i> Add</button></li>
+      <li><button id="removeButton" class="btn btn-inverse" data-toggle="button"><i class="icon-remove icon-white"></i> Remove</button></li>
       <li class="divider-vertical"></li>
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="curBrain"></a>
@@ -115,6 +116,10 @@ case class NavBar(user: UserNode, page: String) {
           """ + pages + """
           """ + userStuff + """
         </div>
+      </div>
+      <div id="alert" class="alert alert-info" style="visibility:hidden">
+        <button class="close" data-dismiss="alert">×</button>
+        <div id="alertMsg"></div>
       </div>
     </div>
     """
