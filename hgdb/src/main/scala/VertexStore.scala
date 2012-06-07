@@ -336,7 +336,7 @@ object VertexStore {
       yield str.replace("$2", ",").replace("$1", "$")).toIterable
   }
 
-  private def extraId(id: String, pos: Int) = {
+  def extraId(id: String, pos: Int) = {
     if (pos == 0)
       id
     else

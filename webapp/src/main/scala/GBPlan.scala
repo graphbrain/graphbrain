@@ -66,9 +66,30 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val link = params("link")(0).replace(" ", "_")
       val targId = params("targ")(0)
       val linkOrNode = params("linkOrNode")(0)
-      Server.store.delrel(link, Array(origId, targId))
-      //log.info(Server.realIp(req) + " REMOVE username: " + userNode.username + "; brain: " + name)
-      
+
+      if (linkOrNode == "link") {
+        // check permissions
+        if ((Server.store.brainOwner(origId) == userNode.id) ||
+            (Server.store.brainOwner(targId) == userNode.id)) {
+
+          Server.store.delrel(link, Array(origId, targId))
+          log.info(Server.realIp(req) + " REMOVE EDGE username: " + userNode.username + "; origId: " + origId + "; link: " + link + "; targId" + targId)
+        }
+        else {
+          log.info(Server.realIp(req) + " PERMISSION DENIED to REMOVE EDGE username: " + userNode.username + "; origId: " + origId + "; link: " + link + "; targId" + targId)
+        }
+      }
+      else {
+        // check permissions
+        if (Server.store.brainOwner(nodeId) == userNode.id) {
+          Server.store.removeVertexAndEdges(Server.store.get(nodeId))
+          log.info(Server.realIp(req) + " REMOVE NODE username: " + userNode.username + "; nodeId: " + nodeId)
+        }
+        else {
+          log.info(Server.realIp(req) + " PERMISSION DENIED to REMOVE NODE username: " + userNode.username + "; nodeId: " + nodeId) 
+        }
+      }
+
       val redirId = if (nodeId == origId) targId else origId
       Redirect("/node/" + redirId)
     }

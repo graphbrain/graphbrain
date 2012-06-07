@@ -7,6 +7,7 @@ abstract trait VertexStoreInterface {
   def remove(vertex: Vertex): Vertex
   def exists(id: String): Boolean
   def addrel(edgeType: String, participants: Array[String]): Boolean
+  def delrel(edgeType: String, participants: Array[String])
 
   def getOrNull(id: String): Vertex = {
     try {
