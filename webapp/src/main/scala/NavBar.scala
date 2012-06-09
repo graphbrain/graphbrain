@@ -117,7 +117,7 @@ case class NavBar(user: UserNode, page: String) {
           """ + userStuff + """
         </div>
       </div>
-      <div id="alert" class="alert alert-info" style="visibility:hidden">
+      <div id="alert" class="alert" style="visibility:hidden">
         <button class="close" data-dismiss="alert">×</button>
         <div id="alertMsg"></div>
       </div>

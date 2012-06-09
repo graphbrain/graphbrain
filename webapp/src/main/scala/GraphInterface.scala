@@ -120,8 +120,8 @@ class GraphInterface (val rootId: String, val store: VertexStore, val user: User
         Map(("type" -> "url"), ("text" -> title), ("url" -> un.url), ("parent" -> parentId))
       }
       case in: ImageNode => Map(("type" -> "image"), ("text" -> in.url), ("parent" -> parentId))
-      case un: UserNode => Map(("type" -> "text"), ("text" -> un.name), ("parent" -> parentId))
-      case br: Brain => Map(("type" -> "text"), ("text" -> br.name), ("parent" -> parentId))
+      case un: UserNode => Map(("type" -> "user"), ("text" -> un.name), ("parent" -> parentId))
+      case br: Brain => Map(("type" -> "brain"), ("text" -> br.name), ("parent" -> parentId))
       case _ => Map(("type" -> "text"), ("text" -> node.id), ("parent" -> parentId))
     }
   }
