@@ -450,7 +450,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, add, addBrain, addFriend, addReply, autoUpdateUsername, brainMap, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAlert, initAddBrainDialog, initAddDialog, initAddFriendDialog, initBrains, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeMode, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setInfoAlert, setLeftRight, setRightLeft, showAddBrainDialog, showAddDialog, showAddFriendDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateAddInput, updateAddInput1, updateAddInput2, updateAddRelation, updateAddRelation1, updateAddRelation2, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, add, addBrain, addFriend, addReply, autoUpdateUsername, brainMap, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAlert, initAddBrainDialog, initAddDialog, initAddFriendDialog, initBrains, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, setLeftRight, setRightLeft, showAddBrainDialog, showAddDialog, showAddFriendDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateAddInput, updateAddInput1, updateAddInput2, updateAddRelation, updateAddRelation1, updateAddRelation2, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -804,6 +804,15 @@ function handler(event) {
 
   setInfoAlert = function(msg) {
     $('#alert').css('visibility', 'visible');
+    $('#alert').removeClass('alert-error');
+    $('#alert').addClass('alert-info');
+    return $('#alertMsg').html(msg);
+  };
+
+  setErrorAlert = function(msg) {
+    $('#alert').css('visibility', 'visible');
+    $('#alert').removeClass('alert-info');
+    $('#alert').addClass('alert-error');
     return $('#alertMsg').html(msg);
   };
 
@@ -2247,12 +2256,16 @@ function handler(event) {
 
   removeMode = false;
 
+  removeInfoMessage = function() {
+    return setInfoAlert('<strong>Click on the item</strong> you want to remove.');
+  };
+
   removeButtonPressed = function(msg) {
     if (removeMode) {
       hideAlert();
       removeMode = false;
     } else {
-      setInfoAlert('<strong>Click on the item</strong> you want to remove.');
+      removeInfoMessage();
       removeMode = true;
     }
     return true;
@@ -2260,19 +2273,35 @@ function handler(event) {
 
   initRemoveDialog = function() {
     var dialogHtml;
-    dialogHtml = $("<div class=\"modal hide\" id=\"removeModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Remove</h3>\n  </div>\n  <form id=\"removeForm\" action=\"/remove\" method=\"post\">\n    <input id=\"removeNodeField\" type=\"hidden\" name=\"node\">\n    <input id=\"removeOrigField\" type=\"hidden\" name=\"orig\">\n    <input id=\"removeLinkField\" type=\"hidden\" name=\"link\">\n    <input id=\"removeTargField\" type=\"hidden\" name=\"targ\">\n    <div class=\"modal-body\" id=\"addBrainBody\">\n        <div id=\"linkDesc\"></div>\n        <label class=\"radio\">\n            <input type=\"radio\" name=\"linkOrNode\" value=\"link\" checked>\n            Just remove this connection\n        </label>\n        <br />\n        <div id=\"itemDesc\">Item</div>\n        <label class=\"radio\">\n            <input type=\"radio\" name=\"linkOrNode\" value=\"node\">\n            Remove this item and all associated connections\n        </label>\n    </div>\n    <div class=\"modal-footer\">\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"removeDlgButton\" class=\"btn btn-primary\">Remove</a>\n    </div>\n  </form>\n</div>");
+    dialogHtml = $("<div class=\"modal hide\" id=\"removeModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Remove</h3>\n  </div>\n  <form id=\"removeForm\" action=\"/remove\" method=\"post\">\n    <input id=\"removeNodeField\" type=\"hidden\" name=\"node\">\n    <input id=\"removeOrigField\" type=\"hidden\" name=\"orig\">\n    <input id=\"removeLinkField\" type=\"hidden\" name=\"link\">\n    <input id=\"removeTargField\" type=\"hidden\" name=\"targ\">\n    <div class=\"modal-body\" id=\"addBrainBody\">\n        <div id=\"linkDesc\"></div>\n        <label class=\"radio\">\n            <input id=\"linkRadio\" type=\"radio\" name=\"linkOrNode\" value=\"link\">\n            Just remove this connection\n        </label>\n        <br />\n        <div id=\"itemDesc\">Item</div>\n        <label class=\"radio\">\n            <input id=\"nodeRadio\" type=\"radio\" name=\"linkOrNode\" value=\"node\">\n            Remove this item and all associated connections\n        </label>\n    </div>\n    <div class=\"modal-footer\">\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"removeDlgButton\" class=\"btn btn-primary\">Remove</a>\n    </div>\n  </form>\n</div>");
     dialogHtml.appendTo('body');
     return $('#removeDlgButton').click(removeAction);
   };
 
   showRemoveDialog = function(node, orig, link, targ) {
-    $('#removeNodeField').val(node);
-    $('#removeOrigField').val(orig);
-    $('#removeLinkField').val(link);
-    $('#removeTargField').val(targ);
-    $('#linkDesc').html(nodes[orig].text + ' <strong>' + link + '</strong> ' + nodes[targ].text);
-    $('#itemDesc').html(nodes[node].text);
-    return $('#removeModal').modal('show');
+    if (node === rootNodeId) {
+      return setErrorAlert('You cannot remove the item in the center.');
+    } else {
+      $('#linkRadio').attr('checked', true);
+      $('#nodeRadio').attr('checked', false);
+      $('#linkRadio').attr('disabled', false);
+      $('#nodeRadio').attr('disabled', false);
+      if (nodes[node].type === 'user') {
+        $('#nodeRadio').attr('disabled', true);
+      } else if ((link === 'brain') && (nodes[orig].type === 'user') && (nodes[targ].type === 'brain')) {
+        $('#linkRadio').attr('disabled', true);
+        $('#linkRadio').attr('checked', false);
+        $('#nodeRadio').attr('checked', true);
+      }
+      removeInfoMessage();
+      $('#removeNodeField').val(node);
+      $('#removeOrigField').val(orig);
+      $('#removeLinkField').val(link);
+      $('#removeTargField').val(targ);
+      $('#linkDesc').html(nodes[orig].text + ' <strong>' + link + '</strong> ' + nodes[targ].text);
+      $('#itemDesc').html(nodes[node].text);
+      return $('#removeModal').modal('show');
+    }
   };
 
   removeAction = function() {

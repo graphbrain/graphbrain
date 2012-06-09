@@ -1,11 +1,14 @@
 removeMode = false
 
+removeInfoMessage = ->
+    setInfoAlert('<strong>Click on the item</strong> you want to remove.')
+
 removeButtonPressed = (msg) ->
     if removeMode
         hideAlert()
         removeMode = false
     else
-        setInfoAlert('<strong>Click on the item</strong> you want to remove.')
+        removeInfoMessage()
         removeMode = true
     true
 
@@ -24,13 +27,13 @@ initRemoveDialog = () ->
     <div class="modal-body" id="addBrainBody">
         <div id="linkDesc"></div>
         <label class="radio">
-            <input type="radio" name="linkOrNode" value="link" checked>
+            <input id="linkRadio" type="radio" name="linkOrNode" value="link">
             Just remove this connection
         </label>
         <br />
         <div id="itemDesc">Item</div>
         <label class="radio">
-            <input type="radio" name="linkOrNode" value="node">
+            <input id="nodeRadio" type="radio" name="linkOrNode" value="node">
             Remove this item and all associated connections
         </label>
     </div>
@@ -45,13 +48,30 @@ initRemoveDialog = () ->
     $('#removeDlgButton').click(removeAction)
 
 showRemoveDialog = (node, orig, link, targ) ->
-  $('#removeNodeField').val(node)
-  $('#removeOrigField').val(orig)
-  $('#removeLinkField').val(link)
-  $('#removeTargField').val(targ)
-  $('#linkDesc').html(nodes[orig].text + ' <strong>' + link + '</strong> ' + nodes[targ].text)
-  $('#itemDesc').html(nodes[node].text)
-  $('#removeModal').modal('show')
+  if node == rootNodeId
+    setErrorAlert('You cannot remove the item in the center.')
+  else
+    $('#linkRadio').attr('checked', true)
+    $('#nodeRadio').attr('checked', false)
+    $('#linkRadio').attr('disabled', false)
+    $('#nodeRadio').attr('disabled', false)
+
+    # user nodes cannot be deleted
+    if nodes[node].type == 'user'
+        $('#nodeRadio').attr('disabled', true)
+    # links between user and brain cannot be deleted
+    else if (link == 'brain') && (nodes[orig].type == 'user') && (nodes[targ].type == 'brain')
+        $('#linkRadio').attr('disabled', true)
+        $('#linkRadio').attr('checked', false)
+        $('#nodeRadio').attr('checked', true)
+    removeInfoMessage()
+    $('#removeNodeField').val(node)
+    $('#removeOrigField').val(orig)
+    $('#removeLinkField').val(link)
+    $('#removeTargField').val(targ)
+    $('#linkDesc').html(nodes[orig].text + ' <strong>' + link + '</strong> ' + nodes[targ].text)
+    $('#itemDesc').html(nodes[node].text)
+    $('#removeModal').modal('show')
 
 removeAction = ->
   $('#removeForm').submit()
