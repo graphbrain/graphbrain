@@ -14,6 +14,7 @@ trait UIOps extends NodeManagement {
         // remove brain from user vertex
         put(user.setBrains(user.brains - b.id))
       }
+      case u: UserNode => // don't delete usernodes
       case _ => removeVertexAndEdges(vertex)
     }
   }
