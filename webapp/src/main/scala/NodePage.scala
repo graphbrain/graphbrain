@@ -11,7 +11,7 @@ import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.Brain
 
 
-case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Boolean, req: HttpRequest[Any], cookies: Map[String, Any]) {
+case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Boolean, req: HttpRequest[Any], cookies: Map[String, Any], errorMsg: String="") {
 	val gi = new GraphInterface(node.id, store, user)
 
   val userId = if (user == null) "" else user.id
@@ -29,6 +29,7 @@ case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Bool
     "var snodes = " + gi.snodesJSON + ";\n" +
     "var links = " + gi.linksJSON + ";\n" +
     "var rootNodeId = '" + node.id + "';\n" +
+    "var errorMsg = '" + errorMsg + "';\n" +
     (if (user == null)
       "var brains = [];"
     else

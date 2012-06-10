@@ -86,6 +86,7 @@ object Server {
       .handler(GBPlan)
       .handler(LandingPlan)
       .handler(NodePlan)
+      .handler(NodeActionsPlan)
       .resources(new URL(getClass().getResource("/robots.txt"), "."))
     http.run
   }

@@ -19,7 +19,8 @@ initRemoveDialog = () ->
     <a class="close" data-dismiss="modal">×</a>
     <h3>Remove</h3>
   </div>
-  <form id="removeForm" action="/remove" method="post">
+  <form id="removeForm" action='/node/""" + rootNodeId + """' method="post">
+    <input type="hidden" name="op" value="remove">
     <input id="removeNodeField" type="hidden" name="node">
     <input id="removeOrigField" type="hidden" name="orig">
     <input id="removeLinkField" type="hidden" name="link">

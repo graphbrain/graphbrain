@@ -944,7 +944,8 @@ function handler(event) {
       initRemoveDialog();
       $('#addLink').bind('click', showAddDialog);
       $('#addFriendLink').bind('click', showAddFriendDialog);
-      return $('#removeButton').bind('click', removeButtonPressed);
+      $('#removeButton').bind('click', removeButtonPressed);
+      if (errorMsg !== '') return setErrorAlert(errorMsg);
     }
   };
 
@@ -2273,7 +2274,7 @@ function handler(event) {
 
   initRemoveDialog = function() {
     var dialogHtml;
-    dialogHtml = $("<div class=\"modal hide\" id=\"removeModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Remove</h3>\n  </div>\n  <form id=\"removeForm\" action=\"/remove\" method=\"post\">\n    <input id=\"removeNodeField\" type=\"hidden\" name=\"node\">\n    <input id=\"removeOrigField\" type=\"hidden\" name=\"orig\">\n    <input id=\"removeLinkField\" type=\"hidden\" name=\"link\">\n    <input id=\"removeTargField\" type=\"hidden\" name=\"targ\">\n    <div class=\"modal-body\" id=\"addBrainBody\">\n        <div id=\"linkDesc\"></div>\n        <label class=\"radio\">\n            <input id=\"linkRadio\" type=\"radio\" name=\"linkOrNode\" value=\"link\">\n            Just remove this connection\n        </label>\n        <br />\n        <div id=\"itemDesc\">Item</div>\n        <label class=\"radio\">\n            <input id=\"nodeRadio\" type=\"radio\" name=\"linkOrNode\" value=\"node\">\n            Remove this item and all associated connections\n        </label>\n    </div>\n    <div class=\"modal-footer\">\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"removeDlgButton\" class=\"btn btn-primary\">Remove</a>\n    </div>\n  </form>\n</div>");
+    dialogHtml = $("<div class=\"modal hide\" id=\"removeModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Remove</h3>\n  </div>\n  <form id=\"removeForm\" action='/node/" + rootNodeId + "' method=\"post\">\n  <input type=\"hidden\" name=\"op\" value=\"remove\">\n  <input id=\"removeNodeField\" type=\"hidden\" name=\"node\">\n  <input id=\"removeOrigField\" type=\"hidden\" name=\"orig\">\n  <input id=\"removeLinkField\" type=\"hidden\" name=\"link\">\n  <input id=\"removeTargField\" type=\"hidden\" name=\"targ\">\n  <div class=\"modal-body\" id=\"addBrainBody\">\n      <div id=\"linkDesc\"></div>\n      <label class=\"radio\">\n          <input id=\"linkRadio\" type=\"radio\" name=\"linkOrNode\" value=\"link\">\n          Just remove this connection\n      </label>\n      <br />\n      <div id=\"itemDesc\">Item</div>\n      <label class=\"radio\">\n          <input id=\"nodeRadio\" type=\"radio\" name=\"linkOrNode\" value=\"node\">\n          Remove this item and all associated connections\n      </label>\n  </div>\n  <div class=\"modal-footer\">\n    <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n    <a id=\"removeDlgButton\" class=\"btn btn-primary\">Remove</a>\n  </div>\n</form>\n</div>");
     dialogHtml.appendTo('body');
     return $('#removeDlgButton').click(removeAction);
   };
