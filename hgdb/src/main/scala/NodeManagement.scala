@@ -35,6 +35,9 @@ trait NodeManagement extends VertexStoreInterface {
         else if (tokens(0) == "brain") {
           tokens(0) + "/" + tokens(1) + "/" + tokens(2)
         }
+        else if (tokens(0) == "user") {
+          tokens(0) + "/" + tokens(1)
+        }
         else {
           ""
         }
