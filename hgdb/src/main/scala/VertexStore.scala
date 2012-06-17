@@ -30,10 +30,10 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         val rolen = map.getOrElse("rolen", "").toString
         EdgeType(id, label, roles, rolen, edges, extra)
       }
+      // discontinued brain node type, just treat as TextNode
       case "brn" => {
-        val name = map.getOrElse("name", "").toString
-        val access = map.getOrElse("access", "public").toString
-        Brain(id, name, access, edges, extra)
+        val text = map.getOrElse("name", "").toString
+        TextNode(id, text, edges, extra)
       }
       case "txt" => {
         val text = map.getOrElse("text", "").toString
