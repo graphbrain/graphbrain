@@ -20,7 +20,8 @@ import com.graphbrain.hgdb.ID
 class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
 
   val quoteRegex = """(\")(.+?)(\")""".r
-  val urlRegex = """(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?""".r
+  val urlRegex = """([\d\w]+?:\/\/)?([\w\d\.\-]+)(\.\w+)(:\d{1,5})?(\/\S*)?""".r // See: http://stackoverflow.com/questions/8725312/javascript-regex-for-url-when-the-url-may-or-may-not-contain-http-and-www-words?lq=1
+  val urlStrictRegex = """(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?""".r
   //"""http:\/\/.+""".r
   val posTagger = if (tagger) new POSTagger() else null
   val verbRegex = """VB[A-Z]?""".r
@@ -72,7 +73,7 @@ def textToNode(text:String, brainID: String): List[Vertex] = {
       }
     }
 
-    for (imageE <- imageExt) {
+    /*for (imageE <- imageExt) {
       if (imageE.findAllIn(text).hasNext) {             
         val imageID = ID.image_id(image_name = text, image_url = text); 
         results =  ImageNode(id = brainID + "/" +  imageID, url = text) :: results;
@@ -84,7 +85,7 @@ def textToNode(text:String, brainID: String): List[Vertex] = {
         val videoID = ID.video_id(video_name = text, video_url = text)
         results = VideoNode(id = brainID + "/" + videoID, url = text) :: results;
       }
-    }
+    }*/
       
     if (urlRegex.findAllIn(text).hasNext) {
       val urlID = ID.url_id(url = text)
