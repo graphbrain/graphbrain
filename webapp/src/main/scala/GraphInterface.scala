@@ -7,7 +7,6 @@ import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.ImageNode
 import com.graphbrain.hgdb.UserNode
-import com.graphbrain.hgdb.Brain
 import scala.collection.mutable.{Map => MMap}
 import scala.collection.mutable.{Set => MSet}
 import com.codahale.jerkson.Json._
@@ -22,7 +21,6 @@ class GraphInterface (val rootId: String, val store: VertexStore, val user: User
   val nodesJSON = nodes2json
   val snodesJSON = snodes2json
   val linksJSON = links2json
-  val brainsJSON = if (user == null) "" else brains2json
 
   Server.store.clear()
 
@@ -121,7 +119,6 @@ class GraphInterface (val rootId: String, val store: VertexStore, val user: User
       }
       case in: ImageNode => Map(("type" -> "image"), ("text" -> in.url), ("parent" -> parentId))
       case un: UserNode => Map(("type" -> "user"), ("text" -> un.name), ("parent" -> parentId))
-      case br: Brain => Map(("type" -> "brain"), ("text" -> br.name), ("parent" -> parentId))
       case _ => Map(("type" -> "text"), ("text" -> node.id), ("parent" -> parentId))
     }
   }
@@ -171,12 +168,5 @@ class GraphInterface (val rootId: String, val store: VertexStore, val user: User
         Map(("id" -> lid), ("directed" -> 1), ("relation" -> relation), ("sorig" -> l._2.toString), ("targ" -> l._3.toString), ("color" -> color))
     }
     generate(json)
-  }
-
-  private def brains2json = {
-    val brains = for (brainId <- user.brains if Server.store.exists(brainId)) yield Server.store.getBrain(brainId)
-    val brainMaps = for (brain <- brains)
-      yield Map(("id" -> brain.id), ("name" -> brain.name), ("access" -> brain.access))
-    generate(brainMaps)
   }
 }
