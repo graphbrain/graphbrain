@@ -52,13 +52,6 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
 
       Redirect("/node/" + node.id)
     }
-    case req@POST(Path("/addbrain") & Params(params) & Cookies(cookies)) => {
-      val userNode = Server.getUser(cookies)
-      val name = params("name")(0)
-      val brainId = Server.store.createBrain(name, userNode, "public")
-      log.info(Server.realIp(req) + " CREATE BRAIN username: " + userNode.username + "; brain: " + name)
-      Redirect("/node/" + brainId)
-    }
     case req@POST(Path("/signup") & Params(params)) => {
       val name = params("name")(0)
       val username = params("username")(0)
