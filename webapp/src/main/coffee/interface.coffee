@@ -103,10 +103,8 @@ initInterface = ->
         document.addEventListener('touchmove', touchMove)
 
         initAddDialog()
-        initAddBrainDialog()
         initRemoveDialog()
         $('#addLink').bind 'click', showAddDialog
-        $('#addFriendLink').bind 'click', showAddFriendDialog
         $('#removeButton').bind 'click', removeButtonPressed
 
         # display error message if defined

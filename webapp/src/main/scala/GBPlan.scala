@@ -33,12 +33,11 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val userNode = Server.getUser(cookies)
       val textUrl = params("textUrl")(0)
       val relation = params("relation")(0)
-      val brainId = params("curBrainId")(0)
       val rootId = params("rootId")(0)
       val direction = params("direction")(0)
       
       val root = Server.store.get(rootId)
-      val results = Server.sparser.textToNode(textUrl, brainId)
+      val results = Server.sparser.textToNode(textUrl)
       val node = results(0)
       
       if (direction == "right") {

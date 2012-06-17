@@ -35,11 +35,6 @@ initAddDialog = () ->
           <input id="addRelation2" name="relation" type="text" placeholder="..." style="width:90%">
         </div>
       </div>
-      <label>Brain</label>
-      <div class="controls">
-        <select id="addDialogSelectBrain" name="brainId"></select>
-      </div>
-      <input name="curBrainId" type="hidden" value='""" + curBrainId + """' />
       <input name="rootId" type="hidden" value='""" + rootNodeId + """' />
       <input id="direction" name="direction" type="hidden" value="right" />
     </div>

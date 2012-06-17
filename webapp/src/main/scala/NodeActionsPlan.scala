@@ -36,8 +36,8 @@ object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with S
 
     if (linkOrNode == "link") {
       // check permissions
-      if ((Server.store.brainOwner(origId) == userNode.id) ||
-          (Server.store.brainOwner(targId) == userNode.id)) {
+      if ((Server.store.nodeOwner(origId) == userNode.id) ||
+          (Server.store.nodeOwner(targId) == userNode.id)) {
 
         Server.store.delrel(link, Array(origId, targId))
         log.info(Server.realIp(req) + " REMOVE EDGE username: " + userNode.username + "; origId: " + origId + "; link: " + link + "; targId" + targId)
@@ -49,7 +49,7 @@ object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with S
     }
     else {
       // check permissions
-      if (Server.store.brainOwner(nodeId) == userNode.id) {
+      if (Server.store.nodeOwner(nodeId) == userNode.id) {
         Server.store.removeVertexAndEdgesUI(Server.store.get(nodeId))
         log.info(Server.realIp(req) + " REMOVE NODE username: " + userNode.username + "; nodeId: " + nodeId)
       }
