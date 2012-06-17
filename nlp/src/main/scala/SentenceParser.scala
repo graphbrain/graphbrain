@@ -28,7 +28,7 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
   val adverbRegex = """RB[A-Z]?""".r
   val propositionRegex = """IN[A-Z]?""".r
   val nounRegex = """NN[A-Z]?""".r
-  val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r, """http://www.flickr.com/photos/.+""".r)
+  val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r)
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
   val gbNodeExt = """(http://)?graphbrain.com/node/""".r
 
@@ -54,7 +54,7 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
     }
   }
 
-def textToNode(text:String, brainID: String): List[Vertex] = {
+def textToNode(text:String): List[Vertex] = {
     var results: List[Vertex] = List()
     if(nodeExists(text)) {
       try{
@@ -89,7 +89,7 @@ def textToNode(text:String, brainID: String): List[Vertex] = {
       
     if (urlRegex.findAllIn(text).hasNext) {
       val urlID = ID.url_id(url = text)
-      results = URLNode(id = brainID + "/" + urlID, url=text) :: results
+      results = URLNode(id = urlID, url=text) :: results
     }
     
     if(results.length>=1) return results.reverse;
@@ -98,7 +98,7 @@ def textToNode(text:String, brainID: String): List[Vertex] = {
     //results = TextNode(id = brainID + "/" + textID, text=removeDeterminers(text)) :: results;
     val textPureID = ID.text_id(text)
 
-    results = TextNode(id = brainID + "/" + textPureID, text=text) :: results;
+    results = TextNode(id = textPureID, text=text) :: results;
 
     return results.reverse;
   }
@@ -535,34 +535,34 @@ object SentenceParser {
       sentenceParser.parseSentence(sentence2, rootNode)
       println("From command line with root with user: " + sentence2)
       sentenceParser.parseSentence(sentence2, rootNode, user=Some(userNode))
-      val brainID = "brain/telmo/stuff"
+      //val brainID = "brain/telmo/stuff"
       
       val text = "Some Magic Cookies"
       println("Text: " + text)
-      println(sentenceParser.textToNode(text, brainID)(0).id)
+      println(sentenceParser.textToNode(text)(0).id)
       
       
       val videoURL = "http://www.youtube.com/watch?v=_e_zcoDDiwc&feature=related"
       println("Video: " + videoURL)
-      println(sentenceParser.textToNode(videoURL, brainID))
+      println(sentenceParser.textToNode(videoURL))
 
 
       val imageURL = "http://www.flickr.com/photos/londonmummy/471232270/"
       println("Image: " + imageURL)
-      println(sentenceParser.textToNode(imageURL, brainID))
+      println(sentenceParser.textToNode(imageURL))
 
 
       val url = "https://github.com/graphbrain/graphbrain"
       println("Image: " + url)
-      println(sentenceParser.textToNode(url, brainID))
+      println(sentenceParser.textToNode(url))
 
       val existing = "wikipedia/aristotle"
       println("Existing: " + existing)
-      println(sentenceParser.textToNode(existing, brainID)(0).id)
+      println(sentenceParser.textToNode(existing)(0).id)
 
       val existingURL = "graphbrain.com/node/wikipedia/aristotle";
       println("Existing URL: " + existingURL)
-      println(sentenceParser.textToNode(existingURL, brainID)(0).id)
+      println(sentenceParser.textToNode(existingURL)(0).id)
 
 
 

@@ -9,11 +9,9 @@ object ID {
 
   def systemId(id: String) = parts(id) == 1
 
-  def brainId(name: String, userName: String) =
-    "brain/" + userName + "/" + sanitize(name)
 
   def usergenerated_id(userName:String, thing:String, brainName:String) =
-	  brainId(brainName, userName) + "/" + thing
+	  userName + "/" + thing
 
   def image_id(image_url:String) =
     "image/" + sanitize(image_url)
