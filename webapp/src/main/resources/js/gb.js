@@ -450,7 +450,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, add, addBrain, addFriend, addReply, autoUpdateUsername, brainMap, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAlert, initAddBrainDialog, initAddDialog, initAddFriendDialog, initBrains, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, setLeftRight, setRightLeft, showAddBrainDialog, showAddDialog, showAddFriendDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateAddInput, updateAddInput1, updateAddInput2, updateAddRelation, updateAddRelation1, updateAddRelation2, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, add, addReply, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAlert, initAddDialog, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, setLeftRight, setRightLeft, showAddDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateAddInput, updateAddInput1, updateAddInput2, updateAddRelation, updateAddRelation1, updateAddRelation2, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -940,10 +940,8 @@ function handler(event) {
       document.addEventListener('touchend', touchEnd);
       document.addEventListener('touchmove', touchMove);
       initAddDialog();
-      initAddBrainDialog();
       initRemoveDialog();
       $('#addLink').bind('click', showAddDialog);
-      $('#addFriendLink').bind('click', showAddFriendDialog);
       $('#removeButton').bind('click', removeButtonPressed);
       if (errorMsg !== '') return setErrorAlert(errorMsg);
     }
@@ -2187,7 +2185,7 @@ function handler(event) {
 
   initAddDialog = function() {
     var dialogHtml;
-    dialogHtml = $("<div class=\"modal hide\" id=\"addModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Add Connection</h3>\n  </div>\n  <form id=\"addForm\" action=\"/add\" method=\"post\">\n    <div class=\"modal-body\" id=\"addBody\">\n      <div id=\"leftRight\">\n        <div style=\"margin-bottom:20px\">\n          <div class=\"snodeDialog\"><div class=\"node\">" + nodes[rootNodeId]['text'] + "</div></div>\n    <div class=\"linkDialog\"><div class=\"linkText\" id=\"relationRight\">...</div><div class=\"linkArrow\" /></div>\n    <div class=\"snodeDialog\"><div class=\"node\" id=\"newNodeRight\">?</div></div>\n    <button id=\"rightLeftBtn\" class=\"btn btn-inverse\" style=\"margin:15px\" href=\"#\"><i class=\"icon-arrow-left icon-white\"></i></button>\n  </div>\n  <div style=\"clear:both\">\n    <label>Relation</label>\n    <input id=\"addRelation\" name=\"relation\" type=\"text\" placeholder=\"...\" style=\"width:90%\">\n    <label>Enter text or URL</label>\n    <input id=\"addInput\" name=\"textUrl\" type=\"text\" placeholder=\"?\" style=\"width:90%\">\n  </div>\n</div>\n<div id=\"rightLeft\">\n  <div style=\"margin-bottom:20px\">\n    <div class=\"snodeDialog\"><div class=\"node\">" + nodes[rootNodeId]['text'] + "</div></div>\n    <div class=\"linkDialog\"><div class=\"linkArrowLeft\" /><div class=\"linkText\" id=\"relationLeft\">...</div></div>\n    <div class=\"snodeDialog\"><div class=\"node\" id=\"newNodeLeft\">?</div></div>\n    <button id=\"leftRightBtn\" class=\"btn btn-inverse\" style=\"margin:15px\" href=\"#\"><i class=\"icon-arrow-right icon-white\"></i></button>\n  </div>\n  <div style=\"clear:both\">\n    <label>Enter text or URL</label>\n    <input id=\"addInput2\" name=\"textUrl\" type=\"text\" placeholder=\"?\" style=\"width:90%\">\n    <label>Relation</label>\n    <input id=\"addRelation2\" name=\"relation\" type=\"text\" placeholder=\"...\" style=\"width:90%\">\n  </div>\n</div>\n<label>Brain</label>\n<div class=\"controls\">\n  <select id=\"addDialogSelectBrain\" name=\"brainId\"></select>\n</div>\n<input name=\"curBrainId\" type=\"hidden\" value='" + curBrainId + "' />\n<input name=\"rootId\" type=\"hidden\" value='" + rootNodeId + "' />\n    <input id=\"direction\" name=\"direction\" type=\"hidden\" value=\"right\" />\n  </div>\n  <div class=\"modal-footer\">\n    </form>\n    <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n    <a id=\"addButton\" class=\"btn btn-primary\">Add</a>\n  </div>\n</form>\n</div>");
+    dialogHtml = $("<div class=\"modal hide\" id=\"addModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Add Connection</h3>\n  </div>\n  <form id=\"addForm\" action=\"/add\" method=\"post\">\n    <div class=\"modal-body\" id=\"addBody\">\n      <div id=\"leftRight\">\n        <div style=\"margin-bottom:20px\">\n          <div class=\"snodeDialog\"><div class=\"node\">" + nodes[rootNodeId]['text'] + "</div></div>\n    <div class=\"linkDialog\"><div class=\"linkText\" id=\"relationRight\">...</div><div class=\"linkArrow\" /></div>\n    <div class=\"snodeDialog\"><div class=\"node\" id=\"newNodeRight\">?</div></div>\n    <button id=\"rightLeftBtn\" class=\"btn btn-inverse\" style=\"margin:15px\" href=\"#\"><i class=\"icon-arrow-left icon-white\"></i></button>\n  </div>\n  <div style=\"clear:both\">\n    <label>Relation</label>\n    <input id=\"addRelation\" name=\"relation\" type=\"text\" placeholder=\"...\" style=\"width:90%\">\n    <label>Enter text or URL</label>\n    <input id=\"addInput\" name=\"textUrl\" type=\"text\" placeholder=\"?\" style=\"width:90%\">\n  </div>\n</div>\n<div id=\"rightLeft\">\n  <div style=\"margin-bottom:20px\">\n    <div class=\"snodeDialog\"><div class=\"node\">" + nodes[rootNodeId]['text'] + "</div></div>\n    <div class=\"linkDialog\"><div class=\"linkArrowLeft\" /><div class=\"linkText\" id=\"relationLeft\">...</div></div>\n    <div class=\"snodeDialog\"><div class=\"node\" id=\"newNodeLeft\">?</div></div>\n    <button id=\"leftRightBtn\" class=\"btn btn-inverse\" style=\"margin:15px\" href=\"#\"><i class=\"icon-arrow-right icon-white\"></i></button>\n  </div>\n  <div style=\"clear:both\">\n    <label>Enter text or URL</label>\n    <input id=\"addInput2\" name=\"textUrl\" type=\"text\" placeholder=\"?\" style=\"width:90%\">\n    <label>Relation</label>\n    <input id=\"addRelation2\" name=\"relation\" type=\"text\" placeholder=\"...\" style=\"width:90%\">\n  </div>\n</div>\n<input name=\"rootId\" type=\"hidden\" value='" + rootNodeId + "' />\n    <input id=\"direction\" name=\"direction\" type=\"hidden\" value=\"right\" />\n  </div>\n  <div class=\"modal-footer\">\n    </form>\n    <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n    <a id=\"addButton\" class=\"btn btn-primary\">Add</a>\n  </div>\n</form>\n</div>");
     dialogHtml.appendTo('body');
     setLeftRight();
     $('#addInput').keyup(updateAddInput1);
@@ -2308,66 +2306,6 @@ function handler(event) {
   removeAction = function() {
     return $('#removeForm').submit();
   };
-
-  brainMap = {};
-
-  initBrains = function() {
-    var brain, html, selectHtml, _i, _len;
-    html = '<i class="icon-eye-open icon-white"></i> ' + curBrainName + ' <b class="caret">';
-    $('#curBrain').html(html);
-    html = '<li><a href="#" id="addBrainLink">Create Brain</a></li>';
-    html += '<li class="divider"></li>';
-    html += '<li><a href="/node/' + userId + '">Home</a></li>';
-    selectHtml = '<option>Home</option>';
-    brainMap[userId] = {
-      'name': 'Home',
-      'access': 'home'
-    };
-    for (_i = 0, _len = brains.length; _i < _len; _i++) {
-      brain = brains[_i];
-      brainMap[brain['id']] = {
-        'name': brain['name'],
-        'access': brain['access']
-      };
-      html += '<li><a href="/node/' + brain['id'] + '">' + brain['name'] + '</a></li>';
-      if (curBrainId === brain['id']) {
-        selectHtml += '<option selected>' + brain['name'] + '</option>';
-      } else {
-        selectHtml += '<option>' + brain['name'] + '</option>';
-      }
-    }
-    $('#brainDropdown').html(html);
-    $('#addDialogSelectBrain').html(selectHtml);
-    return $('#addBrainLink').bind('click', showAddBrainDialog);
-  };
-
-  initAddBrainDialog = function() {
-    var dialogHtml;
-    dialogHtml = $("<div class=\"modal hide\" id=\"addBrainModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Add Brain</h3>\n  </div>\n  <form id=\"addBrainForm\" action=\"/addbrain\" method=\"post\">\n    <div class=\"modal-body\" id=\"addBrainBody\">\n        <label>Brain name</label>\n        <input id=\"brainNameInput\" type=\"text\" name=\"name\" style=\"width:90%\">\n    </div>\n    <div class=\"modal-footer\">\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"addBrainButton\" class=\"btn btn-primary\">Add</a>\n    </div>\n  </form>\n</div>");
-    dialogHtml.appendTo('body');
-    return $('#addBrainButton').click(addBrain);
-  };
-
-  showAddBrainDialog = function() {
-    return $('#addBrainModal').modal('show');
-  };
-
-  addBrain = function() {
-    return $('#addBrainForm').submit();
-  };
-
-  initAddFriendDialog = function() {
-    var dialogHtml;
-    dialogHtml = $("<div class=\"modal hide\" id=\"addFriendModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Add Friend</h3>\n  </div>\n  <form class=\"addFriendForm\">\n    <div class=\"modal-body\" id=\"addBody\">\n        TBD\n    </div>\n    <div class=\"modal-footer\">\n      </form>\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"addFriendButton\" class=\"btn btn-primary\">Add</a>\n    </div>\n  </form>\n</div>");
-    dialogHtml.appendTo('body');
-    return $('#addFriend').click(add);
-  };
-
-  showAddFriendDialog = function() {
-    return $('#addFriendModal').modal('show');
-  };
-
-  addFriend = function() {};
 
   nodeView = false;
 

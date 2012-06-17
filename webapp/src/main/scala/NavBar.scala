@@ -53,11 +53,6 @@ case class NavBar(user: UserNode, page: String) {
       <li class="divider-vertical"></li>
       <li><button class="btn btn-inverse" id="addLink"><i class="icon-plus icon-white"></i> Add</button></li>
       <li><button id="removeButton" class="btn btn-inverse" data-toggle="button"><i class="icon-remove icon-white"></i> Remove</button></li>
-      <li class="divider-vertical"></li>
-      <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="curBrain"></a>
-        <ul class="dropdown-menu" id="brainDropdown"></ul>
-      </li>
       """
     }
     else {
