@@ -78,18 +78,6 @@ case class EdgeType(id: String="", label: String="", roles: List[String]=List[St
 }
 
 
-case class Brain(id: String="", name: String="", access: String = "public", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
-  override val vtype: String = "brn"
-
-  override def toMap: Map[String, Any] = toMapBase ++ Map(("name" -> name), ("access" -> access))
-
-  def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
-  def setExtra(newExtra: Int) = copy(extra=newExtra)
-
-  override def toString: String = name
-}
-
-
 case class TextNode(id: String="", text: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
   override val vtype: String = "txt"
 
