@@ -103,7 +103,7 @@ def textToNode(text:String): List[Vertex] = {
     return results.reverse;
   }
 
-  def textToNode(text:String, node: Vertex= TextNode(id="GBNoneGB", text="GBNoneGB"), brainName: String, user:Option[Vertex]=None): List[Vertex] = {
+  def textToNode(text:String, node: Vertex= TextNode(id="GBNoneGB", text="GBNoneGB"), user:Option[Vertex]=None): List[Vertex] = {
     var userName = anon_username;
     
     user match {
@@ -135,7 +135,7 @@ def textToNode(text:String): List[Vertex] = {
 
 
     //Only make special content types with respect to a "thing" (TextNode)
-    node match {
+    /*node match {
       case r: TextNode => 
         
         for (imageE <- imageExt) {
@@ -152,17 +152,18 @@ def textToNode(text:String): List[Vertex] = {
           }
         }
       case _ =>
-      }
+      }*/
 
     if (urlRegex.findAllIn(text).hasNext) {
       val urlID = ID.url_id(url = text)
-      results = URLNode(id = ID.usergenerated_id(userName, urlID, brainName)) :: results
+      results = URLNode(id = ID.usergenerated_id(userName, urlID)) :: results
     }
 
-    val textID = ID.text_id(removeDeterminers(text))
-    results = TextNode(id = ID.usergenerated_id(userName, textID, brainName), text=removeDeterminers(text)) :: results;
+    //val textID = ID.text_id(removeDeterminers(text))
+    //results = TextNode(id = ID.usergenerated_id(userName, textID, brainName), text=removeDeterminers(text)) :: results;
     val textPureID = ID.text_id(text)
-    if(text!=textPureID) {results = TextNode(id = ID.usergenerated_id(userName, textPureID, brainName), text=text) :: results;}
+    results = TextNode(id = ID.usergenerated_id(userName, textPureID), text=text) :: results;
+    //if(text!=textPureID) {results = TextNode(id = ID.usergenerated_id(userName, textPureID), text=text) :: results;}
     return results.reverse;
   }
 
@@ -462,13 +463,13 @@ def getOrCreate(id:String, user:Vertex, textString:String, root:Vertex):Vertex={
       return store.get(id);
     }
     catch{
-      case e => val newNode = textToNode(textString, root, "stuff", Some(user))(0);
+      case e => val newNode = textToNode(textString, root, Some(user))(0);
       //TextNode(id=ID.usergenerated_id(userID, textString), text=textString);
       return newNode;
     }
   }
   else {
-    val newNode = textToNode(textString, root, "stuff", Some(user))(0);
+    val newNode = textToNode(textString, root, Some(user))(0);
     return newNode;
   }
 
@@ -499,7 +500,7 @@ object SentenceParser {
   def main(args: Array[String]) {
   	  val sentenceParser = new SentenceParser()
       
-      val rootNode = TextNode(id=ID.usergenerated_id("chihchun_chen", "toad", "animals"), text="toad")
+      val rootNode = TextNode(id=ID.usergenerated_id("chihchun_chen", "toad"), text="toad")
       val userNode = UserNode("chihchun_chen", "chihchun_chen", "Chih-Chun Chen")
   	  val sentence1 = "\"Chih-Chun\" is a \"toad\""
   	  val sentence2 = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
@@ -516,16 +517,16 @@ object SentenceParser {
       sentenceParser.parseSentence(sentence1, rootNode, user=Some(userNode))
 
       println("Video with root with user: " + videoURL1)
-      println(sentenceParser.textToNode(videoURL1, rootNode, "animals", user=Some(userNode)))
+      println(sentenceParser.textToNode(videoURL1, rootNode, user=Some(userNode)))
       println("Video with root with user: " + videoURL2)
-      println(sentenceParser.textToNode(videoURL2, rootNode, "animals", user=Some(userNode)))
+      println(sentenceParser.textToNode(videoURL2, rootNode, user=Some(userNode)))
       println("Video with root with user: " + videoURL3)
-      println(sentenceParser.textToNode(videoURL3, rootNode, "animals", user=Some(userNode)))
+      println(sentenceParser.textToNode(videoURL3, rootNode, user=Some(userNode)))
 
       println("Image with root with user: " + imageURL1)
-      println(sentenceParser.textToNode(imageURL1, rootNode, "animals", user=Some(userNode)))
+      println(sentenceParser.textToNode(imageURL1, rootNode, user=Some(userNode)))
       println("Image with root with user: " + imageURL2)
-      println(sentenceParser.textToNode(imageURL2, rootNode, "animals", user=Some(userNode)))
+      println(sentenceParser.textToNode(imageURL2, rootNode, user=Some(userNode)))
       
 
 

@@ -10,7 +10,7 @@ object ID {
   def systemId(id: String) = parts(id) == 1
 
 
-  def usergenerated_id(userName:String, thing:String, brainName:String) =
+  def usergenerated_id(userName:String, thing:String) =
 	  userName + "/" + thing
 
   def image_id(image_url:String) =
