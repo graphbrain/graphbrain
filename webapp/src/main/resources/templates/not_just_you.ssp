@@ -1,16 +1,28 @@
 <% layout("page.ssp") {%>
 
-    <div class="container-fluid" style="padding-top: 60px; padding-bottom: 40px">
-      <div class="row-fluid">
-        <div class="span3">
-          <div class="well sidebar-nav">
+<style>
+  body {
+    padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+    background-color: transparent;
+    background-image:url("../images/bg.jpg")
+  }
+</style>
+
+<div class="container">
+<div class="row-fluid">
+  <div class="whitebox">
+  
+    <div class="row-fluid">
+      
+      <div class="span4">
+          <div class="well_well sidebar-nav">
             <ul class="nav nav-list">
               <li class="nav-header"></li>
               <li><a href="/about">meaningful relationships</a></li>
               <li class="nav-header"></li>
               <li><a href="/not_just_facts">it's not just about facts</a></li>
               <li class="nav-header"></li>
-              <li class="active"><a href="/not_just_you">it's not just about you</a></li>
+              <li class="active"><a href="#">it's not just about you</a></li>
               <li class="nav-header"></li>
               <li><a href="/about_creators">the brains behind GraphBrain</a></li>
               <li class="nav-header"></li>
@@ -18,35 +30,32 @@
               <li class="nav-header"></li>
             </ul>
           </div><!--/.well -->
+          <div class="graystripe">
+          </div>
         </div><!--/span-->
-
-      
-
-      <!-- Main hero unit for a primary marketing message or call to action -->
-      <div class="span9">
-      <div class="hero-unit">
-        <h2>it's not just about you</h2>
-        <p></p>
-        <p>Every brain you build is a semantic network that reflects the way you conceptualise things. This gives you a visual language that you can use to communicate your ideas, opinions, and knowledge to other people and direct them to the things you think are pertinent and important. </p>
-        <p></p>
-        <p>When you <strong>collaborate</strong> with others, you can create a brain together and <strong>collectively</strong> edit it as you gather materials for your project. </p>
-        <p></p>
-        <p><strong>Sharing your brains</strong> with your friends allows them to see what you think of something or what you know. By adding to your graph, you'll also be able to see what they think of that topic. Sharing brains therefore allows you to <strong>structure your conversation threads with respect to a topic</strong>, and you can recapture this whenever you return to the brain or topic. You will be able to see where a discussion branches from a topic, where you 'agree to disagree', or where a conversation ends.</p>
-        <p><a class="btn" href="not_just_facts.html">&laquo; creating your own brains</a><a class="btn" href="about_creators.html">more about us &raquo;</a></p>
-      </div>
+     
+      <div class="span8">
+        <div class="mediumfont">it's not just about you
+        </div>
+        <div class="text_font">
+          <p></p>
+          <p>Every brain you build is a semantic network that reflects the way you conceptualise things. This gives you a visual language that you can use to communicate your ideas, opinions, and knowledge to other people and direct them to the things you think are pertinent and important. </p>
+          <p></p>
+          <p>When you <strong>collaborate</strong> with others, you can create a brain together and <strong>collectively</strong> edit it as you gather materials for your project. </p>
+          <p></p>
+          <p><strong>Sharing your brains</strong> with your friends allows them to see what you think of something or what you know. By adding to your graph, you'll also be able to see what they think of that topic. Sharing brains therefore allows you to <strong>structure your conversation threads with respect to a topic</strong>, and you can recapture this whenever you return to the brain or topic. You will be able to see where a discussion branches from a topic, where you 'agree to disagree', or where a conversation ends.</p>
+          <p><a class="btn" href="not_just_facts.html">&laquo; creating your own brains</a><a class="btn" href="about_creators.html">more about us &raquo;</a></p>
+    </div>
+    
     </div>
 
-      <!-- Example row of columns -->
-      <div class="row">
-    
-      </div>
+  </div> <!-- /whitebox -->
+</div>
 
-      <hr>
+<footer>
+  <p>&copy; GraphBrain 2012</p>
+</footer>
 
-      <footer>
-        <p>&copy; GraphBrain 2012</p>
-      </footer>
-
-    </div> <!-- /container -->
+</div> <!-- /container -->
 
 <%}%>

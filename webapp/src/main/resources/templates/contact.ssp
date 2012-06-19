@@ -1,24 +1,55 @@
 <% layout("page.ssp") {%>
 
-    <div class="container"  style="padding-top: 60px; padding-bottom: 40px">
+<style>
+  body {
+    padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+    background-color: transparent;
+    background-image:url("../images/bg.jpg")
+  }
+</style>
+
+<div class="container">
+<div class="row-fluid">
+  <div class="whitebox">
+  
+    <div class="row-fluid">
       
-      <!-- Main hero unit for a primary marketing message or call to action -->
-      <div class="hero-unit">
-      <p>to share your thoughts, e-mail: <strong>contact@graphbrain.com</strong></p>    
-        
-        
-        
+      <div class="span4">
+          <div class="well_well sidebar-nav">
+            <ul class="nav nav-list">
+              <li class="nav-header"></li>
+              <li><a href="/about">meaningful relationships</a></li>
+              <li class="nav-header"></li>
+              <li><a href="/not_just_facts">it's not just about facts</a></li>
+              <li class="nav-header"></li>
+              <li><a href="/not_just_you">it's not just about you</a></li>
+              <li class="nav-header"></li>
+              <li><a href="/about_creators">the brains behind GraphBrain</a></li>
+              <li class="nav-header"></li>
+              <li class="active"><a href="/contact">get in touch</a></li>
+              <li class="nav-header"></li>
+            </ul>
+          </div><!--/.well -->
+          <div class="graystripe">
+          </div>
+        </div><!--/span-->
+     
+      <div class="span8">
+        <div class="mediumfont">get in touch
+        </div>
+        <div class="text_font">
+          <p>to share your thoughts, e-mail: <strong>contact@graphbrain.com</strong></p>
+        </div>
+    
       </div>
-      <div class="row">
 
-      </div>
+  </div> <!-- /whitebox -->
+</div>
 
-      <hr>
+<footer>
+  <p>&copy; GraphBrain 2012</p>
+</footer>
 
-      <footer>
-        <p>&copy; GraphBrain 2012</p>
-      </footer>
-
-    </div> <!-- /container -->
+</div> <!-- /container -->
 
 <%}%>
