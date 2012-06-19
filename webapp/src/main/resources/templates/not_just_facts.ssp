@@ -1,14 +1,26 @@
 <% layout("page.ssp") {%>
 
-    <div class="container-fluid" style="padding-top: 60px; padding-bottom: 40px">
-      <div class="row-fluid">
-        <div class="span3">
-          <div class="well sidebar-nav">
+<style>
+  body {
+    padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+    background-color: transparent;
+    background-image:url("../images/bg.jpg")
+  }
+</style>
+
+<div class="container">
+<div class="row-fluid">
+  <div class="whitebox">
+  
+    <div class="row-fluid">
+      
+      <div class="span4">
+          <div class="well_well sidebar-nav">
             <ul class="nav nav-list">
               <li class="nav-header"></li>
-              <li><a href="about.html">meaningful relationships</a></li>
+              <li><a href="/about">meaningful relationships</a></li>
               <li class="nav-header"></li>
-              <li class="active"><a href="/not_just_facts">it's not just about facts</a></li>
+              <li class="active"><a href="#">it's not just about facts</a></li>
               <li class="nav-header"></li>
               <li><a href="/not_just_you">it's not just about you</a></li>
               <li class="nav-header"></li>
@@ -18,37 +30,33 @@
               <li class="nav-header"></li>
             </ul>
           </div><!--/.well -->
+          <div class="graystripe">
+          </div>
         </div><!--/span-->
-
-      
-
-      <!-- Main hero unit for a primary marketing message or call to action -->
-      <div class="span9">
-      <div class="hero-unit">
-        <h2>it's not just about facts</h2>
-        <p></p>
-        
-        <p>As well as allowing you to share your wisdom (and cash in on other people's) by editing the global GraphBrain, you can also create as many <strong>personal brains</strong> as you like. This gives you an extremely powerful bookmarking tool to organize content in a way that makes sense to you, or with respect to a task or event. 
-        <p></p>
-        <p>For example, imagine there is a public image of a dog that is of the same breed as a dog you are writing a story about (let's call him Snowy for now). In your personal <i>dog story brain</i>, you would simply connect the [image of the dog] to the [Snowy] node with the relationship [<i>is the same breed as</i>].</p>
-        <p></p>
-        <p>Although personal brains allow you to specify how you want content organized, you still remain connected to <strong>global GraphBrain</strong>. This means that you benefit from the wisdom of others within the context of a content structure you have defined yourself. So, as well as capturing the image's significance with respect to your dog protagonist, you can also easily navigate to any other information that other users have added about the image (for example, a dog-breeding expert may have contributed some advice as to how to look after this breed of dog). </p>
-        <p></p>
-        <p><a class="btn" href="not_just_you.html">&laquo; organising information</a> <a class="btn" href="/not_just_you">share your brains &raquo;</a></p>
-      </div>
+     
+      <div class="span8">
+        <div class="mediumfont">it's not just about facts
+        </div>
+        <div class="text_font">
+          <p></p>
+          <p>As well as allowing you to share your wisdom (and cash in on other people's) by editing the global GraphBrain, you can also create as many <strong>personal brains</strong> as you like. This gives you an extremely powerful bookmarking tool to organize content in a way that makes sense to you, or with respect to a task or event. 
+          <p></p>
+          <p>For example, imagine there is a public image of a dog that is of the same breed as a dog you are writing a story about (let's call him Snowy for now). In your personal <i>dog story brain</i>, you would simply connect the [image of the dog] to the [Snowy] node with the relationship [<i>is the same breed as</i>].</p>
+          <p></p>
+          <p>Although personal brains allow you to specify how you want content organized, you still remain connected to <strong>global GraphBrain</strong>. This means that you benefit from the wisdom of others within the context of a content structure you have defined yourself. So, as well as capturing the image's significance with respect to your dog protagonist, you can also easily navigate to any other information that other users have added about the image (for example, a dog-breeding expert may have contributed some advice as to how to look after this breed of dog). </p>
+          <p></p>
+          <p><a class="btn" href="not_just_you.html">&laquo; organising information</a> <a class="btn" href="/not_just_you">share your brains &raquo;</a></p>
+    </div>
+    
     </div>
 
-      <!-- Example row of columns -->
-      <div class="row">
-    
-      </div>
+  </div> <!-- /whitebox -->
+</div>
 
-      <hr>
+<footer>
+  <p>&copy; GraphBrain 2012</p>
+</footer>
 
-      <footer>
-        <p>&copy; GraphBrain 2012</p>
-      </footer>
-
-    </div> <!-- /container -->
+</div> <!-- /container -->
 
 <%}%>

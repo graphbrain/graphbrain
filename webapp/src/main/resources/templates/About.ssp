@@ -1,9 +1,21 @@
 <% layout("page.ssp") {%>
 
-    <div class="container-fluid" style="padding-top: 60px; padding-bottom: 40px">
-      <div class="row-fluid">
-        <div class="span3">
-          <div class="well sidebar-nav">
+<style>
+  body {
+    padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+    background-color: transparent;
+    background-image:url("../images/bg.jpg")
+  }
+</style>
+
+<div class="container">
+<div class="row-fluid">
+  <div class="whitebox">
+  
+    <div class="row-fluid">
+      
+      <div class="span4">
+          <div class="well_well sidebar-nav">
             <ul class="nav nav-list">
               <li class="nav-header"></li>
               <li class="active"><a href="#">meaningful relationships</a></li>
@@ -16,39 +28,34 @@
               <li class="nav-header"></li>
               <li><a href="/contact">get in touch</a></li>
               <li class="nav-header"></li>
-
             </ul>
           </div><!--/.well -->
+          <div class="graystripe">
+          </div>
         </div><!--/span-->
-
-      
-
-      <!-- Main hero unit for a primary marketing message or call to action -->
-      <div class="span9">
-      <div class="hero-unit">
-        <h2>information is about meaningful relationships</h2>
-        <p></p>
-        <p>Information is not simply about self-contained facts or ideas, it is about meaningful relationships between these ideas and facts. Think of any topic you know about. It is your ability to relate different things to this topic that makes you knowledgeable about it. Communicating these relationships to other people gives them access to your knowledge. GraphBrain represents information as a semantic network of <strong>content nodes</strong> and <strong>labelled links</strong> which can be easily navigated.</p>
-        <p></p>
-        
-        <p>This <strong>semantic network</strong> representation allows you to specify <strong>how</strong> things are related. For example, a video of a song might be related to a film by the fact that the song <i>was number 1 at the time</i> when the film was shot. By labelling the connection between the video and film with [<i>was number 1 at the time shot</i>], we get a brand new piece of information that is much richer than simply knowing that the two pieces of content are linked.</p>
-        <p></p>
-        <p><a class="btn" href="/not_just_facts">organize content in a way that makes sense to you &raquo;</a></p>
-        
-      </div>
+     
+      <div class="span8">
+        <div class="mediumfont">information is about meaningful relationships
+        </div>
+        <div class="text_font">
+          <p></p>
+          <p>Information is not simply about self-contained facts or ideas, it is about meaningful relationships between these ideas and facts. Think of any topic you know about. It is your ability to relate different things to this topic that makes you knowledgeable about it. Communicating these relationships to other people gives them access to your knowledge. GraphBrain represents information as a semantic network of <strong>content nodes</strong> and <strong>labelled links</strong> which can be easily navigated.</p>
+          <p></p>
+          <p>This <strong>semantic network</strong> representation allows you to specify <strong>how</strong> things are related. For example, a video of a song might be related to a film by the fact that the song <i>was number 1 at the time</i> when the film was shot. By labelling the connection between the video and film with [<i>was number 1 at the time shot</i>], we get a brand new piece of information that is much richer than simply knowing that the two pieces of content are linked.</p>
+          <p></p>
+        </div>
+          <p><a class="btn" href="/not_just_facts">organize content in a way that makes sense to you &raquo;</a></p>
+    </div>
+    
     </div>
 
-      <!-- Example row of columns -->
-      <div class="row">
-    
-      </div>
+  </div> <!-- /whitebox -->
+</div>
 
-      <hr>
+<footer>
+  <p>&copy; GraphBrain 2012</p>
+</footer>
 
-      <footer>
-        <p>&copy; GraphBrain 2012</p>
-      </footer>
-
-    </div> <!-- /container -->
+</div> <!-- /container -->
 
 <%}%>

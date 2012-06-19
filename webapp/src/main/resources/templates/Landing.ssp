@@ -2,46 +2,78 @@
 
 <% layout("page.ssp") {%>
 
-    <div class="container" style="padding-top: 60px; padding-bottom: 40px">
+<style>
+  body {
+    padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+    background-color: transparent;
+    background-image:url("../images/bg.jpg")
+  }
+</style>
 
-      <!-- Main hero unit for a primary marketing message or call to action -->
-      <div class="hero-unit">
-        <img src="/images/GB_logo_L.png" style="float:middle;width:500px:height:500px;vertical-align:middle;border:5px" alt="graphbrain_logo" class="brand"/>
-        <h2>a beautiful way to organize and explore information</h2>
-        <p>Use GraphBrain to build relationships between concepts in your brain and content on the web.</p>
-        <p>GraphBrain is still under development but we think it's too good not to share.</p>
-        
-        #if (!loggedIn)
-          <p><a class="btn btn-primary btn-large signupLink">sign up for free &raquo;</a></p>
-        #end
-      </div>
-
-      <!-- Example row of columns -->
-      <div class="row">
-        <div class="span4">
-          <h2>explore & learn</h2>
-           <p><strong>Search</strong> for anything you would find on Wikipedia and <strong>discover new connections</strong>. Connections are semantic so you can <strong>learn new facts visually</strong> by simply following connections in the network.</p>
-           <p><a class="btn" href="/about">more &raquo;</a></p>
-       </div>
-               <div class="span4">
-          <h2>organize & navigate</h2>
-           <p><strong>Create</strong> your own semantic network of concepts and web content. Specify <strong>how things are related</strong>, and not simply which things are related. Navigate web content the way <strong>you</strong> think about it.</p>
-          <p><a class="btn" href="/not_just_facts">more &raquo;</a></p>
-        </div>
-
-        <div class="span4">
-          <h2>contribute & collaborate</h2>
-          <p><strong>Contribute</strong> knowledge by adding semantic connections and new nodes (web content, concepts). <strong>Collaborate</strong> with others by <strong>collectively editing</strong> a brain.</p>
-          <p><a class="btn" href="/not_just_you">more &raquo;</a></p>
+<div class="container">
+<div class="row-fluid">
+  <div class="whitebox">
+    <div class="row-fluid">
+      <div class="span4">
+        <div class="logo_align"><img src="/images/GB_logo_L.png" width="209" height="56" alt="GraphBrain">
         </div>
       </div>
+      <div class="span8">
+        <div class="bigfont">a beautiful way
+        </div>
+        <div class="mediumfont">to organize and explore information
+        </div>
+        <div class="smallfont">
+          <p>Use GraphBrain to build relationships between concepts in your brain and content on the web.</p>
+      <p>GraphBrain is still under development but we think it's too good not to share.</p>
+    </div>
+    </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span4">
+        <div class="graystripe">
+        </div>
+      </div>
+      <div class="span4">
+        <div class="bluestripe">
+        </div>
+      </div>
+      <div class="span4">
+        <div class="graystripe">
+        </div>
+      </div>
+    </div>
+  <div class="row-fluid">
+      <div class="span4">
+        <h2>explore & learn</h2>
+    <p><strong>Search</strong> for anything you would find on Wikipedia and <strong>discover new connections</strong>. Connections are semantic so you can <strong>learn new facts visually</strong> by simply following connections in the network.</p>
+      </div>
+      <div class="span4">
+        <h2>organize & navigate</h2>
+    <p><strong>Create</strong> your own semantic network of concepts and web content. Specify <strong>how things are related</strong>, and not simply which things are related. Navigate web content the way <strong>you</strong> think about it.</p>
+      </div>
+      <div class="span4">
+        <h2>contribute & collaborate</h2>
+    <p><strong>Contribute</strong> knowledge by adding semantic connections and new nodes (web content, concepts). <strong>Collaborate</strong> with others by <strong>collectively editing</strong> a brain.</p>
+      </div>
+  </div>
+      <div class="row-fluid">
+      <div class="span4">
+        <p><a class="btn" href="/about">more &raquo;</a></p>
+      </div>
+      <div class="span4">
+        <p><a class="btn" href="/not_just_facts">more &raquo;</a></p>
+      </div>
+      <div class="span4">        
+        <p><a class="btn" href="/not_just_you">more &raquo;</a></p>
+      </div>
+    </div>
+  </div>
+</div>
 
-      <hr>
-
-      <footer>
-        <p>&copy; GraphBrain Ltd 2012</p>
-      </footer>
-
-    </div> <!-- /container -->
+<footer>
+  <p>&copy; GraphBrain Ltd 2012</p>
+</footer>
+</div> <!-- /container -->
 
 <%}%>
