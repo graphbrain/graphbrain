@@ -39,11 +39,11 @@
         </div>
         <div class="text_font">
           <p></p>
-          <p>As well as allowing you to share your wisdom (and cash in on other people's) by editing the global GraphBrain, you can also create as many <strong>personal brains</strong> as you like. This gives you an extremely powerful bookmarking tool to organize content in a way that makes sense to you, or with respect to a task or event. 
+          <p>As well as allowing you to share your wisdom (and cash in on other people's), nodes can be used as bookmarks. This allows you to organize content in a way that makes sense to you, or with respect to a task or event. 
           <p></p>
-          <p>For example, imagine there is a public image of a dog that is of the same breed as a dog you are writing a story about (let's call him Snowy for now). In your personal <i>dog story brain</i>, you would simply connect the [image of the dog] to the [Snowy] node with the relationship [<i>is the same breed as</i>].</p>
+          <p>For example, imagine there is a public image of a dog that is of the same breed as a dog you are writing a story about (let's call him Snowy for now), you would have a <i>dog story</i> node grouping together all nodes and connections related to this story. Then under this node, you would simply connect the [image of the dog] to the [Snowy] node with the relationship [<i>is the same breed as</i>].</p>
           <p></p>
-          <p>Although personal brains allow you to specify how you want content organized, you still remain connected to <strong>global GraphBrain</strong>. This means that you benefit from the wisdom of others within the context of a content structure you have defined yourself. So, as well as capturing the image's significance with respect to your dog protagonist, you can also easily navigate to any other information that other users have added about the image (for example, a dog-breeding expert may have contributed some advice as to how to look after this breed of dog). </p>
+          <p>At the same time, you benefit from the wisdom of others within the context of a content structure you have defined yourself. So, as well as capturing the image's significance with respect to your dog protagonist (Snowy), you can also easily navigate to any other information that other users have added about the image (for example, a dog-breeding expert may have contributed some advice as to how to look after this breed of dog). </p>
           <p></p>
           <p><a class="btn" href="not_just_you.html">&laquo; organising information</a> <a class="btn" href="/not_just_you">share your brains &raquo;</a></p>
     </div>
