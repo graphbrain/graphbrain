@@ -31,77 +31,68 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
   val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r)
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
   val gbNodeExt = """(http://)?graphbrain.com/node/""".r
+  
 
   val si = RiakSearchInterface("gbsearch")
   
   val store = new VertexStore(storeName) with Indexing with BurstCaching
   val anon_username = "gb_anon"
 
-  def parseSentence(inSentence: String, root: Vertex = TextNode(id="GBNoneGB", text="GBNoneGB"), parseType: String = "graph", numResults: Int = 10, user:Option[UserNode]=None): List[(List[Vertex], Edge)]={
-  	val sentence = inSentence.trim;
-  	//I'm envisioning that in the future we may have other parsing purposes where we might have other parsing rules 
-  	//(e.g. ignoring non-rootparses, different rule precedences) so I've kept the graph creation parsing as just one option.
-    if(parseType == "graph") {
-      var userIn = UserNode(anon_username, anon_username)
-      user match {
-        case Some(u:UserNode) => userIn = u;
-        case _ => 
-      }
-      return parseToGraph(sentence, root, numResults, userIn);
-    }
-    else {
-    	return Nil
-    }
-  }
+  //Only handles two-node graphs at the moment
+  def parseSentence(inSentence: String, root: Vertex  = TextNode(id="GBNoneGB", text="GBNoneGB"), user: Option[UserNode]=None): (List[Vertex], List[Vertex], List[Vertex]) = {
+    var sources: List[Vertex] = List()
+    var relations: List[Vertex] = List()
+    var targets: List[Vertex] = List()
 
-def textToNode(text:String): List[Vertex] = {
-    var results: List[Vertex] = List()
-    if(nodeExists(text)) {
-      try{
-        results = store.get(text) :: results;        
-      }
-      catch {case e =>}
 
-    }
-
-    if(gbNodeExt.split(text).length==2) {
-      val gbID = gbNodeExt.split(text)(1)
-      if(nodeExists(gbID)) {
-        try {
-          results = store.get(gbID) :: results;
+    //Try segmenting with quote marks:
+    val qcParses = quoteChunk(inSentence, root);
+    //If one of the quote chunks is the root, return this result.
+    for (parse <- pcParses) {
+      val nodeTexts = parse._1;
+      val relation = parse._2;
+      if(nodeTexts.length==2) {
+        if(nodeTexts(0)==root.text) {
+          sources = root :: sources;
         }
-      }
-    }
+        else {
 
-    /*for (imageE <- imageExt) {
-      if (imageE.findAllIn(text).hasNext) {             
-        val imageID = ID.image_id(image_name = text, image_url = text); 
-        results =  ImageNode(id = brainID + "/" +  imageID, url = text) :: results;
-      }
-    }
+          //Check whether already in database - global and user; create new node if necessary
+          //Is there a wikipedia entry?
 
-    for (videoE <- videoExt) {
-      if (videoE.findAllIn(text).hasNext) {
-        val videoID = ID.video_id(video_name = text, video_url = text)
-        results = VideoNode(id = brainID + "/" + videoID, url = text) :: results;
+          //Is it a special content type?
+
+        }
+        if(nodeTexts(1)==root.text) {
+          targets = root :: targets
+        }
+        else {
+          
+          //Check whether already in database - global and user; create new node if necessary
+          //Is there a wikipedia entry?
+
+          //Is it a special content type?
+
+        }
+        relations = relation :: relations;
       }
-    }*/
-      
-    if (urlRegex.findAllIn(text).hasNext) {
-      val urlID = ID.url_id(url = text)
-      results = URLNode(id = urlID, url=text) :: results
+
     }
     
-    if(results.length>=1) return results.reverse;
 
-    //val textID = ID.text_id(removeDeterminers(text))
-    //results = TextNode(id = brainID + "/" + textID, text=removeDeterminers(text)) :: results;
-    val textPureID = ID.text_id(text)
+    //Try parsing with known relations:
 
-    results = TextNode(id = textPureID, text=text) :: results;
+    //If no results returned, parse with POS.
 
-    return results.reverse;
+
+    //If root matches the source or target, it is given priority one
+
+
+
+    return (sources, relations, targets)
   }
+
+  
 
   def textToNode(text:String, node: Vertex= TextNode(id="GBNoneGB", text="GBNoneGB"), user:Option[Vertex]=None): List[Vertex] = {
     var userName = anon_username;
@@ -492,6 +483,76 @@ def nodeExists(id:String):Boolean =
       case e => return false
     }
   }
+
+//Abandoned code:
+
+  /*def parseSentence(inSentence: String, root: Vertex = TextNode(id="GBNoneGB", text="GBNoneGB"), parseType: String = "graph", numResults: Int = 10, user:Option[UserNode]=None): List[(List[Vertex], Edge)]={
+    val sentence = inSentence.trim;
+    //I'm envisioning that in the future we may have other parsing purposes where we might have other parsing rules 
+    //(e.g. ignoring non-rootparses, different rule precedences) so I've kept the graph creation parsing as just one option.
+    if(parseType == "graph") {
+      var userIn = UserNode(anon_username, anon_username)
+      user match {
+        case Some(u:UserNode) => userIn = u;
+        case _ => 
+      }
+      return parseToGraph(sentence, root, numResults, userIn);
+    }
+    else {
+      return Nil
+    }
+  }*/
+
+
+/*def textToNode(text:String): List[Vertex] = {
+    var results: List[Vertex] = List()
+    if(nodeExists(text)) {
+      try{
+        results = store.get(text) :: results;        
+      }
+      catch {case e =>}
+
+    }
+
+    if(gbNodeExt.split(text).length==2) {
+      val gbID = gbNodeExt.split(text)(1)
+      if(nodeExists(gbID)) {
+        try {
+          results = store.get(gbID) :: results;
+        }
+      }
+    }
+
+    /*for (imageE <- imageExt) {
+      if (imageE.findAllIn(text).hasNext) {             
+        val imageID = ID.image_id(image_name = text, image_url = text); 
+        results =  ImageNode(id = brainID + "/" +  imageID, url = text) :: results;
+      }
+    }
+
+    for (videoE <- videoExt) {
+      if (videoE.findAllIn(text).hasNext) {
+        val videoID = ID.video_id(video_name = text, video_url = text)
+        results = VideoNode(id = brainID + "/" + videoID, url = text) :: results;
+      }
+    }*/
+      
+    if (urlRegex.findAllIn(text).hasNext) {
+      val urlID = ID.url_id(url = text)
+      results = URLNode(id = urlID, url=text) :: results
+    }
+    
+    if(results.length>=1) return results.reverse;
+
+    //val textID = ID.text_id(removeDeterminers(text))
+    //results = TextNode(id = brainID + "/" + textID, text=removeDeterminers(text)) :: results;
+    val textPureID = ID.text_id(text)
+
+    results = TextNode(id = textPureID, text=text) :: results;
+
+    return results.reverse;
+  }*/
+
 
 }
 
