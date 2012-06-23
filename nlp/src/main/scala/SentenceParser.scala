@@ -96,7 +96,7 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
 
       }
       else {
-        throw new TooManyRelationsException()
+        throw TooManyNodes("Too many nodes: " + nodeTexts.length)
       }
 
     }
@@ -576,10 +576,6 @@ def textToNode(text:String): List[Vertex] = {
   }*/
 
 
-}
-
-class TooManyRelationsException(message: String = null, cause: Throwable = null) extends RuntimeException(message, cause) {
-  
 }
 
 
