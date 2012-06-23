@@ -39,7 +39,7 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
   val anon_username = "gb_anon"
 
   //Only handles two-node graphs at the moment
-  def parseSentence(inSentence: String, root: Vertex  = TextNode(id="GBNoneGB", text="GBNoneGB"), user: Option[UserNode]=None): (List[Vertex], List[Vertex], List[Vertex]) = {
+  /*def parseSentence(inSentence: String, root: Vertex  = TextNode(id="GBNoneGB", text="GBNoneGB"), user: Option[UserNode]=None): (List[Vertex], List[Vertex], List[Vertex]) = {
     var sources: List[Vertex] = List()
     var relations: List[Vertex] = List()
     var targets: List[Vertex] = List()
@@ -48,7 +48,7 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
     //Try segmenting with quote marks:
     val qcParses = quoteChunk(inSentence, root);
     //If one of the quote chunks is the root, return this result.
-    for (parse <- pcParses) {
+    for (parse <- qcParses) {
       val nodeTexts = parse._1;
       val relation = parse._2;
       if(nodeTexts.length==2) {
@@ -90,7 +90,7 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
 
 
     return (sources, relations, targets)
-  }
+  }*/
 
   
 
@@ -486,7 +486,7 @@ def nodeExists(id:String):Boolean =
 
 //Abandoned code:
 
-  /*def parseSentence(inSentence: String, root: Vertex = TextNode(id="GBNoneGB", text="GBNoneGB"), parseType: String = "graph", numResults: Int = 10, user:Option[UserNode]=None): List[(List[Vertex], Edge)]={
+  def parseSentence(inSentence: String, root: Vertex = TextNode(id="GBNoneGB", text="GBNoneGB"), parseType: String = "graph", numResults: Int = 10, user:Option[UserNode]=None): List[(List[Vertex], Edge)]={
     val sentence = inSentence.trim;
     //I'm envisioning that in the future we may have other parsing purposes where we might have other parsing rules 
     //(e.g. ignoring non-rootparses, different rule precedences) so I've kept the graph creation parsing as just one option.
@@ -501,7 +501,7 @@ def nodeExists(id:String):Boolean =
     else {
       return Nil
     }
-  }*/
+  }
 
 
 /*def textToNode(text:String): List[Vertex] = {
