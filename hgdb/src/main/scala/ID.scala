@@ -31,6 +31,13 @@ object ID {
   def relation_id(relation:String):String =
 	  sanitize(relation)
 
+  def relation_id(rel:String, node1ID:String, node2ID:String):String=
+  {
+    val tokens=List[String](rel)++Array[String](node1ID, node2ID)
+    return tokens.reduceLeft(_+ " " +_)
+  }
+
+
   def url_id(url:String):String =
     "web/"+sanitize(url)
 }

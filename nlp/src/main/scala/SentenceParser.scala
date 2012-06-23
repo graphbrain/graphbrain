@@ -44,37 +44,59 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
     var relations: List[Vertex] = List()
     var targets: List[Vertex] = List()
 
-    /*
+    
     //Try segmenting with quote marks:
     val qcParses = quoteChunk(inSentence, root);
     //If one of the quote chunks is the root, return this result.
     for (parse <- qcParses) {
       val nodeTexts = parse._1;
       val relation = parse._2;
+
       if(nodeTexts.length==2) {
-        if(nodeTexts(0)==root.text) {
-          sources = root :: sources;
+        var sourceV = TextNode("", "")
+        var targetV = TextNode("", "")
+        
+        
+        root match {
+          case a: TextNode =>
+            if(nodeTexts(1)==a.text) {
+              targets = root :: targets
+              
+
+            }
+            else {
+                //Check whether already in database - global and user; create new node if necessary
+              //Is there a wikipedia entry?
+
+              //Is it a special content type?
+
+              //If nothing, then create a new node:
+            }
+            if(nodeTexts(0)==a.text) {
+              sources = root :: sources;
+            }
+            else {
+                //Check whether already in database - global and user; create new node if necessary
+              //Is there a wikipedia entry?
+
+              //Is it a special content type?
+
+              //If nothing, then create a new node:
+            }
+            case _ =>
+        //Get the underlying relation type.
+
+        //Check if it is in the known list.
+
+        //Otherwise create id
+        
+        val relationV = Edge(ID.relation_id(relation, sourceV.id, targetV.id))
+        relations = relationV :: relations;
         }
-        else {
 
-          //Check whether already in database - global and user; create new node if necessary
-          //Is there a wikipedia entry?
-
-          //Is it a special content type?
-
-        }
-        if(nodeTexts(1)==root.text) {
-          targets = root :: targets
-        }
-        else {
-          
-          //Check whether already in database - global and user; create new node if necessary
-          //Is there a wikipedia entry?
-
-          //Is it a special content type?
-
-        }
-        relations = relation :: relations;
+      }
+      else {
+        throw new TooManyRelationsException()
       }
 
     }
@@ -85,7 +107,7 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
     //If no results returned, parse with POS.
 
 
-    //If root matches the source or target, it is given priority one*/
+    //If root matches the source or target, it is given priority one
 
 
 
@@ -554,6 +576,10 @@ def textToNode(text:String): List[Vertex] = {
   }*/
 
 
+}
+
+class TooManyRelationsException(message: String = null, cause: Throwable = null) extends RuntimeException(message, cause) {
+  
 }
 
 
