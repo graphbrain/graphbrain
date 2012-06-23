@@ -39,12 +39,12 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
   val anon_username = "gb_anon"
 
   //Only handles two-node graphs at the moment
-  /*def parseSentence(inSentence: String, root: Vertex  = TextNode(id="GBNoneGB", text="GBNoneGB"), user: Option[UserNode]=None): (List[Vertex], List[Vertex], List[Vertex]) = {
+  def parseSentence(inSentence: String, root: Vertex  = TextNode(id="GBNoneGB", text="GBNoneGB"), user: Option[UserNode]=None): (List[Vertex], List[Vertex], List[Vertex]) = {
     var sources: List[Vertex] = List()
     var relations: List[Vertex] = List()
     var targets: List[Vertex] = List()
 
-
+    /*
     //Try segmenting with quote marks:
     val qcParses = quoteChunk(inSentence, root);
     //If one of the quote chunks is the root, return this result.
@@ -85,12 +85,12 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
     //If no results returned, parse with POS.
 
 
-    //If root matches the source or target, it is given priority one
+    //If root matches the source or target, it is given priority one*/
 
 
 
     return (sources, relations, targets)
-  }*/
+  }
 
   
 
@@ -486,7 +486,7 @@ def nodeExists(id:String):Boolean =
 
 //Abandoned code:
 
-  def parseSentence(inSentence: String, root: Vertex = TextNode(id="GBNoneGB", text="GBNoneGB"), parseType: String = "graph", numResults: Int = 10, user:Option[UserNode]=None): List[(List[Vertex], Edge)]={
+ /* def parseSentence(inSentence: String, root: Vertex = TextNode(id="GBNoneGB", text="GBNoneGB"), parseType: String = "graph", numResults: Int = 10, user:Option[UserNode]=None): List[(List[Vertex], Edge)]={
     val sentence = inSentence.trim;
     //I'm envisioning that in the future we may have other parsing purposes where we might have other parsing rules 
     //(e.g. ignoring non-rootparses, different rule precedences) so I've kept the graph creation parsing as just one option.
@@ -504,7 +504,7 @@ def nodeExists(id:String):Boolean =
   }
 
 
-/*def textToNode(text:String): List[Vertex] = {
+def textToNode(text:String): List[Vertex] = {
     var results: List[Vertex] = List()
     if(nodeExists(text)) {
       try{
@@ -570,12 +570,12 @@ object SentenceParser {
       val videoURL3 = "http://www.dailymotion.com/video/xmehe4_millenium-tv_videogames"
       val imageURL1 = "http://www.flickr.com/photos/londonmummy/471232270/"
       val imageURL2 = "http://en.wikipedia.org/wiki/File:Crohook.jpg"
-  	  println("From main: " + sentence1)
-      sentenceParser.parseSentence(sentence1)
-      println("From main with root: " + sentence1)
-      sentenceParser.parseSentence(sentence1, rootNode)
-      println("From main with root with user: " + sentence1)
-      sentenceParser.parseSentence(sentence1, rootNode, user=Some(userNode))
+  	  //println("From main: " + sentence1)
+      //sentenceParser.parseSentence(sentence1)
+      //println("From main with root: " + sentence1)
+      //sentenceParser.parseSentence(sentence1, rootNode)
+      //println("From main with root with user: " + sentence1)
+      //sentenceParser.parseSentence(sentence1, rootNode, user=Some(userNode))
 
       println("Video with root with user: " + videoURL1)
       println(sentenceParser.textToNode(videoURL1, rootNode, user=Some(userNode)))
@@ -591,13 +591,13 @@ object SentenceParser {
       
 
 
-      println("From command line: " + sentence2)
-      sentenceParser.parseSentence(sentence2)
-      println("From command line with root: " + sentence2)
-      sentenceParser.parseSentence(sentence2, rootNode)
-      println("From command line with root with user: " + sentence2)
-      sentenceParser.parseSentence(sentence2, rootNode, user=Some(userNode))
-      //val brainID = "brain/telmo/stuff"
+      //println("From command line: " + sentence2)
+      //sentenceParser.parseSentence(sentence2)
+      //println("From command line with root: " + sentence2)
+      //sentenceParser.parseSentence(sentence2, rootNode)
+      //println("From command line with root with user: " + sentence2)
+      //sentenceParser.parseSentence(sentence2, rootNode, user=Some(userNode))
+      
       
       val text = "Some Magic Cookies"
       println("Text: " + text)
