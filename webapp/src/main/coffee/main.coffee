@@ -12,6 +12,3 @@ $ ->
         initGraph()
     
     initInterface()
-    
-    if nodeView
-        initBrains()
