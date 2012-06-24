@@ -148,4 +148,20 @@ html, body {
     -moz-perspective:1000px;
     -webkit-transform-style:preserve-3d;
     -moz-transform-style:preserve-3d;
+}#ai-chat {
+	color: #000;
+    background: #5bcef1;
+    opacity: 0.8;
+    padding-left: 10px;
+    padding-right: 10px;
+    visibility: hidden;
+}
+
+#ai-chat-input {
+	margin-top: 10px;
+	margin-bottom: 5px;
+	width: 100%;
+	padding-left: 0;
+	padding-right: 0;
+	border-width: 0;
 }

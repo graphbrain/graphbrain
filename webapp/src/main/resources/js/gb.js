@@ -450,7 +450,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, add, addReply, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAlert, initAddDialog, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, setLeftRight, setRightLeft, showAddDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateAddInput, updateAddInput1, updateAddInput2, updateAddRelation, updateAddRelation1, updateAddRelation2, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, add, addReply, aiChatButtonPressed, aiChatSubmit, aiChatVisible, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, initAddDialog, initAiChat, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, setLeftRight, setRightLeft, showAddDialog, showAiChat, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateAddInput, updateAddInput1, updateAddInput2, updateAddRelation, updateAddRelation1, updateAddRelation2, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -939,9 +939,10 @@ function handler(event) {
       document.addEventListener('touchstart', touchStart);
       document.addEventListener('touchend', touchEnd);
       document.addEventListener('touchmove', touchMove);
+      initAiChat();
       initAddDialog();
       initRemoveDialog();
-      $('#addLink').bind('click', showAddDialog);
+      $('#ai-chat-button').bind('click', aiChatButtonPressed);
       $('#removeButton').bind('click', removeButtonPressed);
       if (errorMsg !== '') return setErrorAlert(errorMsg);
     }
@@ -2253,6 +2254,39 @@ function handler(event) {
     return updateAddRelation();
   };
 
+  aiChatVisible = false;
+
+  initAiChat = function() {
+    var html;
+    html = "<div id=\"ai-chat-log\" />\n<form id=\"ai-chat-form\">\n<input id=\"ai-chat-input\" type=\"text\" />\n</form>";
+    $('#ai-chat').html(html);
+    return $('#ai-chat-form').submit(aiChatSubmit);
+  };
+
+  aiChatSubmit = function(msg) {
+    $('#ai-chat-log').append('<br />you said: ' + $('#ai-chat-input').val());
+    $('#ai-chat-input').val('');
+    return false;
+  };
+
+  showAiChat = function() {
+    return $('#ai-chat').css('visibility', 'visible');
+  };
+
+  hideAiChat = function() {
+    return $('#ai-chat').css('visibility', 'hidden');
+  };
+
+  aiChatButtonPressed = function(msg) {
+    if (aiChatVisible) {
+      aiChatVisible = false;
+      return hideAiChat();
+    } else {
+      aiChatVisible = true;
+      return showAiChat();
+    }
+  };
+
   removeMode = false;
 
   removeInfoMessage = function() {
@@ -2312,8 +2346,7 @@ function handler(event) {
   $(function() {
     if (typeof snodes !== 'undefined') nodeView = true;
     if (nodeView) initGraph();
-    initInterface();
-    if (nodeView) return initBrains();
+    return initInterface();
   });
 
 }).call(this);

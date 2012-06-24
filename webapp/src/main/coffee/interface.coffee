@@ -102,9 +102,10 @@ initInterface = ->
         document.addEventListener('touchend', touchEnd)
         document.addEventListener('touchmove', touchMove)
 
+        initAiChat()
         initAddDialog()
         initRemoveDialog()
-        $('#addLink').bind 'click', showAddDialog
+        $('#ai-chat-button').bind 'click', aiChatButtonPressed
         $('#removeButton').bind 'click', removeButtonPressed
 
         # display error message if defined
