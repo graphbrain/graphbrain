@@ -8,6 +8,7 @@ import unfiltered.request._
 import unfiltered.response._
 import unfiltered.Cookie
 import org.fusesource.scalate.TemplateEngine
+import akka.actor.ActorSystem
 
 import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.SimpleCaching
@@ -32,6 +33,8 @@ object Server {
   val templateDirs = List(new java.io.File("/var/www/templates"))
   val scalateMode = "production"
   val engine = new TemplateEngine(templateDirs, scalateMode)
+
+  val actorSystem = ActorSystem("actors")
 
   def scalateResponse(template: String, page: String, cookies: Map[String, Any], req: HttpRequest[Any], js: String="") = {
     val userNode = getUser(cookies)
@@ -90,6 +93,8 @@ object Server {
       .handler(AIChatPlan)
       .resources(new URL(getClass().getResource("/robots.txt"), "."))
     http.run
+
+    actorSystem.shutdown()
   }
 
   def main(args: Array[String]) {
