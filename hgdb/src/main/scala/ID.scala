@@ -37,7 +37,17 @@ object ID {
     return tokens.reduceLeft(_+ " " +_)
   }
 
+  def rule_id(rule_name: String): String =
+    "rule/" + sanitize(rule_name) 
+
 
   def url_id(url:String):String =
     "web/"+sanitize(url)
+
+  def wikipedia_id(wptitle:String):String={
+    val title = wptitle.toLowerCase.replace(" ", "_")
+    return "wikipedia/"+title
+  }
+
+
 }
