@@ -48,15 +48,16 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
     var targets: List[Vertex] = List()
 
     
-    //Try segmenting with quote marks:
-    val qcParses = quoteChunk(inSentence, root);
-    for (parse <- qcParses) {
+    //Try segmenting with quote marks, then with known splitters
+    val parses = quoteChunk(inSentence, root) ++ logChunk(inSentence, root);
+    for (parse <- parses) {
       val nodeTexts = parse._1;
       val relation = parse._2;
 
       if(nodeTexts.length==2) {
-        var sourceV = TextNode("", "")
-        var targetV = TextNode("", "")
+        val sourceV = TextNode("", "")
+        val targetV = TextNode("", "")
+        val relationV = Edge(ID.relation_id(relation, sourceV.id, targetV.id))
         
         
         root match {
@@ -100,9 +101,9 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
         //Placeholder so you still get something back
         sources = sourceV :: sources
         targets = targetV :: targets
-        val relationV = Edge(ID.relation_id(relation, sourceV.id, targetV.id))
-        relations = relationV :: relations;
         
+        relations = relationV :: relations;
+        return (sources, relations, targets)
 
       }
       else {
@@ -110,9 +111,8 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
       }
 
     }
-    
+        
 
-    //Try parsing with known relations:
 
     //If no results returned, parse with POS.
 
@@ -258,6 +258,14 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
 def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
     val knownSplitters = rTypeMapping.keys
     var possibleParses: List[(List[String], String)] = List()
+    for (splitter <- knownSplitters) {
+      val nodes = sentence.split(splitter)
+      if(nodes.length==2) {
+        val source = nodes(1)
+        val target = nodes(2)
+        possibleParses = (List(source, target), rTypeMapping(splitter)) :: possibleParses
+      }
+    }
     return possibleParses.reverse;
   }
 
