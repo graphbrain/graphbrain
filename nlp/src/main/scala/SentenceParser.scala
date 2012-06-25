@@ -31,6 +31,9 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
   val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r)
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
   val gbNodeExt = """(http://)?graphbrain.com/node/""".r
+  val rTypeMapping = HashMap("is the opposite of"->"antonymy", "means the same as" -> "synonymy", "is a"->"subtype", "is a type of"->"subtype", "has a"->"possessive")
+  //"is" needs to be combined with POS to determine whether it is a property, state, or object that is being referred to.
+
   
 
   val si = RiakSearchInterface("gbsearch")
@@ -47,7 +50,6 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
     
     //Try segmenting with quote marks:
     val qcParses = quoteChunk(inSentence, root);
-    //If one of the quote chunks is the root, return this result.
     for (parse <- qcParses) {
       val nodeTexts = parse._1;
       val relation = parse._2;
@@ -59,40 +61,48 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
         
         root match {
           case a: TextNode =>
-            if(nodeTexts(1)==a.text) {
-              targets = root :: targets
+            //Check whether already in database - global and user; create new node if necessary
+            user match {
+              case Some(u:UserNode) => 
+                val userThingID = ID.usergenerated_id(u.username, a.text)
+                if(nodeExists(userThingID)) {
+                  if(nodeTexts(1)==a.text) {
+                    targets = getOrCreate(userThingID) :: targets   
+                  }
+                  if(nodeTexts(0)==a.text) {
+                    sources = getOrCreate(userThingID) :: sources
+                  }
+                }
+
+               case _ => 
+            }
+            val wikiThingID = ID.wikipedia_id(a.text)
+            if(nodeExists(wikiThingID)) targets = getOrCreate(wikiThingID) :: targets
               
-
-            }
-            else {
-                //Check whether already in database - global and user; create new node if necessary
               //Is there a wikipedia entry?
 
               //Is it a special content type?
 
-              //If nothing, then create a new node:
-            }
-            if(nodeTexts(0)==a.text) {
-              sources = root :: sources;
-            }
-            else {
-                //Check whether already in database - global and user; create new node if necessary
-              //Is there a wikipedia entry?
 
-              //Is it a special content type?
+          case _ =>
+        }
 
-              //If nothing, then create a new node:
-            }
-            case _ =>
+
+        sources = textToNode(nodeTexts(0)) ++ sources.reverse 
+        targets = textToNode(nodeTexts(1)) ++ targets.reverse
+            
         //Get the underlying relation type.
-
         //Check if it is in the known list.
+        
 
         //Otherwise create id
         
+        //Placeholder so you still get something back
+        sources = sourceV :: sources
+        targets = targetV :: targets
         val relationV = Edge(ID.relation_id(relation, sourceV.id, targetV.id))
         relations = relationV :: relations;
-        }
+        
 
       }
       else {
@@ -113,6 +123,7 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
 
     return (sources, relations, targets)
   }
+
 
   
 
@@ -174,6 +185,10 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
 
     //val textID = ID.text_id(removeDeterminers(text))
     //results = TextNode(id = ID.usergenerated_id(userName, textID, brainName), text=removeDeterminers(text)) :: results;
+    val wikiID = ID.wikipedia_id(text)
+    //Add the wikipedia node as a possible entry if found
+    if(nodeExists(wikiID)) {results = getOrCreate(wikiID) :: results}
+    
     val textPureID = ID.text_id(text)
     results = TextNode(id = ID.usergenerated_id(userName, textPureID), text=text) :: results;
     //if(text!=textPureID) {results = TextNode(id = ID.usergenerated_id(userName, textPureID), text=text) :: results;}
@@ -240,6 +255,11 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
 
 
 
+def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
+    val knownSplitters = rTypeMapping.keys
+    var possibleParses: List[(List[String], String)] = List()
+    return possibleParses.reverse;
+  }
 
 
   def posChunk(sentence: String, root: Vertex): List[(List[String], String)]={
@@ -470,7 +490,7 @@ def removeDeterminers(possibleParses: List[(List[String], String)], rootNode: Ve
 }
 
 
-def getOrCreate(id:String, user:Vertex, textString:String, root:Vertex):Vertex={
+def getOrCreate(id:String, user:Vertex = UserNode(anon_username, anon_username), textString:String = "", root:Vertex = TextNode("", "")):Vertex={
   if(id != "") {
     try{
       return store.get(id);

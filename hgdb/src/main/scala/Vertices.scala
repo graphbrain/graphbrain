@@ -89,6 +89,18 @@ case class TextNode(id: String="", text: String="", edges: Set[String]=Set[Strin
   override def toString: String = text
 }
 
+//To store the rule body
+case class RuleNode(id: String="", rule: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
+  override val vtype: String = "rule"
+
+  override def toMap: Map[String, Any] = toMapBase ++ Map(("rule" -> rule))
+
+  def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
+  def setExtra(newExtra: Int) = copy(extra=newExtra)
+
+  override def toString: String = rule
+}
+
 
 case class URLNode(id: String="", url: String="", title: String="", edges: Set[String]=Set[String](), extra: Int= -1) extends Vertex {
   override val vtype: String = "url"

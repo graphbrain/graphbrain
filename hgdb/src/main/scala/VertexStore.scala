@@ -59,6 +59,11 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         val svg = map.getOrElse("svg", "").toString
         SVGNode(id, svg, edges, extra)
       }
+
+      case "rule" => {
+        val rule = map.getOrElse("rule", "").toString
+        RuleNode(id, rule, edges, extra)
+      }
       case "usr" => {
         val username = map.getOrElse("username", "").toString
         val name = map.getOrElse("name", "").toString
