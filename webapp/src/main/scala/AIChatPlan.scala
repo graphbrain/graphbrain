@@ -10,10 +10,14 @@ import akka.actor.{ Actor, Props }
 import com.graphbrain.nlp.AIChatResponderActor
 
 object AIChatPlan extends async.Plan with ServerErrorResponse with Logging {
+  val responderActor = Server.actorSystem.actorOf(Props(new AIChatResponderActor()))
+
   def intent = {
-    case req@GET(Path(Seg("xpto" :: Nil)) & Cookies(cookies)) =>
-      val responderActor =
-        Server.actorSystem.actorOf(Props(new AIChatResponderActor(req)))
-      responderActor ! AIChatResponderActor.Sentence("actor responding to request")
+    case req@POST(Path("/ai") & Params(params) & Cookies(cookies)) =>
+      val userNode = Server.getUser(cookies)
+      val sentence = params("sentence")(0)
+      val rootId = params("rootId")(0)
+      val root = Server.store.get(rootId)
+      responderActor ! AIChatResponderActor.Sentence(sentence, root, userNode, req)
   }
 }
