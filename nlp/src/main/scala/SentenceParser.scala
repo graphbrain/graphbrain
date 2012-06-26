@@ -627,29 +627,41 @@ object SentenceParser {
       //println("From main with root with user: " + sentence1)
       //sentenceParser.parseSentence(sentence1, rootNode, user=Some(userNode))
 
-      println("Video with root with user: " + videoURL1)
-      println(sentenceParser.textToNode(videoURL1, rootNode, user=Some(userNode)))
-      println("Video with root with user: " + videoURL2)
-      println(sentenceParser.textToNode(videoURL2, rootNode, user=Some(userNode)))
-      println("Video with root with user: " + videoURL3)
-      println(sentenceParser.textToNode(videoURL3, rootNode, user=Some(userNode)))
+      //println("Video with root with user: " + videoURL1)
+      //println(sentenceParser.textToNode(videoURL1, rootNode, user=Some(userNode)))
+      //println("Video with root with user: " + videoURL2)
+      //println(sentenceParser.textToNode(videoURL2, rootNode, user=Some(userNode)))
+      //println("Video with root with user: " + videoURL3)
+      //println(sentenceParser.textToNode(videoURL3, rootNode, user=Some(userNode)))
 
-      println("Image with root with user: " + imageURL1)
-      println(sentenceParser.textToNode(imageURL1, rootNode, user=Some(userNode)))
-      println("Image with root with user: " + imageURL2)
-      println(sentenceParser.textToNode(imageURL2, rootNode, user=Some(userNode)))
+      //println("Image with root with user: " + imageURL1)
+      //println(sentenceParser.textToNode(imageURL1, rootNode, user=Some(userNode)))
+      //println("Image with root with user: " + imageURL2)
+      //println(sentenceParser.textToNode(imageURL2, rootNode, user=Some(userNode)))
       
 
 
-      //println("From command line: " + sentence2)
-      //sentenceParser.parseSentence(sentence2)
+      println("From command line: " + sentence2)
+      val parses = sentenceParser.parseSentence(sentence2)
+      val sources = parses._1;
+      val relations = parses._2;
+      val targets = parses._3;
+      for(source <- sources) {
+        println("Source: " + source.id)
+      }
+      for(relation <- relations) {
+        println("Relation: " + relation.id)
+      }
+      for(target <- targets) {
+        println("Target: " + target.id)
+      }
       //println("From command line with root: " + sentence2)
       //sentenceParser.parseSentence(sentence2, rootNode)
       //println("From command line with root with user: " + sentence2)
       //sentenceParser.parseSentence(sentence2, rootNode, user=Some(userNode))
       
       
-      val text = "Some Magic Cookies"
+      /*val text = "Some Magic Cookies"
       println("Text: " + text)
       println(sentenceParser.textToNode(text)(0).id)
       
@@ -674,7 +686,7 @@ object SentenceParser {
 
       val existingURL = "graphbrain.com/node/wikipedia/aristotle";
       println("Existing URL: " + existingURL)
-      println(sentenceParser.textToNode(existingURL)(0).id)
+      println(sentenceParser.textToNode(existingURL)(0).id)*/
 
 
 
