@@ -18,6 +18,6 @@ class AIChatResponderActor() extends Actor {
   override protected def receive = {
     case Sentence(sentence, root, user, responder) =>
       responder.respond(PlainTextContent ~> ResponseString(sentence))
-      context.stop(self)
+      //context.stop(self)
   }
 }
