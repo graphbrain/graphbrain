@@ -12,6 +12,7 @@ import com.graphbrain.hgdb.VideoNode
 import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.UserNode
+import com.graphbrain.hgdb.EdgeType
 import com.graphbrain.hgdb.Vertex
 import com.graphbrain.searchengine.Indexing
 import com.graphbrain.searchengine.RiakSearchInterface
@@ -31,7 +32,7 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
   val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r)
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
   val gbNodeExt = """(http://)?graphbrain.com/node/""".r
-  val rTypeMapping = HashMap("is the opposite of"->"antonymy", "means the same as" -> "synonymy", "is a"->"subtype", "is a type of"->"subtype", "has a"->"possessive")
+  val rTypeMapping = HashMap("is the opposite of"->"gb_antonymy", "means the same as" -> "gb_synonymy", "is a"->"gb_subtype", "is a type of"->"gb_subtype", "has a"->"gb_possessive")
   //"is" needs to be combined with POS to determine whether it is a property, state, or object that is being referred to.
 
   
@@ -49,37 +50,55 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
 
     
     //Try segmenting with quote marks, then with known splitters
-    val parses = quoteChunk(inSentence, root) ++ logChunk(inSentence, root);
+    val parses = quoteChunkStrict(inSentence, root) ++ logChunk(inSentence, root);
     for (parse <- parses) {
-      val nodeTexts = parse._1;
-      val relation = parse._2;
 
+      val nodeTexts = parse._1;
+      val relation = parse._2.trim;
+      
       if(nodeTexts.length==2) {
-        val sourceV = TextNode("", "")
-        val targetV = TextNode("", "")
-        val relationV = Edge(ID.relation_id(relation, sourceV.id, targetV.id))
-        
-        
+
+        var relationV = EdgeType(id = ID.reltype_id(relation), label = relation)
+        println(relationV.id)
+
         root match {
           case a: TextNode =>
             //Check whether already in database - global and user; create new node if necessary
             user match {
               case Some(u:UserNode) => 
                 val userThingID = ID.usergenerated_id(u.username, a.text)
+                //val userRelationID = ID.usergenerated_id(u.username, relationV.id)
+                
                 if(nodeExists(userThingID)) {
                   if(nodeTexts(1)==a.text) {
-                    targets = getOrCreate(userThingID) :: targets   
+                    targets = a :: targets
+                    //targets = getOrCreate(userThingID) :: targets   
                   }
                   if(nodeTexts(0)==a.text) {
-                    sources = getOrCreate(userThingID) :: sources
+                    sources = root :: sources
+                    //sources = getOrCreate(userThingID) :: sources
                   }
                 }
+                val relationUV = EdgeType(id = ID.usergenerated_id(u.username, relationV.id), label = relation)
+                relations = getOrCreate(relationUV.id) :: relations
 
-               case _ => 
+              case _ => 
             }
             val wikiThingID = ID.wikipedia_id(a.text)
-            if(nodeExists(wikiThingID)) targets = getOrCreate(wikiThingID) :: targets
-              
+            if(nodeExists(wikiThingID))  {
+              val wikiNode = getOrCreate(wikiThingID)
+              wikiNode match {
+                case w: TextNode =>
+                  if(nodeTexts(1) == w.text) {
+                    targets = w :: targets
+                  }
+                  if(nodeTexts(0) == w.text) {
+                    sources = w :: sources
+                  }
+              }
+            }
+            
+            
               //Is there a wikipedia entry?
 
               //Is it a special content type?
@@ -91,6 +110,8 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
 
         sources = textToNode(nodeTexts(0)) ++ sources.reverse 
         targets = textToNode(nodeTexts(1)) ++ targets.reverse
+        relations = relationV :: relations;
+
             
         //Get the underlying relation type.
         //Check if it is in the known list.
@@ -99,10 +120,10 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
         //Otherwise create id
         
         //Placeholder so you still get something back
-        sources = sourceV :: sources
-        targets = targetV :: targets
+        //sources = sourceV :: sources
+        //targets = targetV :: targets
         
-        relations = relationV :: relations;
+        //relations = relationV :: relations;
         return (sources, relations, targets)
 
       }
@@ -195,74 +216,68 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
     return results.reverse;
   }
 
-  def parseToGraph(sentence: String, root: Vertex, numResults: Int, user: UserNode): List[(List[Vertex], Edge)]={
-
-  	var possibleParses = quoteChunk(sentence, root) ++ posChunk(sentence, root);
-    println("Possible parses: " + possibleParses.length)
-  	var possibleGraphs = findOrConvertToVertices(possibleParses, root, user, numResults);
-  	println("Possible graphs: " + possibleGraphs.length)
-    return possibleGraphs.take(numResults);
-  }
+  
 
 
-  def quoteChunk(sentence: String, root: Vertex): List[(List[String], String)]={
-  	//Find the quotes:
-  	var possibleParses: List[(List[String], String)] = List()
+  
+/**
+Only returns results where both source and target are in quotes, or where there is a known 
+splitter
+*/
+def quoteChunkStrict(sentence: String, root: Vertex): List[(List[String], String)] = {
+  var possibleParses: List[(List[String], String)] = List()
 
-  	
-  	quoteRegex.findFirstIn(sentence) match {
+  quoteRegex.findFirstIn(sentence) match {
 
-  		case Some(exp) => 
-  		
-  		//Make sure the quotation marks are not around the whole string:
-  		  //I'm assigning these in case we want to do something with them later, e.g. infer hypergraphs vs. multi-bi-graphs
-  		  val numQuotes = quoteRegex.findAllIn(sentence).length;
-  		  
-  		  var nonQuotes = quoteRegex.split(sentence);
-  		  var nqEdges:List[String] = List()
-  		  var numNonQuotes = 0;
-  		  
-  		  for (i <- 0 to nonQuotes.length-1) {
-  		  	val nq = nonQuotes(i)
-  		  	if(nq!="") {
-  		  		numNonQuotes+=1;
-  		  		nqEdges = nq::nqEdges;
-  		  	}
-  		  }
-  		  
-  		  if (exp.length == sentence.length) {
-	  	    return Nil;
-	  	  }
-  		  else if (numQuotes >=2 && numNonQuotes == numQuotes-1) {
-  		    val nodes = quoteRegex.findAllIn(sentence).toArray;
-  		    val edges = nqEdges.reverse.toArray
-  		    
-  		    for(i <- 0 to nodes.length-2) {
-  		  	  val current = nodes(i);
-  		  	  val next = nodes(i+1);
-  		  	  val edge = edges(i);
-  		  	  possibleParses = (List(current.replace("\"", "").trim, next.replace("\"", "").trim), edge) :: possibleParses; 
-  		  	  println("Quote Chunk: " + current + ", " + edge + ", " + next)
+    case Some(exp) => 
 
-  		    }
-  		    return possibleParses;
-		} 
-  		case None => return possibleParses;
-  	}
+
+      //I'm assigning these in case we want to do something with them later, e.g. infer hypergraphs vs. multi-bi-graphs
+      val numQuotes = quoteRegex.findAllIn(sentence).length;
+      var nonQuotes = quoteRegex.split(sentence);
+      var nqEdges:List[String] = List()
+      var numNonQuotes = 0;
+
+      for (i <- 0 to nonQuotes.length-1) {
+        val nq = nonQuotes(i)
+        if(nq!="") {
+          numNonQuotes+=1;
+          nqEdges = nq::nqEdges;
+        }
+      }
+      
+      //Make sure the quotation marks are not around the whole string:
+      if (exp.length == sentence.length) {
+          return Nil;
+      }
+      else if (numQuotes >= 2 && numNonQuotes == 1) {
+        val nodes = quoteRegex.findAllIn(sentence).toArray;
+        val edges = nqEdges.reverse.toArray
+          
+        for(i <- 0 to nodes.length-2) {
+          val current = nodes(i);
+          val next = nodes(i+1);
+          val edge = edges(i);
+          possibleParses = (List(current.replace("\"", "").trim, next.replace("\"", "").trim), edge) :: possibleParses; 
+          println("Quote Chunk: " + current + ", " + edge + ", " + next)
+
+        }
+        return possibleParses;
+      } 
+      
+      case None => return possibleParses;
+    }
     return possibleParses
 
-  }
-
-
-
+}
 def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
     val knownSplitters = rTypeMapping.keys
     var possibleParses: List[(List[String], String)] = List()
     for (splitter <- knownSplitters) {
       val nodes = sentence.split(splitter)
       if(nodes.length==2) {
-        val source = nodes(1)
-        val target = nodes(2)
+        val source = nodes(0).trim
+        val target = nodes(1).trim
         possibleParses = (List(source, target), rTypeMapping(splitter)) :: possibleParses
       }
     }
@@ -553,6 +568,14 @@ def nodeExists(id:String):Boolean =
     }
   }
 
+def parseToGraph(sentence: String, root: Vertex, numResults: Int, user: UserNode): List[(List[Vertex], Edge)]={
+
+    var possibleParses = quoteChunkStrict(sentence, root) ++ posChunk(sentence, root);
+    println("Possible parses: " + possibleParses.length)
+    var possibleGraphs = findOrConvertToVertices(possibleParses, root, user, numResults);
+    println("Possible graphs: " + possibleGraphs.length)
+    return possibleGraphs.take(numResults);
+  }
 
 def textToNode(text:String): List[Vertex] = {
     var results: List[Vertex] = List()
@@ -601,7 +624,55 @@ def textToNode(text:String): List[Vertex] = {
     results = TextNode(id = textPureID, text=text) :: results;
 
     return results.reverse;
+  }
+  def quoteChunk(sentence: String, root: Vertex): List[(List[String], String)]={
+    //Find the quotes:
+    var possibleParses: List[(List[String], String)] = List()
+
+    
+    quoteRegex.findFirstIn(sentence) match {
+
+      case Some(exp) => 
+      
+      //Make sure the quotation marks are not around the whole string:
+        //I'm assigning these in case we want to do something with them later, e.g. infer hypergraphs vs. multi-bi-graphs
+        val numQuotes = quoteRegex.findAllIn(sentence).length;
+        
+        var nonQuotes = quoteRegex.split(sentence);
+        var nqEdges:List[String] = List()
+        var numNonQuotes = 0;
+        
+        for (i <- 0 to nonQuotes.length-1) {
+          val nq = nonQuotes(i)
+          if(nq!="") {
+            numNonQuotes+=1;
+            nqEdges = nq::nqEdges;
+          }
+        }
+        
+        if (exp.length == sentence.length) {
+          return Nil;
+        }
+        else if (numQuotes >=2 && numNonQuotes == numQuotes-1) {
+          val nodes = quoteRegex.findAllIn(sentence).toArray;
+          val edges = nqEdges.reverse.toArray
+          
+          for(i <- 0 to nodes.length-2) {
+            val current = nodes(i);
+            val next = nodes(i+1);
+            val edge = edges(i);
+            possibleParses = (List(current.replace("\"", "").trim, next.replace("\"", "").trim), edge) :: possibleParses; 
+            println("Quote Chunk: " + current + ", " + edge + ", " + next)
+
+          }
+          return possibleParses;
+    } 
+      case None => return possibleParses;
+    }
+    return possibleParses
+
   }*/
+
 
 
 }
