@@ -50,7 +50,13 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
 
     
     //Try segmenting with quote marks, then with known splitters
-    val parses = quoteChunkStrict(inSentence, root) ++ logChunk(inSentence, root);
+    var parses = quoteChunkStrict(inSentence, root) ++ logChunk(inSentence, root);
+
+    //Only parse with POS if nothing returned:
+    if(parses == Nil) {
+      parses = posChunk(inSentence, root)
+    }
+
     for (parse <- parses) {
 
       val nodeTexts = parse._1;
@@ -97,13 +103,6 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
                   }
               }
             }
-            
-            
-              //Is there a wikipedia entry?
-
-              //Is it a special content type?
-
-
           case _ =>
         }
 
@@ -112,18 +111,7 @@ class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
         targets = textToNode(nodeTexts(1)) ++ targets.reverse
         relations = relationV :: relations;
 
-            
-        //Get the underlying relation type.
-        //Check if it is in the known list.
         
-
-        //Otherwise create id
-        
-        //Placeholder so you still get something back
-        //sources = sourceV :: sources
-        //targets = targetV :: targets
-        
-        //relations = relationV :: relations;
         return (sources, relations, targets)
 
       }
