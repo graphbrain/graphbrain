@@ -18,13 +18,13 @@ import com.graphbrain.searchengine.Indexing
 import com.graphbrain.searchengine.RiakSearchInterface
 import com.graphbrain.hgdb.ID
 
-class SentenceParser (storeName:String = "gb", tagger: Boolean = true) {
+class SentenceParser (storeName:String = "gb") {
 
   val quoteRegex = """(\")(.+?)(\")""".r
   val urlRegex = """([\d\w]+?:\/\/)?([\w\d\.\-]+)(\.\w+)(:\d{1,5})?(\/\S*)?""".r // See: http://stackoverflow.com/questions/8725312/javascript-regex-for-url-when-the-url-may-or-may-not-contain-http-and-www-words?lq=1
   val urlStrictRegex = """(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?""".r
   //"""http:\/\/.+""".r
-  val posTagger = if (tagger) new POSTagger() else null
+  val posTagger = new POSTagger()
   val verbRegex = """VB[A-Z]?""".r
   val adverbRegex = """RB[A-Z]?""".r
   val propositionRegex = """IN[A-Z]?""".r
