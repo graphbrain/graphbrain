@@ -450,7 +450,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, add, addReply, aiChatButtonPressed, aiChatReply, aiChatSubmit, aiChatVisible, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, initAddDialog, initAiChat, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, setLeftRight, setRightLeft, showAddDialog, showAiChat, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateAddInput, updateAddInput1, updateAddInput2, updateAddRelation, updateAddRelation1, updateAddRelation2, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, aiChatButtonPressed, aiChatReply, aiChatSubmit, aiChatVisible, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, initAiChat, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, showAiChat, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -940,7 +940,6 @@ function handler(event) {
       document.addEventListener('touchend', touchEnd);
       document.addEventListener('touchmove', touchMove);
       initAiChat();
-      initAddDialog();
       initRemoveDialog();
       $('#ai-chat-button').bind('click', aiChatButtonPressed);
       $('#removeButton').bind('click', removeButtonPressed);
@@ -2182,76 +2181,6 @@ function handler(event) {
         return submitting = false;
       }
     }
-  };
-
-  initAddDialog = function() {
-    var dialogHtml;
-    dialogHtml = $("<div class=\"modal hide\" id=\"addModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Add Connection</h3>\n  </div>\n  <form id=\"addForm\" action=\"/add\" method=\"post\">\n    <div class=\"modal-body\" id=\"addBody\">\n      <div id=\"leftRight\">\n        <div style=\"margin-bottom:20px\">\n          <div class=\"snodeDialog\"><div class=\"node\">" + nodes[rootNodeId]['text'] + "</div></div>\n    <div class=\"linkDialog\"><div class=\"linkText\" id=\"relationRight\">...</div><div class=\"linkArrow\" /></div>\n    <div class=\"snodeDialog\"><div class=\"node\" id=\"newNodeRight\">?</div></div>\n    <button id=\"rightLeftBtn\" class=\"btn btn-inverse\" style=\"margin:15px\" href=\"#\"><i class=\"icon-arrow-left icon-white\"></i></button>\n  </div>\n  <div style=\"clear:both\">\n    <label>Relation</label>\n    <input id=\"addRelation\" name=\"relation\" type=\"text\" placeholder=\"...\" style=\"width:90%\">\n    <label>Enter text or URL</label>\n    <input id=\"addInput\" name=\"textUrl\" type=\"text\" placeholder=\"?\" style=\"width:90%\">\n  </div>\n</div>\n<div id=\"rightLeft\">\n  <div style=\"margin-bottom:20px\">\n    <div class=\"snodeDialog\"><div class=\"node\">" + nodes[rootNodeId]['text'] + "</div></div>\n    <div class=\"linkDialog\"><div class=\"linkArrowLeft\" /><div class=\"linkText\" id=\"relationLeft\">...</div></div>\n    <div class=\"snodeDialog\"><div class=\"node\" id=\"newNodeLeft\">?</div></div>\n    <button id=\"leftRightBtn\" class=\"btn btn-inverse\" style=\"margin:15px\" href=\"#\"><i class=\"icon-arrow-right icon-white\"></i></button>\n  </div>\n  <div style=\"clear:both\">\n    <label>Enter text or URL</label>\n    <input id=\"addInput2\" name=\"textUrl\" type=\"text\" placeholder=\"?\" style=\"width:90%\">\n    <label>Relation</label>\n    <input id=\"addRelation2\" name=\"relation\" type=\"text\" placeholder=\"...\" style=\"width:90%\">\n  </div>\n</div>\n<input name=\"rootId\" type=\"hidden\" value='" + rootNodeId + "' />\n    <input id=\"direction\" name=\"direction\" type=\"hidden\" value=\"right\" />\n  </div>\n  <div class=\"modal-footer\">\n    </form>\n    <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n    <a id=\"addButton\" class=\"btn btn-primary\">Add</a>\n  </div>\n</form>\n</div>");
-    dialogHtml.appendTo('body');
-    setLeftRight();
-    $('#addInput').keyup(updateAddInput1);
-    $('#addRelation').keyup(updateAddRelation1);
-    $('#addInput2').keyup(updateAddInput2);
-    $('#addRelation2').keyup(updateAddRelation2);
-    $('#addButton').click(add);
-    $('#leftRightBtn').click(setLeftRight);
-    return $('#rightLeftBtn').click(setRightLeft);
-  };
-
-  setLeftRight = function() {
-    $('#leftRight').css('display', 'inline');
-    $('#rightLeft').css('display', 'none');
-    $('#direction').val('right');
-    return false;
-  };
-
-  setRightLeft = function() {
-    $('#leftRight').css('display', 'none');
-    $('#rightLeft').css('display', 'inline');
-    $('#direction').val('left');
-    return false;
-  };
-
-  showAddDialog = function() {
-    return $('#addModal').modal('show');
-  };
-
-  add = function() {
-    return $('#addForm').submit();
-  };
-
-  addReply = function(msg) {
-    return $('#signUpModal').modal('hide');
-  };
-
-  updateAddInput = function() {
-    $("#newNodeRight").html($("#addInput").val());
-    return $("#newNodeLeft").html($("#addInput").val());
-  };
-
-  updateAddRelation = function() {
-    $("#relationLeft").html($("#addRelation").val());
-    return $("#relationRight").html($("#addRelation").val());
-  };
-
-  updateAddInput1 = function(msg) {
-    $("#addInput2").val($("#addInput").val());
-    return updateAddInput();
-  };
-
-  updateAddRelation1 = function(msg) {
-    $("#addRelation2").val($("#addRelation").val());
-    return updateAddRelation();
-  };
-
-  updateAddInput2 = function(msg) {
-    $("#addInput").val($("#addInput2").val());
-    return updateAddInput();
-  };
-
-  updateAddRelation2 = function(msg) {
-    $("#addRelation").val($("#addRelation2").val());
-    return updateAddRelation();
   };
 
   aiChatVisible = false;

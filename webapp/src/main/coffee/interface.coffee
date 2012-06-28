@@ -103,7 +103,6 @@ initInterface = ->
         document.addEventListener('touchmove', touchMove)
 
         initAiChat()
-        initAddDialog()
         initRemoveDialog()
         $('#ai-chat-button').bind 'click', aiChatButtonPressed
         $('#removeButton').bind 'click', removeButtonPressed
