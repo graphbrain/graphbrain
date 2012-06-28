@@ -22,7 +22,6 @@ build = (callback) ->
     'coffee/Graph.coffee',
     'coffee/search.coffee',
     'coffee/user.coffee',
-    'coffee/add.coffee',
     'coffee/aichat.coffee',
     'coffee/remove.coffee',
     'coffee/main.coffee']
