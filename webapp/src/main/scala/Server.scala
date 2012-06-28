@@ -28,7 +28,7 @@ object Server {
 
   val store = new VertexStore("gb") with SimpleCaching with UserManagement with NodeManagement with UIOps with URLManagement
 
-  val sparser = new SentenceParser(tagger=false)
+  val sparser = new SentenceParser()
 
   val templateDirs = List(new java.io.File("/var/www/templates"))
   val scalateMode = "production"
