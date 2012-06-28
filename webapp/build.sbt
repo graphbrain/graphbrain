@@ -10,6 +10,8 @@ scalacOptions += "-deprecation"
 
 scalacOptions += "-unchecked"
 
+javaOptions in Revolver.reStart += "-Xmx1g"
+
 resolvers ++= Seq("Coda Hales Repository" at "http://repo.codahale.com")
 
 libraryDependencies ++= Seq(
