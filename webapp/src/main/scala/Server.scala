@@ -17,8 +17,6 @@ import com.graphbrain.hgdb.NodeManagement
 import com.graphbrain.hgdb.UIOps
 import com.graphbrain.hgdb.URLManagement
 import com.graphbrain.hgdb.UserNode
-import com.graphbrain.nlp.SentenceParser
-import com.graphbrain.nlp.POSTagger
 
 
 object Server {
@@ -27,8 +25,6 @@ object Server {
   var prod: Boolean = false
 
   val store = new VertexStore("gb") with SimpleCaching with UserManagement with NodeManagement with UIOps with URLManagement
-
-  val sparser = new SentenceParser()
 
   val templateDirs = List(new java.io.File("/var/www/templates"))
   val scalateMode = "production"
