@@ -7,9 +7,6 @@ object ID {
 
   def parts(id: String) = id.split('/').size
 
-  def systemId(id: String) = parts(id) == 1
-
-
   def usergenerated_id(userName:String, thing:String) =
 	  userName + "/" + thing
 

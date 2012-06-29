@@ -30,11 +30,6 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         val rolen = map.getOrElse("rolen", "").toString
         EdgeType(id, label, roles, rolen, edges, extra)
       }
-      // discontinued brain node type, just treat as TextNode
-      case "brn" => {
-        val text = map.getOrElse("name", "").toString
-        TextNode(id, text, edges, extra)
-      }
       case "txt" => {
         val text = map.getOrElse("text", "").toString
         TextNode(id, text, edges, extra)
@@ -285,7 +280,7 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
             for (edgeId <- node.edges)
               // TODO: temporary hack
               if (Edge.valid(edgeId) && (Edge.edgeType(edgeId) != "source"))
-                queue = queue ::: (for (pid <- Edge.participantIds(edgeId) if (!ID.systemId(pid))) yield (pid, depth + 1, curId)).toList
+                queue = queue ::: (for (pid <- Edge.participantIds(edgeId)) yield (pid, depth + 1, curId)).toList
         }
         catch {
           case _ =>
