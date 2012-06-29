@@ -1,7 +1,6 @@
 import org.scalatest.FunSuite
 import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.KeyNotFound
-import com.graphbrain.hgdb.Brain
 import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.ImageNode
@@ -38,12 +37,6 @@ trait BaseVertexStoreTests { this: FunSuite =>
   test("get EdgeType that does not exist [" + label + "]") {
     intercept[KeyNotFound] {
       store.getEdgeType("sdfh89g89gdf")
-    }
-  }
-
-  test("get Brain that does not exist [" + label + "]") {
-    intercept[KeyNotFound] {
-      store.getBrain("sdfh89g89gdf")
     }
   }
 
@@ -87,18 +80,6 @@ trait BaseVertexStoreTests { this: FunSuite =>
     intercept[KeyNotFound] {
       store.getUserEmailNode("sdfh89g89gdf")
     }
-  }
-
-  test("getBrainNode [" + label + "]") {
-    val inVertex = Brain("brain/0", "testing Brain")
-    store.remove(inVertex)
-    store.put(inVertex)
-    
-    val outVertex = store.getBrain("brain/0")
-    assert(outVertex.vtype == "brn")
-    assert(inVertex.id == outVertex.id)
-    assert(inVertex.name == outVertex.name)
-    assert(inVertex.access == "public")
   }
 
   test("getTextNode [" + label + "]") {
