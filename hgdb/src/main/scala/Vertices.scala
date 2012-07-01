@@ -67,9 +67,9 @@ case class EdgeType(id: String="", label: String="", roles: List[String]=List[St
 
 case class EdgeSet(id: String="", edges: Set[String]=Set[String](), extra: Int = -1) extends Vertex {
   override val vtype: String = "edgs"
-  override val edgesets: Set[String] = null
+  override val edgesets: Set[String] = Set[String]()
 
-  override def toMap: Map[String, Any] = toMapBase ++ Map(("extra" -> extra))
+  override def toMap: Map[String, Any] = toMapBase ++ Map(("edges" -> iter2str(edges)), ("extra" -> extra))
 
   // let's not let EdgeSets have EdgeSets - brains could explode
   def setEdgeSets(newEdgeSets: Set[String]) = this
@@ -79,9 +79,9 @@ case class EdgeSet(id: String="", edges: Set[String]=Set[String](), extra: Int =
 
 case class ExtraEdges(id: String="", edges: Set[String]=Set[String]()) extends Vertex {
   override val vtype: String = "ext"
-  override val edgesets: Set[String] = null
+  override val edgesets: Set[String] = Set[String]()
 
-  override def toMap: Map[String, Any] = toMapBase
+  override def toMap: Map[String, Any] = toMapBase ++ Map(("edges" -> iter2str(edges)))
 
   // no EdgeSets on ExtraEdges either
   def setEdgeSets(newEdgeSets: Set[String]) = this
