@@ -13,51 +13,56 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
   /** Gets Vertex by it's id */
   override def get(id: String): Vertex = {
     val map = backend.get(id)
-    val edges = VertexStore.str2iter(map.getOrElse("edges", "").toString).toSet
+    val edgesets = VertexStore.str2iter(map.getOrElse("edgesets", "").toString).toSet
     val vtype = map.getOrElse("vtype", "")
-    val extra = map.getOrElse("extra", "-1").toString.toInt
     vtype match {
       case "edg" => {
         val etype = map.getOrElse("etype", "").toString
-        Edge(id, etype, edges, extra)
+        Edge(id, etype, edgesets)
+      }
+      case "edgs" => {
+        val edges = VertexStore.str2iter(map.getOrElse("edges", "").toString).toSet
+        val extra = map.getOrElse("extra", "-1").toString.toInt
+        EdgeSet(id, edges, extra) 
       }
       case "ext" => {
-        ExtraEdges(id, edges, extra) 
+        val edges = VertexStore.str2iter(map.getOrElse("edges", "").toString).toSet
+        ExtraEdges(id, edges) 
       }
       case "edgt" => {
         val label = map.getOrElse("label", "").toString
         val roles = VertexStore.str2iter(map.getOrElse("roles", "").toString).toList
         val rolen = map.getOrElse("rolen", "").toString
-        EdgeType(id, label, roles, rolen, edges, extra)
+        EdgeType(id, label, roles, rolen, edgesets)
       }
       case "txt" => {
         val text = map.getOrElse("text", "").toString
-        TextNode(id, text, edges, extra)
+        TextNode(id, text, edgesets)
       }
       case "url" => {
         val url = map.getOrElse("url", "").toString
         val title = map.getOrElse("title", "").toString
-        URLNode(id, url, title, edges, extra)
+        URLNode(id, url, title, edgesets)
       }
       case "src" => {
-        SourceNode(id, edges, extra)
+        SourceNode(id, edgesets)
       }
       case "img" => {
         val url = map.getOrElse("url", "").toString
-        ImageNode(id, url, edges, extra)
+        ImageNode(id, url, edgesets)
       }
       case "vid" => {
         val url = map.getOrElse("url", "").toString
-        VideoNode(id, url, edges, extra)
+        VideoNode(id, url, edgesets)
       }
       case "svg" => {
         val svg = map.getOrElse("svg", "").toString
-        SVGNode(id, svg, edges, extra)
+        SVGNode(id, svg, edgesets)
       }
 
       case "rule" => {
         val rule = map.getOrElse("rule", "").toString
-        RuleNode(id, rule, edges, extra)
+        RuleNode(id, rule, edgesets)
       }
       case "usr" => {
         val username = map.getOrElse("username", "").toString
@@ -69,13 +74,12 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         val creationTs = map.getOrElse("creationTs", "").toString.toLong
         val sessionTs = map.getOrElse("sessionTs", "").toString.toLong
         val lastSeen = map.getOrElse("lastSeen", "").toString.toLong
-        val brains = VertexStore.str2iter(map.getOrElse("brains", "").toString).toSet
-        UserNode(id, username, name, email, pwdhash, role, session, creationTs, sessionTs, lastSeen, brains, edges, extra)
+        UserNode(id, username, name, email, pwdhash, role, session, creationTs, sessionTs, lastSeen, edgesets)
       }
       case "usre" => {
         val username = map.getOrElse("username", "").toString
         val email = map.getOrElse("email", "").toString
-        UserEmailNode(id, username, email, edges, extra)
+        UserEmailNode(id, username, email, edgesets)
       }
       case _  => throw WrongVertexType("unkown vtype: " + vtype)
     }
@@ -123,17 +127,23 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
   }
 
   def relExistsOnVertex(vertex: Vertex, edge: Edge): Boolean = {
-    if (vertex.edges.contains(edge.id))
+    val edgeSetId = ID.edgeSetId(vertex, edge)
+
+    if (!vertex.edgesets.contains(edgeSetId))
+      return false
+
+    val edgeSet = getEdgeSet(edgeSetId)
+    if (edgeSet.edges.contains(edge.id))
       return true
     // if extra < 0, no extra vertices exist
-    if (vertex.extra < 0)
+    if (edgeSet.extra < 0)
       return false
 
     // else let's start from extra = 1
     var extra = 1
     while (true) {
       val testVertex = try {
-        get(VertexStore.extraId(vertex.id, extra))
+        getExtraEdges(VertexStore.extraId(edgeSet.id, extra))
       }
       catch {
         case _ => null
@@ -150,26 +160,10 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
   }
 
   def relExists(edge: Edge): Boolean = {
-    var bestExtra = Int.MaxValue
-    var bestVertex: Vertex = null
-    for (id <- edge.participantIds) {
-      val vertex = get(id)
-      if (vertex.extra < bestExtra) {
-        bestExtra = vertex.extra
-        bestVertex = vertex
-      }
-    }
-
-    return relExistsOnVertex(bestVertex, edge)
+    val vertex = get(edge.participantIds(0))
+    return relExistsOnVertex(vertex, edge)
   }
 
-  /** Adds relationship to database
-    * 
-    * Participant nodes are updated with a reference to the edge
-    * in order to represent a new relationship on the database.
-    * maxEdges limit is respected. If the number of edges stored in a participant reaches
-    * this value, ExtraEdges vertices are created and updaed to store the edges.
-    */
   def addrel(edgeType: String, participants: Array[String]): Boolean = {
     val edge = new Edge(edgeType, participants)
 
@@ -178,32 +172,41 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
 
     for (id <- participants) {
       val vertex = get(id)
-      val origExtra = if (vertex.extra >= 0) vertex.extra else 0
+      val edgeSetId = ID.edgeSetId(vertex, edge)
+
+      // create reference to edgeset on vertex if it doesn't exit already
+      if (!vertex.edgesets.contains(edgeSetId)) {
+        update(vertex.setEdgeSets(vertex.edgesets + edgeSetId))
+      }
+
+      // add edge to appropriate edgeset or extraedges vertex
+      val edgeSet = getEdgeSet(edgeSetId)
+      val origExtra = if (edgeSet.extra >= 0) edgeSet.extra else 0
       var extra = origExtra
       var done = false
       while (!done) {
         if (extra == 0) {
-          if (vertex.edges.size < maxEdges) {
+          if (edgeSet.edges.size < maxEdges) {
             done = true;
-            update(vertex.setEdges(vertex.edges + edge.id).setExtra(extra))
+            update(edgeSet.setEdges(edgeSet.edges + edge.id).setExtra(extra))
           }
           else {
             extra += 1
           }
         }
         else {
-          val extraId = VertexStore.extraId(id, extra)
-          val extraEdges = getOrNull(extraId)
+          val extraId = VertexStore.extraId(edgeSetId, extra)
+          val extraEdges = getExtraEdgesOrNull(extraId)
           if (extraEdges == null) {
             done = true
             put(ExtraEdges(extraId, Set[String](edge.id)))
-            update(vertex.setExtra(extra))
+            update(edgeSet.setExtra(extra))
           }
           else if (extraEdges.edges.size < maxEdges) {
             done = true;
             update(extraEdges.setEdges(extraEdges.edges + edge.id))
             if (origExtra != extra) {
-              update(vertex.setExtra(extra))
+              update(edgeSet.setExtra(extra))
             }
           }
           else {
@@ -216,29 +219,56 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
     true
   }
 
-  /** Deletes relationship from database
-    * 
-    * Participant nodes are updated to drop the reference to the edge.
-    */
-  def delrel(edgeType: String, participants: Array[String]) = {
+  def isEdgeSetEmpty(edgeSetId: String, vertex: Vertex): Boolean = {
+    val edgeSet = getEdgeSet(edgeSetId)
+
+    // edgeset never had extra edges if edges == -1
+    if (edgeSet.extra < 0) {
+      return (edgeSet.edges.size == 0)
+    }
+    else {
+      var extra = 0
+      if (edgeSet.edges.size > 0) {
+        return false
+      }
+      while (true) {
+        extra += 1
+        val extraEdges = getExtraEdgesOrNull(VertexStore.extraId(edgeSetId, extra))
+        if (extraEdges == null) {
+          return true
+        }
+        else if (extraEdges.edges.size > 0) {
+          return false
+        }
+      }
+    }
+
+    // this point should never be reached
+    true
+  }
+
+  def delrel(edgeType: String, participants: Array[String]): Unit = {
     val edge = new Edge(edgeType, participants)
 
     for (nodeId <- participants) {
       val node = get(nodeId)
-      // vertex never had extra edges if edges == -1
-      if (node.extra < 0) {
-        update(node.setEdges(node.edges - edge.id))
+      val edgeSetId = ID.edgeSetId(node, edge)
+      val edgeSet = getEdgeSet(edgeSetId)
+
+      // edgeset never had extra edges if edges == -1
+      if (edgeSet.extra < 0) {
+        update(edgeSet.setEdges(edgeSet.edges - edge.id))
       }
       else {
         var done = false
         var extra = 0
-        if (node.edges.contains(edge.id)) {
+        if (edgeSet.edges.contains(edge.id)) {
           done = true
-          update(node.setEdges(node.edges - edge.id))
+          update(edgeSet.setEdges(edgeSet.edges - edge.id))
         }
         while (!done) {
           extra += 1
-          val extraEdges = get(VertexStore.extraId(nodeId, extra))
+          val extraEdges = getExtraEdges(VertexStore.extraId(edgeSetId, extra))
           // this should not happen
           if (extraEdges.id == "") {
 
@@ -249,81 +279,52 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
           }
         }
 
-        // update extra on participant if needed
-        // this idea is to reuse slots that get released on ExtraEdges associated with vertices
-        if (node.extra != extra) update(get(nodeId).setExtra(extra))
+        // update extra on participant's edgeset if needed
+        // this idea is to reuse slots that get released on ExtraEdges associated with EdgeSets
+        if (edgeSet.extra != extra) update(getEdgeSet(edgeSetId).setExtra(extra))
+      }
+
+      // remove from edgesets if empty
+      if (isEdgeSetEmpty(edgeSetId, node)) {
+        update(node.setEdgeSets(node.edgesets - edgeSetId))
       }
     }
-
-    edge
   }
-
   
-  def neighbors(nodeId: String, maxDepth: Int = 1): Set[(String, String)] = {
+  def neighbors(nodeId: String): Set[(String, String)] = {
     val nset = MSet[(String, String)]()
-    var count = 0
+    
+    // add root node
+    nset += ((nodeId, ""))
 
-    var queue = (nodeId, 0, "") :: Nil
-    while (!queue.isEmpty) {
-      val curId = queue.head._1
-      val depth = queue.head._2
-      val parent = queue.head._3
-      queue = queue.tail
-
-      if (!nset.exists(n => n._1 == curId)) {
-        try {
-          val node = get(curId)
-          nset += ((curId, parent))
-          count += 1
-
-          if (depth < maxDepth)
-            for (edgeId <- node.edges)
-              // TODO: temporary hack
-              if (Edge.valid(edgeId) && (Edge.edgeType(edgeId) != "source"))
-                queue = queue ::: (for (pid <- Edge.participantIds(edgeId)) yield (pid, depth + 1, curId)).toList
+    // add nodes connected to root
+    val node = get(nodeId)
+    for (edgeSetId <- node.edgesets) {
+      val edgeSet = getEdgeSet(edgeSetId)
+      for (edgeId <- edgeSet.edges) {
+        for (pid <- Edge.participantIds(edgeId)) {
+          if (pid != nodeId) {
+            nset += ((pid, nodeId))
+          }
         }
-        catch {
-          case _ =>
-        }
-      }
+      }      
     }
 
     nset.toSet
   }
 
-  /** Gets all Edges that are internal to a neighborhood 
-    * 
-    * An Edge is considered inernal if all it's participating Nodes are containes in the
-    * neighborhood.
-    */
-  def neighborEdges(nhood: Set[(String, String)]): Set[String] = {
-    val nhoodIds = for (n <- nhood) yield n._1
+  def neighborEdges(nodeId: String): Set[String] = {
     val eset = MSet[String]()
-    for (n <- nhood) {
-      val node = get(n._1)
-      for (edgeId <- node.edges)
-        if (Edge.valid(edgeId))
-          if ((Edge.participantIds(edgeId).forall(nhoodIds.contains(_))))
-            eset += edgeId
-    }
-    eset.toSet
-  }
 
-  /** Gets all Edges that are internal to a neighborhood and connected to the root 
-    * 
-    * An Edge is considered inernal if all it's participating Nodes are containes in the
-    * neighborhood.
-    */
-  def rootNeighborEdges(rootId: String, nhood: Set[(String, String)]): Set[String] = {
-    val nhoodIds = for (n <- nhood) yield n._1
-    val eset = MSet[String]()
-    for (n <- nhood) {
-      val node = get(n._1)
-      for (edgeId <- node.edges)
-        if ((Edge.participantIds(edgeId).contains(rootId)) &&
-          (Edge.participantIds(edgeId).forall(nhoodIds.contains(_))))
-          eset += edgeId
+    // add edges connected to root
+    val node = get(nodeId)
+    for (edgeSetId <- node.edgesets) {
+      val edgeSet = getEdgeSet(edgeSetId)
+      for (edgeId <- edgeSet.edges) {
+        eset += edgeId
+      }      
     }
+
     eset.toSet
   }
 }

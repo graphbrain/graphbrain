@@ -7,6 +7,11 @@ object ID {
 
   def parts(id: String) = id.split('/').size
 
+  def edgeSetId(vertex: Vertex, edge: Edge) = {
+    val pos = edge.participantIds.indexOf(vertex.id)
+    vertex.id + "/" + pos + "/" + edge.edgeType
+  }
+
   def usergenerated_id(userName:String, thing:String) =
 	  userName + "/" + thing
 

@@ -14,27 +14,11 @@ trait NodeManagement extends VertexStoreInterface {
   }
 
   def removeVertexAndEdges(vertex: Vertex) = {
-    var curEdgeList = vertex
-    
-    // iterate through extra edges
-    var extra = 1
-    var done = false
-    while (!done) {
-      // remove each edge
-      for (edge <- curEdgeList.edges) {
-        val edgeType = Edge.edgeType(edge)
-        val participants = Edge.participantIds(edge).toArray
-        delrel(edgeType, participants)
-      }
+    val nedges = neighborEdges(vertex.id)
 
-      val extraId = VertexStore.extraId(vertex.id, extra)
-      if (exists(extraId)) {
-        curEdgeList = get(extraId)
-        extra += 1
-      }
-      else {
-        done = true
-      }
+    // remove connected edges
+    for (edgeId <- nedges) {
+      delrel(edgeId)
     }
 
     // remove vertex
