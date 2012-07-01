@@ -114,7 +114,7 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
     var extra = 1
     var done = false
     while (!done){
-      val extraId = VertexStore.extraId(vertex.id, extra)
+      val extraId = ID.extraId(vertex.id, extra)
       if (exists(extraId)) {
         backend.remove(extraId)
         extra += 1
@@ -127,7 +127,7 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
   }
 
   def relExistsOnVertex(vertex: Vertex, edge: Edge): Boolean = {
-    val edgeSetId = ID.edgeSetId(vertex, edge)
+    val edgeSetId = ID.edgeSetId(vertex.id, edge.id)
 
     if (!vertex.edgesets.contains(edgeSetId))
       return false
@@ -143,7 +143,7 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
     var extra = 1
     while (true) {
       val testVertex = try {
-        getExtraEdges(VertexStore.extraId(edgeSet.id, extra))
+        getExtraEdges(ID.extraId(edgeSet.id, extra))
       }
       catch {
         case _ => null
@@ -164,18 +164,39 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
     return relExistsOnVertex(vertex, edge)
   }
 
+  def clearEdgeSet(vertex: Vertex, edgeSetId: String) = {
+    remove(EdgeSet(edgeSetId))
+
+    var extra = 1
+    var done = false
+    while (!done) {
+      val extraEdges = getExtraEdgesOrNull(ID.extraId(edgeSetId, extra))
+      if (extraEdges == null) {
+        done = true
+      }
+      else {
+        remove(extraEdges)
+        extra += 1
+      }
+    }
+  }
+
   def addrel(edgeType: String, participants: Array[String]): Boolean = {
     val edge = new Edge(edgeType, participants)
 
     if (relExists(edge))
       return false
 
+    put(edge)
+
     for (id <- participants) {
       val vertex = get(id)
-      val edgeSetId = ID.edgeSetId(vertex, edge)
+      val edgeSetId = ID.edgeSetId(vertex.id, edge.id)
 
-      // create reference to edgeset on vertex if it doesn't exit already
+      // create edgeset and edgeset reference on vertex if it doesn't exit already
       if (!vertex.edgesets.contains(edgeSetId)) {
+        clearEdgeSet(vertex, edgeSetId)
+        put(EdgeSet(edgeSetId))
         update(vertex.setEdgeSets(vertex.edgesets + edgeSetId))
       }
 
@@ -188,14 +209,14 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         if (extra == 0) {
           if (edgeSet.edges.size < maxEdges) {
             done = true;
-            update(edgeSet.setEdges(edgeSet.edges + edge.id).setExtra(extra))
+            update(edgeSet.setEdges(edgeSet.edges + edge.id))
           }
           else {
             extra += 1
           }
         }
         else {
-          val extraId = VertexStore.extraId(edgeSetId, extra)
+          val extraId = ID.extraId(edgeSetId, extra)
           val extraEdges = getExtraEdgesOrNull(extraId)
           if (extraEdges == null) {
             done = true
@@ -233,7 +254,7 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
       }
       while (true) {
         extra += 1
-        val extraEdges = getExtraEdgesOrNull(VertexStore.extraId(edgeSetId, extra))
+        val extraEdges = getExtraEdgesOrNull(ID.extraId(edgeSetId, extra))
         if (extraEdges == null) {
           return true
         }
@@ -252,7 +273,7 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
 
     for (nodeId <- participants) {
       val node = get(nodeId)
-      val edgeSetId = ID.edgeSetId(node, edge)
+      val edgeSetId = ID.edgeSetId(node.id, edge.id)
       val edgeSet = getEdgeSet(edgeSetId)
 
       // edgeset never had extra edges if edges == -1
@@ -268,7 +289,7 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         }
         while (!done) {
           extra += 1
-          val extraEdges = getExtraEdges(VertexStore.extraId(edgeSetId, extra))
+          val extraEdges = getExtraEdges(ID.extraId(edgeSetId, extra))
           // this should not happen
           if (extraEdges.id == "") {
 
@@ -335,12 +356,5 @@ object VertexStore {
   private def str2iter(str: String) = {
     (for (str <- str.split(',') if str != "")
       yield str.replace("$2", ",").replace("$1", "$")).toIterable
-  }
-
-  def extraId(id: String, pos: Int) = {
-    if (pos == 0)
-      id
-    else
-      id + "/" + pos
   }
 }

@@ -19,16 +19,5 @@ class VerticesTest extends FunSuite {
     val edge = new Edge("test", Array[String]("node0", "node1", "node2"))
     assert(edge.etype == "test")
   }
-
-  test("add edge") {
-    val node0 = TextNode("node0", "")
-    
-    val edge = new Edge("test", Array[String]("node0", "node1"))
-
-    val node = node0.setEdges(node0.edges + edge.id)
-
-    assert(node.edges == Set[String](edge.id))
-    assert(node.edges == Set[String]("test node0 node1"))
-  }
 }
 

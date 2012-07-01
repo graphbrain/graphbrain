@@ -1,7 +1,7 @@
 package com.graphbrain.hgdb
 
 
-trait UIOps extends NodeManagement {
+trait UIOps extends VertexStoreInterface {
 
   def removeVertexAndEdgesUI(vertex: Vertex) = {
     vertex match {
