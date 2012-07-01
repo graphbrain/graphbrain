@@ -7,7 +7,11 @@ abstract trait VertexStoreInterface {
   def remove(vertex: Vertex): Vertex
   def exists(id: String): Boolean
   def addrel(edgeType: String, participants: Array[String]): Boolean
-  def delrel(edgeType: String, participants: Array[String])
+  def delrel(edgeType: String, participants: Array[String]): Unit
+  def neighbors(nodeId: String): Set[(String, String)]
+  def neighborEdges(nodeId: String): Set[String]
+
+  def delrel(edgeId: String): Unit = delrel(Edge.edgeType(edgeId), Edge.participantIds(edgeId).toArray)
 
   def getOrNull(id: String): Vertex = {
     try {
@@ -25,10 +29,26 @@ abstract trait VertexStoreInterface {
   	}
   }
 
+  def getEdgeSet(id: String): EdgeSet = {
+    get(id) match {
+      case x: EdgeSet => x
+      case v: Vertex => throw WrongVertexType("on vertex: " + id + " (expected 'edgs', found : '" + v.vtype + "')")
+    }
+  }
+
   def getExtraEdges(id: String): ExtraEdges = {
     get(id) match {
       case x: ExtraEdges => x
       case v: Vertex => throw WrongVertexType("on vertex: " + id + " (expected 'ext', found : '" + v.vtype + "')")
+    }
+  }
+
+  def getExtraEdgesOrNull(id: String): ExtraEdges = {
+    try {
+      getExtraEdges(id)
+    }
+    catch {
+      case e: KeyNotFound => null
     }
   }
 
