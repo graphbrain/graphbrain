@@ -15,7 +15,7 @@ import scala.math
 
 class GraphInterface (val rootId: String, val store: VertexStore, val user: UserNode) {
   val neighbors = store.neighbors(rootId)
-  val edgeIds = store.rootNeighborEdges(rootId, neighbors)
+  val edgeIds = store.neighborEdges(rootId)
   val snodes = supernodes
   val links = visualLinks
   val nodesJSON = nodes2json
