@@ -14,6 +14,7 @@ import com.graphbrain.hgdb.SourceNode
 import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.SVGNode
 import com.graphbrain.hgdb.Vertex
+import com.graphbrain.hgdb.EdgeType
 import com.graphbrain.searchengine.Indexing
 
 class OutputDBWriter(storeName:String, source:String) {
@@ -32,10 +33,14 @@ class OutputDBWriter(storeName:String, source:String) {
 			val N1Wiki=ID.wikipedia_id(node1)
 			val N2Wiki=ID.wikipedia_id(node2)
 			
-			val n1 = TextNode(id=N1Wiki, text=URLDecoder.decode(node1, "UTF-8"));
-			val n2 = TextNode(id=N2Wiki, text=URLDecoder.decode(node2, "UTF-8"));
+			var n1 = TextNode(id=N1Wiki, text=URLDecoder.decode(node1, "UTF-8"));
+			var n2 = TextNode(id=N2Wiki, text=URLDecoder.decode(node2, "UTF-8"));
+
+			val relType = EdgeType(id = rel, label = rel);
+			getOrInsert(relType)
 			getOrInsert(n1)
 			getOrInsert(n2)
+			
 		
 			
 			//val n1RNode = URLNode(ID.url_id(wikiURL+N1Wiki), wikiURL+N1Wiki)
