@@ -30,16 +30,38 @@ class OutputDBWriter(storeName:String, source:String) {
 		try{
 			val rel=ID.relation_id(relin);
 			val sourceNode=store.getSourceNode(ID.source_id(source))
+			val global1 = ID.text_id(node1, "1")
+			val global2 = ID.text_id(node2, "1")
+			val globalRelType = ID.text_id(rel, "1")
+			val userNode1 = ID.user_id(global1, "dbpedia")
+			val userNode2 = ID.user_id(global2, "dbpedia")
+			val userRelType = ID.user_id(globalRelType, "dbpedia")
+
 			val N1Wiki=ID.wikipedia_id(node1)
 			val N2Wiki=ID.wikipedia_id(node2)
 			
-			var n1 = TextNode(id=N1Wiki, text=URLDecoder.decode(node1, "UTF-8"));
-			var n2 = TextNode(id=N2Wiki, text=URLDecoder.decode(node2, "UTF-8"));
+			val nw1 = TextNode(id=N1Wiki, text=URLDecoder.decode(node1, "UTF-8"));
+			val nw2 = TextNode(id=N2Wiki, text=URLDecoder.decode(node2, "UTF-8"));
 
-			val relType = EdgeType(id = rel, label = rel);
+			val ng1 = TextNode(id = global1, text=URLDecoder.decode(node1, "UTF-8"))
+			val ng2 = TextNode(id = global2, text=URLDecoder.decode(node2, "UTF-8"))
+			val rg = TextNode(id = globalRelType, text=URLDecoder.decode(relin, "UTF-8"))
+			
+			val ug1 = TextNode(id = userNode1, text=URLDecoder.decode(node1, "UTF-8"))
+			val ug2 = TextNode(id = userNode2, text=URLDecoder.decode(node2, "UTF-8"))
+			val ru = TextNode(id = userRelType, text=URLDecoder.decode(relin, "UTF-8"))
+
+
+			val relType = EdgeType(id = ID.reltype_id(rel), label = rel);
 			getOrInsert(relType)
-			getOrInsert(n1)
-			getOrInsert(n2)
+			getOrInsert(nw1)
+			getOrInsert(nw2)
+			getOrInsert(ng1)
+			getOrInsert(ng2)
+			getOrInsert(rg)
+			getOrInsert(ug1)
+			getOrInsert(ug2)
+			getOrInsert(ru)
 			
 		
 			
@@ -50,16 +72,16 @@ class OutputDBWriter(storeName:String, source:String) {
 			//getOrInsert(n2RNode)			
 			//store.addrel("en_wikipage", Array[String](n1RNode.id, n1.id))
 			//store.addrel("en_wikipage", Array[String](n2RNode.id, n2.id))
-			store.addrel("source", Array[String](sourceNode.id, n1.id))
-			store.addrel("source", Array[String](sourceNode.id, n2.id))
+			store.addrel("source", Array[String](sourceNode.id, nw1.id))
+			store.addrel("source", Array[String](sourceNode.id, nw2.id))
 		
 						
 			//The id for the relationship between two nodes
-			val relID = getRelID(rel, n1.id, n2.id)
+			//val relID = getRelID(rel, ng1.id, ng2.id)
 		
-
-			store.addrel(rel, Array[String](ID.wikipedia_id(node1), ID.wikipedia_id(node2)))
-		
+			//Relationship at global level
+			store.addrel(rel, Array[String](ng1.id, ng2.id))
+			
 			/*
 			if(resource!="")
 			{

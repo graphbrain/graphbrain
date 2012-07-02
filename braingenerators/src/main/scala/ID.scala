@@ -2,6 +2,8 @@ package com.graphbrain.braingenerators
 
 object ID {
 
+  def sanitize(str: String): String = str.toLowerCase.replace("/", "_").replace(" ", "_")
+
   def url_id(url:String):String={
     val sanitized_url = url.toLowerCase.replace("/", "_")
     return "web/"+sanitized_url
@@ -30,8 +32,16 @@ object ID {
   }
 
   def text_id(thing:String, prefix:String):String={	
-	return prefix+"/"+thing;
+	return prefix+"/"+sanitize(thing);
   }
+
+  def user_id(thingID:String, user:String): String = {
+    return user + "/" + thingID
+  }
+
+  def reltype_id(relT:String): String =
+    "rtype/" + sanitize(relT)
+
 
   def local_id(url:String):String={
 	val sanitized_url = url.toLowerCase.replace("/", "_")
