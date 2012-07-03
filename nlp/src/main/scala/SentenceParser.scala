@@ -32,7 +32,7 @@ class SentenceParser (storeName:String = "gb") {
   val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r)
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
   val gbNodeExt = """(http://)?graphbrain.com/node/""".r
-  val rTypeMapping = HashMap("is the opposite of"->"gb_antonymy", "means the same as" -> "gb_synonymy", "is a"->"gb_subtype", "is a type of"->"gb_subtype", "has a"->"gb_possessive")
+  val rTypeMapping = HashMap("is the opposite of"->"gb_antonymy", "means the same as" -> "gb_synonymy", "is a"->"gb_subtype", "is an"->"gb_subtype",  "is a type of"->"gb_subtype", "has a"->"gb_possessive")
   //"is" needs to be combined with POS to determine whether it is a property, state, or object that is being referred to.
 
   
@@ -40,7 +40,7 @@ class SentenceParser (storeName:String = "gb") {
   val si = RiakSearchInterface("gbsearch")
   
   val store = new VertexStore(storeName) with Indexing with BurstCaching
-  val anon_username = "gb_anon"
+  
 
   //Only handles two-node graphs at the moment
   def parseSentence(inSentence: String, root: Vertex  = TextNode(id="GBNoneGB", text="GBNoneGB"), user: Option[UserNode]=None): (List[Vertex], List[Vertex], List[Vertex]) = {
@@ -65,7 +65,7 @@ class SentenceParser (storeName:String = "gb") {
       if(nodeTexts.length==2) {
 
         var relationV = EdgeType(id = ID.reltype_id(relation), label = relation)
-        println(relationV.id)
+        //println(relationV.id)
 
         root match {
           case a: TextNode =>
@@ -81,12 +81,12 @@ class SentenceParser (storeName:String = "gb") {
                     //targets = getOrCreate(userThingID) :: targets   
                   }
                   if(nodeTexts(0)==a.text) {
-                    sources = root :: sources
+                    sources = a :: sources
                     //sources = getOrCreate(userThingID) :: sources
                   }
                 }
-                val relationUV = EdgeType(id = ID.usergenerated_id(u.username, relationV.id), label = relation)
-                relations = getOrCreate(relationUV.id) :: relations
+                //val relationUV = EdgeType(id = ID.usergenerated_id(u.username, relationV.id), label = relation)
+                //relations = relationUV :: relations
 
               case _ => 
             }
@@ -105,14 +105,27 @@ class SentenceParser (storeName:String = "gb") {
             }
           case _ =>
         }
+        user match {
+          case Some(u:UserNode) =>
+
+            if(u.username == nodeTexts(1) || u.name == nodeTexts(1)) {
+              targets = u :: targets
+            }
+            if(u.username == nodeTexts(0) || u.name == nodeTexts(0)) {
+              sources = u :: sources
+            }
+          case _ =>
+        }
 
 
-        sources = textToNode(nodeTexts(0)) ++ sources.reverse 
-        targets = textToNode(nodeTexts(1)) ++ targets.reverse
+
+        sources = sources.reverse ++ textToNode(nodeTexts(0))
+        targets = targets.reverse ++ textToNode(nodeTexts(1))
         relations = relationV :: relations;
 
+
         
-        return (sources, relations, targets)
+        return (sources, relations.reverse, targets)
 
       }
       else {
@@ -137,7 +150,7 @@ class SentenceParser (storeName:String = "gb") {
   
 
   def textToNode(text:String, node: Vertex= TextNode(id="GBNoneGB", text="GBNoneGB"), user:Option[Vertex]=None): List[Vertex] = {
-    var userName = anon_username;
+    var userName = "";
     
     user match {
         case Some(u:UserNode) => userName = u.username;
@@ -198,8 +211,26 @@ class SentenceParser (storeName:String = "gb") {
     //Add the wikipedia node as a possible entry if found
     if(nodeExists(wikiID)) {results = getOrCreate(wikiID) :: results}
     
-    val textPureID = ID.text_id(text)
-    results = TextNode(id = ID.usergenerated_id(userName, textPureID), text=text) :: results;
+    val textPureID = ID.text_id(text, 1)
+    if(userName==""){
+      results = TextNode(id = textPureID, text=text) :: results;
+      var i = 2;
+      while(nodeExists(ID.text_id(text, i)))
+      {
+        results = TextNode(id = ID.text_id(text, i), text=text) :: results;
+        i +=1;
+        
+      }
+    }
+    else {
+      results = TextNode(id = ID.usergenerated_id(userName, textPureID), text=text) :: results;
+      var i=2
+      while(nodeExists(ID.usergenerated_id(userName, ID.text_id(text, i))))
+      {
+        results = TextNode(id = ID.usergenerated_id(userName, ID.text_id(text, i))) :: results
+      }
+    }
+    
     //if(text!=textPureID) {results = TextNode(id = ID.usergenerated_id(userName, textPureID), text=text) :: results;}
     return results.reverse;
   }
@@ -245,7 +276,8 @@ def quoteChunkStrict(sentence: String, root: Vertex): List[(List[String], String
         for(i <- 0 to nodes.length-2) {
           val current = nodes(i);
           val next = nodes(i+1);
-          val edge = edges(i);
+          var edge = getBaseRel(edges(i).trim);
+
           possibleParses = (List(current.replace("\"", "").trim, next.replace("\"", "").trim), edge) :: possibleParses; 
           println("Quote Chunk: " + current + ", " + edge + ", " + next)
 
@@ -272,6 +304,14 @@ def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
     return possibleParses.reverse;
   }
 
+  def getBaseRel(rel: String): String = {
+    for (key <- rTypeMapping.keys) {
+      if(key == rel) {
+        return rTypeMapping(key)
+      }
+    }
+    return rel;
+  }
 
   def posChunk(sentence: String, root: Vertex): List[(List[String], String)]={
     val taggedSentence = posTagger.tagText(sentence)
@@ -501,7 +541,7 @@ def removeDeterminers(possibleParses: List[(List[String], String)], rootNode: Ve
 }
 
 
-def getOrCreate(id:String, user:Vertex = UserNode(anon_username, anon_username), textString:String = "", root:Vertex = TextNode("", "")):Vertex={
+def getOrCreate(id:String, user:Vertex = UserNode("", ""), textString:String = "", root:Vertex = TextNode("", "")):Vertex={
   if(id != "") {
     try{
       return store.get(id);
@@ -671,15 +711,28 @@ object SentenceParser {
   	  val sentenceParser = new SentenceParser()
       
       val rootNode = TextNode(id=ID.usergenerated_id("chihchun_chen", "toad"), text="toad")
-      val userNode = UserNode("chihchun_chen", "chihchun_chen", "Chih-Chun Chen")
-  	  val sentence1 = "\"Chih-Chun\" is a \"toad\""
+      val userNode = UserNode(id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
+  	  val sentence1 = "\"Chih-Chun Chen\" is a \"toad\""
   	  val sentence2 = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
       val videoURL1 = "http://www.youtube.com/watch?v=_e_zcoDDiwc&feature=related"
       val videoURL2 = "http://vimeo.com/34948855"
       val videoURL3 = "http://www.dailymotion.com/video/xmehe4_millenium-tv_videogames"
       val imageURL1 = "http://www.flickr.com/photos/londonmummy/471232270/"
       val imageURL2 = "http://en.wikipedia.org/wiki/File:Crohook.jpg"
-  	  //println("From main: " + sentence1)
+  	  println("From main: " + sentence1)
+      val mParses = sentenceParser.parseSentence(sentence1, user=Some(userNode))
+      val mSources = mParses._1;
+      val mRelations = mParses._2;
+      val mTargets = mParses._3;
+      for(mSource <- mSources) {
+        println("Source: " + mSource.id)
+      }
+      for(mRelation <- mRelations) {
+        println("Relation: " + mRelation.id)
+      }
+      for(mTarget <- mTargets) {
+        println("Target: " + mTarget.id)
+      }
       //sentenceParser.parseSentence(sentence1)
       //println("From main with root: " + sentence1)
       //sentenceParser.parseSentence(sentence1, rootNode)
