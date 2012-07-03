@@ -34,8 +34,8 @@ object ID {
   def video_id(video_name:String, video_url:String="") =
 	  "video/" + sanitize(video_name) + "/" + sanitize(video_url)
 
-  def text_id(thing:String):String =
-	  sanitize(thing)
+  def text_id(thing:String, which:Int=1):String =
+	  which.toString + "/" + sanitize(thing)
 
   def relation_id(relation:String):String =
 	  sanitize(relation)
@@ -60,6 +60,7 @@ object ID {
     val title = wptitle.toLowerCase.replace(" ", "_")
     return "wikipedia/"+title
   }
+
 
 
 }
