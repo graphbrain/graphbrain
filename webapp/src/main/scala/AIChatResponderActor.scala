@@ -21,6 +21,7 @@ class AIChatResponderActor() extends Actor {
   override protected def receive = {
     case Sentence(sentence, root, user, responder) =>
       val parse = sparser.parseSentence(sentence, root, Option(user))
+
       println("=> ORIG:")
       for (v <- parse._1)
       	println(v.id)
@@ -30,6 +31,13 @@ class AIChatResponderActor() extends Actor {
       println("=> TARG:")
       for (v <- parse._3)
       	println(v.id)
+
+      val node1 = parse._1(0)
+      val node2 = parse._3(0)
+      val relation = parse._2(0).id
+
+      Server.store.createAndConnectVertices(relation, Array(node1, node2))
+
       responder.respond(PlainTextContent ~> ResponseString(sentence))
   }
 }
