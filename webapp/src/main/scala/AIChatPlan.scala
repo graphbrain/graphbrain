@@ -7,7 +7,6 @@ import unfiltered.Cookie
 import com.codahale.logula.Logging
 import akka.actor.{ Actor, Props }
 
-import com.graphbrain.nlp.AIChatResponderActor
 
 object AIChatPlan extends async.Plan with ServerErrorResponse with Logging {
   val responderActor = Server.actorSystem.actorOf(Props(new AIChatResponderActor()))

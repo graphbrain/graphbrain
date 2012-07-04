@@ -1,4 +1,4 @@
-package com.graphbrain.nlp
+package com.graphbrain.webapp
 
 import akka.actor.{ Actor, Props }
 import org.jboss.netty.handler.codec.http.HttpResponse
