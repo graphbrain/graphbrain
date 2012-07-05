@@ -52,7 +52,7 @@ class OutputDBWriter(storeName:String, source:String) {
 			val ru = TextNode(id = userRelType, text=URLDecoder.decode(relin, "UTF-8"))
 
 
-			val relType = EdgeType(id = ID.reltype_id(rel), label = rel);
+			val relType = EdgeType(id = ID.reltype_id(rel, 1), label = rel);
 			getOrInsert(relType)
 			getOrInsert(nw1)
 			getOrInsert(nw2)
