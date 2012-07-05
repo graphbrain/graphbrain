@@ -40,7 +40,7 @@ object ID {
   }
 
    def reltype_id(relT:String, which:Int=1): String =
-    "rtype/" which.toString + "/" + sanitize(relT)
+    "rtype/" + which.toString + "/" + sanitize(relT)
 
 
   def local_id(url:String):String={
