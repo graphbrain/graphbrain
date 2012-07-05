@@ -39,8 +39,8 @@ object ID {
     return user + "/" + thingID
   }
 
-  def reltype_id(relT:String): String =
-    "rtype/" + sanitize(relT)
+   def reltype_id(relT:String, which:Int=1): String =
+    "rtype/" which.toString + "/" + sanitize(relT)
 
 
   def local_id(url:String):String={

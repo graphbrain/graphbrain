@@ -46,8 +46,8 @@ object ID {
     return tokens.reduceLeft(_+ " " +_)
   }
 
-  def reltype_id(relT:String): String =
-    "rtype/" + sanitize(relT)
+  def reltype_id(relT:String, which:Int=1): String =
+    "rtype/" which.toString + "/" + sanitize(relT)
 
   def rule_id(rule_name: String): String =
     "rule/" + sanitize(rule_name) 
