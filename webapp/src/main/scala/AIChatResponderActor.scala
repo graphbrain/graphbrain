@@ -1,9 +1,10 @@
 package com.graphbrain.webapp
 
-import akka.actor.{ Actor, Props }
+import akka.actor.{Actor, Props}
 import org.jboss.netty.handler.codec.http.HttpResponse
 import unfiltered.Async
-import unfiltered.response.{ PlainTextContent, ResponseString }
+import unfiltered.response.{JsonContent, ResponseString}
+import com.codahale.jerkson.Json._
 
 import com.graphbrain.hgdb.Vertex
 import com.graphbrain.hgdb.UserNode
@@ -20,24 +21,40 @@ class AIChatResponderActor() extends Actor {
 
   override protected def receive = {
     case Sentence(sentence, root, user, responder) =>
-      val parse = sparser.parseSentence(sentence, root, Option(user))
+      var replySentence = "Sorry, I don't understand."
+      var goto = ""
 
-      println("=> ORIG:")
-      for (v <- parse._1)
-      	println(v.id)
-      println("=> REL:")
-      for (v <- parse._2)
-      	println(v.id)
-      println("=> TARG:")
-      for (v <- parse._3)
-      	println(v.id)
+      try {
+        val parse = sparser.parseSentence(sentence, root, Option(user))
 
-      val node1 = parse._1(0)
-      val node2 = parse._3(0)
-      val relation = parse._2(0).id
+        if ((parse._1.length >= 1) && (parse._2.length >= 1) && (parse._3.length >= 1)) {
 
-      Server.store.createAndConnectVertices(relation, Array(node1, node2))
+          println("=> ORIG:")
+          for (v <- parse._1)
+      	    println(v.id)
+          println("=> REL:")
+          for (v <- parse._2)
+      	    println(v.id)
+          println("=> TARG:")
+          for (v <- parse._3)
+      	    println(v.id)
 
-      responder.respond(PlainTextContent ~> ResponseString(sentence))
+          val node1 = parse._1(0)
+          val node2 = parse._3(0)
+          val relation = parse._2(0).id
+
+          Server.store.createAndConnectVertices(relation, Array(node1, node2))
+
+          replySentence = "This fact was recorded: '" + sentence + "'"
+          goto = root.id
+        }
+      }
+      catch {
+        case _ => {}
+      }
+
+      val replyMap = Map(("sentence" -> replySentence), ("goto" -> goto))
+
+      responder.respond(JsonContent ~> ResponseString(generate(replyMap)))
   }
 }

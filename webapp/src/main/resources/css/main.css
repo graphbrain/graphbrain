@@ -155,6 +155,9 @@ html, body {
     padding-left: 10px;
     padding-right: 10px;
     visibility: hidden;
+    height: 200px;
+    overflow: auto;
+    resize: vertical;
 }
 
 #ai-chat-input {

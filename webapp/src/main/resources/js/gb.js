@@ -450,7 +450,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, aiChatButtonPressed, aiChatReply, aiChatSubmit, aiChatVisible, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, initAiChat, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, showAiChat, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatButtonPressed, aiChatReply, aiChatSubmit, aiChatVisible, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, initAiChat, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, showAiChat, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -2192,10 +2192,17 @@ function handler(event) {
     return $('#ai-chat-form').submit(aiChatSubmit);
   };
 
+  aiChatAddLine = function(line) {
+    var height;
+    $('#ai-chat-log').append(line);
+    height = $('#ai-chat')[0].scrollHeight;
+    return $('#ai-chat').scrollTop(height);
+  };
+
   aiChatSubmit = function(msg) {
     var sentence;
     sentence = $('#ai-chat-input').val();
-    $('#ai-chat-log').append('<br />you: ' + sentence);
+    aiChatAddLine('<br />you: ' + sentence);
     $('#ai-chat-input').val('');
     $.ajax({
       type: "POST",
@@ -2208,7 +2215,12 @@ function handler(event) {
   };
 
   aiChatReply = function(msg) {
-    return $('#ai-chat-log').append('<br />GraphBrain: ' + msg);
+    var reply;
+    reply = $.parseJSON(msg);
+    aiChatAddLine('<br />GraphBrain: ' + reply['sentence']);
+    if (reply['goto'] !== '') {
+      return window.location.href = '/node/' + reply['goto'];
+    }
   };
 
   showAiChat = function() {

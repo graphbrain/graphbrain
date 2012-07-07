@@ -10,9 +10,14 @@ initAiChat = () ->
 	$('#ai-chat').html(html)
 	$('#ai-chat-form').submit(aiChatSubmit)
 
+aiChatAddLine = (line) ->
+  $('#ai-chat-log').append(line)
+  height = $('#ai-chat')[0].scrollHeight;
+  $('#ai-chat').scrollTop(height);
+
 aiChatSubmit = (msg) ->
   sentence = $('#ai-chat-input').val()
-  $('#ai-chat-log').append('<br />you: ' + sentence)
+  aiChatAddLine('<br />you: ' + sentence)
   $('#ai-chat-input').val('')
   $.ajax({
     type: "POST",
@@ -24,7 +29,11 @@ aiChatSubmit = (msg) ->
   false
 
 aiChatReply = (msg) ->
-  $('#ai-chat-log').append('<br />GraphBrain: ' + msg)
+  reply = $.parseJSON(msg)
+  aiChatAddLine('<br />GraphBrain: ' + reply['sentence'])
+
+  if reply['goto'] != ''
+    window.location.href = '/node/' + reply['goto']
 
 showAiChat = () ->
   $('#ai-chat').css('visibility', 'visible')
