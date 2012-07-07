@@ -34,16 +34,40 @@ class SentenceParser (storeName:String = "gb") {
   val gbNodeExt = """(http://)?graphbrain.com/node/""".r
   val rTypeMapping = HashMap("is the opposite of"->"gb_antonymy", "means the same as" -> "gb_synonymy", "is a"->"gb_subtype", "is an"->"gb_subtype",  "is a type of"->"gb_subtype", "has a"->"gb_possessive")
   //"is" needs to be combined with POS to determine whether it is a property, state, or object that is being referred to.
-
+  val questionWords = List("do", "can", "has", "did", "where", "when", "who", "why", "will", "how")
   
 
   val si = RiakSearchInterface("gbsearch")
   
   val store = new VertexStore(storeName) with Indexing with BurstCaching
   
+  def isQuestion(text:String): Boolean = {
+    //Quite stringent - checks to see whether entire text is a question i.e. starts with a question mark, ends with a question mark.
+    for(qWord <- questionWords) {
+      if(text.toLowerCase.startsWith(qWord)) {
+
+        if(text.endsWith("?")) {
+          return true
+        }
+      }
+    }
+    return false;
+  }
 
   //Only handles two-node graphs at the moment
-  def parseSentence(inSentence: String, root: Vertex  = TextNode(id="GBNoneGB", text="GBNoneGB"), user: Option[UserNode]=None): (List[Vertex], List[Vertex], List[Vertex]) = {
+  def parseSentence(inSent: String, root: Vertex  = TextNode(id="GBNoneGB", text="GBNoneGB"), user: Option[UserNode]=None): (List[Vertex], List[Vertex], List[Vertex]) = {
+    
+    var inSentence = inSent;
+
+    if(isQuestion(inSentence)) {
+      throw QuestionException("Sorry, I don't understand questions yet.")
+    }
+
+    //Only remove full stop or comma at the end of sentence (allow other punctuation since likely to be part of proper name e.g. film titles)
+    if(inSentence.endsWith(".")) {
+      inSentence = inSentence.slice(0, inSentence.length-1)
+    }
+
     var sources: List[Vertex] = List()
     var relations: List[Vertex] = List()
     var targets: List[Vertex] = List()
@@ -235,7 +259,9 @@ class SentenceParser (storeName:String = "gb") {
     return results.reverse;
   }
 
-  
+  def removeEndPunctuation(text: String) = {
+
+  }
 
 
   
