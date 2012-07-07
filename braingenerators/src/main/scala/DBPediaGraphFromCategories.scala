@@ -19,6 +19,7 @@ object DBPediaGraphFromCategories {
   val sourceName = "dbpedia/instancetypes"
   val sourceURL = "http://downloads.dbpedia.org/3.7/en/instance_types_en.nq.bz2"
   val dataFile = "instance_types_en.nq"
+  val vowels = List("a", "e", "i", "o", "u")
 
   /*
   Gets a qtuple and returns a 4-tuple with (node, relation, node, source)
@@ -30,6 +31,7 @@ object DBPediaGraphFromCategories {
 
     val category = getCategory(qTuple)
     val wikiSource = wikiRegex.findAllIn(qTuple).toArray
+    
 
     if(thing.length==1&&category.length>=1)
     {
@@ -37,14 +39,24 @@ object DBPediaGraphFromCategories {
       if(Formatting.isList(subj)){return ("","","","")}
       if(wikiSource.length==1)
       {
-        return (subj, "gb_subtype", category, wikiSource(0));
+        if(isVowel(category(0).toString)) return (subj, "is_an", category, wikiSource(0)) else return (subj, "is_a", category, wikiSource(0))
+        
       }
       else{
-        return (subj,"gb_subtype",category,"")
+        if(isVowel(category(0).toString)) return (subj,"is_an",category,"") else return (subj, "is_a", category, "")
       }
     }
     return ("", "", "", "")
     
+  }
+
+  private def isVowel(text:String): Boolean = {
+    for(v <- vowels) {
+      if(text.toLowerCase==v) {
+        return true
+      }
+    }
+    return false;
   }
 
   private def getCategory(qTuple:String):String=
