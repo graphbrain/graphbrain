@@ -39,7 +39,7 @@ object ID {
     return user + "/" + thingID
   }
 
-   def reltype_id(relT:String, which:Int=1): String =
+  def reltype_id(relT:String, which:Int=1): String =
     "rtype/" + which.toString + "/" + sanitize(relT)
 
 

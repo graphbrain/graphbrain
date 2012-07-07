@@ -32,7 +32,7 @@ class OutputDBWriter(storeName:String, source:String) {
 			val sourceNode=store.getSourceNode(ID.source_id(source))
 			val global1 = ID.text_id(node1, "1")
 			val global2 = ID.text_id(node2, "1")
-			val globalRelType = ID.text_id(rel, "1")
+			val globalRelType = ID.reltype_id(rel, 1)
 			val userNode1 = ID.user_id(global1, "dbpedia")
 			val userNode2 = ID.user_id(global2, "dbpedia")
 			val userRelType = ID.user_id(globalRelType, "dbpedia")
@@ -45,20 +45,19 @@ class OutputDBWriter(storeName:String, source:String) {
 
 			val ng1 = TextNode(id = global1, text=URLDecoder.decode(node1, "UTF-8"))
 			val ng2 = TextNode(id = global2, text=URLDecoder.decode(node2, "UTF-8"))
-			val rg = TextNode(id = globalRelType, text=URLDecoder.decode(relin, "UTF-8"))
+			val relType = EdgeType(id = globalRelType, label = rel);
 			
 			val ug1 = TextNode(id = userNode1, text=URLDecoder.decode(node1, "UTF-8"))
 			val ug2 = TextNode(id = userNode2, text=URLDecoder.decode(node2, "UTF-8"))
 			val ru = TextNode(id = userRelType, text=URLDecoder.decode(relin, "UTF-8"))
 
 
-			val relType = EdgeType(id = ID.reltype_id(rel, 1), label = rel);
+			
 			getOrInsert(relType)
 			getOrInsert(nw1)
 			getOrInsert(nw2)
 			getOrInsert(ng1)
 			getOrInsert(ng2)
-			getOrInsert(rg)
 			getOrInsert(ug1)
 			getOrInsert(ug2)
 			getOrInsert(ru)
@@ -107,6 +106,7 @@ class OutputDBWriter(storeName:String, source:String) {
 		}
 		catch{
 			case e => store.put(node)
+			println(node.id)
 			return store.get(node.id)
 		}
 	}
