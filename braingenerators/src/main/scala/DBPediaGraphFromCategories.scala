@@ -92,15 +92,16 @@ object DBPediaGraphFromCategories {
     while(counter<limit||limit<0)
     {
       val line = reader.readLine()
-      println("Processed Line: " + counter.toString + " Inserted: " + inserted.toString + line + " File line: " + reader.getLineNum());
-      
+      println("Processed Line: " + counter.toString + " File line: " + reader.getLineNum());
+      println(line)
       line match{
+        
         case ""=> return 
         case a:String => processQTuple(a) match {
-          case ("", "", "", "") => //Don't output  
+          case ("", "", "", "") => println("empty"); //Don't output  
           case (b:String, c:String, d:String, e:String) => d match {
-          	case "owl#Thing" => inserted+=addTypes(items.reverse.toList, output); items.clear();
-          	case _ => items.append(processQTuple(a)); 
+          	case "owl#Thing" => inserted+=addTypes(items.reverse.toList, output); items.clear(); println("Top");
+          	case _ => items.append(processQTuple(a)); println("Thing");
           }
          
         }
@@ -120,12 +121,26 @@ object DBPediaGraphFromCategories {
   def addTypes(items:List[(String, String, String, String)], output:OutputDBWriter):Int=
   {
     var inserted=0;
+    var rel = "is_a"
     items match{
       case x::Nil => x match{
-        case (a:String, b:String, c:String, d:String) => output.writeOutDBInfo(Formatting.normalizeWikiTitle(a), "gb_subtype", Formatting.normalizeWikiTitle(c), d); inserted+=1; println(Formatting.normalizeWikiTitle(a) + "," + "gb_subtype" + "," + Formatting.normalizeWikiTitle(c) + "," + d ); return inserted
+        case (a:String, b:String, c:String, d:String) => 
+        
+          if(isVowel(c(0).toString)) {rel="is_an"}
+          output.writeOutDBInfo(Formatting.normalizeWikiTitle(a), rel, Formatting.normalizeWikiTitle(c), d); 
+          inserted+=1; 
+          println("Inserted: " + inserted.toString)
+          println(Formatting.normalizeWikiTitle(a) + "," + rel + "," + Formatting.normalizeWikiTitle(c) + "," + d ); 
+          return inserted
       }
       case x::y::xs => (x,y) match {
-        case ((a:String, b:String, c:String, d:String),(f:String, g:String, h:String, i:String)) => output.writeOutDBInfo(Formatting.normalizeWikiTitle(h), "gb_subtype", Formatting.normalizeWikiTitle(c), ""); inserted+=1; println(Formatting.normalizeWikiTitle(h) + "," + "gb_subtype" + "," + Formatting.normalizeWikiTitle(c) + "," + "" ); addTypes(y::xs, output);  
+        case ((a:String, b:String, c:String, d:String),(f:String, g:String, h:String, i:String)) => 
+          if(isVowel(c(0).toString)) {rel="is_an"}
+          output.writeOutDBInfo(Formatting.normalizeWikiTitle(h), rel, Formatting.normalizeWikiTitle(c), ""); 
+          inserted+=1; 
+          println("Inserted: " + inserted.toString);
+          println(Formatting.normalizeWikiTitle(h) + "," + rel + "," + Formatting.normalizeWikiTitle(c) + "," + "" ); 
+          addTypes(y::xs, output);  
       }
       case Nil => return inserted
     }
