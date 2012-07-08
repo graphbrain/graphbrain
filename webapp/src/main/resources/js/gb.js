@@ -450,7 +450,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatButtonPressed, aiChatReply, aiChatSubmit, aiChatVisible, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, initAiChat, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, showAiChat, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatButtonPressed, aiChatReply, aiChatSubmit, aiChatVisible, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, initAiChat, initAlert, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, showAiChat, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -802,22 +802,27 @@ function handler(event) {
 
   })();
 
+  initAlert = function() {
+    $('#alert').css('display', 'none');
+    return $('#alert').css('visibility', 'visible');
+  };
+
   setInfoAlert = function(msg) {
-    $('#alert').css('visibility', 'visible');
+    $('#alert').css('display', 'block');
     $('#alert').removeClass('alert-error');
     $('#alert').addClass('alert-info');
     return $('#alertMsg').html(msg);
   };
 
   setErrorAlert = function(msg) {
-    $('#alert').css('visibility', 'visible');
+    $('#alert').css('display', 'block');
     $('#alert').removeClass('alert-info');
     $('#alert').addClass('alert-error');
     return $('#alertMsg').html(msg);
   };
 
   hideAlert = function() {
-    return $('#alert').css('visibility', 'hidden');
+    return $('#alert').css('display', 'none');
   };
 
   dragging = false;
@@ -939,6 +944,7 @@ function handler(event) {
       document.addEventListener('touchstart', touchStart);
       document.addEventListener('touchend', touchEnd);
       document.addEventListener('touchmove', touchMove);
+      initAlert();
       initAiChat();
       initRemoveDialog();
       $('#ai-chat-button').bind('click', aiChatButtonPressed);
@@ -2224,11 +2230,11 @@ function handler(event) {
   };
 
   showAiChat = function() {
-    return $('#ai-chat').css('visibility', 'visible');
+    return $('#ai-chat').css('display', 'block');
   };
 
   hideAiChat = function() {
-    return $('#ai-chat').css('visibility', 'hidden');
+    return $('#ai-chat').css('display', 'none');
   };
 
   aiChatButtonPressed = function(msg) {
