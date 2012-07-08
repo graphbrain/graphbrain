@@ -74,7 +74,7 @@ case class EdgeSet(id: String="", edges: Set[String]=Set[String](), extra: Int =
   override val edgesets: Set[String] = Set[String]()
   override val degree: Int = 0
 
-  override def toMap: Map[String, Any] = toMapBase ++ Map(("edges" -> iter2str(edges)), ("extra" -> extra))
+  override def toMap: Map[String, Any] = toMapBase ++ Map(("edges" -> iter2str(edges)), ("extra" -> extra), ("size" -> size))
 
   // let's not let EdgeSets have EdgeSets - brains could explode
   def setEdgeSets(newEdgeSets: Set[String]) = this
