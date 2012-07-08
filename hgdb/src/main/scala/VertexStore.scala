@@ -15,15 +15,17 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
     val map = backend.get(id)
     val edgesets = VertexStore.str2iter(map.getOrElse("edgesets", "").toString).toSet
     val vtype = map.getOrElse("vtype", "")
+    val degree = map.getOrElse("extra", "0").toString.toInt
     vtype match {
       case "edg" => {
         val etype = map.getOrElse("etype", "").toString
-        Edge(id, etype, edgesets)
+        Edge(id, etype, edgesets, degree)
       }
       case "edgs" => {
         val edges = VertexStore.str2iter(map.getOrElse("edges", "").toString).toSet
         val extra = map.getOrElse("extra", "-1").toString.toInt
-        EdgeSet(id, edges, extra) 
+        val size = map.getOrElse("size", "0").toString.toInt
+        EdgeSet(id, edges, extra, size) 
       }
       case "ext" => {
         val edges = VertexStore.str2iter(map.getOrElse("edges", "").toString).toSet
@@ -33,36 +35,36 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         val label = map.getOrElse("label", "").toString
         val roles = VertexStore.str2iter(map.getOrElse("roles", "").toString).toList
         val rolen = map.getOrElse("rolen", "").toString
-        EdgeType(id, label, roles, rolen, edgesets)
+        EdgeType(id, label, roles, rolen, edgesets, degree)
       }
       case "txt" => {
         val text = map.getOrElse("text", "").toString
-        TextNode(id, text, edgesets)
+        TextNode(id, text, edgesets, degree)
       }
       case "url" => {
         val url = map.getOrElse("url", "").toString
         val title = map.getOrElse("title", "").toString
-        URLNode(id, url, title, edgesets)
+        URLNode(id, url, title, edgesets, degree)
       }
       case "src" => {
         SourceNode(id, edgesets)
       }
       case "img" => {
         val url = map.getOrElse("url", "").toString
-        ImageNode(id, url, edgesets)
+        ImageNode(id, url, edgesets, degree)
       }
       case "vid" => {
         val url = map.getOrElse("url", "").toString
-        VideoNode(id, url, edgesets)
+        VideoNode(id, url, edgesets, degree)
       }
       case "svg" => {
         val svg = map.getOrElse("svg", "").toString
-        SVGNode(id, svg, edgesets)
+        SVGNode(id, svg, edgesets, degree)
       }
 
       case "rule" => {
         val rule = map.getOrElse("rule", "").toString
-        RuleNode(id, rule, edgesets)
+        RuleNode(id, rule, edgesets, degree)
       }
       case "usr" => {
         val username = map.getOrElse("username", "").toString
@@ -74,12 +76,12 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         val creationTs = map.getOrElse("creationTs", "").toString.toLong
         val sessionTs = map.getOrElse("sessionTs", "").toString.toLong
         val lastSeen = map.getOrElse("lastSeen", "").toString.toLong
-        UserNode(id, username, name, email, pwdhash, role, session, creationTs, sessionTs, lastSeen, edgesets)
+        UserNode(id, username, name, email, pwdhash, role, session, creationTs, sessionTs, lastSeen, edgesets, degree)
       }
       case "usre" => {
         val username = map.getOrElse("username", "").toString
         val email = map.getOrElse("email", "").toString
-        UserEmailNode(id, username, email, edgesets)
+        UserEmailNode(id, username, email, edgesets, degree)
       }
       case _  => throw WrongVertexType("unkown vtype: " + vtype)
     }
