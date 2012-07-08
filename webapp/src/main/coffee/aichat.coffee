@@ -36,10 +36,10 @@ aiChatReply = (msg) ->
     window.location.href = '/node/' + reply['goto']
 
 showAiChat = () ->
-  $('#ai-chat').css('visibility', 'visible')
+  $('#ai-chat').css('display', 'block')
 
 hideAiChat = () ->
-  $('#ai-chat').css('visibility', 'hidden')
+  $('#ai-chat').css('display', 'none')
 
 aiChatButtonPressed = (msg) ->
   if aiChatVisible
