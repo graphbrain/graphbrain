@@ -5,9 +5,13 @@ object ID {
 
   def sanitize(str: String): String = str.toLowerCase.replace("/", "_").replace(" ", "_")
 
-  def parts(id: String) = id.split('/').size
+  def parts(id: String) = id.split('/')
+
+  def numberOfParts(id: String) = parts(id).size
 
   def globalToUser(id: String, userid: String) = userid + "/" + id
+
+  def isInUserSpace(id: String): Boolean = (parts(id)(0) == "user") && (numberOfParts(id) > 1)
 
   def edgeSetId(vertexId: String, edgeId: String) = {
     val pos = Edge.participantIds(edgeId).indexOf(vertexId)
