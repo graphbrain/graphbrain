@@ -7,6 +7,8 @@ object ID {
 
   def parts(id: String) = id.split('/').size
 
+  def globalToUser(id: String, userid: String) = userid + "/" + id
+
   def edgeSetId(vertexId: String, edgeId: String) = {
     val pos = Edge.participantIds(edgeId).indexOf(vertexId)
     vertexId + "/" + pos + "/" + Edge.edgeType(edgeId)
