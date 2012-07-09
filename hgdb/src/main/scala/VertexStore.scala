@@ -172,6 +172,7 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
   def addrel(edgeType: String, participants: Array[String]): Boolean = {
     val edge = new Edge(edgeType, participants)
 
+    // bail out if relationship already exists
     if (relExists(edge))
       return false
 
@@ -181,11 +182,16 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
       put(etype)
     }
 
+    // increment instances counter on EdgeType
+    val etype = getEdgeType(edgeType)
+    update(etype.setInstances(etype.instances + 1))
+
     // create edge vertex
     put(edge)
 
     for (id <- participants) {
-      val vertex = get(id)
+      var vertex = get(id)
+
       val edgeSetId = ID.edgeSetId(vertex.id, edge.id)
 
       // create edgeset and edgeset reference on vertex if it doesn't exit already
@@ -193,10 +199,19 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         clearEdgeSet(vertex, edgeSetId)
         put(EdgeSet(edgeSetId))
         update(vertex.setEdgeSets(vertex.edgesets + edgeSetId))
+        vertex = get(id)
       }
 
+      // increment participant's degree
+      update(vertex.setDegree(vertex.degree + 1))
+
+      
+      // increment edgeset's size
+      var edgeSet = getEdgeSet(edgeSetId)
+      put(edgeSet.setSize(edgeSet.size + 1))
+
       // add edge to appropriate edgeset or extraedges vertex
-      val edgeSet = getEdgeSet(edgeSetId)
+      edgeSet = getEdgeSet(edgeSetId)      
       val origExtra = if (edgeSet.extra >= 0) edgeSet.extra else 0
       var extra = origExtra
       var done = false
@@ -263,13 +278,30 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
     true
   }
 
-  def delrel(edgeType: String, participants: Array[String]): Unit = {
+  def delrel(edgeType: String, participants: Array[String]): Boolean = {
     val edge = new Edge(edgeType, participants)
 
-    for (nodeId <- participants) {
-      val node = get(nodeId)
-      val edgeSetId = ID.edgeSetId(node.id, edge.id)
-      val edgeSet = getEdgeSet(edgeSetId)
+    // bail out if relationship does not exist
+    if (!relExists(edge))
+      return false
+
+    // decrement instances counter on EdgeType
+    val etype = getEdgeType(edgeType)
+    update(etype.setInstances(etype.instances - 1))
+
+    for (id <- participants) {
+      var vertex = get(id)
+
+      // decrement participant's degree
+      update(vertex.setDegree(vertex.degree - 1))
+
+      val edgeSetId = ID.edgeSetId(id, edge.id)
+      
+      var edgeSet = getEdgeSet(edgeSetId)
+      
+      // decrement edgeset's size
+      put(edgeSet.setSize(edgeSet.size - 1))
+      edgeSet = getEdgeSet(edgeSetId)
 
       // edgeset never had extra edges if edges == -1
       if (edgeSet.extra < 0) {
@@ -296,15 +328,19 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
         }
 
         // update extra on participant's edgeset if needed
-        // this idea is to reuse slots that get released on ExtraEdges associated with EdgeSets
-        if (edgeSet.extra != extra) update(getEdgeSet(edgeSetId).setExtra(extra))
+        // the idea is to reuse slots that get released on ExtraEdges associated with EdgeSets
+        if (edgeSet.extra != extra)
+          update(getEdgeSet(edgeSetId).setExtra(extra))
       }
 
       // remove from edgesets if empty
-      if (isEdgeSetEmpty(edgeSetId, node)) {
-        update(node.setEdgeSets(node.edgesets - edgeSetId))
+      if (isEdgeSetEmpty(edgeSetId, vertex)) {
+        vertex = get(id)
+        update(vertex.setEdgeSets(vertex.edgesets - edgeSetId))
       }
     }
+
+    true
   }
   
   def neighbors(nodeId: String): Set[(String, String)] = {
