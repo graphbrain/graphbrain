@@ -33,7 +33,8 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
       }
       case "edgt" => {
         val label = map.getOrElse("label", "").toString
-        EdgeType(id, label, edgesets, degree)
+        val instances = map.getOrElse("instances", "0").toString.toInt
+        EdgeType(id, label, edgesets, instances, degree)
       }
       case "txt" => {
         val text = map.getOrElse("text", "").toString
@@ -174,6 +175,13 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
     if (relExists(edge))
       return false
 
+    // create EdgeType vertex if it does not exist
+    if (!exists(edgeType)) {
+      val etype = new EdgeType(edgeType)
+      put(etype)
+    }
+
+    // create edge vertex
     put(edge)
 
     for (id <- participants) {
