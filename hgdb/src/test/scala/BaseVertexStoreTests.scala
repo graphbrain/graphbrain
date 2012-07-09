@@ -3,8 +3,6 @@ import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.KeyNotFound
 import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.URLNode
-import com.graphbrain.hgdb.ImageNode
-import com.graphbrain.hgdb.VideoNode
 import com.graphbrain.hgdb.SourceNode
 import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.UserEmailNode
@@ -47,24 +45,6 @@ trait BaseVertexStoreTests { this: FunSuite =>
     }
   }
 
-  test("get URLNode that does not exist [" + label + "]") {
-    intercept[KeyNotFound] {
-      store.getURLNode("sdfh89g89gdf")
-    }
-  }
-
-  test("get ImageNode that does not exist [" + label + "]") {
-    intercept[KeyNotFound] {
-      store.getImageNode("sdfh89g89gdf")
-    }
-  }
-
-  test("get VideoNode that does not exist [" + label + "]") {
-    intercept[KeyNotFound] {
-      store.getVideoNode("sdfh89g89gdf")
-    }
-  }
-
   test("get SourceNode that does not exist [" + label + "]") {
     intercept[KeyNotFound] {
       store.getSourceNode("sdfh89g89gdf")
@@ -101,28 +81,6 @@ trait BaseVertexStoreTests { this: FunSuite =>
     
     val outVertex = store.getURLNode("urlnode/0")
     assert(outVertex.vtype == "url")
-    assert(inVertex.id == outVertex.id)
-    assert(inVertex.url == outVertex.url)
-  }
-
-  test("getImageNode [" + label + "]") {
-    val inVertex = ImageNode("imagenode/0", "http://graphbrain.com/test.jpg")
-    store.remove(inVertex)
-    store.put(inVertex)
-    
-    val outVertex = store.getImageNode("imagenode/0")
-    assert(outVertex.vtype == "img")
-    assert(inVertex.id == outVertex.id)
-    assert(inVertex.url == outVertex.url)
-  }
-
-  test("getVideoNode [" + label + "]") {
-    val inVertex = VideoNode("videonode/0", "http://graphbrain.com/video.mp3")
-    store.remove(inVertex)
-    store.put(inVertex)
-    
-    val outVertex = store.getVideoNode("videonode/0")
-    assert(outVertex.vtype == "vid")
     assert(inVertex.id == outVertex.id)
     assert(inVertex.url == outVertex.url)
   }

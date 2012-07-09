@@ -130,36 +130,6 @@ case class URLNode(id: String="", url: String="", title: String="", edgesets: Se
 }
 
 
-case class ImageNode(id: String="", url: String="", edgesets: Set[String]=Set[String](), degree: Int=0) extends Vertex {
-  override val vtype: String = "img"
-
-  override def toMap: Map[String, Any] = toMapBase ++ Map(("url" -> url))
-
-  def setEdgeSets(newEdgeSets: Set[String]) = copy(edgesets=newEdgeSets)
-  def setDegree(newDegree: Int) = copy(degree=newDegree)
-}
-
-
-case class VideoNode(id: String="", url: String="", edgesets: Set[String]=Set[String](), degree: Int=0) extends Vertex {
-  override val vtype: String = "vid"
-
-  override def toMap: Map[String, Any] = toMapBase ++ Map(("url" -> url))
-
-  def setEdgeSets(newEdgeSets: Set[String]) = copy(edgesets=newEdgeSets)
-  def setDegree(newDegree: Int) = copy(degree=newDegree)
-}
-
-
-case class SVGNode(id: String="", svg:String="", edgesets: Set[String]=Set[String](), degree: Int=0) extends Vertex {
-  override val vtype: String = "svg"
-
-  override def toMap: Map[String, Any] = toMapBase ++ Map(("svg" -> svg))
-
-  def setEdgeSets(newEdgeSets: Set[String]) = copy(edgesets=newEdgeSets)
-  def setDegree(newDegree: Int) = copy(degree=newDegree)
-}
-
-
 case class SourceNode(id: String="", edgesets: Set[String]=Set[String](), degree: Int=0) extends Vertex {
   override val vtype: String = "src"
 

@@ -47,19 +47,6 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
       case "src" => {
         SourceNode(id, edgesets)
       }
-      case "img" => {
-        val url = map.getOrElse("url", "").toString
-        ImageNode(id, url, edgesets, degree)
-      }
-      case "vid" => {
-        val url = map.getOrElse("url", "").toString
-        VideoNode(id, url, edgesets, degree)
-      }
-      case "svg" => {
-        val svg = map.getOrElse("svg", "").toString
-        SVGNode(id, svg, edgesets, degree)
-      }
-
       case "rule" => {
         val rule = map.getOrElse("rule", "").toString
         RuleNode(id, rule, edgesets, degree)
