@@ -80,27 +80,6 @@ abstract trait VertexStoreInterface {
   	}
   }
 
-  def getImageNode(id: String): ImageNode = {
-  	get(id) match {
-  		case x: ImageNode => x
-  		case v: Vertex => throw WrongVertexType("on vertex: " + id + " (expected 'img', found : '" + v.vtype + "')")
-  	}
-  }
-
-  def getVideoNode(id: String): VideoNode = {
-    get(id) match {
-      case x: VideoNode => x
-      case v: Vertex => throw WrongVertexType("on vertex: " + id + " (expected 'vid', found : '" + v.vtype + "')")
-    }
-  }
-
-  def getSVGNode(id: String): SVGNode = {
-    get(id) match {
-      case x: SVGNode => x
-      case v: Vertex => throw WrongVertexType("on vertex: " + id + " (expected 'svg', found : '" + v.vtype + "')")
-    }
-  }
-
   def getUserNode(id: String): UserNode = {
     get(id) match {
       case x: UserNode => x
