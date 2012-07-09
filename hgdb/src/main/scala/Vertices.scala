@@ -57,13 +57,11 @@ object Edge {
   def valid(edgeId: String) = participantIds(edgeId).size > 1
 } 
 
-case class EdgeType(id: String="", label: String="", roles: List[String]=List[String](),
-  rolen: String="", edgesets: Set[String]=Set[String](), degree: Int=0) extends Vertex {
+case class EdgeType(id: String="", label: String="", edgesets: Set[String]=Set[String](), degree: Int=0) extends Vertex {
 
   override val vtype: String = "edgt"
   
-  override def toMap: Map[String, Any] = toMapBase ++
-    Map(("label" -> label), ("roles" -> iter2str(roles)), ("rolen" -> rolen))
+  override def toMap: Map[String, Any] = toMapBase ++ Map(("label" -> label))
 
   def setEdgeSets(newEdgeSets: Set[String]) = copy(edgesets=newEdgeSets)
   def setDegree(newDegree: Int) = copy(degree=newDegree)
