@@ -10,6 +10,8 @@ abstract class Vertex {
   def toMap: Map[String, Any]
   protected def toMapBase: Map[String, Any] = Map(("vtype" -> vtype), ("edgesets" -> iter2str(edgesets)), ("degree" -> degree))
   
+  def clone(newid: String): Vertex
+
   def setEdgeSets(newEdgeSets: Set[String]): Vertex
   def setDegree(newDegree: Int): Vertex
 
@@ -32,6 +34,8 @@ case class Edge(id: String="", etype: String="", edgesets: Set[String]=Set[Strin
       etype, Set[String]())
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("etype" -> etype))
+
+  override def clone(newid: String) = Edge(newid, etype)
 
   def setEdgeSets(newEdgeSets: Set[String]) = copy(edgesets=newEdgeSets)
   def setDegree(newDegree: Int) = copy(degree=newDegree)
@@ -63,6 +67,8 @@ case class EdgeType(id: String="", label: String="", edgesets: Set[String]=Set[S
   
   override def toMap: Map[String, Any] = toMapBase ++ Map(("label" -> label), ("instances" -> instances))
 
+  override def clone(newid: String) = EdgeType(newid, label)
+
   def setEdgeSets(newEdgeSets: Set[String]) = copy(edgesets=newEdgeSets)
   def setDegree(newDegree: Int) = copy(degree=newDegree)
   def setInstances(newInst: Int) = copy(instances=newInst)
@@ -74,6 +80,8 @@ case class EdgeSet(id: String="", edges: Set[String]=Set[String](), extra: Int =
   override val degree: Int = 0
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("edges" -> iter2str(edges)), ("extra" -> extra), ("size" -> size))
+
+  override def clone(newid: String) = this
 
   // let's not let EdgeSets have EdgeSets - brains could explode
   def setEdgeSets(newEdgeSets: Set[String]) = this
@@ -90,6 +98,8 @@ case class ExtraEdges(id: String="", edges: Set[String]=Set[String]()) extends V
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("edges" -> iter2str(edges)))
 
+  override def clone(newid: String) = this
+
   // no EdgeSets on ExtraEdges either
   def setEdgeSets(newEdgeSets: Set[String]) = this
   def setDegree(newDegree: Int) = this
@@ -100,6 +110,8 @@ case class TextNode(id: String="", text: String="", edgesets: Set[String]=Set[St
   override val vtype: String = "txt"
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("text" -> text))
+
+  override def clone(newid: String) = TextNode(newid, text)
 
   def setEdgeSets(newEdgeSets: Set[String]) = copy(edgesets=newEdgeSets)
   def setDegree(newDegree: Int) = copy(degree=newDegree)
@@ -113,6 +125,8 @@ case class RuleNode(id: String="", rule: String="", edgesets: Set[String]=Set[St
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("rule" -> rule))
 
+  override def clone(newid: String) = RuleNode(newid, rule)
+
   def setEdgeSets(newEdgeSets: Set[String]) = copy(edgesets=newEdgeSets)
   def setDegree(newDegree: Int) = copy(degree=newDegree)
 
@@ -125,6 +139,8 @@ case class URLNode(id: String="", url: String="", title: String="", edgesets: Se
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("url" -> url), ("title" -> title))
 
+  override def clone(newid: String) = URLNode(newid, url)
+
   def setEdgeSets(newEdgeSets: Set[String]) = copy(edgesets=newEdgeSets)
   def setDegree(newDegree: Int) = copy(degree=newDegree)
   def setTitle(newTitle: String) = copy(title=newTitle)
@@ -135,6 +151,8 @@ case class SourceNode(id: String="", edgesets: Set[String]=Set[String](), degree
   override val vtype: String = "src"
 
   override def toMap: Map[String, Any] = toMapBase
+
+  override def clone(newid: String) = SourceNode(newid)
 
   def setEdgeSets(newEdgeSets: Set[String]) = copy(edgesets=newEdgeSets)
   def setDegree(newDegree: Int) = copy(degree=newDegree)
@@ -151,6 +169,8 @@ case class UserNode(id: String="", username: String="", name: String="", email: 
     ("email" -> email), ("pwdhash" -> pwdhash), ("role" -> role), ("session" -> session), ("creationTs" -> creationTs)
     , ("sessionTs" -> sessionTs), ("lastSeen" -> lastSeen))
 
+  override def clone(newid: String) = this
+
   def setEdgeSets(newEdgeSets: Set[String]) = copy(edgesets=newEdgeSets)
   def setDegree(newDegree: Int) = copy(degree=newDegree)
 }
@@ -160,6 +180,8 @@ case class UserEmailNode(id: String="", username: String="", email: String="", e
   override val vtype: String = "usre"
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("username" -> username), ("email" -> email))
+
+  override def clone(newid: String) = this
 
   def setEdgeSets(newEdgeSets: Set[String]) = copy(edgesets=newEdgeSets)
   def setDegree(newDegree: Int) = copy(degree=newDegree)
