@@ -33,9 +33,7 @@ class VertexStore(storeName: String, val maxEdges: Int = 1000, ip: String="127.0
       }
       case "edgt" => {
         val label = map.getOrElse("label", "").toString
-        val roles = VertexStore.str2iter(map.getOrElse("roles", "").toString).toList
-        val rolen = map.getOrElse("rolen", "").toString
-        EdgeType(id, label, roles, rolen, edgesets, degree)
+        EdgeType(id, label, edgesets, degree)
       }
       case "txt" => {
         val text = map.getOrElse("text", "").toString
