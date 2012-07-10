@@ -61,20 +61,25 @@ trait UserOps extends VertexStoreInterface {
     vertex
   }
 
-  def createAndConnectVertices(edgeType: String, participants: Array[Vertex], userid: String) = {
-    val userSpace = participants.exists(v => ID.isInUserSpace(v.id))
+  def addrel2(edgeType: String, participants: Array[String], userid: String) = {
+    val userSpace = participants.exists(id => ID.isInUserSpace(id))
 
+    if (!userSpace) {
+      val ids = for (id <- participants) yield id
+      addrel(edgeType.replace(" ", "_"), ids)
+    }
+
+    val ids = for (id <- participants) yield
+      if (ID.isInUserSpace(id)) id else ID.globalToUser(id, userid)
+    addrel(edgeType.replace(" ", "_"), ids)    
+  }
+
+  def createAndConnectVertices(edgeType: String, participants: Array[Vertex], userid: String) = {
     for (v <- participants) {
       put2(v, userid)
     }
 
-    if (!userSpace) {
-      val ids = for (v <- participants) yield v.id
-      addrel(edgeType.replace(" ", "_"), ids)
-    }
-
-    val ids = for (v <- participants) yield
-      if (ID.isInUserSpace(v.id)) v.id else ID.globalToUser(v.id, userid)
-    addrel(edgeType.replace(" ", "_"), ids)
+    val ids = for (v <- participants) yield v.id
+    addrel2(edgeType.replace(" ", "_"), ids, userid)
   }
 }
