@@ -13,6 +13,11 @@ object ID {
 
   def isInUserSpace(id: String): Boolean = (parts(id)(0) == "user") && (numberOfParts(id) > 1)
 
+  def ownerId(id: String): String = {
+    val idParts = parts(id)
+    idParts(0) + "/" + idParts(1)
+  }
+
   def edgeSetId(vertexId: String, edgeId: String) = {
     val pos = Edge.participantIds(edgeId).indexOf(vertexId)
     vertexId + "/" + pos + "/" + Edge.edgeType(edgeId)
