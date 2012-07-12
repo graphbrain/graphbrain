@@ -74,6 +74,16 @@ trait UserOps extends VertexStoreInterface {
     addrel(edgeType.replace(" ", "_"), ids)    
   }
 
+  def delrel2(edgeType: String, participants: Array[String], userid: String): Unit = {
+    val userSpaceParticipants = participants.map(p => ID.globalToUser(p, userid))
+    delrel(edgeType, userSpaceParticipants)
+
+    val globalSpaceParticipants = participants.map(p => ID.userToGlobal(p))
+    delrel(edgeType, globalSpaceParticipants)
+  }
+
+  def delrel2(edgeId: String, userid: String): Unit = delrel2(Edge.edgeType(edgeId), Edge.participantIds(edgeId).toArray, userid)
+
   def createAndConnectVertices(edgeType: String, participants: Array[Vertex], userid: String) = {
     for (v <- participants) {
       put2(v, userid)
@@ -81,5 +91,14 @@ trait UserOps extends VertexStoreInterface {
 
     val ids = for (v <- participants) yield v.id
     addrel2(edgeType.replace(" ", "_"), ids, userid)
+  }
+
+  def removeAllEdges2(vertex: Vertex, userid: String) = {
+    val nedges = neighborEdges(vertex.id)
+
+    // remove connected edges
+    for (edgeId <- nedges) {
+      delrel2(edgeId, userid)
+    }
   }
 }
