@@ -5,13 +5,38 @@ object ID {
 
   def sanitize(str: String): String = str.toLowerCase.replace("/", "_").replace(" ", "_")
 
-  def parts(id: String) = id.split('/')
+  def parts(id: String) = id.split('/').filter(p => p != "")
 
-  def numberOfParts(id: String) = parts(id).size
+  def numberOfParts(id: String) = parts(id).length
 
-  def globalToUser(id: String, userid: String) = userid + "/" + id
+  def isInUserSpace(id: String): Boolean = (parts(id)(0) == "user") && (numberOfParts(id) > 2)
 
-  def isInUserSpace(id: String): Boolean = (parts(id)(0) == "user") && (numberOfParts(id) > 1)
+  def isUserNode(id: String): Boolean = (parts(id)(0) == "user") && (numberOfParts(id) == 2)
+
+  def globalToUser(id: String, userid: String) = {
+    if (isInUserSpace(id))
+      id
+    else if (isUserNode(id))
+      id
+    else
+      userid + "/" + id
+  }
+
+  def userToGlobal(id: String) = {
+    if (isInUserSpace(id)) {
+      val idParts = parts(id)
+      val globalParts = idParts.slice(2, idParts.length)
+      if (globalParts.length == 1) {
+        globalParts(0)
+      }
+      else {
+        globalParts.reduceLeft(_ + "/" + _)
+      }
+    }
+    else {
+      id
+    }
+  }
 
   def ownerId(id: String): String = {
     val idParts = parts(id)
