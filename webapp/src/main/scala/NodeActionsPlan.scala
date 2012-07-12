@@ -50,7 +50,7 @@ object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with S
     else {
       // check permissions
       if (Server.store.nodeOwner(nodeId) == userNode.id) {
-        Server.store.removeVertexAndEdgesUI(Server.store.get(nodeId))
+        Server.store.removeAllEdges2(Server.store.get(nodeId), userNode.id)
         log.info(Server.realIp(req) + " REMOVE NODE username: " + userNode.username + "; nodeId: " + nodeId)
       }
       else {
