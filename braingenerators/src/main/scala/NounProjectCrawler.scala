@@ -77,8 +77,10 @@ object NounProjectCrawler {
 
   def getAllImages(output:OutputDBWriter):Unit={
     var inserted=0;
-    output.writeGeneratorSource(NounProjectCrawler.sourceName, NounProjectCrawler.sourceURL, output);
-    inserted+=1;
+    output.writeUser()
+    inserted += 1;
+    output.writeGeneratorSource(NounProjectCrawler.sourceName, NounProjectCrawler.sourceURL);
+    inserted += 1;
 
     for(i <- 1 to NounProjectCrawler.nounListPages)
     {
@@ -102,8 +104,8 @@ object NounProjectCrawler {
     args match
     {
       
-      case a:Array[String] if(a.length==2) => getAllImages(new OutputDBWriter(args(1), args(2)))
-      case _ =>  getAllImages(new OutputDBWriter("gb", NounProjectCrawler.sourceName))
+      case a:Array[String] if(a.length==2) => getAllImages(new OutputDBWriter(args(1), args(2), "nounproject", "nounproject", "crawler"))
+      case _ =>  getAllImages(new OutputDBWriter("gb", NounProjectCrawler.sourceName, "nounproject", "nounproject", "crawler"))
   
     }
 
