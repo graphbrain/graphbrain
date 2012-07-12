@@ -84,8 +84,11 @@ object DBPediaGraphFromCategories {
     }
     var counter=reader.getLineNum();
     var inserted=0;
-    output.writeGeneratorSource(DBPediaGraphFromCategories.sourceName, DBPediaGraphFromCategories.sourceURL, output)
+    output.writeUser()
+    inserted += 1
+    output.writeGeneratorSource(DBPediaGraphFromCategories.sourceName, DBPediaGraphFromCategories.sourceURL)
     inserted+=1
+    
 
     var items = new ListBuffer[(String, String, String, String)]
 
@@ -152,8 +155,8 @@ object DBPediaGraphFromCategories {
     args match
     {
       
-      case a:Array[String] if(a.length==3) => processFile(args(0), new OutputDBWriter(args(1), args(2)), 0-1, args(3).toInt)
-      case _ =>  processFile(DBPediaGraphFromCategories.dataFile, new OutputDBWriter("gb", DBPediaGraphFromCategories.sourceName), -1)
+      case a:Array[String] if(a.length==3) => processFile(args(0), new OutputDBWriter(args(1), args(2), args(4), args(5), args(6)), args(3).toInt)
+      case _ =>  processFile(DBPediaGraphFromCategories.dataFile, new OutputDBWriter("gb", DBPediaGraphFromCategories.sourceName, "dbpedia", "dbpedia", "crawler"), -1)
       
     }
     
