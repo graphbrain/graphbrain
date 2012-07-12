@@ -7,8 +7,6 @@ import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.BurstCaching
 import com.graphbrain.hgdb.OpLogging
 import com.graphbrain.hgdb.TextNode
-import com.graphbrain.hgdb.ImageNode
-import com.graphbrain.hgdb.VideoNode
 import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.UserNode
