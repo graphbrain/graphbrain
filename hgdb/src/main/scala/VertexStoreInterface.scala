@@ -1,6 +1,7 @@
 package com.graphbrain.hgdb
 
 import scala.collection.mutable.{Set => MSet}
+import java.util.Date
 
 
 abstract trait VertexStoreInterface {
@@ -17,11 +18,12 @@ abstract trait VertexStoreInterface {
     val map = backend.get(id)
     val edgesets = str2iter(map.getOrElse("edgesets", "").toString).toSet
     val vtype = map.getOrElse("vtype", "")
-    val degree = map.getOrElse("extra", "0").toString.toInt
+    val degree = map.getOrElse("degree", "0").toString.toInt
+    val ts = map.getOrElse("ts", "0").toString.toLong
     vtype match {
       case "edg" => {
         val etype = map.getOrElse("etype", "").toString
-        Edge(id, etype, edgesets, degree)
+        Edge(id, etype, edgesets, degree, ts)
       }
       case "edgs" => {
         val edges = str2iter(map.getOrElse("edges", "").toString).toSet
@@ -31,28 +33,28 @@ abstract trait VertexStoreInterface {
       }
       case "ext" => {
         val edges = str2iter(map.getOrElse("edges", "").toString).toSet
-        ExtraEdges(id, edges) 
+        ExtraEdges(id, edges)
       }
       case "edgt" => {
         val label = map.getOrElse("label", "").toString
         val instances = map.getOrElse("instances", "0").toString.toInt
-        EdgeType(id, label, edgesets, instances, degree)
+        EdgeType(id, label, edgesets, instances, degree, ts)
       }
       case "txt" => {
         val text = map.getOrElse("text", "").toString
-        TextNode(id, text, edgesets, degree)
+        TextNode(id, text, edgesets, degree, ts)
       }
       case "url" => {
         val url = map.getOrElse("url", "").toString
         val title = map.getOrElse("title", "").toString
-        URLNode(id, url, title, edgesets, degree)
+        URLNode(id, url, title, edgesets, degree, ts)
       }
       case "src" => {
         SourceNode(id, edgesets)
       }
       case "rule" => {
         val rule = map.getOrElse("rule", "").toString
-        RuleNode(id, rule, edgesets, degree)
+        RuleNode(id, rule, edgesets, degree, ts)
       }
       case "usr" => {
         val username = map.getOrElse("username", "").toString
@@ -61,15 +63,14 @@ abstract trait VertexStoreInterface {
         val pwdhash = map.getOrElse("pwdhash", "").toString
         val role = map.getOrElse("role", "").toString
         val session = map.getOrElse("session", "").toString
-        val creationTs = map.getOrElse("creationTs", "").toString.toLong
         val sessionTs = map.getOrElse("sessionTs", "").toString.toLong
         val lastSeen = map.getOrElse("lastSeen", "").toString.toLong
-        UserNode(id, username, name, email, pwdhash, role, session, creationTs, sessionTs, lastSeen, edgesets, degree)
+        UserNode(id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, edgesets, degree, ts)
       }
       case "usre" => {
         val username = map.getOrElse("username", "").toString
         val email = map.getOrElse("email", "").toString
-        UserEmailNode(id, username, email, edgesets, degree)
+        UserEmailNode(id, username, email, edgesets, degree, ts)
       }
       case _  => throw WrongVertexType("unkown vtype: " + vtype)
     }
@@ -77,7 +78,14 @@ abstract trait VertexStoreInterface {
 
   /** Adds Vertex to database */
   def put(vertex: Vertex): Vertex = {
-    backend.put(vertex.id, vertex.toMap)
+    val v = if (vertex.ts == 0) {
+      val curTs = (new Date()).getTime()
+      vertex.setTs(curTs)
+    }
+    else {
+      vertex
+    }
+    backend.put(v.id, v.toMap)
     vertex
   }
 

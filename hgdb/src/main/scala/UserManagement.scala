@@ -56,7 +56,7 @@ trait UserManagement extends VertexStoreInterface {
   def createUser(username: String, name: String, email: String, password: String, role: String): UserNode = {
   	val id = idFromUsername(username)
   	val pwdhash = BCrypt.hashpw(password, BCrypt.gensalt())
-  	val userNode = put(UserNode(id=id, username=username, name=name, email=email, pwdhash=pwdhash, role=role, creationTs= -1))
+  	val userNode = put(UserNode(id=id, username=username, name=name, email=email, pwdhash=pwdhash, role=role))
 	  if (email != "") {
       val emailId = idFromEmail(email)
   	  put(UserEmailNode(id=emailId, username=username, email=email))
