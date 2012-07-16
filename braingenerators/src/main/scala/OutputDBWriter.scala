@@ -15,13 +15,12 @@ import com.graphbrain.hgdb.SourceNode
 import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.Vertex
 import com.graphbrain.hgdb.EdgeType
-import com.graphbrain.searchengine.Indexing
 
 
 class OutputDBWriter(storeName:String, source:String, username:String, name:String, role:String) {
 	
 
-	val store = new VertexStore(storeName) with Indexing with BurstCaching with UserManagement with UserOps
+	val store = new VertexStore(storeName) with BurstCaching with UserManagement with UserOps
 	val wikiURL = "http://en.wikipedia.org/wiki/"
 
 	def writeOutDBInfo(node1: String, relin: String, node2: String, resource: String):Unit=
