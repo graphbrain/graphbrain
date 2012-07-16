@@ -17,13 +17,30 @@ object Lemmatiser {
 	props.put("annotators", "tokenize, ssplit, pos, lemma");
 	val pipeline = new StanfordCoreNLP(props);
 	val s = new StanfordLemmatizer();
+	val posTagger = new POSTagger();
 
 
-	def lemmatise(stringToLemmatise:String):List[String]=
+	def lemmatise(stringToLemmatise:String): List[(String, String)]=
 	{
-		val lemmas=s.lemmatize("am a tree");
-		return scala.collection.JavaConversions.asScalaBuffer(lemmas).toList
+		var lemmatised:List[(String, String)]=List()
+		val lemmas=scala.collection.JavaConversions.asScalaBuffer(s.lemmatize(stringToLemmatise, 0)).toList;
+		val words = scala.collection.JavaConversions.asScalaBuffer(s.lemmatize(stringToLemmatise, 1)).toList;
+
+		if(lemmas.length==words.length) {
+
+		  for(i <- 0 to (words.length-1)) {
+		    lemmatised = (words(i), lemmas(i)) :: lemmatised
+		  }
+
+		}
+
+		return lemmatised.reverse;
 	}
+
+	def posTag(stringToTag:String): List[(String, String)] =
+	{
+		return posTagger.tagText(stringToTag)
+	}  
 
 
 	def main(args: Array[String])

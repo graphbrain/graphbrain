@@ -27,8 +27,10 @@ class StanfordLemmatizer {
         this.pipeline = new StanfordCoreNLP(props);
     }
 
-    public List<String> lemmatize(String documentText)
+    public List<String> lemmatize(String documentText, int returnType)
     {
+
+        List<String> words = new LinkedList<String>();
         List<String> lemmas = new LinkedList<String>();
 
         // create an empty Annotation just with the given text
@@ -44,17 +46,24 @@ class StanfordLemmatizer {
             for (CoreLabel token: sentence.get(TokensAnnotation.class)) {
                 // Retrieve and add the lemma for each word into the
                 // list of lemmas
-                lemmas.add(token.get(LemmaAnnotation.class));
+                words.add(token.word());
+                lemmas.add(token.lemma());
+//                lemmas.add(token.get(LemmaAnnotation.class));
             }
         }
+        if(returnType==0) {
+            return lemmas;
+        }
+        else {
+            return words;
+        }
 
-        return lemmas;
     }
 
     public static void main(String[] args) {
         StanfordLemmatizer s = new StanfordLemmatizer();
         String tree = "tree";
-        List<String> lemmas=s.lemmatize(tree);
+        List<String> lemmas=s.lemmatize(tree, 1);
 
         System.out.println(lemmas);
     }
