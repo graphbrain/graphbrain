@@ -48,6 +48,8 @@ case class Edge(id: String="", etype: String="", edgesets: Set[String]=Set[Strin
 }
 
 object Edge {
+  def parts(edgeId: String) = edgeId.split(' ')
+
   def participantIds(edgeId: String) = {
     val tokens = edgeId.split(' ')
     for (i <- 1 until tokens.length) yield tokens(i)

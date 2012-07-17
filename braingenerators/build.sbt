@@ -19,4 +19,4 @@ libraryDependencies += "com.basho.riak" % "riak-client" % "1.0.4"
 
 parallelExecution in Test := false 
 
-mainClass in assembly := Some("com.graphbrain.braingenerators.DBPediaGraphFromCategories")
+mainClass in assembly := Some("com.graphbrain.braingenerators.DBPediaGraphFromInfobox")
