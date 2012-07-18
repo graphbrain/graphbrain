@@ -91,35 +91,40 @@ case class NavBar(user: UserNode, page: String) {
   }
 
   def html = {
-    """
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a style="padding:7px 20px 7px" href="/"><img src="/images/GB_logo_S.png" class="brand" alt="graphbrain" /></a>
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li><form class="navbar-search" id="search-field">
-                <input type="text" id="search-input-field" class="search-query" placeholder="Search" />
-              </form></li>
-            </ul>
+    if (page == "comingsoon") {
+      ""
+    }
+    else {
+      """
+      <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+          <div class="container-fluid">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </a>
+            <a style="padding:7px 20px 7px" href="/"><img src="/images/GB_logo_S.png" class="brand" alt="graphbrain" /></a>
+            <div class="nav-collapse">
+              <ul class="nav">
+                <li><form class="navbar-search" id="search-field">
+                  <input type="text" id="search-input-field" class="search-query" placeholder="Search" />
+                </form></li>
+              </ul>
+            </div>
+            """ + pages + """
+            """ + userStuff + """
           </div>
-          """ + pages + """
-          """ + userStuff + """
+        </div>
+        <div id="ai-chat">
+        </div>
+        <div id="alert" class="alert" style="visibility:hidden">
+          <button class="close" data-dismiss="alert">×</button>
+          <div id="alertMsg"></div>
         </div>
       </div>
-      <div id="ai-chat">
-      </div>
-      <div id="alert" class="alert" style="visibility:hidden">
-        <button class="close" data-dismiss="alert">×</button>
-        <div id="alertMsg"></div>
-      </div>
-    </div>
-    """
+      """
+    }
   } 
 }
 

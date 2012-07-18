@@ -15,6 +15,9 @@ object LandingPlan extends cycle.Plan with cycle.SynchronousExecution with Serve
 
   def intent = {
     case req@GET(Path("/") & Cookies(cookies)) => {
+      pageResponse("ComingSoon.ssp", "comingsoon", cookies, req)
+    }
+    case req@GET(Path("/secret") & Cookies(cookies)) => {
       pageResponse("Landing.ssp", "home", cookies, req)
     }
     case req@GET(Path("/about") & Cookies(cookies)) => {
