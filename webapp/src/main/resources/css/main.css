@@ -149,8 +149,8 @@ html, body {
     -webkit-transform-style:preserve-3d;
     -moz-transform-style:preserve-3d;
 }#ai-chat {
-	color: #000;
-    background: #5bcef1;
+	color: #fff;
+    background: #000;
     opacity: 0.8;
     padding-left: 10px;
     padding-right: 10px;
