@@ -3,6 +3,6 @@ resolvers += Resolver.url("sbt-plugin-releases",
 
 resolvers += "spray repo" at "http://repo.spray.cc"
 
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.7.3")
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.8.3")
 
 addSbtPlugin("cc.spray" % "sbt-revolver" % "0.6.1")
