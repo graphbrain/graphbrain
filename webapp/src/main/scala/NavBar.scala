@@ -104,7 +104,7 @@ case class NavBar(user: UserNode, page: String) {
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </a>
-            <a style="padding:7px 20px 7px" href="/"><img src="/images/GB_logo_S.png" class="brand" alt="graphbrain" /></a>
+            <a style="padding:7px 20px 7px" href="/secret"><img src="/images/GB_logo_S.png" class="brand" alt="graphbrain" /></a>
             <div class="nav-collapse">
               <ul class="nav">
                 <li><form class="navbar-search" id="search-field">
