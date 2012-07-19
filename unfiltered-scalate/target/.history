@@ -1,9 +1,0 @@
-compile
-reload
-compile
-project webapp
-clean
-compile
-project webapp
-compile
-project webapp
