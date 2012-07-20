@@ -9,4 +9,4 @@ addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.8.1")
 
 addSbtPlugin("cc.spray" % "sbt-revolver" % "0.6.1")
 
-addSbtPlugin("com.github.retronym" % "sbt-onejar" % "0.6")
+addSbtPlugin("com.github.retronym" % "sbt-onejar" % "0.7")
