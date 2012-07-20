@@ -19,7 +19,7 @@ object GraphbrainBuild extends Build {
 
   lazy val webapp = Project(id = "webapp",
                            base = file("webapp"),
-                           settings = Defaults.defaultSettings ++ SbtOneJar.oneJarSettings ++ Revolver.settings) dependsOn(hgdb, searchengine, nlp, unfilteredScalate)
+                           settings = Defaults.defaultSettings ++ assemblySettings ++ SbtOneJar.oneJarSettings ++ Revolver.settings) dependsOn(hgdb, searchengine, nlp, unfilteredScalate)
 
   lazy val braingenerators = Project(id = "braingenerators",
   							base = file("braingenerators"),
