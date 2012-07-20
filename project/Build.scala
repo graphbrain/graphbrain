@@ -3,7 +3,6 @@ import Keys._
 import sbtassembly.Plugin._
 import AssemblyKeys._
 import cc.spray.revolver.RevolverPlugin._
-import com.github.retronym.SbtOneJar
 
 
 object GraphbrainBuild extends Build {
@@ -19,7 +18,7 @@ object GraphbrainBuild extends Build {
 
   lazy val webapp = Project(id = "webapp",
                            base = file("webapp"),
-                           settings = Defaults.defaultSettings ++ assemblySettings ++ SbtOneJar.oneJarSettings ++ Revolver.settings) dependsOn(hgdb, searchengine, nlp, unfilteredScalate)
+                           settings = Defaults.defaultSettings ++ assemblySettings ++ Revolver.settings) dependsOn(hgdb, searchengine, nlp, unfilteredScalate)
 
   lazy val braingenerators = Project(id = "braingenerators",
   							base = file("braingenerators"),
