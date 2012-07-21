@@ -61,6 +61,19 @@ trait UserOps extends VertexStoreInterface {
     vertex
   }
 
+  def getOrInsert2(node:Vertex, userid: String): Vertex =
+  {
+    try {
+      get(node.id)
+    }
+    catch {
+      case _ => {
+        put2(node, userid)
+        get(node.id)
+      }
+    }
+  }
+
   def addrel2(edgeType: String, participants: Array[String], userid: String) = {
     val userSpace = participants.exists(id => ID.isInUserSpace(id))
 
