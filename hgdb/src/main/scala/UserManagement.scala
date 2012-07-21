@@ -67,7 +67,6 @@ trait UserManagement extends VertexStoreInterface {
   	if (!exists("user")) {
   		put(TextNode("user", "user"))
   	}
-  	addrel("is", Array(id, "user"))
   	userNode.asInstanceOf[UserNode]
   }
 
