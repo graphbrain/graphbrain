@@ -30,7 +30,7 @@ class SentenceParser (storeName:String = "gb") {
   val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r)
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
   val gbNodeExt = """(http://)?graphbrain.com/node/""".r
-  val rTypeMapping = HashMap("is the opposite of"->"1/is_the_opposite_of", "means the same as" -> "1/means_the_same_as", "is a"->"1/is_a", "is an"->"1/is_an",  "is a type of"->"1/is_a_type_of", "has a"->"1/has_a")
+  val rTypeMapping = HashMap("is the opposite of"->"is_the_opposite_of", "means the same as" -> "means_the_same_as", "is a"->"is_a", "is an"->"is_an",  "is a type of"->"is_a_type_of", "has a"->"has_a")
   //"is" needs to be combined with POS to determine whether it is a property, state, or object that is being referred to.
   val questionWords = List("do", "can", "has", "did", "where", "when", "who", "why", "will", "how")
   
