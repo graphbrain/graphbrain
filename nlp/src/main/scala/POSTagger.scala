@@ -35,7 +35,8 @@ class POSTagger {
 		val wordTagPairs = taggedString.split(" ")	
 		for (wordTag <- wordTagPairs)
 		{
-			taggedTokens=(wordTag.split("/")(0), wordTag.split("/")(1))::taggedTokens
+			println(wordTag);
+			taggedTokens=(wordTag.split("_")(0), wordTag.split("_")(1))::taggedTokens
 		}
 		return taggedTokens.reverse
 	}
