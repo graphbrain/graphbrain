@@ -22,6 +22,9 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 
 	val store = new VertexStore(storeName) with BurstCaching with UserManagement with UserOps
 	val wikiURL = "http://en.wikipedia.org/wiki/"
+	val wikiPageET = EdgeType(ID.reltype_id("wikipage"), label = "wikipage")
+	val lineRegex = """#.*?""".r
+	
 
 	def writeOutDBInfo(node1: String, relin: String, node2: String, resource: String):Unit=
 	{
@@ -33,6 +36,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 			val global1 = ID.text_id(node1, "1")
 			val global2 = ID.text_id(node2, "1")
 			val globalRelType = ID.reltype_id(rel, 1)
+			
 			
 			//val N1Wiki=ID.wikipedia_id(node1)
 			//val N2Wiki=ID.wikipedia_id(node2)
@@ -49,9 +53,21 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 			println(store.getOrInsert2(relType, username).id)
 			println(store.getOrInsert2(ng1, username).id)
 			println(store.getOrInsert2(ng2, username).id)
-			
+
+
 			//Relationship at global level
-			store.addrel2(relin, Array[String](ng1.id, ng2.id), username)
+			store.addrel2(relType.id, Array[String](ng1.id, ng2.id), username)
+
+			//Wikipedia page
+			val wikiPageURL = lineRegex.split(resource)(0)
+			
+			if(wikiPageURL.startsWith(wikiURL)) {
+				val wikipediaPage = URLNode(ID.url_id(wikiPageURL))
+			
+				println(store.getOrInsert2(wikipediaPage, username).id)
+				store.addrel2(wikiPageET.id, Array[String](wikipediaPage.id, ng1.id), username)
+			}
+
 			
 			
 		}
@@ -86,6 +102,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 	    	store.getOrInsert2(sourceNode, username)
 	    	store.getOrInsert2(urlNode, username)
 	    	store.addrel2("source", Array[String](sourceNode.id, urlNode.id), username)
+	    	store.getOrInsert2(wikiPageET, username)
 	    }
 	    catch{
 	    	case e => e.printStackTrace()

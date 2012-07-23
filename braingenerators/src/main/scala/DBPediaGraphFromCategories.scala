@@ -39,7 +39,7 @@ object DBPediaGraphFromCategories {
       if(Formatting.isList(subj)){return ("","","","")}
       if(wikiSource.length==1)
       {
-        if(isVowel(category(0).toString)) return (subj, "is_an", category, wikiSource(0)) else return (subj, "is_a", category, wikiSource(0))
+        if(isVowel(category(0).toString)) return (subj, "is_an", category, wikiSource(0).replace("<", "").replace(">", "")) else return (subj, "is_a", category, wikiSource(0).replace("<", "").replace(">", ""))
         
       }
       else{
