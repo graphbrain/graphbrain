@@ -37,7 +37,7 @@ object DBPediaGraphFromInfobox {
       val pred = predicate(0).replace("<http://dbpedia.org/ontology/", "").replace(">", "")
       if(wikiSource.length==1)
       {
-        return (subj, pred, obj, wikiSource(0));
+        return (subj, pred, obj, wikiSource(0).replace("<", "").replace(">", ""));
       }
       else{
         return (subj,pred,obj,"")
