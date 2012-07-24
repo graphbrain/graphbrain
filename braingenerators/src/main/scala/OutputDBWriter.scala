@@ -62,7 +62,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 			val wikiPageURL = lineRegex.split(resource)(0)
 			
 			if(wikiPageURL.startsWith(wikiURL)) {
-				val wikipediaPage = URLNode(ID.url_id(wikiPageURL))
+				val wikipediaPage = URLNode(ID.url_id(wikiPageURL), url = wikiPageURL, title = node1)
 			
 				println(store.getOrInsert2(wikipediaPage, username).id)
 				store.addrel2(wikiPageET.id, Array[String](wikipediaPage.id, ng1.id), username)
