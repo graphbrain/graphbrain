@@ -76,6 +76,8 @@ abstract trait VertexStoreInterface {
     }
   }
 
+  def rawget(id: String): String = backend.rawget(id)
+
   /** Adds Vertex to database */
   def put(vertex: Vertex): Vertex = {
     val v = if (vertex.ts == 0) {
@@ -86,7 +88,7 @@ abstract trait VertexStoreInterface {
       vertex
     }
     backend.put(v.id, v.toMap)
-    vertex
+    v
   }
 
   /** Updates vertex on database */

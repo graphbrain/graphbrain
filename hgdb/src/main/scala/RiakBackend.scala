@@ -22,6 +22,14 @@ class RiakBackend(val bucketName: String, ip: String="127.0.0.1", port: Int=8098
     }
   }
 
+  def rawget(id: String): String = {
+    val value = bucket.fetch(id).execute()
+    value match {
+      case s: IRiakObject => s.getValueAsString
+      case _ => throw KeyNotFound(id)
+    }
+  }
+
   /** Puts a document represented by a Map[String, Any] into the store */
   def put(id: String, doc: Map[String, Any]) = bucket.store(id, map2str(doc)).w(1).returnBody(false).execute()
 

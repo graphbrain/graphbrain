@@ -11,7 +11,7 @@ import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.UserNode
 
 
-case class RawPage(vertex: Vertex, req: HttpRequest[Any], cookies: Map[String, Any]) {
+case class RawPage(vertex: Vertex, raw: String, req: HttpRequest[Any], cookies: Map[String, Any]) {
   var html = "<h2>Vertex: " + vertex.id + "</h2>"
 
   val fieldMap = vertex.toMap
@@ -31,6 +31,9 @@ case class RawPage(vertex: Vertex, req: HttpRequest[Any], cookies: Map[String, A
       html += "<br />"
     }
   }
+
+  html += "<br /><h3>Raw</h3>"
+  html += raw
 
   def response = Server.scalateResponse("raw.ssp", "raw", cookies, req, html=html)
 }
