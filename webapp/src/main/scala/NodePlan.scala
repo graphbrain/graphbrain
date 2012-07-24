@@ -18,8 +18,9 @@ object NodePlan extends cycle.Plan with cycle.SynchronousExecution with ServerEr
 
   def rawResponse(id: String, cookies: Map[String, Any], req: HttpRequest[Any]) = {
     val vertex = Server.store.get(id)
+    val raw = Server.store.rawget(id)
     log.info(Server.realIp(req) + " RAW " + id)
-    RawPage(vertex, req, cookies).response
+    RawPage(vertex, raw, req, cookies).response
   }
 
   def intent = {

@@ -50,7 +50,7 @@ class AIChatResponderActor() extends Actor {
         }
       }
       catch {
-        case _ => {}
+        case e => e.printStackTrace()
       }
 
       val replyMap = Map(("sentence" -> replySentence), ("goto" -> goto))

@@ -5,6 +5,9 @@ trait Backend {
   
   /** Gets a document by it's id in the form of a Map[String, Any] */
   def get(id: String): Map[String, Any]
+
+  def rawget(id: String): String
+
   /** Puts a document represented by a Map[String, Any] into the store */
   def put(id: String, doc: Map[String, Any])
   /** Updates a document identified by it's id with the information contained in the Map[String, Any] */
