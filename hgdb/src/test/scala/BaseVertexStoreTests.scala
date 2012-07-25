@@ -168,8 +168,8 @@ trait BaseVertexStoreTests { this: FunSuite =>
     store.put(node1)
     store.addrel("test", Array[String]("node0", "node1"))
 
-    assert(store.neighbors("node0").toSet == Set[(String, String)](("node0", ""), ("node1", "node0")))
-    assert(store.neighbors("node1").toSet == Set[(String, String)](("node0", "node1"), ("node1", "")))
+    assert(store.neighbors("node0").toSet == Set[String]("node0", "node1"))
+    assert(store.neighbors("node1").toSet == Set[String]("node0", "node1"))
   }
 
   test("a few neighbors [" + label + "]") {
@@ -189,8 +189,8 @@ trait BaseVertexStoreTests { this: FunSuite =>
     store.addrel("test", Array[String]("node5", "node6"))
     store.addrel("test", Array[String]("node6", "node7"))
 
-    assert(store.neighbors("node0").toSet == Set[(String, String)](("node0", ""),
-        ("node1", "node0"), ("node2", "node0"), ("node3", "node0"), ("node4", "node0"), ("node5", "node0")))
+    assert(store.neighbors("node0").toSet == Set[String]("node0",
+        "node1", "node2", "node3", "node4", "node5"))
   }
 
   test("neighborEdges for two neighbors [" + label + "]") {
