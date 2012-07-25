@@ -347,11 +347,11 @@ abstract trait VertexStoreInterface {
     true
   }
   
-  def neighbors(nodeId: String): Set[(String, String)] = {
-    val nset = MSet[(String, String)]()
+  def neighbors(nodeId: String): Set[String] = {
+    val nset = MSet[String]()
     
     // add root node
-    nset += ((nodeId, ""))
+    nset += (nodeId)
 
     // add nodes connected to root
     val node = get(nodeId)
@@ -359,8 +359,8 @@ abstract trait VertexStoreInterface {
       val edgeSet = getEdgeSet(edgeSetId)
       for (edgeId <- edgeSet.edges) {
         for (pid <- Edge.participantIds(edgeId)) {
-          if (pid != nodeId) {
-            nset += ((pid, nodeId))
+          if ((pid != nodeId) && (!ID.isInUserSpace(pid))){
+            nset += pid
           }
         }
       }      

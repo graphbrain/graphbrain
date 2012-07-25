@@ -13,6 +13,8 @@ object ID {
 
   def isUserNode(id: String): Boolean = (parts(id)(0) == "user") && (numberOfParts(id) == 2)
 
+  def isInSystemSpace(id: String): Boolean = parts(id)(0) == "sys"
+
   def globalToUser(id: String, userid: String) = {
     if (isInUserSpace(id))
       id
