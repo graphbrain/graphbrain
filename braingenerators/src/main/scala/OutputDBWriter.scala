@@ -6,6 +6,7 @@ import java.net.URLDecoder;
 import scala.collection.immutable.HashMap
 import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.BurstCaching
+import com.graphbrain.hgdb.TimeStamping
 import com.graphbrain.hgdb.UserManagement
 import com.graphbrain.hgdb.UserOps
 import com.graphbrain.hgdb.OpLogging
@@ -20,7 +21,7 @@ import com.graphbrain.hgdb.EdgeType
 class OutputDBWriter(storeName:String, source:String, username:String, name:String, role:String) {
 	
 
-	val store = new VertexStore(storeName) with BurstCaching with UserManagement with UserOps
+	val store = new VertexStore(storeName) with BurstCaching with TimeStamping with UserManagement with UserOps
 	val wikiURL = "http://en.wikipedia.org/wiki/"
 	val wikiPageET = EdgeType(ID.reltype_id("wikipage"), label = "wikipage")
 	val lineRegex = """#.*?""".r

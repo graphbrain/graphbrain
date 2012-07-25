@@ -1,7 +1,6 @@
 package com.graphbrain.hgdb
 
 import scala.collection.mutable.{Set => MSet}
-import java.util.Date
 
 
 abstract trait VertexStoreInterface {
@@ -80,15 +79,8 @@ abstract trait VertexStoreInterface {
 
   /** Adds Vertex to database */
   def put(vertex: Vertex): Vertex = {
-    val v = if (vertex.ts == 0) {
-      val curTs = (new Date()).getTime()
-      vertex.setTs(curTs)
-    }
-    else {
-      vertex
-    }
-    backend.put(v.id, v.toMap)
-    v
+    backend.put(vertex.id, vertex.toMap)
+    vertex
   }
 
   /** Updates vertex on database */

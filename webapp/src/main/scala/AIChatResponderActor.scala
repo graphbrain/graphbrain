@@ -43,7 +43,7 @@ class AIChatResponderActor() extends Actor {
           val node2 = parse._3(0)
           val relation = parse._2(0).id
 
-          Server.store.createAndConnectVertices(relation, Array(node1, node2))
+          Server.store.createAndConnectVertices2(relation, Array(node1, node2), user.id)
 
           replySentence = "This fact was recorded: '" + sentence + "'"
           goto = root.id

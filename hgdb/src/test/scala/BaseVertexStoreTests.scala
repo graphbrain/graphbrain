@@ -21,6 +21,16 @@ trait BaseVertexStoreTests { this: FunSuite =>
     assert(vertex.id == vertexOut.id)
   }
 
+  test("timestamp [" + label + "]") {
+    val vertex = TextNode("vertex0", "vertex0", ts=1111)
+    store.remove(vertex)
+    store.put(vertex)
+    
+    val vertexOut = store.get("vertex0")
+    assert(vertex.id == vertexOut.id)
+    assert(vertexOut.ts == 1111)
+  }
+
   test("get Vertex that does not exist [" + label + "]") {
     intercept[KeyNotFound] {
       store.get("sdfh89g89gdf")

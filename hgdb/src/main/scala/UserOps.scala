@@ -53,12 +53,12 @@ trait UserOps extends VertexStoreInterface {
     if (!ID.isInUserSpace(vertex.id)) {
       val userSpaceId = ID.globalToUser(vertex.id, userid)
       if (!exists(userSpaceId)) {
-        put(vertex.clone(userSpaceId))
+        put(get(vertex.id).clone(userSpaceId))
         addrel("sys/alt", Array(vertex.id, userSpaceId))
       }
     }
 
-    vertex
+    get(vertex.id)
   }
 
   def getOrInsert2(node:Vertex, userid: String): Vertex =
@@ -97,7 +97,7 @@ trait UserOps extends VertexStoreInterface {
 
   def delrel2(edgeId: String, userid: String): Unit = delrel2(Edge.edgeType(edgeId), Edge.participantIds(edgeId).toArray, userid)
 
-  def createAndConnectVertices(edgeType: String, participants: Array[Vertex], userid: String) = {
+  def createAndConnectVertices2(edgeType: String, participants: Array[Vertex], userid: String) = {
     for (v <- participants) {
       put2(v, userid)
     }
