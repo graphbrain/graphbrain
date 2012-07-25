@@ -156,7 +156,7 @@ object DBPediaGraphFromCategories {
     {
       
       case a:Array[String] if(a.length==3) => processFile(args(0), new OutputDBWriter(args(1), args(2), args(4), args(5), args(6)), args(3).toInt)
-      case _ =>  processFile(DBPediaGraphFromCategories.dataFile, new OutputDBWriter("gb", DBPediaGraphFromCategories.sourceName, "user/dbpedia", "dbpedia", "crawler"), -1)
+      case _ =>  processFile(DBPediaGraphFromCategories.dataFile, new OutputDBWriter(storeName = "gb", source = DBPediaGraphFromCategories.sourceName, username = "dbpedia", name = "dbpedia", role = "crawler"), -1)
       
     }
     
