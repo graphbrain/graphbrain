@@ -51,13 +51,13 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 			
 
 			
-			println(store.getOrInsert2(relType, username).id)
-			println(store.getOrInsert2(ng1, username).id)
-			println(store.getOrInsert2(ng2, username).id)
+			println(store.getOrInsert2(relType, store.idFromUsername(username)).id)
+			println(store.getOrInsert2(ng1, store.idFromUsername(username)).id)
+			println(store.getOrInsert2(ng2, store.idFromUsername(username)).id)
 
 
 			//Relationship at global level
-			store.addrel2(relType.id, Array[String](ng1.id, ng2.id), username)
+			store.addrel2(relType.id, Array[String](ng1.id, ng2.id), store.idFromUsername(username))
 
 			//Wikipedia page
 			val wikiPageURL = lineRegex.split(resource)(0)
@@ -65,8 +65,8 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 			if(wikiPageURL.startsWith(wikiURL)) {
 				val wikipediaPage = URLNode(ID.url_id(wikiPageURL), url = wikiPageURL, title = node1)
 			
-				println(store.getOrInsert2(wikipediaPage, username).id)
-				store.addrel2(wikiPageET.id, Array[String](wikipediaPage.id, ng1.id), username)
+				println(store.getOrInsert2(wikipediaPage, store.idFromUsername(username)).id)
+				store.addrel2(wikiPageET.id, Array[String](wikipediaPage.id, ng1.id), store.idFromUsername(username))
 			}
 
 			
@@ -100,10 +100,10 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
   			val sourceNode=SourceNode(id=ID.source_id(sourceID))
 	    	val urlNode=URLNode(ID.url_id(sourceURL), sourceURL)
 	    	println(username)
-	    	store.getOrInsert2(sourceNode, username)
-	    	store.getOrInsert2(urlNode, username)
-	    	store.addrel2("source", Array[String](sourceNode.id, urlNode.id), username)
-	    	store.getOrInsert2(wikiPageET, username)
+	    	store.getOrInsert2(sourceNode, store.idFromUsername(username))
+	    	store.getOrInsert2(urlNode, store.idFromUsername(username))
+	    	store.addrel2("source", Array[String](sourceNode.id, urlNode.id), store.idFromUsername(username))
+	    	store.getOrInsert2(wikiPageET, store.idFromUsername(username))
 	    }
 	    catch{
 	    	case e => e.printStackTrace()
@@ -125,11 +125,11 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
   		try{
   			val sourceNode=store.getSourceNode(ID.source_id(source))
   			val urlNode = URLNode(ID.url_id(url), url)	
-  			store.getOrInsert2(node, username)
-  			store.getOrInsert2(urlNode, username);
-  			store.getOrInsert2(sourceNode, username)
-  			store.addrel2("en_wikipage", Array[String](urlNode.id, node.id), username); 
-  			store.addrel2("source", Array[String](sourceNode.id, urlNode.id), username)
+  			store.getOrInsert2(node, store.idFromUsername(username))
+  			store.getOrInsert2(urlNode, store.idFromUsername(username));
+  			store.getOrInsert2(sourceNode, store.idFromUsername(username))
+  			store.addrel2("en_wikipage", Array[String](urlNode.id, node.id), store.idFromUsername(username)); 
+  			store.addrel2("source", Array[String](sourceNode.id, urlNode.id), store.idFromUsername(username))
   			
   		}
   		catch {
@@ -151,8 +151,8 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
   			val sourceNode=store.getSourceNode(ID.source_id(source));
   			val urlNode=URLNode(id=ID.url_id(url), url=url)
 			
-			store.getOrInsert2(sourceNode, username);
-			store.getOrInsert2(urlNode, username);
+			store.getOrInsert2(sourceNode, store.idFromUsername(username));
+			store.getOrInsert2(urlNode, store.idFromUsername(username));
 			store.addrel("source", Array[String](sourceNode.id, urlNode.id))
 
 				
@@ -163,20 +163,20 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 			image match{
 				case a:String => 
 					val imageLocal=TextNode(id=ID.nounproject_id(imagename), text=a)
-					store.getOrInsert2(imageLocal, username)
+					store.getOrInsert2(imageLocal, store.idFromUsername(username))
 					store.addrel("image_page", Array[String](urlNode.id,imageLocal.id))
 					store.addrel("source", Array[String](sourceNode.id, imageLocal.id))
 					val attribution = imagename + NounProjectCrawler.attributionText + contributorName;
 					val contributorNode = TextNode(id=ID.nounproject_id(contributorName), text=contributorName);
 					val contURLNode = URLNode(id=ID.url_id(contributorURL), url=contributorURL);
 
-					store.getOrInsert2(contributorNode, username)
-					store.getOrInsert2(contURLNode, username)
+					store.getOrInsert2(contributorNode, store.idFromUsername(username))
+					store.getOrInsert2(contURLNode, store.idFromUsername(username))
 					store.addrel("attribute_as", Array[String](imageLocal.id, contributorNode.id))
 					store.addrel("contributor_page", Array[String](contURLNode.id, contributorNode.id, imageLocal.id))
 
 
-					store.getOrInsert2(imageLocal, username);
+					store.getOrInsert2(imageLocal, store.idFromUsername(username));
 
 					if(nodeExists(wikinode)) 
 					{
@@ -187,7 +187,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 					else{
 
 						val newNode=TextNode(id=ID.text_id(imagename, "noun"), text=imagename)
-						store.getOrInsert2(newNode, username);
+						store.getOrInsert2(newNode, store.idFromUsername(username));
 						store.addrel("image_of", Array[String](imageLocal.id, newNode.id))
 				
 					}
