@@ -14,7 +14,7 @@ import scala.math
 
 class GraphInterface (val rootId: String, val store: VertexStore, val user: UserNode) {
   val neighbors = store.neighbors(rootId)
-  val edgeIds = store.neighborEdges(rootId)
+  val edgeIds = store.neighborEdges(rootId, neighbors)
   val snodes = supernodes
   val links = visualLinks
   val nodesJSON = nodes2json
@@ -123,8 +123,9 @@ class GraphInterface (val rootId: String, val store: VertexStore, val user: User
 
   /** Generates JSON string from nodes */
   private def nodes2json = {
-    val json = (for (n <- neighbors) yield
-      (n._1 -> node2map(n._1, n._2))).toMap
+    val json = (Map((rootId -> node2map(rootId, ""))) ++
+        (for (n <- neighbors if (n != rootId)) yield
+          (n -> node2map(n, rootId)))).toMap
     generate(json)
   }
 

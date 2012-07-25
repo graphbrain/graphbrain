@@ -369,6 +369,17 @@ abstract trait VertexStoreInterface {
     nset.toSet
   }
 
+  def edgeInNeighborhood(edgeId: String, nhood: Set[String]): Boolean = {
+    val pids = Edge.participantIds(edgeId)
+    for (pid <- pids) {
+      if (!nhood.contains(pid)) {
+        return false
+      }
+    }
+
+    true
+  }
+
   def neighborEdges(nodeId: String): Set[String] = {
     val eset = MSet[String]()
 
@@ -378,6 +389,23 @@ abstract trait VertexStoreInterface {
       val edgeSet = getEdgeSet(edgeSetId)
       for (edgeId <- edgeSet.edges) {
         eset += edgeId
+      }      
+    }
+
+    eset.toSet
+  }
+
+  def neighborEdges(nodeId: String, nhood: Set[String]): Set[String] = {
+    val eset = MSet[String]()
+
+    // add edges connected to root
+    val node = get(nodeId)
+    for (edgeSetId <- node.edgesets) {
+      val edgeSet = getEdgeSet(edgeSetId)
+      for (edgeId <- edgeSet.edges) {
+        if (edgeInNeighborhood(edgeId, nhood)) {
+          eset += edgeId
+        }
       }      
     }
 
