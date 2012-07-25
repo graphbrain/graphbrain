@@ -99,7 +99,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
   		try{
   			val sourceNode=SourceNode(id=ID.source_id(sourceID))
 	    	val urlNode=URLNode(ID.url_id(sourceURL), sourceURL)
-	    
+	    	println(username)
 	    	store.getOrInsert2(sourceNode, username)
 	    	store.getOrInsert2(urlNode, username)
 	    	store.addrel2("source", Array[String](sourceNode.id, urlNode.id), username)
@@ -153,7 +153,8 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 			
 			store.getOrInsert2(sourceNode, username);
 			store.getOrInsert2(urlNode, username);
-			store.addrel("source", Array[String](sourceNode.id, urlNode.id))			
+			store.addrel("source", Array[String](sourceNode.id, urlNode.id))
+
 				
 			if(image=="")
 			{
