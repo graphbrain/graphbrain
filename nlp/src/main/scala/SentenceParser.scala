@@ -31,6 +31,7 @@ class SentenceParser (storeName:String = "gb") {
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
   val gbNodeExt = """(http://)?graphbrain.com/node/""".r
   val rTypeMapping = HashMap("is the opposite of"->"is_the_opposite_of", "means the same as" -> "means_the_same_as", "is a"->"is_a", "is an"->"is_an",  "is a type of"->"is_a_type_of", "has a"->"has_a")
+
   //"is" needs to be combined with POS to determine whether it is a property, state, or object that is being referred to.
   val questionWords = List("do", "can", "has", "did", "where", "when", "who", "why", "will", "how")
   
@@ -252,15 +253,28 @@ class SentenceParser (storeName:String = "gb") {
     return results.reverse;
   }
 
-  def nodeToLemmaNode(node: TextNode): (TextNode, TextNode) = {
-    //node match {
-      //case n: TextNode => 
-        
-        val lemma = lemmatiser.annotate(node.text)(0)._3
-        val lemmaNode = TextNode(id = ID.text_id(lemma, 1), text = lemma)
-        return (node, lemmaNode);
-      //case _ => throw NodeTypeException("TextNode expected.")
-    //}
+  /**
+  Returns lemma node and pos relationship type (linking the two edge types).
+  */
+  def relTypeLemmaAndPOS(relType: EdgeType, sentence: String): (EdgeType, (TextNode, EdgeType)) = {
+    
+    if(relType.label == "is a"||relType.label == "is an") {
+      val isLemmaNode = TextNode(id = ID.text_id("be", 1), text = "be")
+      val isRelType = EdgeType(id = ID.reltype_id("VBZ"), label = "VBZ")
+      return (relType, (isLemmaNode, isRelType))
+    }
+    val posSentence = lemmatiser.annotate(sentence);
+    var lemma = "";
+    var posLabel = ""
+    for (tagged <- posSentence) {
+      if(tagged._1==relType.label) {
+        posLabel = tagged._2;
+        lemma = tagged._3;
+      }
+    } 
+    val lemmaNode = TextNode(id = ID.text_id(lemma, 1), text = lemma)
+    val lemmaRelType = EdgeType(id = ID.reltype_id(posLabel), label = posLabel)
+    return (relType, (lemmaNode, lemmaRelType));
     
   }
 
@@ -618,7 +632,7 @@ object SentenceParser {
       
       val rootNode = TextNode(id=ID.usergenerated_id("chihchun_chen", "toad"), text="toad")
       val userNode = UserNode(id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
-  	  val sentence1 = "\"Chih-Chun Chen\" is a \"toad\""
+  	  val sentence1 = "I am a toad"
   	  val sentence2 = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
       val videoURL1 = "http://www.youtube.com/watch?v=_e_zcoDDiwc&feature=related"
       val videoURL2 = "http://vimeo.com/34948855"
@@ -635,6 +649,12 @@ object SentenceParser {
       }
       for(mRelation <- mRelations) {
         println("Relation: " + mRelation.id)
+        mRelation match {
+          case r: EdgeType => val a = sentenceParser.relTypeLemmaAndPOS(r, sentence1);
+            println("EdgeType: " + a._1.id);
+            println("Lemma Node: " + a._2._1.id);
+            println("POS EdgeType: " + a._2._2.id);
+        }
       }
       for(mTarget <- mTargets) {
         println("Target: " + mTarget.id)
@@ -647,9 +667,16 @@ object SentenceParser {
       val targets = parses._3;
       for(source <- sources) {
         println("Source: " + source.id)
+        
       }
       for(relation <- relations) {
         println("Relation: " + relation.id)
+        relation match {
+          case r: EdgeType => val a = sentenceParser.relTypeLemmaAndPOS(r, sentence2);
+            println("EdgeType: " + a._1.id);
+            println("Lemma Node: " + a._2._1.id);
+            println("POS EdgeType: " + a._2._2.id);
+        }
       }
       for(target <- targets) {
         println("Target: " + target.id)

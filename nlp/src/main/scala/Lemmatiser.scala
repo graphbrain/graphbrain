@@ -60,7 +60,7 @@ class Lemmatiser {
 	  	var counter = 0;
 	    for (entry <- lemmas) {
 		  val word = entry._1
-		  val lemma = entry._1
+		  val lemma = entry._2
 		  val pos = posTags(counter)._2
 		  annotated = (word, pos, lemma) :: annotated
 		  counter = counter + 1;
@@ -78,7 +78,7 @@ object Lemmatiser {
 
   		
   		val l = new Lemmatiser()
-    	val annotated = l.annotate("I am a mushroom")
+    	val annotated = l.annotate("Chih-Chun was a mushroom")
 
     	for (a <- annotated) {
     		println(a);
