@@ -21,8 +21,8 @@ class SentenceParser (storeName:String = "gb") {
   val quoteRegex = """(\")(.+?)(\")""".r
   val urlRegex = """([\d\w]+?:\/\/)?([\w\d\.\-]+)(\.\w+)(:\d{1,5})?(\/\S*)?""".r // See: http://stackoverflow.com/questions/8725312/javascript-regex-for-url-when-the-url-may-or-may-not-contain-http-and-www-words?lq=1
   val urlStrictRegex = """(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?""".r
-  //"""http:\/\/.+""".r
-  val posTagger = new POSTagger()
+  val gbNode = TextNode(id = ID.text_id("GraphBrain", 1), text = "GraphBrain")
+
   val verbRegex = """VB[A-Z]?""".r
   val adverbRegex = """RB[A-Z]?""".r
   val propositionRegex = """IN[A-Z]?""".r
@@ -31,8 +31,12 @@ class SentenceParser (storeName:String = "gb") {
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
   val gbNodeExt = """(http://)?graphbrain.com/node/""".r
   val rTypeMapping = HashMap("is the opposite of"->"is_the_opposite_of", "means the same as" -> "means_the_same_as", "is a"->"is_a", "is an"->"is_an",  "is a type of"->"is_a_type_of", "has a"->"has_a")
+
   //"is" needs to be combined with POS to determine whether it is a property, state, or object that is being referred to.
   val questionWords = List("do", "can", "has", "did", "where", "when", "who", "why", "will", "how")
+  
+  //val posTagger = new POSTagger()
+  val lemmatiser = new Lemmatiser()
   
 
   val si = RiakSearchInterface("gbsearch")
@@ -87,6 +91,16 @@ class SentenceParser (storeName:String = "gb") {
       if(nodeTexts.length==2) {
 
         var relationV = EdgeType(id = ID.reltype_id(relation), label = relation)
+
+        
+
+        if(nodeTexts(0) == "you") {
+          sources = gbNode :: sources;
+        }
+
+        if(nodeTexts(1) == "you") {
+          targets = gbNode :: targets;
+        }
         //println(relationV.id)
 
         root match {
@@ -135,6 +149,12 @@ class SentenceParser (storeName:String = "gb") {
             }
             if(u.username == nodeTexts(0) || u.name == nodeTexts(0)) {
               sources = u :: sources
+            }
+            if(nodeTexts(0) == "I") {
+              sources = u :: sources;
+            }
+            if(nodeTexts(1) == "me") {
+              targets = u :: targets;
             }
           case _ =>
         }
@@ -201,34 +221,11 @@ class SentenceParser (storeName:String = "gb") {
     }
 
 
-
-    //Only make special content types with respect to a "thing" (TextNode)
-    /*node match {
-      case r: TextNode => 
-        
-        for (imageE <- imageExt) {
-          if (imageE.findAllIn(text).hasNext && r.id != "GBNoneGB") {             
-            val imageID = ID.image_id(image_name = r.text, image_url = text); 
-            results =  ImageNode(id = ID.usergenerated_id(userName, imageID, brainName), url = text) :: results;
-          }
-        }
-
-        for (videoE <- videoExt) {
-          if (videoE.findAllIn(text).hasNext && r.text != "GBNoneGB") {
-            val videoID = ID.video_id(video_name = r.text, video_url = text)
-            results = VideoNode(id = ID.usergenerated_id(userName, videoID, brainName), url = text) :: results;
-          }
-        }
-      case _ =>
-      }*/
-
     if (urlRegex.findAllIn(text).hasNext) {
       val urlID = ID.url_id(url = text)
       results = URLNode(id = ID.usergenerated_id(userName, urlID)) :: results
     }
 
-    //val textID = ID.text_id(removeDeterminers(text))
-    //results = TextNode(id = ID.usergenerated_id(userName, textID, brainName), text=removeDeterminers(text)) :: results;
     val wikiID = ID.wikipedia_id(text)
     //Add the wikipedia node as a possible entry if found
     if(nodeExists(wikiID)) {results = getOrCreate(wikiID) :: results}
@@ -253,13 +250,34 @@ class SentenceParser (storeName:String = "gb") {
       }
     }
     
-    //if(text!=textPureID) {results = TextNode(id = ID.usergenerated_id(userName, textPureID), text=text) :: results;}
     return results.reverse;
   }
 
-  def removeEndPunctuation(text: String) = {
-
+  /**
+  Returns lemma node and pos relationship type (linking the two edge types).
+  */
+  def relTypeLemmaAndPOS(relType: EdgeType, sentence: String): (EdgeType, (TextNode, EdgeType)) = {
+    
+    if(relType.label == "is a"||relType.label == "is an") {
+      val isLemmaNode = TextNode(id = ID.text_id("be", 1), text = "be")
+      val isRelType = EdgeType(id = ID.reltype_id("VBZ"), label = "VBZ")
+      return (relType, (isLemmaNode, isRelType))
+    }
+    val posSentence = lemmatiser.annotate(sentence);
+    var lemma = "";
+    var posLabel = ""
+    for (tagged <- posSentence) {
+      if(tagged._1==relType.label) {
+        posLabel = tagged._2;
+        lemma = tagged._3;
+      }
+    } 
+    val lemmaNode = TextNode(id = ID.text_id(lemma, 1), text = lemma)
+    val lemmaRelType = EdgeType(id = ID.reltype_id(posLabel), label = posLabel)
+    return (relType, (lemmaNode, lemmaRelType));
+    
   }
+
 
 
   
@@ -338,7 +356,7 @@ def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
   }
 
   def posChunk(sentence: String, root: Vertex): List[(List[String], String)]={
-    val taggedSentence = posTagger.tagText(sentence)
+    val taggedSentence = lemmatiser.posTag(sentence)
     var possibleParses: List[(List[String], String)] = List()
     for(i <- 0 to taggedSentence.length-3) {
       
@@ -386,6 +404,8 @@ def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
     }
     return possibleParses.reverse;
   }
+
+
 
 
   def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: Vertex, user:UserNode, maxPossiblePerParse: Int = 10): List[(List[Vertex], Edge)]={
@@ -508,8 +528,8 @@ If returnAll is false, only return the ones that satisfy the root as node constr
   }
 
 def removeDeterminers(text: String): String={
-  if(posTagger==null) return null
-  val posTagged = posTagger.tagText(text);
+  if(lemmatiser==null) return null
+  val posTagged = lemmatiser.posTag(text);
   
   var newText = ""
   for (tag <- posTagged) {
@@ -526,14 +546,14 @@ def removeDeterminers(text: String): String={
 def removeDeterminers(possibleParses: List[(List[String], String)], rootNode: Vertex, returnAll: Boolean = false): List[(List[String], String)]={
     var removedParses: List[(List[String], String)] = List()
     var optionalParses: List[(List[String], String)] = List()
-    if(posTagger==null) return null
+    if(lemmatiser==null) return null
     for (g <- possibleParses) {
       g match {
         case (nodeTexts: List[String], edgeText: String) => 
         var newNodes = nodeTexts.toArray;
         for(i <- 0 to nodeTexts.length-1) {
           val nodeText = nodeTexts(i)
-          val posTagged = posTagger.tagText(nodeText);
+          val posTagged = lemmatiser.posTag(nodeText);
           var done = false
           for(tag <- posTagged)
           {
@@ -601,130 +621,6 @@ def nodeExists(id:String):Boolean =
     }
   }
 
-//Abandoned code:
-
- /* def parseSentence(inSentence: String, root: Vertex = TextNode(id="GBNoneGB", text="GBNoneGB"), parseType: String = "graph", numResults: Int = 10, user:Option[UserNode]=None): List[(List[Vertex], Edge)]={
-    val sentence = inSentence.trim;
-    //I'm envisioning that in the future we may have other parsing purposes where we might have other parsing rules 
-    //(e.g. ignoring non-rootparses, different rule precedences) so I've kept the graph creation parsing as just one option.
-    if(parseType == "graph") {
-      var userIn = UserNode(anon_username, anon_username)
-      user match {
-        case Some(u:UserNode) => userIn = u;
-        case _ => 
-      }
-      return parseToGraph(sentence, root, numResults, userIn);
-    }
-    else {
-      return Nil
-    }
-  }
-
-def parseToGraph(sentence: String, root: Vertex, numResults: Int, user: UserNode): List[(List[Vertex], Edge)]={
-
-    var possibleParses = quoteChunkStrict(sentence, root) ++ posChunk(sentence, root);
-    println("Possible parses: " + possibleParses.length)
-    var possibleGraphs = findOrConvertToVertices(possibleParses, root, user, numResults);
-    println("Possible graphs: " + possibleGraphs.length)
-    return possibleGraphs.take(numResults);
-  }
-
-def textToNode(text:String): List[Vertex] = {
-    var results: List[Vertex] = List()
-    if(nodeExists(text)) {
-      try{
-        results = store.get(text) :: results;        
-      }
-      catch {case e =>}
-
-    }
-
-    if(gbNodeExt.split(text).length==2) {
-      val gbID = gbNodeExt.split(text)(1)
-      if(nodeExists(gbID)) {
-        try {
-          results = store.get(gbID) :: results;
-        }
-      }
-    }
-
-    /*for (imageE <- imageExt) {
-      if (imageE.findAllIn(text).hasNext) {             
-        val imageID = ID.image_id(image_name = text, image_url = text); 
-        results =  ImageNode(id = brainID + "/" +  imageID, url = text) :: results;
-      }
-    }
-
-    for (videoE <- videoExt) {
-      if (videoE.findAllIn(text).hasNext) {
-        val videoID = ID.video_id(video_name = text, video_url = text)
-        results = VideoNode(id = brainID + "/" + videoID, url = text) :: results;
-      }
-    }*/
-      
-    if (urlRegex.findAllIn(text).hasNext) {
-      val urlID = ID.url_id(url = text)
-      results = URLNode(id = urlID, url=text) :: results
-    }
-    
-    if(results.length>=1) return results.reverse;
-
-    //val textID = ID.text_id(removeDeterminers(text))
-    //results = TextNode(id = brainID + "/" + textID, text=removeDeterminers(text)) :: results;
-    val textPureID = ID.text_id(text)
-
-    results = TextNode(id = textPureID, text=text) :: results;
-
-    return results.reverse;
-  }
-  def quoteChunk(sentence: String, root: Vertex): List[(List[String], String)]={
-    //Find the quotes:
-    var possibleParses: List[(List[String], String)] = List()
-
-    
-    quoteRegex.findFirstIn(sentence) match {
-
-      case Some(exp) => 
-      
-      //Make sure the quotation marks are not around the whole string:
-        //I'm assigning these in case we want to do something with them later, e.g. infer hypergraphs vs. multi-bi-graphs
-        val numQuotes = quoteRegex.findAllIn(sentence).length;
-        
-        var nonQuotes = quoteRegex.split(sentence);
-        var nqEdges:List[String] = List()
-        var numNonQuotes = 0;
-        
-        for (i <- 0 to nonQuotes.length-1) {
-          val nq = nonQuotes(i)
-          if(nq!="") {
-            numNonQuotes+=1;
-            nqEdges = nq::nqEdges;
-          }
-        }
-        
-        if (exp.length == sentence.length) {
-          return Nil;
-        }
-        else if (numQuotes >=2 && numNonQuotes == numQuotes-1) {
-          val nodes = quoteRegex.findAllIn(sentence).toArray;
-          val edges = nqEdges.reverse.toArray
-          
-          for(i <- 0 to nodes.length-2) {
-            val current = nodes(i);
-            val next = nodes(i+1);
-            val edge = edges(i);
-            possibleParses = (List(current.replace("\"", "").trim, next.replace("\"", "").trim), edge) :: possibleParses; 
-            println("Quote Chunk: " + current + ", " + edge + ", " + next)
-
-          }
-          return possibleParses;
-    } 
-      case None => return possibleParses;
-    }
-    return possibleParses
-
-  }*/
-
 
 
 }
@@ -736,7 +632,7 @@ object SentenceParser {
       
       val rootNode = TextNode(id=ID.usergenerated_id("chihchun_chen", "toad"), text="toad")
       val userNode = UserNode(id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
-  	  val sentence1 = "\"Chih-Chun Chen\" is a \"toad\""
+  	  val sentence1 = "I am a toad"
   	  val sentence2 = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
       val videoURL1 = "http://www.youtube.com/watch?v=_e_zcoDDiwc&feature=related"
       val videoURL2 = "http://vimeo.com/34948855"
@@ -753,30 +649,17 @@ object SentenceParser {
       }
       for(mRelation <- mRelations) {
         println("Relation: " + mRelation.id)
+        mRelation match {
+          case r: EdgeType => val a = sentenceParser.relTypeLemmaAndPOS(r, sentence1);
+            println("EdgeType: " + a._1.id);
+            println("Lemma Node: " + a._2._1.id);
+            println("POS EdgeType: " + a._2._2.id);
+        }
       }
       for(mTarget <- mTargets) {
         println("Target: " + mTarget.id)
       }
-      //sentenceParser.parseSentence(sentence1)
-      //println("From main with root: " + sentence1)
-      //sentenceParser.parseSentence(sentence1, rootNode)
-      //println("From main with root with user: " + sentence1)
-      //sentenceParser.parseSentence(sentence1, rootNode, user=Some(userNode))
-
-      //println("Video with root with user: " + videoURL1)
-      //println(sentenceParser.textToNode(videoURL1, rootNode, user=Some(userNode)))
-      //println("Video with root with user: " + videoURL2)
-      //println(sentenceParser.textToNode(videoURL2, rootNode, user=Some(userNode)))
-      //println("Video with root with user: " + videoURL3)
-      //println(sentenceParser.textToNode(videoURL3, rootNode, user=Some(userNode)))
-
-      //println("Image with root with user: " + imageURL1)
-      //println(sentenceParser.textToNode(imageURL1, rootNode, user=Some(userNode)))
-      //println("Image with root with user: " + imageURL2)
-      //println(sentenceParser.textToNode(imageURL2, rootNode, user=Some(userNode)))
       
-
-
       println("From command line: " + sentence2)
       val parses = sentenceParser.parseSentence(sentence2)
       val sources = parses._1;
@@ -784,47 +667,21 @@ object SentenceParser {
       val targets = parses._3;
       for(source <- sources) {
         println("Source: " + source.id)
+        
       }
       for(relation <- relations) {
         println("Relation: " + relation.id)
+        relation match {
+          case r: EdgeType => val a = sentenceParser.relTypeLemmaAndPOS(r, sentence2);
+            println("EdgeType: " + a._1.id);
+            println("Lemma Node: " + a._2._1.id);
+            println("POS EdgeType: " + a._2._2.id);
+        }
       }
       for(target <- targets) {
         println("Target: " + target.id)
       }
-      //println("From command line with root: " + sentence2)
-      //sentenceParser.parseSentence(sentence2, rootNode)
-      //println("From command line with root with user: " + sentence2)
-      //sentenceParser.parseSentence(sentence2, rootNode, user=Some(userNode))
       
-      
-      /*val text = "Some Magic Cookies"
-      println("Text: " + text)
-      println(sentenceParser.textToNode(text)(0).id)
-      
-      
-      val videoURL = "http://www.youtube.com/watch?v=_e_zcoDDiwc&feature=related"
-      println("Video: " + videoURL)
-      println(sentenceParser.textToNode(videoURL))
-
-
-      val imageURL = "http://www.flickr.com/photos/londonmummy/471232270/"
-      println("Image: " + imageURL)
-      println(sentenceParser.textToNode(imageURL))
-
-
-      val url = "https://github.com/graphbrain/graphbrain"
-      println("Image: " + url)
-      println(sentenceParser.textToNode(url))
-
-      val existing = "wikipedia/aristotle"
-      println("Existing: " + existing)
-      println(sentenceParser.textToNode(existing)(0).id)
-
-      val existingURL = "graphbrain.com/node/wikipedia/aristotle";
-      println("Existing URL: " + existingURL)
-      println(sentenceParser.textToNode(existingURL)(0).id)*/
-
-
 
 
 
