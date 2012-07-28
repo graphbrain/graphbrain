@@ -6,6 +6,7 @@ import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.UserNode
+import com.graphbrain.hgdb.ID
 import scala.collection.mutable.{Map => MMap}
 import scala.collection.mutable.{Set => MSet}
 import com.codahale.jerkson.Json._
@@ -152,12 +153,18 @@ class GraphInterface (val rootId: String, val store: VertexStore, val user: User
     "rgb(" + r + "," + g + "," + b + ")"
   }
 
+  private def linkLabel(edgeType: String) = {
+    val lastPart = ID.parts(edgeType).last
+    lastPart
+    lastPart.replace("_", " ")
+  }
+
   /** Generates JSON string from links */
   private def links2json = {
     var lid = 0
     val json = for (l <- links) yield {
       lid += 1
-      val relation = l._1.replace("_", " ")
+      val relation = linkLabel(l._1)
       val color = linkColor(l._1)
       if (l._4 && l._5)
         Map(("id" -> lid), ("directed" -> 1), ("relation" -> relation), ("orig" -> l._2.toString), ("targ" -> l._3.toString), ("color" -> color))
