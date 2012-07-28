@@ -207,7 +207,9 @@ abstract trait VertexStoreInterface {
       }
 
       // increment participant's degree
-      update(vertex.setDegree(vertex.degree + 1))
+      if (!ID.isInSystemSpace(edgeType)) {
+        update(vertex.setDegree(vertex.degree + 1))
+      }
 
       
       // increment edgeset's size
