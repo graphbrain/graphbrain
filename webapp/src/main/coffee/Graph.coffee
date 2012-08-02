@@ -3,7 +3,8 @@
 g = false
 
 initGraph = ->
-    g = new Graph(window.innerWidth, window.innerHeight)
+    console.log('width: ' + $('#graph-view').width() + '; height: ' + $('#graph-view').height())
+    g = new Graph($('#graph-view').width(), $('#graph-view').height())
     g.updateTransform()
 
     # process super nodes and associated nodes
@@ -124,8 +125,8 @@ class Graph
     updateTransform: ->
         transformStr = "translate(" + @offsetX + "px," + @offsetY + "px)" +
             " scale(" + @scale + ")"
-        $('#nodesDiv').css('-webkit-transform', transformStr)
-        $('#nodesDiv').css('-moz-transform', transformStr)
+        $('#graph-view').css('-webkit-transform', transformStr)
+        $('#graph-view').css('-moz-transform', transformStr)
 
     rotateX: (angle) ->
         @deltaQuat.fromEuler(angle, 0, 0)

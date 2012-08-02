@@ -5,11 +5,17 @@
 <% layout("page.ssp") {%>
 
 <style type="text/css">
-  body {background:#FFF;}
+  body {
+    background:#FFF;
+    overflow:hidden;
+  }
 </style>
 
-<div id="graphDiv">
-  <div id="nodesDiv"></div>
+<div class="top-spacer"></div>
+
+<div id="main-view">
+  <div id="graph-view"></div>
+  <div id="text-view"></div>
 </div>
 
 <%}%>

@@ -77,7 +77,7 @@ mouseWheel = (e, delta, deltaX, deltaY) ->
     true
 
 fullBind = (eventName, f) ->
-    $("#graphDiv").bind eventName, f
+    $("#graph-view").bind eventName, f
     $(".snode1").bind eventName, f
     $(".snodeN").bind eventName, f
     $(".link").bind eventName, f

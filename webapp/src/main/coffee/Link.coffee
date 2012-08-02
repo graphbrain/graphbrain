@@ -61,11 +61,11 @@ class Link
         @angle = Math.atan(slope)
 
     place: ->
-        $('#nodesDiv').append('<div class="linkLabel" id="linkLabel' + @id + '"><div class="linkText" id="linkText' + @id + '">' + @label + '</div><div class="linkArrow" id="linkArrow' + @id + '" /></div>')
-        $('#nodesDiv').append('<div class="linkPoint" id="linkPoint1' + @id + '"></div>')
-        $('#nodesDiv').append('<div class="linkPoint" id="linkPoint2' + @id + '"></div>')
-        $('#nodesDiv').append('<div class="linkPoint" id="linkPoint3' + @id + '"></div>')
-        $('#nodesDiv').append('<div class="linkPoint" id="linkPoint4' + @id + '"></div>')
+        $('#graph-view').append('<div class="linkLabel" id="linkLabel' + @id + '"><div class="linkText" id="linkText' + @id + '">' + @label + '</div><div class="linkArrow" id="linkArrow' + @id + '" /></div>')
+        $('#graph-view').append('<div class="linkPoint" id="linkPoint1' + @id + '"></div>')
+        $('#graph-view').append('<div class="linkPoint" id="linkPoint2' + @id + '"></div>')
+        $('#graph-view').append('<div class="linkPoint" id="linkPoint3' + @id + '"></div>')
+        $('#graph-view').append('<div class="linkPoint" id="linkPoint4' + @id + '"></div>')
 
         $('#linkText' + @id).css('background', @color)
         $('#linkArrow' + @id).css('border-left', '11px solid ' + @color)
