@@ -137,7 +137,7 @@ class GraphInterface (val rootId: String, val store: VertexStore, val user: User
 	case x: (String, Integer, String) => x
 	case _ => ("", -1, "")
       }
-      Map(("id" -> snode("id").toString), ("rel" -> key._1), ("rpos" -> key._2), ("nodes" -> snode("nodes").asInstanceOf[Set[String]]))
+      Map(("id" -> snode("id").toString), ("rel" -> linkLabel(key._1)), ("rpos" -> key._2), ("nodes" -> snode("nodes").asInstanceOf[Set[String]]))
     }
     generate(json)
   }
@@ -158,7 +158,9 @@ class GraphInterface (val rootId: String, val store: VertexStore, val user: User
     "rgb(" + r + "," + g + "," + b + ")"
   }
 
-  private def linkLabel(edgeType: String) = {
+  private def linkLabel(edgeType: String): String = {
+    if (edgeType == "")
+      return ""
     val lastPart = ID.parts(edgeType).last
     lastPart
     lastPart.replace("_", " ")

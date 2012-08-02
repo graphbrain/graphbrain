@@ -450,7 +450,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatButtonPressed, aiChatReply, aiChatSubmit, aiChatVisible, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, initAiChat, initAlert, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, showAiChat, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatButtonPressed, aiChatReply, aiChatSubmit, aiChatVisible, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, initAiChat, initAlert, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, initTextView, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, showAiChat, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -1880,6 +1880,34 @@ function handler(event) {
 
   })();
 
+  initTextView = function() {
+    var nid, nlist, nod, rel, sn, text, _i, _len, _results;
+    $('#text-view').append('<h2>' + nodes[rootNodeId]['text'] + '</h2>');
+    _results = [];
+    for (_i = 0, _len = snodes.length; _i < _len; _i++) {
+      sn = snodes[_i];
+      rel = sn['rel'];
+      if (rel !== '') {
+        nlist = sn['nodes'];
+        $('#text-view').append('<h3>' + rel + '</h3>');
+        _results.push((function() {
+          var _j, _len2, _results2;
+          _results2 = [];
+          for (_j = 0, _len2 = nlist.length; _j < _len2; _j++) {
+            nid = nlist[_j];
+            nod = nodes[nid];
+            text = nod['text'];
+            _results2.push($('#text-view').append(text + ' '));
+          }
+          return _results2;
+        })());
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
+  };
+
   initSearchDialog = function() {
     var dialogHtml;
     dialogHtml = $("<div class=\"modal hide\" id=\"searchResultsModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Search Results</h3>\n  </div>\n  <div class=\"modal-body\" id=\"searchResultsBody\" />\n  <div class=\"modal-footer\">\n    <a class=\"btn btn-primary\" data-dismiss=\"modal\">Close</a>\n  </div>\n</div>");
@@ -2306,7 +2334,10 @@ function handler(event) {
 
   $(function() {
     if (typeof snodes !== 'undefined') nodeView = true;
-    if (nodeView) initGraph();
+    if (nodeView) {
+      initGraph();
+      initTextView();
+    }
     return initInterface();
   });
 

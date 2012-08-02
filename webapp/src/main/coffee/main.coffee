@@ -10,5 +10,6 @@ $ ->
 
     if nodeView
         initGraph()
+        initTextView()
     
     initInterface()
