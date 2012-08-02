@@ -132,8 +132,13 @@ class GraphInterface (val rootId: String, val store: VertexStore, val user: User
 
   /** Generates JSON string from supernodes */
   private def snodes2json = {
-    val json = for (snode <- snodes) yield
-      Map(("id" -> snode("id").toString), ("nodes" -> snode("nodes").asInstanceOf[Set[String]]))
+    val json = for (snode <- snodes) yield {
+      val key = snode("key") match { 
+	case x: (String, Integer, String) => x
+	case _ => ("", -1, "")
+      }
+      Map(("id" -> snode("id").toString), ("rel" -> key._1), ("rpos" -> key._2), ("nodes" -> snode("nodes").asInstanceOf[Set[String]]))
+    }
     generate(json)
   }
 

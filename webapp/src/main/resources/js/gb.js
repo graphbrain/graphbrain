@@ -922,7 +922,7 @@ function handler(event) {
   };
 
   fullBind = function(eventName, f) {
-    $("#graphDiv").bind(eventName, f);
+    $("#graph-view").bind(eventName, f);
     $(".snode1").bind(eventName, f);
     $(".snodeN").bind(eventName, f);
     return $(".link").bind(eventName, f);
@@ -1229,7 +1229,7 @@ function handler(event) {
     SNode.prototype.place = function() {
       var html, key, nodeObj, nodesCount;
       html = '<div id="' + this.id + '"><div class="viewport" /></div>';
-      $('#nodesDiv').append(html);
+      $('#graph-view').append(html);
       this.jqDiv = $('#' + this.id);
       nodesCount = 0;
       for (key in this.nodes) {
@@ -1345,11 +1345,11 @@ function handler(event) {
 
     Link.prototype.place = function() {
       var height, labelWidth, snode;
-      $('#nodesDiv').append('<div class="linkLabel" id="linkLabel' + this.id + '"><div class="linkText" id="linkText' + this.id + '">' + this.label + '</div><div class="linkArrow" id="linkArrow' + this.id + '" /></div>');
-      $('#nodesDiv').append('<div class="linkPoint" id="linkPoint1' + this.id + '"></div>');
-      $('#nodesDiv').append('<div class="linkPoint" id="linkPoint2' + this.id + '"></div>');
-      $('#nodesDiv').append('<div class="linkPoint" id="linkPoint3' + this.id + '"></div>');
-      $('#nodesDiv').append('<div class="linkPoint" id="linkPoint4' + this.id + '"></div>');
+      $('#graph-view').append('<div class="linkLabel" id="linkLabel' + this.id + '"><div class="linkText" id="linkText' + this.id + '">' + this.label + '</div><div class="linkArrow" id="linkArrow' + this.id + '" /></div>');
+      $('#graph-view').append('<div class="linkPoint" id="linkPoint1' + this.id + '"></div>');
+      $('#graph-view').append('<div class="linkPoint" id="linkPoint2' + this.id + '"></div>');
+      $('#graph-view').append('<div class="linkPoint" id="linkPoint3' + this.id + '"></div>');
+      $('#graph-view').append('<div class="linkPoint" id="linkPoint4' + this.id + '"></div>');
       $('#linkText' + this.id).css('background', this.color);
       $('#linkArrow' + this.id).css('border-left', '11px solid ' + this.color);
       $('#linkPoint1' + this.id).css('background', this.color);
@@ -1550,7 +1550,8 @@ function handler(event) {
 
   initGraph = function() {
     var key, l, link, linkID, nid, nlist, nod, node, orig, parentID, sid, sn, snode, sorig, starg, subNode, targ, text, type, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref;
-    g = new Graph(window.innerWidth, window.innerHeight);
+    console.log('width: ' + $('#graph-view').width() + '; height: ' + $('#graph-view').height());
+    g = new Graph($('#graph-view').width(), $('#graph-view').height());
     g.updateTransform();
     for (_i = 0, _len = snodes.length; _i < _len; _i++) {
       sn = snodes[_i];
@@ -1673,8 +1674,8 @@ function handler(event) {
     Graph.prototype.updateTransform = function() {
       var transformStr;
       transformStr = "translate(" + this.offsetX + "px," + this.offsetY + "px)" + " scale(" + this.scale + ")";
-      $('#nodesDiv').css('-webkit-transform', transformStr);
-      return $('#nodesDiv').css('-moz-transform', transformStr);
+      $('#graph-view').css('-webkit-transform', transformStr);
+      return $('#graph-view').css('-moz-transform', transformStr);
     };
 
     Graph.prototype.rotateX = function(angle) {

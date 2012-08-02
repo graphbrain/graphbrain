@@ -185,6 +185,8 @@ case class UserNode(id: String="", username: String="", name: String="", email: 
 
   override def clone(newid: String) = this
 
+  override def toString: String = name
+
   def setEdgeSets(newEdgeSets: Set[String]) = copy(edgesets=newEdgeSets)
   def setDegree(newDegree: Int) = copy(degree=newDegree)
   def setTs(newTs: Long) = copy(ts=newTs)

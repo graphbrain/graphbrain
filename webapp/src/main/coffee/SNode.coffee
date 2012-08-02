@@ -149,7 +149,7 @@ class SNode
 
     place: ->
         html = '<div id="' + @id + '"><div class="viewport" /></div>'
-        $('#nodesDiv').append(html)
+        $('#graph-view').append(html)
 
         @jqDiv = $('#' + @id)
 
