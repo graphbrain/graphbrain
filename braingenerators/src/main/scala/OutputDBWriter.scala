@@ -39,12 +39,6 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 			val wikiName2 = ID.wikipedia_id(node2)
 			
 			
-			//val N1Wiki=ID.wikipedia_id(node1)
-			//val N2Wiki=ID.wikipedia_id(node2)
-			
-			//val nw1 = TextNode(id=N1Wiki, text=URLDecoder.decode(node1, "UTF-8"));
-			//val nw2 = TextNode(id=N2Wiki, text=URLDecoder.decode(node2, "UTF-8"));
-
 			val ng1 = insertAndGetWikiDisambigNode(node1)
 			val ng2 = insertAndGetWikiDisambigNode(node2)
 			val relType = EdgeType(id = globalRelType, label = rel);
