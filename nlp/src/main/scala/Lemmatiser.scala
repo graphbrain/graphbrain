@@ -76,14 +76,22 @@ object Lemmatiser {
 	def main(args: Array[String])
   	{
 
-  		
+  		val clSentence = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
+  		val s = "Chih-Chun was a mushroom"
   		val l = new Lemmatiser()
-    	val annotated = l.annotate("Chih-Chun was a mushroom")
+  		println("From main: " + s)
+
+    	val annotated = l.annotate(s)
+    	val annotatedCL = l.annotate(clSentence)
 
     	for (a <- annotated) {
     		println(a);
     	}
-    	
+    	println("From command line: " + clSentence)
+
+    	for ( a <- annotatedCL) {
+    		println(a)
+    	}
 
 
 

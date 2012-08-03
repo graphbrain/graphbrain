@@ -65,6 +65,7 @@ trait UserOps extends VertexStoreInterface {
   {
     try {
       get(node.id)
+      get(ID.globalToUser(node.id, userid))
     }
     catch {
       case _ => {
