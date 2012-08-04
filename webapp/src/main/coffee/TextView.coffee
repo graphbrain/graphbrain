@@ -1,16 +1,27 @@
 # (c) 2012 GraphBrain Ltd. All rigths reserved.
 
 initTextView = ->
-    $('#text-view').append('<h2>' + nodes[rootNodeId]['text'] + '</h2>')
+    rootText = nodes[rootNodeId]['text']
+    $('#text-view').append('<h2>' + rootText + '</h2><br />')
 
     for sn in snodes
         rel = sn['rel']
         if rel != ''
             nlist = sn['nodes']
 
-            $('#text-view').append('<h3>' + rel + '</h3>')
-        
+            relText = rel
+            if sn['rpos'] == 1
+                relText = rel + ' ' + rootText
+
+            $('#text-view').append('<h3>' + relText + ': </h3>')
+
+            first = true
             for nid in nlist
               nod = nodes[nid]
-              text = nod['text']
-              $('#text-view').append(text + ' ')
+              text = ''
+              if first
+                  first = false
+              else
+                  text = ', '
+              text += '<a href="/node/' + nid + '">' + nod['text'] + '</a>'
+              $('#text-view').append(text)

@@ -144,11 +144,16 @@ html, body {
     -moz-transform-style:preserve-3d;
 }
 
-#text-view {
+#right-bar {
     width:30%;
     height:100%;
     float:right;
     overflow: auto;
+    background:#DDD;
+}
+
+#text-view {
+    padding:20px;
 }
 
 .top-spacer {

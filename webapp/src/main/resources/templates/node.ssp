@@ -15,7 +15,9 @@
 
 <div id="main-view">
   <div id="graph-view"></div>
-  <div id="text-view"></div>
+  <div id="right-bar">
+    <div id="text-view"></div>
+  </div>
 </div>
 
 <%}%>
