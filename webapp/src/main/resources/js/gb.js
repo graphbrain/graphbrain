@@ -1881,23 +1881,33 @@ function handler(event) {
   })();
 
   initTextView = function() {
-    var nid, nlist, nod, rel, sn, text, _i, _len, _results;
-    $('#text-view').append('<h2>' + nodes[rootNodeId]['text'] + '</h2>');
+    var first, nid, nlist, nod, rel, relText, rootText, sn, text, _i, _len, _results;
+    rootText = nodes[rootNodeId]['text'];
+    $('#text-view').append('<h2>' + rootText + '</h2><br />');
     _results = [];
     for (_i = 0, _len = snodes.length; _i < _len; _i++) {
       sn = snodes[_i];
       rel = sn['rel'];
       if (rel !== '') {
         nlist = sn['nodes'];
-        $('#text-view').append('<h3>' + rel + '</h3>');
+        relText = rel;
+        if (sn['rpos'] === 1) relText = rel + ' ' + rootText;
+        $('#text-view').append('<h3>' + relText + ': </h3>');
+        first = true;
         _results.push((function() {
           var _j, _len2, _results2;
           _results2 = [];
           for (_j = 0, _len2 = nlist.length; _j < _len2; _j++) {
             nid = nlist[_j];
             nod = nodes[nid];
-            text = nod['text'];
-            _results2.push($('#text-view').append(text + ' '));
+            text = '';
+            if (first) {
+              first = false;
+            } else {
+              text = ', ';
+            }
+            text += '<a href="/node/' + nid + '">' + nod['text'] + '</a>';
+            _results2.push($('#text-view').append(text));
           }
           return _results2;
         })());
