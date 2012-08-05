@@ -32,14 +32,14 @@ object Server {
 
   val actorSystem = ActorSystem("actors")
 
-  def scalateResponse(template: String, page: String, cookies: Map[String, Any], req: HttpRequest[Any], js: String="", html: String="") = {
+  def scalateResponse(template: String, page: String, title: String, cookies: Map[String, Any], req: HttpRequest[Any], js: String="", html: String="") = {
     val userNode = getUser(cookies)
     val loggedIn = userNode != null
     if (prod) {
-      Ok ~> Scalate(req, template, ("navBar", NavBar(userNode, page).html), ("cssAndJs", (new CssAndJs()).cssAndJs), ("loggedIn", loggedIn), ("js", js), ("html", html))(engine)
+      Ok ~> Scalate(req, template, ("title", title), ("navBar", NavBar(userNode, page).html), ("cssAndJs", (new CssAndJs()).cssAndJs), ("loggedIn", loggedIn), ("js", js), ("html", html))(engine)
     }
     else {
-      Ok ~> Scalate(req, template, ("navBar", NavBar(userNode, page).html), ("cssAndJs", (new CssAndJs()).cssAndJs), ("loggedIn", loggedIn), ("js", js), ("html", html))
+      Ok ~> Scalate(req, template, ("title", title), ("navBar", NavBar(userNode, page).html), ("cssAndJs", (new CssAndJs()).cssAndJs), ("loggedIn", loggedIn), ("js", js), ("html", html))
     }
   }
 
