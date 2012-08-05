@@ -22,7 +22,7 @@ case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Bool
     "var errorMsg = '" + errorMsg + "';\n" +
     "var userId = '" + userId + "';\n"
 
-  def response = Server.scalateResponse("node.ssp", "node", cookies, req, js, "")
+  def response = Server.scalateResponse("node.ssp", "node", node.toString, cookies, req, js, "")
 }
 
 object NodePage {    

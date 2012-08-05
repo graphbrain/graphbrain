@@ -35,7 +35,7 @@ case class RawPage(vertex: Vertex, raw: String, req: HttpRequest[Any], cookies: 
   html += "<br /><h3>Raw</h3>"
   html += raw
 
-  def response = Server.scalateResponse("raw.ssp", "raw", cookies, req, html=html)
+  def response = Server.scalateResponse("raw.ssp", "raw", vertex.toString, cookies, req, html=html)
 }
 
 object RawPage {
