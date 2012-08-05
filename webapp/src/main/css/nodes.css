@@ -66,13 +66,19 @@
 }
 
 #main-view {
-    z-index:1;
     width:100%;
     height:100%;
-    background: rgba(0, 0, 0, 0);
+    position:fixed;
+    top:45px;
+    left:0px;
+    background:rgba(0, 0, 0, 0);
+    z-index:1;
 }
 
 #graph-view {
+    position:fixed;
+    top:0px;
+    left:0px;
     width:70%;
     height:100%;
     float:left;
@@ -92,9 +98,4 @@
 
 #text-view {
     padding:20px;
-}
-
-.top-spacer {
-    width:100%;
-    height:45px;
 }

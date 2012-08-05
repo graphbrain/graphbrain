@@ -11,8 +11,6 @@
   }
 </style>
 
-<div class="top-spacer"></div>
-
 <div id="main-view">
   <div id="graph-view"></div>
   <div id="right-bar">
