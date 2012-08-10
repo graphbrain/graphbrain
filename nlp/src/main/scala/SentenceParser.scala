@@ -15,6 +15,7 @@ import com.graphbrain.hgdb.Vertex
 import com.graphbrain.searchengine.Indexing
 import com.graphbrain.searchengine.RiakSearchInterface
 import com.graphbrain.hgdb.ID
+import com.graphbrain.hgdb.EdgeSet
 
 class SentenceParser (storeName:String = "gb") {
 
@@ -25,7 +26,7 @@ class SentenceParser (storeName:String = "gb") {
 
   val verbRegex = """VB[A-Z]?""".r
   val adverbRegex = """RB[A-Z]?""".r
-  val propositionRegex = """IN[A-Z]?""".r
+  val prepositionRegex = """IN[A-Z]?""".r
   val nounRegex = """NN[A-Z]?""".r
   val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r)
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
@@ -254,6 +255,26 @@ class SentenceParser (storeName:String = "gb") {
   }
 
   /**
+  Returns conjugated version of the lemma if present in database. Otherwise
+  simply returns the lemma
+  */
+  def conjugatefromExisting(lemma: String, pos: String): String = {
+
+    val targetESetID = ID.text_id(lemma) + "/0/" + pos; 
+
+    //Get the lemma node:
+    if(store.exists(targetESetID)) {
+      val posEdgeSet = store.get(ID.text_id(lemma) + "/1/" + pos);
+      posEdgeSet match {
+        case p: EdgeSet => return lemma 
+        case _ => 
+      }
+
+    }
+    return lemma; 
+  }
+
+  /**
   Returns lemma node and pos relationship type (linking the two edge types).
   */
   def relTypeLemmaAndPOS(relType: EdgeType, sentence: String): (EdgeType, (TextNode, EdgeType)) = {
@@ -372,7 +393,7 @@ def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
     		  if(verbRegex.findAllIn(tag2).length == 1) {
     		  	//println("verb: " + word2)
     		  
-    		  if(verbRegex.findAllIn(tag1).length == 0 && verbRegex.findAllIn(tag3).length == 0 && adverbRegex.findAllIn(tag3).length == 0) {
+    		    if(verbRegex.findAllIn(tag1).length == 0 && verbRegex.findAllIn(tag3).length == 0) {
     		  	  val edgeindex = i+1
     		  	  //Anything before the edge goes into node 1
     		  	  var node1Text = ""
@@ -387,17 +408,22 @@ def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
     		  	  }
     		  	  for (j <- i+2 to taggedSentence.length-1) {
     		  		taggedSentence(j) match {
-    		  	  		case (word, tag) => node2Text = node2Text + " " + word 
+    		  	  		case (word, tag) => 
+                    if(adverbRegex.findAllIn(tag).length==0 && prepositionRegex.findAllIn(tag).length==0) {
+                      node2Text = node2Text + " " + word 
+                    }
+                    else {
+                      edgeText = edgeText + " " + word;
+                    }
 
     		  	  	}
     		  	  }
-    		  	  println("POS Chunk: " + node1Text + " ," + edgeText + " ," + node2Text)
+    		  	  println("POS Chunk: " + node1Text.trim + " ," + edgeText.trim + " ," + node2Text.trim)
     		  	  val nodes = List(node1Text.replace("`", "").replace("'", "").trim, node2Text.replace("`", "").replace("'", "").trim)
     		  	  possibleParses = (nodes, edgeText) :: possibleParses
 
     		  	}
-				    		  	
-    		  }
+          }
 
 
     	  }
