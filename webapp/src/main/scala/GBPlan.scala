@@ -9,24 +9,21 @@ import com.codahale.jerkson.Json._
 
 import com.codahale.logula.Logging
 
-import com.graphbrain.searchengine.RiakSearchInterface
+import com.graphbrain.hgdb.SearchInterface
 
 
 object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse with Logging {
   def intent = {
     case req@POST(Path("/search") & Params(params)) => {
       val query = params("q")(0)
-      val si = RiakSearchInterface("gbsearch")
-      var results = si.query(query)
-      // if not results are found for exact match, try fuzzier
-      if (results.numResults == 0)
-        results = si.query(query + "*")
-      log.info(Server.realIp(req) + " SEARCH " + query + "; results: " + results.numResults)
+      val si = new SearchInterface(Server.store)
+      val results = si.query(query)
+      log.info(Server.realIp(req) + " SEARCH " + query + "; results: " + results.size)
       
-      val resultsList: Seq[List[String]] = (for (id <- results.ids)
+      val resultsList: Seq[List[String]] = (for (id <- results)
         yield List(id, Server.store.get(id).toString))
       
-      val json = Map(("count" -> results.numResults), ("results" -> resultsList))
+      val json = Map(("count" -> results.size), ("results" -> resultsList))
       ResponseString(generate(json))
     }
     case req@POST(Path("/signup") & Params(params)) => {
