@@ -12,10 +12,9 @@ import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.EdgeType
 import com.graphbrain.hgdb.Vertex
-import com.graphbrain.searchengine.Indexing
-import com.graphbrain.searchengine.RiakSearchInterface
 import com.graphbrain.hgdb.ID
 import com.graphbrain.hgdb.EdgeSet
+import com.graphbrain.hgdb.SearchInterface
 
 class SentenceParser (storeName:String = "gb") {
 
@@ -39,11 +38,10 @@ class SentenceParser (storeName:String = "gb") {
   //val posTagger = new POSTagger()
   val lemmatiser = new Lemmatiser()
   
+  val store = new VertexStore(storeName) with BurstCaching
 
-  val si = RiakSearchInterface("gbsearch")
-  
-  val store = new VertexStore(storeName) with Indexing with BurstCaching
-  
+  val si = new SearchInterface(store)
+
   def isQuestion(text:String): Boolean = {
     //Quite stringent - checks to see whether entire text is a question i.e. starts with a question mark, ends with a question mark.
     for(qWord <- questionWords) {
@@ -457,11 +455,7 @@ def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
 			var textNum = 0;
 			
       for (nodeText <- nodeTexts) {
-
-				var searchResults = try{si.query(nodeText).ids} catch {case e => Nil};
-				var fuzzySearchResults = try{si.query(nodeText+"*").ids} catch{case e => Nil};
-
-				val results = try{searchResults ++ fuzzySearchResults} catch {case e => Nil}
+				val results = si.query(nodeText)
 				
 				//fuzzy search results are second in priority
 				var currentNodesForNodeText:List[Vertex] = List() 
