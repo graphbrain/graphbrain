@@ -13,6 +13,7 @@ import scala.collection.JavaConversions._;
 
 
 class Lemmatiser {
+	val urlRegex = """([\d\w]+?:\/\/)?([\w\d\.\-]+)(\.\w+)(:\d{1,5})?(\/\S*)?""".r // See: http://stackoverflow.com/questions/8725312/javascript-regex-for-url-when-the-url-may-or-may-not-contain-http-and-www-words?lq=1
 	val props = new Properties()
 	props.put("annotators", "tokenize, ssplit, pos, lemma");
 	val pipeline = new StanfordCoreNLP(props);

@@ -384,12 +384,15 @@ def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
     return rel;
   }
 
+
   def posChunk(sentence: String, root: Vertex): List[(List[String], String)]={
     val taggedSentence = lemmatiser.posTag(sentence)
+    val untaggedSentence = """\s""".r.split(sentence);
     var possibleParses: List[(List[String], String)] = List()
+
+    
     for(i <- 0 to taggedSentence.length-3) {
       
-
   	  val current = taggedSentence(i)
   	  
   	  val lookahead1 = taggedSentence(i+1)
@@ -398,30 +401,42 @@ def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
       (current, lookahead1, lookahead2) match{
     		  case ((word1, tag1), (word2, tag2), (word3, tag3)) => 
     		  //println(word2 + ", " + tag2)
-    		  if(verbRegex.findAllIn(tag2).length == 1) {
+    		  if(verbRegex.findAllIn(tag2).length == 1 || adverbRegex.findAllIn(tag2).length == 1 || prepositionRegex.findAllIn(tag2).length == 1) {
     		  	//println("verb: " + word2)
+            var node1Text = "" 
+            var edgeText = ""
+            var node2Text = ""
+
     		  
-    		    if(verbRegex.findAllIn(tag1).length == 0 && verbRegex.findAllIn(tag3).length == 0) {
-    		  	  val edgeindex = i+1
+    		    if(verbRegex.findAllIn(tag1).length == 0 && adverbRegex.findAllIn(tag1).length == 0 && prepositionRegex.findAllIn(tag1).length == 0) {
+    		  	  
     		  	  //Anything before the edge goes into node 1
-    		  	  var node1Text = ""
-    		  	  var edgeText = word2
-    		  	  var node2Text = ""
+    		  	  
+    		  	 edgeText += untaggedSentence(i+1)
+    		  	  
     		  	  for (j <- 0 to i) {
     		  	  	taggedSentence(j) match {
-    		  	  		case (word, tag) => node1Text = node1Text + " " + word
+    		  	  		case (word, tag) => 
+                  
+                    node1Text = node1Text + " " + untaggedSentence(j)  
+                  
+                  
 
     		  	  	}
 
     		  	  }
+              
+
     		  	  for (j <- i+2 to taggedSentence.length-1) {
     		  		taggedSentence(j) match {
     		  	  		case (word, tag) => 
                     if(adverbRegex.findAllIn(tag).length==0 && prepositionRegex.findAllIn(tag).length==0) {
-                      node2Text = node2Text + " " + word 
+                      node2Text = node2Text + " " + untaggedSentence(j)  
+                   
                     }
                     else {
-                      edgeText = edgeText + " " + word;
+
+                      edgeText = edgeText + " " + untaggedSentence(j);
                     }
 
     		  	  	}
@@ -429,8 +444,10 @@ def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
     		  	  println("POS Chunk: " + node1Text.trim + " ," + edgeText.trim + " ," + node2Text.trim)
     		  	  val nodes = List(node1Text.replace("`", "").replace("'", "").trim, node2Text.replace("`", "").replace("'", "").trim)
     		  	  possibleParses = (nodes, edgeText) :: possibleParses
+              
 
     		  	}
+
           }
 
 
