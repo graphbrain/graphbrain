@@ -77,7 +77,7 @@ object Lemmatiser {
   	{
 
   		val clSentence = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
-  		val s = "Chih-Chun was a mushroom"
+  		val s = "Telmo Menezes has http://telmomenezes.com"
   		val l = new Lemmatiser()
   		println("From main: " + s)
 
