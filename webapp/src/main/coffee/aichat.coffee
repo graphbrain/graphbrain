@@ -1,19 +1,73 @@
 aiChatVisible = false
 
+chatBuffer = []
+chatBufferPos = 0
+chatBufferSize = 100
+
+initChatBuffer = () ->
+  if localStorage.getItem('chatBufferPos') != null
+    chatBufferPos = parseInt(localStorage.getItem('chatBufferPos'))
+
+  for pos in [0..chatBufferSize]
+    chatBuffer.push(localStorage.getItem('chatBuffer' + pos))
+
+  curPos = chatBufferPos
+  while curPos < chatBufferSize
+    line = chatBuffer[curPos]
+    if line != null
+      aiChatAddLineRaw(line)
+    curPos += 1
+  curPos = 0
+  while curPos < chatBufferPos
+    line = chatBuffer[curPos]
+    if line != null
+      aiChatAddLineRaw(line)
+    curPos += 1
+
+aiChatGotoBottom = () ->
+  height = $('#ai-chat')[0].scrollHeight
+  $('#ai-chat').scrollTop(height)
+
+showAiChat = () ->
+  $('#ai-chat').css('display', 'block')
+  aiChatVisible = true
+  localStorage.setItem('aichat', 'true')
+  aiChatGotoBottom()
+
+hideAiChat = () ->
+  $('#ai-chat').css('display', 'none')
+  aiChatVisible = false
+  localStorage.setItem('aichat', 'false')
+
 initAiChat = () ->
-	html = """
-	<div id="ai-chat-log" />
-	<form id="ai-chat-form">
-	<input id="ai-chat-input" type="text" />
-	</form>
-	"""
-	$('#ai-chat').html(html)
-	$('#ai-chat-form').submit(aiChatSubmit)
+  html = """
+  <div id="ai-chat-log" />
+  <form id="ai-chat-form">
+  <input id="ai-chat-input" type="text" />
+  </form>
+  """
+  $('#ai-chat').html(html)
+  $('#ai-chat-form').submit(aiChatSubmit)
+
+  initChatBuffer()
+
+  if localStorage.getItem('aichat') == 'true'
+    showAiChat()
+  else
+    hideAiChat()
+
+aiChatAddLineRaw = (line) ->
+  $('#ai-chat-log').append(line)
+  aiChatGotoBottom()
 
 aiChatAddLine = (line) ->
-  $('#ai-chat-log').append(line)
-  height = $('#ai-chat')[0].scrollHeight;
-  $('#ai-chat').scrollTop(height);
+  aiChatAddLineRaw(line)
+  chatBuffer[chatBufferPos] = line
+  localStorage.setItem('chatBuffer' + chatBufferPos, line)
+  chatBufferPos += 1
+  if chatBufferPos >= chatBufferSize
+    chatBufferPos = 0
+  localStorage.setItem('chatBufferPos', chatBufferPos)
 
 aiChatSubmit = (msg) ->
   sentence = $('#ai-chat-input').val()
@@ -35,16 +89,8 @@ aiChatReply = (msg) ->
   if reply['goto'] != ''
     window.location.href = '/node/' + reply['goto']
 
-showAiChat = () ->
-  $('#ai-chat').css('display', 'block')
-
-hideAiChat = () ->
-  $('#ai-chat').css('display', 'none')
-
 aiChatButtonPressed = (msg) ->
   if aiChatVisible
-  	aiChatVisible = false
-  	hideAiChat()
+    hideAiChat()
   else
-  	aiChatVisible = true
-  	showAiChat()
+    showAiChat()

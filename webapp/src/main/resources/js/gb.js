@@ -450,7 +450,7 @@ function handler(event) {
   });
 
 })(jQuery);;
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatButtonPressed, aiChatReply, aiChatSubmit, aiChatVisible, autoUpdateUsername, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, initAiChat, initAlert, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, initTextView, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, showAiChat, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, autoUpdateUsername, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, initAiChat, initAlert, initChatBuffer, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, initTextView, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, showAiChat, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -1550,7 +1550,6 @@ function handler(event) {
 
   initGraph = function() {
     var key, l, link, linkID, nid, nlist, nod, node, orig, parentID, sid, sn, snode, sorig, starg, subNode, targ, text, type, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref;
-    console.log('width: ' + $('#graph-view').width() + '; height: ' + $('#graph-view').height());
     g = new Graph($('#graph-view').width(), $('#graph-view').height());
     g.updateTransform();
     for (_i = 0, _len = snodes.length; _i < _len; _i++) {
@@ -2230,18 +2229,80 @@ function handler(event) {
 
   aiChatVisible = false;
 
+  chatBuffer = [];
+
+  chatBufferPos = 0;
+
+  chatBufferSize = 100;
+
+  initChatBuffer = function() {
+    var curPos, line, pos, _results;
+    if (localStorage.getItem('chatBufferPos') !== null) {
+      chatBufferPos = parseInt(localStorage.getItem('chatBufferPos'));
+    }
+    for (pos = 0; 0 <= chatBufferSize ? pos <= chatBufferSize : pos >= chatBufferSize; 0 <= chatBufferSize ? pos++ : pos--) {
+      chatBuffer.push(localStorage.getItem('chatBuffer' + pos));
+    }
+    curPos = chatBufferPos;
+    while (curPos < chatBufferSize) {
+      line = chatBuffer[curPos];
+      if (line !== null) aiChatAddLineRaw(line);
+      curPos += 1;
+    }
+    curPos = 0;
+    _results = [];
+    while (curPos < chatBufferPos) {
+      line = chatBuffer[curPos];
+      if (line !== null) aiChatAddLineRaw(line);
+      _results.push(curPos += 1);
+    }
+    return _results;
+  };
+
+  aiChatGotoBottom = function() {
+    var height;
+    height = $('#ai-chat')[0].scrollHeight;
+    return $('#ai-chat').scrollTop(height);
+  };
+
+  showAiChat = function() {
+    $('#ai-chat').css('display', 'block');
+    aiChatVisible = true;
+    localStorage.setItem('aichat', 'true');
+    return aiChatGotoBottom();
+  };
+
+  hideAiChat = function() {
+    $('#ai-chat').css('display', 'none');
+    aiChatVisible = false;
+    return localStorage.setItem('aichat', 'false');
+  };
+
   initAiChat = function() {
     var html;
     html = "<div id=\"ai-chat-log\" />\n<form id=\"ai-chat-form\">\n<input id=\"ai-chat-input\" type=\"text\" />\n</form>";
     $('#ai-chat').html(html);
-    return $('#ai-chat-form').submit(aiChatSubmit);
+    $('#ai-chat-form').submit(aiChatSubmit);
+    initChatBuffer();
+    if (localStorage.getItem('aichat') === 'true') {
+      return showAiChat();
+    } else {
+      return hideAiChat();
+    }
+  };
+
+  aiChatAddLineRaw = function(line) {
+    $('#ai-chat-log').append(line);
+    return aiChatGotoBottom();
   };
 
   aiChatAddLine = function(line) {
-    var height;
-    $('#ai-chat-log').append(line);
-    height = $('#ai-chat')[0].scrollHeight;
-    return $('#ai-chat').scrollTop(height);
+    aiChatAddLineRaw(line);
+    chatBuffer[chatBufferPos] = line;
+    localStorage.setItem('chatBuffer' + chatBufferPos, line);
+    chatBufferPos += 1;
+    if (chatBufferPos >= chatBufferSize) chatBufferPos = 0;
+    return localStorage.setItem('chatBufferPos', chatBufferPos);
   };
 
   aiChatSubmit = function(msg) {
@@ -2268,20 +2329,10 @@ function handler(event) {
     }
   };
 
-  showAiChat = function() {
-    return $('#ai-chat').css('display', 'block');
-  };
-
-  hideAiChat = function() {
-    return $('#ai-chat').css('display', 'none');
-  };
-
   aiChatButtonPressed = function(msg) {
     if (aiChatVisible) {
-      aiChatVisible = false;
       return hideAiChat();
     } else {
-      aiChatVisible = true;
       return showAiChat();
     }
   };

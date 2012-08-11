@@ -3,7 +3,6 @@
 g = false
 
 initGraph = ->
-    console.log('width: ' + $('#graph-view').width() + '; height: ' + $('#graph-view').height())
     g = new Graph($('#graph-view').width(), $('#graph-view').height())
     g.updateTransform()
 
