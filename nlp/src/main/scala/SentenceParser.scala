@@ -222,7 +222,7 @@ class SentenceParser (storeName:String = "gb") {
 
     if (urlRegex.findAllIn(text).hasNext) {
       val urlID = ID.url_id(url = text)
-      results = URLNode(id = ID.usergenerated_id(userName, urlID)) :: results
+      results = URLNode(id = ID.usergenerated_id(userName, urlID), url = text) :: results
     }
 
     val wikiID = ID.wikipedia_id(text)
@@ -285,12 +285,22 @@ class SentenceParser (storeName:String = "gb") {
     val posSentence = lemmatiser.annotate(sentence);
     var lemma = "";
     var posLabel = ""
-    for (tagged <- posSentence) {
-      if(tagged._1==relType.label) {
-        posLabel = tagged._2;
-        lemma = tagged._3;
-      }
-    } 
+    val splitRelType = """\s""".r.split(relType.label);
+    for(relTypeComp <- splitRelType) {
+      
+      for (tagged <- posSentence) {
+
+        if(tagged._1 == relTypeComp) {
+          posLabel += tagged._2 + "_";
+          lemma = tagged._3 + "_";
+        }
+        
+      }    
+    }
+    //Remove the last "_"
+    posLabel = posLabel.slice(0, posLabel.length - 1)
+    lemma = lemma.slice(0, lemma.length - 1)
+     
     val lemmaNode = TextNode(id = ID.text_id(lemma, 1), text = lemma)
     val lemmaRelType = EdgeType(id = ID.reltype_id(posLabel), label = posLabel)
     return (relType, (lemmaNode, lemmaRelType));
@@ -665,15 +675,15 @@ object SentenceParser {
       val mRelations = mParses._2;
       val mTargets = mParses._3;
       for(mSource <- mSources) {
-        println("Source: " + mSource.id)
+        println("Source: " + mSource.id + "_")
       }
       for(mRelation <- mRelations) {
-        println("Relation: " + mRelation.id)
+        println("Relation: " + mRelation.id + "_")
         mRelation match {
           case r: EdgeType => val a = sentenceParser.relTypeLemmaAndPOS(r, sentence1);
-            println("EdgeType: " + a._1.id);
-            println("Lemma Node: " + a._2._1.id);
-            println("POS EdgeType: " + a._2._2.id);
+            println("EdgeType: " + a._1.id + "_");
+            println("Lemma Node: " + a._2._1.id + "_");
+            println("POS EdgeType: " + a._2._2.id + "_");
         }
       }
       for(mTarget <- mTargets) {
@@ -686,20 +696,24 @@ object SentenceParser {
       val relations = parses._2;
       val targets = parses._3;
       for(source <- sources) {
-        println("Source: " + source.id)
+        println("Source: " + source.id + "_")
         
       }
       for(relation <- relations) {
         println("Relation: " + relation.id)
         relation match {
           case r: EdgeType => val a = sentenceParser.relTypeLemmaAndPOS(r, sentence2);
-            println("EdgeType: " + a._1.id);
-            println("Lemma Node: " + a._2._1.id);
-            println("POS EdgeType: " + a._2._2.id);
+            println("EdgeType: " + a._1.id + "_");
+            println("Lemma Node: " + a._2._1.id + "_");
+            println("POS EdgeType: " + a._2._2.id + "_");
         }
       }
       for(target <- targets) {
-        println("Target: " + target.id)
+        println("Target: " + target.id + "_")
+        target match {
+          case t: URLNode => println("URL: " + t.url)
+          case _ => 
+        }
       }
       
 
