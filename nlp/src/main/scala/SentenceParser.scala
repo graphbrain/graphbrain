@@ -25,7 +25,7 @@ class SentenceParser (storeName:String = "gb") {
 
   val verbRegex = """VB[A-Z]?""".r
   val adverbRegex = """RB[A-Z]?""".r
-  val prepositionRegex = """IN[A-Z]?""".r
+  val prepositionRegex = """(IN[A-Z]?)|TO""".r
   val nounRegex = """NN[A-Z]?""".r
   val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r)
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
@@ -283,16 +283,17 @@ class SentenceParser (storeName:String = "gb") {
       return (relType, (isLemmaNode, isRelType))
     }
     val posSentence = lemmatiser.annotate(sentence);
+    val splitRelType = """\s""".r.split(relType.label);
     var lemma = "";
     var posLabel = ""
-    val splitRelType = """\s""".r.split(relType.label);
+
     for(relTypeComp <- splitRelType) {
       
       for (tagged <- posSentence) {
 
         if(tagged._1 == relTypeComp) {
           posLabel += tagged._2 + "_";
-          lemma = tagged._3 + "_";
+          lemma += tagged._3 + "_";
         }
         
       }    
@@ -406,13 +407,14 @@ def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
             var node1Text = "" 
             var edgeText = ""
             var node2Text = ""
+            var inEdge = 0;
 
     		  
     		    if(verbRegex.findAllIn(tag1).length == 0 && adverbRegex.findAllIn(tag1).length == 0 && prepositionRegex.findAllIn(tag1).length == 0) {
     		  	  
     		  	  //Anything before the edge goes into node 1
-    		  	  
-    		  	 edgeText += untaggedSentence(i+1)
+    		  	  inEdge = 1;
+    		  	  edgeText += untaggedSentence(i+1)
     		  	  
     		  	  for (j <- 0 to i) {
     		  	  	taggedSentence(j) match {
@@ -430,8 +432,10 @@ def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
     		  	  for (j <- i+2 to taggedSentence.length-1) {
     		  		taggedSentence(j) match {
     		  	  		case (word, tag) => 
-                    if(adverbRegex.findAllIn(tag).length==0 && prepositionRegex.findAllIn(tag).length==0) {
+                    if((adverbRegex.findAllIn(tag).length==0 && prepositionRegex.findAllIn(tag).length==0 && verbRegex.findAllIn(tag).length==0)||inEdge==0) {
                       node2Text = node2Text + " " + untaggedSentence(j)  
+                      //switch inEdge to 0 to indicate that we are now starting to parse the second node even if it contains a verb/adverb/preposition.
+                      inEdge = 0;
                    
                     }
                     else {
