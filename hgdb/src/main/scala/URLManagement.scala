@@ -19,7 +19,6 @@ trait URLManagement extends VertexStoreInterface {
   def getTitle(urlStr: String): String = {
     val url = new URL(urlStr)
 
-
     val client = new DefaultHttpClient()
     val request = new HttpGet(url.toURI())
     val response = client.execute(request)
