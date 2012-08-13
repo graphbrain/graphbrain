@@ -531,4 +531,6 @@ abstract trait VertexStoreInterface {
       ""
     }
   }
+
+  def getEdges(vertexId: String, pos: Int, rel: String) = new Edges(vertexId, pos, rel, this)
 }
