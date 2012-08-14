@@ -26,11 +26,12 @@ class SentenceParser (storeName:String = "gb") {
   val verbRegex = """VB[A-Z]?""".r
   val adverbRegex = """RB[A-Z]?""".r
   val prepositionRegex = """(IN[A-Z]?)|TO""".r
+  val relRegex = """(VB[A-Z]?)|(RB[A-Z]?)|(IN[A-Z]?)|TO""".r
   val nounRegex = """NN[A-Z]?""".r
   val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r)
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
   val gbNodeExt = """(http://)?graphbrain.com/node/""".r
-  val rTypeMapping = HashMap("is the opposite of"->"is_the_opposite_of", "means the same as" -> "means_the_same_as", "is a"->"is_a", "is an"->"is_an",  "is a type of"->"is_a_type_of", "has a"->"has_a")
+  val rTypeMapping = HashMap("is the opposite of "->"is_the_opposite_of", "means the same as " -> "means_the_same_as", "is a "->"is_a", "is an "->"is_an",  "is a type of "->"is_a_type_of", "has a "->"has_a")
 
   //"is" needs to be combined with POS to determine whether it is a property, state, or object that is being referred to.
   val questionWords = List("do", "can", "has", "did", "where", "when", "who", "why", "will", "how")
@@ -402,25 +403,27 @@ def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
       (current, lookahead1, lookahead2) match{
     		  case ((word1, tag1), (word2, tag2), (word3, tag3)) => 
     		  //println(word2 + ", " + tag2)
-    		  if(verbRegex.findAllIn(tag2).length == 1 || adverbRegex.findAllIn(tag2).length == 1 || prepositionRegex.findAllIn(tag2).length == 1) {
+    		  if(relRegex.findAllIn(tag2).length == 1) {
     		  	//println("verb: " + word2)
+            var nodeTexts: List[String] = List()
             var node1Text = "" 
             var edgeText = ""
             var node2Text = ""
-            var inEdge = 0;
-
+            
     		  
-    		    if(verbRegex.findAllIn(tag1).length == 0 && adverbRegex.findAllIn(tag1).length == 0 && prepositionRegex.findAllIn(tag1).length == 0) {
+    		    if(relRegex.findAllIn(tag1).length == 0) {
     		  	  
     		  	  //Anything before the edge goes into node 1
-    		  	  inEdge = 1;
+    		  	  //inEdge = 1;
     		  	  edgeText += untaggedSentence(i+1)
+
     		  	  
     		  	  for (j <- 0 to i) {
     		  	  	taggedSentence(j) match {
     		  	  		case (word, tag) => 
                   
                     node1Text = node1Text + " " + untaggedSentence(j)  
+
                   
                   
 
@@ -432,14 +435,15 @@ def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
     		  	  for (j <- i+2 to taggedSentence.length-1) {
     		  		taggedSentence(j) match {
     		  	  		case (word, tag) => 
-                    if((adverbRegex.findAllIn(tag).length==0 && prepositionRegex.findAllIn(tag).length==0 && verbRegex.findAllIn(tag).length==0)||inEdge==0) {
+                    if(relRegex.findAllIn(tag).length==0) {
                       node2Text = node2Text + " " + untaggedSentence(j)  
-                      //switch inEdge to 0 to indicate that we are now starting to parse the second node even if it contains a verb/adverb/preposition.
-                      inEdge = 0;
+                      //Increment the edgeTextCounter by 1 to indicate that a further role is being introduced:
+                      
+                      //inEdge = 0;
                    
                     }
                     else {
-
+                      
                       edgeText = edgeText + " " + untaggedSentence(j);
                     }
 
@@ -461,6 +465,60 @@ def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
   }
 
 
+def posChunkGeneral(sentence: String, root: Vertex): List[(List[String], String)]={
+  val taggedSentence = lemmatiser.posTag(sentence)
+  val untaggedSentence = """\s""".r.split(sentence);
+  var possibleParses: List[(List[String], String)] = List()
+
+  var inEdge = false;
+
+  var nodeTexts: List[String] = List()
+  var edgeText = ""
+  var nodeText = ""
+
+
+  for(i <- 0 to taggedSentence.length-2) {
+      
+    val current = taggedSentence(i)
+      
+    val lookahead = taggedSentence(i+1)
+      
+      
+      //Find first edge:
+    (current, lookahead) match{
+        case ((word1, tag1), (word2, tag2)) => 
+
+
+          //println(word2 + ", " + tag2)
+        if((relRegex.findAllIn(tag1).length == 1)) {
+          edgeText += " " + untaggedSentence(i)
+            if(relRegex.findAllIn(tag2).length == 0) {
+              edgeText += "~"
+          }
+
+          
+        }
+        else if (relRegex.findAllIn(tag1).length == 0) {
+          nodeText += " " + untaggedSentence(i)
+          if(relRegex.findAllIn(tag2).length == 1) {
+              
+            nodeTexts = nodeText.replace("`", "").replace("'", "").trim :: nodeTexts;
+            nodeText = ""
+          }
+          else if (i == (taggedSentence.length-2)) {
+            nodeText += " " + untaggedSentence(i+1);
+            nodeTexts = nodeText.replace("`", "").replace("'", "").trim :: nodeTexts;
+
+          }
+        }
+      }
+    }
+    nodeTexts = nodeTexts.reverse;
+
+    possibleParses = (nodeTexts, edgeText) :: possibleParses
+              
+    return possibleParses.reverse;
+  }
 
 
   def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: Vertex, user:UserNode, maxPossiblePerParse: Int = 10): List[(List[Vertex], Edge)]={
