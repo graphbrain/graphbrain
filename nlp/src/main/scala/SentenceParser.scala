@@ -80,7 +80,7 @@ class SentenceParser (storeName:String = "gb") {
 
     //Only parse with POS if nothing returned:
     if(parses == Nil) {
-      parses = posChunkGeneral(inSentence, root)
+      parses = posChunk(inSentence, root)
     }
 
     for (parse <- parses) {
