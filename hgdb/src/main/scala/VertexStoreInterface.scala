@@ -256,6 +256,8 @@ abstract trait VertexStoreInterface {
     true
   }
 
+  def addrel(edgeId: String): Boolean = addrel(Edge.edgeType(edgeId), Edge.participantIds(edgeId).toArray)
+
   def isEdgeSetEmpty(edgeSetId: String, vertex: Vertex): Boolean = {
     val edgeSet = getEdgeSet(edgeSetId)
 
@@ -349,6 +351,8 @@ abstract trait VertexStoreInterface {
     true
   }
   
+  def delrel(edgeId: String): Boolean = delrel(Edge.edgeType(edgeId), Edge.participantIds(edgeId).toArray)
+
   def neighbors(nodeId: String): Set[String] = {
     val nset = MSet[String]()
     
@@ -415,8 +419,6 @@ abstract trait VertexStoreInterface {
 
     eset.toSet
   }
-
-  def delrel(edgeId: String): Unit = delrel(Edge.edgeType(edgeId), Edge.participantIds(edgeId).toArray)
 
   def getOrNull(id: String): Vertex = {
     try {
