@@ -178,18 +178,92 @@ class SentenceParser (storeName:String = "gb") {
         
 
 
-    //If no results returned, parse with POS.
-
-
-    //If root matches the source or target, it is given priority one
-
 
 
     return (sources, relations, targets)
   }
 
+  def specialNodeCases(inNodeText: String, root: Vertex  = TextNode(id="GBNoneGB", text="GBNoneGB"), user: Option[UserNode]=None): Vertex = {
+    user match {
+      case Some(u:UserNode) =>
+        if(u.username == inNodeText || u.name == inNodeText || inNodeText == "I" || inNodeText == "me") {
+          return u;
+        }
+      case _ => 
+    }
+    root match {
+      case a: TextNode =>
+        //Check whether already in database - global and user; create new node if necessary
+        user match {
+          case Some(u:UserNode) => 
+          val userThingID = ID.usergenerated_id(u.username, a.text)
+          //val userRelationID = ID.usergenerated_id(u.username, relationV.id)
+                
+          if(nodeExists(userThingID)) {
+            if(inNodeText==a.text) {
+              return a;
+              
+              }
+            }
+          case _ => 
+        }
+        val wikiThingID = ID.wikipedia_id(a.text)
+        if(nodeExists(wikiThingID))  {
+          val wikiNode = getOrCreate(wikiThingID)
+          wikiNode match {
+            case w: TextNode =>
+              if(inNodeText == w.text) {
+                return w;
+              }
+            }
+          }
+      case _ =>
+    }
+    return textToNode(inNodeText)(0);
 
-  
+  }
+
+
+  def parseSentenceGeneral(inSent: String, root: Vertex  = TextNode(id="GBNoneGB", text="GBNoneGB"), user: Option[UserNode]=None): (List[(List[Vertex], Vertex)]) = {
+    var inSentence = inSent;
+    var solutions: List[(List[Vertex], Vertex)] = List();
+
+    if(isQuestion(inSentence)) {
+      throw QuestionException("Sorry, I don't understand questions yet.")
+    }
+
+    //Only remove full stop or comma at the end of sentence (allow other punctuation since likely to be part of proper name e.g. film titles)
+    if(inSentence.endsWith(".")) {
+      inSentence = inSentence.slice(0, inSentence.length-1)
+    }
+
+    //Try segmenting with quote marks, then with known splitters
+    var parses = quoteChunkGeneral(inSentence, root) ++ logChunkGeneral(inSentence, root);
+
+    //Only parse with POS if nothing returned:
+    if(parses == Nil) {
+      parses = posChunkGeneral(inSentence, root)
+    }
+
+    for(parse <- parses) {
+      var nodeTexts = parse._1;
+      var relText = parse._2;
+      var nodes: List[Vertex] = List()
+      for(nodeText <- nodeTexts) {
+        if(nodeText == "you") {
+          nodes = gbNode :: nodes;
+        }
+        else {
+          nodes = specialNodeCases(nodeText, root, user) :: nodes
+        }
+      }
+      var relationV = EdgeType(id = ID.reltype_id(relText), label = relText)
+      solutions = (nodes.reverse, relationV) :: solutions
+
+    }
+    return solutions;
+    
+  }
 
   def textToNode(text:String, node: Vertex= TextNode(id="GBNoneGB", text="GBNoneGB"), user:Option[Vertex]=None): List[Vertex] = {
     var userName = "";
@@ -310,7 +384,13 @@ class SentenceParser (storeName:String = "gb") {
   }
 
 
+def quoteChunkGeneral(sentence:String, root:Vertex): List[(List[String], String)] = {
+  quoteChunkStrict(sentence, root);
+}
 
+def logChunkGeneral(sentence:String, root:Vertex): List[(List[String], String)] = {
+  logChunk(sentence, root);
+}
   
 /**
 Only returns results where both source and target are in quotes, or where there is a known 
@@ -483,37 +563,39 @@ def posChunkGeneral(sentence: String, root: Vertex): List[(List[String], String)
       
     val lookahead = taggedSentence(i+1)
       
-      
-      //Find first edge:
     (current, lookahead) match{
         case ((word1, tag1), (word2, tag2)) => 
 
 
           //println(word2 + ", " + tag2)
         if((relRegex.findAllIn(tag1).length == 1)) {
-          edgeText += " " + untaggedSentence(i)
+          edgeText += untaggedSentence(i) + " "
             if(relRegex.findAllIn(tag2).length == 0) {
+              edgeText = edgeText.substring(0, edgeText.length-1)
               edgeText += "~"
           }
 
           
         }
         else if (relRegex.findAllIn(tag1).length == 0) {
-          nodeText += " " + untaggedSentence(i)
+          nodeText += untaggedSentence(i) + " "
           if(relRegex.findAllIn(tag2).length == 1) {
               
             nodeTexts = nodeText.replace("`", "").replace("'", "").trim :: nodeTexts;
             nodeText = ""
           }
-          else if (i == (taggedSentence.length-2)) {
-            nodeText += " " + untaggedSentence(i+1);
-            nodeTexts = nodeText.replace("`", "").replace("'", "").trim :: nodeTexts;
+          
+        }
+        if (i == (taggedSentence.length-2)) {
+          nodeText += untaggedSentence(i+1);
+          nodeTexts = nodeText.replace("`", "").replace("'", "").trim :: nodeTexts;
 
-          }
         }
       }
     }
     nodeTexts = nodeTexts.reverse;
+    println(nodeTexts.length)
+    edgeText = edgeText.substring(0, edgeText.length-1);
 
     possibleParses = (nodeTexts, edgeText) :: possibleParses
               
@@ -769,34 +851,27 @@ object SentenceParser {
         println("Target: " + mTarget.id)
       }
       
-      println("From command line: " + sentence2)
-      val parses = sentenceParser.parseSentence(sentence2)
-      val sources = parses._1;
-      val relations = parses._2;
-      val targets = parses._3;
-      for(source <- sources) {
-        println("Source: " + source.id + "_")
-        
-      }
-      for(relation <- relations) {
-        println("Relation: " + relation.id)
-        relation match {
-          case r: EdgeType => val a = sentenceParser.relTypeLemmaAndPOS(r, sentence2);
-            println("EdgeType: " + a._1.id + "_");
-            println("Lemma Node: " + a._2._1.id + "_");
-            println("POS EdgeType: " + a._2._2.id + "_");
+      println("From main with general: " + sentence1)
+      val parses1 = sentenceParser.parseSentenceGeneral(sentence1, user=Some(userNode))
+      for(parse <- parses1) {
+        parse match {
+          case (n: List[Vertex], r: Vertex) =>
+          for(node <- n) {
+            println("Node: " + node.id + "_");
+          }
+          println("Rel: " + r.id + "_")
         }
       }
-      for(target <- targets) {
-        println("Target: " + target.id + "_")
-        target match {
-          case t: URLNode => println("URL: " + t.url)
-          case _ => 
+      println("From command line with general: " + sentence2)
+      val parses2 = sentenceParser.parseSentenceGeneral(sentence2)
+      for(parse <- parses2) {
+        parse match {
+          case (n: List[Vertex], r: Vertex) =>
+          for(node <- n) {
+            println("Node: " + node.id + "_");
+          }
+          println("Rel: " + r.id + "_")
         }
       }
-      
-
-
-
 	}
 }
