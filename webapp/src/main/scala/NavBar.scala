@@ -116,12 +116,10 @@ case class NavBar(user: UserNode, page: String) {
             """ + userStuff + """
           </div>
         </div>
-        <div id="ai-chat">
-        </div>
-        <div id="alert" class="alert" style="visibility:hidden">
-          <button class="close" data-dismiss="alert">×</button>
+        <div id="alert" class="alert" style="visibility:hidden; margin:0px">
           <div id="alertMsg"></div>
         </div>
+        <div id="ai-chat"></div>
       </div>
       """
     }
