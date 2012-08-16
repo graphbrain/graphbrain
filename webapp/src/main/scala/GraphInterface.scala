@@ -171,14 +171,15 @@ class GraphInterface (val rootId: String, val store: VertexStore, val user: User
     var lid = 0
     val json = for (l <- links) yield {
       lid += 1
+      val etype = l._1
       val relation = linkLabel(l._1)
       val color = linkColor(l._1)
       if (l._4 && l._5)
-        Map(("id" -> lid), ("directed" -> 1), ("relation" -> relation), ("orig" -> l._2.toString), ("targ" -> l._3.toString), ("color" -> color))
+        Map(("id" -> lid), ("directed" -> 1), ("etype" -> etype), ("relation" -> relation), ("orig" -> l._2.toString), ("targ" -> l._3.toString), ("color" -> color))
       else if (l._4)
-        Map(("id" -> lid), ("directed" -> 1), ("relation" -> relation), ("orig" -> l._2.toString), ("starg" -> l._3.toString), ("color" -> color))
+        Map(("id" -> lid), ("directed" -> 1), ("etype" -> etype), ("relation" -> relation), ("orig" -> l._2.toString), ("starg" -> l._3.toString), ("color" -> color))
       else if (l._5)
-        Map(("id" -> lid), ("directed" -> 1), ("relation" -> relation), ("sorig" -> l._2.toString), ("targ" -> l._3.toString), ("color" -> color))
+        Map(("id" -> lid), ("directed" -> 1), ("etype" -> etype), ("relation" -> relation), ("sorig" -> l._2.toString), ("targ" -> l._3.toString), ("color" -> color))
     }
     generate(json)
   }

@@ -45,6 +45,8 @@ object ID {
     idParts(0) + "/" + idParts(1)
   }
 
+  def edgeId(etype:String, participants: Array[String]) = (List[String](etype) ++ participants).reduceLeft(_ + " " + _)
+
   def edgeSetId(vertexId: String, edgeId: String) = {
     val pos = Edge.participantIds(edgeId).indexOf(vertexId)
     vertexId + "/" + pos + "/" + Edge.edgeType(edgeId)
@@ -61,8 +63,8 @@ object ID {
     val etype = Edge.edgeType(edgeId)
     val pids = Edge.participantIds(edgeId)
 
-    etype + "/" +
-    (for (pid <- pids) yield globalToUser(pid, userId)).reduceLeft(_ + "/" + _)
+    etype + " " +
+    (for (pid <- pids) yield globalToUser(pid, userId)).reduceLeft(_ + " " + _)
   }
 
   def negateEdge(edgeId: String) = "neg/" + edgeId

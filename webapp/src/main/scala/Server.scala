@@ -9,6 +9,8 @@ import unfiltered.response._
 import unfiltered.Cookie
 import org.fusesource.scalate.TemplateEngine
 import akka.actor.ActorSystem
+import akka.actor.Actor
+import akka.actor.Props
 
 import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.SimpleCaching
@@ -17,6 +19,7 @@ import com.graphbrain.hgdb.UserManagement
 import com.graphbrain.hgdb.URLManagement
 import com.graphbrain.hgdb.TimeStamping
 import com.graphbrain.hgdb.UserNode
+import com.graphbrain.hgdb.ConsensusActor
 
 
 object Server {
@@ -31,6 +34,8 @@ object Server {
   val engine = new TemplateEngine(templateDirs, scalateMode)
 
   val actorSystem = ActorSystem("actors")
+
+  val consensusActor = actorSystem.actorOf(Props(new ConsensusActor(store)))
 
   def scalateResponse(template: String, page: String, title: String, cookies: Map[String, Any], req: HttpRequest[Any], js: String="", html: String="") = {
     val userNode = getUser(cookies)

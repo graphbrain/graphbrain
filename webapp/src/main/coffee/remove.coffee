@@ -48,7 +48,7 @@ initRemoveDialog = () ->
     dialogHtml.appendTo('body')
     $('#removeDlgButton').click(removeAction)
 
-showRemoveDialog = (node, orig, link, targ) ->
+showRemoveDialog = (node, orig, link, targ, etype) ->
   if node == rootNodeId
     setErrorAlert('You cannot remove the item in the center.')
   else
@@ -68,7 +68,7 @@ showRemoveDialog = (node, orig, link, targ) ->
     removeInfoMessage()
     $('#removeNodeField').val(node)
     $('#removeOrigField').val(orig)
-    $('#removeLinkField').val(link)
+    $('#removeLinkField').val(etype)
     $('#removeTargField').val(targ)
     $('#linkDesc').html(nodes[orig].text + ' <strong>' + link + '</strong> ' + nodes[targ].text)
     $('#itemDesc').html(nodes[node].text)

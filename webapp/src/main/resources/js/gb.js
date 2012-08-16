@@ -962,7 +962,7 @@ function handler(event) {
 
   nodeClicked = function(msg) {
     if (removeMode) {
-      showRemoveDialog(msg.data.node, msg.data.orig, msg.data.link, msg.data.targ);
+      showRemoveDialog(msg.data.node, msg.data.orig, msg.data.link, msg.data.targ, msg.data.etype);
       return false;
     } else {
       return true;
@@ -1012,6 +1012,7 @@ function handler(event) {
         nodeData = {
           'node': this.id,
           'orig': rootNodeId,
+          'etype': this.snode.etype,
           'link': this.snode.linkLabel,
           'targ': this.id
         };
@@ -1019,6 +1020,7 @@ function handler(event) {
         nodeData = {
           'node': this.id,
           'targ': rootNodeId,
+          'etype': this.snode.etype,
           'link': this.snode.linkLabel,
           'orig': this.id
         };
@@ -1155,6 +1157,7 @@ function handler(event) {
       this.rect.v4.z = 0;
       this.jqDiv = false;
       this.linkLabel = "";
+      this.etype = "";
     }
 
     SNode.prototype.updateTransform = function() {
@@ -1285,12 +1288,13 @@ function handler(event) {
 
   Link = (function() {
 
-    function Link(id, orig, sorig, targ, starg, label, color) {
+    function Link(id, orig, sorig, targ, starg, etype, label, color) {
       this.id = id;
       this.orig = orig;
       this.sorig = sorig;
       this.targ = targ;
       this.starg = starg;
+      this.etype = etype;
       this.label = label;
       this.color = color;
       this.ox = 0;
@@ -1629,15 +1633,17 @@ function handler(event) {
         targ = false;
         starg = g.snodes[l['starg']];
       }
-      link = new Link(linkID++, false, sorig, false, starg, l['relation'], l['color']);
+      link = new Link(linkID++, false, sorig, false, starg, l['etype'], l['relation'], l['color']);
       g.links.push(link);
       sorig.links.push(link);
       starg.links.push(link);
       if (sorig.parent === false) {
         starg.linkLabel = l['relation'];
+        starg.etype = l['etype'];
         starg.linkDirection = 'in';
       } else {
         sorig.linkLabel = l['relation'];
+        starg.etype = l['etype'];
         sorig.linkDirection = 'out';
       }
     }
@@ -2361,7 +2367,7 @@ function handler(event) {
     return $('#removeDlgButton').click(removeAction);
   };
 
-  showRemoveDialog = function(node, orig, link, targ) {
+  showRemoveDialog = function(node, orig, link, targ, etype) {
     if (node === rootNodeId) {
       return setErrorAlert('You cannot remove the item in the center.');
     } else {
@@ -2379,7 +2385,7 @@ function handler(event) {
       removeInfoMessage();
       $('#removeNodeField').val(node);
       $('#removeOrigField').val(orig);
-      $('#removeLinkField').val(link);
+      $('#removeLinkField').val(etype);
       $('#removeTargField').val(targ);
       $('#linkDesc').html(nodes[orig].text + ' <strong>' + link + '</strong> ' + nodes[targ].text);
       $('#itemDesc').html(nodes[node].text);

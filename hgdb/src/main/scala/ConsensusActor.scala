@@ -1,6 +1,7 @@
 package com.graphbrain.hgdb
 
-import akka.actor.{Actor, Props}
+import akka.actor.Actor
+import akka.actor.Props
 
 
 class ConsensusActor(val store: VertexStoreInterface) extends Actor {

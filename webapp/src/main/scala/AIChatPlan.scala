@@ -5,7 +5,8 @@ import unfiltered.response._
 import unfiltered.netty._
 import unfiltered.Cookie
 import com.codahale.logula.Logging
-import akka.actor.{ Actor, Props }
+import akka.actor.Actor
+import akka.actor.Props
 
 
 object AIChatPlan extends async.Plan with ServerErrorResponse with Logging {

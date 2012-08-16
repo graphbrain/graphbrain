@@ -8,6 +8,7 @@ import com.codahale.jerkson.Json._
 
 import com.graphbrain.hgdb.Vertex
 import com.graphbrain.hgdb.UserNode
+import com.graphbrain.hgdb.ID
 import com.graphbrain.nlp.SentenceParser
 
 object AIChatResponderActor {
@@ -28,22 +29,15 @@ class AIChatResponderActor() extends Actor {
         val parse = sparser.parseSentence(sentence, root, Option(user))
 
         if ((parse._1.length >= 1) && (parse._2.length >= 1) && (parse._3.length >= 1)) {
-
-          println("=> ORIG:")
-          for (v <- parse._1)
-      	    println(v.id)
-          println("=> REL:")
-          for (v <- parse._2)
-      	    println(v.id)
-          println("=> TARG:")
-          for (v <- parse._3)
-      	    println(v.id)
-
           val node1 = parse._1(0)
           val node2 = parse._3(0)
-          val relation = parse._2(0).id
+          val relation = parse._2(0).id.replace(" ", "_")
 
           Server.store.createAndConnectVertices2(relation, Array(node1, node2), user.id)
+
+          // force consesnsus re-evaluation of affected edge
+          val edgeId = ID.edgeId(relation, Array(node1.id, node2.id))
+          Server.consensusActor ! edgeId
 
           replySentence = "This fact was recorded: '" + sentence + "'"
           goto = root.id

@@ -55,8 +55,9 @@ class SNode
         # jquery objects
         @jqDiv = false
 
-        # main associated link label
+        # main associated link label and edge type
         @linkLabel = ""
+        @etype = ""
 
 
     updateTransform: ->
