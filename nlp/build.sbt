@@ -14,6 +14,8 @@ resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/release
 
 libraryDependencies += "com.typesafe.akka" % "akka-actor" % "2.0.2"
 
+libraryDependencies += "org.scalatest" %% "scalatest" % "1.7.1" % "test"
+
 libraryDependencies ++= Seq(
   "net.databinder" %% "unfiltered-netty-server" % "0.6.1",
   "net.databinder" %% "unfiltered-spec" % "0.5.3" % "test"

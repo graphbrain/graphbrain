@@ -26,7 +26,7 @@ class SentenceParser (storeName:String = "gb") {
   val verbRegex = """VB[A-Z]?""".r
   val adverbRegex = """RB[A-Z]?""".r
   val prepositionRegex = """(IN[A-Z]?)|TO""".r
-  val relRegex = """(VB[A-Z]?)|(RB[A-Z]?)|(IN[A-Z]?)|TO""".r
+  val relRegex = """(VB[A-Z]?)|(RB[A-Z]?)|(IN[A-Z]?)|TO|DT""".r
   val nounRegex = """NN[A-Z]?""".r
   val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r)
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
@@ -261,7 +261,7 @@ class SentenceParser (storeName:String = "gb") {
       solutions = (nodes.reverse, relationV) :: solutions
 
     }
-    return solutions;
+    return solutions.reverse;
     
   }
 
@@ -352,26 +352,26 @@ class SentenceParser (storeName:String = "gb") {
   */
   def relTypeLemmaAndPOS(relType: EdgeType, sentence: String): (EdgeType, (TextNode, EdgeType)) = {
     
-    if(relType.label == "is a"||relType.label == "is an") {
+    /*if(relType.label == "is a"||relType.label == "is an") {
       val isLemmaNode = TextNode(id = ID.text_id("be", 1), text = "be")
       val isRelType = EdgeType(id = ID.reltype_id("VBZ"), label = "VBZ")
       return (relType, (isLemmaNode, isRelType))
-    }
+    }*/
     val posSentence = lemmatiser.annotate(sentence);
     val splitRelType = """\s""".r.split(relType.label);
     var lemma = "";
     var posLabel = ""
 
-    for(relTypeComp <- splitRelType) {
-      
+    for(i <- 0 to splitRelType.length-1) {
+      val relTypeComp = splitRelType(i)
       for (tagged <- posSentence) {
-
         if(tagged._1 == relTypeComp) {
           posLabel += tagged._2 + "_";
           lemma += tagged._3 + "_";
         }
+      }
         
-      }    
+          
     }
     //Remove the last "_"
     posLabel = posLabel.slice(0, posLabel.length - 1)
@@ -385,7 +385,57 @@ class SentenceParser (storeName:String = "gb") {
 
 
 def quoteChunkGeneral(sentence:String, root:Vertex): List[(List[String], String)] = {
-  quoteChunkStrict(sentence, root);
+  //quoteChunkStrict(sentence, root);
+  var possibleParses: List[(List[String], String)] = List()
+
+  quoteRegex.findFirstIn(sentence) match {
+
+    case Some(exp) => 
+
+
+      //I'm assigning these in case we want to do something with them later, e.g. infer hypergraphs vs. multi-bi-graphs
+      val quotes = quoteRegex.findAllIn(sentence)
+      val numQuotes = quotes.length;
+      var nonQuotes = quoteRegex.split(sentence);
+      var nqEdges:List[String] = List()
+      var numNonQuotes = 0;
+
+      for (i <- 0 to nonQuotes.length-1) {
+        val nq = nonQuotes(i)
+        if(nq!="") {
+          numNonQuotes+=1;
+          nqEdges = nq.trim::nqEdges;
+        }
+      }
+      
+      //Make sure the quotation marks are not around the whole string:
+      if (exp.length == sentence.length) {
+          return Nil;
+      }
+      else if ((numQuotes - numNonQuotes) == 1) {
+        
+        val nodes = quoteRegex.findAllIn(sentence).toArray;
+        var nodeResults: List[String] = List() 
+        var edgeText = ""
+          
+        for(i <- 0 to nodes.length-2) {
+          
+          nodeResults =  nodes(i).replace("\"", "").trim :: nodeResults;
+          nodeResults = nodes(i+1).replace("\"", "").trim :: nodeResults;
+          edgeText += nqEdges(i) + "~"
+        } 
+        nodeResults = nodeResults.reverse;
+        possibleParses = (nodeResults, edgeText.substring(0, edgeText.length-1)) :: possibleParses; 
+        println("Quote Chunk: " + nodeResults(0) + ", " + edgeText.substring(0, edgeText.length-1) + ", " + nodeResults(1))
+
+        
+        return possibleParses;
+      } 
+      
+      case None => return possibleParses;
+    }
+    return possibleParses
+
 }
 
 def logChunkGeneral(sentence:String, root:Vertex): List[(List[String], String)] = {
@@ -429,8 +479,8 @@ def quoteChunkStrict(sentence: String, root: Vertex): List[(List[String], String
         for(i <- 0 to nodes.length-2) {
           val current = nodes(i);
           val next = nodes(i+1);
-          var edge = getBaseRel(edges(i).trim);
-
+          //val edge = getBaseRel(edges(i).trim);
+          val edge = edges(i).trim;
           possibleParses = (List(current.replace("\"", "").trim, next.replace("\"", "").trim), edge) :: possibleParses; 
           println("Quote Chunk: " + current + ", " + edge + ", " + next)
 
@@ -594,7 +644,7 @@ def posChunkGeneral(sentence: String, root: Vertex): List[(List[String], String)
       }
     }
     nodeTexts = nodeTexts.reverse;
-    println(nodeTexts.length)
+    //println(nodeTexts.length)
     edgeText = edgeText.substring(0, edgeText.length-1);
 
     possibleParses = (nodeTexts, edgeText) :: possibleParses
@@ -836,15 +886,15 @@ object SentenceParser {
       val mRelations = mParses._2;
       val mTargets = mParses._3;
       for(mSource <- mSources) {
-        println("Source: " + mSource.id + "_")
+        println("Source: " + mSource.id)
       }
       for(mRelation <- mRelations) {
-        println("Relation: " + mRelation.id + "_")
+        println("Relation: " + mRelation.id)
         mRelation match {
           case r: EdgeType => val a = sentenceParser.relTypeLemmaAndPOS(r, sentence1);
-            println("EdgeType: " + a._1.id + "_");
-            println("Lemma Node: " + a._2._1.id + "_");
-            println("POS EdgeType: " + a._2._2.id + "_");
+            println("EdgeType: " + a._1.id);
+            println("Lemma Node: " + a._2._1.id);
+            println("POS EdgeType: " + a._2._2.id);
         }
       }
       for(mTarget <- mTargets) {
@@ -857,9 +907,9 @@ object SentenceParser {
         parse match {
           case (n: List[Vertex], r: Vertex) =>
           for(node <- n) {
-            println("Node: " + node.id + "_");
+            println("Node: " + node.id);
           }
-          println("Rel: " + r.id + "_")
+          println("Rel: " + r.id)
         }
       }
       println("From command line with general: " + sentence2)
@@ -868,9 +918,9 @@ object SentenceParser {
         parse match {
           case (n: List[Vertex], r: Vertex) =>
           for(node <- n) {
-            println("Node: " + node.id + "_");
+            println("Node: " + node.id);
           }
-          println("Rel: " + r.id + "_")
+          println("Rel: " + r.id)
         }
       }
 	}
