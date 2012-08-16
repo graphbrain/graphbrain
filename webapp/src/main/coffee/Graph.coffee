@@ -77,16 +77,18 @@ initGraph = ->
         else
             targ = false
             starg = g.snodes[l['starg']]
-        link = new Link(linkID++, false, sorig, false, starg, l['relation'], l['color'])
+        link = new Link(linkID++, false, sorig, false, starg, l['etype'], l['relation'], l['color'])
         g.links.push(link)
         sorig.links.push(link)
         starg.links.push(link)
 
         if sorig.parent == false
             starg.linkLabel = l['relation']
+            starg.etype = l['etype']
             starg.linkDirection = 'in'
         else
             sorig.linkLabel = l['relation']
+            starg.etype = l['etype']
             sorig.linkDirection = 'out'
 
     g.placeNodes()

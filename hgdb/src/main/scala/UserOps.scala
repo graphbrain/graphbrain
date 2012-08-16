@@ -76,24 +76,24 @@ trait UserOps extends VertexStoreInterface {
   }
 
   def addrel2(edgeType: String, participants: Array[String], userid: String) = {
-    val userSpace = participants.exists(id => ID.isInUserSpace(id))
+    val etype = edgeType.replace(" ", "_")
 
-    if (!userSpace) {
-      val ids = for (id <- participants) yield id
-      addrel(edgeType.replace(" ", "_"), ids)
-    }
-
+    // convert edge to user space and add
     val ids = for (id <- participants) yield
       if (ID.isInUserSpace(id)) id else ID.globalToUser(id, userid)
-    addrel(edgeType.replace(" ", "_"), ids)    
+    addrel(etype, ids)
+
+    // remove negation of this edge if it exists
+    delrel(ID.negateEdge(etype), ids)
   }
 
   def delrel2(edgeType: String, participants: Array[String], userid: String): Unit = {
+    // delete edge from user space
     val userSpaceParticipants = participants.map(p => ID.globalToUser(p, userid))
     delrel(edgeType, userSpaceParticipants)
 
-    val globalSpaceParticipants = participants.map(p => ID.userToGlobal(p))
-    delrel(edgeType, globalSpaceParticipants)
+    // create negation of edge in user space
+    addrel(ID.negateEdge(edgeType), userSpaceParticipants)
   }
 
   def delrel2(edgeId: String, userid: String): Unit = delrel2(Edge.edgeType(edgeId), Edge.participantIds(edgeId).toArray, userid)
@@ -105,14 +105,5 @@ trait UserOps extends VertexStoreInterface {
 
     val ids = for (v <- participants) yield v.id
     addrel2(edgeType.replace(" ", "_"), ids, userid)
-  }
-
-  def removeAllEdges2(vertex: Vertex, userid: String) = {
-    val nedges = neighborEdges(vertex.id)
-
-    // remove connected edges
-    for (edgeId <- nedges) {
-      delrel2(edgeId, userid)
-    }
   }
 }

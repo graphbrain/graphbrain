@@ -92,7 +92,7 @@ abstract trait VertexStoreInterface {
   /** Chech if vertex exists on database */
   def exists(id: String): Boolean = {
     try {
-      get(id)
+      val v = get(id)
     }
     catch {
       case _ => return false
@@ -289,64 +289,66 @@ abstract trait VertexStoreInterface {
   def delrel(edgeType: String, participants: Array[String]): Boolean = {
     val edge = new Edge(edgeType, participants)
 
-    // bail out if relationship does not exist
-    if (!relExists(edge))
-      return false
+    if (relExists(edge)) {
+      // decrement instances counter on EdgeType
+      val etype = getEdgeType(edgeType)
+      update(etype.setInstances(etype.instances - 1))
 
-    // decrement instances counter on EdgeType
-    val etype = getEdgeType(edgeType)
-    update(etype.setInstances(etype.instances - 1))
+      for (id <- participants) {
+        var vertex = get(id)
 
-    for (id <- participants) {
-      var vertex = get(id)
+        // decrement participant's degree
+        update(vertex.setDegree(vertex.degree - 1))
 
-      // decrement participant's degree
-      update(vertex.setDegree(vertex.degree - 1))
-
-      val edgeSetId = ID.edgeSetId(id, edge.id)
+        val edgeSetId = ID.edgeSetId(id, edge.id)
       
-      var edgeSet = getEdgeSet(edgeSetId)
+        var edgeSet = getEdgeSet(edgeSetId)
       
-      // decrement edgeset's size
-      put(edgeSet.setSize(edgeSet.size - 1))
-      edgeSet = getEdgeSet(edgeSetId)
+        // decrement edgeset's size
+        put(edgeSet.setSize(edgeSet.size - 1))
+        edgeSet = getEdgeSet(edgeSetId)
 
-      // edgeset never had extra edges if edges == -1
-      if (edgeSet.extra < 0) {
-        update(edgeSet.setEdges(edgeSet.edges - edge.id))
-      }
-      else {
-        var done = false
-        var extra = 0
-        if (edgeSet.edges.contains(edge.id)) {
-          done = true
+        // edgeset never had extra edges if edges == -1
+        if (edgeSet.extra < 0) {
           update(edgeSet.setEdges(edgeSet.edges - edge.id))
         }
-        while (!done) {
-          extra += 1
-          val extraEdges = getExtraEdges(ID.extraId(edgeSetId, extra))
-          // this should not happen
-          if (extraEdges.id == "") {
-
-          }
-          else if (extraEdges.edges.contains(edge.id)) {
+        else {
+          var done = false
+          var extra = 0
+          if (edgeSet.edges.contains(edge.id)) {
             done = true
-            update(extraEdges.setEdges(extraEdges.edges - edge.id))
+            update(edgeSet.setEdges(edgeSet.edges - edge.id))
           }
+          while (!done) {
+            extra += 1
+            val extraEdges = getExtraEdges(ID.extraId(edgeSetId, extra))
+            // this should not happen
+            if (extraEdges.id == "") {
+
+            }
+            else if (extraEdges.edges.contains(edge.id)) {
+              done = true
+              update(extraEdges.setEdges(extraEdges.edges - edge.id))
+            }
+          }
+
+          // update extra on participant's edgeset if needed
+          // the idea is to reuse slots that get released on ExtraEdges associated with EdgeSets
+          if (edgeSet.extra != extra)
+            update(getEdgeSet(edgeSetId).setExtra(extra))
         }
 
-        // update extra on participant's edgeset if needed
-        // the idea is to reuse slots that get released on ExtraEdges associated with EdgeSets
-        if (edgeSet.extra != extra)
-          update(getEdgeSet(edgeSetId).setExtra(extra))
-      }
-
-      // remove from edgesets if empty
-      if (isEdgeSetEmpty(edgeSetId, vertex)) {
-        vertex = get(id)
-        update(vertex.setEdgeSets(vertex.edgesets - edgeSetId))
+        // remove from edgesets if empty
+        if (isEdgeSetEmpty(edgeSetId, vertex)) {
+          vertex = get(id)
+          update(vertex.setEdgeSets(vertex.edgesets - edgeSetId))
+        }
       }
     }
+
+    // remove actual edge
+    if (exists(edge.id))
+      remove(edge)
 
     true
   }

@@ -7,6 +7,8 @@ import unfiltered.Cookie
 
 import com.codahale.logula.Logging
 
+import com.graphbrain.hgdb.ID
+
 
 object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse with Logging {
   var errorMessage: String = ""
@@ -35,28 +37,25 @@ object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with S
     val linkOrNode = params("linkOrNode")(0)
 
     if (linkOrNode == "link") {
-      // check permissions
-      if ((Server.store.nodeOwner(origId) == userNode.id) ||
-          (Server.store.nodeOwner(targId) == userNode.id)) {
+      Server.store.delrel2(link, Array(origId, targId), userNode.id)
 
-        Server.store.delrel(link, Array(origId, targId))
-        log.info(Server.realIp(req) + " REMOVE EDGE username: " + userNode.username + "; origId: " + origId + "; link: " + link + "; targId" + targId)
-      }
-      else {
-        errorMessage = "You do not have perissons to remove this connection."
-        log.info(Server.realIp(req) + " PERMISSION DENIED to REMOVE EDGE username: " + userNode.username + "; origId: " + origId + "; link: " + link + "; targId" + targId)
-      }
+      // force consesnsus re-evaluation of affected edge
+      val edgeId = ID.edgeId(link, Array(origId, targId))
+      Server.consensusActor ! edgeId
+
+      log.info(Server.realIp(req) + " REMOVE EDGE username: " + userNode.username + "; origId: " + origId + "; link: " + link + "; targId" + targId)
     }
     else {
-      // check permissions
-      if (Server.store.nodeOwner(nodeId) == userNode.id) {
-        Server.store.removeAllEdges2(Server.store.get(nodeId), userNode.id)
-        log.info(Server.realIp(req) + " REMOVE NODE username: " + userNode.username + "; nodeId: " + nodeId)
+      val nedges = Server.store.neighborEdges(nodeId)
+
+      // remove connected edges
+      for (edgeId <- nedges) {
+        Server.store.delrel2(edgeId, userNode.id)
+        // force consesnsus re-evaluation of affected edge
+        Server.consensusActor ! edgeId
       }
-      else {
-        errorMessage = "You do not have perissons to remove this item."
-        log.info(Server.realIp(req) + " PERMISSION DENIED to REMOVE NODE username: " + userNode.username + "; nodeId: " + nodeId) 
-      }
+
+      log.info(Server.realIp(req) + " REMOVE NODE username: " + userNode.username + "; nodeId: " + nodeId)
     }
   }
 

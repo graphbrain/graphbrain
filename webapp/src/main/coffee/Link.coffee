@@ -2,7 +2,7 @@
 
 # Link
 class Link
-    constructor: (@id, @orig, @sorig, @targ, @starg, @label, @color) ->
+    constructor: (@id, @orig, @sorig, @targ, @starg, @etype, @label, @color) ->
         @ox = 0
         @oy = 0
         @tx = 0

@@ -9,7 +9,7 @@ nodeCount = 0
 
 nodeClicked = (msg) ->
     if removeMode
-        showRemoveDialog(msg.data.node, msg.data.orig, msg.data.link, msg.data.targ)
+        showRemoveDialog(msg.data.node, msg.data.orig, msg.data.link, msg.data.targ, msg.data.etype)
         false
     else
         true
@@ -50,9 +50,9 @@ class Node
 
         nodeData = {}
         if @snode.linkDirection == 'in'
-            nodeData = {'node': @id, 'orig': rootNodeId, 'link': @snode.linkLabel, 'targ': @id}
+            nodeData = {'node': @id, 'orig': rootNodeId, 'etype': @snode.etype, 'link': @snode.linkLabel, 'targ': @id}
         else
-            nodeData = {'node': @id, 'targ': rootNodeId, 'link': @snode.linkLabel, 'orig': @id}
+            nodeData = {'node': @id, 'targ': rootNodeId, 'etype': @snode.etype, 'link': @snode.linkLabel, 'orig': @id}
 
         # create url div
         if @type == 'url'
