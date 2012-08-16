@@ -407,6 +407,7 @@ def quoteChunkGeneral(sentence:String, root:Vertex): List[(List[String], String)
           nqEdges = nq.trim::nqEdges;
         }
       }
+      nqEdges = nqEdges.reverse
       
       //Make sure the quotation marks are not around the whole string:
       if (exp.length == sentence.length) {
