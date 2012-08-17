@@ -31,7 +31,7 @@ class SentenceParser (storeName:String = "gb") {
   val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r)
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
   val gbNodeExt = """(http://)?graphbrain.com/node/""".r
-  val rTypeMapping = HashMap("is the opposite of "->"is_the_opposite_of", "means the same as " -> "means_the_same_as", "is a "->"is_a", "is an "->"is_an",  "is a type of "->"is_a_type_of", "has a "->"has_a")
+  val rTypeMapping = HashMap("is the opposite of "->"is the opposite of", "means the same as " -> "means_the_same_as", "is a "->"is_a", "is an "->"is_an",  "is a type of "->"is_a_type_of", "has a "->"has_a")
 
   //"is" needs to be combined with POS to determine whether it is a property, state, or object that is being referred to.
   val questionWords = List("do", "can", "has", "did", "where", "when", "who", "why", "will", "how")
@@ -161,8 +161,8 @@ class SentenceParser (storeName:String = "gb") {
 
 
 
-        sources = sources.reverse ++ textToNode(nodeTexts(0))
-        targets = targets.reverse ++ textToNode(nodeTexts(1))
+        sources = sources.reverse ++ textToNode(nodeTexts(0), user=user)
+        targets = targets.reverse ++ textToNode(nodeTexts(1), user=user)
         relations = relationV :: relations;
 
 
@@ -191,17 +191,20 @@ class SentenceParser (storeName:String = "gb") {
         }
       case _ => 
     }
+
     root match {
       case a: TextNode =>
+        if(nodeExists(a.id)) {
+          return a;
+        }
         //Check whether already in database - global and user; create new node if necessary
         user match {
           case Some(u:UserNode) => 
-          val userThingID = ID.usergenerated_id(u.username, a.text)
-          //val userRelationID = ID.usergenerated_id(u.username, relationV.id)
-                
-          if(nodeExists(userThingID)) {
-            if(inNodeText==a.text) {
-              return a;
+            val userThingID = ID.usergenerated_id(u.username, a.text)
+            
+            if(nodeExists(userThingID)) {
+              if(inNodeText==a.text) {
+                return a;
               
               }
             }
@@ -219,7 +222,7 @@ class SentenceParser (storeName:String = "gb") {
           }
       case _ =>
     }
-    return textToNode(inNodeText)(0);
+    return textToNode(inNodeText, user=user)(0);
 
   }
 
@@ -238,7 +241,8 @@ class SentenceParser (storeName:String = "gb") {
     }
 
     //Try segmenting with quote marks, then with known splitters
-    var parses = quoteChunkGeneral(inSentence, root) ++ logChunkGeneral(inSentence, root);
+    var parses = quoteChunkGeneral(inSentence, root);
+    //++ logChunkGeneral(inSentence, root);
 
     //Only parse with POS if nothing returned:
     if(parses == Nil) {
@@ -267,14 +271,18 @@ class SentenceParser (storeName:String = "gb") {
 
   def textToNode(text:String, node: Vertex= TextNode(id="GBNoneGB", text="GBNoneGB"), user:Option[Vertex]=None): List[Vertex] = {
     var userName = "";
-    
+    var results: List[Vertex] = List()
     user match {
-        case Some(u:UserNode) => userName = u.username;
+        case Some(u:UserNode) => 
+          userName = u.username;
+          if(text.toLowerCase.indexOf(userName.toLowerCase) == 0 || userName.toLowerCase.indexOf(text.toLowerCase) == 0) {
+            results = u :: results;
+          }
         case _ => 
 
     }
 
-    var results: List[Vertex] = List()
+    
     if(nodeExists(text)) {
       try{
         results = store.get(text) :: results;        
@@ -441,6 +449,7 @@ def quoteChunkGeneral(sentence:String, root:Vertex): List[(List[String], String)
 
 def logChunkGeneral(sentence:String, root:Vertex): List[(List[String], String)] = {
   logChunk(sentence, root);
+
 }
   
 /**
@@ -654,14 +663,14 @@ def posChunkGeneral(sentence: String, root: Vertex): List[(List[String], String)
   }
 
 
-  def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: Vertex, user:UserNode, maxPossiblePerParse: Int = 10): List[(List[Vertex], Edge)]={
+  def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: Vertex, user:Option[Vertex], maxPossiblePerParse: Int = 10): List[(List[Vertex], Edge)]={
     
-    var userID = user.username
-    /*user match {
+    var userID = ""
+    user match {
         case u:UserNode => userID = u.username;
         case _ => 
 
-    }*/
+    }
 	var possibleGraphs:List[(List[Vertex], Edge)] = List()
 	val sortedParses = removeDeterminers(sortRootParsesPriority(possibleParses, root), root)
 
@@ -827,19 +836,19 @@ def removeDeterminers(possibleParses: List[(List[String], String)], rootNode: Ve
 }
 
 
-def getOrCreate(id:String, user:Vertex = UserNode("", ""), textString:String = "", root:Vertex = TextNode("", "")):Vertex={
+def getOrCreate(id:String, user:Option[Vertex] = None, textString:String = "", root:Vertex = TextNode("", "")):Vertex={
   if(id != "") {
     try{
       return store.get(id);
     }
     catch{
-      case e => val newNode = textToNode(textString, root, Some(user))(0);
+      case e => val newNode = textToNode(textString, root, user)(0);
       //TextNode(id=ID.usergenerated_id(userID, textString), text=textString);
       return newNode;
     }
   }
   else {
-    val newNode = textToNode(textString, root, Some(user))(0);
+    val newNode = textToNode(textString, root, user)(0);
     return newNode;
   }
 
