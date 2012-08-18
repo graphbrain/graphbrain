@@ -194,7 +194,7 @@ class SentenceParser (storeName:String = "gb") {
 
     root match {
       case a: TextNode =>
-        if(nodeExists(a.id)) {
+        if(a.text == inNodeText) {
           return a;
         }
         //Check whether already in database - global and user; create new node if necessary
@@ -275,7 +275,8 @@ class SentenceParser (storeName:String = "gb") {
     user match {
         case Some(u:UserNode) => 
           userName = u.username;
-          if(text.toLowerCase.indexOf(userName.toLowerCase) == 0 || userName.toLowerCase.indexOf(text.toLowerCase) == 0) {
+          val name = u.name
+          if(text.toLowerCase.indexOf(userName.toLowerCase) == 0 || userName.toLowerCase.indexOf(text.toLowerCase) == 0 ||text.toLowerCase.indexOf(name.toLowerCase) == 0 || name.toLowerCase.indexOf(text.toLowerCase) == 0 ) {
             results = u :: results;
           }
         case _ => 
@@ -305,7 +306,13 @@ class SentenceParser (storeName:String = "gb") {
 
     if (urlRegex.findAllIn(text).hasNext) {
       val urlID = ID.url_id(url = text)
-      results = URLNode(id = ID.usergenerated_id(userName, urlID), url = text) :: results
+      if(userName == "") {
+        results = URLNode(id = urlID, url = text) :: results  
+      }
+      else {
+        results = URLNode(id = ID.usergenerated_id(userName, urlID), url = text) :: results  
+      }
+      
     }
 
     val wikiID = ID.wikipedia_id(text)
@@ -365,28 +372,33 @@ class SentenceParser (storeName:String = "gb") {
       val isRelType = EdgeType(id = ID.reltype_id("VBZ"), label = "VBZ")
       return (relType, (isLemmaNode, isRelType))
     }*/
+    val allRelTypes = """~""".r.split(relType.label)
     val posSentence = lemmatiser.annotate(sentence);
-    val splitRelType = """\s""".r.split(relType.label);
     var lemma = "";
-    var posLabel = ""
+    var poslabel = "";
+    for (rType <- allRelTypes) {
+      
+      val splitRelType = """\s""".r.split(rType);
 
-    for(i <- 0 to splitRelType.length-1) {
-      val relTypeComp = splitRelType(i)
-      for (tagged <- posSentence) {
-        if(tagged._1 == relTypeComp) {
-          posLabel += tagged._2 + "_";
-          lemma += tagged._3 + "_";
+      for(i <- 0 to splitRelType.length-1) {
+        val relTypeComp = splitRelType(i)
+        for (tagged <- posSentence) {
+          if(tagged._1 == relTypeComp) {
+            poslabel += tagged._2 + "_";
+            lemma += tagged._3 + "_";
+          }
         }
       }
-        
-          
-    }
+      poslabel = poslabel.slice(0, poslabel.length - 1) + "~"
+      lemma = lemma.slice(0, lemma.length - 1) + "~"
+
     //Remove the last "_"
-    posLabel = posLabel.slice(0, posLabel.length - 1)
+    }
+    poslabel = poslabel.slice(0, poslabel.length - 1)
     lemma = lemma.slice(0, lemma.length - 1)
      
     val lemmaNode = TextNode(id = ID.text_id(lemma, 1), text = lemma)
-    val lemmaRelType = EdgeType(id = ID.reltype_id(posLabel), label = posLabel)
+    val lemmaRelType = EdgeType(id = ID.reltype_id(poslabel), label = poslabel)
     return (relType, (lemmaNode, lemmaRelType));
     
   }
@@ -883,48 +895,10 @@ object SentenceParser {
       
       val rootNode = TextNode(id=ID.usergenerated_id("chihchun_chen", "toad"), text="toad")
       val userNode = UserNode(id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
-  	  val sentence1 = "I am a toad"
-  	  val sentence2 = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
-      val videoURL1 = "http://www.youtube.com/watch?v=_e_zcoDDiwc&feature=related"
-      val videoURL2 = "http://vimeo.com/34948855"
-      val videoURL3 = "http://www.dailymotion.com/video/xmehe4_millenium-tv_videogames"
-      val imageURL1 = "http://www.flickr.com/photos/londonmummy/471232270/"
-      val imageURL2 = "http://en.wikipedia.org/wiki/File:Crohook.jpg"
-  	  println("From main: " + sentence1)
-      val mParses = sentenceParser.parseSentence(sentence1, user=Some(userNode))
-      val mSources = mParses._1;
-      val mRelations = mParses._2;
-      val mTargets = mParses._3;
-      for(mSource <- mSources) {
-        println("Source: " + mSource.id)
-      }
-      for(mRelation <- mRelations) {
-        println("Relation: " + mRelation.id)
-        mRelation match {
-          case r: EdgeType => val a = sentenceParser.relTypeLemmaAndPOS(r, sentence1);
-            println("EdgeType: " + a._1.id);
-            println("Lemma Node: " + a._2._1.id);
-            println("POS EdgeType: " + a._2._2.id);
-        }
-      }
-      for(mTarget <- mTargets) {
-        println("Target: " + mTarget.id)
-      }
-      
-      println("From main with general: " + sentence1)
-      val parses1 = sentenceParser.parseSentenceGeneral(sentence1, user=Some(userNode))
-      for(parse <- parses1) {
-        parse match {
-          case (n: List[Vertex], r: Vertex) =>
-          for(node <- n) {
-            println("Node: " + node.id);
-          }
-          println("Rel: " + r.id)
-        }
-      }
-      println("From command line with general: " + sentence2)
-      val parses2 = sentenceParser.parseSentenceGeneral(sentence2)
-      for(parse <- parses2) {
+  	  val sentence = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
+      println("From command line with general: " + sentence)
+      val parses = sentenceParser.parseSentenceGeneral(sentence)
+      for(parse <- parses) {
         parse match {
           case (n: List[Vertex], r: Vertex) =>
           for(node <- n) {
