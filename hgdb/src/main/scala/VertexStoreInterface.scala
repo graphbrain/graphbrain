@@ -368,7 +368,7 @@ abstract trait VertexStoreInterface {
       for (edgeId <- edgeSet.edges) {
         if (!ID.isInSystemSpace(Edge.edgeType(edgeId))) {
           for (pid <- Edge.participantIds(edgeId)) {
-            if ((pid != nodeId) && (!ID.isInUserSpace(pid))){
+            if (pid != nodeId) {
               nset += pid
             }
           }
@@ -420,6 +420,18 @@ abstract trait VertexStoreInterface {
     }
 
     eset.toSet
+  }
+
+  def nodesFromEdgeSet(edgeSet: Set[String]): Set[String] = {
+    var nodeList: List[String] = Nil
+    for (edge <- edgeSet) {
+      val pids = Edge.participantIds(edge)
+      for (pid <- pids) {
+        nodeList = pid :: nodeList
+      }
+    }
+
+    nodeList.toSet
   }
 
   def getOrNull(id: String): Vertex = {

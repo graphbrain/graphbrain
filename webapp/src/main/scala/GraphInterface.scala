@@ -1,6 +1,6 @@
 package com.graphbrain.webapp
 
-import com.graphbrain.hgdb.VertexStore
+import com.graphbrain.hgdb.UserOps
 import com.graphbrain.hgdb.Vertex
 import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.TextNode
@@ -13,9 +13,9 @@ import com.codahale.jerkson.Json._
 import scala.math
 
 
-class GraphInterface (val rootId: String, val store: VertexStore, val user: UserNode) {
-  val neighbors = store.neighbors(rootId)
-  val edgeIds = store.neighborEdges(rootId, neighbors)
+class GraphInterface (val rootId: String, val store: UserOps, val user: UserNode) {
+  val edgeIds = store.neighborEdges2(rootId, user.id)
+  val neighbors = store.nodesFromEdgeSet(edgeIds)
   val snodes = supernodes
   val links = visualLinks
   val nodesJSON = nodes2json
