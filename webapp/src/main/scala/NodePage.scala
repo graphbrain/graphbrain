@@ -5,12 +5,12 @@ import unfiltered.scalate._
 import unfiltered.request._
 import unfiltered.response._
 
-import com.graphbrain.hgdb.VertexStore
+import com.graphbrain.hgdb.UserOps
 import com.graphbrain.hgdb.Vertex
 import com.graphbrain.hgdb.UserNode
 
 
-case class NodePage(store: VertexStore, node: Vertex, user: UserNode, prod: Boolean, req: HttpRequest[Any], cookies: Map[String, Any], errorMsg: String="") {
+case class NodePage(store: UserOps, node: Vertex, user: UserNode, prod: Boolean, req: HttpRequest[Any], cookies: Map[String, Any], errorMsg: String="") {
 	val gi = new GraphInterface(node.id, store, user)
 
   val userId = if (user == null) "" else user.id

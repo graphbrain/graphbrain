@@ -106,4 +106,19 @@ trait UserOps extends VertexStoreInterface {
     val ids = for (v <- participants) yield v.id
     addrel2(edgeType.replace(" ", "_"), ids, userid)
   }
+
+  def neighborEdges2(nodeId: String, userid: String): Set[String] = {
+    val uNodeId = ID.globalToUser(nodeId, userid) 
+
+    val gnhood = neighbors(nodeId)
+    val unhood = neighbors(uNodeId)
+
+    val gedges = neighborEdges(nodeId, gnhood)
+    val uedges = neighborEdges(uNodeId, unhood).map(ID.userToGlobalEdge)
+
+    val applyNegatives = gedges.filter(x => !uedges.contains(ID.negateEdge(x)))
+    val posUEdges = uedges.filter(x => ID.isPositiveEdge(x))
+
+    applyNegatives ++ posUEdges
+  }
 }

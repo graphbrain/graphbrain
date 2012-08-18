@@ -66,8 +66,18 @@ object ID {
     etype + " " +
     (for (pid <- pids) yield globalToUser(pid, userId)).reduceLeft(_ + " " + _)
   }
+  
+  def userToGlobalEdge(edgeId: String) = {
+    val etype = Edge.edgeType(edgeId)
+    val pids = Edge.participantIds(edgeId)
+
+    etype + " " +
+    (for (pid <- pids) yield userToGlobal(pid)).reduceLeft(_ + " " + _)
+  }
 
   def negateEdge(edgeId: String) = "neg/" + edgeId
+
+  def isPositiveEdge(id: String): Boolean = parts(id)(0) != "neg"
 
   def usergenerated_id(userName:String, thing:String) =
 	  userName + "/" + thing
