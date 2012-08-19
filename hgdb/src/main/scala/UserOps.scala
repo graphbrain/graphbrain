@@ -110,8 +110,8 @@ trait UserOps extends VertexStoreInterface {
   def neighborEdges2(nodeId: String, userid: String): Set[String] = {
     val uNodeId = ID.globalToUser(nodeId, userid) 
 
-    val gnhood = neighbors(nodeId)
-    val unhood = neighbors(uNodeId)
+    val gnhood = neighbors(nodeId).filter(x => ID.isUserNode(x) || (!ID.isInUserSpace(x)))
+    val unhood = neighbors(uNodeId).filter(x => ID.isUserNode(x) || ID.isInUserSpace(x))
 
     val gedges = neighborEdges(nodeId, gnhood)
     val uedges = neighborEdges(uNodeId, unhood).map(ID.userToGlobalEdge)

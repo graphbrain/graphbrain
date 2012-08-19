@@ -44,10 +44,12 @@ getForces = ->
 
 layout = ->
   N = g.snodeArray.length
+  if N == 0
+    return
   Nstep = 20
   step = 0.01
   minimalStep = 1e-10
-  
+ 
   for i in [0..(N - 1)]
     g.snodeArray[i].pos[0] = 2 * frand()
     g.snodeArray[i].pos[1] = 2 * frand()
