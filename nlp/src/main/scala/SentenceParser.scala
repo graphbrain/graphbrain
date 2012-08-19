@@ -320,8 +320,9 @@ class SentenceParser (storeName:String = "gb") {
     if(nodeExists(wikiID)) {results = getOrCreate(wikiID) :: results}
     
     val textPureID = ID.text_id(text, 1)
-    if(userName==""){
-      results = TextNode(id = textPureID, text=text) :: results;
+    results = TextNode(id = textPureID, text=text) :: results;
+    /*if(userName==""){
+      
       var i = 2;
       while(nodeExists(ID.text_id(text, i)))
       {
@@ -329,15 +330,18 @@ class SentenceParser (storeName:String = "gb") {
         i +=1;
         
       }
+      results = TextNode(id = textPureID, text=text) :: results;
     }
     else {
-      results = TextNode(id = ID.usergenerated_id(userName, textPureID), text=text) :: results;
+      
       var i=2
       while(nodeExists(ID.usergenerated_id(userName, ID.text_id(text, i))))
       {
         results = TextNode(id = ID.usergenerated_id(userName, ID.text_id(text, i))) :: results
+        i +=1;
       }
-    }
+      results = TextNode(id = ID.usergenerated_id(userName, textPureID), text=text) :: results;
+    }*/
     
     return results.reverse;
   }

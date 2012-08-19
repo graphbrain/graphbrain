@@ -71,7 +71,7 @@ class SentenceParserTest extends FunSuite {
 	println(relType.id)
 	println(isA)
   	assert(nodes(0).id == userNode.id)
-  	assert(nodes(1).id == toadNodeUser.id)
+  	assert(nodes(1).id == toadNodeGlobal.id)
     assert(relType.id == isA)
   }
 
@@ -130,7 +130,7 @@ class SentenceParserTest extends FunSuite {
     assert(nodes.length == 3)
     assert(nodes(0).id == userNode.id)
     assert(nodes(1).id == programmerWikipediaNode.id)
-    assert(nodes(2).id == graphbrainUserNode.id)
+    assert(nodes(2).id == graphbrainGlobalNode.id)
     assert(relType.id == amAlwaysARelTypeID)
   }
 
@@ -163,7 +163,7 @@ class SentenceParserTest extends FunSuite {
 
 
   test("Chih-Chun is always a programmer at graphbrain: Parse 3-role with irrelevant root node (1/toad) no user"){
-    val parses = sentenceParser.parseSentenceGeneral(sentence3, root = toadNodeGlobal);
+    val parses = sentenceParser.parseSentenceGeneral(sentence3, root = toadNodeUser);
     val nodes = parses(0)._1
     val relType = parses(0)._2
 
@@ -176,6 +176,23 @@ class SentenceParserTest extends FunSuite {
     assert(nodes(0).id == globalNameNode2.id)
     assert(nodes(1).id == programmerWikipediaNode.id)
     assert(nodes(2).id == graphbrainGlobalNode.id)
+	assert(relType.id == isAlwaysARelTypeID)
+  }
+
+  test("Chih-Chun is always a programmer at graphbrain: Parse 3-role with relevant user root node (chihchun_chen/1/graphbrain) no user"){
+    val parses = sentenceParser.parseSentenceGeneral(sentence3, root = graphbrainUserNode);
+    val nodes = parses(0)._1
+    val relType = parses(0)._2
+
+    println(nodes(0).id)
+    println(nodes(1).id)
+    println(nodes(2).id)
+    println(relType.id)
+
+    assert(nodes.length == 3)
+    assert(nodes(0).id == globalNameNode2.id)
+    assert(nodes(1).id == programmerWikipediaNode.id)
+    assert(nodes(2).id == graphbrainUserNode.id)
 	assert(relType.id == isAlwaysARelTypeID)
   }
 
@@ -194,7 +211,7 @@ class SentenceParserTest extends FunSuite {
     assert(nodes.length == 3)
     assert(nodes(0).id == userNode.id)
     assert(nodes(1).id == programmerWikipediaNode.id)
-    assert(nodes(2).id == graphbrainUserNode.id)
+    assert(nodes(2).id == graphbrainGlobalNode.id)
     assert(relType.id == isAlwaysARelTypeID)
   }
 
