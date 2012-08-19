@@ -1496,6 +1496,7 @@ function handler(event) {
   layout = function() {
     var N, Nstep, d, e, e0, f, i, k, l, minimalStep, pos, step, tpos, _ref, _ref2, _ref3, _ref4;
     N = g.snodeArray.length;
+    if (N === 0) return;
     Nstep = 20;
     step = 0.01;
     minimalStep = 1e-10;
@@ -1834,51 +1835,13 @@ function handler(event) {
         this.mappingPower = Math.log(Math.asin(Nt / (N / 2)) / Math.PI) * (1 / Math.log(0.5));
         this.negativeStretch = this.mappingPower * 2;
       }
-      _results = [];
-      for (i = 0, _ref = this.snodeArray.length - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
-        _results.push(this.snodeArray[i].applyPos());
-      }
-      return _results;
-    };
-
-    Graph.prototype.layout2 = function() {
-      var coords, i, key, snode, snodeCount, x, y, z, _ref, _results;
-      coords = {
-        0: [-0.7, 0, 0],
-        1: [0.7, 0, 0],
-        2: [0, 0.7, 0],
-        3: [0, -0.7, 0],
-        4: [-0.5, -0.5, -0.5],
-        5: [0.5, 0.5, -0.5],
-        6: [-0.5, 0.5, -0.5],
-        7: [0.5, -0.5, -0.5],
-        8: [-0.5, -0.5, 0.5],
-        9: [0.5, 0.5, 0.5],
-        10: [-0.5, 0.5, 0.5],
-        11: [0.5, -0.5, 0.5]
-      };
-      for (key in this.snodes) {
-        if (this.snodes.hasOwnProperty(key)) this.snodes[key].fixed = false;
-      }
-      this.root.moveTo(width / 2, height / 2, 0);
-      this.root.fixed = true;
-      snodeCount = Object.keys(this.snodes).length;
-      _results = [];
-      for (i = 0, _ref = snodeCount - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
-        snode = this.nextByWeight(1);
-        if (!snode) break;
-        x = width / 2;
-        y = height / 2;
-        z = 0;
-        if (i < Object.keys(coords).length) {
-          x += coords[i][0] * (width / 2);
-          y += coords[i][1] * (height / 2);
-          z += coords[i][2] * (height / 2);
+      if (N > 0) {
+        _results = [];
+        for (i = 0, _ref = this.snodeArray.length - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
+          _results.push(this.snodeArray[i].applyPos());
         }
-        snode.moveTo(x, y, z);
-        _results.push(snode.fixed = true);
+        return _results;
       }
-      return _results;
     };
 
     return Graph;

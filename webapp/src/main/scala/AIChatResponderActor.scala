@@ -33,6 +33,10 @@ class AIChatResponderActor() extends Actor {
           val node2 = parse._3(0)
           val relation = parse._2(0).id.replace(" ", "_")
 
+          //println("node1: " + node1.id)
+          //println("node2: " + node2.id)
+          //println("relation: " + relation)
+
           Server.store.createAndConnectVertices2(relation, Array(node1, node2), user.id)
 
           // force consesnsus re-evaluation of affected edge

@@ -233,46 +233,6 @@ class Graph
             #console.log('mappingPower: ' + @mappingPower)
             #console.log('negativeStretch: ' + @negativeStretch)
 
-        for i in [0..(@snodeArray.length - 1)]
+        if N > 0
+          for i in [0..(@snodeArray.length - 1)]
             @snodeArray[i].applyPos()
-
-    layout2: ->
-        coords = {
-            0: [-0.7, 0, 0],
-            1: [0.7, 0, 0],
-            2: [0, 0.7, 0],
-            3: [0, -0.7, 0],
-            4: [-0.5, -0.5, -0.5],
-            5: [0.5, 0.5, -0.5],
-            6: [-0.5, 0.5, -0.5],
-            7: [0.5, -0.5, -0.5],
-            8: [-0.5, -0.5, 0.5],
-            9: [0.5, 0.5, 0.5],
-            10: [-0.5, 0.5, 0.5],
-            11: [0.5, -0.5, 0.5]
-        }
-
-        # set all super nodes non-fixed
-        @snodes[key].fixed = false for key of @snodes when @snodes.hasOwnProperty(key)
-
-        # layout root node
-        @root.moveTo(width / 2, height / 2, 0)
-        @root.fixed = true
-
-        snodeCount = Object.keys(@snodes).length
-
-        for i in [0..(snodeCount-1)]
-            snode = @nextByWeight(1)
-            if !snode
-                break
-
-            x = width / 2
-            y = height / 2
-            z = 0
-
-            if i < Object.keys(coords).length
-                x += coords[i][0] * (width / 2)
-                y += coords[i][1] * (height / 2)
-                z += coords[i][2] * (height / 2)
-            snode.moveTo(x, y, z)
-            snode.fixed = true

@@ -356,27 +356,32 @@ abstract trait VertexStoreInterface {
   def delrel(edgeId: String): Boolean = delrel(Edge.edgeType(edgeId), Edge.participantIds(edgeId).toArray)
 
   def neighbors(nodeId: String): Set[String] = {
-    val nset = MSet[String]()
+    try {
+      val nset = MSet[String]()
     
-    // add root node
-    nset += (nodeId)
+      // add root node
+      nset += (nodeId)
 
-    // add nodes connected to root
-    val node = get(nodeId)
-    for (edgeSetId <- node.edgesets) {
-      val edgeSet = getEdgeSet(edgeSetId)
-      for (edgeId <- edgeSet.edges) {
-        if (!ID.isInSystemSpace(Edge.edgeType(edgeId))) {
-          for (pid <- Edge.participantIds(edgeId)) {
-            if (pid != nodeId) {
-              nset += pid
+      // add nodes connected to root
+      val node = get(nodeId)
+      for (edgeSetId <- node.edgesets) {
+        val edgeSet = getEdgeSet(edgeSetId)
+        for (edgeId <- edgeSet.edges) {
+          if (!ID.isInSystemSpace(Edge.edgeType(edgeId))) {
+            for (pid <- Edge.participantIds(edgeId)) {
+              if (pid != nodeId) {
+                nset += pid
+              }
             }
           }
-        }
-      }      
-    }
+        }    
+      }
 
-    nset.toSet
+      nset.toSet
+    }
+    catch {
+      case e => Set[String]()
+    }
   }
 
   def edgeInNeighborhood(edgeId: String, nhood: Set[String]): Boolean = {
@@ -391,35 +396,45 @@ abstract trait VertexStoreInterface {
   }
 
   def neighborEdges(nodeId: String): Set[String] = {
-    val eset = MSet[String]()
+    try {
+      val eset = MSet[String]()
 
-    // add edges connected to root
-    val node = get(nodeId)
-    for (edgeSetId <- node.edgesets) {
-      val edgeSet = getEdgeSet(edgeSetId)
-      for (edgeId <- edgeSet.edges) {
-        eset += edgeId
-      }      
+      // add edges connected to root
+      val node = get(nodeId)
+      for (edgeSetId <- node.edgesets) {
+        val edgeSet = getEdgeSet(edgeSetId)
+        for (edgeId <- edgeSet.edges) {
+          eset += edgeId
+        }      
+      }
+
+      eset.toSet
     }
-
-    eset.toSet
+    catch {
+      case e => Set[String]()
+    }
   }
 
   def neighborEdges(nodeId: String, nhood: Set[String]): Set[String] = {
-    val eset = MSet[String]()
+    try {
+      val eset = MSet[String]()
 
-    // add edges connected to root
-    val node = get(nodeId)
-    for (edgeSetId <- node.edgesets) {
-      val edgeSet = getEdgeSet(edgeSetId)
-      for (edgeId <- edgeSet.edges) {
-        if (edgeInNeighborhood(edgeId, nhood)) {
-          eset += edgeId
-        }
-      }      
+      // add edges connected to root
+      val node = get(nodeId)
+      for (edgeSetId <- node.edgesets) {
+        val edgeSet = getEdgeSet(edgeSetId)
+        for (edgeId <- edgeSet.edges) {
+          if ((!ID.isInSystemSpace(Edge.edgeType(edgeId))) && (edgeInNeighborhood(edgeId, nhood))) {
+            eset += edgeId
+          }
+        }      
+      }
+
+      eset.toSet
     }
-
-    eset.toSet
+    catch {
+      case e => Set[String]()
+    }
   }
 
   def nodesFromEdgeSet(edgeSet: Set[String]): Set[String] = {

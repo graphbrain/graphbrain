@@ -14,7 +14,8 @@ import scala.math
 
 
 class GraphInterface (val rootId: String, val store: UserOps, val user: UserNode) {
-  val edgeIds = store.neighborEdges2(rootId, user.id)
+  val userId = if (user != null) user.id else ""
+  val edgeIds = store.neighborEdges2(rootId, userId)
   val neighbors = store.nodesFromEdgeSet(edgeIds)
   val snodes = supernodes
   val links = visualLinks
