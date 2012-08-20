@@ -318,12 +318,9 @@ class SentenceParser (storeName:String = "gb") {
     val textPureID = ID.text_id(text, 1)
     val wikiID = ID.wikipedia_id(text)
 
-    //results = getOrCreate(textPureID) :: results
+    
     if(nodeExists(textPureID)) {
       results = getOrCreate(textPureID) :: results;  
-    }
-    if(nodeExists(wikiID)) {
-      results = getOrCreate(wikiID) :: results
     }
     
     var i = 1;
@@ -338,40 +335,6 @@ class SentenceParser (storeName:String = "gb") {
     }
     
 
-
-    //val wikiID = ID.wikipedia_id(text)
-    //Priority of graphbrain node higher than wikipedia node.
-    
-    
-    //if(nodeExists(textPureID)) {results = getOrCreate(textPureID) :: results}
-    
-    //Add the wikipedia node as a possible entry if found.
-    //if(nodeExists(wikiID)) {results = getOrCreate(wikiID) :: results}
-
-    //if(nodeExists(textPureID)==false) {results = getOrCreate(textPureID) :: results}
-    
-
-    /*if(userName==""){
-      
-      var i = 2;
-      while(nodeExists(ID.text_id(text, i)))
-      {
-        results = TextNode(id = ID.text_id(text, i), text=text) :: results;
-        i +=1;
-        
-      }
-      results = TextNode(id = textPureID, text=text) :: results;
-    }
-    else {
-      
-      var i=2
-      while(nodeExists(ID.usergenerated_id(userName, ID.text_id(text, i))))
-      {
-        results = TextNode(id = ID.usergenerated_id(userName, ID.text_id(text, i))) :: results
-        i +=1;
-      }
-      results = TextNode(id = ID.usergenerated_id(userName, textPureID), text=text) :: results;
-    }*/
     
     return results.reverse;
   }
