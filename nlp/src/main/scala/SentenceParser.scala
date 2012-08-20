@@ -195,7 +195,7 @@ class SentenceParser (storeName:String = "gb") {
 
     root match {
       case a: TextNode =>
-        if(a.text == inNodeText) {
+        if(a.text == inNodeText || a.text.toLowerCase.indexOf(inNodeText.toLowerCase)==0 || inNodeText.toLowerCase.indexOf(a.text.toLowerCase) == 0) {
           return a;
         }
         //Check whether already in database - global and user; create new node if necessary
