@@ -137,10 +137,11 @@ class SentenceParser (storeName:String = "gb") {
                   if(nodeTexts(0) == w.text) {
                     sources = w :: sources
                   }
-              }
+                }
             }
-          case _ =>
-        }
+            case _ =>
+          
+          }
         user match {
           case Some(u:UserNode) =>
 
@@ -210,7 +211,7 @@ class SentenceParser (storeName:String = "gb") {
             }
           case _ => 
         }
-        val wikiThingID = ID.wikipedia_id(a.text)
+        /*val wikiThingID = ID.wikipedia_id(a.text)
         if(nodeExists(wikiThingID))  {
           val wikiNode = getOrCreate(wikiThingID)
           wikiNode match {
@@ -219,7 +220,7 @@ class SentenceParser (storeName:String = "gb") {
                 return w;
               }
             }
-          }
+          }*/         
       case _ =>
     }
     return textToNode(inNodeText, user=user)(0);
@@ -314,13 +315,42 @@ class SentenceParser (storeName:String = "gb") {
       }
       
     }
-
-    val wikiID = ID.wikipedia_id(text)
-    //Add the wikipedia node as a possible entry if found
-    if(nodeExists(wikiID)) {results = getOrCreate(wikiID) :: results}
-    
     val textPureID = ID.text_id(text, 1)
-    results = TextNode(id = textPureID, text=text) :: results;
+    val wikiID = ID.wikipedia_id(text)
+
+    //results = getOrCreate(textPureID) :: results
+    if(nodeExists(textPureID)) {
+      results = getOrCreate(textPureID) :: results;  
+    }
+    if(nodeExists(wikiID)) {
+      results = getOrCreate(wikiID) :: results
+    }
+    
+    var i = 1;
+    while(nodeExists(ID.text_id(text, i)))
+    {
+      results = TextNode(id = ID.text_id(text, i), text=text) :: results;
+      i += 1;
+        
+    }
+    if(i==1) {
+      results = TextNode(id = textPureID, text = text) :: results;
+    }
+    
+
+
+    //val wikiID = ID.wikipedia_id(text)
+    //Priority of graphbrain node higher than wikipedia node.
+    
+    
+    //if(nodeExists(textPureID)) {results = getOrCreate(textPureID) :: results}
+    
+    //Add the wikipedia node as a possible entry if found.
+    //if(nodeExists(wikiID)) {results = getOrCreate(wikiID) :: results}
+
+    //if(nodeExists(textPureID)==false) {results = getOrCreate(textPureID) :: results}
+    
+
     /*if(userName==""){
       
       var i = 2;
@@ -901,7 +931,10 @@ object SentenceParser {
       val userNode = UserNode(id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
   	  val sentence = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
       println("From command line with general: " + sentence)
+      val parses1 = sentenceParser.parseSentence(sentence)
+      println("parsed2")
       val parses = sentenceParser.parseSentenceGeneral(sentence)
+      println("parsed2")
       for(parse <- parses) {
         parse match {
           case (n: List[Vertex], r: Vertex) =>

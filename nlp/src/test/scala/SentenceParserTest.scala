@@ -27,6 +27,7 @@ class SentenceParserTest extends FunSuite {
   val globalNameNode1 = TextNode(id = ID.text_id("ChihChun"))
   val globalNameNode2 = TextNode(id = ID.text_id("Chih-Chun"))
   val programmerWikipediaNode = TextNode(id = ID.wikipedia_id("programmer"))
+  val programmerGlobalNode = TextNode(id = ID.text_id("programmer"), text = "programmer")
   val userNode = UserNode(id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
   val graphbrainGlobalNode = TextNode(id = ID.text_id("graphbrain"))
   val graphbrainUserNode = TextNode(id = ID.usergenerated_id("chihchun_chen", ID.text_id("graphbrain")), text = "graphbrain")
@@ -129,7 +130,7 @@ class SentenceParserTest extends FunSuite {
 
     assert(nodes.length == 3)
     assert(nodes(0).id == userNode.id)
-    assert(nodes(1).id == programmerWikipediaNode.id)
+    assert(nodes(1).id == programmerGlobalNode.id)
     assert(nodes(2).id == graphbrainGlobalNode.id)
     assert(relType.id == amAlwaysARelTypeID)
   }
@@ -174,7 +175,7 @@ class SentenceParserTest extends FunSuite {
 
     assert(nodes.length == 3)
     assert(nodes(0).id == globalNameNode2.id)
-    assert(nodes(1).id == programmerWikipediaNode.id)
+    assert(nodes(1).id == programmerGlobalNode.id)
     assert(nodes(2).id == graphbrainGlobalNode.id)
 	assert(relType.id == isAlwaysARelTypeID)
   }
@@ -191,7 +192,7 @@ class SentenceParserTest extends FunSuite {
 
     assert(nodes.length == 3)
     assert(nodes(0).id == globalNameNode2.id)
-    assert(nodes(1).id == programmerWikipediaNode.id)
+    assert(nodes(1).id == programmerGlobalNode.id)
     assert(nodes(2).id == graphbrainUserNode.id)
 	assert(relType.id == isAlwaysARelTypeID)
   }
@@ -210,7 +211,7 @@ class SentenceParserTest extends FunSuite {
 
     assert(nodes.length == 3)
     assert(nodes(0).id == userNode.id)
-    assert(nodes(1).id == programmerWikipediaNode.id)
+    assert(nodes(1).id == programmerGlobalNode.id)
     assert(nodes(2).id == graphbrainGlobalNode.id)
     assert(relType.id == isAlwaysARelTypeID)
   }
