@@ -75,7 +75,7 @@ trait UserOps extends VertexStoreInterface {
     }
   }
 
-  def addrel2(edgeType: String, participants: Array[String], userid: String) = {
+  def addrel2(edgeType: String, participants: Array[String], userid: String, consensus: Boolean=false) = {
     val etype = edgeType.replace(" ", "_")
 
     // convert edge to user space and add
@@ -85,26 +85,40 @@ trait UserOps extends VertexStoreInterface {
 
     // remove negation of this edge if it exists
     delrel(ID.negateEdge(etype), ids)
+
+    // run consensus algorithm
+    if (consensus) {
+      val gids = for (id <- participants) yield
+        if (!ID.isInUserSpace(id)) id else ID.userToGlobal(id)
+      Consensus.evalEdge(ID.edgeId(edgeType, gids), this)
+    }
   }
 
-  def delrel2(edgeType: String, participants: Array[String], userid: String): Unit = {
+  def delrel2(edgeType: String, participants: Array[String], userid: String, consensus: Boolean=false): Unit = {
     // delete edge from user space
     val userSpaceParticipants = participants.map(p => ID.globalToUser(p, userid))
     delrel(edgeType, userSpaceParticipants)
 
     // create negation of edge in user space
     addrel(ID.negateEdge(edgeType), userSpaceParticipants)
+
+    // run consensus algorithm
+    if (consensus) {
+      val gids = for (id <- participants) yield
+        if (!ID.isInUserSpace(id)) id else ID.userToGlobal(id)
+      Consensus.evalEdge(ID.edgeId(edgeType, gids), this)
+    }
   }
 
   def delrel2(edgeId: String, userid: String): Unit = delrel2(Edge.edgeType(edgeId), Edge.participantIds(edgeId).toArray, userid)
 
-  def createAndConnectVertices2(edgeType: String, participants: Array[Vertex], userid: String) = {
+  def createAndConnectVertices2(edgeType: String, participants: Array[Vertex], userid: String, consensus: Boolean = false) = {
     for (v <- participants) {
       put2(v, userid)
     }
 
     val ids = for (v <- participants) yield v.id
-    addrel2(edgeType.replace(" ", "_"), ids, userid)
+    addrel2(edgeType.replace(" ", "_"), ids, userid, consensus)
   }
 
   def neighborEdges2(nodeId: String, userid: String): Set[String] = {

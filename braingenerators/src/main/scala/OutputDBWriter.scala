@@ -55,7 +55,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
         	//store.addrel(wikiRel, Array[String](ng2.id, w2.id))
 
 			//Relationship at global level
-			store.addrel2(relType.id, Array[String](ng1.id, ng2.id), store.idFromUsername(username))
+			store.addrel2(relType.id, Array[String](ng1.id, ng2.id), store.idFromUsername(username), true)
 
 
 			
@@ -120,7 +120,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 	    	println(username)
 	    	store.getOrInsert2(sourceNode, store.idFromUsername(username))
 	    	store.getOrInsert2(urlNode, store.idFromUsername(username))
-	    	store.addrel2("source", Array[String](sourceNode.id, urlNode.id), store.idFromUsername(username))
+	    	store.addrel2("source", Array[String](sourceNode.id, urlNode.id), store.idFromUsername(username), true)
 	    	store.getOrInsert2(wikiPageET, store.idFromUsername(username))
 	    }
 	    catch{
@@ -146,8 +146,8 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
   			store.getOrInsert2(node, store.idFromUsername(username))
   			store.getOrInsert2(urlNode, store.idFromUsername(username));
   			store.getOrInsert2(sourceNode, store.idFromUsername(username))
-  			store.addrel2("en_wikipage", Array[String](urlNode.id, node.id), store.idFromUsername(username)); 
-  			store.addrel2("source", Array[String](sourceNode.id, urlNode.id), store.idFromUsername(username))
+  			store.addrel2("en_wikipage", Array[String](urlNode.id, node.id), store.idFromUsername(username), true); 
+  			store.addrel2("source", Array[String](sourceNode.id, urlNode.id), store.idFromUsername(username), true)
   			
   		}
   		catch {
