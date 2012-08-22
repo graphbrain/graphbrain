@@ -96,6 +96,18 @@ class SentenceParser (storeName:String = "gb") {
 
         if(nodeTexts(0) == "you") {
           sources = gbNode :: sources;
+          val annotatedRelation = lemmatiser.annotate(relation)
+          var newRelation = ""
+          for (a <- annotatedRelation) {
+            if(verbRegex.findAllIn(a._2).hasNext) {
+              newRelation += lemmatiser.conjugate(a._3) + " "
+            }
+            else {
+              newRelation += a._1 + " "
+            }
+          }
+
+          relationV = EdgeType(id = ID.reltype_id(newRelation.trim), label = newRelation.trim)
         }
 
         if(nodeTexts(1) == "you") {
@@ -153,6 +165,19 @@ class SentenceParser (storeName:String = "gb") {
             }
             if(nodeTexts(0) == "I") {
               sources = u :: sources;
+
+              val annotatedRelation = lemmatiser.annotate(relation)
+              var newRelation = ""
+              for (a <- annotatedRelation) {
+                if(verbRegex.findAllIn(a._2).hasNext) {
+                  newRelation += lemmatiser.conjugate(a._3) + " "
+                }
+                else {
+                  newRelation += a._1 + " "
+                }
+              }
+
+              relationV = EdgeType(id = ID.reltype_id(newRelation.trim), label = newRelation.trim)
             }
             if(nodeTexts(1) == "me") {
               targets = u :: targets;
@@ -254,14 +279,51 @@ class SentenceParser (storeName:String = "gb") {
       var nodeTexts = parse._1;
       var relText = parse._2;
       var nodes: List[Vertex] = List()
+      val sepRelations = """~""".r.split(relText)
+      var i = 0;
+      
+      var newRelation = ""
+          
       for(nodeText <- nodeTexts) {
-        if(nodeText == "you") {
-          nodes = gbNode :: nodes;
+        
+        if(nodeText.toLowerCase == "you" || nodeText.toUpperCase == "I") {
+          if(nodeText.toLowerCase == "you") {
+            nodes = gbNode :: nodes;
+          } 
+          else {
+            user match {
+              case Some(u: UserNode) => nodes = u :: nodes;
+              case _ => 
+            }
+          }
+          
+          if(i < sepRelations.length) {
+            val annotatedRelation = lemmatiser.annotate(sepRelations(i))    
+            for (a <- annotatedRelation) {
+              if(verbRegex.findAllIn(a._2).hasNext) {
+                newRelation += lemmatiser.conjugate(a._3) + " "
+              }
+              else {
+                newRelation += a._1 + " "
+              }
+
+            }
+            
+          }
+
         }
         else {
-          nodes = specialNodeCases(nodeText, root, user) :: nodes
+          nodes = specialNodeCases(nodeText, root, user) :: nodes;
+          if(i < sepRelations.length) {
+            newRelation += sepRelations(i) + " ";  
+          }
+          
         }
+        newRelation = newRelation.trim + "~";
+        
+        i += 1;
       }
+      relText = newRelation.trim.slice(0, newRelation.length-2);
       var relationV = EdgeType(id = ID.reltype_id(relText), label = relText)
       solutions = (nodes.reverse, relationV) :: solutions
 
@@ -649,7 +711,7 @@ def posChunkGeneral(sentence: String, root: Vertex): List[(List[String], String)
         else if (relRegex.findAllIn(tag1).length == 0) {
           nodeText += untaggedSentence(i) + " "
           if(relRegex.findAllIn(tag2).length == 1) {
-              
+
             nodeTexts = nodeText.replace("`", "").replace("'", "").trim :: nodeTexts;
             nodeText = ""
           }
@@ -894,10 +956,29 @@ object SentenceParser {
       val userNode = UserNode(id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
   	  val sentence = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
       println("From command line with general: " + sentence)
-      val parses1 = sentenceParser.parseSentence(sentence)
-      println("parsed2")
-      val parses = sentenceParser.parseSentenceGeneral(sentence)
-      println("parsed2")
+      val parses1 = sentenceParser.parseSentence(sentence, user = Some(userNode))
+      for(node1 <- parses1._1) {
+        node1 match {
+          case n: Vertex => println(n.id)
+          case _ =>
+        }
+      }
+      for(edge <- parses1._2) {
+        edge match {
+          case n: Vertex => println(n.id)
+          case _ =>
+        }
+      }
+      for(node2 <- parses1._3) {
+        node2 match {
+          case n: Vertex => println(n.id)
+          case _ =>
+        }
+      }
+
+      
+      val parses = sentenceParser.parseSentenceGeneral(sentence, user = Some(userNode))
+      
       for(parse <- parses) {
         parse match {
           case (n: List[Vertex], r: Vertex) =>

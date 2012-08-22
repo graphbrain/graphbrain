@@ -22,6 +22,7 @@ class Lemmatiser {
 	val pipeline = new StanfordCoreNLP(props);
 	val s = new StanfordLemmatizer();
 	val posTagger = new POSTagger();
+	val conjugator = new EnglishConjugator();
 	
 
 
@@ -75,9 +76,9 @@ class Lemmatiser {
 	  }
 
   }
- /* def conjugate(stemToConjugate: String, posTag: String): String = {
-	return morph.lemma(stemToConjugate, posTag);
-  }*/
+  def conjugate(stemToConjugate: String, tense: VerbTense = VerbTense.PRESENT, person: Person = Person.THIRD_PERSON_SINGULAR): String = {
+	return conjugator.conjugate(stemToConjugate, tense, person);
+  }
 }
 
 
@@ -103,7 +104,7 @@ object Lemmatiser {
 
     	for ( a <- annotatedCL) {
     		println(a)
-    		//println(l.conjugate(a._3, a._2))
+    		println(l.conjugate(a._3))
     	}
 
 
