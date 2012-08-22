@@ -1,3 +1,6 @@
+import sbtassembly.Plugin._
+import AssemblyKeys._
+
 organization := "com.graphbrain"
 
 name := "nlp"
@@ -20,3 +23,5 @@ libraryDependencies ++= Seq(
   "net.databinder" %% "unfiltered-netty-server" % "0.6.1",
   "net.databinder" %% "unfiltered-spec" % "0.5.3" % "test"
 )
+
+parallelExecution in Test := false 
