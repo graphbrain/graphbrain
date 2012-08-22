@@ -39,11 +39,20 @@ object DBPediaGraphFromCategories {
       if(Formatting.isList(subj)){return ("","","","")}
       if(wikiSource.length==1)
       {
-        if(isVowel(category(0).toString)) return (subj, "isAn", category, wikiSource(0).replace("<", "").replace(">", "")) else return (subj, "isA", category, wikiSource(0).replace("<", "").replace(">", ""))
+        println(category)
+        if(isVowel(category(0).toLowerCase.toString.toLowerCase)) {
+          println(subj + "," + "isAn" + "," + category + "," +  wikiSource(0).replace("<", "").replace(">", ""))
+          return (subj, "isAn", category, wikiSource(0).replace("<", "").replace(">", ""))
+
+          }  else { return (subj, "isA", category, wikiSource(0).replace("<", "").replace(">", ""))}
         
       }
       else{
-        if(isVowel(category(0).toString)) return (subj,"isAn",category,"") else return (subj, "isA", category, "")
+        if(isVowel(category(0).toLowerCase.toString.toLowerCase)) {
+          println(subj + "," + "isAn" + "," + category )
+          return (subj,"isAn",category,"") 
+        }
+        else {return (subj, "isA", category, "")}
       }
     }
     return ("", "", "", "")
@@ -64,7 +73,7 @@ object DBPediaGraphFromCategories {
     if(predicateRegex.findAllIn(qTuple).hasNext)
     {
       val category=predicateRegex.findAllIn(qTuple).toArray
-      return Formatting.separateWords(category(0).replace("<http://dbpedia.org/ontology/", "").replace(">", ""))
+      return Formatting.separateWords(category(0).replace("<http://dbpedia.org/ontology/", "").replace(">", "")).trim
     }
     if(owlString.findAllIn(qTuple).hasNext)
     {
@@ -124,12 +133,12 @@ object DBPediaGraphFromCategories {
   def addTypes(items:List[(String, String, String, String)], output:OutputDBWriter):Int=
   {
     var inserted=0;
-    var rel = "is_a"
+    var rel = "isA"
     items match{
       case x::Nil => x match{
         case (a:String, b:String, c:String, d:String) => 
         
-          if(isVowel(c(0).toString)) {rel="is_an"}
+          if(isVowel(c(0).toString.toLowerCase)) {rel="isAn"}
           output.writeOutDBInfo(Formatting.normalizeWikiTitle(a), rel, Formatting.normalizeWikiTitle(c), d); 
           inserted+=1; 
           println("Inserted: " + inserted.toString)
@@ -138,7 +147,7 @@ object DBPediaGraphFromCategories {
       }
       case x::y::xs => (x,y) match {
         case ((a:String, b:String, c:String, d:String),(f:String, g:String, h:String, i:String)) => 
-          if(isVowel(c(0).toString)) {rel="is_an"}
+          if(isVowel(c(0).toString.toLowerCase)) {rel="isAn"}
           output.writeOutDBInfo(Formatting.normalizeWikiTitle(h), rel, Formatting.normalizeWikiTitle(c), ""); 
           inserted+=1; 
           println("Inserted: " + inserted.toString);
