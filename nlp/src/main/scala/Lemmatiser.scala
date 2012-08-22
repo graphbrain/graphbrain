@@ -10,6 +10,9 @@ import edu.stanford.nlp.ling.CoreLabel;
 import java.util.Properties;
 import edu.stanford.nlp.ling.CoreAnnotations._;
 import scala.collection.JavaConversions._;
+import edu.northwestern.at.utils._;
+//import edu.northwestern.at.utils.corpuslinguistics.inflector.conjugator.EnglishConjugator;
+
 
 
 class Lemmatiser {
@@ -19,6 +22,7 @@ class Lemmatiser {
 	val pipeline = new StanfordCoreNLP(props);
 	val s = new StanfordLemmatizer();
 	val posTagger = new POSTagger();
+	
 
 
 	/**
@@ -47,10 +51,10 @@ class Lemmatiser {
 		return posTagger.tagText(stringToTag)
 	}  
 
-	/**
-	Returns a list of annotated words: (word, pos, lemma)
-	*/
-	def annotate(stringToAnnotate: String): List[(String, String, String)] = {
+  /**
+  Returns a list of annotated words: (word, pos, lemma)
+  */
+  def annotate(stringToAnnotate: String): List[(String, String, String)] = {
 	  var annotated: List[(String, String, String)] = List();
 	  val posTags = posTagger.tagText(stringToAnnotate);
 	  val lemmas = lemmatise(stringToAnnotate);
@@ -70,15 +74,22 @@ class Lemmatiser {
 
 	  }
 
-	}
+  }
+  def conjugate(stemToConjugate: String, posTag: String): String = {
+	return morph.lemma(stemToConjugate, posTag);
+  }
 }
+
+
+
 object Lemmatiser {
 
 	def main(args: Array[String])
   	{
 
   		val clSentence = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
-  		val s = "Telmo Menezes has http://telmomenezes.com"
+  		//val s = "Telmo Menezes has http://telmomenezes.com"
+  		val s = "like"
   		val l = new Lemmatiser()
   		println("From main: " + s)
 
@@ -92,6 +103,7 @@ object Lemmatiser {
 
     	for ( a <- annotatedCL) {
     		println(a)
+    		println(l.conjugate(a._3, a._2))
     	}
 
 

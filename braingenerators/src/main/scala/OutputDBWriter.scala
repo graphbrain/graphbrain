@@ -34,14 +34,14 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 
 		try{
 
-			val globalRelType = ID.reltype_id(relin, 1)
+			val globalRelType = ID.reltype_id(separateWords(relin.trim), 1)
 			//val wikiName1 = ID.wikipedia_id(node1)
 			//val wikiName2 = ID.wikipedia_id(node2)
 			
 			
 			val ng1 = insertAndGetWikiDisambigNode(node1, username)
 			val ng2 = insertAndGetWikiDisambigNode(node2, username)
-			val relType = EdgeType(id = globalRelType, label = relin);
+			val relType = EdgeType(id = globalRelType, label = separateWords(relin.trim));
 			//val w1 = TextNode(id = wikiName1, text = URLDecoder.decode(node1, "UTF-8"))
 			//val w2 = TextNode(id = wikiName2, text = URLDecoder.decode(node2, "UTF-8"))
 
@@ -217,11 +217,35 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 
   	def addWikiPageToDB(pageTitle:String):Unit=
   	{
-    	val pageURL = Wikipedia.wikipediaBaseURL+pageTitle.replace(" ", "_")
+    	val pageURL = Wikipedia.wikipediaBaseURL+pageTitle.trim.replace(" ", "_")
     	val id=ID.wikipedia_id(pageTitle)
     	val pageNode = TextNode(id, pageTitle);
     	writeURLNode(pageNode, pageURL)
 
+  	}
+
+  	def separateWords(stringToSep: String) : String = {
+  		val capRegex = """[A-Z][a-z]*""".r;
+  		val nonCapRegex = """[a-z]+""".r;
+  		var separated = "";
+  		var nonCapsSep = nonCapRegex.findAllIn(stringToSep);
+  		var capsSeparated = capRegex.findAllIn(stringToSep);
+  		
+  		if(nonCapsSep.length > 0) {
+  			nonCapsSep = nonCapRegex.findAllIn(stringToSep);
+  			separated += " " + nonCapsSep.next.toLowerCase;
+  		}
+
+
+  		if(capsSeparated.length > 0) {
+  		  capsSeparated = capRegex.findAllIn(stringToSep);
+  		  while(capsSeparated.hasNext) {
+             
+            separated += " " + capsSeparated.next.toLowerCase;
+
+  		  }
+  		} 
+  		return separated.trim;
   	}
 
 	def getRelID(rel:String, node1ID:String, node2ID:String):String=
