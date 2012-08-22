@@ -10,7 +10,7 @@ import edu.stanford.nlp.ling.CoreLabel;
 import java.util.Properties;
 import edu.stanford.nlp.ling.CoreAnnotations._;
 import scala.collection.JavaConversions._;
-import edu.northwestern.at.utils._;
+
 //import edu.northwestern.at.utils.corpuslinguistics.inflector.conjugator.EnglishConjugator;
 
 
@@ -75,9 +75,9 @@ class Lemmatiser {
 	  }
 
   }
-  def conjugate(stemToConjugate: String, posTag: String): String = {
+ /* def conjugate(stemToConjugate: String, posTag: String): String = {
 	return morph.lemma(stemToConjugate, posTag);
-  }
+  }*/
 }
 
 
@@ -103,7 +103,7 @@ object Lemmatiser {
 
     	for ( a <- annotatedCL) {
     		println(a)
-    		println(l.conjugate(a._3, a._2))
+    		//println(l.conjugate(a._3, a._2))
     	}
 
 
