@@ -36,25 +36,19 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 		try{
 
 			val globalRelType = ID.reltype_id(separateWords(relin.trim), 1)
-			//val wikiName1 = ID.wikipedia_id(node1)
-			//val wikiName2 = ID.wikipedia_id(node2)
 			
 			
 			val ng1 = insertAndGetWikiDisambigNode(node1, username)
 			val ng2 = insertAndGetWikiDisambigNode(node2, username)
 			val relType = EdgeType(id = globalRelType, label = separateWords(relin.trim));
-			//val w1 = TextNode(id = wikiName1, text = URLDecoder.decode(node1, "UTF-8"))
-			//val w2 = TextNode(id = wikiName2, text = URLDecoder.decode(node2, "UTF-8"))
-
+			
 			
 			println(store.getOrInsert2(relType, store.idFromUsername(username)).id + ", " + relType.label);
 			println(store.getOrInsert2(ng1, store.idFromUsername(username)).id);
 			println(store.getOrInsert2(ng2, store.idFromUsername(username)).id);
         	
 
-			//store.addrel(wikiRel, Array[String](ng1.id, w1.id))
-        	//store.addrel(wikiRel, Array[String](ng2.id, w2.id))
-
+			
 			//Relationship at global level
 			store.addrel2(relType.id, Array[String](ng1.id, ng2.id), store.idFromUsername(username), true)
 
@@ -89,9 +83,9 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 	}
 
 	def insertAndGetWikiDisambigNode(wikiTitle: String, username: String): Vertex = {
-		
-		val titleSP = removeWikiDisambig(wikiTitle);
-		val disAmb = """\((.*?)\)""".r.findAllIn(wikiTitle)
+		val decodedTitle = URLDecoder.decode(wikiTitle, "UTF-8")
+		val titleSP = removeWikiDisambig(decodedTitle);
+		val disAmb = """\((.*?)\)""".r.findAllIn(decodedTitle)
 		var i = 1;
 
 		while(store.exists(ID.text_id(titleSP, i.toString))) {
@@ -100,29 +94,38 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 				case e: TextNode => 
 
 				  if(disAmb.hasNext) {
-				  	val daID = ID.text_id(disAmb.next, "1")
+				  	val da = disAmb.next.replace("(", "").replace(")", "").trim
+				  	val daID = ID.text_id(da, "1")
 				  	val daRelID = asInRel + " " + e.id + " " + daID;
-				  	if(store.exists(daRelID)) {
+				  	if(e.text == titleSP && store.exists(daRelID)) {
 				  		return existingNode
 				  	}
+				  }
+				  else {
+				  	if(e.text == titleSP) {
+				  		return existingNode;
+				  	}
+
 				  }
 				case _ =>
 			}
 			i += 1
 		}
-		val newNode = TextNode(id = ID.text_id(titleSP, i.toString), text=URLDecoder.decode(titleSP, "UTF-8"))
-		if(disAmb.hasNext) {
-			val da = disAmb.next
-			val daNode = TextNode(id = ID.text_id(da, "1"), text=URLDecoder.decode(da, "UTF-8"))
-			println(store.getOrInsert2(daNode, store.idFromUsername(username)).id + daNode.text)
-			store.addrel(asInRel, Array[String](newNode.id, daNode.id))
-		}
-
+		val newNode = TextNode(id = ID.text_id(titleSP, i.toString), text=titleSP)
 		println(store.getOrInsert2(newNode, store.idFromUsername(username)).id)
 		val wikiNode = TextNode(id = ID.wikipedia_id(wikiTitle), text = URLDecoder.decode(wikiTitle, "UTF-8"))
 		store.put(wikiNode)
 		println(store.get(wikiNode.id).id)
 		store.addrel(wikiRel, Array[String](newNode.id, wikiNode.id))
+		
+		if(disAmb.hasNext) {
+			val da = disAmb.next.replace("(", "").replace(")", "").trim;
+			val daNode = TextNode(id = ID.text_id(da, "1"), text=da)
+			println(store.getOrInsert2(daNode, store.idFromUsername(username)).id + ", da: " +  daNode.text)
+			store.addrel2(asInRel, Array[String](newNode.id, daNode.id), store.idFromUsername(username), true)
+
+		}
+
 		return newNode;
 		
 	}
