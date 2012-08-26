@@ -26,6 +26,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 	val wikiPageET = EdgeType(ID.reltype_id("wikipage"), label = "wikipage")
 	val lineRegex = """#.*?""".r
 	val wikiRel = "sys/wikipedia"
+	val asInRel = ID.reltype_id("as in", 1)
 	
 
 	def writeOutDBInfo(node1: String, relin: String, node2: String, resource: String):Unit=
@@ -88,20 +89,35 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 	}
 
 	def insertAndGetWikiDisambigNode(wikiTitle: String, username: String): Vertex = {
-		//Check if exists in database
-		val titleSP = removeWikiDisambig(wikiTitle);
 		
+		val titleSP = removeWikiDisambig(wikiTitle);
+		val disAmb = """\((.*?)\)""".r.findAllIn(wikiTitle)
 		var i = 1;
 
 		while(store.exists(ID.text_id(titleSP, i.toString))) {
 			val existingNode = store.get(ID.text_id(titleSP, i.toString));
 			existingNode match {
-				case e: TextNode => if(e.text == URLDecoder.decode(wikiTitle, "UTF-8")) {return existingNode}
+				case e: TextNode => 
+
+				  if(disAmb.hasNext) {
+				  	val daID = ID.text_id(disAmb.next, "1")
+				  	val daRelID = asInRel + " " + e.id + " " + daID;
+				  	if(store.exists(daRelID)) {
+				  		return existingNode
+				  	}
+				  }
 				case _ =>
 			}
 			i += 1
 		}
-		val newNode = TextNode(id = ID.text_id(titleSP, i.toString), text=URLDecoder.decode(wikiTitle, "UTF-8"))
+		val newNode = TextNode(id = ID.text_id(titleSP, i.toString), text=URLDecoder.decode(titleSP, "UTF-8"))
+		if(disAmb.hasNext) {
+			val da = disAmb.next
+			val daNode = TextNode(id = ID.text_id(da, "1"), text=URLDecoder.decode(da, "UTF-8"))
+			println(store.getOrInsert2(daNode, store.idFromUsername(username)).id + daNode.text)
+			store.addrel(asInRel, Array[String](newNode.id, daNode.id))
+		}
+
 		println(store.getOrInsert2(newNode, store.idFromUsername(username)).id)
 		val wikiNode = TextNode(id = ID.wikipedia_id(wikiTitle), text = URLDecoder.decode(wikiTitle, "UTF-8"))
 		store.put(wikiNode)
