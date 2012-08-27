@@ -41,7 +41,7 @@ abstract trait VertexStoreInterface {
       }
       case "txt" => {
         val text = map.getOrElse("text", "").toString
-        TextNode(id, text, edgesets, degree, ts)
+        TextNode(ID.namespace(id), text, edgesets, degree, ts)
       }
       case "url" => {
         val url = map.getOrElse("url", "").toString

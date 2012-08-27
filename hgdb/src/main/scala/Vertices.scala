@@ -8,6 +8,8 @@ abstract class Vertex {
   val degree: Int
   val ts: Long
 
+  def extendedId: String = id
+
   def toMap: Map[String, Any]
   protected def toMapBase: Map[String, Any] = Map(("vtype" -> vtype), ("edgesets" -> iter2str(edgesets)), ("degree" -> degree), ("ts" -> ts))
   
@@ -116,7 +118,11 @@ case class ExtraEdges(id: String="", edges: Set[String]=Set[String]()) extends V
   def setEdges(newEdges: Set[String]) = copy(edges=newEdges)
 }
 
-case class TextNode(id: String="", text: String="", edgesets: Set[String]=Set[String](), degree: Int=0, ts: Long=0) extends Vertex {
+case class TextNode(namespace: String="", text: String="", edgesets: Set[String]=Set[String](), degree: Int=0, ts: Long=0) extends Vertex {
+  override val id = namespace + "/" + ID.sanitize(text).toLowerCase
+
+  override def extendedId: String = namespace + "/" + ID.sanitize(text)
+  
   override val vtype: String = "txt"
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("text" -> text))
