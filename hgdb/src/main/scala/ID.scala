@@ -9,6 +9,16 @@ object ID {
 
   def numberOfParts(id: String) = parts(id).length
 
+  def namespace(id: String) = {
+    val p = parts(id)
+    p.slice(0, p.size - 1).reduceLeft(_ + "/" + _)
+  }
+
+  def lastPart(id: String) = {
+    val p = parts(id)
+    p(p.size - 1)
+  }
+
   def isInUserSpace(id: String): Boolean = (parts(id)(0) == "user") && (numberOfParts(id) > 2)
 
   def isUserNode(id: String): Boolean = (parts(id)(0) == "user") && (numberOfParts(id) == 2)
