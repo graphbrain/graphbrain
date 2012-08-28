@@ -16,6 +16,8 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "1.7.1" % "test"
 
 libraryDependencies += "com.basho.riak" % "riak-client" % "1.0.4"
 
+libraryDependencies += "me.prettyprint" % "hector-core" % "0.8.0-2"
+
 //testOptions in Test += Tests.Argument("-oF")
 
 libraryDependencies ~= { seq =>
