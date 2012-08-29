@@ -21,7 +21,7 @@ class SentenceParser (storeName:String = "gb") {
   val quoteRegex = """(\")(.+?)(\")""".r
   val urlRegex = """([\d\w]+?:\/\/)?([\w\d\.\-]+)(\.\w+)(:\d{1,5})?(\/\S*)?""".r // See: http://stackoverflow.com/questions/8725312/javascript-regex-for-url-when-the-url-may-or-may-not-contain-http-and-www-words?lq=1
   val urlStrictRegex = """(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?""".r
-  val gbNode = TextNode(id = ID.text_id("GraphBrain", 1), text = "GraphBrain")
+  val gbNode = TextNode(namespace="1", text="GraphBrain")
 
   val verbRegex = """VB[A-Z]?""".r
   val adverbRegex = """RB[A-Z]?""".r
@@ -57,7 +57,7 @@ class SentenceParser (storeName:String = "gb") {
   }
 
   //Only handles two-node graphs at the moment
-  def parseSentence(inSent: String, root: Vertex  = TextNode(id="GBNoneGB", text="GBNoneGB"), user: Option[UserNode]=None): (List[Vertex], List[Vertex], List[Vertex]) = {
+  def parseSentence(inSent: String, root: Vertex  = TextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[Vertex], List[Vertex], List[Vertex]) = {
     
     var inSentence = inSent;
 
@@ -209,7 +209,7 @@ class SentenceParser (storeName:String = "gb") {
     return (sources, relations, targets)
   }
 
-  def specialNodeCases(inNodeText: String, root: Vertex  = TextNode(id="GBNoneGB", text="GBNoneGB"), user: Option[UserNode]=None): Vertex = {
+  def specialNodeCases(inNodeText: String, root: Vertex  = TextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): Vertex = {
     user match {
       case Some(u:UserNode) =>
         if(u.username == inNodeText || u.name == inNodeText || inNodeText == "I" || inNodeText == "me") {
@@ -253,7 +253,7 @@ class SentenceParser (storeName:String = "gb") {
   }
 
 
-  def parseSentenceGeneral(inSent: String, root: Vertex  = TextNode(id="GBNoneGB", text="GBNoneGB"), user: Option[UserNode]=None): (List[(List[Vertex], Vertex)]) = {
+  def parseSentenceGeneral(inSent: String, root: Vertex  = TextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[(List[Vertex], Vertex)]) = {
     var inSentence = inSent;
     var solutions: List[(List[Vertex], Vertex)] = List();
 
@@ -332,7 +332,7 @@ class SentenceParser (storeName:String = "gb") {
     
   }
 
-  def textToNode(text:String, node: Vertex= TextNode(id="GBNoneGB", text="GBNoneGB"), user:Option[Vertex]=None): List[Vertex] = {
+  def textToNode(text:String, node: Vertex= TextNode(namespace="", text="GBNoneGB"), user:Option[Vertex]=None): List[Vertex] = {
     var userName = "";
     var results: List[Vertex] = List()
     user match {
@@ -388,12 +388,12 @@ class SentenceParser (storeName:String = "gb") {
     var i = 1;
     while(nodeExists(ID.text_id(text, i)))
     {
-      results = TextNode(id = ID.text_id(text, i), text=text) :: results;
+      results = TextNode(namespace=i.toString, text=text) :: results;
       i += 1;
         
     }
     if(i==1) {
-      results = TextNode(id = textPureID, text = text) :: results;
+      results = TextNode(namespace="1", text = text) :: results;
     }
     
 
@@ -456,7 +456,7 @@ class SentenceParser (storeName:String = "gb") {
     poslabel = poslabel.slice(0, poslabel.length - 1)
     lemma = lemma.slice(0, lemma.length - 1)
      
-    val lemmaNode = TextNode(id = ID.text_id(lemma, 1), text = lemma)
+    val lemmaNode = TextNode(namespace="1", text=lemma)
     val lemmaRelType = EdgeType(id = ID.reltype_id(poslabel), label = poslabel)
     return (relType, (lemmaNode, lemmaRelType));
     
@@ -952,7 +952,7 @@ object SentenceParser {
   def main(args: Array[String]) {
   	  val sentenceParser = new SentenceParser()
       
-      val rootNode = TextNode(id=ID.usergenerated_id("chihchun_chen", "toad"), text="toad")
+      val rootNode = TextNode(namespace="usergenerated/chihchun_chen", text="toad")
       val userNode = UserNode(id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
   	  val sentence = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
       println("From command line with general: " + sentence)
