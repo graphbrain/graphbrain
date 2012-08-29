@@ -30,6 +30,10 @@ abstract class Vertex {
   override def toString: String = id
 }
 
+object Vertex {
+  def cleanId(id: String) = id.toLowerCase
+}
+
 case class Edge(id: String="", etype: String="", edgesets: Set[String]=Set[String](), degree: Int=0, ts: Long=0) extends Vertex {
   override val vtype: String = "edg"
 
