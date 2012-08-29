@@ -111,16 +111,16 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 			}
 			i += 1
 		}
-		val newNode = TextNode(id = ID.text_id(titleSP, i.toString), text=titleSP)
+		val newNode = TextNode(namespace = i.toString, text=titleSP)
 		println(store.getOrInsert2(newNode, store.idFromUsername(username)).id)
-		val wikiNode = TextNode(id = ID.wikipedia_id(wikiTitle), text = URLDecoder.decode(wikiTitle, "UTF-8"))
+		val wikiNode = TextNode(namespace = "wikipedia", text = URLDecoder.decode(wikiTitle, "UTF-8"))
 		store.put(wikiNode)
 		println(store.get(wikiNode.id).id)
 		store.addrel(wikiRel, Array[String](newNode.id, wikiNode.id))
 		
 		if(disAmb.hasNext) {
 			val da = disAmb.next.replace("(", "").replace(")", "").trim;
-			val daNode = TextNode(id = ID.text_id(da, "1"), text=da)
+			val daNode = TextNode(namespace = "1", text=da)
 			println(store.getOrInsert2(daNode, store.idFromUsername(username)).id + ", da: " +  daNode.text)
 			store.addrel2(asInRel, Array[String](newNode.id, daNode.id), store.idFromUsername(username), true)
 
@@ -181,8 +181,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
   	{
   		try{
   			//Tries to find an existing Wiki node.
-  			val WikiID=ID.wikipedia_id(imagename)
-			val wikinode = TextNode(id=WikiID, text=imagename);
+			  val wikinode = TextNode(namespace="wikipedia", text=imagename);
 			
 
   			val sourceNode=store.getSourceNode(ID.source_id(source));
@@ -199,12 +198,12 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 			}
 			image match{
 				case a:String => 
-					val imageLocal=TextNode(id=ID.nounproject_id(imagename), text=a)
+					val imageLocal=TextNode(namespace=ID.nounproject_ns(), text=a)
 					store.getOrInsert2(imageLocal, store.idFromUsername(username))
 					store.addrel("image_page", Array[String](urlNode.id,imageLocal.id))
 					store.addrel("source", Array[String](sourceNode.id, imageLocal.id))
 					val attribution = imagename + NounProjectCrawler.attributionText + contributorName;
-					val contributorNode = TextNode(id=ID.nounproject_id(contributorName), text=contributorName);
+					val contributorNode = TextNode(namespace=ID.nounproject_ns(), text=contributorName);
 					val contURLNode = URLNode(id=ID.url_id(contributorURL), url=contributorURL);
 
 					store.getOrInsert2(contributorNode, store.idFromUsername(username))
@@ -223,7 +222,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 					}
 					else{
 
-						val newNode=TextNode(id=ID.text_id(imagename, "noun"), text=imagename)
+						val newNode=TextNode(namespace="noun", text=imagename)
 						store.getOrInsert2(newNode, store.idFromUsername(username));
 						store.addrel("image_of", Array[String](imageLocal.id, newNode.id))
 				
@@ -237,10 +236,8 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
   	def addWikiPageToDB(pageTitle:String):Unit=
   	{
     	val pageURL = Wikipedia.wikipediaBaseURL+pageTitle.trim.replace(" ", "_")
-    	val id=ID.wikipedia_id(pageTitle)
-    	val pageNode = TextNode(id, pageTitle);
+    	val pageNode = TextNode("wikipedia", pageTitle);
     	writeURLNode(pageNode, pageURL)
-
   	}
 
   	def separateWords(stringToSep: String) : String = {

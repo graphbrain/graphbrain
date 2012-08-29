@@ -48,12 +48,12 @@ object ID {
 	return "localversion/"+sanitized_url;
   }
 
-  def nounproject_id(noun:String, which: Int=1):String={
-	return "svg/nounproject/" + which.toString + "/" + noun.trim;
+  def nounproject_ns(which: Int=1):String={
+	return "svg/nounproject/" + which.toString
   }
 
-  def usergenerated_id(userID:String, thing:String): String={
-	return "usergenerated/" + userID + "/" + thing.replace("\"", "").replace("`", "").replace("'", "").trim.replace(" ", "_");
+  def usergenerated_ns(userID:String): String={
+	return "usergenerated/" + userID
   }
 }
 
