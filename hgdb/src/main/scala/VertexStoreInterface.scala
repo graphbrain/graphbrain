@@ -375,9 +375,10 @@ abstract trait VertexStoreInterface {
         val edgeSet = getEdgeSet(edgeSetId)
         for (edgeId <- edgeSet.edges) {
           if (!ID.isInSystemSpace(Edge.edgeType(edgeId))) {
-            for (pid <- Edge.participantIds(edgeId)) {
-              if (pid != nodeId) {
-                nset += pid
+            for (eid <- Edge.participantIds(edgeId)) {
+              val id = Vertex.cleanId(eid)
+              if (id != nodeId) {
+                nset += id
               }
             }
           }
@@ -411,7 +412,7 @@ abstract trait VertexStoreInterface {
       for (edgeSetId <- node.edgesets) {
         val edgeSet = getEdgeSet(edgeSetId)
         for (edgeId <- edgeSet.edges) {
-          eset += edgeId
+          eset += Edge.cleanId(edgeId)
         }      
       }
 
@@ -431,8 +432,9 @@ abstract trait VertexStoreInterface {
       for (edgeSetId <- node.edgesets) {
         val edgeSet = getEdgeSet(edgeSetId)
         for (edgeId <- edgeSet.edges) {
-          if ((!ID.isInSystemSpace(Edge.edgeType(edgeId))) && (edgeInNeighborhood(edgeId, nhood))) {
-            eset += edgeId
+          val eid = Edge.cleanId(edgeId)
+          if ((!ID.isInSystemSpace(Edge.edgeType(eid))) && (edgeInNeighborhood(eid, nhood))) {
+            eset += eid
           }
         }      
       }
@@ -449,7 +451,7 @@ abstract trait VertexStoreInterface {
     for (edge <- edgeSet) {
       val pids = Edge.participantIds(edge)
       for (pid <- pids) {
-        nodeList = pid :: nodeList
+        nodeList = Vertex.cleanId(pid) :: nodeList
       }
     }
 
