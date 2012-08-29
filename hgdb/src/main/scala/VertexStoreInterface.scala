@@ -125,7 +125,7 @@ abstract trait VertexStoreInterface {
       return false
 
     val edgeSet = getEdgeSet(edgeSetId)
-    if (edgeSet.edges.contains(edge.id))
+    if (edgeSet.edges.exists(x => Vertex.cleanId(x) == edge.id))
       return true
     // if extra < 0, no extra vertices exist
     if (edgeSet.extra < 0)
@@ -142,7 +142,7 @@ abstract trait VertexStoreInterface {
       }
       if (testVertex == null)
         return false
-      if (testVertex.edges.contains(edge.id))
+      if (testVertex.edges.exists(x => Vertex.cleanId(x) == edge.id))
         return true
 
       extra += 1
@@ -315,20 +315,27 @@ abstract trait VertexStoreInterface {
         else {
           var done = false
           var extra = 0
-          if (edgeSet.edges.contains(edge.id)) {
-            done = true
-            update(edgeSet.setEdges(edgeSet.edges - edge.id))
+          var extendedId = edgeSet.edges.find(x => Vertex.cleanId(x) == edge.id)
+          extendedId match {
+            case None =>
+            case Some(x) => {
+              done = true
+              update(edgeSet.setEdges(edgeSet.edges - x))
+            }
           }
           while (!done) {
             extra += 1
             val extraEdges = getExtraEdges(ID.extraId(edgeSetId, extra))
-            // this should not happen
-            if (extraEdges.id == "") {
-
-            }
-            else if (extraEdges.edges.contains(edge.id)) {
-              done = true
-              update(extraEdges.setEdges(extraEdges.edges - edge.id))
+            
+            if (extraEdges.id != "") {
+              extendedId = extraEdges.edges.find(x => Vertex.cleanId(x) == edge.id)
+              extendedId match {
+                case None =>
+                case Some(x) => {
+                  done = true
+                  update(extraEdges.setEdges(extraEdges.edges - x))
+                }
+              }
             }
           }
 
