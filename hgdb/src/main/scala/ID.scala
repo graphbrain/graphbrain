@@ -19,24 +19,24 @@ object ID {
     p(p.size - 1)
   }
 
-  def isInUserSpace(id: String): Boolean = (parts(id)(0) == "user") && (numberOfParts(id) > 2)
+  def isInUserSpace(idOrNs: String): Boolean = (parts(idOrNs)(0) == "user") && (numberOfParts(idOrNs) > 2)
 
-  def isUserNode(id: String): Boolean = (parts(id)(0) == "user") && (numberOfParts(id) == 2)
+  def isUserNode(idOrNs: String): Boolean = (parts(idOrNs)(0) == "user") && (numberOfParts(idOrNs) == 2)
 
-  def isInSystemSpace(id: String): Boolean = parts(id)(0) == "sys"
+  def isInSystemSpace(idOrNs: String): Boolean = parts(idOrNs)(0) == "sys"
 
-  def globalToUser(id: String, userid: String) = {
-    if (isInUserSpace(id))
-      id
-    else if (isUserNode(id))
-      id
+  def globalToUser(idOrNs: String, userid: String) = {
+    if (isInUserSpace(idOrNs))
+      idOrNs
+    else if (isUserNode(idOrNs))
+      idOrNs
     else
-      userid + "/" + id
+      userid + "/" + idOrNs
   }
 
-  def userToGlobal(id: String) = {
-    if (isInUserSpace(id)) {
-      val idParts = parts(id)
+  def userToGlobal(idOrNs: String) = {
+    if (isInUserSpace(idOrNs)) {
+      val idParts = parts(idOrNs)
       val globalParts = idParts.slice(2, idParts.length)
       if (globalParts.length == 1) {
         globalParts(0)
@@ -46,12 +46,12 @@ object ID {
       }
     }
     else {
-      id
+      idOrNs
     }
   }
 
-  def ownerId(id: String): String = {
-    val idParts = parts(id)
+  def ownerId(idOrNs: String): String = {
+    val idParts = parts(idOrNs)
     idParts(0) + "/" + idParts(1)
   }
 
