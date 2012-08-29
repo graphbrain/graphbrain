@@ -70,6 +70,13 @@ object Edge {
   }
 
   def valid(edgeId: String) = participantIds(edgeId).size > 1
+
+  def cleanId(edgeId: String) = {
+    val etype = edgeType(edgeId)
+    val pids = participantIds(edgeId)
+    val ids = pids.map(x => Vertex.cleanId(x))
+    ID.edgeId(etype, ids.toArray)
+  }
 } 
 
 case class EdgeType(id: String="", label: String="", edgesets: Set[String]=Set[String](), instances: Int = 0, degree: Int=0, ts: Long=0) extends Vertex {
