@@ -20,3 +20,10 @@ libraryDependencies += "com.basho.riak" % "riak-client" % "1.0.4"
 parallelExecution in Test := false 
 
 mainClass in assembly := Some("com.graphbrain.braingenerators.DBPediaGraphFromInfobox")
+
+mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
+  {
+    case PathList("javax", "servlet", xs @ _*) => MergeStrategy.first
+    case x => old(x)
+  }
+}
