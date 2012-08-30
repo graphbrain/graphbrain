@@ -24,7 +24,7 @@ mainClass in assembly := Some("com.graphbrain.braingenerators.DBPediaGraphFromIn
 mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
   {
     case PathList("javax", "servlet", xs @ _*) => MergeStrategy.first
-    case "UUIDGen.class" => MergeStrategy.first
+    case "com/eaio/uuid/UUIDGen.class" => MergeStrategy.first
     case x => old(x)
   }
 }
