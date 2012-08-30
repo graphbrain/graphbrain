@@ -23,6 +23,7 @@ mainClass in assembly := Some("com.graphbrain.braingenerators.DBPediaGraphFromIn
 
 mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
   {
-    case x => MergeStrategy.first
+    case PathList("javax", "servlet", xs @ _*) => MergeStrategy.first
+    case x => old(x)
   }
 }
