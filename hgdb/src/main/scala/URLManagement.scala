@@ -1,9 +1,6 @@
 package com.graphbrain.hgdb
 
 
-import dispatch._
-import dispatch.tagsoup.TagSoupHttp._
-
 import java.net.URL
 import java.util.regex.Matcher
 import java.util.regex.Pattern
