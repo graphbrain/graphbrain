@@ -9,7 +9,6 @@ import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.ID
 import scala.collection.mutable.{Map => MMap}
 import scala.collection.mutable.{Set => MSet}
-import com.codahale.jerkson.Json._
 import scala.math
 
 
@@ -128,7 +127,7 @@ class GraphInterface (val rootId: String, val store: UserOps, val user: UserNode
     val json = (Map((rootId -> node2map(rootId, ""))) ++
         (for (n <- neighbors if (n != rootId)) yield
           (n -> node2map(n, rootId)))).toMap
-    generate(json)
+    JSONGen.json(json)
   }
 
   /** Generates JSON string from supernodes */
@@ -140,7 +139,7 @@ class GraphInterface (val rootId: String, val store: UserOps, val user: UserNode
       }
       Map(("id" -> snode("id").toString), ("rel" -> linkLabel(key._1)), ("rpos" -> key._2), ("nodes" -> snode("nodes").asInstanceOf[Set[String]]))
     }
-    generate(json)
+    JSONGen.json(json)
   }
 
   private def linkColor(label: String) = {
@@ -182,6 +181,6 @@ class GraphInterface (val rootId: String, val store: UserOps, val user: UserNode
       else if (l._5)
         Map(("id" -> lid), ("directed" -> 1), ("etype" -> etype), ("relation" -> relation), ("sorig" -> l._2.toString), ("targ" -> l._3.toString), ("color" -> color))
     }
-    generate(json)
+    JSONGen.json(json)
   }
 }

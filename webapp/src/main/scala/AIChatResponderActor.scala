@@ -4,7 +4,6 @@ import akka.actor.{Actor, Props}
 import org.jboss.netty.handler.codec.http.HttpResponse
 import unfiltered.Async
 import unfiltered.response.{JsonContent, ResponseString}
-import com.codahale.jerkson.Json._
 
 import com.graphbrain.hgdb.Vertex
 import com.graphbrain.hgdb.UserNode
@@ -52,7 +51,6 @@ class AIChatResponderActor() extends Actor {
       }
 
       val replyMap = Map(("sentence" -> replySentence), ("goto" -> goto))
-
-      responder.respond(JsonContent ~> ResponseString(generate(replyMap)))
+      responder.respond(JsonContent ~> ResponseString(JSONGen.json(replyMap)))
   }
 }

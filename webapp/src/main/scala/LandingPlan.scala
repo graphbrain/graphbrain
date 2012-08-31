@@ -4,12 +4,10 @@ import unfiltered.request._
 import unfiltered.netty._
 import unfiltered.Cookie
 
-import com.codahale.logula.Logging
 
-
-object LandingPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse with Logging {
+object LandingPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse {
   def pageResponse(template: String, page: String, title: String, cookies: Map[String, Any], req: HttpRequest[Any]) = {
-    log.info(Server.realIp(req) + " PAGE " + page)
+    //log.info(Server.realIp(req) + " PAGE " + page)
     Server.scalateResponse(template, page, title, cookies, req)
   }
 
