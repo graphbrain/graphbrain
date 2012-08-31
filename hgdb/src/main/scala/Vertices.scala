@@ -138,7 +138,7 @@ case class TextNode(namespace: String="", text: String="", edgesets: Set[String]
 
   override def toMap: Map[String, Any] = toMapBase ++ Map(("text" -> text))
 
-  override def clone(newid: String) = TextNode(newid, text)
+  override def clone(newid: String) = TextNode(ID.namespace(newid), text)
 
   def setEdgeSets(newEdgeSets: Set[String]) = copy(edgesets=newEdgeSets)
   def setDegree(newDegree: Int) = copy(degree=newDegree)

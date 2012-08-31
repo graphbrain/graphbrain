@@ -3,12 +3,13 @@ package com.graphbrain.hgdb
 
 trait UserOps extends VertexStoreInterface {
 
-  def getOrCreate(id: String): Vertex = {
+  def getOrCreateIndex(name: String): Vertex = {
+    val id = "index/" + name
     if (exists(id)) {
       get(id)
     }
     else {
-      val node = TextNode(id, id)
+      val node = TextNode("index", name)
       super.put(node)
       node
     }
@@ -19,16 +20,16 @@ trait UserOps extends VertexStoreInterface {
 
     vertex match {
       case u: UserNode => {
-        getOrCreate("user")
-        addrel("sys/index", Array(vertex.id, "user"))
+        getOrCreateIndex("user")
+        addrel("sys/index", Array(vertex.id, "index/user"))
       }
       case t: TextNode => {
         if (ID.isInUserSpace(t.id)) {
           addrel("sys/owns", Array(ID.ownerId(t.id), t.id))
         }
         else {
-          getOrCreate("global")
-          addrel("sys/owns", Array("global", t.id)) 
+          getOrCreateIndex("global")
+          addrel("sys/owns", Array("index/global", t.id)) 
         }
       }
       case u: URLNode => {
@@ -36,8 +37,8 @@ trait UserOps extends VertexStoreInterface {
           addrel("sys/owns", Array(ID.ownerId(u.id), u.id))
         }
         else {
-          getOrCreate("global")
-          addrel("sys/owns", Array("global", u.id)) 
+          getOrCreateIndex("global")
+          addrel("sys/owns", Array("index/global", u.id)) 
         }
       }
       case _ => {}
