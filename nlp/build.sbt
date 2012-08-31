@@ -20,8 +20,8 @@ libraryDependencies += "com.typesafe.akka" % "akka-actor" % "2.0.3"
 libraryDependencies += "org.scalatest" %% "scalatest" % "1.7.1" % "test"
 
 libraryDependencies ++= Seq(
-  "net.databinder" %% "unfiltered-netty-server" % "0.6.1",
-  "net.databinder" %% "unfiltered-spec" % "0.5.3" % "test"
+  "net.databinder" %% "unfiltered-netty-server" % "0.6.3",
+  "net.databinder" %% "unfiltered-spec" % "0.6.3" % "test"
 )
 
 parallelExecution in Test := false 

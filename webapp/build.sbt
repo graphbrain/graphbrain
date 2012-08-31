@@ -15,11 +15,11 @@ javaOptions in Revolver.reStart += "-Xmx1g"
 resolvers ++= Seq("Coda Hales Repository" at "http://repo.codahale.com")
 
 libraryDependencies ++= Seq(
-  "net.databinder" %% "unfiltered-netty-server" % "0.6.1",
-  "net.databinder" %% "dispatch-nio" % "0.8.8",
-  "org.clapper" %% "avsl" % "0.3.6",
-  "net.databinder" %% "unfiltered-spec" % "0.5.3" % "test",
-  "org.scalatest" %% "scalatest" % "1.7.1" % "test",
-  "com.codahale" %% "jerkson" % "0.5.0",
-  "com.codahale" %% "logula" % "2.1.3"
+  "net.databinder" %% "unfiltered-netty-server" % "0.6.3"
+  //"net.databinder" %% "dispatch-nio" % "0.8.8",
+  //"org.clapper" %% "avsl" % "0.3.6",
+  //"net.databinder" %% "unfiltered-spec" % "0.6.3" % "test",
+  //"org.scalatest" %% "scalatest" % "1.7.1" % "test",
+  //"com.codahale" %% "jerkson" % "0.5.0",
+  //"com.codahale" %% "logula" % "2.1.3"
 )

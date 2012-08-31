@@ -7,7 +7,7 @@ version := "0.1.0-SNAPSHOT"
 scalaVersion := "2.9.2"
 
 libraryDependencies <++= scalaVersion { v => Seq(
-  "net.databinder" %% "unfiltered" % "0.6.1",
+  "net.databinder" %% "unfiltered" % "0.6.3",
   "org.fusesource.scalate" % "scalate-core" % "1.5.3",
   "org.fusesource.scalate" % "scalate-util" % "1.5.3" % "test",
   "org.scala-lang" % "scala-compiler" % v % "test",
