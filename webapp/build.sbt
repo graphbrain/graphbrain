@@ -1,3 +1,6 @@
+import sbtassembly.Plugin._
+import AssemblyKeys._
+
 organization := "com.graphbrain"
 
 name := "webapp"
@@ -16,10 +19,13 @@ resolvers ++= Seq("Coda Hales Repository" at "http://repo.codahale.com")
 
 libraryDependencies ++= Seq(
   "net.databinder" %% "unfiltered-netty-server" % "0.6.3"
-  //"net.databinder" %% "dispatch-nio" % "0.8.8",
-  //"org.clapper" %% "avsl" % "0.3.6",
-  //"net.databinder" %% "unfiltered-spec" % "0.6.3" % "test",
-  //"org.scalatest" %% "scalatest" % "1.7.1" % "test",
-  //"com.codahale" %% "jerkson" % "0.5.0",
-  //"com.codahale" %% "logula" % "2.1.3"
 )
+
+mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
+  {
+    case PathList("javax", "servlet", xs @ _*) => MergeStrategy.first
+    case PathList("com", "eaio", "uuid", xs @ _*) => MergeStrategy.first
+    case PathList("com", "eaio", "util", "lang", xs @ _*) => MergeStrategy.first
+    case x => old(x)
+  }
+}
