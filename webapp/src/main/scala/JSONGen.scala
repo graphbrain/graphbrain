@@ -8,7 +8,7 @@ object JSONGen {
       case i: Int => i.toString
       case d: Double => d.toString
       case Nil => "[]"
-      case l: List[_] => "[" + (for (e <- l) yield json(e)).reduceLeft(_ + "," + _) + "]"
+      case l: Seq[_] => "[" + (for (e <- l) yield json(e)).reduceLeft(_ + "," + _) + "]"
       case m: Map[_, _] => {
         if (m.size == 0)
           "{}"
@@ -20,7 +20,6 @@ object JSONGen {
     }
   }
 
-  /*
   def main(args: Array[String]) {
     println(json("Telmo Menezes"))
     println(json(12))
@@ -32,5 +31,5 @@ object JSONGen {
     println(json(Map(("name" -> "Telmo Menezes"), ("numbers" -> List(1, 2, "3")))))
     println(json(Array("Telmo", "Menezes")))
     println(json(Array()))
-  }*/
+  }
 }
