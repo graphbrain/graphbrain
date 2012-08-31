@@ -134,8 +134,8 @@ class GraphInterface (val rootId: String, val store: UserOps, val user: UserNode
   private def snodes2json = {
     val json = for (snode <- snodes) yield {
       val key = snode("key") match { 
-	case x: (String, Integer, String) => x
-	case _ => ("", -1, "")
+	      case x: (String, Integer, String) => x
+	      case _ => ("", -1, "")
       }
       Map(("id" -> snode("id").toString), ("rel" -> linkLabel(key._1)), ("rpos" -> key._2), ("nodes" -> snode("nodes").asInstanceOf[Set[String]]))
     }
