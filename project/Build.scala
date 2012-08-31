@@ -4,7 +4,6 @@ import sbtassembly.Plugin._
 import AssemblyKeys._
 import cc.spray.revolver.RevolverPlugin._
 
-
 object GraphbrainBuild extends Build {
   lazy val hgdb = Project(id = "hgdb",
                            base = file("hgdb"),
