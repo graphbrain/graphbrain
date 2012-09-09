@@ -1,7 +1,7 @@
 package com.graphbrain.hgdb
 
 
-trait UserOps extends VertexStoreInterface {
+trait UserOps extends VertexStore {
 
   def getOrCreateIndex(name: String): Vertex = {
     val id = "index/" + name

@@ -11,7 +11,7 @@ import java.io.InputStreamReader
 import java.io.IOException
 
 
-trait URLManagement extends VertexStoreInterface {
+trait URLManagement extends VertexStore {
 
   def getTitle(urlStr: String): String = {
     val url = new URL(urlStr)

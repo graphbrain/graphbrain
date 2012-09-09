@@ -6,7 +6,7 @@ import scala.collection.mutable.Map
   *
   *  
   */
-trait BurstCaching extends VertexStoreInterface {
+trait BurstCaching extends VertexStore {
   val readCache = Map[String, Vertex]()
   val writeCache = Map[String, Vertex]()
 

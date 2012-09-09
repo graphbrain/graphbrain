@@ -2,7 +2,7 @@ package com.graphbrain.hgdb
 
 
 object Consensus {
-  def evalEdge(edgeId: String, store: VertexStoreInterface) = {
+  def evalEdge(edgeId: String, store: VertexStore) = {
     var score = 0
 
     val negEdgeId = ID.negateEdge(edgeId)

@@ -1,7 +1,7 @@
 package com.graphbrain.hgdb
 
 
-class SearchInterface(store: VertexStoreInterface) {
+class SearchInterface(store: VertexStore) {
 
   def query(text: String) = {
     val id = ID.sanitize(text)
