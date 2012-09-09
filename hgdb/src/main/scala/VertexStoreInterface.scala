@@ -4,7 +4,7 @@ import scala.collection.mutable.{Set => MSet}
 
 
 abstract trait VertexStoreInterface {
-  val backend: Backend
+  val backend: CassandraBackend
   val maxEdges: Int
 
   private def str2iter(str: String) = {
