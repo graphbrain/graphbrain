@@ -54,3 +54,5 @@ test
 run
 test
 project braingenerators
+compile
+project hgdb
