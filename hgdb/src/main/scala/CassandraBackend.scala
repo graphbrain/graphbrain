@@ -17,12 +17,12 @@ import me.prettyprint.cassandra.serializers.StringSerializer
 
 
 /** Interface to Cassandra, a distributed key/value store. */
-class CassandraBackend(storeName: String, ip: String="localhost", port: Int=9160) {
+class CassandraBackend(clusterName: String, keyspaceName: String, ip: String="localhost", port: Int=9160) {
   val replicationFactor = 1
 
-  val cluster: Cluster = HFactory.getOrCreateCluster(storeName, ip + ":" + port)
+  val cluster: Cluster = HFactory.getOrCreateCluster(clusterName, ip + ":" + port)
 
-  val keyspaceDef: KeyspaceDefinition = cluster.describeKeyspace("GBKeyspace")
+  val keyspaceDef: KeyspaceDefinition = cluster.describeKeyspace(keyspaceName)
   if (keyspaceDef == null) {
     createSchema()
   }
@@ -33,8 +33,8 @@ class CassandraBackend(storeName: String, ip: String="localhost", port: Int=9160
 
 
   private def createSchema() = {
-    val cfDef: ColumnFamilyDefinition = HFactory.createColumnFamilyDefinition("GBKeyspace", "GBColumnFamily", ComparatorType.BYTESTYPE)
-    val newKeyspace: KeyspaceDefinition = HFactory.createKeyspaceDefinition("GBKeyspace", ThriftKsDef.DEF_STRATEGY_CLASS, replicationFactor, Arrays.asList(cfDef))
+    val cfDef: ColumnFamilyDefinition = HFactory.createColumnFamilyDefinition(keyspaceName, "GBColumnFamily", ComparatorType.BYTESTYPE)
+    val newKeyspace: KeyspaceDefinition = HFactory.createKeyspaceDefinition(keyspaceName, ThriftKsDef.DEF_STRATEGY_CLASS, replicationFactor, Arrays.asList(cfDef))
     // Add the schema to the cluster.
     // "true" as the second param means that Hector will block until all nodes see the change.
     cluster.addKeyspace(newKeyspace, true)

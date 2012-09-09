@@ -3,7 +3,7 @@ import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.SimpleCaching
 
 class SimpleCachingTest extends FunSuite with BaseVertexStoreTests{
-  val store = new VertexStore("testhgdb") with SimpleCaching
+  val store = new VertexStore("gb", "testhgdb") with SimpleCaching
 
   testsFor(baseTests(store, "VertexStore with SimpleCaching"))
 }

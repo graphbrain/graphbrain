@@ -8,7 +8,7 @@ import com.graphbrain.hgdb.ID
 
 class ExtraVerticesTest extends FunSuite {
 
-  val store = new VertexStore("testhgdb", 10)
+  val store = new VertexStore("gb", "testhgdb", 10)
 
   test("100 edges on a 10 edge limit per vertex") {
     val node0 = TextNode("n0", "?")

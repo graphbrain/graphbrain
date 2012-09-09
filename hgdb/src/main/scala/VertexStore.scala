@@ -3,8 +3,8 @@ package com.graphbrain.hgdb
 import scala.collection.mutable.{Set => MSet}
 
 
-class VertexStore(storeName: String, val maxEdges: Int=1000, ip: String="localhost", port: Int=9160) {
-  val backend = new CassandraBackend(storeName, ip, port)
+class VertexStore(clusterName: String, keyspaceName: String, val maxEdges: Int=1000, ip: String="localhost", port: Int=9160) {
+  val backend = new CassandraBackend(clusterName, keyspaceName, ip, port)
 
   private def str2iter(str: String) = {
     (for (str <- str.split(',') if str != "")
@@ -576,5 +576,5 @@ class VertexStore(storeName: String, val maxEdges: Int=1000, ip: String="localho
 
 
 object VertexStore {
-  def apply(storeName: String) = new VertexStore(storeName)
+  def apply(clusterName: String, keyspaceName: String) = new VertexStore(clusterName, keyspaceName)
 }
