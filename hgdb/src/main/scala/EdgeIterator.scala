@@ -1,7 +1,7 @@
 package com.graphbrain.hgdb
 
 
-class EdgeIterator(val edgeSetId: String, val store: VertexStoreInterface) extends Iterator[String] {
+class EdgeIterator(val edgeSetId: String, val store: VertexStore) extends Iterator[String] {
   var extraPos = 0
   var iterSet: Iterator[String] = null
 

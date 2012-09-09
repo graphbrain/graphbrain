@@ -6,7 +6,7 @@ import scala.collection.mutable.Map
   *
   * Useful for debugging. 
   */
-trait OpLogging extends VertexStoreInterface {
+trait OpLogging extends VertexStore {
   abstract override def get(id: String): Vertex = {
     println("[get] " + id)
     super.get(id)

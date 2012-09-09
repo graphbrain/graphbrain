@@ -4,7 +4,7 @@ import akka.actor.Actor
 import akka.actor.Props
 
 
-class ConsensusActor(val store: VertexStoreInterface) extends Actor {
+class ConsensusActor(val store: VertexStore) extends Actor {
 
   override protected def receive = {
     case edgeId: String =>

@@ -3,7 +3,7 @@ package com.graphbrain.hgdb
 import java.util.Date
 
 
-trait TimeStamping extends VertexStoreInterface {
+trait TimeStamping extends VertexStore {
 
   abstract override def put(vertex: Vertex): Vertex = {
     val v = if (vertex.ts == 0) {

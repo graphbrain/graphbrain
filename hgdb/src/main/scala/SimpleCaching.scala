@@ -7,7 +7,7 @@ import scala.collection.mutable.Map
   * Implements an in-memory write-through cache for vertices that
   * grows unboundedly. 
   */
-trait SimpleCaching extends VertexStoreInterface {
+trait SimpleCaching extends VertexStore {
   val cache = Map[String, Vertex]()
 
   abstract override def get(id: String): Vertex = {

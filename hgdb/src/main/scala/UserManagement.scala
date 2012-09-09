@@ -8,7 +8,7 @@ import java.math.BigInteger
 import org.mindrot.BCrypt
 
 
-trait UserManagement extends VertexStoreInterface {
+trait UserManagement extends VertexStore {
   
   private val random: SecureRandom = new SecureRandom
 
