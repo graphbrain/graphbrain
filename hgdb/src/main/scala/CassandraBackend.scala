@@ -17,7 +17,7 @@ import me.prettyprint.cassandra.serializers.StringSerializer
 
 
 /** Interface to Cassandra, a distributed key/value store. */
-class CassandraBackend(storeName: String, ip: String="localhost", port: Int=9160) extends Backend {
+class CassandraBackend(storeName: String, ip: String="localhost", port: Int=9160) {
   val replicationFactor = 1
 
   val cluster: Cluster = HFactory.getOrCreateCluster(storeName, ip + ":" + port)
@@ -78,4 +78,19 @@ class CassandraBackend(storeName: String, ip: String="localhost", port: Int=9160
 
   /** Removes document identified by id */
   def remove(id: String) = template.deleteRow(id)
+
+  protected def map2str(map: Map[String, Any]) = {
+    val paramList = for (item <- map) yield item._1.toString + " " + encodeValue(item._2.toString)
+    paramList.reduceLeft(_ + "|" + _)
+  }
+
+  protected def str2map(str: String): Map[String, Any] = {
+    val strItems = str.split('|')
+    val items = for (i <- strItems) yield i.split(" ", 2)
+    items map { i => (i(0), decodeValue(i(1))) } toMap
+  }
+
+  protected def encodeValue(value: String) = value.replace("#", "#1").replace("|", "#2")
+
+  protected def decodeValue(value: String) = value.replace("#2", "|").replace("#1", "#")
 }

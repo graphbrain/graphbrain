@@ -7,7 +7,7 @@ package com.graphbrain.hgdb
   */
 class VertexStore(storeName: String, val maxEdges: Int=1000, ip: String="localhost", port: Int=9160) extends VertexStoreInterface {
   //val backend: Backend = new RiakBackend(storeName, ip, port)
-  val backend: Backend = new CassandraBackend(storeName, ip, port)
+  val backend: CassandraBackend = new CassandraBackend(storeName, ip, port)
 }
 
 object VertexStore {
