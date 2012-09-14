@@ -1,47 +1,61 @@
 package com.graphbrain.hgdb
 
+import scala.collection.mutable.{Set => MSet}
+
+import me.prettyprint.hector.api.factory.HFactory
+import me.prettyprint.cassandra.serializers.StringSerializer
+import me.prettyprint.cassandra.service.ColumnSliceIterator
+
 
 trait UserOps extends VertexStore {
 
-  def getOrCreateIndex(name: String): Vertex = {
-    val id = "index/" + name
-    if (exists(id)) {
-      get(id)
-    }
-    else {
-      val node = TextNode("index", name)
-      super.put(node)
-      node
-    }
+  private def setOwner(userId: String, nodeId: String) = {
+    val col = HFactory.createColumn(nodeId, "", StringSerializer.get(), StringSerializer.get())
+    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
+    mutator.addInsertion(userId, "owners", col)
+    mutator.execute()
   }
 
-  abstract override def put(vertex: Vertex): Vertex = {
+  private def unsetOwner(userId: String, nodeId: String) = {
+    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
+    mutator.addDeletion(userId, "edges", nodeId, StringSerializer.get())
+    mutator.execute()
+  }
+
+  private def linkToGlobal(globalNodeId: String, userNodeId: String) = {
+    val col = HFactory.createColumn(userNodeId, "", StringSerializer.get(), StringSerializer.get())
+    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
+    mutator.addInsertion(globalNodeId, "globaluser", col)
+    mutator.execute()
+  }
+
+  override def put(vertex: Vertex): Vertex = {
     super.put(vertex)
 
     vertex match {
-      case u: UserNode => {
-        getOrCreateIndex("user")
-        addrel("sys/index", Array(vertex.id, "index/user"))
-      }
-      case t: TextNode => {
-        if (ID.isInUserSpace(t.id)) {
-          addrel("sys/owns", Array(ID.ownerId(t.id), t.id))
-        }
-        else {
-          getOrCreateIndex("global")
-          addrel("sys/owns", Array("index/global", t.id)) 
-        }
-      }
-      case u: URLNode => {
-        if (ID.isInUserSpace(u.id)) {
-          addrel("sys/owns", Array(ID.ownerId(u.id), u.id))
-        }
-        else {
-          getOrCreateIndex("global")
-          addrel("sys/owns", Array("index/global", u.id)) 
-        }
-      }
-      case _ => {}
+      case t: TextNode =>
+        if (ID.isInUserSpace(t.id))
+          setOwner(ID.ownerId(t.id), t.id)
+
+      case u: URLNode =>
+        if (ID.isInUserSpace(u.id))
+          setOwner(ID.ownerId(u.id), u.id)
+    }
+
+    vertex
+  }
+
+  override def remove(vertex: Vertex): Vertex = {
+    super.remove(vertex)
+
+    vertex match {
+      case t: TextNode =>
+        if (ID.isInUserSpace(t.id))
+          unsetOwner(ID.ownerId(t.id), t.id)
+
+      case u: URLNode =>
+        if (ID.isInUserSpace(u.id))
+          unsetOwner(ID.ownerId(u.id), u.id)
     }
 
     vertex
@@ -55,7 +69,7 @@ trait UserOps extends VertexStore {
       val userSpaceId = ID.globalToUser(vertex.id, userid)
       if (!exists(userSpaceId)) {
         put(get(vertex.id).clone(userSpaceId))
-        addrel("sys/alt", Array(vertex.id, userSpaceId))
+        linkToGlobal(vertex.id, userSpaceId)
       }
     }
 
@@ -82,36 +96,36 @@ trait UserOps extends VertexStore {
     // convert edge to user space and add
     val ids = for (id <- participants) yield
       if (ID.isInUserSpace(id)) id else ID.globalToUser(id, userid)
-    addrel(etype, ids)
+    addrel(etype, ids.toList)
 
     // remove negation of this edge if it exists
-    delrel(ID.negateEdge(etype), ids)
+    delrel(Edge(etype, ids.toList).negate)
 
     // run consensus algorithm
     if (consensus) {
       val gids = for (id <- participants) yield
         if (!ID.isInUserSpace(id)) id else ID.userToGlobal(id)
-      Consensus.evalEdge(ID.edgeId(edgeType, gids), this)
+      Consensus.evalEdge(Edge(edgeType, gids.toList), this)
     }
   }
 
-  def delrel2(edgeType: String, participants: Array[String], userid: String, consensus: Boolean=false): Unit = {
+  def delrel2(edgeType: String, participants: List[String], userid: String, consensus: Boolean=false): Unit = {
     // delete edge from user space
     val userSpaceParticipants = participants.map(p => ID.globalToUser(p, userid))
-    delrel(edgeType, userSpaceParticipants)
+    delrel(edgeType, userSpaceParticipants.toList)
 
     // create negation of edge in user space
-    addrel(ID.negateEdge(edgeType), userSpaceParticipants)
+    addrel(Edge(edgeType, userSpaceParticipants.toList).negate)
 
     // run consensus algorithm
     if (consensus) {
       val gids = for (id <- participants) yield
         if (!ID.isInUserSpace(id)) id else ID.userToGlobal(id)
-      Consensus.evalEdge(ID.edgeId(edgeType, gids), this)
+      Consensus.evalEdge(Edge(edgeType, gids.toList), this)
     }
   }
 
-  def delrel2(edgeId: String, userid: String): Unit = delrel2(Edge.edgeType(edgeId), Edge.participantIds(edgeId).toArray, userid)
+  def delrel2(edge: Edge, userid: String): Unit = delrel2(edge.edgeType, edge.participantIds, userid)
 
   def createAndConnectVertices2(edgeType: String, participants: Array[Vertex], userid: String, consensus: Boolean = false) = {
     for (v <- participants) {
@@ -122,18 +136,34 @@ trait UserOps extends VertexStore {
     addrel2(edgeType.replace(" ", "_"), ids, userid, consensus)
   }
 
-  def neighborEdges2(nodeId: String, userid: String): Set[String] = {
+  def neighborEdges2(nodeId: String, userid: String): Set[Edge] = {
     val uNodeId = ID.globalToUser(nodeId, userid) 
 
-    val gnhood = neighbors(nodeId).filter(x => ID.isUserNode(x) || (!ID.isInUserSpace(x)))
-    val unhood = neighbors(uNodeId).filter(x => ID.isUserNode(x) || ID.isInUserSpace(x))
+    val gedges = neighborEdges(nodeId).filter(x => x.isGlobal)
+    val uedges = neighborEdges(uNodeId).filter(x => x.isInUserSpace).map(x => x.toGlobal)
 
-    val gedges = neighborEdges(nodeId, gnhood)
-    val uedges = neighborEdges(uNodeId, unhood).map(ID.userToGlobalEdge)
+    val gnhood = nodesFromEdgeSet(gedges)
+    val unhood = nodesFromEdgeSet(uedges)
 
-    val applyNegatives = gedges.filter(x => !uedges.contains(ID.negateEdge(x)))
-    val posUEdges = uedges.filter(x => ID.isPositiveEdge(x))
+    val applyNegatives = gedges.filter(x => !uedges.contains(x.negate))
+    val posUEdges = uedges.filter(x => x.isPositive)
 
     applyNegatives ++ posUEdges
+  }
+
+  def globalAlts(globalId: String) = {
+    val altSet = MSet[String]()
+
+    val query = HFactory.createSliceQuery(backend.ksp, StringSerializer.get(),
+      StringSerializer.get(), StringSerializer.get()).setKey(globalId).setColumnFamily("globaluser")
+
+    val iterator = new ColumnSliceIterator[String, String, String](query, null, "\uFFFF", false);
+
+    while (iterator.hasNext) {
+      val column = iterator.next
+      altSet += column.getName
+    }
+
+    altSet.toSet
   }
 }

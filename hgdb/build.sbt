@@ -14,7 +14,7 @@ libraryDependencies += "com.typesafe.akka" % "akka-actor" % "2.0.3"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "1.7.1" % "test"
 
-libraryDependencies += "me.prettyprint" % "hector-core" % "0.8.0-2"
+libraryDependencies += "me.prettyprint" % "hector-core" % "1.0-1"
 
 //testOptions in Test += Tests.Argument("-oF")
 

@@ -12,28 +12,41 @@ trait UserManagement extends VertexStore {
   
   private val random: SecureRandom = new SecureRandom
 
-  def genSessionId: String = new BigInteger(130, random).toString(32)
+  private def associateEmailToUsername(email: String, username: String) = {
+    val template = backend.tpEmail
+    val updater = template.createUpdater(email)
+    updater.setString("username", username)
+    template.update(updater)
+  }
 
-  def idFromUsername(username: String) = {
+
+  private def usernameByEmail(email: String): String = {
+    val res = backend.tpEmail.queryColumns(email)
+    res.getString("username")
+  }
+
+  private def idFromEmail(email: String): String = idFromUsername(usernameByEmail(email))
+
+  private def usernameExists(username: String) = exists(idFromUsername(username))
+
+  private def emailExists(email: String) = {
+    val res = backend.tpEmail.queryColumns(email)
+    res.hasResults 
+  }
+
+  private def genSessionId: String = new BigInteger(130, random).toString(32)
+
+  private def idFromUsername(username: String) = {
   	val usernameNoSpaces = username.replace(' ', '_')
   	"user/" + URLEncoder.encode(usernameNoSpaces, "UTF-8")
   }
-
-  def idFromEmail(email: String) = {
-  	"email/" + URLEncoder.encode(email, "UTF-8")
-  }
-
-  def usernameExists(username: String): Boolean = exists(idFromUsername(username))
-
-  def emailExists(email: String): Boolean = exists(idFromEmail(email))
 
   def findUser(login: String): UserNode = {
   	if (exists(idFromUsername(login))) {
   	  getUserNode(idFromUsername(login))
   	}
   	else if (exists(idFromEmail(login))) {
-  	  val emailNode = getUserEmailNode(idFromEmail(login))
-  	  getUserNode(idFromUsername(emailNode.username))
+  	  getUserNode(idFromEmail(login))
   	}
   	else {
   	  null
@@ -58,15 +71,9 @@ trait UserManagement extends VertexStore {
   	val pwdhash = BCrypt.hashpw(password, BCrypt.gensalt())
   	val userNode = put(UserNode(id=id, username=username, name=name, email=email, pwdhash=pwdhash, role=role))
 	  if (email != "") {
-      val emailId = idFromEmail(email)
-  	  put(UserEmailNode(id=emailId, username=username, email=email))
+      associateEmailToUsername(email, username)
     }
 
-  	// create "is -> user" relationship
-  	// make user "user" node exists
-  	if (!exists("user")) {
-  		put(TextNode("user", "user"))
-  	}
   	userNode.asInstanceOf[UserNode]
   }
 

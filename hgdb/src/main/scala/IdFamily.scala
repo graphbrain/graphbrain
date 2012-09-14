@@ -3,7 +3,7 @@ package com.graphbrain.hgdb
 
 object IdFamily extends Enumeration {
   type IdFamily = Value
-  val Global, User, Email, UserSpace, EdgeType = Value
+  val Global, User, UserSpace, EType, URL, UserURL, Rule, Source = Value
 
   def family(id: String) = {
     val parts = ID.parts(id)
@@ -13,18 +13,30 @@ object IdFamily extends Enumeration {
         Global
       else if (nparts == 2)
         User
+      else if (parts(2) == "url")
+        UserURL
       else
         UserSpace
-    else if (parts(0) == "email")
-      if (nparts == 1)
-        Global
-      else
-        Email
     else if (parts(0) == "rtype")
       if (nparts == 1)
         Global
       else
-        EdgeType
+        EType
+    else if (parts(0) == "url")
+      if (nparts == 1)
+        Global
+      else
+        URL
+    else if (parts(0) == "rule")
+      if (nparts == 1)
+        Global
+      else
+        Rule
+    else if (parts(0) == "source")
+      if (nparts == 1)
+        Global
+      else
+        Source
     else
       Global
   }

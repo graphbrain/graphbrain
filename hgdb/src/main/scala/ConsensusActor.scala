@@ -4,10 +4,10 @@ import akka.actor.Actor
 import akka.actor.Props
 
 
-class ConsensusActor(val store: VertexStore) extends Actor {
+class ConsensusActor(val store: UserOps) extends Actor {
 
   override protected def receive = {
-    case edgeId: String =>
-      Consensus.evalEdge(edgeId, store)
+    case edge: Edge =>
+      Consensus.evalEdge(edge, store)
   }
 }
