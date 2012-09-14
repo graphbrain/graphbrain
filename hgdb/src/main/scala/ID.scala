@@ -50,44 +50,15 @@ object ID {
     }
   }
 
-  def ownerId(idOrNs: String): String = {
-    val idParts = parts(idOrNs)
-    idParts(0) + "/" + idParts(1)
+  def ownerId(idOrNs: String): String = {    
+    val tokens = parts(idOrNs)
+    if (tokens(0) == "user")
+      "user/" + tokens(1)  
+    else
+      ""
   }
 
   def edgeId(etype:String, participants: Array[String]) = (List[String](etype) ++ participants).reduceLeft(_ + " " + _)
-
-  def edgeSetId(vertexId: String, edgeId: String) = {
-    val pos = Edge.participantIds(edgeId).indexOf(vertexId)
-    vertexId + "/" + pos + "/" + Edge.edgeType(edgeId)
-  }
-
-  def extraId(id: String, pos: Int) = {
-    if (pos == 0)
-      id
-    else
-      id + "/" + pos
-  }
-
-  def globalToUserEdge(edgeId: String, userId: String) = {
-    val etype = Edge.edgeType(edgeId)
-    val pids = Edge.participantIds(edgeId)
-
-    etype + " " +
-    (for (pid <- pids) yield globalToUser(pid, userId)).reduceLeft(_ + " " + _)
-  }
-  
-  def userToGlobalEdge(edgeId: String) = {
-    val etype = Edge.edgeType(edgeId)
-    val pids = Edge.participantIds(edgeId)
-
-    etype + " " +
-    (for (pid <- pids) yield userToGlobal(pid)).reduceLeft(_ + " " + _)
-  }
-
-  def negateEdge(edgeId: String) = "neg/" + edgeId
-
-  def isPositiveEdge(id: String): Boolean = parts(id)(0) != "neg"
 
   def usergenerated_id(userName:String, thing:String) =
 	  userName + "/" + thing

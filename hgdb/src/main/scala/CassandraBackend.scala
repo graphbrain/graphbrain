@@ -14,45 +14,69 @@ import me.prettyprint.cassandra.service.template.ThriftColumnFamilyTemplate
 import me.prettyprint.cassandra.service.template.ColumnFamilyResult
 import me.prettyprint.cassandra.service.template.ColumnFamilyUpdater
 import me.prettyprint.cassandra.serializers.StringSerializer
+import me.prettyprint.cassandra.serializers.CompositeSerializer
+import me.prettyprint.hector.api.beans.Composite
 
 
-/** Interface to Cassandra, a distributed key/value store. */
 class CassandraBackend(clusterName: String, keyspaceName: String, ip: String="localhost", port: Int=9160) {
   val replicationFactor = 1
 
   val cluster: Cluster = HFactory.getOrCreateCluster(clusterName, ip + ":" + port)
 
   val keyspaceDef: KeyspaceDefinition = cluster.describeKeyspace(keyspaceName)
-  if (keyspaceDef == null) {
-    createSchema()
-  }
+  if (keyspaceDef == null)
+    createSchemas()
 
-  val ksp: Keyspace = HFactory.createKeyspace("GBKeyspace", cluster)
+  val ksp: Keyspace = HFactory.createKeyspace(keyspaceName, cluster)
 
-  val template: ColumnFamilyTemplate[String, String] = new ThriftColumnFamilyTemplate[String, String](ksp, "GBColumnFamily", StringSerializer.get(), StringSerializer.get())
+  // TODO: get rid of this soon
+  val template = new ThriftColumnFamilyTemplate[String, String](ksp, "GBColumnFamily", StringSerializer.get(), StringSerializer.get())
+
+  val tpGlobal = new ThriftColumnFamilyTemplate[String, String](ksp, "global", StringSerializer.get(), StringSerializer.get())
+  val tpUser = new ThriftColumnFamilyTemplate[String, String](ksp, "user", StringSerializer.get(), StringSerializer.get())
+  val tpEmail = new ThriftColumnFamilyTemplate[String, String](ksp, "email", StringSerializer.get(), StringSerializer.get())
+  val tpUserSpace = new ThriftColumnFamilyTemplate[String, String](ksp, "userspace", StringSerializer.get(), StringSerializer.get())
+  val tpEdgeType = new ThriftColumnFamilyTemplate[String, String](ksp, "edgetype", StringSerializer.get(), StringSerializer.get())
+  val tpEdges = new ThriftColumnFamilyTemplate[String, Composite](ksp, "edges", StringSerializer.get(), new CompositeSerializer())
+  val tpVertexEdgeType = new ThriftColumnFamilyTemplate[String, String](ksp, "vertexedgetype", StringSerializer.get(), StringSerializer.get())
+  val tpGlobalUser = new ThriftColumnFamilyTemplate[String, String](ksp, "globaluser", StringSerializer.get(), StringSerializer.get())
+  val tpOwners = new ThriftColumnFamilyTemplate[String, String](ksp, "owners", StringSerializer.get(), StringSerializer.get())
 
 
-  private def createSchema() = {
-    val cfDef: ColumnFamilyDefinition = HFactory.createColumnFamilyDefinition(keyspaceName, "GBColumnFamily", ComparatorType.BYTESTYPE)
-    val newKeyspace: KeyspaceDefinition = HFactory.createKeyspaceDefinition(keyspaceName, ThriftKsDef.DEF_STRATEGY_CLASS, replicationFactor, Arrays.asList(cfDef))
-    // Add the schema to the cluster.
+  private def createSchemas() = {
+    // How to delete keysapce:
+    // start cassandra-cli
+    // connect localhost/9160;
+    // drop keyspace testhgdb;
+
+    val cfGlobal = HFactory.createColumnFamilyDefinition(keyspaceName, "global", ComparatorType.UTF8TYPE)
+    val cfUser = HFactory.createColumnFamilyDefinition(keyspaceName, "user", ComparatorType.UTF8TYPE)
+    val cfEmail = HFactory.createColumnFamilyDefinition(keyspaceName, "email", ComparatorType.UTF8TYPE)
+    val cfUserSpace = HFactory.createColumnFamilyDefinition(keyspaceName, "userspace", ComparatorType.UTF8TYPE)
+    val cfEdgeType = HFactory.createColumnFamilyDefinition(keyspaceName, "edgetype", ComparatorType.UTF8TYPE)
+    
+    // edges are stored in map of vertex ids to edge definitions (redundant, denormalized)
+    val cfEdges = HFactory.createColumnFamilyDefinition(keyspaceName, "edges", ComparatorType.COMPOSITETYPE)
+    // (edge_type, position, vertex1, vertex2, vertexN)
+    cfEdges.setComparatorTypeAlias("(UTF8Type, IntegerType, UTF8Type, UTF8Type, UTF8Type)")
+
+    // maps vertices to types of edges they participate in
+    val cfVertexEdgeType = HFactory.createColumnFamilyDefinition(keyspaceName, "vertexedgetype", ComparatorType.UTF8TYPE)
+    
+    // global to user space map (which userspace vertices correspond to a given global vertex)
+    val cfGlobalUser = HFactory.createColumnFamilyDefinition(keyspaceName, "globaluser", ComparatorType.UTF8TYPE)
+    
+    // map users to the userspace vertices they own
+    val cfOwners = HFactory.createColumnFamilyDefinition(keyspaceName, "owners", ComparatorType.UTF8TYPE)
+    
+    val newKeyspace = HFactory.createKeyspaceDefinition(keyspaceName,
+      ThriftKsDef.DEF_STRATEGY_CLASS, replicationFactor,
+      Arrays.asList(cfGlobal, cfUser, cfEmail, cfUserSpace, cfEdgeType, cfEdges, cfVertexEdgeType, cfGlobalUser, cfOwners))
+    
     // "true" as the second param means that Hector will block until all nodes see the change.
     cluster.addKeyspace(newKeyspace, true)
   }
-
- 
-  /** Gets a document by it's id in the form of a Map[String, Any] */
-  def get(id: String) = {
-    try {
-      val res: ColumnFamilyResult[String, String] = template.queryColumns(id)
-      val value: String = res.getString("value")
-      str2map(value)
-    }
-    catch {
-      case _ => throw KeyNotFound(id)
-    }
-  }
-
+  
   def rawget(id: String): String = {
     try {
       val res: ColumnFamilyResult[String, String] = template.queryColumns(id)
@@ -63,34 +87,4 @@ class CassandraBackend(clusterName: String, keyspaceName: String, ip: String="lo
       case _ => throw KeyNotFound(id)
     }
   }
-
-  /** Puts a document represented by a Map[String, Any] into the store */
-  def put(id: String, doc: Map[String, Any]) = {
-    val updater: ColumnFamilyUpdater[String, String] = template.createUpdater(id)
-    updater.setString("value", map2str(doc))
-    template.update(updater)
-  }
-
-  /** Updates a document identified by it's id with the information contained in the Map[String, Any] */
-  def update(id: String, doc: Map[String, Any]) = {
-    put(id, doc)
-  }
-
-  /** Removes document identified by id */
-  def remove(id: String) = template.deleteRow(id)
-
-  protected def map2str(map: Map[String, Any]) = {
-    val paramList = for (item <- map) yield item._1.toString + " " + encodeValue(item._2.toString)
-    paramList.reduceLeft(_ + "|" + _)
-  }
-
-  protected def str2map(str: String): Map[String, Any] = {
-    val strItems = str.split('|')
-    val items = for (i <- strItems) yield i.split(" ", 2)
-    items map { i => (i(0), decodeValue(i(1))) } toMap
-  }
-
-  protected def encodeValue(value: String) = value.replace("#", "#1").replace("|", "#2")
-
-  protected def decodeValue(value: String) = value.replace("#2", "|").replace("#1", "#")
 }
