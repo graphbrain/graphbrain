@@ -56,3 +56,6 @@ test
 project braingenerators
 compile
 project hgdb
+compile
+project mail
+project email

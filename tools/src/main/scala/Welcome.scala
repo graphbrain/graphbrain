@@ -18,7 +18,7 @@ class Welcome(val store: VertexStore) {
   }
 
   def addBinaryRel(node1: String, rel:String, node2: String) = {
-    store.addrel(rel, Array(node1, node2))
+    store.addrel(rel, List(node1, node2))
     edges += 1
   }
 

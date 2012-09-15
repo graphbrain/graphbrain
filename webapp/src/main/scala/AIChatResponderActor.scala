@@ -6,6 +6,7 @@ import unfiltered.Async
 import unfiltered.response.{JsonContent, ResponseString}
 
 import com.graphbrain.hgdb.Vertex
+import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.ID
 import com.graphbrain.nlp.SentenceParser
@@ -39,8 +40,8 @@ class AIChatResponderActor() extends Actor {
           Server.store.createAndConnectVertices2(relation, Array(node1, node2), user.id)
 
           // force consesnsus re-evaluation of affected edge
-          val edgeId = ID.edgeId(relation, Array(node1.id, node2.id))
-          Server.consensusActor ! edgeId
+          val edge = Edge(relation, List(node1.id, node2.id))
+          Server.consensusActor ! edge
 
           replySentence = "This fact was recorded: '" + sentence + "'"
           goto = root.id
