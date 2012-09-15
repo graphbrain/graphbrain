@@ -13,7 +13,6 @@ import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.EdgeType
 import com.graphbrain.hgdb.Vertex
 import com.graphbrain.hgdb.ID
-import com.graphbrain.hgdb.EdgeSet
 import com.graphbrain.hgdb.SearchInterface
 
 class SentenceParser (storeName:String = "gb") {
@@ -398,28 +397,32 @@ class SentenceParser (storeName:String = "gb") {
     
 
     
-    return results.reverse;
+    return results.reverse
   }
 
   /**
   Returns conjugated version of the lemma if present in database. Otherwise
   simply returns the lemma
   */
+  // [Telmo] I comments this out because I can't figure out what it does and it's not compatible
+  // with the new hgdb API
+  /*
   def conjugatefromExisting(lemma: String, pos: String): String = {
 
-    val targetESetID = ID.text_id(lemma) + "/0/" + pos; 
+    val targetESetID = ID.text_id(lemma) + "/0/" + pos 
 
     //Get the lemma node:
     if(store.exists(targetESetID)) {
-      val posEdgeSet = store.get(ID.text_id(lemma) + "/1/" + pos);
+      val posEdgeSet = store.get(ID.text_id(lemma) + "/1/" + pos)
       posEdgeSet match {
-        case p: EdgeSet => return lemma 
+        case p: EdgeSet => return lemma
         case _ => 
       }
 
     }
-    return lemma; 
+    return lemma
   }
+  */
 
   /**
   Returns lemma node and pos relationship type (linking the two edge types).
@@ -432,12 +435,12 @@ class SentenceParser (storeName:String = "gb") {
       return (relType, (isLemmaNode, isRelType))
     }*/
     val allRelTypes = """~""".r.split(relType.label)
-    val posSentence = lemmatiser.annotate(sentence);
-    var lemma = "";
-    var poslabel = "";
+    val posSentence = lemmatiser.annotate(sentence)
+    var lemma = ""
+    var poslabel = ""
     for (rType <- allRelTypes) {
       
-      val splitRelType = """\s""".r.split(rType);
+      val splitRelType = """\s""".r.split(rType)
 
       for(i <- 0 to splitRelType.length-1) {
         val relTypeComp = splitRelType(i)
@@ -792,8 +795,8 @@ def posChunkGeneral(sentence: String, root: Vertex): List[(List[String], String)
 			  entryIDs = nodesForEachNodeText(0)(i).id :: entryIDs
 			  entryIDs = nodesForEachNodeText(1)(i).id :: entryIDs
 
-			  val edge = new Edge(ID.relation_id(edgeText), entryIDs.reverse.toArray)
-			  println("Edge: " + edge.id)
+			  val edge = new Edge(ID.relation_id(edgeText), entryIDs.reverse)
+			  println("Edge: " + edge)
 			  val entry = (entryNodes, edge)
 			  
 			  possibleGraphs = entry :: possibleGraphs

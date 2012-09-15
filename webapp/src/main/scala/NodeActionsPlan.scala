@@ -6,7 +6,9 @@ import unfiltered.response._
 import unfiltered.netty._
 import unfiltered.Cookie
 
+import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.ID
+
 
 object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse {
   var errorMessage: String = ""
@@ -35,11 +37,11 @@ object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with S
     val linkOrNode = params("linkOrNode")(0)
 
     if (linkOrNode == "link") {
-      Server.store.delrel2(link, Array(origId, targId), userNode.id)
+      Server.store.delrel2(link, List(origId, targId), userNode.id)
 
       // force consesnsus re-evaluation of affected edge
-      val edgeId = ID.edgeId(link, Array(origId, targId))
-      Server.consensusActor ! edgeId
+      val edge = Edge(link, List(origId, targId))
+      Server.consensusActor ! edge
 
       //log.info(Server.realIp(req) + " REMOVE EDGE username: " + userNode.username + "; origId: " + origId + "; link: " + link + "; targId" + targId)
     }

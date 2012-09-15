@@ -1,38 +1,15 @@
 [0m[[0mdebug[0m] [0m[0m
 [0m[[0mdebug[0m] [0mInitial source changes: [0m
 [0m[[0mdebug[0m] [0m	removed:Set()[0m
-[0m[[0mdebug[0m] [0m	added: Set(/Users/telmo/projects/graphbrain/inference/src/main/scala/LocalInference.scala, /Users/telmo/projects/graphbrain/inference/src/main/scala/RuleMatcher.scala, /Users/telmo/projects/graphbrain/inference/src/main/scala/InferenceTester.scala, /Users/telmo/projects/graphbrain/inference/src/main/scala/RuleParser.scala, /Users/telmo/projects/graphbrain/inference/src/main/scala/RuleEngine.scala, /Users/telmo/projects/graphbrain/inference/src/main/scala/POSTagger.scala, /Users/telmo/projects/graphbrain/inference/src/main/java/TaggerTest.java, /Users/telmo/projects/graphbrain/inference/src/main/scala/RuleExpression.scala)[0m
+[0m[[0mdebug[0m] [0m	added: Set()[0m
 [0m[[0mdebug[0m] [0m	modified: Set()[0m
 [0m[[0mdebug[0m] [0mRemoved products: Set()[0m
 [0m[[0mdebug[0m] [0mModified external sources: Set()[0m
 [0m[[0mdebug[0m] [0mModified binary dependencies: Set()[0m
-[0m[[0mdebug[0m] [0mInitial directly invalidated sources: Set(/Users/telmo/projects/graphbrain/inference/src/main/scala/LocalInference.scala, /Users/telmo/projects/graphbrain/inference/src/main/scala/RuleMatcher.scala, /Users/telmo/projects/graphbrain/inference/src/main/scala/InferenceTester.scala, /Users/telmo/projects/graphbrain/inference/src/main/scala/RuleParser.scala, /Users/telmo/projects/graphbrain/inference/src/main/scala/RuleEngine.scala, /Users/telmo/projects/graphbrain/inference/src/main/scala/POSTagger.scala, /Users/telmo/projects/graphbrain/inference/src/main/java/TaggerTest.java, /Users/telmo/projects/graphbrain/inference/src/main/scala/RuleExpression.scala)[0m
+[0m[[0mdebug[0m] [0mInitial directly invalidated sources: Set()[0m
 [0m[[0mdebug[0m] [0m[0m
 [0m[[0mdebug[0m] [0mSources indirectly invalidated by:[0m
 [0m[[0mdebug[0m] [0m	product: Set()[0m
 [0m[[0mdebug[0m] [0m	binary dep: Set()[0m
 [0m[[0mdebug[0m] [0m	external source: Set()[0m
-[0m[[0mdebug[0m] [0mInitially invalidated: Set(/Users/telmo/projects/graphbrain/inference/src/main/scala/LocalInference.scala, /Users/telmo/projects/graphbrain/inference/src/main/scala/RuleMatcher.scala, /Users/telmo/projects/graphbrain/inference/src/main/scala/InferenceTester.scala, /Users/telmo/projects/graphbrain/inference/src/main/scala/RuleParser.scala, /Users/telmo/projects/graphbrain/inference/src/main/scala/RuleEngine.scala, /Users/telmo/projects/graphbrain/inference/src/main/scala/POSTagger.scala, /Users/telmo/projects/graphbrain/inference/src/main/java/TaggerTest.java, /Users/telmo/projects/graphbrain/inference/src/main/scala/RuleExpression.scala)[0m
-[0m[[0minfo[0m] [0mCompiling 7 Scala sources and 1 Java source to /Users/telmo/projects/graphbrain/inference/target/scala-2.9.2/classes...[0m
-[0m[[0mdebug[0m] [0mRunning cached compiler 1df5973b, interfacing (CompilerInterface) with Scala compiler version 2.9.2[0m
-[0m[[0mdebug[0m] [0mCalling Scala compiler with arguments  (CompilerInterface):[0m
-[0m[[0mdebug[0m] [0m	-unchecked[0m
-[0m[[0mdebug[0m] [0m	-d[0m
-[0m[[0mdebug[0m] [0m	/Users/telmo/projects/graphbrain/inference/target/scala-2.9.2/classes[0m
-[0m[[0mdebug[0m] [0m	-bootclasspath[0m
-[0m[[0mdebug[0m] [0m	/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/jsfd.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Frameworks/JavaRuntimeSupport.framework/Resources/Java/JavaRuntimeSupport.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/ui.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/laf.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/sunrsasign.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/jsse.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/jce.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/charsets.jar:/Users/telmo/.sbt/boot/scala-2.9.2/lib/scala-library.jar[0m
-[0m[[0mdebug[0m] [0m	-classpath[0m
-[0m[[0mdebug[0m] [0m	/Users/telmo/projects/graphbrain/inference/target/scala-2.9.2/classes:/Users/telmo/projects/graphbrain/inference/lib/stanford-postagger-2012-01-06.jar[0m
-[0m[[0mdebug[0m] [0mScala compilation took 9.101417 s[0m
-[0m[[0mdebug[0m] [0mCalling Javac with arguments:[0m
-[0m[[0mdebug[0m] [0m	-d[0m
-[0m[[0mdebug[0m] [0m	/Users/telmo/projects/graphbrain/inference/target/scala-2.9.2/classes[0m
-[0m[[0mdebug[0m] [0m	-classpath[0m
-[0m[[0mdebug[0m] [0m	/Users/telmo/projects/graphbrain/inference/target/scala-2.9.2/classes:/Users/telmo/projects/graphbrain/inference/lib/stanford-postagger-2012-01-06.jar:/Users/telmo/.sbt/boot/scala-2.9.2/lib/scala-library.jar:/Users/telmo/.sbt/boot/scala-2.9.2/lib/scala-library.jar[0m
-[0m[[0mdebug[0m] [0m	/Users/telmo/projects/graphbrain/inference/src/main/java/TaggerTest.java[0m
-[0m[[0mdebug[0m] [0mAttempting to call javac directly...[0m
-[0m[[0mdebug[0m] [0mjavac returned exit code: 0[0m
-[0m[[0mdebug[0m] [0mJava compilation took 0.389855 s[0m
-[0m[[0mdebug[0m] [0mJava compilation and analysis took 0.431806 s[0m
-[0m[[0mdebug[0m] [0m	Invalidated direct: Set()[0m
-[0m[[0mdebug[0m] [0mIncrementally invalidated: Set()[0m
+[0m[[0mdebug[0m] [0mInitially invalidated: Set()[0m

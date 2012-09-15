@@ -14,6 +14,7 @@ import com.graphbrain.hgdb.UserNode
 case class RawPage(vertex: Vertex, raw: String, req: HttpRequest[Any], cookies: Map[String, Any]) {
   var html = "<h2>Vertex: " + vertex.id + "</h2>"
 
+  /*
   val fieldMap = vertex.toMap
   val hiddenKeys = Set("pwdhash", "email", "session", "edgesets")
   val safeMap = fieldMap.filterKeys(k => !(hiddenKeys contains k))
@@ -31,6 +32,7 @@ case class RawPage(vertex: Vertex, raw: String, req: HttpRequest[Any], cookies: 
       html += "<br />"
     }
   }
+  */
 
   html += "<br /><h3>Raw</h3>"
   html += raw

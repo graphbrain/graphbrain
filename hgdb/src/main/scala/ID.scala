@@ -60,6 +60,8 @@ object ID {
 
   def relationshipId(edgeType:String, position: Int) = edgeType + "/" + position
 
+  def userIdFromUsername(username: String) = "user/" + username
+
   def usergenerated_id(userName:String, thing:String) =
 	  userName + "/" + thing
 

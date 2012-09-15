@@ -27,9 +27,9 @@ trait UserManagement extends VertexStore {
 
   private def idFromEmail(email: String): String = idFromUsername(usernameByEmail(email))
 
-  private def usernameExists(username: String) = exists(idFromUsername(username))
+  def usernameExists(username: String) = exists(idFromUsername(username))
 
-  private def emailExists(email: String) = {
+  def emailExists(email: String) = {
     val res = backend.tpEmail.queryColumns(email)
     res.hasResults 
   }

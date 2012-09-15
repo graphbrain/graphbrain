@@ -11,7 +11,7 @@ object Neighbors {
     else {
       val store: VertexStore = new VertexStore("gb")
       val neighbors = store.neighbors(args(0))
-      for (n <- neighbors) println(n._1 + " (parent: " + n._2 + ")")
+      for (n <- neighbors) println(n)
     }
   }
 }

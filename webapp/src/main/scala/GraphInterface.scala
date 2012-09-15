@@ -33,9 +33,9 @@ class GraphInterface (val rootId: String, val store: UserOps, val user: UserNode
   private def relmap = {
     val rm = MMap[(String, Int, String), Set[String]]()
     for (edge <- edgeIds) {
-      val participants = Edge.participantIds(edge).slice(0, 2)
+      val participants = edge.participantIds.slice(0, 2)
       for (i <- 0 until participants.size) {
-        val key = (Edge.edgeType(edge), i, participants(i))
+        val key = (edge.edgeType, i, participants(i))
         val others = participants.filter(p => (p != participants(i)) && (p != rootId)).toSet
         if (rm contains key)
           rm(key) ++= others
@@ -71,13 +71,13 @@ class GraphInterface (val rootId: String, val store: UserOps, val user: UserNode
   }
 
   /** Determines if an Edge is redundant in relation to supernode links */
-  private def redundantEdge(snodes: MSet[Map[String, Any]], edge: String): Boolean = {
+  private def redundantEdge(snodes: MSet[Map[String, Any]], edge: Edge): Boolean = {
     try {
       for (sn <- snodes) {
         val key: (String, Int, String) = sn("key").asInstanceOf[(String, Int, String)]
-        val otherParticipants = Edge.participantIds(edge).toSet - key._3
-        if ((Edge.edgeType(edge) == key._1) &&
-          (Edge.participantIds(edge)(key._2) == key._3) && 
+        val otherParticipants = edge.participantIds.toSet - key._3
+        if ((edge.edgeType == key._1) &&
+          (edge.participantIds(key._2) == key._3) && 
           otherParticipants.subsetOf(sn("nodes").asInstanceOf[Set[String]]))
           return true
       }
@@ -92,8 +92,8 @@ class GraphInterface (val rootId: String, val store: UserOps, val user: UserNode
   /** Generates list of links to be displayed */
   private def visualLinks = {
     val nodeLinks = (for (e <- edgeIds if (!redundantEdge(snodes, e))) yield {
-      val pids = Edge.participantIds(e)
-      (Edge.edgeType(e), pids(0), pids(1), true, true)
+      val pids = e.participantIds
+      (e.edgeType, pids(0), pids(1), true, true)
     }).toSet
 
     val snodeLinks = (for (sn <- snodes) yield {
