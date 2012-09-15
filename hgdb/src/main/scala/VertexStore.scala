@@ -193,9 +193,11 @@ class VertexStore(clusterName: String, keyspaceName: String, ip: String="localho
 
 
   def addrel(edge: Edge): Unit = {
-    // TODO: update vertexedgetype
-    
-    for (p <- edge.participantIds) addEdgeEntry(p, edge)
+    for (i <- 0 until edge.participantIds.size) {
+      val p = edge.participantIds(i)
+      addEdgeEntry(p, edge)
+      incVertexEdgeType(p, edge.edgeType, i)
+    }
   }
 
 
@@ -203,9 +205,11 @@ class VertexStore(clusterName: String, keyspaceName: String, ip: String="localho
 
 
   def delrel(edge: Edge): Unit = {
-    // TODO: update vertexedgetype
-    
-    for (p <- edge.participantIds) delEdgeEntry(p, edge)
+    for (i <- 0 until edge.participantIds.size) {
+      val p = edge.participantIds(i)
+      delEdgeEntry(p, edge)
+      decVertexEdgeType(p, edge.edgeType, i)
+    }
   }
 
 
@@ -319,6 +323,39 @@ class VertexStore(clusterName: String, keyspaceName: String, ip: String="localho
     val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
     mutator.addDeletion(nodeId, "edges", colKey, new CompositeSerializer())
     mutator.execute()
+  }
+
+
+  private def incVertexEdgeType(nodeId: String, edgeType: String, position: Int) = {
+    val relId = ID.relationshipId(edgeType, position)
+
+    val col = HFactory.createCounterColumn(relId, 1L, StringSerializer.get())
+    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
+    mutator.insertCounter(nodeId, "vertexedgetype", col)
+    mutator.execute()
+  }
+
+
+  private def decVertexEdgeType(nodeId: String, edgeType: String, position: Int) = {
+    val relId = ID.relationshipId(edgeType, position)
+
+    // get current count
+    val query = HFactory.createCounterColumnQuery(backend.ksp, StringSerializer.get(), StringSerializer.get())
+    query.setColumnFamily("vertexedgetype").setKey(nodeId).setName(relId)
+    val counter = query.execute().get()
+    val count = counter.getValue()
+
+    // decrement or delete
+    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
+    if (count <= 1) {
+      mutator.addDeletion(nodeId, "vertexedgetype", relId, StringSerializer.get())
+      mutator.execute()
+    }
+    else {
+      val col = HFactory.createCounterColumn(relId, -1L, StringSerializer.get())
+      mutator.insertCounter(nodeId, "vertexedgetype", col)
+      mutator.execute()
+    }
   }
 
 

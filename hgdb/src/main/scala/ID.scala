@@ -58,7 +58,7 @@ object ID {
       ""
   }
 
-  def edgeId(etype:String, participants: Array[String]) = (List[String](etype) ++ participants).reduceLeft(_ + " " + _)
+  def relationshipId(edgeType:String, position: Int) = edgeType + "/" + position
 
   def usergenerated_id(userName:String, thing:String) =
 	  userName + "/" + thing
