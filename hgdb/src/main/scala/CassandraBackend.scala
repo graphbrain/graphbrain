@@ -7,6 +7,7 @@ import me.prettyprint.hector.api.Keyspace
 import me.prettyprint.hector.api.ddl.ColumnFamilyDefinition
 import me.prettyprint.hector.api.ddl.KeyspaceDefinition
 import me.prettyprint.hector.api.ddl.ComparatorType
+import me.prettyprint.hector.api.ddl.ColumnType
 import me.prettyprint.hector.api.factory.HFactory
 import me.prettyprint.cassandra.service.ThriftKsDef
 import me.prettyprint.cassandra.service.template.ColumnFamilyTemplate
@@ -62,6 +63,8 @@ class CassandraBackend(clusterName: String, keyspaceName: String, ip: String="lo
 
     // maps vertices to types of edges they participate in
     val cfVertexEdgeType = HFactory.createColumnFamilyDefinition(keyspaceName, "vertexedgetype", ComparatorType.UTF8TYPE)
+    cfVertexEdgeType.setDefaultValidationClass(ComparatorType.COUNTERTYPE.getClassName())
+    cfVertexEdgeType.setColumnType(ColumnType.STANDARD)
     
     // global to user space map (which userspace vertices correspond to a given global vertex)
     val cfGlobalUser = HFactory.createColumnFamilyDefinition(keyspaceName, "globaluser", ComparatorType.UTF8TYPE)

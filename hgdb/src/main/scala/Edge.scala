@@ -34,7 +34,7 @@ case class Edge(edgeType: String, extParticipantIds: List[String]) {
     Edge(edgeType, pids)
   }
 
-  override def toString = "edgeType: " + edgeType + ";  participants: " + participantIds.reduceLeft(_ + " " + _)
+  override def toString = "edgeType: " + edgeType + ";  participants: " + participantIds.reduceLeft(_ + ", " + _)
 }
 
 object Edge {

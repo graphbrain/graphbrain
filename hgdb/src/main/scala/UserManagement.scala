@@ -22,10 +22,19 @@ trait UserManagement extends VertexStore {
 
   private def usernameByEmail(email: String): String = {
     val res = backend.tpEmail.queryColumns(email)
-    res.getString("username")
+    if (!res.hasResults())
+      null
+    else
+      res.getString("username")
   }
 
-  private def idFromEmail(email: String): String = idFromUsername(usernameByEmail(email))
+  private def idFromEmail(email: String): String = {
+    val userName = usernameByEmail(email)
+    if (userName == null)
+      null
+    else
+      idFromUsername(userName)
+  }
 
   def usernameExists(username: String) = exists(idFromUsername(username))
 
@@ -45,12 +54,15 @@ trait UserManagement extends VertexStore {
   	if (exists(idFromUsername(login))) {
   	  getUserNode(idFromUsername(login))
   	}
-  	else if (exists(idFromEmail(login))) {
-  	  getUserNode(idFromEmail(login))
-  	}
   	else {
-  	  null
-    }
+      val uid = idFromEmail(login)
+      if (uid == null)
+        null
+      else if (exists(uid))
+  	    getUserNode(idFromEmail(login))
+      else
+        null
+  	}
   }
 
   def getUserNodeByUsername(username: String): UserNode = {

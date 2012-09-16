@@ -192,16 +192,18 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
   }
 
 
-  def addrel(edge: Edge): Unit = {
+  def addrel(edge: Edge): Edge = {
     for (i <- 0 until edge.participantIds.size) {
       val p = edge.participantIds(i)
       addEdgeEntry(p, edge)
       incVertexEdgeType(p, edge.edgeType, i)
     }
+
+    edge
   }
 
 
-  def addrel(edgeType: String, participants: List[String]): Unit = addrel(Edge(edgeType, participants))
+  def addrel(edgeType: String, participants: List[String]): Edge = addrel(Edge(edgeType, participants))
 
 
   def delrel(edge: Edge): Unit = {
@@ -336,13 +338,14 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
   }
 
 
-  private def decVertexEdgeType(nodeId: String, edgeType: String, position: Int) = {
+  private def decVertexEdgeType(nodeId: String, edgeType: String, position: Int): Boolean = {
     val relId = ID.relationshipId(edgeType, position)
 
     // get current count
     val query = HFactory.createCounterColumnQuery(backend.ksp, StringSerializer.get(), StringSerializer.get())
     query.setColumnFamily("vertexedgetype").setKey(nodeId).setName(relId)
     val counter = query.execute().get()
+    if (counter == null) return false
     val count = counter.getValue()
 
     // decrement or delete
@@ -356,6 +359,8 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
       mutator.insertCounter(nodeId, "vertexedgetype", col)
       mutator.execute()
     }
+
+    true
   }
 
 
@@ -442,5 +447,18 @@ object VertexStore {
     //for (n <- nb) println(n)
 
     println(store.relExistsOnVertex("test", Edge("am", List("test", "hey", "pipi"))))
+
+    //
+    val node0 = TextNode("node0", "node0")
+    val node1 = TextNode("node1", "node1")
+    store.remove(node0)
+    store.remove(node1)
+    store.put(node0)
+    store.put(node1)
+
+    store.addrel("test", List[String]("node0/node0", "node1/node1"))
+
+    val node0_ = store.getTextNode("node0/node0")
+    val node1_ = store.getTextNode("node1/node1")
   }
 }
