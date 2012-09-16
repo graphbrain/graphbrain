@@ -1,11 +1,11 @@
 import org.scalatest.FunSuite
 import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.KeyNotFound
+import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.SourceNode
 import com.graphbrain.hgdb.UserNode
-import com.graphbrain.hgdb.UserEmailNode
 import com.graphbrain.hgdb.ID
 
 trait BaseVertexStoreTests { this: FunSuite =>
@@ -21,25 +21,9 @@ trait BaseVertexStoreTests { this: FunSuite =>
     assert(vertex.id == vertexOut.id)
   }
 
-  test("timestamp [" + label + "]") {
-    val vertex = TextNode("vertex0", "vertex0", ts=1111)
-    store.remove(vertex)
-    store.put(vertex)
-    
-    val vertexOut = store.get("vertex0/vertex0")
-    assert(vertex.id == vertexOut.id)
-    assert(vertexOut.ts == 1111)
-  }
-
   test("get Vertex that does not exist [" + label + "]") {
     intercept[KeyNotFound] {
       store.get("sdfh89g89gdf")
-    }
-  }
-
-  test("get Edge that does not exist [" + label + "]") {
-    intercept[KeyNotFound] {
-      store.getEdge("sdfh89g89gdf")
     }
   }
 
@@ -67,51 +51,32 @@ trait BaseVertexStoreTests { this: FunSuite =>
     }
   }
 
-  test("get UserEmailNode that does not exist [" + label + "]") {
-    intercept[KeyNotFound] {
-      store.getUserEmailNode("sdfh89g89gdf")
-    }
-  }
-
   test("getTextNode [" + label + "]") {
     val inVertex = TextNode("textnode", "testing TextNode")
     store.remove(inVertex)
     store.put(inVertex)
     
     val outVertex = store.getTextNode("textnode/testing_textnode")
-    assert(outVertex.vtype == "txt")
     assert(inVertex.id == outVertex.id)
     assert(inVertex.text == outVertex.text)
   }
 
   test("getURLNode [" + label + "]") {
-    val inVertex = URLNode("urlnode/0", "http://graphbrain.com")
+    val inVertex = URLNode("url/xxx", "http://graphbrain.com")
     store.remove(inVertex)
     store.put(inVertex)
     
-    val outVertex = store.getURLNode("urlnode/0")
-    assert(outVertex.vtype == "url")
+    val outVertex = store.getURLNode("url/xxx")
     assert(inVertex.id == outVertex.id)
     assert(inVertex.url == outVertex.url)
   }
 
-  test("getSourceNode [" + label + "]") {
-    val inVertex = SourceNode("sourcenode/0")
-    store.remove(inVertex)
-    store.put(inVertex)
-    
-    val outVertex = store.getSourceNode("sourcenode/0")
-    assert(outVertex.vtype == "src")
-    assert(inVertex.id == outVertex.id)
-  }
-
   test("getUserNode [" + label + "]") {
-    val inVertex = UserNode("usernode/0")
+    val inVertex = UserNode("user/username")
     store.remove(inVertex)
     store.put(inVertex)
     
-    val outVertex = store.getUserNode("usernode/0")
-    assert(outVertex.vtype == "usr")
+    val outVertex = store.getUserNode("user/username")
     assert(inVertex.id == outVertex.id)
   }
 
@@ -123,17 +88,10 @@ trait BaseVertexStoreTests { this: FunSuite =>
     store.put(node0)
     store.put(node1)
 
-    store.addrel("test", Array[String]("node0/node0", "node1/node1"))
+    store.addrel("test", List[String]("node0/node0", "node1/node1"))
 
-    val eid = "test " + node0.id + " " + node1.id
-    val edge = store.getEdge(eid)
     val node0_ = store.getTextNode("node0/node0")
     val node1_ = store.getTextNode("node1/node1")
-
-    assert(node0.edgesets == Set[String]())
-    assert(node1.edgesets == Set[String]())
-    assert(node0_.edgesets == Set[String](ID.edgeSetId(node0_.id, edge.id)))
-    assert(node1_.edgesets == Set[String](ID.edgeSetId(node1_.id, edge.id)))
   }
 
   test("add relationship twice [" + label + "]") {
@@ -144,8 +102,8 @@ trait BaseVertexStoreTests { this: FunSuite =>
     store.put(node0)
     store.put(node1)
 
-    assert(store.addrel("test", Array[String]("node0/node0", "node1/node1")))
-    assert(!store.addrel("test", Array[String]("node0/node0", "node1/node1")))
+    store.addrel("test", List[String]("node0/node0", "node1/node1"))
+    store.addrel("test", List[String]("node0/node0", "node1/node1"))
   }
 
   test("delete two node relationship [" + label + "]") {
@@ -155,8 +113,8 @@ trait BaseVertexStoreTests { this: FunSuite =>
     store.remove(node1)
     store.put(node0)
     store.put(node1)
-    store.addrel("test", Array[String]("node0/node0", "node1/node1"))
-    store.delrel("test", Array[String]("node0/node0", "node1/node1"))
+    store.addrel("test", List[String]("node0/node0", "node1/node1"))
+    store.delrel("test", List[String]("node0/node0", "node1/node1"))
   }
 
   test("two neighbors [" + label + "]") {
@@ -166,10 +124,10 @@ trait BaseVertexStoreTests { this: FunSuite =>
     store.remove(node1)
     store.put(node0)
     store.put(node1)
-    store.addrel("test", Array[String]("node0/node0", "node1/node1"))
+    store.addrel("test", List[String]("node0/node0", "node1/node1"))
 
-    assert(store.neighbors("node0/node0").toSet == Set[String]("node0/node0", "node1/node1"))
-    assert(store.neighbors("node1/node1").toSet == Set[String]("node0/node0", "node1/node1"))
+    assert(store.neighbors("node0/node0") == Set[String]("node0/node0", "node1/node1"))
+    assert(store.neighbors("node1/node1") == Set[String]("node0/node0", "node1/node1"))
   }
 
   test("a few neighbors [" + label + "]") {
@@ -182,12 +140,12 @@ trait BaseVertexStoreTests { this: FunSuite =>
     val node6 = TextNode("node6", "?"); store.remove(node6); store.put(node6)
     val node7 = TextNode("node7", "?"); store.remove(node7); store.put(node7)
     
-    store.addrel("test", Array[String]("node0/?", "node1/?"))
-    store.addrel("test", Array[String]("node0/?", "node2/?"))
-    store.addrel("test", Array[String]("node0/?", "node3/?"))
-    store.addrel("test", Array[String]("node0/?", "node4/?", "node5/?"))
-    store.addrel("test", Array[String]("node5/?", "node6/?"))
-    store.addrel("test", Array[String]("node6/?", "node7/?"))
+    store.addrel("test", List[String]("node0/?", "node1/?"))
+    store.addrel("test", List[String]("node0/?", "node2/?"))
+    store.addrel("test", List[String]("node0/?", "node3/?"))
+    store.addrel("test", List[String]("node0/?", "node4/?", "node5/?"))
+    store.addrel("test", List[String]("node5/?", "node6/?"))
+    store.addrel("test", List[String]("node6/?", "node7/?"))
 
     assert(store.neighbors("node0/?").toSet == Set[String]("node0/?",
         "node1/?", "node2/?", "node3/?", "node4/?", "node5/?"))
@@ -197,10 +155,16 @@ trait BaseVertexStoreTests { this: FunSuite =>
     val node0 = TextNode("node0", "?"); store.remove(node0); store.put(node0)
     val node1 = TextNode("node1", "?"); store.remove(node1); store.put(node1)
 
-    store.addrel("test", Array[String]("node0/?", "node1/?"))
+    store.addrel("test", List[String]("node0/?", "node1/?"))
 
     val edges = store.neighborEdges("node0/?")
-    assert(edges == Set[String]("test node0/? node1/?"))
+    println("a: " + edges)
+    println("b: " + Set[Edge](Edge("test", List("node0/? node1/?"))))
+    println("1: " + (edges.head == Edge("test", List("node0/? node1/?"))))
+    println("2: " + edges.head)
+    println(edges == Set[Edge](Edge("test", List("node0/? node1/?"))))
+    println(Set[Edge](Edge("test", List("node0/? node1/?"))) == Set[Edge](Edge("test", List("node0/? node1/?"))))
+    assert(edges == Set[Edge](Edge("test", List("node0/?", "node1/?"))))
   }
 
   test("neighborEdges for a few neighbors [" + label + "]") {
@@ -213,20 +177,14 @@ trait BaseVertexStoreTests { this: FunSuite =>
     val node6 = TextNode("node6", "?"); store.remove(node6); store.put(node6)
     val node7 = TextNode("node7", "?"); store.remove(node7); store.put(node7)
     
-    store.addrel("test", Array[String]("node0/?", "node1/?")); val e01 = "test node0/? node1/?"
-    store.addrel("test", Array[String]("node0/?", "node2/?")); val e02 = "test node0/? node2/?"
-    store.addrel("test", Array[String]("node0/?", "node3/?")); val e03 = "test node0/? node3/?"
-    store.addrel("test", Array[String]("node0/?", "node4/?", "node5/?")); val e045 = "test node0/? node4/? node5/?"
-    store.addrel("test", Array[String]("node5/?", "node6/?")); val e56 = "test node5/? node6/?"
-    store.addrel("test", Array[String]("node6/?", "node7/?")); val e67 = "test node6/? node7/?"
+    val e01 = store.addrel("test", List[String]("node0/?", "node1/?"))
+    val e02 = store.addrel("test", List[String]("node0/?", "node2/?"))
+    val e03 = store.addrel("test", List[String]("node0/?", "node3/?"))
+    val e045 = store.addrel("test", List[String]("node0/?", "node4/?", "node5/?"))
+    val e56 = store.addrel("test", List[String]("node5/?", "node6/?"))
+    val e67 = store.addrel("test", List[String]("node6/?", "node7/?"))
 
-    assert(store.neighborEdges("node0/?") == Set[String](e01, e02, e03, e045))
-  }
-
-  test("addrel with inexistant vertex [" + label + "]") {
-    intercept[KeyNotFound] {
-      store.addrel("test", Array("dummy1", "dummy2"))
-    }
+    assert(store.neighborEdges("node0/?") == Set[Edge](e01, e02, e03, e045))
   }
 
   }
