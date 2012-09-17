@@ -23,14 +23,12 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
       case Global => {
         val res = backend.tpGlobal.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
-        val degree = res.getLong("degree")
         val text = res.getString("text")
-        TextNode(ID.namespace(id), text, degree)        
+        TextNode(ID.namespace(id), text)
       }
       case User => {
         val res = backend.tpUser.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
-        val degree = res.getLong("degree")
         val username = res.getString("username")
         val name = res.getString("name")
         val email = res.getString("email")
@@ -39,50 +37,44 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
         val session = res.getString("session")
         val sessionTs = res.getLong("sessionTs")
         val lastSeen = res.getLong("lastSeen")
-        UserNode(id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, degree)
+        UserNode(id, username, name, email, pwdhash, role, session, sessionTs, lastSeen)
       }
       case UserSpace => {
         val res = backend.tpUserSpace.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
-        val degree = res.getLong("degree")
         val text = res.getString("text")
-        TextNode(ID.namespace(id), text, degree)        
+        TextNode(ID.namespace(id), text)
       }
       case EType => {
         val res = backend.tpEdgeType.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
-        val degree = res.getLong("degree")
         val label = res.getString("label")
         val instances = res.getLong("instances")
-        EdgeType(id, label, instances, degree)
+        EdgeType(id, label, instances)
       }
       case URL => {
         val res = backend.tpGlobal.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
-        val degree = res.getLong("degree")
         val url = res.getString("url")
         val title = res.getString("title")
-        URLNode(id, url, title, degree)
+        URLNode(id, url, title)
       }
       case UserURL => {
         val res = backend.tpUserSpace.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
-        val degree = res.getLong("degree")
         val url = res.getString("url")
         val title = res.getString("title")
-        URLNode(id, url, title, degree)
+        URLNode(id, url, title)
       }
       case Rule => {
         val res = backend.tpGlobal.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
-        val degree = res.getLong("degree")
         val rule = res.getString("rule")
-        RuleNode(id, rule, degree)
+        RuleNode(id, rule)
       }
       case Source => {
         val res = backend.tpGlobal.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
-        val degree = res.getLong("degree")
         SourceNode(id)
       }
     }
@@ -99,14 +91,14 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
       case t: TextNode => {
         val template = if (ID.isInUserSpace(id)) backend.tpUserSpace else backend.tpGlobal
         val updater = template.createUpdater(id)
-        updater.setLong("degree", t.degree)
+        //updater.setLong("degree", t.degree)
         updater.setString("text", t.text)
         template.update(updater)
       }
       case et: EdgeType => {
         val template = backend.tpEdgeType
         val updater = template.createUpdater(id)
-        updater.setLong("degree", et.degree)
+        //updater.setLong("degree", et.degree)
         updater.setString("label", et.label)
         updater.setLong("instances", et.instances)
         template.update(updater)
@@ -114,14 +106,14 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
       case r: RuleNode => {
         val template = backend.tpGlobal
         val updater = template.createUpdater(id)
-        updater.setLong("degree", r.degree)
+        //updater.setLong("degree", r.degree)
         updater.setString("rule", r.rule)
         template.update(updater)
       }
       case u: URLNode => {
         val template = if (ID.isInUserSpace(id)) backend.tpUserSpace else backend.tpGlobal
         val updater = template.createUpdater(id)
-        updater.setLong("degree", u.degree)
+        //updater.setLong("degree", u.degree)
         updater.setString("url", u.url)
         updater.setString("title", u.title)
         template.update(updater)
@@ -129,13 +121,13 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
       case s: SourceNode => {
         val template = backend.tpGlobal
         val updater = template.createUpdater(id)
-        updater.setLong("degree", s.degree)
+        //updater.setLong("degree", s.degree)
         template.update(updater)
       }
       case u: UserNode => {
         val template = backend.tpUser
         val updater = template.createUpdater(id)
-        updater.setLong("degree", u.degree)
+        //updater.setLong("degree", u.degree)
         updater.setString("username", u.username)
         updater.setString("name", u.name)
         updater.setString("email", u.email)
@@ -198,6 +190,7 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
       val p = edge.participantIds(i)
       addEdgeEntry(p, edge)
       incVertexEdgeType(p, edge.edgeType, i)
+      incDegree(p)
     }
 
     edge
@@ -212,6 +205,7 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
       val p = edge.participantIds(i)
       delEdgeEntry(p, edge)
       decVertexEdgeType(p, edge.edgeType, i)
+      decDegree(p)
     }
   }
 
@@ -364,6 +358,21 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
     true
   }
 
+  private def incDegree(vertexId: String) = {
+    val col = HFactory.createCounterColumn("degree", 1L, StringSerializer.get())
+    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
+    mutator.insertCounter(vertexId, "degrees", col)
+    mutator.execute()
+  }
+
+
+  private def decDegree(vertexId: String) = {
+    val col = HFactory.createCounterColumn("degree", -1L, StringSerializer.get())
+    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
+    mutator.insertCounter(vertexId, "degrees", col)
+    mutator.execute()
+  }
+
 
   def relExistsOnVertex(id: String, edge: Edge): Boolean = {
     val ckey = edgeEntryKey(id, edge)
@@ -371,7 +380,7 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
     res.hasResults()
   }
 
-
+  
   def relExists(edge: Edge): Boolean = {
     val id = edge.participantIds(0)
     relExistsOnVertex(id, edge)
