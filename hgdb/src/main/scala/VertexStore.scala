@@ -160,7 +160,10 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
   def remove(vertex: Vertex): Vertex = {
     val id = vertex.id
     
-    // TODO: remove other associated stuff
+    // remove other associated stuff
+    // TODO: globaluser
+    // TODO: owners
+    delDegree(id)
 
     // remove associated edges
     val nEdges = neighborEdges(id)
@@ -370,6 +373,13 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
     val col = HFactory.createCounterColumn("degree", -1L, StringSerializer.get())
     val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
     mutator.insertCounter(vertexId, "degrees", col)
+    mutator.execute()
+  }
+
+
+  private def delDegree(vertexId: String) = {
+    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
+    mutator.addDeletion(vertexId, "degrees", "degree", StringSerializer.get())
     mutator.execute()
   }
 
