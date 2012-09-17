@@ -26,25 +26,30 @@ class AIChatResponderActor() extends Actor {
       var goto = ""
 
       try {
-        val parse = sparser.parseSentence(sentence, root, Option(user))
+        val parse = sparser.parseSentenceGeneral(sentence, root, Option(user))
 
-        if ((parse._1.length >= 1) && (parse._2.length >= 1) && (parse._3.length >= 1)) {
-          val node1 = parse._1(0)
-          val node2 = parse._3(0)
-          val relation = parse._2(0).id.replace(" ", "_")
+        if (parse.length > 1) {
+          val topParse = parse(0);
+          //Check it's a 2-participant relationship
+          if(topParse._1.length == 2) {
+            val node1 = topParse._1(0)
+            val node2 = topParse._1(1)
+            val relation = topParse._2.id.replace(" ", "_")
 
-          //println("node1: " + node1.id)
-          //println("node2: " + node2.id)
-          //println("relation: " + relation)
+            //println("node1: " + node1.id)
+            //println("node2: " + node2.id)
+            //println("relation: " + relation)
 
-          Server.store.createAndConnectVertices2(relation, Array(node1, node2), user.id)
+            Server.store.createAndConnectVertices2(relation, Array(node1, node2), user.id)
 
-          // force consesnsus re-evaluation of affected edge
-          val edge = Edge(relation, List(node1.id, node2.id))
-          Server.consensusActor ! edge
+            // force consesnsus re-evaluation of affected edge
+            val edge = Edge(relation, List(node1.id, node2.id))
+            Server.consensusActor ! edge
 
-          replySentence = "This fact was recorded: '" + sentence + "'"
-          goto = root.id
+            replySentence = "This fact was recorded: '" + sentence + "'"
+            goto = root.id
+
+          }
         }
       }
       catch {
