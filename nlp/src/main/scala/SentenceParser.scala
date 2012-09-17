@@ -439,16 +439,20 @@ class SentenceParser (storeName:String = "gb") {
     var lemma = ""
     var poslabel = ""
     for (rType <- allRelTypes) {
+
       
       val splitRelType = """\s""".r.split(rType)
 
       for(i <- 0 to splitRelType.length-1) {
-        val relTypeComp = splitRelType(i)
+        val relTypeComp = splitRelType(i).trim
+        println("RELTYPECOMP:" + relTypeComp)
         for (tagged <- posSentence) {
+          println("TAGGED: " + tagged._1)
           if(tagged._1 == relTypeComp) {
             poslabel += tagged._2 + "_";
             lemma += tagged._3 + "_";
           }
+
         }
       }
       poslabel = poslabel.slice(0, poslabel.length - 1) + "~"

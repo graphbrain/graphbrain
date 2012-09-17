@@ -14,28 +14,28 @@ import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.EdgeType
 import com.graphbrain.hgdb.Vertex
 import com.graphbrain.hgdb.ID
-import com.graphbrain.hgdb.EdgeSet
-import com.graphbrain.hgdb.SearchInterface
+
 
 
 
 class SentenceParserTest extends FunSuite {
 
   val sentenceParser = new SentenceParser()
-  val toadNodeGlobal = TextNode(id = ID.text_id("toad"), text = "toad")
-  val toadNodeUser = TextNode(id = ID.usergenerated_id("chihchun_chen", ID.text_id("toad")), text = "toad")
-  val globalNameNode1 = TextNode(id = ID.text_id("ChihChun"))
-  val globalNameNode2 = TextNode(id = ID.text_id("Chih-Chun"))
-  val programmerWikipediaNode = TextNode(id = ID.wikipedia_id("programmer"))
-  val programmerGlobalNode = TextNode(id = ID.text_id("programmer"), text = "programmer")
+
+  val toadNodeGlobal = TextNode(namespace="1", text="toad")
+  val toadNodeUser = TextNode(namespace="usergenerated/chihchun_chen", text="toad")
+  val globalNameNode1 = TextNode(namespace="1", text="ChihChun")
+  val globalNameNode2 = TextNode(namespace = "1", text = "Chih-Chun")
+
+  val programmerGlobalNode = TextNode(namespace = "1", text = "programmer")
   val userNode = UserNode(id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
-  val graphbrainGlobalNode = TextNode(id = ID.text_id("graphbrain"))
-  val graphbrainUserNode = TextNode(id = ID.usergenerated_id("chihchun_chen", ID.text_id("graphbrain")), text = "graphbrain")
+  val graphbrainGlobalNode = TextNode(namespace = "1", text = "GraphBrain")
+  val graphbrainUserNode = TextNode(namespace = "usergenerated/chihchun_chen", text = "graphbrain")
   
   val sentence1 = "ChihChun is a toad"
   val sentence2 = "I am always a programmer at graphbrain"
   val sentence3 = "Chih-Chun is always a programmer at graphbrain"
-  val rootNode2 = TextNode(id = ID.text_id("graphbrain"))
+  val rootNode2 = TextNode(namespace = "1", text = "graphbrain")
   val sentence4 = "Chih-Chun is always a programmer at http://graphbrain.com"
  
   val isA = "rtype/1/is_a"
@@ -67,10 +67,10 @@ class SentenceParserTest extends FunSuite {
   	val relType = parses(0)._2
   	println(nodes(0).id)
   	println(userNode.id)
-	println(nodes(1).id)
-	println(toadNodeUser.id)
-	println(relType.id)
-	println(isA)
+	 println(nodes(1).id)
+	 println(toadNodeUser.id)
+	 println(relType.id)
+	 println(isA)
   	assert(nodes(0).id == userNode.id)
   	assert(nodes(1).id == toadNodeGlobal.id)
     assert(relType.id == isA)
@@ -132,34 +132,9 @@ class SentenceParserTest extends FunSuite {
     assert(nodes(0).id == userNode.id)
     assert(nodes(1).id == programmerGlobalNode.id)
     assert(nodes(2).id == graphbrainGlobalNode.id)
-    assert(relType.id == amAlwaysARelTypeID)
+    assert(relType.id == isAlwaysARelTypeID)
   }
 
-   test("I am always a programmer at graphbrain: 3-role lemmas and POS") {
-  	val parses = sentenceParser.parseSentenceGeneral(sentence2);
-  	val nodes = parses(0)._1;
-  	val relTypeVertex = parses(0)._2;
-  	//val relTypeVertex = EdgeType(id = ID.reltype_id(relTypeText), label = relTypeText)
-  	relTypeVertex match {
-  		case r: EdgeType => 
-  		  println(r.id)
-  		  println(r.label)
-  		  val reltypeLemPOS = sentenceParser.relTypeLemmaAndPOS(r, sentence2)
-
-  	      val lemma = reltypeLemPOS._2._1;
-  	      println(lemma.id)
-  	      println(amAlwaysA_AtLemma)
-
-  	      val pos = reltypeLemPOS._2._2;
-  	      println(pos.id)
-  	      println(amAlwaysA_AtPOS)
-  	      assert(lemma.id == amAlwaysA_AtLemma)
-  	      assert(pos.id == amAlwaysA_AtPOS)
-  	    case _ => 
-  	      assert(false)
-  	}
-  	
-  }
 
 
 
