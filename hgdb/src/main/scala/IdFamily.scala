@@ -40,4 +40,17 @@ object IdFamily extends Enumeration {
     else
       Global
   }
+
+  def columnFamily(id: String) = {
+    family(id) match {
+      case Global => "global"
+      case User => "user"
+      case UserSpace => "userspace"
+      case EType => "edgetype"
+      case URL => "global"
+      case UserURL => "userspace"
+      case Rule => "global"
+      case Source => "global"
+    }
+  }
 }
