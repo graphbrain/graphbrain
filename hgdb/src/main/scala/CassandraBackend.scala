@@ -30,9 +30,6 @@ class CassandraBackend(clusterName: String, keyspaceName: String, ip: String="lo
 
   val ksp: Keyspace = HFactory.createKeyspace(keyspaceName, cluster)
 
-  // TODO: get rid of this soon
-  val template = new ThriftColumnFamilyTemplate[String, String](ksp, "GBColumnFamily", StringSerializer.get(), StringSerializer.get())
-
   val tpGlobal = new ThriftColumnFamilyTemplate[String, String](ksp, "global", StringSerializer.get(), StringSerializer.get())
   val tpUser = new ThriftColumnFamilyTemplate[String, String](ksp, "user", StringSerializer.get(), StringSerializer.get())
   val tpEmail = new ThriftColumnFamilyTemplate[String, String](ksp, "email", StringSerializer.get(), StringSerializer.get())
