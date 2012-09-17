@@ -79,15 +79,4 @@ class CassandraBackend(clusterName: String, keyspaceName: String, ip: String="lo
     // "true" as the second param means that Hector will block until all nodes see the change.
     cluster.addKeyspace(newKeyspace, true)
   }
-  
-  def rawget(id: String): String = {
-    try {
-      val res: ColumnFamilyResult[String, String] = template.queryColumns(id)
-      val value: String = res.getString("value")
-      value
-    }
-    catch {
-      case _ => throw KeyNotFound(id)
-    }
-  }
 }

@@ -158,12 +158,6 @@ trait BaseVertexStoreTests { this: FunSuite =>
     store.addrel("test", List[String]("node0/?", "node1/?"))
 
     val edges = store.neighborEdges("node0/?")
-    println("a: " + edges)
-    println("b: " + Set[Edge](Edge("test", List("node0/? node1/?"))))
-    println("1: " + (edges.head == Edge("test", List("node0/? node1/?"))))
-    println("2: " + edges.head)
-    println(edges == Set[Edge](Edge("test", List("node0/? node1/?"))))
-    println(Set[Edge](Edge("test", List("node0/? node1/?"))) == Set[Edge](Edge("test", List("node0/? node1/?"))))
     assert(edges == Set[Edge](Edge("test", List("node0/?", "node1/?"))))
   }
 
