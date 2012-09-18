@@ -29,6 +29,12 @@ trait UserOps extends VertexStore {
     mutator.execute()
   }
 
+  private def unlinkToGlobal(globalNodeId: String, userNodeId: String) = {
+    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
+    mutator.addDeletion(globalNodeId, "globaluser", userNodeId, StringSerializer.get())
+    mutator.execute()
+  }
+
   override def put(vertex: Vertex): Vertex = {
     super.put(vertex)
 
@@ -48,14 +54,21 @@ trait UserOps extends VertexStore {
   override def remove(vertex: Vertex): Vertex = {
     super.remove(vertex)
 
-    vertex match {
-      case t: TextNode =>
-        if (ID.isInUserSpace(t.id))
-          unsetOwner(ID.ownerId(t.id), t.id)
+    val extraStuff = vertex match {
+      case t: TextNode => true
+      case u: URLNode => true
+      case _ => false
+    }
 
-      case u: URLNode =>
-        if (ID.isInUserSpace(u.id))
-          unsetOwner(ID.ownerId(u.id), u.id)
+    if (extraStuff) {
+      val id = vertex.id
+      if (ID.isInUserSpace(id)) {
+        unsetOwner(ID.ownerId(id), id)
+        unlinkToGlobal(ID.userToGlobal(id), id)
+      }
+      else {
+        backend.tpGlobalUser.deleteRow(id)
+      }
     }
 
     vertex
