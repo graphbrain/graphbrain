@@ -153,10 +153,7 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
   def remove(vertex: Vertex): Vertex = {
     val id = vertex.id
     
-    // remove other associated stuff
-    // TODO: globaluser
-    // TODO: owners
-    // TODO: instances
+    // remove associated degree
     delDegree(id)
 
     // remove associated edges
@@ -168,7 +165,10 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
         val template = if (ID.isInUserSpace(id)) backend.tpUserSpace else backend.tpGlobal
         template.deleteRow(id)
       }
-      case et: EdgeType => backend.tpEdgeType.deleteRow(id)
+      case et: EdgeType => {
+        delInstances(id)
+        backend.tpEdgeType.deleteRow(id)
+      }
       case r: RuleNode => backend.tpGlobal.deleteRow(id)
       case u: URLNode => {
         val template = if (ID.isInUserSpace(id)) backend.tpUserSpace else backend.tpGlobal
