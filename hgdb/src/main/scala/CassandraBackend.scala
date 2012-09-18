@@ -40,6 +40,7 @@ class CassandraBackend(clusterName: String, keyspaceName: String, ip: String="lo
   val tpGlobalUser = new ThriftColumnFamilyTemplate[String, String](ksp, "globaluser", StringSerializer.get(), StringSerializer.get())
   val tpOwners = new ThriftColumnFamilyTemplate[String, String](ksp, "owners", StringSerializer.get(), StringSerializer.get())
   val tpDegrees = new ThriftColumnFamilyTemplate[String, String](ksp, "degrees", StringSerializer.get(), StringSerializer.get())
+  val tpInstances = new ThriftColumnFamilyTemplate[String, String](ksp, "instances", StringSerializer.get(), StringSerializer.get())
 
 
   private def createSchemas() = {
@@ -75,9 +76,14 @@ class CassandraBackend(clusterName: String, keyspaceName: String, ip: String="lo
     cfDegrees.setDefaultValidationClass(ComparatorType.COUNTERTYPE.getClassName())
     cfDegrees.setColumnType(ColumnType.STANDARD)
 
+    // maintains edgetypes' number of instances
+    val cfInstances = HFactory.createColumnFamilyDefinition(keyspaceName, "instances", ComparatorType.UTF8TYPE)
+    cfInstances.setDefaultValidationClass(ComparatorType.COUNTERTYPE.getClassName())
+    cfInstances.setColumnType(ColumnType.STANDARD)
+
     val newKeyspace = HFactory.createKeyspaceDefinition(keyspaceName,
       ThriftKsDef.DEF_STRATEGY_CLASS, replicationFactor,
-      Arrays.asList(cfGlobal, cfUser, cfEmail, cfUserSpace, cfEdgeType, cfEdges, cfVertexEdgeType, cfGlobalUser, cfOwners, cfDegrees))
+      Arrays.asList(cfGlobal, cfUser, cfEmail, cfUserSpace, cfEdgeType, cfEdges, cfVertexEdgeType, cfGlobalUser, cfOwners, cfDegrees, cfInstances))
     
     // "true" as the second param means that Hector will block until all nodes see the change.
     cluster.addKeyspace(newKeyspace, true)
