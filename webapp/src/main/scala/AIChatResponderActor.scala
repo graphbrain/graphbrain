@@ -28,7 +28,9 @@ class AIChatResponderActor() extends Actor {
       try {
         val parse = sparser.parseSentenceGeneral(sentence, root, Option(user))
 
-        if (parse.length > 1) {
+        //println(parse)
+
+        if (parse.length > 0) {
           val topParse = parse(0);
           //Check it's a 2-participant relationship
           if(topParse._1.length == 2) {
