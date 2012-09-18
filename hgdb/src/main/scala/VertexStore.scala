@@ -49,8 +49,7 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
         val res = backend.tpEdgeType.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
         val label = res.getString("label")
-        val instances = res.getLong("instances")
-        EdgeType(id, label, instances)
+        EdgeType(id, label)
       }
       case URL => {
         val res = backend.tpGlobal.queryColumns(id)
@@ -91,29 +90,24 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
       case t: TextNode => {
         val template = if (ID.isInUserSpace(id)) backend.tpUserSpace else backend.tpGlobal
         val updater = template.createUpdater(id)
-        //updater.setLong("degree", t.degree)
         updater.setString("text", t.text)
         template.update(updater)
       }
       case et: EdgeType => {
         val template = backend.tpEdgeType
         val updater = template.createUpdater(id)
-        //updater.setLong("degree", et.degree)
         updater.setString("label", et.label)
-        updater.setLong("instances", et.instances)
         template.update(updater)
       }
       case r: RuleNode => {
         val template = backend.tpGlobal
         val updater = template.createUpdater(id)
-        //updater.setLong("degree", r.degree)
         updater.setString("rule", r.rule)
         template.update(updater)
       }
       case u: URLNode => {
         val template = if (ID.isInUserSpace(id)) backend.tpUserSpace else backend.tpGlobal
         val updater = template.createUpdater(id)
-        //updater.setLong("degree", u.degree)
         updater.setString("url", u.url)
         updater.setString("title", u.title)
         template.update(updater)
@@ -121,13 +115,11 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
       case s: SourceNode => {
         val template = backend.tpGlobal
         val updater = template.createUpdater(id)
-        //updater.setLong("degree", s.degree)
         template.update(updater)
       }
       case u: UserNode => {
         val template = backend.tpUser
         val updater = template.createUpdater(id)
-        //updater.setLong("degree", u.degree)
         updater.setString("username", u.username)
         updater.setString("name", u.name)
         updater.setString("email", u.email)
