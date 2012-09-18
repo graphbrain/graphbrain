@@ -46,6 +46,8 @@ trait UserOps extends VertexStore {
       case u: URLNode =>
         if (ID.isInUserSpace(u.id))
           setOwner(ID.ownerId(u.id), u.id)
+
+      case _ =>
     }
 
     vertex
