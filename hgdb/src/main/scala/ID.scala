@@ -62,6 +62,8 @@ object ID {
 
   def userIdFromUsername(username: String) = "user/" + username
 
+  def urlId(url:String):String = "url/" + url
+
   def usergenerated_id(userName:String, thing:String) =
 	  userName + "/" + thing
 
@@ -81,11 +83,7 @@ object ID {
     "rtype/" + which.toString + "/" + sanitize(relT)
 
   def rule_id(rule_name: String): String =
-    "rule/" + sanitize(rule_name) 
-
-
-  def url_id(url:String):String =
-    "web/"+sanitize(url)
+    "rule/" + sanitize(rule_name)
 
   def wikipedia_id(wptitle:String):String={
     val title = wptitle.toLowerCase.replace(" ", "_")

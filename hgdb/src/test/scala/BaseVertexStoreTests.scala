@@ -48,7 +48,7 @@ trait BaseVertexStoreTests { this: FunSuite =>
 
   test("get UserNode that does not exist [" + label + "]") {
     intercept[KeyNotFound] {
-      store.getUserNode("sdfh89g89gdf")
+      store.getUserNode("url/sdfh89g89gdf")
     }
   }
 
@@ -64,11 +64,11 @@ trait BaseVertexStoreTests { this: FunSuite =>
   }
 
   test("getURLNode [" + label + "]") {
-    val inVertex = URLNode("url/xxx", "http://graphbrain.com")
+    val inVertex = URLNode("http://graphbrain.com")
     store.remove(inVertex)
     store.put(inVertex)
     
-    val outVertex = store.getURLNode("url/xxx")
+    val outVertex = store.getURLNode("url/http://graphbrain.com")
     assert(inVertex.id == outVertex.id)
     assert(inVertex.url == outVertex.url)
     assert(store.exists("url/xxx"))

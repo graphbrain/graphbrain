@@ -55,15 +55,16 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
         val res = backend.tpGlobal.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
         val url = res.getString("url")
+        val userId = ID.ownerId(id)
         val title = res.getString("title")
-        URLNode(id, url, title)
+        URLNode(url, userId, title)
       }
       case UserURL => {
         val res = backend.tpUserSpace.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
         val url = res.getString("url")
         val title = res.getString("title")
-        URLNode(id, url, title)
+        URLNode(url, title)
       }
       case Rule => {
         val res = backend.tpGlobal.queryColumns(id)
@@ -155,6 +156,7 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
     // remove other associated stuff
     // TODO: globaluser
     // TODO: owners
+    // TODO: instances
     delDegree(id)
 
     // remove associated edges

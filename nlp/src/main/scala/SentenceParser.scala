@@ -367,14 +367,7 @@ class SentenceParser (storeName:String = "gb") {
 
 
     if (urlRegex.findAllIn(text).hasNext) {
-      val urlID = ID.url_id(url = text)
-      if(userName == "") {
-        results = URLNode(id = urlID, url = text) :: results  
-      }
-      else {
-        results = URLNode(id = ID.usergenerated_id(userName, urlID), url = text) :: results  
-      }
-      
+      results = URLNode(url = text, userId = userName) :: results
     }
     val textPureID = ID.text_id(text, 1)
     val wikiID = ID.wikipedia_id(text)
