@@ -16,11 +16,9 @@ object Vertex {
 } 
 
 
-case class EdgeType(id: String="", label: String="", instances: Long = 0) extends Vertex {
+case class EdgeType(id: String="", label: String="") extends Vertex {
 
   override def clone(newid: String) = EdgeType(newid, label)
-
-  def setInstances(newInst: Long) = copy(instances=newInst)
 }
 
 
