@@ -185,7 +185,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 			
 
   			val sourceNode=store.getSourceNode(ID.source_id(source))
-  			val urlNode=URLNode(id=ID.url_id(url), url=url)
+  			val urlNode=URLNode(url)
 			
 			store.getOrInsert2(sourceNode, HGDBID.userIdFromUsername(username))
 			store.getOrInsert2(urlNode, HGDBID.userIdFromUsername(username))
@@ -204,7 +204,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 					store.addrel("source", List[String](sourceNode.id, imageLocal.id))
 					val attribution = imagename + NounProjectCrawler.attributionText + contributorName;
 					val contributorNode = TextNode(namespace=ID.nounproject_ns(), text=contributorName);
-					val contURLNode = URLNode(id=ID.url_id(contributorURL), url=contributorURL);
+					val contURLNode = URLNode(contributorURL);
 
 					store.getOrInsert2(contributorNode, HGDBID.userIdFromUsername(username))
 					store.getOrInsert2(contURLNode, HGDBID.userIdFromUsername(username))

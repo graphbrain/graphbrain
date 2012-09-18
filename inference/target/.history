@@ -59,3 +59,5 @@ project hgdb
 compile
 project mail
 project email
+compile
+project nlp
