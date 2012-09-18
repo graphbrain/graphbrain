@@ -24,7 +24,7 @@ object Server {
   var http: unfiltered.netty.Http = null
   var prod: Boolean = false
 
-  val store = new VertexStore("gb") with SimpleCaching with UserOps with UserManagement with URLManagement
+  val store = new VertexStore with SimpleCaching with UserOps with UserManagement with URLManagement
 
   val templateDirs = List(new java.io.File("/var/www/templates"))
   val scalateMode = "production"

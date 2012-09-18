@@ -15,7 +15,7 @@ import me.prettyprint.hector.api.beans.Composite
 import IdFamily._
 
 
-class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="localhost", port: Int=9160) {
+class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: String="localhost", port: Int=9160) {
   val backend = new CassandraBackend(clusterName, keyspaceName, ip, port)
 
   def get(id: String): Vertex = {
