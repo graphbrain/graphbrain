@@ -189,6 +189,7 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
 
 
   def addrel(edge: Edge): Edge = {
+    incInstances(edge.edgeType)
     for (i <- 0 until edge.participantIds.size) {
       val p = edge.participantIds(i)
       addEdgeEntry(p, edge)
@@ -204,6 +205,7 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
 
 
   def delrel(edge: Edge): Unit = {
+    decInstances(edge.edgeType)
     for (i <- 0 until edge.participantIds.size) {
       val p = edge.participantIds(i)
       delEdgeEntry(p, edge)
@@ -380,6 +382,28 @@ class VertexStore(keyspaceName: String, clusterName: String="hgdb", ip: String="
   private def delDegree(vertexId: String) = {
     val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
     mutator.addDeletion(vertexId, "degrees", "degree", StringSerializer.get())
+    mutator.execute()
+  }
+
+  private def incInstances(edgeType: String) = {
+    val col = HFactory.createCounterColumn("instances", 1L, StringSerializer.get())
+    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
+    mutator.insertCounter(edgeType, "instances", col)
+    mutator.execute()
+  }
+
+
+  private def decInstances(edgeType: String) = {
+    val col = HFactory.createCounterColumn("instances", -1L, StringSerializer.get())
+    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
+    mutator.insertCounter(edgeType, "instances", col)
+    mutator.execute()
+  }
+
+
+  private def delInstances(edgeType: String) = {
+    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
+    mutator.addDeletion(edgeType, "instances", "instances", StringSerializer.get())
     mutator.execute()
   }
 
