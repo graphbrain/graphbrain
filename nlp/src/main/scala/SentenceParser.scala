@@ -34,7 +34,9 @@ class SentenceParser (storeName:String = "gb") {
 
   //"is" needs to be combined with POS to determine whether it is a property, state, or object that is being referred to.
   val questionWords = List("do", "can", "has", "did", "where", "when", "who", "why", "will", "how")
-  
+
+  val searchWords = List("search", "find", "search for", "look for", "look up")
+
   //val posTagger = new POSTagger()
   val lemmatiser = new Lemmatiser()
   
@@ -42,172 +44,36 @@ class SentenceParser (storeName:String = "gb") {
 
   val si = new SearchInterface(store)
 
-  def isQuestion(text:String): Boolean = {
+  //Returns a float value indicating level of certainty (relative to other values)
+  def isQuestion(text:String): Double = {
     //Quite stringent - checks to see whether entire text is a question i.e. starts with a question mark, ends with a question mark.
     for(qWord <- questionWords) {
       if(text.toLowerCase.startsWith(qWord)) {
 
         if(text.endsWith("?")) {
-          return true
+          return 1
         }
       }
     }
-    return false;
+    return 0;
   }
 
-  //Only handles two-node graphs at the moment
-  def parseSentence(inSent: String, root: Vertex  = TextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[Vertex], List[Vertex], List[Vertex]) = {
-    
-    var inSentence = inSent;
+  def isSearch(text: String): (Double, String) = {
+    for(searchWord <- searchWords) {
+      if(text.toLowerCase.startsWith(searchWord)) {
 
-    if(isQuestion(inSentence)) {
-      throw QuestionException("Sorry, I don't understand questions yet.")
-    }
-
-    //Only remove full stop or comma at the end of sentence (allow other punctuation since likely to be part of proper name e.g. film titles)
-    if(inSentence.endsWith(".")) {
-      inSentence = inSentence.slice(0, inSentence.length-1)
-    }
-
-    var sources: List[Vertex] = List()
-    var relations: List[Vertex] = List()
-    var targets: List[Vertex] = List()
-
-    
-    //Try segmenting with quote marks, then with known splitters
-    var parses = quoteChunkStrict(inSentence, root) ++ logChunk(inSentence, root);
-
-    //Only parse with POS if nothing returned:
-    if(parses == Nil) {
-      parses = posChunk(inSentence, root)
-    }
-
-    for (parse <- parses) {
-
-      val nodeTexts = parse._1;
-      val relation = parse._2.trim;
-      
-      if(nodeTexts.length==2) {
-
-        var relationV = EdgeType(id = ID.reltype_id(relation), label = relation)
-
-        
-
-        if(nodeTexts(0) == "you") {
-          sources = gbNode :: sources;
-          val annotatedRelation = lemmatiser.annotate(relation)
-          var newRelation = ""
-          for (a <- annotatedRelation) {
-            if(verbRegex.findAllIn(a._2).hasNext) {
-              newRelation += lemmatiser.conjugate(a._3) + " "
-            }
-            else {
-              newRelation += a._1 + " "
-            }
-          }
-
-          relationV = EdgeType(id = ID.reltype_id(newRelation.trim), label = newRelation.trim)
-        }
-
-        if(nodeTexts(1) == "you") {
-          targets = gbNode :: targets;
-        }
-        //println(relationV.id)
-
-        root match {
-          case a: TextNode =>
-            //Check whether already in database - global and user; create new node if necessary
-            user match {
-              case Some(u:UserNode) => 
-                val userThingID = ID.usergenerated_id(u.username, a.text)
-                //val userRelationID = ID.usergenerated_id(u.username, relationV.id)
-                
-                if(nodeExists(userThingID)) {
-                  if(nodeTexts(1)==a.text) {
-                    targets = a :: targets
-                    //targets = getOrCreate(userThingID) :: targets   
-                  }
-                  if(nodeTexts(0)==a.text) {
-                    sources = a :: sources
-                    //sources = getOrCreate(userThingID) :: sources
-                  }
-                }
-                //val relationUV = EdgeType(id = ID.usergenerated_id(u.username, relationV.id), label = relation)
-                //relations = relationUV :: relations
-
-              case _ => 
-            }
-            val wikiThingID = ID.wikipedia_id(a.text)
-            if(nodeExists(wikiThingID))  {
-              val wikiNode = getOrCreate(wikiThingID)
-              wikiNode match {
-                case w: TextNode =>
-                  if(nodeTexts(1) == w.text) {
-                    targets = w :: targets
-                  }
-                  if(nodeTexts(0) == w.text) {
-                    sources = w :: sources
-                  }
-                }
-            }
-            case _ =>
-          
-          }
-        user match {
-          case Some(u:UserNode) =>
-
-            if(u.username == nodeTexts(1) || u.name == nodeTexts(1)) {
-              targets = u :: targets
-            }
-            if(u.username == nodeTexts(0) || u.name == nodeTexts(0)) {
-              sources = u :: sources
-            }
-            if(nodeTexts(0) == "I") {
-              sources = u :: sources;
-
-              val annotatedRelation = lemmatiser.annotate(relation)
-              var newRelation = ""
-              for (a <- annotatedRelation) {
-                if(verbRegex.findAllIn(a._2).hasNext) {
-                  newRelation += lemmatiser.conjugate(a._3) + " "
-                }
-                else {
-                  newRelation += a._1 + " "
-                }
-              }
-
-              relationV = EdgeType(id = ID.reltype_id(newRelation.trim), label = newRelation.trim)
-            }
-            if(nodeTexts(1) == "me") {
-              targets = u :: targets;
-            }
-          case _ =>
-        }
-
-
-
-        sources = sources.reverse ++ textToNode(nodeTexts(0), user=user)
-        targets = targets.reverse ++ textToNode(nodeTexts(1), user=user)
-        relations = relationV :: relations;
-
-
-        
-        return (sources, relations.reverse, targets)
-
+        return (1, text.substring(0, searchWord.length-1).trim);
       }
-      else {
-        throw TooManyNodes("Too many nodes: " + nodeTexts.length)
-      }
-
     }
-        
-
-
-
-
-    return (sources, relations, targets)
+    val posTags = lemmatiser.posTag(text);
+    for(tag <- posTags) {
+      if(verbRegex.findAllIn(tag._2).hasNext) {
+        return (0, "");
+      }
+    }
+    return (0.5, text);
+    
   }
-
   def specialNodeCases(inNodeText: String, root: Vertex  = TextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): Vertex = {
     user match {
       case Some(u:UserNode) =>
@@ -235,16 +101,6 @@ class SentenceParser (storeName:String = "gb") {
             }
           case _ => 
         }
-        /*val wikiThingID = ID.wikipedia_id(a.text)
-        if(nodeExists(wikiThingID))  {
-          val wikiNode = getOrCreate(wikiThingID)
-          wikiNode match {
-            case w: TextNode =>
-              if(inNodeText == w.text) {
-                return w;
-              }
-            }
-          }*/         
       case _ =>
     }
     return textToNode(inNodeText, user=user)(0);
@@ -254,10 +110,16 @@ class SentenceParser (storeName:String = "gb") {
 
   def parseSentenceGeneral(inSent: String, root: Vertex  = TextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): List[ResponseType] = {
     var inSentence = inSent;
-    var solutions: List[(List[Vertex], Vertex)] = List();
+    var solutions : List[(List[Vertex], Vertex)] = List();
+    var responses : List[ResponseType] = List();
 
-    if(isQuestion(inSentence)) {
-      return List(HardcodedResponse(List("Sorry, I don't understand questions yet.")))
+    if(isQuestion(inSentence) > 0) {
+      responses = HardcodedResponse(List("Sorry, I don't understand questions yet.")) :: responses
+    }
+
+    val search = isSearch(inSentence)
+    if(search._1 > 0) {
+      responses = SearchResponse(List(search._2)) :: responses
     }
 
     //Only remove full stop or comma at the end of sentence (allow other punctuation since likely to be part of proper name e.g. film titles)
@@ -327,7 +189,9 @@ class SentenceParser (storeName:String = "gb") {
       solutions = (nodes.reverse, relationV) :: solutions
 
     }
-    return List(GraphResponse(solutions.reverse));
+    //This will be the first in the list - so parsing favours graph responses over hardcoded etc.
+    responses = GraphResponse(solutions.reverse) :: responses
+    return responses;
     
   }
 
@@ -957,27 +821,6 @@ object SentenceParser {
       val userNode = UserNode(id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
   	  val sentence = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
       println("From command line with general: " + sentence)
-
-      val parses1 = sentenceParser.parseSentence(sentence, user = Some(userNode))
-      for(node1 <- parses1._1) {
-        node1 match {
-          case n: Vertex => println(n.id)
-          case _ =>
-        }
-      }
-      for(edge <- parses1._2) {
-        edge match {
-          case n: Vertex => println(n.id)
-          case _ =>
-        }
-      }
-      for(node2 <- parses1._3) {
-        node2 match {
-          case n: Vertex => println(n.id)
-          case _ =>
-        }
-      }
-
       val responses = sentenceParser.parseSentenceGeneral(sentence, user = Some(userNode))
       responses(0) match {
         case g: GraphResponse =>
