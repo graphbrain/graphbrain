@@ -252,12 +252,12 @@ class SentenceParser (storeName:String = "gb") {
   }
 
 
-  def parseSentenceGeneral(inSent: String, root: Vertex  = TextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[(List[Vertex], Vertex)]) = {
+  def parseSentenceGeneral(inSent: String, root: Vertex  = TextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): List[ResponseType] = {
     var inSentence = inSent;
     var solutions: List[(List[Vertex], Vertex)] = List();
 
     if(isQuestion(inSentence)) {
-      throw QuestionException("Sorry, I don't understand questions yet.")
+      return List(HardcodedResponse(List("Sorry, I don't understand questions yet.")))
     }
 
     //Only remove full stop or comma at the end of sentence (allow other punctuation since likely to be part of proper name e.g. film titles)
@@ -327,7 +327,7 @@ class SentenceParser (storeName:String = "gb") {
       solutions = (nodes.reverse, relationV) :: solutions
 
     }
-    return solutions.reverse;
+    return List(GraphResponse(solutions.reverse));
     
   }
 
@@ -957,6 +957,7 @@ object SentenceParser {
       val userNode = UserNode(id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
   	  val sentence = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
       println("From command line with general: " + sentence)
+
       val parses1 = sentenceParser.parseSentence(sentence, user = Some(userNode))
       for(node1 <- parses1._1) {
         node1 match {
@@ -977,17 +978,24 @@ object SentenceParser {
         }
       }
 
+      val responses = sentenceParser.parseSentenceGeneral(sentence, user = Some(userNode))
+      responses(0) match {
+        case g: GraphResponse =>
+          val parses = g.hypergraphList
+
       
-      val parses = sentenceParser.parseSentenceGeneral(sentence, user = Some(userNode))
-      
-      for(parse <- parses) {
-        parse match {
-          case (n: List[Vertex], r: Vertex) =>
-          for(node <- n) {
-            println("Node: " + node.id);
+          for(parse <- parses) {
+            parse match {
+              case (n: List[Vertex], r: Vertex) =>
+                for(node <- n) {
+                println("Node: " + node.id);
+              }
+              println("Rel: " + r.id)
+            }
           }
-          println("Rel: " + r.id)
-        }
+        case _ =>
+
       }
+
 	}
 }

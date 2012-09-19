@@ -10,6 +10,11 @@ import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.ID
 import com.graphbrain.nlp.SentenceParser
+import com.graphbrain.nlp.ResponseType
+import com.graphbrain.nlp.GraphResponse
+import com.graphbrain.nlp.HardcodedResponse
+import com.graphbrain.nlp.SearchResponse
+import com.graphbrain.nlp.QuestionFactResponse
 
 object AIChatResponderActor {
   case class Sentence(sentence: String, root: Vertex, user: UserNode, responder: Async.Responder[HttpResponse])
@@ -26,30 +31,38 @@ class AIChatResponderActor() extends Actor {
       var goto = ""
 
       try {
-        val parse = sparser.parseSentenceGeneral(sentence, root, Option(user))
+        val responses = sparser.parseSentenceGeneral(sentence, root, Option(user))
 
         //println(parse)
 
-        if (parse.length > 0) {
-          val topParse = parse(0);
-          //Check it's a 2-participant relationship
-          if(topParse._1.length == 2) {
-            val node1 = topParse._1(0)
-            val node2 = topParse._1(1)
-            val relation = topParse._2.id.replace(" ", "_")
+        if (responses.length > 0) {
 
-            //println("node1: " + node1.id)
-            //println("node2: " + node2.id)
-            //println("relation: " + relation)
+          val topResponse = responses(0);
+          topResponse match {
+            case r: GraphResponse =>
+              val parses = r.hypergraphList
+              val topParse = parses(0);
+              //Check it's a 2-participant relationship
+              if(topParse._1.length == 2) {
+                val node1 = topParse._1(0)
+                val node2 = topParse._1(1)
+                val relation = topParse._2.id.replace(" ", "_")
 
-            Server.store.createAndConnectVertices2(relation, Array(node1, node2), user.id)
+                //println("node1: " + node1.id)
+                //println("node2: " + node2.id)
+                //println("relation: " + relation)
 
-            // force consesnsus re-evaluation of affected edge
-            val edge = Edge(relation, List(node1.id, node2.id))
-            Server.consensusActor ! edge
+                Server.store.createAndConnectVertices2(relation, Array(node1, node2), user.id)
 
-            replySentence = "This fact was recorded: '" + sentence + "'"
-            goto = root.id
+                // force consesnsus re-evaluation of affected edge
+                val edge = Edge(relation, List(node1.id, node2.id))
+                Server.consensusActor ! edge
+
+                replySentence = "This fact was recorded: '" + sentence + "'"
+                goto = root.id
+
+              }
+            case _ =>
 
           }
         }
