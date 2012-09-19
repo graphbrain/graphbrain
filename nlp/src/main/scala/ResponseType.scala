@@ -7,8 +7,16 @@ import com.graphbrain.hgdb.Vertex
 
 abstract class ResponseType 
   
+case class HardcodedResponse(responseStrings: List[String]) extends ResponseType {
+  override def toString: String = responseStrings.toString;
+}
+case class GraphResponse(hypergraphList: List[(List[Vertex], Vertex)]) extends ResponseType {
+  override def toString: String = hypergraphList.toString;
+}
+case class QuestionFactResponse(responseStrings: List[String], hypergraphList: List[(List[Vertex], Vertex)]) extends ResponseType {
+  override def toString = responseStrings.toString + " " + hypergraphList.toString;
+}
+case class SearchResponse(searchStrings: List[String]) extends ResponseType  {
+  override def toString = searchStrings.toString;
+}
 
-case class HardcodedResponse(responseString: List[String]) extends ResponseType
-case class GraphResponse(hypergraphList: List[(List[Vertex], Vertex)]) extends ResponseType
-case class QuestionFactResponse(responseString: List[String], hypergraphList: List[(List[Vertex], Vertex)]) extends ResponseType
-case class SearchResponse(searchString: List[String]) extends ResponseType
