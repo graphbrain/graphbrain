@@ -113,14 +113,18 @@ class SentenceParser (storeName:String = "gb") {
     var solutions : List[(List[Vertex], Vertex)] = List();
     var responses : List[ResponseType] = List();
 
-    if(isQuestion(inSentence) > 0) {
+    val search = isSearch(inSentence)
+    val question = isQuestion(inSentence)
+
+    if(question > search._1) {
       responses = HardcodedResponse(List("Sorry, I don't understand questions yet.")) :: responses
     }
-
-    val search = isSearch(inSentence)
-    if(search._1 > 0) {
+    else {
       responses = SearchResponse(List(search._2)) :: responses
     }
+
+      
+
 
     //Only remove full stop or comma at the end of sentence (allow other punctuation since likely to be part of proper name e.g. film titles)
     if(inSentence.endsWith(".")) {
