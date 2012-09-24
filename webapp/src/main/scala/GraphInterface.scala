@@ -110,7 +110,12 @@ class GraphInterface (val rootId: String, val store: UserOps, val user: UserNode
 
   /** Generates a JSON friendly map from node */
   private def node2map(nodeId: String, parentId: String) = {
-    val node = store.get(nodeId)
+    val node = try {
+      store.get(nodeId)
+    }
+    catch {
+      case _ => null
+    }
     node match {
       case tn: TextNode => Map(("type" -> "text"), ("text" -> tn.text), ("parent" -> parentId))
       case un: URLNode => {
@@ -118,6 +123,7 @@ class GraphInterface (val rootId: String, val store: UserOps, val user: UserNode
         Map(("type" -> "url"), ("text" -> title), ("url" -> un.url), ("parent" -> parentId))
       }
       case un: UserNode => Map(("type" -> "user"), ("text" -> un.name), ("parent" -> parentId))
+      case null => ""
       case _ => Map(("type" -> "text"), ("text" -> node.id), ("parent" -> parentId))
     }
   }
