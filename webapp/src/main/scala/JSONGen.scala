@@ -4,7 +4,7 @@ package com.graphbrain.webapp
 object JSONGen {
   def json(x: Any): String = {
     x match {
-      case s: String => "\"" + s.replaceAll("\\\\", "\\\\").replaceAll("\"", "\\\"") + "\""
+      case s: String => "\"" + s.replaceAllLiterally("\\", "\\\\").replaceAllLiterally("\"", "\\\"") + "\""
       case i: Int => i.toString
       case d: Double => d.toString
       case m: Map[_, _] => {
