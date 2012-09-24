@@ -47,148 +47,194 @@ class SentenceParserTest extends FunSuite {
   val amAlwaysARelTypeID = "rtype/1/am_always_a~at"
   val isAlwaysARelTypeID = "rtype/1/is_always_a~at"
 
-  test("ChihChun is a toad: Parse 2-role with root node no user"){		
-	val parses = sentenceParser.parseSentenceGeneral(sentence1, root = toadNodeGlobal)
-	val nodes = parses(0)._1
-	val relType = parses(0)._2
-	println(nodes(0).id)
-	println(globalNameNode1.id)
-	println(nodes(1).id)
-	println(relType.id)
-	println(isA)
-	assert(nodes(0).id == globalNameNode1.id)
-	assert(nodes(1).id == toadNodeGlobal.id)
-	assert(relType.id == isA)
+  test("ChihChun is a toad: Parse 2-role with root node no user"){	
+    val response = sentenceParser.parseSentenceGeneral(sentence1, root = toadNodeGlobal)
+    response(0) match {
+      case r: GraphResponse => 
+        val parses = r.hypergraphList;
+        val nodes = parses(0)._1
+        val relType = parses(0)._2
+        println(nodes(0).id)
+        println(globalNameNode1.id)
+        println(nodes(1).id)
+        println(relType.id)
+        println(isA)
+        assert(nodes(0).id == globalNameNode1.id)
+        assert(nodes(1).id == toadNodeGlobal.id)
+        assert(relType.id == isA)
+
+      case _ => 
+    }	
   }
 
   test("ChihChun is a toad: Parse 2-role with user node (user/chihchun_chen) no root") {
-  	val parses = sentenceParser.parseSentenceGeneral(sentence1, user = Some(userNode))
-  	val nodes = parses(0)._1
-  	val relType = parses(0)._2
-  	println(nodes(0).id)
-  	println(userNode.id)
-	 println(nodes(1).id)
-	 println(toadNodeUser.id)
-	 println(relType.id)
-	 println(isA)
-  	assert(nodes(0).id == userNode.id)
-  	assert(nodes(1).id == toadNodeGlobal.id)
-    assert(relType.id == isA)
+    val response = sentenceParser.parseSentenceGeneral(sentence1, user = Some(userNode));
+    response(0) match {
+      case r: GraphResponse =>
+        val parses = r.hypergraphList
+        val nodes = parses(0)._1
+        val relType = parses(0)._2
+        println(nodes(0).id)
+        println(userNode.id)
+        println(nodes(1).id)
+        println(toadNodeUser.id)
+        println(relType.id)
+        println(isA)
+        assert(nodes(0).id == userNode.id)
+        assert(nodes(1).id == toadNodeGlobal.id)
+        assert(relType.id == isA)
+      case _ =>
+
+    }
   }
 
   test("Chih-Chun is a toad: Parse 2-role with user node (user/chihchun_chen) and global root (1/toad)") {
-    val parses = sentenceParser.parseSentenceGeneral(sentence1, root = toadNodeGlobal, user = Some(userNode))
-    val nodes = parses(0)._1
-    val relType = parses(0)._2
-    println(nodes(0).id)
-    println(userNode.id)
-	println(nodes(1).id)
-	println(toadNodeGlobal.id)
-	println(relType.id)
-	
-    assert(nodes(0).id == userNode.id)
-    //Should override the fact that user has node in namespace if root is the global node
-    assert(nodes(1).id == toadNodeGlobal.id)
-    assert(relType.id == isA)
+
+    val response = sentenceParser.parseSentenceGeneral(sentence1, root = toadNodeGlobal, user = Some(userNode));
+    response(0) match {
+      case r: GraphResponse =>
+        val parses = r.hypergraphList
+        val nodes = parses(0)._1
+        val relType = parses(0)._2
+        println(nodes(0).id)
+        println(userNode.id)
+        println(nodes(1).id)
+        println(toadNodeGlobal.id)
+        println(relType.id)
+  
+        assert(nodes(0).id == userNode.id)
+        //Should override the fact that user has node in namespace if root is the global node
+        assert(nodes(1).id == toadNodeGlobal.id)
+        assert(relType.id == isA)
+      case _ =>
+    }
   }
 
   test("Chih-Chun is a toad: 2-role lemmas and POS") {
-  	val parses = sentenceParser.parseSentenceGeneral(sentence1);
-  	val nodes = parses(0)._1;
-  	val relTypeVertex = parses(0)._2;
-  	//val relTypeVertex = EdgeType(id = ID.reltype_id(relTypeText), label = relTypeText)
-  	relTypeVertex match {
-  		case r: EdgeType => 
-  		  println(r.id)
-  		  println(r.label)
-  		  val reltypeLemPOS = sentenceParser.relTypeLemmaAndPOS(r, sentence1)
 
-  	      val lemma = reltypeLemPOS._2._1;
-  	      println(lemma.id)
-  	      println(isALemma)
+    val response =  sentenceParser.parseSentenceGeneral(sentence1);
+    response(0) match {
+      case r: GraphResponse =>
+        val parses = r.hypergraphList
+        val nodes = parses(0)._1;
+        val relTypeVertex = parses(0)._2;
+        //val relTypeVertex = EdgeType(id = ID.reltype_id(relTypeText), label = relTypeText)
+        relTypeVertex match {
+          case r: EdgeType => 
+            println(r.id)
+            println(r.label)
+            val reltypeLemPOS = sentenceParser.relTypeLemmaAndPOS(r, sentence1)
 
-  	      val pos = reltypeLemPOS._2._2;
-  	      println(pos.id)
-  	      println(isAPOS)
-  	      assert(lemma.id == isALemma)
-  	      assert(pos.id == isAPOS)
-  	    case _ => 
-  	      assert(false)
-  	}
+            val lemma = reltypeLemPOS._2._1;
+            println(lemma.id)
+            println(isALemma)
+
+            val pos = reltypeLemPOS._2._2;
+            println(pos.id)
+            println(isAPOS)
+            assert(lemma.id == isALemma)
+            assert(pos.id == isAPOS)
+          case _ => 
+            assert(false)
+        }
+      case _ =>
+    }
   	
   }
 
   test("I am always a programmer at graphbrain: Parse 3-role with user node (user/chihchun_chen) and no root") {
-    val parses = sentenceParser.parseSentenceGeneral(sentence2, user = Some(userNode));
-    val nodes = parses(0)._1
-    val relType = parses(0)._2
+    val response = sentenceParser.parseSentenceGeneral(sentence2, user = Some(userNode));
+    response(0) match {
+      case r: GraphResponse =>
+        val parses = r.hypergraphList;
+        val nodes = parses(0)._1
+        val relType = parses(0)._2
 
-    println(nodes(0).id)
-    println(nodes(1).id)
-    println(nodes(2).id)
-    println(relType.id)
+        println(nodes(0).id)
+        println(nodes(1).id)
+        println(nodes(2).id)
+        println(relType.id)
 
-    assert(nodes.length == 3)
-    assert(nodes(0).id == userNode.id)
-    assert(nodes(1).id == programmerGlobalNode.id)
-    assert(nodes(2).id == graphbrainGlobalNode.id)
-    assert(relType.id == isAlwaysARelTypeID)
+        assert(nodes.length == 3)
+        assert(nodes(0).id == userNode.id)
+        assert(nodes(1).id == programmerGlobalNode.id)
+        assert(nodes(2).id == graphbrainGlobalNode.id)
+        assert(relType.id == isAlwaysARelTypeID)
+      case _ =>
+
+    }
   }
 
 
 
 
   test("Chih-Chun is always a programmer at graphbrain: Parse 3-role with irrelevant root node (1/toad) no user"){
-    val parses = sentenceParser.parseSentenceGeneral(sentence3, root = toadNodeUser);
-    val nodes = parses(0)._1
-    val relType = parses(0)._2
+    val response = sentenceParser.parseSentenceGeneral(sentence3, root = toadNodeUser);
+    response(0) match {
+      case r: GraphResponse =>
+        val parses = r.hypergraphList
+        val nodes = parses(0)._1
+        val relType = parses(0)._2
 
-    println(nodes(0).id)
-    println(nodes(1).id)
-    println(nodes(2).id)
-    println(relType.id)
+        println(nodes(0).id)
+        println(nodes(1).id)
+        println(nodes(2).id)
+        println(relType.id)
 
-    assert(nodes.length == 3)
-    assert(nodes(0).id == globalNameNode2.id)
-    assert(nodes(1).id == programmerGlobalNode.id)
-    assert(nodes(2).id == graphbrainGlobalNode.id)
-	assert(relType.id == isAlwaysARelTypeID)
+        assert(nodes.length == 3)
+        assert(nodes(0).id == globalNameNode2.id)
+        assert(nodes(1).id == programmerGlobalNode.id)
+        assert(nodes(2).id == graphbrainGlobalNode.id)
+        assert(relType.id == isAlwaysARelTypeID)
+      case _ =>
+
+    }
   }
 
   test("Chih-Chun is always a programmer at graphbrain: Parse 3-role with relevant user root node (chihchun_chen/1/graphbrain) no user"){
-    val parses = sentenceParser.parseSentenceGeneral(sentence3, root = graphbrainUserNode);
-    val nodes = parses(0)._1
-    val relType = parses(0)._2
+    val response = sentenceParser.parseSentenceGeneral(sentence3, root = graphbrainUserNode);
+    response(0) match {
+      case r:GraphResponse =>
+        val parses = r.hypergraphList
+        val nodes = parses(0)._1
+        val relType = parses(0)._2
 
-    println(nodes(0).id)
-    println(nodes(1).id)
-    println(nodes(2).id)
-    println(relType.id)
+        println(nodes(0).id)
+        println(nodes(1).id)
+        println(nodes(2).id)
+        println(relType.id)
 
-    assert(nodes.length == 3)
-    assert(nodes(0).id == globalNameNode2.id)
-    assert(nodes(1).id == programmerGlobalNode.id)
-    assert(nodes(2).id == graphbrainUserNode.id)
-	assert(relType.id == isAlwaysARelTypeID)
+        assert(nodes.length == 3)
+        assert(nodes(0).id == globalNameNode2.id)
+        assert(nodes(1).id == programmerGlobalNode.id)
+        assert(nodes(2).id == graphbrainUserNode.id)
+        assert(relType.id == isAlwaysARelTypeID)
+      case _ => 
+    }
   }
 
   
 
   test("Chih-Chun is always a programmer at graphbrain: Parse 3-role with user node (user/chihchun_chen) and no root") {
-    val parses = sentenceParser.parseSentenceGeneral(sentence3, user = Some(userNode));
-    val nodes = parses(0)._1
-    val relType = parses(0)._2
+    val response = sentenceParser.parseSentenceGeneral(sentence3, user = Some(userNode));
+    response(0) match {
+      case r: GraphResponse =>
+        val parses = r.hypergraphList
+        val nodes = parses(0)._1
+        val relType = parses(0)._2
 
-    println(nodes(0).id)
-    println(nodes(1).id)
-    println(nodes(2).id)
-    println(relType.id)
+        println(nodes(0).id)
+        println(nodes(1).id)
+        println(nodes(2).id)
+        println(relType.id)
 
-    assert(nodes.length == 3)
-    assert(nodes(0).id == userNode.id)
-    assert(nodes(1).id == programmerGlobalNode.id)
-    assert(nodes(2).id == graphbrainGlobalNode.id)
-    assert(relType.id == isAlwaysARelTypeID)
+        assert(nodes.length == 3)
+        assert(nodes(0).id == userNode.id)
+        assert(nodes(1).id == programmerGlobalNode.id)
+        assert(nodes(2).id == graphbrainGlobalNode.id)
+        assert(relType.id == isAlwaysARelTypeID)
+      case _ =>
+    }
   }
 
 
