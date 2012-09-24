@@ -4,7 +4,7 @@ package com.graphbrain.webapp
 object JSONGen {
   def json(x: Any): String = {
     x match {
-      case s: String => "\"" + s + "\""
+      case s: String => "\"" + s.replaceAll("\\\\", "\\\\").replaceAll("\\\"", "\\\"") + "\""
       case i: Int => i.toString
       case d: Double => d.toString
       case m: Map[_, _] => {
@@ -24,19 +24,4 @@ object JSONGen {
       case _ => ""
     }
   }
-
-  /*
-  def main(args: Array[String]) {
-    println(json("Telmo Menezes"))
-    println(json(12))
-    println(json(12345.67))
-    println(json(List("Telmo", "Menezes", 13)))
-    println(json(Map(("name" -> "Telmo Menezes"), ("age" -> 13))))
-    println(json(List()))
-    println(json(Map()))
-    println(json(Map(("name" -> "Telmo Menezes"), ("numbers" -> List(1, 2, "3")))))
-    println(json(Array("Telmo", "Menesses")))
-    println(json(Array()))
-    println(json(Set("Telmo", "Menezes", 13)))
-  }*/
 }
