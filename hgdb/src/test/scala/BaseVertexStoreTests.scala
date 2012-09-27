@@ -71,7 +71,7 @@ trait BaseVertexStoreTests { this: FunSuite =>
     val outVertex = store.getURLNode("url/http://graphbrain.com")
     assert(inVertex.id == outVertex.id)
     assert(inVertex.url == outVertex.url)
-    assert(store.exists("url/xxx"))
+    assert(store.exists("url/http://graphbrain.com"))
   }
 
   test("getUserNode [" + label + "]") {
