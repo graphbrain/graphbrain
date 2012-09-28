@@ -1,5 +1,11 @@
 package com.graphbrain.hgdb
 
+import java.net.URLEncoder
+import java.security.SecureRandom
+import java.math.BigInteger
+
+import org.mindrot.BCrypt
+
 
 case class UserNode(store: VertexStore, id: String="", username: String="", name: String="",
   email: String="", pwdhash: String="", role: String="", session: String="",
