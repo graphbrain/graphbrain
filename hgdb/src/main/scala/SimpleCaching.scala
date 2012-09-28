@@ -16,9 +16,8 @@ trait SimpleCaching extends VertexStore {
     cache(id)
   }
 
-  abstract override def put(vertex: Vertex): Vertex = {
+  abstract override def onPut(vertex: Vertex) = {
     cache(vertex.id) = vertex
-    super.put(vertex)
   }
 
   abstract override def update(vertex: Vertex): Vertex = {

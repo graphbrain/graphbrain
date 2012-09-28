@@ -12,9 +12,8 @@ trait OpLogging extends VertexStore {
     super.get(id)
   }
 
-  abstract override def put(vertex: Vertex): Vertex = {
+  abstract override def onPut(vertex: Vertex) = {
     println("[put] " + vertex.id)
-    super.put(vertex)
   }
 
   abstract override def update(vertex: Vertex): Vertex = {

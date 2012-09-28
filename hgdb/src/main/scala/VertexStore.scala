@@ -92,6 +92,9 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
   def put(vertex: Vertex): Vertex = vertex.put()
 
 
+  def onPut(vertex: Vertex) = {}
+
+
   def update(vertex: Vertex): Vertex = put(vertex)
 
 
