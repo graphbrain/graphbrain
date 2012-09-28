@@ -5,7 +5,6 @@ import java.io.FileWriter
 import java.net.URLDecoder
 import scala.collection.immutable.HashMap
 import com.graphbrain.hgdb.VertexStore
-import com.graphbrain.hgdb.BurstCaching
 import com.graphbrain.hgdb.UserManagement
 import com.graphbrain.hgdb.UserOps
 import com.graphbrain.hgdb.OpLogging
@@ -21,7 +20,7 @@ import com.graphbrain.hgdb.{ID => HGDBID}
 class OutputDBWriter(storeName:String, source:String, username:String, name:String, role:String) {
 	
 
-	val store = new VertexStore(storeName) with BurstCaching with UserManagement with UserOps
+	val store = new VertexStore(storeName) with UserManagement with UserOps
 	val wikiURL = "http://en.wikipedia.org/wiki/"
 	val wikiPageET = store.createEdgeType(ID.reltype_id("wikipage"), label = "wikipage")
 	val lineRegex = """#.*?""".r
@@ -270,9 +269,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 		return pageTokens.reduceLeft(_+ " " +_)
 	}
 
-	def finish() = {
-		store.finish();
-	}
+	def finish() = {}
 }
 
 object OutputDBWriter {

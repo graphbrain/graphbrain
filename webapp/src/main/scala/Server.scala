@@ -15,7 +15,6 @@ import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.SimpleCaching
 import com.graphbrain.hgdb.UserOps
 import com.graphbrain.hgdb.UserManagement
-import com.graphbrain.hgdb.URLManagement
 import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.ConsensusActor
 
@@ -24,7 +23,7 @@ object Server {
   var http: unfiltered.netty.Http = null
   var prod: Boolean = false
 
-  val store = new VertexStore with SimpleCaching with UserOps with UserManagement with URLManagement
+  val store = new VertexStore with SimpleCaching with UserOps with UserManagement
 
   val templateDirs = List(new java.io.File("/var/www/templates"))
   val scalateMode = "production"
