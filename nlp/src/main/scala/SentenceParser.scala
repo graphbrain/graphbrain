@@ -4,7 +4,6 @@ import java.net.URLDecoder;
 import scala.collection.immutable.HashMap
 import scala.util.Sorting
 import com.graphbrain.hgdb.VertexStore
-import com.graphbrain.hgdb.BurstCaching
 import com.graphbrain.hgdb.OpLogging
 import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.Edge
@@ -17,10 +16,12 @@ import com.graphbrain.hgdb.SearchInterface
 
 class SentenceParser (storeName:String = "gb") {
 
+  val store = new VertexStore(storeName)
+
   val quoteRegex = """(\")(.+?)(\")""".r
   val urlRegex = """([\d\w]+?:\/\/)?([\w\d\.\-]+)(\.\w+)(:\d{1,5})?(\/\S*)?""".r // See: http://stackoverflow.com/questions/8725312/javascript-regex-for-url-when-the-url-may-or-may-not-contain-http-and-www-words?lq=1
   val urlStrictRegex = """(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?""".r
-  val gbNode = TextNode(namespace="1", text="GraphBrain")
+  val gbNode = store.createTextNode(namespace="1", text="GraphBrain")
 
   val verbRegex = """VB[A-Z]?""".r
   val adverbRegex = """RB[A-Z]?""".r
@@ -39,8 +40,6 @@ class SentenceParser (storeName:String = "gb") {
 
   //val posTagger = new POSTagger()
   val lemmatiser = new Lemmatiser()
-  
-  val store = new VertexStore(storeName) with BurstCaching
 
   val si = new SearchInterface(store)
 
@@ -74,7 +73,7 @@ class SentenceParser (storeName:String = "gb") {
     return (0.5, text);
     
   }
-  def specialNodeCases(inNodeText: String, root: Vertex  = TextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): Vertex = {
+  def specialNodeCases(inNodeText: String, root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): Vertex = {
     user match {
       case Some(u:UserNode) =>
         if(u.username == inNodeText || u.name == inNodeText || inNodeText == "I" || inNodeText == "me") {
@@ -108,7 +107,7 @@ class SentenceParser (storeName:String = "gb") {
   }
 
 
-  def parseSentenceGeneral(inSent: String, root: Vertex  = TextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): List[ResponseType] = {
+  def parseSentenceGeneral(inSent: String, root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): List[ResponseType] = {
     var inSentence = inSent;
     var solutions : List[(List[Vertex], Vertex)] = List();
     var responses : List[ResponseType] = List();
@@ -189,7 +188,7 @@ class SentenceParser (storeName:String = "gb") {
         i += 1;
       }
       relText = newRelation.trim.slice(0, newRelation.length-2);
-      var relationV = EdgeType(id = ID.reltype_id(relText), label = relText)
+      var relationV = store.createEdgeType(id = ID.reltype_id(relText), label = relText)
       solutions = (nodes.reverse, relationV) :: solutions
 
     }
@@ -199,7 +198,7 @@ class SentenceParser (storeName:String = "gb") {
     
   }
 
-  def textToNode(text:String, node: Vertex= TextNode(namespace="", text="GBNoneGB"), user:Option[Vertex]=None): List[Vertex] = {
+  def textToNode(text:String, node: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user:Option[Vertex]=None): List[Vertex] = {
     var userName = "";
     var results: List[Vertex] = List()
     user match {
@@ -235,7 +234,7 @@ class SentenceParser (storeName:String = "gb") {
 
 
     if (urlRegex.findAllIn(text).hasNext) {
-      results = URLNode(url = text, userId = userName) :: results
+      results = store.createURLNode(url = text, userId = userName) :: results
     }
     val textPureID = ID.text_id(text, 1)
     val wikiID = ID.wikipedia_id(text)
@@ -248,12 +247,12 @@ class SentenceParser (storeName:String = "gb") {
     var i = 1;
     while(nodeExists(ID.text_id(text, i)))
     {
-      results = TextNode(namespace=i.toString, text=text) :: results;
+      results = store.createTextNode(namespace=i.toString, text=text) :: results;
       i += 1;
         
     }
     if(i==1) {
-      results = TextNode(namespace="1", text = text) :: results;
+      results = store.createTextNode(namespace="1", text = text) :: results;
     }
     
 
@@ -325,8 +324,8 @@ class SentenceParser (storeName:String = "gb") {
     poslabel = poslabel.slice(0, poslabel.length - 1)
     lemma = lemma.slice(0, lemma.length - 1)
      
-    val lemmaNode = TextNode(namespace="1", text=lemma)
-    val lemmaRelType = EdgeType(id = ID.reltype_id(poslabel), label = poslabel)
+    val lemmaNode = store.createTextNode(namespace="1", text=lemma)
+    val lemmaRelType = store.createEdgeType(id = ID.reltype_id(poslabel), label = poslabel)
     return (relType, (lemmaNode, lemmaRelType));
     
   }
@@ -776,7 +775,7 @@ def removeDeterminers(possibleParses: List[(List[String], String)], rootNode: Ve
 }
 
 
-def getOrCreate(id:String, user:Option[Vertex] = None, textString:String = "", root:Vertex = TextNode("", "")):Vertex={
+def getOrCreate(id:String, user:Option[Vertex] = None, textString:String = "", root:Vertex = store.createTextNode("", "")):Vertex={
   if(id != "") {
     try{
       return store.get(id);
@@ -821,8 +820,8 @@ object SentenceParser {
   def main(args: Array[String]) {
   	  val sentenceParser = new SentenceParser()
       
-      val rootNode = TextNode(namespace="usergenerated/chihchun_chen", text="toad")
-      val userNode = UserNode(id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
+      val rootNode = sentenceParser.store.createTextNode(namespace="usergenerated/chihchun_chen", text="toad")
+      val userNode = sentenceParser.store.createUserNode(id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
   	  val sentence = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
       println("From command line with general: " + sentence)
       val responses = sentenceParser.parseSentenceGeneral(sentence, user = Some(userNode))
