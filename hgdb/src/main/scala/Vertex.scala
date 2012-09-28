@@ -8,6 +8,8 @@ abstract class Vertex {
 
   def extendedId: String = id
 
+  def put(): Vertex
+
   def clone(newid: String): Vertex
 
   override def toString: String = id
