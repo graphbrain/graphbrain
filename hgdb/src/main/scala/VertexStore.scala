@@ -24,7 +24,15 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
         val res = backend.tpGlobal.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
         val text = res.getString("text")
-        TextNode(ID.namespace(id), text)
+        val summary = res.getString("summary")
+        TextNode(ID.namespace(id), text, summary, this)
+      }
+      case UserSpace => {
+        val res = backend.tpUserSpace.queryColumns(id)
+        if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
+        val text = res.getString("text")
+        val summary = res.getString("summary")
+        TextNode(ID.namespace(id), text, summary, this)
       }
       case User => {
         val res = backend.tpUser.queryColumns(id)
@@ -37,19 +45,14 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
         val session = res.getString("session")
         val sessionTs = res.getLong("sessionTs")
         val lastSeen = res.getLong("lastSeen")
-        UserNode(id, username, name, email, pwdhash, role, session, sessionTs, lastSeen)
-      }
-      case UserSpace => {
-        val res = backend.tpUserSpace.queryColumns(id)
-        if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
-        val text = res.getString("text")
-        TextNode(ID.namespace(id), text)
+        val summary = res.getString("summary")
+        UserNode(id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, summary, this)
       }
       case EType => {
         val res = backend.tpEdgeType.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
         val label = res.getString("label")
-        EdgeType(id, label)
+        EdgeType(id, label, this)
       }
       case URL => {
         val res = backend.tpGlobal.queryColumns(id)
@@ -57,25 +60,26 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
         val url = res.getString("url")
         val userId = ID.ownerId(id)
         val title = res.getString("title")
-        URLNode(url, userId, title)
+        URLNode(url, userId, title, this)
       }
       case UserURL => {
         val res = backend.tpUserSpace.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
         val url = res.getString("url")
+        val userId = ID.ownerId(id)
         val title = res.getString("title")
-        URLNode(url, title)
+        URLNode(url, userId, title, this)
       }
       case Rule => {
         val res = backend.tpGlobal.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
         val rule = res.getString("rule")
-        RuleNode(id, rule)
+        RuleNode(id, rule, this)
       }
       case Source => {
         val res = backend.tpGlobal.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
-        SourceNode(id)
+        SourceNode(id, this)
       }
     }
   }
@@ -477,26 +481,12 @@ object VertexStore {
   def apply(clusterName: String, keyspaceName: String) = new VertexStore(clusterName, keyspaceName)
 
   def main(args : Array[String]) : Unit = {
-    val store = new VertexStore("experiment", "experiment")
-    store.delrel("am", List("test", "hey", "pipi"))
-    store.neighborEdges("test")
+    val store = new VertexStore()
 
-    val nb = store.neighbors("test")
-    //for (n <- nb) println(n)
+    val edges = store.neighborEdges("user/telmo_menezes")
+    for (e <- edges) println(e)
 
-    println(store.relExistsOnVertex("test", Edge("am", List("test", "hey", "pipi"))))
-
-    //
-    val node0 = TextNode("node0", "node0")
-    val node1 = TextNode("node1", "node1")
-    store.remove(node0)
-    store.remove(node1)
-    store.put(node0)
-    store.put(node1)
-
-    store.addrel("test", List[String]("node0/node0", "node1/node1"))
-
-    val node0_ = store.getTextNode("node0/node0")
-    val node1_ = store.getTextNode("node1/node1")
+    var snode = store.getUserNode("user/telmo_menezes").updateSummary
+    println(snode.summary)
   }
 }
