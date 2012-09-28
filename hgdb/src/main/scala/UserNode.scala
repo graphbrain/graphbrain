@@ -17,6 +17,7 @@ case class UserNode(store: VertexStore, id: String="", username: String="", name
     updater.setLong("sessionTs", sessionTs)
     updater.setLong("lastSeen", lastSeen)
     template.update(updater)
+    store.onPut(this)
     this
   }
 

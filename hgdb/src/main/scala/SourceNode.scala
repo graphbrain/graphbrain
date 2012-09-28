@@ -7,6 +7,7 @@ case class SourceNode(store: VertexStore, id: String="") extends Vertex {
     val template = store.backend.tpGlobal
     val updater = template.createUpdater(id)
     template.update(updater)
+    store.onPut(this)
     this
   }
 

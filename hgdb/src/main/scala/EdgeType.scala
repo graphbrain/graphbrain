@@ -8,6 +8,7 @@ case class EdgeType(store: VertexStore, id: String="", label: String="") extends
     val updater = template.createUpdater(id)
     updater.setString("label", label)
     template.update(updater)
+    store.onPut(this)
     this
   }
 

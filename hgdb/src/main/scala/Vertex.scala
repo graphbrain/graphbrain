@@ -10,6 +10,8 @@ abstract class Vertex {
 
   def put(): Vertex
 
+  def remove() = store.remove(this)
+
   def clone(newid: String): Vertex
 
   override def toString: String = id

@@ -35,9 +35,7 @@ trait UserOps extends VertexStore {
     mutator.execute()
   }
 
-  override def put(vertex: Vertex): Vertex = {
-    super.put(vertex)
-
+  override def onPut(vertex: Vertex) = {
     vertex match {
       case t: TextNode =>
         if (ID.isInUserSpace(t.id))
@@ -49,8 +47,6 @@ trait UserOps extends VertexStore {
 
       case _ =>
     }
-
-    vertex
   }
 
   override def remove(vertex: Vertex): Vertex = {

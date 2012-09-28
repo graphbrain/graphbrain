@@ -13,6 +13,7 @@ case class TextNode(store: VertexStore, namespace: String="", text: String="", s
     updater.setString("text", text)
     updater.setString("summary", summary)
     template.update(updater)
+    store.onPut(this)
     this
   }
 

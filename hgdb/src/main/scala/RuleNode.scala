@@ -9,6 +9,7 @@ case class RuleNode(store: VertexStore, id: String="", rule: String="") extends 
     val updater = template.createUpdater(id)
     updater.setString("rule", rule)
     template.update(updater)
+    store.onPut(this)
     this
   }
 
