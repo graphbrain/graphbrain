@@ -13,7 +13,7 @@ trait BaseVertexStoreTests { this: FunSuite =>
   def baseTests(store: VertexStore, label: String) {  
 
   test("put/get Vertex [" + label + "]") {
-    val vertex = TextNode("vertex0", "vertex0")
+    val vertex = store.createTextNode("vertex0", "vertex0")
     store.remove(vertex)
     store.put(vertex)
     
@@ -53,7 +53,7 @@ trait BaseVertexStoreTests { this: FunSuite =>
   }
 
   test("getTextNode [" + label + "]") {
-    val inVertex = TextNode("textnode", "testing TextNode")
+    val inVertex = store.createTextNode("textnode", "testing TextNode")
     store.remove(inVertex)
     store.put(inVertex)
     
@@ -64,7 +64,7 @@ trait BaseVertexStoreTests { this: FunSuite =>
   }
 
   test("getURLNode [" + label + "]") {
-    val inVertex = URLNode("http://graphbrain.com")
+    val inVertex = store.createURLNode("http://graphbrain.com")
     store.remove(inVertex)
     store.put(inVertex)
     
@@ -75,7 +75,7 @@ trait BaseVertexStoreTests { this: FunSuite =>
   }
 
   test("getUserNode [" + label + "]") {
-    val inVertex = UserNode("user/username")
+    val inVertex = store.createUserNode("user/username")
     store.remove(inVertex)
     store.put(inVertex)
     
@@ -85,8 +85,8 @@ trait BaseVertexStoreTests { this: FunSuite =>
   }
 
   test("add two node relationship [" + label + "]") {
-    val node0 = TextNode("node0", "node0")
-    val node1 = TextNode("node1", "node1")
+    val node0 = store.createTextNode("node0", "node0")
+    val node1 = store.createTextNode("node1", "node1")
     store.remove(node0)
     store.remove(node1)
     store.put(node0)
@@ -100,8 +100,8 @@ trait BaseVertexStoreTests { this: FunSuite =>
   }
 
   test("add relationship twice [" + label + "]") {
-    val node0 = TextNode("node0", "node0")
-    val node1 = TextNode("node1", "node1")
+    val node0 = store.createTextNode("node0", "node0")
+    val node1 = store.createTextNode("node1", "node1")
     store.remove(node0)
     store.remove(node1)
     store.put(node0)
@@ -116,8 +116,8 @@ trait BaseVertexStoreTests { this: FunSuite =>
   }
 
   test("delete two node relationship [" + label + "]") {
-    val node0 = TextNode("node0", "node0")
-    val node1 = TextNode("node1", "node1")
+    val node0 = store.createTextNode("node0", "node0")
+    val node1 = store.createTextNode("node1", "node1")
     store.remove(node0)
     store.remove(node1)
     store.put(node0)
@@ -131,8 +131,8 @@ trait BaseVertexStoreTests { this: FunSuite =>
   }
 
   test("neighborEdges for two neighbors [" + label + "]") {
-    val node0 = TextNode("node0", "?"); store.remove(node0); store.put(node0)
-    val node1 = TextNode("node1", "?"); store.remove(node1); store.put(node1)
+    val node0 = store.createTextNode("node0", "?"); store.remove(node0); store.put(node0)
+    val node1 = store.createTextNode("node1", "?"); store.remove(node1); store.put(node1)
 
     store.addrel("test", List[String]("node0/?", "node1/?"))
 
@@ -141,14 +141,14 @@ trait BaseVertexStoreTests { this: FunSuite =>
   }
 
   test("neighborEdges for a few neighbors [" + label + "]") {
-    val node0 = TextNode("node0", "?"); store.remove(node0); store.put(node0)
-    val node1 = TextNode("node1", "?"); store.remove(node1); store.put(node1)
-    val node2 = TextNode("node2", "?"); store.remove(node2); store.put(node2)
-    val node3 = TextNode("node3", "?"); store.remove(node3); store.put(node3)
-    val node4 = TextNode("node4", "?"); store.remove(node4); store.put(node4)
-    val node5 = TextNode("node5", "?"); store.remove(node5); store.put(node5)
-    val node6 = TextNode("node6", "?"); store.remove(node6); store.put(node6)
-    val node7 = TextNode("node7", "?"); store.remove(node7); store.put(node7)
+    val node0 = store.createTextNode("node0", "?"); store.remove(node0); store.put(node0)
+    val node1 = store.createTextNode("node1", "?"); store.remove(node1); store.put(node1)
+    val node2 = store.createTextNode("node2", "?"); store.remove(node2); store.put(node2)
+    val node3 = store.createTextNode("node3", "?"); store.remove(node3); store.put(node3)
+    val node4 = store.createTextNode("node4", "?"); store.remove(node4); store.put(node4)
+    val node5 = store.createTextNode("node5", "?"); store.remove(node5); store.put(node5)
+    val node6 = store.createTextNode("node6", "?"); store.remove(node6); store.put(node6)
+    val node7 = store.createTextNode("node7", "?"); store.remove(node7); store.put(node7)
     
     val e01 = store.addrel("test", List[String]("node0/?", "node1/?"))
     val e02 = store.addrel("test", List[String]("node0/?", "node2/?"))
@@ -168,8 +168,8 @@ trait BaseVertexStoreTests { this: FunSuite =>
   }
 
   test("two neighbors [" + label + "]") {
-    val node0 = TextNode("node0", "node0")
-    val node1 = TextNode("node1", "node1")
+    val node0 = store.createTextNode("node0", "node0")
+    val node1 = store.createTextNode("node1", "node1")
     store.remove(node0)
     store.remove(node1)
     store.put(node0)
@@ -181,14 +181,14 @@ trait BaseVertexStoreTests { this: FunSuite =>
   }
 
   test("a few neighbors [" + label + "]") {
-    val node0 = TextNode("node0", "?"); store.remove(node0); store.put(node0)
-    val node1 = TextNode("node1", "?"); store.remove(node1); store.put(node1)
-    val node2 = TextNode("node2", "?"); store.remove(node2); store.put(node2)
-    val node3 = TextNode("node3", "?"); store.remove(node3); store.put(node3)
-    val node4 = TextNode("node4", "?"); store.remove(node4); store.put(node4)
-    val node5 = TextNode("node5", "?"); store.remove(node5); store.put(node5)
-    val node6 = TextNode("node6", "?"); store.remove(node6); store.put(node6)
-    val node7 = TextNode("node7", "?"); store.remove(node7); store.put(node7)
+    val node0 = store.createTextNode("node0", "?"); store.remove(node0); store.put(node0)
+    val node1 = store.createTextNode("node1", "?"); store.remove(node1); store.put(node1)
+    val node2 = store.createTextNode("node2", "?"); store.remove(node2); store.put(node2)
+    val node3 = store.createTextNode("node3", "?"); store.remove(node3); store.put(node3)
+    val node4 = store.createTextNode("node4", "?"); store.remove(node4); store.put(node4)
+    val node5 = store.createTextNode("node5", "?"); store.remove(node5); store.put(node5)
+    val node6 = store.createTextNode("node6", "?"); store.remove(node6); store.put(node6)
+    val node7 = store.createTextNode("node7", "?"); store.remove(node7); store.put(node7)
     
     store.addrel("test", List[String]("node0/?", "node1/?"))
     store.addrel("test", List[String]("node0/?", "node2/?"))

@@ -1,7 +1,14 @@
 package com.graphbrain.hgdb
 
 
-case class SourceNode(id: String="", store: VertexStore=null) extends Vertex {
+case class SourceNode(store: VertexStore, id: String="") extends Vertex {
 
-  override def clone(newid: String) = SourceNode(newid)
+  override def put(): Vertex = {
+    val template = store.backend.tpGlobal
+    val updater = template.createUpdater(id)
+    template.update(updater)
+    this
+  }
+
+  override def clone(newid: String) = SourceNode(store, newid)
 }
