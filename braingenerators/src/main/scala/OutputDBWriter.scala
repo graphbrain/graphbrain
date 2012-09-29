@@ -84,7 +84,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 	def insertAndGetWikiDisambigNode(wikiTitle: String, username: String): Vertex = {
 		val decodedTitle = URLDecoder.decode(wikiTitle, "UTF-8")
 		val titleSP = removeWikiDisambig(decodedTitle);
-		val disAmb = """\((.*?)\)""".r.findAllIn(decodedTitle)
+		val disAmb = """\(.*?\)""".r.findAllIn(decodedTitle)
 		var i = 1;
 
 		while(store.exists(ID.text_id(titleSP, i.toString))) {
@@ -114,11 +114,19 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 		println(store.getOrInsert2(newNode, HGDBID.userIdFromUsername(username)).id)
 		val wikiNode = store.createTextNode(namespace = "wikipedia", text = URLDecoder.decode(wikiTitle, "UTF-8"))
 		store.put(wikiNode)
-		println(store.get(wikiNode.id).id)
-		store.addrel(wikiRel, List[String](newNode.id, wikiNode.id))
+		println("Wiki_ID: " + store.get(wikiNode.id).id)
+		try {
+		  store.addrel(wikiRel, List[String](newNode.id, wikiNode.id))
+	    }
+	    catch {
+	      case e => e.printStackTrace()
+	    }
+
 		
-		if(disAmb.hasNext) {
-			val da = disAmb.next.replace("(", "").replace(")", "").trim;
+		val disAmbA = """\(.*?\)""".r.findAllIn(decodedTitle)
+		
+		if(disAmbA.hasNext) {
+			val da = disAmbA.next.replace("(", "").replace(")", "").trim;
 			val daNode = store.createTextNode(namespace = "1", text=da)
 			println(store.getOrInsert2(daNode, HGDBID.userIdFromUsername(username)).id + ", da: " +  daNode.text)
 			store.addrel2(asInRel, Array[String](newNode.id, daNode.id), HGDBID.userIdFromUsername(username), true)
@@ -275,8 +283,8 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 object OutputDBWriter {
 	def main(args : Array[String]) : Unit = {
 		val test = new OutputDBWriter(storeName = "gb", source = DBPediaGraphFromCategories.sourceName, username = "dbpedia", name = "dbpedia", role = "crawler")
-		val sister1 = "Sister_(film)"
-		val sister2 = "Sister_(band)"
+		val sister1 = "Sizzz_(film)"
+		val sister2 = "Sizzz_(band)"
 		test.writeOutDBInfo(sister1, "is a", "film", "http://en.wikipedia.org/wiki/Sister_(film)")
 		test.writeOutDBInfo(sister2, "likes", "music", "http://en.wikipedia.org/wiki/Sister_(band)")
     }
