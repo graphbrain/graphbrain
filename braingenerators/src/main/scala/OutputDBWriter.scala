@@ -23,6 +23,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 	val store = new VertexStore(storeName) with UserManagement with UserOps
 	val wikiURL = "http://en.wikipedia.org/wiki/"
 	val wikiPageET = store.createEdgeType(ID.reltype_id("wikipage"), label = "wikipage")
+	val wikiPageTitle = store.createEdgeType(ID.reltype_id("sys/wikipedia"), label = "wikipedia")
 	val lineRegex = """#.*?""".r
 	val wikiRel = "sys/wikipedia"
 	val asInRel = ID.reltype_id("as in", 1)
@@ -112,16 +113,23 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 		}
 		val newNode = store.createTextNode(namespace = i.toString, text=titleSP)
 		println(store.getOrInsert2(newNode, HGDBID.userIdFromUsername(username)).id)
+
 		val wikiNode = store.createTextNode(namespace = "wikipedia", text = URLDecoder.decode(wikiTitle, "UTF-8"))
-		store.put(wikiNode)
-		println("Wiki_ID: " + store.get(wikiNode.id).id)
+		if(!store.exists(wikiNode.id)) {
+		  
+		  store.put(wikiNode)	
+		  println("Wiki_ID: " + store.get(wikiNode.id).id)
+
+		}
 		try {
-		  store.addrel(wikiRel, List[String](newNode.id, wikiNode.id))
+		  //store.addrel(wikiPageTitle.id, List[String](newNode.id, wikiNode.id))
 	    }
 	    catch {
 	      case e => e.printStackTrace()
 	    }
-
+		
+		
+		
 		
 		val disAmbA = """\(.*?\)""".r.findAllIn(decodedTitle)
 		
@@ -283,8 +291,8 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 object OutputDBWriter {
 	def main(args : Array[String]) : Unit = {
 		val test = new OutputDBWriter(storeName = "gb", source = DBPediaGraphFromCategories.sourceName, username = "dbpedia", name = "dbpedia", role = "crawler")
-		val sister1 = "Sizzz_(film)"
-		val sister2 = "Sizzz_(band)"
+		val sister1 = "Sizzzzzzz_(film)"
+		val sister2 = "Sizzzzzzz_(band)"
 		test.writeOutDBInfo(sister1, "is a", "film", "http://en.wikipedia.org/wiki/Sister_(film)")
 		test.writeOutDBInfo(sister2, "likes", "music", "http://en.wikipedia.org/wiki/Sister_(band)")
     }
