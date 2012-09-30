@@ -119,7 +119,7 @@ case class NavBar(user: UserNode, page: String) {
         <div id="alert" class="alert" style="visibility:hidden; margin:0px">
           <div id="alertMsg"></div>
         </div>
-        <div id="ai-chat"></div>
+        
       </div>
       """
     }

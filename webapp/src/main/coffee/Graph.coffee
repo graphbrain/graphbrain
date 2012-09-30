@@ -105,7 +105,6 @@ class Graph
         @halfHeight = height / 2
 
         @snodes = {}
-        @snodeArray = []
         @nodes = {}
         @links = []
         @scale = 1
@@ -122,6 +121,12 @@ class Graph
         # view eccentricity
         @negativeStretch = 1
         @mappingPower = 1
+
+    updateSize: ->
+        @width = $('#graph-view').width()
+        @height = $('#graph-view').height()
+        @halfWidth = @width / 2
+        @halfHeight = @height / 2
 
     updateTransform: ->
         transformStr = "translate(" + @offsetX + "px," + @offsetY + "px)" +
@@ -206,14 +211,14 @@ class Graph
             -1.0
 
     layout: ->
-        # set all super nodes non-fixed
-        @snodes[key].fixed = false for key of @snodes when @snodes.hasOwnProperty(key)
+        @snodes[key].initLayout() for key of @snodes when @snodes.hasOwnProperty(key)
 
         # layout root node
         @root.moveTo(0, 0, 0)
         @root.fixed = true
 
         # create snode array
+        @snodeArray = []
         @snodeArray.push(@snodes[key]) for key of @snodes when @snodes.hasOwnProperty(key) and !@snodes[key].fixed
 
         layout()
@@ -228,10 +233,6 @@ class Graph
         if (N > (Nt * 2))
             @mappingPower = Math.log(Math.asin(Nt / (N / 2)) / Math.PI) * (1 / Math.log(0.5))
             @negativeStretch = @mappingPower * 2
-            #console.log('N: ' + N)
-            #console.log('Nt: ' + Nt)
-            #console.log('mappingPower: ' + @mappingPower)
-            #console.log('negativeStretch: ' + @negativeStretch)
 
         if N > 0
           for i in [0..(@snodeArray.length - 1)]

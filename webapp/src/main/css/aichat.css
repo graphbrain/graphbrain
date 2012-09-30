@@ -1,13 +1,14 @@
 #ai-chat {
+    position:relative;
 	color: #fff;
-    background: #000;
-    opacity: 0.8;
+    background: #333;
     padding-left: 10px;
     padding-right: 10px;
     display: none;
-    height: 200px;
+    height: 30%;
     overflow: auto;
     resize: vertical;
+    z-index:2;
 }
 
 #ai-chat-input {
