@@ -3,20 +3,7 @@
 # Super node
 class SNode
     constructor: (@id) ->
-        #position before rotation
-        @pos = newv3()
-        @x = 0
-        @y = 0
-        @z = 0
-        # position after rotation
-        @rpos = Array(3)
-
-        # auxiliary vector for rotation calcs
-        @auxVec = new Array(3)
-
-        # layout
-        @f = newv3()    # force
-        @tpos = newv3() # temporary position
+        @initLayout()
 
         @nodes = {}
         @subNodes = []
@@ -58,6 +45,25 @@ class SNode
         # main associated link label and edge type
         @linkLabel = ""
         @etype = ""
+
+
+    initLayout: ->
+        #position before rotation
+        @pos = newv3()
+        @x = 0
+        @y = 0
+        @z = 0
+        # position after rotation
+        @rpos = Array(3)
+
+        # auxiliary vector for rotation calcs
+        @auxVec = new Array(3)
+
+        # layout
+        @f = newv3()    # force
+        @tpos = newv3() # temporary position
+
+        @fixed = false
 
 
     updateTransform: ->

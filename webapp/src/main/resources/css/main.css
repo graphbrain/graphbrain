@@ -138,11 +138,8 @@ html, body {
 }
 
 #graph-view {
-    position:fixed;
-    top:0px;
-    left:0px;
     width:70%;
-    height:100%;
+    height:70%;
     float:left;
     -webkit-perspective:1000px;
     -moz-perspective:1000px;
@@ -151,25 +148,28 @@ html, body {
 }
 
 #right-bar {
+    position:relative;
     width:30%;
-    height:100%;
+    height:70%;
     float:right;
     overflow: auto;
     background:#DDD;
+    z-index:1;
 }
 
 #text-view {
     padding:20px;
 }#ai-chat {
+    position:relative;
 	color: #fff;
-    background: #000;
-    opacity: 0.8;
+    background: #333;
     padding-left: 10px;
     padding-right: 10px;
     display: none;
-    height: 200px;
+    height: 30%;
     overflow: auto;
     resize: vertical;
+    z-index:2;
 }
 
 #ai-chat-input {
