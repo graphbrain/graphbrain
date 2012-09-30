@@ -11,7 +11,8 @@ case class TextNode(store: VertexStore, namespace: String="", text: String="", s
     val template = if (ID.isInUserSpace(id)) store.backend.tpUserSpace else store.backend.tpGlobal
     val updater = template.createUpdater(id)
     updater.setString("text", text)
-    updater.setString("summary", summary)
+    if ((summary != "") && (summary != null))
+      updater.setString("summary", summary)
     template.update(updater)
     store.onPut(this)
     this
