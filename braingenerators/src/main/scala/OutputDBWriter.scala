@@ -122,7 +122,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 
 		}
 		try {
-		  //store.addrel(wikiPageTitle.id, List[String](newNode.id, wikiNode.id))
+		  store.addrel(wikiPageTitle.id, List[String](newNode.id, wikiNode.id))
 	    }
 	    catch {
 	      case e => e.printStackTrace()
@@ -291,8 +291,8 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 object OutputDBWriter {
 	def main(args : Array[String]) : Unit = {
 		val test = new OutputDBWriter(storeName = "gb", source = DBPediaGraphFromCategories.sourceName, username = "dbpedia", name = "dbpedia", role = "crawler")
-		val sister1 = "Sizzzzzzz_(film)"
-		val sister2 = "Sizzzzzzz_(band)"
+		val sister1 = "Sizzzzzzzz_(film)"
+		val sister2 = "Sizzzzzzzz_(band)"
 		test.writeOutDBInfo(sister1, "is a", "film", "http://en.wikipedia.org/wiki/Sister_(film)")
 		test.writeOutDBInfo(sister2, "likes", "music", "http://en.wikipedia.org/wiki/Sister_(band)")
     }

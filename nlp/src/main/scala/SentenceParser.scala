@@ -234,7 +234,11 @@ class SentenceParser (storeName:String = "gb") {
 
 
     if (urlRegex.findAllIn(text).hasNext) {
-      results = store.createURLNode(url = text, userId = userName) :: results
+      
+      val urlNode = URLNode(store, text)
+      results = urlNode :: results;
+      
+      //results = store.createURLNode(url = text, userId = userName) :: results
     }
     val textPureID = ID.text_id(text, 1)
     val wikiID = ID.wikipedia_id(text)
