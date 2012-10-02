@@ -5,6 +5,7 @@ import unfiltered.response._
 import unfiltered.netty._
 import unfiltered.Cookie
 
+import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.SearchInterface
 
 
@@ -61,6 +62,23 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
         //log.info(Server.realIp(req) + " LOGIN login: " + login)
         ResponseString(user.username + " " + user.session)
       } 
+    }
+    case req@POST(Path("/undo_fact") & Params(params) & Cookies(cookies)) => {
+      val userNode = Server.getUser(cookies)
+
+      val rel = params("rel")(0)
+      val participants = params("participants")(0)
+
+      val participantIds = participants.split(" ").toList
+
+      // undo connection
+      Server.store.delrel2(rel, participantIds, userNode.id)
+      // force consesnsus re-evaluation of affected edge
+      val edge = Edge(rel, participantIds)
+      Server.consensusActor ! edge
+
+      ResponseString(JSONGen.json(""))
+      //log.info(Server.realIp(req) + " SEARCH " + query + "; results: " + results.size)
     }
   }
 }

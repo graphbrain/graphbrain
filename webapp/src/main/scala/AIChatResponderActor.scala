@@ -72,7 +72,8 @@ class AIChatResponderActor() extends Actor {
                 val edge = Edge(relation, List(node1.id, node2.id))
                 Server.consensusActor ! edge
 
-                replySentence = "Fact recorded: '" + sentence + "'. <a href=''>Want to undo?</a>"
+                val undoFunctionCall = "undoFact('" + relation + "', '" + node1.id + " " + node2.id + "')"
+                replySentence = "Fact recorded: '" + sentence + "'. <a href=\"#\" onclick=\"" + undoFunctionCall + "\">Want to undo?</a>"
                 replySentence += disambiguationMessage(relation, Array(node1, node2), 0)
                 replySentence += disambiguationMessage(relation, Array(node1, node2), 1)
                 

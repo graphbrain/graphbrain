@@ -53,6 +53,7 @@ disambiguateQuery = (mode, text, rel, participantIds, pos) ->
 
 disambiguateActionReply = (msg) ->
   aiChatAddLine('<br />GraphBrain: fact updated.')
+  window.location.reload()
 
 root = exports ? this
 root.disambiguateCreateNode = (mode, text, rel, participants, pos) ->

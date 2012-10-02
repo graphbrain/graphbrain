@@ -454,7 +454,7 @@ function handler(event) {
 
 })(jQuery);;
 
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, autoUpdateUsername, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initChatBuffer, initDisambiguateDialog, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, initTextView, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, autoUpdateUsername, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initChatBuffer, initDisambiguateDialog, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, initTextView, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -2076,7 +2076,8 @@ function handler(event) {
   };
 
   disambiguateActionReply = function(msg) {
-    return aiChatAddLine('<br />GraphBrain: fact updated.');
+    aiChatAddLine('<br />GraphBrain: fact updated.');
+    return window.location.reload();
   };
 
   root = typeof exports !== "undefined" && exports !== null ? exports : this;
@@ -2113,6 +2114,26 @@ function handler(event) {
       success: disambiguateActionReply
     });
     return hideDisambiguateDialog();
+  };
+
+  undoFactReply = function(msg) {
+    aiChatAddLine('<br />GraphBrain: fact removed (undo).');
+    return window.location.reload();
+  };
+
+  root = typeof exports !== "undefined" && exports !== null ? exports : this;
+
+  root.undoFact = function(rel, participants) {
+    var params;
+    params = "&rel=" + encodeURIComponent(rel);
+    params += "&participants=" + encodeURIComponent(participants);
+    return $.ajax({
+      type: "POST",
+      url: "/undo_fact",
+      data: params,
+      dataType: "text",
+      success: undoFactReply
+    });
   };
 
   String.prototype.replaceAll = function(str1, str2, ignore) {
