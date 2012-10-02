@@ -207,7 +207,6 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
         val nodeN = column.getName().get(4, StringSerializer.get())
         val edge = Edge.fromEdgeEntry(nodeId, edgeType, pos, node1, node2, nodeN)
         eset += edge
-        //println(edge)
       }
 
       eset.toSet

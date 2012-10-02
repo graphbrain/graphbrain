@@ -15,6 +15,8 @@ abstract class Vertex {
   def clone(newid: String): Vertex
 
   override def toString: String = id
+
+  def description: String = toString
 }
 
 object Vertex {

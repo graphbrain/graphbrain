@@ -7,6 +7,7 @@ import unfiltered.response.{JsonContent, ResponseString}
 
 import com.graphbrain.hgdb.Vertex
 import com.graphbrain.hgdb.Edge
+import com.graphbrain.hgdb.Textual
 import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.ID
 import com.graphbrain.nlp.SentenceParser
@@ -24,6 +25,19 @@ class AIChatResponderActor() extends Actor {
   import AIChatResponderActor._
 
   val sparser = new SentenceParser()
+
+  private def disambiguationMessage(rel: String, participants: Array[Vertex], pos: Int) = {
+    val node = participants(pos)
+    val participantIds = participants.foldLeft("")((a, b) => a + "\"" + b.id + "\",")
+    node match {
+      case t: Textual => {
+        // TODO: deal with change (edge didn't exist before) vs add (edge already exists)
+        val onclick = "aiChatDisambiguate(\"change\",\"" + t + "\",\"" + rel + "\",[" + participantIds + "]," + pos + ");"
+        "<br />Using: " + t + " " + t.generateSummary + ". <a href='#' onclick='" + onclick + "'>Did you mean another " + t + "?</a>"
+      }
+      case _ => ""
+    }
+  }
 
   override protected def receive = {
     case Sentence(sentence, root, user, responder) =>
@@ -58,9 +72,11 @@ class AIChatResponderActor() extends Actor {
                 val edge = Edge(relation, List(node1.id, node2.id))
                 Server.consensusActor ! edge
 
-                replySentence = "This fact was recorded: '" + sentence + "'"
+                replySentence = "Fact recorded: '" + sentence + "'. <a href=''>Want to undo?</a>"
+                replySentence += disambiguationMessage(relation, Array(node1, node2), 0)
+                replySentence += disambiguationMessage(relation, Array(node1, node2), 1)
+                
                 goto = root.id
-
               }
             case _ =>
 

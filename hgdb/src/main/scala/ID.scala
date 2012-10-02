@@ -5,7 +5,7 @@ object ID {
 
   def sanitize(str: String): String = str.toLowerCase.replace("/", "_").replace(" ", "_")
 
-  def parts(id: String) = id.split('/').filter(p => p != "")
+  def parts(id: String) = id.split('/')
 
   def numberOfParts(id: String) = parts(id).length
 
