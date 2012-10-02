@@ -23,6 +23,7 @@ build = (callback) ->
     'coffee/TextView.coffee',
     'coffee/search.coffee',
     'coffee/disambiguate.coffee',
+    'coffee/undo.coffee',
     'coffee/user.coffee',
     'coffee/aichat.coffee',
     'coffee/remove.coffee',
