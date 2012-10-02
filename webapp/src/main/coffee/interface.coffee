@@ -105,6 +105,7 @@ initInterface = ->
         initAlert()
         initAiChat()
         initRemoveDialog()
+        initDisambiguateDialog()
         $('#ai-chat-button').bind 'click', aiChatButtonPressed
         $('#removeButton').bind 'click', removeButtonPressed
 

@@ -11,13 +11,13 @@ abstract class Textual extends Vertex {
       return -1
 
     edge.edgeType match {
-      case "rtype/as_in" => 100
+      case "rtype/1/as_in" => 100
       case "rtype/1/is_a" => 10
       case _ => -1
     }
   }
 
-  protected def generateSummary: String = {
+  def generateSummary: String = {
     val edges = store.neighborEdges(id)
 
     var bestEdge: Edge = null
@@ -36,5 +36,7 @@ abstract class Textual extends Vertex {
       "(" + store.get(bestEdge.participantIds(1)) + ")"
   }
 
-  def updateSummary: Textual 
+  def updateSummary: Textual
+
+  override def description: String = toString + " " + generateSummary
 }

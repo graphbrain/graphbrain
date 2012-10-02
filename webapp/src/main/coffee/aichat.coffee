@@ -104,3 +104,7 @@ aiChatButtonPressed = (msg) ->
     hideAiChat()
   else
     showAiChat()
+
+root = exports ? this
+root.aiChatDisambiguate = (mode, text, rel, participantIds, pos) ->
+  disambiguateQuery(mode, text, rel, participantIds, pos)

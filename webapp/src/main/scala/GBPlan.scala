@@ -17,7 +17,7 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       //log.info(Server.realIp(req) + " SEARCH " + query + "; results: " + results.size)
       
       val resultsList: Seq[List[String]] = (for (id <- results)
-        yield List(id, Server.store.get(id).toString))
+        yield List(id, Server.store.get(id).description))
       
       val json = Map(("count" -> results.size), ("results" -> resultsList))
       ResponseString(JSONGen.json(json))
