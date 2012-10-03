@@ -88,14 +88,22 @@ class SendMailAmazon () {
 		return true;
 	}
 
-	def sendRegistrationEmail(recipientEmails: List[String], recipientNames: List[String], userNames: List[String]): Boolean = {
+	def sendRegistrationEmail(recipientEmail: String, recipientName: String, userName: String): Boolean = {
+		sendRegistrationEmails(List(recipientEmail), List(recipientName), List(userName))
+	}
+	def sendRegistrationEmails(recipientEmails: List[String], recipientNames: List[String], userNames: List[String]): Boolean = {
 
-		return sendEmails(recipientEmails, subject = "Welcome to GraphBrain", messageBaseText = registrationEmail, defaultRecipientName = "", defaultSenderName = "", recipientNames = recipientNames, userNames = userNames)
+		sendEmails(recipientEmails, subject = "Welcome to GraphBrain", messageBaseText = registrationEmail, defaultRecipientName = "", defaultSenderName = "", recipientNames = recipientNames, userNames = userNames)
 
 	}
 
-	def sendReferralEmail(recipientEmails: List[String], recipientNames: List[String], senderNames: List[String]): Boolean = {
-		return sendEmails(recipientEmails, subject = "Invitation to GraphBrain", messageBaseText = referralEmail, defaultRecipientName = "", defaultSenderName = "", recipientNames = recipientNames, senderNames = senderNames)
+	def sendReferralEmail(recipientEmail: String, recipientName: String, senderName: String): Boolean = {
+		sendReferralEmails(List(recipientEmail), List(recipientName), List(senderName));
+	}
+
+	def sendReferralEmails(recipientEmails: List[String], recipientNames: List[String], senderNames: List[String]): Boolean = {
+
+		sendEmails(recipientEmails, subject = "Invitation to GraphBrain", messageBaseText = referralEmail, defaultRecipientName = "", defaultSenderName = "", recipientNames = recipientNames, senderNames = senderNames)
 	}
 }
 
@@ -106,13 +114,13 @@ object SendMailAmazon {
       val m = new SendMailAmazon();
       //m.sendEmail("chihchun_chen@yahoo.co.uk", "testing from scala code", "If this gets to you, it's working. \n")
       
-      val recipients = List("chihchun_chen@yahoo.co.uk")
-      val recipientNames = List("Aliana Hepwood")
-      val userNames = List("chihchun_chen")
-      val senderNames = List("Ch-Ch")
+      val recipient = "chihchun_chen@yahoo.co.uk"
+      val recipientName = "Aliana Hepwood"
+      val userName = "chihchun_chen"
+      val senderName = "Ch-Ch"
      
-      m.sendRegistrationEmail(recipients, recipientNames, userNames);
-      m.sendReferralEmail(recipients, recipientNames, senderNames);
+      m.sendRegistrationEmail(recipient, recipientName, userName);
+      m.sendReferralEmail(recipient, recipientName, senderName);
       
         
     }
