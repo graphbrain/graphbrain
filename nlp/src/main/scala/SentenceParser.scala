@@ -50,27 +50,27 @@ class SentenceParser (storeName:String = "gb") {
       if(text.toLowerCase.startsWith(qWord)) {
 
         if(text.endsWith("?")) {
-          return 1
+          1
         }
       }
     }
-    return 0;
+    0
   }
 
   def isSearch(text: String): (Double, String) = {
     for(searchWord <- searchWords) {
       if(text.toLowerCase.startsWith(searchWord)) {
 
-        return (1, text.substring(0, searchWord.length-1).trim);
+        return (1, text.substring(searchWord.length, text.length).trim)
       }
     }
     val posTags = lemmatiser.posTag(text);
     for(tag <- posTags) {
       if(verbRegex.findAllIn(tag._2).hasNext) {
-        return (0, "");
+        (0, "")
       }
     }
-    return (0.5, text);
+    (0.5, text)
     
   }
   def specialNodeCases(inNodeText: String, root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): Vertex = {
@@ -115,16 +115,13 @@ class SentenceParser (storeName:String = "gb") {
     val search = isSearch(inSentence)
     val question = isQuestion(inSentence)
 
-    if(question > search._1) {
+    if(question > search._1 && question > 0.5) {
       responses = HardcodedResponse(List("Sorry, I don't understand questions yet.")) :: responses
     }
-    else {
+    else if (search._1 > 0.5){
       responses = SearchResponse(List(search._2)) :: responses
     }
-
-      
-
-
+ 
     //Only remove full stop or comma at the end of sentence (allow other punctuation since likely to be part of proper name e.g. film titles)
     if(inSentence.endsWith(".")) {
       inSentence = inSentence.slice(0, inSentence.length-1)
@@ -149,6 +146,7 @@ class SentenceParser (storeName:String = "gb") {
       var newRelation = ""
           
       for(nodeText <- nodeTexts) {
+
         
         if(nodeText.toLowerCase == "you" || nodeText.toUpperCase == "I") {
           if(nodeText.toLowerCase == "you") {
@@ -162,6 +160,7 @@ class SentenceParser (storeName:String = "gb") {
           }
           
           if(i < sepRelations.length) {
+            
             val annotatedRelation = lemmatiser.annotate(sepRelations(i))    
             for (a <- annotatedRelation) {
               if(verbRegex.findAllIn(a._2).hasNext) {
@@ -183,18 +182,31 @@ class SentenceParser (storeName:String = "gb") {
           }
           
         }
-        newRelation = newRelation.trim + "~";
+        newRelation = newRelation.trim;
+        if(i < sepRelations.length-1) {
+          newRelation += "~"
+        }
         
         i += 1;
       }
-      relText = newRelation.trim.slice(0, newRelation.length-2);
+      relText = newRelation.trim.slice(0, newRelation.length).trim;
       var relationV = store.createEdgeType(id = ID.reltype_id(relText), label = relText)
       solutions = (nodes.reverse, relationV) :: solutions
 
     }
+    responses = GraphResponse(solutions) :: responses
+    
+    if(question > search._1 && question <= 0.5) {
+      responses = HardcodedResponse(List("Sorry, I don't understand questions yet.")) :: responses
+    }
+    else if (search._1 <= 0.5){
+      responses = SearchResponse(List(search._2)) :: responses
+    }
+
     //This will be the first in the list - so parsing favours graph responses over hardcoded etc.
-    responses = GraphResponse(solutions.reverse) :: responses
-    return responses;
+    
+    return responses.reverse;
+    
     
   }
 
@@ -261,32 +273,10 @@ class SentenceParser (storeName:String = "gb") {
 
     
     return results.reverse
+    
   }
 
-  /**
-  Returns conjugated version of the lemma if present in database. Otherwise
-  simply returns the lemma
-  */
-  // [Telmo] I comments this out because I can't figure out what it does and it's not compatible
-  // with the new hgdb API
-  /*
-  def conjugatefromExisting(lemma: String, pos: String): String = {
-
-    val targetESetID = ID.text_id(lemma) + "/0/" + pos 
-
-    //Get the lemma node:
-    if(store.exists(targetESetID)) {
-      val posEdgeSet = store.get(ID.text_id(lemma) + "/1/" + pos)
-      posEdgeSet match {
-        case p: EdgeSet => return lemma
-        case _ => 
-      }
-
-    }
-    return lemma
-  }
-  */
-
+ 
   /**
   Returns lemma node and pos relationship type (linking the two edge types).
   */
@@ -319,13 +309,13 @@ class SentenceParser (storeName:String = "gb") {
 
         }
       }
-      poslabel = poslabel.slice(0, poslabel.length - 1) + "~"
-      lemma = lemma.slice(0, lemma.length - 1) + "~"
+      poslabel = poslabel.slice(0, poslabel.length).trim + "~"
+      lemma = lemma.slice(0, lemma.length).trim + "~"
 
     //Remove the last "_"
     }
-    poslabel = poslabel.slice(0, poslabel.length - 1)
-    lemma = lemma.slice(0, lemma.length - 1)
+    poslabel = poslabel.slice(0, poslabel.length).trim
+    lemma = lemma.slice(0, lemma.length).trim
      
     val lemmaNode = store.createTextNode(namespace="1", text=lemma)
     val lemmaRelType = store.createEdgeType(id = ID.reltype_id(poslabel), label = poslabel)
@@ -546,7 +536,6 @@ def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
     return possibleParses.reverse;
   }
 
-
 def posChunkGeneral(sentence: String, root: Vertex): List[(List[String], String)]={
   val taggedSentence = lemmatiser.posTag(sentence)
   val untaggedSentence = """\s""".r.split(sentence);
@@ -603,7 +592,6 @@ def posChunkGeneral(sentence: String, root: Vertex): List[(List[String], String)
               
     return possibleParses.reverse;
   }
-
 
   def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: Vertex, user:Option[Vertex], maxPossiblePerParse: Int = 10): List[(List[Vertex], Edge)]={
     
@@ -828,22 +816,24 @@ object SentenceParser {
   	  val sentence = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
       println("From command line with general: " + sentence)
       val responses = sentenceParser.parseSentenceGeneral(sentence, user = Some(userNode))
-      responses(0) match {
-        case g: GraphResponse =>
-          val parses = g.hypergraphList
+        for(response <- responses) {
+          response match {
+            case g: GraphResponse =>
+              val parses = g.hypergraphList
+              for(parse <- parses) {
+                parse match {
+                  case (n: List[Vertex], r: Vertex) =>
+                  for(node <- n) {
+                    println("Node: " + node.id);
+                  }
+                  println("Rel: " + r.id)
+                }
 
-      
-          for(parse <- parses) {
-            parse match {
-              case (n: List[Vertex], r: Vertex) =>
-                for(node <- n) {
-                println("Node: " + node.id);
               }
-              println("Rel: " + r.id)
-            }
-          }
-        case _ =>
+            case r: ResponseType => println(r)
 
+          }
+ 
       }
 
 	}
