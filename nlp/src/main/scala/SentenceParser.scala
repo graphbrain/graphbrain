@@ -61,7 +61,7 @@ class SentenceParser (storeName:String = "gb") {
     for(searchWord <- searchWords) {
       if(text.toLowerCase.startsWith(searchWord)) {
 
-        return (1, text.substring(searchWord.length, text.length).trim)
+        return (1, text.substring(searchWord.length, text.length).replace("`", "").replace("\"", "").replace("'", "").trim)
       }
     }
     val posTags = lemmatiser.posTag(text);
@@ -195,7 +195,7 @@ class SentenceParser (storeName:String = "gb") {
 
     }
     responses = GraphResponse(solutions) :: responses
-    
+
     if(question > search._1 && question <= 0.5) {
       responses = HardcodedResponse(List("Sorry, I don't understand questions yet.")) :: responses
     }
