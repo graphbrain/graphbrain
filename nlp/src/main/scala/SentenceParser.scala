@@ -19,6 +19,7 @@ class SentenceParser (storeName:String = "gb") {
   val store = new VertexStore(storeName)
 
   val quoteRegex = """(\")(.+?)(\")""".r
+  val nodeRegex = """(\[)(.+?)(\])""".r
   val urlRegex = """([\d\w]+?:\/\/)?([\w\d\.\-]+)(\.\w+)(:\d{1,5})?(\/\S*)?""".r // See: http://stackoverflow.com/questions/8725312/javascript-regex-for-url-when-the-url-may-or-may-not-contain-http-and-www-words?lq=1
   val urlStrictRegex = """(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?""".r
   val gbNode = store.createTextNode(namespace="1", text="GraphBrain")
@@ -128,7 +129,8 @@ class SentenceParser (storeName:String = "gb") {
     }
 
     //Try segmenting with quote marks, then with known splitters
-    var parses = quoteChunkGeneral(inSentence, root);
+    var parses = strictChunk(inSentence, root);
+    //quoteChunkGeneral(inSentence, root);
     //++ logChunkGeneral(inSentence, root);
 
     //Only parse with POS if nothing returned:
@@ -223,8 +225,7 @@ class SentenceParser (storeName:String = "gb") {
         case _ => 
 
     }
-
-    
+   
     if(nodeExists(text)) {
       try{
         results = store.get(text) :: results;        
@@ -243,7 +244,6 @@ class SentenceParser (storeName:String = "gb") {
         }
       }
     }
-
 
     if (urlRegex.findAllIn(text).hasNext) {
       
@@ -269,9 +269,6 @@ class SentenceParser (storeName:String = "gb") {
     if(i==1) {
       results = store.createTextNode(namespace="1", text = text) :: results;
     }
-    
-
-    
     return results.reverse
     
   }
@@ -323,7 +320,26 @@ class SentenceParser (storeName:String = "gb") {
     
   }
 
+def strictChunk(sentence: String, root: Vertex): List[(List[String], String)] = {
+  var possibleParses: List[(List[String], String)] = List();
+  val nodeTexts = nodeRegex.findAllIn(sentence);
+  if(!nodeTexts.hasNext) {
+    return possibleParses;
+  }
+  val edgeTexts = nodeRegex.split(sentence);
+  var nodes: List[String] = List()
+  var edge = ""
+  for(nodeText <- nodeTexts) {
+    nodes = nodeText.replace("[", "").replace("]", "").trim:: nodes
+  }
+  //Index from 1 since first element is discarded
+  for(i <- 1 to edgeTexts.length-1) {
+    edge += edgeTexts(i).trim.replace(" ", "_") + "~";
+  }
+  edge = edge.slice(0, edge.length-1)
+  return List((nodes, edge))
 
+}
 def quoteChunkGeneral(sentence:String, root:Vertex): List[(List[String], String)] = {
   //quoteChunkStrict(sentence, root);
   var possibleParses: List[(List[String], String)] = List()
@@ -379,162 +395,9 @@ def quoteChunkGeneral(sentence:String, root:Vertex): List[(List[String], String)
 
 }
 
-def logChunkGeneral(sentence:String, root:Vertex): List[(List[String], String)] = {
-  logChunk(sentence, root);
 
-}
   
-/**
-Only returns results where both source and target are in quotes, or where there is a known 
-splitter
-*/
-def quoteChunkStrict(sentence: String, root: Vertex): List[(List[String], String)] = {
-  var possibleParses: List[(List[String], String)] = List()
 
-  quoteRegex.findFirstIn(sentence) match {
-
-    case Some(exp) => 
-
-
-      //I'm assigning these in case we want to do something with them later, e.g. infer hypergraphs vs. multi-bi-graphs
-      val numQuotes = quoteRegex.findAllIn(sentence).length;
-      var nonQuotes = quoteRegex.split(sentence);
-      var nqEdges:List[String] = List()
-      var numNonQuotes = 0;
-
-      for (i <- 0 to nonQuotes.length-1) {
-        val nq = nonQuotes(i)
-        if(nq!="") {
-          numNonQuotes+=1;
-          nqEdges = nq::nqEdges;
-        }
-      }
-      
-      //Make sure the quotation marks are not around the whole string:
-      if (exp.length == sentence.length) {
-          return Nil;
-      }
-      else if (numQuotes >= 2 && numNonQuotes == 1) {
-        val nodes = quoteRegex.findAllIn(sentence).toArray;
-        val edges = nqEdges.reverse.toArray
-          
-        for(i <- 0 to nodes.length-2) {
-          val current = nodes(i);
-          val next = nodes(i+1);
-          //val edge = getBaseRel(edges(i).trim);
-          val edge = edges(i).trim;
-          possibleParses = (List(current.replace("\"", "").trim, next.replace("\"", "").trim), edge) :: possibleParses; 
-          println("Quote Chunk: " + current + ", " + edge + ", " + next)
-
-        }
-        return possibleParses;
-      } 
-      
-      case None => return possibleParses;
-    }
-    return possibleParses
-
-}
-def logChunk(sentence: String, root: Vertex): List[(List[String], String)]={
-    val knownSplitters = rTypeMapping.keys
-    var possibleParses: List[(List[String], String)] = List()
-    for (splitter <- knownSplitters) {
-      val nodes = sentence.split(splitter)
-      if(nodes.length==2) {
-        val source = nodes(0).trim
-        val target = nodes(1).trim
-        possibleParses = (List(source, target), rTypeMapping(splitter)) :: possibleParses
-      }
-    }
-    return possibleParses.reverse;
-  }
-
-  def getBaseRel(rel: String): String = {
-    for (key <- rTypeMapping.keys) {
-      if(key == rel) {
-        return rTypeMapping(key)
-      }
-    }
-    return rel;
-  }
-
-
-  def posChunk(sentence: String, root: Vertex): List[(List[String], String)]={
-    val taggedSentence = lemmatiser.posTag(sentence)
-    val untaggedSentence = """\s""".r.split(sentence);
-    var possibleParses: List[(List[String], String)] = List()
-
-    
-    for(i <- 0 to taggedSentence.length-3) {
-      
-  	  val current = taggedSentence(i)
-  	  
-  	  val lookahead1 = taggedSentence(i+1)
-  	  val lookahead2 = taggedSentence(i+2)
-      
-      (current, lookahead1, lookahead2) match{
-    		  case ((word1, tag1), (word2, tag2), (word3, tag3)) => 
-    		  //println(word2 + ", " + tag2)
-    		  if(relRegex.findAllIn(tag2).length == 1) {
-    		  	//println("verb: " + word2)
-            var nodeTexts: List[String] = List()
-            var node1Text = "" 
-            var edgeText = ""
-            var node2Text = ""
-            
-    		  
-    		    if(relRegex.findAllIn(tag1).length == 0) {
-    		  	  
-    		  	  //Anything before the edge goes into node 1
-    		  	  //inEdge = 1;
-    		  	  edgeText += untaggedSentence(i+1)
-
-    		  	  
-    		  	  for (j <- 0 to i) {
-    		  	  	taggedSentence(j) match {
-    		  	  		case (word, tag) => 
-                  
-                    node1Text = node1Text + " " + untaggedSentence(j)  
-
-                  
-                  
-
-    		  	  	}
-
-    		  	  }
-              
-
-    		  	  for (j <- i+2 to taggedSentence.length-1) {
-    		  		taggedSentence(j) match {
-    		  	  		case (word, tag) => 
-                    if(relRegex.findAllIn(tag).length==0) {
-                      node2Text = node2Text + " " + untaggedSentence(j)  
-                      //Increment the edgeTextCounter by 1 to indicate that a further role is being introduced:
-                      
-                      //inEdge = 0;
-                   
-                    }
-                    else {
-                      
-                      edgeText = edgeText + " " + untaggedSentence(j);
-                    }
-
-    		  	  	}
-    		  	  }
-    		  	  println("POS Chunk: " + node1Text.trim + " ," + edgeText.trim + " ," + node2Text.trim)
-    		  	  val nodes = List(node1Text.replace("`", "").replace("'", "").trim, node2Text.replace("`", "").replace("'", "").trim)
-    		  	  possibleParses = (nodes, edgeText) :: possibleParses
-              
-
-    		  	}
-
-          }
-
-
-    	  }
-    }
-    return possibleParses.reverse;
-  }
 
 def posChunkGeneral(sentence: String, root: Vertex): List[(List[String], String)]={
   val taggedSentence = lemmatiser.posTag(sentence)
@@ -593,7 +456,7 @@ def posChunkGeneral(sentence: String, root: Vertex): List[(List[String], String)
     return possibleParses.reverse;
   }
 
-  def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: Vertex, user:Option[Vertex], maxPossiblePerParse: Int = 10): List[(List[Vertex], Edge)]={
+def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: Vertex, user:Option[Vertex], maxPossiblePerParse: Int = 10): List[(List[Vertex], Edge)]={
     
     var userID = ""
     user match {
