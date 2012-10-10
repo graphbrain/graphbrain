@@ -201,7 +201,7 @@ class SentenceParser (storeName:String = "gb") {
     if(parses == Nil) {
       parses = posChunkGeneral(inSentence, root)
     }
-    val solutions = reparseGraphTexts(parses);
+    val solutions = reparseGraphTexts(parses, root, user);
     responses = GraphResponse(solutions) :: responses
 
     if(question > search._1 && question <= 0.5) {
