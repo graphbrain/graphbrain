@@ -70,10 +70,16 @@ aiChatAddLineRaw = (line) ->
   $('#ai-chat-log').append(line)
   aiChatGotoBottom()
 
-aiChatAddLine = (line) ->
-  aiChatAddLineRaw(line)
-  chatBuffer[chatBufferPos] = line
-  localStorage.setItem('chatBuffer' + chatBufferPos, line)
+aiChatAddLine = (agent, line) ->
+  html = ''
+  if (agent == 'gb')
+    html += '<div class="gb-line"><b>GraphBrain:</b> '
+  else if (agent == 'user')
+    html += '<div class="user-line"><b>You:</b> '
+  html += line + '</div>'
+  aiChatAddLineRaw(html)
+  chatBuffer[chatBufferPos] = html
+  localStorage.setItem('chatBuffer' + chatBufferPos, html)
   chatBufferPos += 1
   if chatBufferPos >= chatBufferSize
     chatBufferPos = 0
@@ -81,7 +87,7 @@ aiChatAddLine = (line) ->
 
 aiChatSubmit = (msg) ->
   sentence = $('#ai-chat-input').val()
-  aiChatAddLine('<br />you: ' + sentence)
+  aiChatAddLine('user', sentence)
   $('#ai-chat-input').val('')
   $.ajax({
     type: "POST",
@@ -94,7 +100,7 @@ aiChatSubmit = (msg) ->
 
 aiChatReply = (msg) ->
   reply = $.parseJSON(msg)
-  aiChatAddLine('<br />GraphBrain: ' + reply['sentence'])
+  aiChatAddLine('gb', reply['sentence'])
 
   if reply['goto'] != ''
     window.location.href = '/node/' + reply['goto']

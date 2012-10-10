@@ -1,5 +1,5 @@
 undoFactReply = (msg) ->
-  aiChatAddLine('<br />GraphBrain: fact removed (undo).')
+  aiChatAddLine('gb', 'fact removed (undo).')
   window.location.reload()
 
 root = exports ? this

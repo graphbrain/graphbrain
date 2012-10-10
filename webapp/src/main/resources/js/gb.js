@@ -2076,7 +2076,7 @@ function handler(event) {
   };
 
   disambiguateActionReply = function(msg) {
-    aiChatAddLine('<br />GraphBrain: fact updated.');
+    aiChatAddLine('gb', 'fact updated.');
     return window.location.reload();
   };
 
@@ -2117,7 +2117,7 @@ function handler(event) {
   };
 
   undoFactReply = function(msg) {
-    aiChatAddLine('<br />GraphBrain: fact removed (undo).');
+    aiChatAddLine('gb', 'fact removed (undo).');
     return window.location.reload();
   };
 
@@ -2487,10 +2487,18 @@ function handler(event) {
     return aiChatGotoBottom();
   };
 
-  aiChatAddLine = function(line) {
-    aiChatAddLineRaw(line);
-    chatBuffer[chatBufferPos] = line;
-    localStorage.setItem('chatBuffer' + chatBufferPos, line);
+  aiChatAddLine = function(agent, line) {
+    var html;
+    html = '';
+    if (agent === 'gb') {
+      html += '<div class="gb-line"><b>GraphBrain:</b> ';
+    } else if (agent === 'user') {
+      html += '<div class="user-line"><b>You:</b> ';
+    }
+    html += line + '</div>';
+    aiChatAddLineRaw(html);
+    chatBuffer[chatBufferPos] = html;
+    localStorage.setItem('chatBuffer' + chatBufferPos, html);
     chatBufferPos += 1;
     if (chatBufferPos >= chatBufferSize) {
       chatBufferPos = 0;
@@ -2501,7 +2509,7 @@ function handler(event) {
   aiChatSubmit = function(msg) {
     var sentence;
     sentence = $('#ai-chat-input').val();
-    aiChatAddLine('<br />you: ' + sentence);
+    aiChatAddLine('user', sentence);
     $('#ai-chat-input').val('');
     $.ajax({
       type: "POST",
@@ -2516,7 +2524,7 @@ function handler(event) {
   aiChatReply = function(msg) {
     var reply;
     reply = $.parseJSON(msg);
-    aiChatAddLine('<br />GraphBrain: ' + reply['sentence']);
+    aiChatAddLine('gb', reply['sentence']);
     if (reply['goto'] !== '') {
       return window.location.href = '/node/' + reply['goto'];
     }

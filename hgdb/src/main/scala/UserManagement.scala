@@ -108,4 +108,19 @@ trait UserManagement extends VertexStore {
     update(updatedUser)
     updatedUser
   }
+
+  def forceLogin(login: String): UserNode = {
+    val userNode = findUser(login)
+
+    // user does not exist
+    if (userNode == null) {
+      return null
+    }
+
+    // ok, create new session and return it
+    val session = genSessionId
+    val updatedUser = userNode.copy(session=session)
+    update(updatedUser)
+    updatedUser
+  }
 }

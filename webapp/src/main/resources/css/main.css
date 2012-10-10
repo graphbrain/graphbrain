@@ -180,3 +180,20 @@ html, body {
 	padding-right: 0;
 	border-width: 0;
 }
+
+.gb-line {
+    color: #ADF6F7;
+}
+
+.gb-line a {
+    color: #D5F7F7;
+}
+
+.gb-line a:hover {
+    color: #D5F7F7;
+    text-decoration:underline;
+}
+
+.user-line {
+    color: #F7E57E;
+}

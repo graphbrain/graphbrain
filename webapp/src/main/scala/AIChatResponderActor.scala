@@ -33,7 +33,7 @@ class AIChatResponderActor() extends Actor {
       case t: Textual => {
         // TODO: deal with change (edge didn't exist before) vs add (edge already exists)
         val onclick = "aiChatDisambiguate(\"change\",\"" + t + "\",\"" + rel + "\",[" + participantIds + "]," + pos + ");"
-        "<br />Using: " + t + " " + t.generateSummary + ". <a href='#' onclick='" + onclick + "'>Did you mean another " + t + "?</a>"
+        "<br />&nbsp;&nbsp;&nbsp;&nbsp;Using: " + t + " " + t.generateSummary + ". <a href='#' onclick='" + onclick + "'>Did you mean another " + t + "?</a>"
       }
       case _ => ""
     }
