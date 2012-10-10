@@ -107,37 +107,8 @@ class SentenceParser (storeName:String = "gb") {
 
   }
 
-
-  def parseSentenceGeneral(inSent: String, root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): List[ResponseType] = {
-    var inSentence = inSent;
-    var solutions : List[(List[Vertex], Vertex)] = List();
-    var responses : List[ResponseType] = List();
-
-    val search = isSearch(inSentence)
-    val question = isQuestion(inSentence)
-
-    if(question > search._1 && question > 0.5) {
-      responses = HardcodedResponse(List("Sorry, I don't understand questions yet.")) :: responses
-    }
-    else if (search._1 > 0.5){
-      responses = SearchResponse(List(search._2)) :: responses
-    }
- 
-    //Only remove full stop or comma at the end of sentence (allow other punctuation since likely to be part of proper name e.g. film titles)
-    if(inSentence.endsWith(".")) {
-      inSentence = inSentence.slice(0, inSentence.length-1)
-    }
-
-    //Try segmenting with quote marks, then with known splitters
-    var parses = strictChunk(inSentence, root);
-    //quoteChunkGeneral(inSentence, root);
-    //++ logChunkGeneral(inSentence, root);
-
-    //Only parse with POS if nothing returned:
-    if(parses == Nil) {
-      parses = posChunkGeneral(inSentence, root)
-    }
-
+  def reparseGraphTexts(parses: List[(List[String], String)], root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): List[(List[Vertex], Vertex)] = {
+    var solutions: List[(List[Vertex], Vertex)] = List()
     for(parse <- parses) {
       var nodeTexts = parse._1;
       var relText = parse._2;
@@ -196,6 +167,41 @@ class SentenceParser (storeName:String = "gb") {
       solutions = (nodes.reverse, relationV) :: solutions
 
     }
+    return solutions
+
+  }
+
+
+  def parseSentenceGeneral(inSent: String, root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): List[ResponseType] = {
+    var inSentence = inSent;
+    
+    var responses : List[ResponseType] = List();
+
+    val search = isSearch(inSentence)
+    val question = isQuestion(inSentence)
+
+    if(question > search._1 && question > 0.5) {
+      responses = HardcodedResponse(List("Sorry, I don't understand questions yet.")) :: responses
+    }
+    else if (search._1 > 0.5){
+      responses = SearchResponse(List(search._2)) :: responses
+    }
+ 
+    //Only remove full stop or comma at the end of sentence (allow other punctuation since likely to be part of proper name e.g. film titles)
+    if(inSentence.endsWith(".")) {
+      inSentence = inSentence.slice(0, inSentence.length-1)
+    }
+
+    //Try segmenting with quote marks, then with known splitters
+    var parses = strictChunk(inSentence, root);
+    //quoteChunkGeneral(inSentence, root);
+    //++ logChunkGeneral(inSentence, root);
+
+    //Only parse with POS if nothing returned:
+    if(parses == Nil) {
+      parses = posChunkGeneral(inSentence, root)
+    }
+    val solutions = reparseGraphTexts(parses);
     responses = GraphResponse(solutions) :: responses
 
     if(question > search._1 && question <= 0.5) {
