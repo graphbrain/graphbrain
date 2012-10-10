@@ -80,5 +80,12 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       ResponseString(JSONGen.json(""))
       //log.info(Server.realIp(req) + " SEARCH " + query + "; results: " + results.size)
     }
+
+    // TEMPORARY: YC backdoor
+    case req@GET(Path("/yc-secret-door") & Params(params)) => {
+      val login = "ycombinator"
+      val user = Server.store.forceLogin(login)
+      ResponseCookies(Cookie("username", user.username)) ~> ResponseCookies(Cookie("session", user.session)) ~> Redirect("/node/user/ycombinator") 
+    }
   }
 }
