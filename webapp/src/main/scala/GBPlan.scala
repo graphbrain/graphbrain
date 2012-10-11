@@ -15,7 +15,7 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val query = params("q")(0)
       val si = new SearchInterface(Server.store)
       val results = si.query(query)
-      //log.info(Server.realIp(req) + " SEARCH " + query + "; results: " + results.size)
+      Server.log(Server.realIp(req) + " SEARCH " + query + "; results: " + results.size)
       
       val resultsList: Seq[List[String]] = (for (id <- results)
         yield List(id, Server.store.get(id).description))
@@ -29,7 +29,7 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val email = params("email")(0)
       val password = params("password")(0)
       Server.store.createUser(username, name, email, password, "user")
-      //log.info(Server.realIp(req) + " SIGNUP name: " + name + "; username: " + username + "; email:" + email)
+      Server.log(Server.realIp(req) + " SIGNUP name: " + name + "; username: " + username + "; email:" + email)
       ResponseString("ok")
     }
     case req@POST(Path("/checkusername") & Params(params)) => {
@@ -55,11 +55,11 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val password = params("password")(0)
       val user = Server.store.attemptLogin(login, password)
       if (user == null) {
-        //log.info(Server.realIp(req) + " FAILED LOGIN login: " + login)
+        Server.log(Server.realIp(req) + " FAILED LOGIN login: " + login)
         ResponseString("failed")
       }
       else {
-        //log.info(Server.realIp(req) + " LOGIN login: " + login)
+        Server.log(Server.realIp(req) + " LOGIN login: " + login)
         ResponseString(user.username + " " + user.session)
       } 
     }
@@ -78,13 +78,15 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       Server.consensusActor ! edge
 
       ResponseString(JSONGen.json(""))
-      //log.info(Server.realIp(req) + " SEARCH " + query + "; results: " + results.size)
     }
 
     // TEMPORARY: YC backdoor
     case req@GET(Path("/yc-secret-door") & Params(params)) => {
       val login = "ycombinator"
       val user = Server.store.forceLogin(login)
+
+      Server.log(Server.realIp(req) + " yc-secret-door access ")
+      
       ResponseCookies(Cookie("username", user.username)) ~> ResponseCookies(Cookie("session", user.session)) ~> Redirect("/node/user/ycombinator") 
     }
   }

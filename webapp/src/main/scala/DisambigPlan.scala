@@ -21,7 +21,6 @@ object DisambigPlan extends cycle.Plan with cycle.SynchronousExecution with Serv
 
       val si = new SearchInterface(Server.store)
       val results = si.query(text.toLowerCase)
-      //log.info(Server.realIp(req) + " DISAMBIG " + query + "; results: " + results.size)
       
       val resultsList: Seq[List[String]] = (for (id <- results)
         yield List(id, Server.store.get(id).description))
@@ -65,7 +64,6 @@ object DisambigPlan extends cycle.Plan with cycle.SynchronousExecution with Serv
       Server.consensusActor ! edge
 
       ResponseString(JSONGen.json(""))
-      //log.info(Server.realIp(req) + " SEARCH " + query + "; results: " + results.size)
     }
     case req@POST(Path("/disambig_change") & Params(params) & Cookies(cookies)) => {
       val userNode = Server.getUser(cookies)
@@ -97,7 +95,6 @@ object DisambigPlan extends cycle.Plan with cycle.SynchronousExecution with Serv
       Server.consensusActor ! edge
 
       ResponseString(JSONGen.json(""))
-      //log.info(Server.realIp(req) + " SEARCH " + query + "; results: " + results.size)
     }
   }
 }
