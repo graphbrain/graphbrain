@@ -7,7 +7,7 @@ import unfiltered.Cookie
 
 object LandingPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse {
   def pageResponse(template: String, page: String, title: String, cookies: Map[String, Any], req: HttpRequest[Any]) = {
-    //log.info(Server.realIp(req) + " PAGE " + page)
+    Server.log(Server.realIp(req) + " PAGE " + page)
     Server.scalateResponse(template, page, title, cookies, req)
   }
 

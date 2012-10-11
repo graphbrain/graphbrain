@@ -1,7 +1,10 @@
 package com.graphbrain.webapp
 
+import java.io.{PrintWriter, BufferedWriter, FileWriter}
+import java.util.Locale
+import java.text.DateFormat
 import java.net.URL
-import org.apache.log4j.Level
+
 import unfiltered.scalate._
 import unfiltered.request._
 import unfiltered.response._
@@ -80,7 +83,17 @@ object Server {
     }
   }
 
+  def log(msg: String) = {
+    val df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM, Locale.FRANCE)
+
+    val out = new PrintWriter(new BufferedWriter(new FileWriter("webapp.log", true)))
+    out.println("[" + df.format(new java.util.Date) + "] " + msg)
+    out.close()
+  }
+
   def start(prod: Boolean) = {
+    log("webserver started")
+
     this.prod = prod
     http = unfiltered.netty.Http(8080)
       .handler(GBPlan)
@@ -93,6 +106,8 @@ object Server {
     http.run
 
     actorSystem.shutdown()
+
+    log("webserver shutdown")
   }
 
   def main(args: Array[String]) {
