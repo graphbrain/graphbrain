@@ -85,20 +85,31 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 	def insertAndGetWikiDisambigNode(wikiTitle: String, username: String): Vertex = {
 		val decodedTitle = URLDecoder.decode(wikiTitle, "UTF-8")
 		val titleSP = removeWikiDisambig(decodedTitle);
-		val disAmb = """\(.*?\)""".r.findAllIn(decodedTitle)
+		
 		var i = 1;
+		val wikiNode = store.createTextNode(namespace = "wikipedia", text = URLDecoder.decode(wikiTitle, "UTF-8"))
 
 		while(store.exists(ID.text_id(titleSP, i.toString))) {
 			val existingNode = store.get(ID.text_id(titleSP, i.toString));
+			val disAmb = """\(.*?\)""".r.findAllIn(decodedTitle)
 			existingNode match {
 				case e: TextNode => 
 
 				  if(disAmb.hasNext) {
 				  	val da = disAmb.next.replace("(", "").replace(")", "").trim
-				  	val daID = ID.text_id(da, "1")
-				  	val daRelID = asInRel + " " + e.id + " " + daID;
-				  	if(e.text == titleSP && store.exists(daRelID)) {
-				  		return existingNode
+				  	val daNode = store.createTextNode(namespace = "1", text=da)
+				  	val daID = daNode.id
+				  	val daRel = Edge(asInRel, List(e.id, daID));
+				  	val wikiRelID = wikiRel + " " + wikiNode.id
+				  	if(e.text == titleSP) {
+				  		for(nEdge <- store.neighborEdges(existingNode.id)) {
+				  			println(nEdge)
+				  			if(nEdge == daRel) {
+				  				println("Match:" + nEdge)
+				  				return existingNode;		
+				  			}
+				  		}
+				  		
 				  	}
 				  }
 				  else {
@@ -114,7 +125,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 		val newNode = store.createTextNode(namespace = i.toString, text=titleSP)
 		println(store.getOrInsert2(newNode, HGDBID.userIdFromUsername(username)).id)
 
-		val wikiNode = store.createTextNode(namespace = "wikipedia", text = URLDecoder.decode(wikiTitle, "UTF-8"))
+		
 		if(!store.exists(wikiNode.id)) {
 		  
 		  store.put(wikiNode)	
@@ -291,10 +302,17 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 object OutputDBWriter {
 	def main(args : Array[String]) : Unit = {
 		val test = new OutputDBWriter(storeName = "gb", source = DBPediaGraphFromCategories.sourceName, username = "dbpedia", name = "dbpedia", role = "crawler")
-		val sister1 = "Sizzzzzzzz_(film)"
-		val sister2 = "Sizzzzzzzz_(band)"
+		val sister1 = "Sizzzy_(film)"
+		val sister2 = "Sizzzy_(band)"
+		val sister3 = "Sizzzy_(tree)"
+		test.writeOutDBInfo(sister1, "is a", "film", "http://en.wikipedia.org/wiki/Sister_(film)")
 		test.writeOutDBInfo(sister1, "is a", "film", "http://en.wikipedia.org/wiki/Sister_(film)")
 		test.writeOutDBInfo(sister2, "likes", "music", "http://en.wikipedia.org/wiki/Sister_(band)")
+		test.writeOutDBInfo(sister3, "likes", "music", "http://en.wikipedia.org/wiki/Sister_(tree)")
+		println(test.store.get("1/sizzzy").id)
+		println(test.store.get("2/sizzzy").id)
+		println(test.store.get("3/sizzzy").id)
+		//println(test.store.get("4/sizzzy").id)
     }
   
 }
