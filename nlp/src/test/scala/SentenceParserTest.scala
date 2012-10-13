@@ -5,7 +5,6 @@ import java.net.URLDecoder;
 import scala.collection.immutable.HashMap
 import scala.util.Sorting
 import com.graphbrain.hgdb.VertexStore
-import com.graphbrain.hgdb.BurstCaching
 import com.graphbrain.hgdb.OpLogging
 import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.Edge
@@ -14,6 +13,8 @@ import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.EdgeType
 import com.graphbrain.hgdb.Vertex
 import com.graphbrain.hgdb.ID
+import com.graphbrain.hgdb.UserOps
+import com.graphbrain.hgdb.UserManagement
 
 
 
@@ -21,21 +22,22 @@ import com.graphbrain.hgdb.ID
 class SentenceParserTest extends FunSuite {
 
   val sentenceParser = new SentenceParser()
+  val store = new VertexStore("gb") with UserManagement with UserOps
 
-  val toadNodeGlobal = TextNode(namespace="1", text="toad")
-  val toadNodeUser = TextNode(namespace="usergenerated/chihchun_chen", text="toad")
-  val globalNameNode1 = TextNode(namespace="1", text="ChihChun")
-  val globalNameNode2 = TextNode(namespace = "1", text = "Chih-Chun")
+  val toadNodeGlobal = store.createTextNode(namespace="1", text="toad")
+  val toadNodeUser = store.createTextNode(namespace="usergenerated/chihchun_chen", text="toad")
+  val globalNameNode1 = store.createTextNode(namespace="1", text="ChihChun")
+  val globalNameNode2 = store.createTextNode(namespace = "1", text = "Chih-Chun")
 
-  val programmerGlobalNode = TextNode(namespace = "1", text = "programmer")
-  val userNode = UserNode(id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
-  val graphbrainGlobalNode = TextNode(namespace = "1", text = "GraphBrain")
-  val graphbrainUserNode = TextNode(namespace = "usergenerated/chihchun_chen", text = "graphbrain")
+  val programmerGlobalNode = store.createTextNode(namespace = "1", text = "programmer")
+  val userNode = UserNode(store = store, id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
+  val graphbrainGlobalNode = store.createTextNode(namespace = "1", text = "GraphBrain")
+  val graphbrainUserNode = store.createTextNode(namespace = "usergenerated/chihchun_chen", text = "graphbrain")
   
   val sentence1 = "ChihChun is a toad"
   val sentence2 = "I am always a programmer at graphbrain"
   val sentence3 = "Chih-Chun is always a programmer at graphbrain"
-  val rootNode2 = TextNode(namespace = "1", text = "graphbrain")
+  val rootNode2 = store.createTextNode(namespace = "1", text = "graphbrain")
   val sentence4 = "Chih-Chun is always a programmer at http://graphbrain.com"
  
   val isA = "rtype/1/is_a"
