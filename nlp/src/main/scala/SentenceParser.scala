@@ -201,7 +201,7 @@ class SentenceParser (storeName:String = "gb") {
     if(parses == Nil) {
       parses = posChunkGeneral(inSentence, root)
     }
-    val solutions = reparseGraphTexts(parses);
+    val solutions = reparseGraphTexts(parses, root, user);
     responses = GraphResponse(solutions) :: responses
 
     if(question > search._1 && question <= 0.5) {
@@ -317,8 +317,8 @@ class SentenceParser (storeName:String = "gb") {
 
     //Remove the last "_"
     }
-    poslabel = poslabel.slice(0, poslabel.length).trim
-    lemma = lemma.slice(0, lemma.length).trim
+    poslabel = poslabel.slice(0, poslabel.length-2).trim
+    lemma = lemma.slice(0, lemma.length-2).trim
      
     val lemmaNode = store.createTextNode(namespace="1", text=lemma)
     val lemmaRelType = store.createEdgeType(id = ID.reltype_id(poslabel), label = poslabel)
