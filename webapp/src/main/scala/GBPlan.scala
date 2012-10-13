@@ -11,16 +11,18 @@ import com.graphbrain.hgdb.SearchInterface
 
 object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse {
   def intent = {
-    case req@POST(Path("/search") & Params(params)) => {
+    case req@POST(Path("/search") & Params(params) & Cookies(cookies)) => {
       val query = params("q")(0)
       val si = new SearchInterface(Server.store)
       val results = si.query(query)
-      Server.log(Server.realIp(req) + " SEARCH " + query + "; results: " + results.size)
       
       val resultsList: Seq[List[String]] = (for (id <- results)
         yield List(id, Server.store.get(id).description))
       
       val json = Map(("count" -> results.size), ("results" -> resultsList))
+      
+      Server.log(req, cookies, "SEARCH query: " + query + "; results: " + results.size)
+
       ResponseString(JSONGen.json(json))
     }
     case req@POST(Path("/signup") & Params(params)) => {
@@ -29,7 +31,9 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val email = params("email")(0)
       val password = params("password")(0)
       Server.store.createUser(username, name, email, password, "user")
-      Server.log(Server.realIp(req) + " SIGNUP name: " + name + "; username: " + username + "; email:" + email)
+
+      Server.log(req, null, "SIGNUP name: " + name + "; username: " + username + "; email:" + email)
+      
       ResponseString("ok")
     }
     case req@POST(Path("/checkusername") & Params(params)) => {
@@ -55,11 +59,11 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val password = params("password")(0)
       val user = Server.store.attemptLogin(login, password)
       if (user == null) {
-        Server.log(Server.realIp(req) + " FAILED LOGIN login: " + login)
+        Server.log(req, null, "FAILED LOGIN login: " + login)
         ResponseString("failed")
       }
       else {
-        Server.log(Server.realIp(req) + " LOGIN login: " + login)
+        Server.log(req, null, "LOGIN login: " + login)
         ResponseString(user.username + " " + user.session)
       } 
     }
@@ -85,7 +89,7 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val login = "ycombinator"
       val user = Server.store.forceLogin(login)
 
-      Server.log(Server.realIp(req) + " yc-secret-door access ")
+      Server.log(req, null, "YC-SECRET-DOOR access ")
       
       ResponseCookies(Cookie("username", user.username)) ~> ResponseCookies(Cookie("session", user.session)) ~> Redirect("/node/user/ycombinator") 
     }

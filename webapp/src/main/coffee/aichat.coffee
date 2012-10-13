@@ -5,8 +5,12 @@ chatBufferPos = 0
 chatBufferSize = 100
 
 initChatBuffer = () ->
+  firstUse = false
+
   if localStorage.getItem('chatBufferPos') != null
     chatBufferPos = parseInt(localStorage.getItem('chatBufferPos'))
+  else
+    firstUse = true
 
   for pos in [0..chatBufferSize]
     chatBuffer.push(localStorage.getItem('chatBuffer' + pos))
@@ -23,6 +27,9 @@ initChatBuffer = () ->
     if line != null
       aiChatAddLineRaw(line)
     curPos += 1
+
+  if firstUse
+    printHelp()
 
 aiChatGotoBottom = () ->
   height = $('#ai-chat')[0].scrollHeight
@@ -84,6 +91,9 @@ aiChatAddLine = (agent, line) ->
   if chatBufferPos >= chatBufferSize
     chatBufferPos = 0
   localStorage.setItem('chatBufferPos', chatBufferPos)
+
+printHelp = () ->
+  aiChatAddLine('gb', 'Hello world.')
 
 aiChatSubmit = (msg) ->
   sentence = $('#ai-chat-input').val()

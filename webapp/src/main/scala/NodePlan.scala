@@ -10,14 +10,14 @@ object NodePlan extends cycle.Plan with cycle.SynchronousExecution with ServerEr
   def nodeResponse(id: String, cookies: Map[String, Any], req: HttpRequest[Any]) = {
     val userNode = Server.getUser(cookies)
     val node = Server.store.get(id)
-    Server.log(Server.realIp(req) + " NODE " + id)
+    Server.log(req, cookies, "NODE id: " + id)
     NodePage(Server.store, node, userNode, Server.prod, req, cookies).response
   }
 
   def rawResponse(id: String, cookies: Map[String, Any], req: HttpRequest[Any]) = {
     val vertex = Server.store.get(id)
     val raw = Server.store.rawget(id)
-    Server.log(Server.realIp(req) + " RAW " + id)
+    Server.log(req, cookies, "RAW id: " + id)
     RawPage(vertex, raw, req, cookies).response
   }
 
