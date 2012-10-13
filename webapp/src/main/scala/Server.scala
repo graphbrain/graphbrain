@@ -83,16 +83,21 @@ object Server {
     }
   }
 
-  def log(msg: String) = {
+  def log(req: HttpRequest[Any], cookies: Map[String, Any], msg: String) = {
     val df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM, Locale.FRANCE)
 
     val out = new PrintWriter(new BufferedWriter(new FileWriter("webapp.log", true)))
-    out.println("[" + df.format(new java.util.Date) + "] " + msg)
+
+    val ip = if (req == null) "" else realIp(req)
+    val userNode = if (cookies == null) null else getUser(cookies)
+    val username = if (userNode == null) "null" else userNode.username
+
+    out.println("[" + df.format(new java.util.Date) + "] " + ip + " " + username + " - " + msg)
     out.close()
   }
 
   def start(prod: Boolean) = {
-    log("webserver started")
+    log(null, null, "webserver started")
 
     this.prod = prod
     http = unfiltered.netty.Http(8080)
@@ -107,7 +112,7 @@ object Server {
 
     actorSystem.shutdown()
 
-    log("webserver shutdown")
+    log(null, null, "webserver shutdown")
   }
 
   def main(args: Array[String]) {

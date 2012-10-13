@@ -63,6 +63,8 @@ object DisambigPlan extends cycle.Plan with cycle.SynchronousExecution with Serv
       val edge = Edge(rel, participantNodes.map(_.id).toList)
       Server.consensusActor ! edge
 
+      Server.log(req, cookies, "DISAMBIG_CREATE mode: " + mode + "; text: " + text + "; rel: " + rel + "; participants:" + participants + "; pos: " + pos)
+
       ResponseString(JSONGen.json(""))
     }
     case req@POST(Path("/disambig_change") & Params(params) & Cookies(cookies)) => {
@@ -93,6 +95,8 @@ object DisambigPlan extends cycle.Plan with cycle.SynchronousExecution with Serv
       // force consesnsus re-evaluation of affected edge
       val edge = Edge(rel, newParticipantIds.toList)
       Server.consensusActor ! edge
+
+      Server.log(req, cookies, "DISAMBIG_CHANGE mode: " + mode + "; rel: " + rel + "; participants:" + participants + "; pos: " + pos + "; changeTo: " + changeTo)
 
       ResponseString(JSONGen.json(""))
     }

@@ -18,5 +18,7 @@ object AIChatPlan extends async.Plan with ServerErrorResponse {
       val rootId = params("rootId")(0)
       val root = Server.store.get(rootId)
       responderActor ! AIChatResponderActor.Sentence(sentence, root, userNode, req)
+
+      Server.log(req, cookies, "AI CHAT sentence: " + sentence + "; rootId: " + rootId)
   }
 }

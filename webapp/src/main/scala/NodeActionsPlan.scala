@@ -24,7 +24,6 @@ object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with S
 
     val userNode = Server.getUser(cookies)
     val node = Server.store.get(id)
-    Server.log(Server.realIp(req) + " NODE " + id)
     NodePage(Server.store, node, userNode, Server.prod, req, cookies, errorMessage).response
   }
 
@@ -43,7 +42,7 @@ object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with S
       val edge = Edge(link, List(origId, targId))
       Server.consensusActor ! edge
 
-      Server.log(Server.realIp(req) + " REMOVE EDGE username: " + userNode.username + "; origId: " + origId + "; link: " + link + "; targId" + targId)
+      Server.log(req, cookies, "REMOVE EDGE origId: " + origId + "; link: " + link + "; targId" + targId)
     }
     else {
       val nedges = Server.store.neighborEdges(nodeId)
@@ -55,7 +54,7 @@ object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with S
         Server.consensusActor ! edgeId
       }
 
-      Server.log(Server.realIp(req) + " REMOVE NODE username: " + userNode.username + "; nodeId: " + nodeId)
+      Server.log(req, cookies, "REMOVE NODE nodeId: " + nodeId)
     }
   }
 

@@ -454,7 +454,7 @@ function handler(event) {
 
 })(jQuery);;
 
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, autoUpdateUsername, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initChatBuffer, initDisambiguateDialog, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, initTextView, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, autoUpdateUsername, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initChatBuffer, initDisambiguateDialog, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, initTextView, interRect, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, printHelp, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   rotateAndTranslate = function(point, angle, tx, ty) {
     var rx, ry, x, y;
@@ -2413,9 +2413,12 @@ function handler(event) {
   chatBufferSize = 100;
 
   initChatBuffer = function() {
-    var curPos, line, pos, _i, _results;
+    var curPos, firstUse, line, pos, _i;
+    firstUse = false;
     if (localStorage.getItem('chatBufferPos') !== null) {
       chatBufferPos = parseInt(localStorage.getItem('chatBufferPos'));
+    } else {
+      firstUse = true;
     }
     for (pos = _i = 0; 0 <= chatBufferSize ? _i <= chatBufferSize : _i >= chatBufferSize; pos = 0 <= chatBufferSize ? ++_i : --_i) {
       chatBuffer.push(localStorage.getItem('chatBuffer' + pos));
@@ -2429,15 +2432,16 @@ function handler(event) {
       curPos += 1;
     }
     curPos = 0;
-    _results = [];
     while (curPos < chatBufferPos) {
       line = chatBuffer[curPos];
       if (line !== null) {
         aiChatAddLineRaw(line);
       }
-      _results.push(curPos += 1);
+      curPos += 1;
     }
-    return _results;
+    if (firstUse) {
+      return printHelp();
+    }
   };
 
   aiChatGotoBottom = function() {
@@ -2504,6 +2508,10 @@ function handler(event) {
       chatBufferPos = 0;
     }
     return localStorage.setItem('chatBufferPos', chatBufferPos);
+  };
+
+  printHelp = function() {
+    return aiChatAddLine('gb', 'Hello world.');
   };
 
   aiChatSubmit = function(msg) {
