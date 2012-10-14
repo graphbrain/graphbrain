@@ -31,6 +31,11 @@ initChatBuffer = () ->
   if firstUse
     printHelp()
 
+clearChatBuffer = () ->
+  localStorage.removeItem('chatBufferPos')
+  for pos in [0..chatBufferSize]
+    localStorage.removeItem('chatBuffer' + pos)
+
 aiChatGotoBottom = () ->
   height = $('#ai-chat')[0].scrollHeight
   $('#ai-chat').scrollTop(height)
@@ -99,6 +104,12 @@ aiChatSubmit = (msg) ->
   sentence = $('#ai-chat-input').val()
   aiChatAddLine('user', sentence)
   $('#ai-chat-input').val('')
+
+  if sentence == '!clean'
+    clearChatBuffer()
+    location.href = location.href
+    return false
+
   $.ajax({
     type: "POST",
     url: "/ai",
