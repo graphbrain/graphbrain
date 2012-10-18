@@ -2521,7 +2521,9 @@ function handler(event) {
   };
 
   printHelp = function() {
-    return aiChatAddLine('gb', 'Hello world.');
+    var helpMsg;
+    helpMsg = "GraphBrain allows you to record facts as relationships between entities (web resources, objects, concepts).<br />\nTo add a fact, simply type a sentence with a verb linking two entities (objects, concepts, websites), e.g.<br />\n<br />\n<b>GraphBrain likes people</b><br />\n<b>GraphBrain lives at http://graphbrain.com</b>\n<br /><br />\nIn cases where there may be ambiguity, try to use quotation marks, e.g.<br />\n<b>\"Burn after reading\" is a film</b> <br />\n<br />\nYou can also look for existing facts and graphs about entities by using the \"Find\" keyword, e.g.\n<br />\nFind \"GraphBrain\"";
+    return aiChatAddLine('gb', helpMsg);
   };
 
   aiChatSubmit = function(msg) {
@@ -2532,6 +2534,10 @@ function handler(event) {
     if (sentence === '!clean') {
       clearChatBuffer();
       location.href = location.href;
+      return false;
+    }
+    if (sentence === 'help') {
+      printHelp();
       return false;
     }
     $.ajax({
