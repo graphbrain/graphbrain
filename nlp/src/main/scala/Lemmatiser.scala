@@ -23,6 +23,7 @@ class Lemmatiser {
 	val s = new StanfordLemmatizer();
 	val posTagger = new POSTagger();
 	val conjugator = new EnglishConjugator();
+	val quoteRegex = """(\")(.+?)(\")""".r;
 	
 
 
@@ -79,6 +80,43 @@ class Lemmatiser {
   def conjugate(stemToConjugate: String, tense: VerbTense = VerbTense.PRESENT, person: Person = Person.THIRD_PERSON_SINGULAR): String = {
 	return conjugator.conjugate(stemToConjugate, tense, person);
   }
+
+
+def quoteTag(text:String): List[(String, String)] = {
+  var quoteTagged: List[(String, String)] = List();
+  val quotes = quoteRegex.findAllIn(text).toArray;
+  var words = """\s""".r.split(text);
+  //Need to make sure the sentence word order is respected so we don't have reparsing in cases of repetition 
+  //i.e. if there is a match up to a particular point in the sentence, all non-matches before these points can
+  //be safely assumed to be non-quotes and do not have to be checked against the other quotes.
+  var textRemaining = text;
+  var wordsRemaining = words;
+  
+  for(quote <- quotes) {
+
+    val currentSplitQuote = """\s""".r.split(quote)
+    val quoteLocation = textRemaining.indexOf(quote)
+    val quoteEnd = quoteLocation + quote.length;
+    if(quoteLocation > 1) {
+      val precedingStrings = """\s""".r.split(textRemaining.substring(0, quoteLocation).trim)
+      for(ps <- precedingStrings) {
+        quoteTagged = (TextFormatting.deQuoteAndTrim(ps), "NonQuote") :: quoteTagged
+        wordsRemaining = wordsRemaining.tail;
+      }
+
+    }
+    for(sq <- currentSplitQuote) {
+      quoteTagged = (TextFormatting.deQuoteAndTrim(sq), "InQuote") :: quoteTagged
+      wordsRemaining = wordsRemaining.tail
+    }
+    textRemaining = textRemaining.substring(quoteEnd, textRemaining.length)
+  }
+  for(wr <- wordsRemaining) {
+    quoteTagged = (TextFormatting.deQuoteAndTrim(wr), "NonQuote") :: quoteTagged
+  }
+  return quoteTagged.reverse;
+}
+
 }
 
 
@@ -96,7 +134,7 @@ object Lemmatiser {
 
     	val annotated = l.annotate(s)
     	val annotatedCL = l.annotate(clSentence)
-
+    	val quoteCL = l.quoteTag(clSentence)
     	for (a <- annotated) {
     		println(a);
     	}
@@ -105,6 +143,11 @@ object Lemmatiser {
     	for ( a <- annotatedCL) {
     		println(a)
     		println(l.conjugate(a._3))
+
+    	}
+    	for (q <- quoteCL) {
+    		println(q._1)
+    		println(q._2)
     	}
 
 
