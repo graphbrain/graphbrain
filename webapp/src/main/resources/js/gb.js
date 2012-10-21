@@ -1636,10 +1636,16 @@ function handler(event) {
       for (_j = 0, _len1 = nlist.length; _j < _len1; _j++) {
         nid = nlist[_j];
         nod = nodes[nid];
-        text = nod['text'];
-        type = nod['type'];
-        parentID = nod['parent'];
-        node = false;
+        if (nod === "") {
+          text = nid;
+          type = 'text';
+          parentID = rootNodeId;
+        } else {
+          text = nod['text'];
+          type = nod['type'];
+          parentID = nod['parent'];
+          node = false;
+        }
         if (type === 'url') {
           node = new Node(nid, text, type, snode, nod['url']);
         } else {

@@ -15,10 +15,15 @@ initGraph = ->
 
         for nid in nlist
             nod = nodes[nid]
-            text = nod['text']
-            type = nod['type']
-            parentID = nod['parent']
-            node = false
+            if nod == ""
+                text = nid
+                type = 'text'
+                parentID = rootNodeId
+            else
+                text = nod['text']
+                type = nod['type']
+                parentID = nod['parent']
+                node = false
             if type == 'url'
                 node = new Node(nid, text, type, snode, nod['url'])
             else
@@ -36,6 +41,7 @@ initGraph = ->
         sid = sn['id']
         snode = g.snodes[sid]
         parentID = snode.parent
+        #if typeof parentId != "undefined"
         if parentID == ''
             g.root = snode
             snode.parent = false
