@@ -25,9 +25,12 @@ class SentenceParserTest extends FunSuite {
   val store = new VertexStore("gb") with UserManagement with UserOps
 
   val toadNodeGlobal = store.createTextNode(namespace="1", text="toad")
+  val excellenceNodeGlobal = store.createTextNode(namespace="1", text="excellent book")
   val toadNodeUser = store.createTextNode(namespace="usergenerated/chihchun_chen", text="toad")
+  val toadTitleUser = store.createTextNode(namespace="usergenerated/chihchun_chen", text="Chih-Chun is a toad")
   val globalNameNode1 = store.createTextNode(namespace="1", text="ChihChun")
   val globalNameNode2 = store.createTextNode(namespace = "1", text = "Chih-Chun")
+  val globalNameNode3 = store.createTextNode(namespace = "1", text = "Chih-Chun is a toad")
 
   val programmerGlobalNode = store.createTextNode(namespace = "1", text = "programmer")
   val userNode = UserNode(store = store, id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
@@ -37,10 +40,11 @@ class SentenceParserTest extends FunSuite {
   val sentence1 = "ChihChun is a toad"
   val sentence2 = "I am always a programmer at graphbrain"
   val sentence3 = "Chih-Chun is always a programmer at graphbrain"
-  val rootNode2 = store.createTextNode(namespace = "1", text = "graphbrain")
   val sentence4 = "Chih-Chun is always a programmer at http://graphbrain.com"
+  val sentence5 = "\"Chih-Chun is a toad\" is an excellent book"
  
   val isA = "rtype/1/is_a"
+  val isAn = "rtype/1/is_an"
   val amA = "rtype/1/am_a"
   val isALemma = ID.text_id("be_a", 1)
   val isAPOS = ID.reltype_id("vbz_dt")
@@ -68,6 +72,28 @@ class SentenceParserTest extends FunSuite {
       case _ => 
     }	
   }
+
+    test("Quote: \"ChihChun is a toad\" is an excellent book: Parse 2-role with root node no user"){  
+    val response = sentenceParser.parseSentenceGeneral(sentence5, root = toadNodeGlobal)
+    response(0) match {
+      case r: GraphResponse => 
+        val parses = r.hypergraphList;
+        val nodes = parses(0)._1
+        val relType = parses(0)._2
+        println(nodes(0).id)
+        println(globalNameNode3.id)
+        println(nodes(1).id)
+        println(excellenceNodeGlobal.id)
+        println(relType.id)
+        println(isAn)
+        assert(nodes(0).id == globalNameNode3.id)
+        assert(nodes(1).id == excellenceNodeGlobal.id)
+        assert(relType.id == isAn)
+
+      case _ => 
+    } 
+  }
+
 
   test("ChihChun is a toad: Parse 2-role with user node (user/chihchun_chen) no root") {
     val response = sentenceParser.parseSentenceGeneral(sentence1, user = Some(userNode));
