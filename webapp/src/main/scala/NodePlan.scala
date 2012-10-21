@@ -15,33 +15,16 @@ object NodePlan extends cycle.Plan with cycle.SynchronousExecution with ServerEr
   }
 
   def rawResponse(id: String, cookies: Map[String, Any], req: HttpRequest[Any]) = {
+    val userNode = Server.getUser(cookies)
     val vertex = Server.store.get(id)
-    val raw = Server.store.rawget(id)
     Server.log(req, cookies, "RAW id: " + id)
-    RawPage(vertex, raw, req, cookies).response
+    RawPage(vertex, userNode, req, cookies).response
   }
 
   def intent = {
-    case req@GET(Path(Seg("node" :: n1 :: Nil)) & Cookies(cookies)) =>
-      nodeResponse(n1, cookies, req)
-    case req@GET(Path(Seg("node" :: n1 :: n2 :: Nil)) & Cookies(cookies)) =>
-      nodeResponse(n1 + "/" + n2, cookies, req)
-    case req@GET(Path(Seg("node" :: n1 :: n2 :: n3 :: Nil)) & Cookies(cookies)) =>
-      nodeResponse(n1 + "/" + n2 + "/" + n3, cookies, req)
-    case req@GET(Path(Seg("node" :: n1 :: n2 :: n3 :: n4 :: Nil)) & Cookies(cookies)) =>
-      nodeResponse(n1 + "/" + n2 + "/" + n3 + "/" + n4, cookies, req)
-    case req@GET(Path(Seg("node" :: n1 :: n2 :: n3 :: n4 :: n5 :: Nil)) & Cookies(cookies)) =>
-      nodeResponse(n1 + "/" + n2 + "/" + n3 + "/" + n4 + "/" + n5, cookies, req)
-
-    case req@GET(Path(Seg("raw" :: n1 :: Nil)) & Cookies(cookies)) =>
-      rawResponse(n1, cookies, req)
-    case req@GET(Path(Seg("raw" :: n1 :: n2 :: Nil)) & Cookies(cookies)) =>
-      rawResponse(n1 + "/" + n2, cookies, req)
-    case req@GET(Path(Seg("raw" :: n1 :: n2 :: n3 :: Nil)) & Cookies(cookies)) =>
-      rawResponse(n1 + "/" + n2 + "/" + n3, cookies, req)
-    case req@GET(Path(Seg("raw" :: n1 :: n2 :: n3 :: n4 :: Nil)) & Cookies(cookies)) =>
-      rawResponse(n1 + "/" + n2 + "/" + n3 + "/" + n4, cookies, req)
-    case req@GET(Path(Seg("raw" :: n1 :: n2 :: n3 :: n4 :: n5 :: Nil)) & Cookies(cookies)) =>
-      rawResponse(n1 + "/" + n2 + "/" + n3 + "/" + n4 + "/" + n5, cookies, req)
+    case req@GET(Path(Seg2("node" :: n :: Nil)) & Cookies(cookies)) =>
+      nodeResponse(n, cookies, req)
+    case req@GET(Path(Seg2("raw" :: n :: Nil)) & Cookies(cookies)) =>
+      rawResponse(n, cookies, req)
   }
 }
