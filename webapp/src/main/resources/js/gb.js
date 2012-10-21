@@ -1071,7 +1071,7 @@ function handler(event) {
       }
       if (this.type === 'url') {
         html = '<div class="nodeTitle" id="t' + this.divid + '"><a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a></div>';
-        html += '<div><img src="http://graphbrain.com/favicon/' + getHostname(this.url) + '" class="nodeIco" /><div class="nodeUrl"><a href="' + this.url + '" id="url' + this.divid + '">' + this.url + '</a></div></div>';
+        html += '<div><img src="http://' + getHostname(this.url) + '/favicon.ico" width="16px" height="16px" class="nodeIco" /><div class="nodeUrl"><a href="' + this.url + '" id="url' + this.divid + '">' + this.url + '</a></div></div>';
         $('#' + this.divid).append(html);
         $('#url' + this.divid).click(nodeData, nodeClicked);
       } else {
