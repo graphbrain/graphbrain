@@ -47,11 +47,10 @@ class AIChatResponderActor() extends Actor {
       try {
         val responses = sparser.parseSentenceGeneral(sentence, root, Option(user))
 
-        //println(parse)
-
         if (responses.length > 0) {
 
           val topResponse = responses(0);
+          println(topResponse)
           topResponse match {
             case r: GraphResponse =>
               val parses = r.hypergraphList

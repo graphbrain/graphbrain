@@ -20,26 +20,6 @@ case class RawPage(vertex: Vertex, user: UserNode, req: HttpRequest[Any], cookie
   for (eid <- edgeIds)
     html += eid + "<br />"
 
-  /*
-  val fieldMap = vertex.toMap
-  val hiddenKeys = Set("pwdhash", "email", "session", "edgesets")
-  val safeMap = fieldMap.filterKeys(k => !(hiddenKeys contains k))
-  html += (for (kv <- safeMap) yield "<strong>" + kv._1 + ":</strong> " + kv._2 + "<br />").reduceLeft(_ + "\n" + _)
-
-  html += "<br /><h3>Edge Sets</h3>"
-  for (es <- vertex.edgesets) {
-    html += "<strong><a href='/raw/" + es + "'>" + es + "</a></strong><br />"
-    val edgeSet = Server.store.getEdgeSet(es)
-    for (e <- edgeSet.edges) {
-      val parts = Edge.parts(e)
-      for (p <- parts) {
-        html += "<a href='/raw/" + p + "'>" + p + "</a> "
-      }
-      html += "<br />"
-    }
-  }
-  */
-
   def response = Server.scalateResponse("raw.ssp", "raw", vertex.toString, cookies, req, html=html)
 }
 
