@@ -42,8 +42,18 @@ css = (callback) ->
     if error isnt null
       console log error
 
+deploy = (callback) ->
+  cat = exec 'scp -i gb.pem -r resources/* root@graphbrain.com:/var/www', (error, stdout, stderr) =>
+    print stdout
+    process.stderr.write stderr
+    if error isnt null
+      console log error
+
 task 'build', 'Compile CoffeeScript files', ->
   build()
 
 task 'css', 'Concatenate CSS files', ->
   css()
+
+task 'deploy', 'Deploy resources to live server', ->
+  deploy()
