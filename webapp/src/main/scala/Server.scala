@@ -107,6 +107,7 @@ object Server {
       .handler(NodeActionsPlan)
       .handler(AIChatPlan)
       .handler(DisambigPlan)
+      .handler(IcoPlan)
       .resources(new URL(getClass().getResource("/robots.txt"), "."))
     http.run
 

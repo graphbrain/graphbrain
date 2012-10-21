@@ -17,9 +17,9 @@ javaOptions in Revolver.reStart += "-Xmx1g"
 
 resolvers ++= Seq("Coda Hales Repository" at "http://repo.codahale.com")
 
-libraryDependencies ++= Seq(
-  "net.databinder" %% "unfiltered-netty-server" % "0.6.3"
-)
+libraryDependencies += "net.databinder" %% "unfiltered-netty-server" % "0.6.3"
+
+libraryDependencies += "org.jclarion" % "image4j" % "0.7"
 
 mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
   {
