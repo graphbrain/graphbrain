@@ -20,9 +20,11 @@ class SentenceParser (storeName:String = "gb") {
 
   val quoteRegex = """(\")(.+?)(\")""".r
   val nodeRegex = """(\[)(.+?)(\])""".r
+  val disambigRegex = """(\()(.+?)(\))""".r
   val urlRegex = """([\d\w]+?:\/\/)?([\w\d\.\-]+)(\.\w+)(:\d{1,5})?(\/\S*)?""".r // See: http://stackoverflow.com/questions/8725312/javascript-regex-for-url-when-the-url-may-or-may-not-contain-http-and-www-words?lq=1
   val urlStrictRegex = """(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?""".r
   val gbNode = store.createTextNode(namespace="1", text="GraphBrain")
+  val asInRel = ID.reltype_id("as in", 1)
 
   val verbRegex = """VB[A-Z]?""".r
   val adverbRegex = """RB[A-Z]?""".r
@@ -346,115 +348,76 @@ def strictChunk(sentence: String, root: Vertex): List[(List[String], String)] = 
   return List((nodes, edge))
 
 }
-def quoteChunkGeneral(sentence:String, root:Vertex): List[(List[String], String)] = {
-  //quoteChunkStrict(sentence, root);
-  var possibleParses: List[(List[String], String)] = List()
-
-  quoteRegex.findFirstIn(sentence) match {
-
-    case Some(exp) => 
-
-
-      //I'm assigning these in case we want to do something with them later, e.g. infer hypergraphs vs. multi-bi-graphs
-      val quotes = quoteRegex.findAllIn(sentence)
-      val numQuotes = quotes.length;
-      var nonQuotes = quoteRegex.split(sentence);
-      var nqEdges:List[String] = List()
-      var numNonQuotes = 0;
-
-      for (i <- 0 to nonQuotes.length-1) {
-        val nq = nonQuotes(i)
-        if(nq!="") {
-          numNonQuotes+=1;
-          nqEdges = nq.trim::nqEdges;
-        }
-      }
-      nqEdges = nqEdges.reverse
-      
-      //Make sure the quotation marks are not around the whole string:
-      if (exp.length == sentence.length) {
-          return Nil;
-      }
-      else if ((numQuotes - numNonQuotes) == 1) {
-        
-        val nodes = quoteRegex.findAllIn(sentence).toArray;
-        var nodeResults: List[String] = List() 
-        var edgeText = ""
-          
-        for(i <- 0 to nodes.length-2) {
-          
-          nodeResults =  nodes(i).replace("\"", "").trim :: nodeResults;
-          nodeResults = nodes(i+1).replace("\"", "").trim :: nodeResults;
-          edgeText += nqEdges(i) + "~"
-        } 
-        nodeResults = nodeResults.reverse;
-        possibleParses = (nodeResults, edgeText.substring(0, edgeText.length-1)) :: possibleParses; 
-        println("Quote Chunk: " + nodeResults(0) + ", " + edgeText.substring(0, edgeText.length-1) + ", " + nodeResults(1))
-
-        
-        return possibleParses;
-      } 
-      
-      case None => return possibleParses;
-    }
-    return possibleParses
-
-}
-
 
   
 
 
 def posChunkGeneral(sentence: String, root: Vertex): List[(List[String], String)]={
-  val taggedSentence = lemmatiser.posTag(sentence)
-  val untaggedSentence = """\s""".r.split(sentence);
+  val sanSentence = TextFormatting.deQuoteAndTrim(sentence)
+  val taggedSentence = lemmatiser.posTag(sanSentence);
+  val quoteTaggedSentence = lemmatiser.quoteTag(sentence);
+  
+
   var possibleParses: List[(List[String], String)] = List()
 
   var inEdge = false;
+  var inQuote = false;
+  var quoteCounter = 0;
 
   var nodeTexts: List[String] = List()
   var edgeText = ""
   var nodeText = ""
-
+  var currentSplitQuote =""
 
   for(i <- 0 to taggedSentence.length-2) {
       
     val current = taggedSentence(i)
-      
     val lookahead = taggedSentence(i+1)
-      
-    (current, lookahead) match{
-        case ((word1, tag1), (word2, tag2)) => 
+    val currentQuote = quoteTaggedSentence(i)
+    val nextQuote = quoteTaggedSentence(i+1)
 
+    (current, lookahead, currentQuote, nextQuote) match{
+        case ((word1, tag1), (word2, tag2), (qw1, qt1), (qw2, qt2)) => 
+        
+        if(qt1=="InQuote") {
 
-          //println(word2 + ", " + tag2)
-        if((relRegex.findAllIn(tag1).length == 1)) {
-          edgeText += untaggedSentence(i) + " "
-            if(relRegex.findAllIn(tag2).length == 0) {
-              edgeText = edgeText.substring(0, edgeText.length-1)
-              edgeText += "~"
+          nodeText += qw1 + " ";
+          if(qt2=="NonQuote") {
+            nodeTexts = TextFormatting.deQuoteAndTrim(nodeText) :: nodeTexts;
+            nodeText = ""
+          }
+        }
+
+        else if((relRegex.findAllIn(tag1).length == 1)) {
+          edgeText += word1.trim + " "
+
+          if(relRegex.findAllIn(tag2).length == 0) {
+            edgeText = edgeText.trim + "~"
+              
           }
 
           
         }
         else if (relRegex.findAllIn(tag1).length == 0) {
-          nodeText += untaggedSentence(i) + " "
+          nodeText += word1.trim + " "
+
           if(relRegex.findAllIn(tag2).length == 1) {
 
-            nodeTexts = nodeText.replace("`", "").replace("'", "").trim :: nodeTexts;
+            nodeTexts = TextFormatting.deQuoteAndTrim(nodeText) :: nodeTexts;
             nodeText = ""
           }
           
         }
         if (i == (taggedSentence.length-2)) {
-          nodeText += untaggedSentence(i+1);
-          nodeTexts = nodeText.replace("`", "").replace("'", "").trim :: nodeTexts;
+
+          nodeText += word2.trim;
+          nodeTexts = TextFormatting.deQuoteAndTrim(nodeText) :: nodeTexts;
 
         }
       }
     }
     nodeTexts = nodeTexts.reverse;
-    //println(nodeTexts.length)
+
     edgeText = edgeText.substring(0, edgeText.length-1);
 
     possibleParses = (nodeTexts, edgeText) :: possibleParses
