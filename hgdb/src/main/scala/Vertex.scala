@@ -17,6 +17,8 @@ abstract class Vertex {
   override def toString: String = id
 
   def description: String = toString
+
+  def raw: String = ""
 }
 
 object Vertex {

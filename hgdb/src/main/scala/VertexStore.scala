@@ -85,10 +85,6 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
   }
 
 
-  // TODO
-  def rawget(id: String): String = ""
-
-
   def put(vertex: Vertex): Vertex = vertex.put()
 
 

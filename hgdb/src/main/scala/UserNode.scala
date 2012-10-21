@@ -32,4 +32,12 @@ case class UserNode(store: VertexStore, id: String="", username: String="", name
   override def toString: String = name
 
   override def updateSummary: Textual = UserNode(store, id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, generateSummary)
+
+  override def raw: String = {
+    "type: " + "user<br />" +
+    "username: " + username + "<br />" +
+    "name: " + name + "<br />" +
+    "role: " + role + "<br />" +
+    "lastSeen: " + lastSeen + "<br />"
+  }
 }

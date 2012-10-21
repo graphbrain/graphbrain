@@ -23,4 +23,10 @@ case class TextNode(store: VertexStore, namespace: String="", text: String="", s
   override def toString: String = text
 
   override def updateSummary: Textual = TextNode(store, namespace, text, generateSummary)
+
+  override def raw: String = {
+    "type: " + "text<br />" +
+    "text: " + text + "<br />" +
+    "summary: " + summary + "<br />"
+  }
 }

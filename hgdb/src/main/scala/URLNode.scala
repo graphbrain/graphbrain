@@ -74,4 +74,10 @@ case class URLNode(store: VertexStore, url: String="", userId: String = "", titl
   override def clone(newid: String) = this
 
   def setTitle(newTitle: String) = copy(title=newTitle)
+
+  override def raw: String = {
+    "type: " + "url<br />" +
+    "url: " + url + "<br />" +
+    "title: " + title + "<br />"
+  }
 }
