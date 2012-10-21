@@ -57,7 +57,7 @@ class Node
         # create url div
         if @type == 'url'
             html = '<div class="nodeTitle" id="t' + @divid + '"><a href="/node/' + @id + '" id="' + @divid + '">' + @text + '</a></div>'
-            html += '<div><img src="http://www.google.com/s2/u/0/favicons?domain=' + getHostname(@url) + '" class="nodeIco" /><div class="nodeUrl"><a href="' + @url + '" id="url' + @divid + '">' + @url + '</a></div></div>'
+            html += '<div><img src="http://graphbrain.com/favicon/' + getHostname(@url) + '" class="nodeIco" /><div class="nodeUrl"><a href="' + @url + '" id="url' + @divid + '">' + @url + '</a></div></div>'
             $('#' + @divid).append(html)
             $('#url' + @divid).click(nodeData, nodeClicked)
         else
