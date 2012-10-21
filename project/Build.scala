@@ -7,7 +7,7 @@ import cc.spray.revolver.RevolverPlugin._
 object GraphbrainBuild extends Build {
   lazy val hgdb = Project(id = "hgdb",
                            base = file("hgdb"),
-                           settings = Defaults.defaultSettings ++ assemblySettings)
+                           settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(utils)
 
   lazy val inference = Project(id = "inference",
                            base = file("inference"))
@@ -17,7 +17,7 @@ object GraphbrainBuild extends Build {
 
   lazy val webapp = Project(id = "webapp",
                            base = file("webapp"),
-                           settings = Defaults.defaultSettings ++ assemblySettings ++ Revolver.settings) dependsOn(hgdb, nlp, unfilteredScalate)
+                           settings = Defaults.defaultSettings ++ assemblySettings ++ Revolver.settings) dependsOn(hgdb, nlp, unfilteredScalate, utils)
 
   lazy val braingenerators = Project(id = "braingenerators",
   							base = file("braingenerators"),
@@ -35,6 +35,8 @@ object GraphbrainBuild extends Build {
                 base=file("tools"),
                 settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(hgdb, nlp)
 
+  lazy val utils = Project(id = "utils", base=file("utils"))
+
   lazy val root = Project(id = "gb",
-                base = file(".")) aggregate(hgdb, inference, webapp, braingenerators, tools, nlp, unfilteredScalate)
+                base = file(".")) aggregate(hgdb, inference, webapp, braingenerators, tools, nlp, unfilteredScalate, utils)
 }
