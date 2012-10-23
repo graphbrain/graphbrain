@@ -159,12 +159,14 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
   def addrel(edge: Edge): Edge = {
     ldebug("addrel " + edge)
 
-    incInstances(edge.edgeType)
-    for (i <- 0 until edge.participantIds.size) {
-      val p = edge.participantIds(i)
-      addEdgeEntry(p, edge)
-      incVertexEdgeType(p, edge.edgeType, i)
-      incDegree(p)
+    if (!relExists(edge)) {
+      incInstances(edge.edgeType)
+      for (i <- 0 until edge.participantIds.size) {
+        val p = edge.participantIds(i)
+        addEdgeEntry(p, edge)
+        incVertexEdgeType(p, edge.edgeType, i)
+        incDegree(p)
+      }
     }
 
     edge
@@ -177,12 +179,14 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
   def delrel(edge: Edge): Unit = {
     ldebug("delrel " + edge)
 
-    decInstances(edge.edgeType)
-    for (i <- 0 until edge.participantIds.size) {
-      val p = edge.participantIds(i)
-      delEdgeEntry(p, edge)
-      decVertexEdgeType(p, edge.edgeType, i)
-      decDegree(p)
+    if (relExists(edge)) {
+      decInstances(edge.edgeType)
+      for (i <- 0 until edge.participantIds.size) {
+        val p = edge.participantIds(i)
+        delEdgeEntry(p, edge)
+        decVertexEdgeType(p, edge.edgeType, i)
+        decDegree(p)
+      }
     }
   }
 
