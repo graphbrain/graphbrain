@@ -20,6 +20,7 @@ import com.graphbrain.hgdb.UserOps
 import com.graphbrain.hgdb.UserManagement
 import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.ConsensusActor
+import com.graphbrain.utils.SimpleLog
 
 
 object Server {
