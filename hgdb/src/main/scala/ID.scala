@@ -62,7 +62,7 @@ object ID {
 
   def userIdFromUsername(username: String) = "user/" + username
 
-  def urlId(url:String):String = "url/" + url
+  def urlId(url:String):String = "url/" + url.replaceAll("/+$", "")
 
   def usergenerated_id(userName:String, thing:String) =
 	  userName + "/" + thing

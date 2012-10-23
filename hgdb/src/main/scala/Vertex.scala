@@ -14,11 +14,15 @@ abstract class Vertex {
 
   def clone(newid: String): Vertex
 
+  def toUser(newUserId: String): Vertex = this
+
   override def toString: String = id
 
   def description: String = toString
 
   def raw: String = ""
+
+  def shouldUpdate: Boolean = !store.exists(id)
 }
 
 object Vertex {
