@@ -57,8 +57,8 @@ class AIChatResponderActor() extends Actor {
               val topParse = parses(0);
               //Check it's a 2-participant relationship
               if(topParse._1.length == 2) {
-                val node1 = topParse._1(0)
-                val node2 = topParse._1(1)
+                val node1 = topParse._1(0)._1
+                val node2 = topParse._1(1)._1
                 val relation = topParse._2.id.replace(" ", "_")
 
                 println("node1: " + node1.id)

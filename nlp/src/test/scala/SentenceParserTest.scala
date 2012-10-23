@@ -60,13 +60,13 @@ class SentenceParserTest extends FunSuite {
         val parses = r.hypergraphList;
         val nodes = parses(0)._1
         val relType = parses(0)._2
-        println(nodes(0).id)
+        println(nodes(0)._1.id)
         println(globalNameNode1.id)
-        println(nodes(1).id)
+        println(nodes(1)._1.id)
         println(relType.id)
         println(isA)
-        assert(nodes(0).id == globalNameNode1.id)
-        assert(nodes(1).id == toadNodeGlobal.id)
+        assert(nodes(0)._1.id == globalNameNode1.id)
+        assert(nodes(1)._1.id == toadNodeGlobal.id)
         assert(relType.id == isA)
 
       case _ => 
@@ -80,14 +80,14 @@ class SentenceParserTest extends FunSuite {
         val parses = r.hypergraphList;
         val nodes = parses(0)._1
         val relType = parses(0)._2
-        println(nodes(0).id)
+        println(nodes(0)._1.id)
         println(globalNameNode3.id)
-        println(nodes(1).id)
+        println(nodes(1)._1.id)
         println(excellenceNodeGlobal.id)
         println(relType.id)
         println(isAn)
-        assert(nodes(0).id == globalNameNode3.id)
-        assert(nodes(1).id == excellenceNodeGlobal.id)
+        assert(nodes(0)._1.id == globalNameNode3.id)
+        assert(nodes(1)._1.id == excellenceNodeGlobal.id)
         assert(relType.id == isAn)
 
       case _ => 
@@ -102,14 +102,14 @@ class SentenceParserTest extends FunSuite {
         val parses = r.hypergraphList
         val nodes = parses(0)._1
         val relType = parses(0)._2
-        println(nodes(0).id)
+        println(nodes(0)._1.id)
         println(userNode.id)
-        println(nodes(1).id)
+        println(nodes(1)._1.id)
         println(toadNodeUser.id)
         println(relType.id)
         println(isA)
-        assert(nodes(0).id == userNode.id)
-        assert(nodes(1).id == toadNodeGlobal.id)
+        assert(nodes(0)._1.id == userNode.id)
+        assert(nodes(1)._1.id == toadNodeGlobal.id)
         assert(relType.id == isA)
       case _ =>
 
@@ -124,15 +124,15 @@ class SentenceParserTest extends FunSuite {
         val parses = r.hypergraphList
         val nodes = parses(0)._1
         val relType = parses(0)._2
-        println(nodes(0).id)
+        println(nodes(0)._1.id)
         println(userNode.id)
-        println(nodes(1).id)
+        println(nodes(1)._1.id)
         println(toadNodeGlobal.id)
         println(relType.id)
   
-        assert(nodes(0).id == userNode.id)
+        assert(nodes(0)._1.id == userNode.id)
         //Should override the fact that user has node in namespace if root is the global node
-        assert(nodes(1).id == toadNodeGlobal.id)
+        assert(nodes(1)._1.id == toadNodeGlobal.id)
         assert(relType.id == isA)
       case _ =>
     }
@@ -178,15 +178,15 @@ class SentenceParserTest extends FunSuite {
         val nodes = parses(0)._1
         val relType = parses(0)._2
 
-        println(nodes(0).id)
-        println(nodes(1).id)
-        println(nodes(2).id)
+        println(nodes(0)._1.id)
+        println(nodes(1)._1.id)
+        println(nodes(2)._1.id)
         println(relType.id)
 
         assert(nodes.length == 3)
-        assert(nodes(0).id == userNode.id)
-        assert(nodes(1).id == programmerGlobalNode.id)
-        assert(nodes(2).id == graphbrainGlobalNode.id)
+        assert(nodes(0)._1.id == userNode.id)
+        assert(nodes(1)._1.id == programmerGlobalNode.id)
+        assert(nodes(2)._1.id == graphbrainGlobalNode.id)
         assert(relType.id == isAlwaysARelTypeID)
       case _ =>
 
@@ -204,15 +204,15 @@ class SentenceParserTest extends FunSuite {
         val nodes = parses(0)._1
         val relType = parses(0)._2
 
-        println(nodes(0).id)
-        println(nodes(1).id)
-        println(nodes(2).id)
+        println(nodes(0)._1.id)
+        println(nodes(1)._1.id)
+        println(nodes(2)._1.id)
         println(relType.id)
 
         assert(nodes.length == 3)
-        assert(nodes(0).id == globalNameNode2.id)
-        assert(nodes(1).id == programmerGlobalNode.id)
-        assert(nodes(2).id == graphbrainGlobalNode.id)
+        assert(nodes(0)._1.id == globalNameNode2.id)
+        assert(nodes(1)._1.id == programmerGlobalNode.id)
+        assert(nodes(2)._1.id == graphbrainGlobalNode.id)
         assert(relType.id == isAlwaysARelTypeID)
       case _ =>
 
@@ -227,15 +227,15 @@ class SentenceParserTest extends FunSuite {
         val nodes = parses(0)._1
         val relType = parses(0)._2
 
-        println(nodes(0).id)
-        println(nodes(1).id)
-        println(nodes(2).id)
+        println(nodes(0)._1.id)
+        println(nodes(1)._1.id)
+        println(nodes(2)._1.id)
         println(relType.id)
 
         assert(nodes.length == 3)
-        assert(nodes(0).id == globalNameNode2.id)
-        assert(nodes(1).id == programmerGlobalNode.id)
-        assert(nodes(2).id == graphbrainUserNode.id)
+        assert(nodes(0)._1.id == globalNameNode2.id)
+        assert(nodes(1)._1.id == programmerGlobalNode.id)
+        assert(nodes(2)._1.id == graphbrainUserNode.id)
         assert(relType.id == isAlwaysARelTypeID)
       case _ => 
     }
@@ -251,15 +251,15 @@ class SentenceParserTest extends FunSuite {
         val nodes = parses(0)._1
         val relType = parses(0)._2
 
-        println(nodes(0).id)
-        println(nodes(1).id)
-        println(nodes(2).id)
+        println(nodes(0)._1.id)
+        println(nodes(1)._1.id)
+        println(nodes(2)._1.id)
         println(relType.id)
 
         assert(nodes.length == 3)
-        assert(nodes(0).id == userNode.id)
-        assert(nodes(1).id == programmerGlobalNode.id)
-        assert(nodes(2).id == graphbrainGlobalNode.id)
+        assert(nodes(0)._1.id == userNode.id);
+        assert(nodes(1)._1.id == programmerGlobalNode.id);
+        assert(nodes(2)._1.id == graphbrainGlobalNode.id);
         assert(relType.id == isAlwaysARelTypeID)
       case _ =>
     }

@@ -20,6 +20,7 @@ class SentenceParser (storeName:String = "gb") {
 
   val quoteRegex = """(\")(.+?)(\")""".r
   val nodeRegex = """(\[)(.+?)(\])""".r
+  val hashRegex = """#""".r
   val disambigRegex = """(\()(.+?)(\))""".r
   val urlRegex = """([\d\w]+?:\/\/)?([\w\d\.\-]+)(\.\w+)(:\d{1,5})?(\/\S*)?""".r // See: http://stackoverflow.com/questions/8725312/javascript-regex-for-url-when-the-url-may-or-may-not-contain-http-and-www-words?lq=1
   val urlStrictRegex = """(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?""".r
@@ -31,6 +32,9 @@ class SentenceParser (storeName:String = "gb") {
   val prepositionRegex = """(IN[A-Z]?)|TO""".r
   val relRegex = """(VB[A-Z]?)|(RB[A-Z]?)|(IN[A-Z]?)|TO|DT""".r
   val nounRegex = """NN[A-Z]?""".r
+  val leftParenthPosTag = """-LRB-""".r
+  val rightParenthPosTag = """-RRB-""".r
+
   val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r)
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
   val gbNodeExt = """(http://)?graphbrain.com/node/""".r
@@ -109,67 +113,73 @@ class SentenceParser (storeName:String = "gb") {
 
   }
 
-  def reparseGraphTexts(parses: List[(List[String], String)], root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): List[(List[Vertex], Vertex)] = {
-    var solutions: List[(List[Vertex], Vertex)] = List()
-    for(parse <- parses) {
-      var nodeTexts = parse._1;
-      var relText = parse._2;
-      var nodes: List[Vertex] = List()
-      val sepRelations = """~""".r.split(relText)
-      var i = 0;
+  def reparseGraphTexts(nodeTexts: List[String], relText: String, disambigs: List[(String, String)], root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[(Vertex, Option[Vertex])], Vertex) = {
+    var solutions: List[(List[(Vertex, Option[Vertex])], Vertex)] = List()
+    var tempDisambs = disambigs;
+    var nodes: List[(Vertex, Option[Vertex])] = List()
       
-      var newRelation = ""
+    val sepRelations = """~""".r.split(relText)
+    var i = 0;
+      
+    var newRelation = ""
           
-      for(nodeText <- nodeTexts) {
+    for(nodeText <- nodeTexts) {
+      var d = "";
+      var dNode: Option[Vertex] = None;
 
-        
-        if(nodeText.toLowerCase == "you" || nodeText.toUpperCase == "I") {
-          if(nodeText.toLowerCase == "you") {
-            nodes = gbNode :: nodes;
-          } 
-          else {
-            user match {
-              case Some(u: UserNode) => nodes = u :: nodes;
-              case _ => 
-            }
-          }
-          
-          if(i < sepRelations.length) {
-            
-            val annotatedRelation = lemmatiser.annotate(sepRelations(i))    
-            for (a <- annotatedRelation) {
-              if(verbRegex.findAllIn(a._2).hasNext) {
-                newRelation += lemmatiser.conjugate(a._3) + " "
-              }
-              else {
-                newRelation += a._1 + " "
-              }
+      if(tempDisambs.length > 0){
+        if(nodeText == tempDisambs.head._1) {
+          d = tempDisambs.head._2;
+          dNode = Some(specialNodeCases(d, root, user))
 
-            }
-            
-          }
-
+          tempDisambs = tempDisambs.tail;
         }
-        else {
-          nodes = specialNodeCases(nodeText, root, user) :: nodes;
-          if(i < sepRelations.length) {
-            newRelation += sepRelations(i) + " ";  
-          }
-          
-        }
-        newRelation = newRelation.trim;
-        if(i < sepRelations.length-1) {
-          newRelation += "~"
-        }
-        
-        i += 1;
       }
-      relText = newRelation.trim.slice(0, newRelation.length).trim;
-      var relationV = store.createEdgeType(id = ID.reltype_id(relText), label = relText)
-      solutions = (nodes.reverse, relationV) :: solutions
+        
+      if(nodeText.toLowerCase == "you" || nodeText.toUpperCase == "I") {
+        if(nodeText.toLowerCase == "you") {
+          nodes = (gbNode, dNode) :: nodes;
+        } 
+        else {
+          user match {
+            case Some(u: UserNode) => nodes = (u, dNode) :: nodes;
+            case _ => 
+          }
+        }
+          
+        if(i < sepRelations.length) {
+            
+          val annotatedRelation = lemmatiser.annotate(sepRelations(i))    
+          for (a <- annotatedRelation) {
+            if(verbRegex.findAllIn(a._2).hasNext) {
+              newRelation += lemmatiser.conjugate(a._3) + " "
+            }
+            else {
+              newRelation += a._1 + " "
+            }
 
+          }
+            
+        }
+
+      }
+      else {
+        nodes = (specialNodeCases(nodeText, root, user), dNode) :: nodes;
+        if(i < sepRelations.length) {
+          newRelation += sepRelations(i) + " ";  
+        }
+          
+      }
+      newRelation = newRelation.trim;
+      if(i < sepRelations.length-1) {
+        newRelation += "~"
+      }
+        
+      i += 1;
     }
-    return solutions
+    val newRelText = newRelation.trim.slice(0, newRelation.length).trim;
+    var relationV = store.createEdgeType(id = ID.reltype_id(newRelText), label = newRelText)
+    return (nodes.reverse, relationV)
 
   }
 
@@ -194,17 +204,19 @@ class SentenceParser (storeName:String = "gb") {
       inSentence = inSentence.slice(0, inSentence.length-1)
     }
 
-    //Try segmenting with quote marks, then with known splitters
+    //Try segmenting with square bracket syntax.
     var parses = strictChunk(inSentence, root);
-    //quoteChunkGeneral(inSentence, root);
-    //++ logChunkGeneral(inSentence, root);
 
+    //Check for disambiguation syntax
+
+    
     //Only parse with POS if nothing returned:
-    if(parses == Nil) {
+    if(parses==(Nil, "", Nil)) {
       parses = posChunkGeneral(inSentence, root)
     }
-    val solutions = reparseGraphTexts(parses, root, user);
-    responses = GraphResponse(solutions) :: responses
+    val solutions = reparseGraphTexts(parses._1, parses._2, parses._3, root, user);
+
+    responses = GraphResponse(solutions::Nil) :: responses
 
     if(question > search._1 && question <= 0.5) {
       responses = HardcodedResponse(List("Sorry, I don't understand questions yet.")) :: responses
@@ -328,11 +340,11 @@ class SentenceParser (storeName:String = "gb") {
     
   }
 
-def strictChunk(sentence: String, root: Vertex): List[(List[String], String)] = {
-  var possibleParses: List[(List[String], String)] = List();
+def strictChunk(sentence: String, root: Vertex): (List[String], String, List[(String, String)]) = {
+  
   val nodeTexts = nodeRegex.findAllIn(sentence);
   if(!nodeTexts.hasNext) {
-    return possibleParses;
+    return (Nil, "", Nil);
   }
   val edgeTexts = nodeRegex.split(sentence);
   var nodes: List[String] = List()
@@ -345,39 +357,41 @@ def strictChunk(sentence: String, root: Vertex): List[(List[String], String)] = 
     edge += edgeTexts(i).trim.replace(" ", "_") + "~";
   }
   edge = edge.slice(0, edge.length-1)
-  return List((nodes, edge))
+  return (nodes, edge, Nil)
 
 }
 
   
 
 
-def posChunkGeneral(sentence: String, root: Vertex): List[(List[String], String)]={
+def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List[(String, String)])={
   val sanSentence = TextFormatting.deQuoteAndTrim(sentence)
-  val taggedSentence = lemmatiser.posTag(sanSentence);
-  val quoteTaggedSentence = lemmatiser.quoteTag(sentence);
   
-
-  var possibleParses: List[(List[String], String)] = List()
-
+  var taggedSentence = lemmatiser.posTag(sanSentence);
+  var quoteTaggedSentence = InputSyntax.quoteAndParenthTag(sentence);
+  
   var inEdge = false;
   var inQuote = false;
   var quoteCounter = 0;
 
   var nodeTexts: List[String] = List()
+  var disambigs: List[(String, String)] = List() //First tuple stores the text, the second stores the disambiguation.
   var edgeText = ""
   var nodeText = ""
   var currentSplitQuote =""
 
-  for(i <- 0 to taggedSentence.length-2) {
+
+  while(taggedSentence.length > 1) {
       
-    val current = taggedSentence(i)
-    val lookahead = taggedSentence(i+1)
-    val currentQuote = quoteTaggedSentence(i)
-    val nextQuote = quoteTaggedSentence(i+1)
+    val current = taggedSentence.head
+    val lookahead = taggedSentence.tail.head
+    val currentQuote = quoteTaggedSentence.head
+    val nextQuote = quoteTaggedSentence.tail.head
+   
 
     (current, lookahead, currentQuote, nextQuote) match{
         case ((word1, tag1), (word2, tag2), (qw1, qt1), (qw2, qt2)) => 
+        
         
         if(qt1=="InQuote") {
 
@@ -386,6 +400,7 @@ def posChunkGeneral(sentence: String, root: Vertex): List[(List[String], String)
             nodeTexts = TextFormatting.deQuoteAndTrim(nodeText) :: nodeTexts;
             nodeText = ""
           }
+          
         }
 
         else if((relRegex.findAllIn(tag1).length == 1)) {
@@ -408,21 +423,33 @@ def posChunkGeneral(sentence: String, root: Vertex): List[(List[String], String)
           }
           
         }
-        if (i == (taggedSentence.length-2)) {
+        if (taggedSentence.length == 2) {
 
           nodeText += word2.trim;
           nodeTexts = TextFormatting.deQuoteAndTrim(nodeText) :: nodeTexts;
 
         }
+        if(leftParenthPosTag.findAllIn(tag1).length == 1) {
+          val parenthProcessed = InputSyntax.disambig(nodeText.head.toString, disambigs, taggedSentence, quoteTaggedSentence);
+          disambigs = parenthProcessed._1;
+          taggedSentence = parenthProcessed._2;
+          quoteTaggedSentence = parenthProcessed._3;
+        }
+        
+        
       }
+     
+      taggedSentence = taggedSentence.tail;
+      quoteTaggedSentence = quoteTaggedSentence.tail;
+
     }
+    
     nodeTexts = nodeTexts.reverse;
-
     edgeText = edgeText.substring(0, edgeText.length-1);
+    
 
-    possibleParses = (nodeTexts, edgeText) :: possibleParses
-              
-    return possibleParses.reverse;
+
+    return (nodeTexts, edgeText, disambigs);
   }
 
 def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: Vertex, user:Option[Vertex], maxPossiblePerParse: Int = 10): List[(List[Vertex], Edge)]={
@@ -654,9 +681,9 @@ object SentenceParser {
               val parses = g.hypergraphList
               for(parse <- parses) {
                 parse match {
-                  case (n: List[Vertex], r: Vertex) =>
+                  case (n: List[(Vertex, Option[Vertex])], r: Vertex) =>
                   for(node <- n) {
-                    println("Node: " + node.id);
+                    println("Node: " + node._1.id);
                   }
                   println("Rel: " + r.id)
                 }

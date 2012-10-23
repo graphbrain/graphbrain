@@ -10,7 +10,7 @@ abstract class ResponseType
 case class HardcodedResponse(responseStrings: List[String]) extends ResponseType {
   override def toString: String = "HardCoded" + responseStrings.toString;
 }
-case class GraphResponse(hypergraphList: List[(List[Vertex], Vertex)]) extends ResponseType {
+case class GraphResponse(hypergraphList: List[(List[(Vertex, Option[Vertex])], Vertex)]) extends ResponseType {
   override def toString: String = "Graph" + hypergraphList.toString;
 }
 case class QuestionFactResponse(responseStrings: List[String], hypergraphList: List[(List[Vertex], Vertex)]) extends ResponseType {
