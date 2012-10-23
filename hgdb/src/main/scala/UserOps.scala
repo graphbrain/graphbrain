@@ -40,7 +40,7 @@ trait UserOps extends VertexStore {
   }
 
   override def onPut(vertex: Vertex) = {
-    ldebug("onPut " + vertex)
+    ldebug("onPut " + vertex.id)
     vertex match {
       case t: TextNode =>
         if (ID.isInUserSpace(t.id))
@@ -80,13 +80,14 @@ trait UserOps extends VertexStore {
 
   def put2(vertex: Vertex, userid: String): Vertex = {
     ldebug("put2 " + vertex + "; userId: " + userid)
-    if (!exists(vertex.id)) {
+    if (vertex.shouldUpdate) {
+      ldebug("should update " + vertex)
       put(vertex)
     }
     if (!ID.isInUserSpace(vertex.id)) {
       val userSpaceId = ID.globalToUser(vertex.id, userid)
       if (!exists(userSpaceId)) {
-        put(get(vertex.id).clone(userSpaceId))
+        put(get(vertex.id).toUser(userid))
         linkToGlobal(vertex.id, userSpaceId)
       }
     }

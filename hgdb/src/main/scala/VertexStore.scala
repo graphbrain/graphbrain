@@ -23,6 +23,7 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
     ldebug("get vertex: " + id)
     IdFamily.family(id) match {
       case Global => {
+        ldebug("global")
         val res = backend.tpGlobal.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
         val text = res.getString("text")
@@ -30,6 +31,7 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
         TextNode(this, ID.namespace(id), text, summary)
       }
       case UserSpace => {
+        ldebug("userspace")
         val res = backend.tpUserSpace.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
         val text = res.getString("text")
@@ -37,6 +39,7 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
         TextNode(this, ID.namespace(id), text, summary)
       }
       case User => {
+        ldebug("user")
         val res = backend.tpUser.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
         val username = res.getString("username")
@@ -51,12 +54,14 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
         UserNode(this, id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, summary)
       }
       case EType => {
+        ldebug("etype")
         val res = backend.tpEdgeType.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
         val label = res.getString("label")
         EdgeType(this, id, label)
       }
       case URL => {
+        ldebug("url")
         val res = backend.tpGlobal.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
         val url = res.getString("url")
@@ -65,6 +70,7 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
         URLNode(this, url, userId, title)
       }
       case UserURL => {
+        ldebug("userurl")
         val res = backend.tpUserSpace.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
         val url = res.getString("url")
@@ -73,12 +79,14 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
         URLNode(this, url, userId, title)
       }
       case Rule => {
+        ldebug("rule")
         val res = backend.tpGlobal.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
         val rule = res.getString("rule")
         RuleNode(this, id, rule)
       }
       case Source => {
+        ldebug("source")
         val res = backend.tpGlobal.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
         SourceNode(this, id)
@@ -87,7 +95,10 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
   }
 
 
-  def put(vertex: Vertex): Vertex = vertex.put()
+  def put(vertex: Vertex): Vertex = {
+    ldebug("put " + vertex.id)
+    vertex.put()
+  }
 
 
   def onPut(vertex: Vertex) = {}

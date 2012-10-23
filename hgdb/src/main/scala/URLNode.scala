@@ -9,13 +9,17 @@ import java.io.Reader
 import java.io.InputStreamReader
 import java.io.IOException
 
+import com.graphbrain.utils.SimpleLog
 
-case class URLNode(store: VertexStore, url: String="", userId: String = "", title: String="") extends Vertex {
+
+case class URLNode(store: VertexStore, url: String="", userId: String = "", title: String="") extends Vertex with SimpleLog{
   val auxId = ID.urlId(url)
 
-  override val id = if (userId == "") auxId else ID.globalToUser(url, userId)
+  override val id = if (userId == "") auxId else ID.globalToUser(auxId, userId)
 
   private def getTitle(urlStr: String): String = {
+    ldebug("getTitle " + urlStr)
+
     val url = new URL(urlStr)
 
     val client = new DefaultHttpClient()
@@ -52,26 +56,26 @@ case class URLNode(store: VertexStore, url: String="", userId: String = "", titl
     val p: Pattern = Pattern.compile("<title>(.*?)</title>")
     val m: Matcher = p.matcher(html)
     
-    if (m.find()) {
-      m.group(1)
-    }
-    else {
-      ""
-    }
+    val title = if (m.find()) m.group(1) else ""
+    ldebug("title: " + title)
+    title
   }
 
   override def put(): Vertex = {
+    ldebug("put " + id)
+    ldebug("in userspace? " + ID.isInUserSpace(id))
     val template = if (ID.isInUserSpace(id)) store.backend.tpUserSpace else store.backend.tpGlobal
     val updater = template.createUpdater(id)
     updater.setString("url", url)
-    val newTitle = if (title == "") getTitle(url) else title
-    updater.setString("title", newTitle)
+    updater.setString("title", getTitle(url))
     template.update(updater)
     store.onPut(this)
     this
   }
 
-  override def clone(newid: String) = this
+  override def clone(newid: String) = URLNode(store, newid, userId, title)
+
+  override def toUser(newUserId: String): Vertex = URLNode(store, url, newUserId, title)
 
   def setTitle(newTitle: String) = copy(title=newTitle)
 
@@ -80,4 +84,6 @@ case class URLNode(store: VertexStore, url: String="", userId: String = "", titl
     "url: " + url + "<br />" +
     "title: " + title + "<br />"
   }
+
+  override def shouldUpdate: Boolean = true
 }

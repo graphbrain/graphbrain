@@ -7,8 +7,10 @@ import unfiltered.Cookie
 import akka.actor.Actor
 import akka.actor.Props
 
+import com.graphbrain.utils.SimpleLog
 
-object AIChatPlan extends async.Plan with ServerErrorResponse {
+
+object AIChatPlan extends async.Plan with ServerErrorResponse with SimpleLog {
   val responderActor = Server.actorSystem.actorOf(Props(new AIChatResponderActor()))
 
   def intent = {
@@ -20,5 +22,6 @@ object AIChatPlan extends async.Plan with ServerErrorResponse {
       responderActor ! AIChatResponderActor.Sentence(sentence, root, userNode, req)
 
       Server.log(req, cookies, "AI CHAT sentence: " + sentence + "; rootId: " + rootId)
+      ldebug("AI CHAT sentence: " + sentence + "; rootId: " + rootId, Console.CYAN)
   }
 }
