@@ -17,11 +17,14 @@ import com.graphbrain.nlp.HardcodedResponse
 import com.graphbrain.nlp.SearchResponse
 import com.graphbrain.nlp.QuestionFactResponse
 
+import com.graphbrain.utils.SimpleLog
+
+
 object AIChatResponderActor {
   case class Sentence(sentence: String, root: Vertex, user: UserNode, responder: Async.Responder[HttpResponse])
 }
 
-class AIChatResponderActor() extends Actor {
+class AIChatResponderActor() extends Actor with SimpleLog{
   import AIChatResponderActor._
 
   val sparser = new SentenceParser()
@@ -61,9 +64,7 @@ class AIChatResponderActor() extends Actor {
                 val node2 = topParse._1(1)._1
                 val relation = topParse._2.id.replace(" ", "_")
 
-                println("node1: " + node1.id)
-                println("node2: " + node2.id)
-                println("relation: " + relation)
+                ldebug("node1: " + node1.id + "\nnode2: " + node2.id + "\nrelation: " + relation)
 
                 Server.store.createAndConnectVertices2(relation, Array(node1, node2), user.id)
 

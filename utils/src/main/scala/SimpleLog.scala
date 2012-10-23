@@ -5,13 +5,14 @@ import scala.annotation.elidable._
 
 
 trait SimpleLog {
-    def log(msg: String, level: String) = {
-        val line = "[" + level + "] " + msg
+    private def slog(msg: String, level: String) = {
+        val caller = (new Exception).getStackTrace()(3)
+        val line = "[" + level + "] " + caller + " " + msg
         println(line) 
     }
 
-    @elidable(ALL) def debug(msg: String) = log(msg, "DEBUG")
-    @elidable(INFO) def info(msg: String) = log(msg, "INFO")
-    @elidable(WARNING) def warning(msg: String) = log(msg, "WARNING")
-    @elidable(SEVERE) def error(msg: String) = log(msg, "ERROR")
+    @elidable(ALL) def ldebug(msg: String) = slog(msg, "DEBUG")
+    @elidable(INFO) def linfo(msg: String) = slog(msg, "INFO")
+    @elidable(WARNING) def lwarn(msg: String) = slog(msg, "WARNING")
+    @elidable(SEVERE) def lerror(msg: String) = slog(msg, "ERROR")
 }

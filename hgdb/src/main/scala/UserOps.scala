@@ -10,6 +10,7 @@ import me.prettyprint.cassandra.service.ColumnSliceIterator
 trait UserOps extends VertexStore {
 
   private def setOwner(userId: String, nodeId: String) = {
+    ldebug("setOwner userId: " + userId + "; nodeId: " + nodeId)
     val col = HFactory.createColumn(nodeId, "", StringSerializer.get(), StringSerializer.get())
     val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
     mutator.addInsertion(userId, "owners", col)
@@ -17,12 +18,14 @@ trait UserOps extends VertexStore {
   }
 
   private def unsetOwner(userId: String, nodeId: String) = {
+    ldebug("unsetOwner userId: " + userId + "; nodeId: " + nodeId)
     val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
     mutator.addDeletion(userId, "edges", nodeId, StringSerializer.get())
     mutator.execute()
   }
 
   private def linkToGlobal(globalNodeId: String, userNodeId: String) = {
+    ldebug("linkToGlobal globalNodeId: " + globalNodeId + "; userNodeId: " + userNodeId)
     val col = HFactory.createColumn(userNodeId, "", StringSerializer.get(), StringSerializer.get())
     val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
     mutator.addInsertion(globalNodeId, "globaluser", col)
@@ -30,12 +33,14 @@ trait UserOps extends VertexStore {
   }
 
   private def unlinkToGlobal(globalNodeId: String, userNodeId: String) = {
+    ldebug("unlinkToGlobal globalNodeId: " + globalNodeId + "; userNodeId: " + userNodeId)
     val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
     mutator.addDeletion(globalNodeId, "globaluser", userNodeId, StringSerializer.get())
     mutator.execute()
   }
 
   override def onPut(vertex: Vertex) = {
+    ldebug("onPut " + vertex)
     vertex match {
       case t: TextNode =>
         if (ID.isInUserSpace(t.id))
@@ -50,6 +55,7 @@ trait UserOps extends VertexStore {
   }
 
   override def remove(vertex: Vertex): Vertex = {
+    ldebug("remove " + vertex)
     super.remove(vertex)
 
     val extraStuff = vertex match {
@@ -73,6 +79,7 @@ trait UserOps extends VertexStore {
   }
 
   def put2(vertex: Vertex, userid: String): Vertex = {
+    ldebug("put2 " + vertex + "; userId: " + userid)
     if (!exists(vertex.id)) {
       put(vertex)
     }
@@ -87,8 +94,9 @@ trait UserOps extends VertexStore {
     get(vertex.id)
   }
 
-  def getOrInsert2(node:Vertex, userid: String): Vertex =
+  def getOrInsert2(node: Vertex, userid: String): Vertex =
   {
+    ldebug("getOrInsert2 " + node + "; userId: " + userid)
     try {
       get(node.id)
       get(ID.globalToUser(node.id, userid))
@@ -102,6 +110,8 @@ trait UserOps extends VertexStore {
   }
 
   def addrel2(edgeType: String, participants: Array[String], userid: String, consensus: Boolean=false) = {
+    ldebug("addrel2 edgeType: " + edgeType + "; participants: " + participants + "; userid: " + userid + "; consensus: " + consensus)
+
     val etype = edgeType.replace(" ", "_")
 
     // convert edge to user space and add
@@ -121,6 +131,7 @@ trait UserOps extends VertexStore {
   }
 
   def delrel2(edgeType: String, participants: List[String], userid: String, consensus: Boolean=false): Unit = {
+    ldebug("delrel2 edgeType: " + edgeType + "; participants: " + participants + "; userid: " + userid + "; consensus: " + consensus)
     // delete edge from user space
     val userSpaceParticipants = participants.map(p => ID.globalToUser(p, userid))
     delrel(edgeType, userSpaceParticipants.toList)
@@ -139,6 +150,7 @@ trait UserOps extends VertexStore {
   def delrel2(edge: Edge, userid: String): Unit = delrel2(edge.edgeType, edge.participantIds, userid)
 
   def createAndConnectVertices2(edgeType: String, participants: Array[Vertex], userid: String, consensus: Boolean = false) = {
+    ldebug("createAndConnectVertices2 edgeType: " + edgeType + "; participants: " + participants + "; userid: " + userid + "; consensus: " + consensus)
     for (v <- participants) {
       put2(v, userid)
     }
@@ -148,6 +160,7 @@ trait UserOps extends VertexStore {
   }
 
   def neighborEdges2(nodeId: String, userid: String): Set[Edge] = {
+    ldebug("neighborEdges2 nodeId: " + nodeId + "; userid: " + userid)
     val uNodeId = ID.globalToUser(nodeId, userid) 
 
     val gedges = neighborEdges(nodeId).filter(x => x.isGlobal)
@@ -163,6 +176,7 @@ trait UserOps extends VertexStore {
   }
 
   def globalAlts(globalId: String) = {
+    ldebug("globalAlts: " + globalId)
     val altSet = MSet[String]()
 
     val query = HFactory.createSliceQuery(backend.ksp, StringSerializer.get(),

@@ -14,11 +14,13 @@ import me.prettyprint.hector.api.beans.Composite
 
 import IdFamily._
 
+import com.graphbrain.utils.SimpleLog
 
-class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: String="localhost", port: Int=9160) {
+class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: String="localhost", port: Int=9160) extends SimpleLog {
   val backend = new CassandraBackend(clusterName, keyspaceName, ip, port)
 
   def get(id: String): Vertex = {
+    ldebug("get vertex: " + id)
     IdFamily.family(id) match {
       case Global => {
         val res = backend.tpGlobal.queryColumns(id)
@@ -99,13 +101,19 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
       val v = get(id)
     }
     catch {
-      case _ => return false
+      case _ => {
+        ldebug(id + " does not exist")
+        return false
+      }
     }
+    ldebug(id + " exists")
     true
   }
 
 
   def remove(vertex: Vertex): Vertex = {
+    ldebug("remove" + vertex.id)
+
     val id = vertex.id
     
     // remove associated degree
@@ -138,6 +146,8 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
 
   def addrel(edge: Edge): Edge = {
+    ldebug("addrel " + edge)
+
     incInstances(edge.edgeType)
     for (i <- 0 until edge.participantIds.size) {
       val p = edge.participantIds(i)
@@ -154,6 +164,8 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
 
   def delrel(edge: Edge): Unit = {
+    ldebug("delrel " + edge)
+
     decInstances(edge.edgeType)
     for (i <- 0 until edge.participantIds.size) {
       val p = edge.participantIds(i)
@@ -168,6 +180,8 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
 
   def neighborEdges(nodeId: String): Set[Edge] = {
+    ldebug("neighborEdges " + nodeId)
+
     try {
       val eset = MSet[Edge]()
 
@@ -226,12 +240,16 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
 
   def neighbors(nodeId: String): Set[String] = {
+    ldebug("neighbors " + nodeId)
+
     val nedges = neighborEdges(nodeId)
     nodesFromEdgeSet(nedges) + nodeId
   }
 
 
   private def edgeEntryKey(nodeId: String, edge: Edge) = {
+    ldebug("edgeEntryKey nodeId: " + nodeId + "; edge: " + edge)
+
     val pos: java.lang.Integer = edge.participantIds.indexOf(nodeId)    
     // TODO: throw exception if pos == -1
 
@@ -258,6 +276,8 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
 
   private def addEdgeEntry(nodeId: String, edge: Edge) = {
+    ldebug("addEdgeEntry nodeId: " + nodeId + "; edge: " + edge)
+
     val colKey = edgeEntryKey(nodeId, edge)
 
     val col = HFactory.createColumn(colKey, "", new CompositeSerializer(), StringSerializer.get())
@@ -268,6 +288,8 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
 
   private def delEdgeEntry(nodeId: String, edge: Edge) = {
+    ldebug("delEdgeEntry nodeId: " + nodeId + "; edge: " + edge)
+
     val colKey = edgeEntryKey(nodeId, edge)
 
     val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
@@ -277,6 +299,8 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
 
   private def incVertexEdgeType(nodeId: String, edgeType: String, position: Int) = {
+    ldebug("incVertexEdgeType nodeId: " + nodeId + "; edgeType: " + edgeType + "; position: " + position)
+
     val relId = ID.relationshipId(edgeType, position)
 
     val col = HFactory.createCounterColumn(relId, 1L, StringSerializer.get())
@@ -287,6 +311,8 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
 
   private def decVertexEdgeType(nodeId: String, edgeType: String, position: Int): Boolean = {
+    ldebug("decVertexEdgeType nodeId: " + nodeId + "; edgeType: " + edgeType + "; position: " + position)
+
     val relId = ID.relationshipId(edgeType, position)
 
     // get current count
@@ -312,6 +338,8 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
   }
 
   private def incDegree(vertexId: String) = {
+    ldebug("incDegree " + vertexId)
+
     val col = HFactory.createCounterColumn("degree", 1L, StringSerializer.get())
     val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
     mutator.insertCounter(vertexId, "degrees", col)
@@ -320,6 +348,8 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
 
   private def decDegree(vertexId: String) = {
+    ldebug("decDegree " + vertexId)
+
     val col = HFactory.createCounterColumn("degree", -1L, StringSerializer.get())
     val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
     mutator.insertCounter(vertexId, "degrees", col)
@@ -328,12 +358,16 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
 
   private def delDegree(vertexId: String) = {
+    ldebug("delDegree " + vertexId)
+
     val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
     mutator.addDeletion(vertexId, "degrees", "degree", StringSerializer.get())
     mutator.execute()
   }
 
   private def incInstances(edgeType: String) = {
+    ldebug("incInstances " + edgeType)
+
     val col = HFactory.createCounterColumn("instances", 1L, StringSerializer.get())
     val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
     mutator.insertCounter(edgeType, "instances", col)
@@ -342,6 +376,8 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
 
   private def decInstances(edgeType: String) = {
+    ldebug("decInstances " + edgeType)
+
     val col = HFactory.createCounterColumn("instances", -1L, StringSerializer.get())
     val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
     mutator.insertCounter(edgeType, "instances", col)
@@ -350,6 +386,8 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
 
   private def delInstances(edgeType: String) = {
+    ldebug("delInstances " + edgeType)
+
     val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
     mutator.addDeletion(edgeType, "instances", "instances", StringSerializer.get())
     mutator.execute()
@@ -357,6 +395,8 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
 
   def relExistsOnVertex(id: String, edge: Edge): Boolean = {
+    ldebug("relExistsOnVertex id: " + id + "; edge: " + edge)
+
     val ckey = edgeEntryKey(id, edge)
     val res = backend.tpEdges.queryColumns(id, Arrays.asList(ckey))
     res.hasResults()
@@ -364,21 +404,29 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
   
   def relExists(edge: Edge): Boolean = {
+    ldebug("relExists: " + edge)
+
     val id = edge.participantIds(0)
     relExistsOnVertex(id, edge)
   }
 
 
   def getOrNull(id: String): Vertex = {
+    ldebug("getOrNull: " + id)
+
     try {
       get(id)
     }
     catch {
-      case e: KeyNotFound => null
+      case e: KeyNotFound => {
+        ldebug("KeyNotFound " + id)
+        null
+      }
     }
   }
 
   def getEdgeType(id: String): EdgeType = {
+    ldebug("getEdgeType: " + id)
   	get(id) match {
   		case x: EdgeType => x
   		case v: Vertex => throw WrongVertexType("on vertex: " + id + " (expected EdgeType)")
@@ -386,13 +434,15 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
   }
 
   def getTextNode(id: String): TextNode = {
-  	get(id) match {
+  	ldebug("getTextNode: " + id)
+    get(id) match {
   		case x: TextNode => x
   		case v: Vertex => throw WrongVertexType("on vertex: " + id + " (expected TextNode)")
   	}
   }
 
   def getURLNode(id: String): URLNode = {
+    ldebug("getURLNode: " + id)
   	get(id) match {
   		case x: URLNode => x
   		case v: Vertex => throw WrongVertexType("on vertex: " + id + " (expected URLNode)")
@@ -400,13 +450,15 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
   }
 
   def getSourceNode(id: String): SourceNode = {
-  	get(id) match {
+  	ldebug("getSourceNode: " + id)
+    get(id) match {
   		case x: SourceNode => x
   		case v: Vertex => throw WrongVertexType("on vertex: " + id + " (expected SourceNode)")
   	}
   }
 
   def getUserNode(id: String): UserNode = {
+    ldebug("getUserNode: " + id)
     get(id) match {
       case x: UserNode => x
       case v: Vertex => throw WrongVertexType("on vertex: " + id + " (expected UserNode)")
@@ -415,6 +467,7 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
 
   def createAndConnectVertices(edgeType: String, participants: Array[Vertex]) = {
+    ldebug("createAndConnectVertices edgeType: " + edgeType + "; participants: " + participants)
     for (v <- participants) {
       if (!exists(v.id)) {
         put(v)
