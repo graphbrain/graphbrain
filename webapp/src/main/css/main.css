@@ -6,3 +6,19 @@ html, body {
     font-size: 12px;
     background: #fff;
 }
+
+#main-view {
+    width:100%;
+    height:100%;
+    position: relative;
+    /*position:fixed;
+    top:45px;
+    left:0px;*/
+    background:rgba(0, 0, 0, 0);
+    z-index:1;
+}
+
+#nav-spacer {
+    position: relative;
+    height:40px;
+}
