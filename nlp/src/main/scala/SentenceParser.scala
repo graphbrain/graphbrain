@@ -368,7 +368,7 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
   val sanSentence = TextFormatting.deQuoteAndTrim(sentence)
   
   var taggedSentence = lemmatiser.posTag(sanSentence);
-  var quoteTaggedSentence = InputSyntax.quoteAndParenthTag(sentence);
+  var quoteTaggedSentence = InputSyntax.quoteAndDisambigTag(sentence);
   
   var inEdge = false;
   var inQuote = false;
@@ -414,8 +414,13 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
           
         }
         else if (relRegex.findAllIn(tag1).length == 0) {
-          nodeText += word1.trim + " "
-
+          if(hashRegex.findAllIn(word1).length==1) {
+            val hashProcessed = InputSyntax.hashedWords(nodeText.head.toString, disambigs, taggedSentence, quoteTaggedSentence);
+            disambigs = hashProcessed._1;
+          }
+          else {
+            nodeText += word1.trim + " "  
+          }
           if(relRegex.findAllIn(tag2).length == 1) {
 
             nodeTexts = TextFormatting.deQuoteAndTrim(nodeText) :: nodeTexts;
@@ -435,10 +440,10 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
           taggedSentence = parenthProcessed._2;
           quoteTaggedSentence = parenthProcessed._3;
         }
+
         
         
       }
-     
       taggedSentence = taggedSentence.tail;
       quoteTaggedSentence = quoteTaggedSentence.tail;
 
