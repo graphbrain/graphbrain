@@ -64,7 +64,7 @@ class AIChatResponderActor() extends Actor with SimpleLog{
                 val node2 = topParse._1(1)._1
                 val relation = topParse._2.id.replace(" ", "_")
 
-                ldebug("node1: " + node1.id + "\nnode2: " + node2.id + "\nrelation: " + relation)
+                ldebug("node1: " + node1.id + "\nnode2: " + node2.id + "\nrelation: " + relation, Console.RED)
 
                 Server.store.createAndConnectVertices2(relation, Array(node1, node2), user.id)
 

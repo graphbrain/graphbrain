@@ -8,9 +8,10 @@ import unfiltered.Cookie
 
 import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.ID
+import com.graphbrain.utils.SimpleLog
 
 
-object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse {
+object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse with SimpleLog {
   var errorMessage: String = ""
 
   def nodeActionResponse(id: String, params: Map[String, Seq[String]], cookies: Map[String, Any], req: HttpRequest[Any]) = {
@@ -43,6 +44,7 @@ object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with S
       Server.consensusActor ! edge
 
       Server.log(req, cookies, "REMOVE EDGE origId: " + origId + "; link: " + link + "; targId" + targId)
+      ldebug("REMOVE EDGE origId: " + origId + "; link: " + link + "; targId" + targId, Console.CYAN)
     }
     else {
       val nedges = Server.store.neighborEdges(nodeId)
@@ -55,6 +57,7 @@ object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with S
       }
 
       Server.log(req, cookies, "REMOVE NODE nodeId: " + nodeId)
+      ldebug("REMOVE NODE nodeId: " + nodeId, Console.CYAN)
     }
   }
 
