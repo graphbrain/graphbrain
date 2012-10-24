@@ -8,10 +8,15 @@ object InputSyntax {
 	val quoteRegex = """(\")(.+?)(\")""".r;
 
 	//Returns a list of tuples where the first tuple is the text and the second is the disambiguation if it is there.
-	def hashedWords(text: String): List[(String, String)] = {
-
-		val words = """\s""".r.split(text);
-		return Nil
+	def hashedWords(nodeText: String, disambigs: List[(String, String)], annotatedText: List[(String, String)], quoteAnnotatedText: List[(String, String)]): (List[(String, String)], List[(String, String)], List[(String, String)]) = {
+		var anText = annotatedText;
+		var qAnText = quoteAnnotatedText;
+		var disAmb = disambigs;
+		val disAmbText = nodeText.replace("#", "").trim;
+		disAmb = (annotatedText.head._1, disAmbText) :: disAmb;
+		//anText and qAnText stay the same
+		return (disAmb, anText, qAnText)
+		
 	}
 
 	def checkParenthClosed(annotatedText: List[(String, String)]): Boolean = {
@@ -34,7 +39,7 @@ object InputSyntax {
 		}
 		var disAmbText = ""
 		while(rightParenthPosTag.findAllIn(anText.head._2)!=1) {
-			disAmbText += anText.head + " "
+			disAmbText += anText.head._1 + " "
 			anText = anText.tail;
 			qAnText = qAnText.tail
 		}
@@ -81,14 +86,14 @@ object InputSyntax {
     return quoteTagged.reverse;
   }
 
-def quoteAndParenthTag(text:String): List[(String, String)] = {
+def quoteAndDisambigTag(text:String): List[(String, String)] = {
   	  var quoteTagged: List[(String, String)] = List();
   	  val quotes = quoteRegex.findAllIn(text).toArray;
       var words = """\s""".r.split(text);
       //Need to make sure the sentence word order is respected so we don't have reparsing in cases of repetition 
       //i.e. if there is a match up to a particular point in the sentence, all non-matches before these points can
       //be safely assumed to be non-quotes and do not have to be checked against the other quotes.
-      var textRemaining = text.replace("(", "( ").replace(")", ") ");
+      var textRemaining = text.replace("(", "( ").replace(")", ") ").replace("#", " #");
       var wordsRemaining = words;
   
       for(quote <- quotes) {
