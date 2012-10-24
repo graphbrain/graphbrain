@@ -20,6 +20,8 @@ case class TextNode(store: VertexStore, namespace: String="", text: String="", s
 
   override def clone(newid: String) = TextNode(store, ID.namespace(newid), text, summary)
 
+  override def toUser(newUserId: String): Vertex = TextNode(store, ID.globalToUser(namespace, newUserId), text, summary)
+
   override def toString: String = text
 
   override def updateSummary: Textual = TextNode(store, namespace, text, generateSummary)
