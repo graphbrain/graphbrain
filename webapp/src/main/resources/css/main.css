@@ -5,6 +5,22 @@ html, body {
     font-family: Sans-Serif;
     font-size: 12px;
     background: #fff;
+}
+
+#main-view {
+    width:100%;
+    height:100%;
+    position: relative;
+    /*position:fixed;
+    top:45px;
+    left:0px;*/
+    background:rgba(0, 0, 0, 0);
+    z-index:1;
+}
+
+#nav-spacer {
+    position: relative;
+    height:40px;
 }.linkLabel {
     position:fixed;
     text-align:center;
@@ -127,16 +143,6 @@ html, body {
     padding: 10px;
 }
 
-#main-view {
-    width:100%;
-    height:100%;
-    position:fixed;
-    top:45px;
-    left:0px;
-    background:rgba(0, 0, 0, 0);
-    z-index:1;
-}
-
 #graph-view {
     width:70%;
     height:70%;
@@ -159,6 +165,7 @@ html, body {
 
 #text-view {
     padding:20px;
+    margin-bottom:40px;
 }#ai-chat {
     position:relative;
 	color: #fff;

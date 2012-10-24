@@ -12,6 +12,7 @@
 </style>
 
 <div id="main-view">
+  <div id="nav-spacer"></div>
   <div id="ai-chat"></div>
   <div id="graph-view"></div>
   <div id="right-bar">

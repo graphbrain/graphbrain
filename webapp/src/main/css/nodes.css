@@ -65,16 +65,6 @@
     padding: 10px;
 }
 
-#main-view {
-    width:100%;
-    height:100%;
-    position:fixed;
-    top:45px;
-    left:0px;
-    background:rgba(0, 0, 0, 0);
-    z-index:1;
-}
-
 #graph-view {
     width:70%;
     height:70%;
@@ -97,4 +87,5 @@
 
 #text-view {
     padding:20px;
+    margin-bottom:40px;
 }
