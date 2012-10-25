@@ -13,3 +13,4 @@ $ ->
         initTextView()
     
     initInterface()
+    browserSpecificTweaks()

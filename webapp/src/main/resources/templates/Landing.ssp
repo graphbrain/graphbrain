@@ -12,35 +12,15 @@
 
 <div class="container">
 <div class="row-fluid">
-  <div class="whitebox">
+  <div class="hero-unit" style="background-color: rgba(255, 255, 255, 0.8)">
     <div class="row-fluid">
       <div class="span4">
         <div class="logo_align"><img src="/images/GB_logo_L.png" width="209" height="56" alt="GraphBrain">
         </div>
       </div>
       <div class="span8">
-        <div class="bigfont">Expand your mind
-        </div>
-        <div class="mediumfont"><br />
-        </div>
-        <div class="smallfont">
-          <p>GraphBrain is a knowledge graph you can navigate visually and add facts and feelings to.</p>
-      <p>Though GraphBrain is still under development, we think it's too good not to share.</p>
-    </div>
-    </div>
-    </div>
-    <div class="row-fluid">
-      <div class="span4">
-        <div class="graystripe">
-        </div>
-      </div>
-      <div class="span4">
-        <div class="bluestripe">
-        </div>
-      </div>
-      <div class="span4">
-        <div class="graystripe">
-        </div>
+        <p>GraphBrain is a personal knowledge graph.</p>
+        <p>You can navigate it visually and add facts using an artificial intelligence interface.</p>
       </div>
     </div>
   <div class="row-fluid">

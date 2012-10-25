@@ -18,6 +18,7 @@
   <div id="right-bar">
     <div id="text-view"></div>
   </div>
+  <div style="background:#ff0000; height:10px; width:100%; clear:both"></div>
 </div>
 
 <%}%>

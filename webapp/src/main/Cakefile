@@ -9,6 +9,7 @@ build = (callback) ->
     'coffee/jquery.cookie.js',
     'coffee/jquery.mousewheel.js',
     'coffee/slimScroll.js',
+    'coffee/browsers.coffee',
     'coffee/geom.coffee',
     'coffee/vec3mat4x4.coffee',
     'coffee/Quaternion.coffee',
