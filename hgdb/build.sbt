@@ -16,6 +16,8 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "1.7.1" % "test"
 
 libraryDependencies += "me.prettyprint" % "hector-core" % "1.0-1"
 
+libraryDependencies += "org.jsoup" % "jsoup" % "1.7.1"
+
 //testOptions in Test += Tests.Argument("-oF")
 
 parallelExecution in Test := false 

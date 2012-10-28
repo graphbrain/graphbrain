@@ -1033,12 +1033,13 @@ function testCSS(prop) {
 
   Node = (function() {
 
-    function Node(id, text, type, snode, url) {
+    function Node(id, text, type, snode, url, icon) {
       this.id = id;
       this.text = text;
       this.type = type;
       this.snode = snode;
       this.url = url != null ? url : '';
+      this.icon = icon != null ? icon : '';
       this.divid = 'n' + nodeCount++;
       this.rpos = Array(3);
       this.subNodes = [];
@@ -1089,7 +1090,11 @@ function testCSS(prop) {
       }
       if (this.type === 'url') {
         html = '<div class="nodeTitle" id="t' + this.divid + '"><a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a></div>';
-        html += '<div><img src="http://' + getHostname(this.url) + '/favicon.ico" width="16px" height="16px" class="nodeIco" /><div class="nodeUrl"><a href="' + this.url + '" id="url' + this.divid + '">' + this.url + '</a></div></div>';
+        html += '<div>';
+        if (this.icon !== '') {
+          html += '<img src="' + this.icon + '" width="16px" height="16px" class="nodeIco" />';
+        }
+        html += '<div class="nodeUrl"><a href="' + this.url + '" id="url' + this.divid + '">' + this.url + '</a></div></div>';
         $('#' + this.divid).append(html);
         $('#url' + this.divid).click(nodeData, nodeClicked);
       } else {
@@ -1665,7 +1670,7 @@ function testCSS(prop) {
           node = false;
         }
         if (type === 'url') {
-          node = new Node(nid, text, type, snode, nod['url']);
+          node = new Node(nid, text, type, snode, nod['url'], nod['icon']);
         } else {
           node = new Node(nid, text, type, snode);
         }
