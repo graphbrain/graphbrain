@@ -73,10 +73,10 @@ initAiChat = () ->
 
   initChatBuffer()
 
-  if localStorage.getItem('aichat') == 'true'
-    showAiChat()
-  else
+  if localStorage.getItem('aichat') == 'false'
     hideAiChat()
+  else
+    showAiChat()
 
 aiChatAddLineRaw = (line) ->
   $('#ai-chat-log').append(line)
