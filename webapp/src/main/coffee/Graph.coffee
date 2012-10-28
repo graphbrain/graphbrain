@@ -25,7 +25,7 @@ initGraph = ->
                 parentID = nod['parent']
                 node = false
             if type == 'url'
-                node = new Node(nid, text, type, snode, nod['url'])
+                node = new Node(nid, text, type, snode, nod['url'], nod['icon'])
             else
                 node = new Node(nid, text, type, snode)
             snode.nodes[nid] = node

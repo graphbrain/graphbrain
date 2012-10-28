@@ -1,64 +1,77 @@
 package com.graphbrain.hgdb
 
-import java.net.URL
-import java.util.regex.Matcher
-import java.util.regex.Pattern
-import org.apache.http.impl.client.DefaultHttpClient
-import org.apache.http.client.methods.HttpGet
-import java.io.Reader
-import java.io.InputStreamReader
-import java.io.IOException
+
+import java.net._
+import java.io._
+
+import org.jsoup.Jsoup
+import org.jsoup.helper.Validate
+import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
+import org.jsoup.select.Elements
 
 import com.graphbrain.utils.SimpleLog
 
 
-case class URLNode(store: VertexStore, url: String="", userId: String = "", title: String="") extends Vertex with SimpleLog{
+case class URLNode(store: VertexStore, url: String="", userId: String = "", title: String="", icon: String="") extends Vertex with SimpleLog{
   val auxId = ID.urlId(url)
 
   override val id = if (userId == "") auxId else ID.globalToUser(auxId, userId)
 
-  private def getTitle(urlStr: String): String = {
-    ldebug("getTitle " + urlStr)
-
-    val url = new URL(urlStr)
-
-    val client = new DefaultHttpClient()
-    val request = new HttpGet(url.toURI())
-    val response = client.execute(request)
-
-    var reader: Reader = null
-    var html = ""
+  private def exists(urlName: String): Boolean = {
     try {
-      reader = new InputStreamReader(response.getEntity().getContent())
-
-      val sb = new StringBuffer()
-      val cbuf = new Array[Char](1024)
-      var read = reader.read(cbuf)
-      while (read != -1) {
-        sb.append(cbuf, 0, read)
-        read = reader.read(cbuf)
-      }
-
-      html = sb.toString()
+      HttpURLConnection.setFollowRedirects(false)
+      // note : you may also need
+      //        HttpURLConnection.setInstanceFollowRedirects(false)
+      val con = new URL(urlName).openConnection().asInstanceOf[HttpURLConnection]
+      con.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2")
+      con.setRequestMethod("HEAD")
+      con.getResponseCode() == HttpURLConnection.HTTP_OK
     }
-    finally {
-      if (reader != null) {
-        try {
-          reader.close()
-        }
-        catch {
-          case e: IOException => e.printStackTrace()
-        }
-      }
+    catch {
+       case _ => false
     }
+  }
 
-    html = html.replaceAll("\\s+", " ")
-    val p: Pattern = Pattern.compile("<title>(.*?)</title>")
-    val m: Matcher = p.matcher(html)
+  private def getDomainName = {
+    val uri = new URI(url)
+    uri.getHost()
+  }
+
+  private def getTitleAndIcon: (String, String) = {
+    ldebug("getTitleAndIcon " + url)
+
+    try {
+      val doc = Jsoup.connect(url).header("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2").get()
     
-    val title = if (m.find()) m.group(1) else ""
-    ldebug("title: " + title)
-    title
+      val title = doc.title()
+      ldebug("title: " + title)
+    
+      val links = doc.select("link[rel=shortcut icon]")
+      val link = links.first()
+      val icon = if (link != null) {
+        val icoUrl = link.attr("abs:href")
+        icoUrl
+      }
+      else {
+        val icoUrl = "http://" + getDomainName + "/favicon.ico"
+        ldebug("default icon url: " + icoUrl)
+        if (exists(icoUrl))
+          icoUrl
+        else
+          ""
+      }
+
+      ldebug("icon: " + icon)
+
+      (title, icon)
+    }
+    catch {
+      case e: Exception => {
+        ldebug(e.toString)
+        ("", "")
+      }
+    }
   }
 
   override def put(): Vertex = {
@@ -67,7 +80,10 @@ case class URLNode(store: VertexStore, url: String="", userId: String = "", titl
     val template = if (ID.isInUserSpace(id)) store.backend.tpUserSpace else store.backend.tpGlobal
     val updater = template.createUpdater(id)
     updater.setString("url", url)
-    updater.setString("title", getTitle(url))
+
+    val titleAndIcon = getTitleAndIcon
+    updater.setString("title", titleAndIcon._1)
+    updater.setString("icon", titleAndIcon._2)
     template.update(updater)
     store.onPut(this)
     this
@@ -86,4 +102,12 @@ case class URLNode(store: VertexStore, url: String="", userId: String = "", titl
   }
 
   override def shouldUpdate: Boolean = true
+}
+
+
+object URLNode {
+  def main(args : Array[String]) : Unit = {
+    val urlNode = new URLNode(null, "http://graphbrain.com/secret")
+    urlNode.getTitleAndIcon
+  }
 }

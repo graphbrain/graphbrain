@@ -67,7 +67,8 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
         val url = res.getString("url")
         val userId = ID.ownerId(id)
         val title = res.getString("title")
-        URLNode(this, url, userId, title)
+        val icon = res.getString("icon")
+        URLNode(this, url, userId, title, if (icon == null) "" else icon)
       }
       case UserURL => {
         ldebug("userurl")
@@ -76,7 +77,8 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
         val url = res.getString("url")
         val userId = ID.ownerId(id)
         val title = res.getString("title")
-        URLNode(this, url, userId, title)
+        val icon = res.getString("icon")
+        URLNode(this, url, userId, title, if (icon == null) "" else icon)
       }
       case Rule => {
         ldebug("rule")

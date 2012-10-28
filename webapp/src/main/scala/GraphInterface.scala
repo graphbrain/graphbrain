@@ -120,7 +120,7 @@ class GraphInterface (val rootId: String, val store: UserOps, val user: UserNode
       case tn: TextNode => Map(("type" -> "text"), ("text" -> tn.text), ("parent" -> parentId))
       case un: URLNode => {
         val title = if (un.title == "") un.url else un.title
-        Map(("type" -> "url"), ("text" -> title), ("url" -> un.url), ("parent" -> parentId))
+        Map(("type" -> "url"), ("text" -> title), ("url" -> un.url), ("icon" -> un.icon), ("parent" -> parentId))
       }
       case un: UserNode => Map(("type" -> "user"), ("text" -> un.name), ("parent" -> parentId))
       case null => ""
