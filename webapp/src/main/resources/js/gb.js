@@ -2518,10 +2518,10 @@ function testCSS(prop) {
     $('#ai-chat').html(html);
     $('#ai-chat-form').submit(aiChatSubmit);
     initChatBuffer();
-    if (localStorage.getItem('aichat') === 'true') {
-      return showAiChat();
-    } else {
+    if (localStorage.getItem('aichat') === 'false') {
       return hideAiChat();
+    } else {
+      return showAiChat();
     }
   };
 
