@@ -68,7 +68,8 @@ class Lemmatiser {
 	    for (entry <- lemmas) {
 		  val word = entry._1
 		  val lemma = entry._2
-		  val pos = posTags(counter)._2
+		  var pos = posTags(counter)._2
+
 		  annotated = (word, pos, lemma) :: annotated
 		  counter = counter + 1;
 		}
@@ -108,7 +109,7 @@ object Lemmatiser {
 
     	for ( a <- annotatedCL) {
     		println(a)
-    		println(l.conjugate(a._3))
+    		//println(l.conjugate(a._3))
 
     	}
     	for (q <- quoteCL) {

@@ -245,7 +245,7 @@ class SentenceParser (storeName:String = "gb") {
         case _ => 
 
     }
-   
+    
     if(nodeExists(text)) {
       try{
         results = store.get(text) :: results;        
@@ -367,8 +367,8 @@ def strictChunk(sentence: String, root: Vertex): (List[String], String, List[(St
 def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List[(String, String)])={
   val sanSentence = TextFormatting.deQuoteAndTrim(sentence)
   
-  var taggedSentence = lemmatiser.posTag(sanSentence);
-  var quoteTaggedSentence = InputSyntax.quoteAndDisambigTag(sentence);
+  var taggedSentence = lemmatiser.annotate(sanSentence);
+  var quoteTaggedSentence = InputSyntax.quoteAndDisambigTag(InputSyntax.quoteURL(sentence));
   
   var inEdge = false;
   var inQuote = false;
@@ -390,38 +390,41 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
    
 
     (current, lookahead, currentQuote, nextQuote) match{
-        case ((word1, tag1), (word2, tag2), (qw1, qt1), (qw2, qt2)) => 
+        case ((word1, tag1, lem1), (word2, tag2, lem2), (qw1, qt1), (qw2, qt2)) => 
         
         
         if(qt1=="InQuote") {
 
           nodeText += qw1 + " ";
-          if(qt2=="NonQuote") {
+          if(qt2 == "NonQuote") {
             nodeTexts = TextFormatting.deQuoteAndTrim(nodeText) :: nodeTexts;
             nodeText = ""
           }
           
         }
+        else if(qt1=="URL") {
+          nodeTexts = TextFormatting.deQuoteAndTrim(nodeText) :: nodeTexts;
+        }
 
-        else if((relRegex.findAllIn(tag1).length == 1)) {
+        else if((relRegex.findAllIn(tag1).toArray.length == 1)) {
           edgeText += word1.trim + " "
 
-          if(relRegex.findAllIn(tag2).length == 0) {
+          if(relRegex.findAllIn(tag2).toArray.length == 0) {
             edgeText = edgeText.trim + "~"
               
           }
 
           
         }
-        else if (relRegex.findAllIn(tag1).length == 0) {
-          if(hashRegex.findAllIn(word1).length==1) {
+        else if (relRegex.findAllIn(tag1).toArray.length == 0) {
+          if(hashRegex.findAllIn(word1).toArray.length==1) {
             val hashProcessed = InputSyntax.hashedWords(nodeText.head.toString, disambigs, taggedSentence, quoteTaggedSentence);
             disambigs = hashProcessed._1;
           }
           else {
             nodeText += word1.trim + " "  
           }
-          if(relRegex.findAllIn(tag2).length == 1) {
+          if(relRegex.findAllIn(tag2).toArray.length == 1) {
 
             nodeTexts = TextFormatting.deQuoteAndTrim(nodeText) :: nodeTexts;
             nodeText = ""
@@ -434,7 +437,7 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
           nodeTexts = TextFormatting.deQuoteAndTrim(nodeText) :: nodeTexts;
 
         }
-        if(leftParenthPosTag.findAllIn(tag1).length == 1) {
+        if(leftParenthPosTag.findAllIn(tag1).toArray.length == 1) {
           val parenthProcessed = InputSyntax.disambig(nodeText.head.toString, disambigs, taggedSentence, quoteTaggedSentence);
           disambigs = parenthProcessed._1;
           taggedSentence = parenthProcessed._2;
@@ -446,6 +449,8 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
       }
       taggedSentence = taggedSentence.tail;
       quoteTaggedSentence = quoteTaggedSentence.tail;
+      
+      assert(taggedSentence.length == quoteTaggedSentence.length)
 
     }
     
