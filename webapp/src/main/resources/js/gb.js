@@ -2551,7 +2551,7 @@ function testCSS(prop) {
 
   printHelp = function() {
     var helpMsg;
-    helpMsg = "GraphBrain allows you to record facts as relationships between entities (web resources, objects, concepts).<br />\nTo add a fact, simply type a sentence with a verb linking two entities (objects, concepts, websites), e.g.<br />\n<br />\n<b>GraphBrain likes people</b><br />\n<b>GraphBrain lives at http://graphbrain.com</b>\n<br /><br />\nIn cases where there may be ambiguity, try to use quotation marks, e.g.<br />\n<b>\"Burn after reading\" is a film</b> <br />\n<br />\nYou can also look for existing facts and graphs about entities by using the \"Find\" keyword, e.g.\n<br />\nFind \"GraphBrain\"";
+    helpMsg = "GraphBrain allows you to record facts as relationships between entities (web resources, objects, concepts).<br />\nTo add a fact, simply type a sentence with a verb linking two entities (objects, concepts, websites), e.g.<br />\n\n<b>GraphBrain likes people</b><br />\n<b>GraphBrain lives at http://graphbrain.com</b><br />\n\nIn cases where there may be ambiguity, try to use quotation marks, e.g.<br />\n<b>\"Burn after reading\" is a film</b> <br />";
     return aiChatAddLine('gb', helpMsg);
   };
 

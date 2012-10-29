@@ -101,16 +101,12 @@ printHelp = () ->
   helpMsg = """
 GraphBrain allows you to record facts as relationships between entities (web resources, objects, concepts).<br />
 To add a fact, simply type a sentence with a verb linking two entities (objects, concepts, websites), e.g.<br />
-<br />
+
 <b>GraphBrain likes people</b><br />
-<b>GraphBrain lives at http://graphbrain.com</b>
-<br /><br />
+<b>GraphBrain lives at http://graphbrain.com</b><br />
+
 In cases where there may be ambiguity, try to use quotation marks, e.g.<br />
 <b>"Burn after reading" is a film</b> <br />
-<br />
-You can also look for existing facts and graphs about entities by using the "Find" keyword, e.g.
-<br />
-Find "GraphBrain"
   """
   aiChatAddLine('gb', helpMsg)
 
