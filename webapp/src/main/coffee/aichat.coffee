@@ -76,6 +76,7 @@ initAiChat = () ->
   if localStorage.getItem('aichat') == 'false'
     hideAiChat()
   else
+    $("#ai-chat-button").button('toggle')
     showAiChat()
 
 aiChatAddLineRaw = (line) ->
