@@ -149,19 +149,8 @@ class GraphInterface (val rootId: String, val store: UserOps, val user: UserNode
   }
 
   private def linkColor(label: String) = {
-    val code = math.abs(label.hashCode) % 99
-    var hue: Double = code.toDouble / 99.0
-    val hue1 = 0
-    val hue2 = 360
-    val deltaHue = hue2 - hue1
-    hue *= deltaHue
-    hue += hue1
-    // println("label: " + label + "; hue: " + hue)
-    val rgb = HSV.hsvToRgb(hue, 0.75, 1.0)
-    val r: Int = (rgb._1 * 255).toInt
-    val g: Int = (rgb._2 * 255).toInt
-    val b: Int = (rgb._3 * 255).toInt
-    "rgb(" + r + "," + g + "," + b + ")"
+    val index = math.abs(label.hashCode) % Colors.colors.length
+    Colors.colors(index)
   }
 
   private def linkLabel(edgeType: String): String = {
