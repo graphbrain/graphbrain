@@ -2498,7 +2498,8 @@ function testCSS(prop) {
     g.updateView();
     aiChatVisible = true;
     localStorage.setItem('aichat', 'true');
-    return aiChatGotoBottom();
+    aiChatGotoBottom();
+    return $('#ai-chat-input').focus();
   };
 
   hideAiChat = function() {

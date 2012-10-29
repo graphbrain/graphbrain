@@ -50,6 +50,7 @@ showAiChat = () ->
   aiChatVisible = true
   localStorage.setItem('aichat', 'true')
   aiChatGotoBottom()
+  $('#ai-chat-input').focus()
 
 hideAiChat = () ->
   $('#ai-chat').css('display', 'none')
