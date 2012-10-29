@@ -450,7 +450,7 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
       taggedSentence = taggedSentence.tail;
       quoteTaggedSentence = quoteTaggedSentence.tail;
       
-      assert(taggedSentence.length == quoteTaggedSentence.length)
+      
 
     }
     
