@@ -14,3 +14,4 @@ $ ->
     
     initInterface()
     browserSpecificTweaks()
+    initAnimation()
