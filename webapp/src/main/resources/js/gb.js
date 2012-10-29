@@ -2521,6 +2521,7 @@ function testCSS(prop) {
     if (localStorage.getItem('aichat') === 'false') {
       return hideAiChat();
     } else {
+      $("#ai-chat-button").button('toggle');
       return showAiChat();
     }
   };
