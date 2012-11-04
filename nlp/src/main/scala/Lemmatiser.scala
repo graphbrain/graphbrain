@@ -101,12 +101,18 @@ object Lemmatiser {
 
     	val annotated = l.annotate(s)
     	val annotatedCL = l.annotate(clSentence)
-    	val quoteCL = InputSyntax.quoteTag(clSentence)
+    	
+
+    	
     	for (a <- annotated) {
     		println(a);
     	}
-    	println("From command line: " + clSentence)
 
+    	
+    	println("From command line: " + clSentence)
+    	val quoteSentence = InputSyntax.quoteURL(clSentence)
+    	println("Quote sentence: " + quoteSentence)
+    	val quoteCL = InputSyntax.quoteAndDisambigTag(quoteSentence)
     	for ( a <- annotatedCL) {
     		println(a)
     		//println(l.conjugate(a._3))
