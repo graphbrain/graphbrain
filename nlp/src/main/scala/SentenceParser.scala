@@ -267,7 +267,7 @@ class SentenceParser (storeName:String = "gb") {
 
     if (urlRegex.findAllIn(text).hasNext) {
       
-      val urlNode = URLNode(store, text)
+      
       results = store.createURLNode(url = text, userId = "") :: results;
       
     }
@@ -381,7 +381,7 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
   var currentSplitQuote =""
 
 
-  while(taggedSentence.length > 1) {
+  while(taggedSentence.length > 1 && quoteTaggedSentence.length > 1) {
       
     val current = taggedSentence.head
     val lookahead = taggedSentence.tail.head
@@ -391,7 +391,6 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
 
     (current, lookahead, currentQuote, nextQuote) match{
         case ((word1, tag1, lem1), (word2, tag2, lem2), (qw1, qt1), (qw2, qt2)) => 
-        
         
         if(qt1=="InQuote") {
 
@@ -403,7 +402,10 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
           
         }
         else if(qt1=="URL") {
-          nodeTexts = TextFormatting.deQuoteAndTrim(nodeText) :: nodeTexts;
+          
+          nodeTexts = TextFormatting.deQuoteAndTrim(qw1) :: nodeTexts;
+          val urlProcessed = InputSyntax.resolveURL(qw1, taggedSentence, quoteTaggedSentence);
+          taggedSentence = urlProcessed;
         }
 
         else if((relRegex.findAllIn(tag1).toArray.length == 1)) {
@@ -431,18 +433,26 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
           }
           
         }
-        if (taggedSentence.length == 2) {
+        if(leftParenthPosTag.findAllIn(tag1).toArray.length == 1 ) {
+          /*if(qt1 == "URL") {
+            val urlProcessed = InputSyntax.resolveURL(qw1, taggedSentence, quoteTaggedSentence);
+            taggedSentence = urlProcessed;
+          }
+          else{*/
+            val parenthProcessed = InputSyntax.disambig(nodeText.head.toString, disambigs, taggedSentence, quoteTaggedSentence);
+            disambigs = parenthProcessed._1;
+            taggedSentence = parenthProcessed._2;
+            quoteTaggedSentence = parenthProcessed._3;
 
-          nodeText += word2.trim;
+          //}
+        }
+        if (quoteTaggedSentence.length == 2) {
+
+          nodeText += qw2.trim;
           nodeTexts = TextFormatting.deQuoteAndTrim(nodeText) :: nodeTexts;
 
         }
-        if(leftParenthPosTag.findAllIn(tag1).toArray.length == 1) {
-          val parenthProcessed = InputSyntax.disambig(nodeText.head.toString, disambigs, taggedSentence, quoteTaggedSentence);
-          disambigs = parenthProcessed._1;
-          taggedSentence = parenthProcessed._2;
-          quoteTaggedSentence = parenthProcessed._3;
-        }
+
 
         
         
@@ -450,7 +460,7 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
       taggedSentence = taggedSentence.tail;
       quoteTaggedSentence = quoteTaggedSentence.tail;
       
-      
+
 
     }
     

@@ -36,22 +36,44 @@ class SentenceParserTest extends FunSuite {
   val userNode = UserNode(store = store, id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
   val graphbrainGlobalNode = store.createTextNode(namespace = "1", text = "GraphBrain")
   val graphbrainUserNode = store.createTextNode(namespace = "usergenerated/chihchun_chen", text = "graphbrain")
+  val gbURLNode = store.createURLNode(url = "http://graphbrain.com(nice)", userId = "")
   
   val sentence1 = "ChihChun is a toad"
   val sentence2 = "I am always a programmer at graphbrain"
   val sentence3 = "Chih-Chun is always a programmer at graphbrain"
-  val sentence4 = "Chih-Chun is always a programmer at http://graphbrain.com"
+  val sentence4 = "Chih-Chun likes http://graphbrain.com(nice)"
   val sentence5 = "\"Chih-Chun is a toad\" is an excellent book"
  
   val isA = "rtype/1/is_a"
   val isAn = "rtype/1/is_an"
   val amA = "rtype/1/am_a"
+  val likes = "rtype/1/likes"
   val isALemma = ID.text_id("be_a", 1)
   val isAPOS = ID.reltype_id("vbz_dt")
   val amAlwaysA_AtLemma = ID.text_id("be_always_a~at")
   val amAlwaysA_AtPOS = ID.reltype_id("vbp_rb_dt~in")
   val amAlwaysARelTypeID = "rtype/1/am_always_a~at"
   val isAlwaysARelTypeID = "rtype/1/is_always_a~at"
+
+  test("Chih-Chun likes http://graphbrain.com(nice)"){  
+    val response = sentenceParser.parseSentenceGeneral(sentence4, root = toadNodeGlobal)
+    response(0) match {
+      case r: GraphResponse => 
+        val parses = r.hypergraphList;
+        val nodes = parses(0)._1
+        val relType = parses(0)._2
+        println(nodes(0)._1.id)
+        println(globalNameNode2.id)
+        println(nodes(1)._1.id)
+        println(relType.id)
+        println(likes)
+        assert(nodes(0)._1.id == globalNameNode2.id)
+        assert(nodes(1)._1.id == gbURLNode.id)
+        assert(relType.id == likes)
+
+      case _ => 
+    } 
+  }
 
   test("ChihChun is a toad: Parse 2-role with root node no user"){	
     val response = sentenceParser.parseSentenceGeneral(sentence1, root = toadNodeGlobal)
