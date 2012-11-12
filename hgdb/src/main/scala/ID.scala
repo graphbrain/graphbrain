@@ -89,7 +89,4 @@ object ID {
     val title = wptitle.toLowerCase.replace(" ", "_")
     return "wikipedia/"+title
   }
-
-
-
 }

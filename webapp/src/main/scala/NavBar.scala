@@ -50,8 +50,16 @@ case class NavBar(user: UserNode, page: String) {
   def tools = {
     if (page == "node") {
       """
+      <li>
+        <div class="btn-group" data-toggle="buttons-radio">
+          <button class="btn">Public</button>
+          <button class="btn">Personal</button>
+          <button class="btn">Private</button>
+        </div>
+      </li>
+      <li>&nbsp;</li>
       <li><button class="btn" id="ai-chat-button" data-toggle="button"><i class="icon-asterisk icon-black"></i> Talk to AI</button></li>
-      <li><button id="removeButton" class="btn" data-toggle="button"><i class="icon-remove icon-black"></i> Remove</button></li>
+      <li><button class="btn" id="removeButton" data-toggle="button"><i class="icon-remove icon-black"></i> Remove</button></li>
       """
     }
     else {
