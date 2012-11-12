@@ -28,4 +28,13 @@ class IDTest extends FunSuite {
     assert(ID.userToGlobal("user/dummy/1/test") == "1/test")
     assert(ID.userToGlobal("user/dummy") == "user/dummy")
   }
+
+  test("is personal") {
+    assert(ID.isPersonal("user/dummy/p/1/test"))
+    assert(!ID.isPersonal("user/dummy/1/test"))
+    assert(!ID.isPersonal("user/dummy"))
+    assert(!ID.isPersonal("user/dummy/test"))
+    assert(!ID.isPersonal("1/test"))
+    assert(!ID.isPersonal("test"))
+  }
 }

@@ -23,6 +23,10 @@ object ID {
 
   def isUserNode(idOrNs: String): Boolean = (parts(idOrNs)(0) == "user") && (numberOfParts(idOrNs) == 2)
 
+  def isPersonal(idOrNs: String): Boolean = (parts(idOrNs)(0) == "user") &&
+                                              (numberOfParts(idOrNs) > 3) &&
+                                              (parts(idOrNs)(2) == "p")
+
   def isInSystemSpace(idOrNs: String): Boolean = parts(idOrNs)(0) == "sys"
 
   def globalToUser(idOrNs: String, userid: String) = {
