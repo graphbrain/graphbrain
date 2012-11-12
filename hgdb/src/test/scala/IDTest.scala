@@ -9,15 +9,12 @@ class IDTest extends FunSuite {
     assert(ID.isInUserSpace("user/dummy/test"))
     assert(!ID.isInUserSpace("1/test"))
     assert(!ID.isInUserSpace("test"))
-    assert(ID.isInUserSpace("/user/dummy/1/test"))
   }
 
   test("is a user node") {
     assert(!ID.isUserNode("user/dummy/1/test"))
     assert(ID.isUserNode("user/dummy"))
-    assert(ID.isUserNode("/user/dummy"))
     assert(!ID.isUserNode("1/test"))
-    assert(!ID.isUserNode("/user/dummy/1/test"))
   }
 
   test("global to user") {
