@@ -37,4 +37,13 @@ class IDTest extends FunSuite {
     assert(!ID.isPersonal("1/test"))
     assert(!ID.isPersonal("test"))
   }
+
+  test("is in user global space") {
+    assert(!ID.isInUserGlobalSpace("user/dummy/p/1/test"))
+    assert(ID.isInUserGlobalSpace("user/dummy/1/test"))
+    assert(!ID.isInUserGlobalSpace("user/dummy"))
+    assert(ID.isInUserGlobalSpace("user/dummy/test"))
+    assert(!ID.isInUserGlobalSpace("1/test"))
+    assert(!ID.isInUserGlobalSpace("test"))
+  }
 }
