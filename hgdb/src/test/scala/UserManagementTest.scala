@@ -6,6 +6,7 @@ import com.graphbrain.hgdb.UserManagement
 class UserManagementTest extends FunSuite {
 
   val store = new VertexStore("testhgdb") with UserManagement
+  store.simpleLogOn = false
 
   test("create user") {
     store.createUser("testuser", "George Michael Bluth", "testuser@example.com", "test123_!", "user")
