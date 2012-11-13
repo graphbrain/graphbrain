@@ -41,7 +41,7 @@ object ID {
   }
 
   def userToGlobal(idOrNs: String) = {
-    if (isInUserSpace(idOrNs)) {
+    if (isInUserGlobalSpace(idOrNs)) {
       val idParts = parts(idOrNs)
       val globalParts = idParts.slice(2, idParts.length)
       if (globalParts.length == 1) {

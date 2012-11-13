@@ -68,7 +68,9 @@ trait UserOps extends VertexStore {
       val id = vertex.id
       if (ID.isInUserSpace(id)) {
         unsetOwner(ID.ownerId(id), id)
-        unlinkToGlobal(ID.userToGlobal(id), id)
+        if (!ID.isPersonal(id)) {
+          unlinkToGlobal(ID.userToGlobal(id), id)
+        }
       }
       else {
         backend.tpGlobalUser.deleteRow(id)
