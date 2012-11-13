@@ -18,10 +18,10 @@ case class Edge(edgeType: String, extParticipantIds: List[String]) {
 
   def isInUserSpace: Boolean = {
     for (p <- participantIds)
-      if (!ID.isUserNode(p) && (!ID.isInUserSpace(p)))
-        return false
+      if (ID.isInUserSpace(p))
+        return true
 
-    true
+    false
   }
 
   def toUser(userId: String) = {
