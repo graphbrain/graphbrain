@@ -53,7 +53,6 @@ case class NavBar(user: UserNode, page: String) {
       <li>
         <div class="btn-group" data-toggle="buttons-radio">
           <button class="btn">Public</button>
-          <button class="btn">Personal</button>
           <button class="btn">Private</button>
         </div>
       </li>
