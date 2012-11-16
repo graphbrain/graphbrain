@@ -61,3 +61,5 @@ project mail
 project email
 compile
 project nlp
+compile
+run
