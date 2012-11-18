@@ -38,8 +38,11 @@
     float:left;
 }
 
-.snode1 {
+.snode {
     position:fixed;
+}
+
+.snodeInner {
     border-style:solid;
     border-width:2px;
     border-color:#AAA;
@@ -47,12 +50,9 @@
     background: rgba(255, 255, 255, 0.7);
 }
 
-.snodeN {
-    position:fixed;
-    border-style:solid;
-    border-width:2px;
-    border-color:#AAA;
-    padding: 10px;
+.snodeLabel {
+    color:#fff;
+    padding-left: 5px;
     background: rgba(255, 255, 255, 0.7);
 }
 

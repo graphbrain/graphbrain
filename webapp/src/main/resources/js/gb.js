@@ -1344,7 +1344,9 @@ function testCSS(prop) {
 
     SNode.prototype.place = function() {
       var html, key, nodeObj, nodesCount;
-      html = '<div id="' + this.id + '"><div class="viewport" /></div>';
+      html = '<div id="' + this.id + '" class="snode">';
+      html += '<div class="snodeLabel" />';
+      html += '<div class="snodeInner"><div class="viewport" /></div></div>';
       $('#graph-view').append(html);
       this.jqDiv = $('#' + this.id);
       nodesCount = 0;
@@ -1352,11 +1354,6 @@ function testCSS(prop) {
         if (this.nodes.hasOwnProperty(key)) {
           nodesCount++;
         }
-      }
-      if (nodesCount > 1) {
-        this.jqDiv.addClass('snodeN');
-      } else {
-        this.jqDiv.addClass('snode1');
       }
       for (key in this.nodes) {
         if (this.nodes.hasOwnProperty(key)) {
@@ -1371,6 +1368,15 @@ function testCSS(prop) {
       }
       this.updateDimensions();
       return nodeObj = this;
+    };
+
+    SNode.prototype.setLabel = function(label) {
+      return $('#' + this.id + ' .snodeLabel').append(label);
+    };
+
+    SNode.prototype.setColor = function(color) {
+      $('#' + this.id + ' .snodeInner').css('border-color', color);
+      return $('#' + this.id + ' .snodeLabel').css('background', color);
     };
 
     SNode.prototype.updateDetailLevel = function(scale) {
@@ -1466,11 +1472,6 @@ function testCSS(prop) {
 
     Link.prototype.place = function() {
       var height, labelWidth, snode;
-      $('#graph-view').append('<div class="linkLabel" id="linkLabel' + this.id + '"><div class="linkText" id="linkText' + this.id + '">' + this.label + '</div><div class="linkArrow" id="linkArrow' + this.id + '" /></div>');
-      $('#graph-view').append('<div class="linkPoint" id="linkPoint1' + this.id + '"></div>');
-      $('#graph-view').append('<div class="linkPoint" id="linkPoint2' + this.id + '"></div>');
-      $('#graph-view').append('<div class="linkPoint" id="linkPoint3' + this.id + '"></div>');
-      $('#graph-view').append('<div class="linkPoint" id="linkPoint4' + this.id + '"></div>');
       $('#linkText' + this.id).css('background', this.color);
       $('#linkArrow' + this.id).css('border-left', '11px solid ' + this.color);
       $('#linkPoint1' + this.id).css('background', this.color);
@@ -1481,7 +1482,8 @@ function testCSS(prop) {
       if (snode === g.root) {
         snode = this.sorig;
       }
-      snode.jqDiv.css('border-color', this.color);
+      snode.setLabel(this.label);
+      snode.setColor(this.color);
       this.jqLabel = $('#linkLabel' + this.id);
       height = this.jqLabel.outerHeight();
       this.halfHeight = height / 2;
