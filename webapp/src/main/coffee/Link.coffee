@@ -61,11 +61,11 @@ class Link
         @angle = Math.atan(slope)
 
     place: ->
-        $('#graph-view').append('<div class="linkLabel" id="linkLabel' + @id + '"><div class="linkText" id="linkText' + @id + '">' + @label + '</div><div class="linkArrow" id="linkArrow' + @id + '" /></div>')
-        $('#graph-view').append('<div class="linkPoint" id="linkPoint1' + @id + '"></div>')
-        $('#graph-view').append('<div class="linkPoint" id="linkPoint2' + @id + '"></div>')
-        $('#graph-view').append('<div class="linkPoint" id="linkPoint3' + @id + '"></div>')
-        $('#graph-view').append('<div class="linkPoint" id="linkPoint4' + @id + '"></div>')
+        #$('#graph-view').append('<div class="linkLabel" id="linkLabel' + @id + '"><div class="linkText" id="linkText' + @id + '">' + @label + '</div><div class="linkArrow" id="linkArrow' + @id + '" /></div>')
+        #$('#graph-view').append('<div class="linkPoint" id="linkPoint1' + @id + '"></div>')
+        #$('#graph-view').append('<div class="linkPoint" id="linkPoint2' + @id + '"></div>')
+        #$('#graph-view').append('<div class="linkPoint" id="linkPoint3' + @id + '"></div>')
+        #$('#graph-view').append('<div class="linkPoint" id="linkPoint4' + @id + '"></div>')
 
         $('#linkText' + @id).css('background', @color)
         $('#linkArrow' + @id).css('border-left', '11px solid ' + @color)
@@ -76,7 +76,9 @@ class Link
         snode = @starg
         if snode == g.root
             snode = @sorig
-        snode.jqDiv.css('border-color', @color)
+
+        snode.setLabel(@label)
+        snode.setColor(@color)
 
         @jqLabel = $('#linkLabel' + @id)
 

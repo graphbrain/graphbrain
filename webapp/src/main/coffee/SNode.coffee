@@ -155,17 +155,15 @@ class SNode
 
 
     place: ->
-        html = '<div id="' + @id + '"><div class="viewport" /></div>'
+        html = '<div id="' + @id + '" class="snode">'
+        html += '<div class="snodeLabel" />'
+        html += '<div class="snodeInner"><div class="viewport" /></div></div>'
         $('#graph-view').append(html)
 
         @jqDiv = $('#' + @id)
 
         nodesCount = 0
         nodesCount++ for key of @nodes when @nodes.hasOwnProperty(key)
-        if nodesCount > 1
-            @jqDiv.addClass('snodeN')
-        else
-            @jqDiv.addClass('snode1')
 
         # place nodes contained in this super node
         @nodes[key].place() for key of @nodes when @nodes.hasOwnProperty(key)
@@ -178,6 +176,15 @@ class SNode
         @updateDimensions()
 
         nodeObj = this
+
+
+    setLabel: (label) ->
+        $('#' + @id + ' .snodeLabel').append(label)
+
+
+    setColor: (color) ->
+        $('#' + @id + ' .snodeInner').css('border-color', color)
+        $('#' + @id + ' .snodeLabel').css('background', color)
 
 
     updateDetailLevel: (scale) ->
