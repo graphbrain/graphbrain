@@ -113,10 +113,11 @@ class SentenceParser (storeName:String = "gb") {
 
   }
 
-  def reparseGraphTexts(nodeTexts: List[String], relText: String, disambigs: List[(String, String)], root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[(Vertex, Option[Vertex])], Vertex) = {
-    var solutions: List[(List[(Vertex, Option[Vertex])], Vertex)] = List()
+  def reparseGraphTexts(nodeTexts: List[String], relText: String, disambigs: List[(String, String)], root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[(Vertex, Option[(List[Vertex], Vertex)])], Vertex) = {
+   
     var tempDisambs = disambigs;
-    var nodes: List[(Vertex, Option[Vertex])] = List()
+
+    var nodes: List[(Vertex, Option[(List[Vertex], Vertex)])] = Nil
       
     val sepRelations = """~""".r.split(relText)
     var i = 0;
@@ -125,12 +126,14 @@ class SentenceParser (storeName:String = "gb") {
           
     for(nodeText <- nodeTexts) {
       var d = "";
-      var dNode: Option[Vertex] = None;
+
+      var dNode: Option[(List[Vertex], Vertex)] = None;
 
       if(tempDisambs.length > 0){
         if(nodeText == tempDisambs.head._1) {
           d = tempDisambs.head._2;
-          dNode = Some(specialNodeCases(d, root, user))
+          val disambigEdgeType = store.createEdgeType(id = ID.reltype_id("as in"), label = "as in")
+          dNode = Some(List(specialNodeCases(d, root, user)), disambigEdgeType)
 
           tempDisambs = tempDisambs.tail;
         }
@@ -701,7 +704,7 @@ object SentenceParser {
               val parses = g.hypergraphList
               for(parse <- parses) {
                 parse match {
-                  case (n: List[(Vertex, Option[Vertex])], r: Vertex) =>
+                  case (n: List[(Vertex, Option[(List[Vertex], Vertex)])], r: Vertex) =>
                   for(node <- n) {
                     println("Node: " + node._1.id);
                   }
