@@ -466,7 +466,7 @@ function testCSS(prop) {
 }
 ;
 
-  var Graph, Link, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, animSpeedX, animSpeedY, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initAnimation, initChatBuffer, initDisambiguateDialog, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, initTextView, interRect, intervalID, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, printHelp, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopAnim, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, animSpeedX, animSpeedY, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initAnimation, initChatBuffer, initDisambiguateDialog, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, initTextView, interRect, intervalID, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, printHelp, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopAnim, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   browserSpecificTweaks = function() {
     if (isSafari) {
@@ -1222,8 +1222,11 @@ function testCSS(prop) {
 
   SNode = (function() {
 
-    function SNode(id) {
+    function SNode(id, rel, relpos, color) {
       this.id = id;
+      this.rel = rel;
+      this.relpos = relpos;
+      this.color = color;
       this.initLayout();
       this.nodes = {};
       this.subNodes = [];
@@ -1343,9 +1346,16 @@ function testCSS(prop) {
     };
 
     SNode.prototype.place = function() {
-      var html, key, nodeObj, nodesCount;
+      var html, key, nodeObj, nodesCount, relText, rootText;
       html = '<div id="' + this.id + '" class="snode">';
-      html += '<div class="snodeLabel" />';
+      if (this.rel !== '') {
+        rootText = nodes[rootNodeId]['text'];
+        relText = this.rel;
+        if (this.relpos === 1) {
+          relText += ' ' + rootText;
+        }
+        html += '<div class="snodeLabel">' + relText + '</div>';
+      }
       html += '<div class="snodeInner"><div class="viewport" /></div></div>';
       $('#graph-view').append(html);
       this.jqDiv = $('#' + this.id);
@@ -1367,11 +1377,8 @@ function testCSS(prop) {
         this.jqDiv.hover(scrollOn, scrollOff);
       }
       this.updateDimensions();
+      this.setColor(this.color);
       return nodeObj = this;
-    };
-
-    SNode.prototype.setLabel = function(label) {
-      return $('#' + this.id + ' .snodeLabel').append(label);
     };
 
     SNode.prototype.setColor = function(color) {
@@ -1406,151 +1413,6 @@ function testCSS(prop) {
     };
 
     return SNode;
-
-  })();
-
-  Link = (function() {
-
-    function Link(id, orig, sorig, targ, starg, etype, label, color) {
-      this.id = id;
-      this.orig = orig;
-      this.sorig = sorig;
-      this.targ = targ;
-      this.starg = starg;
-      this.etype = etype;
-      this.label = label;
-      this.color = color;
-      this.ox = 0;
-      this.oy = 0;
-      this.tx = 0;
-      this.ty = 0;
-      this.len = 0;
-      this.jqLabel = false;
-    }
-
-    Link.prototype.updatePos = function() {
-      var origSuper, p0, p1, slope, targSuper, x0, x1, y0, y1, _dx, _dy, _orig, _targ;
-      _orig = false;
-      _targ = false;
-      origSuper = false;
-      targSuper = false;
-      if (this.orig) {
-        _orig = this.orig;
-      } else if (this.sorig) {
-        _orig = this.sorig;
-        this.origSuper = true;
-      }
-      if (this.targ) {
-        _targ = this.targ;
-      } else if (this.starg) {
-        _targ = this.starg;
-        this.targSuper = true;
-      }
-      x0 = _orig.rpos[0];
-      y0 = _orig.rpos[1];
-      x1 = _targ.rpos[0];
-      y1 = _targ.rpos[1];
-      p0 = interRect(x0, y0, x1, y1, _orig.x0, _orig.y0, _orig.x1, _orig.y1);
-      p1 = interRect(x1, y1, x0, y0, _targ.x0, _targ.y0, _targ.x1, _targ.y1);
-      this.x0 = p0[0];
-      this.y0 = p0[1];
-      this.z0 = _orig.rpos[2];
-      this.x1 = p1[0];
-      this.y1 = p1[1];
-      this.z1 = _targ.rpos[2];
-      _dx = this.x1 - this.x0;
-      _dy = this.y1 - this.y0;
-      this.dx = _dx;
-      this.dy = _dy;
-      this.len = (_dx * _dx) + (_dy * _dy);
-      this.len = Math.sqrt(this.len);
-      this.cx = this.x0 + ((this.x1 - this.x0) / 2);
-      this.cy = this.y0 + ((this.y1 - this.y0) / 2);
-      slope = (this.y1 - this.y0) / (this.x1 - this.x0);
-      return this.angle = Math.atan(slope);
-    };
-
-    Link.prototype.place = function() {
-      var height, labelWidth, snode;
-      $('#linkText' + this.id).css('background', this.color);
-      $('#linkArrow' + this.id).css('border-left', '11px solid ' + this.color);
-      $('#linkPoint1' + this.id).css('background', this.color);
-      $('#linkPoint2' + this.id).css('background', this.color);
-      $('#linkPoint3' + this.id).css('background', this.color);
-      $('#linkPoint4' + this.id).css('background', this.color);
-      snode = this.starg;
-      if (snode === g.root) {
-        snode = this.sorig;
-      }
-      snode.setLabel(this.label);
-      snode.setColor(this.color);
-      this.jqLabel = $('#linkLabel' + this.id);
-      height = this.jqLabel.outerHeight();
-      this.halfHeight = height / 2;
-      labelWidth = this.jqLabel.outerWidth();
-      return this.halfLabelWidth = labelWidth / 2;
-    };
-
-    Link.prototype.updatePoint = function(pointId, pos) {
-      var deltaX, deltaY, deltaZ, transformStr, tx, ty, tz;
-      deltaX = this.x1 - this.x0;
-      deltaY = this.y1 - this.y0;
-      deltaZ = this.z1 - this.z0;
-      tx = this.x0 + deltaX * pos;
-      ty = this.y0 + deltaY * pos;
-      tz = this.z0 + deltaZ * pos;
-      tx -= 1.5;
-      ty -= 1.5;
-      transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px)';
-      $(pointId).css('-webkit-transform', transformStr);
-      return $(pointId).css('-moz-transform', transformStr);
-    };
-
-    Link.prototype.visualUpdate = function() {
-      var cx, cy, cz, deltaX, deltaY, deltaZ, len, opacity, roty, rotz, transformStr, tx, ty, tz, z;
-      deltaX = this.x1 - this.x0;
-      deltaY = this.y1 - this.y0;
-      deltaZ = this.z1 - this.z0;
-      cx = this.x0 + (deltaX / 2);
-      cy = this.y0 + (deltaY / 2);
-      cz = this.z0 + (deltaZ / 2);
-      len = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ));
-      rotz = Math.atan2(deltaY, deltaX);
-      roty = 0;
-      if (deltaX >= 0) {
-        roty = -Math.atan2(deltaZ * Math.cos(rotz), deltaX);
-      } else {
-        roty = Math.atan2(deltaZ * Math.cos(rotz), -deltaX);
-      }
-      this.jqLabel.css('left', '' + ((len / 2) - this.halfLabelWidth) + 'px');
-      tx = cx - (len / 2);
-      ty = cy - this.halfHeight;
-      tz = cz + g.zOffset;
-      transformStr = 'translate3d(' + tx + 'px,' + ty + 'px,' + tz + 'px)' + ' rotateZ(' + rotz + 'rad)' + ' rotateY(' + roty + 'rad)';
-      this.jqLabel.css('-webkit-transform', transformStr);
-      this.jqLabel.css('-moz-transform', transformStr);
-      this.updatePoint('#linkPoint1' + this.id, 0.1);
-      this.updatePoint('#linkPoint2' + this.id, 0.2);
-      this.updatePoint('#linkPoint3' + this.id, 0.8);
-      this.updatePoint('#linkPoint4' + this.id, 0.9);
-      z = cz;
-      if (z < 0) {
-        opacity = -1 / (z * 0.007);
-        this.jqLabel.css('opacity', opacity);
-        $('#linkPoint1' + this.id).css('opacity', opacity);
-        $('#linkPoint2' + this.id).css('opacity', opacity);
-        $('#linkPoint3' + this.id).css('opacity', opacity);
-        return $('#linkPoint4' + this.id).css('opacity', opacity);
-      } else {
-        this.jqLabel.css('opacity', 0.9);
-        $('#linkPoint1' + this.id).css('opacity', 0.7);
-        $('#linkPoint2' + this.id).css('opacity', 0.7);
-        $('#linkPoint3' + this.id).css('opacity', 0.7);
-        return $('#linkPoint4' + this.id).css('opacity', 0.7);
-      }
-    };
-
-    return Link;
 
   })();
 
@@ -1679,14 +1541,17 @@ function testCSS(prop) {
   g = false;
 
   initGraph = function() {
-    var key, l, link, linkID, nid, nlist, nod, node, orig, parentID, sid, sn, snode, sorig, starg, subNode, targ, text, type, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref;
+    var color, key, nid, nlist, nod, node, parentID, rel, rpos, sid, sn, snode, subNode, text, type, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref;
     g = new Graph($('#graph-view').width(), $('#graph-view').height());
     g.updateTransform();
     for (_i = 0, _len = snodes.length; _i < _len; _i++) {
       sn = snodes[_i];
       sid = sn['id'];
+      rel = sn['rel'];
+      rpos = sn['rpos'];
+      color = sn['color'];
       nlist = sn['nodes'];
-      snode = new SNode(sid);
+      snode = new SNode(sid, rel, rpos, color);
       for (_j = 0, _len1 = nlist.length; _j < _len1; _j++) {
         nid = nlist[_j];
         nod = nodes[nid];
@@ -1746,43 +1611,7 @@ function testCSS(prop) {
       }
     }
     g.genSNodeKeys();
-    linkID = 0;
-    for (_m = 0, _len4 = links.length; _m < _len4; _m++) {
-      l = links[_m];
-      orig = '';
-      targ = '';
-      sorig = '';
-      starg = '';
-      if ('orig' in l) {
-        orig = g.nodes[l['orig']];
-        sorig = orig.snode;
-      } else {
-        orig = false;
-        sorig = g.snodes[l['sorig']];
-      }
-      if ('targ' in l) {
-        targ = g.nodes[l['targ']];
-        starg = targ.snode;
-      } else {
-        targ = false;
-        starg = g.snodes[l['starg']];
-      }
-      link = new Link(linkID++, false, sorig, false, starg, l['etype'], l['relation'], l['color']);
-      g.links.push(link);
-      sorig.links.push(link);
-      starg.links.push(link);
-      if (sorig.parent === false) {
-        starg.linkLabel = l['relation'];
-        starg.etype = l['etype'];
-        starg.linkDirection = 'in';
-      } else {
-        sorig.linkLabel = l['relation'];
-        starg.etype = l['etype'];
-        sorig.linkDirection = 'out';
-      }
-    }
     g.placeNodes();
-    g.placeLinks();
     g.layout();
     return g.updateView();
   };
@@ -1867,17 +1696,6 @@ function testCSS(prop) {
         if (this.snodes.hasOwnProperty(key)) {
           _results.push(this.snodes[key].place());
         }
-      }
-      return _results;
-    };
-
-    Graph.prototype.placeLinks = function() {
-      var link, _i, _len, _ref, _results;
-      _ref = this.links;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        link = _ref[_i];
-        _results.push(link.place());
       }
       return _results;
     };

@@ -9,9 +9,12 @@ initGraph = ->
     # process super nodes and associated nodes
     for sn in snodes
         sid = sn['id']
+        rel = sn['rel']
+        rpos = sn['rpos']
+        color = sn['color']
         nlist = sn['nodes']
         
-        snode = new SNode(sid)
+        snode = new SNode(sid, rel, rpos, color)
 
         for nid in nlist
             nod = nodes[nid]
@@ -64,41 +67,7 @@ initGraph = ->
 
     g.genSNodeKeys()
 
-    # process links
-    linkID = 0
-    for l in links
-        orig = ''
-        targ = ''
-        sorig = ''
-        starg = ''
-        if 'orig' of l
-            orig  = g.nodes[l['orig']]
-            sorig = orig.snode
-        else
-            orig = false
-            sorig = g.snodes[l['sorig']]
-        if 'targ' of l
-            targ  = g.nodes[l['targ']]
-            starg = targ.snode
-        else
-            targ = false
-            starg = g.snodes[l['starg']]
-        link = new Link(linkID++, false, sorig, false, starg, l['etype'], l['relation'], l['color'])
-        g.links.push(link)
-        sorig.links.push(link)
-        starg.links.push(link)
-
-        if sorig.parent == false
-            starg.linkLabel = l['relation']
-            starg.etype = l['etype']
-            starg.linkDirection = 'in'
-        else
-            sorig.linkLabel = l['relation']
-            starg.etype = l['etype']
-            sorig.linkDirection = 'out'
-
     g.placeNodes()
-    g.placeLinks()
     g.layout()
     g.updateView()
 
@@ -177,9 +146,6 @@ class Graph
 
 
     placeNodes: -> @snodes[key].place() for key of @snodes when @snodes.hasOwnProperty(key)
-
-
-    placeLinks: -> link.place() for link in @links
 
 
     updateViewLinks: ->

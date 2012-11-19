@@ -19,7 +19,6 @@ build = (callback) ->
     'coffee/Node.coffee',
     'coffee/SphericalCoords.coffee',
     'coffee/SNode.coffee',
-    'coffee/Link.coffee',
     'coffee/layout.coffee',
     'coffee/Graph.coffee',
     'coffee/TextView.coffee',
