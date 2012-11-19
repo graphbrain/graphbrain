@@ -2,7 +2,7 @@
 
 # Super node
 class SNode
-    constructor: (@id) ->
+    constructor: (@id, @rel, @relpos, @color) ->
         @initLayout()
 
         @nodes = {}
@@ -156,7 +156,12 @@ class SNode
 
     place: ->
         html = '<div id="' + @id + '" class="snode">'
-        html += '<div class="snodeLabel" />'
+        if @rel != ''
+            rootText = nodes[rootNodeId]['text']
+            relText = @rel
+            if @relpos == 1
+                relText += ' ' + rootText
+            html += '<div class="snodeLabel">' + relText + '</div>'
         html += '<div class="snodeInner"><div class="viewport" /></div></div>'
         $('#graph-view').append(html)
 
@@ -175,11 +180,9 @@ class SNode
 
         @updateDimensions()
 
+        @setColor(@color)
+
         nodeObj = this
-
-
-    setLabel: (label) ->
-        $('#' + @id + ' .snodeLabel').append(label)
 
 
     setColor: (color) ->
