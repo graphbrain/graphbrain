@@ -79,8 +79,6 @@ html, body {
 }.node {
     color:#000;
     background:#eee;
-    font-family: Sans-Serif;
-    font-size: 12px;
     margin: 3px;
     padding: 3px;
     max-width: 200px;
@@ -121,6 +119,7 @@ html, body {
 }
 
 .snodeInner {
+    font-size: 12px;
     border-style:solid;
     border-width:2px;
     border-color:#AAA;
@@ -131,6 +130,13 @@ html, body {
 .snodeLabel {
     color:#fff;
     padding-left: 5px;
+}
+
+.snodeRoot {
+    font-size: 18px;
+    border-width:4px;
+    border-color:#000;
+    border-style:dashed;
 }
 
 .snodeDialog {

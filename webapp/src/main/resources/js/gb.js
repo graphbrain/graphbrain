@@ -1348,7 +1348,7 @@ function testCSS(prop) {
     SNode.prototype.place = function() {
       var html, key, nodeObj, nodesCount, relText, rootText;
       html = '<div id="' + this.id + '" class="snode">';
-      if (this.rel !== '') {
+      if (this.depth !== 0) {
         rootText = nodes[rootNodeId]['text'];
         relText = this.rel;
         if (this.relpos === 1) {
@@ -1356,7 +1356,12 @@ function testCSS(prop) {
         }
         html += '<div class="snodeLabel">' + relText + '</div>';
       }
-      html += '<div class="snodeInner"><div class="viewport" /></div></div>';
+      if (this.depth === 0) {
+        html += '<div class="snodeInner snodeRoot">';
+      } else {
+        html += '<div class="snodeInner">';
+      }
+      html += '<div class="viewport" /></div></div>';
       $('#graph-view').append(html);
       this.jqDiv = $('#' + this.id);
       nodesCount = 0;
@@ -1377,7 +1382,9 @@ function testCSS(prop) {
         this.jqDiv.hover(scrollOn, scrollOff);
       }
       this.updateDimensions();
-      this.setColor(this.color);
+      if (this.depth !== 0) {
+        this.setColor(this.color);
+      }
       return nodeObj = this;
     };
 

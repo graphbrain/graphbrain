@@ -156,13 +156,17 @@ class SNode
 
     place: ->
         html = '<div id="' + @id + '" class="snode">'
-        if @rel != ''
+        if @depth != 0
             rootText = nodes[rootNodeId]['text']
             relText = @rel
             if @relpos == 1
                 relText += ' ' + rootText
             html += '<div class="snodeLabel">' + relText + '</div>'
-        html += '<div class="snodeInner"><div class="viewport" /></div></div>'
+        if @depth == 0
+            html += '<div class="snodeInner snodeRoot">'
+        else
+            html += '<div class="snodeInner">'
+        html += '<div class="viewport" /></div></div>'
         $('#graph-view').append(html)
 
         @jqDiv = $('#' + @id)
@@ -180,7 +184,8 @@ class SNode
 
         @updateDimensions()
 
-        @setColor(@color)
+        if @depth != 0
+            @setColor(@color)
 
         nodeObj = this
 
