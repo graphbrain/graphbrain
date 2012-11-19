@@ -1,5 +1,7 @@
 package com.graphbrain.webapp
 
+import java.net.URLDecoder
+
 import unfiltered.request._
 import unfiltered.response._
 import unfiltered.netty._
@@ -10,10 +12,10 @@ import com.graphbrain.utils.SimpleLog
 
 object NodePlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse with SimpleLog {
   def nodeResponse(id: String, cookies: Map[String, Any], req: HttpRequest[Any]) = {
-    val userNode = Server.getUser(cookies)
-    val node = Server.store.get(id)
     Server.log(req, cookies, "NODE id: " + id)
     ldebug("NODE id: " + id, Console.CYAN)
+    val userNode = Server.getUser(cookies)
+    val node = Server.store.get(URLDecoder.decode(id, "UTF-8"))
     NodePage(Server.store, node, userNode, Server.prod, req, cookies).response
   }
 
