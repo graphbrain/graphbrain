@@ -1348,14 +1348,15 @@ function testCSS(prop) {
     SNode.prototype.place = function() {
       var html, key, nodeObj, nodesCount, relText, rootText;
       html = '<div id="' + this.id + '" class="snode">';
+      relText = '';
       if (this.depth !== 0) {
         rootText = nodes[rootNodeId]['text'];
         relText = this.rel;
         if (this.relpos === 1) {
           relText += ' ' + rootText;
         }
-        html += '<div class="snodeLabel">' + relText + '</div>';
       }
+      html += '<div class="snodeLabel">' + relText + '</div>';
       if (this.depth === 0) {
         html += '<div class="snodeInner snodeRoot">';
       } else {

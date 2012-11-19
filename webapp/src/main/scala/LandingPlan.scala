@@ -35,5 +35,9 @@ object LandingPlan extends cycle.Plan with cycle.SynchronousExecution with Serve
     case req@GET(Path("/about_creators") & Cookies(cookies)) => {
       pageResponse("about_creators.ssp", "about", "About", cookies, req)
     }
+    // Google Web Tools verification
+    case req@GET(Path("/googlec78be0b8a9e576fe.html") & Cookies(cookies)) => {
+      pageResponse("google.ssp", "google", "google", cookies, req)
+    }
   }
 }
