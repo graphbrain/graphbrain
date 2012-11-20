@@ -34,6 +34,7 @@ class SentenceParser (storeName:String = "gb") {
   val nounRegex = """NN[A-Z]?""".r
   val leftParenthPosTag = """-LRB-""".r
   val rightParenthPosTag = """-RRB-""".r
+  val ownRegex = """'""".r
 
   val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r)
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
@@ -112,6 +113,8 @@ class SentenceParser (storeName:String = "gb") {
     return textToNode(inNodeText, user=user)(0);
 
   }
+
+  
 
   def reparseGraphTexts(nodeTexts: List[String], relText: String, disambigs: List[(String, String)], root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[(Vertex, Option[(List[Vertex], Vertex)])], Vertex) = {
    
@@ -235,18 +238,76 @@ class SentenceParser (storeName:String = "gb") {
     
   }
 
+  def isUser(text: String, user: Option[Vertex] = None): Boolean = {
+    
+    user match {
+      case Some(u: UserNode) =>
+        val userName = u.username;
+        val name = u.name;
+        if(text.toLowerCase.indexOf(userName.toLowerCase)==0 || userName.toLowerCase.indexOf(text.toLowerCase) ==0 || text.toLowerCase.indexOf(name.toLowerCase) ==0 || name.toLowerCase.indexOf(text.toLowerCase) == 0) {
+          return true;
+        }
+      case _ => 
+    }
+    return false;
+  }
+
+  def isUserPossessed(text: String, user: Option[Vertex] = None): Boolean = {
+   user match {
+      case Some(u: UserNode) =>
+        val userName = u.username;
+        val name = u.name;
+        if(text.toLowerCase.indexOf(userName.toLowerCase)==0 && userName.toLowerCase.indexOf(text.toLowerCase) !=0) {
+          
+          if(text(userName.length)==''' || text(userName.length+1)==''' ) return true;
+
+        }
+        else if (text.toLowerCase.indexOf(name.toLowerCase) ==0 && name.toLowerCase.indexOf(text.toLowerCase) != 0) {
+          if(text(name.length)==''') return true;
+        }
+      case _ =>
+    }
+    return false; 
+
+  }
+
+
+  def getOwnerOwned(text: String) : (String, String) = {
+    var owner = "";
+    var owned = "";
+    def stripS(s:String) = s.replace("s ", "")
+    if(ownRegex.findAllIn(text).hasNext) {
+      val splitText = ownRegex.split(text);
+      if(splitText.length==2) {
+        owner = splitText(0)
+        owned = splitText(1)
+        if(owned.slice(0, 1)=="s") {
+          owned = owned.drop(1).trim
+        }
+        else if (owned.slice(1, 2)=="s") {
+          owned = owned.drop(2).trim
+        }
+      }
+    }
+    return (owner, owned)
+  }
+
   def textToNode(text:String, node: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user:Option[Vertex]=None): List[Vertex] = {
     var userName = "";
     var results: List[Vertex] = List()
-    user match {
+    var isOwned = false;
+    println("text: " + text)
+    println("isUser: " + isUser(text, user))
+    isOwned = isUserPossessed(text, user)
+    println("isOwned: " + isOwned)
+    if(isUser(text, user)) {
+      user match {
         case Some(u:UserNode) => 
           userName = u.username;
-          val name = u.name
-          if(text.toLowerCase.indexOf(userName.toLowerCase) == 0 || userName.toLowerCase.indexOf(text.toLowerCase) == 0 ||text.toLowerCase.indexOf(name.toLowerCase) == 0 || name.toLowerCase.indexOf(text.toLowerCase) == 0 ) {
-            results = u :: results;
-          }
-        case _ => 
-
+          isOwned = isUserPossessed(text, user)
+          if(isOwned==false) results = u :: results    
+      }
+      
     }
     
     if(nodeExists(text)) {
@@ -295,6 +356,8 @@ class SentenceParser (storeName:String = "gb") {
     return results.reverse
     
   }
+
+
 
  
   /**
@@ -364,7 +427,7 @@ def strictChunk(sentence: String, root: Vertex): (List[String], String, List[(St
 
 }
 
-  
+
 
 
 def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List[(String, String)])={
@@ -437,11 +500,6 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
           
         }
         if(leftParenthPosTag.findAllIn(tag1).toArray.length == 1 ) {
-          /*if(qt1 == "URL") {
-            val urlProcessed = InputSyntax.resolveURL(qw1, taggedSentence, quoteTaggedSentence);
-            taggedSentence = urlProcessed;
-          }
-          else{*/
             val parenthProcessed = InputSyntax.disambig(nodeText.head.toString, disambigs, taggedSentence, quoteTaggedSentence);
             disambigs = parenthProcessed._1;
             taggedSentence = parenthProcessed._2;
@@ -454,17 +512,12 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
           nodeText += qw2.trim;
           nodeTexts = TextFormatting.deQuoteAndTrim(nodeText) :: nodeTexts;
 
-        }
-
-
-        
+        }    
         
       }
       taggedSentence = taggedSentence.tail;
       quoteTaggedSentence = quoteTaggedSentence.tail;
       
-
-
     }
     
     nodeTexts = nodeTexts.reverse;
