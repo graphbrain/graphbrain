@@ -34,7 +34,7 @@ class SentenceParser (storeName:String = "gb") {
   val nounRegex = """NN[A-Z]?""".r
   val leftParenthPosTag = """-LRB-""".r
   val rightParenthPosTag = """-RRB-""".r
-  val ownRegex = """'""".r
+  val ownRegex = """('s\s|s'\s)""".r
 
   val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r)
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
@@ -110,7 +110,7 @@ class SentenceParser (storeName:String = "gb") {
         }
       case _ =>
     }
-    return textToNode(inNodeText, user=user)(0)._1;
+    return textToNodes(inNodeText, user=user)(0)._1;
 
   }
 
@@ -274,28 +274,83 @@ class SentenceParser (storeName:String = "gb") {
 
   }
 
+  def isPossessed(text: String): Boolean = {
+
+    if(ownRegex.findAllIn(text).hasNext) return true;
+
+    val tagged = lemmatiser.posTag(text) 
+    for(taggedText <- tagged){
+      val tag = taggedText._2;
+      val component = taggedText._1;
+      if(tag.toUpperCase=="POS") {
+        return true;
+      }
+      else if((verbRegex.findAllIn(tag).hasNext && component == "has")||(verbRegex.findAllIn(tag).hasNext && component == "have")) {
+        return true
+      }
+
+    }
+    return false;
+  }
+
 
   def getOwnerOwned(text: String) : (String, String) = {
     var owner = "";
     var owned = "";
-    def stripS(s:String) = s.replace("s ", "")
+
     if(ownRegex.findAllIn(text).hasNext) {
       val splitText = ownRegex.split(text);
       if(splitText.length==2) {
         owner = splitText(0)
         owned = splitText(1)
-        if(owned.slice(0, 1)=="s") {
-          owned = owned.drop(1).trim
+        return (owner, owned)
+      }
+    }
+    val tagged = lemmatiser.posTag(text) 
+    
+    var posFound = false;
+    for(taggedText <- tagged){
+
+      val tag = taggedText._2;
+      val component = taggedText._1;
+
+      if(tag.toUpperCase=="POS") {
+        posFound = true;
+      }
+      else {
+        if(posFound) {
+          owned += component;
         }
-        else if (owned.slice(1, 2)=="s") {
-          owned = owned.drop(2).trim
+        else {
+          owner += component;
+        }
+      }
+    }
+    if(posFound) {return (owner, owned)}
+    var hasFound = false;
+    for(taggedText <- tagged){
+
+      val tag = taggedText._2;
+      val component = taggedText._1;
+
+      if((verbRegex.findAllIn(tag).hasNext && component == "has")||(verbRegex.findAllIn(tag).hasNext && component == "have")) {
+        hasFound = true;
+      }
+      else {
+        if(hasFound) {
+          owned += component;
+        }
+        else {
+          owner += component;
         }
       }
     }
     return (owner, owned)
   }
 
-  def textToNode(text:String, node: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user:Option[Vertex]=None): List[(Vertex, Option[(List[Vertex], Vertex)])] = {
+  val instanceOwnedByRelType = store.createEdgeType(id = ID.reltype_id("instance_of~owned_by"));
+
+  def textToNodes(text:String, node: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user:Option[Vertex]=None): List[(Vertex, Option[(List[Vertex], Vertex)])] = {
     var userName = "";
     var results: List[(Vertex, Option[(List[Vertex], Vertex)])] = Nil
     var isOwned = false;
@@ -310,7 +365,20 @@ class SentenceParser (storeName:String = "gb") {
           
           if(isUserPossessed(text, user)) {
             val owned = getOwnerOwned(text)._2;
-            val owner = user;
+            val ownedNodes = textToNode(owned)
+            for(ownedNode <- ownedNodes) {
+              ownedNode match {
+                case on: TextNode => val owner = u;
+                val ownedText = on.text;
+                val newNode = getNextAvailableUserOwnedNode(ownedText, userName)
+                val accessoryVertices = (List(ownedNode, u), instanceOwnedByRelType)
+                results = (newNode, Some(accessoryVertices)) :: results;
+
+                case _ => 
+
+              }
+
+            }
           }
 
           else {
@@ -319,10 +387,68 @@ class SentenceParser (storeName:String = "gb") {
       }
       
     }
+
+    if(!isPossessed(text)) {
+      val nodes = textToNode(text, user = user);
+      for (node <- nodes) {
+        results = (node, None) :: results;
+      }
+    }
+    else {
+      val ownerOwned = getOwnerOwned(text)
+      val ownerNodes = textToNode(ownerOwned._1)
+      val ownedNode = textToNode(ownerOwned._2)
+      for(ownerNode <- ownerNodes) {
+        for (ownedNode <- ownedNode) {
+          ownedNode match {
+            case o: TextNode => val ownedText = o.text;
+                val accessoryVertices = (List(ownedNode, ownerNode), instanceOwnedByRelType);
+                val newNode = getNextAvailableNode(ownedText);
+                results = (newNode, Some(accessoryVertices)) :: results;
+            case _ =>
+ 
+          }
+        }
+      }
+    }
+    return results.reverse
+    
+  }
+
+  def getNextAvailableNode(text: String): Vertex = {
+    var i = 1;
+    while(nodeExists(ID.text_id(text, i))) {
+      i +=1
+    }
+    return store.createTextNode(namespace = i.toString, text=text);
+  }
+
+  def getNextAvailableUserOwnedNode(text: String, username: String): Vertex = {
+    var i = 1;
+    while(nodeExists(ID.personalOwned_id(username, text, i))) {
+      i +=1;
+    }
+    val ns = "user" + username + "/p/" + i.toString; 
+    return store.createTextNode(namespace = ns, text = text);
+  }
+
+  def textToNode(text:String, node: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user:Option[Vertex]=None): List[Vertex] = {
+    var userName = "";
+    var results: List[Vertex] = List()
+    user match {
+        case Some(u:UserNode) => 
+          userName = u.username;
+          val name = u.name
+          if(text.toLowerCase.indexOf(userName.toLowerCase) == 0 || userName.toLowerCase.indexOf(text.toLowerCase) == 0 ||text.toLowerCase.indexOf(name.toLowerCase) == 0 || name.toLowerCase.indexOf(text.toLowerCase) == 0 ) {
+            results = u :: results;
+          }
+        case _ => 
+
+    }
     
     if(nodeExists(text)) {
       try{
-        results = (store.get(text), None) :: results;        
+        results = store.get(text) :: results;        
       }
       catch {case e =>}
 
@@ -334,7 +460,7 @@ class SentenceParser (storeName:String = "gb") {
       if(nodeExists(gbID)) {
         
         try {
-          results = (store.get(gbID), None) :: results;
+          results = store.get(gbID) :: results;
         }
       }
     }
@@ -342,7 +468,7 @@ class SentenceParser (storeName:String = "gb") {
     if (urlRegex.findAllIn(text).hasNext) {
       
       
-      results = (store.createURLNode(url = text, userId = ""), None) :: results;
+      results = store.createURLNode(url = text, userId = "") :: results;
       
     }
     val textPureID = ID.text_id(text, 1)
@@ -350,25 +476,23 @@ class SentenceParser (storeName:String = "gb") {
 
     
     if(nodeExists(textPureID)) {
-      results = (getOrCreate(textPureID), None) :: results;  
+      results = getOrCreate(textPureID) :: results;  
     }
     
     var i = 1;
     while(nodeExists(ID.text_id(text, i)))
     {
-      results = (store.createTextNode(namespace=i.toString, text=text), None) :: results;
+      results = store.createTextNode(namespace=i.toString, text=text) :: results;
       i += 1;
         
     }
     if(i==1) {
-      results = (store.createTextNode(namespace="1", text = text), None) :: results;
+      results = store.createTextNode(namespace="1", text = text) :: results;
     }
     return results.reverse
     
   }
-
-
-
+  
  
   /**
   Returns lemma node and pos relationship type (linking the two edge types).
@@ -717,13 +841,13 @@ def getOrCreate(id:String, user:Option[Vertex] = None, textString:String = "", r
       return store.get(id);
     }
     catch{
-      case e => val newNode = textToNode(textString, root, user)(0)._1;
+      case e => val newNode = textToNode(textString, root, user)(0);
       //TextNode(id=ID.usergenerated_id(userID, textString), text=textString);
       return newNode;
     }
   }
   else {
-    val newNode = textToNode(textString, root, user)(0)._1;
+    val newNode = textToNode(textString, root, user)(0);
     return newNode;
   }
 
