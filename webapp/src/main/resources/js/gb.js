@@ -1829,7 +1829,7 @@ function testCSS(prop) {
     _results = [];
     for (_i = 0, _len = snodes.length; _i < _len; _i++) {
       sn = snodes[_i];
-      rel = sn['rel'];
+      rel = sn['label'];
       if (rel !== '') {
         nlist = sn['nodes'];
         relText = rel;

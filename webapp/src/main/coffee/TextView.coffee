@@ -5,7 +5,7 @@ initTextView = ->
     $('#text-view').append('<h2>' + rootText + '</h2><br />')
 
     for sn in snodes
-        rel = sn['rel']
+        rel = sn['label']
         if rel != ''
             nlist = sn['nodes']
 
