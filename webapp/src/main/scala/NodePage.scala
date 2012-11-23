@@ -17,9 +17,9 @@ case class NodePage(store: UserOps, node: Vertex, user: UserNode, prod: Boolean,
 
   val js = "var nodes = " + gi.nodesJSON + ";\n" +
     "var snodes = " + gi.snodesJSON + ";\n" +
-    "var rootNodeId = '" + node.id + "';\n" +
-    "var errorMsg = '" + errorMsg + "';\n" +
-    "var userId = '" + userId + "';\n"
+    "var rootNodeId = \"" + node.id + "\";\n" +
+    "var errorMsg = \"" + errorMsg + "\";\n" +
+    "var userId = \"" + userId + "\";\n"
 
   def response = Server.scalateResponse("node.ssp", "node", node.toString, cookies, req, js, "")
 }
