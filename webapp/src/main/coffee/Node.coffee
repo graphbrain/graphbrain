@@ -49,10 +49,10 @@ class Node
         $('#' + @snode.id + ' .viewport').append('<div id="' + @divid + '" class="node" />')
 
         nodeData = {}
-        if @snode.linkDirection == 'in'
-            nodeData = {'node': @id, 'orig': rootNodeId, 'etype': @snode.etype, 'link': @snode.linkLabel, 'targ': @id}
+        if @snode.relpos == 0
+            nodeData = {'node': @id, 'orig': rootNodeId, 'etype': @snode.etype, 'link': @snode.label, 'targ': @id}
         else
-            nodeData = {'node': @id, 'targ': rootNodeId, 'etype': @snode.etype, 'link': @snode.linkLabel, 'orig': @id}
+            nodeData = {'node': @id, 'targ': rootNodeId, 'etype': @snode.etype, 'link': @snode.label, 'orig': @id}
 
         # create url div
         if @type == 'url'

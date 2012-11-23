@@ -1100,12 +1100,12 @@ function testCSS(prop) {
       var html, nodeData;
       $('#' + this.snode.id + ' .viewport').append('<div id="' + this.divid + '" class="node" />');
       nodeData = {};
-      if (this.snode.linkDirection === 'in') {
+      if (this.snode.relpos === 0) {
         nodeData = {
           'node': this.id,
           'orig': rootNodeId,
           'etype': this.snode.etype,
-          'link': this.snode.linkLabel,
+          'link': this.snode.label,
           'targ': this.id
         };
       } else {
@@ -1113,7 +1113,7 @@ function testCSS(prop) {
           'node': this.id,
           'targ': rootNodeId,
           'etype': this.snode.etype,
-          'link': this.snode.linkLabel,
+          'link': this.snode.label,
           'orig': this.id
         };
       }
@@ -1222,10 +1222,11 @@ function testCSS(prop) {
 
   SNode = (function() {
 
-    function SNode(id, rel, relpos, color) {
+    function SNode(id, etype, relpos, label, color) {
       this.id = id;
-      this.rel = rel;
+      this.etype = etype;
       this.relpos = relpos;
+      this.label = label;
       this.color = color;
       this.initLayout();
       this.nodes = {};
@@ -1258,8 +1259,6 @@ function testCSS(prop) {
       this.rect.v4.y = 0;
       this.rect.v4.z = 0;
       this.jqDiv = false;
-      this.linkLabel = "";
-      this.etype = "";
     }
 
     SNode.prototype.initLayout = function() {
@@ -1351,7 +1350,7 @@ function testCSS(prop) {
       relText = '';
       if (this.depth !== 0) {
         rootText = nodes[rootNodeId]['text'];
-        relText = this.rel;
+        relText = this.label;
         if (this.relpos === 1) {
           relText += ' ' + rootText;
         }
@@ -1549,17 +1548,18 @@ function testCSS(prop) {
   g = false;
 
   initGraph = function() {
-    var color, key, nid, nlist, nod, node, parentID, rel, rpos, sid, sn, snode, subNode, text, type, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref;
+    var color, etype, key, label, nid, nlist, nod, node, parentID, rpos, sid, sn, snode, subNode, text, type, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref;
     g = new Graph($('#graph-view').width(), $('#graph-view').height());
     g.updateTransform();
     for (_i = 0, _len = snodes.length; _i < _len; _i++) {
       sn = snodes[_i];
       sid = sn['id'];
-      rel = sn['rel'];
+      etype = sn['etype'];
+      label = sn['label'];
       rpos = sn['rpos'];
       color = sn['color'];
       nlist = sn['nodes'];
-      snode = new SNode(sid, rel, rpos, color);
+      snode = new SNode(sid, etype, rpos, label, color);
       for (_j = 0, _len1 = nlist.length; _j < _len1; _j++) {
         nid = nlist[_j];
         nod = nodes[nid];

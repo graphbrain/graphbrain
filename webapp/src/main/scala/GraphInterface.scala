@@ -104,8 +104,9 @@ class GraphInterface (val rootId: String, val store: UserOps, val user: UserNode
 	      case x: (String, Integer, String) => x
 	      case _ => ("", -1, "")
       }
-      val label = linkLabel(key._1)
-      Map(("id" -> snode("id").toString), ("rel" -> label), ("color" -> linkColor(label)), ("rpos" -> key._2), ("nodes" -> snode("nodes").asInstanceOf[Set[String]]))
+      val etype = key._1
+      val label = linkLabel(etype)
+      Map(("id" -> snode("id").toString), ("etype" -> etype), ("label" -> label), ("color" -> linkColor(label)), ("rpos" -> key._2), ("nodes" -> snode("nodes").asInstanceOf[Set[String]]))
     }
     JSONGen.json(json)
   }
