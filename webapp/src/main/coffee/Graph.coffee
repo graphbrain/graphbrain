@@ -9,12 +9,13 @@ initGraph = ->
     # process super nodes and associated nodes
     for sn in snodes
         sid = sn['id']
-        rel = sn['rel']
+        etype = sn['etype']
+        label = sn['label']
         rpos = sn['rpos']
         color = sn['color']
         nlist = sn['nodes']
         
-        snode = new SNode(sid, rel, rpos, color)
+        snode = new SNode(sid, etype, rpos, label, color)
 
         for nid in nlist
             nod = nodes[nid]

@@ -2,7 +2,7 @@
 
 # Super node
 class SNode
-    constructor: (@id, @rel, @relpos, @color) ->
+    constructor: (@id, @etype, @relpos, @label, @color) ->
         @initLayout()
 
         @nodes = {}
@@ -41,10 +41,6 @@ class SNode
 
         # jquery objects
         @jqDiv = false
-
-        # main associated link label and edge type
-        @linkLabel = ""
-        @etype = ""
 
 
     initLayout: ->
@@ -159,7 +155,7 @@ class SNode
         relText = ''
         if @depth != 0
             rootText = nodes[rootNodeId]['text']
-            relText = @rel
+            relText = @label
             if @relpos == 1
                 relText += ' ' + rootText
         html += '<div class="snodeLabel">' + relText + '</div>'
