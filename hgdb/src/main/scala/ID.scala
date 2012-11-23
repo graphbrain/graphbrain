@@ -73,6 +73,9 @@ object ID {
   def usergenerated_id(userName:String, thing:String) =
 	  userName + "/" + thing
 
+  def personalOwned_id(userName: String, thing: String, which: Int=1) =
+    "user/" + userName + "/p/" + which.toString + "/" + sanitize(thing)
+
   def text_id(thing:String, which:Int=1):String =
 	  which.toString + "/" + sanitize(thing)
 
