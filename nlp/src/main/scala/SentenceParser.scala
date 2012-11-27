@@ -81,11 +81,11 @@ class SentenceParser (storeName:String = "gb") {
     (0.5, text)
     
   }
-  def specialNodeCases(inNodeText: String, root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): Vertex = {
+  def specialNodeCases(inNodeText: String, root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (Vertex, Option[(List[Vertex], Vertex)]) = {
     user match {
       case Some(u:UserNode) =>
         if(u.username == inNodeText || u.name == inNodeText || inNodeText == "I" || inNodeText == "me") {
-          return u;
+          return (u, None);
         }
       case _ => 
     }
@@ -93,7 +93,7 @@ class SentenceParser (storeName:String = "gb") {
     root match {
       case a: TextNode =>
         if(a.text == inNodeText || a.text.toLowerCase.indexOf(inNodeText.toLowerCase)==0 || inNodeText.toLowerCase.indexOf(a.text.toLowerCase) == 0) {
-          return a;
+          return (a, None);
         }
         //Check whether already in database - global and user; create new node if necessary
         user match {
@@ -102,7 +102,7 @@ class SentenceParser (storeName:String = "gb") {
             
             if(nodeExists(userThingID)) {
               if(inNodeText==a.text) {
-                return a;
+                return (a, None);
               
               }
             }
@@ -110,14 +110,14 @@ class SentenceParser (storeName:String = "gb") {
         }
       case _ =>
     }
-    return textToNodes(inNodeText, user=user)(0)._1;
+    return textToNodes(inNodeText, user=user)(0);
 
   }
 
   
 
   def reparseGraphTexts(nodeTexts: List[String], relText: String, disambigs: List[(String, String)], root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[(Vertex, Option[(List[Vertex], Vertex)])], Vertex) = {
-   
+   println(relText)
     var tempDisambs = disambigs;
 
     var nodes: List[(Vertex, Option[(List[Vertex], Vertex)])] = Nil
@@ -136,7 +136,7 @@ class SentenceParser (storeName:String = "gb") {
         if(nodeText == tempDisambs.head._1) {
           d = tempDisambs.head._2;
           val disambigEdgeType = store.createEdgeType(id = ID.reltype_id("as in"), label = "as in")
-          dNode = Some(List(specialNodeCases(d, root, user)), disambigEdgeType)
+          dNode = Some(List(specialNodeCases(d, root, user)._1), disambigEdgeType)
 
           tempDisambs = tempDisambs.tail;
         }
@@ -170,7 +170,9 @@ class SentenceParser (storeName:String = "gb") {
 
       }
       else {
-        nodes = (specialNodeCases(nodeText, root, user), dNode) :: nodes;
+        val newNodes = specialNodeCases(nodeText, root, user)
+        nodes = newNodes :: nodes 
+        
         if(i < sepRelations.length) {
           newRelation += sepRelations(i) + " ";  
         }
@@ -301,8 +303,8 @@ class SentenceParser (storeName:String = "gb") {
     if(ownRegex.findAllIn(text).hasNext) {
       val splitText = ownRegex.split(text);
       if(splitText.length==2) {
-        owner = splitText(0)
-        owned = splitText(1)
+        owner = splitText(0).trim
+        owned = splitText(1).trim
         return (owner, owned)
       }
     }
@@ -319,10 +321,10 @@ class SentenceParser (storeName:String = "gb") {
       }
       else {
         if(posFound) {
-          owned += component;
+          owned += component.trim;
         }
         else {
-          owner += component;
+          owner += component.trim;
         }
       }
     }
@@ -338,10 +340,10 @@ class SentenceParser (storeName:String = "gb") {
       }
       else {
         if(hasFound) {
-          owned += component;
+          owned += component.trim;
         }
         else {
-          owner += component;
+          owner += component.trim;
         }
       }
     }
@@ -389,42 +391,48 @@ class SentenceParser (storeName:String = "gb") {
     }
 
     if(!isPossessed(text)) {
-      val nodes = textToNode(text, user = user);
+      println("Not possessed")
+      val nodes = textToNode(text.trim, user = user);
       for (node <- nodes) {
         results = (node, None) :: results;
       }
     }
     else {
+      println("Possessed")
       val ownerOwned = getOwnerOwned(text)
       val ownerNodes = textToNode(ownerOwned._1)
-      val ownedNode = textToNode(ownerOwned._2)
+      val ownedNodes = textToNode(ownerOwned._2)
       for(ownerNode <- ownerNodes) {
-        for (ownedNode <- ownedNode) {
+        
+        for (ownedNode <- ownedNodes) {
+         
           ownedNode match {
             case o: TextNode => val ownedText = o.text;
                 val accessoryVertices = (List(ownedNode, ownerNode), instanceOwnedByRelType);
-                val newNode = getNextAvailableNode(ownedText);
+                val newNode = getNextAvailableNode(ownedText, 2);
                 results = (newNode, Some(accessoryVertices)) :: results;
+                println("Owner: " + ownerNode.id + " Owned: " + ownedNode.id + " Node: " + newNode.id)
             case _ =>
  
           }
         }
       }
     }
+    println("Length results: " + results.length)
     return results.reverse
     
   }
 
-  def getNextAvailableNode(text: String): Vertex = {
-    var i = 1;
+  def getNextAvailableNode(text: String, startCounter: Int = 1): Vertex = {
+    var i = startCounter;
     while(nodeExists(ID.text_id(text, i))) {
       i +=1
     }
     return store.createTextNode(namespace = i.toString, text=text);
   }
 
-  def getNextAvailableUserOwnedNode(text: String, username: String): Vertex = {
-    var i = 1;
+  def getNextAvailableUserOwnedNode(text: String, username: String, startCounter: Int = 1): Vertex = {
+    var i = startCounter;
     while(nodeExists(ID.personalOwned_id(username, text, i))) {
       i +=1;
     }
@@ -562,7 +570,13 @@ def strictChunk(sentence: String, root: Vertex): (List[String], String, List[(St
 }
 
 
+def checkTags(lemmatisedSentence1: (String, String, String), lemmatisedSentence2: (String, String, String), quoteTaggedSentence1: (String, String), quoteTaggedSentence2: (String, String)): ((String, String, String), (String, String)) = {
+  def nextSame = quoteTaggedSentence2._1.indexOf(lemmatisedSentence2._1)==0 || lemmatisedSentence2._1.indexOf(quoteTaggedSentence2._1)==0
 
+  if(lemmatisedSentence1._1.trim + lemmatisedSentence2._1.trim == quoteTaggedSentence1._1) return (lemmatisedSentence2, quoteTaggedSentence1);
+  
+  else return (lemmatisedSentence2, quoteTaggedSentence2);
+}
 
 def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List[(String, String)])={
   val sanSentence = TextFormatting.deQuoteAndTrim(sentence)
@@ -581,12 +595,13 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
   var currentSplitQuote =""
 
 
-  while(taggedSentence.length > 1 && quoteTaggedSentence.length > 1) {
+  while(taggedSentence.length > 1 || quoteTaggedSentence.length > 1) {
       
-    val current = taggedSentence.head
-    val lookahead = taggedSentence.tail.head
+    val current = taggedSentence.head 
+    val lookahead = taggedSentence.tail.head 
     val currentQuote = quoteTaggedSentence.head
-    val nextQuote = quoteTaggedSentence.tail.head
+    val nextQuote = quoteTaggedSentence.tail.head 
+    println(current + " " + lookahead + " " + currentQuote + " " + nextQuote)
    
 
     (current, lookahead, currentQuote, nextQuote) match{
@@ -608,7 +623,7 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
           taggedSentence = urlProcessed;
         }
 
-        else if((relRegex.findAllIn(tag1).toArray.length == 1)) {
+        else if(relRegex.findAllIn(tag1).toArray.length == 1) {
           edgeText += word1.trim + " "
 
           if(relRegex.findAllIn(tag2).toArray.length == 0) {
@@ -649,13 +664,26 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
         }    
         
       }
-      taggedSentence = taggedSentence.tail;
-      quoteTaggedSentence = quoteTaggedSentence.tail;
+      val newPair = checkTags(current, lookahead, currentQuote, nextQuote)
+      if(newPair._1==lookahead) {
+        taggedSentence = taggedSentence.tail;  
+      }
+      else {
+        taggedSentence = taggedSentence
+      }
+      if(newPair._2==nextQuote) {
+        quoteTaggedSentence = quoteTaggedSentence.tail
+      }
+      else {
+        quoteTaggedSentence = quoteTaggedSentence;  
+      }
       
     }
+
     
     nodeTexts = nodeTexts.reverse;
     edgeText = edgeText.substring(0, edgeText.length-1);
+    println(edgeText)
     
 
 
@@ -893,7 +921,21 @@ object SentenceParser {
                 parse match {
                   case (n: List[(Vertex, Option[(List[Vertex], Vertex)])], r: Vertex) =>
                   for(node <- n) {
-                    println("Node: " + node._1.id);
+                    
+                    node match {
+                      case (nd: TextNode, None) => println("Node: " + nd.id);
+                      case (nd: TextNode, Some(aux: (List[Vertex], Vertex))) => 
+                      println("Node with aux: " + nd.id)
+                        aux match {
+                          case (a:List[TextNode], ed:EdgeType) => 
+                            for(aNode <- a) {
+                              println("auxNode: " + aNode.id)
+                            }
+                            println("auxEdge: " + ed.id)
+                          case _ => println("mismatch")
+                        }
+                      case _ => println("No match")
+                    }
                   }
                   println("Rel: " + r.id)
                 }

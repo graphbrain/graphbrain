@@ -43,6 +43,7 @@ class SentenceParserTest extends FunSuite {
   val sentence3 = "Chih-Chun is always a programmer at graphbrain"
   val sentence4 = "Chih-Chun likes http://graphbrain.com(nice)"
   val sentence5 = "\"Chih-Chun is a toad\" is an excellent book"
+  val sentence6 = "Chih-Chun's books are about toads."
  
   val isA = "rtype/1/is_a"
   val isAn = "rtype/1/is_an"
