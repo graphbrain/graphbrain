@@ -571,11 +571,18 @@ def strictChunk(sentence: String, root: Vertex): (List[String], String, List[(St
 
 
 def checkTags(lemmatisedSentence1: (String, String, String), lemmatisedSentence2: (String, String, String), quoteTaggedSentence1: (String, String), quoteTaggedSentence2: (String, String)): ((String, String, String), (String, String)) = {
+  def currentSame = quoteTaggedSentence1._1.trim == lemmatisedSentence1._1.trim
   def nextSame = quoteTaggedSentence2._1.indexOf(lemmatisedSentence2._1)==0 || lemmatisedSentence2._1.indexOf(quoteTaggedSentence2._1)==0
+  def quoteAhead = lemmatisedSentence1._1.trim + lemmatisedSentence2._1.trim == quoteTaggedSentence1._1
+  def nextQuoteSuperstring = quoteTaggedSentence2._1.trim.indexOf(lemmatisedSentence2._1.trim)==0
+  def nextQuoteLarger = quoteTaggedSentence1._1.trim.length > lemmatisedSentence1._1.trim.length
+  def nextQuoteURL = quoteTaggedSentence2._2=="URL" && nextQuoteLarger;
 
-  if(lemmatisedSentence1._1.trim + lemmatisedSentence2._1.trim == quoteTaggedSentence1._1) return (lemmatisedSentence2, quoteTaggedSentence1);
-  
+  if(quoteAhead) return (lemmatisedSentence2, quoteTaggedSentence1);
+  else if(nextQuoteURL && nextQuoteLarger && currentSame) return (lemmatisedSentence2, quoteTaggedSentence1)
+  else if(nextQuoteLarger && nextQuoteSuperstring) return(lemmatisedSentence2, quoteTaggedSentence1)
   else return (lemmatisedSentence2, quoteTaggedSentence2);
+
 }
 
 def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List[(String, String)])={
@@ -605,7 +612,7 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
    
 
     (current, lookahead, currentQuote, nextQuote) match{
-        case ((word1, tag1, lem1), (word2, tag2, lem2), (qw1, qt1), (qw2, qt2)) => 
+      case ((word1, tag1, lem1), (word2, tag2, lem2), (qw1, qt1), (qw2, qt2)) => 
         
         if(qt1=="InQuote") {
 
@@ -648,7 +655,7 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
           }
           
         }
-        if(leftParenthPosTag.findAllIn(tag1).toArray.length == 1 ) {
+        if(leftParenthPosTag.findAllIn(tag1).toArray.length == 1 && qt1!="URL") {
             val parenthProcessed = InputSyntax.disambig(nodeText.head.toString, disambigs, taggedSentence, quoteTaggedSentence);
             disambigs = parenthProcessed._1;
             taggedSentence = parenthProcessed._2;
@@ -660,6 +667,14 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
 
           nodeText += qw2.trim;
           nodeTexts = TextFormatting.deQuoteAndTrim(nodeText) :: nodeTexts;
+          nodeTexts = nodeTexts.reverse;
+          edgeText = edgeText.substring(0, edgeText.length-1);
+          println(edgeText)
+    
+
+
+    return (nodeTexts, edgeText, disambigs);
+          
 
         }    
         
