@@ -25,6 +25,10 @@ class SentenceParserTest extends FunSuite {
   val store = new VertexStore("gb") with UserManagement with UserOps
 
   val toadNodeGlobal = store.createTextNode(namespace="1", text="toad")
+  val booksNodeGlobal1 = store.createTextNode(namespace="1", text="books")
+  val booksNodeGlobal2 = store.createTextNode(namespace="2", text="books")
+  val toadsNodeGlobal = store.createTextNode(namespace="1", text="toads")
+
   val excellenceNodeGlobal = store.createTextNode(namespace="1", text="excellent book")
   val toadNodeUser = store.createTextNode(namespace="usergenerated/chihchun_chen", text="toad")
   val toadTitleUser = store.createTextNode(namespace="usergenerated/chihchun_chen", text="Chih-Chun is a toad")
@@ -45,16 +49,20 @@ class SentenceParserTest extends FunSuite {
   val sentence5 = "\"Chih-Chun is a toad\" is an excellent book"
   val sentence6 = "Chih-Chun's books are about toads."
  
-  val isA = "rtype/1/is_a"
-  val isAn = "rtype/1/is_an"
-  val amA = "rtype/1/am_a"
-  val likes = "rtype/1/likes"
+  val isA = ID.reltype_id("is_a")
+  val isAn = ID.reltype_id("is_an")
+  val amA = ID.reltype_id("am_a")
+  val likes = ID.reltype_id("likes")
   val isALemma = ID.text_id("be_a", 1)
   val isAPOS = ID.reltype_id("vbz_dt")
   val amAlwaysA_AtLemma = ID.text_id("be_always_a~at")
   val amAlwaysA_AtPOS = ID.reltype_id("vbp_rb_dt~in")
-  val amAlwaysARelTypeID = "rtype/1/am_always_a~at"
-  val isAlwaysARelTypeID = "rtype/1/is_always_a~at"
+  val amAlwaysARelTypeID = ID.reltype_id("am_always_a~at")
+  val isAlwaysARelTypeID = ID.reltype_id("is_always_a~at")
+  val instanceOf_ownedByID = ID.reltype_id("instance_of~owned_by")
+  val areAboutID = ID.reltype_id("are_about")
+
+
 
   test("Chih-Chun likes http://graphbrain.com(nice)"){  
     val response = sentenceParser.parseSentenceGeneral(sentence4, root = toadNodeGlobal)
@@ -286,6 +294,89 @@ class SentenceParserTest extends FunSuite {
         assert(relType.id == isAlwaysARelTypeID)
       case _ =>
     }
+  }
+
+
+  test("Chih-Chun's books are about toads: No user given") {
+    val response = sentenceParser.parseSentenceGeneral(sentence6, user = None)
+    response(0) match {
+      case g: GraphResponse => 
+        val parse = g.hypergraphList(0)
+        parse match {
+          case (nodes: List[(Vertex, Option[(List[Vertex], Vertex)])], relType: Vertex) =>
+
+          val nodeEntry1 = nodes(0)
+          val nodeEntry2 = nodes(1)
+          println("node2: " + nodeEntry2._1.id)
+          println("node2: " + toadsNodeGlobal.id)
+          assert(nodeEntry2._1.id==toadsNodeGlobal.id)
+
+          nodeEntry1 match {
+            case (nd: TextNode, None) => println("Node: " + nd.id);
+            case (nd: TextNode, Some(aux: (List[Vertex], Vertex))) => 
+              println("Node with aux: " + nd.id)
+              aux match {
+                case (a:List[TextNode], ed:EdgeType) => 
+                  assert(a.length==2);
+                  println("aux0: " + a(0).id)
+                  println("aux1: " + a(1).id)
+                  assert(a(0).id==booksNodeGlobal1.id)
+                  assert(a(1).id==globalNameNode2.id)
+                  println("auxEdge: " + ed.id)
+                  assert(ed.id==instanceOf_ownedByID);
+
+                case _ => println("mismatch")
+              }
+              case _ => println("No match")
+            }
+            println("Rel: " + relType.id)
+            assert(relType.id==areAboutID) 
+          
+        }
+      
+    }
+  }
+    
+
+  test("Chih-Chun's books are about toads: User given") {
+    val response = sentenceParser.parseSentenceGeneral(sentence6, user = Some(userNode))
+    response(0) match {
+      case g: GraphResponse => 
+        val parse = g.hypergraphList(0)
+        parse match {
+          case (nodes: List[(Vertex, Option[(List[Vertex], Vertex)])], relType: Vertex) =>
+
+          val nodeEntry1 = nodes(0)
+          val nodeEntry2 = nodes(1)
+          println("node2: " + nodeEntry2._1.id)
+          println("node2: " + toadsNodeGlobal.id)
+          assert(nodeEntry2._1.id==toadsNodeGlobal.id)
+          
+          nodeEntry1 match {
+            case (nd: TextNode, None) => println("Node: " + nd.id);
+            case (nd: TextNode, Some(aux: (List[Vertex], Vertex))) => 
+              println("Node with aux: " + nd.id)
+              aux match {
+                case (a:List[TextNode], ed:EdgeType) => 
+                  assert(a.length==2);
+                  println("aux0: " + a(0).id)
+                  println("aux1: " + a(1).id)
+                  assert(a(0).id==booksNodeGlobal1.id)
+                  assert(a(1).id==globalNameNode2.id)
+                  println("auxEdge: " + ed.id)
+                  assert(ed.id==instanceOf_ownedByID);
+
+                case _ => println("mismatch")
+              }
+              case _ => println("No match")
+            }
+            println("Rel: " + relType.id)
+            assert(relType.id==areAboutID) 
+          
+        }
+      
+    }
+    
   }
 
 
