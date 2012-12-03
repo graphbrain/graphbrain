@@ -117,7 +117,7 @@ class SentenceParser (storeName:String = "gb") {
   
 
   def reparseGraphTexts(nodeTexts: List[String], relText: String, disambigs: List[(String, String)], root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[(Vertex, Option[(List[Vertex], Vertex)])], Vertex) = {
-   println(relText)
+   //println(relText)
     var tempDisambs = disambigs;
 
     var nodes: List[(Vertex, Option[(List[Vertex], Vertex)])] = Nil
@@ -241,16 +241,16 @@ class SentenceParser (storeName:String = "gb") {
   }
 
   def isUser(text: String, user: Option[Vertex] = None): Boolean = {
-    println("isUserText: " + text)
+    //println("isUserText: " + text)
     user match {
       case Some(u: UserNode) =>
         val userName = u.username;
-        println("username: " + userName);
+        //println("username: " + userName);
         val name = u.name;
-        println("name: " + name);
-        println("isUser: " + (text.toLowerCase.indexOf(userName.toLowerCase)==0 || userName.toLowerCase.indexOf(text.toLowerCase) ==0 || text.toLowerCase.indexOf(name.toLowerCase) ==0 || name.toLowerCase.indexOf(text.toLowerCase) == 0))
+        //println("name: " + name);
+        //println("isUser: " + (text.toLowerCase.indexOf(userName.toLowerCase)==0 || userName.toLowerCase.indexOf(text.toLowerCase) ==0 || text.toLowerCase.indexOf(name.toLowerCase) ==0 || name.toLowerCase.indexOf(text.toLowerCase) == 0))
         return(text.toLowerCase.indexOf(userName.toLowerCase)==0 || userName.toLowerCase.indexOf(text.toLowerCase) ==0 || text.toLowerCase.indexOf(name.toLowerCase) ==0 || name.toLowerCase.indexOf(text.toLowerCase) == 0) 
-      case _ => println("Not user"); return false; 
+      case _ => return false; 
     }
   }
 
@@ -346,25 +346,25 @@ class SentenceParser (storeName:String = "gb") {
     if(isUser(text, user) && !isPossessed(text)) {
       user match {
         case Some(u:UserNode) => 
-          println("isUser");
+          //println("isUser");
           results = (u, None) :: results;
         case _ => 
       }
     }
 
     else if(!isPossessed(text)) {
-      println("Not possessed")
+      //println("Not possessed")
       val nodes = textToNode(text.trim, user = user);
       for (node <- nodes) {
         results = (node, None) :: results;
       }
     }
     else {
-      println("Possessed")
+      //println("Possessed")
       val ownerOwned = getOwnerOwned(text)
-      println("Owner: " + ownerOwned._1)
+      //println("Owner: " + ownerOwned._1)
       if(isUser(text = ownerOwned._1, user = user)) {
-        println("User possessed")
+        //println("User possessed")
         
         val ownerNode = getUserNode(user)
         val userName = ownerNode.username
@@ -393,7 +393,7 @@ class SentenceParser (storeName:String = "gb") {
                 val accessoryVertices = (List(ownedNode, ownerNode), instanceOwnedByRelType);
                 val newNode = getNextAvailableNode(ownedText, 2);
                 results = (newNode, Some(accessoryVertices)) :: results;
-                println("Owner: " + ownerNode.id + " Owned: " + ownedNode.id + " Node: " + newNode.id)
+                //println("Owner: " + ownerNode.id + " Owned: " + ownedNode.id + " Node: " + newNode.id)
               case _ =>
  
             }
@@ -401,7 +401,7 @@ class SentenceParser (storeName:String = "gb") {
         }
       }
     }
-    println("Length results: " + results.length)
+    //println("Length results: " + results.length)
     return results.reverse
     
   }
@@ -605,7 +605,7 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
     val lookahead = taggedSentence.tail.head 
     val currentQuote = quoteTaggedSentence.head
     val nextQuote = quoteTaggedSentence.tail.head 
-    println(current + " " + lookahead + " " + currentQuote + " " + nextQuote)
+    //println(current + " " + lookahead + " " + currentQuote + " " + nextQuote)
    
 
     (current, lookahead, currentQuote, nextQuote) match{
@@ -666,7 +666,7 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
           nodeTexts = TextFormatting.deQuoteAndTrim(nodeText) :: nodeTexts;
           nodeTexts = nodeTexts.reverse;
           edgeText = edgeText.substring(0, edgeText.length-1);
-          println(edgeText)
+          //println(edgeText)
     
 
 
@@ -695,7 +695,7 @@ def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List
     
     nodeTexts = nodeTexts.reverse;
     edgeText = edgeText.substring(0, edgeText.length-1);
-    println(edgeText)
+    //println(edgeText)
     
 
 
@@ -713,7 +713,7 @@ def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: 
 	var possibleGraphs:List[(List[Vertex], Edge)] = List()
 	val sortedParses = removeDeterminers(sortRootParsesPriority(possibleParses, root), root)
 
-  println("Sorted parses: " + sortedParses.length)
+  //println("Sorted parses: " + sortedParses.length)
 
 	for (pp <- sortedParses) {
 		pp match {
@@ -730,11 +730,11 @@ def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: 
 				//fuzzy search results are second in priority
 				var currentNodesForNodeText:List[Vertex] = List() 
 				val limit = if (maxPossiblePerParse < results.length) maxPossiblePerParse else results.length;
-        println("Limit: " + limit)
+        //println("Limit: " + limit)
 				for(i <- 0 to limit-1) {
 				  val result = try {results(i) } catch { case e => ""}
 				  val resultNode = getOrCreate(result, user, nodeText, root)
-				  println("Node: " + resultNode.id)
+				  //println("Node: " + resultNode.id)
 
 				  currentNodesForNodeText = resultNode :: currentNodesForNodeText;
 				}
@@ -761,7 +761,7 @@ def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: 
 			  entryIDs = nodesForEachNodeText(1)(i).id :: entryIDs
 
 			  val edge = new Edge(ID.relation_id(edgeText), entryIDs.reverse)
-			  println("Edge: " + edge)
+			  //println("Edge: " + edge)
 			  val entry = (entryNodes, edge)
 			  
 			  possibleGraphs = entry :: possibleGraphs
