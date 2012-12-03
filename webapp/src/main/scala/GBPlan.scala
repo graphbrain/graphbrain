@@ -83,5 +83,15 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
 
       ResponseString(JSONGen.json(""))
     }
+
+    // TEMPORARY: Amazon backdoor
+    case req@GET(Path("/amazon") & Params(params)) => {
+      val login = "amazon"
+      val user = Server.store.forceLogin(login)
+
+      Server.log(req, null, "AMAZON access ")
+      
+      ResponseCookies(Cookie("username", user.username)) ~> ResponseCookies(Cookie("session", user.session)) ~> Redirect("/node/user/amazon") 
+    }
   }
 }
