@@ -27,6 +27,8 @@ class SentenceParserTest extends FunSuite {
   val toadNodeGlobal = store.createTextNode(namespace="1", text="toad")
   val booksNodeGlobal1 = store.createTextNode(namespace="1", text="books")
   val booksNodeGlobal2 = store.createTextNode(namespace="2", text="books")
+  val booksUserOwned = store.createTextNode(namespace = "user/chihchun_chen/p/1", text="books")
+
   val toadsNodeGlobal = store.createTextNode(namespace="1", text="toads")
 
   val excellenceNodeGlobal = store.createTextNode(namespace="1", text="excellent book")
@@ -307,14 +309,15 @@ class SentenceParserTest extends FunSuite {
 
           val nodeEntry1 = nodes(0)
           val nodeEntry2 = nodes(1)
-          println("node2: " + nodeEntry2._1.id)
-          println("node2: " + toadsNodeGlobal.id)
+          println("node2 obtained: " + nodeEntry2._1.id)
+          println("node2 expected: " + toadsNodeGlobal.id)
           assert(nodeEntry2._1.id==toadsNodeGlobal.id)
 
           nodeEntry1 match {
             case (nd: TextNode, None) => println("Node: " + nd.id);
             case (nd: TextNode, Some(aux: (List[Vertex], Vertex))) => 
-              println("Node with aux: " + nd.id)
+              println("Node 1 with aux: " + nd.id)
+              assert(nd.id==booksNodeGlobal2.id)
               aux match {
                 case (a:List[TextNode], ed:EdgeType) => 
                   assert(a.length==2);
@@ -348,21 +351,22 @@ class SentenceParserTest extends FunSuite {
 
           val nodeEntry1 = nodes(0)
           val nodeEntry2 = nodes(1)
-          println("node2: " + nodeEntry2._1.id)
-          println("node2: " + toadsNodeGlobal.id)
+          println("node1 obtained: " + nodeEntry2._1.id)
+          println("node2 expected: " + toadsNodeGlobal.id)
           assert(nodeEntry2._1.id==toadsNodeGlobal.id)
           
           nodeEntry1 match {
             case (nd: TextNode, None) => println("Node: " + nd.id);
             case (nd: TextNode, Some(aux: (List[Vertex], Vertex))) => 
               println("Node with aux: " + nd.id)
+              assert(nd.id==booksUserOwned.id)
               aux match {
-                case (a:List[TextNode], ed:EdgeType) => 
+                case (a:List[Vertex], ed:EdgeType) => 
                   assert(a.length==2);
                   println("aux0: " + a(0).id)
                   println("aux1: " + a(1).id)
                   assert(a(0).id==booksNodeGlobal1.id)
-                  assert(a(1).id==globalNameNode2.id)
+                  assert(a(1).id==userNode.id)
                   println("auxEdge: " + ed.id)
                   assert(ed.id==instanceOf_ownedByID);
 
