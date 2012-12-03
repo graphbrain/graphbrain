@@ -110,7 +110,7 @@ class SentenceParser (storeName:String = "gb") {
         }
       case _ =>
     }
-    return textToNodes(inNodeText, user=user)(0);
+    return textToNodes(text = inNodeText, user=user)(0);
 
   }
 
@@ -241,40 +241,27 @@ class SentenceParser (storeName:String = "gb") {
   }
 
   def isUser(text: String, user: Option[Vertex] = None): Boolean = {
-    
+    println("isUserText: " + text)
     user match {
       case Some(u: UserNode) =>
         val userName = u.username;
+        println("username: " + userName);
         val name = u.name;
-        if(text.toLowerCase.indexOf(userName.toLowerCase)==0 || userName.toLowerCase.indexOf(text.toLowerCase) ==0 || text.toLowerCase.indexOf(name.toLowerCase) ==0 || name.toLowerCase.indexOf(text.toLowerCase) == 0) {
-          return true;
-        }
-      case _ => 
+        println("name: " + name);
+        println("isUser: " + (text.toLowerCase.indexOf(userName.toLowerCase)==0 || userName.toLowerCase.indexOf(text.toLowerCase) ==0 || text.toLowerCase.indexOf(name.toLowerCase) ==0 || name.toLowerCase.indexOf(text.toLowerCase) == 0))
+        return(text.toLowerCase.indexOf(userName.toLowerCase)==0 || userName.toLowerCase.indexOf(text.toLowerCase) ==0 || text.toLowerCase.indexOf(name.toLowerCase) ==0 || name.toLowerCase.indexOf(text.toLowerCase) == 0) 
+      case _ => println("Not user"); return false; 
     }
-    return false;
   }
 
-  def isUserPossessed(text: String, user: Option[Vertex] = None): Boolean = {
-   user match {
-      case Some(u: UserNode) =>
-        val userName = u.username;
-        val name = u.name;
-        if(text.toLowerCase.indexOf(userName.toLowerCase)==0 && userName.toLowerCase.indexOf(text.toLowerCase) !=0) {
-          
-          if(text(userName.length)==''' || text(userName.length+1)==''' ) return true;
-
-        }
-        else if (text.toLowerCase.indexOf(name.toLowerCase) ==0 && name.toLowerCase.indexOf(text.toLowerCase) != 0) {
-          if(text(name.length)==''') return true;
-        }
-        else if(text.toLowerCase.startsWith("my")) {
-          return true
-        }
-      case _ =>
+  def getUserNode(user: Option[Vertex] = None): UserNode = {
+    user match {
+      case Some(u: UserNode) => return u;
+      case _ => throw new Exception("No user found")
     }
-    return false; 
-
   }
+
+  
 
   def isPossessed(text: String): Boolean = {
 
@@ -353,44 +340,19 @@ class SentenceParser (storeName:String = "gb") {
   val instanceOwnedByRelType = store.createEdgeType(id = ID.reltype_id("instance_of~owned_by"));
 
   def textToNodes(text:String, node: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user:Option[Vertex]=None): List[(Vertex, Option[(List[Vertex], Vertex)])] = {
-    var userName = "";
+    
     var results: List[(Vertex, Option[(List[Vertex], Vertex)])] = Nil
-    var isOwned = false;
-    println("text: " + text)
-    println("isUser: " + isUser(text, user))
-    isOwned = isUserPossessed(text, user)
-    println("isOwned: " + isOwned)
-    if(isUser(text, user)) {
+    
+    if(isUser(text, user) && !isPossessed(text)) {
       user match {
         case Some(u:UserNode) => 
-          userName = u.username;
-          
-          if(isUserPossessed(text, user)) {
-            val owned = getOwnerOwned(text)._2;
-            val ownedNodes = textToNode(owned)
-            for(ownedNode <- ownedNodes) {
-              ownedNode match {
-                case on: TextNode => val owner = u;
-                val ownedText = on.text;
-                val newNode = getNextAvailableUserOwnedNode(ownedText, userName)
-                val accessoryVertices = (List(ownedNode, u), instanceOwnedByRelType)
-                results = (newNode, Some(accessoryVertices)) :: results;
-
-                case _ => 
-
-              }
-
-            }
-          }
-
-          else {
-            results = (u, None) :: results;
-          }   
+          println("isUser");
+          results = (u, None) :: results;
+        case _ => 
       }
-      
     }
 
-    if(!isPossessed(text)) {
+    else if(!isPossessed(text)) {
       println("Not possessed")
       val nodes = textToNode(text.trim, user = user);
       for (node <- nodes) {
@@ -400,20 +362,41 @@ class SentenceParser (storeName:String = "gb") {
     else {
       println("Possessed")
       val ownerOwned = getOwnerOwned(text)
-      val ownerNodes = textToNode(ownerOwned._1)
-      val ownedNodes = textToNode(ownerOwned._2)
-      for(ownerNode <- ownerNodes) {
+      println("Owner: " + ownerOwned._1)
+      if(isUser(text = ownerOwned._1, user = user)) {
+        println("User possessed")
         
-        for (ownedNode <- ownedNodes) {
-         
+        val ownerNode = getUserNode(user)
+        val userName = ownerNode.username
+        val ownedNodes = textToNode(ownerOwned._2); 
+        for(ownedNode <- ownedNodes){
           ownedNode match {
             case o: TextNode => val ownedText = o.text;
+              val accessoryVertices = (List(ownedNode, ownerNode), instanceOwnedByRelType);
+              val newNode = getNextAvailableUserOwnedNode(ownedText, userName);
+              results = (newNode, Some(accessoryVertices)) :: results;
+            case _ =>
+          }
+        }
+          
+          
+      }
+      else {
+        val ownerNodes = textToNode(ownerOwned._1)
+        val ownedNodes = textToNode(ownerOwned._2)
+        for(ownerNode <- ownerNodes) {
+        
+          for (ownedNode <- ownedNodes) {
+         
+            ownedNode match {
+              case o: TextNode => val ownedText = o.text;
                 val accessoryVertices = (List(ownedNode, ownerNode), instanceOwnedByRelType);
                 val newNode = getNextAvailableNode(ownedText, 2);
                 results = (newNode, Some(accessoryVertices)) :: results;
                 println("Owner: " + ownerNode.id + " Owned: " + ownedNode.id + " Node: " + newNode.id)
-            case _ =>
+              case _ =>
  
+            }
           }
         }
       }
@@ -431,12 +414,21 @@ class SentenceParser (storeName:String = "gb") {
     return store.createTextNode(namespace = i.toString, text=text);
   }
 
+  def getFirstFoundNode(text: String, startCounter: Int = 1): Vertex = {
+    var i = startCounter;
+    while(!nodeExists(ID.text_id(text, i))) {
+      i +=1
+    }
+    return store.createTextNode(namespace = i.toString, text=text);
+  }
+
+
   def getNextAvailableUserOwnedNode(text: String, username: String, startCounter: Int = 1): Vertex = {
     var i = startCounter;
     while(nodeExists(ID.personalOwned_id(username, text, i))) {
       i +=1;
     }
-    val ns = "user" + username + "/p/" + i.toString; 
+    val ns = "user/" + username + "/p/" + i.toString; 
     return store.createTextNode(namespace = ns, text = text);
   }
 
@@ -574,13 +566,18 @@ def checkTags(lemmatisedSentence1: (String, String, String), lemmatisedSentence2
   def currentSame = quoteTaggedSentence1._1.trim == lemmatisedSentence1._1.trim
   def nextSame = quoteTaggedSentence2._1.indexOf(lemmatisedSentence2._1)==0 || lemmatisedSentence2._1.indexOf(quoteTaggedSentence2._1)==0
   def quoteAhead = lemmatisedSentence1._1.trim + lemmatisedSentence2._1.trim == quoteTaggedSentence1._1
-  def nextQuoteSuperstring = quoteTaggedSentence2._1.trim.indexOf(lemmatisedSentence2._1.trim)==0
-  def nextQuoteLarger = quoteTaggedSentence1._1.trim.length > lemmatisedSentence1._1.trim.length
-  def nextQuoteURL = quoteTaggedSentence2._2=="URL" && nextQuoteLarger;
+  def lemAhead = lemmatisedSentence2._1.trim == quoteTaggedSentence1._1 + quoteTaggedSentence2._1;
+  def nextQuoteSuperstring = quoteTaggedSentence2._1.trim.indexOf(lemmatisedSentence2._1.trim)==0 && quoteTaggedSentence2._1.trim.length > lemmatisedSentence2._1.trim.length
+  def nextLemSuperstring = lemmatisedSentence2._1.trim.indexOf(quoteTaggedSentence2._1.trim)==0 && quoteTaggedSentence2._1.trim.length < lemmatisedSentence2._1.trim.length
+  def lemLarger = quoteTaggedSentence1._1.trim.length < lemmatisedSentence1._1.trim.length 
+  def quoteLarger = quoteTaggedSentence1._1.trim.length > lemmatisedSentence1._1.trim.length
+  def nextQuoteURL = quoteTaggedSentence2._2=="URL" && quoteLarger;
 
-  if(quoteAhead) return (lemmatisedSentence2, quoteTaggedSentence1);
-  else if(nextQuoteURL && nextQuoteLarger && currentSame) return (lemmatisedSentence2, quoteTaggedSentence1)
-  else if(nextQuoteLarger && nextQuoteSuperstring) return(lemmatisedSentence2, quoteTaggedSentence1)
+  if(lemmatisedSentence2._1.trim==quoteTaggedSentence2._1.trim) return (lemmatisedSentence2, quoteTaggedSentence2);
+  else if(quoteAhead) return (lemmatisedSentence2, quoteTaggedSentence1);
+  else if(nextQuoteURL && quoteLarger && currentSame) return (lemmatisedSentence2, quoteTaggedSentence1)
+  else if(quoteLarger && nextQuoteSuperstring) return (lemmatisedSentence2, quoteTaggedSentence1)
+  else if(lemLarger && nextLemSuperstring) return (lemmatisedSentence1, quoteTaggedSentence2)
   else return (lemmatisedSentence2, quoteTaggedSentence2);
 
 }
