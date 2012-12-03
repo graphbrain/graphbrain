@@ -57,27 +57,47 @@ class AIChatResponderActor() extends Actor with SimpleLog{
           topResponse match {
             case r: GraphResponse =>
               val parses = r.hypergraphList
+
               val topParse = parses(0);
-              //Check it's a 2-participant relationship
-              if(topParse._1.length == 2) {
-                val node1 = topParse._1(0)._1
-                val node2 = topParse._1(1)._1
-                val relation = topParse._2.id.replace(" ", "_")
 
-                ldebug("node1: " + node1.id + "\nnode2: " + node2.id + "\nrelation: " + relation, Console.RED)
+              val nodes = topParse._1.map(_._1).toArray
+              val nodeIds = nodes.map(_.id).toList
+              val relation = topParse._2.id.replace(" ", "_")
 
-                Server.store.createAndConnectVertices2(relation, Array(node1, node2), user.id)
+              //ldebug("node1: " + node1.id + "\nnode2: " + node2.id + "\nrelation: " + relation, Console.RED)
 
-                // force consesnsus re-evaluation of affected edge
-                val edge = Edge(relation, List(node1.id, node2.id))
-                Server.consensusActor ! edge
+              Server.store.createAndConnectVertices2(relation, nodes, user.id)
 
-                val undoFunctionCall = "undoFact('" + relation + "', '" + node1.id + " " + node2.id + "')"
-                replySentence = "Fact recorded: '" + sentence + "'. <a href=\"#\" onclick=\"" + undoFunctionCall + "\">Want to undo?</a>"
-                replySentence += disambiguationMessage(relation, Array(node1, node2), 0)
-                replySentence += disambiguationMessage(relation, Array(node1, node2), 1)
+              // force consesnsus re-evaluation of affected edge
+              val edge = Edge(relation, nodeIds)
+              Server.consensusActor ! edge
+
+              //TODO: fix undoFunctionCall to support facts with any number of participants
+              val undoFunctionCall = "undoFact('" + relation + "', '" + nodes(0).id + " " + nodes(1).id + "')"
+              
+              replySentence = "Fact recorded: '" + sentence + "'. <a href=\"#\" onclick=\"" + undoFunctionCall + "\">Want to undo?</a>"
+              
+              for (i <- 0 until nodes.length) {
+                replySentence += disambiguationMessage(relation, nodes, i)
+              }
                 
-                goto = root.id
+              goto = root.id
+
+              // Create extra facts
+              val extraFacts = topParse._1.map(_._2)
+              for (fact <- extraFacts) {
+                fact match {
+                  case Some(f) =>
+                    val nodes = f._1.toArray
+                    val nodeIds = nodes.map(_.id).toList
+                    val relation = f._2.id.replace(" ", "_")
+
+                    Server.store.createAndConnectVertices2(relation, nodes, user.id)
+
+                    // force consesnsus re-evaluation of affected edge
+                    val edge = Edge(relation, nodeIds)
+                    Server.consensusActor ! edge                    
+                }
               }
             case _ =>
 
