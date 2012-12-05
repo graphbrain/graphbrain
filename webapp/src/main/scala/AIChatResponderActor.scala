@@ -62,6 +62,7 @@ class AIChatResponderActor() extends Actor with SimpleLog{
 
               val nodes = topParse._1.map(_._1).toArray
               val nodeIds = nodes.map(_.id).toList
+              //println(nodeIds)
               val relation = topParse._2.id.replace(" ", "_")
 
               //ldebug("node1: " + node1.id + "\nnode2: " + node2.id + "\nrelation: " + relation, Console.RED)
@@ -84,11 +85,13 @@ class AIChatResponderActor() extends Actor with SimpleLog{
               goto = root.id
 
               // Create extra facts
-              val extraFacts = topParse._1.map(_._2)
-              for (fact <- extraFacts) {
-                fact match {
+              val facts = topParse._1
+              for (fact <- facts) {
+                val firstNode = fact._1
+                val extraFact = fact._2
+                extraFact match {
                   case Some(f) =>
-                    val nodes = f._1.toArray
+                    val nodes = (firstNode :: f._1).toArray
                     val nodeIds = nodes.map(_.id).toList
                     val relation = f._2.id.replace(" ", "_")
 
