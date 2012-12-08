@@ -26,6 +26,18 @@ case class TextNode(store: VertexStore, namespace: String="", text: String="", s
 
   override def updateSummary: Textual = TextNode(store, namespace, text, generateSummary)
 
+
+  override def updateFromEdges(): Vertex = {
+    val newSummary = generateSummary
+    val newVertex = this.copy(summary=newSummary)
+
+    if (this != newVertex) {
+      put()
+    }
+
+    this
+  }
+
   override def raw: String = {
     "type: " + "text<br />" +
     "text: " + text + "<br />" +
