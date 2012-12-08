@@ -7,6 +7,7 @@ import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.ID
+import com.graphbrain.hgdb.HyperEdges2Edges
 import scala.collection.mutable.{Map => MMap}
 import scala.collection.mutable.{Set => MSet}
 import scala.math
@@ -14,7 +15,7 @@ import scala.math
 
 class GraphInterface (val rootId: String, val store: UserOps, val user: UserNode) {
   val userId = if (user != null) user.id else ""
-  val edgeIds = store.neighborEdges2(rootId, userId)
+  val edgeIds = HyperEdges2Edges(store.neighborEdges2(rootId, userId), rootId)
   val neighbors = store.nodesFromEdgeSet(edgeIds)
   val snodes = supernodes
   val nodesJSON = nodes2json
@@ -120,7 +121,6 @@ class GraphInterface (val rootId: String, val store: UserOps, val user: UserNode
     if (edgeType == "")
       return ""
     val lastPart = ID.parts(edgeType).last
-    lastPart
     lastPart.replace("_", " ")
   }
 }

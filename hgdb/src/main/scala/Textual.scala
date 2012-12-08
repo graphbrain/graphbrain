@@ -36,7 +36,7 @@ abstract class Textual extends Vertex {
       "(" + store.get(bestEdge.participantIds(1)) + ")"
   }
 
-  def updateSummary: Textual
+  def updateSummary: Textual = this
 
   override def description: String = toString + " " + generateSummary
 }

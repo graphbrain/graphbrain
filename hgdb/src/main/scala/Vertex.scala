@@ -23,6 +23,8 @@ abstract class Vertex {
   def raw: String = ""
 
   def shouldUpdate: Boolean = !store.exists(id)
+
+  def updateFromEdges(): Vertex = this
 }
 
 object Vertex {
