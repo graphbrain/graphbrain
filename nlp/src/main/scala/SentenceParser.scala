@@ -35,6 +35,7 @@ class SentenceParser (storeName:String = "gb") {
   val leftParenthPosTag = """-LRB-""".r
   val rightParenthPosTag = """-RRB-""".r
   val ownRegex = """('s\s|s'\s)""".r
+  val hasOfTypeRegex="""(has|have).+?\:""".r
 
   val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r)
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
@@ -215,7 +216,7 @@ class SentenceParser (storeName:String = "gb") {
     //Try segmenting with square bracket syntax.
     var parses = strictChunk(inSentence, root);
 
-    //Check for disambiguation syntax
+
 
     
     //Only parse with POS if nothing returned:
@@ -338,6 +339,7 @@ class SentenceParser (storeName:String = "gb") {
   }
 
   val instanceOwnedByRelType = store.createEdgeType(id = ID.reltype_id("instance_of~owned_by"));
+  val hasOfType = store.createEdgeType(id = ID.reltype_id("has~of_type"))
 
   def textToNodes(text:String, node: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user:Option[Vertex]=None): List[(Vertex, Option[(List[Vertex], Vertex)])] = {
     
@@ -431,6 +433,8 @@ class SentenceParser (storeName:String = "gb") {
     val ns = "user/" + username + "/p/" + i.toString; 
     return store.createTextNode(namespace = ns, text = text);
   }
+
+  
 
   def textToNode(text:String, node: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user:Option[Vertex]=None): List[Vertex] = {
     var userName = "";
@@ -544,7 +548,7 @@ def strictChunk(sentence: String, root: Vertex): (List[String], String, List[(St
   
   val nodeTexts = nodeRegex.findAllIn(sentence);
   if(!nodeTexts.hasNext) {
-    return (Nil, "", Nil);
+    return hasTypeChunk(sentence, root)
   }
   val edgeTexts = nodeRegex.split(sentence);
   var nodes: List[String] = List()
@@ -560,6 +564,8 @@ def strictChunk(sentence: String, root: Vertex): (List[String], String, List[(St
   return (nodes, edge, Nil)
 
 }
+
+
 
 
 def checkTags(lemmatisedSentence1: (String, String, String), lemmatisedSentence2: (String, String, String), quoteTaggedSentence1: (String, String), quoteTaggedSentence2: (String, String)): ((String, String, String), (String, String)) = {
@@ -582,6 +588,24 @@ def checkTags(lemmatisedSentence1: (String, String, String), lemmatisedSentence2
 
 }
 
+def hasTypeChunk(sentence: String, root: Vertex): (List[String], String, List[(String, String)])={
+  
+  if(hasOfTypeRegex.findAllIn(sentence).hasNext){
+    val hasHave = """(has|have)""".r.findAllIn(sentence).next.trim
+    val hasSplit = ("""(has|have)""".r.split(sentence))
+    val ownerText = hasSplit(0).trim
+    val owned = hasSplit(1).trim
+    val colonSplit = (""":""".r.split(owned))
+    val superType = colonSplit(0).trim
+    val subType = colonSplit(1).trim
+    val edgeText = hasHave + "~of_type"
+    return (List(ownerText, subType, superType), edgeText, Nil)
+
+  }
+  else {
+    return (Nil, "", Nil)
+  }
+}
 def posChunkGeneral(sentence: String, root: Vertex): (List[String], String, List[(String, String)])={
   val sanSentence = TextFormatting.deQuoteAndTrim(sentence)
   
