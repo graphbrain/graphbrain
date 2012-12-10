@@ -36,6 +36,7 @@ class SentenceParser (storeName:String = "gb") {
   val rightParenthPosTag = """-RRB-""".r
   val ownRegex = """('s\s|s'\s)""".r
   val hasOfTypeRegex="""(has|have).+?\:""".r
+  val hasHaveRelTypeRegex = """(has|have)~of_type""".r
 
   val imageExt = List("""[^\s^\']+(\.(?i)(jpg))""".r, """[^\s^\']+(\.(?i)(jpeg))""".r, """[^\s^\']+(\.(?i)(gif))""".r, """[^\s^\']+(\.(?i)(tif))""".r, """[^\s^\']+(\.(?i)(png))""".r, """[^\s^\']+(\.(?i)(bmp))""".r, """[^\s^\']+(\.(?i)(svg))""".r)
   val videoExt = List("""http://www.youtube.com/watch?.+""".r, """http://www.vimeo.com/.+""".r, """http://www.dailymotion.com/video.+""".r)
@@ -115,11 +116,42 @@ class SentenceParser (storeName:String = "gb") {
 
   }
 
-  
+  def hasOfTypeVertices(nodeTexts: List[String], relText: String, root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[(Vertex, Option[(List[Vertex], Vertex)])], Vertex) = {
+    var nodes: List[(Vertex, Option[(List[Vertex], Vertex)])] = Nil
+    val ownerText = nodeTexts(0);
+    val subTypeText = nodeTexts(1);
+    val superTypeText = nodeTexts(2);
+
+    
+    val userNode = getUserNode(user)
+    nodes = (userNode, None) :: nodes;
+
+    val userName = userNode.username;
+    val subTypePNode = getNextAvailableUserOwnedNode(subTypeText, userName)
+    val superTypeNode = getNextAvailableNode(superTypeText)
+    val superTypePNode = getNextAvailableUserOwnedNode(superTypeText, userName)
+    val subTypeVertices = (subTypePNode, Some(List(superTypePNode, userNode), instanceOwnedByRelType))
+    nodes = subTypeVertices :: nodes;
+    val supTypeVertices = (superTypePNode, Some(List(superTypeNode, userNode), instanceOwnedByRelType))
+    nodes = supTypeVertices :: nodes;
+      
+    
+    
+
+    val relationV = store.createEdgeType(id = ID.reltype_id(relText), label = relText)
+
+    return (nodes, relationV)
+
+
+
+  }
 
   def reparseGraphTexts(nodeTexts: List[String], relText: String, disambigs: List[(String, String)], root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[(Vertex, Option[(List[Vertex], Vertex)])], Vertex) = {
    //println(relText)
     var tempDisambs = disambigs;
+    if(hasHaveRelTypeRegex.findAllIn(relText).hasNext && isUser(nodeTexts(0), user)) {
+      return hasOfTypeVertices(nodeTexts, relText, root, user);
+    }
 
     var nodes: List[(Vertex, Option[(List[Vertex], Vertex)])] = Nil
       
@@ -339,7 +371,7 @@ class SentenceParser (storeName:String = "gb") {
   }
 
   val instanceOwnedByRelType = store.createEdgeType(id = ID.reltype_id("instance_of~owned_by"));
-  val hasOfType = store.createEdgeType(id = ID.reltype_id("has~of_type"))
+  
 
   def textToNodes(text:String, node: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user:Option[Vertex]=None): List[(Vertex, Option[(List[Vertex], Vertex)])] = {
     
@@ -361,6 +393,7 @@ class SentenceParser (storeName:String = "gb") {
         results = (node, None) :: results;
       }
     }
+
     else {
       //println("Possessed")
       val ownerOwned = getOwnerOwned(text)
@@ -956,27 +989,55 @@ object SentenceParser {
               for(parse <- parses) {
                 parse match {
                   case (n: List[(Vertex, Option[(List[Vertex], Vertex)])], r: Vertex) =>
-                  for(node <- n) {
+                    for(node <- n) {
                     
-                    node match {
+                      node match {
                       case (nd: TextNode, None) => println("Node: " + nd.id);
+                      case (nd: UserNode, None) => println("Node: " + nd.id);
                       case (nd: TextNode, Some(aux: (List[Vertex], Vertex))) => 
-                      println("Node with aux: " + nd.id)
+                        println("Node with aux: " + nd.id)
                         aux match {
-                          case (a:List[TextNode], ed:EdgeType) => 
+                          case (a:List[Vertex], ed:EdgeType) => 
                             for(aNode <- a) {
-                              println("auxNode: " + aNode.id)
+                              a match {
+                                case tn: TextNode => println("auxNode: " + tn.id)
+                                case un: UserNode => println("auxNode: " + un.id)
+                                case _ => 
+                              }
+
                             }
                             println("auxEdge: " + ed.id)
-                          case _ => println("mismatch")
+                          case _ =>
+                          
                         }
-                      case _ => println("No match")
+                      case (nd: UserNode, Some(aux: (List[Vertex], Vertex))) => 
+                        println("Node with aux: " + nd.id)
+                        aux match {
+                          case (a:List[Vertex], ed:EdgeType) => 
+                            for(aNode <- a) {
+                              a match {
+                                case tn: TextNode => println("auxNode: " + tn.id)
+                                case un: UserNode => println("auxNode: " + un.id)
+                                case _ => 
+                              }
+
+                            }
+                            println("auxEdge: " + ed.id)
+                          case _ =>
+                          
+                        }
+                      case _ => println("mismatch")
+                      
+                      }
                     }
+                    println("Rel: " + r.id)
+                  case _ => println("No match")
+                  
                   }
-                  println("Rel: " + r.id)
+                  
                 }
 
-              }
+              
             case r: ResponseType => println(r)
 
           }
