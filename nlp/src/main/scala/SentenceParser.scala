@@ -118,29 +118,40 @@ class SentenceParser (storeName:String = "gb") {
 
   def hasOfTypeVertices(nodeTexts: List[String], relText: String, root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[(Vertex, Option[(List[Vertex], Vertex)])], Vertex) = {
     var nodes: List[(Vertex, Option[(List[Vertex], Vertex)])] = Nil
-    
+    val ownerText = nodeTexts(0)
     val subTypeText = nodeTexts(1);
     val superTypeText = nodeTexts(2);
 
-    
-    val userNode = getUserNode(user)
-    nodes = (userNode, None) :: nodes;
+    if(isUser(ownerText, user)) {
+      val userNode = getUserNode(user)
+      nodes = (userNode, None) :: nodes;
 
-    val userName = userNode.username;
-    val subTypePNode = getNextAvailableUserOwnedNode(subTypeText, userName)
-    val superTypeNode = getNextAvailableNode(superTypeText)
-    val superTypePNode = getNextAvailableUserOwnedNode(superTypeText, userName)
-    val subTypeVertices = (subTypePNode, Some(List(superTypePNode, userNode), instanceOwnedByRelType))
-    nodes = subTypeVertices :: nodes;
-    val supTypeVertices = (superTypePNode, Some(List(superTypeNode, userNode), instanceOwnedByRelType))
-    nodes = supTypeVertices :: nodes;
+      val userName = userNode.username;
+      val subTypePNode = getNextAvailableUserOwnedNode(subTypeText, userName)
+      val superTypeNode = getNextAvailableNode(superTypeText)
+      val superTypePNode = getNextAvailableUserOwnedNode(superTypeText, userName)
+      val subTypeVertices = (subTypePNode, Some(List(superTypePNode, userNode), instanceOwnedByRelType))
+      nodes = subTypeVertices :: nodes;
+      val supTypeVertices = (superTypePNode, Some(List(superTypeNode, userNode), instanceOwnedByRelType))
+      nodes = supTypeVertices :: nodes;
+      val relationV = store.createEdgeType(id = ID.reltype_id(relText), label = relText)
+
+      return (nodes, relationV)
+
+    }
+    else {
       
-    
-    
-
-    val relationV = store.createEdgeType(id = ID.reltype_id(relText), label = relText)
-
-    return (nodes, relationV)
+      val ownerNode = getNextAvailableNode(ownerText)
+      val superTypeNode = getNextAvailableNode(superTypeText)
+      val superTypeSubNode = getNextAvailableNode(superTypeText, 2)
+      val subTypeNode = getNextAvailableNode(subTypeText)
+      val subTypeVertices = (subTypeNode, Some(List(superTypeSubNode, ownerNode), instanceOwnedByRelType))
+      nodes = subTypeVertices :: nodes
+      val superTypeVertices = (superTypeSubNode, Some(List(subTypeNode, ownerNode), instanceOwnedByRelType))
+      nodes = superTypeVertices :: nodes
+      val relationV = store.createEdgeType(id=ID.reltype_id(relText), label = relText)
+      return (nodes, relationV)
+    }
 
 
 
@@ -149,7 +160,7 @@ class SentenceParser (storeName:String = "gb") {
   def reparseGraphTexts(nodeTexts: List[String], relText: String, disambigs: List[(String, String)], root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[(Vertex, Option[(List[Vertex], Vertex)])], Vertex) = {
    //println(relText)
     var tempDisambs = disambigs;
-    if(hasHaveRelTypeRegex.findAllIn(relText).hasNext && isUser(nodeTexts(0), user)) {
+    if(hasHaveRelTypeRegex.findAllIn(relText).hasNext) {
       val newRelText = "has~of_type" //Just to transform into 3rd person form
       return hasOfTypeVertices(nodeTexts, newRelText, root, user);
     }
