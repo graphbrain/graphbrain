@@ -118,7 +118,7 @@ class SentenceParser (storeName:String = "gb") {
 
   def hasOfTypeVertices(nodeTexts: List[String], relText: String, root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[(Vertex, Option[(List[Vertex], Vertex)])], Vertex) = {
     var nodes: List[(Vertex, Option[(List[Vertex], Vertex)])] = Nil
-    val ownerText = nodeTexts(0);
+    
     val subTypeText = nodeTexts(1);
     val superTypeText = nodeTexts(2);
 
@@ -150,7 +150,8 @@ class SentenceParser (storeName:String = "gb") {
    //println(relText)
     var tempDisambs = disambigs;
     if(hasHaveRelTypeRegex.findAllIn(relText).hasNext && isUser(nodeTexts(0), user)) {
-      return hasOfTypeVertices(nodeTexts, relText, root, user);
+      val newRelText = "has~of_type" //Just to transform into 3rd person form
+      return hasOfTypeVertices(nodeTexts, newRelText, root, user);
     }
 
     var nodes: List[(Vertex, Option[(List[Vertex], Vertex)])] = Nil
@@ -282,7 +283,7 @@ class SentenceParser (storeName:String = "gb") {
         val name = u.name;
         //println("name: " + name);
         //println("isUser: " + (text.toLowerCase.indexOf(userName.toLowerCase)==0 || userName.toLowerCase.indexOf(text.toLowerCase) ==0 || text.toLowerCase.indexOf(name.toLowerCase) ==0 || name.toLowerCase.indexOf(text.toLowerCase) == 0))
-        return(text.toLowerCase.indexOf(userName.toLowerCase)==0 || userName.toLowerCase.indexOf(text.toLowerCase) ==0 || text.toLowerCase.indexOf(name.toLowerCase) ==0 || name.toLowerCase.indexOf(text.toLowerCase) == 0) 
+        return(text.toLowerCase.indexOf(userName.toLowerCase)==0 || userName.toLowerCase.indexOf(text.toLowerCase) ==0 || text.toLowerCase.indexOf(name.toLowerCase) ==0 || name.toLowerCase.indexOf(text.toLowerCase) == 0 || text.toLowerCase=="i") 
       case _ => return false; 
     }
   }
