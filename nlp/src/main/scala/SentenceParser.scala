@@ -136,21 +136,22 @@ class SentenceParser (storeName:String = "gb") {
       nodes = supTypeVertices :: nodes;
       val relationV = store.createEdgeType(id = ID.reltype_id(relText), label = relText)
 
-      return (nodes, relationV)
+      return (nodes.reverse, relationV)
 
     }
     else {
       
       val ownerNode = getNextAvailableNode(ownerText)
+      nodes = (ownerNode, None) :: nodes;
       val superTypeNode = getNextAvailableNode(superTypeText)
       val superTypeSubNode = getNextAvailableNode(superTypeText, 2)
       val subTypeNode = getNextAvailableNode(subTypeText)
       val subTypeVertices = (subTypeNode, Some(List(superTypeSubNode, ownerNode), instanceOwnedByRelType))
       nodes = subTypeVertices :: nodes
-      val superTypeVertices = (superTypeSubNode, Some(List(subTypeNode, ownerNode), instanceOwnedByRelType))
+      val superTypeVertices = (superTypeSubNode, Some(List(superTypeNode, ownerNode), instanceOwnedByRelType))
       nodes = superTypeVertices :: nodes
       val relationV = store.createEdgeType(id=ID.reltype_id(relText), label = relText)
-      return (nodes, relationV)
+      return (nodes.reverse, relationV)
     }
 
 
