@@ -63,3 +63,13 @@ compile
 project nlp
 compile
 run
+compile
+test
+exit
+teste
+test
+project inference
+compile
+test
+re-stop
+exit

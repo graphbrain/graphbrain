@@ -18,7 +18,8 @@ object HyperEdges2Edges {
         }
       }
       else {
-        null
+        val edgeType = edge.edgeType.replaceAll("~", " .. ") + " .. "
+        Edge(edgeType, List(edge.participantIds(0), edge.participantIds(1)))
       }
     }
     else {
