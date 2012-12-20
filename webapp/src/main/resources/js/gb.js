@@ -987,8 +987,7 @@ function testCSS(prop) {
       this.rpos = Array(3);
       this.auxVec = new Array(3);
       this.f = newv3();
-      this.tpos = newv3();
-      return this.fixed = false;
+      return this.tpos = newv3();
     };
 
     SNode.prototype.updateTransform = function() {
@@ -1373,12 +1372,11 @@ function testCSS(prop) {
     };
 
     Graph.prototype.layout = function() {
-      var N, Nt, i, key, _i, _ref, _results;
+      var N, Nt, k, key, _results;
       this.root.moveTo(0, 0, 0);
-      this.root.fixed = true;
       this.snodeArray = [];
       for (key in this.snodes) {
-        if (this.snodes.hasOwnProperty(key) && !this.snodes[key].fixed) {
+        if (this.snodes.hasOwnProperty(key) && !this.snodes[key].isRoot) {
           this.snodeArray.push(this.snodes[key]);
         }
       }
@@ -1391,13 +1389,11 @@ function testCSS(prop) {
         this.mappingPower = Math.log(Math.asin(Nt / (N / 2)) / Math.PI) * (1 / Math.log(0.5));
         this.negativeStretch = this.mappingPower * 2;
       }
-      if (N > 0) {
-        _results = [];
-        for (i = _i = 0, _ref = this.snodeArray.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
-          _results.push(this.snodeArray[i].applyPos());
-        }
-        return _results;
+      _results = [];
+      for (k in this.snodes) {
+        _results.push(this.snodes[k].applyPos());
       }
+      return _results;
     };
 
     return Graph;
