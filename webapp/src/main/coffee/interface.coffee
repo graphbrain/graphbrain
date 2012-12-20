@@ -94,23 +94,22 @@ initInterface = ->
     $('#loginLink').bind 'click', showLoginDialog
     $('#logoutLink').bind 'click', logout
 
-    if nodeView
-        fullBind("mouseup", mouseUp)
-        fullBind("mousedown", mouseDown)
-        fullBind("mousemove", mouseMove)
-        fullBind("mousewheel", mouseWheel)
+    fullBind("mouseup", mouseUp)
+    fullBind("mousedown", mouseDown)
+    fullBind("mousemove", mouseMove)
+    fullBind("mousewheel", mouseWheel)
     
-        document.addEventListener('touchstart', touchStart)
-        document.addEventListener('touchend', touchEnd)
-        document.addEventListener('touchmove', touchMove)
+    document.addEventListener('touchstart', touchStart)
+    document.addEventListener('touchend', touchEnd)
+    document.addEventListener('touchmove', touchMove)
 
-        initAlert()
-        initAiChat()
-        initRemoveDialog()
-        initDisambiguateDialog()
-        $('#ai-chat-button').bind 'click', aiChatButtonPressed
-        $('#removeButton').bind 'click', removeButtonPressed
+    initAlert()
+    initAiChat()
+    initRemoveDialog()
+    initDisambiguateDialog()
+    $('#ai-chat-button').bind 'click', aiChatButtonPressed
+    $('#removeButton').bind 'click', removeButtonPressed
 
-        # display error message if defined
-        if errorMsg != ''
-            setErrorAlert(errorMsg)
+    # display error message if defined
+    if errorMsg != ''
+        setErrorAlert(errorMsg)

@@ -32,7 +32,7 @@ object VisualGraph {
     val snodeMap = generateSnodeMap(edgeNodeMap, store)
 
     // create reply structure with all the information needed for rendering
-    val reply = Map(("root" -> rootId), ("snodes" -> snodeMap))
+    val reply = Map(("user" -> userId), ("root" -> node2map(rootId, store)), ("snodes" -> snodeMap))
 
     Server.store.clear()
 
@@ -82,24 +82,24 @@ object VisualGraph {
       case _ => null
     }
     node match {
-      case tn: TextNode => Map(("type" -> "text"), ("text" -> tn.text))
+      case tn: TextNode => Map(("id" -> tn.id), ("type" -> "text"), ("text" -> tn.text))
       case un: URLNode => {
         val title = if (un.title == "") un.url else un.title
-        Map(("type" -> "url"), ("text" -> title), ("url" -> un.url), ("icon" -> un.icon))
+        Map(("id" -> un.id), ("type" -> "url"), ("text" -> title), ("url" -> un.url), ("icon" -> un.icon))
       }
-      case un: UserNode => Map(("type" -> "user"), ("text" -> un.name))
+      case un: UserNode => Map(("id" -> un.id), ("type" -> "user"), ("text" -> un.name))
       case null => ""
-      case _ => Map(("type" -> "text"), ("text" -> node.id))
+      case _ => Map(("id" -> node.id), ("type" -> "text"), ("text" -> node.id))
     }
   }
 
   private def generateSnode(pair: ((String, Int), Set[String]), store: UserOps) = {
-    val id = pair._1._1 + " " + pair._1._2
+    val id = pair._1._1.replaceAll("/", "_") + "_" + pair._1._2
     val label = linkLabel(pair._1._1)
     val color = linkColor(label)
     val nodes = pair._2.map(node2map(_, store))
 
-    val data = Map(("nodes" -> nodes), ("label" -> label), ("color" -> color))
+    val data = Map(("nodes" -> nodes), ("etype" -> pair._1._1), ("rpos" -> pair._1._2), ("label" -> label), ("color" -> color))
 
     id -> data
   }
@@ -120,11 +120,12 @@ object VisualGraph {
     lastPart.replace("_", " ")
   }
 
+  /*
   def main(args: Array[String]) {
     val store = new VertexStore with SimpleCaching with UserOps with UserManagement
       
     println(VisualGraph.generate("1/eraserhead", store, null))
 
     sys.exit(0)
-  }
+  }*/
 }

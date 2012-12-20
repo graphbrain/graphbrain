@@ -466,7 +466,7 @@ function testCSS(prop) {
 }
 ;
 
-  var Graph, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, animSpeedX, animSpeedY, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initAnimation, initChatBuffer, initDisambiguateDialog, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, initTextView, interRect, intervalID, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, printHelp, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopAnim, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, animSpeedX, animSpeedY, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dotProduct, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initAnimation, initChatBuffer, initDisambiguateDialog, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, initTextView, interRect, intervalID, lastScale, lastX, lastY, layout, lineRectOverlap, lineSegsOverlap, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, pointInTriangle, printHelp, rectsDist, rectsDist2, rectsOverlap, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rootNodeId, rotRectsOverlap, rotateAndTranslate, scroll, scrollOff, scrollOn, searchQuery, searchRequest, sepAxis, sepAxisSide, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopAnim, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   browserSpecificTweaks = function() {
     if (isSafari) {
@@ -1023,23 +1023,21 @@ function testCSS(prop) {
     $('.signupLink').bind('click', showSignUpDialog);
     $('#loginLink').bind('click', showLoginDialog);
     $('#logoutLink').bind('click', logout);
-    if (nodeView) {
-      fullBind("mouseup", mouseUp);
-      fullBind("mousedown", mouseDown);
-      fullBind("mousemove", mouseMove);
-      fullBind("mousewheel", mouseWheel);
-      document.addEventListener('touchstart', touchStart);
-      document.addEventListener('touchend', touchEnd);
-      document.addEventListener('touchmove', touchMove);
-      initAlert();
-      initAiChat();
-      initRemoveDialog();
-      initDisambiguateDialog();
-      $('#ai-chat-button').bind('click', aiChatButtonPressed);
-      $('#removeButton').bind('click', removeButtonPressed);
-      if (errorMsg !== '') {
-        return setErrorAlert(errorMsg);
-      }
+    fullBind("mouseup", mouseUp);
+    fullBind("mousedown", mouseDown);
+    fullBind("mousemove", mouseMove);
+    fullBind("mousewheel", mouseWheel);
+    document.addEventListener('touchstart', touchStart);
+    document.addEventListener('touchend', touchEnd);
+    document.addEventListener('touchmove', touchMove);
+    initAlert();
+    initAiChat();
+    initRemoveDialog();
+    initDisambiguateDialog();
+    $('#ai-chat-button').bind('click', aiChatButtonPressed);
+    $('#removeButton').bind('click', removeButtonPressed);
+    if (errorMsg !== '') {
+      return setErrorAlert(errorMsg);
     }
   };
 
@@ -1222,19 +1220,15 @@ function testCSS(prop) {
 
   SNode = (function() {
 
-    function SNode(id, etype, relpos, label, color) {
+    function SNode(id, etype, relpos, label, color, isRoot) {
       this.id = id;
       this.etype = etype;
       this.relpos = relpos;
       this.label = label;
       this.color = color;
+      this.isRoot = isRoot;
       this.initLayout();
       this.nodes = {};
-      this.subNodes = [];
-      this.parent = 'unknown';
-      this.links = [];
-      this.weight = 0;
-      this.depth = 0;
       this.width = 0;
       this.height = 0;
       this.halfWidth = 0;
@@ -1345,18 +1339,18 @@ function testCSS(prop) {
     };
 
     SNode.prototype.place = function() {
-      var html, key, nodeObj, nodesCount, relText, rootText;
+      var html, key, relText, rootText;
       html = '<div id="' + this.id + '" class="snode">';
       relText = '';
-      if (this.depth !== 0) {
-        rootText = nodes[rootNodeId]['text'];
+      if (!this.isRoot) {
+        rootText = g.rootNode['text'];
         relText = this.label;
         if (this.relpos === 1) {
           relText += ' ' + rootText;
         }
       }
       html += '<div class="snodeLabel">' + relText + '</div>';
-      if (this.depth === 0) {
+      if (this.isRoot) {
         html += '<div class="snodeInner snodeRoot">';
       } else {
         html += '<div class="snodeInner">';
@@ -1364,28 +1358,21 @@ function testCSS(prop) {
       html += '<div class="viewport" /></div></div>';
       $('#graph-view').append(html);
       this.jqDiv = $('#' + this.id);
-      nodesCount = 0;
-      for (key in this.nodes) {
-        if (this.nodes.hasOwnProperty(key)) {
-          nodesCount++;
-        }
-      }
       for (key in this.nodes) {
         if (this.nodes.hasOwnProperty(key)) {
           this.nodes[key].place();
         }
       }
-      if ((nodesCount > 1) && (this.jqDiv.outerHeight() > 250)) {
+      if (this.jqDiv.outerHeight() > 250) {
         $('#' + this.id + ' .viewport').slimScroll({
           height: '250px'
         });
         this.jqDiv.hover(scrollOn, scrollOff);
       }
       this.updateDimensions();
-      if (this.depth !== 0) {
-        this.setColor(this.color);
+      if (!this.isRoot) {
+        return this.setColor(this.color);
       }
-      return nodeObj = this;
     };
 
     SNode.prototype.setColor = function(color) {
@@ -1547,32 +1534,43 @@ function testCSS(prop) {
 
   g = false;
 
+  rootNodeId = false;
+
   initGraph = function() {
-    var color, etype, key, label, nid, nlist, nod, node, parentID, rpos, sid, sn, snode, subNode, text, type, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref;
+    var color, etype, k, label, nid, nlist, nod, node, rpos, sid, snode, text, type, v, _i, _len, _ref;
     g = new Graph($('#graph-view').width(), $('#graph-view').height());
     g.updateTransform();
-    for (_i = 0, _len = snodes.length; _i < _len; _i++) {
-      sn = snodes[_i];
-      sid = sn['id'];
-      etype = sn['etype'];
-      label = sn['label'];
-      rpos = sn['rpos'];
-      color = sn['color'];
-      nlist = sn['nodes'];
-      snode = new SNode(sid, etype, rpos, label, color);
-      for (_j = 0, _len1 = nlist.length; _j < _len1; _j++) {
-        nid = nlist[_j];
-        nod = nodes[nid];
-        if (nod === "") {
-          text = nid;
-          type = 'text';
-          parentID = rootNodeId;
-        } else {
-          text = nod['text'];
-          type = nod['type'];
-          parentID = nod['parent'];
-          node = false;
-        }
+    snode = new SNode('root', '', 0, '', '#000', true);
+    g.snodes['root'] = snode;
+    g.root = snode;
+    nid = data['root']['id'];
+    rootNodeId = nid;
+    text = data['root']['text'];
+    type = data['root']['type'];
+    if (type === 'url') {
+      node = new Node(nid, text, type, snode, data['root']['url'], data['root']['icon']);
+    } else {
+      node = new Node(nid, text, type, snode);
+    }
+    snode.nodes[nid] = node;
+    g.nodes[nid] = node;
+    g.rootNode = node;
+    _ref = data['snodes'];
+    for (k in _ref) {
+      v = _ref[k];
+      sid = k;
+      etype = v['etype'];
+      label = v['label'];
+      rpos = v['rpos'];
+      color = v['color'];
+      nlist = v['nodes'];
+      snode = new SNode(sid, etype, rpos, label, color, false);
+      g.snodes[sid] = snode;
+      for (_i = 0, _len = nlist.length; _i < _len; _i++) {
+        nod = nlist[_i];
+        nid = nod['id'];
+        text = nod['text'];
+        type = nod['type'];
         if (type === 'url') {
           node = new Node(nid, text, type, snode, nod['url'], nod['icon']);
         } else {
@@ -1580,42 +1578,6 @@ function testCSS(prop) {
         }
         snode.nodes[nid] = node;
         g.nodes[nid] = node;
-        if ((snode.parent === 'unknown') || (parentID === '')) {
-          snode.parent = parentID;
-        }
-      }
-      g.snodes[sid] = snode;
-    }
-    for (_k = 0, _len2 = snodes.length; _k < _len2; _k++) {
-      sn = snodes[_k];
-      sid = sn['id'];
-      snode = g.snodes[sid];
-      parentID = snode.parent;
-      if (parentID === '') {
-        g.root = snode;
-        snode.parent = false;
-      } else {
-        snode.parent = g.nodes[parentID].snode;
-        g.nodes[parentID].snode.subNodes[g.nodes[parentID].snode.subNodes.length] = snode;
-      }
-    }
-    for (key in g.snodes) {
-      if (!(g.snodes.hasOwnProperty(key))) {
-        continue;
-      }
-      snode = g.snodes[key];
-      snode.weight = Object.keys(snode.nodes).length;
-      if (!snode.parent) {
-        snode.depth = 0;
-      } else if (snode.parent === g.root) {
-        snode.depth = 1;
-        _ref = snode.subNodes;
-        for (_l = 0, _len3 = _ref.length; _l < _len3; _l++) {
-          subNode = _ref[_l];
-          snode.weight += subNode.nodes.size();
-        }
-      } else {
-        snode.depth = 2;
       }
     }
     g.genSNodeKeys();
@@ -1700,9 +1662,9 @@ function testCSS(prop) {
     Graph.prototype.placeNodes = function() {
       var key, _results;
       _results = [];
-      for (key in this.snodes) {
-        if (this.snodes.hasOwnProperty(key)) {
-          _results.push(this.snodes[key].place());
+      for (key in g.snodes) {
+        if (g.snodes.hasOwnProperty(key)) {
+          _results.push(g.snodes[key].place());
         }
       }
       return _results;
@@ -1823,27 +1785,29 @@ function testCSS(prop) {
   })();
 
   initTextView = function() {
-    var first, nid, nlist, nod, rel, relText, rootText, sn, text, _i, _len, _results;
-    rootText = nodes[rootNodeId]['text'];
+    var first, k, n, nid, nlist, nod, rel, relText, rootText, text, v, _ref, _results;
+    rootText = g.rootNode['text'];
     $('#text-view').append('<h2>' + rootText + '</h2><br />');
+    _ref = data['snodes'];
     _results = [];
-    for (_i = 0, _len = snodes.length; _i < _len; _i++) {
-      sn = snodes[_i];
-      rel = sn['label'];
+    for (k in _ref) {
+      v = _ref[k];
+      rel = v['label'];
       if (rel !== '') {
-        nlist = sn['nodes'];
+        nlist = v['nodes'];
         relText = rel;
-        if (sn['rpos'] === 1) {
+        if (v['rpos'] === 1) {
           relText = rel + ' ' + rootText;
         }
         $('#text-view').append('<h3>' + relText + ': </h3>');
         first = true;
         _results.push((function() {
-          var _j, _len1, _results1;
+          var _i, _len, _results1;
           _results1 = [];
-          for (_j = 0, _len1 = nlist.length; _j < _len1; _j++) {
-            nid = nlist[_j];
-            nod = nodes[nid];
+          for (_i = 0, _len = nlist.length; _i < _len; _i++) {
+            n = nlist[_i];
+            nid = n['id'];
+            nod = g.snodes[k].nodes[nid];
             text = '';
             if (first) {
               first = false;
@@ -2518,13 +2482,8 @@ function testCSS(prop) {
   nodeView = false;
 
   $(function() {
-    if (typeof snodes !== 'undefined') {
-      nodeView = true;
-    }
-    if (nodeView) {
-      initGraph();
-      initTextView();
-    }
+    initGraph();
+    initTextView();
     initInterface();
     browserSpecificTweaks();
     return initAnimation();

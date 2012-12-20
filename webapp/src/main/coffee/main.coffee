@@ -5,13 +5,8 @@
 nodeView = false
 
 $ ->
-    if (typeof snodes != 'undefined')
-        nodeView = true
-
-    if nodeView
-        initGraph()
-        initTextView()
-    
+    initGraph()
+    initTextView()
     initInterface()
     browserSpecificTweaks()
     initAnimation()

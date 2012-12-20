@@ -1,70 +1,54 @@
 # (c) 2012 GraphBrain Ltd. All rigths reserved.
 
 g = false
+rootNodeId = false
 
 initGraph = ->
     g = new Graph($('#graph-view').width(), $('#graph-view').height())
     g.updateTransform()
 
-    # process super nodes and associated nodes
-    for sn in snodes
-        sid = sn['id']
-        etype = sn['etype']
-        label = sn['label']
-        rpos = sn['rpos']
-        color = sn['color']
-        nlist = sn['nodes']
-        
-        snode = new SNode(sid, etype, rpos, label, color)
+    # create root
+    snode = new SNode('root', '', 0, '', '#000', true)
+    g.snodes['root'] = snode
+    g.root = snode
+    nid = data['root']['id']
+    rootNodeId = nid
+    text = data['root']['text']
+    type = data['root']['type']
+    
+    if type == 'url'
+        node = new Node(nid, text, type, snode, data['root']['url'], data['root']['icon'])
+    else
+        node = new Node(nid, text, type, snode)
+            
+    snode.nodes[nid] = node
+    g.nodes[nid] = node
+    g.rootNode = node
 
-        for nid in nlist
-            nod = nodes[nid]
-            if nod == ""
-                text = nid
-                type = 'text'
-                parentID = rootNodeId
-            else
-                text = nod['text']
-                type = nod['type']
-                parentID = nod['parent']
-                node = false
+    # process super nodes and associated nodes
+    for k, v of data['snodes']
+        sid = k
+        etype = v['etype']
+        label = v['label']
+        rpos = v['rpos']
+        color = v['color']
+        nlist = v['nodes']
+        
+        snode = new SNode(sid, etype, rpos, label, color, false)
+        g.snodes[sid] = snode
+
+        for nod in nlist
+            nid = nod['id']
+            text = nod['text']
+            type = nod['type']
+
             if type == 'url'
                 node = new Node(nid, text, type, snode, nod['url'], nod['icon'])
             else
                 node = new Node(nid, text, type, snode)
+            
             snode.nodes[nid] = node
             g.nodes[nid] = node
-
-            if (snode.parent == 'unknown') or (parentID == '')
-                snode.parent = parentID
-
-        g.snodes[sid] = snode
-
-    # assign root, parents and subNodes
-    for sn in snodes
-        sid = sn['id']
-        snode = g.snodes[sid]
-        parentID = snode.parent
-        #if typeof parentId != "undefined"
-        if parentID == ''
-            g.root = snode
-            snode.parent = false
-        else
-            snode.parent = g.nodes[parentID].snode
-            g.nodes[parentID].snode.subNodes[g.nodes[parentID].snode.subNodes.length] = snode
-
-
-    # assign depth and weight
-    for key of g.snodes when g.snodes.hasOwnProperty(key)
-        snode = g.snodes[key]
-        snode.weight = Object.keys(snode.nodes).length
-        if not snode.parent
-            snode.depth = 0
-        else if snode.parent == g.root
-            snode.depth = 1
-            snode.weight += subNode.nodes.size() for subNode in snode.subNodes
-        else
-            snode.depth = 2
 
     g.genSNodeKeys()
 
@@ -146,7 +130,7 @@ class Graph
         @updateDetailLevel()
 
 
-    placeNodes: -> @snodes[key].place() for key of @snodes when @snodes.hasOwnProperty(key)
+    placeNodes: -> g.snodes[key].place() for key of g.snodes when g.snodes.hasOwnProperty(key)
 
 
     updateViewLinks: ->
