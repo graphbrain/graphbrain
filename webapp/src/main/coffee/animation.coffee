@@ -8,7 +8,6 @@ animCycle = ->
   g.rotateX(-animSpeedX)
   g.rotateY(animSpeedY)
   g.updateView()
-  g.updateDetailLevel()
 
   animSpeedX *= 0.98
   animSpeedY *= 0.98
