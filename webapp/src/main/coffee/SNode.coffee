@@ -34,8 +34,6 @@ class SNode
         @f = newv3()    # force
         @tpos = newv3() # temporary position
 
-        @fixed = false
-
 
     updateTransform: ->
         x = @rpos[0]

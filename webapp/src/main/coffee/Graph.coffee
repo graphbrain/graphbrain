@@ -133,15 +133,12 @@ class Graph
 
 
     layout: ->
-        #@snodes[key].initLayout() for key of @snodes when @snodes.hasOwnProperty(key)
-
         # layout root node
         @root.moveTo(0, 0, 0)
-        @root.fixed = true
 
         # create snode array
         @snodeArray = []
-        @snodeArray.push(@snodes[key]) for key of @snodes when @snodes.hasOwnProperty(key) and !@snodes[key].fixed
+        @snodeArray.push(@snodes[key]) for key of @snodes when @snodes.hasOwnProperty(key) and !@snodes[key].isRoot
 
         layout()
 
@@ -156,6 +153,4 @@ class Graph
             @mappingPower = Math.log(Math.asin(Nt / (N / 2)) / Math.PI) * (1 / Math.log(0.5))
             @negativeStretch = @mappingPower * 2
 
-        if N > 0
-          for i in [0..(@snodeArray.length - 1)]
-            @snodeArray[i].applyPos()
+        @snodes[k].applyPos() for k of @snodes
