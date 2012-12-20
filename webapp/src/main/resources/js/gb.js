@@ -893,7 +893,6 @@ function testCSS(prop) {
     g.rotateX(-animSpeedX);
     g.rotateY(animSpeedY);
     g.updateView();
-    g.updateDetailLevel();
     animSpeedX *= 0.98;
     animSpeedY *= 0.98;
     if (animSpeedX < 0.0001) {
@@ -949,7 +948,6 @@ function testCSS(prop) {
       g.rotateX(-deltaX * 0.0015);
       g.rotateY(deltaY * 0.0015);
       g.updateView();
-      g.updateDetailLevel();
     }
     return false;
   };
@@ -982,7 +980,6 @@ function testCSS(prop) {
       g.rotateX(-deltaX * 0.0015);
       g.rotateY(deltaY * 0.0015);
       g.updateView();
-      g.updateDetailLevel();
       false;
     } else if (e.touches.length === 2) {
       e.preventDefault();
@@ -1068,31 +1065,7 @@ function testCSS(prop) {
       this.url = url != null ? url : '';
       this.icon = icon != null ? icon : '';
       this.divid = 'n' + nodeCount++;
-      this.rpos = Array(3);
-      this.subNodes = [];
-      this.sx = 0;
-      this.sy = 0;
-      this.dlevel = 0;
     }
-
-    Node.prototype.estimatePos = function() {
-      this.rpos[0] = this.snode.rpos[0] + this.sx;
-      this.rpos[1] = this.snode.rpos[1] + this.sy;
-      this.rpos[2] = this.snode.rpos[2];
-      this.x0 = this.rpos[0] - this.halfWidth;
-      this.y0 = this.rpos[1] - this.halfHeight;
-      this.x1 = this.rpos[0] + this.halfWidth;
-      return this.y1 = this.rpos[1] + this.halfHeight;
-    };
-
-    Node.prototype.updateDimensions = function() {
-      var nodeDiv;
-      nodeDiv = $('#' + this.divid);
-      this.width = nodeDiv.outerWidth();
-      this.height = nodeDiv.outerHeight();
-      this.halfWidth = this.width / 2;
-      return this.halfHeight = this.height / 2;
-    };
 
     Node.prototype.place = function() {
       var html, nodeData;
@@ -1130,29 +1103,7 @@ function testCSS(prop) {
       }
       $('#t' + this.divid).click(nodeData, nodeClicked);
       html = '<div id="d' + this.divid + '" class="nodeDetail">Some more text about this node.</div>';
-      $('#' + this.divid).append(html);
-      return this.updateDimensions();
-    };
-
-    Node.prototype.updateDetailLevel = function(scale, z, depth) {
-      var k, _dlevel;
-      k = scale * (z + 500);
-      _dlevel = 1;
-      if (k < 99999999) {
-        _dlevel = 0;
-      }
-      if (_dlevel === this.dlevel) {
-        return false;
-      }
-      this.dlevel = _dlevel;
-      if (this.dlevel === 0) {
-        $('div#' + this.divid).css('font-size', '12px');
-        $('div#d' + this.divid).css('display', 'none');
-      } else if (this.dlevel === 1) {
-        $('div#' + this.divid).css('font-size', '24px');
-        $('div#d' + this.divid).css('display', 'block');
-      }
-      return true;
+      return $('#' + this.divid).append(html);
     };
 
     return Node;
@@ -1233,25 +1184,7 @@ function testCSS(prop) {
       this.height = 0;
       this.halfWidth = 0;
       this.halfHeight = 0;
-      this.initialWidth = -1;
       this.scale = 1;
-      this.rect = [];
-      this.rect.v1 = [];
-      this.rect.v2 = [];
-      this.rect.v3 = [];
-      this.rect.v4 = [];
-      this.rect.v1.x = 0;
-      this.rect.v1.y = 0;
-      this.rect.v1.z = 0;
-      this.rect.v2.x = 0;
-      this.rect.v2.y = 0;
-      this.rect.v2.z = 0;
-      this.rect.v3.x = 0;
-      this.rect.v3.y = 0;
-      this.rect.v3.z = 0;
-      this.rect.v4.x = 0;
-      this.rect.v4.y = 0;
-      this.rect.v4.z = 0;
       this.jqDiv = false;
     }
 
@@ -1308,18 +1241,6 @@ function testCSS(prop) {
       this.rpos[0] = this.rpos[0] * g.halfWidth * 0.8 + g.halfWidth;
       this.rpos[1] += this.rpos[1] * g.halfHeight * 0.8 + g.halfHeight;
       this.rpos[2] += this.rpos[2] * Math.min(g.halfWidth, g.halfHeight) * 0.8;
-      this.x0 = this.rpos[0] - this.halfWidth;
-      this.y0 = this.rpos[1] - this.halfHeight;
-      this.x1 = this.rpos[0] + this.halfWidth;
-      this.y1 = this.rpos[1] + this.halfHeight;
-      this.rect.v1.x = this.rpos[0] - this.halfWidth;
-      this.rect.v1.y = this.rpos[1] - this.halfHeight;
-      this.rect.v2.x = this.rpos[0] - this.halfWidth;
-      this.rect.v2.y = this.rpos[1] + this.halfHeight;
-      this.rect.v3.x = this.rpos[0] + this.halfWidth;
-      this.rect.v3.y = this.rpos[1] + this.halfHeight;
-      this.rect.v4.x = this.rpos[0] + this.halfWidth;
-      this.rect.v4.y = this.rpos[1] - this.halfHeight;
       return this.updateTransform();
     };
 
@@ -1378,23 +1299,6 @@ function testCSS(prop) {
     SNode.prototype.setColor = function(color) {
       $('#' + this.id + ' .snodeInner').css('border-color', color);
       return $('#' + this.id + ' .snodeLabel').css('background', color);
-    };
-
-    SNode.prototype.updateDetailLevel = function(scale) {
-      var key, updated;
-      updated = false;
-      for (key in this.nodes) {
-        if (this.nodes.hasOwnProperty(key)) {
-          if (this.nodes[key].updateDetailLevel(scale, this.rpos[2], this.depth)) {
-            updated = true;
-          }
-        }
-      }
-      if (updated) {
-        this.updateDimensions();
-        this.scale = this.initialWidth / this.width;
-        return this.updateTransform();
-      }
     };
 
     SNode.prototype.toString = function() {
@@ -1553,7 +1457,6 @@ function testCSS(prop) {
       node = new Node(nid, text, type, snode);
     }
     snode.nodes[nid] = node;
-    g.nodes[nid] = node;
     g.rootNode = node;
     _ref = data['snodes'];
     for (k in _ref) {
@@ -1577,10 +1480,8 @@ function testCSS(prop) {
           node = new Node(nid, text, type, snode);
         }
         snode.nodes[nid] = node;
-        g.nodes[nid] = node;
       }
     }
-    g.genSNodeKeys();
     g.placeNodes();
     g.layout();
     return g.updateView();
@@ -1594,8 +1495,6 @@ function testCSS(prop) {
       this.halfWidth = width / 2;
       this.halfHeight = height / 2;
       this.snodes = {};
-      this.nodes = {};
-      this.links = [];
       this.scale = 1;
       this.offsetX = 0;
       this.offsetY = 0;
@@ -1655,8 +1554,7 @@ function testCSS(prop) {
         }
       }
       this.scale = newScale;
-      this.updateTransform();
-      return this.updateDetailLevel();
+      return this.updateTransform();
     };
 
     Graph.prototype.placeNodes = function() {
@@ -1670,90 +1568,21 @@ function testCSS(prop) {
       return _results;
     };
 
-    Graph.prototype.updateViewLinks = function() {
-      var link, _i, _j, _len, _len1, _ref, _ref1, _results;
-      _ref = this.links;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        link = _ref[_i];
-        link.updatePos();
-      }
-      _ref1 = this.links;
-      _results = [];
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        link = _ref1[_j];
-        _results.push(link.visualUpdate());
-      }
-      return _results;
-    };
-
     Graph.prototype.updateView = function() {
-      var key, sn;
+      var key, sn, _results;
+      _results = [];
       for (key in this.snodes) {
         if (!(this.snodes.hasOwnProperty(key))) {
           continue;
         }
         sn = this.snodes[key];
-        sn.moveTo(sn.x, sn.y, sn.z);
-      }
-      return this.updateViewLinks();
-    };
-
-    Graph.prototype.updateDetailLevel = function() {
-      var key, _results;
-      _results = [];
-      for (key in this.snodes) {
-        if (this.snodes.hasOwnProperty(key)) {
-          _results.push(this.snodes[key].updateDetailLevel(this.scale));
-        }
+        _results.push(sn.moveTo(sn.x, sn.y, sn.z));
       }
       return _results;
-    };
-
-    Graph.prototype.genSNodeKeys = function() {
-      var key, _i, _len, _ref, _results;
-      _ref = this.snodes;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        key = _ref[_i];
-        _results.push(key);
-      }
-      return _results;
-    };
-
-    Graph.prototype.nextByWeight = function(depth) {
-      var bestSNode, bestWeight, key, snode;
-      bestWeight = -1;
-      bestSNode = false;
-      for (key in this.snodes) {
-        if (!(this.snodes.hasOwnProperty(key))) {
-          continue;
-        }
-        snode = this.snodes[key];
-        if ((!snode.fixed) && (snode.depth === depth)) {
-          if (snode.weight > bestWeight) {
-            bestWeight = snode.weight;
-            bestSNode = snode;
-          }
-        }
-      }
-      return bestSNode;
-    };
-
-    Graph.prototype.signal = function(value) {
-      if (value >= 0) {
-        return 1.0;
-      } else {
-        return -1.0;
-      }
     };
 
     Graph.prototype.layout = function() {
       var N, Nt, i, key, _i, _ref, _results;
-      for (key in this.snodes) {
-        if (this.snodes.hasOwnProperty(key)) {
-          this.snodes[key].initLayout();
-        }
-      }
       this.root.moveTo(0, 0, 0);
       this.root.fixed = true;
       this.snodeArray = [];

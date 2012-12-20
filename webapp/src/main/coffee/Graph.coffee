@@ -22,7 +22,6 @@ initGraph = ->
         node = new Node(nid, text, type, snode)
             
     snode.nodes[nid] = node
-    g.nodes[nid] = node
     g.rootNode = node
 
     # process super nodes and associated nodes
@@ -48,9 +47,6 @@ initGraph = ->
                 node = new Node(nid, text, type, snode)
             
             snode.nodes[nid] = node
-            g.nodes[nid] = node
-
-    g.genSNodeKeys()
 
     g.placeNodes()
     g.layout()
@@ -65,8 +61,6 @@ class Graph
         @halfHeight = height / 2
 
         @snodes = {}
-        @nodes = {}
-        @links = []
         @scale = 1
         @offsetX = 0
         @offsetY = 0
@@ -127,48 +121,19 @@ class Graph
         @scale = newScale
 
         @updateTransform()
-        @updateDetailLevel()
 
 
     placeNodes: -> g.snodes[key].place() for key of g.snodes when g.snodes.hasOwnProperty(key)
 
-
-    updateViewLinks: ->
-        link.updatePos() for link in @links
-        link.visualUpdate() for link in @links
 
     updateView: ->
         for key of @snodes when @snodes.hasOwnProperty(key)
             sn = @snodes[key]
             sn.moveTo(sn.x, sn.y, sn.z)
 
-        @updateViewLinks()
-
-    updateDetailLevel: -> @snodes[key].updateDetailLevel(@scale) for key of @snodes when @snodes.hasOwnProperty(key)
-
-    genSNodeKeys: -> key for key in @snodes
-
-    nextByWeight: (depth) ->
-        bestWeight = -1
-        bestSNode = false
-        
-        for key of @snodes when @snodes.hasOwnProperty(key)
-            snode = @snodes[key]
-            if (not snode.fixed) and (snode.depth == depth)
-                if snode.weight > bestWeight
-                    bestWeight = snode.weight
-                    bestSNode = snode
-
-        bestSNode
-
-    signal: (value) ->
-        if value >= 0
-            1.0
-        else
-            -1.0
 
     layout: ->
-        @snodes[key].initLayout() for key of @snodes when @snodes.hasOwnProperty(key)
+        #@snodes[key].initLayout() for key of @snodes when @snodes.hasOwnProperty(key)
 
         # layout root node
         @root.moveTo(0, 0, 0)

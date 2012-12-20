@@ -31,7 +31,6 @@ mouseMove = (e) ->
         g.rotateX(-deltaX * 0.0015)
         g.rotateY(deltaY * 0.0015)
         g.updateView()
-        g.updateDetailLevel()
     false
 
 touchStart = (e) ->
@@ -57,7 +56,6 @@ touchMove = (e) ->
         g.rotateX(-deltaX * 0.0015)
         g.rotateY(deltaY * 0.0015)
         g.updateView()
-        g.updateDetailLevel()
         false
     else if e.touches.length == 2
         e.preventDefault()

@@ -11,28 +11,7 @@ class SNode
         @height = 0
         @halfWidth = 0
         @halfHeight = 0
-        @initialWidth = -1
         @scale = 1
-
-        # bounding rectangle
-        @rect = []
-        @rect.v1 = []
-        @rect.v2 = []
-        @rect.v3 = []
-        @rect.v4 = []
-
-        @rect.v1.x = 0
-        @rect.v1.y = 0
-        @rect.v1.z = 0
-        @rect.v2.x = 0
-        @rect.v2.y = 0
-        @rect.v2.z = 0
-        @rect.v3.x = 0
-        @rect.v3.y = 0
-        @rect.v3.z = 0
-        @rect.v4.x = 0
-        @rect.v4.y = 0
-        @rect.v4.z = 0
 
         # jquery objects
         @jqDiv = false
@@ -44,6 +23,7 @@ class SNode
         @x = 0
         @y = 0
         @z = 0
+
         # position after rotation
         @rpos = Array(3)
 
@@ -103,25 +83,6 @@ class SNode
         @rpos[1] += @rpos[1] * g.halfHeight * 0.8 + g.halfHeight
         @rpos[2] += @rpos[2] * Math.min(g.halfWidth, g.halfHeight) * 0.8
 
-        # limits used to place links
-        @x0 = @rpos[0] - @halfWidth
-        @y0 = @rpos[1] - @halfHeight
-        @x1 = @rpos[0] + @halfWidth
-        @y1 = @rpos[1] + @halfHeight
-
-        # calc bounding rectangle
-        @rect.v1.x = @rpos[0] - @halfWidth
-        @rect.v1.y = @rpos[1] - @halfHeight
-        @rect.v2.x = @rpos[0] - @halfWidth
-        @rect.v2.y = @rpos[1] + @halfHeight
-        @rect.v3.x = @rpos[0] + @halfWidth
-        @rect.v3.y = @rpos[1] + @halfHeight
-        @rect.v4.x = @rpos[0] + @halfWidth
-        @rect.v4.y = @rpos[1] - @halfHeight
-
-        # update position of contained nodes
-        #@nodes[key].estimatePos() for key of @nodes when @nodes.hasOwnProperty(key) 
-
         # update position of connected links
         @updateTransform()
 
@@ -140,9 +101,6 @@ class SNode
             @initialWidth = @width
 
         @updateTransform()
-
-        # calc relative positions of nodes contained in this super node
-        #@nodes[key].updateDimensions() for key of @nodes when @nodes.hasOwnProperty(key)
 
 
     place: ->
@@ -180,20 +138,6 @@ class SNode
     setColor: (color) ->
         $('#' + @id + ' .snodeInner').css('border-color', color)
         $('#' + @id + ' .snodeLabel').css('background', color)
-
-
-    updateDetailLevel: (scale) ->
-        updated = false
-        for key of @nodes
-            if @nodes.hasOwnProperty(key)
-                if @nodes[key].updateDetailLevel(scale, @rpos[2], @depth)
-                    updated = true
-
-        if updated
-            @updateDimensions()
-            @scale = @initialWidth / @width
-            #console.log('initialWidth: ' + @initialWidth + '; width: ' + @width + '; scale: ' + @scale)
-            @updateTransform()
 
 
     toString: ->
