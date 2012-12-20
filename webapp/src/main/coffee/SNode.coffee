@@ -2,15 +2,10 @@
 
 # Super node
 class SNode
-    constructor: (@id, @etype, @relpos, @label, @color) ->
+    constructor: (@id, @etype, @relpos, @label, @color, @isRoot) ->
         @initLayout()
 
         @nodes = {}
-        @subNodes = []
-        @parent = 'unknown'
-        @links = []
-        @weight = 0
-        @depth = 0
 
         @width = 0
         @height = 0
@@ -153,13 +148,13 @@ class SNode
     place: ->
         html = '<div id="' + @id + '" class="snode">'
         relText = ''
-        if @depth != 0
-            rootText = nodes[rootNodeId]['text']
+        if not @isRoot
+            rootText = g.rootNode['text']
             relText = @label
             if @relpos == 1
                 relText += ' ' + rootText
         html += '<div class="snodeLabel">' + relText + '</div>'
-        if @depth == 0
+        if @isRoot
             html += '<div class="snodeInner snodeRoot">'
         else
             html += '<div class="snodeInner">'
@@ -168,23 +163,18 @@ class SNode
 
         @jqDiv = $('#' + @id)
 
-        nodesCount = 0
-        nodesCount++ for key of @nodes when @nodes.hasOwnProperty(key)
-
         # place nodes contained in this super node
         @nodes[key].place() for key of @nodes when @nodes.hasOwnProperty(key)
 
         # scrollbar
-        if (nodesCount > 1) && (@jqDiv.outerHeight() > 250)
+        if @jqDiv.outerHeight() > 250
             $('#' + @id + ' .viewport').slimScroll({height: '250px'})
             @jqDiv.hover scrollOn, scrollOff
 
         @updateDimensions()
 
-        if @depth != 0
+        if not @isRoot
             @setColor(@color)
-
-        nodeObj = this
 
 
     setColor: (color) ->
