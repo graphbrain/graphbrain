@@ -50,7 +50,6 @@ initGraph = ->
 
     g.placeNodes()
     g.layout()
-    g.updateView()
 
 
 class Graph
@@ -127,9 +126,7 @@ class Graph
 
 
     updateView: ->
-        for key of @snodes when @snodes.hasOwnProperty(key)
-            sn = @snodes[key]
-            sn.moveTo(sn.x, sn.y, sn.z)
+        @snodes[k].applyPos() for k of @snodes
 
 
     layout: ->
@@ -153,4 +150,4 @@ class Graph
             @mappingPower = Math.log(Math.asin(Nt / (N / 2)) / Math.PI) * (1 / Math.log(0.5))
             @negativeStretch = @mappingPower * 2
 
-        @snodes[k].applyPos() for k of @snodes
+        @updateView

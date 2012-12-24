@@ -969,7 +969,6 @@ function testCSS(prop) {
       this.label = label;
       this.color = color;
       this.isRoot = isRoot;
-      this.initLayout();
       this.nodes = {};
       this.width = 0;
       this.height = 0;
@@ -977,9 +976,6 @@ function testCSS(prop) {
       this.halfHeight = 0;
       this.scale = 1;
       this.jqDiv = false;
-    }
-
-    SNode.prototype.initLayout = function() {
       this.pos = newv3();
       this.x = 0;
       this.y = 0;
@@ -987,30 +983,11 @@ function testCSS(prop) {
       this.rpos = Array(3);
       this.auxVec = new Array(3);
       this.f = newv3();
-      return this.tpos = newv3();
-    };
-
-    SNode.prototype.updateTransform = function() {
-      var opacity, transformStr, x, y, z;
-      x = this.rpos[0];
-      y = this.rpos[1];
-      z = this.rpos[2] + g.zOffset;
-      if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
-        transformStr = 'translate3d(' + (x - this.halfWidth) + 'px,' + (y - this.halfHeight) + 'px,' + z + 'px)';
-        transformStr += ' scale(' + this.scale + ')';
-        this.jqDiv.css('-webkit-transform', transformStr);
-        this.jqDiv.css('-moz-transform', transformStr);
-        if (z < 0) {
-          opacity = -1 / (z * 0.007);
-          return this.jqDiv.css('opacity', opacity);
-        } else {
-          return this.jqDiv.css('opacity', 1);
-        }
-      }
-    };
+      this.tpos = newv3();
+    }
 
     SNode.prototype.moveTo = function(x, y, z) {
-      var sc;
+      var opacity, sc, transformStr;
       this.x = x;
       this.y = y;
       this.z = z;
@@ -1031,22 +1008,25 @@ function testCSS(prop) {
       this.rpos[0] = this.rpos[0] * g.halfWidth * 0.8 + g.halfWidth;
       this.rpos[1] += this.rpos[1] * g.halfHeight * 0.8 + g.halfHeight;
       this.rpos[2] += this.rpos[2] * Math.min(g.halfWidth, g.halfHeight) * 0.8;
-      return this.updateTransform();
+      x = this.rpos[0];
+      y = this.rpos[1];
+      z = this.rpos[2] + g.zOffset;
+      if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
+        transformStr = 'translate3d(' + (x - this.halfWidth) + 'px,' + (y - this.halfHeight) + 'px,' + z + 'px)';
+        transformStr += ' scale(' + this.scale + ')';
+        this.jqDiv.css('-webkit-transform', transformStr);
+        this.jqDiv.css('-moz-transform', transformStr);
+        if (z < 0) {
+          opacity = -1 / (z * 0.007);
+          return this.jqDiv.css('opacity', opacity);
+        } else {
+          return this.jqDiv.css('opacity', 1);
+        }
+      }
     };
 
     SNode.prototype.applyPos = function() {
       return this.moveTo(this.pos[0], this.pos[1], this.pos[2]);
-    };
-
-    SNode.prototype.updateDimensions = function() {
-      this.width = this.jqDiv.outerWidth();
-      this.height = this.jqDiv.outerHeight();
-      this.halfWidth = this.width / 2;
-      this.halfHeight = this.height / 2;
-      if (this.initialWidth < 0) {
-        this.initialWidth = this.width;
-      }
-      return this.updateTransform();
     };
 
     SNode.prototype.place = function() {
@@ -1080,7 +1060,13 @@ function testCSS(prop) {
         });
         this.jqDiv.hover(scrollOn, scrollOff);
       }
-      this.updateDimensions();
+      this.width = this.jqDiv.outerWidth();
+      this.height = this.jqDiv.outerHeight();
+      this.halfWidth = this.width / 2;
+      this.halfHeight = this.height / 2;
+      if (this.initialWidth < 0) {
+        this.initialWidth = this.width;
+      }
       if (!this.isRoot) {
         return this.setColor(this.color);
       }
@@ -1273,8 +1259,7 @@ function testCSS(prop) {
       }
     }
     g.placeNodes();
-    g.layout();
-    return g.updateView();
+    return g.layout();
   };
 
   Graph = (function() {
@@ -1359,20 +1344,16 @@ function testCSS(prop) {
     };
 
     Graph.prototype.updateView = function() {
-      var key, sn, _results;
+      var k, _results;
       _results = [];
-      for (key in this.snodes) {
-        if (!(this.snodes.hasOwnProperty(key))) {
-          continue;
-        }
-        sn = this.snodes[key];
-        _results.push(sn.moveTo(sn.x, sn.y, sn.z));
+      for (k in this.snodes) {
+        _results.push(this.snodes[k].applyPos());
       }
       return _results;
     };
 
     Graph.prototype.layout = function() {
-      var N, Nt, k, key, _results;
+      var N, Nt, key;
       this.root.moveTo(0, 0, 0);
       this.snodeArray = [];
       for (key in this.snodes) {
@@ -1389,11 +1370,7 @@ function testCSS(prop) {
         this.mappingPower = Math.log(Math.asin(Nt / (N / 2)) / Math.PI) * (1 / Math.log(0.5));
         this.negativeStretch = this.mappingPower * 2;
       }
-      _results = [];
-      for (k in this.snodes) {
-        _results.push(this.snodes[k].applyPos());
-      }
-      return _results;
+      return this.updateView;
     };
 
     return Graph;
