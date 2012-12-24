@@ -1,55 +1,6 @@
 # (c) 2012 GraphBrain Ltd. All rigths reserved.
 
-g = false
 rootNodeId = false
-
-initGraph = ->
-    g = new Graph($('#graph-view').width(), $('#graph-view').height())
-    g.updateTransform()
-
-    # create root
-    snode = new SNode('root', '', 0, '', '#000', true)
-    g.snodes['root'] = snode
-    g.root = snode
-    nid = data['root']['id']
-    rootNodeId = nid
-    text = data['root']['text']
-    type = data['root']['type']
-    
-    if type == 'url'
-        node = new Node(nid, text, type, snode, data['root']['url'], data['root']['icon'])
-    else
-        node = new Node(nid, text, type, snode)
-            
-    snode.nodes[nid] = node
-    g.rootNode = node
-
-    # process super nodes and associated nodes
-    for k, v of data['snodes']
-        sid = k
-        etype = v['etype']
-        label = v['label']
-        rpos = v['rpos']
-        color = v['color']
-        nlist = v['nodes']
-        
-        snode = new SNode(sid, etype, rpos, label, color, false)
-        g.snodes[sid] = snode
-
-        for nod in nlist
-            nid = nod['id']
-            text = nod['text']
-            type = nod['type']
-
-            if type == 'url'
-                node = new Node(nid, text, type, snode, nod['url'], nod['icon'])
-            else
-                node = new Node(nid, text, type, snode)
-            
-            snode.nodes[nid] = node
-
-    g.placeNodes()
-    g.layout()
 
 
 class Graph
@@ -74,6 +25,58 @@ class Graph
         # view eccentricity
         @negativeStretch = 1
         @mappingPower = 1
+
+
+    @initGraph = ->
+        graph = new Graph($('#graph-view').width(), $('#graph-view').height())
+        graph.updateTransform()
+
+        # create root
+        snode = new SNode(graph, 'root', '', 0, '', '#000', true)
+        graph.snodes['root'] = snode
+        graph.root = snode
+        nid = data['root']['id']
+        rootNodeId = nid
+        text = data['root']['text']
+        type = data['root']['type']
+    
+        if type == 'url'
+            node = new Node(nid, text, type, snode, data['root']['url'], data['root']['icon'])
+        else
+            node = new Node(nid, text, type, snode)
+            
+        snode.nodes[nid] = node
+        graph.rootNode = node
+
+        # process super nodes and associated nodes
+        for k, v of data['snodes']
+            sid = k
+            etype = v['etype']
+            label = v['label']
+            rpos = v['rpos']
+            color = v['color']
+            nlist = v['nodes']
+        
+            snode = new SNode(graph, sid, etype, rpos, label, color, false)
+            graph.snodes[sid] = snode
+
+            for nod in nlist
+                nid = nod['id']
+                text = nod['text']
+                type = nod['type']
+
+                if type == 'url'
+                    node = new Node(nid, text, type, snode, nod['url'], nod['icon'])
+                else
+                    node = new Node(nid, text, type, snode)
+            
+                snode.nodes[nid] = node
+
+        graph.placeNodes()
+        graph.layout()
+
+        graph
+
 
     updateSize: ->
         @width = $('#graph-view').width()
@@ -122,7 +125,7 @@ class Graph
         @updateTransform()
 
 
-    placeNodes: -> g.snodes[key].place() for key of g.snodes when g.snodes.hasOwnProperty(key)
+    placeNodes: -> @snodes[key].place() for key of @snodes when @snodes.hasOwnProperty(key)
 
 
     updateView: ->
@@ -134,16 +137,16 @@ class Graph
         @root.moveTo(0, 0, 0)
 
         # create snode array
-        @snodeArray = []
-        @snodeArray.push(@snodes[key]) for key of @snodes when @snodes.hasOwnProperty(key) and !@snodes[key].isRoot
+        snodeArray = []
+        snodeArray.push(@snodes[key]) for key of @snodes when @snodes.hasOwnProperty(key) and !@snodes[key].isRoot
 
-        layout()
+        layout(snodeArray)
 
         # calc eccentricity params
         @negativeStretch = 1
         @mappingPower = 1
 
-        N = @snodeArray.length
+        N = snodeArray.length
         Nt = 7
 
         if (N > (Nt * 2))

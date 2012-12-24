@@ -466,7 +466,7 @@ function testCSS(prop) {
 }
 ;
 
-  var Graph, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, animSpeedX, animSpeedY, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initAnimation, initChatBuffer, initDisambiguateDialog, initGraph, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, initTextView, intervalID, lastScale, lastX, lastY, layout, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, nodeView, printHelp, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopAnim, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, animSpeedX, animSpeedY, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initAnimation, initChatBuffer, initDisambiguateDialog, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, initTextView, intervalID, lastScale, lastX, lastY, layout, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, printHelp, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopAnim, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   browserSpecificTweaks = function() {
     if (isSafari) {
@@ -903,7 +903,9 @@ function testCSS(prop) {
 
   SphericalCoords = (function() {
 
-    function SphericalCoords() {
+    function SphericalCoords(negativeStretch, mappingPower) {
+      this.negativeStretch = negativeStretch;
+      this.mappingPower = mappingPower;
       this.theta = 0;
       this.phi = 0;
       this.r = 0;
@@ -925,7 +927,7 @@ function testCSS(prop) {
         this.y = this.r * Math.cos(phi);
         this.z = this.r * Math.sin(theta) * Math.sin(phi);
         if (this.z < 0) {
-          return this.z *= g.negativeStretch;
+          return this.z *= this.negativeStretch;
         }
       }
     };
@@ -946,7 +948,7 @@ function testCSS(prop) {
         _maxAng = -maxAng;
       }
       d = Math.abs((_maxAng - ang) / maxAng);
-      d = Math.abs(Math.pow(d, g.mappingPower));
+      d = Math.abs(Math.pow(d, this.mappingPower));
       d *= _maxAng;
       return _maxAng - d;
     };
@@ -962,7 +964,8 @@ function testCSS(prop) {
 
   SNode = (function() {
 
-    function SNode(id, etype, relpos, label, color, isRoot) {
+    function SNode(graph, id, etype, relpos, label, color, isRoot) {
+      this.graph = graph;
       this.id = id;
       this.etype = etype;
       this.relpos = relpos;
@@ -994,8 +997,8 @@ function testCSS(prop) {
       this.auxVec[0] = this.x;
       this.auxVec[1] = this.y;
       this.auxVec[2] = this.z;
-      m4x4mulv3(g.affinMat, this.auxVec, this.rpos);
-      sc = new SphericalCoords;
+      m4x4mulv3(this.graph.affinMat, this.auxVec, this.rpos);
+      sc = new SphericalCoords(this.graph.negativeStretch, this.graph.mappingPower);
       sc.x = this.rpos[0];
       sc.y = this.rpos[1];
       sc.z = this.rpos[2];
@@ -1005,12 +1008,12 @@ function testCSS(prop) {
       this.rpos[0] = sc.x;
       this.rpos[1] = sc.y;
       this.rpos[2] = sc.z;
-      this.rpos[0] = this.rpos[0] * g.halfWidth * 0.8 + g.halfWidth;
-      this.rpos[1] += this.rpos[1] * g.halfHeight * 0.8 + g.halfHeight;
-      this.rpos[2] += this.rpos[2] * Math.min(g.halfWidth, g.halfHeight) * 0.8;
+      this.rpos[0] = this.rpos[0] * this.graph.halfWidth * 0.8 + this.graph.halfWidth;
+      this.rpos[1] += this.rpos[1] * this.graph.halfHeight * 0.8 + this.graph.halfHeight;
+      this.rpos[2] += this.rpos[2] * Math.min(this.graph.halfWidth, this.graph.halfHeight) * 0.8;
       x = this.rpos[0];
       y = this.rpos[1];
-      z = this.rpos[2] + g.zOffset;
+      z = this.rpos[2] + this.graph.zOffset;
       if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
         transformStr = 'translate3d(' + (x - this.halfWidth) + 'px,' + (y - this.halfHeight) + 'px,' + z + 'px)';
         transformStr += ' scale(' + this.scale + ')';
@@ -1034,7 +1037,7 @@ function testCSS(prop) {
       html = '<div id="' + this.id + '" class="snode">';
       relText = '';
       if (!this.isRoot) {
-        rootText = g.rootNode['text'];
+        rootText = this.graph.rootNode['text'];
         relText = this.label;
         if (this.relpos === 1) {
           relText += ' ' + rootText;
@@ -1094,52 +1097,52 @@ function testCSS(prop) {
     return Math.random() - 0.5;
   };
 
-  getCoulombEnergy = function() {
+  getCoulombEnergy = function(snodeArray) {
     var N, e, i, j, _i, _j, _ref, _ref1, _ref2;
     e = 0;
-    N = g.snodeArray.length;
+    N = snodeArray.length;
     for (i = _i = 0, _ref = N - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
       if (i < N - 1) {
         for (j = _j = _ref1 = i + 1, _ref2 = N - 1; _ref1 <= _ref2 ? _j <= _ref2 : _j >= _ref2; j = _ref1 <= _ref2 ? ++_j : --_j) {
-          e += 1 / v3diffLength(g.snodeArray[i].tpos, g.snodeArray[j].tpos);
+          e += 1 / v3diffLength(snodeArray[i].tpos, snodeArray[j].tpos);
         }
       }
     }
     return e;
   };
 
-  getForces = function() {
+  getForces = function(snodeArray) {
     var N, ff, i, j, l, posi, posj, r, _i, _j, _ref, _ref1, _results;
-    N = g.snodeArray.length;
+    N = snodeArray.length;
     r = newv3;
     for (i = _i = 0, _ref = N - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
-      g.snodeArray[i].f[0] = 0;
-      g.snodeArray[i].f[1] = 0;
-      g.snodeArray[i].f[2] = 0;
+      snodeArray[i].f[0] = 0;
+      snodeArray[i].f[1] = 0;
+      snodeArray[i].f[2] = 0;
     }
     _results = [];
     for (i = _j = 0, _ref1 = N - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
-      posi = g.snodeArray[i].pos;
+      posi = snodeArray[i].pos;
       if (i < N - 1) {
         _results.push((function() {
           var _k, _ref2, _ref3, _results1;
           _results1 = [];
           for (j = _k = _ref2 = i + 1, _ref3 = N - 1; _ref2 <= _ref3 ? _k <= _ref3 : _k >= _ref3; j = _ref2 <= _ref3 ? ++_k : --_k) {
-            posj = g.snodeArray[j].pos;
+            posj = snodeArray[j].pos;
             r[0] = posi[0] - posj[0];
             r[1] = posi[1] - posj[1];
             r[2] = posi[2] - posj[2];
             l = v3length(r);
             l = 1 / (l * l * l);
             ff = l * r[0];
-            g.snodeArray[i].f[0] += ff;
-            g.snodeArray[j].f[0] -= ff;
+            snodeArray[i].f[0] += ff;
+            snodeArray[j].f[0] -= ff;
             ff = l * r[1];
-            g.snodeArray[i].f[1] += ff;
-            g.snodeArray[j].f[1] -= ff;
+            snodeArray[i].f[1] += ff;
+            snodeArray[j].f[1] -= ff;
             ff = l * r[2];
-            g.snodeArray[i].f[2] += ff;
-            _results1.push(g.snodeArray[j].f[2] -= ff);
+            snodeArray[i].f[2] += ff;
+            _results1.push(snodeArray[j].f[2] -= ff);
           }
           return _results1;
         })());
@@ -1150,9 +1153,9 @@ function testCSS(prop) {
     return _results;
   };
 
-  layout = function() {
+  layout = function(snodeArray) {
     var N, Nstep, d, e, e0, f, i, k, l, minimalStep, pos, step, tpos, _i, _j, _k, _l, _ref, _ref1, _ref2, _ref3;
-    N = g.snodeArray.length;
+    N = snodeArray.length;
     if (N === 0) {
       return;
     }
@@ -1160,28 +1163,28 @@ function testCSS(prop) {
     step = 0.01;
     minimalStep = 1e-10;
     for (i = _i = 0, _ref = N - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
-      g.snodeArray[i].pos[0] = 2 * frand();
-      g.snodeArray[i].pos[1] = 2 * frand();
-      g.snodeArray[i].pos[2] = 2 * frand();
-      l = v3length(g.snodeArray[i].pos);
+      snodeArray[i].pos[0] = 2 * frand();
+      snodeArray[i].pos[1] = 2 * frand();
+      snodeArray[i].pos[2] = 2 * frand();
+      l = v3length(snodeArray[i].pos);
       if (l !== 0.0) {
-        g.snodeArray[i].pos[0] /= l;
-        g.snodeArray[i].pos[1] /= l;
-        g.snodeArray[i].pos[2] /= l;
-        g.snodeArray[i].tpos[0] = g.snodeArray[i].pos[0];
-        g.snodeArray[i].tpos[1] = g.snodeArray[i].pos[1];
-        g.snodeArray[i].tpos[2] = g.snodeArray[i].pos[2];
+        snodeArray[i].pos[0] /= l;
+        snodeArray[i].pos[1] /= l;
+        snodeArray[i].pos[2] /= l;
+        snodeArray[i].tpos[0] = snodeArray[i].pos[0];
+        snodeArray[i].tpos[1] = snodeArray[i].pos[1];
+        snodeArray[i].tpos[2] = snodeArray[i].pos[2];
       } else {
         i -= 1;
       }
     }
-    e0 = getCoulombEnergy();
+    e0 = getCoulombEnergy(snodeArray);
     for (k = _j = 0, _ref1 = Nstep - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; k = 0 <= _ref1 ? ++_j : --_j) {
-      getForces();
+      getForces(snodeArray);
       for (i = _k = 0, _ref2 = N - 1; 0 <= _ref2 ? _k <= _ref2 : _k >= _ref2; i = 0 <= _ref2 ? ++_k : --_k) {
-        f = g.snodeArray[i].f;
-        pos = g.snodeArray[i].pos;
-        tpos = g.snodeArray[i].tpos;
+        f = snodeArray[i].f;
+        pos = snodeArray[i].pos;
+        tpos = snodeArray[i].tpos;
         d = v3dotv3(f, pos);
         f[0] -= pos[0] * d;
         f[1] -= pos[1] * d;
@@ -1194,7 +1197,7 @@ function testCSS(prop) {
         tpos[1] /= l;
         tpos[2] /= l;
       }
-      e = getCoulombEnergy();
+      e = getCoulombEnergy(snodeArray);
       if (e >= e0) {
         step /= 2;
         if (step < minimalStep) {
@@ -1202,9 +1205,9 @@ function testCSS(prop) {
         }
       } else {
         for (i = _l = 0, _ref3 = N - 1; 0 <= _ref3 ? _l <= _ref3 : _l >= _ref3; i = 0 <= _ref3 ? ++_l : --_l) {
-          g.snodeArray[i].pos[0] = g.snodeArray[i].tpos[0];
-          g.snodeArray[i].pos[1] = g.snodeArray[i].tpos[1];
-          g.snodeArray[i].pos[2] = g.snodeArray[i].tpos[2];
+          snodeArray[i].pos[0] = snodeArray[i].tpos[0];
+          snodeArray[i].pos[1] = snodeArray[i].tpos[1];
+          snodeArray[i].pos[2] = snodeArray[i].tpos[2];
         }
         e0 = e;
         step *= 2;
@@ -1212,55 +1215,7 @@ function testCSS(prop) {
     }
   };
 
-  g = false;
-
   rootNodeId = false;
-
-  initGraph = function() {
-    var color, etype, k, label, nid, nlist, nod, node, rpos, sid, snode, text, type, v, _i, _len, _ref;
-    g = new Graph($('#graph-view').width(), $('#graph-view').height());
-    g.updateTransform();
-    snode = new SNode('root', '', 0, '', '#000', true);
-    g.snodes['root'] = snode;
-    g.root = snode;
-    nid = data['root']['id'];
-    rootNodeId = nid;
-    text = data['root']['text'];
-    type = data['root']['type'];
-    if (type === 'url') {
-      node = new Node(nid, text, type, snode, data['root']['url'], data['root']['icon']);
-    } else {
-      node = new Node(nid, text, type, snode);
-    }
-    snode.nodes[nid] = node;
-    g.rootNode = node;
-    _ref = data['snodes'];
-    for (k in _ref) {
-      v = _ref[k];
-      sid = k;
-      etype = v['etype'];
-      label = v['label'];
-      rpos = v['rpos'];
-      color = v['color'];
-      nlist = v['nodes'];
-      snode = new SNode(sid, etype, rpos, label, color, false);
-      g.snodes[sid] = snode;
-      for (_i = 0, _len = nlist.length; _i < _len; _i++) {
-        nod = nlist[_i];
-        nid = nod['id'];
-        text = nod['text'];
-        type = nod['type'];
-        if (type === 'url') {
-          node = new Node(nid, text, type, snode, nod['url'], nod['icon']);
-        } else {
-          node = new Node(nid, text, type, snode);
-        }
-        snode.nodes[nid] = node;
-      }
-    }
-    g.placeNodes();
-    return g.layout();
-  };
 
   Graph = (function() {
 
@@ -1281,6 +1236,53 @@ function testCSS(prop) {
       this.negativeStretch = 1;
       this.mappingPower = 1;
     }
+
+    Graph.initGraph = function() {
+      var color, etype, graph, k, label, nid, nlist, nod, node, rpos, sid, snode, text, type, v, _i, _len, _ref;
+      graph = new Graph($('#graph-view').width(), $('#graph-view').height());
+      graph.updateTransform();
+      snode = new SNode(graph, 'root', '', 0, '', '#000', true);
+      graph.snodes['root'] = snode;
+      graph.root = snode;
+      nid = data['root']['id'];
+      rootNodeId = nid;
+      text = data['root']['text'];
+      type = data['root']['type'];
+      if (type === 'url') {
+        node = new Node(nid, text, type, snode, data['root']['url'], data['root']['icon']);
+      } else {
+        node = new Node(nid, text, type, snode);
+      }
+      snode.nodes[nid] = node;
+      graph.rootNode = node;
+      _ref = data['snodes'];
+      for (k in _ref) {
+        v = _ref[k];
+        sid = k;
+        etype = v['etype'];
+        label = v['label'];
+        rpos = v['rpos'];
+        color = v['color'];
+        nlist = v['nodes'];
+        snode = new SNode(graph, sid, etype, rpos, label, color, false);
+        graph.snodes[sid] = snode;
+        for (_i = 0, _len = nlist.length; _i < _len; _i++) {
+          nod = nlist[_i];
+          nid = nod['id'];
+          text = nod['text'];
+          type = nod['type'];
+          if (type === 'url') {
+            node = new Node(nid, text, type, snode, nod['url'], nod['icon']);
+          } else {
+            node = new Node(nid, text, type, snode);
+          }
+          snode.nodes[nid] = node;
+        }
+      }
+      graph.placeNodes();
+      graph.layout();
+      return graph;
+    };
 
     Graph.prototype.updateSize = function() {
       this.width = $('#graph-view').width();
@@ -1335,9 +1337,9 @@ function testCSS(prop) {
     Graph.prototype.placeNodes = function() {
       var key, _results;
       _results = [];
-      for (key in g.snodes) {
-        if (g.snodes.hasOwnProperty(key)) {
-          _results.push(g.snodes[key].place());
+      for (key in this.snodes) {
+        if (this.snodes.hasOwnProperty(key)) {
+          _results.push(this.snodes[key].place());
         }
       }
       return _results;
@@ -1353,18 +1355,18 @@ function testCSS(prop) {
     };
 
     Graph.prototype.layout = function() {
-      var N, Nt, key;
+      var N, Nt, key, snodeArray;
       this.root.moveTo(0, 0, 0);
-      this.snodeArray = [];
+      snodeArray = [];
       for (key in this.snodes) {
         if (this.snodes.hasOwnProperty(key) && !this.snodes[key].isRoot) {
-          this.snodeArray.push(this.snodes[key]);
+          snodeArray.push(this.snodes[key]);
         }
       }
-      layout();
+      layout(snodeArray);
       this.negativeStretch = 1;
       this.mappingPower = 1;
-      N = this.snodeArray.length;
+      N = snodeArray.length;
       Nt = 7;
       if (N > (Nt * 2)) {
         this.mappingPower = Math.log(Math.asin(Nt / (N / 2)) / Math.PI) * (1 / Math.log(0.5));
@@ -1377,9 +1379,9 @@ function testCSS(prop) {
 
   })();
 
-  initTextView = function() {
+  initTextView = function(graph) {
     var first, k, n, nid, nlist, nod, rel, relText, rootText, text, v, _ref, _results;
-    rootText = g.rootNode['text'];
+    rootText = graph.rootNode['text'];
     $('#text-view').append('<h2>' + rootText + '</h2><br />');
     _ref = data['snodes'];
     _results = [];
@@ -1400,7 +1402,7 @@ function testCSS(prop) {
           for (_i = 0, _len = nlist.length; _i < _len; _i++) {
             n = nlist[_i];
             nid = n['id'];
-            nod = g.snodes[k].nodes[nid];
+            nod = graph.snodes[k].nodes[nid];
             text = '';
             if (first) {
               first = false;
@@ -2072,11 +2074,11 @@ function testCSS(prop) {
     return $('#removeForm').submit();
   };
 
-  nodeView = false;
+  g = false;
 
   $(function() {
-    initGraph();
-    initTextView();
+    g = Graph.initGraph();
+    initTextView(g);
     initInterface();
     browserSpecificTweaks();
     return initAnimation();

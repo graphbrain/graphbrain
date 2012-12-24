@@ -2,7 +2,7 @@
 
 # Super node
 class SNode
-    constructor: (@id, @etype, @relpos, @label, @color, @isRoot) ->
+    constructor: (@graph, @id, @etype, @relpos, @label, @color, @isRoot) ->
         @nodes = {}
 
         @width = 0
@@ -41,10 +41,10 @@ class SNode
         @auxVec[1] = @y
         @auxVec[2] = @z
 
-        m4x4mulv3(g.affinMat, @auxVec, @rpos)
+        m4x4mulv3(@graph.affinMat, @auxVec, @rpos)
     
         # sphere mapping
-        sc = new SphericalCoords
+        sc = new SphericalCoords(@graph.negativeStretch, @graph.mappingPower)
         sc.x = @rpos[0]
         sc.y = @rpos[1]
         sc.z = @rpos[2]
@@ -56,14 +56,14 @@ class SNode
         @rpos[2] = sc.z
 
         # convert to screen coordinates
-        @rpos[0] = @rpos[0] * g.halfWidth * 0.8 + g.halfWidth
-        @rpos[1] += @rpos[1] * g.halfHeight * 0.8 + g.halfHeight
-        @rpos[2] += @rpos[2] * Math.min(g.halfWidth, g.halfHeight) * 0.8
+        @rpos[0] = @rpos[0] * @graph.halfWidth * 0.8 + @graph.halfWidth
+        @rpos[1] += @rpos[1] * @graph.halfHeight * 0.8 + @graph.halfHeight
+        @rpos[2] += @rpos[2] * Math.min(@graph.halfWidth, @graph.halfHeight) * 0.8
 
         # update transform
         x = @rpos[0]
         y = @rpos[1]
-        z = @rpos[2] + g.zOffset
+        z = @rpos[2] + @graph.zOffset
         if (!isNaN(x) && !isNaN(y) && !isNaN(z))
             transformStr = 'translate3d(' + (x - @halfWidth) + 'px,' + (y - @halfHeight) + 'px,' + z + 'px)'
             transformStr += ' scale(' + @scale + ')'
@@ -84,7 +84,7 @@ class SNode
         html = '<div id="' + @id + '" class="snode">'
         relText = ''
         if not @isRoot
-            rootText = g.rootNode['text']
+            rootText = @graph.rootNode['text']
             relText = @label
             if @relpos == 1
                 relText += ' ' + rootText

@@ -3,7 +3,7 @@
 
 
 class SphericalCoords
-    constructor: ->
+    constructor: (@negativeStretch, @mappingPower) ->
         # spherical coords
         @theta = 0
         @phi = 0
@@ -26,7 +26,7 @@ class SphericalCoords
             @y = @r * Math.cos(phi)
             @z = @r * Math.sin(theta) * Math.sin(phi)
             if @z < 0
-                @z *= g.negativeStretch
+                @z *= @negativeStretch
 
     cartesianToSpherical: ->
         @r = Math.sqrt(@x * @x + @y * @y + @z * @z)
@@ -41,7 +41,7 @@ class SphericalCoords
             _maxAng = -maxAng
 
         d = Math.abs((_maxAng - ang) / maxAng)
-        d = Math.abs(Math.pow(d, g.mappingPower))
+        d = Math.abs(Math.pow(d, @mappingPower))
         d *= _maxAng
         _maxAng - d
 
