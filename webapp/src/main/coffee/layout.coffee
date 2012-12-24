@@ -54,6 +54,7 @@ layout = (snodeArray) ->
     snodeArray[i].pos[0] = 2 * frand()
     snodeArray[i].pos[1] = 2 * frand()
     snodeArray[i].pos[2] = 2 * frand()
+
     l = v3length(snodeArray[i].pos)
     if l != 0.0
       snodeArray[i].pos[0] /= l
