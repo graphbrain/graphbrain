@@ -5,6 +5,8 @@
 g = false
 
 $ ->
+    Math.seedrandom("GraphBrain")
+
     g = Graph.initGraph()
     initTextView(g)
     initInterface()
