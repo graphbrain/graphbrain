@@ -1,7 +1,7 @@
 # (c) 2012 GraphBrain Ltd. All rigths reserved.
 
-initTextView = ->
-    rootText = g.rootNode['text']
+initTextView = (graph) ->
+    rootText = graph.rootNode['text']
     $('#text-view').append('<h2>' + rootText + '</h2><br />')
 
     for k, v of data['snodes']
@@ -18,7 +18,7 @@ initTextView = ->
             first = true
             for n in nlist
               nid = n['id']
-              nod = g.snodes[k].nodes[nid]
+              nod = graph.snodes[k].nodes[nid]
               text = ''
               if first
                   first = false

@@ -2,11 +2,11 @@
 
 # Entry point functions & global variables
 
-nodeView = false
+g = false
 
 $ ->
-    initGraph()
-    initTextView()
+    g = Graph.initGraph()
+    initTextView(g)
     initInterface()
     browserSpecificTweaks()
     initAnimation()
