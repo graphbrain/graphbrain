@@ -40,17 +40,6 @@ object VisualGraph {
     JSONGen.json(reply)
   }
 
-  private def generateEdgeNodeMap(edges: Set[Edge], rootId: String) = {
-    edges.map(
-      e => e.participantIds
-        .zip(0 until e.participantIds.length)
-        .map(x => (e.edgeType, x._2, x._1))
-    ).flatten
-      .filter(x => x._3 != rootId)
-      .groupBy(x => (x._1, x._2))
-      .mapValues(x => x.map(y => y._3))
-  }
-
   private def hyper2edge(edge: Edge, rootId: String) = {
     if (edge.participantIds.length > 2) {
       if (edge.edgeType == "rtype/1/instance_of~owned_by") {
@@ -74,6 +63,17 @@ object VisualGraph {
     }
   }
 
+  private def generateEdgeNodeMap(edges: Set[Edge], rootId: String) = {
+    edges.map(
+      e => e.participantIds
+        .zip(0 until e.participantIds.length)
+        .map(x => (e.edgeType, x._2, x._1))
+    ).flatten
+      .filter(x => x._3 != rootId)
+      .groupBy(x => (x._1, x._2))
+      .mapValues(x => x.map(y => y._3))
+  }
+
   private def node2map(nodeId: String, store: UserOps) = {
     val node = try {
       store.get(nodeId)
@@ -93,8 +93,8 @@ object VisualGraph {
     }
   }
 
-  private def generateSnode(pair: ((String, Int), Set[String]), store: UserOps) = {
-    val id = pair._1._1.replaceAll("/", "_") + "_" + pair._1._2
+  private def generateSnode(pair: ((String, Int), Set[String]), index: Int, store: UserOps) = {
+    val id = "sn" + index
     val label = linkLabel(pair._1._1)
     val color = linkColor(label)
     val nodes = pair._2.map(node2map(_, store))
@@ -105,7 +105,7 @@ object VisualGraph {
   }
 
   private def generateSnodeMap(edgeNodeMap: Map[(String, Int), Set[String]], store: UserOps) = {
-    edgeNodeMap.map(x => generateSnode(x, store))
+    edgeNodeMap.zipWithIndex.map(x => generateSnode(x._1, x._2, store))
   }
 
   private def linkColor(label: String) = {
