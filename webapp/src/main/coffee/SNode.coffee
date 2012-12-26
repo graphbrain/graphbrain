@@ -86,7 +86,7 @@ class SNode
         if not @isRoot
             rootText = @graph.rootNode['text']
             relText = @label
-            if @relpos == 1
+            if @relpos == 0
                 relText += ' ' + rootText
         html += '<div class="snodeLabel">' + relText + '</div>'
         if @isRoot

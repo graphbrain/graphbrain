@@ -1312,7 +1312,7 @@ function testCSS(prop) {
       if (!this.isRoot) {
         rootText = this.graph.rootNode['text'];
         relText = this.label;
-        if (this.relpos === 1) {
+        if (this.relpos === 0) {
           relText += ' ' + rootText;
         }
       }
