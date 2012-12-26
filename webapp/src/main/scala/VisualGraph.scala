@@ -27,6 +27,7 @@ object VisualGraph {
 
     // group nodes by edge type
     val edgeNodeMap = generateEdgeNodeMap(visualEdges, rootId)
+    println(edgeNodeMap)
 
     // create map with all information for supernodes
     val snodeMap = generateSnodeMap(edgeNodeMap, store)
