@@ -739,7 +739,7 @@ function testCSS(prop) {
 }
 ;
 
-  var Graph, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, animSpeedX, animSpeedY, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initAnimation, initChatBuffer, initDisambiguateDialog, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, initTextView, intervalID, lastScale, lastX, lastY, layout, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, printHelp, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopAnim, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, animSpeedX, animSpeedY, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initAnimation, initChatBuffer, initDisambiguateDialog, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, intervalID, lastScale, lastX, lastY, layout, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, printHelp, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopAnim, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   browserSpecificTweaks = function() {
     if (isSafari) {
@@ -1652,48 +1652,6 @@ function testCSS(prop) {
 
   })();
 
-  initTextView = function(graph) {
-    var first, k, n, nid, nlist, nod, rel, relText, rootText, text, v, _ref, _results;
-    rootText = graph.rootNode['text'];
-    $('#text-view').append('<h2>' + rootText + '</h2><br />');
-    _ref = data['snodes'];
-    _results = [];
-    for (k in _ref) {
-      v = _ref[k];
-      rel = v['label'];
-      if (rel !== '') {
-        nlist = v['nodes'];
-        relText = rel;
-        if (v['rpos'] === 1) {
-          relText = rel + ' ' + rootText;
-        }
-        $('#text-view').append('<h3>' + relText + ': </h3>');
-        first = true;
-        _results.push((function() {
-          var _i, _len, _results1;
-          _results1 = [];
-          for (_i = 0, _len = nlist.length; _i < _len; _i++) {
-            n = nlist[_i];
-            nid = n['id'];
-            nod = graph.snodes[k].nodes[nid];
-            text = '';
-            if (first) {
-              first = false;
-            } else {
-              text = ', ';
-            }
-            text += '<a href="/node/' + nid + '">' + nod['text'] + '</a>';
-            _results1.push($('#text-view').append(text));
-          }
-          return _results1;
-        })());
-      } else {
-        _results.push(void 0);
-      }
-    }
-    return _results;
-  };
-
   initSearchDialog = function() {
     var dialogHtml;
     dialogHtml = $("<div class=\"modal hide\" id=\"searchResultsModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Search Results</h3>\n  </div>\n  <div class=\"modal-body\" id=\"searchResultsBody\" />\n  <div class=\"modal-footer\">\n    <a class=\"btn btn-primary\" data-dismiss=\"modal\">Close</a>\n  </div>\n</div>");
@@ -2352,7 +2310,6 @@ function testCSS(prop) {
   $(function() {
     Math.seedrandom("GraphBrain");
     g = Graph.initGraph();
-    initTextView(g);
     initInterface();
     browserSpecificTweaks();
     return initAnimation();

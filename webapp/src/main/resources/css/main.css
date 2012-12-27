@@ -150,7 +150,7 @@ html, body {
 
 #graph-view {
     position:relative;
-    width:70%;
+    width:100%;
     height:100%;
     float:left;
     -webkit-perspective:1000px;
@@ -158,22 +158,6 @@ html, body {
     -webkit-transform-style:preserve-3d;
     -moz-transform-style:preserve-3d;
     /*overflow:hidden;*/
-}
-
-#right-bar {
-    position:relative;
-    width:30%;
-    height:100%;
-    float:right;
-    overflow: auto;
-    background:#DDD;
-    z-index:1;
-    -webkit-transform: translate3d(0,0,0);
-}
-
-#text-view {
-    padding:20px;
-    margin-bottom:40px;
 }#ai-chat {
     position:relative;
 	color: #fff;

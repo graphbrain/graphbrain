@@ -21,7 +21,6 @@ build = (callback) ->
     'coffee/SNode.coffee',
     'coffee/layout.coffee',
     'coffee/Graph.coffee',
-    'coffee/TextView.coffee',
     'coffee/search.coffee',
     'coffee/disambiguate.coffee',
     'coffee/undo.coffee',
