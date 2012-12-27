@@ -36,7 +36,7 @@ build = (callback) ->
     callback?() if code is 0
 
 css = (callback) ->
-  cat = exec 'cat css/main.css css/links.css css/nodes.css css/aichat.css > resources/css/main.css', (error, stdout, stderr) =>
+  cat = exec 'cat css/main.css css/nodes.css css/aichat.css > resources/css/main.css', (error, stdout, stderr) =>
     print stdout
     process.stderr.write stderr
     if error isnt null
