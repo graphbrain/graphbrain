@@ -15,9 +15,6 @@
   <div id="nav-spacer"></div>
   <div id="ai-chat"></div>
   <div id="graph-view"></div>
-  <div id="right-bar">
-    <div id="text-view"></div>
-  </div>
   <div style="background:#ff0000; height:10px; width:100%; clear:both"></div>
 </div>
 

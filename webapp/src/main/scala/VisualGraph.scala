@@ -15,6 +15,8 @@ import scala.math
 
 
 object VisualGraph {
+  val MAX_SNODES = 15
+
 
   def generate(rootId: String, store: UserOps, user: UserNode) = {
     val userId = if (user != null) user.id else ""
@@ -27,13 +29,18 @@ object VisualGraph {
 
     // group nodes by edge type
     val edgeNodeMap = generateEdgeNodeMap(visualEdges, rootId)
-    println(edgeNodeMap)
+
+    // truncate edge node map
+    val truncatedEdgeNodeMap = truncateEdgeNodeMap(edgeNodeMap, MAX_SNODES)
+
+    // full relations list
+    val allRelations = edgeNodeMap.keys.map(x => Map(("rel" -> x._1), ("pos" -> x._2)))
 
     // create map with all information for supernodes
-    val snodeMap = generateSnodeMap(edgeNodeMap, store)
+    val snodeMap = generateSnodeMap(truncatedEdgeNodeMap, store)
 
     // create reply structure with all the information needed for rendering
-    val reply = Map(("user" -> userId), ("root" -> node2map(rootId, store)), ("snodes" -> snodeMap))
+    val reply = Map(("user" -> userId), ("root" -> node2map(rootId, store)), ("snodes" -> snodeMap), ("allrelations" -> allRelations))
 
     Server.store.clear()
 
@@ -73,6 +80,10 @@ object VisualGraph {
       .filter(x => x._3 != rootId)
       .groupBy(x => (x._1, x._2))
       .mapValues(x => x.map(y => y._3))
+  }
+
+  private def truncateEdgeNodeMap(edgeNodeMap: Map[(String, Int), Set[String]], maxSize: Int) = {
+    edgeNodeMap.zipWithIndex.filter(x=> x._2 < maxSize).map(x => x._1)
   }
 
   private def node2map(nodeId: String, store: UserOps) = {
