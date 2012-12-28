@@ -34,7 +34,7 @@ object VisualGraph {
     val truncatedEdgeNodeMap = truncateEdgeNodeMap(edgeNodeMap, MAX_SNODES)
 
     // full relations list
-    val allRelations = edgeNodeMap.keys.map(x => Map(("rel" -> x._1), ("pos" -> x._2)))
+    val allRelations = edgeNodeMap.keys.map(x => Map(("rel" -> x._1), ("pos" -> x._2), ("label" -> linkLabel(x._1))))
 
     // create map with all information for supernodes
     val snodeMap = generateSnodeMap(truncatedEdgeNodeMap, store)

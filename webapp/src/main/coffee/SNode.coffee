@@ -84,10 +84,7 @@ class SNode
         html = '<div id="' + @id + '" class="snode">'
         relText = ''
         if not @isRoot
-            rootText = @graph.rootNode['text']
-            relText = @label
-            if @relpos == 0
-                relText += ' ' + rootText
+            relText = @graph.label(@label, @relpos)
         html += '<div class="snodeLabel">' + relText + '</div>'
         if @isRoot
             html += '<div class="snodeInner snodeRoot">'

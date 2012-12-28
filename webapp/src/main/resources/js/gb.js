@@ -739,7 +739,7 @@ function testCSS(prop) {
 }
 ;
 
-  var Graph, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, animSpeedX, animSpeedY, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initAnimation, initChatBuffer, initDisambiguateDialog, initInterface, initLoginDialog, initRemoveDialog, initSearchDialog, initSignUpDialog, intervalID, lastScale, lastX, lastY, layout, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, printHelp, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopAnim, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, animSpeedX, animSpeedY, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initAnimation, initChatBuffer, initDisambiguateDialog, initInterface, initLoginDialog, initRelations, initRemoveDialog, initSearchDialog, initSignUpDialog, intervalID, lastScale, lastX, lastY, layout, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, printHelp, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopAnim, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   browserSpecificTweaks = function() {
     if (isSafari) {
@@ -1306,15 +1306,11 @@ function testCSS(prop) {
     };
 
     SNode.prototype.place = function() {
-      var html, key, relText, rootText;
+      var html, key, relText;
       html = '<div id="' + this.id + '" class="snode">';
       relText = '';
       if (!this.isRoot) {
-        rootText = this.graph.rootNode['text'];
-        relText = this.label;
-        if (this.relpos === 0) {
-          relText += ' ' + rootText;
-        }
+        relText = this.graph.label(this.label, this.relpos);
       }
       html += '<div class="snodeLabel">' + relText + '</div>';
       if (this.isRoot) {
@@ -1646,6 +1642,14 @@ function testCSS(prop) {
         this.negativeStretch = this.mappingPower * 2;
       }
       return this.updateView;
+    };
+
+    Graph.prototype.label = function(text, relpos) {
+      if (relpos === 0) {
+        return text += ' ' + this.rootNode['text'];
+      } else {
+        return text;
+      }
     };
 
     return Graph;
@@ -2080,6 +2084,17 @@ function testCSS(prop) {
     }
   };
 
+  initRelations = function() {
+    var html, r, rels, _i, _len;
+    html = "";
+    rels = data['allrelations'];
+    for (_i = 0, _len = rels.length; _i < _len; _i++) {
+      r = rels[_i];
+      html += g.label(r['label'], r['pos']) + '<br />';
+    }
+    return $('#rel-list').html(html);
+  };
+
   aiChatVisible = false;
 
   chatBuffer = [];
@@ -2138,11 +2153,6 @@ function testCSS(prop) {
 
   showAiChat = function() {
     $('#ai-chat').css('display', 'block');
-    $('#graph-view').css('height', '70%');
-    $('#right-bar').css('height', '70%');
-    g.updateSize();
-    g.layout();
-    g.updateView();
     aiChatVisible = true;
     localStorage.setItem('aichat', 'true');
     aiChatGotoBottom();
@@ -2151,11 +2161,6 @@ function testCSS(prop) {
 
   hideAiChat = function() {
     $('#ai-chat').css('display', 'none');
-    $('#graph-view').css('height', '100%');
-    $('#right-bar').css('height', '100%');
-    g.updateSize();
-    g.layout();
-    g.updateView();
     aiChatVisible = false;
     return localStorage.setItem('aichat', 'false');
   };
@@ -2311,6 +2316,7 @@ function testCSS(prop) {
     Math.seedrandom("GraphBrain");
     g = Graph.initGraph();
     initInterface();
+    initRelations();
     browserSpecificTweaks();
     return initAnimation();
   });
