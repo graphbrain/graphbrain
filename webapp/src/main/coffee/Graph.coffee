@@ -154,3 +154,10 @@ class Graph
             @negativeStretch = @mappingPower * 2
 
         @updateView
+
+
+    label: (text, relpos) ->
+        if relpos == 0
+            text += ' ' + @rootNode['text']
+        else
+            text

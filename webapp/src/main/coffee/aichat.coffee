@@ -42,11 +42,6 @@ aiChatGotoBottom = () ->
 
 showAiChat = () ->
   $('#ai-chat').css('display', 'block')
-  $('#graph-view').css('height', '70%')
-  $('#right-bar').css('height', '70%')
-  g.updateSize()
-  g.layout()
-  g.updateView()
   aiChatVisible = true
   localStorage.setItem('aichat', 'true')
   aiChatGotoBottom()
@@ -54,11 +49,6 @@ showAiChat = () ->
 
 hideAiChat = () ->
   $('#ai-chat').css('display', 'none')
-  $('#graph-view').css('height', '100%')
-  $('#right-bar').css('height', '100%')
-  g.updateSize()
-  g.layout()
-  g.updateView()
   aiChatVisible = false
   localStorage.setItem('aichat', 'false')
 

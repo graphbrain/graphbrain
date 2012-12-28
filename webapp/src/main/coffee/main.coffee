@@ -9,5 +9,6 @@ $ ->
 
     g = Graph.initGraph()
     initInterface()
+    initRelations()
     browserSpecificTweaks()
     initAnimation()

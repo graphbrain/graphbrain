@@ -25,6 +25,7 @@ build = (callback) ->
     'coffee/disambiguate.coffee',
     'coffee/undo.coffee',
     'coffee/user.coffee',
+    'coffee/relations.coffee',
     'coffee/aichat.coffee',
     'coffee/remove.coffee',
     'coffee/main.coffee']
