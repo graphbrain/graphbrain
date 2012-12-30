@@ -739,7 +739,7 @@ function testCSS(prop) {
 }
 ;
 
-  var Graph, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, animSpeedX, animSpeedY, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initAnimation, initChatBuffer, initDisambiguateDialog, initInterface, initLoginDialog, initRelations, initRemoveDialog, initSearchDialog, initSignUpDialog, intervalID, lastScale, lastX, lastY, layout, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, printHelp, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopAnim, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, animSpeedX, animSpeedY, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initAnimation, initChatBuffer, initDisambiguateDialog, initInterface, initLoginDialog, initRelations, initRemoveDialog, initSearchDialog, initSignUpDialog, intervalID, lastScale, lastX, lastY, layout, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, printHelp, relationReply, relationSubmit, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopAnim, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   browserSpecificTweaks = function() {
     if (isSafari) {
@@ -2085,14 +2085,46 @@ function testCSS(prop) {
   };
 
   initRelations = function() {
-    var html, r, rels, _i, _len;
+    var count, eventData, html, label, r, rels, _i, _j, _len, _len1, _results;
     html = "";
     rels = data['allrelations'];
+    count = 0;
     for (_i = 0, _len = rels.length; _i < _len; _i++) {
       r = rels[_i];
-      html += g.label(r['label'], r['pos']) + '<br />';
+      label = g.label(r['label'], r['pos']) + '<br />';
+      html += '<a href="#" id="rel' + count + '">' + label + '</a>';
+      count += 1;
     }
-    return $('#rel-list').html(html);
+    $('#rel-list').html(html);
+    count = 0;
+    _results = [];
+    for (_j = 0, _len1 = rels.length; _j < _len1; _j++) {
+      r = rels[_j];
+      eventData = {
+        rel: r['rel'],
+        pos: r['pos']
+      };
+      $('#rel' + count).bind('click', eventData, relationSubmit);
+      _results.push(count += 1);
+    }
+    return _results;
+  };
+
+  relationSubmit = function(msg) {
+    var eventData;
+    eventData = msg.data;
+    $.ajax({
+      type: "POST",
+      url: "/rel",
+      data: "rel=" + eventData.rel + "&pos=" + eventData.pos + "&rootId=" + rootNodeId,
+      dataType: "json",
+      success: relationReply
+    });
+    return false;
+  };
+
+  relationReply = function(msg) {
+    return alert('server reply: ' + msg['rel']);
   };
 
   aiChatVisible = false;

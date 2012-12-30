@@ -106,6 +106,7 @@ object Server {
       .handler(LandingPlan)
       .handler(NodePlan)
       .handler(NodeActionsPlan)
+      .handler(RelationsPlan)
       .handler(AIChatPlan)
       .handler(DisambigPlan)
       .resources(new URL(getClass().getResource("/robots.txt"), "."))
