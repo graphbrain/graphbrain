@@ -87,7 +87,8 @@ html, body {
 
 .snodeLabel {
     color:#fff;
-    padding-left: 5px;
+    padding-left:5px;
+    padding-right:5px;
 }
 
 .snodeRoot {
