@@ -6,7 +6,10 @@ initRelations = () ->
   count = 0
   for r in rels
     label = g.label(r['label'], r['pos']) + '<br />'
-    html += '<a href="#" id="rel' + count + '">' + label + '</a>'
+    if g.snodes[r['snode']] == undefined
+      html += '<a href="#" id="rel' + count + '">' + label + '</a>'
+    else
+      html += label
     count += 1
 
   $('#rel-list').html(html)
@@ -17,6 +20,7 @@ initRelations = () ->
     eventData = {rel: r['rel'], pos: r['pos']}
     $('#rel' + count).bind 'click', eventData, relationSubmit
     count += 1
+
 
 relationSubmit = (msg) ->
   eventData = msg.data
@@ -31,5 +35,5 @@ relationSubmit = (msg) ->
 
 
 relationReply = (msg) ->
-  #reply = $.parseJSON(msg)
-  console.log(msg)
+  g.addSNodesFromJSON(msg)
+  initRelations()

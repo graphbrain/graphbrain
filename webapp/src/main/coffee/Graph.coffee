@@ -48,8 +48,15 @@ class Graph
         snode.nodes[nid] = node
         graph.rootNode = node
 
-        # process super nodes and associated nodes
-        for k, v of data['snodes']
+        snode.place()
+
+        graph.addSNodesFromJSON(data)
+
+        graph
+
+
+    addSNodesFromJSON: (json) ->
+        for k, v of json['snodes']
             sid = k
             etype = v['etype']
             label = v['label']
@@ -57,8 +64,8 @@ class Graph
             color = v['color']
             nlist = v['nodes']
         
-            snode = new SNode(graph, sid, etype, rpos, label, color, false)
-            graph.snodes[sid] = snode
+            snode = new SNode(this, sid, etype, rpos, label, color, false)
+            @snodes[sid] = snode
 
             for nod in nlist
                 nid = nod['id']
@@ -72,10 +79,9 @@ class Graph
             
                 snode.nodes[nid] = node
 
-        graph.placeNodes()
-        graph.layout()
+            snode.place()
 
-        graph
+        @layout()
 
 
     updateSize: ->
@@ -125,14 +131,13 @@ class Graph
         @updateTransform()
 
 
-    placeNodes: -> @snodes[key].place() for key of @snodes when @snodes.hasOwnProperty(key)
-
-
     updateView: ->
         @snodes[k].applyPos() for k of @snodes
 
 
     layout: ->
+        @snodes[k].initPosAndLayout() for k of @snodes
+
         # layout root node
         @root.moveTo(0, 0, 0)
 
@@ -153,7 +158,7 @@ class Graph
             @mappingPower = Math.log(Math.asin(Nt / (N / 2)) / Math.PI) * (1 / Math.log(0.5))
             @negativeStretch = @mappingPower * 2
 
-        @updateView
+        @updateView()
 
 
     label: (text, relpos) ->

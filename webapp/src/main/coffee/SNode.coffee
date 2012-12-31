@@ -14,6 +14,8 @@ class SNode
         # jquery objects
         @jqDiv = false
 
+
+    initPosAndLayout: ->
         #position before rotation
         @pos = newv3()
         @x = 0
