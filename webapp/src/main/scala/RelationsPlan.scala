@@ -22,7 +22,7 @@ object RelationsPlan extends async.Plan with ServerErrorResponse with SimpleLog 
       val root = Server.store.get(rootId)
       responderActor ! RelationsResponderActor.Relation(rel, pos, root, userNode, req)
 
-      //Server.log(req, cookies, "AI CHAT sentence: " + sentence + "; rootId: " + rootId)
-      //ldebug("AI CHAT sentence: " + sentence + "; rootId: " + rootId, Console.CYAN)
+      Server.log(req, cookies, "REL rootId: " + rootId + "; edgeType: " + rel + "; pos: " + pos)
+      ldebug("REL rootId: " + rootId + "; edgeType: " + rel + "; pos: " + pos)
   }
 }
