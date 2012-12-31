@@ -105,8 +105,8 @@ object VisualGraph {
     }
   }
 
-  private def generateSnode(pair: ((String, Int), Set[String]), index: Int, store: UserOps) = {
-    val id = "sn" + index
+  private def generateSnode(pair: ((String, Int), Set[String]), store: UserOps) = {
+    val id = pair._1._1.replaceAll("/", "_") + "_" + pair._1._2
     val label = linkLabel(pair._1._1)
     val color = linkColor(label)
     val nodes = pair._2.map(node2map(_, store))
@@ -117,7 +117,7 @@ object VisualGraph {
   }
 
   private def generateSnodeMap(edgeNodeMap: Map[(String, Int), Set[String]], store: UserOps) = {
-    edgeNodeMap.zipWithIndex.map(x => generateSnode(x._1, x._2, store))
+    edgeNodeMap.map(x => generateSnode(x, store))
   }
 
   private def linkColor(label: String) = {
