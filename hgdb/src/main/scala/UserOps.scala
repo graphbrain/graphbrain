@@ -163,7 +163,7 @@ trait UserOps extends VertexStore {
   }
 
   def neighborEdges2(nodeId: String, userid: String, edgeType: String = "", relPos: Integer = -1): Set[Edge] = {
-    ldebug("neighborEdges2 nodeId: " + nodeId + "; userid: " + userid)
+    ldebug("neighborEdges2 nodeId: " + nodeId + "; userid: " + userid + "; edgeType: " + edgeType + "; pos: " + relPos)
     val uNodeId = ID.globalToUser(nodeId, userid) 
 
     val gedges = neighborEdges(nodeId, edgeType, relPos).filter(x => x.isGlobal)

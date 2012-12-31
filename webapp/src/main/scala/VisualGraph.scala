@@ -18,11 +18,11 @@ object VisualGraph {
   val MAX_SNODES = 15
 
 
-  def generate(rootId: String, store: UserOps, user: UserNode) = {
+  def generate(rootId: String, store: UserOps, user: UserNode, edgeType: String = "", relPos: Integer = -1) = {
     val userId = if (user != null) user.id else ""
     
     // get neighboring edges
-    val hyperEdges = store.neighborEdges2(rootId, userId)
+    val hyperEdges = store.neighborEdges2(rootId, userId, edgeType, relPos)
     
     // map hyperedges to visual edges
     val visualEdges = hyperEdges.map(hyper2edge(_, rootId)).filter(_ != null)
