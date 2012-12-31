@@ -1252,6 +1252,9 @@ function testCSS(prop) {
       this.halfHeight = 0;
       this.scale = 1;
       this.jqDiv = false;
+    }
+
+    SNode.prototype.initPosAndLayout = function() {
       this.pos = newv3();
       this.x = 0;
       this.y = 0;
@@ -1259,8 +1262,8 @@ function testCSS(prop) {
       this.rpos = Array(3);
       this.auxVec = new Array(3);
       this.f = newv3();
-      this.tpos = newv3();
-    }
+      return this.tpos = newv3();
+    };
 
     SNode.prototype.moveTo = function(x, y, z) {
       var opacity, sc, transformStr;
@@ -1507,7 +1510,7 @@ function testCSS(prop) {
     }
 
     Graph.initGraph = function() {
-      var color, etype, graph, k, label, nid, nlist, nod, node, rpos, sid, snode, text, type, v, _i, _len, _ref;
+      var graph, nid, node, snode, text, type;
       graph = new Graph($('#graph-view').width(), $('#graph-view').height());
       graph.updateTransform();
       snode = new SNode(graph, 'root', '', 0, '', '#000', true);
@@ -1524,7 +1527,14 @@ function testCSS(prop) {
       }
       snode.nodes[nid] = node;
       graph.rootNode = node;
-      _ref = data['snodes'];
+      snode.place();
+      graph.addSNodesFromJSON(data);
+      return graph;
+    };
+
+    Graph.prototype.addSNodesFromJSON = function(json) {
+      var color, etype, k, label, nid, nlist, nod, node, rpos, sid, snode, text, type, v, _i, _len, _ref;
+      _ref = json['snodes'];
       for (k in _ref) {
         v = _ref[k];
         sid = k;
@@ -1533,8 +1543,8 @@ function testCSS(prop) {
         rpos = v['rpos'];
         color = v['color'];
         nlist = v['nodes'];
-        snode = new SNode(graph, sid, etype, rpos, label, color, false);
-        graph.snodes[sid] = snode;
+        snode = new SNode(this, sid, etype, rpos, label, color, false);
+        this.snodes[sid] = snode;
         for (_i = 0, _len = nlist.length; _i < _len; _i++) {
           nod = nlist[_i];
           nid = nod['id'];
@@ -1547,10 +1557,9 @@ function testCSS(prop) {
           }
           snode.nodes[nid] = node;
         }
+        snode.place();
       }
-      graph.placeNodes();
-      graph.layout();
-      return graph;
+      return this.layout();
     };
 
     Graph.prototype.updateSize = function() {
@@ -1603,17 +1612,6 @@ function testCSS(prop) {
       return this.updateTransform();
     };
 
-    Graph.prototype.placeNodes = function() {
-      var key, _results;
-      _results = [];
-      for (key in this.snodes) {
-        if (this.snodes.hasOwnProperty(key)) {
-          _results.push(this.snodes[key].place());
-        }
-      }
-      return _results;
-    };
-
     Graph.prototype.updateView = function() {
       var k, _results;
       _results = [];
@@ -1624,7 +1622,10 @@ function testCSS(prop) {
     };
 
     Graph.prototype.layout = function() {
-      var N, Nt, key, snodeArray;
+      var N, Nt, k, key, snodeArray;
+      for (k in this.snodes) {
+        this.snodes[k].initPosAndLayout();
+      }
       this.root.moveTo(0, 0, 0);
       snodeArray = [];
       for (key in this.snodes) {
@@ -1641,7 +1642,7 @@ function testCSS(prop) {
         this.mappingPower = Math.log(Math.asin(Nt / (N / 2)) / Math.PI) * (1 / Math.log(0.5));
         this.negativeStretch = this.mappingPower * 2;
       }
-      return this.updateView;
+      return this.updateView();
     };
 
     Graph.prototype.label = function(text, relpos) {
@@ -2092,7 +2093,11 @@ function testCSS(prop) {
     for (_i = 0, _len = rels.length; _i < _len; _i++) {
       r = rels[_i];
       label = g.label(r['label'], r['pos']) + '<br />';
-      html += '<a href="#" id="rel' + count + '">' + label + '</a>';
+      if (g.snodes[r['snode']] === void 0) {
+        html += '<a href="#" id="rel' + count + '">' + label + '</a>';
+      } else {
+        html += label;
+      }
       count += 1;
     }
     $('#rel-list').html(html);
@@ -2124,7 +2129,8 @@ function testCSS(prop) {
   };
 
   relationReply = function(msg) {
-    return console.log(msg);
+    g.addSNodesFromJSON(msg);
+    return initRelations();
   };
 
   aiChatVisible = false;
