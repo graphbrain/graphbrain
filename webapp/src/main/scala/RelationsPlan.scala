@@ -23,6 +23,6 @@ object RelationsPlan extends async.Plan with ServerErrorResponse with SimpleLog 
       responderActor ! RelationsResponderActor.Relation(rel, pos, root, userNode, req)
 
       Server.log(req, cookies, "REL rootId: " + rootId + "; edgeType: " + rel + "; pos: " + pos)
-      ldebug("REL rootId: " + rootId + "; edgeType: " + rel + "; pos: " + pos)
+      ldebug("REL rootId: " + rootId + "; edgeType: " + rel + "; pos: " + pos, Console.CYAN)
   }
 }

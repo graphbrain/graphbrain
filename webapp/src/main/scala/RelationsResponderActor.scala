@@ -21,7 +21,7 @@ class RelationsResponderActor() extends Actor with SimpleLog{
 
   override protected def receive = {
     case Relation(edgeType, pos, root, user, responder) =>
-      val replyMap = Map(("rel" -> edgeType), ("pos" -> pos))
-      responder.respond(JsonContent ~> ResponseString(JSONGen.json(replyMap)))
+      val reply = VisualGraph.generate(root.id, Server.store, user, edgeType, pos)
+      responder.respond(JsonContent ~> ResponseString(reply))
   }
 }

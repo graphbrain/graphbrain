@@ -2124,7 +2124,7 @@ function testCSS(prop) {
   };
 
   relationReply = function(msg) {
-    return alert('server reply: ' + msg['rel']);
+    return console.log(msg);
   };
 
   aiChatVisible = false;

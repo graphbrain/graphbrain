@@ -32,4 +32,4 @@ relationSubmit = (msg) ->
 
 relationReply = (msg) ->
   #reply = $.parseJSON(msg)
-  alert('server reply: ' + msg['rel'])
+  console.log(msg)

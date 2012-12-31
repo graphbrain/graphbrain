@@ -197,7 +197,7 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
 
   def neighborEdges(nodeId: String, edgeType: String = "", relPos: Integer = -1): Set[Edge] = {
-    ldebug("neighborEdges " + nodeId)
+    ldebug("neighborEdges " + nodeId + "; edgeType: " + edgeType + "; pos: " + relPos)
 
     try {
       val eset = MSet[Edge]()
@@ -207,8 +207,8 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
       query.setKey(nodeId)
       query.setColumnFamily("edges")
 
-      val minPos: java.lang.Integer = if (relPos < 0) Integer.MIN_VALUE else relPos
-      val maxPos: java.lang.Integer = if (relPos < 0) Integer.MAX_VALUE else relPos
+      val minPos: java.lang.Integer = Integer.MIN_VALUE
+      val maxPos: java.lang.Integer = Integer.MAX_VALUE
 
       val minEdgeType = if (edgeType == "") String.valueOf(Character.MIN_VALUE) else edgeType
       val maxEdgeType = if (edgeType == "") String.valueOf(Character.MAX_VALUE) else edgeType
@@ -230,13 +230,16 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
       val it = new ColumnSliceIterator[String, Composite, String](query, start, finish, false)
       while (it.hasNext()) {
         val column = it.next()
-        val edgeType = column.getName().get(0, StringSerializer.get())
-        val pos = column.getName().get(1, IntegerSerializer.get())
-        val node1 = column.getName().get(2, StringSerializer.get())
-        val node2 = column.getName().get(3, StringSerializer.get())
-        val nodeN = column.getName().get(4, StringSerializer.get())
-        val edge = Edge.fromEdgeEntry(nodeId, edgeType, pos, node1, node2, nodeN)
-        eset += edge
+        val pos: Integer = column.getName().get(1, IntegerSerializer.get())
+
+        if ((relPos < 0) || (relPos != pos)) {
+          val edgeType = column.getName().get(0, StringSerializer.get())
+          val node1 = column.getName().get(2, StringSerializer.get())
+          val node2 = column.getName().get(3, StringSerializer.get())
+          val nodeN = column.getName().get(4, StringSerializer.get())
+          val edge = Edge.fromEdgeEntry(nodeId, edgeType, pos, node1, node2, nodeN)
+          eset += edge
+        }
       }
 
       eset.toSet
