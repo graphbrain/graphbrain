@@ -196,7 +196,7 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
   def delrel(edgeType: String, participants: List[String]): Unit = delrel(Edge(edgeType, participants))
 
 
-  def neighborEdges(nodeId: String): Set[Edge] = {
+  def neighborEdges(nodeId: String, edgeType: String = "", relPos: Integer = -1): Set[Edge] = {
     ldebug("neighborEdges " + nodeId)
 
     try {
@@ -207,18 +207,21 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
       query.setKey(nodeId)
       query.setColumnFamily("edges")
 
-      val minPos: java.lang.Integer = Integer.MIN_VALUE
-      val maxPos: java.lang.Integer = Integer.MAX_VALUE
+      val minPos: java.lang.Integer = if (relPos < 0) Integer.MIN_VALUE else relPos
+      val maxPos: java.lang.Integer = if (relPos < 0) Integer.MAX_VALUE else relPos
+
+      val minEdgeType = if (edgeType == "") String.valueOf(Character.MIN_VALUE) else edgeType
+      val maxEdgeType = if (edgeType == "") String.valueOf(Character.MAX_VALUE) else edgeType
 
       val start = new Composite()
-      start.addComponent(String.valueOf(Character.MIN_VALUE), StringSerializer.get())
+      start.addComponent(minEdgeType, StringSerializer.get())
       start.addComponent(minPos, IntegerSerializer.get())
       start.addComponent(String.valueOf(Character.MIN_VALUE), StringSerializer.get())
       start.addComponent(String.valueOf(Character.MIN_VALUE), StringSerializer.get())
       start.addComponent(String.valueOf(Character.MIN_VALUE), StringSerializer.get())
         
       val finish = new Composite()
-      finish.addComponent(String.valueOf(Character.MAX_VALUE), StringSerializer.get())
+      finish.addComponent(maxEdgeType, StringSerializer.get())
       finish.addComponent(maxPos, IntegerSerializer.get())
       finish.addComponent(String.valueOf(Character.MAX_VALUE), StringSerializer.get())
       finish.addComponent(String.valueOf(Character.MAX_VALUE), StringSerializer.get())
