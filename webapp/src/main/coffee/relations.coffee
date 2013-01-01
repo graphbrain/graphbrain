@@ -37,3 +37,11 @@ relationSubmit = (msg) ->
 relationReply = (msg) ->
   g.addSNodesFromJSON(msg)
   initRelations()
+  
+  sid = ''
+  for k, v of msg['snodes']
+    sid = k
+
+  if sid != ''
+    snode = g.snodes[sid]
+    lookToSNode(snode)

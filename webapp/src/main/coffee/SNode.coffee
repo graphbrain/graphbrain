@@ -57,6 +57,10 @@ class SNode
         @rpos[1] = sc.y
         @rpos[2] = sc.z
 
+        @angleX = Math.atan2(sc.y, sc.z)
+        @angleY = Math.atan2(sc.x, sc.z)
+        #console.log('snode: ' + @etype + ' -> angleX: ' + angleX + '; angleY: ' + angleY)
+
         # convert to screen coordinates
         @rpos[0] = @rpos[0] * @graph.halfWidth * 0.8 + @graph.halfWidth
         @rpos[1] += @rpos[1] * @graph.halfHeight * 0.8 + @graph.halfHeight

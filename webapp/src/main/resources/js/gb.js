@@ -739,7 +739,7 @@ function testCSS(prop) {
 }
 ;
 
-  var Graph, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, animSpeedX, animSpeedY, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initAnimation, initChatBuffer, initDisambiguateDialog, initInterface, initLoginDialog, initRelations, initRemoveDialog, initSearchDialog, initSignUpDialog, intervalID, lastScale, lastX, lastY, layout, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, printHelp, relationReply, relationSubmit, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopAnim, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, animSpeedX, animSpeedY, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initAnimation, initChatBuffer, initDisambiguateDialog, initInterface, initLoginDialog, initRelations, initRemoveDialog, initSearchDialog, initSignUpDialog, intervalID, lastScale, lastX, lastY, layout, login, loginReply, logout, lookToSNode, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, printHelp, relationReply, relationSubmit, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopAnim, submitting, targetSNode, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   browserSpecificTweaks = function() {
     if (isSafari) {
@@ -953,17 +953,44 @@ function testCSS(prop) {
 
   animSpeedY = 0.005;
 
-  animCycle = function() {
-    g.rotateX(-animSpeedX);
-    g.rotateY(animSpeedY);
-    g.updateView();
-    animSpeedX *= 0.98;
-    animSpeedY *= 0.98;
-    if (animSpeedX < 0.0001) {
-      stopAnim = true;
+  targetSNode = false;
+
+  lookToSNode = function(snode) {
+    targetSNode = snode;
+    if (intervalID === false) {
+      return intervalID = window.setInterval(animCycle, 30);
+    } else {
+      return stopAnim = true;
     }
-    if (stopAnim) {
-      return window.clearInterval(intervalID);
+  };
+
+  animCycle = function() {
+    var precision, speedFactor, speedX, speedY;
+    if (targetSNode === false) {
+      g.rotateX(-animSpeedX);
+      g.rotateY(animSpeedY);
+      g.updateView();
+      animSpeedX *= 0.98;
+      animSpeedY *= 0.98;
+      if (animSpeedX < 0.0001) {
+        stopAnim = true;
+      }
+      if (stopAnim) {
+        window.clearInterval(intervalID);
+        return intervalID = false;
+      }
+    } else {
+      speedFactor = 0.05;
+      precision = 0.01;
+      speedX = targetSNode.angleX * speedFactor;
+      speedY = targetSNode.angleY * speedFactor;
+      g.rotateX(speedY);
+      g.rotateY(-speedX);
+      g.updateView();
+      if ((Math.abs(targetSNode.angleX) < precision) && (Math.abs(targetSNode.angleY) < precision)) {
+        window.clearInterval(intervalID);
+        return intervalID = false;
+      }
     }
   };
 
@@ -1284,6 +1311,8 @@ function testCSS(prop) {
       this.rpos[0] = sc.x;
       this.rpos[1] = sc.y;
       this.rpos[2] = sc.z;
+      this.angleX = Math.atan2(sc.y, sc.z);
+      this.angleY = Math.atan2(sc.x, sc.z);
       this.rpos[0] = this.rpos[0] * this.graph.halfWidth * 0.8 + this.graph.halfWidth;
       this.rpos[1] += this.rpos[1] * this.graph.halfHeight * 0.8 + this.graph.halfHeight;
       this.rpos[2] += this.rpos[2] * Math.min(this.graph.halfWidth, this.graph.halfHeight) * 0.8;
@@ -2129,8 +2158,19 @@ function testCSS(prop) {
   };
 
   relationReply = function(msg) {
+    var k, sid, snode, v, _ref;
     g.addSNodesFromJSON(msg);
-    return initRelations();
+    initRelations();
+    sid = '';
+    _ref = msg['snodes'];
+    for (k in _ref) {
+      v = _ref[k];
+      sid = k;
+    }
+    if (sid !== '') {
+      snode = g.snodes[sid];
+      return lookToSNode(snode);
+    }
   };
 
   aiChatVisible = false;
