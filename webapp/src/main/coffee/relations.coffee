@@ -7,9 +7,9 @@ initRelations = () ->
   for r in rels
     label = g.label(r['label'], r['pos']) + '<br />'
     if g.snodes[r['snode']] == undefined
-      html += '<a href="#" id="rel' + count + '">' + label + '</a>'
+      html += '<a class="visible_rel_link" href="#" id="rel' + count + '">' + label + '</a>'
     else
-      html += label
+      html += '<a class="hidden_rel_link" href="#" id="rel' + count + '">' + label + '</a>'
     count += 1
 
   $('#rel-list').html(html)
@@ -17,20 +17,23 @@ initRelations = () ->
   # events relation links
   count = 0
   for r in rels
-    eventData = {rel: r['rel'], pos: r['pos']}
+    eventData = {rel: r['rel'], pos: r['pos'], snode: r['snode']}
     $('#rel' + count).bind 'click', eventData, relationSubmit
     count += 1
 
 
 relationSubmit = (msg) ->
   eventData = msg.data
-  $.ajax({
-    type: "POST",
-    url: "/rel",
-    data: "rel=" + eventData.rel + "&pos=" + eventData.pos +  "&rootId=" + rootNodeId,
-    dataType: "json",
-    success: relationReply
-  })
+  if g.snodes[msg.snode] == undefined
+    $.ajax({
+      type: "POST",
+      url: "/rel",
+      data: "rel=" + eventData.rel + "&pos=" + eventData.pos +  "&rootId=" + rootNodeId,
+      dataType: "json",
+      success: relationReply
+    })
+  else
+    lookToSNode(g.snodes[msg.snode])
   false
 
 

@@ -2123,9 +2123,9 @@ function testCSS(prop) {
       r = rels[_i];
       label = g.label(r['label'], r['pos']) + '<br />';
       if (g.snodes[r['snode']] === void 0) {
-        html += '<a href="#" id="rel' + count + '">' + label + '</a>';
+        html += '<a class="visible_rel_link" href="#" id="rel' + count + '">' + label + '</a>';
       } else {
-        html += label;
+        html += '<a class="hidden_rel_link" href="#" id="rel' + count + '">' + label + '</a>';
       }
       count += 1;
     }
@@ -2136,7 +2136,8 @@ function testCSS(prop) {
       r = rels[_j];
       eventData = {
         rel: r['rel'],
-        pos: r['pos']
+        pos: r['pos'],
+        snode: r['snode']
       };
       $('#rel' + count).bind('click', eventData, relationSubmit);
       _results.push(count += 1);
@@ -2147,13 +2148,17 @@ function testCSS(prop) {
   relationSubmit = function(msg) {
     var eventData;
     eventData = msg.data;
-    $.ajax({
-      type: "POST",
-      url: "/rel",
-      data: "rel=" + eventData.rel + "&pos=" + eventData.pos + "&rootId=" + rootNodeId,
-      dataType: "json",
-      success: relationReply
-    });
+    if (g.snodes[msg.snode] === void 0) {
+      $.ajax({
+        type: "POST",
+        url: "/rel",
+        data: "rel=" + eventData.rel + "&pos=" + eventData.pos + "&rootId=" + rootNodeId,
+        dataType: "json",
+        success: relationReply
+      });
+    } else {
+      lookToSNode(g.snodes[msg.snode]);
+    }
     return false;
   };
 

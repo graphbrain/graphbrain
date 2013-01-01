@@ -35,6 +35,14 @@ html, body {
     border-width:7px;
     border-color:rgb(90, 180, 250);
     z-index:2;
+}
+
+#rel-list .visible_rel_link {
+    color:rgba(0, 0, 0, 1);
+}
+
+#rel-list .hidden_rel_link {
+    color:rgba(80, 80, 80, 1);
 }.node {
     color:#000;
     background:#eee;
