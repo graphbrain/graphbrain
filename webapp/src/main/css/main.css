@@ -29,9 +29,10 @@ html, body {
     overflow:auto;
     padding:10px;
     color:rgba(0, 0, 0, 1);
-    background:rgba(90, 180, 250, 0.8);
+    background:rgba(90, 180, 250, 0.9);
     border-radius:5px;
     border-style:solid;
     border-width:7px;
     border-color:rgb(90, 180, 250);
+    z-index:2;
 }
