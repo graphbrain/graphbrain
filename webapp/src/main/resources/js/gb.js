@@ -2148,7 +2148,7 @@ function testCSS(prop) {
   relationSubmit = function(msg) {
     var eventData;
     eventData = msg.data;
-    if (g.snodes[msg.snode] === void 0) {
+    if (g.snodes[eventData.snode] === void 0) {
       $.ajax({
         type: "POST",
         url: "/rel",
@@ -2157,8 +2157,9 @@ function testCSS(prop) {
         success: relationReply
       });
     } else {
-      lookToSNode(g.snodes[msg.snode]);
+
     }
+    lookToSNode(g.snodes[eventData.snode]);
     return false;
   };
 
