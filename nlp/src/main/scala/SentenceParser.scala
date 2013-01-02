@@ -201,16 +201,27 @@ class SentenceParser (storeName:String = "gb") {
           
         if(i < sepRelations.length) {
             
-          val annotatedRelation = lemmatiser.annotate(sepRelations(i))    
-          for (a <- annotatedRelation) {
-            if(verbRegex.findAllIn(a._2).hasNext) {
-              newRelation += lemmatiser.conjugate(a._3) + " "
-            }
-            else {
+          val annotatedRelation = lemmatiser.annotate(sepRelations(i))
+
+          if(annotatedRelation(0)._1=="was") {
+            for (a <- annotatedRelation) {
               newRelation += a._1 + " "
+
             }
 
-          }
+          }   
+          else {
+            for (a <- annotatedRelation) {
+              if(verbRegex.findAllIn(a._2).hasNext) {
+                newRelation += lemmatiser.conjugate(a._3) + " "
+              }
+              else {
+                newRelation += a._1 + " "
+              }
+
+            }
+
+          } 
             
         }
 
