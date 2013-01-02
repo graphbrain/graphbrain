@@ -24,7 +24,7 @@ initRelations = () ->
 
 relationSubmit = (msg) ->
   eventData = msg.data
-  if g.snodes[msg.snode] == undefined
+  if g.snodes[eventData.snode] == undefined
     $.ajax({
       type: "POST",
       url: "/rel",
@@ -33,7 +33,7 @@ relationSubmit = (msg) ->
       success: relationReply
     })
   else
-    lookToSNode(g.snodes[msg.snode])
+  lookToSNode(g.snodes[eventData.snode])
   false
 
 

@@ -38,11 +38,11 @@ html, body {
 }
 
 #rel-list .visible_rel_link {
-    color:rgba(0, 0, 0, 1);
+    color:rgba(80, 80, 80, 1);
 }
 
 #rel-list .hidden_rel_link {
-    color:rgba(80, 80, 80, 1);
+    color:rgba(0, 0, 0, 1);
 }.node {
     color:#000;
     background:#eee;
