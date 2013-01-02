@@ -64,8 +64,9 @@ class SNode
         #console.log('snode: ' + @etype + ' -> angleX: ' + angleX + '; angleY: ' + angleY)
 
         # convert to screen coordinates
-        @rpos[0] = @rpos[0] * @graph.halfWidth * 0.8 + @graph.halfWidth
-        @rpos[1] += @rpos[1] * @graph.halfHeight * 0.8 + @graph.halfHeight
+        spread = 0.7
+        @rpos[0] = @rpos[0] * @graph.halfWidth * spread + @graph.halfWidth
+        @rpos[1] += @rpos[1] * @graph.halfHeight * spread + @graph.halfHeight
         @rpos[2] += @rpos[2] * Math.min(@graph.halfWidth, @graph.halfHeight) * 0.8
 
         # update transform
