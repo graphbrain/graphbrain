@@ -51,20 +51,24 @@ layout = (snodeArray) ->
   minimalStep = 1e-10
  
   for i in [0..(N - 1)]
-    snodeArray[i].pos[0] = 2 * frand()
-    snodeArray[i].pos[1] = 2 * frand()
-    snodeArray[i].pos[2] = 2 * frand()
+    if not snodeArray[i].layedOut
+      snodeArray[i].pos[0] = 2 * frand()
+      snodeArray[i].pos[1] = 2 * frand()
+      snodeArray[i].pos[2] = 2 * frand()
 
     l = v3length(snodeArray[i].pos)
     if l != 0.0
-      snodeArray[i].pos[0] /= l
-      snodeArray[i].pos[1] /= l
-      snodeArray[i].pos[2] /= l
+      if not snodeArray[i].layedOut
+        snodeArray[i].pos[0] /= l
+        snodeArray[i].pos[1] /= l
+        snodeArray[i].pos[2] /= l
       snodeArray[i].tpos[0] = snodeArray[i].pos[0]
       snodeArray[i].tpos[1] = snodeArray[i].pos[1]
       snodeArray[i].tpos[2] = snodeArray[i].pos[2]
     else
       i -= 1
+
+    snodeArray[i].layedOut = true
 
   e0 = getCoulombEnergy(snodeArray)
   for k in [0..(Nstep - 1)]
