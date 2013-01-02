@@ -1279,13 +1279,14 @@ function testCSS(prop) {
       this.halfHeight = 0;
       this.scale = 1;
       this.jqDiv = false;
-    }
-
-    SNode.prototype.initPosAndLayout = function() {
       this.pos = newv3();
       this.x = 0;
       this.y = 0;
       this.z = 0;
+      this.layedOut = false;
+    }
+
+    SNode.prototype.initPosAndLayout = function() {
       this.rpos = Array(3);
       this.auxVec = new Array(3);
       this.f = newv3();
@@ -1464,20 +1465,25 @@ function testCSS(prop) {
     step = 0.01;
     minimalStep = 1e-10;
     for (i = _i = 0, _ref = N - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
-      snodeArray[i].pos[0] = 2 * frand();
-      snodeArray[i].pos[1] = 2 * frand();
-      snodeArray[i].pos[2] = 2 * frand();
+      if (!snodeArray[i].layedOut) {
+        snodeArray[i].pos[0] = 2 * frand();
+        snodeArray[i].pos[1] = 2 * frand();
+        snodeArray[i].pos[2] = 2 * frand();
+      }
       l = v3length(snodeArray[i].pos);
       if (l !== 0.0) {
-        snodeArray[i].pos[0] /= l;
-        snodeArray[i].pos[1] /= l;
-        snodeArray[i].pos[2] /= l;
+        if (!snodeArray[i].layedOut) {
+          snodeArray[i].pos[0] /= l;
+          snodeArray[i].pos[1] /= l;
+          snodeArray[i].pos[2] /= l;
+        }
         snodeArray[i].tpos[0] = snodeArray[i].pos[0];
         snodeArray[i].tpos[1] = snodeArray[i].pos[1];
         snodeArray[i].tpos[2] = snodeArray[i].pos[2];
       } else {
         i -= 1;
       }
+      snodeArray[i].layedOut = true;
     }
     e0 = getCoulombEnergy(snodeArray);
     for (k = _j = 0, _ref1 = Nstep - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; k = 0 <= _ref1 ? ++_j : --_j) {
