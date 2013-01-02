@@ -1294,7 +1294,7 @@ function testCSS(prop) {
     };
 
     SNode.prototype.moveTo = function(x, y, z) {
-      var opacity, sc, transformStr;
+      var opacity, sc, spread, transformStr;
       this.x = x;
       this.y = y;
       this.z = z;
@@ -1314,8 +1314,9 @@ function testCSS(prop) {
       this.rpos[2] = sc.z;
       this.angleX = Math.atan2(sc.y, sc.z);
       this.angleY = Math.atan2(sc.x, sc.z);
-      this.rpos[0] = this.rpos[0] * this.graph.halfWidth * 0.8 + this.graph.halfWidth;
-      this.rpos[1] += this.rpos[1] * this.graph.halfHeight * 0.8 + this.graph.halfHeight;
+      spread = 0.7;
+      this.rpos[0] = this.rpos[0] * this.graph.halfWidth * spread + this.graph.halfWidth;
+      this.rpos[1] += this.rpos[1] * this.graph.halfHeight * spread + this.graph.halfHeight;
       this.rpos[2] += this.rpos[2] * Math.min(this.graph.halfWidth, this.graph.halfHeight) * 0.8;
       x = this.rpos[0];
       y = this.rpos[1];
