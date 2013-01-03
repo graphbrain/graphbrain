@@ -1,7 +1,7 @@
 package com.graphbrain.hgdb
 
 
-case class Edge(edgeType: String, extParticipantIds: List[String]) {
+case class Edge(edgeType: String, extParticipantIds: List[String], originalEdge: Edge = null) {
   val participantIds = extParticipantIds.map(x => Vertex.cleanId(x))
 
   def negate = Edge("neg/" + edgeType, extParticipantIds)
@@ -34,10 +34,17 @@ case class Edge(edgeType: String, extParticipantIds: List[String]) {
     Edge(edgeType, pids)
   }
 
-  override def toString = "edgeType: " + edgeType + ";  participants: " + participantIds.reduceLeft(_ + ", " + _)
+  def getOriginalEdge = if (originalEdge == null) this else originalEdge
+
+  override def toString = edgeType + " " + participantIds.reduceLeft(_ + " " + _)
 }
 
 object Edge {
+  def fromString(edgeString: String) = {
+    val tokens = edgeString.split(" ").toList
+    Edge(tokens.head, tokens.tail)
+  }
+
   def fromEdgeEntry(nodeId: String, edgeType: String, position: Int, node1: String, node2: String, nodeN: String) = {
     val preParticipantIds = if (nodeN != null) {
         List[String](node1, node2) ::: nodeN.split(" ").toList

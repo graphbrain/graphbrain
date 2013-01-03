@@ -51,7 +51,6 @@ case class NavBar(user: UserNode, page: String) {
     if (page == "node") {
       """
       <li><button class="btn" id="ai-chat-button" data-toggle="button"><i class="icon-asterisk icon-black"></i> Talk to AI</button></li>
-      <li><button class="btn" id="removeButton" data-toggle="button"><i class="icon-remove icon-black"></i> Remove</button></li>
       """
     }
     else {

@@ -739,7 +739,7 @@ function testCSS(prop) {
 }
 ;
 
-  var Graph, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, animSpeedX, animSpeedY, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initAnimation, initChatBuffer, initDisambiguateDialog, initInterface, initLoginDialog, initRelations, initRemoveDialog, initSearchDialog, initSignUpDialog, intervalID, lastScale, lastX, lastY, layout, login, loginReply, logout, lookToSNode, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeClicked, nodeCount, printHelp, relationReply, relationSubmit, removeAction, removeButtonPressed, removeInfoMessage, removeMode, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopAnim, submitting, targetSNode, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var Graph, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, animSpeedX, animSpeedY, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initAnimation, initChatBuffer, initDisambiguateDialog, initInterface, initLoginDialog, initRelations, initRemoveDialog, initSearchDialog, initSignUpDialog, intervalID, lastScale, lastX, lastY, layout, login, loginReply, logout, lookToSNode, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, printHelp, relationReply, relationSubmit, removeAction, removeClicked, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopAnim, submitting, targetSNode, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
 
   browserSpecificTweaks = function() {
     if (isSafari) {
@@ -1123,7 +1123,6 @@ function testCSS(prop) {
     initRemoveDialog();
     initDisambiguateDialog();
     $('#ai-chat-button').bind('click', aiChatButtonPressed);
-    $('#removeButton').bind('click', removeButtonPressed);
     if (errorMsg !== '') {
       return setErrorAlert(errorMsg);
     }
@@ -1137,29 +1136,22 @@ function testCSS(prop) {
 };
 
 
-  nodeClicked = function(msg) {
-    if (removeMode) {
-      showRemoveDialog(msg.data.node, msg.data.orig, msg.data.link, msg.data.targ, msg.data.etype);
-      return false;
-    } else {
-      return true;
-    }
-  };
-
   Node = (function() {
 
-    function Node(id, text, type, snode, url, icon) {
+    function Node(id, text, type, snode, edge, url, icon) {
       this.id = id;
       this.text = text;
       this.type = type;
       this.snode = snode;
+      this.edge = edge;
       this.url = url != null ? url : '';
       this.icon = icon != null ? icon : '';
       this.divid = 'n' + nodeCount++;
+      this.root = false;
     }
 
     Node.prototype.place = function() {
-      var html, nodeData;
+      var html, nodeData, removeData, removeLinkId;
       $('#' + this.snode.id + ' .viewport').append('<div id="' + this.divid + '" class="node" />');
       nodeData = {};
       if (this.snode.relpos === 0) {
@@ -1179,22 +1171,36 @@ function testCSS(prop) {
           'orig': this.id
         };
       }
+      removeLinkId = '';
       if (this.type === 'url') {
-        html = '<div class="nodeTitle" id="t' + this.divid + '"><a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a></div>';
-        html += '<div>';
+        html = '';
         if (this.icon !== '') {
           html += '<img src="' + this.icon + '" width="16px" height="16px" class="nodeIco" />';
         }
-        html += '<div class="nodeUrl"><a href="' + this.url + '" id="url' + this.divid + '">' + this.url + '</a></div></div>';
+        html += '<div class="nodeUrl"><a href="' + this.url + '" id="url' + this.divid + '">' + this.url + '</a></div>';
+        if (!this.root) {
+          removeLinkId = 'rem' + this.divid;
+          html += '<div class="nodeRemove"><a id="' + removeLinkId + '" href="#">x</a></div>';
+        }
+        html += '<div style="clear:both;"></div>';
         $('#' + this.divid).append(html);
-        $('#url' + this.divid).click(nodeData, nodeClicked);
       } else {
         html = '<div class="nodeTitle" id="t' + this.divid + '"><a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a></div>';
+        if (!this.root) {
+          removeLinkId = 'rem' + this.divid;
+          html += '<div class="nodeRemove"><a id="' + removeLinkId + '" href="#">x</a></div>';
+        }
+        html += '<div style="clear:both;"></div>';
         $('#' + this.divid).append(html);
       }
-      $('#t' + this.divid).click(nodeData, nodeClicked);
-      html = '<div id="d' + this.divid + '" class="nodeDetail">Some more text about this node.</div>';
-      return $('#' + this.divid).append(html);
+      if (removeLinkId !== '') {
+        removeData = {
+          'node': this,
+          'link': this.snode.label,
+          'edge': this.edge
+        };
+        return $('#' + removeLinkId).click(removeData, removeClicked);
+      }
     };
 
     return Node;
@@ -1557,10 +1563,11 @@ function testCSS(prop) {
       text = data['root']['text'];
       type = data['root']['type'];
       if (type === 'url') {
-        node = new Node(nid, text, type, snode, data['root']['url'], data['root']['icon']);
+        node = new Node(nid, text, type, snode, '', data['root']['url'], data['root']['icon']);
       } else {
-        node = new Node(nid, text, type, snode);
+        node = new Node(nid, text, type, snode, '');
       }
+      node.root = true;
       snode.nodes[nid] = node;
       graph.rootNode = node;
       snode.place();
@@ -1569,7 +1576,7 @@ function testCSS(prop) {
     };
 
     Graph.prototype.addSNodesFromJSON = function(json) {
-      var color, etype, k, label, nid, nlist, nod, node, rpos, sid, snode, text, type, v, _i, _len, _ref;
+      var color, edge, etype, k, label, nid, nlist, nod, node, rpos, sid, snode, text, type, v, _i, _len, _ref;
       _ref = json['snodes'];
       for (k in _ref) {
         v = _ref[k];
@@ -1586,10 +1593,11 @@ function testCSS(prop) {
           nid = nod['id'];
           text = nod['text'];
           type = nod['type'];
+          edge = nod['edge'];
           if (type === 'url') {
-            node = new Node(nid, text, type, snode, nod['url'], nod['icon']);
+            node = new Node(nid, text, type, snode, edge, nod['url'], nod['icon']);
           } else {
-            node = new Node(nid, text, type, snode);
+            node = new Node(nid, text, type, snode, edge);
           }
           snode.nodes[nid] = node;
         }
@@ -2347,54 +2355,21 @@ function testCSS(prop) {
     return disambiguateQuery(mode, text, rel, participantIds, pos);
   };
 
-  removeMode = false;
-
-  removeInfoMessage = function() {
-    return setInfoAlert('<strong>Click on the item</strong> you want to remove.');
-  };
-
-  removeButtonPressed = function(msg) {
-    if (removeMode) {
-      hideAlert();
-      removeMode = false;
-    } else {
-      removeInfoMessage();
-      removeMode = true;
-    }
-    return true;
+  removeClicked = function(msg) {
+    return showRemoveDialog(msg.data.node, msg.data.link, msg.data.edge);
   };
 
   initRemoveDialog = function() {
     var dialogHtml;
-    dialogHtml = $("<div class=\"modal hide\" id=\"removeModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Remove</h3>\n  </div>\n  <form id=\"removeForm\" action='/node/" + rootNodeId + "' method=\"post\">\n  <input type=\"hidden\" name=\"op\" value=\"remove\">\n  <input id=\"removeNodeField\" type=\"hidden\" name=\"node\">\n  <input id=\"removeOrigField\" type=\"hidden\" name=\"orig\">\n  <input id=\"removeLinkField\" type=\"hidden\" name=\"link\">\n  <input id=\"removeTargField\" type=\"hidden\" name=\"targ\">\n  <div class=\"modal-body\" id=\"addBrainBody\">\n      <div id=\"linkDesc\"></div>\n      <label class=\"radio\">\n          <input id=\"linkRadio\" type=\"radio\" name=\"linkOrNode\" value=\"link\">\n          Just remove this connection\n      </label>\n      <br />\n      <div id=\"itemDesc\">Item</div>\n      <label class=\"radio\">\n          <input id=\"nodeRadio\" type=\"radio\" name=\"linkOrNode\" value=\"node\">\n          Remove this item and all associated connections\n      </label>\n  </div>\n  <div class=\"modal-footer\">\n    <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n    <a id=\"removeDlgButton\" class=\"btn btn-primary\">Remove</a>\n  </div>\n</form>\n</div>");
+    dialogHtml = $("<div class=\"modal hide\" id=\"removeModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Confirm Removal</h3>\n  </div>\n  <form id=\"removeForm\" action='/node/" + rootNodeId + "' method=\"post\">\n  <input type=\"hidden\" name=\"op\" value=\"remove\">\n  <input id=\"removeEdgeField\" type=\"hidden\" name=\"edge\">\n  <div class=\"modal-body\" id=\"addBrainBody\">\n      <div id=\"linkDesc\"></div>\n  </div>\n  <div class=\"modal-footer\">\n    <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n    <a id=\"removeDlgButton\" class=\"btn btn-primary\">Remove</a>\n  </div>\n</form>\n</div>");
     dialogHtml.appendTo('body');
     return $('#removeDlgButton').click(removeAction);
   };
 
-  showRemoveDialog = function(node, orig, link, targ, etype) {
-    if (node === rootNodeId) {
-      return setErrorAlert('You cannot remove the item in the center.');
-    } else {
-      $('#linkRadio').attr('checked', true);
-      $('#nodeRadio').attr('checked', false);
-      $('#linkRadio').attr('disabled', false);
-      $('#nodeRadio').attr('disabled', false);
-      if (nodes[node].type === 'user') {
-        $('#nodeRadio').attr('disabled', true);
-      } else if ((link === 'brain') && (nodes[orig].type === 'user') && (nodes[targ].type === 'brain')) {
-        $('#linkRadio').attr('disabled', true);
-        $('#linkRadio').attr('checked', false);
-        $('#nodeRadio').attr('checked', true);
-      }
-      removeInfoMessage();
-      $('#removeNodeField').val(node);
-      $('#removeOrigField').val(orig);
-      $('#removeLinkField').val(etype);
-      $('#removeTargField').val(targ);
-      $('#linkDesc').html(nodes[orig].text + ' <strong>' + link + '</strong> ' + nodes[targ].text);
-      $('#itemDesc').html(nodes[node].text);
-      return $('#removeModal').modal('show');
-    }
+  showRemoveDialog = function(node, link, edge) {
+    $('#removeEdgeField').val(edge);
+    $('#linkDesc').html(node.text + ' <strong>(' + link + '</strong>)');
+    return $('#removeModal').modal('show');
   };
 
   removeAction = function() {
