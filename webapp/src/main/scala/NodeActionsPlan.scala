@@ -30,35 +30,17 @@ object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with S
 
   def removeLinkOrNode(params: Map[String, Seq[String]], cookies: Map[String, Any], req: HttpRequest[Any]) = {
     val userNode = Server.getUser(cookies)
-    val nodeId = params("node")(0)
-    val origId = params("orig")(0)
-    val link = params("link")(0).replace(" ", "_")
-    val targId = params("targ")(0)
-    val linkOrNode = params("linkOrNode")(0)
+    val edgeString = params("edge")(0)
+    
+    val edge = Edge.fromString(edgeString)
 
-    if (linkOrNode == "link") {
-      Server.store.delrel2(link, List(origId, targId), userNode.id)
+    Server.store.delrel2(edge, userNode.id)
 
-      // force consesnsus re-evaluation of affected edge
-      val edge = Edge(link, List(origId, targId))
-      Server.consensusActor ! edge
+    // force consesnsus re-evaluation of affected edge
+    Server.consensusActor ! edge
 
-      Server.log(req, cookies, "REMOVE EDGE origId: " + origId + "; link: " + link + "; targId" + targId)
-      ldebug("REMOVE EDGE origId: " + origId + "; link: " + link + "; targId" + targId, Console.CYAN)
-    }
-    else {
-      val nedges = Server.store.neighborEdges(nodeId)
-
-      // remove connected edges
-      for (edgeId <- nedges) {
-        Server.store.delrel2(edgeId, userNode.id)
-        // force consesnsus re-evaluation of affected edge
-        Server.consensusActor ! edgeId
-      }
-
-      Server.log(req, cookies, "REMOVE NODE nodeId: " + nodeId)
-      ldebug("REMOVE NODE nodeId: " + nodeId, Console.CYAN)
-    }
+    Server.log(req, cookies, "REMOVE EDGE: " + edgeString)
+    ldebug("REMOVE EDGE: " + edgeString, Console.CYAN)
   }
 
   def intent = {

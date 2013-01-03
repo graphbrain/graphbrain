@@ -1,30 +1,40 @@
 .node {
+    max-width: 200px;
     color:#000;
     background:#eee;
     margin: 3px;
     padding: 3px;
-    max-width: 200px;
-    text-overflow:ellipsis;
+    white-space: nowrap;
+    clear:both;
 }
 
 .node a {
     color:#000;
 }
 
-.nodeDetail {
-    display:none;
-}
-
 .nodeTitle {
+    max-width: 170px;
     max-height: 70px;
     overflow:hidden;
     text-overflow:ellipsis;
+    float:left;
+}
+
+.nodeRemove {
+    text-align: right;
+    float:right;
+    margin-left:10px;
+}
+
+.nodeRemove a {
+    color: #B0B0B0;
 }
 
 .nodeUrl {
     overflow:hidden;
     text-overflow:ellipsis;
     max-width: 170px;
+    float:left;
 }
 
 .nodeUrl a {
@@ -60,15 +70,6 @@
     border-width:4px;
     border-color:#000;
     border-style:dashed;
-}
-
-.snodeDialog {
-    display:inline;
-    float:left;
-    border-style:solid;
-    border-width:2px;
-    border-color:#AAA;
-    padding: 10px;
 }
 
 #graph-view {

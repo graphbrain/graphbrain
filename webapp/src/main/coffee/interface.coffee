@@ -106,7 +106,6 @@ initInterface = ->
     initRemoveDialog()
     initDisambiguateDialog()
     $('#ai-chat-button').bind 'click', aiChatButtonPressed
-    $('#removeButton').bind 'click', removeButtonPressed
 
     # display error message if defined
     if errorMsg != ''

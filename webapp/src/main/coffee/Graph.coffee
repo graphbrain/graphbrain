@@ -41,10 +41,11 @@ class Graph
         type = data['root']['type']
     
         if type == 'url'
-            node = new Node(nid, text, type, snode, data['root']['url'], data['root']['icon'])
+            node = new Node(nid, text, type, snode, '', data['root']['url'], data['root']['icon'])
         else
-            node = new Node(nid, text, type, snode)
-            
+            node = new Node(nid, text, type, snode, '')
+        
+        node.root = true    
         snode.nodes[nid] = node
         graph.rootNode = node
 
@@ -71,11 +72,12 @@ class Graph
                 nid = nod['id']
                 text = nod['text']
                 type = nod['type']
+                edge = nod['edge']
 
                 if type == 'url'
-                    node = new Node(nid, text, type, snode, nod['url'], nod['icon'])
+                    node = new Node(nid, text, type, snode, edge, nod['url'], nod['icon'])
                 else
-                    node = new Node(nid, text, type, snode)
+                    node = new Node(nid, text, type, snode, edge)
             
                 snode.nodes[nid] = node
 

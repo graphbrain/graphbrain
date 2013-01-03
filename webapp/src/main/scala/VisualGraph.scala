@@ -41,7 +41,7 @@ object VisualGraph {
     val snodeMap = generateSnodeMap(truncatedEdgeNodeMap, store)
 
     // create reply structure with all the information needed for rendering
-    val reply = Map(("user" -> userId), ("root" -> node2map(rootId, store)), ("snodes" -> snodeMap), ("allrelations" -> allRelations))
+    val reply = Map(("user" -> userId), ("root" -> node2map(rootId, "", store)), ("snodes" -> snodeMap), ("allrelations" -> allRelations))
 
     Server.store.clear()
 
@@ -53,10 +53,10 @@ object VisualGraph {
     if (edge.participantIds.length > 2) {
       if (edge.edgeType == "rtype/1/instance_of~owned_by") {
         if (edge.participantIds(0) == rootId) {
-          Edge("rtype/1/has", List(edge.participantIds(2), rootId))
+          Edge("rtype/1/has", List(edge.participantIds(2), rootId), edge)
         }
         else if (edge.participantIds(2) == rootId) {
-          Edge("rtype/1/has", List(rootId, edge.participantIds(0)))
+          Edge("rtype/1/has", List(rootId, edge.participantIds(0)), edge)
         }
         else {
           null
@@ -64,7 +64,7 @@ object VisualGraph {
       }
       else {
         val edgeType = edge.edgeType.replaceAll("~", " .. ") + " .. "
-        Edge(edgeType, List(edge.participantIds(0), edge.participantIds(1)))
+        Edge(edgeType, List(edge.participantIds(0), edge.participantIds(1)), edge)
       }
     }
     else {
@@ -76,18 +76,18 @@ object VisualGraph {
     edges.map(
       e => e.participantIds
         .zip(0 until e.participantIds.length)
-        .map(x => (e.edgeType, x._2, x._1))
+        .map(x => (e.edgeType, x._2, x._1, e.getOriginalEdge.toString))
     ).flatten
       .filter(x => x._3 != rootId)
       .groupBy(x => (x._1, x._2))
-      .mapValues(x => x.map(y => y._3))
+      .mapValues(x => x.map(y => (y._3, y._4)))
   }
 
-  private def truncateEdgeNodeMap(edgeNodeMap: Map[(String, Int), Set[String]], maxSize: Int) = {
+  private def truncateEdgeNodeMap(edgeNodeMap: Map[(String, Int), Set[(String, String)]], maxSize: Int) = {
     edgeNodeMap.zipWithIndex.filter(x=> x._2 < maxSize).map(x => x._1)
   }
 
-  private def node2map(nodeId: String, store: UserOps) = {
+  private def node2map(nodeId: String, nodeEdge: String, store: UserOps) = {
     val node = try {
       store.get(nodeId)
     }
@@ -95,31 +95,31 @@ object VisualGraph {
       case _ => null
     }
     node match {
-      case tn: TextNode => Map(("id" -> tn.id), ("type" -> "text"), ("text" -> tn.text))
+      case tn: TextNode => Map(("id" -> tn.id), ("type" -> "text"), ("text" -> tn.text), ("edge" -> nodeEdge))
       case un: URLNode => {
         val title = if (un.title == "") un.url else un.title
-        Map(("id" -> un.id), ("type" -> "url"), ("text" -> title), ("url" -> un.url), ("icon" -> un.icon))
+        Map(("id" -> un.id), ("type" -> "url"), ("text" -> title), ("url" -> un.url), ("icon" -> un.icon), ("edge" -> nodeEdge))
       }
-      case un: UserNode => Map(("id" -> un.id), ("type" -> "user"), ("text" -> un.name))
+      case un: UserNode => Map(("id" -> un.id), ("type" -> "user"), ("text" -> un.name), ("edge" -> nodeEdge))
       case null => ""
-      case _ => Map(("id" -> node.id), ("type" -> "text"), ("text" -> node.id))
+      case _ => Map(("id" -> node.id), ("type" -> "text"), ("text" -> node.id), ("edge" -> nodeEdge))
     }
   }
 
   private def snodeId(edgeType: String, pos: Integer) = edgeType.replaceAll("/", "_") + "_" + pos
 
-  private def generateSnode(pair: ((String, Int), Set[String]), store: UserOps) = {
+  private def generateSnode(pair: ((String, Int), Set[(String, String)]), store: UserOps) = {
     val id = snodeId(pair._1._1, pair._1._2)
     val label = linkLabel(pair._1._1)
     val color = linkColor(label)
-    val nodes = pair._2.map(node2map(_, store))
+    val nodes = pair._2.map(x => node2map(x._1, x._2, store))
 
     val data = Map(("nodes" -> nodes), ("etype" -> pair._1._1), ("rpos" -> pair._1._2), ("label" -> label), ("color" -> color))
 
     id -> data
   }
 
-  private def generateSnodeMap(edgeNodeMap: Map[(String, Int), Set[String]], store: UserOps) = {
+  private def generateSnodeMap(edgeNodeMap: Map[(String, Int), Set[(String, String)]], store: UserOps) = {
     edgeNodeMap.map(x => generateSnode(x, store))
   }
 
