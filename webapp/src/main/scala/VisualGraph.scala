@@ -63,8 +63,10 @@ object VisualGraph {
         }
       }
       else {
-        val edgeType = edge.edgeType.replaceAll("~", " .. ") + " .. "
-        Edge(edgeType, List(edge.participantIds(0), edge.participantIds(1)), edge)
+        val parts = edge.edgeType.split("~").toList
+        val edgeType = parts.head + " " + ID.lastPart(edge.participantIds(1)) + " " + parts.tail.reduceLeft(_ + " " + _)
+        //val edgeType = edge.edgeType.replaceAll("~", " .. ") + " .. "
+        Edge(edgeType, List(edge.participantIds(0), edge.participantIds(2)), edge)
       }
     }
     else {
@@ -106,7 +108,7 @@ object VisualGraph {
     }
   }
 
-  private def snodeId(edgeType: String, pos: Integer) = edgeType.replaceAll("/", "_") + "_" + pos
+  private def snodeId(edgeType: String, pos: Integer) = edgeType.replaceAll("/", "_").replaceAll(" ", "_").replaceAll("\\.", "_") + "_" + pos
 
   private def generateSnode(pair: ((String, Int), Set[(String, String)]), store: UserOps) = {
     val id = snodeId(pair._1._1, pair._1._2)
