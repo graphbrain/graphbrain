@@ -197,13 +197,14 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
 
   def neighborEdges(nodeId: String, edgeType: String = "", relPos: Integer = -1): Set[Edge] = {
-    ldebug("neighborEdges " + nodeId + "; edgeType: " + edgeType + "; pos: " + relPos)
+    //ldebug("neighborEdges " + nodeId + "; edgeType: " + edgeType + "; pos: " + relPos)
 
     try {
       val eset = MSet[Edge]()
 
       val query = HFactory.createSliceQuery(backend.ksp, StringSerializer.get(),
                                                       new CompositeSerializer(), StringSerializer.get())
+      
       query.setKey(nodeId)
       query.setColumnFamily("edges")
 
