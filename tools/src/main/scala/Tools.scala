@@ -9,9 +9,9 @@ object Tools {
     else {
       val toolArgs = args.slice(1, args.size)
       args(0) match {
-        case "welcome" => Welcome(toolArgs)
         case "showvertex" => ShowVertex(toolArgs)
         case "neighbors" => Neighbors(toolArgs)
+        case "edgetypes" => EdgeTypes(toolArgs)
         case _ => println("Error: unkown tool.")
       }
     }
