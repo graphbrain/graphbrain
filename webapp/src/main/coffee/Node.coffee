@@ -15,7 +15,10 @@ class Node
 
     place: ->
         # create node div
-        $('#' + @snode.id + ' .viewport').append('<div id="' + @divid + '" class="node" />')
+        if @root
+            $('#' + @snode.id + ' .viewport').append('<div id="' + @divid + '" class="node_root" />')
+        else
+            $('#' + @snode.id + ' .viewport').append('<div id="' + @divid + '" class="node" />')
 
         nodeData = {}
         if @snode.relpos == 0

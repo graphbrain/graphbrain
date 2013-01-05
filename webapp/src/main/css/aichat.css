@@ -1,21 +1,16 @@
 #ai-chat {
     position:fixed;
-    bottom:10px;
-    right:10px;
+    bottom:0px;
+    right:0px;
     width:600px;
-    height:150px;
+    height:180px;
 	color: #fff;
-    background: rgba(50, 50, 50, 0.9);
+    background: rgba(189,218,249, 0.9);
     padding-left: 10px;
     padding-right: 10px;
     display: none;
     overflow: auto;
     z-index:2;
-    border-radius:5px;
-
-    border-style:solid;
-    border-width:7px;
-    border-color:rgb(50, 50, 50);
 }
 
 #ai-chat-input {
@@ -28,18 +23,18 @@
 }
 
 .gb-line {
-    color: #ADF6F7;
+    color: #111;
 }
 
 .gb-line a {
-    color: #D5F7F7;
+    color: #000;
 }
 
 .gb-line a:hover {
-    color: #D5F7F7;
+    color: #000;
     text-decoration:underline;
 }
 
 .user-line {
-    color: #F7E57E;
+    color: #444;
 }
