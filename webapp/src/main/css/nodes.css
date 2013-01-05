@@ -12,12 +12,23 @@
     color:#000;
 }
 
+.node_root {
+    color:#000;
+    background:#eee;
+    margin: 3px;
+    padding: 10px;
+}
+
 .nodeTitle {
     max-width: 170px;
     max-height: 70px;
     overflow:hidden;
     text-overflow:ellipsis;
     float:left;
+}
+
+.nodeTitle a {
+    color:#000;
 }
 
 .nodeRemove {
@@ -53,9 +64,9 @@
 .snodeInner {
     font-size: 12px;
     border-style:solid;
-    border-width:2px;
+    border-width:3px;
     border-color:#AAA;
-    padding: 10px;
+    padding: 5px;
     background: rgba(255, 255, 255, 0.8);
 }
 
@@ -66,10 +77,11 @@
 }
 
 .snodeRoot {
-    font-size: 20px;
-    background:rgba(0, 0, 0, 0.8);
-    border-radius:5px;
+    font-size: 28px;
+    background:rgba(255, 255, 255, 0.8);
     border-width:0px;
+    border-color:rgb(255, 255, 255);
+    padding: 0px;
 }
 
 #graph-view {

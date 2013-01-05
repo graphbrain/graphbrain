@@ -1152,7 +1152,11 @@ function testCSS(prop) {
 
     Node.prototype.place = function() {
       var html, nodeData, removeData, removeLinkId;
-      $('#' + this.snode.id + ' .viewport').append('<div id="' + this.divid + '" class="node" />');
+      if (this.root) {
+        $('#' + this.snode.id + ' .viewport').append('<div id="' + this.divid + '" class="node_root" />');
+      } else {
+        $('#' + this.snode.id + ' .viewport').append('<div id="' + this.divid + '" class="node" />');
+      }
       nodeData = {};
       if (this.snode.relpos === 0) {
         nodeData = {
