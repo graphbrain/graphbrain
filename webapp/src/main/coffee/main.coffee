@@ -10,14 +10,20 @@ $ ->
 
     state = new State()
 
-    g = Graph.initGraph(state.getNewEdges())
+    if data?
+        g = Graph.initGraph(state.getNewEdges())
+    
     initInterface()
-    initRelations()
+    
+    if data?
+        initRelations()
+    
     browserSpecificTweaks()
 
-    if g.changedSNode == null
-      addAnim(new AnimInitRotation())
-    else
-      addAnim(new AnimLookAt(g.changedSNode))
+    if data?
+        if g.changedSNode == null
+            addAnim(new AnimInitRotation())
+        else
+            addAnim(new AnimLookAt(g.changedSNode))
 
     state.clean()
