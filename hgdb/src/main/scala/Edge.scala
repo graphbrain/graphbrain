@@ -37,6 +37,10 @@ case class Edge(edgeType: String, extParticipantIds: List[String], originalEdge:
   def getOriginalEdge = if (originalEdge == null) this else originalEdge
 
   override def toString = edgeType + " " + participantIds.reduceLeft(_ + " " + _)
+
+  def humanReadable2 = ID.humanReadable(participantIds(0)) +
+                        " [" +  ID.humanReadable(edgeType) + "] " +
+                        ID.humanReadable(participantIds(1))
 }
 
 object Edge {
