@@ -1,5 +1,8 @@
 package com.graphbrain.webapp
 
+
+import scala.collection.mutable.Set
+
 import akka.actor.{Actor, Props}
 import org.jboss.netty.handler.codec.http.HttpResponse
 import unfiltered.Async
@@ -24,7 +27,7 @@ object AIChatResponderActor {
   case class Sentence(sentence: String, root: Vertex, user: UserNode, responder: Async.Responder[HttpResponse])
 }
 
-class AIChatResponderActor() extends Actor with SimpleLog{
+class AIChatResponderActor() extends Actor with SimpleLog {
   import AIChatResponderActor._
 
   val sparser = new SentenceParser()
@@ -46,6 +49,8 @@ class AIChatResponderActor() extends Actor with SimpleLog{
     case Sentence(sentence, root, user, responder) =>
       var replySentence = "Sorry, I don't understand."
       var goto = ""
+      var newEdges = Set[String]()
+      newEdges += ""
 
       try {
         val responses = sparser.parseSentenceGeneral(sentence, root, Option(user))
@@ -69,8 +74,10 @@ class AIChatResponderActor() extends Actor with SimpleLog{
 
               Server.store.createAndConnectVertices2(relation, nodes, user.id)
 
-              // force consesnsus re-evaluation of affected edge
               val edge = Edge(relation, nodeIds)
+              newEdges += edge.toString
+
+              // force consesnsus re-evaluation of affected edge
               Server.consensusActor ! edge
 
               //TODO: fix undoFunctionCall to support facts with any number of participants
@@ -97,8 +104,10 @@ class AIChatResponderActor() extends Actor with SimpleLog{
 
                     Server.store.createAndConnectVertices2(relation, nodes, user.id)
 
-                    // force consesnsus re-evaluation of affected edge
                     val edge = Edge(relation, nodeIds)
+                    newEdges += edge.toString
+
+                    // force consesnsus re-evaluation of affected edge
                     Server.consensusActor ! edge                    
                 }
               }
@@ -111,7 +120,7 @@ class AIChatResponderActor() extends Actor with SimpleLog{
         case e => e.printStackTrace()
       }
 
-      val replyMap = Map(("sentence" -> replySentence), ("goto" -> goto))
+      val replyMap = Map(("sentence" -> replySentence), ("goto" -> goto), ("newedges" -> newEdges))
       responder.respond(JsonContent ~> ResponseString(JSONGen.json(replyMap)))
   }
 }

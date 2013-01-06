@@ -19,7 +19,7 @@ mouseDown = (e) ->
     dragging = true
     lastX = e.pageX
     lastY = e.pageY
-    stopAnim = true
+    stopAnims()
     false
 
 mouseMove = (e) ->
@@ -34,7 +34,7 @@ mouseMove = (e) ->
     false
 
 touchStart = (e) ->
-    stopAnim = true
+    stopAnims()
     if e.touches.length == 1
         touch = e.touches[0]
         lastX = touch.pageX

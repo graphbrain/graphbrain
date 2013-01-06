@@ -33,7 +33,7 @@ relationSubmit = (msg) ->
       success: relationReply
     })
   else
-  lookToSNode(g.snodes[eventData.snode])
+    addAnim(new AnimLookAt(g.snodes[eventData.snode]))
   false
 
 
@@ -47,4 +47,4 @@ relationReply = (msg) ->
 
   if sid != ''
     snode = g.snodes[sid]
-    lookToSNode(snode)
+    addAnim(new AnimLookAt(snode))

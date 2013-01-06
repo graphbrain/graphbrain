@@ -28,6 +28,7 @@ build = (callback) ->
     'coffee/relations.coffee',
     'coffee/aichat.coffee',
     'coffee/remove.coffee',
+    'coffee/State.coffee'
     'coffee/main.coffee']
   coffee.stderr.on 'data', (data) ->
     process.stderr.write data.toString()

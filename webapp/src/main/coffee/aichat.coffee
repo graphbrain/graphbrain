@@ -120,17 +120,18 @@ aiChatSubmit = (msg) ->
     type: "POST",
     url: "/ai",
     data: "sentence=" + sentence + "&rootId=" + rootNodeId,
-    dataType: "text",
+    dataType: "json",
     success: aiChatReply
   })
   false
 
 aiChatReply = (msg) ->
-  reply = $.parseJSON(msg)
-  aiChatAddLine('gb', reply['sentence'])
+  aiChatAddLine('gb', msg['sentence'])
 
-  if reply['goto'] != ''
-    window.location.href = '/node/' + reply['goto']
+  state.setNewEdges(msg['newedges'])
+
+  if msg['goto'] != ''
+    window.location.href = '/node/' + msg['goto']
 
 aiChatButtonPressed = (msg) ->
   if aiChatVisible

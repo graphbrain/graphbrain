@@ -1,7 +1,7 @@
 .node {
     max-width: 200px;
     color:#000;
-    background:#eee;
+    background:rgb(224, 224, 224);
     margin: 3px;
     padding: 3px;
     white-space: nowrap;

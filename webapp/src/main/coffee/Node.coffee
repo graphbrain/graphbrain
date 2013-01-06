@@ -9,7 +9,7 @@ nodeCount = 0
 
 # Node
 class Node
-    constructor: (@id, @text, @type, @snode, @edge, @url='', @icon='') ->
+    constructor: (@id, @text, @type, @snode, @edge, @url='', @icon='', @glow=false) ->
         @divid = 'n' + nodeCount++
         @root = false
 
@@ -49,3 +49,6 @@ class Node
         if removeLinkId != ''
             removeData = {'node': this, 'link': @snode.label, 'edge': @edge}
             $('#' + removeLinkId).click(removeData, removeClicked)
+
+        if @glow
+            addAnim(new AnimNodeGlow(this))
