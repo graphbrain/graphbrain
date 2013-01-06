@@ -38,9 +38,9 @@ case class Edge(edgeType: String, extParticipantIds: List[String], originalEdge:
 
   override def toString = edgeType + " " + participantIds.reduceLeft(_ + " " + _)
 
-  def humanReadable2 = ID.humanReadable(participantIds(0)) +
+  def humanReadable2 = (ID.humanReadable(participantIds(0)) +
                         " [" +  ID.humanReadable(edgeType) + "] " +
-                        ID.humanReadable(participantIds(1))
+                        ID.humanReadable(participantIds(1))).replace(",", "")
 }
 
 object Edge {
