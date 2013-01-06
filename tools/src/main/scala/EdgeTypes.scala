@@ -7,6 +7,8 @@ import me.prettyprint.hector.api.factory.HFactory
 import me.prettyprint.cassandra.serializers.StringSerializer
 
 import com.graphbrain.hgdb.VertexStore
+import com.graphbrain.hgdb.ID
+import com.graphbrain.hgdb.Edge
 
 
 object EdgeTypes {
@@ -51,8 +53,7 @@ object EdgeTypes {
               if (!edgeTypes.contains(et)) {
                 typeCount += 1
                 edgeTypes(et) = e.toString
-                println(e.toString)
-                println("types: " + typeCount + "; nodes: " + nodeCount)
+                println(ID.humanReadable(et) + ", " + e.humanReadable2)
               }
             }
           }
@@ -62,8 +63,6 @@ object EdgeTypes {
       if (rows.getCount() < rowCount)
         done = true
     }
-
-    println("node count: " + nodeCount)
   }
 
   def main(args: Array[String]) : Unit = {
