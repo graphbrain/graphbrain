@@ -3,12 +3,21 @@
 # Entry point functions & global variables
 
 g = false
+state = false
 
 $ ->
     Math.seedrandom("GraphBrain")
 
-    g = Graph.initGraph()
+    state = new State()
+
+    g = Graph.initGraph(state.getNewEdges())
     initInterface()
     initRelations()
     browserSpecificTweaks()
-    initAnimation()
+
+    if g.changedSNode == null
+      addAnim(new AnimInitRotation())
+    else
+      addAnim(new AnimLookAt(g.changedSNode))
+
+    state.clean()

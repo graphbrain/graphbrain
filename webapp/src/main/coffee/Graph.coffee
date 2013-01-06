@@ -4,9 +4,11 @@ rootNodeId = false
 
 
 class Graph
-    constructor: (width, height) ->
+    constructor: (width, height, newedges) ->
         @width = width
         @height = height
+        @newedges = newedges
+
         @halfWidth = width / 2
         @halfHeight = height / 2
 
@@ -26,9 +28,12 @@ class Graph
         @negativeStretch = 1
         @mappingPower = 1
 
+        # new edges
+        @changedSNode = null
 
-    @initGraph = ->
-        graph = new Graph($('#graph-view').width(), $('#graph-view').height())
+
+    @initGraph = (newedges) ->
+        graph = new Graph($('#graph-view').width(), $('#graph-view').height(), newedges)
         graph.updateTransform()
 
         # create root
@@ -74,10 +79,17 @@ class Graph
                 type = nod['type']
                 edge = nod['edge']
 
+                glow = false
+                if @newedges != undefined
+                    for e in @newedges
+                        if e == edge
+                            @changedSNode = snode
+                            glow = true
+
                 if type == 'url'
-                    node = new Node(nid, text, type, snode, edge, nod['url'], nod['icon'])
+                    node = new Node(nid, text, type, snode, edge, nod['url'], nod['icon'], glow)
                 else
-                    node = new Node(nid, text, type, snode, edge)
+                    node = new Node(nid, text, type, snode, edge, '', '', glow)
             
                 snode.nodes[nid] = node
 

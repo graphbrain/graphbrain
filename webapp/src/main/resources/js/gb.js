@@ -739,7 +739,9 @@ function testCSS(prop) {
 }
 ;
 
-  var Graph, Node, Quaternion, SNode, SphericalCoords, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, animSpeedX, animSpeedY, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initAnimation, initChatBuffer, initDisambiguateDialog, initInterface, initLoginDialog, initRelations, initRemoveDialog, initSearchDialog, initSignUpDialog, intervalID, lastScale, lastX, lastY, layout, login, loginReply, logout, lookToSNode, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, printHelp, relationReply, relationSubmit, removeAction, removeClicked, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, stopAnim, submitting, targetSNode, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length;
+  var AnimInitRotation, AnimLookAt, AnimNodeGlow, Animation, Graph, Node, Quaternion, SNode, SphericalCoords, State, addAnim, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, anims, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initChatBuffer, initDisambiguateDialog, initInterface, initLoginDialog, initRelations, initRemoveDialog, initSearchDialog, initSignUpDialog, intervalID, lastScale, lastX, lastY, layout, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, printHelp, relationReply, relationSubmit, removeAction, removeClicked, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, state, stopAnims, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   browserSpecificTweaks = function() {
     if (isSafari) {
@@ -947,56 +949,159 @@ function testCSS(prop) {
 
   intervalID = false;
 
-  stopAnim = false;
+  anims = [];
 
-  animSpeedX = 0.007;
-
-  animSpeedY = 0.005;
-
-  targetSNode = false;
-
-  lookToSNode = function(snode) {
-    targetSNode = snode;
-    if (intervalID === false) {
-      return intervalID = window.setInterval(animCycle, 30);
-    } else {
-      return stopAnim = true;
+  addAnim = function(anim) {
+    stopAnims();
+    if (anims.length === 0) {
+      intervalID = window.setInterval(animCycle, 30);
     }
+    return anims.push(anim);
   };
 
   animCycle = function() {
-    var precision, speedFactor, speedX, speedY;
-    if (targetSNode === false) {
-      g.rotateX(-animSpeedX);
-      g.rotateY(animSpeedY);
-      g.updateView();
-      animSpeedX *= 0.98;
-      animSpeedY *= 0.98;
-      if (animSpeedX < 0.0001) {
-        stopAnim = true;
-      }
-      if (stopAnim) {
-        window.clearInterval(intervalID);
-        return intervalID = false;
-      }
-    } else {
-      speedFactor = 0.05;
-      precision = 0.01;
-      speedX = targetSNode.angleX * speedFactor;
-      speedY = targetSNode.angleY * speedFactor;
-      g.rotateX(speedY);
-      g.rotateY(-speedX);
-      g.updateView();
-      if ((Math.abs(targetSNode.angleX) < precision) && (Math.abs(targetSNode.angleY) < precision)) {
-        window.clearInterval(intervalID);
-        return intervalID = false;
-      }
+    var a, _i, _len;
+    for (_i = 0, _len = anims.length; _i < _len; _i++) {
+      a = anims[_i];
+      a.runCycle();
+    }
+    anims = anims.filter(function(anim) {
+      return anim.active;
+    });
+    if (anims.length === 0) {
+      window.clearInterval(intervalID);
+      return intervalID = false;
     }
   };
 
-  initAnimation = function() {
-    return intervalID = window.setInterval(animCycle, 30);
+  stopAnims = function() {
+    anims = anims.filter(function(anim) {
+      return !anim.stoppable;
+    });
+    if (anims.length === 0) {
+      window.clearInterval(intervalID);
+      return intervalID = false;
+    }
   };
+
+  Animation = (function() {
+
+    function Animation() {
+      this.active = true;
+      this.stoppable = false;
+    }
+
+    Animation.prototype.runCycle = function() {
+      return this.active = this.cycle();
+    };
+
+    return Animation;
+
+  })();
+
+  AnimInitRotation = (function(_super) {
+
+    __extends(AnimInitRotation, _super);
+
+    function AnimInitRotation() {
+      this.stoppable = true;
+      this.animSpeedX = 0.007;
+      this.animSpeedY = 0.005;
+    }
+
+    AnimInitRotation.prototype.cycle = function() {
+      g.rotateX(-this.animSpeedX);
+      g.rotateY(this.animSpeedY);
+      g.updateView();
+      this.animSpeedX *= 0.98;
+      this.animSpeedY *= 0.98;
+      if (this.animSpeedX < 0.0001) {
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    return AnimInitRotation;
+
+  })(Animation);
+
+  AnimLookAt = (function(_super) {
+
+    __extends(AnimLookAt, _super);
+
+    function AnimLookAt(targetSNode) {
+      AnimLookAt.__super__.constructor.call(this);
+      this.targetSNode = targetSNode;
+    }
+
+    AnimLookAt.prototype.cycle = function() {
+      var precision, speedFactor, speedX, speedY;
+      speedFactor = 0.05;
+      precision = 0.01;
+      speedX = this.targetSNode.angleX * speedFactor;
+      speedY = this.targetSNode.angleY * speedFactor;
+      g.rotateX(speedY);
+      g.rotateY(-speedX);
+      g.updateView();
+      if ((Math.abs(this.targetSNode.angleX) < precision) && (Math.abs(this.targetSNode.angleY) < precision)) {
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    return AnimLookAt;
+
+  })(Animation);
+
+  AnimNodeGlow = (function(_super) {
+
+    __extends(AnimNodeGlow, _super);
+
+    function AnimNodeGlow(node) {
+      AnimNodeGlow.__super__.constructor.call(this);
+      this.node = node;
+      this.x = 0;
+      this.cycles = 0.0;
+      this.delta = 0.05;
+      this.r1 = 224.0;
+      this.g1 = 224.0;
+      this.b1 = 224.0;
+      this.r2 = 189.0;
+      this.g2 = 218.0;
+      this.b2 = 249.0;
+    }
+
+    AnimNodeGlow.prototype.cycle = function() {
+      var b, g, r, rgb;
+      this.x += this.delta;
+      if (this.x > 1) {
+        this.x = 1;
+        this.delta = -this.delta;
+      }
+      if (this.x < 0) {
+        this.x = 0;
+        this.delta = -this.delta;
+        this.cycles += 1;
+      }
+      r = Math.round(this.r1 + ((this.r2 - this.r1) * this.x));
+      g = Math.round(this.g1 + ((this.g2 - this.g1) * this.x));
+      b = Math.round(this.b1 + ((this.b2 - this.b1) * this.x));
+      rgb = 'rgb(' + r + ',' + g + ',' + b + ')';
+      $('#' + this.node.divid).css({
+        background: rgb
+      });
+      if (this.cycles > 3) {
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    return AnimNodeGlow;
+
+  })(Animation);
 
   dragging = false;
 
@@ -1025,7 +1130,7 @@ function testCSS(prop) {
     dragging = true;
     lastX = e.pageX;
     lastY = e.pageY;
-    stopAnim = true;
+    stopAnims();
     return false;
   };
 
@@ -1045,7 +1150,7 @@ function testCSS(prop) {
 
   touchStart = function(e) {
     var touch;
-    stopAnim = true;
+    stopAnims();
     if (e.touches.length === 1) {
       touch = e.touches[0];
       lastX = touch.pageX;
@@ -1138,7 +1243,7 @@ function testCSS(prop) {
 
   Node = (function() {
 
-    function Node(id, text, type, snode, edge, url, icon) {
+    function Node(id, text, type, snode, edge, url, icon, glow) {
       this.id = id;
       this.text = text;
       this.type = type;
@@ -1146,6 +1251,7 @@ function testCSS(prop) {
       this.edge = edge;
       this.url = url != null ? url : '';
       this.icon = icon != null ? icon : '';
+      this.glow = glow != null ? glow : false;
       this.divid = 'n' + nodeCount++;
       this.root = false;
     }
@@ -1203,7 +1309,10 @@ function testCSS(prop) {
           'link': this.snode.label,
           'edge': this.edge
         };
-        return $('#' + removeLinkId).click(removeData, removeClicked);
+        $('#' + removeLinkId).click(removeData, removeClicked);
+      }
+      if (this.glow) {
+        return addAnim(new AnimNodeGlow(this));
       }
     };
 
@@ -1537,9 +1646,10 @@ function testCSS(prop) {
 
   Graph = (function() {
 
-    function Graph(width, height) {
+    function Graph(width, height, newedges) {
       this.width = width;
       this.height = height;
+      this.newedges = newedges;
       this.halfWidth = width / 2;
       this.halfHeight = height / 2;
       this.snodes = {};
@@ -1553,11 +1663,12 @@ function testCSS(prop) {
       this.quat.getMatrix(this.affinMat);
       this.negativeStretch = 1;
       this.mappingPower = 1;
+      this.changedSNode = null;
     }
 
-    Graph.initGraph = function() {
+    Graph.initGraph = function(newedges) {
       var graph, nid, node, snode, text, type;
-      graph = new Graph($('#graph-view').width(), $('#graph-view').height());
+      graph = new Graph($('#graph-view').width(), $('#graph-view').height(), newedges);
       graph.updateTransform();
       snode = new SNode(graph, 'root', '', 0, '', '#000', true);
       graph.snodes['root'] = snode;
@@ -1580,7 +1691,7 @@ function testCSS(prop) {
     };
 
     Graph.prototype.addSNodesFromJSON = function(json) {
-      var color, edge, etype, k, label, nid, nlist, nod, node, rpos, sid, snode, text, type, v, _i, _len, _ref;
+      var color, e, edge, etype, glow, k, label, nid, nlist, nod, node, rpos, sid, snode, text, type, v, _i, _j, _len, _len1, _ref, _ref1;
       _ref = json['snodes'];
       for (k in _ref) {
         v = _ref[k];
@@ -1598,10 +1709,21 @@ function testCSS(prop) {
           text = nod['text'];
           type = nod['type'];
           edge = nod['edge'];
+          glow = false;
+          if (this.newedges !== void 0) {
+            _ref1 = this.newedges;
+            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+              e = _ref1[_j];
+              if (e === edge) {
+                this.changedSNode = snode;
+                glow = true;
+              }
+            }
+          }
           if (type === 'url') {
-            node = new Node(nid, text, type, snode, edge, nod['url'], nod['icon']);
+            node = new Node(nid, text, type, snode, edge, nod['url'], nod['icon'], glow);
           } else {
-            node = new Node(nid, text, type, snode, edge);
+            node = new Node(nid, text, type, snode, edge, '', '', glow);
           }
           snode.nodes[nid] = node;
         }
@@ -2176,9 +2298,8 @@ function testCSS(prop) {
         success: relationReply
       });
     } else {
-
+      addAnim(new AnimLookAt(g.snodes[eventData.snode]));
     }
-    lookToSNode(g.snodes[eventData.snode]);
     return false;
   };
 
@@ -2194,7 +2315,7 @@ function testCSS(prop) {
     }
     if (sid !== '') {
       snode = g.snodes[sid];
-      return lookToSNode(snode);
+      return addAnim(new AnimLookAt(snode));
     }
   };
 
@@ -2330,18 +2451,17 @@ function testCSS(prop) {
       type: "POST",
       url: "/ai",
       data: "sentence=" + sentence + "&rootId=" + rootNodeId,
-      dataType: "text",
+      dataType: "json",
       success: aiChatReply
     });
     return false;
   };
 
   aiChatReply = function(msg) {
-    var reply;
-    reply = $.parseJSON(msg);
-    aiChatAddLine('gb', reply['sentence']);
-    if (reply['goto'] !== '') {
-      return window.location.href = '/node/' + reply['goto'];
+    aiChatAddLine('gb', msg['sentence']);
+    state.setNewEdges(msg['newedges']);
+    if (msg['goto'] !== '') {
+      return window.location.href = '/node/' + msg['goto'];
     }
   };
 
@@ -2380,15 +2500,49 @@ function testCSS(prop) {
     return $('#removeForm').submit();
   };
 
+  State = (function() {
+
+    function State() {
+      this.values = {};
+      if (localStorage.getItem('newedges') !== null) {
+        this.values['newedges'] = JSON.parse(localStorage.getItem('newedges'));
+      }
+    }
+
+    State.prototype.setNewEdges = function(newedges) {
+      localStorage.setItem('newedges', JSON.stringify(newedges));
+      return this.values['newedges'] = newedges;
+    };
+
+    State.prototype.getNewEdges = function() {
+      return this.values['newedges'];
+    };
+
+    State.prototype.clean = function() {
+      return localStorage.removeItem('newedges');
+    };
+
+    return State;
+
+  })();
+
   g = false;
+
+  state = false;
 
   $(function() {
     Math.seedrandom("GraphBrain");
-    g = Graph.initGraph();
+    state = new State();
+    g = Graph.initGraph(state.getNewEdges());
     initInterface();
     initRelations();
     browserSpecificTweaks();
-    return initAnimation();
+    if (g.changedSNode === null) {
+      addAnim(new AnimInitRotation());
+    } else {
+      addAnim(new AnimLookAt(g.changedSNode));
+    }
+    return state.clean();
   });
 
 }).call(this);
