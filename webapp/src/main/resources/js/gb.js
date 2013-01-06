@@ -2542,14 +2542,20 @@ function testCSS(prop) {
   $(function() {
     Math.seedrandom("GraphBrain");
     state = new State();
-    g = Graph.initGraph(state.getNewEdges());
+    if (typeof data !== "undefined" && data !== null) {
+      g = Graph.initGraph(state.getNewEdges());
+    }
     initInterface();
-    initRelations();
+    if (typeof data !== "undefined" && data !== null) {
+      initRelations();
+    }
     browserSpecificTweaks();
-    if (g.changedSNode === null) {
-      addAnim(new AnimInitRotation());
-    } else {
-      addAnim(new AnimLookAt(g.changedSNode));
+    if (typeof data !== "undefined" && data !== null) {
+      if (g.changedSNode === null) {
+        addAnim(new AnimInitRotation());
+      } else {
+        addAnim(new AnimLookAt(g.changedSNode));
+      }
     }
     return state.clean();
   });
