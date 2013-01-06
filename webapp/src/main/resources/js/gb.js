@@ -952,7 +952,11 @@ function testCSS(prop) {
   anims = [];
 
   addAnim = function(anim) {
-    stopAnims();
+    if (anim.name === 'lookat') {
+      anims = anims.filter(function(anim) {
+        return anim.name !== 'initrotation';
+      });
+    }
     if (anims.length === 0) {
       intervalID = window.setInterval(animCycle, 30);
     }
@@ -987,6 +991,7 @@ function testCSS(prop) {
   Animation = (function() {
 
     function Animation() {
+      this.name = '';
       this.active = true;
       this.stoppable = false;
     }
@@ -1004,6 +1009,7 @@ function testCSS(prop) {
     __extends(AnimInitRotation, _super);
 
     function AnimInitRotation() {
+      this.name = 'initrotation';
       this.stoppable = true;
       this.animSpeedX = 0.007;
       this.animSpeedY = 0.005;
@@ -1032,6 +1038,8 @@ function testCSS(prop) {
 
     function AnimLookAt(targetSNode) {
       AnimLookAt.__super__.constructor.call(this);
+      this.name = 'lookat';
+      this.stoppable = true;
       this.targetSNode = targetSNode;
     }
 
@@ -1061,6 +1069,7 @@ function testCSS(prop) {
 
     function AnimNodeGlow(node) {
       AnimNodeGlow.__super__.constructor.call(this);
+      this.name = 'nodeglow';
       this.node = node;
       this.x = 0;
       this.cycles = 0.0;

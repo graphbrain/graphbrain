@@ -6,9 +6,8 @@ import com.graphbrain.hgdb.UserNode
 
 
 case class CssAndJs() {
-    
-  //val version = "040312"
-  val version = CssAndJs.randomVersion
+
+  val version = "060113"
 
   val analyticsJs = """
     <script type="text/javascript">
@@ -28,19 +27,19 @@ case class CssAndJs() {
 
   def cssAndJs = {
     if (Server.prod) {
-      """<link href="/css/main.css?03012013" type="text/css" rel="Stylesheet" />""" +
+      """<link href="/css/main.css?""" + version + """" type="text/css" rel="Stylesheet" />""" +
       """<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>""" +
       """<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.js" type="text/javascript"></script>""" +
       """<script src="/js/bootstrap.min.js" type="text/javascript" ></script>""" +
-      """<script src="/js/gb.js?03012013" type="text/javascript" ></script>""" +
+      """<script src="/js/gb.js?""" + version + """" type="text/javascript" ></script>""" +
       analyticsJs
     }
     else {
-      """<link href="/css/main.css?""" + version + """" type="text/css" rel="Stylesheet" />""" +
+      """<link href="/css/main.css?""" + CssAndJs.randomVersion + """" type="text/css" rel="Stylesheet" />""" +
       """<script src="/js/jquery-1.7.2.min.js" type="text/javascript" ></script>""" +
       """<script src="/js/jquery-ui-1.8.18.custom.min.js" type="text/javascript" ></script>""" +
       """<script src="/js/bootstrap.min.js" type="text/javascript" ></script>""" +
-      """<script src="/js/gb.js?""" + version + """" type="text/javascript" ></script>"""
+      """<script src="/js/gb.js?""" + CssAndJs.randomVersion + """" type="text/javascript" ></script>"""
     }
   } 
 }

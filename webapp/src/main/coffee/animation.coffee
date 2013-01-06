@@ -3,7 +3,8 @@ anims = []
 
 
 addAnim = (anim) ->
-  stopAnims()
+  if anim.name == 'lookat'
+    anims = anims.filter (anim) -> anim.name != 'initrotation'
 
   if anims.length == 0
     intervalID = window.setInterval(animCycle, 30)
@@ -33,6 +34,7 @@ stopAnims = ->
 
 class Animation
   constructor: ->
+    @name = ''
     @active = true
     @stoppable = false
 
@@ -43,6 +45,7 @@ class Animation
 
 class AnimInitRotation extends Animation
   constructor: ->
+    @name = 'initrotation'
     @stoppable = true
     @animSpeedX = 0.007
     @animSpeedY = 0.005
@@ -65,6 +68,8 @@ class AnimInitRotation extends Animation
 class AnimLookAt extends Animation
   constructor: (targetSNode) ->
     super()
+    @name = 'lookat'
+    @stoppable = true
     @targetSNode = targetSNode
   
   cycle: ->
@@ -88,6 +93,7 @@ class AnimLookAt extends Animation
 class AnimNodeGlow extends Animation
   constructor: (node) ->
     super()
+    @name = 'nodeglow'
     @node = node
     @x = 0
     @cycles = 0.0
