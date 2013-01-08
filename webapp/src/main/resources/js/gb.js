@@ -1704,39 +1704,41 @@ function testCSS(prop) {
       _ref = json['snodes'];
       for (k in _ref) {
         v = _ref[k];
-        sid = k;
-        etype = v['etype'];
         label = v['label'];
-        rpos = v['rpos'];
-        color = v['color'];
-        nlist = v['nodes'];
-        snode = new SNode(this, sid, etype, rpos, label, color, false);
-        this.snodes[sid] = snode;
-        for (_i = 0, _len = nlist.length; _i < _len; _i++) {
-          nod = nlist[_i];
-          nid = nod['id'];
-          text = nod['text'];
-          type = nod['type'];
-          edge = nod['edge'];
-          glow = false;
-          if (this.newedges !== void 0) {
-            _ref1 = this.newedges;
-            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-              e = _ref1[_j];
-              if (e === edge) {
-                this.changedSNode = snode;
-                glow = true;
+        if ((label !== 'x') && (label !== 'X')) {
+          sid = k;
+          etype = v['etype'];
+          rpos = v['rpos'];
+          color = v['color'];
+          nlist = v['nodes'];
+          snode = new SNode(this, sid, etype, rpos, label, color, false);
+          this.snodes[sid] = snode;
+          for (_i = 0, _len = nlist.length; _i < _len; _i++) {
+            nod = nlist[_i];
+            nid = nod['id'];
+            text = nod['text'];
+            type = nod['type'];
+            edge = nod['edge'];
+            glow = false;
+            if (this.newedges !== void 0) {
+              _ref1 = this.newedges;
+              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+                e = _ref1[_j];
+                if (e === edge) {
+                  this.changedSNode = snode;
+                  glow = true;
+                }
               }
             }
+            if (type === 'url') {
+              node = new Node(nid, text, type, snode, edge, nod['url'], nod['icon'], glow);
+            } else {
+              node = new Node(nid, text, type, snode, edge, '', '', glow);
+            }
+            snode.nodes[nid] = node;
           }
-          if (type === 'url') {
-            node = new Node(nid, text, type, snode, edge, nod['url'], nod['icon'], glow);
-          } else {
-            node = new Node(nid, text, type, snode, edge, '', '', glow);
-          }
-          snode.nodes[nid] = node;
+          snode.place();
         }
-        snode.place();
       }
       return this.layout();
     };

@@ -140,7 +140,7 @@ narrator,has narrator
 voice,has voice
 manager,had manager
 manager club,was manager of club
-statistic label,hide?
+statistic label,X
 region served,served region
 target airport,has target airport
 hub airport,has hub airport
@@ -436,7 +436,7 @@ port,has port
 target space station,has target space station
 rocket,has rocket
 crew,has crew
-religious head label,hide?
+religious head label,X
 second driver country,had second driver country
 international affiliation,has international affiliation
 current partner,has current partner
@@ -570,7 +570,7 @@ boiler pressure,has boiler pressure
 river branch of,is river branch of
 river branch,has river branch
 category,belongs to category
-vice principal label,hide?
+vice principal label,X
 sheading,has sheading
 parish,has parish
 managing editor,has managing editor
@@ -617,7 +617,7 @@ left child,has left child
 named after,is named after
 wins at challenges,wins at challenges
 organ system,has organ system
-chair label,hide?
+chair label,X
 aircraft helicopter observation,has aircraft helicopter observation
 last flight,has last flight
 original end point,has original end point
