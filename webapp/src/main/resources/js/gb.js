@@ -1233,10 +1233,12 @@ function testCSS(prop) {
     document.addEventListener('touchend', touchEnd);
     document.addEventListener('touchmove', touchMove);
     initAlert();
-    initAiChat();
-    initRemoveDialog();
-    initDisambiguateDialog();
-    $('#ai-chat-button').bind('click', aiChatButtonPressed);
+    if (typeof data !== "undefined" && data !== null) {
+      initAiChat();
+      initRemoveDialog();
+      initDisambiguateDialog();
+      $('#ai-chat-button').bind('click', aiChatButtonPressed);
+    }
     if (errorMsg !== '') {
       return setErrorAlert(errorMsg);
     }
