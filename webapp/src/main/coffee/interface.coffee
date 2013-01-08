@@ -102,10 +102,12 @@ initInterface = ->
     document.addEventListener('touchmove', touchMove)
 
     initAlert()
-    initAiChat()
-    initRemoveDialog()
-    initDisambiguateDialog()
-    $('#ai-chat-button').bind 'click', aiChatButtonPressed
+
+    if data?
+        initAiChat()
+        initRemoveDialog()
+        initDisambiguateDialog()
+        $('#ai-chat-button').bind 'click', aiChatButtonPressed
 
     # display error message if defined
     if errorMsg != ''
