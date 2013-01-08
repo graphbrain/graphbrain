@@ -130,11 +130,13 @@ object VisualGraph {
     Colors.colors(index)
   }
 
+  private def fixLabel(label: String) = if (EdgeLabelTable.table.contains(label)) EdgeLabelTable.table(label) else label
+
   private def linkLabel(edgeType: String): String = {
     if (edgeType == "")
       return ""
     val lastPart = ID.parts(edgeType).last
-    lastPart.replace("_", " ")
+    fixLabel(lastPart.replace("_", " "))
   }
 
   /*
