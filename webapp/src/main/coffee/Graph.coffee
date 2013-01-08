@@ -63,37 +63,40 @@ class Graph
 
     addSNodesFromJSON: (json) ->
         for k, v of json['snodes']
-            sid = k
-            etype = v['etype']
             label = v['label']
-            rpos = v['rpos']
-            color = v['color']
-            nlist = v['nodes']
-        
-            snode = new SNode(this, sid, etype, rpos, label, color, false)
-            @snodes[sid] = snode
-
-            for nod in nlist
-                nid = nod['id']
-                text = nod['text']
-                type = nod['type']
-                edge = nod['edge']
-
-                glow = false
-                if @newedges != undefined
-                    for e in @newedges
-                        if e == edge
-                            @changedSNode = snode
-                            glow = true
-
-                if type == 'url'
-                    node = new Node(nid, text, type, snode, edge, nod['url'], nod['icon'], glow)
-                else
-                    node = new Node(nid, text, type, snode, edge, '', '', glow)
             
-                snode.nodes[nid] = node
+            # snodes labeled 'x' should be discarded
+            if (label != 'x') and (label != 'X')
+                sid = k
+                etype = v['etype']
+                rpos = v['rpos']
+                color = v['color']
+                nlist = v['nodes']
+        
+                snode = new SNode(this, sid, etype, rpos, label, color, false)
+                @snodes[sid] = snode
 
-            snode.place()
+                for nod in nlist
+                    nid = nod['id']
+                    text = nod['text']
+                    type = nod['type']
+                    edge = nod['edge']
+
+                    glow = false
+                    if @newedges != undefined
+                        for e in @newedges
+                            if e == edge
+                                @changedSNode = snode
+                                glow = true
+
+                    if type == 'url'
+                        node = new Node(nid, text, type, snode, edge, nod['url'], nod['icon'], glow)
+                    else
+                        node = new Node(nid, text, type, snode, edge, '', '', glow)
+            
+                    snode.nodes[nid] = node
+
+                snode.place()
 
         @layout()
 
