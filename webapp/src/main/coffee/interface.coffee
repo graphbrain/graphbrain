@@ -87,9 +87,8 @@ initInterface = ->
     $('#search-field').submit(searchQuery)
     initSearchDialog()
     initSignUpDialog()
-    initLoginDialog()
     $('.signupLink').bind 'click', showSignUpDialog
-    $('#loginLink').bind 'click', showLoginDialog
+    $('#loginLink').bind 'click', showSignUpDialog
     $('#logoutLink').bind 'click', logout
 
     fullBind("mouseup", mouseUp)

@@ -739,7 +739,7 @@ function testCSS(prop) {
 }
 ;
 
-  var AnimInitRotation, AnimLookAt, AnimNodeGlow, Animation, Graph, Node, Quaternion, SNode, SphericalCoords, State, addAnim, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, anims, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearLoginErrors, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initChatBuffer, initDisambiguateDialog, initInterface, initLoginDialog, initRelations, initRemoveDialog, initSearchDialog, initSignUpDialog, intervalID, lastScale, lastX, lastY, layout, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, printHelp, relationReply, relationSubmit, removeAction, removeClicked, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showLoginDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, state, stopAnims, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length,
+  var AnimInitRotation, AnimLookAt, AnimNodeGlow, Animation, Graph, Node, Quaternion, SNode, SphericalCoords, State, addAnim, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, anims, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initChatBuffer, initDisambiguateDialog, initInterface, initRelations, initRemoveDialog, initSearchDialog, initSignUpDialog, intervalID, lastScale, lastX, lastY, layout, login, loginReply, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, printHelp, relationReply, relationSubmit, removeAction, removeClicked, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, state, stopAnims, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -1221,9 +1221,8 @@ function testCSS(prop) {
     $('#search-field').submit(searchQuery);
     initSearchDialog();
     initSignUpDialog();
-    initLoginDialog();
     $('.signupLink').bind('click', showSignUpDialog);
-    $('#loginLink').bind('click', showLoginDialog);
+    $('#loginLink').bind('click', showSignUpDialog);
     $('#logoutLink').bind('click', logout);
     fullBind("mouseup", mouseUp);
     fullBind("mousedown", mouseDown);
@@ -2015,15 +2014,9 @@ function testCSS(prop) {
 
   initSignUpDialog = function() {
     var dialogHtml;
-    dialogHtml = $("<div class=\"modal hide\" id=\"signUpModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Sign Up</h3>\n  </div>\n  <form class=\"signupForm\">\n    <div class=\"modal-body\" id=\"registerLoginBody\">\n      <fieldset id=\"nameFieldSet\">\n        <label>Name</label>\n        <input id=\"suName\" type=\"text\" class=\"span3\" placeholder=\"Or an alias if you prefer\">\n        <span id=\"nameErrMsg\" class=\"help-inline\" />\n      </fieldset>\n      <fieldset id=\"usernameFieldSet\">\n        <label>Username</label>\n        <input id=\"suUsername\" type=\"text\" class=\"span3\" placeholder=\"Unique identifier\">\n        <span id=\"usernameErrMsg\" class=\"help-inline\" />\n      </fieldset>\n      <fieldset id=\"emailFieldSet\">\n        <label>Email</label>\n        <input id=\"suEmail\" type=\"text\" class=\"span3\" placeholder=\"Will not be seen by other members\">\n        <span id=\"emailErrMsg\" class=\"help-inline\" />\n        <span class=\"help-block\">We will never give or sell it to third-parties.</span>\n      </fieldset>\n      <fieldset id=\"passFieldSet\">\n        <label>Password</label>\n        <input id=\"suPassword\" type=\"password\" class=\"span3\" placeholder=\"A good password\">\n        <input id=\"suPassword2\" type=\"password\" class=\"span3\" placeholder=\"Confirm password\">\n        <span id=\"passErrMsg\" class=\"help-inline\" />\n      </fieldset>\n    </div>\n    <div class=\"modal-footer\">\n      </form>\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"signupButton\" class=\"btn btn-primary\">Sign Up</a>\n    </div>\n  </form>\n</div>");
+    dialogHtml = $("\n<div class=\"modal hide\" id=\"signUpModal\" style=\"width:650px; height:500px; margin: -295px 0 0 -325px;\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Register or Login</h3>\n  </div>\n\n  <div class=\"modal-body\" id=\"registerLoginBody\" style=\"height:500px; overflow:hidden;\">\n    <div style=\"float:left\">\n      <h5>REGISTER NEW ACCOUNT</h5>\n      <span id=\"signupErrMsg\" class=\"error\" />\n      <form class=\"signupForm\">\n        <fieldset id=\"nameFieldSet\">\n          <label>Name</label>\n          <input id=\"suName\" type=\"text\" class=\"span3\" placeholder=\"Or an alias if you prefer\">\n        </fieldset>\n        <fieldset id=\"usernameFieldSet\">\n          <label>Username</label>\n          <input id=\"suUsername\" type=\"text\" class=\"span3\" placeholder=\"Unique identifier\">\n        </fieldset>\n        <fieldset id=\"emailFieldSet\">\n          <label>Email</label>\n          <input id=\"suEmail\" type=\"text\" class=\"span3\" placeholder=\"Will not be seen by other members\">\n        </fieldset>\n        <fieldset id=\"passFieldSet\">\n          <label>Password</label>\n          <input id=\"suPassword\" type=\"password\" class=\"span3\" placeholder=\"A good password\">\n          <br />\n          <input id=\"suPassword2\" type=\"password\" class=\"span3\" placeholder=\"Confirm password\">\n        </fieldset>\n    \n        <br />\n        <a id=\"signupButton\" class=\"btn btn-primary\">Sign Up</a>\n      </form>\n    </div>\n\n    <div style=\"float:right\">\n      <h5>LOGIN</h5>\n      <span id=\"loginErrMsg\" class=\"error\" />\n      <form class=\"loginForm\">\n        <fieldset id=\"logEmailFieldSet\">\n          <label>Email or Username</label>\n          <input id=\"logEmail\" type=\"text\" class=\"span3\">\n        </fieldset>\n        <fieldset id=\"logPassFieldSet\">\n          <label>Password</label>\n          <input id=\"logPassword\" type=\"password\" class=\"span3\">\n        </fieldset>\n      \n        <br />\n        <a id=\"loginButton\" class=\"btn btn-primary\" data-dismiss=\"modal\">Login</a>\n      </form>\n    </div>\n\n  </div>\n</div>");
     dialogHtml.appendTo('body');
-    return $('#signupButton').click(signup);
-  };
-
-  initLoginDialog = function() {
-    var dialogHtml;
-    dialogHtml = $("<div class=\"modal hide\" id=\"loginModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Login</h3>\n  </div>\n  <form class=\"loginForm\">\n    <div class=\"modal-body\" id=\"registerLoginBody\">\n      <fieldset id=\"logEmailFieldSet\">\n        <label>Email or Username</label>\n        <input id=\"logEmail\" type=\"text\" class=\"span3\">\n        <span id=\"logEmailErrMsg\" class=\"help-inline\" />\n      </fieldset>\n      <fieldset id=\"logPassFieldSet\">\n        <label>Password</label>\n        <input id=\"logPassword\" type=\"password\" class=\"span3\">\n        <span id=\"logPassErrMsg\" class=\"help-inline\" />\n      </fieldset>\n      <fieldset id=\"loginMessageFieldSet\" class=\"control-group error\">\n        <span id=\"loginMessage\" class=\"help-inline\" />\n      </fieldset>\n    </div>\n    <div class=\"modal-footer\">\n      <a class=\"btn\" data-dismiss=\"modal\">Close</a>\n      <a id=\"loginButton\" class=\"btn btn-primary\" data-dismiss=\"modal\">Login</a>\n    </div>\n  </form>\n</div>");
-    dialogHtml.appendTo('body');
+    $('#signupButton').click(signup);
     $('#loginButton').click(login);
     $('#suName').keyup(updateUsername);
     $('#suName').blur(checkUsername);
@@ -2037,27 +2030,15 @@ function testCSS(prop) {
     return $('#signUpModal').modal('show');
   };
 
-  showLoginDialog = function() {
-    return $('#loginModal').modal('show');
-  };
-
   clearSignupErrors = function() {
     $('#nameFieldSet').removeClass('control-group error');
     $('#usernameFieldSet').removeClass('control-group error');
     $('#emailFieldSet').removeClass('control-group error');
     $('#passFieldSet').removeClass('control-group error');
-    $('#nameErrMsg').html('');
-    $('#usernameErrMsg').html('');
-    $('#emailErrMsg').html('');
-    return $('#passErrMsg').html('');
-  };
-
-  clearLoginErrors = function() {
+    $('#signupErrMsg').html('');
     $('#logEmailFieldSet').removeClass('control-group error');
     $('#logPassFieldSet').removeClass('control-group error');
-    $('#logEmailErrMsg').html('');
-    $('#logPassErrMsg').html('');
-    return $('#loginMessage').html('');
+    return $('#loginErrMsg').html('');
   };
 
   signup = function() {
@@ -2070,33 +2051,33 @@ function testCSS(prop) {
     password2 = $("#suPassword2").val();
     if (name === '') {
       $('#nameFieldSet').addClass('control-group error');
-      $('#nameErrMsg').html('Name cannot be empty.');
+      $('#signupErrMsg').html('Name cannot be empty.');
       return false;
     }
     if (username === '') {
       $('#usernameFieldSet').addClass('control-group error');
-      $('#usernameErrMsg').html('Username cannot be empty.');
+      $('#signupErrMsg').html('Username cannot be empty.');
       return false;
     }
     if (email === '') {
       $('#emailFieldSet').addClass('control-group error');
-      $('#emailErrMsg').html('Email cannot be empty.');
+      $('#signupErrMsg').html('Email cannot be empty.');
       return false;
     }
     filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
     if (!filter.test(email)) {
       $('#emailFieldSet').addClass('control-group error');
-      $('#emailErrMsg').html('Not a valid email address.');
+      $('#signupErrMsg').html('Not a valid email address.');
       return false;
     }
     if (password === '') {
       $('#passFieldSet').addClass('control-group error');
-      $('#passErrMsg').html('You must specify a password.');
+      $('#signupErrMsg').html('You must specify a password.');
       return false;
     }
     if (password !== password2) {
       $('#passFieldSet').addClass('control-group error');
-      $('#passErrMsg').html('Passwords do not match.');
+      $('#signupErrMsg').html('Passwords do not match.');
       return false;
     }
     if (usernameStatus === 'exists') {
@@ -2125,17 +2106,17 @@ function testCSS(prop) {
 
   login = function() {
     var logEmail, password;
-    clearLoginErrors();
+    clearSignupErrors();
     logEmail = $("#logEmail").val();
     password = $("#logPassword").val();
     if (logEmail === '') {
       $('#logEmailFieldSet').addClass('control-group error');
-      $('#logEmailErrMsg').html('Email / Username cannot be empty.');
+      $('#loginErrMsg').html('Email / Username cannot be empty.');
       return false;
     }
     if (password === '') {
       $('#logPassFieldSet').addClass('control-group error');
-      $('#logPassErrMsg').html('Password cannot be empty.');
+      $('#loginErrMsg').html('Password cannot be empty.');
       return false;
     }
     $.ajax({
@@ -2155,7 +2136,7 @@ function testCSS(prop) {
   loginReply = function(msg) {
     var response;
     if (msg === "failed") {
-      return $('#loginMessage').html('Wrong username / email or password.');
+      return $('#loginErrMsg').html('Wrong username / email or password.');
     } else {
       response = msg.split(' ');
       $.cookie('username', response[0], {
@@ -2218,7 +2199,6 @@ function testCSS(prop) {
         usernameStatus = 'ok';
         $('#usernameFieldSet').removeClass('control-group error');
         $('#usernameFieldSet').addClass('control-group success');
-        $('#usernameErrMsg').html('Nice, this username is available.');
         if (submitting) {
           return signup();
         }
@@ -2226,7 +2206,7 @@ function testCSS(prop) {
         usernameStatus = 'exists';
         $('#usernameFieldSet').removeClass('control-group success');
         $('#usernameFieldSet').addClass('control-group error');
-        $('#usernameErrMsg').html('Sorry, this username is already in use.');
+        $('#signupErrMsg').html('Sorry, this username is already in use.');
         return submitting = false;
       }
     }
@@ -2262,7 +2242,7 @@ function testCSS(prop) {
         emailStatus = 'exists';
         $('#emailFieldSet').removeClass('control-group success');
         $('#emailFieldSet').addClass('control-group error');
-        $('#emailErrMsg').html('Sorry, this email is already in use.');
+        $('#signupErrMsg').html('Sorry, this email is already in use.');
         return submitting = false;
       }
     }
