@@ -13,7 +13,7 @@
 <div class="hero-unit landing" style="background-color: rgba(255, 255, 255, 0.8)">    
       <div class="row">
         <div class="span3"><img src="/images/GB_logo_L.png" width="209" height="56" alt="GraphBrain"></div>
-        <div class="span8">
+        <div class="span8" style="color:#555">
           “Cyberspace. A consensual hallucination experienced daily by billions of legitimate operators, in every nation, by children being taught mathematical concepts... A graphic representation of data abstracted from banks of every computer in the human system. Unthinkable complexity. Lines of light ranged in the nonspace of the mind, clusters and constellations of data. Like city lights, receding...”
           <br />
           <i>― William Gibson, Neuromancer</i>
@@ -29,7 +29,7 @@
       </div>
       <div class="row">
         <div class="span11" style="text-align:center">
-          <h3>You can navigate it visually and add facts using an artificial intelligence interface.</h3>
+          <h3>Navigate it visually and add facts using an artificial intelligence interface.</h3>
         </div>
       </div>
       <br /><br /><br /><br />
@@ -41,7 +41,7 @@
           </form>
         </div>
         <div class="span5" style="text-align:center">
-          <button type="button" class="btn btn-success btn-large signupLink">Register and add facts</button>
+          <button type="button" class="btn btn-success btn-large signupLink">Register or Login</button>
         </div>
       </div>
 </div>
