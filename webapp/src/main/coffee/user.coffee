@@ -11,78 +11,65 @@ submitting = false
 
 initSignUpDialog = () ->
     dialogHtml = $("""
-<div class="modal hide" id="signUpModal">
+
+<div class="modal hide" id="signUpModal" style="width:650px; height:500px; margin: -295px 0 0 -325px;">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
-    <h3>Sign Up</h3>
+    <h3>Register or Login</h3>
   </div>
-  <form class="signupForm">
-    <div class="modal-body" id="registerLoginBody">
-      <fieldset id="nameFieldSet">
-        <label>Name</label>
-        <input id="suName" type="text" class="span3" placeholder="Or an alias if you prefer">
-        <span id="nameErrMsg" class="help-inline" />
-      </fieldset>
-      <fieldset id="usernameFieldSet">
-        <label>Username</label>
-        <input id="suUsername" type="text" class="span3" placeholder="Unique identifier">
-        <span id="usernameErrMsg" class="help-inline" />
-      </fieldset>
-      <fieldset id="emailFieldSet">
-        <label>Email</label>
-        <input id="suEmail" type="text" class="span3" placeholder="Will not be seen by other members">
-        <span id="emailErrMsg" class="help-inline" />
-        <span class="help-block">We will never give or sell it to third-parties.</span>
-      </fieldset>
-      <fieldset id="passFieldSet">
-        <label>Password</label>
-        <input id="suPassword" type="password" class="span3" placeholder="A good password">
-        <input id="suPassword2" type="password" class="span3" placeholder="Confirm password">
-        <span id="passErrMsg" class="help-inline" />
-      </fieldset>
-    </div>
-    <div class="modal-footer">
+
+  <div class="modal-body" id="registerLoginBody" style="height:500px; overflow:hidden;">
+    <div style="float:left">
+      <h5>REGISTER NEW ACCOUNT</h5>
+      <span id="signupErrMsg" class="error" />
+      <form class="signupForm">
+        <fieldset id="nameFieldSet">
+          <label>Name</label>
+          <input id="suName" type="text" class="span3" placeholder="Or an alias if you prefer">
+        </fieldset>
+        <fieldset id="usernameFieldSet">
+          <label>Username</label>
+          <input id="suUsername" type="text" class="span3" placeholder="Unique identifier">
+        </fieldset>
+        <fieldset id="emailFieldSet">
+          <label>Email</label>
+          <input id="suEmail" type="text" class="span3" placeholder="Will not be seen by other members">
+        </fieldset>
+        <fieldset id="passFieldSet">
+          <label>Password</label>
+          <input id="suPassword" type="password" class="span3" placeholder="A good password">
+          <br />
+          <input id="suPassword2" type="password" class="span3" placeholder="Confirm password">
+        </fieldset>
+    
+        <br />
+        <a id="signupButton" class="btn btn-primary">Sign Up</a>
       </form>
-      <a class="btn" data-dismiss="modal">Close</a>
-      <a id="signupButton" class="btn btn-primary">Sign Up</a>
     </div>
-  </form>
+
+    <div style="float:right">
+      <h5>LOGIN</h5>
+      <span id="loginErrMsg" class="error" />
+      <form class="loginForm">
+        <fieldset id="logEmailFieldSet">
+          <label>Email or Username</label>
+          <input id="logEmail" type="text" class="span3">
+        </fieldset>
+        <fieldset id="logPassFieldSet">
+          <label>Password</label>
+          <input id="logPassword" type="password" class="span3">
+        </fieldset>
+      
+        <br />
+        <a id="loginButton" class="btn btn-primary" data-dismiss="modal">Login</a>
+      </form>
+    </div>
+
+  </div>
 </div>
     """)
     dialogHtml.appendTo('body')
     $('#signupButton').click(signup)
-
-initLoginDialog = () ->
-    dialogHtml = $("""
-<div class="modal hide" id="loginModal">
-  <div class="modal-header">
-    <a class="close" data-dismiss="modal">×</a>
-    <h3>Login</h3>
-  </div>
-  <form class="loginForm">
-    <div class="modal-body" id="registerLoginBody">
-      <fieldset id="logEmailFieldSet">
-        <label>Email or Username</label>
-        <input id="logEmail" type="text" class="span3">
-        <span id="logEmailErrMsg" class="help-inline" />
-      </fieldset>
-      <fieldset id="logPassFieldSet">
-        <label>Password</label>
-        <input id="logPassword" type="password" class="span3">
-        <span id="logPassErrMsg" class="help-inline" />
-      </fieldset>
-      <fieldset id="loginMessageFieldSet" class="control-group error">
-        <span id="loginMessage" class="help-inline" />
-      </fieldset>
-    </div>
-    <div class="modal-footer">
-      <a class="btn" data-dismiss="modal">Close</a>
-      <a id="loginButton" class="btn btn-primary" data-dismiss="modal">Login</a>
-    </div>
-  </form>
-</div>
-    """)
-    dialogHtml.appendTo('body')
     $('#loginButton').click(login)
     $('#suName').keyup(updateUsername)
     $('#suName').blur(checkUsername)
@@ -94,25 +81,16 @@ initLoginDialog = () ->
 showSignUpDialog = () ->
   $('#signUpModal').modal('show')
 
-showLoginDialog = () ->
-  $('#loginModal').modal('show')
-
 clearSignupErrors = ->
   $('#nameFieldSet').removeClass('control-group error')
   $('#usernameFieldSet').removeClass('control-group error')
   $('#emailFieldSet').removeClass('control-group error')
   $('#passFieldSet').removeClass('control-group error')
-  $('#nameErrMsg').html('')
-  $('#usernameErrMsg').html('')
-  $('#emailErrMsg').html('')
-  $('#passErrMsg').html('')
+  $('#signupErrMsg').html('')
 
-clearLoginErrors = ->
   $('#logEmailFieldSet').removeClass('control-group error')
   $('#logPassFieldSet').removeClass('control-group error')
-  $('#logEmailErrMsg').html('')
-  $('#logPassErrMsg').html('')
-  $('#loginMessage').html('')
+  $('#loginErrMsg').html('')
 
 signup = ->
   clearSignupErrors()
@@ -125,33 +103,33 @@ signup = ->
 
   if (name == '')
     $('#nameFieldSet').addClass('control-group error')
-    $('#nameErrMsg').html('Name cannot be empty.')
+    $('#signupErrMsg').html('Name cannot be empty.')
     return false
 
   if (username == '')
     $('#usernameFieldSet').addClass('control-group error')
-    $('#usernameErrMsg').html('Username cannot be empty.')
+    $('#signupErrMsg').html('Username cannot be empty.')
     return false
 
   if (email == '')
     $('#emailFieldSet').addClass('control-group error')
-    $('#emailErrMsg').html('Email cannot be empty.')
+    $('#signupErrMsg').html('Email cannot be empty.')
     return false
 
   filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/
   if !filter.test(email)
     $('#emailFieldSet').addClass('control-group error')
-    $('#emailErrMsg').html('Not a valid email address.')
+    $('#signupErrMsg').html('Not a valid email address.')
     return false    
 
   if (password == '')
     $('#passFieldSet').addClass('control-group error')
-    $('#passErrMsg').html('You must specify a password.')
+    $('#signupErrMsg').html('You must specify a password.')
     return false
 
   if (password != password2)
     $('#passFieldSet').addClass('control-group error')
-    $('#passErrMsg').html('Passwords do not match.')
+    $('#signupErrMsg').html('Passwords do not match.')
     return false
 
   if usernameStatus == 'exists'
@@ -178,19 +156,19 @@ signup = ->
   false
 
 login = ->
-  clearLoginErrors()
+  clearSignupErrors()
 
   logEmail = $("#logEmail").val()
   password = $("#logPassword").val()
 
   if logEmail == ''
     $('#logEmailFieldSet').addClass('control-group error')
-    $('#logEmailErrMsg').html('Email / Username cannot be empty.')
+    $('#loginErrMsg').html('Email / Username cannot be empty.')
     return false
 
   if password == ''
     $('#logPassFieldSet').addClass('control-group error')
-    $('#logPassErrMsg').html('Password cannot be empty.')
+    $('#loginErrMsg').html('Password cannot be empty.')
     return false
 
   $.ajax({
@@ -207,7 +185,7 @@ signupReply = (msg) ->
 
 loginReply = (msg) ->
   if msg == "failed"
-    $('#loginMessage').html('Wrong username / email or password.')
+    $('#loginErrMsg').html('Wrong username / email or password.')
   else
     response = msg.split(' ')
     $.cookie('username', response[0], { path: '/' })
@@ -252,14 +230,13 @@ checkUsernameReply = (msg) ->
       usernameStatus = 'ok'
       $('#usernameFieldSet').removeClass('control-group error')
       $('#usernameFieldSet').addClass('control-group success')
-      $('#usernameErrMsg').html('Nice, this username is available.')
       if submitting
         signup()
     else
       usernameStatus = 'exists'
       $('#usernameFieldSet').removeClass('control-group success')
       $('#usernameFieldSet').addClass('control-group error')
-      $('#usernameErrMsg').html('Sorry, this username is already in use.')
+      $('#signupErrMsg').html('Sorry, this username is already in use.')
       submitting = false
 
 checkEmail = ->
@@ -288,5 +265,5 @@ checkEmailReply = (msg) ->
       emailStatus = 'exists'
       $('#emailFieldSet').removeClass('control-group success')
       $('#emailFieldSet').addClass('control-group error')
-      $('#emailErrMsg').html('Sorry, this email is already in use.')
+      $('#signupErrMsg').html('Sorry, this email is already in use.')
       submitting = false
