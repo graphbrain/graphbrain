@@ -954,7 +954,7 @@ function testCSS(prop) {
   addAnim = function(anim) {
     if (anim.name === 'lookat') {
       anims = anims.filter(function(anim) {
-        return anim.name !== 'initrotation';
+        return (anim.name !== 'initrotation') && (anim.name !== 'lookat');
       });
     }
     if (anims.length === 0) {

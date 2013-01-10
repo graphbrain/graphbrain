@@ -4,7 +4,7 @@ anims = []
 
 addAnim = (anim) ->
   if anim.name == 'lookat'
-    anims = anims.filter (anim) -> anim.name != 'initrotation'
+    anims = anims.filter (anim) -> (anim.name != 'initrotation') and (anim.name != 'lookat')
 
   if anims.length == 0
     intervalID = window.setInterval(animCycle, 30)
