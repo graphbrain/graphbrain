@@ -34,20 +34,23 @@
       </div>
       <br /><br /><br /><br />
       <div class="row">
-        <div class="span5" style="text-align:center">
+        <div class="span1"></div>
+        <div class="span4" style="text-align:center">
           <form class="form-search" id="search-field">
-            <input type="text" class="input-medium search-query" id="search-input-field" placeholder="Search">
+            <input type="text" class="input-medium search-query input-large" id="search-input-field" placeholder="Search">
             <button type="submit" class="btn">Search</button>
           </form>
         </div>
-        <div class="span5" style="text-align:center">
-          <button type="button" class="btn btn-success btn-large signupLink">Register or Login</button>
+        <div class="span1"></div>
+        <div class="span4" style="text-align:center">
+          <button type="button" class="btn btn-success btn-large signupLink" style="font-size:150%">Register or Login</button>
         </div>
+        <div class="span1"></div>
       </div>
 </div>
 
-<footer>
-  <p>&copy; GraphBrain Ltd 2012</p>
+<footer style="text-align: center; color:#FFF">
+  <p>&copy; GraphBrain Ltd 2013</p>
 </footer>
 </div> <!-- /container -->
 
