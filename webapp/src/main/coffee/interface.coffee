@@ -109,5 +109,6 @@ initInterface = ->
         $('#ai-chat-button').bind 'click', aiChatButtonPressed
 
     # display error message if defined
-    if errorMsg != ''
-        setErrorAlert(errorMsg)
+    if errorMsg?
+        if errorMsg != ''
+            setErrorAlert(errorMsg)

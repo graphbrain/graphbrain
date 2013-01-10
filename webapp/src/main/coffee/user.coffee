@@ -156,10 +156,12 @@ signup = ->
   false
 
 login = ->
-  clearSignupErrors()
-
   logEmail = $("#logEmail").val()
   password = $("#logPassword").val()
+  loginRequest(logEmail, password)
+
+loginRequest = (logEmail, password) ->
+  clearSignupErrors()
 
   if logEmail == ''
     $('#logEmailFieldSet').addClass('control-group error')
@@ -181,7 +183,7 @@ login = ->
   false
 
 signupReply = (msg) ->
-  $('#signUpModal').modal('hide')
+  loginRequest($("#suEmail").val(), $("#suPassword").val())
 
 loginReply = (msg) ->
   if msg == "failed"
@@ -190,8 +192,11 @@ loginReply = (msg) ->
     response = msg.split(' ')
     $.cookie('username', response[0], { path: '/' })
     $.cookie('session', response[1], { path: '/' })  
-    #$('#loginModal').modal('hide')
-    location.reload()
+    
+    if data?
+      location.reload()
+    else
+      window.location.href = '/node/user/' + response[0]
 
 logout = ->
   $.cookie('username', '', { path: '/' })
