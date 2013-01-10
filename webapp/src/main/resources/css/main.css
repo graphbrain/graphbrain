@@ -7,6 +7,12 @@ html, body {
     background: #fff;
 }
 
+.landing {
+    padding: 50px;
+    margin: 20px;
+    border-radius: 10px;
+}
+
 #main-view {
     width:100%;
     height:100%;

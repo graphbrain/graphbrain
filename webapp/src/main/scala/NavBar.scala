@@ -8,45 +8,6 @@ case class NavBar(user: UserNode, page: String) {
     
   val userId = if (user == null) "" else user.id
 
-  def pages = {
-    if (page == "home") {
-      """
-      <div class="nav-collapse">
-        <ul class="nav">
-          <li class="active"><a href="#">home</a></li>
-          <li><a href="/about">learn more</a></li>
-          <li><a href="/contact">contact</a></li>
-        </ul>
-      </div>
-      """
-    }
-    else if (page == "about") {
-      """
-      <div class="nav-collapse">
-        <ul class="nav">
-          <li><a href="/">home</a></li>
-          <li class="active"><a href="#">learn more</a></li>
-          <li><a href="/contact">contact</a></li>
-        </ul>
-      </div>
-      """
-    }
-    else if (page == "contact") {
-      """
-      <div class="nav-collapse">
-        <ul class="nav">
-          <li><a href="/">home</a></li>
-          <li><a href="/about">learn more</a></li>
-          <li class="active"><a href="#">contact</a></li>
-        </ul>
-      </div>
-      """
-    }
-    else {
-      ""
-    }
-  }
-
   def tools = {
     if (page == "node") {
       """
@@ -89,7 +50,7 @@ case class NavBar(user: UserNode, page: String) {
 
   // <div class="navbar navbar-fixed-top">
   def html = {
-    if (page == "comingsoon") {
+    if ((page == "comingsoon") || (page == "home")) {
       ""
     }
     else {
@@ -110,7 +71,6 @@ case class NavBar(user: UserNode, page: String) {
                 </form></li>
               </ul>
             </div>
-            """ + pages + """
             """ + userStuff + """
           </div>
         </div>
