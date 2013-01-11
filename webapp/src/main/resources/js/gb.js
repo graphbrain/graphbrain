@@ -1269,7 +1269,7 @@ function testCSS(prop) {
     }
 
     Node.prototype.place = function() {
-      var html, nodeData, removeData, removeLinkId;
+      var html, nodeData, nodeTitleClass, nodeUrlClass, removeData, removeLinkId;
       if (this.root) {
         $('#' + this.snode.id + ' .viewport').append('<div id="' + this.divid + '" class="node_root" />');
       } else {
@@ -1294,12 +1294,18 @@ function testCSS(prop) {
         };
       }
       removeLinkId = '';
+      nodeTitleClass = 'nodeTitle';
+      nodeUrlClass = 'nodeUrl';
+      if (this.root) {
+        nodeTitleClass = 'nodeTitle_root';
+        nodeUrlClass = 'nodeUrl_root';
+      }
       if (this.type === 'url') {
-        html = '';
+        html = '<div class="' + nodeTitleClass + '" id="t' + this.divid + '"><a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a></div><br />';
         if (this.icon !== '') {
           html += '<img src="' + this.icon + '" width="16px" height="16px" class="nodeIco" />';
         }
-        html += '<div class="nodeUrl"><a href="' + this.url + '" id="url' + this.divid + '">' + this.url + '</a></div>';
+        html += '<div class="' + nodeUrlClass + '"><a href="' + this.url + '" id="url' + this.divid + '">' + this.url + '</a></div>';
         if (!this.root) {
           removeLinkId = 'rem' + this.divid;
           html += '<div class="nodeRemove"><a id="' + removeLinkId + '" href="#">x</a></div>';
@@ -1307,7 +1313,7 @@ function testCSS(prop) {
         html += '<div style="clear:both;"></div>';
         $('#' + this.divid).append(html);
       } else {
-        html = '<div class="nodeTitle" id="t' + this.divid + '"><a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a></div>';
+        html = '<div class="' + nodeTitleClass + '" id="t' + this.divid + '"><a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a></div>';
         if (!this.root) {
           removeLinkId = 'rem' + this.divid;
           html += '<div class="nodeRemove"><a id="' + removeLinkId + '" href="#">x</a></div>';
