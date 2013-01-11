@@ -140,6 +140,7 @@ html, body {
 }
 
 .snodeLabel {
+    max-width: 200px;
     color:#fff;
     padding-left:5px;
     padding-right:5px;
