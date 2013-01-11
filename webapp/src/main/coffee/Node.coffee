@@ -28,18 +28,23 @@ class Node
 
         # create url div
         removeLinkId = ''
+        nodeTitleClass = 'nodeTitle'
+        nodeUrlClass = 'nodeUrl'
+        if @root
+            nodeTitleClass = 'nodeTitle_root'
+            nodeUrlClass = 'nodeUrl_root'
         if @type == 'url'
-            html = ''
+            html = '<div class="' + nodeTitleClass + '" id="t' + @divid + '"><a href="/node/' + @id + '" id="' + @divid + '">' + @text + '</a></div><br />'
             if @icon != ''
                 html += '<img src="' + @icon + '" width="16px" height="16px" class="nodeIco" />'
-            html += '<div class="nodeUrl"><a href="' + @url + '" id="url' + @divid + '">' + @url + '</a></div>'
+            html += '<div class="' + nodeUrlClass + '"><a href="' + @url + '" id="url' + @divid + '">' + @url + '</a></div>'
             if not @root
                 removeLinkId = 'rem' + @divid
                 html += '<div class="nodeRemove"><a id="' + removeLinkId + '" href="#">x</a></div>'
             html += '<div style="clear:both;"></div>'
             $('#' + @divid).append(html)
         else
-            html = '<div class="nodeTitle" id="t' + @divid + '"><a href="/node/' + @id + '" id="' + @divid + '">' + @text + '</a></div>'
+            html = '<div class="' + nodeTitleClass + '" id="t' + @divid + '"><a href="/node/' + @id + '" id="' + @divid + '">' + @text + '</a></div>'
             if not @root
                 removeLinkId = 'rem' + @divid
                 html += '<div class="nodeRemove"><a id="' + removeLinkId + '" href="#">x</a></div>'

@@ -31,6 +31,14 @@
     color:#000;
 }
 
+.nodeTitle_root {
+    max-width: 600px;
+}
+
+.nodeTitle_root a {
+    color:#000;
+}
+
 .nodeRemove {
     text-align: right;
     float:right;
@@ -49,6 +57,17 @@
 }
 
 .nodeUrl a {
+    color:rgb(0, 0, 255);
+}
+
+.nodeUrl_root {
+    font-size: 16px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width: 600px;
+}
+
+.nodeUrl_root a {
     color:rgb(0, 0, 255);
 }
 

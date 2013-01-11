@@ -37,7 +37,7 @@
         <div class="span1"></div>
         <div class="span4" style="text-align:center">
           <form class="form-search" id="search-field">
-            <input type="text" class="input-medium search-query input-large" id="search-input-field" placeholder="Search">
+            <input type="text" class="input-medium search-query input-large" id="search-input-field" placeholder="Search" style="border-radius:0px; border-color:#666">
             <button type="submit" class="btn">Search</button>
           </form>
         </div>
