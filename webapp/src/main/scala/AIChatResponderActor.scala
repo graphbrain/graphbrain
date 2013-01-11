@@ -39,7 +39,7 @@ class AIChatResponderActor() extends Actor with SimpleLog {
       case t: Textual => {
         // TODO: deal with change (edge didn't exist before) vs add (edge already exists)
         val onclick = "aiChatDisambiguate(\"change\",\"" + t + "\",\"" + rel + "\",[" + participantIds + "]," + pos + ");"
-        "<br />&nbsp;&nbsp;&nbsp;&nbsp;Using: " + t + " " + t.generateSummary + ". <a href='#' onclick='" + onclick + "'>Did you mean another " + t + "?</a>"
+        "<br />&nbsp;&nbsp;&nbsp;&nbsp;Using: " + t + " " + t.generateSummary + ". <a href='#' class='aichat_action' onclick='" + onclick + "'>Did you mean another " + t + "?</a>"
       }
       case _ => ""
     }
@@ -83,7 +83,7 @@ class AIChatResponderActor() extends Actor with SimpleLog {
               //TODO: fix undoFunctionCall to support facts with any number of participants
               val undoFunctionCall = "undoFact('" + relation + "', '" + nodes(0).id + " " + nodes(1).id + "')"
               
-              replySentence = "Fact recorded: '" + sentence + "'. <a href=\"#\" onclick=\"" + undoFunctionCall + "\">Want to undo?</a>"
+              replySentence = "Fact recorded: '" + sentence + "'. <a href=\"#\" class=\"aichat_action\" onclick=\"" + undoFunctionCall + "\">Want to undo?</a>"
               
               for (i <- 0 until nodes.length) {
                 replySentence += disambiguationMessage(relation, nodes, i)
