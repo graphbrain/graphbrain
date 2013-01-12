@@ -7,7 +7,7 @@ import com.graphbrain.hgdb.UserNode
 
 case class CssAndJs() {
 
-  val version = "110113"
+  val version = "130113"
 
   val analyticsJs = """
     <script type="text/javascript">

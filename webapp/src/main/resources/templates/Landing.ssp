@@ -10,43 +10,39 @@
 </style>
 
 <br />
-<div class="hero-unit landing" style="background-color: rgba(255, 255, 255, 0.8)">    
-      <div class="row">
-        <div class="span3"><img src="/images/GB_logo_L.png" width="209" height="56" alt="GraphBrain"></div>
-        <div class="span8" style="color:#555">
-          “Cyberspace. A consensual hallucination experienced daily by billions of legitimate operators, in every nation, by children being taught mathematical concepts... A graphic representation of data abstracted from banks of every computer in the human system. Unthinkable complexity. Lines of light ranged in the nonspace of the mind, clusters and constellations of data. Like city lights, receding...”
-          <br />
-          <i>― William Gibson, Neuromancer</i>
-        </div>
-      </div>
-      
-      <br /><br /><br />
 
-      <div class="row">
-        <div class="span11" style="text-align:center">
-          <h1>Personal Knowledge Graph</h1>
-        </div>
-      </div>
-      <div class="row">
-        <div class="span11" style="text-align:center">
-          <h3>Navigate it visually and add facts using an artificial intelligence interface.</h3>
-        </div>
-      </div>
-      <br /><br /><br /><br />
-      <div class="row">
-        <div class="span1"></div>
-        <div class="span4" style="text-align:center">
-          <form class="form-search" id="search-field">
-            <input type="text" class="input-medium search-query input-large" id="search-input-field" placeholder="Search" style="border-radius:0px; border-color:#666">
-            <button type="submit" class="btn">Search</button>
-          </form>
-        </div>
-        <div class="span1"></div>
-        <div class="span4" style="text-align:center">
-          <button type="button" class="btn btn-success btn-large signupLink" style="font-size:150%">Register or Login</button>
-        </div>
-        <div class="span1"></div>
-      </div>
+<div>
+
+<div class="hero-unit landing" style="background-color: rgba(255, 255, 255, 0.8)">    
+  <div>
+    <div style="float:left; height:180px; padding-right:70px"><img src="/images/GB_logo_L.png" width="209" height="56" alt="GraphBrain"></img></div>
+    <div style="color:#555; padding-top:0px; margin-top:0px;">
+      “Cyberspace. A consensual hallucination experienced daily by billions of legitimate operators, in every nation, by children being taught mathematical concepts... A graphic representation of data abstracted from banks of every computer in the human system. Unthinkable complexity. Lines of light ranged in the nonspace of the mind, clusters and constellations of data. Like city lights, receding...”
+      <br />
+      <i>― William Gibson, Neuromancer</i>
+    </div>
+  </div>
+
+  <div style="text-align:center; clear:both;">
+    <h1>Personal Knowledge Graph</h1>
+  </div>
+  <div style="text-align:center">
+    <h3>Navigate it visually and add facts using an artificial intelligence interface.</h3>
+  </div>
+      
+  <br /><br /><br /><br />
+      
+  <div style="margin-bottom:70px;">
+    <div style="text-align:center; float: left; padding-left:150px;">
+      <form class="form-search" id="search-field">
+        <input type="text" class="input-medium search-query input-large" id="search-input-field" placeholder="Search" style="border-radius:0px; border-color:#666">
+        <button type="submit" class="btn">Search</button>
+      </form>
+    </div>
+    <div style="text-align:center; float: right; padding-right:150px;">
+      <button type="button" class="btn btn-success btn-large signupLink" style="font-size:150%">Register or Login</button>
+    </div>
+  </div>
 </div>
 
 <footer style="text-align: center; color:#FFF">
