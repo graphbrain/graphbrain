@@ -6,7 +6,7 @@ g = false
 state = false
 
 $ ->
-    Math.seedrandom("GraphBrain")
+    Math.seedrandom("GraphBrain GraphBrain")
 
     state = new State()
 
