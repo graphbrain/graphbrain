@@ -18,10 +18,10 @@
       <h1>About</h1>
 
       <h2>What is GraphBrain?</h2>
-      GraphBrain is an online personal knowledge graph that allows users to store and share facts, ideas and opinions. It allows users to define meaningful relationships between any content (books, songs, web sites, facts, locations, people), including their social networks. The connections between content can take any logical form an involve any number of content items (e.g. [John (friend of user William)] likes [Oliver Twist (the book)] which references [London (the city)], in which is located [Selfridges (the department store)] which sells [Vivienne Westwood clothes].). As well as being able to store knowledge, GraphBrain allows users to search for and browse content based on semantic relationships, providing a rich complement to traditional search.   
+      GraphBrain is an online personal knowledge graph that allows users to store and share facts, ideas and opinions. It allows users to define meaningful relationships between any content (books, songs, web sites, facts, locations, people), including their social networks. The connections between content can take any logical form an involve any number of content items (e.g. [John (friend of user William)] likes [Oliver Twist (the book)] which references [London (the city)], in which is located [Selfridges (the department store)] having URL [http://www.selfridges.com/].). As well as being able to store knowledge, GraphBrain allows users to search for and browse content based on semantic relationships, providing a rich complement to traditional search.   
 
       <h2>How do I add facts?</h2>
-      By typing sentences in plain English.
+      By typing sentences in plain English. If GraphBrain misunderstands you, try using quotation marks to indicate content items, e.g. "Running on Empty" is a "film".
 
       <h2>What facts should I add?</h2>
       Anything you want. GraphBrain is smart enough to distinguish between facts that are specific to you and the ones with general interest.
