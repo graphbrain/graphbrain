@@ -15,10 +15,10 @@ object LandingPlan extends cycle.Plan with cycle.SynchronousExecution with Serve
   }
 
   def intent = {
-    case req@GET(Path("/") & Cookies(cookies)) => {
+    /*case req@GET(Path("/") & Cookies(cookies)) => {
       pageResponse("ComingSoon.ssp", "comingsoon", "Coming soon", cookies, req)
-    }
-    case req@GET(Path("/secret") & Cookies(cookies)) => {
+    }*/
+    case req@GET(Path("/") & Cookies(cookies)) => {
       val userNode = Server.getUser(cookies)
 
       if (userNode == null) {
