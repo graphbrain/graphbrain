@@ -28,6 +28,7 @@ class SentenceParser (storeName:String = "gb") {
   val asInRel = ID.reltype_id("as in", 1)
 
   val verbRegex = """VB[A-Z]?""".r
+  val verbPastRegex = """VBD|VBN""".r
   val adverbRegex = """RB[A-Z]?""".r
   val prepositionRegex = """(IN[A-Z]?)|TO""".r
   val relRegex = """(VB[A-Z]?)|(RB[A-Z]?)|(IN[A-Z]?)|TO|DT""".r
@@ -212,8 +213,13 @@ class SentenceParser (storeName:String = "gb") {
           }   
           else {
             for (a <- annotatedRelation) {
-              if(verbRegex.findAllIn(a._2).hasNext) {
-                newRelation += lemmatiser.conjugate(a._3) + " "
+              if(verbPastRegex.findAllIn(a._2).hasNext) {
+                newRelation += lemmatiser.conjugate(a._3, tense = VerbTense.PAST) + " "  
+              }
+              else if(verbRegex.findAllIn(a._2).hasNext) {
+                
+                newRelation += lemmatiser.conjugate(a._3) + " "  
+                
               }
               else {
                 newRelation += a._1 + " "
@@ -652,11 +658,36 @@ def hasTypeChunk(sentence: String, root: Vertex): (List[String], String, List[(S
     val hasSplit = ("""(has|have)""".r.split(sentence))
     val ownerText = hasSplit(0).trim
     val owned = hasSplit(1).trim
-    val colonSplit = (""":""".r.split(owned))
-    val superType = colonSplit(0).trim
-    val subType = colonSplit(1).trim
     val edgeText = hasHave + "~of_type"
-    return (List(ownerText, subType, superType), edgeText, Nil)
+    if(urlRegex.findAllIn(owned).hasNext) {
+      val theURL = urlRegex.findAllIn(owned).next
+      val spaceSplit = ("""\s""".r.split(owned))
+      var superType = ""
+      var subType = theURL
+      var urlFound=false
+      for(chunk <- spaceSplit) {
+        if(urlFound) {
+          subType+=" " + chunk
+        }
+        else if(chunk==theURL) {
+          urlFound=true
+        }
+        else {
+          superType += " " + chunk.trim.replace(":", "")
+        }
+      }
+      if(superType=="") {
+        superType = "url"
+      }
+      return (List(ownerText, subType, superType), edgeText, Nil)
+    }
+    val colonSplit = (""":""".r.split(owned))
+    var superType = colonSplit(0).trim
+    val subType = colonSplit(1).trim
+    
+    return (List(ownerText, subType, superType), edgeText, Nil)      
+
+
 
   }
   else {
