@@ -2540,7 +2540,7 @@ function testCSS(prop) {
   state = false;
 
   $(function() {
-    Math.seedrandom("GraphBrain");
+    Math.seedrandom("GraphBrain GraphBrain");
     state = new State();
     if (typeof data !== "undefined" && data !== null) {
       g = Graph.initGraph(state.getNewEdges());
