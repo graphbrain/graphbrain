@@ -38,6 +38,7 @@ case class NavBar(user: UserNode, page: String) {
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-black"></i> """ + user.name + """ <b class="caret"></b></a>
           <ul class="dropdown-menu">
+            <li><a href="/about">About GraphBrain</a></li>
             <li><a href="/node/user/""" + user.username +  """">Home</a></li>
             <li><a href="#" id="logoutLink">Logout</a></li>
           </ul>

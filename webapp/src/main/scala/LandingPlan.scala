@@ -22,11 +22,14 @@ object LandingPlan extends cycle.Plan with cycle.SynchronousExecution with Serve
       val userNode = Server.getUser(cookies)
 
       if (userNode == null) {
-        pageResponse("Landing.ssp", "home", "Welcome", cookies, req)
+        pageResponse("Landing.ssp", "home", "Graphbrain", cookies, req)
       }
       else {
         Redirect("/node/" + userNode.id)
       }
+    }
+    case req@GET(Path("/about") & Cookies(cookies)) => {
+      pageResponse("About.ssp", "about", "About GraphBrain", cookies, req)
     }
     // Google Web Tools verification
     case req@GET(Path("/googlec78be0b8a9e576fe.html") & Cookies(cookies)) => {
