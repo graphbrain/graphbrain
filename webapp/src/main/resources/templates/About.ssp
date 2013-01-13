@@ -1,0 +1,39 @@
+<% escapeMarkup = false %>
+<%@ val userStuff: String="" %>
+<%@ val js: String="" %>
+<%@ val html: String="" %>
+
+<% layout("page.ssp") {%>
+
+<style type="text/css">
+  body {
+    padding-top: 60px;
+    background:#FFF;
+  }
+</style>
+
+<div class="container">
+  <div class="row-fluid">
+    <div class="offset3 span6">
+      <h1>About</h1>
+
+      <h2>What is GraphBrain?</h2>
+      GraphBrain is an online personal knowledge graph that allows users to store and share facts, ideas and opinions. It allows users to define meaningful relationships between any content (books, songs, web sites, facts, locations, people), including their social networks. The connections between content can take any logical form an involve any number of content items (e.g. [John (friend of user William)] likes [Oliver Twist (the book)] which references [London (the city)], in which is located [Selfridges (the department store)] which sells [Vivienne Westwood clothes].). As well as being able to store knowledge, GraphBrain allows users to search for and browse content based on semantic relationships, providing a rich complement to traditional search.   
+
+      <h2>How do I add facts?</h2>
+      By typing sentences in plain English.
+
+      <h2>What facts should I add?</h2>
+      Anything you want. GraphBrain is smart enough to distinguish between facts that are specific to you and the ones with general interest.
+
+      <h2>Can other people delete my facts?</h2>
+      Not from your view of the graph. GraphBrain is like a multi-universe, where each person has his or her own world of knowledge. These worlds intersect in the global graph, which is generated from information obtained from web sources and a consensus of facts added by users. If you create or delete a fact, this always applies to you and may or not apply to the global graph.
+
+      <h2>Can I contact you?</h2>
+      Sure, we'd love to have your feedback! You can contact us at <a href="mailto:contact@graphbrain.com">contact@graphbrain.com</a>.
+
+    </div>
+  </div>
+</div>
+
+<%}%>

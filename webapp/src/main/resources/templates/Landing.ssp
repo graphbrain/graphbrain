@@ -29,6 +29,9 @@
   <div style="text-align:center">
     <h3>Navigate it visually and add facts using an artificial intelligence interface.</h3>
   </div>
+  <div style="text-align:center">
+    <h4><a href="/about">About</a> | <a href="mailto:contact@graphbrain.com">contact@graphbrain.com</a></h4>
+  </div>
       
   <br /><br /><br /><br />
       
@@ -45,9 +48,6 @@
   </div>
 </div>
 
-<footer style="text-align: center; color:#FFF">
-  <p>&copy; GraphBrain Ltd 2013</p>
-</footer>
 </div> <!-- /container -->
 
 <%}%>
