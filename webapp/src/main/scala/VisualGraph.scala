@@ -62,6 +62,10 @@ object VisualGraph {
           null
         }
       }
+      if (edge.edgeType == "rtype/1/has~of_type") {
+        val edgeType = "has " + ID.lastPart(edge.participantIds(1))
+        Edge(edgeType, List(edge.participantIds(0), edge.participantIds(2)), edge)
+      }
       else {
         val parts = edge.edgeType.split("~").toList
         val edgeType = parts.head + " " + ID.lastPart(edge.participantIds(1)) + " " + parts.tail.reduceLeft(_ + " " + _)
