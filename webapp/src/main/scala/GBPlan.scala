@@ -83,6 +83,10 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
 
       ResponseString(JSONGen.json(""))
     }
+    case req@GET(Path("/allusers") & Cookies(cookies)) => {
+      val userNode = Server.getUser(cookies)
+      AllUsersPage(userNode, req, cookies).response
+    }
 
     // TEMPORARY: Amazon backdoor
     case req@GET(Path("/amazon") & Params(params)) => {
