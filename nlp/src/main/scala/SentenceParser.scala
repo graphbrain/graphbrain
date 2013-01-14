@@ -476,7 +476,13 @@ class SentenceParser (storeName:String = "gb") {
     while(nodeExists(ID.text_id(text, i))) {
       i +=1
     }
-    return store.createTextNode(namespace = i.toString, text=text);
+    if(urlRegex.findAllIn(text).hasNext) {
+      return store.createURLNode(url = text, userId = "")
+    }
+    else {
+      return store.createTextNode(namespace = i.toString, text=text);  
+    }
+    
   }
 
   def getFirstFoundNode(text: String, startCounter: Int = 1): Vertex = {
@@ -494,7 +500,14 @@ class SentenceParser (storeName:String = "gb") {
       i +=1;
     }
     val ns = "user/" + username + "/p/" + i.toString; 
-    return store.createTextNode(namespace = ns, text = text);
+    if(urlRegex.findAllIn(text).hasNext) {
+      return store.createURLNode(url = text, userId = username)
+
+    }
+    else {
+      return store.createTextNode(namespace = ns, text = text);  
+    }
+    
   }
 
   
@@ -535,7 +548,7 @@ class SentenceParser (storeName:String = "gb") {
     if (urlRegex.findAllIn(text).hasNext) {
       
       
-      results = store.createURLNode(url = text, userId = "") :: results;
+      results = store.createURLNode(url = text, userId = userName) :: results;
       
     }
     val textPureID = ID.text_id(text, 1)
@@ -654,7 +667,7 @@ def checkTags(lemmatisedSentence1: (String, String, String), lemmatisedSentence2
 def hasTypeChunk(sentence: String, root: Vertex): (List[String], String, List[(String, String)])={
   
   if(hasOfTypeRegex.findAllIn(sentence).hasNext){
-    val hasHave = """(has|have)""".r.findAllIn(sentence).next.trim
+    val hasHave = "has"
     val hasSplit = ("""(has|have)""".r.split(sentence))
     val ownerText = hasSplit(0).trim
     val owned = hasSplit(1).trim
@@ -1049,6 +1062,7 @@ object SentenceParser {
                       node match {
                       case (nd: TextNode, None) => println("Node: " + nd.id);
                       case (nd: UserNode, None) => println("Node: " + nd.id);
+                      case (nd: URLNode, None) => println("Node: " + nd.id)
                       case (nd: TextNode, Some(aux: (List[Vertex], Vertex))) => 
                         println("Node with aux: " + nd.id)
                         aux match {
@@ -1081,6 +1095,23 @@ object SentenceParser {
                           case _ =>
                           
                         }
+                      case (nd: URLNode, Some(aux: (List[Vertex], Vertex))) => 
+                        println("Node with aux: " + nd.id)
+                        aux match {
+                          case (a:List[Vertex], ed:EdgeType) => 
+                            for(aNode <- a) {
+                              a match {
+                                case tn: TextNode => println("auxNode: " + tn.id)
+                                case un: UserNode => println("auxNode: " + un.id)
+                                case _ => 
+                              }
+
+                            }
+                            println("auxEdge: " + ed.id)
+                          case _ =>
+                          
+                        }
+
                       case _ => println("mismatch")
                       
                       }
