@@ -501,7 +501,8 @@ class SentenceParser (storeName:String = "gb") {
     }
     val ns = "user/" + username + "/p/" + i.toString; 
     if(urlRegex.findAllIn(text).hasNext) {
-      return store.createURLNode(url = text, userId = username)
+      val theURL = urlRegex.findAllIn(text).next.trim
+      return store.createURLNode(url = theURL, userId = username)
 
     }
     else {
@@ -547,8 +548,8 @@ class SentenceParser (storeName:String = "gb") {
 
     if (urlRegex.findAllIn(text).hasNext) {
       
-      
-      results = store.createURLNode(url = text, userId = userName) :: results;
+
+      results = store.createURLNode(url = text.trim, userId = "") :: results;
       
     }
     val textPureID = ID.text_id(text, 1)
@@ -673,7 +674,7 @@ def hasTypeChunk(sentence: String, root: Vertex): (List[String], String, List[(S
     val owned = hasSplit(1).trim
     val edgeText = hasHave + "~of_type"
     if(urlRegex.findAllIn(owned).hasNext) {
-      val theURL = urlRegex.findAllIn(owned).next
+      val theURL = urlRegex.findAllIn(owned).next.trim
       val spaceSplit = ("""\s""".r.split(owned))
       var superType = ""
       var subType = theURL
@@ -686,13 +687,13 @@ def hasTypeChunk(sentence: String, root: Vertex): (List[String], String, List[(S
           urlFound=true
         }
         else {
-          superType += " " + chunk.trim.replace(":", "")
+          superType += chunk.trim.replace(":", "") + " "
         }
       }
       if(superType=="") {
         superType = "url"
       }
-      return (List(ownerText, subType, superType), edgeText, Nil)
+      return (List(ownerText, subType.trim, superType.trim), edgeText, Nil)
     }
     val colonSplit = (""":""".r.split(owned))
     var superType = colonSplit(0).trim

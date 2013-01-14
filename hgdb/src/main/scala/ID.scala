@@ -39,7 +39,7 @@ object ID {
     else if (isUserNode(idOrNs))
       idOrNs
     else
-      userid + "/" + idOrNs
+      "user" + "/" +userid + "/" + idOrNs
   }
 
   def userToGlobal(idOrNs: String) = {
