@@ -1,5 +1,4 @@
 .node {
-    max-width: 200px;
     color:#000;
     background:rgb(224, 224, 224);
     margin: 3px;
@@ -77,31 +76,35 @@
 }
 
 .snode {
+    max-width: 200px;
     position:fixed;
-}
-
-.snodeInner {
     font-size: 12px;
     border-style:solid;
     border-width:3px;
     border-color:#AAA;
-    padding: 5px;
+    padding: 0px;
     background: rgba(255, 255, 255, 0.8);
 }
 
-.snodeLabel {
-    max-width: 200px;
-    color:#fff;
-    padding-left:5px;
-    padding-right:5px;
-}
-
-.snodeRoot {
+.snodeR {
+    max-width: 600px;
+    position:fixed;
     font-size: 28px;
     background:rgba(255, 255, 255, 0.8);
     border-width:0px;
     border-color:rgb(255, 255, 255);
     padding: 0px;
+}
+
+.snodeLabel {
+    color:#fff;
+    padding-left:5px;
+    padding-right:5px;
+    margin: 0px;
+}
+
+.snodeInner {
+    padding: 5px;
 }
 
 #graph-view {
