@@ -91,14 +91,14 @@ class SNode
 
     place: ->
         html = '<div id="' + @id + '" class="snode">'
+        if @isRoot
+            html = '<div id="' + @id + '" class="snodeR">'
+
         relText = ''
         if not @isRoot
             relText = @graph.label(@label, @relpos)
         html += '<div class="snodeLabel">' + relText + '</div>'
-        if @isRoot
-            html += '<div class="snodeInner snodeRoot">'
-        else
-            html += '<div class="snodeInner">'
+        html += '<div class="snodeInner">'
         html += '<div class="viewport" /></div></div>'
         $('#graph-view').append(html)
 
@@ -126,7 +126,7 @@ class SNode
 
 
     setColor: (color) ->
-        $('#' + @id + ' .snodeInner').css('border-color', color)
+        $('#' + @id).css('border-color', color)
         $('#' + @id + ' .snodeLabel').css('background', color)
 
 

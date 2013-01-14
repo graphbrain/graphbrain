@@ -1479,16 +1479,15 @@ function testCSS(prop) {
     SNode.prototype.place = function() {
       var html, key, relText;
       html = '<div id="' + this.id + '" class="snode">';
+      if (this.isRoot) {
+        html = '<div id="' + this.id + '" class="snodeR">';
+      }
       relText = '';
       if (!this.isRoot) {
         relText = this.graph.label(this.label, this.relpos);
       }
       html += '<div class="snodeLabel">' + relText + '</div>';
-      if (this.isRoot) {
-        html += '<div class="snodeInner snodeRoot">';
-      } else {
-        html += '<div class="snodeInner">';
-      }
+      html += '<div class="snodeInner">';
       html += '<div class="viewport" /></div></div>';
       $('#graph-view').append(html);
       this.jqDiv = $('#' + this.id);
@@ -1516,7 +1515,7 @@ function testCSS(prop) {
     };
 
     SNode.prototype.setColor = function(color) {
-      $('#' + this.id + ' .snodeInner').css('border-color', color);
+      $('#' + this.id).css('border-color', color);
       return $('#' + this.id + ' .snodeLabel').css('background', color);
     };
 
