@@ -130,7 +130,7 @@ trait UserManagement extends VertexStore {
   }
 
   def allUsers = {
-    val users = Set[Vertex]()
+    val users = Set[UserNode]()
     val rowCount = 100
 
     val rangeSlicesQuery = HFactory
@@ -157,7 +157,7 @@ trait UserManagement extends VertexStore {
 
         if (!row.getColumnSlice().getColumns().isEmpty()) {
           val id = row.getKey()
-          users.add(get(id))
+          users.add(getUserNode(id))
         }
       }
 

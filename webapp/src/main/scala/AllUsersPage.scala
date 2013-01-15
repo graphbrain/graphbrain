@@ -19,7 +19,7 @@ case class AllUsersPage(user: UserNode, req: HttpRequest[Any], cookies: Map[Stri
   html += "<strong>Count:" + users.size + "</strong><br /><br />"
 
   for (u <- users)
-    html += u + "<br />"
+    html += "<a href='/node/user/" + u.username + "'>" + u.username + "</a> " + u.name + " " + u.email + "<br />"
 
   def response = Server.scalateResponse("raw.ssp", "allusers", "All Users", cookies, req, html=html)
 }
