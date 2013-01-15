@@ -128,9 +128,12 @@ class SentenceParser (storeName:String = "gb") {
       nodes = (userNode, None) :: nodes;
 
       val userName = userNode.username;
-      val subTypePNode = getFirstFoundUserOwnedNode(subTypeText, userName)
-      val superTypeNode = getFirstFoundNode(superTypeText)
-      val superTypePNode = getFirstFoundUserOwnedNode(superTypeText, userName)
+      val pNodeGroup = getExistingInstanceOwnedByWithUserP(subTypeText, superTypeText, userName)
+      val gNodeGroup = getExistingInstanceOwnedByWithUserG(superTypeText, userName)
+      val subTypePNode = pNodeGroup._1
+      val superTypeNode = gNodeGroup._2
+      val superTypePNode = pNodeGroup._2
+
       val subTypeVertices = (subTypePNode, Some(List(superTypePNode, userNode), instanceOwnedByRelType))
       nodes = subTypeVertices :: nodes;
       val supTypeVertices = (superTypePNode, Some(List(superTypeNode, userNode), instanceOwnedByRelType))
@@ -141,12 +144,13 @@ class SentenceParser (storeName:String = "gb") {
 
     }
     else {
-      
-      val ownerNode = getNextAvailableNode(ownerText)
+      val pNodeGroup = getExistingInstanceOwnedByP(subTypeText, superTypeText, ownerText)
+      val gNodeGroup = getExistingInstanceOwnedByG(superTypeText, ownerText)
+      val ownerNode = pNodeGroup._3
       nodes = (ownerNode, None) :: nodes;
-      val superTypeNode = getFirstFoundNode(superTypeText)
-      val superTypeSubNode = getNextAvailableNode(superTypeText, 2)
-      val subTypeNode = getFirstFoundNode(subTypeText)
+      val superTypeNode = gNodeGroup._2
+      val superTypeSubNode = gNodeGroup._1
+      val subTypeNode = pNodeGroup._1
       val subTypeVertices = (subTypeNode, Some(List(superTypeSubNode, ownerNode), instanceOwnedByRelType))
       nodes = subTypeVertices :: nodes
       val superTypeVertices = (superTypeSubNode, Some(List(superTypeNode, ownerNode), instanceOwnedByRelType))
@@ -469,6 +473,129 @@ class SentenceParser (storeName:String = "gb") {
     //println("Length results: " + results.length)
     return results.reverse
     
+  }
+
+  //Returns existing group if it exists, otherwise just the first placeholders.
+  def getExistingInstanceOwnedByWithUserP(subtypeText: String, supertypeText: String, username: String): (Vertex, Vertex) = {
+    var i = 1;
+    if(nodeExists(ID.personalOwned_id(username, subtypeText, i))==false||nodeExists(ID.personalOwned_id(username, supertypeText, i))==false) {
+
+      return(getFirstFoundUserOwnedNode(subtypeText, username), getFirstFoundUserOwnedNode(supertypeText, username))   
+    }
+    return getPersonalInstanceOwnedByParticipants(subtypeText, supertypeText, username)
+  }
+  //Returns existing group if it exists, otherwise just the first placeholders.
+  def getExistingInstanceOwnedByWithUserG(supertypeText: String, username: String): (Vertex, Vertex) = {
+    var i = 1;
+    if(nodeExists(ID.text_id(supertypeText, i))==false||nodeExists(ID.personalOwned_id(username, supertypeText, i))==false) {
+      return(getFirstFoundUserOwnedNode(supertypeText, username), getFirstFoundNode(supertypeText))
+    }
+    return getPersonalInstanceOwnedByParticipants(supertypeText, supertypeText, username)
+
+  }
+
+  //Returns existing group if it exists, otherwise just the first placeholders.
+  def getExistingInstanceOwnedByP(subtypeText: String, supertypeText: String, ownerText: String): (Vertex, Vertex, Vertex) = {
+    var i=1;
+    if(nodeExists(ID.text_id(subtypeText, i))==false||nodeExists(ID.urlId(subtypeText))==false||nodeExists(ID.text_id(supertypeText, i))==false) {
+      return(getFirstFoundNode(subtypeText), getFirstFoundNode(supertypeText, 2), getFirstFoundNode(ownerText))
+    }
+    return getInstanceOwnedByParticipants(subtypeText, supertypeText, ownerText)
+
+  }
+  def getExistingInstanceOwnedByG(supertypeText: String, ownerText: String): (Vertex, Vertex, Vertex) = {
+    var i=1;
+    if(nodeExists(ID.text_id(supertypeText, i))==false||nodeExists(ID.text_id(ownerText, i))==false||nodeExists(ID.urlId(ownerText))==false) {
+      return(getFirstFoundNode(supertypeText, 2), getFirstFoundNode(supertypeText, 1), getFirstFoundNode(ownerText))
+    }
+    return getInstanceOwnedByParticipants(supertypeText, supertypeText, ownerText)
+  }
+
+  def hasInstanceOwnedBy(subtypeID: String): Boolean = {
+    val edges = store.neighborEdges(subtypeID, instanceOwnedByRelType.id)
+    return !edges.isEmpty
+  }
+
+  def getInstanceOwnedByTriplet(subtypeID: String, supertypeText: String, ownerText: String): (Vertex, Vertex, Vertex, Int) = {
+    val edges = store.neighborEdges(subtypeID, instanceOwnedByRelType.id);
+    val subtype = store.get(subtypeID)
+    var superType = getFirstFoundNode(supertypeText)
+    var owner = getFirstFoundNode(ownerText)
+    var score = 0;
+    for(edge <- edges) {
+      val participants = edge.participantIds
+      for (participant <- participants) {
+        val pNode = store.get(participant)
+        pNode match {
+          case p: TextNode => if(p.text == supertypeText && p.id != subtypeID) {superType = p; score +=1;} else if(p.text == ownerText && p.id != subtypeID) {owner = p; score +=1;}
+          case p: URLNode => if(p.url == supertypeText) {superType = p; score+=1} else if (p.url == ownerText) {owner = p; score +=1;}
+          case u: UserNode => if(u.name == ownerText || u.username == ownerText) {owner = u; score+=1} else if(u.name == supertypeText || u.username == supertypeText) {superType = u; score +=1;}
+          case _ => 
+        }
+
+      }
+    }
+    return (subtype, superType, owner, score)
+
+  }
+
+  def getInstanceOwnedByParticipants(subtypeText: String, supertypeText: String, ownerText: String): (Vertex, Vertex, Vertex) = {
+
+    if(urlRegex.findAllIn(subtypeText).hasNext) {
+      if(hasInstanceOwnedBy(ID.urlId(subtypeText))) {
+        getInstanceOwnedByTriplet(ID.urlId(subtypeText), supertypeText, ownerText)
+      }
+      else {
+        return (getFirstFoundNode(subtypeText), getFirstFoundNode(supertypeText, 2), getFirstFoundNode(ownerText))
+      }
+    }
+    var i = 1
+    var greatestScore = 0
+    var best = 1;
+    while(nodeExists(ID.text_id(subtypeText, i))) {
+      val currentID = ID.text_id(subtypeText, i)
+      if(hasInstanceOwnedBy(currentID)) {
+        val result = getInstanceOwnedByTriplet(currentID, supertypeText, ownerText)
+        if(result._4 > greatestScore) {
+          best = i
+          greatestScore = result._4
+        }
+      }
+      i += 1
+    }
+    val bestID = ID.text_id(subtypeText, best)
+    val bestResult = getInstanceOwnedByTriplet(bestID, supertypeText, ownerText)
+    return (bestResult._1, bestResult._2, bestResult._3)
+  }
+
+  def personalURLID(url: String, username: String): String = {
+    return store.createURLNode(url, username).id
+  }
+
+  def getPersonalInstanceOwnedByParticipants(subtypeText: String, supertypeText: String, username: String): (Vertex, Vertex) = {
+
+    if(urlRegex.findAllIn(subtypeText).hasNext) {
+      val results =  getInstanceOwnedByTriplet(personalURLID(subtypeText, username), supertypeText, username)
+      return (results._1, results._2)
+    }
+
+    var i = 1
+    var greatestScore = 0
+    var best = 1;
+    while(nodeExists(ID.personalOwned_id(username, subtypeText, i))) {
+      val currentID = ID.personalOwned_id(username, subtypeText, i)
+      if(hasInstanceOwnedBy(currentID)) {
+        val result = getInstanceOwnedByTriplet(currentID, supertypeText, username)
+        if(result._4 > greatestScore) {
+          best = i
+          greatestScore = result._4
+        }
+      }
+      i += 1
+    }
+    val bestID = ID.personalOwned_id(username, subtypeText, best)
+    val bestResult = getInstanceOwnedByTriplet(bestID, supertypeText, username)
+    return (bestResult._1, bestResult._2)
   }
 
   def getNextAvailableNode(text: String, startCounter: Int = 1): Vertex = {
