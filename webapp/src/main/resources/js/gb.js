@@ -1732,9 +1732,11 @@ function testCSS(prop) {
               _ref1 = this.newedges;
               for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
                 e = _ref1[_j];
-                if (e === edge) {
-                  this.changedSNode = snode;
-                  glow = true;
+                if (e !== '') {
+                  if (e === edge) {
+                    this.changedSNode = snode;
+                    glow = true;
+                  }
                 }
               }
             }

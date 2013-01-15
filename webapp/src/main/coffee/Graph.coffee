@@ -85,9 +85,10 @@ class Graph
                     glow = false
                     if @newedges != undefined
                         for e in @newedges
-                            if e == edge
-                                @changedSNode = snode
-                                glow = true
+                            if e != ''
+                                if e == edge
+                                    @changedSNode = snode
+                                    glow = true
 
                     if type == 'url'
                         node = new Node(nid, text, type, snode, edge, nod['url'], nod['icon'], glow)
