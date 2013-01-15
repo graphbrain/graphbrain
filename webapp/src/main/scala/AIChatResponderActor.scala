@@ -54,6 +54,7 @@ class AIChatResponderActor() extends Actor with SimpleLog {
 
       try {
         val responses = sparser.parseSentenceGeneral(sentence, root, Option(user))
+        println(responses)
 
         if (responses.length > 0) {
 
@@ -67,7 +68,7 @@ class AIChatResponderActor() extends Actor with SimpleLog {
 
               val nodes = topParse._1.map(_._1).toArray
               val nodeIds = nodes.map(_.id).toList
-              //println("\n\n\n ************* " + nodeIds + "\n************\n\n\n")
+              println("\n\n\n ************* " + nodeIds + "\n************\n\n\n")
               val relation = topParse._2.id.replace(" ", "_")
 
               //ldebug("node1: " + node1.id + "\nnode2: " + node2.id + "\nrelation: " + relation, Console.RED)
