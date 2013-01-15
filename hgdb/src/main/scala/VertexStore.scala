@@ -430,8 +430,7 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
   def relExists(edge: Edge): Boolean = {
     ldebug("relExists: " + edge)
 
-    val id = edge.participantIds(0)
-    relExistsOnVertex(id, edge)
+    edge.participantIds.exists(relExistsOnVertex(_, edge))
   }
 
 
