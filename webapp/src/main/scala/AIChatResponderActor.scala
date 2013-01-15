@@ -68,7 +68,7 @@ class AIChatResponderActor() extends Actor with SimpleLog {
 
               val nodes = topParse._1.map(_._1).toArray
               val nodeIds = nodes.map(_.id).toList
-              println("\n\n\n ************* " + nodeIds + "\n************\n\n\n")
+              //println("\n\n\n ************* " + nodeIds + "\n************\n\n\n")
               val relation = topParse._2.id.replace(" ", "_")
 
               //ldebug("node1: " + node1.id + "\nnode2: " + node2.id + "\nrelation: " + relation, Console.RED)
@@ -76,7 +76,7 @@ class AIChatResponderActor() extends Actor with SimpleLog {
               Server.store.createAndConnectVertices2(relation, nodes, user.id)
 
               val edge = Edge(relation, nodeIds)
-              newEdges += edge.toString
+              newEdges += edge.toGlobal.toString
 
               // force consesnsus re-evaluation of affected edge
               Server.consensusActor ! edge
@@ -106,7 +106,7 @@ class AIChatResponderActor() extends Actor with SimpleLog {
                     Server.store.createAndConnectVertices2(relation, nodes, user.id)
 
                     val edge = Edge(relation, nodeIds)
-                    newEdges += edge.toString
+                    newEdges += edge.toGlobal.toString
 
                     // force consesnsus re-evaluation of affected edge
                     Server.consensusActor ! edge                    
