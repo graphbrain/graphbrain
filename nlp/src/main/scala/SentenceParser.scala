@@ -128,9 +128,9 @@ class SentenceParser (storeName:String = "gb") {
       nodes = (userNode, None) :: nodes;
 
       val userName = userNode.username;
-      val subTypePNode = getNextAvailableUserOwnedNode(subTypeText, userName)
-      val superTypeNode = getNextAvailableNode(superTypeText)
-      val superTypePNode = getNextAvailableUserOwnedNode(superTypeText, userName)
+      val subTypePNode = getFirstFoundUserOwnedNode(subTypeText, userName)
+      val superTypeNode = getFirstFoundNode(superTypeText)
+      val superTypePNode = getFirstFoundUserOwnedNode(superTypeText, userName)
       val subTypeVertices = (subTypePNode, Some(List(superTypePNode, userNode), instanceOwnedByRelType))
       nodes = subTypeVertices :: nodes;
       val supTypeVertices = (superTypePNode, Some(List(superTypeNode, userNode), instanceOwnedByRelType))
@@ -144,9 +144,9 @@ class SentenceParser (storeName:String = "gb") {
       
       val ownerNode = getNextAvailableNode(ownerText)
       nodes = (ownerNode, None) :: nodes;
-      val superTypeNode = getNextAvailableNode(superTypeText)
+      val superTypeNode = getFirstFoundNode(superTypeText)
       val superTypeSubNode = getNextAvailableNode(superTypeText, 2)
-      val subTypeNode = getNextAvailableNode(subTypeText)
+      val subTypeNode = getFirstFoundNode(subTypeText)
       val subTypeVertices = (subTypeNode, Some(List(superTypeSubNode, ownerNode), instanceOwnedByRelType))
       nodes = subTypeVertices :: nodes
       val superTypeVertices = (superTypeSubNode, Some(List(superTypeNode, ownerNode), instanceOwnedByRelType))
@@ -438,7 +438,7 @@ class SentenceParser (storeName:String = "gb") {
           ownedNode match {
             case o: TextNode => val ownedText = o.text;
               val accessoryVertices = (List(ownedNode, ownerNode), instanceOwnedByRelType);
-              val newNode = getNextAvailableUserOwnedNode(ownedText, userName);
+              val newNode = getFirstFoundUserOwnedNode(ownedText, userName);
               results = (newNode, Some(accessoryVertices)) :: results;
             case _ =>
           }
@@ -456,7 +456,7 @@ class SentenceParser (storeName:String = "gb") {
             ownedNode match {
               case o: TextNode => val ownedText = o.text;
                 val accessoryVertices = (List(ownedNode, ownerNode), instanceOwnedByRelType);
-                val newNode = getNextAvailableNode(ownedText, 2);
+                val newNode = getFirstFoundNode(ownedText, 2);
                 results = (newNode, Some(accessoryVertices)) :: results;
                 //println("Owner: " + ownerNode.id + " Owned: " + ownedNode.id + " Node: " + newNode.id)
               case _ =>
@@ -486,20 +486,37 @@ class SentenceParser (storeName:String = "gb") {
   }
 
   def getFirstFoundNode(text: String, startCounter: Int = 1): Vertex = {
-    var i = startCounter;
-    while(!nodeExists(ID.text_id(text, i))) {
-      i +=1
+    if(urlRegex.findAllIn(text).hasNext) {
+      return store.createURLNode(url = text, userId = "")
     }
-    return store.createTextNode(namespace = i.toString, text=text);
+    else {
+      return store.createTextNode(namespace = startCounter.toString, text=text);  
+    }
+
+  }
+
+  def getFirstFoundUserOwnedNode(text: String, username: String, startCounter: Int = 1): Vertex = {
+    
+    val ns = "user/" + username + "/p/" + startCounter.toString; 
+    if(urlRegex.findAllIn(text).hasNext) {
+      val theURL = urlRegex.findAllIn(text).next.trim
+      return store.createURLNode(url = theURL, userId = username)
+
+    }
+    else {
+      return store.createTextNode(namespace = ns, text = text);  
+    }
   }
 
 
   def getNextAvailableUserOwnedNode(text: String, username: String, startCounter: Int = 1): Vertex = {
     var i = startCounter;
+
     while(nodeExists(ID.personalOwned_id(username, text, i))) {
       i +=1;
     }
     val ns = "user/" + username + "/p/" + i.toString; 
+
     if(urlRegex.findAllIn(text).hasNext) {
       val theURL = urlRegex.findAllIn(text).next.trim
       return store.createURLNode(url = theURL, userId = username)
