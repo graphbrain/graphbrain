@@ -39,7 +39,12 @@ object ID {
     else if (isUserNode(idOrNs))
       idOrNs
     else
-      "user" + "/" +userid + "/" + idOrNs
+      if ((numberOfParts(userid) > 0) && (parts(userid)(0) == "user")) {
+        userid + "/" + idOrNs
+      }
+      else {
+        "user/" + userid + "/" + idOrNs
+      }
   }
 
   def userToGlobal(idOrNs: String) = {
