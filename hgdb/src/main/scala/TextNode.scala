@@ -46,3 +46,12 @@ case class TextNode(store: VertexStore, namespace: String="", text: String="", s
     "summary: " + summary + "<br />"
   }
 }
+
+
+object TextNode {
+  def fromId(id: String, store: VertexStore) = {
+    val namespace = ID.namespace(id)
+    val text = ID.lastPart(id).toLowerCase.split("_").map(_.capitalize) mkString " " 
+    TextNode(store, namespace, text, "")
+  }
+}

@@ -7,6 +7,7 @@ import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.ID
+import com.graphbrain.hgdb.IdFamily
 
 import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.UserManagement
@@ -38,10 +39,10 @@ object VisualGraph {
       ("label" -> linkLabel(x._1)), ("snode" -> snodeId(x._1, x._2))))
 
     // create map with all information for supernodes
-    val snodeMap = generateSnodeMap(truncatedEdgeNodeMap, store)
+    val snodeMap = generateSnodeMap(truncatedEdgeNodeMap, store, rootId)
 
     // create reply structure with all the information needed for rendering
-    val reply = Map(("user" -> userId), ("root" -> node2map(rootId, "", store)), ("snodes" -> snodeMap), ("allrelations" -> allRelations))
+    val reply = Map(("user" -> userId), ("root" -> node2map(rootId, "", store, rootId)), ("snodes" -> snodeMap), ("allrelations" -> allRelations))
 
     Server.store.clear()
 
@@ -93,13 +94,20 @@ object VisualGraph {
     edgeNodeMap.zipWithIndex.filter(x=> x._2 < maxSize).map(x => x._1)
   }
 
-  private def node2map(nodeId: String, nodeEdge: String, store: UserOps) = {
-    val node = try {
-      store.get(nodeId)
+  private def node2map(nodeId: String, nodeEdge: String, store: UserOps, rootId: String) = {
+    val family = IdFamily.family(nodeId)
+    val node = if ((nodeId != rootId) && ((family == IdFamily.Global) || (family == IdFamily.UserSpace))) {
+      TextNode.fromId(nodeId, store)
     }
-    catch {
-      case _ => null
+    else{
+      try {
+        store.get(nodeId)
+      }
+      catch {
+        case _ => null
+      }
     }
+
     node match {
       case tn: TextNode => Map(("id" -> tn.id), ("type" -> "text"), ("text" -> tn.text), ("edge" -> nodeEdge))
       case un: URLNode => {
@@ -114,19 +122,19 @@ object VisualGraph {
 
   private def snodeId(edgeType: String, pos: Integer) = edgeType.replaceAll("/", "_").replaceAll(" ", "_").replaceAll("\\.", "_") + "_" + pos
 
-  private def generateSnode(pair: ((String, Int), Set[(String, String)]), store: UserOps) = {
+  private def generateSnode(pair: ((String, Int), Set[(String, String)]), store: UserOps, rootId: String) = {
     val id = snodeId(pair._1._1, pair._1._2)
     val label = linkLabel(pair._1._1)
     val color = linkColor(label)
-    val nodes = pair._2.map(x => node2map(x._1, x._2, store))
+    val nodes = pair._2.map(x => node2map(x._1, x._2, store, rootId))
 
     val data = Map(("nodes" -> nodes), ("etype" -> pair._1._1), ("rpos" -> pair._1._2), ("label" -> label), ("color" -> color))
 
     id -> data
   }
 
-  private def generateSnodeMap(edgeNodeMap: Map[(String, Int), Set[(String, String)]], store: UserOps) = {
-    edgeNodeMap.map(x => generateSnode(x, store))
+  private def generateSnodeMap(edgeNodeMap: Map[(String, Int), Set[(String, String)]], store: UserOps, rootId: String) = {
+    edgeNodeMap.map(x => generateSnode(x, store, rootId))
   }
 
   private def linkColor(label: String) = {
