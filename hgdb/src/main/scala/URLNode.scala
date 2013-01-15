@@ -91,6 +91,8 @@ case class URLNode(store: VertexStore, url: String="", userId: String = "", titl
 
   override def clone(newid: String) = URLNode(store, newid, userId, title)
 
+  override def toGlobal: Vertex = URLNode(store, url, "", title)
+
   override def toUser(newUserId: String): Vertex = URLNode(store, url, newUserId, title)
 
   def setTitle(newTitle: String) = copy(title=newTitle)

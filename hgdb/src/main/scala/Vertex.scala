@@ -14,6 +14,8 @@ abstract class Vertex {
 
   def clone(newid: String): Vertex
 
+  def toGlobal: Vertex = this
+
   def toUser(newUserId: String): Vertex = this
 
   override def toString: String = id
