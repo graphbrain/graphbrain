@@ -85,6 +85,10 @@ class SentenceParser (storeName:String = "gb") {
     
   }
   def specialNodeCases(inNodeText: String, root: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (Vertex, Option[(List[Vertex], Vertex)]) = {
+    if(inNodeText.toLowerCase.trim=="this" && root.id!=store.createTextNode(namespace="", text="GBNoneGB").id) {
+      return (root, None);
+
+    }
     user match {
       case Some(u:UserNode) =>
         if(u.username == inNodeText || u.name == inNodeText || inNodeText == "I" || inNodeText == "me") {
@@ -98,6 +102,7 @@ class SentenceParser (storeName:String = "gb") {
         if(a.text == inNodeText || a.text.toLowerCase.indexOf(inNodeText.toLowerCase)==0 || inNodeText.toLowerCase.indexOf(a.text.toLowerCase) == 0) {
           return (a, None);
         }
+
         //Check whether already in database - global and user; create new node if necessary
         user match {
           case Some(u:UserNode) => 
@@ -113,6 +118,7 @@ class SentenceParser (storeName:String = "gb") {
         }
       case _ =>
     }
+
     return textToNodes(text = inNodeText, user=user)(0);
 
   }
