@@ -91,6 +91,8 @@ initInterface = ->
     $('#loginLink').bind 'click', showSignUpDialog
     $('#logoutLink').bind 'click', logout
 
+    $('#createContextLink').bind 'click', showCreateContextDialog
+
     fullBind("mouseup", mouseUp)
     fullBind("mousedown", mouseDown)
     fullBind("mousemove", mouseMove)

@@ -35,6 +35,14 @@ case class NavBar(user: UserNode, page: String) {
       <div class="pull-right">
       <ul class="nav">
         """ + tools + """
+        
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-globe icon-black"></i> Global Context <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a id="createContextLink" href="#">Create Context</a></li>
+          </ul>
+        </li>
+
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-black"></i> """ + user.name + """ <b class="caret"></b></a>
           <ul class="dropdown-menu">

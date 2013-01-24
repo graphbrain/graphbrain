@@ -739,7 +739,7 @@ function testCSS(prop) {
 }
 ;
 
-  var AnimInitRotation, AnimLookAt, AnimNodeGlow, Animation, Graph, Node, Quaternion, SNode, SphericalCoords, State, addAnim, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, anims, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearSignupErrors, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideDisambiguateDialog, initAiChat, initAlert, initChatBuffer, initDisambiguateDialog, initInterface, initRelations, initRemoveDialog, initSearchDialog, initSignUpDialog, intervalID, lastScale, lastX, lastY, layout, login, loginReply, loginRequest, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, printHelp, relationReply, relationSubmit, removeAction, removeClicked, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showDisambiguateDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, state, stopAnims, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length,
+  var AnimInitRotation, AnimLookAt, AnimNodeGlow, Animation, Graph, Node, Quaternion, SNode, SphericalCoords, State, addAnim, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, anims, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearSignupErrors, contextCreateReply, createContextModalExists, createContextSubmit, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideCreateContextDialog, hideDisambiguateDialog, initAiChat, initAlert, initChatBuffer, initCreateContextDialog, initDisambiguateDialog, initInterface, initRelations, initRemoveDialog, initSearchDialog, initSignUpDialog, intervalID, lastScale, lastX, lastY, layout, login, loginReply, loginRequest, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, printHelp, relationReply, relationSubmit, removeAction, removeClicked, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showCreateContextDialog, showDisambiguateDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, state, stopAnims, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -1224,6 +1224,7 @@ function testCSS(prop) {
     $('.signupLink').bind('click', showSignUpDialog);
     $('#loginLink').bind('click', showSignUpDialog);
     $('#logoutLink').bind('click', logout);
+    $('#createContextLink').bind('click', showCreateContextDialog);
     fullBind("mouseup", mouseUp);
     fullBind("mousedown", mouseDown);
     fullBind("mousemove", mouseMove);
@@ -2487,6 +2488,42 @@ function testCSS(prop) {
 
   root.aiChatDisambiguate = function(mode, text, rel, participantIds, pos) {
     return disambiguateQuery(mode, text, rel, participantIds, pos);
+  };
+
+  createContextModalExists = false;
+
+  initCreateContextDialog = function() {
+    var dialogHtml;
+    dialogHtml = $("<div class=\"modal hide\" id=\"createContextModal\">\n  <div class=\"modal-header\">\n    <a class=\"close\" data-dismiss=\"modal\">×</a>\n    <h3>Create Context</h3>\n  </div>\n  <div class=\"modal-body\">\n    <form class=\"form-inline\">\n      <input type=\"text\" id=\"contextName\" placeholder=\"Context name\">\n      <button id=\"createContextBtn\" type=\"submit\" class=\"btn\">Create</button>\n    </form>\n  </div>\n  <div class=\"modal-footer\">\n    <a class=\"btn btn-primary\" data-dismiss=\"modal\">Close</a>\n  </div>\n</div>");
+    dialogHtml.appendTo('body');
+    return $('#createContextBtn').click(createContextSubmit);
+  };
+
+  showCreateContextDialog = function(msg) {
+    if (!createContextModalExists) {
+      createContextModalExists = true;
+      initCreateContextDialog();
+    }
+    return $('#createContextModal').modal('show');
+  };
+
+  hideCreateContextDialog = function(msg) {
+    return $('#createContextModal').modal('hide');
+  };
+
+  createContextSubmit = function(msg) {
+    $.ajax({
+      type: "POST",
+      url: "/createcontext",
+      data: "name=" + $("#contextName").val(),
+      dataType: "json",
+      success: contextCreateReply
+    });
+    return false;
+  };
+
+  contextCreateReply = function(msg) {
+    return window.location.reload();
   };
 
   removeClicked = function(msg) {
