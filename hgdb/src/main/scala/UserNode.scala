@@ -9,7 +9,7 @@ import org.mindrot.BCrypt
 
 case class UserNode(store: VertexStore, id: String="", username: String="", name: String="",
   email: String="", pwdhash: String="", role: String="", session: String="",
-  sessionTs: Long= -1, lastSeen: Long= -1, summary: String="") extends Textual {
+  sessionTs: Long= -1, lastSeen: Long= -1, contexts: Array[String]=null, summary: String="") extends Textual {
 
   override def put(): Vertex = {
     val template = store.backend.tpUser
@@ -22,6 +22,9 @@ case class UserNode(store: VertexStore, id: String="", username: String="", name
     updater.setString("session", session)
     updater.setLong("sessionTs", sessionTs)
     updater.setLong("lastSeen", lastSeen)
+    if (contexts != null) {
+      updater.setString("contexts", contexts.reduceLeft(_ + " " + _))
+    }
     template.update(updater)
     store.onPut(this)
     this
@@ -31,13 +34,16 @@ case class UserNode(store: VertexStore, id: String="", username: String="", name
 
   override def toString: String = name
 
-  override def updateSummary: Textual = UserNode(store, id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, generateSummary)
+  override def updateSummary: Textual = UserNode(store, id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, contexts, generateSummary)
 
   override def raw: String = {
     "type: " + "user<br />" +
     "username: " + username + "<br />" +
     "name: " + name + "<br />" +
     "role: " + role + "<br />" +
-    "lastSeen: " + lastSeen + "<br />"
+    "lastSeen: " + lastSeen + "<br />" +
+    "contexts: " + 
+    (if (contexts != null) contexts.reduceLeft(_ + " " + _) else "") +
+    "<br />"
   }
 }

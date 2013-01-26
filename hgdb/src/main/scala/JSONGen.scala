@@ -1,4 +1,4 @@
-package com.graphbrain.webapp
+package com.graphbrain.hgdb
 
 
 object JSONGen {
