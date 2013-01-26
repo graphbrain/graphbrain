@@ -7,6 +7,7 @@ import unfiltered.Cookie
 
 import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.SearchInterface
+import com.graphbrain.hgdb.JSONGen
 
 
 object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse {

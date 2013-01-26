@@ -50,8 +50,10 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
         val session = res.getString("session")
         val sessionTs = res.getLong("sessionTs")
         val lastSeen = res.getLong("lastSeen")
+        val contextsStr = res.getString("contexts")
+        val contexts = if (contextsStr == null) null else contextsStr.split(" ")
         val summary = res.getString("summary")
-        UserNode(this, id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, summary)
+        UserNode(this, id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, contexts, summary)
       }
       case EType => {
         ldebug("etype")
@@ -92,6 +94,15 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
         val res = backend.tpGlobal.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
         SourceNode(this, id)
+      }
+      case Context => {
+        ldebug("context")
+        val res = backend.tpGlobal.queryColumns(id)
+        if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
+        val userId = ID.ownerId(id)
+        val name = res.getString("name")
+        val access = res.getString("access")
+        ContextNode(this, userId, name, access)
       }
     }
   }
@@ -152,6 +163,7 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
       }
       case s: SourceNode => backend.tpGlobal.deleteRow(id)
       case u: UserNode => backend.tpUser.deleteRow(id)
+      case u: ContextNode => backend.tpUserSpace.deleteRow(id)
     }
 
     vertex
@@ -511,7 +523,7 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
   def createUserNode(id: String="", username: String="", name: String="",
   email: String="", pwdhash: String="", role: String="", session: String="",
-  sessionTs: Long= -1, lastSeen: Long= -1, summary: String="") = UserNode(this, id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, summary)
+  sessionTs: Long= -1, lastSeen: Long= -1, contexts: Array[String]=null, summary: String="") = UserNode(this, id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, contexts, summary)
 
   def createRuleNode(store: VertexStore, id: String="", rule: String="") = RuleNode(this, id, rule)
 }

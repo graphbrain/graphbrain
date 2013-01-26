@@ -13,6 +13,7 @@ import com.graphbrain.hgdb.Edge
 import com.graphbrain.hgdb.Textual
 import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.ID
+import com.graphbrain.hgdb.JSONGen
 import com.graphbrain.nlp.SentenceParser
 import com.graphbrain.nlp.ResponseType
 import com.graphbrain.nlp.GraphResponse

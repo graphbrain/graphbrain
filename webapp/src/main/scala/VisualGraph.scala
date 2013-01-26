@@ -8,6 +8,7 @@ import com.graphbrain.hgdb.URLNode
 import com.graphbrain.hgdb.UserNode
 import com.graphbrain.hgdb.ID
 import com.graphbrain.hgdb.IdFamily
+import com.graphbrain.hgdb.JSONGen
 
 import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.UserManagement

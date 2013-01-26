@@ -194,4 +194,10 @@ trait UserOps extends VertexStore {
 
     altSet.toSet
   }
+
+  def createContext(name: String, userid: String) = {
+    // add to user node
+
+    // add context node
+  }
 }
