@@ -19,7 +19,7 @@ object ID {
     p(p.size - 1)
   }
 
-  def humanReadable(id: String) = ID.lastPart(id).toLowerCase.replace("_", " ")
+  def humanReadable(id: String) = lastPart(id).toLowerCase.split("_").map(_.capitalize) mkString " "
 
   def isUserNode(idOrNs: String): Boolean = (parts(idOrNs)(0) == "user") && (numberOfParts(idOrNs) == 2)
 

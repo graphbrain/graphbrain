@@ -16,6 +16,7 @@ object ContextsPlan extends cycle.Plan with cycle.SynchronousExecution with Serv
       val userNode = Server.getUser(cookies)
       val name = params("name")(0)
       println("$$$$$$$$$ create context: " + name)
+      Server.store.createContext(name, userNode.id, "public")
       Ok
   }
 }

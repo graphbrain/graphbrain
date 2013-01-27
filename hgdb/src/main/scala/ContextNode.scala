@@ -33,3 +33,12 @@ case class ContextNode(store: VertexStore, userId: String, name: String, access:
     "summary: " + summary + "<br />"
   }
 }
+
+
+object ContextNode {
+  def fromId(store: VertexStore, contextId: String, access: String): ContextNode = {
+    val userId = ID.ownerId(contextId)
+    val name = ID.humanReadable(contextId)
+    ContextNode(store, userId, name, access)
+  }
+}

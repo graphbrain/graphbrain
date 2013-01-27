@@ -50,8 +50,14 @@ trait UserOps extends VertexStore {
         if (ID.isInUserSpace(u.id))
           setOwner(ID.ownerId(u.id), u.id)
 
+      case c: ContextNode =>
+        if (ID.isInUserSpace(c.id))
+          setOwner(ID.ownerId(c.id), c.id)
+
       case _ =>
     }
+
+    super.onPut(vertex)
   }
 
   override def remove(vertex: Vertex): Vertex = {
@@ -195,9 +201,25 @@ trait UserOps extends VertexStore {
     altSet.toSet
   }
 
-  def createContext(name: String, userid: String) = {
-    // add to user node
+  def createContext(name: String, userid: String, access: String) = {
+    ldebug("createContext: " + name + "; user: " + userid + "; access: " + access)
+    val contextNode = ContextNode(this, userid, name, access)
 
-    // add context node
+    val userNode = getUserNode(userid)
+    val contexts = if (userNode.contexts == null) List[ContextNode]() else userNode.contexts
+
+    // check if already exists
+    if (!contexts.exists(_.id == contextNode.id)) {
+      ldebug("context does not exist yet")
+      // add to user node
+      val newContexts = contextNode :: contexts
+      put(userNode.copy(contexts = newContexts))
+
+      // add context node
+      put(contextNode)
+    }
+    else {
+      ldebug("context already exists")
+    }
   }
 }
