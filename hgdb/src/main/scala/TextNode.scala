@@ -51,7 +51,7 @@ case class TextNode(store: VertexStore, namespace: String="", text: String="", s
 object TextNode {
   def fromId(id: String, store: VertexStore) = {
     val namespace = ID.namespace(id)
-    val text = ID.lastPart(id).toLowerCase.split("_").map(_.capitalize) mkString " " 
+    val text = ID.humanReadable(id) 
     TextNode(store, namespace, text, "")
   }
 }

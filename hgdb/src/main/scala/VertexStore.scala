@@ -51,7 +51,17 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
         val sessionTs = res.getLong("sessionTs")
         val lastSeen = res.getLong("lastSeen")
         val contextsStr = res.getString("contexts")
-        val contexts = if (contextsStr == null) null else contextsStr.split(" ")
+        val contexts = if ((contextsStr == null) || (contextsStr == "")) null else {
+          ldebug("%%%%%%%% contextsStr: " + contextsStr)
+          val tokenArray = contextsStr.trim.split(" ").toList
+          if (tokenArray.length == 0) {
+            null
+          }
+          else {
+            val contextParams = tokenArray.sliding(2, 2)
+            contextParams.map(x => ContextNode.fromId(this, x(0), x(1))).toList
+          }
+        }
         val summary = res.getString("summary")
         UserNode(this, id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, contexts, summary)
       }
@@ -523,7 +533,7 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
 
   def createUserNode(id: String="", username: String="", name: String="",
   email: String="", pwdhash: String="", role: String="", session: String="",
-  sessionTs: Long= -1, lastSeen: Long= -1, contexts: Array[String]=null, summary: String="") = UserNode(this, id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, contexts, summary)
+  sessionTs: Long= -1, lastSeen: Long= -1, contexts: List[ContextNode]=null, summary: String="") = UserNode(this, id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, contexts, summary)
 
   def createRuleNode(store: VertexStore, id: String="", rule: String="") = RuleNode(this, id, rule)
 }

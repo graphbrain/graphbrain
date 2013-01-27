@@ -42,8 +42,17 @@ object VisualGraph {
     // create map with all information for supernodes
     val snodeMap = generateSnodeMap(truncatedEdgeNodeMap, store, rootId)
 
+    // contexts
+    val contexts = if ((user != null) && (user.contexts != null)) {
+      user.contexts.map(c => Map(("id" -> c.id), ("name" -> c.name), ("access" -> c.access)))
+    }
+    else {
+      Nil
+    }
+
     // create reply structure with all the information needed for rendering
-    val reply = Map(("user" -> userId), ("root" -> node2map(rootId, "", store, rootId)), ("snodes" -> snodeMap), ("allrelations" -> allRelations))
+    val reply = Map(("user" -> userId), ("root" -> node2map(rootId, "", store, rootId)), 
+      ("snodes" -> snodeMap), ("allrelations" -> allRelations), ("contexts" -> contexts))
 
     Server.store.clear()
 
