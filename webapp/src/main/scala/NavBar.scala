@@ -38,8 +38,9 @@ case class NavBar(user: UserNode, page: String) {
         
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-globe icon-black"></i> Global Context <b class="caret"></b></a>
-          <ul class="dropdown-menu">
+          <ul id="contexts-dropdown" class="dropdown-menu">
             <li><a id="createContextLink" href="#">Create Context</a></li>
+            <li class="divider"></li>
           </ul>
         </li>
 

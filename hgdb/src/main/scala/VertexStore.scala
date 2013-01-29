@@ -52,7 +52,6 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
         val lastSeen = res.getLong("lastSeen")
         val contextsStr = res.getString("contexts")
         val contexts = if ((contextsStr == null) || (contextsStr == "")) null else {
-          ldebug("%%%%%%%% contextsStr: " + contextsStr)
           val tokenArray = contextsStr.trim.split(" ").toList
           if (tokenArray.length == 0) {
             null
@@ -107,7 +106,7 @@ class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: Str
       }
       case Context => {
         ldebug("context")
-        val res = backend.tpGlobal.queryColumns(id)
+        val res = backend.tpUserSpace.queryColumns(id)
         if (!res.hasResults()) throw new KeyNotFound("vertex with key: " + id + " not found.")
         val userId = ID.ownerId(id)
         val name = res.getString("name")
