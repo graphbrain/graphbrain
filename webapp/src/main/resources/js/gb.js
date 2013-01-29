@@ -739,7 +739,7 @@ function testCSS(prop) {
 }
 ;
 
-  var AnimInitRotation, AnimLookAt, AnimNodeGlow, Animation, Graph, Node, Quaternion, SNode, SphericalCoords, State, addAnim, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, anims, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearSignupErrors, contextCreateReply, createContextModalExists, createContextSubmit, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideCreateContextDialog, hideDisambiguateDialog, initAiChat, initAlert, initChatBuffer, initCreateContextDialog, initDisambiguateDialog, initInterface, initRelations, initRemoveDialog, initSearchDialog, initSignUpDialog, intervalID, lastScale, lastX, lastY, layout, login, loginReply, loginRequest, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, printHelp, relationReply, relationSubmit, removeAction, removeClicked, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showCreateContextDialog, showDisambiguateDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, state, stopAnims, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length,
+  var AnimInitRotation, AnimLookAt, AnimNodeGlow, Animation, Graph, Node, Quaternion, SNode, SphericalCoords, State, addAnim, aiChatAddLine, aiChatAddLineRaw, aiChatButtonPressed, aiChatGotoBottom, aiChatReply, aiChatSubmit, aiChatVisible, animCycle, anims, autoUpdateUsername, browserSpecificTweaks, chatBuffer, chatBufferPos, chatBufferSize, checkEmail, checkEmailReply, checkUsername, checkUsernameReply, clearChatBuffer, clearSignupErrors, contextCreateReply, createContextModalExists, createContextSubmit, disambiguateActionReply, disambiguateQuery, disambiguateResultsReceived, dragging, emailChanged, emailStatus, frand, fullBind, g, getCoulombEnergy, getForces, hideAiChat, hideAlert, hideCreateContextDialog, hideDisambiguateDialog, initAiChat, initAlert, initChatBuffer, initContextsDropDown, initCreateContextDialog, initDisambiguateDialog, initInterface, initRelations, initRemoveDialog, initSearchDialog, initSignUpDialog, intervalID, lastScale, lastX, lastY, layout, login, loginReply, loginRequest, logout, m4x4mulv3, mouseDown, mouseMove, mouseUp, mouseWheel, newv3, nodeCount, printHelp, relationReply, relationSubmit, removeAction, removeClicked, resultsReceived, root, rootNodeId, scroll, scrollOff, scrollOn, searchQuery, searchRequest, setErrorAlert, setInfoAlert, showAiChat, showCreateContextDialog, showDisambiguateDialog, showRemoveDialog, showSearchDialog, showSignUpDialog, signup, signupReply, state, stopAnims, submitting, tmpVec, touchEnd, touchMove, touchStart, undoFactReply, updateUsername, usernameChanged, usernameStatus, v3diffLength, v3dotv3, v3length,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -1238,6 +1238,7 @@ function testCSS(prop) {
       initRemoveDialog();
       initDisambiguateDialog();
       $('#ai-chat-button').bind('click', aiChatButtonPressed);
+      initContextsDropDown();
     }
     if (typeof errorMsg !== "undefined" && errorMsg !== null) {
       if (errorMsg !== '') {
@@ -2524,6 +2525,18 @@ function testCSS(prop) {
 
   contextCreateReply = function(msg) {
     return window.location.reload();
+  };
+
+  initContextsDropDown = function() {
+    var c, html, _i, _len, _ref, _results;
+    _ref = data.contexts;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      c = _ref[_i];
+      html = '<li><a href="/node/' + c['id'] + '">' + c['name'] + '</a></li>';
+      _results.push($('#contexts-dropdown').append(html));
+    }
+    return _results;
   };
 
   removeClicked = function(msg) {

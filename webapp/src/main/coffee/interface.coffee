@@ -110,6 +110,8 @@ initInterface = ->
         initDisambiguateDialog()
         $('#ai-chat-button').bind 'click', aiChatButtonPressed
 
+        initContextsDropDown()
+
     # display error message if defined
     if errorMsg?
         if errorMsg != ''

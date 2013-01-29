@@ -16,10 +16,10 @@ object IdFamily extends Enumeration {
       else if (parts(2) == "url")
         UserURL
       else if (parts(2) == "context")
-        if (nparts == 3)
+        if (nparts == 4)
           Context
         else
-          UserURL
+          UserSpace
       else
         UserSpace
     else if (parts(0) == "rtype")
