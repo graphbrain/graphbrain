@@ -24,6 +24,14 @@ case class Edge(edgeType: String, extParticipantIds: List[String], originalEdge:
     false
   }
 
+  def isInContextSpace: Boolean = {
+    for (p <- participantIds)
+      if (!ID.isInContextSpace(p))
+        return false
+
+    true
+  }
+
   def toUser(userId: String) = {
     val pids = for (pid <- extParticipantIds) yield ID.globalToUser(pid, userId)
     Edge(edgeType, pids)

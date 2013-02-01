@@ -1257,9 +1257,10 @@ function testCSS(prop) {
 
   Node = (function() {
 
-    function Node(id, text, type, snode, edge, url, icon, glow) {
+    function Node(id, text, text2, type, snode, edge, url, icon, glow) {
       this.id = id;
       this.text = text;
+      this.text2 = text2;
       this.type = type;
       this.snode = snode;
       this.edge = edge;
@@ -1316,6 +1317,9 @@ function testCSS(prop) {
         $('#' + this.divid).append(html);
       } else {
         html = '<div class="' + nodeTitleClass + '" id="t' + this.divid + '"><a href="/node/' + this.id + '" id="' + this.divid + '">' + this.text + '</a></div>';
+        if (this.text2 != null) {
+          html += '<div class="nodeSubText">(' + this.text2 + ')</div>';
+        }
         if (!this.root) {
           removeLinkId = 'rem' + this.divid;
           html += '<div class="nodeRemove"><a id="' + removeLinkId + '" href="#">x</a></div>';
@@ -1686,7 +1690,7 @@ function testCSS(prop) {
     }
 
     Graph.initGraph = function(newedges) {
-      var graph, nid, node, snode, text, type;
+      var graph, nid, node, snode, text, text2, type;
       graph = new Graph($('#graph-view').width(), $('#graph-view').height(), newedges);
       graph.updateTransform();
       snode = new SNode(graph, 'root', '', 0, '', '#000', true);
@@ -1695,11 +1699,12 @@ function testCSS(prop) {
       nid = data['root']['id'];
       rootNodeId = nid;
       text = data['root']['text'];
+      text2 = data['root']['text2'];
       type = data['root']['type'];
       if (type === 'url') {
-        node = new Node(nid, text, type, snode, '', data['root']['url'], data['root']['icon']);
+        node = new Node(nid, text, text2, type, snode, '', data['root']['url'], data['root']['icon']);
       } else {
-        node = new Node(nid, text, type, snode, '');
+        node = new Node(nid, text, text2, type, snode, '');
       }
       node.root = true;
       snode.nodes[nid] = node;
@@ -1710,7 +1715,7 @@ function testCSS(prop) {
     };
 
     Graph.prototype.addSNodesFromJSON = function(json) {
-      var color, e, edge, etype, glow, k, label, nid, nlist, nod, node, rpos, sid, snode, text, type, v, _i, _j, _len, _len1, _ref, _ref1;
+      var color, e, edge, etype, glow, k, label, nid, nlist, nod, node, rpos, sid, snode, text, text2, type, v, _i, _j, _len, _len1, _ref, _ref1;
       _ref = json['snodes'];
       for (k in _ref) {
         v = _ref[k];
@@ -1727,6 +1732,7 @@ function testCSS(prop) {
             nod = nlist[_i];
             nid = nod['id'];
             text = nod['text'];
+            text2 = nod['text2'];
             type = nod['type'];
             edge = nod['edge'];
             glow = false;
@@ -1743,9 +1749,9 @@ function testCSS(prop) {
               }
             }
             if (type === 'url') {
-              node = new Node(nid, text, type, snode, edge, nod['url'], nod['icon'], glow);
+              node = new Node(nid, text, text2, type, snode, edge, nod['url'], nod['icon'], glow);
             } else {
-              node = new Node(nid, text, type, snode, edge, '', '', glow);
+              node = new Node(nid, text, text2, type, snode, edge, '', '', glow);
             }
             snode.nodes[nid] = node;
           }

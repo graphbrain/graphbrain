@@ -170,18 +170,26 @@ trait UserOps extends VertexStore {
 
   def neighborEdges2(nodeId: String, userid: String, edgeType: String = "", relPos: Integer = -1): Set[Edge] = {
     ldebug("neighborEdges2 nodeId: " + nodeId + "; userid: " + userid + "; edgeType: " + edgeType + "; pos: " + relPos)
-    val uNodeId = ID.globalToUser(nodeId, userid) 
+    
+    // context space
+    if (ID.isInContextSpace(nodeId)) {
+      neighborEdges(nodeId, edgeType, relPos).filter(x => x.isInContextSpace)
+    }
+    // global space
+    else {
+      val uNodeId = ID.globalToUser(nodeId, userid) 
 
-    val gedges = neighborEdges(nodeId, edgeType, relPos).filter(x => x.isGlobal)
-    val uedges = neighborEdges(uNodeId, edgeType, relPos).filter(x => x.isInUserSpace).map(x => x.toGlobal)
+      val gedges = neighborEdges(nodeId, edgeType, relPos).filter(x => x.isGlobal)
+      val uedges = neighborEdges(uNodeId, edgeType, relPos).filter(x => x.isInUserSpace).map(x => x.toGlobal)
 
-    val gnhood = nodesFromEdgeSet(gedges)
-    val unhood = nodesFromEdgeSet(uedges)
+      val gnhood = nodesFromEdgeSet(gedges)
+      val unhood = nodesFromEdgeSet(uedges)
 
-    val applyNegatives = gedges.filter(x => !uedges.contains(x.negate))
-    val posUEdges = uedges.filter(x => x.isPositive)
+      val applyNegatives = gedges.filter(x => !uedges.contains(x.negate))
+      val posUEdges = uedges.filter(x => x.isPositive)
 
-    applyNegatives ++ posUEdges
+      applyNegatives ++ posUEdges
+    }
   }
 
   def globalAlts(globalId: String) = {

@@ -43,12 +43,13 @@ class Graph
         nid = data['root']['id']
         rootNodeId = nid
         text = data['root']['text']
+        text2 = data['root']['text2']
         type = data['root']['type']
     
         if type == 'url'
-            node = new Node(nid, text, type, snode, '', data['root']['url'], data['root']['icon'])
+            node = new Node(nid, text, text2, type, snode, '', data['root']['url'], data['root']['icon'])
         else
-            node = new Node(nid, text, type, snode, '')
+            node = new Node(nid, text, text2, type, snode, '')
         
         node.root = true    
         snode.nodes[nid] = node
@@ -79,6 +80,7 @@ class Graph
                 for nod in nlist
                     nid = nod['id']
                     text = nod['text']
+                    text2 = nod['text2']
                     type = nod['type']
                     edge = nod['edge']
 
@@ -91,9 +93,9 @@ class Graph
                                     glow = true
 
                     if type == 'url'
-                        node = new Node(nid, text, type, snode, edge, nod['url'], nod['icon'], glow)
+                        node = new Node(nid, text, text2, type, snode, edge, nod['url'], nod['icon'], glow)
                     else
-                        node = new Node(nid, text, type, snode, edge, '', '', glow)
+                        node = new Node(nid, text, text2, type, snode, edge, '', '', glow)
             
                     snode.nodes[nid] = node
 
