@@ -25,6 +25,8 @@ object ID {
 
   def isInUserSpace(idOrNs: String): Boolean = (parts(idOrNs)(0) == "user") && (numberOfParts(idOrNs) > 2)
 
+  def isInContextSpace(idOrNs: String): Boolean = (numberOfParts(idOrNs) > 3) && (parts(idOrNs)(2) == "context")
+
   def isPersonal(idOrNs: String): Boolean = (parts(idOrNs)(0) == "user") &&
                                               (numberOfParts(idOrNs) > 3) &&
                                               (parts(idOrNs)(2) == "p")

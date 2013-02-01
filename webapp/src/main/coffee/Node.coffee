@@ -9,7 +9,7 @@ nodeCount = 0
 
 # Node
 class Node
-    constructor: (@id, @text, @type, @snode, @edge, @url='', @icon='', @glow=false) ->
+    constructor: (@id, @text, @text2, @type, @snode, @edge, @url='', @icon='', @glow=false) ->
         @divid = 'n' + nodeCount++
         @root = false
 
@@ -45,6 +45,10 @@ class Node
             $('#' + @divid).append(html)
         else
             html = '<div class="' + nodeTitleClass + '" id="t' + @divid + '"><a href="/node/' + @id + '" id="' + @divid + '">' + @text + '</a></div>'
+
+            if @text2?
+                html += '<div class="nodeSubText">(' + @text2 + ')</div>'
+
             if not @root
                 removeLinkId = 'rem' + @divid
                 html += '<div class="nodeRemove"><a id="' + removeLinkId + '" href="#">x</a></div>'

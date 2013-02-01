@@ -38,6 +38,14 @@
     color:#000;
 }
 
+.nodeSubText {
+    font-size: 14px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    margin-top: 5px;
+    text-align: center;
+}
+
 .nodeRemove {
     text-align: right;
     float:right;
