@@ -54,3 +54,6 @@ initContextsDropDown = () ->
   for c in data.contexts
     html = '<li><a href="/node/' + c['id'] + '">' + c['name'] + '</a></li>'
     $('#contexts-dropdown').append(html)
+
+    if c.id == data.context
+      $("#current-context").html('<i class="icon-globe icon-black"></i> ' + c.name + ' <b class="caret">')

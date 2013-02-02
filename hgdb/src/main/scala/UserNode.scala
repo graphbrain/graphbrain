@@ -35,6 +35,12 @@ case class UserNode(store: VertexStore, id: String="", username: String="", name
 
   override def clone(newid: String) = this
 
+  override def removeContext: Vertex = UserNode(store, ID.removeContext(id), username, name, email, pwdhash, role, session, sessionTs, lastSeen, contexts, generateSummary)
+
+  // returns the context node
+  override def setContext(newContext: String): Vertex = 
+    if (newContext == "") this else ContextNode(store, ID.ownerId(newContext), ID.lastPart(newContext))
+
   override def toString: String = name
 
   override def updateSummary: Textual = UserNode(store, id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, contexts, generateSummary)

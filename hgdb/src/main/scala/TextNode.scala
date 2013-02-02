@@ -24,6 +24,10 @@ case class TextNode(store: VertexStore, namespace: String="", text: String="", s
 
   override def toUser(newUserId: String): Vertex = TextNode(store, ID.globalToUser(namespace, newUserId), text, summary)
 
+  override def removeContext: Vertex = TextNode(store, ID.removeContext(namespace), text, summary)
+
+  override def setContext(newContext: String): Vertex = TextNode(store, ID.setContext(namespace, newContext), text, summary)
+
   override def toString: String = text
 
   override def updateSummary: Textual = TextNode(store, namespace, text, generateSummary)

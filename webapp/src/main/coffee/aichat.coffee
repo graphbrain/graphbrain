@@ -128,6 +128,7 @@ aiChatSubmit = (msg) ->
 aiChatReply = (msg) ->
   aiChatAddLine('gb', msg['sentence'])
 
+  #console.log(msg['newedges'])
   state.setNewEdges(msg['newedges'])
 
   if msg['goto'] != ''
