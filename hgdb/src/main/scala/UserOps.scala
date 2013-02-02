@@ -128,31 +128,41 @@ trait UserOps extends VertexStore {
       if (ID.isInUserSpace(id)) id else ID.globalToUser(id, userid)
     addrel(etype, ids.toList)
 
-    // remove negation of this edge if it exists
-    delrel(Edge(etype, ids.toList).negate)
+    val edge = Edge(etype, ids.toList)
+    
+    if (!edge.isInContextSpace) {
+      // remove negation of this edge if it exists
+      delrel(edge.negate)
 
-    // run consensus algorithm
-    if (consensus) {
-      val gids = for (id <- participants) yield
-        if (!ID.isInUserSpace(id)) id else ID.userToGlobal(id)
-      Consensus.evalEdge(Edge(edgeType, gids.toList), this)
+      // run consensus algorithm
+      if (consensus) {
+        val gids = for (id <- participants) yield
+          if (!ID.isInUserSpace(id)) id else ID.userToGlobal(id)
+        Consensus.evalEdge(Edge(edgeType, gids.toList), this)
+      }
     }
   }
 
   def delrel2(edgeType: String, participants: List[String], userid: String, consensus: Boolean=false): Unit = {
     ldebug("delrel2 edgeType: " + edgeType + "; participants: " + participants + "; userid: " + userid + "; consensus: " + consensus)
+    
+    val edge = Edge(edgeType, participants.toList)
+    val context = edge.isInContextSpace
+
     // delete edge from user space
-    val userSpaceParticipants = participants.map(p => ID.globalToUser(p, userid))
+    val userSpaceParticipants = if (context) participants else participants.map(p => ID.globalToUser(p, userid))
     delrel(edgeType, userSpaceParticipants.toList)
 
-    // create negation of edge in user space
-    addrel(Edge(edgeType, userSpaceParticipants.toList).negate)
+    if (!context) {
+      // create negation of edge in user space
+      addrel(Edge(edgeType, userSpaceParticipants.toList).negate)
 
-    // run consensus algorithm
-    if (consensus) {
-      val gids = for (id <- participants) yield
-        if (!ID.isInUserSpace(id)) id else ID.userToGlobal(id)
-      Consensus.evalEdge(Edge(edgeType, gids.toList), this)
+      // run consensus algorithm
+      if (consensus) {
+        val gids = for (id <- participants) yield
+          if (!ID.isInUserSpace(id)) id else ID.userToGlobal(id)
+        Consensus.evalEdge(Edge(edgeType, gids.toList), this)
+      }
     }
   }
 

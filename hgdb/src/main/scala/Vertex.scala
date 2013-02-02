@@ -18,6 +18,10 @@ abstract class Vertex {
 
   def toUser(newUserId: String): Vertex = this
 
+  def removeContext: Vertex = this
+
+  def setContext(newContext: String): Vertex = this
+
   override def toString: String = id
 
   def description: String = toString

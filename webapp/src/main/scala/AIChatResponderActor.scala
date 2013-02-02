@@ -54,7 +54,7 @@ class AIChatResponderActor() extends Actor with SimpleLog {
       newEdges += ""
 
       try {
-        val responses = sparser.parseSentenceGeneral(sentence, root, Option(user))
+        val responses = sparser.parseSentenceGeneral(sentence, root.removeContext, Option(user))
         println(responses)
 
         if (responses.length > 0) {
@@ -67,8 +67,9 @@ class AIChatResponderActor() extends Actor with SimpleLog {
 
               val topParse = parses(0);
 
-              val nodes = topParse._1.map(_._1).map(_.toGlobal).toArray
-              val nodeIds = nodes.map(_.id).toList
+              val contextId = ID.contextId(root.id)
+              val nodes = topParse._1.map(_._1).map(_.setContext(contextId)).toArray
+              val nodeIds = nodes.map(n => ID.setContext(n.id, contextId)).toList
               println("\n\n\n ************* " + nodeIds + "\n************\n\n\n")
               val relation = topParse._2.id.replace(" ", "_")
 
@@ -77,6 +78,7 @@ class AIChatResponderActor() extends Actor with SimpleLog {
               Server.store.createAndConnectVertices2(relation, nodes, user.id)
 
               val edge = Edge(relation, nodeIds)
+              println("KKKKKKKKKKKKKKKKKK >> " + edge.toString)
               newEdges += edge.toGlobal.toString
 
               // force consesnsus re-evaluation of affected edge
@@ -96,11 +98,11 @@ class AIChatResponderActor() extends Actor with SimpleLog {
               // Create extra facts
               val facts = topParse._1
               for (fact <- facts) {
-                val firstNode = fact._1.toGlobal
+                val firstNode = fact._1.setContext(contextId)
                 val extraFact = fact._2
                 extraFact match {
                   case Some(f) =>
-                    val nodes = (firstNode :: f._1.map(_.toGlobal)).toArray
+                    val nodes = (firstNode :: f._1.map(_.setContext(contextId))).toArray
                     val nodeIds = nodes.map(_.id).toList
                     val relation = f._2.id.replace(" ", "_")
 

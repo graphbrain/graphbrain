@@ -2540,7 +2540,12 @@ function testCSS(prop) {
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       c = _ref[_i];
       html = '<li><a href="/node/' + c['id'] + '">' + c['name'] + '</a></li>';
-      _results.push($('#contexts-dropdown').append(html));
+      $('#contexts-dropdown').append(html);
+      if (c.id === data.context) {
+        _results.push($("#current-context").html('<i class="icon-globe icon-black"></i> ' + c.name + ' <b class="caret">'));
+      } else {
+        _results.push(void 0);
+      }
     }
     return _results;
   };

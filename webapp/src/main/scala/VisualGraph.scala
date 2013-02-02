@@ -53,7 +53,7 @@ object VisualGraph {
 
     // create reply structure with all the information needed for rendering
     val reply = Map(("user" -> userId), ("root" -> node2map(rootId, "", store, rootId, user)), 
-      ("snodes" -> snodeMap), ("allrelations" -> allRelations), ("contexts" -> contexts))
+      ("snodes" -> snodeMap), ("allrelations" -> allRelations), ("context" -> ID.contextId(rootId)), ("contexts" -> contexts))
 
     Server.store.clear()
 

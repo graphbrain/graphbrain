@@ -25,6 +25,8 @@ object ID {
 
   def isInUserSpace(idOrNs: String): Boolean = (parts(idOrNs)(0) == "user") && (numberOfParts(idOrNs) > 2)
 
+  def isContextNode(idOrNs: String): Boolean = (numberOfParts(idOrNs) == 4) && (parts(idOrNs)(2) == "context")
+
   def isInContextSpace(idOrNs: String): Boolean = (numberOfParts(idOrNs) > 3) && (parts(idOrNs)(2) == "context")
 
   def isPersonal(idOrNs: String): Boolean = (parts(idOrNs)(0) == "user") &&
@@ -50,7 +52,7 @@ object ID {
   }
 
   def userToGlobal(idOrNs: String) = {
-    if (isInUserGlobalSpace(idOrNs)) {
+    if (isInUserGlobalSpace(idOrNs) && (!isInContextSpace(idOrNs))) {
       val idParts = parts(idOrNs)
       val globalParts = idParts.slice(2, idParts.length)
       if (globalParts.length == 1) {
@@ -65,12 +67,42 @@ object ID {
     }
   }
 
+  def removeContext(idOrNs: String) = {
+    if (isInContextSpace(idOrNs)) {
+      val idParts = parts(idOrNs)
+
+      val newParts = idParts.toList diff List(idParts(2), idParts(3))
+      newParts.reduceLeft(_ + "/" + _)
+    }
+    else {
+      idOrNs
+    }
+  }
+
+  def setContext(idOrNs: String, contextId: String) =
+    if (isUserNode(idOrNs) || (isContextNode(idOrNs))) {
+      if (contextId == "") idOrNs else contextId
+    }
+    else {
+      (if (contextId == "") "" else contextId + "/") + userToGlobal(removeContext(idOrNs))
+    }
+
   def ownerId(idOrNs: String): String = {    
     val tokens = parts(idOrNs)
     if (tokens(0) == "user")
       "user/" + tokens(1)  
     else
       ""
+  }
+
+  def contextId(idOrNs: String): String = {
+    if (isInContextSpace(idOrNs)) {
+      val idParts = parts(idOrNs)
+      idParts(0) + "/" + idParts(1) + "/" + idParts(2) + "/" + idParts(3)
+    }
+    else {
+      ""
+    }
   }
 
   def relationshipId(edgeType:String, position: Int) = edgeType + "/" + position

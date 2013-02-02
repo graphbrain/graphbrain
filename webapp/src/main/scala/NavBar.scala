@@ -37,10 +37,11 @@ case class NavBar(user: UserNode, page: String) {
         """ + tools + """
         
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-globe icon-black"></i> Global Context <b class="caret"></b></a>
+          <a href="#" id="current-context" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-globe icon-black"></i> Global Context <b class="caret"></b></a>
           <ul id="contexts-dropdown" class="dropdown-menu">
             <li><a id="createContextLink" href="#">Create Context</a></li>
             <li class="divider"></li>
+            <li><a href="/node/user/""" + user.username +  """">Global Context</a></li>
           </ul>
         </li>
 
