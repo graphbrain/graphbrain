@@ -26,6 +26,7 @@ class SentenceParser (storeName:String = "gb") {
   val urlStrictRegex = """(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?""".r
   val gbNode = store.createTextNode(namespace="1", text="GraphBrain")
   val asInRel = ID.reltype_id("as in", 1)
+  val rootRefWords = List("this", "it", "he", "she");
 
   val verbRegex = """VB[A-Z]?""".r
   val verbPastRegex = """VBD|VBN""".r
@@ -68,6 +69,13 @@ class SentenceParser (storeName:String = "gb") {
     0
   }
 
+  def isRoot(text: String): Double = {
+    for(sWord <- rootRefWords) {
+      if(text.trim.toLowerCase.equals(sWord)) 1
+    }
+    0
+  }
+
   def isSearch(text: String): (Double, String) = {
     for(searchWord <- searchWords) {
       if(text.toLowerCase.startsWith(searchWord)) {
@@ -99,7 +107,7 @@ class SentenceParser (storeName:String = "gb") {
 
     root match {
       case a: TextNode =>
-        if(a.text == inNodeText || a.text.toLowerCase.indexOf(inNodeText.toLowerCase)==0 || inNodeText.toLowerCase.indexOf(a.text.toLowerCase) == 0) {
+        if(a.text == inNodeText || a.text.toLowerCase.indexOf(inNodeText.toLowerCase)==0 || inNodeText.toLowerCase.indexOf(a.text.toLowerCase) == 0 || isRoot(inNodeText)>0) {
           return (a, None);
         }
 

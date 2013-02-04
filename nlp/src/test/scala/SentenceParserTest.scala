@@ -33,6 +33,7 @@ class SentenceParserTest extends FunSuite {
   val todoGlobal = store.createTextNode(namespace = "1", text="todo")
   val todoGlobal2 = store.createTextNode(namespace = "2", text="todo")
   val washTheCarGlobal = store.createTextNode(namespace = "1", text = "wash the car")
+  val jobGlobal = store.createTextNode(namespace = "1", text = "job");
 
 
   val toadsNodeGlobal = store.createTextNode(namespace="1", text="toads")
@@ -59,6 +60,7 @@ class SentenceParserTest extends FunSuite {
   val sentence6 = "Chih-Chun's books are about toads."
   val sentence7 = "Chih-Chun has TODO: wash the car."
   val sentence8 = "Telmo has TODO: wash the car."
+  val sentence9 = "Programmer is a job."
  
   val isA = ID.reltype_id("is_a")
   val isAn = ID.reltype_id("is_an")
@@ -459,6 +461,7 @@ class SentenceParserTest extends FunSuite {
     
   }
 
+
   test("Chih-Chun has TODDO: wash the car: Not user") {
     val response = sentenceParser.parseSentenceGeneral(sentence8, user = Some(userNode))
     response(0) match {
@@ -523,11 +526,30 @@ class SentenceParserTest extends FunSuite {
           
         }
       
-    }
-
-
-    
+    }    
   }
+  
+  test("It is a job.: Root programmer given") {
+    val response = sentenceParser.parseSentenceGeneral(sentence9, root = programmerGlobalNode, user = Some(userNode));
+    response(0) match {
+      case g: GraphResponse => 
+        val parse = g.hypergraphList(0);
+        parse match {
+          case (nodes: List[(Vertex, Option[(List[Vertex], Vertex)])], relType: Vertex) =>
+          val nodeEntry1 = nodes(0)
+          val nodeEntry2 = nodes(1)
+          println("node1 obtained: " + nodeEntry1._1.id);
+          println("node1 expected: " + programmerGlobalNode.id);
+          assert(nodeEntry1._1.id==programmerGlobalNode.id)
+          println("node2 obtained: " + nodeEntry2._1.id);
+          println("node2 expected: " + jobGlobal.id);
+          assert(nodeEntry2._1.id==jobGlobal.id)
+          println("Rel: " + relType.id);
+          assert(relType.id==isA);
+        }
+    }
+  }
+
 
 
 
