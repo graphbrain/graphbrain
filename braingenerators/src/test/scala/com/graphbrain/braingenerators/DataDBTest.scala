@@ -1,10 +1,11 @@
+package com.graphbrain.braingenerators
+
+
 import com.graphbrain.hgdb.VertexStore
 import com.graphbrain.hgdb.SimpleCaching
 import com.graphbrain.hgdb.TextNode
 import com.graphbrain.hgdb.ImageNode
 import com.graphbrain.hgdb.Edge
-
-
 
 
 object DataDBTest {
