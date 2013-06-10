@@ -1,4 +1,4 @@
-organization := "unfiltered"
+organization := "com.graphbrain"
 
 name := "unfiltered-scalate"
 
