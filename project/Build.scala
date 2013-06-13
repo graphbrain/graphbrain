@@ -5,8 +5,8 @@ import AssemblyKeys._
 import cc.spray.revolver.RevolverPlugin._
 
 object GraphbrainBuild extends Build {
-  lazy val hgdb = Project(id = "hgdb",
-                           base = file("hgdb"),
+  lazy val gbdb = Project(id = "gbdb",
+                           base = file("gbdb"),
                            settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(utils)
 
   lazy val inference = Project(id = "inference",
@@ -17,26 +17,26 @@ object GraphbrainBuild extends Build {
 
   lazy val webapp = Project(id = "webapp",
                            base = file("webapp"),
-                           settings = Defaults.defaultSettings ++ assemblySettings ++ Revolver.settings) dependsOn(hgdb, nlp, unfilteredScalate, utils)
+                           settings = Defaults.defaultSettings ++ assemblySettings ++ Revolver.settings) dependsOn(gbdb, nlp, unfilteredScalate, utils)
 
   lazy val braingenerators = Project(id = "braingenerators",
   							base = file("braingenerators"),
-                settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(hgdb)
+                settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(gbdb)
 
   lazy val nlp = Project(id = "nlp",
                 base = file("nlp"),
-                settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(hgdb, braingenerators)
+                settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(gbdb, braingenerators)
   
   lazy val email = Project(id = "email",
                 base = file("email"),
-                settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(hgdb)
+                settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(gbdb)
 
   lazy val tools = Project(id = "tools",
                 base=file("tools"),
-                settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(hgdb, nlp)
+                settings = Defaults.defaultSettings ++ assemblySettings) dependsOn(gbdb, nlp)
 
   lazy val utils = Project(id = "utils", base=file("utils"))
 
   lazy val root = Project(id = "gb",
-                base = file(".")) aggregate(hgdb, inference, webapp, braingenerators, tools, nlp, unfilteredScalate, utils)
+                base = file(".")) aggregate(gbdb, inference, webapp, braingenerators, tools, nlp, unfilteredScalate, utils)
 }
