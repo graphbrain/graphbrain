@@ -1,11 +1,11 @@
 package com.graphbrain.braingenerators
 
 
-import com.graphbrain.hgdb.VertexStore
-import com.graphbrain.hgdb.SimpleCaching
-import com.graphbrain.hgdb.TextNode
-import com.graphbrain.hgdb.ImageNode
-import com.graphbrain.hgdb.Edge
+import com.graphbrain.gbdb.VertexStore
+import com.graphbrain.gbdb.SimpleCaching
+import com.graphbrain.gbdb.TextNode
+import com.graphbrain.gbdb.SourceNode
+import com.graphbrain.gbdb.Edge
 
 
 object DataDBTest {

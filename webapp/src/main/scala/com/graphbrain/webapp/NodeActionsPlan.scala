@@ -6,8 +6,8 @@ import unfiltered.response._
 import unfiltered.netty._
 import unfiltered.Cookie
 
-import com.graphbrain.hgdb.Edge
-import com.graphbrain.hgdb.ID
+import com.graphbrain.gbdb.Edge
+import com.graphbrain.gbdb.ID
 import com.graphbrain.utils.SimpleLog
 
 

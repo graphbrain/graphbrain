@@ -5,10 +5,10 @@ import unfiltered.scalate._
 import unfiltered.request._
 import unfiltered.response._
 
-import com.graphbrain.hgdb.VertexStore
-import com.graphbrain.hgdb.Vertex
-import com.graphbrain.hgdb.Edge
-import com.graphbrain.hgdb.UserNode
+import com.graphbrain.gbdb.VertexStore
+import com.graphbrain.gbdb.Vertex
+import com.graphbrain.gbdb.Edge
+import com.graphbrain.gbdb.UserNode
 
 
 case class AllUsersPage(user: UserNode, req: HttpRequest[Any], cookies: Map[String, Any]) {

@@ -5,9 +5,9 @@ import org.jboss.netty.handler.codec.http.HttpResponse
 import unfiltered.Async
 import unfiltered.response.{JsonContent, ResponseString}
 
-import com.graphbrain.hgdb.Vertex
-import com.graphbrain.hgdb.Edge
-import com.graphbrain.hgdb.UserNode
+import com.graphbrain.gbdb.Vertex
+import com.graphbrain.gbdb.Edge
+import com.graphbrain.gbdb.UserNode
 
 import com.graphbrain.utils.SimpleLog
 

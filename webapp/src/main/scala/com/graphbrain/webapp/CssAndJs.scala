@@ -2,7 +2,7 @@ package com.graphbrain.webapp
 
 
 import scala.util.Random
-import com.graphbrain.hgdb.UserNode
+import com.graphbrain.gbdb.UserNode
 
 
 case class CssAndJs() {

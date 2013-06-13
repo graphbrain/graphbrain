@@ -6,9 +6,9 @@ import scala.collection.mutable.Map
 import me.prettyprint.hector.api.factory.HFactory
 import me.prettyprint.cassandra.serializers.StringSerializer
 
-import com.graphbrain.hgdb.VertexStore
-import com.graphbrain.hgdb.ID
-import com.graphbrain.hgdb.Edge
+import com.graphbrain.gbdb.VertexStore
+import com.graphbrain.gbdb.ID
+import com.graphbrain.gbdb.Edge
 
 
 object EdgeTypes {

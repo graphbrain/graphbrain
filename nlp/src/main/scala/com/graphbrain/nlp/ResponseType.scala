@@ -1,6 +1,6 @@
 package com.graphbrain.nlp
 
-import com.graphbrain.hgdb.Vertex
+import com.graphbrain.gbdb.Vertex
 
 
 

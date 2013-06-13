@@ -1,6 +1,6 @@
 package com.graphbrain.tools
 
-import com.graphbrain.hgdb.VertexStore
+import com.graphbrain.gbdb.VertexStore
 
 
 object ShowVertex {

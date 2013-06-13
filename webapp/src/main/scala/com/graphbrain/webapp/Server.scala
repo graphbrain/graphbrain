@@ -14,12 +14,12 @@ import akka.actor.ActorSystem
 import akka.actor.Actor
 import akka.actor.Props
 
-import com.graphbrain.hgdb.VertexStore
-import com.graphbrain.hgdb.SimpleCaching
-import com.graphbrain.hgdb.UserOps
-import com.graphbrain.hgdb.UserManagement
-import com.graphbrain.hgdb.UserNode
-import com.graphbrain.hgdb.ConsensusActor
+import com.graphbrain.gbdb.VertexStore
+import com.graphbrain.gbdb.SimpleCaching
+import com.graphbrain.gbdb.UserOps
+import com.graphbrain.gbdb.UserManagement
+import com.graphbrain.gbdb.UserNode
+import com.graphbrain.gbdb.ConsensusActor
 import com.graphbrain.utils.SimpleLog
 
 

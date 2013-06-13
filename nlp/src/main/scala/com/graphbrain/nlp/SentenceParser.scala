@@ -3,16 +3,16 @@ package com.graphbrain.nlp
 import java.net.URLDecoder;
 import scala.collection.immutable.HashMap
 import scala.util.Sorting
-import com.graphbrain.hgdb.VertexStore
-import com.graphbrain.hgdb.OpLogging
-import com.graphbrain.hgdb.TextNode
-import com.graphbrain.hgdb.Edge
-import com.graphbrain.hgdb.URLNode
-import com.graphbrain.hgdb.UserNode
-import com.graphbrain.hgdb.EdgeType
-import com.graphbrain.hgdb.Vertex
-import com.graphbrain.hgdb.ID
-import com.graphbrain.hgdb.SearchInterface
+import com.graphbrain.gbdb.VertexStore
+import com.graphbrain.gbdb.OpLogging
+import com.graphbrain.gbdb.TextNode
+import com.graphbrain.gbdb.Edge
+import com.graphbrain.gbdb.URLNode
+import com.graphbrain.gbdb.UserNode
+import com.graphbrain.gbdb.EdgeType
+import com.graphbrain.gbdb.Vertex
+import com.graphbrain.gbdb.ID
+import com.graphbrain.gbdb.SearchInterface
 
 class SentenceParser (storeName:String = "gb") {
 
