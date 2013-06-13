@@ -5,9 +5,9 @@ import unfiltered.response._
 import unfiltered.netty._
 import unfiltered.Cookie
 
-import com.graphbrain.hgdb.Edge
-import com.graphbrain.hgdb.SearchInterface
-import com.graphbrain.hgdb.JSONGen
+import com.graphbrain.gbdb.Edge
+import com.graphbrain.gbdb.SearchInterface
+import com.graphbrain.gbdb.JSONGen
 
 
 object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse {

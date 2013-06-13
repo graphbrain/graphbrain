@@ -1,19 +1,19 @@
 package com.graphbrain.webapp
 
-import com.graphbrain.hgdb.UserOps
-import com.graphbrain.hgdb.Vertex
-import com.graphbrain.hgdb.Edge
-import com.graphbrain.hgdb.TextNode
-import com.graphbrain.hgdb.URLNode
-import com.graphbrain.hgdb.UserNode
-import com.graphbrain.hgdb.ContextNode
-import com.graphbrain.hgdb.ID
-import com.graphbrain.hgdb.IdFamily
-import com.graphbrain.hgdb.JSONGen
+import com.graphbrain.gbdb.UserOps
+import com.graphbrain.gbdb.Vertex
+import com.graphbrain.gbdb.Edge
+import com.graphbrain.gbdb.TextNode
+import com.graphbrain.gbdb.URLNode
+import com.graphbrain.gbdb.UserNode
+import com.graphbrain.gbdb.ContextNode
+import com.graphbrain.gbdb.ID
+import com.graphbrain.gbdb.IdFamily
+import com.graphbrain.gbdb.JSONGen
 
-import com.graphbrain.hgdb.VertexStore
-import com.graphbrain.hgdb.UserManagement
-import com.graphbrain.hgdb.SimpleCaching
+import com.graphbrain.gbdb.VertexStore
+import com.graphbrain.gbdb.UserManagement
+import com.graphbrain.gbdb.SimpleCaching
 import scala.math
 
 

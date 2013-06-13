@@ -4,17 +4,17 @@ import java.io.BufferedWriter
 import java.io.FileWriter
 import java.net.URLDecoder
 import scala.collection.immutable.HashMap
-import com.graphbrain.hgdb.VertexStore
-import com.graphbrain.hgdb.UserManagement
-import com.graphbrain.hgdb.UserOps
-import com.graphbrain.hgdb.OpLogging
-import com.graphbrain.hgdb.TextNode
-import com.graphbrain.hgdb.Edge
-import com.graphbrain.hgdb.SourceNode
-import com.graphbrain.hgdb.URLNode
-import com.graphbrain.hgdb.Vertex
-import com.graphbrain.hgdb.EdgeType
-import com.graphbrain.hgdb.{ID => HGDBID}
+import com.graphbrain.gbdb.VertexStore
+import com.graphbrain.gbdb.UserManagement
+import com.graphbrain.gbdb.UserOps
+import com.graphbrain.gbdb.OpLogging
+import com.graphbrain.gbdb.TextNode
+import com.graphbrain.gbdb.Edge
+import com.graphbrain.gbdb.SourceNode
+import com.graphbrain.gbdb.URLNode
+import com.graphbrain.gbdb.Vertex
+import com.graphbrain.gbdb.EdgeType
+import com.graphbrain.gbdb.{ID => HGDBID}
 
 
 class OutputDBWriter(storeName:String, source:String, username:String, name:String, role:String) {

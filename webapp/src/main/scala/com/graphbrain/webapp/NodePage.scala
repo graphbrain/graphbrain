@@ -5,9 +5,9 @@ import unfiltered.scalate._
 import unfiltered.request._
 import unfiltered.response._
 
-import com.graphbrain.hgdb.UserOps
-import com.graphbrain.hgdb.Vertex
-import com.graphbrain.hgdb.UserNode
+import com.graphbrain.gbdb.UserOps
+import com.graphbrain.gbdb.Vertex
+import com.graphbrain.gbdb.UserNode
 
 
 case class NodePage(store: UserOps, node: Vertex, user: UserNode, prod: Boolean, req: HttpRequest[Any], cookies: Map[String, Any], errorMsg: String="") {
