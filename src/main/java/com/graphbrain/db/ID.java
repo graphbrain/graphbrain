@@ -156,6 +156,10 @@ public class ID {
 			return "";
 		}
 	}
+	
+	public static String buildContextId(String userId, String name) {
+		return userId + "/context/" + ID.sanitize(name).toLowerCase();
+	}
 
 	public static String relationshipId(String edgeType, int position) {
 		return edgeType + "/" + position;

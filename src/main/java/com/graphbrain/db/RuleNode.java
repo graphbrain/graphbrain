@@ -1,19 +1,21 @@
-package com.graphbrain.gbdb
+package com.graphbrain.db;
 
+import java.util.HashMap;
+import java.util.Map;
 
-//To store the rule body
-case class RuleNode(store: VertexStore, id: String="", rule: String="") extends Vertex {
+public class RuleNode extends Vertex {
   
-  override def put(): Vertex = {
-    val template = store.backend.tpGlobal
-    val updater = template.createUpdater(id)
-    updater.setString("rule", rule)
-    template.update(updater)
-    store.onPut(this)
-    this
-  }
-
-  override def clone(newid: String) = RuleNode(store, newid, rule)
-
-  override def toString: String = rule
+	public RuleNode(String id) {
+		super(id);
+	}
+  
+	public RuleNode(String id, Map<String, String> map) {
+		super(id);
+	}
+	
+	@Override
+	public Map<String, String> toMap() {
+		Map<String, String> map = new HashMap<String, String>();
+		return map;
+	}
 }

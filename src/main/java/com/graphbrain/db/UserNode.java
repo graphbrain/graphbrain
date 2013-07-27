@@ -1,65 +1,68 @@
-package com.graphbrain.gbdb
+package com.graphbrain.db;
 
-import java.net.URLEncoder
-import java.security.SecureRandom
-import java.math.BigInteger
+import java.util.HashMap;
+import java.util.Map;
 
-import org.mindrot.BCrypt
+//import org.mindrot.jbcrypt.BCrypt;
 
 
-case class UserNode(store: VertexStore, id: String="", username: String="", name: String="",
-  email: String="", pwdhash: String="", role: String="", session: String="",
-  sessionTs: Long= -1, lastSeen: Long= -1, contexts: List[ContextNode]=null, summary: String="") extends Textual {
+public class UserNode extends Textual {
 
-  override def put(): Vertex = {
-    val template = store.backend.tpUser
-    val updater = template.createUpdater(id)
-    updater.setString("username", username)
-    updater.setString("name", name)
-    updater.setString("email", email)
-    updater.setString("pwdhash", pwdhash)
-    updater.setString("role", role)
-    updater.setString("session", session)
-    updater.setLong("sessionTs", sessionTs)
-    updater.setLong("lastSeen", lastSeen)
-    if (contexts != null) {
-      val contextStr = contexts.foldLeft("") {
-        (x, y) => x + " " + y.id + " " + y.access
-      }
-      updater.setString("contexts", contextStr)
-    }
-    template.update(updater)
-    store.onPut(this)
-    this
-  }
+	private String username;
+	private String name;
+	private String email;
+	private String pwdhash;
+	private String role;
+	private String session;
+	private long sessionTs;
+	private long lastSeen;
+	
+	public UserNode(String username, String name, String email, String pwdhash, String role) {
+		super(ID.userIdFromUsername(username));
+		this.username = username;
+		this.name = name;
+		this.email = email;
+		this.pwdhash = pwdhash;
+		this.role = role;
+	}
+	
+	public UserNode(String id, Map<String, String> map) {
+		super(id);
+		this.username = map.get("username");
+		this.name = map.get("name");
+		this.email = map.get("email");
+		this.pwdhash = map.get("pwdhash");
+		this.role = map.get("role");
+		this.session = map.get("session");
+		this.sessionTs = Long.parseLong(map.get("sessionTs"));
+		this.lastSeen = Long.parseLong(map.get("lastSeen"));
+	}
+	
+	@Override
+	public Map<String, String> toMap() {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("username", username);
+		map.put("name", name);
+		map.put("email", email);
+		map.put("pwdhash", pwdhash);
+		map.put("role", role);
+		map.put("session", session);
+		map.put("sessionTs", String.valueOf(sessionTs));
+		map.put("lastSeen", String.valueOf(lastSeen));
+		return map;
+	}
 
-  override def clone(newid: String) = this
+  
+	@Override
+	public String toString() {
+		return name;
+	}
 
-  override def removeContext: Vertex = UserNode(store, ID.removeContext(id), username, name, email, pwdhash, role, session, sessionTs, lastSeen, contexts, generateSummary)
-
-  // returns the context node
-  override def setContext(newContext: String): Vertex = 
-    if (newContext == "") this else ContextNode(store, ID.ownerId(newContext), ID.lastPart(newContext))
-
-  override def toString: String = name
-
-  override def updateSummary: Textual = UserNode(store, id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, contexts, generateSummary)
-
-  override def raw: String = {
-    val contextStr = if (contexts != null) {
-      contexts.foldLeft("") {
-        (x, y) => x + " " + y.name
-      }
-    }
-    else {
-      ""
-    }
-
-    "type: " + "user<br />" +
-    "username: " + username + "<br />" +
-    "name: " + name + "<br />" +
-    "role: " + role + "<br />" +
-    "lastSeen: " + lastSeen + "<br />" +
-    "contexts: " + contextStr + "<br />"
-  }
+	public String raw() {
+		return "type: " + "user<br />" +
+				"username: " + username + "<br />" +
+				"name: " + name + "<br />" +
+				"role: " + role + "<br />" +
+				"lastSeen: " + lastSeen + "<br />";
+	}
 }

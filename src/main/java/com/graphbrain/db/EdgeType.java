@@ -1,16 +1,27 @@
-package com.graphbrain.gbdb
+package com.graphbrain.db;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
-case class EdgeType(store: VertexStore, id: String="", label: String="") extends Vertex {
+public class EdgeType extends Vertex {
 
-  override def put(): Vertex = {
-    val template = store.backend.tpEdgeType
-    val updater = template.createUpdater(id)
-    updater.setString("label", label)
-    template.update(updater)
-    store.onPut(this)
-    this
-  }
-
-  override def clone(newid: String) = EdgeType(store, newid, label)
+	private String label;
+			
+	public EdgeType(String id, String label) {
+		super(id);
+		this.label = label;
+	}
+	
+	public EdgeType(String id, Map<String, String> map) {
+		super(id);
+		this.label = map.get("label");
+	}
+	
+	@Override
+	public Map<String, String> toMap() {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("label", label);
+		return map;
+	}
 }

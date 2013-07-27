@@ -39,10 +39,6 @@ public class URLNode extends Vertex {
 	}
 	
 	//override def clone(newid: String) = URLNode(store, newid, userId, title)
-	@Override
-	public Vertex copy(String newid) {
-		return null;
-	}
 	
 	@Override
 	public Map<String, String> toMap() {
