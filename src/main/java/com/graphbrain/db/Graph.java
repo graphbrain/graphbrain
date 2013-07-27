@@ -1,13 +1,15 @@
 package com.graphbrain.db;
 
-//import com.graphbrain.utils.SimpleLog
-
 public abstract class Graph {
 
-	public abstract Vertex getTextNode(String id);
-	public abstract Vertex getURLNode(String id);
-	public abstract Vertex getUserNode(String id);
-	public abstract Vertex getEdgeType(String id);
+	public abstract Vertex put(Vertex vertex);
+	public abstract Vertex update(Vertex vertex);
+	public abstract TextNode getTextNode(String id);
+	public abstract URLNode getURLNode(String id);
+	public abstract UserNode getUserNode(String id);
+	public abstract EdgeType getEdgeType(String id);
+	protected abstract void associateEmailToUsername(String email, String username);
+	protected abstract String usernameByEmail(String email);
 	
 	public Vertex get(String id) throws KeyNotFound {
 		//ldebug("get vertex: " + id)
@@ -52,33 +54,114 @@ public abstract class Graph {
 		else
 			return node;
 	}
+	
+	public boolean exists(String id) {
+		try {
+			get(id);
+		}
+		catch (Exception e) {
+		    //ldebug(id + " does not exist")
+		    return false;
+		}
+		//ldebug(id + " exists")
+		return true;
+	}
+	
+	private String idFromEmail(String email) {
+		String userName = usernameByEmail(email);
+		if (userName == null) {
+			return null;
+		}
+		else {
+			return ID.idFromUsername(userName);
+		}
+	}
+	
+	public boolean usernameExists(String username) {
+		return exists(ID.idFromUsername(username));
+	}
+	
+	public boolean emailExists(String email) {
+		String userName = usernameByEmail(email);
+	    return userName != null; 
+	}
+	
+	public UserNode findUser(String login) {
+		if (exists(ID.idFromUsername(login))) {
+		  	  return getUserNode(ID.idFromUsername(login));
+		}
+		else {
+			String uid = idFromEmail(login);
+		    if (uid == null) {
+		    	return null;
+		    }
+		    else if (exists(uid)) {
+		  	    return getUserNode(idFromEmail(login));
+		    }
+		    else {
+		        return null;
+		    }
+		}
+	}
+	
+	public UserNode getUserNodeByUsername(String username) {
+		if (exists(ID.idFromUsername(username))) {
+			return getUserNode(ID.idFromUsername(username));
+		}
+		else {
+			return null;
+		}
+	}
+	
+	public UserNode createUser(String username, String name, String email, String password, String role) {
+		UserNode userNode = UserNode.create(username, name, email, password, role);
+		put(userNode);
+		if (!email.equals("")) {
+		    associateEmailToUsername(email, username);
+		}
+
+		return userNode;
+	}
+	
+	public UserNode attemptLogin(String login, String password) {
+		UserNode userNode = findUser(login);
+
+		// user does not exist
+		if (userNode == null) {
+			return null;
+		}
+		    
+		// password is incorrect
+		if (!userNode.checkPassword(password)) {
+			return null;
+		}
+
+		// ok, create new session
+		userNode.newSession();
+		update(userNode);
+		return userNode;
+	}
+	
+	public UserNode forceLogin(String login) {
+		UserNode userNode = findUser(login);
+
+		// user does not exist
+		if (userNode == null) {
+			return null;
+		}
+
+		// ok, create new session
+		userNode.newSession();
+		update(userNode);
+		return userNode;
+	}
 
 /*
-  def put(vertex: Vertex): Vertex = {
-    ldebug("put " + vertex.id)
-    vertex.put()
-  }
-
 
   def onPut(vertex: Vertex) = {}
 
 
   def update(vertex: Vertex): Vertex = put(vertex)
-
-
-  def exists(id: String): Boolean = {
-    try {
-      val v = get(id)
-    }
-    catch {
-      case _ => {
-        ldebug(id + " does not exist")
-        return false
-      }
-    }
-    ldebug(id + " exists")
-    true
-  }
 
 
   def remove(vertex: Vertex): Vertex = {

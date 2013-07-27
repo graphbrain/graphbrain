@@ -23,22 +23,22 @@ public class LevelDbGraph extends Graph  {
     	}
 	}
 	
-	public Vertex getTextNode(String id) {
+	public TextNode getTextNode(String id) {
 		String value = asString(db.get(bytes(id)));
 		return new TextNode(id, stringToMap(value));
 	}
 	
-	public Vertex getURLNode(String id) {
+	public URLNode getURLNode(String id) {
 		String value = asString(db.get(bytes(id)));
 		return new URLNode(id, stringToMap(value));
 	}
 	
-	public Vertex getUserNode(String id) {
+	public UserNode getUserNode(String id) {
 		String value = asString(db.get(bytes(id)));
 		return new UserNode(id, stringToMap(value));
 	}
 	
-	public Vertex getEdgeType(String id) {
+	public EdgeType getEdgeType(String id) {
 		String value = asString(db.get(bytes(id)));
 		return new EdgeType(id, stringToMap(value));
 	}
@@ -82,10 +82,26 @@ public class LevelDbGraph extends Graph  {
 		return map;
 	}
 	
+	@Override
 	public Vertex put(Vertex vertex) {
 		String value = mapToString(vertex.toMap());
 		db.put(bytes(vertex.getId()), bytes(value));
 		return vertex;
+	}
+	
+	@Override
+	public Vertex update(Vertex vertex) {
+		return put(vertex);
+	}
+	
+	@Override
+	protected void associateEmailToUsername(String email, String username) {
+		db.put(bytes(ID.emailId(email)), bytes(username));
+	}
+	
+	@Override
+	protected String usernameByEmail(String email) {
+		return asString(db.get(bytes(ID.emailId(email))));
 	}
 	
     public static void main( String[] args ) {
@@ -94,6 +110,9 @@ public class LevelDbGraph extends Graph  {
     	try {
     		DB db = factory.open(new File("example"), options);
     		try {
+    			
+    			System.out.println("=> " + db.get(bytes("xpto666")));
+    			
     			/*
     			for (int i = 0; i < 1000000; i++) {
     				String key = UUID.randomUUID().toString();
@@ -101,6 +120,7 @@ public class LevelDbGraph extends Graph  {
     				db.put(bytes(key), bytes(value));
     			}*/
     			
+    			/*
     			DBIterator iterator = db.iterator();
     			try {
     				iterator.seek(bytes("c"));
@@ -122,6 +142,7 @@ public class LevelDbGraph extends Graph  {
     			finally {
     			  iterator.close();
     			}
+    			*/
     			
     			//String value = asString(db.get(bytes("Tampa")));
     			//System.out.println(value);

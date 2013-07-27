@@ -2,8 +2,10 @@ package com.graphbrain.db;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.math.BigInteger;
+import com.graphbrain.utils.RandUtils;
 
-//import org.mindrot.jbcrypt.BCrypt;
+import org.mindrot.jbcrypt.BCrypt;
 
 
 public class UserNode extends Textual {
@@ -38,6 +40,11 @@ public class UserNode extends Textual {
 		this.lastSeen = Long.parseLong(map.get("lastSeen"));
 	}
 	
+	public static UserNode create(String username, String name, String email, String password, String role) {
+		String pwdhash = BCrypt.hashpw(password, BCrypt.gensalt());
+		return new UserNode(username, name, email, pwdhash, role);
+	}
+	
 	@Override
 	public Map<String, String> toMap() {
 		Map<String, String> map = new HashMap<String, String>();
@@ -52,6 +59,18 @@ public class UserNode extends Textual {
 		return map;
 	}
 
+	public UserNode newSession() {
+		session = (new BigInteger(130, RandUtils.secRand)).toString(32);
+		return this;
+	}
+	
+	public boolean checkPassword(String candidate) {
+		return BCrypt.checkpw(candidate, pwdhash);
+	}
+
+	public boolean checkSession(String candidate) {
+		return session == candidate;
+	}
   
 	@Override
 	public String toString() {
