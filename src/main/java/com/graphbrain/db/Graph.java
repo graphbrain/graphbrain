@@ -1,84 +1,59 @@
-package com.graphbrain.gbdb
+package com.graphbrain.db;
 
-import scala.collection.mutable.{Set => MSet}
+//import com.graphbrain.utils.SimpleLog
 
-import java.util.Arrays
+public abstract class Graph {
 
-import me.prettyprint.hector.api.factory.HFactory
-import me.prettyprint.cassandra.service.template.ColumnFamilyUpdater
-import me.prettyprint.cassandra.service.ColumnSliceIterator
-import me.prettyprint.cassandra.serializers.StringSerializer
-import me.prettyprint.cassandra.serializers.IntegerSerializer
-import me.prettyprint.cassandra.serializers.CompositeSerializer
-import me.prettyprint.hector.api.beans.Composite
+	public abstract Vertex getTextNode(String id);
+	public abstract Vertex getURLNode(String id);
+	public abstract Vertex getUserNode(String id);
+	public abstract Vertex getEdgeType(String id);
+	
+	public Vertex get(String id) throws KeyNotFound {
+		//ldebug("get vertex: " + id)
+		Vertex node = null;
+		switch(IdFamily.family(id)) {
+		case Global:
+			//ldebug("global")
+			node = getTextNode(id);
+			break;
+		case UserSpace:
+			//ldebug("userspace")
+			node = getTextNode(id);
+			break;
+		case User:
+			//ldebug("user")
+			node = getUserNode(id);
+			break;
+		case EType:
+			//ldebug("etype")
+			node = getEdgeType(id);
+			break;
+		case URL:
+			//ldebug("url")
+			node = getURLNode(id);
+			break;
+		case UserURL:
+			//ldebug("userurl")
+			node = getURLNode(id);
+			break;
+		case Context:
+			break;
+		case Rule:
+			break;
+		case Source:
+			break;
+		default:
+			break;
+		}
+		
+		if (node == null)
+			throw new KeyNotFound("vertex with key: " + id + " not found.");
+		else
+			return node;
+	}
 
-import IdFamily._
-
-import com.graphbrain.utils.SimpleLog
-
-abstract class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: String="localhost", port: Int=9160) extends SimpleLog {
-  val backend = new CassandraBackend(clusterName, keyspaceName, ip, port)
-
-  def getTextNode(id: String): TextNode
-  def getURLNode(id: String): URLNode
-  def getUserNode(id: String): UserNode
-  def getEdgeType(id: String): EdgeType
-
-  def get(id: String): Vertex = {
-    ldebug("get vertex: " + id)
-    IdFamily.family(id) match {
-      case Global => {
-        ldebug("global")
-        val node = getTextNode(id)
-        if (node == null)
-          throw new KeyNotFound("vertex with key: " + id + " not found.")
-        else
-          node
-      }
-      case UserSpace => {
-        ldebug("userspace")
-        val node = getTextNode(id)
-        if (node == null)
-          throw new KeyNotFound("vertex with key: " + id + " not found.")
-        else
-          node
-      }
-      case User => {
-        ldebug("user")
-        val node = getUserNode(id)
-        if (node == null)
-          throw new KeyNotFound("vertex with key: " + id + " not found.")
-        else
-          node
-      }
-      case EType => {
-        ldebug("etype")
-        val node = getEdgeType(id)
-        if (node == null)
-          throw new KeyNotFound("vertex with key: " + id + " not found.")
-        else
-          node
-      }
-      case URL => {
-        ldebug("url")
-        val node = getURLNode(id)
-        if (node == null)
-          throw new KeyNotFound("vertex with key: " + id + " not found.")
-        else
-          node
-      }
-      case UserURL => {
-        ldebug("userurl")
-        val node = getURLNode(id)
-        if (node == null)
-          throw new KeyNotFound("vertex with key: " + id + " not found.")
-        else
-          node
-      }
-    }
-  }
-
-
+/*
   def put(vertex: Vertex): Vertex = {
     ldebug("put " + vertex.id)
     vertex.put()
@@ -464,6 +439,7 @@ abstract class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb"
   sessionTs: Long= -1, lastSeen: Long= -1, contexts: List[ContextNode]=null, summary: String="") = UserNode(this, id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, contexts, summary)
 
   def createRuleNode(store: VertexStore, id: String="", rule: String="") = RuleNode(this, id, rule)
+  */
 }
 
 
@@ -471,7 +447,6 @@ abstract class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb"
 object VertexStore {
   def apply(clusterName: String, keyspaceName: String) = new VertexStore(clusterName, keyspaceName)
 
-  /*
   def main(args : Array[String]) : Unit = {
     val store = new VertexStore()
 
@@ -480,6 +455,5 @@ object VertexStore {
 
     var snode = store.getUserNode("user/telmo_menezes").updateSummary
     println(snode.summary)
-  } */
-}
-*/
+  }
+}*/
