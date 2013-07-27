@@ -1,5 +1,8 @@
 package com.graphbrain.db;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import org.apache.commons.lang3.text.WordUtils;
 
 public class ID {
@@ -147,6 +150,20 @@ public class ID {
 			return "";
 	}
 
+	public static String emailId(String email) {
+		return "email/" + email.toLowerCase();
+	}
+	
+	public static String idFromUsername(String username) {
+	  	String usernameNoSpaces = username.replace(' ', '_');
+	  	try {
+			return "user/" + URLEncoder.encode(usernameNoSpaces, "UTF-8");
+		}
+	  	catch (UnsupportedEncodingException e) {
+			return "";
+		}
+	}
+	
 	public static String contextId(String idOrNs) {
 		if (isInContextSpace(idOrNs)) {
 			String[] p = parts(idOrNs);
