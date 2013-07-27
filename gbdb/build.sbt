@@ -18,6 +18,10 @@ libraryDependencies += "me.prettyprint" % "hector-core" % "1.0-1"
 
 libraryDependencies += "org.jsoup" % "jsoup" % "1.7.1"
 
+libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.25"
+
+libraryDependencies += "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.7"
+
 //testOptions in Test += Tests.Argument("-oF")
 
 parallelExecution in Test := false 
