@@ -24,7 +24,6 @@ public class TextNode extends Textual {
 	    this(ID.namespace(id), ID.humanReadable(id), "");
 	}
 	
-	@Override
 	public Vertex copy(String newid) {
 		return new TextNode(ID.namespace(newid), text, summary);
 	}

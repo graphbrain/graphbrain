@@ -34,11 +34,13 @@ public class LevelDbGraph extends Graph  {
 	}
 	
 	public Vertex getUserNode(String id) {
-		return null;
+		String value = asString(db.get(bytes(id)));
+		return new UserNode(id, stringToMap(value));
 	}
 	
 	public Vertex getEdgeType(String id) {
-		return null;
+		String value = asString(db.get(bytes(id)));
+		return new EdgeType(id, stringToMap(value));
 	}
 	
 	private static String mapToString(Map<String, String> map) {

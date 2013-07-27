@@ -1,44 +1,41 @@
-package com.graphbrain.gbdb
+package com.graphbrain.db;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
-case class ContextNode(store: VertexStore, userId: String, name: String, access: String="public", summary: String="") extends Textual {
+public class ContextNode extends Textual {
   
-  override val id = userId + "/context/" + ID.sanitize(name).toLowerCase
-
-  override def extendedId: String = userId + "/context/" + ID.sanitize(name)
-
-  override def put(): Vertex = {
-    val template = store.backend.tpUserSpace
-    val updater = template.createUpdater(id)
-    updater.setString("name", name)
-    updater.setString("access", access)
-    if ((summary != "") && (summary != null))
-      updater.setString("summary", summary)
-    template.update(updater)
-    store.onPut(this)
-    this
-  }
-
-  override def clone(newid: String) = ContextNode(store, userId, name, access, summary)
-
-  override def toString: String = name
-
-  override def updateSummary: Textual = ContextNode(store, userId, name, access, generateSummary)
-
-  override def raw: String = {
-    "type: " + "context<br />" +
-    "userId: " + userId + "<br />" +
-    "name: " + name + "<br />" +
-    "access: " + access + "<br />" +
-    "summary: " + summary + "<br />"
-  }
-}
-
-
-object ContextNode {
-  def fromId(store: VertexStore, contextId: String, access: String): ContextNode = {
-    val userId = ID.ownerId(contextId)
-    val name = ID.humanReadable(contextId)
-    ContextNode(store, userId, name, access)
-  }
+	public String access;
+	
+	public ContextNode(String userId, String name, String access) {
+		super(ID.buildContextId(userId, name));
+		this.access = access;
+	}
+	
+	public ContextNode(String userId, String name) {
+		super(ID.buildContextId(userId, name));
+		this.access = "public";
+	}
+	
+	public ContextNode(String id, Map<String, String> map) {
+		super(id);
+		this.access = map.get("access");
+		this.summary = map.get("summary");
+	}
+	
+	@Override
+	public Map<String, String> toMap() {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("access", access);
+		map.put("summary", summary);
+		return map;
+	}
+  
+  	public String raw() {
+  		return "type: " + "context<br />" +
+  				"id: " + id + "<br />" +
+  				"access: " + access + "<br />" +
+  				"summary: " + summary + "<br />";
+  	}
 }

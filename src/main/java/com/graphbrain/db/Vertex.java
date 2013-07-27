@@ -12,7 +12,6 @@ public abstract class Vertex {
 	}
 	
 	public abstract Map<String, String> toMap();
-	public abstract Vertex copy(String newid);
 	
 	public void remove() {
 		//graph.remove(this);
