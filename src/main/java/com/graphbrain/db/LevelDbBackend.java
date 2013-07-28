@@ -127,6 +127,11 @@ public class LevelDbBackend implements Backend  {
 		return put(vertex);
 	}
 	
+	public void remove(Vertex vertex) {
+		String realId = typeToChar(vertex.type()) + vertex.getId();
+		db.delete(bytes(realId));
+	}
+	
 	public void associateEmailToUsername(String email, String username) {
 		db.put(bytes(ID.emailId(email)), bytes(username));
 	}

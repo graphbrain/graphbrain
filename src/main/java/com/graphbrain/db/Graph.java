@@ -14,6 +14,18 @@ public abstract class Graph {
 		return back.get(id, VertexType.type(id));
 	}
 	
+	public Vertex put(Vertex vertex) {
+		return back.put(vertex);
+	}
+	
+	public Vertex update(Vertex vertex) {
+		return back.update(vertex);
+	}
+	
+	public void remove(Vertex vertex) {
+		back.remove(vertex);
+	}
+	
 	public boolean exists(String id) {
 		return get(id) != null;
 	}
@@ -116,47 +128,6 @@ public abstract class Graph {
 	}
 
 /*
-
-  def onPut(vertex: Vertex) = {}
-
-
-  def update(vertex: Vertex): Vertex = put(vertex)
-
-
-  def remove(vertex: Vertex): Vertex = {
-    ldebug("remove" + vertex.id)
-
-    val id = vertex.id
-    
-    // remove associated degree
-    delDegree(id)
-
-    // remove associated edges
-    val nEdges = neighborEdges(id)
-    for (e <- nEdges) delrel(e)
-
-    vertex match {
-      case t: TextNode => {
-        val template = if (ID.isInUserSpace(id)) backend.tpUserSpace else backend.tpGlobal
-        template.deleteRow(id)
-      }
-      case et: EdgeType => {
-        delInstances(id)
-        backend.tpEdgeType.deleteRow(id)
-      }
-      case r: RuleNode => backend.tpGlobal.deleteRow(id)
-      case u: URLNode => {
-        val template = if (ID.isInUserSpace(id)) backend.tpUserSpace else backend.tpGlobal
-        template.deleteRow(id)
-      }
-      case s: SourceNode => backend.tpGlobal.deleteRow(id)
-      case u: UserNode => backend.tpUser.deleteRow(id)
-      case u: ContextNode => backend.tpUserSpace.deleteRow(id)
-    }
-
-    vertex
-  }
-
 
   def addrel(edge: Edge): Edge = {
     ldebug("addrel " + edge)
