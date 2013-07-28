@@ -38,6 +38,9 @@ public class URLNode extends Vertex {
 		this.icon = map.get("icon");
 	}
 	
+	@Override
+	public VertexType type() {return VertexType.URL;}
+	
 	//override def clone(newid: String) = URLNode(store, newid, userId, title)
 	
 	@Override

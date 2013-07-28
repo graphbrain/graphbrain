@@ -5,17 +5,13 @@ import java.util.Map;
 
 public abstract class Vertex {
 	protected String id;
-	//private String extendedId;
 	
 	public Vertex(String id) {
 		this.id = id;
 	}
 	
 	public abstract Map<String, String> toMap();
-	
-	public void remove() {
-		//graph.remove(this);
-	}
+	public abstract VertexType type();
 
 	public Vertex toGlobal() {
 		return this;

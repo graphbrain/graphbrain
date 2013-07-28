@@ -6,13 +6,16 @@ import java.io.*;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 
-public class LevelDbGraph extends Graph  {
+public class LevelDbBackend implements Backend  {
 	private DB db;
 	
-	public LevelDbGraph() {
+	public LevelDbBackend() {
 		Options options = new Options();
     	options.createIfMissing(true);
     	try {
@@ -23,24 +26,55 @@ public class LevelDbGraph extends Graph  {
     	}
 	}
 	
-	public TextNode getTextNode(String id) {
-		String value = asString(db.get(bytes(id)));
-		return new TextNode(id, stringToMap(value));
+	public Vertex get(String id, VertexType type) {
+		String realId = typeToChar(type) + id;
+		String value = asString(db.get(bytes(realId)));
+		return decodeVertex(realId, value);
 	}
 	
-	public URLNode getURLNode(String id) {
-		String value = asString(db.get(bytes(id)));
-		return new URLNode(id, stringToMap(value));
+	private Vertex decodeVertex(String realId, String value) {
+		char typeChar = realId.charAt(0);
+		String id = realId.substring(1);
+		
+		switch(typeChar) {
+		case 'T':
+			return new TextNode(id, stringToMap(value));
+		case 'H':
+			return new URLNode(id, stringToMap(value));
+		case 'Y':
+			return new EdgeType(id, stringToMap(value));
+		case 'U':
+			return new UserNode(id, stringToMap(value));
+		case 'R':
+			return new RuleNode(id, stringToMap(value));
+		case 'S':
+			return new SourceNode(id, stringToMap(value));
+		case 'C':
+			return new ContextNode(id, stringToMap(value));
+		default:
+			return null;
+		}
 	}
 	
-	public UserNode getUserNode(String id) {
-		String value = asString(db.get(bytes(id)));
-		return new UserNode(id, stringToMap(value));
-	}
-	
-	public EdgeType getEdgeType(String id) {
-		String value = asString(db.get(bytes(id)));
-		return new EdgeType(id, stringToMap(value));
+	private char typeToChar(VertexType type) {
+		switch(type) {
+		case Text:
+			return 'T';
+		case URL:
+			return 'H';
+		case EdgeType:
+			return 'Y';
+		case User:
+			return 'U';
+		case Rule:
+			return 'R';
+		case Source:
+			return 'S';
+		case Context:
+			return 'C';
+		default:
+			return '?';
+		}
 	}
 	
 	private static String mapToString(Map<String, String> map) {
@@ -82,26 +116,54 @@ public class LevelDbGraph extends Graph  {
 		return map;
 	}
 	
-	@Override
 	public Vertex put(Vertex vertex) {
+		String realId = typeToChar(vertex.type()) + vertex.getId();
 		String value = mapToString(vertex.toMap());
-		db.put(bytes(vertex.getId()), bytes(value));
+		db.put(bytes(realId), bytes(value));
 		return vertex;
 	}
 	
-	@Override
 	public Vertex update(Vertex vertex) {
 		return put(vertex);
 	}
 	
-	@Override
-	protected void associateEmailToUsername(String email, String username) {
+	public void associateEmailToUsername(String email, String username) {
 		db.put(bytes(ID.emailId(email)), bytes(username));
 	}
 	
-	@Override
-	protected String usernameByEmail(String email) {
+	public String usernameByEmail(String email) {
 		return asString(db.get(bytes(ID.emailId(email))));
+	}
+	
+	public List<Vertex> listByType(VertexType type) {
+		List<Vertex> res = new LinkedList<Vertex>();
+		
+		char startChar = typeToChar(type);
+		char endChar = startChar++;
+		String startStr = "" + startChar;
+		String endStr = "" + endChar;
+		DBIterator iterator = db.iterator();
+		try {
+			iterator.seek(bytes(startStr));
+		    String id = startStr;
+		    String value;
+		    
+		    while (iterator.hasNext() && id.compareTo(endStr) < 0) {
+		    	Entry<byte[], byte[]> entry = iterator.next();
+		    	id = asString(entry.getKey());
+    			value = asString(entry.getValue());
+    			res.add(decodeVertex(id, value));
+		    }
+		}
+		finally {
+			try {
+				iterator.close();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return res;
 	}
 	
     public static void main( String[] args ) {
