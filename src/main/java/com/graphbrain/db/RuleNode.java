@@ -14,6 +14,9 @@ public class RuleNode extends Vertex {
 	}
 	
 	@Override
+	public VertexType type() {return VertexType.Rule;}
+	
+	@Override
 	public Map<String, String> toMap() {
 		Map<String, String> map = new HashMap<String, String>();
 		return map;

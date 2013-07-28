@@ -25,6 +25,9 @@ public class ContextNode extends Textual {
 	}
 	
 	@Override
+	public VertexType type() {return VertexType.Context;}
+	
+	@Override
 	public Map<String, String> toMap() {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("access", access);

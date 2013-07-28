@@ -1,74 +1,29 @@
 package com.graphbrain.db;
 
+import java.util.List;
+
 public abstract class Graph {
 
-	public abstract Vertex put(Vertex vertex);
-	public abstract Vertex update(Vertex vertex);
-	public abstract TextNode getTextNode(String id);
-	public abstract URLNode getURLNode(String id);
-	public abstract UserNode getUserNode(String id);
-	public abstract EdgeType getEdgeType(String id);
-	protected abstract void associateEmailToUsername(String email, String username);
-	protected abstract String usernameByEmail(String email);
+	private Backend back;
 	
-	public Vertex get(String id) throws KeyNotFound {
-		//ldebug("get vertex: " + id)
-		Vertex node = null;
-		switch(IdFamily.family(id)) {
-		case Global:
-			//ldebug("global")
-			node = getTextNode(id);
-			break;
-		case UserSpace:
-			//ldebug("userspace")
-			node = getTextNode(id);
-			break;
-		case User:
-			//ldebug("user")
-			node = getUserNode(id);
-			break;
-		case EType:
-			//ldebug("etype")
-			node = getEdgeType(id);
-			break;
-		case URL:
-			//ldebug("url")
-			node = getURLNode(id);
-			break;
-		case UserURL:
-			//ldebug("userurl")
-			node = getURLNode(id);
-			break;
-		case Context:
-			break;
-		case Rule:
-			break;
-		case Source:
-			break;
-		default:
-			break;
-		}
-		
-		if (node == null)
-			throw new KeyNotFound("vertex with key: " + id + " not found.");
-		else
-			return node;
+	public Graph() {
+		back = new LevelDbBackend();
+	}
+	
+	public Vertex get(String id) {
+		return back.get(id, VertexType.type(id));
 	}
 	
 	public boolean exists(String id) {
-		try {
-			get(id);
-		}
-		catch (Exception e) {
-		    //ldebug(id + " does not exist")
-		    return false;
-		}
-		//ldebug(id + " exists")
-		return true;
+		return get(id) != null;
+	}
+	
+	public UserNode getUserNode(String id) {
+		return (UserNode)back.get(id, VertexType.User);
 	}
 	
 	private String idFromEmail(String email) {
-		String userName = usernameByEmail(email);
+		String userName = back.usernameByEmail(email);
 		if (userName == null) {
 			return null;
 		}
@@ -82,7 +37,7 @@ public abstract class Graph {
 	}
 	
 	public boolean emailExists(String email) {
-		String userName = usernameByEmail(email);
+		String userName = back.usernameByEmail(email);
 	    return userName != null; 
 	}
 	
@@ -115,9 +70,9 @@ public abstract class Graph {
 	
 	public UserNode createUser(String username, String name, String email, String password, String role) {
 		UserNode userNode = UserNode.create(username, name, email, password, role);
-		put(userNode);
+		back.put(userNode);
 		if (!email.equals("")) {
-		    associateEmailToUsername(email, username);
+		    back.associateEmailToUsername(email, username);
 		}
 
 		return userNode;
@@ -138,7 +93,7 @@ public abstract class Graph {
 
 		// ok, create new session
 		userNode.newSession();
-		update(userNode);
+		back.update(userNode);
 		return userNode;
 	}
 	
@@ -152,8 +107,12 @@ public abstract class Graph {
 
 		// ok, create new session
 		userNode.newSession();
-		update(userNode);
+		back.update(userNode);
 		return userNode;
+	}
+	
+	public List<Vertex> allUsers() {
+		return back.listByType(VertexType.User);
 	}
 
 /*

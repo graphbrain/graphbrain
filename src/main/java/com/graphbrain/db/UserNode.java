@@ -46,6 +46,9 @@ public class UserNode extends Textual {
 	}
 	
 	@Override
+	public VertexType type() {return VertexType.User;}
+	
+	@Override
 	public Map<String, String> toMap() {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("username", username);

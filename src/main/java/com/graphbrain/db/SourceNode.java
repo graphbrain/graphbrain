@@ -14,6 +14,9 @@ public class SourceNode extends Vertex {
 	}
 	
 	@Override
+	public VertexType type() {return VertexType.Source;}
+	
+	@Override
 	public Map<String, String> toMap() {
 		Map<String, String> map = new HashMap<String, String>();
 		return map;
