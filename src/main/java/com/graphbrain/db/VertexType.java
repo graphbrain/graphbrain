@@ -4,9 +4,13 @@ import static com.graphbrain.db.ID.numberOfParts;
 import static com.graphbrain.db.ID.parts;
 
 public enum VertexType {
-	Text, URL, EdgeType, User, Source, Context, Rule;
+	Edge, EdgeType, Text, URL, User, Source, Context, Rule;
 	
 	public static VertexType type(String id) {
+		if (id.contains(" ")) {
+			return Edge;
+		}
+		
 		String[] parts = parts(id);
 		int nparts = numberOfParts(id);
 		if (parts[0].equals("user"))

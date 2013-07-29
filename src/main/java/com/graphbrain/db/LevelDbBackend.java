@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import static com.graphbrain.utils.Permutations.*;
 
 
 public class LevelDbBackend implements Backend  {
@@ -26,6 +27,15 @@ public class LevelDbBackend implements Backend  {
     	}
 	}
 	
+	public void close() {
+		try {
+			db.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public Vertex get(String id, VertexType type) {
 		String realId = typeToChar(type) + id;
 		String value = asString(db.get(bytes(realId)));
@@ -37,6 +47,8 @@ public class LevelDbBackend implements Backend  {
 		String id = realId.substring(1);
 		
 		switch(typeChar) {
+		case 'E':
+			return new Edge(id, stringToMap(value));
 		case 'T':
 			return new TextNode(id, stringToMap(value));
 		case 'H':
@@ -58,6 +70,8 @@ public class LevelDbBackend implements Backend  {
 	
 	private char typeToChar(VertexType type) {
 		switch(type) {
+		case Edge:
+			return 'E';
 		case Text:
 			return 'T';
 		case URL:
@@ -171,56 +185,23 @@ public class LevelDbBackend implements Backend  {
 		return res;
 	}
 	
-    public static void main( String[] args ) {
-    	Options options = new Options();
-    	options.createIfMissing(true);
-    	try {
-    		DB db = factory.open(new File("example"), options);
-    		try {
-    			
-    			System.out.println("=> " + db.get(bytes("xpto666")));
-    			
-    			/*
-    			for (int i = 0; i < 1000000; i++) {
-    				String key = UUID.randomUUID().toString();
-    				String value = UUID.randomUUID().toString();
-    				db.put(bytes(key), bytes(value));
-    			}*/
-    			
-    			/*
-    			DBIterator iterator = db.iterator();
-    			try {
-    				iterator.seek(bytes("c"));
-    			    String key = asString(iterator.peekNext().getKey());
-    			    String value = asString(iterator.peekNext().getValue());
-    			    
-    			    while (key.compareTo("c1") < 0) {
-    			    	System.out.println(key + " = " + value);
-    			    	if (iterator.hasNext()) {
-    			    		iterator.next();
-    			    		key = asString(iterator.peekNext().getKey());
-    	    			    value = asString(iterator.peekNext().getValue());
-    			    	}
-    			    	else {
-    			    		key = "ZZZ";
-    			    	}
-    			    }
-    			}
-    			finally {
-    			  iterator.close();
-    			}
-    			*/
-    			
-    			//String value = asString(db.get(bytes("Tampa")));
-    			//System.out.println(value);
-    			//db.delete(bytes("Tampa"));
-    		}
-    		finally {
-    			db.close();
-    		}
-    	}
-    	catch (Exception e) {
-    		e.printStackTrace();
-    	}
+	private static void edgePermutations(Edge edge) {
+		int count = edge.getIds().length;
+		int perms = permutations(count);
+
+		for (int i = 0; i < perms; i++) {
+			String[] ids = strArrayPermutation(edge.getIds(), i);
+			String permId = Edge.idFromParticipants(ids);
+			
+			String[] ids2 = strArrayUnpermutate(ids, i);
+			String permId2 = Edge.idFromParticipants(ids2);
+			
+			System.out.println("#" + permId + " [" + i + "] " + permId2);
+		}
+	}
+	
+    public static void main(String[] args) {
+    	Edge edge = new Edge("rel/1/sells 1/hank_hill 1/propane");
+    	edgePermutations(edge);
     }
 }
