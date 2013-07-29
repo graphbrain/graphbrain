@@ -27,16 +27,16 @@ public class TextNode extends Textual {
 	@Override
 	public VertexType type() {return VertexType.Text;}
 	
-	public Vertex copy(String newid) {
-		return new TextNode(ID.namespace(newid), text, summary);
-	}
-	
 	@Override
 	public Map<String, String> toMap() {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("text", text);
 		map.put("summary", summary);
 		return map;
+	}
+	
+	public Vertex copy(String newid) {
+		return new TextNode(ID.namespace(newid), text, summary);
 	}
 	
 	public TextNode makeGlobal() {

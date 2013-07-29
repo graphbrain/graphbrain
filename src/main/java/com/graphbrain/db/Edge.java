@@ -1,49 +1,72 @@
 package com.graphbrain.db;
 
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class Edge {
+public class Edge extends Vertex {
 	
-	private String edgeType;
-	private List<String> participantIds;
-	private Edge originalEdge;
+	private String[] ids;
 	
-	public Edge(String edgeType, List<String> extParticipantIds, Edge originalEdge) {
-		this.edgeType = edgeType;
-		participantIds = new LinkedList<String>();
-		for (String pid : extParticipantIds) {
-			participantIds.add(Vertex.cleanId(pid));
+	public static String idFromParticipants(String[] participants) {
+		StringBuilder sb = new StringBuilder(100);
+		for (int i = 0; i < participants.length; i++) {
+			if (i > 0) {
+				sb.append(" ");
+			}
+			sb.append(participants[i]);
 		}
-		this.originalEdge = originalEdge;
+		return sb.toString();
 	}
 	
-	public Edge(String edgeType, List<String> extParticipantIds) {
-		this(edgeType, extParticipantIds, null);
+	public static String idFromParticipants(String edgeType, List<String> participantIds) {
+		StringBuilder sb = new StringBuilder(100);
+		sb.append(edgeType);
+		for (String pid : participantIds) {
+			sb.append(" ");
+			sb.append(pid);
+		}
+		return sb.toString();
+	}
+	
+	public static String[] participantsFromId(String id) {
+		return id.split(" ");
+	}
+	
+	public Edge(String id) {
+		super(id);
+	    ids = participantsFromId(id);
+	}
+	
+	public Edge(String edgeType, List<String> participantIds) {
+		this(idFromParticipants(edgeType, participantIds));
+	}
+	
+	public Edge(String id, Map<String, String> map) {
+		this(id);
+	}
+	
+	@Override
+	public VertexType type() {return VertexType.Edge;}
+	
+	@Override
+	public Map<String, String> toMap() {
+		Map<String, String> map = new HashMap<String, String>();
+		return map;
 	}
 
 	public Edge negate() {
-		edgeType = "neg/" + edgeType;
+		ids[0] = "neg/" + ids[0];
 		return this;
-	}
-
-	public Edge fromString(String edgeString) {
-	    String[] tokens = edgeString.split(" ");
-	    edgeType = tokens[0];
-	    
-	    participantIds = new LinkedList<String>();
-	    for (int i = 1; i < tokens.length; i++) {
-	    	participantIds.add(tokens[i]);
-	    }
-	    return this;
 	}
 	
 	public boolean isPositive() {
-		return ID.parts(edgeType)[0] != "neg";
+		return ID.parts(ids[0])[0] != "neg";
 	}
 
 	public boolean isGlobal() {
-		for (String p : participantIds) {
+		for (int i = 1; i < ids.length; i++) {
+			String p = ids[i];
 			if (!ID.isUserNode(p) && ID.isInUserSpace(p)) {
 				return false;
 			}
@@ -52,7 +75,8 @@ public class Edge {
 	}
 
 	public boolean isInUserSpace() {
-		for (String p : participantIds) {
+		for (int i = 1; i < ids.length; i++) {
+			String p = ids[i];
 			if (ID.isInUserSpace(p)) {
 				return true;
 			}
@@ -61,7 +85,8 @@ public class Edge {
 	}
 
   	public boolean isInContextSpace() {
-  		for (String p : participantIds) {
+  		for (int i = 1; i < ids.length; i++) {
+			String p = ids[i];
   			if (!ID.isInContextSpace(p)) {
   				return false;
   			}
@@ -70,46 +95,38 @@ public class Edge {
   	}
 
   	public Edge makeUser(String userId) {
-  		List<String> pids = new LinkedList<String>();
-  		for (String pid : participantIds) {
-  			pids.add(ID.globalToUser(pid, userId));
+  		for (int i = 1; i < ids.length; i++) {
+  			ids[i] = (ID.globalToUser(ids[i], userId));
   		}
-  		participantIds = pids;
   		return this;
   	}
   
   	public Edge makeGlobal() {
-  		List<String> pids = new LinkedList<String>();
-  		for (String pid : participantIds) {
-  			pids.add(ID.userToGlobal(pid));
+  		for (int i = 1; i < ids.length; i++) {
+  			ids[i] = (ID.userToGlobal(ids[i]));
   		}
-  		participantIds = pids;
   		return this;
-  	}
-
-  	public Edge getOriginalEdge() {
-  		if (originalEdge == null) {
-  			return this;
-  		}
-  		else {
-  			return originalEdge;
-  		}
   	}
 
   	@Override
   	public String toString() {
   		StringBuilder sb = new StringBuilder(100);
-  		sb.append(edgeType);
-  		for (String p : participantIds) {
-  			sb.append(" ");
-  			sb.append(p);
+  		for (int i = 0; i < ids.length; i++) {
+  			if (i > 0) {
+  				sb.append(" ");
+  			}
+  			sb.append(ids[i]);
   		}
   		return sb.toString();
   	}
 
-  	public String humanReadable2() {
-  		return (ID.humanReadable(participantIds.get(0))
-  				+ " [" +  ID.humanReadable(edgeType) + "] "
-  				+ ID.humanReadable(participantIds.get(1))).replace(",", "");
+  	public String[] getIds() {
+		return ids;
+	}
+
+	public String humanReadable2() {
+  		return (ID.humanReadable(ids[1]))
+  				+ " [" +  ID.humanReadable(ids[0]) + "] "
+  				+ ID.humanReadable(ids[2]).replace(",", "");
   	}
 }
