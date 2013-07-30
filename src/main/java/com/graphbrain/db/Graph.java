@@ -200,57 +200,16 @@ public class Graph {
 			decDegree(id);
 		}
 	}
+	
+	public void createAndConnectVertices(Vertex[] participants) {
+	    //ldebug("createAndConnectVertices edgeType: " + edgeType + "; participants: " + participants)
+	    for (Vertex v : participants) {
+	    	if (!exists(v.id)) {
+	    		put(v);
+	    	}
+	    }
 
-/*
-
-  def addrel(edge: Edge): Edge = {
-    ldebug("addrel " + edge)
-
-    if (!relExists(edge)) {
-      incInstances(edge.edgeType)
-      for (i <- 0 until edge.participantIds.size) {
-        val p = edge.participantIds(i)
-        addEdgeEntry(p, edge)
-        incVertexEdgeType(p, edge.edgeType, i)
-        incDegree(p)
-      }
-    }
-
-    edge
-  }
-
-
-  def addrel(edgeType: String, participants: List[String]): Edge = addrel(Edge(edgeType, participants))
-
-
-  def delrel(edge: Edge): Unit = {
-    ldebug("delrel " + edge)
-
-    if (relExists(edge)) {
-      decInstances(edge.edgeType)
-      for (i <- 0 until edge.participantIds.size) {
-        val p = edge.participantIds(i)
-        delEdgeEntry(p, edge)
-        decVertexEdgeType(p, edge.edgeType, i)
-        decDegree(p)
-      }
-    }
-  }
-
-
-  def delrel(edgeType: String, participants: List[String]): Unit = delrel(Edge(edgeType, participants))
-
-
-  def createAndConnectVertices(edgeType: String, participants: Array[Vertex]) = {
-    ldebug("createAndConnectVertices edgeType: " + edgeType + "; participants: " + participants)
-    for (v <- participants) {
-      if (!exists(v.id)) {
-        put(v)
-      }
-    }
-
-    val ids = for (v <- participants) yield v.id
-    addrel(edgeType.replace(" ", "_"), ids.toList)
-  }
-  */
+	    Edge edge = new Edge(participants);
+	    put(edge);
+	}
 }

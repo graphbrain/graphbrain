@@ -21,6 +21,17 @@ public class Edge extends Vertex {
 		return sb.toString();
 	}
 	
+	public static String idFromParticipants(Vertex[] participants) {
+		StringBuilder sb = new StringBuilder(100);
+		for (int i = 0; i < participants.length; i++) {
+			if (i > 0) {
+				sb.append(" ");
+			}
+			sb.append(participants[i].getId());
+		}
+		return sb.toString();
+	}
+	
 	public static String idFromParticipants(String edgeType, List<String> participantIds) {
 		StringBuilder sb = new StringBuilder(100);
 		sb.append(edgeType);
@@ -38,6 +49,10 @@ public class Edge extends Vertex {
 	public Edge(String id) {
 		super(id);
 	    ids = participantsFromId(id);
+	}
+	
+	public Edge(Vertex[] participants) {
+		this(idFromParticipants(participants));
 	}
 	
 	public Edge(String[] participants) {
