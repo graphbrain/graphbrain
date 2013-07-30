@@ -1,7 +1,6 @@
 package com.graphbrain.db;
 
 import java.net.*;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.jsoup.Jsoup;
@@ -32,7 +31,7 @@ public class URLNode extends Vertex {
 	}
 	
 	public URLNode(String id, Map<String, String> map) {
-		super(id);
+		super(id, map);
 		this.url = map.get("url");
 		this.title = map.get("title");
 		this.icon = map.get("icon");
@@ -44,12 +43,10 @@ public class URLNode extends Vertex {
 	//override def clone(newid: String) = URLNode(store, newid, userId, title)
 	
 	@Override
-	public Map<String, String> toMap() {
-		Map<String, String> map = new HashMap<String, String>();
+	public void fillMap(Map<String, String> map) {
 		map.put("url", url);
 		map.put("title", title);
 		map.put("icon", icon);
-		return map;
 	}
 	
 	private static boolean exists(String urlName) {

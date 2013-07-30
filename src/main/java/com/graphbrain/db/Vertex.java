@@ -1,18 +1,37 @@
 package com.graphbrain.db;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
 public abstract class Vertex {
 	protected String id;
+	protected long degree;
+	protected long ts;
 	
 	public Vertex(String id) {
 		this.id = id;
+		degree = 0;
+		ts = 0;
 	}
 	
-	public abstract Map<String, String> toMap();
+	public Vertex(String id, Map<String, String> map) {
+		this(id);
+		degree = Long.parseLong(map.get("degree"));
+		ts = Long.parseLong(map.get("ts"));
+	}
+	
 	public abstract VertexType type();
-
+	public void fillMap(Map<String, String> map) {}
+	
+	public final Map<String, String> toMap() {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("degree", "" + degree);
+		map.put("ts", "" + ts);
+		fillMap(map);
+		return map;
+	}
+	
 	public Vertex toGlobal() {
 		return this;
 	}
@@ -57,5 +76,21 @@ public abstract class Vertex {
 	
 	public String getId() {
 		return id;
+	}
+	
+	public long getDegree() {
+		return degree;
+	}
+	
+	public long getTimestamp() {
+		return ts;
+	}
+	
+	public void incDegree() {
+		degree++;
+	}
+	
+	public void decDegree() {
+		degree--;
 	}
 }
