@@ -1,19 +1,25 @@
 package com.graphbrain.db;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.iq80.leveldb.*;
 import static org.fusesource.leveldbjni.JniDBFactory.*;
 import java.io.*;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+
 import static com.graphbrain.utils.Permutations.*;
 
 
 public class LevelDbBackend implements Backend  {
+	static final String EDGE_PREFIX = "#";
+	
 	private DB db;
 	
 	public LevelDbBackend() {
@@ -134,6 +140,11 @@ public class LevelDbBackend implements Backend  {
 		String realId = typeToChar(vertex.type()) + vertex.getId();
 		String value = mapToString(vertex.toMap());
 		db.put(bytes(realId), bytes(value));
+		
+		if (vertex.type() == VertexType.Edge) {
+			writeEdgePermutations((Edge)vertex);
+		}
+		
 		return vertex;
 	}
 	
@@ -144,6 +155,10 @@ public class LevelDbBackend implements Backend  {
 	public void remove(Vertex vertex) {
 		String realId = typeToChar(vertex.type()) + vertex.getId();
 		db.delete(bytes(realId));
+		
+		if (vertex.type() == VertexType.Edge) {
+			removeEdgePermutations((Edge)vertex);
+		}
 	}
 	
 	public void associateEmailToUsername(String email, String username) {
@@ -185,23 +200,77 @@ public class LevelDbBackend implements Backend  {
 		return res;
 	}
 	
-	private static void edgePermutations(Edge edge) {
+	private static String strPlusOne(String str) {
+		char lastChar = str.charAt(str.length() - 1);
+		return str.substring(0, str.length() - 1) + (++lastChar);
+	}
+	
+	public Set<Edge> edges(Vertex center) {
+		Set<Edge> res = new HashSet<Edge>();
+		
+		String startStr = EDGE_PREFIX + center.getId();
+		String endStr = strPlusOne(startStr);
+		DBIterator iterator = db.iterator();
+		try {
+			iterator.seek(bytes(startStr));
+		    String key = startStr;
+		    //String value;
+		    
+		    while (iterator.hasNext() && key.compareTo(endStr) < 0) {
+		    	Entry<byte[], byte[]> entry = iterator.next();
+		    	key = asString(entry.getKey());
+    			//value = asString(entry.getValue());
+    			
+    			key = key.substring(1);
+    			String[] tokens = key.split(" ");
+    			int perm = Integer.parseInt(tokens[tokens.length - 1]);
+    			tokens = ArrayUtils.remove(tokens, tokens.length - 1);
+    			tokens = strArrayUnpermutate(tokens, perm);
+    			Edge edge = new Edge(tokens);
+    			res.add(edge);
+		    }
+		}
+		finally {
+			try {
+				iterator.close();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return res;
+	}
+	
+	private void writeEdgePermutations(Edge edge) {
 		int count = edge.getIds().length;
 		int perms = permutations(count);
 
 		for (int i = 0; i < perms; i++) {
 			String[] ids = strArrayPermutation(edge.getIds(), i);
-			String permId = Edge.idFromParticipants(ids);
-			
-			String[] ids2 = strArrayUnpermutate(ids, i);
-			String permId2 = Edge.idFromParticipants(ids2);
-			
-			System.out.println("#" + permId + " [" + i + "] " + permId2);
+			String permId = EDGE_PREFIX + Edge.idFromParticipants(ids) + " " + i;
+			String value = "";
+			db.put(bytes(permId), bytes(value));
+		}
+	}
+	
+	private void removeEdgePermutations(Edge edge) {
+		int count = edge.getIds().length;
+		int perms = permutations(count);
+
+		for (int i = 0; i < perms; i++) {
+			String[] ids = strArrayPermutation(edge.getIds(), i);
+			String permId = EDGE_PREFIX + Edge.idFromParticipants(ids) + " " + i;
+			db.delete(bytes(permId));
 		}
 	}
 	
     public static void main(String[] args) {
+    	String test = "1/hank_hill";
+    	System.out.println(strPlusOne(test));
+    	/*
     	Edge edge = new Edge("rel/1/sells 1/hank_hill 1/propane");
-    	edgePermutations(edge);
+    	LevelDbBackend be = new LevelDbBackend();
+    	be.writeEdgePermutations(edge);
+    	*/
     }
 }

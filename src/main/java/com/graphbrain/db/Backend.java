@@ -1,6 +1,7 @@
 package com.graphbrain.db;
 
 import java.util.List;
+import java.util.Set;
 
 public interface Backend {
 	public abstract void close();
@@ -11,4 +12,5 @@ public interface Backend {
 	public abstract void associateEmailToUsername(String email, String username);
 	public abstract String usernameByEmail(String email);
 	public abstract List<Vertex> listByType(VertexType type);
+	public abstract Set<Edge> edges(Vertex center);
 }

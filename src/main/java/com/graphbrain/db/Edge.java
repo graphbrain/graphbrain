@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class Edge extends Vertex {
 	
 	private String[] ids;
@@ -36,6 +39,10 @@ public class Edge extends Vertex {
 	public Edge(String id) {
 		super(id);
 	    ids = participantsFromId(id);
+	}
+	
+	public Edge(String[] participants) {
+		this(idFromParticipants(participants));
 	}
 	
 	public Edge(String edgeType, List<String> participantIds) {
@@ -108,7 +115,17 @@ public class Edge extends Vertex {
   		return this;
   	}
 
-  	@Override
+  	public String[] getIds() {
+		return ids;
+	}
+
+	public String humanReadable2() {
+  		return (ID.humanReadable(ids[1]))
+  				+ " [" +  ID.humanReadable(ids[0]) + "] "
+  				+ ID.humanReadable(ids[2]).replace(",", "");
+  	}
+	
+	@Override
   	public String toString() {
   		StringBuilder sb = new StringBuilder(100);
   		for (int i = 0; i < ids.length; i++) {
@@ -119,14 +136,34 @@ public class Edge extends Vertex {
   		}
   		return sb.toString();
   	}
+	
+	@Override
+	public int hashCode() {
+        return new HashCodeBuilder(17, 31).append(id).toHashCode();
+    }
 
-  	public String[] getIds() {
-		return ids;
+	@Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        if (obj == this)
+            return true;
+        if (!(obj instanceof Edge))
+            return false;
+
+        Edge edge = (Edge)obj;
+        return new EqualsBuilder().append(id, edge.id).isEquals();
+    }
+	
+	public static void main(String[] args) {
+		Edge edg1 = new Edge("sells hank_hill propane");
+		Edge edg2 = new Edge("sells hank_hill propane");
+		Edge edg3 = new Edge("sells zank_zill propane");
+		
+		System.out.println(edg1.equals(edg2));
+		System.out.println(edg1.equals(edg3));
+		System.out.println(edg1.hashCode());
+		System.out.println(edg2.hashCode());
+		System.out.println(edg3.hashCode());
 	}
-
-	public String humanReadable2() {
-  		return (ID.humanReadable(ids[1]))
-  				+ " [" +  ID.humanReadable(ids[0]) + "] "
-  				+ ID.humanReadable(ids[2]).replace(",", "");
-  	}
 }
