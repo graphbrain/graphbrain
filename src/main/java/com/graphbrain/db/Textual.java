@@ -1,11 +1,17 @@
 package com.graphbrain.db;
 
+import java.util.Map;
+
 
 public abstract class Textual extends Vertex {
 	protected String summary;
 	
 	public Textual(String id) {
 		super(id);
+	}
+	
+	public Textual(String id, Map<String, String> map) {
+		super(id, map);
 	}
 
 	public String getSummary() {

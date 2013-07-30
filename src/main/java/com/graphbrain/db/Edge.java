@@ -1,6 +1,5 @@
 package com.graphbrain.db;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,17 +49,11 @@ public class Edge extends Vertex {
 	}
 	
 	public Edge(String id, Map<String, String> map) {
-		this(id);
+		super(id, map);
 	}
 	
 	@Override
 	public VertexType type() {return VertexType.Edge;}
-	
-	@Override
-	public Map<String, String> toMap() {
-		Map<String, String> map = new HashMap<String, String>();
-		return map;
-	}
 
 	public Edge negate() {
 		ids[0] = "neg/" + ids[0];

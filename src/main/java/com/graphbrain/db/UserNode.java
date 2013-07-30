@@ -1,6 +1,5 @@
 package com.graphbrain.db;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.math.BigInteger;
 import com.graphbrain.utils.RandUtils;
@@ -29,7 +28,7 @@ public class UserNode extends Textual {
 	}
 	
 	public UserNode(String id, Map<String, String> map) {
-		super(id);
+		super(id, map);
 		this.username = map.get("username");
 		this.name = map.get("name");
 		this.email = map.get("email");
@@ -49,8 +48,7 @@ public class UserNode extends Textual {
 	public VertexType type() {return VertexType.User;}
 	
 	@Override
-	public Map<String, String> toMap() {
-		Map<String, String> map = new HashMap<String, String>();
+	public void fillMap(Map<String, String> map) {
 		map.put("username", username);
 		map.put("name", name);
 		map.put("email", email);
@@ -59,7 +57,6 @@ public class UserNode extends Textual {
 		map.put("session", session);
 		map.put("sessionTs", String.valueOf(sessionTs));
 		map.put("lastSeen", String.valueOf(lastSeen));
-		return map;
 	}
 
 	public UserNode newSession() {

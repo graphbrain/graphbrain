@@ -17,7 +17,13 @@ public class Graph {
 	}
 	
 	public Vertex put(Vertex vertex) {
-		return back.put(vertex);
+		back.put(vertex);
+		
+		if (vertex.type() == VertexType.Edge) {
+			onPutEdge((Edge)vertex);
+		}
+		
+		return vertex;
 	}
 	
 	public Vertex update(Vertex vertex) {
@@ -26,6 +32,10 @@ public class Graph {
 	
 	public void remove(Vertex vertex) {
 		back.remove(vertex);
+		
+		if (vertex.type() == VertexType.Edge) {
+			onRemoveEdge((Edge)vertex);
+		}
 	}
 	
 	public boolean exists(String id) {
@@ -158,6 +168,38 @@ public class Graph {
 		nodes.add(centerId);
 		return nodes;
 	}
+	
+	protected void incDegree(Vertex vertex) {
+		vertex.incDegree();
+		update(vertex);
+	}
+	
+	protected void incDegree(String id) {
+		Vertex vertex = get(id);
+		incDegree(vertex);
+	}
+	
+	protected void decDegree(Vertex vertex) {
+		vertex.decDegree();
+		update(vertex);
+	}
+	
+	protected void decDegree(String id) {
+		Vertex vertex = get(id);
+		decDegree(vertex);
+	}
+	
+	protected void onPutEdge(Edge edge) {
+		for (String id : edge.getIds()) {
+			incDegree(id);
+		}
+	}
+	
+	protected void onRemoveEdge(Edge edge) {
+		for (String id : edge.getIds()) {
+			decDegree(id);
+		}
+	}
 
 /*
 
@@ -198,101 +240,6 @@ public class Graph {
 
   def delrel(edgeType: String, participants: List[String]): Unit = delrel(Edge(edgeType, participants))
 
-
-  private def incVertexEdgeType(nodeId: String, edgeType: String, position: Int) = {
-    ldebug("incVertexEdgeType nodeId: " + nodeId + "; edgeType: " + edgeType + "; position: " + position)
-
-    val relId = ID.relationshipId(edgeType, position)
-
-    val col = HFactory.createCounterColumn(relId, 1L, StringSerializer.get())
-    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
-    mutator.insertCounter(nodeId, "vertexedgetype", col)
-    mutator.execute()
-  }
-
-
-  private def decVertexEdgeType(nodeId: String, edgeType: String, position: Int): Boolean = {
-    ldebug("decVertexEdgeType nodeId: " + nodeId + "; edgeType: " + edgeType + "; position: " + position)
-
-    val relId = ID.relationshipId(edgeType, position)
-
-    // get current count
-    val query = HFactory.createCounterColumnQuery(backend.ksp, StringSerializer.get(), StringSerializer.get())
-    query.setColumnFamily("vertexedgetype").setKey(nodeId).setName(relId)
-    val counter = query.execute().get()
-    if (counter == null) return false
-    val count = counter.getValue()
-
-    // decrement or delete
-    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
-    if (count <= 1) {
-      mutator.addDeletion(nodeId, "vertexedgetype", relId, StringSerializer.get())
-      mutator.execute()
-    }
-    else {
-      val col = HFactory.createCounterColumn(relId, -1L, StringSerializer.get())
-      mutator.insertCounter(nodeId, "vertexedgetype", col)
-      mutator.execute()
-    }
-
-    true
-  }
-
-  private def incDegree(vertexId: String) = {
-    ldebug("incDegree " + vertexId)
-
-    val col = HFactory.createCounterColumn("degree", 1L, StringSerializer.get())
-    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
-    mutator.insertCounter(vertexId, "degrees", col)
-    mutator.execute()
-  }
-
-
-  private def decDegree(vertexId: String) = {
-    ldebug("decDegree " + vertexId)
-
-    val col = HFactory.createCounterColumn("degree", -1L, StringSerializer.get())
-    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
-    mutator.insertCounter(vertexId, "degrees", col)
-    mutator.execute()
-  }
-
-
-  private def delDegree(vertexId: String) = {
-    ldebug("delDegree " + vertexId)
-
-    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
-    mutator.addDeletion(vertexId, "degrees", "degree", StringSerializer.get())
-    mutator.execute()
-  }
-
-  private def incInstances(edgeType: String) = {
-    ldebug("incInstances " + edgeType)
-
-    val col = HFactory.createCounterColumn("instances", 1L, StringSerializer.get())
-    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
-    mutator.insertCounter(edgeType, "instances", col)
-    mutator.execute()
-  }
-
-
-  private def decInstances(edgeType: String) = {
-    ldebug("decInstances " + edgeType)
-
-    val col = HFactory.createCounterColumn("instances", -1L, StringSerializer.get())
-    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
-    mutator.insertCounter(edgeType, "instances", col)
-    mutator.execute()
-  }
-
-
-  private def delInstances(edgeType: String) = {
-    ldebug("delInstances " + edgeType)
-
-    val mutator = HFactory.createMutator(backend.ksp, StringSerializer.get())
-    mutator.addDeletion(edgeType, "instances", "instances", StringSerializer.get())
-    mutator.execute()
-  }
 
   def createAndConnectVertices(edgeType: String, participants: Array[Vertex]) = {
     ldebug("createAndConnectVertices edgeType: " + edgeType + "; participants: " + participants)

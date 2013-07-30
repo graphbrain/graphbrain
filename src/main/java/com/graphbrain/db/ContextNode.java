@@ -1,8 +1,6 @@
 package com.graphbrain.db;
 
-import java.util.HashMap;
 import java.util.Map;
-
 
 public class ContextNode extends Textual {
   
@@ -19,7 +17,7 @@ public class ContextNode extends Textual {
 	}
 	
 	public ContextNode(String id, Map<String, String> map) {
-		super(id);
+		super(id, map);
 		this.access = map.get("access");
 		this.summary = map.get("summary");
 	}
@@ -28,11 +26,9 @@ public class ContextNode extends Textual {
 	public VertexType type() {return VertexType.Context;}
 	
 	@Override
-	public Map<String, String> toMap() {
-		Map<String, String> map = new HashMap<String, String>();
+	public void fillMap(Map<String, String> map) {
 		map.put("access", access);
 		map.put("summary", summary);
-		return map;
 	}
   
   	public String raw() {
