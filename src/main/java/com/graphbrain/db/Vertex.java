@@ -1,5 +1,6 @@
 package com.graphbrain.db;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +13,7 @@ public abstract class Vertex {
 	public Vertex(String id) {
 		this.id = id;
 		degree = 0;
-		ts = 0;
+		ts = -1;
 	}
 	
 	public Vertex(String id, Map<String, String> map) {
@@ -92,5 +93,9 @@ public abstract class Vertex {
 	
 	public void decDegree() {
 		degree--;
+	}
+	
+	public void setTimestampNow() {
+		ts = (new Date()).getTime();
 	}
 }
