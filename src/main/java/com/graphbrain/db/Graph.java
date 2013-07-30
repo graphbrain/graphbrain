@@ -17,6 +17,10 @@ public class Graph {
 	}
 	
 	public Vertex put(Vertex vertex) {
+		if (vertex.getTimestamp() < 0) {
+			vertex.setTimestampNow();
+		}
+		
 		back.put(vertex);
 		
 		if (vertex.type() == VertexType.Edge) {
