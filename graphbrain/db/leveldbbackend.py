@@ -1,20 +1,6 @@
-package com.graphbrain.db;
+import leveldb
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.iq80.leveldb.*;
-import static org.fusesource.leveldbjni.JniDBFactory.*;
-import java.io.*;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import static com.graphbrain.utils.Permutations.*;
+from ..utils import permutations.*
 
 
 public class LevelDbBackend implements Backend  {
