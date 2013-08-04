@@ -60,6 +60,3 @@ def str_array_unpermutate(arr_in, per):
 		out[n - i - 1] = get_from_perm_pos(arr_in, config[i])
 		
 	return out
-
-if __name__ == '__main__':
-	print permutations(5)
