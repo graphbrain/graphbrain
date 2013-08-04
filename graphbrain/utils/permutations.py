@@ -1,84 +1,65 @@
-package com.graphbrain.utils;
+def permutations(n):
+	perms = 1
+	for i in range(2, n + 1):
+		perms *= i
+	return perms
+	
+def assign_to_perm_pos(value, str_array, pos):
+	j = 0
+	for i in range(0, len(str_array)):
+		if str_array[i] == None:
+			if j == pos:
+				str_array[i] = value
+				return
+			j += 1
+	
+def get_from_perm_pos(str_array, pos):
+	j = 0;
+	for i in range(0, len(str_array)):
+		if str_array[i] != None:
+			if (j == pos):
+				res = str_array[i]
+				str_array[i] = None
+				return res
+			j += 1
+	# this should not happen
+	return None
+	
+# http://stackoverflow.com/questions/1506078/fast-permutation-number-permutation-mapping-algorithms
+def permutation_positions(n, per):
+	res = [0 for i in xrange(n)]
+	number = per
 
+	# the remaining element always goes to the first free slot
+	res[0] = 0
+		
+	base = 2
+	for i in range(1, n):
+		res[i] = number % base
+		number = number / base
+		base += 1
+		
+	return res
+	
+def str_array_permutation(arr_in, per):
+	n = len(arr_in)
+	out = [0 for i in xrange(n)]
+	config = permutation_positions(n, per)
+	
+	for i in range(n - 1, -1, -1):	
+		assign_to_perm_pos(arr_in[n - i - 1], out, config[i])
+		
+	return out
+	
+def str_array_unpermutate(arr_in, per):
+	n = len(arr_in)
+	out = [0 for i in xrange(n)]
+	config = permutation_positions(n, per)
+		
+	for i in range(n - 1, -1, -1):
+		out[n - i - 1] = get_from_perm_pos(arr_in, config[i])
+		
+	return out
 
-public class Permutations {
-	
-	public static int permutations(int n) {
-		int perms = 1;
-		for (int i = 2; i <= n; i++) {
-			perms *= i;
-		}
-		return perms;
-	}
-	
-	public static void assignToPermPos(String value, String[] strArray, int pos) {
-		int j = 0;
-		for (int i = 0; i < strArray.length; i++) {
-			if (strArray[i] == null) {
-				if (j == pos) {
-					strArray[i] = value;
-					return;
-				}
-				j++;
-			}
-		}
-	}
-	
-	public static String getFromPermPos(String[] strArray, int pos) {
-		int j = 0;
-		for (int i = 0; i < strArray.length; i++) {
-			if (strArray[i] != null) {
-				if (j == pos) {
-					String res = strArray[i];
-					strArray[i] = null;
-					return res;
-				}
-				j++;
-			}
-		}
-		// this should not happen
-		return null;
-	}
-	
-	// http://stackoverflow.com/questions/1506078/fast-permutation-number-permutation-mapping-algorithms
-	public static int[] permutationPositions(int n, int per) {
-		int[] res = new int[n];
-		int number = per;
-
-		// the remaining element always goes to the first free slot
-		res[0] = 0;
-		
-		int base = 2;
-		for (int i = 1; i < n; i++) {
-			res[i] = number % base;
-		    number = number / base;
-		    base++;
-		}
-		
-		return res;
-	}
-	
-	public static String[] strArrayPermutation(String[] in, int per) {
-		int n = in.length;
-		String[] out = new String[n];
-		int[] config = permutationPositions(n, per);
-		
-		for (int i = n - 1; i >= 0; i--) {
-			assignToPermPos(in[n - i - 1], out, config[i]);
-		}
-		
-		return out;
-	}
-	
-	public static String[] strArrayUnpermutate(String[] in, int per) {
-		int n = in.length;
-		String[] out = new String[n];
-		int[] config = permutationPositions(n, per);
-		
-		for (int i = n - 1; i >= 0; i--) {
-			out[n - i - 1] = getFromPermPos(in, config[i]);
-		}
-		
-		return out;
-	}
-}
+if __name__ == '__main__':
+	print permutations(5)
