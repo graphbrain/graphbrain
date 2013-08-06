@@ -1,4 +1,4 @@
-package com.graphbrain.gbdb
+package com.graphbrain.core
 
 
 case class Edge(edgeType: String, extParticipantIds: List[String], originalEdge: Edge = null) {

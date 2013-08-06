@@ -1,4 +1,4 @@
-package com.graphbrain.gbdb
+package com.graphbrain.core
 
 
 abstract class Vertex {

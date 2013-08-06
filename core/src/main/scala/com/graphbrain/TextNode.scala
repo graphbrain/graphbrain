@@ -1,4 +1,4 @@
-package com.graphbrain.gbdb
+package com.graphbrain.core
 
 
 case class TextNode(store: VertexStore, namespace: String="", text: String="", summary: String="") extends Textual {
