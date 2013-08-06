@@ -1,4 +1,4 @@
-package com.graphbrain.core
+package com.graphbrain.utils
 
 import scala.annotation.elidable
 import scala.annotation.elidable._
