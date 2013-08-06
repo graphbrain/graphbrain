@@ -1,7 +1,7 @@
-package com.graphbrain.utils;
+package com.graphbrain.utils
 
-import java.security.SecureRandom;
+import java.security.SecureRandom
 
-public class RandUtils {
-	public static SecureRandom secRand = new SecureRandom();
+object RandUtils {
+	def secRand = new SecureRandom()
 }
