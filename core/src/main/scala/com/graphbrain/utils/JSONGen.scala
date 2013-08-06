@@ -1,5 +1,4 @@
-package com.graphbrain.gbdb
-
+package com.graphbrain.utils
 
 object JSONGen {
   def json(x: Any): String = {
