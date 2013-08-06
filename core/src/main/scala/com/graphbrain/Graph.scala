@@ -1,23 +1,11 @@
-package com.graphbrain.gbdb
+package com.graphbrain.core
 
 import scala.collection.mutable.{Set => MSet}
 
 import java.util.Arrays
 
-import me.prettyprint.hector.api.factory.HFactory
-import me.prettyprint.cassandra.service.template.ColumnFamilyUpdater
-import me.prettyprint.cassandra.service.ColumnSliceIterator
-import me.prettyprint.cassandra.serializers.StringSerializer
-import me.prettyprint.cassandra.serializers.IntegerSerializer
-import me.prettyprint.cassandra.serializers.CompositeSerializer
-import me.prettyprint.hector.api.beans.Composite
-
-import IdFamily._
-
-import com.graphbrain.utils.SimpleLog
-
-abstract class VertexStore(keyspaceName: String="gb", clusterName: String="hgdb", ip: String="localhost", port: Int=9160) extends SimpleLog {
-  val backend = new CassandraBackend(clusterName, keyspaceName, ip, port)
+abstract class Graph() extends SimpleLog {
+  val backend = new LevelDbBackend()
 
   def getTextNode(id: String): TextNode
   def getURLNode(id: String): URLNode
