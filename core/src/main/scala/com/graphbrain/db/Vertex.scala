@@ -1,16 +1,21 @@
-package com.graphbrain.core
+package com.graphbrain.db
 
+//import scala.collection.mutable
+import VertexType.VertexType
 
 abstract class Vertex {
-  val store: VertexStore
 
   val id: String
+  val degree: Int = 0
+  val ts: Long = -1
 
-  def extendedId: String = id
+  def vtype: VertexType
+  def extraMap: Map[String, String]
 
-  def put(): Vertex
-
-  def remove() = store.remove(this)
+  def toMap: Map[String, String] =
+    Map("degree" -> "" + degree.toString,
+      "ts" -> "" + ts.toString) ++
+    extraMap
 
   def clone(newid: String): Vertex
 
@@ -18,7 +23,7 @@ abstract class Vertex {
 
   def toUser(newUserId: String): Vertex = this
 
-  def removeContext: Vertex = this
+  def removeContext(): Vertex = this
 
   def setContext(newContext: String): Vertex = this
 
@@ -28,7 +33,7 @@ abstract class Vertex {
 
   def raw: String = ""
 
-  def shouldUpdate: Boolean = !store.exists(id)
+  //def shouldUpdate: Boolean = !store.exists(id)
 
   def updateFromEdges(): Vertex = this
 }

@@ -1,4 +1,4 @@
-package com.graphbrain.gbdb
+package com.graphbrain.db
 
 import java.net.URLEncoder
 import java.security.SecureRandom

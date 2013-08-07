@@ -1,4 +1,4 @@
-package com.graphbrain.core
+package com.graphbrain.db
 
 
 object ID {

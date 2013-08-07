@@ -1,4 +1,4 @@
-package com.graphbrain.core
+package com.graphbrain.db
 
 //import org.apache.commons.lang3.ArrayUtils
 import org.iq80.leveldb._
@@ -7,126 +7,94 @@ import java.io._
 import java.net.URLDecoder
 import java.net.URLEncoder
 
-import com.graphbrain.core.Permutations.*;
+import com.graphbrain.utils.Permutations
+import VertexType.VertexType
 
 
-public class LevelDbBackend implements Backend  {
-	static final String EDGE_PREFIX = "#";
+class LevelDbBackend extends Backend  {
+	val EDGE_PREFIX = '#'
 	
-	private DB db;
+	var db: DB
+
+	val options = new Options()
+  options.createIfMissing(true)
+  try {
+    db = factory.open(new File("dbnode"), options)
+  }
+  catch {
+    case e => e.printStackTrace()
+  }
 	
-	public LevelDbBackend() {
-		Options options = new Options();
-    	options.createIfMissing(true);
-    	try {
-    		db = factory.open(new File("gbdb"), options);
-    	}
-    	catch (Exception e) {
-    		e.printStackTrace();
-    	}
-	}
-	
-	public void close() {
+	def close() = {
 		try {
-			db.close();
+			db.close()
 		}
-		catch (IOException e) {
-			e.printStackTrace();
+		catch {
+			case e => e.printStackTrace()
 		}
 	}
 	
-	public Vertex get(String id, VertexType type) {
-		String realId = typeToChar(type) + id;
-		String value = asString(db.get(bytes(realId)));
-		return decodeVertex(realId, value);
+	def get(id: String, vtype: VertexType) = {
+		val realId = typeToChar(vtype) + id
+		val value = asString(db.get(bytes(realId)))
+		decodeVertex(realId, value)
 	}
 	
-	private Vertex decodeVertex(String realId, String value) {
-		char typeChar = realId.charAt(0);
-		String id = realId.substring(1);
+	private def decodeVertex(realId: String, value: String): Vertex = {
+		val typeChar = realId.charAt(0)
+		val id = realId.substring(1)
 		
-		switch(typeChar) {
-		case 'E':
-			return new Edge(id, stringToMap(value));
-		case 'T':
-			return new TextNode(id, stringToMap(value));
-		case 'H':
-			return new URLNode(id, stringToMap(value));
-		case 'Y':
-			return new EdgeType(id, stringToMap(value));
-		case 'U':
-			return new UserNode(id, stringToMap(value));
-		case 'R':
-			return new RuleNode(id, stringToMap(value));
-		case 'S':
-			return new SourceNode(id, stringToMap(value));
-		case 'C':
-			return new ContextNode(id, stringToMap(value));
-		default:
-			return null;
+		typeChar match {
+		case 'E' => Edge(id, stringToMap(value))
+		case 'T' => TextNode(id, stringToMap(value))
+		case 'H' => URLNode(id, stringToMap(value))
+		case 'Y' => EdgeType(id, stringToMap(value))
+		case 'U' => UserNode(id, stringToMap(value))
+		case 'R' => RuleNode(id, stringToMap(value))
+		case 'S' => SourceNode(id, stringToMap(value))
+		//case 'C' => ContextNode(id, stringToMap(value))
+		case _ => null
 		}
 	}
 	
-	private char typeToChar(VertexType type) {
-		switch(type) {
-		case Edge:
-			return 'E';
-		case Text:
-			return 'T';
-		case URL:
-			return 'H';
-		case EdgeType:
-			return 'Y';
-		case User:
-			return 'U';
-		case Rule:
-			return 'R';
-		case Source:
-			return 'S';
-		case Context:
-			return 'C';
-		default:
-			return '?';
+	private def typeToChar(vtype: VertexType) = {
+		vtype match {
+		case VertexType.Edge => 'E'
+		case VertexType.Text => 'T'
+		case VertexType.URL => 'H'
+		case VertexType.EdgeType => 'Y'
+		case VertexType.User => 'U'
+		case VertexType.Rule => 'R'
+		case VertexType.Source => 'S'
+		case VertexType.Context => 'C'
+		case _ => '?'
 		}
 	}
 	
-	private static String mapToString(Map<String, String> map) {
-		StringBuilder stringBuilder = new StringBuilder();
+	private def mapToString(map: Map[String, String]) = {
+		val stringBuilder = new StringBuilder()
 
-		for (String key : map.keySet()) {
-			if (stringBuilder.length() > 0) {
-				stringBuilder.append("&");
-		    }
-		    String value = map.get(key);
-		    try {
-		    	stringBuilder.append((key != null ? URLEncoder.encode(key, "UTF-8") : ""));
-		    	stringBuilder.append("=");
-		    	stringBuilder.append(value != null ? URLEncoder.encode(value, "UTF-8") : "");
-		    }
-		    catch (UnsupportedEncodingException e) {
-		    	throw new RuntimeException("This method requires UTF-8 encoding support", e);
-		    }
+		for (key <- map.keySet) {
+			if (stringBuilder.length > 0) {
+				stringBuilder.append("&")
+		  }
+		  val value = map(key)
+		  stringBuilder.append(if (key != null) URLEncoder.encode(key, "UTF-8") else "")
+		  stringBuilder.append("=")
+		  stringBuilder.append(if (value != null) URLEncoder.encode(value, "UTF-8") else "")
 		}
 
-		return stringBuilder.toString();
+		stringBuilder.toString
 	}
 	
-	private static Map<String, String> stringToMap(String input) {
-		Map<String, String> map = new HashMap<String, String>();
+	private def stringToMap(input: String) = {
+		val map = Map[String, String]()
 
-		String[] nameValuePairs = input.split("&");
-		for (String nameValuePair : nameValuePairs) {
-			String[] nameValue = nameValuePair.split("=");
-		    try {
-		    	map.put(URLDecoder.decode(nameValue[0], "UTF-8"), nameValue.length > 1 ? URLDecoder.decode(
-		    			nameValue[1], "UTF-8") : "");
-		    }
-		    catch (UnsupportedEncodingException e) {
-		    	throw new RuntimeException("This method requires UTF-8 encoding support", e);
-		    }
+		val nameValuePairs = input.split("&")
+		for (nameValuePair <- nameValuePairs) {
+			val nameValue = nameValuePair.split("=")
+      yield (URLDecoder.decode(nameValue(0), "UTF-8") -> if (nameValue.length > 1) URLDecoder.decode(nameValue(1), "UTF-8") else "")
 		}
-
-		return map;
 	}
 	
 	public Vertex put(Vertex vertex) {

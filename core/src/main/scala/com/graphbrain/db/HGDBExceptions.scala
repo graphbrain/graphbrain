@@ -1,4 +1,4 @@
-package com.graphbrain.gbdb
+package com.graphbrain.db
 
 case class KeyNotFound(message: String) extends Exception(message)
 

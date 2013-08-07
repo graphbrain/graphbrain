@@ -1,11 +1,36 @@
-package com.graphbrain.gbdb
+package com.graphbrain.db
 
 
 abstract class Textual extends Vertex {
   val summary: String
 
+  def updateSummary(): Textual = this
+
+  //override def description: String = toString + " " + generateSummary
+}
+
+object Textual {
+  def generateSummary(id: String, graph: Graph): String = {
+    val edges = graph.neighborEdges(id)
+
+    var bestEdge: Edge = null
+    var maxScore = -1
+    for (e <- edges) {
+      val score = scoreForSummary(id, e)
+      if (score > maxScore) {
+        bestEdge = e
+        maxScore = score
+      }
+    }
+
+    if (bestEdge == null)
+      ""
+    else
+      "(" + graph.get(bestEdge.participantIds(1)) + ")"
+  }
+
   // Score edge in terms of its ability to generate a summary for this TextNode
-  private def scoreForSummary(edge: Edge): Int = {
+  private def scoreForSummary(id: String, edge: Edge): Int = {
     // Only consider edges where this TextNode is the first participant
     if (edge.participantIds(0) != id)
       return -1
@@ -16,27 +41,4 @@ abstract class Textual extends Vertex {
       case _ => -1
     }
   }
-
-  def generateSummary: String = {
-    val edges = store.neighborEdges(id)
-
-    var bestEdge: Edge = null
-    var maxScore = -1
-    for (e <- edges) {
-      val score = scoreForSummary(e)
-      if (score > maxScore) {
-        bestEdge = e
-        maxScore = score
-      }
-    }
-
-    if (bestEdge == null)
-      ""
-    else
-      "(" + store.get(bestEdge.participantIds(1)) + ")"
-  }
-
-  def updateSummary: Textual = this
-
-  override def description: String = toString + " " + generateSummary
 }

@@ -1,8 +1,8 @@
-package com.graphbrain.core
+package com.graphbrain.db
 
 import scala.collection.mutable.{Set => MSet}
-
 import java.util.Arrays
+import com.graphbrain.utils.SimpleLog
 
 abstract class Graph() extends SimpleLog {
   val backend = new LevelDbBackend()

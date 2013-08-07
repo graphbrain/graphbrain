@@ -1,7 +1,7 @@
-package com.graphbrain.core
+package com.graphbrain.db
 
 
-case class Edge(edgeType: String, extParticipantIds: List[String], originalEdge: Edge = null) {
+case class Edge(edgeType: String, extParticipantIds: List[String], originalEdge: Edge = null) extends Vertex {
   val participantIds = extParticipantIds.map(x => Vertex.cleanId(x))
 
   def negate = Edge("neg/" + edgeType, extParticipantIds)
