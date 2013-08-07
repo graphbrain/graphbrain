@@ -1,4 +1,4 @@
-package com.graphbrain.gbdb
+package com.graphbrain.db
 
 
 case class ContextNode(store: VertexStore, userId: String, name: String, access: String="public", summary: String="") extends Textual {

@@ -1,4 +1,4 @@
-package com.graphbrain.core
+package com.graphbrain.db
 
 object VertexType extends Enumeration {
   type VertexType = Value
@@ -13,39 +13,39 @@ object VertexType extends Enumeration {
 		val nparts = ID.numberOfParts(id)
 		if (parts(0) == "user")
 			if (nparts == 1)
-				return Text
+				Text
 			else if (nparts == 2)
-				return User
+				User
 			else if (parts(2) == "url")
-				return URL
+				URL
 			else if (parts(2) == "context")
 				if (nparts == 4)
-					return Context
+					Context
 				else
-					return Text
+					Text
 			else
-				return Text
+				Text
 		else if (parts(0) == "rtype")
 			if (nparts == 1)
-				return Text
+				Text
 			else
-				return EdgeType
+				EdgeType
 		else if (parts(0) == "url")
 			if (nparts == 1)
-				return Text
+				Text
 			else
-				return URL
+				URL
 		else if (parts(0) == "rule")
 			if (nparts == 1)
-				return Text
+				Text
 			else
-				return Rule
+				Rule
 		else if (parts(0) == "source")
 			if (nparts == 1)
-				return Text
+				Text
 			else
-				return Source
+				Source
 		else
-			return Text
+			Text
   }
 }

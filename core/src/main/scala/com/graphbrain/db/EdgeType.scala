@@ -1,4 +1,4 @@
-package com.graphbrain.gbdb
+package com.graphbrain.db
 
 
 case class EdgeType(store: VertexStore, id: String="", label: String="") extends Vertex {

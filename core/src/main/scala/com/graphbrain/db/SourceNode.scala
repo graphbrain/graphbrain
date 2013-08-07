@@ -1,4 +1,4 @@
-package com.graphbrain.gbdb
+package com.graphbrain.db
 
 
 case class SourceNode(store: VertexStore, id: String="") extends Vertex {
