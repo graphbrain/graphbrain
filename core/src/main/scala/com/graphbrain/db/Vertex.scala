@@ -1,6 +1,6 @@
 package com.graphbrain.db
 
-abstract class Vertex(val id: String, val degree: Int = 0, val ts: Long = -1) {
+abstract case class Vertex(id: String, degree: Int = 0, ts: Long = -1) {
 
   def this(id: String, map: Map[String, String]) =
     this(id, map("degree").toInt, map("ts").toLong)

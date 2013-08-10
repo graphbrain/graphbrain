@@ -1,10 +1,10 @@
 package com.graphbrain.db
 
 
-abstract class Textual(id: String,
-                       val summary: String = "",
-                       degree: Int = 0,
-                       ts: Long = -1)
+abstract case class Textual(override val id: String,
+                       summary: String = "",
+                       override val degree: Int = 0,
+                       override val ts: Long = -1)
   extends Vertex (id, degree, ts) {
 
   def updateSummary(): Textual = this
