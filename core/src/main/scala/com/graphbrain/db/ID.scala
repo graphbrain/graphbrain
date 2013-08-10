@@ -109,6 +109,8 @@ object ID {
 
   def userIdFromUsername(username: String) = "user/" + username
 
+  def emailId(email: String) = "email/" + email.toLowerCase
+
   def urlId(url:String):String = "url/" + url.toLowerCase.replaceAll("/+$", "")
 
   def usergenerated_id(userName:String, thing:String) =

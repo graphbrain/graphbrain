@@ -1,22 +1,29 @@
 package com.graphbrain.db
 
-
 import java.net._
-import java.io._
-
 import org.jsoup.Jsoup
-import org.jsoup.helper.Validate
-import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
-
 import com.graphbrain.utils.SimpleLog
 
 
-case class URLNode(store: VertexStore, url: String="", userId: String = "", title: String="", icon: String="") extends Vertex with SimpleLog{
-  val auxId = ID.urlId(url)
+case class URLNode(override val id: String,
+                   url: String,
+                   title: String="",
+                   icon: String="",
+                   override val degree: Int = 0,
+                   override val ts: Long = -1)
+  extends Vertex(id, degree, ts) with SimpleLog {
 
-  override val id = if (userId == "") auxId else ID.globalToUser(auxId, userId)
+  def this(id: String, map: Map[String, String]) =
+    this(id,
+      map("url"),
+      map("title"),
+      map("icon"),
+      map("degree").toInt,
+      map("ts").toLong)
+
+  override def extraMap = Map("url" -> url,
+                              "title" -> title,
+                              "icon" -> icon)
 
   private def exists(urlName: String): Boolean = {
     try {
@@ -26,16 +33,16 @@ case class URLNode(store: VertexStore, url: String="", userId: String = "", titl
       val con = new URL(urlName).openConnection().asInstanceOf[HttpURLConnection]
       con.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2")
       con.setRequestMethod("HEAD")
-      con.getResponseCode() == HttpURLConnection.HTTP_OK
+      con.getResponseCode == HttpURLConnection.HTTP_OK
     }
     catch {
-       case _ => false
+       case _: Throwable => false
     }
   }
 
   private def getDomainName = {
     val uri = new URI(url)
-    uri.getHost()
+    uri.getHost
   }
 
   private def getTitleAndIcon: (String, String) = {
@@ -74,28 +81,13 @@ case class URLNode(store: VertexStore, url: String="", userId: String = "", titl
     }
   }
 
-  override def put(): Vertex = {
-    ldebug("put " + id)
-    ldebug("in userspace? " + ID.isInUserSpace(id))
-    val template = if (ID.isInUserSpace(id)) store.backend.tpUserSpace else store.backend.tpGlobal
-    val updater = template.createUpdater(id)
-    updater.setString("url", url)
+  //override def clone(newid: String) = URLNode(store, newid, userId, title)
 
-    val titleAndIcon = getTitleAndIcon
-    updater.setString("title", titleAndIcon._1)
-    updater.setString("icon", titleAndIcon._2)
-    template.update(updater)
-    store.onPut(this)
-    this
-  }
+  //override def toGlobal: Vertex = URLNode(store, url, "", title)
 
-  override def clone(newid: String) = URLNode(store, newid, userId, title)
+  //override def toUser(newUserId: String): Vertex = URLNode(store, url, newUserId, title)
 
-  override def toGlobal: Vertex = URLNode(store, url, "", title)
-
-  override def toUser(newUserId: String): Vertex = URLNode(store, url, newUserId, title)
-
-  def setTitle(newTitle: String) = copy(title=newTitle)
+  //def setTitle(newTitle: String) = copy(title=newTitle)
 
   override def raw: String = {
     "type: " + "url<br />" +
@@ -103,11 +95,17 @@ case class URLNode(store: VertexStore, url: String="", userId: String = "", titl
     "title: " + title + "<br />"
   }
 
-  override def shouldUpdate: Boolean = true
+  //override def shouldUpdate: Boolean = true
 }
 
 
 object URLNode {
+  def fromUrl(url: String, userId: String = "", title: String="", icon: String="") = {
+    val auxId = ID.urlId(url)
+    val id = if (userId == "") auxId else ID.globalToUser(auxId, userId)
+    URLNode(id, url, title, icon)
+  }
+
   def main(args : Array[String]) : Unit = {
     val urlNode = new URLNode(null, "http://graphbrain.com/secret")
     urlNode.getTitleAndIcon

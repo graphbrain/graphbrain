@@ -1,8 +1,11 @@
 package com.graphbrain.db
 
 
-abstract class Textual extends Vertex {
-  val summary: String
+abstract class Textual(id: String,
+                       val summary: String = "",
+                       degree: Int = 0,
+                       ts: Long = -1)
+  extends Vertex (id, degree, ts) {
 
   def updateSummary(): Textual = this
 

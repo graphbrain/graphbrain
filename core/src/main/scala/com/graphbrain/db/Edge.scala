@@ -1,10 +1,22 @@
 package com.graphbrain.db
 
+case class Edge(override val id: String,
+                override val degree: Int = 0,
+                override val ts: Long = -1)
+  extends Vertex(id, degree, ts) {
 
-case class Edge(edgeType: String, extParticipantIds: List[String], originalEdge: Edge = null) extends Vertex {
-  val participantIds = extParticipantIds.map(x => Vertex.cleanId(x))
+  val ids  = ID.parts(id)
+  val edgeType = ids.head
+  val participantIds = ids.tail
 
-  def negate = Edge("neg/" + edgeType, extParticipantIds)
+  def this(id: String, map: Map[String, String]) =
+    this(id,
+      map("degree").toInt,
+      map("ts").toLong)
+
+  override def extraMap = Map()
+
+  def negate = Edge.fromParticipants("neg/" + edgeType, participantIds)
 
   def isPositive = ID.parts(edgeType)(0) != "neg"
 
@@ -32,17 +44,15 @@ case class Edge(edgeType: String, extParticipantIds: List[String], originalEdge:
     true
   }
 
-  def toUser(userId: String) = {
-    val pids = for (pid <- extParticipantIds) yield ID.globalToUser(pid, userId)
-    Edge(edgeType, pids)
+  override def toUser(userId: String) = {
+    val pids = for (pid <- participantIds) yield ID.globalToUser(pid, userId)
+    Edge.fromParticipants(edgeType, pids)
   }
   
-  def toGlobal = {
-    val pids = for (pid <- extParticipantIds) yield ID.userToGlobal(pid)
-    Edge(edgeType, pids)
+  override def toGlobal = {
+    val pids = for (pid <- participantIds) yield ID.userToGlobal(pid)
+    Edge.fromParticipants(edgeType, pids)
   }
-
-  def getOriginalEdge = if (originalEdge == null) this else originalEdge
 
   override def toString = edgeType + " " + participantIds.reduceLeft(_ + " " + _)
 
@@ -52,33 +62,20 @@ case class Edge(edgeType: String, extParticipantIds: List[String], originalEdge:
 }
 
 object Edge {
-  def fromString(edgeString: String) = {
-    val tokens = edgeString.split(" ").toList
-    Edge(tokens.head, tokens.tail)
-  }
+  def fromParticipants(participants: Array[String]) =
+    new Edge(idFromParticipants(participants))
 
-  def fromEdgeEntry(nodeId: String, edgeType: String, position: Int, node1: String, node2: String, nodeN: String) = {
-    val preParticipantIds = if (nodeN != null) {
-        List[String](node1, node2) ::: nodeN.split(" ").toList
-      }
-      else if (node2 != null) {
-        List[String](node1, node2)
-      }
-      else {
-        List[String](node1)
-      }
+  def fromParticipants(participants: Array[Vertex]) =
+    new Edge(idFromParticipants(participants))
 
-    val participantIds = if (position == 0) {
-        nodeId :: preParticipantIds
-      }
-      else if (position >= preParticipantIds.length) {
-        preParticipantIds :+ nodeId
-      }
-      else {
-        val parts = preParticipantIds.splitAt(position)
-        parts._1 ::: nodeId :: parts._2
-      }
+  def fromParticipants(edgeType: String, participantIds: Array[String]) =
+    new Edge(idFromParticipants(edgeType, participantIds))
 
-    Edge(edgeType, participantIds)
-  }
+  def idFromParticipants(participants: Array[String]) = participants.mkString(" ")
+
+  def idFromParticipants(participants: Array[Vertex]) =
+    idFromParticipants(participants.map(v => v.id))
+
+  def idFromParticipants(edgeType: String, participantIds: Array[String]) =
+    idFromParticipants(Array(edgeType) ++ participantIds)
 }

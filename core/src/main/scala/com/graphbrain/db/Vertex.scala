@@ -1,15 +1,10 @@
 package com.graphbrain.db
 
-//import scala.collection.mutable
-import VertexType.VertexType
+abstract class Vertex(val id: String, val degree: Int = 0, val ts: Long = -1) {
 
-abstract class Vertex {
+  def this(id: String, map: Map[String, String]) =
+    this(id, map("degree").toInt, map("ts").toLong)
 
-  val id: String
-  val degree: Int = 0
-  val ts: Long = -1
-
-  def vtype: VertexType
   def extraMap: Map[String, String]
 
   def toMap: Map[String, String] =
@@ -17,7 +12,7 @@ abstract class Vertex {
       "ts" -> "" + ts.toString) ++
     extraMap
 
-  def clone(newid: String): Vertex
+  //def clone(newid: String): Vertex
 
   def toGlobal: Vertex = this
 
@@ -36,6 +31,13 @@ abstract class Vertex {
   //def shouldUpdate: Boolean = !store.exists(id)
 
   def updateFromEdges(): Vertex = this
+
+  override def equals(o: Any) = o match {
+    case that: Vertex => that.id == id
+    case _ => false
+  }
+
+  override def hashCode = id.hashCode
 }
 
 object Vertex {
