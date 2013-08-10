@@ -1,13 +1,8 @@
-package com.graphbrain.gbdb
+package com.graphbrain.db
 
 import scala.collection.mutable.{Set => MSet}
 
-import me.prettyprint.hector.api.factory.HFactory
-import me.prettyprint.cassandra.serializers.StringSerializer
-import me.prettyprint.cassandra.service.ColumnSliceIterator
-
-
-trait UserOps extends VertexStore {
+trait UserOps extends Graph {
 
   private def setOwner(userId: String, nodeId: String) = {
     ldebug("setOwner userId: " + userId + "; nodeId: " + nodeId)
