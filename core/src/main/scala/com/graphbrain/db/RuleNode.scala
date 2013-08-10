@@ -1,19 +1,12 @@
 package com.graphbrain.db
 
+case class RuleNode(override val id: String,
+                    override val degree: Int = 0,
+                    override val ts: Long = -1)
+  extends Vertex (id, degree, ts) {
 
-//To store the rule body
-case class RuleNode(store: VertexStore, id: String="", rule: String="") extends Vertex {
-  
-  override def put(): Vertex = {
-    val template = store.backend.tpGlobal
-    val updater = template.createUpdater(id)
-    updater.setString("rule", rule)
-    template.update(updater)
-    store.onPut(this)
-    this
-  }
+  def this(id: String, map: Map[String, String]) =
+    this(id, map("degree").toInt, map("ts").toLong)
 
-  override def clone(newid: String) = RuleNode(store, newid, rule)
-
-  override def toString: String = rule
+  override def extraMap: Map[String, String] = Map()
 }

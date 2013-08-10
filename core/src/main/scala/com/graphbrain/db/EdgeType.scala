@@ -1,16 +1,16 @@
 package com.graphbrain.db
 
+case class EdgeType(override val id: String,
+                    label: String="",
+                    override val degree: Int = 0,
+                    override val ts: Long = -1)
+  extends Vertex(id, degree, ts) {
 
-case class EdgeType(store: VertexStore, id: String="", label: String="") extends Vertex {
+  def this(id: String, map: Map[String, String]) =
+    this(id,
+      map("label"),
+      map("degree").toInt,
+      map("ts").toLong)
 
-  override def put(): Vertex = {
-    val template = store.backend.tpEdgeType
-    val updater = template.createUpdater(id)
-    updater.setString("label", label)
-    template.update(updater)
-    store.onPut(this)
-    this
-  }
-
-  override def clone(newid: String) = EdgeType(store, newid, label)
+  override def extraMap = Map("label" -> label)
 }
