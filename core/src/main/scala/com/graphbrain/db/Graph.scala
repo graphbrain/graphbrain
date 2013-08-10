@@ -3,7 +3,7 @@ package com.graphbrain.db
 import java.util.Date
 import com.graphbrain.utils.SimpleLog
 
-abstract class Graph() extends SimpleLog {
+class Graph() extends SimpleLog {
   val back = new LevelDbBackend()
 
   def get(id: String): Vertex = back.get(id, VertexType.getType(id))
@@ -23,21 +23,19 @@ abstract class Graph() extends SimpleLog {
     v
   }
 
-  protected def incDegree(vertex: Vertex) = update(vertex.copy(degree=vertex.degree + 1))
-
-  protected def incDegree(id: String) = incDegree(get(id))
-
-  protected def onPutEdge(edge: Edge) =
-    for (id <- edge.ids)
-      incDegree(id)
-
   def onPut(vertex: Vertex) = {}
 
   def update(vertex: Vertex): Vertex = put(vertex)
 
   def exists(id: String): Boolean = get(id) != null
 
-  def remove(vertex: Vertex) = back.remove(vertex)
+  def remove(vertex: Vertex) = {
+    back.remove(vertex)
+
+    vertex match {
+      case e: Edge => onRemoveEdge(e)
+    }
+  }
 
   def edges(center: Vertex) = back.edges(center)
 
@@ -70,6 +68,22 @@ abstract class Graph() extends SimpleLog {
     }
     put(Edge.fromParticipants(participants))
   }
+
+  protected def incDegree(vertex: Vertex) = update(vertex.copy(degree=vertex.degree + 1))
+
+  protected def incDegree(id: String) = incDegree(get(id))
+
+  protected def onPutEdge(edge: Edge) =
+    for (id <- edge.ids)
+      incDegree(id)
+
+  protected def decDegree(vertex: Vertex) = update(vertex.copy(degree=vertex.degree - 1))
+
+  protected def decDegree(id: String) = decDegree(get(id))
+
+  protected def onRemoveEdge(edge: Edge) =
+    for (id <- edge.ids)
+      decDegree(id)
 }
 
 
