@@ -17,18 +17,19 @@ class LevelDbBackend extends Backend  {
   val db = factory.open(new File("dbnode"), options)
 	
 	def close() = {
-		try {
-			db.close()
-		}
-		catch {
-			case e: Throwable => e.printStackTrace()
-		}
+		db.close()
 	}
 	
 	def get(id: String, vtype: VertexType) = {
 		val realId = typeToChar(vtype) + id
-		val value = asString(db.get(bytes(realId)))
-		decodeVertex(realId, value)
+    val raw = db.get(bytes(realId))
+    if (raw == null) {
+      null
+    }
+    else {
+		  val value = asString(raw)
+		  decodeVertex(realId, value)
+    }
 	}
 	
 	private def decodeVertex(realId: String, value: String): Vertex = {
@@ -165,7 +166,7 @@ class LevelDbBackend extends Backend  {
     res
 	}
 
-	def edges(center: Vertex) {
+	override def edges(center: Vertex): Set[Edge] = {
 		var res = Set[Edge]()
 		
 		val startStr = EDGE_PREFIX + center.id
