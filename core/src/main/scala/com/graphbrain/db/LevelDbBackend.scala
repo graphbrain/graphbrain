@@ -39,11 +39,11 @@ class LevelDbBackend extends Backend  {
 		case 'E' => new Edge(id, stringToMap(value))
 		case 'T' => new TextNode(id, stringToMap(value))
 		case 'H' => new URLNode(id, stringToMap(value))
-		//case 'Y' => new EdgeType(id, stringToMap(value))
-		//case 'U' => new UserNode(id, stringToMap(value))
-		//case 'R' => new RuleNode(id, stringToMap(value))
-		//case 'S' => new SourceNode(id, stringToMap(value))
-		//case 'C' => new ContextNode(id, stringToMap(value))
+		case 'Y' => new EdgeType(id, stringToMap(value))
+		case 'U' => new UserNode(id, stringToMap(value))
+		case 'R' => new RuleNode(id, stringToMap(value))
+		case 'S' => new SourceNode(id, stringToMap(value))
+		case 'C' => new ContextNode(id, stringToMap(value))
 		case _ => null
 		}
 	}
