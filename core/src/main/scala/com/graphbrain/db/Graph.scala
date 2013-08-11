@@ -10,7 +10,7 @@ class Graph() extends SimpleLog {
 
   def put(vertex: Vertex): Vertex = {
     val v = if (vertex.ts < 0)
-      vertex.copy(ts= new Date().getTime)
+      vertex.setTs(new Date().getTime)
     else
       vertex
 
@@ -22,8 +22,6 @@ class Graph() extends SimpleLog {
 
     v
   }
-
-  def onPut(vertex: Vertex) = {}
 
   def update(vertex: Vertex): Vertex = put(vertex)
 
@@ -71,17 +69,17 @@ class Graph() extends SimpleLog {
     put(Edge.fromParticipants(participants))
   }
 
-  protected def incDegree(vertex: Vertex) = update(vertex.copy(degree=vertex.degree + 1))
+  protected def incDegree(vertex: Vertex): Vertex = update(vertex.setDegree(vertex.degree + 1))
 
-  protected def incDegree(id: String) = incDegree(get(id))
+  protected def incDegree(id: String): Vertex = incDegree(get(id))
 
   protected def onPutEdge(edge: Edge) =
     for (id <- edge.ids)
       incDegree(id)
 
-  protected def decDegree(vertex: Vertex) = update(vertex.copy(degree=vertex.degree - 1))
+  protected def decDegree(vertex: Vertex): Vertex = update(vertex.setDegree(vertex.degree - 1))
 
-  protected def decDegree(id: String) = decDegree(get(id))
+  protected def decDegree(id: String): Vertex = decDegree(get(id))
 
   protected def onRemoveEdge(edge: Edge) =
     for (id <- edge.ids)

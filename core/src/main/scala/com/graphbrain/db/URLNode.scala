@@ -25,6 +25,12 @@ case class URLNode(override val id: String,
                               "title" -> title,
                               "icon" -> icon)
 
+  override def setId(newId: String): Vertex = copy(id=newId)
+
+  override def setDegree(newDegree: Int): Vertex = copy(degree=newDegree)
+
+  override def setTs(newTs: Long): Vertex = copy(ts=newTs)
+
   private def exists(urlName: String): Boolean = {
     try {
       HttpURLConnection.setFollowRedirects(false)

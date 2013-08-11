@@ -43,6 +43,12 @@ case class UserNode(override val id: String,
                               "lastSeen" -> lastSeen.toString,
                               "summary" -> summary)
 
+  override def setId(newId: String): Vertex = copy(id=newId)
+
+  override def setDegree(newDegree: Int): Vertex = copy(degree=newDegree)
+
+  override def setTs(newTs: Long): Vertex = copy(ts=newTs)
+
   def newSession = copy(session= new BigInteger(130, RandUtils.secRand).toString(32))
 
   def checkPassword(candidate: String) = BCrypt.checkpw(candidate, pwdhash)

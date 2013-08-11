@@ -52,6 +52,11 @@
         <artifactId>jbcrypt</artifactId>
         <version>0.3m</version>
     </dependency>
+    <dependency>
+        <groupId>com.typesafe.akka</groupId>
+        <artifactId>akka-actor_2.10</artifactId>
+        <version>2.2.0-RC2</version>
+    </dependency>
 
     <!-- Test -->
     <dependency>
@@ -84,8 +89,8 @@
             </goals>
             <configuration>
               <args>
-                <arg>-make:transitive</arg>
                 <arg>-dependencyfile</arg>
+                <arg>-deprecation</arg>
                 <arg>${project.build.directory}/.scala_dependencies</arg>
               </args>
             </configuration>

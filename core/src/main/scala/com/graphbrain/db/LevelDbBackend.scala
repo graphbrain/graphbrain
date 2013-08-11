@@ -11,6 +11,7 @@ import VertexType.VertexType
 
 class LevelDbBackend extends Backend  {
 	val EDGE_PREFIX = '#'
+  val GLOBAL_LINK_PREFIX = '*'
 
 	val options = new Options()
   options.createIfMissing(true)
@@ -166,7 +167,7 @@ class LevelDbBackend extends Backend  {
     res
 	}
 
-	override def edges(center: Vertex): Set[Edge] = {
+	def edges(center: Vertex): Set[Edge] = {
 		var res = Set[Edge]()
 		
 		val startStr = EDGE_PREFIX + center.id
@@ -222,6 +223,48 @@ class LevelDbBackend extends Backend  {
 			db.delete(bytes(permId))
 		}
 	}
+
+  def addLinkToGlobal(globalId: String, userId: String) = {
+    val permId = GLOBAL_LINK_PREFIX + globalId + " " + userId
+    val value = ""
+    db.put(bytes(permId), bytes(value))
+  }
+
+  def removeLinkToGlobal(globalId: String, userId: String) = {
+    val permId = GLOBAL_LINK_PREFIX + globalId + " " + userId
+    db.delete(bytes(permId))
+  }
+
+  def alts(globalId: String): Set[String] = {
+    var res = Set[String]()
+
+    val startStr = GLOBAL_LINK_PREFIX + globalId
+    val endStr = LevelDbBackend.strPlusOne(startStr)
+    val iterator = db.iterator()
+    try {
+      iterator.seek(bytes(startStr))
+      var key = startStr
+
+      while (iterator.hasNext && key.compareTo(endStr) < 0) {
+        val entry = iterator.next()
+        key = asString(entry.getKey)
+
+        key = key.substring(1)
+        val tokens = key.split(" ")
+        val id = tokens(1)
+        res = res + id
+      }
+    }
+    finally {
+      try {
+        iterator.close()
+      }
+      catch {
+        case e: IOException => e.printStackTrace()
+      }
+    }
+    res
+  }
 }
 
 object LevelDbBackend {
