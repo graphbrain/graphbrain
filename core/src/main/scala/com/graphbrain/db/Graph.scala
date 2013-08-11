@@ -29,6 +29,8 @@ class Graph() extends SimpleLog {
 
   def exists(id: String): Boolean = get(id) != null
 
+  def exists(v: Vertex): Boolean = exists(v.id)
+
   def remove(vertex: Vertex) = {
     back.remove(vertex)
 

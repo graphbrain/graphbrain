@@ -1,4 +1,4 @@
-package com.graphbrain.gbdb
+package com.graphbrain.db
 
 import akka.actor.Actor
 import akka.actor.Props

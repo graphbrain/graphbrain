@@ -1,13 +1,13 @@
-package com.graphbrain.gbdb
+package com.graphbrain.db
 
 
-class SearchInterface(store: VertexStore) {
+class SearchInterface(graph: Graph) {
 
   def query(text: String) = {
     val id = ID.sanitize(text)
     var maxId = 0
 
-    while (store.exists("" + (maxId + 1) + "/" + id))
+    while (graph.exists("" + (maxId + 1) + "/" + id))
       maxId += 1
 
     for (i <- 1 to maxId) yield "" + i + "/" + id
