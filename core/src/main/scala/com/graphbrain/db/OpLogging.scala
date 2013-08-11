@@ -1,19 +1,14 @@
-package com.graphbrain.gbdb
+package com.graphbrain.db
 
-import scala.collection.mutable.Map
-
-/** Print log of operations performed on store.
-  *
-  * Useful for debugging. 
-  */
-trait OpLogging extends VertexStore {
+trait OpLogging extends Graph {
   abstract override def get(id: String): Vertex = {
     println("[get] " + id)
     super.get(id)
   }
 
-  abstract override def onPut(vertex: Vertex) = {
+  abstract override def put(vertex: Vertex) = {
     println("[put] " + vertex.id)
+    super.put(vertex)
   }
 
   abstract override def update(vertex: Vertex): Vertex = {
@@ -21,7 +16,7 @@ trait OpLogging extends VertexStore {
     super.update(vertex)
   }
 
-  abstract override def remove(vertex: Vertex): Vertex = {
+  abstract override def remove(vertex: Vertex) = {
     println("[remove] " + vertex.id)
     super.remove(vertex)
   } 
