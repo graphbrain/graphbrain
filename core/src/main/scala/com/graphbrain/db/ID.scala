@@ -1,5 +1,6 @@
 package com.graphbrain.db
 
+import java.net.URLEncoder
 
 object ID {
 
@@ -80,7 +81,7 @@ object ID {
   }
 
   def setContext(idOrNs: String, contextId: String) =
-    if (isUserNode(idOrNs) || (isContextNode(idOrNs))) {
+    if (isUserNode(idOrNs) || isContextNode(idOrNs)) {
       if (contextId == "") idOrNs else contextId
     }
     else {
@@ -111,6 +112,11 @@ object ID {
 
   def emailId(email: String) = "email/" + email.toLowerCase
 
+  def idFromUsername(username: String) = {
+    val usernameNoSpaces = username.replace(' ', '_')
+    "user/" + URLEncoder.encode(usernameNoSpaces, "UTF-8")
+  }
+
   def urlId(url:String):String = "url/" + url.toLowerCase.replaceAll("/+$", "")
 
   def usergenerated_id(userName:String, thing:String) =
@@ -128,7 +134,7 @@ object ID {
   def relation_id(rel:String, node1ID:String, node2ID:String):String=
   {
     val tokens=List[String](rel)++Array[String](node1ID, node2ID)
-    return tokens.reduceLeft(_+ " " +_)
+    tokens.reduceLeft(_+ " " +_)
   }
 
   def reltype_id(relT:String, which:Int=1): String =
@@ -139,6 +145,6 @@ object ID {
 
   def wikipedia_id(wptitle:String):String={
     val title = wptitle.toLowerCase.replace(" ", "_")
-    return "wikipedia/"+title
+    "wikipedia/"+title
   }
 }

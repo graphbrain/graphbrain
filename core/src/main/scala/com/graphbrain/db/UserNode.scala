@@ -1,5 +1,9 @@
 package com.graphbrain.db
 
+import org.mindrot.jbcrypt.BCrypt
+import java.math.BigInteger
+import com.graphbrain.utils.RandUtils
+
 
 case class UserNode(override val id: String,
                     username: String,
@@ -39,6 +43,12 @@ case class UserNode(override val id: String,
                               "lastSeen" -> lastSeen.toString,
                               "summary" -> summary)
 
+  def newSession = copy(session= new BigInteger(130, RandUtils.secRand).toString(32))
+
+  def checkPassword(candidate: String) = BCrypt.checkpw(candidate, pwdhash)
+
+  def checkSession(candidate: String) = session == candidate
+
   override def toString: String = name
 
   //override def updateSummary: Textual = UserNode(id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, generateSummary)
@@ -49,5 +59,13 @@ case class UserNode(override val id: String,
     "name: " + name + "<br />" +
     "role: " + role + "<br />" +
     "lastSeen: " + lastSeen + "<br />"
+  }
+}
+
+object UserNode {
+  def create(username: String, name: String, email: String, password: String, role: String) = {
+    val id = ID.userIdFromUsername(username)
+    val pwdhash = BCrypt.hashpw(password, BCrypt.gensalt())
+    UserNode(id, username, name, email, pwdhash, role)
   }
 }
