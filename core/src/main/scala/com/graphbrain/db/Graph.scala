@@ -18,6 +18,7 @@ class Graph() extends SimpleLog {
 
     v match  {
       case e: Edge => onPutEdge(e)
+      case _ =>
     }
 
     v
@@ -34,6 +35,7 @@ class Graph() extends SimpleLog {
 
     vertex match {
       case e: Edge => onRemoveEdge(e)
+      case _ =>
     }
   }
 
