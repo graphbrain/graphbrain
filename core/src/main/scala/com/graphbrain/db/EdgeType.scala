@@ -13,4 +13,10 @@ case class EdgeType(override val id: String,
       map("ts").toLong)
 
   override def extraMap = Map("label" -> label)
+
+  override def setId(newId: String): Vertex = copy(id=newId)
+
+  override def setDegree(newDegree: Int): Vertex = copy(degree=newDegree)
+
+  override def setTs(newTs: Long): Vertex = copy(ts=newTs)
 }

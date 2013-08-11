@@ -1,6 +1,6 @@
 package com.graphbrain.db
 
-abstract case class Vertex(id: String, degree: Int = 0, ts: Long = -1) {
+abstract class Vertex(val id: String, val degree: Int = 0, val ts: Long = -1) {
 
   def this(id: String, map: Map[String, String]) =
     this(id, map("degree").toInt, map("ts").toLong)
@@ -8,19 +8,19 @@ abstract case class Vertex(id: String, degree: Int = 0, ts: Long = -1) {
   def extraMap: Map[String, String]
 
   def toMap: Map[String, String] =
-    Map("degree" -> "" + degree.toString,
-      "ts" -> "" + ts.toString) ++
+    Map("degree" -> degree.toString,
+      "ts" -> ts.toString) ++
     extraMap
 
-  //def clone(newid: String): Vertex
+  def setId(newId: String): Vertex
 
-  def toGlobal: Vertex = this
+  def setDegree(newDegree: Int): Vertex
 
-  def toUser(newUserId: String): Vertex = this
+  def setTs(newTs: Long): Vertex
 
-  def removeContext(): Vertex = this
+  def toGlobal: Vertex = setId(ID.userToGlobal(id))
 
-  def setContext(newContext: String): Vertex = this
+  def toUser(userId: String): Vertex = setId(ID.globalToUser(id, userId))
 
   override def toString: String = id
 
@@ -28,7 +28,7 @@ abstract case class Vertex(id: String, degree: Int = 0, ts: Long = -1) {
 
   def raw: String = ""
 
-  //def shouldUpdate: Boolean = !store.exists(id)
+  def shouldUpdate(graph: Graph): Boolean = !graph.exists(id)
 
   def updateFromEdges(): Vertex = this
 

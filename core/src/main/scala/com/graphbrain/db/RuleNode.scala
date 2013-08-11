@@ -9,4 +9,10 @@ case class RuleNode(override val id: String,
     this(id, map("degree").toInt, map("ts").toLong)
 
   override def extraMap: Map[String, String] = Map()
+
+  override def setId(newId: String): Vertex = copy(id=newId)
+
+  override def setDegree(newDegree: Int): Vertex = copy(degree=newDegree)
+
+  override def setTs(newTs: Long): Vertex = copy(ts=newTs)
 }

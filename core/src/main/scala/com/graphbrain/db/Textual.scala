@@ -1,8 +1,8 @@
 package com.graphbrain.db
 
 
-abstract case class Textual(override val id: String,
-                       summary: String = "",
+abstract class Textual(override val id: String,
+                       val summary: String = "",
                        override val degree: Int = 0,
                        override val ts: Long = -1)
   extends Vertex (id, degree, ts) {
@@ -14,7 +14,7 @@ abstract case class Textual(override val id: String,
 
 object Textual {
   def generateSummary(id: String, graph: Graph): String = {
-    val edges = graph.neighborEdges(id)
+    val edges = graph.edges(id)
 
     var bestEdge: Edge = null
     var maxScore = -1

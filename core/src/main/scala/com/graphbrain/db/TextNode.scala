@@ -14,17 +14,11 @@ case class TextNode(override val id: String,
 
   override def extraMap = Map("summary" -> summary)
 
-  //override def clone(newid: String) = TextNode(ID.namespace(newid), summary)
+  override def setId(newId: String): Vertex = copy(id=newId)
 
-  //override def toGlobal: Vertex = TextNode(ID.userToGlobal(namespace), text, summary)
+  override def setDegree(newDegree: Int): Vertex = copy(degree=newDegree)
 
-  //override def toUser(newUserId: String): Vertex = TextNode(ID.globalToUser(namespace, newUserId), text, summary)
-
-  //override def removeContext() = TextNode(ID.removeContext(namespace), text, summary)
-
-  //override def setContext(newContext: String): Vertex = TextNode(ID.setContext(namespace, newContext), text, summary)
-
-  //override def toString: String = text
+  override def setTs(newTs: Long): Vertex = copy(ts=newTs)
 
   /*
   override def updateSummary: Textual = TextNode(namespace, text, generateSummary)

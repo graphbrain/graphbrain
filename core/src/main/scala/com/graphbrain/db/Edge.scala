@@ -16,6 +16,12 @@ case class Edge(override val id: String,
 
   override def extraMap = Map()
 
+  override def setId(newId: String): Vertex = copy(id=newId)
+
+  override def setDegree(newDegree: Int): Vertex = copy(degree=newDegree)
+
+  override def setTs(newTs: Long): Vertex = copy(ts=newTs)
+
   def negate = Edge.fromParticipants("neg/" + edgeType, participantIds)
 
   def isPositive = ID.parts(edgeType)(0) != "neg"
@@ -34,14 +40,6 @@ case class Edge(override val id: String,
         return true
 
     false
-  }
-
-  def isInContextSpace: Boolean = {
-    for (p <- participantIds)
-      if (!ID.isInContextSpace(p))
-        return false
-
-    true
   }
 
   override def toUser(userId: String) = {
@@ -73,9 +71,9 @@ object Edge {
 
   def idFromParticipants(participants: Array[String]) = participants.mkString(" ")
 
-  def idFromParticipants(participants: Array[Vertex]) =
+  def idFromParticipants(participants: Array[Vertex]): String =
     idFromParticipants(participants.map(v => v.id))
 
-  def idFromParticipants(edgeType: String, participantIds: Array[String]) =
+  def idFromParticipants(edgeType: String, participantIds: Array[String]): String =
     idFromParticipants(Array(edgeType) ++ participantIds)
 }
