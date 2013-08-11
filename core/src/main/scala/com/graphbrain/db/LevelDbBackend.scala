@@ -113,6 +113,7 @@ class LevelDbBackend extends Backend  {
 
     vertex match {
 		  case e: Edge => writeEdgePermutations(e)
+      case _ =>
     }
 		
 		vertex
@@ -126,6 +127,7 @@ class LevelDbBackend extends Backend  {
 
     vertex match {
       case e: Edge => removeEdgePermutations(e)
+      case _ =>
     }
 	}
 	
