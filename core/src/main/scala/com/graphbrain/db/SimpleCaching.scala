@@ -1,14 +1,9 @@
-package com.graphbrain.gbdb
+package com.graphbrain.db
 
-import scala.collection.mutable.Map
+import scala.collection.mutable
 
-/** Simple cache for a vertex store.
-  *
-  * Implements an in-memory write-through cache for vertices that
-  * grows unboundedly. 
-  */
-trait SimpleCaching extends VertexStore {
-  val cache = Map[String, Vertex]()
+trait SimpleCaching extends Graph {
+  val cache = mutable.Map[String, Vertex]()
 
   abstract override def get(id: String): Vertex = {
     if (!(cache contains id))
@@ -16,9 +11,9 @@ trait SimpleCaching extends VertexStore {
     cache(id)
   }
 
-  override def onPut(vertex: Vertex) = {
+  override def put(vertex: Vertex) = {
     cache(vertex.id) = vertex
-    super.onPut(vertex)
+    super.put(vertex)
   }
 
   abstract override def update(vertex: Vertex): Vertex = {
@@ -26,7 +21,7 @@ trait SimpleCaching extends VertexStore {
     super.update(vertex)
   }
 
-  abstract override def remove(vertex: Vertex): Vertex = {
+  abstract override def remove(vertex: Vertex) = {
     cache -= vertex.id
     super.remove(vertex)
   }
