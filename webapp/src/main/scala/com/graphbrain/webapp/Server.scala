@@ -8,7 +8,6 @@ import java.net.URL
 import unfiltered.request._
 import unfiltered.response._
 import unfiltered.Cookie
-import unfiltered.scalate.Scalate
 import org.fusesource.scalate.TemplateEngine
 import akka.actor.ActorSystem
 import akka.actor.Props

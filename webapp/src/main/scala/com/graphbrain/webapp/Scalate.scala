@@ -1,4 +1,4 @@
-package unfiltered.scalate
+package com.graphbrain.webapp
 
 import org.fusesource.scalate.{
   TemplateEngine, Binding, DefaultRenderContext, RenderContext}

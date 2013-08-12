@@ -8,12 +8,12 @@ import org.jboss.netty.handler.codec.http.HttpResponse
 import unfiltered.Async
 import unfiltered.response.{JsonContent, ResponseString}
 
-import com.graphbrain.gbdb.Vertex
-import com.graphbrain.gbdb.Edge
-import com.graphbrain.gbdb.Textual
-import com.graphbrain.gbdb.UserNode
-import com.graphbrain.gbdb.ID
-import com.graphbrain.gbdb.JSONGen
+import com.graphbrain.db.Vertex
+import com.graphbrain.db.Edge
+import com.graphbrain.db.Textual
+import com.graphbrain.db.UserNode
+import com.graphbrain.db.ID
+import com.graphbrain.utils.JSONGen
 import com.graphbrain.nlp.SentenceParser
 import com.graphbrain.nlp.ResponseType
 import com.graphbrain.nlp.GraphResponse
