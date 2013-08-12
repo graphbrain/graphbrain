@@ -19,11 +19,11 @@ import com.graphbrain.db.UserManagement
 import com.graphbrain.db.UserNode
 import com.graphbrain.db.ConsensusActor
 
-object Server {
+object WebServer {
   var http: unfiltered.netty.Http = null
   var prod: Boolean = false
 
-  val store = new Graph with SimpleCaching with UserOps with UserManagement
+  val graph = new Graph with SimpleCaching with UserOps with UserManagement
 
   val templateDirs = List(new java.io.File("/var/www/templates"))
   val scalateMode = "production"
@@ -31,7 +31,7 @@ object Server {
 
   val actorSystem = ActorSystem("actors")
 
-  val consensusActor = actorSystem.actorOf(Props(new ConsensusActor(store)))
+  val consensusActor = actorSystem.actorOf(Props(new ConsensusActor(graph)))
 
   def scalateResponse(template: String, page: String, title: String, cookies: Map[String, Any], req: HttpRequest[Any], js: String="", html: String="") = {
     val userNode = getUser(cookies)
@@ -65,7 +65,7 @@ object Server {
       null
     }
     else {
-      val userNode = store.getUserNodeByUsername(username)
+      val userNode = graph.getUserNodeByUsername(username)
       if (userNode == null) {
         null
       }
