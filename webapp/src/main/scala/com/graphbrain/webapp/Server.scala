@@ -37,17 +37,17 @@ object Server {
     val userNode = getUser(cookies)
     val loggedIn = userNode != null
     if (prod) {
-      Ok ~> Scalate(req, template, ("title", title), ("navBar", NavBar(userNode, page).html), ("cssAndJs", (new CssAndJs()).cssAndJs), ("loggedIn", loggedIn), ("js", js), ("html", html))(engine)
+      Ok ~> Scalate(req, template, ("title", title), ("navBar", NavBar(userNode, page).html), ("cssAndJs", new CssAndJs().cssAndJs), ("loggedIn", loggedIn), ("js", js), ("html", html))(engine)
     }
     else {
-      Ok ~> Scalate(req, template, ("title", title), ("navBar", NavBar(userNode, page).html), ("cssAndJs", (new CssAndJs()).cssAndJs), ("loggedIn", loggedIn), ("js", js), ("html", html))
+      Ok ~> Scalate(req, template, ("title", title), ("navBar", NavBar(userNode, page).html), ("cssAndJs", new CssAndJs().cssAndJs), ("loggedIn", loggedIn), ("js", js), ("html", html))
     }
   }
 
   def realIp(req: HttpRequest[Any]) = {
     val headers = req.headers("X-Forwarded-For")
     if (headers.hasNext)
-      headers.next
+      headers.next()
     else
       req.remoteAddr
   }
@@ -70,7 +70,7 @@ object Server {
         null
       }
       else {
-        if (store.checkSession(userNode, session)) {
+        if (userNode.checkSession(session)) {
           userNode
         }
         else {
@@ -106,8 +106,8 @@ object Server {
       .handler(AIChatPlan)
       .handler(DisambigPlan)
       .handler(ContextsPlan)
-      .resources(new URL(getClass().getResource("/robots.txt"), "."))
-    http.run
+      .resources(new URL(getClass.getResource("/robots.txt"), "."))
+    http.run()
 
     actorSystem.shutdown()
 

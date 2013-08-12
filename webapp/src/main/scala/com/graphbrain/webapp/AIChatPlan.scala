@@ -3,8 +3,6 @@ package com.graphbrain.webapp
 import unfiltered.request._
 import unfiltered.response._
 import unfiltered.netty._
-import unfiltered.Cookie
-import akka.actor.Actor
 import akka.actor.Props
 
 import com.graphbrain.utils.SimpleLog

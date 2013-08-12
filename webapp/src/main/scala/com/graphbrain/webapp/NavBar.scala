@@ -1,8 +1,6 @@
 package com.graphbrain.webapp
 
-
-import com.graphbrain.gbdb.UserNode
-
+import com.graphbrain.db.UserNode
 
 case class NavBar(user: UserNode, page: String) {
     
