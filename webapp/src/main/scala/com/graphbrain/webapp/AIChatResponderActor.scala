@@ -3,7 +3,7 @@ package com.graphbrain.webapp
 
 import scala.collection.mutable.Set
 
-import akka.actor.{Actor, Props}
+import akka.actor.Actor
 import org.jboss.netty.handler.codec.http.HttpResponse
 import unfiltered.Async
 import unfiltered.response.{JsonContent, ResponseString}
@@ -15,11 +15,7 @@ import com.graphbrain.db.UserNode
 import com.graphbrain.db.ID
 import com.graphbrain.utils.JSONGen
 import com.graphbrain.nlp.SentenceParser
-import com.graphbrain.nlp.ResponseType
 import com.graphbrain.nlp.GraphResponse
-import com.graphbrain.nlp.HardcodedResponse
-import com.graphbrain.nlp.SearchResponse
-import com.graphbrain.nlp.QuestionFactResponse
 
 import com.graphbrain.utils.SimpleLog
 
@@ -40,7 +36,7 @@ class AIChatResponderActor() extends Actor with SimpleLog {
       case t: Textual => {
         // TODO: deal with change (edge didn't exist before) vs add (edge already exists)
         val onclick = "aiChatDisambiguate(\"change\",\"" + t + "\",\"" + rel + "\",[" + participantIds + "]," + pos + ");"
-        "<br />&nbsp;&nbsp;&nbsp;&nbsp;Using: " + t + " " + t.generateSummary + ". <a href='#' class='aichat_action' onclick='" + onclick + "'>Did you mean another " + t + "?</a>"
+        "<br />&nbsp;&nbsp;&nbsp;&nbsp;Using: " + t + " " + Textual.generateSummary(t.id, WebServer.graph) + ". <a href='#' class='aichat_action' onclick='" + onclick + "'>Did you mean another " + t + "?</a>"
       }
       case _ => ""
     }
@@ -54,7 +50,7 @@ class AIChatResponderActor() extends Actor with SimpleLog {
       newEdges += ""
 
       try {
-        val responses = sparser.parseSentenceGeneral(sentence, root.removeContext, Option(user))
+        val responses = sparser.parseSentenceGeneral(sentence, root, Option(user))
         println(responses)
 
         if (responses.length > 0) {
