@@ -1,8 +1,6 @@
 package com.graphbrain.nlp
 
-import com.graphbrain.gbdb.Vertex
-
-
+import com.graphbrain.db.Vertex
 
 
 abstract class ResponseType 
