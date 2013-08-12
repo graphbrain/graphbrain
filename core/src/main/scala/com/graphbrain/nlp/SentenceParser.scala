@@ -3,20 +3,20 @@ package com.graphbrain.nlp
 import java.net.URLDecoder;
 import scala.collection.immutable.HashMap
 import scala.util.Sorting
-import com.graphbrain.gbdb.VertexStore
-import com.graphbrain.gbdb.OpLogging
-import com.graphbrain.gbdb.TextNode
-import com.graphbrain.gbdb.Edge
-import com.graphbrain.gbdb.URLNode
-import com.graphbrain.gbdb.UserNode
-import com.graphbrain.gbdb.EdgeType
-import com.graphbrain.gbdb.Vertex
-import com.graphbrain.gbdb.ID
-import com.graphbrain.gbdb.SearchInterface
+import com.graphbrain.db.Graph
+import com.graphbrain.db.OpLogging
+import com.graphbrain.db.TextNode
+import com.graphbrain.db.Edge
+import com.graphbrain.db.URLNode
+import com.graphbrain.db.UserNode
+import com.graphbrain.db.EdgeType
+import com.graphbrain.db.Vertex
+import com.graphbrain.db.ID
+import com.graphbrain.db.SearchInterface
 
 class SentenceParser (storeName:String = "gb") {
 
-  val store = new VertexStore(storeName)
+  val store = new Graph()
 
   val quoteRegex = """(\")(.+?)(\")""".r
   val nodeRegex = """(\[)(.+?)(\])""".r
