@@ -20,6 +20,8 @@ case class TextNode(override val id: String,
 
   override def setTs(newTs: Long): Vertex = copy(ts=newTs)
 
+  def text = ID.lastPart(id).replace("_", " ")
+
   /*
   override def updateSummary: Textual = TextNode(namespace, text, generateSummary)
 
@@ -41,7 +43,6 @@ case class TextNode(override val id: String,
     "summary: " + summary + "<br />"
   }
 }
-
 
 object TextNode {
   def fromNsAndText(namespace: String,
