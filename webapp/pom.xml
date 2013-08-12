@@ -61,8 +61,15 @@
         <artifactId>unfiltered-netty_2.10</artifactId>
         <version>0.6.8</version>
     </dependency>
+      <dependency>
+          <groupId>org.fusesource.scalate</groupId>
+          <artifactId>scalate-core_2.10</artifactId>
+          <version>1.6.1</version>
+      </dependency>
 
-    <!-- Test -->
+
+
+      <!-- Test -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
