@@ -5,29 +5,26 @@ import java.util.Locale
 import java.text.DateFormat
 import java.net.URL
 
-import unfiltered.scalate._
 import unfiltered.request._
 import unfiltered.response._
 import unfiltered.Cookie
+import unfiltered.scalate.Scalate
 import org.fusesource.scalate.TemplateEngine
 import akka.actor.ActorSystem
-import akka.actor.Actor
 import akka.actor.Props
 
-import com.graphbrain.gbdb.VertexStore
-import com.graphbrain.gbdb.SimpleCaching
-import com.graphbrain.gbdb.UserOps
-import com.graphbrain.gbdb.UserManagement
-import com.graphbrain.gbdb.UserNode
-import com.graphbrain.gbdb.ConsensusActor
-import com.graphbrain.utils.SimpleLog
-
+import com.graphbrain.db.Graph
+import com.graphbrain.db.SimpleCaching
+import com.graphbrain.db.UserOps
+import com.graphbrain.db.UserManagement
+import com.graphbrain.db.UserNode
+import com.graphbrain.db.ConsensusActor
 
 object Server {
   var http: unfiltered.netty.Http = null
   var prod: Boolean = false
 
-  val store = new VertexStore with SimpleCaching with UserOps with UserManagement
+  val store = new Graph with SimpleCaching with UserOps with UserManagement
 
   val templateDirs = List(new java.io.File("/var/www/templates"))
   val scalateMode = "production"
