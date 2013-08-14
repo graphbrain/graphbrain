@@ -1,56 +1,44 @@
-package com.graphbrain.nlp;
+package com.graphbrain.nlp
 
-import org.scalatest.FunSuite;
-import java.net.URLDecoder;
-import scala.collection.immutable.HashMap
-import scala.util.Sorting
-import com.graphbrain.gbdb.VertexStore
-import com.graphbrain.gbdb.OpLogging
-import com.graphbrain.gbdb.TextNode
-import com.graphbrain.gbdb.Edge
-import com.graphbrain.gbdb.URLNode
-import com.graphbrain.gbdb.UserNode
-import com.graphbrain.gbdb.EdgeType
-import com.graphbrain.gbdb.Vertex
-import com.graphbrain.gbdb.ID
-import com.graphbrain.gbdb.UserOps
-import com.graphbrain.gbdb.UserManagement
-
-
+import org.scalatest.FunSuite
+import com.graphbrain.db._
+import com.graphbrain.nlp.GraphResponse
+import scala.Some
+import com.graphbrain.db.EdgeType
 
 
 class SentenceParserTest extends FunSuite {
 
   val sentenceParser = new SentenceParser()
-  val store = new VertexStore("gb") with UserManagement with UserOps
+  val store = new Graph() with UserManagement with UserOps
 
-  val toadNodeGlobal = store.createTextNode(namespace="1", text="toad")
-  val booksNodeGlobal1 = store.createTextNode(namespace="1", text="books")
-  val booksNodeGlobal2 = store.createTextNode(namespace="2", text="books")
-  val booksUserOwned = store.createTextNode(namespace = "user/chihchun_chen/p/1", text="books")
-  val todoUserOwned = store.createTextNode(namespace = "user/chihchun_chen/p/1", text="todo")
-  val washTheCarUserOwned = store.createTextNode(namespace = "user/chihchun_chen/p/1", text = "wash the car")
-  val todoGlobal = store.createTextNode(namespace = "1", text="todo")
-  val todoGlobal2 = store.createTextNode(namespace = "2", text="todo")
-  val washTheCarGlobal = store.createTextNode(namespace = "1", text = "wash the car")
-  val jobGlobal = store.createTextNode(namespace = "1", text = "job");
+  val toadNodeGlobal = TextNode.fromNsAndText(namespace="1", text="toad")
+  val booksNodeGlobal1 = TextNode.fromNsAndText(namespace="1", text="books")
+  val booksNodeGlobal2 = TextNode.fromNsAndText(namespace="2", text="books")
+  val booksUserOwned = TextNode.fromNsAndText(namespace = "user/chihchun_chen/p/1", text="books")
+  val todoUserOwned = TextNode.fromNsAndText(namespace = "user/chihchun_chen/p/1", text="todo")
+  val washTheCarUserOwned = TextNode.fromNsAndText(namespace = "user/chihchun_chen/p/1", text = "wash the car")
+  val todoGlobal = TextNode.fromNsAndText(namespace = "1", text="todo")
+  val todoGlobal2 = TextNode.fromNsAndText(namespace = "2", text="todo")
+  val washTheCarGlobal = TextNode.fromNsAndText(namespace = "1", text = "wash the car")
+  val jobGlobal = TextNode.fromNsAndText(namespace = "1", text = "job")
 
 
-  val toadsNodeGlobal = store.createTextNode(namespace="1", text="toads")
+  val toadsNodeGlobal = TextNode.fromNsAndText(namespace="1", text="toads")
 
-  val excellenceNodeGlobal = store.createTextNode(namespace="1", text="excellent book")
-  val toadNodeUser = store.createTextNode(namespace="usergenerated/chihchun_chen", text="toad")
-  val toadTitleUser = store.createTextNode(namespace="usergenerated/chihchun_chen", text="Chih-Chun is a toad")
-  val globalNameNode1 = store.createTextNode(namespace="1", text="ChihChun")
-  val globalNameNode2 = store.createTextNode(namespace = "1", text = "Chih-Chun")
-  val globalNameNode3 = store.createTextNode(namespace = "1", text = "Chih-Chun is a toad")
-  val globalNameNode4 = store.createTextNode(namespace = "1", text = "Telmo")
+  val excellenceNodeGlobal = TextNode.fromNsAndText(namespace="1", text="excellent book")
+  val toadNodeUser = TextNode.fromNsAndText(namespace="usergenerated/chihchun_chen", text="toad")
+  val toadTitleUser = TextNode.fromNsAndText(namespace="usergenerated/chihchun_chen", text="Chih-Chun is a toad")
+  val globalNameNode1 = TextNode.fromNsAndText(namespace="1", text="ChihChun")
+  val globalNameNode2 = TextNode.fromNsAndText(namespace = "1", text = "Chih-Chun")
+  val globalNameNode3 = TextNode.fromNsAndText(namespace = "1", text = "Chih-Chun is a toad")
+  val globalNameNode4 = TextNode.fromNsAndText(namespace = "1", text = "Telmo")
 
-  val programmerGlobalNode = store.createTextNode(namespace = "1", text = "programmer")
-  val userNode = UserNode(store = store, id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
-  val graphbrainGlobalNode = store.createTextNode(namespace = "1", text = "GraphBrain")
-  val graphbrainUserNode = store.createTextNode(namespace = "usergenerated/chihchun_chen", text = "graphbrain")
-  val gbURLNode = store.createURLNode(url = "http://graphbrain.com(nice)", userId = "")
+  val programmerGlobalNode = TextNode.fromNsAndText(namespace = "1", text = "programmer")
+  val userNode = UserNode.create(username="chihchun_chen", name="Chih-Chun Chen", email="chihchun@example.com", password="password")
+  val graphbrainGlobalNode = TextNode.fromNsAndText(namespace = "1", text = "GraphBrain")
+  val graphbrainUserNode = TextNode.fromNsAndText(namespace = "usergenerated/chihchun_chen", text = "graphbrain")
+  val gbURLNode = URLNode.fromUrl(url = "http://graphbrain.com(nice)", userId = "")
   
   val sentence1 = "ChihChun is a toad"
   val sentence2 = "I am always a programmer at graphbrain"

@@ -15,7 +15,7 @@ object AIChatPlan extends async.Plan with ServerErrorResponse with SimpleLog {
       val userNode = WebServer.getUser(cookies)
       val sentence = params("sentence")(0)
       val rootId = params("rootId")(0)
-      val root = WebServer.store.get(rootId)
+      val root = WebServer.graph.get(rootId)
       responderActor ! AIChatResponderActor.Sentence(sentence, root, userNode, req)
 
       WebServer.log(req, cookies, "AI CHAT sentence: " + sentence + "; rootId: " + rootId)

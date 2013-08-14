@@ -69,7 +69,7 @@ case class UserNode(override val id: String,
 }
 
 object UserNode {
-  def create(username: String, name: String, email: String, password: String, role: String) = {
+  def create(username: String, name: String, email: String, password: String, role: String="") = {
     val id = ID.userIdFromUsername(username)
     val pwdhash = BCrypt.hashpw(password, BCrypt.gensalt())
     UserNode(id, username, name, email, pwdhash, role)

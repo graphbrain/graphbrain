@@ -1,21 +1,8 @@
 package com.graphbrain.webapp
 
-import com.graphbrain.gbdb.UserOps
-import com.graphbrain.gbdb.Vertex
-import com.graphbrain.gbdb.Edge
-import com.graphbrain.gbdb.TextNode
-import com.graphbrain.gbdb.URLNode
-import com.graphbrain.gbdb.UserNode
-import com.graphbrain.gbdb.ContextNode
-import com.graphbrain.gbdb.ID
-import com.graphbrain.gbdb.IdFamily
-import com.graphbrain.gbdb.JSONGen
-
-import com.graphbrain.gbdb.VertexStore
-import com.graphbrain.gbdb.UserManagement
-import com.graphbrain.gbdb.SimpleCaching
 import scala.math
-
+import com.graphbrain.db._
+import com.graphbrain.utils.JSONGen
 
 object VisualGraph {
   val MAX_SNODES = 15
@@ -25,7 +12,7 @@ object VisualGraph {
     val userId = if (user != null) user.id else ""
     
     // get neighboring edges
-    val hyperEdges = store.neighborEdges2(rootId, userId, edgeType, relPos)
+    val hyperEdges = store.edges(rootId, userId)
     
     // map hyperedges to visual edges
     val visualEdges = hyperEdges.map(hyper2edge(_, rootId)).filter(_ != null)
@@ -37,25 +24,20 @@ object VisualGraph {
     val truncatedEdgeNodeMap = truncateEdgeNodeMap(edgeNodeMap, MAX_SNODES)
 
     // full relations list
-    val allRelations = edgeNodeMap.keys.map(x => Map(("rel" -> x._1), ("pos" -> x._2),
-      ("label" -> linkLabel(x._1)), ("snode" -> snodeId(x._1, x._2))))
+    val allRelations = edgeNodeMap.keys.map(x => Map("rel" -> x._1, "pos" -> x._2,
+      "label" -> linkLabel(x._1), "snode" -> snodeId(x._1, x._2)))
 
     // create map with all information for supernodes
     val snodeMap = generateSnodeMap(truncatedEdgeNodeMap, store, rootId, user)
 
     // contexts
-    val contexts = if ((user != null) && (user.contexts != null)) {
-      user.contexts.map(c => Map(("id" -> c.id), ("name" -> c.name), ("access" -> c.access)))
-    }
-    else {
-      Nil
-    }
+    val contexts = Nil
 
     // create reply structure with all the information needed for rendering
-    val reply = Map(("user" -> userId), ("root" -> node2map(rootId, "", store, rootId, user)), 
-      ("snodes" -> snodeMap), ("allrelations" -> allRelations), ("context" -> ID.contextId(rootId)), ("contexts" -> contexts))
+    val reply = Map("user" -> userId, "root" -> node2map(rootId, "", store, rootId, user),
+      "snodes" -> snodeMap, "allrelations" -> allRelations, "context" -> ID.contextId(rootId), "contexts" -> contexts)
 
-    Server.store.clear()
+    WebServer.graph.clear()
 
     // generate json reply
     JSONGen.json(reply)
@@ -106,29 +88,29 @@ object VisualGraph {
   }
 
   private def node2map(nodeId: String, nodeEdge: String, store: UserOps, rootId: String, user: UserNode) = {
-    val family = IdFamily.family(nodeId)
-    val node = if ((nodeId != rootId) && ((family == IdFamily.Global) || (family == IdFamily.UserSpace))) {
-      TextNode.fromId(nodeId, store)
+    val vtype = VertexType.getType(nodeId)
+    val node = if ((nodeId != rootId) && (vtype == VertexType.Text)) {
+      TextNode(nodeId)
     }
     else{
       try {
         store.get(nodeId)
       }
       catch {
-        case _ => null
+        case _: Throwable => null
       }
     }
 
     node match {
-      case tn: TextNode => Map(("id" -> tn.id), ("type" -> "text"), ("text" -> tn.text), ("edge" -> nodeEdge))
+      case tn: TextNode => Map("id" -> tn.id, "type" -> "text", "text" -> tn.text, "edge" -> nodeEdge)
       case un: URLNode => {
         val title = if (un.title == "") un.url else un.title
-        Map(("id" -> un.id), ("type" -> "url"), ("text" -> title), ("url" -> un.url), ("icon" -> un.icon), ("edge" -> nodeEdge))
+        Map("id" -> un.id, "type" -> "url", "text" -> title, "url" -> un.url, "icon" -> un.icon, "edge" -> nodeEdge)
       }
-      case un: UserNode => Map(("id" -> un.id), ("type" -> "user"), ("text" -> un.name), ("edge" -> nodeEdge))
-      case cn: ContextNode => Map(("id" -> cn.id), ("type" -> "context"), ("text" -> user.name), ("text2" -> ID.humanReadable(cn.id)), ("edge" -> nodeEdge))
+      case un: UserNode => Map("id" -> un.id, "type" -> "user", "text" -> un.name, "edge" -> nodeEdge)
+      case cn: ContextNode => Map("id" -> cn.id, "type" -> "context", "text" -> user.name, "text2" -> ID.humanReadable(cn.id), "edge" -> nodeEdge)
       case null => ""
-      case _ => Map(("id" -> node.id), ("type" -> "text"), ("text" -> node.id), ("edge" -> nodeEdge))
+      case _ => Map("id" -> node.id, "type" -> "text", "text" -> node.id, "edge" -> nodeEdge)
     }
   }
 

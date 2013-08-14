@@ -521,12 +521,12 @@ class SentenceParser (storeName:String = "gb") {
   }
 
   def hasInstanceOwnedBy(subtypeID: String): Boolean = {
-    val edges = store.neighborEdges(subtypeID, instanceOwnedByRelType.id)
+    val edges = store.edges(Array(instanceOwnedByRelType.id, subtypeID))
     !edges.isEmpty
   }
 
   def getInstanceOwnedByTriplet(subtypeID: String, supertypeText: String, ownerText: String): (Vertex, Vertex, Vertex, Int) = {
-    val edges = store.neighborEdges(subtypeID, instanceOwnedByRelType.id)
+    val edges = store.edges(Array(instanceOwnedByRelType.id, subtypeID))
     val subtype = store.get(subtypeID)
     var superType = getFirstFoundNode(supertypeText)
     var owner = getFirstFoundNode(ownerText)
@@ -665,7 +665,7 @@ class SentenceParser (storeName:String = "gb") {
 
 
 
-  def textToNode(text:String, node: Vertex = store.createTextNode(namespace="", text="GBNoneGB"), user:Option[Vertex]=None): List[Vertex] = {
+  def textToNode(text:String, node: Vertex = TextNode.fromNsAndText(namespace="", text="GBNoneGB"), user:Option[Vertex]=None): List[Vertex] = {
     var userName = ""
     var results: List[Vertex] = List()
     user match {
@@ -1037,7 +1037,7 @@ def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: 
 			  entryIDs = nodesForEachNodeText(0)(i).id :: entryIDs
 			  entryIDs = nodesForEachNodeText(1)(i).id :: entryIDs
 
-			  val edge = new Edge(ID.relation_id(edgeText), entryIDs.reverse)
+			  val edge = Edge.fromParticipants(ID.relation_id(edgeText), entryIDs.reverse.toArray)
 			  //println("Edge: " + edge)
 			  val entry = (entryNodes, edge)
 
@@ -1195,7 +1195,7 @@ object SentenceParser {
   	  val sentenceParser = new SentenceParser()
 
       val rootNode = TextNode.fromNsAndText(namespace="usergenerated/chihchun_chen", text="toad")
-      val userNode = sentenceParser.store.createUserNode(id="user/chihchun_chen", username="chihchun_chen", name="Chih-Chun Chen")
+      val userNode = UserNode.create(username="chihchun_chen", name="Chih-Chun Chen", email="chihchun@graphbrain.com", password="chichun")
   	  val sentence = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
       println("From command line with general: " + sentence)
       val responses = sentenceParser.parseSentenceGeneral(sentence, user = Some(userNode))

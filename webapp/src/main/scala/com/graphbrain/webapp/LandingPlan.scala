@@ -3,15 +3,13 @@ package com.graphbrain.webapp
 import unfiltered.request._
 import unfiltered.response._
 import unfiltered.netty._
-import unfiltered.Cookie
-
 
 object LandingPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse {
   def pageResponse(template: String, page: String, title: String, cookies: Map[String, Any], req: HttpRequest[Any]) = {
     
-    Server.log(req, cookies, "PAGE " + page)
+    WebServer.log(req, cookies, "PAGE " + page)
     
-    Server.scalateResponse(template, page, title, cookies, req)
+    WebServer.scalateResponse(template, page, title, cookies, req)
   }
 
   def intent = {
@@ -19,7 +17,7 @@ object LandingPlan extends cycle.Plan with cycle.SynchronousExecution with Serve
       pageResponse("ComingSoon.ssp", "comingsoon", "Coming soon", cookies, req)
     }*/
     case req@GET(Path("/") & Cookies(cookies)) => {
-      val userNode = Server.getUser(cookies)
+      val userNode = WebServer.getUser(cookies)
 
       if (userNode == null) {
         pageResponse("Landing.ssp", "home", "Graphbrain", cookies, req)

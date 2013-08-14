@@ -202,6 +202,55 @@ class LevelDbBackend extends Backend  {
 		}
 		res
 	}
+
+  def edges(pattern: Edge): Set[Edge] = {
+    var res = Set[Edge]()
+
+    val sb = new StringBuilder(100)
+    sb.append(EDGE_PREFIX)
+
+    var first = true
+    for (p <- pattern.ids) {
+      if (p != "*") {
+        if (first)
+          first = false
+        else
+          sb.append(" ")
+        sb.append(p)
+      }
+    }
+
+    val startStr = sb.toString()
+    val endStr = LevelDbBackend.strPlusOne(startStr)
+    val iterator = db.iterator()
+    try {
+      iterator.seek(bytes(startStr))
+      var key = startStr
+
+      while (iterator.hasNext && key.compareTo(endStr) < 0) {
+        val entry = iterator.next()
+        key = asString(entry.getKey)
+
+        key = key.substring(1)
+        var tokens = key.split(" ")
+        val perm = tokens(tokens.length - 1).toInt
+        tokens = tokens.dropRight(1)
+        tokens = strArrayUnpermutate(tokens, perm)
+        val edge = Edge.fromParticipants(tokens)
+        if (edge matches pattern)
+          res = res + edge
+      }
+    }
+    finally {
+      try {
+        iterator.close()
+      }
+      catch {
+        case e: IOException => e.printStackTrace()
+      }
+    }
+    res
+  }
 	
 	def writeEdgePermutations(edge: Edge) = {
 		val count = edge.ids.length

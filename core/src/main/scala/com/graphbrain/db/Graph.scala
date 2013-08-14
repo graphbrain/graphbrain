@@ -43,6 +43,10 @@ class Graph() extends SimpleLog {
 
   def edges(centerId: String): Set[Edge] = edges(get(centerId))
 
+  def edges(pattern: Edge) = back.edges(pattern)
+
+  def edges(pattern: Array[String]) = back.edges(Edge.fromParticipants(pattern))
+
   def nodesFromEdgeSet(edgeSet: Set[Edge]) = {
     var nset = Set[String]()
 
