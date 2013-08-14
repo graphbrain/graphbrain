@@ -43,7 +43,7 @@ object Scalate {
     (String, PrintWriter, TemplateEngine) => RenderContext
 
   private val defaultTemplateDirs = 
-    new File("src/main/resources/templates") :: Nil
+    new File("webapp/src/main/resources/templates") :: Nil
   private val defaultEngine = new TemplateEngine(defaultTemplateDirs)
   private val defaultRenderContext: ToRenderContext =
     (path, writer, engine) =>

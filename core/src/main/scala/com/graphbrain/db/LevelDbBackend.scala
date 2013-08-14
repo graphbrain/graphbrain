@@ -13,9 +13,7 @@ class LevelDbBackend extends Backend  {
 	val EDGE_PREFIX = '#'
   val GLOBAL_LINK_PREFIX = '*'
 
-	val options = new Options()
-  options.createIfMissing(true)
-  val db = factory.open(new File("dbnode"), options)
+  val db = LevelDbBackend.db
 	
 	def close() = {
 		db.close()
@@ -319,6 +317,10 @@ class LevelDbBackend extends Backend  {
 }
 
 object LevelDbBackend {
+  val options = new Options()
+  options.createIfMissing(true)
+  val db = factory.open(new File("dbnode"), options)
+
   def strPlusOne(str: String) = {
     val lastChar = str.charAt(str.length - 1)
     str.substring(0, str.length - 1) + (lastChar + 1).toChar
