@@ -683,7 +683,7 @@ class SentenceParser (storeName:String = "gb") {
       try{
         results = store.get(text) :: results
       }
-      catch {case e =>}
+      catch {case e: Throwable =>}
 
     }
 
@@ -983,7 +983,7 @@ def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: 
 
     var userID = ""
     user match {
-        case u:UserNode => userID = u.username
+        case Some(u:UserNode) => userID = u.username
         case _ =>
 
     }
@@ -1009,7 +1009,7 @@ def findOrConvertToVertices(possibleParses: List[(List[String], String)], root: 
 				val limit = if (maxPossiblePerParse < results.length) maxPossiblePerParse else results.length;
         //println("Limit: " + limit)
 				for(i <- 0 to limit-1) {
-				  val result = try {results(i) } catch { case e => ""}
+				  val result = try {results(i) } catch { case e: Throwable => ""}
 				  val resultNode = getOrCreate(result, user, nodeText, root)
 				  //println("Node: " + resultNode.id)
 
@@ -1157,7 +1157,7 @@ def getOrCreate(id:String, user:Option[Vertex] = None, textString:String = "", r
       store.get(id)
     }
     catch{
-      case e => val newNode = textToNode(textString, root, user)(0)
+      case e: Throwable => val newNode = textToNode(textString, root, user)(0)
       //TextNode(id=ID.usergenerated_id(userID, textString), text=textString);
       return newNode
     }
@@ -1218,8 +1218,8 @@ object SentenceParser {
                           case (a:List[Vertex], ed:EdgeType) =>
                             for(aNode <- a) {
                               a match {
-                                case tn: TextNode => println("auxNode: " + tn.id)
-                                case un: UserNode => println("auxNode: " + un.id)
+                                case List(tn: TextNode) => println("auxNode: " + tn.id)
+                                case List(un: UserNode) => println("auxNode: " + un.id)
                                 case _ =>
                               }
 
@@ -1234,8 +1234,8 @@ object SentenceParser {
                           case (a:List[Vertex], ed:EdgeType) =>
                             for(aNode <- a) {
                               a match {
-                                case tn: TextNode => println("auxNode: " + tn.id)
-                                case un: UserNode => println("auxNode: " + un.id)
+                                case List(tn: TextNode) => println("auxNode: " + tn.id)
+                                case List(un: UserNode) => println("auxNode: " + un.id)
                                 case _ =>
                               }
 
@@ -1250,8 +1250,8 @@ object SentenceParser {
                           case (a:List[Vertex], ed:EdgeType) =>
                             for(aNode <- a) {
                               a match {
-                                case tn: TextNode => println("auxNode: " + tn.id)
-                                case un: UserNode => println("auxNode: " + un.id)
+                                case List(tn: TextNode) => println("auxNode: " + tn.id)
+                                case List(un: UserNode) => println("auxNode: " + un.id)
                                 case _ =>
                               }
 

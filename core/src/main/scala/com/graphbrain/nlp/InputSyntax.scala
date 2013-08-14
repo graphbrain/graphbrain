@@ -34,11 +34,11 @@ object InputSyntax {
 
 	def checkParenthClosed(annotatedText: List[(String, String, String)]): Boolean = {
 		for(an <- annotatedText) {
-			if(rightParenthPosTag.findAllIn(an._2)==1) {
-				return true;
+			if(rightParenthPosTag.findAllIn(an._2) == 1) {
+				return true
 			}
 		}
-		return false;
+		false
 	}
 
 	/*def parseURL(url: String, annotatedText: List[(String, String, String)], quoteAnnotatedText: List[(String, String)]: (List[(String, String)], List[(String, String, String)], List[(String, String)]) = {
