@@ -1,14 +1,11 @@
 package com.graphbrain.webapp
 
-import akka.actor.{Actor, Props}
+import akka.actor.Actor
 import org.jboss.netty.handler.codec.http.HttpResponse
 import unfiltered.Async
 import unfiltered.response.{JsonContent, ResponseString}
-
-import com.graphbrain.gbdb.Vertex
-import com.graphbrain.gbdb.Edge
-import com.graphbrain.gbdb.UserNode
-
+import com.graphbrain.db.Vertex
+import com.graphbrain.db.UserNode
 import com.graphbrain.utils.SimpleLog
 
 
@@ -19,9 +16,9 @@ object RelationsResponderActor {
 class RelationsResponderActor() extends Actor with SimpleLog{
   import RelationsResponderActor._
 
-  override protected def receive = {
+  override def receive = {
     case Relation(edgeType, pos, root, user, responder) =>
-      val reply = VisualGraph.generate(root.id, Server.store, user, edgeType, pos)
+      val reply = VisualGraph.generate(root.id, WebServer.graph, user, edgeType, pos)
       responder.respond(JsonContent ~> ResponseString(reply))
   }
 }

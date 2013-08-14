@@ -1,13 +1,9 @@
 package com.graphbrain.webapp
 
 import java.net.URLDecoder
-
 import unfiltered.request._
-import unfiltered.response._
 import unfiltered.netty._
-
 import com.graphbrain.utils.SimpleLog
-
 
 object NodePlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse with SimpleLog {
   def nodeResponse(id: String, cookies: Map[String, Any], req: HttpRequest[Any]) = {
@@ -15,7 +11,7 @@ object NodePlan extends cycle.Plan with cycle.SynchronousExecution with ServerEr
     ldebug("NODE id: " + id, Console.CYAN)
     val userNode = WebServer.getUser(cookies)
     val node = WebServer.graph.get(URLDecoder.decode(id, "UTF-8"))
-    NodePage(WebServer.graph, node, userNode, Server.prod, req, cookies).response
+    NodePage(WebServer.graph, node, userNode, WebServer.prod, req, cookies).response
   }
 
   def rawResponse(id: String, cookies: Map[String, Any], req: HttpRequest[Any]) = {
