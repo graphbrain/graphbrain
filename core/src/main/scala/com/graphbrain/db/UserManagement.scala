@@ -80,5 +80,8 @@ trait UserManagement extends Graph {
     un
   }
 
-  def allUsers = back.listByType(VertexType.User)
+  def allUsers = back.listByType(VertexType.User).map(f = v => v match {
+    case u: UserNode => u
+    case _ => null
+  })
 }

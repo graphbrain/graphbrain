@@ -4,10 +4,8 @@ package com.graphbrain.webapp
 import unfiltered.request._
 import unfiltered.response._
 import unfiltered.netty._
-import unfiltered.Cookie
 
-import com.graphbrain.gbdb.Edge
-import com.graphbrain.gbdb.ID
+import com.graphbrain.db.Edge
 import com.graphbrain.utils.SimpleLog
 
 
@@ -23,23 +21,23 @@ object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with S
       removeLinkOrNode(params, cookies, req)
     }
 
-    val userNode = Server.getUser(cookies)
-    val node = Server.store.get(id)
-    NodePage(Server.store, node, userNode, Server.prod, req, cookies, errorMessage).response
+    val userNode = WebServer.getUser(cookies)
+    val node = WebServer.graph.get(id)
+    NodePage(WebServer.graph, node, userNode, WebServer.prod, req, cookies, errorMessage).response
   }
 
   def removeLinkOrNode(params: Map[String, Seq[String]], cookies: Map[String, Any], req: HttpRequest[Any]) = {
-    val userNode = Server.getUser(cookies)
+    val userNode = WebServer.getUser(cookies)
     val edgeString = params("edge")(0)
     
-    val edge = Edge.fromString(edgeString)
+    val edge = Edge(edgeString)
 
-    Server.store.delrel2(edge, userNode.id)
+    WebServer.store.delrel2(edge, userNode.id)
 
     // force consesnsus re-evaluation of affected edge
-    Server.consensusActor ! edge
+    WebServer.consensusActor ! edge
 
-    Server.log(req, cookies, "REMOVE EDGE: " + edgeString)
+    WebServer.log(req, cookies, "REMOVE EDGE: " + edgeString)
     ldebug("REMOVE EDGE: " + edgeString, Console.CYAN)
   }
 

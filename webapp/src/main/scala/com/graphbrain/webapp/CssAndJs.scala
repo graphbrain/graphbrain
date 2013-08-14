@@ -1,9 +1,6 @@
 package com.graphbrain.webapp
 
-
 import scala.util.Random
-import com.graphbrain.gbdb.UserNode
-
 
 case class CssAndJs() {
 
@@ -26,7 +23,7 @@ case class CssAndJs() {
     """
 
   def cssAndJs = {
-    if (Server.prod) {
+    if (WebServer.prod) {
       """<link href="/css/main.css?""" + version + """" type="text/css" rel="Stylesheet" />""" +
       """<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>""" +
       """<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.js" type="text/javascript"></script>""" +

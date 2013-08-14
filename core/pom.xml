@@ -64,10 +64,24 @@
         </dependency>
         <dependency>
             <groupId>edu.stanford</groupId>
-            <artifactId>nlp</artifactId>
+            <artifactId>stanford-corenlp</artifactId>
             <version>1.0.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/stanford-corenlp-2012-07-09.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford</groupId>
+            <artifactId>stanford-corenlp-models</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/stanford-corenlp-2012-07-06-models.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford</groupId>
+            <artifactId>xom</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/xom.jar</systemPath>
         </dependency>
 
         <!-- Test -->

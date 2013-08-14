@@ -1,23 +1,19 @@
 package com.graphbrain.webapp
 
-
-import scala.collection.mutable.Set
-
 import akka.actor.Actor
 import org.jboss.netty.handler.codec.http.HttpResponse
 import unfiltered.Async
-import unfiltered.response.{JsonContent, ResponseString}
+import unfiltered.response.JsonContent
 
-import com.graphbrain.db.Vertex
-import com.graphbrain.db.Edge
-import com.graphbrain.db.Textual
-import com.graphbrain.db.UserNode
-import com.graphbrain.db.ID
+import com.graphbrain.db._
 import com.graphbrain.utils.JSONGen
 import com.graphbrain.nlp.SentenceParser
-import com.graphbrain.nlp.GraphResponse
 
 import com.graphbrain.utils.SimpleLog
+import com.graphbrain.nlp.GraphResponse
+import scala.Some
+import unfiltered.response.ResponseString
+import scala.collection.mutable
 
 
 object AIChatResponderActor {
@@ -46,7 +42,7 @@ class AIChatResponderActor() extends Actor with SimpleLog {
     case Sentence(sentence, root, user, responder) =>
       var replySentence = "Sorry, I don't understand."
       var goto = ""
-      var newEdges = Set[String]()
+      var newEdges = mutable.Set[String]()
       newEdges += ""
 
       try {
@@ -55,30 +51,30 @@ class AIChatResponderActor() extends Actor with SimpleLog {
 
         if (responses.length > 0) {
 
-          val topResponse = responses(0);
+          val topResponse = responses(0)
           println(topResponse)
           topResponse match {
             case r: GraphResponse =>
               val parses = r.hypergraphList
 
-              val topParse = parses(0);
+              val topParse = parses(0)
 
-              val contextId = ID.contextId(root.id)
-              val nodes = topParse._1.map(_._1).map(_.setContext(contextId)).toArray
-              val nodeIds = nodes.map(n => ID.setContext(n.id, contextId)).toList
+              val nodes = topParse._1.map(_._1).toArray
+              val nodeIds = nodes.map(n => n.id)
               println("\n\n\n ************* " + nodeIds + "\n************\n\n\n")
               val relation = topParse._2.id.replace(" ", "_")
 
               //ldebug("node1: " + node1.id + "\nnode2: " + node2.id + "\nrelation: " + relation, Console.RED)
 
-              Server.store.createAndConnectVertices2(relation, nodes, user.id)
+              val relType = EdgeType(relation)
+              WebServer.graph.createAndConnectVertices(Array(relType) ++ nodes, user.id)
 
-              val edge = Edge(relation, nodeIds)
+              val edge = Edge.fromParticipants(relation, nodeIds)
               println("KKKKKKKKKKKKKKKKKK >> " + edge.toString)
               newEdges += edge.toGlobal.toString
 
               // force consesnsus re-evaluation of affected edge
-              Server.consensusActor ! edge
+              WebServer.consensusActor ! edge
 
               //TODO: fix undoFunctionCall to support facts with any number of participants
               val undoFunctionCall = "undoFact('" + relation + "', '" + nodes(0).id + " " + nodes(1).id + "')"
@@ -94,21 +90,22 @@ class AIChatResponderActor() extends Actor with SimpleLog {
               // Create extra facts
               val facts = topParse._1
               for (fact <- facts) {
-                val firstNode = fact._1.setContext(contextId)
+                val firstNode = fact._1
                 val extraFact = fact._2
                 extraFact match {
                   case Some(f) =>
-                    val nodes = (firstNode :: f._1.map(_.setContext(contextId))).toArray
-                    val nodeIds = nodes.map(_.id).toList
+                    val nodes = (firstNode :: f._1).toArray
+                    val nodeIds = nodes.map(_.id)
                     val relation = f._2.id.replace(" ", "_")
 
-                    Server.store.createAndConnectVertices2(relation, nodes, user.id)
+                    val relType = EdgeType(relation)
+                    WebServer.graph.createAndConnectVertices(Array(relType) ++  nodes, user.id)
 
-                    val edge = Edge(relation, nodeIds)
+                    val edge = Edge.fromParticipants(relation, nodeIds)
                     newEdges += edge.toGlobal.toString
 
                     // force consesnsus re-evaluation of affected edge
-                    Server.consensusActor ! edge                    
+                    WebServer.consensusActor ! edge
                 }
               }
             case _ =>
@@ -117,10 +114,10 @@ class AIChatResponderActor() extends Actor with SimpleLog {
         }
       }
       catch {
-        case e => e.printStackTrace()
+        case e: Throwable => e.printStackTrace()
       }
 
-      val replyMap = Map(("sentence" -> replySentence), ("goto" -> goto), ("newedges" -> newEdges))
+      val replyMap = Map("sentence" -> replySentence, "goto" -> goto, "newedges" -> newEdges)
       responder.respond(JsonContent ~> ResponseString(JSONGen.json(replyMap)))
   }
 }

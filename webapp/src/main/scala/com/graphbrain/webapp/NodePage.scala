@@ -1,13 +1,10 @@
 package com.graphbrain.webapp
 
-
-import unfiltered.scalate._
 import unfiltered.request._
-import unfiltered.response._
 
-import com.graphbrain.gbdb.UserOps
-import com.graphbrain.gbdb.Vertex
-import com.graphbrain.gbdb.UserNode
+import com.graphbrain.db.UserOps
+import com.graphbrain.db.Vertex
+import com.graphbrain.db.UserNode
 
 
 case class NodePage(store: UserOps, node: Vertex, user: UserNode, prod: Boolean, req: HttpRequest[Any], cookies: Map[String, Any], errorMsg: String="") {
@@ -16,7 +13,7 @@ case class NodePage(store: UserOps, node: Vertex, user: UserNode, prod: Boolean,
   val js = "var data = " + VisualGraph.generate(node.id, store, user) + ";\n" +
     "var errorMsg = \"" + errorMsg + "\";\n"
 
-  def response = Server.scalateResponse("node.ssp", "node", node.toString, cookies, req, js, "")
+  def response = WebServer.scalateResponse("node.ssp", "node", node.toString, cookies, req, js, "")
 }
 
 object NodePage {    
