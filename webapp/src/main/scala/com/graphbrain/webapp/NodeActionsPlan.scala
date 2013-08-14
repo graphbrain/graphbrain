@@ -1,8 +1,6 @@
 package com.graphbrain.webapp
 
-
 import unfiltered.request._
-import unfiltered.response._
 import unfiltered.netty._
 
 import com.graphbrain.db.Edge
@@ -32,7 +30,7 @@ object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with S
     
     val edge = Edge(edgeString)
 
-    WebServer.store.delrel2(edge, userNode.id)
+    WebServer.graph.remove(edge, userNode.id)
 
     // force consesnsus re-evaluation of affected edge
     WebServer.consensusActor ! edge

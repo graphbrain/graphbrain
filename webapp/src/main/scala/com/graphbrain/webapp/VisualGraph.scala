@@ -43,14 +43,14 @@ object VisualGraph {
     JSONGen.json(reply)
   }
 
-  private def hyper2edge(edge: Edge, rootId: String) = {
+  private def hyper2edge(edge: Edge, rootId: String): SimpleEdge = {
     if (edge.participantIds.length > 2) {
       if (edge.edgeType == "rtype/1/instance_of~owned_by") {
         if (edge.participantIds(0) == rootId) {
-          Edge("rtype/1/has", List(edge.participantIds(2), rootId), edge)
+          SimpleEdge("rtype/1/has", edge.participantIds(2), rootId, edge)
         }
         else if (edge.participantIds(2) == rootId) {
-          Edge("rtype/1/has", List(rootId, edge.participantIds(0)), edge)
+          SimpleEdge("rtype/1/has", rootId, edge.participantIds(0), edge)
         }
         else {
           null
@@ -58,25 +58,24 @@ object VisualGraph {
       }
       if (edge.edgeType == "rtype/1/has~of_type") {
         val edgeType = "has " + ID.lastPart(edge.participantIds(2))
-        Edge(edgeType, List(edge.participantIds(0), edge.participantIds(1)), edge)
+        SimpleEdge(edgeType, edge.participantIds(0), edge.participantIds(1), edge)
       }
       else {
         val parts = edge.edgeType.split("~").toList
         val edgeType = parts.head + " " + ID.lastPart(edge.participantIds(1)) + " " + parts.tail.reduceLeft(_ + " " + _)
         //val edgeType = edge.edgeType.replaceAll("~", " .. ") + " .. "
-        Edge(edgeType, List(edge.participantIds(0), edge.participantIds(2)), edge)
+        SimpleEdge(edgeType, edge.participantIds(0), edge.participantIds(2), edge)
       }
     }
     else {
-      edge
+      new SimpleEdge(edge)
     }
   }
 
-  private def generateEdgeNodeMap(edges: Set[Edge], rootId: String) = {
+  private def generateEdgeNodeMap(edges: Set[SimpleEdge], rootId: String) = {
     edges.map(
-      e => e.participantIds
-        .zip(0 until e.participantIds.length)
-        .map(x => (e.edgeType, x._2, x._1, e.getOriginalEdge.toString))
+      e => List(e.id1 -> 0, e.id2 -> 1)
+        .map(x => (e.edgeType, x._2, x._1, e.parent.toString))
     ).flatten
       .filter(x => x._3 != rootId)
       .groupBy(x => (x._1, x._2))
@@ -122,7 +121,7 @@ object VisualGraph {
     val color = linkColor(label)
     val nodes = pair._2.map(x => node2map(x._1, x._2, store, rootId, user))
 
-    val data = Map(("nodes" -> nodes), ("etype" -> pair._1._1), ("rpos" -> pair._1._2), ("label" -> label), ("color" -> color))
+    val data = Map("nodes" -> nodes, "etype" -> pair._1._1, "rpos" -> pair._1._2, "label" -> label, "color" -> color)
 
     id -> data
   }
