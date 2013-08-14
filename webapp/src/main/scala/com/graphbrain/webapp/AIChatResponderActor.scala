@@ -38,7 +38,7 @@ class AIChatResponderActor() extends Actor with SimpleLog {
     }
   }
 
-  override protected def receive = {
+  override def receive = {
     case Sentence(sentence, root, user, responder) =>
       var replySentence = "Sorry, I don't understand."
       var goto = ""

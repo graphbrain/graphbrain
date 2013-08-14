@@ -1,26 +1,20 @@
 package com.graphbrain.webapp
 
-
-import unfiltered.scalate._
 import unfiltered.request._
-import unfiltered.response._
 
-import com.graphbrain.gbdb.VertexStore
-import com.graphbrain.gbdb.Vertex
-import com.graphbrain.gbdb.Edge
-import com.graphbrain.gbdb.UserNode
-
+import com.graphbrain.db.Vertex
+import com.graphbrain.db.UserNode
 
 case class RawPage(vertex: Vertex, user: UserNode, req: HttpRequest[Any], cookies: Map[String, Any]) {
   var html = "<h2>Vertex: " + vertex.id + "</h2>"
 
   html += vertex.raw
 
-  val edgeIds = Server.store.neighborEdges2(vertex.id, user.id)
+  val edgeIds = WebServer.graph.edges(vertex.id, user.id)
   for (eid <- edgeIds)
     html += eid + "<br />"
 
-  def response = Server.scalateResponse("raw.ssp", "raw", vertex.toString, cookies, req, html=html)
+  def response = WebServer.scalateResponse("raw.ssp", "raw", vertex.toString, cookies, req, html=html)
 }
 
 object RawPage {
