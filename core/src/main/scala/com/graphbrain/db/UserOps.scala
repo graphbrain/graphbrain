@@ -13,16 +13,17 @@ trait UserOps extends Graph {
   }
 
   def put(vertex: Vertex, userid: String): Vertex = {
-    ldebug("put2 " + vertex + "; userId: " + userid)
+    ldebug("put " + vertex + "; userId: " + userid)
     if (vertex.shouldUpdate(this)) {
       ldebug("should update " + vertex)
       put(vertex)
     }
     if (!ID.isInUserSpace(vertex.id)) {
-      val userSpaceId = ID.globalToUser(vertex.id, userid)
-      if (!exists(userSpaceId)) {
-        put(get(vertex.id).toUser(userid))
-        addLinkToGlobal(vertex.id, userSpaceId)
+      val uVertex = vertex.toUser(userid)
+      ldebug("uVertex " + uVertex)
+      if (!exists(uVertex)) {
+        put(uVertex)
+        addLinkToGlobal(vertex.id, uVertex.id)
       }
     }
 
@@ -31,8 +32,12 @@ trait UserOps extends Graph {
         remove(edge.negate)
 
         // run consensus algorithm
-        Consensus.evalEdge(edge.toGlobal, this)
+        edge.toGlobal match {
+          case e: Edge => Consensus.evalEdge(e, this)
+          case _ =>
+        }
       }
+      case _ =>
     }
 
     vertex
@@ -70,7 +75,7 @@ trait UserOps extends Graph {
   }
 
   def createAndConnectVertices(participants: Array[Vertex], userId: String) = {
-    //ldebug("createAndConnectVertices edgeType: " + edgeType + "; participants: " + participants + "; userid: " + userid + "; consensus: " + consensus)
+    ldebug("createAndConnectVertices participants: " + participants.map(_.id).mkString(" ") + "; userId: " + userId)
     for (v <- participants) {
       val uid = ID.globalToUser(v.id, userId)
       if (!exists(uid)) {
@@ -87,7 +92,12 @@ trait UserOps extends Graph {
     val uCenterId = ID.globalToUser(centerId, userId)
 
     val gedges = edges(centerId).filter(x => x.isGlobal)
-    val uedges = edges(uCenterId).filter(x => x.isInUserSpace).map(x => x.toGlobal)
+    val uedges = edges(uCenterId).filter(x => x.isInUserSpace).map(x =>
+      x.toGlobal match {
+        case e: Edge => e
+        case _ => null
+      }
+    )
 
     val applyNegatives = gedges.filter(x => !uedges.contains(x.negate))
     val posUEdges = uedges.filter(x => x.isPositive)

@@ -7,9 +7,10 @@ import java.net.URLDecoder
 import java.net.URLEncoder
 import com.graphbrain.utils.Permutations._
 import VertexType.VertexType
+import com.graphbrain.utils.SimpleLog
 
 
-class LevelDbBackend extends Backend  {
+class LevelDbBackend extends Backend with SimpleLog {
 	val EDGE_PREFIX = '#'
   val GLOBAL_LINK_PREFIX = '*'
 
@@ -110,7 +111,10 @@ class LevelDbBackend extends Backend  {
 		db.put(bytes(realId), bytes(value))
 
     vertex match {
-		  case e: Edge => writeEdgePermutations(e)
+		  case e: Edge => {
+        println("))) " + e)
+        writeEdgePermutations(e)
+      }
       case _ =>
     }
 		
@@ -177,10 +181,14 @@ class LevelDbBackend extends Backend  {
 			iterator.seek(bytes(startStr))
 		  var key = startStr
 		    
-		  while (iterator.hasNext && key.compareTo(endStr) < 0) {
+		  while (iterator.hasNext && key.compareTo(endStr) > 0) {
 		    	val entry = iterator.next()
 		    	key = asString(entry.getKey)
-    			
+
+          println("startStr: " + startStr)
+          println("endStr: " + endStr)
+          println("-> " + key)
+
     			key = key.substring(1)
     			var tokens = key.split(" ")
     			val perm = tokens(tokens.length - 1).toInt
@@ -251,6 +259,7 @@ class LevelDbBackend extends Backend  {
   }
 	
 	def writeEdgePermutations(edge: Edge) = {
+    ldebug("writeEdgePermutations " + edge)
 		val count = edge.ids.length
 		val perms = permutations(count)
 
@@ -263,6 +272,7 @@ class LevelDbBackend extends Backend  {
 	}
 	
 	def removeEdgePermutations(edge: Edge) = {
+    ldebug("removeEdgePermutations " + edge)
 		val count = edge.ids.length
 		val perms = permutations(count)
 
