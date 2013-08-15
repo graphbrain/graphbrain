@@ -89,7 +89,10 @@ object WebServer {
     val userNode = if (cookies == null) null else getUser(cookies)
     val username = if (userNode == null) "null" else userNode.username
 
-    out.println("[" + df.format(new java.util.Date) + "] " + ip + " " + username + " - " + msg)
+    val logLine = "[" + df.format(new java.util.Date) + "] " + ip + " " + username + " - " + msg
+
+    println(logLine)
+    out.println(logLine)
     out.close()
   }
 

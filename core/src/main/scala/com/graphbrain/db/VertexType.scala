@@ -18,6 +18,8 @@ object VertexType extends Enumeration {
 				User
 			else if (parts(2) == "url")
 				URL
+      else if (parts(2) == "rtype")
+        EdgeType
 			else if (parts(2) == "context")
 				if (nparts == 4)
 					Context

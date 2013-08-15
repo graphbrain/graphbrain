@@ -5,7 +5,7 @@ case class Edge(override val id: String,
                 override val ts: Long = -1)
   extends Vertex(id, degree, ts) {
 
-  val ids = ID.parts(id)
+  val ids = id.split(" ")
   val edgeType = ids.head
   val participantIds = ids.tail
 
@@ -42,14 +42,14 @@ case class Edge(override val id: String,
     false
   }
 
-  override def toUser(userId: String) = {
-    val pids = for (pid <- participantIds) yield ID.globalToUser(pid, userId)
-    Edge.fromParticipants(edgeType, pids)
+  override def toUser(userId: String): Vertex = {
+    val pids = for (pid <- ids) yield ID.globalToUser(pid, userId)
+    Edge.fromParticipants(pids)
   }
   
-  override def toGlobal = {
-    val pids = for (pid <- participantIds) yield ID.userToGlobal(pid)
-    Edge.fromParticipants(edgeType, pids)
+  override def toGlobal: Vertex = {
+    val pids = for (pid <- ids) yield ID.userToGlobal(pid)
+    Edge.fromParticipants(pids)
   }
 
   def matches(pattern: Edge): Boolean = {
@@ -59,8 +59,6 @@ case class Edge(override val id: String,
 
     true
   }
-
-  override def toString = edgeType + " " + participantIds.reduceLeft(_ + " " + _)
 
   def humanReadable2 = (ID.humanReadable(participantIds(0)) +
                         " [" +  ID.humanReadable(edgeType) + "] " +
