@@ -23,7 +23,7 @@ object WebServer {
   var http: unfiltered.netty.Http = null
   var prod: Boolean = false
 
-  val graph = new Graph with SimpleCaching with UserOps with UserManagement
+  val graph = new Graph with UserOps with UserManagement
 
   val templateDirs = List(new java.io.File("/var/www/templates"))
   val scalateMode = "production"

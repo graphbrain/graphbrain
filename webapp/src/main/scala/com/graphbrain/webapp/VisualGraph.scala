@@ -13,7 +13,7 @@ object VisualGraph {
     
     // get neighboring edges
     val hyperEdges = store.edges(rootId, userId)
-    
+
     // map hyperedges to visual edges
     val visualEdges = hyperEdges.map(hyper2edge(_, rootId)).filter(_ != null)
 
@@ -37,7 +37,7 @@ object VisualGraph {
     val reply = Map("user" -> userId, "root" -> node2map(rootId, "", store, rootId, user),
       "snodes" -> snodeMap, "allrelations" -> allRelations, "context" -> ID.contextId(rootId), "contexts" -> contexts)
 
-    WebServer.graph.clear()
+    //WebServer.graph.clear()
 
     // generate json reply
     JSONGen.json(reply)

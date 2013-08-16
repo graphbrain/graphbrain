@@ -6,5 +6,5 @@ case class SimpleEdge(edgeType: String,
                 parent: Edge) {
 
   def this(edge: Edge) =
-    this(edge.ids(0), edge.ids(1), edge.ids(1), edge)
+    this(edge.ids(0), edge.ids(1), edge.ids(2), edge)
 }

@@ -1,4 +1,4 @@
-package com.graphbrain.utils.tests
+package com.graphbrain.db.tests
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
@@ -22,7 +22,7 @@ class GraphSuite extends FunSuite {
         assert(t.degree === 7)
         assert(t.ts === 777)
       }
-      case _ => assert(false)
+      case _ => assert(condition = false)
     }
   }
 

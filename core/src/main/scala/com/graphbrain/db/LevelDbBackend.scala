@@ -200,14 +200,16 @@ class LevelDbBackend extends Backend with SimpleLog {
         val entry = iterator.next()
         key = asString(entry.getKey)
 
-        key = key.substring(1)
-        var tokens = key.split(" ")
-        val perm = tokens(tokens.length - 1).toInt
-        tokens = tokens.dropRight(1)
-        tokens = strArrayUnpermutate(tokens, perm)
-        val edge = Edge.fromParticipants(tokens)
-        if (edge matches pattern)
-          res = res + edge
+        if (key.compareTo(endStr) < 0) {
+          val key2 = key.substring(1)
+          var tokens = key2.split(" ")
+          val perm = tokens(tokens.length - 1).toInt
+          tokens = tokens.dropRight(1)
+          tokens = strArrayUnpermutate(tokens, perm)
+          val edge = Edge.fromParticipants(tokens)
+          if (edge matches pattern)
+            res = res + edge
+        }
       }
     }
     finally {
@@ -237,13 +239,15 @@ class LevelDbBackend extends Backend with SimpleLog {
         val entry = iterator.next()
         key = asString(entry.getKey)
 
-        key = key.substring(1)
-        var tokens = key.split(" ")
-        val perm = tokens(tokens.length - 1).toInt
-        tokens = tokens.dropRight(1)
-        tokens = strArrayUnpermutate(tokens, perm)
-        val edge = Edge.fromParticipants(tokens)
-        res = res + edge
+        if (key.compareTo(endStr) < 0) {
+          val key2 = key.substring(1)
+          var tokens = key2.split(" ")
+          val perm = tokens(tokens.length - 1).toInt
+          tokens = tokens.dropRight(1)
+          tokens = strArrayUnpermutate(tokens, perm)
+          val edge = Edge.fromParticipants(tokens)
+          res = res + edge
+        }
       }
     }
     finally {
