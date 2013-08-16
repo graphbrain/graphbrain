@@ -6,23 +6,22 @@ import com.graphbrain.utils.SimpleLog
 
 
 case class URLNode(override val id: String,
-                   url: String,
                    title: String="",
                    icon: String="",
                    override val degree: Int = 0,
                    override val ts: Long = -1)
   extends Vertex(id, degree, ts) with SimpleLog {
 
+  val url = URLNode.idToUrl(id)
+
   def this(id: String, map: Map[String, String]) =
     this(id,
-      map("url"),
       map("title"),
       map("icon"),
       map("degree").toInt,
       map("ts").toLong)
 
-  override def extraMap = Map("url" -> url,
-                              "title" -> title,
+  override def extraMap = Map("title" -> title,
                               "icon" -> icon)
 
   override def setId(newId: String): Vertex = copy(id=newId)
@@ -87,14 +86,6 @@ case class URLNode(override val id: String,
     }
   }
 
-  //override def clone(newid: String) = URLNode(store, newid, userId, title)
-
-  //override def toGlobal: Vertex = URLNode(store, url, "", title)
-
-  //override def toUser(newUserId: String): Vertex = URLNode(store, url, newUserId, title)
-
-  //def setTitle(newTitle: String) = copy(title=newTitle)
-
   override def raw: String = {
     "type: " + "url<br />" +
     "url: " + url + "<br />" +
@@ -107,13 +98,12 @@ case class URLNode(override val id: String,
 
 object URLNode {
   def fromUrl(url: String, userId: String = "", title: String="", icon: String="") = {
-    val auxId = ID.urlId(url)
+    val auxId = urlToId(url)
     val id = if (userId == "") auxId else ID.globalToUser(auxId, userId)
-    URLNode(id, url, title, icon)
+    URLNode(id, title, icon)
   }
 
-  def main(args : Array[String]) : Unit = {
-    val urlNode = new URLNode(null, "http://graphbrain.com/secret")
-    urlNode.getTitleAndIcon
-  }
+  def idToUrl(id: String) = URLDecoder.decode(ID.lastPart(id), "UTF-8")
+
+  def urlToId(url: String) = "url/" + URLEncoder.encode(url, "UTF-8")
 }

@@ -506,7 +506,7 @@ class SentenceParser (storeName:String = "gb") {
   //Returns existing group if it exists, otherwise just the first placeholders.
   def getExistingInstanceOwnedByP(subtypeText: String, supertypeText: String, ownerText: String): (Vertex, Vertex, Vertex) = {
     var i=1
-    if(nodeExists(ID.text_id(subtypeText, i))==false||nodeExists(ID.urlId(subtypeText))==false||nodeExists(ID.text_id(supertypeText, i))==false) {
+    if(nodeExists(ID.text_id(subtypeText, i))==false||nodeExists(URLNode.urlToId(subtypeText))==false||nodeExists(ID.text_id(supertypeText, i))==false) {
       return(getFirstFoundNode(subtypeText), getFirstFoundNode(supertypeText, 2), getFirstFoundNode(ownerText))
     }
     getInstanceOwnedByParticipants(subtypeText, supertypeText, ownerText)
@@ -514,7 +514,7 @@ class SentenceParser (storeName:String = "gb") {
   }
   def getExistingInstanceOwnedByG(supertypeText: String, ownerText: String): (Vertex, Vertex, Vertex) = {
     var i=1
-    if(nodeExists(ID.text_id(supertypeText, i))==false||nodeExists(ID.text_id(ownerText, i))==false||nodeExists(ID.urlId(ownerText))==false) {
+    if(nodeExists(ID.text_id(supertypeText, i))==false||nodeExists(ID.text_id(ownerText, i))==false||nodeExists(URLNode.urlToId(ownerText))==false) {
       return(getFirstFoundNode(supertypeText, 2), getFirstFoundNode(supertypeText, 1), getFirstFoundNode(ownerText))
     }
     getInstanceOwnedByParticipants(supertypeText, supertypeText, ownerText)
@@ -550,8 +550,8 @@ class SentenceParser (storeName:String = "gb") {
   def getInstanceOwnedByParticipants(subtypeText: String, supertypeText: String, ownerText: String): (Vertex, Vertex, Vertex) = {
 
     if(urlRegex.findAllIn(subtypeText).hasNext) {
-      if(hasInstanceOwnedBy(ID.urlId(subtypeText))) {
-        getInstanceOwnedByTriplet(ID.urlId(subtypeText), supertypeText, ownerText)
+      if(hasInstanceOwnedBy(URLNode.urlToId(subtypeText))) {
+        getInstanceOwnedByTriplet(URLNode.urlToId(subtypeText), supertypeText, ownerText)
       }
       else {
         return (getFirstFoundNode(subtypeText), getFirstFoundNode(supertypeText, 2), getFirstFoundNode(ownerText))
