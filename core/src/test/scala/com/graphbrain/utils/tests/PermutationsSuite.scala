@@ -15,4 +15,19 @@ class PermutationsSuite extends FunSuite {
     assert(Permutations.permutations(3) === 6)
     assert(Permutations.permutations(4) === 24)
   }
+
+  test("permutation postitions") {
+    var pos = Permutations.permutationPositions(3, 0)
+    assert(pos === Array(0, 0, 0))
+    pos = Permutations.permutationPositions(3, 1)
+    assert(pos === Array(0, 1, 0))
+    pos = Permutations.permutationPositions(3, 2)
+    assert(pos === Array(0, 0, 1))
+    pos = Permutations.permutationPositions(3, 3)
+    assert(pos === Array(0, 1, 1))
+    pos = Permutations.permutationPositions(3, 4)
+    assert(pos === Array(0, 0, 2))
+    pos = Permutations.permutationPositions(3, 5)
+    assert(pos === Array(0, 1, 2))
+  }
 }

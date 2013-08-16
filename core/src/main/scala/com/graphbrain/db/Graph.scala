@@ -39,11 +39,11 @@ class Graph() extends SimpleLog {
     }
   }
 
+  def edges(pattern: Edge) = back.edges(pattern)
+
   def edges(center: Vertex) = back.edges(center)
 
   def edges(centerId: String): Set[Edge] = edges(get(centerId))
-
-  def edges(pattern: Edge) = back.edges(pattern)
 
   def edges(pattern: Array[String]) = back.edges(Edge.fromParticipants(pattern))
 
@@ -85,7 +85,10 @@ class Graph() extends SimpleLog {
 
   protected def decDegree(vertex: Vertex): Vertex = update(vertex.setDegree(vertex.degree - 1))
 
-  protected def decDegree(id: String): Vertex = decDegree(get(id))
+  protected def decDegree(id: String): Vertex = {
+    val v = get(id)
+    if (v != null) decDegree(v) else null
+  }
 
   protected def onRemoveEdge(edge: Edge) =
     for (id <- edge.ids)

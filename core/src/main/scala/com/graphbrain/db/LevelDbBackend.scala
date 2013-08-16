@@ -171,45 +171,8 @@ class LevelDbBackend extends Backend with SimpleLog {
     res
 	}
 
-	def edges(center: Vertex): Set[Edge] = {
-		var res = Set[Edge]()
-		
-		val startStr = EDGE_PREFIX + center.id
-		val endStr = LevelDbBackend.strPlusOne(startStr)
-		val iterator = db.iterator()
-		try {
-			iterator.seek(bytes(startStr))
-		  var key = startStr
-		    
-		  while (iterator.hasNext && key.compareTo(endStr) > 0) {
-		    	val entry = iterator.next()
-		    	key = asString(entry.getKey)
-
-          println("startStr: " + startStr)
-          println("endStr: " + endStr)
-          println("-> " + key)
-
-    			key = key.substring(1)
-    			var tokens = key.split(" ")
-    			val perm = tokens(tokens.length - 1).toInt
-    			tokens = tokens.dropRight(1)
-    			tokens = strArrayUnpermutate(tokens, perm)
-    			val edge = Edge.fromParticipants(tokens)
-    			res = res + edge
-		    }
-		}
-		finally {
-			try {
-				iterator.close()
-      }
-			catch {
-				case e: IOException => e.printStackTrace()
-			}
-		}
-		res
-	}
-
   def edges(pattern: Edge): Set[Edge] = {
+    ldebug("edges [LevelDbBackend] pattern: " + pattern)
     var res = Set[Edge]()
 
     val sb = new StringBuilder(100)
@@ -257,6 +220,42 @@ class LevelDbBackend extends Backend with SimpleLog {
     }
     res
   }
+
+  def edges(center: Vertex): Set[Edge] = {
+    ldebug("edges [LevelDbBackend] center: " + center)
+    var res = Set[Edge]()
+
+    val startStr = EDGE_PREFIX + center.id
+    val endStr = LevelDbBackend.strPlusOne(startStr)
+    val iterator = db.iterator()
+
+    try {
+      iterator.seek(bytes(startStr))
+      var key = startStr
+
+      while (iterator.hasNext && key.compareTo(endStr) < 0) {
+        val entry = iterator.next()
+        key = asString(entry.getKey)
+
+        key = key.substring(1)
+        var tokens = key.split(" ")
+        val perm = tokens(tokens.length - 1).toInt
+        tokens = tokens.dropRight(1)
+        tokens = strArrayUnpermutate(tokens, perm)
+        val edge = Edge.fromParticipants(tokens)
+        res = res + edge
+      }
+    }
+    finally {
+      try {
+        iterator.close()
+      }
+      catch {
+        case e: IOException => e.printStackTrace()
+      }
+    }
+    res
+  }
 	
 	def writeEdgePermutations(edge: Edge) = {
     ldebug("writeEdgePermutations " + edge)
@@ -264,8 +263,8 @@ class LevelDbBackend extends Backend with SimpleLog {
 		val perms = permutations(count)
 
     for (i <- 0 until perms) {
-			val ids = strArrayPermutation(edge.ids, i)
-			val permId = EDGE_PREFIX + Edge.idFromParticipants(ids) + " " + i
+      val ids = strArrayPermutation(edge.ids, i)
+      val permId = EDGE_PREFIX + Edge.idFromParticipants(ids) + " " + i
 			val value = ""
 			db.put(bytes(permId), bytes(value))
 		}
@@ -334,15 +333,5 @@ object LevelDbBackend {
   def strPlusOne(str: String) = {
     val lastChar = str.charAt(str.length - 1)
     str.substring(0, str.length - 1) + (lastChar + 1).toChar
-  }
-
-  def main(args: Array[String]) = {
-    val test = "1/hank_hill"
-    println(strPlusOne(test))
-    /*
-    Edge edge = new Edge("rel/1/sells 1/hank_hill 1/propane");
-    LevelDbBackend be = new LevelDbBackend();
-    be.writeEdgePermutations(edge);
-    */
   }
 }

@@ -11,8 +11,8 @@ trait Backend {
 	def associateEmailToUsername(email: String, username: String)
 	def usernameByEmail(email: String): String
 	def listByType(vtype: VertexType): List[Vertex]
-	def edges(center: Vertex): Set[Edge]
   def edges(pattern: Edge): Set[Edge]
+	def edges(center: Vertex): Set[Edge]
   def addLinkToGlobal(globalId: String, userId: String)
   def removeLinkToGlobal(globalId: String, userId: String)
   def alts(globalId: String): Set[String]
