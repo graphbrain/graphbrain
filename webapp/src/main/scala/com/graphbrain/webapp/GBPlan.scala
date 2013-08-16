@@ -60,7 +60,7 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val password = params("password")(0)
       val user = WebServer.graph.attemptLogin(login, password)
       if (user == null) {
-        WebServer.log(req, null, "FAILED LOGIN login: " + login)
+        WebServer.log(req, null, "FAILED LOGIN login: " + login + " passwd: " + password)
         ResponseString("failed")
       }
       else {
