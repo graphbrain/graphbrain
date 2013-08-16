@@ -65,23 +65,17 @@ class Graph() extends SimpleLog {
     nodes + centerId
   }
 
-  def createAndConnectVertices(participants: Array[Vertex]) = {
-    //ldebug("createAndConnectVertices edgeType: " + edgeType + "; participants: " + participants)
-    for (v <- participants) {
-      if (!exists(v.id)) {
-        put(v)
-      }
-    }
-    put(Edge.fromParticipants(participants))
-  }
-
   protected def incDegree(vertex: Vertex): Vertex = update(vertex.setDegree(vertex.degree + 1))
 
   protected def incDegree(id: String): Vertex = incDegree(get(id))
 
   protected def onPutEdge(edge: Edge) =
-    for (id <- edge.ids)
+    for (id <- edge.ids) {
+      if (!exists(id)) {
+        put(Vertex.createFromId(id))
+      }
       incDegree(id)
+    }
 
   protected def decDegree(vertex: Vertex): Vertex = update(vertex.setDegree(vertex.degree - 1))
 
@@ -94,21 +88,3 @@ class Graph() extends SimpleLog {
     for (id <- edge.ids)
       decDegree(id)
 }
-
-
-/*
-object VertexStore {
-  def apply(clusterName: String, keyspaceName: String) = new VertexStore(clusterName, keyspaceName)
-
-  /*
-  def main(args : Array[String]) : Unit = {
-    val store = new VertexStore()
-
-    val edges = store.neighborEdges("user/telmo_menezes")
-    for (e <- edges) println(e)
-
-    var snode = store.getUserNode("user/telmo_menezes").updateSummary
-    println(snode.summary)
-  } */
-}
-*/

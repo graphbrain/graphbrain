@@ -42,4 +42,15 @@ abstract class Vertex(val id: String, val degree: Int = 0, val ts: Long = -1) {
 
 object Vertex {
   def cleanId(id: String) = id.toLowerCase
+
+  def createFromId(id: String) = {
+    VertexType.getType(id) match {
+      case VertexType.Text => TextNode(id)
+      case VertexType.Edge => Edge(id)
+      case VertexType.EdgeType => EdgeType(id)
+      case VertexType.URL => URLNode(id)
+      case VertexType.Rule => RuleNode(id)
+      case VertexType.User => null // this shouldn't happen
+    }
+  }
 }
