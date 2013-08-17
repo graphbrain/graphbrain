@@ -1,8 +1,8 @@
-package com.graphbrain.nlp
+package com.graphbrain.nlp.tests
 
 import org.scalatest.FunSuite
 import com.graphbrain.db._
-import com.graphbrain.nlp.GraphResponse
+import com.graphbrain.nlp.{SentenceParser, GraphResponse}
 import scala.Some
 import com.graphbrain.db.EdgeType
 
