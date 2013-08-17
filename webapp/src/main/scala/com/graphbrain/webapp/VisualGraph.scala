@@ -12,7 +12,7 @@ object VisualGraph {
     val userId = if (user != null) user.id else ""
     
     // get neighboring edges
-    val hyperEdges = store.edges(rootId, userId)
+    val hyperEdges = store.edges(rootId, userId).filter(_.isPositive)
 
     // map hyperedges to visual edges
     val visualEdges = hyperEdges.map(hyper2edge(_, rootId)).filter(_ != null)

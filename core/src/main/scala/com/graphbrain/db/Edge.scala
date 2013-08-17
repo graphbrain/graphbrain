@@ -24,7 +24,9 @@ case class Edge(override val id: String,
 
   def negate = Edge.fromParticipants("neg/" + edgeType, participantIds)
 
-  def isPositive = ID.parts(edgeType)(0) != "neg"
+  def isNegative = EdgeType.isNegative(edgeType)
+
+  def isPositive = !isNegative
 
   def isGlobal: Boolean = {
     for (p <- participantIds)
