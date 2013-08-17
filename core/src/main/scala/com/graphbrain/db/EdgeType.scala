@@ -19,4 +19,10 @@ case class EdgeType(override val id: String,
   override def setDegree(newDegree: Int): Vertex = copy(degree=newDegree)
 
   override def setTs(newTs: Long): Vertex = copy(ts=newTs)
+
+  def isNegative = EdgeType.isNegative(id)
+}
+
+object EdgeType {
+  def isNegative(id: String) = ID.parts(id)(0) == "neg"
 }

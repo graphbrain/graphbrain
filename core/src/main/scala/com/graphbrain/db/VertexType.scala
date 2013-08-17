@@ -20,6 +20,13 @@ object VertexType extends Enumeration {
 				URL
       else if (parts(2) == "rtype")
         EdgeType
+      else if (parts(2) == "neg")
+        if (nparts <= 4)
+          Text
+        else if (parts(3) == "rtype")
+          EdgeType
+        else
+          Text
 			else if (parts(2) == "context")
 				if (nparts == 4)
 					Context
@@ -32,6 +39,13 @@ object VertexType extends Enumeration {
 				Text
 			else
 				EdgeType
+    else if (parts(0) == "neg")
+      if (nparts <= 2)
+        Text
+      else if (parts(1) == "rtype")
+        EdgeType
+      else
+        Text
 		else if (parts(0) == "url")
 			if (nparts == 1)
 				Text
