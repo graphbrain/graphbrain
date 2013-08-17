@@ -261,7 +261,7 @@ class LevelDbBackend extends Backend with SimpleLog {
     res
   }
 	
-	def writeEdgePermutations(edge: Edge) = {
+	private def writeEdgePermutations(edge: Edge) = {
     ldebug("writeEdgePermutations " + edge)
 		val count = edge.ids.length
 		val perms = permutations(count)
@@ -274,7 +274,7 @@ class LevelDbBackend extends Backend with SimpleLog {
 		}
 	}
 	
-	def removeEdgePermutations(edge: Edge) = {
+	private def removeEdgePermutations(edge: Edge) = {
     ldebug("removeEdgePermutations " + edge)
 		val count = edge.ids.length
 		val perms = permutations(count)
