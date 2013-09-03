@@ -1,6 +1,5 @@
 package com.graphbrain.webapp
 
-import java.io.{PrintWriter, BufferedWriter, FileWriter}
 import java.util.Locale
 import java.text.DateFormat
 import java.net.URL
@@ -13,13 +12,13 @@ import akka.actor.ActorSystem
 import akka.actor.Props
 
 import com.graphbrain.db.Graph
-import com.graphbrain.db.SimpleCaching
 import com.graphbrain.db.UserOps
 import com.graphbrain.db.UserManagement
 import com.graphbrain.db.UserNode
 import com.graphbrain.db.ConsensusActor
+import com.typesafe.scalalogging.slf4j.Logging
 
-object WebServer {
+object WebServer extends Logging {
   var http: unfiltered.netty.Http = null
   var prod: Boolean = false
 
@@ -83,17 +82,13 @@ object WebServer {
   def log(req: HttpRequest[Any], cookies: Map[String, Any], msg: String) = {
     val df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM, Locale.FRANCE)
 
-    val out = new PrintWriter(new BufferedWriter(new FileWriter("webapp.log", true)))
-
     val ip = if (req == null) "" else realIp(req)
     val userNode = if (cookies == null) null else getUser(cookies)
     val username = if (userNode == null) "null" else userNode.username
 
     val logLine = "[" + df.format(new java.util.Date) + "] " + ip + " " + username + " - " + msg
 
-    println(logLine)
-    out.println(logLine)
-    out.close()
+    logger.info(logLine)
   }
 
   def start(prod: Boolean) = {

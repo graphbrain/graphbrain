@@ -1,9 +1,9 @@
 package com.graphbrain.db
 
 import java.util.Date
-import com.graphbrain.utils.SimpleLog
+import com.typesafe.scalalogging.slf4j.Logging
 
-class Graph() extends SimpleLog {
+class Graph() extends Logging {
   val back = new LevelDbBackend()
 
   def get(id: String): Vertex = back.get(id, VertexType.getType(id))
@@ -58,7 +58,7 @@ class Graph() extends SimpleLog {
   }
 
   def neighbors(centerId: String) = {
-    //ldebug("neighbors " + nodeId)
+    logger.debug(s"neighbors: $centerId")
 
     val nedges = edges(centerId)
     val nodes = nodesFromEdgeSet(nedges)
