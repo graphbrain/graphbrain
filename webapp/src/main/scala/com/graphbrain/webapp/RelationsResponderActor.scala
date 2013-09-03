@@ -6,14 +6,12 @@ import unfiltered.Async
 import unfiltered.response.{JsonContent, ResponseString}
 import com.graphbrain.db.Vertex
 import com.graphbrain.db.UserNode
-import com.graphbrain.utils.SimpleLog
-
 
 object RelationsResponderActor {
   case class Relation(edgeType: String, pos: Integer, root: Vertex, user: UserNode, responder: Async.Responder[HttpResponse])
 }
 
-class RelationsResponderActor() extends Actor with SimpleLog{
+class RelationsResponderActor() extends Actor {
   import RelationsResponderActor._
 
   override def receive = {

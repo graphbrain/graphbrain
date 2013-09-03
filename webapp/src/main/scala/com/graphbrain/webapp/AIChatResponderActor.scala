@@ -9,18 +9,18 @@ import com.graphbrain.db._
 import com.graphbrain.utils.JSONGen
 import com.graphbrain.nlp.SentenceParser
 
-import com.graphbrain.utils.SimpleLog
 import com.graphbrain.nlp.GraphResponse
 import scala.Some
 import unfiltered.response.ResponseString
 import scala.collection.mutable
+import com.typesafe.scalalogging.slf4j.Logging
 
 
 object AIChatResponderActor {
   case class Sentence(sentence: String, root: Vertex, user: UserNode, responder: Async.Responder[HttpResponse])
 }
 
-class AIChatResponderActor() extends Actor with SimpleLog {
+class AIChatResponderActor() extends Actor with Logging {
   import AIChatResponderActor._
 
   val sparser = new SentenceParser()

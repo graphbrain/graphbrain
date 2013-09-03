@@ -7,10 +7,11 @@ import java.net.URLDecoder
 import java.net.URLEncoder
 import com.graphbrain.utils.Permutations._
 import VertexType.VertexType
-import com.graphbrain.utils.SimpleLog
+import com.typesafe.scalalogging.slf4j.Logging
 
 
-class LevelDbBackend extends Backend with SimpleLog {
+class LevelDbBackend extends Backend with Logging {
+
 	val EDGE_PREFIX = '#'
   val GLOBAL_LINK_PREFIX = '*'
 
@@ -21,6 +22,7 @@ class LevelDbBackend extends Backend with SimpleLog {
 	}
 	
 	def get(id: String, vtype: VertexType) = {
+    logger.debug(s"get: $id")
 		val realId = typeToChar(vtype) + id
     val raw = db.get(bytes(realId))
     if (raw == null) {
@@ -94,8 +96,6 @@ class LevelDbBackend extends Backend with SimpleLog {
 	}
 	
 	private def stringToMap(input: String) = {
-		//val map = Map[String, String]()
-
 		val nameValuePairs = {
       input.split("&")
     }
@@ -172,7 +172,7 @@ class LevelDbBackend extends Backend with SimpleLog {
 	}
 
   def edges(pattern: Edge): Set[Edge] = {
-    ldebug("edges [LevelDbBackend] pattern: " + pattern)
+    logger.debug(s"edges pattern: pattern")
     var res = Set[Edge]()
 
     val sb = new StringBuilder(100)
@@ -224,7 +224,7 @@ class LevelDbBackend extends Backend with SimpleLog {
   }
 
   def edges(center: Vertex): Set[Edge] = {
-    ldebug("edges [LevelDbBackend] center: " + center)
+    logger.debug(s"edges center: $center")
     var res = Set[Edge]()
 
     val startStr = EDGE_PREFIX + center.id
@@ -262,7 +262,7 @@ class LevelDbBackend extends Backend with SimpleLog {
   }
 	
 	private def writeEdgePermutations(edge: Edge) = {
-    ldebug("writeEdgePermutations " + edge)
+    logger.debug(s"writeEdgePermutations: $edge")
 		val count = edge.ids.length
 		val perms = permutations(count)
 
@@ -275,7 +275,7 @@ class LevelDbBackend extends Backend with SimpleLog {
 	}
 	
 	private def removeEdgePermutations(edge: Edge) = {
-    ldebug("removeEdgePermutations " + edge)
+    logger.debug(s"removeEdgePermutations: $edge")
 		val count = edge.ids.length
 		val perms = permutations(count)
 

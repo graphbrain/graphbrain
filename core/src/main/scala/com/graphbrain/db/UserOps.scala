@@ -3,24 +3,24 @@ package com.graphbrain.db
 trait UserOps extends Graph {
 
   private def addLinkToGlobal(globalId: String, userId: String) = {
-    ldebug("addLinkToGlobal globalNodeId: " + globalId + "; userNodeId: " + userId)
+    logger.debug(s"addLinkToGlobal globalNodeId: $globalId; userNodeId: $userId")
     back.addLinkToGlobal(globalId, userId)
   }
 
   private def removeLinkToGlobal(globalId: String, userId: String) = {
-    ldebug("removeLinkToGlobal globalNodeId: " + globalId + "; userNodeId: " + userId)
+    logger.debug(s"removeLinkToGlobal globalNodeId: $globalId; userNodeId: $userId")
     back.removeLinkToGlobal(globalId, userId)
   }
 
   def put(vertex: Vertex, userid: String): Vertex = {
-    ldebug("put " + vertex + "; userId: " + userid)
+    logger.debug(s"put $vertex; userId: $userid")
     if (vertex.shouldUpdate(this)) {
-      ldebug("should update " + vertex)
+      logger.debug(s"should update: $vertex")
       put(vertex)
     }
     if (!ID.isInUserSpace(vertex.id)) {
       val uVertex = vertex.toUser(userid)
-      ldebug("uVertex " + uVertex)
+      logger.debug(s"uVertex: $uVertex")
       if (!exists(uVertex)) {
         put(uVertex)
         addLinkToGlobal(vertex.id, uVertex.id)
@@ -62,7 +62,7 @@ trait UserOps extends Graph {
   }
 
   def getOrInsert(node: Vertex, userId: String): Vertex = {
-    ldebug("getOrInsert " + node + "; userId: " + userId)
+    logger.debug(s"getOrInsert: $node; userId: $userId")
     val g = get(node.id)
     val u = get(ID.globalToUser(node.id, userId))
     if ((g == null) || (u == null)) {
@@ -75,7 +75,7 @@ trait UserOps extends Graph {
   }
 
   def createAndConnectVertices(participants: Array[Vertex], userId: String) = {
-    ldebug("createAndConnectVertices participants: " + participants.map(_.id).mkString(" ") + "; userId: " + userId)
+    logger.debug(s"createAndConnectVertices participants: ${participants.map(_.id).mkString(" ")}; userId: $userId")
     for (v <- participants) {
       val uid = ID.globalToUser(v.id, userId)
       if (!exists(uid)) {

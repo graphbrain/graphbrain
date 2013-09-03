@@ -2,7 +2,7 @@ package com.graphbrain.db
 
 import java.net._
 import org.jsoup.Jsoup
-import com.graphbrain.utils.SimpleLog
+import com.typesafe.scalalogging.slf4j.Logging
 
 
 case class URLNode(override val id: String,
@@ -10,7 +10,7 @@ case class URLNode(override val id: String,
                    icon: String="",
                    override val degree: Int = 0,
                    override val ts: Long = -1)
-  extends Vertex(id, degree, ts) with SimpleLog {
+  extends Vertex(id, degree, ts) with Logging {
 
   val url = URLNode.idToUrl(id)
 

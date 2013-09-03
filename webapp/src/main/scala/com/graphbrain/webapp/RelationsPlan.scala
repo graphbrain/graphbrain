@@ -4,10 +4,7 @@ import unfiltered.request._
 import unfiltered.netty._
 import akka.actor.Props
 
-import com.graphbrain.utils.SimpleLog
-
-
-object RelationsPlan extends async.Plan with ServerErrorResponse with SimpleLog {
+object RelationsPlan extends async.Plan with ServerErrorResponse {
   val responderActor = WebServer.actorSystem.actorOf(Props(new RelationsResponderActor()))
 
   def intent = {
@@ -20,6 +17,5 @@ object RelationsPlan extends async.Plan with ServerErrorResponse with SimpleLog 
       responderActor ! RelationsResponderActor.Relation(rel, pos, root, userNode, req)
 
       WebServer.log(req, cookies, "REL rootId: " + rootId + "; edgeType: " + rel + "; pos: " + pos)
-      ldebug("REL rootId: " + rootId + "; edgeType: " + rel + "; pos: " + pos, Console.CYAN)
   }
 }

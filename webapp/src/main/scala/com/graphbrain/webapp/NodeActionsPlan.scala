@@ -4,10 +4,9 @@ import unfiltered.request._
 import unfiltered.netty._
 
 import com.graphbrain.db.Edge
-import com.graphbrain.utils.SimpleLog
 
 
-object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse with SimpleLog {
+object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse {
   var errorMessage: String = ""
 
   def nodeActionResponse(id: String, params: Map[String, Seq[String]], cookies: Map[String, Any], req: HttpRequest[Any]) = {
@@ -36,7 +35,6 @@ object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with S
     WebServer.consensusActor ! edge
 
     WebServer.log(req, cookies, "REMOVE EDGE: " + edgeString)
-    ldebug("REMOVE EDGE: " + edgeString, Console.CYAN)
   }
 
   def intent = {
