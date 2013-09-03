@@ -313,8 +313,13 @@ class LevelDbBackend extends Backend with Logging {
 
         key = key.substring(1)
         val tokens = key.split(" ")
-        val id = tokens(1)
-        res = res + id
+        if (tokens.length > 1) {
+          val id = tokens(1)
+          res = res + id
+        }
+        else {
+          logger.warn(s"This should not happen: $key")
+        }
       }
     }
     finally {
