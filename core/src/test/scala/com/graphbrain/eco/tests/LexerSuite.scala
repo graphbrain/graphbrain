@@ -53,4 +53,22 @@ class LexerSuite extends FunSuite {
       Token("+", TokenType.Plus),
       Token("1", TokenType.Number)))
   }
+
+  test("1.0 + -1.0") {
+    val lexer = new Lexer("1.0 + -1.0")
+    val toks = lexer.tokens
+    assert(toks === List(
+      Token("1.0", TokenType.Number),
+      Token("+", TokenType.Plus),
+      Token("-1.0", TokenType.Number)))
+  }
+
+  test("1.0 - -1.0") {
+    val lexer = new Lexer("1.0 - -1.0")
+    val toks = lexer.tokens
+    assert(toks === List(
+      Token("1.0", TokenType.Number),
+      Token("-", TokenType.Minus),
+      Token("-1.0", TokenType.Number)))
+  }
 }
