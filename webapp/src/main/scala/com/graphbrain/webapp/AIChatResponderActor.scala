@@ -106,6 +106,7 @@ class AIChatResponderActor() extends Actor with Logging {
 
                     // force consesnsus re-evaluation of affected edge
                     WebServer.consensusActor ! edge
+                  case _ =>
                 }
               }
             case _ =>
