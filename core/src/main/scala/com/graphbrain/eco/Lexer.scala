@@ -1,6 +1,7 @@
 package com.graphbrain.eco
 
 import com.graphbrain.eco.TokenType.TokenType
+import scala.collection.mutable.ListBuffer
 
 class Lexer(val input: String) {
   private var pos: Int = 0
@@ -8,15 +9,15 @@ class Lexer(val input: String) {
   private val EOF: Char = (-1).toChar
 
   def tokens = {
-    var toks = List[Token]()
+    val toks = ListBuffer[Token]()
 
     var tok = nextToken()
     while (tok != null) {
-      toks = tok :: toks
+      toks.append(tok)
       tok = nextToken()
     }
 
-    toks
+    toks.toList
   }
 
   private def nextToken(): Token = {
@@ -24,7 +25,7 @@ class Lexer(val input: String) {
       null
     }
     else {
-      while (c.isSpaceChar) consume()
+      while (c.isWhitespace) consume()
 
       predict match {
         case TokenType.Symbol => tokSymbol
@@ -62,6 +63,7 @@ class Lexer(val input: String) {
       TokenType.Number
     else
       c match {
+        case '"' => TokenType.String
         case '(' => TokenType.LPar
         case ')' => TokenType.RPar
         case '[' => TokenType.LSPar
@@ -149,7 +151,9 @@ class Lexer(val input: String) {
       }
     }
 
-    new Token(sb.toString(), TokenType.Number)
+    consume()
+
+    new Token(sb.toString(), TokenType.String)
   }
 
   private def tokConsequence: Token = {
