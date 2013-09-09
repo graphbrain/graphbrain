@@ -30,7 +30,7 @@ class LexerSuite extends FunSuite {
     val toks = lexer.tokens
     assert(toks === List(
       Token("is-noun", TokenType.Symbol),
-      Token("(", TokenType.LPar),
+      Token("(", TokenType.LParamPar),
       Token("x", TokenType.Symbol),
       Token(")", TokenType.RPar)))
   }
@@ -40,7 +40,7 @@ class LexerSuite extends FunSuite {
     val toks = lexer.tokens
     assert(toks === List(
       Token("print", TokenType.Symbol),
-      Token("(", TokenType.LPar),
+      Token("(", TokenType.LParamPar),
       Token("eco", TokenType.String),
       Token(")", TokenType.RPar)))
   }

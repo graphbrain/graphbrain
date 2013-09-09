@@ -7,6 +7,7 @@ class Lexer(val input: String) {
   private var pos: Int = 0
   private var c: Char = input(pos)
   private val EOF: Char = (-1).toChar
+  private var lastType = TokenType.Unknown
 
   def tokens = {
     val toks = ListBuffer[Token]()
@@ -27,13 +28,14 @@ class Lexer(val input: String) {
     else {
       while (c.isWhitespace) consume()
 
-      predict match {
+      val nt = predict match {
         case TokenType.Symbol => tokSymbol
         case TokenType.Number => tokNumber
         case TokenType.String => tokString
         case TokenType.Consequence => tokConsequence
         case TokenType.LPar => tokLPar
         case TokenType.RPar => tokRPar
+        case TokenType.LParamPar => tokLParamPar
         case TokenType.LSPar => tokLSPar
         case TokenType.RSPar => tokRSPar
         case TokenType.Quote => tokQuote
@@ -43,6 +45,10 @@ class Lexer(val input: String) {
         case TokenType.Mul => tokMul
         case TokenType.Div => tokDiv
       }
+
+      lastType = nt.ttype
+
+      nt
     }
   }
 
@@ -64,7 +70,9 @@ class Lexer(val input: String) {
     else
       c match {
         case '"' => TokenType.String
-        case '(' => TokenType.LPar
+        case '(' => {
+          if (lastType == TokenType.Symbol) TokenType.LParamPar else TokenType.LPar
+        }
         case ')' => TokenType.RPar
         case '[' => TokenType.LSPar
         case ']' => TokenType.RSPar
@@ -170,6 +178,11 @@ class Lexer(val input: String) {
   private def tokRPar: Token = {
     consume()
     new Token(")", TokenType.RPar)
+  }
+
+  private def tokLParamPar: Token = {
+    consume()
+    new Token("(", TokenType.LParamPar)
   }
 
   private def tokLSPar: Token = {

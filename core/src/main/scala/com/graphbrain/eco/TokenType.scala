@@ -9,6 +9,7 @@ object TokenType extends Enumeration {
       Consequence,
       LPar,
       RPar,
+      LParamPar,
       LSPar,
       RSPar,
       Quote,
