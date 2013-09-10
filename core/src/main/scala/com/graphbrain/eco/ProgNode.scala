@@ -1,5 +1,5 @@
 package com.graphbrain.eco
 
-trait ProgNode {
-  def eval(): Any
+abstract class ProgNode(val prog: Prog) {
+  def eval(): AnyVal
 }
