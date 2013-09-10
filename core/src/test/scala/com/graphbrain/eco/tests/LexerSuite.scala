@@ -32,7 +32,7 @@ class LexerSuite extends FunSuite {
       Token("is-noun", TokenType.Symbol),
       Token("(", TokenType.LParamPar),
       Token("x", TokenType.Symbol),
-      Token(")", TokenType.RPar)))
+      Token(")", TokenType.RParamPar)))
   }
 
   test("print(\"eco\")") {
@@ -42,7 +42,7 @@ class LexerSuite extends FunSuite {
       Token("print", TokenType.Symbol),
       Token("(", TokenType.LParamPar),
       Token("eco", TokenType.String),
-      Token(")", TokenType.RPar)))
+      Token(")", TokenType.RParamPar)))
   }
 
   test("extra spaces, tabs and newlines") {
