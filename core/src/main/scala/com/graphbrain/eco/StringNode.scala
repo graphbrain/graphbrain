@@ -1,5 +1,5 @@
 package com.graphbrain.eco
 
-class StringNode(val value: String) extends ProgNode {
+class StringNode(prog: Prog, val value: String) extends ProgNode(prog) {
   override def eval(): Any = value
 }

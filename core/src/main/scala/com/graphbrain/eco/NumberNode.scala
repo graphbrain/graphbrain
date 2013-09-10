@@ -1,5 +1,5 @@
 package com.graphbrain.eco
 
-class NumberNode(val value: Double) extends ProgNode {
-  override def eval(): Any = value
+class NumberNode(prog: Prog, val value: Double) extends ProgNode(prog) {
+  override def eval(): AnyVal = value
 }
