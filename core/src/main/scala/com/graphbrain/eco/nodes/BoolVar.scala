@@ -2,7 +2,7 @@ package com.graphbrain.eco.nodes
 
 import com.graphbrain.eco.{NodeType, Prog}
 
-class BoolNode(prog: Prog, val value: Boolean) extends ProgNode(prog) {
+class BoolVar(prog: Prog, name: String, val value: Boolean) extends VarNode(prog, name) {
   override val ntype = NodeType.Boolean
   override def booleanValue() = value
 }

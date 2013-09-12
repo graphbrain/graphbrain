@@ -2,7 +2,7 @@ package com.graphbrain.eco.nodes
 
 import com.graphbrain.eco.{NodeType, Prog}
 
-class NumberNode(prog: Prog, val value: Double) extends ProgNode(prog) {
+class NumberVar(prog: Prog, name: String, var value: Double) extends VarNode(prog, name) {
   override val ntype = NodeType.Number
   override def numberValue() = value
 }
