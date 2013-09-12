@@ -2,7 +2,7 @@ package com.graphbrain.eco.nodes
 
 import com.graphbrain.eco.{NodeType, Prog}
 
-class StringNode(prog: Prog, val value: String) extends ProgNode(prog) {
+class StringVar(prog: Prog, name: String, val value: String) extends VarNode(prog, name) {
   override val ntype = NodeType.String
   override def stringValue() = value
 }
