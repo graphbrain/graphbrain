@@ -1,8 +1,8 @@
 package com.graphbrain.eco.nodes
 
-import com.graphbrain.eco.{NodeType, Prog}
+import com.graphbrain.eco.NodeType
 
-class NlpRule(prog: Prog, params: Array[ProgNode]) extends FunNode(prog, params) {
+class NlpRule(params: Array[ProgNode]) extends FunNode(params) {
   override val label = "nlp"
 
   override val ntype = {

@@ -1,8 +1,13 @@
 package com.graphbrain.eco.nodes
 
-import com.graphbrain.eco.{NodeType, Prog}
+import com.graphbrain.eco.NodeType
 
-class StringVar(prog: Prog, name: String, val value: String) extends VarNode(prog, name) {
+class StringVar(name: String, val value: String) extends VarNode(name) {
   override val ntype = NodeType.String
   override def stringValue() = value
+
+  override def equals(obj:Any) = obj match {
+    case s: StringVar => s.name == name
+    case _ => false
+  }
 }

@@ -22,18 +22,24 @@ class Parser(val input: String) {
 
     val p1 = parseExpr(3, consqPos)
     val p2 = parseExpr(consqPos + 1, tokens.length)
-    new NlpRule(prog, Array(p1, p2))
+    new NlpRule(Array(p1, p2))
   }
 
   private def parseExpr(start: Int, end: Int): ProgNode = {
 
+    // expression only has one element
     if ((end - start) == 1) {
       val tok = tokens(start)
 
       tok.ttype match {
-        case TokenType.Number => return new NumberNode(prog, tok.text.toDouble)
+        case TokenType.Number => return new NumberNode(tok.text.toDouble)
       }
     }
+
+    // expression is surrounded by parenthesis
+    if ((tokens(start).ttype == TokenType.LPar) &&
+      (tokens(end - 1).ttype == TokenType.RPar))
+      return parseExpr(start + 1, end - 1)
 
     var maxPrecedence = 0
     var pivot = -1
@@ -65,7 +71,7 @@ class Parser(val input: String) {
         case TokenType.Plus => {
           val p1 = parseExpr(start, pivot)
           val p2 = parseExpr(pivot + 1, end)
-          new SumFun(prog, Array(p1, p2))
+          new SumFun(Array(p1, p2))
         }
       }
     }
