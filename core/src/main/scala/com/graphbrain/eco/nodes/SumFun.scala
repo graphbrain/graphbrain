@@ -3,6 +3,8 @@ package com.graphbrain.eco.nodes
 import com.graphbrain.eco.{NodeType, Prog}
 
 class SumFun(prog: Prog, params: Array[ProgNode]) extends FunNode(prog, params) {
+  override val label = "+"
+
   override val ntype = {
     params(0).ntype match {
       case NodeType.Number => params(1).ntype match {
