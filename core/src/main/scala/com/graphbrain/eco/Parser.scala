@@ -33,6 +33,12 @@ class Parser(val input: String) {
 
       tok.ttype match {
         case TokenType.Number => return new NumberNode(tok.text.toDouble)
+        case TokenType.Symbol => {
+          tok.text match {
+            case "true" => return new BoolNode(true)
+            case "false" => return new BoolNode(false)
+          }
+        }
       }
     }
 
