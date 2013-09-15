@@ -9,4 +9,10 @@ abstract class ProgNode(val prog: Prog) {
   def stringValue(): String = "" // error
   def numberValue(): Double = 0 // error
   def booleanValue(): Boolean = false // error
+
+  protected def error(msg: String) = {
+    println(msg)
+  }
+
+  protected def typeError() = error("type error")
 }
