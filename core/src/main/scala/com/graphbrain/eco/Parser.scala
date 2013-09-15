@@ -27,6 +27,9 @@ class Parser(val input: String) {
 
   private def parseExpr(start: Int, end: Int): ProgNode = {
 
+    //println("xxx")
+    //for (i <- start until end) println(tokens(i))
+
     // expression only has one element
     if ((end - start) == 1) {
       val tok = tokens(start)
@@ -50,9 +53,13 @@ class Parser(val input: String) {
     var maxPrecedence = 0
     var pivot = -1
     var paramDepth = 0
+    var initialPar = true
 
     for (i <- start until end) {
       val tok = tokens(i)
+
+      if (tok.ttype != TokenType.LPar)
+        initialPar = false
 
       if (tok.ttype == TokenType.LParamPar) {
         paramDepth += 1
@@ -61,10 +68,20 @@ class Parser(val input: String) {
         paramDepth -= 1
       }
       else if (paramDepth == 0) {
-        if (tok.precedence > maxPrecedence) {
+        if (tok.ttype == TokenType.LPar) {
+          if (!initialPar) {
+            pivot = i - 1
+            maxPrecedence = tok.precedence
+          }
+        }
+        else if (tok.ttype == TokenType.RPar) {
+          pivot = i + 1
+          maxPrecedence = tok.precedence
+        }
+        else if (tok.precedence > maxPrecedence) {
+          pivot = i
           maxPrecedence = tok.precedence
           // what if first param?
-          if (tok.ttype == TokenType.LPar) pivot = i - 1 else pivot = i
         }
       }
     }
@@ -78,6 +95,25 @@ class Parser(val input: String) {
           val p1 = parseExpr(start, pivot)
           val p2 = parseExpr(pivot + 1, end)
           new SumFun(Array(p1, p2))
+        }
+        case TokenType.Minus => {
+          val p1 = parseExpr(start, pivot)
+          val p2 = parseExpr(pivot + 1, end)
+          new SubFun(Array(p1, p2))
+        }
+        case TokenType.Mul => {
+          val p1 = parseExpr(start, pivot)
+          val p2 = parseExpr(pivot + 1, end)
+          new MulFun(Array(p1, p2))
+        }
+        case TokenType.Div => {
+          val p1 = parseExpr(start, pivot)
+          val p2 = parseExpr(pivot + 1, end)
+          new DivFun(Array(p1, p2))
+        }
+        case _ => {
+          println("*** no match " + tokens(pivot))
+          null
         }
       }
     }
