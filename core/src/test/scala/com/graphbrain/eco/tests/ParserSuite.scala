@@ -16,4 +16,22 @@ class ParserSuite extends FunSuite {
 
     assert(p.prog == prog)
   }
+
+  test("nlp test: true -> 1 + 2 * 3") {
+    val p = new Parser("nlp test: true -> 1 + 2 * 3")
+    val prog: Prog = new Prog(new NlpRule(Array(
+      new BoolNode(true),
+      new SumFun(Array(new NumberNode(1), new MulFun(Array(new NumberNode(2), new NumberNode(3))))))))
+
+    assert(p.prog == prog)
+  }
+
+  test("nlp test: false -> (1 + 2) * 3") {
+    val p = new Parser("nlp test: false -> (1 + 2) * 3")
+    val prog: Prog = new Prog(new NlpRule(Array(
+      new BoolNode(false),
+      new MulFun(Array(new SumFun(Array(new NumberNode(1), new NumberNode(2))), new NumberNode(3))))))
+
+    assert(p.prog == prog)
+  }
 }

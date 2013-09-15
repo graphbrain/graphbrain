@@ -10,11 +10,12 @@ class Token(val text: String, val ttype: TokenType) {
     obj.asInstanceOf[Token].ttype == ttype
 
   def precedence = ttype match {
-    case TokenType.LPar => 3
+    case TokenType.LPar => 1
+    case TokenType.RPar => 1
     case TokenType.Mul => 2
     case TokenType.Div => 2
-    case TokenType.Plus => 1
-    case TokenType.Minus => 1
+    case TokenType.Plus => 3
+    case TokenType.Minus => 3
     case _ => 0
   }
 }
