@@ -1,7 +1,5 @@
 package com.graphbrain.eco.nodes
 
-import com.graphbrain.eco.Prog
-
-abstract class VarNode(prog: Prog, val name: String) extends ProgNode(prog) {
+abstract class VarNode(val name: String) extends ProgNode {
   override def toString = name
 }

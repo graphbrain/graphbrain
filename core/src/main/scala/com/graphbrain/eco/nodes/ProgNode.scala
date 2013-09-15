@@ -1,9 +1,8 @@
 package com.graphbrain.eco.nodes
 
-import com.graphbrain.eco.Prog
 import com.graphbrain.eco.NodeType.NodeType
 
-abstract class ProgNode(val prog: Prog) {
+abstract class ProgNode {
   val ntype: NodeType
 
   def stringValue(): String = "" // error

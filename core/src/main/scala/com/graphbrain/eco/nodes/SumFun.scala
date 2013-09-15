@@ -1,8 +1,8 @@
 package com.graphbrain.eco.nodes
 
-import com.graphbrain.eco.{NodeType, Prog}
+import com.graphbrain.eco.NodeType
 
-class SumFun(prog: Prog, params: Array[ProgNode]) extends FunNode(prog, params) {
+class SumFun(params: Array[ProgNode]) extends FunNode(params) {
   override val label = "+"
 
   override val ntype = {
