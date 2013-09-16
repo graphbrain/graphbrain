@@ -5,7 +5,7 @@ import com.graphbrain.eco.NodeType
 class NlpRule(params: Array[ProgNode]) extends FunNode(params) {
   override val label = "nlp"
 
-  override val ntype = {
+  override def ntype = {
     params(0).ntype match {
       case NodeType.Boolean => NodeType.Unknown
       case _ => {

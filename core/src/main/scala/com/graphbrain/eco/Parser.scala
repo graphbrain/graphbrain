@@ -20,15 +20,56 @@ class Parser(val input: String) {
       pos += 1
     }
 
-    val p1 = parseExpr(3, consqPos)
-    val p2 = parseExpr(consqPos + 1, tokens.length)
+    val p1 = parseConds(3, consqPos)
+    val p2 = parseConds(consqPos + 1, tokens.length)
     new NlpRule(Array(p1, p2))
   }
 
-  private def parseExpr(start: Int, end: Int): ProgNode = {
+  private def parseConds(start: Int, end: Int): ProgNode = {
+    val count = (for (i <- start until end) yield
+      if (tokens(i).ttype == TokenType.SColon) 1 else 0).reduceLeft(_ + _) + 1
 
-    //println("xxx")
-    //for (i <- start until end) println(tokens(i))
+    var cstart = start
+    val params = new Array[ProgNode](count)
+    var cond = 0
+
+    for (pos <- start until end) {
+      if (tokens(pos).ttype == TokenType.SColon) {
+        params(cond) = parseCond(cstart, pos)
+        cond += 1
+        cstart = pos + 1
+      }
+    }
+
+    params(cond) = parseCond(cstart, end)
+
+    if (count == 1)
+      params(0)
+    else
+      new CondsFun(params)
+  }
+
+  private def parseCond(start: Int, end: Int): ProgNode = {
+    if (tokens(start).ttype == TokenType.Quote)
+      parsePattern(start + 1, end - 1)
+    else
+      parseExpr(start, end)
+  }
+
+  private def parsePattern(start: Int, end: Int): ProgNode = {
+    val params = new Array[ProgNode](end - start)
+
+    for (pos <- start until end) {
+      params(pos - start) = tokens(pos).ttype match {
+        case TokenType.String => new StringNode(tokens(pos).text)
+        case TokenType.Symbol => new StringVar(tokens(pos).text, "")
+      }
+    }
+
+    new PatFun(params)
+  }
+
+  private def parseExpr(start: Int, end: Int): ProgNode = {
 
     // expression only has one element
     if ((end - start) == 1) {
@@ -112,7 +153,7 @@ class Parser(val input: String) {
           new DivFun(Array(p1, p2))
         }
         case _ => {
-          println("*** no match " + tokens(pivot))
+          // error
           null
         }
       }

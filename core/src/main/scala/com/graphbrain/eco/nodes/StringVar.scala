@@ -3,7 +3,7 @@ package com.graphbrain.eco.nodes
 import com.graphbrain.eco.NodeType
 
 class StringVar(name: String, val value: String) extends VarNode(name) {
-  override val ntype = NodeType.String
+  override def ntype = NodeType.String
   override def stringValue() = value
 
   override def equals(obj:Any) = obj match {

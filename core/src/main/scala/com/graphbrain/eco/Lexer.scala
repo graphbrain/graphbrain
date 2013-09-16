@@ -42,6 +42,7 @@ class Lexer(val input: String) {
         case TokenType.RSPar => tokRSPar
         case TokenType.Quote => tokQuote
         case TokenType.Colon => tokColon
+        case TokenType.SColon => tokSColon
         case TokenType.Plus => tokPlus
         case TokenType.Minus => tokMinus
         case TokenType.Mul => tokMul
@@ -90,6 +91,7 @@ class Lexer(val input: String) {
         case '[' => TokenType.LSPar
         case ']' => TokenType.RSPar
         case ':' => TokenType.Colon
+        case ';' => TokenType.SColon
         case '+' => TokenType.Plus
         case '-' => {
           if (onLastChar) {
@@ -221,6 +223,11 @@ class Lexer(val input: String) {
   private def tokColon: Token = {
     consume()
     new Token(":", TokenType.Colon)
+  }
+
+  private def tokSColon: Token = {
+    consume()
+    new Token(";", TokenType.SColon)
   }
 
   private def tokPlus: Token = {
