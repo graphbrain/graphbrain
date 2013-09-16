@@ -5,7 +5,7 @@ import com.graphbrain.eco.NodeType
 class DivFun(params: Array[ProgNode]) extends FunNode(params) {
   override val label = "/"
 
-  override val ntype = {
+  override def ntype = {
     params(0).ntype match {
       case NodeType.Number => params(1).ntype match {
         case NodeType.Number => NodeType.Number

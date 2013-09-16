@@ -15,6 +15,7 @@ object TokenType extends Enumeration {
       RSPar,
       Quote,
       Colon,
+      SColon,
       Plus,
       Minus,
       Mul,

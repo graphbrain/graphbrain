@@ -3,7 +3,7 @@ package com.graphbrain.eco.nodes
 import com.graphbrain.eco.NodeType.NodeType
 
 abstract class ProgNode {
-  val ntype: NodeType
+  def ntype: NodeType
 
   def stringValue(): String = "" // error
   def numberValue(): Double = 0 // error

@@ -3,7 +3,7 @@ package com.graphbrain.eco.nodes
 import com.graphbrain.eco.NodeType
 
 class NumberNode(val value: Double) extends ProgNode {
-  override val ntype = NodeType.Number
+  override def ntype = NodeType.Number
   override def numberValue() = value
 
   override def toString = value.toString
