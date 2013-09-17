@@ -1,6 +1,6 @@
 package com.graphbrain.eco.nodes
 
-import com.graphbrain.eco.NodeType
+import com.graphbrain.eco.{Contexts, NodeType}
 
 class SumFun(params: Array[ProgNode]) extends FunNode(params) {
   override val label = "+"
@@ -28,9 +28,9 @@ class SumFun(params: Array[ProgNode]) extends FunNode(params) {
     }
   }
 
-  override def stringValue() = params(0).stringValue() + params(1).stringValue()
+  override def stringValue(ctxts: Contexts) = params(0).stringValue(ctxts) + params(1).stringValue(ctxts)
 
-  override def numberValue() = params(0).numberValue() + params(1).numberValue()
+  override def numberValue(ctxts: Contexts) = params(0).numberValue(ctxts) + params(1).numberValue(ctxts)
 
   override protected def typeError() = error("parameters must be either two numbers or two strings")
 }
