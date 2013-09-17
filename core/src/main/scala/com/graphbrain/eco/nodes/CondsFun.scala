@@ -1,7 +1,7 @@
 package com.graphbrain.eco.nodes
 
 import com.graphbrain.eco.NodeType.NodeType
-import com.graphbrain.eco.NodeType
+import com.graphbrain.eco.{Contexts, NodeType}
 
 class CondsFun(params: Array[ProgNode]) extends FunNode(params) {
   override val label = ";"
@@ -16,9 +16,9 @@ class CondsFun(params: Array[ProgNode]) extends FunNode(params) {
     NodeType.Boolean
   }
 
-  override def booleanValue(): Boolean = {
+  override def booleanValue(ctxts: Contexts): Boolean = {
     for (p <- params)
-      if (!p.booleanValue()) return false
+      if (!p.booleanValue(ctxts)) return false
     true
   }
 

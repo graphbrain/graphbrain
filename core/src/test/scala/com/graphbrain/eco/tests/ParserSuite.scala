@@ -40,6 +40,11 @@ class ParserSuite extends FunSuite {
     assert(p.prog.toString == "(nlp (' x y z) true)")
   }
 
+  test("nlp test: 'x \"likes\" z' -> true") {
+    val p = new Parser("nlp test: 'x \"likes\" z' -> true")
+    assert(p.prog.toString == "(nlp (' x likes z) true)")
+  }
+
   test("nlp test: 'x y z'; true -> true") {
     val p = new Parser("nlp test: 'x y z'; true -> true")
     assert(p.prog.toString == "(nlp (; (' x y z) true) true)")
