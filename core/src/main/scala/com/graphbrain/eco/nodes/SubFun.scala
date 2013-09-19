@@ -1,6 +1,6 @@
 package com.graphbrain.eco.nodes
 
-import com.graphbrain.eco.{Contexts, NodeType}
+import com.graphbrain.eco.{Context, Contexts, NodeType}
 
 class SubFun(params: Array[ProgNode]) extends FunNode(params) {
   override val label = "-"
@@ -21,7 +21,8 @@ class SubFun(params: Array[ProgNode]) extends FunNode(params) {
     }
   }
 
-  override def numberValue(ctxts: Contexts) = params(0).numberValue(ctxts) - params(1).numberValue(ctxts)
+  override def numberValue(ctxts: Contexts, ctxt: Context)
+    = params(0).numberValue(ctxts, ctxt) - params(1).numberValue(ctxts, ctxt)
 
   override protected def typeError() = error("parameters must be two numbers")
 }
