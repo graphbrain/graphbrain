@@ -1,10 +1,10 @@
 package com.graphbrain.eco.nodes
 
-import com.graphbrain.eco.{Contexts, NodeType}
+import com.graphbrain.eco.{Contexts, Context, NodeType}
 
 class StringNode(val value: String) extends ProgNode {
   override def ntype = NodeType.String
-  override def stringValue(ctxts: Contexts) = value
+  override def stringValue(ctxts: Contexts, ctxt: Context) = value
 
   override def toString = value
 

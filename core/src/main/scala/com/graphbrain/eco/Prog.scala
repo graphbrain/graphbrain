@@ -6,7 +6,7 @@ class Prog(val root: ProgNode) {
 
   def eval(): Contexts = {
     val ctxts = new Contexts()
-    root.booleanValue(ctxts)
+    root.booleanValue(ctxts, null)
     ctxts
   }
 
