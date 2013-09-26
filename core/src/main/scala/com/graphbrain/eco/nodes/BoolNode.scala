@@ -2,7 +2,7 @@ package com.graphbrain.eco.nodes
 
 import com.graphbrain.eco.{Contexts, Context, NodeType}
 
-class BoolNode(val value: Boolean) extends ProgNode {
+class BoolNode(val value: Boolean, lastTokenPos: Int= -1) extends ProgNode(lastTokenPos) {
   override def ntype = NodeType.Boolean
   override def booleanValue(ctxts: Contexts, ctxt: Context) = value
 

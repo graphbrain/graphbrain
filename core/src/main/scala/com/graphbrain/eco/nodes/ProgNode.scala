@@ -3,7 +3,7 @@ package com.graphbrain.eco.nodes
 import com.graphbrain.eco.NodeType.NodeType
 import com.graphbrain.eco.{Contexts, Context}
 
-abstract class ProgNode {
+abstract class ProgNode(val lastTokenPos: Int) {
   def ntype: NodeType
 
   def stringValue(ctxts: Contexts, ctxt: Context): String = "" // error
