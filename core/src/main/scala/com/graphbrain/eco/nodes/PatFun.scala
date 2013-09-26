@@ -3,7 +3,7 @@ package com.graphbrain.eco.nodes
 import com.graphbrain.eco.NodeType.NodeType
 import com.graphbrain.eco.{Context, Contexts, NodeType}
 
-class PatFun(params: Array[ProgNode]) extends FunNode(params) {
+class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
   override val label = "'"
 
   override def ntype: NodeType = NodeType.Boolean

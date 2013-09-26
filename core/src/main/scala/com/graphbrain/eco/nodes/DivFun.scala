@@ -2,7 +2,7 @@ package com.graphbrain.eco.nodes
 
 import com.graphbrain.eco.{Context, Contexts, NodeType}
 
-class DivFun(params: Array[ProgNode]) extends FunNode(params) {
+class DivFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
   override val label = "/"
 
   override def ntype = {
