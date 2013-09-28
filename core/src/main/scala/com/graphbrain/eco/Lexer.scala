@@ -33,15 +33,6 @@ class Lexer(val input: String) {
         case TokenType.String => tokString
         case TokenType.LPar => tokLPar
         case TokenType.RPar => tokRPar
-        case TokenType.LSPar => tokLSPar
-        case TokenType.RSPar => tokRSPar
-        case TokenType.Quote => tokQuote
-        case TokenType.Colon => tokColon
-        case TokenType.SColon => tokSColon
-        case TokenType.Plus => tokPlus
-        case TokenType.Minus => tokMinus
-        case TokenType.Mul => tokMul
-        case TokenType.Div => tokDiv
       }
 
       nt
@@ -59,23 +50,16 @@ class Lexer(val input: String) {
   private def onLastChar = pos >= input.length - 1
 
   private def predict: TokenType = {
-    if (c.isLetter)
-      TokenType.Symbol
-    else if (c.isDigit)
+    if (c.isDigit)
       TokenType.Number
     else
       c match {
         case '"' => TokenType.String
         case '(' => TokenType.LPar
         case ')' => TokenType.RPar
-        case '[' => TokenType.LSPar
-        case ']' => TokenType.RSPar
-        case ':' => TokenType.Colon
-        case ';' => TokenType.SColon
-        case '+' => TokenType.Plus
         case '-' => {
           if (onLastChar) {
-            TokenType.Minus
+            TokenType.Symbol
           }
           else {
             val next = input(pos + 1)
@@ -84,14 +68,11 @@ class Lexer(val input: String) {
             else
               next match {
                 case '.' => TokenType.Number
-                case _ => TokenType.Minus
+                case _ => TokenType.Symbol
               }
           }
         }
-        case '*' => TokenType.Mul
-        case '/' => TokenType.Div
-        case '\'' => TokenType.Quote
-        case _ => TokenType.Unknown
+        case _ => TokenType.Symbol
     }
   }
 
@@ -166,51 +147,6 @@ class Lexer(val input: String) {
   private def tokRPar: Token = {
     consume()
     new Token(")", TokenType.RPar)
-  }
-
-  private def tokLSPar: Token = {
-    consume()
-    new Token("[", TokenType.LSPar)
-  }
-
-  private def tokRSPar: Token = {
-    consume()
-    new Token("]", TokenType.RSPar)
-  }
-
-  private def tokQuote: Token = {
-    consume()
-    new Token("'", TokenType.Quote)
-  }
-
-  private def tokColon: Token = {
-    consume()
-    new Token(":", TokenType.Colon)
-  }
-
-  private def tokSColon: Token = {
-    consume()
-    new Token(";", TokenType.SColon)
-  }
-
-  private def tokPlus: Token = {
-    consume()
-    new Token("+", TokenType.Plus)
-  }
-
-  private def tokMinus: Token = {
-    consume()
-    new Token("-", TokenType.Minus)
-  }
-
-  private def tokMul: Token = {
-    consume()
-    new Token("-", TokenType.Mul)
-  }
-
-  private def tokDiv: Token = {
-    consume()
-    new Token("/", TokenType.Div)
   }
 }
 

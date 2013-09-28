@@ -7,14 +7,5 @@ object TokenType extends Enumeration {
       Number,
       String,
       LPar,
-      RPar,
-      LSPar,
-      RSPar,
-      Quote,
-      Colon,
-      SColon,
-      Plus,
-      Minus,
-      Mul,
-      Div = Value
+      RPar = Value
 }

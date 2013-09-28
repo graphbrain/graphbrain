@@ -11,6 +11,7 @@ class Parser(val input: String) {
       case TokenType.LPar => parseList(pos)
       case TokenType.String => new StringNode(tokens(pos).text, pos)
       case TokenType.Symbol => new StringVar(tokens(pos).text, "", pos)
+      case TokenType.Number => new NumberNode(tokens(pos).text.toDouble, pos)
     }
   }
 
@@ -31,16 +32,25 @@ class Parser(val input: String) {
     tokens(pos).text match {
       case "nlp" => parseNlp(pos + 1)
       case "?" => parsePattern(pos + 1)
+      case "+" => parseSum(pos + 1)
+      case _ => null // error
+    }
+  }
+
+  private def parseRuleName(pos: Int): ProgNode = {
+    tokens(pos).ttype match {
+      case TokenType.Symbol => new StringVar(tokens(pos).text, "", pos)
       case _ => null // error
     }
   }
 
   private def parseNlp(pos: Int): ProgNode = {
-    val p1 = parseConds(pos)
+    val p1 = parseRuleName(pos)
     val p2 = parseConds(p1.lastTokenPos + 1)
+    val p3 = parseConds(p2.lastTokenPos + 1)
 
-    if (matchClosingPar(p2.lastTokenPos + 1))
-      new NlpRule(Array(p1, p2), p2.lastTokenPos + 1)
+    if (matchClosingPar(p3.lastTokenPos + 1))
+      new NlpRule(Array(p1, p2, p3), p3.lastTokenPos + 1)
     else
       null // error
   }
@@ -63,7 +73,7 @@ class Parser(val input: String) {
       Nil
     }
     else {
-      val cond = parseFun(pos)
+      val cond = parse(pos)
       cond :: parseCondsList(cond.lastTokenPos + 1)
     }
   }
@@ -92,11 +102,21 @@ class Parser(val input: String) {
 
     new PatFun(params, lastParamsTokenPos + 1)
   }
+
+  private def parseSum(pos: Int): ProgNode = {
+    val p1 = parse(pos)
+    val p2 = parse(p1.lastTokenPos + 1)
+
+    if (matchClosingPar(p2.lastTokenPos + 1))
+      new SumFun(Array(p1, p2), p2.lastTokenPos + 1)
+    else
+      null // error
+  }
 }
 
 object Parser {
   def main(args: Array[String]) = {
-    val p = new Parser("nlp test: 1 + 1 -> 2 + 2")
+    val p = new Parser("(nlp test ((? x \"is\" y)) ((+ 1 1)))")
     println(p.prog)
   }
 }
