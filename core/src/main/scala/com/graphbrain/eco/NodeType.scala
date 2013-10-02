@@ -6,5 +6,6 @@ object NodeType extends Enumeration {
       Boolean,
       Number,
       String,
-      Vertex = Value
+      Vertex,
+      RuleName = Value
 }

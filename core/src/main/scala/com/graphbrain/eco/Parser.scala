@@ -45,7 +45,7 @@ class Parser(val input: String) {
 
   private def parseRuleName(pos: Int): ProgNode = {
     tokens(pos).ttype match {
-      case TokenType.Symbol => new StringNode(tokens(pos).text, pos)
+      case TokenType.Symbol => new RuleNameNode(tokens(pos).text, pos)
       case _ => null // error
     }
   }
