@@ -10,9 +10,15 @@ class Parser(val input: String) {
     tokens(pos).ttype match {
       case TokenType.LPar => parseList(pos)
       case TokenType.String => new StringNode(tokens(pos).text, pos)
-      case TokenType.Symbol => new StringVar(tokens(pos).text, "", pos)
+      case TokenType.Symbol => parseSymbol(pos)
       case TokenType.Number => new NumberNode(tokens(pos).text.toDouble, pos)
     }
+  }
+
+  private def parseSymbol(pos: Int): ProgNode = tokens(pos).text match {
+    case "true" => new BoolNode(true, pos)
+    case "false" => new BoolNode(false, pos)
+    case _ => new StringVar(tokens(pos).text, "", pos)
   }
 
   private def matchOpeningPar(pos: Int) =
@@ -39,7 +45,7 @@ class Parser(val input: String) {
 
   private def parseRuleName(pos: Int): ProgNode = {
     tokens(pos).ttype match {
-      case TokenType.Symbol => new StringVar(tokens(pos).text, "", pos)
+      case TokenType.Symbol => new StringNode(tokens(pos).text, pos)
       case _ => null // error
     }
   }
@@ -116,7 +122,7 @@ class Parser(val input: String) {
 
 object Parser {
   def main(args: Array[String]) = {
-    val p = new Parser("(nlp test ((? x \"is\" y)) ((+ 1 1)))")
+    val p = new Parser("(nlp test ((? x \"is\" y)) (true))")
     println(p.prog)
   }
 }

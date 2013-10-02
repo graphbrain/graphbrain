@@ -8,11 +8,12 @@ import com.graphbrain.eco.nodes._
 
 @RunWith(classOf[JUnitRunner])
 class ParserSuite extends FunSuite {
-  test("nlp test: true -> 1 + 1") {
-    val p = new Parser("nlp test: true -> 1 + 1")
+  test("(nlp test (true) ((+ 1 1)))") {
+    val p = new Parser("(nlp test (true) ((+ 1 1)))")
     val prog: Prog = new Prog(new NlpRule(Array(
-      new BoolNode(true),
-      new SumFun(Array(new NumberNode(1), new NumberNode(1))))))
+      new StringNode("test"),
+      new CondsFun(Array(new BoolNode(true))),
+      new CondsFun(Array(new SumFun(Array(new NumberNode(1), new NumberNode(1))))))))
 
     assert(p.prog == prog)
   }
