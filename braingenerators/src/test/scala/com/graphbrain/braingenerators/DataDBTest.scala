@@ -1,16 +1,15 @@
 package com.graphbrain.braingenerators
 
 
-import com.graphbrain.gbdb.VertexStore
-import com.graphbrain.gbdb.SimpleCaching
-import com.graphbrain.gbdb.TextNode
-import com.graphbrain.gbdb.SourceNode
-import com.graphbrain.gbdb.Edge
+import com.graphbrain.db.Graph
+import com.graphbrain.db.SimpleCaching
+import com.graphbrain.db.TextNode
+import com.graphbrain.db.Edge
 
 
 object DataDBTest {
-
-	def checkDBGraphFromInfobox():Unit=
+  /*
+	def checkDBGraphFromInfobox(): Unit=
 	{
 		val testStoreName = "testgbdb"
 		DBPediaGraphFromInfobox.processFile("brain-generators/data-files/mappingbased_properties_en.nq", new OutputDBWriter(testStoreName), 100)
@@ -24,8 +23,5 @@ object DataDBTest {
 
 		DataDBTest.checkDBGraphfromInfobox();
 	}
-
-
-
-
+	*/
 }

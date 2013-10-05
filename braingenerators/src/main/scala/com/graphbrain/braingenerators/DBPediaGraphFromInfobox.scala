@@ -1,15 +1,5 @@
 package com.graphbrain.braingenerators
 
-import java.net.URL
-import scala.io.Source
-import scala.util.matching.Regex
-import scala.xml._
-import java.io.BufferedReader;
-import java.io.InputStreamReader
-import scala.collection.mutable.ListBuffer
-
-
-
 object DBPediaGraphFromInfobox {
 
   
@@ -35,48 +25,43 @@ object DBPediaGraphFromInfobox {
       val obj = Formatting.normalizeWikiTitle(things(1).replace("<http://dbpedia.org/resource/", "").replace(">", ""))
       if(Formatting.isList(subj)||Formatting.isList(obj)){return ("","","","")}
       val pred = predicate(0).replace("<http://dbpedia.org/ontology/", "").replace(">", "")
-      if(wikiSource.length==1)
-      {
-        return (subj, pred, obj, wikiSource(0).replace("<", "").replace(">", ""));
+      if(wikiSource.length==1) {
+        (subj, pred, obj, wikiSource(0).replace("<", "").replace(">", ""))
       }
-      else{
-        return (subj,pred,obj,"")
+      else {
+        (subj,pred,obj,"")
       }
     }
-    else
-    {
-      return ("", "", "", "")
+    else {
+      ("", "", "", "")
     }
   }
 
 
-  def processFile(filename:String, output:OutputDBWriter, limit:Int, readerLine:Int=0):Unit=
-  {
-    
-     
-    val reader = new InputFileReader(filename);
+  def processFile(filename:String, output:OutputDBWriter, limit:Int, readerLine:Int=0):Unit = {
+    val reader = new InputFileReader(filename)
     if(readerLine>0)
     {
       reader.initAtLine(readerLine)
     }
-    var counter=reader.getLineNum();
-    var inserted=0;
-    output.writeUser();
-    inserted += 1;
+    var counter=reader.getLineNum
+    var inserted=0
+    output.writeUser()
+    inserted += 1
 
-    output.writeGeneratorSource(DBPediaGraphFromInfobox.sourceName, DBPediaGraphFromInfobox.sourceURL)
-    inserted += 1;
+    //output.writeGeneratorSource(DBPediaGraphFromInfobox.sourceName, DBPediaGraphFromInfobox.sourceURL)
+    inserted += 1
     
     while(counter<limit||limit<0)
     {
       val line = reader.readLine()
-      println("Processed Line: " + counter.toString + " Inserted: " + inserted.toString +  line + " File line: " + reader.getLineNum());
+      println("Processed Line: " + counter.toString + " Inserted: " + inserted.toString +  line + " File line: " + reader.getLineNum)
       
       line match{
-        case ""=> return;
+        case ""=> return
         case a:String => processQTuple(a) match {
           case ("", "", "", "") => //Don't output  
-          case (b:String, c:String, d:String, e:String) => output.writeOutDBInfo(b, c, d, e); inserted+=1
+          case (b:String, c:String, d:String, e:String) => output.writeOutDBInfo(b, c, d, e); inserted += 1
         }
       } 
       counter+=1     
@@ -86,8 +71,8 @@ object DBPediaGraphFromInfobox {
     output.finish()
 
     println("Start line: "+readerLine.toString)
-    println("End line: "+ counter.toString); 
-    println("Inserted: "+ inserted.toString); 
+    println("End line: "+ counter.toString)
+    println("Inserted: "+ inserted.toString)
     return
   }
 
@@ -98,7 +83,7 @@ object DBPediaGraphFromInfobox {
     args match
     {
       
-      case a:Array[String] if(a.length==3) => processFile(args(0), new OutputDBWriter(args(1), args(2), args(4), args(5), args(6)), args(3).toInt)
+      case a:Array[String] if a.length == 3 => processFile(args(0), new OutputDBWriter(args(1), args(2), args(4), args(5), args(6)), args(3).toInt)
       case _ =>  processFile(DBPediaGraphFromInfobox.dataFile, new OutputDBWriter(storeName = "gb", source = DBPediaGraphFromInfobox.sourceName, username = "dbpedia", name = "dbpedia", role = "crawler"), -1)
   
     }

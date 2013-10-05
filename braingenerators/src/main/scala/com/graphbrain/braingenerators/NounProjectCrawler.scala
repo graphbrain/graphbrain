@@ -79,7 +79,7 @@ object NounProjectCrawler {
     var inserted=0;
     output.writeUser()
     inserted += 1;
-    output.writeGeneratorSource(NounProjectCrawler.sourceName, NounProjectCrawler.sourceURL);
+    //output.writeGeneratorSource(NounProjectCrawler.sourceName, NounProjectCrawler.sourceURL);
     inserted += 1;
 
     for(i <- 1 to NounProjectCrawler.nounListPages)
