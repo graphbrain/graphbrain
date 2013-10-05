@@ -15,9 +15,13 @@ class LevelDbBackend(name: String="dbnode") extends Backend with Logging {
 	val EDGE_PREFIX = '#'
   val GLOBAL_LINK_PREFIX = '*'
 
-  val options = new Options()
-  options.createIfMissing(true)
-  val db = factory.open(new File(name), options)
+  if (LevelDbBackend.db == null) {
+    val options = new Options()
+    options.createIfMissing(true)
+    LevelDbBackend.db = factory.open(new File(name), options)
+  }
+
+  val db = LevelDbBackend.db
 	
 	def close() = {
 		db.close()
@@ -337,6 +341,8 @@ class LevelDbBackend(name: String="dbnode") extends Backend with Logging {
 }
 
 object LevelDbBackend {
+  var db: DB = null
+
   def strPlusOne(str: String) = {
     val lastChar = str.charAt(str.length - 1)
     str.substring(0, str.length - 1) + (lastChar + 1).toChar
