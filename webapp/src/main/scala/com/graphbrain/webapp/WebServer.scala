@@ -95,7 +95,7 @@ object WebServer extends Logging {
     log(null, null, "webserver started")
 
     this.prod = prod
-    http = unfiltered.netty.Http(8080)
+    http = unfiltered.netty.Http(4000)
       .handler(GBPlan)
       .handler(LandingPlan)
       .handler(NodePlan)

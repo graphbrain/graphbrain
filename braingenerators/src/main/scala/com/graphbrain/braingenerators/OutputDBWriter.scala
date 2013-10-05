@@ -6,7 +6,7 @@ import com.graphbrain.db.{ID => HGDBID, _}
 
 class OutputDBWriter(storeName:String, source:String, username:String, name:String, role:String) {
 
-	val store = new Graph() with UserManagement with UserOps
+	val store = new Graph(storeName) with UserManagement with UserOps
 	val wikiURL = "http://en.wikipedia.org/wiki/"
 	val wikiPageET = store.put(new EdgeType(ID.reltype_id("sys/wikipage"), label = "wikipage"))
 	val wikiPageTitle = store.put(new EdgeType(ID.reltype_id("sys/wikipedia"), label = "wikipedia"))
@@ -63,11 +63,10 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 			existingNode match {
 				case e: TextNode =>
 				  if(disAmb.hasNext) {
-				  	val da = disAmb.next.replace("(", "").replace(")", "").trim
+				  	val da = disAmb.next().replace("(", "").replace(")", "").trim
 				  	val daNode = store.put(TextNode.fromNsAndText(namespace = "1", text = da))
 				  	val daID = daNode.id
 				  	val daRel = Edge.fromParticipants(Array(asInRel, e.id, daID))
-				  	val wikiRelID = wikiRel + " " + wikiNode.id
 				  	if(e.text == titleSP) {
 				  		for(nEdge <- store.edges(existingNode.id)) {
 				  			println(nEdge)
@@ -106,7 +105,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 		val disAmbA = """\(.*?\)""".r.findAllIn(decodedTitle)
 		
 		if(disAmbA.hasNext) {
-			val da = disAmbA.next.replace("(", "").replace(")", "").trim
+			val da = disAmbA.next().replace("(", "").replace(")", "").trim
 			val daNode = TextNode.fromNsAndText(namespace="1", text=da)
       store.put(daNode)
 			println(store.getOrInsert(daNode, HGDBID.userIdFromUsername(username)).id + ", da: " +  daNode.text)

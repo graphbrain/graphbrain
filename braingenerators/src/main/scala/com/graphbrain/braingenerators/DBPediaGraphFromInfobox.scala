@@ -2,9 +2,8 @@ package com.graphbrain.braingenerators
 
 object DBPediaGraphFromInfobox {
 
-  
-  val thingRegex="""(<http:\/\/dbpedia.org\/resource\/.+?>)""".r
-  val predicateRegex = """(<http:\/\/dbpedia.org\/ontology\/.+?>)""".r
+  val thingRegex = """(<http:\/\/dbpedia.org\/resource\/.+?>)""".r
+  val predicateRegex ="""(<http:\/\/dbpedia.org\/ontology\/.+?>)""".r
   val wikiRegex = """(<http:\/\/en.wikipedia.org\/wiki\/.+?>)""".r
   val sourceName = "dbpedia/mappingproperties"
   val dataFile = "mappingbased_properties_en.nq"
@@ -16,7 +15,7 @@ object DBPediaGraphFromInfobox {
   */
   def processQTuple(qTuple:String):(String, String, String, String)=
   {
-    var things = thingRegex.findAllIn(qTuple).toArray
+    val things = thingRegex.findAllIn(qTuple).toArray
     val predicate = predicateRegex.findAllIn(qTuple).toArray
     val wikiSource = wikiRegex.findAllIn(qTuple).toArray
     if(things.length==2&&predicate.length==1)
@@ -36,7 +35,6 @@ object DBPediaGraphFromInfobox {
       ("", "", "", "")
     }
   }
-
 
   def processFile(filename:String, output:OutputDBWriter, limit:Int, readerLine:Int=0):Unit = {
     val reader = new InputFileReader(filename)
@@ -64,8 +62,7 @@ object DBPediaGraphFromInfobox {
           case (b:String, c:String, d:String, e:String) => output.writeOutDBInfo(b, c, d, e); inserted += 1
         }
       } 
-      counter+=1     
-      
+      counter += 1
     }
 
     output.finish()
@@ -76,17 +73,16 @@ object DBPediaGraphFromInfobox {
     return
   }
 
-
-     
-
-  def main(args : Array[String]) : Unit = {
-    args match
-    {
-      
-      case a:Array[String] if a.length == 3 => processFile(args(0), new OutputDBWriter(args(1), args(2), args(4), args(5), args(6)), args(3).toInt)
-      case _ =>  processFile(DBPediaGraphFromInfobox.dataFile, new OutputDBWriter(storeName = "gb", source = DBPediaGraphFromInfobox.sourceName, username = "dbpedia", name = "dbpedia", role = "crawler"), -1)
-  
+  def main(args: Array[String]): Unit =
+    args match {
+      case a: Array[String] if a.length == 3 =>
+        processFile(args(0), new OutputDBWriter(args(1), args(2), args(4), args(5), args(6)), args(3).toInt)
+      case _ =>
+        processFile(DBPediaGraphFromInfobox.dataFile,
+          new OutputDBWriter(storeName="dbnode",
+            source=DBPediaGraphFromInfobox.sourceName,
+            username="dbpedia",
+            name="dbpedia",
+            role="crawler"), -1)
     }
-    
-  }
 }
