@@ -1,112 +1,79 @@
 package com.graphbrain.braingenerators
 
-import java.io.BufferedWriter
-import java.io.FileWriter
 import java.net.URLDecoder
-import scala.collection.immutable.HashMap
-import com.graphbrain.gbdb.VertexStore
-import com.graphbrain.gbdb.UserManagement
-import com.graphbrain.gbdb.UserOps
-import com.graphbrain.gbdb.OpLogging
-import com.graphbrain.gbdb.TextNode
-import com.graphbrain.gbdb.Edge
-import com.graphbrain.gbdb.SourceNode
-import com.graphbrain.gbdb.URLNode
-import com.graphbrain.gbdb.Vertex
-import com.graphbrain.gbdb.EdgeType
-import com.graphbrain.gbdb.{ID => HGDBID}
+import com.graphbrain.db.{ID => HGDBID, _}
 
 
 class OutputDBWriter(storeName:String, source:String, username:String, name:String, role:String) {
-	
 
-	val store = new VertexStore(storeName) with UserManagement with UserOps
+	val store = new Graph() with UserManagement with UserOps
 	val wikiURL = "http://en.wikipedia.org/wiki/"
-	val wikiPageET = store.createEdgeType(ID.reltype_id("wikipage"), label = "wikipage")
-	val wikiPageTitle = store.createEdgeType(ID.reltype_id("sys/wikipedia"), label = "wikipedia")
+	val wikiPageET = store.put(new EdgeType(ID.reltype_id("sys/wikipage"), label = "wikipage"))
+	val wikiPageTitle = store.put(new EdgeType(ID.reltype_id("sys/wikipedia"), label = "wikipedia"))
 	val lineRegex = """#.*?""".r
 	val wikiRel = "sys/wikipedia"
 	val asInRel = ID.reltype_id("as in", 1)
 	
 
-	def writeOutDBInfo(node1: String, relin: String, node2: String, resource: String):Unit=
-	{
-		
-
-		try{
-
+	def writeOutDBInfo(node1: String, relin: String, node2: String, resource: String):Unit = {
+		try {
 			val globalRelType = ID.reltype_id(separateWords(relin.trim), 1)
-			
 			
 			val ng1 = insertAndGetWikiDisambigNode(node1, username)
 			val ng2 = insertAndGetWikiDisambigNode(node2, username)
-			val relType = store.createEdgeType(id = globalRelType, label = separateWords(relin.trim));
+			val relType = new EdgeType(id = globalRelType, label = separateWords(relin.trim))
+      store.put(relType)
 			
+			println(store.getOrInsert(relType, HGDBID.userIdFromUsername(username)).id + ", " + relType.label)
+			println(store.getOrInsert(ng1, HGDBID.userIdFromUsername(username)).id)
+			println(store.getOrInsert(ng2, HGDBID.userIdFromUsername(username)).id)
 			
-			println(store.getOrInsert2(relType, HGDBID.userIdFromUsername(username)).id + ", " + relType.label);
-			println(store.getOrInsert2(ng1, HGDBID.userIdFromUsername(username)).id);
-			println(store.getOrInsert2(ng2, HGDBID.userIdFromUsername(username)).id);
-        	
-
-			
-			//Relationship at global level
-			store.addrel2(relType.id, Array[String](ng1.id, ng2.id), HGDBID.userIdFromUsername(username), true)
-
-
-			
-			
+			// Relationship at global level
+			store.connectVertices(Array[String](relType.id, ng1.id, ng2.id), HGDBID.userIdFromUsername(username))
 		}
 		catch {
-			case e => e.printStackTrace()
+			case e: Throwable => e.printStackTrace()
 		}
-		
-		
-
 	}
-
-	
 
 	def nodeExists(node:Vertex):Boolean=
 	{
-		try{
-			store.get(node.id);
-			return true			
+		try {
+			store.get(node.id)
+			true
 		}
-		catch{
-			case e => return false
-
+		catch {
+			case e: Throwable => return false
 		}	
 	}
 
-	def removeWikiDisambig(wikiTitle: String): String = {
-      return wikiTitle.split("""\(""")(0).reverse.dropWhile(_ == '_').reverse.trim
-	}
+	def removeWikiDisambig(wikiTitle: String): String =
+    wikiTitle.split("""\(""")(0).reverse.dropWhile(_ == '_').reverse.trim
 
 	def insertAndGetWikiDisambigNode(wikiTitle: String, username: String): Vertex = {
 		val decodedTitle = URLDecoder.decode(wikiTitle, "UTF-8")
-		val titleSP = removeWikiDisambig(decodedTitle);
+		val titleSP = removeWikiDisambig(decodedTitle)
 		
-		var i = 1;
-		val wikiNode = store.createTextNode(namespace = "wikipedia", text = URLDecoder.decode(wikiTitle, "UTF-8"))
+		var i = 1
+		val wikiNode = store.put(TextNode.fromNsAndText(namespace = "wikipedia", text = URLDecoder.decode(wikiTitle, "UTF-8")))
 
 		while(store.exists(ID.text_id(titleSP, i.toString))) {
-			val existingNode = store.get(ID.text_id(titleSP, i.toString));
+			val existingNode = store.get(ID.text_id(titleSP, i.toString))
 			val disAmb = """\(.*?\)""".r.findAllIn(decodedTitle)
 			existingNode match {
-				case e: TextNode => 
-
+				case e: TextNode =>
 				  if(disAmb.hasNext) {
 				  	val da = disAmb.next.replace("(", "").replace(")", "").trim
-				  	val daNode = store.createTextNode(namespace = "1", text=da)
+				  	val daNode = store.put(TextNode.fromNsAndText(namespace = "1", text = da))
 				  	val daID = daNode.id
-				  	val daRel = Edge(asInRel, List(e.id, daID));
+				  	val daRel = Edge.fromParticipants(Array(asInRel, e.id, daID))
 				  	val wikiRelID = wikiRel + " " + wikiNode.id
 				  	if(e.text == titleSP) {
-				  		for(nEdge <- store.neighborEdges(existingNode.id)) {
+				  		for(nEdge <- store.edges(existingNode.id)) {
 				  			println(nEdge)
 				  			if(nEdge == daRel) {
 				  				println("Match:" + nEdge)
-				  				return existingNode;		
+				  				return existingNode
 				  			}
 				  		}
 				  		
@@ -114,51 +81,43 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 				  }
 				  else {
 				  	if(e.text == titleSP) {
-				  		return existingNode;
+				  		return existingNode
 				  	}
-
 				  }
 				case _ =>
 			}
 			i += 1
 		}
-		val newNode = store.createTextNode(namespace = i.toString, text=titleSP)
-		println(store.getOrInsert2(newNode, HGDBID.userIdFromUsername(username)).id)
+		val newNode = store.put(TextNode.fromNsAndText(namespace=i.toString, text=titleSP))
+		println(store.getOrInsert(newNode, HGDBID.userIdFromUsername(username)).id)
 
 		
 		if(!store.exists(wikiNode.id)) {
-		  
 		  store.put(wikiNode)	
 		  println("Wiki_ID: " + store.get(wikiNode.id).id)
-
 		}
 		try {
-		  store.addrel(wikiPageTitle.id, List[String](newNode.id, wikiNode.id))
-	    }
-	    catch {
-	      case e => e.printStackTrace()
-	    }
-		
-		
-		
+		  store.connectVertices(Array[String](wikiPageTitle.id, newNode.id, wikiNode.id))
+	  }
+	  catch {
+	    case e: Throwable => e.printStackTrace()
+	  }
 		
 		val disAmbA = """\(.*?\)""".r.findAllIn(decodedTitle)
 		
 		if(disAmbA.hasNext) {
-			val da = disAmbA.next.replace("(", "").replace(")", "").trim;
-			val daNode = store.createTextNode(namespace = "1", text=da)
-			println(store.getOrInsert2(daNode, HGDBID.userIdFromUsername(username)).id + ", da: " +  daNode.text)
-			store.addrel2(asInRel, Array[String](newNode.id, daNode.id), HGDBID.userIdFromUsername(username), true)
-
+			val da = disAmbA.next.replace("(", "").replace(")", "").trim
+			val daNode = TextNode.fromNsAndText(namespace="1", text=da)
+      store.put(daNode)
+			println(store.getOrInsert(daNode, HGDBID.userIdFromUsername(username)).id + ", da: " +  daNode.text)
+			store.connectVertices(Array[String](asInRel, newNode.id, daNode.id), HGDBID.userIdFromUsername(username))
 		}
 
-		return newNode;
-		
+		newNode
 	}
 
-
-	def writeGeneratorSource(sourceID:String, sourceURL:String)
-  	{
+  /*
+	def writeGeneratorSource(sourceID:String, sourceURL:String) = {
   		try{
   			val sourceNode = store.createSourceNode(id=ID.source_id(sourceID))
 	    	val urlNode = store.createURLNode(ID.url_id(sourceURL), sourceURL)
@@ -171,129 +130,109 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 	    catch{
 	    	case e => e.printStackTrace()
 	    }
+  	}*/
+
+  def writeUser() = {
+    try {
+  		store.createUser(username = username, name = name, email = "", password = "", role = role)
   	}
-
-  	def writeUser() 
-  	{
-  		try {
-  			store.createUser(username = username, name = name, email = "", password = "", role = role)
-  		}
-  		catch {
-  			case e => e.printStackTrace()
-  		}
+  	catch {
+  		case e: Throwable => e.printStackTrace()
   	}
+  }
 
-  	def writeURLNode(node:Vertex, url:String)
-  	{
-  		try{
-  			val sourceNode=store.getSourceNode(ID.source_id(source))
-  			val urlNode = store.createURLNode(ID.url_id(url), url)	
-  			store.getOrInsert2(node, HGDBID.userIdFromUsername(username))
-  			store.getOrInsert2(urlNode, HGDBID.userIdFromUsername(username))
-  			store.getOrInsert2(sourceNode, HGDBID.userIdFromUsername(username))
-  			store.addrel2("en_wikipage", Array[String](urlNode.id, node.id), HGDBID.userIdFromUsername(username), true) 
-  			store.addrel2("source", Array[String](sourceNode.id, urlNode.id), HGDBID.userIdFromUsername(username), true)
-  			
-  		}
-  		catch {
-  			case e => e.printStackTrace()
-
-  		}
-  		
-
+  def writeURLNode(node:Vertex, url:String) = {
+  	try {
+  		//val sourceNode=store.getSourceNode(ID.source_id(source))
+  		val urlNode = store.put(URLNode(ID.url_id(url), url))
+  		store.getOrInsert(node, HGDBID.userIdFromUsername(username))
+  		store.getOrInsert(urlNode, HGDBID.userIdFromUsername(username))
+  		//store.getOrInsert(sourceNode, HGDBID.userIdFromUsername(username))
+  		store.connectVertices(Array[String]("en_wikipage", urlNode.id, node.id), HGDBID.userIdFromUsername(username))
+  		//store.addrel2("source", Array[String](sourceNode.id, urlNode.id), HGDBID.userIdFromUsername(username))
   	}
+  	catch {
+  		case e: Throwable => e.printStackTrace()
+  	}
+  }
 
-  	def writeNounProjectImageNode(imagename:String, url:String, image:String="", contributorName:String="", contributorURL:String="")
-  	{
-  		try{
-  			//Tries to find an existing Wiki node.
-			  val wikinode = store.createTextNode(namespace="wikipedia", text=imagename)
+  def writeNounProjectImageNode(imagename:String, url:String, image:String="", contributorName:String="", contributorURL:String=""): Unit = {
+  	try {
+  		//Tries to find an existing Wiki node.
+			val wikinode = store.put(TextNode.fromNsAndText(namespace="wikipedia", text=imagename))
+
+  		//val sourceNode=store.getSourceNode(ID.source_id(source))
+  		val urlNode = store.put(URLNode(url))
 			
-
-  			val sourceNode=store.getSourceNode(ID.source_id(source))
-  			val urlNode = store.createURLNode(url)
-			
-			store.getOrInsert2(sourceNode, HGDBID.userIdFromUsername(username))
-			store.getOrInsert2(urlNode, HGDBID.userIdFromUsername(username))
-			store.addrel("source", List[String](sourceNode.id, urlNode.id))
+			//store.getOrInsert(sourceNode, HGDBID.userIdFromUsername(username))
+			store.getOrInsert(urlNode, HGDBID.userIdFromUsername(username))
+			//store.connectVertices(Array[String]("source", sourceNode.id, urlNode.id))
 
 				
-			if(image=="")
-			{
-				return;
+			if(image == "") {
+				return
 			}
 			image match{
 				case a:String => 
-					val imageLocal = store.createTextNode(namespace=ID.nounproject_ns(), text=a)
-					store.getOrInsert2(imageLocal, HGDBID.userIdFromUsername(username))
-					store.addrel("image_page", List[String](urlNode.id,imageLocal.id))
-					store.addrel("source", List[String](sourceNode.id, imageLocal.id))
-					val attribution = imagename + NounProjectCrawler.attributionText + contributorName;
-					val contributorNode = store.createTextNode(namespace=ID.nounproject_ns(), text=contributorName);
-					val contURLNode = store.createURLNode(contributorURL);
+					val imageLocal = store.put(TextNode.fromNsAndText(namespace=ID.nounproject_ns(), text=a))
+					store.getOrInsert(imageLocal, HGDBID.userIdFromUsername(username))
+					store.connectVertices(Array[String]("image_page", urlNode.id,imageLocal.id))
+					//store.connectVertices(Array[String]("source", sourceNode.id, imageLocal.id))
+					//val attribution = imagename + NounProjectCrawler.attributionText + contributorName
+					val contributorNode = store.put(TextNode.fromNsAndText(namespace=ID.nounproject_ns(), text=contributorName))
+					val contURLNode = store.put(URLNode(contributorURL))
 
-					store.getOrInsert2(contributorNode, HGDBID.userIdFromUsername(username))
-					store.getOrInsert2(contURLNode, HGDBID.userIdFromUsername(username))
-					store.addrel("attribute_as", List[String](imageLocal.id, contributorNode.id))
-					store.addrel("contributor_page", List[String](contURLNode.id, contributorNode.id, imageLocal.id))
+					store.getOrInsert(contributorNode, HGDBID.userIdFromUsername(username))
+					store.getOrInsert(contURLNode, HGDBID.userIdFromUsername(username))
+					store.connectVertices(Array[String]("attribute_as", imageLocal.id, contributorNode.id))
+					store.connectVertices(Array[String]("contributor_page", contURLNode.id, contributorNode.id, imageLocal.id))
 
+					store.getOrInsert(imageLocal, HGDBID.userIdFromUsername(username))
 
-					store.getOrInsert2(imageLocal, HGDBID.userIdFromUsername(username));
-
-					if(nodeExists(wikinode)) 
-					{
-						store.addrel("image_of", List[String](imageLocal.id, wikinode.id))
-
-					
+					if(nodeExists(wikinode))  {
+						store.connectVertices(Array[String]("image_of", imageLocal.id, wikinode.id))
 					}
-					else{
-
-						val newNode = store.createTextNode(namespace="noun", text=imagename)
-						store.getOrInsert2(newNode, HGDBID.userIdFromUsername(username));
-						store.addrel("image_of", List[String](imageLocal.id, newNode.id))
-				
+					else {
+						val newNode = store.put(TextNode.fromNsAndText(namespace="noun", text=imagename))
+						store.getOrInsert(newNode, HGDBID.userIdFromUsername(username))
+						store.connectVertices(Array[String]("image_of", imageLocal.id, newNode.id))
 					}
-
-			}
-
+			  }
   		}
   	}
 
   	def addWikiPageToDB(pageTitle:String):Unit=
   	{
     	val pageURL = Wikipedia.wikipediaBaseURL+pageTitle.trim.replace(" ", "_")
-    	val pageNode = store.createTextNode("wikipedia", pageTitle);
+    	val pageNode = store.put(TextNode.fromNsAndText("wikipedia", pageTitle))
     	writeURLNode(pageNode, pageURL)
   	}
 
   	def separateWords(stringToSep: String) : String = {
-  		val capRegex = """[A-Z][a-z]*""".r;
-  		val nonCapRegex = """[a-z]+""".r;
-  		var separated = "";
-  		var nonCapsSep = nonCapRegex.findAllIn(stringToSep);
-  		var capsSeparated = capRegex.findAllIn(stringToSep);
+  		val capRegex = """[A-Z][a-z]*""".r
+  		val nonCapRegex = """[a-z]+""".r
+  		var separated = ""
+  		var nonCapsSep = nonCapRegex.findAllIn(stringToSep)
+  		var capsSeparated = capRegex.findAllIn(stringToSep)
   		
   		if(nonCapsSep.length > 0) {
-  			nonCapsSep = nonCapRegex.findAllIn(stringToSep);
-  			separated += " " + nonCapsSep.next.toLowerCase;
+  			nonCapsSep = nonCapRegex.findAllIn(stringToSep)
+  			separated += " " + nonCapsSep.next().toLowerCase
   		}
 
-
   		if(capsSeparated.length > 0) {
-  		  capsSeparated = capRegex.findAllIn(stringToSep);
+  		  capsSeparated = capRegex.findAllIn(stringToSep)
   		  while(capsSeparated.hasNext) {
-             
-            separated += " " + capsSeparated.next.toLowerCase;
-
+          separated += " " + capsSeparated.next().toLowerCase
   		  }
   		} 
-  		return separated.trim;
+  		separated.trim
   	}
 
 	def getRelID(rel:String, node1ID:String, node2ID:String):String=
 	{
 		val pageTokens=List[String](rel)++Array[String](node1ID, node2ID)
-		return pageTokens.reduceLeft(_+ " " +_)
+		pageTokens.reduceLeft(_+ " " +_)
 	}
 
 	def finish() = {}

@@ -1,17 +1,9 @@
 package com.graphbrain.braingenerators
 
-import java.net.URL
-import scala.io.Source
-import scala.util.matching.Regex
-import scala.xml._
-import java.io.BufferedReader;
-import java.io.InputStreamReader
 import scala.collection.mutable.ListBuffer
-
 
 object DBPediaGraphFromCategories {
 
-  
   val thingRegex="""(<http:\/\/dbpedia.org\/resource\/.+?>)""".r
   val predicateRegex = """(<http:\/\/dbpedia.org\/ontology\/.+?>)""".r
   val owlString="""<http:.*owl#Thing>""".r
@@ -40,7 +32,7 @@ object DBPediaGraphFromCategories {
       if(wikiSource.length==1)
       {
         println(category)
-        if(isVowel(category(0).toLowerCase.toString.toLowerCase)) {
+        if(isVowel(category(0).toString.toLowerCase)) {
           println(subj + "," + "isAn" + "," + category + "," +  wikiSource(0).replace("<", "").replace(">", ""))
           return (subj, "isAn", category, wikiSource(0).replace("<", "").replace(">", ""))
 
@@ -48,15 +40,14 @@ object DBPediaGraphFromCategories {
         
       }
       else{
-        if(isVowel(category(0).toLowerCase.toString.toLowerCase)) {
+        if(isVowel(category(0).toString.toLowerCase)) {
           println(subj + "," + "isAn" + "," + category )
           return (subj,"isAn",category,"") 
         }
         else {return (subj, "isA", category, "")}
       }
     }
-    return ("", "", "", "")
-    
+    ("", "", "", "")
   }
 
   private def isVowel(text:String): Boolean = {
@@ -65,7 +56,7 @@ object DBPediaGraphFromCategories {
         return true
       }
     }
-    return false;
+    false
   }
 
   private def getCategory(qTuple:String):String=
@@ -79,32 +70,32 @@ object DBPediaGraphFromCategories {
     {
       return "owl#Thing"
     }
-    return ""
+    ""
   }
 
   def processFile(filename:String, output:OutputDBWriter, limit:Int, readerLine:Int=0):Unit=
   
   {
     
-    val reader = new InputFileReader(filename);
+    val reader = new InputFileReader(filename)
     if(readerLine>1)
     {
       reader.initAtLine(readerLine)
     }
-    var counter=reader.getLineNum();
-    var inserted=0;
+    var counter=reader.getLineNum
+    var inserted=0
     output.writeUser()
     inserted += 1
-    output.writeGeneratorSource(DBPediaGraphFromCategories.sourceName, DBPediaGraphFromCategories.sourceURL)
+    //output.writeGeneratorSource(DBPediaGraphFromCategories.sourceName, DBPediaGraphFromCategories.sourceURL)
     inserted+=1
     
 
-    var items = new ListBuffer[(String, String, String, String)]
+    val items = new ListBuffer[(String, String, String, String)]
 
-    while(counter<limit||limit<0)
+    while(counter < limit || limit < 0)
     {
       val line = reader.readLine()
-      println("Processed Line: " + counter.toString + " File line: " + reader.getLineNum());
+      println("Processed Line: " + counter.toString + " File line: " + reader.getLineNum)
       println(line)
       line match{
         
@@ -112,8 +103,15 @@ object DBPediaGraphFromCategories {
         case a:String => processQTuple(a) match {
           case ("", "", "", "") => println("empty"); //Don't output  
           case (b:String, c:String, d:String, e:String) => d match {
-          	case "owl#Thing" => inserted+=addTypes(items.reverse.toList, output); items.clear(); println("Top");
-          	case _ => items.append(processQTuple(a)); println("Thing");
+          	case "owl#Thing" => {
+              inserted += addTypes(items.reverse.toList, output)
+              items.clear()
+              println("Top")
+            }
+          	case _ => {
+              items.append(processQTuple(a))
+              println("Thing")
+            }
           }
          
         }
@@ -124,37 +122,37 @@ object DBPediaGraphFromCategories {
     output.finish()
 
     println("Start line: "+readerLine.toString)
-    println("End line: "+ counter.toString); 
-    println("Inserted: "+ inserted.toString); 
+    println("End line: "+ counter.toString)
+    println("Inserted: "+ inserted.toString)
     return
 
   }
 
   def addTypes(items:List[(String, String, String, String)], output:OutputDBWriter):Int=
   {
-    var inserted=0;
+    var inserted=0
     var rel = "isA"
     items match{
       case x::Nil => x match{
         case (a:String, b:String, c:String, d:String) => 
         
           if(isVowel(c(0).toString.toLowerCase)) {rel="isAn"}
-          output.writeOutDBInfo(Formatting.normalizeWikiTitle(a), rel, Formatting.normalizeWikiTitle(c), d); 
-          inserted+=1; 
+          output.writeOutDBInfo(Formatting.normalizeWikiTitle(a), rel, Formatting.normalizeWikiTitle(c), d)
+          inserted += 1
           println("Inserted: " + inserted.toString)
-          println(Formatting.normalizeWikiTitle(a) + "," + rel + "," + Formatting.normalizeWikiTitle(c) + "," + d ); 
-          return inserted
+          println(Formatting.normalizeWikiTitle(a) + "," + rel + "," + Formatting.normalizeWikiTitle(c) + "," + d )
+          inserted
       }
       case x::y::xs => (x,y) match {
         case ((a:String, b:String, c:String, d:String),(f:String, g:String, h:String, i:String)) => 
           if(isVowel(c(0).toString.toLowerCase)) {rel="isAn"}
-          output.writeOutDBInfo(Formatting.normalizeWikiTitle(h), rel, Formatting.normalizeWikiTitle(c), ""); 
-          inserted+=1; 
-          println("Inserted: " + inserted.toString);
-          println(Formatting.normalizeWikiTitle(h) + "," + rel + "," + Formatting.normalizeWikiTitle(c) + "," + "" ); 
-          addTypes(y::xs, output);  
+          output.writeOutDBInfo(Formatting.normalizeWikiTitle(h), rel, Formatting.normalizeWikiTitle(c), "")
+          inserted+=1
+          println("Inserted: " + inserted.toString)
+          println(Formatting.normalizeWikiTitle(h) + "," + rel + "," + Formatting.normalizeWikiTitle(c) + "," + "" )
+          addTypes(y::xs, output)
       }
-      case Nil => return inserted
+      case Nil => inserted
     }
 
   }
@@ -164,7 +162,7 @@ object DBPediaGraphFromCategories {
     args match
     {
       
-      case a:Array[String] if(a.length==3) => processFile(args(0), new OutputDBWriter(args(1), args(2), args(4), args(5), args(6)), args(3).toInt)
+      case a:Array[String] if a.length == 3 => processFile(args(0), new OutputDBWriter(args(1), args(2), args(4), args(5), args(6)), args(3).toInt)
       case _ =>  processFile(DBPediaGraphFromCategories.dataFile, new OutputDBWriter(storeName = "gb", source = DBPediaGraphFromCategories.sourceName, username = "dbpedia", name = "dbpedia", role = "crawler"), -1)
       
     }

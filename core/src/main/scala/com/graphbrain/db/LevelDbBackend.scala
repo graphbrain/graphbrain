@@ -10,12 +10,14 @@ import VertexType.VertexType
 import com.typesafe.scalalogging.slf4j.Logging
 
 
-class LevelDbBackend extends Backend with Logging {
+class LevelDbBackend(name: String="dbnode") extends Backend with Logging {
 
 	val EDGE_PREFIX = '#'
   val GLOBAL_LINK_PREFIX = '*'
 
-  val db = LevelDbBackend.db
+  val options = new Options()
+  options.createIfMissing(true)
+  val db = factory.open(new File(name), options)
 	
 	def close() = {
 		db.close()
@@ -335,10 +337,6 @@ class LevelDbBackend extends Backend with Logging {
 }
 
 object LevelDbBackend {
-  val options = new Options()
-  options.createIfMissing(true)
-  val db = factory.open(new File("dbnode"), options)
-
   def strPlusOne(str: String) = {
     val lastChar = str.charAt(str.length - 1)
     str.substring(0, str.length - 1) + (lastChar + 1).toChar

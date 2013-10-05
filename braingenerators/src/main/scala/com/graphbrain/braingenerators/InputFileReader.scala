@@ -1,6 +1,6 @@
 package com.graphbrain.braingenerators
 
-import java.io.BufferedReader;
+import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.FileInputStream
 
@@ -8,33 +8,24 @@ import java.io.FileInputStream
 
 class InputFileReader(fileName:String, sep:String=",") {
 	
-	val reader:BufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
-	var lineNum=0;
+	val reader:BufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)))
+	var lineNum = 0
 
-	def readLine():String=
-	{
-		val line = reader.readLine();
-		lineNum+=1;
-		line match{
-			case a:String => return a;
-			case _ => return "";
+	def readLine():String = {
+		val line = reader.readLine()
+		lineNum += 1
+		line match {
+			case a:String => a
+			case _ => ""
 		}
-		
 	}
 
-	def getLineNum():Int=
-	{
-		return lineNum;
-	}
+	def getLineNum = lineNum
 
-	def initAtLine(line:Int):Unit=
-	{
-		for(i<-0 to line-1){
+	def initAtLine(line:Int):Unit =
+		for (i <- 0 to line - 1) {
 			readLine()
-
 		}
-		
-	}
 
 	/*def readLine(startLine:Int):String=
 	{
@@ -50,23 +41,16 @@ class InputFileReader(fileName:String, sep:String=",") {
 		}
 	}*/
 
-	def readItems():Array[String]=
-	{
-		val line = reader.readLine();
-		line match{
-			case a:String => return line.split(sep)			
-			case _ => return new Array[String](0)
+	def readItems():Array[String]= {
+		val line = reader.readLine()
+		line match {
+			case a:String => line.split(sep)
+			case _ => new Array[String](0)
 		}
-
 	}
 
 	
-	def close():Unit=
-	{	
+	def close():Unit =
 		reader.close()
-		
-	}
-
-        
 }
 

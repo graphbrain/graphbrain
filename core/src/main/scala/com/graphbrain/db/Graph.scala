@@ -3,8 +3,8 @@ package com.graphbrain.db
 import java.util.Date
 import com.typesafe.scalalogging.slf4j.Logging
 
-class Graph() extends Logging {
-  val back = new LevelDbBackend()
+class Graph(name: String="dbnode") extends Logging {
+  val back = new LevelDbBackend(name)
 
   def get(id: String): Vertex = back.get(id, VertexType.getType(id))
 
@@ -37,6 +37,11 @@ class Graph() extends Logging {
       case e: Edge => onRemoveEdge(e)
       case _ =>
     }
+  }
+
+  def connectVertices(participants: Array[String]) = {
+    logger.debug(s"connectVertices participants: ${participants.mkString(" ")}")
+    put(Edge.fromParticipants(participants))
   }
 
   def edges(pattern: Edge) = back.edges(pattern)

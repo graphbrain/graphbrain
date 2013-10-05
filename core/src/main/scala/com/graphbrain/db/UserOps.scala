@@ -85,6 +85,11 @@ trait UserOps extends Graph {
     put(Edge.fromParticipants(participants), userId)
   }
 
+  def connectVertices(participants: Array[String], userId: String) = {
+    logger.debug(s"connectVertices participants: ${participants.mkString(" ")}; userId: $userId")
+    put(Edge.fromParticipants(participants), userId)
+  }
+
   def edges(centerId: String, userId: String): Set[Edge] = {
     //ldebug("neighborEdges2 nodeId: " + nodeId + "; userid: " + userid + "; edgeType: " + edgeType + "; pos: " + relPos)
 
