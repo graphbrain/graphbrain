@@ -9,13 +9,13 @@ import com.graphbrain.db.{Edge, EdgeType, TextNode}
 class GlobalAndUserSuite extends FunSuite {
 
   test("global text node to user") {
-    val tn = TextNode("1/hank_hill", "Hank Hill", 7, 777)
+    val tn = TextNode("1/hank_hill", 7, 777)
     val utn = tn.toUser("user/telmo")
     assert(utn.id === "user/telmo/1/hank_hill")
   }
 
   test("user text node to global") {
-    val tn = TextNode("user/telmo/1/hank_hill", "Hank Hill", 7, 777)
+    val tn = TextNode("user/telmo/1/hank_hill", 7, 777)
     val gtn = tn.toGlobal
     assert(gtn.id === "1/hank_hill")
   }

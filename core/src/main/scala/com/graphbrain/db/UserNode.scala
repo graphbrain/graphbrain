@@ -14,10 +14,9 @@ case class UserNode(override val id: String,
                     session: String="",
                     sessionTs: Long= -1,
                     lastSeen: Long= -1,
-                    override val summary: String="",
                     override val degree: Int = 0,
                     override val ts: Long = -1)
-  extends Textual(id, summary, degree, ts) {
+  extends Vertex(id, degree, ts) {
 
   def this(id: String, map: Map[String, String]) =
     this(id,
@@ -29,7 +28,6 @@ case class UserNode(override val id: String,
       map("session"),
       map("sessionTs").toLong,
       map("lastSeen").toLong,
-      map("summary"),
       map("degree").toInt,
       map("ts").toLong)
 
@@ -40,8 +38,7 @@ case class UserNode(override val id: String,
                               "role" -> role,
                               "session" -> session,
                               "sessionTs" -> sessionTs.toString,
-                              "lastSeen" -> lastSeen.toString,
-                              "summary" -> summary)
+                              "lastSeen" -> lastSeen.toString)
 
   override def setId(newId: String): Vertex = copy(id=newId)
 

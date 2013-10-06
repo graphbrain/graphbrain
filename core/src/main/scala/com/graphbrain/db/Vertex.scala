@@ -24,11 +24,7 @@ abstract class Vertex(val id: String, val degree: Int = 0, val ts: Long = -1) {
 
   override def toString: String = id
 
-  def description: String = toString
-
   def raw: String = ""
-
-  def shouldUpdate(graph: Graph): Boolean = !graph.exists(id)
 
   def updateFromEdges(): Vertex = this
 

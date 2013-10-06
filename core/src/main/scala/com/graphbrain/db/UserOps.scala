@@ -14,10 +14,9 @@ trait UserOps extends Graph {
 
   def put(vertex: Vertex, userid: String): Vertex = {
     logger.debug(s"put $vertex; userId: $userid")
-    if (vertex.shouldUpdate(this)) {
-      logger.debug(s"should update: $vertex")
-      put(vertex)
-    }
+
+    put(vertex)
+
     if (!ID.isInUserSpace(vertex.id)) {
       val uVertex = vertex.toUser(userid)
       logger.debug(s"uVertex: $uVertex")

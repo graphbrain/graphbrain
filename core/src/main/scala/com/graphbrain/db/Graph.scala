@@ -92,4 +92,19 @@ class Graph(name: String="dbnode") extends Logging {
   protected def onRemoveEdge(edge: Edge) =
     for (id <- edge.ids)
       decDegree(id)
+
+  def description(vertex: Vertex): String = vertex match {
+    case t: TextNode => {
+      val asIn = edges(Array[String]("rtype/1/as_in", vertex.id))
+      if (asIn.size == 0) {
+        ""
+      }
+      else {
+        " (" + asIn.map(e => get(e.participantIds(2)).toString).mkString(", ") + ")"
+      }
+    }
+    case v => v.toString
+  }
+
+  def description(id: String): String = description(get(id))
 }

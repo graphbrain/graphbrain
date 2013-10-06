@@ -10,8 +10,8 @@ class EdgeSuite extends FunSuite {
   val g = new Graph()
 
   test("write edge") {
-    val telmo = TextNode("1/telmo_menezes", "Telmo Menezes")
-    val berlin = TextNode("1/berlin", "Berlin")
+    val telmo = TextNode("1/telmo_menezes")
+    val berlin = TextNode("1/berlin")
     val livesIn = EdgeType("rtype/1/lives_in", "lives in")
     g.put(telmo)
     g.put(berlin)

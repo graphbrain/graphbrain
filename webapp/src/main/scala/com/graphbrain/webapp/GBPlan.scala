@@ -18,7 +18,7 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val results = si.query(query)
       
       val resultsList: Seq[List[String]] = for (id <- results)
-      yield List(id, WebServer.graph.get(id).description)
+      yield List(id, WebServer.graph.description(id))
       
       val json = Map("count" -> results.size, "results" -> resultsList)
       
