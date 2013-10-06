@@ -11,14 +11,13 @@ class GraphSuite extends FunSuite {
   val g = new Graph()
 
   test("add text node") {
-    val tn = TextNode("1/hank_hill", "Hank Hill", 7, 777)
+    val tn = TextNode("1/hank_hill", 7, 777)
     g.remove(tn)
     g.put(tn)
 
     g.get("1/hank_hill") match {
       case t: TextNode => {
         assert(t.id === "1/hank_hill")
-        assert(t.summary === "Hank Hill")
         assert(t.degree === 7)
         assert(t.ts === 777)
       }
@@ -27,7 +26,7 @@ class GraphSuite extends FunSuite {
   }
 
   test("get text node that does not exist") {
-    val tn = TextNode("1/hank_hill", "Hank Hill", 7, 777)
+    val tn = TextNode("1/hank_hill", 7, 777)
     g.remove(tn)
     assert(g.get("1/hank_hill") == null)
   }

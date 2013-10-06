@@ -22,7 +22,7 @@ object DisambigPlan extends cycle.Plan with cycle.SynchronousExecution with Serv
       val results = si.query(text.toLowerCase)
       
       val resultsList: Seq[List[String]] = for (id <- results)
-      yield List(id, WebServer.graph.get(id).description)
+      yield List(id, WebServer.graph.description(id))
       
       val json = Map("count" -> results.size, "results" -> resultsList, "mode" -> mode, "text" -> text,
         "rel" -> rel, "participants" -> participantIds, "pos" -> pos)

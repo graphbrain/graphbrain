@@ -28,14 +28,10 @@ class AIChatResponderActor() extends Actor with Logging {
   private def disambiguationMessage(rel: String, participants: Array[Vertex], pos: Int) = {
     val node = participants(pos)
     val participantIds = participants.foldLeft("")((a, b) => a + "\"" + b.id + "\",")
-    node match {
-      case t: Textual => {
-        // TODO: deal with change (edge didn't exist before) vs add (edge already exists)
-        val onclick = "aiChatDisambiguate(\"change\",\"" + t + "\",\"" + rel + "\",[" + participantIds + "]," + pos + ");"
-        "<br />&nbsp;&nbsp;&nbsp;&nbsp;Using: " + t + " " + Textual.generateSummary(t.id, WebServer.graph) + ". <a href='#' class='aichat_action' onclick='" + onclick + "'>Did you mean another " + t + "?</a>"
-      }
-      case _ => ""
-    }
+
+    // TODO: deal with change (edge didn't exist before) vs add (edge already exists)
+    val onclick = "aiChatDisambiguate(\"change\",\"" + node + "\",\"" + rel + "\",[" + participantIds + "]," + pos + ");"
+      "<br />&nbsp;&nbsp;&nbsp;&nbsp;Using: " + node + " " + WebServer.graph.description(node) + ". <a href='#' class='aichat_action' onclick='" + onclick + "'>Did you mean another " + node + "?</a>"
   }
 
   override def receive = {
