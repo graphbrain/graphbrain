@@ -13,18 +13,19 @@ object DBPediaGraphFromInfobox {
   Gets a qtuple and returns a 4-tuple with (node, relation, node, source)
   If the qtuple is not in the correct format, the tuple ("", "", "", "", "") is returned.
   */
-  def processQTuple(qTuple:String):(String, String, String, String)=
-  {
+  def processQTuple(qTuple:String):(String, String, String, String) = {
     val things = thingRegex.findAllIn(qTuple).toArray
     val predicate = predicateRegex.findAllIn(qTuple).toArray
     val wikiSource = wikiRegex.findAllIn(qTuple).toArray
-    if(things.length==2&&predicate.length==1)
-    {
-      val subj=Formatting.normalizeWikiTitle(things(0).replace("<http://dbpedia.org/resource/", "").replace(">", ""))
+
+    if (things.length == 2 && predicate.length == 1) {
+      val subj = Formatting.normalizeWikiTitle(things(0).replace("<http://dbpedia.org/resource/", "").replace(">", ""))
       val obj = Formatting.normalizeWikiTitle(things(1).replace("<http://dbpedia.org/resource/", "").replace(">", ""))
-      if(Formatting.isList(subj)||Formatting.isList(obj)){return ("","","","")}
+      if (Formatting.isList(subj) || Formatting.isList(obj)) {
+        return ("", "", "", "")
+      }
       val pred = predicate(0).replace("<http://dbpedia.org/ontology/", "").replace(">", "")
-      if(wikiSource.length==1) {
+      if (wikiSource.length == 1) {
         (subj, pred, obj, wikiSource(0).replace("<", "").replace(">", ""))
       }
       else {
@@ -36,30 +37,31 @@ object DBPediaGraphFromInfobox {
     }
   }
 
-  def processFile(filename:String, output:OutputDBWriter, limit:Int, readerLine:Int=0):Unit = {
+  def processFile(filename:String, output:OutputDBWriter, limit:Int, readerLine:Int=0): Unit = {
     val reader = new InputFileReader(filename)
-    if(readerLine>0)
-    {
+    if(readerLine > 0) {
       reader.initAtLine(readerLine)
     }
     var counter=reader.getLineNum
-    var inserted=0
+    var inserted = 0
     output.writeUser()
     inserted += 1
 
     //output.writeGeneratorSource(DBPediaGraphFromInfobox.sourceName, DBPediaGraphFromInfobox.sourceURL)
-    inserted += 1
+    //inserted += 1
     
-    while(counter<limit||limit<0)
-    {
+    while(counter < limit || limit < 0) {
       val line = reader.readLine()
       println("Processed Line: " + counter.toString + " Inserted: " + inserted.toString +  line + " File line: " + reader.getLineNum)
       
       line match{
-        case ""=> return
+        case "" => return
         case a:String => processQTuple(a) match {
           case ("", "", "", "") => //Don't output  
-          case (b:String, c:String, d:String, e:String) => output.writeOutDBInfo(b, c, d, e); inserted += 1
+          case (b:String, c:String, d:String, e:String) => {
+            output.writeOutDBInfo(b, c, d, e)
+            inserted += 1
+          }
         }
       } 
       counter += 1
@@ -70,7 +72,6 @@ object DBPediaGraphFromInfobox {
     println("Start line: "+readerLine.toString)
     println("End line: "+ counter.toString)
     println("Inserted: "+ inserted.toString)
-    return
   }
 
   def main(args: Array[String]): Unit =
