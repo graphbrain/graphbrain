@@ -20,6 +20,8 @@ case class TextNode(override val id: String,
 
   def text = ID.lastPart(id).replace("_", " ")
 
+  override def toString: String = text
+
   override def raw: String = {
     "type: " + "text<br />" +
     "id: " + id + "<br />"
