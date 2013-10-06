@@ -10,7 +10,8 @@ case class RawPage(vertex: Vertex, user: UserNode, req: HttpRequest[Any], cookie
 
   html += vertex.raw
 
-  val edgeIds = WebServer.graph.edges(vertex.id, user.id)
+  val userId = if (user == null) null else user.id
+  val edgeIds = WebServer.graph.edges(vertex.id, userId)
   for (eid <- edgeIds)
     html += eid + "<br />"
 
