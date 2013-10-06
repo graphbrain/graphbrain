@@ -93,17 +93,15 @@ class Graph(name: String="dbnode") extends Logging {
     for (id <- edge.ids)
       decDegree(id)
 
-  def description(vertex: Vertex): String = vertex match {
-    case t: TextNode => {
-      val asIn = edges(Array[String]("rtype/1/as_in", vertex.id))
-      if (asIn.size == 0) {
-        ""
-      }
-      else {
-        " (" + asIn.map(e => get(e.participantIds(2)).toString).mkString(", ") + ")"
-      }
+  def description(vertex: Vertex): String = {
+    val asIn = edges(Array[String]("rtype/1/as_in", vertex.id, "*"))
+
+    vertex.toString + (if (asIn.size == 0) {
+      ""
     }
-    case v => v.toString
+    else {
+      " (" + asIn.map(e => get(e.participantIds(1)).toString).mkString(", ") + ")"
+    })
   }
 
   def description(id: String): String = description(get(id))
