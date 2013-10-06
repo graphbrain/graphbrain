@@ -91,18 +91,21 @@ trait UserOps extends Graph {
   }
 
   def edges(centerId: String, userId: String): Set[Edge] = {
-    //ldebug("neighborEdges2 nodeId: " + nodeId + "; userid: " + userid + "; edgeType: " + edgeType + "; pos: " + relPos)
-
-    // global space
-    val uCenterId = ID.globalToUser(centerId, userId)
+    logger.debug(s"edges centerId: $centerId; userId: $userId")
 
     val gedges = edges(centerId).filter(x => x.isGlobal)
-    val uedges = edges(uCenterId).filter(x => x.isInUserSpace).map(x =>
-      x.toGlobal match {
-        case e: Edge => e
-        case _ => null
-      }
-    )
+    val uedges = if (userId == null) {
+      Set[Edge]()
+    }
+    else {
+      val uCenterId = ID.globalToUser(centerId, userId)
+      edges(uCenterId).filter(x => x.isInUserSpace).map(x =>
+        x.toGlobal match {
+          case e: Edge => e
+          case _ => null
+        }
+      )
+    }
 
     val applyNegatives = gedges.filter(x => !uedges.contains(x.negate))
     val posUEdges = uedges.filter(x => x.isPositive)

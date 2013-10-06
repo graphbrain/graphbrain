@@ -36,8 +36,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 		}
 	}
 
-	def nodeExists(node:Vertex):Boolean=
-	{
+	def nodeExists(node:Vertex):Boolean = {
 		try {
 			store.get(node.id)
 			true
@@ -51,12 +50,8 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
     wikiTitle.split("""\(""")(0).reverse.dropWhile(_ == '_').reverse.trim
 
 	def insertAndGetWikiDisambigNode(wikiTitle: String, username: String): Vertex = {
-    println(">>>>>>>> insertAndGetWikiDisambigNode: " + wikiTitle)
-
 		val decodedTitle = URLDecoder.decode(wikiTitle, "UTF-8")
 		val titleSP = removeWikiDisambig(decodedTitle)
-
-    println("titleSP: " + titleSP)
 		
 		var i = 1
 		val wikiNode = store.put(TextNode.fromNsAndText(namespace = "wikipedia", text = URLDecoder.decode(wikiTitle, "UTF-8")))
@@ -67,9 +62,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 			existingNode match {
 				case e: TextNode =>
 				  if(disAmb.hasNext) {
-            println(".......... disAmb.hasNext")
 				  	val da = disAmb.next().replace("(", "").replace(")", "").trim
-            println("da: " + da)
 				  	val daNode = store.put(TextNode.fromNsAndText(namespace = "1", text = da))
 				  	val daID = daNode.id
 				  	val daRel = Edge.fromParticipants(Array(asInRel, e.id, daID))
@@ -84,7 +77,6 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 				  	}
 				  }
 				  else {
-            println("e.text: " + e.text)
 				  	if(e.text == titleSP.toLowerCase) {
 				  		return existingNode
 				  	}
@@ -148,7 +140,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 
   def writeURLNode(node:Vertex, url:String) = {
   	try {
-  		//val sourceNode=store.getSourceNode(ID.source_id(source))
+  		//val sourceNode = store.getSourceNode(ID.source_id(source))
   		val urlNode = store.put(URLNode(ID.url_id(url), url))
   		store.getOrInsert(node, HGDBID.userIdFromUsername(username))
   		store.getOrInsert(urlNode, HGDBID.userIdFromUsername(username))
