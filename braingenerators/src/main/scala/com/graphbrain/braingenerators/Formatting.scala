@@ -11,12 +11,12 @@ object Formatting {
    		val title=rawTitle.trim.stripLineEnd
     	
     	var norm_title = ""
-    	if(title.length > 0) {
+    	if (title.length > 0) {
         norm_title += title(0).toString.toUpperCase
       }
     
-    	if(title.length > 1) {
-      		norm_title += title.substring(1, title.length)
+    	if (title.length > 1) {
+        norm_title += title.substring(1, title.length)
     	}
     	norm_title = norm_title.replace("_", " ")
       

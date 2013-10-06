@@ -118,7 +118,6 @@ class LevelDbBackend(name: String="dbnode") extends Backend with Logging {
 
     vertex match {
 		  case e: Edge => {
-        println("))) " + e)
         writeEdgePermutations(e)
       }
       case _ =>
@@ -232,6 +231,8 @@ class LevelDbBackend(name: String="dbnode") extends Backend with Logging {
   def edges(center: Vertex): Set[Edge] = {
     logger.debug(s"edges center: $center")
     var res = Set[Edge]()
+
+    if (center == null) return res
 
     val startStr = EDGE_PREFIX + center.id
     val endStr = LevelDbBackend.strPlusOne(startStr)

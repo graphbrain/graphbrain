@@ -24,9 +24,9 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 			val relType = new EdgeType(id = globalRelType, label = separateWords(relin.trim))
       store.put(relType)
 			
-			println(store.getOrInsert(relType, HGDBID.userIdFromUsername(username)).id + ", " + relType.label)
-			println(store.getOrInsert(ng1, HGDBID.userIdFromUsername(username)).id)
-			println(store.getOrInsert(ng2, HGDBID.userIdFromUsername(username)).id)
+			println("relType: " + store.getOrInsert(relType, HGDBID.userIdFromUsername(username)).id + ", " + relType.label)
+			println("ng1: " + store.getOrInsert(ng1, HGDBID.userIdFromUsername(username)).id)
+			println("ng2: " + store.getOrInsert(ng2, HGDBID.userIdFromUsername(username)).id)
 			
 			// Relationship at global level
 			store.connectVertices(Array[String](relType.id, ng1.id, ng2.id), HGDBID.userIdFromUsername(username))
@@ -51,8 +51,12 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
     wikiTitle.split("""\(""")(0).reverse.dropWhile(_ == '_').reverse.trim
 
 	def insertAndGetWikiDisambigNode(wikiTitle: String, username: String): Vertex = {
+    println(">>>>>>>> insertAndGetWikiDisambigNode: " + wikiTitle)
+
 		val decodedTitle = URLDecoder.decode(wikiTitle, "UTF-8")
 		val titleSP = removeWikiDisambig(decodedTitle)
+
+    println("titleSP: " + titleSP)
 		
 		var i = 1
 		val wikiNode = store.put(TextNode.fromNsAndText(namespace = "wikipedia", text = URLDecoder.decode(wikiTitle, "UTF-8")))
@@ -63,11 +67,13 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 			existingNode match {
 				case e: TextNode =>
 				  if(disAmb.hasNext) {
+            println(".......... disAmb.hasNext")
 				  	val da = disAmb.next().replace("(", "").replace(")", "").trim
+            println("da: " + da)
 				  	val daNode = store.put(TextNode.fromNsAndText(namespace = "1", text = da))
 				  	val daID = daNode.id
 				  	val daRel = Edge.fromParticipants(Array(asInRel, e.id, daID))
-				  	if(e.text == titleSP) {
+				  	if(e.text == titleSP.toLowerCase) {
 				  		for(nEdge <- store.edges(existingNode.id)) {
 				  			println(nEdge)
 				  			if(nEdge == daRel) {
@@ -75,11 +81,11 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 				  				return existingNode
 				  			}
 				  		}
-				  		
 				  	}
 				  }
 				  else {
-				  	if(e.text == titleSP) {
+            println("e.text: " + e.text)
+				  	if(e.text == titleSP.toLowerCase) {
 				  		return existingNode
 				  	}
 				  }
