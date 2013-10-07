@@ -13,9 +13,6 @@ object LandingPlan extends cycle.Plan with cycle.SynchronousExecution with Serve
   }
 
   def intent = {
-    /*case req@GET(Path("/") & Cookies(cookies)) => {
-      pageResponse("ComingSoon.ssp", "comingsoon", "Coming soon", cookies, req)
-    }*/
     case req@GET(Path("/") & Cookies(cookies)) => {
       val userNode = WebServer.getUser(cookies)
 
