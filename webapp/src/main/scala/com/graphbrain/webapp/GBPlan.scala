@@ -88,15 +88,5 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val userNode = WebServer.getUser(cookies)
       AllUsersPage(userNode, req, cookies).response
     }
-
-    // TEMPORARY: Amazon backdoor
-    case req@GET(Path("/amazon") & Params(params)) => {
-      val login = "amazon"
-      val user = WebServer.graph.forceLogin(login)
-
-      WebServer.log(req, null, "AMAZON access ")
-      
-      ResponseCookies(Cookie("username", user.username)) ~> ResponseCookies(Cookie("session", user.session)) ~> Redirect("/node/user/amazon") 
-    }
   }
 }
