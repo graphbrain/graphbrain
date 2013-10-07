@@ -234,7 +234,7 @@ class LevelDbBackend(name: String="dbnode") extends Backend with Logging {
 
     if (center == null) return res
 
-    val startStr = EDGE_PREFIX + center.id
+    val startStr = EDGE_PREFIX + center.id + " "
     val endStr = LevelDbBackend.strPlusOne(startStr)
     val iterator = db.iterator()
 
