@@ -66,7 +66,7 @@ class Parser(val input: String) {
       return null // error
 
     val params = parseCondsList(pos + 1).toArray
-    val lastParamsTokenPos = if (params == Nil) pos else params.last.lastTokenPos
+    val lastParamsTokenPos = if (params.size == 0) pos else params.last.lastTokenPos
 
     if (!matchClosingPar(lastParamsTokenPos + 1))
       return null // error
@@ -101,7 +101,7 @@ class Parser(val input: String) {
   private def parsePattern(pos: Int): ProgNode = {
     val params = parsePatternParamsList(pos).toArray
 
-    val lastParamsTokenPos = if (params == Nil) pos else params.last.lastTokenPos
+    val lastParamsTokenPos = if (params.size == 0) pos else params.last.lastTokenPos
 
     if (!matchClosingPar(lastParamsTokenPos + 1))
       return null // error
