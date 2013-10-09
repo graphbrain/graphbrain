@@ -1,31 +1,23 @@
 package com.graphbrain.nlp
 
-import edu.stanford.nlp.ling.Sentence;
-import edu.stanford.nlp.ling.TaggedWord;
-import edu.stanford.nlp.ling.HasWord;
-import edu.stanford.nlp.tagger.maxent.MaxentTagger;
+import edu.stanford.nlp.tagger.maxent.MaxentTagger
 
 class POSTagger {
 
+	val tagger = new MaxentTagger("pos_models/english-left3words-distsim.tagger")
 
-	val tagger = new MaxentTagger("pos_models/english-left3words-distsim.tagger");
+	def tagText(stringToTag: String): List[(String, String)] =
+		taggedTokens(addTagToText(stringToTag))
 
-	def tagText(stringToTag:String):List[(String, String)]=
-	{
-		return taggedTokens(addTagToText(stringToTag))
-	}
-
-	def getTokenSequence(stringToTag:String):String=
-	{
+	def getTokenSequence(stringToTag: String): String = {
 		var tokenSeq = ""
 		val tokenTags=tagText(stringToTag)
-		for (tokenTag <- tokenTags)
-		{
+		for (tokenTag <- tokenTags) {
 			tokenTag match {
-				case (word, tag) => tokenSeq=tokenSeq+tag+" ";
+				case (word, tag) => tokenSeq=tokenSeq + tag + " "
 			}
 		}
-		return tokenSeq.trim;
+		tokenSeq.trim
 	}
 
 	//Returns the tagged tokens as a list of (word, tag) tuples.
@@ -33,43 +25,30 @@ class POSTagger {
 	{
 		var taggedTokens:List[(String, String)]=List()
 		val wordTagPairs = taggedString.split(" ")	
-		for (wordTag <- wordTagPairs)
-		{
+		for (wordTag <- wordTagPairs) {
 			//println(wordTag);
 			taggedTokens=(wordTag.split("_")(0), wordTag.split("_")(1))::taggedTokens
 		}
-		return taggedTokens.reverse
+		taggedTokens.reverse
 	}
 
-	private def addTagToText(stringToTag:String):String=
-	{
-		
-		return(tagger.tagString(stringToTag))
-	}
-
-
-  
-	
-
+	private def addTagToText(stringToTag: String): String =
+	  tagger.tagString(stringToTag)
 }
 
 object POSTagger {
-	def main(args: Array[String])
-  	{
-  	  val taggerTest = new POSTagger()
+	def main(args: Array[String]) = {
+    val taggerTest = new POSTagger()
 
-    	val taggedToks=taggerTest.tagText("John's dog")
+    val taggedToks = taggerTest.tagText("John's dog")
 
 
-    	for(tag <- taggedToks)
-    	{
-    		tag match{
-    			case (a,b) => println (a + ", " +  b)
-    		}
+    for(tag <- taggedToks) {
+    	tag match{
+    		case (a,b) => println (a + ", " +  b)
     	}
-    	println(taggerTest.getTokenSequence("John's dog"))
-
-
+    }
+    println(taggerTest.getTokenSequence("John's dog"))
 	}
 }
 
