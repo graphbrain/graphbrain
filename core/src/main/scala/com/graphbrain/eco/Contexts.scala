@@ -21,7 +21,7 @@ class Contexts(s: String) {
   }
 
   private def parseSentence(s: String) =
-    Contexts.l.annotate(s).map(w => new Word(w._1, w._2, w._3))
+    Contexts.l.annotate(s).map(w => new Word(w._1, POS.withName(w._2), w._3))
 
   def print() = {
     for (c <- ctxts) c.print()
