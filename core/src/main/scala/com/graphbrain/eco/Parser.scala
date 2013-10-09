@@ -18,7 +18,7 @@ class Parser(val input: String) {
   private def parseSymbol(pos: Int): ProgNode = tokens(pos).text match {
     case "true" => new BoolNode(true, pos)
     case "false" => new BoolNode(false, pos)
-    case _ => new StringVar(tokens(pos).text, "", pos)
+    case _ => new StringVar(tokens(pos).text, pos)
   }
 
   private def matchOpeningPar(pos: Int) =
@@ -91,7 +91,7 @@ class Parser(val input: String) {
     else {
       val param = tokens(pos).ttype match {
         case TokenType.String => new StringNode(tokens(pos).text, pos)
-        case TokenType.Symbol => new PhraseVar(tokens(pos).text, null, pos)
+        case TokenType.Symbol => new PhraseVar(tokens(pos).text, pos)
         case _ => null // error
       }
       param :: parsePatternParamsList(param.lastTokenPos + 1)
