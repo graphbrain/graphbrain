@@ -41,43 +41,4 @@ object POS extends Enumeration {
       WP$,      // Possessive wh-pronoun
       WRB       // Wh-adverb e.g. how, where why
         = Value
-
-  def fromString(s: String) = s match {
-    case "CC" => CC
-    case "CD" => CD
-    case "DT" => DT
-    case "EX" => EX
-    case "FW" => FW
-    case "IN" => IN
-    case "JJ" => JJ
-    case "JJR" => JJR
-    case "JJS" => JJS
-    case "LS" => LS
-    case "MD" => MD
-    case "NN" => NN
-    case "NNP" => NNP
-    case "NNPS" => NNPS
-    case "NNS" => NNS
-    case "PDT" => PDT
-    case "POS" => POS
-    case "PRP" => PRP
-    case "PRP$" => PRP$
-    case "RB" => RB
-    case "RBR" => RBR
-    case "RBS" => RBS
-    case "RP" => RP
-    case "SYM" => SYM
-    case "TO" => TO
-    case "UH" => UH
-    case "VB" => VB
-    case "VBD" => VBD
-    case "VBG" => VBG
-    case "VBN" => VBN
-    case "VBP" => VBP
-    case "VBZ" => VBZ
-    case "WDT" => WDT
-    case "WP" => WP
-    case "WP$" => WP$
-    case "WRB" => WRB
-  }
 }
