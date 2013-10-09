@@ -15,7 +15,10 @@ class NlpRule(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(pa
     }
   }
 
-  override def booleanValue(ctxts: Contexts, ctxt: Context) = true
+  override def booleanValue(ctxts: Contexts, ctxt: Context) = {
+    // incomplete
+    params(1).booleanValue(ctxts, ctxt)
+  }
 
   override protected def typeError() = error("the first part of a rule must be a boolean")
 }

@@ -2,9 +2,9 @@ package com.graphbrain.eco
 
 import scala.collection.mutable
 
-class Contexts {
+class Contexts(s: String) {
   val ctxts = mutable.ListBuffer[Context]()
-  var sentence: Array[String] = null
+  val sentence = parseSentence(s)
 
   private val addCtxts = mutable.ListBuffer[Context]()
   private val remCtxts = mutable.ListBuffer[Context]()
@@ -17,5 +17,11 @@ class Contexts {
     for (c <- remCtxts) ctxts -= c
     addCtxts.clear()
     remCtxts.clear()
+  }
+
+  private def parseSentence(s: String) = s.split(" ")
+
+  def print() = {
+    for (c <- ctxts) c.print()
   }
 }

@@ -14,4 +14,9 @@ class Context {
   def getString(variable: String) = stringVars(variable)
   def getNumber(variable: String) = numberVars(variable)
   def getBoolean(variable: String) = booleanVars(variable)
+
+  def print() = {
+    println("context:")
+    for (v <- stringVars) (println(v._1 + " = " + v._2))
+  }
 }

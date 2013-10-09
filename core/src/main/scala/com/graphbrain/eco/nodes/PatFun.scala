@@ -47,7 +47,8 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
       var matches = true
       for (i <- 0 until count) {
         val start = pointers(i)
-        val end = if (i < (count - 1)) pointers(i + 1) else words + 1
+        val end = if (i < (count - 1)) pointers(i + 1) else words
+
         val subStr = (for (j <- start until end) yield ctxts.sentence(j)).reduceLeft(_ + " " + _)
 
         params(i) match {
