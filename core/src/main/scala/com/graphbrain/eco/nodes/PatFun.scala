@@ -49,10 +49,11 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
         val start = pointers(i)
         val end = if (i < (count - 1)) pointers(i + 1) else words
 
-        val subStr = (for (j <- start until end) yield ctxts.sentence(j)).reduceLeft(_ + " " + _)
+        val subStr = (for (j <- start until end) yield ctxts.sentence(j)).map(_.word).reduceLeft(_ + " " + _)
+        val subPhrase = ctxts.sentence.slice(start, end)
 
         params(i) match {
-          case v: StringVar => newContext.setString(v.name, subStr)
+          case v: PhraseVar => newContext.setPhrase(v.name, subPhrase)
           case s: StringNode => if (s.value != subStr) matches = false // should bail out
           case _ => // error
         }
