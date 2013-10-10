@@ -19,7 +19,7 @@ class Prog(val root: ProgNode) {
 
 object Prog {
   def main(args: Array[String]) = {
-    val p = new Parser("""(nlp test ((? x "is" y)) (true))""")
+    val p = new Parser("""(nlp test ((? x "is true") (match-rel x)) (true))""")
     val ctxts = new Contexts("Telmo is cool is true")
     p.prog.eval(ctxts)
     println(p.prog)

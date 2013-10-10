@@ -14,7 +14,7 @@ class POSTagger {
 		val tokenTags=tagText(stringToTag)
 		for (tokenTag <- tokenTags) {
 			tokenTag match {
-				case (word, tag) => tokenSeq=tokenSeq + tag + " "
+				case (word, tag) => tokenSeq = tokenSeq + tag + " "
 			}
 		}
 		tokenSeq.trim

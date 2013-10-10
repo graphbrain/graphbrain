@@ -9,45 +9,17 @@ import java.util.*;
 
 public class SetUtils
 {
-	/**	Load string set from a URL.
-	 *
-	 *	@param	setURL		URL for set file.
-	 *	@param	encoding	Character encoding for the file.
-	 *
-	 *	@throws FileNotFoundException	If input file does not exist.
-	 *	@throws IOException				If input file cannot be opened.
-	 *
-	 *	@return				Set with values read from file.
-	 */
+	public static Set<String> loadSet(BufferedReader bufferedReader)
+	    throws IOException {
 
-	public static Set<String> loadSet
-	(
-		URL setURL ,
-		String encoding
-	)
-		throws IOException , FileNotFoundException
-	{
-		Set<String> set	= SetFactory.createNewSet();
+        Set<String> set	= SetFactory.createNewSet();
 
-		if ( setURL != null )
-		{
-	        BufferedReader bufferedReader	=
-    	    	new BufferedReader
-        		(
-        			new UnicodeReader
-        			(
-	        			setURL.openStream() ,
-    	    			encoding
-        			)
-        		);
+		if (bufferedReader != null) {
+			String inputLine = bufferedReader.readLine();
 
-			String inputLine	= bufferedReader.readLine();
-
-			while ( inputLine != null )
-			{
-				set.add( inputLine );
-
-				inputLine	= bufferedReader.readLine();
+			while (inputLine != null) {
+				set.add(inputLine);
+				inputLine = bufferedReader.readLine();
 			}
 
 			bufferedReader.close();
@@ -55,6 +27,40 @@ public class SetUtils
 
 		return set;
 	}
+
+    public static Set<String> loadSet(InputStream is)
+            throws IOException {
+
+        if (is != null) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            return loadSet(br);
+        }
+
+        return null;
+    }
+
+    /**	Load string set from a URL.
+     *
+     *	@param	setURL		URL for set file.
+     *	@param	encoding	Character encoding for the file.
+     *
+     *	@throws FileNotFoundException	If input file does not exist.
+     *	@throws IOException				If input file cannot be opened.
+     *
+     *	@return				Set with values read from file.
+     */
+    public static Set<String> loadSet(URL setURL, String encoding)
+            throws IOException {
+
+        if (setURL != null) {
+            BufferedReader bufferedReader = new BufferedReader(
+                    new UnicodeReader(setURL.openStream(), encoding));
+
+            return loadSet(bufferedReader);
+        }
+
+        return null;
+    }
 
 	/**	Load string set from a file.
 	 *
@@ -67,14 +73,10 @@ public class SetUtils
 	 *	@return				Set with values read from file.
 	 */
 
-	public static Set<String> loadSet
-	(
-		File setFile ,
-		String encoding
-	)
-		throws IOException , FileNotFoundException
-	{
-		return loadSet( setFile.toURI().toURL() , encoding );
+	public static Set<String> loadSet(File setFile, String encoding)
+		throws IOException {
+
+		return loadSet(setFile.toURI().toURL(), encoding);
 	}
 
 	/**	Load string set from a file name.
@@ -88,14 +90,10 @@ public class SetUtils
 	 *	@return					Set with values read from file name.
 	 */
 
-	public static Set<String> loadSet
-	(
-		String setFileName ,
-		String encoding
-	)
-		throws IOException , FileNotFoundException
-	{
-		return loadSet( new File( setFileName ) , encoding );
+	public static Set<String> loadSet(String setFileName, String encoding)
+		throws IOException {
+
+        return loadSet(new File(setFileName), encoding );
 	}
 
 	/**	Save set as string to a file.

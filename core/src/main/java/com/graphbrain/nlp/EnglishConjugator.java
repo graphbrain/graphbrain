@@ -1,6 +1,7 @@
 package com.graphbrain.nlp;
 /*	Please see the license information at the end of this file. */
 
+import java.io.InputStream;
 import java.util.*;
 
 /** English language conjugator.
@@ -14,16 +15,16 @@ public class EnglishConjugator implements Conjugator
 
 	/**	Resource path to list of doubled consonant verbs. */
 
-	public static final String doublingVerbsPath	=
+	public static final String doublingVerbsPath =
 		"doublingverbs.txt";
 
 	/**	Present participle replacement patterns. */
 
-	protected static final PatternReplacer presentParticiplePattern1	=
-		new PatternReplacer( "(.[bcdfghjklmnpqrstvwxyz])eing$" , "$1ing" );
+	/*protected static final PatternReplacer presentParticiplePattern1	=
+		new PatternReplacer( "(.[bcdfghjklmnpqrstvwxyz])eing$" , "$1ing" );*/
 
-	protected static final PatternReplacer presentParticiplePattern2	=
-		new PatternReplacer( "ieing$" , "ying" );
+	/*protected static final PatternReplacer presentParticiplePattern2	=
+		new PatternReplacer( "ieing$" , "ying" );*/
 
 	/**	Map3D of irregular verbs.
 	 *
@@ -35,49 +36,35 @@ public class EnglishConjugator implements Conjugator
 	 *	</p>
 	 */
 
-	protected Map3D<String, String, String, String> irregularVerbs	=
-		null;
+	protected Map3D<String, String, String, String> irregularVerbs = null;
 
 	/**	Resource path to map of irregular verbs. */
 
-	public static final String irregularVerbsPath	=
-		"irregularverbs.txt";
+	public static final String irregularVerbsPath = "irregularverbs.txt";
 
 	/**	Create an English conjugator. */
 
-	public EnglishConjugator()
-	{
-								//	Load consonant doubling verbs.
-
-		if ( doublingVerbs == null )
-		{
-			try
-			{
-				doublingVerbs	=
-					SetUtils.loadSet
-					(EnglishConjugator.doublingVerbsPath ,"utf-8");
+	public EnglishConjugator() {
+		//	Load consonant doubling verbs.
+		if (doublingVerbs == null) {
+			try {
+                InputStream is = getClass().getClassLoader().getResourceAsStream(EnglishConjugator.doublingVerbsPath);
+				doublingVerbs =
+					SetUtils.loadSet(is);
 			}
-			catch ( Exception e )
-			{
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-								//	Load irregular verb forms.
 
-		if ( irregularVerbs == null )
-		{
-			try
-			{
-				irregularVerbs	=
-					Map3DUtils.loadMap3D
-					(EnglishConjugator.irregularVerbsPath,
-						"\t" ,
-						"" ,
-						"utf-8"
-					);
+		//	Load irregular verb forms.
+		if (irregularVerbs == null) {
+			try {
+                InputStream is = getClass().getClassLoader().getResourceAsStream(EnglishConjugator.irregularVerbsPath);
+				irregularVerbs =
+					Map3DUtils.loadMap3D(is, "\t", "", "utf-8" );
 			}
-			catch ( Exception e )
-			{
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

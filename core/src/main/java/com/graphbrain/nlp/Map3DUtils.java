@@ -11,6 +11,45 @@ import java.util.*;
 
 public class Map3DUtils
 {
+    public static Map3D<String, String, String, String> loadMap3D(
+            BufferedReader bufferedReader, String separator,
+            String qualifier, String encoding) throws IOException {
+
+        Map3D<String, String, String, String> map3D	=
+                Map3DFactory.createNewMap3D();
+
+        if (bufferedReader != null) {
+            String inputLine = bufferedReader.readLine();
+            String[] tokens;
+
+            while (inputLine != null) {
+                tokens = inputLine.split(separator);
+
+                if (tokens.length > 3) {
+                    map3D.put(tokens[0], tokens[1], tokens[2], tokens[3]);
+                }
+
+                inputLine = bufferedReader.readLine();
+            }
+
+            bufferedReader.close();
+        }
+
+        return map3D;
+    }
+
+    public static Map3D<String, String, String, String> loadMap3D(
+            InputStream is, String separator,
+            String qualifier, String encoding) throws IOException {
+
+        if (is != null) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            return loadMap3D(br, separator, qualifier, encoding);
+        }
+
+        return null;
+    }
+
 	/**	Load string map3D from a URL.
 	 *
 	 *	@param	map3DURL	URL for map3Dfile.
@@ -24,55 +63,18 @@ public class Map3DUtils
 	 *	@return				Map3D with values read from file.
 	 */
 
-	public static Map3D<String, String, String, String> loadMap3D
-	(
-		URL map3DURL ,
-		String separator ,
-		String qualifier ,
-		String encoding
-	)
-		throws IOException , FileNotFoundException
-	{
-		Map3D<String, String, String, String> map3D	=
-			Map3DFactory.createNewMap3D();
+	public static Map3D<String, String, String, String> loadMap3D(
+		URL map3DURL, String separator, String qualifier, String encoding)
+		throws IOException {
 
-		if ( map3DURL != null )
-		{
-	        BufferedReader bufferedReader	=
-    	    	new BufferedReader
-        		(
-        			new UnicodeReader
-        			(
-	        			map3DURL.openStream() ,
-    	    			encoding
-        			)
-        		);
+		if (map3DURL != null) {
+	        BufferedReader bufferedReader = new BufferedReader(
+        		new UnicodeReader(map3DURL.openStream(), encoding));
 
-			String inputLine	= bufferedReader.readLine();
-			String[] tokens;
-
-			while ( inputLine != null )
-			{
-				tokens		= inputLine.split( separator );
-
-				if ( tokens.length > 3 )
-				{
-					map3D.put
-					(
-						tokens[ 0 ] ,
-						tokens[ 1 ] ,
-						tokens[ 2 ] ,
-						tokens[ 3 ]
-					);
-				}
-
-				inputLine	= bufferedReader.readLine();
-			}
-
-			bufferedReader.close();
+			return loadMap3D(bufferedReader, separator, qualifier, encoding);
 		}
 
-		return map3D;
+		return null;
 	}
 
 	/**	Load string map3Dfrom a file.
