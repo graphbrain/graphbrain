@@ -17,6 +17,8 @@ import com.graphbrain.db.UserManagement
 import com.graphbrain.db.UserNode
 import com.graphbrain.db.ConsensusActor
 import com.typesafe.scalalogging.slf4j.Logging
+import org.fusesource.scalate.util.{Resource, FileResourceLoader}
+import org.apache.commons.io.IOUtils
 
 object WebServer extends Logging {
   var http: unfiltered.netty.Http = null
@@ -24,9 +26,16 @@ object WebServer extends Logging {
 
   val graph = new Graph with UserOps with UserManagement
 
-  val templateDirs = List(new java.io.File("/var/www/templates"))
+  val templateDirs = List(new java.io.File(""))
   val scalateMode = "production"
   val engine = new TemplateEngine(templateDirs, scalateMode)
+  engine.resourceLoader = new FileResourceLoader {
+    override def resource(uri: String): Option[Resource] = {
+      val is = getClass.getClassLoader.getResourceAsStream("templates/" + uri)
+      val s = IOUtils.toString(is, "UTF-8")
+      Some(Resource.fromText(uri, s))
+    }
+  }
 
   val actorSystem = ActorSystem("actors")
 
@@ -35,12 +44,7 @@ object WebServer extends Logging {
   def scalateResponse(template: String, page: String, title: String, cookies: Map[String, Any], req: HttpRequest[Any], js: String="", html: String="") = {
     val userNode = getUser(cookies)
     val loggedIn = userNode != null
-    if (prod) {
-      Ok ~> Scalate(req, template, ("title", title), ("navBar", NavBar(userNode, page).html), ("cssAndJs", new CssAndJs().cssAndJs), ("loggedIn", loggedIn), ("js", js), ("html", html))(engine)
-    }
-    else {
-      Ok ~> Scalate(req, template, ("title", title), ("navBar", NavBar(userNode, page).html), ("cssAndJs", new CssAndJs().cssAndJs), ("loggedIn", loggedIn), ("js", js), ("html", html))
-    }
+    Ok ~> Scalate(req, template, ("title", title), ("navBar", NavBar(userNode, page).html), ("cssAndJs", new CssAndJs().cssAndJs), ("loggedIn", loggedIn), ("js", js), ("html", html))(engine)
   }
 
   def realIp(req: HttpRequest[Any]) = {
@@ -91,11 +95,11 @@ object WebServer extends Logging {
     logger.info(logLine)
   }
 
-  def start(prod: Boolean) = {
+  def start(port: Int, prod: Boolean) = {
     log(null, null, "webserver started")
 
     this.prod = prod
-    http = unfiltered.netty.Http(4000)
+    http = unfiltered.netty.Http(port)
       .handler(GBPlan)
       .handler(LandingPlan)
       .handler(NodePlan)
@@ -113,6 +117,8 @@ object WebServer extends Logging {
   }
 
   def main(args: Array[String]) {
-    start((args.length > 0) && (args(0) == "prod"))
+    val port = if (args.length > 0) args(0).toInt else 4000
+    val prod = args.length > 1
+    start(port, prod)
   }
 }
