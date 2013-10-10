@@ -7,7 +7,7 @@ import com.graphbrain.db.Vertex
 import com.graphbrain.db.UserNode
 
 
-case class NodePage(store: UserOps, node: Vertex, user: UserNode, prod: Boolean, req: HttpRequest[Any], cookies: Map[String, Any], errorMsg: String="") {
+case class NodePage(store: UserOps, node: Vertex, user: UserNode, req: HttpRequest[Any], cookies: Map[String, Any], errorMsg: String="") {
   val userId = if (user == null) "" else user.id
 
   val js = "var data = " + VisualGraph.generate(node.id, store, user) + ";\n" +

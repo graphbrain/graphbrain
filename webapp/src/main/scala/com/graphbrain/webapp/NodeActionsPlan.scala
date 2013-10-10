@@ -20,7 +20,7 @@ object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with S
 
     val userNode = WebServer.getUser(cookies)
     val node = WebServer.graph.get(id)
-    NodePage(WebServer.graph, node, userNode, WebServer.prod, req, cookies, errorMessage).response
+    NodePage(WebServer.graph, node, userNode, req, cookies, errorMessage).response
   }
 
   def removeLinkOrNode(params: Map[String, Seq[String]], cookies: Map[String, Any], req: HttpRequest[Any]) = {

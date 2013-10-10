@@ -9,7 +9,7 @@ object NodePlan extends cycle.Plan with cycle.SynchronousExecution with ServerEr
     WebServer.log(req, cookies, "NODE id: " + id)
     val userNode = WebServer.getUser(cookies)
     val node = WebServer.graph.get(URLDecoder.decode(id, "UTF-8"))
-    NodePage(WebServer.graph, node, userNode, WebServer.prod, req, cookies).response
+    NodePage(WebServer.graph, node, userNode, req, cookies).response
   }
 
   def rawResponse(id: String, cookies: Map[String, Any], req: HttpRequest[Any]) = {

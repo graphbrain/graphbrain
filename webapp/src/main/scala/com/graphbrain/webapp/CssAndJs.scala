@@ -23,6 +23,7 @@ case class CssAndJs() {
     """
 
   def cssAndJs = {
+    /*
     if (WebServer.prod) {
       """<link href="/css/main.css?""" + version + """" type="text/css" rel="Stylesheet" />""" +
       """<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>""" +
@@ -32,12 +33,13 @@ case class CssAndJs() {
       analyticsJs
     }
     else {
+    */
       """<link href="/css/main.css?""" + CssAndJs.randomVersion + """" type="text/css" rel="Stylesheet" />""" +
       """<script src="/js/jquery-1.7.2.min.js" type="text/javascript" ></script>""" +
       """<script src="/js/jquery-ui-1.8.18.custom.min.js" type="text/javascript" ></script>""" +
       """<script src="/js/bootstrap.min.js" type="text/javascript" ></script>""" +
       """<script src="/js/gb.js?""" + CssAndJs.randomVersion + """" type="text/javascript" ></script>"""
-    }
+    //}
   } 
 }
 
