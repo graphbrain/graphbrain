@@ -22,9 +22,8 @@ import org.apache.commons.io.IOUtils
 
 object WebServer extends Logging {
   var http: unfiltered.netty.Http = null
-  var prod: Boolean = false
 
-  val graph = new Graph with UserOps with UserManagement
+  var graph: Graph with UserOps with UserManagement = null
 
   val templateDirs = List(new java.io.File(""))
   val scalateMode = "production"
@@ -95,10 +94,11 @@ object WebServer extends Logging {
     logger.info(logLine)
   }
 
-  def start(port: Int, prod: Boolean) = {
+  def start(port: Int, dbpath: String) = {
     log(null, null, "webserver started")
 
-    this.prod = prod
+    WebServer.graph = new Graph(dbpath) with UserOps with UserManagement
+
     http = unfiltered.netty.Http(port)
       .handler(GBPlan)
       .handler(LandingPlan)
@@ -118,7 +118,7 @@ object WebServer extends Logging {
 
   def main(args: Array[String]) {
     val port = if (args.length > 0) args(0).toInt else 4000
-    val prod = args.length > 1
-    start(port, prod)
+    val dbpath = if (args.length > 1) args(1) else "dbnode"
+    start(port, dbpath)
   }
 }
