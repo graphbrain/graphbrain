@@ -24,7 +24,7 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       
       WebServer.log(req, cookies, "SEARCH query: " + query + "; results: " + results.size)
 
-      ResponseString(JSONGen.json(json))
+      JsonContent ~> ResponseString(JSONGen.json(json))
     }
     case req@POST(Path("/signup") & Params(params)) => {
       val name = params("name")(0)
@@ -34,25 +34,25 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       WebServer.graph.createUser(username, name, email, password, "user")
 
       WebServer.log(req, null, "SIGNUP name: " + name + "; username: " + username + "; email:" + email)
-      
-      ResponseString("ok")
+
+      Ok ~> ResponseHeader("Content-Type", Set("text/plain")) ~> ResponseString("ok")
     }
     case req@POST(Path("/checkusername") & Params(params)) => {
       val username = params("username")(0)
       if (WebServer.graph.usernameExists(username)) {
-        ResponseString("exists " + username)
+        Ok ~> ResponseHeader("Content-Type", Set("text/plain")) ~> ResponseString("exists " + username)
       }
       else {
-        ResponseString("ok " + username)
+        Ok ~> ResponseHeader("Content-Type", Set("text/plain")) ~> ResponseString("ok " + username)
       }
     }
     case req@POST(Path("/checkemail") & Params(params)) => {
       val email = params("email")(0)
       if (WebServer.graph.emailExists(email)) {
-        ResponseString("exists " + email)
+        Ok ~> ResponseHeader("Content-Type", Set("text/plain")) ~> ResponseString("exists " + email)
       }
       else {
-        ResponseString("ok " + email) 
+        Ok ~> ResponseHeader("Content-Type", Set("text/plain")) ~> ResponseString("ok " + email)
       }
     }
     case req@POST(Path("/login") & Params(params)) => {
@@ -61,11 +61,11 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val user = WebServer.graph.attemptLogin(login, password)
       if (user == null) {
         WebServer.log(req, null, "FAILED LOGIN login: " + login + " passwd: " + password)
-        ResponseString("failed")
+        Ok ~> ResponseHeader("Content-Type", Set("text/plain")) ~> ResponseString("failed")
       }
       else {
         WebServer.log(req, null, "LOGIN login: " + login)
-        ResponseString(user.username + " " + user.session)
+        Ok ~> ResponseHeader("Content-Type", Set("text/plain")) ~> ResponseString(user.username + " " + user.session)
       } 
     }
     case req@POST(Path("/undo_fact") & Params(params) & Cookies(cookies)) => {
@@ -82,7 +82,7 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       val edge = Edge.fromParticipants(rel, participantIds)
       WebServer.consensusActor ! edge
 
-      ResponseString(JSONGen.json(""))
+      JsonContent ~> ResponseString(JSONGen.json(""))
     }
     case req@GET(Path("/allusers") & Cookies(cookies)) => {
       val userNode = WebServer.getUser(cookies)

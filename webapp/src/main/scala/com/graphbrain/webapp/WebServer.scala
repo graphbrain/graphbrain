@@ -43,7 +43,7 @@ object WebServer extends Logging {
   def scalateResponse(template: String, page: String, title: String, cookies: Map[String, Any], req: HttpRequest[Any], js: String="", html: String="") = {
     val userNode = getUser(cookies)
     val loggedIn = userNode != null
-    Ok ~> Scalate(req, template, ("title", title), ("navBar", NavBar(userNode, page).html), ("cssAndJs", new CssAndJs().cssAndJs), ("loggedIn", loggedIn), ("js", js), ("html", html))(engine)
+    Ok ~> ResponseHeader("Content-Type", Set("text/html")) ~> Scalate(req, template, ("title", title), ("navBar", NavBar(userNode, page).html), ("cssAndJs", new CssAndJs().cssAndJs), ("loggedIn", loggedIn), ("js", js), ("html", html))(engine)
   }
 
   def realIp(req: HttpRequest[Any]) = {
