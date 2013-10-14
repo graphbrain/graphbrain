@@ -26,7 +26,7 @@ object DisambigPlan extends cycle.Plan with cycle.SynchronousExecution with Serv
       
       val json = Map("count" -> results.size, "results" -> resultsList, "mode" -> mode, "text" -> text,
         "rel" -> rel, "participants" -> participantIds, "pos" -> pos)
-      ResponseString(JSONGen.json(json))
+      JsonContent ~> ResponseString(JSONGen.json(json))
     }
     case req@POST(Path("/disambig_create") & Params(params) & Cookies(cookies)) => {
       val userNode = WebServer.getUser(cookies)
@@ -65,7 +65,7 @@ object DisambigPlan extends cycle.Plan with cycle.SynchronousExecution with Serv
 
       WebServer.log(req, cookies, "DISAMBIG_CREATE mode: " + mode + "; text: " + text + "; rel: " + rel + "; participants:" + participants + "; pos: " + pos)
 
-      ResponseString(JSONGen.json(""))
+      JsonContent ~> ResponseString(JSONGen.json(""))
     }
     case req@POST(Path("/disambig_change") & Params(params) & Cookies(cookies)) => {
       val userNode = WebServer.getUser(cookies)
@@ -97,7 +97,7 @@ object DisambigPlan extends cycle.Plan with cycle.SynchronousExecution with Serv
 
       WebServer.log(req, cookies, "DISAMBIG_CHANGE mode: " + mode + "; rel: " + rel + "; participants:" + participants + "; pos: " + pos + "; changeTo: " + changeTo)
 
-      ResponseString(JSONGen.json(""))
+      JsonContent ~> ResponseString(JSONGen.json(""))
     }
   }
 }
