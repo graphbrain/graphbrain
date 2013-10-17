@@ -73,6 +73,14 @@ object Lemmatiser {
 
 	def main(args: Array[String]) = {
 
+    val l = new Lemmatiser()
+    val s= "I like hot dogs."
+    val annotated = l.annotate(s)
+    for (a <- annotated) {
+      println(a)
+    }
+
+    /*
   	val clSentence = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
   	//val s = "Telmo Menezes has http://telmomenezes.com"
   	val s = "like"
@@ -97,7 +105,7 @@ object Lemmatiser {
     for (q <- quoteCL) {
     	println(q._1)
     	println(q._2)
-    }
+    }*/
 	}
 }
 
