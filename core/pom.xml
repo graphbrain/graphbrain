@@ -46,25 +46,26 @@
             <version>2.2.0-RC2</version>
         </dependency>
         <dependency>
-            <groupId>edu.stanford</groupId>
+            <groupId>edu.stanford.nlp</groupId>
             <artifactId>stanford-corenlp</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/stanford-corenlp-2012-07-09.jar</systemPath>
+            <version>3.2.0</version>
         </dependency>
         <dependency>
-            <groupId>edu.stanford</groupId>
-            <artifactId>stanford-corenlp-models</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/stanford-corenlp-2012-07-06-models.jar</systemPath>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>3.2.0</version>
+            <classifier>models</classifier>
         </dependency>
         <dependency>
-            <groupId>edu.stanford</groupId>
-            <artifactId>xom</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/xom.jar</systemPath>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-parser</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-parser</artifactId>
+            <version>3.2.0</version>
+            <classifier>models</classifier>
         </dependency>
     </dependencies>
 
