@@ -12,8 +12,6 @@ object Parser {
     //val lp = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
     val lp = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/frenchFactored.ser.gz")
 
-    println("xpto...")
-
     //val sent2 = "It answered my question about how to include both the data and the lib"
     //val sent2 = "This package is a Java implementation of probabilistic natural language parsers, both highly optimized PCFG and lexicalized dependency parsers, and a lexicalized PCFG parser."
     //val sent2 = "Les mouvements actuellement classés à l'extrême droite en Europe sont souvent accusés de racisme et de xénophobie en raison de leur hostilité générale à l'immigration et des positions ouvertement racistes revendiquées par certains d'entre eux."
@@ -38,6 +36,7 @@ object Parser {
     val tp = new TreePrint("penn")
     tp.printTree(parse)
 
-    for (p <- parse.children()(0).children()) println("xxx> " + p)
+    for (p <- parse.children()(0).children())
+      println(p.value() + " " + p.yieldWords().toArray().map(_.toString).reduceLeft(_ + " " + _))
   }
 }

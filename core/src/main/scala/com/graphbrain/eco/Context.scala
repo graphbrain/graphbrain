@@ -6,12 +6,12 @@ class Context {
   val stringVars = mutable.Map[String, String]()
   val numberVars = mutable.Map[String, Double]()
   val booleanVars = mutable.Map[String, Boolean]()
-  val phraseVars = mutable.Map[String, Array[Word]]()
+  val phraseVars = mutable.Map[String, Phrase]()
 
   def setString(variable: String, value: String) = stringVars(variable) = value
   def setNumber(variable: String, value: Double) = numberVars(variable) = value
   def setBoolean(variable: String, value: Boolean) = booleanVars(variable) = value
-  def setPhrase(variable: String, value: Array[Word]) = phraseVars(variable) = value
+  def setPhrase(variable: String, value: Phrase) = phraseVars(variable) = value
 
   def getString(variable: String) = stringVars(variable)
   def getNumber(variable: String) = numberVars(variable)
@@ -20,6 +20,6 @@ class Context {
 
   def print() = {
     println("context:")
-    for (v <- phraseVars) println(v._1 + " = " + v._2.map(_.toString()).reduceLeft(_ + " " + _))
+    for (v <- phraseVars) println(v._1 + " = " + v._2)
   }
 }
