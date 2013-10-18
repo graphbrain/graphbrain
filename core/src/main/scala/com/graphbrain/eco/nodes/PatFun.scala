@@ -8,6 +8,7 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
 
   override def ntype: NodeType = NodeType.Boolean
 
+  /*
   private def stepPointers(pointers: Array[Int], words: Int): Boolean = {
     val count = pointers.length
 
@@ -34,8 +35,10 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
 
     true
   }
+  */
 
   override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = {
+    /*
     val words = ctxts.sentence.length
     val count = params.length
     val pointers = new Array[Int](count)
@@ -61,8 +64,32 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
 
       if (matches) ctxts.addContext(newContext)
     }
+    */
 
-    false
+    val words = ctxts.sentence.children.length
+    val pcount = params.length
+
+    if (words != pcount) return false
+
+    for (i <- 0 until pcount) {
+      params(i) match {
+        case s: StringNode =>
+          if (s.value != ctxts.sentence.children(i).text)
+            return false
+        case _ =>
+      }
+    }
+
+    val newContext = new Context
+    for (i <- 0 until pcount) {
+      params(i) match {
+        case v: PhraseVar =>
+          newContext.setPhrase(v.name, ctxts.sentence.children(i))
+        case _ =>
+      }
+    }
+    ctxts.addContext(newContext)
+    true
   }
 
   override protected def typeError() = error("parameters must be variables or strings")
