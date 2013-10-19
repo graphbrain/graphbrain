@@ -18,7 +18,7 @@ class Parser(val input: String) {
   private def parseSymbol(pos: Int): ProgNode = tokens(pos).text match {
     case "true" => new BoolNode(true, pos)
     case "false" => new BoolNode(false, pos)
-    case _ => new StringVar(tokens(pos).text, pos)
+    case _ => new TreeVar(tokens(pos).text, pos)
   }
 
   private def matchOpeningPar(pos: Int) =

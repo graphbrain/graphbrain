@@ -12,18 +12,20 @@ class TreeFun(val fun: TreeFun.TreeFun, params: Array[ProgNode], lastTokenPos: I
 
   override def ntype: NodeType = NodeType.Boolean
 
-  override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = fun match {
-    case TreeFun.Is => {
-      params(0) match {
-        case t: TreeVar =>
-          t.treeValue(ctxts, ctxt).pos == params(1).stringValue(ctxts, ctxt)
-        case _ => false
+  override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = {
+    fun match {
+      case TreeFun.Is => {
+        params(0) match {
+          case t: TreeVar =>
+            t.treeValue(ctxts, ctxt).pos == params(1).stringValue(ctxts, ctxt)
+          case _ => false
+        }
       }
-    }
-    case TreeFun.IsLeaf => {
-      params(0) match {
-        case t: TreeVar => t.treeValue(ctxts, ctxt).isLeaf
-        case _ => false
+      case TreeFun.IsLeaf => {
+        params(0) match {
+          case t: TreeVar => t.treeValue(ctxts, ctxt).isLeaf
+          case _ => false
+        }
       }
     }
   }
