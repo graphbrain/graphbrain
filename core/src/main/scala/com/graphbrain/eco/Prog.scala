@@ -19,7 +19,7 @@ class Prog(val root: ProgNode) {
 
 object Prog {
   def main(args: Array[String]) = {
-    val p = new Parser("""(tree test ((? x y)) (true))""")
+    val p = new Parser("""(tree test ((? x y) (is x "NP")) (true))""")
     val ctxts = new Contexts("Telmo is a hacker")
     p.prog.eval(ctxts)
     println(p.prog)

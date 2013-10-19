@@ -40,9 +40,7 @@ class Contexts(s: String) {
       parse.yieldWords().toArray.map(_.toString).reduceLeft(_ + " " + _), children)
   }
 
-  def print() = {
-    for (c <- ctxts) c.print()
-  }
+  def print() = for (c <- ctxts) c.print()
 }
 
 object Contexts {
@@ -53,7 +51,6 @@ object Contexts {
   val tokenizerFactory = PTBTokenizer.factory(new CoreLabelTokenFactory(), "")
 
   def main(args: Array[String]) = {
-    println("xpto")
     //val c = new Contexts("For one thing, Lu felt jQuery constructed the rendering tree the wrong way around and opted to emulate the way games handled rendering instead.")
     //val c = new Contexts("Les mouvements sont accusés de racisme.")
     val c = new Contexts("Telmo is a hacker.")

@@ -39,6 +39,8 @@ class Parser(val input: String) {
       case "nlp" => parseNlp(pos + 1)
       case "tree" => parseTree(pos + 1)
       case "?" => parsePattern(pos + 1)
+      case "is" => parseIs(pos + 1)
+      case "is-leaf" => parseIsLeaf(pos + 1)
       case "+" => parseSum(pos + 1)
       case _ => null // error
     }
@@ -103,7 +105,7 @@ class Parser(val input: String) {
     else {
       val param = tokens(pos).ttype match {
         case TokenType.String => new StringNode(tokens(pos).text, pos)
-        case TokenType.Symbol => new PhraseVar(tokens(pos).text, pos)
+        case TokenType.Symbol => new TreeVar(tokens(pos).text, pos)
         case _ => null // error
       }
       param :: parsePatternParamsList(param.lastTokenPos + 1)
@@ -127,6 +129,25 @@ class Parser(val input: String) {
 
     if (matchClosingPar(p2.lastTokenPos + 1))
       new SumFun(Array(p1, p2), p2.lastTokenPos + 1)
+    else
+      null // error
+  }
+
+  private def parseIs(pos: Int): ProgNode = {
+    val p1 = parse(pos)
+    val p2 = parse(p1.lastTokenPos + 1)
+
+    if (matchClosingPar(p2.lastTokenPos + 1))
+      new TreeFun(TreeFun.Is, Array(p1, p2), p2.lastTokenPos + 1)
+    else
+      null // error
+  }
+
+  private def parseIsLeaf(pos: Int): ProgNode = {
+    val p1 = parse(pos)
+
+    if (matchClosingPar(p1.lastTokenPos + 1))
+      new TreeFun(TreeFun.IsLeaf, Array(p1), p1.lastTokenPos + 1)
     else
       null // error
   }

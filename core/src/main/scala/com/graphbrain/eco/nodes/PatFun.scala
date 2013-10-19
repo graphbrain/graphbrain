@@ -83,7 +83,7 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
     val newContext = new Context
     for (i <- 0 until pcount) {
       params(i) match {
-        case v: PhraseVar =>
+        case v: TreeVar =>
           newContext.setPhrase(v.name, ctxts.sentence.children(i))
         case _ =>
       }
