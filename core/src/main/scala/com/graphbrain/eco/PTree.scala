@@ -11,3 +11,7 @@ class PTree(val pos: String, val text: String, val children: Array[PTree] = Arra
       "(" + pos + " " + children.map(_.toString).reduceLeft(_ + " " + _) + ")"
   }
 }
+
+object PTree {
+  def nullTree = new PTree("", "", Array[PTree]())
+}

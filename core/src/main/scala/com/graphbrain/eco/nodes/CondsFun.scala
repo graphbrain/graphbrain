@@ -21,7 +21,9 @@ class CondsFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(p
       p.booleanValue(ctxts, null)
 
       for (c <- ctxts.ctxts) {
-        p.booleanValue(ctxts, c)
+        if (!p.booleanValue(ctxts, c)) {
+          ctxts.remContext(c)
+        }
       }
 
       ctxts.applyChanges()
