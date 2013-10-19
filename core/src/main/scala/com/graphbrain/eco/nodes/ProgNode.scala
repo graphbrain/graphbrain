@@ -9,7 +9,7 @@ abstract class ProgNode(val lastTokenPos: Int) {
   def stringValue(ctxts: Contexts, ctxt: Context): String = "" // error
   def numberValue(ctxts: Contexts, ctxt: Context): Double = 0 // error
   def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = false // error
-  def phraseValue(ctxts: Contexts, ctxt: Context): PTree = null // error
+  def treeValue(ctxts: Contexts, ctxt: Context): PTree = null // error
 
   protected def error(msg: String) = println(msg)
 
