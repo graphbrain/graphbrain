@@ -6,7 +6,7 @@ object NodeType extends Enumeration {
       Boolean,
       Number,
       String,
-      Phrase,
+      PTree,
       Vertex,
       RuleName = Value
 }

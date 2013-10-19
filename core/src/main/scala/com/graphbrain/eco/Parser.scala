@@ -37,6 +37,7 @@ class Parser(val input: String) {
   private def parseFun(pos: Int): ProgNode = {
     tokens(pos).text match {
       case "nlp" => parseNlp(pos + 1)
+      case "tree" => parseTree(pos + 1)
       case "?" => parsePattern(pos + 1)
       case "+" => parseSum(pos + 1)
       case _ => null // error
@@ -57,6 +58,17 @@ class Parser(val input: String) {
 
     if (matchClosingPar(p3.lastTokenPos + 1))
       new NlpRule(Array(p1, p2, p3), p3.lastTokenPos + 1)
+    else
+      null // error
+  }
+
+  private def parseTree(pos: Int): ProgNode = {
+    val p1 = parseRuleName(pos)
+    val p2 = parseConds(p1.lastTokenPos + 1)
+    val p3 = parseConds(p2.lastTokenPos + 1)
+
+    if (matchClosingPar(p3.lastTokenPos + 1))
+      new TreeRule(Array(p1, p2, p3), p3.lastTokenPos + 1)
     else
       null // error
   }

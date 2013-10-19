@@ -1,6 +1,6 @@
 package com.graphbrain.eco
 
-class Phrase(val pos: String, val text: String, val children: Array[Phrase] = Array[Phrase]()) {
+class PTree(val pos: String, val text: String, val children: Array[PTree] = Array[PTree]()) {
   override def toString: String = {
     if (children.length == 0)
       "(" + pos + " " + text + ")"
