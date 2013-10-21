@@ -5,7 +5,10 @@ import com.graphbrain.eco.nodes.ProgNode
 class Prog(val root: ProgNode) {
 
   def eval(ctxts: Contexts): Contexts = {
-    root.booleanValue(ctxts, null)
+    val c = new Context
+    ctxts.addContext(c)
+    ctxts.applyChanges()
+    root.booleanValue(ctxts, c)
     ctxts
   }
 
@@ -22,7 +25,10 @@ object Prog {
     val p = new Parser(
       """
         (tree test
-          ((? S (NP x) (VP y (a b))))
+          ((? S (NP x) (VP y (a b)))
+          (let orig (txt-vert x))
+          (let rel (rel-vert y))
+          (let targ (txt-vert b)))
           (true))
       """)
     val ctxts = new Contexts("Telmo is a hacker")

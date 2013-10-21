@@ -9,6 +9,7 @@ class LetFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
   override def ntype(ctxt: Context): NodeType = NodeType.Boolean
 
   override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = {
+    if (ctxt != null) {
     params(0) match {
       case v: VarNode =>
         params(1).ntype(ctxt) match {
@@ -19,6 +20,7 @@ class LetFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
           case NodeType.String => ctxt.setString(v.name, params(1).stringValue(ctxts, ctxt))
           case NodeType.Vertex => ctxt.setVertex(v.name, params(1).vertexValue(ctxts, ctxt))
         }
+    }
     }
 
     true
