@@ -36,7 +36,7 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
     // leaf case
     if ((pcount - start == 1) && pt.isLeaf) {
       params(start) match {
-        case v: TreeVar => newContext.setPhrase(v.name, pt)
+        case v: TreeVar => newContext.setTree(v.name, pt)
       }
     }
     // other cases
@@ -63,7 +63,7 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
       val j = i - start
       params(i) match {
         case v: TreeVar =>
-          newContext.setPhrase(v.name, pt.children(j))
+          newContext.setTree(v.name, pt.children(j))
         case _ =>
       }
     }

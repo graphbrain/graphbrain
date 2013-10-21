@@ -10,7 +10,7 @@ abstract class VarNode(val name: String, lastTokenPos: Int) extends ProgNode(las
   override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean =
     if (ctxt == null) false else ctxt.getBoolean(name)
   override def treeValue(ctxts: Contexts, ctxt: Context): PTree =
-    if (ctxt == null) PTree.nullTree else ctxt.getPhrase(name)
+    if (ctxt == null) PTree.nullTree else ctxt.getTree(name)
 
   override def toString = name
 }
