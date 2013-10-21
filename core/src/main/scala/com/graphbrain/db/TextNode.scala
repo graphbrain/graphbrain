@@ -34,8 +34,9 @@ object TextNode {
     degree: Int = 0,
     ts: Long = -1) = {
 
-    TextNode(namespace + "/" + ID.sanitize(text).toLowerCase,
-      degree,
-      ts)
+    TextNode(id(namespace, text), degree, ts)
   }
+
+  def id(namespace: String, text: String) =
+    namespace + "/" + ID.sanitize(text).toLowerCase
 }

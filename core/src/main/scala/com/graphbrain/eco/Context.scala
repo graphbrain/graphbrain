@@ -55,6 +55,11 @@ class Context {
 
   def print() = {
     println("context:")
+    for (v <- stringVars) println(v._1 + " = " + v._2)
+    for (v <- numberVars) println(v._1 + " = " + v._2)
+    for (v <- booleanVars) println(v._1 + " = " + v._2)
     for (v <- treeVars) println(v._1 + " = " + v._2)
+    for (v <- posVars) println(v._1 + " = " + v._2)
+    for (v <- vertexVars) println(v._1 + " = " + v._2)
   }
 }

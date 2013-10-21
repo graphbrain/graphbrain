@@ -18,7 +18,7 @@ class CondsFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(p
 
   override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = {
     for (p <- params) {
-      p.booleanValue(ctxts, null)
+      //p.booleanValue(ctxts, null)
 
       for (c <- ctxts.ctxts) {
         if (!p.booleanValue(ctxts, c)) {

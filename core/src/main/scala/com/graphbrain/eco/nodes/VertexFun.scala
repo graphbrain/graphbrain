@@ -2,6 +2,7 @@ package com.graphbrain.eco.nodes
 
 import com.graphbrain.eco.NodeType.NodeType
 import com.graphbrain.eco.{Context, Contexts, NodeType}
+import com.graphbrain.db.{ID, TextNode}
 
 class VertexFun(val fun: VertexFun.VertexFun, params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
 
@@ -15,14 +16,16 @@ class VertexFun(val fun: VertexFun.VertexFun, params: Array[ProgNode], lastToken
   override def vertexValue(ctxts: Contexts, ctxt: Context): String = {
     fun match {
       case VertexFun.RelVert => {
-        params(0) match {
-          case t: VarNode => "rel/1/test"
+        params(0).ntype(ctxt) match {
+          case NodeType.PTree => ID.reltype_id(params(0).treeValue(ctxts, ctxt).text)
+          case NodeType.String => ID.reltype_id(params(0).stringValue(ctxts, ctxt))
           case _ => "" // error!
         }
       }
       case VertexFun.TxtVert => {
-        params(0) match {
-          case t: VarNode => "1/test"
+        params(0).ntype(ctxt) match {
+          case NodeType.PTree => TextNode.id("1", params(0).treeValue(ctxts, ctxt).text)
+          case NodeType.String => TextNode.id("1", params(0).stringValue(ctxts, ctxt))
           case _ => "" // error!
         }
       }

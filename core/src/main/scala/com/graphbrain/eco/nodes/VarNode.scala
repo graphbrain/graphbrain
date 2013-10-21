@@ -21,5 +21,5 @@ class VarNode(val name: String, lastTokenPos: Int) extends ProgNode(lastTokenPos
   override def vertexValue(ctxts: Contexts, ctxt: Context): String =
     if (ctxt == null) "" else ctxt.getVertex(name)
 
-  override def toString = name
+  override def toString = "$" + name
 }
