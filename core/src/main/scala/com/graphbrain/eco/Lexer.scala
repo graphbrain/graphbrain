@@ -28,7 +28,7 @@ class Lexer(val input: String) {
       while (c.isWhitespace) consume()
 
       val nt = predict match {
-        case TokenType.Symbol => tokSymbol
+        case TokenType.Symbol => tokSymbolOrId
         case TokenType.POS => tokPOS
         case TokenType.Number => tokNumber
         case TokenType.String => tokString
@@ -78,7 +78,7 @@ class Lexer(val input: String) {
     }
   }
 
-  private def tokSymbol: Token = {
+  private def tokSymbolOrId: Token = {
     val sb = new StringBuilder(25)
     var done = false
 
@@ -95,7 +95,9 @@ class Lexer(val input: String) {
       }
     }
 
-    new Token(sb.toString(), TokenType.Symbol)
+    val str = sb.toString()
+    val ttype = if (str.contains('/')) TokenType.Id else TokenType.Symbol
+    new Token(str, ttype)
   }
 
   private def tokPOS: Token = {
