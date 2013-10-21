@@ -49,9 +49,6 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
         case s: StringNode =>
           if (s.value != pt.children(j).text)
             return false
-        case t: TreeVar =>
-          if ((t.pos != "") && (t.pos != pt.children(j).pos))
-            return false
         case p: POSNode =>
           if (p.value != pt.pos)
             return false
