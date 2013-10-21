@@ -1,6 +1,6 @@
 package com.graphbrain.eco.nodes
 
-abstract class FunNode(val params: Array[ProgNode], lastTokenPos: Int= -1) extends ProgNode(lastTokenPos) {
+abstract class FunNode(params: Array[ProgNode], lastTokenPos: Int= -1) extends ListNode(params, lastTokenPos) {
   val label: String
 
   override def toString = "(" + label + " " + params.mkString(" ") + ")"
