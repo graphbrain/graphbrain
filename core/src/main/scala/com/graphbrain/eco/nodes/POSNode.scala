@@ -3,7 +3,7 @@ package com.graphbrain.eco.nodes
 import com.graphbrain.eco.{Contexts, Context, NodeType}
 
 class POSNode(val value: String, lastTokenPos: Int= -1) extends ProgNode(lastTokenPos) {
-  override def ntype = NodeType.POS
+  override def ntype(ctxt: Context) = NodeType.POS
   override def posValue(ctxts: Contexts, ctxt: Context) = value
 
   override def toString = value

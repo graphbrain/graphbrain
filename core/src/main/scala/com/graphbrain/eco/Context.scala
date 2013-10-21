@@ -1,8 +1,11 @@
 package com.graphbrain.eco
 
 import scala.collection.mutable
+import com.graphbrain.eco.NodeType.NodeType
 
 class Context {
+  val varTypes = mutable.Map[String, NodeType]()
+
   val stringVars = mutable.Map[String, String]()
   val numberVars = mutable.Map[String, Double]()
   val booleanVars = mutable.Map[String, Boolean]()
@@ -10,12 +13,38 @@ class Context {
   val posVars = mutable.Map[String, String]()
   val vertexVars = mutable.Map[String, String]()
 
-  def setString(variable: String, value: String) = stringVars(variable) = value
-  def setNumber(variable: String, value: Double) = numberVars(variable) = value
-  def setBoolean(variable: String, value: Boolean) = booleanVars(variable) = value
-  def setTree(variable: String, value: PTree) = treeVars(variable) = value
-  def setPOS(variable: String, value: String) = posVars(variable) = value
-  def setVertex(variable: String, value: String) = vertexVars(variable) = value
+  private def setType(variable: String, value: NodeType) = varTypes(variable) = value
+
+  def getType(variable: String) =
+    if (varTypes.contains(variable))
+      varTypes(variable)
+    else
+      NodeType.Unknown
+
+  def setString(variable: String, value: String) = {
+    setType(variable, NodeType.String)
+    stringVars(variable) = value
+  }
+  def setNumber(variable: String, value: Double) = {
+    setType(variable, NodeType.Number)
+    numberVars(variable) = value
+  }
+  def setBoolean(variable: String, value: Boolean) = {
+    setType(variable, NodeType.Boolean)
+    booleanVars(variable) = value
+  }
+  def setTree(variable: String, value: PTree) = {
+    setType(variable, NodeType.PTree)
+    treeVars(variable) = value
+  }
+  def setPOS(variable: String, value: String) = {
+    setType(variable, NodeType.POS)
+    posVars(variable) = value
+  }
+  def setVertex(variable: String, value: String) = {
+    setType(variable, NodeType.Vertex)
+    vertexVars(variable) = value
+  }
 
   def getString(variable: String) = stringVars(variable)
   def getNumber(variable: String) = numberVars(variable)

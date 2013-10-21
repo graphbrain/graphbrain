@@ -6,7 +6,7 @@ import com.graphbrain.eco.{PTree, Context, Contexts, NodeType}
 class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
   override val label = "?"
 
-  override def ntype: NodeType = NodeType.Boolean
+  override def ntype(ctxt: Context): NodeType = NodeType.Boolean
 
   override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = {
     val newContext = new Context
@@ -36,7 +36,7 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
     // leaf case
     if ((pcount - start == 1) && pt.isLeaf) {
       params(start) match {
-        case v: TreeVar => newContext.setTree(v.name, pt)
+        case v: VarNode => newContext.setTree(v.name, pt)
       }
     }
     // other cases
@@ -62,7 +62,7 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
     for (i <- start until pcount) {
       val j = i - start
       params(i) match {
-        case v: TreeVar =>
+        case v: VarNode =>
           newContext.setTree(v.name, pt.children(j))
         case _ =>
       }

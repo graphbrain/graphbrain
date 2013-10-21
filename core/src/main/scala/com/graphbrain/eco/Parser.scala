@@ -18,7 +18,7 @@ class Parser(val input: String) {
   private def parseSymbol(pos: Int): ProgNode = tokens(pos).text match {
     case "true" => new BoolNode(true, pos)
     case "false" => new BoolNode(false, pos)
-    case _ => new TreeVar(tokens(pos).text, pos)
+    case _ => new VarNode(tokens(pos).text, pos)
   }
 
   private def matchOpeningPar(pos: Int) =
@@ -36,12 +36,10 @@ class Parser(val input: String) {
 
   private def parseFun(pos: Int): ProgNode = {
     tokens(pos).text match {
-      case "nlp" => parseNlp(pos + 1)
       case "tree" => parseTree(pos + 1)
       case "?" => parsePattern(pos + 1)
       case "is" => parseIs(pos + 1)
       case "is-leaf" => parseIsLeaf(pos + 1)
-      case "+" => parseSum(pos + 1)
       case _ => null // error
     }
   }
@@ -51,17 +49,6 @@ class Parser(val input: String) {
       case TokenType.Symbol => new RuleNameNode(tokens(pos).text, pos)
       case _ => null // error
     }
-  }
-
-  private def parseNlp(pos: Int): ProgNode = {
-    val p1 = parseRuleName(pos)
-    val p2 = parseConds(p1.lastTokenPos + 1)
-    val p3 = parseConds(p2.lastTokenPos + 1)
-
-    if (matchClosingPar(p3.lastTokenPos + 1))
-      new NlpRule(Array(p1, p2, p3), p3.lastTokenPos + 1)
-    else
-      null // error
   }
 
   private def parseTree(pos: Int): ProgNode = {
@@ -105,7 +92,7 @@ class Parser(val input: String) {
     else {
       val param = tokens(pos).ttype match {
         case TokenType.String => new StringNode(tokens(pos).text, pos)
-        case TokenType.Symbol => new TreeVar(tokens(pos).text, pos)
+        case TokenType.Symbol => new VarNode(tokens(pos).text, pos)
         case TokenType.POS => new POSNode(tokens(pos).text, pos)
         case TokenType.LPar => parsePattern(pos + 1)
         case _ => null // error
@@ -123,16 +110,6 @@ class Parser(val input: String) {
       return null // error
 
     new PatFun(params, lastParamsTokenPos + 1)
-  }
-
-  private def parseSum(pos: Int): ProgNode = {
-    val p1 = parse(pos)
-    val p2 = parse(p1.lastTokenPos + 1)
-
-    if (matchClosingPar(p2.lastTokenPos + 1))
-      new SumFun(Array(p1, p2), p2.lastTokenPos + 1)
-    else
-      null // error
   }
 
   private def parseIs(pos: Int): ProgNode = {
