@@ -4,7 +4,7 @@ import com.graphbrain.eco.NodeType.NodeType
 import com.graphbrain.eco.{PTree, Contexts, Context}
 
 abstract class ProgNode(val lastTokenPos: Int) {
-  def ntype: NodeType
+  def ntype(ctxt: Context): NodeType
 
   def stringValue(ctxts: Contexts, ctxt: Context): String = "" // error
   def numberValue(ctxts: Contexts, ctxt: Context): Double = 0 // error

@@ -6,9 +6,9 @@ import com.graphbrain.eco.{Context, Contexts, NodeType}
 class CondsFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
   override val label = ";"
 
-  override def ntype: NodeType = {
+  override def ntype(ctxt: Context): NodeType = {
     for (p <- params) {
-      if (p.ntype != NodeType.Boolean) {
+      if (p.ntype(ctxt) != NodeType.Boolean) {
         typeError()
         return NodeType.Unknown
       }

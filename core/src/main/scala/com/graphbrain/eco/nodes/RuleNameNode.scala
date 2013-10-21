@@ -3,7 +3,7 @@ package com.graphbrain.eco.nodes
 import com.graphbrain.eco.{Contexts, Context, NodeType}
 
 class RuleNameNode(val value: String, lastTokenPos: Int= -1) extends ProgNode(lastTokenPos) {
-  override def ntype = NodeType.RuleName
+  override def ntype(ctxt: Context) = NodeType.RuleName
   override def stringValue(ctxts: Contexts, ctxt: Context) = value
 
   override def toString = value

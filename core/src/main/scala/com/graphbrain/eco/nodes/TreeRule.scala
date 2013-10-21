@@ -5,8 +5,8 @@ import com.graphbrain.eco.{Context, Contexts, NodeType}
 class TreeRule(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
   override val label = "tree"
 
-  override def ntype = {
-    params(0).ntype match {
+  override def ntype(ctxt: Context) = {
+    params(0).ntype(ctxt) match {
       case NodeType.Boolean => NodeType.Unknown
       case _ => {
         typeError()
