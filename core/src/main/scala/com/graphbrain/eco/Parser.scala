@@ -38,6 +38,7 @@ class Parser(val input: String) {
     tokens(pos).text match {
       case "tree" => parseTree(pos + 1)
       case "?" => parsePattern(pos + 1)
+      case "let" => parseLet(pos + 1)
       case "is" => parseIs(pos + 1)
       case "is-leaf" => parseIsLeaf(pos + 1)
       case _ => null // error
@@ -110,6 +111,16 @@ class Parser(val input: String) {
       return null // error
 
     new PatFun(params, lastParamsTokenPos + 1)
+  }
+
+  private def parseLet(pos: Int): ProgNode = {
+    val p1 = parse(pos)
+    val p2 = parse(p1.lastTokenPos + 1)
+
+    if (matchClosingPar(p2.lastTokenPos + 1))
+      new LetFun(Array(p1, p2), p2.lastTokenPos + 1)
+    else
+      null // error
   }
 
   private def parseIs(pos: Int): ProgNode = {

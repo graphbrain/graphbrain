@@ -10,21 +10,20 @@ class VertexFun(val fun: VertexFun.VertexFun, params: Array[ProgNode], lastToken
     case VertexFun.TxtVert => "txt-vert"
   }
 
-  override def ntype(ctxt: Context): NodeType = NodeType.Boolean
+  override def ntype(ctxt: Context): NodeType = NodeType.Vertex
 
-  override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = {
+  override def vertexValue(ctxts: Contexts, ctxt: Context): String = {
     fun match {
       case VertexFun.RelVert => {
         params(0) match {
-          case t: VarNode =>
-            t.treeValue(ctxts, ctxt).pos == params(1).stringValue(ctxts, ctxt)
-          case _ => false
+          case t: VarNode => "rel/1/test"
+          case _ => "" // error!
         }
       }
       case VertexFun.TxtVert => {
         params(0) match {
-          case t: VarNode => t.treeValue(ctxts, ctxt).isLeaf
-          case _ => false
+          case t: VarNode => "1/test"
+          case _ => "" // error!
         }
       }
     }
