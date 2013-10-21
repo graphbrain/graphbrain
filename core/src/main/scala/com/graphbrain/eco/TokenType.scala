@@ -7,6 +7,7 @@ object TokenType extends Enumeration {
       POS,
       Number,
       String,
+      Id,
       LPar,
       RPar = Value
 }
