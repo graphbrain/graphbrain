@@ -10,6 +10,8 @@ abstract class ProgNode(val lastTokenPos: Int) {
   def numberValue(ctxts: Contexts, ctxt: Context): Double = 0 // error
   def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = false // error
   def treeValue(ctxts: Contexts, ctxt: Context): PTree = null // error
+  def posValue(ctxts: Contexts, ctxt: Context): String = "" // error
+  def vertexValue(ctxts: Contexts, ctxt: Context): String = "" // error
 
   protected def error(msg: String) = println(msg)
 
