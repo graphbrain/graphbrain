@@ -8,16 +8,8 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
 
   override def ntype(ctxt: Context): NodeType = NodeType.Boolean
 
-  override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = {
-    val newContext = new Context
-
-    if (booleanValue(newContext, ctxts.sentence)) {
-      ctxts.addContext(newContext)
-      true
-    }
-    else
-      false
-  }
+  override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean =
+    booleanValue(ctxt, ctxts.sentence)
 
   def booleanValue(newContext: Context, pt: PTree): Boolean = {
 
