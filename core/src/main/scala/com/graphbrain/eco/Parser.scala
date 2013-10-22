@@ -4,7 +4,7 @@ import com.graphbrain.eco.nodes._
 
 class Parser(val input: String) {
   val tokens = new Lexer(input).tokens
-  val prog = new Prog(parse(0))
+  val expr = new Expression(parse(0))
 
   private def parse(pos: Int): ProgNode = {
     tokens(pos).ttype match {
@@ -206,6 +206,6 @@ class Parser(val input: String) {
 object Parser {
   def main(args: Array[String]) = {
     val p = new Parser("(nlp test ((? x \"is\" y)) (true))")
-    println(p.prog)
+    println(p.expr)
   }
 }
