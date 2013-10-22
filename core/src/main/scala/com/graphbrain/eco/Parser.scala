@@ -12,6 +12,7 @@ class Parser(val input: String) {
       case TokenType.String => new StringNode(tokens(pos).text, pos)
       case TokenType.Symbol => parseSymbol(pos)
       case TokenType.Number => new NumberNode(tokens(pos).text.toDouble, pos)
+      case TokenType.Vertex => new VertexNode(tokens(pos).text, pos)
     }
   }
 
@@ -37,8 +38,9 @@ class Parser(val input: String) {
   private def parseFun(pos: Int): ProgNode = {
     tokens(pos).text match {
       case "tree" => parseTree(pos + 1)
-      case "?" => parsePattern(pos + 1)
       case "let" => parseLet(pos + 1)
+      case "?" => parsePattern(pos + 1)
+      case "!" => parseBuildVert(pos + 1)
       case "rel-vert" => parseRelVert(pos + 1)
       case "txt-vert" => parseTxtVert(pos + 1)
       case "is" => parseIs(pos + 1)
@@ -123,6 +125,20 @@ class Parser(val input: String) {
       new LetFun(Array(p1, p2), p2.lastTokenPos + 1)
     else
       null // error
+  }
+
+  private def parseBuildVert(pos: Int): ProgNode = {
+    var lastPos = pos
+    var paramList = List[ProgNode]()
+
+    while (!matchClosingPar(lastPos)) {
+      val p = parse(lastPos)
+      lastPos = p.lastTokenPos + 1
+      paramList ::= p
+    }
+
+    val params = paramList.reverse.toArray
+    new VertexFun(VertexFun.BuildVert, params, lastPos)
   }
 
   private def parseRelVert(pos: Int): ProgNode = {

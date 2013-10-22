@@ -7,6 +7,7 @@ import com.graphbrain.db.{ID, TextNode}
 class VertexFun(val fun: VertexFun.VertexFun, params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
 
   override val label = fun match {
+    case VertexFun.BuildVert => "!"
     case VertexFun.RelVert => "rel-vert"
     case VertexFun.TxtVert => "txt-vert"
   }
@@ -15,6 +16,16 @@ class VertexFun(val fun: VertexFun.VertexFun, params: Array[ProgNode], lastToken
 
   override def vertexValue(ctxts: Contexts, ctxt: Context): String = {
     fun match {
+      case VertexFun.BuildVert => {
+        val id = params.map(
+          p => p.ntype(ctxt) match {
+            case NodeType.Vertex => p.vertexValue(ctxts, ctxt)
+            case NodeType.String => p.stringValue(ctxts, ctxt)
+            case _ => "" // error!
+          }).reduceLeft(_ + " " + _)
+        println(id)
+        id
+      }
       case VertexFun.RelVert => {
         params(0).ntype(ctxt) match {
           case NodeType.PTree => ID.reltype_id(params(0).treeValue(ctxts, ctxt).text)
@@ -37,6 +48,7 @@ class VertexFun(val fun: VertexFun.VertexFun, params: Array[ProgNode], lastToken
 
 object VertexFun extends Enumeration {
   type VertexFun = Value
-  val RelVert,
-  TxtVert = Value
+  val BuildVert,
+    RelVert,
+    TxtVert = Value
 }

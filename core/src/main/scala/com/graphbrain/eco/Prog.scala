@@ -29,7 +29,7 @@ object Prog {
           (let orig (txt-vert x))
           (let rel (rel-vert y))
           (let targ (txt-vert b)))
-          (true))
+          ((! rel orig targ)))
       """)
     val ctxts = new Contexts("Telmo is a hacker")
     p.prog.eval(ctxts)
