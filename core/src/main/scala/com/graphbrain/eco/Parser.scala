@@ -45,7 +45,7 @@ class Parser(val input: String) {
       case "txt-vert" => parseTxtVert(pos + 1)
       case "is" => parseIs(pos + 1)
       case "is-leaf" => parseIsLeaf(pos + 1)
-      case _ => null // error
+      case s: String => parseDummy(s, pos + 1)
     }
   }
 
@@ -186,6 +186,20 @@ class Parser(val input: String) {
       new TreeFun(TreeFun.IsLeaf, Array(p1), p1.lastTokenPos + 1)
     else
       null // error
+  }
+
+  private def parseDummy(name: String, pos: Int): ProgNode = {
+    var lastPos = pos
+    var paramList = List[ProgNode]()
+
+    while (!matchClosingPar(lastPos)) {
+      val p = parse(lastPos)
+      lastPos = p.lastTokenPos + 1
+      paramList ::= p
+    }
+
+    val params = paramList.reverse.toArray
+    new DummyFun(name, params, lastPos)
   }
 }
 
