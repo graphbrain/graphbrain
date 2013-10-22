@@ -25,13 +25,14 @@ object Prog {
     val p = new Parser(
       """
         (tree test
-          ((? S (NP x) (VP y (a b)))
+          ((? S (NP x) (VP y z))
           (let orig (txt-vert x))
           (let rel (rel-vert y))
-          (let targ (txt-vert b)))
+          (let targ (txt-vert z)))
           ((! rel orig targ)))
       """)
-    val ctxts = new Contexts("Telmo is a hacker")
+    val ctxts = new Contexts("Telmo likes chocolate")
+    //val ctxts = new Contexts("Bitcoin can be thought of as the first real autonomous ‘corporation’ although you probably don’t see it that way.")
     p.prog.eval(ctxts)
     println(p.prog)
     println(ctxts.sentence)
