@@ -5,19 +5,16 @@ import com.graphbrain.eco.{Context, Contexts, NodeType}
 class TreeRule(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
   override val label = "tree"
 
-  override def ntype(ctxt: Context) = {
-    params(0).ntype(ctxt) match {
-      case NodeType.Boolean => NodeType.Unknown
-      case _ => {
-        typeError()
-        NodeType.Unknown
-      }
-    }
-  }
+  override def ntype(ctxt: Context) = NodeType.Boolean
 
   override def booleanValue(ctxts: Contexts, ctxt: Context) = {
     // incomplete
-    params(1).booleanValue(ctxts, ctxt)
+    if (params(1).booleanValue(ctxts, ctxt)) {
+      params(2).booleanValue(ctxts, ctxt)
+    }
+    else {
+      false
+    }
   }
 
   override protected def typeError() = error("the first part of a rule must be a boolean")

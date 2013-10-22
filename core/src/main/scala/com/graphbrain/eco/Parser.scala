@@ -59,7 +59,7 @@ class Parser(val input: String) {
   private def parseTree(pos: Int): ProgNode = {
     val p1 = parseRuleName(pos)
     val p2 = parseConds(p1.lastTokenPos + 1)
-    val p3 = parseConds(p2.lastTokenPos + 1)
+    val p3 = parseResults(p2.lastTokenPos + 1)
 
     if (matchClosingPar(p3.lastTokenPos + 1))
       new TreeRule(Array(p1, p2, p3), p3.lastTokenPos + 1)
@@ -67,27 +67,37 @@ class Parser(val input: String) {
       null // error
   }
 
-  private def parseConds(pos: Int): ProgNode = {
+  private def parseElems(pos: Int): (Array[ProgNode], Int) = {
     if (!matchOpeningPar(pos))
       return null // error
 
-    val params = parseCondsList(pos + 1).toArray
+    val params = parseElemList(pos + 1).toArray
     val lastParamsTokenPos = if (params.size == 0) pos else params.last.lastTokenPos
 
     if (!matchClosingPar(lastParamsTokenPos + 1))
       return null // error
 
-    new CondsFun(params, lastParamsTokenPos + 1)
+    (params, lastParamsTokenPos + 1)
   }
 
-  private def parseCondsList(pos: Int): List[ProgNode] = {
+  private def parseElemList(pos: Int): List[ProgNode] = {
     if (matchClosingPar(pos)) {
       Nil
     }
     else {
-      val cond = parse(pos)
-      cond :: parseCondsList(cond.lastTokenPos + 1)
+      val elem = parse(pos)
+      elem :: parseElemList(elem.lastTokenPos + 1)
     }
+  }
+
+  private def parseConds(pos: Int): ProgNode = {
+    val e = parseElems(pos)
+    new CondsFun(e._1, e._2)
+  }
+
+  private def parseResults(pos: Int): ProgNode = {
+    val e = parseElems(pos)
+    new ResultsFun(e._1, e._2)
   }
 
   private def parsePatternParamsList(pos: Int): List[ProgNode] = {
