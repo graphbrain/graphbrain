@@ -21,17 +21,17 @@ class ParserSuite extends FunSuite {
 
   test("(nlp test ((? x y z)) (true))") {
     val p = new Parser("(nlp test ((? x y z)) (true))")
-    assert(p.prog.toString == "(nlp test (; (? x y z)) (; true))")
+    assert(p.expr.toString == "(nlp test (; (? x y z)) (; true))")
   }
 
   test("(nlp test ((? x \"likes\" z)) (true))") {
     val p = new Parser("(nlp test ((? x \"likes\" z)) (true))")
-    println(p.prog.toString)
-    assert(p.prog.toString == "(nlp test (; (? x \"likes\" z)) (; true))")
+    println(p.expr.toString)
+    assert(p.expr.toString == "(nlp test (; (? x \"likes\" z)) (; true))")
   }
 
   test("(nlp test ((? x y z) true) (true))") {
     val p = new Parser("(nlp test ((? x y z) true) (true))")
-    assert(p.prog.toString == "(nlp test (; (? x y z) true) (; true))")
+    assert(p.expr.toString == "(nlp test (; (? x y z) true) (; true))")
   }
 }
