@@ -1,6 +1,6 @@
 package com.graphbrain.repl
 
-import com.graphbrain.eco.{Prog, Parser}
+import com.graphbrain.eco.{Contexts, Prog, Parser}
 import com.graphbrain.eco.nodes.DummyFun
 
 object REPL {
@@ -9,6 +9,7 @@ object REPL {
   def main(args: Array[String]) = {
     println("Welcome to the Eco REPL.")
 
+    print("> ")
     for(ln <- io.Source.stdin.getLines()) {
       val p = new Parser(ln)
 
@@ -25,9 +26,17 @@ object REPL {
               println("bye.")
               sys.exit(0)
             }
+            case "parse" => {
+              val sentence = d.params(0).stringValue(null, null)
+              val ctxts = new Contexts(sentence)
+              prog.eval(ctxts)
+              ctxts.print()
+            }
           }
         }
       }
+
+      print("> ")
     }
   }
 }
