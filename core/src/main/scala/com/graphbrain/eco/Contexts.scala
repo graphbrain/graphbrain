@@ -20,8 +20,10 @@ class Contexts(s: String) {
     remCtxts.clear()
   }
 
-  private def parseSentence(s: String) =
+  private def parseSentence(s: String) = {
+    println(Contexts.l.annotate(s))
     new Words(Contexts.l.annotate(s).map(w => new Word(w._1, w._2, w._3)).toArray)
+  }
 
   def print() = for (c <- ctxts) c.print()
 }

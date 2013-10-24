@@ -4,8 +4,8 @@ import edu.stanford.nlp.tagger.maxent.MaxentTagger
 
 class POSTagger {
 
-	//val tagger = new MaxentTagger("pos_models/english-left3words-distsim.tagger")
-  val tagger = new MaxentTagger("pos_models/french.tagger")
+	val tagger = new MaxentTagger("pos_models/english-left3words-distsim.tagger")
+  //val tagger = new MaxentTagger("pos_models/french.tagger")
 
 	def tagText(stringToTag: String): List[(String, String)] =
 		taggedTokens(addTagToText(stringToTag))

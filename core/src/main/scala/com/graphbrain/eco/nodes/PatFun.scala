@@ -59,7 +59,9 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
         }
       }
 
-      if (matches) ctxts.addContext(newContext)
+      if (matches) {
+        ctxts.addContext(newContext)
+      }
     }
 
     true
