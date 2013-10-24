@@ -16,7 +16,7 @@ class LetFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
           case NodeType.Boolean => ctxt.setBoolean(v.name, params(1).booleanValue(ctxts, ctxt))
           case NodeType.Number => ctxt.setNumber(v.name, params(1).numberValue(ctxts, ctxt))
           case NodeType.POS => ctxt.setPOS(v.name, params(1).posValue(ctxts, ctxt))
-          case NodeType.PTree => ctxt.setTree(v.name, params(1).treeValue(ctxts, ctxt))
+          case NodeType.Words => ctxt.setWords(v.name, params(1).wordsValue(ctxts, ctxt))
           case NodeType.String => ctxt.setString(v.name, params(1).stringValue(ctxts, ctxt))
           case NodeType.Vertex => ctxt.setVertex(v.name, params(1).vertexValue(ctxts, ctxt))
         }

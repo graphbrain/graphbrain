@@ -1,64 +1,65 @@
 package com.graphbrain.eco.nodes
 
 import com.graphbrain.eco.NodeType.NodeType
-import com.graphbrain.eco.{PTree, Context, Contexts, NodeType}
+import com.graphbrain.eco.{Words, Context, Contexts, NodeType}
 
 class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
   override val label = "?"
 
   override def ntype(ctxt: Context): NodeType = NodeType.Boolean
 
-  override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean =
-    booleanValue(ctxt, ctxts.sentence)
+  private def stepPointers(pointers: Array[Int], words: Int): Boolean = {
+    val count = pointers.length
 
-  def booleanValue(newContext: Context, pt: PTree): Boolean = {
-
-    val words = pt.children.length
-    val pcount = params.length
-
-    val start = params(0) match {
-      case p: POSNode => {
-        if (p.value != pt.pos)
-          return false
-        1
-      }
-      case _ => 0
+    if (pointers(1) < 0) {
+      for (i <- 1 until count) pointers(i) = i
     }
-
-    // leaf case
-    if ((pcount - start == 1) && pt.isLeaf) {
-      params(start) match {
-        case v: VarNode => newContext.setTree(v.name, pt)
-      }
-    }
-    // other cases
     else {
-    if (words != (pcount - start)) return false
+      var curPointer = count - 1
+      pointers(curPointer) += 1
 
-    for (i <- start until pcount) {
-      val j = i - start
-      params(i) match {
-        case s: StringNode =>
-          if (s.value != pt.children(j).text)
-            return false
-        case p: POSNode =>
-          if (p.value != pt.pos)
-            return false
-        case p: PatFun =>
-          if (!p.booleanValue(newContext, pt.children(j)))
-            return false
-        case _ =>
+      while (pointers(curPointer) >= words - count + curPointer + 1) {
+        curPointer -= 1
+
+        if (curPointer < 1) return false
+
+        pointers(curPointer) += 1
+        var pos = pointers(curPointer)
+        for (i <- (curPointer + 1) until count) {
+          pos += 1
+          pointers(i) = pos
+        }
       }
     }
 
-    for (i <- start until pcount) {
-      val j = i - start
-      params(i) match {
-        case v: VarNode =>
-          newContext.setTree(v.name, pt.children(j))
-        case _ =>
+    true
+  }
+
+  override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = {
+    val words = ctxts.sentence.words.length
+    val count = params.length
+    val pointers = new Array[Int](count)
+    pointers(0) = 0
+    pointers(1) = -1
+
+    while(stepPointers(pointers, words)) {
+      val newContext = new Context
+      var matches = true
+      for (i <- 0 until count) {
+        val start = pointers(i)
+        val end = if (i < (count - 1)) pointers(i + 1) else words
+
+        val subStr = (for (j <- start until end) yield ctxts.sentence.words(j)).map(_.word).reduceLeft(_ + " " + _)
+        val subPhrase = ctxts.sentence.words.slice(start, end)
+
+        params(i) match {
+          case v: VarNode => newContext.setWords(v.name, new Words(subPhrase))
+          case s: StringNode => if (s.value != subStr) matches = false // should bail out
+          case _ => // error
+        }
       }
-    }
+
+      if (matches) ctxts.addContext(newContext)
     }
 
     true
