@@ -43,9 +43,9 @@ class Parser(val input: String) {
       case "!" => parseBuildVert(pos + 1)
       case "rel-vert" => parseRelVert(pos + 1)
       case "txt-vert" => parseTxtVert(pos + 1)
-      case "pos" => parsePos(pos + 1)
-      case "pos-pre" => parsePosPre(pos + 1)
-      case "lemma" => parseLemma(pos + 1)
+      case "is-pos" => parsePos(pos + 1)
+      case "is-pos-pre" => parsePosPre(pos + 1)
+      case "is-lemma" => parseLemma(pos + 1)
       case s: String => parseDummy(s, pos + 1)
     }
   }
@@ -188,7 +188,7 @@ class Parser(val input: String) {
     val p2 = parse(p1.lastTokenPos + 1)
 
     if (matchClosingPar(p2.lastTokenPos + 1))
-      new NlpFun(NlpFunType.POS, Array(p1, p2), p2.lastTokenPos + 1)
+      new NlpFun(NlpFunType.IS_POS, Array(p1, p2), p2.lastTokenPos + 1)
     else
       null // error
   }
@@ -198,7 +198,7 @@ class Parser(val input: String) {
     val p2 = parse(p1.lastTokenPos + 1)
 
     if (matchClosingPar(p2.lastTokenPos + 1))
-      new NlpFun(NlpFunType.POSPRE, Array(p1, p2), p2.lastTokenPos + 1)
+      new NlpFun(NlpFunType.IS_POSPRE, Array(p1, p2), p2.lastTokenPos + 1)
     else
       null // error
   }
@@ -208,7 +208,7 @@ class Parser(val input: String) {
     val p2 = parse(p1.lastTokenPos + 1)
 
     if (matchClosingPar(p2.lastTokenPos + 1))
-      new NlpFun(NlpFunType.LEMMA, Array(p1, p2), p2.lastTokenPos + 1)
+      new NlpFun(NlpFunType.IS_LEMMA, Array(p1, p2), p2.lastTokenPos + 1)
     else
       null // error
   }

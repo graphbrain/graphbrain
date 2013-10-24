@@ -7,21 +7,21 @@ import com.graphbrain.eco.nodes.NlpFunType.NlpFunType
 
 object NlpFunType extends Enumeration {
   type NlpFunType = Value
-  val POS, POSPRE, LEMMA = Value
+  val IS_POS, IS_POSPRE, IS_LEMMA = Value
 }
 
 class NlpFun(val funType: NlpFunType, params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
 
   override val label = funType match {
-    case NlpFunType.POS => "pos"
-    case NlpFunType.POSPRE => "pos-pre"
-    case NlpFunType.LEMMA => "lemma"
+    case NlpFunType.IS_POS => "is-pos"
+    case NlpFunType.IS_POSPRE => "is-pos-pre"
+    case NlpFunType.IS_LEMMA => "is-lemma"
   }
 
   override def ntype(ctxt: Context): NodeType = NodeType.Boolean
 
   override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = funType match {
-    case NlpFunType.POS => {
+    case NlpFunType.IS_POS => {
       params(0) match {
         case v: VarNode => {
           val words = v.wordsValue(ctxts, ctxt)
@@ -30,7 +30,7 @@ class NlpFun(val funType: NlpFunType, params: Array[ProgNode], lastTokenPos: Int
         }
       }
     }
-    case NlpFunType.POSPRE => {
+    case NlpFunType.IS_POSPRE => {
       params(0) match {
         case v: VarNode => {
           val words = v.wordsValue(ctxts, ctxt)
@@ -39,7 +39,7 @@ class NlpFun(val funType: NlpFunType, params: Array[ProgNode], lastTokenPos: Int
         }
       }
     }
-    case NlpFunType.LEMMA => {
+    case NlpFunType.IS_LEMMA => {
       params(0) match {
         case v: VarNode => {
           val words = v.wordsValue(ctxts, ctxt)
