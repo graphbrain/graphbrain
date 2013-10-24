@@ -16,8 +16,6 @@ class VarNode(val name: String, lastTokenPos: Int) extends ProgNode(lastTokenPos
     if (ctxt == null) false else ctxt.getBoolean(name)
   override def wordsValue(ctxts: Contexts, ctxt: Context): Words =
     if (ctxt == null) null else ctxt.getWords(name)
-  override def posValue(ctxts: Contexts, ctxt: Context): String =
-    if (ctxt == null) "" else ctxt.getPOS(name)
   override def vertexValue(ctxts: Contexts, ctxt: Context): String =
     if (ctxt == null) "" else ctxt.getVertex(name)
 

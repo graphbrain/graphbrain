@@ -29,7 +29,6 @@ class Lexer(val input: String) {
 
       val nt = predict match {
         case TokenType.Symbol => tokSymbolOrVertex
-        case TokenType.POS => tokPOS
         case TokenType.Number => tokNumber
         case TokenType.String => tokString
         case TokenType.LPar => tokLPar
@@ -73,8 +72,7 @@ class Lexer(val input: String) {
               }
           }
         }
-        case _ =>
-          if (c.isUpper) TokenType.POS else TokenType.Symbol
+        case _ => TokenType.Symbol
     }
   }
 
@@ -98,26 +96,6 @@ class Lexer(val input: String) {
     val str = sb.toString()
     val ttype = if (str.contains('/')) TokenType.Vertex else TokenType.Symbol
     new Token(str, ttype)
-  }
-
-  private def tokPOS: Token = {
-    val sb = new StringBuilder(25)
-    var done = false
-
-    while (!done) {
-      sb.append(c)
-      consume()
-
-      if ((!c.isLetter)
-        && (!c.isDigit)
-        && (c != '-')
-        && (c != '_')) {
-
-        done = true
-      }
-    }
-
-    new Token(sb.toString(), TokenType.POS)
   }
 
   private def tokNumber: Token = {

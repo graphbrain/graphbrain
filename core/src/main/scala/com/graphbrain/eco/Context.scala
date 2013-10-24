@@ -10,7 +10,6 @@ class Context {
   val numberVars = mutable.Map[String, Double]()
   val booleanVars = mutable.Map[String, Boolean]()
   val wordsVars = mutable.Map[String, Words]()
-  val posVars = mutable.Map[String, String]()
   val vertexVars = mutable.Map[String, String]()
 
   private def setType(variable: String, value: NodeType) = varTypes(variable) = value
@@ -37,10 +36,6 @@ class Context {
     setType(variable, NodeType.Words)
     wordsVars(variable) = value
   }
-  def setPOS(variable: String, value: String) = {
-    setType(variable, NodeType.POS)
-    posVars(variable) = value
-  }
   def setVertex(variable: String, value: String) = {
     setType(variable, NodeType.Vertex)
     vertexVars(variable) = value
@@ -50,7 +45,6 @@ class Context {
   def getNumber(variable: String) = numberVars(variable)
   def getBoolean(variable: String) = booleanVars(variable)
   def getWords(variable: String) = wordsVars(variable)
-  def getPOS(variable: String) = posVars(variable)
   def getVertex(variable: String) = vertexVars(variable)
 
   def print() = {
@@ -59,7 +53,6 @@ class Context {
     for (v <- numberVars) println(v._1 + " = " + v._2)
     for (v <- booleanVars) println(v._1 + " = " + v._2)
     for (v <- wordsVars) println(v._1 + " = " + v._2)
-    for (v <- posVars) println(v._1 + " = " + v._2)
     for (v <- vertexVars) println(v._1 + " = " + v._2)
   }
 }

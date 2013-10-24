@@ -4,7 +4,6 @@ object TokenType extends Enumeration {
   type TokenType = Value
 	val Unknown,
       Symbol,
-      POS,
       Number,
       String,
       Vertex,

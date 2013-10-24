@@ -108,7 +108,6 @@ class Parser(val input: String) {
       val param = tokens(pos).ttype match {
         case TokenType.String => new StringNode(tokens(pos).text, pos)
         case TokenType.Symbol => new VarNode(tokens(pos).text, pos)
-        case TokenType.POS => new POSNode(tokens(pos).text, pos)
         case TokenType.LPar => parsePattern(pos + 1)
         case _ => null // error
       }
