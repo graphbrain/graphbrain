@@ -5,10 +5,7 @@ import com.graphbrain.eco.nodes.ProgNode
 class Expression(val root: ProgNode) {
 
   def eval(ctxts: Contexts): Contexts = {
-    val c = new Context
-    ctxts.addContext(c)
-    ctxts.applyChanges()
-    root.booleanValue(ctxts, c)
+    root.booleanValue(ctxts, null)
     ctxts
   }
 
@@ -24,14 +21,14 @@ object Expression {
   def main(args: Array[String]) = {
     val p = new Parser(
       """
-        (tree test
-          ((? S (NP x) (VP y z))
+        (nlp test
+          ((? x "likes" y ".")
           (let orig (txt-vert x))
-          (let rel (rel-vert y))
-          (let targ (txt-vert z)))
+          (let rel (rel-vert "likes"))
+          (let targ (txt-vert y)))
           ((! rel orig targ)))
       """)
-    val ctxts = new Contexts("Telmo likes chocolate")
+    val ctxts = new Contexts("Telmo likes chocolate.")
     //val ctxts = new Contexts("Bitcoin can be thought of as the first real autonomous ‘corporation’ although you probably don’t see it that way.")
     p.expr.eval(ctxts)
     println(p.expr)
