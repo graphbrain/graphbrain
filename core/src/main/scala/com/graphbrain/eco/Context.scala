@@ -9,7 +9,7 @@ class Context {
   val stringVars = mutable.Map[String, String]()
   val numberVars = mutable.Map[String, Double]()
   val booleanVars = mutable.Map[String, Boolean]()
-  val treeVars = mutable.Map[String, PTree]()
+  val wordsVars = mutable.Map[String, Words]()
   val posVars = mutable.Map[String, String]()
   val vertexVars = mutable.Map[String, String]()
 
@@ -33,9 +33,9 @@ class Context {
     setType(variable, NodeType.Boolean)
     booleanVars(variable) = value
   }
-  def setTree(variable: String, value: PTree) = {
-    setType(variable, NodeType.PTree)
-    treeVars(variable) = value
+  def setWords(variable: String, value: Words) = {
+    setType(variable, NodeType.Words)
+    wordsVars(variable) = value
   }
   def setPOS(variable: String, value: String) = {
     setType(variable, NodeType.POS)
@@ -49,7 +49,7 @@ class Context {
   def getString(variable: String) = stringVars(variable)
   def getNumber(variable: String) = numberVars(variable)
   def getBoolean(variable: String) = booleanVars(variable)
-  def getTree(variable: String) = treeVars(variable)
+  def getWords(variable: String) = wordsVars(variable)
   def getPOS(variable: String) = posVars(variable)
   def getVertex(variable: String) = vertexVars(variable)
 
@@ -58,7 +58,7 @@ class Context {
     for (v <- stringVars) println(v._1 + " = " + v._2)
     for (v <- numberVars) println(v._1 + " = " + v._2)
     for (v <- booleanVars) println(v._1 + " = " + v._2)
-    for (v <- treeVars) println(v._1 + " = " + v._2)
+    for (v <- wordsVars) println(v._1 + " = " + v._2)
     for (v <- posVars) println(v._1 + " = " + v._2)
     for (v <- vertexVars) println(v._1 + " = " + v._2)
   }

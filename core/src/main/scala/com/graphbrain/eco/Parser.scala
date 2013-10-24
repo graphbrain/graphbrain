@@ -37,14 +37,12 @@ class Parser(val input: String) {
 
   private def parseFun(pos: Int): ProgNode = {
     tokens(pos).text match {
-      case "tree" => parseTree(pos + 1)
+      case "nlp" => parseNlp(pos + 1)
       case "let" => parseLet(pos + 1)
       case "?" => parsePattern(pos + 1)
       case "!" => parseBuildVert(pos + 1)
       case "rel-vert" => parseRelVert(pos + 1)
       case "txt-vert" => parseTxtVert(pos + 1)
-      case "is" => parseIs(pos + 1)
-      case "is-leaf" => parseIsLeaf(pos + 1)
       case s: String => parseDummy(s, pos + 1)
     }
   }
@@ -56,13 +54,13 @@ class Parser(val input: String) {
     }
   }
 
-  private def parseTree(pos: Int): ProgNode = {
+  private def parseNlp(pos: Int): ProgNode = {
     val p1 = parseRuleName(pos)
     val p2 = parseConds(p1.lastTokenPos + 1)
     val p3 = parseResults(p2.lastTokenPos + 1)
 
     if (matchClosingPar(p3.lastTokenPos + 1))
-      new TreeRule(Array(p1, p2, p3), p3.lastTokenPos + 1)
+      new NlpRule(Array(p1, p2, p3), p3.lastTokenPos + 1)
     else
       null // error
   }
@@ -165,25 +163,6 @@ class Parser(val input: String) {
 
     if (matchClosingPar(p1.lastTokenPos + 1))
       new VertexFun(VertexFun.TxtVert, Array(p1), p1.lastTokenPos + 1)
-    else
-      null // error
-  }
-
-  private def parseIs(pos: Int): ProgNode = {
-    val p1 = parse(pos)
-    val p2 = parse(p1.lastTokenPos + 1)
-
-    if (matchClosingPar(p2.lastTokenPos + 1))
-      new TreeFun(TreeFun.Is, Array(p1, p2), p2.lastTokenPos + 1)
-    else
-      null // error
-  }
-
-  private def parseIsLeaf(pos: Int): ProgNode = {
-    val p1 = parse(pos)
-
-    if (matchClosingPar(p1.lastTokenPos + 1))
-      new TreeFun(TreeFun.IsLeaf, Array(p1), p1.lastTokenPos + 1)
     else
       null // error
   }

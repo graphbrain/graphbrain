@@ -39,7 +39,14 @@ object Prog {
   }
 
   def main(args: Array[String]) = {
-    val p = Prog.load("/Users/telmo/test.eco")
-    println(p)
+    val p = Prog.load("/Users/telmo/projects/graphbrain/test.eco")
+
+    //val s = "Telmo likes chocolate"
+    val s = "The Obama administration is appealing to its allies in Congress, on Wall Street and across the country to stick with President Barack Obama's health care law even as embarrassing problems with the flagship website continue to mount."
+
+    val ctxts = new Contexts(s)
+    p.eval(ctxts)
+    println(ctxts.sentence)
+    ctxts.print()
   }
 }

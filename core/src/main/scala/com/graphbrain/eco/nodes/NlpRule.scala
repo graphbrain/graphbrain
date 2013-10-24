@@ -2,8 +2,8 @@ package com.graphbrain.eco.nodes
 
 import com.graphbrain.eco.{Context, Contexts, NodeType}
 
-class TreeRule(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
-  override val label = "tree"
+class NlpRule(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
+  override val label = "nlp"
 
   override def ntype(ctxt: Context) = NodeType.Boolean
 
