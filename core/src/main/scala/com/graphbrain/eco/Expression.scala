@@ -23,7 +23,7 @@ object Expression {
       """
         (nlp test
           ((? a v b ".")
-          (pos-pre v "VB")
+          (is-pos-pre v "VB")
           (let orig (txt-vert a))
           (let rel (rel-vert v))
           (let targ (txt-vert b)))
