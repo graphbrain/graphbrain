@@ -29,7 +29,7 @@ object Expression {
           ((! rel orig targ)))
       """)
     val ctxts = new Contexts("Telmo likes chocolate.")
-    //val ctxts = new Contexts("Bitcoin can be thought of as the first real autonomous ‘corporation’ although you probably don’t see it that way.")
+    //val ctxts = new Contexts("Mrs Merkel has demanded a \"complete explanation\" of the claims, which are threatening to overshadow an EU summit.")
     p.expr.eval(ctxts)
     println(p.expr)
     println(ctxts.sentence)

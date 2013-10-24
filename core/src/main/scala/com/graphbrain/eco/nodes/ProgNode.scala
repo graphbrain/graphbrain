@@ -9,7 +9,7 @@ abstract class ProgNode(val lastTokenPos: Int) {
   def stringValue(ctxts: Contexts, ctxt: Context): String = "" // error
   def numberValue(ctxts: Contexts, ctxt: Context): Double = 0 // error
   def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = false // error
-  def wordsValue(ctxts: Contexts, ctxt: Context): Words = null // error
+  def wordsValue(ctxts: Contexts, ctxt: Context): Words = Words.empty // error
   def posValue(ctxts: Contexts, ctxt: Context): String = "" // error
   def vertexValue(ctxts: Contexts, ctxt: Context): String = "" // error
 
