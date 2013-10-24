@@ -22,13 +22,14 @@ object Expression {
     val p = new Parser(
       """
         (nlp test
-          ((? x "likes" y ".")
-          (let orig (txt-vert x))
-          (let rel (rel-vert "likes"))
-          (let targ (txt-vert y)))
+          ((? a v b ".")
+          (pos-pre v "VB")
+          (let orig (txt-vert a))
+          (let rel (rel-vert v))
+          (let targ (txt-vert b)))
           ((! rel orig targ)))
       """)
-    val ctxts = new Contexts("Telmo likes chocolate.")
+    val ctxts = new Contexts("Telmo knew Kung-Fu.")
     //val ctxts = new Contexts("Mrs Merkel has demanded a \"complete explanation\" of the claims, which are threatening to overshadow an EU summit.")
     p.expr.eval(ctxts)
     println(p.expr)
