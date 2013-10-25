@@ -1,12 +1,19 @@
 package com.graphbrain.eco
 
 import scala.io.Source
+import com.graphbrain.eco.nodes.ProgNode
 
-class Prog(val exprs: Set[Expression]=Set[Expression]()) {
+class Prog(val exprs: Set[ProgNode]=Set[ProgNode]()) extends ProgNode(-1) {
 
-  def eval(ctxts: Contexts): Contexts = {
-    for (e <- exprs) e.eval(ctxts)
-    ctxts
+  override def ntype(ctxt: Context) = NodeType.Unknown
+
+  override def verticesValue(ctxts: Contexts, ctxt: Context): Set[String] = {
+    var vertices = Set[String]()
+
+    for (e <- exprs)
+      vertices ++= e.verticesValue(ctxts, ctxt)
+
+    vertices
   }
 
   override def toString = exprs.map(_.toString).reduceLeft(_ + "\n" + _)
@@ -15,7 +22,7 @@ class Prog(val exprs: Set[Expression]=Set[Expression]()) {
 object Prog {
   def load(path: String) = {
     var exprStr = ""
-    var exprList = List[Expression]()
+    var exprList = List[ProgNode]()
 
     for(line <- Source.fromFile(path).getLines()) {
       if (line == "") {
@@ -38,7 +45,7 @@ object Prog {
     new Prog(exprList.reverse.toSet)
   }
 
-  def fromExpression(e: Expression) = new Prog(Set[Expression](e))
+  def fromNode(e: ProgNode) = new Prog(Set[ProgNode](e))
 
   def main(args: Array[String]) = {
     /*
@@ -64,12 +71,12 @@ object Prog {
           ((! rel orig targ)))
       """)
 
-    val prog = Prog.fromExpression(p.expr)
-    val ctxts = new Contexts(prog, "Telmo knew Kung-Fu.")
+    val prog = Prog.fromNode(p.expr)
+    val ctxts = Contexts(prog, "Telmo knew Kung-Fu.")
     //val ctxts = new Contexts("Mrs Merkel has demanded a \"complete explanation\" of the claims, which are threatening to overshadow an EU summit.")
-    prog.eval(ctxts)
+    prog.verticesValue(ctxts, null)
     println(prog)
     println(ctxts.sentence)
-    ctxts.print()
+    //ctxts.print()
   }
 }

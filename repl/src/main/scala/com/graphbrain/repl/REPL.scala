@@ -13,7 +13,7 @@ object REPL {
     for(ln <- io.Source.stdin.getLines()) {
       val p = new Parser(ln)
 
-      p.expr.root match {
+      p.expr match {
         case d: DummyFun => {
           d.name match {
             case "load" => {
@@ -28,8 +28,8 @@ object REPL {
             }
             case "parse" => {
               val sentence = d.params(0).stringValue(null, null)
-              val ctxts = new Contexts(prog, sentence)
-              prog.eval(ctxts)
+              val ctxts = Contexts(prog, sentence)
+              prog.verticesValue(ctxts, null)
               ctxts.print()
             }
           }
