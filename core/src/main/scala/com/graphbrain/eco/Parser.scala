@@ -41,6 +41,7 @@ class Parser(val input: String) {
       case "let" => parseLet(pos + 1)
       case "?" => parsePattern(pos + 1)
       case "!" => parseBuildVert(pos + 1)
+      case ":" => parseRecursion(pos + 1)
       case "rel-vert" => parseRelVert(pos + 1)
       case "txt-vert" => parseTxtVert(pos + 1)
       case "is-pos" => parsePos(pos + 1)
@@ -209,6 +210,15 @@ class Parser(val input: String) {
 
     if (matchClosingPar(p2.lastTokenPos + 1))
       new NlpFun(NlpFunType.IS_LEMMA, Array(p1, p2), p2.lastTokenPos + 1)
+    else
+      null // error
+  }
+
+  private def parseRecursion(pos: Int): ProgNode = {
+    val p1 = parse(pos)
+
+    if (matchClosingPar(p1.lastTokenPos + 1))
+      new RecursionFun(Array(p1), p1.lastTokenPos + 1)
     else
       null // error
   }

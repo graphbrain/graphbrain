@@ -3,7 +3,7 @@ package com.graphbrain.eco
 import scala.collection.mutable
 import com.graphbrain.nlp.Lemmatiser
 
-class Contexts(s: String) {
+class Contexts(val prog: Prog, s: String) {
   val ctxts = mutable.ListBuffer[Context]()
   val sentence = parseSentence(s)
 
