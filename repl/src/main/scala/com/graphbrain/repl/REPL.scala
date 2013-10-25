@@ -28,7 +28,7 @@ object REPL {
             }
             case "parse" => {
               val sentence = d.params(0).stringValue(null, null)
-              val ctxts = new Contexts(sentence)
+              val ctxts = new Contexts(prog, sentence)
               prog.eval(ctxts)
               ctxts.print()
             }
