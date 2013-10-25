@@ -11,6 +11,7 @@ abstract class ProgNode(val lastTokenPos: Int) {
   def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = false // error
   def wordsValue(ctxts: Contexts, ctxt: Context): Words = Words.empty // error
   def vertexValue(ctxts: Contexts, ctxt: Context): String = "" // error
+  def verticesValue(ctxts: Contexts, ctxt: Context): Set[String] = Set[String]() // error
 
   protected def error(msg: String) = println(msg)
 

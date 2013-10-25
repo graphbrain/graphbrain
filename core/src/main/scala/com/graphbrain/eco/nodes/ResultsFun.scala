@@ -16,12 +16,14 @@ class ResultsFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode
     NodeType.Boolean
   }
 
-  override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = {
+  override def verticesValue(ctxts: Contexts, ctxt: Context): Set[String] = {
+    var vertices = Set[String]()
+
     for (p <- params)
       for (c <- ctxts.ctxts)
-        p.vertexValue(ctxts, c)
+        vertices += p.vertexValue(ctxts, c)
 
-    true
+    vertices
   }
 
   override protected def typeError() = error("parameters must be vertex")

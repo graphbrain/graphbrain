@@ -4,7 +4,7 @@ import com.graphbrain.eco.nodes._
 
 class Parser(val input: String) {
   val tokens = new Lexer(input).tokens
-  val expr = new Expression(parse(0))
+  val expr = parse(0)
 
   private def parse(pos: Int): ProgNode = {
     tokens(pos).ttype match {
