@@ -48,18 +48,17 @@ object Prog {
   def fromNode(e: ProgNode) = new Prog(Set[ProgNode](e))
 
   def main(args: Array[String]) = {
-    /*
     val p = Prog.load("/Users/telmo/projects/graphbrain/test.eco")
 
-    //val s = "Telmo likes chocolate"
-    val s = "The Obama administration is appealing to its allies in Congress, on Wall Street and across the country to stick with President Barack Obama's health care law even as embarrassing problems with the flagship website continue to mount."
+    val s = "Telmo likes chocolate."
+    //val s = "The Obama administration is appealing to its allies in Congress, on Wall Street and across the country to stick with President Barack Obama's health care law even as embarrassing problems with the flagship website continue to mount."
 
-    val ctxts = new Contexts(s)
-    p.eval(ctxts)
+    val ctxts = Contexts(p, s)
+    p.verticesValue(ctxts, null)
     println(ctxts.sentence)
-    ctxts.print()
-    */
+    //ctxts.print()
 
+    /*
     val p = new Parser(
       """
         (nlp test
@@ -72,11 +71,12 @@ object Prog {
       """)
 
     val prog = Prog.fromNode(p.expr)
-    val ctxts = Contexts(prog, "Telmo knew Kung-Fu.")
-    //val ctxts = new Contexts("Mrs Merkel has demanded a \"complete explanation\" of the claims, which are threatening to overshadow an EU summit.")
+    //val ctxts = Contexts(prog, "Telmo knew Kung-Fu.")
+    val ctxts = Contexts(prog, "Mrs Merkel has demanded a \"complete explanation\" of the claims, which are threatening to overshadow an EU summit.")
     prog.verticesValue(ctxts, null)
     println(prog)
     println(ctxts.sentence)
     //ctxts.print()
+    */
   }
 }

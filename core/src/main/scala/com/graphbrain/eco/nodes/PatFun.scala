@@ -38,6 +38,9 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
   override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = {
     val words = ctxts.sentence.words.length
     val count = params.length
+
+    if (count > words) return false
+
     val pointers = new Array[Int](count)
     pointers(0) = 0
     pointers(1) = -1
