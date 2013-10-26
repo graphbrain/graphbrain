@@ -19,7 +19,10 @@ class Contexts(val prog: Prog, val sentence: Words) {
     remCtxts.clear()
   }
 
-  def print() = for (c <- ctxts) c.print()
+  def print() = {
+    println("Contexts: " + sentence)
+    for (c <- ctxts) c.print()
+  }
 }
 
 object Contexts {

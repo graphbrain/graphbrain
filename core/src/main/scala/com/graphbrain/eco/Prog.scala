@@ -1,19 +1,50 @@
 package com.graphbrain.eco
 
 import scala.io.Source
-import com.graphbrain.eco.nodes.ProgNode
+import com.graphbrain.eco.nodes.{WWRule, WVRule, ProgNode}
 
-class Prog(val exprs: Set[ProgNode]=Set[ProgNode]()) extends ProgNode(-1) {
+class Prog(val exprs: Set[ProgNode]=Set[ProgNode]()) {
 
-  override def ntype(ctxt: Context) = NodeType.Unknown
-
-  override def verticesValue(ctxts: Contexts, ctxt: Context): Set[String] = {
+  def wv(s: String): Set[String] = {
     var vertices = Set[String]()
 
-    for (e <- exprs)
-      vertices ++= e.verticesValue(ctxts, ctxt)
+    for (e <- exprs) e match {
+      case wv: WVRule => {
+        val ctxts = Contexts(this, s)
+        vertices ++= wv.verticesValue(ctxts, null)
+      }
+      case _ =>
+    }
 
     vertices
+  }
+
+  def wv(w: Words): Set[String] = {
+    var vertices = Set[String]()
+
+    for (e <- exprs) e match {
+      case wv: WVRule => {
+        val ctxts = Contexts(this, w)
+        vertices ++= wv.verticesValue(ctxts, null)
+      }
+      case _ =>
+    }
+
+    vertices
+  }
+
+  def ww(w: Words): Words = {
+    var r = Words.empty
+
+    for (e <- exprs) e match {
+      case ww: WWRule => {
+        val ctxts = Contexts(this, w)
+        r = ww.wordsValue(ctxts, null)
+      }
+      case _ =>
+    }
+
+    r
   }
 
   override def toString = exprs.map(_.toString).reduceLeft(_ + "\n" + _)
@@ -53,30 +84,6 @@ object Prog {
     val s = "Telmo likes chocolate."
     //val s = "The Obama administration is appealing to its allies in Congress, on Wall Street and across the country to stick with President Barack Obama's health care law even as embarrassing problems with the flagship website continue to mount."
 
-    val ctxts = Contexts(p, s)
-    p.verticesValue(ctxts, null)
-    println(ctxts.sentence)
-    //ctxts.print()
-
-    /*
-    val p = new Parser(
-      """
-        (nlp test
-          ((? a v b ".")
-          (is-pos-pre v "VB")
-          (let orig (txt-vert a))
-          (let rel (rel-vert v))
-          (let targ (txt-vert b)))
-          ((! rel orig targ)))
-      """)
-
-    val prog = Prog.fromNode(p.expr)
-    //val ctxts = Contexts(prog, "Telmo knew Kung-Fu.")
-    val ctxts = Contexts(prog, "Mrs Merkel has demanded a \"complete explanation\" of the claims, which are threatening to overshadow an EU summit.")
-    prog.verticesValue(ctxts, null)
-    println(prog)
-    println(ctxts.sentence)
-    //ctxts.print()
-    */
+    p.wv(s)
   }
 }

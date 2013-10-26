@@ -1,8 +1,6 @@
 package com.graphbrain.eco.nodes
 
 import com.graphbrain.eco._
-import scala.Predef.String
-import scala.Boolean
 
 class VarNode(val name: String, lastTokenPos: Int) extends ProgNode(lastTokenPos) {
 
@@ -14,8 +12,9 @@ class VarNode(val name: String, lastTokenPos: Int) extends ProgNode(lastTokenPos
     if (ctxt == null) 0 else ctxt.getNumber(name)
   override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean =
     if (ctxt == null) false else ctxt.getBoolean(name)
-  override def wordsValue(ctxts: Contexts, ctxt: Context): Words =
+  override def wordsValue(ctxts: Contexts, ctxt: Context): Words = {
     if (ctxt == null) null else ctxt.getWords(name)
+  }
   override def vertexValue(ctxts: Contexts, ctxt: Context): String =
     if (ctxt == null) "" else ctxt.getVertex(name)
 

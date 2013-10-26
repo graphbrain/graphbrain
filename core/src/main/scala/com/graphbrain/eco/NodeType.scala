@@ -7,6 +7,5 @@ object NodeType extends Enumeration {
       Number,
       String,
       Words,
-      Vertex,
-      RuleName = Value
+      Vertex = Value
 }
