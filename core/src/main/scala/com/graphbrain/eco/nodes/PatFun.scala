@@ -11,8 +11,8 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
   private def stepPointers(pointers: Array[Int], words: Int): Boolean = {
     val count = pointers.length
 
-    if (pointers(1) < 0) {
-      for (i <- 1 until count) pointers(i) = i
+    if (pointers(0) < 0) {
+      for (i <- 0 until count) pointers(i) = i
     }
     else {
       var curPointer = count - 1
@@ -42,8 +42,7 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
     if (count > words) return false
 
     val pointers = new Array[Int](count)
-    pointers(0) = 0
-    pointers(1) = -1
+    pointers(0) = -1
 
     while(stepPointers(pointers, words)) {
       val newContext = new Context

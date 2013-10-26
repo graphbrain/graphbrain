@@ -5,7 +5,8 @@ class Words(val words: Array[Word]=Array[Word]()) {
 
   def count = words.size
 
-  override def toString = words.map(_.toString).reduceLeft(_ + " " + _)
+  override def toString =
+    if (words.length > 0) words.map(_.toString).reduceLeft(_ + " " + _) else ""
 }
 
 object Words {

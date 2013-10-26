@@ -23,7 +23,7 @@ class VertexFun(val fun: VertexFun.VertexFun, params: Array[ProgNode], lastToken
             case NodeType.String => p.stringValue(ctxts, ctxt)
             case _ => "" // error!
           }).reduceLeft(_ + " " + _)
-        println(id)
+        println("!" + id)
         id
       }
       case VertexFun.RelVert => {
