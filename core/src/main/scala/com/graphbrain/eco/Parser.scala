@@ -1,6 +1,8 @@
 package com.graphbrain.eco
 
 import com.graphbrain.eco.nodes._
+import com.graphbrain.eco.nodes.NlpFunType.NlpFunType
+import com.graphbrain.eco.nodes.NlpFunType
 
 class Parser(val input: String) {
   val tokens = new Lexer(input).tokens
@@ -46,9 +48,11 @@ class Parser(val input: String) {
       case ":ww" => parseWWRecursion(pos + 1)
       case "rel-vert" => parseRelVert(pos + 1)
       case "txt-vert" => parseTxtVert(pos + 1)
-      case "is-pos" => parsePos(pos + 1)
-      case "is-pos-pre" => parsePosPre(pos + 1)
-      case "is-lemma" => parseLemma(pos + 1)
+      case "is-pos" => parseNlpFun(NlpFunType.IS_POS, pos + 1)
+      case "is-pos-pre" => parseNlpFun(NlpFunType.IS_POSPRE, pos + 1)
+      case "are-pos" => parseNlpFun(NlpFunType.ARE_POS, pos + 1)
+      case "are-pos-pre" => parseNlpFun(NlpFunType.ARE_POSPRE, pos + 1)
+      case "is-lemma" => parseNlpFun(NlpFunType.IS_LEMMA, pos + 1)
       case s: String => parseDummy(s, pos + 1)
     }
   }
@@ -188,32 +192,12 @@ class Parser(val input: String) {
     new DummyFun(name, params, lastPos)
   }
 
-  private def parsePos(pos: Int): ProgNode = {
+  private def parseNlpFun(ftype: NlpFunType, pos: Int): ProgNode = {
     val p1 = parse(pos)
     val p2 = parse(p1.lastTokenPos + 1)
 
     if (matchClosingPar(p2.lastTokenPos + 1))
-      new NlpFun(NlpFunType.IS_POS, Array(p1, p2), p2.lastTokenPos + 1)
-    else
-      null // error
-  }
-
-  private def parsePosPre(pos: Int): ProgNode = {
-    val p1 = parse(pos)
-    val p2 = parse(p1.lastTokenPos + 1)
-
-    if (matchClosingPar(p2.lastTokenPos + 1))
-      new NlpFun(NlpFunType.IS_POSPRE, Array(p1, p2), p2.lastTokenPos + 1)
-    else
-      null // error
-  }
-
-  private def parseLemma(pos: Int): ProgNode = {
-    val p1 = parse(pos)
-    val p2 = parse(p1.lastTokenPos + 1)
-
-    if (matchClosingPar(p2.lastTokenPos + 1))
-      new NlpFun(NlpFunType.IS_LEMMA, Array(p1, p2), p2.lastTokenPos + 1)
+      new NlpFun(ftype, Array(p1, p2), p2.lastTokenPos + 1)
     else
       null // error
   }
