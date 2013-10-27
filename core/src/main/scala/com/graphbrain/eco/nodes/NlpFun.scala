@@ -8,7 +8,13 @@ import com.graphbrain.eco.NodeType
 
 object NlpFunType extends Enumeration {
   type NlpFunType = Value
-  val IS_POS, IS_POSPRE, ARE_POS, ARE_POSPRE, IS_LEMMA = Value
+  val IS_POS,
+    IS_POSPRE,
+    ARE_POS,
+    ARE_POSPRE,
+    CONTAINS_POS,
+    CONTAINS_POSPRE,
+    IS_LEMMA = Value
 }
 
 class NlpFun(val funType: NlpFunType, params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
@@ -18,6 +24,8 @@ class NlpFun(val funType: NlpFunType, params: Array[ProgNode], lastTokenPos: Int
     case NlpFunType.IS_POSPRE => "is-pos-pre"
     case NlpFunType.ARE_POS => "are-pos"
     case NlpFunType.ARE_POSPRE => "are-pos-pre"
+    case NlpFunType.CONTAINS_POS => "contains-pos"
+    case NlpFunType.CONTAINS_POSPRE => "contains-pos-pre"
     case NlpFunType.IS_LEMMA => "is-lemma"
   }
 
@@ -26,9 +34,9 @@ class NlpFun(val funType: NlpFunType, params: Array[ProgNode], lastTokenPos: Int
   private def matchPoses(word: Word, pre: Boolean, poses: Array[String]): Boolean = {
     for (pos <- poses)
       if (pre)
-        if (word.pos == pos) return true
-      else
         if (word.pos.startsWith(pos)) return true
+      else
+        if (word.pos == pos) return true
 
     false
   }
@@ -40,6 +48,15 @@ class NlpFun(val funType: NlpFunType, params: Array[ProgNode], lastTokenPos: Int
       if (!matchPoses(word, pre, poses)) return false
 
     true
+  }
+
+  private def containsPoses(words: Words, pre: Boolean, ctxts: Contexts, ctxt: Context): Boolean = {
+    val poses = params.drop(1).map(_.stringValue(ctxts, ctxt))
+
+    for (word <- words.words)
+      if (matchPoses(word, pre, poses)) return true
+
+    false
   }
 
   override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = {
@@ -61,6 +78,14 @@ class NlpFun(val funType: NlpFunType, params: Array[ProgNode], lastTokenPos: Int
       case NlpFunType.ARE_POSPRE => {
         if (words.count == 0) return false
         matchPoses(words, pre = true, ctxts, ctxt)
+      }
+      case NlpFunType.CONTAINS_POS => {
+        if (words.count == 0) return false
+        containsPoses(words, pre = false, ctxts, ctxt)
+      }
+      case NlpFunType.CONTAINS_POSPRE => {
+        if (words.count == 0) return false
+        containsPoses(words, pre = true, ctxts, ctxt)
       }
       case NlpFunType.IS_LEMMA => {
         if (words.count != 1) return false
