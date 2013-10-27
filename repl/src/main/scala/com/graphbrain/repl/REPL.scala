@@ -1,6 +1,6 @@
 package com.graphbrain.repl
 
-import com.graphbrain.eco.{Contexts, Prog, Parser}
+import com.graphbrain.eco.{Words, Prog, Parser}
 import com.graphbrain.eco.nodes.DummyFun
 
 object REPL {
@@ -28,9 +28,7 @@ object REPL {
             }
             case "parse" => {
               val sentence = d.params(0).stringValue(null, null)
-              val ctxts = Contexts(prog, sentence)
-              prog.verticesValue(ctxts, null)
-              ctxts.print()
+              prog.wv(Words.fromString(sentence))
             }
           }
         }
