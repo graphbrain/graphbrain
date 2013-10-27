@@ -43,7 +43,7 @@ class Parser(val input: String) {
       case "ww" => parseWW(pos + 1)
       case "let" => parseLet(pos + 1)
       case "?" => parsePattern(pos + 1)
-      case "!" => parseBuildVert(pos + 1)
+      case "o" => parseBuildVert(pos + 1)
       case ":wv" => parseWVRecursion(pos + 1)
       case ":ww" => parseWWRecursion(pos + 1)
       case "rel-vert" => parseRelVert(pos + 1)
@@ -52,6 +52,8 @@ class Parser(val input: String) {
       case "is-pos-pre" => parseNlpFun(NlpFunType.IS_POSPRE, pos + 1)
       case "are-pos" => parseNlpFun(NlpFunType.ARE_POS, pos + 1)
       case "are-pos-pre" => parseNlpFun(NlpFunType.ARE_POSPRE, pos + 1)
+      case "contains-pos" => parseNlpFun(NlpFunType.CONTAINS_POS, pos + 1)
+      case "contains-pos-pre" => parseNlpFun(NlpFunType.CONTAINS_POSPRE, pos + 1)
       case "is-lemma" => parseNlpFun(NlpFunType.IS_LEMMA, pos + 1)
       case s: String => parseDummy(s, pos + 1)
     }

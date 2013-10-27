@@ -7,7 +7,7 @@ import com.graphbrain.db.{ID, TextNode}
 class VertexFun(val fun: VertexFun.VertexFun, params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
 
   override val label = fun match {
-    case VertexFun.BuildVert => "!"
+    case VertexFun.BuildVert => "o"
     case VertexFun.RelVert => "rel-vert"
     case VertexFun.TxtVert => "txt-vert"
   }
