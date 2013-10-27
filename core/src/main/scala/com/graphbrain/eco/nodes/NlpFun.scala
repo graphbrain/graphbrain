@@ -1,9 +1,10 @@
 package com.graphbrain.eco.nodes
 
-import com.graphbrain.eco.{Contexts, NodeType, Context}
+import com.graphbrain.eco._
 import scala.Boolean
-import com.graphbrain.eco.NodeType.NodeType
 import com.graphbrain.eco.nodes.NlpFunType.NlpFunType
+import com.graphbrain.eco.NodeType.NodeType
+import com.graphbrain.eco.NodeType
 
 object NlpFunType extends Enumeration {
   type NlpFunType = Value
@@ -22,56 +23,48 @@ class NlpFun(val funType: NlpFunType, params: Array[ProgNode], lastTokenPos: Int
 
   override def ntype(ctxt: Context): NodeType = NodeType.Boolean
 
-  override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = funType match {
-    case NlpFunType.IS_POS => {
-      params(0) match {
-        case v: VarNode => {
-          val words = v.wordsValue(ctxts, ctxt)
-          if (words.count != 1) return false
-          words.words(0).pos == params(1).stringValue(ctxts, ctxt)
-        }
+  private def matchPoses(word: Word, pre: Boolean, poses: Array[String]): Boolean = {
+    for (pos <- poses)
+      if (pre)
+        if (word.pos == pos) return true
+      else
+        if (word.pos.startsWith(pos)) return true
+
+    false
+  }
+
+  private def matchPoses(words: Words, pre: Boolean, ctxts: Contexts, ctxt: Context): Boolean = {
+    val poses = params.drop(1).map(_.stringValue(ctxts, ctxt))
+
+    for (word <- words.words)
+      if (!matchPoses(word, pre, poses)) return false
+
+    true
+  }
+
+  override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = {
+    val words = params(0).wordsValue(ctxts, ctxt)
+
+    funType match {
+      case NlpFunType.IS_POS => {
+        if (words.count != 1) return false
+        matchPoses(words, pre = false, ctxts, ctxt)
       }
-    }
-    case NlpFunType.IS_POSPRE => {
-      params(0) match {
-        case v: VarNode => {
-          val words = v.wordsValue(ctxts, ctxt)
-          if (words.count != 1) return false
-          words.words(0).pos.startsWith(params(1).stringValue(ctxts, ctxt))
-        }
+      case NlpFunType.IS_POSPRE => {
+        if (words.count != 1) return false
+        matchPoses(words, pre = true, ctxts, ctxt)
       }
-    }
-    case NlpFunType.ARE_POS => {
-      params(0) match {
-        case v: VarNode => {
-          val words = v.wordsValue(ctxts, ctxt)
-          if (words.count == 0) return false
-          val pos = params(1).stringValue(ctxts, ctxt)
-          for (w <- words.words)
-            if (w.pos != pos) return false
-          true
-        }
+      case NlpFunType.ARE_POS => {
+        if (words.count == 0) return false
+        matchPoses(words, pre = false, ctxts, ctxt)
       }
-    }
-    case NlpFunType.ARE_POSPRE => {
-      params(0) match {
-        case v: VarNode => {
-          val words = v.wordsValue(ctxts, ctxt)
-          if (words.count == 0) return false
-          val pos = params(1).stringValue(ctxts, ctxt)
-          for (w <- words.words)
-            if (!w.pos.startsWith(pos)) return false
-          true
-        }
+      case NlpFunType.ARE_POSPRE => {
+        if (words.count == 0) return false
+        matchPoses(words, pre = true, ctxts, ctxt)
       }
-    }
-    case NlpFunType.IS_LEMMA => {
-      params(0) match {
-        case v: VarNode => {
-          val words = v.wordsValue(ctxts, ctxt)
-          if (words.count != 1) return false
-          words.words(0).lemma == params(1).stringValue(ctxts, ctxt)
-        }
+      case NlpFunType.IS_LEMMA => {
+        if (words.count != 1) return false
+        words.words(0).lemma == params(1).stringValue(ctxts, ctxt)
       }
     }
   }

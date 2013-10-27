@@ -110,7 +110,7 @@ class Parser(val input: String) {
     new ResultsFun(e._1, e._2)
   }
 
-  private def parsePatternParamsList(pos: Int): List[ProgNode] = {
+  private def parseParamsList(pos: Int): List[ProgNode] = {
     if (matchClosingPar(pos)) {
       Nil
     }
@@ -121,12 +121,12 @@ class Parser(val input: String) {
         case TokenType.LPar => parsePattern(pos + 1)
         case _ => null // error
       }
-      param :: parsePatternParamsList(param.lastTokenPos + 1)
+      param :: parseParamsList(param.lastTokenPos + 1)
     }
   }
 
   private def parsePattern(pos: Int): ProgNode = {
-    val params = parsePatternParamsList(pos).toArray
+    val params = parseParamsList(pos).toArray
 
     val lastParamsTokenPos = if (params.size == 0) pos else params.last.lastTokenPos
 
@@ -193,11 +193,12 @@ class Parser(val input: String) {
   }
 
   private def parseNlpFun(ftype: NlpFunType, pos: Int): ProgNode = {
-    val p1 = parse(pos)
-    val p2 = parse(p1.lastTokenPos + 1)
+    val params = parseParamsList(pos).toArray
 
-    if (matchClosingPar(p2.lastTokenPos + 1))
-      new NlpFun(ftype, Array(p1, p2), p2.lastTokenPos + 1)
+    val lastParamsTokenPos = if (params.size == 0) pos else params.last.lastTokenPos
+
+    if (matchClosingPar(lastParamsTokenPos + 1))
+      new NlpFun(ftype, params, lastParamsTokenPos + 1)
     else
       null // error
   }
