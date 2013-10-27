@@ -6,11 +6,13 @@ import com.graphbrain.eco.nodes.{WWRule, WVRule, ProgNode}
 class Prog(val exprs: Set[ProgNode]=Set[ProgNode]()) {
 
   def wv(s: String): Set[String] = {
+    val w = Words.fromString(s)
+
     var vertices = Set[String]()
 
     for (e <- exprs) e match {
       case wv: WVRule => {
-        val ctxts = Contexts(this, s)
+        val ctxts = Contexts(this, w)
         vertices ++= wv.verticesValue(ctxts, null)
       }
       case _ =>
