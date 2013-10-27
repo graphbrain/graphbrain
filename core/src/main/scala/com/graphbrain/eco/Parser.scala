@@ -43,6 +43,7 @@ class Parser(val input: String) {
       case "ww" => parseWW(pos + 1)
       case "let" => parseLet(pos + 1)
       case "?" => parsePattern(pos + 1)
+      case "!" => parseNotFun(pos + 1)
       case "o" => parseBuildVert(pos + 1)
       case ":wv" => parseWVRecursion(pos + 1)
       case ":ww" => parseWWRecursion(pos + 1)
@@ -219,6 +220,15 @@ class Parser(val input: String) {
 
     if (matchClosingPar(p1.lastTokenPos + 1))
       new WWRecursion(Array(p1), p1.lastTokenPos + 1)
+    else
+      null // error
+  }
+
+  private def parseNotFun(pos: Int): ProgNode = {
+    val p1 = parse(pos)
+
+    if (matchClosingPar(p1.lastTokenPos + 1))
+      new NotFun(Array(p1), p1.lastTokenPos + 1)
     else
       null // error
   }
