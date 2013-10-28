@@ -15,6 +15,8 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
       for (i <- 0 until count) pointers(i) = i
     }
     else {
+      if (count == 1) return false
+
       var curPointer = count - 1
       pointers(curPointer) += 1
 
@@ -62,6 +64,8 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
       }
 
       if (matches) {
+        //println("\n\n--------------------------------------------------------")
+        //newContext.print()
         ctxts.addContext(newContext)
       }
     }
