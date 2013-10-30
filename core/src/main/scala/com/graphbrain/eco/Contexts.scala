@@ -18,9 +18,12 @@ class Contexts(val prog: Prog, val sentence: Words) {
     remCtxts.clear()
   }
 
-  def print() = {
-    println("Contexts: " + sentence)
-    for (c <- ctxts) c.print()
+  override def toString = {
+    val sb = new mutable.StringBuilder()
+    sb.append("Contexts: " + sentence)
+    for (c <- ctxts)
+      sb.append(c)
+    sb.toString()
   }
 }
 
