@@ -5,48 +5,39 @@ import com.graphbrain.eco.nodes.{WWRule, WVRule, ProgNode}
 
 class Prog(val exprs: Set[ProgNode]=Set[ProgNode]()) {
 
-  def wv(s: String): Set[String] = {
+  def wv(s: String): List[Contexts] = {
     val w = Words.fromString(s)
+    wv(w)
+  }
 
-    var vertices = Set[String]()
+  def wv(w: Words): List[Contexts] = {
+    var ctxtsList = List[Contexts]()
 
     for (e <- exprs) e match {
       case wv: WVRule => {
         val ctxts = Contexts(this, w)
-        vertices ++= wv.verticesValue(ctxts, null)
+        wv.vertexValue(ctxts)
+        ctxtsList ::= ctxts
       }
       case _ =>
     }
 
-    vertices
+    ctxtsList
   }
 
-  def wv(w: Words): Set[String] = {
-    var vertices = Set[String]()
-
-    for (e <- exprs) e match {
-      case wv: WVRule => {
-        val ctxts = Contexts(this, w)
-        vertices ++= wv.verticesValue(ctxts, null)
-      }
-      case _ =>
-    }
-
-    vertices
-  }
-
-  def ww(w: Words): Words = {
-    var r = Words.empty
+  def ww(w: Words): List[Contexts] = {
+    var ctxtsList = List[Contexts]()
 
     for (e <- exprs) e match {
       case ww: WWRule => {
         val ctxts = Contexts(this, w)
-        r = ww.wordsValue(ctxts, null)
+        ww.wordsValue(ctxts)
+        ctxtsList ::= ctxts
       }
       case _ =>
     }
 
-    r
+    ctxtsList
   }
 
   override def toString = exprs.map(_.toString).reduceLeft(_ + "\n" + _)
@@ -85,9 +76,11 @@ object Prog {
 
     //val s = "Telmo likes chocolate."
     //val s = "Telmo likes eating chocolate."
-    val s = "The Obama administration is appealing to its allies in Congress."
+    //val s = "The Obama administration is appealing to its allies in Congress."
     //val s = "The Obama administration is appealing to its allies in Congress, on Wall Street and across the country to stick with President Barack Obama's health care law even as embarrassing problems with the flagship website continue to mount."
+    val s = "The Obama administration is appealing to its allies in Congress to stick with health care law."
 
-    p.wv(s)
+    val ctxts = p.wv(s)
+    println(ctxts)
   }
 }

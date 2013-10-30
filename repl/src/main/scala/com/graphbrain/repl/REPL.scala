@@ -1,6 +1,6 @@
 package com.graphbrain.repl
 
-import com.graphbrain.eco.{Words, Prog, Parser}
+import com.graphbrain.eco.{Prog, Parser}
 import com.graphbrain.eco.nodes.DummyFun
 
 object REPL {
@@ -17,9 +17,11 @@ object REPL {
         case d: DummyFun => {
           d.name match {
             case "load" => {
+              /*
               val progFile = d.params(0).stringValue(null, null)
               println("loading " + progFile)
               prog = Prog.load(progFile)
+              */
             }
             case "list" => println(prog)
             case "exit" => {
@@ -27,8 +29,10 @@ object REPL {
               sys.exit(0)
             }
             case "parse" => {
+              /*
               val sentence = d.params(0).stringValue(null, null)
               prog.wv(Words.fromString(sentence))
+              */
             }
           }
         }

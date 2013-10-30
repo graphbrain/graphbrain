@@ -1,32 +1,43 @@
 package com.graphbrain.eco.nodes
 
 import com.graphbrain.eco.NodeType.NodeType
-import com.graphbrain.eco.{Context, Contexts, NodeType}
+import com.graphbrain.eco.{Contexts, NodeType}
 
 class LetFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
   override val label = "let"
 
-  override def ntype(ctxt: Context): NodeType = NodeType.Boolean
+  override def ntype: NodeType = NodeType.Boolean
 
-  override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = {
-    if (ctxt != null) {
+  override def booleanValue(ctxts: Contexts) = {
     params(0) match {
-      case v: VarNode =>
-        params(1).ntype(ctxt) match {
-          case NodeType.Boolean => ctxt.setBoolean(v.name, params(1).booleanValue(ctxts, ctxt))
-          case NodeType.Number => ctxt.setNumber(v.name, params(1).numberValue(ctxts, ctxt))
-          case NodeType.Words => ctxt.setWords(v.name, params(1).wordsValue(ctxts, ctxt))
-          case NodeType.String => ctxt.setString(v.name, params(1).stringValue(ctxts, ctxt))
-          case NodeType.Vertex => {
-            val vertex = params(1).vertexValue(ctxts, ctxt)
-            if (vertex == "") return false
-            ctxt.setVertex(v.name, vertex)
+      case v: VarNode => {
+        for (c <- ctxts.ctxts) {
+          val p = params(1)
+          p.ntype match {
+            case NodeType.Boolean => {
+              p.booleanValue(ctxts)
+              c.setBoolean(v.name, c.getRetBoolean(p))
+            }
+            case NodeType.Number => {
+              p.numberValue(ctxts)
+              c.setNumber(v.name, c.getRetNumber(p))
+            }
+            case NodeType.Words => {
+              p.wordsValue(ctxts)
+              c.setWords(v.name, c.getRetWords(p))
+            }
+            case NodeType.String => {
+              p.stringValue(ctxts)
+              c.setString(v.name, c.getRetString(p))
+            }
+            case NodeType.Vertex => {
+              p.vertexValue(ctxts)
+              c.setVertex(v.name, c.getRetVertex(p))
+            }
           }
         }
+      }
     }
-    }
-
-    true
   }
 
   override protected def typeError() = error("parameters must be boolean")

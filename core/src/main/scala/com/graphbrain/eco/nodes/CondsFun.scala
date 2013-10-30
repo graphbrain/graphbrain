@@ -1,35 +1,27 @@
 package com.graphbrain.eco.nodes
 
 import com.graphbrain.eco.NodeType.NodeType
-import com.graphbrain.eco.{Context, Contexts, NodeType}
+import com.graphbrain.eco.{Contexts, NodeType}
 
 class CondsFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
   override val label = ";"
 
-  override def ntype(ctxt: Context): NodeType = {
-    for (p <- params) {
-      if (p.ntype(ctxt) != NodeType.Boolean) {
-        typeError()
-        return NodeType.Unknown
-      }
-    }
-    NodeType.Boolean
-  }
+  override def ntype: NodeType = NodeType.Boolean
 
-  override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = {
+  override def booleanValue(ctxts: Contexts) = {
     for (p <- params) {
+      p.booleanValue(ctxts)
       p match {
-        case p: PatFun => p.booleanValue(ctxts, null)
+        case p: PatFun =>
         case p: ProgNode => {
           for (c <- ctxts.ctxts) {
-            if (!p.booleanValue(ctxts, c)) {
+            if (!c.getRetBoolean(p)) {
               ctxts.remContext(c)
             }
           }
+          ctxts.applyChanges()
         }
       }
-
-      ctxts.applyChanges()
     }
 
     true

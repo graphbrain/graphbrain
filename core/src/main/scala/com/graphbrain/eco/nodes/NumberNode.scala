@@ -1,10 +1,12 @@
 package com.graphbrain.eco.nodes
 
-import com.graphbrain.eco.{Contexts, Context, NodeType}
+import com.graphbrain.eco.{Contexts, NodeType}
 
 class NumberNode(val value: Double, lastTokenPos: Int= -1) extends ProgNode(lastTokenPos) {
-  override def ntype(ctxt: Context) = NodeType.Number
-  override def numberValue(ctxts: Contexts, ctxt: Context) = value
+  override def ntype = NodeType.Number
+
+  override def numberValue(ctxts: Contexts) =
+    for (c <- ctxts.ctxts) c.setRetNumber(this, value)
 
   override def toString = value.toString
 

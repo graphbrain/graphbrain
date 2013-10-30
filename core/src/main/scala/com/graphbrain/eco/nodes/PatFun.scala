@@ -6,7 +6,7 @@ import com.graphbrain.eco.{Words, Context, Contexts, NodeType}
 class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
   override val label = "?"
 
-  override def ntype(ctxt: Context): NodeType = NodeType.Boolean
+  override def ntype: NodeType = NodeType.Boolean
 
   private def stepPointers(pointers: Array[Int], words: Int): Boolean = {
     val count = pointers.length
@@ -37,11 +37,11 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
     true
   }
 
-  override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = {
+  override def booleanValue(ctxts: Contexts): Unit = {
     val words = ctxts.sentence.words.length
     val count = params.length
 
-    if (count > words) return false
+    if (count > words) return
 
     val pointers = new Array[Int](count)
     pointers(0) = -1
@@ -64,9 +64,8 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
       }
 
       if (matches) {
-        //println("\n\n--------------------------------------------------------")
-        //newContext.print()
         ctxts.addContext(newContext)
+        ctxts.applyChanges()
       }
     }
 
