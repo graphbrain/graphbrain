@@ -29,7 +29,7 @@ class NlpFun(val funType: NlpFunType, params: Array[ProgNode], lastTokenPos: Int
     case NlpFunType.IS_LEMMA => "is-lemma"
   }
 
-  override def ntype(ctxt: Context): NodeType = NodeType.Boolean
+  override def ntype: NodeType = NodeType.Boolean
 
   private def matchPoses(word: Word, pre: Boolean, poses: Array[String]): Boolean = {
     for (pos <- poses)
@@ -41,8 +41,8 @@ class NlpFun(val funType: NlpFunType, params: Array[ProgNode], lastTokenPos: Int
     false
   }
 
-  private def matchPoses(words: Words, pre: Boolean, ctxts: Contexts, ctxt: Context): Boolean = {
-    val poses = params.drop(1).map(_.stringValue(ctxts, ctxt))
+  private def matchPoses(words: Words, pre: Boolean, ctxt: Context): Boolean = {
+    val poses = params.drop(1).map(ctxt.getRetString)
 
     for (word <- words.words)
       if (!matchPoses(word, pre, poses)) return false
@@ -50,8 +50,8 @@ class NlpFun(val funType: NlpFunType, params: Array[ProgNode], lastTokenPos: Int
     true
   }
 
-  private def containsPoses(words: Words, pre: Boolean, ctxts: Contexts, ctxt: Context): Boolean = {
-    val poses = params.drop(1).map(_.stringValue(ctxts, ctxt))
+  private def containsPoses(words: Words, pre: Boolean, ctxt: Context): Boolean = {
+    val poses = params.drop(1).map(ctxt.getRetString)
 
     for (word <- words.words)
       if (matchPoses(word, pre, poses)) return true
@@ -59,37 +59,56 @@ class NlpFun(val funType: NlpFunType, params: Array[ProgNode], lastTokenPos: Int
     false
   }
 
-  override def booleanValue(ctxts: Contexts, ctxt: Context): Boolean = {
-    val words = params(0).wordsValue(ctxts, ctxt)
+  override def booleanValue(ctxts: Contexts) = {
+    params(0).wordsValue(ctxts)
+    params.drop(1).map(_.stringValue(ctxts))
 
-    funType match {
-      case NlpFunType.IS_POS => {
-        if (words.count != 1) return false
-        matchPoses(words, pre = false, ctxts, ctxt)
-      }
-      case NlpFunType.IS_POSPRE => {
-        if (words.count != 1) return false
-        matchPoses(words, pre = true, ctxts, ctxt)
-      }
-      case NlpFunType.ARE_POS => {
-        if (words.count == 0) return false
-        matchPoses(words, pre = false, ctxts, ctxt)
-      }
-      case NlpFunType.ARE_POSPRE => {
-        if (words.count == 0) return false
-        matchPoses(words, pre = true, ctxts, ctxt)
-      }
-      case NlpFunType.CONTAINS_POS => {
-        if (words.count == 0) return false
-        containsPoses(words, pre = false, ctxts, ctxt)
-      }
-      case NlpFunType.CONTAINS_POSPRE => {
-        if (words.count == 0) return false
-        containsPoses(words, pre = true, ctxts, ctxt)
-      }
-      case NlpFunType.IS_LEMMA => {
-        if (words.count != 1) return false
-        words.words(0).lemma == params(1).stringValue(ctxts, ctxt)
+    for (c <- ctxts.ctxts) {
+      val words = c.getRetWords(params(0))
+
+      funType match {
+        case NlpFunType.IS_POS => {
+          c.setRetBoolean(this, if (words.count != 1)
+            false
+          else
+            matchPoses(words, pre = false, c))
+        }
+        case NlpFunType.IS_POSPRE => {
+          c.setRetBoolean(this, if (words.count != 1)
+            false
+          else
+            matchPoses(words, pre = true, c))
+        }
+        case NlpFunType.ARE_POS => {
+          c.setRetBoolean(this, if (words.count == 0)
+            false
+          else
+            matchPoses(words, pre = false, c))
+        }
+        case NlpFunType.ARE_POSPRE => {
+          c.setRetBoolean(this, if (words.count == 0)
+            false
+          else
+            matchPoses(words, pre = true, c))
+        }
+        case NlpFunType.CONTAINS_POS => {
+          c.setRetBoolean(this, if (words.count == 0)
+            false
+          else
+            containsPoses(words, pre = false, c))
+        }
+        case NlpFunType.CONTAINS_POSPRE => {
+          c.setRetBoolean(this, if (words.count == 0)
+            false
+          else
+            containsPoses(words, pre = true, c))
+        }
+        case NlpFunType.IS_LEMMA => {
+          c.setRetBoolean(this, if (words.count != 1)
+            false
+          else
+            words.words(0).lemma == c.getRetString(params(1)))
+        }
       }
     }
   }

@@ -62,7 +62,7 @@ class Parser(val input: String) {
 
   private def parseWV(pos: Int): ProgNode = {
     val p1 = parseConds(pos)
-    val p2 = parseResults(p1.lastTokenPos + 1)
+    val p2 = parse(p1.lastTokenPos + 1)
 
     if (matchClosingPar(p2.lastTokenPos + 1))
       new WVRule(Array(p1, p2), p2.lastTokenPos + 1)
@@ -72,7 +72,7 @@ class Parser(val input: String) {
 
   private def parseWW(pos: Int): ProgNode = {
     val p1 = parseConds(pos)
-    val p2 = parseResults(p1.lastTokenPos + 1)
+    val p2 = parse(p1.lastTokenPos + 1)
 
     if (matchClosingPar(p2.lastTokenPos + 1))
       new WWRule(Array(p1, p2), p2.lastTokenPos + 1)
@@ -108,11 +108,6 @@ class Parser(val input: String) {
     new CondsFun(e._1, e._2)
   }
 
-  private def parseResults(pos: Int): ProgNode = {
-    val e = parseElems(pos)
-    new ResultsFun(e._1, e._2)
-  }
-
   private def parseParamsList(pos: Int): List[ProgNode] = {
     if (matchClosingPar(pos)) {
       Nil
@@ -131,6 +126,11 @@ class Parser(val input: String) {
   private def parsePattern(pos: Int): ProgNode = {
     val params = parseParamsList(pos).toArray
 
+    // set var types
+    for (p <- params) p match {
+      case v: VarNode => v.varType = NodeType.Words
+    }
+
     val lastParamsTokenPos = if (params.size == 0) pos else params.last.lastTokenPos
 
     if (!matchClosingPar(lastParamsTokenPos + 1))
@@ -142,6 +142,11 @@ class Parser(val input: String) {
   private def parseLet(pos: Int): ProgNode = {
     val p1 = parse(pos)
     val p2 = parse(p1.lastTokenPos + 1)
+
+    // set var type
+    p1 match {
+      case v: VarNode => v.varType = p2.ntype
+    }
 
     if (matchClosingPar(p2.lastTokenPos + 1))
       new LetFun(Array(p1, p2), p2.lastTokenPos + 1)

@@ -6,5 +6,5 @@ import com.graphbrain.eco.{Context, NodeType}
 class DummyFun(val name: String, params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
   override val label = name
 
-  override def ntype(ctxt: Context): NodeType = NodeType.Boolean
+  override def ntype: NodeType = NodeType.Boolean
 }
