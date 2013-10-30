@@ -3,8 +3,11 @@ package com.graphbrain.eco
 import com.graphbrain.eco.nodes._
 import com.graphbrain.eco.nodes.NlpFunType.NlpFunType
 import com.graphbrain.eco.nodes.NlpFunType
+import com.graphbrain.eco.NodeType.NodeType
+import scala.collection.mutable
 
 class Parser(val input: String) {
+  val varTypes = mutable.Map[String, NodeType]()
   val tokens = new Lexer(input).tokens
   val expr = parse(0)
 
@@ -21,7 +24,11 @@ class Parser(val input: String) {
   private def parseSymbol(pos: Int): ProgNode = tokens(pos).text match {
     case "true" => new BoolNode(true, pos)
     case "false" => new BoolNode(false, pos)
-    case _ => new VarNode(tokens(pos).text, pos)
+    case _ => {
+      val vn = new VarNode(tokens(pos).text, pos)
+      if (varTypes.contains(vn.name)) vn.varType = varTypes(vn.name)
+      vn
+    }
   }
 
   private def matchOpeningPar(pos: Int) =
@@ -128,7 +135,11 @@ class Parser(val input: String) {
 
     // set var types
     for (p <- params) p match {
-      case v: VarNode => v.varType = NodeType.Words
+      case v: VarNode => {
+        v.varType = NodeType.Words
+        varTypes(v.name) = NodeType.Words
+      }
+      case _ =>
     }
 
     val lastParamsTokenPos = if (params.size == 0) pos else params.last.lastTokenPos
@@ -145,7 +156,11 @@ class Parser(val input: String) {
 
     // set var type
     p1 match {
-      case v: VarNode => v.varType = p2.ntype
+      case v: VarNode => {
+        v.varType = p2.ntype
+        varTypes(v.name) = p2.ntype
+      }
+      case _ =>
     }
 
     if (matchClosingPar(p2.lastTokenPos + 1))

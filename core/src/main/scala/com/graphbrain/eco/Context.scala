@@ -110,12 +110,14 @@ class Context(
   def getWords(variable: String) = wordsVars(variable)
   def getVertex(variable: String) = vertexVars(variable)
 
-  def print() = {
-    println("context:")
-    for (v <- stringVars) println(v._1 + " = " + v._2)
-    for (v <- numberVars) println(v._1 + " = " + v._2)
-    for (v <- booleanVars) println(v._1 + " = " + v._2)
-    for (v <- wordsVars) println(v._1 + " = " + v._2)
-    for (v <- vertexVars) println(v._1 + " = " + v._2)
+  override def toString = {
+    val sb = new mutable.StringBuilder()
+    sb.append("context:")
+    for (v <- stringVars) sb.append(v._1 + " = " + v._2)
+    for (v <- numberVars) sb.append(v._1 + " = " + v._2)
+    for (v <- booleanVars) sb.append(v._1 + " = " + v._2)
+    for (v <- wordsVars) sb.append(v._1 + " = " + v._2)
+    for (v <- vertexVars) sb.append(v._1 + " = " + v._2)
+    sb.toString()
   }
 }

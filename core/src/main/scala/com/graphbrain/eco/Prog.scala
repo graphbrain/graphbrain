@@ -80,7 +80,12 @@ object Prog {
     //val s = "The Obama administration is appealing to its allies in Congress, on Wall Street and across the country to stick with President Barack Obama's health care law even as embarrassing problems with the flagship website continue to mount."
     val s = "The Obama administration is appealing to its allies in Congress to stick with health care law."
 
-    val ctxts = p.wv(s)
-    println(ctxts)
+    val ctxtList = p.wv(s)
+
+    for (ctxts <- ctxtList)
+      for (c <- ctxts.ctxts)
+        println(c.getTopRetVertex)
+
+    //println(ctxts)
   }
 }

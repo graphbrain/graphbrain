@@ -11,30 +11,17 @@ class LetFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
   override def booleanValue(ctxts: Contexts) = {
     params(0) match {
       case v: VarNode => {
+        val p = params(1)
+        p.value(ctxts)
         for (c <- ctxts.ctxts) {
-          val p = params(1)
           p.ntype match {
-            case NodeType.Boolean => {
-              p.booleanValue(ctxts)
-              c.setBoolean(v.name, c.getRetBoolean(p))
-            }
-            case NodeType.Number => {
-              p.numberValue(ctxts)
-              c.setNumber(v.name, c.getRetNumber(p))
-            }
-            case NodeType.Words => {
-              p.wordsValue(ctxts)
-              c.setWords(v.name, c.getRetWords(p))
-            }
-            case NodeType.String => {
-              p.stringValue(ctxts)
-              c.setString(v.name, c.getRetString(p))
-            }
-            case NodeType.Vertex => {
-              p.vertexValue(ctxts)
-              c.setVertex(v.name, c.getRetVertex(p))
-            }
+            case NodeType.Boolean => c.setBoolean(v.name, c.getRetBoolean(p))
+            case NodeType.Number => c.setNumber(v.name, c.getRetNumber(p))
+            case NodeType.Words => c.setWords(v.name, c.getRetWords(p))
+            case NodeType.String => c.setString(v.name, c.getRetString(p))
+            case NodeType.Vertex => c.setVertex(v.name, c.getRetVertex(p))
           }
+          c.setRetBoolean(this, value = true)
         }
       }
     }
