@@ -1,8 +1,11 @@
 package com.graphbrain.eco
 
 import scala.collection.mutable
+import com.graphbrain.eco.nodes.ProgNode
 
-class Contexts(val prog: Prog, val sentence: Words) {
+class Contexts(val rule: ProgNode, val prog: Prog, val sentence: Words) {
+  var subContexts = List[Contexts]()
+
   val ctxts = mutable.ListBuffer[Context]()
 
   private val addCtxts = mutable.ListBuffer[Context]()
@@ -18,6 +21,10 @@ class Contexts(val prog: Prog, val sentence: Words) {
     remCtxts.clear()
   }
 
+  def addSubContexts(subCtxtsList: List[Contexts]) =
+    for (subCtxts <- subCtxtsList)
+      subContexts :+= subCtxts
+
   override def toString = {
     val sb = new mutable.StringBuilder()
     sb.append("Contexts: " + sentence)
@@ -28,5 +35,5 @@ class Contexts(val prog: Prog, val sentence: Words) {
 }
 
 object Contexts {
-  def apply(prog: Prog, w: Words) = new Contexts(prog, w)
+  def apply(rule: ProgNode, prog: Prog, w: Words) = new Contexts(rule, prog, w)
 }
