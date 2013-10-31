@@ -47,7 +47,7 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
     pointers(0) = -1
 
     while(stepPointers(pointers, words)) {
-      val newContext = new Context
+      val newContext = new Context(ctxts)
       var matches = true
       for (i <- 0 until count) {
         val start = pointers(i)

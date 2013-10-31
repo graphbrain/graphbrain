@@ -2,7 +2,9 @@ package com.graphbrain.eco.nodes
 
 import com.graphbrain.eco.{Contexts, NodeType}
 
-class WWRule(val name: String, params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
+class WWRule(name: String, params: Array[ProgNode], lastTokenPos: Int= -1)
+  extends RuleNode(name, params, lastTokenPos) {
+
   override val label = "ww"
 
   override def ntype = NodeType.Words

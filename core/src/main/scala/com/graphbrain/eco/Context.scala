@@ -4,7 +4,7 @@ import scala.collection.mutable
 import com.graphbrain.eco.NodeType.NodeType
 import com.graphbrain.eco.nodes.ProgNode
 
-class Context(
+class Context(val parent: Contexts,
   val varTypes: mutable.Map[String, NodeType] = mutable.Map[String, NodeType](),
   val stringVars: mutable.Map[String, String] = mutable.Map[String, String](),
   val numberVars: mutable.Map[String, Double] = mutable.Map[String, Double](),
@@ -17,24 +17,26 @@ class Context(
   private val retWordsMap: ProgNodeMap[Words] = new ProgNodeMap[Words],
   private val retVertexMap: ProgNodeMap[String] = new ProgNodeMap[String],
   private val retVerticesMap: ProgNodeMap[Set[String]] = new ProgNodeMap[Set[String]],
-  private var topRet: ProgNode = null)
+  private var topRet: ProgNode = null,
+  var subContexts: List[Context] = List[Context]())
 
   extends Cloneable {
 
-  override def clone() = new Context(
-    varTypes.clone(),
-    stringVars.clone(),
-    numberVars.clone(),
-    booleanVars.clone(),
-    wordsVars.clone(),
-    vertexVars.clone(),
-    retStringMap.clone(),
-    retNumberMap.clone(),
-    retBooleanMap.clone(),
-    retWordsMap.clone(),
-    retVertexMap.clone(),
-    retVerticesMap.clone(),
-    topRet)
+  override def clone() = new Context(parent,
+      varTypes.clone(),
+      stringVars.clone(),
+      numberVars.clone(),
+      booleanVars.clone(),
+      wordsVars.clone(),
+      vertexVars.clone(),
+      retStringMap.clone(),
+      retNumberMap.clone(),
+      retBooleanMap.clone(),
+      retWordsMap.clone(),
+      retVertexMap.clone(),
+      retVerticesMap.clone(),
+      topRet,
+      subContexts)
 
   def getRetString(p: ProgNode) = retStringMap(p)
   def getRetNumber(p: ProgNode) = retNumberMap(p)
@@ -109,6 +111,16 @@ class Context(
   def getBoolean(variable: String) = booleanVars(variable)
   def getWords(variable: String) = wordsVars(variable)
   def getVertex(variable: String) = vertexVars(variable)
+
+  def addSubContext(subCtxt: Context) =
+    subContexts :+= subCtxt
+
+  def printCallStack(indent: Int = 0): Unit = {
+    (0 to indent).foreach(x => print("...."))
+    println(parent.rule.name + " [" + parent.sentence + "]")
+    for (sctxts <- subContexts)
+      sctxts.printCallStack(indent + 1)
+  }
 
   override def toString = {
     val sb = new mutable.StringBuilder()

@@ -72,7 +72,7 @@ class Parser(val input: String) {
     val p2 = parseConds(p1.lastTokenPos + 1)
     val p3 = parse(p2.lastTokenPos + 1)
 
-    val name = p3 match {
+    val name = p1 match {
       case s: StringNode => s.value
       case _ => "" // error
     }
@@ -88,7 +88,7 @@ class Parser(val input: String) {
     val p2 = parseConds(p1.lastTokenPos + 1)
     val p3 = parse(p2.lastTokenPos + 1)
 
-    val name = p3 match {
+    val name = p1 match {
       case s: StringNode => s.value
       case _ => "" // error
     }
