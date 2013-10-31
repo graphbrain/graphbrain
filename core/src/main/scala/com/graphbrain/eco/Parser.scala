@@ -68,24 +68,38 @@ class Parser(val input: String) {
   }
 
   private def parseWV(pos: Int): ProgNode = {
-    val p1 = parseConds(pos)
-    val p2 = parse(p1.lastTokenPos + 1)
+    val p1 = parseRuleName(pos)
+    val p2 = parseConds(p1.lastTokenPos + 1)
+    val p3 = parse(p2.lastTokenPos + 1)
 
-    if (matchClosingPar(p2.lastTokenPos + 1))
-      new WVRule(Array(p1, p2), p2.lastTokenPos + 1)
+    val name = p3 match {
+      case s: StringNode => s.value
+      case _ => "" // error
+    }
+
+    if (matchClosingPar(p3.lastTokenPos + 1))
+      new WVRule(name, Array(p2, p3), p3.lastTokenPos + 1)
     else
       null // error
   }
 
   private def parseWW(pos: Int): ProgNode = {
-    val p1 = parseConds(pos)
-    val p2 = parse(p1.lastTokenPos + 1)
+    val p1 = parseRuleName(pos)
+    val p2 = parseConds(p1.lastTokenPos + 1)
+    val p3 = parse(p2.lastTokenPos + 1)
 
-    if (matchClosingPar(p2.lastTokenPos + 1))
-      new WWRule(Array(p1, p2), p2.lastTokenPos + 1)
+    val name = p3 match {
+      case s: StringNode => s.value
+      case _ => "" // error
+    }
+
+    if (matchClosingPar(p3.lastTokenPos + 1))
+      new WWRule(name, Array(p2, p3), p3.lastTokenPos + 1)
     else
       null // error
   }
+
+  private def parseRuleName(pos: Int): ProgNode = new StringNode(tokens(pos).text, pos)
 
   private def parseElems(pos: Int): (Array[ProgNode], Int) = {
     if (!matchOpeningPar(pos))
