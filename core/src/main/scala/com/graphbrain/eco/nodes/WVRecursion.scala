@@ -12,12 +12,12 @@ class WVRecursion(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNod
     params(0).wordsValue(ctxts)
     for (c <- ctxts.ctxts) {
       val newCtxts = ctxts.prog.wv(c.getRetWords(params(0)))
-      ctxts.addSubContexts(newCtxts)
 
       for (nctxts <- newCtxts) {
         for (nc <- nctxts.ctxts) {
           val forkCtxt = c.clone()
           forkCtxt.setRetVertex(this, nc.getTopRetVertex)
+          forkCtxt.addSubContext(nc)
 
           // add forked context to caller contexts
           ctxts.addContext(forkCtxt)

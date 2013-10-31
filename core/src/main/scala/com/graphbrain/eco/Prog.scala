@@ -80,9 +80,13 @@ object Prog {
 
     val ctxtList = p.wv(s)
 
-    for (ctxts <- ctxtList)
-      for (c <- ctxts.ctxts)
+    for (ctxts <- ctxtList) {
+      for (c <- ctxts.ctxts) {
+        println("\n\n")
         println(c.getTopRetVertex)
+        c.printCallStack()
+      }
+    }
 
     //println(ctxts)
   }
