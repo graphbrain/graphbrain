@@ -12,7 +12,7 @@ class Prog(val exprs: Set[ProgNode]=Set[ProgNode]()) {
 
     for (e <- exprs) e match {
       case wv: WVRule => {
-        val ctxts = Contexts(this, w)
+        val ctxts = Contexts(wv, this, w)
         wv.vertexValue(ctxts)
         ctxtsList ::= ctxts
       }
@@ -27,7 +27,7 @@ class Prog(val exprs: Set[ProgNode]=Set[ProgNode]()) {
 
     for (e <- exprs) e match {
       case ww: WWRule => {
-        val ctxts = Contexts(this, w)
+        val ctxts = Contexts(ww, this, w)
         ww.wordsValue(ctxts)
         ctxtsList ::= ctxts
       }
