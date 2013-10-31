@@ -26,13 +26,13 @@ class VertexFun(val fun: VertexFun.VertexFun, params: Array[ProgNode], lastToken
         }
 
         for (c <- ctxts.ctxts) {
-          val id = params.map(
+          val id = "(" + params.map(
             p => p.ntype match {
               case NodeType.Vertex => c.getRetVertex(p)
               case NodeType.String => c.getRetString(p)
               case _ => "" // error!
             }
-          ).reduceLeft(_ + " " + _)
+          ).reduceLeft(_ + " " + _) + ")"
 
           c.setRetVertex(this, id)
         }
