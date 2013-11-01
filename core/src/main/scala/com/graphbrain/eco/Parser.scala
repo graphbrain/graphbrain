@@ -63,6 +63,7 @@ class Parser(val input: String) {
       case "contains-pos" => parseNlpFun(NlpFunType.CONTAINS_POS, pos + 1)
       case "contains-pos-pre" => parseNlpFun(NlpFunType.CONTAINS_POSPRE, pos + 1)
       case "is-lemma" => parseNlpFun(NlpFunType.IS_LEMMA, pos + 1)
+      case "max-depth" => parseMaxDepth(pos + 1)
       case s: String => parseDummy(s, pos + 1)
     }
   }
@@ -263,6 +264,15 @@ class Parser(val input: String) {
 
     if (matchClosingPar(p1.lastTokenPos + 1))
       new NotFun(Array(p1), p1.lastTokenPos + 1)
+    else
+      null // error
+  }
+
+  private def parseMaxDepth(pos: Int): ProgNode = {
+    val p1 = parse(pos)
+
+    if (matchClosingPar(p1.lastTokenPos + 1))
+      new MaxDepthFun(Array(p1), p1.lastTokenPos + 1)
     else
       null // error
   }

@@ -11,7 +11,7 @@ class WVRecursion(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNod
   override def vertexValue(ctxts: Contexts) = {
     params(0).wordsValue(ctxts)
     for (c <- ctxts.ctxts) {
-      val newCtxts = ctxts.prog.wv(c.getRetWords(params(0)))
+      val newCtxts = ctxts.prog.wv(c.getRetWords(params(0)), ctxts.depth + 1)
 
       for (nctxts <- newCtxts) {
         for (nc <- nctxts.ctxts) {
