@@ -3,7 +3,11 @@ package com.graphbrain.eco
 import scala.collection.mutable
 import com.graphbrain.eco.nodes.RuleNode
 
-class Contexts(val rule: RuleNode, val prog: Prog, val sentence: Words) {
+class Contexts(val rule: RuleNode,
+               val prog: Prog,
+               val sentence: Words,
+               val depth: Integer) {
+
   val ctxts = mutable.ListBuffer[Context]()
 
   private val addCtxts = mutable.ListBuffer[Context]()
@@ -29,5 +33,6 @@ class Contexts(val rule: RuleNode, val prog: Prog, val sentence: Words) {
 }
 
 object Contexts {
-  def apply(rule: RuleNode, prog: Prog, w: Words) = new Contexts(rule, prog, w)
+  def apply(rule: RuleNode, prog: Prog, w: Words, depth: Integer) =
+    new Contexts(rule, prog, w, depth)
 }
