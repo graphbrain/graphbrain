@@ -38,6 +38,12 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
   }
 
   override def booleanValue(ctxts: Contexts): Unit = {
+    if (ctxts.ctxts.size == 0) return
+
+    // remove all existing contexts
+    for (c <- ctxts.ctxts)
+      ctxts.remContext(c)
+
     val words = ctxts.sentence.words.length
     val count = params.length
 
@@ -64,12 +70,15 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
       }
 
       if (matches) {
-        ctxts.addContext(newContext)
-        ctxts.applyChanges()
+        for (c <- ctxts.ctxts) {
+          val forkedCtxt = c.clone()
+          forkedCtxt.merge(newContext)
+          ctxts.addContext(forkedCtxt)
+        }
       }
     }
 
-    true
+    ctxts.applyChanges()
   }
 
   override protected def typeError() = error("parameters must be variables or strings")

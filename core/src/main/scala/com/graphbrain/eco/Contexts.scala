@@ -16,6 +16,8 @@ class Contexts(val rule: RuleNode,
   def addContext(c: Context) = addCtxts += c
   def remContext(c: Context) = remCtxts += c
 
+  def addEmpty() = ctxts += new Context(this)
+
   def applyChanges() = {
     for (c <- addCtxts) ctxts += c
     for (c <- remCtxts) ctxts -= c
