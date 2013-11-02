@@ -73,6 +73,8 @@ object Prog {
   def main(args: Array[String]) = {
     val p = Prog.load("/Users/telmo/projects/graphbrain/test.eco")
 
+    println(p)
+
     //val s = "Telmo likes chocolate."
     //val s = "Telmo likes eating chocolate."
     //val s = "The Obama administration is appealing to its allies in Congress."

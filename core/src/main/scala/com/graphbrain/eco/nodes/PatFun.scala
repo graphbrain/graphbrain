@@ -47,7 +47,10 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
     val words = ctxts.sentence.words.length
     val count = params.length
 
-    if (count > words) return
+    if (count > words) {
+      ctxts.applyChanges()
+      return
+    }
 
     val pointers = new Array[Int](count)
     pointers(0) = -1
