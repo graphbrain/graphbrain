@@ -49,7 +49,7 @@ class Parser(val input: String) {
       case "wv" => parseWV(pos + 1)
       case "ww" => parseWW(pos + 1)
       case "let" => parseLet(pos + 1)
-      case "?" => parsePattern(pos + 1)
+      case "pat" => parsePattern(pos + 1)
       case "!" => parseNotFun(pos + 1)
       case "x" => parseBuildVert(pos + 1)
       case ":wv" => parseWVRecursion(pos + 1)
