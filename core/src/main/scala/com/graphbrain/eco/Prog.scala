@@ -13,6 +13,7 @@ class Prog(val exprs: Set[ProgNode]=Set[ProgNode]()) {
     for (e <- exprs) e match {
       case wv: WVRule => {
         val ctxts = Contexts(wv, this, w, depth)
+        ctxts.addEmpty()
         wv.vertexValue(ctxts)
         ctxtsList ::= ctxts
       }
@@ -28,6 +29,7 @@ class Prog(val exprs: Set[ProgNode]=Set[ProgNode]()) {
     for (e <- exprs) e match {
       case ww: WWRule => {
         val ctxts = Contexts(ww, this, w, depth)
+        ctxts.addEmpty()
         ww.wordsValue(ctxts)
         ctxtsList ::= ctxts
       }
@@ -81,6 +83,8 @@ object Prog {
     val ctxtList = p.wv(s, 0)
 
     for (ctxts <- ctxtList) {
+      println(ctxts.sentence)
+
       for (c <- ctxts.ctxts) {
         println("\n\n")
         println(c.getTopRetVertex)

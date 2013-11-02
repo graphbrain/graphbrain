@@ -38,6 +38,27 @@ class Context(val parent: Contexts,
       topRet,
       subContexts)
 
+  def merge(ctxt: Context) = {
+    ctxt.varTypes.foreach(kv => varTypes(kv._1) = kv._2)
+
+    ctxt.stringVars.foreach(kv => stringVars(kv._1) = kv._2)
+    ctxt.numberVars.foreach(kv => numberVars(kv._1) = kv._2)
+    ctxt.booleanVars.foreach(kv => booleanVars(kv._1) = kv._2)
+    ctxt.wordsVars.foreach(kv => wordsVars(kv._1) = kv._2)
+    ctxt.vertexVars.foreach(kv => vertexVars(kv._1) = kv._2)
+
+    ctxt.retStringMap.foreach(kv => retStringMap(kv._1) = kv._2)
+    ctxt.retNumberMap.foreach(kv => retNumberMap(kv._1) = kv._2)
+    ctxt.retBooleanMap.foreach(kv => retBooleanMap(kv._1) = kv._2)
+    ctxt.retWordsMap.foreach(kv => retWordsMap(kv._1) = kv._2)
+    ctxt.retVertexMap.foreach(kv => retVertexMap(kv._1) = kv._2)
+    ctxt.retVerticesMap.foreach(kv => retVerticesMap(kv._1) = kv._2)
+
+    topRet = ctxt.topRet
+
+    subContexts = ctxt.subContexts
+  }
+
   def getRetString(p: ProgNode) = retStringMap(p)
   def getRetNumber(p: ProgNode) = retNumberMap(p)
   def getRetBoolean(p: ProgNode) = retBooleanMap(p)
