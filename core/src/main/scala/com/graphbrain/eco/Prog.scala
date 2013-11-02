@@ -75,9 +75,9 @@ object Prog {
 
     //val s = "Telmo likes chocolate."
     //val s = "Telmo likes eating chocolate."
-    val s = "The Obama administration is appealing to its allies in Congress."
+    //val s = "The Obama administration is appealing to its allies in Congress."
     //val s = "The Obama administration is appealing to its allies in Congress, on Wall Street and across the country to stick with President Barack Obama's health care law even as embarrassing problems with the flagship website continue to mount."
-    //val s = "The Obama administration is appealing to its allies in Congress to stick with health care law."
+    val s = "The Obama administration is appealing to its allies in Congress to stick with health care law."
     //val s = "The research by America's Morgan Stanley financial services firm says demand for wine exceeded supply by 300m cases in 2012"
 
     val ctxtList = p.wv(s, 0)
