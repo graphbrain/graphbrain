@@ -42,15 +42,12 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
 
     // remove all existing contexts
     for (c <- ctxts.ctxts)
-      ctxts.remContext(c)
+      c.setRetBoolean(this, value = false)
 
     val words = ctxts.sentence.words.length
     val count = params.length
 
-    if (count > words) {
-      ctxts.applyChanges()
-      return
-    }
+    if (count > words) return
 
     val pointers = new Array[Int](count)
     pointers(0) = -1
@@ -81,6 +78,7 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
           val forkedCtxt = c.clone()
           forkedCtxt.merge(newContext)
           ctxts.addContext(forkedCtxt)
+          forkedCtxt.setRetBoolean(this, value = true)
         }
       }
       patPos += 1
