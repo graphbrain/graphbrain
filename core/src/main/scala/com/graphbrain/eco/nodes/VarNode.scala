@@ -24,6 +24,7 @@ class VarNode(val name: String, lastTokenPos: Int) extends ProgNode(lastTokenPos
   override def vertexValue(ctxts: Contexts) =
     for (c <- ctxts.ctxts) c.setRetVertex(this, c.getVertex(name))
 
+  def isGLobal = name(0) == '_'
 
   override def toString = "$" + name
 }

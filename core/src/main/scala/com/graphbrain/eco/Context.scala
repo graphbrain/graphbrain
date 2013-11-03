@@ -59,6 +59,16 @@ class Context(val parent: Contexts,
     subContexts = ctxt.subContexts
   }
 
+  def mergeGlobals(ctxt: Context) = {
+    ctxt.varTypes.foreach(kv => varTypes(kv._1) = kv._2)
+
+    ctxt.stringVars.filter(v => v._1(0) == '_').foreach(kv => stringVars(kv._1) = kv._2)
+    ctxt.numberVars.filter(v => v._1(0) == '_').foreach(kv => numberVars(kv._1) = kv._2)
+    ctxt.booleanVars.filter(v => v._1(0) == '_').foreach(kv => booleanVars(kv._1) = kv._2)
+    ctxt.wordsVars.filter(v => v._1(0) == '_').foreach(kv => wordsVars(kv._1) = kv._2)
+    ctxt.vertexVars.filter(v => v._1(0) == '_').foreach(kv => vertexVars(kv._1) = kv._2)
+  }
+
   def getRetString(p: ProgNode) = retStringMap(p)
   def getRetNumber(p: ProgNode) = retNumberMap(p)
   def getRetBoolean(p: ProgNode) = retBooleanMap(p)

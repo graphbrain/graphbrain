@@ -84,13 +84,26 @@ object Prog {
 
     val ctxtList = p.wv(s, 0)
 
+    var maxStrength = Double.NegativeInfinity
+    for (ctxts <- ctxtList) {
+      for (c <- ctxts.ctxts) {
+        val strength = c.getNumber("_strength")
+        if (strength > maxStrength) maxStrength = strength
+      }
+    }
+
     for (ctxts <- ctxtList) {
       println(ctxts.sentence)
 
       for (c <- ctxts.ctxts) {
-        println("\n\n")
-        println(c.getTopRetVertex)
-        c.printCallStack()
+        val strength = c.getNumber("_strength")
+
+        if (strength == maxStrength) {
+          println("\n\n")
+          println(c.getTopRetVertex)
+          println(strength)
+          c.printCallStack()
+        }
       }
     }
   }

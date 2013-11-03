@@ -18,6 +18,7 @@ class WWRecursion(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNod
           val forkCtxt = c.clone()
           forkCtxt.setRetWords(this, nc.getTopRetWords)
           forkCtxt.addSubContext(nc)
+          forkCtxt.mergeGlobals(nc)
 
           // add forked context to caller contexts
           ctxts.addContext(forkCtxt)
