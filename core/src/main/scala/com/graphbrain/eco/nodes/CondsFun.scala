@@ -10,10 +10,9 @@ class CondsFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(p
 
   override def booleanValue(ctxts: Contexts) = {
     for (p <- params) {
-      p.booleanValue(ctxts)
-      p match {
-        case p: PatFun =>
-        case p: ProgNode => {
+      p.value(ctxts)
+      p.ntype match {
+        case NodeType.Boolean => {
           for (c <- ctxts.ctxts) {
             if (!c.getRetBoolean(p)) {
               ctxts.remContext(c)
