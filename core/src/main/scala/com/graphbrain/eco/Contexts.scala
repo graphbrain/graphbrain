@@ -16,9 +16,12 @@ class Contexts(val rule: RuleNode,
   def addContext(c: Context) = addCtxts += c
   def remContext(c: Context) = remCtxts += c
 
-  def addEmpty() = {
+  def init(caller: Context) = {
     val ctxt = new Context(this)
-    ctxt.setNumber("_strength", 0)
+    if (caller == null)
+      ctxt.setNumber("_strength", 0)
+    else
+      ctxt.mergeGlobals(caller)
     ctxts += ctxt
   }
 
