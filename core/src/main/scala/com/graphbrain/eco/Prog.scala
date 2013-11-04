@@ -5,15 +5,16 @@ import com.graphbrain.eco.nodes.{WWRule, WVRule, ProgNode}
 
 class Prog(val exprs: Set[ProgNode]=Set[ProgNode]()) {
 
-  def wv(s: String, depth: Integer): List[Contexts] = wv(Words.fromString(s), depth)
+  def wv(s: String, depth: Integer, caller: Context=null): List[Contexts] =
+    wv(Words.fromString(s), depth, caller)
 
-  def wv(w: Words, depth: Integer): List[Contexts] = {
+  def wv(w: Words, depth: Integer, caller: Context): List[Contexts] = {
     var ctxtsList = List[Contexts]()
 
     for (e <- exprs) e match {
       case wv: WVRule => {
         val ctxts = Contexts(wv, this, w, depth)
-        ctxts.addEmpty()
+        ctxts.init(caller)
         wv.vertexValue(ctxts)
         ctxtsList ::= ctxts
       }
@@ -23,13 +24,13 @@ class Prog(val exprs: Set[ProgNode]=Set[ProgNode]()) {
     ctxtsList
   }
 
-  def ww(w: Words, depth: Integer): List[Contexts] = {
+  def ww(w: Words, depth: Integer, caller: Context): List[Contexts] = {
     var ctxtsList = List[Contexts]()
 
     for (e <- exprs) e match {
       case ww: WWRule => {
         val ctxts = Contexts(ww, this, w, depth)
-        ctxts.addEmpty()
+        ctxts.init(caller)
         ww.wordsValue(ctxts)
         ctxtsList ::= ctxts
       }
@@ -71,7 +72,7 @@ object Prog {
   def fromNode(e: ProgNode) = new Prog(Set[ProgNode](e))
 
   def main(args: Array[String]) = {
-    val p = Prog.load("/Users/telmo/projects/graphbrain/test.eco")
+    val p = Prog.load("/Users/telmo/projects/graphbrain/eco/progs/test.eco")
 
     println(p)
 

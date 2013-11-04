@@ -1,0 +1,39 @@
+(wv process-words
+  ((pat x)
+    (let r (:wv (:ww x))))
+  r)
+
+(ww remove-full-stop
+  ((max-depth 1)
+    (pat x "."))
+  x)
+
+(wv middle-verbs
+  ((pat a v b)
+    (are-pos-pre v "V" "TO")
+    (let orig (:wv a))
+    (let rel (rel-vert v))
+    (let targ (:wv b)))
+  (build rel orig targ))
+
+(wv no-verbs
+  ((pat n)
+    (! (contains-pos-pre n "V" "."))
+    (let r (txt-vert n)))
+  r)
+
+(wv no-full-stop
+  ((pat n)
+    (! (contains-pos-pre n "."))
+    (let r (txt-vert n)))
+  r)
+
+(wv is-verb-to
+  ((pat a "is" v "to" b "to" c)
+    (are-pos-pre v "V")
+    (let _strength 1)
+    (let orig (:wv a))
+    (let rel (rel-vert v))
+    (let targ (:wv b))
+    (let targ2 (:wv c)))
+  (build rel orig targ targ2))
