@@ -17,7 +17,7 @@ class FilterFun(val fun: FilterFun.FilterFun, params: Array[ProgNode], lastToken
     var bestCtxt: Context = null
     var bestVal = fun match {
       case FilterFun.FilterMin => Double.PositiveInfinity
-      case FilterFun.FilterMin => Double.NegativeInfinity
+      case FilterFun.FilterMax => Double.NegativeInfinity
     }
 
     for (c <- ctxts.ctxts) {
