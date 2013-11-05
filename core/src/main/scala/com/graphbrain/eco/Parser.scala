@@ -64,7 +64,8 @@ class Parser(val input: String) {
       case "contains-pos-pre" => parseNlpFun(NlpFunType.CONTAINS_POSPRE, pos + 1)
       case "is-lemma" => parseNlpFun(NlpFunType.IS_LEMMA, pos + 1)
       case "max-depth" => parseMaxDepth(pos + 1)
-      case "filter-min" => parseFilterMin(pos + 1)
+      case "filter-min" => parseFilter(FilterFun.FilterMin, pos + 1)
+      case "filter-max" => parseFilter(FilterFun.FilterMax, pos + 1)
       case s: String => parseDummy(s, pos + 1)
     }
   }
@@ -278,11 +279,11 @@ class Parser(val input: String) {
       null // error
   }
 
-  private def parseFilterMin(pos: Int): ProgNode = {
+  private def parseFilter(fun: FilterFun.FilterFun, pos: Int): ProgNode = {
     val p1 = parse(pos)
 
     if (matchClosingPar(p1.lastTokenPos + 1))
-      new FilterMinFun(Array(p1), p1.lastTokenPos + 1)
+      new FilterFun(fun, Array(p1), p1.lastTokenPos + 1)
     else
       null // error
   }
