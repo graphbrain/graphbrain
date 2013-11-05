@@ -8,6 +8,15 @@
     (pat x "."))
   x)
 
+(wv is-verb-to
+  ((pat a "is" v "to" b "to" c)
+    (are-pos-pre v "V")
+    (let orig (:wv a))
+    (let rel (rel-vert v))
+    (let targ (:wv b))
+    (let targ2 (:wv c)))
+  (build rel orig targ targ2))
+
 (wv middle-verbs
   ((pat a v b)
     (are-pos-pre v "V" "TO")
@@ -27,13 +36,3 @@
     (! (contains-pos-pre n "."))
     (let r (txt-vert n)))
   r)
-
-(wv is-verb-to
-  ((pat a "is" v "to" b "to" c)
-    (are-pos-pre v "V")
-    (let _strength 1)
-    (let orig (:wv a))
-    (let rel (rel-vert v))
-    (let targ (:wv b))
-    (let targ2 (:wv c)))
-  (build rel orig targ targ2))
