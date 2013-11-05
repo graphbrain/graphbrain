@@ -66,6 +66,7 @@ class Parser(val input: String) {
       case "max-depth" => parseMaxDepth(pos + 1)
       case "filter-min" => parseFilter(FilterFun.FilterMin, pos + 1)
       case "filter-max" => parseFilter(FilterFun.FilterMax, pos + 1)
+      case "len" => parseLenFun(pos + 1)
       case s: String => parseDummy(s, pos + 1)
     }
   }
@@ -284,6 +285,15 @@ class Parser(val input: String) {
 
     if (matchClosingPar(p1.lastTokenPos + 1))
       new FilterFun(fun, Array(p1), p1.lastTokenPos + 1)
+    else
+      null // error
+  }
+
+  private def parseLenFun(pos: Int): ProgNode = {
+    val p1 = parse(pos)
+
+    if (matchClosingPar(p1.lastTokenPos + 1))
+      new LenFun(Array(p1), p1.lastTokenPos + 1)
     else
       null // error
   }
