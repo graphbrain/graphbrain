@@ -3,7 +3,7 @@ package com.graphbrain.webapp
 import unfiltered.request._
 import unfiltered.response._
 import unfiltered.netty._
-import com.graphbrain.eco.{Context, Word, Words, Prog}
+import com.graphbrain.eco.{Context, Word, Words, Prog, Text}
 
 object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse {
 
@@ -32,47 +32,56 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
     var parse = ""
 
     if (text != "") {
+      val t = new Text(text)
+
       val p = Prog.load("eco/progs/test.eco")
-      val ctxtList = p.wv(text, 0)
 
-      for (ctxts <- ctxtList) {
-        parse +=
-          """<div class="panel-group" id="accordion">"""
+      parse +=
+        """<div class="panel-group" id="accordion">"""
 
-        for (c <- ctxts.ctxts) {
-          parse +=
-            """
-              |  <div class="panel panel-default">
-              |    <div class="panel-heading">
-              |      <h4 class="panel-title">
-              |        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">""".stripMargin
+      var coll = 0
 
-          parse += c.getTopRetVertex
+      for (s <- t.sentences) {
+        val ctxtList = p.wv(s, 0)
 
-          parse +=
-            """
-              |        </a>
-              |      </h4>
-              |    </div>
-              |    <div id="collapseOne" class="panel-collapse collapse">
-              |      <div class="panel-body">""".stripMargin
+        for (ctxts <- ctxtList) {
+          for (c <- ctxts.ctxts) {
+            parse +=
+              ("""
+                |  <div class="panel panel-default">
+                |    <div class="panel-heading">
+                |      <h4 class="panel-title">
+                |        <a data-toggle="collapse" data-parent="#accordion" href="#collapse""" + coll + """">""").stripMargin
 
-          parse += renderWords(ctxts.sentence)
+            parse += c.getTopRetVertex
 
-          parse += "<br /><br />"
+            parse +=
+              ("""
+                |        </a>
+                |      </h4>
+                |    </div>
+                |    <div id="collapse""" + coll + """" class="panel-collapse collapse">
+                |      <div class="panel-body">""").stripMargin
 
-          parse += renderContext(c)
+            parse += renderWords(ctxts.sentence)
 
-          parse +=
-            """
-              |      </div>
-              |    </div>
-              |  </div>
-            """.stripMargin
+            parse += "<br /><br />"
+
+            parse += renderContext(c)
+
+            parse +=
+              """
+                |      </div>
+                |    </div>
+                |  </div>
+              """.stripMargin
+
+            coll += 1
+          }
         }
-
-        parse += "</div>"
       }
+
+      parse += "</div>"
     }
 
     Ok ~> ResponseHeader("Content-Type", Set("text/html")) ~>
