@@ -27,6 +27,6 @@ object Text {
         |Protests took place outside the court and elsewhere in Cairo.
       """.stripMargin
 
-    (new Text(text)).parse(Prog.load("eco/progs/test.eco"))
+    new Text(text).parse(Prog.load("eco/progs/test.eco"))
   }
 }
