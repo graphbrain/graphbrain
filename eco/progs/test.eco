@@ -10,6 +10,17 @@
     (pat x "."))
   x)
 
+(wv two-pronouns
+  ((pat a v p1 b p2 c)
+    (are-pos-pre v "V")
+    (are-pos-pre p1 "IN")
+    (are-pos-pre p2 "IN")
+    (let rel (rel-vert v))
+    (let orig (:wv a))
+    (let targ (:wv b))
+    (let targ2 (:wv c)))
+  (build rel orig targ targ2))
+
 (wv is-verb-to
   ((pat a "is" v "to" b "to" c)
     (are-pos-pre v "V")

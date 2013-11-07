@@ -108,6 +108,7 @@ object WebServer extends Logging {
       .handler(AIChatPlan)
       .handler(DisambigPlan)
       .handler(ContextsPlan)
+      .handler(EcoPlan)
       .resources(new URL(getClass.getResource("/robots.txt"), "."))
     http.run()
 
