@@ -1,0 +1,70 @@
+<% escapeMarkup = false %>
+<%@ val title: String="Code" %>
+
+<% layout("ecopage.ssp") {%>
+
+<form><textarea id="code" name="code">
+; English
+
+(wv process-words
+  ((pat x)
+    (let r (:wv (:ww x))))
+  r)
+
+(ww remove-full-stop
+  ((max-depth 1)
+    (pat x "."))
+  x)
+
+(wv two-pronouns
+  ((pat a v p1 b p2 c)
+    (are-pos-pre v "V")
+    (are-pos-pre p1 "IN")
+    (are-pos-pre p2 "IN")
+    (let rel (rel-vert v))
+    (let orig (:wv a))
+    (let targ (:wv b))
+    (let targ2 (:wv c)))
+  (build rel orig targ targ2))
+
+(wv is-verb-to
+  ((pat a "is" v "to" b "to" c)
+    (are-pos-pre v "V")
+    (let orig (:wv a))
+    (let rel (rel-vert v))
+    (let targ (:wv b))
+    (let targ2 (:wv c)))
+  (build rel orig targ targ2))
+
+(wv middle-verbs
+  ((pat a v b)
+    (are-pos-pre v "V" "TO")
+    (filter-max (len v))
+    (let orig (:wv a))
+    (let rel (rel-vert v))
+    (let targ (:wv b)))
+  (build rel orig targ))
+
+(wv no-verbs
+  ((pat n)
+    (! (contains-pos-pre n "V" "."))
+    (let r (txt-vert n)))
+  r)
+
+(wv no-full-stop
+  ((pat n)
+    (! (contains-pos-pre n "."))
+    (let r (txt-vert n)))
+  r)
+</textarea></form>
+
+<script>
+  var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+    lineNumbers: true,
+    styleActiveLine: true,
+    matchBrackets: true,
+    mode: "scheme"
+  });
+</script>
+
+<%}%>

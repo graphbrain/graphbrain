@@ -1,0 +1,18 @@
+<% escapeMarkup = false %>
+<%@ val text: String="" %>
+<%@ val parse: String="" %>
+
+<% layout("ecopage.ssp") {%>
+
+<form role="form" action="eco" method="post">
+    <div class="form-group">
+        <textarea name="text" cols="50" rows="10" style="width:500px"><%= text %></textarea>
+    </div>
+    <button type="submit" class="btn btn-default">Parse</button>
+</form>
+
+<br /><br />
+
+<%= parse %>
+
+<%}%>

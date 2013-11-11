@@ -1,6 +1,6 @@
 <% escapeMarkup = false %>
-<%@ val text: String="" %>
-<%@ val parse: String="" %>
+<%@ val title: String="" %>
+<%@ val body: String="" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,15 +10,23 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Eco interface</title>
+    <title><%= title %> - Eco interface</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap3.css" rel="stylesheet">
+    <link href="/css/bootstrap3.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/codemirror/codemirror.css">
+    <link rel="stylesheet" href="/css/codemirror/3024-day.css">
 
     <!-- Add custom CSS here -->
     <style>
         body {margin-top: 60px;}
     </style>
+
+    <script src="/js/codemirror/codemirror.js"></script>
+    <script src="/js/codemirror/scheme.js"></script>
+    <script src="/js/codemirror/active-line.js"></script>
+    <script src="/js/codemirror/matchbrackets.js"></script>
 
   </head>
 
@@ -39,32 +47,21 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse navbar-ex1-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="#">Parse</a></li>
-            <li><a href="#">Code</a></li>
+            <li><a href="/eco">Parse</a></li>
+            <li><a href="/eco/code">Code</a></li>
           </ul>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container -->
     </nav>
 
     <div class="container">
-
-      <form role="form" action="eco" method="post">
-        <div class="form-group">
-          <textarea name="text" cols="50" rows="10" style="width:500px"><%= text %></textarea>
-        </div>
-        <button type="submit" class="btn btn-default">Parse</button>
-      </form>
-
-      <br /><br />
-
-      <%= parse %>
-
+      <%= body %>
     </div><!-- /.container -->
 
     <!-- Bootstrap core JavaScript -->
     <!-- Placed at the end of the document so the pages load faster -->
     <!-- Make sure to add jQuery - download the most recent version at http://jquery.com/ -->
-    <script src="js/jquery-1.7.2.min.js"></script>
-    <script src="js/bootstrap3.min.js"></script>
+    <script src="/js/jquery-1.7.2.min.js"></script>
+    <script src="/js/bootstrap3.min.js"></script>
   </body>
 </html>
