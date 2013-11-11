@@ -105,4 +105,9 @@ class Graph(name: String="dbnode") extends Logging {
   }
 
   def description(id: String): String = description(get(id))
+
+  def getProgNode(id: String): ProgNode = get(id) match {
+    case p: ProgNode => p
+    case _ => null
+  }
 }

@@ -4,8 +4,14 @@ import unfiltered.request._
 import unfiltered.response._
 import unfiltered.netty._
 import com.graphbrain.eco.{Context, Word, Words, Prog, Text}
+import com.graphbrain.db.ProgNode
 
 object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse {
+
+  private def getCode = {
+    val prog = WebServer.graph.getProgNode("prog/prog")
+    if (prog == null) "" else prog.prog
+  }
 
   private def renderContext(ctxt: Context, indent: Int = 0): String = {
     var r = ""
@@ -34,7 +40,7 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
     if (text != "") {
       val t = new Text(text)
 
-      val p = Prog.load("eco/progs/test.eco")
+      val p = Prog.fromString(getCode)
 
       parse +=
         """<div class="panel-group" id="accordion">"""
@@ -89,8 +95,10 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
   }
 
   private def renderCode(req: HttpRequest[Any]) = {
+    val code = getCode
+
     Ok ~> ResponseHeader("Content-Type", Set("text/html")) ~>
-      Scalate(req, "ecocode.ssp", ("title", "Code"))(WebServer.engine)
+      Scalate(req, "ecocode.ssp", ("title", "Code"), ("code", code))(WebServer.engine)
   }
 
   def intent = {
@@ -100,5 +108,9 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
       renderParser(req, params("text")(0))
     case req@GET(Path(Seg2("eco" :: "code" :: Nil)) & Cookies(cookies)) =>
       renderCode(req)
+    case req@POST(Path(Seg2("eco" :: "code" :: Nil)) & Params(params) & Cookies(cookies)) => {
+      WebServer.graph.put(ProgNode("prog/prog", params("code")(0)))
+      renderCode(req)
+    }
   }
 }
