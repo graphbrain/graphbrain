@@ -45,7 +45,7 @@ object Vertex {
       case VertexType.Edge => Edge(id)
       case VertexType.EdgeType => EdgeType(id)
       case VertexType.URL => URLNode(id)
-      case VertexType.Rule => RuleNode(id)
+      case VertexType.Prog => ProgNode(id)
       case VertexType.User => null // this shouldn't happen
     }
   }

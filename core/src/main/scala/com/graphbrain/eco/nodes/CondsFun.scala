@@ -22,8 +22,6 @@ class CondsFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(p
         }
       }
     }
-
-    true
   }
 
   override protected def typeError() = error("parameters must be boolean")
