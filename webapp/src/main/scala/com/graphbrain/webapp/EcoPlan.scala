@@ -27,7 +27,7 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
     words.words.map(w => renderWord(w))
       .reduceLeft(_ + " " + _)
 
-  private def render(req: HttpRequest[Any], text: String = "") = {
+  private def renderParser(req: HttpRequest[Any], text: String = "") = {
 
     var parse = ""
 
@@ -85,13 +85,20 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
     }
 
     Ok ~> ResponseHeader("Content-Type", Set("text/html")) ~>
-      Scalate(req, "eco.ssp", ("text", text), ("parse", parse))(WebServer.engine)
+      Scalate(req, "ecoparse.ssp", ("title", "Parse"), ("text", text), ("parse", parse))(WebServer.engine)
+  }
+
+  private def renderCode(req: HttpRequest[Any]) = {
+    Ok ~> ResponseHeader("Content-Type", Set("text/html")) ~>
+      Scalate(req, "ecocode.ssp", ("title", "Code"))(WebServer.engine)
   }
 
   def intent = {
     case req@GET(Path("/eco") & Cookies(cookies)) =>
-      render(req)
+      renderParser(req)
     case req@POST(Path("/eco") & Params(params) & Cookies(cookies)) =>
-      render(req, params("text")(0))
+      renderParser(req, params("text")(0))
+    case req@GET(Path(Seg2("eco" :: "code" :: Nil)) & Cookies(cookies)) =>
+      renderCode(req)
   }
 }
