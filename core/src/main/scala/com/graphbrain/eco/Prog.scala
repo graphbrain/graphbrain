@@ -78,11 +78,17 @@ object Prog {
   private def emptyLine(line: String) =
     (line == "") || (line(0) == ';')
 
-  def load(path: String) = {
+  def load(path: String) =
+    fromStringList(Source.fromFile(path).getLines().toList)
+
+  def fromString(str: String) =
+    fromStringList(str.split("\\r?\\n").toList)
+
+  def fromStringList(strList: List[String]) = {
     var exprStr = ""
     var exprList = List[ProgNode]()
 
-    for(line <- Source.fromFile(path).getLines()) {
+    for(line <- strList) {
       if (emptyLine(line)) {
         if (exprStr != "") {
           val p = new Parser(exprStr)
