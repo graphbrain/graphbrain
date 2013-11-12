@@ -49,6 +49,7 @@
           <ul class="nav navbar-nav">
             <li><a href="/eco">Parse</a></li>
             <li><a href="/eco/code">Code</a></li>
+            <li><a href="/eco/tests">Tests</a></li>
           </ul>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container -->
