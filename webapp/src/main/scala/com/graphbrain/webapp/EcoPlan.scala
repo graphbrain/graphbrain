@@ -3,8 +3,9 @@ package com.graphbrain.webapp
 import unfiltered.request._
 import unfiltered.response._
 import unfiltered.netty._
-import com.graphbrain.eco.{Context, Word, Words, Prog, Text}
+import com.graphbrain.eco._
 import com.graphbrain.db.ProgNode
+import unfiltered.response.ResponseHeader
 
 object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse {
 
@@ -13,85 +14,27 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
     if (prog == null) "" else prog.prog
   }
 
-  private def renderContext(ctxt: Context, indent: Int = 0): String = {
-    var r = ""
-
-    (0 until indent).foreach(x => r += "&nbsp;&nbsp;&nbsp;&nbsp;")
-    r += "<span class=\"text-success\">" + ctxt.parent.rule.name + "</span>"
-    r += " (" + renderWords(ctxt.parent.sentence) + ") <br />"
-
-    for (sctxt <- ctxt.subContexts)
-      r += renderContext(sctxt, indent + 1)
-
-    r
-  }
-
-  private def renderWord(word: Word) =
-    word.word + " <span class=\"text-primary\">[" + word.pos + "]</span>"
-
-  private def renderWords(words: Words) =
-    words.words.map(w => renderWord(w))
-      .reduceLeft(_ + " " + _)
-
   private def renderParser(req: HttpRequest[Any], text: String = "") = {
 
-    var parse = ""
-
+    var visualCtxtList = List[VisualContext]()
     if (text != "") {
       val t = new Text(text)
 
       val p = Prog.fromString(getCode)
 
-      parse +=
-        """<div class="panel-group" id="accordion">"""
-
-      var coll = 0
-
       for (s <- t.sentences) {
-        val ctxtList = p.wv(s, 0)
-
-        for (ctxts <- ctxtList) {
-          for (c <- ctxts.ctxts) {
-            parse +=
-              ("""
-                |  <div class="panel panel-default">
-                |    <div class="panel-heading">
-                |      <h4 class="panel-title">
-                |        <a data-toggle="collapse" data-parent="#accordion" href="#collapse""" + coll + """">""").stripMargin
-
-            parse += c.getTopRetVertex
-
-            parse +=
-              ("""
-                |        </a>
-                |      </h4>
-                |    </div>
-                |    <div id="collapse""" + coll + """" class="panel-collapse collapse">
-                |      <div class="panel-body">""").stripMargin
-
-            parse += renderWords(ctxts.sentence)
-
-            parse += "<br /><br />"
-
-            parse += renderContext(c)
-
-            parse +=
-              """
-                |      </div>
-                |    </div>
-                |  </div>
-              """.stripMargin
-
-            coll += 1
+        val ctxtsList = p.wv(s, 0)
+        for (ctxts <- ctxtsList) {
+          for (ctxt <- ctxts.ctxts) {
+            visualCtxtList ::= new VisualContext(ctxt)
           }
         }
       }
-
-      parse += "</div>"
     }
 
     Ok ~> ResponseHeader("Content-Type", Set("text/html")) ~>
-      Scalate(req, "ecoparse.ssp", ("title", "Parse"), ("text", text), ("parse", parse))(WebServer.engine)
+      Scalate(req, "ecoparse.ssp", ("title", "Parse"), ("text", text),
+        ("ctxtList", visualCtxtList.reverse))(WebServer.engine)
   }
 
   private def renderCode(req: HttpRequest[Any]) = {
@@ -99,6 +42,11 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
 
     Ok ~> ResponseHeader("Content-Type", Set("text/html")) ~>
       Scalate(req, "ecocode.ssp", ("title", "Code"), ("code", code))(WebServer.engine)
+  }
+
+  private def renderTests(req: HttpRequest[Any]) = {
+    Ok ~> ResponseHeader("Content-Type", Set("text/html")) ~>
+      Scalate(req, "ecotests.ssp", ("title", "Tests"))(WebServer.engine)
   }
 
   def intent = {
@@ -112,5 +60,7 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
       WebServer.graph.put(ProgNode("prog/prog", params("code")(0)))
       renderCode(req)
     }
+    case req@GET(Path(Seg2("eco" :: "tests" :: Nil)) & Cookies(cookies)) =>
+      renderTests(req)
   }
 }

@@ -1,6 +1,8 @@
+#import(com.graphbrain.webapp.VisualContext)
+
 <% escapeMarkup = false %>
 <%@ val text: String="" %>
-<%@ val parse: String="" %>
+<%@ val ctxtList: List[VisualContext] %>
 
 <% layout("ecopage.ssp") {%>
 
@@ -13,6 +15,31 @@
 
 <br /><br />
 
-<%= parse %>
+<%
+  var coll = 0
+%>
+
+#for (c <- ctxtList)
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapse${coll}">
+                    ${c.htmlVertex}
+                </a>
+            </h4>
+        </div>
+        <div id="collapse${coll}" class="panel-collapse collapse">
+            <div class="panel-body">
+                ${c.htmlWords}
+                <br /><br />
+                ${c.htmlContext}
+            </div>
+        </div>
+    </div>
+
+    <%
+        coll += 1
+    %>
+#end
 
 <%}%>
