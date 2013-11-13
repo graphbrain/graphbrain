@@ -1,9 +1,0 @@
-<% escapeMarkup = false %>
-
-<% layout("ecopage.ssp") {%>
-
-<form role="form" action="tests" method="post">
-    <button type="submit" class="btn btn-default">Run</button>
-</form>
-
-<%}%>

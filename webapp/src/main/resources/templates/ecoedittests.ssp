@@ -1,0 +1,22 @@
+<% escapeMarkup = false %>
+
+<% layout("ecopage.ssp") {%>
+
+<form role="form" action="edittests" method="post">
+    <textarea id="tests" name="tests">
+Tests...
+    </textarea>
+    <br />
+    <button type="submit" class="btn btn-default">Save</button>
+</form>
+
+<script>
+  var editor = CodeMirror.fromTextArea(document.getElementById("tests"), {
+    lineNumbers: true,
+    styleActiveLine: true,
+    matchBrackets: false,
+    mode: "scheme"
+  });
+</script>
+
+<%}%>

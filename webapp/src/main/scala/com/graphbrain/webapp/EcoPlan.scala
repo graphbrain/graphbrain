@@ -44,9 +44,37 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
       Scalate(req, "ecocode.ssp", ("title", "Code"), ("code", code))(WebServer.engine)
   }
 
-  private def renderTests(req: HttpRequest[Any]) = {
+  private def renderRunTests(req: HttpRequest[Any], run: Boolean) = {
+
+    val text =
+      """
+        |Telmo is learning German.
+      """.stripMargin
+
+    var visualCtxtList = List[VisualContext]()
+
+    if (run) {
+      val t = new Text(text)
+
+      val p = Prog.fromString(getCode)
+
+      for (s <- t.sentences) {
+        val ctxtsList = p.wv(s, 0)
+        for (ctxts <- ctxtsList) {
+          for (ctxt <- ctxts.ctxts) {
+            visualCtxtList ::= new VisualContext(ctxt)
+          }
+        }
+      }
+    }
+
     Ok ~> ResponseHeader("Content-Type", Set("text/html")) ~>
-      Scalate(req, "ecotests.ssp", ("title", "Tests"))(WebServer.engine)
+      Scalate(req, "ecoruntests.ssp", ("title", "Run Tests"), ("ctxtList", visualCtxtList.reverse))(WebServer.engine)
+  }
+
+  private def renderEditTests(req: HttpRequest[Any]) = {
+    Ok ~> ResponseHeader("Content-Type", Set("text/html")) ~>
+      Scalate(req, "ecoedittests.ssp", ("title", "Edit Tests"))(WebServer.engine)
   }
 
   def intent = {
@@ -60,7 +88,11 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
       WebServer.graph.put(ProgNode("prog/prog", params("code")(0)))
       renderCode(req)
     }
-    case req@GET(Path(Seg2("eco" :: "tests" :: Nil)) & Cookies(cookies)) =>
-      renderTests(req)
+    case req@GET(Path(Seg2("eco" :: "runtests" :: Nil)) & Cookies(cookies)) =>
+      renderRunTests(req, run = false)
+    case req@POST(Path(Seg2("eco" :: "runtests" :: Nil)) & Cookies(cookies)) =>
+      renderRunTests(req, run = true)
+    case req@GET(Path(Seg2("eco" :: "edittests" :: Nil)) & Cookies(cookies)) =>
+      renderEditTests(req)
   }
 }
