@@ -12,6 +12,13 @@
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse${coll}">
+                    #if (c.isTest)
+                        #if (c.correct)
+                            <span class="text-success">[ok]</span>
+                        #else
+                            <span class="text-danger">[failed]</span>
+                        #end
+                    #end
                     ${c.htmlVertex}
                 </a>
             </h4>
@@ -19,7 +26,12 @@
         <div id="collapse${coll}" class="panel-collapse collapse">
             <div class="panel-body">
                 ${c.htmlWords}
-                <br /><br />
+                #if (c.isTest && !c.correct)
+                    <p class="text-danger">target: ${c.targetVertex}</p>
+                #else
+                    <br />
+                #end
+                <br />
                 ${c.htmlContext}
             </div>
         </div>

@@ -2,7 +2,7 @@ package com.graphbrain.webapp
 
 import com.graphbrain.eco.{Context, Words, Word}
 
-class VisualContext(ctxt: Context){
+class VisualContext(ctxt: Context, val targetVertex: String="") {
   val htmlWords = renderWords(ctxt.parent.sentence)
   val htmlContext = renderContext(ctxt)
   val htmlVertex = ctxt.getTopRetVertex
@@ -26,4 +26,8 @@ class VisualContext(ctxt: Context){
   private def renderWords(words: Words) =
     words.words.map(w => renderWord(w))
       .reduceLeft(_ + " " + _)
+
+  def isTest = targetVertex != ""
+
+  def correct = targetVertex == ctxt.getTopRetVertex
 }
