@@ -6,6 +6,7 @@ import unfiltered.netty._
 import com.graphbrain.eco._
 import com.graphbrain.db.{TextNode, ProgNode}
 import unfiltered.response.ResponseHeader
+import unfiltered.Cookie
 
 object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse {
 
@@ -19,7 +20,15 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
     if (tests == null) "" else tests.text
   }
 
-  private def renderParser(req: HttpRequest[Any], text: String = "") = {
+  private def renderParser(req: HttpRequest[Any], cookies: Map[String, Any], parseText: String = "") = {
+
+    val text = if (parseText == "")
+      cookies("parse_test") match {
+        case Some(Cookie(_, value, _, _, _, _, _, _)) => value
+        case _ => ""
+      }
+    else
+      parseText
 
     var visualCtxtList = List[VisualContext]()
     if (text != "") {
@@ -37,7 +46,9 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
       }
     }
 
-    Ok ~> ResponseHeader("Content-Type", Set("text/html")) ~>
+    Ok ~>
+      SetCookies(Cookie("parse_test", parseText)) ~>
+      ResponseHeader("Content-Type", Set("text/html")) ~>
       Scalate(req, "ecoparse.ssp", ("title", "Parse"), ("text", text),
         ("ctxtList", visualCtxtList.reverse))(WebServer.engine)
   }
@@ -81,9 +92,9 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
 
   def intent = {
     case req@GET(Path("/eco") & Cookies(cookies)) =>
-      renderParser(req)
+      renderParser(req, cookies)
     case req@POST(Path("/eco") & Params(params) & Cookies(cookies)) =>
-      renderParser(req, params("text")(0))
+      renderParser(req, cookies, params("text")(0))
     case req@GET(Path(Seg2("eco" :: "code" :: Nil)) & Cookies(cookies)) =>
       renderCode(req)
     case req@POST(Path(Seg2("eco" :: "code" :: Nil)) & Params(params) & Cookies(cookies)) => {
