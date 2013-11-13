@@ -53,6 +53,7 @@ class LevelDbBackend(name: String="dbnode") extends Backend with Logging {
 		case 'P' => new ProgNode(id, stringToMap(value))
 		case 'S' => new SourceNode(id, stringToMap(value))
 		case 'C' => new ContextNode(id, stringToMap(value))
+    case 'T' => new TextNode(id, stringToMap(value))
 		case _ => null
 		}
 	}
@@ -67,6 +68,7 @@ class LevelDbBackend(name: String="dbnode") extends Backend with Logging {
 		case VertexType.Prog => 'P'
 		case VertexType.Source => 'S'
 		case VertexType.Context => 'C'
+    case VertexType.Text => 'T'
 		case _ => '?'
 		}
 	}
@@ -81,6 +83,7 @@ class LevelDbBackend(name: String="dbnode") extends Backend with Logging {
       case v: ProgNode => 'P'
       case v: SourceNode => 'S'
       case v: ContextNode => 'C'
+      case v: TextNode => 'T'
       case _ => '?'
     }
   }

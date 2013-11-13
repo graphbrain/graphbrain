@@ -2,7 +2,7 @@ package com.graphbrain.db
 
 object VertexType extends Enumeration {
   type VertexType = Value
-	val Edge, EdgeType, Entity, URL, User, Source, Context, Prog = Value
+	val Edge, EdgeType, Entity, URL, User, Source, Context, Prog, Text = Value
 	
 	def getType(id: String): VertexType = {
 		if (id.contains(" ")) {
@@ -61,6 +61,11 @@ object VertexType extends Enumeration {
         Entity
 			else
 				Source
+    else if (parts(0) == "text")
+      if (nparts == 1)
+        Entity
+      else
+        Text
 		else
       Entity
   }
