@@ -4,7 +4,7 @@ import unfiltered.request._
 import unfiltered.response._
 import unfiltered.netty._
 import com.graphbrain.eco._
-import com.graphbrain.db.ProgNode
+import com.graphbrain.db.{TextNode, ProgNode}
 import unfiltered.response.ResponseHeader
 
 object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErrorResponse {
@@ -12,6 +12,11 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
   private def getCode = {
     val prog = WebServer.graph.getProgNode("prog/prog")
     if (prog == null) "" else prog.prog
+  }
+
+  private def getTests = {
+    val tests = WebServer.graph.getTextNode("text/tests")
+    if (tests == null) "" else tests.text
   }
 
   private def renderParser(req: HttpRequest[Any], text: String = "") = {
@@ -45,24 +50,19 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
   }
 
   private def renderRunTests(req: HttpRequest[Any], run: Boolean) = {
-
-    val text =
-      """
-        |Telmo is learning German.
-      """.stripMargin
-
     var visualCtxtList = List[VisualContext]()
 
     if (run) {
-      val t = new Text(text)
+      val testData = getTests
+      val tests = new Tests(testData)
 
       val p = Prog.fromString(getCode)
 
-      for (s <- t.sentences) {
-        val ctxtsList = p.wv(s, 0)
+      for (t <- tests.tests) {
+        val ctxtsList = p.wv(t(0), 0)
         for (ctxts <- ctxtsList) {
           for (ctxt <- ctxts.ctxts) {
-            visualCtxtList ::= new VisualContext(ctxt)
+            visualCtxtList ::= new VisualContext(ctxt, t(1))
           }
         }
       }
@@ -73,8 +73,10 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
   }
 
   private def renderEditTests(req: HttpRequest[Any]) = {
+    val tests = getTests
+
     Ok ~> ResponseHeader("Content-Type", Set("text/html")) ~>
-      Scalate(req, "ecoedittests.ssp", ("title", "Edit Tests"))(WebServer.engine)
+      Scalate(req, "ecoedittests.ssp", ("title", "Edit Tests"), ("tests", tests))(WebServer.engine)
   }
 
   def intent = {
@@ -94,5 +96,9 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
       renderRunTests(req, run = true)
     case req@GET(Path(Seg2("eco" :: "edittests" :: Nil)) & Cookies(cookies)) =>
       renderEditTests(req)
+    case req@POST(Path(Seg2("eco" :: "edittests" :: Nil)) & Params(params) & Cookies(cookies)) => {
+      WebServer.graph.put(TextNode("text/tests", params("tests")(0)))
+      renderEditTests(req)
+    }
   }
 }
