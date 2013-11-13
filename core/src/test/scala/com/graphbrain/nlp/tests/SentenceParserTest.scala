@@ -12,32 +12,32 @@ class SentenceParserTest extends FunSuite {
   val sentenceParser = new SentenceParser()
   val store = new Graph() with UserManagement with UserOps
 
-  val toadNodeGlobal = TextNode.fromNsAndText(namespace="1", text="toad")
-  val booksNodeGlobal1 = TextNode.fromNsAndText(namespace="1", text="books")
-  val booksNodeGlobal2 = TextNode.fromNsAndText(namespace="2", text="books")
-  val booksUserOwned = TextNode.fromNsAndText(namespace = "user/chihchun_chen/p/1", text="books")
-  val todoUserOwned = TextNode.fromNsAndText(namespace = "user/chihchun_chen/p/1", text="todo")
-  val washTheCarUserOwned = TextNode.fromNsAndText(namespace = "user/chihchun_chen/p/1", text = "wash the car")
-  val todoGlobal = TextNode.fromNsAndText(namespace = "1", text="todo")
-  val todoGlobal2 = TextNode.fromNsAndText(namespace = "2", text="todo")
-  val washTheCarGlobal = TextNode.fromNsAndText(namespace = "1", text = "wash the car")
-  val jobGlobal = TextNode.fromNsAndText(namespace = "1", text = "job")
+  val toadNodeGlobal = EntityNode.fromNsAndText(namespace="1", text="toad")
+  val booksNodeGlobal1 = EntityNode.fromNsAndText(namespace="1", text="books")
+  val booksNodeGlobal2 = EntityNode.fromNsAndText(namespace="2", text="books")
+  val booksUserOwned = EntityNode.fromNsAndText(namespace = "user/chihchun_chen/p/1", text="books")
+  val todoUserOwned = EntityNode.fromNsAndText(namespace = "user/chihchun_chen/p/1", text="todo")
+  val washTheCarUserOwned = EntityNode.fromNsAndText(namespace = "user/chihchun_chen/p/1", text = "wash the car")
+  val todoGlobal = EntityNode.fromNsAndText(namespace = "1", text="todo")
+  val todoGlobal2 = EntityNode.fromNsAndText(namespace = "2", text="todo")
+  val washTheCarGlobal = EntityNode.fromNsAndText(namespace = "1", text = "wash the car")
+  val jobGlobal = EntityNode.fromNsAndText(namespace = "1", text = "job")
 
 
-  val toadsNodeGlobal = TextNode.fromNsAndText(namespace="1", text="toads")
+  val toadsNodeGlobal = EntityNode.fromNsAndText(namespace="1", text="toads")
 
-  val excellenceNodeGlobal = TextNode.fromNsAndText(namespace="1", text="excellent book")
-  val toadNodeUser = TextNode.fromNsAndText(namespace="usergenerated/chihchun_chen", text="toad")
-  val toadTitleUser = TextNode.fromNsAndText(namespace="usergenerated/chihchun_chen", text="Chih-Chun is a toad")
-  val globalNameNode1 = TextNode.fromNsAndText(namespace="1", text="ChihChun")
-  val globalNameNode2 = TextNode.fromNsAndText(namespace = "1", text = "Chih-Chun")
-  val globalNameNode3 = TextNode.fromNsAndText(namespace = "1", text = "Chih-Chun is a toad")
-  val globalNameNode4 = TextNode.fromNsAndText(namespace = "1", text = "Telmo")
+  val excellenceNodeGlobal = EntityNode.fromNsAndText(namespace="1", text="excellent book")
+  val toadNodeUser = EntityNode.fromNsAndText(namespace="usergenerated/chihchun_chen", text="toad")
+  val toadTitleUser = EntityNode.fromNsAndText(namespace="usergenerated/chihchun_chen", text="Chih-Chun is a toad")
+  val globalNameNode1 = EntityNode.fromNsAndText(namespace="1", text="ChihChun")
+  val globalNameNode2 = EntityNode.fromNsAndText(namespace = "1", text = "Chih-Chun")
+  val globalNameNode3 = EntityNode.fromNsAndText(namespace = "1", text = "Chih-Chun is a toad")
+  val globalNameNode4 = EntityNode.fromNsAndText(namespace = "1", text = "Telmo")
 
-  val programmerGlobalNode = TextNode.fromNsAndText(namespace = "1", text = "programmer")
+  val programmerGlobalNode = EntityNode.fromNsAndText(namespace = "1", text = "programmer")
   val userNode = UserNode.create(username="chihchun_chen", name="Chih-Chun Chen", email="chihchun@example.com", password="password")
-  val graphbrainGlobalNode = TextNode.fromNsAndText(namespace = "1", text = "GraphBrain")
-  val graphbrainUserNode = TextNode.fromNsAndText(namespace = "usergenerated/chihchun_chen", text = "graphbrain")
+  val graphbrainGlobalNode = EntityNode.fromNsAndText(namespace = "1", text = "GraphBrain")
+  val graphbrainUserNode = EntityNode.fromNsAndText(namespace = "usergenerated/chihchun_chen", text = "graphbrain")
   val gbURLNode = URLNode.fromUrl(url = "http://graphbrain.com(nice)", userId = "")
   
   val sentence1 = "ChihChun is a toad"
@@ -70,7 +70,7 @@ class SentenceParserTest extends FunSuite {
     val response = sentenceParser.parseSentenceGeneral(sentence4, root = toadNodeGlobal)
     response(0) match {
       case r: GraphResponse => 
-        val parses = r.hypergraphList;
+        val parses = r.hypergraphList
         val nodes = parses(0)._1
         val relType = parses(0)._2
         println(nodes(0)._1.id)
@@ -90,7 +90,7 @@ class SentenceParserTest extends FunSuite {
     val response = sentenceParser.parseSentenceGeneral(sentence1, root = toadNodeGlobal)
     response(0) match {
       case r: GraphResponse => 
-        val parses = r.hypergraphList;
+        val parses = r.hypergraphList
         val nodes = parses(0)._1
         val relType = parses(0)._2
         println(nodes(0)._1.id)
@@ -110,7 +110,7 @@ class SentenceParserTest extends FunSuite {
     val response = sentenceParser.parseSentenceGeneral(sentence5, root = toadNodeGlobal)
     response(0) match {
       case r: GraphResponse => 
-        val parses = r.hypergraphList;
+        val parses = r.hypergraphList
         val nodes = parses(0)._1
         val relType = parses(0)._2
         println(nodes(0)._1.id)
@@ -129,7 +129,7 @@ class SentenceParserTest extends FunSuite {
 
 
   test("ChihChun is a toad: Parse 2-role with user node (user/chihchun_chen) no root") {
-    val response = sentenceParser.parseSentenceGeneral(sentence1, user = Some(userNode));
+    val response = sentenceParser.parseSentenceGeneral(sentence1, user = Some(userNode))
     response(0) match {
       case r: GraphResponse =>
         val parses = r.hypergraphList
@@ -151,7 +151,7 @@ class SentenceParserTest extends FunSuite {
 
   test("Chih-Chun is a toad: Parse 2-role with user node (user/chihchun_chen) and global root (1/toad)") {
 
-    val response = sentenceParser.parseSentenceGeneral(sentence1, root = toadNodeGlobal, user = Some(userNode));
+    val response = sentenceParser.parseSentenceGeneral(sentence1, root = toadNodeGlobal, user = Some(userNode))
     response(0) match {
       case r: GraphResponse =>
         val parses = r.hypergraphList
@@ -173,12 +173,12 @@ class SentenceParserTest extends FunSuite {
 
   test("Chih-Chun is a toad: 2-role lemmas and POS") {
 
-    val response =  sentenceParser.parseSentenceGeneral(sentence1);
+    val response =  sentenceParser.parseSentenceGeneral(sentence1)
     response(0) match {
       case r: GraphResponse =>
         val parses = r.hypergraphList
-        val nodes = parses(0)._1;
-        val relTypeVertex = parses(0)._2;
+        val nodes = parses(0)._1
+        val relTypeVertex = parses(0)._2
         //val relTypeVertex = EdgeType(id = ID.reltype_id(relTypeText), label = relTypeText)
         relTypeVertex match {
           case r: EdgeType => 
@@ -186,11 +186,11 @@ class SentenceParserTest extends FunSuite {
             println(r.label)
             val reltypeLemPOS = sentenceParser.relTypeLemmaAndPOS(r, sentence1)
 
-            val lemma = reltypeLemPOS._2._1;
+            val lemma = reltypeLemPOS._2._1
             println(lemma.id)
             println(isALemma)
 
-            val pos = reltypeLemPOS._2._2;
+            val pos = reltypeLemPOS._2._2
             println(pos.id)
             println(isAPOS)
             assert(lemma.id == isALemma)
@@ -204,10 +204,10 @@ class SentenceParserTest extends FunSuite {
   }
 
   test("I am always a programmer at graphbrain: Parse 3-role with user node (user/chihchun_chen) and no root") {
-    val response = sentenceParser.parseSentenceGeneral(sentence2, user = Some(userNode));
+    val response = sentenceParser.parseSentenceGeneral(sentence2, user = Some(userNode))
     response(0) match {
       case r: GraphResponse =>
-        val parses = r.hypergraphList;
+        val parses = r.hypergraphList
         val nodes = parses(0)._1
         val relType = parses(0)._2
 
@@ -230,7 +230,7 @@ class SentenceParserTest extends FunSuite {
 
 
   test("Chih-Chun is always a programmer at graphbrain: Parse 3-role with irrelevant root node (1/toad) no user"){
-    val response = sentenceParser.parseSentenceGeneral(sentence3, root = toadNodeUser);
+    val response = sentenceParser.parseSentenceGeneral(sentence3, root = toadNodeUser)
     response(0) match {
       case r: GraphResponse =>
         val parses = r.hypergraphList
@@ -253,7 +253,7 @@ class SentenceParserTest extends FunSuite {
   }
 
   test("Chih-Chun is always a programmer at graphbrain: Parse 3-role with relevant user root node (chihchun_chen/1/graphbrain) no user"){
-    val response = sentenceParser.parseSentenceGeneral(sentence3, root = graphbrainUserNode);
+    val response = sentenceParser.parseSentenceGeneral(sentence3, root = graphbrainUserNode)
     response(0) match {
       case r:GraphResponse =>
         val parses = r.hypergraphList
@@ -277,7 +277,7 @@ class SentenceParserTest extends FunSuite {
   
 
   test("Chih-Chun is always a programmer at graphbrain: Parse 3-role with user node (user/chihchun_chen) and no root") {
-    val response = sentenceParser.parseSentenceGeneral(sentence3, user = Some(userNode));
+    val response = sentenceParser.parseSentenceGeneral(sentence3, user = Some(userNode))
     response(0) match {
       case r: GraphResponse =>
         val parses = r.hypergraphList
@@ -290,9 +290,9 @@ class SentenceParserTest extends FunSuite {
         println(relType.id)
 
         assert(nodes.length == 3)
-        assert(nodes(0)._1.id == userNode.id);
-        assert(nodes(1)._1.id == programmerGlobalNode.id);
-        assert(nodes(2)._1.id == graphbrainGlobalNode.id);
+        assert(nodes(0)._1.id == userNode.id)
+        assert(nodes(1)._1.id == programmerGlobalNode.id)
+        assert(nodes(2)._1.id == graphbrainGlobalNode.id)
         assert(relType.id == isAlwaysARelTypeID)
       case _ =>
     }
@@ -314,19 +314,19 @@ class SentenceParserTest extends FunSuite {
           assert(nodeEntry2._1.id==toadsNodeGlobal.id)
 
           nodeEntry1 match {
-            case (nd: TextNode, None) => println("Node: " + nd.id);
-            case (nd: TextNode, Some(aux: (List[Vertex], Vertex))) => 
+            case (nd: EntityNode, None) => println("Node: " + nd.id)
+            case (nd: EntityNode, Some(aux: (List[Vertex], Vertex))) =>
               println("Node 1 with aux: " + nd.id)
               assert(nd.id==booksNodeGlobal2.id)
               aux match {
-                case (a:List[TextNode], ed:EdgeType) => 
-                  assert(a.length==2);
+                case (a:List[EntityNode], ed:EdgeType) =>
+                  assert(a.length==2)
                   println("aux0: " + a(0).id)
                   println("aux1: " + a(1).id)
                   assert(a(0).id==booksNodeGlobal1.id)
                   assert(a(1).id==globalNameNode2.id)
                   println("auxEdge: " + ed.id)
-                  assert(ed.id==instanceOf_ownedByID);
+                  assert(ed.id==instanceOf_ownedByID)
 
                 case _ => println("mismatch")
               }
@@ -356,19 +356,19 @@ class SentenceParserTest extends FunSuite {
           assert(nodeEntry2._1.id==toadsNodeGlobal.id)
           
           nodeEntry1 match {
-            case (nd: TextNode, None) => println("Node: " + nd.id);
-            case (nd: TextNode, Some(aux: (List[Vertex], Vertex))) => 
+            case (nd: EntityNode, None) => println("Node: " + nd.id)
+            case (nd: EntityNode, Some(aux: (List[Vertex], Vertex))) =>
               println("Node with aux: " + nd.id)
               assert(nd.id==booksUserOwned.id)
               aux match {
                 case (a:List[Vertex], ed:EdgeType) => 
-                  assert(a.length==2);
+                  assert(a.length==2)
                   println("aux0: " + a(0).id)
                   println("aux1: " + a(1).id)
                   assert(a(0).id==booksNodeGlobal1.id)
                   assert(a(1).id==userNode.id)
                   println("auxEdge: " + ed.id)
-                  assert(ed.id==instanceOf_ownedByID);
+                  assert(ed.id==instanceOf_ownedByID)
 
                 case _ => println("mismatch")
               }
@@ -399,13 +399,13 @@ class SentenceParserTest extends FunSuite {
           assert(nodeEntry1._1.id==userNode.id)
           
           nodeEntry2 match {
-            case (nd: TextNode, None) => println("Node: " + nd.id);
-            case (nd: TextNode, Some(aux: (List[Vertex], Vertex))) => 
+            case (nd: EntityNode, None) => println("Node: " + nd.id)
+            case (nd: EntityNode, Some(aux: (List[Vertex], Vertex))) =>
               println("Node with aux: " + nd.id)
               assert(nd.id==washTheCarUserOwned.id)
               aux match {
                 case (a:List[Vertex], ed:EdgeType) => 
-                  assert(a.length==2);
+                  assert(a.length==2)
                   println("aux0: " + a(0).id)
                   println("aux0 expected: " + todoUserOwned.id)
                   println("aux1: " + a(1).id)
@@ -413,15 +413,15 @@ class SentenceParserTest extends FunSuite {
                   assert(a(0).id==todoUserOwned.id)
                   assert(a(1).id==userNode.id)
                   println("auxEdge: " + ed.id)
-                  assert(ed.id==instanceOf_ownedByID);
+                  assert(ed.id==instanceOf_ownedByID)
 
                 case _ => println("mismatch")
               }
               case _ => println("No match")
             }
           nodeEntry3 match {
-            case (nd: TextNode, None) => println("Node: " + nd.id);
-            case (nd: TextNode, Some(aux: (List[Vertex], Vertex))) => 
+            case (nd: EntityNode, None) => println("Node: " + nd.id)
+            case (nd: EntityNode, Some(aux: (List[Vertex], Vertex))) =>
               println("Node with aux: " + nd.id)
               assert(nd.id==todoUserOwned.id)
               aux match {
@@ -432,7 +432,7 @@ class SentenceParserTest extends FunSuite {
                   assert(a(0).id==todoGlobal.id)
                   assert(a(1).id==userNode.id)
                   println("auxEdge: " + ed.id)
-                  assert(ed.id==instanceOf_ownedByID);
+                  assert(ed.id==instanceOf_ownedByID)
 
                 case _ => println("mismatch")
               }
@@ -466,13 +466,13 @@ class SentenceParserTest extends FunSuite {
           assert(nodeEntry1._1.id==globalNameNode4.id)
           
           nodeEntry2 match {
-            case (nd: TextNode, None) => println("Node: " + nd.id);
-            case (nd: TextNode, Some(aux: (List[Vertex], Vertex))) => 
+            case (nd: EntityNode, None) => println("Node: " + nd.id)
+            case (nd: EntityNode, Some(aux: (List[Vertex], Vertex))) =>
               println("Node with aux: " + nd.id)
               assert(nd.id==washTheCarGlobal.id)
               aux match {
                 case (a:List[Vertex], ed:EdgeType) => 
-                  assert(a.length==2);
+                  assert(a.length==2)
                   println("aux0: " + a(0).id)
                   println("aux0 expected: " + todoGlobal2.id)
                   println("aux1: " + a(1).id)
@@ -480,20 +480,20 @@ class SentenceParserTest extends FunSuite {
                   assert(a(0).id==todoGlobal2.id)
                   assert(a(1).id==globalNameNode4.id)
                   println("auxEdge: " + ed.id)
-                  assert(ed.id==instanceOf_ownedByID);
+                  assert(ed.id==instanceOf_ownedByID)
 
                 case _ => println("mismatch")
               }
               case _ => println("No match")
             }
           nodeEntry3 match {
-            case (nd: TextNode, None) => println("Node: " + nd.id);
-            case (nd: TextNode, Some(aux: (List[Vertex], Vertex))) => 
+            case (nd: EntityNode, None) => println("Node: " + nd.id)
+            case (nd: EntityNode, Some(aux: (List[Vertex], Vertex))) =>
               println("Node with aux: " + nd.id)
               assert(nd.id==todoGlobal2.id)
               aux match {
                 case (a:List[Vertex], ed:EdgeType) => 
-                  assert(a.length==2);
+                  assert(a.length==2)
                   println("aux0: " + a(0).id)
                   println("aux0 expected: " + todoGlobal.id)
                   println("aux1: " + a(1).id)
@@ -501,7 +501,7 @@ class SentenceParserTest extends FunSuite {
                   assert(a(0).id==todoGlobal.id)
                   assert(a(1).id==globalNameNode4.id)
                   println("auxEdge: " + ed.id)
-                  assert(ed.id==instanceOf_ownedByID);
+                  assert(ed.id==instanceOf_ownedByID)
 
                 case _ => println("mismatch")
               }
@@ -521,19 +521,19 @@ class SentenceParserTest extends FunSuite {
     val response = sentenceParser.parseSentenceGeneral(sentence9, root = programmerGlobalNode, user = Some(userNode));
     response(0) match {
       case g: GraphResponse => 
-        val parse = g.hypergraphList(0);
+        val parse = g.hypergraphList(0)
         parse match {
           case (nodes: List[(Vertex, Option[(List[Vertex], Vertex)])], relType: Vertex) =>
           val nodeEntry1 = nodes(0)
           val nodeEntry2 = nodes(1)
-          println("node1 obtained: " + nodeEntry1._1.id);
-          println("node1 expected: " + programmerGlobalNode.id);
+          println("node1 obtained: " + nodeEntry1._1.id)
+          println("node1 expected: " + programmerGlobalNode.id)
           assert(nodeEntry1._1.id==programmerGlobalNode.id)
-          println("node2 obtained: " + nodeEntry2._1.id);
-          println("node2 expected: " + jobGlobal.id);
+          println("node2 obtained: " + nodeEntry2._1.id)
+          println("node2 expected: " + jobGlobal.id)
           assert(nodeEntry2._1.id==jobGlobal.id)
-          println("Rel: " + relType.id);
-          assert(relType.id==isA);
+          println("Rel: " + relType.id)
+          assert(relType.id==isA)
         }
     }
   }

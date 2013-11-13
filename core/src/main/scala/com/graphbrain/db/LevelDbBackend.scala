@@ -46,7 +46,7 @@ class LevelDbBackend(name: String="dbnode") extends Backend with Logging {
 		
 		typeChar match {
 		case 'E' => new Edge(id, stringToMap(value))
-		case 'T' => new TextNode(id, stringToMap(value))
+		case 'X' => new EntityNode(id, stringToMap(value))
 		case 'H' => new URLNode(id, stringToMap(value))
 		case 'Y' => new EdgeType(id, stringToMap(value))
 		case 'U' => new UserNode(id, stringToMap(value))
@@ -60,7 +60,7 @@ class LevelDbBackend(name: String="dbnode") extends Backend with Logging {
 	private def typeToChar(vtype: VertexType) = {
 		vtype match {
 		case VertexType.Edge => 'E'
-		case VertexType.Text => 'T'
+		case VertexType.Entity => 'X'
 		case VertexType.URL => 'H'
 		case VertexType.EdgeType => 'Y'
 		case VertexType.User => 'U'
@@ -74,7 +74,7 @@ class LevelDbBackend(name: String="dbnode") extends Backend with Logging {
   private def typeToChar(v: Vertex) = {
     v match {
       case v: Edge => 'E'
-      case v: TextNode => 'T'
+      case v: EntityNode => 'X'
       case v: URLNode => 'H'
       case v: EdgeType => 'Y'
       case v: UserNode => 'U'

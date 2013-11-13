@@ -88,8 +88,8 @@ object VisualGraph {
 
   private def node2map(nodeId: String, nodeEdge: String, store: UserOps, rootId: String, user: UserNode) = {
     val vtype = VertexType.getType(nodeId)
-    val node = if ((nodeId != rootId) && (vtype == VertexType.Text)) {
-      TextNode(nodeId)
+    val node = if ((nodeId != rootId) && (vtype == VertexType.Entity)) {
+      EntityNode(nodeId)
     }
     else{
       try {
@@ -101,7 +101,7 @@ object VisualGraph {
     }
 
     node match {
-      case tn: TextNode => Map("id" -> tn.id, "type" -> "text", "text" -> tn.text, "edge" -> nodeEdge)
+      case tn: EntityNode => Map("id" -> tn.id, "type" -> "text", "text" -> tn.text, "edge" -> nodeEdge)
       case un: URLNode => {
         val title = if (un.title == "") un.url else un.title
         Map("id" -> un.id, "type" -> "url", "text" -> title, "url" -> un.url, "icon" -> un.icon, "edge" -> nodeEdge)

@@ -2,15 +2,11 @@ package com.graphbrain.nlp
 
 import scala.collection.immutable.HashMap
 import scala.util.Sorting
-import com.graphbrain.db.Graph
-import com.graphbrain.db.TextNode
-import com.graphbrain.db.Edge
-import com.graphbrain.db.URLNode
-import com.graphbrain.db.UserNode
-import com.graphbrain.db.EdgeType
-import com.graphbrain.db.Vertex
-import com.graphbrain.db.ID
-import com.graphbrain.db.SearchInterface
+import com.graphbrain.db._
+import scala.Some
+import com.graphbrain.nlp.GraphResponse
+import com.graphbrain.nlp.SearchResponse
+import com.graphbrain.nlp.HardcodedResponse
 
 class SentenceParser (storeName:String = "gb") {
 
@@ -22,7 +18,7 @@ class SentenceParser (storeName:String = "gb") {
   val disambigRegex = """(\()(.+?)(\))""".r
   val urlRegex = """([\d\w]+?:\/\/)?([\w\d\.\-]+)(\.\w+)(:\d{1,5})?(\/\S*)?""".r // See: http://stackoverflow.com/questions/8725312/javascript-regex-for-url-when-the-url-may-or-may-not-contain-http-and-www-words?lq=1
   val urlStrictRegex = """(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?""".r
-  val gbNode = TextNode.fromNsAndText(namespace="1", text="GraphBrain")
+  val gbNode = EntityNode.fromNsAndText(namespace="1", text="GraphBrain")
   val asInRel = ID.reltype_id("as in", 1)
   val rootRefWords = List("this", "it", "he", "she");
 
@@ -90,8 +86,8 @@ class SentenceParser (storeName:String = "gb") {
     (0.5, text)
 
   }
-  def specialNodeCases(inNodeText: String, root: Vertex = TextNode.fromNsAndText(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (Vertex, Option[(List[Vertex], Vertex)]) = {
-    if(inNodeText.toLowerCase.trim=="this" && root.id!=TextNode.fromNsAndText(namespace="", text="GBNoneGB").id) {
+  def specialNodeCases(inNodeText: String, root: Vertex = EntityNode.fromNsAndText(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (Vertex, Option[(List[Vertex], Vertex)]) = {
+    if(inNodeText.toLowerCase.trim=="this" && root.id!=EntityNode.fromNsAndText(namespace="", text="GBNoneGB").id) {
       return (root, None)
 
     }
@@ -104,7 +100,7 @@ class SentenceParser (storeName:String = "gb") {
     }
 
     root match {
-      case a: TextNode =>
+      case a: EntityNode =>
         if(a.text == inNodeText || a.text.toLowerCase.indexOf(inNodeText.toLowerCase)==0 || inNodeText.toLowerCase.indexOf(a.text.toLowerCase) == 0 || isRoot(inNodeText)>0) {
           return (a, None)
         }
@@ -129,7 +125,7 @@ class SentenceParser (storeName:String = "gb") {
 
   }
 
-  def hasOfTypeVertices(nodeTexts: List[String], relText: String, root: Vertex = TextNode.fromNsAndText(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[(Vertex, Option[(List[Vertex], Vertex)])], Vertex) = {
+  def hasOfTypeVertices(nodeTexts: List[String], relText: String, root: Vertex = EntityNode.fromNsAndText(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[(Vertex, Option[(List[Vertex], Vertex)])], Vertex) = {
     var nodes: List[(Vertex, Option[(List[Vertex], Vertex)])] = Nil
     val ownerText = nodeTexts(0)
     val subTypeText = nodeTexts(1)
@@ -159,7 +155,7 @@ class SentenceParser (storeName:String = "gb") {
       val pNodeGroup = getExistingInstanceOwnedByP(subTypeText, superTypeText, ownerText)
       val gNodeGroup = getExistingInstanceOwnedByG(superTypeText, ownerText)
       val ownerNode = pNodeGroup._3
-      nodes = (ownerNode, None) :: nodes;
+      nodes = (ownerNode, None) :: nodes
       val superTypeNode = gNodeGroup._2
       val superTypeSubNode = gNodeGroup._1
       val subTypeNode = pNodeGroup._1
@@ -168,50 +164,50 @@ class SentenceParser (storeName:String = "gb") {
       val superTypeVertices = (superTypeSubNode, Some(List(superTypeNode, ownerNode), instanceOwnedByRelType))
       nodes = superTypeVertices :: nodes
       val relationV = EdgeType(id=ID.reltype_id(relText), label = relText)
-      return (nodes.reverse, relationV)
+      (nodes.reverse, relationV)
     }
 
 
 
   }
 
-  def reparseGraphTexts(nodeTexts: List[String], relText: String, disambigs: List[(String, String)], root: Vertex = TextNode.fromNsAndText(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[(Vertex, Option[(List[Vertex], Vertex)])], Vertex) = {
+  def reparseGraphTexts(nodeTexts: List[String], relText: String, disambigs: List[(String, String)], root: Vertex = EntityNode.fromNsAndText(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): (List[(Vertex, Option[(List[Vertex], Vertex)])], Vertex) = {
    //println(relText)
-    var tempDisambs = disambigs;
+    var tempDisambs = disambigs
     if(hasHaveRelTypeRegex.findAllIn(relText).hasNext) {
       val newRelText = "has~of_type" //Just to transform into 3rd person form
-      return hasOfTypeVertices(nodeTexts, newRelText, root, user);
+      return hasOfTypeVertices(nodeTexts, newRelText, root, user)
     }
 
     var nodes: List[(Vertex, Option[(List[Vertex], Vertex)])] = Nil
 
     val sepRelations = """~""".r.split(relText)
-    var i = 0;
+    var i = 0
 
     var newRelation = ""
 
     for(nodeText <- nodeTexts) {
-      var d = "";
+      var d = ""
 
-      var dNode: Option[(List[Vertex], Vertex)] = None;
+      var dNode: Option[(List[Vertex], Vertex)] = None
 
       if(tempDisambs.length > 0){
         if(nodeText == tempDisambs.head._1) {
-          d = tempDisambs.head._2;
+          d = tempDisambs.head._2
           val disambigEdgeType = EdgeType(id = ID.reltype_id("as in"), label = "as in")
           dNode = Some(List(specialNodeCases(d, root, user)._1), disambigEdgeType)
 
-          tempDisambs = tempDisambs.tail;
+          tempDisambs = tempDisambs.tail
         }
       }
 
       if(nodeText.toLowerCase == "you" || nodeText.toUpperCase == "I") {
         if(nodeText.toLowerCase == "you") {
-          nodes = (gbNode, dNode) :: nodes;
+          nodes = (gbNode, dNode) :: nodes
         }
         else {
           user match {
-            case Some(u: UserNode) => nodes = (u, dNode) :: nodes;
+            case Some(u: UserNode) => nodes = (u, dNode) :: nodes
             case _ =>
           }
         }
@@ -266,12 +262,12 @@ class SentenceParser (storeName:String = "gb") {
     }
     val newRelText = newRelation.trim.slice(0, newRelation.length).trim
     var relationV = EdgeType(id = ID.reltype_id(newRelText), label = newRelText)
-    return (nodes.reverse, relationV)
+    (nodes.reverse, relationV)
 
   }
 
 
-  def parseSentenceGeneral(inSent: String, root: Vertex = TextNode.fromNsAndText(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): List[ResponseType] = {
+  def parseSentenceGeneral(inSent: String, root: Vertex = EntityNode.fromNsAndText(namespace="", text="GBNoneGB"), user: Option[UserNode]=None): List[ResponseType] = {
     var inSentence = inSent
 
     var responses : List[ResponseType] = List()
@@ -417,7 +413,7 @@ class SentenceParser (storeName:String = "gb") {
   val instanceOwnedByRelType = EdgeType(id = ID.reltype_id("instance_of~owned_by"))
 
 
-  def textToNodes(text:String, node: Vertex = TextNode.fromNsAndText(namespace="", text="GBNoneGB"), user:Option[Vertex]=None): List[(Vertex, Option[(List[Vertex], Vertex)])] = {
+  def textToNodes(text:String, node: Vertex = EntityNode.fromNsAndText(namespace="", text="GBNoneGB"), user:Option[Vertex]=None): List[(Vertex, Option[(List[Vertex], Vertex)])] = {
 
     var results: List[(Vertex, Option[(List[Vertex], Vertex)])] = Nil
 
@@ -450,7 +446,7 @@ class SentenceParser (storeName:String = "gb") {
         val ownedNodes = textToNode(ownerOwned._2)
         for(ownedNode <- ownedNodes){
           ownedNode match {
-            case o: TextNode => val ownedText = o.text
+            case o: EntityNode => val ownedText = o.text
               val accessoryVertices = (List(ownedNode, ownerNode), instanceOwnedByRelType)
               val newNode = getFirstFoundUserOwnedNode(ownedText, userName)
               results = (newNode, Some(accessoryVertices)) :: results
@@ -468,7 +464,7 @@ class SentenceParser (storeName:String = "gb") {
           for (ownedNode <- ownedNodes) {
 
             ownedNode match {
-              case o: TextNode => val ownedText = o.text
+              case o: EntityNode => val ownedText = o.text
                 val accessoryVertices = (List(ownedNode, ownerNode), instanceOwnedByRelType)
                 val newNode = getFirstFoundNode(ownedText, 2)
                 results = (newNode, Some(accessoryVertices)) :: results
@@ -481,7 +477,7 @@ class SentenceParser (storeName:String = "gb") {
       }
     }
     //println("Length results: " + results.length)
-    return results.reverse
+    results.reverse
 
   }
 
@@ -536,7 +532,7 @@ class SentenceParser (storeName:String = "gb") {
       for (participant <- participants) {
         val pNode = store.get(participant)
         pNode match {
-          case p: TextNode => if(p.text == supertypeText && p.id != subtypeID) {superType = p; score +=1;} else if(p.text == ownerText && p.id != subtypeID) {owner = p; score +=1;}
+          case p: EntityNode => if(p.text == supertypeText && p.id != subtypeID) {superType = p; score +=1;} else if(p.text == ownerText && p.id != subtypeID) {owner = p; score +=1;}
           case p: URLNode => if(p.url == supertypeText) {superType = p; score+=1} else if (p.url == ownerText) {owner = p; score +=1;}
           case u: UserNode => if(u.name == ownerText || u.username == ownerText) {owner = u; score+=1} else if(u.name == supertypeText || u.username == supertypeText) {superType = u; score +=1;}
           case _ =>
@@ -615,7 +611,7 @@ class SentenceParser (storeName:String = "gb") {
       URLNode.fromUrl(url = text, userId = "")
     }
     else {
-      TextNode.fromNsAndText(namespace = i.toString, text=text)
+      EntityNode.fromNsAndText(namespace = i.toString, text=text)
     }
 
   }
@@ -625,7 +621,7 @@ class SentenceParser (storeName:String = "gb") {
       URLNode.fromUrl(url = text, userId = "")
     }
     else {
-      TextNode.fromNsAndText(namespace = startCounter.toString, text=text)
+      EntityNode.fromNsAndText(namespace = startCounter.toString, text=text)
     }
 
   }
@@ -639,7 +635,7 @@ class SentenceParser (storeName:String = "gb") {
 
     }
     else {
-      TextNode.fromNsAndText(namespace = ns, text = text)
+      EntityNode.fromNsAndText(namespace = ns, text = text)
     }
   }
 
@@ -658,14 +654,14 @@ class SentenceParser (storeName:String = "gb") {
 
     }
     else {
-      TextNode.fromNsAndText(namespace = ns, text = text)
+      EntityNode.fromNsAndText(namespace = ns, text = text)
     }
 
   }
 
 
 
-  def textToNode(text:String, node: Vertex = TextNode.fromNsAndText(namespace="", text="GBNoneGB"), user:Option[Vertex]=None): List[Vertex] = {
+  def textToNode(text:String, node: Vertex = EntityNode.fromNsAndText(namespace="", text="GBNoneGB"), user:Option[Vertex]=None): List[Vertex] = {
     var userName = ""
     var results: List[Vertex] = List()
     user match {
@@ -715,12 +711,12 @@ class SentenceParser (storeName:String = "gb") {
     var i = 1
     while(nodeExists(ID.text_id(text, i)))
     {
-      results = TextNode.fromNsAndText(namespace=i.toString, text=text) :: results
-      i += 1;
+      results = EntityNode.fromNsAndText(namespace=i.toString, text=text) :: results
+      i += 1
 
     }
     if(i==1) {
-      results = TextNode.fromNsAndText(namespace="1", text = text) :: results
+      results = EntityNode.fromNsAndText(namespace="1", text = text) :: results
     }
     results.reverse
   }
@@ -729,7 +725,7 @@ class SentenceParser (storeName:String = "gb") {
   /**
   Returns lemma node and pos relationship type (linking the two edge types).
   */
-  def relTypeLemmaAndPOS(relType: EdgeType, sentence: String): (EdgeType, (TextNode, EdgeType)) = {
+  def relTypeLemmaAndPOS(relType: EdgeType, sentence: String): (EdgeType, (EntityNode, EdgeType)) = {
 
     /*if(relType.label == "is a"||relType.label == "is an") {
       val isLemmaNode = TextNode(id = ID.text_id("be", 1), text = "be")
@@ -766,7 +762,7 @@ class SentenceParser (storeName:String = "gb") {
     poslabel = poslabel.slice(0, poslabel.length-2).trim
     lemma = lemma.slice(0, lemma.length-2).trim
 
-    val lemmaNode = TextNode.fromNsAndText(namespace="1", text=lemma)
+    val lemmaNode = EntityNode.fromNsAndText(namespace="1", text=lemma)
     val lemmaRelType = EdgeType(id = ID.reltype_id(poslabel), label = poslabel)
     (relType, (lemmaNode, lemmaRelType))
 
@@ -1063,7 +1059,7 @@ If returnAll is false, only return the ones that satisfy the root as node constr
   	var rootParses: List[(List[String], String)] = List()
   	var optionalParses: List[(List[String], String)] = List()
   	rootNode match {
-  		case a: TextNode => val rootText = a.text.r
+  		case a: EntityNode => val rootText = a.text.r
   		for (g <- possibleParses) {
   			g match {
   				case (nodeTexts: List[String], edgeText: String) =>
@@ -1116,7 +1112,7 @@ def removeDeterminers(possibleParses: List[(List[String], String)], rootNode: Ve
     for (g <- possibleParses) {
       g match {
         case (nodeTexts: List[String], edgeText: String) =>
-        var newNodes = nodeTexts.toArray
+        val newNodes = nodeTexts.toArray
         for(i <- 0 to nodeTexts.length-1) {
           val nodeText = nodeTexts(i)
           val posTagged = lemmatiser.posTag(nodeText)
@@ -1125,7 +1121,7 @@ def removeDeterminers(possibleParses: List[(List[String], String)], rootNode: Ve
           {
             tag match{
               case (a,b) =>
-                if(b=="DT" && done==false) {
+                if(b=="DT" && !done) {
 
                   newNodes(i)=nodeText.replace(a+" ", "").trim.replace("`", "").replace("'", "")
                   val newParse = (newNodes.toList, edgeText)
@@ -1141,30 +1137,29 @@ def removeDeterminers(possibleParses: List[(List[String], String)], rootNode: Ve
 
     }
     if(returnAll) {
-
-     return removedParses.reverse++optionalParses.reverse
+      removedParses.reverse++optionalParses.reverse
     }
     else {
-      return removedParses.reverse
+      removedParses.reverse
     }
 
 }
 
 
-def getOrCreate(id:String, user:Option[Vertex] = None, textString:String = "", root:Vertex = TextNode.fromNsAndText("", "")):Vertex={
+def getOrCreate(id:String, user:Option[Vertex] = None, textString:String = "", root:Vertex = EntityNode.fromNsAndText("", "")):Vertex={
   if(id != "") {
     try{
       store.get(id)
     }
     catch{
       case e: Throwable => val newNode = textToNode(textString, root, user)(0)
-      //TextNode(id=ID.usergenerated_id(userID, textString), text=textString);
+      //EntityNode(id=ID.usergenerated_id(userID, textString), text=textString);
       return newNode
     }
   }
   else {
     val newNode = textToNode(textString, root, user)(0)
-    return newNode
+    newNode
   }
 
 }
@@ -1194,7 +1189,7 @@ object SentenceParser {
   def main(args: Array[String]) {
   	  val sentenceParser = new SentenceParser()
 
-      val rootNode = TextNode.fromNsAndText(namespace="usergenerated/chihchun_chen", text="toad")
+      val rootNode = EntityNode.fromNsAndText(namespace="usergenerated/chihchun_chen", text="toad")
       val userNode = UserNode.create(username="chihchun_chen", name="Chih-Chun Chen", email="chihchun@graphbrain.com", password="chichun")
   	  val sentence = args.reduceLeft((w1:String, w2:String) => w1 + " " + w2)
       println("From command line with general: " + sentence)
@@ -1209,16 +1204,16 @@ object SentenceParser {
                     for(node <- n) {
 
                       node match {
-                      case (nd: TextNode, None) => println("Node: " + nd.id)
+                      case (nd: EntityNode, None) => println("Node: " + nd.id)
                       case (nd: UserNode, None) => println("Node: " + nd.id)
                       case (nd: URLNode, None) => println("Node: " + nd.id)
-                      case (nd: TextNode, Some(aux: (List[Vertex], Vertex))) =>
+                      case (nd: EntityNode, Some(aux: (List[Vertex], Vertex))) =>
                         println("Node with aux: " + nd.id)
                         aux match {
                           case (a:List[Vertex], ed:EdgeType) =>
                             for(aNode <- a) {
                               a match {
-                                case List(tn: TextNode) => println("auxNode: " + tn.id)
+                                case List(tn: EntityNode) => println("auxNode: " + tn.id)
                                 case List(un: UserNode) => println("auxNode: " + un.id)
                                 case _ =>
                               }
@@ -1234,7 +1229,7 @@ object SentenceParser {
                           case (a:List[Vertex], ed:EdgeType) =>
                             for(aNode <- a) {
                               a match {
-                                case List(tn: TextNode) => println("auxNode: " + tn.id)
+                                case List(tn: EntityNode) => println("auxNode: " + tn.id)
                                 case List(un: UserNode) => println("auxNode: " + un.id)
                                 case _ =>
                               }
@@ -1250,7 +1245,7 @@ object SentenceParser {
                           case (a:List[Vertex], ed:EdgeType) =>
                             for(aNode <- a) {
                               a match {
-                                case List(tn: TextNode) => println("auxNode: " + tn.id)
+                                case List(tn: EntityNode) => println("auxNode: " + tn.id)
                                 case List(un: UserNode) => println("auxNode: " + un.id)
                                 case _ =>
                               }

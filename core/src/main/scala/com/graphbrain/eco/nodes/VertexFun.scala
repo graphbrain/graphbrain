@@ -2,7 +2,7 @@ package com.graphbrain.eco.nodes
 
 import com.graphbrain.eco.NodeType.NodeType
 import com.graphbrain.eco.{Contexts, NodeType}
-import com.graphbrain.db.{ID, TextNode}
+import com.graphbrain.db.{ID, EntityNode}
 
 class VertexFun(val fun: VertexFun.VertexFun, params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
 
@@ -65,8 +65,8 @@ class VertexFun(val fun: VertexFun.VertexFun, params: Array[ProgNode], lastToken
 
         for (c <- ctxts.ctxts) {
           p.ntype match {
-            case NodeType.Words => c.setRetVertex(this, TextNode.id("1", c.getRetWords(p).text))
-            case NodeType.String => c.setRetVertex(this, TextNode.id("1", c.getRetString(p)))
+            case NodeType.Words => c.setRetVertex(this, EntityNode.id("1", c.getRetWords(p).text))
+            case NodeType.String => c.setRetVertex(this, EntityNode.id("1", c.getRetString(p)))
             case _ => "" // error!
           }
         }

@@ -4,7 +4,7 @@ import unfiltered.request._
 import unfiltered.response._
 import unfiltered.netty._
 
-import com.graphbrain.db.{TextNode, EdgeType, SearchInterface, Edge}
+import com.graphbrain.db.{EntityNode, EdgeType, SearchInterface, Edge}
 import com.graphbrain.utils.JSONGen
 
 
@@ -51,7 +51,7 @@ object DisambigPlan extends cycle.Plan with cycle.SynchronousExecution with Serv
       val si = new SearchInterface(WebServer.graph)
       val results = si.query(text.toLowerCase)
       val number = results.size + 1
-      val newNode = TextNode.fromNsAndText(number.toString, text)
+      val newNode = EntityNode.fromNsAndText(number.toString, text)
 
       // create revised edge
       val participantNodes = (for (pid <- participantIds) yield WebServer.graph.get(pid)).toArray

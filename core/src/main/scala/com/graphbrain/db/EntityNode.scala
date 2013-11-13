@@ -1,6 +1,6 @@
 package com.graphbrain.db
 
-case class TextNode(override val id: String,
+case class EntityNode(override val id: String,
                     override val degree: Int = 0,
                     override val ts: Long = -1)
   extends Vertex(id, degree, ts) {
@@ -28,13 +28,13 @@ case class TextNode(override val id: String,
   }
 }
 
-object TextNode {
+object EntityNode {
   def fromNsAndText(namespace: String,
     text: String,
     degree: Int = 0,
     ts: Long = -1) = {
 
-    TextNode(id(namespace, text), degree, ts)
+    EntityNode(id(namespace, text), degree, ts)
   }
 
   def id(namespace: String, text: String) =

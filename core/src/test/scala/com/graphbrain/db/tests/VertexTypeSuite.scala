@@ -3,21 +3,21 @@ package com.graphbrain.db.tests
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FunSuite
-import com.graphbrain.db.{Edge, EdgeType, VertexType, TextNode}
+import com.graphbrain.db.{Edge, EdgeType, VertexType, EntityNode}
 
 @RunWith(classOf[JUnitRunner])
 class VertexTypeSuite extends FunSuite {
 
   test("global text node type") {
-    val tn = TextNode("1/hank_hill", 7, 777)
+    val tn = EntityNode("1/hank_hill", 7, 777)
     val vtype = VertexType.getType(tn.id)
-    assert(vtype === VertexType.Text)
+    assert(vtype === VertexType.Entity)
   }
 
   test("user text node type") {
-    val tn = TextNode("user/telmo/1/hank_hill", 7, 777)
+    val tn = EntityNode("user/telmo/1/hank_hill", 7, 777)
     val vtype = VertexType.getType(tn.id)
-    assert(vtype === VertexType.Text)
+    assert(vtype === VertexType.Entity)
   }
 
   test("global edge type type") {

@@ -18,8 +18,8 @@ class LevelDbBackendSuite extends FunSuite {
   }
 
   test("neighbours") {
-    val hank = TextNode("1/hank_hill")
-    val texas = TextNode("1/texas")
+    val hank = EntityNode("1/hank_hill")
+    val texas = EntityNode("1/texas")
     val livesIn = EdgeType("rtype/1/lives_in", "lives in")
     back.put(hank)
     back.put(texas)
