@@ -54,16 +54,16 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 		val titleSP = removeWikiDisambig(decodedTitle)
 		
 		var i = 1
-		val wikiNode = store.put(TextNode.fromNsAndText(namespace = "wikipedia", text = URLDecoder.decode(wikiTitle, "UTF-8")))
+		val wikiNode = store.put(EntityNode.fromNsAndText(namespace = "wikipedia", text = URLDecoder.decode(wikiTitle, "UTF-8")))
 
 		while(store.exists(ID.text_id(titleSP, i.toString))) {
 			val existingNode = store.get(ID.text_id(titleSP, i.toString))
 			val disAmb = """\(.*?\)""".r.findAllIn(decodedTitle)
 			existingNode match {
-				case e: TextNode =>
+				case e: EntityNode =>
 				  if(disAmb.hasNext) {
 				  	val da = disAmb.next().replace("(", "").replace(")", "").trim
-				  	val daNode = store.put(TextNode.fromNsAndText(namespace = "1", text = da))
+				  	val daNode = store.put(EntityNode.fromNsAndText(namespace = "1", text = da))
 				  	val daID = daNode.id
 				  	val daRel = Edge.fromParticipants(Array(asInRel, e.id, daID))
 				  	if(e.text == titleSP.toLowerCase) {
@@ -85,7 +85,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 			}
 			i += 1
 		}
-		val newNode = store.put(TextNode.fromNsAndText(namespace=i.toString, text=titleSP))
+		val newNode = store.put(EntityNode.fromNsAndText(namespace=i.toString, text=titleSP))
 		println(store.getOrInsert(newNode, HGDBID.userIdFromUsername(username)).id)
 
 		
@@ -104,7 +104,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 		
 		if(disAmbA.hasNext) {
 			val da = disAmbA.next().replace("(", "").replace(")", "").trim
-			val daNode = TextNode.fromNsAndText(namespace="1", text=da)
+			val daNode = EntityNode.fromNsAndText(namespace="1", text=da)
       store.put(daNode)
 			println(store.getOrInsert(daNode, HGDBID.userIdFromUsername(username)).id + ", da: " +  daNode.text)
 			store.connectVertices(Array[String](asInRel, newNode.id, daNode.id), HGDBID.userIdFromUsername(username))
@@ -156,7 +156,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
   def writeNounProjectImageNode(imagename:String, url:String, image:String="", contributorName:String="", contributorURL:String=""): Unit = {
   	try {
   		//Tries to find an existing Wiki node.
-			val wikinode = store.put(TextNode.fromNsAndText(namespace="wikipedia", text=imagename))
+			val wikinode = store.put(EntityNode.fromNsAndText(namespace="wikipedia", text=imagename))
 
   		//val sourceNode=store.getSourceNode(ID.source_id(source))
   		val urlNode = store.put(URLNode(url))
@@ -171,12 +171,12 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 			}
 			image match{
 				case a:String => 
-					val imageLocal = store.put(TextNode.fromNsAndText(namespace=ID.nounproject_ns(), text=a))
+					val imageLocal = store.put(EntityNode.fromNsAndText(namespace=ID.nounproject_ns(), text=a))
 					store.getOrInsert(imageLocal, HGDBID.userIdFromUsername(username))
 					store.connectVertices(Array[String]("image_page", urlNode.id,imageLocal.id))
 					//store.connectVertices(Array[String]("source", sourceNode.id, imageLocal.id))
 					//val attribution = imagename + NounProjectCrawler.attributionText + contributorName
-					val contributorNode = store.put(TextNode.fromNsAndText(namespace=ID.nounproject_ns(), text=contributorName))
+					val contributorNode = store.put(EntityNode.fromNsAndText(namespace=ID.nounproject_ns(), text=contributorName))
 					val contURLNode = store.put(URLNode(contributorURL))
 
 					store.getOrInsert(contributorNode, HGDBID.userIdFromUsername(username))
@@ -190,7 +190,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
 						store.connectVertices(Array[String]("image_of", imageLocal.id, wikinode.id))
 					}
 					else {
-						val newNode = store.put(TextNode.fromNsAndText(namespace="noun", text=imagename))
+						val newNode = store.put(EntityNode.fromNsAndText(namespace="noun", text=imagename))
 						store.getOrInsert(newNode, HGDBID.userIdFromUsername(username))
 						store.connectVertices(Array[String]("image_of", imageLocal.id, newNode.id))
 					}
@@ -201,7 +201,7 @@ class OutputDBWriter(storeName:String, source:String, username:String, name:Stri
   	def addWikiPageToDB(pageTitle:String):Unit=
   	{
     	val pageURL = Wikipedia.wikipediaBaseURL+pageTitle.trim.replace(" ", "_")
-    	val pageNode = store.put(TextNode.fromNsAndText("wikipedia", pageTitle))
+    	val pageNode = store.put(EntityNode.fromNsAndText("wikipedia", pageTitle))
     	writeURLNode(pageNode, pageURL)
   	}
 

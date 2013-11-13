@@ -41,7 +41,7 @@ object Vertex {
 
   def createFromId(id: String) = {
     VertexType.getType(id) match {
-      case VertexType.Text => TextNode(id)
+      case VertexType.Entity => EntityNode(id)
       case VertexType.Edge => Edge(id)
       case VertexType.EdgeType => EdgeType(id)
       case VertexType.URL => URLNode(id)

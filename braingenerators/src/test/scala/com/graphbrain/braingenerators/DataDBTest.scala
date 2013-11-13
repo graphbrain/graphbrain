@@ -3,7 +3,7 @@ package com.graphbrain.braingenerators
 
 import com.graphbrain.db.Graph
 import com.graphbrain.db.SimpleCaching
-import com.graphbrain.db.TextNode
+import com.graphbrain.db.EntityNode
 import com.graphbrain.db.Edge
 
 

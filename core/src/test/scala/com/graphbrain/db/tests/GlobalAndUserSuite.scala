@@ -3,19 +3,19 @@ package com.graphbrain.db.tests
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FunSuite
-import com.graphbrain.db.{Edge, EdgeType, TextNode}
+import com.graphbrain.db.{EntityNode, Edge, EdgeType}
 
 @RunWith(classOf[JUnitRunner])
 class GlobalAndUserSuite extends FunSuite {
 
   test("global text node to user") {
-    val tn = TextNode("1/hank_hill", 7, 777)
+    val tn = EntityNode("1/hank_hill", 7, 777)
     val utn = tn.toUser("user/telmo")
     assert(utn.id === "user/telmo/1/hank_hill")
   }
 
   test("user text node to global") {
-    val tn = TextNode("user/telmo/1/hank_hill", 7, 777)
+    val tn = EntityNode("user/telmo/1/hank_hill", 7, 777)
     val gtn = tn.toGlobal
     assert(gtn.id === "1/hank_hill")
   }

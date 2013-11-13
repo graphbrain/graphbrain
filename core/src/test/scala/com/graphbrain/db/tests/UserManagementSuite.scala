@@ -3,7 +3,7 @@ package com.graphbrain.db.tests
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FunSuite
-import com.graphbrain.db.{UserManagement, TextNode, Graph}
+import com.graphbrain.db.{UserManagement, Graph}
 
 @RunWith(classOf[JUnitRunner])
 class UserManagementSuite extends FunSuite {
@@ -11,7 +11,7 @@ class UserManagementSuite extends FunSuite {
   val g = new Graph() with UserManagement
 
   test("create user") {
-    val usr = g.createUser(username="turing",
+    g.createUser(username="turing",
                            name="Alan Turing",
                            email="turing@graphbrain.com",
                            password="test123",
