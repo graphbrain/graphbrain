@@ -16,7 +16,7 @@
     lineNumbers: true,
     styleActiveLine: true,
     matchBrackets: true,
-    mode: "scheme"
+    mode: "eco"
   });
 </script>
 

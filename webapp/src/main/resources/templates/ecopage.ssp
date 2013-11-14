@@ -24,7 +24,7 @@
     </style>
 
     <script src="/js/codemirror/codemirror.js"></script>
-    <script src="/js/codemirror/scheme.js"></script>
+    <script src="/js/codemirror/eco.js"></script>
     <script src="/js/codemirror/active-line.js"></script>
     <script src="/js/codemirror/matchbrackets.js"></script>
 
