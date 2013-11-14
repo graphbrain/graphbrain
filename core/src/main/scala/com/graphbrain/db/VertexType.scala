@@ -18,12 +18,12 @@ object VertexType extends Enumeration {
 				User
 			else if (parts(2) == "url")
 				URL
-      else if (parts(2) == "rtype")
+      else if (parts(2) == "r")
         EdgeType
       else if (parts(2) == "neg")
         if (nparts <= 4)
           Entity
-        else if (parts(3) == "rtype")
+        else if (parts(3) == "r")
           EdgeType
         else
           Entity
@@ -34,7 +34,7 @@ object VertexType extends Enumeration {
           Entity
 			else
         Entity
-		else if (parts(0) == "rtype")
+		else if (parts(0) == "r")
 			if (nparts == 1)
         Entity
 			else
@@ -42,7 +42,7 @@ object VertexType extends Enumeration {
     else if (parts(0) == "neg")
       if (nparts <= 2)
         Entity
-      else if (parts(1) == "rtype")
+      else if (parts(1) == "r")
         EdgeType
       else
         Entity

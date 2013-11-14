@@ -45,18 +45,18 @@ object VisualGraph {
 
   private def hyper2edge(edge: Edge, rootId: String): SimpleEdge = {
     if (edge.participantIds.length > 2) {
-      if (edge.edgeType == "rtype/1/instance_of~owned_by") {
+      if (edge.edgeType == "r/1/instance_of~owned_by") {
         if (edge.participantIds(0) == rootId) {
-          SimpleEdge("rtype/1/has", edge.participantIds(2), rootId, edge)
+          SimpleEdge("r/1/has", edge.participantIds(2), rootId, edge)
         }
         else if (edge.participantIds(2) == rootId) {
-          SimpleEdge("rtype/1/has", rootId, edge.participantIds(0), edge)
+          SimpleEdge("r/1/has", rootId, edge.participantIds(0), edge)
         }
         else {
           null
         }
       }
-      if (edge.edgeType == "rtype/1/has~of_type") {
+      if (edge.edgeType == "r/1/has~of_type") {
         val edgeType = "has " + ID.lastPart(edge.participantIds(2))
         SimpleEdge(edgeType, edge.participantIds(0), edge.participantIds(1), edge)
       }
