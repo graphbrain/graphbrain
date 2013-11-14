@@ -94,7 +94,7 @@ class Graph(name: String="dbnode") extends Logging {
       decDegree(id)
 
   def description(vertex: Vertex): String = {
-    val asIn = edges(Array[String]("rtype/1/as_in", vertex.id, "*"))
+    val asIn = edges(Array[String]("r/1/as_in", vertex.id, "*"))
 
     vertex.toString + (if (asIn.size == 0) {
       ""

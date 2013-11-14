@@ -10,17 +10,17 @@ class LevelDbBackendSuite extends FunSuite {
   val back = new LevelDbBackend()
 
   test("write edge") {
-    val e = Edge("rtype/1/lives_in user/telmo 1/berlin")
+    val e = Edge("r/1/lives_in user/telmo 1/berlin")
     back.put(e)
 
-    val e2 = back.get("rtype/1/lives_in user/telmo 1/berlin", VertexType.Edge)
+    val e2 = back.get("r/1/lives_in user/telmo 1/berlin", VertexType.Edge)
     assert(e.id === e2.id)
   }
 
   test("neighbours") {
     val hank = EntityNode("1/hank_hill")
     val texas = EntityNode("1/texas")
-    val livesIn = EdgeType("rtype/1/lives_in", "lives in")
+    val livesIn = EdgeType("r/1/lives_in", "lives in")
     back.put(hank)
     back.put(texas)
     back.put(livesIn)
@@ -28,6 +28,6 @@ class LevelDbBackendSuite extends FunSuite {
     back.put(e)
 
     val nb = back.edges(hank)
-    assert(nb.head.id === "rtype/1/lives_in 1/hank_hill 1/texas")
+    assert(nb.head.id === "r/1/lives_in 1/hank_hill 1/texas")
   }
 }

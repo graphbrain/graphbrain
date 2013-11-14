@@ -12,16 +12,16 @@ class EdgeSuite extends FunSuite {
   test("write edge") {
     val telmo = EntityNode("1/telmo_menezes")
     val berlin = EntityNode("1/berlin")
-    val livesIn = EdgeType("rtype/1/lives_in", "lives in")
+    val livesIn = EdgeType("r/1/lives_in", "lives in")
     g.put(telmo)
     g.put(berlin)
     g.put(livesIn)
-    val e = Edge("rtype/1/lives_in 1/telmo_menezes 1/berlin")
+    val e = Edge("r/1/lives_in 1/telmo_menezes 1/berlin")
     g.put(e)
   }
 
   test("neighbours") {
-    val e = Edge("rtype/1/lives_in 1/telmo_menezes 1/berlin")
+    val e = Edge("r/1/lives_in 1/telmo_menezes 1/berlin")
     g.put(e)
     g.edges("1/telmo_menezes")
   }
