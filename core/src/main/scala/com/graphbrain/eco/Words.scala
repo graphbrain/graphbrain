@@ -2,7 +2,7 @@ package com.graphbrain.eco
 
 import com.graphbrain.nlp.Lemmatiser
 
-class Words(val words: Array[Word]=Array[Word]()) {
+class Words(val words: Array[Word]=Array[Word](), val pos: Int=0) {
   def text = words.map(_.word).reduceLeft(_ + " " + _)
 
   def count = words.size

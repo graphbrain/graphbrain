@@ -67,7 +67,7 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
         val subPhrase = ctxts.sentence.words.slice(start, end)
 
         params(i) match {
-          case v: VarNode => newContext.setWords(v.name, new Words(subPhrase))
+          case v: VarNode => newContext.setWords(v.name, new Words(subPhrase, start))
           case s: StringNode => if (s.value != subStr) matches = false // should bail out
           case _ => // error
         }
