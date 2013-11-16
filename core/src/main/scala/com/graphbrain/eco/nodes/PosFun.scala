@@ -12,8 +12,8 @@ class PosFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
     val p = params(0)
     p.wordsValue(ctxts)
     for (c <- ctxts.ctxts) {
-      val pos = c.getRetWords(p).pos
-      c.setRetNumber(this, pos)
+      val len = c.getRetWords(p).count
+      c.setRetNumber(this, len)
     }
   }
 }

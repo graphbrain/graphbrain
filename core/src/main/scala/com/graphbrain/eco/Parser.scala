@@ -68,6 +68,7 @@ class Parser(val input: String) {
       case "filter-max" => parseFilter(FilterFun.FilterMax, pos + 1)
       case "len" => parseLenFun(pos + 1)
       case "pos" => parsePosFun(pos + 1)
+      case "+" => parseSum(pos + 1)
       case s: String => parseDummy(s, pos + 1)
     }
   }
@@ -306,6 +307,16 @@ class Parser(val input: String) {
       new PosFun(Array(p1), p1.lastTokenPos + 1)
     else
       null // error
+  }
+
+  private def parseSum(pos: Int): ProgNode = {
+    val params = parseParamsList(pos).toArray
+    val lastParamsTokenPos = if (params.size == 0) pos else params.last.lastTokenPos
+
+    if (!matchClosingPar(lastParamsTokenPos + 1))
+      return null // error
+
+    new SumFun(params, lastParamsTokenPos + 1)
   }
 }
 

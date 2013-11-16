@@ -7,6 +7,9 @@ class Words(val words: Array[Word]=Array[Word](), val pos: Int=0) {
 
   def count = words.size
 
+  def +(operand: Words): Words =
+    new Words(words ++ operand.words, 0)
+
   override def toString =
     if (words.length > 0) words.map(_.toString).reduceLeft(_ + " " + _) else ""
 }
