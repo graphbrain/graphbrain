@@ -69,6 +69,7 @@ class Parser(val input: String) {
       case "len" => parseLenFun(pos + 1)
       case "pos" => parsePosFun(pos + 1)
       case "+" => parseSum(pos + 1)
+      case "ends-with" => parseEndsWith(pos + 1)
       case s: String => parseDummy(s, pos + 1)
     }
   }
@@ -317,6 +318,16 @@ class Parser(val input: String) {
       return null // error
 
     new SumFun(params, lastParamsTokenPos + 1)
+  }
+
+  private def parseEndsWith(pos: Int): ProgNode = {
+    val p1 = parse(pos)
+    val p2 = parse(p1.lastTokenPos + 1)
+
+    if (matchClosingPar(p2.lastTokenPos + 1))
+      new WordsFun(WordsFun.EndsWith, Array(p1, p2), p2.lastTokenPos + 1)
+    else
+      null // error
   }
 }
 
