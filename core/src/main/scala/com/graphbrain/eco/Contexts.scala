@@ -5,8 +5,10 @@ import com.graphbrain.eco.nodes.RuleNode
 
 class Contexts(val rule: RuleNode,
                val prog: Prog,
-               val sentence: Words,
+               inSentence: Words,
                val depth: Integer) {
+
+  val sentence = inSentence.removeFullStop()
 
   val ctxts = mutable.ListBuffer[Context]()
 
