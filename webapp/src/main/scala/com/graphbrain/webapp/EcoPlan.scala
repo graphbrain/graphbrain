@@ -35,6 +35,7 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
       val t = new Text(text)
 
       val p = Prog.fromString(getCode)
+      //println(p)
 
       for (s <- t.sentences) {
         val ctxtsList = p.wv(s, 0)
