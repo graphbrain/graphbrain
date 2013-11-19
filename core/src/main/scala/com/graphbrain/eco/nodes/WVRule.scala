@@ -2,20 +2,28 @@ package com.graphbrain.eco.nodes
 
 import com.graphbrain.eco.{Contexts, NodeType}
 
-class WVRule(name: String, params: Array[ProgNode], lastTokenPos: Int= -1)
-  extends RuleNode(name, params, lastTokenPos) {
+class WVRule(params: Array[ProgNode], lastTokenPos: Int= -1)
+  extends RuleNode(params, lastTokenPos) {
 
   override val label = "wv"
 
   override def ntype = NodeType.Boolean
 
   override def vertexValue(ctxts: Contexts) = {
+    // eval pattern
     params(0).booleanValue(ctxts)
-    params(1).vertexValue(ctxts)
+
+    println("???")
+    println(params(0))
+    println(ctxts)
+    for (c <- ctxts.ctxts) println(c)
+
+    // eval conditions
+    params(1).booleanValue(ctxts)
+    // eval return value
+    params(2).vertexValue(ctxts)
 
     for (c <- ctxts.ctxts)
-      c.setRetVertex(this, c.getRetVertex(params(1)))
+      c.setRetVertex(this, c.getRetVertex(params(2)))
   }
-
-  override protected def typeError() = error("the first part of a rule must be a boolean")
 }

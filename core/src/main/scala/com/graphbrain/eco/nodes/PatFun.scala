@@ -38,12 +38,6 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
   }
 
   override def booleanValue(ctxts: Contexts): Unit = {
-    if (ctxts.ctxts.size == 0) return
-
-    // remove all existing contexts
-    for (c <- ctxts.ctxts)
-      c.setRetBoolean(this, value = false)
-
     val words = ctxts.sentence.words.length
     val count = params.length
 
@@ -52,11 +46,8 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
     val pointers = new Array[Int](count)
     pointers(0) = -1
 
-    var patPos = 0
     while(stepPointers(pointers, words)) {
       val newContext = new Context(ctxts)
-
-      newContext.setNumber("_pat-pos", patPos)
 
       var matches = true
       for (i <- 0 until count) {
@@ -74,18 +65,11 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
       }
 
       if (matches) {
-        for (c <- ctxts.ctxts) {
-          val forkedCtxt = c.clone()
-          forkedCtxt.merge(newContext)
-          ctxts.addContext(forkedCtxt)
-          forkedCtxt.setRetBoolean(this, value = true)
-        }
+        ctxts.addContext(newContext)
+        newContext.setRetBoolean(this, value = true)
       }
-      patPos += 1
     }
 
     ctxts.applyChanges()
   }
-
-  override protected def typeError() = error("parameters must be variables or strings")
 }
