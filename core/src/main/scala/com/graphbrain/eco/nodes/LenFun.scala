@@ -12,7 +12,7 @@ class LenFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
     val p = params(0)
     p.wordsValue(ctxts)
     for (c <- ctxts.ctxts) {
-      val len = c.getRetWords(p).count
+      val len = c.getRetWords(p).length
       c.setRetNumber(this, len)
     }
   }
