@@ -68,43 +68,43 @@ class NlpFun(val funType: NlpFunType, params: Array[ProgNode], lastTokenPos: Int
 
       funType match {
         case NlpFunType.IS_POS => {
-          c.setRetBoolean(this, if (words.count != 1)
+          c.setRetBoolean(this, if (words.length != 1)
             false
           else
             matchPoses(words, pre = false, c))
         }
         case NlpFunType.IS_POSPRE => {
-          c.setRetBoolean(this, if (words.count != 1)
+          c.setRetBoolean(this, if (words.length != 1)
             false
           else
             matchPoses(words, pre = true, c))
         }
         case NlpFunType.ARE_POS => {
-          c.setRetBoolean(this, if (words.count == 0)
+          c.setRetBoolean(this, if (words.length == 0)
             false
           else
             matchPoses(words, pre = false, c))
         }
         case NlpFunType.ARE_POSPRE => {
-          c.setRetBoolean(this, if (words.count == 0)
+          c.setRetBoolean(this, if (words.length == 0)
             false
           else
             matchPoses(words, pre = true, c))
         }
         case NlpFunType.CONTAINS_POS => {
-          c.setRetBoolean(this, if (words.count == 0)
+          c.setRetBoolean(this, if (words.length == 0)
             false
           else
             containsPoses(words, pre = false, c))
         }
         case NlpFunType.CONTAINS_POSPRE => {
-          c.setRetBoolean(this, if (words.count == 0)
+          c.setRetBoolean(this, if (words.length == 0)
             false
           else
             containsPoses(words, pre = true, c))
         }
         case NlpFunType.IS_LEMMA => {
-          c.setRetBoolean(this, if (words.count != 1)
+          c.setRetBoolean(this, if (words.length != 1)
             false
           else
             words.words(0).lemma == c.getRetString(params(1)))

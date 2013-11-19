@@ -5,7 +5,7 @@ import com.graphbrain.nlp.Lemmatiser
 class Words(val words: Array[Word]=Array[Word](), val pos: Int=0) {
   def text = words.map(_.word).reduceLeft(_ + " " + _)
 
-  def count = words.size
+  def length = words.size
 
   def +(operand: Words): Words =
     new Words(words ++ operand.words)
