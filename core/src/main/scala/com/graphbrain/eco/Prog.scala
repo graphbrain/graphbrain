@@ -14,7 +14,6 @@ class Prog(val exprs: List[ProgNode]=List[ProgNode]()) {
     for (e <- exprs) e match {
       case wv: WVRule => {
         val ctxts = Contexts(wv, this, w, depth)
-        ctxts.init(caller)
         wv.vertexValue(ctxts)
         if (ctxts.ctxts.size > 0) {
           ctxtsList ::= ctxts
@@ -33,7 +32,6 @@ class Prog(val exprs: List[ProgNode]=List[ProgNode]()) {
     for (e <- exprs) e match {
       case ww: WWRule => {
         val ctxts = Contexts(ww, this, w, depth)
-        ctxts.init(caller)
         ww.wordsValue(ctxts)
         if (ctxts.ctxts.size > 0) {
           ctxtsList ::= ctxts

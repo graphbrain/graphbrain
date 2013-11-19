@@ -155,12 +155,17 @@ class Context(val parent: Contexts,
 
   override def toString = {
     val sb = new mutable.StringBuilder()
-    sb.append("context:")
+    sb.append("context: ")
     for (v <- stringVars) sb.append(v._1 + " = " + v._2)
+    sb.append("; ")
     for (v <- numberVars) sb.append(v._1 + " = " + v._2)
+    sb.append("; ")
     for (v <- booleanVars) sb.append(v._1 + " = " + v._2)
+    sb.append("; ")
     for (v <- wordsVars) sb.append(v._1 + " = " + v._2)
+    sb.append("; ")
     for (v <- vertexVars) sb.append(v._1 + " = " + v._2)
+    sb.append("; ")
     sb.toString()
   }
 }
