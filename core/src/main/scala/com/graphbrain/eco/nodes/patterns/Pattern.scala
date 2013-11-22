@@ -18,7 +18,7 @@ class Pattern(val elems: Array[PatternElem]) {
   }
 
   private def matchSentence(sentence: Words, pos: Int): Unit = {
-    println("+" + pos)
+    //println("+" + pos)
 
     elems(pos).fixed = true
 
@@ -26,10 +26,10 @@ class Pattern(val elems: Array[PatternElem]) {
     while (elems(pos).next(sentence)) {
       if (pos == elems.length - 1) {
         // match found
-        println(this)
+        println("\n" + this)
       }
       else {
-        println(elems(pos))
+        //println(elems(pos))
         matchSentence(sentence, pos + 1)
       }
     }
@@ -43,10 +43,12 @@ class Pattern(val elems: Array[PatternElem]) {
 object Pattern {
   def main(args: Array[String]) = {
 
-    val sentence = Words.fromString("Telmo likes chocolate.")
+    val sentence = Words.fromString("Telmo likes eating chocolate.")
+    println(sentence)
 
     val a = new VarPatternElem("a")
     val v = new VarPatternElem("v", Array("V"))
+    val s = new StrPatternElem("likes")
     val c = new VarPatternElem("c")
 
     val pattern = new Pattern(Array(a, v, c))

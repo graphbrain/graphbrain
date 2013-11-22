@@ -13,7 +13,13 @@ class VarPatternElem(val name: String,
     if (possiblePOS.length == 0)
       return true
 
-    possiblePOS.contains(sentence.words(pos).pos)
+    val wordPOS = sentence.words(pos).pos
+    val b = possiblePOS.exists(p => wordPOS.startsWith(p))
+    //println(pos)
+    //println(sentence.words(pos))
+    //println(possiblePOS.reduceLeft(_ + ", " + _))
+    //println(b)
+    b
   }
 
   private def findIntervals() = {
@@ -25,7 +31,7 @@ class VarPatternElem(val name: String,
     while (intStart <= startMax) {
       if (possibleWord(intStart)) {
         intEnd = intStart
-        while ((intEnd < endMax) && possibleWord(intEnd))
+        while ((intEnd <= endMax) && possibleWord(intEnd))
           intEnd += 1
 
         intervals = (intStart, intEnd - 1) :: intervals
@@ -38,6 +44,8 @@ class VarPatternElem(val name: String,
     }
 
     intervals = intervals.reverse
+    //println(endMax)
+    //println(intervals)
   }
 
   override protected def onSetSentence() = {
@@ -53,7 +61,7 @@ class VarPatternElem(val name: String,
     val slen = sentence.length
     val remaining = elemCount - elemPos - 1
 
-    endMin = startMin
+    endMin = if (remaining == 0) slen - 1 else startMin
     endMax = slen - 1 - remaining
 
     findIntervals()
@@ -82,6 +90,8 @@ class VarPatternElem(val name: String,
         found = true
     }
 
+    //println(this)
+
     true
   }
 
@@ -106,7 +116,7 @@ class VarPatternElem(val name: String,
 
     // look for first interval that can fit
     while ((firstInterval < intervals.length)
-      && (intervals(firstInterval)._2 > curStartMin))
+      && (intervals(firstInterval)._2 < curStartMin))
       firstInterval += 1
 
     setCurInterval(firstInterval)
@@ -115,7 +125,7 @@ class VarPatternElem(val name: String,
     end += 1
     if (end > intEnd) {
       start += 1
-      if (start > intervals(curInterval)._2) {
+      if ((start > intervals(curInterval)._2) || (start > curStartMax)) {
         if (!setCurInterval(curInterval + 1))
           return false
       }
