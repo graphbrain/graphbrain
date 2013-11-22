@@ -18,12 +18,12 @@ class StrPatternElem(val str: String)
   }
 
   private def step: Boolean = if (start < 0) {
-    start = Math.min(curStartMax, curEndMin)
+    start = curStartMin
     true
   }
   else {
     start += 1
-    start > curEndMax
+    start <= curEndMax
   }
 
   override def onNext(): Boolean = {
