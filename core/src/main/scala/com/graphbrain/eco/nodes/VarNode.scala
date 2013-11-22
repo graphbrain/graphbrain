@@ -26,5 +26,5 @@ class VarNode(val name: String, lastTokenPos: Int) extends ProgNode(lastTokenPos
 
   def isGLobal = name(0) == '_'
 
-  override def toString = "$" + name
+  override def toString = name
 }

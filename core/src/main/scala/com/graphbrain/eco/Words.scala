@@ -37,6 +37,9 @@ class Words(val words: Array[Word]=Array[Word](), val pos: Int=0) {
     else
       this
   }
+
+  def slice(start: Int, end: Int) =
+    new Words(words.slice(start, end + 1), pos + start)
 }
 
 object Words {
