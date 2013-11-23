@@ -23,7 +23,7 @@ class StrPatternElem(val str: String)
   }
   else {
     start += 1
-    start <= curEndMax
+    (start <= curStartMax) && (start <= curEndMax)
   }
 
   override def onNext(): Boolean = {
