@@ -71,12 +71,10 @@ class VarPatternElem(val name: String,
     if (necessaryPOS.length == 0)
       return true
 
-    // this is wrong
-    for (i <- start to end)
-      if (necessaryPOS.contains(sentence.words(i).pos))
-        return true
 
-    false
+    necessaryPOS.forall(np =>
+      (start to end).exists(i =>
+        sentence.words(i).pos.startsWith(np)))
   }
 
   override def onNext(): Boolean = {

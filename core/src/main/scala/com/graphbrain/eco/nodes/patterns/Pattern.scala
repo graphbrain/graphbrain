@@ -48,7 +48,7 @@ object Pattern {
 
     val a = new VarPatternElem("a")
     val v = new VarPatternElem("v", Array("V"))
-    val s = new StrPatternElem("likes")
+    //val s = new StrPatternElem("likes")
     val c = new VarPatternElem("c")
 
     val pattern = new Pattern(Array(a, v, c))
