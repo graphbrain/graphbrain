@@ -1,6 +1,7 @@
 package com.graphbrain.eco.nodes.patterns
 
 import com.graphbrain.eco.Words
+import com.graphbrain.eco.nodes.{VarNode, StringNode, PatFun}
 
 class Pattern(val elems: Array[PatternElem]) {
 
@@ -41,17 +42,28 @@ class Pattern(val elems: Array[PatternElem]) {
 }
 
 object Pattern {
+  def apply(patFun: PatFun) = {
+    val elems = patFun.params.map(f = {
+      case s: StringNode => new StrPatternElem(s.value)
+      case v: VarNode => new VarPatternElem(v.name, v.possiblePOS, v.necessaryPOS, v.forbiddenPOS)
+      case _ => null // error
+    })
+
+    new Pattern(elems)
+  }
+
   def main(args: Array[String]) = {
 
-    val sentence = Words.fromString("Telmo likes eating chocolate.")
+    val sentence = Words.fromString("The capital city of Germany")
     println(sentence)
 
     val a = new VarPatternElem("a")
-    val v = new VarPatternElem("v", Array("V"))
-    //val s = new StrPatternElem("likes")
-    val c = new VarPatternElem("c")
+    //val v = new VarPatternElem("v")//, Array("V"))
+    val the = new StrPatternElem("the")
+    val of = new StrPatternElem("of")
+    val b = new VarPatternElem("b")
 
-    val pattern = new Pattern(Array(a, v, c))
+    val pattern = new Pattern(Array(a, of, b))
     pattern.matches(sentence)
   }
 }

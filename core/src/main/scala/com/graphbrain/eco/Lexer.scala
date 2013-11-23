@@ -87,7 +87,10 @@ class Lexer(val input: String) {
       if ((!c.isLetter)
         && (!c.isDigit)
         && (c != '-')
-        && (c != '_')) {
+        && (c != '_')
+        && (c != ':')
+        && (c != '|')
+        && (c != '+')) {
 
         done = true
       }

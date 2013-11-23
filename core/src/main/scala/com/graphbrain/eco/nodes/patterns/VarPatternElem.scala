@@ -2,7 +2,8 @@ package com.graphbrain.eco.nodes.patterns
 
 class VarPatternElem(val name: String,
                      val possiblePOS: Array[String]=Array[String](),
-                     val necessaryPOS: Array[String]=Array[String]())
+                     val necessaryPOS: Array[String]=Array[String](),
+                     val forbiddenPOS: Array[String]=Array[String]())
   extends PatternElem {
 
   var intervals = List[(Int, Int)]()
@@ -68,13 +69,23 @@ class VarPatternElem(val name: String,
   }
 
   private def curIntervalValid: Boolean = {
-    if (necessaryPOS.length == 0)
+    if ((necessaryPOS.length == 0) && (forbiddenPOS.length == 0))
       return true
 
+    if (necessaryPOS.length > 0) {
+      val necessary = necessaryPOS.forall(np =>
+        (start to end).exists(i =>
+          sentence.words(i).pos.startsWith(np)))
 
-    necessaryPOS.forall(np =>
-      (start to end).exists(i =>
-        sentence.words(i).pos.startsWith(np)))
+      if (!necessary) return false
+    }
+
+    if (forbiddenPOS.length > 0)
+      forbiddenPOS.forall(np =>
+        !(start to end).exists(i =>
+          sentence.words(i).pos.startsWith(np)))
+    else
+      true
   }
 
   override def onNext(): Boolean = {
@@ -134,6 +145,15 @@ class VarPatternElem(val name: String,
     true
   }
 
-  override def toString =
+  def curWords = sentence.slice(start, end)
+
+  override def toString = if (sentence == null)
+    name + ":" +
+      (if (possiblePOS.isEmpty) "" else possiblePOS.reduceLeft(_ + "|" + _)) +
+      "+" +
+      (if (necessaryPOS.isEmpty) "" else necessaryPOS.reduceLeft(_ + "|" + _)) +
+      "-" +
+      (if (forbiddenPOS.isEmpty) "" else forbiddenPOS.reduceLeft(_ + "|" + _))
+  else
     name + " = '" + sentence.slice(start, end) + "'"
 }

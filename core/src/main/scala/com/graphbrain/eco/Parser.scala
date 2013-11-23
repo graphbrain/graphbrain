@@ -24,11 +24,13 @@ class Parser(val input: String) {
   private def parseSymbol(pos: Int): ProgNode = tokens(pos).text match {
     case "true" => new BoolNode(true, pos)
     case "false" => new BoolNode(false, pos)
-    case _ => {
-      val vn = new VarNode(tokens(pos).text, pos)
-      if (varTypes.contains(vn.name)) vn.varType = varTypes(vn.name)
-      vn
-    }
+    case _ => parseVar(pos)
+  }
+
+  private def parseVar(pos: Int): ProgNode = {
+    val vn = VarNode(tokens(pos).text, pos)
+    if (varTypes.contains(vn.name)) vn.varType = varTypes(vn.name)
+    vn
   }
 
   private def matchOpeningPar(pos: Int) =
@@ -130,7 +132,7 @@ class Parser(val input: String) {
     else {
       val param = tokens(pos).ttype match {
         case TokenType.String => new StringNode(tokens(pos).text, pos)
-        case TokenType.Symbol => new VarNode(tokens(pos).text, pos)
+        case TokenType.Symbol => parseVar(pos)
         case TokenType.LPar => parsePattern(pos + 1)
         case _ => null // error
       }

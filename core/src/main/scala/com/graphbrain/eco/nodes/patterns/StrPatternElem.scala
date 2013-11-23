@@ -37,7 +37,7 @@ class StrPatternElem(val str: String)
       if (!step)
         return false
 
-      if (sentence.words(start).word == str)
+      if (sentence.words(start).word.toLowerCase == str.toLowerCase)
         found = true
     }
 
@@ -45,6 +45,8 @@ class StrPatternElem(val str: String)
     true
   }
 
-  override def toString =
-    "\"" + str + "\"" + " = '" + sentence.slice(start, end) + "'"
+  override def toString = if (sentence == null)
+      "\"" + str + "\""
+    else
+      "\"" + str + "\"" + " = '" + sentence.slice(start, end) + "'"
 }
