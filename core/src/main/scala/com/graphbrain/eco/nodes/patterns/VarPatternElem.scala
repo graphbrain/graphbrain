@@ -112,9 +112,12 @@ class VarPatternElem(val name: String,
     intEnd = Math.min(curEndMax, intervals(curInterval)._2)
 
     start = Math.max(curStartMin, intervals(curInterval)._1)
+    if (start > curStartMax)
+      return false
+
     end = Math.max(curEndMin, start)
 
-    if (end > intervals(curInterval)._2)
+    if (end > intEnd)
       return false
 
     true
