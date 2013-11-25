@@ -2,8 +2,11 @@ package com.graphbrain.eco.nodes.patterns
 
 import com.graphbrain.eco.Words
 import com.graphbrain.eco.nodes.{VarNode, StringNode, PatFun}
+import scala.util.Sorting
 
 class Pattern(val elems: Array[PatternElem]) {
+
+  val first = elems(0)
 
   // init elements
   for (i <- 0 until elems.length) {
@@ -12,26 +15,32 @@ class Pattern(val elems: Array[PatternElem]) {
     elems(i).init(i, elems.length, prev, next)
   }
 
-  def matches(sentence: Words) = {
-    elems.foreach(_.resetSentence())
+  // order by priority
+  Sorting.quickSort(elems)
 
-    matchSentence(sentence, 0)
+  def matches(sentence: Words) = {
+    var e = first
+    while (e != null) {
+      e.setSentence(sentence)
+      e = e.nextElem
+    }
+    matchSentence(0)
   }
 
-  private def matchSentence(sentence: Words, pos: Int): Unit = {
+  private def matchSentence(pos: Int): Unit = {
     //println("+" + pos)
 
     elems(pos).fixed = true
 
     elems(pos).rewind()
-    while (elems(pos).next(sentence)) {
+    while (elems(pos).next()) {
       if (pos == elems.length - 1) {
         // match found
         println("\n" + this)
       }
       else {
         //println(elems(pos))
-        matchSentence(sentence, pos + 1)
+        matchSentence(pos + 1)
       }
     }
 
@@ -64,6 +73,9 @@ object Pattern {
     val b = new VarPatternElem("b")
 
     val pattern = new Pattern(Array(a, of, b))
+
+    println(pattern)
+
     pattern.matches(sentence)
   }
 }

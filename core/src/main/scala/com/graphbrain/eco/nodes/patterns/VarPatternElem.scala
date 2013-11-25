@@ -10,6 +10,8 @@ class VarPatternElem(val name: String,
   var curInterval = -1
   var intEnd = -1
 
+  override protected def priority: Int = possiblePOS.length + necessaryPOS.length + forbiddenPOS.length
+
   private def possibleWord(pos: Int): Boolean = {
     if (possiblePOS.length == 0)
       return true
@@ -23,7 +25,7 @@ class VarPatternElem(val name: String,
     b
   }
 
-  private def findIntervals() = {
+  override protected def onPreProcess() = {
     intervals = List[(Int, Int)]()
 
     var intStart = startMin
@@ -64,8 +66,6 @@ class VarPatternElem(val name: String,
 
     endMin = if (remaining == 0) slen - 1 else startMin
     endMax = slen - 1 - remaining
-
-    findIntervals()
   }
 
   private def curIntervalValid: Boolean = {

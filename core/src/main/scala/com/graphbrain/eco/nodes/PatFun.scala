@@ -3,6 +3,7 @@ package com.graphbrain.eco.nodes
 import com.graphbrain.eco.NodeType.NodeType
 import com.graphbrain.eco.{Context, Contexts, NodeType}
 import com.graphbrain.eco.nodes.patterns.{VarPatternElem, StrPatternElem}
+import scala.util.Sorting
 
 class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
   override val label = "pat"
@@ -15,6 +16,8 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
     case _ => null // error
   })
 
+  val first = elems(0)
+
   // init elements
   for (i <- 0 until elems.length) {
     val prev = if (i == 0) null else elems(i - 1)
@@ -22,9 +25,12 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
     elems(i).init(i, elems.length, prev, next)
   }
 
-  println("\n+++++++++++++++")
-  println(this)
-  printMatch()
+  // order by priority
+  Sorting.quickSort(elems)
+
+  //println("\n+++++++++++++++")
+  //println(this)
+  //printMatch()
 
   override def booleanValue(ctxts: Contexts): Unit = {
     val words = ctxts.sentence.words.length
@@ -32,7 +38,11 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
 
     if (count > words) return
 
-    elems.foreach(_.resetSentence())
+    var e = first
+    while (e != null) {
+      e.setSentence(ctxts.sentence)
+      e = e.nextElem
+    }
 
     matches(ctxts, 0)
 
@@ -45,7 +55,7 @@ class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(par
     elems(pos).fixed = true
 
     elems(pos).rewind()
-    while (elems(pos).next(ctxts.sentence)) {
+    while (elems(pos).next()) {
       if (pos == elems.length - 1) {
         // match found
         println("\n")
