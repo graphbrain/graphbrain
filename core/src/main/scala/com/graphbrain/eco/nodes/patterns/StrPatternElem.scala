@@ -3,6 +3,8 @@ package com.graphbrain.eco.nodes.patterns
 class StrPatternElem(val str: String)
   extends PatternElem {
 
+  override protected def priority: Int = 1000 * str.length
+
   override protected def onSetSentence() = {
     if (prevElem == null) {
       startMin = 0

@@ -2,11 +2,12 @@ package com.graphbrain.eco.nodes.patterns
 
 import com.graphbrain.eco.Words
 
-abstract class PatternElem {
+abstract class PatternElem extends Ordered[PatternElem] {
   var elemPos: Int = -1
   var elemCount: Int = -1
 
   var fixed = false
+  var preProcessed = false
   var sentence: Words = null
 
   var prevElem: PatternElem = null
@@ -27,21 +28,29 @@ abstract class PatternElem {
     this.nextElem = next
   }
 
+  protected def priority: Int
+
   protected def onSetSentence()
 
-  def resetSentence() = sentence = null
-
-  private def setSentence(sentence: Words) = {
+  def setSentence(sentence: Words) = {
     this.sentence = sentence
+    preProcessed = false
     onSetSentence()
   }
 
   def rewind() =
     start = -1
 
-  def next(sentence: Words): Boolean = {
-    if (this.sentence == null)
-      setSentence(sentence)
+  def preProcess() = {
+    preProcessed = true
+    onPreProcess()
+  }
+
+  protected def onPreProcess() = {}
+
+  def next(): Boolean = {
+    if (!preProcessed)
+      preProcess()
 
     onNext()
   }
@@ -67,4 +76,7 @@ abstract class PatternElem {
     nextElem.start - 1
   else
     endMax
+
+  def compare(that: PatternElem) =
+    that.priority - this.priority
 }
