@@ -16,12 +16,12 @@ class EdgeSuite extends FunSuite {
     g.put(telmo)
     g.put(berlin)
     g.put(livesIn)
-    val e = Edge("r/1/lives_in 1/telmo_menezes 1/berlin")
+    val e = Edge.fromId("r/1/lives_in 1/telmo_menezes 1/berlin")
     g.put(e)
   }
 
   test("neighbours") {
-    val e = Edge("r/1/lives_in 1/telmo_menezes 1/berlin")
+    val e = Edge.fromId("r/1/lives_in 1/telmo_menezes 1/berlin")
     g.put(e)
     g.edges("1/telmo_menezes")
   }

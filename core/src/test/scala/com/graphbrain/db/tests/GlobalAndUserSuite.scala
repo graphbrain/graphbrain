@@ -33,7 +33,7 @@ class GlobalAndUserSuite extends FunSuite {
   }
 
   test("global edge to user") {
-    val e = Edge("r/1/lives_in user/telmo 1/berlin")
+    val e = Edge.fromId("r/1/lives_in user/telmo 1/berlin")
     val ue = e.toUser("user/telmo")
     assert(ue.id === "user/telmo/r/1/lives_in user/telmo user/telmo/1/berlin")
   }

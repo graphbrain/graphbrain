@@ -278,7 +278,7 @@ class LevelDbBackend(name: String="dbnode") extends Backend with Logging {
 
     for (i <- 0 until perms) {
       val ids = strArrayPermutation(edge.ids, i)
-      val permId = EDGE_PREFIX + Edge.idFromParticipants(ids) + " " + i
+      val permId = EDGE_PREFIX + Edge.fromParticipants(ids).id + " " + i
 			val value = ""
 			db.put(bytes(permId), bytes(value))
 		}
@@ -291,7 +291,7 @@ class LevelDbBackend(name: String="dbnode") extends Backend with Logging {
 
     for (i <- 0 until perms) {
 			val ids = strArrayPermutation(edge.ids, i)
-			val permId = EDGE_PREFIX + Edge.idFromParticipants(ids) + " " + i
+			val permId = EDGE_PREFIX + Edge.fromParticipants(ids).id + " " + i
 			db.delete(bytes(permId))
 		}
 	}

@@ -27,7 +27,7 @@ object NodeActionsPlan extends cycle.Plan with cycle.SynchronousExecution with S
     val userNode = WebServer.getUser(cookies)
     val edgeString = params("edge")(0)
     
-    val edge = Edge(edgeString)
+    val edge = Edge.fromId(edgeString)
 
     WebServer.graph.remove(edge, userNode.id)
 

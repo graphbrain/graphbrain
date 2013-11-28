@@ -1,22 +1,22 @@
 package com.graphbrain.db
 
-case class Edge(override val id: String,
+case class Edge(elems: Array[Vertex],
                 override val degree: Int = 0,
                 override val ts: Long = -1)
-  extends Vertex(id, degree, ts) {
+  extends Vertex("(" + elems.map(_.toString).reduceLeft(_ + " " + _) + ")", degree, ts) {
 
-  val ids = id.split(" ")
+  val ids = elems.map(_.toString)
   val edgeType = ids.head
   val participantIds = ids.tail
 
   def this(id: String, map: Map[String, String]) =
-    this(id,
+    this(Edge.elemsFromId(id),
       map("degree").toInt,
       map("ts").toLong)
 
   override def extraMap = Map()
 
-  override def setId(newId: String): Vertex = copy(id=newId)
+  override def setId(newId: String): Vertex = Edge.fromId(newId)
 
   override def setDegree(newDegree: Int): Vertex = copy(degree=newDegree)
 
@@ -68,20 +68,17 @@ case class Edge(override val id: String,
 }
 
 object Edge {
-  def fromParticipants(participants: Array[String]) =
-    new Edge(idFromParticipants(participants))
+  def fromId(id: String) = EdgeParser(id) match {
+    case e: Edge => e
+    case _ => null
+  }
 
-  def fromParticipants(participants: Array[Vertex]) =
-    new Edge(idFromParticipants(participants))
+  def elemsFromId(id: String) =
+    fromId(id).elems
+
+  def fromParticipants(participants: Array[String]) =
+    new Edge(participants.map(Vertex.fromId))
 
   def fromParticipants(edgeType: String, participantIds: Array[String]) =
-    new Edge(idFromParticipants(edgeType, participantIds))
-
-  def idFromParticipants(participants: Array[String]) = participants.mkString(" ")
-
-  def idFromParticipants(participants: Array[Vertex]): String =
-    idFromParticipants(participants.map(v => v.id))
-
-  def idFromParticipants(edgeType: String, participantIds: Array[String]): String =
-    idFromParticipants(Array(edgeType) ++ participantIds)
+    new Edge(Array(Vertex.fromId(edgeType)) ++ participantIds.map(Vertex.fromId))
 }

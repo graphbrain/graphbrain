@@ -81,7 +81,7 @@ trait UserOps extends Graph {
         put(v, userId)
       }
     }
-    put(Edge.fromParticipants(participants), userId)
+    put(new Edge(participants), userId)
   }
 
   def connectVertices(participants: Array[String], userId: String) = {

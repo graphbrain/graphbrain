@@ -39,10 +39,10 @@ abstract class Vertex(val id: String, val degree: Int = 0, val ts: Long = -1) {
 object Vertex {
   def cleanId(id: String) = id.toLowerCase
 
-  def createFromId(id: String) = {
+  def fromId(id: String) = {
     VertexType.getType(id) match {
       case VertexType.Entity => EntityNode(id)
-      case VertexType.Edge => Edge(id)
+      case VertexType.Edge => Edge.fromId(id)
       case VertexType.EdgeType => EdgeType(id)
       case VertexType.URL => URLNode(id)
       case VertexType.Prog => ProgNode(id)
