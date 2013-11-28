@@ -77,7 +77,7 @@ class Graph(name: String="dbnode") extends Logging {
   protected def onPutEdge(edge: Edge) =
     for (id <- edge.ids) {
       if (!exists(id)) {
-        put(Vertex.createFromId(id))
+        put(Vertex.fromId(id))
       }
       incDegree(id)
     }

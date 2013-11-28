@@ -10,7 +10,7 @@ class LevelDbBackendSuite extends FunSuite {
   val back = new LevelDbBackend()
 
   test("write edge") {
-    val e = Edge("r/1/lives_in user/telmo 1/berlin")
+    val e = Edge.fromId("r/1/lives_in user/telmo 1/berlin")
     back.put(e)
 
     val e2 = back.get("r/1/lives_in user/telmo 1/berlin", VertexType.Edge)
@@ -24,7 +24,7 @@ class LevelDbBackendSuite extends FunSuite {
     back.put(hank)
     back.put(texas)
     back.put(livesIn)
-    val e = Edge.fromParticipants(Array[Vertex](livesIn, hank, texas))
+    val e = new Edge(Array[Vertex](livesIn, hank, texas))
     back.put(e)
 
     val nb = back.edges(hank)

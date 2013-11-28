@@ -33,13 +33,13 @@ class VertexTypeSuite extends FunSuite {
   }
 
   test("global edge type") {
-    val e = Edge("r/1/lives_in user/telmo 1/berlin")
+    val e = Edge.fromId("r/1/lives_in user/telmo 1/berlin")
     val vtype = VertexType.getType(e.id)
     assert(vtype === VertexType.Edge)
   }
 
   test("user edge type") {
-    val e = Edge("user/telmo/r/1/lives_in user/telmo user/telmo/1/berlin")
+    val e = Edge.fromId("user/telmo/r/1/lives_in user/telmo user/telmo/1/berlin")
     val vtype = VertexType.getType(e.id)
     assert(vtype === VertexType.Edge)
   }
