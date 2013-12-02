@@ -83,8 +83,7 @@ object Edge {
     new Edge(Array(Vertex.fromId(edgeType)) ++ participantIds.map(Vertex.fromId))
 
   def main(args: Array[String]) = {
-    println("xpto")
-    val e = Edge.fromId("(r/1/is 1/telmo 1/cool)")
+    val e = Edge.fromId("(r/1/is 1/telmo (r/1/prop 1/cool 1/guy))")
     println("edge id: " + e)
   }
 }

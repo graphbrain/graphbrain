@@ -2,7 +2,7 @@ package com.graphbrain.eco.nodes
 
 import com.graphbrain.eco.NodeType.NodeType
 import com.graphbrain.eco.{Contexts, NodeType}
-import com.graphbrain.db.{ID, EntityNode}
+import com.graphbrain.db.{Edge, Vertex, ID, EntityNode}
 
 class VertexFun(val fun: VertexFun.VertexFun, params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
 
@@ -26,15 +26,15 @@ class VertexFun(val fun: VertexFun.VertexFun, params: Array[ProgNode], lastToken
         }
 
         for (c <- ctxts.ctxts) {
-          val id = "(" + params.map(
+          val verts = params.map(
             p => p.ntype match {
               case NodeType.Vertex => c.getRetVertex(p)
-              case NodeType.String => c.getRetString(p)
-              case _ => "" // error!
+              case NodeType.String => Vertex.fromId(c.getRetString(p))
+              case _ => null // error!
             }
-          ).reduceLeft(_ + " " + _) + ")"
+          )
 
-          c.setRetVertex(this, id)
+          c.setRetVertex(this, new Edge(verts))
         }
       }
       case VertexFun.RelVert => {
@@ -48,8 +48,8 @@ class VertexFun(val fun: VertexFun.VertexFun, params: Array[ProgNode], lastToken
 
         for (c <- ctxts.ctxts) {
           p.ntype match {
-            case NodeType.Words => c.setRetVertex(this, ID.reltype_id(c.getRetWords(p).text))
-            case NodeType.String => c.setRetVertex(this, ID.reltype_id(c.getRetString(p)))
+            case NodeType.Words => c.setRetVertex(this, Vertex.fromId(ID.reltype_id(c.getRetWords(p).text)))
+            case NodeType.String => c.setRetVertex(this, Vertex.fromId(ID.reltype_id(c.getRetString(p))))
             case _ => "" // error!
           }
         }
@@ -65,8 +65,8 @@ class VertexFun(val fun: VertexFun.VertexFun, params: Array[ProgNode], lastToken
 
         for (c <- ctxts.ctxts) {
           p.ntype match {
-            case NodeType.Words => c.setRetVertex(this, EntityNode.id("1", c.getRetWords(p).text))
-            case NodeType.String => c.setRetVertex(this, EntityNode.id("1", c.getRetString(p)))
+            case NodeType.Words => c.setRetVertex(this, EntityNode.fromNsAndText("1", c.getRetWords(p).text))
+            case NodeType.String => c.setRetVertex(this, EntityNode.fromNsAndText("1", c.getRetString(p)))
             case _ => "" // error!
           }
         }

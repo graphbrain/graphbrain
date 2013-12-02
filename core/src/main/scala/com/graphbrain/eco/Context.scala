@@ -3,6 +3,7 @@ package com.graphbrain.eco
 import scala.collection.mutable
 import com.graphbrain.eco.NodeType.NodeType
 import com.graphbrain.eco.nodes.ProgNode
+import com.graphbrain.db.Vertex
 
 class Context(val parent: Contexts,
   val varTypes: mutable.Map[String, NodeType] = mutable.Map[String, NodeType](),
@@ -10,12 +11,12 @@ class Context(val parent: Contexts,
   val numberVars: mutable.Map[String, Double] = mutable.Map[String, Double](),
   val booleanVars: mutable.Map[String, Boolean] = mutable.Map[String, Boolean](),
   val wordsVars: mutable.Map[String, Words] = mutable.Map[String, Words](),
-  val vertexVars: mutable.Map[String, String] = mutable.Map[String, String](),
+  val vertexVars: mutable.Map[String, Vertex] = mutable.Map[String, Vertex](),
   private val retStringMap: ProgNodeMap[String] = new ProgNodeMap[String],
   private val retNumberMap: ProgNodeMap[Double] = new ProgNodeMap[Double],
   private val retBooleanMap: ProgNodeMap[Boolean] = new ProgNodeMap[Boolean],
   private val retWordsMap: ProgNodeMap[Words] = new ProgNodeMap[Words],
-  private val retVertexMap: ProgNodeMap[String] = new ProgNodeMap[String],
+  private val retVertexMap: ProgNodeMap[Vertex] = new ProgNodeMap[Vertex],
   private val retVerticesMap: ProgNodeMap[Set[String]] = new ProgNodeMap[Set[String]],
   private var topRet: ProgNode = null,
   var subContexts: List[Context] = List[Context]())
@@ -99,7 +100,7 @@ class Context(val parent: Contexts,
     retWordsMap(p) = value
     topRet = p
   }
-  def setRetVertex(p: ProgNode, value: String) = {
+  def setRetVertex(p: ProgNode, value: Vertex) = {
     retVertexMap(p) = value
     topRet = p
   }
@@ -132,7 +133,7 @@ class Context(val parent: Contexts,
     setType(variable, NodeType.Words)
     wordsVars(variable) = value
   }
-  def setVertex(variable: String, value: String) = {
+  def setVertex(variable: String, value: Vertex) = {
     setType(variable, NodeType.Vertex)
     vertexVars(variable) = value
   }
