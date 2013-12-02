@@ -14,6 +14,7 @@ class EdgeParser(input: String) {
   }
 
   def parse: Vertex = {
+    jumpSpace()
     if (c != '(') {
       Vertex.fromId(nextToken)
     }
@@ -35,6 +36,10 @@ class EdgeParser(input: String) {
 
     input.substring(start, pos)
   }
+
+  private def jumpSpace() =
+    while (c == ' ')
+      consume()
 }
 
 object EdgeParser {
