@@ -2,6 +2,7 @@ package com.graphbrain.eco
 
 import scala.io.Source
 import com.graphbrain.eco.nodes.{WWRule, WVRule, ProgNode}
+import com.graphbrain.db.Vertex
 
 class Prog(val exprs: List[ProgNode]=List[ProgNode]()) {
 
@@ -44,7 +45,7 @@ class Prog(val exprs: List[ProgNode]=List[ProgNode]()) {
     ctxtsList
   }
 
-  def parse(sentence: String): String = {
+  def parse(sentence: String): Vertex = {
     val ctxtList = wv(sentence, 0)
 
     var maxStrength = Double.NegativeInfinity
@@ -66,7 +67,7 @@ class Prog(val exprs: List[ProgNode]=List[ProgNode]()) {
       }
     }
 
-    ""
+    null
   }
 
   override def toString = exprs.map(_.toString).reduceLeft(_ + "\n" + _)

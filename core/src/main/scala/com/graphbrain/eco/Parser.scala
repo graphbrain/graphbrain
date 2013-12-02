@@ -5,6 +5,7 @@ import com.graphbrain.eco.nodes.NlpFunType.NlpFunType
 import com.graphbrain.eco.nodes.NlpFunType
 import com.graphbrain.eco.NodeType.NodeType
 import scala.collection.mutable
+import com.graphbrain.db.Vertex
 
 class Parser(val input: String) {
   val varTypes = mutable.Map[String, NodeType]()
@@ -17,7 +18,7 @@ class Parser(val input: String) {
       case TokenType.String => new StringNode(tokens(pos).text, pos)
       case TokenType.Symbol => parseSymbol(pos)
       case TokenType.Number => new NumberNode(tokens(pos).text.toDouble, pos)
-      case TokenType.Vertex => new VertexNode(tokens(pos).text, pos)
+      case TokenType.Vertex => new VertexNode(Vertex.fromId(tokens(pos).text), pos)
     }
   }
 
