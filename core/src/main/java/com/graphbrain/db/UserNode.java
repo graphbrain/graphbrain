@@ -117,4 +117,36 @@ public class UserNode extends Vertex {
                 + "name: " + name + "<br />" + "role: " + role + "<br />"
                 + "lastSeen: " + lastSeen + "<br />";
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPwdhash() {
+        return pwdhash;
+    }
+
+    public String getSession() {
+        return session;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public long getSessionTs() {
+        return sessionTs;
+    }
+
+    public long getLastSeen() {
+        return lastSeen;
+    }
 }

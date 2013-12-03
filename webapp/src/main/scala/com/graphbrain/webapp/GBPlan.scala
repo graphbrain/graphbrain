@@ -3,7 +3,6 @@ package com.graphbrain.webapp
 import unfiltered.request._
 import unfiltered.response._
 import unfiltered.netty._
-import unfiltered.Cookie
 
 import com.graphbrain.db.Edge
 import com.graphbrain.db.SearchInterface
@@ -65,7 +64,7 @@ object GBPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErro
       }
       else {
         WebServer.log(req, null, "LOGIN login: " + login)
-        Ok ~> ResponseHeader("Content-Type", Set("text/plain")) ~> ResponseString(user.username + " " + user.session)
+        Ok ~> ResponseHeader("Content-Type", Set("text/plain")) ~> ResponseString(user.getUsername + " " + user.getSession)
       } 
     }
     case req@POST(Path("/undo_fact") & Params(params) & Cookies(cookies)) => {

@@ -155,4 +155,16 @@ public class URLNode extends Vertex {
             return false;
         }
     }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public String getUrl() {
+        return url;
+    }
 }

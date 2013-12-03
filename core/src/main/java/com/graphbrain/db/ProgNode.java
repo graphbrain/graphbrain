@@ -32,4 +32,8 @@ public class ProgNode extends Vertex {
     protected void fillMap(Map<String, String> map) {
         map.put("prog", prog);
     }
+
+    public String getProg() {
+        return prog;
+    }
 }

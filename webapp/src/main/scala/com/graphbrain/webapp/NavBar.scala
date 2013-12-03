@@ -39,15 +39,15 @@ case class NavBar(user: UserNode, page: String) {
           <ul id="contexts-dropdown" class="dropdown-menu">
             <li><a id="createContextLink" href="#">Create Context</a></li>
             <li class="divider"></li>
-            <li><a href="/node/user/""" + user.username +  """">Global Context</a></li>
+            <li><a href="/node/user/""" + user.getUsername +  """">Global Context</a></li>
           </ul>
         </li>
 
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-black"></i> """ + user.name + """ <b class="caret"></b></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-black"></i> """ + user.getName + """ <b class="caret"></b></a>
           <ul class="dropdown-menu">
             <li><a href="/about">About GraphBrain</a></li>
-            <li><a href="/node/user/""" + user.username +  """">Home</a></li>
+            <li><a href="/node/user/""" + user.getUsername +  """">Home</a></li>
             <li><a href="#" id="logoutLink">Logout</a></li>
           </ul>
         </li>

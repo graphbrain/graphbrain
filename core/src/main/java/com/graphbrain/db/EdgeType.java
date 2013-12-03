@@ -44,4 +44,8 @@ public class EdgeType extends Vertex {
     public boolean isNegative() {
         return isNegative(id);
     }
+
+    public String getLabel() {
+        return label;
+    }
 }

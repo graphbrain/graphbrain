@@ -12,12 +12,12 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
 
   private def getCode = {
     val prog = WebServer.graph.getProgNode("prog/prog")
-    if (prog == null) "" else prog.prog
+    if (prog == null) "" else prog.getProg
   }
 
   private def getTests = {
     val tests = WebServer.graph.getTextNode("text/tests")
-    if (tests == null) "" else tests.text
+    if (tests == null) "" else tests.getText
   }
 
   private def renderParser(req: HttpRequest[Any], cookies: Map[String, Any], parseText: String = "") = {
@@ -99,7 +99,7 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
     case req@GET(Path(Seg2("eco" :: "code" :: Nil)) & Cookies(cookies)) =>
       renderCode(req)
     case req@POST(Path(Seg2("eco" :: "code" :: Nil)) & Params(params) & Cookies(cookies)) => {
-      WebServer.graph.put(ProgNode("prog/prog", params("code")(0)))
+      WebServer.graph.put(new ProgNode("prog/prog", params("code")(0)))
       renderCode(req)
     }
     case req@GET(Path(Seg2("eco" :: "runtests" :: Nil)) & Cookies(cookies)) =>
@@ -109,7 +109,7 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
     case req@GET(Path(Seg2("eco" :: "edittests" :: Nil)) & Cookies(cookies)) =>
       renderEditTests(req)
     case req@POST(Path(Seg2("eco" :: "edittests" :: Nil)) & Params(params) & Cookies(cookies)) => {
-      WebServer.graph.put(TextNode("text/tests", params("tests")(0)))
+      WebServer.graph.put(new TextNode("text/tests", params("tests")(0)))
       renderEditTests(req)
     }
   }

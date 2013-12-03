@@ -3,12 +3,14 @@ package com.graphbrain.webapp
 import scala.math
 import com.graphbrain.db._
 import com.graphbrain.utils.JSONGen
+import scala.collection.JavaConversions._
+import scala.collection.mutable.Set
 
 object VisualGraph {
   val MAX_SNODES = 15
 
 
-  def generate(rootId: String, store: UserOps, user: UserNode, edgeType: String = "", relPos: Integer = -1) = {
+  def generate(rootId: String, store: Graph, user: UserNode, edgeType: String = "", relPos: Integer = -1) = {
     val userId = if (user != null) user.id else ""
     
     // get neighboring edges
@@ -35,7 +37,7 @@ object VisualGraph {
 
     // create reply structure with all the information needed for rendering
     val reply = Map("user" -> userId, "root" -> node2map(rootId, "", store, rootId, user),
-      "snodes" -> snodeMap, "allrelations" -> allRelations, "context" -> ID.contextId(rootId), "contexts" -> contexts)
+      "snodes" -> snodeMap, "allrelations" -> allRelations, "context" -> "", "contexts" -> contexts)
 
     //WebServer.graph.clear()
 
@@ -44,27 +46,27 @@ object VisualGraph {
   }
 
   private def hyper2edge(edge: Edge, rootId: String): SimpleEdge = {
-    if (edge.participantIds.length > 2) {
-      if (edge.edgeType == "r/1/instance_of~owned_by") {
-        if (edge.participantIds(0) == rootId) {
-          SimpleEdge("r/1/has", edge.participantIds(2), rootId, edge)
+    if (edge.getParticipantIds.length > 2) {
+      if (edge.getEdgeType == "r/1/instance_of~owned_by") {
+        if (edge.getParticipantIds()(0) == rootId) {
+          new SimpleEdge("r/1/has", edge.getParticipantIds()(2), rootId, edge)
         }
-        else if (edge.participantIds(2) == rootId) {
-          SimpleEdge("r/1/has", rootId, edge.participantIds(0), edge)
+        else if (edge.getParticipantIds()(2) == rootId) {
+          new SimpleEdge("r/1/has", rootId, edge.getParticipantIds()(0), edge)
         }
         else {
           null
         }
       }
-      if (edge.edgeType == "r/1/has~of_type") {
-        val edgeType = "has " + ID.lastPart(edge.participantIds(2))
-        SimpleEdge(edgeType, edge.participantIds(0), edge.participantIds(1), edge)
+      if (edge.getEdgeType == "r/1/has~of_type") {
+        val edgeType = "has " + ID.lastPart(edge.getParticipantIds()(2))
+        new SimpleEdge(edgeType, edge.getParticipantIds()(0), edge.getParticipantIds()(1), edge)
       }
       else {
-        val parts = edge.edgeType.split("~").toList
-        val edgeType = parts.head + " " + ID.lastPart(edge.participantIds(1)) + " " + parts.tail.reduceLeft(_ + " " + _)
+        val parts = edge.getEdgeType.split("~").toList
+        val edgeType = parts.head + " " + ID.lastPart(edge.getParticipantIds()(1)) + " " + parts.tail.reduceLeft(_ + " " + _)
         //val edgeType = edge.edgeType.replaceAll("~", " .. ") + " .. "
-        SimpleEdge(edgeType, edge.participantIds(0), edge.participantIds(2), edge)
+        new SimpleEdge(edgeType, edge.getParticipantIds()(0), edge.getParticipantIds()(2), edge)
       }
     }
     else {
@@ -74,8 +76,8 @@ object VisualGraph {
 
   private def generateEdgeNodeMap(edges: Set[SimpleEdge], rootId: String) = {
     edges.map(
-      e => List(e.id1 -> 0, e.id2 -> 1)
-        .map(x => (e.edgeType, x._2, x._1, e.parent.toString))
+      e => List(e.getId1 -> 0, e.getId2 -> 1)
+        .map(x => (e.getEdgeType, x._2, x._1, e.getParent.toString))
     ).flatten
       .filter(x => x._3 != rootId)
       .groupBy(x => (x._1, x._2))
@@ -86,10 +88,10 @@ object VisualGraph {
     edgeNodeMap.zipWithIndex.filter(x=> x._2 < maxSize).map(x => x._1)
   }
 
-  private def node2map(nodeId: String, nodeEdge: String, store: UserOps, rootId: String, user: UserNode) = {
+  private def node2map(nodeId: String, nodeEdge: String, store: Graph, rootId: String, user: UserNode) = {
     val vtype = VertexType.getType(nodeId)
     val node = if ((nodeId != rootId) && (vtype == VertexType.Entity)) {
-      EntityNode(nodeId)
+      new EntityNode(nodeId)
     }
     else{
       try {
@@ -103,11 +105,10 @@ object VisualGraph {
     node match {
       case tn: EntityNode => Map("id" -> tn.id, "type" -> "text", "text" -> tn.text, "edge" -> nodeEdge)
       case un: URLNode => {
-        val title = if (un.title == "") un.url else un.title
-        Map("id" -> un.id, "type" -> "url", "text" -> title, "url" -> un.url, "icon" -> un.icon, "edge" -> nodeEdge)
+        val title = if (un.getTitle == "") un.getUrl else un.getTitle
+        Map("id" -> un.id, "type" -> "url", "text" -> title, "url" -> un.getUrl, "icon" -> un.getIcon, "edge" -> nodeEdge)
       }
-      case un: UserNode => Map("id" -> un.id, "type" -> "user", "text" -> un.name, "edge" -> nodeEdge)
-      case cn: ContextNode => Map("id" -> cn.id, "type" -> "context", "text" -> user.name, "text2" -> ID.humanReadable(cn.id), "edge" -> nodeEdge)
+      case un: UserNode => Map("id" -> un.id, "type" -> "user", "text" -> un.getName, "edge" -> nodeEdge)
       case null => ""
       case _ => Map("id" -> node.id, "type" -> "text", "text" -> node.id, "edge" -> nodeEdge)
     }
@@ -115,7 +116,7 @@ object VisualGraph {
 
   private def snodeId(edgeType: String, pos: Integer) = edgeType.replaceAll("/", "_").replaceAll(" ", "_").replaceAll("\\.", "_") + "_" + pos
 
-  private def generateSnode(pair: ((String, Int), Set[(String, String)]), store: UserOps, rootId: String, user: UserNode) = {
+  private def generateSnode(pair: ((String, Int), Set[(String, String)]), store: Graph, rootId: String, user: UserNode) = {
     val id = snodeId(pair._1._1, pair._1._2)
     val label = linkLabel(pair._1._1)
     val color = linkColor(label)
@@ -126,7 +127,7 @@ object VisualGraph {
     id -> data
   }
 
-  private def generateSnodeMap(edgeNodeMap: Map[(String, Int), Set[(String, String)]], store: UserOps, rootId: String, user: UserNode) = {
+  private def generateSnodeMap(edgeNodeMap: Map[(String, Int), Set[(String, String)]], store: Graph, rootId: String, user: UserNode) = {
     edgeNodeMap.map(x => generateSnode(x, store, rootId, user))
   }
 

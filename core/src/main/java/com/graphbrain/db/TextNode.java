@@ -32,4 +32,8 @@ public class TextNode extends Vertex {
     protected void fillMap(Map<String, String> map) {
         map.put("text", text);
     }
+
+    public String getText() {
+        return text;
+    }
 }

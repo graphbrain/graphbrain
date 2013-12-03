@@ -6,10 +6,8 @@ import java.util.Map;
 public class Edge extends Vertex {
 
     private Vertex[] elems;
-
     private String[] ids;
     private String edgeType;
-
     private String[] participantIds;
 
     @Override
@@ -171,5 +169,13 @@ public class Edge extends Vertex {
 
     public String[] getParticipantIds() {
         return participantIds;
+    }
+
+    public String getEdgeType() {
+        return edgeType;
+    }
+
+    public Vertex[] getElems() {
+        return elems;
     }
 }
