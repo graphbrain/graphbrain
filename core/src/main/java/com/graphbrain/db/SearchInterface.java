@@ -12,7 +12,7 @@ public class SearchInterface {
         this.graph = graph;
     }
 
-    public List<String> query(String text) {
+    public String[] query(String text) {
         String id = ID.sanitize(text);
         int maxId = 0;
 
@@ -23,6 +23,6 @@ public class SearchInterface {
         for (int i = 1; i <= maxId; i++)
             res.add("" + i + "/" + id);
 
-        return res;
+        return res.toArray(new String[res.size()]);
     }
 }

@@ -10,35 +10,35 @@ import com.graphbrain.db.EdgeType
 class SentenceParserTest extends FunSuite {
 
   val sentenceParser = new SentenceParser()
-  val store = new Graph() with UserManagement with UserOps
+  val store = new Graph()
 
-  val toadNodeGlobal = EntityNode.fromNsAndText(namespace="1", text="toad")
-  val booksNodeGlobal1 = EntityNode.fromNsAndText(namespace="1", text="books")
-  val booksNodeGlobal2 = EntityNode.fromNsAndText(namespace="2", text="books")
-  val booksUserOwned = EntityNode.fromNsAndText(namespace = "user/chihchun_chen/p/1", text="books")
-  val todoUserOwned = EntityNode.fromNsAndText(namespace = "user/chihchun_chen/p/1", text="todo")
-  val washTheCarUserOwned = EntityNode.fromNsAndText(namespace = "user/chihchun_chen/p/1", text = "wash the car")
-  val todoGlobal = EntityNode.fromNsAndText(namespace = "1", text="todo")
-  val todoGlobal2 = EntityNode.fromNsAndText(namespace = "2", text="todo")
-  val washTheCarGlobal = EntityNode.fromNsAndText(namespace = "1", text = "wash the car")
-  val jobGlobal = EntityNode.fromNsAndText(namespace = "1", text = "job")
+  val toadNodeGlobal = EntityNode.fromNsAndText("1", "toad")
+  val booksNodeGlobal1 = EntityNode.fromNsAndText("1", "books")
+  val booksNodeGlobal2 = EntityNode.fromNsAndText("2", "books")
+  val booksUserOwned = EntityNode.fromNsAndText("user/chihchun_chen/p/1", "books")
+  val todoUserOwned = EntityNode.fromNsAndText("user/chihchun_chen/p/1", "todo")
+  val washTheCarUserOwned = EntityNode.fromNsAndText("user/chihchun_chen/p/1", "wash the car")
+  val todoGlobal = EntityNode.fromNsAndText("1", "todo")
+  val todoGlobal2 = EntityNode.fromNsAndText("2", "todo")
+  val washTheCarGlobal = EntityNode.fromNsAndText("1", "wash the car")
+  val jobGlobal = EntityNode.fromNsAndText("1", "job")
 
 
-  val toadsNodeGlobal = EntityNode.fromNsAndText(namespace="1", text="toads")
+  val toadsNodeGlobal = EntityNode.fromNsAndText("1", "toads")
 
-  val excellenceNodeGlobal = EntityNode.fromNsAndText(namespace="1", text="excellent book")
-  val toadNodeUser = EntityNode.fromNsAndText(namespace="usergenerated/chihchun_chen", text="toad")
-  val toadTitleUser = EntityNode.fromNsAndText(namespace="usergenerated/chihchun_chen", text="Chih-Chun is a toad")
-  val globalNameNode1 = EntityNode.fromNsAndText(namespace="1", text="ChihChun")
-  val globalNameNode2 = EntityNode.fromNsAndText(namespace = "1", text = "Chih-Chun")
-  val globalNameNode3 = EntityNode.fromNsAndText(namespace = "1", text = "Chih-Chun is a toad")
-  val globalNameNode4 = EntityNode.fromNsAndText(namespace = "1", text = "Telmo")
+  val excellenceNodeGlobal = EntityNode.fromNsAndText("1", "excellent book")
+  val toadNodeUser = EntityNode.fromNsAndText("usergenerated/chihchun_chen", "toad")
+  val toadTitleUser = EntityNode.fromNsAndText("usergenerated/chihchun_chen", "Chih-Chun is a toad")
+  val globalNameNode1 = EntityNode.fromNsAndText("1", "ChihChun")
+  val globalNameNode2 = EntityNode.fromNsAndText("1", "Chih-Chun")
+  val globalNameNode3 = EntityNode.fromNsAndText("1", "Chih-Chun is a toad")
+  val globalNameNode4 = EntityNode.fromNsAndText("1", "Telmo")
 
-  val programmerGlobalNode = EntityNode.fromNsAndText(namespace = "1", text = "programmer")
-  val userNode = UserNode.create(username="chihchun_chen", name="Chih-Chun Chen", email="chihchun@example.com", password="password")
-  val graphbrainGlobalNode = EntityNode.fromNsAndText(namespace = "1", text = "GraphBrain")
-  val graphbrainUserNode = EntityNode.fromNsAndText(namespace = "usergenerated/chihchun_chen", text = "graphbrain")
-  val gbURLNode = URLNode.fromUrl(url = "http://graphbrain.com(nice)", userId = "")
+  val programmerGlobalNode = EntityNode.fromNsAndText("1", "programmer")
+  val userNode = UserNode.create("chihchun_chen", "Chih-Chun Chen", "chihchun@example.com", "password")
+  val graphbrainGlobalNode = EntityNode.fromNsAndText("1", "GraphBrain")
+  val graphbrainUserNode = EntityNode.fromNsAndText("usergenerated/chihchun_chen", "graphbrain")
+  val gbURLNode = URLNode.fromUrl("http://graphbrain.com(nice)", "")
   
   val sentence1 = "ChihChun is a toad"
   val sentence2 = "I am always a programmer at graphbrain"
@@ -183,7 +183,7 @@ class SentenceParserTest extends FunSuite {
         relTypeVertex match {
           case r: EdgeType => 
             println(r.id)
-            println(r.label)
+            println(r.getLabel())
             val reltypeLemPOS = sentenceParser.relTypeLemmaAndPOS(r, sentence1)
 
             val lemma = reltypeLemPOS._2._1

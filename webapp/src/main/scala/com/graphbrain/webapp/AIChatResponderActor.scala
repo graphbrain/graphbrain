@@ -62,7 +62,7 @@ class AIChatResponderActor() extends Actor with Logging {
 
               //ldebug("node1: " + node1.id + "\nnode2: " + node2.id + "\nrelation: " + relation, Console.RED)
 
-              val relType = EdgeType(relation)
+              val relType = new EdgeType(relation)
               WebServer.graph.createAndConnectVertices(Array(relType) ++ nodes, user.id)
 
               val edge = Edge.fromParticipants(relation, nodeIds)
@@ -94,7 +94,7 @@ class AIChatResponderActor() extends Actor with Logging {
                     val nodeIds = nodes.map(_.id)
                     val relation = f._2.id.replace(" ", "_")
 
-                    val relType = EdgeType(relation)
+                    val relType = new EdgeType(relation)
                     WebServer.graph.createAndConnectVertices(Array(relType) ++  nodes, user.id)
 
                     val edge = Edge.fromParticipants(relation, nodeIds)

@@ -5,7 +5,7 @@ import java.util.Map;
 
 public abstract class Vertex {
 
-    protected String id;
+    public String id;
 
     protected int degree;
 

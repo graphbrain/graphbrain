@@ -3,6 +3,7 @@ package com.graphbrain.webapp
 import unfiltered.request._
 
 import com.graphbrain.db.UserNode
+import scala.collection.JavaConversions._
 
 
 case class AllUsersPage(user: UserNode, req: HttpRequest[Any], cookies: Map[String, Any]) {
@@ -13,7 +14,7 @@ case class AllUsersPage(user: UserNode, req: HttpRequest[Any], cookies: Map[Stri
   html += "<strong>Count:" + users.size + "</strong><br /><br />"
 
   for (u <- users)
-    html += "<a href='/node/user/" + u.username + "'>" + u.username + "</a> " + u.name + " " + u.email + " " + u.pwdhash + "<br />"
+    html += "<a href='/node/user/" + u.getUsername + "'>" + u.getUsername + "</a> " + u.getName + " " + u.getEmail + " " + u.getPwdhash + "<br />"
 
   def response = WebServer.scalateResponse("raw.ssp", "allusers", "All Users", cookies, req, html=html)
 }

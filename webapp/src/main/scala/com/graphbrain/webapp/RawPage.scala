@@ -1,9 +1,9 @@
 package com.graphbrain.webapp
 
 import unfiltered.request._
-
 import com.graphbrain.db.Vertex
 import com.graphbrain.db.UserNode
+import scala.collection.JavaConversions._
 
 case class RawPage(vertex: Vertex, user: UserNode, req: HttpRequest[Any], cookies: Map[String, Any]) {
   var html = "<h2>Vertex: " + vertex.id + "</h2>"

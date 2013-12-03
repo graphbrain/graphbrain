@@ -56,7 +56,7 @@ object DisambigPlan extends cycle.Plan with cycle.SynchronousExecution with Serv
       // create revised edge
       val participantNodes = (for (pid <- participantIds) yield WebServer.graph.get(pid)).toArray
       participantNodes(pos) = newNode
-      val relType = EdgeType(rel)
+      val relType = new EdgeType(rel)
       WebServer.graph.createAndConnectVertices(Array(relType) ++ participantNodes, userNode.id)
 
       // force consesnsus re-evaluation of affected edge

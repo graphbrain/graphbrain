@@ -12,8 +12,6 @@ import akka.actor.ActorSystem
 import akka.actor.Props
 
 import com.graphbrain.db.Graph
-import com.graphbrain.db.UserOps
-import com.graphbrain.db.UserManagement
 import com.graphbrain.db.UserNode
 import com.graphbrain.db.ConsensusActor
 import com.typesafe.scalalogging.slf4j.Logging
@@ -23,7 +21,7 @@ import org.apache.commons.io.IOUtils
 object WebServer extends Logging {
   var http: unfiltered.netty.Http = null
 
-  var graph: Graph with UserOps with UserManagement = null
+  var graph: Graph = null
 
   val templateDirs = List(new java.io.File(""))
   val scalateMode = "production"
@@ -87,7 +85,7 @@ object WebServer extends Logging {
 
     val ip = if (req == null) "" else realIp(req)
     val userNode = if (cookies == null) null else getUser(cookies)
-    val username = if (userNode == null) "null" else userNode.username
+    val username = if (userNode == null) "null" else userNode.getUsername
 
     val logLine = "[" + df.format(new java.util.Date) + "] " + ip + " " + username + " - " + msg
 
@@ -97,7 +95,7 @@ object WebServer extends Logging {
   def start(port: Int, dbpath: String) = {
     log(null, null, "webserver started")
 
-    WebServer.graph = new Graph(dbpath) with UserOps with UserManagement
+    WebServer.graph = new Graph(dbpath)
 
     http = unfiltered.netty.Http(port)
       .handler(GBPlan)
