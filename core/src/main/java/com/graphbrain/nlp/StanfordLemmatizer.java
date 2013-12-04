@@ -11,7 +11,7 @@ import edu.stanford.nlp.ling.CoreAnnotations.*;
 
 
 
-class StanfordLemmatizer {
+public class StanfordLemmatizer {
 
     protected StanfordCoreNLP pipeline;
 
