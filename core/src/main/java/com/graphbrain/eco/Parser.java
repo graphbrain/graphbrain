@@ -1,13 +1,15 @@
-package com.graphbrain.eco
+package com.graphbrain.eco;
 
-import com.graphbrain.eco.nodes._
-import com.graphbrain.eco.nodes.NlpFunType.NlpFunType
-import com.graphbrain.eco.nodes.NlpFunType
-import com.graphbrain.eco.NodeType.NodeType
-import scala.collection.mutable
-import com.graphbrain.db.Vertex
+import com.graphbrain.eco.nodes.*;
+import com.graphbrain.eco.NodeType;
+import com.graphbrain.db.Vertex;
 
-class Parser(val input: String) {
+public class Parser {
+
+    public Parser(String input) {
+
+    }
+
   val varTypes = mutable.Map[String, NodeType]()
   val tokens = new Lexer(input).tokens
   val expr = parse(0)

@@ -1,5 +1,7 @@
 package com.graphbrain.eco.nodes;
 
+import com.graphbrain.eco.Context;
+import com.graphbrain.eco.Contexts;
 import com.graphbrain.eco.NodeType;
 
 public class NotFun extends FunNode {
@@ -15,13 +17,14 @@ public class NotFun extends FunNode {
     @Override
     public String label(){return  "!";}
 
-    @override
-    def ntype: NodeType = NodeType.Boolean
+    @Override
+    public NodeType ntype(){return NodeType.Boolean;}
 
-  override def booleanValue(ctxts: Contexts) = {
-    params(0).booleanValue(ctxts)
+    @Override
+    public void booleanValue(Contexts ctxts) {
+        params[0].booleanValue(ctxts);
 
-    for (c <- ctxts.ctxts)
-      c.setRetBoolean(this, !c.getRetBoolean(params(0)))
-  }
+        for (Context c : ctxts.getCtxts())
+            c.setRetBoolean(this, !c.getRetBoolean(params[0]));
+    }
 }

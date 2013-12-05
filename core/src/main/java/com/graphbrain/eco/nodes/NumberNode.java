@@ -1,17 +1,41 @@
-package com.graphbrain.eco.nodes
+package com.graphbrain.eco.nodes;
 
-import com.graphbrain.eco.{Contexts, NodeType}
+import com.graphbrain.eco.Context;
+import com.graphbrain.eco.Contexts;
+import com.graphbrain.eco.NodeType;
 
-class NumberNode(val value: Double, lastTokenPos: Int= -1) extends ProgNode(lastTokenPos) {
-  override def ntype = NodeType.Number
+public class NumberNode extends ProgNode {
+    private double value;
 
-  override def numberValue(ctxts: Contexts) =
-    for (c <- ctxts.ctxts) c.setRetNumber(this, value)
+    public NumberNode(double value, int lastTokenPos) {
+        super(lastTokenPos);
+        this.value = value;
+    }
 
-  override def toString = value.toString
+    public NumberNode(double value) {
+        this(value, -1);
+    }
 
-  override def equals(obj:Any) = obj match {
-    case n: NumberNode => n.value == value
-    case _ => false
-  }
+    @Override
+    public NodeType ntype(){return NodeType.Number;}
+
+    @Override
+    public void numberValue(Contexts ctxts) {
+        for (Context c : ctxts.getCtxts())
+            c.setRetNumber(this, value);
+    }
+
+    @Override
+    public String toString() {
+        return "" + value;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof NumberNode) {
+            NumberNode n = (NumberNode)obj;
+            return n.value == value;
+        }
+        return false;
+    }
 }

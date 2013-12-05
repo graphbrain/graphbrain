@@ -1,60 +1,160 @@
-package com.graphbrain.eco.nodes
+package com.graphbrain.eco.nodes;
 
-import com.graphbrain.eco._
-import com.graphbrain.eco.NodeType.NodeType
+import com.graphbrain.eco.*;
+import com.graphbrain.eco.NodeType;
 
-class VarNode(val name: String,
-              val possiblePOS: Array[String],
-              val necessaryPOS: Array[String],
-              val forbiddenPOS: Array[String],
-              lastTokenPos: Int) extends ProgNode(lastTokenPos) {
+public class VarNode extends ProgNode {
 
-  var varType: NodeType = NodeType.Unknown
+    private String name;
+    private String[] possiblePOS;
+    private String[] necessaryPOS;
+    private String[] forbiddenPOS;
 
-  override def ntype = varType
+    public VarNode(String name,
+        String[] possiblePOS,
+        String[] necessaryPOS,
+        String[] forbiddenPOS,
+        int lastTokenPos) {
 
-  override def booleanValue(ctxts: Contexts) =
-    for (c <- ctxts.ctxts) c.setRetBoolean(this, c.getBoolean(name))
+        super(lastTokenPos);
 
-  override def stringValue(ctxts: Contexts) =
-    for (c <- ctxts.ctxts) c.setRetString(this, c.getString(name))
+        this.name = name;
+        this.possiblePOS = possiblePOS;
+        this.necessaryPOS = necessaryPOS;
+        this.forbiddenPOS = forbiddenPOS;
+    }
 
-  override def numberValue(ctxts: Contexts) =
-    for (c <- ctxts.ctxts) c.setRetNumber(this, c.getNumber(name))
+    public VarNode(String name,
+                   String[] possiblePOS,
+                   String[] necessaryPOS,
+                   String[] forbiddenPOS) {
 
-  override def wordsValue(ctxts: Contexts) =
-    for (c <- ctxts.ctxts) c.setRetWords(this, c.getWords(name))
+        this(name, possiblePOS, necessaryPOS, forbiddenPOS, -1);
+    }
 
-  override def vertexValue(ctxts: Contexts) =
-    for (c <- ctxts.ctxts) c.setRetVertex(this, c.getVertex(name))
+    public VarNode(String varStr, int lastTokenPos) {
+        super(lastTokenPos);
 
-  def isGLobal = name(0) == '_'
+        String[] parts = varStr.split(":");
+        name = parts[0];
 
-  override def toString = name
-}
+        String[] constStrs;
+        if (parts.length > 1)
+            constStrs = parts[1].split("\\|");
+        else
+            constStrs = new String[]{};
 
-object VarNode {
-  def apply(varStr: String, lastTokenPos: Int) = {
-    val parts = varStr.split(":")
-    val name = parts(0)
+        int count = 0;
+        for (String c : constStrs) {
+            if (c.charAt(0) != '-')
+                count++;
+        }
 
-    val constStrs = if (parts.length > 1)
-      parts(1).split("\\|")
-    else
-      Array[String]()
+        possiblePOS = new String[count];
 
-    val possiblePOS = constStrs
-      .filter(_.charAt(0) != '-')
-      .map(p => if (p.charAt(0) == '+') p.substring(1) else p)
+        int pos = 0;
+        for (String c : constStrs) {
+            if (c.charAt(0) != '-') {
+                if (c.charAt(0) == '+')
+                    possiblePOS[pos] = c.substring(1);
+                else
+                    possiblePOS[pos] = c;
 
-    val necessaryPOS = constStrs
-      .filter(_.charAt(0) == '+')
-      .map(_.substring(1))
+                pos++;
+            }
+        }
 
-    val forbiddenPOS = constStrs
-      .filter(_.charAt(0) == '+')
-      .map(_.substring(1))
 
-    new VarNode(name, possiblePOS, necessaryPOS, forbiddenPOS, lastTokenPos)
-  }
+        count = 0;
+        for (String c : constStrs) {
+            if (c.charAt(0) == '+')
+                count++;
+        }
+
+        necessaryPOS = new String[count];
+
+        pos = 0;
+        for (String c : constStrs) {
+            if (c.charAt(0) == '+') {
+                necessaryPOS[pos] = c.substring(1);
+                pos++;
+            }
+        }
+
+
+        count = 0;
+        for (String c : constStrs) {
+            if (c.charAt(0) == '-')
+                count++;
+        }
+
+        forbiddenPOS = new String[count];
+
+        pos = 0;
+        for (String c : constStrs) {
+            if (c.charAt(0) == '-') {
+                forbiddenPOS[pos] = c.substring(1);
+                pos++;
+            }
+        }
+    }
+
+    public NodeType varType(){return NodeType.Unknown;}
+
+    @Override
+    public NodeType ntype(){return varType();}
+
+    @Override
+    public void booleanValue(Contexts ctxts) {
+        for (Context c : ctxts.getCtxts()) {
+            c.setRetBoolean(this, c.getBoolean(name));
+        }
+    }
+
+    @Override
+    public void stringValue(Contexts ctxts) {
+        for (Context c : ctxts.getCtxts())
+            c.setRetString(this, c.getString(name));
+    }
+
+    @Override
+    public void numberValue(Contexts ctxts) {
+        for (Context c : ctxts.getCtxts())
+            c.setRetNumber(this, c.getNumber(name));
+    }
+
+    @Override
+    public void wordsValue(Contexts ctxts) {
+        for (Context c : ctxts.getCtxts())
+            c.setRetWords(this, c.getWords(name));
+    }
+
+    @Override
+    public void vertexValue(Contexts ctxts) {
+        for (Context c : ctxts.getCtxts())
+            c.setRetVertex(this, c.getVertex(name));
+    }
+
+    public boolean isGLobal() {
+        return name.charAt(0) == '_';
+    }
+
+    @Override
+    public String toString() {return name;}
+
+    public String getName() {
+        return name;
+    }
+
+    public String[] getPossiblePOS() {
+        return possiblePOS;
+    }
+
+    public String[] getNecessaryPOS() {
+        return necessaryPOS;
+    }
+
+    public String[] getForbiddenPOS() {
+        return forbiddenPOS;
+    }
 }

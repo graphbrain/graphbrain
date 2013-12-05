@@ -1,82 +1,120 @@
-package com.graphbrain.eco.nodes.patterns
+package com.graphbrain.eco.nodes.patterns;
 
-import com.graphbrain.eco.Words
+import com.graphbrain.eco.Words;
 
-abstract class PatternElem extends Ordered[PatternElem] {
-  var elemPos: Int = -1
-  var elemCount: Int = -1
+public abstract class PatternElem implements Comparable<PatternElem> {
+    protected int elemPos;
+    protected int elemCount;
 
-  var fixed = false
-  var preProcessed = false
-  var sentence: Words = null
+    protected boolean fixed;
+    protected boolean preProcessed;
+    protected Words sentence;
 
-  var prevElem: PatternElem = null
-  var nextElem: PatternElem = null
+    protected PatternElem prevElem;
+    protected PatternElem nextElem;
 
-  var start: Int = -1
-  var end: Int = -1
+    protected int start;
+    protected int end;
 
-  var startMin: Int = -1
-  var startMax: Int = -1
-  var endMin: Int = -1
-  var endMax: Int = -1
+    protected int startMin;
+    protected int startMax;
+    protected int endMin;
+    protected int endMax;
 
-  def init(elemPos: Int, elemCount: Int, prev: PatternElem, next: PatternElem) = {
-    this.elemPos = elemPos
-    this.elemCount = elemCount
-    this.prevElem = prev
-    this.nextElem = next
-  }
+    public PatternElem() {
+        elemPos = -1;
+        elemCount = -1;
 
-  protected def priority: Int
+        fixed = false;
+        preProcessed = false;
+        sentence = null;
 
-  protected def onSetSentence()
+        prevElem = null;
+        nextElem = null;
 
-  def setSentence(sentence: Words) = {
-    this.sentence = sentence
-    preProcessed = false
-    onSetSentence()
-  }
+        start = -1;
+        end = -1;
 
-  def rewind() =
-    start = -1
+        startMin = -1;
+        startMax = -1;
+        endMin = -1;
+        endMax = -1;
+    }
 
-  def preProcess() = {
-    preProcessed = true
-    onPreProcess()
-  }
+    public void init(int elemPos, int elemCount, PatternElem prev, PatternElem next) {
+        this.elemPos = elemPos;
+        this.elemCount = elemCount;
+        this.prevElem = prev;
+        this.nextElem = next;
+    }
 
-  protected def onPreProcess() = {}
+    protected abstract int priority();
 
-  def next(): Boolean = {
-    if (!preProcessed)
-      preProcess()
+    protected abstract void onSetSentence();
 
-    onNext()
-  }
+    public void setSentence(Words sentence) {
+        this.sentence = sentence;
+        preProcessed = false;
+        onSetSentence();
+    }
 
-  def onNext(): Boolean
+    public void rewind() {
+        start = -1;
+    }
 
-  def curStartMin = if ((prevElem != null) && prevElem.fixed)
-    prevElem.end + 1
-  else
-    startMin
+    public void preProcess() {
+        preProcessed = true;
+        onPreProcess();
+    }
 
-  def curStartMax = if ((prevElem != null) && prevElem.fixed)
-    prevElem.end + 1
-  else
-    startMax
+    protected void onPreProcess() {}
 
-  def curEndMin = if ((nextElem != null) && nextElem.fixed)
-    nextElem.start - 1
-  else
-    endMin
+    public boolean next() {
+        if (!preProcessed)
+            preProcess();
 
-  def curEndMax = if ((nextElem != null) && nextElem.fixed)
-    nextElem.start - 1
-  else
-    endMax
+        return onNext();
+    }
 
-  def compare(that: PatternElem) =
-    that.priority - this.priority
+    public abstract boolean onNext();
+
+    public int curStartMin() {
+        if ((prevElem != null) && prevElem.fixed)
+            return prevElem.end + 1;
+        else
+            return startMin;
+    }
+
+    public int curStartMax() {
+        if ((prevElem != null) && prevElem.fixed)
+            return prevElem.end + 1;
+        else
+            return startMax;
+    }
+
+    public int curEndMin() {
+        if ((nextElem != null) && nextElem.fixed)
+            return nextElem.start - 1;
+        else
+            return endMin;
+    }
+
+    public int curEndMax() {
+        if ((nextElem != null) && nextElem.fixed)
+            return nextElem.start - 1;
+        else
+            return endMax;
+    }
+
+    public int compareTo(PatternElem e) {
+        return priority() - e.priority();
+    }
+
+    public PatternElem getNextElem() {
+        return nextElem;
+    }
+
+    public void setFixed(boolean fixed) {
+        this.fixed = fixed;
+    }
 }

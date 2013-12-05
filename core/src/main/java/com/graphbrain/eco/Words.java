@@ -105,4 +105,8 @@ public class Words {
     public Word[] getWords() {
         return words;
     }
+
+    public int getPos() {
+        return pos;
+    }
 }

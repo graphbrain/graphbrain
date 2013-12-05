@@ -1,19 +1,32 @@
-package com.graphbrain.eco.nodes
+package com.graphbrain.eco.nodes;
 
-import com.graphbrain.eco.NodeType.NodeType
-import com.graphbrain.eco.{Contexts, NodeType}
+import com.graphbrain.eco.Context;
+import com.graphbrain.eco.NodeType;
+import com.graphbrain.eco.Contexts;
 
-class PosFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
-  override val label = "pos"
+public class PosFun extends FunNode {
 
-  override def ntype: NodeType = NodeType.Number
-
-  override def numberValue(ctxts: Contexts) = {
-    val p = params(0)
-    p.wordsValue(ctxts)
-    for (c <- ctxts.ctxts) {
-      val pos = c.getRetWords(p).pos
-      c.setRetNumber(this, pos)
+    public PosFun(ProgNode[] params, int lastTokenPos) {
+        super(params, lastTokenPos);
     }
-  }
+
+    public PosFun(ProgNode[] params) {
+        this(params, -1);
+    }
+
+    @Override
+    public String label(){return "pos";}
+
+    @Override
+    public NodeType ntype(){return NodeType.Number;}
+
+    @Override
+    public void numberValue(Contexts ctxts) {
+        ProgNode p = params[0];
+        p.wordsValue(ctxts);
+        for (Context c : ctxts.getCtxts()) {
+            double pos = c.getRetWords(p).getPos();
+            c.setRetNumber(this, pos);
+        }
+    }
 }

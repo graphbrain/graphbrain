@@ -15,6 +15,9 @@ public class WVRule extends RuleNode {
     }
 
     @Override
+    public String label() {return "wv";}
+
+    @Override
     public NodeType ntype() {return NodeType.Boolean;}
 
     @Override
