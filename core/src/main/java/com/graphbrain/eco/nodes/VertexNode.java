@@ -1,18 +1,41 @@
-package com.graphbrain.eco.nodes
+package com.graphbrain.eco.nodes;
 
-import com.graphbrain.eco.{Contexts, NodeType}
-import com.graphbrain.db.Vertex
+import com.graphbrain.eco.Context;
+import com.graphbrain.eco.Contexts;
+import com.graphbrain.eco.NodeType;
+import com.graphbrain.db.Vertex;
 
-class VertexNode(val value: Vertex, lastTokenPos: Int= -1) extends ProgNode(lastTokenPos) {
-  override def ntype = NodeType.Vertex
+public class VertexNode extends ProgNode {
 
-  override def vertexValue(ctxts: Contexts) =
-    for (c <- ctxts.ctxts) c.setRetVertex(this, value)
+    private Vertex value;
 
-  override def toString = value.toString
+    public VertexNode(Vertex value, int lastTokenPos) {
+        super(lastTokenPos);
+        this.value = value;
+    }
 
-  override def equals(obj:Any) = obj match {
-    case v: VertexNode => v.value == value
-    case _ => false
-  }
+    public VertexNode(Vertex value) {
+        this(value, -1);
+    }
+
+    @Override
+    public NodeType ntype() {return NodeType.Vertex;}
+
+    @Override
+    public void vertexValue(Contexts ctxts) {
+        for (Context c : ctxts.getCtxts())
+            c.setRetVertex(this, value);
+    }
+
+    @Override
+    public String toString() {return value.toString();}
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof VertexNode) {
+            VertexNode v = (VertexNode)obj;
+            return v.value == value;
+        }
+        return false;
+    }
 }

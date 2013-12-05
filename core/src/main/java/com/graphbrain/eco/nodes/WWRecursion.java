@@ -1,33 +1,47 @@
-package com.graphbrain.eco.nodes
+package com.graphbrain.eco.nodes;
 
-import com.graphbrain.eco.{Contexts, NodeType}
-import com.graphbrain.eco.NodeType.NodeType
+import com.graphbrain.eco.Context;
+import com.graphbrain.eco.Contexts;
+import com.graphbrain.eco.NodeType;
 
-class WWRecursion(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
-  override val label = ":ww"
+import java.util.List;
 
-  override def ntype: NodeType = NodeType.Words
+public class WWRecursion extends FunNode {
 
-  override def wordsValue(ctxts: Contexts) = {
-    params(0).wordsValue(ctxts)
-    for (c <- ctxts.ctxts) {
-      val newCtxts = ctxts.prog.ww(c.getRetWords(params(0)), ctxts.depth + 1, c)
-
-      for (nctxts <- newCtxts) {
-        for (nc <- nctxts.ctxts) {
-          val forkCtxt = c.clone()
-          forkCtxt.setRetWords(this, nc.getTopRetWords)
-          forkCtxt.addSubContext(nc)
-          forkCtxt.mergeGlobals(nc)
-
-          // add forked context to caller contexts
-          ctxts.addContext(forkCtxt)
-        }
-      }
-
-      // remove original context
-      ctxts.remContext(c)
+    public WWRecursion(ProgNode[] params, int lastTokenPos) {
+        super(params, lastTokenPos);
     }
-    ctxts.applyChanges()
-  }
+
+    public WWRecursion(ProgNode[] params) {
+        this(params, -1);
+    }
+
+    @Override
+    public String label() {return ":ww";}
+
+    @Override
+    public NodeType ntype() {return NodeType.Words;}
+
+    @Override
+    public void wordsValue(Contexts ctxts) {
+        params[0].wordsValue(ctxts);
+        for (Context c : ctxts.getCtxts()) {
+            List<Contexts> newCtxts = ctxts.getProg().ww(c.getRetWords(params[0]), ctxts.getDepth() + 1, c);
+
+            for (Contexts nctxts : newCtxts) {
+                for (Context nc : nctxts.getCtxts()) {
+                    Context forkCtxt = c.copy();
+                    forkCtxt.setRetWords(this, nc.getTopRetWords());
+                    forkCtxt.addSubContext(nc);
+
+                    // add forked context to caller contexts
+                    ctxts.addContext(forkCtxt);
+                }
+            }
+
+            // remove original context
+            ctxts.remContext(c);
+        }
+        ctxts.applyChanges();
+    }
 }

@@ -1,34 +1,52 @@
-package com.graphbrain.eco.nodes
+package com.graphbrain.eco.nodes;
 
-import com.graphbrain.eco.NodeType.NodeType
-import com.graphbrain.eco.{Words, Contexts}
+import com.graphbrain.eco.Context;
+import com.graphbrain.eco.NodeType;
+import com.graphbrain.eco.Words;
+import com.graphbrain.eco.Contexts;
 
-class SumFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
-  override val label = "+"
+public class SumFun extends FunNode {
 
-  override def ntype: NodeType = params(0).ntype
-
-  override def numberValue(ctxts: Contexts) = {
-    for (p <- params)
-      p.numberValue(ctxts)
-
-    for (c <- ctxts.ctxts) {
-      var sum: Double = 0
-      for (p <- params)
-        sum += c.getRetNumber(p)
-      c.setRetNumber(this, sum)
+    public SumFun(ProgNode[] params, int lastTokenPos) {
+        super(params, lastTokenPos);
     }
-  }
 
-  override def wordsValue(ctxts: Contexts) = {
-    for (p <- params)
-      p.wordsValue(ctxts)
-
-    for (c <- ctxts.ctxts) {
-      var agg = Words.empty
-      for (p <- params)
-        agg += c.getRetWords(p)
-      c.setRetWords(this, agg)
+    public SumFun(ProgNode[] params) {
+        this(params, -1);
     }
-  }
+
+    @Override
+    public String label(){return "+";}
+
+    @Override
+    public NodeType ntype() {
+        return params[0].ntype();
+    }
+
+    @Override
+    public void numberValue(Contexts ctxts) {
+        for (ProgNode p : params) {
+            p.numberValue(ctxts);
+        }
+
+        for (Context c : ctxts.getCtxts()) {
+            double sum = 0;
+            for (ProgNode p : params)
+                sum += c.getRetNumber(p);
+            c.setRetNumber(this, sum);
+        }
+    }
+
+    @Override
+    public void wordsValue(Contexts ctxts) {
+        for (ProgNode p : params)
+            p.wordsValue(ctxts);
+
+        for (Context c : ctxts.getCtxts()) {
+            Words agg = Words.empty();
+            for (ProgNode p : params)
+                agg.append(c.getRetWords(p));
+            c.setRetWords(this, agg);
+        }
+    }
 }

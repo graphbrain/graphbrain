@@ -15,6 +15,9 @@ public class WWRule extends RuleNode {
     }
 
     @Override
+    public String label() {return "ww";}
+
+    @Override
     public NodeType ntype() {return NodeType.Words;}
 
     @Override

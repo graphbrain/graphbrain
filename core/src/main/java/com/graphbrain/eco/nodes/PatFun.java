@@ -1,92 +1,129 @@
-package com.graphbrain.eco.nodes
+package com.graphbrain.eco.nodes;
 
-import com.graphbrain.eco.NodeType.NodeType
-import com.graphbrain.eco.{Context, Contexts, NodeType}
-import com.graphbrain.eco.nodes.patterns.{VarPatternElem, StrPatternElem}
-import scala.util.Sorting
+import com.graphbrain.eco.Context;
+import com.graphbrain.eco.Contexts;
+import com.graphbrain.eco.NodeType;
+import com.graphbrain.eco.nodes.patterns.PatternElem;
+import com.graphbrain.eco.nodes.patterns.StrPatternElem;
+import com.graphbrain.eco.nodes.patterns.VarPatternElem;
 
-class PatFun(params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
-  override val label = "pat"
+import java.util.Arrays;
 
-  override def ntype: NodeType = NodeType.Boolean
+public class PatFun extends FunNode {
 
-  val elems = params.map(f = {
-    case s: StringNode => new StrPatternElem(s.value)
-    case v: VarNode => new VarPatternElem(v.name, v.possiblePOS, v.necessaryPOS, v.forbiddenPOS)
-    case _ => null // error
-  })
+    private PatternElem[] elems;
+    private PatternElem first;
+    PatternElem prev;
+    PatternElem next;
 
-  val first = elems(0)
+    public PatFun(ProgNode[] params, int lastTokenPos) {
+        super(params, lastTokenPos);
 
-  // init elements
-  for (i <- 0 until elems.length) {
-    val prev = if (i == 0) null else elems(i - 1)
-    val next = if (i == elems.length - 1) null else elems(i + 1)
-    elems(i).init(i, elems.length, prev, next)
-  }
+        elems = new PatternElem[params.length];
 
-  // order by priority
-  Sorting.quickSort(elems)
+        int i = 0;
+        for (ProgNode p : params) {
+            if (p instanceof StringNode) {
+                StringNode s = (StringNode)p;
+                elems[i] = new StrPatternElem(s.getValue());
+            }
+            else if (p instanceof VarNode) {
+                VarNode v = (VarNode)p;
+                elems[i] = new VarPatternElem(v.getName(),
+                        v.getPossiblePOS(),
+                        v.getNecessaryPOS(),
+                        v.getForbiddenPOS());
+            }
+        }
 
-  //println("\n+++++++++++++++")
-  //println(this)
-  //printMatch()
+        first = elems[0];
 
-  override def booleanValue(ctxts: Contexts): Unit = {
-    val words = ctxts.sentence.words.length
-    val count = params.length
+        // init elements
+        for (i = 0; i < elems.length; i++) {
+            if (i == 0)
+                prev = null;
+            else
+                prev = elems[i - 1];
+            if (i == elems.length - 1)
+                next = null;
+            else
+                next = elems[i + 1];
 
-    if (count > words) return
+            elems[i].init(i, elems.length, prev, next);
+        }
 
-    var e = first
-    while (e != null) {
-      e.setSentence(ctxts.sentence)
-      e = e.nextElem
+        // order by priority
+        Arrays.sort(elems);
     }
 
-    matches(ctxts, 0)
-
-    ctxts.applyChanges()
-  }
-
-  private def matches(ctxts: Contexts, pos: Int): Unit = {
-    //println("+" + pos)
-
-    elems(pos).fixed = true
-
-    elems(pos).rewind()
-    while (elems(pos).next()) {
-      if (pos == elems.length - 1) {
-        // match found
-        println("\n")
-        println(ctxts.sentence)
-        println(this)
-        printMatch()
-        addContext(ctxts)
-      }
-      else {
-        //println(elems(pos))
-        matches(ctxts, pos + 1)
-      }
+    public PatFun(ProgNode[] params) {
+        this(params, -1);
     }
 
-    elems(pos).fixed = false
-  }
+    @Override
+    public String label() {return "pat";}
 
-  def addContext(ctxts: Contexts): Unit = {
-    val newContext = new Context(ctxts)
+    @Override
+    public NodeType ntype() {return NodeType.Boolean;}
 
-    for (e <- elems) {
-      e match {
-        case v: VarPatternElem => newContext.setWords(v.name, v.curWords)
-        case _ => // error
-      }
+    @Override
+    public void booleanValue(Contexts ctxts) {
+        int words = ctxts.getSentence().getWords().length;
+        int count = params.length;
+
+        if (count > words)
+            return;
+
+        PatternElem e = first;
+        while (e != null) {
+            e.setSentence(ctxts.getSentence());
+            e = e.getNextElem();
+        }
+
+        matches(ctxts, 0);
+
+        ctxts.applyChanges();
     }
 
-    ctxts.addContext(newContext)
-    newContext.setRetBoolean(this, value = true)
-  }
+    private void matches(Contexts ctxts, int pos) {
+        elems[pos].setFixed(true);
 
-  def printMatch() =
-    println(elems.map(_.toString).reduceLeft(_ + "\n" + _))
+        elems[pos].rewind();
+        while (elems[pos].next()) {
+            if (pos == elems.length - 1) {
+                // match found
+                //println("\n")
+                //println(ctxts.sentence)
+                //println(this)
+                printMatch();
+                addContext(ctxts);
+            }
+            else {
+                //println(elems(pos))
+                matches(ctxts, pos + 1);
+            }
+        }
+
+        elems[pos].setFixed(false);
+    }
+
+    public void addContext(Contexts ctxts) {
+        Context newContext = new Context(ctxts);
+
+        for (PatternElem e : elems) {
+            if (e instanceof VarPatternElem) {
+                VarPatternElem v = (VarPatternElem)e;
+                newContext.setWords(v.getName(), v.curWords());
+            }
+        }
+
+        ctxts.addContext(newContext);
+        newContext.setRetBoolean(this, true);
+    }
+
+    public void printMatch() {
+        for (PatternElem e : elems) {
+            System.out.println(e.toString());
+        }
+    }
 }

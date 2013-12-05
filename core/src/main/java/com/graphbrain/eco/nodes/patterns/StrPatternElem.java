@@ -1,54 +1,70 @@
-package com.graphbrain.eco.nodes.patterns
+package com.graphbrain.eco.nodes.patterns;
 
-class StrPatternElem(val str: String)
-  extends PatternElem {
+public class StrPatternElem extends PatternElem {
 
-  override protected def priority: Int = 1000 * str.length
+    private String str;
 
-  override protected def onSetSentence() = {
-    if (prevElem == null) {
-      startMin = 0
-      startMax = 0
-    }
-    else {
-      startMin = prevElem.endMin + 1
-      startMax = prevElem.endMax + 1
+    public StrPatternElem(String str) {
+        super();
+        this.str = str;
     }
 
-    endMin = startMin
-    endMax = startMax
-  }
-
-  private def step: Boolean = if (start < 0) {
-    start = curStartMin
-    true
-  }
-  else {
-    start += 1
-    (start <= curStartMax) && (start <= curEndMax)
-  }
-
-  override def onNext(): Boolean = {
-    // check if gap to fill is larger than one word
-    if (curStartMax < curEndMin)
-      return false
-
-    var found = false
-
-    while(!found) {
-      if (!step)
-        return false
-
-      if (sentence.words(start).word.toLowerCase == str.toLowerCase)
-        found = true
+    @Override
+    protected int priority() {
+        return 1000 * str.length();
     }
 
-    end = start
-    true
-  }
+    @Override
+    protected void onSetSentence() {
+        if (prevElem == null) {
+            startMin = 0;
+            startMax = 0;
+        }
+        else {
+            startMin = prevElem.endMin + 1;
+            startMax = prevElem.endMax + 1;
+        }
 
-  override def toString = if (sentence == null)
-      "\"" + str + "\""
-    else
-      "\"" + str + "\"" + " = '" + sentence.slice(start, end) + "'"
+        endMin = startMin;
+        endMax = startMax;
+    }
+
+    private boolean step() {
+        if (start < 0) {
+            start = curStartMin();
+            return true;
+        }
+        else {
+            start += 1;
+            return (start <= curStartMax()) && (start <= curEndMax());
+        }
+    }
+
+    @Override
+    public boolean onNext() {
+        // check if gap to fill is larger than one word
+        if (curStartMax() < curEndMin())
+            return false;
+
+        boolean found = false;
+
+        while(!found) {
+            if (!step())
+                return false;
+
+            if (sentence.getWords()[start].getWord().toLowerCase().equals(str.toLowerCase()))
+                found = true;
+        }
+
+        end = start;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        if (sentence == null)
+            return "\"" + str + "\"";
+        else
+            return "\"" + str + "\"" + " = '" + sentence.slice(start, end) + "'";
+    }
 }

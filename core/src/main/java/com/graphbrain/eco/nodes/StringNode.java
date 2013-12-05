@@ -1,17 +1,46 @@
-package com.graphbrain.eco.nodes
+package com.graphbrain.eco.nodes;
 
-import com.graphbrain.eco.{Contexts, NodeType}
+import com.graphbrain.eco.Context;
+import com.graphbrain.eco.Contexts;
+import com.graphbrain.eco.NodeType;
 
-class StringNode(val value: String, lastTokenPos: Int= -1) extends ProgNode(lastTokenPos) {
-  override def ntype = NodeType.String
+public class StringNode extends ProgNode {
 
-  override def stringValue(ctxts: Contexts) =
-    for (c <- ctxts.ctxts) c.setRetString(this, value)
+    private String value;
 
-  override def toString = "\"" + value + "\""
+    public StringNode(String value, int lastTokenPos) {
+        super(lastTokenPos);
+        this.value = value;
+    }
 
-  override def equals(obj:Any) = obj match {
-    case s: StringNode => s.value == value
-    case _ => false
-  }
+    public StringNode(String value) {
+        this(value, -1);
+    }
+
+    @Override
+    public NodeType ntype(){return NodeType.String;}
+
+    @Override
+    public void stringValue(Contexts ctxts) {
+        for (Context c : ctxts.getCtxts())
+            c.setRetString(this, value);
+    }
+
+    @Override
+    public String toString() {
+        return "\"" + value + "\"";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof StringNode) {
+            StringNode s = (StringNode)obj;
+            return s.value.equals(value);
+        }
+        return false;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }
