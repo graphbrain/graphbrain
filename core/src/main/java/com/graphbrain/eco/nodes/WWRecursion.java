@@ -26,7 +26,7 @@ public class WWRecursion extends FunNode {
     public void wordsValue(Contexts ctxts) {
         params[0].wordsValue(ctxts);
         for (Context c : ctxts.getCtxts()) {
-            List<Contexts> newCtxts = ctxts.getProg().ww(c.getRetWords(params[0]), ctxts.getDepth() + 1, c);
+            List<Contexts> newCtxts = ctxts.getProg().ww(c.getRetWords(params[0]), ctxts.getDepth() + 1);
 
             for (Contexts nctxts : newCtxts) {
                 for (Context nc : nctxts.getCtxts()) {

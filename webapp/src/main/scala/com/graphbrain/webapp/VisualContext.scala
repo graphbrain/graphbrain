@@ -3,7 +3,7 @@ package com.graphbrain.webapp
 import com.graphbrain.eco.{Context, Words, Word}
 
 class VisualContext(ctxt: Context, val targetVertex: String="") {
-  val htmlWords = renderWords(ctxt.parent.sentence)
+  val htmlWords = renderWords(ctxt.getParent().sentence)
   val htmlContext = renderContext(ctxt)
   val htmlVertex = ctxt.getTopRetVertex
 
@@ -21,10 +21,10 @@ class VisualContext(ctxt: Context, val targetVertex: String="") {
   }
 
   private def renderWord(word: Word) =
-    word.word + " <span class=\"text-primary\">[" + word.pos + "]</span>"
+    word.getWord() + " <span class=\"text-primary\">[" + word.pos + "]</span>"
 
   private def renderWords(words: Words) =
-    words.words.map(w => renderWord(w))
+    words.getWords().map(w => renderWord(w))
       .reduceLeft(_ + " " + _)
 
   def isTest = targetVertex != ""

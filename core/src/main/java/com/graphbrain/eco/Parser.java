@@ -16,7 +16,7 @@ public class Parser {
 
     private Map<String, NodeType> varTypes;
     private Token[] tokens;
-    ProgNode expr;
+    private ProgNode expr;
 
     public Parser(String input) {
         varTypes = new HashMap<String, NodeType>();
@@ -382,5 +382,9 @@ public class Parser {
             return new WordsFun(WordsFunType.EndsWith, new ProgNode[]{p1, p2}, p2.getLastTokenPos() + 1);
         else
             return null; // error
+    }
+
+    public ProgNode getExpr() {
+        return expr;
     }
 }

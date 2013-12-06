@@ -4,7 +4,6 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FunSuite
 import com.graphbrain.eco._
-import com.graphbrain.eco.nodes._
 
 @RunWith(classOf[JUnitRunner])
 class ParserSuite extends FunSuite {
@@ -21,17 +20,17 @@ class ParserSuite extends FunSuite {
 
   test("(nlp test ((? x y z)) (true))") {
     val p = new Parser("(nlp test ((? x y z)) (true))")
-    assert(p.expr.toString == "(nlp test (; (? x y z)) (; true))")
+    assert(p.getExpr.toString == "(nlp test (; (? x y z)) (; true))")
   }
 
   test("(nlp test ((? x \"likes\" z)) (true))") {
     val p = new Parser("(nlp test ((? x \"likes\" z)) (true))")
-    println(p.expr.toString)
-    assert(p.expr.toString == "(nlp test (; (? x \"likes\" z)) (; true))")
+    println(p.getExpr.toString)
+    assert(p.getExpr.toString == "(nlp test (; (? x \"likes\" z)) (; true))")
   }
 
   test("(nlp test ((? x y z) true) (true))") {
     val p = new Parser("(nlp test ((? x y z) true) (true))")
-    assert(p.expr.toString == "(nlp test (; (? x y z) true) (; true))")
+    assert(p.getExpr.toString == "(nlp test (; (? x y z) true) (; true))")
   }
 }

@@ -1,5 +1,7 @@
 package com.graphbrain.eco;
 
+import com.graphbrain.db.Vertex;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,7 +23,7 @@ public class Text {
 
     public void parse(Prog prog) {
         for (String s : sentences) {
-            String vertex = prog.parse(s);
+            Vertex vertex = prog.parse(s);
             System.out.println(s);
             System.out.println(vertex);
         }

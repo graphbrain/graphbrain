@@ -1,6 +1,5 @@
 package com.graphbrain.eco;
 
-//import scala.io.Source
 import com.graphbrain.eco.nodes.WWRule;
 import com.graphbrain.eco.nodes.WVRule;
 import com.graphbrain.eco.nodes.ProgNode;
@@ -126,7 +125,7 @@ public class Prog {
             if (emptyLine(line)) {
                 if (!exprStr.isEmpty()) {
                     Parser p = new Parser(exprStr);
-                    exprList.add(p.expr);
+                    exprList.add(p.getExpr());
                 }
                 exprStr = "";
             }
@@ -137,7 +136,7 @@ public class Prog {
 
         if (!exprStr.isEmpty()) {
             Parser p = new Parser(exprStr);
-            exprList.add(p.expr);
+            exprList.add(p.getExpr());
         }
 
         return new Prog(exprList);

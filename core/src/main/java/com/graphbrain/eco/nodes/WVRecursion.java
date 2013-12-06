@@ -22,7 +22,7 @@ public class WVRecursion extends FunNode {
     public void vertexValue(Contexts ctxts) {
         params[0].wordsValue(ctxts);
         for (Context c : ctxts.getCtxts()) {
-            List<Contexts> newCtxts = ctxts.getProg().wv(c.getRetWords(params[0]), ctxts.getDepth() + 1, c);
+            List<Contexts> newCtxts = ctxts.getProg().wv(c.getRetWords(params[0]), ctxts.getDepth() + 1);
 
             for (Contexts nctxts : newCtxts) {
                 for (Context nc : nctxts.getCtxts()) {
