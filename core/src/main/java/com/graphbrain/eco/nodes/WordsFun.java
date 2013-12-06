@@ -1,34 +1,50 @@
-package com.graphbrain.eco.nodes
+package com.graphbrain.eco.nodes;
 
-import com.graphbrain.eco.NodeType.NodeType
-import com.graphbrain.eco.{Contexts, NodeType}
+import com.graphbrain.eco.*;
+import com.graphbrain.eco.NodeType;
 
-class WordsFun(val fun: WordsFun.WordsFun, params: Array[ProgNode], lastTokenPos: Int= -1) extends FunNode(params, lastTokenPos) {
+public class WordsFun extends FunNode {
 
-  override val label = fun match {
-    case WordsFun.EndsWith => "ends-with"
-  }
-
-  override def ntype: NodeType = NodeType.Boolean
-
-  override def booleanValue(ctxts: Contexts) = {
-    fun match {
-      case WordsFun.EndsWith => {
-        for (p <- params)
-          p.wordsValue(ctxts)
-
-        for (c <- ctxts.ctxts) {
-          val words1 = c.getRetWords(params(0))
-          val words2 = c.getRetWords(params(1))
-
-          c.setRetBoolean(this, words1.endsWith(words2))
-        }
-      }
+    public enum WordsFunType {
+        EndsWith
     }
-  }
-}
 
-object WordsFun extends Enumeration {
-  type WordsFun = Value
-  val EndsWith = Value
+    private WordsFunType fun;
+
+    public WordsFun(WordsFunType fun, ProgNode[] params, int lastTokenPos) {
+        super(params, lastTokenPos);
+        this.fun = fun;
+    }
+
+    public WordsFun(WordsFunType fun, ProgNode[] params) {
+        this(fun, params, -1);
+    }
+
+    @Override
+    public String label() {
+        switch(fun) {
+            case EndsWith: return "ends-with";
+        }
+        return "?";
+    }
+
+    @Override
+    public NodeType ntype() {return NodeType.Boolean;}
+
+    @Override
+    public void booleanValue(Contexts ctxts) {
+        switch(fun) {
+            case EndsWith:
+                for (ProgNode p : params)
+                    p.wordsValue(ctxts);
+
+                for (Context c : ctxts.getCtxts()) {
+                    Words words1 = c.getRetWords(params[0]);
+                    Words words2 = c.getRetWords(params[1]);
+
+                    c.setRetBoolean(this, words1.endsWith(words2));
+                }
+            break;
+        }
+    }
 }

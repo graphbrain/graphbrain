@@ -4,9 +4,9 @@ import com.graphbrain.eco.Context;
 import com.graphbrain.eco.Contexts;
 import com.graphbrain.eco.NodeType;
 
-class FilterFun extends FunNode {
+public class FilterFun extends FunNode {
 
-    enum FilterFunType {
+    public enum FilterFunType {
         FilterMin, FilterMax
     }
 
