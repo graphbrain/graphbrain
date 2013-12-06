@@ -10,7 +10,6 @@
   <modules>
     <module>core</module>
     <module>repl</module>
-    <module>webapp</module>
     <module>braingenerators</module>
   </modules>
 
