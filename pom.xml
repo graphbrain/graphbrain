@@ -11,6 +11,7 @@
     <module>core</module>
     <module>repl</module>
     <module>braingenerators</module>
+    <module>web</module>
   </modules>
 
   <dependencies>
