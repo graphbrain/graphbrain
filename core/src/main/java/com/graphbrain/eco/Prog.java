@@ -5,7 +5,10 @@ import com.graphbrain.eco.nodes.WWRule;
 import com.graphbrain.eco.nodes.WVRule;
 import com.graphbrain.eco.nodes.ProgNode;
 import com.graphbrain.db.Vertex;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,15 +24,11 @@ public class Prog {
         this(new LinkedList<ProgNode>());
     }
 
-    public List<Contexts> wv(String s, int depth, Context caller) {
-        return wv(Words.fromString(s), depth, caller);
-    }
-
     public List<Contexts> wv(String s, int depth) {
-        return wv(s, depth, null);
+        return wv(Words.fromString(s), depth);
     }
 
-    public List<Contexts> wv(Words w, int depth, Context caller) {
+    public List<Contexts> wv(Words w, int depth) {
         List<Contexts> ctxtsList = new LinkedList<Contexts>();
 
         for (ProgNode e : exprs) {
@@ -47,7 +46,7 @@ public class Prog {
         return ctxtsList;
     }
 
-    public List<Contexts> ww(Words w, int depth, Context caller) {
+    public List<Contexts> ww(Words w, int depth) {
         List<Contexts> ctxtsList = new LinkedList<Contexts>();
 
         for (ProgNode e : exprs) {
@@ -105,7 +104,14 @@ public class Prog {
     }
 
     public static Prog load(String path) {
-        return fromStringList(Source.fromFile(path).getLines().toList);
+        try {
+            String str = FileUtils.readFileToString(new File(path));
+            return fromString(str);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static Prog fromString(String str) {
