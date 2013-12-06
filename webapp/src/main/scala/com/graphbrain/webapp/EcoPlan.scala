@@ -37,10 +37,10 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
       val p = Prog.fromString(getCode)
       //println(p)
 
-      for (s <- t.sentences) {
+      for (s: String <- t.getSentences.toArray) {
         val ctxtsList = p.wv(s, 0)
-        for (ctxts <- ctxtsList) {
-          for (ctxt <- ctxts.ctxts) {
+        for (ctxts: Contexts <- ctxtsList.toArray) {
+          for (ctxt: Context <- ctxts.getCtxts.toArray) {
             visualCtxtList ::= new VisualContext(ctxt)
           }
         }
@@ -70,10 +70,10 @@ object EcoPlan extends cycle.Plan with cycle.SynchronousExecution with ServerErr
 
       val p = Prog.fromString(getCode)
 
-      for (t <- tests.tests) {
+      for (t: Array[String] <- tests.getTests.toArray) {
         val ctxtsList = p.wv(t(0), 0)
-        for (ctxts <- ctxtsList) {
-          for (ctxt <- ctxts.ctxts) {
+        for (ctxts: Contexts <- ctxtsList.toArray) {
+          for (ctxt <- ctxts.getCtxts) {
             visualCtxtList ::= new VisualContext(ctxt, t(1))
           }
         }

@@ -7,7 +7,7 @@ import java.util.*;
 
 public class Context {
 
-    Contexts parent;
+    private Contexts parent;
     Map<String, NodeType> varTypes;
     Map<String, String> stringVars;
     Map<String, Double> numberVars;
@@ -221,5 +221,9 @@ public class Context {
         sb.append("; ");
 
         return sb.toString();
+    }
+
+    public Contexts getParent() {
+        return parent;
     }
 }

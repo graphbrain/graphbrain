@@ -1,5 +1,5 @@
 package com.graphbrain.eco;
 
-enum TokenType {
+public enum TokenType {
     Unknown, Symbol, Number, String, Vertex, LPar, RPar
 }
