@@ -13,9 +13,9 @@ object REPL {
     for(ln <- io.Source.stdin.getLines()) {
       val p = new Parser(ln)
 
-      p.expr match {
+      p.getExpr match {
         case d: DummyFun => {
-          d.name match {
+          d.getName match {
             case "load" => {
               /*
               val progFile = d.params(0).stringValue(null, null)
