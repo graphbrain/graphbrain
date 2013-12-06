@@ -5,7 +5,7 @@ import com.graphbrain.eco.NodeType;
 
 public class NlpFun extends FunNode {
 
-    enum NlpFunType {
+    public enum NlpFunType {
         IS_POS, IS_POSPRE, ARE_POS, ARE_POSPRE, CONTAINS_POS, CONTAINS_POSPRE, IS_LEMMA
     }
 

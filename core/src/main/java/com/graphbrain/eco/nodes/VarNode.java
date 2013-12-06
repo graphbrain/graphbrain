@@ -6,6 +6,7 @@ import com.graphbrain.eco.NodeType;
 public class VarNode extends ProgNode {
 
     private String name;
+    private NodeType varType;
     private String[] possiblePOS;
     private String[] necessaryPOS;
     private String[] forbiddenPOS;
@@ -34,6 +35,8 @@ public class VarNode extends ProgNode {
 
     public VarNode(String varStr, int lastTokenPos) {
         super(lastTokenPos);
+
+        varType = NodeType.Unknown;
 
         String[] parts = varStr.split(":");
         name = parts[0];
@@ -99,10 +102,8 @@ public class VarNode extends ProgNode {
         }
     }
 
-    public NodeType varType(){return NodeType.Unknown;}
-
     @Override
-    public NodeType ntype(){return varType();}
+    public NodeType ntype(){return varType;}
 
     @Override
     public void booleanValue(Contexts ctxts) {
@@ -144,6 +145,14 @@ public class VarNode extends ProgNode {
 
     public String getName() {
         return name;
+    }
+
+    public NodeType getVarType() {
+        return varType;
+    }
+
+    public void setVarType(NodeType varType) {
+        this.varType = varType;
     }
 
     public String[] getPossiblePOS() {

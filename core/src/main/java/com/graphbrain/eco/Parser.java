@@ -1,334 +1,386 @@
 package com.graphbrain.eco;
 
-import com.graphbrain.eco.nodes.*;
-import com.graphbrain.eco.NodeType;
 import com.graphbrain.db.Vertex;
+import com.graphbrain.eco.nodes.*;
+import com.graphbrain.eco.nodes.NlpFun.NlpFunType;
+import com.graphbrain.eco.nodes.FilterFun.FilterFunType;
+import com.graphbrain.eco.nodes.VertexFun.VertexFunType;
+import com.graphbrain.eco.nodes.WordsFun.WordsFunType;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class Parser {
 
+    private Map<String, NodeType> varTypes;
+    private Token[] tokens;
+    ProgNode expr;
+
     public Parser(String input) {
+        varTypes = new HashMap<String, NodeType>();
+        tokens = (Token[])new Lexer(input).tokens().toArray();
+        expr = parse(0);
+    }
+
+    private ProgNode parse(int pos) {
+        switch(tokens[pos].getTtype()) {
+            case LPar: return parseList(pos);
+            case String: return new StringNode(tokens[pos].getText(), pos);
+            case Symbol: return parseSymbol(pos);
+            case Number: return new NumberNode(Double.parseDouble(tokens[pos].getText()), pos);
+            case Vertex: return new VertexNode(Vertex.fromId(tokens[pos].getText()), pos);
+            default: return null; // error
+        }
+    }
+
+    private ProgNode parseSymbol(int pos) {
+        String s = tokens[pos].getText();
+
+        if (s.equals("true"))
+            return new BoolNode(true, pos);
+        if (s.equals("false"))
+                return new BoolNode(false, pos);
+
+        return parseVar(pos);
+    }
+
+    private ProgNode parseVar(int pos) {
+        VarNode vn = new VarNode(tokens[pos].getText(), pos);
+        if (varTypes.keySet().contains(vn.getName()))
+            vn.setVarType(varTypes.get(vn.getName()));
+        return vn;
+    }
+
+    private boolean matchOpeningPar(int pos) {
+        return tokens[pos].getTtype() == TokenType.LPar;
+    }
+
+    private boolean matchClosingPar(int pos) {
+        return tokens[pos].getTtype() == TokenType.RPar;
+    }
+
+    private ProgNode parseList(int pos) {
+        if (tokens[pos + 1].getTtype() == TokenType.Symbol) {
+            return parseFun(pos + 1);
+        }
+
+        return null; //error
+    }
+
+    private ProgNode parseFun(int pos) {
+        String text = tokens[pos].getText();
+
+        if (text.equals("wv")) return parseWV(pos + 1);
+        if (text.equals("ww")) return parseWW(pos + 1);
+        if (text.equals("let")) return parseLet(pos + 1);
+        if (text.equals("!")) return parseNotFun(pos + 1);
+        if (text.equals("build")) return parseBuildVert(pos + 1);
+        if (text.equals(":wv")) return parseWVRecursion(pos + 1);
+        if (text.equals(":ww")) return parseWWRecursion(pos + 1);
+        if (text.equals("rel-vert")) return parseRelVert(pos + 1);
+        if (text.equals("txt-vert")) return parseTxtVert(pos + 1);
+        if (text.equals("is-pos")) return parseNlpFun(NlpFunType.IS_POS, pos + 1);
+        if (text.equals("is-pos-pre")) return parseNlpFun(NlpFunType.IS_POSPRE, pos + 1);
+        if (text.equals("are-pos")) return parseNlpFun(NlpFunType.ARE_POS, pos + 1);
+        if (text.equals("are-pos-pre")) return parseNlpFun(NlpFunType.ARE_POSPRE, pos + 1);
+        if (text.equals("contains-pos")) return parseNlpFun(NlpFunType.CONTAINS_POS, pos + 1);
+        if (text.equals("contains-pos-pre")) return parseNlpFun(NlpFunType.CONTAINS_POSPRE, pos + 1);
+        if (text.equals("is-lemma")) return parseNlpFun(NlpFunType.IS_LEMMA, pos + 1);
+        if (text.equals("max-depth")) return parseMaxDepth(pos + 1);
+        if (text.equals("filter-min")) return parseFilter(FilterFunType.FilterMin, pos + 1);
+        if (text.equals("filter-max")) return parseFilter(FilterFunType.FilterMax, pos + 1);
+        if (text.equals("len")) return parseLenFun(pos + 1);
+        if (text.equals("pos")) return parsePosFun(pos + 1);
+        if (text.equals("+")) return parseSum(pos + 1);
+        if (text.equals("ends-with")) return parseEndsWith(pos + 1);
+        return parseDummy(text, pos + 1);
 
     }
 
-  val varTypes = mutable.Map[String, NodeType]()
-  val tokens = new Lexer(input).tokens
-  val expr = parse(0)
+    private ProgNode parseWV(int pos) {
+        ProgNode p1 = parsePattern(pos);
+        ProgNode p2 = parseConds(p1.getLastTokenPos() + 1);
+        ProgNode p3 = parse(p2.getLastTokenPos() + 1);
 
-  private def parse(pos: Int): ProgNode = {
-    tokens(pos).ttype match {
-      case TokenType.LPar => parseList(pos)
-      case TokenType.String => new StringNode(tokens(pos).text, pos)
-      case TokenType.Symbol => parseSymbol(pos)
-      case TokenType.Number => new NumberNode(tokens(pos).text.toDouble, pos)
-      case TokenType.Vertex => new VertexNode(Vertex.fromId(tokens(pos).text), pos)
-    }
-  }
-
-  private def parseSymbol(pos: Int): ProgNode = tokens(pos).text match {
-    case "true" => new BoolNode(true, pos)
-    case "false" => new BoolNode(false, pos)
-    case _ => parseVar(pos)
-  }
-
-  private def parseVar(pos: Int): ProgNode = {
-    val vn = VarNode(tokens(pos).text, pos)
-    if (varTypes.contains(vn.name)) vn.varType = varTypes(vn.name)
-    vn
-  }
-
-  private def matchOpeningPar(pos: Int) =
-    tokens(pos).ttype == TokenType.LPar
-
-  private def matchClosingPar(pos: Int) =
-    tokens(pos).ttype == TokenType.RPar
-
-  private def parseList(pos: Int): ProgNode = {
-    tokens(pos + 1).ttype match {
-      case TokenType.Symbol => parseFun(pos + 1)
-      case _ => null // error
-    }
-  }
-
-  private def parseFun(pos: Int): ProgNode = {
-    tokens(pos).text match {
-      case "wv" => parseWV(pos + 1)
-      case "ww" => parseWW(pos + 1)
-      case "let" => parseLet(pos + 1)
-      case "!" => parseNotFun(pos + 1)
-      case "build" => parseBuildVert(pos + 1)
-      case ":wv" => parseWVRecursion(pos + 1)
-      case ":ww" => parseWWRecursion(pos + 1)
-      case "rel-vert" => parseRelVert(pos + 1)
-      case "txt-vert" => parseTxtVert(pos + 1)
-      case "is-pos" => parseNlpFun(NlpFunType.IS_POS, pos + 1)
-      case "is-pos-pre" => parseNlpFun(NlpFunType.IS_POSPRE, pos + 1)
-      case "are-pos" => parseNlpFun(NlpFunType.ARE_POS, pos + 1)
-      case "are-pos-pre" => parseNlpFun(NlpFunType.ARE_POSPRE, pos + 1)
-      case "contains-pos" => parseNlpFun(NlpFunType.CONTAINS_POS, pos + 1)
-      case "contains-pos-pre" => parseNlpFun(NlpFunType.CONTAINS_POSPRE, pos + 1)
-      case "is-lemma" => parseNlpFun(NlpFunType.IS_LEMMA, pos + 1)
-      case "max-depth" => parseMaxDepth(pos + 1)
-      case "filter-min" => parseFilter(FilterFun.FilterMin, pos + 1)
-      case "filter-max" => parseFilter(FilterFun.FilterMax, pos + 1)
-      case "len" => parseLenFun(pos + 1)
-      case "pos" => parsePosFun(pos + 1)
-      case "+" => parseSum(pos + 1)
-      case "ends-with" => parseEndsWith(pos + 1)
-      case s: String => parseDummy(s, pos + 1)
-    }
-  }
-
-  private def parseWV(pos: Int): ProgNode = {
-    val p1 = parsePattern(pos)
-    val p2 = parseConds(p1.lastTokenPos + 1)
-    val p3 = parse(p2.lastTokenPos + 1)
-
-    if (matchClosingPar(p3.lastTokenPos + 1))
-      new WVRule(Array(p1, p2, p3), p3.lastTokenPos + 1)
-    else
-      null // error
-  }
-
-  private def parseWW(pos: Int): ProgNode = {
-    val p1 = parsePattern(pos)
-    val p2 = parseConds(p1.lastTokenPos + 1)
-    val p3 = parse(p2.lastTokenPos + 1)
-
-    if (matchClosingPar(p3.lastTokenPos + 1))
-      new WWRule(Array(p1, p2, p3), p3.lastTokenPos + 1)
-    else
-      null // error
-  }
-
-  private def parseElems(pos: Int): (Array[ProgNode], Int) = {
-    if (!matchOpeningPar(pos))
-      return null // error
-
-    val params = parseElemList(pos + 1).toArray
-    val lastParamsTokenPos = if (params.size == 0) pos else params.last.lastTokenPos
-
-    if (!matchClosingPar(lastParamsTokenPos + 1))
-      return null // error
-
-    (params, lastParamsTokenPos + 1)
-  }
-
-  private def parseElemList(pos: Int): List[ProgNode] = {
-    if (matchClosingPar(pos)) {
-      Nil
-    }
-    else {
-      val elem = parse(pos)
-      elem :: parseElemList(elem.lastTokenPos + 1)
-    }
-  }
-
-  private def parseConds(pos: Int): ProgNode = {
-    val e = parseElems(pos)
-    new CondsFun(e._1, e._2)
-  }
-
-  private def parseParamsList(pos: Int): List[ProgNode] = {
-    if (matchClosingPar(pos)) {
-      Nil
-    }
-    else {
-      val param = tokens(pos).ttype match {
-        case TokenType.String => new StringNode(tokens(pos).text, pos)
-        case TokenType.Symbol => parseVar(pos)
-        case TokenType.LPar => parsePattern(pos + 1)
-        case _ => null // error
-      }
-      param :: parseParamsList(param.lastTokenPos + 1)
-    }
-  }
-
-  private def parsePattern(pos: Int): ProgNode = {
-    if (!matchOpeningPar(pos))
-      return null // error
-
-    val params = parseParamsList(pos + 1).toArray
-
-    // set var types
-    for (p <- params) p match {
-      case v: VarNode => {
-        v.varType = NodeType.Words
-        varTypes(v.name) = NodeType.Words
-      }
-      case _ =>
+        if (matchClosingPar(p3.getLastTokenPos() + 1))
+            return new WVRule(new ProgNode[]{p1, p2, p3}, p3.getLastTokenPos() + 1);
+        else
+            return null; // error
     }
 
-    val lastParamsTokenPos = if (params.size == 0) pos + 1 else params.last.lastTokenPos
+    private ProgNode parseWW(int pos) {
+        ProgNode p1 = parsePattern(pos);
+        ProgNode p2 = parseConds(p1.getLastTokenPos() + 1);
+        ProgNode p3 = parse(p2.getLastTokenPos() + 1);
 
-    if (!matchClosingPar(lastParamsTokenPos + 1))
-      return null // error
-
-    new PatFun(params, lastParamsTokenPos + 1)
-  }
-
-  private def parseLet(pos: Int): ProgNode = {
-    val p1 = parse(pos)
-    val p2 = parse(p1.lastTokenPos + 1)
-
-    // set var type
-    p1 match {
-      case v: VarNode => {
-        v.varType = p2.ntype
-        varTypes(v.name) = p2.ntype
-      }
-      case _ =>
+        if (matchClosingPar(p3.getLastTokenPos() + 1))
+            return new WWRule(new ProgNode[]{p1, p2, p3}, p3.getLastTokenPos() + 1);
+        else
+            return null; // error
     }
 
-    if (matchClosingPar(p2.lastTokenPos + 1))
-      new LetFun(Array(p1, p2), p2.lastTokenPos + 1)
-    else
-      null // error
-  }
+    private Object[] parseElems(int pos) {
+        //(Array[ProgNode], Int)
+        if (!matchOpeningPar(pos))
+            return null; // error
 
-  private def parseBuildVert(pos: Int): ProgNode = {
-    var lastPos = pos
-    var paramList = List[ProgNode]()
+        ProgNode[] params = (ProgNode[])parseElemList(pos + 1).toArray();
 
-    while (!matchClosingPar(lastPos)) {
-      val p = parse(lastPos)
-      lastPos = p.lastTokenPos + 1
-      paramList ::= p
+        int lastParamsTokenPos;
+
+        if (params.length == 0)
+            lastParamsTokenPos = pos;
+        else
+            lastParamsTokenPos = params[params.length - 1].getLastTokenPos();
+
+        if (!matchClosingPar(lastParamsTokenPos + 1))
+            return null; // error
+
+        return new Object[]{params, lastParamsTokenPos + 1};
     }
 
-    val params = paramList.reverse.toArray
-    new VertexFun(VertexFun.BuildVert, params, lastPos)
-  }
-
-  private def parseRelVert(pos: Int): ProgNode = {
-    val p1 = parse(pos)
-
-    if (matchClosingPar(p1.lastTokenPos + 1))
-      new VertexFun(VertexFun.RelVert, Array(p1), p1.lastTokenPos + 1)
-    else
-      null // error
-  }
-
-  private def parseTxtVert(pos: Int): ProgNode = {
-    val p1 = parse(pos)
-
-    if (matchClosingPar(p1.lastTokenPos + 1))
-      new VertexFun(VertexFun.TxtVert, Array(p1), p1.lastTokenPos + 1)
-    else
-      null // error
-  }
-
-  private def parseDummy(name: String, pos: Int): ProgNode = {
-    var lastPos = pos
-    var paramList = List[ProgNode]()
-
-    while (!matchClosingPar(lastPos)) {
-      val p = parse(lastPos)
-      lastPos = p.lastTokenPos + 1
-      paramList ::= p
+    private void parseElemList_r(List<ProgNode> l, int pos) {
+        if (!matchClosingPar(pos)) {
+            ProgNode elem = parse(pos);
+            l.add(elem);
+            parseElemList_r(l, elem.getLastTokenPos() + 1);
+        }
     }
 
-    val params = paramList.reverse.toArray
-    new DummyFun(name, params, lastPos)
-  }
+    private List<ProgNode> parseElemList(int pos) {
+        List<ProgNode> l = new LinkedList<ProgNode>();
+        parseElemList_r(l, pos);
+        return l;
+    }
 
-  private def parseNlpFun(ftype: NlpFunType, pos: Int): ProgNode = {
-    val params = parseParamsList(pos).toArray
+    private ProgNode parseConds(int pos) {
+        Object[] e = parseElems(pos);
+        return new CondsFun((ProgNode[])e[0], (Integer)e[1]);
+    }
 
-    val lastParamsTokenPos = if (params.size == 0) pos else params.last.lastTokenPos
+    private void parseParamsList_r(List<ProgNode> l, int pos) {
+        if (!matchClosingPar(pos)) {
 
-    if (matchClosingPar(lastParamsTokenPos + 1))
-      new NlpFun(ftype, params, lastParamsTokenPos + 1)
-    else
-      null // error
-  }
+            ProgNode param;
 
-  private def parseWVRecursion(pos: Int): ProgNode = {
-    val p1 = parse(pos)
+            switch(tokens[pos].getTtype()) {
+                case String:
+                    param = new StringNode(tokens[pos].getText(), pos);
+                    break;
+                case Symbol:
+                    param = parseVar(pos);
+                    break;
+                case LPar:
+                    param = parsePattern(pos + 1);
+                    break;
+                default:
+                    param = null; // error
+            }
 
-    if (matchClosingPar(p1.lastTokenPos + 1))
-      new WVRecursion(Array(p1), p1.lastTokenPos + 1)
-    else
-      null // error
-  }
+            if (param != null) {
+                l.add(param);
+                parseParamsList_r(l, param.getLastTokenPos() + 1);
+            }
+        }
+    }
 
-  private def parseWWRecursion(pos: Int): ProgNode = {
-    val p1 = parse(pos)
+    private List<ProgNode> parseParamsList(int pos) {
+        List<ProgNode> l = new LinkedList<ProgNode>();
+        parseParamsList_r(l, pos);
+        return l;
+    }
 
-    if (matchClosingPar(p1.lastTokenPos + 1))
-      new WWRecursion(Array(p1), p1.lastTokenPos + 1)
-    else
-      null // error
-  }
+    private ProgNode parsePattern(int pos) {
+        if (!matchOpeningPar(pos))
+            return null; // error
 
-  private def parseNotFun(pos: Int): ProgNode = {
-    val p1 = parse(pos)
+        ProgNode[] params = (ProgNode[])parseParamsList(pos + 1).toArray();
 
-    if (matchClosingPar(p1.lastTokenPos + 1))
-      new NotFun(Array(p1), p1.lastTokenPos + 1)
-    else
-      null // error
-  }
+        // set var types
+        for (ProgNode p : params) {
+            if (p instanceof VarNode) {
+                VarNode v = (VarNode)p;
+                v.setVarType(NodeType.Words);
+                varTypes.put(v.getName(), NodeType.Words);
+            }
+        }
 
-  private def parseMaxDepth(pos: Int): ProgNode = {
-    val p1 = parse(pos)
+        int lastParamsTokenPos;
+        if (params.length == 0)
+            lastParamsTokenPos = pos + 1;
+        else
+            lastParamsTokenPos = params[params.length - 1].getLastTokenPos();
 
-    if (matchClosingPar(p1.lastTokenPos + 1))
-      new MaxDepthFun(Array(p1), p1.lastTokenPos + 1)
-    else
-      null // error
-  }
+        if (!matchClosingPar(lastParamsTokenPos + 1))
+            return null; // error
 
-  private def parseFilter(fun: FilterFun.FilterFun, pos: Int): ProgNode = {
-    val p1 = parse(pos)
+        return new PatFun(params, lastParamsTokenPos + 1);
+    }
 
-    if (matchClosingPar(p1.lastTokenPos + 1))
-      new FilterFun(fun, Array(p1), p1.lastTokenPos + 1)
-    else
-      null // error
-  }
+    private ProgNode parseLet(int pos) {
+        ProgNode p1 = parse(pos);
+        ProgNode p2 = parse(p1.getLastTokenPos() + 1);
 
-  private def parseLenFun(pos: Int): ProgNode = {
-    val p1 = parse(pos)
+        // set var type
+        if (p1 instanceof VarNode) {
+            VarNode v = (VarNode)p1;
+            v.setVarType(p2.ntype());
+            varTypes.put(v.getName(), p2.ntype());
+        }
 
-    if (matchClosingPar(p1.lastTokenPos + 1))
-      new LenFun(Array(p1), p1.lastTokenPos + 1)
-    else
-      null // error
-  }
+        if (matchClosingPar(p2.getLastTokenPos() + 1))
+            return new LetFun(new ProgNode[]{p1, p2}, p2.getLastTokenPos() + 1);
+        else
+            return null; // error
+    }
 
-  private def parsePosFun(pos: Int): ProgNode = {
-    val p1 = parse(pos)
+    private ProgNode parseBuildVert(int pos) {
+        int lastPos = pos;
+        List<ProgNode> paramList = new LinkedList<ProgNode>();
 
-    if (matchClosingPar(p1.lastTokenPos + 1))
-      new PosFun(Array(p1), p1.lastTokenPos + 1)
-    else
-      null // error
-  }
+        while (!matchClosingPar(lastPos)) {
+            ProgNode p = parse(lastPos);
+            lastPos = p.getLastTokenPos() + 1;
+            paramList.add(p);
+        }
 
-  private def parseSum(pos: Int): ProgNode = {
-    val params = parseParamsList(pos).toArray
-    val lastParamsTokenPos = if (params.size == 0) pos else params.last.lastTokenPos
+        ProgNode[] params = (ProgNode[])paramList.toArray();
+        return new VertexFun(VertexFunType.BuildVert, params, lastPos);
+    }
 
-    if (!matchClosingPar(lastParamsTokenPos + 1))
-      return null // error
+    private ProgNode parseRelVert(int pos) {
+        ProgNode p1 = parse(pos);
 
-    new SumFun(params, lastParamsTokenPos + 1)
-  }
+        if (matchClosingPar(p1.getLastTokenPos() + 1))
+            return new VertexFun(VertexFunType.RelVert, new ProgNode[]{p1}, p1.getLastTokenPos() + 1);
+        else
+            return null; // error
+    }
 
-  private def parseEndsWith(pos: Int): ProgNode = {
-    val p1 = parse(pos)
-    val p2 = parse(p1.lastTokenPos + 1)
+    private ProgNode parseTxtVert(int pos) {
+        ProgNode p1 = parse(pos);
 
-    if (matchClosingPar(p2.lastTokenPos + 1))
-      new WordsFun(WordsFun.EndsWith, Array(p1, p2), p2.lastTokenPos + 1)
-    else
-      null // error
-  }
-}
+        if (matchClosingPar(p1.getLastTokenPos() + 1))
+            return new VertexFun(VertexFunType.TxtVert, new ProgNode[]{p1}, p1.getLastTokenPos() + 1);
+        else
+            return null; // error
+    }
 
-object Parser {
-  def main(args: Array[String]) = {
-    val p = new Parser("(nlp test ((? x \"is\" y)) (true))")
-    println(p.expr)
-  }
+    private ProgNode parseDummy(String name, int pos) {
+        int lastPos = pos;
+        List<ProgNode> paramList = new LinkedList<ProgNode>();
+
+        while (!matchClosingPar(lastPos)) {
+            ProgNode p = parse(lastPos);
+            lastPos = p.getLastTokenPos() + 1;
+            paramList.add(p);
+        }
+
+        ProgNode[] params = (ProgNode[])paramList.toArray();
+        return new DummyFun(name, params, lastPos);
+    }
+
+    private ProgNode parseNlpFun(NlpFunType ftype, int pos) {
+        ProgNode[] params = (ProgNode[])parseParamsList(pos).toArray();
+
+        int lastParamsTokenPos;
+        if (params.length == 0)
+            lastParamsTokenPos = pos;
+        else
+            lastParamsTokenPos = params[params.length - 1].getLastTokenPos();
+
+        if (matchClosingPar(lastParamsTokenPos + 1))
+            return new NlpFun(ftype, params, lastParamsTokenPos + 1);
+        else
+            return null; // error
+    }
+
+    private ProgNode parseWVRecursion(int pos) {
+        ProgNode p1 = parse(pos);
+
+        if (matchClosingPar(p1.getLastTokenPos() + 1))
+            return new WVRecursion(new ProgNode[]{p1}, p1.getLastTokenPos() + 1);
+        else
+            return null; // error
+    }
+
+    private ProgNode parseWWRecursion(int pos) {
+        ProgNode p1 = parse(pos);
+
+        if (matchClosingPar(p1.getLastTokenPos() + 1))
+            return new WWRecursion(new ProgNode[]{p1}, p1.getLastTokenPos() + 1);
+        else
+            return null; // error
+    }
+
+    private ProgNode parseNotFun(int pos) {
+        ProgNode p1 = parse(pos);
+
+        if (matchClosingPar(p1.getLastTokenPos() + 1))
+            return new NotFun(new ProgNode[]{p1}, p1.getLastTokenPos() + 1);
+        else
+            return null; // error
+    }
+
+    private ProgNode parseMaxDepth(int pos) {
+        ProgNode p1 = parse(pos);
+
+        if (matchClosingPar(p1.getLastTokenPos() + 1))
+            return new MaxDepthFun(new ProgNode[]{p1}, p1.getLastTokenPos() + 1);
+        else
+            return null; // error
+    }
+
+    private ProgNode parseFilter(FilterFunType fun, int pos) {
+        ProgNode p1 = parse(pos);
+
+        if (matchClosingPar(p1.getLastTokenPos() + 1))
+            return new FilterFun(fun, new ProgNode[]{p1}, p1.getLastTokenPos() + 1);
+        else
+            return null; // error
+    }
+
+    private ProgNode parseLenFun(int pos) {
+        ProgNode p1 = parse(pos);
+
+        if (matchClosingPar(p1.getLastTokenPos() + 1))
+            return new LenFun(new ProgNode[]{p1}, p1.getLastTokenPos() + 1);
+        else
+            return null; // error
+    }
+
+    private ProgNode parsePosFun(int pos) {
+        ProgNode p1 = parse(pos);
+
+        if (matchClosingPar(p1.getLastTokenPos() + 1))
+            return new PosFun(new ProgNode[]{p1}, p1.getLastTokenPos() + 1);
+        else
+            return null; // error
+    }
+
+    private ProgNode parseSum(int pos) {
+        ProgNode[] params = (ProgNode[])parseParamsList(pos).toArray();
+        int lastParamsTokenPos;
+        if (params.length == 0)
+            lastParamsTokenPos = pos;
+        else
+            lastParamsTokenPos = params[params.length - 1].getLastTokenPos();
+
+        if (!matchClosingPar(lastParamsTokenPos + 1))
+            return null; // error
+
+        return new SumFun(params, lastParamsTokenPos + 1);
+    }
+
+    private ProgNode parseEndsWith(int pos) {
+        ProgNode p1 = parse(pos);
+        ProgNode p2 = parse(p1.getLastTokenPos() + 1);
+
+        if (matchClosingPar(p2.getLastTokenPos() + 1))
+            return new WordsFun(WordsFunType.EndsWith, new ProgNode[]{p1, p2}, p2.getLastTokenPos() + 1);
+        else
+            return null; // error
+    }
 }
