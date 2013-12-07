@@ -90,12 +90,9 @@ public class Words {
     }
 
     public Words slice(int start, int end) {
-        System.out.println("------- " + start + " / " + end);
-        System.out.println("len: " + words.length);
         int newLen = end - start + 1;
         Word[] newWords = new Word[newLen];
         System.arraycopy(words, start, newWords, 0, newLen);
-        System.out.println("xxx");
 
         return new Words(newWords, pos + start);
     }

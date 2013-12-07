@@ -1,11 +1,8 @@
-<% escapeMarkup = false %>
-<%@ val tests: String="" %>
-
-<% layout("ecopage.ssp") {%>
+#parse("velocity/template/ecopage_header.wm")
 
 <form role="form" action="edittests" method="post">
     <textarea id="tests" name="tests">
-<%= tests %>
+$tests
     </textarea>
     <br />
     <button type="submit" class="btn btn-default">Save</button>
@@ -20,4 +17,4 @@
   });
 </script>
 
-<%}%>
+#parse("velocity/template/ecopage_footer.wm")
