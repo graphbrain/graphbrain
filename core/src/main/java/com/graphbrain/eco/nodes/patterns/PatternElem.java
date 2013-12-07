@@ -107,7 +107,7 @@ public abstract class PatternElem implements Comparable<PatternElem> {
     }
 
     public int compareTo(PatternElem e) {
-        return priority() - e.priority();
+        return e.priority() - priority();
     }
 
     public PatternElem getNextElem() {
@@ -116,5 +116,20 @@ public abstract class PatternElem implements Comparable<PatternElem> {
 
     public void setFixed(boolean fixed) {
         this.fixed = fixed;
+    }
+
+    public String detailStr() {
+        String str = "";
+        str += "elemPos: " + elemPos;
+        str += "; elemCount: " + elemCount;
+        str += "; start: " + start;
+        str += "; end: " + end;
+        str += "; startMin: " + startMin;
+        str += "; startMax: " + startMax;
+        str += "; endMin: " + endMin;
+        str += "; endMax: " + endMax;
+        str += "; fixed: " + fixed;
+
+        return str;
     }
 }

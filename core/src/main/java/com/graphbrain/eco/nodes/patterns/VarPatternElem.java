@@ -45,16 +45,15 @@ public class VarPatternElem extends PatternElem {
             return true;
 
         String wordPOS = sentence.getWords()[pos].getPos();
-        boolean b = false;
 
         for (String p : possiblePOS) {
+            //System.out.println("possiblePOS: " + p + "; wordPOS: " + wordPOS);
             if (wordPOS.startsWith(p)) {
-                b = true;
-                break;
+                return true;
             }
         }
 
-        return b;
+        return false;
     }
 
     @Override
@@ -78,6 +77,12 @@ public class VarPatternElem extends PatternElem {
                 intStart += 1;
             }
         }
+
+        /*
+        System.out.println("\n" + name);
+        for (Integer[] i : intervals) {
+            System.out.println("[" + i[0] + ", " + i[1] + "]");
+        }*/
     }
 
     @Override
@@ -197,10 +202,10 @@ public class VarPatternElem extends PatternElem {
                     if (!setCurInterval(curInterval + 1))
                         return false;
                 }
-                /*
                 else {
-                    Math.max(curEndMin(), start);
-                }*/
+                    if (end > Math.max(curEndMin(), start))
+                        return false;
+                }
             }
             return true;
         }

@@ -54,6 +54,13 @@ public class PatFun extends FunNode {
             elems[i].init(i, elems.length, prev, next);
         }
 
+        /*
+        System.out.println("---------------------------");
+        for (PatternElem x : elems) {
+            System.out.println(x.toString());
+        }
+        */
+
         // order by priority
         Arrays.sort(elems);
     }
@@ -82,26 +89,40 @@ public class PatFun extends FunNode {
             e = e.getNextElem();
         }
 
+        /*
+        System.out.println("####################################");
+        for (ProgNode p : params) System.out.print(p.toString() + "-");
+        System.out.println("\n");
+        */
         matches(ctxts, 0);
 
         ctxts.applyChanges();
     }
 
     private void matches(Contexts ctxts, int pos) {
+
         elems[pos].setFixed(true);
 
         elems[pos].rewind();
+        //System.out.println("matches pos: " + pos + "; length: " + elems.length);
         while (elems[pos].next()) {
+            /*System.out.println("---------------------------");
+            System.out.println("sentence length: " + ctxts.getSentence().length());
+            for (PatternElem x : elems) {
+                System.out.println(x.detailStr());
+            }*/
             if (pos == elems.length - 1) {
                 // match found
-                //println("\n")
-                //println(ctxts.sentence)
-                //println(this)
+                //System.out.println("\n-> ");
+                //System.out.println(ctxts.getSentence());
+                //System.out.println(this);
+                System.out.println("\n\n+++++++++++");
+                System.out.println(ctxts.getSentence());
                 printMatch();
                 addContext(ctxts);
             }
             else {
-                //println(elems(pos))
+                //System.out.println(elems[pos]);
                 matches(ctxts, pos + 1);
             }
         }

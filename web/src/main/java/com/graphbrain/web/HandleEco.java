@@ -17,18 +17,34 @@ import java.util.List;
 import java.util.Map;
 
 public class HandleEco extends VelocityRoute {
-    public HandleEco(String route) {
+    public enum HandleEcoType {
+        PARSER, CODE, EDIT_TESTS
+    }
+
+    private HandleEcoType type;
+
+    public HandleEco(HandleEcoType type, String route) {
         super(route);
+        this.type = type;
     }
 
     @Override
     public Object handle(Request request, Response response) {
-        String text = "";
+        switch(type) {
+            case PARSER:
+                String text = "";
 
-        if (request.requestMethod().equals("post")) {
-            text = request.queryParams("text");
+                if (request.requestMethod().equals("post")) {
+                    text = request.queryParams("text");
+                }
+                return renderParser(request, response, text);
+            case CODE:
+                return renderCode();
+            case EDIT_TESTS:
+                return renderEditTests();
+            default:
+                return "error";
         }
-        return renderParser(request, text);
     }
 
     private String getCode() {
@@ -47,13 +63,13 @@ public class HandleEco extends VelocityRoute {
             return tests.getText();
     }
 
-    private ModelAndView renderParser(Request request, String parseText) {
+    private ModelAndView renderParser(Request request, Response response, String parseText) {
 
         String text;
 
         if (parseText.isEmpty()) {
             if (request.cookies().containsKey("parse_text"))
-                text = request.cookie("parse_test");
+                text = request.cookie("parse_text");
             else
                 text = "";
         }
@@ -66,6 +82,7 @@ public class HandleEco extends VelocityRoute {
             Text t = new Text(text);
 
             Prog p = Prog.fromString(getCode());
+            System.out.println(p);
 
             for (String s : t.getSentences()) {
                 List<Contexts> ctxtsList = p.wv(s, 0);
@@ -82,17 +99,31 @@ public class HandleEco extends VelocityRoute {
         attributes.put("text", text);
         attributes.put("ctxtList", visualCtxtList);
 
+        response.cookie("parse_text", text);
         return modelAndView(attributes, "velocity/template/ecoparse.wm");
     }
 
-    /*
-    private def renderCode(req: HttpRequest[Any]) = {
-        val code = getCode
+    private ModelAndView renderCode() {
+        String code = getCode();
 
-        Ok ~> ResponseHeader("Content-Type", Set("text/html")) ~>
-        Scalate(req, "ecocode.ssp", ("title", "Code"), ("code", code))(WebServer.engine)
+        Map<String, Object> attributes = new HashMap<String, Object>();
+        attributes.put("title", "Code");
+        attributes.put("code", code);
+
+        return modelAndView(attributes, "velocity/template/ecocode.wm");
     }
 
+    private ModelAndView renderEditTests() {
+        String tests = getTests();
+
+        Map<String, Object> attributes = new HashMap<String, Object>();
+        attributes.put("title", "Edit Tests");
+        attributes.put("tests", tests);
+
+        return modelAndView(attributes, "velocity/template/ecoedittests.wm");
+    }
+
+    /*
     private def renderRunTests(req: HttpRequest[Any], run: Boolean) = {
         var visualCtxtList = List[VisualContext]()
 
@@ -114,13 +145,6 @@ public class HandleEco extends VelocityRoute {
 
         Ok ~> ResponseHeader("Content-Type", Set("text/html")) ~>
         Scalate(req, "ecoruntests.ssp", ("title", "Run Tests"), ("ctxtList", visualCtxtList.reverse))(WebServer.engine)
-        }
-
-private def renderEditTests(req: HttpRequest[Any]) = {
-        val tests = getTests
-
-        Ok ~> ResponseHeader("Content-Type", Set("text/html")) ~>
-        Scalate(req, "ecoedittests.ssp", ("title", "Edit Tests"), ("tests", tests))(WebServer.engine)
         }
         */
 }

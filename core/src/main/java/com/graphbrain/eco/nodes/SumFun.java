@@ -45,7 +45,7 @@ public class SumFun extends FunNode {
         for (Context c : ctxts.getCtxts()) {
             Words agg = Words.empty();
             for (ProgNode p : params)
-                agg.append(c.getRetWords(p));
+                agg = agg.append(c.getRetWords(p));
             c.setRetWords(this, agg);
         }
     }

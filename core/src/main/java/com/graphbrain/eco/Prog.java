@@ -94,6 +94,7 @@ public class Prog {
         StringBuilder sb = new StringBuilder(100);
         for (ProgNode e : exprs) {
             sb.append(e.toString());
+            sb.append('\n');
         }
         return sb.toString();
     }

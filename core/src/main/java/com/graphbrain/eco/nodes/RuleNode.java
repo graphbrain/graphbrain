@@ -7,12 +7,13 @@ public abstract class RuleNode extends FunNode {
     public RuleNode(ProgNode[] params, int lastTokenPos) {
         super(params, lastTokenPos);
 
+        ProgNode[] pattern = ((PatFun)params[0]).params;
         StringBuilder sb = new StringBuilder(50);
-        for (int i = 0; i < params.length; i++) {
+        for (int i = 0; i < pattern.length; i++) {
             if (i > 0) {
                 sb.append("-");
             }
-            sb.append(params[i].toString());
+            sb.append(pattern[i].toString());
         }
         name = sb.toString();
     }
