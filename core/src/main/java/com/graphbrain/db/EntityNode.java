@@ -12,7 +12,7 @@ public class EntityNode extends Vertex {
     }
 
     public EntityNode(String id) {
-        super(id);
+        this(id, 0, -1);
     }
 
     public EntityNode(String id, Map<String, String> map) {
@@ -34,11 +34,6 @@ public class EntityNode extends Vertex {
 
     public static EntityNode fromNsAndText(String namespace, String text) {
         return new EntityNode(id(namespace, text));
-    }
-
-    @Override
-    public String toString() {
-        return text();
     }
 
     @Override

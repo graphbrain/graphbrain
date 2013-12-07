@@ -1,13 +1,16 @@
 package com.graphbrain.web;
 
-import org.eclipse.jetty.server.Server;
+import com.graphbrain.db.Graph;
+import static spark.Spark.*;
 
-public class WebServer
-{
-    public static void main(String[] args) throws Exception
-    {
-        Server server = new Server(8080);
-        server.start();
-        server.join();
+public class WebServer {
+
+    public static Graph graph = new Graph();
+
+    public static void main(String[] args) {
+
+        staticFileLocation("/");
+        get(new HandleEco("/eco"));
+        post(new HandleEco("/eco"));
     }
 }

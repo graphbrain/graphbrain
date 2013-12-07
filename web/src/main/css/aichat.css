@@ -1,0 +1,44 @@
+#ai-chat {
+    position:fixed;
+    bottom:0px;
+    right:0px;
+    width:600px;
+    height:180px;
+	color: #fff;
+    background: rgba(189,218,249, 0.9);
+    padding-left: 10px;
+    padding-right: 10px;
+    display: none;
+    overflow: auto;
+    z-index:2;
+}
+
+#ai-chat-input {
+	margin-top:10px;
+	margin-bottom:5px;
+	padding-left:0;
+	padding-right:0;
+	border-width:0;
+    width:100%;
+}
+
+.aichat_action {
+    background: #69D2E7;
+}
+
+.gb-line {
+    color: #111;
+}
+
+.gb-line a {
+    color: #000;
+}
+
+.gb-line a:hover {
+    color: #000;
+    text-decoration:underline;
+}
+
+.user-line {
+    color: #444;
+}

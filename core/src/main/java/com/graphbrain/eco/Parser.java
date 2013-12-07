@@ -20,7 +20,8 @@ public class Parser {
 
     public Parser(String input) {
         varTypes = new HashMap<String, NodeType>();
-        tokens = (Token[])new Lexer(input).tokens().toArray();
+        List<Token> lstTokens = new Lexer(input).tokens();
+        tokens = lstTokens.toArray(new Token[lstTokens.size()]);
         expr = parse(0);
     }
 
@@ -126,7 +127,8 @@ public class Parser {
         if (!matchOpeningPar(pos))
             return null; // error
 
-        ProgNode[] params = (ProgNode[])parseElemList(pos + 1).toArray();
+        List<ProgNode> lstParams = parseElemList(pos + 1);
+        ProgNode[] params = lstParams.toArray(new ProgNode[lstParams.size()]);
 
         int lastParamsTokenPos;
 
@@ -196,7 +198,8 @@ public class Parser {
         if (!matchOpeningPar(pos))
             return null; // error
 
-        ProgNode[] params = (ProgNode[])parseParamsList(pos + 1).toArray();
+        List<ProgNode> lstParams = parseParamsList(pos + 1);
+        ProgNode[] params = lstParams.toArray(new ProgNode[parseParamsList(pos + 1).size()]);
 
         // set var types
         for (ProgNode p : params) {
@@ -246,7 +249,7 @@ public class Parser {
             paramList.add(p);
         }
 
-        ProgNode[] params = (ProgNode[])paramList.toArray();
+        ProgNode[] params = paramList.toArray(new ProgNode[paramList.size()]);
         return new VertexFun(VertexFunType.BuildVert, params, lastPos);
     }
 
@@ -361,7 +364,8 @@ public class Parser {
     }
 
     private ProgNode parseSum(int pos) {
-        ProgNode[] params = (ProgNode[])parseParamsList(pos).toArray();
+        List<ProgNode> progNodes = parseParamsList(pos);
+        ProgNode[] params = progNodes.toArray(new ProgNode[progNodes.size()]);
         int lastParamsTokenPos;
         if (params.length == 0)
             lastParamsTokenPos = pos;

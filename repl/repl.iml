@@ -33,8 +33,6 @@
     <orderEntry type="library" name="Maven: org.fusesource.leveldbjni:leveldbjni-win64:1.5" level="project" />
     <orderEntry type="library" name="Maven: org.jsoup:jsoup:1.7.2" level="project" />
     <orderEntry type="library" name="Maven: org.mindrot:jbcrypt:0.3m" level="project" />
-    <orderEntry type="library" name="Maven: com.typesafe.akka:akka-actor_2.10:2.2.0-RC2" level="project" />
-    <orderEntry type="library" name="Maven: com.typesafe:config:1.0.1" level="project" />
     <orderEntry type="library" name="Maven: edu.stanford.nlp:stanford-corenlp:3.2.0" level="project" />
     <orderEntry type="library" name="Maven: xom:xom:1.2.5" level="project" />
     <orderEntry type="library" name="Maven: xml-apis:xml-apis:1.3.03" level="project" />
@@ -51,11 +49,7 @@
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-log4j12:1.7.5" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.5" level="project" />
     <orderEntry type="library" name="Maven: log4j:log4j:1.2.17" level="project" />
-    <orderEntry type="library" name="Maven: com.typesafe:scalalogging-slf4j_2.10:1.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.scala-lang:scala-reflect:2.10.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.scalatest:scalatest_2.10:1.9.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.scala-lang:scala-actors:2.10.0" level="project" />
   </component>
 </module>
 
