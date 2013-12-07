@@ -226,4 +226,8 @@ public class Context {
     public Contexts getParent() {
         return parent;
     }
+
+    public List<Context> getSubContexts() {
+        return subContexts;
+    }
 }

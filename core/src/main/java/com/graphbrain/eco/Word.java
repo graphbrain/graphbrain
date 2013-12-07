@@ -14,7 +14,7 @@ public class Word {
 
     @Override
     public String toString() {
-        return word + " [" + pos + ", " + lemma + "]";
+        return word;
     }
 
     public String getWord() {

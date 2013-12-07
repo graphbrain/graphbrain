@@ -34,6 +34,8 @@ public class PatFun extends FunNode {
                         v.getNecessaryPOS(),
                         v.getForbiddenPOS());
             }
+
+            i++;
         }
 
         first = elems[0];
