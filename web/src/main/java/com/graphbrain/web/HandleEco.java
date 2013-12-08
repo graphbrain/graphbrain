@@ -2,10 +2,8 @@ package com.graphbrain.web;
 
 import com.graphbrain.db.ProgNode;
 import com.graphbrain.db.TextNode;
-import com.graphbrain.eco.Context;
-import com.graphbrain.eco.Contexts;
-import com.graphbrain.eco.Prog;
-import com.graphbrain.eco.Text;
+import com.graphbrain.db.Vertex;
+import com.graphbrain.eco.*;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
@@ -18,7 +16,7 @@ import java.util.Map;
 
 public class HandleEco extends VelocityRoute {
     public enum HandleEcoType {
-        PARSER, CODE, EDIT_TESTS
+        PARSER, CODE, EDIT_TESTS, RUN_TESTS
     }
 
     private HandleEcoType type;
@@ -39,9 +37,17 @@ public class HandleEco extends VelocityRoute {
                 }
                 return renderParser(request, response, text);
             case CODE:
+                if (request.requestMethod().equals("post")) {
+                    WebServer.graph.put(new ProgNode("prog/prog", request.queryParams("code")));
+                }
                 return renderCode();
             case EDIT_TESTS:
+                if (request.requestMethod().equals("post")) {
+                    WebServer.graph.put(new TextNode("text/tests", request.queryParams("tests")));
+                }
                 return renderEditTests();
+            case RUN_TESTS:
+                return renderRunTests(request.requestMethod().equals("post"));
             default:
                 return "error";
         }
@@ -82,7 +88,7 @@ public class HandleEco extends VelocityRoute {
             Text t = new Text(text);
 
             Prog p = Prog.fromString(getCode());
-            System.out.println(p);
+            //System.out.println(p);
 
             for (String s : t.getSentences()) {
                 List<Contexts> ctxtsList = p.wv(s, 0);
@@ -123,28 +129,29 @@ public class HandleEco extends VelocityRoute {
         return modelAndView(attributes, "velocity/template/ecoedittests.wm");
     }
 
-    /*
-    private def renderRunTests(req: HttpRequest[Any], run: Boolean) = {
-        var visualCtxtList = List[VisualContext]()
+    private ModelAndView renderRunTests(boolean run) {
+        List<VisualContext> visualCtxtList = new LinkedList<VisualContext>();
 
         if (run) {
-        val testData = getTests
-        val tests = new Tests(testData)
+            String testData = getTests();
+            Tests tests = new Tests(testData);
 
-        val p = Prog.fromString(getCode)
+            Prog p = Prog.fromString(getCode());
 
-        for (t: Array[String] <- tests.getTests.toArray) {
-        val ctxtsList = p.wv(t(0), 0)
-        for (ctxts: Contexts <- ctxtsList.toArray) {
-        for (ctxt <- ctxts.getCtxts) {
-        visualCtxtList ::= new VisualContext(ctxt, t(1))
-        }
-        }
-        }
+            for (String[] t : tests.getTests()) {
+                List<Contexts> ctxtsList = p.wv(t[0], 0);
+                for (Contexts ctxts : ctxtsList) {
+                    for (Context ctxt : ctxts.getCtxts()) {
+                        visualCtxtList.add(new VisualContext(ctxt, t[1]));
+                    }
+                }
+            }
         }
 
-        Ok ~> ResponseHeader("Content-Type", Set("text/html")) ~>
-        Scalate(req, "ecoruntests.ssp", ("title", "Run Tests"), ("ctxtList", visualCtxtList.reverse))(WebServer.engine)
-        }
-        */
+        Map<String, Object> attributes = new HashMap<String, Object>();
+        attributes.put("title", "Run Tests");
+        attributes.put("ctxtList", visualCtxtList);
+
+        return modelAndView(attributes, "velocity/template/ecoruntests.wm");
+    }
 }

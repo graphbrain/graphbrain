@@ -52,9 +52,6 @@ public class StrPatternElem extends PatternElem {
             if (!step())
                 return false;
 
-            //System.out.println("*start: " + start);
-            //System.out.println("curStartMax: " + curStartMax());
-            //System.out.println("curEndMax: " + curEndMax());
             if (sentence.getWords()[start].getWord().toLowerCase().equals(str.toLowerCase())) {
                 found = true;
             }

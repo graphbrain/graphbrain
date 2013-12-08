@@ -57,6 +57,9 @@ public class Words {
     }
 
     public boolean endsWith(Words words2) {
+        if (words2 == null)
+            return false;
+
         int length1 = words.length;
         int length2 = words2.words.length;
 

@@ -281,7 +281,7 @@ public class Parser {
             paramList.add(p);
         }
 
-        ProgNode[] params = (ProgNode[])paramList.toArray();
+        ProgNode[] params = paramList.toArray(new ProgNode[paramList.size()]);
         return new DummyFun(name, params, lastPos);
     }
 

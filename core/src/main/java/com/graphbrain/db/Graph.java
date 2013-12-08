@@ -1,7 +1,6 @@
 package com.graphbrain.db;
 
 import java.util.*;
-//import com.typesafe.scalalogging.slf4j.Logging;
 
 public class Graph {
     private Backend back;
@@ -162,6 +161,10 @@ public class Graph {
 
     public ProgNode getProgNode(String id) {
         Vertex v = get(id);
+
+        if (v == null)
+            return null;
+
         if (v.type() == VertexType.Prog) {
             return (ProgNode)v;
         }
@@ -174,6 +177,10 @@ public class Graph {
 
     public UserNode getUserNode(String id) {
         Vertex v = get(id);
+
+        if (v == null)
+            return null;
+
         if (v.type() == VertexType.User) {
             return (UserNode)v;
         }

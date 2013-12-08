@@ -70,14 +70,16 @@ public class LevelDbBackend implements Backend {
 
             try {
                 key = URLDecoder.decode(nameValue[0], "UTF-8");
-            } catch (UnsupportedEncodingException e) {
+            }
+            catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
 
             if (nameValue.length > 1) {
                 try {
                     value = URLDecoder.decode(nameValue[1], "UTF-8");
-                } catch (UnsupportedEncodingException e) {
+                }
+                catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
             }
@@ -147,7 +149,7 @@ public class LevelDbBackend implements Backend {
 
             if (k != null) {
                 try {
-                    key = URLEncoder.encode(key, "UTF-8");
+                    key = URLEncoder.encode(k, "UTF-8");
                 }
                 catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
@@ -156,6 +158,14 @@ public class LevelDbBackend implements Backend {
 
             if (value == null)
                 value = "";
+            else {
+                try {
+                    value = URLEncoder.encode(value, "UTF-8");
+                }
+                catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
 
             stringBuilder.append(key);
 		    stringBuilder.append("=");

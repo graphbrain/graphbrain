@@ -104,25 +104,13 @@ public class PatFun extends FunNode {
         elems[pos].setFixed(true);
 
         elems[pos].rewind();
-        //System.out.println("matches pos: " + pos + "; length: " + elems.length);
         while (elems[pos].next()) {
-            /*System.out.println("---------------------------");
-            System.out.println("sentence length: " + ctxts.getSentence().length());
-            for (PatternElem x : elems) {
-                System.out.println(x.detailStr());
-            }*/
             if (pos == elems.length - 1) {
                 // match found
-                //System.out.println("\n-> ");
-                //System.out.println(ctxts.getSentence());
-                //System.out.println(this);
-                System.out.println("\n\n+++++++++++");
-                System.out.println(ctxts.getSentence());
-                printMatch();
+                //printMatch();
                 addContext(ctxts);
             }
             else {
-                //System.out.println(elems[pos]);
                 matches(ctxts, pos + 1);
             }
         }
