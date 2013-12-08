@@ -1,0 +1,21 @@
+<% escapeMarkup = false %>
+<%@ val userStuff: String="" %>
+<%@ val js: String="" %>
+
+<% layout("page.ssp") {%>
+
+<style type="text/css">
+  body {
+    background:#FFF;
+    overflow:hidden;
+  }
+</style>
+
+<div id="main-view">
+  <div id="nav-spacer"></div>
+  <div id="graph-view"></div>
+</div>
+<div id="ai-chat"></div>
+<div id="rel-list"></div>
+
+<%}%>

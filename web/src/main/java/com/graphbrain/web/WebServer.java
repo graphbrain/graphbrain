@@ -10,6 +10,9 @@ public class WebServer {
     public static void main(String[] args) {
 
         staticFileLocation("/");
+
+        get(new HandleLanding("/"));
+
         get(new HandleEco(HandleEco.HandleEcoType.PARSER, "/eco"));
         post(new HandleEco(HandleEco.HandleEcoType.PARSER, "/eco"));
         get(new HandleEco(HandleEco.HandleEcoType.CODE, "/eco/code"));

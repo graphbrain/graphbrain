@@ -2,7 +2,6 @@ package com.graphbrain.web;
 
 import com.graphbrain.db.ProgNode;
 import com.graphbrain.db.TextNode;
-import com.graphbrain.db.Vertex;
 import com.graphbrain.eco.*;
 import spark.ModelAndView;
 import spark.Request;
