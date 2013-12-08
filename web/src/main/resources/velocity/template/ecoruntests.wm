@@ -1,9 +1,4 @@
-#import(com.graphbrain.webapp.VisualContext)
-
-<% escapeMarkup = false %>
-<%@ val ctxtList: List[VisualContext] %>
-
-<% layout("ecopage.ssp") {%>
+#parse("velocity/template/ecopage_header.wm")
 
 <form role="form" action="runtests" method="post">
     <button type="submit" class="btn btn-default">Run</button>
@@ -11,6 +6,6 @@
 
 <br /><br />
 
-<% render("ecocontexts.ssp", Map("ctxtList" -> ctxtList)) %>
+#parse("velocity/template/ecocontexts.wm")
 
-<%}%>
+#parse("velocity/template/ecopage_footer.wm")

@@ -31,5 +31,5 @@ public class WVRule extends RuleNode {
 
         for (Context c : ctxts.getCtxts())
             c.setRetVertex(this, c.getRetVertex(params[2]));
-  }
+    }
 }

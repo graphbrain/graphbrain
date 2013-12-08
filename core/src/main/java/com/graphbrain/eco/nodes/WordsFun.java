@@ -42,7 +42,12 @@ public class WordsFun extends FunNode {
                     Words words1 = c.getRetWords(params[0]);
                     Words words2 = c.getRetWords(params[1]);
 
-                    c.setRetBoolean(this, words1.endsWith(words2));
+                    if (words1 == null) {
+                        c.setRetBoolean(this, false);
+                    }
+                    else {
+                        c.setRetBoolean(this, words1.endsWith(words2));
+                    }
                 }
             break;
         }
