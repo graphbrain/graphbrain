@@ -8,7 +8,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-//import com.typesafe.scalalogging.slf4j.Logging
 
 
 public class URLNode extends Vertex {
