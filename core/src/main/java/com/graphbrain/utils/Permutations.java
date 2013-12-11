@@ -5,7 +5,7 @@ public class Permutations {
 	
 	public static int permutations(int n) {
 		int perms = 1;
-		for (int i = 2 ; i < n; i++) {
+		for (int i = 2 ; i <= n; i++) {
 			perms *= i;
 		}
 
@@ -70,6 +70,24 @@ public class Permutations {
 		
 		return out;
 	}
+
+    public static String strArrayPermutationToStr(String[] in, int per) {
+        String[] pers = strArrayPermutation(in, per);
+
+        StringBuilder sb = new StringBuilder(100);
+        boolean first = true;
+        for (String s : pers) {
+            if (first) {
+                first = false;
+            }
+            else {
+                sb.append(" ");
+            }
+            sb.append(s);
+        }
+
+        return sb.toString();
+    }
 	
 	public static String[] strArrayUnpermutate(String[] in, int per) {
 		int n = in.length;

@@ -342,8 +342,7 @@ public class LevelDbBackend implements Backend {
 		int perms = permutations(count);
 
         for (int i = 0; i < perms; i++) {
-            String[] ids = strArrayPermutation(edge.getIds(), i);
-            String permId = EDGE_PREFIX + Edge.fromParticipants(ids).id + " " + i;
+            String permId = EDGE_PREFIX + strArrayPermutationToStr(edge.getIds(), i) + " " + i;
 			String value = "";
 			db.put(bytes(permId), bytes(value));
 		}
@@ -355,8 +354,7 @@ public class LevelDbBackend implements Backend {
 		int perms = permutations(count);
 
         for (int i = 0; i < perms; i++) {
-			String[] ids = strArrayPermutation(edge.getIds(), i);
-			String permId = EDGE_PREFIX + Edge.fromParticipants(ids).id + " " + i;
+			String permId = EDGE_PREFIX + strArrayPermutationToStr(edge.getIds(), i) + " " + i;
 			db.delete(bytes(permId));
 		}
 	}
