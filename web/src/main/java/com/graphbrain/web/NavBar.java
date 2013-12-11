@@ -41,14 +41,6 @@ public class NavBar {
                 return "<div class=\"pull-right\">"
                     + "<ul class=\"nav\">"
                     + tools()
-                    //+ "<li class=\"dropdown\">"
-                    //+ "<a href=\"#\" id=\"current-context\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"icon-globe icon-black\"></i> Global Context <b class=\"caret\"></b></a>"
-                    //+ "<ul id=\"contexts-dropdown\" class=\"dropdown-menu\">"
-                    //+ "<li><a id=\"createContextLink\" href=\"#\">Create Context</a></li>"
-                    //+ "<li class=\"divider\"></li>"
-                    //+ "<li><a href=\"/node/user/" + user.getUsername() +  ">Global Context</a></li>"
-                    //+ "</ul>"
-                    //+ "</li>"
                     + "<li class=\"dropdown\">"
                     + "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"icon-user icon-black\"></i> "
                     + user.getName()
