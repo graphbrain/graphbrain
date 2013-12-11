@@ -46,7 +46,7 @@ public class HandleNode extends VelocityRoute {
 
         Map<String, Object> attributes = new HashMap<String, Object>();
         attributes.put("title", node.toString());
-        attributes.put("navBar", new NavBar(null, "node").html());
+        attributes.put("navBar", new NavBar(userNode, "node").html());
         attributes.put("cssAndJs", new CssAndJs().cssAndJs());
         attributes.put("loggedIn", false);
         attributes.put("js", js);
