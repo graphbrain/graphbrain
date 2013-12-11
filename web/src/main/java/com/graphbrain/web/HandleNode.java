@@ -178,7 +178,7 @@ public class HandleNode extends VelocityRoute {
                 return;
         }
 
-        if (!enMap.containsKey(key)) {
+        if (enMap.containsKey(key)) {
             enMap.get(key).add(e);
         }
         else {
