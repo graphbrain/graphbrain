@@ -1,52 +1,67 @@
 ; English
 
-(wv process-words
-  ((pat x)
-    (let r (:wv (:ww x))))
-  r)
+(wv ("with" "a" a "," verb:V c)
+     ((filter-max (len verb))
+     (let x (:wv a))
+     (let y (:wv b))
+     (let z (:wv (+ b verb c)))
+     (let k (build (rel-vert "has") y x)))
+  (build (rel-vert "+list") k z))
 
-(ww remove-full-stop
-  ((max-depth 1)
-    (pat x "."))
-  x)
+(wv (a verb1:V b "and" verb2:V c)
+     ((let x (:wv (+ a verb1 b)))
+     (let y (:wv (+ a verb2 c))))
+  (build (rel-vert "+list") x y))
 
-(wv two-pronouns
-  ((pat a v p1 b p2 c)
-    (are-pos-pre v "V")
-    (are-pos-pre p1 "IN")
-    (are-pos-pre p2 "IN")
-    (let rel (rel-vert v))
+(wv (a verb:V b in1:IN c "and" d in2:IN e)
+     ((! (ends-with (+ in1 c) (+ in2 e)))
+     (let x (:wv (+ a verb b in1 c)))
+     (let y (:wv (+ a verb d in2 e))))
+  (build (rel-vert "+list") x y))
+
+(wv (a verb:V b "and" c in:IN d)
+     ((let x (:wv (+ a verb b in d)))
+     (let y (:wv (+ a verb c in d))))
+  (build (rel-vert "+list") x y))
+
+(wv (a verb:V b "and" c)
+     ((let x (:wv (+ a verb b)))
+     (let y (:wv (+ a verb c))))
+  (build (rel-vert "+list") x y))
+
+(wv (a verb:V b)
+    ((filter-max (len verb))
     (let orig (:wv a))
-    (let targ (:wv b))
-    (let targ2 (:wv c)))
-  (build rel orig targ targ2))
-
-(wv is-verb-to
-  ((pat a "is" v "to" b "to" c)
-    (are-pos-pre v "V")
-    (let orig (:wv a))
-    (let rel (rel-vert v))
-    (let targ (:wv b))
-    (let targ2 (:wv c)))
-  (build rel orig targ targ2))
-
-(wv middle-verbs
-  ((pat a v b)
-    (are-pos-pre v "V" "TO")
-    (filter-max (len v))
-    (let orig (:wv a))
-    (let rel (rel-vert v))
+    (let rel (rel-vert verb))
     (let targ (:wv b)))
   (build rel orig targ))
 
-(wv no-verbs
-  ((pat n)
-    (! (contains-pos-pre n "V" "."))
-    (let r (txt-vert n)))
+(wv (a:-V "of" b:-V)
+    ((filter-min (pos b))
+    (let x (:wv a))
+    (let y (:wv b)))
+  (build (rel-vert "+of") x y))
+
+(wv (a "'s" b)
+    ((let x (:wv a))
+    (let y (:wv b)))
+  (build (rel-vert "+poss") x y))
+
+(wv (a "in" b)
+    ((let x (:wv a))
+    (let y (:wv b)))
+  (build (rel-vert "+in") x y))
+
+(wv (prop:JJ|RB obj:-JJ|-RB)
+    ((filter-max (len prop)) 
+    (let x (:wv prop))
+    (let y (:wv obj)))
+  (build (rel-vert "+prop") y x))
+
+(wv ("the" no-the:-V)
+    ((let r (:wv no-the)))
   r)
 
-(wv no-full-stop
-  ((pat n)
-    (! (contains-pos-pre n "."))
-    (let r (txt-vert n)))
+(wv (obj:-V)
+    ((let r (txt-vert obj)))
   r)
