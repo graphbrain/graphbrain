@@ -63,11 +63,8 @@ public class DBPediaGraphFromInfobox {
     }
 
     public static void processFile(String filename, OutputDBWriter output) {
-
         File file = new File(filename);
-
         LineIterator reader;
-
         try {
             reader = FileUtils.lineIterator(file, "UTF-8");
         }
@@ -80,9 +77,6 @@ public class DBPediaGraphFromInfobox {
         output.writeUser();
         inserted += 1;
         int counter = 0;
-
-        //output.writeGeneratorSource(DBPediaGraphFromInfobox.sourceName, DBPediaGraphFromInfobox.sourceURL)
-        //inserted += 1
     
         while (reader.hasNext()) {
             String line = reader.next();
@@ -116,7 +110,7 @@ public class DBPediaGraphFromInfobox {
         else {
             processFile(DBPediaGraphFromInfobox.dataFile,
                 new OutputDBWriter("dbnode",
-                    DBPediaGraphFromInfobox.sourceName,
+                    "dbpedia",
                     "dbpedia",
                     "crawler"));
         }

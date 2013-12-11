@@ -20,6 +20,7 @@ public class OutputDBWriter {
 
     private static Pattern patCapRegex = Pattern.compile("[A-Z][a-z]*");
     private static Pattern patNonCapRegex = Pattern.compile("[a-z]+");
+    private static Pattern patDisambig = Pattern.compile("\\(.*?\\)");
 
     public OutputDBWriter(String storeName, String username, String name, String role) {
         this.username = username;
@@ -82,10 +83,12 @@ public class OutputDBWriter {
 
 		while(store.exists(EntityNode.id("" + i, titleSP))) {
 			Vertex existingNode = store.get(EntityNode.id("" + i, titleSP));
-			Pattern p = Pattern.compile("\\(.*?\\)");
-            Matcher m = p.matcher(decodedTitle);
-            m.find();
-            String disAmb = m.group();
+            Matcher m = patDisambig.matcher(decodedTitle);
+
+            String disAmb = "";
+            if (m.find()) {
+                disAmb = m.group();
+            }
 
             if (existingNode.type() == VertexType.Entity) {
 		        EntityNode e = (EntityNode)existingNode;
@@ -129,10 +132,10 @@ public class OutputDBWriter {
 	        e.printStackTrace();
 	    }
 
-        Pattern p = Pattern.compile("\\(.*?\\)");
-        Matcher m = p.matcher(decodedTitle);
-        m.find();
-        String disAmbA = m.group();
+        Matcher m = patDisambig.matcher(decodedTitle);
+        String disAmbA = "";
+        if (m.find())
+            disAmbA = m.group();
 		
 		if(!disAmbA.isEmpty()) {
 			String da = disAmbA.replace("(", "").replace(")", "").trim();
