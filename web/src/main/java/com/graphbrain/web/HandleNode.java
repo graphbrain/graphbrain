@@ -38,6 +38,9 @@ public class HandleNode extends VelocityRoute {
 
         String errorMsg = "";
 
+        System.out.println("node: " + node);
+        System.out.println("userNode: " + userNode);
+
         String js = "var data = " + generate(node.id, userNode) + ";\n" +
                     "var errorMsg = \"" + errorMsg + "\";\n";
 
