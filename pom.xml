@@ -9,6 +9,7 @@
 
   <modules>
     <module>core</module>
+    <module>cli</module>
     <module>web</module>
     <module>braingenerators</module>
   </modules>
