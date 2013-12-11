@@ -60,6 +60,22 @@ public abstract class Vertex {
         return id;
     }
 
+    public String info() {
+        StringBuilder sb = new StringBuilder(100);
+
+        sb.append(type());
+        sb.append('\n');
+
+        Map<String, String> fields = toMap();
+        for (String key : fields.keySet()) {
+            sb.append(key);
+            sb.append(" = ");
+            sb.append(fields.get(key));
+            sb.append('\n');
+        }
+        return sb.toString();
+    }
+
     public String raw() {
         return "";
     }
