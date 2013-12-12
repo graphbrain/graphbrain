@@ -31,6 +31,10 @@ public class WebServer {
 
         post(new HandleSearch("/search"));
 
+        post(new HandleRelations("/rel"));
+
+        post(new HandleUndoFact("/undo_fact"));
+
         get(new HandleAllUsers("/allusers"));
 
         get(new HandleEco(HandleEco.HandleEcoType.PARSER, "/eco"));
