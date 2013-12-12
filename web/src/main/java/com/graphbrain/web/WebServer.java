@@ -34,6 +34,10 @@ public class WebServer {
         post(new HandleRelations("/rel"));
 
         post(new HandleUndoFact("/undo_fact"));
+        post(new HandleDisambig(HandleDisambig.DisambigRequestType.DISAMBIG, "/disambig"));
+        post(new HandleDisambig(HandleDisambig.DisambigRequestType.CREATE, "/disambig_create"));
+        post(new HandleDisambig(HandleDisambig.DisambigRequestType.CHANGE, "/disambig_change"));
+
 
         get(new HandleAllUsers("/allusers"));
 
