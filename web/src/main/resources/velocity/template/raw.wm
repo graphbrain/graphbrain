@@ -1,9 +1,4 @@
-<% escapeMarkup = false %>
-<%@ val userStuff: String="" %>
-<%@ val js: String="" %>
-<%@ val html: String="" %>
-
-<% layout("page.ssp") {%>
+#parse("velocity/template/page_header.wm")
 
 <style type="text/css">
   body {
@@ -15,9 +10,9 @@
 <div class="container">
   <div class="row-fluid">
     <div class="span12">
-      <%= html %>
+      $html
     </div>
   </div>
 </div>
 
-<%}%>
+#parse("velocity/template/page_footer.wm")
