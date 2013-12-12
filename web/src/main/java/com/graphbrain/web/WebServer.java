@@ -20,6 +20,9 @@ public class WebServer {
         get(new HandleLanding("/"));
 
         get(new HandleNode("/node/*"));
+        post(new HandleNodeActions("/node/*"));
+
+        get(new HandleRaw("/raw/*"));
 
         post(new HandleUser(HandleUser.HandleUserType.SIGNUP, "/signup"));
         post(new HandleUser(HandleUser.HandleUserType.CHECK_USERNAME, "/checkusername"));
