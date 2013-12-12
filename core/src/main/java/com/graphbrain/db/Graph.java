@@ -151,6 +151,10 @@ public class Graph {
 
     public TextNode getTextNode(String id) {
         Vertex v = get(id);
+
+        if (v == null)
+            return null;
+
         if (v.type() == VertexType.Text) {
             return (TextNode)v;
         }
