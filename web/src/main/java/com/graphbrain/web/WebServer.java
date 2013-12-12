@@ -33,6 +33,8 @@ public class WebServer {
 
         post(new HandleRelations("/rel"));
 
+        post(new HandleAIChat("/ai"));
+
         post(new HandleUndoFact("/undo_fact"));
         post(new HandleDisambig(HandleDisambig.DisambigRequestType.DISAMBIG, "/disambig"));
         post(new HandleDisambig(HandleDisambig.DisambigRequestType.CREATE, "/disambig_create"));
