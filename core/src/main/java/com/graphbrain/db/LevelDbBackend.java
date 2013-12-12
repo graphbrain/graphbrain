@@ -214,9 +214,10 @@ public class LevelDbBackend implements Backend {
 		List<Vertex> res = new LinkedList<Vertex>();
 		
 		char startChar = typeToChar(vtype);
-		char endChar = (char) (startChar + 1);
+		char endChar = (char)(startChar + 1);
 		String startStr = "" + startChar;
 		String endStr = "" + endChar;
+
 		DBIterator iterator = db.iterator();
 		try {
 			iterator.seek(bytes(startStr));
@@ -226,8 +227,10 @@ public class LevelDbBackend implements Backend {
 		    while (iterator.hasNext() && id.compareTo(endStr) < 0) {
 		    	Map.Entry<byte[], byte[]> entry = iterator.next();
 		    	id = asString(entry.getKey());
-    			value = asString(entry.getValue());
-    			res.add(decodeVertex(id, value));
+                if (id.compareTo(endStr) < 0) {
+                    value = asString(entry.getValue());
+    			    res.add(decodeVertex(id, value));
+                }
 		    }
 		}
 		finally {

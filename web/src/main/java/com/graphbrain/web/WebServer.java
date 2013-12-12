@@ -31,6 +31,8 @@ public class WebServer {
 
         post(new HandleSearch("/search"));
 
+        get(new HandleAllUsers("/allusers"));
+
         get(new HandleEco(HandleEco.HandleEcoType.PARSER, "/eco"));
         post(new HandleEco(HandleEco.HandleEcoType.PARSER, "/eco"));
         get(new HandleEco(HandleEco.HandleEcoType.CODE, "/eco/code"));
