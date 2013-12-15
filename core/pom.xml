@@ -5,17 +5,17 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
+    <properties>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <encoding>UTF-8</encoding>
+    </properties>
+
     <modelVersion>4.0.0</modelVersion>
     <artifactId>core</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <description>GraphBrain core</description>
-
-    <properties>
-        <maven.compiler.source>1.5</maven.compiler.source>
-        <maven.compiler.target>1.5</maven.compiler.target>
-        <encoding>UTF-8</encoding>
-    </properties>
 
     <dependencies>
         <dependency>
