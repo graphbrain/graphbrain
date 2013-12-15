@@ -1,7 +1,5 @@
 package com.graphbrain.db;
 
-//import VertexType.VertexType;
-
 import java.util.List;
 import java.util.Set;
 
