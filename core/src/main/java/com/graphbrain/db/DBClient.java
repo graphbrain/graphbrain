@@ -3,8 +3,7 @@ package com.graphbrain.db;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import com.graphbrain.db.messages.GetResponse;
-import com.graphbrain.db.messages.GetRequest;
+import com.graphbrain.db.messages.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -63,44 +62,173 @@ public class DBClient implements Backend {
     }
 
     public Vertex put(Vertex vertex) {
-        return null;
+        client.sendTCP(new PutRequest(vertex));
+
+        try {
+            Object obj = queue.take();
+            if (obj instanceof OK) {
+                return vertex;
+            }
+            else {
+                return null;
+            }
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public Vertex update(Vertex vertex) {
-        return null;
+        client.sendTCP(new UpdateRequest(vertex));
+
+        try {
+            Object obj = queue.take();
+            if (obj instanceof OK) {
+                return vertex;
+            }
+            else {
+                return null;
+            }
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void remove(Vertex vertex) {
+        client.sendTCP(new RemoveRequest(vertex));
+
+        try {
+            queue.take();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void associateEmailToUsername(String email, String username) {
+        client.sendTCP(new AssociateEmailToUsernameRequest(email, username));
 
+        try {
+            queue.take();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public String usernameByEmail(String email) {
-        return null;
+        client.sendTCP(new UsernameByEmailRequest(email));
+
+        try {
+            Object obj = queue.take();
+            if (obj instanceof UsernameByEmailResponse) {
+                return ((UsernameByEmailResponse)obj).getUsername();
+            }
+            else {
+                return null;
+            }
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public List<Vertex> listByType(VertexType vtype) {
-        return null;
+        client.sendTCP(new ListByTypeRequest(vtype));
+
+        try {
+            Object obj = queue.take();
+            if (obj instanceof ListByTypeResponse) {
+                return ((ListByTypeResponse)obj).getVertices();
+            }
+            else {
+                return null;
+            }
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public Set<Edge> edges(Edge pattern) {
-        return null;
+        client.sendTCP(new EdgesRequest(pattern));
+
+        try {
+            Object obj = queue.take();
+            if (obj instanceof EdgesResponse) {
+                return ((EdgesResponse)obj).getVertices();
+            }
+            else {
+                return null;
+            }
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public Set<Edge> edges(Vertex center) {
-        return null;
+        client.sendTCP(new EdgesRequest(center));
+
+        try {
+            Object obj = queue.take();
+            if (obj instanceof EdgesResponse) {
+                return ((EdgesResponse)obj).getVertices();
+            }
+            else {
+                return null;
+            }
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void addLinkToGlobal(String globalId, String userId) {
+        client.sendTCP(new AddLinkToGlobalRequest(globalId, userId));
+
+        try {
+            queue.take();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void removeLinkToGlobal(String globalId, String userId) {
+        client.sendTCP(new RemoveLinkToGlobalRequest(globalId, userId));
+
+        try {
+            queue.take();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public Set<String> alts(String globalId) {
-        return null;
+        client.sendTCP(new AltsRequest(globalId));
+
+        try {
+            Object obj = queue.take();
+            if (obj instanceof AltsResponse) {
+                return ((AltsResponse)obj).getAlts();
+            }
+            else {
+                return null;
+            }
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static void main(String[] args) {
