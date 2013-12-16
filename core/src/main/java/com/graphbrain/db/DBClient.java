@@ -12,10 +12,20 @@ import java.util.concurrent.SynchronousQueue;
 
 public class DBClient implements Backend {
 
+    DBServer server;
     Client client;
     SynchronousQueue<Object> queue;
 
     public DBClient() {
+        // try to start server
+        try {
+            server = new DBServer();
+            server.start();
+        }
+        catch (Exception e) {
+            // maybe the server already exists
+        }
+
         queue = new SynchronousQueue<>();
 
         client = new Client();
@@ -232,9 +242,6 @@ public class DBClient implements Backend {
     }
 
     public static void main(String[] args) {
-        DBServer server = new DBServer();
-        server.start();
-
         DBClient client = new DBClient();
         Vertex v = client.get("1/coimbra", VertexType.Entity);
         System.out.println("reply: " + v.raw() + "; " + v.getTs() + "; " + v.getDegree());
