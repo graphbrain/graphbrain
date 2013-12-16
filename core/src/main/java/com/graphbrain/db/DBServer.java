@@ -6,6 +6,8 @@ import com.esotericsoftware.kryonet.Server;
 import com.graphbrain.db.messages.*;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 public class DBServer {
 
@@ -33,6 +35,82 @@ public class DBServer {
 
                     GetResponse response = new GetResponse(backend.get(get.getId(), get.getVtype()));
                     connection.sendTCP(response);
+                }
+                else if (object instanceof PutRequest) {
+                    PutRequest put = (PutRequest)object;
+
+                    backend.put(put.getVertex());
+
+                    connection.sendTCP(new OK());
+                }
+                else if (object instanceof UpdateRequest) {
+                    UpdateRequest update = (UpdateRequest)object;
+
+                    backend.update(update.getVertex());
+
+                    connection.sendTCP(new OK());
+                }
+                else if (object instanceof RemoveRequest) {
+                    RemoveRequest remove = (RemoveRequest)object;
+
+                    backend.remove(remove.getVertex());
+
+                    connection.sendTCP(new OK());
+                }
+                else if (object instanceof AssociateEmailToUsernameRequest) {
+                    AssociateEmailToUsernameRequest req = (AssociateEmailToUsernameRequest)object;
+
+                    backend.associateEmailToUsername(req.getEmail(), req.getUsername());
+
+                    connection.sendTCP(new OK());
+                }
+                else if (object instanceof UsernameByEmailRequest) {
+                    UsernameByEmailRequest req = (UsernameByEmailRequest)object;
+
+                    String username = backend.usernameByEmail(req.getEmail());
+
+                    connection.sendTCP(new UsernameByEmailResponse(username));
+                }
+                else if (object instanceof ListByTypeRequest) {
+                    ListByTypeRequest req = (ListByTypeRequest)object;
+
+                    List<Vertex> vertices = backend.listByType(req.getVtype());
+
+                    connection.sendTCP(new ListByTypeResponse(vertices));
+                }
+                else if (object instanceof EdgesRequest) {
+                    EdgesRequest req = (EdgesRequest)object;
+
+                    Set<Edge> edges = null;
+                    if (req.getEdge() != null) {
+                        edges = backend.edges(req.getEdge());
+                    }
+                    else if (req.getVertex() != null) {
+                        edges = backend.edges(req.getVertex());
+                    }
+
+                    connection.sendTCP(new EdgesResponse(edges));
+                }
+                else if (object instanceof AddLinkToGlobalRequest) {
+                    AddLinkToGlobalRequest req = (AddLinkToGlobalRequest)object;
+
+                    backend.addLinkToGlobal(req.getGlobalId(), req.getUserId());
+
+                    connection.sendTCP(new OK());
+                }
+                else if (object instanceof RemoveLinkToGlobalRequest) {
+                    RemoveLinkToGlobalRequest req = (RemoveLinkToGlobalRequest)object;
+
+                    backend.removeLinkToGlobal(req.getGlobalId(), req.getUserId());
+
+                    connection.sendTCP(new OK());
+                }
+                else if (object instanceof AltsRequest) {
+                    AltsRequest req = (AltsRequest)object;
+
+                    Set<String> alts = backend.alts(req.getGlobalId());
+
+                    connection.sendTCP(new AltsResponse(alts));
                 }
             }
         });
