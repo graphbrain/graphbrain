@@ -19,6 +19,8 @@ public class EntityNode extends Vertex {
         super(id, map);
     }
 
+    public EntityNode() {}
+
     @Override
     public Vertex copy() {
         return new EntityNode(id, degree, ts);

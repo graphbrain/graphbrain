@@ -29,12 +29,14 @@ public abstract class Vertex {
                 Long.parseLong(map.get("ts")));
     }
 
+    public Vertex() {}
+
     public abstract Vertex copy();
 
     protected void fillMap(Map<String, String> map) {}
 
     public Map<String, String> toMap() {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         map.put("degree", "" + degree);
         map.put("ts", "" + ts);
 
