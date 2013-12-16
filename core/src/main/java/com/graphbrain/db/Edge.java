@@ -31,6 +31,8 @@ public class Edge extends Vertex {
         participantIds = e.participantIds;
     }
 
+    public Edge() {}
+
     @Override
     public Vertex copy() {
         return new Edge(elems, degree, ts);

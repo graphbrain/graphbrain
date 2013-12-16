@@ -16,10 +16,10 @@ public class DBClient implements Backend {
     Client client;
     SynchronousQueue<Object> queue;
 
-    public DBClient() {
+    public DBClient(String name) {
         // try to start server
         try {
-            server = new DBServer();
+            server = new DBServer(name);
             server.start();
         }
         catch (Exception e) {
@@ -28,7 +28,8 @@ public class DBClient implements Backend {
 
         queue = new SynchronousQueue<>();
 
-        client = new Client();
+        //client = new Client(8192, 65536);
+        client = new Client(65536, 65536);
         Network.registerMessages(client.getKryo());
         client.start();
         try {
@@ -40,9 +41,7 @@ public class DBClient implements Backend {
 
         client.addListener(new Listener() {
             public void received (Connection connection, Object object) {
-                if (object instanceof GetResponse) {
-                    queue.offer(object);
-                }
+                queue.offer(object);
             }
         });
     }
@@ -166,7 +165,7 @@ public class DBClient implements Backend {
     }
 
     public Set<Edge> edges(Edge pattern) {
-        client.sendTCP(new EdgesRequest(pattern));
+        client.sendTCP(new EdgesPatternRequest(pattern));
 
         try {
             Object obj = queue.take();
@@ -242,8 +241,11 @@ public class DBClient implements Backend {
     }
 
     public static void main(String[] args) {
-        DBClient client = new DBClient();
+        DBClient client = new DBClient("dbnode");
         Vertex v = client.get("1/coimbra", VertexType.Entity);
         System.out.println("reply: " + v.raw() + "; " + v.getTs() + "; " + v.getDegree());
+
+        Set<Edge> edges = client.edges(v);
+        System.out.println(edges);
     }
 }

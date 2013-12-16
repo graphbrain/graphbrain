@@ -54,6 +54,8 @@ public class UserNode extends Vertex {
         this(id, username, name, email, pwdhash, role, "", -1, -1, 0, -1);
     }
 
+    public UserNode() {}
+
     @Override
     public Vertex copy() {
         return new UserNode(id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, degree, ts);
