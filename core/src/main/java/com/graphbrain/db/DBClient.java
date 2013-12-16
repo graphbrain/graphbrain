@@ -20,7 +20,7 @@ public class DBClient implements Backend {
         queue = new SynchronousQueue<>();
 
         client = new Client();
-        Messages.register(client.getKryo());
+        Network.registerMessages(client.getKryo());
         client.start();
         try {
             client.connect(5000, "localhost", 54555, 54777);
