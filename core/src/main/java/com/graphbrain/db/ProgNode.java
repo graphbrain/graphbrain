@@ -23,6 +23,8 @@ public class ProgNode extends Vertex {
         this(id, prog, 0, -1);
     }
 
+    public ProgNode() {}
+
     @Override
     public Vertex copy() {
         return new ProgNode(id, prog, degree, ts);

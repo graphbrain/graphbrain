@@ -13,12 +13,12 @@ public class DBServer {
 
     Backend backend;
 
-    public DBServer() {
-        backend = new LevelDbBackend();
+    public DBServer(String name) {
+        backend = new LevelDbBackend(name);
     }
 
     public void start() {
-        Server server = new Server();
+        Server server = new Server(65536, 65536);
         Network.registerMessages(server.getKryo());
         server.start();
         try {
@@ -81,13 +81,14 @@ public class DBServer {
                 else if (object instanceof EdgesRequest) {
                     EdgesRequest req = (EdgesRequest)object;
 
-                    Set<Edge> edges = null;
-                    if (req.getEdge() != null) {
-                        edges = backend.edges(req.getEdge());
-                    }
-                    else if (req.getVertex() != null) {
-                        edges = backend.edges(req.getVertex());
-                    }
+                    Set<Edge> edges = backend.edges(req.getVertex());
+
+                    connection.sendTCP(new EdgesResponse(edges));
+                }
+                else if (object instanceof EdgesPatternRequest) {
+                    EdgesPatternRequest req = (EdgesPatternRequest)object;
+
+                    Set<Edge> edges = backend.edges(req.getEdge());
 
                     connection.sendTCP(new EdgesResponse(edges));
                 }

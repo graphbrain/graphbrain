@@ -3,6 +3,8 @@ package com.graphbrain.db;
 import com.esotericsoftware.kryo.Kryo;
 import com.graphbrain.db.messages.*;
 
+import java.util.HashSet;
+
 public class Network {
     public static void registerMessages(Kryo kryo) {
         kryo.register(OK.class);
@@ -23,6 +25,7 @@ public class Network {
         kryo.register(AddLinkToGlobalRequest.class);
         kryo.register(RemoveLinkToGlobalRequest.class);
         kryo.register(Vertex.class);
+        kryo.register(Vertex[].class);
         kryo.register(VertexType.class);
         kryo.register(EntityNode.class);
         kryo.register(Edge.class);
@@ -30,5 +33,9 @@ public class Network {
         kryo.register(ProgNode.class);
         kryo.register(TextNode.class);
         kryo.register(URLNode.class);
+        kryo.register(UserNode.class);
+        kryo.register(HashSet.class);
+        kryo.register(String.class);
+        kryo.register(String[].class);
     }
 }

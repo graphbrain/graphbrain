@@ -6,7 +6,7 @@ public class Graph {
     private Backend back;
 
     public Graph(String name) {
-        back = new LevelDbBackend(name);
+        back = new DBClient(name);
     }
 
     public Graph() {
@@ -70,7 +70,7 @@ public class Graph {
     }
 
     public Set<String> nodesFromEdgeSet(Set<Edge> edgeSet) {
-        Set<String> nset = new HashSet<String>();
+        Set<String> nset = new HashSet<>();
 
         for (Edge e : edgeSet) {
             nset.addAll(Arrays.asList(e.getIds()));
@@ -272,7 +272,7 @@ public class Graph {
 
     public List<UserNode> allUsers() {
         List<Vertex> verts = back.listByType(VertexType.User);
-        List<UserNode> usrs = new LinkedList<UserNode>();
+        List<UserNode> usrs = new LinkedList<>();
         for (Vertex v : verts) {
             usrs.add((UserNode)v);
         }
@@ -374,13 +374,13 @@ public class Graph {
 
         Set<Edge> edges = edges(centerId);
 
-        Set<Edge> gedges = new HashSet<Edge>();
+        Set<Edge> gedges = new HashSet<>();
         for (Edge e : edges) {
             if (e.isGlobal())
                 gedges.add(e);
         }
 
-        Set<Edge> uedges = new HashSet<Edge>();
+        Set<Edge> uedges = new HashSet<>();
 
         if (userId != null) {
             String uCenterId = ID.globalToUser(centerId, userId);
@@ -393,7 +393,7 @@ public class Graph {
             }
         }
 
-        edges = new HashSet<Edge>();
+        edges = new HashSet<>();
 
         for (Edge e : gedges) {
             if (!uedges.contains(e.negate())) {

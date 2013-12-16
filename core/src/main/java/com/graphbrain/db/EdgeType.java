@@ -27,6 +27,8 @@ public class EdgeType extends Vertex {
         this(id, "");
     }
 
+    public EdgeType() {}
+
     @Override
     public Vertex copy() {
         return new EdgeType(id, label, degree, ts);
