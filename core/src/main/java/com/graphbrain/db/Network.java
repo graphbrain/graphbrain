@@ -4,8 +4,8 @@ import com.esotericsoftware.kryo.Kryo;
 import com.graphbrain.db.messages.GetResponse;
 import com.graphbrain.db.messages.GetRequest;
 
-public class Messages {
-    public static void register(Kryo kryo) {
+public class Network {
+    public static void registerMessages(Kryo kryo) {
         kryo.register(GetRequest.class);
         kryo.register(GetResponse.class);
         kryo.register(Vertex.class);

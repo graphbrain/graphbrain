@@ -17,7 +17,7 @@ public class DBServer {
 
     public void start() {
         Server server = new Server();
-        Messages.register(server.getKryo());
+        Network.registerMessages(server.getKryo());
         server.start();
         try {
             server.bind(54555, 54777);
