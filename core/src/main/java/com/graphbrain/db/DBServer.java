@@ -19,6 +19,7 @@ public class DBServer {
 
     public void start() {
         Server server = new Server(65536, 65536);
+        //Server server = new Server();
         Network.registerMessages(server.getKryo());
         server.start();
         try {
