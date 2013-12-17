@@ -21,6 +21,7 @@ public class Network {
         kryo.register(AltsRequest.class);
         kryo.register(AltsResponse.class);
         kryo.register(EdgesRequest.class);
+        kryo.register(EdgesPatternRequest.class);
         kryo.register(EdgesResponse.class);
         kryo.register(AddLinkToGlobalRequest.class);
         kryo.register(RemoveLinkToGlobalRequest.class);

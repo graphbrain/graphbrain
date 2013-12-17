@@ -31,6 +31,7 @@ public class DBServer {
 
         server.addListener(new Listener() {
             public void received (Connection connection, Object object) {
+                try {
                 if (object instanceof GetRequest) {
                     GetRequest get = (GetRequest)object;
 
@@ -113,6 +114,10 @@ public class DBServer {
                     Set<String> alts = backend.alts(req.getGlobalId());
 
                     connection.sendTCP(new AltsResponse(alts));
+                }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
