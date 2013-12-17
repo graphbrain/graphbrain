@@ -62,6 +62,10 @@ public abstract class Vertex {
         return id;
     }
 
+    public String label() {
+        return id;
+    }
+
     public String info() {
         StringBuilder sb = new StringBuilder(100);
 

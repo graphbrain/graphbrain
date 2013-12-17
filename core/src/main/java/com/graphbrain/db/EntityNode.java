@@ -27,7 +27,14 @@ public class EntityNode extends Vertex {
     }
 
     public String text() {
-        return ID.lastPart(id).replace("_", " ");
+        return label();
+    }
+
+    @Override
+    public String label() {
+        String desc = ID.lastPart(id).replace("_", " ");
+        desc = desc.substring(0,1).toUpperCase() + desc.substring(1);
+        return desc;
     }
 
     public static String id(String namespace, String text) {

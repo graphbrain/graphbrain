@@ -6,7 +6,8 @@ public class Graph {
     private Backend back;
 
     public Graph(String name) {
-        back = new DBClient(name);
+        //back = new DBClient(name);
+        back = new LevelDbBackend();
     }
 
     public Graph() {
@@ -125,7 +126,7 @@ public class Graph {
     public String description(Vertex vertex) {
         Set<Edge> asIn = edges(new String[]{"r/1/as_in", vertex.id, "*"});
 
-        String desc = vertex.toString();
+        String desc = vertex.label();
 
         if (asIn.size() > 0) {
             desc += " (";
@@ -136,7 +137,7 @@ public class Graph {
                     first = false;
                 else
                     desc += ", ";
-                desc += get(e.getParticipantIds()[1]).toString();
+                desc += get(e.getParticipantIds()[1]).label();
             }
 
             desc += ")";
