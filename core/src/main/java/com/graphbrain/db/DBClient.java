@@ -26,10 +26,11 @@ public class DBClient implements Backend {
             // maybe the server already exists
         }
 
-        queue = new SynchronousQueue<>();
+        queue = new SynchronousQueue<>(true);
 
         //client = new Client(8192, 65536);
         client = new Client(65536, 65536);
+        //client = new Client();
         Network.registerMessages(client.getKryo());
         client.start();
         try {
@@ -41,7 +42,13 @@ public class DBClient implements Backend {
 
         client.addListener(new Listener() {
             public void received (Connection connection, Object object) {
-                queue.offer(object);
+                //System.out.println("QUEUE " + object);
+                try {
+                    queue.put(object);
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -51,11 +58,14 @@ public class DBClient implements Backend {
     }
 
     public Vertex get(String id, VertexType vtype) {
+        //System.out.println("REQ get " + id);
+
         client.sendTCP(new GetRequest(id, vtype));
 
         try {
             Object obj = queue.take();
             GetResponse reply;
+            //System.out.println("RES get " + id);
             if (obj instanceof GetResponse) {
                 reply = (GetResponse)obj;
                 return reply.getVertex();
@@ -71,10 +81,12 @@ public class DBClient implements Backend {
     }
 
     public Vertex put(Vertex vertex) {
+        //System.out.println("REQ put");
         client.sendTCP(new PutRequest(vertex));
 
         try {
             Object obj = queue.take();
+            //System.out.println("RES put");
             if (obj instanceof OK) {
                 return vertex;
             }
@@ -89,10 +101,12 @@ public class DBClient implements Backend {
     }
 
     public Vertex update(Vertex vertex) {
+        //System.out.println("REQ update");
         client.sendTCP(new UpdateRequest(vertex));
 
         try {
             Object obj = queue.take();
+            //System.out.println("RES update");
             if (obj instanceof OK) {
                 return vertex;
             }
@@ -107,10 +121,12 @@ public class DBClient implements Backend {
     }
 
     public void remove(Vertex vertex) {
+        //System.out.println("REQ remove");
         client.sendTCP(new RemoveRequest(vertex));
 
         try {
             queue.take();
+            //System.out.println("RES remove");
         }
         catch (InterruptedException e) {
             e.printStackTrace();
@@ -118,10 +134,12 @@ public class DBClient implements Backend {
     }
 
     public void associateEmailToUsername(String email, String username) {
+        //System.out.println("REQ associate");
         client.sendTCP(new AssociateEmailToUsernameRequest(email, username));
 
         try {
             queue.take();
+            //System.out.println("RES associate");
         }
         catch (InterruptedException e) {
             e.printStackTrace();
@@ -129,10 +147,12 @@ public class DBClient implements Backend {
     }
 
     public String usernameByEmail(String email) {
+        //System.out.println("REQ usernameByEmail");
         client.sendTCP(new UsernameByEmailRequest(email));
 
         try {
             Object obj = queue.take();
+            //System.out.println("RES usernameByEmail");
             if (obj instanceof UsernameByEmailResponse) {
                 return ((UsernameByEmailResponse)obj).getUsername();
             }
@@ -147,10 +167,12 @@ public class DBClient implements Backend {
     }
 
     public List<Vertex> listByType(VertexType vtype) {
+        //System.out.println("REQ listByType");
         client.sendTCP(new ListByTypeRequest(vtype));
 
         try {
             Object obj = queue.take();
+            //System.out.println("RES listByType");
             if (obj instanceof ListByTypeResponse) {
                 return ((ListByTypeResponse)obj).getVertices();
             }
@@ -165,10 +187,12 @@ public class DBClient implements Backend {
     }
 
     public Set<Edge> edges(Edge pattern) {
+        //System.out.println("REQ edges");
         client.sendTCP(new EdgesPatternRequest(pattern));
 
         try {
             Object obj = queue.take();
+            //System.out.println("RES edges");
             if (obj instanceof EdgesResponse) {
                 return ((EdgesResponse)obj).getVertices();
             }
@@ -183,10 +207,12 @@ public class DBClient implements Backend {
     }
 
     public Set<Edge> edges(Vertex center) {
+        //System.out.println("REQ edges");
         client.sendTCP(new EdgesRequest(center));
 
         try {
             Object obj = queue.take();
+            //System.out.println("RES edges");
             if (obj instanceof EdgesResponse) {
                 return ((EdgesResponse)obj).getVertices();
             }
@@ -201,10 +227,12 @@ public class DBClient implements Backend {
     }
 
     public void addLinkToGlobal(String globalId, String userId) {
+        //System.out.println("REQ addLinkToGlobal");
         client.sendTCP(new AddLinkToGlobalRequest(globalId, userId));
 
         try {
             queue.take();
+            //System.out.println("RES addLinkToGlobal");
         }
         catch (InterruptedException e) {
             e.printStackTrace();
@@ -212,10 +240,12 @@ public class DBClient implements Backend {
     }
 
     public void removeLinkToGlobal(String globalId, String userId) {
+        //System.out.println("REQ removeLinkToGlobal");
         client.sendTCP(new RemoveLinkToGlobalRequest(globalId, userId));
 
         try {
             queue.take();
+            //System.out.println("RES removeLinkToGlobal");
         }
         catch (InterruptedException e) {
             e.printStackTrace();
@@ -223,10 +253,12 @@ public class DBClient implements Backend {
     }
 
     public Set<String> alts(String globalId) {
+        //System.out.println("REQ atls");
         client.sendTCP(new AltsRequest(globalId));
 
         try {
             Object obj = queue.take();
+            //System.out.println("RES alts");
             if (obj instanceof AltsResponse) {
                 return ((AltsResponse)obj).getAlts();
             }
