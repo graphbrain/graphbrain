@@ -3,6 +3,7 @@ package com.graphbrain.db;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import com.esotericsoftware.minlog.Log;
 import com.graphbrain.db.messages.*;
 
 import java.io.IOException;
@@ -12,19 +13,17 @@ import java.util.concurrent.SynchronousQueue;
 
 public class DBClient implements Backend {
 
-    DBServer server;
     Client client;
     SynchronousQueue<Object> queue;
+    String name;
 
     public DBClient(String name) {
-        // try to start server
-        try {
-            server = new DBServer(name);
-            server.start();
-        }
-        catch (Exception e) {
-            // maybe the server already exists
-        }
+        this.name = name;
+        start();
+    }
+
+    private void start() {
+        Log.set(Log.LEVEL_DEBUG);
 
         queue = new SynchronousQueue<>(true);
 
@@ -33,24 +32,31 @@ public class DBClient implements Backend {
         //client = new Client();
         Network.registerMessages(client.getKryo());
         client.start();
+        client.setKeepAliveTCP(1000);
+
+        client.addListener(
+                new Listener() {
+                    public void received (Connection connection, Object object) {
+                        //System.out.println("QUEUE " + object);
+                        try {
+                            queue.put(object);
+                        }
+                        catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    public void disconnected (Connection connection) {
+                        System.exit(1);
+                    }
+                });
+
         try {
             client.connect(5000, "localhost", 54555, 54777);
         }
         catch (IOException e) {
             e.printStackTrace();
         }
-
-        client.addListener(new Listener() {
-            public void received (Connection connection, Object object) {
-                //System.out.println("QUEUE " + object);
-                try {
-                    queue.put(object);
-                }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     public void close() {

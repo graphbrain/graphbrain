@@ -7,7 +7,7 @@ public class Graph {
 
     public Graph(String name) {
         //back = new DBClient(name);
-        back = new LevelDbBackend();
+        back = new LevelDbBackend(name);
     }
 
     public Graph() {

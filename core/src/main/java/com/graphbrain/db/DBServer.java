@@ -3,6 +3,7 @@ package com.graphbrain.db;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import com.esotericsoftware.minlog.Log;
 import com.graphbrain.db.messages.*;
 
 import java.io.IOException;
@@ -18,16 +19,12 @@ public class DBServer {
     }
 
     public void start() {
+        Log.set(Log.LEVEL_DEBUG);
+
         Server server = new Server(65536, 65536);
         //Server server = new Server();
         Network.registerMessages(server.getKryo());
         server.start();
-        try {
-            server.bind(54555, 54777);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
 
         server.addListener(new Listener() {
             public void received (Connection connection, Object object) {
@@ -121,5 +118,25 @@ public class DBServer {
                 }
             }
         });
+
+        try {
+            server.bind(54555, 54777);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        DBServer server;
+
+        try {
+            server = new DBServer("dbnode");
+            server.start();
+        }
+        catch (Exception e) {
+            // maybe the server already exists
+            e.printStackTrace();
+        }
     }
 }
