@@ -11,7 +11,6 @@ interface Backend {
 	public void remove(Vertex vertex);
 	public void associateEmailToUsername(String email, String username);
 	public String usernameByEmail(String email);
-	public List<Vertex> listByType(VertexType vtype);
     public Set<Edge> edges(Edge pattern);
 	public Set<Edge> edges(Vertex center);
     public void addLinkToGlobal(String globalId, String userId);
