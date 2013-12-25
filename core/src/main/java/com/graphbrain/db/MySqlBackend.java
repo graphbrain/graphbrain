@@ -50,6 +50,7 @@ public class MySqlBackend implements Backend {
 
     private PreparedStatement psEdgeRange;
     private PreparedStatement psUsernameFromEmail;
+    private PreparedStatement psAllUsers;
 
     private PreparedStatement psAddLinkToGlobal;
     private PreparedStatement psRemoveLinkToGlobal;
@@ -233,6 +234,7 @@ public class MySqlBackend implements Backend {
             // queries
             psEdgeRange = connection.prepareStatement("SELECT id FROM edgeperms WHERE id>=? AND id<?");
             psUsernameFromEmail = connection.prepareStatement("SELECT username FROM users WHERE email=?");
+            psAllUsers = connection.prepareStatement("SELECT id, degree, ts, username, name, email, pwdhash, role, session, session_ts, last_seen FROM users");
 
             // global-user links
             psAddLinkToGlobal = connection.prepareStatement("INSERT INTO globaluser (global_id, user_id) VALUES (?, ?)");
@@ -359,6 +361,35 @@ public class MySqlBackend implements Backend {
         catch (SQLException e) {
             return null;
         }
+    }
+
+    public List<UserNode> allUsers() {
+        List<UserNode> res = new LinkedList<>();
+
+        try {
+            ResultSet resultSet = psAllUsers.executeQuery();
+
+            while (resultSet.next()) {
+                String id = resultSet.getString("id");
+                int degree = resultSet.getInt("degree");
+                long ts = resultSet.getLong("ts");
+                String username = resultSet.getString("username");
+                String name = resultSet.getString("name");
+                String email = resultSet.getString("email");
+                String pwdhash = resultSet.getString("pwdhash");
+                String role = resultSet.getString("role");
+                String session = resultSet.getString("session");
+                long sessionTs = resultSet.getLong("session_ts");
+                long lastSeen = resultSet.getLong("last_seen");
+                UserNode user = new UserNode(id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, degree, ts);
+                res.add(user);
+            }
+        }
+        catch (SQLException e) {
+            return null;
+        }
+
+        return res;
     }
 
     public Set<Edge> edges(Edge pattern) {

@@ -6,8 +6,7 @@ public class Graph {
     private Backend back;
 
     public Graph(String name) {
-        //back = new DBClient(name);
-        back = new LevelDbBackend(name);
+        back = new MySqlBackend(name);
     }
 
     public Graph() {
@@ -272,12 +271,7 @@ public class Graph {
     }
 
     public List<UserNode> allUsers() {
-        List<Vertex> verts = back.listByType(VertexType.User);
-        List<UserNode> usrs = new LinkedList<>();
-        for (Vertex v : verts) {
-            usrs.add((UserNode)v);
-        }
-        return usrs;
+        return back.allUsers();
     }
 
     // User Ops
