@@ -18,7 +18,6 @@
         <module>cli</module>
         <module>web</module>
         <module>braingenerators</module>
-        <module>kryonet</module>
     </modules>
 
     <repositories>
