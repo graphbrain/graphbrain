@@ -11,6 +11,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="core" />
+    <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.27" level="project" />
     <orderEntry type="library" name="Maven: org.fusesource.leveldbjni:leveldbjni-all:1.7" level="project" />
     <orderEntry type="library" name="Maven: org.fusesource.leveldbjni:leveldbjni:1.7" level="project" />
     <orderEntry type="library" name="Maven: org.fusesource.hawtjni:hawtjni-runtime:1.8" level="project" />
