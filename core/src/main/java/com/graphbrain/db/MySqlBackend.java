@@ -349,7 +349,7 @@ public class MySqlBackend implements Backend {
     public String usernameByEmail(String email) {
         try {
             psUsernameFromEmail.setString(1, email);
-            ResultSet resultSet = psGetUser.executeQuery();
+            ResultSet resultSet = psUsernameFromEmail.executeQuery();
 
             if (resultSet.next()) {
                 return(resultSet.getString("username"));
@@ -816,9 +816,9 @@ public class MySqlBackend implements Backend {
 
     private Edge updateEdge(Edge edge) {
         try {
-            psUpdateEdge.setString(1, edge.id);
-            psUpdateEdge.setInt(2, edge.degree);
-            psUpdateEdge.setLong(3, edge.ts);
+            psUpdateEdge.setInt(1, edge.degree);
+            psUpdateEdge.setLong(2, edge.ts);
+            psUpdateEdge.setString(3, edge.id);
 
             psUpdateEdge.executeUpdate();
         }
@@ -831,10 +831,10 @@ public class MySqlBackend implements Backend {
 
     private EdgeType updateEdgeType(EdgeType edgeType) {
         try {
-            psUpdateEdgeType.setString(1, edgeType.id);
-            psUpdateEdgeType.setInt(2, edgeType.degree);
-            psUpdateEdgeType.setLong(3, edgeType.ts);
-            psUpdateEdgeType.setString(4, edgeType.getLabel());
+            psUpdateEdgeType.setInt(1, edgeType.degree);
+            psUpdateEdgeType.setLong(2, edgeType.ts);
+            psUpdateEdgeType.setString(3, edgeType.getLabel());
+            psUpdateEdgeType.setString(4, edgeType.id);
 
             psUpdateEdgeType.executeUpdate();
         }
@@ -847,9 +847,9 @@ public class MySqlBackend implements Backend {
 
     private EntityNode updateEntity(EntityNode entity) {
         try {
-            psUpdateEntity.setString(1, entity.id);
-            psUpdateEntity.setInt(2, entity.degree);
-            psUpdateEntity.setLong(3, entity.ts);
+            psUpdateEntity.setInt(1, entity.degree);
+            psUpdateEntity.setLong(2, entity.ts);
+            psUpdateEntity.setString(3, entity.id);
 
             psUpdateEntity.executeUpdate();
         }
@@ -862,11 +862,11 @@ public class MySqlBackend implements Backend {
 
     private URLNode updateURL(URLNode url) {
         try {
-            psUpdateURL.setString(1, url.id);
-            psUpdateURL.setInt(2, url.degree);
-            psUpdateURL.setLong(3, url.ts);
-            psUpdateURL.setString(4, url.getTitle());
-            psUpdateURL.setString(5, url.getIcon());
+            psUpdateURL.setInt(1, url.degree);
+            psUpdateURL.setLong(2, url.ts);
+            psUpdateURL.setString(3, url.getTitle());
+            psUpdateURL.setString(4, url.getIcon());
+            psUpdateURL.setString(5, url.id);
 
             psUpdateURL.executeUpdate();
         }
@@ -879,17 +879,17 @@ public class MySqlBackend implements Backend {
 
     private UserNode updateUser(UserNode user) {
         try {
-            psUpdateUser.setString(1, user.id);
-            psUpdateUser.setInt(2, user.degree);
-            psUpdateUser.setLong(3, user.ts);
-            psUpdateUser.setString(4, user.getUsername());
-            psUpdateUser.setString(5, user.getName());
-            psUpdateUser.setString(6, user.getEmail());
-            psUpdateUser.setString(7, user.getPwdhash());
-            psUpdateUser.setString(8, user.getRole());
-            psUpdateUser.setString(9, user.getSession());
-            psUpdateUser.setLong(10, user.getSessionTs());
-            psUpdateUser.setLong(11, user.getLastSeen());
+            psUpdateUser.setInt(1, user.degree);
+            psUpdateUser.setLong(2, user.ts);
+            psUpdateUser.setString(3, user.getUsername());
+            psUpdateUser.setString(4, user.getName());
+            psUpdateUser.setString(5, user.getEmail());
+            psUpdateUser.setString(6, user.getPwdhash());
+            psUpdateUser.setString(7, user.getRole());
+            psUpdateUser.setString(8, user.getSession());
+            psUpdateUser.setLong(9, user.getSessionTs());
+            psUpdateUser.setLong(10, user.getLastSeen());
+            psUpdateUser.setString(11, user.id);
 
             psUpdateUser.executeUpdate();
         }
@@ -902,10 +902,10 @@ public class MySqlBackend implements Backend {
 
     private ProgNode updateProg(ProgNode prog) {
         try {
-            psUpdateProg.setString(1, prog.id);
-            psUpdateProg.setInt(2, prog.degree);
-            psUpdateProg.setLong(3, prog.ts);
-            psUpdateProg.setString(4, prog.getProg());
+            psUpdateProg.setInt(1, prog.degree);
+            psUpdateProg.setLong(2, prog.ts);
+            psUpdateProg.setString(3, prog.getProg());
+            psUpdateProg.setString(4, prog.id);
 
             psUpdateProg.executeUpdate();
         }
@@ -918,10 +918,10 @@ public class MySqlBackend implements Backend {
 
     private TextNode updateText(TextNode text) {
         try {
-            psUpdateText.setString(1, text.id);
-            psUpdateText.setInt(2, text.degree);
-            psUpdateText.setLong(3, text.ts);
-            psUpdateText.setString(4, text.getText());
+            psUpdateText.setInt(1, text.degree);
+            psUpdateText.setLong(2, text.ts);
+            psUpdateText.setString(3, text.getText());
+            psUpdateText.setString(4, text.id);
 
             psUpdateText.executeUpdate();
         }
