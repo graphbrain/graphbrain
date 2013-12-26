@@ -10,7 +10,7 @@ public class Graph {
     }
 
     public Graph() {
-        this("dbnode");
+        this("gbnode");
     }
 
     public Vertex get(String id) {
@@ -30,7 +30,7 @@ public class Graph {
     }
 
     public Vertex update(Vertex vertex) {
-        return put(vertex);
+        return back.update(vertex);
     }
 
     public boolean exists(String id) {
@@ -195,6 +195,7 @@ public class Graph {
 
     protected String idFromEmail(String email) {
         String userName = back.usernameByEmail(email);
+        System.out.println("username: " + back.usernameByEmail(email));
         if (userName == null)
             return null;
         else
@@ -244,12 +245,14 @@ public class Graph {
         UserNode userNode = findUser(login);
 
         // user does not exist
-        if (userNode == null)
+        if (userNode == null) {
             return null;
+        }
 
         // password is incorrect
-        if (!userNode.checkPassword(password))
+        if (!userNode.checkPassword(password)) {
             return null;
+        }
 
         // ok, create new session
         UserNode un = userNode.newSession();
