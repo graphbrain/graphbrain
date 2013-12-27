@@ -40,7 +40,13 @@ public class OutputDBWriter {
 			Vertex ng2 = insertAndGetWikiDisambigNode(node2, username);
 			EdgeType relType = new EdgeType(globalRelType, separateWords(relin.trim()));
             store.put(relType);
-			
+
+            System.out.println("! relType: " + relType);
+            System.out.println("! username: " + username);
+            System.out.println("! userIdFromUsername: " + ID.userIdFromUsername(username));
+            System.out.println("! relType.getLabel(): " + relType.getLabel());
+            System.out.println("! store.getOrInsert(relType, ID.userIdFromUsername(username)): " + store.getOrInsert(relType, ID.userIdFromUsername(username)));
+
 			System.out.println("relType: " + store.getOrInsert(relType, ID.userIdFromUsername(username)).id + ", " + relType.getLabel());
             System.out.println("ng1: " + store.getOrInsert(ng1, ID.userIdFromUsername(username)).id);
             System.out.println("ng2: " + store.getOrInsert(ng2, ID.userIdFromUsername(username)).id);

@@ -108,7 +108,7 @@ public class MySqlBackend implements Backend {
         safeExec(createTableStr);
 
         // EdgeTypes table
-        createTableStr = "CREATE TABLE IF NOT EXISTS edegetypes (";
+        createTableStr = "CREATE TABLE IF NOT EXISTS edgetypes (";
         createTableStr += "id TEXT,";
         createTableStr += "degree INT DEFAULT 0,";
         createTableStr += "ts BIGINT DEFAULT -1,";
@@ -210,7 +210,7 @@ public class MySqlBackend implements Backend {
             psPutUser = connection.prepareStatement("INSERT INTO users (id, degree, ts, username, name, email, pwdhash, role, session, session_ts, last_seen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             psPutProg = connection.prepareStatement("INSERT INTO entities (id, degree, ts, prog) VALUES (?, ?, ?, ?)");
             psPutText = connection.prepareStatement("INSERT INTO entities (id, degree, ts, text) VALUES (?, ?, ?, ?)");
-            psPutEdgePerm = connection.prepareStatement("INSERT INTO edgesperms (id) VALUES (?)");
+            psPutEdgePerm = connection.prepareStatement("INSERT INTO edgeperms (id) VALUES (?)");
 
             // update
             psUpdateEdge = connection.prepareStatement("UPDATE edges SET degree=?, ts=? WHERE id=?");
@@ -505,7 +505,7 @@ public class MySqlBackend implements Backend {
     public void addLinkToGlobal(String globalId, String userId) {
         try {
             psAddLinkToGlobal.setString(1, globalId);
-            psAddLinkToGlobal.setString(1, userId);
+            psAddLinkToGlobal.setString(2, userId);
 
             psAddLinkToGlobal.executeUpdate();
         }
@@ -517,7 +517,7 @@ public class MySqlBackend implements Backend {
     public void removeLinkToGlobal(String globalId, String userId) {
         try {
             psRemoveLinkToGlobal.setString(1, globalId);
-            psRemoveLinkToGlobal.setString(1, userId);
+            psRemoveLinkToGlobal.setString(2, userId);
 
             psRemoveLinkToGlobal.executeUpdate();
         }

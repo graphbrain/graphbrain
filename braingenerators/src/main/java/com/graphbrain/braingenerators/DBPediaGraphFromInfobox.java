@@ -109,7 +109,7 @@ public class DBPediaGraphFromInfobox {
         }
         else {
             processFile(DBPediaGraphFromInfobox.dataFile,
-                new OutputDBWriter("dbnode",
+                new OutputDBWriter("gbnode",
                     "dbpedia",
                     "dbpedia",
                     "crawler"));

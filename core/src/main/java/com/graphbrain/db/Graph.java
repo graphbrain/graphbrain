@@ -99,6 +99,7 @@ public class Graph {
     protected void onPutEdge(Edge edge) {
         for (String id : edge.getIds()) {
             if (!exists(id)) {
+                System.out.println("... " + id);
                 put(Vertex.fromId(id));
             }
             incDegree(id);
@@ -341,8 +342,12 @@ public class Graph {
     public Vertex getOrInsert(Vertex node, String userId) {
         //logger.debug(s"getOrInsert: $node; userId: $userId")
         Vertex g = get(node.id);
+        if (g == null) {
+            g = put(node);
+        }
         Vertex u = get(ID.globalToUser(node.id, userId));
-        if ((g == null) || (u == null)) {
+
+        if (u == null) {
             put(node, userId);
             return get(node.id);
         }
