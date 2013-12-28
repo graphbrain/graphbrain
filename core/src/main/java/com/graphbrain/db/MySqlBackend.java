@@ -418,8 +418,7 @@ public class MySqlBackend implements Backend {
 
             while (resultSet.next()) {
                 String pid = resultSet.getString("id");
-                String key2 = pid.substring(1);
-                String[] tokens = key2.split(" ");
+                String[] tokens = pid.split(" ");
                 int perm = Integer.parseInt(tokens[tokens.length - 1]);
                 tokens = Arrays.copyOfRange(tokens, 0, tokens.length - 1);
                 tokens = strArrayUnpermutate(tokens, perm);
@@ -451,8 +450,7 @@ public class MySqlBackend implements Backend {
 
             while (resultSet.next()) {
                 String pid = resultSet.getString("id");
-                String key2 = pid.substring(1);
-                String[] tokens = key2.split(" ");
+                String[] tokens = pid.split(" ");
                 int perm = Integer.parseInt(tokens[tokens.length - 1]);
                 tokens = Arrays.copyOfRange(tokens, 0, tokens.length - 1);
                 tokens = strArrayUnpermutate(tokens, perm);

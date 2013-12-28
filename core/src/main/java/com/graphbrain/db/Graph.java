@@ -99,7 +99,6 @@ public class Graph {
     protected void onPutEdge(Edge edge) {
         for (String id : edge.getIds()) {
             if (!exists(id)) {
-                System.out.println("... " + id);
                 put(Vertex.fromId(id));
             }
             incDegree(id);
@@ -196,7 +195,6 @@ public class Graph {
 
     protected String idFromEmail(String email) {
         String userName = back.usernameByEmail(email);
-        System.out.println("username: " + back.usernameByEmail(email));
         if (userName == null)
             return null;
         else
