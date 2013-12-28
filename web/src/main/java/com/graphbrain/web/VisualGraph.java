@@ -137,14 +137,14 @@ public class VisualGraph {
             enMap.get(key).add(e);
         }
         else {
-            Set<SimpleEdge> set = new HashSet<SimpleEdge>();
+            Set<SimpleEdge> set = new HashSet<>();
             set.add(e);
             enMap.put(key, set);
         }
     }
 
     private static Map<RelPos, Set<SimpleEdge>> generateEdgeNodeMap(Set<SimpleEdge> edges, String rootId) {
-        Map<RelPos, Set<SimpleEdge>> enMap = new HashMap<RelPos, Set<SimpleEdge>>();
+        Map<RelPos, Set<SimpleEdge>> enMap = new HashMap<>();
 
         int count = 0;
         for (SimpleEdge e : edges) {
@@ -222,7 +222,7 @@ public class VisualGraph {
     private static Map<String, Object> generateSnode(RelPos rp, Set<SimpleEdge> sedges, String rootId) {
         String label = linkLabel(rp.rel);
         String color = linkColor(label);
-        List<Map<String, String>> nodes = new LinkedList<Map<String, String>>();
+        List<Map<String, String>> nodes = new LinkedList<>();
 
         for (SimpleEdge se : sedges) {
             String nodeId;
