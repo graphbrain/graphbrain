@@ -5,11 +5,12 @@ import java.util.Set;
 
 interface Backend {
     public void close();
-	public Vertex get(String id, VertexType vtype);
+    public Vertex get(String id, VertexType vtype);
+    public boolean exists(String id, VertexType vtype);
 	public Vertex put(Vertex vertex);
     public Vertex update(Vertex vertex);
-	public void remove(Vertex vertex);
-	public void associateEmailToUsername(String email, String username);
+    public void remove(Vertex vertex);
+    public void associateEmailToUsername(String email, String username);
 	public String usernameByEmail(String email);
     public List<UserNode> allUsers();
     public Set<Edge> edges(Edge pattern);

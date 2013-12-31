@@ -21,10 +21,15 @@ public class Graph {
         if (vertex.ts < 0)
             vertex.setTs((new Date()).getTime());
 
-        back.put(vertex);
+        if (!exists(vertex)) {
+            back.put(vertex);
 
-        if (vertex.type() == VertexType.Edge)
-            onPutEdge((Edge)vertex);
+            if (vertex.type() == VertexType.Edge)
+                onPutEdge((Edge)vertex);
+        }
+        else {
+            update(vertex);
+        }
 
         return vertex;
     }
@@ -34,7 +39,7 @@ public class Graph {
     }
 
     public boolean exists(String id) {
-        return get(id) != null;
+        return back.exists(id, VertexType.getType(id));
     }
 
     public boolean exists(Vertex v) {
