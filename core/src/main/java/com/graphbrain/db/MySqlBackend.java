@@ -22,6 +22,14 @@ public class MySqlBackend implements Backend {
     private PreparedStatement psGetProg;
     private PreparedStatement psGetText;
 
+    private PreparedStatement psExistsEdge;
+    private PreparedStatement psExistsEdgeType;
+    private PreparedStatement psExistsEntity;
+    private PreparedStatement psExistsURL;
+    private PreparedStatement psExistsUser;
+    private PreparedStatement psExistsProg;
+    private PreparedStatement psExistsText;
+
     private PreparedStatement psPutEdge;
     private PreparedStatement psPutEdgeType;
     private PreparedStatement psPutEntity;
@@ -100,7 +108,7 @@ public class MySqlBackend implements Backend {
 
         // Edges table
         String createTableStr = "CREATE TABLE IF NOT EXISTS edges (";
-        createTableStr += "id TEXT,";
+        createTableStr += "id VARCHAR(10000),";
         createTableStr += "degree INT DEFAULT 0,";
         createTableStr += "ts BIGINT DEFAULT -1,";
         createTableStr += "INDEX id_index (id(255))";
@@ -109,7 +117,7 @@ public class MySqlBackend implements Backend {
 
         // EdgeTypes table
         createTableStr = "CREATE TABLE IF NOT EXISTS edgetypes (";
-        createTableStr += "id TEXT,";
+        createTableStr += "id VARCHAR(10000),";
         createTableStr += "degree INT DEFAULT 0,";
         createTableStr += "ts BIGINT DEFAULT -1,";
         createTableStr += "label VARCHAR(255),";
@@ -119,7 +127,7 @@ public class MySqlBackend implements Backend {
 
         // Entities table
         createTableStr = "CREATE TABLE IF NOT EXISTS entities (";
-        createTableStr += "id TEXT,";
+        createTableStr += "id VARCHAR(10000),";
         createTableStr += "degree INT DEFAULT 0,";
         createTableStr += "ts BIGINT DEFAULT -1,";
         createTableStr += "INDEX id_index (id(255))";
@@ -128,7 +136,7 @@ public class MySqlBackend implements Backend {
 
         // URLs table
         createTableStr = "CREATE TABLE IF NOT EXISTS urls (";
-        createTableStr += "id TEXT,";
+        createTableStr += "id VARCHAR(10000),";
         createTableStr += "degree INT DEFAULT 0,";
         createTableStr += "ts BIGINT DEFAULT -1,";
         createTableStr += "title VARCHAR(500),";
@@ -139,7 +147,7 @@ public class MySqlBackend implements Backend {
 
         // Users table
         createTableStr = "CREATE TABLE IF NOT EXISTS users (";
-        createTableStr += "id TEXT,";
+        createTableStr += "id VARCHAR(10000),";
         createTableStr += "degree INT DEFAULT 0,";
         createTableStr += "ts BIGINT DEFAULT -1,";
         createTableStr += "username VARCHAR(255),";
@@ -157,7 +165,7 @@ public class MySqlBackend implements Backend {
 
         // Progs table
         createTableStr = "CREATE TABLE IF NOT EXISTS progs (";
-        createTableStr += "id TEXT,";
+        createTableStr += "id VARCHAR(10000),";
         createTableStr += "degree INT DEFAULT 0,";
         createTableStr += "ts BIGINT DEFAULT -1,";
         createTableStr += "prog TEXT,";
@@ -167,7 +175,7 @@ public class MySqlBackend implements Backend {
 
         // Texts table
         createTableStr = "CREATE TABLE IF NOT EXISTS texts (";
-        createTableStr += "id TEXT,";
+        createTableStr += "id VARCHAR(10000),";
         createTableStr += "degree INT DEFAULT 0,";
         createTableStr += "ts BIGINT DEFAULT -1,";
         createTableStr += "text TEXT,";
@@ -177,15 +185,15 @@ public class MySqlBackend implements Backend {
 
         // Edge permutations table
         createTableStr = "CREATE TABLE IF NOT EXISTS edgeperms (";
-        createTableStr += "id TEXT,";
+        createTableStr += "id VARCHAR(10000),";
         createTableStr += "INDEX id_index (id(255))";
         createTableStr += ") ENGINE=" + MYSQL_ENGINE + " DEFAULT CHARSET=utf8;";
         safeExec(createTableStr);
 
         // Global-User table
         createTableStr = "CREATE TABLE IF NOT EXISTS globaluser (";
-        createTableStr += "global_id TEXT,";
-        createTableStr += "user_id TEXT,";
+        createTableStr += "global_id VARCHAR(10000),";
+        createTableStr += "user_id VARCHAR(10000),";
         createTableStr += "INDEX global_id_index (global_id(255))";
         createTableStr += ") ENGINE=" + MYSQL_ENGINE + " DEFAULT CHARSET=utf8;";
         safeExec(createTableStr);
@@ -201,6 +209,15 @@ public class MySqlBackend implements Backend {
             psGetUser = connection.prepareStatement("SELECT degree, ts, username, name, email, pwdhash, role, session, session_ts, last_seen FROM users WHERE id=?");
             psGetProg = connection.prepareStatement("SELECT degree, ts, prog FROM progs WHERE id=?");
             psGetText = connection.prepareStatement("SELECT degree, ts, text FROM texts WHERE id=?");
+
+            // exists
+            psExistsEdge = connection.prepareStatement("SELECT EXISTS(SELECT 1 FROM edges WHERE id=?)");
+            psExistsEdgeType = connection.prepareStatement("SELECT EXISTS(SELECT 1 FROM edgetypes WHERE id=?)");
+            psExistsEntity = connection.prepareStatement("SELECT EXISTS(SELECT 1 FROM entities WHERE id=?)");
+            psExistsURL = connection.prepareStatement("SELECT EXISTS(SELECT 1 FROM urls WHERE id=?)");
+            psExistsUser = connection.prepareStatement("SELECT EXISTS(SELECT 1 FROM users WHERE id=?)");
+            psExistsProg = connection.prepareStatement("SELECT EXISTS(SELECT 1 FROM progs WHERE id=?)");
+            psExistsText = connection.prepareStatement("SELECT EXISTS(SELECT 1 FROM texts WHERE id=?)");
 
             // put
             psPutEdge = connection.prepareStatement("INSERT INTO edges (id, degree, ts) VALUES (?, ?, ?)");
@@ -264,6 +281,27 @@ public class MySqlBackend implements Backend {
                 return getText(id);
             default:
                 return null;
+        }
+    }
+
+    public boolean exists(String id, VertexType vtype) {
+        switch(vtype) {
+            case Edge:
+                return existsEdge(id);
+            case EdgeType:
+                return existsEdgeType(id);
+            case Entity:
+                return existsEntity(id);
+            case URL:
+                return existsURL(id);
+            case User:
+                return existsUser(id);
+            case Prog:
+                return existsProg(id);
+            case Text:
+                return existsText(id);
+            default:
+                return false;
         }
     }
 
@@ -691,6 +729,90 @@ public class MySqlBackend implements Backend {
         }
         catch (SQLException e) {
             return null;
+        }
+    }
+
+    private boolean existsEdge(String id) {
+        try {
+            psExistsEdge.setString(1, id);
+            ResultSet resultSet = psExistsEdge.executeQuery();
+
+            return resultSet.next() && resultSet.getInt(1) == 1;
+        }
+        catch (SQLException e) {
+            return false;
+        }
+    }
+
+    private boolean existsEdgeType(String id) {
+        try {
+            psExistsEdgeType.setString(1, id);
+            ResultSet resultSet = psExistsEdgeType.executeQuery();
+
+            return resultSet.next() && resultSet.getInt(1) == 1;
+        }
+        catch (SQLException e) {
+            return false;
+        }
+    }
+
+    private boolean existsEntity(String id) {
+        try {
+            psExistsEntity.setString(1, id);
+            ResultSet resultSet = psExistsEntity.executeQuery();
+
+            return resultSet.next() && resultSet.getInt(1) == 1;
+        }
+        catch (SQLException e) {
+            return false;
+        }
+    }
+
+    private boolean existsURL(String id) {
+        try {
+            psExistsURL.setString(1, id);
+            ResultSet resultSet = psExistsURL.executeQuery();
+
+            return resultSet.next() && resultSet.getInt(1) == 1;
+        }
+        catch (SQLException e) {
+            return false;
+        }
+    }
+
+    private boolean existsUser(String id) {
+        try {
+            psExistsUser.setString(1, id);
+            ResultSet resultSet = psExistsUser.executeQuery();
+
+            return resultSet.next() && resultSet.getInt(1) == 1;
+        }
+        catch (SQLException e) {
+            return false;
+        }
+    }
+
+    private boolean existsProg(String id) {
+        try {
+            psExistsProg.setString(1, id);
+            ResultSet resultSet = psExistsProg.executeQuery();
+
+            return resultSet.next() && resultSet.getInt(1) == 1;
+        }
+        catch (SQLException e) {
+            return false;
+        }
+    }
+
+    private boolean existsText(String id) {
+        try {
+            psExistsText.setString(1, id);
+            ResultSet resultSet = psExistsText.executeQuery();
+
+            return resultSet.next() && resultSet.getInt(1) == 1;
+        }
+        catch (SQLException e) {
+            return false;
         }
     }
 
