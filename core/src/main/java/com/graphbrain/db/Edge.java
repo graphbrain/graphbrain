@@ -1,6 +1,8 @@
 package com.graphbrain.db;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class Edge extends Vertex {
@@ -163,6 +165,32 @@ public class Edge extends Vertex {
         }
 
         return fromParticipants(parts);
+    }
+
+    @Override
+    public Vertex flatten() {
+        List<Vertex> newParts = new LinkedList<>();
+        newParts.add(elems[0]);
+
+        for (int i = 1; i < elems.length; i++) {
+            Vertex v = elems[i];
+            if (v.type() == VertexType.Edge) {
+                Edge e = (Edge)v;
+                if (e.getEdgeType().equals(edgeType)) {
+                    for (int j = 1; j < e.getElems().length; j++) {
+                        newParts.add(e.getElems()[j]);
+                    }
+                }
+                else {
+                    newParts.add(v);
+                }
+            }
+            else {
+                newParts.add(v);
+            }
+        }
+
+        return new Edge(newParts.toArray(new Vertex[]{}));
     }
 
     public String[] getIds() {
