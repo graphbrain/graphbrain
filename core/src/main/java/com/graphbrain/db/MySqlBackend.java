@@ -105,6 +105,7 @@ public class MySqlBackend implements Backend {
 
     private void createTables() {
         String MYSQL_ENGINE = "InnoDB";
+        //String MYSQL_ENGINE = "MyISAM";
 
         // Edges table
         String createTableStr = "CREATE TABLE IF NOT EXISTS edges (";
@@ -225,8 +226,8 @@ public class MySqlBackend implements Backend {
             psPutEntity = connection.prepareStatement("INSERT INTO entities (id, degree, ts) VALUES (?, ?, ?)");
             psPutURL = connection.prepareStatement("INSERT INTO urls (id, degree, ts, title, icon) VALUES (?, ?, ?, ?, ?)");
             psPutUser = connection.prepareStatement("INSERT INTO users (id, degree, ts, username, name, email, pwdhash, role, session, session_ts, last_seen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            psPutProg = connection.prepareStatement("INSERT INTO entities (id, degree, ts, prog) VALUES (?, ?, ?, ?)");
-            psPutText = connection.prepareStatement("INSERT INTO entities (id, degree, ts, text) VALUES (?, ?, ?, ?)");
+            psPutProg = connection.prepareStatement("INSERT INTO progs (id, degree, ts, prog) VALUES (?, ?, ?, ?)");
+            psPutText = connection.prepareStatement("INSERT INTO texts (id, degree, ts, text) VALUES (?, ?, ?, ?)");
             psPutEdgePerm = connection.prepareStatement("INSERT INTO edgeperms (id) VALUES (?)");
 
             // update
@@ -235,8 +236,8 @@ public class MySqlBackend implements Backend {
             psUpdateEntity = connection.prepareStatement("UPDATE entities SET degree=?, ts=? WHERE id=?");
             psUpdateURL = connection.prepareStatement("UPDATE urls SET degree=?, ts=?, title=?, icon=? WHERE id=?");
             psUpdateUser = connection.prepareStatement("UPDATE users SET degree=?, ts=?, username=?, name=?, email=?, pwdhash=?, role=?, session=?, session_ts=?, last_seen=? WHERE id=?");
-            psUpdateProg = connection.prepareStatement("UPDATE prog SET degree=?, ts=?, prog=? WHERE id=?");
-            psUpdateText = connection.prepareStatement("UPDATE text SET degree=?, ts=?, text=? WHERE id=?");
+            psUpdateProg = connection.prepareStatement("UPDATE progs SET degree=?, ts=?, prog=? WHERE id=?");
+            psUpdateText = connection.prepareStatement("UPDATE texts SET degree=?, ts=?, text=? WHERE id=?");
 
             // remove
             psRemoveEdge = connection.prepareStatement("DELETE FROM edges WHERE id=?");
@@ -315,17 +316,17 @@ public class MySqlBackend implements Backend {
                 }
                 return edge;
             case EdgeType:
-                return putEdgeType((EdgeType) vertex);
+                return putEdgeType((EdgeType)vertex);
             case Entity:
                 return putEntity((EntityNode)vertex);
             case URL:
-                return putURL((URLNode) vertex);
+                return putURL((URLNode)vertex);
             case User:
-                return putUser((UserNode) vertex);
+                return putUser((UserNode)vertex);
             case Prog:
-                return putProg((ProgNode) vertex);
+                return putProg((ProgNode)vertex);
             case Text:
-                return putText((TextNode) vertex);
+                return putText((TextNode)vertex);
             default:
                 return null;
         }
