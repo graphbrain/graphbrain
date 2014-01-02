@@ -11,7 +11,7 @@ import com.graphbrain.eco.NodeType;
 public class VertexFun extends FunNode {
 
     public enum VertexFunType {
-        BuildVert, RelVert, TxtVert
+        BuildVert, RelVert, TxtVert, Flatten
     }
 
     private VertexFunType fun;
@@ -31,6 +31,7 @@ public class VertexFun extends FunNode {
             case BuildVert: return "build";
             case RelVert: return "rel-vert";
             case TxtVert: return "txt-vert";
+            case Flatten: return "flatten";
             default: return "?";
         }
     }
@@ -120,6 +121,17 @@ public class VertexFun extends FunNode {
                         default: // error!
                     }
                 }
+                break;
+            }
+            case Flatten: {
+                p = params[0];
+                p.vertexValue(ctxts);
+
+                for (Context c : ctxts.getCtxts()) {
+                    Vertex v = c.getRetVertex(p);
+                    c.setRetVertex(this, v.flatten());
+                }
+                break;
             }
         }
     }

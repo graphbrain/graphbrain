@@ -90,6 +90,10 @@ public abstract class Vertex {
         return this;
     }
 
+    public Vertex flatten() {
+        return this;
+    }
+
     public static String cleanId(String id) {
         return id.toLowerCase();
     }

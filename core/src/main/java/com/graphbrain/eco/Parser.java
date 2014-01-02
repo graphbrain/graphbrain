@@ -19,7 +19,7 @@ public class Parser {
     private ProgNode expr;
 
     public Parser(String input) {
-        varTypes = new HashMap<String, NodeType>();
+        varTypes = new HashMap<>();
         List<Token> lstTokens = new Lexer(input).tokens();
         tokens = lstTokens.toArray(new Token[lstTokens.size()]);
         expr = parse(0);
@@ -96,6 +96,7 @@ public class Parser {
         if (text.equals("pos")) return parsePosFun(pos + 1);
         if (text.equals("+")) return parseSum(pos + 1);
         if (text.equals("ends-with")) return parseEndsWith(pos + 1);
+        if (text.equals("flatten")) return parseFlatten(pos + 1);
         return parseDummy(text, pos + 1);
 
     }
@@ -152,7 +153,7 @@ public class Parser {
     }
 
     private List<ProgNode> parseElemList(int pos) {
-        List<ProgNode> l = new LinkedList<ProgNode>();
+        List<ProgNode> l = new LinkedList<>();
         parseElemList_r(l, pos);
         return l;
     }
@@ -189,7 +190,7 @@ public class Parser {
     }
 
     private List<ProgNode> parseParamsList(int pos) {
-        List<ProgNode> l = new LinkedList<ProgNode>();
+        List<ProgNode> l = new LinkedList<>();
         parseParamsList_r(l, pos);
         return l;
     }
@@ -241,7 +242,7 @@ public class Parser {
 
     private ProgNode parseBuildVert(int pos) {
         int lastPos = pos;
-        List<ProgNode> paramList = new LinkedList<ProgNode>();
+        List<ProgNode> paramList = new LinkedList<>();
 
         while (!matchClosingPar(lastPos)) {
             ProgNode p = parse(lastPos);
@@ -273,7 +274,7 @@ public class Parser {
 
     private ProgNode parseDummy(String name, int pos) {
         int lastPos = pos;
-        List<ProgNode> paramList = new LinkedList<ProgNode>();
+        List<ProgNode> paramList = new LinkedList<>();
 
         while (!matchClosingPar(lastPos)) {
             ProgNode p = parse(lastPos);
@@ -384,6 +385,15 @@ public class Parser {
 
         if (matchClosingPar(p2.getLastTokenPos() + 1))
             return new WordsFun(WordsFunType.EndsWith, new ProgNode[]{p1, p2}, p2.getLastTokenPos() + 1);
+        else
+            return null; // error
+    }
+
+    private ProgNode parseFlatten(int pos) {
+        ProgNode p = parse(pos);
+
+        if (matchClosingPar(p.getLastTokenPos() + 1))
+            return new VertexFun(VertexFunType.Flatten, new ProgNode[]{p}, p.getLastTokenPos() + 1);
         else
             return null; // error
     }
