@@ -18,11 +18,11 @@ public class MaxDepthFun extends FunNode {
     public String label(){return "max-depth";}
 
     @Override
-    public NodeType ntype(){return NodeType.Boolean;}
+    public NodeType ntype(Context ctxt){return NodeType.Boolean;}
 
     @Override
-    public void booleanValue(Contexts ctxts) {
-        params[0].numberValue(ctxts);
+    public void eval(Contexts ctxts) {
+        params[0].eval(ctxts);
 
         for (Context c : ctxts.getCtxts()) {
             boolean r = ctxts.getDepth() <= c.getRetNumber(params[0]);

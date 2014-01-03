@@ -19,34 +19,43 @@ public class SumFun extends FunNode {
     public String label(){return "+";}
 
     @Override
-    public NodeType ntype() {
-        return params[0].ntype();
+    public NodeType ntype(Context ctxt) {
+        return params[0].ntype(ctxt);
     }
 
     @Override
-    public void numberValue(Contexts ctxts) {
-        for (ProgNode p : params) {
-            p.numberValue(ctxts);
-        }
-
-        for (Context c : ctxts.getCtxts()) {
-            double sum = 0;
-            for (ProgNode p : params)
-                sum += c.getRetNumber(p);
-            c.setRetNumber(this, sum);
-        }
-    }
-
-    @Override
-    public void wordsValue(Contexts ctxts) {
+    public void eval(Contexts ctxts) {
         for (ProgNode p : params)
-            p.wordsValue(ctxts);
+            p.eval(ctxts);
 
         for (Context c : ctxts.getCtxts()) {
-            Words agg = Words.empty();
-            for (ProgNode p : params)
-                agg = agg.append(c.getRetWords(p));
-            c.setRetWords(this, agg);
+
+            // determine sum type
+            NodeType t = params[0].ntype(c);
+            for (int i = 1; i < params.length; i++) {
+                if (params[i].ntype(c) != t) {
+                    t = NodeType.Unknown;
+                    break;
+                }
+            }
+
+            switch(t) {
+                case Number:
+                    double sum = 0;
+                    for (ProgNode p : params)
+                        sum += c.getRetNumber(p);
+                    c.setRetNumber(this, sum);
+                    break;
+                case Words:
+                    Words agg = Words.empty();
+                    for (ProgNode p : params)
+                        agg = agg.append(c.getRetWords(p));
+                    c.setRetWords(this, agg);
+                    break;
+                default:
+                    // error
+                    break;
+            }
         }
     }
 }

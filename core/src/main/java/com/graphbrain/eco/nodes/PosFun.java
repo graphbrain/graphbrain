@@ -18,12 +18,12 @@ public class PosFun extends FunNode {
     public String label(){return "pos";}
 
     @Override
-    public NodeType ntype(){return NodeType.Number;}
+    public NodeType ntype(Context ctxt){return NodeType.Number;}
 
     @Override
-    public void numberValue(Contexts ctxts) {
+    public void eval(Contexts ctxts) {
         ProgNode p = params[0];
-        p.wordsValue(ctxts);
+        p.eval(ctxts);
         for (Context c : ctxts.getCtxts()) {
             double pos = c.getRetWords(p).getPos();
             c.setRetNumber(this, pos);

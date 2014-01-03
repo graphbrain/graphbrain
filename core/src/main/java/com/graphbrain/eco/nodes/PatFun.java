@@ -73,10 +73,10 @@ public class PatFun extends FunNode {
     public String label() {return "pat";}
 
     @Override
-    public NodeType ntype() {return NodeType.Boolean;}
+    public NodeType ntype(Context ctxt) {return NodeType.Boolean;}
 
     @Override
-    public void booleanValue(Contexts ctxts) {
+    public void eval(Contexts ctxts) {
         int words = ctxts.getSentence().getWords().length;
         int count = params.length;
 

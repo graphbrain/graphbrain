@@ -18,12 +18,12 @@ public class LenFun extends FunNode {
     public String label(){return "len";}
 
     @Override
-    public NodeType ntype(){return NodeType.Number;}
+    public NodeType ntype(Context ctxt){return NodeType.Number;}
 
     @Override
-    public void numberValue(Contexts ctxts) {
+    public void eval(Contexts ctxts) {
         ProgNode p = params[0];
-        p.wordsValue(ctxts);
+        p.eval(ctxts);
         for (Context c : ctxts.getCtxts()) {
             int len = c.getRetWords(p).length();
             c.setRetNumber(this, len);

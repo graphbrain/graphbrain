@@ -1,5 +1,7 @@
 package com.graphbrain.eco.nodes;
 
+import com.graphbrain.eco.Context;
+import com.graphbrain.eco.Contexts;
 import com.graphbrain.eco.NodeType;
 
 public class DummyFun extends FunNode {
@@ -19,8 +21,13 @@ public class DummyFun extends FunNode {
     public String label(){return name;}
 
     @Override
-    public NodeType ntype() {
+    public NodeType ntype(Context ctxt) {
         return NodeType.Boolean;
+    }
+
+    @Override
+    public void eval(Contexts ctxts) {
+
     }
 
     public String getName() {

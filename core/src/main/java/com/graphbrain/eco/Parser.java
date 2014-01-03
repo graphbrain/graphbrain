@@ -7,19 +7,15 @@ import com.graphbrain.eco.nodes.FilterFun.FilterFunType;
 import com.graphbrain.eco.nodes.VertexFun.VertexFunType;
 import com.graphbrain.eco.nodes.WordsFun.WordsFunType;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class Parser {
 
-    private Map<String, NodeType> varTypes;
     private Token[] tokens;
     private ProgNode expr;
 
     public Parser(String input) {
-        varTypes = new HashMap<>();
         List<Token> lstTokens = new Lexer(input).tokens();
         tokens = lstTokens.toArray(new Token[lstTokens.size()]);
         expr = parse(0);
@@ -48,10 +44,7 @@ public class Parser {
     }
 
     private ProgNode parseVar(int pos) {
-        VarNode vn = new VarNode(tokens[pos].getText(), pos);
-        if (varTypes.keySet().contains(vn.getName()))
-            vn.setVarType(varTypes.get(vn.getName()));
-        return vn;
+        return new VarNode(tokens[pos].getText(), pos);
     }
 
     private boolean matchOpeningPar(int pos) {
@@ -202,15 +195,6 @@ public class Parser {
         List<ProgNode> lstParams = parseParamsList(pos + 1);
         ProgNode[] params = lstParams.toArray(new ProgNode[parseParamsList(pos + 1).size()]);
 
-        // set var types
-        for (ProgNode p : params) {
-            if (p instanceof VarNode) {
-                VarNode v = (VarNode)p;
-                v.setVarType(NodeType.Words);
-                varTypes.put(v.getName(), NodeType.Words);
-            }
-        }
-
         int lastParamsTokenPos;
         if (params.length == 0)
             lastParamsTokenPos = pos + 1;
@@ -226,13 +210,6 @@ public class Parser {
     private ProgNode parseLet(int pos) {
         ProgNode p1 = parse(pos);
         ProgNode p2 = parse(p1.getLastTokenPos() + 1);
-
-        // set var type
-        if (p1 instanceof VarNode) {
-            VarNode v = (VarNode)p1;
-            v.setVarType(p2.ntype());
-            varTypes.put(v.getName(), p2.ntype());
-        }
 
         if (matchClosingPar(p2.getLastTokenPos() + 1))
             return new LetFun(new ProgNode[]{p1, p2}, p2.getLastTokenPos() + 1);

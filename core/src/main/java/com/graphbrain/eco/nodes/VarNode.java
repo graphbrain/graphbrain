@@ -6,7 +6,6 @@ import com.graphbrain.eco.NodeType;
 public class VarNode extends ProgNode {
 
     private String name;
-    private NodeType varType;
     private String[] possiblePOS;
     private String[] necessaryPOS;
     private String[] forbiddenPOS;
@@ -35,8 +34,6 @@ public class VarNode extends ProgNode {
 
     public VarNode(String varStr, int lastTokenPos) {
         super(lastTokenPos);
-
-        varType = NodeType.Unknown;
 
         String[] parts = varStr.split(":");
         name = parts[0];
@@ -103,41 +100,29 @@ public class VarNode extends ProgNode {
     }
 
     @Override
-    public NodeType ntype(){return varType;}
+    public NodeType ntype(Context ctxt){return ctxt.getType(name);}
 
     @Override
-    public void booleanValue(Contexts ctxts) {
+    public void eval(Contexts ctxts) {
         for (Context c : ctxts.getCtxts()) {
-            c.setRetBoolean(this, c.getBoolean(name));
+            switch(ntype(c)) {
+                case Boolean:
+                    c.setRetBoolean(this, c.getBoolean(name));
+                    break;
+                case String:
+                    c.setRetString(this, c.getString(name));
+                    break;
+                case Number:
+                    c.setRetNumber(this, c.getNumber(name));
+                    break;
+                case Words:
+                    c.setRetWords(this, c.getWords(name));
+                    break;
+                case Vertex:
+                    c.setRetVertex(this, c.getVertex(name));
+                    break;
+            }
         }
-    }
-
-    @Override
-    public void stringValue(Contexts ctxts) {
-        for (Context c : ctxts.getCtxts())
-            c.setRetString(this, c.getString(name));
-    }
-
-    @Override
-    public void numberValue(Contexts ctxts) {
-        for (Context c : ctxts.getCtxts())
-            c.setRetNumber(this, c.getNumber(name));
-    }
-
-    @Override
-    public void wordsValue(Contexts ctxts) {
-        for (Context c : ctxts.getCtxts())
-            c.setRetWords(this, c.getWords(name));
-    }
-
-    @Override
-    public void vertexValue(Contexts ctxts) {
-        for (Context c : ctxts.getCtxts())
-            c.setRetVertex(this, c.getVertex(name));
-    }
-
-    public boolean isGLobal() {
-        return name.charAt(0) == '_';
     }
 
     @Override
@@ -145,14 +130,6 @@ public class VarNode extends ProgNode {
 
     public String getName() {
         return name;
-    }
-
-    public NodeType getVarType() {
-        return varType;
-    }
-
-    public void setVarType(NodeType varType) {
-        this.varType = varType;
     }
 
     public String[] getPossiblePOS() {

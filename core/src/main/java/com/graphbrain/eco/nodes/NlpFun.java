@@ -36,7 +36,7 @@ public class NlpFun extends FunNode {
     }
 
     @Override
-    public NodeType ntype(){return NodeType.Boolean;}
+    public NodeType ntype(Context ctxt){return NodeType.Boolean;}
 
     private boolean matchPoses(Word word, boolean pre, String[] poses) {
         for (String pos : poses)
@@ -77,11 +77,11 @@ public class NlpFun extends FunNode {
     }
 
     @Override
-    public void booleanValue(Contexts ctxts) {
-        params[0].wordsValue(ctxts);
+    public void eval(Contexts ctxts) {
+        params[0].eval(ctxts);
 
         for (int i = 1; i < params.length; i++) {
-            params[i].stringValue(ctxts);
+            params[i].eval(ctxts);
         }
 
         for (Context c : ctxts.getCtxts()) {

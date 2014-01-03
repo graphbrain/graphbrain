@@ -18,12 +18,12 @@ public class BoolNode extends ProgNode {
     }
 
     @Override
-    public NodeType ntype() {
+    public NodeType ntype(Context ctxt) {
         return NodeType.Boolean;
     }
 
     @Override
-    public void booleanValue(Contexts ctxts) {
+    public void eval(Contexts ctxts) {
         for (Context c : ctxts.getCtxts())
             c.setRetBoolean(this, value);
     }

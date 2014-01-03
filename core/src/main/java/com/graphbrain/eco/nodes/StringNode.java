@@ -18,10 +18,10 @@ public class StringNode extends ProgNode {
     }
 
     @Override
-    public NodeType ntype(){return NodeType.String;}
+    public NodeType ntype(Context ctxt) {return NodeType.String;}
 
     @Override
-    public void stringValue(Contexts ctxts) {
+    public void eval(Contexts ctxts) {
         for (Context c : ctxts.getCtxts())
             c.setRetString(this, value);
     }

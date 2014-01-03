@@ -8,35 +8,46 @@ import java.util.*;
 public class Context {
 
     private Contexts parent;
+
     Map<String, NodeType> varTypes;
     Map<String, String> stringVars;
     Map<String, Double> numberVars;
     Map<String, Boolean> booleanVars;
     Map<String, Words> wordsVars;
     Map<String, Vertex> vertexVars;
+
     Map<ProgNode, String> retStringMap;
     Map<ProgNode, Double> retNumberMap;
     Map<ProgNode, Boolean> retBooleanMap;
     Map<ProgNode, Words> retWordsMap;
     Map<ProgNode, Vertex> retVertexMap;
+
     ProgNode topRet;
+
     List<Context> subContexts;
 
     public Context(Contexts parent) {
         this.parent = parent;
-        varTypes = new HashMap<String, NodeType>();
-        stringVars = new HashMap<String, String>();
-        numberVars = new HashMap<String, Double>();
-        booleanVars = new HashMap<String, Boolean>();
-        wordsVars = new HashMap<String, Words>();
-        vertexVars = new HashMap<String, Vertex>();
-        retStringMap = new IdentityHashMap<ProgNode, String>();
-        retNumberMap = new IdentityHashMap<ProgNode, Double>();
-        retBooleanMap = new IdentityHashMap<ProgNode, Boolean>();
-        retWordsMap = new IdentityHashMap<ProgNode, Words>();
-        retVertexMap = new IdentityHashMap<ProgNode, Vertex>();
+
+        varTypes = new HashMap<>();
+        stringVars = new HashMap<>();
+        numberVars = new HashMap<>();
+        booleanVars = new HashMap<>();
+        wordsVars = new HashMap<>();
+        vertexVars = new HashMap<>();
+
+        retStringMap = new IdentityHashMap<>();
+        retNumberMap = new IdentityHashMap<>();
+        retBooleanMap = new IdentityHashMap<>();
+        retWordsMap = new IdentityHashMap<>();
+        retVertexMap = new IdentityHashMap<>();
         topRet = null;
-        subContexts = new LinkedList<Context>();
+        subContexts = new LinkedList<>();
+
+        Context globals = parent.getGlobals();
+        if (globals != null) {
+            copyGlobalsFrom(globals);
+        }
     }
 
     private Context() {}
@@ -45,55 +56,52 @@ public class Context {
         Context c = new Context();
 
         c.parent = parent;
-        c.varTypes = new HashMap<String, NodeType>(varTypes);
-        c.stringVars = new HashMap<String, String>(stringVars);
-        c.numberVars = new HashMap<String, Double>(numberVars);
-        c.booleanVars = new HashMap<String, Boolean>(booleanVars);
-        c.wordsVars = new HashMap<String, Words>(wordsVars);
-        c.vertexVars = new HashMap<String, Vertex>(vertexVars);
-        c.retStringMap = new IdentityHashMap<ProgNode, String>(retStringMap);
-        c.retNumberMap = new IdentityHashMap<ProgNode, Double>(retNumberMap);
-        c.retBooleanMap = new IdentityHashMap<ProgNode, Boolean>(retBooleanMap);
-        c.retWordsMap = new IdentityHashMap<ProgNode, Words>(retWordsMap);
-        c.retVertexMap = new IdentityHashMap<ProgNode, Vertex>(retVertexMap);
+
+        c.varTypes = new HashMap<>(varTypes);
+        c.stringVars = new HashMap<>(stringVars);
+        c.numberVars = new HashMap<>(numberVars);
+        c.booleanVars = new HashMap<>(booleanVars);
+        c.wordsVars = new HashMap<>(wordsVars);
+        c.vertexVars = new HashMap<>(vertexVars);
+
+        c.retStringMap = new IdentityHashMap<>(retStringMap);
+        c.retNumberMap = new IdentityHashMap<>(retNumberMap);
+        c.retBooleanMap = new IdentityHashMap<>(retBooleanMap);
+        c.retWordsMap = new IdentityHashMap<>(retWordsMap);
+        c.retVertexMap = new IdentityHashMap<>(retVertexMap);
         c.topRet = topRet;
-        c.subContexts = new LinkedList<Context>(subContexts);
+        c.subContexts = new LinkedList<>(subContexts);
 
         return c;
     }
 
-    /*
-    def merge(ctxt: Context) = {
-        ctxt.varTypes.foreach(kv => varTypes(kv._1) = kv._2)
-
-        ctxt.stringVars.foreach(kv => stringVars(kv._1) = kv._2)
-        ctxt.numberVars.foreach(kv => numberVars(kv._1) = kv._2)
-        ctxt.booleanVars.foreach(kv => booleanVars(kv._1) = kv._2)
-        ctxt.wordsVars.foreach(kv => wordsVars(kv._1) = kv._2)
-        ctxt.vertexVars.foreach(kv => vertexVars(kv._1) = kv._2)
-
-        ctxt.retStringMap.foreach(kv => retStringMap(kv._1) = kv._2)
-        ctxt.retNumberMap.foreach(kv => retNumberMap(kv._1) = kv._2)
-        ctxt.retBooleanMap.foreach(kv => retBooleanMap(kv._1) = kv._2)
-        ctxt.retWordsMap.foreach(kv => retWordsMap(kv._1) = kv._2)
-        ctxt.retVertexMap.foreach(kv => retVertexMap(kv._1) = kv._2)
-        ctxt.retVerticesMap.foreach(kv => retVerticesMap(kv._1) = kv._2)
-
-        topRet = ctxt.topRet
-
-        subContexts = ctxt.subContexts
+    public void copyGlobalsFrom(Context globals) {
+        for (String key : globals.stringVars.keySet()) {
+            if (key.charAt(0) == '_') {
+                setString(key, globals.stringVars.get(key));
+            }
+        }
+        for (String key : globals.numberVars.keySet()) {
+            if (key.charAt(0) == '_') {
+                setNumber(key, globals.numberVars.get(key));
+            }
+        }
+        for (String key : globals.booleanVars.keySet()) {
+            if (key.charAt(0) == '_') {
+                setBoolean(key, globals.booleanVars.get(key));
+            }
+        }
+        for (String key : globals.wordsVars.keySet()) {
+            if (key.charAt(0) == '_') {
+                setWords(key, globals.wordsVars.get(key));
+            }
+        }
+        for (String key : globals.vertexVars.keySet()) {
+            if (key.charAt(0) == '_') {
+                setVertex(key, globals.vertexVars.get(key));
+            }
+        }
     }
-
-    def mergeGlobals(ctxt: Context) = {
-        ctxt.varTypes.foreach(kv => varTypes(kv._1) = kv._2)
-
-        ctxt.stringVars.filter(v => v._1(0) == '_').foreach(kv => stringVars(kv._1) = kv._2)
-        ctxt.numberVars.filter(v => v._1(0) == '_').foreach(kv => numberVars(kv._1) = kv._2)
-        ctxt.booleanVars.filter(v => v._1(0) == '_').foreach(kv => booleanVars(kv._1) = kv._2)
-        ctxt.wordsVars.filter(v => v._1(0) == '_').foreach(kv => wordsVars(kv._1) = kv._2)
-        ctxt.vertexVars.filter(v => v._1(0) == '_').foreach(kv => vertexVars(kv._1) = kv._2)
-    }
-    */
 
     public String getRetString(ProgNode p) {return retStringMap.get(p);}
     public double getRetNumber(ProgNode p) {return retNumberMap.get(p);}
