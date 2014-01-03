@@ -18,16 +18,16 @@ public class WWRule extends RuleNode {
     public String label() {return "ww";}
 
     @Override
-    public NodeType ntype() {return NodeType.Words;}
+    public NodeType ntype(Context ctxt) {return NodeType.Words;}
 
     @Override
-    public void wordsValue(Contexts ctxts) {
+    public void eval(Contexts ctxts) {
         // eval pattern
-        params[0].booleanValue(ctxts);
+        params[0].eval(ctxts);
         // eval conds
-        params[1].booleanValue(ctxts);
+        params[1].eval(ctxts);
         // eval return value
-        params[2].wordsValue(ctxts);
+        params[2].eval(ctxts);
 
         for (Context c : ctxts.getCtxts())
             c.setRetWords(this, c.getRetWords(params[2]));

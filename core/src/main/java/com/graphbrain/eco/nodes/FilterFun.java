@@ -32,11 +32,11 @@ public class FilterFun extends FunNode {
     }
 
     @Override
-    public NodeType ntype(){return NodeType.Boolean;}
+    public NodeType ntype(Context ctxt){return NodeType.Boolean;}
 
     @Override
-    public void booleanValue(Contexts ctxts) {
-        params[0].numberValue(ctxts);
+    public void eval(Contexts ctxts) {
+        params[0].eval(ctxts);
 
         Context bestCtxt = null;
 

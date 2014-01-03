@@ -24,17 +24,22 @@ public class Prog {
     }
 
     public List<Contexts> wv(String s, int depth) {
-        return wv(Words.fromString(s), depth);
+        return wv(s, depth, null);
     }
 
-    public List<Contexts> wv(Words w, int depth) {
-        List<Contexts> ctxtsList = new LinkedList<Contexts>();
+    public List<Contexts> wv(String s, int depth, Context globals) {
+        return wv(Words.fromString(s), depth, globals);
+    }
+
+    public List<Contexts> wv(Words w, int depth, Context globals) {
+        List<Contexts> ctxtsList = new LinkedList<>();
 
         for (ProgNode e : exprs) {
             if (e instanceof WVRule) {
                 WVRule wv = (WVRule)e;
                 Contexts ctxts = new Contexts(wv, this, w, depth);
-                wv.vertexValue(ctxts);
+                ctxts.setGlobals(globals);
+                wv.eval(ctxts);
                 if (ctxts.getCtxts().size() > 0) {
                     ctxtsList.add(ctxts);
                     return ctxtsList;
@@ -45,14 +50,15 @@ public class Prog {
         return ctxtsList;
     }
 
-    public List<Contexts> ww(Words w, int depth) {
-        List<Contexts> ctxtsList = new LinkedList<Contexts>();
+    public List<Contexts> ww(Words w, int depth, Context globals) {
+        List<Contexts> ctxtsList = new LinkedList<>();
 
         for (ProgNode e : exprs) {
             if (e instanceof WWRule) {
                 WWRule ww = (WWRule)e;
                 Contexts ctxts = new Contexts(ww, this, w, depth);
-                ww.wordsValue(ctxts);
+                ctxts.setGlobals(globals);
+                ww.eval(ctxts);
                 if (ctxts.getCtxts().size() > 0) {
                     ctxtsList.add(ctxts);
                     return ctxtsList;
@@ -120,7 +126,7 @@ public class Prog {
 
     public static Prog fromStringArray(String[] strArr) {
         String exprStr = "";
-        List<ProgNode> exprList = new LinkedList<ProgNode>();
+        List<ProgNode> exprList = new LinkedList<>();
 
         for(String line : strArr) {
             if (emptyLine(line)) {
@@ -144,7 +150,7 @@ public class Prog {
     }
 
     public static Prog fromNode(ProgNode e) {
-        List<ProgNode> l = new LinkedList<ProgNode>();
+        List<ProgNode> l = new LinkedList<>();
         l.add(e);
         return new Prog(l);
     }

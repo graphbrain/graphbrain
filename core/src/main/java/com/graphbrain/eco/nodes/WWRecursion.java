@@ -20,13 +20,13 @@ public class WWRecursion extends FunNode {
     public String label() {return ":ww";}
 
     @Override
-    public NodeType ntype() {return NodeType.Words;}
+    public NodeType ntype(Context ctxt) {return NodeType.Words;}
 
     @Override
-    public void wordsValue(Contexts ctxts) {
-        params[0].wordsValue(ctxts);
+    public void eval(Contexts ctxts) {
+        params[0].eval(ctxts);
         for (Context c : ctxts.getCtxts()) {
-            List<Contexts> newCtxts = ctxts.getProg().ww(c.getRetWords(params[0]), ctxts.getDepth() + 1);
+            List<Contexts> newCtxts = ctxts.getProg().ww(c.getRetWords(params[0]), ctxts.getDepth() + 1, c);
 
             for (Contexts nctxts : newCtxts) {
                 for (Context nc : nctxts.getCtxts()) {

@@ -19,10 +19,10 @@ public class VertexNode extends ProgNode {
     }
 
     @Override
-    public NodeType ntype() {return NodeType.Vertex;}
+    public NodeType ntype(Context ctxt) {return NodeType.Vertex;}
 
     @Override
-    public void vertexValue(Contexts ctxts) {
+    public void eval(Contexts ctxts) {
         for (Context c : ctxts.getCtxts())
             c.setRetVertex(this, value);
     }

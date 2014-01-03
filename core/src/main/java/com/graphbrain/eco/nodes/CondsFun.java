@@ -18,13 +18,13 @@ public class CondsFun extends FunNode {
     public String label(){return ";";}
 
     @Override
-    public NodeType ntype(){return NodeType.Boolean;}
+    public NodeType ntype(Context ctxt) {return NodeType.Boolean;}
 
     @Override
-    public void booleanValue(Contexts ctxts) {
+    public void eval(Contexts ctxts) {
         for (ProgNode p : params) {
-            p.value(ctxts);
-            if (p.ntype() == NodeType.Boolean) {
+            p.eval(ctxts);
+            if (p.ntype(null) == NodeType.Boolean) {
                 for (Context c : ctxts.getCtxts()) {
                     if (!c.getRetBoolean(p)) {
                         ctxts.remContext(c);

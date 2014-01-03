@@ -6,28 +6,28 @@
      (let y (:wv b))
      (let z (:wv (+ b verb c)))
      (let k (build (rel-vert "has") y x)))
-  (build (rel-vert "+list") k z))
+  (flatten (build (rel-vert "+list") k z)))
 
 (wv (a verb1:V b "and" verb2:V c)
      ((let x (:wv (+ a verb1 b)))
      (let y (:wv (+ a verb2 c))))
-  (build (rel-vert "+list") x y))
+  (flatten (build (rel-vert "+list") x y)))
 
 (wv (a verb:V b in1:IN c "and" d in2:IN e)
      ((! (ends-with (+ in1 c) (+ in2 e)))
      (let x (:wv (+ a verb b in1 c)))
      (let y (:wv (+ a verb d in2 e))))
-  (build (rel-vert "+list") x y))
+  (flatten (build (rel-vert "+list") x y)))
 
 (wv (a verb:V b "and" c in:IN d)
      ((let x (:wv (+ a verb b in d)))
      (let y (:wv (+ a verb c in d))))
-  (build (rel-vert "+list") x y))
+  (flatten (build (rel-vert "+list") x y)))
 
 (wv (a verb:V b "and" c)
      ((let x (:wv (+ a verb b)))
      (let y (:wv (+ a verb c))))
-  (build (rel-vert "+list") x y))
+  (flatten (build (rel-vert "+list") x y)))
 
 (wv (a verb:V b)
     ((filter-max (len verb))

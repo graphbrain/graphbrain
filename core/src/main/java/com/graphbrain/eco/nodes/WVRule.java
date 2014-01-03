@@ -18,16 +18,16 @@ public class WVRule extends RuleNode {
     public String label() {return "wv";}
 
     @Override
-    public NodeType ntype() {return NodeType.Boolean;}
+    public NodeType ntype(Context ctxt) {return NodeType.Boolean;}
 
     @Override
-    public void vertexValue(Contexts ctxts) {
+    public void eval(Contexts ctxts) {
         // eval pattern
-        params[0].booleanValue(ctxts);
+        params[0].eval(ctxts);
         // eval conditions
-        params[1].booleanValue(ctxts);
+        params[1].eval(ctxts);
         // eval return value
-        params[2].vertexValue(ctxts);
+        params[2].eval(ctxts);
 
         for (Context c : ctxts.getCtxts())
             c.setRetVertex(this, c.getRetVertex(params[2]));

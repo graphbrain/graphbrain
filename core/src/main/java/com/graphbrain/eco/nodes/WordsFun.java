@@ -29,14 +29,14 @@ public class WordsFun extends FunNode {
     }
 
     @Override
-    public NodeType ntype() {return NodeType.Boolean;}
+    public NodeType ntype(Context ctxt) {return NodeType.Boolean;}
 
     @Override
-    public void booleanValue(Contexts ctxts) {
+    public void eval(Contexts ctxts) {
         switch(fun) {
             case EndsWith:
                 for (ProgNode p : params)
-                    p.wordsValue(ctxts);
+                    p.eval(ctxts);
 
                 for (Context c : ctxts.getCtxts()) {
                     Words words1 = c.getRetWords(params[0]);

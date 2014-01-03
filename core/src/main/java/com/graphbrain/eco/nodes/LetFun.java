@@ -18,18 +18,18 @@ public class LetFun extends FunNode {
     public String label(){return "let";}
 
     @Override
-    public NodeType ntype(){return NodeType.Boolean;}
+    public NodeType ntype(Context ctxt){return NodeType.Boolean;}
 
     @Override
-    public void booleanValue(Contexts ctxts) {
+    public void eval(Contexts ctxts) {
         // TODO: check if params[0] is a var
         VarNode v = (VarNode)params[0];
         ProgNode p = params[1];
 
-        p.value(ctxts);
+        p.eval(ctxts);
 
         for (Context c : ctxts.getCtxts()) {
-            switch(p.ntype()) {
+            switch(p.ntype(c)) {
                 case Boolean:
                     c.setBoolean(v.getName(), c.getRetBoolean(p));
                     break;

@@ -17,10 +17,10 @@ public class NumberNode extends ProgNode {
     }
 
     @Override
-    public NodeType ntype(){return NodeType.Number;}
+    public NodeType ntype(Context ctxt){return NodeType.Number;}
 
     @Override
-    public void numberValue(Contexts ctxts) {
+    public void eval(Contexts ctxts) {
         for (Context c : ctxts.getCtxts())
             c.setRetNumber(this, value);
     }

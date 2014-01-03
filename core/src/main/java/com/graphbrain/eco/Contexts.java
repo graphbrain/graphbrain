@@ -14,14 +14,17 @@ public class Contexts {
     private List<Context> addCtxts;
     private List<Context> remCtxts;
 
+    private Context globals;
+
     public Contexts(RuleNode rule, Prog prog, Words inSentence, int depth) {
         this.rule = rule;
         this.prog = prog;
         this.depth = depth;
         sentence = inSentence.removeFullStop();
-        ctxts = new LinkedList<Context>();
-        addCtxts = new LinkedList<Context>();
-        remCtxts = new LinkedList<Context>();
+        ctxts = new LinkedList<>();
+        addCtxts = new LinkedList<>();
+        remCtxts = new LinkedList<>();
+        globals = null;
     }
 
     public void addContext(Context c) {addCtxts.add(c);}
@@ -66,5 +69,13 @@ public class Contexts {
 
     public List<Context> getCtxts() {
         return ctxts;
+    }
+
+    public Context getGlobals() {
+        return globals;
+    }
+
+    public void setGlobals(Context globals) {
+        this.globals = globals;
     }
 }

@@ -1,5 +1,6 @@
 package com.graphbrain.eco.nodes;
 
+import com.graphbrain.eco.Context;
 import com.graphbrain.eco.Contexts;
 import com.graphbrain.eco.NodeType;
 
@@ -11,34 +12,42 @@ public abstract class ProgNode {
         this.lastTokenPos = lastTokenPos;
     }
 
-    public abstract NodeType ntype();
+    public abstract NodeType ntype(Context ctxt);
 
-    public void stringValue(Contexts ctxts) {} // error
-    public void numberValue(Contexts ctxts) {} // error
-    public void booleanValue(Contexts ctxts) {} // error
-    public void wordsValue(Contexts ctxts) {} // error
-    public void vertexValue(Contexts ctxts) {} // error
-    public void verticesValue(Contexts ctxts) {} // error
+    public abstract void eval(Contexts ctxts);
+
+    /*
+    protected void stringValue(Context ctxt) {} // error
+    protected void numberValue(Context ctxt) {} // error
+    protected void booleanValue(Context ctxt) {} // error
+    protected void wordsValue(Context ctxt) {} // error
+    protected void vertexValue(Context ctxt) {} // error
 
     public void value(Contexts ctxts) {
-        switch(ntype()) {
-            case Boolean:
-                booleanValue(ctxts);
+        for (Context c : ctxts.getCtxts()) {
+            switch(ntype(c)) {
+                case Boolean:
+                    booleanValue(c);
+                    break;
+                case Number:
+                    numberValue(c);
+                    break;
+                case Words:
+                    wordsValue(c);
+                    break;
+                case String:
+                    stringValue(c);
+                    break;
+                case Vertex:
+                    vertexValue(c);
+                    break;
+                case Unknown:
+                    // error
                 break;
-            case Number:
-                numberValue(ctxts);
-                break;
-            case Words:
-                wordsValue(ctxts);
-                break;
-            case String:
-                stringValue(ctxts);
-                break;
-            case Vertex:
-                vertexValue(ctxts);
-                break;
+            }
         }
     }
+    */
 
     protected void error(String msg) {
         System.out.println(msg);

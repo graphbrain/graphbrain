@@ -37,36 +37,30 @@ public class VertexFun extends FunNode {
     }
 
     @Override
-    public NodeType ntype() {return NodeType.Vertex;}
+    public NodeType ntype(Context ctxt) {return NodeType.Vertex;}
 
     @Override
-    public void vertexValue(Contexts ctxts) {
+    public void eval(Contexts ctxts) {
         switch(fun) {
             case BuildVert:
                 for (ProgNode p : params) {
-                    switch(p.ntype()) {
-                        case Vertex:
-                            p.vertexValue(ctxts);
-                            break;
-                        case String:
-                            p.stringValue(ctxts);
-                            break;
-                        default: // error!
-                    }
+                    p.eval(ctxts);
                 }
 
                 for (Context c : ctxts.getCtxts()) {
                     Vertex[] verts = new Vertex[params.length];
                     for (int i = 0; i < params.length; i++) {
                         ProgNode p = params[i];
-                        switch(p.ntype()) {
+                        System.out.println("_subj = " + c.getVertex("_subj"));
+                        switch(p.ntype(c)) {
                             case Vertex:
                                 verts[i] = c.getRetVertex(p);
                                 break;
                             case String:
                                 verts[i] = Vertex.fromId(c.getRetString(p));
                                 break;
-                            default: // error
+                            default:
+                                System.out.println("%%%% ERROR " + p.ntype(c)); // error
                         }
                     }
                     c.setRetVertex(this, new Edge(verts));
@@ -75,18 +69,10 @@ public class VertexFun extends FunNode {
             case RelVert:
                 ProgNode p = params[0];
 
-                switch(p.ntype()) {
-                    case Words:
-                        p.wordsValue(ctxts);
-                        break;
-                    case String:
-                        p.stringValue(ctxts);
-                        break;
-                    default: //error
-                }
+                p.eval(ctxts);
 
                 for (Context c : ctxts.getCtxts()) {
-                    switch(p.ntype()) {
+                    switch(p.ntype(c)) {
                         case Words:
                             c.setRetVertex(this, Vertex.fromId(ID.reltype_id(c.getRetWords(p).text())));
                             break;
@@ -100,18 +86,10 @@ public class VertexFun extends FunNode {
             case TxtVert: {
                 p = params[0];
 
-                switch(p.ntype()) {
-                    case Words:
-                        p.wordsValue(ctxts);
-                        break;
-                    case String:
-                        p.stringValue(ctxts);
-                        break;
-                    default: // error!
-                }
+                p.eval(ctxts);
 
                 for (Context c : ctxts.getCtxts()) {
-                    switch(p.ntype()) {
+                    switch(p.ntype(c)) {
                         case Words:
                             c.setRetVertex(this, EntityNode.fromNsAndText("1", c.getRetWords(p).text()));
                             break;
@@ -125,7 +103,7 @@ public class VertexFun extends FunNode {
             }
             case Flatten: {
                 p = params[0];
-                p.vertexValue(ctxts);
+                p.eval(ctxts);
 
                 for (Context c : ctxts.getCtxts()) {
                     Vertex v = c.getRetVertex(p);
