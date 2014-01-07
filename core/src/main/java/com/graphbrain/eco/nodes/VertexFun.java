@@ -51,7 +51,6 @@ public class VertexFun extends FunNode {
                     Vertex[] verts = new Vertex[params.length];
                     for (int i = 0; i < params.length; i++) {
                         ProgNode p = params[i];
-                        System.out.println("_subj = " + c.getVertex("_subj"));
                         switch(p.ntype(c)) {
                             case Vertex:
                                 verts[i] = c.getRetVertex(p);
@@ -60,7 +59,8 @@ public class VertexFun extends FunNode {
                                 verts[i] = Vertex.fromId(c.getRetString(p));
                                 break;
                             default:
-                                System.out.println("%%%% ERROR " + p.ntype(c)); // error
+                                // error
+                                break;
                         }
                     }
                     c.setRetVertex(this, new Edge(verts));
