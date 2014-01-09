@@ -18,6 +18,7 @@
         <module>cli</module>
         <module>web</module>
         <module>braingenerators</module>
+        <module>crawlers</module>
     </modules>
 
     <repositories>
