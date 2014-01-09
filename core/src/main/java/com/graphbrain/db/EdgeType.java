@@ -1,7 +1,5 @@
 package com.graphbrain.db;
 
-import java.util.Map;
-
 public class EdgeType extends Vertex {
 
     private String label;
@@ -37,5 +35,9 @@ public class EdgeType extends Vertex {
 
     public String getLabel() {
         return label;
+    }
+
+    public static String buildId(String text) {
+        return "r/" + ID.sanitize(text);
     }
 }

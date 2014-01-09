@@ -1,9 +1,6 @@
 package com.graphbrain.eco.nodes;
 
-import com.graphbrain.db.Edge;
-import com.graphbrain.db.EntityNode;
-import com.graphbrain.db.ID;
-import com.graphbrain.db.Vertex;
+import com.graphbrain.db.*;
 import com.graphbrain.eco.Context;
 import com.graphbrain.eco.Contexts;
 import com.graphbrain.eco.NodeType;
@@ -74,10 +71,10 @@ public class VertexFun extends FunNode {
                 for (Context c : ctxts.getCtxts()) {
                     switch(p.ntype(c)) {
                         case Words:
-                            c.setRetVertex(this, Vertex.fromId(ID.reltype_id(c.getRetWords(p).text())));
+                            c.setRetVertex(this, Vertex.fromId(EdgeType.buildId(c.getRetWords(p).text())));
                             break;
                         case String:
-                            c.setRetVertex(this, Vertex.fromId(ID.reltype_id(c.getRetString(p))));
+                            c.setRetVertex(this, Vertex.fromId(EdgeType.buildId(c.getRetString(p))));
                             break;
                         default: // error!
                     }
@@ -91,10 +88,10 @@ public class VertexFun extends FunNode {
                 for (Context c : ctxts.getCtxts()) {
                     switch(p.ntype(c)) {
                         case Words:
-                            c.setRetVertex(this, EntityNode.fromNsAndText("1", c.getRetWords(p).text()));
+                            c.setRetVertex(this, EntityNode.fromNsAndText("", c.getRetWords(p).text()));
                             break;
                         case String:
-                            c.setRetVertex(this, EntityNode.fromNsAndText("1", c.getRetString(p)));
+                            c.setRetVertex(this, EntityNode.fromNsAndText("", c.getRetString(p)));
                             break;
                         default: // error!
                     }
