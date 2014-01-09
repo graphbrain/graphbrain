@@ -18,11 +18,6 @@ public class TextNode extends Vertex {
         this(id, text, 0, -1);
     }
 
-    public TextNode(String id, Map<String, String> map) {
-        super(id, map);
-        text = map.get("text");
-    }
-
     @Override
     public Vertex copy() {
         return new TextNode(id, text, degree, ts);

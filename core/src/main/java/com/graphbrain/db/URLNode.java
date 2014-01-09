@@ -26,13 +26,6 @@ public class URLNode extends Vertex {
         url = URLNode.idToUrl(id);
     }
 
-    public URLNode(String id, Map<String, String> map) {
-        super(id, map);
-        title = map.get("title");
-        icon = map.get("icon");
-        url = URLNode.idToUrl(id);
-    }
-
     public URLNode(String id, String title, String icon) {
         this(id, title, icon, 0, -1);
     }

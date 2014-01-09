@@ -14,16 +14,9 @@ public class ProgNode extends Vertex {
         this.prog = prog;
     }
 
-    public ProgNode(String id, Map<String, String> map) {
-        super(id, map);
-        prog = map.get("prog");
-    }
-
     public ProgNode(String id, String prog) {
         this(id, prog, 0, -1);
     }
-
-    public ProgNode() {}
 
     @Override
     public Vertex copy() {

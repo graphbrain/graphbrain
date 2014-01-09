@@ -54,23 +54,9 @@ public class UserNode extends Vertex {
         this(id, username, name, email, pwdhash, role, "", -1, -1, 0, -1);
     }
 
-    public UserNode() {}
-
     @Override
     public Vertex copy() {
         return new UserNode(id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, degree, ts);
-    }
-
-    public UserNode(String id, Map<String, String> map) {
-        super(id, map);
-        username = map.get("username");
-        name = map.get("name");
-        email = map.get("email");
-        pwdhash = map.get("pwdhash");
-        role = map.get("role");
-        session = map.get("session");
-        sessionTs = Long.parseLong(map.get("sessionTs"));
-        lastSeen = Long.parseLong(map.get("lastSeen"));
     }
 
     @Override

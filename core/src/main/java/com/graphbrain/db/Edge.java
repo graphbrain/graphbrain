@@ -24,17 +24,6 @@ public class Edge extends Vertex {
         this(elems, 0, -1);
     }
 
-    public Edge(String id, Map<String, String> map) {
-        super(id, map);
-        Edge e = fromId(id);
-        elems = e.elems;
-        ids = e.ids;
-        edgeType = e.edgeType;
-        participantIds = e.participantIds;
-    }
-
-    public Edge() {}
-
     @Override
     public Vertex copy() {
         return new Edge(elems, degree, ts);
