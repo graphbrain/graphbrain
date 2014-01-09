@@ -44,12 +44,6 @@ public class URLNode extends Vertex {
     }
 
     @Override
-    protected void fillMap(Map<String, String> map) {
-        map.put("title", title);
-        map.put("icon", icon);
-    }
-
-    @Override
     public String raw() {
         return "type: " + "url<br />" + "url: " + url
                 + "<br />" + "title: " + title + "<br />";

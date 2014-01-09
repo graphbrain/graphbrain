@@ -31,18 +31,6 @@ public abstract class Vertex {
 
     public abstract Vertex copy();
 
-    protected void fillMap(Map<String, String> map) {}
-
-    public Map<String, String> toMap() {
-        HashMap<String, String> map = new HashMap<>();
-        map.put("degree", "" + degree);
-        map.put("ts", "" + ts);
-
-        fillMap(map);
-
-        return map;
-    }
-
     public Vertex toGlobal() {
         Vertex r = copy();
         r.id = ID.userToGlobal(id);
@@ -70,13 +58,6 @@ public abstract class Vertex {
         sb.append(type());
         sb.append('\n');
 
-        Map<String, String> fields = toMap();
-        for (String key : fields.keySet()) {
-            sb.append(key);
-            sb.append(" = ");
-            sb.append(fields.get(key));
-            sb.append('\n');
-        }
         return sb.toString();
     }
 

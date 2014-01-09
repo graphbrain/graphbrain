@@ -23,11 +23,6 @@ public class ProgNode extends Vertex {
         return new ProgNode(id, prog, degree, ts);
     }
 
-    @Override
-    protected void fillMap(Map<String, String> map) {
-        map.put("prog", prog);
-    }
-
     public String getProg() {
         return prog;
     }
