@@ -59,18 +59,6 @@ public class UserNode extends Vertex {
         return new UserNode(id, username, name, email, pwdhash, role, session, sessionTs, lastSeen, degree, ts);
     }
 
-    @Override
-    protected void fillMap(Map<String, String> map) {
-        map.put("username", username);
-        map.put("name", name);
-        map.put("email", email);
-        map.put("pwdhash", pwdhash);
-        map.put("role", role);
-        map.put("session", session);
-        map.put("sessionTs", "" + sessionTs);
-        map.put("lastSeen", "" + lastSeen);
-    }
-
     public static UserNode create(String username, String name, String email, String password, String role) {
         String id = ID.userIdFromUsername(username);
         String pwdhash = BCrypt.hashpw(password, BCrypt.gensalt());

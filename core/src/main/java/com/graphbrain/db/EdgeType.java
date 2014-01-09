@@ -27,11 +27,6 @@ public class EdgeType extends Vertex {
         return new EdgeType(id, label, degree, ts);
     }
 
-    @Override
-    protected void fillMap(Map<String, String> map) {
-        map.put("label", label);
-    }
-
     public static boolean isNegative(String id) {
         return ID.parts(id)[0].equals("neg");
     }

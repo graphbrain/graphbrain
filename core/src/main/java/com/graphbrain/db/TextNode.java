@@ -23,11 +23,6 @@ public class TextNode extends Vertex {
         return new TextNode(id, text, degree, ts);
     }
 
-    @Override
-    protected void fillMap(Map<String, String> map) {
-        map.put("text", text);
-    }
-
     public String getText() {
         return text;
     }
