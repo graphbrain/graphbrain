@@ -1,7 +1,5 @@
 package com.graphbrain.db;
 
-import java.util.Map;
-
 public class EntityNode extends Vertex {
 
     @Override
@@ -32,7 +30,12 @@ public class EntityNode extends Vertex {
     }
 
     public static String id(String namespace, String text) {
-        return namespace + "/" + ID.sanitize(text).toLowerCase();
+        String text2id = ID.sanitize(text).toLowerCase();
+
+        if (namespace.isEmpty())
+            return text2id;
+        else
+            return namespace + "/" + text2id;
     }
 
     public static EntityNode fromNsAndText(String namespace, String text) {

@@ -10,52 +10,54 @@ public enum VertexType {
 		
 		String[] parts = ID.parts(id);
 		int nparts = ID.numberOfParts(id);
-		if (parts[0].equals("user"))
-			if (nparts == 1)
-                return Entity;
-			else if (nparts == 2)
-				return User;
-	        else if (parts[2].equals("url"))
-				return URL;
-            else if (parts[2].equals("r"))
-                return EdgeType;
-            else if (parts[2].equals("neg"))
-                if (nparts <= 4)
+        switch (parts[0]) {
+            case "user":
+                if (nparts == 1)
                     return Entity;
-                else if (parts[3].equals("r"))
+                else if (nparts == 2)
+                    return User;
+                else if (parts[2].equals("url"))
+                    return URL;
+                else if (parts[2].equals("r"))
+                    return EdgeType;
+                else if (parts[2].equals("neg"))
+                    if (nparts <= 4)
+                        return Entity;
+                    else if (parts[3].equals("r"))
+                        return EdgeType;
+                    else
+                        return Entity;
+                else
+                    return Entity;
+            case "r":
+                if (nparts == 1)
+                    return Entity;
+                else
+                    return EdgeType;
+            case "neg":
+                if (nparts <= 2)
+                    return Entity;
+                else if (parts[1].equals("r"))
                     return EdgeType;
                 else
                     return Entity;
-			else
+            case "url":
+                if (nparts == 1)
+                    return Entity;
+                else
+                    return URL;
+            case "prog":
+                if (nparts == 1)
+                    return Entity;
+                else
+                    return Prog;
+            case "text":
+                if (nparts == 1)
+                    return Entity;
+                else
+                    return Text;
+            default:
                 return Entity;
-		else if (parts[0].equals("r"))
-			if (nparts == 1)
-                return Entity;
-			else
-				return EdgeType;
-        else if (parts[0].equals("neg"))
-            if (nparts <= 2)
-                return Entity;
-            else if (parts[1].equals("r"))
-                return EdgeType;
-            else
-                return Entity;
-	    else if (parts[0].equals("url"))
-			if (nparts == 1)
-                return Entity;
-			else
-				return URL;
-		else if (parts[0].equals("prog"))
-			if (nparts == 1)
-                return Entity;
-			else
-				return Prog;
-        else if (parts[0].equals("text"))
-            if (nparts == 1)
-                return Entity;
-            else
-                return Text;
-		else
-            return Entity;
+        }
     }
 }
