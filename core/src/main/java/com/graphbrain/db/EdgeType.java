@@ -14,11 +14,6 @@ public class EdgeType extends Vertex {
         this.label = label;
     }
 
-    public EdgeType(String id, Map<String, String> map) {
-        super(id, map);
-        label = map.get("label");
-    }
-
     public EdgeType(String id, String label) {
         this(id, label, 0, -1);
     }
@@ -26,8 +21,6 @@ public class EdgeType extends Vertex {
     public EdgeType(String id) {
         this(id, "");
     }
-
-    public EdgeType() {}
 
     @Override
     public Vertex copy() {

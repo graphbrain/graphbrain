@@ -15,12 +15,6 @@ public class EntityNode extends Vertex {
         this(id, 0, -1);
     }
 
-    public EntityNode(String id, Map<String, String> map) {
-        super(id, map);
-    }
-
-    public EntityNode() {}
-
     @Override
     public Vertex copy() {
         return new EntityNode(id, degree, ts);

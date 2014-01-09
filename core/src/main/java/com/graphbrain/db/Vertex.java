@@ -29,8 +29,6 @@ public abstract class Vertex {
                 Long.parseLong(map.get("ts")));
     }
 
-    public Vertex() {}
-
     public abstract Vertex copy();
 
     protected void fillMap(Map<String, String> map) {}
