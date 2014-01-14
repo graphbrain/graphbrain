@@ -56,7 +56,12 @@ class CrawlSite:
         self.count += 1
         print(("#{} {}".format(self.count, page)))
 
-        content = urllib.request.urlopen(page).read()
+        try:
+            content = urllib.request.urlopen(page).read()
+        except URLError as error:
+            print("URLError: {}".format(error))
+            return
+
         soup = BeautifulSoup(content)
 
         path = self.url2path(page)
