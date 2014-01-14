@@ -61,6 +61,9 @@ class CrawlSite:
         except urllib.error.URLError as error:
             print("URLError: {}".format(error))
             return
+        except UnicodeEncodeError as error:
+            print("UnicodeEnocodeError: {}".format(error))
+            return
 
         try:
             soup = BeautifulSoup(content)
