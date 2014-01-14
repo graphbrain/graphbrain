@@ -77,6 +77,9 @@ public class Crawler {
         else if (urlStr.contains("submit=search")) {
             return false;
         }
+        else if (urlStr.contains("share=")) {
+            return false;
+        }
         else if (urlStr.endsWith(".png")) {
             return false;
         }
