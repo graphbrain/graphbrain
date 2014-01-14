@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import urllib.request, urllib.error, urllib.parse
 from urllib.parse import urlparse
 import os
+import collections
 
  
 class CrawlSite:
@@ -12,6 +13,7 @@ class CrawlSite:
         self.basedir = "crawldata/" + self.url2path(baseurl)
 
         self.pages = set()
+        self.queue = collections.deque()
         self.count = 0
 
         self.stop_fragments = ("comment-page", "langswitch_lang", "comments_popup", "wpmp_switcher", "submit=search", "share=")
@@ -22,7 +24,10 @@ class CrawlSite:
     	    os.makedirs(self.basedir)
 
     def crawl(self):
-        self.process_page(self.baseurl)
+        self.queue.append(self.baseurl)
+
+        while len(self.queue) > 0:
+            self.process_page(self.queue.pop())
 
     def url2path(self, urlstr):
         return str.replace(urlstr, "/", "_")
@@ -66,7 +71,7 @@ class CrawlSite:
                 if urlstr.startswith(self.baseurl):
                     if not urlstr in self.pages:
                         if self.save_page(urlstr):
-                            self.process_page(urlstr)
+                            self.queue.append(urlstr)
                             
 
 if __name__ == "__main__":
