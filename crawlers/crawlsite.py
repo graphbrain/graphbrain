@@ -58,11 +58,15 @@ class CrawlSite:
 
         try:
             content = urllib.request.urlopen(page).read()
-        except URLError as error:
+        except urllib.error.URLError as error:
             print("URLError: {}".format(error))
             return
 
-        soup = BeautifulSoup(content)
+        try:
+            soup = BeautifulSoup(content)
+        except TypeError as error:
+            print("TypeError: {}".format(error))
+            return
 
         path = self.url2path(page)
 
