@@ -4,6 +4,7 @@ import urllib.request, urllib.error, urllib.parse
 from urllib.parse import urlparse
 import os
 import collections
+from http.client import BadStatusLine
 
  
 class CrawlSite:
@@ -63,6 +64,9 @@ class CrawlSite:
             return
         except UnicodeEncodeError as error:
             print("UnicodeEnocodeError: {}".format(error))
+            return
+        except BadStatusLine as error:
+            print("BadStatusLine: {}".format(error))
             return
 
         try:
