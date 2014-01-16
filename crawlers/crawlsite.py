@@ -17,7 +17,7 @@ class CrawlSite:
         self.queue = collections.deque()
         self.count = 0
 
-        self.stop_fragments = ("comment-page", "langswitch_lang", "comments_popup", "wpmp_switcher", "submit=search", "share=")
+        self.stop_fragments = ("comment-page", "langswitch_lang", "comments_popup", "wpmp_switcher", "submit=search", "share=", "search?")
         self.stop_endings = (".png", ".gif", ".jpg", ".jpeg", ".pdf", ".r")
 
         # create base dir if it does not exist
