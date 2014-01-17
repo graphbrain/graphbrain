@@ -2,13 +2,15 @@
 from bs4 import BeautifulSoup
 import urllib.request, urllib.error, urllib.parse
 from urllib.parse import urlparse
-import os
+import os, sys
 import collections
 from http.client import BadStatusLine
 
  
 class CrawlSite:
     def __init__(self, baseurl):
+        sys.setrecursionlimit(1500) 
+
         self.baseurl = baseurl
 
         self.basedir = "crawldata/" + self.url2path(baseurl)
@@ -22,7 +24,7 @@ class CrawlSite:
 
         # create base dir if it does not exist
         if not os.path.exists(self.basedir):
-    	    os.makedirs(self.basedir)
+            os.makedirs(self.basedir)
 
     def crawl(self):
         self.queue.append(self.baseurl)
@@ -42,12 +44,12 @@ class CrawlSite:
         urlstr = page_url_str.lower()
 
         for s in self.stop_fragments:
-        	if s in urlstr:
-        		return False
+            if s in urlstr:
+                return False
 
         for s in self.stop_endings:
-        	if urlstr.endswith(s):
-        		return False
+            if urlstr.endswith(s):
+                return False
 
         return True
 
@@ -77,19 +79,23 @@ class CrawlSite:
 
         path = self.url2path(page)
 
-        with open(self.basedir + "/" + path, "w") as text_file:
-    	    text_file.write(str(soup))
+        try:
+            with open(self.basedir + "/" + path, "w") as text_file:
+               text_file.write(str(soup))
 
-        for link in soup.find_all('a'):
-            urlstr = link.get('href')
+            for link in soup.find_all('a'):
+                urlstr = link.get('href')
 
-            if (urlstr != '') and (not urlstr is None):
-                if urlstr.startswith(self.baseurl):
-                    if not urlstr in self.pages:
-                        if self.save_page(urlstr):
-                            self.queue.append(urlstr)
+                if (urlstr != '') and (not urlstr is None):
+                    if urlstr.startswith(self.baseurl):
+                        if not urlstr in self.pages:
+                            if self.save_page(urlstr):
+                                self.queue.append(urlstr)
+        except RuntimeError as e:
+            if not str(e).startswith('maximum recursion'):
+                raise
                             
 
 if __name__ == "__main__":
-	c = CrawlSite("http://www.realclimate.org")
-	c.crawl()
+    c = CrawlSite("http://www.realclimate.org")
+    c.crawl()
