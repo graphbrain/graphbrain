@@ -20,7 +20,7 @@ public class VisualGraph {
         }
 
         public String snodeId() {
-            return rel.replaceAll("/", "_").replaceAll(" ", "_").replaceAll("\\.", "_") + "_" + pos;
+            return rel.replaceAll("/", "_").replaceAll(" ", "_").replaceAll("\\.", "_").replaceAll("\\+", "_") + "_" + pos;
         }
 
         @Override
@@ -171,7 +171,7 @@ public class VisualGraph {
             node = WebServer.graph.get(nodeId);
         }
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
 
         switch(node.type()) {
             case Entity:
@@ -236,7 +236,7 @@ public class VisualGraph {
             nodes.add(node2map(nodeId, se.getParent().id, rootId));
         }
 
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> data = new HashMap<>();
         data.put("nodes", nodes);
         data.put("etype", rp.rel);
         data.put("rpos", rp.pos);
@@ -272,7 +272,6 @@ public class VisualGraph {
         if (edgeType.isEmpty())
             return "";
 
-        String lastPart = ID.lastPart(edgeType);
-        return fixLabel(lastPart.replace("_", " "));
+        return fixLabel(EdgeType.label(edgeType));
     }
 }

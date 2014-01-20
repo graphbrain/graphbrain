@@ -1,6 +1,8 @@
 package com.graphbrain.braingenerators;
 
 
+import com.graphbrain.db.Edge;
+import com.graphbrain.db.Graph;
 import com.graphbrain.db.ID;
 import net.sf.extjwnl.JWNLException;
 import net.sf.extjwnl.data.*;
@@ -12,109 +14,24 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Iterator;
 import java.util.List;
 
 
 public class WordNet {
 
-    private final Dictionary dictionary;
+    private Dictionary dictionary;
+    private Graph graph;
 
     public WordNet(Dictionary dictionary) throws JWNLException {
         this.dictionary = dictionary;
+        graph = new Graph();
     }
 
-    public void test() throws JWNLException, CloneNotSupportedException {
-
-        Synset concept = null;
-        try {
-            concept = dictionary.getIndexWord(POS.NOUN, "paris").getSenses().get(0);
-        }
-        catch (JWNLException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("===> Concept");
-        System.out.println(concept);
-
-        PointerTargetNodeList results;
-
-        System.out.println("\n===> Hypernyms");
-        results = PointerUtils.getDirectHypernyms(concept);
-        for (PointerTargetNode result : results) {
-            System.out.println(result.getSynset());
-        }
-
-        System.out.println("\n===> Also sees");
-        results = PointerUtils.getAlsoSees(concept);
-        for (PointerTargetNode result : results) {
-            System.out.println(result.getSynset());
-        }
-
-        System.out.println("\n===> Antonyms");
-        results = PointerUtils.getAntonyms(concept);
-        for (PointerTargetNode result : results) {
-            System.out.println(result.getSynset());
-        }
-
-        System.out.println("\n===> Attributes");
-        results = PointerUtils.getAttributes(concept);
-        for (PointerTargetNode result : results) {
-            System.out.println(result.getSynset());
-        }
-
-        System.out.println("\n===> Causes");
-        results = PointerUtils.getCauses(concept);
-        for (PointerTargetNode result : results) {
-            System.out.println(result.getSynset());
-        }
-
-        System.out.println("\n===> Entailments");
-        results = PointerUtils.getEntailments(concept);
-        for (PointerTargetNode result : results) {
-            System.out.println(result.getSynset());
-        }
-
-        System.out.println("\n===> Holonyms");
-        results = PointerUtils.getHolonyms(concept);
-        for (PointerTargetNode result : results) {
-            System.out.println(result.getSynset());
-        }
-
-        System.out.println("\n===> Meronyms");
-        results = PointerUtils.getMeronyms(concept);
-        for (PointerTargetNode result : results) {
-            System.out.println(result.getSynset());
-        }
-
-        System.out.println("\n===> Part Meronyms");
-        results = PointerUtils.getPartMeronyms(concept);
-        for (PointerTargetNode result : results) {
-            System.out.println(result.getSynset());
-        }
-
-        System.out.println("\n===> ParticipleOf");
-        results = PointerUtils.getParticipleOf(concept);
-        for (PointerTargetNode result : results) {
-            System.out.println(result.getSynset());
-        }
-
-        System.out.println("\n===> Pertainyms");
-        results = PointerUtils.getPertainyms(concept);
-        for (PointerTargetNode result : results) {
-            System.out.println(result.getSynset());
-        }
-
-        System.out.println("\n===> Synonyms");
-        results = PointerUtils.getSynonyms(concept);
-        for (PointerTargetNode result : results) {
-            System.out.println(result.getSynset());
-        }
-
-        System.out.println("\n===> VerbGroup");
-        results = PointerUtils.getVerbGroup(concept);
-        for (PointerTargetNode result : results) {
-            System.out.println(result.getSynset());
-        }
+    private void addRelation(String rel) {
+        System.out.println(rel);
+        Edge edge = Edge.fromId(rel);
+        graph.put(edge);
     }
 
     private Word superType(Word word) {
@@ -142,43 +59,11 @@ public class WordNet {
         }
     }
 
-    public void go() throws JWNLException, CloneNotSupportedException {
-        /*
-        Iterator<IndexWord> iter = dictionary.getIndexWordIterator(POS.NOUN);
-
-        while (iter.hasNext()) {
-            IndexWord word = iter.next();
-            System.out.println(word);
-        }
-        */
-
-        /*
-        Synset concept = dictionary.getIndexWord(POS.NOUN, "dog").getSenses().get(0);
-
-        while (concept != null) {
-            System.out.println(concept);
-            concept = superType(concept);
-        }
-        */
-
-        /*
-        List<Synset> synsets = word.getSenses();
-
-        for (Synset synset : synsets) {
-            System.out.println("\n\n");
-            System.out.println(synset);
-            PointerTargetNodeList hypernyms = PointerUtils.getDirectHypernyms(synset);
-            hypernyms.print();
-        }8?
-
-        /*
-        PointerTargetNodeList hypernyms = PointerUtils.getDirectHypernyms(word.getSenses().get(0));
-        System.out.println("Direct hypernyms of \"" + word.getLemma() + "\":");
-        hypernyms.print();
-        */
+    private boolean hasSuperType(Word word) {
+        return superType(word) != null;
     }
 
-    public static String hash(String string) {
+    private String hash(String string) {
         long h = 1125899906842597L; // prime
         int len = string.length();
 
@@ -188,13 +73,13 @@ public class WordNet {
         return Long.toHexString(h);
     }
 
-    public String getVertexId(Word word) {
+    private String getVertexId(Word word) {
         String id = ID.sanitize(word.getLemma());
 
         Word st = superType(word);
 
         if (st == null) {
-            return word.getLemma();
+            return id;
         }
 
         String stId = getVertexId(st);
@@ -216,7 +101,7 @@ public class WordNet {
                 String superId = getVertexId(superWord);
 
                 String rel = "(r/+type_of " + vid + " " + superId + ")";
-                System.out.println(rel);
+                addRelation(rel);
             }
         }
         catch (JWNLException e) {
@@ -233,7 +118,7 @@ public class WordNet {
             Word syn =  wordList.get(i);
             String synId = getVertexId(syn);
             String rel = "(r/+synonym " + vid + " " + synId + ")";
-            System.out.println(rel);
+            addRelation(rel);
         }
     }
 
@@ -247,7 +132,7 @@ public class WordNet {
                 Word partWord = result.getSynset().getWords().get(0);
                 String partId = getVertexId(partWord);
                 String rel = "(r/+part_of " + partId + " " + vid + ")";
-                System.out.println(rel);
+                addRelation(rel);
             }
         }
         catch (JWNLException e) {
@@ -265,7 +150,7 @@ public class WordNet {
                 Word antWord = result.getSynset().getWords().get(0);
                 String antId = getVertexId(antWord);
                 String rel = "(r/+antonym " + vid + " " + antId + ")";
-                System.out.println(rel);
+                addRelation(rel);
             }
         }
         catch (JWNLException e) {
@@ -283,7 +168,7 @@ public class WordNet {
                 Word alsoWord = result.getSynset().getWords().get(0);
                 String alsoId = getVertexId(alsoWord);
                 String rel = "(r/+also_see " + vid + " " + alsoId + ")";
-                System.out.println(rel);
+                addRelation(rel);
             }
         }
         catch (JWNLException e) {
@@ -292,9 +177,13 @@ public class WordNet {
     }
 
     private void processCanMean(String vid, Word word) {
+        if (!hasSuperType(word)) {
+            return;
+        }
+
         String sid = ID.sanitize(word.getLemma());
         String rel = "(r/+can_mean " + sid + " " + vid + ")";
-        System.out.println(rel);
+        addRelation(rel);
     }
 
     private void processPOS(String vid, Word word) {
@@ -318,7 +207,7 @@ public class WordNet {
 
         if (pos != null) {
             String rel = "(r/+pos " + vid + " " + posId + ")";
-            System.out.println(rel);
+            addRelation(rel);
         }
     }
 
@@ -339,13 +228,14 @@ public class WordNet {
         }
     }
 
-    public void process() {
+    public void processPOSSynset(POS pos) {
         try {
-            List<Synset> concepts = dictionary.getIndexWord(POS.NOUN, "sex").getSenses();
+            Iterator<Synset> iter = dictionary.getSynsetIterator(pos);
 
-            for (Synset concept : concepts) {
-                System.out.println(concept);
-                processSynset(concept);
+            while (iter.hasNext()) {
+                Synset synset = iter.next();
+                System.out.println(synset);
+                processSynset(synset);
             }
         }
         catch (JWNLException e) {
@@ -353,23 +243,24 @@ public class WordNet {
         }
     }
 
+    public void process() {
+        processPOSSynset(POS.NOUN);
+        processPOSSynset(POS.VERB);
+        processPOSSynset(POS.ADJECTIVE);
+        processPOSSynset(POS.ADVERB);
+    }
+
 
     public static void main(String[] args) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        //System.out.println(hash("8e41616fa327b286/Telmo_Menezes"));
-
         try {
             FileInputStream inputStream = new FileInputStream("braingenerators/file_properties.xml");
             Dictionary dictionary = Dictionary.getInstance(inputStream);
 
             WordNet wn = new WordNet(dictionary);
             wn.process();
-            //wn.test();
         }
         catch (FileNotFoundException | JWNLException e) {
             e.printStackTrace();
         }
-        /*catch (FileNotFoundException | JWNLException | CloneNotSupportedException e) {
-            e.printStackTrace();
-        }*/
     }
 }
