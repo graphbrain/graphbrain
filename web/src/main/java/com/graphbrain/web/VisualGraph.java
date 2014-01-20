@@ -178,7 +178,7 @@ public class VisualGraph {
                 EntityNode en = (EntityNode)node;
                 map.put("id", en.id);
                 map.put("type", "text");
-                map.put("text", en.text());
+                map.put("text", WebServer.graph.description(en));
                 map.put("edge", nodeEdge);
                 return map;
             case URL:

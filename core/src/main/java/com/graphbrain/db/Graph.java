@@ -128,7 +128,7 @@ public class Graph {
     }
 
     public String description(Vertex vertex) {
-        Set<Edge> asIn = edges(new String[]{"r/1/as_in", vertex.id, "*"});
+        Set<Edge> asIn = edges(new String[]{"r/+type_of", vertex.id, "*"});
 
         String desc = vertex.label();
 
