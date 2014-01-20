@@ -40,4 +40,32 @@ public class EdgeType extends Vertex {
     public static String buildId(String text) {
         return "r/" + ID.sanitize(text);
     }
+
+    public static String label(String id) {
+        String lastPart = ID.lastPart(id);
+
+        if (lastPart.equals("+pos")) {
+            return "is";
+        }
+        else if (lastPart.equals("+can_mean")) {
+            return "can mean";
+        }
+        else if (lastPart.equals("+type_of")) {
+            return "is type of";
+        }
+        else if (lastPart.equals("+synonym")) {
+            return "is synonym of";
+        }
+        else if (lastPart.equals("+part_of")) {
+            return "is part of";
+        }
+        else if (lastPart.equals("+antonym")) {
+            return "is opposite of";
+        }
+        else if (lastPart.equals("+also_see")) {
+            return "related to";
+        }
+
+        return lastPart.replace("_", " ");
+    }
 }
