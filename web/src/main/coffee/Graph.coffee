@@ -183,6 +183,6 @@ class Graph
 
     label: (text, relpos) ->
         if relpos == 0
-            text += ' ' + @rootNode['text']
+            text + ' ' + @rootNode['text']
         else
             text

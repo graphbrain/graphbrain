@@ -1829,7 +1829,7 @@ function testCSS(prop) {
 
     Graph.prototype.label = function(text, relpos) {
       if (relpos === 0) {
-        return text += ' ' + this.rootNode['text'];
+        return text + ' ' + this.rootNode['text'];
       } else {
         return text;
       }
