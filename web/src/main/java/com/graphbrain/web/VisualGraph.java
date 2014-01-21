@@ -51,7 +51,7 @@ public class VisualGraph {
         Set<Edge> hyperEdges = WebServer.graph.edges(rootId, userId);
 
         // map hyperedges to visual edges
-        Set<SimpleEdge> visualEdges = new HashSet<SimpleEdge>();
+        Set<SimpleEdge> visualEdges = new HashSet<>();
         for (Edge e: hyperEdges) {
             if (e.isPositive()) {
                 SimpleEdge se = hyper2edge(e, rootId);
@@ -65,11 +65,11 @@ public class VisualGraph {
         Map<RelPos, Set<SimpleEdge>> edgeNodeMap = generateEdgeNodeMap(visualEdges, rootId);
 
         // full relations list
-        List<Map<String, String>> allRelations = new LinkedList<Map<String, String>>();
+        List<Map<String, Object>> allRelations = new LinkedList<>();
         for (RelPos rp : edgeNodeMap.keySet()) {
-            Map<String, String> r = new HashMap<String, String>();
+            Map<String, Object> r = new HashMap<>();
             r.put("rel", rp.rel);
-            r.put("pos", "" + rp.pos);
+            r.put("pos", rp.pos);
             r.put("label", linkLabel(rp.rel));
             r.put("snode", rp.snodeId());
             allRelations.add(r);
@@ -247,7 +247,7 @@ public class VisualGraph {
     }
 
     private static Map<String, Map<String, Object>> generateSnodeMap(Map<RelPos, Set<SimpleEdge>> edgeNodeMap, String rootId) {
-        Map<String, Map<String, Object>> snodeMap = new HashMap<String, Map<String, Object>>();
+        Map<String, Map<String, Object>> snodeMap = new HashMap<>();
 
         for (RelPos rp : edgeNodeMap.keySet()) {
             snodeMap.put(rp.snodeId(), generateSnode(rp, edgeNodeMap.get(rp), rootId));
