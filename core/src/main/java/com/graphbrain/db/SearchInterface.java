@@ -3,6 +3,7 @@ package com.graphbrain.db;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class SearchInterface {
 
@@ -14,14 +15,13 @@ public class SearchInterface {
 
     public String[] query(String text) {
         String id = ID.sanitize(text);
-        int maxId = 0;
+        Set<Edge> canMean = graph.edges(new String[]{"r/+can_mean", id, "*"});
 
-        while (graph.exists("" + (maxId + 1) + "/" + id))
-            maxId += 1;
+        List<String> res = new LinkedList<>();
 
-        List<String> res = new LinkedList<String>();
-        for (int i = 1; i <= maxId; i++)
-            res.add("" + i + "/" + id);
+        for (Edge e : canMean) {
+            res.add(e.getParticipantIds()[1]);
+        }
 
         return res.toArray(new String[res.size()]);
     }
