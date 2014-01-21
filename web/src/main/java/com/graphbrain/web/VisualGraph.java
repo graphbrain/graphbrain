@@ -53,6 +53,7 @@ public class VisualGraph {
         // map hyperedges to visual edges
         Set<SimpleEdge> visualEdges = new HashSet<>();
         for (Edge e: hyperEdges) {
+            //System.out.println(e);
             if (e.isPositive()) {
                 SimpleEdge se = hyper2edge(e, rootId);
                 if (se != null) {
@@ -146,15 +147,9 @@ public class VisualGraph {
     private static Map<RelPos, Set<SimpleEdge>> generateEdgeNodeMap(Set<SimpleEdge> edges, String rootId) {
         Map<RelPos, Set<SimpleEdge>> enMap = new HashMap<>();
 
-        int count = 0;
         for (SimpleEdge e : edges) {
             addToEdgeNodeMap(enMap, new RelPos(e.getEdgeType(), 0), e, rootId);
             addToEdgeNodeMap(enMap, new RelPos(e.getEdgeType(), 1), e, rootId);
-
-            count++;
-            if (count > MAX_SNODES) {
-                return enMap;
-            }
         }
 
         return enMap;
@@ -249,8 +244,14 @@ public class VisualGraph {
     private static Map<String, Map<String, Object>> generateSnodeMap(Map<RelPos, Set<SimpleEdge>> edgeNodeMap, String rootId) {
         Map<String, Map<String, Object>> snodeMap = new HashMap<>();
 
+        int count = 0;
         for (RelPos rp : edgeNodeMap.keySet()) {
             snodeMap.put(rp.snodeId(), generateSnode(rp, edgeNodeMap.get(rp), rootId));
+
+            count++;
+            if (count > MAX_SNODES) {
+                return snodeMap;
+            }
         }
 
         return snodeMap;
