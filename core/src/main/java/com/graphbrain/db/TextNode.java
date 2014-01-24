@@ -1,7 +1,5 @@
 package com.graphbrain.db;
 
-import java.util.Map;
-
 public class TextNode extends Vertex {
 
     private String text;
@@ -12,6 +10,10 @@ public class TextNode extends Vertex {
     public TextNode(String id, String text, int degree, long ts) {
         super(id, degree, ts);
         this.text = text;
+    }
+
+    public TextNode(String text, int degree, long ts) {
+        this(idFromText(text), text, degree, ts);
     }
 
     public TextNode(String id, String text) {
@@ -25,5 +27,11 @@ public class TextNode extends Vertex {
 
     public String getText() {
         return text;
+    }
+
+    public static String idFromText(String text) {
+        String shortText = text.substring(0, Math.min(text.length(), 50));
+        String hash = ID.hash(text);
+        return hash + "/" + ID.sanitize(shortText);
     }
 }

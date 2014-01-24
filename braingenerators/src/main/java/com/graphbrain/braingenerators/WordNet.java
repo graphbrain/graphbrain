@@ -71,16 +71,6 @@ public class WordNet {
         return superType(word) != null;
     }
 
-    private String hash(String string) {
-        long h = 1125899906842597L; // prime
-        int len = string.length();
-
-        for (int i = 0; i < len; i++) {
-            h = 31 * h + string.charAt(i);
-        }
-        return Long.toHexString(h);
-    }
-
     private String getVertexId(Word word) {
         String id = ID.sanitize(word.getLemma());
 
@@ -94,7 +84,7 @@ public class WordNet {
 
         String rel = "(r/+type_of " + id + " " + stId + ")";
         //System.out.println(rel);
-        return hash(rel) + "/" + id;
+        return ID.hash(rel) + "/" + id;
     }
 
     private void processSuperTypes(String vid, Word word) {
