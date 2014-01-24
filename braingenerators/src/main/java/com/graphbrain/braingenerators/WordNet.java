@@ -22,16 +22,24 @@ public class WordNet {
 
     private Dictionary dictionary;
     private Graph graph;
+    private boolean dryTest;
+
+    public WordNet(Dictionary dictionary, boolean dryTest) throws JWNLException {
+        this.dictionary = dictionary;
+        this.dryTest = dryTest;
+        graph = new Graph();
+    }
 
     public WordNet(Dictionary dictionary) throws JWNLException {
-        this.dictionary = dictionary;
-        graph = new Graph();
+        this(dictionary, false);
     }
 
     private void addRelation(String rel) {
         System.out.println(rel);
         Edge edge = Edge.fromId(rel);
-        graph.put(edge);
+        if (!dryTest) {
+            graph.put(edge, "wordnet");
+        }
     }
 
     private Word superType(Word word) {
@@ -243,11 +251,27 @@ public class WordNet {
         }
     }
 
-    public void process() {
+    public void run() {
+        graph.createUser("wordnet", "wordnet", "", "", "crawler");
+
         processPOSSynset(POS.NOUN);
         processPOSSynset(POS.VERB);
         processPOSSynset(POS.ADJECTIVE);
         processPOSSynset(POS.ADVERB);
+    }
+
+    public void test() throws JWNLException {
+        List<Synset> synsets = dictionary.getIndexWord(POS.ADJECTIVE, "violent").getSenses();
+        for (Synset s : synsets) {
+            System.out.println(s);
+
+            Word st = superType(s.getWords().get(0));
+            System.out.println(st);
+
+            processSynset(s);
+
+            System.out.println("\n");
+        }
     }
 
 
@@ -256,8 +280,9 @@ public class WordNet {
             FileInputStream inputStream = new FileInputStream("braingenerators/file_properties.xml");
             Dictionary dictionary = Dictionary.getInstance(inputStream);
 
-            WordNet wn = new WordNet(dictionary);
-            wn.process();
+            WordNet wn = new WordNet(dictionary, true);
+            //wn.run();
+            wn.test();
         }
         catch (FileNotFoundException | JWNLException e) {
             e.printStackTrace();
