@@ -6,6 +6,16 @@ import java.util.Arrays;
 
 public class ID {
 
+    public static String hash(String string) {
+        long h = 1125899906842597L; // prime
+        int len = string.length();
+
+        for (int i = 0; i < len; i++) {
+            h = 31 * h + string.charAt(i);
+        }
+        return Long.toHexString(h);
+    }
+
     public static String buildId(String[] parts) {
         StringBuilder sb = new StringBuilder(50);
         for (int i = 0; i < parts.length; i ++) {
