@@ -32,6 +32,6 @@ public class TextNode extends Vertex {
     public static String idFromText(String text) {
         String shortText = text.substring(0, Math.min(text.length(), 50));
         String hash = ID.hash(text);
-        return hash + "/" + ID.sanitize(shortText);
+        return "text/" + hash + "/" + ID.sanitize(shortText);
     }
 }
