@@ -84,6 +84,7 @@ public abstract class Vertex {
             case EdgeType: return new EdgeType(id);
             case URL: return new URLNode(id);
             case Prog: return new ProgNode(id, "");
+            case Text: return new TextNode(id, "");
             case User: return null; // this shouldn't happen
         }
 
