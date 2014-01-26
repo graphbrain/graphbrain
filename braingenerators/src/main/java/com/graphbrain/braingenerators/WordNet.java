@@ -4,6 +4,7 @@ package com.graphbrain.braingenerators;
 import com.graphbrain.db.Edge;
 import com.graphbrain.db.Graph;
 import com.graphbrain.db.ID;
+import com.graphbrain.db.TextNode;
 import net.sf.extjwnl.JWNLException;
 import net.sf.extjwnl.data.*;
 import net.sf.extjwnl.data.list.PointerTargetNode;
@@ -22,11 +23,11 @@ public class WordNet {
 
     private Dictionary dictionary;
     private Graph graph;
-    private boolean dryTest;
+    private boolean dryrun;
 
     public WordNet(Dictionary dictionary, boolean dryTest) throws JWNLException {
         this.dictionary = dictionary;
-        this.dryTest = dryTest;
+        this.dryrun = dryTest;
         graph = new Graph();
     }
 
@@ -37,7 +38,7 @@ public class WordNet {
     private void addRelation(String rel) {
         System.out.println(rel);
         Edge edge = Edge.fromId(rel);
-        if (!dryTest) {
+        if (!dryrun) {
             graph.put(edge, "wordnet");
         }
     }
@@ -74,17 +75,31 @@ public class WordNet {
     private String getVertexId(Word word) {
         String id = ID.sanitize(word.getLemma());
 
-        Word st = superType(word);
-
-        if (st == null) {
+        // wordnet ontology root
+        if (id.equals("entity")) {
             return id;
         }
 
-        String stId = getVertexId(st);
+        String rel;
 
-        String rel = "(r/+type_of " + id + " " + stId + ")";
-        //System.out.println(rel);
-        return ID.hash(rel) + "/" + id;
+        Word st = superType(word);
+
+        if (st == null) {
+            TextNode tn = getExample(word);
+            rel = "(r/+example " + id + " " + tn.id + ")";
+        }
+        else {
+            String stId = getVertexId(st);
+            rel = "(r/+type_of " + id + " " + stId + ")";
+
+        }
+
+        String hid = ID.hash(rel) + "/" + id;
+
+        //String hashRel = "(r/+hash " + hid + " " + rel + ")";
+        //addRelation(hashRel);
+
+        return hid;
     }
 
     private void processSuperTypes(String vid, Word word) {
@@ -120,9 +135,8 @@ public class WordNet {
         }
     }
 
-    private void processMeronyms(Word word) {
+    private void processMeronyms(String vid, Word word) {
         Synset concept = word.getSynset();
-        String vid = getVertexId(word);
 
         try {
             PointerTargetNodeList results = PointerUtils.getMeronyms(concept);
@@ -138,9 +152,8 @@ public class WordNet {
         }
     }
 
-    private void processAntonyms(Word word) {
+    private void processAntonyms(String vid, Word word) {
         Synset concept = word.getSynset();
-        String vid = getVertexId(word);
 
         try {
             PointerTargetNodeList results = PointerUtils.getAntonyms(concept);
@@ -156,9 +169,8 @@ public class WordNet {
         }
     }
 
-    private void processAlsoSees(Word word) {
+    private void processAlsoSees(String vid, Word word) {
         Synset concept = word.getSynset();
-        String vid = getVertexId(word);
 
         try {
             PointerTargetNodeList results = PointerUtils.getAlsoSees(concept);
@@ -209,12 +221,34 @@ public class WordNet {
         }
     }
 
+    private TextNode getExample(Word word) {
+        Synset synset = word.getSynset();
+
+        String example = synset.getGloss();
+        return new TextNode(example);
+    }
+
+    private void processExample(String vid, Word word) {
+        TextNode tn = getExample(word);
+
+        if (!dryrun) {
+            graph.put(tn);
+        }
+
+        String rel = "(r/+example " + vid + " " + tn.id + ")";
+        addRelation(rel);
+    }
+
     private void processSynset(Synset synset) {
         processSynonyms(synset);
 
-        processMeronyms(synset.getWords().get(0));
-        processAntonyms(synset.getWords().get(0));
-        processAlsoSees(synset.getWords().get(0));
+        Word mainWord = synset.getWords().get(0);
+        String mwid = getVertexId(mainWord);
+
+        processMeronyms(mwid, mainWord);
+        processAntonyms(mwid, mainWord);
+        processAlsoSees(mwid, mainWord);
+        processExample(mwid, mainWord);
 
         for (Word word : synset.getWords()) {
             String vid = getVertexId(word);
@@ -270,9 +304,9 @@ public class WordNet {
             FileInputStream inputStream = new FileInputStream("braingenerators/file_properties.xml");
             Dictionary dictionary = Dictionary.getInstance(inputStream);
 
-            WordNet wn = new WordNet(dictionary, true);
-            //wn.run();
-            wn.test();
+            WordNet wn = new WordNet(dictionary, false);
+            wn.run();
+            //wn.test();
         }
         catch (FileNotFoundException | JWNLException e) {
             e.printStackTrace();

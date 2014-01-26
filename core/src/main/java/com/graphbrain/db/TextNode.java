@@ -12,12 +12,12 @@ public class TextNode extends Vertex {
         this.text = text;
     }
 
-    public TextNode(String text, int degree, long ts) {
-        this(idFromText(text), text, degree, ts);
-    }
-
     public TextNode(String id, String text) {
         this(id, text, 0, -1);
+    }
+
+    public TextNode(String text) {
+        this(idFromText(text), text);
     }
 
     @Override

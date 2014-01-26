@@ -576,6 +576,7 @@ public class MySqlBackend implements Backend {
             }
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
 

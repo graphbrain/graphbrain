@@ -18,17 +18,57 @@ public class Graph {
     }
 
     public Vertex put(Vertex vertex) {
-        if (vertex.ts < 0)
-            vertex.setTs((new Date()).getTime());
 
         if (!exists(vertex)) {
+            if (vertex.ts < 0) {
+                vertex.setTs((new Date()).getTime());
+            }
+
             back.put(vertex);
 
-            if (vertex.type() == VertexType.Edge)
-                onPutEdge((Edge)vertex);
+            if (vertex.type() == VertexType.Edge) {
+                Edge edge = (Edge)vertex;
+                for (String id : edge.getIds()) {
+                    put(Vertex.fromId(id));
+                    incDegree(id);
+                }
+            }
         }
-        else {
-            update(vertex);
+
+        return vertex;
+    }
+
+    public Vertex put(Vertex vertex, String userid) {
+        //logger.debug(s"put $vertex; userId: $userid")
+
+        // create participant vertices if edge
+        if (vertex.type() == VertexType.Edge) {
+            Edge edge = (Edge)vertex;
+
+            for (String id : edge.getIds()) {
+                put(Vertex.fromId(id), userid);
+            }
+        }
+
+        put(vertex);
+
+        if (!ID.isInUserSpace(vertex.id)) {
+            Vertex uVertex = vertex.toUser(userid);
+            //logger.debug(s"uVertex: $uVertex")
+            if (!exists(uVertex)) {
+                put(uVertex);
+                addLinkToGlobal(vertex.id, uVertex.id);
+            }
+        }
+
+        if (vertex.type() == VertexType.Edge) {
+            Edge edge = (Edge)vertex;
+
+            remove(edge.negate());
+
+            // run consensus algorithm
+            Edge gEdge = (Edge)edge.toGlobal();
+            Consensus.evalEdge(gEdge, this);
         }
 
         return vertex;
@@ -99,15 +139,6 @@ public class Graph {
 
     protected Vertex incDegree(String id) {
         return incDegree(get(id));
-    }
-
-    protected void onPutEdge(Edge edge) {
-        for (String id : edge.getIds()) {
-            if (!exists(id)) {
-                put(Vertex.fromId(id));
-            }
-            incDegree(id);
-        }
     }
 
     protected Vertex decDegree(Vertex vertex) {
@@ -296,33 +327,6 @@ public class Graph {
     public Set<String> globalAlts(String globalId) {
         //ldebug("globalAlts: " + globalId)
         return back.alts(globalId);
-    }
-
-    public Vertex put(Vertex vertex, String userid) {
-        //logger.debug(s"put $vertex; userId: $userid")
-
-        put(vertex);
-
-        if (!ID.isInUserSpace(vertex.id)) {
-            Vertex uVertex = vertex.toUser(userid);
-            //logger.debug(s"uVertex: $uVertex")
-            if (!exists(uVertex)) {
-                put(uVertex);
-                addLinkToGlobal(vertex.id, uVertex.id);
-            }
-        }
-
-        if (vertex.type() == VertexType.Edge) {
-            Edge edge = (Edge)vertex;
-
-            remove(edge.negate());
-
-            // run consensus algorithm
-            Edge gEdge = (Edge)edge.toGlobal();
-            Consensus.evalEdge(gEdge, this);
-        }
-
-        return vertex;
     }
 
     public void remove(Vertex vertex, String userId) {
