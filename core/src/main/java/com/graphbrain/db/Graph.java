@@ -64,7 +64,7 @@ public class Graph {
         if (vertex.type() == VertexType.Edge) {
             Edge edge = (Edge)vertex;
 
-            remove(edge.negate());
+            //remove(edge.negate());
 
             // run consensus algorithm
             Edge gEdge = (Edge)edge.toGlobal();
