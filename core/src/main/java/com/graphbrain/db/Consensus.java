@@ -13,6 +13,7 @@ public class Consensus {
 
             // go through all the user space alt version of the first version in this edge
             // TODO: select edge participant with the lowest degree?
+
             Set<String> altVertices = graph.globalAlts(pids[0]);
             for (String altV : altVertices) {
                 String userId = ID.ownerId(altV);
