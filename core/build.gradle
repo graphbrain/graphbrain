@@ -1,0 +1,10 @@
+dependencies {
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.27'
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.7.2'
+    compile group: 'org.mindrot', name: 'jbcrypt', version: '0.3m'
+    compile group: 'edu.stanford.nlp', name: 'stanford-corenlp', version: '3.2.0'
+    compile group: 'edu.stanford.nlp', name: 'stanford-corenlp', version: '3.2.0', classifier: 'models'
+    compile group: 'edu.stanford.nlp', name: 'stanford-parser', version: '3.2.0'
+    compile group: 'edu.stanford.nlp', name: 'stanford-parser', version: '3.2.0', classifier: 'models'
+    compile group: 'commons-io', name: 'commons-io', version: '2.4'
+}
