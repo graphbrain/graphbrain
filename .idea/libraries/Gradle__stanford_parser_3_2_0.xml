@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: stanford-parser-3.2.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.stanford.nlp/stanford-parser/3.2.0/d12e09dd4c02e1fd37d8444f89b9858a893e5a2d/stanford-parser-3.2.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.stanford.nlp/stanford-parser/3.2.0/da3501defefa4d2be0b07183f42469d78e239874/stanford-parser-3.2.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

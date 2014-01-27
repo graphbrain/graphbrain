@@ -15,7 +15,15 @@ public class WebServer {
 
     public static void main(String[] args) {
 
-        staticFileLocation("/");
+        boolean prod = args.length > 0;
+
+        if (prod) {
+            externalStaticFileLocation("/www/resources");
+            setPort(80);
+        }
+        else {
+            staticFileLocation("/");
+        }
 
         get(new HandleLanding("/"));
 
