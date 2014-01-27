@@ -1,0 +1,18 @@
+subprojects {
+    apply plugin: 'java'
+
+    repositories {
+       mavenCentral()
+    }
+
+    dependencies {
+        testCompile 'junit:junit:4.11'
+    }
+
+    sourceCompatibility = 1.7
+    version = '1.0'
+
+    jar {
+        manifest.attributes provider: 'gradle'
+    }
+}
