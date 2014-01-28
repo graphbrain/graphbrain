@@ -67,7 +67,7 @@ public class MySqlBackend implements Backend {
     public MySqlBackend(String name) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            String dbConnStr = "jdbc:mysql://localhost/" + name + "?user=gb&password=gb";
+            String dbConnStr = "jdbc:mysql://localhost/" + name + "?user=gb&password=gb&autoreconnect=true";
             connection = DriverManager.getConnection(dbConnStr);
         }
         catch (Exception e) {
