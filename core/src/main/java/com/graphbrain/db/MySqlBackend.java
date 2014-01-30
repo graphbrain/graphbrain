@@ -398,6 +398,7 @@ public class MySqlBackend implements Backend {
             }
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -425,6 +426,7 @@ public class MySqlBackend implements Backend {
             }
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
 
@@ -467,6 +469,7 @@ public class MySqlBackend implements Backend {
             }
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
 
@@ -499,6 +502,7 @@ public class MySqlBackend implements Backend {
             }
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
 
@@ -603,6 +607,7 @@ public class MySqlBackend implements Backend {
             }
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -623,6 +628,7 @@ public class MySqlBackend implements Backend {
             }
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -642,6 +648,7 @@ public class MySqlBackend implements Backend {
             }
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -663,6 +670,7 @@ public class MySqlBackend implements Backend {
             }
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -690,6 +698,7 @@ public class MySqlBackend implements Backend {
             }
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -710,6 +719,7 @@ public class MySqlBackend implements Backend {
             }
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -730,6 +740,7 @@ public class MySqlBackend implements Backend {
             }
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -742,6 +753,7 @@ public class MySqlBackend implements Backend {
             return resultSet.next() && resultSet.getInt(1) == 1;
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -754,6 +766,7 @@ public class MySqlBackend implements Backend {
             return resultSet.next() && resultSet.getInt(1) == 1;
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -766,6 +779,7 @@ public class MySqlBackend implements Backend {
             return resultSet.next() && resultSet.getInt(1) == 1;
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -778,6 +792,7 @@ public class MySqlBackend implements Backend {
             return resultSet.next() && resultSet.getInt(1) == 1;
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -790,6 +805,7 @@ public class MySqlBackend implements Backend {
             return resultSet.next() && resultSet.getInt(1) == 1;
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -802,6 +818,7 @@ public class MySqlBackend implements Backend {
             return resultSet.next() && resultSet.getInt(1) == 1;
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -814,6 +831,7 @@ public class MySqlBackend implements Backend {
             return resultSet.next() && resultSet.getInt(1) == 1;
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -827,6 +845,7 @@ public class MySqlBackend implements Backend {
             psPutEdge.executeUpdate();
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
 
@@ -843,6 +862,7 @@ public class MySqlBackend implements Backend {
             psPutEdgeType.executeUpdate();
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
 
@@ -858,6 +878,7 @@ public class MySqlBackend implements Backend {
             psPutEntity.executeUpdate();
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
 
@@ -875,6 +896,7 @@ public class MySqlBackend implements Backend {
             psPutURL.executeUpdate();
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
 
@@ -898,6 +920,7 @@ public class MySqlBackend implements Backend {
             psPutUser.executeUpdate();
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
 
@@ -914,6 +937,7 @@ public class MySqlBackend implements Backend {
             psPutProg.executeUpdate();
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
 
@@ -930,6 +954,7 @@ public class MySqlBackend implements Backend {
             psPutText.executeUpdate();
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
 
@@ -945,6 +970,7 @@ public class MySqlBackend implements Backend {
             psUpdateEdge.executeUpdate();
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
 
@@ -961,6 +987,7 @@ public class MySqlBackend implements Backend {
             psUpdateEdgeType.executeUpdate();
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
 
@@ -976,6 +1003,7 @@ public class MySqlBackend implements Backend {
             psUpdateEntity.executeUpdate();
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
 
@@ -993,6 +1021,7 @@ public class MySqlBackend implements Backend {
             psUpdateURL.executeUpdate();
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
 
@@ -1016,6 +1045,7 @@ public class MySqlBackend implements Backend {
             psUpdateUser.executeUpdate();
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
 
@@ -1032,6 +1062,7 @@ public class MySqlBackend implements Backend {
             psUpdateProg.executeUpdate();
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
 
@@ -1048,6 +1079,7 @@ public class MySqlBackend implements Backend {
             psUpdateText.executeUpdate();
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
 
