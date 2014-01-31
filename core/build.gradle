@@ -1,5 +1,6 @@
 dependencies {
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.27'
+    compile group: 'com.zaxxer', name: 'HikariCP', version: '1.2.8', scope: 'compile'
     compile group: 'org.jsoup', name: 'jsoup', version: '1.7.2'
     compile group: 'org.mindrot', name: 'jbcrypt', version: '0.3m'
     compile group: 'edu.stanford.nlp', name: 'stanford-corenlp', version: '3.2.0'
