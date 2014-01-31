@@ -82,7 +82,7 @@ public class HandleEco extends VelocityRoute {
             text = parseText;
         }
 
-        List<VisualContext> visualCtxtList = new LinkedList<VisualContext>();
+        List<VisualContext> visualCtxtList = new LinkedList<>();
         if (!text.isEmpty()) {
             Text t = new Text(text);
 
@@ -99,7 +99,7 @@ public class HandleEco extends VelocityRoute {
             }
         }
 
-        Map<String, Object> attributes = new HashMap<String, Object>();
+        Map<String, Object> attributes = new HashMap<>();
         attributes.put("title", "Parse");
         attributes.put("text", text);
         attributes.put("ctxtList", visualCtxtList);
@@ -111,7 +111,7 @@ public class HandleEco extends VelocityRoute {
     private ModelAndView renderCode() {
         String code = getCode();
 
-        Map<String, Object> attributes = new HashMap<String, Object>();
+        Map<String, Object> attributes = new HashMap<>();
         attributes.put("title", "Code");
         attributes.put("code", code);
 
@@ -121,7 +121,7 @@ public class HandleEco extends VelocityRoute {
     private ModelAndView renderEditTests() {
         String tests = getTests();
 
-        Map<String, Object> attributes = new HashMap<String, Object>();
+        Map<String, Object> attributes = new HashMap<>();
         attributes.put("title", "Edit Tests");
         attributes.put("tests", tests);
 
@@ -129,7 +129,7 @@ public class HandleEco extends VelocityRoute {
     }
 
     private ModelAndView renderRunTests(boolean run) {
-        List<VisualContext> visualCtxtList = new LinkedList<VisualContext>();
+        List<VisualContext> visualCtxtList = new LinkedList<>();
 
         if (run) {
             String testData = getTests();
@@ -147,7 +147,7 @@ public class HandleEco extends VelocityRoute {
             }
         }
 
-        Map<String, Object> attributes = new HashMap<String, Object>();
+        Map<String, Object> attributes = new HashMap<>();
         attributes.put("title", "Run Tests");
         attributes.put("ctxtList", visualCtxtList);
 
