@@ -1,4 +1,4 @@
-`// seedrandom.js version 2.0.
+// seedrandom.js version 2.0.
 // Author: David Bau 4/2/2011
 //
 // Defines a method Math.seedrandom() that, when called, substitutes
@@ -269,4 +269,4 @@ mixkey(math.random(), pool);
   256,  // width: each RC4 output is 0 <= x < 256
   6,    // chunks: at least six RC4 outputs for each double
   52    // significance: there are 52 significant digits in a double
-);`
+);

@@ -1,4 +1,4 @@
-`/*!
+/*!
  * jQuery Cookie Plugin
  * https://github.com/carhartl/jquery-cookie
  *
@@ -44,4 +44,4 @@
         }
         return null;
     };
-})(jQuery);`
+})(jQuery);
