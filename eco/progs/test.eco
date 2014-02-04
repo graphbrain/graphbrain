@@ -1,6 +1,6 @@
 ; English
 
-(wv ("with" "a" a "," verb:V c)
+(wv ("with" "a" a "," b verb:V c)
      ((filter-max (len verb))
      (let x (:wv a))
      (let y (:wv b))

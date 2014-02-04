@@ -5,6 +5,7 @@ import com.graphbrain.db.UserNode;
 import com.graphbrain.eco.Context;
 import com.graphbrain.eco.Contexts;
 import com.graphbrain.eco.Prog;
+import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -35,13 +36,21 @@ public class HandleAIChat extends Route {
 
         WebServer.log(request, "user said: " + sentence);
 
+        String edgeStr = "";
+
         List<Contexts> ctxtsList = prog.wv(sentence, 0);
+
         for (Contexts ctxts : ctxtsList) {
             for (Context ctxt : ctxts.getCtxts()) {
-                System.out.println(ctxt.getTopRetVertex().toString());
+                edgeStr = ctxt.getTopRetVertex().toString();
             }
         }
 
-        return "";
+        JSONObject json = new JSONObject();
+        json.put("sentence", edgeStr);
+        json.put("newedges", "");
+        json.put("goto", "");
+
+        return json.toString();
     }
 }

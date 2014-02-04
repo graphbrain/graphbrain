@@ -37,12 +37,12 @@ public class HandleEco extends VelocityRoute {
                 return renderParser(request, response, text);
             case CODE:
                 if (request.requestMethod().equals("post")) {
-                    WebServer.graph.put(new ProgNode("prog/prog", request.queryParams("code")));
+                    WebServer.graph.putOrUpdate(new ProgNode("prog/prog", request.queryParams("code")));
                 }
                 return renderCode();
             case EDIT_TESTS:
                 if (request.requestMethod().equals("post")) {
-                    WebServer.graph.put(new TextNode("text/tests", request.queryParams("tests")));
+                    WebServer.graph.putOrUpdate(new TextNode("text/tests", request.queryParams("tests")));
                 }
                 return renderEditTests();
             case RUN_TESTS:
