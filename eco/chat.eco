@@ -58,13 +58,17 @@
     (let y (:wv obj)))
   (build (rel-vert "+prop") y x))
 
-(wv ("the" no-the:-V)
-    ((let r (:wv no-the)))
+(wv (a:DT no-dt:-V)
+    ((let r (:wv no-dt)))
   r)
 
 (wv ("i")
     ()
   $user)
+
+(wv ("this")
+    ()
+  $root)
 
 (wv (obj:-V)
     ((let r (txt-vert obj)))
