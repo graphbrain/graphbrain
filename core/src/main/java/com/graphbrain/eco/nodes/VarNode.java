@@ -9,34 +9,14 @@ public class VarNode extends ProgNode {
     private String[] possiblePOS;
     private String[] necessaryPOS;
     private String[] forbiddenPOS;
-
-    public VarNode(String name,
-        String[] possiblePOS,
-        String[] necessaryPOS,
-        String[] forbiddenPOS,
-        int lastTokenPos) {
-
-        super(lastTokenPos);
-
-        this.name = name;
-        this.possiblePOS = possiblePOS;
-        this.necessaryPOS = necessaryPOS;
-        this.forbiddenPOS = forbiddenPOS;
-    }
-
-    public VarNode(String name,
-                   String[] possiblePOS,
-                   String[] necessaryPOS,
-                   String[] forbiddenPOS) {
-
-        this(name, possiblePOS, necessaryPOS, forbiddenPOS, -1);
-    }
+    boolean external;
 
     public VarNode(String varStr, int lastTokenPos) {
         super(lastTokenPos);
 
         String[] parts = varStr.split(":");
         name = parts[0];
+        external = name.charAt(0) == '$';
 
         String[] constStrs;
         if (parts.length > 1)
@@ -81,7 +61,6 @@ public class VarNode extends ProgNode {
             }
         }
 
-
         count = 0;
         for (String c : constStrs) {
             if (c.charAt(0) == '-')
@@ -105,21 +84,32 @@ public class VarNode extends ProgNode {
     @Override
     public void eval(Contexts ctxts) {
         for (Context c : ctxts.getCtxts()) {
-            switch(ntype(c)) {
+            VariableContainer vc;
+            NodeType nt;
+            if (external) {
+                vc = ctxts.getProg();
+                nt = ctxts.getProg().getType(name);
+            }
+            else {
+                vc = c;
+                nt = ntype(c);
+            }
+
+            switch(nt) {
                 case Boolean:
-                    c.setRetBoolean(this, c.getBoolean(name));
+                    c.setRetBoolean(this, vc.getBoolean(name));
                     break;
                 case String:
-                    c.setRetString(this, c.getString(name));
+                    c.setRetString(this, vc.getString(name));
                     break;
                 case Number:
-                    c.setRetNumber(this, c.getNumber(name));
+                    c.setRetNumber(this, vc.getNumber(name));
                     break;
                 case Words:
-                    c.setRetWords(this, c.getWords(name));
+                    c.setRetWords(this, vc.getWords(name));
                     break;
                 case Vertex:
-                    c.setRetVertex(this, c.getVertex(name));
+                    c.setRetVertex(this, vc.getVertex(name));
                     break;
             }
         }

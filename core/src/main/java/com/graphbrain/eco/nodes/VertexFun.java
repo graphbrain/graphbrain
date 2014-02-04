@@ -18,10 +18,6 @@ public class VertexFun extends FunNode {
         this.fun = fun;
     }
 
-    public VertexFun(VertexFunType fun, ProgNode[] params) {
-        this(fun, params, -1);
-    }
-
     @Override
     public String label() {
         switch(fun) {
