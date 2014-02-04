@@ -19,10 +19,6 @@ public class Prog {
         this.exprs = exprs;
     }
 
-    public Prog() {
-        this(new LinkedList<ProgNode>());
-    }
-
     public List<Contexts> wv(String s, int depth) {
         return wv(s, depth, null);
     }
@@ -147,11 +143,5 @@ public class Prog {
         }
 
         return new Prog(exprList);
-    }
-
-    public static Prog fromNode(ProgNode e) {
-        List<ProgNode> l = new LinkedList<>();
-        l.add(e);
-        return new Prog(l);
     }
 }

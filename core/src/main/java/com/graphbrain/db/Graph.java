@@ -38,6 +38,15 @@ public class Graph {
         return vertex;
     }
 
+    public Vertex putOrUpdate(Vertex vertex) {
+        if (!exists(vertex)) {
+            return put(vertex);
+        }
+        else {
+            return update(vertex);
+        }
+    }
+
     public Vertex put(Vertex vertex, String userid) {
         //logger.debug(s"put $vertex; userId: $userid")
 
