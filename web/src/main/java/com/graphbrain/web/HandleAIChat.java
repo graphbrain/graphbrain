@@ -1,15 +1,16 @@
 package com.graphbrain.web;
 
-import com.graphbrain.db.ProgNode;
-import com.graphbrain.db.UserNode;
 import com.graphbrain.eco.Context;
 import com.graphbrain.eco.Contexts;
 import com.graphbrain.eco.Prog;
+import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class HandleAIChat extends Route {
@@ -19,13 +20,16 @@ public class HandleAIChat extends Route {
     public HandleAIChat(String route) {
         super(route);
 
-        ProgNode prognode = WebServer.graph.getProgNode("prog/prog");
-        if (prognode != null) {
-            prog = Prog.fromString(prognode.getProg());
+        File file = new File("eco/chat.eco");
+        String progStr = "";
+        try {
+            progStr = FileUtils.readFileToString(file);
         }
-        else {
-            prog = null;
+        catch (IOException e) {
+            e.printStackTrace();
         }
+
+        prog = Prog.fromString(progStr);
     }
 
     @Override
