@@ -62,6 +62,10 @@
     ((let r (:wv no-the)))
   r)
 
+(wv ("i")
+    ()
+  $user)
+
 (wv (obj:-V)
     ((let r (txt-vert obj)))
   r)

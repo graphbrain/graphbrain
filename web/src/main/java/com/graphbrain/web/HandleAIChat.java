@@ -1,5 +1,7 @@
 package com.graphbrain.web;
 
+import com.graphbrain.db.UserNode;
+import com.graphbrain.db.Vertex;
 import com.graphbrain.eco.Context;
 import com.graphbrain.eco.Contexts;
 import com.graphbrain.eco.Prog;
@@ -34,9 +36,12 @@ public class HandleAIChat extends Route {
 
     @Override
     public Object handle(Request request, Response response) {
-        //UserNode userNode = WebServer.getUser(request);
+        UserNode user = WebServer.getUser(request);
         String sentence = request.queryParams("sentence");
-        //String rootId = request.queryParams("rootId");
+        Vertex root = WebServer.graph.get(request.queryParams("rootId"));
+
+        prog.setVertex("$user", user);
+        prog.setVertex("$root", root);
 
         WebServer.log(request, "user said: " + sentence);
 
@@ -46,7 +51,7 @@ public class HandleAIChat extends Route {
 
         for (Contexts ctxts : ctxtsList) {
             for (Context ctxt : ctxts.getCtxts()) {
-                edgeStr = ctxt.getTopRetVertex().toString();
+                edgeStr = ctxt.getTopRetVertex().id;
             }
         }
 

@@ -5,16 +5,9 @@ import com.graphbrain.db.Vertex;
 
 import java.util.*;
 
-public class Context {
+public class Context extends VariableContainer {
 
     private Contexts parent;
-
-    Map<String, NodeType> varTypes;
-    Map<String, String> stringVars;
-    Map<String, Double> numberVars;
-    Map<String, Boolean> booleanVars;
-    Map<String, Words> wordsVars;
-    Map<String, Vertex> vertexVars;
 
     Map<ProgNode, String> retStringMap;
     Map<ProgNode, Double> retNumberMap;
@@ -27,14 +20,9 @@ public class Context {
     List<Context> subContexts;
 
     public Context(Contexts parent) {
-        this.parent = parent;
+        super();
 
-        varTypes = new HashMap<>();
-        stringVars = new HashMap<>();
-        numberVars = new HashMap<>();
-        booleanVars = new HashMap<>();
-        wordsVars = new HashMap<>();
-        vertexVars = new HashMap<>();
+        this.parent = parent;
 
         retStringMap = new IdentityHashMap<>();
         retNumberMap = new IdentityHashMap<>();
@@ -109,9 +97,9 @@ public class Context {
     public Words getRetWords(ProgNode p) {return retWordsMap.get(p);}
     public Vertex getRetVertex(ProgNode p) {return retVertexMap.get(p);}
 
-    public String getTopRetString() {return retStringMap.get(topRet);}
-    public double getTopRetNumber() {return retNumberMap.get(topRet);}
-    public boolean getTopRetBoolean() {return retBooleanMap.get(topRet);}
+    //public String getTopRetString() {return retStringMap.get(topRet);}
+    //public double getTopRetNumber() {return retNumberMap.get(topRet);}
+    //public boolean getTopRetBoolean() {return retBooleanMap.get(topRet);}
     public Words getTopRetWords() {return retWordsMap.get(topRet);}
     public Vertex getTopRetVertex() {return retVertexMap.get(topRet);}
 
@@ -136,48 +124,11 @@ public class Context {
         topRet = p;
     }
 
-    private void setType(String variable, NodeType value) {
-        varTypes.put(variable, value);
-    }
-
-    public NodeType getType(String variable) {
-        if (varTypes.containsKey(variable))
-            return varTypes.get(variable);
-        else
-            return NodeType.Unknown;
-    }
-
-    public void setString(String variable, String value) {
-        setType(variable, NodeType.String);
-        stringVars.put(variable, value);
-    }
-    public void setNumber(String variable, double value) {
-        setType(variable, NodeType.Number);
-        numberVars.put(variable, value);
-    }
-    public void setBoolean(String variable, boolean value) {
-        setType(variable, NodeType.Boolean);
-        booleanVars.put(variable, value);
-    }
-    public void setWords(String variable, Words value) {
-        setType(variable, NodeType.Words);
-        wordsVars.put(variable, value);
-    }
-    public void setVertex(String variable, Vertex value) {
-        setType(variable, NodeType.Vertex);
-        vertexVars.put(variable, value);
-    }
-
-    public String getString(String variable) {return stringVars.get(variable);}
-    public double getNumber(String variable) {return numberVars.get(variable);}
-    public boolean getBoolean(String variable) {return booleanVars.get(variable);}
-    public Words getWords(String variable) {return wordsVars.get(variable);}
-    public Vertex getVertex(String variable) {return vertexVars.get(variable);}
-
     public void addSubContext(Context subCtxt) {
         subContexts.add(subCtxt);
     }
 
+    /*
     public void printCallStack(int indent) {
         for (int i = 0; i <= indent; i++) {
             System.out.print("....");
@@ -191,7 +142,7 @@ public class Context {
 
     public void printCallStack() {
         printCallStack(0);
-    }
+    }*/
 
     @Override
     public String toString() {
