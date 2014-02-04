@@ -100,7 +100,7 @@ public class Edge extends Vertex {
                 + ID.humanReadable(participantIds[1])).replace(",", "");
     }
 
-    public static String buildId(Object[] elems) {
+    public static String buildId(Vertex[] elems) {
         StringBuilder sb = new StringBuilder(50);
         sb.append("(");
 
@@ -108,7 +108,7 @@ public class Edge extends Vertex {
             if (i > 0) {
                 sb.append(" ");
             }
-            sb.append(elems[i].toString());
+            sb.append(elems[i].id);
         }
 
         sb.append(")");
