@@ -38,7 +38,8 @@ Graph = (function() {
     type = data['root']['type'];
     if (type === 'url') {
       node = new Node(nid, text, text2, type, snode, '', data['root']['url'], data['root']['icon']);
-    } else {
+    }
+    else {
       node = new Node(nid, text, text2, type, snode, '');
     }
     node.root = true;
