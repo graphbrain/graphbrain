@@ -56,9 +56,8 @@ public class HandleAIChat extends Route {
             }
         }
 
-        WebServer.graph.put(v);
-        //WebServer.graph.put(v, user.id);
-        //System.out.println(v.id);
+        System.out.println(v.id);
+        WebServer.graph.put(v, user.id);
 
         JSONObject json = new JSONObject();
         json.put("sentence", v.id);

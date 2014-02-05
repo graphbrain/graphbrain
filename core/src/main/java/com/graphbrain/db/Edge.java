@@ -32,7 +32,7 @@ public class Edge extends Vertex {
         this.elems = elems;
         ids = new String[elems.length];
         for (int i = 0; i < elems.length; i++) {
-            ids[i] = elems[i].toString();
+            ids[i] = elems[i].id;
         }
         edgeType = ids[0];
         participantIds = Arrays.copyOfRange(ids, 1, ids.length);
