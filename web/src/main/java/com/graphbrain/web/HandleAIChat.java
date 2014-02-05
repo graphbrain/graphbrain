@@ -61,8 +61,8 @@ public class HandleAIChat extends Route {
 
         JSONObject json = new JSONObject();
         json.put("sentence", v.id);
-        json.put("newedges", v.id);
-        json.put("goto", "");
+        json.put("newedges", new String[]{v.id});
+        json.put("goto", root.id);
 
         return json.toString();
     }
