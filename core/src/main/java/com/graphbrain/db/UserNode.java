@@ -2,7 +2,6 @@ package com.graphbrain.db;
 
 import org.mindrot.jbcrypt.BCrypt;
 import java.math.BigInteger;
-import java.util.Map;
 
 import com.graphbrain.utils.RandUtils;
 

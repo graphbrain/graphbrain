@@ -32,7 +32,7 @@ public class EdgeParser {
         }
         else {
             consume();
-            List<Vertex> params = new LinkedList<Vertex>();
+            List<Vertex> params = new LinkedList<>();
             while (c != ')') {
                 params.add(parse());
             }
