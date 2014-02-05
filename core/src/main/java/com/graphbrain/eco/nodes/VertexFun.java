@@ -84,10 +84,10 @@ public class VertexFun extends FunNode {
                 for (Context c : ctxts.getCtxts()) {
                     switch(p.ntype(c)) {
                         case Words:
-                            c.setRetVertex(this, EntityNode.fromNsAndText("", c.getRetWords(p).text()));
+                            c.setRetVertex(this, EntityNode.fromNsAndText("x", c.getRetWords(p).text()));
                             break;
                         case String:
-                            c.setRetVertex(this, EntityNode.fromNsAndText("", c.getRetString(p)));
+                            c.setRetVertex(this, EntityNode.fromNsAndText("x", c.getRetString(p)));
                             break;
                         default: // error!
                     }

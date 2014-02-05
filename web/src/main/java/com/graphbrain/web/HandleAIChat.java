@@ -1,5 +1,6 @@
 package com.graphbrain.web;
 
+import com.graphbrain.db.Edge;
 import com.graphbrain.db.UserNode;
 import com.graphbrain.db.Vertex;
 import com.graphbrain.eco.Context;
@@ -45,19 +46,21 @@ public class HandleAIChat extends Route {
 
         WebServer.log(request, "user said: " + sentence);
 
-        String edgeStr = "";
+        Vertex v = null;
 
         List<Contexts> ctxtsList = prog.wv(sentence, 0);
 
         for (Contexts ctxts : ctxtsList) {
             for (Context ctxt : ctxts.getCtxts()) {
-                edgeStr = ctxt.getTopRetVertex().id;
+                v = ctxt.getTopRetVertex();
             }
         }
 
+        //WebServer.graph.put(v, user.id);
+
         JSONObject json = new JSONObject();
-        json.put("sentence", edgeStr);
-        json.put("newedges", "");
+        json.put("sentence", v.id);
+        json.put("newedges", v.id);
         json.put("goto", "");
 
         return json.toString();

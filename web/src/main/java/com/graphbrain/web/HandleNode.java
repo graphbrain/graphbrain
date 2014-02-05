@@ -40,7 +40,7 @@ public class HandleNode extends VelocityRoute {
         String js = "var data = " + VisualGraph.generate(node.id, userNode) + ";\n" +
                     "var errorMsg = \"" + errorMsg + "\";\n";
 
-        Map<String, Object> attributes = new HashMap<String, Object>();
+        Map<String, Object> attributes = new HashMap<>();
         attributes.put("title", node.label());
         attributes.put("navBar", new NavBar(userNode, "node").html());
         attributes.put("cssAndJs", new CssAndJs().cssAndJs());

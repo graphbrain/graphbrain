@@ -17,6 +17,7 @@ dependencies {
     compile group: 'com.sparkjava', name: 'spark-core', version: '1.1.1'
     compile group: 'com.sparkjava', name: 'spark-template-velocity', version: '1.0'
     compile group: 'org.json', name: 'json', version: '20131018'
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.5'
 }
 
 fatJar {

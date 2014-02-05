@@ -1,6 +1,5 @@
 package com.graphbrain.db;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Vertex {
@@ -85,7 +84,7 @@ public abstract class Vertex {
             case URL: return new URLNode(id);
             case Prog: return new ProgNode(id, "");
             case Text: return new TextNode(id, "");
-            case User: return null; // this shouldn't happen
+            case User: return new UserNode(id, "", "", "", "", "");
         }
 
         // shouldn't happen
@@ -123,5 +122,9 @@ public abstract class Vertex {
     public Vertex setDegree(int degree) {
         this.degree = degree;
         return this;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(Vertex.fromId("(r/is user/telmo computer_scientist)").type());
     }
 }
