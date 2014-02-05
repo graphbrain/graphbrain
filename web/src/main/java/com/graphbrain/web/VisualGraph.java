@@ -47,12 +47,8 @@ public class VisualGraph {
         if (user != null)
             userId = user.id;
 
-        System.out.println("#A");
-
         // get neighboring edges
         Set<Edge> hyperEdges = WebServer.graph.edges(rootId, userId);
-
-        System.out.println("#B");
 
         // map hyperedges to visual edges
         Set<SimpleEdge> visualEdges = new HashSet<>();
@@ -66,12 +62,8 @@ public class VisualGraph {
             }
         }
 
-        System.out.println("#C");
-
         // group nodes by edge type
         Map<RelPos, Set<SimpleEdge>> edgeNodeMap = generateEdgeNodeMap(visualEdges, rootId);
-
-        System.out.println("#D");
 
         // full relations list
         List<Map<String, Object>> allRelations = new LinkedList<>();
@@ -84,12 +76,8 @@ public class VisualGraph {
             allRelations.add(r);
         }
 
-        System.out.println("#E");
-
         // create map with all information for supernodes
         Map<String, Map<String, Object>> snodeMap = generateSnodeMap(edgeNodeMap, rootId);
-
-        System.out.println("#F");
 
         // create reply structure with all the information needed for rendering
         JSONObject json = new JSONObject();
@@ -97,8 +85,6 @@ public class VisualGraph {
         json.put("root", node2map(rootId, "", rootId));
         json.put("snodes", snodeMap);
         json.put("allrelations", allRelations);
-
-        System.out.println("#G");
 
         return json.toString();
     }
@@ -178,6 +164,10 @@ public class VisualGraph {
         }
         else {
             node = WebServer.graph.get(nodeId);
+
+            if (node == null) {
+                node = Vertex.fromId(nodeId);
+            }
         }
 
         Map<String, String> map = new HashMap<>();

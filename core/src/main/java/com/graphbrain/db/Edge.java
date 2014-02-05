@@ -3,7 +3,6 @@ package com.graphbrain.db;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class Edge extends Vertex {
 
@@ -71,8 +70,8 @@ public class Edge extends Vertex {
     @Override
     public Vertex toUser(String userId) {
         String[] pids = new String[ids.length];
-        for (int i = 0; i < ids.length; i++) {
-            pids[i] = ID.globalToUser(ids[i], userId);
+        for (int i = 0; i < elems.length; i++) {
+            pids[i] = elems[i].toUser(userId).id;
         }
         return Edge.fromParticipants(pids);
     }
@@ -80,8 +79,8 @@ public class Edge extends Vertex {
     @Override
     public Vertex toGlobal() {
         String[] pids = new String[ids.length];
-        for (int i = 0; i < ids.length; i++) {
-            pids[i] = ID.userToGlobal(ids[i]);
+        for (int i = 0; i < elems.length; i++) {
+            pids[i] = elems[i].toGlobal().id;
         }
         return Edge.fromParticipants(pids);
     }

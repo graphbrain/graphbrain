@@ -18,7 +18,6 @@ public class Graph {
     }
 
     public Vertex put(Vertex vertex) {
-
         if (!exists(vertex)) {
             if (vertex.ts < 0) {
                 vertex.setTs((new Date()).getTime());

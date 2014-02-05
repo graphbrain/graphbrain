@@ -372,6 +372,66 @@ public class MySqlBackend implements Backend {
         return res;
     }
 
+    private String[] splitEdgePerm(String ep) {
+        int pos = 0;
+        char cc = ep.charAt(pos);
+        char firstChar = cc;
+
+        int tokenCount = 0;
+        while (pos < ep.length()) {
+            while (((firstChar == '(' && cc != ')')
+                    || (firstChar != '(' && cc != ' '))
+                        && (pos < ep.length())) {
+
+                pos++;
+                if (pos < ep.length()) cc = ep.charAt(pos);
+            }
+
+            if (firstChar == '(') {
+                pos++;
+            }
+
+            tokenCount++;
+
+            pos++;
+            if (pos < ep.length()) cc = ep.charAt(pos);
+            firstChar = cc;
+        }
+
+
+        String[] tokens = new String[tokenCount];
+
+        pos = 0;
+        cc = ep.charAt(pos);
+        firstChar = cc;
+        int start = pos;
+        int i = 0;
+
+        while (pos < ep.length()) {
+            while (((firstChar == '(' && cc != ')')
+                    || (firstChar != '(' && cc != ' '))
+                    && (pos < ep.length())) {
+
+                pos++;
+                if (pos < ep.length()) cc = ep.charAt(pos);
+            }
+
+            if (firstChar == '(') {
+                pos++;
+            }
+
+            tokens[i] = ep.substring(start, pos);
+            i++;
+
+            pos++;
+            if (pos < ep.length()) cc = ep.charAt(pos);
+            firstChar = cc;
+            start = pos;
+        }
+
+        return tokens;
+    }
+
     public Set<Edge> edges(Edge pattern) {
         Set<Edge> res = new HashSet<>();
 
@@ -403,7 +463,7 @@ public class MySqlBackend implements Backend {
 
             while (resultSet.next()) {
                 String pid = resultSet.getString("id");
-                String[] tokens = pid.split(" ");
+                String[] tokens = splitEdgePerm(pid);
                 int perm = Integer.parseInt(tokens[tokens.length - 1]);
                 tokens = Arrays.copyOfRange(tokens, 0, tokens.length - 1);
                 tokens = strArrayUnpermutate(tokens, perm);
@@ -444,7 +504,7 @@ public class MySqlBackend implements Backend {
 
             while (resultSet.next()) {
                 String pid = resultSet.getString("id");
-                String[] tokens = pid.split(" ");
+                String[] tokens = splitEdgePerm(pid);
                 int perm = Integer.parseInt(tokens[tokens.length - 1]);
                 tokens = Arrays.copyOfRange(tokens, 0, tokens.length - 1);
                 tokens = strArrayUnpermutate(tokens, perm);

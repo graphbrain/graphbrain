@@ -125,6 +125,10 @@ public abstract class Vertex {
     }
 
     public static void main(String[] args) {
-        System.out.println(Vertex.fromId("(r/is user/telmo computer_scientist)").type());
+        Vertex v = Vertex.fromId("(r/is user/telmo (r/+prop cool computer_scientist))");
+        Edge e = (Edge)v;
+        for (Vertex p : e.getElems()) {
+            System.out.println(p.type());
+        }
     }
 }
