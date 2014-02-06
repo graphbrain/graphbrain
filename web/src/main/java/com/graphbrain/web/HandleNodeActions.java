@@ -4,9 +4,9 @@ import com.graphbrain.db.Edge;
 import com.graphbrain.db.UserNode;
 import spark.Request;
 import spark.Response;
-import spark.Route;
+import spark.template.velocity.VelocityRoute;
 
-public class HandleNodeActions extends Route {
+public class HandleNodeActions extends VelocityRoute {
 
     public HandleNodeActions(String route) {
         super(route);
@@ -14,14 +14,15 @@ public class HandleNodeActions extends Route {
 
     public Object handle(Request request, Response response) {
 
+        String id = request.splat()[0];
         String op = request.queryParams("op");
 
         if (op.equals("remove")) {
             removeLinkOrNode(request);
         }
 
-        HandleNode hn = new HandleNode("");
-        return hn.handle(request, response);
+        response.redirect("/node/" + id);
+        return modelAndView(null, null);
     }
 
     private void removeLinkOrNode(Request request) {
