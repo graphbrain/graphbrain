@@ -3,6 +3,7 @@ package com.graphbrain.web;
 import com.graphbrain.db.Edge;
 import com.graphbrain.db.UserNode;
 import com.graphbrain.db.Vertex;
+import com.graphbrain.db.VertexType;
 import com.graphbrain.eco.Context;
 import com.graphbrain.eco.Contexts;
 import com.graphbrain.eco.Prog;
@@ -56,13 +57,18 @@ public class HandleAIChat extends Route {
             }
         }
 
-        System.out.println(v.id);
         WebServer.graph.put(v, user.id);
+
+        String gotoId = root.id;
+        if (v != null && v.type() == VertexType.Edge) {
+            Edge e = (Edge)v;
+            gotoId = e.getIds()[1];
+        }
 
         JSONObject json = new JSONObject();
         json.put("sentence", v.id);
         json.put("newedges", new String[]{v.id});
-        json.put("goto", root.id);
+        json.put("goto", gotoId);
 
         return json.toString();
     }
