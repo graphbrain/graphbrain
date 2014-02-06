@@ -29,6 +29,13 @@
      (let y (:wv (+ a verb c))))
   (flatten (build (rel-vert "+list") x y)))
 
+(wv (a verb:V in:IN b)
+    ((filter-max (len verb))
+    (let orig (:wv a))
+    (let rel (rel-vert (+ verb in)))
+    (let targ (:wv b)))
+  (build rel orig targ))
+
 (wv (a verb:V b)
     ((filter-max (len verb))
     (let orig (:wv a))
