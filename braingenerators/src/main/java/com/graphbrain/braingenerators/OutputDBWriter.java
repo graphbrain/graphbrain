@@ -183,7 +183,9 @@ public class OutputDBWriter {
   		return separated.trim();
   	}
 
+    /*
 	public String getRelID(String rel, String node1ID, String node2ID) {
         return Edge.buildId(new String[]{rel, node1ID, node2ID});
 	}
+	*/
 }
