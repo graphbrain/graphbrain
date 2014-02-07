@@ -3,6 +3,7 @@ package com.graphbrain.eco.nodes;
 import com.graphbrain.db.*;
 import com.graphbrain.eco.Context;
 import com.graphbrain.eco.Contexts;
+import com.graphbrain.eco.EntityGuesser;
 import com.graphbrain.eco.NodeType;
 
 public class VertexFun extends FunNode {
@@ -81,13 +82,15 @@ public class VertexFun extends FunNode {
 
                 p.eval(ctxts);
 
+                Graph graph = ctxts.getProg().getGraph();
+
                 for (Context c : ctxts.getCtxts()) {
                     switch(p.ntype(c)) {
                         case Words:
-                            c.setRetVertex(this, EntityNode.fromNsAndText("x", c.getRetWords(p).text()));
+                            c.setRetVertex(this, EntityGuesser.guess(graph, c.getRetWords(p).text()));
                             break;
                         case String:
-                            c.setRetVertex(this, EntityNode.fromNsAndText("x", c.getRetString(p)));
+                            c.setRetVertex(this, EntityGuesser.guess(graph, c.getRetString(p)));
                             break;
                         default: // error!
                     }

@@ -1,5 +1,6 @@
 package com.graphbrain.eco;
 
+import com.graphbrain.db.Graph;
 import com.graphbrain.eco.nodes.WWRule;
 import com.graphbrain.eco.nodes.WVRule;
 import com.graphbrain.eco.nodes.ProgNode;
@@ -14,10 +15,12 @@ import java.util.List;
 public class Prog extends VariableContainer {
 
     private List<ProgNode> exprs;
+    private Graph graph;
 
-    public Prog(List<ProgNode> exprs) {
+    public Prog(List<ProgNode> exprs, Graph graph) {
         super();
         this.exprs = exprs;
+        this.graph = graph;
     }
 
     public List<Contexts> wv(String s, int depth) {
@@ -106,10 +109,10 @@ public class Prog extends VariableContainer {
         return ((line.equals("")) || (line.charAt(0) == ';'));
     }
 
-    public static Prog load(String path) {
+    public static Prog load(String path, Graph graph) {
         try {
             String str = FileUtils.readFileToString(new File(path));
-            return fromString(str);
+            return fromString(str, graph);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -117,11 +120,11 @@ public class Prog extends VariableContainer {
         }
     }
 
-    public static Prog fromString(String str) {
-        return fromStringArray(str.split("\\r?\\n"));
+    public static Prog fromString(String str, Graph graph) {
+        return fromStringArray(str.split("\\r?\\n"), graph);
     }
 
-    public static Prog fromStringArray(String[] strArr) {
+    public static Prog fromStringArray(String[] strArr, Graph graph) {
         String exprStr = "";
         List<ProgNode> exprList = new LinkedList<>();
 
@@ -143,6 +146,10 @@ public class Prog extends VariableContainer {
             exprList.add(p.getExpr());
         }
 
-        return new Prog(exprList);
+        return new Prog(exprList, graph);
+    }
+
+    public Graph getGraph() {
+        return graph;
     }
 }
