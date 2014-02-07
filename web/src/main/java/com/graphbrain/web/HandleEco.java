@@ -86,7 +86,7 @@ public class HandleEco extends VelocityRoute {
         if (!text.isEmpty()) {
             Text t = new Text(text);
 
-            Prog p = Prog.fromString(getCode());
+            Prog p = Prog.fromString(getCode(), WebServer.graph);
             //System.out.println(p);
 
             for (String s : t.getSentences()) {
@@ -135,7 +135,7 @@ public class HandleEco extends VelocityRoute {
             String testData = getTests();
             Tests tests = new Tests(testData);
 
-            Prog p = Prog.fromString(getCode());
+            Prog p = Prog.fromString(getCode(), WebServer.graph);
 
             for (String[] t : tests.getTests()) {
                 List<Contexts> ctxtsList = p.wv(t[0], 0);

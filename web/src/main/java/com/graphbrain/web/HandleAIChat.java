@@ -33,7 +33,7 @@ public class HandleAIChat extends Route {
             e.printStackTrace();
         }
 
-        prog = Prog.fromString(progStr);
+        prog = Prog.fromString(progStr, WebServer.graph);
     }
 
     @Override
