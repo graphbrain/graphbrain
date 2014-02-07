@@ -87,10 +87,16 @@ public class VertexFun extends FunNode {
                 for (Context c : ctxts.getCtxts()) {
                     switch(p.ntype(c)) {
                         case Words:
-                            c.setRetVertex(this, EntityGuesser.guess(graph, c.getRetWords(p).text()));
+                            c.setRetVertex(this,
+                                    EntityGuesser.guess(graph,
+                                            c.getRetWords(p).text(),
+                                            ctxts.getSentence().toString()));
                             break;
                         case String:
-                            c.setRetVertex(this, EntityGuesser.guess(graph, c.getRetString(p)));
+                            c.setRetVertex(this,
+                                    EntityGuesser.guess(graph,
+                                            c.getRetString(p),
+                                            ctxts.getSentence().toString()));
                             break;
                         default: // error!
                     }

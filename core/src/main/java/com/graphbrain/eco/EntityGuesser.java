@@ -6,8 +6,9 @@ import java.util.Set;
 
 public class EntityGuesser {
 
-    public static EntityNode guess(Graph graph, String name) {
-        Set<Edge> canMean = graph.edges(new String[]{"r/+can_mean", name, "*"});
+    public static EntityNode guess(Graph graph, String name, String toHash) {
+        String baseId = ID.sanitize(name);
+        Set<Edge> canMean = graph.edges(new String[]{"r/+can_mean", baseId, "*"});
 
         int maxDegree = -1;
         EntityNode entity = null;
@@ -24,7 +25,7 @@ public class EntityGuesser {
         }
 
         if (entity == null) {
-            entity = EntityNode.fromNsAndText("x", name);
+            entity = EntityNode.fromNsAndText(ID.hash(toHash), name);
         }
 
         return entity;
