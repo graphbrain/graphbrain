@@ -1,45 +1,27 @@
-package com.graphbrain.nlp;
-
+package com.graphbrain.eco.conjugator;
 /*	Please see the license information at the end of this file. */
 
-import java.util.*;
 
-/**	Factory for creating a HashSet.
+/** Defines an interface for conjugating a verb..
  */
 
-public class SetFactory
+public interface Conjugator
 {
-	/**	Create a new HashSet.
-	 */
-
-	public static<E> Set<E> createNewSet()
-	{
-		return new HashSet<E>();
-	}
-
-	/**	Create a new HashSet.
+	/**	Conjugate a verb from its lemma (infinitive), tense, and person.
 	 *
-	 *	@param	capacity	Initial capacity.
+	 *	@param	infinitive	The infinitive of the verb to inflect.
+	 *	@param	tense		The verb tense to generate.
+	 *	@param	person		The person (1st, 2nd, 3rd) to generate.
+	 *
+	 *	@return				The conjugated form of the verb.
 	 */
 
-	public static<E> Set<E> createNewSet( int capacity )
-	{
-		return new HashSet<E>( capacity );
-	}
-
-	/**	Create a new TreeSet.
-	 */
-
-	public static<E> Set<E> createNewSortedSet()
-	{
-		return new TreeSet<E>();
-	}
-
-	/** Don't allow instantiation, do allow overrides. */
-
-	protected SetFactory()
-	{
-	}
+	public String conjugate
+	(
+		String infinitive ,
+		VerbTense tense ,
+		Person person
+	);
 }
 
 /*

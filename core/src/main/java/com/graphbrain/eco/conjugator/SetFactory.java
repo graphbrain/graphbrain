@@ -1,29 +1,44 @@
-package com.graphbrain.nlp;
+package com.graphbrain.eco.conjugator;
 
 /*	Please see the license information at the end of this file. */
 
-/**	Grammatical verb tenses. */
+import java.util.*;
 
-public enum VerbTense
+/**	Factory for creating a HashSet.
+ */
+
+public class SetFactory
 {
-	PRESENT ( "present" ) ,
-	PRESENT_PARTICIPLE ( "present_participle" ) ,
-	PAST ( "past" ) ,
-	PAST_PARTICIPLE ( "past_participle" ) ,
-	PERFECT ( "perfect" ) ,
-	PAST_PERFECT ( "past_perfect" ) ,
-	PAST_PERFECT_PARTICIPLE ( "past_perfect_participle" );
+	/**	Create a new HashSet.
+	 */
 
-	protected final String toStringValue;
-
-	VerbTense( String toStringValue )
+	public static<E> Set<E> createNewSet()
 	{
-		this.toStringValue	= toStringValue;
+		return new HashSet<E>();
 	}
 
-	public String toString()
+	/**	Create a new HashSet.
+	 *
+	 *	@param	capacity	Initial capacity.
+	 */
+
+	public static<E> Set<E> createNewSet( int capacity )
 	{
-		return toStringValue;
+		return new HashSet<E>( capacity );
+	}
+
+	/**	Create a new TreeSet.
+	 */
+
+	public static<E> Set<E> createNewSortedSet()
+	{
+		return new TreeSet<E>();
+	}
+
+	/** Don't allow instantiation, do allow overrides. */
+
+	protected SetFactory()
+	{
 	}
 }
 

@@ -1,27 +1,37 @@
-package com.graphbrain.nlp;
+package com.graphbrain.eco.conjugator;
+
 /*	Please see the license information at the end of this file. */
 
-
-/** Defines an interface for conjugating a verb..
+/**	Factory for creating a HashMap3D.
  */
 
-public interface Conjugator
+public class Map3DFactory
 {
-	/**	Conjugate a verb from its lemma (infinitive), tense, and person.
-	 *
-	 *	@param	infinitive	The infinitive of the verb to inflect.
-	 *	@param	tense		The verb tense to generate.
-	 *	@param	person		The person (1st, 2nd, 3rd) to generate.
-	 *
-	 *	@return				The conjugated form of the verb.
+	/**	Create a new HashMap3D.
 	 */
 
-	public String conjugate
-	(
-		String infinitive ,
-		VerbTense tense ,
-		Person person
-	);
+	public static<R extends Comparable, C extends Comparable,
+		S extends Comparable, V> Map3D<R, C, S, V> createNewMap3D()
+	{
+		return new HashMap3D<R, C, S, V>();
+	}
+
+	/**	Create a new HashMap3D.
+	 *
+	 *	@param	capacity	Initial capacity.
+	 */
+
+	public static<R extends Comparable, C extends Comparable,
+		S extends Comparable, V> Map3D<R, C, S, V> createNewMap3D( int capacity )
+	{
+		return new HashMap3D<R, C, S, V>( capacity );
+	}
+
+	/** Don't allow instantiation, do allow overrides. */
+
+	protected Map3DFactory()
+	{
+	}
 }
 
 /*

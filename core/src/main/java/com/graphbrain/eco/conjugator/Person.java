@@ -1,36 +1,27 @@
-package com.graphbrain.nlp;
-
+package com.graphbrain.eco.conjugator;
 /*	Please see the license information at the end of this file. */
 
-/**	Factory for creating a HashMap3D.
- */
+/** Grammatical persons. */
 
-public class Map3DFactory
+public enum Person
 {
-	/**	Create a new HashMap3D.
-	 */
+	FIRST_PERSON_SINGULAR ( "first_person_singular" ),
+	SECOND_PERSON_SINGULAR ( "second_person_singular" ),
+	THIRD_PERSON_SINGULAR ( "third_person_singular" ),
+	FIRST_PERSON_PLURAL ( "first_person_plural" ),
+	SECOND_PERSON_PLURAL ( "second_person_plural" ),
+	THIRD_PERSON_PLURAL ( "third_person_plural" );
 
-	public static<R extends Comparable, C extends Comparable,
-		S extends Comparable, V> Map3D<R, C, S, V> createNewMap3D()
+	protected final String toStringValue;
+
+	Person( String toStringValue )
 	{
-		return new HashMap3D<R, C, S, V>();
+		this.toStringValue	= toStringValue;
 	}
 
-	/**	Create a new HashMap3D.
-	 *
-	 *	@param	capacity	Initial capacity.
-	 */
-
-	public static<R extends Comparable, C extends Comparable,
-		S extends Comparable, V> Map3D<R, C, S, V> createNewMap3D( int capacity )
+	public String toString()
 	{
-		return new HashMap3D<R, C, S, V>( capacity );
-	}
-
-	/** Don't allow instantiation, do allow overrides. */
-
-	protected Map3DFactory()
-	{
+		return toStringValue;
 	}
 }
 

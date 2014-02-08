@@ -1,27 +1,63 @@
-package com.graphbrain.nlp;
+package com.graphbrain.eco.conjugator;
+
 /*	Please see the license information at the end of this file. */
 
-/** Grammatical persons. */
+import java.util.*;
 
-public enum Person
+/**	Factory for creating maps.
+ */
+
+public class MapFactory
 {
-	FIRST_PERSON_SINGULAR ( "first_person_singular" ),
-	SECOND_PERSON_SINGULAR ( "second_person_singular" ),
-	THIRD_PERSON_SINGULAR ( "third_person_singular" ),
-	FIRST_PERSON_PLURAL ( "first_person_plural" ),
-	SECOND_PERSON_PLURAL ( "second_person_plural" ),
-	THIRD_PERSON_PLURAL ( "third_person_plural" );
+	/**	Create a new unsorted map (HashMap).
+	 */
 
-	protected final String toStringValue;
-
-	Person( String toStringValue )
+	public static<K, V> Map<K, V> createNewMap()
 	{
-		this.toStringValue	= toStringValue;
+		return new HashMap<K , V>();
 	}
 
-	public String toString()
+	/**	Create a new unsorted map (HashMap) with specified initial capacity.
+	 *
+	 *	@param	capacity	Initial capacity.
+	 */
+
+	public static<K, V> Map<K, V> createNewMap( int capacity )
 	{
-		return toStringValue;
+		return new HashMap<K , V>( capacity );
+	}
+
+	/**	Create a new  map with keys in insertion order (LinkedHashMap).
+	 */
+
+	public static<K, V> Map<K, V> createNewLinkedMap()
+	{
+		return new LinkedHashMap<K , V>();
+	}
+
+	/**	Create a new  map with keys in insertion order (LinkedHashMap) with
+	 *	specified initial capacity..
+	 *
+	 *	@param	capacity	Initial capacity.
+	 */
+
+	public static<K, V> Map<K, V> createNewLinkedMap( int capacity )
+	{
+		return new LinkedHashMap<K , V>( capacity );
+	}
+
+	/**	Create a new sorted map (TreeMap).
+	 */
+
+	public static<K, V> Map<K, V> createNewSortedMap()
+	{
+		return new TreeMap<K, V>();
+	}
+
+	/** Don't allow instantiation, do allow overrides. */
+
+	protected MapFactory()
+	{
 	}
 }
 
