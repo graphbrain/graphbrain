@@ -1,4 +1,4 @@
-package com.graphbrain.nlp;
+package com.graphbrain.eco.conjugator;
 
 import java.io.*;
 import java.net.*;

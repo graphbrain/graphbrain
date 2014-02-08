@@ -1,4 +1,4 @@
-package com.graphbrain.nlp;
+package com.graphbrain.eco.conjugator;
 /*	Please see the license information at the end of this file. */
 
 import java.io.InputStream;
@@ -204,6 +204,12 @@ public class EnglishConjugator implements Conjugator
 
 		return result;
 	}
+
+    public static void main(String[] args) {
+        EnglishConjugator conj = new EnglishConjugator();
+        String res = conj.conjugate("live", VerbTense.PRESENT, Person.THIRD_PERSON_SINGULAR);
+        System.out.println(res);
+    }
 }
 
 /*

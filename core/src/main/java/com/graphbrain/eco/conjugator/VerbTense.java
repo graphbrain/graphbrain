@@ -1,63 +1,29 @@
-package com.graphbrain.nlp;
+package com.graphbrain.eco.conjugator;
 
 /*	Please see the license information at the end of this file. */
 
-import java.util.*;
+/**	Grammatical verb tenses. */
 
-/**	Factory for creating maps.
- */
-
-public class MapFactory
+public enum VerbTense
 {
-	/**	Create a new unsorted map (HashMap).
-	 */
+	PRESENT ( "present" ) ,
+	PRESENT_PARTICIPLE ( "present_participle" ) ,
+	PAST ( "past" ) ,
+	PAST_PARTICIPLE ( "past_participle" ) ,
+	PERFECT ( "perfect" ) ,
+	PAST_PERFECT ( "past_perfect" ) ,
+	PAST_PERFECT_PARTICIPLE ( "past_perfect_participle" );
 
-	public static<K, V> Map<K, V> createNewMap()
+	protected final String toStringValue;
+
+	VerbTense( String toStringValue )
 	{
-		return new HashMap<K , V>();
+		this.toStringValue	= toStringValue;
 	}
 
-	/**	Create a new unsorted map (HashMap) with specified initial capacity.
-	 *
-	 *	@param	capacity	Initial capacity.
-	 */
-
-	public static<K, V> Map<K, V> createNewMap( int capacity )
+	public String toString()
 	{
-		return new HashMap<K , V>( capacity );
-	}
-
-	/**	Create a new  map with keys in insertion order (LinkedHashMap).
-	 */
-
-	public static<K, V> Map<K, V> createNewLinkedMap()
-	{
-		return new LinkedHashMap<K , V>();
-	}
-
-	/**	Create a new  map with keys in insertion order (LinkedHashMap) with
-	 *	specified initial capacity..
-	 *
-	 *	@param	capacity	Initial capacity.
-	 */
-
-	public static<K, V> Map<K, V> createNewLinkedMap( int capacity )
-	{
-		return new LinkedHashMap<K , V>( capacity );
-	}
-
-	/**	Create a new sorted map (TreeMap).
-	 */
-
-	public static<K, V> Map<K, V> createNewSortedMap()
-	{
-		return new TreeMap<K, V>();
-	}
-
-	/** Don't allow instantiation, do allow overrides. */
-
-	protected MapFactory()
-	{
+		return toStringValue;
 	}
 }
 
