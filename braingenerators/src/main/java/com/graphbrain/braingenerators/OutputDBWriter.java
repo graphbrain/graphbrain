@@ -41,7 +41,7 @@ public class OutputDBWriter {
         String id2 = insertAndGetID(node2, username);
         System.out.println("id2: " + id1);
 
-        String rel = "(r/" + globalRelType + " " + id1 + " " + id2 + ")";
+        String rel = "(r/+" + globalRelType + " " + id1 + " " + id2 + ")";
         addRelation(rel);
         System.out.println("rel: " + rel);
 
@@ -80,8 +80,11 @@ public class OutputDBWriter {
 
 
 
+
+
         try {
             decodedText = URLDecoder.decode(wikiText, "UTF-8");
+
             newNode = new TextNode(wikiText);
 
         }
@@ -89,19 +92,18 @@ public class OutputDBWriter {
             e.printStackTrace();
             return null;
         }
+        String titleSP = removeWikiDisambig(decodedText);
         Matcher m = patDisambig.matcher(decodedText);
 
-        String titleSP = removeWikiDisambig(decodedText);
+
 
         String disAmb = "";
         if (m.find()) {
             disAmb = m.group();
         }
         if(!disAmb.isEmpty()) {
-            String da = disAmb.replace("(", "").replace(")", "").trim();
 
-            String daID = ID.hash((da));
-            String rel = "(r/as_in " + newNode.id + " " + daID + ")";
+            String rel = "(r/as_in " + titleSP + " " + newNode.id + ")";
             addRelation(rel);
 
         }
