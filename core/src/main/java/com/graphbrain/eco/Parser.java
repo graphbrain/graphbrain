@@ -38,7 +38,7 @@ public class Parser {
         if (s.equals("true"))
             return new BoolNode(true, pos);
         if (s.equals("false"))
-                return new BoolNode(false, pos);
+            return new BoolNode(false, pos);
 
         return parseVar(pos);
     }
@@ -90,6 +90,8 @@ public class Parser {
         if (text.equals("+")) return parseSum(pos + 1);
         if (text.equals("ends-with")) return parseEndsWith(pos + 1);
         if (text.equals("flatten")) return parseFlatten(pos + 1);
+        if (text.equals("conj")) return parseVerbFun(VerbFun.VerbFunType.Conj, pos + 1);
+        if (text.equals("tense")) return parseVerbFun(VerbFun.VerbFunType.Tense, pos + 1);
         return parseDummy(text, pos + 1);
 
     }
@@ -169,7 +171,10 @@ public class Parser {
                     param = parseVar(pos);
                     break;
                 case LPar:
-                    param = parsePattern(pos + 1);
+                    param = parseFun(pos + 1);
+                    break;
+                case Number:
+                    param = new NumberNode(Double.parseDouble(tokens[pos].getText()), pos);
                     break;
                 default:
                     param = null; // error
@@ -373,6 +378,28 @@ public class Parser {
             return new VertexFun(VertexFunType.Flatten, new ProgNode[]{p}, p.getLastTokenPos() + 1);
         else
             return null; // error
+    }
+
+    private ProgNode parseVerbFun(VerbFun.VerbFunType ftype, int pos) {
+        switch (ftype) {
+            case Conj:
+                ProgNode p1 = parse(pos);
+                ProgNode p2 = parse(p1.getLastTokenPos() + 1);
+                ProgNode p3 = parse(p2.getLastTokenPos() + 1);
+
+                if (matchClosingPar(p3.getLastTokenPos() + 1))
+                    return new VerbFun(VerbFun.VerbFunType.Conj, new ProgNode[]{p1, p2, p3}, p3.getLastTokenPos() + 1);
+                else
+                    return null; // error
+            case Tense:
+                ProgNode p = parse(pos);
+                if (matchClosingPar(p.getLastTokenPos() + 1))
+                    return new VerbFun(VerbFun.VerbFunType.Tense, new ProgNode[]{p}, p.getLastTokenPos() + 1);
+                else
+                    return null; // error
+            default:
+                return null; // error
+        }
     }
 
     public ProgNode getExpr() {

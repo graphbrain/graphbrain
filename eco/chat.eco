@@ -32,14 +32,14 @@
 (wv (a verb:V in:IN b)
     ((filter-max (len verb))
     (let orig (:wv a))
-    (let rel (rel-vert (+ verb in)))
+    (let rel (rel-vert (+ (conj verb 5 3) in)))
     (let targ (:wv b)))
   (build rel orig targ))
 
 (wv (a verb:V b)
     ((filter-max (len verb))
     (let orig (:wv a))
-    (let rel (rel-vert verb))
+    (let rel (rel-vert (conj verb 5 3)))
     (let targ (:wv b)))
   (build rel orig targ))
 

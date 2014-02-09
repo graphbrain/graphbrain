@@ -12,6 +12,10 @@ public class Word {
         this.lemma = lemma;
     }
 
+    public Word(Word word) {
+        this(word.word, word.pos, word.lemma);
+    }
+
     @Override
     public String toString() {
         return word;
@@ -31,5 +35,9 @@ public class Word {
 
     public void setLemma(String lemma) {
         this.lemma = lemma;
+    }
+
+    public void setWord(String word) {
+        this.word = word;
     }
 }
