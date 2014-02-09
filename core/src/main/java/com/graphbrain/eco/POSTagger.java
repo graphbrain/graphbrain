@@ -11,7 +11,6 @@ public class POSTagger {
 
     public POSTagger() {
 	    tagger = new MaxentTagger("pos_models/english-left3words-distsim.tagger");
-        //tagger = new MaxentTagger("pos_models/french.tagger");
 
         s = new StanfordLemmatizer();
     }
@@ -42,6 +41,7 @@ public class POSTagger {
         i = 0;
         for (String lemma : lemmas) {
             annotated[i].setLemma(lemma);
+            i++;
         }
 
         return annotated;

@@ -15,6 +15,18 @@ public class Words {
         this(words, 0);
     }
 
+    public Words(Words words) {
+        this(cloneWords(words.words), words.pos);
+    }
+
+    private static Word[] cloneWords(Word[] words) {
+        Word[] cwords = new Word[words.length];
+        for (int i = 0; i < words.length; i++) {
+            cwords[i] = new Word(words[i]);
+        }
+        return cwords;
+    }
+
     public String text() {
         StringBuilder sb = new StringBuilder(100);
 
