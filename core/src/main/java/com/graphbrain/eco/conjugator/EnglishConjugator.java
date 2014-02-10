@@ -207,7 +207,7 @@ public class EnglishConjugator implements Conjugator
 
     public static void main(String[] args) {
         EnglishConjugator conj = new EnglishConjugator();
-        String res = conj.conjugate("be", VerbTense.PAST, Person.THIRD_PERSON_SINGULAR);
+        String res = conj.conjugate("fly", VerbTense.PAST, Person.THIRD_PERSON_SINGULAR);
         System.out.println(res);
     }
 }
