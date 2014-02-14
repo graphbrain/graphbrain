@@ -10,11 +10,23 @@ buildscript {
 
 apply plugin: 'fatjar'
 
+/*
+repositories {
+    maven {
+        url "http://boilerpipe.googlecode.com/svn/repo/"
+    }
+}
+*/
+
 dependencies {
     compile project(':core')
+    compile project(':boilerpipe')
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.1'
     compile group: 'net.sf.extjwnl', name: 'extjwnl', version: '1.7.1'
     compile group: 'net.sf.extjwnl', name: 'extjwnl-data-wn31', version: '1.1'
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.7.3'
+    //compile group: 'de.l3s.boilerpipe', name: 'boilerpipe', version: '1.2.0'
+    compile group: 'net.sourceforge.nekohtml', name: 'nekohtml', version: '1.9.19'
 }
 
 fatJar {
