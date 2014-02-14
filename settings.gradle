@@ -1,2 +1,2 @@
 
-include "core", "braingenerators", "web"
+include "core", "braingenerators", "web", "boilerpipe"

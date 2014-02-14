@@ -7,16 +7,14 @@ import java.util.*;
 /** English language conjugator.
  */
 
-public class EnglishConjugator implements Conjugator
-{
+public class EnglishConjugator implements Conjugator {
 	/**	Set of verbs whose final consonant is doubled in inflected forms. */
 
-	protected static Set<String> doublingVerbs	= null;
+	protected static Set<String> doublingVerbs = null;
 
 	/**	Resource path to list of doubled consonant verbs. */
 
-	public static final String doublingVerbsPath =
-		"doublingverbs.txt";
+	public static final String doublingVerbsPath = "doublingverbs.txt";
 
 	/**	Present participle replacement patterns. */
 
@@ -49,8 +47,7 @@ public class EnglishConjugator implements Conjugator
 		if (doublingVerbs == null) {
 			try {
                 InputStream is = getClass().getClassLoader().getResourceAsStream(EnglishConjugator.doublingVerbsPath);
-				doublingVerbs =
-					SetUtils.loadSet(is);
+				doublingVerbs = SetUtils.loadSet(is);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -61,8 +58,7 @@ public class EnglishConjugator implements Conjugator
 		if (irregularVerbs == null) {
 			try {
                 InputStream is = getClass().getClassLoader().getResourceAsStream(EnglishConjugator.irregularVerbsPath);
-				irregularVerbs =
-					Map3DUtils.loadMap3D(is, "\t", "", "utf-8" );
+				irregularVerbs = Map3DUtils.loadMap3D(is, "\t", "", "utf-8" );
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -79,54 +75,33 @@ public class EnglishConjugator implements Conjugator
 	 *	@return				The English inflected form of the verb
 	 *						in all lower case.
 	 */
-
-	public String conjugate
-	(
-		String infinitive ,
-		VerbTense tense ,
-		Person person
-	)
-	{
-								//	We only work with lower case verbs.
-
+	public String conjugate(String infinitive, VerbTense tense, Person person) {
+		//	We only work with lower case verbs.
 		String verb	= infinitive.toLowerCase();
 		
-								//	Check for irregular verb.
-		String result	=
-			irregularVerbs.get
-			(
-				verb ,
-				person.toString() ,
-				tense.toString()
-			);
+		//	Check for irregular verb.
+		String result = irregularVerbs.get(verb, person.toString(), tense.toString());
 
-		if ( result == null )
-		{
-			result	=
-				irregularVerbs.get
-				(
-					verb ,
-					"*" ,
-					tense.toString()
-				);
+		if (result == null) {
+			result = irregularVerbs.get(verb, "*", tense.toString());
 		}
-								//	If we found an irregular verb form,
-								//	we're done.
 
-		if ( result != null ) return result;
+		//	If we found an irregular verb form,
+		//	we're done.
 
-		result	= verb;
-								//	If we didn't find an irregular
-								//	verb form, proceeed assuming we
-								//	have a regular verb.
-		switch ( tense )
-		{
+		if (result != null)
+            return result;
+
+		result = verb;
+
+		//	If we didn't find an irregular
+		//	verb form, proceeed assuming we
+		//	have a regular verb.
+		switch (tense) {
 			case PRESENT:
-				if ( person == Person.THIRD_PERSON_SINGULAR )
-				{
-					if ( result.matches( ".*(ch|s|sh|x|z)$" ) )
-					{
-						result	+= "es";
+				if (person == Person.THIRD_PERSON_SINGULAR) {
+					if (result.matches(".*(ch|s|sh|x|z)$")) {
+						result += "es";
 					}
 /*
 					else if ( result.matches( ".*(ay|ey|oy|uy)$" ) )
@@ -134,15 +109,11 @@ public class EnglishConjugator implements Conjugator
 						result	+= "s";
 					}
 */
-					else if ( result.matches( ".*[^aeiou]y" ) )
-					{
-						result	=
-							result.substring( 0 , result.length() - 1 ) +
-							"ies";
+					else if (result.matches(".*[^aeiou]y")) {
+						result = result.substring( 0 , result.length() - 1 ) + "ies";
 					}
-					else
-					{
-						result	+= "s";
+					else {
+						result += "s";
 					}
 				}
 				break;

@@ -22,6 +22,10 @@
     <orderEntry type="library" exported="" name="Gradle: extjwnl-data-wn31-1.1" level="project" />
     <orderEntry type="library" exported="" name="Gradle: extjwnl-1.7.1" level="project" />
     <orderEntry type="library" exported="" name="Gradle: slf4j-log4j12-1.7.5" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: jsoup-1.7.3" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: nekohtml-1.9.19" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: xercesImpl-2.10.0" level="project" />
+    <orderEntry type="module" module-name="boilerpipe" exported="" />
   </component>
 </module>
 
