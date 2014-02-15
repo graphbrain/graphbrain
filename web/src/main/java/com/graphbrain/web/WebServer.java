@@ -106,17 +106,7 @@ public class WebServer {
         else
             username = userNode.getUsername();
 
-        StringBuilder sb = new StringBuilder(100);
-        sb.append("[");
-        sb.append(df.format(new java.util.Date()));
-        sb.append("] ");
-        sb.append(ip);
-        sb.append(" ");
-        sb.append(username);
-        sb.append(" - ");
-        sb.append(msg);
-
-        System.out.println(sb.toString());
+        System.out.println("[" + df.format(new java.util.Date()) + "] " + ip + " " + username + " - " + msg);
         //logger.info(logLine);
     }
 }
