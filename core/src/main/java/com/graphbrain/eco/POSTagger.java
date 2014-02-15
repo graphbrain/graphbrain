@@ -11,7 +11,6 @@ public class POSTagger {
 
     public POSTagger() {
 	    tagger = new MaxentTagger("pos_models/english-left3words-distsim.tagger");
-
         s = new StanfordLemmatizer();
     }
 

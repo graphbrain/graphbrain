@@ -5,11 +5,13 @@ public class Word {
     private String word;
     private String pos;
     private String lemma;
+    private HtmlTag htmlTag;
 
     public Word(String word, String pos, String lemma) {
         this.word = word;
         this.pos = pos;
         this.lemma = lemma;
+        htmlTag = null;
     }
 
     public Word(Word word) {
@@ -39,5 +41,13 @@ public class Word {
 
     public void setWord(String word) {
         this.word = word;
+    }
+
+    public HtmlTag getHtmlTag() {
+        return htmlTag;
+    }
+
+    public void setHtmlTag(HtmlTag htmlTag) {
+        this.htmlTag = htmlTag;
     }
 }

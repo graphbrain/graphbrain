@@ -1,5 +1,8 @@
 package com.graphbrain.eco;
 
+import java.util.List;
+import java.util.ListIterator;
+
 public class Words {
     private static POSTagger tagger = new POSTagger();
 
@@ -118,6 +121,19 @@ public class Words {
 
     public static Words fromString(String s) {
         return new Words(tagger.annotate(s));
+    }
+
+    public static Words fromStringAndHtmlTags(String s, List<HtmlTag> htmlTags) {
+        Words words = new Words(tagger.annotate(s));
+
+        ListIterator<HtmlTag> iter = htmlTags.listIterator();
+        for (Word w : words.getWords()) {
+            if (iter.hasNext()) {
+                w.setHtmlTag(iter.next());
+            }
+        }
+
+        return words;
     }
 
     public Word[] getWords() {
