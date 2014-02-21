@@ -100,27 +100,25 @@ public class POSTagger {
             annotated[i] = word;
         }
 
-        /*
         // lemmatise
-        List<String> lemmas = s.lemmatize(stringToAnnotate, 0);
 
-        // merge
-        i = 0;
-        for (String lemma : lemmas) {
-            annotated[i].setLemma(lemma);
-            i++;
+        for (int i = 0; i < length; i++) {
+            Stemmer stemmer = new Stemmer();
+            String word = annotated[i].getWord();
+            stemmer.add(word.toCharArray(), word.length());
+            stemmer.stem();
+            annotated[i].setLemma(stemmer.toString());
         }
-        */
 
         return annotated;
     }
 
     public static void main(String[] args) {
         POSTagger tagger = new POSTagger();
-        Word[] annotated = tagger.annotate("Telmo likes chocolate.");
+        Word[] annotated = tagger.annotate("Telmo played guitar.");
 
         for (Word w : annotated) {
-            System.out.println(w + "[" + w.getPos() + "]");
+            System.out.println(w + "[" + w.getPos() + "; " + w.getLemma() + "]");
         }
     }
 }
