@@ -1,3 +1,10 @@
+repositories {
+    maven {
+        url "http://opennlp.sourceforge.net/maven2"
+    }
+}
+
+
 dependencies {
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.27'
     compile group: 'com.zaxxer', name: 'HikariCP', version: '1.2.8', scope: 'compile'
@@ -8,4 +15,6 @@ dependencies {
     compile group: 'edu.stanford.nlp', name: 'stanford-parser', version: '3.2.0'
     compile group: 'edu.stanford.nlp', name: 'stanford-parser', version: '3.2.0', classifier: 'models'
     compile group: 'commons-io', name: 'commons-io', version: '2.4'
+    compile group: 'org.apache.opennlp', name: 'opennlp-tools', version: '1.5.3'
+    compile group: 'org.apache.opennlp', name: 'opennlp-maxent', version: '1.5.3'
 }

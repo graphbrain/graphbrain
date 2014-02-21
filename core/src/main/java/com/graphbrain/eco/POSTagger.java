@@ -1,38 +1,106 @@
 package com.graphbrain.eco;
 
-import com.graphbrain.nlp.StanfordLemmatizer;
-import edu.stanford.nlp.tagger.maxent.MaxentTagger;
-import java.util.List;
+
+import opennlp.tools.postag.POSModel;
+import opennlp.tools.postag.POSTaggerME;
+//import opennlp.tools.sentdetect.SentenceDetector;
+//import opennlp.tools.sentdetect.SentenceDetectorME;
+//import opennlp.tools.sentdetect.SentenceModel;
+import opennlp.tools.tokenize.Tokenizer;
+import opennlp.tools.tokenize.TokenizerME;
+import opennlp.tools.tokenize.TokenizerModel;
+import java.io.IOException;
+import java.io.InputStream;
+
 
 public class POSTagger {
 
-    private MaxentTagger tagger;
-    private StanfordLemmatizer s;
+    //private SentenceDetector sentenceDetector;
+    private Tokenizer tokenizer;
+    private opennlp.tools.postag.POSTagger posTagger;
 
     public POSTagger() {
-	    tagger = new MaxentTagger("pos_models/english-left3words-distsim.tagger");
-        s = new StanfordLemmatizer();
-    }
+        // init sentence detector
+        /*
+        sentenceDetector = null;
 
-    /**
-     Returns a list of annotated words: (word, pos, lemma)
-     */
-    public Word[] annotate(String stringToAnnotate) {
-        // taggedTokens
-        String taggedString = tagger.tagString(stringToAnnotate);
-        String[] wordTagPairs = taggedString.split(" ");
+        InputStream modelIn = null;
+        try {
+            // Loading sentence detection model
+            File file = new File("en-sent.bin");
+            modelIn = new FileInputStream(file);
+            final SentenceModel sentenceModel = new SentenceModel(modelIn);
+            modelIn.close();
 
-        int length = wordTagPairs.length;
-        Word[] annotated = new Word[length];
+            sentenceDetector = new SentenceDetectorME(sentenceModel);
+        }
+        catch (final IOException ioe) {
+            ioe.printStackTrace();
+        }
+        */
 
-        int i = 0;
-        for (String wordTag : wordTagPairs) {
-            String[] tt = wordTag.split("_");
-            Word word = new Word(tt[0], tt[1], "");
-            annotated[i] = word;
-            i++;
+        // init tokenizer
+        tokenizer = null;
+
+        InputStream modelIn = null;
+        try {
+            // Loading tokenizer model
+            modelIn = Thread.currentThread().getContextClassLoader().getResourceAsStream("pos_models/en-token.bin");
+            final TokenizerModel tokenModel = new TokenizerModel(modelIn);
+            modelIn.close();
+
+            tokenizer = new TokenizerME(tokenModel);
+        }
+        catch (final IOException ioe) {
+            ioe.printStackTrace();
+        }
+        finally {
+            if (modelIn != null) {
+                try {
+                    modelIn.close();
+                }
+                catch (final IOException ignored) {} // oh well!
+            }
         }
 
+        // init POS tagger
+        modelIn = null;
+        try {
+            // Loading tokenizer model
+            modelIn = Thread.currentThread().getContextClassLoader().getResourceAsStream("pos_models/en-pos-maxent.bin");
+            final POSModel posModel = new POSModel(modelIn);
+            modelIn.close();
+
+            posTagger = new POSTaggerME(posModel);
+
+        }
+        catch (final IOException ioe) {
+            ioe.printStackTrace();
+        }
+        finally {
+            if (modelIn != null) {
+                try {
+                    modelIn.close();
+                }
+                catch (final IOException ignored) {} // oh well!
+            }
+        }
+    }
+
+    public Word[] annotate(String stringToAnnotate) {
+        //String[] sentences = sentenceDetector.sentDetect(stringToAnnotate);
+        String[] tokens = tokenizer.tokenize(stringToAnnotate);
+        String[] posTokens = posTagger.tag(tokens);
+
+        int length = tokens.length;
+        Word[] annotated = new Word[length];
+
+        for (int i = 0; i < length; i++) {
+            Word word = new Word(tokens[i], posTokens[i], "");
+            annotated[i] = word;
+        }
+
+        /*
         // lemmatise
         List<String> lemmas = s.lemmatize(stringToAnnotate, 0);
 
@@ -42,18 +110,17 @@ public class POSTagger {
             annotated[i].setLemma(lemma);
             i++;
         }
+        */
 
         return annotated;
     }
 
     public static void main(String[] args) {
-        /*
         POSTagger tagger = new POSTagger();
-        List<String[]> annotated = tagger.annotate("Telmo likes chocolate.");
+        Word[] annotated = tagger.annotate("Telmo likes chocolate.");
 
-        for (String[] elem : annotated) {
-            System.out.println("-> " + elem[0] + " " + elem[1] + " " + elem[2]);
+        for (Word w : annotated) {
+            System.out.println(w + "[" + w.getPos() + "]");
         }
-        */
     }
 }

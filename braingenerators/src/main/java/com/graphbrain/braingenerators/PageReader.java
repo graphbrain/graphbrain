@@ -153,8 +153,10 @@ public class PageReader {
     }
 
     public static void main(String[] args) {
-        PageReader pr = new PageReader("http://judithcurry.com/2014/02/10/uk-us-workshop-on-climate-science-needed-to-support-robust-adaptation-decisions/", new Graph());
+        //PageReader pr = new PageReader("http://judithcurry.com/2014/02/10/uk-us-workshop-on-climate-science-needed-to-support-robust-adaptation-decisions/", new Graph());
         //PageReader pr = new PageReader("http://www.realclimate.org/index.php/archives/2014/01/global-temperature-2013/");
+        //PageReader pr = new PageReader("http://latimesblogs.latimes.com/world_now/2012/07/lack-of-exercise-kills-roughly-as-many-as-smoking-study-says.html", new Graph());
+        PageReader pr = new PageReader("http://www.realclimate.org/index.php/archives/2014/02/going-with-the-wind/", new Graph());
         pr.read();
     }
 }
