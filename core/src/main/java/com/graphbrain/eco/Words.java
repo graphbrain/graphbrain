@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class Words {
-    private static POSTagger tagger = new POSTagger();
-
     private Word[] words;
     private int pos;
 
@@ -120,11 +118,11 @@ public class Words {
     }
 
     public static Words fromString(String s) {
-        return new Words(tagger.annotate(s));
+        return new Words(POSTagger.annotate(s));
     }
 
     public static Words fromStringAndHtmlTags(String s, List<HtmlTag> htmlTags) {
-        Words words = new Words(tagger.annotate(s));
+        Words words = new Words(POSTagger.annotate(s));
 
         ListIterator<HtmlTag> iter = htmlTags.listIterator();
         for (Word w : words.getWords()) {

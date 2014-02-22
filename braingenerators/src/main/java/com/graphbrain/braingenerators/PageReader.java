@@ -8,17 +8,16 @@ import de.l3s.boilerpipe.document.Image;
 import de.l3s.boilerpipe.extractors.CommonExtractors;
 import de.l3s.boilerpipe.sax.HTMLHighlighter;
 import de.l3s.boilerpipe.sax.ImageExtractor;
-import edu.stanford.nlp.ling.HasWord;
-import edu.stanford.nlp.process.DocumentPreprocessor;
+import opennlp.tools.sentdetect.SentenceDetector;
+import opennlp.tools.sentdetect.SentenceDetectorME;
+import opennlp.tools.sentdetect.SentenceModel;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.net.URL;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -26,15 +25,83 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 public class PageReader {
+
+    public static int nonWhitespaceLength(String str) {
+        int length = 0;
+        for (char c : str.toCharArray()) {
+            if (!Character.isWhitespace(c)) {
+                length++;
+            }
+        }
+        return length;
+    }
+
+    private class TextAndHtml {
+        private String text;
+        private List<Tag> tags;
+        private int curPos;
+
+        public TextAndHtml() {
+            text = "";
+            tags = new LinkedList<>();
+            curPos = 0;
+        }
+
+        public void addText(String text) {
+            if (!this.text.isEmpty()) {
+                this.text += " ";
+            }
+            this.text += text;
+            curPos += nonWhitespaceLength(text);
+        }
+
+        public void addTextAndTag(String text, String tag, String href) {
+            int start = curPos;
+            addText(text);
+            Tag t = new Tag(start, curPos, tag, href);
+            tags.add(t);
+        }
+
+        public void addTextAndTag(String text, String tag) {
+            addTextAndTag(text, tag, "");
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public List<Tag> getTags() {
+            return tags;
+        }
+    }
+
+
+    private class Tag {
+        public int start;
+        public int end;
+        public String tag;
+        public String href;
+
+        public Tag(int start, int end, String tag, String href) {
+            this.start = start;
+            this.end = end;
+            this.tag = tag;
+            this.href = href;
+        }
+    }
+
 
     private static final Pattern aPattern = Pattern.compile("<a href='(.+?)'>");
     private static final Pattern tagPattern = Pattern.compile("<(.+?)>");
 
     private String urlStr;
     private Prog prog;
+    private SentenceDetector sentenceDetector;
 
     public PageReader(String urlStr, Graph graph) {
+
         this.urlStr = urlStr;
 
         File file = new File("eco/page.eco");
@@ -47,40 +114,60 @@ public class PageReader {
         }
 
         prog = Prog.fromString(progStr, graph);
+
+        // init sentence detector
+        sentenceDetector = null;
+
+        InputStream modelIn;
+        try {
+            // Loading sentence detection model
+            modelIn = Thread.currentThread().getContextClassLoader().getResourceAsStream("pos_models/en-sent.bin");
+            final SentenceModel sentenceModel = new SentenceModel(modelIn);
+            modelIn.close();
+
+            sentenceDetector = new SentenceDetectorME(sentenceModel);
+        }
+        catch (final IOException ioe) {
+            ioe.printStackTrace();
+        }
     }
 
-    private void parseNode(Node node) {
-        String text = "";
-
+    private void parseNode(Node node, TextAndHtml th) {
         for (Node n : node.childNodes()) {
             if (n instanceof TextNode) {
-                text += " " + ((TextNode)n).text();
+                th.addText(((TextNode) n).text());
             }
             else if (n.nodeName().equals("a")) {
                 Node cn = n.childNode(0);
                 if (cn instanceof TextNode) {
-                    text += " <a href='" + n.attr("abs:href") + "'>" + ((TextNode)cn).text() + "</a>";
+                    th.addTextAndTag(((TextNode)cn).text(), "a", n.attr("abs:href"));
                 }
             }
             else if (n.nodeName().equals("strong")) {
                 Node cn = n.childNode(0);
                 if (cn instanceof TextNode) {
-                    text += " <strong>" + ((TextNode)cn).text() + "</strong>";
+                    th.addTextAndTag(((TextNode)cn).text(), "strong");
                 }
             }
             else {
-                parseNode(n);
+                parseNode(n, th);
             }
         }
+    }
 
-        if (!text.isEmpty()) {
-            DocumentPreprocessor dp = new DocumentPreprocessor(new StringReader(text));
-            for (List<HasWord> l : dp) {
+    private void parseDoc(Node doc) {
+
+        TextAndHtml th = new TextAndHtml();
+        parseNode(doc, th);
+
+        if (!th.getText().isEmpty()) {
+            String[] sentences = sentenceDetector.sentDetect(th.getText());
+            for (String l : sentences) {
                 String sentence = "";
                 List<HtmlTag> htmlTags = new LinkedList<>();
                 HtmlTag curHtmlTag = null;
-                for (HasWord h : l) {
-                    String token = h.toString();
+                String[] tokens = POSTagger.tokenize(l);
+                for (String token : tokens) {
                     if ((token.charAt(0) == '<') && (token.length() > 1)) {
                         if (token.charAt(1) == '/') {
                             curHtmlTag = null;
@@ -133,7 +220,7 @@ public class PageReader {
             String html = hh.process(url, extractor);
 
             Document doc = Jsoup.parse(html);
-            parseNode(doc);
+            parseDoc(doc);
 
 
             final ImageExtractor ie = ImageExtractor.INSTANCE;
