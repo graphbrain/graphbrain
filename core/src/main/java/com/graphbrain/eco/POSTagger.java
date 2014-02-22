@@ -3,9 +3,6 @@ package com.graphbrain.eco;
 
 import opennlp.tools.postag.POSModel;
 import opennlp.tools.postag.POSTaggerME;
-//import opennlp.tools.sentdetect.SentenceDetector;
-//import opennlp.tools.sentdetect.SentenceDetectorME;
-//import opennlp.tools.sentdetect.SentenceModel;
 import opennlp.tools.tokenize.Tokenizer;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
@@ -15,30 +12,13 @@ import java.io.InputStream;
 
 public class POSTagger {
 
-    //private SentenceDetector sentenceDetector;
-    private Tokenizer tokenizer;
-    private opennlp.tools.postag.POSTagger posTagger;
+    // prevent instantiation
+    private POSTagger() {}
 
-    public POSTagger() {
-        // init sentence detector
-        /*
-        sentenceDetector = null;
+    private static Tokenizer tokenizer;
+    private static opennlp.tools.postag.POSTagger posTagger;
 
-        InputStream modelIn = null;
-        try {
-            // Loading sentence detection model
-            File file = new File("en-sent.bin");
-            modelIn = new FileInputStream(file);
-            final SentenceModel sentenceModel = new SentenceModel(modelIn);
-            modelIn.close();
-
-            sentenceDetector = new SentenceDetectorME(sentenceModel);
-        }
-        catch (final IOException ioe) {
-            ioe.printStackTrace();
-        }
-        */
-
+    static {
         // init tokenizer
         tokenizer = null;
 
@@ -87,9 +67,12 @@ public class POSTagger {
         }
     }
 
-    public Word[] annotate(String stringToAnnotate) {
-        //String[] sentences = sentenceDetector.sentDetect(stringToAnnotate);
-        String[] tokens = tokenizer.tokenize(stringToAnnotate);
+    public static String[] tokenize(String sentence) {
+        return tokenizer.tokenize(sentence);
+    }
+
+    public static Word[] annotate(String stringToAnnotate) {
+        String[] tokens = tokenize(stringToAnnotate);
         String[] posTokens = posTagger.tag(tokens);
 
         int length = tokens.length;
@@ -101,7 +84,6 @@ public class POSTagger {
         }
 
         // lemmatise
-
         for (int i = 0; i < length; i++) {
             Stemmer stemmer = new Stemmer();
             String word = annotated[i].getWord();
@@ -114,8 +96,7 @@ public class POSTagger {
     }
 
     public static void main(String[] args) {
-        POSTagger tagger = new POSTagger();
-        Word[] annotated = tagger.annotate("Telmo played guitar.");
+        Word[] annotated = POSTagger.annotate("Telmo played guitar.");
 
         for (Word w : annotated) {
             System.out.println(w + "[" + w.getPos() + "; " + w.getLemma() + "]");
