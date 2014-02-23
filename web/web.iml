@@ -75,6 +75,7 @@
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.4" level="project" />
     <orderEntry type="library" name="Maven: org.json:json:20131018" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.1" level="project" />
+    <orderEntry type="library" name="Maven: org.clojure:clojure:1.5.1" level="project" />
   </component>
 </module>
 

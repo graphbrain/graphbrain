@@ -11,14 +11,13 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <encoding>UTF-8</encoding>
+        <clojure.version>1.5.1</clojure.version>
     </properties>
 
     <modules>
         <module>core</module>
-        <module>cli</module>
         <module>web</module>
         <module>braingenerators</module>
-        <module>crawlers</module>
     </modules>
 
     <repositories>
@@ -61,6 +60,44 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Clean plugin -->
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <version>2.2</version>
+            </plugin>
+
+            <!-- Dependencies plugin -->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <version>2.2</version>
+            </plugin>
+
+            <!-- Clojure Maven Plugin -->
+            <plugin>
+                <groupId>com.theoryinpractise</groupId>
+                <artifactId>clojure-maven-plugin</artifactId>
+                <version>1.3.10</version>
+
+                <configuration>
+                    <copyAllCompiledNamespaces>true</copyAllCompiledNamespaces>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>clojure-compile</id>
+                        <phase>compile</phase>
+                        <goals><goal>compile</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>clojure-test</id>
+                        <phase>test</phase>
+                        <goals><goal>test</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -78,6 +115,13 @@
             <artifactId>junit</artifactId>
             <version>4.8.1</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Clojure core -->
+        <dependency>
+            <groupId>org.clojure</groupId>
+            <artifactId>clojure</artifactId>
+            <version>${clojure.version}</version>
         </dependency>
     </dependencies>
 </project>
