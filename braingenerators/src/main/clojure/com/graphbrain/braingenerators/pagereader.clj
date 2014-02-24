@@ -4,8 +4,11 @@
            (de.l3s.boilerpipe.sax HTMLHighlighter)
            (org.jsoup Jsoup)
            (org.jsoup.nodes TextNode)
-           (opennlp.tools.sentdetect SentenceModel SentenceDetectorME)))
+           (opennlp.tools.sentdetect SentenceModel SentenceDetectorME)
+           (com.graphbrain.eco Prog POSTagger Words)
+           (com.graphbrain.db Graph)))
 
+; create opennlp sentence detector
 (def sentence-detector
   (let [model-in (. (. (Thread/currentThread) getContextClassLoader)
                    getResourceAsStream "pos_models/en-sent.bin")
@@ -13,17 +16,30 @@
     (. model-in close)
     (new SentenceDetectorME sentence-model)))
 
-(defn extract-html [url-str]
+; create graph
+(def graph (new Graph))
+
+; create prog
+(def prog
+  (Prog/fromString (slurp "eco/page.eco") graph))
+
+(defn extract-html
+  "Extract 'meat' from a page, returns html string"
+  [url-str]
   (let [url (new URL url-str)
         extractor CommonExtractors/ARTICLE_EXTRACTOR
         hh (HTMLHighlighter/newExtractingInstance)]
     (. hh process url extractor)))
 
-(defn deep-text [node]
+(defn deep-text
+  "Extract the text from a html node"
+  [node]
   (let [cn  (. node childNode 0)]
     (. cn text)))
 
-(defn non-white-count [text]
+(defn non-white-count
+  "Count number of non-whitespace characters in a string"
+  [text]
   (loop [rest-text text
          count 0]
     (if (empty? rest-text)
@@ -32,7 +48,9 @@
         (recur (rest rest-text) count)
         (recur (rest rest-text) (inc count))))))
 
-(defn parse-node [node char-count]
+(defn parse-node
+  "Parse html node to a list of maps with info about text and certain tags"
+  [node char-count]
   (flatten (let [children (. node childNodes)]
     (loop [rest-chil children
            res []
@@ -57,7 +75,10 @@
                         elem))
             (+ cc length))))))))
 
-(defn split-text-tags [text+tags]
+(defn split-text-tags
+  "Split output of parse-node into a string with all the text
+  and list of maps with information about tags"
+  [text+tags]
   (loop [list text+tags
          text ""
          tags []]
@@ -71,15 +92,43 @@
             tags
             (conj tags elem)))))))
 
-(defn extract-sentences [text]
-  (. sentence-detector sentDetect text))
+(defn sentence2words
+  "Convert sentence string to Words object"
+  [sentence]
+  (new Words
+    (POSTagger/annotate sentence)))
 
-(defn parse-doc [doc]
-  (extract-sentences
-    ((split-text-tags (parse-node doc 0)) :text)))
+(defn extract-sentences
+  "Divide a text into sentences"
+  [text]
+  (map sentence2words
+    (. sentence-detector sentDetect text)))
 
-(defn read-page [url-str]
+(defn parse-words
+  "Use eco program to parse sequence of words to graphbrain vertex"
+  [words]
+  (let [ctxts-list (. prog wv words 0 nil)
+        ctxts (if (not (empty? ctxts-list))
+               (. (first ctxts-list) getCtxts))
+        ctxt (if (not (or (nil? ctxts) (empty? ctxts)))
+               (first ctxts))]
+    (if (not (nil? ctxt))
+      (. ctxt getTopRetVertex))))
+
+(defn parse-doc
+  [doc]
+  (map parse-words
+    (extract-sentences
+      ((split-text-tags (parse-node doc 0)) :text))))
+
+(defn read-page
+  [url-str]
   (parse-doc (Jsoup/parse (extract-html url-str))))
 
-(doseq [sentence (read-page "http://www.realclimate.org/index.php/archives/2014/02/going-with-the-wind/")]
-  (println sentence))
+(defn print-words
+  [words]
+  (doseq [word words]
+    (print (str (. word getWord) "[" (. word getPos) "] ")))
+  (println ""))
+
+(println (read-page "http://www.realclimate.org/index.php/archives/2014/02/going-with-the-wind/"))
