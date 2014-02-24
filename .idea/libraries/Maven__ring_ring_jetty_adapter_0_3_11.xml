@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: ring:ring-jetty-adapter:0.3.11">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/ring/ring-jetty-adapter/0.3.11/ring-jetty-adapter-0.3.11.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/ring/ring-jetty-adapter/0.3.11/ring-jetty-adapter-0.3.11-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/ring/ring-jetty-adapter/0.3.11/ring-jetty-adapter-0.3.11-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
