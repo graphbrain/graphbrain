@@ -1,8 +1,8 @@
-(ns com.graphbrain.web
+(ns graphbrain.web
   (:use compojure.core
         ring.adapter.jetty
         (ring.middleware resource file-info cookies)
-        (com.graphbrain.web.views page landing node))
+        (graphbrain.web.views page landing node))
   (:require [compojure.handler :as handler]
             [compojure.route :as route])
   (:import (com.graphbrain.web NavBar CssAndJs VisualGraph)
@@ -37,7 +37,7 @@
       :title (. vert label)
       :css-and-js (. (new CssAndJs) cssAndJs)
       :navbar (. (new NavBar user "node") html)
-      :body-fun node
+      :body-fun node-view
       :js (js vert user))))
 
 (defroutes app-routes
@@ -46,7 +46,7 @@
       :title "Welcome"
       :css-and-js (. (new CssAndJs) cssAndJs)
       :navbar (. (new NavBar nil "home") html)
-      :body-fun landing
+      :body-fun landing-view
       :js ""))
   (GET "/node/*" response (handle-node response))
   (route/not-found "<h1>Page not found</h1>"))

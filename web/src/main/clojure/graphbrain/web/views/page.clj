@@ -1,4 +1,4 @@
-(ns com.graphbrain.web.views.page
+(ns graphbrain.web.views.page
   (:use hiccup.core
         hiccup.page))
 
