@@ -65,6 +65,11 @@
             <artifactId>json</artifactId>
             <version>20131018</version>
         </dependency>
+        <dependency>
+            <groupId>org.clojure</groupId>
+            <artifactId>data.json</artifactId>
+            <version>0.2.4</version>
+        </dependency>
     </dependencies>
 
     <build>
