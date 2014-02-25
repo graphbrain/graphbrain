@@ -2,11 +2,7 @@
   (:use hiccup.core
         hiccup.page))
 
-(defn page [title
-            css-and-js
-            navbar
-            body-fun
-            js]
+(defn page [& {:keys [title css-and-js navbar body-fun js]}]
   (html5 {:lang "en"}
     [:head
       [:meta {:charset "utf-8"}]
