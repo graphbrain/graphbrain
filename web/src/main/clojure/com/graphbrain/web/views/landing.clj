@@ -1,6 +1,5 @@
 (ns com.graphbrain.web.views.landing
-  (:use hiccup.core
-        hiccup.page))
+  (:use hiccup.core))
 
 (def style "
 <style>
