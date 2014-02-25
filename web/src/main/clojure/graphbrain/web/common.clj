@@ -6,8 +6,8 @@
 (defn get-user
   [response]
   (let
-    [username (:username (response :cookies))
-     session (:session (response :cookies))]
+    [username (:value ((response :cookies) "username"))
+     session (:value ((response :cookies) "session"))]
     (if (or (not username) (not session))
       nil
       (let
