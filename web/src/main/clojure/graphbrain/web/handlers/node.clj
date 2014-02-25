@@ -9,10 +9,10 @@
     "var errorMsg = \"\";\n"))
 
 (defn handle-node
-  [response]
+  [request]
   (let
-    [user (get-user response)
-     vert (. graph get (:* (:route-params response)))]
+    [user (get-user request)
+     vert (. graph get (:* (:route-params request)))]
     (page
       :title (. vert label)
       :css-and-js (. (new CssAndJs) cssAndJs)
