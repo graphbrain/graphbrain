@@ -2,36 +2,36 @@
   (:use (graphbrain.web common)))
 
 (defn handle-signup
-  [response]
+  [request]
   (let
-    [name ((response :form-params) "name")
-     username ((response :form-params) "username")
-     email ((response :form-params) "email")
-     password ((response :form-params) "password")]
+    [name ((request :form-params) "name")
+     username ((request :form-params) "username")
+     email ((request :form-params) "email")
+     password ((request :form-params) "password")]
     (. graph createUser username  name  email  password  "user")
     "ok"))
 
 (defn handle-check-username
-  [response]
+  [request]
   (let
-    [username ((response :form-params) "username")]
+    [username ((request :form-params) "username")]
     (if (. graph usernameExists username)
       (str "exists " username)
       (str "ok " username))))
 
 (defn handle-check-email
-  [response]
+  [request]
   (let
-    [email ((response :form-params) "email")]
+    [email ((request :form-params) "email")]
     (if (. graph emailExists email)
       (str "exists " email)
       (str "ok " email))))
 
 (defn handle-login
-  [response]
+  [request]
   (let
-    [login ((response :form-params) "login")
-     password ((response :form-params) "password")
+    [login ((request :form-params) "login")
+     password ((request :form-params) "password")
      user (. graph attemptLogin login password)]
     (if user
       (str (. user getUsername) " " (. user getSession))

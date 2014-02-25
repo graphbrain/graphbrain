@@ -2,17 +2,18 @@
   (:use compojure.core
         ring.adapter.jetty
         (ring.middleware resource file-info cookies params)
-        (graphbrain.web.handlers landing node user))
+        (graphbrain.web.handlers landing node user raw))
   (:require [compojure.handler :as handler]
             [compojure.route :as route]))
 
 (defroutes app-routes
-  (GET "/" response (handle-landing response))
-  (GET "/node/*" response (handle-node response))
-  (POST "/signup" response (handle-signup response))
-  (POST "/checkusername" response (handle-check-username response))
-  (POST "/checkemail" response (handle-check-email response))
-  (POST "/login" response (handle-login response))
+  (GET "/" request (handle-landing request))
+  (GET "/node/*" request (handle-node request))
+  (GET "/raw/*" request (handle-raw request))
+  (POST "/signup" request (handle-signup request))
+  (POST "/checkusername" request (handle-check-username request))
+  (POST "/checkemail" request (handle-check-email request))
+  (POST "/login" request (handle-login request))
   (route/not-found "<h1>Page not found</h1>"))
 
 (def app

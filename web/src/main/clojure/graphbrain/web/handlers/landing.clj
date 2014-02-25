@@ -5,9 +5,9 @@
   (:import (com.graphbrain.web NavBar CssAndJs)))
 
 (defn handle-landing
-  [response]
+  [request]
   (let
-    [user (get-user response)]
+    [user (get-user request)]
     (if user
       (redirect (str "/node/" (. user id)))
       (page
