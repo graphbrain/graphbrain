@@ -1,4 +1,4 @@
-(ns com.graphbrain.web.views.landing
+(ns graphbrain.web.views.landing
   (:use hiccup.core))
 
 (def style "
@@ -17,7 +17,7 @@ of every computer in the human system. Unthinkable complexity. Lines of light
 ranged in the nonspace of the mind, clusters and constellations of data. Like
 city lights, receding...")
 
-(defn landing []
+(defn landing-view []
   (html
     style
     [:br]

@@ -1,4 +1,4 @@
-(ns com.graphbrain.web.views.node
+(ns graphbrain.web.views.node
   (:use hiccup.core))
 
 (def ^:private style "
@@ -10,7 +10,7 @@
 </style>
 ")
 
-(defn node []
+(defn node-view []
   (html
     style
     [:div {:id "main-view"}
