@@ -1,105 +1,61 @@
 package com.graphbrain.eco;
 
-
-import opennlp.tools.postag.POSModel;
-import opennlp.tools.postag.POSTaggerME;
-import opennlp.tools.tokenize.Tokenizer;
-import opennlp.tools.tokenize.TokenizerME;
-import opennlp.tools.tokenize.TokenizerModel;
-import java.io.IOException;
-import java.io.InputStream;
-
+import edu.stanford.nlp.tagger.maxent.MaxentTagger;
+import java.util.List;
 
 public class POSTagger {
 
     // prevent instantiation
     private POSTagger() {}
 
-    private static Tokenizer tokenizer;
-    private static opennlp.tools.postag.POSTagger posTagger;
+    private static MaxentTagger tagger;
+    private static StanfordLemmatizer s;
 
     static {
-        // init tokenizer
-        tokenizer = null;
-
-        InputStream modelIn = null;
-        try {
-            // Loading tokenizer model
-            modelIn = Thread.currentThread().getContextClassLoader().getResourceAsStream("pos_models/en-token.bin");
-            final TokenizerModel tokenModel = new TokenizerModel(modelIn);
-            modelIn.close();
-
-            tokenizer = new TokenizerME(tokenModel);
-        }
-        catch (final IOException ioe) {
-            ioe.printStackTrace();
-        }
-        finally {
-            if (modelIn != null) {
-                try {
-                    modelIn.close();
-                }
-                catch (final IOException ignored) {} // oh well!
-            }
-        }
-
-        // init POS tagger
-        modelIn = null;
-        try {
-            // Loading tokenizer model
-            modelIn = Thread.currentThread().getContextClassLoader().getResourceAsStream("pos_models/en-pos-maxent.bin");
-            final POSModel posModel = new POSModel(modelIn);
-            modelIn.close();
-
-            posTagger = new POSTaggerME(posModel);
-
-        }
-        catch (final IOException ioe) {
-            ioe.printStackTrace();
-        }
-        finally {
-            if (modelIn != null) {
-                try {
-                    modelIn.close();
-                }
-                catch (final IOException ignored) {} // oh well!
-            }
-        }
+        tagger = new MaxentTagger("pos_models/english-left3words-distsim.tagger");
+        s = new StanfordLemmatizer();
     }
 
-    public static String[] tokenize(String sentence) {
-        return tokenizer.tokenize(sentence);
-    }
-
+    /**
+     Returns a list of annotated words: (word, pos, lemma)
+     */
     public static Word[] annotate(String stringToAnnotate) {
-        String[] tokens = tokenize(stringToAnnotate);
-        String[] posTokens = posTagger.tag(tokens);
+        // taggedTokens
+        String taggedString = tagger.tagString(stringToAnnotate);
+        String[] wordTagPairs = taggedString.split(" ");
 
-        int length = tokens.length;
+        int length = wordTagPairs.length;
         Word[] annotated = new Word[length];
 
-        for (int i = 0; i < length; i++) {
-            Word word = new Word(tokens[i], posTokens[i], "");
+        int i = 0;
+        for (String wordTag : wordTagPairs) {
+            String[] tt = wordTag.split("_");
+            Word word = new Word(tt[0], tt[1], "");
             annotated[i] = word;
+            i++;
         }
 
         // lemmatise
-        for (int i = 0; i < length; i++) {
-            Stemmer stemmer = new Stemmer();
-            String word = annotated[i].getWord();
-            stemmer.add(word.toCharArray(), word.length());
-            stemmer.stem();
-            annotated[i].setLemma(stemmer.toString());
+        List<String> lemmas = s.lemmatize(stringToAnnotate, 0);
+
+        // merge
+        i = 0;
+        for (String lemma : lemmas) {
+            annotated[i].setLemma(lemma);
+            i++;
         }
 
         return annotated;
     }
 
     public static void main(String[] args) {
-        Word[] annotated = POSTagger.annotate("Telmo played guitar.");
+        /*
+        POSTagger tagger = new POSTagger();
+        List<String[]> annotated = tagger.annotate("Telmo likes chocolate.");
 
-        for (Word w : annotated) {
-            System.out.println(w + "[" + w.getPos() + "; " + w.getLemma() + "]");
+        for (String[] elem : annotated) {
+            System.out.println("-> " + elem[0] + " " + elem[1] + " " + elem[2]);
         }
+        */
     }
 }
