@@ -1,6 +1,7 @@
 (ns graphbrain.web.handlers.aichat
   (:use (graphbrain.web common))
-  (:require [clojure.data.json :as json])
+  (:require [clojure.data.json :as json]
+            [graphbrain.graph :as gb])
   (:import (com.graphbrain.eco Prog)
            (com.graphbrain.db VertexType)))
 
@@ -12,11 +13,11 @@
 (defn- aichat-reply
   [root-id vertex]
   (let
-    [goto-id (if
-               (and vertex (= (. vertex type) VertexType/Edge)
-                 (second (. vertex getIds)))
+    [goto-id (if (gb/edge? vertex)
+               (second (. vertex getIds))
                root-id)]
-    (json/write-str {:sentence (,.id vertex)
+    (json/write-str
+      {:sentence (.id vertex)
       :newedges (list (. vertex id))
       :goto goto-id})))
 
@@ -31,6 +32,6 @@
     (let
       [ctxts-list (. prog wv sentence 0)
        vertex (. (first (. (first ctxts-list) getCtxts)) getTopRetVertex)]
-      (prn (. (last (. (last ctxts-list) getCtxts)) getTopRetVertex))
-      ;(. graph put vertex (. user id))
-      (prn (aichat-reply root-id vertex)))))
+      (if (gb/edge? vertex)
+        (. graph put vertex (. user id)))
+      (aichat-reply root-id vertex))))
