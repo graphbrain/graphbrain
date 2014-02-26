@@ -2,7 +2,7 @@
   (:use compojure.core
         ring.adapter.jetty
         (ring.middleware resource file-info cookies params)
-        (graphbrain.web.handlers landing node user raw search))
+        (graphbrain.web.handlers landing node user raw search aichat))
   (:require [compojure.handler :as handler]
             [compojure.route :as route]))
 
@@ -15,6 +15,7 @@
   (POST "/checkemail" request (handle-check-email request))
   (POST "/login" request (handle-login request))
   (POST "/search" request (handle-search request))
+  (POST "/ai" request (handle-aichat request))
   (route/not-found "<h1>Page not found</h1>"))
 
 (def app
