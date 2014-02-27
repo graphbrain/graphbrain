@@ -5,7 +5,7 @@
         (graphbrain.web.handlers landing node nodeactions user
                                          raw search aichat relations
                                          allusers ecoparser ecocode
-                                         ecoedittests))
+                                         ecoedittests ecoruntests))
   (:require [compojure.handler :as handler]
             [compojure.route :as route]))
 
@@ -28,6 +28,8 @@
   (POST "/eco/code" request (handle-ecocode-post request))
   (GET "/eco/edittests" request (handle-ecoedittests-get request))
   (POST "/eco/edittests" request (handle-ecoedittests-post request))
+  (GET "/eco/runtests" request (handle-ecoruntests-get request))
+  (POST "/eco/runtests" request (handle-ecoruntests-post request))
   (route/not-found "<h1>Page not found</h1>"))
 
 (def app
