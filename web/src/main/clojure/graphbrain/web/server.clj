@@ -4,7 +4,8 @@
         (ring.middleware resource file-info cookies params)
         (graphbrain.web.handlers landing node nodeactions user
                                          raw search aichat relations
-                                         allusers ecoparser ecocode))
+                                         allusers ecoparser ecocode
+                                         ecoedittests))
   (:require [compojure.handler :as handler]
             [compojure.route :as route]))
 
@@ -25,6 +26,8 @@
   (POST "/eco" request (handle-ecoparser-post request))
   (GET "/eco/code" request (handle-ecocode-get request))
   (POST "/eco/code" request (handle-ecocode-post request))
+  (GET "/eco/edittests" request (handle-ecoedittests-get request))
+  (POST "/eco/edittests" request (handle-ecoedittests-post request))
   (route/not-found "<h1>Page not found</h1>"))
 
 (def app
