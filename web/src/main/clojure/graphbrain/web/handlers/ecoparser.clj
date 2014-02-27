@@ -66,6 +66,12 @@
       :title "Parse"
       :body-fun (fn [] (ecoparser-view text vcl)))))
 
-(defn handle-ecoparser
+(defn handle-ecoparser-get
   [request]
   (render-parser request ""))
+
+(defn handle-ecoparser-post
+  [request]
+  (let
+    [text ((request :form-params) "text")]
+    (render-parser request text)))

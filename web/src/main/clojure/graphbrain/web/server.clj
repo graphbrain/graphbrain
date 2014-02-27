@@ -21,7 +21,8 @@
   (POST "/ai" request (handle-aichat request))
   (POST "/rel" request (handle-relations request))
   (GET "/allusers" request (handle-allusers request))
-  (GET "/eco" request (handle-ecoparser request))
+  (GET "/eco" request (handle-ecoparser-get request))
+  (POST "/eco" request (handle-ecoparser-post request))
   (route/not-found "<h1>Page not found</h1>"))
 
 (def app
