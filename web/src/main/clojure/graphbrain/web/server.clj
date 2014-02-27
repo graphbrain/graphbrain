@@ -4,7 +4,7 @@
         (ring.middleware resource file-info cookies params)
         (graphbrain.web.handlers landing node nodeactions user
                                          raw search aichat relations
-                                         allusers))
+                                         allusers ecoparser))
   (:require [compojure.handler :as handler]
             [compojure.route :as route]))
 
@@ -21,6 +21,7 @@
   (POST "/ai" request (handle-aichat request))
   (POST "/rel" request (handle-relations request))
   (GET "/allusers" request (handle-allusers request))
+  (GET "/eco" request (handle-ecoparser request))
   (route/not-found "<h1>Page not found</h1>"))
 
 (def app
