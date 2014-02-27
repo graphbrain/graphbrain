@@ -22,3 +22,10 @@
     [prog (. graph getProgNode "prog/prog")]
     (if prog
       (. prog getProg) "")))
+
+(defn get-tests
+  []
+  (let
+    [tests (. graph getTextNode "text/tests")]
+    (if tests
+      (. tests getText) "")))

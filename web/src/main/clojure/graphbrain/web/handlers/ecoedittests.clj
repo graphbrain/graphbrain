@@ -3,13 +3,6 @@
         (graphbrain.web.views ecopage ecoedittests))
   (:import (com.graphbrain.db TextNode)))
 
-(defn get-tests
-  []
-  (let
-    [tests (. graph getTextNode "text/tests")]
-    (if tests
-      (. tests getText) "")))
-
 (defn handle-ecoedittests-get
   [request]
   (let
