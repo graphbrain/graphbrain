@@ -67,4 +67,5 @@
   [request]
   (let
     [text ((request :form-params) "text")]
-    (render-parser request text)))
+    {:cookies {"parse_text" text}
+     :body (render-parser request text)}))
