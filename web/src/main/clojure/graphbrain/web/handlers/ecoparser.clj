@@ -5,13 +5,6 @@
   (:import (com.graphbrain.eco Prog Text)
            (com.graphbrain.web VisualContext)))
 
-(defn- get-code
-  []
-  (let
-    [prog (. graph getProgNode "prog/prog")]
-    (if prog
-      (. prog getProg) "")))
-
 (defn- text2sentences
   [text]
   (. text getSentences))

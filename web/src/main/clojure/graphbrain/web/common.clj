@@ -15,3 +15,10 @@
         (if user-node
           (if (. user-node checkSession session)
             user-node))))))
+
+(defn get-code
+  []
+  (let
+    [prog (. graph getProgNode "prog/prog")]
+    (if prog
+      (. prog getProg) "")))
