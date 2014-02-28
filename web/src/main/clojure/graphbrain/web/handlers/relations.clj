@@ -9,4 +9,4 @@
     [user (get-user request)
      pos ((request :form-params) "pos")
      root-id ((request :form-params) "rootId")]
-    (VisualGraph/generate root-id, user)))
+    (VisualGraph/generate graph root-id user)))

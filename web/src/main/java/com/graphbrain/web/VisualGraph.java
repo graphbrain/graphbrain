@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import java.util.*;
 
+
 public class VisualGraph {
 
     public static final int MAX_SNODES = 15;
@@ -42,13 +43,13 @@ public class VisualGraph {
         }
     }
 
-    public static String generate(String rootId, UserNode user) {
+    public static String generate(Graph graph, String rootId, UserNode user) {
         String userId = "";
         if (user != null)
             userId = user.id;
 
         // get neighboring edges
-        Set<Edge> hyperEdges = WebServer.graph.edges(rootId, userId);
+        Set<Edge> hyperEdges = graph.edges(rootId, userId);
 
         // map hyperedges to visual edges
         Set<SimpleEdge> visualEdges = new HashSet<>();
@@ -77,12 +78,12 @@ public class VisualGraph {
         }
 
         // create map with all information for supernodes
-        Map<String, Map<String, Object>> snodeMap = generateSnodeMap(edgeNodeMap, rootId);
+        Map<String, Map<String, Object>> snodeMap = generateSnodeMap(graph, edgeNodeMap, rootId);
 
         // create reply structure with all the information needed for rendering
         JSONObject json = new JSONObject();
         json.put("user", userId);
-        json.put("root", node2map(rootId, "", rootId));
+        json.put("root", node2map(graph, rootId, "", rootId));
         json.put("snodes", snodeMap);
         json.put("allrelations", allRelations);
 
@@ -155,7 +156,7 @@ public class VisualGraph {
         return enMap;
     }
 
-    private static Map<String, String> node2map(String nodeId, String nodeEdge, String rootId) {
+    private static Map<String, String> node2map(Graph graph, String nodeId, String nodeEdge, String rootId) {
         VertexType vtype = VertexType.getType(nodeId);
         Vertex node;
 
@@ -163,7 +164,7 @@ public class VisualGraph {
             node = new EntityNode(nodeId);
         }
         else {
-            node = WebServer.graph.get(nodeId);
+            node = graph.get(nodeId);
 
             if (node == null) {
                 node = Vertex.fromId(nodeId);
@@ -177,7 +178,7 @@ public class VisualGraph {
                 EntityNode en = (EntityNode)node;
                 map.put("id", en.id);
                 map.put("type", "text");
-                map.put("text", WebServer.graph.description(en));
+                map.put("text", graph.description(en));
                 map.put("edge", nodeEdge);
                 return map;
             case URL:
@@ -218,7 +219,7 @@ public class VisualGraph {
         }
     }
 
-    private static Map<String, Object> generateSnode(RelPos rp, Set<SimpleEdge> sedges, String rootId) {
+    private static Map<String, Object> generateSnode(Graph graph, RelPos rp, Set<SimpleEdge> sedges, String rootId) {
         String label = linkLabel(rp.rel);
         String color = linkColor(label);
         List<Map<String, String>> nodes = new LinkedList<>();
@@ -232,7 +233,7 @@ public class VisualGraph {
                 nodeId = se.getId2();
             }
 
-            nodes.add(node2map(nodeId, se.getParent().id, rootId));
+            nodes.add(node2map(graph, nodeId, se.getParent().id, rootId));
         }
 
         Map<String, Object> data = new HashMap<>();
@@ -245,12 +246,12 @@ public class VisualGraph {
         return data;
     }
 
-    private static Map<String, Map<String, Object>> generateSnodeMap(Map<RelPos, Set<SimpleEdge>> edgeNodeMap, String rootId) {
+    private static Map<String, Map<String, Object>> generateSnodeMap(Graph graph, Map<RelPos, Set<SimpleEdge>> edgeNodeMap, String rootId) {
         Map<String, Map<String, Object>> snodeMap = new HashMap<>();
 
         int count = 0;
         for (RelPos rp : edgeNodeMap.keySet()) {
-            snodeMap.put(rp.snodeId(), generateSnode(rp, edgeNodeMap.get(rp), rootId));
+            snodeMap.put(rp.snodeId(), generateSnode(graph, rp, edgeNodeMap.get(rp), rootId));
 
             count++;
             if (count > MAX_SNODES) {
