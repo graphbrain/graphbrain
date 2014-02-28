@@ -5,7 +5,7 @@
 
 (defn- js
   [node user]
-  (str "var data = " (VisualGraph/generate (. node id) user)  ";\n"
+  (str "var data = " (VisualGraph/generate graph (. node id) user) ";\n"
     "var errorMsg = \"\";\n"))
 
 (defn handle-node
