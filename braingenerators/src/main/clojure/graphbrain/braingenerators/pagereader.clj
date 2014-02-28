@@ -1,20 +1,15 @@
-(ns com.graphbrain.braingenerators
+(ns graphbrain.braingenerators.pagereader
+  (:use [clojure.string :only [join]])
   (:import (java.net URL)
+           (java.io StringReader)
            (de.l3s.boilerpipe.extractors CommonExtractors)
            (de.l3s.boilerpipe.sax HTMLHighlighter)
            (org.jsoup Jsoup)
            (org.jsoup.nodes TextNode)
-           (opennlp.tools.sentdetect SentenceModel SentenceDetectorME)
+           (edu.stanford.nlp.process DocumentPreprocessor)
+           (edu.stanford.nlp.ling HasWord)
            (com.graphbrain.eco Prog POSTagger Words)
            (com.graphbrain.db Graph)))
-
-; create opennlp sentence detector
-(def sentence-detector
-  (let [model-in (. (. (Thread/currentThread) getContextClassLoader)
-                   getResourceAsStream "pos_models/en-sent.bin")
-        sentence-model (new SentenceModel model-in)]
-    (. model-in close)
-    (new SentenceDetectorME sentence-model)))
 
 ; create graph
 (def graph (new Graph))
@@ -22,6 +17,17 @@
 ; create prog
 (def prog
   (Prog/fromString (slurp "eco/page.eco") graph))
+
+(defn- has-word-list2sentence
+  [word-list]
+  (join " "
+    (map (fn [w] (. w toString)) word-list)))
+
+(defn extract-sentences
+  [text]
+  (let
+    [dp (new DocumentPreprocessor (new StringReader text))]
+    (map (fn [l] (has-word-list2sentence l)) dp)))
 
 (defn extract-html
   "Extract 'meat' from a page, returns html string"
@@ -97,12 +103,6 @@
   [sentence]
   (new Words
     (POSTagger/annotate sentence)))
-
-(defn extract-sentences
-  "Divide a text into sentences"
-  [text]
-  (map sentence2words
-    (. sentence-detector sentDetect text)))
 
 (defn parse-words
   "Use eco program to parse sequence of words to graphbrain vertex"
