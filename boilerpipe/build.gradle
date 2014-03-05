@@ -1,3 +1,0 @@
-dependencies {
-    compile group: 'net.sourceforge.nekohtml', name: 'nekohtml', version: '1.9.19'
-}
