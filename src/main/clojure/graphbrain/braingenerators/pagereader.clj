@@ -131,4 +131,4 @@
     (print (str (. word getWord) "[" (. word getPos) "] ")))
   (println ""))
 
-(println (read-page "http://www.realclimate.org/index.php/archives/2014/02/going-with-the-wind/"))
+;(println (read-page "http://www.realclimate.org/index.php/archives/2014/02/going-with-the-wind/"))

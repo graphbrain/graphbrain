@@ -39,4 +39,8 @@
     wrap-params
     wrap-cookies))
 
-(run-jetty app {:port 4567})
+(defn run
+  []
+  (run-jetty app {:port 4567}))
+
+;;(run-jetty app {:port 4567})
