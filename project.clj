@@ -1,7 +1,7 @@
 (defproject graphbrain "0.1.0-SNAPSHOT"
   :description "GraphBrain project"
   :url "http://graphbrain.com/"
-  :dependencies  [[org.clojure/clojure "1.5.1"]
+  :dependencies  [[org.clojure/clojure "1.5.0"]
                  [commons-io/commons-io "2.4"]
                  [org.apache.commons/commons-lang3 "3.1"]
                  [commons-lang/commons-lang "2.6"]
@@ -20,9 +20,11 @@
                  [compojure/compojure "1.1.6"]
                  [ring/ring-jetty-adapter "0.3.11"]
                  [hiccup/hiccup "1.0.5"]
-                 [org.clojure/data.json "0.2.4"]]
+                 [org.clojure/data.json "0.2.4"]
+                 [org.clojure/tools.nrepl "0.2.3"]]
+  :plugins [[lein-ring "0.8.10"]]
   :source-paths ["src" "src/main/clojure"]
   :java-source-paths ["src/main/java"]
   :test-paths ["test" "src/test/clojure"]
-  :resource-paths ["src/main/resources"]
-  :main graphbrain.web.server)
+  :resource-paths ["src/main/resources"])
+ ;; :main graphbrain.web.server)
