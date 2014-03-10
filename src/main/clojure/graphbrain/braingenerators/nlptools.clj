@@ -1,6 +1,7 @@
 (ns graphbrain.braingenerators.nlptools
   (:use [clojure.string :only [join]]
-        graphbrain.braingenerators.htmltools)
+        graphbrain.braingenerators.htmltools
+        graphbrain.eco.words)
   (:import (java.io StringReader)
            (edu.stanford.nlp.process DocumentPreprocessor)
            (edu.stanford.nlp.ling HasWord)
@@ -17,25 +18,13 @@
     [dp (new DocumentPreprocessor (new StringReader text))]
     (map (fn [l] (has-word-list->sentence l)) dp)))
 
-(defn sentence->words
-  "Convert sentence string to Words object"
-  [sentence]
-  (new Words
-    (POSTagger/annotate sentence)))
-
 (defn sentences->words-list
   [sentences]
-  (map sentence->words sentences))
-
-(defn words-list->word-list
-  [words-list]
-  (flatten (map
-    (fn [words]
-      (map (fn [word] word) (. words getWords))) words-list)))
+  (map str->words sentences))
 
 (defn url->word-list
   [url-str]
-  (words-list->word-list
+  (flatten
    (sentences->words-list
     (extract-sentences ((url->text+tags url-str) :text)))))
 
