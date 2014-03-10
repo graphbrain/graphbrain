@@ -19,6 +19,24 @@ public class Word {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Word) {
+            Word wrd = (Word)obj;
+            return (wrd.word.equals(word)
+                    && wrd.pos.equals(pos));
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31).
+            append(word).
+            append(pos).
+            toHashCode();
+    }
+
+    @Override
     public String toString() {
         return word;
     }
