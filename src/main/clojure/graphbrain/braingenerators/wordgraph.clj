@@ -1,5 +1,6 @@
 (ns graphbrain.braingenerators.wordgraph
-  (:use graphbrain.braingenerators.nlptools)
+  (:use graphbrain.braingenerators.nlptools
+        graphbrain.eco.word)
   (:require [clojure.math.combinatorics :as combo]))
 
 (defn add-edge
@@ -14,6 +15,14 @@
         g (assoc g targ (assoc targ-node :links (conj targ-links orig)))]
     g))
 
+(defn- )
+
+(defn- filter-and-add-edge
+  [graph pair]
+  (if (pair-relevant? pair)
+    (add-edge graph pair)
+    graph))
+
 (defn- add-window-to-graph
   [window graph]
   (let [pairs combo/combinations window 2]
@@ -21,7 +30,7 @@
            p pairs]
       (if (empty? p)
         g
-        (recur (add-edge g p)
+        (recur (filter-and-add-edge g p)
                (rest p))))))
 
 (defn word-list->graph
