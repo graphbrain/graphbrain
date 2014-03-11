@@ -1,5 +1,7 @@
 package com.graphbrain.eco;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 public class Word {
 
     private String word;
