@@ -1,11 +1,8 @@
 (ns graphbrain.braingenerators.webtools
-  (:use [clojure.string :only [join]])
+  (:require [clj-http.client :as client])
   (:import (java.net URL)
            (java.io BufferedReader InputStreamReader)))
 
 
-(defn slurp-url[address]
-  (with-open [stream (.openStream (java.net.URL. address))]
-    (let  [buf (java.io.BufferedReader. 
-                (java.io.InputStreamReader. stream))]
-      (apply str (line-seq buf)))))
+(defn slurp-url[url-str]
+  (:body (client/get url-str)))

@@ -40,3 +40,11 @@
 (defn add-field-all-nodes
   [graph field value]
   (map-map-vals #(assoc % field value) graph))
+
+(defn inc-field
+  [graph node-key field]
+  (let [node (graph node-key)
+        node (if node node {})
+        val (node field)
+        newval (if val (inc val) 1)]
+    (assoc graph node-key (assoc node field newval))))
