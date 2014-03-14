@@ -10,12 +10,12 @@
   <scm>
     <connection>scm:git:git://github.com//.git</connection>
     <developerConnection>scm:git:ssh://git@github.com//.git</developerConnection>
-    <tag>1df7a6b2f7d0e4111276d26a0df5f2e099556d31
+    <tag>d07adbb705ca94ca9b1f00729c066417c60f9ebc
 </tag>
     <url>https://github.com//</url>
   </scm>
   <build>
-    <sourceDirectory>src</sourceDirectory>
+    <sourceDirectory>src/main/clojure</sourceDirectory>
     <testSourceDirectory>test</testSourceDirectory>
     <resources>
       <resource>
@@ -46,7 +46,6 @@
             </goals>
             <configuration>
               <sources>
-                <source>src/main/clojure</source>
                 <source>src/main/java</source>
               </sources>
             </configuration>

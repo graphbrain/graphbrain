@@ -25,7 +25,7 @@
                  [org.clojure/math.combinatorics "0.0.7"]
                  [clj-http "0.9.0"]]
   :plugins [[lein-ring "0.8.10"]]
-  :source-paths ["src" "src/main/clojure"]
+  :source-paths ["src/main/clojure"]
   :java-source-paths ["src/main/java"]
   :test-paths ["test" "src/test/clojure"]
   :resource-paths ["src/main/resources"])
