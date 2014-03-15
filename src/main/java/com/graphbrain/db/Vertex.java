@@ -106,6 +106,10 @@ public abstract class Vertex {
         return id.hashCode();
     }
 
+    public String getId() {
+        return id;
+    }
+
     public long getTs() {
         return ts;
     }

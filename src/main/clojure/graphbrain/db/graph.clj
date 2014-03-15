@@ -78,14 +78,14 @@
 
 (defn vertex-obj->map
   [obj]
-  (case (VertexType/getType (. obj getId))
-    Entity (entity-obj->map obj)
-    Edge (edge-obj->map obj)
-    EdgeType (edge-type-obj->map obj)
-    URL (url-obj->map obj)
-    User (user-obj->map obj)
-    Prog (prog-obj->map obj)
-    Text (text-obj->map obj)))
+  (condp = (VertexType/getType (. obj getId))
+    VertexType/Entity (entity-obj->map obj)
+    VertexType/Edge (edge-obj->map obj)
+    VertexType/EdgeType (edge-type-obj->map obj)
+    VertexType/URL (url-obj->map obj)
+    VertexType/User (user-obj->map obj)
+    VertexType/Prog (prog-obj->map obj)
+    VertexType/Text (text-obj->map obj)))
 
 (defn map->entity-obj
   [m]
