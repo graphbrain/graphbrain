@@ -56,13 +56,15 @@
   [text+tags]
   (loop [list text+tags
          text ""
+         text-parts []
          tags []]
     (if (empty? list)
-      {:text text, :tags tags}
+      {:text text, :text-parts text-parts :tags tags}
       (let [elem (first list)]
         (recur
           (rest list)
           (str text " " (elem :text))
+          (conj text-parts (elem :text))
           (if (nil? (elem :tag))
             tags
             (conj tags elem)))))))

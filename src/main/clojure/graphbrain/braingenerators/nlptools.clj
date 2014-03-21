@@ -12,22 +12,33 @@
   (join " "
     (map (fn [w] (. w toString)) word-list)))
 
-(defn extract-sentences
+(defmulti extract-sentences class)
+
+(defmethod extract-sentences java.lang.String
   [text]
   (let
     [dp (new DocumentPreprocessor (new StringReader text))]
     (map (fn [l] (has-word-list->sentence l)) dp)))
 
-(defn sentences->words-list
+(defmethod extract-sentences clojure.lang.Sequential
+  [text-parts]
+  (flatten (map extract-sentences text-parts)))
+
+(defn sentences->words
   [sentences]
-  (map str->words sentences))
+  (flatten sentences))
 
-(defn url->word-list
+(defn url->sentences
   [url-str]
-  (flatten
-   (sentences->words-list
-    (extract-sentences ((url->text+tags url-str) :text)))))
+  (map str->words
+       (extract-sentences ((url->text+tags url-str) :text-parts))))
 
-(defn- test
-  []
-  (url->word-list "http://www.realclimate.org/index.php/archives/2014/03/the-nenana-ice-classic-and-climate/"))
+(defn url->words
+  [url-str]
+  (sentences->words
+   (extract-sentences ((url->text+tags url-str) :text))))
+
+(defn print-sentences
+  [sentences]
+  (doseq [sentence sentences]
+    (prn (clojure.string/join " " (map #(:word %) sentence)))))
