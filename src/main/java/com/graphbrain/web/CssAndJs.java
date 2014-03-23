@@ -34,6 +34,6 @@ public class CssAndJs {
             + "<script src=\"/js/jquery-1.7.2.min.js\" type=\"text/javascript\" ></script>"
             + "<script src=\"/js/jquery-ui-1.8.18.custom.min.js\" type=\"text/javascript\" ></script>"
             + "<script src=\"/js/bootstrap.min.js\" type=\"text/javascript\" ></script>"
-            + "<script src=\"/js/gb.js?" + randomVersion() + " type=\"text/javascript\" ></script>";
+            + "<script src=\"/js/gbui.js?" + randomVersion() + " type=\"text/javascript\" ></script>";
     }
 }
