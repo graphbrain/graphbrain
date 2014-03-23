@@ -63,7 +63,7 @@
   [ngrams]
   (map #(assoc % :score (ngram-score %)) ngrams))
 
-(defn- sorted-ngrams
+(defn sorted-ngrams
   [ngrams]
   (sort-by :score ngrams))
 
@@ -144,6 +144,10 @@
        graph
        (recur (rest ngs) (ngram->graph (first ngs) graph ngram-map))))))
 
+(defn ngram->str
+  [ngram]
+  (clojure.string/join " " (map #(:word %) (:words ngram))))
+
 (defn leaf-ngrams
   [ngrams-graph]
   (keys (filter #(empty? (:in (second %))) ngrams-graph)))
@@ -154,5 +158,5 @@
         ngrams-graph (ngrams->graph ngrams)
         leafs (sorted-ngrams (leaf-ngrams ngrams-graph))]
     (doseq [ngram leafs]
-      (prn (clojure.string/join " " (map #(:word %) (:words ngram)))
-           (:score ngram)))))
+      (prn (ngram->str ngram))
+           (:score ngram))))
