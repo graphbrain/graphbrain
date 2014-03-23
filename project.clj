@@ -23,10 +23,27 @@
                  [org.clojure/data.json "0.2.4"]
                  [org.clojure/tools.nrepl "0.2.3"]
                  [org.clojure/math.combinatorics "0.0.7"]
-                 [clj-http "0.9.0"]]
-  :plugins [[lein-ring "0.8.10"]]
-  :source-paths ["src/main/clojure"]
+                 [clj-http "0.9.0"]
+                 [org.clojure/clojurescript "0.0-2173"]]
+  :plugins [[lein-ring "0.8.10"]
+            [lein-cljsbuild "1.0.0"]]
+  :source-paths ["src/main/clojure" "src/main/cljs"]
   :java-source-paths ["src/main/java"]
   :test-paths ["test" "src/test/clojure"]
   :resource-paths ["src/main/resources"])
- ;; :main graphbrain.web.server)
+  :ring {:handler graphbrain.gbui.server/handler}
+
+  ;; cljsbuild options configuration
+  :cljsbuild {:buildsp
+              [{;; CLJS source code path
+                :source-paths ["src/cljs"]
+
+                ;; Google Closure (CLS) options configuration
+                :compiler {;; CLS generated JS script filename
+                           :output-to "resources/public/js/gbui.js"
+
+                           ;; minimal JS optimization directive
+                           :optimizations :whitespace
+
+                           ;; generated JS code prettyfication
+                           :pretty-print true}}]})
