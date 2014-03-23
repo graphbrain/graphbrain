@@ -39,6 +39,13 @@
     wrap-params
     wrap-cookies))
 
+(def handler
+  (handler/site (-> app-routes
+       (wrap-resource "")
+       wrap-file-info
+       wrap-params
+       wrap-cookies)))
+
 (defn run
   []
   (run-jetty app {:port 4567}))

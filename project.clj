@@ -1,7 +1,7 @@
 (defproject graphbrain "0.1.0-SNAPSHOT"
   :description "GraphBrain project"
   :url "http://graphbrain.com/"
-  :dependencies  [[org.clojure/clojure "1.5.0"]
+  :dependencies  [[org.clojure/clojure "1.5.1"]
                  [commons-io/commons-io "2.4"]
                  [org.apache.commons/commons-lang3 "3.1"]
                  [commons-lang/commons-lang "2.6"]
@@ -30,20 +30,38 @@
   :source-paths ["src/main/clojure" "src/main/cljs"]
   :java-source-paths ["src/main/java"]
   :test-paths ["test" "src/test/clojure"]
-  :resource-paths ["src/main/resources"])
-  :ring {:handler graphbrain.gbui.server/handler}
+  :resource-paths ["src/main/resources"]
+  :ring {:handler graphbrain.web.server/handler}
 
   ;; cljsbuild options configuration
-  :cljsbuild {:buildsp
-              [{;; CLJS source code path
-                :source-paths ["src/cljs"]
-
-                ;; Google Closure (CLS) options configuration
-                :compiler {;; CLS generated JS script filename
-                           :output-to "resources/public/js/gbui.js"
-
-                           ;; minimal JS optimization directive
-                           :optimizations :whitespace
-
-                           ;; generated JS code prettyfication
-                           :pretty-print true}}]})
+  :cljsbuild {:builds
+              [{:source-paths ["src/main/cljs"],
+                :compiler
+                {:output-to "src/main/resources/js/gbui.js",
+                 :foreign-libs
+                 [{:file "src/main/js/seedrandom.js" :provides ["seedrandom"]}
+                  {:file "src/main/js/jquery.cookie.js" :provides ["jquery.cookie"]}
+                  {:file "src/main/js/jquery.mousewheel.js" :provides ["jquery.mousewheel"]}
+                  {:file "src/main/js/slimScroll.js" :provides ["slimscroll"]}
+                  {:file "src/main/js/browsers.js" :provides ["browsers"]}
+                  {:file "src/main/js/vec3mat4x4.js" :provides ["vec3mat4x4"]}
+                  {:file "src/main/js/Quaternion.js" :provides ["quaternion"]}
+                  {:file "src/main/js/alerts.js" :provides ["alerts"]}
+                  {:file "src/main/js/animation.js" :provides ["animation"]}
+                  {:file "src/main/js/interface.js" :provides ["interf"]}
+                  {:file "src/main/js/Node.js" :provides ["node"]}
+                  {:file "src/main/js/SphericalCoords.js" :provides ["sphericalcoords"]}
+                  {:file "src/main/js/SNode.js" :provides ["snode"]}
+                  {:file "src/main/js/layout.js" :provides ["layout"]}
+                  {:file "src/main/js/Graph.js" :provides ["graph"]}
+                  {:file "src/main/js/search.js" :provides ["search"]}
+                  {:file "src/main/js/disambiguate.js" :provides ["disambiguate"]}
+                  {:file "src/main/js/undo.js" :provides ["undo"]}
+                  {:file "src/main/js/user.js" :provides ["user"]}
+                  {:file "src/main/js/relations.js" :provides ["relations"]}
+                  {:file "src/main/js/aichat.js" :provides ["aichat"]}
+                  {:file "src/main/js/remove.js" :provides ["remove"]}
+                  {:file "src/main/js/State.js" :provides ["state"]}
+                  {:file "src/main/js/main.js" :provides ["main"]}],
+                 :optimizations :whitespace,
+                 :pretty-print true}}]})
