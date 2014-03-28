@@ -1,5 +1,6 @@
-(ns graphbrain.gbui.animationb
-  (:require [jayq.core :as jq])
+(ns graphbrain.gbui.animation
+  (:require [jayq.core :as jq]
+            [graphbrain.gbui.graph :as graph])
   (:use [jayq.core :only [$]]))
 
 (def anims (atom []))
@@ -15,24 +16,10 @@
   [anim]
   (not (exclusive-anim? anim)))
 
-(defn- set-interval!
-  []
-  (reset! interval-id
-          (js/setInterval anim-cycle 30)))
-
 (defn- clear-interval!
   []
   (js/clearInterval @interval-id)
   (reset! interval-id nil))
-
-(defn add-anim!
-  [anim]
-  (let [new-anims (if (= (:name anim) "lookat")
-                    (filter non-exclusive-anim? @anims)
-                    @anims)
-        new-anims (conj new-anims anim)]
-    (if (emtpy? @anims) (set-interval!))
-    (reset! anims new-anims)))
 
 (defn- remove-inactive!
   []
@@ -47,11 +34,25 @@
   (reset! anims (map run-cycle @anims))
   (remove-inactive!))
 
+(defn- set-interval!
+  []
+  (reset! interval-id
+          (js/setInterval anim-cycle 30)))
+
+(defn add-anim!
+  [anim]
+  (let [new-anims (if (= (:name anim) "lookat")
+                    (filter non-exclusive-anim? @anims)
+                    @anims)
+        new-anims (conj new-anims anim)]
+    (if (empty? @anims) (set-interval!))
+    (reset! anims new-anims)))
+
 (defn- stop-anims!
   []
   (let [new-anims (filter #(not (:stoppable %)) @anims)]
     (reset! anims new-anims)
-    (if (empty? @anims) clear-intervals!)))
+    (if (empty? @anims) clear-interval!)))
 
 (defn anim-init-rotation
   []
@@ -65,15 +66,15 @@
   (let [speed (:anim-speed anim)
         speed-x (first speed)
         speed-y (second speed)]
-    (graph-rotate [(- speed-x) speed-y])
-    (graph-update-view)
+    (graph/graph-rotate [(- speed-x) speed-y])
+    (graph/graph-update-view)
     (let [new-speed-x (* speed-x 0.98)
           new-speed-y (* speed-y 0.98)
           new-speed [new-speed-x new-speed-y]
           active (< new-speed-x 0.0001)
           new-anim (assoc anim :anim-speed new-speed)
-          new-anim (assoc new-anim :active active]
-      new-anim))))
+          new-anim (assoc new-anim :active active)]
+      new-anim)))
 
 (defn anim-lookat
   [target-snode-id]
@@ -86,15 +87,15 @@
   [anim]
   (let [speed-factor 0.05
         precision 0.01
-        target-snode ((:snodes @graph) (:target-snode-id anim))
+        target-snode ((:snodes @graph/graph) (:target-snode-id anim))
         angle (:angle target-snode)
         angle-x (first angle)
         angle-y (second angle)
         speed-x (* angle-x speed-factor)
         speed-y (* angle-y speed-factor)]
-    (graph-rotate [speed-y (- speed-x)])
-    (graph-update-view)
-    (let [target-snode ((:snodes @graph) (:target-snode-id anim))
+    (graph/graph-rotate [speed-y (- speed-x)])
+    (graph/graph-update-view)
+    (let [target-snode ((:snodes @graph/graph) (:target-snode-id anim))
           angle (:angle target-snode)
           abs-angle-x (Math/abs (first angle))
           abs-angle-y (Math/abs (second angle))
@@ -138,7 +139,7 @@
         g (Math/round (+ g1 ((- g2 g1) x)))
         b (Math/round (+ b1 ((- b2 b1) x)))
         rgb-str (str "rgb(" r "," g "," b ")")
-        node ((:nodes @graph) (:node-id anim))
+        node ((:nodes @graph/graph) (:node-id anim))
         divid (:divid node)
         active (< cycles 4)]
     (jq/css ($ (str "#" divid)) {:background rgb-str})
