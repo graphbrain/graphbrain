@@ -22,15 +22,15 @@
                :affin-mat affin-mat
                :negative-stretch 1
                :mapping-power 1
-               :snodes (snode/snodes-vis-map snodes)}]
+               :snodes (snodes-vis-map snodes)}]
     (. quat getMatrix affin-mat)
     graph))
 
 (defn graph-view-size
   []
   (let [graph-view ($ "#graph-view")
-        width (js/width graph-view)
-        height (js/height graph-view)]
+        width (jq/width graph-view)
+        height (jq/height graph-view)]
     [width height]))
 
 (defn update-size
@@ -61,11 +61,20 @@
   (reset! g/graph-vis (create-graph-vis-state
                        (graph-view-size)
                        (:snodes @g/graph)))
+  (doseq [snode-id (keys (:snodes @g/graph-vis))]
+    (snode/place snode-id))
   (update-transform))
+
+(defn- snode-ids->str
+  [graph]
+  (let [snodes (:snodes graph)
+        snodes (map #(vector (.substring (str (first %)) 1) (second %)) snodes)]
+    (assoc graph :snodes snodes)))
 
 (defn init-graph!
   []
-  (reset! g/graph (js->clj js/data :keywordize-keys true))
+  (reset! g/graph
+          (snode-ids->str (js->clj js/data :keywordize-keys true)))
   (init-graph-vis!))
 
 (defn rotate
@@ -118,7 +127,7 @@
 
 (defn update-view
   []
-  (doseq [snode (:snodes @g/graph-vis)] (snode/apply-pos snode)))
+  (doseq [snode-id (keys (:snodes @g/graph-vis))] (snode/apply-pos snode-id)))
 
 (defn layout
   []

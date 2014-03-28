@@ -1,5 +1,5 @@
 (ns graphbrain.gbui.globals)
 
-(def graph (atom nil))
+(defonce graph (atom nil))
 
-(def graph-vis (atom nil))
+(defonce graph-vis (atom nil))
