@@ -2,7 +2,8 @@
   (:require [jayq.core :as jq]
             [graphbrain.gbui.spherical :as spher]
             [graphbrain.gbui.globals :as g]
-            [graphbrain.gbui.node :as node])
+            [graphbrain.gbui.node :as node]
+            [graphbrain.gbui.mat :as mat])
   (:use [jayq.core :only [$]]))
 
 ;; TODO
@@ -18,16 +19,15 @@
 
 (defn create-snode-vis
   []
-  {:pos (js/newv3)
+  {:pos [0 0 0]
    :size [0 0]
    :angle [0 0]
    :x 0
    :y 0
    :z 0
-   :rpos (array 0 0 0)
-   :aux-vec (array 0 0 0)
-   :f (js/newv3)
-   :tpos (js/newv3)})
+   :rpos [0 0 0]
+   :f [0 0 0]
+   :tpos [0 0 0]})
 
 (defn half-size
   [snode-vis]
@@ -41,19 +41,17 @@
   (let [gv @g/graph-vis
         snodes-vis (:snodes gv)
         snode-vis (snodes-vis snode-id)
+        aux-vec [(:x snode-vis) (:y snode-vis) (:z snode-vis)]
         snode-vis (assoc snode-vis :x x :y y :z z)
-        aux-vec (array x y z)
-        snode-vis (assoc snode-vis :aux-vec aux-vec)
         affin-mat (:affin-mat gv)
-        rpos (:rpos snode-vis)
-        dummy (js/m4x4mulv3 affin-mat aux-vec rpos)
+        rpos (mat/m4x4mulv3 affin-mat aux-vec)
         sc (spher/spherical (:negative-stretch gv) (:mapping-power gv))
         rpos (:rpos snode-vis)
-        sc (assoc sc :coords (into [] (map identity rpos)))
+        sc (assoc sc :coords rpos)
         sc (spher/cartesian->spherical sc)
         sc (spher/view-mapping sc)
         sc (spher/spherical->cartesian sc)
-        rpos (apply array (:coords sc))
+        rpos (:coords sc)
         coords (:coords sc)
         angle-x (Math/atan2 (nth coords 1) (nth coords 2))
         angle-y (Math/atan2 (nth coords 0) (nth coords 2))
@@ -64,7 +62,7 @@
         x (+ (* (nth rpos 0) half-width spread) half-width)
         y (+ (nth rpos 1) (* (nth rpos 1) half-height spread) half-height)
         z (+ (nth rpos 2) (* (nth rpos 2) (Math/min half-width half-height) 0.8))
-        rpos (array x y z)
+        rpos [x y z]
         snode-vis (assoc snode-vis :rpos rpos :angle [angle-x angle-y])]
     (reset! g/graph-vis (assoc-in gv [:snodes snode-id] snode-vis))
     (if (and (not (js/isNaN x)) (not (js/isNaN y)) (not (js/isNaN z)))
@@ -90,9 +88,9 @@
   [snode-id]
   (let [snode-vis ((:snodes @g/graph-vis) snode-id)
         pos (:pos snode-vis)
-        x (nth 0 pos)
-        y (nth 1 pos)
-        z (nth 2 pos)]
+        x (nth pos 0)
+        y (nth pos 1)
+        z (nth pos 2)]
     (move-to snode-id x y z)))
 
 (defn set-color
@@ -102,6 +100,7 @@
 
 (defn place
   [snode-id]
+  (.log js/console snode-id)
   (let [snode ((:snodes @g/graph) snode-id)
         rel-text (if (is-root snode-id)
                    ""

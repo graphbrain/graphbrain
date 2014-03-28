@@ -3,9 +3,9 @@
             [graphbrain.gbui.graph :as graph])
   (:use [jayq.core :only [$]]))
 
-(def anims (atom []))
+(defonce anims (atom []))
 
-(def interval-id (atom nil))
+(defonce interval-id (atom nil))
 
 (defn exclusive-anim?
   [anim]
@@ -57,17 +57,17 @@
 (defn anim-init-rotation
   []
   {:name "initrotation"
-    :active true
-    :stoppable true
-    :anim-speed [0.007 0.005]})
+   :active true
+   :stoppable true
+   :anim-speed [0.007 0.005]})
 
 (defmethod run-cycle "initrotation"
   [anim]
   (let [speed (:anim-speed anim)
         speed-x (first speed)
         speed-y (second speed)]
-    (graph/graph-rotate [(- speed-x) speed-y])
-    (graph/graph-update-view)
+    (graph/rotate (- speed-x) speed-y 0)
+    (graph/update-view)
     (let [new-speed-x (* speed-x 0.98)
           new-speed-y (* speed-y 0.98)
           new-speed [new-speed-x new-speed-y]

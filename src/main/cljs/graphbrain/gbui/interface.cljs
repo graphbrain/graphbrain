@@ -1,7 +1,8 @@
 (ns graphbrain.gbui.interface
   (:require [jayq.core :as jq]
             [graphbrain.gbui.graph :as graph]
-            [graphbrain.gbui.animation :as anim])
+            [graphbrain.gbui.animation :as anim]
+            [graphbrain.gbui.remove :as rem])
   (:use [jayq.core :only [$]]))
 
 (def dragging (atom false))
@@ -116,7 +117,7 @@
 
 (defn init-interface
   []
-  (jq/submit ($ "#search-field") js/searchQuery)
+;;  (jq/submit ($ "#search-field") js/searchQuery)
   (js/initSearchDialog)
   (js/initSignUpDialog)
   (jq/bind ($ ".signupLink") "click" js/showSignUpDialog)
@@ -130,10 +131,11 @@
   (.addEventListener js/document "touchend" touch-end)
   (.addEventListener js/document "touchmove" touch-move)
   (js/initAlert)
-  (if (not (nil? js/data))
+  (if (exists? js/data)
     (js/initAiChat)
-    (js/initRemoveDialog)
+    ;; TODO
+    (rem/init-remove-dialog 'root')
     (js/initDisambiguateDialog)
     (js/bind ($ "#ai-chat-button") "click" js/aiChatButtonPressed))
-  (if (not (or (nil? js/errorMsg) (empty? js/errorMsg)))
+  (if (and (exists? js/errorMsg) (not (empty? js/errorMsg)))
     (js/setErrorAlert js/errorMsg)))

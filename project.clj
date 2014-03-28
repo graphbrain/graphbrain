@@ -36,19 +36,17 @@
 
   ;; cljsbuild options configuration
   :cljsbuild {:builds
-              [{:source-paths ["src/main/cljs"],
+              [{:source-paths ["src/main/cljs"]
                 :compiler
-                {:output-to "src/main/resources/js/gbui.js",
+                {:output-to "src/main/resources/js/gbui.js"
                  :foreign-libs
                  [{:file "src/main/js/seedrandom.js" :provides ["seedrandom"]}
                   {:file "src/main/js/jquery.cookie.js" :provides ["jquery.cookie"]}
                   {:file "src/main/js/jquery.mousewheel.js" :provides ["jquery.mousewheel"]}
                   {:file "src/main/js/slimScroll.js" :provides ["slimscroll"]}
                   {:file "src/main/js/browsers.js" :provides ["browsers"]}
-                  {:file "src/main/js/vec3mat4x4.js" :provides ["vec3mat4x4"]}
                   {:file "src/main/js/Quaternion.js" :provides ["quaternion"]}
                   {:file "src/main/js/alerts.js" :provides ["alerts"]}
-                  {:file "src/main/js/interface.js" :provides ["interf"]}
                   {:file "src/main/js/layout.js" :provides ["layout"]}
                   {:file "src/main/js/search.js" :provides ["search"]}
                   {:file "src/main/js/disambiguate.js" :provides ["disambiguate"]}
@@ -56,7 +54,6 @@
                   {:file "src/main/js/user.js" :provides ["user"]}
                   {:file "src/main/js/relations.js" :provides ["relations"]}
                   {:file "src/main/js/aichat.js" :provides ["aichat"]}
-                  {:file "src/main/js/State.js" :provides ["state"]}
-                  {:file "src/main/js/main.js" :provides ["main"]}],
-                 :optimizations :whitespace,
+                  {:file "src/main/js/State.js" :provides ["state"]}]
+                 :optimizations :whitespace
                  :pretty-print true}}]})
