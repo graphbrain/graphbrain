@@ -1,15 +1,14 @@
 (ns graphbrain.gbui.node
-  (:require [goog.dom :as dom])
-  (:use [jayq.core :only [$]]
-        graphbrain.gbui.remove
-        graphbrain.gbui.animation))
+  (:require [jayq.core :as jq]
+            [graphbrain.gbui.remove :as rem])
+  (:use [jayq.core :only [$]]))
 
 (defn node-div-id
   [node]
   (let [div-id (str (:id node) (:edge node))
         div-id (clojure.string/replace div-id " " "_")
         div-id (clojure.string/replace div-id "(" "_")
-        div-id (clojpure.string/replace div-id ")" "_")]
+        div-id (clojure.string/replace div-id ")" "_")]
     (str "n_" div-id)))
 
 (defn- url-node-html
@@ -22,7 +21,7 @@
         html (str html (:text node))
         html (str "</a></div><br />")
         icon (:icon node)
-        html (if (!= icon "")
+        html (if (not= icon "")
                (str html
                     "<img src='"
                     icon
@@ -39,7 +38,7 @@
                     "<div class='nodeRemove'><a id='rem"
                     div-id
                     "' href='#'>x</a></div>"))
-        html (str hrml "<div style='clear:both;'></div>")]
+        html (str html "<div style='clear:both;'></div>")]
     html))
 
 (defn- entity-node-html
@@ -53,7 +52,7 @@
         text2 (:text2 node)
         html (if text2
                (str html
-                    "<div class="nodeSubText">("
+                    "<div class='nodeSubText'>("
                     text2
                     ")</div>"))
         html (if root
@@ -84,6 +83,6 @@
     (jq/append ($ (str "#" snode-id " .viewport")) html)
     (jq/bind ($ (str "#rem" div-id))
                    :click
-                   #(remove-clicked node snode))
-    (if glow (add-anim (anim-node-glow node)))
+                   #(rem/remove-clicked node snode))
+    ;; (if glow (anim/add-anim (anim/anim-node-glow node)))
     node))

@@ -1,5 +1,8 @@
 (ns graphbrain.gbui.interface
-  (:use graphbrain.gbui.animation))
+  (:require [jayq.core :as jq]
+            [graphbrain.gbui.graph :as graph]
+            [graphbrain.gbui.animation :as anim])
+  (:use [jayq.core :only [$]]))
 
 (def dragging (atom false))
 
@@ -29,7 +32,7 @@
   (reset! dragging true)
   (reset! last-x (.-pageX e))
   (reset! last-y (.-pageY e))
-  (stop-anims)
+  (anim/stop-anims)
   false)
 
 (defn mouse-move
@@ -41,17 +44,17 @@
           delta-y (- page-y @last-y)]
       (reset! last-x page-x)
       (reset! last-y page-y)
-      (rotate-x (* (- delta-x) 0.0015))
-      (rotate-y (* (- delta-y) 0.0015))
-      (update-view)))
+      (graph/rotate-x (* (- delta-x) 0.0015))
+      (graph/rotate-y (* (- delta-y) 0.0015))
+      (graph/update-view)))
   false)
 
 (defn touch-start
   [e]
-  (stop-anims)
+  (anim/stop-anims)
   (let [touches (.-touches e)]
     (if (= (count touches) 1)
-      (let [touch = (nth touches 0)]
+      (let [touch (nth touches 0)]
         (reset! last-x (.-pageX touch))
         (reset! last-y (.-pageY touch))))
     true))
@@ -74,9 +77,9 @@
         (.preventDefault e)
         (reset! last-x page-x)
         (reset! last-y page-y)
-        (rotate-x (* (- delta-x) * 0.0015))
-        (rotate-y (* (- delta-y) * 0.0015))
-        (update-view)
+        (graph/rotate-x (* (- delta-x) * 0.0015))
+        (graph/rotate-y (* (- delta-y) * 0.0015))
+        (graph/update-view)
         false)
       (= ntouches 2)
       (let [touch0 (nth touches 0)
@@ -91,9 +94,9 @@
         (.preventDefault e)
         (if (>= @last-scale 0)
           (let [x (/ (+ page-x0 page-x1) 2)
-                y (/ (+ page-y0 page-y1) 2)]
-            (reset! delta-scale (* (- scale @last-scale) 0.025))
-            (zoom @delta-scale x y)))
+                y (/ (+ page-y0 page-y1) 2)
+                delta-scale (* (- scale @last-scale) 0.025)]
+            (graph/zoom delta-scale x y)))
         (reset! last-scale scale)
         false)
       :else true)))
@@ -101,7 +104,7 @@
 (defn mouse-wheel
   [e delta delta-x delta-y]
   (if (not @scroll)
-    (zoom delta-y (.-pageX e) (.-pageY e)))
+    (graph/zoom delta-y (.-pageX e) (.-pageY e)))
   true)
 
 (defn full-bind

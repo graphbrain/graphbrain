@@ -1,31 +1,28 @@
 (ns graphbrain.gbui.graph
-  (:require [jayq.core :as jq])
-  (:use [jayq.core :only [$]]
-        graphbrain.gbui.snode))
-
-(def graph (atom nil))
-
-(def graph-vis (atom nil))
+  (:require [jayq.core :as jq]
+            [graphbrain.gbui.globals :as g]
+            [graphbrain.gbui.snode :as snode])
+  (:use [jayq.core :only [$]]))
 
 (defn snodes-vis-map
   [snodes]
   (apply hash-map
          (flatten (into []
-                        (map #(vector (first %) (create-snode-vis)) snodes)))))
+                        (map #(vector (first %) (snode/create-snode-vis)) snodes)))))
 
 (defn create-graph-vis-state
   [size snodes]
-  (let [quat (Quaternion.)
-        affin-mat (Array. 16)
+  (let [quat (js/Quaternion.)
+        affin-mat (js/Array. 16)
         graph {:size size
                :scale 1
                :offeset [0 0 0]
                :quat quat
-               :delta-quat (Quaternion.)
+               :delta-quat (js/Quaternion.)
                :affin-mat affin-mat
                :negative-stretch 1
                :mapping-power 1
-               :snodes (snodes-vis-map snodes)}]
+               :snodes (snode/snodes-vis-map snodes)}]
     (. quat getMatrix affin-mat)
     graph))
 
@@ -38,11 +35,11 @@
 
 (defn update-size
   []
-  (reset! graph-vis (assoc @graph-vis :size (graph-view-size))))
+  (reset! g/graph-vis (assoc @g/graph-vis :size (graph-view-size))))
 
 (defn update-transform
   []
-  (let [gv @graph-vis
+  (let [gv @g/graph-vis
         offset (:offset gv)
         offset-x (first offset)
         offset-y (second offset)
@@ -61,19 +58,19 @@
 
 (defn init-graph-vis!
   []
-  (reset! graph-vis (create-graph-vis-state
-                     (graph-view-size)
-                     (:snodes @graph)))
+  (reset! g/graph-vis (create-graph-vis-state
+                       (graph-view-size)
+                       (:snodes @g/graph)))
   (update-transform))
 
 (defn init-graph!
   []
-  (reset! graph (js->clj js/data :keywordize-keys true))
+  (reset! g/graph (js->clj js/data :keywordize-keys true))
   (init-graph-vis!))
 
 (defn rotate
   [x y z]
-  (let [gv @graph-vis
+  (let [gv @g/graph-vis
         quat (:quat gv)
         delta-quat (:delta-quat gv)
         affin-mat (:affin-mat gv)]
@@ -92,7 +89,7 @@
 
 (defn zoom
   [delta-zoom x y]
-  (let [gv @graph-vis
+  (let [gv @g/graph-vis
         scale (:scale gv)
         new-scale (+ scale (* 0.3 delta-zoom))
         new-scale (if (< new-scale 0.4) 0.4 new-scale)
@@ -110,26 +107,26 @@
             new-offset-x (- rx (* (/ (- rx offset-x) scale) new-scale))
             new-offset-y (- ry (* (/ (- ry offset-y) scale) new-scale))
             gv (assoc gv :offset [new-offset-x new-offset-y] :scale new-scale)]
-        (reset! graph-vis gv))
+        (reset! g/graph-vis gv))
       (let [offset (if (> (- scale 0.4) 0)
                      (let [r (/ (- new-scale 0.4) (- scale 0.4))]
                        [(* offset-x r) (* offset-y r)])
                      offset)
             gv (assoc gv :offset offset :scale new-scale)]
-        (reset! graph-vis gv))))
+        (reset! g/graph-vis gv))))
   (update-transform))
 
 (defn update-view
   []
-  (doseq [snode (:snodes @graph-vis)] (apply-pos snode)))
+  (doseq [snode (:snodes @g/graph-vis)] (snode/apply-pos snode)))
 
 (defn layout
   []
-  (doseq [snode (:snodes @graph-vis)] (init-pos-and-layout snode))
-  (move-to (:root @graph-vis [0 0 0]))
-  (let [gv @graph-vis
-        snodes (filter #(not is-root) (:snodes gv))]
-    (layout-snodes snodes)
+  (doseq [snode (:snodes @g/graph-vis)] (snode/init-pos-and-layout snode))
+  (snode/move-to (:root @g/graph-vis) 0 0 0)
+  (let [gv @g/graph-vis
+        snodes (filter #(not snode/is-root) (:snodes gv))]
+    (snode/layout-snodes snodes)
     (let [negative-stretch 1
           mapping-power 1
           N (count snodes)
@@ -142,12 +139,6 @@
                           mapping-power)
           negative-stretch (if c (* mapping-power 2.0) negative-stretch)
           gv (assoc gv :mapping-power mapping-power
-                       :negative-stretch negative-sretch)]
-      (reset! graph-vis gv)))
+                       :negative-stretch negative-stretch)]
+      (reset! g/graph-vis gv)))
     (update-view))
-
-(defn label
-  [text relpos]
-  (if (= relpos 0)
-    (str text " " (:text (:rootNode @graph-vis)))
-    text))

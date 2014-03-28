@@ -50,6 +50,6 @@
   [spher]
   (let [theta (:theta spher)
         phi (:phi spher)
-        theta (scoord-mapping theta Math/PI)
-        phi (scoord-mapping phi (/ Math/PI 2))]
+        theta (scoord-mapping spher theta Math/PI)
+        phi (scoord-mapping spher phi (/ Math/PI 2))]
     (assoc spher :theta theta :phi phi)))

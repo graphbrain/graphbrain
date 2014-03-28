@@ -2,9 +2,9 @@
   (:require [jayq.core :as jq])
   (:use [jayq.core :only [$]]))
 
-(defn remove-clicked
-  [node snode]
-  (show-remove-dialog node snode))
+(defn remove-action
+  []
+  (jq/submit ($ "#removeForm")))
 
 (defn init-remove-dialog
   [root-node-id]
@@ -37,6 +37,6 @@
     (jq/html ($ "#linkDesc") html)
     (jq/modal ($ "#removeModal") "show")))
 
-(defn remove-action
-  []
-  (jq/submit ($ "#removeForm")))
+(defn remove-clicked
+  [node snode]
+  (show-remove-dialog node snode))
