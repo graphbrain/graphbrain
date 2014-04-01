@@ -17,7 +17,7 @@ $(function() {
   browserSpecificTweaks();
   if (typeof data !== "undefined" && data !== null) {
     if (g.changedSNode === null) {
-      addAnim(new AnimInitRotation());
+//      addAnim(new AnimInitRotation());
     } else {
       addAnim(new AnimLookAt(g.changedSNode));
     }

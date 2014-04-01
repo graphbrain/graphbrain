@@ -30,23 +30,27 @@
    :tpos [0 0 0]})
 
 (defn half-size
-  [snode-vis]
-  (let [size (:size snode-vis)
+  [vis]
+  (let [size (:size vis)
         width (first size)
         height (second size)]
     [(/ width 2.0) (/ height 2.0)]))
 
 (defn move-to
   [snode-id x y z]
+  (.log js/console (str "move-to> " [x y z]))
   (let [gv @g/graph-vis
         snodes-vis (:snodes gv)
         snode-vis (snodes-vis snode-id)
+        snode-vis (assoc snode-vis :x x :y y :z z)
         aux-vec [(:x snode-vis) (:y snode-vis) (:z snode-vis)]
         snode-vis (assoc snode-vis :x x :y y :z z)
         affin-mat (:affin-mat gv)
+        xxx (.log js/console (str "affin-mat> " affin-mat))
+        xxx (.log js/console (str "rpos0>" rpos))
         rpos (mat/m4x4mulv3 affin-mat aux-vec)
+        xxx (.log js/console (str "rpos1>" rpos))
         sc (spher/spherical (:negative-stretch gv) (:mapping-power gv))
-        rpos (:rpos snode-vis)
         sc (assoc sc :coords rpos)
         sc (spher/cartesian->spherical sc)
         sc (spher/view-mapping sc)
@@ -56,31 +60,36 @@
         angle-x (Math/atan2 (nth coords 1) (nth coords 2))
         angle-y (Math/atan2 (nth coords 0) (nth coords 2))
         spread 0.7
-        half (half-size snode-vis)
+        half (half-size @g/graph-vis)
+        xxx (.log js/console (str "half> " half))
         half-width (first half)
         half-height (second half)
-        x (+ (* (nth rpos 0) half-width spread) half-width)
-        y (+ (nth rpos 1) (* (nth rpos 1) half-height spread) half-height)
-        z (+ (nth rpos 2) (* (nth rpos 2) (Math/min half-width half-height) 0.8))
-        rpos [x y z]
-        snode-vis (assoc snode-vis :rpos rpos :angle [angle-x angle-y])]
+        nx (+ (* (nth rpos 0) half-width spread) half-width)
+        ny (+ (nth rpos 1) (* (nth rpos 1) half-height spread) half-height)
+        nz (+ (nth rpos 2) (* (nth rpos 2) (Math/min half-width half-height) 0.8))
+        xxx (.log js/console (str "rpos2>" rpos))
+        rpos [nx ny nz]
+        xxx (.log js/console (str "rpos3>" rpos))
+        snode-vis (assoc snode-vis :rpos rpos :angle [angle-x angle-y])
+        nz (+ nz (nth (:offset @g/graph-vis) 2))]
     (reset! g/graph-vis (assoc-in gv [:snodes snode-id] snode-vis))
-    (if (and (not (js/isNaN x)) (not (js/isNaN y)) (not (js/isNaN z)))
-      (let [transform-str  (str "translate3d("
-                                (- x half-width)
+    (if (and (not (js/isNaN nx)) (not (js/isNaN ny)) (not (js/isNaN nz)))
+      (let [s-half (half-size snode-vis)
+            xxx (.log js/console (str "snode-vis> " snode-vis))
+            xxx (.log js/console (str "snode half w/h> " s-half))
+            transform-str  (str "translate3d("
+                                (- nx (first s-half))
                                 "px,"
-                                (- y half-height)
+                                (- ny (second s-half))
                                 "px,"
-                                z
+                                nz
                                 "px)")
-                                ;; " scale("
-                                ;; scale
-                                ;; ")")
             sn-div ($ (str "#" snode-id))]
+        (.log js/console transform-str)
         (jq/css sn-div {:-webkit-transform transform-str})
         (jq/css sn-div {:-moz-transform transform-str})
-        (if (< z 0)
-          (let [opacity (/ (- 1) (* z 0.007))]
+        (if (< nz 0)
+          (let [opacity (/ (- 1) (* nz 0.007))]
             (jq/css sn-div {:opacity opacity})
             (jq/css sn-div {:opacity 1})))))))
 
@@ -100,14 +109,13 @@
 
 (defn place
   [snode-id]
-  (.log js/console snode-id)
   (let [snode ((:snodes @g/graph) snode-id)
         rel-text (if (is-root snode-id)
                    ""
                    (label (:label snode) (:relpos snode)))
         html (if (is-root snode-id)
-               (str "<div id='" snode-id "' class='snode'>")
-               (str "<div id='" snode-id "' class='snodeR'>"))
+               (str "<div id='" snode-id "' class='snodeR'>")
+               (str "<div id='" snode-id "' class='snode'>"))
         html (str html
                   "<div class='snodeLabel'>"
                   rel-text
@@ -116,16 +124,17 @@
                   "<div class='viewport' /></div></div>")]
     (jq/append ($ "#graph-view") html)
     (doseq [node (:nodes snode)]
-      (node/node-place node snode false))
+      (node/node-place node snode-id snode false))
     (let [sn-div ($ (str "#" snode-id))]
-      (if (> (jq/outerHeight sn-div) 250)
+      (if (> (.outerHeight sn-div) 250)
         (do
           (js/slimScroll ($ (str "#" snode-id " .viewport") {:height "250px"}))
           (js/hover sn-div js/scrollOn js/scrollOff)))
       (let [snode-vis ((:snodes @g/graph-vis) snode-id)
-            width (jq/outerWidth sn-div)
-            height (jq/outerHeight sn-div)
+            width (.outerWidth sn-div)
+            height (.outerHeight sn-div)
+            xxx (.log js/console (str "outer w/h> " [width height]))
             snode-vis (assoc snode-vis :size [width height])]
         (reset! g/graph-vis (assoc-in @g/graph-vis [:snodes snode-id] snode-vis)))
-      (if (is-root snode-id)
+      (if (not (is-root snode-id))
         (set-color snode-id (:color snode))))))

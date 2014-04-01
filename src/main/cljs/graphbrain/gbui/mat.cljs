@@ -10,7 +10,7 @@
   [v]
   (Math/sqrt (apply + (map #(* % %) v))))
 
-(defn v3diffLength
+(defn v3diff-length
   [v1 v2]
   (v3length (map - v2 v1)))
 

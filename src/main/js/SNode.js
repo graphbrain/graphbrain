@@ -32,6 +32,7 @@ SNode = (function() {
   };
 
   SNode.prototype.moveTo = function(x, y, z) {
+    console.log("moveTo> " + x + " " + y + " " + z);
     var opacity, sc, spread, transformStr;
     this.x = x;
     this.y = y;
@@ -39,6 +40,8 @@ SNode = (function() {
     this.auxVec[0] = this.x;
     this.auxVec[1] = this.y;
     this.auxVec[2] = this.z;
+    console.log("affinMat> " + this.graph.affinMat)
+    console.log("rpos0> " + this.rpos);
     m4x4mulv3(this.graph.affinMat, this.auxVec, this.rpos);
     sc = new SphericalCoords(this.graph.negativeStretch, this.graph.mappingPower);
     sc.x = this.rpos[0];
@@ -47,21 +50,26 @@ SNode = (function() {
     sc.cartesianToSpherical();
     sc.viewMapping();
     sc.sphericalToCartesian();
+    console.log("rpos1> " + this.rpos);
     this.rpos[0] = sc.x;
     this.rpos[1] = sc.y;
     this.rpos[2] = sc.z;
     this.angleX = Math.atan2(sc.y, sc.z);
     this.angleY = Math.atan2(sc.x, sc.z);
     spread = 0.7;
+    console.log("rpos2> " + this.rpos);
     this.rpos[0] = this.rpos[0] * this.graph.halfWidth * spread + this.graph.halfWidth;
     this.rpos[1] += this.rpos[1] * this.graph.halfHeight * spread + this.graph.halfHeight;
     this.rpos[2] += this.rpos[2] * Math.min(this.graph.halfWidth, this.graph.halfHeight) * 0.8;
+    console.log("rpos3> " + this.rpos);
     x = this.rpos[0];
     y = this.rpos[1];
     z = this.rpos[2] + this.graph.zOffset;
     if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
+      console.log("snode half w/h> " + this.halfWidth + " " + this.halfHeight);
       transformStr = 'translate3d(' + (x - this.halfWidth) + 'px,' + (y - this.halfHeight) + 'px,' + z + 'px)';
       transformStr += ' scale(' + this.scale + ')';
+      console.log(transformStr)
       this.jqDiv.css('-webkit-transform', transformStr);
       this.jqDiv.css('-moz-transform', transformStr);
       if (z < 0) {

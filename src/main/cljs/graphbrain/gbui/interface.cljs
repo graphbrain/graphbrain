@@ -46,7 +46,7 @@
       (reset! last-x page-x)
       (reset! last-y page-y)
       (graph/rotate-x (* (- delta-x) 0.0015))
-      (graph/rotate-y (* (- delta-y) 0.0015))
+      (graph/rotate-y (* delta-y 0.0015))
       (graph/update-view)))
   false)
 

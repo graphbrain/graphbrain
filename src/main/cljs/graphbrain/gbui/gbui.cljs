@@ -10,7 +10,6 @@
             browsers
             quaternion
             alerts
-            layout
             search
             disambiguate
             undo
@@ -34,7 +33,7 @@
 
   (graph/init-graph!)
   
-  (if (and (exists? js/data) (not (nil? js/data)))
+ #_(if (and (exists? js/data) (not (nil? js/data)))
     (if (:changedSNode @g/graph)
       (anim/add-anim! (anim/anim-lookat (:changedSNode @g/graph)))
       (anim/add-anim! (anim/anim-init-rotation)))))

@@ -1,14 +1,14 @@
 (ns graphbrain.gbui.graph
   (:require [jayq.core :as jq]
             [graphbrain.gbui.globals :as g]
-            [graphbrain.gbui.snode :as snode])
+            [graphbrain.gbui.snode :as snode]
+            [graphbrain.gbui.layout :as layout])
   (:use [jayq.core :only [$]]))
 
 (defn snodes-vis-map
   [snodes]
-  (apply hash-map
-         (flatten (into []
-                        (map #(vector (first %) (snode/create-snode-vis)) snodes)))))
+  (into {}
+         (map #(vector (first %) (snode/create-snode-vis)) snodes)))
 
 (defn create-graph-vis-state
   [size snodes]
@@ -16,7 +16,7 @@
         affin-mat (js/Array. 16)
         graph {:size size
                :scale 1
-               :offeset [0 0 0]
+               :offset [0 0 0]
                :quat quat
                :delta-quat (js/Quaternion.)
                :affin-mat affin-mat
@@ -56,6 +56,41 @@
     (jq/css gv-div {:-webkit-transform transform-str})
     (jq/css gv-div {:-moz-transform transform-str})))
 
+(defn update-view
+  []
+  (doseq [snode-id (keys (:snodes @g/graph-vis))] (snode/apply-pos snode-id)))
+
+(defn snodes->seq
+  [snodes]
+  (map #(assoc (second %) :id (first %)) snodes))
+
+(defn seq->snodes
+  [snodes]
+  (into {} (map #(vector (:id %) (dissoc % :id)) snodes)))
+
+(defn graph-layout
+  []
+  ;;(doseq [snode (:snodes @g/graph-vis)] (snode/init-pos-and-layout snode))
+  ;;(snode/move-to (:root @g/graph-vis) 0 0 0)
+  (let [gv @g/graph-vis
+        snodes (snodes->seq (filter #(not (snode/is-root %)) (:snodes gv)))
+        snodes (layout/layout snodes)]
+    (let [negative-stretch 1
+          mapping-power 1
+          N (count snodes)
+          Nt 7
+          c (> N (* Nt 2))
+          mapping-power (if c
+                          (* (/ (Math/asin (/ Nt (/ N 2.0))) Math/PI)
+                             (/ 1.0 (Math/log 0.5)))
+                          mapping-power)
+          negative-stretch (if c (* mapping-power 2.0) negative-stretch)
+          gv (assoc gv :mapping-power mapping-power
+                       :negative-stretch negative-stretch
+                       :snodes (seq->snodes snodes))]
+      (reset! g/graph-vis gv)))
+    (update-view))
+
 (defn init-graph-vis!
   []
   (reset! g/graph-vis (create-graph-vis-state
@@ -63,12 +98,16 @@
                        (:snodes @g/graph)))
   (doseq [snode-id (keys (:snodes @g/graph-vis))]
     (snode/place snode-id))
+  (graph-layout)
   (update-transform))
 
 (defn- snode-ids->str
   [graph]
   (let [snodes (:snodes graph)
-        snodes (map #(vector (.substring (str (first %)) 1) (second %)) snodes)]
+        snodes (into {}
+                      (map
+                       #(vector
+                         (.substring (str (first %)) 1) (second %)) snodes))]
     (assoc graph :snodes snodes)))
 
 (defn init-graph!
@@ -104,7 +143,8 @@
         new-scale (if (< new-scale 0.4) 0.4 new-scale)
         offset (:offset gv)
         offset-x (first offset)
-        offset-y (second offset)]
+        offset-y (second offset)
+        offset-z (nth offset 2)]
     (if (>= delta-zoom 0)
       (let [size (:size gv)
             width (first size)
@@ -115,39 +155,13 @@
             ry (- y half-height)
             new-offset-x (- rx (* (/ (- rx offset-x) scale) new-scale))
             new-offset-y (- ry (* (/ (- ry offset-y) scale) new-scale))
-            gv (assoc gv :offset [new-offset-x new-offset-y] :scale new-scale)]
+            gv (assoc gv :offset [new-offset-x new-offset-y offset-z]
+                         :scale new-scale)]
         (reset! g/graph-vis gv))
       (let [offset (if (> (- scale 0.4) 0)
                      (let [r (/ (- new-scale 0.4) (- scale 0.4))]
-                       [(* offset-x r) (* offset-y r)])
+                       [(* offset-x r) (* offset-y r) offset-z])
                      offset)
             gv (assoc gv :offset offset :scale new-scale)]
         (reset! g/graph-vis gv))))
   (update-transform))
-
-(defn update-view
-  []
-  (doseq [snode-id (keys (:snodes @g/graph-vis))] (snode/apply-pos snode-id)))
-
-(defn layout
-  []
-  (doseq [snode (:snodes @g/graph-vis)] (snode/init-pos-and-layout snode))
-  (snode/move-to (:root @g/graph-vis) 0 0 0)
-  (let [gv @g/graph-vis
-        snodes (filter #(not snode/is-root) (:snodes gv))]
-    (snode/layout-snodes snodes)
-    (let [negative-stretch 1
-          mapping-power 1
-          N (count snodes)
-          Nt 7
-          c (> N (* Nt 2))
-          mapping-power (if c
-                          (Math/log
-                           (Math/asin (* (/ (/ Nt (/ N 2.0)) Math/PI)
-                                         (/ 1.0 (Math/log 0.5)))))
-                          mapping-power)
-          negative-stretch (if c (* mapping-power 2.0) negative-stretch)
-          gv (assoc gv :mapping-power mapping-power
-                       :negative-stretch negative-stretch)]
-      (reset! g/graph-vis gv)))
-    (update-view))
