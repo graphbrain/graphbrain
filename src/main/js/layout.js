@@ -15,6 +15,7 @@ getCoulombEnergy = function(snodeArray) {
       }
     }
   }
+  console.log("coulomb " + e);
   return e;
 };
 

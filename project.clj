@@ -27,7 +27,7 @@
                  [org.clojure/clojurescript "0.0-2173"]
                  [jayq "2.5.0"]]
   :plugins [[lein-ring "0.8.10"]
-            [lein-cljsbuild "1.0.0"]]
+            [lein-cljsbuild "1.0.2"]]
   :source-paths ["src/main/clojure" "src/main/cljs"]
   :java-source-paths ["src/main/java"]
   :test-paths ["test" "src/test/clojure"]
@@ -47,7 +47,6 @@
                   {:file "src/main/js/browsers.js" :provides ["browsers"]}
                   {:file "src/main/js/Quaternion.js" :provides ["quaternion"]}
                   {:file "src/main/js/alerts.js" :provides ["alerts"]}
-                  {:file "src/main/js/layout.js" :provides ["layout"]}
                   {:file "src/main/js/search.js" :provides ["search"]}
                   {:file "src/main/js/disambiguate.js" :provides ["disambiguate"]}
                   {:file "src/main/js/undo.js" :provides ["undo"]}

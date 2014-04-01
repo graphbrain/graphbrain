@@ -25,11 +25,11 @@ SOURCES =	js/seedrandom.js \
 
 .PHONY: all push clean
 
-all: resources/js/gb.js
+all: resources/js/gbui.js
 
-resources/js/gb.js: $(SOURCES)
-	@echo "/* mindmaps.io */" > $@
+resources/js/gbui.js: $(SOURCES)
+	@echo "/* graphbrain.com */" > $@
 	@cat $^ >> $@
 
 clean:
-	@rm resources/js/gb.js
+	@rm resources/js/gbui.js

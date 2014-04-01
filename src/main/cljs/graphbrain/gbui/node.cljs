@@ -8,7 +8,8 @@
   (let [div-id (str (:id node) (:edge node))
         div-id (clojure.string/replace div-id " " "_")
         div-id (clojure.string/replace div-id "(" "_")
-        div-id (clojure.string/replace div-id ")" "_")]
+        div-id (clojure.string/replace div-id ")" "_")
+        div-id (clojure.string/replace div-id "/" "_")]
     (str "n_" div-id)))
 
 (defn- url-node-html
@@ -48,13 +49,14 @@
         html (str "<div class='" title-class "'" "id='" t-div-id "'>")
         html (str html "<a href='/node/" (:id node) "' id='" div-id "'>")
         html (str html (:text node))
-        html (str "</a></div>")
+        html (str html "</a></div>")
         text2 (:text2 node)
         html (if text2
                (str html
                     "<div class='nodeSubText'>("
                     text2
-                    ")</div>"))
+                    ")</div>")
+               html)
         html (if root
                html
                (str html
@@ -72,10 +74,9 @@
       (entity-node-html node root div-id))))
 
 (defn node-place
-  [node snode glow]
+  [node snode-id snode glow]
   (let [root (nil? snode)
         class (if root "node_root" "node")
-        snode-id (if root "root" (:id snode))
         div-id (node-div-id node)
         html (str "<div id='" div-id "' class='" class "'>")
         html (str html (node-html node root div-id))
