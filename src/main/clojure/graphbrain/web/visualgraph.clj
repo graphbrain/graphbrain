@@ -16,7 +16,7 @@
 
 (defn hyper->edge
   [edge root-id]
-  (if (> (.length (.getParticipantIds() edge)) 2)
+  (if (> (count (. edge getParticipantIds)) 2)
     (if (= (.getEdgeType edge) "r/1/instance_of~owned_by")
       (if (= (nth (.getParticipantIds edge) 0) root-id)
         {:edge-type "r/1/has"
@@ -57,8 +57,9 @@
 
 (defn add-edge-to-edge-node-map
   [en-map edge root-id]
-  (let [enm (add-to-edge-node-map en-map [(.getEdgeType edge) 0] edge root-id)
-        enm (add-to-edge-node-map enm [(.getEdgeType edge) 1] edge root-id)]
+  (prn edge)
+  (let [enm (add-to-edge-node-map en-map [(:edge-type edge) 0] edge root-id)
+        enm (add-to-edge-node-map enm [(:edge-type edge) 1] edge root-id)]
     enm))
 
 (defn edge-node-map
@@ -67,7 +68,7 @@
 
 (defn link-color
   [label]
-  (nth Colors/colors (mod (Math/abs (.hashCode label)) (.length Colors/colors))))
+  (nth Colors/colors (mod (Math/abs (.hashCode label)) (count Colors/colors))))
 
 (defn fix-label
   [label]
@@ -87,23 +88,23 @@
                (.get graph node-id))
         node (if (nil? node) (Vertex/fromId node-id) node)]
 
-    (condp = (.type node)
-      ((VertexType/Entity) {:id (.id node)
-                            :type "text"
-                            :text (.description graph node)
-                            :edge node-edge})
-      ((VertexType/URL) {:id (.id node)
-                         :type "url"
-                         :text (if (empty? (.getTitle node))
-                                 (.getUrl node)
-                                 (.getTitle node))
-                         :url (.getUrl node)
-                         :icon (.getIcon node)
-                         :edge node-edge})
-      ((VertexType/User) {:id (.id node)
-                          :type "user"
-                          :text (.getName node)
-                          :edge node-edge})
+    (condp = (. node type)
+      (VertexType/Entity) {:id (.id node)
+                           :type "text"
+                           :text (.description graph node)
+                           :edge node-edge}
+      (VertexType/URL) {:id (.id node)
+                        :type "url"
+                        :text (if (empty? (.getTitle node))
+                                (.getUrl node)
+                                (.getTitle node))
+                        :url (.getUrl node)
+                        :icon (.getIcon node)
+                        :edge node-edge}
+      (VertexType/User) {:id (.id node)
+                         :type "user"
+                         :text (.getName node)
+                         :edge node-edge}
       {:id (.id node)
        :type "text"
        :text (.id node)
@@ -132,12 +133,12 @@
   (loop [enm en-map
          count 0
          snode-map {}]
-    (if (or (> count max-snodes) (empty? enm)) snode-map)
-    (let [en (first enm)
-          rp (first en)
-          snid (snode-id rp)]
-      (recur (rest en) (inc count)
-             (assoc snode-map snid (snode graph rp (second en) root-id))))))
+    (if (or (> count max-snodes) (empty? enm)) snode-map
+        (let [en (first enm)
+              rp (first en)
+              snid (snode-id rp)]
+          (recur (rest enm) (inc count)
+                 (assoc snode-map snid (snode graph rp (second en) root-id)))))))
 
 (defn generate
   [graph root-id user]
@@ -145,7 +146,7 @@
         hyper-edges (.edges graph root-id user-id)
         visual-edges (filter (complement nil?)
                              (map #(hyper->edge % root-id)
-                                  (filter #(.isPostive %) hyper-edges)))
+                                  (filter #(. % isPositive) hyper-edges)))
         edge-node-map (edge-node-map visual-edges root-id)
         all-relations (into {} (for [[rp v] edge-node-map]
                                  [rp {:rel (first rp)
