@@ -33,7 +33,7 @@
   (reset! dragging true)
   (reset! last-x (.-pageX e))
   (reset! last-y (.-pageY e))
-  (anim/stop-anims)
+  (anim/stop-anims!)
   false)
 
 (defn mouse-move

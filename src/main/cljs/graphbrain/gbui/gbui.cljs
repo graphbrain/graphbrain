@@ -33,7 +33,7 @@
 
   (graph/init-graph!)
   
- #_(if (and (exists? js/data) (not (nil? js/data)))
+ (if (and (exists? js/data) (not (nil? js/data)))
     (if (:changedSNode @g/graph)
       (anim/add-anim! (anim/anim-lookat (:changedSNode @g/graph)))
       (anim/add-anim! (anim/anim-init-rotation)))))
