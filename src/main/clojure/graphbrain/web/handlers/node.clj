@@ -1,11 +1,12 @@
 (ns graphbrain.web.handlers.node
   (:use (graphbrain.web common)
         (graphbrain.web.views page node))
-  (:import (com.graphbrain.web NavBar CssAndJs VisualGraph)))
+  (:require [graphbrain.web.visualgraph :as vg])
+  (:import (com.graphbrain.web NavBar CssAndJs)))
 
 (defn- js
   [node user]
-  (str "var data = " (VisualGraph/generate graph (. node id) user) ";\n"
+  (str "var data = " (vg/generate graph (. node id) user) ";\n"
     "var errorMsg = \"\";\n"))
 
 (defn handle-node

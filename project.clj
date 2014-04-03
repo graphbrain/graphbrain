@@ -26,6 +26,7 @@
                  [clj-http "0.9.0"]
                  [org.clojure/clojurescript "0.0-2173"]
                  [jayq "2.5.0"]]
+  :dev-dependencies [[ring-serve "0.1.2"]]
   :plugins [[lein-ring "0.8.10"]
             [lein-cljsbuild "1.0.2"]]
   :source-paths ["src/main/clojure" "src/main/cljs"]
@@ -33,7 +34,8 @@
   :test-paths ["test" "src/test/clojure"]
   :resource-paths ["src/main/resources"]
   :ring {:handler graphbrain.web.server/handler}
-
+  :aot :all
+  
   ;; cljsbuild options configuration
   :cljsbuild {:builds
               [{:source-paths ["src/main/cljs"]
