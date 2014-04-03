@@ -10,8 +10,8 @@
   (str (-> (first rel-pos)
            (.replace "/" "_")
            (.replace " " "_")
-           (.replace "\\." "_")
-           (.replace "\\+" "_"))
+           (.replace "." "_")
+           (.replace "+" "_"))
        "_" (second rel-pos)))
 
 (defn hyper->edge
@@ -45,7 +45,7 @@
            :parent edge})))
     {:edge-type (nth (.getIds edge) 0)
      :id1 (nth (.getIds edge) 1)
-     :id2 (nth (.getIds edge)2)
+     :id2 (nth (.getIds edge) 2)
      :parent edge}))
 
 (defn add-to-edge-node-map
@@ -57,7 +57,6 @@
 
 (defn add-edge-to-edge-node-map
   [en-map edge root-id]
-  (prn edge)
   (let [enm (add-to-edge-node-map en-map [(:edge-type edge) 0] edge root-id)
         enm (add-to-edge-node-map enm [(:edge-type edge) 1] edge root-id)]
     enm))
@@ -153,8 +152,9 @@
                                       :pos (second rp)
                                       :label (link-label (first rp))
                                       :snode (snode-id rp)}]))
-        snode-map (snode-map graph edge-node-map root-id)]
+        snode-map (snode-map graph edge-node-map root-id)
+        snode-map (assoc snode-map :root
+                         {:nodes [(node->map graph root-id "" root-id)]})]
     (json/write-str {:user user-id
-                     :root (node->map graph root-id "" root-id)
                      :snodes snode-map
                      :allrelations all-relations})))

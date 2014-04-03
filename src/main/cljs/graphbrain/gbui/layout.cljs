@@ -15,7 +15,6 @@
   (let [x (apply + (map
                    #(/ 1.0 (mat/v3diff-length (:tpos (first %)) (:tpos (second %))))
                    (all-pairs snodes)))]
-       (.log js/console (str "coulomb " x))
        x))
 
 (defn force-pair
@@ -87,12 +86,3 @@
               e0 (if success e e0)
               sn (if success (map #(assoc % :pos (:tpos %)) sn) sn)]
           (recur sn e0 (dec k) step))))))
-
-(defn layout2
-  [snodes]
-  (map #(assoc %1 :pos %2 :tpos %2) snodes
-       [[-0.485571434791272 -0.8054828353254343 0.3397319291895368]
-        [-0.4897311829353475 -0.08612767837281596 -0.8676090084126917]
-        [0.873872393539818 -0.08255877488607626 -0.4790940288693851]
-        [0.4982792655592682 0.07018887680665058 0.8641708714637035]
-        [-0.3979165495037415 0.9060997103008811 0.14368623672327047]]))

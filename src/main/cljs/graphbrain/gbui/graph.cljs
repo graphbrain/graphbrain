@@ -70,10 +70,11 @@
 
 (defn graph-layout
   []
-  ;;(doseq [snode (:snodes @g/graph-vis)] (snode/init-pos-and-layout snode))
-  ;;(snode/move-to (:root @g/graph-vis) 0 0 0)
+  (snode/move-to "root" 0 0 0)
   (let [gv @g/graph-vis
-        snodes (snodes->seq (filter #(not (snode/is-root %)) (:snodes gv)))
+        snodes (snodes->seq
+                (filter #(not (snode/is-root (first %))) (:snodes gv)))
+        ;;snodes (snodes->seq (:snodes gv))
         snodes (layout/layout snodes)]
     (let [negative-stretch 1
           mapping-power 1

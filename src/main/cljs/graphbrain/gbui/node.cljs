@@ -74,9 +74,8 @@
       (entity-node-html node root div-id))))
 
 (defn node-place
-  [node snode-id snode glow]
-  (let [root (nil? snode)
-        class (if root "node_root" "node")
+  [node snode-id snode root glow]
+  (let [class (if root "node_root" "node")
         div-id (node-div-id node)
         html (str "<div id='" div-id "' class='" class "'>")
         html (str html (node-html node root div-id))
