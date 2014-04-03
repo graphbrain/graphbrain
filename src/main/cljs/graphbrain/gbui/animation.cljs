@@ -71,7 +71,7 @@
     (let [new-speed-x (* speed-x 0.98)
           new-speed-y (* speed-y 0.98)
           new-speed [new-speed-x new-speed-y]
-          active (< new-speed-x 0.0001)
+          active (> new-speed-x 0.0001)
           new-anim (assoc anim :anim-speed new-speed)
           new-anim (assoc new-anim :active active)]
       new-anim)))
