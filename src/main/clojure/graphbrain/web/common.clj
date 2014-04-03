@@ -1,7 +1,7 @@
 (ns graphbrain.web.common
   (:import (com.graphbrain.db Graph)))
 
-(def graph (new Graph))
+(def graph (Graph.))
 
 (defn get-user
   [response]
