@@ -50,8 +50,8 @@
   []
   (run-jetty app {:port 4567}))
 
-(defonce server (run-jetty #'app {:port 8080 :join? false}))
+#_(defonce server (run-jetty #'app {:port 8080 :join? false}))
 
-(defn restart []
+#_(defn restart []
   (.stop server)
   (.start server))
