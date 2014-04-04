@@ -147,11 +147,11 @@
                              (map #(hyper->edge % root-id)
                                   (filter #(. % isPositive) hyper-edges)))
         edge-node-map (edge-node-map visual-edges root-id)
-        all-relations (into {} (for [[rp v] edge-node-map]
-                                 [rp {:rel (first rp)
+        all-relations (into [] (for [[rp v] edge-node-map]
+                                 {:rel (first rp)
                                       :pos (second rp)
                                       :label (link-label (first rp))
-                                      :snode (snode-id rp)}]))
+                                      :snode (snode-id rp)}))
         snode-map (snode-map graph edge-node-map root-id)
         snode-map (assoc snode-map :root
                          {:nodes [(node->map graph root-id "" root-id)]})]

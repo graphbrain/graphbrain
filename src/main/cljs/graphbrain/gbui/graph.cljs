@@ -74,7 +74,6 @@
   (let [gv @g/graph-vis
         snodes (snodes->seq
                 (filter #(not (snode/is-root (first %))) (:snodes gv)))
-        ;;snodes (snodes->seq (:snodes gv))
         snodes (layout/layout snodes)]
     (let [negative-stretch 1
           mapping-power 1
@@ -111,11 +110,28 @@
                          (.substring (str (first %)) 1) (second %)) snodes))]
     (assoc graph :snodes snodes)))
 
+(defn json->gdata
+  [json-data]
+  (snode-ids->str (js->clj json-data :keywordize-keys true)))
+
 (defn init-graph!
   []
-  (reset! g/graph
-          (snode-ids->str (js->clj js/data :keywordize-keys true)))
-  (init-graph-vis!))
+  (let [gdata (json->gdata js/data)]
+    (reset! g/graph gdata)
+    (init-graph-vis!)))
+
+(defn merge-snodes
+  [graph snode-data]
+  (assoc graph :snodes (merge (:snodes graph) snode-data)))
+
+(defn add-snodes!
+  [json-data]
+  (let [gdata (json->gdata json-data)
+        snode-data (:snodes gdata)
+        graph (merge-snodes @g/graph snode-data)]
+    (reset! g/graph graph)
+    (init-graph-vis!)
+    snode-data))
 
 (defn rotate
   [x y z]

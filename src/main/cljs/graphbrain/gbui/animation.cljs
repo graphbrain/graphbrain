@@ -1,5 +1,6 @@
 (ns graphbrain.gbui.animation
   (:require [jayq.core :as jq]
+            [graphbrain.gbui.globals :as g]
             [graphbrain.gbui.graph :as graph])
   (:use [jayq.core :only [$]]))
 
@@ -44,9 +45,10 @@
   (let [new-anims (if (= (:name anim) "lookat")
                     (filter non-exclusive-anim? @anims)
                     @anims)
-        new-anims (conj new-anims anim)]
-    (if (empty? @anims) (set-interval!))
-    (reset! anims new-anims)))
+        new-anims (conj new-anims anim)
+        restart (empty? @anims)]
+    (reset! anims new-anims)
+    (if restart (set-interval!))))
 
 (defn- stop-anims!
   []
@@ -87,21 +89,22 @@
   [anim]
   (let [speed-factor 0.05
         precision 0.01
-        target-snode ((:snodes @graph/graph) (:target-snode-id anim))
+        target-snode ((:snodes @g/graph-vis) (:target-snode-id anim))
         angle (:angle target-snode)
         angle-x (first angle)
         angle-y (second angle)
         speed-x (* angle-x speed-factor)
         speed-y (* angle-y speed-factor)]
-    (graph/graph-rotate [speed-y (- speed-x)])
-    (graph/graph-update-view)
-    (let [target-snode ((:snodes @graph/graph) (:target-snode-id anim))
+    (graph/rotate-x speed-y)
+    (graph/rotate-y (- speed-x))
+    (graph/update-view)
+    (let [target-snode ((:snodes @g/graph-vis) (:target-snode-id anim))
           angle (:angle target-snode)
           abs-angle-x (Math/abs (first angle))
           abs-angle-y (Math/abs (second angle))
           active (or (> abs-angle-x precision)
                      (> abs-angle-y precision))]
-          (assoc anim :active active))))
+      (assoc anim :active active))))
 
 (defn anim-node-glow
   [node-id]
