@@ -142,7 +142,7 @@
         g (Math/round (+ g1 ((- g2 g1) x)))
         b (Math/round (+ b1 ((- b2 b1) x)))
         rgb-str (str "rgb(" r "," g "," b ")")
-        node ((:nodes @graph/graph) (:node-id anim))
+        node ((:nodes @g/graph-vis) (:node-id anim))
         divid (:divid node)
         active (< cycles 4)]
     (jq/css ($ (str "#" divid)) {:background rgb-str})
