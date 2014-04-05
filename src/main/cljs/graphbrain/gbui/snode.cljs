@@ -115,7 +115,7 @@
     (doseq [node (:nodes snode)]
       (node/node-place node snode-id snode (is-root snode-id)  false))
     (let [sn-div ($ (str "#" snode-id))]
-      (if (> (.outerHeight sn-div) 250)
+      #_(if (> (.outerHeight sn-div) 250)
         (do
           (js/slimScroll ($ (str "#" snode-id " .viewport") {:height "250px"}))
           (js/hover sn-div js/scrollOn js/scrollOff)))

@@ -4,6 +4,7 @@
             [graphbrain.gbui.graph :as graph]
             [graphbrain.gbui.animation :as anim]
             [graphbrain.gbui.relations :as rels]
+            [graphbrain.gbui.aichat :as aichat]
             seedrandom
             jquery.cookie
             jquery.mousewheel
@@ -14,15 +15,11 @@
             search
             disambiguate
             undo
-            user
-            aichat
-            state))
+            user))
 
 (defn start
   []
   (Math/seedrandom "GraphBrain GraphBrain")
-
-  (set! js/state (js/State.))
 
   (intf/init-interface)
 
@@ -31,7 +28,8 @@
   (graph/init-graph!)
 
   (if (not (or (undefined? js/data) (nil? js/data)))
-    (rels/init-relations!))
+    (do (rels/init-relations!)
+        (aichat/init-ai-chat!)))
   
  (if (and (exists? js/data) (not (nil? js/data)))
     (if (:changedSNode @g/graph)
