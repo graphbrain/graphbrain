@@ -14,10 +14,8 @@
             browsers
             quaternion
             alerts
-            search
-            disambiguate
-            undo
-            user))
+            user)
+  (:use [jayq.core :only [$]]))
 
 (defn start
   []
@@ -41,4 +39,6 @@
        (anim/add-anim! (anim/anim-node-glow (node/node-div-id node-id)))
        (newedges/clean)))))
 
-(set! (.-onload js/window) start)
+;;(set! (.-onload js/window) start)
+
+($ start)

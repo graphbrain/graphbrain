@@ -4,7 +4,8 @@
             [graphbrain.gbui.graph :as graph]
             [graphbrain.gbui.animation :as anim]
             [graphbrain.gbui.remove :as rem]
-            [graphbrain.gbui.aichat :as aichat])
+            [graphbrain.gbui.aichat :as aichat]
+            [graphbrain.gbui.search :as search])
   (:use [jayq.core :only [$]]))
 
 (def dragging (atom false))
@@ -119,8 +120,8 @@
 
 (defn init-interface
   []
-;;  (jq/submit ($ "#search-field") js/searchQuery)
-  (js/initSearchDialog)
+  (jq/bind ($ "#search-field") "submit" search/search-query)
+  (search/init-search-dialog!)
   (js/initSignUpDialog)
   (jq/bind ($ ".signupLink") "click" js/showSignUpDialog)
   (jq/bind ($ "#loginLink") "click" js/showSignUpDialog)

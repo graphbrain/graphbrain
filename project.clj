@@ -49,10 +49,6 @@
                   {:file "src/main/js/browsers.js" :provides ["browsers"]}
                   {:file "src/main/js/Quaternion.js" :provides ["quaternion"]}
                   {:file "src/main/js/alerts.js" :provides ["alerts"]}
-                  {:file "src/main/js/search.js" :provides ["search"]}
-                  {:file "src/main/js/disambiguate.js" :provides ["disambiguate"]}
-                  {:file "src/main/js/undo.js" :provides ["undo"]}
-                  {:file "src/main/js/user.js" :provides ["user"]}
-                  {:file "src/main/js/bootstrap.min.js" :provides ["bootstrap"]}]
+                  {:file "src/main/js/user.js" :provides ["user"]}]
                  :optimizations :whitespace
                  :pretty-print true}}]})
