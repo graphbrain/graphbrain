@@ -23,12 +23,12 @@
   []
   (Math/seedrandom "GraphBrain GraphBrain")
 
-  (intf/init-interface)
-
   (js/browserSpecificTweaks)
 
   (graph/init-graph!)
 
+  (intf/init-interface)
+  
   (if (not (or (undefined? js/data) (nil? js/data)))
     (do (rels/init-relations!)
         (aichat/init-ai-chat!)))
