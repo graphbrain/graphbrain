@@ -119,7 +119,7 @@
         color (link-color label)
         nodes (map #(node->map graph
                                (se->node-id % rp)
-                               (get-in % [:parent :id])
+                               (.id (:parent %))
                                root-id) sedges)]
     {:nodes nodes
      :etype (first rp)

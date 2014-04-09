@@ -1,6 +1,7 @@
 (ns graphbrain.gbui.aichat
   (:require [jayq.core :as jq]
-            [graphbrain.gbui.globals :as g])
+            [graphbrain.gbui.globals :as g]
+            [graphbrain.gbui.newedges :as newedges])
   (:use [jayq.core :only [$]]))
 
 (defonce ai-chat-visible (atom false))
@@ -86,8 +87,9 @@ use quotation marks, e.g.<br />\n<b>\"Burn after reading\" is a film</b> <br />"
 (defn ai-chat-reply
   [msg]
   (ai-chat-add-line! "gb" (.-sentence msg))
-  (if (not (empty? (.-goto msg)))
-    (set! (.-href js/window.location) (str "/node/" (.-goto msg)))))
+  (newedges/set-new-edges! (into [] (.-newedges msg)))
+  (if (not (empty? (.-gotoid msg)))
+    (set! (.-href js/window.location) (str "/node/" (.-gotoid msg)))))
 
 (defn ai-chat-submit
   [msg]

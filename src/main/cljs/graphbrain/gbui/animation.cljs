@@ -32,7 +32,7 @@
 
 (defn- anim-cycle
   []
-  (reset! anims (map run-cycle @anims))
+  (reset! anims (doall (map run-cycle @anims)))
   (remove-inactive!))
 
 (defn- set-interval!
@@ -107,11 +107,11 @@
       (assoc anim :active active))))
 
 (defn anim-node-glow
-  [node-id]
+  [node-div-id]
   {:name "nodeglow"
    :active true
    :stoppable false
-   :node-id node-id
+   :node-div-id node-div-id
    :x 0
    :cycles 0
    :delta 0.05
@@ -138,12 +138,10 @@
         r2 (nth color2 0)
         g2 (nth color2 1)
         b2 (nth color2 2)
-        r (Math/round (+ r1 ((- r2 r1) x)))
-        g (Math/round (+ g1 ((- g2 g1) x)))
-        b (Math/round (+ b1 ((- b2 b1) x)))
+        r (Math/round (+ r1 (* (- r2 r1) x)))
+        g (Math/round (+ g1 (* (- g2 g1) x)))
+        b (Math/round (+ b1 (* (- b2 b1) x)))
         rgb-str (str "rgb(" r "," g "," b ")")
-        node ((:nodes @g/graph-vis) (:node-id anim))
-        divid (:divid node)
         active (< cycles 4)]
-    (jq/css ($ (str "#" divid)) {:background rgb-str})
+    (jq/css ($ (str "#" (:node-div-id anim))) {:background rgb-str})
     (assoc anim :delta delta :cycles cycles :x x :active active)))
