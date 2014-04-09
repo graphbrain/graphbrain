@@ -4,7 +4,7 @@
 
 (defn remove-action
   []
-  (jq/submit ($ "#removeForm")))
+  (.submit ($ "#removeForm")))
 
 (defn init-remove-dialog
   [root-node-id]
@@ -35,7 +35,7 @@
         html (str (:text node) " <strong>(" link "</strong>)")]
     (jq/val ($ "#removeEdgeField") edge)
     (jq/html ($ "#linkDesc") html)
-    (jq/modal ($ "#removeModal") "show")))
+    (.modal ($ "#removeModal") "show")))
 
 (defn remove-clicked
   [node snode]

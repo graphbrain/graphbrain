@@ -1,5 +1,6 @@
 (ns graphbrain.gbui.interface
   (:require [jayq.core :as jq]
+            [graphbrain.gbui.globals :as g]
             [graphbrain.gbui.graph :as graph]
             [graphbrain.gbui.animation :as anim]
             [graphbrain.gbui.remove :as rem]
@@ -133,8 +134,8 @@
   (.addEventListener js/document "touchmove" touch-move)
   (js/initAlert)
   (if (exists? js/data)
-    ;; TODO
-    (rem/init-remove-dialog 'root')
+    (rem/init-remove-dialog
+     (:id (first (get-in @g/graph [:snodes "root" :nodes]))))
     (js/initDisambiguateDialog)
     (js/bind ($ "#ai-chat-button") "click" aichat/ai-chat-button-pressed))
   (if (and (exists? js/errorMsg) (not (empty? js/errorMsg)))
