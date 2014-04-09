@@ -19,7 +19,7 @@
     (json/write-str
      {:sentence (.id vertex)
       :newedges (list (. vertex id))
-      :goto goto-id})))
+      :gotoid goto-id})))
 
 (defn handle-aichat
   [request]

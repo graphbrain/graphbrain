@@ -3,7 +3,8 @@
             [graphbrain.gbui.spherical :as spher]
             [graphbrain.gbui.globals :as g]
             [graphbrain.gbui.node :as node]
-            [graphbrain.gbui.mat :as mat])
+            [graphbrain.gbui.mat :as mat]
+            [graphbrain.gbui.newedges :as newedges])
   (:use [jayq.core :only [$]]))
 
 (defn is-root
@@ -113,7 +114,9 @@
                   "<div class='viewport' /></div></div>")]
     (jq/append ($ "#graph-view") html)
     (doseq [node (:nodes snode)]
-      (node/node-place node snode-id snode (is-root snode-id)  false))
+      (let [new-edge (some #{(:edge node)} (newedges/new-edges))]
+        (if new-edge (reset! g/changed-snode snode-id))
+        (node/node-place node snode-id snode (is-root snode-id))))
     (let [sn-div ($ (str "#" snode-id))]
       #_(if (> (.outerHeight sn-div) 250)
         (do

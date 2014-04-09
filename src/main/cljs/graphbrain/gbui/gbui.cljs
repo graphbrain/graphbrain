@@ -5,6 +5,8 @@
             [graphbrain.gbui.animation :as anim]
             [graphbrain.gbui.relations :as rels]
             [graphbrain.gbui.aichat :as aichat]
+            [graphbrain.gbui.newedges :as newedges]
+            [graphbrain.gbui.node :as node]
             seedrandom
             jquery.cookie
             jquery.mousewheel
@@ -30,10 +32,13 @@
   (if (not (or (undefined? js/data) (nil? js/data)))
     (do (rels/init-relations!)
         (aichat/init-ai-chat!)))
-  
- (if (and (exists? js/data) (not (nil? js/data)))
-    (if (:changedSNode @g/graph)
-      (anim/add-anim! (anim/anim-lookat (:changedSNode @g/graph)))
-      (anim/add-anim! (anim/anim-init-rotation)))))
+ 
+  (if (and (exists? js/data) (not (nil? js/data)))
+    (do (if @g/changed-snode
+       (anim/add-anim! (anim/anim-lookat @g/changed-snode))
+       (anim/add-anim! (anim/anim-init-rotation)))
+     (doseq [node-id (newedges/new-edges)]
+       (anim/add-anim! (anim/anim-node-glow (node/node-div-id node-id)))
+       (newedges/clean)))))
 
 (set! (.-onload js/window) start)

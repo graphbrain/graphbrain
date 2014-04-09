@@ -1,12 +1,12 @@
 (ns graphbrain.gbui.node
   (:require [jayq.core :as jq]
-            [graphbrain.gbui.remove :as rem])
+            [graphbrain.gbui.remove :as rem]
+            [graphbrain.gbui.globals :as g])
   (:use [jayq.core :only [$]]))
 
 (defn node-div-id
-  [node]
-  (let [div-id (str (:id node) (:edge node))
-        div-id (clojure.string/replace div-id " " "_")
+  [edge]
+  (let [div-id (clojure.string/replace edge " " "_")
         div-id (clojure.string/replace div-id "(" "_")
         div-id (clojure.string/replace div-id ")" "_")
         div-id (clojure.string/replace div-id "/" "_")]
@@ -74,9 +74,9 @@
       (entity-node-html node root div-id))))
 
 (defn node-place
-  [node snode-id snode root glow]
+  [node snode-id snode root]
   (let [class (if root "node_root" "node")
-        div-id (node-div-id node)
+        div-id (node-div-id (:edge node))
         html (str "<div id='" div-id "' class='" class "'>")
         html (str html (node-html node root div-id))
         html (str html "</div>")]
@@ -84,5 +84,4 @@
     (jq/bind ($ (str "#rem" div-id))
                    :click
                    #(rem/remove-clicked node snode))
-    ;; (if glow (anim/add-anim (anim/anim-node-glow node)))
     node))
