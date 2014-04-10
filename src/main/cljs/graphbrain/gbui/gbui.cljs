@@ -8,13 +8,11 @@
             [graphbrain.gbui.newedges :as newedges]
             [graphbrain.gbui.node :as node]
             seedrandom
-            jquery.cookie
             jquery.mousewheel
             slimscroll
             browsers
             quaternion
-            alerts
-            user)
+            alerts)
   (:use [jayq.core :only [$]]))
 
 (defn start
@@ -23,7 +21,8 @@
 
   (js/browserSpecificTweaks)
 
-  (graph/init-graph!)
+  (if (and (exists? js/data) (not (nil? js/data)))
+    (graph/init-graph!))
 
   (intf/init-interface)
   
@@ -38,7 +37,5 @@
      (doseq [node-id (newedges/new-edges)]
        (anim/add-anim! (anim/anim-node-glow (node/node-div-id node-id)))
        (newedges/clean)))))
-
-;;(set! (.-onload js/window) start)
 
 ($ start)
