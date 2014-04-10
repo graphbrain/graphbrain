@@ -5,7 +5,8 @@
             [graphbrain.gbui.animation :as anim]
             [graphbrain.gbui.remove :as rem]
             [graphbrain.gbui.aichat :as aichat]
-            [graphbrain.gbui.search :as search])
+            [graphbrain.gbui.search :as search]
+            [graphbrain.gbui.user :as user])
   (:use [jayq.core :only [$]]))
 
 (def dragging (atom false))
@@ -122,10 +123,10 @@
   []
   (jq/bind ($ "#search-field") "submit" search/search-query)
   (search/init-search-dialog!)
-  (js/initSignUpDialog)
-  (jq/bind ($ ".signupLink") "click" js/showSignUpDialog)
-  (jq/bind ($ "#loginLink") "click" js/showSignUpDialog)
-  (jq/bind ($ "#logoutLink") "click" js/logout)
+  (user/init-signup-dialog!)
+  (jq/bind ($ ".signupLink") "click" user/show-signup-dialog!)
+  (jq/bind ($ "#loginLink") "click" user/show-signup-dialog!)
+  (jq/bind ($ "#logoutLink") "click" user/logout!)
   (full-bind "mouseup" mouse-up)
   (full-bind "mousedown" mouse-down)
   (full-bind "mousemove" mouse-move)
