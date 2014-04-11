@@ -43,9 +43,6 @@
                 {:output-to "src/main/resources/js/gbui.js"
                  :foreign-libs
                  [{:file "src/main/js/seedrandom.js" :provides ["seedrandom"]}
-                  {:file "src/main/js/jquery.mousewheel.js" :provides ["jquery.mousewheel"]}
-                  {:file "src/main/js/slimScroll.js" :provides ["slimscroll"]}
-                  {:file "src/main/js/browsers.js" :provides ["browsers"]}
                   {:file "src/main/js/Quaternion.js" :provides ["quaternion"]}]
                  :optimizations :whitespace
                  :pretty-print true}}]})
