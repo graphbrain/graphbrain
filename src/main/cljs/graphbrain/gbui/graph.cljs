@@ -2,7 +2,8 @@
   (:require [jayq.core :as jq]
             [graphbrain.gbui.globals :as g]
             [graphbrain.gbui.snode :as snode]
-            [graphbrain.gbui.layout :as layout])
+            [graphbrain.gbui.layout :as layout]
+            [graphbrain.gbui.browsers :as browsers])
   (:use [jayq.core :only [$]]))
 
 (defn snodes-vis-map
@@ -93,6 +94,7 @@
 
 (defn init-graph-vis!
   []
+  (if (browsers/safari?) (.css ($ "#graph-view") "overflow" "hidden"))
   (reset! g/graph-vis (create-graph-vis-state
                        (graph-view-size)
                        (:snodes @g/graph)))

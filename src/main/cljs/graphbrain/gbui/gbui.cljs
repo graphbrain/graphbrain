@@ -8,17 +8,12 @@
             [graphbrain.gbui.newedges :as newedges]
             [graphbrain.gbui.node :as node]
             seedrandom
-            jquery.mousewheel
-            slimscroll
-            browsers
             quaternion)
   (:use [jayq.core :only [$]]))
 
 (defn start
   []
   (Math/seedrandom "GraphBrain GraphBrain")
-
-  (js/browserSpecificTweaks)
 
   (if (and (exists? js/data) (not (nil? js/data)))
     (graph/init-graph!))
