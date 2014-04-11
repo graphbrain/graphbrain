@@ -49,7 +49,6 @@
 
 (defn check-email-reply
   [msg]
-  (.log js/console (str "check-email-reply> " msg))
   (let [response (clojure.string/split msg #" ")
         status (first response)
         email (second response)]
@@ -79,7 +78,6 @@
 
 (defn check-email!
   []
-  (.log js/console "check-email!")
   (if (not (empty? (.val ($ "#suEmail"))))
     (jq/ajax {:type "POST"
               :url "/checkemail"
@@ -130,7 +128,6 @@
         password (.val ($ "#suPassword"))
         password2 (.val ($ "#suPassword2"))
         filter #"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$"]
-    (.log js/console (str "signup!" @email-status " " @username-status))
     (cond
      (empty? name) (do (.addClass ($ "#nameFieldSet") "control-group error")
                        (.html ($ "#signupErrMsg") "Name cannot be empty.")
@@ -162,8 +159,7 @@
      (= @email-status "unknown") (do (reset! submitting true)
                                    (check-email!)
                                    false)
-     :else (do (.log js/console "signup POST")
-             (jq/ajax {:type "POST"
+     :else (do (jq/ajax {:type "POST"
                          :url "/signup"
                          :data (str "name=" name "&username=" username "&email="
                                     email "&password=" password)

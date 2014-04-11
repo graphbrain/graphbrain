@@ -6,7 +6,8 @@
             [graphbrain.gbui.remove :as rem]
             [graphbrain.gbui.aichat :as aichat]
             [graphbrain.gbui.search :as search]
-            [graphbrain.gbui.user :as user])
+            [graphbrain.gbui.user :as user]
+            [graphbrain.gbui.alerts :as alerts])
   (:use [jayq.core :only [$]]))
 
 (def dragging (atom false))
@@ -134,11 +135,10 @@
   (.addEventListener js/document "touchstart" touch-start)
   (.addEventListener js/document "touchend" touch-end)
   (.addEventListener js/document "touchmove" touch-move)
-  (js/initAlert)
+  (alerts/init-alert!)
   (if (exists? js/data)
     (rem/init-remove-dialog
      (:id (first (get-in @g/graph [:snodes "root" :nodes]))))
-    (js/initDisambiguateDialog)
     (js/bind ($ "#ai-chat-button") "click" aichat/ai-chat-button-pressed))
   (if (and (exists? js/errorMsg) (not (empty? js/errorMsg)))
-    (js/setErrorAlert js/errorMsg)))
+    (alerts/set-error-alert! js/errorMsg)))

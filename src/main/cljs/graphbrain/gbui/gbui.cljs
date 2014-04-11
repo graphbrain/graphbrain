@@ -11,8 +11,7 @@
             jquery.mousewheel
             slimscroll
             browsers
-            quaternion
-            alerts)
+            quaternion)
   (:use [jayq.core :only [$]]))
 
 (defn start
