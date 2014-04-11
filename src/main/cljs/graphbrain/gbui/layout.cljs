@@ -1,9 +1,11 @@
 (ns graphbrain.gbui.layout
-  (:require [graphbrain.gbui.mat :as mat]))
+  (:require [graphbrain.gbui.mat :as mat]
+            [graphbrain.gbui.globals :as g]
+            [cemerick.pprng :as rng]))
 
 (defn frand
   []
-  (- (Math/random) 0.5))
+  (- (rng/double @g/rng) 0.5))
 
 (defn all-pairs [coll]
   (when-let [s (next coll)]
