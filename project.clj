@@ -42,7 +42,6 @@
                 :compiler
                 {:output-to "src/main/resources/js/gbui.js"
                  :foreign-libs
-                 [{:file "src/main/js/seedrandom.js" :provides ["seedrandom"]}
-                  {:file "src/main/js/Quaternion.js" :provides ["quaternion"]}]
+                 [{:file "src/main/js/seedrandom.js" :provides ["seedrandom"]}]
                  :optimizations :whitespace
                  :pretty-print true}}]})
