@@ -7,8 +7,7 @@
             [graphbrain.gbui.aichat :as aichat]
             [graphbrain.gbui.newedges :as newedges]
             [graphbrain.gbui.node :as node]
-            seedrandom
-            quaternion)
+            seedrandom)
   (:use [jayq.core :only [$]]))
 
 (defn start

@@ -3,7 +3,8 @@
             [graphbrain.gbui.globals :as g]
             [graphbrain.gbui.snode :as snode]
             [graphbrain.gbui.layout :as layout]
-            [graphbrain.gbui.browsers :as browsers])
+            [graphbrain.gbui.browsers :as browsers]
+            [graphbrain.gbui.quaternion :as quat])
   (:use [jayq.core :only [$]]))
 
 (defn snodes-vis-map
@@ -13,18 +14,16 @@
 
 (defn create-graph-vis-state
   [size snodes]
-  (let [quat (js/Quaternion.)
-        affin-mat (js/Array. 16)
+  (let [quat (quat/quaternion)
         graph {:size size
                :scale 1
                :offset [0 0 0]
                :quat quat
-               :delta-quat (js/Quaternion.)
-               :affin-mat affin-mat
+               :delta-quat (quat/quaternion)
+               :affin-mat (quat/matrix quat)
                :negative-stretch 1
                :mapping-power 1
                :snodes (snodes-vis-map snodes)}]
-    (. quat getMatrix affin-mat)
     graph))
 
 (defn graph-view-size
@@ -140,11 +139,15 @@
   (let [gv @g/graph-vis
         quat (:quat gv)
         delta-quat (:delta-quat gv)
-        affin-mat (:affin-mat gv)]
-    (. delta-quat fromEuler x y z)
-    (. quat mul delta-quat)
-    (. quat normalise)
-    (. quat getMatrix affin-mat)))
+        affin-mat (:affin-mat gv)
+        delta-quat (quat/from-euler delta-quat x y z)
+        quat (quat/mul quat delta-quat)
+        quat (quat/normalise quat)
+        affin-mat (quat/matrix quat)
+        gv (assoc gv :quat quat)
+        gv (assoc gv :delta-quat delta-quat)
+        gv (assoc gv :affin-mat affin-mat)]
+    (reset! g/graph-vis gv)))
 
 (defn rotate-x
   [angle]
