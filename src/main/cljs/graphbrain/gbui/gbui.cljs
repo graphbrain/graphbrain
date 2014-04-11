@@ -7,12 +7,12 @@
             [graphbrain.gbui.aichat :as aichat]
             [graphbrain.gbui.newedges :as newedges]
             [graphbrain.gbui.node :as node]
-            seedrandom)
+            [cemerick.pprng :as rng])
   (:use [jayq.core :only [$]]))
 
 (defn start
   []
-  (Math/seedrandom "GraphBrain GraphBrain")
+  (reset! g/rng (rng/rng "GraphBrain GraphBrain"))
 
   (if (and (exists? js/data) (not (nil? js/data)))
     (graph/init-graph!))
