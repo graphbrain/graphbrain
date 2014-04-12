@@ -1,7 +1,8 @@
 (ns graphbrain.web.visualgraph
-  (:require [clojure.data.json :as json])
+  (:require [clojure.data.json :as json]
+            [graphbrain.web.colors :as colors])
   (:import (com.graphbrain.db ID EdgeType VertexType EntityNode Vertex)
-           (com.graphbrain.web Colors EdgeLabelTable)))
+           (com.graphbrain.web EdgeLabelTable)))
 
 (def ^:const max-snodes 15)
 
@@ -67,7 +68,7 @@
 
 (defn link-color
   [label]
-  (nth Colors/colors (mod (Math/abs (.hashCode label)) (count Colors/colors))))
+  (nth colors/colors (mod (Math/abs (.hashCode label)) (count colors/colors))))
 
 (defn fix-label
   [label]
