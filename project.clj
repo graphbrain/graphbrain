@@ -42,5 +42,8 @@
               [{:source-paths ["src/main/cljs"]
                 :compiler {:output-to "src/main/resources/js/gbui.js"
                            :libs [""]
+                           :externs ["src/main/resources/js/jquery-1.7.2.min.js"
+                                     "src/main/resources/js/jquery-ui-1.8.18.custom.min.js"
+                                     "src/main/resources/js/bootstrap.min.js"]
                            :optimizations :whitespace
                            :pretty-print true}}]})
