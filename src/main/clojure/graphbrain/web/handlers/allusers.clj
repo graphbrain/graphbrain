@@ -2,7 +2,7 @@
   (:use [clojure.string :only [join]]
         (graphbrain.web common)
         (graphbrain.web.views page raw))
-  (:import (com.graphbrain.web NavBar CssAndJs)))
+  (:require [graphbrain.web.cssandjs :as css+js]))
 
 (defn- raw-html
   [request]
@@ -28,7 +28,8 @@
   (let [user (get-user request)]
     (page
       :title "all users"
-      :css-and-js (. (new CssAndJs) cssAndJs)
-      :navbar (. (new NavBar user "allusers") html)
+      :css-and-js (css+js/css+js)
+      :user user
+      :page :allusers
       :body-fun (fn [] (raw-view (raw-html request)))
       :js "")))

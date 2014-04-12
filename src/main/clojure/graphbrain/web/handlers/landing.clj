@@ -2,7 +2,7 @@
   (:use (ring.util response)
         (graphbrain.web common)
         (graphbrain.web.views page landing))
-  (:import (com.graphbrain.web NavBar CssAndJs)))
+  (:require [graphbrain.web.cssandjs :as css+js]))
 
 (defn handle-landing
   [request]
@@ -12,7 +12,8 @@
       (redirect (str "/node/" (. user id)))
       (page
         :title "Welcome"
-        :css-and-js (. (new CssAndJs) cssAndJs)
-        :navbar (. (new NavBar nil "home") html)
+        :css-and-js (css+js/css+js)
+        :user nil
+        :page :home
         :body-fun landing-view
         :js ""))))
