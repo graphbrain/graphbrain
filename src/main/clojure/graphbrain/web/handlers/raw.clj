@@ -2,7 +2,7 @@
   (:use [clojure.string :only [join]]
         (graphbrain.web common)
         (graphbrain.web.views page raw))
-  (:import (com.graphbrain.web NavBar CssAndJs)))
+  (:require [graphbrain.web.cssandjs :as css+js]))
 
 (defn- raw-html
   [request user vertex]
@@ -21,9 +21,9 @@
   [request]
   (let [user (get-user request)
         vertex (. graph get (:* (:route-params request)))]
-    (page
-      :title (. vertex label)
-      :css-and-js (. (new CssAndJs) cssAndJs)
-      :navbar (. (new NavBar user "raw") html)
-      :body-fun (fn [] (raw-view (raw-html request user vertex)))
-      :js "")))
+    (page :title (. vertex label)
+          :css-and-js (css+js/css+js)
+          :user user
+          :page :raw
+          :body-fun (fn [] (raw-view (raw-html request user vertex)))
+          :js "")))

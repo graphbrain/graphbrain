@@ -7,8 +7,7 @@
     background:#FFF;
     overflow:hidden;
   }
-</style>
-")
+</style>")
 
 (defn node-view []
   (html
