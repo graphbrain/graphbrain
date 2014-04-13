@@ -1,7 +1,8 @@
 (ns graphbrain.web.common
-  (:import (com.graphbrain.db Graph)))
+  (:require [graphbrain.db.graph :as gb]
+            [graphbrain.db.user :as user]))
 
-(def graph (Graph.))
+(defonce graph (gb/graph))
 
 (defn get-user
   [response]
@@ -11,21 +12,21 @@
     (if (or (not username) (not session))
       nil
       (let
-        [user-node (. graph getUserNodeByUsername username)]
+        [user-node (gb/username->node graph username)]
         (if user-node
-          (if (. user-node checkSession session)
+          (if (user/check-session user-node session)
             user-node))))))
 
 (defn get-code
   []
   (let
-    [prog (. graph getProgNode "prog/prog")]
+    [prog (gb/getv graph "prog/prog")]
     (if prog
-      (. prog getProg) "")))
+      (:prog prog) "")))
 
 (defn get-tests
   []
   (let
-    [tests (. graph getTextNode "text/tests")]
+    [tests (gb/getv graph "text/tests")]
     (if tests
-      (. tests getText) "")))
+      (:text tests) "")))
