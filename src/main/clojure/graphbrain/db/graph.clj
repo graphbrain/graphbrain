@@ -186,7 +186,7 @@
       (. graph put (map->vertex-obj vert))))
   ([graph vert user-id]
      (vertex-obj->map
-      (. graph put (map->vertex-obj vert)))))
+      (. graph put (map->vertex-obj vert) user-id))))
 
 (defn edge?
   [vert]

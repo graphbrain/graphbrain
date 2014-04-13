@@ -39,4 +39,4 @@
 (defn extract-knowledge!
   [url-str]
   (let [edges (url->edges url-str)]
-    (doseq [edge edges] (graph/putv! g edge))))
+    (doseq [edge-id edges] (graph/putv! g (edge/id->edge edge-id)))))

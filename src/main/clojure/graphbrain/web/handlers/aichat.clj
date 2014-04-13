@@ -44,7 +44,7 @@
   [user root sentence]
   (let [url-id (url/url->id sentence)]
     (pr/extract-knowledge! sentence)
-    (aichat-reply (:id root) root "url!")))
+    (aichat-reply url-id nil (str "processed url: " sentence))))
 
 (defn handle-aichat
   [request]

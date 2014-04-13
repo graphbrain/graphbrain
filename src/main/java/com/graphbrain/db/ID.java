@@ -47,7 +47,23 @@ public class ID {
 
     public static String lastPart(String id) {
         String[] p = parts(id);
-        return p[p.length - 1];
+        if (VertexType.getType(id) == VertexType.URL) {
+            int start = 1;
+            if (isUserNode(id)) {
+                start = 3;
+            }
+            String last = "";
+            for (int i = start; i < p.length; i++) {
+                if (i > start) {
+                    last += "/";
+                }
+                last += p[i];
+            }
+            return last;
+        }
+        else {
+            return p[p.length - 1];
+        }
     }
 
     public static String humanReadable(String id) {

@@ -1,20 +1,22 @@
 (ns graphbrain.web.handlers.node
   (:use (graphbrain.web common)
         (graphbrain.web.views page node))
-  (:require [graphbrain.web.visualgraph :as vg]
+  (:require [graphbrain.db.graph :as gb]
+            [graphbrain.web.visualgraph :as vg]
             [graphbrain.web.cssandjs :as css+js]))
 
 (defn- js
   [node user]
-  (str "var data = " (vg/generate graph (. node id) user) ";\n"
+  (str "var data = " (vg/generate graph (:id node) user) ";\n"
     "var errorMsg = \"\";\n"))
 
 (defn handle-node
   [request]
   (let
-    [user (get-user request)
-     vert (. graph get (:* (:route-params request)))]
-    (page :title (. vert label)
+      [user (get-user request)
+       vert (gb/getv graph (:* (:route-params request)))]
+    (prn (:* (:route-params request)))
+    (page :title (:label vert)
           :css-and-js (css+js/css+js)
           :user user
           :page :node
