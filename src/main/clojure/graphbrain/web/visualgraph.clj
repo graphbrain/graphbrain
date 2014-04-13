@@ -98,7 +98,7 @@
                :type "text"
                :text (gb/description graph (:id node))
                :edge node-edge}
-      :url {:id (.id node)
+      :url {:id (:id node)
             :type "url"
             :text (if (empty? (:title node))
                     (:url node)

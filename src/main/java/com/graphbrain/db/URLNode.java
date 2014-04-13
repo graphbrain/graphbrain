@@ -60,6 +60,9 @@ public class URLNode extends Vertex {
     }
 
     public static String urlToId(String url) {
+        return "url/" + url;
+
+        /*
         try {
             return "url/" + URLEncoder.encode(url, "UTF-8");
         }
@@ -67,6 +70,7 @@ public class URLNode extends Vertex {
             e.printStackTrace();
             return "";
         }
+        */
     }
 
     public static URLNode fromUrl(String url) {

@@ -1,5 +1,6 @@
 (ns graphbrain.db.edge
-  (:require [graphbrain.db.graph :as gb]))
+  (:require [graphbrain.db.graph :as gb])
+  (:import (com.graphbrain.db Edge)))
 
 (defn ids->edge-id
   [ids]
@@ -16,3 +17,7 @@
 (defn positive?
   [edge]
   (.isPositive (gb/map->edge-obj edge)))
+
+(defn id->edge
+  [id]
+  (gb/edge-obj->map (Edge/fromId id)))

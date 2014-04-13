@@ -20,7 +20,7 @@
         html (str "<div class='" title-class "'" "id='" t-div-id "'>")
         html (str html "<a href='/node/" (:id node) "' id='" div-id "'>")
         html (str html (:text node))
-        html (str "</a></div><br />")
+        html (str html "</a></div><br />")
         icon (:icon node)
         html (if (not= icon "")
                (str html
@@ -32,7 +32,7 @@
         url (:url node)
         html (str html "<a href='" url "' id='url" div-id "'>")
         html (str html url)
-        html (str "</a></div>")
+        html (str html "</a></div>")
         html (if root
                html
                (str html
