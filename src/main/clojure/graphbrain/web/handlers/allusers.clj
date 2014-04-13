@@ -1,31 +1,32 @@
 (ns graphbrain.web.handlers.allusers
   (:use [clojure.string :only [join]]
-        (graphbrain.web common)
         (graphbrain.web.views page raw))
-  (:require [graphbrain.web.cssandjs :as css+js]))
+  (:require [graphbrain.web.cssandjs :as css+js]
+            [graphbrain.web.common :as common]
+            [graphbrain.db.graph :as gb]))
 
 (defn- raw-html
   [request]
   (let
-    [users (. graph allUsers)]
+    [users (gb/all-users common/graph)]
     (str "<h2>All Users</h2>"
       (str "<strong>Count:" (count users) "</strong><br /><br />")
       (join
         (map
           (fn [u] (str
                     "<a href='/node/user/"
-                    (. u getUsername) "'>"
-                    (. u getUsername) "</a> "
-                    (. u getName)
+                    (:username u) "'>"
+                    (:username u) "</a> "
+                    (:name u)
                     " "
-                    (. u getEmail)
+                    (:email u)
                     " "
-                    (. u getPwdhash)
+                    (:pwdhash u)
                     "<br />")) users)))))
 
 (defn handle-allusers
   [request]
-  (let [user (get-user request)]
+  (let [user (common/get-user request)]
     (page
       :title "all users"
       :css-and-js (css+js/css+js)

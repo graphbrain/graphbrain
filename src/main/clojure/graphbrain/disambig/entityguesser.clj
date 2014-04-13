@@ -1,7 +1,7 @@
 (ns graphbrain.disambig.entityguesser
-  (:use graphbrain.db.graph)
+  (:require [graphbrain.db.graph :as graph])
   (:import (com.graphbrain.eco EntityGuesser)))
 
 (defn guess
-  [graph name to-hash]
-  (vertex-obj->map (EntityGuesser/guess graph name to-hash)))
+  [g name to-hash]
+  (graph/vertex-obj->map (EntityGuesser/guess g name to-hash)))

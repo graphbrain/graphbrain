@@ -1,8 +1,13 @@
 (ns graphbrain.web.visualgraph
   (:require [clojure.data.json :as json]
-            [graphbrain.web.colors :as colors])
-  (:import (com.graphbrain.db ID EdgeType VertexType EntityNode Vertex)
-           (com.graphbrain.web EdgeLabelTable)))
+            [graphbrain.web.colors :as colors]
+            [graphbrain.db.graph :as gb]
+            [graphbrain.db.edge :as edge]
+            [graphbrain.db.id :as id]
+            [graphbrain.db.edgetype :as edgetype]
+            [graphbrain.db.entity :as entity]
+            [graphbrain.db.vertex :as vertex])
+  (:import (com.graphbrain.web EdgeLabelTable)))
 
 (def ^:const max-snodes 15)
 
@@ -17,36 +22,36 @@
 
 (defn hyper->edge
   [edge root-id]
-  (if (> (count (. edge getParticipantIds)) 2)
+  (if (> (count (edge/participant-ids edge)) 2)
     (if (= (.getEdgeType edge) "r/1/instance_of~owned_by")
-      (if (= (nth (.getParticipantIds edge) 0) root-id)
+      (if (= (nth (edge/participant-ids edge) 0) root-id)
         {:edge-type "r/1/has"
-         :id1 (nth (.getParticipantIds edge) 2)
+         :id1 (nth (edge/participant-ids edge) 2)
          :id2 root-id
          :parent edge}
-        (if (= (nth (.getParticipantIds edge) 2) root-id)
+        (if (= (nth (edge/participant-ids edge) 2) root-id)
           {:edge-type "r/1/has"
            :id1 root-id
-           :id2 (nth (.getParticipantIds edge) 0)
+           :id2 (nth (edge/participant-ids edge) 0)
            :parent edge}
           nil))
-      (if (= (.getEdgeType edge) "r/1/has~of_type")
-        {:edge-type (str "has " (ID/lastPart (nth (.getParticipantIds edge) 2)))
-         :id1 (nth (.getParticipantIds edge) 0)
-         :id2 (nth (.getParticipantIds edge) 1)
+      (if (= (edge/edge-type edge) "r/1/has~of_type")
+        {:edge-type (str "has " (id/last-part (nth (edge/participant-ids edge) 2)))
+         :id1 (nth (edge/participant-ids edge) 0)
+         :id2 (nth (edge/participant-ids edge) 1)
          :parent edge}
-        (let [parts (.split (.getEdgeType edge) "~")]
+        (let [parts (.split (edge/edge-type edge) "~")]
           {:edge-type (str (first parts)
                            " "
-                           (ID/lastPart (nth (.getParticipantIds edge) 1))
+                           (id/last-part (nth (edge/participant-ids edge) 1))
                            " "
                            (clojure.string/join " " (rest parts)))
-           :id1 (nth (.getParticipantIds edge) 0)
-           :id2 (nth (.getParticipantIds edge) 2)
+           :id1 (nth (edge/participant-ids edge) 0)
+           :id2 (nth (edge/participant-ids edge) 2)
            :parent edge})))
-    {:edge-type (nth (.getIds edge) 0)
-     :id1 (nth (.getIds edge) 1)
-     :id2 (nth (.getIds edge) 2)
+    {:edge-type (nth (:ids edge) 0)
+     :id1 (nth (:ids edge) 1)
+     :id2 (nth (:ids edge) 2)
      :parent edge}))
 
 (defn add-to-edge-node-map
@@ -78,36 +83,36 @@
 
 (defn link-label
   [edge-type]
-  (if (empty? edge-type) "" (fix-label (EdgeType/label edge-type))))
+  (if (empty? edge-type) "" (fix-label (edgetype/label edge-type))))
 
 (defn node->map
   [graph node-id node-edge root-id]
-  (let [vtype (VertexType/getType node-id)
-        node (if (and (= node-id root-id) (= vtype VertexType/Entity))
-               (EntityNode. node-id)
-               (.get graph node-id))
-        node (if (nil? node) (Vertex/fromId node-id) node)]
+  (let [vtype (gb/vertex-type node-id)
+        node (if (and (= node-id root-id) (= vtype :entity))
+               (entity/create node-id)
+               (gb/getv graph node-id))
+        node (if (nil? node) (vertex/id->vertex node-id) node)]
 
-    (condp = (. node type)
-      (VertexType/Entity) {:id (.id node)
-                           :type "text"
-                           :text (.description graph node)
-                           :edge node-edge}
-      (VertexType/URL) {:id (.id node)
-                        :type "url"
-                        :text (if (empty? (.getTitle node))
-                                (.getUrl node)
-                                (.getTitle node))
-                        :url (.getUrl node)
-                        :icon (.getIcon node)
-                        :edge node-edge}
-      (VertexType/User) {:id (.id node)
-                         :type "user"
-                         :text (.getName node)
-                         :edge node-edge}
-      {:id (.id node)
+    (condp = (:type node )
+      :entity {:id (:id node)
+               :type "text"
+               :text (gb/description graph (:id node))
+               :edge node-edge}
+      :url {:id (.id node)
+            :type "url"
+            :text (if (empty? (:title node))
+                    (:url node)
+                    (:title node))
+            :url (:url node)
+            :icon (:icon node)
+            :edge node-edge}
+      :user {:id (:id node)
+             :type "user"
+             :text (:name node)
+             :edge node-edge}
+      {:id (:id node)
        :type "text"
-       :text (.id node)
+       :text (:id node)
        :edge node-edge})))
 
 (defn se->node-id
@@ -120,7 +125,7 @@
         color (link-color label)
         nodes (map #(node->map graph
                                (se->node-id % rp)
-                               (.id (:parent %))
+                               (:id (:parent %))
                                root-id) sedges)]
     {:nodes nodes
      :etype (first rp)
@@ -142,11 +147,11 @@
 
 (defn generate
   [graph root-id user]
-  (let [user-id (if user (.id user) "")
-        hyper-edges (.edges graph root-id user-id)
+  (let [user-id (if user (:id user) "")
+        hyper-edges (gb/id->edges graph root-id user-id)
         visual-edges (filter (complement nil?)
                              (map #(hyper->edge % root-id)
-                                  (filter #(. % isPositive) hyper-edges)))
+                                  (filter edge/positive? hyper-edges)))
         edge-node-map (edge-node-map visual-edges root-id)
         all-relations (into [] (for [[rp v] edge-node-map]
                                  {:rel (first rp)

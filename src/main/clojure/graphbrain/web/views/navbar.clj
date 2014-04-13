@@ -2,7 +2,7 @@
 
 (defn- user-id
   [user]
-  (if (nil? user) "" (.-id user)))
+  (if (nil? user) "" (:id user)))
 
 (defn- tools
   [page]
@@ -28,11 +28,11 @@
             :class "dropdown-toggle"
             :data-toggle "dropdown"}
         [:i {:class "icon-user icon-black"}]
-        (.getName user)
+        (:name user)
         [:b {:class "caret"}]]
        [:ul {:class "dropdown-menu"}
         [:li [:a {:href "http://graphbrain.com"} "About GraphBrain"]]
-        [:li [:a {:href (str "/node/user/" (.getUsername user))} "Home"]]
+        [:li [:a {:href (str "/node/user/" (:username user))} "Home"]]
         [:li [:a {:href "#" :id "logoutLink"} "Logout"]]]]]]))
 
 (defn navbar

@@ -54,7 +54,7 @@
    :username (. obj getUsername)
    :name (. obj getName)
    :email (. obj getEmail)
-   :pwdhash (. obj getPwdHash)
+   :pwdhash (. obj getPwdhash)
    :role (. obj getRole)
    :session (. obj getSession)
    :session-ts (. obj getSessionTs)
@@ -76,16 +76,27 @@
    :ts (. obj getTs)
    :text (. obj getText)})
 
+(defn vertex-type
+  [id]
+  (condp = (VertexType/getType id)
+    VertexType/Entity :entity
+    VertexType/Edge :edge
+    VertexType/EdgeType :edge-type
+    VertexType/URL :url
+    VertexType/User :user
+    VertexType/Prog :prog
+    VertexType/Text :text))
+
 (defn vertex-obj->map
   [obj]
-  (condp = (VertexType/getType (. obj getId))
-    VertexType/Entity (entity-obj->map obj)
-    VertexType/Edge (edge-obj->map obj)
-    VertexType/EdgeType (edge-type-obj->map obj)
-    VertexType/URL (url-obj->map obj)
-    VertexType/User (user-obj->map obj)
-    VertexType/Prog (prog-obj->map obj)
-    VertexType/Text (text-obj->map obj)))
+  (condp = (vertex-type (. obj getId))
+    :entity (entity-obj->map obj)
+    :edge (edge-obj->map obj)
+    :edge-type (edge-type-obj->map obj)
+    :url (url-obj->map obj)
+    :user (user-obj->map obj)
+    :prog (prog-obj->map obj)
+    :text (text-obj->map obj)))
 
 (defn map->entity-obj
   [m]
@@ -164,12 +175,36 @@
   ([] (graph "gbnode"))
   ([name] (new Graph name)))
 
-(defn get-vert
+(defn getv
   [graph id]
   (let [obj (. graph get id)]
     (if obj (vertex-obj->map obj))))
 
-(defn put-vert!
-  [graph vert]
+(defn putv!
+  ([graph vert]
+     (vertex-obj->map
+      (. graph put (map->vertex-obj vert))))
+  ([graph vert user-id]
+     (vertex-obj->map
+      (. graph put (map->vertex-obj vert)))))
+
+(defn edge?
+  [vert]
+  (= (:type vert) :edge))
+
+(defn username->node
+  [graph username]
   (vertex-obj->map
-   (. graph put (map->vertex-obj vert))))
+   (.getUserNodeByUsername graph username)))
+
+(defn all-users
+  [graph]
+  (map vertex-obj->map (.allUsers graph)))
+
+(defn description
+  [graph id]
+  (.description graph id))
+
+(defn id->edges
+  [graph id user-id]
+  (map edge-obj->map (.edges graph id user-id)))
