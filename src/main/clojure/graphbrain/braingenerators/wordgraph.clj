@@ -37,7 +37,7 @@
 (defn- words->graph
   [word-list]
   (loop [graph {}
-         windows (partition 7 1 word-list)]
+         windows (partition 5 1 word-list)]
     (if (empty? windows)
       graph
       (recur (add-window-to-graph (first windows) graph)
