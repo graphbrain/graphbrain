@@ -21,3 +21,12 @@
 (defn id->edge
   [id]
   (gb/edge-obj->map (Edge/fromId id)))
+
+(defn ids->edge
+  [ids]
+  (id->edge (ids->edge-id ids)))
+
+(defn matches?
+  [edge pattern]
+  (every? identity
+          (map #(or (= %2 "*") (= %1 %2)) (:ids edge) (:ids pattern))))

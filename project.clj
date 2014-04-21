@@ -5,6 +5,7 @@
                   [commons-io/commons-io "2.4"]
                   [org.apache.commons/commons-lang3 "3.1"]
                   [commons-lang/commons-lang "2.6"]
+                  [org.clojure/java.jdbc "0.3.3"]
                   [mysql/mysql-connector-java "5.1.27"]
                   [org.mindrot/jbcrypt "0.3m"]
                   [net.sf.extjwnl/extjwnl "1.7.1"]
