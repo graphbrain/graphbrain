@@ -11,7 +11,6 @@
     [vertex-id (:id vertex)]
     (str "<h2>Vertex: " vertex-id "</h2>" (str vertex) "<br/><br/>"
       (let [user-id (if user (:id user) "")
-            xxx (println (str "vertex-id: " vertex-id "; user-id: " user-id))
             edges (gb/id->edges graph vertex-id user-id)]
         (join (map (fn [x] (str (:id x) "<br />")) edges))))))
 
