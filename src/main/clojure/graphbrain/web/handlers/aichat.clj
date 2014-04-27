@@ -16,7 +16,7 @@
 (defn- aichat-reply
   [root-id vertex sentence]
   (let [goto-id (if (gb/edge? vertex)
-                  (second (:ids vertex))
+                  (second (edge/ids vertex))
                   root-id)]
     (json/write-str {:sentence sentence
                      :newedges (list (:id vertex))

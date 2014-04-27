@@ -120,7 +120,7 @@
 
 (defn- do-with-edge-permutations!
   [edge f]
-  (let [ids (:ids edge)
+  (let [ids (edge/ids edge)
         nperms (Permutations/permutations (count ids))
         perms (map #(str (Permutations/strArrayPermutationToStr ids %) " " %) (range nperms))]
     (doseq [perm-id perms] (f perm-id))))
@@ -196,17 +196,17 @@
 (defn- results->edges
   [rs]
   (loop [results rs
-           edges #{}]
-      (if (empty? results) edges
-          (let [res (first results)
-                pid (:id res)
-                tokens (edgeparser/split-edge pid)
-                perm (Integer. (last tokens))
-                tokens (drop-last tokens)
-                tokens (Permutations/strArrayUnpermutate (into-array tokens) perm)
-                edge (edge/ids->edge tokens)
-                edges (conj edges edge)]
-            (recur (rest results) edges)))))
+         edges #{}]
+    (if (empty? results) edges
+        (let [res (first results)
+              pid (:id res)
+              tokens (edgeparser/split-edge pid)
+              perm (Integer. (last tokens))
+              tokens (drop-last tokens)
+              tokens (Permutations/strArrayUnpermutate (into-array tokens) perm)
+              edge (edge/ids->edge tokens)
+              edges (conj edges edge)]
+          (recur (rest results) edges)))))
 
 (defn- str+1
   [str]
@@ -216,7 +216,7 @@
 (defn pattern->edges
   [dbs pattern]
   (let [start-str (clojure.string/join
-                   (filter #(not= % "*") (:ids pattern)) " ") 
+                   " " (filter #(not= % "*") pattern))
         end-str (str+1 start-str)
         rs (jdbc/query dbs ["SELECT id FROM edgeperms WHERE id>=? AND id<?"
                             start-str end-str])]

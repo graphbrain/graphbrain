@@ -49,9 +49,9 @@
            :id1 (nth (edge/participant-ids edge) 0)
            :id2 (nth (edge/participant-ids edge) 2)
            :parent edge})))
-    {:edge-type (nth (:ids edge) 0)
-     :id1 (nth (:ids edge) 1)
-     :id2 (nth (:ids edge) 2)
+    {:edge-type (nth (edge/ids edge) 0)
+     :id1 (nth (edge/ids edge) 1)
+     :id2 (nth (edge/ids edge) 2)
      :parent edge}))
 
 (defn add-to-edge-node-map
@@ -92,8 +92,7 @@
                (vertex/id->vertex node-id)
                (gb/getv graph node-id))
         node (if (nil? node) (vertex/id->vertex node-id) node)]
-
-    (condp = (:type node )
+    (condp = (:type node)
       :entity {:id (:id node)
                :type "text"
                :text (gb/description graph (:id node))
