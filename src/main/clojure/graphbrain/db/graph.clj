@@ -1,4 +1,9 @@
 (ns graphbrain.db.graph
+  (:require [graphbrain.db.mysql :as mysql]
+            [graphbrain.db.id :as id]
+            [graphbrain.db.vertex :as vertex]
+            [graphbrain.db.edge :as edge]
+            [graphbrain.db.user :as user])
   (:import (com.graphbrain.db Graph
                               VertexType
                               EntityNode
@@ -7,7 +12,8 @@
                               URLNode
                               UserNode
                               ProgNode
-                              TextNode)))
+                              TextNode)
+           (java.util Date)))
 
 (defn entity-obj->map
   [obj]
@@ -173,20 +179,73 @@
 
 (defn graph
   ([] (graph "gbnode"))
-  ([name] (new Graph name)))
+  ([name] (mysql/db-spec name)))
 
 (defn getv
   [graph id]
-  (let [obj (. graph get id)]
-    (if obj (vertex-obj->map obj))))
+  (mysql/getv graph id (id/id->type id)))
+
+(defn exists?
+  [graph vert-or-id]
+  (let [id (if (string? vert-or-id) vert-or-id (:id vert-or-id))
+        vtype (id/id->type id)]
+    (mysql/exists? graph id vtype)))
+
+(defn add-link-to-global!
+  [graph global-id user-id]
+  (mysql/add-link-to-global! graph global-id user-id))
+
+(defn remove-link-to-global!
+  [graph global-id user-id]
+  (mysql/remove-link-to-global! graph global-id user-id))
+
+(defn- f-degree!
+  [graph id-or-vertex f]
+  (let [vertex (if (string? id-or-vertex) (getv id-or-vertex) id-or-vertex)
+        degree (:degree vertex)
+        vertex (assoc vertex :degree (f degree))]
+    (mysql/update! graph vertex)))
+
+(defn inc-degree!
+  [graph id-or-vertex]
+  (f-degree! graph id-or-vertex inc))
+
+(defn dec-degree!
+  [graph id-or-vertex]
+  (f-degree! graph id-or-vertex dec))
 
 (defn putv!
-  ([graph vert]
-     (vertex-obj->map
-      (. graph put (map->vertex-obj vert))))
-  ([graph vert user-id]
-     (vertex-obj->map
-      (. graph put (map->vertex-obj vert) user-id))))
+  ([graph vertex]
+     (if (not (exists? graph vertex))
+       (let [vertex (assoc vertex :ts (.getTime (Date.)))]
+         (mysql/putv! vertex)
+         (if (= (:type vertex) :edge)
+           (doseq [id (:ids vertex)]
+             (putv! (vertex/id->vertex id))
+             (inc-degree! id)))))
+     vertex)
+  ([graph vertex user-id]
+     (putv! vertex)
+     (if (not (id/user-space? (:id vertex)))
+       (let [uvert (vertex/global->user vertex user-id)]
+         (if (not (exists? uvert))
+           (putv! uvert)
+           (add-link-to-global! (:id vertex) (:id uvert)))
+         #_(if (= (:type vertex) :edge)
+            ;; run consensus algorithm
+            (let [gedge (vertex/user->global vertex)]
+              (consensus/eval-edge graph gedge)))))
+     vertex))
+
+(defn update!
+  [graph vertex]
+  (mysql/update! graph vertex))
+
+(defn put-or-update!
+  [graph vertex]
+  (if (exists? graph vertex)
+    (update! graph vertex)
+    (putv! graph vertex)))
 
 (defn edge?
   [vert]
@@ -208,3 +267,113 @@
 (defn id->edges
   [graph id user-id]
   (map edge-obj->map (.edges graph id user-id)))
+
+(defn- on-remove-edge!
+  [graph edge]
+  (doseq [id (:ids edge)] (dec-degree! graph id)))
+
+(defn remove!
+  ([graph vertex]
+     (mysql/remove! graph vertex)
+     (if (= (:type vertex) :edge)
+       (on-remove-edge! vertex)))
+  ([graph vertex user-id]
+     (let [u (vertex/global->user vertex user-id)]
+       (remove graph u)
+       (remove-link-to-global! (:id vertex) (:id u))
+       (if (= (:type vertex) :edge)
+         (do (putv! (edge/negate vertex))
+             #_(consensus/eval-edge! graph vertex))))))
+
+(defn pattern->edges
+  [grpah pattern]
+  (mysql/pattern->edges graph pattern))
+
+(defn id->edges
+  ([graph center]
+     (mysql/id->edges graph center))
+  ([graph center-id user-id]
+     (let [edges (id->edges graph center-id)
+           gedges (filter vertex/global-space? edges)
+           uedges (if user-id
+                    (let [ucenter-id (id/global->user center-id user-id)]
+                      (filter vertex/user-space? (id->edges ucenter-id))) #{})]
+       (clojure.set/union (filter #(not (some #{(edge/negate %)} uedges)) gedges)
+                          (filter edge/positive? uedges)))))
+
+(defn vertex->edges
+  [graph center]
+    (id->edges graph (:id center)))
+
+(defn edges->vertex-ids
+  [edges]
+  (set (flatten (map :ids edges))))
+
+(defn neighbors
+  [grpah center-id]
+  (conj (edges->vertex-ids (id->edges graph center-id)) center-id))
+
+(defn description
+  [graph id-or-vertex]
+  (let [id (if (string? id-or-vertex) id-or-vertex (:id id-or-vertex))
+        vertex (if (string? id-or-vertex) (getv id-or-vertex) id-or-vertex)
+        as-in (pattern->edges graph (str "(r/+type_of " id " *)"))
+        desc (vertex/label vertex)]
+    (if (empty? as-in) desc
+        (str desc " ("
+             (clojure.string/join ", "
+                                  (map #(vertex/label (second (:ids %))) as-in))
+             ")"))))
+
+(defn email->id
+  [graph email]
+  (let [username (mysql/email->username graph email)]
+    (if username (id/username->id username))))
+
+(defn username-exists?
+  [graph username]
+  (exists? graph (id/username->id username)))
+
+(defn email-exists?
+  [graph email]
+  (mysql/email->username graph email))
+
+(defn find-user
+  [login]
+  (if (exists? (id/username->id login))
+    (getv id/username->id login)
+    (let [uid (email->id login)]
+            (if uid
+              (if (exists? uid) (getv uid))))))
+
+(defn username->vertex
+  [username]
+  (let [uid (id/username->id username)]
+    (if (exists? uid) (getv uid))))
+
+(defn create-user!
+  [username name email password role]
+  (let [user {:username username
+              :name name
+              :email email
+              :password password
+              :role role}]
+    (putv! user)))
+
+(defn attempt-login!
+  [login password]
+  (let [user (find-user login)]
+    (if (and user (user/check-password user password))
+        (update! (user/new-session user)))))
+
+(defn force-login!
+  [login]
+  (let [user (find-user login)]
+    (if user
+        (update! (user/new-session user)))))
+
+(defn all-users [graph] (mysql/all-users graph))
+
+(defn global-alts
+  [graph global-id]
+  (mysql/alts graph global-id))

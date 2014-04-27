@@ -1,7 +1,8 @@
-(ns graphbrain.db.graph
+(ns graphbrain.db.mysql
   (:use graphbrain.utils)
   (:require [clojure.java.jdbc :as jdbc]
-            [graphbrain.db.edge :as edge])
+            [graphbrain.db.edge :as edge]
+            [graphbrain.db.edgeparser :as edgeparser])
   (:import (com.graphbrain.utils Permutations)))
 
 (defonce MYSQL_ENGINE "InnoDB")
@@ -98,7 +99,7 @@
   dbs)
 
 (defn db-spec
-  [& {:keys [name] :or {name "gbnode"}}]
+  [name]
   (let [dbs {:classname "com.mysql.jdbc.Driver"
              :subprotocol "mysql"
              :subname (str "//127.0.0.1:3306/" name)
@@ -183,8 +184,6 @@
     (remove-vertex! dbs (:id vertex) (vtype->tname vtype))
     (if (= vtype :edge) (remove-edge-permutations! dbs vertex))))
 
-(defn associate-email-to-username! [dbs email username] nil)
-
 (defn email->username
   [dbs email]
   (:username (jdbc/query dbs ["SELECT username FROM users WHERE email=?" email])))
@@ -194,38 +193,6 @@
   (map #(assoc % :type :user)
        (jdbc/query dbs "SELECT * FROM users")))
 
-(defn- open-pars
-  [str]
-  (loop [s str
-         n 0]
-    (if (not= \( (first s))
-      n
-      (recur (rest s) (inc n)))))
-
-(defn- close-pars
-  [str]
-  (loop [s str
-         n 0]
-    (if (not= \) (last s))
-      n
-      (recur (drop-last s) (inc n)))))
-
-(defn- split-edge-perm
-  [ep]
-  (let [stoks (clojure.string/split ep #" ")]
-    (loop [st stoks
-           tokens []
-           curtok nil
-           depth 0]
-      (if (empty? st) tokens
-          (let [tok (first st)
-                depth (- (+ depth (open-pars tok)) (close-pars tok))
-                bottom (= depth 0)
-                curtok (str curtok (if curtok " ") tok)
-                tokens (if bottom (conj tokens curtok) tokens)
-                curtok (if bottom nil curtok)]
-            (recur (rest st) tokens curtok depth))))))
-
 (defn- results->edges
   [rs]
   (loop [results rs
@@ -233,7 +200,7 @@
       (if (empty? results) edges
           (let [res (first results)
                 pid (:id res)
-                tokens (split-edge-perm pid)
+                tokens (edgeparser/split-edge pid)
                 perm (Integer. (last tokens))
                 tokens (drop-last tokens)
                 tokens (Permutations/strArrayUnpermutate (into-array tokens) perm)
@@ -255,16 +222,14 @@
                             start-str end-str])]
     (filter #(edge/matches? % pattern) (results->edges rs))))
 
-(defn neighbours
-  [dbs center]
-  (if center
-    (let [start-str (str (:id center) " ")
-          end-str (str+1 start-str)
-          rs (jdbc/query dbs ["SELECT id FROM edgeperms WHERE id>=? AND id<?"
-                              start-str
-                              end-str])]
-      (results->edges rs))
-    #{}))
+(defn id->edges
+  [dbs center-id]
+  (let [start-str (str center-id " ")
+        end-str (str+1 start-str)
+        rs (jdbc/query dbs ["SELECT id FROM edgeperms WHERE id>=? AND id<?"
+                            start-str
+                            end-str])]
+    (results->edges rs)))
 
 (defn add-link-to-global!
   [dbs global-id user-id]

@@ -1,7 +1,7 @@
 (ns graphbrain.web.handlers.relations
   (:use (graphbrain.web common)
         (graphbrain.web.views page node))
-  (:import (com.graphbrain.web VisualGraph)))
+  (:require [graphbrain.web.visualgraph :as vg]))
 
 (defn handle-relations
   [request]
@@ -9,4 +9,4 @@
     [user (get-user request)
      pos ((request :form-params) "pos")
      root-id ((request :form-params) "rootId")]
-    (VisualGraph/generate graph root-id user)))
+    (vg/generate graph root-id user)))

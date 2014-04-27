@@ -21,6 +21,7 @@
                   [compojure/compojure "1.1.6"]
                   [ring/ring-core "1.2.2"]
                   [ring/ring-jetty-adapter "1.2.2"]
+                  [hiccup "1.0.5"]
                   [org.clojure/data.json "0.2.4"]
                   [org.clojure/tools.nrepl "0.2.3"]
                   [org.clojure/math.combinatorics "0.0.7"]

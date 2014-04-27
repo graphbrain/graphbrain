@@ -1,10 +1,6 @@
 (ns graphbrain.db.edge
-  (:require [graphbrain.db.graph :as gb])
-  (:import (com.graphbrain.db Edge)))
-
-(defn ids->edge-id
-  [ids]
-  (str "(" (clojure.string/join " " ids) ")"))
+  (:require [graphbrain.db.edgetype :as edgetype]
+            [graphbrain.db.id :as id]))
 
 (defn participant-ids
   [edge]
@@ -14,17 +10,35 @@
   [edge]
   (first (:ids edge)))
 
+(defn negative?
+  [edge]
+  (edgetype/negative? (edge-type edge)))
+
 (defn positive?
   [edge]
-  (.isPositive (gb/map->edge-obj edge)))
-
-(defn id->edge
-  [id]
-  (gb/edge-obj->map (Edge/fromId id)))
+  (not (negative? edge)))
 
 (defn ids->edge
-  [ids]
-  (id->edge (ids->edge-id ids)))
+  ([ids degree ts]
+     {:id (id/ids->id ids)
+      :ids ids
+      :degree degree
+      :ts ts})
+  ([ids]
+     (ids->edge ids 0 -1)))
+
+(defn id->edge
+  ([id degree ts]
+     {:id id
+      :ids (id/id->ids id)
+      :degree degree
+      :ts ts})
+  ([id]
+     (id->edge id 0 -1)))
+
+(defn negate
+  [edge]
+  (ids->edge (cons (str "neg/" (edge-type edge)) (participant-ids edge))))
 
 (defn matches?
   [edge pattern]
