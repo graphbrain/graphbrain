@@ -89,7 +89,7 @@
   [graph node-id node-edge root-id]
   (let [vtype (gb/vertex-type node-id)
         node (if (and (= node-id root-id) (= vtype :entity))
-               (entity/create node-id)
+               (vertex/id->vertex node-id)
                (gb/getv graph node-id))
         node (if (nil? node) (vertex/id->vertex node-id) node)]
 

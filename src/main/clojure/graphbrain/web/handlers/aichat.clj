@@ -11,7 +11,7 @@
 (defonce prog
   (Prog/fromString
     (slurp "eco/chat.eco")
-    common/graph))
+    nil))
 
 (defn- aichat-reply
   [root-id vertex sentence]

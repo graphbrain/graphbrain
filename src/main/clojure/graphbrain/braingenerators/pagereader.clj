@@ -1,11 +1,12 @@
 (ns graphbrain.braingenerators.pagereader
   (:use graphbrain.braingenerators.ngrams
         graphbrain.disambig.entityguesser)
-  (:require [graphbrain.db.graph :as graph]
+  (:require [graphbrain.db.graph :as gb]
             [graphbrain.db.urlnode :as url]
+            [graphbrain.db.id :as id]
             [graphbrain.db.edge :as edge]))
 
-(defonce g (graph/graph))
+(defonce g (gb/graph))
 
 (defn ngram->entity
   [graph ngram]
@@ -34,9 +35,9 @@
   [url-str]
   (let [url-id (url/url->id url-str)
         entities (url->leaf-entities url-str)]
-    (map #(edge/ids->edge-id ["r/has_topic" url-id (:id %)]) entities)))
+    (map #(id/ids->id ["r/has_topic" url-id (:id %)]) entities)))
 
 (defn extract-knowledge!
   [url-str]
   (let [edges (url->edges url-str)]
-    (doseq [edge-id edges] (graph/putv! g (edge/id->edge edge-id)))))
+    (doseq [edge-id edges] (gb/putv! g (edge/id->edge edge-id)))))
