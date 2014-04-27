@@ -4,8 +4,7 @@
             [graphbrain.db.vertex :as vertex]
             [graphbrain.db.edge :as edge]
             [graphbrain.db.user :as user])
-  (:import (com.graphbrain.db Graph
-                              VertexType
+  (:import (com.graphbrain.db VertexType
                               EntityNode
                               Edge
                               EdgeType
@@ -220,7 +219,7 @@
        (let [vertex (assoc vertex :ts (.getTime (Date.)))]
          (mysql/putv! vertex)
          (if (= (:type vertex) :edge)
-           (doseq [id (:ids vertex)]
+           (doseq [id (edge/ids vertex)]
              (putv! (vertex/id->vertex id))
              (inc-degree! id)))))
      vertex)
@@ -253,16 +252,11 @@
 
 (defn username->node
   [graph username]
-  (vertex-obj->map
-   (.getUserNodeByUsername graph username)))
+  (getv graph (id/username->id username)))
 
 (defn all-users
   [graph]
   (map vertex-obj->map (.allUsers graph)))
-
-(defn description
-  [graph id]
-  (.description graph id))
 
 (defn id->edges
   [graph id user-id]
@@ -270,7 +264,7 @@
 
 (defn- on-remove-edge!
   [graph edge]
-  (doseq [id (:ids edge)] (dec-degree! graph id)))
+  (doseq [id (edge/ids edge)] (dec-degree! graph id)))
 
 (defn remove!
   ([graph vertex]
@@ -286,7 +280,7 @@
              #_(consensus/eval-edge! graph vertex))))))
 
 (defn pattern->edges
-  [grpah pattern]
+  [graph pattern]
   (mysql/pattern->edges graph pattern))
 
 (defn id->edges
@@ -297,9 +291,10 @@
            gedges (filter vertex/global-space? edges)
            uedges (if user-id
                     (let [ucenter-id (id/global->user center-id user-id)]
-                      (filter vertex/user-space? (id->edges ucenter-id))) #{})]
-       (clojure.set/union (filter #(not (some #{(edge/negate %)} uedges)) gedges)
-                          (filter edge/positive? uedges)))))
+                      (filter vertex/user-space? (id->edges graph ucenter-id))) #{})]
+       (clojure.set/union (set (filter #(not (some #{(edge/negate %)} uedges))
+                                       gedges))
+                          (set (filter edge/positive? uedges))))))
 
 (defn vertex->edges
   [graph center]
@@ -307,7 +302,7 @@
 
 (defn edges->vertex-ids
   [edges]
-  (set (flatten (map :ids edges))))
+  (set (flatten (map edge/ids edges))))
 
 (defn neighbors
   [grpah center-id]
@@ -316,13 +311,13 @@
 (defn description
   [graph id-or-vertex]
   (let [id (if (string? id-or-vertex) id-or-vertex (:id id-or-vertex))
-        vertex (if (string? id-or-vertex) (getv id-or-vertex) id-or-vertex)
+        vertex (if (string? id-or-vertex) (getv graph id-or-vertex) id-or-vertex)
         as-in (pattern->edges graph (str "(r/+type_of " id " *)"))
         desc (vertex/label vertex)]
     (if (empty? as-in) desc
         (str desc " ("
              (clojure.string/join ", "
-                                  (map #(vertex/label (second (:ids %))) as-in))
+                                  (map #(vertex/label (second (edge/ids %))) as-in))
              ")"))))
 
 (defn email->id
@@ -377,3 +372,14 @@
 (defn global-alts
   [graph global-id]
   (mysql/alts graph global-id))
+
+(defn description
+  [graph vertex]
+  (let [vertex (if (string? vertex) (getv graph vertex) vertex)
+        as-in (pattern->edges graph ["r/+type_of" (:id vertex) "*"])
+        desc (vertex/label vertex)]
+    (if (empty? as-in) desc
+        (str desc " ("
+             (clojure.string/join
+              ", "
+              (map #(vertex/label (second (edge/participant-ids %))) as-in)) ")"))))
