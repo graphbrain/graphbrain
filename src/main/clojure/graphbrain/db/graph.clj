@@ -3,7 +3,8 @@
             [graphbrain.db.id :as id]
             [graphbrain.db.vertex :as vertex]
             [graphbrain.db.edge :as edge]
-            [graphbrain.db.user :as user])
+            [graphbrain.db.user :as user]
+            [graphbrain.db.queues :as queues])
   (:import (com.graphbrain.db VertexType
                               EntityNode
                               Edge
@@ -230,10 +231,10 @@
          (if (not (exists? uvert))
            (putv! uvert)
            (add-link-to-global! (:id vertex) (:id uvert)))
-         #_(if (= (:type vertex) :edge)
+         (if (= (:type vertex) :edge)
             ;; run consensus algorithm
             (let [gedge (vertex/user->global vertex)]
-              (consensus/eval-edge graph gedge)))))
+              (queues/consensus-enqueue! (:id gedge))))))
      vertex))
 
 (defn update!
@@ -277,7 +278,7 @@
        (remove-link-to-global! (:id vertex) (:id u))
        (if (= (:type vertex) :edge)
          (do (putv! (edge/negate vertex))
-             #_(consensus/eval-edge! graph vertex))))))
+             (queues/consensus-enqueue! (:id vertex)))))))
 
 (defn pattern->edges
   [graph pattern]
