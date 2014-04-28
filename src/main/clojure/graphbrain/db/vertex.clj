@@ -45,4 +45,5 @@
   [vertex]
   (case (:type vertex)
     :entity (entity/label vertex)
+    :user (:name vertex)
     (:id vertex)))
