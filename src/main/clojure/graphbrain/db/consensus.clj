@@ -2,12 +2,13 @@
   (:require [graphbrain.db.id :as id]
             [graphbrain.db.graph :as gb]
             [graphbrain.db.vertex :as vertex]
-            [graphbrain.db.edge :as edge]))
+            [graphbrain.db.edge :as edge]
+            [graphbrain.db.queues :as queues]))
 
 (defn eval-edge!
-  [graph edge]
-  (if (id/global-space? (:id edge))
-    (let [score 0
+  [graph edge-id]
+  (if (id/global-space? edge-id)
+    (let [edge (edge/id->edge edge-id)
           neg-edge (edge/negate edge)
           pids (edge/participant-ids edge)
           alt-vertices (gb/global-alts (first pids))
@@ -22,3 +23,14 @@
                             s (if (gb/exists? graph neg-user-edge) (dec s) s)]
                         (recur (rest altvs) s))))]
       (if (> score 0) (gb/putv! graph edge) (gb/remove! graph edge)))))
+
+(defn start-consensus-processor!
+  [graph]
+  (compare-and-set! queues/consensus-active false true)
+  (future
+    (while @queues/consensus-active
+      (eval-edge! (.take queues/consensus-queue)))))
+
+(defn stop-consensus-processor!
+  []
+  (compare-and-set! queues/consensus-active true false))
