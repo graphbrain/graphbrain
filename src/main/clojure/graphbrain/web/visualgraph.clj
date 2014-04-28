@@ -87,7 +87,7 @@
 
 (defn node->map
   [graph node-id node-edge root-id]
-  (let [vtype (gb/vertex-type node-id)
+  (let [vtype (id/id->type node-id)
         node (if (and (= node-id root-id) (= vtype :entity))
                (vertex/id->vertex node-id)
                (gb/getv graph node-id))
