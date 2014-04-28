@@ -101,7 +101,7 @@
   ([graph vertex user-id]
      (let [u (vertex/global->user vertex user-id)]
        (remove graph u)
-       (remove-link-to-global! (:id vertex) (:id u))
+       (remove-link-to-global! graph (:id vertex) (:id u))
        (if (= (:type vertex) :edge)
          (do (putv! (edge/negate vertex))
              (queues/consensus-enqueue! (:id vertex)))))))

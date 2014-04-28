@@ -1,16 +1,17 @@
 (ns graphbrain.web.handlers.nodeactions
   (:use (graphbrain.web common)
         (ring.util response))
-  (:require [graphbrain.graph :as gb]))
+  (:require [graphbrain.db.graph :as gb]
+            [graphbrain.db.edge :as edge]))
 
 (defn- remove-vertex
   [request]
   (let
     [user (get-user request)
      edge-id ((request :form-params) "edge")]
-    (. graph remove
-      (gb/edge-from-id edge-id)
-      (. user id))))
+    (gb/remove! graph
+      (edge/id->edge edge-id)
+      (:id user))))
 
 (defn handle-nodeactions
   [request]
