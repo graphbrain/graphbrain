@@ -2,6 +2,7 @@
   (:use (graphbrain.web common)
         (graphbrain.web.views page node))
   (:require [graphbrain.db.graph :as gb]
+            [graphbrain.db.vertex :as vertex]
             [graphbrain.web.visualgraph :as vg]
             [graphbrain.web.cssandjs :as css+js]))
 
@@ -16,7 +17,7 @@
       [user (get-user request)
        vert (gb/getv graph (:* (:route-params request)))]
     (prn (:* (:route-params request)))
-    (page :title (:label vert)
+    (page :title (vertex/label vert)
           :css-and-js (css+js/css+js)
           :user user
           :page :node
