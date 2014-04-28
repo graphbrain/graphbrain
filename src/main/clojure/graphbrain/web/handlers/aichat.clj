@@ -2,6 +2,7 @@
   (:require [graphbrain.web.common :as common]
             [clojure.data.json :as json]
             [graphbrain.db.graph :as gb]
+            [graphbrain.db.graphjava :as gbj]
             [graphbrain.db.edge :as edge]
             [graphbrain.db.urlnode :as url]
             [graphbrain.braingenerators.pagereader :as pr]
@@ -30,11 +31,11 @@
 
 (defn- process-fact
   [user root sentence]
-  (. prog setVertex "$user" (gb/map->user-obj user))
-  (. prog setVertex "$root" (gb/map->vertex-obj root))
+  (. prog setVertex "$user" (gbj/map->user-obj user))
+  (. prog setVertex "$root" (gbj/map->vertex-obj root))
   (let
       [ctxts-list (. prog wv sentence 0)
-       vertex (gb/vertex-obj->map
+       vertex (gbj/vertex-obj->map
                (. (first (. (first ctxts-list) getCtxts)) getTopRetVertex))]
     (if (gb/edge? vertex)
       (gb/putv! common/graph vertex (:id user)))

@@ -1,6 +1,14 @@
 (ns graphbrain.db.id
   (:require [graphbrain.db.edgeparser :as edgeparser]))
 
+(defn hashed
+  [str]
+  (let [h (loop [s str
+                 x 1125899906842597]  ;; prime
+            (if (empty? s) x
+                (recur (rest s) (* 31 (+ x (long (first s)))))))]
+    (Long/toHexString h)))
+
 (defn parts
   [id]
   (clojure.string/split id #"/"))
