@@ -164,12 +164,7 @@
 
 (defn create-user!
   [graph username name email password role]
-  (let [user {:username username
-              :name name
-              :email email
-              :password password
-              :role role}]
-    (putv! graph user)))
+  (putv! graph (user/new-user username name email password role)))
 
 (defn attempt-login!
   [graph login password]

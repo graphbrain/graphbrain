@@ -14,10 +14,26 @@
    :pwdhash ""
    :role ""
    :session ""
-   :session-ts -1
-   :last-seen -1
+   :session_ts -1
+   :last_seen -1
    :degree 0
    :ts -1})
+
+(defn new-user
+  [username name email password role]
+  {:id (id/username->id username)
+   :type :user
+   :username username
+   :name name
+   :email email
+   :pwdhash (BCrypt/hashpw password (BCrypt/gensalt))
+   :role role
+   :session ""
+   :session_ts -1
+   :last_seen -1
+   :degree 0
+   :ts -1})
+
 
 (defn check-session
   [user candidate]
