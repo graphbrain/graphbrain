@@ -56,12 +56,13 @@
              (inc-degree! graph id)))))
      vertex)
   ([graph vertex user-id]
-     (putv! vertex)
+     (prn (str "putv! " vertex "; user: " user-id))
+     (putv! graph vertex)
      (if (not (id/user-space? (:id vertex)))
        (let [uvert (vertex/global->user vertex user-id)]
-         (if (not (exists? uvert))
-           (putv! uvert)
-           (add-link-to-global! (:id vertex) (:id uvert)))
+         (if (not (exists? graph uvert))
+           (putv! graph uvert)
+           (add-link-to-global! graph (:id vertex) (:id uvert)))
          (if (= (:type vertex) :edge)
             ;; run consensus algorithm
             (let [gedge (vertex/user->global vertex)]

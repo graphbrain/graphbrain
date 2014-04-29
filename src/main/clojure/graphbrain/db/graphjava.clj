@@ -1,5 +1,6 @@
 (ns graphbrain.db.graphjava
-  (:import (com.graphbrain.db VertexType
+  (:import (com.graphbrain.db Graph
+                              VertexType
                               EntityNode
                               Edge
                               EdgeType
@@ -7,6 +8,10 @@
                               UserNode
                               ProgNode
                               TextNode)))
+
+(defn graph
+  []
+  (Graph.))
 
 (defn entity-obj->map
   [obj]
@@ -20,11 +25,7 @@
   {:id (. obj getId)
    :type :edge
    :degree (. obj getDegree)
-   :ts (. obj getTs)
-   :elems (. obj getElems)
-   :ids (. obj getIds)
-   :edge-type (. obj getEdgeType)
-   :participant-ids (. obj getParticipantIds)})
+   :ts (. obj getTs)})
 
 (defn edge-type-obj->map
   [obj]
@@ -56,8 +57,8 @@
    :pwdhash (. obj getPwdhash)
    :role (. obj getRole)
    :session (. obj getSession)
-   :session-ts (. obj getSessionTs)
-   :last-seen (. obj getLastSeen)})
+   :session_ts (. obj getSessionTs)
+   :last_seen (. obj getLastSeen)})
 
 (defn prog-obj->map
   [obj]
@@ -138,8 +139,8 @@
        (:pwdhash m)
        (:role m)
        (:session m)
-       (:session-ts m)
-       (:last-seen m)
+       (:session_ts m)
+       (:last_seen m)
        (:degree m)
        (:ts m)))
 
