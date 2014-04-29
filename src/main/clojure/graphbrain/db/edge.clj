@@ -25,6 +25,7 @@
 (defn id->edge
   ([id degree ts]
      {:id id
+      :type :edge
       :degree degree
       :ts ts})
   ([id]
@@ -38,9 +39,9 @@
 
 (defn negate
   [edge]
-  (ids->edge (cons (str "neg/" (edge-type edge)) (participant-ids edge))))
+  (ids->edge (cons (edgetype/negate (edge-type edge)) (participant-ids edge))))
 
 (defn matches?
   [edge pattern]
   (every? identity
-          (map #(or (= %2 "*") (= %1 %2)) (ids edge) (ids pattern))))
+          (map #(or (= %2 "*") (= %1 %2)) (ids edge) pattern)))

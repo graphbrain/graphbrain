@@ -27,9 +27,9 @@
 (defn start-consensus-processor!
   [graph]
   (compare-and-set! queues/consensus-active false true)
-  (future
-    (while @queues/consensus-active
-      (eval-edge! (.take queues/consensus-queue)))))
+  (def consensus-processor (future
+     (while @queues/consensus-active
+       (eval-edge! (.take queues/consensus-queue))))))
 
 (defn stop-consensus-processor!
   []

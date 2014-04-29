@@ -7,7 +7,8 @@
                                          allusers ecoparser ecocode
                                          ecoedittests ecoruntests))
   (:require [compojure.handler :as handler]
-            [compojure.route :as route]))
+            [compojure.route :as route]
+            [graphbrain.web.common :as common]))
 
 (defroutes app-routes
   (GET "/" request (handle-landing request))
@@ -40,14 +41,17 @@
     wrap-cookies))
 
 (def handler
-  (handler/site (-> app-routes
-       (wrap-resource "")
-       wrap-file-info
-       wrap-params
-       wrap-cookies)))
+  (do
+    (common/init-graph!)
+    (handler/site (-> app-routes
+                      (wrap-resource "")
+                      wrap-file-info
+                      wrap-params
+                      wrap-cookies))))
 
 (defn run
   []
+  (common/init-graph!)
   (run-jetty app {:port 4567}))
 
 #_(defonce server (run-jetty #'app {:port 8080 :join? false}))

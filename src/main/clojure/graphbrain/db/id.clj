@@ -114,4 +114,4 @@
   [id-or-ns]
   (let [tokens (parts id-or-ns)]
     (if (= (first tokens) "user")
-      (str "user/" (first tokens)) "")))
+      (str "user/" (second tokens)) "")))

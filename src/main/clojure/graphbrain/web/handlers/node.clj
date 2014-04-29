@@ -16,7 +16,6 @@
   (let
       [user (get-user request)
        vert (gb/getv graph (:* (:route-params request)))]
-    (prn (:* (:route-params request)))
     (page :title (vertex/label vert)
           :css-and-js (css+js/css+js)
           :user user
