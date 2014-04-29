@@ -9,10 +9,10 @@
             [graphbrain.string :as gbstr])
   (:import (com.graphbrain.eco Prog)))
 
-(defonce prog
+(def prog
   (Prog/fromString
     (slurp "eco/chat.eco")
-    nil))
+    (gbj/graph)))
 
 (defn- aichat-reply
   [root-id vertex sentence]
