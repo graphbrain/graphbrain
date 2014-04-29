@@ -122,7 +122,9 @@
   [edge f]
   (let [ids (edge/ids edge)
         nperms (Permutations/permutations (count ids))
-        perms (map #(str (Permutations/strArrayPermutationToStr ids %) " " %) (range nperms))]
+        ids (into-array ids)
+        perms (map #(str (Permutations/strArrayPermutationToStr ids %) " " %)
+                   (range nperms))]
     (doseq [perm-id perms] (f perm-id))))
 
 (defn- write-edge-permutations!
@@ -143,8 +145,9 @@
 
 (defn- exists-vertex?
   [dbs id table]
-  (let [rs (jdbc/query dbs ["SELECT EXISTS(SELECT 1 FROM ? WHERE id=?)" table id])]
-    (= 1 (:1 (first rs)))))
+  (let [rs (jdbc/query dbs [(str "SELECT id FROM " table " WHERE id=?")
+                            id])]
+    (not (empty? rs))))
 
 (defn- put-vertex!
   [dbs vertex table]

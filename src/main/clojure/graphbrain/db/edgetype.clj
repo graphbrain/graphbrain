@@ -13,7 +13,17 @@
 
 (defn negative?
   [id]
-  (= (first (id/parts id)) "neg"))
+  (= (first (id/parts (id/user->global id))) "neg"))
+
+(defn negate
+  [id]
+  (if (negative? id) id
+      (let [user-id (id/owner-id id)
+            global-id (id/user->global id)
+            neg-id (str "neg/" global-id)]
+        (if (empty? user-id)
+          neg-id
+          (id/global->user neg-id user-id)))))
 
 (defn build-id
   [text]

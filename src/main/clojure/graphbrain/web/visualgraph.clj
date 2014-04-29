@@ -95,7 +95,7 @@
     (condp = (:type node)
       :entity {:id (:id node)
                :type "text"
-               :text (gb/description graph (:id node))
+               :text (gb/description graph node)
                :edge node-edge}
       :url {:id (:id node)
             :type "url"

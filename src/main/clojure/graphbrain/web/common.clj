@@ -1,8 +1,12 @@
 (ns graphbrain.web.common
   (:require [graphbrain.db.graph :as gb]
-            [graphbrain.db.user :as user]))
+            [graphbrain.db.user :as user]
+            [graphbrain.db.utils :as utils]))
 
-(defonce graph (gb/graph))
+(defn init-graph!
+  []
+  #_(def graph (utils/init-with-consensus!))
+  (def graph (gb/graph)))
 
 (defn get-user
   [response]
@@ -11,8 +15,7 @@
      session (:value ((response :cookies) "session"))]
     (if (or (not username) (not session))
       nil
-      (let
-        [user-node (gb/username->node graph username)]
+      (let [user-node (gb/username->vertex graph username)]
         (if user-node
           (if (user/check-session user-node session)
             user-node))))))
