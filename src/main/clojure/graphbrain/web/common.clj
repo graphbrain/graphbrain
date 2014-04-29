@@ -5,8 +5,8 @@
 
 (defn init-graph!
   []
-  #_(def graph (utils/init-with-consensus!))
-  (def graph (gb/graph)))
+  (def graph (utils/init-with-consensus!))
+  #_(def graph (gb/graph)))
 
 (defn get-user
   [response]
