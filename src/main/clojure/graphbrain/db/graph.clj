@@ -56,7 +56,6 @@
              (inc-degree! graph id)))))
      vertex)
   ([graph vertex user-id]
-     (prn (str "putv! " vertex "; user: " user-id))
      (putv! graph vertex)
      (if (not (id/user-space? (:id vertex)))
        (let [uvert (vertex/global->user vertex user-id)]
