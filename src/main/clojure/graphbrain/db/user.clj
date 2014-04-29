@@ -25,7 +25,7 @@
 
 (defn new-session
   [user]
-  (assoc user :session (BigInteger. 130 (.toString (RandUtils/secRand) 32))))
+  (assoc user :session (.toString (BigInteger. 130 (RandUtils/secRand)) 32)))
 
 (defn check-password
   [user candidate]

@@ -189,7 +189,8 @@
 
 (defn email->username
   [dbs email]
-  (:username (jdbc/query dbs ["SELECT username FROM users WHERE email=?" email])))
+  (:username (first
+              (jdbc/query dbs ["SELECT username FROM users WHERE email=?" email]))))
 
 (defn all-users
   [dbs]

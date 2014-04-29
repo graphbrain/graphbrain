@@ -150,12 +150,12 @@
   (mysql/email->username graph email))
 
 (defn find-user
-  [login]
-  (if (exists? (id/username->id login))
-    (getv id/username->id login)
-    (let [uid (email->id login)]
-            (if uid
-              (if (exists? uid) (getv uid))))))
+  [graph login]
+  (if (exists? graph (id/username->id login))
+    (getv graph (id/username->id login))
+    (let [uid (email->id graph login)]
+      (if uid
+        (if (exists? graph uid) (getv graph uid))))))
 
 (defn username->vertex
   [graph username]
@@ -163,19 +163,19 @@
     (if (exists? graph uid) (getv graph uid))))
 
 (defn create-user!
-  [username name email password role]
+  [graph username name email password role]
   (let [user {:username username
               :name name
               :email email
               :password password
               :role role}]
-    (putv! user)))
+    (putv! graph user)))
 
 (defn attempt-login!
-  [login password]
-  (let [user (find-user login)]
+  [graph login password]
+  (let [user (find-user graph login)]
     (if (and user (user/check-password user password))
-        (update! (user/new-session user)))))
+        (update! graph (user/new-session user)))))
 
 (defn force-login!
   [login]
