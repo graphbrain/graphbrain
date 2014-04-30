@@ -2,6 +2,7 @@
   :description "GraphBrain project"
   :url "http://graphbrain.com/"
   :dependencies  [[org.clojure/clojure "1.5.1"]
+                  [org.clojure/tools.cli "0.3.1"]
                   [commons-io/commons-io "2.4"]
                   [org.apache.commons/commons-lang3 "3.1"]
                   [commons-lang/commons-lang "2.6"]
@@ -38,7 +39,7 @@
   :java-source-paths ["src/main/java"]
   :test-paths ["test" "src/test/clojure"]
   :resource-paths ["src/main/resources"]
-  :main graphbrain.braingenerators.wordnet
+  :main graphbrain.core
   :ring {:handler graphbrain.web.server/handler}
   :aot :all
   
