@@ -11,3 +11,13 @@
 (defn map-map-vals
   [f m]
   (into {} (for [[k v] m] [k (f v)])))
+
+(defn iteration->seq
+  [iteration]
+  (seq
+   (reify java.lang.Iterable 
+     (iterator [this] 
+       (reify java.util.Iterator
+         (hasNext [this] (.hasNext iteration))
+         (next [this] (.next iteration))
+         (remove [this] (.remove iteration)))))))

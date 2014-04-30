@@ -1,13 +1,14 @@
 (defproject graphbrain "0.1.0-SNAPSHOT"
   :description "GraphBrain project"
   :url "http://graphbrain.com/"
-  :dependencies  [[org.clojure/clojure "1.6.0"]
+  :dependencies  [[org.clojure/clojure "1.5.1"]
                   [commons-io/commons-io "2.4"]
                   [org.apache.commons/commons-lang3 "3.1"]
                   [commons-lang/commons-lang "2.6"]
                   [org.clojure/java.jdbc "0.3.3"]
                   [mysql/mysql-connector-java "5.1.27"]
                   [org.mindrot/jbcrypt "0.3m"]
+                  [xml-apis/xml-apis "1.4.01"]
                   [net.sf.extjwnl/extjwnl "1.7.1"]
                   [net.sf.extjwnl/extjwnl-data-wn31 "1.1"]
                   [com.zaxxer/HikariCP "1.2.8"]
@@ -21,11 +22,11 @@
                   [compojure/compojure "1.1.6"]
                   [ring/ring-core "1.2.2"]
                   [ring/ring-jetty-adapter "1.2.2"]
-                  [hiccup "1.0.5"]
                   [org.clojure/data.json "0.2.4"]
                   [org.clojure/tools.nrepl "0.2.3"]
                   [org.clojure/math.combinatorics "0.0.7"]
                   [clj-http "0.9.0"]
+                  [hiccup "1.0.5"]
                   ;; ClojureScript
                   [org.clojure/clojurescript "0.0-2173"]
                   [jayq "2.5.0"]
@@ -37,6 +38,7 @@
   :java-source-paths ["src/main/java"]
   :test-paths ["test" "src/test/clojure"]
   :resource-paths ["src/main/resources"]
+  :main graphbrain.braingenerators.wordnet
   :ring {:handler graphbrain.web.server/handler}
   :aot :all
   

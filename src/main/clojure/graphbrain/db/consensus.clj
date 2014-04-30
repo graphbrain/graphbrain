@@ -7,7 +7,6 @@
 
 (defn eval-edge!
   [graph edge-id]
-  (prn (str "eval-edge!" edge-id))
   (if (id/global-space? edge-id)
     (let [edge (edge/id->edge edge-id)
           neg-edge (edge/negate edge)
