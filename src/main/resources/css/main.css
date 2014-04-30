@@ -17,7 +17,8 @@ html, body {
     width:100%;
     height:100%;
     position: relative;
-    background:rgba(0, 0, 0, 0);
+    #background:rgba(113, 52, 8, 0.8);
+    background:rgba(10, 10, 60, 0.8);
     z-index:1;
 }
 
@@ -48,7 +49,9 @@ html, body {
 
 #rel-list .hidden_rel_link {
     color:rgba(0, 0, 0, 1);
-}.node {
+}
+
+.node {
     color:#000;
     background:rgb(224, 224, 224);
     margin: 3px;
@@ -175,7 +178,9 @@ html, body {
     -webkit-transform-style:preserve-3d;
     -moz-transform-style:preserve-3d;
     /*overflow:hidden;*/
-}#ai-chat {
+}
+
+#ai-chat {
     position:fixed;
     bottom:0px;
     right:0px;

@@ -164,7 +164,8 @@
 
 (defn getv
   [dbs id vtype]
-  (assoc (get-vertex dbs id (vtype->tname vtype)) :type vtype))
+  (let [v (get-vertex dbs id (vtype->tname vtype))]
+    (if v (assoc v :type vtype))))
 
 (defn exists?
   [dbs id vtype]

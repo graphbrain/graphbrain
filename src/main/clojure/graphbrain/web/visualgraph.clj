@@ -23,7 +23,7 @@
 (defn hyper->edge
   [edge root-id]
   (if (> (count (edge/participant-ids edge)) 2)
-    (if (= (.getEdgeType edge) "r/1/instance_of~owned_by")
+    (if (= (edge/edge-type edge) "r/1/instance_of~owned_by")
       (if (= (nth (edge/participant-ids edge) 0) root-id)
         {:edge-type "r/1/has"
          :id1 (nth (edge/participant-ids edge) 2)

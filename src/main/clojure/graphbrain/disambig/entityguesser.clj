@@ -7,8 +7,8 @@
 (defn guess
   [graph name to-hash]
   (let [base-id (id/sanitize name)
-        can-mean (graph/pattern->edges ["r/+can_mean"  base-id "*"])]
+        can-mean (graph/pattern->edges graph ["r/+can_mean" base-id "*"])]
     (if (empty? can-mean)
       (vertex/id->vertex (id/build-id [(id/hashed to-hash) base-id]))
-      (let [syns (map #(graph/getv graph (nth (edge/ids %) 3)) can-mean)]
+      (let [syns (map #(graph/getv graph (nth (edge/ids %) 2)) can-mean)]
         (apply max-key :degree syns)))))

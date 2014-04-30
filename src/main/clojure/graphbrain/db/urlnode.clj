@@ -13,7 +13,6 @@
   ([id degree ts]
      {:id id
       :type :url
-      :url (id->url id)
       :title ""
       :icon ""
       :degree degree

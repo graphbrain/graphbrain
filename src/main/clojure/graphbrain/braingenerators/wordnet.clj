@@ -12,7 +12,7 @@
            (java.io FileInputStream)
            (java.security NoSuchAlgorithmException)))
 
-(def dryrun true)
+(def dryrun false)
 
 (defn add-relation!
   [graph rel]
@@ -118,7 +118,7 @@
 (defn process-example!
   [graph vid word]
   (let [tn (example word)]
-    (if (not dryrun) (gb/putv! tn))
+    (if (not dryrun) (gb/putv! graph tn))
     (let [rel (str "(r/+example " vid " " (:id tn) ")")]
       (add-relation! graph rel))))
 
