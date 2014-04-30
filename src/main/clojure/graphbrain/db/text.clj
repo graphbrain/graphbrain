@@ -1,9 +1,24 @@
-(ns graphbrain.db.text)
+(ns graphbrain.db.text
+  (:require [graphbrain.db.id :as id]))
+
+(defn text->id
+  [text]
+  (let [short-text (subs text 0 (min (count text) 20))
+        hash (id/hashed text)]
+    (str "text/" hash "/" (id/sanitize short-text))))
 
 (defn id->text
   [id]
   {:id id
-   :type :prog
+   :type :text
    :text ""
+   :degree 0
+   :ts -1})
+
+(defn text->vertex
+  [text]
+  {:id (text->id text)
+   :type :text
+   :text text
    :degree 0
    :ts -1})

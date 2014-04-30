@@ -6,7 +6,7 @@
   (let [h (loop [s str
                  x 1125899906842597]  ;; prime
             (if (empty? s) x
-                (recur (rest s) (* 31 (+ x (long (first s)))))))]
+                (recur (rest s) (unchecked-multiply 31 (+ x (long (first s)))))))]
     (Long/toHexString h)))
 
 (defn parts
