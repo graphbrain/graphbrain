@@ -160,7 +160,3 @@
   (let [dictionary (Dictionary/getDefaultResourceInstance)
         graph (gb/graph)]
     (process! graph dictionary)))
-
-(defn -main
-  []
-  (run!))
