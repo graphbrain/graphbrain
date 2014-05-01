@@ -6,7 +6,8 @@
             [graphbrain.db.id :as id]
             [graphbrain.db.edgetype :as edgetype]
             [graphbrain.db.entity :as entity]
-            [graphbrain.db.vertex :as vertex])
+            [graphbrain.db.vertex :as vertex]
+            [graphbrain.db.urlnode :as url])
   (:import (com.graphbrain.web EdgeLabelTable)))
 
 (def ^:const max-snodes 15)
@@ -100,7 +101,7 @@
       :url {:id (:id node)
             :type "url"
             :text (if (empty? (:title node))
-                    (:url node)
+                    (url/url node)
                     (:title node))
             :url (:url node)
             :icon (:icon node)

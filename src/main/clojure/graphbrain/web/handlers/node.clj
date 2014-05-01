@@ -20,5 +20,5 @@
           :css-and-js (css+js/css+js)
           :user user
           :page :node
-          :body-fun node-view
+          :body-fun #(node-view user)
           :js (js vert user))))
