@@ -16,14 +16,14 @@ html, body {
 #main-view {
     width:100%;
     height:100%;
-    position: relative;
+    #position: relative;
     #background:rgba(113, 52, 8, 0.8);
     background:rgba(10, 10, 60, 0.8);
     z-index:1;
 }
 
 #nav-spacer {
-    position:relative;
+    #position:relative;
     height:40px;
 }
 
@@ -168,39 +168,45 @@ html, body {
     padding: 5px;
 }
 
+#data-view {
+    #position:relative;
+    width: 100%;
+    height: 100%;
+    #overflow: hidden;
+}
+
 #graph-view {
-    position:relative;
-    width:100%;
-    height:100%;
     float:left;
+    width:75%;
+    height:100%;
     -webkit-perspective:1000px;
     -moz-perspective:1000px;
     -webkit-transform-style:preserve-3d;
     -moz-transform-style:preserve-3d;
-    /*overflow:hidden;*/
 }
 
 #ai-chat {
-    position:fixed;
-    bottom:0px;
-    right:0px;
-    width:600px;
-    height:180px;
-	color: #fff;
-    background: rgba(189,218,249, 0.9);
+    position:absolute;
+    bottom:0;
+    right:0;
+    float:right;
+    width:25%;
+    height:100%;
+    color: #fff;
+    background: rgba(0, 0, 0, 1);
     padding-left: 10px;
     padding-right: 10px;
-    display: none;
+    #display: none;
     overflow: auto;
-    z-index:2;
+    #z-index:2;
 }
 
 #ai-chat-input {
-	margin-top:10px;
-	margin-bottom:5px;
-	padding-left:0;
-	padding-right:0;
-	border-width:0;
+    margin-top:10px;
+    margin-bottom:5px;
+    padding-left:0;
+    padding-right:0;
+    border-width:0;
     width:100%;
 }
 
@@ -209,18 +215,59 @@ html, body {
 }
 
 .gb-line {
-    color: #111;
+    color: #888;
 }
 
 .gb-line a {
-    color: #000;
+    color: #888;
 }
 
 .gb-line a:hover {
-    color: #000;
+    color: #fff;
     text-decoration:underline;
 }
 
 .user-line {
-    color: #444;
+    color: #fff;
+}
+
+.navbar-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    heigth: 45px;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.navbar-element {
+    display:inline;
+    line-height:45px;
+}
+
+.menu-caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    vertical-align: middle;
+    border-top: 5px solid #aaa;
+    border-right: 5px solid transparent;
+    border-left: 5px solid transparent;
+    color: #aaa;
+}
+
+.nav-search {
+    display: inline;
+    margin-left: 15px;
+    margin-right: 15px;
+ }
+
+.nav-search input[type=text] {
+    padding:5px;
+    margin:0px;
+    border:1px solid #000; 
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
 }

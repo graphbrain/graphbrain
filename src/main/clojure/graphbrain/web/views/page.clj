@@ -1,7 +1,6 @@
 (ns graphbrain.web.views.page
   (:use hiccup.core
-        hiccup.page)
-  (:require [graphbrain.web.views.navbar :as navbar]))
+        hiccup.page))
 
 (defn page [& {:keys [title user page css-and-js body-fun js]}]
   (html5 {:lang "en"}
@@ -16,6 +15,5 @@
       [:link {:href "/css/bootstrap-responsive.css" :rel "stylesheet"}]
       [:script {:src "http://html5shim.googlecode.com/svn/trunk/html5.js"}]]
     [:body
-      (navbar/navbar user page)
       (body-fun)
       [:script {:language "javascript"} js]]))

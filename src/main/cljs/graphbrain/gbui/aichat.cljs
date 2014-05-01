@@ -72,13 +72,15 @@ use quotation marks, e.g.<br />\n<b>\"Burn after reading\" is a film</b> <br />"
 
 (defn show-ai-chat!
   []
-  (.css ($ "#ai-chat") "display" "block")
+  #_(.css ($ "#ai-chat") "display" "block")
   (reset! ai-chat-visible true)
   (.setItem js/localStorage "aichat" "true")
   (ai-chat-goto-bottom!)
   (.focus ($ "#ai-chat-input")))
 
-(defn hide-ai-chat!
+(defn hide-ai-chat! [] nil)
+
+#_(defn hide-ai-chat!
   []
   (.css ($ "#ai-chat") "display" "none")
   (reset! ai-chat-visible false)
@@ -112,13 +114,13 @@ use quotation marks, e.g.<br />\n<b>\"Burn after reading\" is a film</b> <br />"
   []
   (let [html (str "<div id='ai-chat-log' /><form id='ai-chat-form'>"
                   "<input id='ai-chat-input' type='text' /></form>")]
-    (.html ($ "#ai-chat") html))
-  (.submit ($ "#ai-chat-form") ai-chat-submit)
-  (init-chat-buffer!)
-  (if (= (.getItem js/localStorage "aichat") "false")
-    (hide-ai-chat!)
-    (do (.button ($ "#ai-chat-button") "toggle")
-        (show-ai-chat!))))
+    (.html ($ "#ai-chat") html)
+    (.submit ($ "#ai-chat-form") ai-chat-submit)
+    (init-chat-buffer!)
+    (if (= (.getItem js/localStorage "aichat") "false")
+      (hide-ai-chat!)
+      (do (.button ($ "#ai-chat-button") "toggle")
+          (show-ai-chat!)))))
 
 (defn ai-chat-button-pressed!
   [msg]

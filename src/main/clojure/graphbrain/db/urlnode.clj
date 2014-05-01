@@ -19,3 +19,7 @@
       :ts ts})
   ([id]
      (id->urlnode id 0 -1)))
+
+(defn url
+  [node]
+  (id->url (:id node)))
