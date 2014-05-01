@@ -22,11 +22,6 @@ html, body {
     z-index:1;
 }
 
-#nav-spacer {
-    #position:relative;
-    height:40px;
-}
-
 #rel-list {
     position:fixed;
     top:45px;
@@ -169,10 +164,11 @@ html, body {
 }
 
 #data-view {
-    #position:relative;
+    position:relative;
     width: 100%;
     height: 100%;
     #overflow: hidden;
+    z-index: 1;
 }
 
 #graph-view {
@@ -196,9 +192,7 @@ html, body {
     background: rgba(0, 0, 0, 1);
     padding-left: 10px;
     padding-right: 10px;
-    #display: none;
     overflow: auto;
-    #z-index:2;
 }
 
 #ai-chat-input {
