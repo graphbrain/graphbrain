@@ -45,3 +45,7 @@
   [edge pattern]
   (every? identity
           (map #(or (= %2 "*") (= %1 %2)) (ids edge) pattern)))
+
+(defn owner-id
+  [edge]
+  (id/owner-id (second (ids edge))))
