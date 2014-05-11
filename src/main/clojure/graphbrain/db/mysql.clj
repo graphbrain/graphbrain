@@ -5,7 +5,7 @@
             [graphbrain.db.edgeparser :as edgeparser])
   (:import (com.graphbrain.utils Permutations)))
 
-(defonce MYSQL_ENGINE "InnoDB")
+(def MYSQL_ENGINE "InnoDB")
 
 (defn safe-exec!
   [dbs sql]
@@ -16,86 +16,89 @@
   [dbs]
   ;; Edges table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS edges ("
-                      "id VARCHAR(10000),"
-                      "degree INT DEFAULT 0,"
-                      "ts BIGINT DEFAULT -1,"
-                      "INDEX id_index (id(255))"
-                      ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
+                       "id VARCHAR(10000),"
+                       "score FLOAT DEFAULT 1,"
+                       "degree INT DEFAULT 0,"
+                       "ts BIGINT DEFAULT -1,"
+                       "INDEX id_index (id(255))"
+                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
   ;; EdgeTypes table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS edgetypes ("
-                      "id VARCHAR(10000),"
-                      "degree INT DEFAULT 0,"
-                      "ts BIGINT DEFAULT -1,"
-                      "label VARCHAR(255),"
-                      "INDEX id_index (id(255))"
-                      ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
+                       "id VARCHAR(10000),"
+                       "degree INT DEFAULT 0,"
+                       "ts BIGINT DEFAULT -1,"
+                       "label VARCHAR(255),"
+                       "INDEX id_index (id(255))"
+                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
   ;; Entities table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS entities ("
-                      "id VARCHAR(10000),"
-                      "degree INT DEFAULT 0,"
-                      "ts BIGINT DEFAULT -1,"
-                      "INDEX id_index (id(255))"
-                      ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
+                       "id VARCHAR(10000),"
+                       "relid VARCHAR(10000),"
+                       "degree INT DEFAULT 0,"
+                       "ts BIGINT DEFAULT -1,"
+                       "INDEX id_index (id(255))"
+                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
   ;; URLs table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS urls ("
-                      "id VARCHAR(10000),"
-                      "degree INT DEFAULT 0,"
-                      "ts BIGINT DEFAULT -1,"
-                      "title VARCHAR(500),"
-                      "icon VARCHAR(500),"
-                      "INDEX id_index (id(255))"
-                      ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
+                       "id VARCHAR(10000),"
+                       "degree INT DEFAULT 0,"
+                       "ts BIGINT DEFAULT -1,"
+                       "title VARCHAR(500),"
+                       "icon VARCHAR(500),"
+                       "INDEX id_index (id(255))"
+                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
   ;; Users table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS users ("
-                      "id VARCHAR(10000),"
-                      "degree INT DEFAULT 0,"
-                      "ts BIGINT DEFAULT -1,"
-                      "username VARCHAR(255),"
-                      "name VARCHAR(255),"
-                      "email VARCHAR(255),"
-                      "pwdhash VARCHAR(255),"
-                      "role VARCHAR(255),"
-                      "session VARCHAR(255),"
-                      "session_ts BIGINT DEFAULT -1,"
-                      "last_seen BIGINT DEFAULT -1,"
-                      "INDEX id_index (id(255)),"
-                      "INDEX email_index (email)"
-                      ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
+                       "id VARCHAR(10000),"
+                       "degree INT DEFAULT 0,"
+                       "ts BIGINT DEFAULT -1,"
+                       "username VARCHAR(255),"
+                       "name VARCHAR(255),"
+                       "email VARCHAR(255),"
+                       "pwdhash VARCHAR(255),"
+                       "role VARCHAR(255),"
+                       "session VARCHAR(255),"
+                       "session_ts BIGINT DEFAULT -1,"
+                       "last_seen BIGINT DEFAULT -1,"
+                       "INDEX id_index (id(255)),"
+                       "INDEX email_index (email)"
+                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
   ;; Progs table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS progs ("
-                      "id VARCHAR(10000),"
-                      "degree INT DEFAULT 0,"
-                      "ts BIGINT DEFAULT -1,"
-                      "prog TEXT,"
-                      "INDEX id_index (id(255))"
-                      ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
+                       "id VARCHAR(10000),"
+                       "degree INT DEFAULT 0,"
+                       "ts BIGINT DEFAULT -1,"
+                       "prog TEXT,"
+                       "INDEX id_index (id(255))"
+                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
   ;; Texts table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS texts ("
-                      "id VARCHAR(10000),"
-                      "degree INT DEFAULT 0,"
-                      "ts BIGINT DEFAULT -1,"
-                      "text TEXT,"
-                      "INDEX id_index (id(255))"
-                      ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
+                       "id VARCHAR(10000),"
+                       "degree INT DEFAULT 0,"
+                       "ts BIGINT DEFAULT -1,"
+                       "text TEXT,"
+                       "INDEX id_index (id(255))"
+                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
   ;; Edge permutations table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS edgeperms ("
-                      "id VARCHAR(10000),"
-                      "INDEX id_index (id(255))"
-                      ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
+                       "id VARCHAR(10000),"
+                       "params VARCHAR(10000),"
+                       "INDEX id_index (id(255))"
+                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
   ;; Global-User table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS globaluser ("
-                      "global_id VARCHAR(10000),"
-                      "user_id VARCHAR(10000),"
-                      "INDEX global_id_index (global_id(255))"
-                      ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
+                       "global_id VARCHAR(10000),"
+                       "user_id VARCHAR(10000),"
+                       "INDEX global_id_index (global_id(255))"
+                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
   dbs)
 
 (defn db-spec
