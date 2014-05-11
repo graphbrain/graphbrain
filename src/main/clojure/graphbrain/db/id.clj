@@ -112,6 +112,8 @@
 
 (defn owner-id
   [id-or-ns]
-  (let [tokens (parts id-or-ns)]
-    (if (= (first tokens) "user")
-      (str "user/" (second tokens)) "")))
+  (if (edge? id-or-ns)
+    (owner-id (first (id->ids id-or-ns)))
+    (let [tokens (parts id-or-ns)]
+      (if (= (first tokens) "user")
+        (str "user/" (second tokens)) ""))))
