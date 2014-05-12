@@ -75,6 +75,7 @@
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS contexts ("
                        "id VARCHAR(10000),"
                        "name VARCHAR(10000),"
+                       "access CHAR(10),"
                        "size INT DEFAULT 0,"
                        "degree INT DEFAULT 0,"
                        "ts BIGINT DEFAULT -1,"

@@ -23,12 +23,12 @@
     (mysql/exists? graph id vtype)))
 
 (defn add-link-to-global!
-  [graph global-id user-id]
-  (mysql/add-link-to-global! graph global-id user-id))
+  [graph global-id local-id]
+  (mysql/add-link-to-global! graph global-id local-id))
 
 (defn remove-link-to-global!
-  [graph global-id user-id]
-  (mysql/remove-link-to-global! graph global-id user-id))
+  [graph global-id local-id]
+  (mysql/remove-link-to-global! graph global-id local-id))
 
 (defn- f-degree!
   [graph id-or-vertex f]
@@ -55,16 +55,16 @@
              (putv! graph (vertex/id->vertex id))
              (inc-degree! graph id)))))
      vertex)
-  ([graph vertex user-id]
+  ([graph vertex owner-id]
      (putv! graph vertex)
      (if (not (id/user-space? (:id vertex)))
-       (let [uvert (vertex/global->user vertex user-id)]
-         (if (not (exists? graph uvert))
-           (putv! graph uvert)
-           (add-link-to-global! graph (:id vertex) (:id uvert)))
+       (let [lvert (vertex/global->local vertex owner-id)]
+         (if (not (exists? graph lvert))
+           (putv! graph lvert)
+           (add-link-to-global! graph (:id vertex) (:id lvert)))
          (if (= (:type vertex) :edge)
             ;; run consensus algorithm
-            (let [gedge (vertex/user->global vertex)]
+            (let [gedge (vertex/local->global vertex)]
               (queues/consensus-enqueue! (:id gedge))))))
      vertex))
 
@@ -80,7 +80,7 @@
 
 (defn edge?
   [vert]
-  (= (:type vert) :edge))
+  (id/edge? (:type vert)))
 
 (defn all-users
   [graph]
@@ -93,13 +93,13 @@
 (defn remove!
   ([graph vertex]
      (mysql/remove! graph vertex)
-     (if (= (:type vertex) :edge)
+     (if (edge? vertex)
        (on-remove-edge! vertex)))
-  ([graph vertex user-id]
-     (let [u (vertex/global->user vertex user-id)]
+  ([graph vertex owner-id]
+     (let [u (vertex/global->local vertex owner-id)]
        (mysql/remove! graph u)
        (remove-link-to-global! graph (:id vertex) (:id u))
-       (if (= (:type u) :edge)
+       (if (edge? u)
          (do (putv! graph (edge/negate u))
              (queues/consensus-enqueue! (:id vertex)))))))
 
@@ -110,19 +110,19 @@
 (defn id->edges
   ([graph center]
      (mysql/id->edges graph center))
-  ([graph center-id user-id]
+  ([graph center-id owner-id]
      (let [edges (id->edges graph center-id)
            gedges (filter vertex/global-space? edges)
-           uedges (if user-id
-                    (let [ucenter-id (id/global->user center-id user-id)]
-                      (map vertex/user->global
-                           (filter vertex/user-space?
-                                   (id->edges graph ucenter-id)))) #{})]
+           ledges (if owner-id
+                    (let [lcenter-id (id/global->local center-id owner-id)]
+                      (map vertex/local->global
+                           (filter vertex/local-space?
+                                   (id->edges graph lcenter-id)))) #{})]
        (clojure.set/union (set (filter
                                 edge/positive?
-                                (filter #(not (some #{(edge/negate %)} uedges))
+                                (filter #(not (some #{(edge/negate %)} ledges))
                                         gedges)))
-                          (set (filter edge/positive? uedges))))))
+                          (set (filter edge/positive? ledges))))))
 
 (defn vertex->edges
   [graph center]

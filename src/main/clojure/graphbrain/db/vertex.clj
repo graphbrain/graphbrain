@@ -5,6 +5,7 @@
             [graphbrain.db.edgetype :as edgetype]
             [graphbrain.db.urlnode :as url]
             [graphbrain.db.user :as user]
+            [graphbrain.db.context :as context]
             [graphbrain.db.prog :as prog]
             [graphbrain.db.text :as text]))
 
@@ -16,30 +17,31 @@
     :edge-type (edgetype/id->edgetype id)
     :url (url/id->urlnode id)
     :user (user/id->user id)
+    :context (context/id->context id)
     :prog (prog/id->prog id)
     :text (text/id->text id)))
-
-(defn user->global
-  [vertex]
-  (case (:type vertex)
-    :edge (edge/id->edge (id/user->global (:id vertex)))
-    :user vertex
-    (assoc vertex :id (id/user->global (:id vertex)))))
-
-(defn global->user
-  [vertex user-id]
-  (case (:type vertex)
-    :edge (edge/id->edge (id/global->user (:id vertex) user-id))
-    :user vertex
-    (assoc vertex :id (id/global->user (:id vertex) user-id))))
 
 (defn global-space?
   [vertex]
   (id/global-space? (:id vertex)))
 
-(defn user-space?
+(defn local-space?
   [vertex]
-  (id/user-space? (:id vertex)))
+  (id/local-space? (:id vertex)))
+
+(defn local->global
+  [vertex]
+  (let [gid (id/local->global (:id vertex))]
+    (if (id/edge? gid)
+      (edge/id->edge gid)
+      (assoc vertex :id gid))))
+
+(defn global->local
+  [vertex owner]
+  (let [lid (id/global->local (:id vertex) owner)]
+    (if (id/edge? lid)
+      (edge/id->edge lid)
+      (assoc vertex :id lid))))
 
 (defn label
   [vertex]

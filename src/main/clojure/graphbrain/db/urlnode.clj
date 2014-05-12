@@ -7,7 +7,7 @@
 
 (defn url->id
   [url]
-  (str "url/" url))
+  (str "h/" url))
 
 (defn id->urlnode
   ([id degree ts]
