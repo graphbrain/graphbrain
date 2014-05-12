@@ -53,9 +53,21 @@
         "t" (if (= nparts 1) :entity :text)
         :entity))))
 
+(defn type?
+  [id tp]
+  (if (= (id->type id) tp) id))
+
 (defn edge?
-  [id-or-ns]
-  (= (first id-or-ns) \())
+  [id]
+  (type? id :edge))
+
+(defn user?
+  [id]
+  (type? id :user))
+
+(defn context?
+  [id]
+  (type? id :context))
 
 (defn id->ids
   [id]
@@ -66,22 +78,29 @@
   [ids]
   (str "(" (clojure.string/join " " ids) ")"))
 
-(defn user-space?
-  [id-or-ns]
-  (if (edge? id-or-ns)
-    (let [ids (id->ids id-or-ns)]
-      (some user-space? ids))
-    (let [p (parts id-or-ns)]
-      (and (= (first p) "u") (> (count p) 2)))))
+(defn- space-in-set?
+  [id spaces-set]
+  (if (edge? id)
+    (let [ids (id->ids id)]
+      (some #(space-in-set? % spaces-set) ids))
+    (let [p (parts id)]
+      (and (spaces-set (first p)) (> (count p) 2)))))
 
-(defn user?
-  [id-or-ns]
-  (let [p (parts id-or-ns)]
-    (and (= (first p) "u") (= (count p) 2))))
+(defn user-space?
+  [id]
+  (space-in-set? id #{"u"}))
+
+(defn context-space?
+  [id]
+  (space-in-set? id #{"c"}))
+
+(defn local-space?
+  [id]
+  (space-in-set? id #{"u" "c"}))
 
 (defn global-space?
-  [id-or-ns]
-  (not (user-space? id-or-ns)))
+  [id]
+  (not (local-space? id)))
 
 (defn last-part
   [id]
@@ -100,28 +119,33 @@
   (clojure.string/replace
    (clojure.string/replace (.toLowerCase str) "/" "_") " " "_"))
 
-(defn global->user
-  [id-or-ns user-id]
+(defn global->local
+  [id owner]
   (cond
-   (edge? id-or-ns) (ids->id (map #(global->user % user-id) (id->ids id-or-ns)))
-   (user-space? id-or-ns) id-or-ns
-   (user? id-or-ns) id-or-ns
-   :else (if (and (> (count-parts user-id) 0)
-                  (= (first (parts user-id)) "user"))
-           (str user-id "/" id-or-ns)
-           (str "u/" user-id "/" id-or-ns))))
+   (edge? id) (ids->id (map #(global->local % owner) (id->ids id)))
+   (local-space? id) id
+   (user? id) id
+   (context? id) id
+   :else (str owner "/" id)))
 
-(defn user->global
-  [id-or-ns]
+(defn local->global
+  [id]
   (cond
-   (edge? id-or-ns) (ids->id (map user->global (id->ids id-or-ns)))
-   (user-space? id-or-ns) (build-id (drop 2 (parts id-or-ns)))
-   :else id-or-ns))
+   (edge? id) (ids->id (map local->global (id->ids id)))
+   (local-space? id) (build-id (drop 2 (parts id)))
+   :else id))
 
-(defn owner-id
-  [id-or-ns]
-  (if (edge? id-or-ns)
-    (owner-id (first (id->ids id-or-ns)))
-    (let [tokens (parts id-or-ns)]
-      (if (= (first tokens) "u")
-        (str "u/" (second tokens)) ""))))
+(defn owner
+  [id]
+  (if (global-space? id) nil
+    (if (edge? id)
+      (owner (first (id->ids id)))
+      (build-id (take 2 (parts id))))))
+
+(defn owner-user
+  [id]
+  (user? (owner id)))
+
+(defn owner-context
+  [id]
+  (context? (owner id)))

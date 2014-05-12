@@ -3,27 +3,27 @@
 
 (defn id->edgetype
   ([id degree ts]
-     {:id id
-      :type :edge-type
-      :label ""
-      :degree degree
-      :ts ts})
+   {:id id
+    :type :edge-type
+    :label ""
+    :degree degree
+    :ts ts})
   ([id]
-     (id->edgetype id 0 -1)))
+   (id->edgetype id 0 -1)))
 
 (defn negative?
   [id]
-  (= (first (id/parts (id/user->global id))) "neg"))
+  (= (first (id/parts (id/local->global id))) "n"))
 
 (defn negate
   [id]
   (if (negative? id) id
-      (let [user-id (id/owner-id id)
-            global-id (id/user->global id)
-            neg-id (str "neg/" global-id)]
-        (if (empty? user-id)
-          neg-id
-          (id/global->user neg-id user-id)))))
+    (let [owner-id (id/owner id)
+          global-id (id/local->global id)
+          neg-id (str "n/" global-id)]
+      (if (empty? owner-id)
+        neg-id
+        (id/global->local neg-id owner-id)))))
 
 (defn build-id
   [text]

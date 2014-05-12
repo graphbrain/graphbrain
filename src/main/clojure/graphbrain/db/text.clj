@@ -5,7 +5,7 @@
   [text]
   (let [short-text (subs text 0 (min (count text) 20))
         hash (id/hashed text)]
-    (str "text/" hash "/" (id/sanitize short-text))))
+    (str "t/" hash "/" (id/sanitize short-text))))
 
 (defn id->text
   [id]

@@ -16,11 +16,11 @@
                        score 0]
                   (if (empty? altvs) score
                       (let [altv (first altvs)
-                            user-id (id/owner-id altv)
-                            user-edge (vertex/global->user edge user-id)
-                            neg-user-edge (vertex/global->user neg-edge user-id)
-                            s (if (gb/exists? graph user-edge) (inc score) score)
-                            s (if (gb/exists? graph neg-user-edge) (dec s) s)]
+                            owner-id (id/owner-id altv)
+                            local-edge (vertex/global->local edge owner-id)
+                            neg-local-edge (vertex/global->local neg-edge owner-id)
+                            s (if (gb/exists? graph local-edge) (inc score) score)
+                            s (if (gb/exists? graph neg-local-edge) (dec s) s)]
                         (recur (rest altvs) s))))]
       (if (> score 0) (gb/putv! graph edge) (gb/remove! graph edge)))))
 
