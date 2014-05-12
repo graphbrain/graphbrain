@@ -6,7 +6,7 @@
   (let [h (loop [s str
                  x 1125899906842597]  ;; prime
             (if (empty? s) x
-                (recur (rest s) (unchecked-multiply 31 (+ x (long (first s)))))))]
+              (recur (rest s) (unchecked-multiply 31 (+ x (long (first s)))))))]
     (Long/toHexString h)))
 
 (defn parts
@@ -28,21 +28,29 @@
     (let [parts (parts id)
           nparts (count parts)]
       (case (first parts)
-        "user" (cond (= nparts 1) :entity
-                     (= nparts 2) :user
-                     (= (nth parts 2) "url") :url
-                     (= (nth parts 2) "r") :edge-type
-                     (= (nth parts 2) "neg") (cond (<= nparts 4) :entity
-                                                   (= (nth parts 3) "r") :edge-type
-                                                   :else :entity)
-                     :else :entity)
+        "u" (cond (= nparts 1) :entity
+                  (= nparts 2) :user
+                  (= (nth parts 2) "h") :url
+                  (= (nth parts 2) "r") :edge-type
+                  (= (nth parts 2) "n") (cond (<= nparts 4) :entity
+                                              (= (nth parts 3) "r") :edge-type
+                                              :else :entity)
+                  :else :entity)
+        "c" (cond (= nparts 1) :entity
+                  (= nparts 2) :context
+                  (= (nth parts 2) "h") :url
+                  (= (nth parts 2) "r") :edge-type
+                  (= (nth parts 2) "n") (cond (<= nparts 4) :entity
+                                              (= (nth parts 3) "r") :edge-type
+                                              :else :entity)
+                  :else :entity)
         "r" (if (= nparts 1) :entity :edge-type)
-        "neg" (cond (<= nparts 2) :entity
-                    (= (second parts) "r") :edge-type
-                    :else :entity)
-        "url" (if (= nparts 1) :entity :url)
-        "prog" (if (= nparts 1) :entity :prog)
-        "text" (if (= nparts 1) :entity :text)
+        "n" (cond (<= nparts 2) :entity
+                  (= (second parts) "r") :edge-type
+                  :else :entity)
+        "h" (if (= nparts 1) :entity :url)
+        "p" (if (= nparts 1) :entity :prog)
+        "t" (if (= nparts 1) :entity :text)
         :entity))))
 
 (defn edge?
@@ -52,7 +60,7 @@
 (defn id->ids
   [id]
   (let [s (subs id 1 (dec (count id)))]
-      (edgeparser/split-edge s)))
+    (edgeparser/split-edge s)))
 
 (defn ids->id
   [ids]
@@ -64,12 +72,12 @@
     (let [ids (id->ids id-or-ns)]
       (some user-space? ids))
     (let [p (parts id-or-ns)]
-      (and (= (first p) "user") (> (count p) 2)))))
+      (and (= (first p) "u") (> (count p) 2)))))
 
 (defn user?
   [id-or-ns]
   (let [p (parts id-or-ns)]
-    (and (= (first p) "user") (= (count p) 2))))
+    (and (= (first p) "u") (= (count p) 2))))
 
 (defn global-space?
   [id-or-ns]
@@ -85,7 +93,7 @@
 
 (defn username->id
   [username]
-  (str "user/" (clojure.string/replace username " " "_")))
+  (str "u/" (clojure.string/replace username " " "_")))
 
 (defn sanitize
   [str]
@@ -101,7 +109,7 @@
    :else (if (and (> (count-parts user-id) 0)
                   (= (first (parts user-id)) "user"))
            (str user-id "/" id-or-ns)
-           (str "user/" user-id "/" id-or-ns))))
+           (str "u/" user-id "/" id-or-ns))))
 
 (defn user->global
   [id-or-ns]
@@ -115,5 +123,5 @@
   (if (edge? id-or-ns)
     (owner-id (first (id->ids id-or-ns)))
     (let [tokens (parts id-or-ns)]
-      (if (= (first tokens) "user")
-        (str "user/" (second tokens)) ""))))
+      (if (= (first tokens) "u")
+        (str "u/" (second tokens)) ""))))

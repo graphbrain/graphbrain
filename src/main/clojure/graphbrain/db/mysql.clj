@@ -2,7 +2,8 @@
   (:use graphbrain.utils)
   (:require [clojure.java.jdbc :as jdbc]
             [graphbrain.db.edge :as edge]
-            [graphbrain.db.edgeparser :as edgeparser])
+            [graphbrain.db.edgeparser :as edgeparser]
+            [graphbrain.db.id :as id])
   (:import (com.graphbrain.utils Permutations)))
 
 (def MYSQL_ENGINE "InnoDB")
@@ -38,7 +39,8 @@
                        "relid VARCHAR(10000),"
                        "degree INT DEFAULT 0,"
                        "ts BIGINT DEFAULT -1,"
-                       "INDEX id_index (id(255))"
+                       "INDEX index_id_degree (id(255), degree)"
+                       "INDEX index_id_ts (id(255), ts)"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
   ;; URLs table
@@ -48,7 +50,8 @@
                        "ts BIGINT DEFAULT -1,"
                        "title VARCHAR(500),"
                        "icon VARCHAR(500),"
-                       "INDEX id_index (id(255))"
+                       "INDEX index_id_degree (id(255), degree)"
+                       "INDEX index_id_ts (id(255), ts)"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
   ;; Users table
@@ -62,10 +65,20 @@
                        "pwdhash VARCHAR(255),"
                        "role VARCHAR(255),"
                        "session VARCHAR(255),"
-                       "session_ts BIGINT DEFAULT -1,"
-                       "last_seen BIGINT DEFAULT -1,"
+                       "sessionts BIGINT DEFAULT -1,"
+                       "lastseen BIGINT DEFAULT -1,"
                        "INDEX id_index (id(255)),"
                        "INDEX email_index (email)"
+                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
+
+  ;; Contexts table
+  (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS contexts ("
+                       "id VARCHAR(10000),"
+                       "name VARCHAR(10000),"
+                       "size INT DEFAULT 0,"
+                       "degree INT DEFAULT 0,"
+                       "ts BIGINT DEFAULT -1,"
+                       "INDEX id_index (id(255))"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
   ;; Progs table
@@ -93,11 +106,11 @@
                        "INDEX id_index (id(255))"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
-  ;; Global-User table
-  (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS globaluser ("
-                       "global_id VARCHAR(10000),"
-                       "user_id VARCHAR(10000),"
-                       "INDEX global_id_index (global_id(255))"
+  ;; Global-Local table
+  (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS globallocal ("
+                       "gid VARCHAR(10000),"
+                       "lid VARCHAR(10000),"
+                       "INDEX global_id_index (gid(255), lid(255))"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
   dbs)
 
@@ -118,12 +131,14 @@
     :entity "entities"
     :url "urls"
     :user "users"
+    :context "contexts"
     :prog "progs"
     :text "texts"))
 
 (defn- do-with-edge-permutations!
   [edge f]
-  (let [ids (edge/ids edge)
+  (let [ids (edge/ids (id/user->global edge))
+        owner-id (id/owner-id edge)
         nperms (Permutations/permutations (count ids))
         ids (into-array ids)
         perms (map #(str (Permutations/strArrayPermutationToStr ids %) " " %)
@@ -180,7 +195,7 @@
     (put-vertex! dbs vertex (vtype->tname vtype))
     (if (= vtype :edge) (write-edge-permutations! dbs vertex))
     vertex))
-        
+
 (defn update!
   [dbs vertex]
   (update-vertex! dbs vertex (vtype->tname (:type vertex))))
@@ -240,18 +255,18 @@
     (results->edges rs)))
 
 (defn add-link-to-global!
-  [dbs global-id user-id]
-  (jdbc/execute! dbs ["INSERT INTO globaluser (global_id, user_id) VALUES (?, ?)"
-                      global-id
-                      user-id]))
+  [dbs gid lid]
+  (jdbc/execute! dbs ["INSERT INTO globallocal (gid, lid) VALUES (?, ?)"
+                      gid
+                      lid]))
 
 (defn remove-link-to-global!
-  [dbs global-id user-id]
-  (jdbc/execute! dbs ["DELETE FROM globaluser WHERE global_id=? AND user_id=?"
-                      global-id
-                      user-id]))
+  [dbs gid lid]
+  (jdbc/execute! dbs ["DELETE FROM globallocal WHERE gid=? AND lid=?"
+                      gid
+                      lid]))
 
 (defn alts
-  [dbs global-id]
-  (map :user_id (jdbc/query dbs ["SELECT user_id FROM globaluser WHERE global_id=?"
-                                 global-id])))
+  [dbs gid]
+  (map :lid (jdbc/query dbs ["SELECT lid FROM globallocal WHERE gid=?"
+                                 gid])))
