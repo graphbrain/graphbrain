@@ -71,11 +71,11 @@ public class ID {
     }
 
     public static boolean isUserNode(String idOrNs) {
-        return (parts(idOrNs)[0].equals("user")) && (numberOfParts(idOrNs) == 2);
+        return (parts(idOrNs)[0].equals("u")) && (numberOfParts(idOrNs) == 2);
     }
 
     public static boolean isInUserSpace(String idOrNs) {
-        return (parts(idOrNs)[0].equals("user")) && (numberOfParts(idOrNs) > 2);
+        return (parts(idOrNs)[0].equals("u")) && (numberOfParts(idOrNs) > 2);
     }
 
     public static boolean isContextNode(String idOrNs) {
@@ -87,7 +87,7 @@ public class ID {
     }
 
     public static boolean isPersonal(String idOrNs) {
-        return (parts(idOrNs)[0].equals("user"))
+        return (parts(idOrNs)[0].equals("u"))
                 && (numberOfParts(idOrNs) > 3)
                 && (parts(idOrNs)[2].equals("p"));
     }

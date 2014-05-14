@@ -80,7 +80,7 @@
 
 (defn edge?
   [vert]
-  (id/edge? (:type vert)))
+  (id/edge? (:id vert)))
 
 (defn all-users
   [graph]
