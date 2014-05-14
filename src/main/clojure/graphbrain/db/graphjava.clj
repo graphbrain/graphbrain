@@ -139,8 +139,8 @@
        (:pwdhash m)
        (:role m)
        (:session m)
-       (:session_ts m)
-       (:last_seen m)
+       (:sessionts m)
+       (:lastseen m)
        (:degree m)
        (:ts m)))
 
