@@ -57,7 +57,7 @@
      vertex)
   ([graph vertex owner-id]
      (putv! graph vertex)
-     (if (not (id/user-space? (:id vertex)))
+     (if (not (id/local-space? (:id vertex)))
        (let [lvert (vertex/global->local vertex owner-id)]
          (if (not (exists? graph lvert))
            (putv! graph lvert)

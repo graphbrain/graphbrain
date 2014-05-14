@@ -1,10 +1,13 @@
 (ns graphbrain.db.mysql
   (:use graphbrain.utils)
   (:require [clojure.java.jdbc :as jdbc]
+            [graphbrain.db.vertex :as vertex]
             [graphbrain.db.edge :as edge]
             [graphbrain.db.edgeparser :as edgeparser]
             [graphbrain.db.id :as id])
   (:import (com.graphbrain.utils Permutations)))
+
+(def global-owner "g")
 
 (def MYSQL_ENGINE "InnoDB")
 
@@ -39,7 +42,7 @@
                        "relid VARCHAR(10000),"
                        "degree INT DEFAULT 0,"
                        "ts BIGINT DEFAULT -1,"
-                       "INDEX index_id_degree (id(255), degree)"
+                       "INDEX index_id_degree (id(255), degree),"
                        "INDEX index_id_ts (id(255), ts)"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
@@ -50,7 +53,7 @@
                        "ts BIGINT DEFAULT -1,"
                        "title VARCHAR(500),"
                        "icon VARCHAR(500),"
-                       "INDEX index_id_degree (id(255), degree)"
+                       "INDEX index_id_degree (id(255), degree),"
                        "INDEX index_id_ts (id(255), ts)"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
@@ -138,11 +141,13 @@
 
 (defn- do-with-edge-permutations!
   [edge f]
-  (let [ids (edge/ids (id/user->global edge))
-        owner-id (id/owner-id edge)
+  (let [edge-id (:id edge)
+        ids (edge/ids (vertex/local->global edge))
+        owner-id (id/owner edge-id)
+        owner-id (if owner-id owner-id global-owner)
         nperms (Permutations/permutations (count ids))
         ids (into-array ids)
-        perms (map #(str (Permutations/strArrayPermutationToStr ids %) " " %)
+        perms (map #(str owner-id " " (Permutations/strArrayPermutationToStr ids %) " " %)
                    (range nperms))]
     (doseq [perm-id perms] (f perm-id))))
 
@@ -225,9 +230,13 @@
         (let [res (first results)
               pid (:id res)
               tokens (edgeparser/split-edge pid)
+              owner-id (first tokens)
               perm (Integer. (last tokens))
-              tokens (drop-last tokens)
+              tokens (rest (drop-last tokens))
               tokens (Permutations/strArrayUnpermutate (into-array tokens) perm)
+              tokens (if (= owner-id global-owner)
+                       tokens
+                       (map #(id/global->local % owner-id) tokens))
               edge (edge/ids->edge tokens)
               edges (conj edges edge)]
           (recur (rest results) edges)))))

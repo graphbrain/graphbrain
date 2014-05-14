@@ -14,8 +14,8 @@
    :pwdhash ""
    :role ""
    :session ""
-   :session_ts -1
-   :last_seen -1
+   :sessionts -1
+   :lastseen -1
    :degree 0
    :ts -1})
 
@@ -29,8 +29,8 @@
    :pwdhash (BCrypt/hashpw password (BCrypt/gensalt))
    :role role
    :session ""
-   :session_ts -1
-   :last_seen -1
+   :sessionts -1
+   :lastseen -1
    :degree 0
    :ts -1})
 
