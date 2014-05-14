@@ -16,8 +16,8 @@
 
 (defn add-relation!
   [graph rel]
-  (prn rel)
-  (if (not dryrun) (gb/putv! graph (edge/id->edge rel) "wordnet")))
+  (prn (str "rel: " rel))
+  (if (not dryrun) (gb/putv! graph (edge/id->edge rel) "c/wordnet")))
 
 (defn super-type
   [word]
