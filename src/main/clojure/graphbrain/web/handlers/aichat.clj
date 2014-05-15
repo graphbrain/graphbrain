@@ -38,7 +38,7 @@
        vertex (gbj/vertex-obj->map
                (. (first (. (first ctxts-list) getCtxts)) getTopRetVertex))]
     (if (gb/edge? vertex)
-      (gb/putv! common/graph vertex (:id user)))
+      (gb/putv! common/graph (assoc vertex :score 1) (:id user)))
     (aichat-reply (:id root) vertex (:id vertex))))
 
 (defn process-url

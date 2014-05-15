@@ -8,16 +8,7 @@
   [id]
   {:id id
    :type :user
-   :username (id/last-part id)
-   :name ""
-   :email ""
-   :pwdhash ""
-   :role ""
-   :session ""
-   :sessionts -1
-   :lastseen -1
-   :degree -1
-   :ts -1})
+   :username (id/last-part id)})
 
 (defn new-user
   [username name email password role]

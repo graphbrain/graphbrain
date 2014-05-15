@@ -4,10 +4,7 @@
 (defn id->edgetype
   [id]
   {:id id
-   :type :edge-type
-   :label ""
-   :degree -1
-   :ts -1})
+   :type :edge-type})
 
 (defn negative?
   [id]

@@ -26,9 +26,7 @@
   ([id score]
      {:id id
       :type :edge
-      :score score
-      :degree -1
-      :ts -1})
+      :score score})
   ([id]
      (id->edge id 1)))
 

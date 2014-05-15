@@ -12,11 +12,7 @@
 (defn id->urlnode
   [id]
   {:id id
-   :type :url
-   :title ""
-   :icon ""
-   :degree -1
-   :ts -1})
+   :type :url})
 
 (defn url
   [node]

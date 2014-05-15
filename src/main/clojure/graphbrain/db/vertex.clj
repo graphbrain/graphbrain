@@ -33,14 +33,14 @@
   [vertex]
   (let [gid (id/local->global (:id vertex))]
     (if (id/edge? gid)
-      (edge/id->edge gid)
+      (edge/id->edge gid (:score vertex))
       (assoc vertex :id gid))))
 
 (defn global->local
   [vertex owner]
   (let [lid (id/global->local (:id vertex) owner)]
     (if (id/edge? lid)
-      (edge/id->edge lid)
+      (edge/id->edge lid (:score vertex))
       (assoc vertex :id lid))))
 
 (defn label
