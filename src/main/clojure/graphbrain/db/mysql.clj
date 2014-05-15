@@ -5,7 +5,8 @@
             [graphbrain.db.edge :as edge]
             [graphbrain.db.edgeparser :as edgeparser]
             [graphbrain.db.id :as id])
-  (:import (com.graphbrain.utils Permutations)))
+  (:import (com.graphbrain.utils Permutations)
+           (com.mchange.v2.c3p0 ComboPooledDataSource)))
 
 (def global-owner "g")
 
@@ -42,6 +43,7 @@
                        "relid VARCHAR(10000),"
                        "degree INT DEFAULT 0,"
                        "ts BIGINT DEFAULT -1,"
+                       ;;"INDEX index_id_degree (id(255))"
                        "INDEX index_id_degree (id(255), degree),"
                        "INDEX index_id_ts (id(255), ts)"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
@@ -53,6 +55,7 @@
                        "ts BIGINT DEFAULT -1,"
                        "title VARCHAR(500),"
                        "icon VARCHAR(500),"
+                       ;;"INDEX index_id_degree (id(255))"
                        "INDEX index_id_degree (id(255), degree),"
                        "INDEX index_id_ts (id(255), ts)"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
@@ -118,7 +121,7 @@
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
   dbs)
 
-(defn db-spec
+(defn- db-spec
   [name]
   (let [dbs {:classname "com.mysql.jdbc.Driver"
              :subprotocol "mysql"
@@ -126,6 +129,23 @@
              :user "gb"
              :password "gb"}]
     (create-tables! dbs)))
+
+(defn- pool
+  [spec]
+  (let [cpds (doto (ComboPooledDataSource.)
+               (.setDriverClass (:classname spec))
+               (.setJdbcUrl (str "jdbc:" (:subprotocol spec) ":" (:subname spec)))
+               (.setUser (:user spec))
+               (.setPassword (:password spec))
+               ;; expire excess connections after 30 minutes of inactivity:
+               (.setMaxIdleTimeExcessConnections (* 30 60))
+               ;; expire connections after 3 hours of inactivity:
+               (.setMaxIdleTime (* 3 60 60)))]
+    {:datasource cpds}))
+
+(def pooled-db (delay (pool (db-spec "gbnode"))))
+
+(defn db-connection [] @pooled-db)
 
 (defn- vtype->tname
   [vtype]
@@ -154,37 +174,37 @@
 (defn- write-edge-permutations!
   [dbs edge]
   (do-with-edge-permutations! edge #(jdbc/execute!
-                                     dbs
+                                     (dbs)
                                      ["INSERT INTO edgeperms (id) VALUES (?)" %])))
 
 (defn- remove-edge-permutations!
   [dbs edge]
   (do-with-edge-permutations! edge #(jdbc/execute!
-                                     dbs
+                                     (dbs)
                                      ["DELETE FROM edgeperms WHERE id=?" %])))
 
 (defn- get-vertex
   [dbs id table]
-  (first (jdbc/query dbs [(str "SELECT * FROM " table " WHERE id=?") id])))
+  (first (jdbc/query (dbs) [(str "SELECT * FROM " table " WHERE id=?") id])))
 
 (defn- exists-vertex?
   [dbs id table]
-  (let [rs (jdbc/query dbs [(str "SELECT id FROM " table " WHERE id=?")
+  (let [rs (jdbc/query (dbs) [(str "SELECT id FROM " table " WHERE id=?")
                             id])]
     (not (empty? rs))))
 
 (defn- put-vertex!
   [dbs vertex table]
-  (jdbc/insert! dbs (keyword table) (dissoc vertex :type)))
+  (jdbc/insert! (dbs) (keyword table) (dissoc vertex :type)))
 
 (defn- update-vertex!
   [dbs vertex table]
-  (jdbc/update! dbs (keyword table) (dissoc vertex :type) ["id = ?" (:id vertex)])
+  (jdbc/update! (dbs) (keyword table) (dissoc vertex :type) ["id = ?" (:id vertex)])
   vertex)
 
 (defn- remove-vertex!
   [dbs id table]
-  (jdbc/delete! dbs (keyword table) ["id = ?" id]))
+  (jdbc/delete! (dbs) (keyword table) ["id = ?" id]))
 
 (defn getv
   [dbs id vtype]
@@ -215,12 +235,12 @@
 (defn email->username
   [dbs email]
   (:username (first
-              (jdbc/query dbs ["SELECT username FROM users WHERE email=?" email]))))
+              (jdbc/query (dbs) ["SELECT username FROM users WHERE email=?" email]))))
 
 (defn all-users
   [dbs]
   (map #(assoc % :type :user)
-       (jdbc/query dbs "SELECT * FROM users")))
+       (jdbc/query (dbs) "SELECT * FROM users")))
 
 (defn- results->edges
   [rs]
@@ -254,7 +274,7 @@
         ids (map id/local->global ids)
         start-str (str owner-id " " (clojure.string/join " " ids))
         end-str (str+1 start-str)
-        rs (jdbc/query dbs ["SELECT id FROM edgeperms WHERE id>=? AND id<?"
+        rs (jdbc/query (dbs) ["SELECT id FROM edgeperms WHERE id>=? AND id<?"
                             start-str end-str])]
     (filter #(edge/matches? % pattern) (results->edges rs))))
 
@@ -265,24 +285,24 @@
         gcenter-id (id/local->global center-id)
         start-str (str owner-id " " gcenter-id " ")
         end-str (str+1 start-str)
-        rs (jdbc/query dbs ["SELECT id FROM edgeperms WHERE id>=? AND id<?"
+        rs (jdbc/query (dbs) ["SELECT id FROM edgeperms WHERE id>=? AND id<?"
                             start-str
                             end-str])]
     (results->edges rs)))
 
 (defn add-link-to-global!
   [dbs gid lid]
-  (jdbc/execute! dbs ["INSERT INTO globallocal (gid, lid) VALUES (?, ?)"
+  (jdbc/execute! (dbs) ["INSERT INTO globallocal (gid, lid) VALUES (?, ?)"
                       gid
                       lid]))
 
 (defn remove-link-to-global!
   [dbs gid lid]
-  (jdbc/execute! dbs ["DELETE FROM globallocal WHERE gid=? AND lid=?"
+  (jdbc/execute! (dbs) ["DELETE FROM globallocal WHERE gid=? AND lid=?"
                       gid
                       lid]))
 
 (defn alts
   [dbs gid]
-  (map :lid (jdbc/query dbs ["SELECT lid FROM globallocal WHERE gid=?"
+  (map :lid (jdbc/query (dbs) ["SELECT lid FROM globallocal WHERE gid=?"
                                  gid])))
