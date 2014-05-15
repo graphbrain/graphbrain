@@ -12,7 +12,7 @@
   {:id id
    :type :text
    :text ""
-   :degree 0
+   :degree -1
    :ts -1})
 
 (defn text->vertex

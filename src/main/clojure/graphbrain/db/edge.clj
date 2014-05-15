@@ -23,19 +23,20 @@
   (not (negative? edge)))
 
 (defn id->edge
-  ([id degree ts]
+  ([id score]
      {:id id
       :type :edge
-      :degree degree
-      :ts ts})
+      :score score
+      :degree -1
+      :ts -1})
   ([id]
-     (id->edge id 0 -1)))
+     (id->edge id 1)))
 
 (defn ids->edge
-  ([ids degree ts]
-     (id->edge (id/ids->id ids) degree ts))
+  ([ids score]
+     (id->edge (id/ids->id ids) score))
   ([ids]
-     (ids->edge ids 0 -1)))
+     (ids->edge ids 1)))
 
 (defn negate
   [edge]
@@ -46,6 +47,6 @@
   (every? identity
           (map #(or (= %2 "*") (= %1 %2)) (ids edge) pattern)))
 
-(defn owner-id
+(defn owner
   [edge]
-  (id/owner-id (second (ids edge))))
+  (id/owner (second (ids edge))))

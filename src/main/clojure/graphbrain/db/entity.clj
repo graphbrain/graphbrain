@@ -2,13 +2,11 @@
   (:require [graphbrain.db.id :as id]))
 
 (defn id->entity
-  ([id degree ts]
-     {:id id
-      :type :entity
-      :degree degree
-      :ts ts})
-  ([id]
-     (id->entity id 0 -1)))
+  [id]
+  {:id id
+   :type :entity
+   :degree -1
+   :ts -1})
 
 (defn text
   [entity]

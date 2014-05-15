@@ -16,7 +16,7 @@
    :session ""
    :sessionts -1
    :lastseen -1
-   :degree 0
+   :degree -1
    :ts -1})
 
 (defn new-user

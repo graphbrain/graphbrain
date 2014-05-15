@@ -10,15 +10,13 @@
   (str "h/" url))
 
 (defn id->urlnode
-  ([id degree ts]
-     {:id id
-      :type :url
-      :title ""
-      :icon ""
-      :degree degree
-      :ts ts})
-  ([id]
-     (id->urlnode id 0 -1)))
+  [id]
+  {:id id
+   :type :url
+   :title ""
+   :icon ""
+   :degree -1
+   :ts -1})
 
 (defn url
   [node]

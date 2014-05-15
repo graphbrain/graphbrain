@@ -5,5 +5,5 @@
   {:id id
    :type :prog
    :prog ""
-   :degree 0
+   :degree -1
    :ts -1})
