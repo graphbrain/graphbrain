@@ -8,6 +8,7 @@
                   [commons-lang/commons-lang "2.6"]
                   [org.clojure/java.jdbc "0.3.3"]
                   [mysql/mysql-connector-java "5.1.27"]
+                  [com.mchange/c3p0 "0.9.2.1"]
                   [org.mindrot/jbcrypt "0.3m"]
                   [xml-apis/xml-apis "1.4.01"]
                   [net.sf.extjwnl/extjwnl "1.7.1"]

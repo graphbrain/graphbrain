@@ -10,7 +10,7 @@
 
 (defn graph
   ([] (graph "gbnode"))
-  ([name] (mysql/db-spec name)))
+  ([name] mysql/db-connection))
 
 (defn getv
   [graph id]
