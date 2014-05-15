@@ -15,7 +15,7 @@
 (defn safe-exec!
   [dbs sql]
   (try (jdbc/db-do-commands dbs sql)
-       (catch Exception e (exception->str e))))
+    (catch Exception e (exception->str e))))
 
 (defn create-tables!
   [dbs]
@@ -40,10 +40,8 @@
   ;; Entities table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS entities ("
                        "id VARCHAR(10000),"
-                       "relid VARCHAR(10000),"
                        "degree INT DEFAULT 0,"
                        "ts BIGINT DEFAULT -1,"
-                       ;;"INDEX index_id_degree (id(255))"
                        "INDEX index_id_degree (id(255), degree),"
                        "INDEX index_id_ts (id(255), ts)"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
@@ -55,7 +53,6 @@
                        "ts BIGINT DEFAULT -1,"
                        "title VARCHAR(500),"
                        "icon VARCHAR(500),"
-                       ;;"INDEX index_id_degree (id(255))"
                        "INDEX index_id_degree (id(255), degree),"
                        "INDEX index_id_ts (id(255), ts)"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
@@ -109,7 +106,7 @@
   ;; Edge permutations table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS edgeperms ("
                        "id VARCHAR(10000),"
-                       "params VARCHAR(10000),"
+                       "score FLOAT DEFAULT 1,"
                        "INDEX id_index (id(255))"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
@@ -169,19 +166,20 @@
         ids (into-array ids)
         perms (map #(str owner-id " " (Permutations/strArrayPermutationToStr ids %) " " %)
                    (range nperms))]
-    (doseq [perm-id perms] (f perm-id))))
+    (doseq [perm-id perms] (f {:id perm-id, :score (:score edge)}))))
 
 (defn- write-edge-permutations!
   [dbs edge]
   (do-with-edge-permutations! edge #(jdbc/execute!
                                      (dbs)
-                                     ["INSERT INTO edgeperms (id) VALUES (?)" %])))
+                                     ["INSERT INTO edgeperms (id, score) VALUES (?, ?)"
+                                      (:id %) (:score %)])))
 
 (defn- remove-edge-permutations!
   [dbs edge]
   (do-with-edge-permutations! edge #(jdbc/execute!
                                      (dbs)
-                                     ["DELETE FROM edgeperms WHERE id=?" %])))
+                                     ["DELETE FROM edgeperms WHERE id=?" (:id %)])))
 
 (defn- get-vertex
   [dbs id table]
@@ -190,7 +188,7 @@
 (defn- exists-vertex?
   [dbs id table]
   (let [rs (jdbc/query (dbs) [(str "SELECT id FROM " table " WHERE id=?")
-                            id])]
+                              id])]
     (not (empty? rs))))
 
 (defn- put-vertex!
@@ -247,19 +245,20 @@
   (loop [results rs
          edges #{}]
     (if (empty? results) edges
-        (let [res (first results)
-              pid (:id res)
-              tokens (edgeparser/split-edge pid)
-              owner-id (first tokens)
-              perm (Integer. (last tokens))
-              tokens (rest (drop-last tokens))
-              tokens (Permutations/strArrayUnpermutate (into-array tokens) perm)
-              tokens (if (= owner-id global-owner)
-                       tokens
-                       (map #(id/global->local % owner-id) tokens))
-              edge (edge/ids->edge tokens)
-              edges (conj edges edge)]
-          (recur (rest results) edges)))))
+      (let [res (first results)
+            pid (:id res)
+            score (:score res)
+            tokens (edgeparser/split-edge pid)
+            owner-id (first tokens)
+            perm (Integer. (last tokens))
+            tokens (rest (drop-last tokens))
+            tokens (Permutations/strArrayUnpermutate (into-array tokens) perm)
+            tokens (if (= owner-id global-owner)
+                     tokens
+                     (map #(id/global->local % owner-id) tokens))
+            edge (edge/ids->edge tokens score)
+            edges (conj edges edge)]
+        (recur (rest results) edges)))))
 
 (defn- str+1
   [str]
@@ -274,8 +273,8 @@
         ids (map id/local->global ids)
         start-str (str owner-id " " (clojure.string/join " " ids))
         end-str (str+1 start-str)
-        rs (jdbc/query (dbs) ["SELECT id FROM edgeperms WHERE id>=? AND id<?"
-                            start-str end-str])]
+        rs (jdbc/query (dbs) ["SELECT id, score FROM edgeperms WHERE id>=? AND id<?"
+                              start-str end-str])]
     (filter #(edge/matches? % pattern) (results->edges rs))))
 
 (defn id->edges
@@ -285,24 +284,24 @@
         gcenter-id (id/local->global center-id)
         start-str (str owner-id " " gcenter-id " ")
         end-str (str+1 start-str)
-        rs (jdbc/query (dbs) ["SELECT id FROM edgeperms WHERE id>=? AND id<?"
-                            start-str
-                            end-str])]
+        rs (jdbc/query (dbs) ["SELECT id, score FROM edgeperms WHERE id>=? AND id<?"
+                              start-str
+                              end-str])]
     (results->edges rs)))
 
 (defn add-link-to-global!
   [dbs gid lid]
   (jdbc/execute! (dbs) ["INSERT INTO globallocal (gid, lid) VALUES (?, ?)"
-                      gid
-                      lid]))
+                        gid
+                        lid]))
 
 (defn remove-link-to-global!
   [dbs gid lid]
   (jdbc/execute! (dbs) ["DELETE FROM globallocal WHERE gid=? AND lid=?"
-                      gid
-                      lid]))
+                        gid
+                        lid]))
 
 (defn alts
   [dbs gid]
   (map :lid (jdbc/query (dbs) ["SELECT lid FROM globallocal WHERE gid=?"
-                                 gid])))
+                               gid])))

@@ -16,7 +16,7 @@
                        score 0]
                   (if (empty? altvs) score
                       (let [altv (first altvs)
-                            owner-id (id/owner-id altv)
+                            owner-id (id/owner altv)
                             local-edge (vertex/global->local edge owner-id)
                             neg-local-edge (vertex/global->local neg-edge owner-id)
                             s (if (gb/exists? graph local-edge) (inc score) score)

@@ -2,14 +2,12 @@
   (:require [graphbrain.db.id :as id]))
 
 (defn id->edgetype
-  ([id degree ts]
-   {:id id
-    :type :edge-type
-    :label ""
-    :degree degree
-    :ts ts})
-  ([id]
-   (id->edgetype id 0 -1)))
+  [id]
+  {:id id
+   :type :edge-type
+   :label ""
+   :degree -1
+   :ts -1})
 
 (defn negative?
   [id]
