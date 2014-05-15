@@ -10,15 +10,10 @@
 (defn id->text
   [id]
   {:id id
-   :type :text
-   :text ""
-   :degree -1
-   :ts -1})
+   :type :text})
 
 (defn text->vertex
   [text]
   {:id (text->id text)
    :type :text
-   :text text
-   :degree 0
-   :ts -1})
+   :text text})

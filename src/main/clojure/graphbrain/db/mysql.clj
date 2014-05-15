@@ -22,17 +22,17 @@
   ;; Edges table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS edges ("
                        "id VARCHAR(10000),"
-                       "score FLOAT DEFAULT 1,"
-                       "degree INT DEFAULT 0,"
-                       "ts BIGINT DEFAULT -1,"
+                       "score FLOAT NOT NULL DEFAULT 1,"
+                       "degree INT NOT NULL DEFAULT 0,"
+                       "ts BIGINT NOT NULL DEFAULT -1,"
                        "INDEX id_index (id(255))"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
   ;; EdgeTypes table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS edgetypes ("
                        "id VARCHAR(10000),"
-                       "degree INT DEFAULT 0,"
-                       "ts BIGINT DEFAULT -1,"
+                       "degree INT NOT NULL DEFAULT 0,"
+                       "ts BIGINT NOT NULL DEFAULT -1,"
                        "label VARCHAR(255),"
                        "INDEX id_index (id(255))"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
@@ -49,8 +49,8 @@
   ;; URLs table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS urls ("
                        "id VARCHAR(10000),"
-                       "degree INT DEFAULT 0,"
-                       "ts BIGINT DEFAULT -1,"
+                       "degree INT NOT NULL DEFAULT 0,"
+                       "ts BIGINT NOT NULL DEFAULT -1,"
                        "title VARCHAR(500),"
                        "icon VARCHAR(500),"
                        "INDEX index_id_degree (id(255), degree),"
@@ -60,16 +60,16 @@
   ;; Users table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS users ("
                        "id VARCHAR(10000),"
-                       "degree INT DEFAULT 0,"
-                       "ts BIGINT DEFAULT -1,"
+                       "degree INT NOT NULL DEFAULT 0,"
+                       "ts BIGINT NOT NULL DEFAULT -1,"
                        "username VARCHAR(255),"
                        "name VARCHAR(255),"
                        "email VARCHAR(255),"
                        "pwdhash VARCHAR(255),"
                        "role VARCHAR(255),"
                        "session VARCHAR(255),"
-                       "sessionts BIGINT DEFAULT -1,"
-                       "lastseen BIGINT DEFAULT -1,"
+                       "sessionts BIGINT NOT NULL DEFAULT -1,"
+                       "lastseen BIGINT NOT NULL DEFAULT -1,"
                        "INDEX id_index (id(255)),"
                        "INDEX email_index (email)"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
@@ -79,17 +79,17 @@
                        "id VARCHAR(10000),"
                        "name VARCHAR(10000),"
                        "access CHAR(10),"
-                       "size INT DEFAULT 0,"
-                       "degree INT DEFAULT 0,"
-                       "ts BIGINT DEFAULT -1,"
+                       "size INT NOT NULL DEFAULT 0,"
+                       "degree INT NOT NULL DEFAULT 0,"
+                       "ts BIGINT NOT NULL DEFAULT -1,"
                        "INDEX id_index (id(255))"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
   ;; Progs table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS progs ("
                        "id VARCHAR(10000),"
-                       "degree INT DEFAULT 0,"
-                       "ts BIGINT DEFAULT -1,"
+                       "degree INT NOT NULL DEFAULT 0,"
+                       "ts BIGINT NOT NULL DEFAULT -1,"
                        "prog TEXT,"
                        "INDEX id_index (id(255))"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
@@ -97,8 +97,8 @@
   ;; Texts table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS texts ("
                        "id VARCHAR(10000),"
-                       "degree INT DEFAULT 0,"
-                       "ts BIGINT DEFAULT -1,"
+                       "degree INT NOT NULL DEFAULT 0,"
+                       "ts BIGINT NOT NULL DEFAULT -1,"
                        "text TEXT,"
                        "INDEX id_index (id(255))"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
@@ -106,7 +106,7 @@
   ;; Edge permutations table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS edgeperms ("
                        "id VARCHAR(10000),"
-                       "score FLOAT DEFAULT 1,"
+                       "score FLOAT NOT NULL DEFAULT 1,"
                        "INDEX id_index (id(255))"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
@@ -271,7 +271,7 @@
         owner-id (id/owner (first ids))
         owner-id (if owner-id owner-id global-owner)
         ids (map id/local->global ids)
-        start-str (str owner-id " " (clojure.string/join " " ids))
+        start-str (str owner-id " " (clojure.string/join " " ids) " ")
         end-str (str+1 start-str)
         rs (jdbc/query (dbs) ["SELECT id, score FROM edgeperms WHERE id>=? AND id<?"
                               start-str end-str])]

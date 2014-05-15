@@ -4,9 +4,7 @@
 (defn id->entity
   [id]
   {:id id
-   :type :entity
-   :degree -1
-   :ts -1})
+   :type :entity})
 
 (defn text
   [entity]
