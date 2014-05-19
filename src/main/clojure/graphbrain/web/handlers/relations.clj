@@ -9,4 +9,4 @@
     [user (get-user request)
      pos ((request :form-params) "pos")
      root-id ((request :form-params) "rootId")]
-    (vg/generate graph root-id user)))
+    (vg/generate gbdb root-id user)))

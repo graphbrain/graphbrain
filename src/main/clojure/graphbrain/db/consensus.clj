@@ -1,12 +1,12 @@
 (ns graphbrain.db.consensus
   (:require [graphbrain.db.id :as id]
-            [graphbrain.db.graph :as gb]
+            [graphbrain.db.gbdb :as gb]
             [graphbrain.db.vertex :as vertex]
             [graphbrain.db.edge :as edge]
             [graphbrain.db.queues :as queues]))
 
 (defn eval-edge!
-  [graph edge-id]
+  [gbdb edge-id]
   (if (id/global-space? edge-id)
     (let [edge (edge/id->edge edge-id)
           neg-edge (edge/negate edge)
@@ -19,13 +19,13 @@
                             owner-id (id/owner altv)
                             local-edge (vertex/global->local edge owner-id)
                             neg-local-edge (vertex/global->local neg-edge owner-id)
-                            s (if (gb/exists? graph local-edge) (inc score) score)
-                            s (if (gb/exists? graph neg-local-edge) (dec s) s)]
+                            s (if (gb/exists? gbdb local-edge) (inc score) score)
+                            s (if (gb/exists? gbdb neg-local-edge) (dec s) s)]
                         (recur (rest altvs) s))))]
-      (if (> score 0) (gb/putv! graph edge) (gb/remove! graph edge)))))
+      (if (> score 0) (gb/putv! gbdb edge) (gb/remove! gbdb edge)))))
 
 (defn start-consensus-processor!
-  [graph]
+  [gbdb]
   (compare-and-set! queues/consensus-active false true)
   (def consensus-processor (future
      (while @queues/consensus-active

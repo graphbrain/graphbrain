@@ -53,7 +53,7 @@
        (if cookie-text cookie-text "")
        parse-text)
      t (new Text text)
-     p (Prog/fromString (get-code) graph)
+     p nil ;;(Prog/fromString (get-code) graph)
      vcl (text2vc-list p t)]
     (ecopage
       :title "Parse"

@@ -3,12 +3,12 @@
         (graphbrain.web.views page raw))
   (:require [graphbrain.web.cssandjs :as css+js]
             [graphbrain.web.common :as common]
-            [graphbrain.db.graph :as gb]))
+            [graphbrain.db.gbdb :as gb]))
 
 (defn- raw-html
   [request]
   (let
-    [users (gb/all-users common/graph)]
+    [users (gb/all-users common/gbdb)]
     (str "<h2>All Users</h2>"
       (str "<strong>Count:" (count users) "</strong><br /><br />")
       (join

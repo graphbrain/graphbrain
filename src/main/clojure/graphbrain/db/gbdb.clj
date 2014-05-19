@@ -1,4 +1,4 @@
-(ns graphbrain.db.graph
+(ns graphbrain.db.gbdb
   (:require [graphbrain.db.mysql :as mysql]
             [graphbrain.db.id :as id]
             [graphbrain.db.vertex :as vertex]
@@ -8,60 +8,60 @@
             [clojure.set])
   (:import (java.util Date)))
 
-(defn graph
-  ([] (graph "gbnode"))
+(defn gbdb
+  ([] (gbdb "gbnode"))
   ([name] mysql/db-connection))
 
 (defn getv
-  [graph id]
-  (mysql/getv graph id (id/id->type id)))
+  [gbdb id]
+  (mysql/getv gbdb id (id/id->type id)))
 
 (defn exists?
-  [graph vert-or-id]
+  [gbdb vert-or-id]
   (let [id (if (string? vert-or-id) vert-or-id (:id vert-or-id))
         vtype (id/id->type id)]
-    (mysql/exists? graph id vtype)))
+    (mysql/exists? gbdb id vtype)))
 
 (defn add-link-to-global!
-  [graph global-id local-id]
-  (mysql/add-link-to-global! graph global-id local-id))
+  [gbdb global-id local-id]
+  (mysql/add-link-to-global! gbdb global-id local-id))
 
 (defn remove-link-to-global!
-  [graph global-id local-id]
-  (mysql/remove-link-to-global! graph global-id local-id))
+  [gbdb global-id local-id]
+  (mysql/remove-link-to-global! gbdb global-id local-id))
 
 (defn- f-degree!
-  [graph id-or-vertex f]
-  (let [vertex (if (string? id-or-vertex) (getv graph id-or-vertex) id-or-vertex)
+  [gbdb id-or-vertex f]
+  (let [vertex (if (string? id-or-vertex) (getv gbdb id-or-vertex) id-or-vertex)
         degree (:degree vertex)
         vertex (assoc vertex :degree (f degree))]
-    (mysql/update! graph vertex)))
+    (mysql/update! gbdb vertex)))
 
 (defn inc-degree!
-  [graph id-or-vertex]
-  (f-degree! graph id-or-vertex inc))
+  [gbdb id-or-vertex]
+  (f-degree! gbdb id-or-vertex inc))
 
 (defn dec-degree!
-  [graph id-or-vertex]
-  (f-degree! graph id-or-vertex dec))
+  [gbdb id-or-vertex]
+  (f-degree! gbdb id-or-vertex dec))
 
 (defn putv!
-  ([graph vertex]
-     (if (not (exists? graph vertex))
+  ([gbdb vertex]
+     (if (not (exists? gbdb vertex))
        (let [vertex (assoc vertex :ts (.getTime (Date.)))]
-         (mysql/putv! graph vertex)
+         (mysql/putv! gbdb vertex)
          (if (= (:type vertex) :edge)
            (doseq [id (edge/ids vertex)]
-             (putv! graph (vertex/id->vertex id))
-             (inc-degree! graph id)))))
+             (putv! gbdb (vertex/id->vertex id))
+             (inc-degree! gbdb id)))))
      vertex)
-  ([graph vertex owner-id]
-     (putv! graph vertex)
+  ([gbdb vertex owner-id]
+     (putv! gbdb vertex)
      (if (not (id/local-space? (:id vertex)))
        (let [lvert (vertex/global->local vertex owner-id)]
-         (if (not (exists? graph lvert))
-           (putv! graph lvert)
-           (add-link-to-global! graph (:id vertex) (:id lvert)))
+         (if (not (exists? gbdb lvert))
+           (putv! gbdb lvert)
+           (add-link-to-global! gbdb (:id vertex) (:id lvert)))
          (if (= (:type vertex) :edge)
             ;; run consensus algorithm
             (let [gedge (vertex/local->global vertex)]
@@ -69,55 +69,55 @@
      vertex))
 
 (defn update!
-  [graph vertex]
-  (mysql/update! graph vertex))
+  [gbdb vertex]
+  (mysql/update! gbdb vertex))
 
 (defn put-or-update!
-  [graph vertex]
-  (if (exists? graph vertex)
-    (update! graph vertex)
-    (putv! graph vertex)))
+  [gbdb vertex]
+  (if (exists? gbdb vertex)
+    (update! gbdb vertex)
+    (putv! gbdb vertex)))
 
 (defn edge?
   [vert]
   (id/edge? (:id vert)))
 
 (defn all-users
-  [graph]
-  (mysql/all-users graph))
+  [gbdb]
+  (mysql/all-users gbdb))
 
 (defn- on-remove-edge!
-  [graph edge]
-  (doseq [id (edge/ids edge)] (dec-degree! graph id)))
+  [gbdb edge]
+  (doseq [id (edge/ids edge)] (dec-degree! gbdb id)))
 
 (defn remove!
-  ([graph vertex]
-     (mysql/remove! graph vertex)
+  ([gbdb vertex]
+     (mysql/remove! gbdb vertex)
      (if (edge? vertex)
        (on-remove-edge! vertex)))
-  ([graph vertex owner-id]
+  ([gbdb vertex owner-id]
      (let [u (vertex/global->local vertex owner-id)]
-       (mysql/remove! graph u)
-       (remove-link-to-global! graph (:id vertex) (:id u))
+       (mysql/remove! gbdb u)
+       (remove-link-to-global! gbdb (:id vertex) (:id u))
        (if (edge? u)
-         (do (putv! graph (edge/negate u))
+         (do (putv! gbdb (edge/negate u))
              (queues/consensus-enqueue! (:id vertex)))))))
 
 (defn pattern->edges
-  [graph pattern]
-  (mysql/pattern->edges graph pattern))
+  [gbdb pattern]
+  (mysql/pattern->edges gbdb pattern))
 
 (defn id->edges
-  ([graph center]
-     (mysql/id->edges graph center))
-  ([graph center-id owner-id]
-     (let [edges (id->edges graph center-id)
+  ([gbdb center]
+     (mysql/id->edges gbdb center))
+  ([gbdb center-id owner-id]
+     (let [edges (id->edges gbdb center-id)
            gedges (filter vertex/global-space? edges)
            ledges (if owner-id
                     (let [lcenter-id (id/global->local center-id owner-id)]
                       (map vertex/local->global
                            (filter vertex/local-space?
-                                   (id->edges graph lcenter-id)))) #{})]
+                                   (id->edges gbdb lcenter-id)))) #{})]
        (clojure.set/union (set (filter
                                 edge/positive?
                                 (filter #(not (some #{(edge/negate %)} ledges))
@@ -125,8 +125,8 @@
                           (set (filter edge/positive? ledges))))))
 
 (defn vertex->edges
-  [graph center]
-    (id->edges graph (:id center)))
+  [gbdb center]
+    (id->edges gbdb (:id center)))
 
 (defn edges->vertex-ids
   [edges]
@@ -134,43 +134,43 @@
 
 (defn neighbors
   [grpah center-id]
-  (conj (edges->vertex-ids (id->edges graph center-id)) center-id))
+  (conj (edges->vertex-ids (id->edges gbdb center-id)) center-id))
 
 (defn email->id
-  [graph email]
-  (let [username (mysql/email->username graph email)]
+  [gbdb email]
+  (let [username (mysql/email->username gbdb email)]
     (if username (id/username->id username))))
 
 (defn username-exists?
-  [graph username]
-  (exists? graph (id/username->id username)))
+  [gbdb username]
+  (exists? gbdb (id/username->id username)))
 
 (defn email-exists?
-  [graph email]
-  (mysql/email->username graph email))
+  [gbdb email]
+  (mysql/email->username gbdb email))
 
 (defn find-user
-  [graph login]
-  (if (exists? graph (id/username->id login))
-    (getv graph (id/username->id login))
-    (let [uid (email->id graph login)]
+  [gbdb login]
+  (if (exists? gbdb (id/username->id login))
+    (getv gbdb (id/username->id login))
+    (let [uid (email->id gbdb login)]
       (if uid
-        (if (exists? graph uid) (getv graph uid))))))
+        (if (exists? gbdb uid) (getv gbdb uid))))))
 
 (defn username->vertex
-  [graph username]
+  [gbdb username]
   (let [uid (id/username->id username)]
-    (if (exists? graph uid) (getv graph uid))))
+    (if (exists? gbdb uid) (getv gbdb uid))))
 
 (defn create-user!
-  [graph username name email password role]
-  (putv! graph (user/new-user username name email password role)))
+  [gbdb username name email password role]
+  (putv! gbdb (user/new-user username name email password role)))
 
 (defn attempt-login!
-  [graph login password]
-  (let [user (find-user graph login)]
+  [gbdb login password]
+  (let [user (find-user gbdb login)]
     (if (and user (user/check-password user password))
-        (update! graph (user/new-session user)))))
+        (update! gbdb (user/new-session user)))))
 
 (defn force-login!
   [login]
@@ -178,21 +178,21 @@
     (if user
         (update! (user/new-session user)))))
 
-(defn all-users [graph] (mysql/all-users graph))
+(defn all-users [gbdb] (mysql/all-users gbdb))
 
 (defn global-alts
-  [graph global-id]
-  (mysql/alts graph global-id))
+  [gbdb global-id]
+  (mysql/alts gbdb global-id))
 
 (defn description
-  [graph id-or-vertex]
+  [gbdb id-or-vertex]
   (let [id (if (string? id-or-vertex) id-or-vertex (:id id-or-vertex))
-        vertex (if (string? id-or-vertex) (getv graph id-or-vertex) id-or-vertex)
-        as-in (pattern->edges graph ["r/+type_of" id "*"])
+        vertex (if (string? id-or-vertex) (getv gbdb id-or-vertex) id-or-vertex)
+        as-in (pattern->edges gbdb ["r/+type_of" id "*"])
         desc (vertex/label vertex)]
     (if (empty? as-in) desc
         (str desc " ("
              (clojure.string/join
               ", "
-              (map #(vertex/label (getv graph (second (edge/participant-ids %))))
+              (map #(vertex/label (getv gbdb (second (edge/participant-ids %))))
                    as-in)) ")"))))

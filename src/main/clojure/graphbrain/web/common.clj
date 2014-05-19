@@ -1,12 +1,12 @@
 (ns graphbrain.web.common
-  (:require [graphbrain.db.graph :as gb]
+  (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.user :as user]
             [graphbrain.db.utils :as utils]))
 
 (defn init-graph!
   []
-  (def graph (utils/init-with-consensus!))
-  #_(def graph (gb/graph)))
+  (def gbdb (utils/init-with-consensus!))
+  #_(def gbdb (gb/gbdb)))
 
 (defn get-user
   [response]
@@ -15,7 +15,7 @@
      session (:value ((response :cookies) "session"))]
     (if (or (not username) (not session))
       nil
-      (let [user-node (gb/username->vertex graph username)]
+      (let [user-node (gb/username->vertex gbdb username)]
         (if user-node
           (if (user/check-session user-node session)
             user-node))))))
@@ -23,13 +23,13 @@
 (defn get-code
   []
   (let
-    [prog (gb/getv graph "prog/prog")]
+    [prog (gb/getv gbdb "prog/prog")]
     (if prog
       (:prog prog) "")))
 
 (defn get-tests
   []
   (let
-    [tests (gb/getv graph "text/tests")]
+    [tests (gb/getv gbdb "text/tests")]
     (if tests
       (:text tests) "")))

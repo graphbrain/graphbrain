@@ -1,22 +1,22 @@
 (ns graphbrain.braingenerators.pagereader
   (:use graphbrain.braingenerators.ngrams
         graphbrain.disambig.entityguesser)
-  (:require [graphbrain.db.graph :as gb]
+  (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.urlnode :as url]
             [graphbrain.db.id :as id]
             [graphbrain.db.edge :as edge]))
 
-(defonce g (gb/graph))
+(defonce g (gb/gbdb))
 
 (defn ngram->entity
-  [graph ngram]
+  [gbdb ngram]
   (let [ngram-str (ngram->str ngram)]
     (prn ngram-str)
-    (guess graph ngram-str "xpto")))
+    (guess gbdb ngram-str "xpto")))
 
 (defn ngrams->entities
-  [graph ngrams]
-  (map #(ngram->entity graph %) ngrams))
+  [gbdb ngrams]
+  (map #(ngram->entity gbdb %) ngrams))
 
 (defn url->leaf-entities
   [url-str]

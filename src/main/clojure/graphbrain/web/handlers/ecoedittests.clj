@@ -13,6 +13,7 @@
 
 (defn handle-ecoedittests-post
   [request]
-  (. graph putOrUpdate
+  nil
+  #_(. graph putOrUpdate
     (new TextNode "text/tests", ((request :form-params) "tests")))
   (handle-ecoedittests-get request))
