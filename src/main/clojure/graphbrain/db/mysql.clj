@@ -40,6 +40,7 @@
   ;; Entities table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS entities ("
                        "id VARCHAR(10000),"
+                       "typerel VARCHAR(10000),"
                        "degree INT DEFAULT 0,"
                        "ts BIGINT DEFAULT -1,"
                        "INDEX index_id_degree (id(255), degree),"

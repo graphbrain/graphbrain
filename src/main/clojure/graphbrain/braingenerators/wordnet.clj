@@ -1,5 +1,5 @@
 (ns graphbrain.braingenerators.wordnet
-  (:require [graphbrain.db.graph :as gb]
+  (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.id :as id]
             [graphbrain.db.edge :as edge]
             [graphbrain.db.text :as text])
@@ -15,9 +15,9 @@
 (def dryrun false)
 
 (defn add-relation!
-  [graph rel]
+  [gbdb rel]
   (prn (str "rel: " rel))
-  (if (not dryrun) (gb/putv! graph (edge/id->edge rel) "c/wordnet")))
+  (if (not dryrun) (gb/putv! gbdb (edge/id->edge rel) "c/wordnet")))
 
 (defn super-type
   [word]
@@ -46,17 +46,17 @@
           (str (id/hashed rel) "/" id)))))
 
 (defn process-super-types!
-  [graph vid word]
+  [gbdb vid word]
   (let [concept (.getSynset word)
         hypernyms (PointerUtils/getDirectHypernyms concept)]
     (doseq [hypernym hypernyms]
       (let [super-word (first (.getWords (.getSynset hypernym)))
             super-id (vertex-id super-word)
             rel (str "(r/+type_of " vid " " super-id ")")]
-        (add-relation! graph rel)))))
+        (add-relation! gbdb rel)))))
 
 (defn process-synonyms!
-  [graph synset]
+  [gbdb synset]
   (let [word-list (.getWords synset)
         main-word (nth word-list 0)
         vid (vertex-id main-word)]
@@ -64,47 +64,47 @@
       (let [syn-id (vertex-id syn)
             rel (str "(r/+synonym " vid " " syn-id ")")]
         (if (not (= vid syn-id))
-                 (add-relation! graph rel))))))
+                 (add-relation! gbdb rel))))))
 
 (defn process-meronyms!
-  [graph vid word]
+  [gbdb vid word]
   (let [concept (.getSynset word)
         results (PointerUtils/getMeronyms concept)]
     (doseq [result results]
       (let [part-word (first (.getWords (.getSynset result)))
             part-id (vertex-id part-word)
             rel (str "(r/+part_of " part-id " " vid ")")]
-        (add-relation! graph rel)))))
+        (add-relation! gbdb rel)))))
 
 (defn process-antonyms!
-  [graph vid word]
+  [gbdb vid word]
   (let [concept (.getSynset word)
         results (PointerUtils/getAntonyms concept)]
     (doseq [result results]
       (let [ant-word (first (.getWords (.getSynset result)))
             ant-id (vertex-id ant-word)
             rel (str "(r/+antonym " vid " " ant-id ")")]
-        (add-relation! graph rel)))))
+        (add-relation! gbdb rel)))))
 
 (defn process-also-sees!
-  [graph vid word]
+  [gbdb vid word]
   (let [concept (.getSynset word)
         results (PointerUtils/getAlsoSees concept)]
     (doseq [result results]
       (let [also-word (first (.getWords (.getSynset result)))
             also-id (vertex-id also-word)
             rel (str "(r/+also_see " vid " " also-id ")")]
-        (add-relation! graph rel)))))
+        (add-relation! gbdb rel)))))
 
 (defn process-can-mean!
-  [graph vid word]
+  [gbdb vid word]
   (if (super-type word)
     (let [sid (id/sanitize (.getLemma word))
           rel (str "(r/+can_mean " sid " " vid ")")]
-      (add-relation! graph rel))))
+      (add-relation! gbdb rel))))
 
 (defn process-pos!
-  [graph vid word]
+  [gbdb vid word]
   (let [pos (.getPOS word)]
     (if pos
       (let [pos-id (cond
@@ -113,50 +113,50 @@
                      (.equals pos POS/ADJECTIVE) "90a283c76334fb9d/adjective"
                      (.equals pos POS/ADVERB) "20383f8100e0be26/adverb")
             rel (str "(r/+pos " vid " " pos-id ")")]
-        (add-relation! graph rel)))))
+        (add-relation! gbdb rel)))))
 
 (defn process-example!
-  [graph vid word]
+  [gbdb vid word]
   (let [tn (example word)]
-    (if (not dryrun) (gb/putv! graph tn))
+    (if (not dryrun) (gb/putv! gbdb tn))
     (let [rel (str "(r/+example " vid " " (:id tn) ")")]
-      (add-relation! graph rel))))
+      (add-relation! gbdb rel))))
 
 (defn process-synset!
-  [graph synset]
-  (process-synonyms! graph synset)
+  [gbdb synset]
+  (process-synonyms! gbdb synset)
   (let [main-word (first (.getWords synset))
         mwid (vertex-id main-word)]
-    (process-meronyms! graph mwid main-word)
-    (process-antonyms! graph mwid main-word)
-    (process-also-sees! graph mwid main-word)
-    (process-example! graph mwid main-word)
+    (process-meronyms! gbdb mwid main-word)
+    (process-antonyms! gbdb mwid main-word)
+    (process-also-sees! gbdb mwid main-word)
+    (process-example! gbdb mwid main-word)
     (let [words (.getWords synset)]
           (doseq [word words]
             (let [vid (vertex-id word)]
               (prn vid)
-              (process-can-mean! graph vid word)
-              (process-super-types! graph vid word)
-              (process-pos! graph vid word))))))
+              (process-can-mean! gbdb vid word)
+              (process-super-types! gbdb vid word)
+              (process-pos! gbdb vid word))))))
 
 (defn process-pos-synset!
-  [graph dictionary pos]
+  [gbdb dictionary pos]
   (let [iter (.getSynsetIterator dictionary pos)]
     (while (.hasNext iter)
       (let [synset (.next iter)]
         (prn synset)
-        (process-synset! graph synset)))))
+        (process-synset! gbdb synset)))))
 
 (defn process!
-  [graph dictionary]
-  (gb/create-user! graph "wordnet" "wordnet" "" "" "crawler")
-  (process-pos-synset! graph dictionary (POS/NOUN))
-  (process-pos-synset! graph dictionary (POS/VERB))
-  (process-pos-synset! graph dictionary (POS/ADJECTIVE))
-  (process-pos-synset! graph dictionary (POS/ADVERB)))
+  [gbdb dictionary]
+  (gb/create-user! gbdb "wordnet" "wordnet" "" "" "crawler")
+  (process-pos-synset! gbdb dictionary (POS/NOUN))
+  (process-pos-synset! gbdb dictionary (POS/VERB))
+  (process-pos-synset! gbdb dictionary (POS/ADJECTIVE))
+  (process-pos-synset! gbdb dictionary (POS/ADVERB)))
 
 (defn run!
   []
   (let [dictionary (Dictionary/getDefaultResourceInstance)
-        graph (gb/graph)]
-    (process! graph dictionary)))
+        gbdb (gb/gbdb)]
+    (process! gbdb dictionary)))

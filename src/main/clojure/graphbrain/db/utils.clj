@@ -1,8 +1,8 @@
 (ns graphbrain.db.utils
-  (:require [graphbrain.db.graph :as gb]
+  (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.consensus :as consensus]))
 
 (defn init-with-consensus!
   []
-  (let [g (gb/graph)]
+  (let [g (gb/gbdb)]
     (consensus/start-consensus-processor! g) g))

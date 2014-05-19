@@ -17,7 +17,7 @@
   [id]
   (count (parts id)))
 
-(defn build-id
+(defn build
   [parts]
   (clojure.string/join "/" parts))
 
@@ -132,7 +132,7 @@
   [id]
   (cond
    (edge? id) (ids->id (map local->global (id->ids id)))
-   (local-space? id) (build-id (drop 2 (parts id)))
+   (local-space? id) (build (drop 2 (parts id)))
    :else id))
 
 (defn owner
@@ -140,7 +140,7 @@
   (if (global-space? id) nil
     (if (edge? id)
       (owner (first (id->ids id)))
-      (build-id (take 2 (parts id))))))
+      (build (take 2 (parts id))))))
 
 (defn owner-user
   [id]

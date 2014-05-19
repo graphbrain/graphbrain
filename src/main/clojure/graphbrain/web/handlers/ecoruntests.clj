@@ -84,7 +84,7 @@
   [request]
   (let
     [tests-str (get-tests)
-     prog (Prog/fromString (get-code) graph)
+     prog nil ;;(Prog/fromString (get-code) graph)
      tests (array2tests (. (new Tests tests-str) getTests))
      vcl (tests2vc-list prog tests)]
     (ecopage

@@ -30,6 +30,21 @@
   ([id]
      (id->edge id 1)))
 
+(defn idedge->entity
+  [typerel]
+  (if (= (edge-type typerel) "r/+id")
+    (let [hsh (id/hashed (:id typerel))
+          name (first (participant-ids typerel))
+          id (id/build [hsh name])]
+      {:id id
+       :type :entity
+       :typerel (:id typerel)})))
+
+(defn idedge-id->entity
+  [idedge-id]
+  (if (= (id/id->type idedge-id) :edge)
+    (idedge->entity (id->edge idedge-id))))
+
 (defn ids->edge
   ([ids score]
      (id->edge (id/ids->id ids) score))

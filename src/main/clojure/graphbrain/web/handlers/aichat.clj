@@ -1,7 +1,7 @@
 (ns graphbrain.web.handlers.aichat
   (:require [graphbrain.web.common :as common]
             [clojure.data.json :as json]
-            [graphbrain.db.graph :as gb]
+            [graphbrain.db.gbdb :as gb]
             [graphbrain.db.graphjava :as gbj]
             [graphbrain.db.edge :as edge]
             [graphbrain.db.urlnode :as url]
@@ -38,7 +38,7 @@
        vertex (gbj/vertex-obj->map
                (. (first (. (first ctxts-list) getCtxts)) getTopRetVertex))]
     (if (gb/edge? vertex)
-      (gb/putv! common/graph (assoc vertex :score 1) (:id user)))
+      (gb/putv! common/gbdb (assoc vertex :score 1) (:id user)))
     (aichat-reply (:id root) vertex (:id vertex))))
 
 (defn process-url
@@ -51,7 +51,7 @@
   [request]
   (let [sentence ((request :form-params) "sentence")
         root-id ((request :form-params) "rootId")
-        root (if root-id (gb/getv common/graph root-id))
+        root (if root-id (gb/getv common/gbdb root-id))
         user (common/get-user request)]
     (case (sentence-type sentence)
       :fact (process-fact user root sentence)

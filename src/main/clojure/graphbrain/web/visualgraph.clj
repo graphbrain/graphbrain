@@ -1,7 +1,7 @@
 (ns graphbrain.web.visualgraph
   (:require [clojure.data.json :as json]
             [graphbrain.web.colors :as colors]
-            [graphbrain.db.graph :as gb]
+            [graphbrain.db.gbdb :as gb]
             [graphbrain.db.edge :as edge]
             [graphbrain.db.id :as id]
             [graphbrain.db.edgetype :as edgetype]
@@ -87,16 +87,16 @@
   (if (empty? edge-type) "" (fix-label (edgetype/label edge-type))))
 
 (defn node->map
-  [graph node-id node-edge root-id]
+  [gbdb node-id node-edge root-id]
   (let [vtype (id/id->type node-id)
         node (if (and (= node-id root-id) (= vtype :entity))
                (vertex/id->vertex node-id)
-               (gb/getv graph node-id))
+               (gb/getv gbdb node-id))
         node (if (nil? node) (vertex/id->vertex node-id) node)]
     (condp = (:type node)
       :entity {:id (:id node)
                :type "text"
-               :text (gb/description graph node)
+               :text (gb/description gbdb node)
                :edge node-edge}
       :url {:id (:id node)
             :type "url"
@@ -120,10 +120,10 @@
   (if (= (second rp) 0) (:id1 se) (:id2 se)))
 
 (defn snode
-  [graph rp sedges root-id]
+  [gbdb rp sedges root-id]
   (let [label (link-label (first rp))
         color (link-color label)
-        nodes (map #(node->map graph
+        nodes (map #(node->map gbdb
                                (se->node-id % rp)
                                (:id (:parent %))
                                root-id) sedges)]
@@ -134,7 +134,7 @@
      :color color}))
 
 (defn snode-map
-  [graph en-map root-id]
+  [gbdb en-map root-id]
   (loop [enm en-map
          count 0
          snode-map {}]
@@ -143,12 +143,12 @@
               rp (first en)
               snid (snode-id rp)]
           (recur (rest enm) (inc count)
-                 (assoc snode-map snid (snode graph rp (second en) root-id)))))))
+                 (assoc snode-map snid (snode gbdb rp (second en) root-id)))))))
 
 (defn generate
-  [graph root-id user]
+  [gbdb root-id user]
   (let [user-id (if user (:id user) "")
-        hyper-edges (gb/id->edges graph root-id user-id)
+        hyper-edges (gb/id->edges gbdb root-id user-id)
         visual-edges (filter (complement nil?)
                              (map #(hyper->edge % root-id)
                                   (filter edge/positive? hyper-edges)))
@@ -158,9 +158,9 @@
                                       :pos (second rp)
                                       :label (link-label (first rp))
                                       :snode (snode-id rp)}))
-        snode-map (snode-map graph edge-node-map root-id)
+        snode-map (snode-map gbdb edge-node-map root-id)
         snode-map (assoc snode-map :root
-                         {:nodes [(node->map graph root-id "" root-id)]})]
+                         {:nodes [(node->map gbdb root-id "" root-id)]})]
     (json/write-str {:user user-id
                      :snodes snode-map
                      :allrelations all-relations})))
