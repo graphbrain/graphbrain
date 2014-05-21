@@ -4,12 +4,6 @@
            (java.math BigInteger)
            (com.graphbrain.utils RandUtils)))
 
-(defn id->user
-  [id]
-  {:id id
-   :type :user
-   :username (id/last-part id)})
-
 (defn new-user
   [username name email password role]
   {:id (id/username->id username)

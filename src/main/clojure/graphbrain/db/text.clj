@@ -7,11 +7,6 @@
         hash (id/hashed text)]
     (str "t/" hash "/" (id/sanitize short-text))))
 
-(defn id->text
-  [id]
-  {:id id
-   :type :text})
-
 (defn text->vertex
   [text]
   {:id (text->id text)

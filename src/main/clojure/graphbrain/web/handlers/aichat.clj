@@ -3,7 +3,7 @@
             [clojure.data.json :as json]
             [graphbrain.db.gbdb :as gb]
             [graphbrain.db.graphjava :as gbj]
-            [graphbrain.db.edge :as edge]
+            [graphbrain.db.maps :as maps]
             [graphbrain.db.urlnode :as url]
             [graphbrain.braingenerators.pagereader :as pr]
             [graphbrain.string :as gbstr])
@@ -17,7 +17,7 @@
 (defn- aichat-reply
   [root-id vertex sentence]
   (let [goto-id (if (gb/edge? vertex)
-                  (second (edge/ids vertex))
+                  (second (maps/ids vertex))
                   root-id)]
     (json/write-str {:sentence sentence
                      :newedges (list (:id vertex))

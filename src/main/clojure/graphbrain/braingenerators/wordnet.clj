@@ -1,7 +1,7 @@
 (ns graphbrain.braingenerators.wordnet
   (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.id :as id]
-            [graphbrain.db.edge :as edge]
+            [graphbrain.db.maps :as maps]
             [graphbrain.db.text :as text])
   (:import (org.w3c.dom ElementTraversal)
            (net.sf.extjwnl.data PointerUtils
@@ -17,7 +17,7 @@
 (defn add-relation!
   [gbdb rel]
   (prn (str "rel: " rel))
-  (if (not dryrun) (gb/putv! gbdb (edge/id->edge rel) "c/wordnet")))
+  (if (not dryrun) (gb/putv! gbdb (maps/id->edge rel) "c/wordnet")))
 
 (defn super-type
   [word]

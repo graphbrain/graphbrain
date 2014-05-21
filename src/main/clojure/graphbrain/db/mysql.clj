@@ -1,7 +1,7 @@
 (ns graphbrain.db.mysql
   (:use graphbrain.utils)
   (:require [clojure.java.jdbc :as jdbc]
-            [graphbrain.db.vertex :as vertex]
+            [graphbrain.db.maps :as maps]
             [graphbrain.db.edge :as edge]
             [graphbrain.db.edgeparser :as edgeparser]
             [graphbrain.db.id :as id])
@@ -160,7 +160,7 @@
 (defn- do-with-edge-permutations!
   [edge f]
   (let [edge-id (:id edge)
-        ids (edge/ids (vertex/local->global edge))
+        ids (maps/ids (maps/local->global edge))
         owner-id (id/owner edge-id)
         owner-id (if owner-id owner-id global-owner)
         nperms (Permutations/permutations (count ids))
@@ -257,7 +257,7 @@
             tokens (if (= owner-id global-owner)
                      tokens
                      (map #(id/global->local % owner-id) tokens))
-            edge (edge/ids->edge tokens score)
+            edge (maps/ids->edge tokens score)
             edges (conj edges edge)]
         (recur (rest results) edges)))))
 

@@ -2,7 +2,7 @@
   (:require [clojure.data.json :as json]
             [graphbrain.web.colors :as colors]
             [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.edge :as edge]
+            [graphbrain.db.maps :as maps]
             [graphbrain.db.id :as id]
             [graphbrain.db.edgetype :as edgetype]
             [graphbrain.db.entity :as entity]
@@ -23,36 +23,36 @@
 
 (defn hyper->edge
   [edge root-id]
-  (if (> (count (edge/participant-ids edge)) 2)
-    (if (= (edge/edge-type edge) "r/1/instance_of~owned_by")
-      (if (= (nth (edge/participant-ids edge) 0) root-id)
+  (if (> (count (maps/participant-ids edge)) 2)
+    (if (= (maps/edge-type edge) "r/1/instance_of~owned_by")
+      (if (= (nth (maps/participant-ids edge) 0) root-id)
         {:edge-type "r/1/has"
-         :id1 (nth (edge/participant-ids edge) 2)
+         :id1 (nth (maps/participant-ids edge) 2)
          :id2 root-id
          :parent edge}
-        (if (= (nth (edge/participant-ids edge) 2) root-id)
+        (if (= (nth (maps/participant-ids edge) 2) root-id)
           {:edge-type "r/1/has"
            :id1 root-id
-           :id2 (nth (edge/participant-ids edge) 0)
+           :id2 (nth (maps/participant-ids edge) 0)
            :parent edge}
           nil))
-      (if (= (edge/edge-type edge) "r/1/has~of_type")
-        {:edge-type (str "has " (id/last-part (nth (edge/participant-ids edge) 2)))
-         :id1 (nth (edge/participant-ids edge) 0)
-         :id2 (nth (edge/participant-ids edge) 1)
+      (if (= (maps/edge-type edge) "r/1/has~of_type")
+        {:edge-type (str "has " (id/last-part (nth (maps/participant-ids edge) 2)))
+         :id1 (nth (maps/participant-ids edge) 0)
+         :id2 (nth (maps/participant-ids edge) 1)
          :parent edge}
-        (let [parts (.split (edge/edge-type edge) "~")]
+        (let [parts (.split (maps/edge-type edge) "~")]
           {:edge-type (str (first parts)
                            " "
-                           (id/last-part (nth (edge/participant-ids edge) 1))
+                           (id/last-part (nth (maps/participant-ids edge) 1))
                            " "
                            (clojure.string/join " " (rest parts)))
-           :id1 (nth (edge/participant-ids edge) 0)
-           :id2 (nth (edge/participant-ids edge) 2)
+           :id1 (nth (maps/participant-ids edge) 0)
+           :id2 (nth (maps/participant-ids edge) 2)
            :parent edge})))
-    {:edge-type (nth (edge/ids edge) 0)
-     :id1 (nth (edge/ids edge) 1)
-     :id2 (nth (edge/ids edge) 2)
+    {:edge-type (nth (maps/ids edge) 0)
+     :id1 (nth (maps/ids edge) 1)
+     :id2 (nth (maps/ids edge) 2)
      :parent edge}))
 
 (defn add-to-edge-node-map
@@ -90,9 +90,9 @@
   [gbdb node-id node-edge root-id]
   (let [vtype (id/id->type node-id)
         node (if (and (= node-id root-id) (= vtype :entity))
-               (vertex/id->vertex node-id)
+               (maps/id->vertex node-id)
                (gb/getv gbdb node-id))
-        node (if (nil? node) (vertex/id->vertex node-id) node)]
+        node (if (nil? node) (maps/id->vertex node-id) node)]
     (condp = (:type node)
       :entity {:id (:id node)
                :type "text"
@@ -151,7 +151,7 @@
         hyper-edges (gb/id->edges gbdb root-id user-id)
         visual-edges (filter (complement nil?)
                              (map #(hyper->edge % root-id)
-                                  (filter edge/positive? hyper-edges)))
+                                  (filter maps/positive? hyper-edges)))
         edge-node-map (edge-node-map visual-edges root-id)
         all-relations (into [] (for [[rp v] edge-node-map]
                                  {:rel (first rp)

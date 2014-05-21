@@ -1,11 +1,6 @@
 (ns graphbrain.db.entity
   (:require [graphbrain.db.id :as id]))
 
-(defn id->entity
-  [id]
-  {:id id
-   :type :entity})
-
 (defn text
   [entity]
   (clojure.string/replace (id/last-part (:id entity)) "_" " "))

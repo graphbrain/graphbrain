@@ -1,8 +1,8 @@
 (ns graphbrain.db.gbdb
   (:require [graphbrain.db.mysql :as mysql]
             [graphbrain.db.id :as id]
+            [graphbrain.db.maps :as maps]
             [graphbrain.db.vertex :as vertex]
-            [graphbrain.db.edge :as edge]
             [graphbrain.db.user :as user]
             [graphbrain.db.queues :as queues]
             [clojure.set])
@@ -51,20 +51,20 @@
        (let [vertex (assoc vertex :ts (.getTime (Date.)))]
          (mysql/putv! gbdb vertex)
          (if (= (:type vertex) :edge)
-           (doseq [id (edge/ids vertex)]
-             (putv! gbdb (vertex/id->vertex id))
+           (doseq [id (maps/ids vertex)]
+             (putv! gbdb (maps/id->vertex id))
              (inc-degree! gbdb id)))))
      vertex)
   ([gbdb vertex owner-id]
      (putv! gbdb vertex)
      (if (not (id/local-space? (:id vertex)))
-       (let [lvert (vertex/global->local vertex owner-id)]
+       (let [lvert (maps/global->local vertex owner-id)]
          (if (not (exists? gbdb lvert))
            (putv! gbdb lvert)
            (add-link-to-global! gbdb (:id vertex) (:id lvert)))
          (if (= (:type vertex) :edge)
             ;; run consensus algorithm
-            (let [gedge (vertex/local->global vertex)]
+            (let [gedge (maps/local->global vertex)]
               (queues/consensus-enqueue! (:id gedge))))))
      vertex))
 
@@ -88,7 +88,7 @@
 
 (defn- on-remove-edge!
   [gbdb edge]
-  (doseq [id (edge/ids edge)] (dec-degree! gbdb id)))
+  (doseq [id (maps/ids edge)] (dec-degree! gbdb id)))
 
 (defn remove!
   ([gbdb vertex]
@@ -96,11 +96,11 @@
      (if (edge? vertex)
        (on-remove-edge! vertex)))
   ([gbdb vertex owner-id]
-     (let [u (vertex/global->local vertex owner-id)]
+     (let [u (maps/global->local vertex owner-id)]
        (mysql/remove! gbdb u)
        (remove-link-to-global! gbdb (:id vertex) (:id u))
        (if (edge? u)
-         (do (putv! gbdb (edge/negate u))
+         (do (putv! gbdb (maps/negate u))
              (queues/consensus-enqueue! (:id vertex)))))))
 
 (defn pattern->edges
@@ -112,17 +112,17 @@
      (mysql/id->edges gbdb center))
   ([gbdb center-id owner-id]
      (let [edges (id->edges gbdb center-id)
-           gedges (filter vertex/global-space? edges)
+           gedges (filter maps/global-space? edges)
            ledges (if owner-id
                     (let [lcenter-id (id/global->local center-id owner-id)]
-                      (map vertex/local->global
-                           (filter vertex/local-space?
+                      (map maps/local->global
+                           (filter maps/local-space?
                                    (id->edges gbdb lcenter-id)))) #{})]
        (clojure.set/union (set (filter
-                                edge/positive?
-                                (filter #(not (some #{(edge/negate %)} ledges))
+                                maps/positive?
+                                (filter #(not (some #{(maps/negate %)} ledges))
                                         gedges)))
-                          (set (filter edge/positive? ledges))))))
+                          (set (filter maps/positive? ledges))))))
 
 (defn vertex->edges
   [gbdb center]
@@ -130,7 +130,7 @@
 
 (defn edges->vertex-ids
   [edges]
-  (set (flatten (map edge/ids edges))))
+  (set (flatten (map maps/ids edges))))
 
 (defn neighbors
   [grpah center-id]
@@ -194,5 +194,5 @@
         (str desc " ("
              (clojure.string/join
               ", "
-              (map #(vertex/label (getv gbdb (second (edge/participant-ids %))))
+              (map #(vertex/label (getv gbdb (second (maps/participant-ids %))))
                    as-in)) ")"))))
