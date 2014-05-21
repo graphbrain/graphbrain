@@ -2,7 +2,7 @@
   (:use (graphbrain.web common)
         (ring.util response))
   (:require [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.edge :as edge]))
+            [graphbrain.db.maps :as maps]))
 
 (defn- remove-vertex
   [request]
@@ -10,7 +10,7 @@
     [user (get-user request)
      edge-id ((request :form-params) "edge")]
     (gb/remove! gbdb
-      (edge/id->edge edge-id)
+      (maps/id->edge edge-id)
       (:id user))))
 
 (defn handle-nodeactions

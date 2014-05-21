@@ -1,25 +1,6 @@
 (ns graphbrain.db.edgetype
   (:require [graphbrain.db.id :as id]))
 
-(defn id->edgetype
-  [id]
-  {:id id
-   :type :edge-type})
-
-(defn negative?
-  [id]
-  (= (first (id/parts (id/local->global id))) "n"))
-
-(defn negate
-  [id]
-  (if (negative? id) id
-    (let [owner-id (id/owner id)
-          global-id (id/local->global id)
-          neg-id (str "n/" global-id)]
-      (if (empty? owner-id)
-        neg-id
-        (id/global->local neg-id owner-id)))))
-
 (defn build-id
   [text]
   (str "r/" (id/sanitize text)))

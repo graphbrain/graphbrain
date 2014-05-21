@@ -9,11 +9,6 @@
   [url]
   (str "h/" url))
 
-(defn id->urlnode
-  [id]
-  {:id id
-   :type :url})
-
 (defn url
   [node]
   (id->url (:id node)))
