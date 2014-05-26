@@ -36,14 +36,11 @@
 
 (defn vertex-id
   [word]
-  (let [id (id/sanitize (.getLemma word))]
-    (if (= id "entity") id
-        (let [st (super-type word)
-              rel (if st
-                    (str "(r/+type_of " id " " (vertex-id st) ")")
-                    (let [tn (example word)]
-                      (str "(r/+example " id " " (:id tn) ")")))]
-          (str (id/hashed rel) "/" id)))))
+  (let [name (.getLemma word)
+        st (super-type word)
+        stid (if st (id/eid->id (vertex-id st)))
+        classes (if st [stid] [])]
+    (id/name+classes->eid name classes)))
 
 (defn process-super-types!
   [gbdb vid word]
@@ -149,7 +146,6 @@
 
 (defn process!
   [gbdb dictionary]
-  (gb/create-user! gbdb "wordnet" "wordnet" "" "" "crawler")
   (process-pos-synset! gbdb dictionary (POS/NOUN))
   (process-pos-synset! gbdb dictionary (POS/VERB))
   (process-pos-synset! gbdb dictionary (POS/ADJECTIVE))

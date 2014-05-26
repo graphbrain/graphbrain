@@ -119,6 +119,9 @@
   (clojure.string/replace
    (clojure.string/replace (.toLowerCase str) "/" "_") " " "_"))
 
+
+;; global / local
+
 (defn global->local
   [id owner]
   (cond
@@ -135,6 +138,9 @@
    (local-space? id) (build (drop 2 (parts id)))
    :else id))
 
+
+;; owner
+
 (defn owner
   [id]
   (if (global-space? id) nil
@@ -149,3 +155,33 @@
 (defn owner-context
   [id]
   (context? (owner id)))
+
+
+;; eids
+
+(defn eid?
+  [id]
+  (if (= (id->type id) :edge)
+    (let [ids (id->ids id)]
+      (= (local->global (first ids)) "r/+id"))))
+
+(defn has-eids?
+  [id]
+  (if (= (id->type id) :edge)
+    (some eid? (id->ids id))))
+
+(defn eid->id
+  [eid]
+  (if (eid? eid)
+         (let [hsh (hashed eid)
+               ids (id->ids eid)
+               name (second ids)]
+            (build [hsh name]))
+        eid))
+
+(defn name+classes->eid
+  [name classes]
+  (str "(r/+id "
+       (clojure.string/join
+        " "
+        (cons (sanitize name) classes)) ")"))

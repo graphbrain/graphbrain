@@ -24,21 +24,6 @@
   [edge]
   (first (ids edge)))
 
-(defn idedge->entity
-  [typerel]
-  (if (= (edge-type typerel) "r/+id")
-    (let [hsh (id/hashed (:id typerel))
-          name (first (participant-ids typerel))
-          id (id/build [hsh name])]
-      {:id id
-       :type :entity
-       :typerel (:id typerel)})))
-
-(defn idedge-id->entity
-  [idedge-id]
-  (if (= (id/id->type idedge-id) :edge)
-    (idedge->entity (id->edge idedge-id))))
-
 (defn ids->edge
   ([ids score]
      (id->edge (id/ids->id ids) score))
@@ -47,6 +32,17 @@
 
 
 ;; entity
+
+(defn eid->entity
+  [eid]
+  (if (id/eid? eid)
+    {:id (id/eid->id eid)
+     :eid eid
+     :type :entity}))
+
+(defn name+classes->entity
+  [name classes]
+  (eid->entity (id/name+classes->eid name classes)))
 
 (defn id->entity
   [id]
@@ -163,7 +159,9 @@
   [id]
   (case (id/id->type id)
     :entity (id->entity id)
-    :edge (id->edge id)
+    :edge (if (id/eid? id)
+            (eid->entity id)
+            (id->edge id))
     :edge-type (id->edgetype id)
     :url (id->urlnode id)
     :user (id->user id)
