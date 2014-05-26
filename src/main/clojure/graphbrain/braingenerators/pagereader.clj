@@ -6,7 +6,7 @@
             [graphbrain.db.id :as id]
             [graphbrain.db.maps :as maps]))
 
-;;(def g (gb/gbdb))
+(def g (gb/gbdb))
 
 (defn ngram->entity
   [gbdb ngram]

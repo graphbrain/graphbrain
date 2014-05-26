@@ -165,19 +165,18 @@
     (let [ids (id->ids id)]
       (= (local->global (first ids)) "r/+id"))))
 
-(defn has-eids?
-  [id]
-  (if (= (id->type id) :edge)
-    (some eid? (id->ids id))))
-
 (defn eid->id
   [eid]
   (if (eid? eid)
-         (let [hsh (hashed eid)
-               ids (id->ids eid)
-               name (second ids)]
-            (build [hsh name]))
-        eid))
+    (let [owner (owner eid)
+          geid (local->global eid)
+          hsh (hashed geid)
+          ids (id->ids geid)
+          name (second ids)
+          id (build [hsh name])
+          id (if owner (global->local id owner) id)]
+      id)
+    eid))
 
 (defn name+classes->eid
   [name classes]
