@@ -42,6 +42,23 @@
         classes (if st [stid] [])]
     (id/name+classes->eid name classes)))
 
+(defn- major-form-class-id
+  [gbdb dictionary]
+  (id/eid->id
+     (vertex-id (.get
+                  (.getWords
+                   (.get
+                    (.getSenses
+                     (. dictionary getIndexWord POS/NOUN "major form class")) 0)) 0))))
+
+(defn- set-globals!
+  [gbdb dictionary]
+  (let [mfc (major-form-class-id gbdb dictionary)]
+    (def noun (str "(r/+id noun " mfc ")"))
+    (def verb (str "(r/+id verb " mfc ")"))
+    (def adjective (str "(r/+id adjective " mfc ")"))
+    (def adverb (str "(r/+id adverb " mfc ")"))))
+
 (defn process-super-types!
   [gbdb vid word]
   (let [concept (.getSynset word)
@@ -105,10 +122,10 @@
   (let [pos (.getPOS word)]
     (if pos
       (let [pos-id (cond
-                     (.equals pos POS/NOUN) "850e2accee28f70e/noun"
-                     (.equals pos POS/VERB) "b43b5b40bb0873e9/verb"
-                     (.equals pos POS/ADJECTIVE) "90a283c76334fb9d/adjective"
-                     (.equals pos POS/ADVERB) "20383f8100e0be26/adverb")
+                     (.equals pos POS/NOUN) noun
+                     (.equals pos POS/VERB) verb
+                     (.equals pos POS/ADJECTIVE) adjective
+                     (.equals pos POS/ADVERB) adverb)
             rel (str "(r/+pos " vid " " pos-id ")")]
         (add-relation! gbdb rel)))))
 
@@ -155,4 +172,5 @@
   []
   (let [dictionary (Dictionary/getDefaultResourceInstance)
         gbdb (gb/gbdb)]
+    (set-globals! gbdb dictionary)
     (process! gbdb dictionary)))

@@ -47,7 +47,6 @@
 
 (defn putv!
   ([gbdb vertex]
-   (prn (str "putv! " vertex))
      (if (not (exists? gbdb vertex))
        (let [vertex (assoc vertex :ts (.getTime (Date.)))]
          (mysql/putv! gbdb vertex)
