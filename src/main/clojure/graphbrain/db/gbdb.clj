@@ -52,9 +52,11 @@
          (mysql/putv! gbdb vertex)
          (if (= (:type vertex) :edge)
            (doseq [id (maps/ids vertex)]
-             (putv! gbdb (maps/id->vertex id))
-             (inc-degree! gbdb id)))))
-     vertex)
+             (let [v (maps/id->vertex id)]
+               (putv! gbdb v)
+               (inc-degree! gbdb (:id v)))))
+         vertex)
+     vertex))
   ([gbdb vertex owner-id]
      (putv! gbdb vertex)
      (if (not (id/local-space? (:id vertex)))
@@ -86,15 +88,12 @@
   [gbdb]
   (mysql/all-users gbdb))
 
-(defn- on-remove-edge!
-  [gbdb edge]
-  (doseq [id (maps/ids edge)] (dec-degree! gbdb id)))
-
 (defn remove!
   ([gbdb vertex]
      (mysql/remove! gbdb vertex)
      (if (edge? vertex)
-       (on-remove-edge! vertex)))
+       (doseq [id (maps/ids vertex)]
+         (dec-degree! gbdb (id/eid->id id)))))
   ([gbdb vertex owner-id]
      (let [u (maps/global->local vertex owner-id)]
        (mysql/remove! gbdb u)
@@ -103,18 +102,29 @@
          (do (putv! gbdb (maps/negate u))
              (queues/consensus-enqueue! (:id vertex)))))))
 
+(defn id->eid
+  [id]
+  (if (= (id/id->type id) :entity)
+    (:eid (getv id)) id))
+
+(defn- patid->eid
+  [patid]
+  (if (= patid "*") patid (id->eid patid)))
+
 (defn pattern->edges
   [gbdb pattern]
-  (mysql/pattern->edges gbdb pattern))
+  (let [epat (map patid->eid pattern)]
+    (mysql/pattern->edges gbdb epat)))
 
 (defn id->edges
-  ([gbdb center]
-     (mysql/id->edges gbdb center))
-  ([gbdb center-id owner-id]
-     (let [edges (id->edges gbdb center-id)
+  ([gbdb id]
+     (mysql/id->edges gbdb (map id->eid id)))
+  ([gbdb id owner-id]
+     (let [eid (map id->eid id)
+           edges (id->edges gbdb eid)
            gedges (filter maps/global-space? edges)
            ledges (if owner-id
-                    (let [lcenter-id (id/global->local center-id owner-id)]
+                    (let [lcenter-id (id/global->local eid owner-id)]
                       (map maps/local->global
                            (filter maps/local-space?
                                    (id->edges gbdb lcenter-id)))) #{})]
@@ -133,8 +143,8 @@
   (set (flatten (map maps/ids edges))))
 
 (defn neighbors
-  [grpah center-id]
-  (conj (edges->vertex-ids (id->edges gbdb center-id)) center-id))
+  [grpah id]
+  (conj (edges->vertex-ids (id->edges gbdb id)) id))
 
 (defn email->id
   [gbdb email]

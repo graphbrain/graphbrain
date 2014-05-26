@@ -53,9 +53,3 @@
   []
   (common/init-graph!)
   (run-jetty app {:port 4567}))
-
-#_(defonce server (run-jetty #'app {:port 8080 :join? false}))
-
-#_(defn restart []
-  (.stop server)
-  (.start server))
