@@ -103,24 +103,25 @@
              (queues/consensus-enqueue! (:id vertex)))))))
 
 (defn id->eid
-  [id]
+  [gbdb id]
   (if (= (id/id->type id) :entity)
-    (:eid (getv id)) id))
+    (let [eid (:eid (getv gbdb id))]
+      (if eid eid id)) id))
 
 (defn- patid->eid
-  [patid]
-  (if (= patid "*") patid (id->eid patid)))
+  [gbdb patid]
+  (if (= patid "*") patid (id->eid gbdb patid)))
 
 (defn pattern->edges
   [gbdb pattern]
-  (let [epat (map patid->eid pattern)]
+  (let [epat (map #(patid->eid gbdb %) pattern)]
     (mysql/pattern->edges gbdb epat)))
 
 (defn id->edges
   ([gbdb id]
-     (mysql/id->edges gbdb (map id->eid id)))
+     (mysql/id->edges gbdb (id->eid gbdb id)))
   ([gbdb id owner-id]
-     (let [eid (map id->eid id)
+     (let [eid (id->eid gbdb id)
            edges (id->edges gbdb eid)
            gedges (filter maps/global-space? edges)
            ledges (if owner-id
