@@ -89,14 +89,14 @@
 (defn node->map
   [gbdb node-id node-edge root-id]
   (let [vtype (id/id->type node-id)
-        node (if (and (= node-id root-id) (= vtype :entity))
+        node (if (= vtype :entity)
                (maps/id->vertex node-id)
                (gb/getv gbdb node-id))
         node (if (nil? node) (maps/id->vertex node-id) node)]
     (condp = (:type node)
       :entity {:id (:id node)
                :type "text"
-               :text (gb/description gbdb node)
+               :text (entity/description node)
                :edge node-edge}
       :url {:id (:id node)
             :type "url"
@@ -148,6 +148,7 @@
 (defn generate
   [gbdb root-id user]
   (let [user-id (if user (:id user) "")
+        root-id (gb/id->eid gbdb root-id)
         hyper-edges (gb/id->edges gbdb root-id user-id)
         visual-edges (filter (complement nil?)
                              (map #(hyper->edge % root-id)
