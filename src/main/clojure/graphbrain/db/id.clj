@@ -162,8 +162,10 @@
 (defn eid?
   [id]
   (if (= (id->type id) :edge)
-    (let [ids (id->ids id)]
-      (= (local->global (first ids)) "r/+id"))))
+    (let [ids (id->ids id)
+          rel (local->global (first ids))]
+      (or (= rel "r/+id")
+          (= rel "r/+c")))))
 
 (defn eid->id
   [eid]
@@ -184,3 +186,10 @@
        (clojure.string/join
         " "
         (cons (sanitize name) classes)) ")"))
+
+(defn name+comps->eid
+  [name comps]
+  (str "(r/+c "
+       (clojure.string/join
+        " "
+        (cons (sanitize name) comps)) ")"))

@@ -37,7 +37,7 @@
 (defn- words->graph
   [word-list]
   (loop [graph {}
-         windows (partition 5 1 word-list)]
+         windows (partition 10 1 word-list)]
     (if (empty? windows)
       graph
       (recur (add-window-to-graph (first windows) graph)
@@ -69,14 +69,14 @@
 (defn- topwords
   [graph]
   (let [sorted-graph (sort-by :pr graph)
-        top (take (quot (count sorted-graph) 3) sorted-graph)]
+        top (take (quot (count sorted-graph) 5) sorted-graph)]
     (set (keys top))))
 
 (defn prgraph->topwords
   [graph]
   (topwords graph))
 
-(defn graph->topwordso
+(defn graph->topwords
   [graph]
   (prgraph->topwords (graph->prgraph graph)))
 

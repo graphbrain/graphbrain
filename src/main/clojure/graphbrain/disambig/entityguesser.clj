@@ -4,10 +4,10 @@
             [graphbrain.db.maps :as maps]))
 
 (defn guess
-  [gbdb name to-hash]
+  [gbdb name eid]
   (let [base-id (id/sanitize name)
         can-mean (gbdb/pattern->edges gbdb ["r/+can_mean" base-id "*"])]
     (if (empty? can-mean)
-      (maps/id->vertex (id/build [(id/hashed to-hash) base-id]))
-      (let [syns (map #(gbdb/getv gbdb (nth (maps/ids %) 2)) can-mean)]
+      (maps/eid->entity eid)
+      (let [syns (map #(gbdb/getv gbdb (id/eid->id (nth (maps/ids %) 2))) can-mean)]
         (apply max-key :degree syns)))))
