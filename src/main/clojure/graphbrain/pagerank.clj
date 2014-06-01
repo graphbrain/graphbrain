@@ -49,7 +49,7 @@
   [graph damp]
   (loop [g graph
          error 1]
-    (if (< error 0.0001)
+    (if (< error 0.001)
       (sorted-by-pr g)
       (let [g1 (compute-new-pr g damp)
             err (pr-error g1)]

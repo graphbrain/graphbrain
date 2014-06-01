@@ -1,9 +1,9 @@
 (ns graphbrain.braingenerators.ngrams
-  (:use graphbrain.utils
-        graphbrain.graphtools
-        graphbrain.pagerank
-        graphbrain.braingenerators.wordgraph
-        graphbrain.braingenerators.nlptools))
+  (:require [graphbrain.utils :as utils]
+            [graphbrain.graphtools :as gt]
+            [graphbrain.pagerank :as pr]
+            [graphbrain.braingenerators.wordgraph :as wg]
+            [graphbrain.braingenerators.nlptools :as nlp]))
 
 
 ;; build ngrams
@@ -69,9 +69,9 @@
 
 (defn url->ngrams
   [url-str]
-  (let [sentences (url->sentences url-str)
-        prgraph (words->prgraph (sentences->words sentences))
-        twords (prgraph->topwords prgraph)]
+  (let [sentences (nlp/url->sentences url-str)
+        prgraph (wg/words->prgraph (nlp/sentences->words sentences))
+        twords (wg/prgraph->topwords prgraph)]
     (sorted-ngrams
      (scored-ngrams
       (ngrams-with-pr (topwords->ngrams twords sentences) prgraph)))))
@@ -133,13 +133,13 @@
            p parents]
       (if (empty? p)
         g
-        (recur (add-arc g (list ngram (first p))) (rest p))))))
+        (recur (gt/add-arc g (list ngram (first p))) (rest p))))))
 
 (defn ngrams->graph
   [ngrams]
   (let [ngram-map (ngrams->map ngrams)]
     (loop [ngs ngrams
-          graph {}]
+           graph {}]
      (if (empty? ngs)
        graph
        (recur (rest ngs) (ngram->graph (first ngs) graph ngram-map))))))
@@ -151,6 +151,11 @@
 (defn leaf-ngrams
   [ngrams-graph]
   (keys (filter #(empty? (:in (second %))) ngrams-graph)))
+
+(defn url->ngrams-graph
+  [url-str]
+  (let [ngrams (url->ngrams url-str)]
+    (ngrams->graph ngrams)))
 
 (defn print-leaf-ngrams
   [url-str]
