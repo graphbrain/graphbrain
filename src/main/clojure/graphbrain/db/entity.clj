@@ -4,7 +4,7 @@
 (defn text
   [id-or-entity]
   (let [id (if (string? id-or-entity)
-             id-or-entity
+             (id/eid->id id-or-entity)
              (:id id-or-entity))]
     (clojure.string/replace (id/last-part id) "_" " ")))
 

@@ -24,35 +24,20 @@
 (defn hyper->edge
   [edge root-id]
   (if (> (count (maps/participant-ids edge)) 2)
-    (if (= (maps/edge-type edge) "r/1/instance_of~owned_by")
-      (if (= (nth (maps/participant-ids edge) 0) root-id)
-        {:edge-type "r/1/has"
-         :id1 (nth (maps/participant-ids edge) 2)
-         :id2 root-id
-         :parent edge}
-        (if (= (nth (maps/participant-ids edge) 2) root-id)
-          {:edge-type "r/1/has"
-           :id1 root-id
-           :id2 (nth (maps/participant-ids edge) 0)
-           :parent edge}
-          nil))
-      (if (= (maps/edge-type edge) "r/1/has~of_type")
-        {:edge-type (str "has " (id/last-part (nth (maps/participant-ids edge) 2)))
-         :id1 (nth (maps/participant-ids edge) 0)
-         :id2 (nth (maps/participant-ids edge) 1)
-         :parent edge}
-        (let [parts (.split (maps/edge-type edge) "~")]
-          {:edge-type (str (first parts)
-                           " "
-                           (id/last-part (nth (maps/participant-ids edge) 1))
-                           " "
-                           (clojure.string/join " " (rest parts)))
-           :id1 (nth (maps/participant-ids edge) 0)
-           :id2 (nth (maps/participant-ids edge) 2)
-           :parent edge})))
+    (let [parts (.split (maps/edge-type edge) "~")]
+      {:edge-type (str (first parts)
+                       " "
+                       (id/last-part (nth (maps/participant-ids edge) 1))
+                       " "
+                       (clojure.string/join " " (rest parts)))
+       :id1 (nth (maps/participant-ids edge) 0)
+       :id2 (nth (maps/participant-ids edge) 2)
+       :score (:score edge)
+       :parent edge})
     {:edge-type (nth (maps/ids edge) 0)
      :id1 (nth (maps/ids edge) 1)
      :id2 (nth (maps/ids edge) 2)
+     :score (:score edge)
      :parent edge}))
 
 (defn add-to-edge-node-map
@@ -87,17 +72,20 @@
   (if (empty? edge-type) "" (fix-label (edgetype/label edge-type))))
 
 (defn node->map
-  [gbdb node-id node-edge root-id]
+  [gbdb node-id edge root-id]
   (let [vtype (id/id->type node-id)
         node (if (= vtype :entity)
                (maps/id->vertex node-id)
                (gb/getv gbdb node-id))
-        node (if (nil? node) (maps/id->vertex node-id) node)]
+        node (if (nil? node) (maps/id->vertex node-id) node)
+        node-edge (:id (:parent edge))
+        score (:score edge)]
     (condp = (:type node)
       :entity {:id (:id node)
                :type "text"
                :text (entity/description node)
-               :edge node-edge}
+               :edge node-edge
+               :score score}
       :url {:id (:id node)
             :type "url"
             :text (if (empty? (:title node))
@@ -105,15 +93,18 @@
                     (:title node))
             :url (:url node)
             :icon (:icon node)
-            :edge node-edge}
+            :edge node-edge
+            :score score}
       :user {:id (:id node)
              :type "user"
              :text (:name node)
-             :edge node-edge}
+             :edge node-edge
+             :score score}
       {:id (:id node)
        :type "text"
        :text (:id node)
-       :edge node-edge})))
+       :edge node-edge
+       :score score})))
 
 (defn se->node-id
   [se rp]
@@ -125,7 +116,7 @@
         color (link-color label)
         nodes (map #(node->map gbdb
                                (se->node-id % rp)
-                               (:id (:parent %))
+                               %
                                root-id) sedges)]
     {:nodes nodes
      :etype (first rp)
@@ -145,6 +136,21 @@
           (recur (rest enm) (inc count)
                  (assoc snode-map snid (snode gbdb rp (second en) root-id)))))))
 
+(defn- snode-limit-size
+  [snode]
+  (let [max-nodes 10
+        nodes (:nodes snode)]
+    (if (> (count nodes) max-nodes)
+      (let [nodes (sort-by :score nodes)
+            nodes (take-last max-nodes nodes)]
+        (assoc snode :nodes nodes))
+      snode)))
+
+(defn- snodes-limit-size
+  [snodes]
+  (into {} (for [[k v] snodes]
+             [k (snode-limit-size v)])))
+
 (defn generate
   [gbdb root-id user]
   (let [user-id (if user (:id user) "")
@@ -156,12 +162,13 @@
         edge-node-map (edge-node-map visual-edges root-id)
         all-relations (into [] (for [[rp v] edge-node-map]
                                  {:rel (first rp)
-                                      :pos (second rp)
-                                      :label (link-label (first rp))
-                                      :snode (snode-id rp)}))
+                                  :pos (second rp)
+                                  :label (link-label (first rp))
+                                  :snode (snode-id rp)}))
         snode-map (snode-map gbdb edge-node-map root-id)
         snode-map (assoc snode-map :root
-                         {:nodes [(node->map gbdb root-id "" root-id)]})]
+                         {:nodes [(node->map gbdb root-id "" root-id)]})
+        snode-map (snodes-limit-size snode-map)]
     (json/write-str {:user user-id
                      :snodes snode-map
                      :allrelations all-relations})))
