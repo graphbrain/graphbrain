@@ -81,11 +81,15 @@
         node-edge (:id (:parent edge))
         score (:score edge)]
     (condp = (:type node)
-      :entity {:id (:id node)
-               :type "text"
-               :text (entity/description node)
-               :edge node-edge
-               :score score}
+      :entity (let [sub (entity/subentities node)
+                    sub (map #(hash-map :id (id/eid->id %)
+                                        :text (entity/description %)) sub)]
+                {:id (:id node)
+                 :type "text"
+                 :text (entity/label node-id)
+                 :sub sub
+                 :edge node-edge
+                 :score score})
       :url {:id (:id node)
             :type "url"
             :text (if (empty? (:title node))

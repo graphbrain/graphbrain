@@ -42,21 +42,31 @@
         html (str html "<div style='clear:both;'></div>")]
     html))
 
+(defn- subtext-item
+  [sub]
+  (str "<a href='/node/" (:id sub) "'>" (:text sub) "</a>"))
+
+(defn- subtext
+  [sub]
+  (clojure.string/join ", " (map subtext-item sub)))
+
 (defn- entity-node-html
   [node root div-id]
   (let [title-class (if root "nodeTitle_root" "nodeTitle")
         t-div-id (str "t" div-id)
-        html (str "<div class='" title-class "'" "id='" t-div-id "'>")
+        html (str "<div class='node-main'>")
+        html (str html "<div class='" title-class "'" "id='" t-div-id "'>")
         html (str html "<a href='/node/" (:id node) "' id='" div-id "'>")
-        html (str html (:text node))
+        html (str html (:text node) "&nbsp;")
         html (str html "</a></div>")
-        text2 (:text2 node)
-        html (if text2
+        sub-txt (subtext (:sub node))
+        html (if sub-txt
                (str html
-                    "<div class='nodeSubText'>("
-                    text2
-                    ")</div>")
+                    "<div class='nodeSubText'> "
+                    sub-txt
+                    "</div>")
                html)
+        html (str html "</div>")
         html (if root
                html
                (str html

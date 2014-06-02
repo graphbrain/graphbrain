@@ -46,10 +46,10 @@ html, body {
 
 .node {
     color:#000;
-    background:rgb(224, 224, 224);
+    #background:rgb(224, 224, 224);
+    background:rgb(230, 230, 230);
     margin: 3px;
     padding: 3px;
-    white-space: nowrap;
     clear:both;
 }
 
@@ -64,16 +64,19 @@ html, body {
     padding: 10px;
 }
 
+.node-main {
+    float:left;
+    max-width: 160px;
+}
+
 .nodeTitle {
-    max-width: 170px;
-    max-height: 70px;
-    overflow:hidden;
-    text-overflow:ellipsis;
+    font-size: 14px;
     float:left;
 }
 
 .nodeTitle a {
     color:#000;
+    float:left;
 }
 
 .nodeTitle_root {
@@ -85,11 +88,12 @@ html, body {
 }
 
 .nodeSubText {
-    font-size: 14px;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    margin-top: 5px;
-    text-align: center;
+    float:left;
+}
+
+.nodeSubText a {
+    font-size: 11px;
+    color: #555;
 }
 
 .nodeRemove {
