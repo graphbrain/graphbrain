@@ -1,18 +1,16 @@
 (ns graphbrain.braingenerators.wordgraph
-  (:use graphbrain.utils
-        graphbrain.graphtools
-        graphbrain.pagerank
-        graphbrain.braingenerators.nlptools
-        graphbrain.eco.word
-        graphbrain.eco.words)
-  (:require [clojure.math.combinatorics :as combo]))
+  (:require [graphbrain.graphtools :as graphtools]
+            [graphbrain.pagerank :as pagerank]
+            [graphbrain.braingenerators.nlptools :as nlptools]
+            [graphbrain.eco.word :as word]
+            [clojure.math.combinatorics :as combo]))
 
 
 ;; words -> word graph
 
 (defn- relevant?
   [word]
-  (or (noun? word) (adjective? word)))
+  (or (word/noun? word) (word/adjective? word)))
 
 (defn- pair-relevant?
   [pair]
@@ -21,7 +19,7 @@
 (defn- filter-and-add-edge
   [graph pair]
   (if (pair-relevant? pair)
-    (add-edge graph pair)
+    (graphtools/add-edge graph pair)
     graph))
 
 (defn- add-window-to-graph
@@ -45,15 +43,15 @@
 
 (defn url->wordgraph
   [url-str]
-  (words->graph (url->words url-str)))
+  (words->graph (nlptools/url->words url-str)))
 
 
 ;; compute pagerank on word graph
 
 (defn graph->prgraph
   [graph]
-  (let [g (init-pr graph)
-        g (compute-pr g 0.85)] g))
+  (let [g (pagerank/init-pr graph)
+        g (pagerank/compute-pr g 0.85)] g))
 
 (defn words->prgraph
   [words]

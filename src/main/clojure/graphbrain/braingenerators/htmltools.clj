@@ -1,6 +1,6 @@
 (ns graphbrain.braingenerators.htmltools
-  (:use graphbrain.braingenerators.webtools
-        graphbrain.braingenerators.meat)
+  (:require [graphbrain.braingenerators.webtools :as webtools]
+            [graphbrain.braingenerators.meat :as meat])
   (:import (org.jsoup Jsoup)
            (org.jsoup.nodes TextNode)
            (edu.stanford.nlp.process DocumentPreprocessor)
@@ -35,7 +35,9 @@
         (let [n (first rest-chil)
               elem (cond
                 (instance? TextNode n) {:text (. n text)}
-                (= "a" (. n nodeName)) {:text (deep-text n), :tag "a", :href (. n attr "abs:href")}
+                (= "a" (. n nodeName)) {:text (deep-text n)
+                                        :tag "a"
+                                        :href (. n attr "abs:href")}
                 (= "strong" (. n nodeName)) {:text (deep-text n), :tag "strong"}
                 :else (parse-node n cc))
               length (if (map? elem)
@@ -79,4 +81,4 @@
 
 (defn url->text+tags
   [url-str]
-  (html->text+tags (extract-meat (slurp-url url-str))))
+  (html->text+tags (meat/extract-meat (webtools/slurp-url url-str))))

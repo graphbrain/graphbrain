@@ -1,5 +1,5 @@
 (ns graphbrain.braingenerators.meat
-  (:use graphbrain.braingenerators.webtools)
+  (:require [graphbrain.braingenerators.webtools :as webtools])
   (:import (java.io StringReader)
            (de.l3s.boilerpipe.extractors CommonExtractors)
            (de.l3s.boilerpipe.sax HTMLHighlighter BoilerpipeSAXInput HTMLDocument)))
@@ -18,5 +18,5 @@
 (defn extract-meat-url
   "Get html from url and extract 'meat'"
   [url-str]
-  (let [html-str (slurp-url url-str)]
+  (let [html-str (webtools/slurp-url url-str)]
     (extract-meat html-str)))
