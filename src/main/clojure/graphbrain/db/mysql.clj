@@ -52,8 +52,6 @@
                        "id VARCHAR(10000),"
                        "degree INT NOT NULL DEFAULT 0,"
                        "ts BIGINT NOT NULL DEFAULT -1,"
-                       "title VARCHAR(500),"
-                       "icon VARCHAR(500),"
                        "INDEX index_id_degree (id(255), degree),"
                        "INDEX index_id_ts (id(255), ts)"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))

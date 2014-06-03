@@ -1,7 +1,6 @@
 (ns graphbrain.braingenerators.nlptools
-  (:use [clojure.string :only [join]]
-        graphbrain.braingenerators.htmltools
-        graphbrain.eco.words)
+  (:require [graphbrain.braingenerators.htmltools :as htmltools]
+            [graphbrain.eco.words :as words])
   (:import (java.io StringReader)
            (edu.stanford.nlp.process DocumentPreprocessor)
            (edu.stanford.nlp.ling HasWord)
@@ -9,7 +8,7 @@
 
 (defn- has-word-list->sentence
   [word-list]
-  (join " "
+  (clojure.string/join " "
     (map (fn [w] (. w toString)) word-list)))
 
 (defmulti extract-sentences class)
@@ -30,13 +29,13 @@
 
 (defn url->sentences
   [url-str]
-  (map str->words
-       (extract-sentences ((url->text+tags url-str) :text-parts))))
+  (map words/str->words
+       (extract-sentences ((htmltools/url->text+tags url-str) :text-parts))))
 
 (defn url->words
   [url-str]
   (sentences->words
-   (extract-sentences ((url->text+tags url-str) :text))))
+   (extract-sentences ((htmltools/url->text+tags url-str) :text))))
 
 (defn print-sentences
   [sentences]
