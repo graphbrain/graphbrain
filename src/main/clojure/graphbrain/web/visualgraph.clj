@@ -90,15 +90,15 @@
                  :sub sub
                  :edge node-edge
                  :score score})
-      :url {:id (:id node)
-            :type "url"
-            :text (if (empty? (:title node))
-                    (url/url node)
-                    (:title node))
-            :url (:url node)
-            :icon (:icon node)
-            :edge node-edge
-            :score score}
+      :url (let [title (url/title gbdb (:id node))
+                 url (url/url node)]
+             {:id (:id node)
+              :type "url"
+              :text (if (empty? title) (url/url node) title)
+              :url url
+              :icon (str "http://g.etfv.co/" url)
+              :edge node-edge
+              :score score})
       :user {:id (:id node)
              :type "user"
              :text (:name node)

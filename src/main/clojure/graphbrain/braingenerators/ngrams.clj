@@ -67,21 +67,14 @@
   [ngrams]
   (sort-by :score ngrams))
 
-(defn url->ngrams
-  [url-str]
-  (let [sentences (nlp/url->sentences url-str)
+(defn html->ngrams
+  [html]
+  (let [sentences (nlp/html->sentences html)
         prgraph (wg/words->prgraph (nlp/sentences->words sentences))
         twords (wg/prgraph->topwords prgraph)]
     (sorted-ngrams
      (scored-ngrams
       (ngrams-with-pr (topwords->ngrams twords sentences) prgraph)))))
-
-(defn print-ngrams
-  [url-str]
-  (let [ngrams (url->ngrams url-str)]
-    (doseq [ngram ngrams]
-      (prn (clojure.string/join " " (map #(:word %) (:words ngram)))
-           (:score ngram)))))
 
 
 ;; build ngram graph
@@ -152,16 +145,7 @@
   [ngrams-graph]
   (keys (filter #(empty? (:in (second %))) ngrams-graph)))
 
-(defn url->ngrams-graph
-  [url-str]
-  (let [ngrams (url->ngrams url-str)]
+(defn html->ngrams-graph
+  [html]
+  (let [ngrams (html->ngrams html)]
     (ngrams->graph ngrams)))
-
-(defn print-leaf-ngrams
-  [url-str]
-  (let [ngrams (url->ngrams url-str)
-        ngrams-graph (ngrams->graph ngrams)
-        leafs (sorted-ngrams (leaf-ngrams ngrams-graph))]
-    (doseq [ngram leafs]
-      (prn (ngram->str ngram))
-           (:score ngram))))
