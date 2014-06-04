@@ -12,6 +12,15 @@
 
 (def ^:const max-snodes 15)
 
+(defn- hide?
+  [edge]
+  (let [et (maps/edge-type edge)]
+    (or (= et "r/+title"))))
+
+(defn hide-edges
+  [edges]
+  (filter #(not (hide? %)) edges))
+
 (defn snode-id
   [rel-pos]
   (str (-> (first rel-pos)
@@ -160,6 +169,7 @@
   (let [user-id (if user (:id user) "")
         root-id (gb/id->eid gbdb root-id)
         hyper-edges (gb/id->edges gbdb root-id user-id)
+        hyper-edges (hide-edges hyper-edges)
         visual-edges (filter (complement nil?)
                              (map #(hyper->edge % root-id)
                                   (filter maps/positive? hyper-edges)))
