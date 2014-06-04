@@ -7,7 +7,8 @@
             [graphbrain.db.edgetype :as edgetype]
             [graphbrain.db.entity :as entity]
             [graphbrain.db.vertex :as vertex]
-            [graphbrain.db.urlnode :as url])
+            [graphbrain.db.urlnode :as url]
+            [graphbrain.db.text :as text])
   (:import (com.graphbrain.web EdgeLabelTable)))
 
 (def ^:const max-snodes 15)
@@ -94,7 +95,7 @@
                     sub (map #(hash-map :id (id/eid->id %)
                                         :text (entity/description %)) sub)]
                 {:id (:id node)
-                 :type "text"
+                 :type "entity"
                  :text (entity/label node-id)
                  :sub sub
                  :edge node-edge
@@ -111,6 +112,11 @@
       :user {:id (:id node)
              :type "user"
              :text (:name node)
+             :edge node-edge
+             :score score}
+      :text {:id (:id node)
+             :type "text"
+             :text (:text (text/id->text gbdb (:id node)))
              :edge node-edge
              :score score}
       {:id (:id node)
