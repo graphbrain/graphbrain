@@ -27,15 +27,15 @@
   [sentences]
   (flatten sentences))
 
-(defn url->sentences
-  [url-str]
+(defn html->sentences
+  [html]
   (map words/str->words
-       (extract-sentences ((htmltools/url->text+tags url-str) :text-parts))))
+       (extract-sentences ((htmltools/html->text+tags html) :text-parts))))
 
-(defn url->words
-  [url-str]
+(defn html->words
+  [html]
   (sentences->words
-   (extract-sentences ((htmltools/url->text+tags url-str) :text))))
+   (extract-sentences ((htmltools/html->text+tags html) :text))))
 
 (defn print-sentences
   [sentences]

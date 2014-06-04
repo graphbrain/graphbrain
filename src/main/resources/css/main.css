@@ -85,6 +85,7 @@ html, body {
 
 .nodeTitle_root a {
     color:#000;
+    line-height:110%;
 }
 
 .nodeSubText {

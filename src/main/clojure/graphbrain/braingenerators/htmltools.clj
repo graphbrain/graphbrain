@@ -76,9 +76,13 @@
   (parse-node doc 0))
 
 (defn html->text+tags
-  [html-str]
-  (split-text-tags (parse-doc (Jsoup/parse html-str))))
+  [html]
+  (split-text-tags (parse-doc (Jsoup/parse html))))
 
-(defn url->text+tags
-  [url-str]
-  (html->text+tags (meat/extract-meat (webtools/slurp-url url-str))))
+(defn html->jsoup
+  [html]
+  (Jsoup/parse html))
+
+(defn jsoup->title
+  [jsoup]
+  (.title jsoup))
