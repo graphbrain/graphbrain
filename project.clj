@@ -1,7 +1,7 @@
 (defproject graphbrain "0.1.0-SNAPSHOT"
   :description "GraphBrain project"
   :url "http://graphbrain.com/"
-  :dependencies  [[org.clojure/clojure "1.5.1"]
+  :dependencies  [[org.clojure/clojure "1.6.0"]
                   [org.clojure/tools.cli "0.3.1"]
                   [commons-io/commons-io "2.4"]
                   [org.apache.commons/commons-lang3 "3.1"]
@@ -29,13 +29,15 @@
                   [org.clojure/math.combinatorics "0.0.7"]
                   [clj-http "0.9.0"]
                   [hiccup "1.0.5"]
+                  [garden "1.1.7"]
                   ;; ClojureScript
                   [org.clojure/clojurescript "0.0-2173"]
                   [jayq "2.5.0"]
                   [alandipert/storage-atom "1.2.2"]
                   [com.cemerick/pprng "0.0.2"]]
   :plugins [[lein-ring "0.8.10"]
-            [lein-cljsbuild "1.0.2"]]
+            [lein-cljsbuild "1.0.2"]
+            [lein-garden "0.1.8"]]
   :source-paths ["src/main/clojure" "src/main/cljs"]
   :java-source-paths ["src/main/java"]
   :test-paths ["test" "src/test/clojure"]
@@ -52,4 +54,8 @@
                                      "src/main/resources/js/jquery-ui-1.8.18.custom.min.js"
                                      "src/main/resources/js/bootstrap.min.js"]
                            :optimizations :whitespace
-                           :pretty-print true}}]})
+                           :pretty-print true}}]}
+
+  :garden {:builds [{:stylesheet graphbrain.web.css.main/main
+                     :compiler {:output-to "src/main/resources/css/gb.css"
+                                :pretty-print? false}}]})
