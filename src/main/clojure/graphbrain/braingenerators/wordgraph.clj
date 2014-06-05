@@ -41,10 +41,6 @@
       (recur (add-window-to-graph (first windows) graph)
              (rest windows)))))
 
-(defn url->wordgraph
-  [url-str]
-  (words->graph (nlptools/url->words url-str)))
-
 
 ;; compute pagerank on word graph
 
@@ -56,10 +52,6 @@
 (defn words->prgraph
   [words]
   (graph->prgraph (words->graph words)))
-
-(defn url->prgraph
-  [url-str]
-  (graph->prgraph (url->wordgraph url-str)))
 
 
 ;; extract top words from pageranked graph
@@ -81,16 +73,3 @@
 (defn words->topwords
   [words]
   (prgraph->topwords (words->prgraph words)))
-
-(defn url->topwords
-  [url-str]
-  (let [graph (url->prgraph url-str)]
-    (prgraph->topwords graph)))
-
-(defn print-topwords
-  [url-str]
-  (prn (map #(:word %) (url->topwords url-str))))
-
-
-#_(def words (url->word-list "http://www.realclimate.org/index.php/archives/2014/03/the-nenana-ice-classic-and-climate/"))
-
