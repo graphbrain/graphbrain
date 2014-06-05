@@ -80,10 +80,6 @@
     (update! gbdb vertex)
     (putv! gbdb vertex)))
 
-(defn edge?
-  [vert]
-  (id/edge? (:id vert)))
-
 (defn all-users
   [gbdb]
   (mysql/all-users gbdb))
@@ -91,14 +87,14 @@
 (defn remove!
   ([gbdb vertex]
      (mysql/remove! gbdb vertex)
-     (if (edge? vertex)
+     (if (maps/edge? vertex)
        (doseq [id (maps/ids vertex)]
          (dec-degree! gbdb (id/eid->id id)))))
   ([gbdb vertex owner-id]
      (let [u (maps/global->local vertex owner-id)]
        (mysql/remove! gbdb u)
        (remove-link-to-global! gbdb (:id vertex) (:id u))
-       (if (edge? u)
+       (if (maps/edge? u)
          (do (putv! gbdb (maps/negate u))
              (queues/consensus-enqueue! (:id vertex)))))))
 

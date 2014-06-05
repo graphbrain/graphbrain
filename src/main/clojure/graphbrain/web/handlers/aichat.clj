@@ -16,7 +16,7 @@
 
 (defn- aichat-reply
   [root-id vertex sentence]
-  (let [goto-id (if (gb/edge? vertex)
+  (let [goto-id (if (maps/edge? vertex)
                   (second (maps/ids vertex))
                   root-id)]
     (json/write-str {:sentence sentence
@@ -37,14 +37,14 @@
       [ctxts-list (. prog wv sentence 0)
        vertex (gbj/vertex-obj->map
                (. (first (. (first ctxts-list) getCtxts)) getTopRetVertex))]
-    (if (gb/edge? vertex)
+    (if (maps/edge? vertex)
       (gb/putv! common/gbdb (assoc vertex :score 1) (:id user)))
     (aichat-reply (:id root) vertex (:id vertex))))
 
 (defn process-url
   [user root sentence]
   (let [url-id (url/url->id sentence)]
-    (pr/extract-knowledge! sentence)
+    (pr/extract-knowledge! common/gbdb sentence)
     (aichat-reply url-id nil (str "processed url: " sentence))))
 
 (defn handle-aichat
