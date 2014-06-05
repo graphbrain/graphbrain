@@ -30,6 +30,9 @@
   ([ids]
      (ids->edge ids 1)))
 
+(defn edge?
+  [vert]
+  (if vert (id/edge? (:id vert))))
 
 ;; entity
 
