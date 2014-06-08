@@ -11,5 +11,9 @@
       (maps/eid->entity eid)
       (let [syns (map #(gbdb/getv gbdb (id/eid->id (nth (maps/ids %) 2)) ctxts)
                       can-mean)]
-        (doseq [syn syns] (prn (str "syn> " syn)))
         (apply max-key :degree syns)))))
+
+(defn guess-eid
+  [gbdb name eid ctxts]
+  (let [entity (guess gbdb name eid ctxts)]
+    (id/local->global (:eid entity))))
