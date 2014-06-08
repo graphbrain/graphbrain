@@ -42,9 +42,9 @@
     (aichat-reply (:id root) vertex (:id vertex))))
 
 (defn process-url
-  [user root sentence]
+  [user root sentence ctxts]
   (let [url-id (url/url->id sentence)]
-    (pr/extract-knowledge! common/gbdb sentence)
+    (pr/extract-knowledge! common/gbdb sentence ctxts (:id user))
     (aichat-reply url-id nil (str "processed url: " sentence))))
 
 (defn handle-aichat
@@ -52,7 +52,8 @@
   (let [sentence ((request :form-params) "sentence")
         root-id ((request :form-params) "rootId")
         root (if root-id (gb/getv common/gbdb root-id))
-        user (common/get-user request)]
+        user (common/get-user request)
+        ctxts (common/user-id->ctxts (:id user))]
     (case (sentence-type sentence)
       :fact (process-fact user root sentence)
-      :url (process-url user root sentence))))
+      :url (process-url user root sentence ctxts))))

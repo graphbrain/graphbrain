@@ -8,7 +8,8 @@
   [request]
   (let
     [user (get-user request)
-     edge-id ((request :form-params) "edge")]
+     edge-id ((request :form-params) "edge")
+     xxx (prn (str "remove: " edge-id))]
     (gb/remove! gbdb
       (maps/id->edge edge-id)
       (:id user))))

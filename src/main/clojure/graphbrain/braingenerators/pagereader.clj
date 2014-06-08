@@ -18,7 +18,7 @@
     (not (some part-of ngram-set))))
 
 (defn ngram->entity
-  [gbdb ngrams-graph ng-ent-map ngram]
+  [gbdb ngrams-graph ng-ent-map ngram ctxts]
   (if (ng-ent-map ngram) ng-ent-map
       (let [ngram-str (ngrams/ngram->str ngram) 
             components (keys (:out (ngrams-graph ngram)))
@@ -32,16 +32,17 @@
                              gbdb
                              ngrams-graph
                              nem
-                             (first comps))
+                             (first comps)
+                             ctxts)
                             (rest comps))))
             eid (if (empty? components)
                   (id/name+classes->eid ngram-str ["topic"])
                   (id/name+comps->eid ngram-str (map #(:eid (ng-ent-map %))
                                                      components)))]
-        (assoc ng-ent-map ngram (eg/guess gbdb ngram-str eid)))))
+        (assoc ng-ent-map ngram (eg/guess gbdb ngram-str eid ctxts)))))
 
 (defn ngrams-graph->entities
-  [gbdb ngrams-graph]
+  [gbdb ngrams-graph ctxts]
   (loop [ngs ngrams-graph
          ng-ent-map {}]
     (if (empty? ngs)
@@ -51,37 +52,38 @@
               gbdb
               ngrams-graph
               ng-ent-map
-              (first (first ngs)))))))
+              (first (first ngs))
+              ctxts)))))
 
 (defn html->entities
-  [gbdb html]
+  [gbdb html ctxts]
   (let [ngrams (ngrams/html->ngrams html)
         ngrams-graph (ngrams/ngrams->graph ngrams)
         ngrams (ngrams/sorted-ngrams (keys ngrams-graph))]
-    (ngrams-graph->entities gbdb ngrams-graph)))
+    (ngrams-graph->entities gbdb ngrams-graph ctxts)))
 
 (defn url+html->edges
-  [gbdb url-str html]
+  [gbdb url-str html ctxts]
   (let [url-id (url/url->id url-str)
-        entities (html->entities gbdb html)]
+        entities (html->entities gbdb html ctxts)]
     (map #(maps/id->edge
            (id/ids->id ["r/has_topic" url-id (:eid (second %))])
            (:score (first %))) entities)))
 
 (defn assoc-title!
-  [gbdb url-str title]
+  [gbdb url-str title user-id]
   (let [url-id (url/url->id url-str)
         title-node (text/text->vertex title)
         edge-id (id/ids->id ["r/+title" url-id (:id title-node)])]
-    (gb/putv! gbdb title-node)
-    (gb/putv! gbdb (maps/id->edge edge-id))))
+    (gb/putv! gbdb title-node user-id)
+    (gb/putv! gbdb (maps/id->edge edge-id) user-id)))
 
 (defn extract-knowledge!
-  [gbdb url-str]
+  [gbdb url-str ctxts user-id]
   (let [html (webtools/slurp-url url-str)
         jsoup (htmltools/html->jsoup html)
         title (htmltools/jsoup->title jsoup)
         meat (meat/extract-meat html)
-        edges (url+html->edges gbdb url-str meat)]
-    (assoc-title! gbdb url-str title)
-    (doseq [edge edges] (gb/putv! gbdb edge))))
+        edges (url+html->edges gbdb url-str meat ctxts)]
+    (assoc-title! gbdb url-str title user-id)
+    (doseq [edge edges] (gb/putv! gbdb edge user-id))))

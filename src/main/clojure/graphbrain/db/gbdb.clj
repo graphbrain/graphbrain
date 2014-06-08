@@ -13,8 +13,14 @@
   ([name] mysql/db-connection))
 
 (defn getv
-  [gbdb id]
-  (mysql/getv gbdb id (id/id->type id)))
+  ([gbdb id]
+     (mysql/getv gbdb id (id/id->type id)))
+  ([gbdb id ctxts]
+     (loop [cs ctxts
+            vertex nil]
+       (if (or vertex (empty? cs))
+         vertex
+         (recur (rest cs) (getv gbdb (id/global->local id (first cs))))))))
 
 (defn exists?
   [gbdb vert-or-id]
@@ -46,29 +52,20 @@
   (f-degree! gbdb id-or-vertex dec))
 
 (defn putv!
-  ([gbdb vertex]
-     (if (not (exists? gbdb vertex))
-       (let [vertex (assoc vertex :ts (.getTime (Date.)))]
-         (mysql/putv! gbdb vertex)
-         (if (= (:type vertex) :edge)
-           (doseq [id (maps/ids vertex)]
-             (let [v (maps/id->vertex id)]
-               (putv! gbdb v)
-               (inc-degree! gbdb (:id v)))))
-         vertex)
-     vertex))
-  ([gbdb vertex owner-id]
-     (putv! gbdb vertex)
-     (if (not (id/local-space? (:id vertex)))
-       (let [lvert (maps/global->local vertex owner-id)]
-         (if (not (exists? gbdb lvert))
-           (putv! gbdb lvert)
-           (add-link-to-global! gbdb (:id vertex) (:id lvert)))
-         (if (= (:type vertex) :edge)
-            ;; run consensus algorithm
-            (let [gedge (maps/local->global vertex)]
-              (queues/consensus-enqueue! (:id gedge))))))
-     vertex))
+  [gbdb vertex owner-id]
+  (let [gvert (maps/local->global vertex)
+        lvert (maps/global->local gvert owner-id)]
+    (if (not (exists? gbdb lvert))
+      (let [vertex (assoc lvert :ts (.getTime (Date.)))]
+        (mysql/putv! gbdb lvert)
+        (add-link-to-global! gbdb (:id gvert) (:id lvert))
+        (if (= (:type lvert) :edge)
+          (doseq [id (maps/ids lvert)]
+            (let [v (maps/id->vertex id)]
+              (putv! gbdb v owner-id)
+              (inc-degree! gbdb (:id v)))))
+        vertex)
+      vertex)))
 
 (defn update!
   [gbdb vertex]
@@ -85,18 +82,15 @@
   (mysql/all-users gbdb))
 
 (defn remove!
-  ([gbdb vertex]
-     (mysql/remove! gbdb vertex)
-     (if (maps/edge? vertex)
-       (doseq [id (maps/ids vertex)]
-         (dec-degree! gbdb (id/eid->id id)))))
-  ([gbdb vertex owner-id]
-     (let [u (maps/global->local vertex owner-id)]
-       (mysql/remove! gbdb u)
-       (remove-link-to-global! gbdb (:id vertex) (:id u))
-       (if (maps/edge? u)
-         (do (putv! gbdb (maps/negate u))
-             (queues/consensus-enqueue! (:id vertex)))))))
+  [gbdb vertex owner-id]
+  (let [gvert (maps/local->global vertex)
+        lvert (maps/global->local gvert owner-id)]
+    (mysql/remove! gbdb lvert)
+    (remove-link-to-global! gbdb (:id gvert) (:id lvert))
+    (if (maps/edge? lvert)
+      (do (putv! gbdb (maps/negate gvert) owner-id)
+          (doseq [id (maps/ids lvert)]
+            (dec-degree! gbdb (id/eid->id id)))))))
 
 (defn id->eid
   [gbdb id]
@@ -104,44 +98,41 @@
     (let [eid (:eid (getv gbdb id))]
       (if eid eid id)) id))
 
-(defn- patid->eid
-  [gbdb patid]
-  (if (= patid "*") patid (id->eid gbdb patid)))
+(defn- patid->local-eid
+  [gbdb patid owner-id]
+  (if (= patid "*")
+    patid
+    (id/global->local (id->eid gbdb patid) owner-id)))
+
+(defn f->edges
+  [f ctxts]
+  (let [edges-sets (map f ctxts)
+        edges-sets (map #(map maps/local->global %) edges-sets)
+        edges (into #{} (apply clojure.set/union edges-sets))
+        edges (filter #(not (some #{(maps/negate %)} edges)) edges)
+        edges (filter maps/positive? edges)]
+    edges))
 
 (defn pattern->edges
-  [gbdb pattern]
-  (let [epat (map #(patid->eid gbdb %) pattern)]
-    (mysql/pattern->edges gbdb epat)))
+  [gbdb pattern ctxts]
+  (let [f (fn [ctxt]
+            (mysql/pattern->edges
+             gbdb
+             (map #(patid->local-eid gbdb % ctxt) pattern)))]
+    (f->edges f ctxts)))
 
 (defn id->edges
-  ([gbdb id]
-     (mysql/id->edges gbdb (id->eid gbdb id)))
-  ([gbdb id owner-id]
-     (let [eid (id->eid gbdb id)
-           edges (id->edges gbdb eid)
-           gedges (filter maps/global-space? edges)
-           ledges (if owner-id
-                    (let [lcenter-id (id/global->local eid owner-id)]
-                      (map maps/local->global
-                           (filter maps/local-space?
-                                   (id->edges gbdb lcenter-id)))) #{})]
-       (clojure.set/union (set (filter
-                                maps/positive?
-                                (filter #(not (some #{(maps/negate %)} ledges))
-                                        gedges)))
-                          (set (filter maps/positive? ledges))))))
+  [gbdb id ctxts]
+  (let [f #(mysql/id->edges gbdb (id->eid gbdb (id/global->local id %)))]
+    (f->edges f ctxts)))
 
 (defn vertex->edges
-  [gbdb center]
-    (id->edges gbdb (:id center)))
+  [gbdb center ctxts]
+    (id->edges gbdb (:id center) ctxts))
 
 (defn edges->vertex-ids
   [edges]
   (set (flatten (map maps/ids edges))))
-
-(defn neighbors
-  [grpah id]
-  (conj (edges->vertex-ids (id->edges gbdb id)) id))
 
 (defn email->id
   [gbdb email]
@@ -171,7 +162,7 @@
 
 (defn create-user!
   [gbdb username name email password role]
-  (putv! gbdb (user/new-user username name email password role)))
+  (putv! gbdb (user/new-user username name email password role) ""))
 
 (defn attempt-login!
   [gbdb login password]
@@ -190,16 +181,3 @@
 (defn global-alts
   [gbdb global-id]
   (mysql/alts gbdb global-id))
-
-(defn description
-  [gbdb id-or-vertex]
-  (let [id (if (string? id-or-vertex) id-or-vertex (:id id-or-vertex))
-        vertex (if (string? id-or-vertex) (getv gbdb id-or-vertex) id-or-vertex)
-        as-in (pattern->edges gbdb ["r/+type_of" id "*"])
-        desc (vertex/label vertex)]
-    (if (empty? as-in) desc
-        (str desc " ("
-             (clojure.string/join
-              ", "
-              (map #(vertex/label (getv gbdb (second (maps/participant-ids %))))
-                   as-in)) ")"))))
