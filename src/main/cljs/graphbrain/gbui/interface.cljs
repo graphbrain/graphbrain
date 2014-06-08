@@ -137,8 +137,7 @@
   (.addEventListener js/document "touchmove" touch-move)
   (alerts/init-alert!)
   (if (not (or (undefined? js/data) (nil? js/data)))
-    (do (rem/init-remove-dialog
-         (:id (first (get-in @g/graph [:snodes "root" :nodes]))))
-        (jq/bind ($ "#ai-chat-button") "click" aichat/ai-chat-button-pressed!)))
+    (rem/init-remove-dialog
+     (:id (first (get-in @g/graph [:snodes "root" :nodes])))))
   (if (and (exists? js/errorMsg) (not (empty? js/errorMsg)))
     (alerts/set-error-alert! js/errorMsg)))
