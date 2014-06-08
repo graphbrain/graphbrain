@@ -4,7 +4,7 @@
             [graphbrain.db.maps :as maps]))
 
 (defn query
-  [gbdb text]
+  [gbdb text ctxts]
   (let [id (id/sanitize text)
-        can-mean (gb/pattern->edges gbdb ["r/+can_mean" id "*"])]
+        can-mean (gb/pattern->edges gbdb ["r/+can_mean" id "*"] ctxts)]
     (map #(second (maps/participant-ids %)) can-mean)))

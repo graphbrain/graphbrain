@@ -33,3 +33,7 @@
     [tests (gb/getv gbdb "text/tests")]
     (if tests
       (:text tests) "")))
+
+(defn user-id->ctxts
+  [user-id]
+  #{"c/wordnet" user-id})

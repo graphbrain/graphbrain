@@ -132,7 +132,7 @@
 (defn process-example!
   [gbdb vid word]
   (let [tn (example word)]
-    (if (not dryrun) (gb/putv! gbdb tn))
+    (if (not dryrun) (gb/putv! gbdb tn "c/wordnet"))
     (let [rel (str "(r/+example " vid " " (:id tn) ")")]
       (add-relation! gbdb rel))))
 
