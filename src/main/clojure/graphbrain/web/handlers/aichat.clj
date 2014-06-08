@@ -34,7 +34,7 @@
 (defn- disambig-id
   [id eid ctxts]
   (if (= (id/id->type id) :entity)
-    (:eid (eg/guess common/gbdb (id/last-part id) eid ctxts))
+    (eg/guess-eid common/gbdb (id/last-part id) eid ctxts)
     id))
 
 (defn- disambig-edge
@@ -50,8 +50,7 @@
   (let
       [ctxts-list (. prog wv sentence 0)
        vertex (gbj/vertex-obj->map
-               (. (first (. (first ctxts-list) getCtxts)) getTopRetVertex))
-       vertex (maps/global->local vertex (:id user))]
+               (. (first (. (first ctxts-list) getCtxts)) getTopRetVertex))]
     (if (maps/edge? vertex)
       (let [edge (disambig-edge vertex "xpto" ctxts)
             edge (assoc edge :score 1)]
