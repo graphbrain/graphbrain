@@ -6,11 +6,14 @@
 
 (defn node-div-id
   [edge]
-  (if (empty? edge) "n_" (let [div-id (clojure.string/replace edge " " "_")
-         div-id (clojure.string/replace div-id "(" "_")
-         div-id (clojure.string/replace div-id ")" "_")
-         div-id (clojure.string/replace div-id "/" "_")]
-     (str "n_" div-id))))
+  (if (empty? edge)
+    "n_"
+    (let [div-id (clojure.string/replace edge " " "_")
+          div-id (clojure.string/replace div-id "(" "_")
+          div-id (clojure.string/replace div-id ")" "_")
+          div-id (clojure.string/replace div-id "/" "_")
+          div-id (clojure.string/replace div-id "+" "_")]
+      (str "n_" div-id))))
 
 (defn- url-node-html
   [node root div-id]
