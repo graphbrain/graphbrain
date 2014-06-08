@@ -11,4 +11,5 @@
       (maps/eid->entity eid)
       (let [syns (map #(gbdb/getv gbdb (id/eid->id (nth (maps/ids %) 2)) ctxts)
                       can-mean)]
+        (doseq [syn syns] (prn (str "syn> " syn)))
         (apply max-key :degree syns)))))

@@ -34,22 +34,26 @@
 
 (defn hyper->edge
   [edge root-id]
-  (if (> (count (maps/participant-ids edge)) 2)
-    (let [parts (.split (maps/edge-type edge) "~")]
-      {:edge-type (str (first parts)
-                       " "
-                       (id/last-part (nth (maps/participant-ids edge) 1))
-                       " "
-                       (clojure.string/join " " (rest parts)))
-       :id1 (nth (maps/participant-ids edge) 0)
-       :id2 (nth (maps/participant-ids edge) 2)
-       :score (:score edge)
-       :parent edge})
-    {:edge-type (nth (maps/ids edge) 0)
-     :id1 (nth (maps/ids edge) 1)
-     :id2 (nth (maps/ids edge) 2)
-     :score (:score edge)
-     :parent edge}))
+  (let [c (count (maps/participant-ids edge))]
+    (cond
+     (> c 2)
+     (let [parts (.split (maps/edge-type edge) "~")]
+       {:edge-type (str (first parts)
+                        " "
+                        (id/last-part (nth (maps/participant-ids edge) 1))
+                        " "
+                        (clojure.string/join " " (rest parts)))
+        :id1 (nth (maps/participant-ids edge) 0)
+        :id2 (nth (maps/participant-ids edge) 2)
+        :score (:score edge)
+        :parent edge})
+     (= c 2)
+     {:edge-type (nth (maps/ids edge) 0)
+      :id1 (nth (maps/ids edge) 1)
+      :id2 (nth (maps/ids edge) 2)
+      :score (:score edge)
+      :parent edge}
+     :else nil)))
 
 (defn add-to-edge-node-map
   [en-map key e root-id]
