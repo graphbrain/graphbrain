@@ -35,6 +35,7 @@
                   (= (nth parts 2) "n") (cond (<= nparts 4) :entity
                                               (= (nth parts 3) "r") :edge-type
                                               :else :entity)
+                  (= (nth parts 2) "t") :text
                   :else :entity)
         "c" (cond (= nparts 1) :entity
                   (= nparts 2) :context
@@ -43,6 +44,7 @@
                   (= (nth parts 2) "n") (cond (<= nparts 4) :entity
                                               (= (nth parts 3) "r") :edge-type
                                               :else :entity)
+                  (= (nth parts 2) "t") :text
                   :else :entity)
         "r" (if (= nparts 1) :entity :edge-type)
         "n" (cond (<= nparts 2) :entity
@@ -126,15 +128,17 @@
   [id owner]
   (cond
    (edge? id) (ids->id (map #(global->local % owner) (id->ids id)))
-   (local-space? id) id
    (user? id) id
    (context? id) id
+   (local-space? id) id
    :else (str owner "/" id)))
 
 (defn local->global
   [id]
   (cond
    (edge? id) (ids->id (map local->global (id->ids id)))
+   (user? id) id
+   (context? id) id
    (local-space? id) (build (drop 2 (parts id)))
    :else id))
 
@@ -143,10 +147,11 @@
 
 (defn owner
   [id]
-  (if (global-space? id) nil
-    (if (edge? id)
-      (owner (first (id->ids id)))
-      (build (take 2 (parts id))))))
+  (if (user? id) id
+      (if (global-space? id) nil
+          (if (edge? id)
+            (owner (first (id->ids id)))
+            (build (take 2 (parts id)))))))
 
 (defn owner-user
   [id]

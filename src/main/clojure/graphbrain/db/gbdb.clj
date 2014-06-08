@@ -56,7 +56,7 @@
   (let [gvert (maps/local->global vertex)
         lvert (maps/global->local gvert owner-id)]
     (if (not (exists? gbdb lvert))
-      (let [vertex (assoc lvert :ts (.getTime (Date.)))]
+      (let [lvert (assoc lvert :ts (.getTime (Date.)))]
         (mysql/putv! gbdb lvert)
         (add-link-to-global! gbdb (:id gvert) (:id lvert))
         (if (= (:type lvert) :edge)

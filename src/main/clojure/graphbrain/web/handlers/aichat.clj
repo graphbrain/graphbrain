@@ -3,8 +3,10 @@
             [clojure.data.json :as json]
             [graphbrain.db.gbdb :as gb]
             [graphbrain.db.graphjava :as gbj]
+            [graphbrain.db.id :as id]
             [graphbrain.db.maps :as maps]
             [graphbrain.db.urlnode :as url]
+            [graphbrain.disambig.entityguesser :as eg]
             [graphbrain.braingenerators.pagereader :as pr]
             [graphbrain.string :as gbstr])
   (:import (com.graphbrain.eco Prog)))
@@ -29,17 +31,32 @@
            (or (.startsWith sentence "http://") (.startsWith sentence "https://")))
     :url :fact))
 
+(defn- disambig-id
+  [id eid ctxts]
+  (if (= (id/id->type id) :entity)
+    (:eid (eg/guess common/gbdb (id/last-part id) eid ctxts))
+    id))
+
+(defn- disambig-edge
+  [edge eid ctxts]
+  (let [ids (maps/ids edge)
+        ids (map #(disambig-id % eid ctxts) ids)]
+    (maps/ids->edge ids)))
+
 (defn- process-fact
-  [user root sentence]
+  [user root sentence ctxts]
   (. prog setVertex "$user" (gbj/map->user-obj user))
   (. prog setVertex "$root" (gbj/map->vertex-obj root))
   (let
       [ctxts-list (. prog wv sentence 0)
        vertex (gbj/vertex-obj->map
-               (. (first (. (first ctxts-list) getCtxts)) getTopRetVertex))]
+               (. (first (. (first ctxts-list) getCtxts)) getTopRetVertex))
+       vertex (maps/global->local vertex (:id user))]
     (if (maps/edge? vertex)
-      (gb/putv! common/gbdb (assoc vertex :score 1) (:id user)))
-    (aichat-reply (:id root) vertex (:id vertex))))
+      (let [edge (disambig-edge vertex "xpto" ctxts)
+            edge (assoc edge :score 1)]
+        (gb/putv! common/gbdb edge (:id user))
+        (aichat-reply (:id root) edge (:id edge))))))
 
 (defn process-url
   [user root sentence ctxts]
@@ -55,5 +72,5 @@
         user (common/get-user request)
         ctxts (common/user-id->ctxts (:id user))]
     (case (sentence-type sentence)
-      :fact (process-fact user root sentence)
+      :fact (process-fact user root sentence ctxts)
       :url (process-url user root sentence ctxts))))
