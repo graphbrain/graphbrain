@@ -81,7 +81,7 @@
 (defn bookmark!
   [gbdb url-str user-id]
   (let [url-id (url/url->id url-str)
-        edge-id (id/ids->id ["r/bookmarked" url-id user-id])]
+        edge-id (id/ids->id ["r/bookmarked" user-id url-id])]
     (gb/putv! gbdb (maps/id->edge edge-id) user-id)))
 
 (defn extract-knowledge!
