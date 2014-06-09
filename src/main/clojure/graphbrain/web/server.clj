@@ -49,7 +49,8 @@
                       wrap-params
                       wrap-cookies))))
 
-(defn run
+(defn run!
   []
   (common/init-graph!)
-  (run-jetty app {:port 4567}))
+  (let [port (if common/production? 80 3000)]
+    (run-jetty app {:port port})))

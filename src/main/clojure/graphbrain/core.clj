@@ -1,6 +1,7 @@
 (ns graphbrain.core
   (:require [clojure.tools.cli :as cli]
-            [graphbrain.braingenerators.wordnet :as wordnet]))
+            [graphbrain.braingenerators.wordnet :as wordnet]
+            [graphbrain.web.server :as server]))
 
 (def cli-options
   [["-p" "--port PORT" "Port number"
@@ -19,4 +20,5 @@
         arg (first (:arguments opts))]
     (case arg
       "wordnet" (wordnet/run!)
+      "webapp" (server/run!)
       (prn (str "Unknown command: " arg)))))
