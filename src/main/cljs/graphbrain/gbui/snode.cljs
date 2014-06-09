@@ -100,18 +100,26 @@
 (defn place
   [snode-id]
   (let [snode ((:snodes @g/graph) snode-id)
+        relpos (:rpos snode)
         rel-text (if (is-root snode-id)
                    ""
-                   (label (:label snode) (:relpos snode)))
+                   (label (:label snode) relpos))
         html (if (is-root snode-id)
                (str "<div id='" snode-id "' class='snodeR'>")
                (str "<div id='" snode-id "' class='snode'>"))
-        html (str html
-                  "<div class='snodeLabel'>"
-                  rel-text
-                  "</div>"
-                  "<div class='snodeInner'>"
-                  "<div class='viewport' /></div></div>")]
+        html (if (= relpos 0)
+               (str html
+                    "<div class='snodeInner'>"
+                    "<div class='viewport' /></div>"
+                    "<div class='snodeLabel'>"
+                    rel-text
+                    "</div></div>")
+               (str html
+                    "<div class='snodeLabel'>"
+                    rel-text
+                    "</div>"
+                    "<div class='snodeInner'>"
+                    "<div class='viewport' /></div></div>"))]
     (jq/append ($ "#graph-view") html)
     (doseq [node (:nodes snode)]
       (let [new-edge (some #{(:edge node)} (newedges/new-edges))]
