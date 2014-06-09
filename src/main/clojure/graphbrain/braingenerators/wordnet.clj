@@ -110,7 +110,7 @@
             rel (str "(r/+also_see " vid " " also-id ")")]
         (add-relation! gbdb rel)))))
 
-(defn process-can-mean!
+#_(defn process-can-mean!
   [gbdb vid word]
   (if (super-type word)
     (let [sid (id/sanitize (.getLemma word))
@@ -149,7 +149,7 @@
           (doseq [word words]
             (let [vid (vertex-id word)]
               (prn vid)
-              (process-can-mean! gbdb vid word)
+              #_(process-can-mean! gbdb vid word)
               (process-super-types! gbdb vid word)
               (process-pos! gbdb vid word))))))
 

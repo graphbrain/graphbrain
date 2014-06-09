@@ -1,10 +1,11 @@
-(ns graphbrain.web.cssandjs)
+(ns graphbrain.web.cssandjs
+  (:use [graphbrain.web.common :as common]))
 
-(defonce version "130113")
-
-(defn- random-version
+(defn- version
   []
-  (str (rand-int 999999999)))
+  (if common/production?
+    ""
+    (str "?" (rand-int 999999999))))
 
 (defonce analytics-js
   "<script type='text/javascript'>
@@ -20,8 +21,8 @@
 
 (defn css+js
   []
-  (str "<link href='/css/gb.css?" (random-version) "' type='text/css' rel='Stylesheet' />"
+  (str "<link href='/css/gb.css" (version) "' type='text/css' rel='Stylesheet' />"
        "<script src='/js/jquery-1.7.2.min.js' type='text/javascript'></script>"
        "<script src='/js/jquery-ui-1.8.18.custom.min.js' type='text/javascript' ></script>"
        "<script src='/js/bootstrap.min.js' type='text/javascript' ></script>"
-       "<script src='/js/gbui.js?" (random-version) "' type='text/javascript' ></script>"))
+       "<script src='/js/gbui.js" (version) "' type='text/javascript' ></script>"))

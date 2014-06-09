@@ -3,6 +3,12 @@
             [graphbrain.db.user :as user]
             [graphbrain.db.utils :as utils]))
 
+(def production?
+  (= "production" (get (System/getenv) "APP_ENV")))
+
+(def development?
+  (not production?))
+
 (defn init-graph!
   []
   (def gbdb (utils/init-with-consensus!))

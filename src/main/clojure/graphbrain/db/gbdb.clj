@@ -59,23 +59,22 @@
       (let [lvert (assoc lvert :ts (.getTime (Date.)))]
         (mysql/putv! gbdb lvert)
         (add-link-to-global! gbdb (:id gvert) (:id lvert))
-        (if (= (:type lvert) :edge)
-          (doseq [id (maps/ids lvert)]
-            (let [v (maps/id->vertex id)]
-              (putv! gbdb v owner-id)
-              (inc-degree! gbdb (:id v)))))
+        (case (:type lvert)
+          :entity (if (> (id/count-parts (:id gvert)) 1)
+                    (let [vid (:id gvert)
+                          sid (id/last-part vid)
+                          rel (str "(r/+can_mean " sid " " vid ")")]
+                      (putv! gbdb rel owner-id)))
+          :edge (doseq [id (maps/ids lvert)]
+                  (let [v (maps/id->vertex id)]
+                    (putv! gbdb v owner-id)
+                    (inc-degree! gbdb (:id v)))))
         vertex)
       vertex)))
 
 (defn update!
   [gbdb vertex]
   (mysql/update! gbdb vertex))
-
-(defn put-or-update!
-  [gbdb vertex]
-  (if (exists? gbdb vertex)
-    (update! gbdb vertex)
-    (putv! gbdb vertex)))
 
 (defn all-users
   [gbdb]
