@@ -78,6 +78,12 @@
     (gb/putv! gbdb title-node user-id)
     (gb/putv! gbdb (maps/id->edge edge-id) user-id)))
 
+(defn bookmark!
+  [gbdb url-str user-id]
+  (let [url-id (url/url->id url-str)
+        edge-id (id/ids->id ["r/bookmarked" url-id user-id])]
+    (gb/putv! gbdb (maps/id->edge edge-id) user-id)))
+
 (defn extract-knowledge!
   [gbdb url-str ctxts user-id]
   (let [html (webtools/slurp-url url-str)
@@ -86,4 +92,5 @@
         meat (meat/extract-meat html)
         edges (url+html->edges gbdb url-str meat ctxts)]
     (assoc-title! gbdb url-str title user-id)
-    (doseq [edge edges] (gb/putv! gbdb edge user-id))))
+    (doseq [edge edges] (gb/putv! gbdb edge user-id))
+    (bookmark! gbdb url-str user-id)))
