@@ -75,8 +75,8 @@
   (let [url-id (url/url->id url-str)
         title-node (text/text->vertex title)
         edge-id (id/ids->id ["r/+title" url-id (:id title-node)])]
-    (gb/putv! gbdb title-node user-id)
-    (gb/putv! gbdb (maps/id->edge edge-id) user-id)))
+    (gb/putv! gbdb title-node "c/web")
+    (gb/putv! gbdb (maps/id->edge edge-id) "c/web")))
 
 (defn bookmark!
   [gbdb url-str user-id]

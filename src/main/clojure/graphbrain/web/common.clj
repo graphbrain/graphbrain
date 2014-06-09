@@ -36,4 +36,4 @@
 
 (defn user-id->ctxts
   [user-id]
-  ["c/wordnet" user-id])
+  ["c/wordnet" "c/web" user-id])
