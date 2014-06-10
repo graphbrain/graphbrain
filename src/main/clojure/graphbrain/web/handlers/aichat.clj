@@ -68,8 +68,9 @@
   [request]
   (let [sentence ((request :form-params) "sentence")
         root-id ((request :form-params) "rootId")
-        root (if root-id (gb/getv common/gbdb root-id))
         user (common/get-user request)
+        root (if root-id (gb/getv common/gbdb root-id
+                                  (common/user-id->ctxts (:id user))))
         ctxts (common/user-id->ctxts (:id user))]
     (case (sentence-type sentence)
       :fact (process-fact user root sentence ctxts)
