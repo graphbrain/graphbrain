@@ -22,7 +22,7 @@
   ;; Edges table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS edges ("
                        "id VARCHAR(10000),"
-                       "score FLOAT NOT NULL DEFAULT '1.0',"
+                       "score FLOAT NOT NULL DEFAULT 1.0,"
                        "degree INT NOT NULL DEFAULT 0,"
                        "ts BIGINT NOT NULL DEFAULT -1,"
                        "INDEX id_index (id(255))"
@@ -105,7 +105,7 @@
   ;; Edge permutations table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS edgeperms ("
                        "id VARCHAR(10000),"
-                       "score FLOAT NOT NULL DEFAULT '1.0',"
+                       "score FLOAT NOT NULL DEFAULT 1.0,"
                        "INDEX id_index (id(255))"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
