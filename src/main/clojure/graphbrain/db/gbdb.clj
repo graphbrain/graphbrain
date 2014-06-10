@@ -61,14 +61,16 @@
         (add-link-to-global! gbdb (:id gvert) (:id lvert))
         (case (:type lvert)
           :entity (if (> (id/count-parts (:id gvert)) 1)
-                    (let [vid (:id gvert)
-                          sid (id/last-part vid)
-                          rel (str "(r/+can_mean " sid " " vid ")")]
+                    (let [vid (:eid gvert)
+                          sid (id/last-part (:id gvert))
+                          rel (maps/id->vertex
+                               (str "(r/+can_mean " sid " " vid ")"))]
                       (putv! gbdb rel owner-id)))
           :edge (doseq [id (maps/ids lvert)]
                   (let [v (maps/id->vertex id)]
                     (putv! gbdb v owner-id)
-                    (inc-degree! gbdb (:id v)))))
+                    (inc-degree! gbdb (:id v))))
+          nil)
         vertex)
       vertex)))
 
