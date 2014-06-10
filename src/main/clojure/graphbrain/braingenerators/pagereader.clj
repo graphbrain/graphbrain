@@ -92,5 +92,5 @@
         meat (meat/extract-meat html)
         edges (url+html->edges gbdb url-str meat ctxts)]
     (assoc-title! gbdb url-str title user-id)
-    (doseq [edge edges] (gb/putv! gbdb edge user-id))
+    (doseq [edge edges] (gb/putv! gbdb edge "c/web"))
     (bookmark! gbdb url-str user-id)))
