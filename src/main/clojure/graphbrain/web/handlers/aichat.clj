@@ -14,7 +14,8 @@
 (def prog
   (Prog/fromString
     (slurp "eco/chat.eco")
-    (gbj/graph)))
+    #_(gbj/graph)
+    nil))
 
 (defn- aichat-reply
   [root-id vertex sentence]
