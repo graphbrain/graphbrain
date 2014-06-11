@@ -9,9 +9,21 @@
               (recur (rest s) (unchecked-multiply 31 (+ x (long (first s)))))))]
     (Long/toHexString h)))
 
+(defn- count-end-slashes
+  [str]
+  (loop [s (reverse str)
+         c 0]
+    (if (= (first s) \/)
+      (recur (rest s) (inc c))
+      c)))
+
 (defn parts
   [id]
-  (clojure.string/split id #"/"))
+  (let [ps (clojure.string/split id #"/")
+        c (count-end-slashes id)]
+    (if (> c 0)
+      (apply conj ps (repeat c ""))
+      ps)))
 
 (defn count-parts
   [id]
