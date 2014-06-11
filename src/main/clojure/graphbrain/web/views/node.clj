@@ -26,7 +26,7 @@
       [:div {:class "menu-caret"}]]
      [:ul {:class "dropdown-menu"}
       [:li [:a {:href "http://graphbrain.com"} "About GraphBrain"]]
-      [:li [:a {:href (str "/node/user/" (:username user))} "Home"]]
+      [:li [:a {:href (str "/node/u/" (:username user))} "Home"]]
       [:li [:a {:href "#" :id "logoutLink"} "Logout"]]]]))
 
 (defn node-view
