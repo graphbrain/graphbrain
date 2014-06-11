@@ -1,6 +1,5 @@
 (ns graphbrain.web.css.general
-  (:require [garden.def :refer [defstylesheet defstyles]]
-            [garden.units :refer [px]]))
+  (:require [garden.units :refer [px]]))
 
 (def css
   [[:html :body
