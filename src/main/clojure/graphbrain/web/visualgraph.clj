@@ -131,6 +131,7 @@
       :user {:id (:id node)
              :type "user"
              :text (:name node)
+             :sub [{:id "" :text "GraphBrain user"}]
              :edge node-edge
              :score score}
       :text {:id (:id node)

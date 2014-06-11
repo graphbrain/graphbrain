@@ -48,7 +48,9 @@
 
 (defn- subtext-item
   [sub]
-  (str "<a href='/node/" (:id sub) "'>" (:text sub) "</a>"))
+  (if (= (:id sub) "")
+    (:text sub)
+    (str "<a href='/node/" (:id sub) "'>" (:text sub) "</a>")))
 
 (defn- subtext
   [sub]
