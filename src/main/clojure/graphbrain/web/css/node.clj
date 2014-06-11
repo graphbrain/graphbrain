@@ -1,6 +1,5 @@
 (ns graphbrain.web.css.node
-  (:require [garden.def :refer [defstylesheet defstyles]]
-            [garden.units :refer [px]]))
+  (:require [garden.units :refer [px]]))
 
 (def css
   [[:.node
@@ -14,7 +13,7 @@
    [:a
     {:color "#000"}]]
 
-  [:.node_root
+  [:.node-root
    {:color "#000"
     :background "#eee"
     :margin (px 3)
@@ -24,62 +23,82 @@
    {:float "left"
     :max-width (px 160)}]
 
-  [:.nodeTitle
-   {:font-size (px 14)
+  [:.node-title
+   {:font-size (px 13)
     :float "left"}]
 
-  [:.nodeTitle
+  [:.node-title
    [:a
     {:color "#000"
      :float "left"}]]
 
-  [:.nodeTitle_root
+  [:.node-url-title
+   {:float "left"
+    :overflow "hidden"
+    :text-overflow "ellipsis"
+    :white-space "nowrap"}]
+
+  [:.node-url-title
+   [:a
+    {:font-size (px 12)
+     :color "#000"
+     :max-width (px 165)
+     :float "left"}]]
+  
+  [:.node-title-root
    {:max-width (px 600)}]
 
-  [:.nodeTitle_root
+  [:.node-title-root
    [:a
     {:color "#000"
      :line-height "110%"}]]
 
-  [:.nodeSubText
+  [:.node-sub-text
    {:float "left"
     :font-size (px 11)
     :color "#555"}]
 
-  [:.nodeSubText
+  [:.node-sub-text
    [:a
     {:font-size (px 11)
      :color "#555"}]]
 
-  [:.nodeRemove
+  [:.node-remove
    {:text-align "right"
     :float "right"
     :margin-left (px 10)}]
 
-  [:.nodeRemove
+  [:.node-remove
    [:a
     {:color "#B0B0B0"}]]
 
-  [:.nodeUrl
+  [:.node-url
    {:overflow "hidden"
     :text-overflow "ellipsis"
-    :max-width (px 170)
-    :float "left"}]
+    :max-width (px 135)
+    :white-space "nowrap"
+    :float "right"}]
 
-  [:.nodeUrl
+  [:.node-url
    [:a
-    {:color "rgb(0, 0, 255)"}]]
+    {:font-size (px 10)
+     :color "rgb(0, 0, 255)"}]]
 
-  [:.nodeUrl_root
+  [:.node-url-root
    {:font-size (px 16)
     :overflow "hidden"
     :text-overflow "ellipsis"
     :max-width (px 600)}]
 
-  [:.nodeUrl_root
+  [:.node-url-root
    [:a
     {:color "rgb(0, 0, 255)"}]]
 
-  [:.nodeIco
+  [:.node-ico
    {:margin-right (px 5)
-    :float "left"}]])
+    :float "left"}]
+
+  [:.node-ico
+   [:img
+    {:margin-right (px 5)
+     :float "left"}]]])
