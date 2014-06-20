@@ -58,6 +58,16 @@
                                               :else :entity)
                   (= (nth parts 2) "t") :text
                   :else :entity)
+        "k" (cond (= nparts 1) :entity
+                  (= nparts 2) :entity
+                  (= nparts 3) :context
+                  (= (nth parts 3) "h") :url
+                  (= (nth parts 3) "r") :edge-type
+                  (= (nth parts 3) "n") (cond (<= nparts 5) :entity
+                                              (= (nth parts 4) "r") :edge-type
+                                              :else :entity)
+                  (= (nth parts 2) "t") :text
+                  :else :entity)
         "r" (if (= nparts 1) :entity :edge-type)
         "n" (cond (<= nparts 2) :entity
                   (= (second parts) "r") :edge-type
@@ -92,13 +102,18 @@
   [ids]
   (str "(" (clojure.string/join " " ids) ")"))
 
+(defn- space-length
+  [space]
+  (if (= space "k") 3 2))
+
 (defn- space-in-set?
   [id spaces-set]
   (if (edge? id)
     (let [ids (id->ids id)]
       (some #(space-in-set? % spaces-set) ids))
-    (let [p (parts id)]
-      (and (spaces-set (first p)) (> (count p) 2)))))
+    (let [p (parts id)
+          space (first p)]
+      (and (spaces-set space) (> (count p) (space-length space))))))
 
 (defn user-space?
   [id]
@@ -106,11 +121,11 @@
 
 (defn context-space?
   [id]
-  (space-in-set? id #{"c"}))
+  (space-in-set? id #{"c" "k"}))
 
 (defn local-space?
   [id]
-  (space-in-set? id #{"u" "c"}))
+  (or (user-space? id) (context-space? id)))
 
 (defn global-space?
   [id]
@@ -151,7 +166,9 @@
    (edge? id) (ids->id (map local->global (id->ids id)))
    (user? id) id
    (context? id) id
-   (local-space? id) (build (drop 2 (parts id)))
+   (local-space? id) (let [p (parts id)
+                           space (first p)]
+                       (build (drop (space-length space) (parts id))))
    :else id))
 
 
