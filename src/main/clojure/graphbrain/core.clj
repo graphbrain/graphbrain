@@ -1,6 +1,7 @@
 (ns graphbrain.core
   (:require [clojure.tools.cli :as cli]
             [graphbrain.braingenerators.wordnet :as wordnet]
+            [graphbrain.tools.removecontext :as rc]
             [graphbrain.braingenerators.emmanuel :as emmanuel]
             [graphbrain.web.server :as server]))
 
@@ -18,9 +19,11 @@
 (defn -main
   [& args]
   (let [opts (cli/parse-opts args cli-options)
-        arg (first (:arguments opts))]
+        arg (first (:arguments opts))
+        arg1 (second (:arguments opts))]
     (case arg
       "wordnet" (wordnet/run!)
-      "emmanuel" (emmanuel/run!)
       "webapp" (server/run!)
+      "removecontext" (rc/run! arg1)
+      "emmanuel" (emmanuel/run!)
       (prn (str "Unknown command: " arg)))))

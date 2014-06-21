@@ -182,3 +182,7 @@
 (defn global-alts
   [gbdb global-id]
   (mysql/alts gbdb global-id))
+
+(defn remove-context!
+  [gbdb ctxt]
+  (mysql/remove-context! gbdb ctxt))

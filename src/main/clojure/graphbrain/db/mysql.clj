@@ -304,3 +304,22 @@
   [dbs gid]
   (map :lid (jdbc/query (dbs) ["SELECT lid FROM globallocal WHERE gid=?"
                                gid])))
+
+(defn remove-context!
+  [dbs ctxt]
+  (jdbc/execute! (dbs) ["DELETE FROM edges WHERE id like ?"
+                        (str "(" ctxt "%")])
+  (jdbc/execute! (dbs) ["DELETE FROM edgeperms WHERE id like ?"
+                        (str ctxt "%")])
+  (jdbc/execute! (dbs) ["DELETE FROM edgetypes WHERE id like ?"
+                        (str ctxt "%")])
+  (jdbc/execute! (dbs) ["DELETE FROM entities WHERE id like ?"
+                        (str ctxt "%")])
+  (jdbc/execute! (dbs) ["DELETE FROM texts WHERE id like ?"
+                        (str ctxt "%")])
+  (jdbc/execute! (dbs) ["DELETE FROM urls WHERE id like ?"
+                        (str ctxt "%")])
+  (jdbc/execute! (dbs) ["DELETE FROM globallocal WHERE lid like ?"
+                        (str "(" ctxt "%")])
+  (jdbc/execute! (dbs) ["DELETE FROM globallocal WHERE lid like ?"
+                        (str ctxt "%")]))
