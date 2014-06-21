@@ -42,4 +42,4 @@
 
 (defn user-id->ctxts
   [user-id]
-  ["c/wordnet" "c/web" user-id])
+  ["c/wordnet" "c/web" user-id "k/emmanuel/psychosis"])
