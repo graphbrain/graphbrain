@@ -180,7 +180,9 @@
       (if (global-space? id) nil
           (if (edge? id)
             (owner (first (id->ids id)))
-            (build (take 2 (parts id)))))))
+            (let [pars (parts id)
+                  space (first pars)]
+              (build (take (space-length space) pars)))))))
 
 (defn owner-user
   [id]
