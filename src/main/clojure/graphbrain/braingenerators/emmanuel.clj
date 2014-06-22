@@ -17,7 +17,7 @@
 
 (defn- take-data
   []
-  (take-csv "/Users/telmo/psychosis.csv"))
+  (take-csv "/Users/telmo/psychosis2.csv"))
 
 (defn- author-list
   [authors]
@@ -56,7 +56,7 @@
   [row]
   {:authors (map researcher-node (:authors row))
    :article (article-node (:title row))
-   :abstract (text/text->vertex (:abstract row))
+   :abstract (if (not (empty? (:abstract row))) (text/text->vertex (:abstract row)))
    :journal (journal-node (:journal row))})
 
 (defn- map-text->nodes
@@ -86,27 +86,30 @@
 
 (defn- process-authors!
   [article authors]
-  (let [art-eid (:eid article)
-        auth-eids (map :eid authors)]
-    (doseq [auth-eid auth-eids]
-      (process-author! art-eid auth-eid))))
+  (if (not (nil? article))
+    (let [art-eid (:eid article)
+         auth-eids (map :eid authors)]
+     (doseq [auth-eid auth-eids]
+       (process-author! art-eid auth-eid)))))
 
 (defn- process-abstract!
   [article abstract]
-  (let [art-eid (:eid article)
-        abs-eid (:eid abstract)
-        edge-id (id/ids->id ["r/has_abstract" art-eid abs-eid])]
-    (gb/putv! g abstract ctxt)
-    (prn edge-id)
-    (gb/putv! g (maps/id->edge edge-id) ctxt)))
+  (if (not (nil? abstract))
+    (let [art-eid (:eid article)
+         abs-eid (:eid abstract)
+         edge-id (id/ids->id ["r/has_abstract" art-eid abs-eid])]
+     (gb/putv! g abstract ctxt)
+     (prn edge-id)
+     (gb/putv! g (maps/id->edge edge-id) ctxt))))
 
 (defn- process-journal!
   [journal article]
-  (let [art-eid (:eid article)
-        journ-eid (:eid journal)
-        edge-id (id/ids->id ["r/has_article" journ-eid art-eid])]
-    (prn edge-id)
-    (gb/putv! g (maps/id->edge edge-id) ctxt)))
+  (if (and (not (nil? journal)) (not (nil? article)))
+    (let [art-eid (:eid article)
+         journ-eid (:eid journal)
+         edge-id (id/ids->id ["r/has_article" journ-eid art-eid])]
+     (prn edge-id)
+     (gb/putv! g (maps/id->edge edge-id) ctxt))))
 
 (defn- process-row!
   [row]
