@@ -58,9 +58,10 @@
 
 (defn- entity-node-html
   [node root div-id]
-  (let [title-class (if root "node-title-root" "node-title")
+  (let [main-class (if root "node-main-root" "node-main")
+        title-class (if root "node-title-root" "node-title")
         t-div-id (str "t" div-id)
-        html (str "<div class='node-main'>")
+        html (str "<div class='" main-class  "'>")
         html (str html "<div class='" title-class "'" "id='" t-div-id "'>")
         html (str html "<a href='/node/" (:id node) "' id='" div-id "'>")
         html (str html (:text node) "&nbsp;")
