@@ -12,7 +12,7 @@
     :padding (px 0)
     :background "rgba(255, 255, 255, 0.8)"}]
 
-  [:.snodeR
+  [:.snode-root
    {:max-width (px 600)
     :position "fixed"
     :font-size (px 28)
@@ -21,11 +21,11 @@
     :border-color "rgb(255, 255, 255)"
     :padding (px 0)}]
 
-  [:.snodeLabel
+  [:.snode-label
    {:color "#fff"
     :padding-left (px 5)
     :padding-right (px 5)
     :margin (px 0)}]
 
-  [:.snodeInner
+  [:.snode-inner
    {:padding (px 5)}]])
