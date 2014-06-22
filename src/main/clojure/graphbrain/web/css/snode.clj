@@ -13,7 +13,7 @@
     :background "rgba(255, 255, 255, 0.8)"}]
 
   [:.snodeR
-   {:max-width "600px"
+   {:max-width (px 600)
     :position "fixed"
     :font-size (px 28)
     :background "rgba(255, 255, 255, 0.8)"

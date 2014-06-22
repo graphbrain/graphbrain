@@ -23,6 +23,10 @@
    {:float "left"
     :max-width (px 160)}]
 
+  [:.node-main
+   {:float "left"
+    :max-width (px 560)}]
+
   [:.node-title
    {:font-size (px 13)
     :float "left"}]
