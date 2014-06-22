@@ -95,7 +95,7 @@
 (defn set-color
   [snode-id color]
     (jq/css ($ (str "#" snode-id)) {:border-color color})
-    (jq/css ($ (str "#" snode-id " .snodeLabel")) {:background color}))
+    (jq/css ($ (str "#" snode-id " .snode-label")) {:background color}))
 
 (defn place
   [snode-id]
@@ -105,20 +105,20 @@
                    ""
                    (label (:label snode) relpos))
         html (if (is-root snode-id)
-               (str "<div id='" snode-id "' class='snodeR'>")
+               (str "<div id='" snode-id "' class='snode-root'>")
                (str "<div id='" snode-id "' class='snode'>"))
         html (if (= relpos 0)
                (str html
-                    "<div class='snodeInner'>"
+                    "<div class='snode-inner'>"
                     "<div class='viewport' /></div>"
-                    "<div class='snodeLabel'>"
+                    "<div class='snode-label'>"
                     rel-text
                     "</div></div>")
                (str html
-                    "<div class='snodeLabel'>"
+                    "<div class='snode-label'>"
                     rel-text
                     "</div>"
-                    "<div class='snodeInner'>"
+                    "<div class='snode-inner'>"
                     "<div class='viewport' /></div></div>"))]
     (jq/append ($ "#graph-view") html)
     (doseq [node (:nodes snode)]
