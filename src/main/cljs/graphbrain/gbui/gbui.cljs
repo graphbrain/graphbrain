@@ -7,6 +7,7 @@
             [graphbrain.gbui.aichat :as aichat]
             [graphbrain.gbui.newedges :as newedges]
             [graphbrain.gbui.node :as node]
+            [graphbrain.gbui.contexts :as contexts]
             [cemerick.pprng :as rng])
   (:use [jayq.core :only [$]]))
 
@@ -19,9 +20,10 @@
 
   (intf/init-interface)
   
-  (if (not (or (undefined? js/data) (nil? js/data)))
+  (if (and (exists? js/data) (not (nil? js/data)))
     (do (rels/init-relations!)
-        (aichat/init-ai-chat!)))
+        (aichat/init-ai-chat!)
+        (contexts/init-contexts!)))
  
   (if (and (exists? js/data) (not (nil? js/data)))
     (do (if @g/changed-snode

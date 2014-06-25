@@ -69,6 +69,7 @@
                        "session VARCHAR(255),"
                        "sessionts BIGINT NOT NULL DEFAULT -1,"
                        "lastseen BIGINT NOT NULL DEFAULT -1,"
+                       "ctxts TEXT,"
                        "INDEX id_index (id(255)),"
                        "INDEX email_index (email)"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))

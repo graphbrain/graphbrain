@@ -1,29 +1,73 @@
 (ns graphbrain.gbui.user
+  (:require-macros [hiccups.core :as hiccups])
   (:require [jayq.core :as jq]
-            [goog.net.cookies :as cookies])
+            [goog.net.cookies :as cookies]
+            [hiccups.runtime :as hiccupsrt])
   (:use [jayq.core :only [$]]))
 
-(defonce auto-update-username (atom true))
+(def auto-update-username (atom true))
 
-(defonce username-status (atom "unknown"))
+(def username-status (atom "unknown"))
 
-(defonce email-status (atom "unknown"))
+(def email-status (atom "unknown"))
 
-(defonce submitting (atom false))
+(def submitting (atom false))
+
+(hiccups/defhtml signup-dialog-template []
+  [:div {:class "modal" :role "dialog" :aria-hidden "true" :id "signup-modal"}
+    [:div {:class "modal-dialog"}
+      [:div {:class "modal-content"}
+        [:div {:class "modal-header"}
+          [:a {:class "close" :data-dismiss "modal"} "×"]
+          [:h3 "Register or Login"]]
+          [:div {:class "container-fluid"}
+            [:div {:class "modal-body row" :id "registerLoginBody"}
+              [:div {:class "col-md-6"}
+                [:h5 "REGISTER NEW ACCOUNT"]
+                [:span {:id "signupErrMsg" :class "text-danger"}]
+                [:form {:role "form"}
+                  [:div {:id "name-formgroup" :class "form-group"}
+                    [:label {:class "control-label"} "Name"]
+                    [:input {:id "suName" :type "text" :class "form-control input-sm" :placeholder "Or an alias if you prefer"}]]
+                  [:div {:id "username-formgroup" :class "form-group"}
+                    [:label {:class "control-label"} "Username"]
+                    [:input {:id "suUsername" :type "text" :class "form-control input-sm" :placeholder "Unique identifier"}]]
+                  [:div {:id "email-formgroup" :class "form-group"}
+                    [:label {:class "control-label"} "Email"]
+                    [:input {:id "suEmail" :type "text" :class "form-control input-sm" :placeholder "Will not be seen by other members"}]]
+                  [:div {:id "pass-formgroup" :class "form-group"}
+                    [:label {:class "control-label"} "Password"]
+                    [:input {:id "suPassword" :type "password" :class "form-control input-sm" :placeholder "A good password"}]
+                    [:input {:id "suPassword2" :type "password" :class "form-control input-sm" :placeholder "Confirm password"}]]
+                  [:br]
+                  [:a {:id "signupButton" :class "btn btn-primary"} "Sign Up"]]]
+              [:div {:class "col-md-6"}
+                [:h5 "LOGIN"]
+                [:span {:id "loginErrMsg" :class "text-danger"}]
+                [:form {:role "form"}
+                  [:div {:id "log-email-fieldgroup" :class "form-group"}
+                    [:label {:class "control-label"} "Email or Username"]
+                    [:input {:id "logEmail" :type "text" :class "form-control input-sm"}]]
+                  [:div {:id "log-pass-fieldgroup" :class "form-group"}
+                    [:label {:class "control-label"} "Password"]
+                    [:input {:id "logPassword" :type "password" :class "form-control input-sm"}]]
+                  [:br]
+                  [:a {:id "loginButton" :class "btn btn-primary" :data-dismiss "modal"} "Login"]]]]]
+          [:div {:class "modal-footer"}]]]])
 
 (defn show-signup-dialog!
   []
-  (.modal ($ "#signUpModal") "show"))
+  (.modal ($ "#signup-modal") "show"))
 
 (defn clear-signup-errors!
   []
-  (.removeClass ($ "#nameFieldSet") "control-group error")
-  (.removeClass ($ "#usernameFieldSet") "control-group error")
-  (.removeClass ($ "#emailFieldSet") "control-group error")
-  (.removeClass ($ "#passFieldSet") "control-group error")
+  (.removeClass ($ "#name-fieldgroup") "has-error")
+  (.removeClass ($ "#username-fieldgroup") "has-error")
+  (.removeClass ($ "#email-fieldgroup") "has-error")
+  (.removeClass ($ "#pass-fieldgroup") "has-error")
   (.html ($ "#signupErrMsg") "")
-  (.removeClass ($ "#logEmailFieldSet") "control-group error")
-  (.removeClass ($ "#logPassFieldSet") "control-group error")
+  (.removeClass ($ "#log-email-fieldgroup") "has-error")
+  (.removeClass ($ "#log-pass-fieldgroup") "has-error")
   (.html ($ "#loginErrMsg") ""))
 
 (declare signup!)
@@ -37,13 +81,13 @@
       (if (= status "ok")
         (do
           (reset! username-status "ok")
-          (.removeClass ($ "#usernameFieldSet") "control-group error")
-          (.addClass ($ "#usernameFieldSet") "control-group success")
+          (.removeClass ($ "#username-formgroup") "has-error")
+          (.addClass ($ "#username-formgroup") "has-success")
           (if @submitting (signup!)))
         (do
           (reset! username-status "exists")
-          (.removeClass ($ "#usernameFieldSet") "control-group success")
-          (.addClass ($ "#usernameFieldSet") "control-group error")
+          (.removeClass ($ "#username-formgroup") "has-success")
+          (.addClass ($ "#username-formgroup") "has-error")
           (.html ($ "#signupErrMsg") "Sorry, this username is already in use.")
           (reset! submitting false))))))
 
@@ -56,14 +100,14 @@
       (if (= status "ok")
         (do
           (reset! email-status "ok")
-          (.removeClass ($ "#emailFieldSet") "control-group error")
-          (.addClass ($ "#emailFieldSet") "control-group success")
+          (.removeClass ($ "#email-formgroup") "has-error")
+          (.addClass ($ "#email-formgroup") "has-success")
           (.html ($ "#emailErrMsg") "")
           (if @submitting (signup!)))
         (do
           (reset! email-status "exists")
-          (.removeClass ($ "#emailFieldSet") "control-group success")
-          (.addClass ($ "#emailFieldSet") "control-group error")
+          (.removeClass ($ "#email-formgroup") "has-success")
+          (.addClass ($ "#email-formgroup") "has-error")
           (.html ($ "#signupErrMsg") "Sorry, this email is already in use.")
           (reset! submitting false))))))
 
@@ -129,25 +173,24 @@
         password2 (.val ($ "#suPassword2"))
         filter #"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$"]
     (cond
-     (empty? name) (do (.addClass ($ "#nameFieldSet") "control-group error")
+     (empty? name) (do (.addClass ($ "#name-fieldgroup") "has-error")
                        (.html ($ "#signupErrMsg") "Name cannot be empty.")
                        false)
-     (empty? username) (do (.addClass ($ "#usernameFieldSet") "control-group error")
+     (empty? username) (do (.addClass ($ "#username-fieldgroup") "has-error")
                            (.html ($ "#signupErrMsg") "Username cannot be empty.")
                            false)
-     (empty? email) (do (.addClass ($ "#emailFieldSet") "control-group error")
+     (empty? email) (do (.addClass ($ "#email-fieldgroup") "has-error")
                         (.html ($ "#signupErrMsg") "Email cannot be empty.")
                         false)
      (not (.test filter email)) (do (.addClass
-                                     ($ "#emailFieldSet") "control-group error")
+                                     ($ "#email-fieldgroup") "has-error")
                                     (.html ($ "#signupErrMsg")
                                            "Not a valid email address.")
                                     false)
-     (empty? password) (do (.addClass ($ "#passFieldSet") "control-group error")
+     (empty? password) (do (.addClass ($ "#pass-fieldgroup") "has-error")
                            (.html ($ "#signupErrMsg") "You must specify a password.")
                            false)
-     (not= password password2) (do (.addClass ($ "#passFieldSet")
-                                              "control-group error")
+     (not= password password2) (do (.addClass ($ "#pass-fieldgroup") "has-error")
                                    (.html ($ "#signupErrMsg")
                                           "Passwords do not match.")
                                    false)
@@ -197,7 +240,7 @@
 
 (defn init-signup-dialog!
   []
-  (let [html "<div class='modal hide' id='signUpModal' style='width:650px; height:500px; margin: -295px 0 0 -325px;'>  <div class='modal-header'>    <a class='close' data-dismiss='modal'>×</a>    <h3>Register or Login</h3>  </div>  <div class='modal-body' id='registerLoginBody' style='height:500px; overflow:hidden;'>   <div style='float:left'>      <h5>REGISTER NEW ACCOUNT</h5>      <span id='signupErrMsg' class='error' />      <form class='signupForm'>        <fieldset id='nameFieldSet'>          <label>Name</label>          <input id='suName' type='text' class='span3' placeholder='Or an alias if you prefer'>        </fieldset>        <fieldset id='usernameFieldSet'>          <label>Username</label>          <input id='suUsername' type='text' class='span3' placeholder='Unique identifier'>        </fieldset>        <fieldset id='emailFieldSet'>          <label>Email</label>          <input id='suEmail' type='text' class='span3' placeholder='Will not be seen by other members'>        </fieldset>        <fieldset id='passFieldSet'>          <label>Password</label>          <input id='suPassword' type='password' class='span3' placeholder='A good password'>          <br />          <input id='suPassword2' type='password' class='span3' placeholder='Confirm password'>        </fieldset>            <br />        <a id='signupButton' class='btn btn-primary'>Sign Up</a>      </form>    </div>    <div style='float:right'>     <h5>LOGIN</h5>      <span id='loginErrMsg' class='error' />      <form class='loginForm'>        <fieldset id='logEmailFieldSet'>          <label>Email or Username</label>          <input id='logEmail' type='text' class='span3'>        </fieldset>        <fieldset id='logPassFieldSet'>          <label>Password</label>          <input id='logPassword' type='password' class='span3'>        </fieldset>              <br />        <a id='loginButton' class='btn btn-primary' data-dismiss='modal'>Login</a></form></div></div></div>"]
+  (let [html (signup-dialog-template)]
     (.appendTo ($ html) "body")
     (jq/bind ($ "#signupButton") "click" signup!)
     (jq/bind ($ "#loginButton") "click" login!)

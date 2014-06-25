@@ -28,18 +28,19 @@
 
 (defn get-code
   []
-  (let
-    [prog (gb/getv gbdb "prog/prog")]
-    (if prog
-      (:prog prog) "")))
+  (let [prog (gb/getv gbdb "prog/prog")]
+      (if prog
+        (:prog prog) "")))
 
 (defn get-tests
   []
-  (let
-    [tests (gb/getv gbdb "text/tests")]
-    (if tests
-      (:text tests) "")))
+  (let [tests (gb/getv gbdb "text/tests")]
+      (if tests
+        (:text tests) "")))
 
-(defn user-id->ctxts
-  [user-id]
-  ["c/wordnet" "c/web" user-id "k/emmanuel/psychosis"])
+(defn user->ctxts
+  [user]
+  (let [ctxts (:ctxts user)]
+    (if (nil? ctxts)
+      ["c/wordnet" "c/web" (:id user) "k/emmanuel/psychosis"]
+      (clojure.string/split ctxts #" "))))
