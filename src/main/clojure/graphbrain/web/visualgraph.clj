@@ -9,7 +9,8 @@
             [graphbrain.db.entity :as entity]
             [graphbrain.db.vertex :as vertex]
             [graphbrain.db.urlnode :as url]
-            [graphbrain.db.text :as text])
+            [graphbrain.db.text :as text]
+            [graphbrain.db.context :as context])
   (:import (com.graphbrain.web EdgeLabelTable)))
 
 (def ^:const max-snodes 15)
@@ -200,7 +201,8 @@
   (let [user-id (if user (:id user) "")
         root-id (gb/id->eid gbdb root-id)
         root-id (id/local->global root-id)
-        hyper-edges (gb/id->edges gbdb root-id (common/user-id->ctxts user-id))
+        ctxts (common/user->ctxts user)
+        hyper-edges (gb/id->edges gbdb root-id ctxts)
         hyper-edges (hide-edges hyper-edges)
         visual-edges (filter (complement nil?)
                              (map #(hyper->edge % root-id)
@@ -221,4 +223,5 @@
         snode-map (snodes-limit-size snode-map)]
     (json/write-str {:user user-id
                      :snodes snode-map
-                     :allrelations all-relations})))
+                     :allrelations all-relations
+                     :ctxts (map #(hash-map :id % :name (context/label %)) ctxts)})))

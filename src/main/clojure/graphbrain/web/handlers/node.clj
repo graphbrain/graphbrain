@@ -15,7 +15,7 @@
   [request]
   (let
       [user (common/get-user request)
-       ctxts (common/user-id->ctxts (:id user))
+       ctxts (common/user->ctxts (:id user))
        vert (gb/getv common/gbdb
                      (:* (:route-params request))
                      ctxts)]

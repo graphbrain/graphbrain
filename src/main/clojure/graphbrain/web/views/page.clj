@@ -10,9 +10,8 @@
       [:meta {:description ""}]
       [:meta {:author ""}]
       [:title (str title " - GraphBrain")]
+      [:link {:href "/css/bootstrap.min.css" :type "text/css" :rel "Stylesheet"}]
       css-and-js
-      [:link {:href "/css/bootstrap.css" :type "text/css" :rel "Stylesheet"}]
-      [:link {:href "/css/bootstrap-responsive.css" :rel "stylesheet"}]
       [:script {:src "http://html5shim.googlecode.com/svn/trunk/html5.js"}]]
     [:body
       (body-fun)

@@ -42,14 +42,16 @@ city lights, receding...")
         [:br] [:br] [:br] [:br]
         [:div {:style "margin-bottom:70px;"}
           [:div {:style "text-align:center; float: left; padding-left:150px;"}
-            [:form {:class "form-search", :id "search-field"}
-              [:input {:type "text"
-                       :class "input-medium search-query input-large"
-                       :id "search-input-field"
-                       :placeholder "Search"
-                       :style "border-radius:0px; border-color:#666"}]
-              [:button {:type "submit" :class "btn"} "Search"]]]
+            [:form {:class "form-inline" :role "form" :id "search-field"}
+              [:div {:class "form-group"}
+                [:input {:type "text"
+                         :class "form-control input-lg search-query"
+                         :id "search-input-field"
+                         :placeholder "Search"}]]
+              [:div {:class "form-group"} [:button {:type "submit" :class "btn btn-primary btn-lg"} "Search"]]]]
           [:div {:style "text-align:center; float: right; padding-right:150px;"}
             [:button {:type "button"
-                      :class "btn btn-success btn-large signupLink"
+                      :class "btn btn-success btn-large"
+                      :data-toggle "modal"
+                      :data-target "#signup-modal"
                       :style "font-size:150%"} "Register or Login"]]]]]))

@@ -46,11 +46,12 @@
                 :id "search-input-field"
                 :placeholder "Search"}]]]
      [:div {:class "navbar-element"}
-      (user-menu user)]])
+     (user-menu user)]])
 
    ;; main
    [:div {:id "main-view"}
     [:div {:id "data-view"}
      [:div {:id "graph-view"}]
      [:div {:id "ai-chat"}]]]
-   [:div {:id "rel-list"}]))
+   [:div {:id "rel-list"}]
+   [:div {:id "ctxt-area"}]))
