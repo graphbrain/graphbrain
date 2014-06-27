@@ -70,8 +70,8 @@
         root-id ((request :form-params) "rootId")
         user (common/get-user request)
         root (if root-id (gb/getv common/gbdb root-id
-                                  (common/user-id->ctxts (:id user))))
-        ctxts (common/user-id->ctxts (:id user))]
+                                  (common/user->ctxts user)))
+        ctxts (common/user->ctxts user)]
     (case (sentence-type sentence)
       :fact (process-fact user root sentence ctxts)
       :url (process-url user root sentence ctxts))))
