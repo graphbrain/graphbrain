@@ -16,8 +16,8 @@
     (csv/parse-csv (slurp file))))
 
 (defn- take-data
-  []
-  (take-csv "/Users/telmo/psychosis2.csv"))
+  [filename]
+  (take-csv filename))
 
 (defn- author-list
   [authors]
@@ -33,8 +33,8 @@
    :journal (clojure.string/trim (nth row 18))})
 
 (defn- csv->map
-  []
-  (let [data (take-data)]
+  [filename]
+  (let [data (take-data filename)]
     (filter #(not (empty? (:authors %))) (map row->map data))))
 
 (defn- researcher-node
@@ -119,9 +119,9 @@
   (process-journal! (:journal row) (:article row)))
 
 (defn run!
-  []
+  [filename]
   (prn "running...")
-  (let [rows (csv->map)
+  (let [rows (csv->map filename)
         rows (map-text->nodes rows)]
     (doseq [row rows]
       (process-row! row)))

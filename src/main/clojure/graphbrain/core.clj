@@ -25,5 +25,5 @@
       "wordnet" (wordnet/run!)
       "webapp" (server/run!)
       "removecontext" (rc/run! arg1)
-      "emmanuel" (emmanuel/run!)
+      "emmanuel" (emmanuel/run! arg1)
       (prn (str "Unknown command: " arg)))))

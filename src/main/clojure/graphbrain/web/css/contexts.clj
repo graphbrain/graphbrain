@@ -8,7 +8,7 @@
     :padding (px 5)
     :left (px 0)
     :z-index 2}]
-   [:#ctxt
+   [:.ctxt
    {:display "inline"
     :font-size (px 16)
     :padding (px 10)
