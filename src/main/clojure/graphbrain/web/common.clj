@@ -37,10 +37,3 @@
   (let [tests (gb/getv gbdb "text/tests")]
       (if tests
         (:text tests) "")))
-
-(defn user->ctxts
-  [user]
-  (let [ctxts (:ctxts user)]
-    (if (nil? ctxts)
-      ["c/wordnet" "c/web" (:id user) "k/emmanuel/psychosis"]
-      (clojure.string/split ctxts #" "))))

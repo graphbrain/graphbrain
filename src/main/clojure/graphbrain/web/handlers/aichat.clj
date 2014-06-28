@@ -1,5 +1,6 @@
 (ns graphbrain.web.handlers.aichat
   (:require [graphbrain.web.common :as common]
+            [graphbrain.web.contexts :as contexts]
             [clojure.data.json :as json]
             [graphbrain.db.gbdb :as gb]
             [graphbrain.db.graphjava :as gbj]
@@ -70,8 +71,8 @@
         root-id ((request :form-params) "rootId")
         user (common/get-user request)
         root (if root-id (gb/getv common/gbdb root-id
-                                  (common/user->ctxts user)))
-        ctxts (common/user->ctxts user)]
+                                  (contexts/active-ctxts request user)))
+        ctxts (contexts/active-ctxts request user)]
     (case (sentence-type sentence)
       :fact (process-fact user root sentence ctxts)
       :url (process-url user root sentence ctxts))))

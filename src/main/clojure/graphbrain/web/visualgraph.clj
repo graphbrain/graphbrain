@@ -201,7 +201,6 @@
   (let [user-id (if user (:id user) "")
         root-id (gb/id->eid gbdb root-id)
         root-id (id/local->global root-id)
-        ctxts (common/user->ctxts user)
         hyper-edges (gb/id->edges gbdb root-id ctxts)
         hyper-edges (hide-edges hyper-edges)
         visual-edges (filter (complement nil?)
