@@ -3,6 +3,7 @@
   (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.vertex :as vertex]
             [graphbrain.web.common :as common]
+            [graphbrain.web.contexts :as contexts]
             [graphbrain.web.visualgraph :as vg]
             [graphbrain.web.cssandjs :as css+js]))
 
@@ -15,7 +16,7 @@
   [request]
   (let
       [user (common/get-user request)
-       ctxts (common/user->ctxts (:id user))
+       ctxts (contexts/active-ctxts request user)
        vert (gb/getv common/gbdb
                      (:* (:route-params request))
                      ctxts)]
