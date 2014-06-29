@@ -46,6 +46,10 @@
   [id]
   (str "rem-" (ctxt-id id)))
 
+(defn- add-id
+  [id]
+  (str "add-" (ctxt-id id)))
+
 (hiccups/defhtml ctxt->html [ctxt]
   [:div {:class "dropdown dropup ctxt"}
     [:a {:href "#" :class "dropdown-toggle" :data-toggle "dropdown" :id ctxt} (label ctxt)]
@@ -62,11 +66,32 @@
     (set-ctxts! ctxts))
   (.reload js/location))
 
+(defn add!
+  [id]
+  (let [ctxts (active-ctxts)
+        ctxts (if (some #{id} ctxts) ctxts (conj ctxts id))]
+    (set-ctxts! ctxts))
+  (.reload js/location))
+
+(hiccups/defhtml ctxts->html []
+  [:div {:class "dropdown dropup ctxt"}
+    [:a {:href "#" :class "dropdown-toggle" :data-toggle "dropdown" :id "add-context-dropdown"} "+"]
+    [:ul {:class "dropdown-menu" :role "menu" :aria-labelledby "add-context" :id "add-context"}]])
+
+(defn init-add-context!
+  [ctxts]
+  (let [html (map #(str "<li><a href='#' id=" (add-id (:id %)) ">" (:name %) "</a></li>") ctxts)
+        html (clojure.string/join html)]
+    (.html ($ "#add-context") html))
+  (doseq [ctxt ctxts]
+      (jq/bind ($ (str "#" (add-id (:id ctxt)))) "click" #(add! (:id ctxt)))))
+
 (defn init-contexts!
   []
   (let [ctxts (active-ctxts)
         html (clojure.string/join (map ctxt->html ctxts))
-        html (str html "<div class='ctxt'>+</div>")]
+        html (str html (ctxts->html))]
     (.html ($ "#ctxt-area") html)
+    (init-add-context! (:ctxts @g/graph))
     (doseq [ctxt ctxts]
       (jq/bind ($ (str "#" (rem-id ctxt))) "click" #(remove! ctxt)))))
