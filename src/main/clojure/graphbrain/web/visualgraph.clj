@@ -197,7 +197,7 @@
              [k (snode-limit-size v)])))
 
 (defn generate
-  [gbdb root-id user ctxts]
+  [gbdb root-id user ctxts all-ctxts]
   (let [user-id (if user (:id user) "")
         root-id (gb/id->eid gbdb root-id)
         root-id (id/local->global root-id)
@@ -223,4 +223,4 @@
     (json/write-str {:user user-id
                      :snodes snode-map
                      :allrelations all-relations
-                     :ctxts (map #(hash-map :id % :name (context/label %)) ctxts)})))
+                     :ctxts (map #(hash-map :id % :name (context/label %)) all-ctxts)})))

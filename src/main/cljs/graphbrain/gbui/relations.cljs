@@ -29,20 +29,6 @@
       (if (not (missing (first sn)))
         (anim/add-anim (anim/anim-lookat (second sn)))))))
 
-;;  g.addSNodesFromJSON(msg);
-;;  initRelations();
-;;  sid = '';
-;;  _ref = msg['snodes'];
-;;  for (k in _ref) {
-;;    v = _ref[k];
-;;    sid = k;
-;;  }
-;;  if (sid !== '') {
-;;    snode = g.snodes[sid];
-;;    return addAnim(new AnimLookAt(snode));
-;;  }
-;;};
-
 (defn relation-submit
   [msg]
   (let [event-data (.-data msg)]

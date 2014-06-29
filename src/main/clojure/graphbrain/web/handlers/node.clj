@@ -8,8 +8,8 @@
             [graphbrain.web.cssandjs :as css+js]))
 
 (defn- js
-  [vert user ctxts]
-  (str "var data = " (vg/generate common/gbdb (:id vert) user ctxts) ";\n"
+  [vert user ctxts all-ctxts]
+  (str "var data = " (vg/generate common/gbdb (:id vert) user ctxts all-ctxts) ";\n"
     "var errorMsg = \"\";\n"))
 
 (defn handle-node
@@ -17,6 +17,7 @@
   (let
       [user (common/get-user request)
        ctxts (contexts/active-ctxts request user)
+       all-ctxts (contexts/user->ctxts user)
        vert (gb/getv common/gbdb
                      (:* (:route-params request))
                      ctxts)]
@@ -25,4 +26,4 @@
           :user user
           :page :node
           :body-fun #(node-view user)
-          :js (js vert user ctxts))))
+          :js (js vert user ctxts all-ctxts))))
