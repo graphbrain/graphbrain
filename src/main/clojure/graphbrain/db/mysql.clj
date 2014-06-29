@@ -306,6 +306,11 @@
   (map :lid (jdbc/query (dbs) ["SELECT lid FROM globallocal WHERE gid=?"
                                gid])))
 
+(defn first-alt
+  [dbs gid]
+  (:lid (first (jdbc/query (dbs) ["SELECT lid FROM globallocal WHERE gid=? LIMIT 1"
+                                  gid]))))
+
 (defn remove-context!
   [dbs ctxt]
   (jdbc/execute! (dbs) ["DELETE FROM edges WHERE id like ?"

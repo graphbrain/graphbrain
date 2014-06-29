@@ -19,7 +19,10 @@
      (loop [cs ctxts
             vertex nil]
        (if (or vertex (empty? cs))
-         vertex
+         (if vertex vertex
+           (let [id (mysql/first-alt gbdb (id/local->global id))
+                 vertex (if id (maps/local->global (getv gbdb id)))]
+             vertex))
          (recur (rest cs) (getv gbdb (id/global->local id (first cs))))))))
 
 (defn exists?
@@ -97,7 +100,12 @@
   [gbdb id]
   (if (= (id/id->type id) :entity)
     (let [eid (:eid (getv gbdb id))]
-      (if eid eid id)) id))
+      (if eid eid
+        (let [gid (id/local->global id)
+              lid (mysql/first-alt gbdb gid)
+              eid (if lid (id->eid gbdb lid))]
+          (if eid (id/local->global eid) id))))
+    id))
 
 (defn- patid->local-eid
   [gbdb patid owner-id]
