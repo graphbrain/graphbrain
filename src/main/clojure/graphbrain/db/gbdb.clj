@@ -103,7 +103,7 @@
       (if eid eid
         (let [gid (id/local->global id)
               lid (mysql/first-alt gbdb gid)
-              eid (if lid (id->eid gbdb lid))]
+              eid (if lid (:eid (getv gbdb lid)))]
           (if eid (id/local->global eid) id))))
     id))
 
@@ -127,12 +127,15 @@
   (let [f (fn [ctxt]
             (mysql/pattern->edges
              gbdb
-             (map #(patid->local-eid gbdb % ctxt) pattern)))]
+             (map #(patid->local-eid gbdb % ctxt) pattern)
+             ctxt))]
     (f->edges f ctxts)))
 
 (defn id->edges
   [gbdb id ctxts]
-  (let [f #(mysql/id->edges gbdb (id->eid gbdb (id/global->local id %)))]
+  (let [f #(mysql/id->edges gbdb
+                            (id->eid gbdb (id/global->local id %))
+                            %)]
     (f->edges f ctxts)))
 
 (defn vertex->edges
