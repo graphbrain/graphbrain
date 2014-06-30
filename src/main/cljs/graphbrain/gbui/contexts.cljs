@@ -40,7 +40,7 @@
 
 (defn- ctxt-id
   [id]
-  (clojure.string/replace id "/" "-"))
+  (clojure.string/replace id #"\W" "_"))
 
 (defn- rem-id
   [id]

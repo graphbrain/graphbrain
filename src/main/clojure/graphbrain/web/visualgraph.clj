@@ -27,10 +27,7 @@
 (defn- snode-id
   [rel-pos]
   (str (-> (first rel-pos)
-           (.replace "/" "_")
-           (.replace " " "_")
-           (.replace "." "_")
-           (.replace "+" "_"))
+           (clojure.string/replace #"\W" "_"))
        "_" (second rel-pos)))
 
 (defn- hyper->edge
