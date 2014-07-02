@@ -7,6 +7,10 @@
             [cljs.reader :as reader])
   (:use [jayq.core :only [$]]))
 
+(defn- key->str
+  [key]
+  (clojure.string/join (rest (str key))))
+
 (defn- last-part
   [id]
   (let [ps (clojure.string/split id #"/")]
@@ -50,10 +54,17 @@
   [id]
   (str "add-" (ctxt-id id)))
 
+(defn- button-id
+  [id]
+  (str "button-" (ctxt-id id)))
+
 (hiccups/defhtml ctxt->html [ctxt]
-  [:div {:class "dropdown dropup ctxt"}
-    [:a {:href "#" :class "dropdown-toggle" :data-toggle "dropdown" :id ctxt} (label ctxt)]
-    [:ul {:class "dropdown-menu" :role "menu" :aria-labelledby ctxt}
+  [:div {:class "dropdown dropup ctxt" :id (button-id ctxt)}
+   [:a {:href "#"
+        :class "dropdown-toggle"
+        :data-toggle "dropdown"
+        :id (ctxt-id ctxt)} (label ctxt)]
+    [:ul {:class "dropdown-menu" :role "menu" :aria-labelledby (ctxt-id ctxt)}
       [:li
         [:a {:href "#" :id (rem-id ctxt)} "Remove"]]
       [:li
@@ -80,18 +91,29 @@
 
 (defn init-add-context!
   [ctxts]
-  (let [html (map #(str "<li><a href='#' id=" (add-id (:id %)) ">" (:name %) "</a></li>") ctxts)
+  (let [ctxt-ids (keys ctxts)
+        html (map #(str "<li><a href='#' id="
+                        (add-id (key->str %))
+                        ">"
+                        (:name (% ctxts))
+                        "</a></li>") ctxt-ids)
         html (clojure.string/join html)]
-    (.html ($ "#add-context") html))
-  (doseq [ctxt ctxts]
-      (jq/bind ($ (str "#" (add-id (:id ctxt)))) "click" #(add! (:id ctxt)))))
+    (.html ($ "#add-context") html)
+    (doseq [ctxt ctxt-ids]
+      (jq/bind ($ (str "#"
+                       (add-id (key->str ctxt))))
+               "click"
+               #(add! (key->str ctxt))))))
 
 (defn init-contexts!
   []
   (let [ctxts (active-ctxts)
+        all-ctxts (:ctxts @g/graph)
         html (clojure.string/join (map ctxt->html ctxts))
         html (str html (ctxts->html))]
     (.html ($ "#ctxt-area") html)
-    (init-add-context! (:ctxts @g/graph))
+    (init-add-context! all-ctxts)
     (doseq [ctxt ctxts]
+      (jq/css ($ (str "#" (button-id ctxt))) {:background
+                                              (:color ((keyword ctxt) all-ctxts))})
       (jq/bind ($ (str "#" (rem-id ctxt))) "click" #(remove! ctxt)))))

@@ -268,8 +268,6 @@
 (defn pattern->edges
   [dbs pattern owner-id]
   (let [ids (filter #(not= % "*") pattern)
-        ;;owner-id (id/owner (first ids))
-        ;;owner-id (if owner-id owner-id global-owner)
         ids (map id/local->global ids)
         start-str (str owner-id " " (clojure.string/join " " ids) " ")
         end-str (str+1 start-str)
@@ -279,9 +277,7 @@
 
 (defn id->edges
   [dbs center-id owner-id]
-  (let [;;owner-id (id/owner center-id)
-        ;;owner-id (if owner-id owner-id global-owner)
-        gcenter-id (id/local->global center-id)
+  (let [gcenter-id (id/local->global center-id)
         start-str (str owner-id " " gcenter-id " ")
         end-str (str+1 start-str)
         rs (jdbc/query (dbs) ["SELECT id, score FROM edgeperms WHERE id>=? AND id<?"

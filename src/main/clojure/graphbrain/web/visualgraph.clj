@@ -1,7 +1,7 @@
 (ns graphbrain.web.visualgraph
   (:require [clojure.data.json :as json]
             [graphbrain.web.common :as common]
-            [graphbrain.web.colors :as colors]
+            [graphbrain.web.contexts :as contexts]
             [graphbrain.db.gbdb :as gb]
             [graphbrain.db.maps :as maps]
             [graphbrain.db.id :as id]
@@ -44,12 +44,14 @@
         :id1 (nth (maps/participant-ids edge) 0)
         :id2 (nth (maps/participant-ids edge) 2)
         :score (:score edge)
+        :ctxts (:ctxts edge)
         :parent edge})
      (= c 2)
      {:edge-type (nth (maps/ids edge) 0)
       :id1 (nth (maps/ids edge) 1)
       :id2 (nth (maps/ids edge) 2)
       :score (:score edge)
+      :ctxts (:ctxts edge)
       :parent edge}
      :else nil)))
 
@@ -69,10 +71,6 @@
 (defn- edge-node-map
   [edges root-id]
   (reduce #(add-edge-to-edge-node-map %1 %2 root-id) {} edges))
-
-(defn- link-color
-  [label]
-  (nth colors/colors (mod (Math/abs (.hashCode label)) (count colors/colors))))
 
 (defn- fix-label
   [label]
@@ -106,7 +104,8 @@
         node (if (nil? node) (maps/id->vertex node-id) node)
         node (maps/local->global node)
         node-edge (:id (:parent edge))
-        score (:score edge)]
+        score (:score edge)
+        ctxts (:ctxts edge)]
     (condp = (:type node)
       :entity (let [sub (entity/subentities node)
                     sub (map #(hash-map :id (id/eid->id %)
@@ -116,7 +115,8 @@
                  :text (entity/label node-id)
                  :sub sub
                  :edge node-edge
-                 :score score})
+                 :score score
+                 :ctxts ctxts})
       :url (let [title (url/title gbdb (:id node) ctxts)
                  url (url/url node)]
              {:id (:id node)
@@ -125,18 +125,21 @@
               :url url
               :icon (str "http://g.etfv.co/" url)
               :edge node-edge
-              :score score})
+              :score score
+              :ctxts ctxts})
       :user {:id (:id node)
              :type "user"
              :text (:name node)
              :sub [{:id "" :text "GraphBrain user"}]
              :edge node-edge
-             :score score}
+             :score score
+             :ctxts ctxts}
       :text {:id (:id node)
              :type "text"
              :text (:text (text/id->text gbdb (:id node)))
              :edge node-edge
-             :score score}
+             :score score
+             :ctxts ctxts}
       {:id (:id node)
        :type "text"
        :text (:id node)
@@ -152,7 +155,6 @@
   (let [etype (first rp)
         rpos (second rp)
         label (link-label etype rpos root-node)
-        color (link-color etype)
         nodes (map #(node->map gbdb
                                (se->node-id % rp)
                                %
@@ -161,8 +163,7 @@
     {:nodes nodes
      :etype etype
      :rpos rpos
-     :label label
-     :color color}))
+     :label label}))
 
 (defn- snode-map
   [gbdb en-map root-node ctxts]
@@ -220,4 +221,8 @@
     (json/write-str {:user user-id
                      :snodes snode-map
                      :allrelations all-relations
-                     :ctxts (map #(hash-map :id % :name (context/label %)) all-ctxts)})))
+                     :ctxts (zipmap all-ctxts
+                                    (map #(hash-map
+                                           :name (context/label %)
+                                           :color (contexts/color % user-id))
+                                         all-ctxts))})))

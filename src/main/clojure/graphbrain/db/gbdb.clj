@@ -113,13 +113,34 @@
     patid
     (id/global->local (id->eid gbdb patid) owner-id)))
 
+(defn- edge-with-ctxts
+  [edge edges-maps]
+  (loop [e edge
+         em edges-maps]
+    (if (empty? em)
+      e
+      (recur
+       (let [emap (first em)]
+         (if (some #{e} (:edges emap))
+           (assoc e :ctxts (conj (:ctxts e) (:ctxt emap)))
+           e))
+       (rest em)))))
+
+(defn- edges-with-ctxts
+  [edges edges-maps]
+  (map #(edge-with-ctxts % edges-maps) edges))
+
 (defn f->edges
   [f ctxts]
-  (let [edges-sets (map f ctxts)
-        edges-sets (map #(map maps/local->global %) edges-sets)
-        edges (into #{} (apply clojure.set/union edges-sets))
+  (let [edges-maps (map
+                    #(hash-map
+                      :ctxt %
+                      :edges (map maps/local->global (f %)))
+                    ctxts)
+        edges (into #{} (apply clojure.set/union (map :edges edges-maps)))
         edges (filter #(not (some #{(maps/negate %)} edges)) edges)
-        edges (filter maps/positive? edges)]
+        edges (filter maps/positive? edges)
+        edges (edges-with-ctxts edges edges-maps)]
     edges))
 
 (defn pattern->edges

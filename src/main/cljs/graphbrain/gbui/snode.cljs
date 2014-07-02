@@ -93,9 +93,13 @@
     (move-to snode-id x y z)))
 
 (defn set-color
-  [snode-id color]
+  [snode-id snode]
+  (let [nodes (:nodes snode)
+        ctxt (first (:ctxts (first nodes)))
+        all-ctxts (:ctxts @g/graph)
+        color (:color ((keyword ctxt) all-ctxts))]
     (jq/css ($ (str "#" snode-id)) {:border-color color})
-    (jq/css ($ (str "#" snode-id " .snode-label")) {:background color}))
+    (jq/css ($ (str "#" snode-id " .snode-label")) {:background color})))
 
 (defn place
   [snode-id]
@@ -136,4 +140,4 @@
             snode-vis (assoc snode-vis :size [width height])]
         (reset! g/graph-vis (assoc-in @g/graph-vis [:snodes snode-id] snode-vis)))
       (if (not (is-root snode-id))
-        (set-color snode-id (:color snode))))))
+        (set-color snode-id snode)))))
