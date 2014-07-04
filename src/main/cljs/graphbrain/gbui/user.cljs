@@ -220,7 +220,8 @@
   []
   (cookies/set "username" "" 8640000 "/")
   (cookies/set "session" "" 8640000 "/")
-  (.reload js/location))
+  #_(.reload js/location)
+  (set! js/document.location.href "/"))
 
 (defn username-changed!
   [msg]
