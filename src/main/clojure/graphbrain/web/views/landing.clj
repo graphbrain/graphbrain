@@ -41,7 +41,7 @@ city lights, receding...")
             [:a {:href "http://algopol.fr"} "Algopol Project"]]]
         [:br] [:br] [:br] [:br]
         [:div {:style "margin-bottom:70px;"}
-          [:div {:style "text-align:center; float: left; padding-left:150px;"}
+          #_[:div {:style "text-align:center; float: left; padding-left:150px;"}
             [:form {:class "form-inline" :role "form" :id "search-field"}
               [:div {:class "form-group"}
                 [:input {:type "text"
@@ -49,7 +49,7 @@ city lights, receding...")
                          :id "search-input-field"
                          :placeholder "Search"}]]
               [:div {:class "form-group"} [:button {:type "submit" :class "btn btn-primary btn-lg"} "Search"]]]]
-          [:div {:style "text-align:center; float: right; padding-right:150px;"}
+          [:div {:style "text-align:center; xfloat: right; xpadding-right:150px;"}
             [:button {:type "button"
                       :class "btn btn-success btn-large"
                       :data-toggle "modal"
