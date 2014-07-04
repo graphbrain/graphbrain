@@ -35,3 +35,10 @@
 (defn check-session
   [user candidate]
   (= (:session user) candidate))
+
+(defn user->ctxts
+  [user]
+  (let [ctxts (:ctxts user)]
+    (if (nil? ctxts)
+      ["c/wordnet" "c/web" (:id user)]
+      (clojure.string/split ctxts #" "))))

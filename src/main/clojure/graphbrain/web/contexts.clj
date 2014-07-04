@@ -1,13 +1,6 @@
 (ns graphbrain.web.contexts
   (:require [graphbrain.web.colors :as colors]))
 
-(defn user->ctxts
-  [user]
-  (let [ctxts (:ctxts user)]
-    (if (nil? ctxts)
-      ["c/wordnet" "c/web" (:id user)]
-      (clojure.string/split ctxts #" "))))
-
 (defn active-ctxts
   [response user]
   (let [ctxts (:value ((response :cookies) "ctxts"))]
