@@ -19,12 +19,12 @@
 (defn -main
   [& args]
   (let [opts (cli/parse-opts args cli-options)
-        arg (first (:arguments opts))
-        arg1 (second (:arguments opts))
-        arg2 (nth (:arguments opts) 2)]
+        arg (first (:arguments opts))]
     (case arg
       "wordnet" (wordnet/run!)
       "webapp" (server/run!)
-      "addcontext" (ctxts/add-context-to-user! arg1 arg2)
-      "emmanuel" (emmanuel/run! arg1)
+      "addcontext" (ctxts/add-context-to-user!
+                    (second (:arguments opts))
+                    (nth (:arguments opts) 2))
+      "emmanuel" (emmanuel/run! (second (:arguments opts)))
       (prn (str "Unknown command: " arg)))))
