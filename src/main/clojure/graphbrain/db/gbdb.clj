@@ -215,6 +215,11 @@
   [gbdb global-id]
   (mysql/alts gbdb global-id))
 
-(defn remove-context!
-  [gbdb ctxt]
-  (mysql/remove-context! gbdb ctxt))
+(defn add-ctxt-to-user!
+  [gbdb user ctxt-id]
+  (let [ctxts (user/user->ctxts user)]
+    (if (not (some #{ctxt-id} ctxts))
+      (let [ctxts (conj ctxts ctxt-id)
+            ctxts-str (clojure.string/join " " ctxts)
+            user (assoc user :ctxts ctxts-str)]
+        (update! gbdb user)))))
