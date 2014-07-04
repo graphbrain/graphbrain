@@ -5,7 +5,7 @@
   [response user]
   (let [ctxts (:value ((response :cookies) "ctxts"))]
     (if (nil? ctxts)
-      ["c/wordnet" "c/web" (:id user) "k/emmanuel/psychosis"]
+      ["c/wordnet" "c/web" (:id user)]
       (clojure.string/split ctxts #":"))))
 
 (defn color
