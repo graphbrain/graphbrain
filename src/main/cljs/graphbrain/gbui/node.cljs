@@ -18,7 +18,11 @@
         t-div-id (str "t" div-id)
         html (str "<div class='node-main'>")
         html (str html "<div class='" title-class "'" "id='" t-div-id "'>")
-        html (str html "<a href='/node/" (:id node) "' id='" div-id "'>")
+        html (str html "<a href='/node/"
+                  (js/encodeURIComponent (:id node))
+                  "' id='"
+                  div-id
+                  "'>")
         html (str html (:text node))
         html (str html "</a></div><br />")
         icon (:icon node)
@@ -59,7 +63,11 @@
         t-div-id (str "t" div-id)
         html (str "<div class='" main-class  "'>")
         html (str html "<div class='" title-class "'" "id='" t-div-id "'>")
-        html (str html "<a href='/node/" (:id node) "' id='" div-id "'>")
+        html (str html "<a href='/node/"
+                  (js/encodeURIComponent (:id node))
+                  "' id='"
+                  div-id
+                  "'>")
         html (str html (:text node) "&nbsp;")
         html (str html "</a></div>")
         sub-txt (subtext (:sub node))
