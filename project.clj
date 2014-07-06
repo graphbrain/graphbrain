@@ -1,6 +1,7 @@
 (defproject graphbrain "0.1.0-SNAPSHOT"
   :description "GraphBrain project"
   :url "http://graphbrain.com/"
+  :jvm-opts ["-Xmx768M"]
   :dependencies  [[org.clojure/clojure "1.6.0"]
                   [org.clojure/tools.cli "0.3.1"]
                   [commons-io/commons-io "2.4"]
