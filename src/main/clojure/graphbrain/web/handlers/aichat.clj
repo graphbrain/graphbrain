@@ -21,7 +21,7 @@
 (defn- aichat-reply
   [root-id vertex sentence]
   (let [goto-id (if (maps/edge? vertex)
-                  (second (maps/ids vertex))
+                  (id/eid->id (second (maps/ids vertex)))
                   root-id)]
     (json/write-str {:sentence sentence
                      :newedges (list (:id vertex))
@@ -34,15 +34,15 @@
     :url :fact))
 
 (defn- disambig-id
-  [id eid ctxts]
+  [id text ctxts]
   (if (= (id/id->type id) :entity)
-    (eg/guess-eid common/gbdb (id/last-part id) eid ctxts)
+    (eg/guess-eid common/gbdb (id/last-part id) text nil ctxts)
     id))
 
 (defn- disambig-edge
-  [edge eid ctxts]
+  [edge text ctxts]
   (let [ids (maps/ids edge)
-        ids (map #(disambig-id % eid ctxts) ids)]
+        ids (map #(disambig-id % text ctxts) ids)]
     (maps/ids->edge ids)))
 
 (defn- process-fact
@@ -54,7 +54,7 @@
        vertex (gbj/vertex-obj->map
                (. (first (. (first ctxts-list) getCtxts)) getTopRetVertex))]
     (if (maps/edge? vertex)
-      (let [edge (disambig-edge vertex "xpto" ctxts)
+      (let [edge (disambig-edge vertex sentence ctxts)
             edge (assoc edge :score 1)]
         (gb/putv! common/gbdb edge (:id user))
         (aichat-reply (:id root) edge (:id edge))))))

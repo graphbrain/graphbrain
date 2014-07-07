@@ -24,4 +24,3 @@
               title-id (second (maps/participant-ids title-edge))
               title-node (text/id->text gbdb title-id)]
           (:text title-node)))))
-

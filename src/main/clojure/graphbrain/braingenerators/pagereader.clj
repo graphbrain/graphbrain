@@ -6,6 +6,8 @@
             [graphbrain.db.text :as text]
             [graphbrain.braingenerators.webtools :as webtools]
             [graphbrain.braingenerators.htmltools :as htmltools]
+            [graphbrain.braingenerators.nlptools :as nlp]
+            [graphbrain.braingenerators.wordgraph :as wg]
             [graphbrain.braingenerators.meat :as meat]
             [graphbrain.braingenerators.ngrams :as ngrams]
             [graphbrain.disambig.entityguesser :as eg]))
@@ -18,7 +20,7 @@
     (not (some part-of ngram-set))))
 
 (defn ngram->entity
-  [gbdb ngrams-graph ng-ent-map ngram ctxts]
+  [gbdb ngrams-graph ng-ent-map ngram text ctxts]
   (if (ng-ent-map ngram) ng-ent-map
       (let [ngram-str (ngrams/ngram->str ngram) 
             components (keys (:out (ngrams-graph ngram)))
@@ -33,16 +35,17 @@
                              ngrams-graph
                              nem
                              (first comps)
+                             text
                              ctxts)
                             (rest comps))))
             eid (if (empty? components)
-                  (id/name+classes->eid ngram-str ["topic"])
+                  nil
                   (id/name+comps->eid ngram-str (map #(:eid (ng-ent-map %))
                                                      components)))]
-        (assoc ng-ent-map ngram (eg/guess gbdb ngram-str eid ctxts)))))
+        (assoc ng-ent-map ngram (eg/guess gbdb ngram-str text eid ctxts)))))
 
 (defn ngrams-graph->entities
-  [gbdb ngrams-graph ctxts]
+  [gbdb ngrams-graph text ctxts]
   (loop [ngs ngrams-graph
          ng-ent-map {}]
     (if (empty? ngs)
@@ -53,14 +56,38 @@
               ngrams-graph
               ng-ent-map
               (first (first ngs))
+              text
               ctxts)))))
+
+
+(defn ngram->text
+  [ngram]
+  (clojure.string/join " "
+   (apply vector (map #(str (:word %) " " (:lemma %)) (:words ngram)))))
+
+(defn ngrams->text
+  [ngrams]
+  (clojure.string/join " " (apply vector (map ngram->text ngrams))))
+
+(defn prgraph->text
+  [prgraph]
+  (let [words (keys prgraph)]
+    (clojure.string/join " "
+                         (map #(str (:word %) " " (:lemma %)) words))))
 
 (defn html->entities
   [gbdb html ctxts]
-  (let [ngrams (ngrams/html->ngrams html)
+  (let [sentences (nlp/html->sentences html)
+        prgraph (wg/words->prgraph (nlp/sentences->words sentences))
+        twords (wg/prgraph->topwords prgraph)
+        ngrams (ngrams/sorted-ngrams
+                (ngrams/scored-ngrams
+                 (ngrams/ngrams-with-pr
+                  (ngrams/topwords->ngrams twords sentences) prgraph)))
+        text (prgraph->text prgraph)
         ngrams-graph (ngrams/ngrams->graph ngrams)
         ngrams (ngrams/sorted-ngrams (keys ngrams-graph))]
-    (ngrams-graph->entities gbdb ngrams-graph ctxts)))
+    (ngrams-graph->entities gbdb ngrams-graph text ctxts)))
 
 (defn url+html->edges
   [gbdb url-str html ctxts]
