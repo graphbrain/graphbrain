@@ -28,7 +28,7 @@
                    ngrams
                    (conj ngrams ngram))))))))
 
-(defn- topwords->ngrams
+(defn topwords->ngrams
   [twords sentences]
   (loop [slist sentences
          ngrams #{}]
@@ -48,7 +48,7 @@
   [words graph]
   (into [] (map #(word-with-pr % graph) words)))
 
-(defn- ngrams-with-pr
+(defn ngrams-with-pr
   [ngrams graph]
   (map #(assoc % :words (words-with-pr (:words %) graph)) ngrams))
 
@@ -59,7 +59,7 @@
   [ngram]
   (average (map #(:pr %) (:words ngram))))
 
-(defn- scored-ngrams
+(defn scored-ngrams
   [ngrams]
   (map #(assoc % :score (ngram-score %)) ngrams))
 

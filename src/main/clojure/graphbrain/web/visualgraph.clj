@@ -105,7 +105,7 @@
         node (maps/local->global node)
         node-edge (:id (:parent edge))
         score (:score edge)
-        ctxts (:ctxts edge)]
+        ectxts (:ctxts edge)]
     (condp = (:type node)
       :entity (let [sub (entity/subentities node)
                     sub (map #(hash-map :id (id/eid->id %)
@@ -116,7 +116,7 @@
                  :sub sub
                  :edge node-edge
                  :score score
-                 :ctxts ctxts})
+                 :ctxts ectxts})
       :url (let [title (url/title gbdb (:id node) ctxts)
                  url (url/url node)]
              {:id (:id node)
@@ -126,25 +126,26 @@
               :icon (str "http://g.etfv.co/" url)
               :edge node-edge
               :score score
-              :ctxts ctxts})
+              :ctxts ectxts})
       :user {:id (:id node)
              :type "user"
              :text (:name node)
              :sub [{:id "" :text "GraphBrain user"}]
              :edge node-edge
              :score score
-             :ctxts ctxts}
+             :ctxts ectxts}
       :text {:id (:id node)
              :type "text"
              :text (:text (text/id->text gbdb (:id node)))
              :edge node-edge
              :score score
-             :ctxts ctxts}
+             :ctxts ectxts}
       {:id (:id node)
        :type "text"
        :text (:id node)
        :edge node-edge
-       :score score})))
+       :score score
+       :ctxts ectxts})))
 
 (defn- se->node-id
   [se rp]
