@@ -14,6 +14,10 @@
   [word]
   (pos-first-char-is? word "J"))
 
+(defn verb?
+  [word]
+  (pos-first-char-is? word "V"))
+
 (defn word-obj->word
   [word-obj]
   {:word (clojure.string/lower-case (. word-obj getWord))
