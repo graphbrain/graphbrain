@@ -1,25 +1,78 @@
 (ns graphbrain.eco.eco
-  (:require [graphbrain.eco.words :as words]
+  (:require [graphbrain.db.id :as id]
+            [graphbrain.eco.words :as words]
             [graphbrain.eco.word :as word]))
 
 (defn verb
   [word]
   (word/verb? word))
 
-(defn not-verb
+(defn !verb
   [word]
   (not (verb word)))
 
-(defn- chunk-def->chunk
+(defn ind
+  [word]
+  (word/indicator? word))
+
+(defn !ind
+  [word]
+  (not (ind word)))
+
+(defn adverb
+  [word]
+  (word/adverb? word))
+
+(defn !adverb
+  [word]
+  (not (adverb word)))
+
+(defn adjective
+  [word]
+  (word/adjective? word))
+
+(defn !adjective
+  [word]
+  (not (adjective word)))
+
+(defn det
+  [word]
+  (word/det? word))
+
+(defn !det
+  [word]
+  (not (det word)))
+
+(defn w
+  [word-str]
+  (fn [word] (= (:word word) word-str)))
+
+(defn !w
+  [word-str]
+  (fn [word] (not (= (:word word) word-str))))
+
+(defn ends-with
+  [words1 words2]
+  (= (take-last (count words2) words1) words2))
+
+(defn entity
+  [words]
+  (id/sanitize (clojure.string/join " " (map :word words))))
+
+(defn rel
+  [words]
+  (str "r/" (entity words)))
+
+(defn chunk-def->chunk
   [chunk-def]
   {:var (first chunk-def)
    :word-conds (second chunk-def)})
 
-(defmacro ecorules
+(defmacro ecoparser
   [name]
   `(def ~name []))
 
-(defmacro ecorule
+(defmacro eco-wv
   [rules chunks f]
   `(def ~rules
      (conj ~rules
@@ -37,14 +90,6 @@
                              (sort (apply vector
                                     (map first (partition 2 (destructure chunks))))))
                       f)})))
-
-(ecorules testrules)
-
-(ecorule testrules
-         [a [not-verb]
-          b [verb]
-          c [not-verb]]
-         (str "verb: " b))
 
 (defn eval-chunk-word
   [chunk word]
@@ -75,14 +120,17 @@
                   (assoc results (:var chunk) subsent)
                   (drop (count subsent) rest-of-sentence))))))))
 
-(defn eval-rules
-  [rules sentence]
-  (let [words (words/str->words sentence)]
-    (loop [rs rules]
-      (if (not (empty? rs))
-        (let [rule (first rs)
-              result (eval-rule rule words)]
-          (if result
-            (let [ks (sort (keys result))]
-              (apply (:f rule) (map #(% result) ks)))
-            (recur (rest rs))))))))
+(defn parse
+  [rules words]
+  (loop [rs rules]
+    (if (not (empty? rs))
+      (let [rule (first rs)
+            result (eval-rule rule words)]
+        (if result
+          (let [ks (sort (keys result))]
+            (apply (:f rule) (map #(% result) ks)))
+          (recur (rest rs)))))))
+
+(defn parse-str
+  [rules s]
+  (parse rules (words/str->words s)))
