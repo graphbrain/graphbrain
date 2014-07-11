@@ -11,9 +11,9 @@
          b [!verb]
          verb [verb]
          c [!verb]]
-        (let [x (parse chat a)
-              y (parse chat b)
-              z (parse chat (concat b verb c))
+        (let [x (p chat a)
+              y (p chat b)
+              z (p chat (concat b verb c))
               k ["r/has" y x]]
           ["r/+list" k z]))
 
@@ -26,7 +26,7 @@
          c [!verb]]
         (let [x (concat a verb1 b)
               y (concat a verb2 c)]
-          ["r/+list" (parse chat x) (parse chat y)]))
+          ["r/+list" (p chat x) (p chat y)]))
 
 (eco-wv chat
         [a [!verb]
@@ -50,8 +50,8 @@
          in2 [ind]
          e [!verb]]
         (if (not (ends-with (concat in1 c) (concat in2 e)))
-          (let [x (parse chat (concat a verb b in1 c))
-                y (parse chat (concat a verb d in2 e))]
+          (let [x (p chat (concat a verb b in1 c))
+                y (p chat (concat a verb d in2 e))]
             ["r/+list" x y])))
 
 (eco-wv chat
@@ -62,8 +62,8 @@
          c [!verb !ind]
          in [ind]
          d [!verb]]
-        (let [x (parse chat (concat a verb b in d))
-              y (parse chat (concat a verb c in d))]
+        (let [x (p chat (concat a verb b in d))
+              y (p chat (concat a verb c in d))]
           ["r/+list" x y]))
 
 (eco-wv chat
@@ -81,63 +81,63 @@
          verb [verb]
          in [ind]
          b [!verb]]
-        (let [orig (parse chat a)
+        (let [orig (p chat a)
               rel (rel (concat verb in))
-              targ (parse chat b)]
+              targ (p chat b)]
           [rel orig targ]))
 
 (eco-wv chat
         [a [!verb]
          verb [verb]
          c [!verb]]
-        (let [orig (parse chat a)
+        (let [orig (p chat a)
               rel (rel verb)
-              targ (parse chat c)]
+              targ (p chat c)]
           [rel orig targ]))
 
 (eco-wv chat
         [a [!verb (!w "of")]
          x0 [(w "of")]
          b [verb]]
-        (let [x (parse chat a)
-              y (parse chat b)]
+        (let [x (p chat a)
+              y (p chat b)]
           ["r/+of" x y]))
 
 (eco-wv chat
         [a [(!w "'s")]
          x0 [(w "'s")]
          b []]
-        (let [x (parse chat a)
-              y (parse chat b)]
+        (let [x (p chat a)
+              y (p chat b)]
           ["r/+poss" x y]))
 
 (eco-wv chat
         [a [(!w "in")]
          x0 [(w "in")]
          b []]
-        (let [x (parse chat a)
-              y (parse chat b)]
+        (let [x (p chat a)
+              y (p chat b)]
           ["r/+in" x y]))
 
 (eco-wv chat
         [prop [#(or (adjective %) (adverb %))]
          obj [!verb]]
-        (let [x (parse chat prop)
-              y (parse chat obj)]
+        (let [x (p chat prop)
+              y (p chat obj)]
           ["r/+prop" y x]))
 
 (eco-wv chat
         [a [det]
          no-dt [!verb]]
-        (parse chat no-dt))
+        (p chat no-dt))
 
-#_(wv ("i")
-    ()
-  $user)
+(eco-wv chat
+        [x0 [(w "i")]]
+        (:user env))
 
-#_(wv ("this")
-    ()
-  $root)
+(eco-wv chat
+        [x0 [(w "this")]]
+        (:root env))
 
 (eco-wv chat
         [obj [!verb]]
