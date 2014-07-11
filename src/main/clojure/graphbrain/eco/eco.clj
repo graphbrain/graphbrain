@@ -63,6 +63,10 @@
   [words]
   (str "r/" (entity words)))
 
+(defn edge
+  [& parts]
+  (id/ids->id parts))
+
 (defn chunk-def->chunk
   [chunk-def]
   {:var (first chunk-def)
