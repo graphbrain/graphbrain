@@ -15,7 +15,7 @@
               y (p chat b)
               z (p chat (concat b verb c))
               k ["r/has" y x]]
-          ["r/+list" k z]))
+          (edge "r/+list" k z)))
 
 (eco-wv chat
         [a [!verb]
@@ -26,7 +26,7 @@
          c [!verb]]
         (let [x (concat a verb1 b)
               y (concat a verb2 c)]
-          ["r/+list" (p chat x) (p chat y)]))
+          (edge "r/+list" (p chat x) (p chat y))))
 
 (eco-wv chat
         [a [!verb]
@@ -37,7 +37,7 @@
          c [!verb]]
         (let [x (concat a verb1 b)
               y (concat a verb2 c)]
-          ["r/+list" x y]))
+          (edge "r/+list" x y)))
 
 (eco-wv chat
         [a [!verb]
@@ -52,7 +52,7 @@
         (if (not (ends-with (concat in1 c) (concat in2 e)))
           (let [x (p chat (concat a verb b in1 c))
                 y (p chat (concat a verb d in2 e))]
-            ["r/+list" x y])))
+            (edge "r/+list" x y))))
 
 (eco-wv chat
         [a [!verb]
@@ -64,7 +64,7 @@
          d [!verb]]
         (let [x (p chat (concat a verb b in d))
               y (p chat (concat a verb c in d))]
-          ["r/+list" x y]))
+          (edge "r/+list" x y)))
 
 (eco-wv chat
         [a [!verb]
@@ -74,7 +74,7 @@
          c [!verb]]
         (let [x (concat a verb b)
               y (concat a verb c)]
-          ["r/+list" x y]))
+          (edge "r/+list" x y)))
 
 (eco-wv chat
         [a [!verb]
@@ -84,7 +84,7 @@
         (let [orig (p chat a)
               rel (rel (concat verb in))
               targ (p chat b)]
-          [rel orig targ]))
+          (edge rel orig targ)))
 
 (eco-wv chat
         [a [!verb]
@@ -93,7 +93,7 @@
         (let [orig (p chat a)
               rel (rel verb)
               targ (p chat c)]
-          [rel orig targ]))
+          (edge rel orig targ)))
 
 (eco-wv chat
         [a [!verb (!w "of")]
@@ -101,7 +101,7 @@
          b [verb]]
         (let [x (p chat a)
               y (p chat b)]
-          ["r/+of" x y]))
+          (edge "r/+of" x y)))
 
 (eco-wv chat
         [a [(!w "'s")]
@@ -109,7 +109,7 @@
          b []]
         (let [x (p chat a)
               y (p chat b)]
-          ["r/+poss" x y]))
+          (edge "r/+poss" x y)))
 
 (eco-wv chat
         [a [(!w "in")]
@@ -117,14 +117,14 @@
          b []]
         (let [x (p chat a)
               y (p chat b)]
-          ["r/+in" x y]))
+          (edge  "r/+in" x y)))
 
 (eco-wv chat
         [prop [#(or (adjective %) (adverb %))]
          obj [!verb]]
         (let [x (p chat prop)
               y (p chat obj)]
-          ["r/+prop" y x]))
+          (edge "r/+prop" x y)))
 
 (eco-wv chat
         [a [det]
