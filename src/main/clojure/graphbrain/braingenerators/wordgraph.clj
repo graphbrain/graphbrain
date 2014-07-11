@@ -6,7 +6,7 @@
             [clojure.math.combinatorics :as combo]))
 
 
-;; words -> word graph
+;; words/ -> word graph
 
 (defn- relevant?
   [word]

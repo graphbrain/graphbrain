@@ -28,7 +28,7 @@
 
 (defn det?
   [word]
-  (= (:pos word)) "DT")
+  (= (:pos word) "DT"))
 
 (defn word-obj->word
   [word-obj]

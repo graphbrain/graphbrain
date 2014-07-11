@@ -87,9 +87,15 @@
                [] ~'chunk-defs))
             :f ~(list 'fn*
                       (apply vector
-                             (sort (apply vector
-                                    (map first (partition 2 (destructure chunks))))))
-                      f)})))
+                             (conj (sort
+                               (apply vector
+                                      (map
+                                       first
+                                       (partition 2 (destructure chunks)))))
+                                   (symbol 'env)))
+                      f)
+            :desc ~(clojure.string/join "-"
+                   (map #(name (first %)) (partition 2 (destructure chunks))))})))
 
 (defn eval-chunk-word
   [chunk word]
@@ -99,14 +105,14 @@
   [chunk sentence]
   (loop [s sentence
          part []]
-    (if (eval-chunk-word chunk (first s))
-      (if (empty? s)
-        part
-        (recur (rest s) (conj part (first s))))
-      part)))
+    (if (empty? s)
+      part
+      (if (eval-chunk-word chunk (first s))
+        (recur (rest s) (conj part (first s)))
+        part))))
 
 (defn eval-rule
-  [rule sentence]
+  [rule sentence env]
   (loop [chunks (:chunks rule)
          results nil
          rest-of-sentence sentence]
@@ -121,16 +127,20 @@
                   (drop (count subsent) rest-of-sentence))))))))
 
 (defn parse
-  [rules words]
+  [rules words env]
   (loop [rs rules]
     (if (not (empty? rs))
       (let [rule (first rs)
-            result (eval-rule rule words)]
+            result (eval-rule rule words env)]
         (if result
           (let [ks (sort (keys result))]
-            (apply (:f rule) (map #(% result) ks)))
+            (apply (:f rule) (conj (map #(% result) ks) env)))
           (recur (rest rs)))))))
 
 (defn parse-str
-  [rules s]
-  (parse rules (words/str->words s)))
+  [rules s env]
+  (parse rules (words/str->words s) env))
+
+(defmacro p
+  [rules words]
+  `(parse ~rules ~words ~'env))
