@@ -101,7 +101,7 @@
   [gbdb url-str title user-id]
   (let [url-id (url/url->id url-str)
         title-node (text/text->vertex title)
-        edge-id (id/ids->id ["r/+title" url-id (:id title-node)])]
+        edge-id (id/ids->id ["r/*title" url-id (:id title-node)])]
     (gb/putv! gbdb title-node "c/web")
     (gb/putv! gbdb (maps/id->edge edge-id) "c/web")))
 

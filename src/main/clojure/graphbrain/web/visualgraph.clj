@@ -18,7 +18,7 @@
 (defn- hide?
   [edge]
   (let [et (maps/edge-type edge)]
-    (or (= et "r/+title"))))
+    (or (= et "r/*title"))))
 
 (defn- hide-edges
   [edges]

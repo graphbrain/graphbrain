@@ -18,7 +18,7 @@
 
 (defn title
   [gbdb id ctxts]
-  (let [title-edges (gb/pattern->edges gbdb ["r/+title" id "*"] ctxts)]
+  (let [title-edges (gb/pattern->edges gbdb ["r/*title" id "*"] ctxts)]
     (if (empty? title-edges) ""
         (let [title-edge (first title-edges)
               title-id (second (maps/participant-ids title-edge))
