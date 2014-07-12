@@ -11,7 +11,7 @@
 (defn can-mean
   [gbdb name ctxts]
   (let [base-id (id/sanitize name)
-        can-mean (gbdb/pattern->edges gbdb ["r/+can_mean" base-id "*"] ctxts)]
+        can-mean (gbdb/pattern->edges gbdb ["r/*can_mean" base-id "*"] ctxts)]
     (map #(gbdb/getv gbdb
                      (id/eid->id (nth (maps/ids %) 2))
                      ctxts)

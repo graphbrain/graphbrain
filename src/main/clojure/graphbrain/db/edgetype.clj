@@ -9,11 +9,12 @@
   [id]
   (let [last (id/last-part id)]
     (case last
-      "+pos" "is"
-      "+can_mean" "can mean"
-      "+type_of" "is type of"
-      "+synonym" "is synonym of"
-      "+part_of" "is part of"
-      "+antonym" "is opposite of"
-      "+also_see" "related to"
+      "*pos" "is"
+      "*can_mean" "can mean"
+      "*type_of" "is type of"
+      "*synonym" "is synonym of"
+      "*part_of" "is part of"
+      "*antonym" "is opposite of"
+      "*also_see" "is related to"
+      "*example" "has example"
       (clojure.string/replace last "_" " "))))

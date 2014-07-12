@@ -66,7 +66,7 @@
     (doseq [hypernym hypernyms]
       (let [super-word (first (.getWords (.getSynset hypernym)))
             super-id (vertex-id super-word)
-            rel (str "(r/+type_of " vid " " super-id ")")]
+            rel (str "(r/*type_of " vid " " super-id ")")]
         (add-relation! gbdb rel)))))
 
 (defn process-synonyms!
@@ -76,7 +76,7 @@
         vid (vertex-id main-word)]
     (doseq [syn word-list]
       (let [syn-id (vertex-id syn)
-            rel (str "(r/+synonym " vid " " syn-id ")")]
+            rel (str "(r/*synonym " vid " " syn-id ")")]
         (if (not (= vid syn-id))
                  (add-relation! gbdb rel))))))
 
@@ -87,7 +87,7 @@
     (doseq [result results]
       (let [part-word (first (.getWords (.getSynset result)))
             part-id (vertex-id part-word)
-            rel (str "(r/+part_of " part-id " " vid ")")]
+            rel (str "(r/*part_of " part-id " " vid ")")]
         (add-relation! gbdb rel)))))
 
 (defn process-antonyms!
@@ -97,7 +97,7 @@
     (doseq [result results]
       (let [ant-word (first (.getWords (.getSynset result)))
             ant-id (vertex-id ant-word)
-            rel (str "(r/+antonym " vid " " ant-id ")")]
+            rel (str "(r/*antonym " vid " " ant-id ")")]
         (add-relation! gbdb rel)))))
 
 (defn process-also-sees!
@@ -107,15 +107,8 @@
     (doseq [result results]
       (let [also-word (first (.getWords (.getSynset result)))
             also-id (vertex-id also-word)
-            rel (str "(r/+also_see " vid " " also-id ")")]
+            rel (str "(r/*also_see " vid " " also-id ")")]
         (add-relation! gbdb rel)))))
-
-#_(defn process-can-mean!
-  [gbdb vid word]
-  (if (super-type word)
-    (let [sid (id/sanitize (.getLemma word))
-          rel (str "(r/+can_mean " sid " " vid ")")]
-      (add-relation! gbdb rel))))
 
 (defn process-pos!
   [gbdb vid word]
@@ -126,14 +119,14 @@
                      (.equals pos POS/VERB) verb
                      (.equals pos POS/ADJECTIVE) adjective
                      (.equals pos POS/ADVERB) adverb)
-            rel (str "(r/+pos " vid " " pos-id ")")]
+            rel (str "(r/*pos " vid " " pos-id ")")]
         (add-relation! gbdb rel)))))
 
 (defn process-example!
   [gbdb vid word]
   (let [tn (example word)]
     (if (not dryrun) (gb/putv! gbdb tn "c/wordnet"))
-    (let [rel (str "(r/+example " vid " " (:id tn) ")")]
+    (let [rel (str "(r/*example " vid " " (:id tn) ")")]
       (add-relation! gbdb rel))))
 
 (defn process-synset!
@@ -149,7 +142,6 @@
           (doseq [word words]
             (let [vid (vertex-id word)]
               (prn vid)
-              #_(process-can-mean! gbdb vid word)
               (process-super-types! gbdb vid word)
               (process-pos! gbdb vid word))))))
 

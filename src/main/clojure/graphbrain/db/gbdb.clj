@@ -67,7 +67,7 @@
                     (let [vid (:eid gvert)
                           sid (id/last-part (:id gvert))
                           rel (maps/id->vertex
-                               (str "(r/+can_mean " sid " " vid ")"))]
+                               (str "(r/*can_mean " sid " " vid ")"))]
                       (putv! gbdb rel owner-id)))
           :edge (doseq [id (maps/ids lvert)]
                   (let [v (maps/id->vertex id)]
@@ -98,7 +98,7 @@
 
 (defn id->eid
   [gbdb id]
-  (if (= (id/id->type id) :entity)
+  (if (and (= (id/id->type id) :entity) (> (count (id/parts id)) 0))
     (let [eid (:eid (getv gbdb id))]
       (if eid eid
         (let [gid (id/local->global id)
