@@ -194,3 +194,9 @@
 (defn local-space?
   [vertex]
   (id/local-space? (:id vertex)))
+
+(defn vertex->eid
+  [vertex]
+  (if (:eid vertex)
+    (:eid vertex)
+    (:id vertex)))

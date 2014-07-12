@@ -3,20 +3,14 @@
             [graphbrain.web.contexts :as contexts]
             [clojure.data.json :as json]
             [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.graphjava :as gbj]
             [graphbrain.db.id :as id]
             [graphbrain.db.maps :as maps]
             [graphbrain.db.urlnode :as url]
-            [graphbrain.disambig.entityguesser :as eg]
+            [graphbrain.disambig.edgeguesser :as edg]
             [graphbrain.braingenerators.pagereader :as pr]
-            [graphbrain.string :as gbstr])
-  (:import (com.graphbrain.eco Prog)))
-
-(def prog
-  (Prog/fromString
-    (slurp "eco/chat.eco")
-    #_(gbj/graph)
-    nil))
+            [graphbrain.eco.eco :as eco]
+            [graphbrain.eco.parsers.chat :as chat]
+            [graphbrain.string :as gbstr]))
 
 (defn- aichat-reply
   [root-id vertex sentence]
@@ -33,28 +27,14 @@
            (or (.startsWith sentence "http://") (.startsWith sentence "https://")))
     :url :fact))
 
-(defn- disambig-id
-  [id text ctxts]
-  (if (= (id/id->type id) :entity)
-    (eg/guess-eid common/gbdb (id/last-part id) text nil ctxts)
-    id))
-
-(defn- disambig-edge
-  [edge text ctxts]
-  (let [ids (maps/ids edge)
-        ids (map #(disambig-id % text ctxts) ids)]
-    (maps/ids->edge ids)))
-
 (defn- process-fact
   [user root sentence ctxts]
-  (. prog setVertex "$user" (gbj/map->user-obj user))
-  (. prog setVertex "$root" (gbj/map->vertex-obj root))
   (let
-      [ctxts-list (. prog wv sentence 0)
-       vertex (gbj/vertex-obj->map
-               (. (first (. (first ctxts-list) getCtxts)) getTopRetVertex))]
-    (if (maps/edge? vertex)
-      (let [edge (disambig-edge vertex sentence ctxts)
+      [env {:root (maps/vertex->eid root) :user (:id user)}
+       res (eco/parse-str chat/chat sentence env)]
+    (if (id/edge? res)
+      (let [edge-id (edg/guess common/gbdb res sentence ctxts)
+            edge (maps/id->vertex edge-id)
             edge (assoc edge :score 1)]
         (gb/putv! common/gbdb edge (:id user))
         (aichat-reply (:id root) edge (:id edge))))))
