@@ -91,7 +91,8 @@ use quotation marks, e.g.<br />\n<b>\"Burn after reading\" is a film</b> <br />"
   (ai-chat-add-line! "gb" (.-sentence msg))
   (newedges/set-new-edges! (into [] (.-newedges msg)))
   (if (not (empty? (.-gotoid msg)))
-    (set! (.-href js/window.location) (str "/node/" (.-gotoid msg)))))
+    (set! (.-href js/window.location) (str "/node/" (js/encodeURIComponent
+                                                     (.-gotoid msg))))))
 
 (defn ai-chat-submit
   [msg]
