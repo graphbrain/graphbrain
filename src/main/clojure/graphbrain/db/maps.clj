@@ -50,6 +50,7 @@
 (defn id->entity
   [id]
   {:id id
+   :eid id
    :type :entity})
 
 
