@@ -220,27 +220,5 @@
   (let [base-id (sanitize name)]
     (if (empty? ids)
       base-id
-      (str rel
-           (clojure.string/join
-            " "
-            (cons base-id ids)) ")"))))
-
-#_(defn name+classes->eid
-  [name classes]
-  (let [base-id (sanitize name)]
-    (if (empty? classes)
-      base-id
-      (str "(r/+id "
-           (clojure.string/join
-            " "
-            (cons base-id classes)) ")"))))
-
-#_(defn name+comps->eid
-  [name comps]
-  (let [base-id (sanitize name)]
-    (if (empty? comps)
-      base-id
-      (str "(r/+c "
-           (clojure.string/join
-            " "
-            (cons base-id comps)) ")"))))
+      (str "(" rel " " base-id " "
+           (clojure.string/join " " ids) ")"))))
