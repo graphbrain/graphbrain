@@ -2,7 +2,8 @@
   (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.id :as id]
             [graphbrain.db.maps :as maps]
-            [graphbrain.db.text :as text])
+            [graphbrain.db.text :as text]
+            [graphbrain.db.constants :as consts])
   (:import (org.w3c.dom ElementTraversal)
            (net.sf.extjwnl.data PointerUtils
                                 POS)
@@ -40,7 +41,7 @@
         st (super-type word)
         stid (if st (id/eid->id (vertex-id st)))
         classes (if st [stid] [])]
-    (id/name+classes->eid name classes)))
+    (id/name+ids->eid consts/type-eid-rel name classes)))
 
 (defn- major-form-class-id
   [gbdb dictionary]

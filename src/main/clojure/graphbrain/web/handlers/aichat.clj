@@ -36,6 +36,7 @@
       (let [edge-id (edg/guess common/gbdb res sentence ctxts)
             edge (maps/id->vertex edge-id)
             edge (assoc edge :score 1)]
+        (prn edge)
         (gb/putv! common/gbdb edge (:id user))
         (aichat-reply (:id root) edge (:id edge))))))
 

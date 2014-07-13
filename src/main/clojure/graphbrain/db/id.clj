@@ -200,8 +200,7 @@
   (if (= (id->type id) :edge)
     (let [ids (id->ids id)
           rel (local->global (first ids))]
-      (or (= rel "r/+id")
-          (= rel "r/+c")))))
+      (= (first (second (parts rel))) \+))))
 
 (defn eid->id
   [eid]
@@ -216,16 +215,32 @@
       id)
     eid))
 
-(defn name+classes->eid
-  [name classes]
-  (str "(r/+id "
-       (clojure.string/join
-        " "
-        (cons (sanitize name) classes)) ")"))
+(defn name+ids->eid
+  [rel name ids]
+  (let [base-id (sanitize name)]
+    (if (empty? ids)
+      base-id
+      (str rel
+           (clojure.string/join
+            " "
+            (cons base-id ids)) ")"))))
 
-(defn name+comps->eid
+#_(defn name+classes->eid
+  [name classes]
+  (let [base-id (sanitize name)]
+    (if (empty? classes)
+      base-id
+      (str "(r/+id "
+           (clojure.string/join
+            " "
+            (cons base-id classes)) ")"))))
+
+#_(defn name+comps->eid
   [name comps]
-  (str "(r/+c "
-       (clojure.string/join
-        " "
-        (cons (sanitize name) comps)) ")"))
+  (let [base-id (sanitize name)]
+    (if (empty? comps)
+      base-id
+      (str "(r/+c "
+           (clojure.string/join
+            " "
+            (cons base-id comps)) ")"))))

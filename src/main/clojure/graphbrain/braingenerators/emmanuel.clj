@@ -4,7 +4,8 @@
             [graphbrain.db.gbdb :as gb]
             [graphbrain.db.id :as id]
             [graphbrain.db.maps :as maps]
-            [graphbrain.db.text :as text]))
+            [graphbrain.db.text :as text]
+            [graphbrain.db.constants :as consts]))
 
 (def g (gb/gbdb))
 
@@ -40,17 +41,17 @@
 (defn- researcher-node
   [name]
   (maps/eid->entity
-   (id/name+classes->eid name ["645112e583987a2c/researcher"])))
+   (id/name+ids->eid consts/type-eid-rel name ["645112e583987a2c/researcher"])))
 
 (defn- article-node
   [title]
   (maps/eid->entity
-   (id/name+classes->eid title ["47e9752fc47633dc/article"])))
+   (id/name+ids->eid consts/type-eid-rel title ["47e9752fc47633dc/article"])))
 
 (defn- journal-node
   [name]
   (maps/eid->entity
-   (id/name+classes->eid name ["8d921bed0d349259/journal"])))
+   (id/name+ids->eid consts/type-eid-rel name ["8d921bed0d349259/journal"])))
 
 (defn- row-text->nodes
   [row]

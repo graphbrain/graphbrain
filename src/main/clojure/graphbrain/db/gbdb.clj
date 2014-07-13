@@ -56,8 +56,11 @@
 
 (defn putv!
   [gbdb vertex owner-id]
+  (prn (str "putv! " vertex " / " owner-id))
   (let [gvert (maps/local->global vertex)
         lvert (maps/global->local gvert owner-id)]
+    (prn (str "gvert " gvert))
+    (prn (str "lvert " lvert))
     (if (not (exists? gbdb lvert))
       (let [lvert (assoc lvert :ts (.getTime (Date.)))]
         (mysql/putv! gbdb lvert)

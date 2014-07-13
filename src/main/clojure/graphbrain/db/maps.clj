@@ -43,9 +43,9 @@
      :eid eid
      :type :entity}))
 
-(defn name+classes->entity
-  [name classes]
-  (eid->entity (id/name+classes->eid name classes)))
+(defn name+ids->entity
+  [rel name classes]
+  (eid->entity (id/name+ids->eid rel name classes)))
 
 (defn id->entity
   [id]

@@ -4,6 +4,7 @@
             [graphbrain.db.id :as id]
             [graphbrain.db.maps :as maps]
             [graphbrain.db.text :as text]
+            [graphbrain.db.constants :as consts]
             [graphbrain.braingenerators.webtools :as webtools]
             [graphbrain.braingenerators.htmltools :as htmltools]
             [graphbrain.braingenerators.nlptools :as nlp]
@@ -40,8 +41,9 @@
                             (rest comps))))
             eid (if (empty? components)
                   nil
-                  (id/name+comps->eid ngram-str (map #(:eid (ng-ent-map %))
-                                                     components)))]
+                  (id/name+ids->eid consts/composed-eid-rel ngram-str
+                                    (map #(:eid (ng-ent-map %))
+                                         components)))]
         (assoc ng-ent-map ngram (eg/guess gbdb ngram-str text eid ctxts)))))
 
 (defn ngrams-graph->entities
