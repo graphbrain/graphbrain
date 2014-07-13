@@ -20,14 +20,14 @@
   (prn (str "rel: " rel))
   (if (not dryrun) (gb/putv! gbdb (maps/id->edge rel) "c/wordnet")))
 
-(defn super-type
+(defn super-types
   [word]
   (let [concept (.getSynset word)
         hypernyms (PointerUtils/getDirectHypernyms concept)]
     (if (not (empty? hypernyms))
         (let [hypernym (.getFirst hypernyms)]
           (if hypernym
-            (first (.getWords (.getSynset hypernym))))))))
+            (.getWords (.getSynset hypernym)))))))
 
 (defn example
   [word]
@@ -38,9 +38,9 @@
 (defn vertex-id
   [word]
   (let [name (.getLemma word)
-        st (super-type word)
-        stid (if st (id/eid->id (vertex-id st)))
-        classes (if st [stid] [])]
+        sts (super-types word)
+        stids (if sts (map #(id/eid->id (vertex-id %)) sts))
+        classes (if sts stids)]
     (id/name+ids->eid consts/type-eid-rel name classes)))
 
 (defn- major-form-class-id
@@ -55,10 +55,10 @@
 (defn- set-globals!
   [gbdb dictionary]
   (let [mfc (major-form-class-id gbdb dictionary)]
-    (def noun (str "(r/+id noun " mfc ")"))
-    (def verb (str "(r/+id verb " mfc ")"))
-    (def adjective (str "(r/+id adjective " mfc ")"))
-    (def adverb (str "(r/+id adverb " mfc ")"))))
+    (def noun (str "(r/+t noun " mfc ")"))
+    (def verb (str "(r/+t verb " mfc ")"))
+    (def adjective (str "(r/+t adjective " mfc ")"))
+    (def adverb (str "(r/+t adverb " mfc ")"))))
 
 (defn process-super-types!
   [gbdb vid word]

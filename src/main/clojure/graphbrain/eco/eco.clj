@@ -67,6 +67,15 @@
   [& parts]
   (id/ids->id parts))
 
+(defn eid
+  [rel name & ids]
+  (id/name+ids->eid rel name ids))
+
+(defn words->str
+  [& words]
+  (clojure.string/join " "
+   (map #(clojure.string/join " " (map :word %)) words)))
+
 (defn chunk-def->chunk
   [chunk-def]
   {:var (first chunk-def)
