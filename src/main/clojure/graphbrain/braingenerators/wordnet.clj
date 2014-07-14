@@ -35,13 +35,17 @@
         example (.getGloss synset)]
     (text/text->vertex example)))
 
-(defn vertex-id
+(declare vertex-id)
+
+(defn vertex-id-raw
   [word]
   (let [name (.getLemma word)
         sts (super-types word)
         stids (if sts (map #(id/eid->id (vertex-id %)) sts))
         classes (if sts stids)]
     (id/name+ids->eid consts/type-eid-rel name classes)))
+
+(def vertex-id (memoize vertex-id-raw))
 
 (defn- major-form-class-id
   [gbdb dictionary]
