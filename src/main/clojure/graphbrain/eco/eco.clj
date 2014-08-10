@@ -1,7 +1,8 @@
 (ns graphbrain.eco.eco
   (:require [graphbrain.db.id :as id]
             [graphbrain.eco.words :as words]
-            [graphbrain.eco.word :as word]))
+            [graphbrain.eco.word :as word]
+            [clojure.math.combinatorics :as combs]))
 
 (defn verb
   [word]
@@ -112,7 +113,8 @@
 
 (defn eval-chunk-word
   [chunk word]
-  (every? #(% word) (:word-conds chunk)))
+  (if (and chunk word)
+    (every? #(% word) (:word-conds chunk))))
 
 (defn eval-chunk
   [chunk sentence]
@@ -139,15 +141,67 @@
                   (assoc results (:var chunk) subsent)
                   (drop (count subsent) rest-of-sentence))))))))
 
+(defn eval-rule-r
+  [sentence chunks subsent env]
+  (let [chunk (first chunks)
+        next-chunk (second chunks)
+        word (first sentence)
+        next-word (second sentence)
+        ;; continue chunk
+        result1 (if (eval-chunk-word chunk word)
+                  (eval-rule-r
+                   (rest sentence)
+                   chunks
+                   (conj subsent word)
+                   env))
+        fail (and (not result1) (empty? subsent))
+        ;; fork chunk
+        result2 (if (and
+                     (not fail)
+                     (eval-chunk-word next-chunk next-word))
+                  (eval-rule-r
+                   sentence
+                   (rest chunks)
+                   []
+                   env))
+        ;; end current chunk
+        result3 (if (or result2 (and (not fail) (not result1)))
+                  (map #(assoc % (:var chunk) subsent)
+                       (eval-rule-r
+                           sentence
+                           (rest chunks)
+                           []
+                           env)))]
+    (if (and (empty? sentence) (empty? chunks))
+      [{}]
+      (flatten (filter #(not (nil? %)) [result1 result2 result3])))))
+
+(defn eval-rule-start
+  [rule sentence env]
+  (let [chunks (:chunks rule)]
+    (eval-rule-r sentence chunks [] env)))
+
+(defn- results->vertices
+  [rule results env]
+  (let [ks (sort (keys results))
+        vals (map #(% results) ks)
+        val-sets (into [] (apply combs/cartesian-product vals))]
+    (prn (str "ks::: " (into [] ks)))
+    (prn (str "vals::: " (into [] vals)))
+    (prn (str "val-sets::: " (into [] val-sets)))
+    (prn (str "xxx:::" (conj (into [] (first val-sets)) env)))
+    (map #(apply (:f rule) (conj (into [] %) env)) val-sets)))
+
 (defn parse
   [rules words env]
+  (prn (str "parse>> " (into [] words)))
   (loop [rs rules]
     (if (not (empty? rs))
       (let [rule (first rs)
-            result (eval-rule rule words env)]
-        (if result
-          (let [ks (sort (keys result))]
-            (apply (:f rule) (conj (map #(% result) ks) env)))
+            results (eval-rule-start rule words env)]
+        (if (not (empty? results))
+          (into [] (map #(results->vertices rule % env)
+                results))
           (recur (rest rs)))))))
 
 (defn parse-str
