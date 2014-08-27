@@ -113,6 +113,7 @@
 
 (defn eval-chunk-word
   [chunk word]
+  (prn (str "eval-chunk-word " chunk " / " word))
   (if (and chunk word)
     (every? #(% word) (:word-conds chunk))))
 

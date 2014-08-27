@@ -7,7 +7,9 @@
             [graphbrain.web.css.contexts :as contexts]
             [graphbrain.web.css.aichat :as aichat]
             [graphbrain.web.css.navbar :as navbar]
-            [graphbrain.web.css.relations :as relations]))
+            [graphbrain.web.css.relations :as relations]
+            [graphbrain.web.css.view :as view]
+            [graphbrain.web.css.bubble :as bubble]))
 
 (defstyles main
   (concat general/css
@@ -17,4 +19,6 @@
           contexts/css
           aichat/css
           navbar/css
-          relations/css))
+          relations/css
+          view/css
+          bubble/css))

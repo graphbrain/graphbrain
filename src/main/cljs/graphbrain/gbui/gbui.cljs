@@ -8,6 +8,7 @@
             [graphbrain.gbui.newedges :as newedges]
             [graphbrain.gbui.node :as node]
             [graphbrain.gbui.contexts :as contexts]
+            [graphbrain.gbui.view :as view]
             [cemerick.pprng :as rng])
   (:use [jayq.core :only [$]]))
 
@@ -15,6 +16,9 @@
   []
   (reset! g/rng (rng/rng "GraphBrain GraphBrain"))
 
+  (if (and (exists? js/viewdata) (not (nil? js/viewdata)))
+    (view/init-view! js/viewdata))
+  
   (if (and (exists? js/data) (not (nil? js/data)))
     (graph/init-graph!))
 
