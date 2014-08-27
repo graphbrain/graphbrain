@@ -7,3 +7,7 @@
 (defonce changed-snode (atom nil))
 
 (defonce rng (atom nil))
+
+(defonce view-size (atom nil))
+
+(def world-size [5000 5000])

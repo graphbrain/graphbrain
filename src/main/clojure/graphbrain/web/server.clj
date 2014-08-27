@@ -2,7 +2,7 @@
   (:use compojure.core
         ring.adapter.jetty
         (ring.middleware resource file-info cookies params)
-        (graphbrain.web.handlers landing node nodeactions user
+        (graphbrain.web.handlers landing node view nodeactions user
                                          raw search aichat relations
                                          allusers ecoparser ecocode
                                          ecoedittests ecoruntests))
@@ -12,6 +12,7 @@
 
 (defroutes app-routes
   (GET "/" request (handle-landing request))
+  (GET "/view" request (handle-view request))
   (GET "/node/*" request (handle-node request))
   (POST "/node/*" request (handle-nodeactions request))
   (GET "/raw/*" request (handle-raw request))
