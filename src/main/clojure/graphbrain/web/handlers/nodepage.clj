@@ -1,6 +1,6 @@
-(ns graphbrain.web.handlers.raw
+(ns graphbrain.web.handlers.nodepage
   (:use [clojure.string :only [join]]
-        (graphbrain.web.views page raw))
+        (graphbrain.web.views page nodepage))
   (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.vertex :as vertex]
             [graphbrain.web.common :as common]
@@ -16,7 +16,7 @@
             edges (gb/id->edges common/gbdb vertex-id ctxts)]
         (join (map (fn [x] (str (:id x) "<br />")) edges))))))
 
-(defn handle-raw
+(defn handle-nodepage
   [request]
   (let [user (common/get-user request)
         ctxts (contexts/active-ctxts request user)
@@ -24,5 +24,5 @@
     (page :title (vertex/label vertex)
           :user user
           :page :raw
-          :body-fun (fn [] (raw-view (raw-html request user vertex ctxts)))
+          :body-fun (fn [] (nodepage-view (raw-html request user vertex ctxts)))
           :js "")))

@@ -37,10 +37,42 @@
   (move-world! [0 0] scale)
   false)
 
+(defn on-reply
+  [reply]
+  (.log js/console (pr-str @g/last-pos))
+  (let [bubble (cljs.reader/read-string reply)
+        bubble (assoc bubble :pos @g/last-pos)]
+    (bubble/place-bubble! bubble)))
+
+(defn on-mouse-up
+  [event]
+  (let [oev (.-originalEvent event)
+        page [(.-pageX oev) (.-pageY oev)]
+        xxx (.log js/console (str "page: " (pr-str page)))
+        view ($ "#view-view")
+        parent-offset (.offset view)
+        offset [(.-left parent-offset) (.-top parent-offset)]
+        xxx (.log js/console (str "offset: " (pr-str offset)))
+        pos (map - page offset)
+        xxx (.log js/console (str "pos1: " (pr-str pos)))
+        half-size (map #(/ % 2) g/world-size)
+        pos (map - pos half-size)
+        xxx (.log js/console (str "pos2: " (pr-str pos)))]
+    (reset! g/last-pos (into [] pos)))
+  (jq/ajax {:url "/bubble"
+            :success on-reply
+            :contentType "text"
+            :data @g/origin}))
+
+(defn bind-events!
+  []
+  (jq/bind ($ "#data-view") "mousewheel" on-scroll-world)
+  (jq/bind ($ "#view-view") "mouseup" on-mouse-up))
+
 (defn init-view!
   [view-data-str]
   (reset! g/view-size (view-size))
   (move-world! [0 0] 1)
-  (jq/bind ($ "#data-view") "mousewheel" on-scroll-world)
+  (bind-events!)
   (def data (cljs.reader/read-string view-data-str))
   (place-bubbles! (:bubbles data)))

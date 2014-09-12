@@ -11,3 +11,7 @@
 (defonce view-size (atom nil))
 
 (def world-size [5000 5000])
+
+(def origin (atom nil))
+
+(def last-pos (atom nil))
