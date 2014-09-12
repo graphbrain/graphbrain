@@ -2,7 +2,8 @@
   (:require-macros [hiccups.core :as hiccups])
   (:require [jayq.core :as jq]
             [hiccups.runtime :as hiccupsrt]
-            [graphbrain.gbui.globals :as g])
+            [graphbrain.gbui.globals :as g]
+            [graphbrain.gbui.subbubble :as sb])
   (:use [jayq.core :only [$]]))
 
 (defn bubble-id
@@ -11,9 +12,17 @@
     (str "bub_" bid)))
 
 (hiccups/defhtml bubble-template
-  [id title]
+  [id html]
   [:div {:id (bubble-id id)
-         :class "bubble"} title])
+         :class "bubble"} html])
+
+(hiccups/defhtml bubble-title-template
+  [node]
+  [:div {:class "bubble-title"} (:text node)])
+
+(hiccups/defhtml bubble-body-template
+  [html]
+  [:div {:class "bubble-body"} html])
 
 (defn bubble-size
   [bid]
@@ -25,18 +34,28 @@
 (defn move-bubble!
   [bid pos]
   (let [bsize (bubble-size bid)
-        half-width (/ (first g/world-size) 2)
-        half-height (/ (second g/world-size) 2)
-        half-bwidth (/ (first bsize) 2)
-        half-bheight (/ (second bsize) 2)
-        x (- (+ (first pos) half-width) half-bwidth)
-        y (- (+ (second pos) half-height) half-bheight)
-        transform-str (str "translate(" x "px," y "px)")
+        half-size (map #(/ % 2) g/world-size)
+        half-bsize (map #(/ % 2) bsize)
+        trans (map #(- (+ %1 %2) %3) pos half-size half-bsize)
+        transform-str (str "translate(" (first trans) "px," (second trans) "px)")
         bub-div ($ (str "#" bid))]
     (jq/css bub-div {:transform transform-str})))
 
+(defn bind-events!
+  [bubble]
+  (let [bid (bubble-id (:id bubble))
+        content (:content bubble)]
+    (doseq [snode (:snodes content)]
+      (sb/bind-events! bid snode))))
+
 (defn place-bubble!
   [bubble]
-  (jq/append ($ "#view-view") (bubble-template (:id bubble)
-                                               (pr-str bubble)))
-  (move-bubble! (bubble-id (:id bubble)) [0 0]))
+  (let [bid (bubble-id (:id bubble))
+        content (:content bubble)
+        title (bubble-title-template (:root content))
+        subs (bubble-body-template (reduce str (map #(sb/html bid %)
+                                                    (:snodes content))))
+        html (str title subs)]
+    (jq/append ($ "#view-view") (bubble-template (:id bubble) html))
+    (move-bubble! bid (:pos bubble)))
+  (bind-events! bubble))
