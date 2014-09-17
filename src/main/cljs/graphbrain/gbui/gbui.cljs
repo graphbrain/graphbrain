@@ -9,6 +9,7 @@
             [graphbrain.gbui.node :as node]
             [graphbrain.gbui.contexts :as contexts]
             [graphbrain.gbui.view :as view]
+            [graphbrain.gbui.nodepage :as nodepage]
             [cemerick.pprng :as rng])
   (:use [jayq.core :only [$]]))
 
@@ -16,6 +17,9 @@
   []
   (reset! g/rng (rng/rng "GraphBrain GraphBrain"))
 
+  (if (and (exists? js/pagedata) (not (nil? js/pagedata)))
+    (nodepage/init-nodepage! js/pagedata))
+  
   (if (and (exists? js/viewdata) (not (nil? js/viewdata)))
     (view/init-view! js/viewdata))
   
