@@ -2,18 +2,25 @@
   (:require [garden.units :refer [px]]))
 
 (def css
-  [[:#nodeback
+  [[:body
+    {:background "#EEE"}]
+
+   [:#nodeback
     {:width "100%"
      :height "100%"
      :background "#EEE"}]
    
    [:#nodepage
     {:max-width (px 900)
-     :margin-top (px 60)
+     :height "100%"
+     :padding-top (px 100)
      :margin-left "auto"
      :margin-right "auto"
      :display "block"}]
 
+   [:#nodepage-title
+    {:margin-bottom (px 25)}]
+   
    [:#frames
     {:column-count 3
      :-webkit-column-count 3

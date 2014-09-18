@@ -34,28 +34,25 @@
 (defn view
   [vert user]
   (html
-   style
-   ;; topbar
-   (html
+   [:div {:id "nodeback"}
     [:div {:id "topbar"}
      [:div {:class "topbar-menu topbar-center"}
       (user-menu user)]
      [:div {:class "topbar-element topbar-center"}
       [:a {:href "/"}
-        [:img {:src "/images/GB_logo_XS.png"
-               :alt "graphbrain"}]]]
+       [:img {:src "/images/GB_logo_XS.png"
+              :alt "graphbrain"}]]]
      [:div {:class "topbar-input-area topbar-center"}
       [:form {:class "top-input" :id "search-field"}
        [:input {:type "text"
                 :id "search-input-field"
                 :class "top-input-field"
-                :placeholder "Search or say something"}]]]])
+                :placeholder "Search or say something"}]]]]
 
-   ;; main
-   [:div {:id "nodeback"}
     [:div {:id "nodepage"}
-     [:div {:class "np-title"}
-      (vertex/label vert)]
-     [:div {:class "np-desc"}
-      (entity/description vert)]
+     [:div {:id "nodepage-title"}
+      [:div {:class "np-title"}
+       (vertex/label vert)]
+      [:div {:class "np-desc"}
+       (entity/description vert)]]
      [:div {:id "frames"}]]]))
