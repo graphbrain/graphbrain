@@ -35,20 +35,21 @@
   [vert user]
   (html
    style
-   ;; navbar
+   ;; topbar
    (html
-    [:div {:class "navbar-container"}
-     [:div {:class "navbar-element" :style "float:left;"}
+    [:div {:id "topbar"}
+     [:div {:class "topbar-menu topbar-center"}
+      (user-menu user)]
+     [:div {:class "topbar-element topbar-center"}
       [:a {:href "/"}
-       [:img {:src "/images/GB_logo_XS.png"
-              :alt "graphbrain"}]]]
-     [:div {:class "navbar-element"}
-      [:form {:class "nav-search" :id "search-field"}
+        [:img {:src "/images/GB_logo_XS.png"
+               :alt "graphbrain"}]]]
+     [:div {:class "topbar-input-area topbar-center"}
+      [:form {:class "top-input" :id "search-field"}
        [:input {:type "text"
                 :id "search-input-field"
-                :placeholder "Search"}]]]
-     [:div {:class "navbar-element"}
-     (user-menu user)]])
+                :class "top-input-field"
+                :placeholder "Search or say something"}]]]])
 
    ;; main
    [:div {:id "nodeback"}
