@@ -47,7 +47,8 @@
        [:input {:type "text"
                 :id "search-input-field"
                 :class "top-input-field"
-                :placeholder "Search or say something"}]]]]
+                :placeholder "Search or say something"
+                :autofocus ""}]]]]
 
     [:div {:id "nodepage"}
      [:div {:id "nodepage-title"}
