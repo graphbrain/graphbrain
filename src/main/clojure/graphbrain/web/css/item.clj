@@ -17,7 +17,7 @@
     :max-width (px 560)}]
 
   [:.item-title
-   {:font-size (px 13)
+   {:font-size (px 16)
     :float "left"}]
 
   [:.item-title

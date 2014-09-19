@@ -14,19 +14,12 @@
         relpos (:rpos snode)
         rel-text (:label snode)
         html (str "<div id='" snode-id "' class='frame'>")
-        html (if (= relpos 0)
-               (str html
-                    "<div class='frame-inner'>"
-                    "<div class='viewport' /></div>"
-                    "<div class='frame-label'>"
-                    rel-text
-                    "</div></div>")
-               (str html
-                    "<div class='frame-label'>"
-                    rel-text
-                    "</div>"
-                    "<div class='frame-inner'>"
-                    "<div class='viewport' /></div></div>"))]
+        html (str html
+                  "<div class='frame-label'>"
+                  rel-text
+                  ":</div>"
+                  "<div class='frame-inner'>"
+                  "<div class='viewport' /></div></div>")]
     (jq/append ($ "#frames") html)
     (doseq [node (:nodes snode)]
       (item/item-place node snode-id snode ctxts))))

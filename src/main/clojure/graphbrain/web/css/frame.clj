@@ -3,7 +3,7 @@
 
 (def css
   [[:.frame
-   {:font-size (px 14)
+   {:font-size (px 16)
     :border-style "none"
     :width "100%"
     :margin-bottom (px 15)
@@ -14,7 +14,7 @@
   [:.frame-label
    {:padding-left (px 5)
     :padding-right (px 5)
-    :margin (px 0)
+    :margin-bottom (px 10)
     :font-weight "bold"}]
 
   [:.frame-inner
