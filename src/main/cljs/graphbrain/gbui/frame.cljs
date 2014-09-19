@@ -8,7 +8,7 @@
   (:use [jayq.core :only [$]]))
 
 (defn place!
-  [snode-pair]
+  [snode-pair ctxts]
   (let [snode-id (first snode-pair)
         snode (second snode-pair)
         relpos (:rpos snode)
@@ -29,4 +29,4 @@
                     "<div class='viewport' /></div></div>"))]
     (jq/append ($ "#frames") html)
     (doseq [node (:nodes snode)]
-      (item/item-place node snode-id snode))))
+      (item/item-place node snode-id snode ctxts))))

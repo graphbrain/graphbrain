@@ -22,8 +22,7 @@
 
   [:.item-title
    [:a
-    {:color "#000"
-     :background "#FAFAD2"
+    {:color "#FFF"
      :float "left"}]]
 
   [:.item-url-title

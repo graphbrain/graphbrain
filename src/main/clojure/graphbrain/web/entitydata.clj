@@ -220,8 +220,9 @@
     snode-map))
 
 (defn generate
-  [gbdb root-id ctxts]
-  (let [root-id (gb/id->eid gbdb root-id)
+  [gbdb root-id user ctxts all-ctxts]
+  (let [user-id (if user (:id user) "")
+        root-id (gb/id->eid gbdb root-id)
         root-id (id/local->global root-id)
         hyper-edges (gb/id->edges gbdb root-id ctxts)
         hyper-edges (hide-edges hyper-edges)
@@ -233,4 +234,9 @@
         snode-map (snode-map gbdb edge-node-map root-node ctxts)
         snode-map (snodes-limit-size snode-map)]
     {:root root-node
-     :snodes snode-map}))
+     :snodes snode-map
+     :ctxts (zipmap all-ctxts
+                    (map #(hash-map
+                           :name (context/label %)
+                           :color (contexts/color % user-id))
+                         all-ctxts))}))

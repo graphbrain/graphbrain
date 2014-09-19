@@ -10,13 +10,13 @@
             [graphbrain.web.views.nodepage :as npview]))
 
 (defn- pagedata
-  [vert ctxts]
-  (let [entity-data (ed/generate common/gbdb (:id vert) ctxts)]
+  [vert user ctxts all-ctxts]
+  (let [entity-data (ed/generate common/gbdb (:id vert) user ctxts all-ctxts)]
     entity-data))
 
 (defn- js
   [vert user ctxts all-ctxts]
-  (str "var pagedata = '" (pr-str (pagedata vert ctxts)) "';"))
+  (str "var pagedata = '" (pr-str (pagedata vert user ctxts all-ctxts)) "';"))
 
 (defn handle-nodepage
   [request]
