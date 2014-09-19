@@ -11,7 +11,8 @@
             [graphbrain.web.css.view :as view]
             [graphbrain.web.css.bubble :as bubble]
             [graphbrain.web.css.frame :as frame]
-            [graphbrain.web.css.nodepage :as np]))
+            [graphbrain.web.css.nodepage :as np]
+            [graphbrain.web.css.item :as item]))
 
 (defstyles main
   (concat general/css
@@ -25,4 +26,5 @@
           view/css
           bubble/css
           frame/css
-          np/css))
+          np/css
+          item/css))

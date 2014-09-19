@@ -2,7 +2,7 @@
   (:require [jayq.core :as jq]
             [graphbrain.gbui.spherical :as spher]
             [graphbrain.gbui.globals :as g]
-            [graphbrain.gbui.node :as node]
+            [graphbrain.gbui.item :as item]
             [graphbrain.gbui.mat :as mat]
             [graphbrain.gbui.newedges :as newedges])
   (:use [jayq.core :only [$]]))
@@ -29,4 +29,4 @@
                     "<div class='viewport' /></div></div>"))]
     (jq/append ($ "#frames") html)
     (doseq [node (:nodes snode)]
-      (node/node-place node snode-id snode nil))))
+      (item/item-place node snode-id snode))))
