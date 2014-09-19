@@ -84,21 +84,26 @@
     html))
 
 (defn- item-html
-  [node div-id]
-  (let [type (:type node)]
+  [item div-id]
+  (let [type (:type item)]
     (if (= type "url")
-      (url-item-html node div-id)
-      (entity-item-html node div-id))))
+      (url-item-html item div-id)
+      (entity-item-html item div-id))))
+
+(defn- item-color
+  [item ctxts]
+  (:color (ctxts (first (:ctxts item)))))
 
 (defn item-place
-  [node snode-id snode]
+  [item frame-id snode ctxts]
   (let [class "item"
-        div-id (item-div-id (:edge node))
+        div-id (item-div-id (:edge item))
         html (str "<div id='" div-id "' class='" class "'>")
-        html (str html (item-html node div-id))
+        html (str html (item-html item div-id))
         html (str html "</div>")]
-    (jq/append ($ (str "#" snode-id " .viewport")) html)
+    (jq/append ($ (str "#" frame-id " .viewport")) html)
+    (jq/css ($ (str "#t" div-id)) {:background (item-color item ctxts)})
     (jq/bind ($ (str "#rem" div-id))
                    :click
-                   #(rem/remove-clicked node snode))
-    node))
+                   #(rem/remove-clicked item snode))
+    item))
