@@ -1,7 +1,8 @@
 (ns graphbrain.gbui.nodepage
   (:require [jayq.core :as jq]
             [graphbrain.gbui.globals :as g]
-            [graphbrain.gbui.frame :as frame])
+            [graphbrain.gbui.frame :as frame]
+            [graphbrain.gbui.input :as input])
   (:use [jayq.core :only [$]]))
 
 (defn- place-frames!
@@ -11,5 +12,7 @@
 
 (defn init-nodepage!
   [view-data-str]
-  (def data (cljs.reader/read-string view-data-str))
-  (place-frames! (:snodes data) (:ctxts data)))
+  (let [data (cljs.reader/read-string view-data-str)]
+    (reset! g/root-id (:id (:root data)))
+    (place-frames! (:snodes data) (:ctxts data)))
+  (jq/bind ($ "#top-input-field") "submit" input/query))
