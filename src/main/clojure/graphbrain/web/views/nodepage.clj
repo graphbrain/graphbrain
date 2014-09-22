@@ -43,9 +43,9 @@
        [:img {:src "/images/GB_logo_XS.png"
               :alt "graphbrain"}]]]
      [:div {:class "topbar-input-area topbar-center"}
-      [:form {:class "top-input" :id "search-field"}
+      [:form {:class "top-input" :id "top-input-field"}
        [:input {:type "text"
-                :id "search-input-field"
+                :id "main-input-field"
                 :class "top-input-field"
                 :placeholder "Search or say something"
                 :autofocus ""}]]]]

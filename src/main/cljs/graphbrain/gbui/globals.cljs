@@ -15,3 +15,5 @@
 (def origin (atom nil))
 
 (def last-pos (atom nil))
+
+(def root-id (atom nil))

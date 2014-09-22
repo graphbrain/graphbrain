@@ -8,7 +8,8 @@
                                          ecoedittests ecoruntests nodepage))
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
-            [graphbrain.web.common :as common]))
+            [graphbrain.web.common :as common]
+            [graphbrain.web.handlers.input :as input]))
 
 (defroutes app-routes
   (GET "/" request (handle-landing request))
@@ -24,6 +25,7 @@
   (POST "/login" request (handle-login request))
   (POST "/search" request (handle-search request))
   (POST "/ai" request (handle-aichat request))
+  (POST "/input" request (input/handle request))
   (POST "/rel" request (handle-relations request))
   (GET "/allusers" request (handle-allusers request))
   (GET "/eco" request (handle-ecoparser-get request))
