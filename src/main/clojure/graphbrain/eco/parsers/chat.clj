@@ -87,9 +87,9 @@
           (edge rel orig targ)))
 
 (eco-wv chat
-        [a [!verb]
+        [a []
          verb [verb]
-         c [!verb]]
+         c []]
         (let [orig (p chat a)
               rel (rel verb)
               targ (p chat c)]

@@ -3,6 +3,7 @@
   :url "http://graphbrain.com/"
   :jvm-opts ["-Xmx750M" "-XX:-OmitStackTraceInFastThrow"]
   :dependencies  [[org.clojure/clojure "1.6.0"]
+                  [org.clojure/tools.trace "0.7.8"]
                   [org.clojure/tools.cli "0.3.1"]
                   [commons-io/commons-io "2.4"]
                   [org.apache.commons/commons-lang3 "3.1"]
@@ -40,7 +41,7 @@
                   [hiccups "0.3.0"]]
   :plugins [[lein-ring "0.8.10"]
             [lein-cljsbuild "1.0.2"]
-            [lein-garden "0.1.8"]]
+            [lein-garden "0.1.8" :exclusions [org.clojure/clojure]]]
   :source-paths ["src/main/clojure" "src/main/cljs"]
   :java-source-paths ["src/main/java"]
   :test-paths ["test" "src/test/clojure"]
