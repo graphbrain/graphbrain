@@ -1,9 +1,10 @@
 (ns graphbrain.eco.word
+  (:use [graphbrain.utils :only [dbg]])
   (:import (com.graphbrain.eco Word)))
 
 (defn pos-first-char-is?
   [word prefix]
-  (let [first-char (str  (first (:pos word)))]
+  (let [first-char (str (first (:pos word)))]
     (= first-char prefix)))
 
 (defn noun?

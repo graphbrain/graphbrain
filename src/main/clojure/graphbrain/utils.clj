@@ -1,6 +1,8 @@
 (ns graphbrain.utils
   (:import (java.io StringWriter PrintWriter)))
 
+(defmacro dbg[x] `(let [x# ~x] (println "dbg:" '~x "=" x#) x#))
+
 (defn exception->str
   [e]
   (let [sw (StringWriter.)

@@ -3,7 +3,9 @@
             [graphbrain.braingenerators.wordnet :as wordnet]
             [graphbrain.tools.contexts :as ctxts]
             [graphbrain.braingenerators.emmanuel :as emmanuel]
-            [graphbrain.web.server :as server]))
+            [graphbrain.web.server :as server]
+            [graphbrain.eco.eco :as eco]
+            [graphbrain.eco.parsers.chat :as chat]))
 
 (def cli-options
   [["-p" "--port PORT" "Port number"
@@ -27,4 +29,5 @@
                     (second (:arguments opts))
                     (nth (:arguments opts) 2))
       "emmanuel" (emmanuel/run! (second (:arguments opts)))
+      "ecotest" (eco/ecotest chat/chat)
       (prn (str "Unknown command: " arg)))))
