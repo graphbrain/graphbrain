@@ -119,18 +119,18 @@
   (if (and chunk word)
     (every? #(% word) (:word-conds chunk))))
 
-(declare eval-rule-r)
+(declare eval-rule)
 
 (defn- add-var-and-parse-more
   [chunk subsent chunks sentence env]
-  (let [parse (eval-rule-r
+  (let [parse (eval-rule
                sentence
                (rest chunks)
                []
                env)]
     (if parse (map #(assoc % (:var chunk) subsent) parse))))
 
-(defn eval-rule-r
+(defn eval-rule
   [sentence chunks subsent env]
   (let [chunk (first chunks)
         word (first sentence)
@@ -139,7 +139,7 @@
         
         ;; continue chunk
         continue (if cur-word-cur-chunk
-                  (eval-rule-r
+                  (eval-rule
                    (rest sentence)
                    chunks
                    (conj subsent word)
@@ -159,11 +159,6 @@
       (let [res (filter #(not (empty? %)) (into (into continue end) fork))]
         res))))
 
-(defn eval-rule-start
-  [rule sentence env]
-  (let [chunks (:chunks rule)]
-    (eval-rule-r sentence chunks [] env)))
-
 (defn- result->vertex
   [rule result env]
   (let [ks (sort (keys result))
@@ -175,7 +170,7 @@
   (loop [rs rules]
     (if (not (empty? rs))
       (let [rule (first rs)
-            results (eval-rule-start rule words env)]
+            results (eval-rule words (:chunks rule) [] env)]
         (if (not (empty? results))
           (into [] (map #(result->vertex rule % env)
                           results))
