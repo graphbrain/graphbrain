@@ -4,7 +4,7 @@
 (ecoparser chat)
 
 (eco-wv chat
-        [x0 [(w "with")]
+        [xwith [(w "with")]
          x1 [(w "a")]
          a [(!w ",")]
          x2 [(w ",")]
@@ -21,7 +21,7 @@
         [a [!verb]
          verb1 [verb]
          b [(!w "and") !verb]
-         x0 [(w "and")]
+         xand1 [(w "and")]
          verb2 [verb]
          c [!verb]]
         (let [x (concat a verb1 b)
@@ -32,7 +32,7 @@
         [a [!verb]
          verb1 [verb]
          b [!verb]
-         x0 [(w "and")]
+         xand2 [(w "and")]
          verb2 [verb]
          c [!verb]]
         (let [x (concat a verb1 b)
@@ -45,7 +45,7 @@
          b [!verb !ind]
          in1 [ind]
          c [!verb]
-         x0 [(w "and")]
+         xand3 [(w "and")]
          d [!verb !ind]
          in2 [ind]
          e [!verb]]
@@ -58,7 +58,7 @@
         [a [!verb]
          verb [verb]
          b [!verb (!w "and")]
-         x0 (w "and")
+         xand4 [(w "and")]
          c [!verb !ind]
          in [ind]
          d [!verb]]
@@ -70,7 +70,7 @@
         [a [!verb]
          verb [verb]
          b [!verb (!w "and")]
-         x0 (w "and")
+         xand5 [(w "and")]
          c [!verb]]
         (let [x (concat a verb b)
               y (concat a verb c)]
@@ -97,15 +97,15 @@
 
 (eco-wv chat
         [a [!verb (!w "of")]
-         x0 [(w "of")]
+         xof [(w "of")]
          b [verb]]
         (let [x (p chat a)
               y (p chat b)]
-          (eid "r/+of" (words->str a x0 b) x y)))
+          (eid "r/+of" (words->str a xof b) x y)))
 
 (eco-wv chat
         [a [(!w "'s")]
-         x0 [(w "'s")]
+         xs [(w "'s")]
          b []]
         (let [x (p chat a)
               y (p chat b)]
@@ -113,11 +113,11 @@
 
 (eco-wv chat
         [a [(!w "in")]
-         x0 [(w "in")]
+         xin [(w "in")]
          b []]
         (let [x (p chat a)
               y (p chat b)]
-          (eid  "r/+in" (words->str a x0 b) x y)))
+          (eid  "r/+in" (words->str a xin b) x y)))
 
 (eco-wv chat
         [prop [#(or (adjective %) (adverb %))]
@@ -128,17 +128,17 @@
 
 (eco-wv chat
         [a [det]
-         no-dt [!verb]]
+         no-dt []]
         (p chat no-dt))
 
 (eco-wv chat
-        [x0 [(w "i")]]
+        [i [(w "i")]]
         (:user env))
 
 (eco-wv chat
-        [x0 [(w "this")]]
+        [this [(w "this")]]
         (:root env))
 
 (eco-wv chat
-        [obj [!verb]]
+        [obj []]
         (entity obj))
