@@ -89,7 +89,7 @@
   [name]
   `(def ~name []))
 
-(defmacro eco-wv
+(defmacro pattern
   [rules chunks f]
   `(def ~rules
      (conj ~rules
@@ -118,31 +118,6 @@
   [chunk word]
   (if (and chunk word)
     (every? #(% word) (:word-conds chunk))))
-
-(defn eval-chunk
-  [chunk sentence]
-  (loop [s sentence
-         part []]
-    (if (empty? s)
-      part
-      (if (eval-chunk-word chunk (first s))
-        (recur (rest s) (conj part (first s)))
-        part))))
-
-(defn eval-rule
-  [rule sentence env]
-  (loop [chunks (:chunks rule)
-         results nil
-         rest-of-sentence sentence]
-    (if (and (empty? chunks) (empty? rest-of-sentence))
-      results
-      (if (and (not (empty? chunks)) (not (empty? rest-of-sentence)))
-        (let [chunk (first chunks)
-              subsent (eval-chunk chunk rest-of-sentence)]
-          (if (not (empty? subsent))
-            (recur (rest chunks)
-                   (assoc results (:var chunk) subsent)
-                   (drop (count subsent) rest-of-sentence))))))))
 
 (declare eval-rule-r)
 
