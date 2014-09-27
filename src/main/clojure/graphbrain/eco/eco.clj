@@ -181,7 +181,8 @@
                (add-var-and-parse-more chunk subsent chunks sentence env))]
     (if (and (empty? sentence) (empty? chunks))
       [nil]
-      (filter #(not (empty? %)) (into (into continue end) fork)))))
+      (let [res (filter #(not (empty? %)) (into (into continue end) fork))]
+        res))))
 
 (defn eval-rule-start
   [rule sentence env]
