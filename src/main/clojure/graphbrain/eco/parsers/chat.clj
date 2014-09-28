@@ -1,5 +1,6 @@
 (ns graphbrain.eco.parsers.chat
-  (:use graphbrain.eco.eco))
+  (:use graphbrain.eco.eco
+        [graphbrain.utils :only [dbg]]))
 
 (ecoparser chat)
 
@@ -133,11 +134,11 @@
 
 (pattern chat
          [i [(w "i")]]
-         (:user env))
+         (user env))
 
 (pattern chat
          [this [(w "this")]]
-         (:root env))
+         (root env))
 
 (pattern chat
          [obj []]
