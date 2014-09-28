@@ -57,19 +57,32 @@
   [words1 words2]
   (= (take-last (count words2) words1) words2))
 
-(defn entity
+
+(defn- words->id
   [words]
   (id/sanitize (clojure.string/join " " (map :word words))))
 
+(defn entity
+  [words]
+  {:vertex (words->id words)})
+
+(defn user
+  [env]
+  {:vertex (:user env)})
+
+(defn root
+  [env]
+  {:vertex (:root env)})
+
 (defn rel
   [words]
-  (str "r/" (entity words)))
+  {:vertex (str "r/" (words->id words))})
 
 (defn edge
   [& parts]
-  (let [lparts (map #(if (coll? %) % [%]) parts)]
-    (map #(id/ids->id %)
-         (apply combs/cartesian-product lparts))))
+  (let [lparts (map #(if (and (coll? %) (not (map? %))) % [%]) parts)]
+    (map #(hash-map :vertex %) (apply combs/cartesian-product lparts))))
+
 
 (defn eid
   [rel name & ids]
@@ -162,8 +175,11 @@
 (defn- result->vertex
   [rule result env]
   (let [ks (sort (keys result))
-        vals (map #(% result) ks)]
-    (apply (:f rule) (conj vals env))))
+        vals (map #(% result) ks)
+        verts (apply (:f rule) (conj vals env))]
+    (if (map? verts)
+      (assoc verts :rule rule)
+      (map #(assoc % :rule rule) verts))))
 
 (defn parse
   [rules words env]
@@ -172,20 +188,28 @@
       (let [rule (first rs)
             results (eval-rule words (:chunks rule) [] env)]
         (if (not (empty? results))
-          (into [] (map #(result->vertex rule % env)
-                          results))
+          (flatten (into [] (map #(result->vertex rule % env)
+                                 results)))
           (recur (rest rs)))))))
+
+(defn parse->vertex
+  [par]
+  (let [vert (:vertex par)]
+    (if (coll? vert)
+      (id/ids->id (map parse->vertex vert))
+      vert)))
 
 (defn parse-str
   [rules s env]
-  (parse rules (words/str->words s) env))
+  (let [par (parse rules (words/str->words s) env)]
+    (map parse->vertex par)))
 
 (defmacro p
   [rules words]
   `(parse ~rules ~words ~'env))
 
 (defn ecotest
-  [rules]
+  [s]
   (let [env {:root "f43806bb591e3b87/berlin", :user "u/telmo"}]
-    (parse-str rules "I like Berlin" env)
-    (System/exit 0)))
+    (parse-str graphbrain.eco.parsers.chat/chat s env)
+    #_(System/exit 0)))
