@@ -106,14 +106,6 @@
   [name]
   `(def ~name []))
 
-(defn funexpand
-  [funs]
-  (map #(if (coll? %) % %) (dbg funs)))
-
-(defn funvec
-  [x]
-  (if (coll? x) x [x]))
-
 (defmacro pattern
   [rules chunks f]
   `(def ~rules
@@ -122,7 +114,7 @@
             (let [~'chunk-defs
                   ~(apply vector (map
                                   #(vector (keyword (first %))
-                                           (funvec (second %)))
+                                           (second %))
                                   (partition 2 (destructure chunks))))]
               (reduce
                (fn [~'v ~'cd]
@@ -141,16 +133,18 @@
             :desc ~(clojure.string/join "-"
                    (map #(name (first %)) (partition 2 (destructure chunks))))})))
 
-(defn eval-cond-word
-  [cond word]
-  (if (string? cond)
-    (= (:word word) cond)
-    (cond word)))
+(defn funexpand
+  [funs]
+  (map #(if (string? %) (w %) %) funs))
+
+(defn funvec
+  [x]
+  (funexpand (if (coll? x) x [x])))
 
 (defn eval-chunk-word
   [chunk word]
   (if (and chunk word)
-    (every? #(eval-cond-word % word) (:word-conds chunk))))
+    (every? #(% word) (funvec (:word-conds chunk)))))
 
 (declare eval-rule)
 
