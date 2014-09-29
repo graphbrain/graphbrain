@@ -5,6 +5,10 @@
             [graphbrain.eco.word :as word]
             [clojure.math.combinatorics :as combs]))
 
+(defn ?
+  [word]
+  true)
+
 (defn verb
   [word]
   (word/verb? word))
@@ -220,6 +224,6 @@
   (let [par (parse rules (words/str->words s) env)]
     (map parse->vertex par)))
 
-(defmacro ?
+(defmacro !
   [words]
   `(parse ~'rules ~words ~'env))
