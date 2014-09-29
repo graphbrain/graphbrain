@@ -29,5 +29,4 @@
                     (second (:arguments opts))
                     (nth (:arguments opts) 2))
       "emmanuel" (emmanuel/run! (second (:arguments opts)))
-      "ecotest" (eco/ecotest chat/chat)
       (prn (str "Unknown command: " arg)))))

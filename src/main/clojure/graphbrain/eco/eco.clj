@@ -122,7 +122,8 @@
                                       (map
                                        first
                                        (partition 2 (destructure chunks)))))
-                                   (symbol 'env)))
+                                   (symbol 'env)
+                                   (symbol 'rules)))
                       f)
             :desc ~(clojure.string/join "-"
                    (map #(name (first %)) (partition 2 (destructure chunks))))})))
@@ -173,10 +174,10 @@
         res))))
 
 (defn- result->vertex
-  [rule result env]
+  [rules rule result env]
   (let [ks (sort (keys result))
         vals (map #(% result) ks)
-        verts (apply (:f rule) (conj vals env))]
+        verts (apply (:f rule) (conj vals env rules))]
     (if (map? verts)
       (assoc verts :rule rule)
       (map #(assoc % :rule rule) verts))))
@@ -188,7 +189,7 @@
       (let [rule (first rs)
             results (eval-rule words (:chunks rule) [] env)]
         (if (not (empty? results))
-          (flatten (into [] (map #(result->vertex rule % env)
+          (flatten (into [] (map #(result->vertex rules rule % env)
                                  results)))
           (recur (rest rs)))))))
 
@@ -204,12 +205,6 @@
   (let [par (parse rules (words/str->words s) env)]
     (map parse->vertex par)))
 
-(defmacro p
-  [rules words]
-  `(parse ~rules ~words ~'env))
-
-(defn ecotest
-  [s]
-  (let [env {:root "f43806bb591e3b87/berlin", :user "u/telmo"}]
-    (parse-str graphbrain.eco.parsers.chat/chat s env)
-    #_(System/exit 0)))
+(defmacro ?
+  [words]
+  `(parse ~'rules ~words ~'env))
