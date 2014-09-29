@@ -76,8 +76,7 @@
            (eid  "r/+in" (words->str a xin b) x y)))
 
 (pattern chat
-         [prop [#(or (adjective %) (adverb %))]
-          obj ?]
+         [prop (| adjective adverb), obj ?]
          (let [x (! prop)
                y (! obj)]
            (eid "r/+prop" (words->str prop obj) x y)))

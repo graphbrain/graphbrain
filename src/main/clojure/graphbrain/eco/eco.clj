@@ -9,6 +9,11 @@
   [word]
   true)
 
+(defn |
+  [& cond-funs]
+  (fn [word]
+    (some #(% word) cond-funs)))
+
 (defn verb
   [word]
   (word/verb? word))
