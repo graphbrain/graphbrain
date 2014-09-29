@@ -30,21 +30,21 @@
   [word]
   (not (ind word)))
 
-(defn adverb
+(defn adv
   [word]
   (word/adverb? word))
 
-(defn !adverb
+(defn !adv
   [word]
-  (not (adverb word)))
+  (not (adv word)))
 
-(defn adjective
+(defn adj
   [word]
   (word/adjective? word))
 
-(defn !adjective
+(defn !adj
   [word]
-  (not (adjective word)))
+  (not (adj word)))
 
 (defn det
   [word]
