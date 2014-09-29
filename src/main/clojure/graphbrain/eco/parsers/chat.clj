@@ -5,13 +5,13 @@
 (ecoparser chat)
 
 (pattern chat
-         [xwith [(w "with")]
-          x1 [(w "a")]
-          a [(!w ",")]
-          x2 [(w ",")]
-          b [!verb]
+         [xwith "with"
+          x1 "a"
+          a []
+          x2 ","
+          b []
           verb [verb]
-          c [!verb]]
+          c []]
          (let [x (? a)
                y (? b)
                z (? (concat b verb c))
@@ -19,69 +19,69 @@
            (edge "r/+list" k z)))
 
 (pattern chat
-         [a [!verb]
+         [a []
           verb1 [verb]
-          b [(!w "and") !verb]
-          xand1 [(w "and")]
+          b []
+          xand1 "and"
           verb2 [verb]
-          c [!verb]]
+          c []]
          (let [x (concat a verb1 b)
                y (concat a verb2 c)]
            (edge "r/+list" (? x) (? y))))
 
 (pattern chat
-         [a [!verb]
+         [a []
           verb1 [verb]
-          b [!verb]
-          xand2 [(w "and")]
+          b []
+          xand2 "and"
           verb2 [verb]
-          c [!verb]]
+          c []]
          (let [x (concat a verb1 b)
                y (concat a verb2 c)]
            (edge "r/+list" x y)))
 
 (pattern chat
-         [a [!verb]
+         [a []
           verb [verb]
-          b [!verb !ind]
+          b []
           in1 [ind]
-          c [!verb]
-          xand3 [(w "and")]
-          d [!verb !ind]
+          c []
+          xand3 "and"
+          d []
           in2 [ind]
-          e [!verb]]
+          e []]
          (if (not (ends-with (concat in1 c) (concat in2 e)))
            (let [x (? (concat a verb b in1 c))
                  y (? (concat a verb d in2 e))]
              (edge "r/+list" x y))))
 
 (pattern chat
-         [a [!verb]
+         [a []
           verb [verb]
-          b [!verb (!w "and")]
-          xand4 [(w "and")]
-          c [!verb !ind]
+          b []
+          xand4 "and"
+          c []
           in [ind]
-          d [!verb]]
+          d []]
          (let [x (? (concat a verb b in d))
                y (? (concat a verb c in d))]
            (edge "r/+list" x y)))
 
 (pattern chat
-         [a [!verb]
+         [a []
           verb [verb]
-          b [!verb (!w "and")]
-          xand5 [(w "and")]
-          c [!verb]]
+          b []
+          xand5 "and"
+          c []]
          (let [x (concat a verb b)
                y (concat a verb c)]
            (edge "r/+list" x y)))
 
 (pattern chat
-         [a [!verb]
+         [a []
           verb [verb]
           in [ind]
-          b [!verb]]
+          b []]
          (let [orig (? a)
                rel (rel (concat verb in))
                targ (? b)]
@@ -89,7 +89,7 @@
 
 (pattern chat
          [a []
-          verb [verb]
+          verb verb
           c []]
          (let [orig (? a)
                rel (rel verb)
@@ -97,24 +97,24 @@
            (edge rel orig targ)))
 
 (pattern chat
-         [a [!verb (!w "of")]
-          xof [(w "of")]
+         [a []
+          xof "of"
           b [verb]]
          (let [x (? a)
                y (? b)]
            (eid "r/+of" (words->str a xof b) x y)))
 
 (pattern chat
-         [a [(!w "'s")]
-          xs [(w "'s")]
+         [a []
+          xs "'s"
           b []]
          (let [x (? a)
                y (? b)]
            (eid "r/+poss" (str (words->str a) "'s " (words->str b)) x y)))
 
 (pattern chat
-         [a [(!w "in")]
-          xin [(w "in")]
+         [a []
+          xin "in"
           b []]
          (let [x (? a)
                y (? b)]
@@ -122,7 +122,7 @@
 
 (pattern chat
          [prop [#(or (adjective %) (adverb %))]
-          obj [!verb]]
+          obj []]
          (let [x (? prop)
                y (? obj)]
            (eid "r/+prop" (words->str prop obj) x y)))
@@ -133,11 +133,11 @@
          (? no-dt))
 
 (pattern chat
-         [i [(w "i")]]
+         [i "i"]
          (user env))
 
 (pattern chat
-         [this [(w "this")]]
+         [this "this"]
          (root env))
 
 (pattern chat
