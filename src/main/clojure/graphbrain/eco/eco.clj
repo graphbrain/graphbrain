@@ -111,32 +111,48 @@
   [name]
   `(def ~name []))
 
+(defn- cond-weight
+  [cond]
+  (if (= cond ?) 0 1))
+
+(defn- rule-priority
+  [rule]
+  (reduce +
+          (map
+           #(+ (reduce + (map cond-weight (funvec (:word-conds %)))) 1)
+           (:chunks rule))))
+
+(defn sorted-rules
+  [rules]
+  (sort #(> (:priority %1) (:priority %2))
+        (map #(assoc % :priority (rule-priority %)) rules)))
+
 (defmacro pattern
   [rules chunks f]
   `(def ~rules
-     (conj ~rules
-           {:chunks
-            (let [~'chunk-defs
-                  ~(apply vector (map
-                                  #(vector (keyword (first %))
-                                           (second %))
-                                  (partition 2 (destructure chunks))))]
-              (reduce
-               (fn [~'v ~'cd]
-                 (conj ~'v (chunk-def->chunk ~'cd)))
-               [] ~'chunk-defs))
-            :f ~(list 'fn*
-                      (apply vector
-                             (conj (sort
-                               (apply vector
-                                      (map
-                                       first
-                                       (partition 2 (destructure chunks)))))
-                                   (symbol 'env)
-                                   (symbol 'rules)))
-                      f)
-            :desc ~(clojure.string/join "-"
-                   (map #(name (first %)) (partition 2 (destructure chunks))))})))
+     (sorted-rules (conj ~rules
+            {:chunks
+             (let [~'chunk-defs
+                   ~(apply vector (map
+                                   #(vector (keyword (first %))
+                                            (second %))
+                                   (partition 2 (destructure chunks))))]
+               (reduce
+                (fn [~'v ~'cd]
+                  (conj ~'v (chunk-def->chunk ~'cd)))
+                [] ~'chunk-defs))
+             :f ~(list 'fn*
+                       (apply vector
+                              (conj (sort
+                                     (apply vector
+                                            (map
+                                             first
+                                             (partition 2 (destructure chunks)))))
+                                    (symbol 'env)
+                                    (symbol 'rules)))
+                       f)
+             :desc ~(clojure.string/join "-"
+                                         (map #(name (first %)) (partition 2 (destructure chunks))))}))))
 
 (defn funexpand
   [funs]
