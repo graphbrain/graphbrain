@@ -111,6 +111,14 @@
   [name]
   `(def ~name []))
 
+(defn funexpand
+  [funs]
+  (map #(if (string? %) (w %) %) funs))
+
+(defn funvec
+  [x]
+  (funexpand (if (coll? x) x [x])))
+
 (defn- cond-weight
   [cond]
   (if (= cond ?) 0 1))
@@ -153,14 +161,6 @@
                        f)
              :desc ~(clojure.string/join "-"
                                          (map #(name (first %)) (partition 2 (destructure chunks))))}))))
-
-(defn funexpand
-  [funs]
-  (map #(if (string? %) (w %) %) funs))
-
-(defn funvec
-  [x]
-  (funexpand (if (coll? x) x [x])))
 
 (defn eval-chunk-word
   [chunk word]
