@@ -43,12 +43,13 @@
   [user root sentence ctxts]
   (let
       [env {:root (maps/vertex->eid root) :user (:id user)}
-       res (eco/parse-str chat/chat sentence env)]
+       res (first (eco/parse-str chat/chat sentence env))]
     (if (id/edge? res)
       (let [edge-id (edg/guess common/gbdb res sentence ctxts)
             edge (maps/id->vertex edge-id)
             edge (assoc edge :score 1)]
-        (gb/putv! common/gbdb edge (:id user))))))
+        (gb/putv! common/gbdb edge (:id user))
+        (input-reply-fact (:id root) edge)))))
 
 (defn process-search
   [user root q ctxts]
