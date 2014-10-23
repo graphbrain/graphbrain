@@ -31,7 +31,7 @@
                   [org.clojure/math.combinatorics "0.0.7"]
                   [clj-http "0.9.0"]
                   [hiccup "1.0.5"]
-                  [garden "1.1.7"]
+                  [garden "1.1.5" :exclusions [org.clojure/clojure]]
                   ;; ClojureScript
                   [org.clojure/clojurescript "0.0-2173"]
                   [jayq "2.5.0"]
