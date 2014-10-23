@@ -1,7 +1,9 @@
 (ns graphbrain.gbui.item
+  (:require-macros [hiccups.core :as hiccups])
   (:require [jayq.core :as jq]
             [graphbrain.gbui.remove :as rem]
-            [graphbrain.gbui.globals :as g])
+            [graphbrain.gbui.globals :as g]
+            [hiccups.runtime :as hiccupsrt])
   (:use [jayq.core :only [$]]))
 
 (defn item-div-id
@@ -11,38 +13,23 @@
     (let [div-id (clojure.string/replace edge #"\W" "_")]
       (str "i_" div-id))))
 
-(defn- url-item-html
+(hiccups/defhtml url-item-html
   [node div-id]
-  (let [title-class "item-url-title"
-        url-class "item-url"
-        t-div-id (str "t" div-id)
-        html (str "<div class='item-main'>")
-        html (str html "<div class='" title-class "'" "id='" t-div-id "'>")
-        html (str html "<a href='/x/"
-                  (js/encodeURIComponent (:id node))
-                  "' id='"
-                  div-id
-                  "'>")
-        html (str html (:text node))
-        html (str html "</a></div><br />")
-        icon (:icon node)
-        html (if (not= icon "")
-               (str html
-                    "<div><img src='"
-                    icon
-                    "' width='16px' height='16px' class='item-ico' /></div>")
-               html)
-        html (str html "<div class='" url-class "'>")
-        url (:url node)
-        html (str html "<a href='" url "' id='url" div-id "'>")
-        html (str html url)
-        html (str html "</a></div></div>")
-        html (str html
-                  "<div class='node-remove'><a id='rem"
-                  div-id
-                  "' href='#'>x</a></div>")
-        html (str html "<div style='clear:both;'></div>")]
-    html))
+  [:div {:class "item-main"}
+   [:div {:class "item-url-title" :id (str "t" div-id)}
+    [:a {:href (str "/x/" (js/encodeURIComponent (:id node)))
+         :id div-id}
+     (:text node)]]
+   [:br]
+   (if (not= (:icon node) "")
+     [:div {:class "item-ico"}
+      [:img {:src (:icon node) :width "16px" :height "16px" :class "item-ico"}]])
+   [:div {:class "item-url"}
+    [:a {:href (:url node) :id (str "url" div-id)}
+     (:url node)]]]
+  [:div {:class "node-remove"}
+   [:a {:id (str "rem" div-id) :href "#"} "x"]]
+  [:div {:style "clear:both;"}])
 
 (defn- subtext-item
   [sub]
@@ -54,41 +41,24 @@
   [sub]
   (clojure.string/join ", " (map subtext-item sub)))
 
-(defn- entity-item-html
-  [node div-id]
-  (let [main-class "item-main"
-        title-class "item-title"
-        t-div-id (str "t" div-id)
-        html (str "<div class='" main-class  "'>")
-        html (str html "<div class='" title-class "'" "id='" t-div-id "'>")
-        html (str html "<a href='/x/"
-                  (js/encodeURIComponent (:id node))
-                  "' id='"
-                  div-id
-                  "'>")
-        html (str html (:text node) "&nbsp;")
-        html (str html "</a></div>")
-        sub-txt (subtext (:sub node))
-        html (if sub-txt
-               (str html
-                    "<div class='item-sub-text'> "
-                    sub-txt
-                    "</div>")
-               html)
-        html (str html "</div>")
-        html (str html
-                  "<div class='item-remove'><a id='rem"
-                  div-id
-                  "' href='#'>x</a></div>")
-        html (str html "<div style='clear:both;'></div>")]
-    html))
+(hiccups/defhtml entity-item-html
+  [node div-id sub-txt]
+  [:div {:class "item-main"}
+   [:div {:class "item-title" :id (str "t" div-id)}
+    [:a {:href (str "/x/" (js/encodeURIComponent (:id node))) :id div-id}
+     (str (:text node) "&nbsp;")]]
+   (if sub-txt
+     [:div {:class "item-sub-text"} sub-txt])]
+  [:div {:class "item-remove"}
+   [:a {:id (str "rem" div-id) :href "#"} "x"]]
+  [:div {:style "clear:both;"}])
 
 (defn- item-html
   [item div-id]
   (let [type (:type item)]
     (if (= type "url")
       (url-item-html item div-id)
-      (entity-item-html item div-id))))
+      (entity-item-html item div-id (subtext (:sub item))))))
 
 (defn- item-color
   [item ctxts]

@@ -60,13 +60,14 @@
    [:a
     {:color "#B0B0B0"}]]
 
-  [:.node-url
-   {:overflow "hidden"
+  [:.item-url
+   {:max-width (px 100)
+    :background "rgb(255, 0, 0)"
+    :overflow "hidden"
     :text-overflow "ellipsis"
-    :max-width (px 135)
     :white-space "nowrap"
     :float "right"}]
-
+  
   [:.item-url
    [:a
     {:font-size (px 10)
