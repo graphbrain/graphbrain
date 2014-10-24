@@ -15,21 +15,21 @@
 
 (hiccups/defhtml url-item-html
   [node div-id]
-  [:div {:class "item-main"}
-   [:div {:class "item-url-title" :id (str "t" div-id)}
-    [:a {:href (str "/x/" (js/encodeURIComponent (:id node)))
-         :id div-id}
-     (:text node)]]
-   [:br]
-   (if (not= (:icon node) "")
-     [:div {:class "item-ico"}
-      [:img {:src (:icon node) :width "16px" :height "16px" :class "item-ico"}]])
-   [:div {:class "item-url"}
-    [:a {:href (:url node) :id (str "url" div-id)}
-     (:url node)]]]
-  [:div {:class "node-remove"}
-   [:a {:id (str "rem" div-id) :href "#"} "x"]]
-  [:div {:style "clear:both;"}])
+  [:div {:class "item clearfix"}
+   [:div {:class "item-main clearfix"}
+    [:div {:class "item-url-title" :id (str "t" div-id)}
+     [:a {:href (str "/x/" (js/encodeURIComponent (:id node)))
+          :id div-id}
+      (:text node)]]
+    [:div {:class "item-url-area clearfix"}
+     (if (not= (:icon node) "")
+       [:div {:class "item-ico"}
+        [:img {:src (:icon node) :width "16px" :height "16px" :class "item-ico"}]])
+     [:div {:class "item-url"}
+      [:a {:href (:url node) :id (str "url" div-id)}
+       (:url node)]]]]
+   [:div {:class "item-remove"}
+    [:a {:id (str "rem" div-id) :href "#"} "x"]]])
 
 (defn- subtext-item
   [sub]
@@ -43,15 +43,15 @@
 
 (hiccups/defhtml entity-item-html
   [node div-id sub-txt]
-  [:div {:class "item-main"}
-   [:div {:class "item-title" :id (str "t" div-id)}
-    [:a {:href (str "/x/" (js/encodeURIComponent (:id node))) :id div-id}
-     (str (:text node) "&nbsp;")]]
-   (if sub-txt
-     [:div {:class "item-sub-text"} sub-txt])]
-  [:div {:class "item-remove"}
-   [:a {:id (str "rem" div-id) :href "#"} "x"]]
-  [:div {:style "clear:both;"}])
+  [:div {:class "item clearfix"}
+   [:div {:class "item-main clearfix"}
+    [:span {:class "item-title" :id (str "t" div-id)}
+     [:a {:href (str "/x/" (js/encodeURIComponent (:id node))) :id div-id}
+      (:text node)]]
+    (if sub-txt
+      [:span {:class "item-sub-text"} sub-txt])]
+   [:div {:class "item-remove"}
+    [:a {:id (str "rem" div-id) :href "#"} "x"]]])
 
 (defn- item-html
   [item div-id]
@@ -68,10 +68,8 @@
   [item frame-id snode ctxts]
   (let [class "item"
         div-id (item-div-id (:edge item))
-        html (str "<div id='" div-id "' class='" class "'>")
-        html (str html (item-html item div-id))
-        html (str html "</div>")]
-    (jq/append ($ (str "#" frame-id " .viewport")) html)
+        html (item-html item div-id)]
+    (jq/append ($ (str "#" frame-id " .frame-inner")) html)
     (jq/css ($ (str "#t" div-id)) {:background (item-color item ctxts)})
     (jq/bind ($ (str "#rem" div-id))
                    :click
