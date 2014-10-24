@@ -2,82 +2,90 @@
   (:require [garden.units :refer [px]]))
 
 (def css
-  [[:.item
-   {:color "#000"
-    :margin (px 3)
-    :padding (px 3)
+  [[:.clearfix:after
+   {:content " "
+    :display "block" 
+    :height 0 
     :clear "both"}]
 
-  [:.item
-   [:a
-    {:color "#000"}]]
+   [:.item
+    {:color "#000"
+     :margin (px 3)
+     :padding (px 3)
+     :position "relative"}]
 
-  [:.item-main
-   {:float "left"
-    :max-width (px 560)}]
+   [:.item
+    [:a
+     {:color "#000"}]]
 
-  [:.item-title
-   {:font-size (px 15)
-    :float "left"}]
+   [:.item:hover
+    {:background "#EEE"}]
+   
+   [:.item-main
+    {:margin-right (px 15)}]
 
-  [:.item-title
-   [:a
-    {:color "#FFF"
-     :float "left"}]]
+   [:.item-title
+    {:font-size (px 15)
+     :padding (px 3)}]
 
-  [:.item-url-title
-   {:float "left"
-    :overflow "hidden"
-    :text-overflow "ellipsis"
-    :white-space "nowrap"}]
+   [:.item-title
+    [:a
+     {:color "#FFF"}]]
 
-  [:.item-url-title
-   [:a
-    {:font-size (px 12)
-     :color "#000"
-     :max-width (px 165)
-     :float "left"}]]
-  
-  [:.node-title-root
-   {:max-width (px 600)}]
-
-  [:.item-sub-text
-   {:float "left"
-    :font-size (px 11)
-    :color "#555"}]
-
-  [:.item-sub-text
-   [:a
+   [:.item-sub-text
     {:font-size (px 11)
-     :color "#555"}]]
-
-  [:.item-remove
-   {:text-align "right"
-    :float "right"
-    :margin-left (px 10)}]
-
-  [:.item-remove
-   [:a
-    {:color "#B0B0B0"}]]
-
-  [:.item-url
-   {:max-width (px 100)
-    :background "rgb(255, 0, 0)"
-    :overflow "hidden"
-    :text-overflow "ellipsis"
-    :white-space "nowrap"
-    :float "right"}]
+     :margin-left (px 5)
+     :color "#555"}]
   
-  [:.item-url
-   [:a
-    {:font-size (px 10)
-     :color "rgb(0, 0, 255)"}]]
+   [:.item-sub-text
+    [:a
+     {:font-size (px 11)
+      :color "#555"}]]
+   
+   [:.item-url-title
+    {:overflow "hidden"
+     :text-overflow "ellipsis"
+     :white-space "nowrap"}]
 
-  [:.item-ico
-   {:margin-right (px 5)
-    :float "left"}]
+   [:.item-url-title
+    [:a
+     {:font-size (px 12)
+      :color "#FFF"
+      :padding (px 3)}]]
 
-  [:.item-ico
-   [:img
-    {:margin-right (px 5)
-     :float "left"}]]])
+   [:.item-url-area {}]
+  
+   [:.item-url
+    {:overflow "hidden"
+     :white-space "nowrap"
+     :text-overflow "ellipsis"}]
+  
+   [:.item-url
+    [:a
+     {:font-size (px 10)
+      :color "rgb(0, 0, 255)"
+      :overflow "hidden"
+      :white-space "nowrap"
+      :text-overflow "ellipsis"}]]
+
+   [:.item-ico
+    {:float "left"
+     :margin-top (px 2)
+     :margin-right (px 3)}]
+
+   [:.item-ico
+    [:img
+     {:float "left"
+      :vertical-align "middle"}]]
+
+   [:.item-remove
+    {:position "absolute"
+     :top 0
+     :right 0
+     :width (px 15)
+     :padding-right (px 3)
+     :text-align "right"}]
+
+   [:.item-remove
+    [:a
+     {:color "#B0B0B0"}]]])
