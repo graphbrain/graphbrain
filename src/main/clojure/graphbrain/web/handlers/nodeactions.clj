@@ -21,4 +21,4 @@
      op ((request :form-params) "op")]
     (if (= op "remove")
       (remove-vertex request))
-    (redirect (str "/node/" vert-id))))
+    (redirect (str "/x/" vert-id))))
