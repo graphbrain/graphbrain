@@ -33,7 +33,7 @@
                :url (url/title common/gbdb (:id vert) ctxts)
                (vertex/label vert))
        desc (case (:type vert)
-              :entity (entity/description vert)
+              :entity (entity/subentities vert)
               :url "web page"
               :user "GraphBrain user"
               nil)]
