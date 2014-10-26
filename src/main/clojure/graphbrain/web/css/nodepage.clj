@@ -39,6 +39,7 @@
      :left (px 0)
      :width "100%"
      :height (px 60)
+     :text-color "#000"
      :background "#FFF"}]
 
    [:.topbar-element
@@ -46,17 +47,22 @@
      :width (px 100)}]
 
    [:.topbar-menu
-    {:float "right"
-     :width (px 100)}]
+    {:margin-right (px 15)
+     :z-index 9999
+     :max-width (px 100)
+     :font-size (px 14)}]
 
    [:.topbar-input-area
-    {:margin "0 100px"}]
+    {:margin "0px 120px 0px 100px"}]
 
    [:.topbar-center
     {:position "relative"
-     :top "50%"
-     :transform "translateY(-50%)"
      :text-align "center"}]
+
+   [:.topbar-vcenter
+    {:position "relative"
+     :top "50%"
+     :transform "translateY(-50%)"}]
    
    [:.top-input
     {}]
@@ -67,5 +73,4 @@
      :line-height (px 30)
      :font-size (px 24)
      :border "none"
-     ;;:-webkit-appearance "none"
      :outline "none"}]])
