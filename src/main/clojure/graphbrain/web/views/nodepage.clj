@@ -15,21 +15,35 @@
   [user]
   (if (nil? user)
     [:span
-     [:a {:class "signupLink" :href "#"} "Sign Up"]
-     "&nbsp; | &nbsp"
-     [:a {:id "loginLink" :href "#"} "Login"]]
-
-    [:span {:class "dropdown"}
+     [:a {:class "signupLink" :href "#"} "sign up"]
+     "&nbsp; | &nbsp;"
+     [:a {:id "loginLink" :href "#"} "login"]]
+    
+    [:div {:class "dropdown"}
      [:a {:href "#"
-          :class "dropdown-toggle"
+          :class ""
+          :id "user-menu"
           :data-toggle "dropdown"}
-      [:i {:class "icon-user icon-white"}]
-      (:name user)
-      [:div {:class "menu-caret"}]]
-     [:ul {:class "dropdown-menu"}
-      [:li [:a {:href "http://graphbrain.com"} "About GraphBrain"]]
-      [:li [:a {:href (str "/node/u/" (:username user))} "Home"]]
-      [:li [:a {:href "#" :id "logoutLink"} "Logout"]]]]))
+      #_[:img {:src "http://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=25"}]
+      [:i {:class "icon-user"}]
+      (str (:name user) " ")
+      [:span {:class "caret"}]]
+     [:ul {:class "dropdown-menu dropdown-menu-right"
+           :role "menu"
+           :aria-labelledby "user-menu"}
+      [:li {:role "presentation"}
+       [:a {:href "http://graphbrain.com"
+            :role "menu"}
+        "About GraphBrain"]]
+      [:li {:role "presentation"}
+       [:a {:href (str "/x/u/" (:username user))
+            :role "menu"}
+        "Home"]]
+      [:li {:role "presentation"}
+       [:a {:href "#"
+            :id "logoutLink"
+            :role "menu"}
+        "Logout"]]]]))
 
 (defn- subid->link
   [id]
@@ -41,13 +55,13 @@
   (html
    [:div {:id "nodeback"}
     [:div {:id "topbar"}
-     [:div {:class "topbar-menu topbar-center"}
+     [:div {:class "pull-right topbar-vcenter topbar-menu"}
       (user-menu user)]
-     [:div {:class "topbar-element topbar-center"}
+     [:div {:class "topbar-element topbar-center topbar-vcenter"}
       [:a {:href "/"}
        [:img {:src "/images/GB_logo_XS.png"
               :alt "graphbrain"}]]]
-     [:div {:class "topbar-input-area topbar-center"}
+     [:div {:class "topbar-input-area topbar-center topbar-vcenter"}
       [:form {:class "top-input" :id "top-input-field"}
        [:input {:type "text"
                 :id "main-input-field"

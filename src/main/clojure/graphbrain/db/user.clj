@@ -40,5 +40,7 @@
   [user]
   (let [ctxts (:ctxts user)]
     (if (nil? ctxts)
-      ["c/wordnet" "c/web" (:id user)]
+      (if user
+        ["c/wordnet" "c/web" (:id user)]
+        ["c/wordnet" "c/web"])
       (clojure.string/split ctxts #" "))))
