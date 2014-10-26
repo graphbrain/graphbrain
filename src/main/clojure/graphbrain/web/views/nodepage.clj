@@ -31,6 +31,11 @@
       [:li [:a {:href (str "/node/u/" (:username user))} "Home"]]
       [:li [:a {:href "#" :id "logoutLink"} "Logout"]]]]))
 
+(defn- subid->link
+  [id]
+  [:a {:href (str "/x/" id)}
+   (entity/label id)])
+
 (defn view
   [user title desc]
   (html
@@ -55,5 +60,8 @@
       [:div {:class "np-title"}
        title]
       [:div {:class "np-desc"}
-       desc]]
+       (if (string? desc)
+         desc
+         (interpose ", "
+                    (map subid->link desc)))]]
      [:div {:id "frames"}]]]))
