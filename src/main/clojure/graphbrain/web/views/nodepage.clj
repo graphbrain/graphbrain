@@ -32,7 +32,7 @@
       [:li [:a {:href "#" :id "logoutLink"} "Logout"]]]]))
 
 (defn view
-  [vert user]
+  [user title desc]
   (html
    [:div {:id "nodeback"}
     [:div {:id "topbar"}
@@ -53,7 +53,7 @@
     [:div {:id "nodepage"}
      [:div {:id "nodepage-title"}
       [:div {:class "np-title"}
-       (vertex/label vert)]
+       title]
       [:div {:class "np-desc"}
-       (entity/description vert)]]
+       desc]]
      [:div {:id "frames"}]]]))
