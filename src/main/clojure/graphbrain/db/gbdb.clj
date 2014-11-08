@@ -39,6 +39,13 @@
   [gbdb global-id local-id]
   (mysql/remove-link-to-global! gbdb global-id local-id))
 
+(defn degree
+  [gbdb id ctxts]
+  (let [v (getv gbdb id ctxts)]
+    (if v
+      (:degree v)
+      0)))
+
 (defn- f-degree!
   [gbdb id-or-vertex f]
   (let [vertex (if (string? id-or-vertex) (getv gbdb id-or-vertex) id-or-vertex)
@@ -153,11 +160,20 @@
     (f->edges f ctxts)))
 
 (defn id->edges
-  [gbdb id ctxts]
-  (let [f #(mysql/id->edges gbdb
-                            (id->eid gbdb (id/global->local id %))
-                            %)]
-    (f->edges f ctxts)))
+  ([gbdb id ctxts]
+     (let [f #(mysql/id->edges gbdb
+                               (id->eid gbdb (id/global->local id %))
+                               %)]
+       (f->edges f ctxts)))
+  ([gbdb id ctxts depth]
+     (if (> depth 0)
+       (let [edges (id->edges gbdb id ctxts)
+             ids (set (flatten (map maps/participant-ids edges)))
+             ids (map id/eid->id ids)
+             ids (filter #(< (degree gbdb % ctxts) 9999) ids)
+             next-edges (map #(id->edges gbdb % ctxts (dec depth))
+                             ids)]
+         (apply clojure.set/union (conj next-edges edges))))))
 
 (defn vertex->edges
   [gbdb center ctxts]
