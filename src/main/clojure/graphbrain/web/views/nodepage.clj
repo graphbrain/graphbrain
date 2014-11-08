@@ -24,7 +24,8 @@
           :class ""
           :id "user-menu"
           :data-toggle "dropdown"}
-      #_[:img {:src "http://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=25"}]
+      ;;[:img {:src "http://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=25"}]
+      ;;"&nbsp;"
       [:i {:class "icon-user"}]
       (str (:name user) " ")
       [:span {:class "caret"}]]
