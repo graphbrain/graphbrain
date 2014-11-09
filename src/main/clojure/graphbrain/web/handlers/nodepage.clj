@@ -1,5 +1,4 @@
 (ns graphbrain.web.handlers.nodepage
-  (:use (graphbrain.web.views page))
   (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.vertex :as vertex]
             [graphbrain.db.entity :as entity]
@@ -9,7 +8,7 @@
             [graphbrain.web.contexts :as contexts]
             [graphbrain.web.entitydata :as ed]
             [graphbrain.web.cssandjs :as css+js]
-            [graphbrain.web.views.nodepage :as npview]))
+            [graphbrain.web.views.nodepage :as np]))
 
 (defn- pagedata
   [vert user ctxts all-ctxts]
@@ -37,9 +36,8 @@
               :url "web page"
               :user "GraphBrain user"
               nil)]
-    (page :title title
-          :css-and-js (css+js/css+js)
-          :user user
-          :page :node
-          :body-fun #(npview/view user title desc)
-          :js (js vert user ctxts all-ctxts))))
+    (np/nodepage :title title
+                 :css-and-js (css+js/css+js)
+                 :user user
+                 :js (js vert user ctxts all-ctxts)
+                 :desc desc)))

@@ -2,7 +2,7 @@
   (:use hiccup.core
         hiccup.page))
 
-(defn page [& {:keys [title user page css-and-js body-fun js]}]
+(defn page [& {:keys [title css-and-js body-fun js]}]
   (html5 {:lang "en"}
     [:head
       [:meta {:charset "utf-8"}]
