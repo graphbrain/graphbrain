@@ -5,7 +5,8 @@
         (graphbrain.web.handlers landing node view bubble nodeactions user
                                          raw search aichat relations
                                          allusers ecoparser ecocode
-                                         ecoedittests ecoruntests nodepage))
+                                         ecoedittests ecoruntests nodepage
+                                         intersect))
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
             [graphbrain.web.common :as common]
@@ -18,6 +19,7 @@
   (GET "/node/*" request (handle-node request))
   (POST "/node/*" request (handle-nodeactions request))
   (GET "/v/*" request (handle-nodepage request))
+  (GET "/x" request (handle-intersect request))
   (GET "/raw/*" request (handle-raw request))
   (POST "/signup" request (handle-signup request))
   (POST "/checkusername" request (handle-check-username request))
