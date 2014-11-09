@@ -17,7 +17,7 @@
   (GET "/bubble" request (handle-bubble request))
   (GET "/node/*" request (handle-node request))
   (POST "/node/*" request (handle-nodeactions request))
-  (GET "/x/*" request (handle-nodepage request))
+  (GET "/v/*" request (handle-nodepage request))
   (GET "/raw/*" request (handle-raw request))
   (POST "/signup" request (handle-signup request))
   (POST "/checkusername" request (handle-check-username request))
