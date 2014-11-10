@@ -10,8 +10,8 @@
 
 (defn- js
   [vert user ctxts all-ctxts]
-  (str "var data = " (vg/generate common/gbdb (:id vert) user ctxts all-ctxts) ";\n"
-    "var errorMsg = \"\";\n"))
+  (str "var ptype='node3d';"
+       "var data=" (vg/generate common/gbdb (:id vert) user ctxts all-ctxts) ";"))
 
 (defn handle-node
   [request]

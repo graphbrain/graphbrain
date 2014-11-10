@@ -136,9 +136,9 @@
   (.addEventListener js/document "touchend" touch-end)
   (.addEventListener js/document "touchmove" touch-move)
   (alerts/init-alert!)
-  (if (and (exists? js/pagedata) (not (nil? js/pagedata)))
+  (if (= js/ptype "node")
     (rem/init-remove-dialog @g/root-id))
-  (if (and (exists? js/data) (not (nil? js/data)))
+  (if (= js/ptype "node3d")
     (rem/init-remove-dialog
      (:id (first (get-in @g/graph [:snodes "root" :nodes])))))
   (if (and (exists? js/errorMsg) (not (empty? js/errorMsg)))

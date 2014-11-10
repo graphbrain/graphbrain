@@ -17,7 +17,8 @@
 
 (defn- js
   [vert user ctxts all-ctxts]
-  (str "var pagedata = '" (pr-str (pagedata vert user ctxts all-ctxts)) "';"))
+  (str "var ptype='node';"
+       "var data='" (pr-str (pagedata vert user ctxts all-ctxts)) "';"))
 
 (defn handle-nodepage
   [request]

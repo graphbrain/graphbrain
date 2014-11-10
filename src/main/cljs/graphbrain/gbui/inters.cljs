@@ -1,4 +1,4 @@
-(ns graphbrain.gbui.view
+(ns graphbrain.gbui.inters
   (:require [jayq.core :as jq]
             [graphbrain.gbui.bubble :as bubble]
             [graphbrain.gbui.globals :as g])
