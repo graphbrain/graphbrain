@@ -1,24 +1,36 @@
 (ns graphbrain.web.handlers.intersect
-  (:use (graphbrain.web.views page))
   (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.vertex :as vertex]
-            [graphbrain.db.entity :as entity]
-            [graphbrain.db.urlnode :as url]
             [graphbrain.db.user :as user]
+            [graphbrain.db.queries :as q]
             [graphbrain.web.common :as common]
             [graphbrain.web.contexts :as contexts]
             [graphbrain.web.entitydata :as ed]
             [graphbrain.web.cssandjs :as css+js]
-            [graphbrain.web.views.nodepage :as npview]))
+            [graphbrain.web.views.intersect :as i]))
 
-(defn- pagedata
-  [vert user ctxts all-ctxts]
-  (let [entity-data (ed/generate common/gbdb (:id vert) user ctxts all-ctxts)]
-    entity-data))
+(defn- entity-bubble
+  [gbdb id user ctxts all-ctxts]
+  (let [entity-data (ed/generate gbdb id user ctxts all-ctxts)]
+    {:id id
+     :type :entity
+     :pos [0 0]
+     :scale 1
+     :content entity-data}))
+
+(defn- view-data
+  [user ctxts all-ctxts]
+  (let [bubble (entity-bubble common/gbdb
+                              "f43806bb591e3b87/berlin"
+                              user
+                              ctxts
+                              all-ctxts)]
+    {:bubbles [bubble]}))
 
 (defn- js
   [vert user ctxts all-ctxts]
-  (str "var pagedata = '" (pr-str (pagedata vert user ctxts all-ctxts)) "';"))
+  (str "var ptype='intersect';"
+       "var data='" (pr-str (view-data user ctxts all-ctxts)) "';"))
 
 (defn handle-intersect
   [request]
@@ -26,20 +38,10 @@
       [user (common/get-user request)
        ctxts (contexts/active-ctxts request user)
        all-ctxts (user/user->ctxts user)
-       vert (gb/getv common/gbdb
-                     (:* (:route-params request))
-                     ctxts)
-       title (case (:type vert)
-               :url (url/title common/gbdb (:id vert) ctxts)
-               (vertex/label vert))
-       desc (case (:type vert)
-              :entity (entity/subentities vert)
-              :url "web page"
-              :user "GraphBrain user"
-              nil)]
-    (page :title title
-          :css-and-js (css+js/css+js)
-          :user user
-          :page :node
-          :body-fun #(npview/view user title desc)
-          :js (js vert user ctxts all-ctxts))))
+       ids (vals (:query-params request))
+       edges (q/intersect common/gbdb ids ctxts)]
+    (i/intersect :title "intersect"
+                 :css-and-js (css+js/css+js)
+                 :user user
+                 :js (js nil user ctxts all-ctxts)
+                 :text edges)))

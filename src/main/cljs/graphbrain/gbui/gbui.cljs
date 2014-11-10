@@ -8,7 +8,7 @@
             [graphbrain.gbui.newedges :as newedges]
             [graphbrain.gbui.node :as node]
             [graphbrain.gbui.contexts :as contexts]
-            [graphbrain.gbui.view :as view]
+            [graphbrain.gbui.inters :as inters]
             [graphbrain.gbui.nodepage :as nodepage]
             [cemerick.pprng :as rng])
   (:use [jayq.core :only [$]]))
@@ -17,23 +17,23 @@
   []
   (reset! g/rng (rng/rng "GraphBrain GraphBrain"))
 
-  (if (and (exists? js/pagedata) (not (nil? js/pagedata)))
-    (nodepage/init-nodepage! js/pagedata))
+  (if (= js/ptype "node")
+    (nodepage/init-nodepage! js/data))
   
-  (if (and (exists? js/viewdata) (not (nil? js/viewdata)))
-    (view/init-view! js/viewdata))
+  (if (= js/ptype "intersect")
+    (inters/init-view! js/data))
   
-  (if (and (exists? js/data) (not (nil? js/data)))
+  (if (= js/ptype "node3d")
     (graph/init-graph!))
 
   (intf/init-interface)
   
-  (if (and (exists? js/data) (not (nil? js/data)))
+  (if (= js/ptype "node3d")
     (do (rels/init-relations!)
         (aichat/init-ai-chat!)
         (contexts/init-contexts!)))
  
-  (if (and (exists? js/data) (not (nil? js/data)))
+  (if (= js/ptype "node3d")
     (do (if @g/changed-snode
        (anim/add-anim! (anim/anim-lookat @g/changed-snode))
        (anim/add-anim! (anim/anim-init-rotation)))
