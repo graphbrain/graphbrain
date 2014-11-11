@@ -5,9 +5,8 @@
 (defn view
   [text]
   (html
-   [:div {:id "main-view"}
-    [:div {:id "data-view"}
-     [:div {:id "view-view"}]]]))
+   [:div {:id "data-view"}
+    [:div {:id "inters-view"}]]))
 
 (defn intersect
   [& {:keys [title css-and-js user js text]}]

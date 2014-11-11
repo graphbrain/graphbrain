@@ -1,14 +1,12 @@
 (ns graphbrain.web.entitydata
   (:require [graphbrain.web.common :as common]
             [graphbrain.web.contexts :as contexts]
+            [graphbrain.web.visualvert :as vv]
             [graphbrain.db.gbdb :as gb]
             [graphbrain.db.maps :as maps]
             [graphbrain.db.id :as id]
             [graphbrain.db.edgetype :as edgetype]
-            [graphbrain.db.entity :as entity]
             [graphbrain.db.vertex :as vertex]
-            [graphbrain.db.urlnode :as url]
-            [graphbrain.db.text :as text]
             [graphbrain.db.context :as context])
   (:import (com.graphbrain.web EdgeLabelTable)))
 
@@ -80,9 +78,10 @@
 (defn- node-label
   [node]
   (case (:type node)
-    "entity" (:text node)
-    "user" (:text node)
-    (:type node)))
+    :entity (:text node)
+    :user (:text node)
+    :url "web page"
+    (name (:type node))))
 
 (defn- link-label
   [edge-type rpos root-node]
@@ -96,55 +95,14 @@
 
 (defn- node->map
   [gbdb node-id edge root-id ctxts]
-  (let [vtype (id/id->type node-id)
-        node (if (= vtype :entity)
-               (maps/id->vertex node-id)
-               (gb/getv gbdb node-id ctxts))
-        node (if (nil? node) (maps/id->vertex node-id) node)
-        node (maps/local->global node)
+  (let [vv (vv/id->visual gbdb node-id ctxts)
         node-edge (:id (:parent edge))
         score (:score edge)
         ectxts (:ctxts edge)]
-    (condp = (:type node)
-      :entity (let [sub (entity/subentities node)
-                    sub (map #(hash-map :id (id/eid->id %)
-                                        :text (entity/description %)) sub)]
-                {:id (:id node)
-                 :type "entity"
-                 :text (entity/label node-id)
-                 :sub sub
-                 :edge node-edge
-                 :score score
-                 :ctxts ectxts})
-      :url (let [title (url/title gbdb (:id node) ctxts)
-                 url (url/url node)]
-             {:id (:id node)
-              :type "url"
-              :text (if (empty? title) (url/url node) title)
-              :url url
-              :icon (str "http://g.etfv.co/" url)
-              :edge node-edge
-              :score score
-              :ctxts ectxts})
-      :user {:id (:id node)
-             :type "user"
-             :text (:name node)
-             :sub [{:id "" :text "GraphBrain user"}]
-             :edge node-edge
-             :score score
-             :ctxts ectxts}
-      :text {:id (:id node)
-             :type "text"
-             :text (:text (text/id->text gbdb (:id node)))
-             :edge node-edge
-             :score score
-             :ctxts ectxts}
-      {:id (:id node)
-       :type "text"
-       :text (:id node)
-       :edge node-edge
-       :score score
-       :ctxts ectxts})))
+    (assoc vv
+      :edge node-edge
+      :score score
+      :ctxts ectxts)))
 
 (defn- se->node-id
   [se rp]

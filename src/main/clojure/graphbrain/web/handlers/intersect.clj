@@ -2,6 +2,8 @@
   (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.vertex :as vertex]
             [graphbrain.db.user :as user]
+            [graphbrain.db.id :as id]
+            [graphbrain.db.maps :as maps]
             [graphbrain.db.queries :as q]
             [graphbrain.web.common :as common]
             [graphbrain.web.contexts :as contexts]
@@ -27,21 +29,27 @@
                               all-ctxts)]
     {:bubbles [bubble]}))
 
+(defn- inters-data
+  [ids ctxts]
+  (let [edges (q/intersect common/gbdb ids ctxts)
+        verts (into #{}
+               (flatten
+                (map maps/participant-ids edges)))
+        verts (map #(maps/id->vertex (id/eid->id %)) verts)]
+    {:vertices verts}))
+
 (defn- js
-  [vert user ctxts all-ctxts]
+  [ids ctxts]
   (str "var ptype='intersect';"
-       "var data='" (pr-str (view-data user ctxts all-ctxts)) "';"))
+       "var data='" (pr-str (inters-data ids ctxts)) "';"))
 
 (defn handle-intersect
   [request]
   (let
       [user (common/get-user request)
        ctxts (contexts/active-ctxts request user)
-       all-ctxts (user/user->ctxts user)
-       ids (vals (:query-params request))
-       edges (q/intersect common/gbdb ids ctxts)]
+       ids (vals (:query-params request))]
     (i/intersect :title "intersect"
                  :css-and-js (css+js/css+js)
                  :user user
-                 :js (js nil user ctxts all-ctxts)
-                 :text edges)))
+                 :js (js ids ctxts))))

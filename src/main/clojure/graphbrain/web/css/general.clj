@@ -18,7 +18,6 @@
   [:#main-view
    {:width "100%"
     :height "100%"
-    ;;:background "rgba(10, 10, 60, 0.8)"
     :background "rgb(10, 10, 10)"
     ;;:background-image "url('http://www.theloftberlin.com/wp-content/uploads/2013/09/2013-berlin.jpg')"
     :-webkit-background-size "cover"
