@@ -53,10 +53,10 @@
    [:div {:class "item-remove"}
     [:a {:id (str "rem" div-id) :href "#"} "x"]]])
 
-(defn- item-html
+(defn item-html
   [item div-id]
   (let [type (:type item)]
-    (if (= type "url")
+    (if (= type :url)
       (url-item-html item div-id)
       (entity-item-html item div-id (subtext (:sub item))))))
 

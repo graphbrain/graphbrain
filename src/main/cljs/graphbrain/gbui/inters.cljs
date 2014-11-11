@@ -8,7 +8,7 @@
 
 (defn- view-size
   []
-  (let [view-view ($ "#view-view")
+  (let [view-view ($ "#inters-view")
         width (jq/width view-view)
         height (jq/height view-view)]
     [width height]))
@@ -25,7 +25,7 @@
         trans (map - half-size half-wsize)
         transform-str (str "translate(" (first trans) "px," (second trans) "px) "
                            "scale(" scale ")")
-        view-div ($ "#view-view")]
+        view-div ($ "#inters-view")]
     (jq/css view-div {:width (str (first g/world-size) "px")
                       :height (str (second g/world-size) "px")
                       :transform transform-str})))
@@ -49,7 +49,7 @@
   (let [oev (.-originalEvent event)
         page [(.-pageX oev) (.-pageY oev)]
         xxx (.log js/console (str "page: " (pr-str page)))
-        view ($ "#view-view")
+        view ($ "#inters-view")
         parent-offset (.offset view)
         offset [(.-left parent-offset) (.-top parent-offset)]
         xxx (.log js/console (str "offset: " (pr-str offset)))
@@ -67,7 +67,7 @@
 (defn bind-events!
   []
   (jq/bind ($ "#data-view") "mousewheel" on-scroll-world)
-  (jq/bind ($ "#view-view") "mouseup" on-mouse-up))
+  (jq/bind ($ "#inters-view") "mouseup" on-mouse-up))
 
 (defn init-view!
   [view-data-str]
@@ -75,4 +75,4 @@
   (move-world! [0 0] 1)
   (bind-events!)
   (def data (cljs.reader/read-string view-data-str))
-  (place-bubbles! (:bubbles data)))
+  (place-bubbles! (:vertices data)))

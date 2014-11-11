@@ -1,7 +1,7 @@
-(ns graphbrain.web.css.view
+(ns graphbrain.web.css.inters
   (:require [garden.units :refer [px]]))
 
 (def css
-  [[:#view-view
+  [[:#inters-view
     {:width "100%"
      :height "100%"}]])

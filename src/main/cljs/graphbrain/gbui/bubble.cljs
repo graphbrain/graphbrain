@@ -3,7 +3,7 @@
   (:require [jayq.core :as jq]
             [hiccups.runtime :as hiccupsrt]
             [graphbrain.gbui.globals :as g]
-            [graphbrain.gbui.subbubble :as sb])
+            [graphbrain.gbui.item :as item])
   (:use [jayq.core :only [$]]))
 
 (defn bubble-id
@@ -41,21 +41,10 @@
         bub-div ($ (str "#" bid))]
     (jq/css bub-div {:transform transform-str})))
 
-(defn bind-events!
-  [bubble]
-  (let [bid (bubble-id (:id bubble))
-        content (:content bubble)]
-    (doseq [snode (:snodes content)]
-      (sb/bind-events! bid snode))))
-
 (defn place-bubble!
   [bubble]
-  (let [bid (bubble-id (:id bubble))
-        content (:content bubble)
-        title (bubble-title-template (:root content))
-        subs (bubble-body-template (reduce str (map #(sb/html bid %)
-                                                    (:snodes content))))
-        html (str title subs)]
-    (jq/append ($ "#view-view") (bubble-template (:id bubble) html))
-    (move-bubble! bid (:pos bubble)))
-  (bind-events! bubble))
+  (let [bid (bubble-id (:id bubble))]
+    (jq/append ($ "#inters-view")
+               (bubble-template (:id bubble)
+                (item/item-html bubble "xxx")))
+    (move-bubble! bid [0 0])))

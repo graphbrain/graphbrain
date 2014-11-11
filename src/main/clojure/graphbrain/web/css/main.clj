@@ -8,7 +8,7 @@
             [graphbrain.web.css.aichat :as aichat]
             [graphbrain.web.css.navbar :as navbar]
             [graphbrain.web.css.relations :as relations]
-            [graphbrain.web.css.view :as view]
+            [graphbrain.web.css.inters :as inters]
             [graphbrain.web.css.bubble :as bubble]
             [graphbrain.web.css.frame :as frame]
             [graphbrain.web.css.nodepage :as np]
@@ -23,7 +23,7 @@
           aichat/css
           navbar/css
           relations/css
-          view/css
+          inters/css
           bubble/css
           frame/css
           np/css
