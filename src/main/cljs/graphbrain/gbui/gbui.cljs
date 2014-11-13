@@ -39,6 +39,9 @@
        (anim/add-anim! (anim/anim-init-rotation)))
      (doseq [node-id (newedges/new-edges)]
        (anim/add-anim! (anim/anim-node-glow (node/node-div-id node-id)))
-       (newedges/clean)))))
+       (newedges/clean))))
+
+  (if (= js/ptype "intersect")
+    (anim/add-anim! (anim/anim-graph-layout))))
 
 ($ start)

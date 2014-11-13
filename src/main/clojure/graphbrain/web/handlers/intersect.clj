@@ -7,35 +7,18 @@
             [graphbrain.db.queries :as q]
             [graphbrain.web.common :as common]
             [graphbrain.web.contexts :as contexts]
-            [graphbrain.web.entitydata :as ed]
+            [graphbrain.web.visualvert :as vv]
             [graphbrain.web.cssandjs :as css+js]
             [graphbrain.web.views.intersect :as i]))
-
-(defn- entity-bubble
-  [gbdb id user ctxts all-ctxts]
-  (let [entity-data (ed/generate gbdb id user ctxts all-ctxts)]
-    {:id id
-     :type :entity
-     :pos [0 0]
-     :scale 1
-     :content entity-data}))
-
-(defn- view-data
-  [user ctxts all-ctxts]
-  (let [bubble (entity-bubble common/gbdb
-                              "f43806bb591e3b87/berlin"
-                              user
-                              ctxts
-                              all-ctxts)]
-    {:bubbles [bubble]}))
 
 (defn- inters-data
   [ids ctxts]
   (let [edges (q/intersect common/gbdb ids ctxts)
+        xxx (println (map :id edges))
         verts (into #{}
                (flatten
                 (map maps/participant-ids edges)))
-        verts (map #(maps/id->vertex (id/eid->id %)) verts)]
+        verts (map #(vv/id->visual common/gbdb % ctxts) verts)]
     {:vertices verts}))
 
 (defn- js

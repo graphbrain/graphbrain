@@ -1,7 +1,20 @@
 (ns graphbrain.db.queries
   (:require [graphbrain.db.gbdb :as db]
+            [graphbrain.db.id :as id]
             [graphbrain.db.maps :as maps]
             [graphbrain.utils :as u]))
+
+(def exclude-set
+  #{"653d14f5d5a58462/noun"})
+
+(defn- exclude-edge
+  [edge]
+  (some exclude-set
+        (map id/eid->id (maps/participant-ids edge))))
+
+(defn- include-edge
+  [edge]
+  (not (exclude-edge edge)))
 
 (defn- vemap-assoc-id-edge
   [vemap id edge]
@@ -17,12 +30,6 @@
   [vemap edges]
   (reduce #(vemap+edge %1 %2) vemap edges))
 
-(defn- edges->ids
-  [edges]
-  (set
-   (flatten
-    (map maps/participant-ids edges))))
-
 (defn- propagate
   [vemap ids pos label]
   (let [val (vemap pos)
@@ -37,10 +44,14 @@
           vemap
           (reduce #(propagate %1 ids %2 label) vemap ids))))))
 
+(defn id->edges
+  [gbdb id ctxts]
+  (filter include-edge
+   (db/id->edges gbdb id ctxts)))
+
 (defn intersect
   [gbdb ids ctxts]
-  (let [edgesets (map #(db/id->edges gbdb % ctxts) ids)
-        idsets (map edges->ids edgesets)
+  (let [edgesets (map #(id->edges gbdb % ctxts) ids)
         vemap (reduce edges->vemap {} edgesets)
         eids (map #(db/id->eid gbdb %) ids)
         vemap (reduce #(propagate %1 eids %2 %2) vemap eids)

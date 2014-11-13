@@ -8,7 +8,12 @@
 
 (defn bubble-id
   [id]
-  (let [bid (clojure.string/replace id "/" "_")]
+  (let [bid (clojure.string/replace id "/" "_")
+        bid (clojure.string/replace bid "." "_")
+        bid (clojure.string/replace bid "#" "_")
+        bid (clojure.string/replace bid ":" "_")
+        bid (clojure.string/replace bid "?" "_")
+        bid (clojure.string/replace bid "=" "_")]
     (str "bub_" bid)))
 
 (hiccups/defhtml bubble-template
@@ -32,19 +37,39 @@
     [width height]))
 
 (defn move-bubble!
-  [bid pos]
+  [bubbles bid pos]
   (let [bsize (bubble-size bid)
         half-size (map #(/ % 2) g/world-size)
         half-bsize (map #(/ % 2) bsize)
         trans (map #(- (+ %1 %2) %3) pos half-size half-bsize)
         transform-str (str "translate(" (first trans) "px," (second trans) "px)")
         bub-div ($ (str "#" bid))]
-    (jq/css bub-div {:transform transform-str})))
+    (jq/css bub-div {:transform transform-str})
+    (assoc-in bubbles [bid :pos] pos)))
+
+(defn- new-bubble
+  []
+  {:pos [0 0]
+   :v [0 0]})
+
+(defn random-pos!
+  [bubbles bid]
+  (move-bubble! bubbles bid [(+ -60 (rand-int 120))
+                             (+ -20 (rand-int 40))]))
 
 (defn place-bubble!
-  [bubble]
-  (let [bid (bubble-id (:id bubble))]
+  [bubbles bubble]
+  (let [bid (bubble-id (:id bubble))
+        bubbs (assoc bubbles bid (new-bubble))]
     (jq/append ($ "#inters-view")
                (bubble-template (:id bubble)
                 (item/item-html bubble "xxx")))
-    (move-bubble! bid [0 0])))
+    (random-pos! bubbs bid)))
+
+(defn layout-step!
+  [bubbles bid]
+  (let [bubble (bubbles bid)
+        pos (:pos bubble)
+        v (:v bubble)
+        pos (map + pos v)]
+    (move-bubble! bubbles bid pos)))
