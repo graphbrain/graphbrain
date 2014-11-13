@@ -27,9 +27,10 @@
                :url url
                :icon icon))
       :user (let [u (db/getv gbdb id ctxts)]
-              (assoc u
-                :text (:name u)
-                :sub [{:id "" :text "GraphBrain user"}]))
+              {:id id
+               :type :user
+               :text (:name u)
+               :sub [{:id "" :text "GraphBrain user"}]})
       :text (text/id->text gbdb id)
       (assoc vert
         :text id))))

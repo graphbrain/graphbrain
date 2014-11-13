@@ -1,12 +1,13 @@
 (ns graphbrain.gbui.animation
   (:require [jayq.core :as jq]
             [graphbrain.gbui.globals :as g]
-            [graphbrain.gbui.graph :as graph])
+            [graphbrain.gbui.graph :as graph]
+            [graphbrain.gbui.inters :as inters])
   (:use [jayq.core :only [$]]))
 
-(defonce anims (atom []))
+(def anims (atom []))
 
-(defonce interval-id (atom nil))
+(def interval-id (atom nil))
 
 (defn exclusive-anim?
   [anim]
@@ -145,3 +146,14 @@
         active (< cycles 4)]
     (jq/css ($ (str "#" (:node-div-id anim))) {:background rgb-str})
     (assoc anim :delta delta :cycles cycles :x x :active active)))
+
+(defn anim-graph-layout
+  []
+  {:name "graphlayout"
+   :active true
+   :stoppable false})
+
+(defmethod run-cycle "graphlayout"
+  [anim]
+  (assoc anim
+    :active (inters/layout-step!)))

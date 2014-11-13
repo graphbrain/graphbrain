@@ -33,7 +33,7 @@
                "<p>Sorry, no results found.</p>"
                (str "<p>" (count (:results msg)) " results found.</p>"
                     (clojure.string/join
-                     (map #(str "<p><a href='/x/"
+                     (map #(str "<p><a href='/v/"
                                 (first %) "'>" (second %) "</a></p>") results))))]
     (.html ($ "#searchResultsBody") html)
     (show-search-dialog)))
