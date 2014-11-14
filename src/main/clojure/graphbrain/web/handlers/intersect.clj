@@ -9,17 +9,26 @@
             [graphbrain.web.contexts :as contexts]
             [graphbrain.web.visualvert :as vv]
             [graphbrain.web.cssandjs :as css+js]
-            [graphbrain.web.views.intersect :as i]))
+            [graphbrain.web.views.intersect :as i]
+            [clojure.math.combinatorics :as combo]))
+
+(defn- edge->links
+  [edge]
+  (combo/combinations
+   (map id/eid->id
+        (maps/participant-ids edge)) 2))
 
 (defn- inters-data
   [ids ctxts]
   (let [edges (q/intersect common/gbdb ids ctxts)
-        xxx (println (map :id edges))
         verts (into #{}
                (flatten
                 (map maps/participant-ids edges)))
-        verts (map #(vv/id->visual common/gbdb % ctxts) verts)]
-    {:vertices verts}))
+        verts (map #(vv/id->visual common/gbdb % ctxts) verts)
+        links (mapcat identity
+                      (map edge->links edges))]
+    {:vertices verts
+     :links links}))
 
 (defn- js
   [ids ctxts]

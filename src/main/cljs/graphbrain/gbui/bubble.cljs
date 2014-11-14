@@ -13,7 +13,10 @@
         bid (clojure.string/replace bid "#" "_")
         bid (clojure.string/replace bid ":" "_")
         bid (clojure.string/replace bid "?" "_")
-        bid (clojure.string/replace bid "=" "_")]
+        bid (clojure.string/replace bid "=" "_")
+        bid (clojure.string/replace bid "(" "_")
+        bid (clojure.string/replace bid ")" "_")
+        bid (clojure.string/replace bid "+" "_")]
     (str "bub_" bid)))
 
 (hiccups/defhtml bubble-template

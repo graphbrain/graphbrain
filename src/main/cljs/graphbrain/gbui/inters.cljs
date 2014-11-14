@@ -1,6 +1,7 @@
 (ns graphbrain.gbui.inters
   (:require [jayq.core :as jq]
             [graphbrain.gbui.bubble :as bubble]
+            [graphbrain.gbui.link :as link]
             [graphbrain.gbui.globals :as g])
   (:use [jayq.core :only [$]]))
 
@@ -50,6 +51,16 @@
   (reset! bubbs
           (reduce #(bubble/place-bubble! %1 %2) @bubbs bubbles)))
 
+(defn- place-links!
+  [links]
+  (doseq [link links]
+    (link/place-link! @bubbs link)))
+
+(defn- update-links!
+  [links]
+  (doseq [link links]
+    (link/update-pos! @bubbs link)))
+
 (defn move-world!
   [pos scale]
   (let [half-size (map #(/ % 2) @g/view-size)
@@ -79,7 +90,8 @@
   (move-world! [0 0] 1)
   (bind-events!)
   (def data (cljs.reader/read-string view-data-str))
-  (place-bubbles! (:vertices data)))
+  (place-bubbles! (:vertices data))
+  (place-links! (:links data)))
 
 (defn- coulomb-pair
   [bubbles pair]
@@ -144,8 +156,7 @@
 (defn- forces
   [bubbles]
   (let [bubbs (reduce drag bubbles (keys bubbles))
-        bubbs (reduce center-attraction bubbs (keys bubbs))
-        ]
+        bubbs (reduce center-attraction bubbs (keys bubbs))]
     bubbs))
 
 (defn layout-step!
@@ -155,4 +166,5 @@
   (let [keys (keys @bubbs)]
     (doseq [k keys]
       (reset! bubbs (bubble/layout-step! @bubbs k))))
+  (update-links! (:links data))
   true)

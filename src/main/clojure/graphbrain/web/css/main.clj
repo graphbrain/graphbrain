@@ -10,6 +10,7 @@
             [graphbrain.web.css.relations :as relations]
             [graphbrain.web.css.inters :as inters]
             [graphbrain.web.css.bubble :as bubble]
+            [graphbrain.web.css.link :as link]
             [graphbrain.web.css.frame :as frame]
             [graphbrain.web.css.nodepage :as np]
             [graphbrain.web.css.item :as item]))
@@ -25,6 +26,7 @@
           relations/css
           inters/css
           bubble/css
+          link/css
           frame/css
           np/css
           item/css))
