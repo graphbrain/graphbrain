@@ -103,7 +103,7 @@
         pos2 (:pos b2)
         delta (map - pos1 pos2)
         r2 (reduce #(+ %1 (* %2 %2)) 0 delta)
-        k 200.0
+        k 500.0
         f (/ k r2)
         ang (apply #(.atan2 js/Math %2 %1) delta)
         f1 [(* f (.cos js/Math ang)) (* f (.sin js/Math ang))]
@@ -114,13 +114,6 @@
         v2 (map + v2 f2)
         b1 (assoc b1 :v v1)
         b2 (assoc b2 :v v2)]
-    #_(do (.log js/console "---------------------------")
-        (.log js/console (str "pos 1> " pos1))
-        (.log js/console (str "pos 2> " pos2))
-        (.log js/console (str "delta> " delta))
-        (.log js/console (str "r2> " r2))
-        (.log js/console (str "ang> " ang))
-        (.log js/console (str "f1> " f1)))
     (assoc bubbles
       id1 b1
       id2 b2)))
@@ -130,12 +123,42 @@
     (let [pairs (combinations (keys bubbles) 2)]
       (reduce coulomb-pair bubbles pairs)))
 
+(defn- hooke-force
+  [bubbles pair]
+  (let [id1 (bubble/bubble-id (first pair))
+        id2 (bubble/bubble-id (second pair))
+        b1 (bubbles id1)
+        b2 (bubbles id2)
+        pos1 (:pos b1)
+        pos2 (:pos b2)
+        delta (map - pos1 pos2)
+        r2 (.sqrt js/Math
+                  (reduce #(+ %1 (* %2 %2)) 0 delta))
+        k 0.0001
+        f (* -1 k r2)
+        ang (apply #(.atan2 js/Math %2 %1) delta)
+        f1 [(* f (.cos js/Math ang)) (* f (.sin js/Math ang))]
+        f2 (map - f1)
+        v1 (:v b1)
+        v2 (:v b2)
+        v1 (map + v1 f1)
+        v2 (map + v2 f2)
+        b1 (assoc b1 :v v1)
+        b2 (assoc b2 :v v2)]
+    (assoc bubbles
+      id1 b1
+      id2 b2)))
+
+(defn- hooke
+    [bubbles links]
+    (reduce hooke-force bubbles links))
+
 (defn- center-attraction
   [bubbles id]
   (let [b (bubbles id)
         pos (:pos b)
         r2 (reduce #(+ %1 (* %2 %2)) 0 pos)
-        k 0.000001
+        k 0.0000001
         f (* k r2)
         ang (apply #(.atan2 js/Math %2 %1) pos)
         f [(* f (.cos js/Math ang)) (* f (.sin js/Math ang))]
@@ -156,12 +179,14 @@
 (defn- forces
   [bubbles]
   (let [bubbs (reduce drag bubbles (keys bubbles))
-        bubbs (reduce center-attraction bubbs (keys bubbs))]
+        bubbs (reduce center-attraction bubbs (keys bubbs))
+        ]
     bubbs))
 
 (defn layout-step!
   []
   (reset! bubbs (coulomb @bubbs))
+  (reset! bubbs (hooke @bubbs (:links data)))
   (reset! bubbs (forces @bubbs))
   (let [keys (keys @bubbs)]
     (doseq [k keys]
