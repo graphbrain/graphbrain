@@ -14,6 +14,7 @@
         bid (clojure.string/replace bid ":" "_")
         bid (clojure.string/replace bid "?" "_")
         bid (clojure.string/replace bid "=" "_")
+        bid (clojure.string/replace bid ";" "_")
         bid (clojure.string/replace bid "(" "_")
         bid (clojure.string/replace bid ")" "_")
         bid (clojure.string/replace bid "+" "_")]
@@ -40,15 +41,16 @@
     [width height]))
 
 (defn move-bubble!
-  [bubbles bid pos]
-  (let [bsize (bubble-size bid)
-        half-size (map #(/ % 2) g/world-size)
-        half-bsize (map #(/ % 2) bsize)
-        trans (map #(- (+ %1 %2) %3) pos half-size half-bsize)
-        transform-str (str "translate(" (first trans) "px," (second trans) "px)")
-        bub-div ($ (str "#" bid))]
-    (jq/css bub-div {:transform transform-str})
-    (assoc-in bubbles [bid :pos] pos)))
+  [bubbles bid pos visual]
+  (if visual
+    (let [bsize (bubble-size bid)
+          half-size (map #(/ % 2) g/world-size)
+          half-bsize (map #(/ % 2) bsize)
+          trans (map #(- (+ %1 %2) %3) pos half-size half-bsize)
+          transform-str (str "translate(" (first trans) "px," (second trans) "px)")
+          bub-div ($ (str "#" bid))]
+      (jq/css bub-div {:transform transform-str})))
+  (assoc-in bubbles [bid :pos] pos))
 
 (defn- new-bubble
   []
@@ -58,7 +60,8 @@
 (defn random-pos!
   [bubbles bid]
   (move-bubble! bubbles bid [(+ -60 (rand-int 120))
-                             (+ -20 (rand-int 40))]))
+                             (+ -20 (rand-int 40))]
+                false))
 
 (defn place-bubble!
   [bubbles bubble]
@@ -70,9 +73,9 @@
     (random-pos! bubbs bid)))
 
 (defn layout-step!
-  [bubbles bid]
+  [bubbles bid visual]
   (let [bubble (bubbles bid)
         pos (:pos bubble)
         v (:v bubble)
         pos (map + pos v)]
-    (move-bubble! bubbles bid pos)))
+    (move-bubble! bubbles bid pos visual)))
