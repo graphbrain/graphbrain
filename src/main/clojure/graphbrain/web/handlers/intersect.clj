@@ -30,10 +30,15 @@
     {:vertices verts
      :links links}))
 
+(defn- data->str
+  [data]
+  (clojure.string/replace (pr-str data)
+                          "'" ""))
+
 (defn- js
   [ids ctxts]
   (str "var ptype='intersect';"
-       "var data='" (pr-str (inters-data ids ctxts)) "';"))
+       "var data='" (data->str (inters-data ids ctxts)) "';"))
 
 (defn handle-intersect
   [request]

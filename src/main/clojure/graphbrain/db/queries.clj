@@ -16,9 +16,17 @@
   [edge]
   (not (exclude-edge edge)))
 
+(defn- add-neighbours
+  [neighbours edge]
+  (clojure.set/union neighbours
+                     (into #{}
+                           (maps/participant-ids edge))))
+
 (defn- vemap-assoc-id-edge
   [vemap id edge]
-  (update-in vemap [id :edges] #(conj % edge)))
+  (let [vemap (update-in vemap [id :edges] #(conj % edge))
+        vemap (update-in vemap [id :neighbours] add-neighbours edge)]
+    vemap))
 
 (defn- vemap+edge
   [vemap edge]
@@ -30,34 +38,40 @@
   [vemap edges]
   (reduce #(vemap+edge %1 %2) vemap edges))
 
-(defn- propagate
-  [vemap ids pos label]
-  (let [val (vemap pos)
-        labels (:labels val)]
-    (if (some #{label} labels)
-      vemap
-      (let [vemap (assoc-in vemap [pos :labels] (conj labels label))
-            edges (:edges val)
-            ids (flatten (map maps/participant-ids edges))
-            ids (into #{} ids)]
-        (if (and (some #{pos} ids) (not= pos label))
-          vemap
-          (reduce #(propagate %1 ids %2 label) vemap ids))))))
-
 (defn id->edges
   [gbdb id ctxts]
   (filter include-edge
-   (db/id->edges gbdb id ctxts)))
+          (db/id->edges gbdb id ctxts 2)))
+
+(defn- interedge
+  [edge interverts]
+  (let [ids (maps/participant-ids edge)]
+    (every? #(some #{%} interverts) ids)))
+
+(defn walks
+  [vemap ids walk all-walks]
+  (if (every? #(some #{%} walk) ids)
+    (conj all-walks walk)
+    (let [neighbours (:neighbours (vemap (last walk)))
+         next-steps (filter #(not (some #{%} walk)) neighbours)]
+     (if (empty? next-steps)
+       all-walks
+       (reduce #(clojure.set/union %1
+                                   (walks vemap ids
+                                          (conj walk %2)
+                                          #{}))
+               all-walks next-steps)))))
 
 (defn intersect
   [gbdb ids ctxts]
   (let [edgesets (map #(id->edges gbdb % ctxts) ids)
         vemap (reduce edges->vemap {} edgesets)
         eids (map #(db/id->eid gbdb %) ids)
-        vemap (reduce #(propagate %1 eids %2 %2) vemap eids)
+        walks (walks vemap eids [(first eids)] #{})
+        interverts (into #{}
+                         (flatten
+                          (into [] walks)))
         edges (vals vemap)
-        edges (filter #(= (count (:labels %)) (count ids)) edges)
-        edges (into #{}
-                    (flatten
-                     (map :edges edges)))]
+        edges (mapcat identity (map :edges edges))
+        edges (filter #(interedge % interverts) edges)]
     edges))

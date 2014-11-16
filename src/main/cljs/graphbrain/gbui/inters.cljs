@@ -5,6 +5,12 @@
             [graphbrain.gbui.globals :as g])
   (:use [jayq.core :only [$]]))
 
+(def *k-coulomb* 10000000.0)
+(def *k-hooke* 0.3)
+(def *k-center* 0.00001)
+(def *k-drag* 0.01)
+(def *hidden-steps* 0)
+
 (def scale 1)
 
 (def bubbs (atom {}))
@@ -103,8 +109,7 @@
         pos2 (:pos b2)
         delta (map - pos1 pos2)
         r2 (reduce #(+ %1 (* %2 %2)) 0 delta)
-        k 500.0
-        f (/ k r2)
+        f (/ *k-coulomb* r2)
         ang (apply #(.atan2 js/Math %2 %1) delta)
         f1 [(* f (.cos js/Math ang)) (* f (.sin js/Math ang))]
         f2 (map - f1)
@@ -134,8 +139,7 @@
         delta (map - pos1 pos2)
         r2 (.sqrt js/Math
                   (reduce #(+ %1 (* %2 %2)) 0 delta))
-        k 0.0001
-        f (* -1 k r2)
+        f (* -1 *k-hooke* r2)
         ang (apply #(.atan2 js/Math %2 %1) delta)
         f1 [(* f (.cos js/Math ang)) (* f (.sin js/Math ang))]
         f2 (map - f1)
@@ -158,8 +162,7 @@
   (let [b (bubbles id)
         pos (:pos b)
         r2 (reduce #(+ %1 (* %2 %2)) 0 pos)
-        k 0.0000001
-        f (* k r2)
+        f (* *k-center* r2)
         ang (apply #(.atan2 js/Math %2 %1) pos)
         f [(* f (.cos js/Math ang)) (* f (.sin js/Math ang))]
         v (:v b)
@@ -171,8 +174,7 @@
   [bubbles id]
   (let [b (bubbles id)
         v (:v b)
-        d 0.99
-        v (map #(* d %) v)
+        v (map #(* *k-drag* %) v)
         b (assoc b :v v)]
     (assoc bubbles id b)))
 
@@ -183,13 +185,18 @@
         ]
     bubbs))
 
+(def step (atom 0))
+
 (defn layout-step!
   []
+  (swap! step inc)
   (reset! bubbs (coulomb @bubbs))
   (reset! bubbs (hooke @bubbs (:links data)))
   (reset! bubbs (forces @bubbs))
-  (let [keys (keys @bubbs)]
+  (let [keys (keys @bubbs)
+        visual (> @step *hidden-steps*)]
     (doseq [k keys]
-      (reset! bubbs (bubble/layout-step! @bubbs k))))
-  (update-links! (:links data))
+      (reset! bubbs (bubble/layout-step! @bubbs k visual)))
+    (if visual
+      (update-links! (:links data))))
   true)

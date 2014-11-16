@@ -46,5 +46,4 @@
   [bubbles link]
   (let [lid (link-id link)]
     (jq/append ($ "#inters-view")
-               (link-template link))
-    (update-pos! bubbles link)))
+               (link-template link))))
