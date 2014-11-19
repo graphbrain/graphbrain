@@ -4,7 +4,7 @@
 (def css
   [[:.link
     {:position "absolute"
-     :background "#FF0000"
+     :background "#88CCEE"
      :width (px 5)
      :height (px 5)
      :z-index -1}]])
