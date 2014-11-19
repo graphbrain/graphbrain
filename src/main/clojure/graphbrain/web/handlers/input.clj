@@ -28,16 +28,18 @@
            :gotoid root-id}))
 
 (defn- input-reply-search
-  [count results]
+  [count results mode]
   (pr-str {:type :search
+           :mode mode
            :count count
            :results results}))
 
 (defn- sentence-type
   [sentence]
-  (if (and (gbstr/no-spaces? sentence)
-           (or (.startsWith sentence "http://") (.startsWith sentence "https://")))
-    :url :fact))
+  (cond
+   (and (gbstr/no-spaces? sentence) (or (.startsWith sentence "http://") (.startsWith sentence "https://"))) :url
+   (.startsWith sentence "x ") :intersect
+   :else :fact))
 
 (defn- process-fact
   [user root sentence ctxts]
@@ -52,12 +54,15 @@
         (input-reply-fact (:id root) edge)))))
 
 (defn process-search
-  [user root q ctxts]
-  (let [results (si/query common/gbdb q ctxts)
+  [user root q ctxts mode]
+  (let [q (if (= mode :intersect)
+            (clojure.string/trim (subs q 1))
+            q)
+        results (si/query common/gbdb q ctxts)
         results-list (map #(list (id/eid->id %) (entity/description %)) results)]
     (if (empty? results-list)
       (process-fact user root q ctxts)
-      (input-reply-search (count results-list) results-list))))
+      (input-reply-search (count results-list) results-list mode))))
 
 (defn process-url
   [user root sentence ctxts]
@@ -74,5 +79,6 @@
                                   (contexts/active-ctxts request user)))
         ctxts (contexts/active-ctxts request user)]
     (case (sentence-type sentence)
-      :fact (process-search user root sentence ctxts)
-      :url (process-url user root sentence ctxts))))
+      :fact (process-search user root sentence ctxts :search)
+      :url (process-url user root sentence ctxts)
+      :intersect (process-search user root sentence ctxts :intersect))))

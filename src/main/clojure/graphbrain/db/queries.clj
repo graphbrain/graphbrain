@@ -62,12 +62,41 @@
                                           #{}))
                all-walks next-steps)))))
 
+(defn- walk-step->wmap
+  [wmap walk-length step]
+  (let [clen (wmap step)]
+    (if (or (not clen) (< walk-length clen))
+      (assoc wmap step walk-length)
+      wmap)))
+
+(defn- walk->wmap
+  [wmap walk]
+  (let [walk-length (count walk)]
+    (reduce #(walk-step->wmap %1 walk-length %2)
+            wmap walk)))
+
+(defn- walks->wmap
+  [walks]
+  (reduce walk->wmap {} walks))
+
+(defn- valid-step?
+  [wmap ids walk-length step]
+  (or (some #{step} ids)
+      (= walk-length (wmap step))))
+
+(defn- valid-walk?
+  [wmap ids walk]
+  (let [walk-length (count walk)]
+    (every? #(valid-step? wmap ids walk-length %) walk)))
+
 (defn intersect
   [gbdb ids ctxts]
   (let [edgesets (map #(id->edges gbdb % ctxts) ids)
         vemap (reduce edges->vemap {} edgesets)
         eids (map #(db/id->eid gbdb %) ids)
         walks (walks vemap eids [(first eids)] #{})
+        wmap (walks->wmap walks)
+        walks (filter #(valid-walk? wmap eids %) walks)
         interverts (into #{}
                          (flatten
                           (into [] walks)))

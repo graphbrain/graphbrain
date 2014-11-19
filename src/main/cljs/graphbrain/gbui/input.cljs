@@ -26,15 +26,24 @@
   []
   (.modal ($ "#searchResultsModal") "show"))
 
+(defn search-link
+  [result mode]
+  (case mode
+    :search (str "/v/" (first result))
+    :intersect (str "/x?id1=" (first result)
+                    "&id2=" @g/root-id)))
+
 (defn- search-results-received
   [msg]
   (let [results (:results msg)
+        mode (:mode msg)
         html (if (empty? results)
                "<p>Sorry, no results found.</p>"
                (str "<p>" (count (:results msg)) " results found.</p>"
                     (clojure.string/join
-                     (map #(str "<p><a href='/v/"
-                                (first %) "'>" (second %) "</a></p>") results))))]
+                     (map #(str "<p><a href='"
+                                (search-link % mode) "'>" (second %) "</a></p>")
+                          results))))]
     (.html ($ "#searchResultsBody") html)
     (show-search-dialog)))
 
@@ -43,14 +52,14 @@
   (let [goto-id (:gotoid msg)]
     (if (not (empty? goto-id))
       (set! (.-href js/window.location)
-            (str "/x/" (js/encodeURIComponent goto-id))))))
+            (str "/v/" (js/encodeURIComponent goto-id))))))
 
 (defn- fact-results-received
   [msg]
   (let [goto-id (:gotoid msg)]
     (if (not (empty? goto-id))
       (set! (.-href js/window.location)
-            (str "/x/" (js/encodeURIComponent goto-id))))))
+            (str "/v/" goto-id)))))
 
 (defn results-received
   [data]
