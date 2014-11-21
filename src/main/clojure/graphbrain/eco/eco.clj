@@ -92,7 +92,6 @@
   (let [lparts (map #(if (and (coll? %) (not (map? %))) % [%]) parts)]
     (map #(hash-map :vertex %) (apply combs/cartesian-product lparts))))
 
-
 (defn eid
   [rel name & ids]
   (id/name+ids->eid rel name ids))
@@ -212,6 +211,8 @@
   (let [ks (sort (keys result))
         vals (map #(% result) ks)
         verts (apply (:f rule) (conj vals env rules))]
+    (println "verts:")
+    (prn verts)
     (if (map? verts)
       (assoc verts :rule rule)
       (map #(assoc % :rule rule) verts))))

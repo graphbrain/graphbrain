@@ -10,6 +10,7 @@
             [graphbrain.gbui.contexts :as contexts]
             [graphbrain.gbui.inters :as inters]
             [graphbrain.gbui.nodepage :as nodepage]
+            [graphbrain.gbui.encoder :as enc]
             [cemerick.pprng :as rng])
   (:use [jayq.core :only [$]]))
 
@@ -18,10 +19,10 @@
   (reset! g/rng (rng/rng "GraphBrain GraphBrain"))
 
   (if (= js/ptype "node")
-    (nodepage/init-nodepage! js/data))
+    (nodepage/init-nodepage! (enc/decode js/data)))
   
   (if (= js/ptype "intersect")
-    (inters/init-view! js/data))
+    (inters/init-view! (enc/decode js/data)))
   
   (if (= js/ptype "node3d")
     (graph/init-graph!))
