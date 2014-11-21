@@ -8,7 +8,8 @@
             [graphbrain.web.contexts :as contexts]
             [graphbrain.web.entitydata :as ed]
             [graphbrain.web.cssandjs :as css+js]
-            [graphbrain.web.views.nodepage :as np]))
+            [graphbrain.web.views.nodepage :as np]
+            [graphbrain.web.encoder :as enc]))
 
 (defn- pagedata
   [vert user ctxts all-ctxts]
@@ -18,7 +19,8 @@
 (defn- js
   [vert user ctxts all-ctxts]
   (str "var ptype='node';"
-       "var data='" (pr-str (pagedata vert user ctxts all-ctxts)) "';"))
+       "var data='" (enc/encode (pr-str
+                      (pagedata vert user ctxts all-ctxts))) "';"))
 
 (defn handle-nodepage
   [request]

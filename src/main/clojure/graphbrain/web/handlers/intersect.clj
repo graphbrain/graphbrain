@@ -10,6 +10,7 @@
             [graphbrain.web.visualvert :as vv]
             [graphbrain.web.cssandjs :as css+js]
             [graphbrain.web.views.intersect :as i]
+            [graphbrain.web.encoder :as enc]
             [clojure.math.combinatorics :as combo]))
 
 (defn- edge->links
@@ -38,7 +39,7 @@
 (defn- js
   [ids ctxts]
   (str "var ptype='intersect';"
-       "var data='" (data->str (inters-data ids ctxts)) "';"))
+       "var data='" (enc/encode (inters-data ids ctxts)) "';"))
 
 (defn handle-intersect
   [request]
