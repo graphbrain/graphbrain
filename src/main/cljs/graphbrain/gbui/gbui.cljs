@@ -10,6 +10,7 @@
             [graphbrain.gbui.contexts :as contexts]
             [graphbrain.gbui.inters :as inters]
             [graphbrain.gbui.nodepage :as nodepage]
+            [graphbrain.gbui.eco :as eco]
             [graphbrain.gbui.encoder :as enc]
             [cemerick.pprng :as rng])
   (:use [jayq.core :only [$]]))
@@ -23,6 +24,9 @@
   
   (if (= js/ptype "intersect")
     (inters/init-view! (enc/decode js/data)))
+
+  (if (= js/ptype "eco")
+    (eco/init-eco!))
   
   (if (= js/ptype "node3d")
     (graph/init-graph!))

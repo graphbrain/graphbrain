@@ -64,8 +64,9 @@
                 :id "main-input-field"
                 :class "top-input-field"
                 :placeholder "Search or say something"
+                :name "input-field"
                 :autofocus ""}]]]]
-
+    
     (content-fun)]))
 
 (defn barpage

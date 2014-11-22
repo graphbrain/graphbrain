@@ -240,10 +240,16 @@
       (id/ids->id (map parse->vertex vert))
       vert)))
 
+(defn parse-words
+  [rules words env]
+  (let [par (parse rules words env)]
+    (map parse->vertex par)))
+
 (defn parse-str
   [rules s env]
-  (let [par (parse rules (words/str->words s) env)]
-    (map parse->vertex par)))
+  (parse-words rules
+               (words/str->words s)
+               env))
 
 (defmacro !
   [words]
