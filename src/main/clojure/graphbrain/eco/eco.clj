@@ -94,7 +94,12 @@
 
 (defn eid
   [rel name & ids]
-  (id/name+ids->eid rel name ids))
+  (let [lparts (map #(if (and (coll? %) (not (map? %))) % [%]) ids)]
+    (prn lparts)
+    (map #(hash-map :vertex
+                    (apply id/name+ids->eid
+                           (conj [rel name] (:vertex %))))
+         (apply combs/cartesian-product lparts))))
 
 (defn words->str
   [& words]

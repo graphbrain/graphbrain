@@ -79,7 +79,7 @@
          [prop (| adj adv), obj ?]
          (let [x (! prop)
                y (! obj)]
-           (edge "r/+prop" (words->str prop obj) x y)))
+           (eid "r/+prop" (words->str prop obj) x y)))
 
 (pattern chat
          [a det, no-dt ?]
