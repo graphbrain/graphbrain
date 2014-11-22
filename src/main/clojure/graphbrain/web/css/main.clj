@@ -13,7 +13,8 @@
             [graphbrain.web.css.link :as link]
             [graphbrain.web.css.frame :as frame]
             [graphbrain.web.css.nodepage :as np]
-            [graphbrain.web.css.item :as item]))
+            [graphbrain.web.css.item :as item]
+            [graphbrain.web.css.eco :as eco]))
 
 (defstyles main
   (concat general/css
@@ -29,4 +30,5 @@
           link/css
           frame/css
           np/css
-          item/css))
+          item/css
+          eco/css))
