@@ -27,7 +27,9 @@
             edge (assoc edge :score 1)]
         {:words words
          :res res
-         :edge edge}))))
+         :edge edge})
+      {:words words
+       :res res})))
 
 (defn report
   [user sentence ctxts]

@@ -15,6 +15,10 @@
   [word]
   (pos-first-char-is? word "J"))
 
+(defn comparative?
+  [word]
+  (= (:pos word) "JJR"))
+
 (defn verb?
   [word]
   (pos-first-char-is? word "V"))
