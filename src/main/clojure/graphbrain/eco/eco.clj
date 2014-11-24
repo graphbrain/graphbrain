@@ -42,6 +42,10 @@
   [word]
   (word/adjective? word))
 
+(defn compar
+  [word]
+  (word/comparative? word))
+
 (defn !adj
   [word]
   (not (adj word)))

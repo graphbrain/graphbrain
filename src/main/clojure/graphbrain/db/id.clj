@@ -95,8 +95,9 @@
 
 (defn id->ids
   [id]
-  (let [s (subs id 1 (dec (count id)))]
-    (edgeparser/split-edge s)))
+  (if (= (first id) \()
+    (let [s (subs id 1 (dec (count id)))]
+     (edgeparser/split-edge s))))
 
 (defn ids->id
   [ids]

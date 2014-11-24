@@ -51,6 +51,13 @@
            (edge rel orig targ)))
 
 (pattern chat
+         [a ?, verb verb, compar compar, ind ind c ?]
+         (let [orig (! a)
+               rel (rel (concat verb compar ind))
+               targ (! c)]
+           (edge rel orig targ)))
+
+(pattern chat
          [a ?, verb verb, c ?]
          (let [orig (! a)
                rel (rel verb)
