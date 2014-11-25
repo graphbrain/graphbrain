@@ -48,10 +48,13 @@
 
 (defn- f-degree!
   [gbdb id-or-vertex f]
-  (let [vertex (if (string? id-or-vertex) (getv gbdb id-or-vertex) id-or-vertex)
-        degree (:degree vertex)
-        vertex (assoc vertex :degree (f degree))]
-    (mysql/update! gbdb vertex)))
+  (let [vertex (if (string? id-or-vertex)
+                 (getv gbdb id-or-vertex)
+                 id-or-vertex)]
+    (if vertex
+      (let [degree (:degree vertex)
+            vertex (assoc vertex :degree (f degree))]
+        (mysql/update! gbdb vertex)))))
 
 (defn inc-degree!
   [gbdb id-or-vertex]
@@ -145,7 +148,10 @@
                       :edges (map maps/local->global (f %)))
                     ctxts)
         edges (into #{} (apply clojure.set/union (map :edges edges-maps)))
-        edges (filter #(not (some #{(maps/negate %)} edges)) edges)
+        edges (filter
+               #(not (some #{(:id (maps/negate %))}
+                           (map :id edges)))
+               edges)
         edges (filter maps/positive? edges)
         edges (edges-with-ctxts edges edges-maps)]
     edges))
