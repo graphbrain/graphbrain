@@ -16,7 +16,8 @@
      :background "#FFF"}]
 
    [:.eco-word
-    {:margin-right (px 10)}]
+    {:margin-right (px 10)
+     :display "inline"}]
 
    [:.eco-pos
     {:color "#00CC00"}]
