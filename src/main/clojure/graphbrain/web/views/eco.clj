@@ -4,12 +4,13 @@
 
 (defn sentence
   [words]
-  (map #(vector :span {:class "eco-word"}
-                (:word %)
-                "/"
-                [:span {:class "eco-pos"} (:pos %)]
-                "/"
-                [:span {:class "eco-lemma"} (:lemma %)]) words))
+  (interpose " "
+             (map #(vector :span {:class "eco-word"}
+                           (:word %)
+                           "/"
+                           [:span {:class "eco-pos"} (:pos %)]
+                           "/"
+                           [:span {:class "eco-lemma"} (:lemma %)]) words)))
 
 (defn view
   [report]
