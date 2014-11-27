@@ -21,9 +21,12 @@
     (str "bub_" bid)))
 
 (hiccups/defhtml bubble-template
-  [id html]
-  [:div {:id (bubble-id id)
-         :class "bubble"} html])
+  [id html seed]
+  (let [classes (if seed
+                  "bubble seed-bubble"
+                  "bubble")]
+    [:div {:id (bubble-id id)
+           :class classes} html]))
 
 (hiccups/defhtml bubble-title-template
   [node]
@@ -64,12 +67,13 @@
                 false))
 
 (defn place-bubble!
-  [bubbles bubble]
+  [bubbles bubble seeds]
   (let [bid (bubble-id (:id bubble))
         bubbs (assoc bubbles bid (new-bubble))]
     (jq/append ($ "#inters-view")
                (bubble-template (:id bubble)
-                (item/item-html bubble "xxx")))
+                                (item/item-html bubble "xxx")
+                                (some #{(:id bubble)} seeds)))
     (random-pos! bubbs bid)))
 
 (defn layout-step!

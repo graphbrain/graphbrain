@@ -5,7 +5,10 @@
             [graphbrain.utils :as u]))
 
 (def exclude-set
-  #{"653d14f5d5a58462/noun"})
+  #{"653d14f5d5a58462/noun"
+    "e2665974fa3ff255/much"
+    "10bb96ba951ac820/more"
+    "other"})
 
 (defn- exclude-edge
   [edge]

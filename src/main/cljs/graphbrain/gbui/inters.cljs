@@ -53,9 +53,9 @@
     [width height]))
 
 (defn- place-bubbles!
-  [bubbles]
+  [bubbles seeds]
   (reset! bubbs
-          (reduce #(bubble/place-bubble! %1 %2) @bubbs bubbles)))
+          (reduce #(bubble/place-bubble! %1 %2 seeds) @bubbs bubbles)))
 
 (defn- place-links!
   [links]
@@ -96,7 +96,7 @@
   (move-world! [0 0] 1)
   (bind-events!)
   (def data (cljs.reader/read-string view-data-str))
-  (place-bubbles! (:vertices data))
+  (place-bubbles! (:vertices data) (:seeds data))
   (place-links! (:links data)))
 
 (defn- coulomb-pair
