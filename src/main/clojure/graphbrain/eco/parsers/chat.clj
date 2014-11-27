@@ -5,6 +5,15 @@
 (ecoparser chat)
 
 (pattern chat
+         [x0 "-lcb-", a ?, x1 "-rcb-",
+          x2 "-lsb-", r ?, x3 "-rsb-"
+          x4 "-lcb-", b ?, x5 "-rcb-"]
+         (let [orig (! a)
+               targ (! b)
+               rel (rel r)]
+           (edge rel orig targ)))
+
+(pattern chat
          [xwith "with", x1 "a", a ?, x2 ",", b ?, verb verb, c ?]
          (let [x (! a)
                y (! b)
@@ -51,6 +60,13 @@
            (edge rel orig targ)))
 
 (pattern chat
+         [a ?, verb verb, to to, b ?]
+         (let [orig (! a)
+               rel (rel (concat verb to))
+               targ (! b)]
+           (edge rel orig targ)))
+
+(pattern chat
          [a ?, verb verb, compar compar, ind ind c ?]
          (let [orig (! a)
                rel (rel (concat verb compar ind))
@@ -77,10 +93,11 @@
            (eid "r/+poss" (str (words->str a) "'s " (words->str b)) x y)))
 
 (pattern chat
-         [a ?, xin "in", b ?]
+         [a ?, xin "in", b !verb]
          (let [x (! a)
-               y (! b)]
-           (eid  "r/+in" (words->str a xin b) x y)))
+               y (! b)
+               r (rel xin)]
+           (edge r x y)))
 
 (pattern chat
          [prop (| adj adv), obj ?]
@@ -89,8 +106,17 @@
            (eid "r/+prop" (words->str prop obj) x y)))
 
 (pattern chat
+         [a ?,
+          x0 "-lrb-", b ?, x1 "-rrb-"]
+         (! a))
+
+(pattern chat
          [a det, no-dt ?]
          (! no-dt))
+
+(pattern chat
+         [no-stop ?, stop "."]
+         (! no-stop))
 
 (pattern chat
          [i "i"]

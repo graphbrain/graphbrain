@@ -12,6 +12,9 @@
      :background "rgb(20, 20, 20)"
      :overflow "scroll"}]
 
+   [:.seed-bubble
+    {:background "rgb(200, 0, 0)"}]
+
    [:.bubble-title
     {:color "rgb(20, 20, 20)"
      :background "rgb(91, 214, 185)"

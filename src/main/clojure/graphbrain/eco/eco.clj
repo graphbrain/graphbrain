@@ -58,6 +58,10 @@
   [word]
   (not (det word)))
 
+(defn to
+  [word]
+  (word/to? word))
+
 (defn w
   [word-str]
   (fn [word] (= (:word word) word-str)))
@@ -91,6 +95,10 @@
   [words]
   {:vertex (str "r/" (words->id words))})
 
+(defn id->vert
+  [id]
+  {:vertex id})
+
 (defn edge
   [& parts]
   (let [lparts (map #(if (and (coll? %) (not (map? %))) % [%]) parts)]
@@ -99,10 +107,9 @@
 (defn eid
   [rel name & ids]
   (let [lparts (map #(if (and (coll? %) (not (map? %))) % [%]) ids)]
-    (prn lparts)
     (map #(hash-map :vertex
                     (apply id/name+ids->eid
-                           (conj [rel name] (:vertex %))))
+                           (conj [rel name] (map :vertex %))))
          (apply combs/cartesian-product lparts))))
 
 (defn words->str
@@ -220,6 +227,8 @@
   (let [ks (sort (keys result))
         vals (map #(% result) ks)
         verts (apply (:f rule) (conj vals env rules))]
+    (println "rule:")
+    (prn rule)
     (println "verts:")
     (prn verts)
     (if (map? verts)

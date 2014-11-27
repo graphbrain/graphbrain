@@ -35,6 +35,10 @@
   [word]
   (= (:pos word) "DT"))
 
+(defn to?
+  [word]
+  (= (:pos word) "TO"))
+
 (defn word-obj->word
   [word-obj]
   {:word (clojure.string/lower-case (. word-obj getWord))

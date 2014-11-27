@@ -29,7 +29,8 @@
         links (mapcat identity
                       (map edge->links edges))]
     {:vertices verts
-     :links links}))
+     :links links
+     :seeds ids}))
 
 (defn- data->str
   [data]

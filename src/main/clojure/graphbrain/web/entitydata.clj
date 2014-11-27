@@ -139,7 +139,7 @@
 
 (defn- snode-limit-size
   [snode]
-  (let [max-nodes 30
+  (let [max-nodes 10
         nodes (:nodes snode)]
     (if (> (count nodes) max-nodes)
       (let [nodes (sort-by :score nodes)
