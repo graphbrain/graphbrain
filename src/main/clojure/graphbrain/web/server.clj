@@ -2,8 +2,7 @@
   (:use compojure.core
         ring.adapter.jetty
         (ring.middleware resource file-info cookies params)
-        (graphbrain.web.handlers landing node nodeactions user
-                                         raw search aichat relations
+        (graphbrain.web.handlers landing nodeactions user raw
                                          allusers eco nodepage intersect))
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
@@ -12,7 +11,6 @@
 
 (defroutes app-routes
   (GET "/" request (handle-landing request))
-  (GET "/node/*" request (handle-node request))
   (POST "/node/*" request (handle-nodeactions request))
   (GET "/v/*" request (handle-nodepage request))
   (GET "/x" request (handle-intersect request))
@@ -21,10 +19,7 @@
   (POST "/checkusername" request (handle-check-username request))
   (POST "/checkemail" request (handle-check-email request))
   (POST "/login" request (handle-login request))
-  (POST "/search" request (handle-search request))
-  (POST "/ai" request (handle-aichat request))
   (POST "/input" request (input/handle request))
-  (POST "/rel" request (handle-relations request))
   (GET "/allusers" request (handle-allusers request))
   (GET "/eco" request (handle-eco request))
   (POST "/eco" request (handle-eco request))
