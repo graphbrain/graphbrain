@@ -2,7 +2,6 @@
   (:require [graphbrain.gbui.interface :as intf]
             [graphbrain.gbui.globals :as g]
             [graphbrain.gbui.animation :as anim]
-            [graphbrain.gbui.node :as node]
             [graphbrain.gbui.inters :as inters]
             [graphbrain.gbui.nodepage :as nodepage]
             [graphbrain.gbui.eco :as eco]

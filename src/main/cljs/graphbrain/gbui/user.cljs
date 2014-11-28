@@ -13,47 +13,67 @@
 
 (def submitting (atom false))
 
-(hiccups/defhtml signup-dialog-template []
+(hiccups/defhtml signup-dialog-template
+  []
   [:div {:class "modal" :role "dialog" :aria-hidden "true" :id "signup-modal"}
-    [:div {:class "modal-dialog"}
-      [:div {:class "modal-content"}
-        [:div {:class "modal-header"}
-          [:a {:class "close" :data-dismiss "modal"} "×"]
-          [:h3 "Register or Login"]]
-          [:div {:class "container-fluid"}
-            [:div {:class "modal-body row" :id "registerLoginBody"}
-              [:div {:class "col-md-6"}
-                [:h5 "REGISTER NEW ACCOUNT"]
-                [:span {:id "signupErrMsg" :class "text-danger"}]
-                [:form {:role "form"}
-                  [:div {:id "name-formgroup" :class "form-group"}
-                    [:label {:class "control-label"} "Name"]
-                    [:input {:id "suName" :type "text" :class "form-control input-sm" :placeholder "Or an alias if you prefer"}]]
-                  [:div {:id "username-formgroup" :class "form-group"}
-                    [:label {:class "control-label"} "Username"]
-                    [:input {:id "suUsername" :type "text" :class "form-control input-sm" :placeholder "Unique identifier"}]]
-                  [:div {:id "email-formgroup" :class "form-group"}
-                    [:label {:class "control-label"} "Email"]
-                    [:input {:id "suEmail" :type "text" :class "form-control input-sm" :placeholder "Will not be seen by other members"}]]
-                  [:div {:id "pass-formgroup" :class "form-group"}
-                    [:label {:class "control-label"} "Password"]
-                    [:input {:id "suPassword" :type "password" :class "form-control input-sm" :placeholder "A good password"}]
-                    [:input {:id "suPassword2" :type "password" :class "form-control input-sm" :placeholder "Confirm password"}]]
-                  [:br]
-                  [:a {:id "signupButton" :class "btn btn-primary"} "Sign Up"]]]
-              [:div {:class "col-md-6"}
-                [:h5 "LOGIN"]
-                [:span {:id "loginErrMsg" :class "text-danger"}]
-                [:form {:role "form"}
-                  [:div {:id "log-email-fieldgroup" :class "form-group"}
-                    [:label {:class "control-label"} "Email or Username"]
-                    [:input {:id "logEmail" :type "text" :class "form-control input-sm"}]]
-                  [:div {:id "log-pass-fieldgroup" :class "form-group"}
-                    [:label {:class "control-label"} "Password"]
-                    [:input {:id "logPassword" :type "password" :class "form-control input-sm"}]]
-                  [:br]
-                  [:a {:id "loginButton" :class "btn btn-primary" :data-dismiss "modal"} "Login"]]]]]
-          [:div {:class "modal-footer"}]]]])
+   [:div {:class "modal-dialog"}
+    [:div {:class "modal-content"}
+     [:div {:class "modal-header"}
+      [:a {:class "close" :data-dismiss "modal"} "×"]
+      [:h3 "Register or Login"]]
+     [:div {:class "container-fluid"}
+      [:div {:class "modal-body row" :id "registerLoginBody"}
+       [:div {:class "col-md-6"}
+        [:h5 "REGISTER NEW ACCOUNT"]
+        [:span {:id "signupErrMsg" :class "text-danger"}]
+        [:form {:role "form"}
+         [:div {:id "name-formgroup" :class "form-group"}
+          [:label {:class "control-label"} "Name"]
+          [:input {:id "suName"
+                   :type "text"
+                   :class "form-control input-sm"
+                   :placeholder "Or an alias if you prefer"}]]
+         [:div {:id "username-formgroup" :class "form-group"}
+          [:label {:class "control-label"} "Username"]
+          [:input {:id "suUsername"
+                   :type "text"
+                   :class "form-control input-sm"
+                   :placeholder "Unique identifier"}]]
+         [:div {:id "email-formgroup" :class "form-group"}
+          [:label {:class "control-label"} "Email"]
+          [:input {:id "suEmail"
+                   :type "text"
+                   :class "form-control input-sm"
+                   :placeholder "Will not be seen by other members"}]]
+         [:div {:id "pass-formgroup" :class "form-group"}
+          [:label {:class "control-label"} "Password"]
+          [:input {:id "suPassword"
+                   :type "password"
+                   :class "form-control input-sm"
+                   :placeholder "A good password"}]
+          [:input {:id "suPassword2"
+                   :type "password"
+                   :class "form-control input-sm"
+                   :placeholder "Confirm password"}]]
+         [:br]
+         [:a {:id "signupButton" :class "btn btn-primary"} "Sign Up"]]]
+       [:div {:class "col-md-6"}
+        [:h5 "LOGIN"]
+        [:span {:id "loginErrMsg" :class "text-danger"}]
+        [:form {:role "form"}
+         [:div {:id "log-email-fieldgroup" :class "form-group"}
+          [:label {:class "control-label"} "Email or Username"]
+          [:input {:id "logEmail" :type "text" :class "form-control input-sm"}]]
+         [:div {:id "log-pass-fieldgroup" :class "form-group"}
+          [:label {:class "control-label"} "Password"]
+          [:input {:id "logPassword"
+                   :type "password"
+                   :class "form-control input-sm"}]]
+         [:br]
+         [:a {:id "loginButton"
+              :class "btn btn-primary"
+              :data-dismiss "modal"} "Login"]]]]]
+     [:div {:class "modal-footer"}]]]])
 
 (defn show-signup-dialog!
   []
@@ -138,7 +158,7 @@
       (cookies/set "session" (second response) 8640000 "/")
       (if (and (exists? js/data) (not (nil? js/data)))
         (.reload js/location)
-        (set! (.-href js/window.location) (str "/node/u/" (first response)))))))
+        (set! (.-href js/window.location) (str "/v/u/" (first response)))))))
 
 (defn login-request
   [log-email password]
@@ -220,7 +240,6 @@
   []
   (cookies/set "username" "" 8640000 "/")
   (cookies/set "session" "" 8640000 "/")
-  #_(.reload js/location)
   (set! js/document.location.href "/"))
 
 (defn username-changed!
