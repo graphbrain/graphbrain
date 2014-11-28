@@ -3,6 +3,6 @@
   (:use [jayq.core :only [$]]))
 
 (defn init-eco!
-  [view-data-str]
+  []
   (.attr ($ "#top-input-field") "action" "/eco")
   (.attr ($ "#top-input-field") "method" "POST"))

@@ -2,11 +2,8 @@
   (:require-macros [hiccups.core :as hiccups])
   (:require [jayq.core :as jq]
             [hiccups.runtime :as hiccupsrt]
-            [graphbrain.gbui.spherical :as spher]
             [graphbrain.gbui.globals :as g]
-            [graphbrain.gbui.item :as item]
-            [graphbrain.gbui.mat :as mat]
-            [graphbrain.gbui.newedges :as newedges])
+            [graphbrain.gbui.item :as item])
   (:use [jayq.core :only [$]]))
 
 (hiccups/defhtml frame-html

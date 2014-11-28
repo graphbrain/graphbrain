@@ -9,7 +9,7 @@
   (let
     [user (get-user request)]
     (if user
-      (redirect (str "/node/" (:id user)))
+      (redirect (str "/v/" (:id user)))
       (page
         :title "Welcome"
         :css-and-js (css+js/css+js)
