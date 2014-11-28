@@ -49,7 +49,6 @@
   :main graphbrain.core
   :ring {:handler graphbrain.web.server/handler}
   :aot :all
-
   :cljsbuild {:builds
               [{:source-paths ["src/main/cljs"]
                 :compiler {:output-to "src/main/resources/js/gbui.js"

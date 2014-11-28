@@ -4,6 +4,10 @@
         (graphbrain.web.views page landing))
   (:require [graphbrain.web.cssandjs :as css+js]))
 
+(defn- js
+  []
+  "var ptype='landing';")
+
 (defn handle-landing
   [request]
   (let
@@ -16,4 +20,4 @@
         :user nil
         :page :home
         :body-fun landing-view
-        :js ""))))
+        :js (js)))))
