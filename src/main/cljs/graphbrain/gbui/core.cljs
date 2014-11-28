@@ -13,18 +13,12 @@
   []
   (reset! g/rng (rng/rng "GraphBrain GraphBrain"))
 
-  (if (= js/ptype "node")
-    (nodepage/init-nodepage! (enc/decode js/data)))
+  (case js/ptype
+    "node" (nodepage/init-nodepage! (enc/decode js/data))
+    "intersect" (do (inters/init-view! (enc/decode js/data))
+                    (anim/add-anim! (anim/anim-graph-layout)))
+    "eco" (eco/init-eco!))
   
-  (if (= js/ptype "intersect")
-    (inters/init-view! (enc/decode js/data)))
-
-  (if (= js/ptype "eco")
-    (eco/init-eco!))
-  
-  (intf/init-interface)
-  
-  (if (= js/ptype "intersect")
-    (anim/add-anim! (anim/anim-graph-layout))))
+  (intf/init-interface))
 
 ($ start)
