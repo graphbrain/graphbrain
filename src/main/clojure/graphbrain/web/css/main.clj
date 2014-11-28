@@ -5,6 +5,7 @@
             [graphbrain.web.css.link :as link]
             [graphbrain.web.css.frame :as frame]
             [graphbrain.web.css.nodepage :as np]
+            [graphbrain.web.css.bubble :as bubble]
             [graphbrain.web.css.item :as item]
             [graphbrain.web.css.eco :as eco]))
 
@@ -14,5 +15,6 @@
           link/css
           frame/css
           np/css
+          bubble/css
           item/css
           eco/css))
