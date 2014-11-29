@@ -172,6 +172,19 @@
                        (build (drop (space-length space) (parts id))))
    :else id))
 
+;; negativity
+
+(defn negative?
+  [id]
+  (= (first
+      (parts
+       (local->global id)))
+     "n"))
+
+(defn positive?
+  [id]
+  (not (negative? id)))
+
 
 ;; owner
 
