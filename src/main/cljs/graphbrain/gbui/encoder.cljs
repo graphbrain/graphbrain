@@ -16,9 +16,10 @@
 (defn- decode-char
   [str c]
   (conj str
-        (next-char (last str) c)))
+        (next-char (first str) c)))
 
 (defn decode
   [s]
   (apply str
-         (reduce decode-char [] s)))
+         (reverse
+          (reduce decode-char '() s))))
