@@ -105,17 +105,9 @@
 
 ;; negations
 
-(defn negative-id?
-  [id]
-  (= (first (id/parts (id/local->global id))) "n"))
-
-(defn positive-id?
-  [id]
-  (not (negative-id? id)))
-
 (defn negate-id
   [id]
-  (if (negative-id? id) id
+  (if (id/negative? id) id
     (let [owner-id (id/owner id)
           global-id (id/local->global id)
           neg-id (str "n/" global-id)]
@@ -129,7 +121,7 @@
 
 (defn negative-edge?
   [edge]
-  (negative-id? (edge-type edge)))
+  (id/negative? (edge-type edge)))
 
 (defn positive-edge?
   [edge]
@@ -145,14 +137,14 @@
 (defn negative?
   [thing]
   (cond
-   (string? thing) (negative-id? thing)
+   (string? thing) (id/negative? thing)
    (= (id/id->type (:id thing)) :edge) (negative-edge? thing)
    :else nil))
 
 (defn positive?
   [thing]
   (cond
-   (string? thing) (positive-id? thing)
+   (string? thing) (id/positive? thing)
    (= (id/id->type (:id thing)) :edge) (positive-edge? thing)
    :else nil))
 

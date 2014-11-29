@@ -13,7 +13,8 @@
 
 (defn- pagedata
   [vert user ctxts all-ctxts]
-  (let [entity-data (ed/generate common/gbdb (:id vert) user ctxts all-ctxts)]
+  (let [entity-data (ed/generate
+                     common/gbdb (:id vert) user ctxts all-ctxts)]
     entity-data))
 
 (defn- js
@@ -24,23 +25,23 @@
 
 (defn handle-nodepage
   [request]
-  (time (let
-       [user (common/get-user request)
-        ctxts (contexts/active-ctxts request user)
-        all-ctxts (user/user->ctxts user)
-        vert (gb/getv common/gbdb
-                      (:* (:route-params request))
-                      ctxts)
-        title (case (:type vert)
-                :url (url/title common/gbdb (:id vert) ctxts)
-                (vertex/label vert))
-        desc (case (:type vert)
-               :entity (entity/subentities vert)
-               :url "web page"
-               :user "GraphBrain user"
-               nil)]
-     (np/nodepage :title title
-                  :css-and-js (css+js/css+js)
-                  :user user
-                  :js (js vert user ctxts all-ctxts)
-                  :desc desc))))
+  (let
+      [user (common/get-user request)
+       ctxts (contexts/active-ctxts request user)
+       all-ctxts (user/user->ctxts user)
+       vert (gb/getv common/gbdb
+                     (:* (:route-params request))
+                     ctxts)
+       title (case (:type vert)
+               :url (url/title common/gbdb (:id vert) ctxts)
+               (vertex/label vert))
+       desc (case (:type vert)
+              :entity (entity/subentities vert)
+              :url "web page"
+              :user "GraphBrain user"
+              nil)]
+    (np/nodepage :title title
+                 :css-and-js (css+js/css+js)
+                 :user user
+                 :js (js vert user ctxts all-ctxts)
+                 :desc desc)))

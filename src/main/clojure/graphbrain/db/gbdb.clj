@@ -64,10 +64,15 @@
   [gbdb id-or-vertex]
   (f-degree! gbdb id-or-vertex dec))
 
+(declare remove!)
+
 (defn putv!
   [gbdb vertex owner-id]
   (let [gvert (maps/local->global vertex)
         lvert (maps/global->local gvert owner-id)]
+    (if (and (maps/edge? gvert)
+             (maps/positive? gvert))
+      (remove! gbdb (maps/negate-edge gvert) owner-id))
     (if (not (exists? gbdb lvert))
       (let [lvert (assoc lvert :ts (.getTime (Date.)))]
         (mysql/putv! gbdb lvert)
@@ -101,7 +106,8 @@
         lvert (maps/global->local gvert owner-id)]
     (mysql/remove! gbdb lvert)
     (remove-link-to-global! gbdb (:id gvert) (:id lvert))
-    (if (maps/edge? lvert)
+    (if (and (maps/edge? lvert)
+             (maps/positive? lvert))
       (do (putv! gbdb (maps/negate gvert) owner-id)
           (doseq [id (maps/ids lvert)]
             (dec-degree! gbdb (id/eid->id id)))))))
