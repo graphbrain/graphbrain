@@ -17,7 +17,8 @@
     "node" (nodepage/init-nodepage! (enc/decode js/data))
     "intersect" (do (inters/init-view! (enc/decode js/data))
                     (anim/add-anim! (anim/anim-graph-layout)))
-    "eco" (eco/init-eco!))
+    "eco" (eco/init-eco!)
+    nil)
   
   (intf/init-interface))
 
