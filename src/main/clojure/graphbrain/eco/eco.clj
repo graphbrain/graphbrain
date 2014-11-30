@@ -74,7 +74,6 @@
   [words1 words2]
   (= (take-last (count words2) words1) words2))
 
-
 (defn- words->id
   [words]
   (id/sanitize (clojure.string/join " " (map :word words))))
@@ -227,24 +226,22 @@
   (let [ks (sort (keys result))
         vals (map #(% result) ks)
         verts (apply (:f rule) (conj vals env rules))]
-    (println "rule:")
-    (prn rule)
-    (println "verts:")
-    (prn verts)
     (if (map? verts)
       (assoc verts :rule rule)
       (map #(assoc % :rule rule) verts))))
 
 (defn parse
   [rules words env]
-  (loop [rs rules]
-    (if (not (empty? rs))
+  (loop [rs rules
+         res []]
+    (if (empty? rs)
+      res
       (let [rule (first rs)
-            results (eval-rule words (:chunks rule) [] env)]
-        (if (not (empty? results))
-          (flatten (into [] (map #(result->vertex rules rule % env)
-                                 results)))
-          (recur (rest rs)))))))
+            results (eval-rule words (:chunks rule) [] env)
+            results (flatten (into [] (map #(result->vertex rules rule % env)
+                                           results)))]
+        (recur (rest rs)
+               (clojure.set/union res results))))))
 
 (defn parse->vertex
   [par]
@@ -253,10 +250,29 @@
       (id/ids->id (map parse->vertex vert))
       vert)))
 
+(defn parse->vertex+weight
+  [par]
+  (let [vert (:vertex par)
+        rule (:rule par)
+        weight (if rule
+                 (:priority rule)
+                 0)]
+    (if (coll? vert)
+      (let [vws (map parse->vertex+weight vert)
+            id (id/ids->id (map :vert vws))
+            w (reduce + (map :weight vws))]
+        {:vert id
+         :weight (+ w weight)})
+      {:vert vert
+       :weight weight})))
+
 (defn parse-words
   [rules words env]
-  (let [par (parse rules words env)]
-    (map parse->vertex par)))
+  (let [par (parse rules words env)
+        vws (map parse->vertex+weight par)
+        best (apply max (map :weight vws))
+        vws (filter #(= (:weight %) best) vws)]
+    (:vert (first vws))))
 
 (defn parse-str
   [rules s env]
