@@ -20,8 +20,7 @@
   (let
       [env {:root (maps/vertex->eid root) :user (:id user)}
        words (words/str->words sentence)
-       results (eco/parse-words chat/chat words env)
-       res (first results)]
+       res (eco/parse-words chat/chat words env)]
     (if (id/edge? res)
       (let [edge-id (edg/guess common/gbdb res sentence ctxts)
             edge (maps/id->vertex edge-id)
