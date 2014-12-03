@@ -20,16 +20,20 @@
   (let
       [env {:root (maps/vertex->eid root) :user (:id user)}
        words (words/str->words sentence)
-       res (eco/parse-words chat/chat words env)]
+       par (eco/parse chat/chat words env)
+       vws (map eco/vert+weight par)
+       res (eco/verts+weights->vertex chat/chat vws env)]
     (if (id/edge? res)
       (let [edge-id (edg/guess common/gbdb res sentence ctxts)
             edge (maps/id->vertex edge-id)
             edge (assoc edge :score 1)]
         {:words words
          :res res
+         :vws vws
          :edge edge})
       {:words words
-       :res res})))
+       :res res
+       :vws vws})))
 
 (defn report
   [user sentence ctxts]

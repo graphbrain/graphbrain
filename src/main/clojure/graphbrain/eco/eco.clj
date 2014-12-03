@@ -3,7 +3,8 @@
   (:require [graphbrain.db.id :as id]
             [graphbrain.eco.words :as words]
             [graphbrain.eco.word :as word]
-            [clojure.math.combinatorics :as combs]))
+            [clojure.math.combinatorics :as combs]
+            [clojure.set :as set]))
 
 (defn ?
   [word]
@@ -241,7 +242,7 @@
             results (flatten (into [] (map #(result->vertex rules rule % env)
                                            results)))]
         (recur (rest rs)
-               (clojure.set/union res results))))))
+               (set/union res results))))))
 
 (defn parse->vertex
   [par]
@@ -250,29 +251,34 @@
       (id/ids->id (map parse->vertex vert))
       vert)))
 
-(defn parse->vertex+weight
+(defn vert+weight
   [par]
   (let [vert (:vertex par)
         rule (:rule par)
         weight (if rule
-                 (:priority rule)
-                 0)]
+                 (:priority rule) 0)]
     (if (coll? vert)
-      (let [vws (map parse->vertex+weight vert)
+      (let [vws (map vert+weight vert)
             id (id/ids->id (map :vert vws))
             w (reduce + (map :weight vws))]
-        {:vert id
-         :weight (+ w weight)})
-      {:vert vert
-       :weight weight})))
+        (assoc par
+          :vert id
+          :weight (+ w weight)))
+      (assoc par
+        :vert vert
+        :weight weight))))
+
+(defn verts+weights->vertex
+  [rules vws env]
+  (let [best (apply max (map :weight vws))
+        vws (filter #(= (:weight %) best) vws)]
+    (:vert (first vws))))
 
 (defn parse-words
   [rules words env]
   (let [par (parse rules words env)
-        vws (map parse->vertex+weight par)
-        best (apply max (map :weight vws))
-        vws (filter #(= (:weight %) best) vws)]
-    (:vert (first vws))))
+        vws (map vert+weight par)]
+    (verts+weights->vertex rules vws env)))
 
 (defn parse-str
   [rules s env]
