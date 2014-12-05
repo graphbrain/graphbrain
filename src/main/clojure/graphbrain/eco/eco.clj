@@ -39,7 +39,7 @@
         (map #(assoc % :priority (rule-priority %)) rules)))
 
 (defmacro pattern
-  [rules chunks f]
+  [rules desc chunks f]
   `(def ~rules
      (sorted-rules (conj ~rules
             {:chunks
@@ -62,8 +62,12 @@
                                     (symbol 'env)
                                     (symbol 'rules)))
                        f)
-             :desc ~(clojure.string/join "-"
-                                         (map #(name (first %)) (partition 2 (destructure chunks))))}))))
+             :desc ~(str desc " ["
+                         (clojure.string/join
+                          "-"
+                          (map #(name (first %))
+                               (partition 2 (destructure chunks))))
+                         "]")}))))
 
 (defn eval-chunk-word
   [chunk word]
@@ -122,15 +126,18 @@
 (defn parse
   [rules words env]
   (loop [rs rules
-         res []]
-    (if (empty? rs)
+         res []
+         c 0]
+    (if (or (empty? rs) (> c 1))
       res
       (let [rule (first rs)
             results (eval-rule words (:chunks rule) [] env)
+            newc (if (empty? results) c (inc c))
             results (flatten (into [] (map #(result->vertex rules rule % env)
                                            results)))]
         (recur (rest rs)
-               (set/union res results))))))
+               (set/union res results)
+               newc)))))
 
 (defn parse->vertex
   [par]
