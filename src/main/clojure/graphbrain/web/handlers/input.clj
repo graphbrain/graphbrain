@@ -45,7 +45,7 @@
   [user root sentence ctxts]
   (let
       [env {:root (maps/vertex->eid root) :user (:id user)}
-       res (first (eco/parse-str chat/chat sentence env))]
+       res (eco/parse-str chat/chat sentence env)]
     (if (id/edge? res)
       (let [edge-id (edg/guess common/gbdb res sentence ctxts)
             edge (maps/id->vertex edge-id)
