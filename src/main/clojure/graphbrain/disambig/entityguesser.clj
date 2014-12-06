@@ -45,19 +45,21 @@
 
 (defn guess
   [gbdb name text eid ctxts]
-  (let [text (clojure.string/lower-case text)
-        can-mean (can-mean gbdb name ctxts)]
-    (if (empty? can-mean)
-      (if eid
-        (maps/eid->entity eid)
-        (maps/id->vertex (id/sanitize name)))
-      (let [scored (map #(hash-map
-                          :vertex %
-                          :score (text-score gbdb text % ctxts))
-                        can-mean)
-            max-score (apply max (map :score scored))
-            high-scores (filter #(>= (:score %) max-score) scored)]
-        (apply max-key :degree (map :vertex high-scores))))))
+  (if (> (id/count-parts name) 1)
+    (gbdb/getv gbdb name ctxts)
+    (let [text (clojure.string/lower-case text)
+         can-mean (can-mean gbdb name ctxts)]
+     (if (empty? can-mean)
+       (if eid
+         (maps/eid->entity eid)
+         (maps/id->vertex (id/sanitize name)))
+       (let [scored (map #(hash-map
+                           :vertex %
+                           :score (text-score gbdb text % ctxts))
+                         can-mean)
+             max-score (apply max (map :score scored))
+             high-scores (filter #(>= (:score %) max-score) scored)]
+         (apply max-key :degree (map :vertex high-scores)))))))
 
 (defn guess-eid
   [gbdb name text eid ctxts]
