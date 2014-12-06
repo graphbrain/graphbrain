@@ -16,9 +16,10 @@
   (str "var ptype='eco';"))
 
 (defn- sentence->result
-  [user root sentence ctxts]
+  [user sentence ctxts]
   (let
-      [env {:root (maps/vertex->eid root) :user (:id user)}
+      [env {:root "561852ced99a782d/europe"
+            :user (:id user)}
        words (words/str->words sentence)
        par (eco/parse chat/chat words env)
        vws (map eco/vert+weight par)
@@ -37,7 +38,7 @@
 
 (defn report
   [user sentence ctxts]
-  (sentence->result user "graphbrain" sentence ctxts))
+  (sentence->result user sentence ctxts))
 
 (defn handle-eco
   [request]

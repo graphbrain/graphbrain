@@ -37,14 +37,17 @@
 (defn- sentence-type
   [sentence]
   (cond
-   (and (gbstr/no-spaces? sentence) (or (.startsWith sentence "http://") (.startsWith sentence "https://"))) :url
+   (and (gbstr/no-spaces? sentence)
+        (or (.startsWith sentence "http://")
+            (.startsWith sentence "https://"))) :url
    (.startsWith sentence "x ") :intersect
    :else :fact))
 
 (defn- process-fact
   [user root sentence ctxts]
   (let
-      [env {:root (maps/vertex->eid root) :user (:id user)}
+      [env {:root (:id root)
+            :user (:id user)}
        res (eco/parse-str chat/chat sentence env)]
     (if (id/edge? res)
       (let [edge-id (edg/guess common/gbdb res sentence ctxts)
