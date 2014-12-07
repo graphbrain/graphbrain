@@ -14,7 +14,7 @@
       (maps/id->edge edge-id)
       (:id user))))
 
-(defn handle-nodeactions
+(defn handle
   [request]
   (let
     [vert-id (:* (:route-params request))

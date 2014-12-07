@@ -40,7 +40,7 @@
   [user sentence ctxts]
   (sentence->result user sentence ctxts))
 
-(defn handle-eco
+(defn handle
   [request]
   (let
       [sentence ((request :form-params) "input-field")

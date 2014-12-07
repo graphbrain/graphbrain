@@ -42,7 +42,7 @@
   (str "var ptype='intersect';"
        "var data='" (enc/encode (inters-data ids ctxts)) "';"))
 
-(defn handle-intersect
+(defn handle
   [request]
   (let
       [user (common/get-user request)

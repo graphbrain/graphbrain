@@ -20,7 +20,7 @@
                edges (gb/id->edges common/gbdb vertex-id ctxts)]
            (join (map #(str (:id %) "<br />") edges))))))
 
-(defn handle-raw
+(defn handle
   [request]
   (let [user (common/get-user request)
         ctxts (contexts/active-ctxts request user)

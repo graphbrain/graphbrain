@@ -1,7 +1,7 @@
 (ns graphbrain.gbui.item
   (:require-macros [hiccups.core :as hiccups])
   (:require [jayq.core :as jq]
-            [graphbrain.gbui.remove :as rem]
+            [graphbrain.gbui.change :as change]
             [graphbrain.gbui.globals :as g]
             [hiccups.runtime :as hiccupsrt])
   (:use [jayq.core :only [$]]))
@@ -29,7 +29,7 @@
       [:a {:href (:url node) :id (str "url" div-id)}
        (:url node)]]]]
    [:div {:class "item-remove"}
-    [:a {:id (str "rem" div-id) :href "#"} "x"]]])
+    [:a {:id (str "chg" div-id) :href "#"} "✱"]]])
 
 (defn- subtext-item
   [sub]
@@ -51,7 +51,7 @@
     (if sub-txt
       [:span {:class "item-sub-text"} sub-txt])]
    [:div {:class "item-remove"}
-    [:a {:id (str "rem" div-id) :href "#"} "x"]]])
+    [:a {:id (str "chg" div-id) :href "#"} "✱"]]])
 
 (defn item-html
   [item div-id]
@@ -71,7 +71,7 @@
         html (item-html item div-id)]
     (jq/append ($ (str "#" frame-id " .frame-inner")) html)
     (jq/css ($ (str "#t" div-id)) {:background (item-color item ctxts)})
-    (jq/bind ($ (str "#rem" div-id))
+    (jq/bind ($ (str "#chg" div-id))
                    :click
-                   #(rem/remove-clicked item snode))
+                   #(change/clicked item snode))
     item))
