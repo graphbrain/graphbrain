@@ -1,6 +1,7 @@
 (ns graphbrain.web.handlers.input
   (:require [graphbrain.web.common :as common]
             [graphbrain.web.contexts :as contexts]
+            [graphbrain.web.handlers.search :as search]
             [graphbrain.db.gbdb :as gb]
             [graphbrain.db.id :as id]
             [graphbrain.db.maps :as maps]
@@ -9,9 +10,7 @@
             [graphbrain.braingenerators.pagereader :as pr]
             [graphbrain.eco.eco :as eco]
             [graphbrain.eco.parsers.chat :as chat]
-            [graphbrain.string :as gbstr]
-            [graphbrain.db.entity :as entity]
-            [graphbrain.db.searchinterface :as si]))
+            [graphbrain.string :as gbstr]))
 
 (defn- input-reply-fact
   [root-id vertex]
@@ -40,7 +39,7 @@
    (and (gbstr/no-spaces? sentence)
         (or (.startsWith sentence "http://")
             (.startsWith sentence "https://"))) :url
-   (.startsWith sentence "x ") :intersect
+            (.startsWith sentence "x ") :intersect
    :else :fact))
 
 (defn- process-fact
@@ -61,11 +60,10 @@
   (let [q (if (= mode :intersect)
             (clojure.string/trim (subs q 1))
             q)
-        results (si/query common/gbdb q ctxts)
-        results-list (map #(list (id/eid->id %) (entity/description %)) results)]
-    (if (empty? results-list)
+        results (search/results q ctxts)]
+    (if (empty? results)
       (process-fact user root q ctxts)
-      (input-reply-search (count results-list) results-list mode))))
+      (search/reply results mode))))
 
 (defn process-url
   [user root sentence ctxts]
