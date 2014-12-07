@@ -2,50 +2,9 @@
   (:require-macros [hiccups.core :as hiccups])
   (:require [jayq.core :as jq]
             [hiccups.runtime :as hiccupsrt]
-            [graphbrain.gbui.globals :as g])
+            [graphbrain.gbui.globals :as g]
+            [graphbrain.gbui.search :as search])
   (:use [jayq.core :only [$]]))
-
-(hiccups/defhtml search-dialog-template []
-  [:div {:class "modal" :role "dialog" :aria-hidden "true" :id "searchResultsModal"}
-    [:div {:class "modal-dialog"}
-      [:div {:class "modal-content"}
-        [:div {:class "modal-header"}
-          [:a {:class "close" :data-dismiss "modal"} "×"]
-          [:h3 "Search Results"]]
-        [:div {:class "modal-body" :id "searchResultsBody"}
-          [:div {:class "modal-footer"}
-            [:a {:class "btn btn-primary" :data-dismiss "modal"} "Close"]]]]]])
-                 
-(defn init-search-dialog!
-  []
-  (let [html (search-dialog-template)]
-  (.appendTo ($ html) "body")
-  (.modal ($ "#searchResultsModal") "hide")))
-
-(defn show-search-dialog
-  []
-  (.modal ($ "#searchResultsModal") "show"))
-
-(defn search-link
-  [result mode]
-  (case mode
-    :search (str "/v/" (first result))
-    :intersect (str "/x?id1=" (first result)
-                    "&id2=" @g/root-id)))
-
-(defn- search-results-received
-  [msg]
-  (let [results (:results msg)
-        mode (:mode msg)
-        html (if (empty? results)
-               "<p>Sorry, no results found.</p>"
-               (str "<p>" (count (:results msg)) " results found.</p>"
-                    (clojure.string/join
-                     (map #(str "<p><a href='"
-                                (search-link % mode) "'>" (second %) "</a></p>")
-                          results))))]
-    (.html ($ "#searchResultsBody") html)
-    (show-search-dialog)))
 
 (defn- url-results-received
   [msg]
@@ -65,7 +24,7 @@
   [data]
   (let [msg (cljs.reader/read-string data)]
     (case (:type msg)
-      :search (search-results-received msg)
+      :search (search/results-received msg)o
       :url (url-results-received msg)
       :fact (fact-results-received msg))))
 

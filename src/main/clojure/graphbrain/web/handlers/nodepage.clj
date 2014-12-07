@@ -23,7 +23,7 @@
        "var data='" (enc/encode (pr-str
                       (pagedata vert user ctxts all-ctxts))) "';"))
 
-(defn handle-nodepage
+(defn handle
   [request]
   (let
       [user (common/get-user request)

@@ -24,7 +24,7 @@
                     (:pwdhash u)
                     "<br />")) users)))))
 
-(defn handle-allusers
+(defn handle
   [request]
   (let [user (common/get-user request)]
     (page

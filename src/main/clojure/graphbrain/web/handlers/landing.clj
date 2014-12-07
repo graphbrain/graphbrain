@@ -8,7 +8,7 @@
   []
   "var ptype='landing';")
 
-(defn handle-landing
+(defn handle
   [request]
   (let
     [user (get-user request)]
