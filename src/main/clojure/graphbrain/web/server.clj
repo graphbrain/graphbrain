@@ -13,7 +13,8 @@
             [graphbrain.web.handlers.eco :as eco]
             [graphbrain.web.handlers.nodepage :as nodepage]
             [graphbrain.web.handlers.intersect :as intersect]
-            [graphbrain.web.handlers.input :as input]))
+            [graphbrain.web.handlers.input :as input]
+            [graphbrain.web.handlers.search :as search]))
 
 (defroutes app-routes
   (GET "/" request (landing/handle request))
@@ -26,6 +27,7 @@
   (POST "/checkemail" request (user/handle-check-email request))
   (POST "/login" request (user/handle-login request))
   (POST "/input" request (input/handle request))
+  (POST "/search" request (search/handle request))
   (GET "/allusers" request (allusers/handle request))
   (GET "/eco" request (eco/handle request))
   (POST "/eco" request (eco/handle request))
@@ -37,6 +39,15 @@
     wrap-file-info
     wrap-params
     wrap-cookies))
+
+(def handler
+  (do
+    (common/init-graph!)
+    (handler/site (-> app-routes
+                      (wrap-resource "")
+                      wrap-file-info
+                      wrap-params
+                      wrap-cookies))))
 
 (defn run!
   []
