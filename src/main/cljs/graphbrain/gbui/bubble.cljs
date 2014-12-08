@@ -3,22 +3,13 @@
   (:require [jayq.core :as jq]
             [hiccups.runtime :as hiccupsrt]
             [graphbrain.gbui.globals :as g]
+            [graphbrain.gbui.id :as id]
             [graphbrain.gbui.item :as item])
   (:use [jayq.core :only [$]]))
 
 (defn bubble-id
   [id]
-  (let [bid (clojure.string/replace id "/" "_")
-        bid (clojure.string/replace bid "." "_")
-        bid (clojure.string/replace bid "#" "_")
-        bid (clojure.string/replace bid ":" "_")
-        bid (clojure.string/replace bid "?" "_")
-        bid (clojure.string/replace bid "=" "_")
-        bid (clojure.string/replace bid ";" "_")
-        bid (clojure.string/replace bid "(" "_")
-        bid (clojure.string/replace bid ")" "_")
-        bid (clojure.string/replace bid "+" "_")]
-    (str "bub_" bid)))
+  (str "bub_" (id/clean id)))
 
 (hiccups/defhtml bubble-template
   [id html seed]
