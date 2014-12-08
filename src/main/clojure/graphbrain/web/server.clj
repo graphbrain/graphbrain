@@ -14,7 +14,8 @@
             [graphbrain.web.handlers.nodepage :as nodepage]
             [graphbrain.web.handlers.intersect :as intersect]
             [graphbrain.web.handlers.input :as input]
-            [graphbrain.web.handlers.search :as search]))
+            [graphbrain.web.handlers.search :as search]
+            [graphbrain.web.handlers.change :as change]))
 
 (defroutes app-routes
   (GET "/" request (landing/handle request))
@@ -31,6 +32,7 @@
   (GET "/allusers" request (allusers/handle request))
   (GET "/eco" request (eco/handle request))
   (POST "/eco" request (eco/handle request))
+  (POST "/change" request (change/handle request))
   (route/not-found "<h1>Page not found</h1>"))
 
 (def app

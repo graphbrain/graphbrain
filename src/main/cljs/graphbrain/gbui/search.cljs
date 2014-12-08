@@ -2,7 +2,8 @@
   (:require-macros [hiccups.core :as hiccups])
   (:require [jayq.core :as jq]
             [hiccups.runtime :as hiccupsrt]
-            [graphbrain.gbui.globals :as g])
+            [graphbrain.gbui.globals :as g]
+            [graphbrain.gbui.id :as id])
   (:use [jayq.core :only [$]]))
 
 (hiccups/defhtml search-dialog-template []
@@ -26,12 +27,18 @@
   []
   (.modal ($ "#search-results-modal") "show"))
 
-(defn- search-link
+(defn- link
   [result mode]
   (case mode
     :search (str "/v/" (first result))
     :intersect (str "/x?id1=" (first result)
-                    "&id2=" @g/root-id)))
+                    "&id2=" @g/root-id)
+    :change "#"))
+
+(defn link-id
+  [id]
+  (str "sl_"
+       (id/clean id)))
 
 (defn rendered-results
   [msg]
@@ -39,7 +46,12 @@
         mode (:mode msg)]
     (clojure.string/join
      (map #(str "<p><a href='"
-                (search-link % mode) "'>" (second %) "</a></p>")
+                (link % mode)
+                "' id='"
+                (link-id (first %))
+                "'>"
+                (second %)
+                "</a></p>")
           results))))
 
 (defn results-received
@@ -52,10 +64,11 @@
     (.html ($ "#search-results-body") html)
     (show-dialog)))
 
-(defn search-request
-  [query]
+(defn request!
+  [query mode f]
   (jq/ajax {:type "POST"
             :url "/search"
-            :data (str "q=" (.toLowerCase query))
+            :data (str "q=" (.toLowerCase query)
+                       "&mode=" (name mode))
             :dataType "text"
-            :success results-received}))
+            :success f}))

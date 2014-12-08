@@ -1,7 +1,8 @@
 (ns graphbrain.gbui.change
   (:require-macros [hiccups.core :as hiccups])
   (:require [jayq.core :as jq]
-            [hiccups.runtime :as hiccupsrt])
+            [hiccups.runtime :as hiccupsrt]
+            [graphbrain.gbui.search :as search])
   (:use [jayq.core :only [$]]))
 
 (hiccups/defhtml change-dialog-template
@@ -15,11 +16,12 @@
          [:form {:id "change-form" :action (str "/node/" root-node-id) :method "post"}
           [:input {:type "hidden" :name "op" :value "remove"}]
           [:input {:id "removeEdgeField" :type "hidden" :name "edge"}]
-          [:div {:class "modal-body" :id "addBrainBody"}
-           [:div {:id "linkDesc"}]]
+          [:div {:class "modal-body"}
+           [:div {:id "link-desc"}]
+           [:div {:id "alt-entities"}]]
           [:div {:class "modal-footer"}
            [:a {:class "btn" :data-dismiss "modal"} "Close"]
-           [:a {:id "removeDlgButton" :class "btn btn-primary"} "Remove"]]]]]]])
+           [:a {:id "remove-button" :class "btn btn-danger"} "Remove"]]]]]]])
 
 (defn change-action
   []
@@ -29,17 +31,51 @@
   [root-node-id]
   (let [html (change-dialog-template root-node-id)]
     (jq/append ($ "body") html)
-    (jq/bind ($ "#removeDlgButton") :click change-action)))
+    (jq/bind ($ "#remove-button") :click change-action)))
+
+(defn- on-changed
+  []
+  (.reload js/window.location))
+
+(defn- change-request!
+  [node new-id]
+  (jq/ajax {:type "POST"
+            :url "/change"
+            :data (str "edge=" (js/encodeURIComponent (:edge node))
+                       "&old-id=" (js/encodeURIComponent (:id node))
+                       "&new-id=" (js/encodeURIComponent new-id))
+            :dataType "text"
+            :success on-changed}))
+
+(defn- on-change
+  [node new-id]
+  (change-request! node new-id))
 
 (defn show-change-dialog
-  [node snode]
+  [msg node snode]
   (let [edge (:edge node)
         link (:label snode)
         html (str (:text node) " <strong>(" link ")</strong>")]
     (jq/val ($ "#removeEdgeField") edge)
-    (jq/html ($ "#linkDesc") html)
+    (jq/html ($ "#link-desc") html)
+    (jq/html ($ "#alt-entities")
+             (search/rendered-results msg))
+    (let [results (:results msg)]
+      (doseq [result results]
+        (jq/bind
+         ($ (str "#" (search/link-id (first result))))
+         "click"
+         #(on-change node (first result)))))
     (.modal ($ "#change-modal") "show")))
+
+(defn- results-received
+  [msg node snode]
+  (show-change-dialog (cljs.reader/read-string msg)
+                      node
+                      snode))
 
 (defn clicked
   [node snode]
-  (show-change-dialog node snode))
+  (search/request! (:text node)
+                   :change
+                   #(results-received % node snode)))
