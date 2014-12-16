@@ -64,4 +64,5 @@
 (defn guess-eid
   [gbdb name text eid ctxts]
   (let [entity (guess gbdb name text eid ctxts)]
+    (prn entity)
     (id/local->global (:eid entity))))

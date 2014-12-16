@@ -19,18 +19,25 @@
   (map #(if (string? %) (w %) %) funs))
 
 (defn funvec
-  [x]
-  (funexpand (if (coll? x) x [x])))
+  ([x f]
+     (f (if (coll? x) x [x])))
+  ([x]
+     (funvec x funexpand)))
 
 (defn- cond-weight
-  [cond]
-  (if (= cond ?) 0 1))
+  [condf]
+  (cond (= condf ?) 0
+        (string? condf) 3
+        :else 1))
 
 (defn- rule-priority
   [rule]
   (reduce +
           (map
-           #(+ (reduce + (map cond-weight (funvec (:word-conds %)))) 1)
+           #(+ (reduce + (map cond-weight
+                              (funvec (:word-conds %)
+                                      identity)))
+               1)
            (:chunks rule))))
 
 (defn sorted-rules

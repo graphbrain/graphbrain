@@ -72,6 +72,6 @@
     (jq/append ($ (str "#" frame-id " .frame-inner")) html)
     (jq/css ($ (str "#t" div-id)) {:background (item-color item ctxts)})
     (jq/bind ($ (str "#chg" div-id))
-                   :click
-                   #(change/clicked item snode))
+             :click
+             #(change/clicked item snode))
     item))
