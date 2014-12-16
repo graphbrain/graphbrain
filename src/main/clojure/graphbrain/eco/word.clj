@@ -21,7 +21,8 @@
 
 (defn verb?
   [word]
-  (pos-first-char-is? word "V"))
+  (or (pos-first-char-is? word "V")
+      (= (:pos word) "MD")))
 
 (defn indicator?
   [word]

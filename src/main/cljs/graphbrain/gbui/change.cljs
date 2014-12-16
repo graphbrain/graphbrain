@@ -17,10 +17,11 @@
           [:input {:type "hidden" :name "op" :value "remove"}]
           [:input {:id "removeEdgeField" :type "hidden" :name "edge"}]
           [:div {:class "modal-body"}
-           [:div {:id "link-desc"}]
+           [:p {:id "link-desc"}]
            [:div {:id "alt-entities"}]]
           [:div {:class "modal-footer"}
            [:a {:class "btn" :data-dismiss "modal"} "Close"]
+           [:a {:id "new-meaning-button" :class "btn btn-warning"} "New Meaning"]
            [:a {:id "remove-button" :class "btn btn-danger"} "Remove"]]]]]]])
 
 (defn change-action
