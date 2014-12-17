@@ -49,11 +49,11 @@
    [:.topbar-menu
     {:margin-right (px 15)
      :z-index 9999
-     :max-width (px 100)
+     :max-width (px 200)
      :font-size (px 14)}]
 
    [:.topbar-input-area
-    {:margin "0px 120px 0px 100px"}]
+    {:margin "0px 220px 0px 100px"}]
 
    [:.topbar-center
     {:position "relative"
