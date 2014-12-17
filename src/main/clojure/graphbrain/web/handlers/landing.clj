@@ -1,8 +1,7 @@
 (ns graphbrain.web.handlers.landing
   (:use (ring.util response)
-        (graphbrain.web common)
-        (graphbrain.web.views page landing))
-  (:require [graphbrain.web.cssandjs :as css+js]))
+        (graphbrain.web common))
+  (:require [graphbrain.web.views.launchpage :as lp]))
 
 (defn- js
   []
@@ -14,10 +13,6 @@
     [user (get-user request)]
     (if user
       (redirect (str "/v/" (:id user)))
-      (page
-        :title "Welcome"
-        :css-and-js (css+js/css+js)
-        :user nil
-        :page :home
-        :body-fun landing-view
-        :js (js)))))
+      (if (= (:server request) "graphbrain.com")
+        (lp/page)
+        (redirect "/demo")))))
