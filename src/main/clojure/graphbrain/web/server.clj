@@ -6,6 +6,7 @@
             [compojure.route :as route]
             [graphbrain.web.common :as common]
             [graphbrain.web.handlers.landing :as landing]
+            [graphbrain.web.handlers.home :as home]
             [graphbrain.web.handlers.nodeactions :as nodeactions]
             [graphbrain.web.handlers.user :as user]
             [graphbrain.web.handlers.raw :as raw]
@@ -19,6 +20,7 @@
 
 (defroutes app-routes
   (GET "/" request (landing/handle request))
+  (GET "/demo" request (home/handle request))
   (POST "/node/*" request (nodeactions/handle request))
   (GET "/v/*" request (nodepage/handle request))
   (GET "/x" request (intersect/handle request))

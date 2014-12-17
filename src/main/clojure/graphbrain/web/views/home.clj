@@ -1,4 +1,4 @@
-(ns graphbrain.web.views.landing
+(ns graphbrain.web.views.home
   (:use hiccup.core))
 
 (def style "
@@ -17,7 +17,7 @@ of every computer in the human system. Unthinkable complexity. Lines of light
 ranged in the nonspace of the mind, clusters and constellations of data. Like
 city lights, receding...")
 
-(defn landing-view []
+(defn view []
   (html
     style
     [:br]
@@ -31,9 +31,9 @@ city lights, receding...")
               [:br]
               [:i "-- William Gibson, Neuromancer"]]]
         [:div {:style "text-align:center; clear:both;"}
-          [:h1 "Contextual Knowledge Graph"]]
+          [:h1 "A map of your ideas"]]
         [:div {:style "text-align:center"}
-          [:h3 "Navigate it visually and add facts using an artificial intelligence interface."]]
+          [:h3 "Navigate it visually and store knowledge using an artificial intelligence interface."]]
         [:div {:style "text-align:center"}
           [:h4
             [:a {:href "http://graphbrain.com"} "About"]
