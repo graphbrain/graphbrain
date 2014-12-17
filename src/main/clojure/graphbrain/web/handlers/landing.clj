@@ -9,7 +9,7 @@
 
 (defn handle
   [request]
-  (prn handle)
+  (prn request)
   (let [user (get-user request)]
     (if user
       (redirect (str "/v/" (:id user)))
