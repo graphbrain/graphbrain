@@ -21,7 +21,7 @@
       :url (let [url (url/url vert)
                  title (url/title gbdb id ctxts)
                  title (if (empty? title) url title)
-                 icon (str "http://g.etfv.co/" url)]
+                 icon (str "http://www.google.com/s2/favicons?domain=" url)]
              (assoc vert
                :text title
                :url url
