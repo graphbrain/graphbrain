@@ -27,9 +27,10 @@
           :data-toggle "dropdown"}
       ;;[:img {:src "http://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=25"}]
       ;;"&nbsp;"
-      [:i {:class "icon-user"}]
+      ;;[:i {:class "icon-user"}]
       (str (:name user) " ")
-      [:span {:class "caret"}]]
+      [:span {:class "caret"}]
+      ]
      [:ul {:class "dropdown-menu dropdown-menu-right"
            :role "menu"
            :aria-labelledby "user-menu"}
