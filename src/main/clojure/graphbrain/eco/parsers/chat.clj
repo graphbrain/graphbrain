@@ -151,13 +151,28 @@
          (! no-stop))
 
 (pattern chat
-         "the user"
+         "the user -- I"
          [i "i"]
          (user env))
 
 (pattern chat
-         "the current entity"
+         "the user -- me"
+         [i "me"]
+         (user env))
+
+(pattern chat
+         "the current entity -- this"
          [this "this"]
+         (root env))
+
+(pattern chat
+         "the current entity -- he"
+         [this "he"]
+         (root env))
+
+(pattern chat
+         "the current entity -- she"
+         [this "she"]
          (root env))
 
 (pattern chat
