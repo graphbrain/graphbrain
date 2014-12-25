@@ -18,7 +18,7 @@
   [:div {:class "item clearfix"}
    [:div {:class "item-main clearfix"}
     [:div {:class "item-url-title" :id (str "t" div-id)}
-     [:a {:href (str "/v/" (js/encodeURIComponent (:id node)))
+     [:a {:href (str "/n/" (js/encodeURIComponent (:id node)))
           :id div-id}
       (:text node)]]
     [:div {:class "item-url-area clearfix"}
@@ -35,7 +35,7 @@
   [sub]
   (if (= (:id sub) "")
     (:text sub)
-    (str "<a href='/v/" (:id sub) "'>" (:text sub) "</a>")))
+    (str "<a href='/n/" (:id sub) "'>" (:text sub) "</a>")))
 
 (defn- subtext
   [sub]
@@ -46,7 +46,7 @@
   [:div {:class "item clearfix"}
    [:div {:class "item-main clearfix"}
     [:span {:class "item-title" :id (str "t" div-id)}
-     [:a {:href (str "/v/" (:id node)) :id div-id}
+     [:a {:href (str "/n/" (:id node)) :id div-id}
       (:text node)]]
     (if sub-txt
       [:span {:class "item-sub-text"} sub-txt])]

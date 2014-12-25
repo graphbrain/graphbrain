@@ -11,7 +11,7 @@
   [request]
   (let [user (get-user request)]
     (if user
-      (redirect (str "/v/" (:id user)))
+      (redirect (str "/n/" (:id user)))
       (if (= (:server-name request) "graphbrain.com")
         (lp/page)
         (redirect "/demo")))))

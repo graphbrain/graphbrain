@@ -14,7 +14,7 @@
   (let
     [user (get-user request)]
     (if user
-      (redirect (str "/v/" (:id user)))
+      (redirect (str "/n/" (:id user)))
       (page
        :title "Welcome"
        :css-and-js (css+js/css+js)
