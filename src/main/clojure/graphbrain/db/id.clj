@@ -246,7 +246,10 @@
            (clojure.string/join " " ids) ")"))))
 
 (defn new-meaning
-  [eid ctxt]
-  (name+ids->eid "r/+temp"
-                 (eid->name eid)
-                 [ctxt]))
+  [id ctxt]
+  (if ctxt
+    (let [name (if (eid? id)
+                 (eid->name id)
+                 (last-part id))]
+      (name+ids->eid "r/+temp" name [ctxt]))
+    id))

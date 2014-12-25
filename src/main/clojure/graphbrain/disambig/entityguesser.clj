@@ -31,7 +31,7 @@
         words (map ent/text ids)
         words (map #(clojure.string/split % #" ") words)
         words (flatten words)
-        words (set words)]
+        words (set (filter #(not (empty? %)) words))]
     words))
 
 (defn- text-word-score
@@ -44,7 +44,7 @@
     (apply + (map #(text-word-score text %) words))))
 
 (defn guess
-  [gbdb name text eid ctxts]
+  [gbdb name text eid ctxt ctxts]
   (if (> (id/count-parts name) 1)
     (gbdb/getv gbdb name ctxts)
     (let [text (clojure.string/lower-case text)
@@ -52,7 +52,9 @@
      (if (empty? can-mean)
        (if eid
          (maps/eid->entity eid)
-         (maps/id->vertex (id/sanitize name)))
+         (maps/id->vertex (id/new-meaning
+                           (id/sanitize name)
+                           ctxt)))
        (let [scored (map #(hash-map
                            :vertex %
                            :score (text-score gbdb text % ctxts))
@@ -62,7 +64,6 @@
          (apply max-key :degree (map :vertex high-scores)))))))
 
 (defn guess-eid
-  [gbdb name text eid ctxts]
-  (let [entity (guess gbdb name text eid ctxts)]
-    (prn entity)
+  [gbdb name text eid ctxt ctxts]
+  (let [entity (guess gbdb name text eid ctxt ctxts)]
     (id/local->global (:eid entity))))

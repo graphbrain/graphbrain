@@ -44,7 +44,7 @@
                   (id/name+ids->eid consts/composed-eid-rel ngram-str
                                     (map #(:eid (ng-ent-map %))
                                          components)))]
-        (assoc ng-ent-map ngram (eg/guess gbdb ngram-str text eid ctxts)))))
+        (assoc ng-ent-map ngram (eg/guess gbdb ngram-str text eid nil ctxts)))))
 
 (defn ngrams-graph->entities
   [gbdb ngrams-graph text ctxts]
