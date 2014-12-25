@@ -25,7 +25,7 @@
        vws (map eco/vert+weight par)
        res (eco/verts+weights->vertex chat/chat vws env)]
     (if (id/edge? res)
-      (let [edge-id (edg/guess common/gbdb res sentence ctxts)
+      (let [edge-id (edg/guess common/gbdb res sentence (:id user) ctxts)
             edge (maps/id->vertex edge-id)
             edge (assoc edge :score 1)]
         {:words words
