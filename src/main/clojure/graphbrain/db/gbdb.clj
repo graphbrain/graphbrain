@@ -112,6 +112,18 @@
           (doseq [id (maps/ids lvert)]
             (dec-degree! gbdb (id/eid->id id)))))))
 
+(defn replace!
+  [gbdb edge old-eid new-eid owner-id]
+  (if (and (maps/edge? edge)
+           (id/eid? old-eid)
+           (id/eid? new-eid))
+      (let [ids (maps/ids (maps/local->global edge))
+            ids (map #(if (= % old-eid) new-eid %)
+                     ids)
+            new-edge (maps/ids->edge ids (:score edge))]
+        (remove! gbdb edge owner-id)
+        (putv! gbdb new-edge owner-id))))
+
 (defn id->eid
   [gbdb id]
   (if (and (= (id/id->type id) :entity) (> (count (id/parts id)) 0))
