@@ -116,7 +116,8 @@
   [gbdb edge old-eid new-eid owner-id]
   (if (and (maps/edge? edge)
            (id/eid? old-eid)
-           (id/eid? new-eid))
+           (id/eid? new-eid)
+           (not= old-eid new-eid))
       (let [ids (maps/ids (maps/local->global edge))
             ids (map #(if (= % old-eid) new-eid %)
                      ids)

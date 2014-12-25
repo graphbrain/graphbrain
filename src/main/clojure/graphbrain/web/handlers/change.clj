@@ -21,8 +21,7 @@
         new-ids (map #(if (= % old-eid) new-eid %)
                      ids)
         new-edge (maps/ids->edge new-ids)]
-    (gb/remove! common/gbdb edge user-id)
-    (gb/putv! common/gbdb new-edge user-id))
+    (gb/replace! common/gbdb edge old-eid new-eid user-id))
   (reply))
 
 (defn handle
