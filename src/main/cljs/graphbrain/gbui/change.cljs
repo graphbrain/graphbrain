@@ -14,8 +14,8 @@
          [:a {:class "close" :data-dismiss "modal"} "×"]
          [:h3 "Change"]
          [:form {:id "change-form" :action (str "/n/" root-node-id) :method "post"}
-          [:input {:type "hidden" :name "op" :value "remove"}]
-          [:input {:id "removeEdgeField" :type "hidden" :name "edge"}]
+          [:input {:id "change-op" :type "hidden" :name "op"}]
+          [:input {:id "remove-edge-field" :type "hidden" :name "edge"}]
           [:div {:class "modal-body"}
            [:p {:id "link-desc"}]
            [:div {:id "alt-entities"}]]
@@ -24,15 +24,22 @@
            [:a {:id "new-meaning-button" :class "btn btn-warning"} "New Meaning"]
            [:a {:id "remove-button" :class "btn btn-danger"} "Remove"]]]]]]])
 
-(defn change-action
+(defn- submit-remove
   []
+  (jq/val ($ "#change-op") "remove")
+  (.submit ($ "#change-form")))
+
+(defn- submit-new-meaning
+  []
+  (jq/val ($ "#change-op") "new-meaning")
   (.submit ($ "#change-form")))
 
 (defn init-dialog
   [root-node-id]
   (let [html (change-dialog-template root-node-id)]
     (jq/append ($ "body") html)
-    (jq/bind ($ "#remove-button") :click change-action)))
+    (jq/bind ($ "#remove-button") :click submit-remove)
+    (jq/bind ($ "#new-meaning-button") :click submit-new-meaning)))
 
 (defn- on-changed
   []
@@ -57,7 +64,7 @@
   (let [edge (:edge node)
         link (:label snode)
         html (str (:text node) " <strong>(" link ")</strong>")]
-    (jq/val ($ "#removeEdgeField") edge)
+    (jq/val ($ "#remove-edge-field") edge)
     (jq/html ($ "#link-desc") html)
     (jq/html ($ "#alt-entities")
              (search/rendered-results msg))

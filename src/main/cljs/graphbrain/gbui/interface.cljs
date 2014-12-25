@@ -3,7 +3,6 @@
             [graphbrain.gbui.globals :as g]
             [graphbrain.gbui.animation :as anim]
             [graphbrain.gbui.change :as change]
-            [graphbrain.gbui.remove :as rem]
             [graphbrain.gbui.user :as user]
             [graphbrain.gbui.search :as search])
   (:use [jayq.core :only [$]]))
@@ -17,5 +16,4 @@
   (jq/bind ($ "#logoutLink") "click" user/logout!)
   (if (= js/ptype "node")
     (do
-      (change/init-dialog @g/root-id)
-      (rem/init-remove-dialog @g/root-id))))
+      (change/init-dialog @g/root-id))))
