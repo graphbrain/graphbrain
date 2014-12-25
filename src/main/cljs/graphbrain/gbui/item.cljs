@@ -34,7 +34,7 @@
 (defn- subtext-item
   [sub]
   (if (= (:id sub) "")
-    (:text sub)
+    "undefined meaning"
     (str "<a href='/n/" (:id sub) "'>" (:text sub) "</a>")))
 
 (defn- subtext

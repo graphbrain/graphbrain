@@ -17,13 +17,16 @@
   [eid-or-entity]
   (if (string? eid-or-entity)
     (if (id/eid? eid-or-entity)
-     (let [ids (id/id->ids eid-or-entity)
-           ents (rest ids)
-           ents (map label ents)
-           name (first ents)
-           classes (rest ents)]
-       (str name " (" (clojure.string/join ", " classes) ")"))
-     (label eid-or-entity))
+      (let [ids (id/id->ids eid-or-entity)
+            rel (first ids)
+            ents (rest ids)
+            ents (map label ents)
+            name (first ents)
+            classes (rest ents)]
+        (if (= rel "r/+temp")
+          (str name " (undefined meaning)")
+          (str name " (" (clojure.string/join ", " classes) ")")))
+      (label eid-or-entity))
     (let [eid (:eid eid-or-entity)]
       (if eid
         (description eid)
@@ -33,7 +36,10 @@
   [eid-or-entity]
   (if (string? eid-or-entity)
     (let [ids (id/id->ids eid-or-entity)
+          rel (first ids)
           ents (rest ids)]
-      (rest ents))
+      (if (= rel "r/+temp")
+        [""]
+        (rest ents)))
     (let [eid (:eid eid-or-entity)]
       (if eid (subentities eid) nil))))

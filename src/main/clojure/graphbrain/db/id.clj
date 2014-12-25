@@ -229,6 +229,14 @@
       id)
     eid))
 
+(defn eid->name
+  [eid]
+  (if (eid? eid)
+    (-> eid
+        local->global
+        id->ids
+        second)))
+
 (defn name+ids->eid
   [rel name ids]
   (let [base-id (sanitize name)]
@@ -236,3 +244,9 @@
       base-id
       (str "(" rel " " base-id " "
            (clojure.string/join " " ids) ")"))))
+
+(defn new-meaning
+  [eid ctxt]
+  (name+ids->eid "r/+temp"
+                 (eid->name eid)
+                 [ctxt]))
