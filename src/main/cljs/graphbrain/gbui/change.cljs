@@ -13,7 +13,7 @@
        [:div {:class "modal-header"}
          [:a {:class "close" :data-dismiss "modal"} "×"]
          [:h3 "Change"]
-         [:form {:id "change-form" :action (str "/node/" root-node-id) :method "post"}
+         [:form {:id "change-form" :action (str "/n/" root-node-id) :method "post"}
           [:input {:type "hidden" :name "op" :value "remove"}]
           [:input {:id "removeEdgeField" :type "hidden" :name "edge"}]
           [:div {:class "modal-body"}

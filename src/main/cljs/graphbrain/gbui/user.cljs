@@ -158,7 +158,7 @@
       (cookies/set "session" (second response) 8640000 "/")
       (if (and (exists? js/data) (not (nil? js/data)))
         (.reload js/location)
-        (set! (.-href js/window.location) (str "/v/u/" (first response)))))))
+        (set! (.-href js/window.location) (str "/n/u/" (first response)))))))
 
 (defn login-request
   [log-email password]

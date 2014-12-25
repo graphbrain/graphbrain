@@ -11,14 +11,14 @@
   (let [goto-id (:gotoid msg)]
     (if (not (empty? goto-id))
       (set! (.-href js/window.location)
-            (str "/v/" (js/encodeURIComponent goto-id))))))
+            (str "/n/" (js/encodeURIComponent goto-id))))))
 
 (defn- fact-results-received
   [msg]
   (let [goto-id (:gotoid msg)]
     (if (not (empty? goto-id))
       (set! (.-href js/window.location)
-            (str "/v/" goto-id)))))
+            (str "/n/" goto-id)))))
 
 (defn results-received
   [data]

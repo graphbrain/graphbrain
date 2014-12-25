@@ -30,7 +30,7 @@
 (defn- link
   [result mode]
   (case mode
-    :search (str "/v/" (first result))
+    :search (str "/n/" (first result))
     :intersect (str "/x?id1=" (first result)
                     "&id2=" @g/root-id)
     :change "#"))
