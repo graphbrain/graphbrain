@@ -64,7 +64,7 @@
        [:input {:type "text"
                 :id "main-input-field"
                 :class "top-input-field"
-                :placeholder "Search or say something"
+                :placeholder "Search or tell me something"
                 :name "input-field"
                 :autofocus ""}]]]]
     
