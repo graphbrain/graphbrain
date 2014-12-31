@@ -172,7 +172,8 @@
                        (build (drop (space-length space) (parts id))))
    :else id))
 
-;; negativity
+
+;; edges
 
 (defn negative?
   [id]
@@ -184,6 +185,14 @@
 (defn positive?
   [id]
   (not (negative? id)))
+
+(defn edge-rel
+  [eid]
+  (if (= (id->type eid) :edge)
+    (-> eid
+        id->ids
+        first
+        local->global)))
 
 
 ;; owner
@@ -253,3 +262,7 @@
                  (last-part id))]
       (name+ids->eid "r/+temp" name [ctxt]))
     id))
+
+(defn undefined-eid?
+  [eid]
+  (= (edge-rel eid) "r/+temp"))

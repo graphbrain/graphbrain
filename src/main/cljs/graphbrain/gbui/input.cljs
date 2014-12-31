@@ -20,13 +20,18 @@
       (set! (.-href js/window.location)
             (str "/n/" goto-id)))))
 
+(defn- def-results-received
+  [msg]
+  (.log js/console (str msg)))
+
 (defn results-received
   [data]
   (let [msg (cljs.reader/read-string data)]
     (case (:type msg)
-      :search (search/results-received msg)o
+      :search (search/results-received msg)
       :url (url-results-received msg)
-      :fact (fact-results-received msg))))
+      :fact (fact-results-received msg)
+      :def (def-results-received msg))))
 
 (defn input-request
   [sentence]

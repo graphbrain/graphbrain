@@ -33,6 +33,13 @@
            :count count
            :results results}))
 
+(defn- input-reply-definition
+  [root-id rel param]
+  (pr-str {:type :def
+           :root-id root-id
+           :rel rel
+           :param param}))
+
 (defn- sentence-type
   [sentence]
   (cond
@@ -40,20 +47,42 @@
         (or (.startsWith sentence "http://")
             (.startsWith sentence "https://"))) :url
             (.startsWith sentence "x ") :intersect
-   :else :fact))
+            :else :fact))
+
+(defn- is-definer?
+  [edge]
+  (= (id/edge-rel edge) "r/is"))
+
+(defn- definer->rel
+  [edge]
+  (case (id/edge-rel edge)
+    "r/is" "r/+t"))
+
+(defn- definer->param
+  [edge]
+  (case (id/edge-rel edge)
+    "r/is" (-> edge
+               id/id->ids
+               (nth 2))))
 
 (defn- process-fact
   [user root sentence ctxts]
   (let
-      [env {:root (:id root)
+      [root-id (:id root)
+       env {:root root-id
             :user (:id user)}
        res (eco/parse-str chat/chat sentence env)]
     (if (id/edge? res)
-      (let [edge-id (edg/guess common/gbdb res sentence (:id user) ctxts)
-            edge (maps/id->vertex edge-id)
-            edge (assoc edge :score 1)]
-        (gb/putv! common/gbdb edge (:id user))
-        (input-reply-fact (:id root) edge)))))
+      (if (and (id/undefined-eid? (:eid root))
+               (is-definer? res))
+        (input-reply-definition root-id
+                                (definer->rel res)
+                                (definer->param res))
+        (let [edge-id (edg/guess common/gbdb res sentence (:id user) ctxts)
+              edge (maps/id->vertex edge-id)
+              edge (assoc edge :score 1)]
+          (gb/putv! common/gbdb edge (:id user))
+          (input-reply-fact root-id edge))))))
 
 (defn process-search
   [user root q ctxts mode]
