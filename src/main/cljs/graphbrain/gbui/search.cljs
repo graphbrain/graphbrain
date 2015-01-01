@@ -33,7 +33,9 @@
     :search (str "/n/" (first result))
     :intersect (str "/x?id1=" (first result)
                     "&id2=" @g/root-id)
-    :change "#"))
+    :change "#"
+    :define "#"
+    "#"))
 
 (defn link-id
   [id]
