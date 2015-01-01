@@ -114,16 +114,18 @@
 
 (defn replace!
   [gbdb edge old-eid new-eid owner-id]
-  (if (and (maps/edge? edge)
-           (id/eid? old-eid)
-           (id/eid? new-eid)
-           (not= old-eid new-eid))
+  (let [old-eid (id/local->global old-eid)
+        new-eid (id/local->global new-eid)]
+    (if (and (maps/edge? edge)
+             (id/eid? old-eid)
+             (id/eid? new-eid)
+             (not= old-eid new-eid))
       (let [ids (maps/ids (maps/local->global edge))
             ids (map #(if (= % old-eid) new-eid %)
                      ids)
             new-edge (maps/ids->edge ids (:score edge))]
         (remove! gbdb edge owner-id)
-        (putv! gbdb new-edge owner-id))))
+        (putv! gbdb new-edge owner-id)))))
 
 (defn id->eid
   [gbdb id]
@@ -207,6 +209,17 @@
 (defn edges->vertex-ids
   [edges]
   (set (flatten (map maps/ids edges))))
+
+(defn replace-vertex!
+  [gbdb old new owner-id ctxts]
+  (putv! gbdb new owner-id)
+  (let [edges (vertex->edges gbdb old ctxts)]
+    (doseq [edge edges]
+      (replace! gbdb
+                edge
+                (:eid old)
+                (:eid new)
+                owner-id))))
 
 (defn email->id
   [gbdb email]

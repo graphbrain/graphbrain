@@ -20,7 +20,7 @@
        [:input {:id "score-field" :type "hidden" :name "score"}]       
        [:div {:class "modal-body"}
         [:p {:id "link-desc"}]
-        [:div {:id "alt-entities"}]]
+        [:div {:id "alt-entities-change"}]]
        [:div {:class "modal-footer"}
         [:a {:class "btn" :data-dismiss "modal"} "Close"]
         [:a {:id "new-meaning-button" :class "btn btn-warning"} "New Meaning"]
@@ -72,7 +72,7 @@
     (jq/val ($ "#edge-field") edge)
     (jq/val ($ "#score-field") score)
     (jq/html ($ "#link-desc") html)
-    (jq/html ($ "#alt-entities")
+    (jq/html ($ "#alt-entities-change")
              (search/rendered-results msg))
     (let [results (:results msg)]
       (doseq [result results]

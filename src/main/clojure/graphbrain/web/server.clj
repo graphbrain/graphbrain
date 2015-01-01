@@ -16,7 +16,8 @@
             [graphbrain.web.handlers.intersect :as intersect]
             [graphbrain.web.handlers.input :as input]
             [graphbrain.web.handlers.search :as search]
-            [graphbrain.web.handlers.change :as change]))
+            [graphbrain.web.handlers.change :as change]
+            [graphbrain.web.handlers.define :as define]))
 
 (defroutes app-routes
   (GET "/" request (landing/handle request))
@@ -35,6 +36,7 @@
   (GET "/eco" request (eco/handle request))
   (POST "/eco" request (eco/handle request))
   (POST "/change" request (change/handle request))
+  (POST "/define" request (define/handle request))
   (route/not-found "<h1>Page not found</h1>"))
 
 (def app
