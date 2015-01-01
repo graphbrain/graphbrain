@@ -35,47 +35,49 @@
 
 (defn id->type
   [id]
-  (if (some #{\space} (seq id))
-    :edge
-    (let [parts (parts id)
-          nparts (count parts)]
-      (case (first parts)
-        "u" (cond (= nparts 1) :entity
-                  (= nparts 2) :user
-                  (= (nth parts 2) "h") :url
-                  (= (nth parts 2) "r") :edge-type
-                  (= (nth parts 2) "n") (cond (<= nparts 4) :entity
-                                              (= (nth parts 3) "r") :edge-type
-                                              :else :entity)
-                  (= (nth parts 2) "t") :text
-                  :else :entity)
-        "c" (cond (= nparts 1) :entity
-                  (= nparts 2) :context
-                  (= (nth parts 2) "h") :url
-                  (= (nth parts 2) "r") :edge-type
-                  (= (nth parts 2) "n") (cond (<= nparts 4) :entity
-                                              (= (nth parts 3) "r") :edge-type
-                                              :else :entity)
-                  (= (nth parts 2) "t") :text
-                  :else :entity)
-        "k" (cond (= nparts 1) :entity
-                  (= nparts 2) :entity
-                  (= nparts 3) :context
-                  (= (nth parts 3) "h") :url
-                  (= (nth parts 3) "r") :edge-type
-                  (= (nth parts 3) "n") (cond (<= nparts 5) :entity
-                                              (= (nth parts 4) "r") :edge-type
-                                              :else :entity)
-                  (= (nth parts 2) "t") :text
-                  :else :entity)
-        "r" (if (= nparts 1) :entity :edge-type)
-        "n" (cond (<= nparts 2) :entity
-                  (= (second parts) "r") :edge-type
-                  :else :entity)
-        "h" (if (= nparts 1) :entity :url)
-        "p" (if (= nparts 1) :entity :prog)
-        "t" (if (= nparts 1) :entity :text)
-        :entity))))
+  (if id
+    (if (some #{\space} (seq id))
+      :edge
+      (let [parts (parts id)
+            nparts (count parts)]
+        (case (first parts)
+          "u" (cond (= nparts 1) :entity
+                    (= nparts 2) :user
+                    (= (nth parts 2) "h") :url
+                    (= (nth parts 2) "r") :edge-type
+                    (= (nth parts 2) "n") (cond (<= nparts 4) :entity
+                                                (= (nth parts 3) "r") :edge-type
+                                                :else :entity)
+                    (= (nth parts 2) "t") :text
+                    :else :entity)
+          "c" (cond (= nparts 1) :entity
+                    (= nparts 2) :context
+                    (= (nth parts 2) "h") :url
+                    (= (nth parts 2) "r") :edge-type
+                    (= (nth parts 2) "n") (cond (<= nparts 4) :entity
+                                                (= (nth parts 3) "r") :edge-type
+                                                :else :entity)
+                    (= (nth parts 2) "t") :text
+                    :else :entity)
+          "k" (cond (= nparts 1) :entity
+                    (= nparts 2) :entity
+                    (= nparts 3) :context
+                    (= (nth parts 3) "h") :url
+                    (= (nth parts 3) "r") :edge-type
+                    (= (nth parts 3) "n") (cond (<= nparts 5) :entity
+                                                (= (nth parts 4) "r") :edge-type
+                                                :else :entity)
+                    (= (nth parts 2) "t") :text
+                    :else :entity)
+          "r" (if (= nparts 1) :entity :edge-type)
+          "n" (cond (<= nparts 2) :entity
+                    (= (second parts) "r") :edge-type
+                    :else :entity)
+          "h" (if (= nparts 1) :entity :url)
+          "p" (if (= nparts 1) :entity :prog)
+          "t" (if (= nparts 1) :entity :text)
+          :entity)))
+    :unknown))
 
 (defn type?
   [id tp]

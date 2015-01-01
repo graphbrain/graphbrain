@@ -14,7 +14,7 @@
       [:a {:class "close" :data-dismiss "modal"} "×"]
       [:h3 "Define"]
       [:div {:class "modal-body"}
-       [:div {:id "alt-entities"}]]
+       [:div {:id "alt-entities-define"}]]
       [:div {:class "modal-footer"}
        [:a {:class "btn" :data-dismiss "modal"} "Close"]]]]]])
 
@@ -23,8 +23,9 @@
   (jq/append ($ "body") (dialog-template)))
 
 (defn- on-defined
-  []
-  (.reload js/window.location))
+  [goto-id]
+  (set! (.-href js/window.location)
+            (str "/n/" goto-id)))
 
 (defn- define-request!
   [msg new-id]
@@ -32,13 +33,13 @@
             :url "/define"
             :data (str "rel=" (js/encodeURIComponent (:rel msg))
                        "&root-id=" (js/encodeURIComponent (:root-id msg))
-                       "&param=" (js/encodeURIComponent (:param msg)))
+                       "&new-id=" (js/encodeURIComponent new-id))
             :dataType "text"
             :success on-defined}))
 
 (defn show-dialog!
   [results msg]
-  (jq/html ($ "#alt-entities")
+  (jq/html ($ "#alt-entities-define")
            (search/rendered-results results))
   (let [results (:results results)]
     (doseq [result results]
