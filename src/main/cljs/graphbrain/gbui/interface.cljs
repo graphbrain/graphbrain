@@ -4,13 +4,15 @@
             [graphbrain.gbui.animation :as anim]
             [graphbrain.gbui.change :as change]
             [graphbrain.gbui.user :as user]
-            [graphbrain.gbui.search :as search])
+            [graphbrain.gbui.search :as search]
+            [graphbrain.gbui.define :as define])
   (:use [jayq.core :only [$]]))
 
 (defn init-interface
   []
   (search/init-dialog!)
   (user/init-signup-dialog!)
+  (define/init-dialog!)
   (jq/bind ($ ".signupLink") "click" user/show-signup-dialog!)
   (jq/bind ($ "#loginLink") "click" user/show-signup-dialog!)
   (jq/bind ($ "#logoutLink") "click" user/logout!)

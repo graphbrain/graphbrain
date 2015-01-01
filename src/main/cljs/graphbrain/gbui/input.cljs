@@ -3,7 +3,8 @@
   (:require [jayq.core :as jq]
             [hiccups.runtime :as hiccupsrt]
             [graphbrain.gbui.globals :as g]
-            [graphbrain.gbui.search :as search])
+            [graphbrain.gbui.search :as search]
+            [graphbrain.gbui.define :as define])
   (:use [jayq.core :only [$]]))
 
 (defn- url-results-received
@@ -22,7 +23,7 @@
 
 (defn- def-results-received
   [msg]
-  (.log js/console (str msg)))
+  (define/show! msg))
 
 (defn results-received
   [data]
