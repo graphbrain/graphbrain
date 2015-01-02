@@ -1,5 +1,6 @@
 (ns graphbrain.db.text
-  (:require [graphbrain.db.id :as id]))
+  (:require [graphbrain.db.id :as id]
+            [cemerick.url :as url]))
 
 (defn sanitize-text
   [str]
@@ -22,8 +23,25 @@
         hash (id/hashed text)]
     (str "t/" hash "/" (sanitize-text short-text))))
 
+(defn text->pseudo
+  [text]
+  (str "t/"
+       (url/url-encode text)))
+
+(defn pseudo?
+  [id]
+  (let [parts (id/parts id)]
+    (and (= (count parts) 2)
+         (= (first parts) "t"))))
+
 (defn text->vertex
   [text]
   {:id (text->id text)
    :type :text
    :text text})
+
+(defn pseudo->vertex
+  [pseudo]
+  (text->vertex
+   (url/url-decode
+    (second (id/parts pseudo)))))

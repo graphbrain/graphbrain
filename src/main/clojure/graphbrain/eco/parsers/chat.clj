@@ -16,6 +16,16 @@
            (edge rel orig targ)))
 
 (pattern chat
+         "TODO:"
+         [todo "todo"
+          colon ":"
+          task ?]
+         (let [r (id->vert "r/has_todo")
+               actor (user env)
+               task (text task)]
+           (edge r actor task)))
+
+(pattern chat
          "have to -> task"
          [actor !verb
           have "have"
