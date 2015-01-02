@@ -1,6 +1,7 @@
 (ns graphbrain.eco.ecofuns
   (:use [graphbrain.utils :only [dbg]])
   (:require [graphbrain.db.id :as id]
+            [graphbrain.db.text :as text]
             [graphbrain.eco.word :as word]
             [clojure.math.combinatorics :as combs]))
 
@@ -114,3 +115,8 @@
   [& words]
   (clojure.string/join " "
    (map #(clojure.string/join " " (map :word %)) words)))
+
+(defn text
+  [words]
+  {:vertex (text/text->pseudo
+            (words->str words))})
