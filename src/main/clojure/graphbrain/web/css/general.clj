@@ -8,7 +8,7 @@
     :margin (px 0)
     :font-family "Helvetica, sans-serif"
     :font-size (px 12)
-    :background "#fff"}]
+    :background "#EEE"}]
 
   [:.landing
    {:padding (px 50)

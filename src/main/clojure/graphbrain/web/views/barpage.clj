@@ -29,8 +29,7 @@
       ;;"&nbsp;"
       ;;[:i {:class "icon-user"}]
       (str (:name user) " ")
-      [:span {:class "caret"}]
-      ]
+      [:span {:class "caret"}]]
      [:ul {:class "dropdown-menu dropdown-menu-right"
            :role "menu"
            :aria-labelledby "user-menu"}

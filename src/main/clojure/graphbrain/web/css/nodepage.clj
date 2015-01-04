@@ -40,7 +40,8 @@
      :width "100%"
      :height (px 60)
      :text-color "#000"
-     :background "#FFF"}]
+     :background "#FFF"
+     :z-index 1000}]
 
    [:.topbar-element
     {:float "left"
