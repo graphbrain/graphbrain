@@ -29,8 +29,9 @@
       [user (common/get-user request)
        ctxts (contexts/active-ctxts request user)
        all-ctxts (user/user->ctxts user)
+       id (:* (:route-params request))
        vert (gb/getv common/gbdb
-                     (:* (:route-params request))
+                     id
                      ctxts)
        title (case (:type vert)
                :url (url/title common/gbdb (:id vert) ctxts)
@@ -43,5 +44,6 @@
     (np/nodepage :title title
                  :css-and-js (css+js/css+js)
                  :user user
+                 :ctxt (contexts/context-data id (:id user))
                  :js (js vert user ctxts all-ctxts)
                  :desc desc)))

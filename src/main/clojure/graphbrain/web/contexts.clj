@@ -1,5 +1,16 @@
 (ns graphbrain.web.contexts
-  (:require [graphbrain.web.colors :as colors]))
+  (:require [graphbrain.db.id :as id]
+            [graphbrain.web.colors :as colors]))
+
+(defn context-data
+  [id user-id]
+  (let [ctxt (id/context id)
+        ctxt (if ctxt ctxt user-id)
+        name (if (= ctxt user-id)
+               "Personal"
+               ctxt)]
+    {:id ctxt
+     :name name}))
 
 (defn active-ctxts
   [response user]

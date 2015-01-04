@@ -20,7 +20,7 @@
         (maps/participant-ids edge)) 2))
 
 (defn- inters-data
-  [ids ctxts]
+  [ids user ctxts]
   (let [edges (q/intersect common/gbdb ids ctxts)
         verts (into #{}
                (flatten
@@ -30,7 +30,10 @@
                       (map edge->links edges))]
     {:vertices verts
      :links links
-     :seeds ids}))
+     :seeds ids
+     :context (contexts/context-data
+               (first ids)
+               (:id user))}))
 
 (defn- data->str
   [data]
@@ -38,9 +41,11 @@
                           "'" ""))
 
 (defn- js
-  [ids ctxts]
+  [ids user ctxts]
   (str "var ptype='intersect';"
-       "var data='" (enc/encode (inters-data ids ctxts)) "';"))
+       "var data='" (enc/encode
+                     (inters-data ids user ctxts))
+       "';"))
 
 (defn handle
   [request]
@@ -51,4 +56,7 @@
     (i/intersect :title "intersect"
                  :css-and-js (css+js/css+js)
                  :user user
-                 :js (js ids ctxts))))
+                 :ctxt (contexts/context-data
+                        (first ids)
+                        (:id user))
+                 :js (js ids user ctxts))))

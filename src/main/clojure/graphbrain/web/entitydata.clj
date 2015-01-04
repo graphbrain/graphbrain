@@ -180,7 +180,8 @@
 
 (defn generate
   [gbdb root-id user ctxts all-ctxts]
-  (let [user-id (if user (:id user) "")
+  (let [context-data (contexts/context-data root-id (:id user))
+        user-id (if user (:id user) "")
         root-id (gb/id->eid gbdb root-id)
         root-id (id/local->global root-id)
         hyper-edges (gb/id->edges gbdb root-id ctxts)
@@ -198,4 +199,5 @@
                     (map #(hash-map
                            :name (context/label %)
                            :color (contexts/color % user-id))
-                         all-ctxts))}))
+                         all-ctxts))
+     :context context-data}))
