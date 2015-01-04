@@ -209,14 +209,6 @@
                   space (first pars)]
               (build (take (space-length space) pars)))))))
 
-#_(defn owner-user
-  [id]
-  (user? (owner id)))
-
-#_(defn owner-context
-  [id]
-  (context? (owner id)))
-
 
 ;; eids
 

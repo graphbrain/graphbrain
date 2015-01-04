@@ -48,7 +48,7 @@
         "Logout"]]]]))
 
 (defn- context-menu
-  []
+  [ctxt]
   [:div {:class "dropdown"}
    [:button {:type "button"
              :class "btn btn-info dropdown-toggle"
@@ -56,27 +56,30 @@
              :id "context-menu"
              :data-toggle "dropdown"
              :aria-expanded "true"}
-    "Personal "
+    (str (:name ctxt) " ")
     [:span {:class "caret"}]]
    [:ul {:class "dropdown-menu dropdown-menu-right"
          :role "menu"
          :aria-labelledby "context-menu"}
+    [:li {:role "presentation"
+          :class "dropdown-header"}
+     "Contexts"]
     [:li {:role "presentation"}
      [:a {:href "#"
           :role "menu"}
-      "Change Context"]]
+      "Change"]]
     [:li {:role "presentation"}
      [:a {:href "#"
           :role "menu"}
-      "Create Context"]]
+      "Create"]]
     [:li {:role "presentation"}
      [:a {:href "#"
           :id "logoutLink"
           :role "menu"}
-      "Manage Context"]]]])
+      "Manage"]]]])
 
 (defn view
-  [user content-fun]
+  [user ctxt content-fun]
   (html
    [:div {:id "nodeback"}
     [:div {:id "topbar"}
@@ -85,7 +88,7 @@
       (user-menu user)]
      
      [:div {:class "pull-right topbar-vcenter topbar-menu"}
-      (context-menu)]
+      (context-menu ctxt)]
   
      [:div {:class "topbar-element topbar-center topbar-vcenter"}
       [:a {:href "/"}
@@ -104,8 +107,8 @@
     (content-fun)]))
 
 (defn barpage
-  [& {:keys [title css-and-js user js content-fun]}]
+  [& {:keys [title css-and-js user ctxt js content-fun]}]
   (page :title title
         :css-and-js css-and-js
-        :body-fun #(view user content-fun)
+        :body-fun #(view user ctxt content-fun)
         :js js))

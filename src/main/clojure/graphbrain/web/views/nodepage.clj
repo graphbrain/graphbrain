@@ -23,9 +23,10 @@
     [:div {:id "frames"}]]))
 
 (defn nodepage
-  [& {:keys [title css-and-js user js desc]}]
+  [& {:keys [title css-and-js user ctxt js desc]}]
   (bar/barpage :title title
                :css-and-js css-and-js
                :user user
+               :ctxt ctxt
                :js js
                :content-fun #(view title desc)))
