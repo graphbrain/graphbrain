@@ -7,6 +7,8 @@
   (every? identity
           (map #(or (= %2 "*") (= %1 %2)) (maps/ids edge) pattern)))
 
-(defn owner
+(defn context
   [edge]
-  (id/owner (second (maps/ids edge))))
+  (id/context
+   (second
+    (maps/ids edge))))

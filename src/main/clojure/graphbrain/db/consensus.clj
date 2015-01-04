@@ -15,9 +15,9 @@
                        score 0]
                   (if (empty? altvs) score
                       (let [altv (first altvs)
-                            owner-id (id/owner altv)
-                            local-edge (maps/global->local edge owner-id)
-                            neg-local-edge (maps/global->local neg-edge owner-id)
+                            ctxt (id/context altv)
+                            local-edge (maps/global->local edge ctxt)
+                            neg-local-edge (maps/global->local neg-edge ctxt)
                             s (if (gb/exists? gbdb local-edge) (inc score) score)
                             s (if (gb/exists? gbdb neg-local-edge) (dec s) s)]
                         (recur (rest altvs) s))))]

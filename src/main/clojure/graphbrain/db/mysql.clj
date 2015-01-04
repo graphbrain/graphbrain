@@ -8,7 +8,7 @@
   (:import (com.graphbrain.utils Permutations)
            (com.mchange.v2.c3p0 ComboPooledDataSource)))
 
-(def global-owner "g")
+(def global-context "g")
 
 (def MYSQL_ENGINE "InnoDB")
 
@@ -160,11 +160,11 @@
   [edge f]
   (let [edge-id (:id edge)
         ids (maps/ids (maps/local->global edge))
-        owner-id (id/owner edge-id)
-        owner-id (if owner-id owner-id global-owner)
+        ctxt (id/context edge-id)
+        ctxt (if ctxt ctxt global-context)
         nperms (Permutations/permutations (count ids))
         ids (into-array ids)
-        perms (map #(str owner-id " " (Permutations/strArrayPermutationToStr ids %) " " %)
+        perms (map #(str ctxt " " (Permutations/strArrayPermutationToStr ids %) " " %)
                    (range nperms))]
     (doseq [perm-id perms] (f {:id perm-id, :score (:score edge)}))))
 
@@ -249,13 +249,13 @@
             pid (:id res)
             score (:score res)
             tokens (edgeparser/split-edge pid)
-            owner-id (first tokens)
+            ctxt (first tokens)
             perm (Integer. (last tokens))
             tokens (rest (drop-last tokens))
             tokens (Permutations/strArrayUnpermutate (into-array tokens) perm)
-            tokens (if (= owner-id global-owner)
+            tokens (if (= ctxt global-context)
                      tokens
-                     (map #(id/global->local % owner-id) tokens))
+                     (map #(id/global->local % ctxt) tokens))
             edge (maps/ids->edge tokens score)
             edges (conj edges edge)]
         (recur (rest results) edges)))))
@@ -266,19 +266,19 @@
    (concat (drop-last str) (list (char (inc (int (last str))))))))
 
 (defn pattern->edges
-  [dbs pattern owner-id]
+  [dbs pattern ctxt]
   (let [ids (filter #(not= % "*") pattern)
         ids (map id/local->global ids)
-        start-str (str owner-id " " (clojure.string/join " " ids) " ")
+        start-str (str ctxt " " (clojure.string/join " " ids) " ")
         end-str (str+1 start-str)
         rs (jdbc/query (dbs) ["SELECT id, score FROM edgeperms WHERE id>=? AND id<?"
                               start-str end-str])]
     (filter #(edge/matches? % pattern) (results->edges rs))))
 
 (defn id->edges
-  [dbs center-id owner-id]
+  [dbs center-id ctxt]
   (let [gcenter-id (id/local->global center-id)
-        start-str (str owner-id " " gcenter-id " ")
+        start-str (str ctxt " " gcenter-id " ")
         end-str (str+1 start-str)
         rs (jdbc/query (dbs) ["SELECT id, score FROM edgeperms WHERE id>=? AND id<?"
                               start-str

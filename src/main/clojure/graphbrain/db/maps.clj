@@ -108,12 +108,12 @@
 (defn negate-id
   [id]
   (if (id/negative? id) id
-    (let [owner-id (id/owner id)
+    (let [ctxt (id/context id)
           global-id (id/local->global id)
           neg-id (str "n/" global-id)]
-      (if (empty? owner-id)
+      (if (empty? ctxt)
         neg-id
-        (id/global->local neg-id owner-id)))))
+        (id/global->local neg-id ctxt)))))
 
 (defn negate-edge
   [edge]
@@ -173,8 +173,8 @@
       (assoc vertex :id gid))))
 
 (defn global->local
-  [vertex owner]
-  (let [lid (id/global->local (:id vertex) owner)]
+  [vertex ctxt]
+  (let [lid (id/global->local (:id vertex) ctxt)]
     (if (id/edge? lid)
       (id->edge lid (:score vertex))
       (assoc vertex :id lid))))
