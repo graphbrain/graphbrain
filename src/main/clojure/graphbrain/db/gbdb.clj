@@ -67,12 +67,12 @@
 (declare remove!)
 
 (defn putv!
-  [gbdb vertex owner-id]
+  [gbdb vertex ctxt]
   (let [gvert (maps/local->global vertex)
-        lvert (maps/global->local gvert owner-id)]
+        lvert (maps/global->local gvert ctxt)]
     (if (and (maps/edge? gvert)
              (maps/positive? gvert))
-      (remove! gbdb (maps/negate-edge gvert) owner-id))
+      (remove! gbdb (maps/negate-edge gvert) ctxt))
     (if (not (exists? gbdb lvert))
       (let [lvert (assoc lvert :ts (.getTime (Date.)))]
         (mysql/putv! gbdb lvert)
@@ -83,10 +83,10 @@
                           sid (id/last-part (:id gvert))
                           rel (maps/id->vertex
                                (str "(r/*can_mean " sid " " vid ")"))]
-                      (putv! gbdb rel owner-id)))
+                      (putv! gbdb rel ctxt)))
           :edge (doseq [id (maps/ids lvert)]
                   (let [v (maps/id->vertex id)]
-                    (putv! gbdb v owner-id)
+                    (putv! gbdb v ctxt)
                     (inc-degree! gbdb (:id v))))
           nil)
         vertex)
@@ -101,19 +101,19 @@
   (mysql/all-users gbdb))
 
 (defn remove!
-  [gbdb vertex owner-id]
+  [gbdb vertex ctxt]
   (let [gvert (maps/local->global vertex)
-        lvert (maps/global->local gvert owner-id)]
+        lvert (maps/global->local gvert ctxt)]
     (mysql/remove! gbdb lvert)
     (remove-link-to-global! gbdb (:id gvert) (:id lvert))
     (if (and (maps/edge? lvert)
              (maps/positive? lvert))
-      (do (putv! gbdb (maps/negate gvert) owner-id)
+      (do (putv! gbdb (maps/negate gvert) ctxt)
           (doseq [id (maps/ids lvert)]
             (dec-degree! gbdb (id/eid->id id)))))))
 
 (defn replace!
-  [gbdb edge old-eid new-eid owner-id]
+  [gbdb edge old-eid new-eid ctxt]
   (let [old-eid (id/local->global old-eid)
         new-eid (id/local->global new-eid)]
     (if (and (maps/edge? edge)
@@ -124,8 +124,8 @@
             ids (map #(if (= % old-eid) new-eid %)
                      ids)
             new-edge (maps/ids->edge ids (:score edge))]
-        (remove! gbdb edge owner-id)
-        (putv! gbdb new-edge owner-id)))))
+        (remove! gbdb edge ctxt)
+        (putv! gbdb new-edge ctxt)))))
 
 (defn id->eid
   [gbdb id]
@@ -139,10 +139,10 @@
     id))
 
 (defn- patid->local-eid
-  [gbdb patid owner-id]
+  [gbdb patid ctxt]
   (if (= patid "*")
     patid
-    (id/global->local (id->eid gbdb patid) owner-id)))
+    (id/global->local (id->eid gbdb patid) ctxt)))
 
 (defn- edge-with-ctxts
   [edge edges-maps]
@@ -211,15 +211,15 @@
   (set (flatten (map maps/ids edges))))
 
 (defn replace-vertex!
-  [gbdb old new owner-id ctxts]
-  (putv! gbdb new owner-id)
+  [gbdb old new ctxt ctxts]
+  (putv! gbdb new ctxt)
   (let [edges (vertex->edges gbdb old ctxts)]
     (doseq [edge edges]
       (replace! gbdb
                 edge
                 (:eid old)
                 (:eid new)
-                owner-id))))
+                ctxt))))
 
 (defn email->id
   [gbdb email]

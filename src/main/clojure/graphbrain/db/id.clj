@@ -155,13 +155,13 @@
 ;; global / local
 
 (defn global->local
-  [id owner]
+  [id ctxt]
   (cond
-   (edge? id) (ids->id (map #(global->local % owner) (id->ids id)))
+   (edge? id) (ids->id (map #(global->local % ctxt) (id->ids id)))
    (user? id) id
    (context? id) id
    (local-space? id) id
-   :else (str owner "/" id)))
+   :else (str ctxt "/" id)))
 
 (defn local->global
   [id]
@@ -197,23 +197,23 @@
         local->global)))
 
 
-;; owner
+;; context
 
-(defn owner
+(defn context
   [id]
   (if (user? id) id
       (if (global-space? id) nil
           (if (edge? id)
-            (owner (first (id->ids id)))
+            (context (first (id->ids id)))
             (let [pars (parts id)
                   space (first pars)]
               (build (take (space-length space) pars)))))))
 
-(defn owner-user
+#_(defn owner-user
   [id]
   (user? (owner id)))
 
-(defn owner-context
+#_(defn owner-context
   [id]
   (context? (owner id)))
 
@@ -230,13 +230,13 @@
 (defn eid->id
   [eid]
   (if (eid? eid)
-    (let [owner (owner eid)
+    (let [ctxt (context eid)
           geid (local->global eid)
           hsh (hashed geid)
           ids (id->ids geid)
           name (second ids)
           id (build [hsh name])
-          id (if owner (global->local id owner) id)]
+          id (if ctxt (global->local id ctxt) id)]
       id)
     eid))
 

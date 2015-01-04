@@ -45,7 +45,6 @@
 
 (defn guess
   [gbdb name text eid ctxt ctxts]
-  (prn (str "guess" name))
   (if (> (id/count-parts name) 1)
     (gbdb/getv gbdb name ctxts)
     (let [text (clojure.string/lower-case text)
