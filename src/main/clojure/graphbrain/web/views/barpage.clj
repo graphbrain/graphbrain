@@ -47,17 +47,51 @@
             :role "menu"}
         "Logout"]]]]))
 
+(defn- context-menu
+  []
+  [:div {:class "dropdown"}
+   [:button {:type "button"
+             :class "btn btn-info dropdown-toggle"
+             :aria-label "Left Align"
+             :id "context-menu"
+             :data-toggle "dropdown"
+             :aria-expanded "true"}
+    "Personal "
+    [:span {:class "caret"}]]
+   [:ul {:class "dropdown-menu dropdown-menu-right"
+         :role "menu"
+         :aria-labelledby "context-menu"}
+    [:li {:role "presentation"}
+     [:a {:href "#"
+          :role "menu"}
+      "Change Context"]]
+    [:li {:role "presentation"}
+     [:a {:href "#"
+          :role "menu"}
+      "Create Context"]]
+    [:li {:role "presentation"}
+     [:a {:href "#"
+          :id "logoutLink"
+          :role "menu"}
+      "Manage Context"]]]])
+
 (defn view
   [user content-fun]
   (html
    [:div {:id "nodeback"}
     [:div {:id "topbar"}
+
      [:div {:class "pull-right topbar-vcenter topbar-menu"}
       (user-menu user)]
+     
+     [:div {:class "pull-right topbar-vcenter topbar-menu"}
+      (context-menu)]
+  
      [:div {:class "topbar-element topbar-center topbar-vcenter"}
       [:a {:href "/"}
        [:img {:src "/images/GB_logo_XS.png"
               :alt "graphbrain"}]]]
+
      [:div {:class "topbar-input-area topbar-center topbar-vcenter"}
       [:form {:class "top-input" :id "top-input-field"}
        [:input {:type "text"

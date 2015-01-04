@@ -49,12 +49,12 @@
 
    [:.topbar-menu
     {:margin-right (px 15)
-     :z-index 9999
+     ;;:z-index 9999
      :max-width (px 200)
      :font-size (px 14)}]
 
    [:.topbar-input-area
-    {:margin "0px 220px 0px 100px"}]
+    {:margin "0px 440px 0px 100px"}]
 
    [:.topbar-center
     {:position "relative"
@@ -74,4 +74,6 @@
      :line-height (px 30)
      :font-size (px 24)
      :border "none"
-     :outline "none"}]])
+     :outline "none"}]
+
+   ])
