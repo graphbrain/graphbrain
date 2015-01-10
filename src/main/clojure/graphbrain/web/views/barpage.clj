@@ -70,11 +70,11 @@
       "Change"]]
     [:li {:role "presentation"}
      [:a {:href "#"
+          :id "create-context-link"
           :role "menu"}
       "Create"]]
     [:li {:role "presentation"}
      [:a {:href "#"
-          :id "logoutLink"
           :role "menu"}
       "Manage"]]]])
 

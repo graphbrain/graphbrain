@@ -61,6 +61,13 @@
   {:id id
    :type :context})
 
+(defn new-context
+  [handle name access]
+  {:id (id/build
+        ["k" (id/random-hash) (id/sanitize handle)])
+   :name name
+   :access access
+   :type :context})
 
 ;; edgetype
 
