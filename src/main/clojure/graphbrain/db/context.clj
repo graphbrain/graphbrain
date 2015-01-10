@@ -8,4 +8,5 @@
 (defn label
   [id]
   (let [desc (text id)]
-    (clojure.string/join (cons (.toUpperCase (str (first desc))) (rest desc)))))
+    (clojure.string/join
+     (cons (.toUpperCase (str (first desc))) (rest desc)))))

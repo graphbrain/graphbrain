@@ -1,5 +1,6 @@
 (ns graphbrain.db.id
-  (:require [graphbrain.db.edgeparser :as edgeparser]))
+  (:require [graphbrain.db.edgeparser :as edgeparser])
+  (:import (com.graphbrain.utils RandUtils)))
 
 (defn hashed
   [str]
@@ -8,6 +9,12 @@
             (if (empty? s) x
               (recur (rest s) (unchecked-multiply 31 (+ x (long (first s)))))))]
     (Long/toHexString h)))
+
+(defn random-hash
+  []
+  (hashed
+   (.toString
+    (BigInteger. 130 (RandUtils/secRand)) 32)))
 
 (defn- count-end-slashes
   [str]

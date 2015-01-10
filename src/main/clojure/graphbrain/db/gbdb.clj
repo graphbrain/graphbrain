@@ -67,30 +67,41 @@
 (declare remove!)
 
 (defn putv!
-  [gbdb vertex ctxt]
-  (let [gvert (maps/local->global vertex)
-        lvert (maps/global->local gvert ctxt)]
-    (if (and (maps/edge? gvert)
-             (maps/positive? gvert))
-      (remove! gbdb (maps/negate-edge gvert) ctxt))
-    (if (not (exists? gbdb lvert))
-      (let [lvert (assoc lvert :ts (.getTime (Date.)))]
-        (mysql/putv! gbdb lvert)
-        (add-link-to-global! gbdb (:id gvert) (:id lvert))
-        (case (:type lvert)
-          :entity (if (> (id/count-parts (:id gvert)) 1)
-                    (let [vid (:eid gvert)
-                          sid (id/last-part (:id gvert))
-                          rel (maps/id->vertex
-                               (str "(r/*can_mean " sid " " vid ")"))]
-                      (putv! gbdb rel ctxt)))
-          :edge (doseq [id (maps/ids lvert)]
-                  (let [v (maps/id->vertex id)]
-                    (putv! gbdb v ctxt)
-                    (inc-degree! gbdb (:id v))))
-          nil)
-        vertex)
-      vertex)))
+  ([gbdb vertex ctxt]
+     (let [gvert (maps/local->global vertex)
+           lvert (maps/global->local gvert ctxt)]
+       (if (and (maps/edge? gvert)
+                (maps/positive? gvert))
+         (remove! gbdb (maps/negate-edge gvert) ctxt))
+       (if (not (exists? gbdb lvert))
+         (let [lvert (assoc lvert :ts (.getTime (Date.)))]
+           (mysql/putv! gbdb lvert)
+           (add-link-to-global! gbdb (:id gvert) (:id lvert))
+           (case (:type lvert)
+             :entity (if (> (id/count-parts (:id gvert)) 1)
+                       (let [vid (:eid gvert)
+                             sid (id/last-part (:id gvert))
+                             rel (maps/id->vertex
+                                  (str "(r/*can_mean " sid " " vid ")"))]
+                         (putv! gbdb rel ctxt)))
+             :edge (doseq [id (maps/ids lvert)]
+                     (let [v (maps/id->vertex id)]
+                       (putv! gbdb v ctxt)
+                       (inc-degree! gbdb (:id v))))
+             nil)
+           vertex)
+         vertex)))
+  ([gbdb vertex]
+     (putv! gbdb vertex nil)))
+
+(defn putrel!
+  ([gbdb ids ctxt]
+     (putv! gbdb
+            (maps/id->edge
+             (id/ids->id ids))
+            ctxt))
+  ([gbdb ids]
+     (putrel! gbdb ids nil)))
 
 (defn update!
   [gbdb vertex]
