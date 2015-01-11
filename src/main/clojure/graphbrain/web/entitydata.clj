@@ -179,7 +179,7 @@
     snode-map))
 
 (defn generate
-  [gbdb root-id user ctxts all-ctxts]
+  [gbdb root-id user ctxts]
   (let [context-data (contexts/context-data root-id (:id user))
         user-id (if user (:id user) "")
         root-id (gb/id->eid gbdb root-id)
@@ -195,9 +195,9 @@
         snode-map (snodes-limit-size snode-map)]
     {:root root-node
      :snodes snode-map
-     :ctxts (zipmap all-ctxts
+     :ctxts (zipmap ctxts
                     (map #(hash-map
                            :name (context/label %)
                            :color (contexts/color % user-id))
-                         all-ctxts))
+                         ctxts))
      :context context-data}))

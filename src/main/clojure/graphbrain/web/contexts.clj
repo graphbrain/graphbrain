@@ -1,5 +1,6 @@
 (ns graphbrain.web.contexts
   (:require [graphbrain.db.id :as id]
+            [graphbrain.db.context :as context]
             [graphbrain.web.colors :as colors]))
 
 (defn context-data
@@ -8,18 +9,20 @@
         ctxt (if ctxt ctxt user-id)
         name (if (= ctxt user-id)
                "Personal"
-               ctxt)]
+               (context/label ctxt))]
     {:id ctxt
      :name name}))
 
 (defn active-ctxts
-  [response user]
-  (let [ctxts (:value ((response :cookies) "ctxts"))]
-    (if (nil? ctxts)
-      (if user
-        ["c/wordnet" "c/web" (:id user)]
-        ["c/wordnet" "c/web"])
-      (clojure.string/split ctxts #":"))))
+  [id user]
+  (let [ctxt (id/context id)
+        user-id (:id user)
+        ctxts ["c/wordnet" "c/web" ctxt]
+        ctxts (if user
+                (conj ctxts user-id)
+                ctxts)]
+    (into #{}
+          (filter #(not (nil? %)) ctxts))))
 
 (defn color
   [ctxt-id user-id]

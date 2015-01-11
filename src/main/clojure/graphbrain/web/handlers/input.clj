@@ -66,7 +66,7 @@
                (nth 2))))
 
 (defn- process-fact
-  [user root sentence ctxts]
+  [user root sentence ctxt ctxts]
   (let
       [root-id (:id root)
        env {:root root-id
@@ -81,17 +81,17 @@
         (let [edge-id (edg/guess common/gbdb res sentence (:id user) ctxts)
               edge (maps/id->vertex edge-id)
               edge (assoc edge :score 1)]
-          (gb/putv! common/gbdb edge (:id user))
+          (gb/putv! common/gbdb edge ctxt)
           (input-reply-fact root-id edge))))))
 
 (defn process-search
-  [user root q ctxts mode]
+  [user root q ctxt ctxts mode]
   (let [q (if (= mode :intersect)
             (clojure.string/trim (subs q 1))
             q)
         results (search/results q ctxts)]
     (if (empty? results)
-      (process-fact user root q ctxts)
+      (process-fact user root q ctxt ctxts)
       (search/reply results mode))))
 
 (defn process-url
@@ -104,11 +104,11 @@
   [request]
   (let [sentence ((request :form-params) "sentence")
         root-id ((request :form-params) "root")
+        targ-ctxt ((request :form-params) "targ-ctxt")
         user (common/get-user request)
-        root (if root-id (gb/getv common/gbdb root-id
-                                  (contexts/active-ctxts request user)))
-        ctxts (contexts/active-ctxts request user)]
+        ctxts (contexts/active-ctxts targ-ctxt user)
+        root (if root-id (gb/getv common/gbdb root-id ctxts))]
     (case (sentence-type sentence)
-      :fact (process-search user root sentence ctxts :search)
+      :fact (process-search user root sentence targ-ctxt ctxts :search)
       :url (process-url user root sentence ctxts)
       :intersect (process-search user root sentence ctxts :intersect))))

@@ -13,6 +13,7 @@
             [graphbrain.web.handlers.allusers :as allusers]
             [graphbrain.web.handlers.eco :as eco]
             [graphbrain.web.handlers.nodepage :as nodepage]
+            [graphbrain.web.handlers.brainpage :as brainpage]
             [graphbrain.web.handlers.intersect :as intersect]
             [graphbrain.web.handlers.input :as input]
             [graphbrain.web.handlers.search :as search]
@@ -25,6 +26,7 @@
   (GET "/demo" request (home/handle request))
   (POST "/n/*" request (nodeactions/handle request))
   (GET "/n/*" request (nodepage/handle request))
+  (GET "/b/*" request (brainpage/handle request))
   (GET "/x" request (intersect/handle request))
   (GET "/raw/*" request (raw/handle request))
   (POST "/signup" request (user/handle-signup request))

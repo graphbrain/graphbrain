@@ -4,7 +4,8 @@
             [hiccups.runtime :as hiccupsrt]
             [graphbrain.gbui.globals :as g]
             [graphbrain.gbui.search :as search]
-            [graphbrain.gbui.define :as define])
+            [graphbrain.gbui.define :as define]
+            [graphbrain.gbui.contexts :as contexts])
   (:use [jayq.core :only [$]]))
 
 (defn- url-results-received
@@ -19,7 +20,7 @@
   (let [goto-id (:gotoid msg)]
     (if (not (empty? goto-id))
       (set! (.-href js/window.location)
-            (str "/n/" goto-id)))))
+            (str "/n/" @g/context "/" goto-id)))))
 
 (defn- def-results-received
   [msg]
@@ -38,7 +39,9 @@
   [sentence]
   (jq/ajax {:type "POST"
             :url "/input"
-            :data (str "sentence=" sentence "&root=" @g/root-id)
+            :data (str "sentence=" sentence
+                       "&root=" @g/root-id
+                       "&targ-ctxt=" (contexts/targ-ctxt))
             :dataType "text"
             :success results-received}))
 

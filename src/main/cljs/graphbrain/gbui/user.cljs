@@ -13,6 +13,11 @@
 
 (def submitting (atom false))
 
+(defn id
+  []
+  (str "u/"
+       (cookies/get "username")))
+
 (hiccups/defhtml signup-dialog-template
   []
   [:div {:class "modal" :role "dialog" :aria-hidden "true" :id "signup-modal"}

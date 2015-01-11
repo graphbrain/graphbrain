@@ -91,13 +91,12 @@
   (jq/bind ($ "#data-view") "mousewheel" on-scroll-world))
 
 (defn init-view!
-  [view-data-str]
+  []
   (reset! g/view-size (view-size))
   (move-world! [0 0] 1)
   (bind-events!)
-  (def data (cljs.reader/read-string view-data-str))
-  (place-bubbles! (:vertices data) (:seeds data))
-  (place-links! (:links data)))
+  (place-bubbles! (:vertices @g/data) (:seeds @g/data))
+  (place-links! (:links @g/data)))
 
 (defn- coulomb-pair
   [bubbles pair]
@@ -191,12 +190,12 @@
   []
   (swap! step inc)
   (reset! bubbs (coulomb @bubbs))
-  (reset! bubbs (hooke @bubbs (:links data)))
+  (reset! bubbs (hooke @bubbs (:links @g/data)))
   (reset! bubbs (forces @bubbs))
   (let [keys (keys @bubbs)
         visual (> @step *hidden-steps*)]
     (doseq [k keys]
       (reset! bubbs (bubble/layout-step! @bubbs k visual)))
     (if visual
-      (update-links! (:links data))))
+      (update-links! (:links @g/data))))
   true)

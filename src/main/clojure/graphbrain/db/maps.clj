@@ -34,6 +34,7 @@
   [vert]
   (if vert (id/edge? (:id vert))))
 
+
 ;; entity
 
 (defn eid->entity
