@@ -2,7 +2,8 @@
   (:require-macros [hiccups.core :as hiccups])
   (:require [jayq.core :as jq]
             [hiccups.runtime :as hiccupsrt]
-            [graphbrain.gbui.search :as search])
+            [graphbrain.gbui.search :as search]
+            [graphbrain.gbui.contexts :as contexts])
   (:use [jayq.core :only [$]]))
 
 (hiccups/defhtml change-dialog-template
@@ -17,7 +18,8 @@
        [:input {:id "op-field" :type "hidden" :name "op"}]
        [:input {:id "eid-field" :type "hidden" :name "eid"}]
        [:input {:id "edge-field" :type "hidden" :name "edge"}]
-       [:input {:id "score-field" :type "hidden" :name "score"}]       
+       [:input {:id "score-field" :type "hidden" :name "score"}]
+       [:input {:id "targ-ctxt-field" :type "hidden" :name "targ-ctxt"}]
        [:div {:class "modal-body"}
         [:p {:id "link-desc"}]
         [:div {:id "alt-entities-change"}]]
@@ -53,7 +55,8 @@
             :url "/change"
             :data (str "edge=" (js/encodeURIComponent (:edge node))
                        "&old-id=" (js/encodeURIComponent (:id node))
-                       "&new-id=" (js/encodeURIComponent new-id))
+                       "&new-id=" (js/encodeURIComponent new-id)
+                       "&targ-ctxt=" (contexts/targ-ctxt (:ctxts node)))
             :dataType "text"
             :success on-changed}))
 
@@ -66,11 +69,13 @@
   (let [eid (:eid node)
         edge (:edge node)
         score (:score node)
+        targ-ctxt (contexts/targ-ctxt (:ctxts node))
         link (:label snode)
         html (str (:text node) " <strong>(" link ")</strong>")]
     (jq/val ($ "#eid-field") eid)
     (jq/val ($ "#edge-field") edge)
     (jq/val ($ "#score-field") score)
+    (jq/val ($ "#targ-ctxt-field") targ-ctxt)
     (jq/html ($ "#link-desc") html)
     (jq/html ($ "#alt-entities-change")
              (search/rendered-results msg))

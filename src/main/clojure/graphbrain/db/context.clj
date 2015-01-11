@@ -1,12 +1,10 @@
 (ns graphbrain.db.context
-  (:require [graphbrain.db.id :as id]))
+  (:require [graphbrain.db.entity :as entity]))
 
 (defn text
-  [id]
-  (clojure.string/replace (id/last-part id) "_" " "))
+  [id-or-context]
+  (entity/text id-or-context))
 
 (defn label
-  [id]
-  (let [desc (text id)]
-    (clojure.string/join
-     (cons (.toUpperCase (str (first desc))) (rest desc)))))
+  [id-or-context]
+  (entity/label id-or-context))

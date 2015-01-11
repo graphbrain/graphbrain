@@ -208,13 +208,14 @@
 
 (defn context
   [id]
-  (if (user? id) id
-      (if (global-space? id) nil
-          (if (edge? id)
-            (context (first (id->ids id)))
-            (let [pars (parts id)
-                  space (first pars)]
-              (build (take (space-length space) pars)))))))
+  (cond
+   (user? id) id
+   (context? id) id
+   (global-space? id) nil
+   (edge? id) (context (first (id->ids id)))
+   :else (let [pars (parts id)
+               space (first pars)]
+           (build (take (space-length space) pars)))))
 
 
 ;; eids

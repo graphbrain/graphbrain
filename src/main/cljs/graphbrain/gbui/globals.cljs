@@ -16,4 +16,8 @@
 
 (def last-pos (atom nil))
 
+(def data (atom nil))
+
 (def root-id (atom nil))
+
+(def context (atom nil))

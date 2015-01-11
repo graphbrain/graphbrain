@@ -28,6 +28,7 @@
   [request]
   (let [q ((request :form-params) "q")
         mode (keyword ((request :form-params) "mode"))
+        ctxt ((request :form-params) "ctxt")
         user (common/get-user request)
-        ctxts (contexts/active-ctxts request user)]
+        ctxts (contexts/active-ctxts ctxt user)]
     (process q ctxts mode)))

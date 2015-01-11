@@ -12,16 +12,15 @@
   (pr-str {:type :change}))
 
 (defn process
-  [user edge-id old-id new-id ctxts]
+  [edge-id old-id new-id targ-ctxt]
   (let [edge (maps/id->edge edge-id)
-        user-id (:id user)
         old-eid (gb/id->eid common/gbdb old-id)
         new-eid (gb/id->eid common/gbdb new-id)
         ids (id/id->ids edge-id)
         new-ids (map #(if (= % old-eid) new-eid %)
                      ids)
         new-edge (maps/ids->edge new-ids)]
-    (gb/replace! common/gbdb edge old-eid new-eid user-id))
+    (gb/replace! common/gbdb edge old-eid new-eid targ-ctxt))
   (reply))
 
 (defn handle
@@ -29,6 +28,5 @@
   (let [edge ((request :form-params) "edge")
         old-id ((request :form-params) "old-id")
         new-id ((request :form-params) "new-id")
-        user (common/get-user request)
-        ctxts (contexts/active-ctxts request user)]
-    (process user edge old-id new-id ctxts)))
+        targ-ctxt ((request :form-params) "targ-ctxt")]
+    (process edge old-id new-id targ-ctxt)))

@@ -1,8 +1,18 @@
 (ns graphbrain.gbui.contexts
   (:require-macros [hiccups.core :as hiccups])
-  (:require [jayq.core :as jq]
+  (:require [graphbrain.gbui.globals :as g]
+            [graphbrain.gbui.user :as user]
+            [jayq.core :as jq]
             [hiccups.runtime :as hiccupsrt])
   (:use [jayq.core :only [$]]))
+
+(defn targ-ctxt
+  ([]
+     @g/context)
+  ([ctxts]
+     (if (some #{@g/context} ctxts)
+       @g/context
+       (user/id))))
 
 (hiccups/defhtml create-context-dialog-template
   []
