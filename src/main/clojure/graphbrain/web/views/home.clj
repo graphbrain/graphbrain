@@ -52,6 +52,7 @@ city lights, receding...")
           [:div {:style "text-align:center; xfloat: right; xpadding-right:150px;"}
             [:button {:type "button"
                       :class "btn btn-success btn-large"
+                      :id "loginLink"
                       :data-toggle "modal"
                       :data-target "#signup-modal"
                       :style "font-size:150%"} "Register or Login"]]]]]))

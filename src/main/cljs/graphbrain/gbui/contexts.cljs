@@ -6,6 +6,8 @@
             [hiccups.runtime :as hiccupsrt])
   (:use [jayq.core :only [$]]))
 
+(def initialised (atom false))
+
 (defn targ-ctxt
   ([]
      @g/context)
@@ -45,10 +47,6 @@
        [:button
         {:type "submit" :class "btn btn-primary"} "Create"]]]]]])
 
-(defn show-create-context-dialog!
-  []
-  (.modal ($ "#create-context-modal") "show"))
-
 (defn clear-create-context-errors!
   []
   (.removeClass ($ "#name-formgroup") "has-error")
@@ -59,3 +57,11 @@
   []
   (.appendTo
    ($ (create-context-dialog-template)) "body"))
+
+(defn show-create-context-dialog!
+  []
+  (if (not @initialised)
+    (do
+      (init-dialogs!)
+      (reset! initialised true)))
+  (.modal ($ "#create-context-modal") "show"))

@@ -5,6 +5,8 @@
             [graphbrain.gbui.search :as search])
   (:use [jayq.core :only [$]]))
 
+(def initialised (atom false))
+
 (hiccups/defhtml dialog-template
   []
   [:div {:class "modal" :role "dialog" :aria-hidden "true" :id "define-modal"}
@@ -39,6 +41,10 @@
 
 (defn show-dialog!
   [results msg]
+  (if (not @initialised)
+    (do
+      (init-dialog!)
+      (reset! initialised true)))
   (jq/html ($ "#alt-entities-define")
            (search/rendered-results results))
   (let [results (:results results)]
