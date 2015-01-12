@@ -50,9 +50,11 @@
 (defn handle
   [request]
   (let
-      [user (common/get-user request)
-       ctxts (contexts/active-ctxts request user)
-       ids (vals (:query-params request))]
+      [ids (vals (:query-params request))
+       user (common/get-user request)
+       ctxt (id/context (first ids))
+       ctxts (contexts/active-ctxts ctxt user)
+       ids (map id/local->global ids)]
     (i/intersect :title "intersect"
                  :css-and-js (css+js/css+js)
                  :user user

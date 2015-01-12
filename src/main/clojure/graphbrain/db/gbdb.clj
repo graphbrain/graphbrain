@@ -78,7 +78,9 @@
            (mysql/putv! gbdb lvert)
            (add-link-to-global! gbdb (:id gvert) (:id lvert))
            (case (:type lvert)
-             :entity (if (> (id/count-parts (:id gvert)) 1)
+             :entity (if (and
+                          (= (id/id->type (:id gvert)) :entity)
+                          (> (id/count-parts (:id gvert)) 1))
                        (let [vid (:eid gvert)
                              sid (id/last-part (:id gvert))
                              rel (maps/id->vertex
@@ -95,13 +97,11 @@
      (putv! gbdb vertex nil)))
 
 (defn putrel!
-  ([gbdb ids ctxt]
-     (putv! gbdb
-            (maps/id->edge
-             (id/ids->id ids))
-            ctxt))
-  ([gbdb ids]
-     (putrel! gbdb ids nil)))
+  [gbdb ids ctxt]
+  (putv! gbdb
+         (maps/id->edge
+          (id/ids->id ids))
+         ctxt))
 
 (defn update!
   [gbdb vertex]

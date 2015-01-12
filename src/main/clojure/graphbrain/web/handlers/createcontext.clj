@@ -11,5 +11,6 @@
         user (common/get-user request)
         ctxt (maps/new-context name desc "public")]
     (gb/putv! common/gbdb ctxt)
-    (gb/putrel! common/gbdb ["r/*admin" (:id ctxt) (:id user)])
+    (gb/putrel! common/gbdb ["r/*admin" (:id user) (:id ctxt)] (:id ctxt))
+    (gb/putrel! common/gbdb ["r/*follower" (:id user) (:id ctxt)] (:id user))
     (redirect (str "/b/" (:id ctxt)))))

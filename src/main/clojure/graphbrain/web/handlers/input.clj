@@ -111,4 +111,4 @@
     (case (sentence-type sentence)
       :fact (process-search user root sentence targ-ctxt ctxts :search)
       :url (process-url user root sentence ctxts)
-      :intersect (process-search user root sentence ctxts :intersect))))
+      :intersect (process-search user root sentence targ-ctxt ctxts :intersect))))

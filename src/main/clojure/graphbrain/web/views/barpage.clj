@@ -63,11 +63,12 @@
          :aria-labelledby "context-menu"}
     [:li {:role "presentation"
           :class "dropdown-header"}
-     "Contexts"]
+     "GraphBrains"]
     [:li {:role "presentation"}
      [:a {:href "#"
+          :id "switch-context-link"
           :role "menu"}
-      "Change"]]
+      "Switch"]]
     [:li {:role "presentation"}
      [:a {:href "#"
           :id "create-context-link"
