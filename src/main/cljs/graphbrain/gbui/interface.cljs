@@ -4,8 +4,6 @@
             [graphbrain.gbui.animation :as anim]
             [graphbrain.gbui.change :as change]
             [graphbrain.gbui.user :as user]
-            [graphbrain.gbui.search :as search]
-            [graphbrain.gbui.define :as define]
             [graphbrain.gbui.contexts :as contexts]
             [graphbrain.gbui.input :as input]
             [graphbrain.gbui.switchcontext :as sc])
@@ -13,10 +11,6 @@
 
 (defn init-interface
   []
-  (search/init-dialog!)
-  (user/init-signup-dialog!)
-  (define/init-dialog!)
-  (contexts/init-dialogs!)
   (jq/bind ($ "#top-input-field") "submit" input/query)
   (jq/bind ($ ".signupLink") "click" user/show-signup-dialog!)
   (jq/bind ($ "#loginLink") "click" user/show-signup-dialog!)

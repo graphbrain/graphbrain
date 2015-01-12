@@ -6,6 +6,8 @@
             [graphbrain.gbui.id :as id])
   (:use [jayq.core :only [$]]))
 
+(def initialised (atom false))
+
 (hiccups/defhtml search-dialog-template []
   [:div {:class "modal" :role "dialog" :aria-hidden "true" :id "search-results-modal"}
     [:div {:class "modal-dialog"}
@@ -23,8 +25,11 @@
   (.appendTo ($ html) "body")
   (.modal ($ "#search-results-modal") "hide")))
 
-(defn show-dialog
+(defn show-dialog!
   []
+  (if (not @initialised)
+    (do (init-dialog!)
+        (reset! initialised true)))
   (.modal ($ "#search-results-modal") "show"))
 
 (defn- link
@@ -63,8 +68,8 @@
                "<p>Sorry, no results found.</p>"
                (str "<p>" (count results) " results found.</p>"
                     (rendered-results msg)))]
-    (.html ($ "#search-results-body") html)
-    (show-dialog)))
+    (show-dialog!)
+    (.html ($ "#search-results-body") html)))
 
 (defn request!
   [query mode f]

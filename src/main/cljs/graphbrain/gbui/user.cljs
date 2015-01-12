@@ -5,6 +5,8 @@
             [hiccups.runtime :as hiccupsrt])
   (:use [jayq.core :only [$]]))
 
+(def initialised (atom false))
+
 (def auto-update-username (atom true))
 
 (def username-status (atom "unknown"))
@@ -79,10 +81,6 @@
               :class "btn btn-primary"
               :data-dismiss "modal"} "Login"]]]]]
      [:div {:class "modal-footer"}]]]])
-
-(defn show-signup-dialog!
-  []
-  (.modal ($ "#signup-modal") "show"))
 
 (defn clear-signup-errors!
   []
@@ -275,3 +273,11 @@
     (jq/bind ($ "#suUsername") "blur" check-username!)
     (jq/bind ($ "#suEmail") "keyup" email-changed!)
     (jq/bind ($ "#suEmail") "blur" check-email!)))
+
+(defn show-signup-dialog!
+  []
+  (if (not @initialised)
+    (do
+      (init-signup-dialog!)
+      (reset! initialised true)))
+  (.modal ($ "#signup-modal") "show"))
