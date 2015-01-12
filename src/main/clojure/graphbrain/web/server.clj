@@ -19,7 +19,8 @@
             [graphbrain.web.handlers.search :as search]
             [graphbrain.web.handlers.change :as change]
             [graphbrain.web.handlers.define :as define]
-            [graphbrain.web.handlers.createcontext :as cc]))
+            [graphbrain.web.handlers.createcontext :as cc]
+            [graphbrain.web.handlers.contexts :as contexts]))
 
 (defroutes app-routes
   (GET "/" request (landing/handle request))
@@ -41,6 +42,7 @@
   (POST "/change" request (change/handle request))
   (POST "/define" request (define/handle request))
   (POST "/create-context" request (cc/handle request))
+  (POST "/contexts" request (contexts/handle request))
   (route/not-found "<h1>Page not found</h1>"))
 
 (def app
