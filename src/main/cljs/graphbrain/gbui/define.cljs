@@ -2,6 +2,7 @@
   (:require-macros [hiccups.core :as hiccups])
   (:require [jayq.core :as jq]
             [hiccups.runtime :as hiccupsrt]
+            [graphbrain.gbui.globals :as g]
             [graphbrain.gbui.search :as search])
   (:use [jayq.core :only [$]]))
 
@@ -35,7 +36,8 @@
             :url "/define"
             :data (str "rel=" (js/encodeURIComponent (:rel msg))
                        "&root-id=" (js/encodeURIComponent (:root-id msg))
-                       "&new-id=" (js/encodeURIComponent new-id))
+                       "&new-id=" (js/encodeURIComponent new-id)
+                       "&ctxt=" @g/context)
             :dataType "text"
             :success on-defined}))
 

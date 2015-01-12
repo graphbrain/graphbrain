@@ -25,6 +25,7 @@
   (let [rel ((request :form-params) "rel")
         root-id ((request :form-params) "root-id")
         new-id ((request :form-params) "new-id")
+        ctxt ((request :form-params) "ctxt")
         user (common/get-user request)
-        ctxts (contexts/active-ctxts request user)]
+        ctxts (contexts/active-ctxts ctxt user)]
     (process user rel root-id new-id ctxts)))
