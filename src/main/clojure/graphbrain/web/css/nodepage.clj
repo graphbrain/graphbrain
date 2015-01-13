@@ -24,7 +24,7 @@
    [:#frames
     {:column-count 3
      :-webkit-column-count 3
-     :-mozcolumn-count 3}]
+     :-moz-column-count 3}]
 
    [:.np-title
     {:font-size (px 36)}]
