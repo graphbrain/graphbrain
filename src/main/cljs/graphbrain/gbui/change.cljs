@@ -66,26 +66,32 @@
 
 (defn show-change-dialog
   [msg node snode]
-  (let [eid (:eid node)
-        edge (:edge node)
-        score (:score node)
-        targ-ctxt (contexts/targ-ctxt (:ctxts node))
-        link (:label snode)
-        html (str (:text node) " <strong>(" link ")</strong>")]
-    (jq/val ($ "#eid-field") eid)
-    (jq/val ($ "#edge-field") edge)
-    (jq/val ($ "#score-field") score)
-    (jq/val ($ "#targ-ctxt-field") targ-ctxt)
-    (jq/html ($ "#link-desc") html)
-    (jq/html ($ "#alt-entities-change")
-             (search/rendered-results msg))
-    (let [results (:results msg)]
-      (doseq [result results]
-        (jq/bind
-         ($ (str "#" (search/link-id (first result))))
-         "click"
-         #(on-change node (first result)))))
-    (.modal ($ "#change-modal") "show")))
+   (let [eid (:eid node)
+         edge (:edge node)
+         score (:score node)
+         targ-ctxt (contexts/targ-ctxt (:ctxts node))
+         link (:label snode)
+         html (str (:text node) " <strong>(" link ")</strong>")
+         mod (= :entity (:type node))
+         mod-button ($ "#new-meaning-button")]
+     (if mod
+       (jq/show mod-button)
+       (jq/hide mod-button))
+     (jq/val ($ "#eid-field") eid)
+     (jq/val ($ "#edge-field") edge)
+     (jq/val ($ "#score-field") score)
+     (jq/val ($ "#targ-ctxt-field") targ-ctxt)
+     (jq/html ($ "#link-desc") html)
+     (jq/html ($ "#alt-entities-change")
+              (search/rendered-results msg))
+     (if mod
+       (let [results (:results msg)]
+         (doseq [result results]
+           (jq/bind
+            ($ (str "#" (search/link-id (first result))))
+            "click"
+            #(on-change node (first result))))))
+     (.modal ($ "#change-modal") "show")))
 
 (defn- results-received
   [msg node snode]
@@ -95,6 +101,8 @@
 
 (defn clicked
   [node snode]
-  (search/request! (:text node)
-                   :change
-                   #(results-received % node snode)))
+  (if (= :entity (:type node))
+    (search/request! (:text node)
+                     :change
+                     #(results-received % node snode))
+    (show-change-dialog nil node snode)))
