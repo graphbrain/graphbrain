@@ -76,6 +76,7 @@
       "Create"]]
     [:li {:role "presentation"}
      [:a {:href "#"
+          :id "manage-context-link"
           :role "menu"}
       "Manage"]]]])
 
