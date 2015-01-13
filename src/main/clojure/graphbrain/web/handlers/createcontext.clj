@@ -13,4 +13,4 @@
     (gb/putv! common/gbdb ctxt)
     (gb/putrel! common/gbdb ["r/*admin" (:id user) (:id ctxt)] (:id ctxt))
     (gb/putrel! common/gbdb ["r/*follower" (:id user) (:id ctxt)] (:id user))
-    (redirect (str "/b/" (:id ctxt)))))
+    (redirect (str "/n/" (:id ctxt)))))

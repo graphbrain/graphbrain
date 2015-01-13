@@ -75,10 +75,9 @@
           :role "menu"}
       "Create"]]
     [:li {:role "presentation"}
-     [:a {:href "#"
-          :id "manage-context-link"
+     [:a {:href (str "/n/" (:id ctxt))
           :role "menu"}
-      "Manage"]]]])
+      (str (:name ctxt) " Home")]]]])
 
 (defn view
   [user ctxt content-fun]
