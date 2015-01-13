@@ -2,6 +2,7 @@
   (:use (ring.util response))
   (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.maps :as maps]
+            [graphbrain.db.perms :as perms]
             [graphbrain.web.common :as common]))
 
 (defn handle
@@ -11,6 +12,6 @@
         user (common/get-user request)
         ctxt (maps/new-context name desc "public")]
     (gb/putv! common/gbdb ctxt)
-    (gb/putrel! common/gbdb ["r/*admin" (:id user) (:id ctxt)] (:id ctxt))
+    (perms/grant-admin! common/gbdb (:id user) (:id ctxt))
     (gb/putrel! common/gbdb ["r/*follower" (:id user) (:id ctxt)] (:id user))
     (redirect (str "/n/" (:id ctxt)))))

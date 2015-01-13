@@ -76,4 +76,11 @@
      :border "none"
      :outline "none"}]
 
+   [:#manage-context
+    {:margin-top (px 15)
+     :margin-bottom (px 25)}]
+
+   [:.manage-form-elem
+    {:margin-right (px 5)}]
+   
    ])
