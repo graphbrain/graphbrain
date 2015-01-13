@@ -103,6 +103,14 @@
           (id/ids->id ids))
          ctxt))
 
+(defn exists-rel?
+  [gbdb ids ctxt]
+  (exists? gbdb
+           (maps/global->local
+            (maps/id->edge
+             (id/ids->id ids))
+            ctxt)))
+
 (defn update!
   [gbdb vertex]
   (mysql/update! gbdb vertex))
