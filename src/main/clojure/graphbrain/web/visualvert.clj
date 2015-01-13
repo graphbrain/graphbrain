@@ -4,7 +4,8 @@
             [graphbrain.db.maps :as maps]
             [graphbrain.db.entity :as entity]
             [graphbrain.db.urlnode :as url]
-            [graphbrain.db.text :as text]))
+            [graphbrain.db.text :as text]
+            [graphbrain.db.context :as context]))
 
 (defn id->visual
   [gbdb id ctxts]
@@ -32,5 +33,9 @@
                :text (:name u)
                :sub [{:id "" :text "GraphBrain user"}]})
       :text (text/id->text gbdb id)
+      :context {:id id
+                :type :context
+                :text (context/label id)
+                :sub [{:id "" :text "a GraphBrain"}]}
       (assoc vert
         :text id))))

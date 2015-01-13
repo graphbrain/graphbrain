@@ -80,6 +80,7 @@
   (case (:type node)
     :entity (:text node)
     :user (:text node)
+    :context (:text node)
     :url "web page"
     (name (:type node))))
 
