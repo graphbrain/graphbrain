@@ -33,8 +33,9 @@
 
 (defn- subtext-item
   [sub]
-  (if (= (:id sub) "")
-    "undefined meaning"
+  (case (:id sub)
+    "" "undefined meaning"
+    "#" (:text sub)
     (str "<a href='/n/"
          @g/context
          "/"
@@ -52,7 +53,9 @@
   [:div {:class "item clearfix"}
    [:div {:class "item-main clearfix"}
     [:span {:class "item-title" :id (str "t" div-id)}
-     [:a {:href (str "/n/" @g/context "/" (:id node))
+     [:a {:href (if (= @g/context (:id node))
+                  (str "/n/" @g/context)
+                  (str "/n/" @g/context "/" (:id node)))
           :id div-id}
       (:text node)]]
     (if sub-txt

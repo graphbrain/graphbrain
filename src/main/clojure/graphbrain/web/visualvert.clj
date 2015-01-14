@@ -31,11 +31,11 @@
               {:id id
                :type :user
                :text (:name u)
-               :sub [{:id "" :text "GraphBrain user"}]})
+               :sub [{:id "#" :text "GraphBrain user"}]})
       :text (text/id->text gbdb id)
       :context {:id id
                 :type :context
                 :text (context/label id)
-                :sub [{:id "" :text "a GraphBrain"}]}
+                :sub [{:id "#" :text "a GraphBrain"}]}
       (assoc vert
         :text id))))
