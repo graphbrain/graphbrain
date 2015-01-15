@@ -7,7 +7,7 @@
 
 (defn query
   [gbdb user-id]
-  (let [follows (gb/pattern->edges gbdb ["r/*follower" user-id "*"] [user-id])]
+  (let [follows (gb/pattern->edges gbdb ["r/*following" user-id "*"] [user-id])]
     (map #(second (maps/participant-ids %)) follows)))
 
 (defn results

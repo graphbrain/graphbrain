@@ -4,7 +4,6 @@
             [graphbrain.db.entity :as entity]
             [graphbrain.db.urlnode :as url]
             [graphbrain.db.user :as user]
-            [graphbrain.db.perms :as perms]
             [graphbrain.web.common :as common]
             [graphbrain.web.contexts :as contexts]
             [graphbrain.web.entitydata :as ed]
@@ -23,13 +22,6 @@
   (str "var ptype='node';"
        "var data='" (enc/encode (pr-str
                       (pagedata id user ctxts))) "';"))
-
-(defn- show-manage-form?
-  [user id ctxt]
-  (and (= id (:id ctxt))
-       (perms/is-admin? common/gbdb
-                        (:id user)
-                        (:id ctxt))))
 
 (defn handle
   [request]
@@ -54,5 +46,4 @@
                  :user user
                  :ctxt ctxt
                  :js (js id user ctxts)
-                 :desc desc
-                 :show-manage-form (show-manage-form? user id ctxt))))
+                 :desc desc)))

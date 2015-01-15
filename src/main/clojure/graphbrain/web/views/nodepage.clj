@@ -10,29 +10,48 @@
 
 (defn- manage-context
   [ctxt]
-  [:div {:id "manage-context"}
+  [:div {:id "manage-context"
+         :class "after-title-frame"}
    [:form {:class "form-inline"
            :action "/grant-perm"
            :method "post"}
     [:input {:name "ctxt"
              :type "hidden"
              :value (:id ctxt)}]
-    [:div {:class "form-group manage-form-elem"}
+    [:div {:class "form-group after-title-form-elem"}
      [:input {:type "text"
               :class "form-control"
               :placeholder "Email or username"
               :name "email-username"}]]
-    [:div {:class "form-group manage-form-elem"}
+    [:div {:class "form-group after-title-form-elem"}
      [:select {:class "form-control"
                :name "role"}
       [:option "Editor"]
       [:option "Administrator"]]]
     [:button {:type "submit"
-              :class "btn btn-primary manage-form-elem"}
+              :class "btn btn-primary after-title-form-elem"}
      "Add Collaborator"]]])
 
+(defn- follow-unfollow
+  [ctxt]
+  [:div {:id "follow-unfollow"
+         :class "after-title-frame"}
+   [:form {:class "form-inline"
+           :action "/follow-unfollow"
+           :method "post"}
+    [:input {:name "ctxt"
+             :type "hidden"
+             :value (:id ctxt)}]
+    (if (:following ctxt)
+      [:button {:type "submit"
+                :class "btn btn-primary after-title-form-elem"}
+       (str "Unfollow " (:name ctxt))]
+      [:button {:type "submit"
+                :class "btn btn-primary manage-form-elem"}
+       (str "Follow " (:name ctxt))])]])
+
 (defn view
-  [title desc show-manage-form ctxt]
+  [title desc ctxt]
   (html
    [:div {:id "nodepage"}
     [:div {:id "nodepage-title"}
@@ -44,16 +63,19 @@
         (interpose ", "
                    (map subid->link desc)))]]
 
-    (if show-manage-form
+    (if (:manage ctxt)
       (manage-context ctxt))
+
+    (if (:follow-unfollow ctxt)
+      (follow-unfollow ctxt))
     
     [:div {:id "frames"}]]))
 
 (defn nodepage
-  [& {:keys [title css-and-js user ctxt js desc show-manage-form]}]
+  [& {:keys [title css-and-js user ctxt js desc]}]
   (bar/barpage :title title
                :css-and-js css-and-js
                :user user
                :ctxt ctxt
                :js js
-               :content-fun #(view title desc show-manage-form ctxt)))
+               :content-fun #(view title desc ctxt)))

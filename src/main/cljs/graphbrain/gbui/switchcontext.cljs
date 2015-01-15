@@ -35,9 +35,7 @@
 
 (defn- link
   [result]
-  (if @g/root-id
-    (str "/n/" (first result) "/" @g/root-id)
-    (str "/b/" (first result))))
+  (str "/n/" (first result)))
 
 (defn rendered-results
   [msg]

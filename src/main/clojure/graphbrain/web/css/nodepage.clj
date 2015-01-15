@@ -76,11 +76,11 @@
      :border "none"
      :outline "none"}]
 
-   [:#manage-context
+   [:.after-title-frame
     {:margin-top (px 15)
      :margin-bottom (px 25)}]
 
-   [:.manage-form-elem
+   [:.after-title-form-elem
     {:margin-right (px 5)}]
    
    ])

@@ -15,6 +15,12 @@
   [gbdb user-id ctxt-id]
   (has-perm? gbdb user-id ctxt-id "editor"))
 
+(defn is-following?
+  [gbdb user-id ctxt-id]
+  (gb/exists-rel? gbdb
+                  ["r/*following" user-id ctxt-id]
+                  user-id))
+
 (defn grant-perm!
   [gbdb user-id ctxt-id perm]
   (gb/putrel! gbdb
@@ -28,3 +34,21 @@
 (defn grant-editor!
   [gbdb user-id ctxt-id]
   (grant-perm! gbdb user-id ctxt-id "editor"))
+
+(defn follow!
+  [gbdb user-id ctxt-id]
+  (gb/putrel! gbdb
+              ["r/*following" user-id ctxt-id]
+              user-id))
+
+(defn unfollow!
+  [gbdb user-id ctxt-id]
+  (gb/remrel! gbdb
+              ["r/*following" user-id ctxt-id]
+              user-id))
+
+(defn toggle-follow!
+  [gbdb user-id ctxt-id]
+  (if (is-following? gbdb user-id ctxt-id)
+    (unfollow! gbdb user-id ctxt-id)
+    (follow! gbdb user-id ctxt-id)))
