@@ -20,7 +20,8 @@
             [graphbrain.web.handlers.define :as define]
             [graphbrain.web.handlers.createcontext :as cc]
             [graphbrain.web.handlers.contexts :as contexts]
-            [graphbrain.web.handlers.grantperm :as gp]))
+            [graphbrain.web.handlers.grantperm :as gp]
+            [graphbrain.web.handlers.followunfollow :as fu]))
 
 (defroutes app-routes
   (GET "/" request (landing/handle request))
@@ -43,6 +44,7 @@
   (POST "/create-context" request (cc/handle request))
   (POST "/contexts" request (contexts/handle request))
   (POST "/grant-perm" request (gp/handle request))
+  (POST "/follow-unfollow" request (fu/handle request))
   (route/not-found "<h1>Page not found</h1>"))
 
 (def app

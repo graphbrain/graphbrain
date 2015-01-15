@@ -103,6 +103,13 @@
           (id/ids->id ids))
          ctxt))
 
+(defn remrel!
+  [gbdb ids ctxt]
+  (remove! gbdb
+           (maps/id->edge
+            (id/ids->id ids))
+           ctxt))
+
 (defn exists-rel?
   [gbdb ids ctxt]
   (exists? gbdb
