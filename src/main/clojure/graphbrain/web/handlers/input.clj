@@ -6,6 +6,7 @@
             [graphbrain.db.id :as id]
             [graphbrain.db.maps :as maps]
             [graphbrain.db.urlnode :as url]
+            [graphbrain.db.knowledge :as k]
             [graphbrain.disambig.edgeguesser :as edg]
             [graphbrain.braingenerators.pagereader :as pr]
             [graphbrain.eco.eco :as eco]
@@ -81,7 +82,7 @@
         (let [edge-id (edg/guess common/gbdb res sentence (:id user) ctxts)
               edge (maps/id->vertex edge-id)
               edge (assoc edge :score 1)]
-          (gb/putv! common/gbdb edge ctxt)
+          (k/addfact! common/gbdb edge ctxt (:id user))
           (input-reply-fact root-id edge))))))
 
 (defn process-search
