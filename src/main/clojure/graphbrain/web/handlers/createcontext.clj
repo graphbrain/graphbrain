@@ -13,5 +13,5 @@
         ctxt (maps/new-context name desc "public")]
     (gb/putv! common/gbdb ctxt)
     (perms/grant-admin! common/gbdb (:id user) (:id ctxt))
-    (gb/putrel! common/gbdb ["r/*follower" (:id user) (:id ctxt)] (:id user))
+    (perms/follow! common/gbdb (:id user) (:id ctxt))
     (redirect (str "/n/" (:id ctxt)))))
