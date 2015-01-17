@@ -5,10 +5,18 @@
 
 (defn addfact!
   [gbdb edge ctxt-id author-id]
-  (let [ledge (maps/global->local edge ctxt-id)
-        fact-author-id ["r/*author" (:id ledge) author-id]]
-    (gb/putv! gbdb edge ctxt-id)
-    (gb/putv! gbdb
-              (maps/id->edge
-               (id/ids->id fact-author-id))
-              ctxt-id)))
+  (if (not (gb/getv gbdb (:id edge) [ctxt-id]))
+    (let [fact-author-id ["r/*author" (:id edge) author-id]]
+      (gb/putv! gbdb edge ctxt-id)
+      (gb/putv! gbdb
+                (maps/id->edge
+                 (id/ids->id fact-author-id))
+                ctxt-id))))
+
+(defn author
+  [gbdb edge-id ctxts]
+  (let [authors (gb/pattern->edges gbdb ["r/*author" edge-id "*"] ctxts)]
+    (if authors
+      (second
+       (maps/participant-ids
+        (first authors))))))

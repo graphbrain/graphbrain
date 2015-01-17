@@ -2,6 +2,7 @@
   (:require-macros [hiccups.core :as hiccups])
   (:require [jayq.core :as jq]
             [hiccups.runtime :as hiccupsrt]
+            [graphbrain.gbui.globals :as g]
             [graphbrain.gbui.search :as search]
             [graphbrain.gbui.contexts :as contexts])
   (:use [jayq.core :only [$]]))
@@ -13,7 +14,7 @@
     [:div {:class "modal-content"}
      [:div {:class "modal-header"}
       [:a {:class "close" :data-dismiss "modal"} "×"]
-      [:h3 "Change"]
+      [:h3 {:id "edge-dialog-title"}]
       [:form {:id "change-form" :action (str "/n/" root-node-id) :method "post"}
        [:input {:id "op-field" :type "hidden" :name "op"}]
        [:input {:id "eid-field" :type "hidden" :name "eid"}]
@@ -21,7 +22,9 @@
        [:input {:id "score-field" :type "hidden" :name "score"}]
        [:input {:id "targ-ctxt-field" :type "hidden" :name "targ-ctxt"}]
        [:div {:class "modal-body"}
-        [:p {:id "link-desc"}]
+        [:p {:id "edge-author"}]
+        [:br]
+        [:p "Change meaning?"]
         [:div {:id "alt-entities-change"}]]
        [:div {:class "modal-footer"}
         [:a {:class "btn" :data-dismiss "modal"} "Close"]
@@ -81,7 +84,18 @@
      (jq/val ($ "#edge-field") edge)
      (jq/val ($ "#score-field") score)
      (jq/val ($ "#targ-ctxt-field") targ-ctxt)
-     (jq/html ($ "#link-desc") html)
+     (jq/html ($ "#edge-dialog-title") html)
+
+     (if (:author msg)
+       (jq/html ($ "#edge-author")
+                (str "created by:  <a href='/n/"
+                     @g/context
+                     "/"
+                     (:id (:author msg))
+                     "'>"
+                     (:username (:author msg))
+                     "</a>")))
+     
      (jq/html ($ "#alt-entities-change")
               (search/rendered-results msg))
      (if mod
@@ -99,10 +113,18 @@
                       node
                       snode))
 
+(defn request!
+  [node snode]
+  (jq/ajax {:type "POST"
+            :url "/edge-data"
+            :data (str "id=" (:id node)
+                       "&edge=" (.encodeURIComponent js/window (:edge node))
+                       "&ctxt=" @g/context)
+            :dataType "text"
+            :success #(results-received % node snode)}))
+
 (defn clicked
   [node snode]
   (if (= :entity (:type node))
-    (search/request! (:text node)
-                     :change
-                     #(results-received % node snode))
+    (request! node snode)
     (show-change-dialog nil node snode)))

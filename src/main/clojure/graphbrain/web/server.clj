@@ -21,7 +21,8 @@
             [graphbrain.web.handlers.createcontext :as cc]
             [graphbrain.web.handlers.contexts :as contexts]
             [graphbrain.web.handlers.grantperm :as gp]
-            [graphbrain.web.handlers.followunfollow :as fu]))
+            [graphbrain.web.handlers.followunfollow :as fu]
+            [graphbrain.web.handlers.edgedata :as ed]))
 
 (defroutes app-routes
   (GET "/" request (landing/handle request))
@@ -45,14 +46,15 @@
   (POST "/contexts" request (contexts/handle request))
   (POST "/grant-perm" request (gp/handle request))
   (POST "/follow-unfollow" request (fu/handle request))
+  (POST "/edge-data" request (ed/handle request))
   (route/not-found "<h1>Page not found</h1>"))
 
 (def app
   (-> app-routes
-    (wrap-resource "")
-    wrap-file-info
-    wrap-params
-    wrap-cookies))
+      (wrap-resource "")
+      wrap-file-info
+      wrap-params
+      wrap-cookies))
 
 (def handler
   (do
