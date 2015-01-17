@@ -30,7 +30,7 @@
 
    [:.item-title
     [:a
-     {:color "#FFF"}]]
+     {:color "#333"}]]
 
    [:.item-sub-text
     {:font-size (px 11)
@@ -50,7 +50,7 @@
    [:.item-url-title
     [:a
      {:font-size (px 12)
-      :color "#FFF"
+      :color "#333"
       :padding (px 3)}]]
 
    [:.item-url-area {}]

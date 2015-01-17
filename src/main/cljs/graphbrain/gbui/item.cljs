@@ -80,7 +80,8 @@
         div-id (item-div-id (:edge item))
         html (item-html item div-id)]
     (jq/append ($ (str "#" frame-id " .frame-inner")) html)
-    (jq/css ($ (str "#t" div-id)) {:background (item-color item ctxts)})
+;;    (jq/css ($ (str "#t" div-id)) {:background (item-color item ctxts)})
+    (jq/css ($ (str "#chg" div-id)) {:color (item-color item ctxts)})
     (jq/bind ($ (str "#chg" div-id))
              :click
              #(change/clicked item snode))
