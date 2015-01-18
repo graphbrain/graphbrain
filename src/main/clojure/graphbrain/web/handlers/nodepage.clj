@@ -12,16 +12,16 @@
             [graphbrain.web.encoder :as enc]))
 
 (defn- pagedata
-  [id user ctxts]
+  [id user ctxt ctxts]
   (let [entity-data (ed/generate
-                     common/gbdb id user ctxts)]
+                     common/gbdb id user ctxt ctxts)]
     entity-data))
 
 (defn- js
-  [id user ctxts]
+  [id user ctxt ctxts]
   (str "var ptype='node';"
        "var data='" (enc/encode (pr-str
-                      (pagedata id user ctxts))) "';"))
+                      (pagedata id user ctxt ctxts))) "';"))
 
 (defn handle
   [request]
@@ -45,5 +45,5 @@
                  :css-and-js (css+js/css+js)
                  :user user
                  :ctxt ctxt
-                 :js (js id user ctxts)
+                 :js (js id user ctxt ctxts)
                  :desc desc)))
