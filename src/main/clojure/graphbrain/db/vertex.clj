@@ -1,5 +1,6 @@
 (ns graphbrain.db.vertex
   (:require [graphbrain.db.id :as id]
+            [graphbrain.db.maps :as maps]
             [graphbrain.db.entity :as entity]
             [graphbrain.db.context :as context]))
 

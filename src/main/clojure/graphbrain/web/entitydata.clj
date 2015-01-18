@@ -96,13 +96,15 @@
         (str text " " rel-label)))))
 
 (defn- node->map
-  [gbdb node-id edge root-id ctxts]
+  [gbdb node-id edge root-id ctxt ctxts]
   (let [vv (vv/id->visual gbdb node-id ctxts)
         node-edge (:id (:parent edge))
         score (:score edge)
         ectxts (:ctxts edge)]
     (assoc vv
       :edge node-edge
+      :edge-text (vv/edge-id->text (:id (:parent edge))
+                                   ctxt)
       :score score
       :ctxts ectxts)))
 
@@ -111,7 +113,7 @@
   (if (= (second rp) 0) (:id1 se) (:id2 se)))
 
 (defn- snode
-  [gbdb rp sedges root-node ctxts]
+  [gbdb rp sedges root-node ctxt ctxts]
   (let [etype (first rp)
         rpos (second rp)
         label (link-label etype rpos root-node)
@@ -119,14 +121,14 @@
                                (se->node-id % rp)
                                %
                                (:id root-node)
-                               ctxts) sedges)]
+                               ctxt ctxts) sedges)]
     {:nodes nodes
      :etype etype
      :rpos rpos
      :label label}))
 
 (defn- snode-map
-  [gbdb en-map root-node ctxts]
+  [gbdb en-map root-node ctxt ctxts]
   (loop [enm en-map
          count 0
          snode-map {}]
@@ -137,7 +139,7 @@
           (recur (rest enm) (inc count)
                  (assoc snode-map
                    snid
-                   (snode gbdb rp (second en) root-node ctxts)))))))
+                   (snode gbdb rp (second en) root-node ctxt ctxts)))))))
 
 (defn- snode-limit-size
   [snode]
@@ -156,7 +158,7 @@
              [k (snode-limit-size v)])))
 
 (defn snodes
-  [gbdb root-id ctxts]
+  [gbdb root-id ctxt ctxts]
   (let [root-id (gb/id->eid gbdb root-id)
         root-id (id/local->global root-id)
         hyper-edges (gb/id->edges gbdb root-id ctxts)
@@ -174,14 +176,14 @@
                                           (second rp)
                                           root-node)
                                   :snode (snode-id rp)}))
-        snode-map (snode-map gbdb edge-node-map root-node ctxts)
+        snode-map (snode-map gbdb edge-node-map root-node ctxt ctxts)
         snode-map (assoc snode-map :root
                          {:nodes [root-node]})
         snode-map (snodes-limit-size snode-map)]
     snode-map))
 
 (defn generate
-  [gbdb root-id user ctxts]
+  [gbdb root-id user ctxt ctxts]
   (let [context-data (contexts/context-data root-id (:id user))
         user-id (if user (:id user) "")
         root-id (gb/id->eid gbdb root-id)
@@ -192,8 +194,8 @@
                              (map #(hyper->edge % root-id)
                                   (filter maps/positive? hyper-edges)))
         edge-node-map (edge-node-map visual-edges root-id)
-        root-node (node->map gbdb root-id "" root-id ctxts)
-        snode-map (snode-map gbdb edge-node-map root-node ctxts)
+        root-node (node->map gbdb root-id "" root-id ctxt ctxts)
+        snode-map (snode-map gbdb edge-node-map root-node ctxt ctxts)
         snode-map (snodes-limit-size snode-map)]
     {:root root-node
      :snodes snode-map

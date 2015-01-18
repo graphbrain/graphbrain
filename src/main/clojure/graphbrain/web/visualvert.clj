@@ -7,6 +7,39 @@
             [graphbrain.db.text :as text]
             [graphbrain.db.context :as context]))
 
+(declare edge-id->text)
+
+(defn id->label
+  [id]
+  (case (id/id->type id)
+    :entity (entity/label id)
+    :edge (edge-id->text id)
+    :context (context/label id)
+    :user (entity/label id)
+    :edge-type (entity/text id)
+    :url (url/id->url id)
+    id))
+
+(defn id->html
+  [id ctxt]
+  (if (= (id/id->type id) :edge-type)
+    (id->label id)
+    (str "<a href='/n/" (:id ctxt) "/" id "'>"
+         (id->label id)
+         "</a>")))
+
+(defn edge-id->text
+  [edge-id ctxt]
+  (let [labels (map #(id->html (id/eid->id %) ctxt)
+                    (id/id->ids edge-id))]
+    (str (second labels)
+         " "
+         (first labels)
+         " "
+         (clojure.string/join " "
+                              (rest
+                               (rest labels))))))
+
 (defn id->visual
   [gbdb id ctxts]
   (let [vtype (id/id->type id)

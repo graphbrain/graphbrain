@@ -74,7 +74,6 @@
          score (:score node)
          targ-ctxt (contexts/targ-ctxt (:ctxts node))
          link (:label snode)
-         html (str (:text node) " <strong>(" link ")</strong>")
          mod (= :entity (:type node))
          mod-button ($ "#new-meaning-button")]
      (if mod
@@ -84,7 +83,7 @@
      (jq/val ($ "#edge-field") edge)
      (jq/val ($ "#score-field") score)
      (jq/val ($ "#targ-ctxt-field") targ-ctxt)
-     (jq/html ($ "#edge-dialog-title") html)
+     (jq/html ($ "#edge-dialog-title") (:edge-text node))
 
      (if (:author msg)
        (jq/html ($ "#edge-author")
