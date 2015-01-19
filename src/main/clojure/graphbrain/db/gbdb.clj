@@ -236,6 +236,18 @@
   [gbdb ctxt n]
   (mysql/popular-n-entities gbdb ctxt n))
 
+(defn popular-n-urls
+  [gbdb ctxt n]
+  (mysql/popular-n-urls gbdb ctxt n))
+
+(defn recent-n-entities
+  [gbdb ctxt n]
+  (mysql/recent-n-entities gbdb ctxt n))
+
+(defn recent-n-urls
+  [gbdb ctxt n]
+  (mysql/recent-n-urls gbdb ctxt n))
+
 (defn vertex->edges
   [gbdb center ctxts]
     (id->edges gbdb (:id center) ctxts))
