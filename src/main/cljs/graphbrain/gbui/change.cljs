@@ -99,13 +99,18 @@
                      (:username (:author msg))
                      "</a>")))
      
-     (let [res (search/rendered-results msg)
-           cm ($ "#change-meaning-label")]
-       (if (empty? res)
-         (jq/hide cm)
+     (let [cm ($ "#change-meaning-label")]
+       (if (not (:static snode))
+         (let [res (search/rendered-results msg)]
+           (if (empty? res)
+             (jq/hide cm)
+             (do
+               (jq/show cm)
+               (jq/html ($ "#alt-entities-change") res))))
          (do
-           (jq/show cm)
-           (jq/html ($ "#alt-entities-change") res))))
+           (jq/hide cm)
+           (jq/hide mod-button))))
+     
      (if mod
        (let [results (:results msg)]
          (doseq [result results]
