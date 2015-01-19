@@ -1,6 +1,7 @@
 (ns graphbrain.web.snodes
   (:require [graphbrain.web.common :as common]
             [graphbrain.web.visualvert :as vv]
+            [graphbrain.web.extrasnodes :as xs]
             [graphbrain.db.gbdb :as gb]
             [graphbrain.db.maps :as maps]
             [graphbrain.db.id :as id]
@@ -95,7 +96,7 @@
 
 (defn- node->map
   [gbdb node-id edge root-id ctxt ctxts]
-  (let [vv (vv/id->visual gbdb node-id ctxts)
+  (let [vv (vv/id->visual gbdb node-id ctxt ctxts)
         node-edge (:id (:parent edge))
         score (:score edge)
         ectxts (:ctxts edge)]
@@ -170,6 +171,7 @@
                (gb/id->edges gbdb root-id ctxts))
         visual-edges (edges->visual root-id edges)
         en-map (edge-node-map visual-edges root-id)
-        root-node (vv/id->visual gbdb root-id ctxts)]
-    (snodes-limit-size
-     (snode-map gbdb en-map root-node ctxt ctxts))))
+        root-node (vv/id->visual gbdb root-id ctxt ctxts)]
+    (xs/extrasnodes gbdb root-id ctxt ctxts
+                    (snodes-limit-size
+                     (snode-map gbdb en-map root-node ctxt ctxts)))))

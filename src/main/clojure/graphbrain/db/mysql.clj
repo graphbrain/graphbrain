@@ -289,8 +289,9 @@
 
 (defn recent-n-edges
   [dbs ctxt n]
-  (let [start-str (str "(" ctxt)
+  (let [start-str (str+1 (str "(" ctxt "/r/*"))
         end-str (str+1 start-str)
+        end-str (str+1 (str "(" ctxt "/"))
         rs (jdbc/query (dbs) [(str "SELECT * FROM edges WHERE id>=? AND id<=?"
                                    " ORDER BY ts DESC LIMIT ?")
                               start-str end-str n])]

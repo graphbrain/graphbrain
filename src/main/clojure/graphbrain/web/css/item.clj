@@ -26,7 +26,8 @@
 
    [:.item-title
     {:font-size (px 15)
-     :padding (px 3)}]
+     :padding (px 3)
+     :color "#0F52BA"}]
 
    [:.item-title
     [:a
