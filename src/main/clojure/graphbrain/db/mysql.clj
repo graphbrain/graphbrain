@@ -28,6 +28,8 @@
                        "INDEX id_index (id(255))"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
+  (safe-exec! dbs (str "CREATE INDEX id_ts_edges_index ON edges (id, ts);"))
+  
   ;; EdgeTypes table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS edgetypes ("
                        "id VARCHAR(10000),"
@@ -284,6 +286,15 @@
                               start-str
                               end-str])]
     (results->edges rs)))
+
+(defn recent-n-edges
+  [dbs ctxt n]
+  (let [start-str (str "(" ctxt)
+        end-str (str+1 start-str)
+        rs (jdbc/query (dbs) [(str "SELECT * FROM edges WHERE id>=? AND id<=?"
+                                   " ORDER BY ts DESC LIMIT ?")
+                              start-str end-str n])]
+    (map #(assoc % :type :edge) rs)))
 
 (defn add-link-to-global!
   [dbs gid lid]
