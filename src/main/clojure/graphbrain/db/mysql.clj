@@ -306,6 +306,33 @@
                               start-str end-str n])]
     (map #(assoc % :type :entity) rs)))
 
+(defn popular-n-urls
+  [dbs ctxt n]
+  (let [start-str ctxt
+        end-str (str+1 start-str)
+        rs (jdbc/query (dbs) [(str "SELECT * FROM urls WHERE id>=? AND id<=?"
+                                   " ORDER BY degree DESC LIMIT ?")
+                              start-str end-str n])]
+    (map #(assoc % :type :url) rs)))
+
+(defn recent-n-entities
+  [dbs ctxt n]
+  (let [start-str ctxt
+        end-str (str+1 start-str)
+        rs (jdbc/query (dbs) [(str "SELECT * FROM entities WHERE id>=? AND id<=?"
+                                   " ORDER BY ts DESC LIMIT ?")
+                              start-str end-str n])]
+    (map #(assoc % :type :entity) rs)))
+
+(defn recent-n-urls
+  [dbs ctxt n]
+  (let [start-str ctxt
+        end-str (str+1 start-str)
+        rs (jdbc/query (dbs) [(str "SELECT * FROM urls WHERE id>=? AND id<=?"
+                                   " ORDER BY ts DESC LIMIT ?")
+                              start-str end-str n])]
+    (map #(assoc % :type :url) rs)))
+
 (defn add-link-to-global!
   [dbs gid lid]
   (jdbc/execute! (dbs) ["INSERT INTO globallocal (gid, lid) VALUES (?, ?)"

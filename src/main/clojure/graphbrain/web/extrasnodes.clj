@@ -11,17 +11,45 @@
       :edge-text (:text vv))))
 
 (defn- entity->map
-  [ent ctxt]
+  [ent ctxt pre-label]
   (let [vv (vv/id->visual nil (:eid ent) ctxt nil)]
     (assoc vv
       :edge (:id ent)
-      :edge-text (str "Popular entity: " (:text vv)))))
+      :edge-text (str pre-label (:text vv)))))
+
+(defn- url->map
+  [url ctxt pre-label]
+  (let [vv (vv/id->visual nil (:id url) ctxt nil)]
+    (assoc vv
+      :edge (:id url)
+      :edge-text (str pre-label (:text vv)))))
 
 (defn- popular-entities
   [ctxt]
   (let [ents (gb/popular-n-entities common/gbdb (:id ctxt) 10)]
-    {:nodes (map #(entity->map % ctxt) ents)
+    {:nodes (map #(entity->map % ctxt "Popular entity: ") ents)
      :label "Popular entities"
+     :static true}))
+
+(defn- popular-urls
+  [ctxt]
+  (let [ents (gb/popular-n-urls common/gbdb (:id ctxt) 10)]
+    {:nodes (map #(url->map % ctxt "Popular url: ") ents)
+     :label "Popular urls"
+     :static true}))
+
+(defn- recent-entities
+  [ctxt]
+  (let [ents (gb/popular-n-entities common/gbdb (:id ctxt) 10)]
+    {:nodes (map #(entity->map % ctxt "Recent entity: ") ents)
+     :label "Recent entities"
+     :static true}))
+
+(defn- recent-urls
+  [ctxt]
+  (let [ents (gb/popular-n-urls common/gbdb (:id ctxt) 10)]
+    {:nodes (map #(url->map % ctxt "Recent url: ") ents)
+     :label "Recent urls"
      :static true}))
 
 (defn- recent-edges
@@ -36,5 +64,8 @@
   (if (= root-id (:id ctxt))
     (assoc snodes
       "recent" (recent-edges ctxt)
-      "popular_entities" (popular-entities ctxt))
+      "popular_entities" (popular-entities ctxt)
+      "popular_urls" (popular-urls ctxt)
+      "recent_entities" (recent-entities ctxt)
+      "recent_urls" (recent-urls ctxt))
     snodes))
