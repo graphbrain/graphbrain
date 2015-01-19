@@ -228,6 +228,10 @@
                              ids)]
          (apply clojure.set/union (conj next-edges edges))))))
 
+(defn recent-n-edges
+  [gbdb ctxt n]
+  (mysql/recent-n-edges gbdb ctxt n))
+
 (defn vertex->edges
   [gbdb center ctxts]
     (id->edges gbdb (:id center) ctxts))
