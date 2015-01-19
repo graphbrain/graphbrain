@@ -52,3 +52,11 @@
     user-id "#117733"
     (nth colors/colors
          (mod (Math/abs (.hashCode ctxt-id)) (count colors/colors)))))
+
+(defn contexts-map
+  [ctxts user-id]
+  (zipmap ctxts
+          (map #(hash-map
+                 :name (context/label %)
+                 :color (color % user-id))
+               ctxts)))

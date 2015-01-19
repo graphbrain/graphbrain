@@ -6,22 +6,25 @@
             [graphbrain.db.user :as user]
             [graphbrain.web.common :as common]
             [graphbrain.web.contexts :as contexts]
-            [graphbrain.web.entitydata :as ed]
+            [graphbrain.web.snodes :as snodes]
             [graphbrain.web.cssandjs :as css+js]
             [graphbrain.web.views.nodepage :as np]
             [graphbrain.web.encoder :as enc]))
 
-(defn- pagedata
+(defn- data
   [id user ctxt ctxts]
-  (let [entity-data (ed/generate
-                     common/gbdb id user ctxt ctxts)]
-    entity-data))
+  (let [snodes (snodes/generate common/gbdb id ctxt ctxts)
+        context-data (contexts/context-data id (:id user))]
+    {:root-id id
+     :snodes snodes
+     :ctxts (contexts/contexts-map ctxts (:id user))
+     :context context-data}))
 
 (defn- js
   [id user ctxt ctxts]
   (str "var ptype='node';"
        "var data='" (enc/encode (pr-str
-                      (pagedata id user ctxt ctxts))) "';"))
+                      (data id user ctxt ctxts))) "';"))
 
 (defn handle
   [request]
@@ -41,6 +44,8 @@
               :user "GraphBrain user"
               nil)
        ctxt (contexts/context-data id (:id user))]
+    (doseq [edge (gb/recent-n-edges common/gbdb (:id ctxt) 10)]
+      (prn edge))
     (np/nodepage :title title
                  :css-and-js (css+js/css+js)
                  :user user
