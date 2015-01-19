@@ -297,6 +297,15 @@
                               start-str end-str n])]
     (map #(assoc % :type :edge) rs)))
 
+(defn popular-n-entities
+  [dbs ctxt n]
+  (let [start-str ctxt
+        end-str (str+1 start-str)
+        rs (jdbc/query (dbs) [(str "SELECT * FROM entities WHERE id>=? AND id<=?"
+                                   " ORDER BY degree DESC LIMIT ?")
+                              start-str end-str n])]
+    (map #(assoc % :type :entity) rs)))
+
 (defn add-link-to-global!
   [dbs gid lid]
   (jdbc/execute! (dbs) ["INSERT INTO globallocal (gid, lid) VALUES (?, ?)"

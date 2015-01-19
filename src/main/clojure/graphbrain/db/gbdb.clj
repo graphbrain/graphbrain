@@ -232,6 +232,10 @@
   [gbdb ctxt n]
   (mysql/recent-n-edges gbdb ctxt n))
 
+(defn popular-n-entities
+  [gbdb ctxt n]
+  (mysql/popular-n-entities gbdb ctxt n))
+
 (defn vertex->edges
   [gbdb center ctxts]
     (id->edges gbdb (:id center) ctxts))

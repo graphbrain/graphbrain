@@ -10,6 +10,20 @@
       :edge (:id edge)
       :edge-text (:text vv))))
 
+(defn- entity->map
+  [ent ctxt]
+  (let [vv (vv/id->visual nil (:eid ent) ctxt nil)]
+    (assoc vv
+      :edge (:id ent)
+      :edge-text (str "Popular entity: " (:text vv)))))
+
+(defn- popular-entities
+  [ctxt]
+  (let [ents (gb/popular-n-entities common/gbdb (:id ctxt) 10)]
+    {:nodes (map #(entity->map % ctxt) ents)
+     :label "Popular entities"
+     :static true}))
+
 (defn- recent-edges
   [ctxt]
   (let [edges (gb/recent-n-edges common/gbdb (:id ctxt) 10)]
@@ -21,5 +35,6 @@
   [gbdb root-id ctxt ctxts snodes]
   (if (= root-id (:id ctxt))
     (assoc snodes
-      "recent" (recent-edges ctxt))
+      "recent" (recent-edges ctxt)
+      "popular_entities" (popular-entities ctxt))
     snodes))
