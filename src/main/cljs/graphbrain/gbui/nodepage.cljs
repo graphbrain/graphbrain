@@ -11,5 +11,5 @@
 
 (defn init-nodepage!
   []
-  (reset! g/root-id (:id (:root @g/data)))
+  (reset! g/root-id (:root-id @g/data))
   (place-frames! (:snodes @g/data) (:ctxts @g/data)))

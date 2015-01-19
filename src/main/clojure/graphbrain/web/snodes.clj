@@ -1,13 +1,11 @@
-(ns graphbrain.web.entitydata
+(ns graphbrain.web.snodes
   (:require [graphbrain.web.common :as common]
-            [graphbrain.web.contexts :as contexts]
             [graphbrain.web.visualvert :as vv]
             [graphbrain.db.gbdb :as gb]
             [graphbrain.db.maps :as maps]
             [graphbrain.db.id :as id]
             [graphbrain.db.edgetype :as edgetype]
-            [graphbrain.db.vertex :as vertex]
-            [graphbrain.db.context :as context])
+            [graphbrain.db.vertex :as vertex])
   (:import (com.graphbrain.web EdgeLabelTable)))
 
 (def ^:const max-snodes 15)
@@ -28,7 +26,7 @@
            (clojure.string/replace #"\W" "_"))
        "_" (second rel-pos)))
 
-(defn- hyper->edge
+(defn- edge->visual
   [edge root-id]
   (let [c (count (maps/participant-ids edge))]
     (cond
@@ -157,51 +155,21 @@
   (into {} (for [[k v] snodes]
              [k (snode-limit-size v)])))
 
-(defn snodes
-  [gbdb root-id ctxt ctxts]
-  (let [root-id (gb/id->eid gbdb root-id)
-        root-id (id/local->global root-id)
-        hyper-edges (gb/id->edges gbdb root-id ctxts)
-        hyper-edges (hide-edges hyper-edges)
-        visual-edges (filter (complement nil?)
-                             (map #(hyper->edge % root-id)
-                                  (filter maps/positive? hyper-edges)))
-        edge-node-map (edge-node-map visual-edges root-id)
-        root-node (node->map gbdb root-id "" root-id ctxts)
-        all-relations (into [] (for [[rp v] edge-node-map]
-                                 {:rel (first rp)
-                                  :pos (second rp)
-                                  :label (link-label
-                                          (first rp)
-                                          (second rp)
-                                          root-node)
-                                  :snode (snode-id rp)}))
-        snode-map (snode-map gbdb edge-node-map root-node ctxt ctxts)
-        snode-map (assoc snode-map :root
-                         {:nodes [root-node]})
-        snode-map (snodes-limit-size snode-map)]
-    snode-map))
+(defn- edges->visual
+  [root-id edges]
+  (filter (complement nil?)
+          (map #(edge->visual % root-id)
+               (filter maps/positive? edges))))
 
 (defn generate
-  [gbdb root-id user ctxt ctxts]
-  (let [context-data (contexts/context-data root-id (:id user))
-        user-id (if user (:id user) "")
-        root-id (gb/id->eid gbdb root-id)
-        root-id (id/local->global root-id)
-        hyper-edges (gb/id->edges gbdb root-id ctxts)
-        hyper-edges (hide-edges hyper-edges)
-        visual-edges (filter (complement nil?)
-                             (map #(hyper->edge % root-id)
-                                  (filter maps/positive? hyper-edges)))
-        edge-node-map (edge-node-map visual-edges root-id)
-        root-node (node->map gbdb root-id "" root-id ctxt ctxts)
-        snode-map (snode-map gbdb edge-node-map root-node ctxt ctxts)
-        snode-map (snodes-limit-size snode-map)]
-    {:root root-node
-     :snodes snode-map
-     :ctxts (zipmap ctxts
-                    (map #(hash-map
-                           :name (context/label %)
-                           :color (contexts/color % user-id))
-                         ctxts))
-     :context context-data}))
+  [gbdb root-id ctxt ctxts]
+  (let [root-id (->> root-id
+                     (gb/id->eid gbdb)
+                     (id/local->global))
+        edges (hide-edges
+               (gb/id->edges gbdb root-id ctxts))
+        visual-edges (edges->visual root-id edges)
+        en-map (edge-node-map visual-edges root-id)
+        root-node (vv/id->visual gbdb root-id ctxts)]
+    (snodes-limit-size
+     (snode-map gbdb en-map root-node ctxt ctxts))))
