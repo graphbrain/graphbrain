@@ -44,8 +44,6 @@
               :user "GraphBrain user"
               nil)
        ctxt (contexts/context-data id (:id user))]
-    (doseq [edge (gb/recent-n-edges common/gbdb (:id ctxt) 10)]
-      (prn edge))
     (np/nodepage :title title
                  :css-and-js (css+js/css+js)
                  :user user

@@ -10,10 +10,10 @@
 (declare edge-id->text)
 
 (defn id->label
-  [id]
+  [id ctxt]
   (case (id/id->type id)
     :entity (entity/label id)
-    :edge (edge-id->text id)
+    :edge (edge-id->text id ctxt)
     :context (context/label id)
     :user (entity/label id)
     :edge-type (entity/text id)
@@ -23,9 +23,9 @@
 (defn id->html
   [id ctxt]
   (if (= (id/id->type id) :edge-type)
-    (id->label id)
+    (id->label id ctxt)
     (str "<a href='/n/" (:id ctxt) "/" id "'>"
-         (id->label id)
+         (id->label id ctxt)
          "</a>")))
 
 (defn edge-id->text
@@ -41,7 +41,7 @@
                                (rest labels))))))
 
 (defn id->visual
-  [gbdb id ctxts]
+  [gbdb id ctxt ctxts]
   (let [vtype (id/id->type id)
         vert (maps/id->vertex id)
         vert (maps/local->global vert)]
@@ -70,5 +70,8 @@
                 :type :context
                 :text (context/label id)
                 :sub [{:id "#" :text "a GraphBrain"}]}
+      :edge {:id id
+             :type :edge
+             :text (edge-id->text id ctxt)}
       (assoc vert
         :text id))))

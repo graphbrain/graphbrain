@@ -24,7 +24,7 @@
        [:div {:class "modal-body"}
         [:p {:id "edge-author"}]
         [:br]
-        [:p "Change meaning?"]
+        [:p {:id "change-meaning-label"} "Change meaning?"]
         [:div {:id "alt-entities-change"}]]
        [:div {:class "modal-footer"}
         [:a {:class "btn" :data-dismiss "modal"} "Close"]
@@ -75,10 +75,14 @@
          targ-ctxt (contexts/targ-ctxt (:ctxts node))
          link (:label snode)
          mod (= :entity (:type node))
-         mod-button ($ "#new-meaning-button")]
+         mod-button ($ "#new-meaning-button")
+         rem-button ($ "#remove-button")]
      (if mod
        (jq/show mod-button)
        (jq/hide mod-button))
+     (if (:static snode)
+       (jq/hide rem-button)
+       (jq/show rem-button))
      (jq/val ($ "#eid-field") eid)
      (jq/val ($ "#edge-field") edge)
      (jq/val ($ "#score-field") score)
@@ -95,8 +99,13 @@
                      (:username (:author msg))
                      "</a>")))
      
-     (jq/html ($ "#alt-entities-change")
-              (search/rendered-results msg))
+     (let [res (search/rendered-results msg)
+           cm ($ "#change-meaning-label")]
+       (if (empty? res)
+         (jq/hide cm)
+         (do
+           (jq/show cm)
+           (jq/html ($ "#alt-entities-change") res))))
      (if mod
        (let [results (:results msg)]
          (doseq [result results]
@@ -124,6 +133,6 @@
 
 (defn clicked
   [node snode]
-  (if (= :entity (:type node))
+  (if (some #{(:type node)} [:entity :edge])
     (request! node snode)
     (show-change-dialog nil node snode)))
