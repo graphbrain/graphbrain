@@ -1,14 +1,15 @@
 (ns graphbrain.web.handlers.nodeactions
-  (:use (graphbrain.web common)
-        (ring.util response))
+  (:use (ring.util response))
   (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.id :as id]
-            [graphbrain.db.maps :as maps]))
+            [graphbrain.db.maps :as maps]
+            [graphbrain.db.perms :as perms]
+            [graphbrain.web.common :as common]))
 
 (defn- remove-vertex!
   [request targ-ctxt]
   (let [edge-id ((request :form-params) "edge")]
-    (gb/remove! gbdb
+    (gb/remove! common/gbdb
                 (maps/id->edge edge-id)
                 targ-ctxt)))
 
@@ -19,14 +20,17 @@
         score ((request :form-params) "score")
         edge (maps/id->edge edge-id score)
         new-eid (id/new-meaning eid targ-ctxt)]
-    (gb/replace! gbdb edge eid new-eid targ-ctxt)))
+    (gb/replace! common/gbdb edge eid new-eid targ-ctxt)))
 
 (defn handle
   [request]
-  (let [vert-id (:* (:route-params request))
+  (let [user (common/get-user request)
+        vert-id (:* (:route-params request))
         op ((request :form-params) "op")
         targ-ctxt ((request :form-params) "targ-ctxt")]
-    (case op
-      "remove" (remove-vertex! request targ-ctxt)
-      "new-meaning" (new-meaning! request targ-ctxt))
-    (redirect (str "/n/" targ-ctxt "/" vert-id))))
+    (if (perms/can-edit? common/gbdb (:id user) targ-ctxt)
+      (case op
+        "remove" (remove-vertex! request targ-ctxt)
+        "new-meaning" (new-meaning! request targ-ctxt)))
+    (redirect (str "/n/" targ-ctxt
+                   "/" (id/local->global vert-id)))))

@@ -21,6 +21,11 @@
                   ["r/*following" user-id ctxt-id]
                   user-id))
 
+(defn can-edit?
+  [gbdb user-id ctxt-id]
+  (or (is-editor? gbdb user-id ctxt-id)
+      (is-admin? gbdb user-id ctxt-id)))
+
 (defn grant-perm!
   [gbdb user-id ctxt-id perm]
   (gb/putrel! gbdb
