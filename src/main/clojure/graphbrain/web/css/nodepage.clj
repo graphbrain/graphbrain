@@ -43,6 +43,15 @@
      :background "#FFF"
      :z-index 1000}]
 
+   [:#msgbar
+    {:position "fixed"
+     :top (px 60)
+     :left (px 0)
+     :width "100%"
+     :height (px 40)
+     :z-index 1000
+     :display "none"}]
+
    [:.topbar-element
     {:float "left"
      :width (px 100)}]

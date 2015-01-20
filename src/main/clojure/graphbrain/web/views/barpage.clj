@@ -104,6 +104,10 @@
                 :placeholder "Search or tell me something"
                 :name "input-field"
                 :autofocus ""}]]]]
+
+    [:div {:class "alert alert-danger"
+           :id "msgbar"
+           :role "alert"}]
     
     (content-fun)]))
 

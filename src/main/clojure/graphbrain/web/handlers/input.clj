@@ -41,6 +41,11 @@
            :rel rel
            :param param}))
 
+(defn- input-reply-error
+  [msg]
+  (pr-str {:type :error
+           :msg msg}))
+
 (defn- sentence-type
   [sentence]
   (cond
@@ -83,7 +88,8 @@
               edge (maps/id->vertex edge-id)
               edge (assoc edge :score 1)]
           (k/addfact! common/gbdb edge ctxt (:id user))
-          (input-reply-fact root-id edge))))))
+          (input-reply-fact root-id edge)))
+      (input-reply-error "Sorry, I don't understand."))))
 
 (defn process-search
   [user root q ctxt ctxts mode]

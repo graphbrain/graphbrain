@@ -40,14 +40,14 @@
 
 (defn- recent-entities
   [ctxt]
-  (let [ents (gb/popular-n-entities common/gbdb (:id ctxt) 10)]
+  (let [ents (gb/recent-n-entities common/gbdb (:id ctxt) 10)]
     {:nodes (map #(entity->map % ctxt "Recent entity: ") ents)
      :label "Recent entities"
      :static true}))
 
 (defn- recent-urls
   [ctxt]
-  (let [ents (gb/popular-n-urls common/gbdb (:id ctxt) 10)]
+  (let [ents (gb/recent-n-urls common/gbdb (:id ctxt) 10)]
     {:nodes (map #(url->map % ctxt "Recent url: ") ents)
      :label "Recent urls"
      :static true}))
