@@ -7,6 +7,7 @@
             [graphbrain.db.maps :as maps]
             [graphbrain.db.urlnode :as url]
             [graphbrain.db.knowledge :as k]
+            [graphbrain.db.perms :as perms]
             [graphbrain.disambig.edgeguesser :as edg]
             [graphbrain.braingenerators.pagereader :as pr]
             [graphbrain.eco.eco :as eco]
@@ -79,16 +80,18 @@
             :user (:id user)}
        res (eco/parse-str chat/chat sentence env)]
     (if (id/edge? res)
-      (if (and (id/undefined-eid? (:eid root))
-               (is-definer? res))
-        (input-reply-definition root-id
-                                (definer->rel res)
-                                (definer->param res))
-        (let [edge-id (edg/guess common/gbdb res sentence (:id user) ctxts)
-              edge (maps/id->vertex edge-id)
-              edge (assoc edge :score 1)]
-          (k/addfact! common/gbdb edge ctxt (:id user))
-          (input-reply-fact root-id edge)))
+      (if (perms/can-edit? common/gbdb (:id user) ctxt)
+        (if (and (id/undefined-eid? (:eid root))
+                 (is-definer? res))
+          (input-reply-definition root-id
+                                  (definer->rel res)
+                                  (definer->param res))
+          (let [edge-id (edg/guess common/gbdb res sentence (:id user) ctxts)
+                edge (maps/id->vertex edge-id)
+                edge (assoc edge :score 1)]
+            (k/addfact! common/gbdb edge ctxt (:id user))
+            (input-reply-fact root-id edge)))
+        (input-reply-error "Sorry, you don't have permissions to edit this GraphBrain."))
       (input-reply-error "Sorry, I don't understand."))))
 
 (defn process-search

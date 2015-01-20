@@ -5,11 +5,17 @@
             [graphbrain.db.id :as id]
             [graphbrain.db.maps :as maps]
             [graphbrain.db.entity :as entity]
-            [graphbrain.db.searchinterface :as si]))
+            [graphbrain.db.searchinterface :as si]
+            [graphbrain.db.perms :as perms]))
 
 (defn reply
   []
   (pr-str {:type :change}))
+
+(defn reply-no-perms
+  []
+  (pr-str {:type :error
+           :msg "Sorry, you don't have permissions to edit this GraphBrain."}))
 
 (defn process
   [edge-id old-id new-id targ-ctxt]
@@ -25,8 +31,11 @@
 
 (defn handle
   [request]
-  (let [edge ((request :form-params) "edge")
+  (let [user (common/get-user request)
+        edge ((request :form-params) "edge")
         old-id ((request :form-params) "old-id")
         new-id ((request :form-params) "new-id")
         targ-ctxt ((request :form-params) "targ-ctxt")]
-    (process edge old-id new-id targ-ctxt)))
+    (if (perms/can-edit? common/gbdb (:id user) targ-ctxt)
+      (process edge old-id new-id targ-ctxt)
+      (reply-no-perms))))
