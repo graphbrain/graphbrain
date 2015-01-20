@@ -1,7 +1,7 @@
 (ns graphbrain.gbui.item
   (:require-macros [hiccups.core :as hiccups])
   (:require [jayq.core :as jq]
-            [graphbrain.gbui.change :as change]
+            [graphbrain.gbui.edgedialog :as ed]
             [graphbrain.gbui.globals :as g]
             [hiccups.runtime :as hiccupsrt])
   (:use [jayq.core :only [$]]))
@@ -84,5 +84,5 @@
     (jq/css ($ (str "#chg" div-id)) {:color (item-color item ctxts)})
     (jq/bind ($ (str "#chg" div-id))
              :click
-             #(change/clicked item snode))
+             #(ed/clicked item snode))
     item))
