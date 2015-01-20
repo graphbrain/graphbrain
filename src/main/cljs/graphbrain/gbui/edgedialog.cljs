@@ -86,9 +86,13 @@
     (if mod
       (jq/show mod-button)
       (jq/hide mod-button))
-    (if (:static snode)
+
+    (if (or (:static snode)
+            (and (= :entity (:type node))
+                 (not (:can-edit msg))))
       (jq/hide rem-button)
       (jq/show rem-button))
+    
     (jq/val ($ "#eid-field") eid)
     (jq/val ($ "#edge-field") edge)
     (jq/val ($ "#score-field") score)
@@ -106,7 +110,8 @@
                     "</a>")))
      
     (let [cm ($ "#change-meaning-label")]
-      (if (not (:static snode))
+      (if (and (not (:static snode))
+               (:can-edit msg))
         (let [res (search/rendered-results msg)]
           (if (empty? res)
             (jq/hide cm)
