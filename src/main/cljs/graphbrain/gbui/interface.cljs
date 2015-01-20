@@ -2,7 +2,6 @@
   (:require [jayq.core :as jq]
             [graphbrain.gbui.globals :as g]
             [graphbrain.gbui.animation :as anim]
-            [graphbrain.gbui.change :as change]
             [graphbrain.gbui.user :as user]
             [graphbrain.gbui.contexts :as contexts]
             [graphbrain.gbui.input :as input]
@@ -16,7 +15,4 @@
   (jq/bind ($ "#loginLink") "click" user/show-signup-dialog!)
   (jq/bind ($ "#logoutLink") "click" user/logout!)
   (jq/bind ($ "#create-context-link") "click" contexts/show-create-context-dialog!)
-  (jq/bind ($ "#switch-context-link") "click" sc/request!)
-  (if (= js/ptype "node")
-    (do
-      (change/init-dialog @g/root-id))))
+  (jq/bind ($ "#switch-context-link") "click" sc/request!))
