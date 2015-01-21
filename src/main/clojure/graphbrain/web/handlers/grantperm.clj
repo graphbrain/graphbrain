@@ -7,12 +7,14 @@
 
 (defn handle
   [request]
-  (let [ctxt ((request :form-params) "ctxt")
-        email-username ((request :form-params) "email-username")
+  (let [user (common/get-user request)
+        ctxt ((request :form-params) "ctxt")
         role ((request :form-params) "role")
-        user (gb/find-user common/gbdb email-username)]
-    (if user
+        email-username ((request :form-params) "email-username")
+        targ-user (gb/find-user common/gbdb email-username)]
+    (if (and targ-user
+             (perms/is-admin? common/gbdb (:id user) ctxt))
       (case role
-        "Administrator" (perms/grant-admin! common/gbdb (:id user) ctxt)
-        "Editor" (perms/grant-editor! common/gbdb (:id user) ctxt)))
+        "Administrator" (perms/grant-admin! common/gbdb (:id targ-user) ctxt)
+        "Editor" (perms/grant-editor! common/gbdb (:id targ-user) ctxt)))
     (redirect (str "/n/" ctxt))))

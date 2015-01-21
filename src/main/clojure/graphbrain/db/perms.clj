@@ -1,5 +1,6 @@
 (ns graphbrain.db.perms
-  (:require [graphbrain.db.gbdb :as gb]))
+  (:require [graphbrain.db.gbdb :as gb]
+            [graphbrain.db.id :as id]))
 
 (defn has-perm?
   [gbdb user-id ctxt-id perm]
@@ -22,9 +23,16 @@
                   user-id))
 
 (defn can-edit?
-  [gbdb user-id ctxt-id]
-  (or (is-editor? gbdb user-id ctxt-id)
-      (is-admin? gbdb user-id ctxt-id)))
+  ([gbdb id user-id ctxt-id]
+     (let [rel (if (= (id/id->type id) :edge)
+                 (first (id/id->ids id))
+                 "")]
+       (if (some #{rel} ["r/*admin" "r/*editor"])
+         (is-admin? gbdb user-id ctxt-id)
+         (can-edit? gbdb user-id ctxt-id))))
+  ([gbdb user-id ctxt-id]
+     (or (is-editor? gbdb user-id ctxt-id)
+         (is-admin? gbdb user-id ctxt-id))))
 
 (defn grant-perm!
   [gbdb user-id ctxt-id perm]
