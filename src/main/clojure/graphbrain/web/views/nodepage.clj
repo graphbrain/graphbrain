@@ -8,9 +8,9 @@
   [:a {:href (str "/x/" id)}
    (entity/label id)])
 
-(defn- manage-context
+(defn- admin-context
   [ctxt]
-  [:div {:id "manage-context"
+  [:div {:id "admin-context"
          :class "after-title-frame"}
    [:form {:class "form-inline"
            :action "/grant-perm"
@@ -47,7 +47,7 @@
                 :class "btn btn-primary after-title-form-elem"}
        (str "Unfollow " (:name ctxt))]
       [:button {:type "submit"
-                :class "btn btn-primary manage-form-elem"}
+                :class "btn btn-primary admin-form-elem"}
        (str "Follow " (:name ctxt))])]])
 
 (defn view
@@ -63,8 +63,8 @@
         (interpose ", "
                    (map subid->link desc)))]]
 
-    (if (:manage ctxt)
-      (manage-context ctxt))
+    (if (:admin ctxt)
+      (admin-context ctxt))
 
     (if (:follow-unfollow ctxt)
       (follow-unfollow ctxt))

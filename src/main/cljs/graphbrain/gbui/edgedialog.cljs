@@ -88,7 +88,7 @@
       (jq/hide mod-button))
 
     (if (or (:static snode)
-            (and (= :entity (:type node))
+            (and msg
                  (not (:can-edit msg))))
       (jq/hide rem-button)
       (jq/show rem-button))
@@ -149,6 +149,6 @@
 
 (defn clicked
   [node snode]
-  (if (some #{(:type node)} [:entity :edge])
+  (if (some #{(:type node)} [:entity :edge :user])
     (request! node snode)
     (show-edge-dialog nil node snode)))
