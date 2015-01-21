@@ -21,7 +21,7 @@
                      (entity/text id)
                      ctxts)
            :author (author edge-id ctxts)
-           :can-edit (perms/can-edit? common/gbdb user-id ctxt)}))
+           :can-edit (perms/can-edit? common/gbdb edge-id user-id ctxt)}))
 
 (defn handle
   [request]

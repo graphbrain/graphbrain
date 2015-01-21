@@ -5,7 +5,7 @@
             [graphbrain.web.colors :as colors]
             [graphbrain.web.common :as common]))
 
-(defn- manage?
+(defn- admin?
   [id user-id ctxt-id]
   (and (= id ctxt-id)
        (perms/is-admin? common/gbdb
@@ -13,8 +13,8 @@
                         ctxt-id)))
 
 (defn- follow-unfollow?
-  [id ctxt-id manage]
-  (and (not manage)
+  [id ctxt-id admin]
+  (and (not admin)
        (= id ctxt-id)))
 
 (defn context-data
@@ -24,11 +24,11 @@
         name (if (= ctxt-id user-id)
                "Personal"
                (context/label ctxt-id))
-        manage (manage? id user-id ctxt-id)
-        follow-unfollow (follow-unfollow? id ctxt-id manage)]
+        admin (admin? id user-id ctxt-id)
+        follow-unfollow (follow-unfollow? id ctxt-id admin)]
     {:id ctxt-id
      :name name
-     :manage manage
+     :admin admin
      :follow-unfollow follow-unfollow
      :following (if follow-unfollow
                   (perms/is-following? common/gbdb user-id ctxt-id))}))
