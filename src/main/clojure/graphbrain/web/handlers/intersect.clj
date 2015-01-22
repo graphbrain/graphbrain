@@ -30,7 +30,7 @@
                       (map edge->links edges))]
     {:vertices verts
      :links links
-     :seeds ids
+     :seeds (map id/local->global ids)
      :context (contexts/context-data
                (first ids)
                (:id user))}))
@@ -53,8 +53,7 @@
       [ids (vals (:query-params request))
        user (common/get-user request)
        ctxt (id/context (first ids))
-       ctxts (contexts/active-ctxts ctxt user)
-       ids (map id/local->global ids)]
+       ctxts (contexts/active-ctxts ctxt user)]
     (i/intersect :title "intersect"
                  :css-and-js (css+js/css+js)
                  :user user
