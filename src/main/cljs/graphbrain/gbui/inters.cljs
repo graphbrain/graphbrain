@@ -180,9 +180,13 @@
 (defn- forces
   [bubbles]
   (let [bubbs (reduce drag bubbles (keys bubbles))
-        bubbs (reduce center-attraction bubbs (keys bubbs))
-        ]
+        bubbs (reduce center-attraction bubbs (keys bubbs))]
     bubbs))
+
+(defn- total-delta
+  [bubbles]
+  (reduce #(+ %1 (:delta (second %2)))
+          0 bubbles))
 
 (def step (atom 0))
 
@@ -198,4 +202,4 @@
       (reset! bubbs (bubble/layout-step! @bubbs k visual)))
     (if visual
       (update-links! (:links @g/data))))
-  true)
+  (> (total-delta @bubbs) 1.0))

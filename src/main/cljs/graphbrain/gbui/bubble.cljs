@@ -34,6 +34,15 @@
         height (jq/height bub-div)]
     [width height]))
 
+(defn- dist
+  [p1 p2]
+  (let [dx (- (first p1) (first p2))
+        dy (- (second p1) (second p2))
+        dx2 (* dx dx)
+        dy2 (* dy dy)]
+    (Math/sqrt
+     (+ dx2 dy2))))
+
 (defn move-bubble!
   [bubbles bid pos visual]
   (if visual
@@ -44,7 +53,12 @@
           transform-str (str "translate(" (first trans) "px," (second trans) "px)")
           bub-div ($ (str "#" bid))]
       (jq/css bub-div {:transform transform-str})))
-  (assoc-in bubbles [bid :pos] pos))
+  (let [bubble (bubbles bid)
+        old-pos (:pos bubble)
+        new-bubble (assoc bubble
+                     :pos pos
+                     :delta (dist old-pos pos))]
+    (assoc bubbles bid new-bubble)))
 
 (defn- new-bubble
   []
