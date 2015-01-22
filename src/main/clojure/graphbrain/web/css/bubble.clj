@@ -8,12 +8,12 @@
      :max-height (px 200)
      :font-size (px 12)
      :padding (px 0)
-     :color "rgb(91, 214, 185)"
-     :background "rgb(20, 20, 20)"
+     :color "#000"
+     :background "#FFF"
      :overflow "scroll"}]
 
    [:.seed-bubble
-    {:background "rgb(200, 0, 0)"}]
+    {:background "rgb(250, 150, 150)"}]
 
    [:.bubble-title
     {:color "rgb(20, 20, 20)"

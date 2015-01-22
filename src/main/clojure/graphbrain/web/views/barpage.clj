@@ -97,7 +97,9 @@
               :alt "graphbrain"}]]]
 
      [:div {:class "topbar-input-area topbar-center topbar-vcenter"}
-      [:form {:class "top-input" :id "top-input-field"}
+      [:form {:class "top-input"
+              :id "top-input-field"
+              :autocomplete "off"}
        [:input {:type "text"
                 :id "main-input-field"
                 :class "top-input-field"

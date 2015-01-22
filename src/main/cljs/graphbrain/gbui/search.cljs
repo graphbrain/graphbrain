@@ -8,22 +8,53 @@
 
 (def initialised (atom false))
 
+(def mode (atom :search))
+
 (hiccups/defhtml search-dialog-template []
-  [:div {:class "modal" :role "dialog" :aria-hidden "true" :id "search-results-modal"}
-    [:div {:class "modal-dialog"}
-      [:div {:class "modal-content"}
-        [:div {:class "modal-header"}
-          [:a {:class "close" :data-dismiss "modal"} "×"]
-          [:h3 "Search Results"]]
-        [:div {:class "modal-body" :id "search-results-body"}
-          [:div {:class "modal-footer"}
-            [:a {:class "btn btn-primary" :data-dismiss "modal"} "Close"]]]]]])
-                 
+  [:div {:class "modal"
+         :role "dialog"
+         :aria-hidden "true"
+         :id "search-results-modal"}
+   [:div {:class "modal-dialog"}
+     [:div {:class "modal-content"}
+       [:div {:class "modal-header"}
+        [:a {:class "close" :data-dismiss "modal"} "×"]
+        [:h3 "Search Results"]
+        [:div {:class "btn-group"
+               :role "group"
+               :aria-label "..."}
+         [:button {:type "button"
+                   :class "btn btn-default active"
+                   :id "simple-button"}
+          "Simple"]
+         [:button {:type "button"
+                   :class "btn btn-default"
+                   :id "intersect-button"}
+          "Intersect"]]]
+      [:div {:class "modal-body" :id "search-results-body"}
+       [:div {:class "modal-footer"}
+        [:a {:class "btn btn-primary" :data-dismiss "modal"} "Close"]]]]]])
+
+(defn simple-clicked!
+  []
+  (.addClass ($ "#simple-button") "active")
+  (.removeClass ($ "#intersect-button") "active")
+  (reset! mode :search))
+
+(defn intersect-clicked!
+  []
+  (.removeClass ($ "#simple-button") "active")
+  (.addClass ($ "#intersect-button") "active")
+  (reset! mode :intersect))
+
 (defn init-dialog!
   []
   (let [html (search-dialog-template)]
-  (.appendTo ($ html) "body")
-  (.modal ($ "#search-results-modal") "hide")))
+    (.appendTo ($ html) "body")
+    (.modal ($ "#search-results-modal") "hide"))
+  (jq/bind ($ "#simple-button") "click" simple-clicked!)
+  (jq/bind ($ "#intersect-button") "click" intersect-clicked!)
+  (simple-clicked!))
 
 (defn show-dialog!
   []
@@ -37,7 +68,7 @@
   (case mode
     :search (str "/n/" @g/context "/" (first result))
     :intersect (str "/x?id1=" @g/context "/" (first result)
-                    "&id2=" @g/context "/" @g/root-id)
+                    "&id2=" @g/root-id)
     :change "#"
     :define "#"
     "#"))
@@ -52,14 +83,18 @@
   (let [results (:results msg)
         mode (:mode msg)]
     (clojure.string/join
-     (map #(str "<p><a href='"
-                (link % mode)
-                "' id='"
+     (map #(str "<p><a href='#' id='"
                 (link-id (first %))
                 "'>"
                 (second %)
                 "</a></p>")
           results))))
+
+(defn- on-click-result!
+  [result]
+  (set!
+   (.-href js/window.location)
+   (link result @mode)))
 
 (defn results-received
   [msg]
@@ -69,7 +104,12 @@
                (str "<p>" (count results) " results found.</p>"
                     (rendered-results msg)))]
     (show-dialog!)
-    (.html ($ "#search-results-body") html)))
+    (.html ($ "#search-results-body") html)
+    (doseq [result results]
+      (jq/bind
+       ($ (str "#" (link-id (first result))))
+       "click"
+       #(on-click-result! result)))))
 
 (defn request!
   [query mode f]
