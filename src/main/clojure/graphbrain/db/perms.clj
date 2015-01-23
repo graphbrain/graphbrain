@@ -4,9 +4,11 @@
 
 (defn has-perm?
   [gbdb user-id ctxt-id perm]
-  (gb/exists-rel? gbdb
-                  [(str "r/*" perm) user-id ctxt-id]
-                  ctxt-id))
+  (or
+   (= user-id ctxt-id)
+   (gb/exists-rel? gbdb
+                   [(str "r/*" perm) user-id ctxt-id]
+                   ctxt-id)))
 
 (defn is-admin?
   [gbdb user-id ctxt-id]
