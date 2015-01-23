@@ -129,7 +129,7 @@
   [request user root sentence ctxt ctxts]
   (let [url-id (url/url->id sentence)
         root-id (:id root)]
-    (pr/extract-knowledge! common/gbdb sentence ctxts (:id user))
+    (pr/extract-knowledge! common/gbdb sentence ctxt ctxts (:id user))
     (common/log request (str "extract knowledge from url "
                              "input: " sentence
                              "; ctxt: " ctxt

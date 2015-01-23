@@ -100,26 +100,26 @@
            (:score (first %))) entities)))
 
 (defn assoc-title!
-  [gbdb url-str title user-id]
+  [gbdb url-str title user-id ctxt]
   (let [url-id (url/url->id url-str)
         title-node (text/text->vertex title)
         edge-id (id/ids->id ["r/*title" url-id (:id title-node)])]
-    (gb/putv! gbdb title-node "c/web")
-    (gb/putv! gbdb (maps/id->edge edge-id) "c/web")))
+    (gb/putv! gbdb title-node ctxt)
+    (gb/putv! gbdb (maps/id->edge edge-id) ctxt)))
 
 (defn bookmark!
-  [gbdb url-str user-id]
+  [gbdb url-str user-id ctxt]
   (let [url-id (url/url->id url-str)
         edge-id (id/ids->id ["r/bookmarked" user-id url-id])]
-    (gb/putv! gbdb (maps/id->edge edge-id) user-id)))
+    (gb/putv! gbdb (maps/id->edge edge-id) ctxt)))
 
 (defn extract-knowledge!
-  [gbdb url-str ctxts user-id]
+  [gbdb url-str ctxt ctxts user-id]
   (let [html (webtools/slurp-url url-str)
         jsoup (htmltools/html->jsoup html)
         title (htmltools/jsoup->title jsoup)
         meat (meat/extract-meat html)
         edges (url+html->edges gbdb url-str meat ctxts)]
-    (assoc-title! gbdb url-str title user-id)
-    (doseq [edge edges] (gb/putv! gbdb edge "c/web"))
-    (bookmark! gbdb url-str user-id)))
+    (assoc-title! gbdb url-str title user-id ctxt)
+    (doseq [edge edges] (gb/putv! gbdb edge ctxt))
+    (bookmark! gbdb url-str user-id ctxt)))
