@@ -1,7 +1,8 @@
 (ns graphbrain.web.common
   (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.user :as user]
-            [graphbrain.db.utils :as utils]))
+            [graphbrain.db.utils :as utils]
+            [clojure.tools.logging :as log]))
 
 (def production?
   (= "production" (get (System/getenv) "APP_ENV")))
@@ -37,3 +38,13 @@
   (let [tests (gb/getv gbdb "text/tests")]
       (if tests
         (:text tests) "")))
+
+(defn log
+  [request msg]
+  (let [username (:value ((request :cookies) "username"))]
+    (log/info
+     (str "[" (:remote-addr request) "] "
+          (if username
+            (str "{" username "} ")
+            "")
+          msg))))
