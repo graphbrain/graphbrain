@@ -37,7 +37,7 @@
   [id user]
   (let [ctxt (id/context id)
         user-id (:id user)
-        ctxts ["c/wordnet" "c/web" ctxt]
+        ctxts ["c/wordnet" ctxt]
         ctxts (if user
                 (conj ctxts user-id)
                 ctxts)]
