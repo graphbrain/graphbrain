@@ -1,6 +1,6 @@
 (ns graphbrain.web.handlers.user
-  (:require [graphbrain.db.gbdb :as gb])
-  (:use (graphbrain.web common)))
+  (:require [graphbrain.db.gbdb :as gb]
+            [graphbrain.web.common :as common]))
 
 (defn handle-signup
   [request]
@@ -9,6 +9,7 @@
      username ((request :form-params) "username")
      email ((request :form-params) "email")
      password ((request :form-params) "password")]
+    (common/log request (str "create user: " username))
     (gb/create-user! gbdb username name email password "user")
     "ok"))
 
@@ -17,16 +18,24 @@
   (let
     [username ((request :form-params) "username")]
     (if (gb/username-exists? gbdb username)
-      (str "exists " username)
-      (str "ok " username))))
+      (do
+        (common/log request (str "check username: " username "; EXISTS"))
+        (str "exists " username))
+      (do
+        (common/log request (str "check username: " username "; OK"))
+        (str "ok " username)))))
 
 (defn handle-check-email
   [request]
   (let
     [email ((request :form-params) "email")]
     (if (gb/email-exists? gbdb email)
-      (str "exists " email)
-      (str "ok " email))))
+      (do
+        (common/log request (str "check email: " email "; EXISTS"))
+        (str "exists " email))
+      (do
+        (common/log request (str "check email: " email "; OK"))        
+        (str "ok " email)))))
 
 (defn handle-login
   [request]
@@ -35,5 +44,9 @@
      password ((request :form-params) "password")
      user (gb/attempt-login! gbdb login password)]
     (if user
-      (str (:username user) " " (:session user))
-      "failed")))
+      (do
+        (common/log request (str "login: " (:id user)))
+        (str (:username user) " " (:session user)))
+      (do
+        (common/log request (str "FAILED LOGIN: " login))
+        "failed"))))

@@ -54,6 +54,8 @@
        user (common/get-user request)
        ctxt (id/context (first ids))
        ctxts (contexts/active-ctxts ctxt user)]
+    (common/log request (str "intersect: " ids
+                             "; ctxt: " ctxt))
     (i/intersect :title "intersect"
                  :css-and-js (css+js/css+js)
                  :user user

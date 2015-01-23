@@ -37,5 +37,13 @@
         new-id ((request :form-params) "new-id")
         targ-ctxt ((request :form-params) "targ-ctxt")]
     (if (perms/can-edit? common/gbdb (:id user) targ-ctxt)
-      (process edge old-id new-id targ-ctxt)
-      (reply-no-perms))))
+      (do
+        (common/log request (str "change old-id: " old-id
+                                 "; new-id: " new-id
+                                 "; ctxt: " targ-ctxt))
+        (process edge old-id new-id targ-ctxt))
+      (do
+        (common/log request (str "CHANGE FAILED (no perms) old-id: " old-id
+                                 "; new-id: " new-id
+                                 "; ctxt: " targ-ctxt))
+        (reply-no-perms)))))
