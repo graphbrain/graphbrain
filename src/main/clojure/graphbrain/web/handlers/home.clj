@@ -1,9 +1,9 @@
 (ns graphbrain.web.handlers.home
   (:use (ring.util response)
-        (graphbrain.web common)
         (graphbrain.web.views page))
   (:require [graphbrain.web.cssandjs :as css+js]
-            [graphbrain.web.views.home :as home]))
+            [graphbrain.web.views.home :as home]
+            [graphbrain.web.common :as common]))
 
 (defn- js
   []
@@ -11,8 +11,9 @@
 
 (defn handle
   [request]
+  (common/log request "home")
   (let
-    [user (get-user request)]
+    [user (common/get-user request)]
     (if user
       (redirect (str "/n/" (:id user)))
       (page

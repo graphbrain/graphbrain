@@ -7,13 +7,17 @@
             [graphbrain.web.common :as common]))
 
 (defn- remove-vertex!
-  [edge-id targ-ctxt]
+  [request edge-id targ-ctxt]
+  (common/log request (str "remove vertex: " edge-id
+                           "; ctxt: " targ-ctxt))
   (gb/remove! common/gbdb
               (maps/id->edge edge-id)
               targ-ctxt))
 
 (defn- new-meaning!
   [request edge-id targ-ctxt]
+  (common/log request (str "new meaning: " edge-id
+                           "; ctxt: " targ-ctxt))
   (let [eid ((request :form-params) "eid")
         score ((request :form-params) "score")
         edge (maps/id->edge edge-id score)
@@ -29,8 +33,11 @@
         targ-ctxt ((request :form-params) "targ-ctxt")]
     (if (perms/can-edit? common/gbdb edge-id (:id user) targ-ctxt)
       (case op
-        "remove" (remove-vertex! edge-id targ-ctxt)
-        "new-meaning" (new-meaning! request edge-id targ-ctxt)))
+        "remove" (remove-vertex! request edge-id targ-ctxt)
+        "new-meaning" (new-meaning! request edge-id targ-ctxt))
+      (common/log request (str "FAILED NODE ACTION (no permissions) " op
+                               "; edge-id: " edge-id
+                               "; ctxt: " targ-ctxt)))
     (redirect (str "/n/" (if (= targ-ctxt vert-id)
                            ""
                            (str targ-ctxt "/"))

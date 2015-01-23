@@ -28,4 +28,8 @@
         ctxt ((request :form-params) "ctxt")
         user (common/get-user request)
         ctxts (contexts/active-ctxts ctxt user)]
+    (common/log request (str "define new-id: " new-id
+                             "; rel: " rel
+                             "; root-id: " root-id
+                             "; ctxt: " ctxt))
     (process user rel root-id new-id ctxts)))

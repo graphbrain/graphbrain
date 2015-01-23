@@ -73,7 +73,7 @@
                (nth 2))))
 
 (defn- process-fact
-  [user root sentence ctxt ctxts]
+  [request user root sentence ctxt ctxts]
   (let
       [root-id (:id root)
        env {:root root-id
@@ -90,24 +90,50 @@
                 edge (maps/id->vertex edge-id)
                 edge (assoc edge :score 1)]
             (k/addfact! common/gbdb edge ctxt (:id user))
+            (common/log request (str "fact added: " edge
+                                     "; input: " sentence
+                                     "; ctxt: " ctxt
+                                     (if root-id (str "; root: " root-id))))
             (input-reply-fact root-id edge)))
-        (input-reply-error "Sorry, you don't have permissions to edit this GraphBrain."))
-      (input-reply-error "Sorry, I don't understand."))))
+        (do
+          (common/log request (str "INPUT FAILED (no permissions). "
+                                   "input: " sentence
+                                   "; ctxt: " ctxt
+                                   (if root-id (str "; root: " root-id))))
+          (input-reply-error
+           "Sorry, you don't have permissions to edit this GraphBrain.")))
+      (do
+        (common/log request (str "INPUT FAILED (don't understand). "
+                                 "input: " sentence
+                                 "; ctxt: " ctxt
+                                 (if root-id (str "; root: " root-id))))
+        (input-reply-error "Sorry, I don't understand.")))))
 
 (defn process-search
-  [user root q ctxt ctxts mode]
+  [request user root q ctxt ctxts mode]
   (let [q (if (= mode :intersect)
             (clojure.string/trim (subs q 1))
             q)
-        results (search/results q ctxts)]
+        results (search/results q ctxts)
+        root-id (:id root)]
     (if (empty? results)
-      (process-fact user root q ctxt ctxts)
-      (search/reply results mode))))
+      (process-fact request user root q ctxt ctxts)
+      (do
+        (common/log request (str "search "
+                                 "input: " q
+                                 "; ctxt: " ctxt
+                                 (if root-id (str "; root: " root-id))))
+        (search/reply results mode)))))
 
 (defn process-url
-  [user root sentence ctxts]
-  (let [url-id (url/url->id sentence)]
+  [request user root sentence ctxt ctxts]
+  (let [url-id (url/url->id sentence)
+        root-id (:id root)]
     (pr/extract-knowledge! common/gbdb sentence ctxts (:id user))
+    (common/log request (str "extract knowledge from url "
+                             "input: " sentence
+                             "; ctxt: " ctxt
+                             (if root-id (str "; root: " root-id))))
     (input-reply-url url-id)))
 
 (defn handle
@@ -122,6 +148,7 @@
                              "; ctxt: " targ-ctxt
                              (if root-id (str "; root: " root-id))))
     (case (sentence-type sentence)
-      :fact (process-search user root sentence targ-ctxt ctxts :search)
-      :url (process-url user root sentence ctxts)
-      :intersect (process-search user root sentence targ-ctxt ctxts :intersect))))
+      :fact (process-search request user root sentence targ-ctxt ctxts :search)
+      :url (process-url request user root sentence targ-ctxt ctxts)
+      :intersect (process-search
+                  request user root sentence targ-ctxt ctxts :intersect))))

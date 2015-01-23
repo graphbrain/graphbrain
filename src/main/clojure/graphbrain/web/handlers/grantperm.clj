@@ -14,7 +14,17 @@
         targ-user (gb/find-user common/gbdb email-username)]
     (if (and targ-user
              (perms/is-admin? common/gbdb (:id user) ctxt))
-      (case role
-        "Administrator" (perms/grant-admin! common/gbdb (:id targ-user) ctxt)
-        "Editor" (perms/grant-editor! common/gbdb (:id targ-user) ctxt)))
+      (do
+        (common/log request (str "grant permissions ctxt: " ctxt
+                                 "; role: " role
+                                 "; email-username: " email-username
+                                 "; targ-user: " (:id targ-user)))
+        (case role
+          "Administrator" (perms/grant-admin! common/gbdb (:id targ-user) ctxt)
+          "Editor" (perms/grant-editor! common/gbdb (:id targ-user) ctxt)))
+      (do
+        (common/log request (str "FAILED TO GRANT PERMISSIONS ctxt: " ctxt
+                                 "; role: " role
+                                 "; email-username: " email-username
+                                 "; targ-user: " (:id targ-user)))))
     (redirect (str "/n/" ctxt))))

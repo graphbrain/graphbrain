@@ -9,7 +9,7 @@
 
 (defn handle
   [request]
-  (log request "home")
+  (log request "landing")
   (let [user (get-user request)]
     (if user
       (redirect (str "/n/" (:id user)))
