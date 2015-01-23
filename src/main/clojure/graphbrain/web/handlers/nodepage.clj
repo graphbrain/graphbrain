@@ -44,6 +44,7 @@
               :user "GraphBrain user"
               nil)
        ctxt (contexts/context-data id (:id user))]
+    (common/log request (str "nodepage: " id))
     (np/nodepage :title title
                  :css-and-js (css+js/css+js)
                  :user user

@@ -118,6 +118,9 @@
         user (common/get-user request)
         ctxts (contexts/active-ctxts targ-ctxt user)
         root (if root-id (gb/getv common/gbdb root-id ctxts))]
+    (common/log request (str "input: " sentence
+                             "; ctxt: " targ-ctxt
+                             (if root-id (str "; root: " root-id))))
     (case (sentence-type sentence)
       :fact (process-search user root sentence targ-ctxt ctxts :search)
       :url (process-url user root sentence ctxts)

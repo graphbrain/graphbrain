@@ -26,6 +26,7 @@
 
 (defn handle
   [request]
+  (common/log request "allusers")
   (let [user (common/get-user request)]
     (page
       :title "all users"

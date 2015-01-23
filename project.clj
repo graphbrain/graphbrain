@@ -5,6 +5,7 @@
   :dependencies  [[org.clojure/clojure "1.6.0"]
                   [org.clojure/tools.trace "0.7.8"]
                   [org.clojure/tools.cli "0.3.1"]
+                  [org.clojure/tools.logging "0.3.1"]
                   [commons-io/commons-io "2.4"]
                   [org.apache.commons/commons-lang3 "3.1"]
                   [commons-lang/commons-lang "2.6"]

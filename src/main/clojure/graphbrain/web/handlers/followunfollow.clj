@@ -9,5 +9,6 @@
   [request]
   (let [ctxt ((request :form-params) "ctxt")
         user (common/get-user request)]
+    (common/log request (str "followunfollow: " ctxt))
     (perms/toggle-follow! common/gbdb (:id user) ctxt)
     (redirect (str "/n/" ctxt))))
