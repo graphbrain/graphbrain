@@ -7,6 +7,7 @@
             [graphbrain.web.common :as common]
             [graphbrain.web.handlers.landing :as landing]
             [graphbrain.web.handlers.home :as home]
+            [graphbrain.web.handlers.presentation :as pres]
             [graphbrain.web.handlers.nodeactions :as nodeactions]
             [graphbrain.web.handlers.user :as user]
             [graphbrain.web.handlers.raw :as raw]
@@ -47,6 +48,7 @@
   (POST "/grant-perm" request (gp/handle request))
   (POST "/follow-unfollow" request (fu/handle request))
   (POST "/edge-data" request (ed/handle request))
+  (GET "/presentation" request (pres/handle request))
   (route/not-found "<h1>Page not found</h1>"))
 
 (def app
