@@ -79,9 +79,16 @@
         [:p "Simply give GraphBrain a URL and it will reade the page, extract the topics and connect everything to your graph."]]
        [:div {:class "col-md-4"}
         [:h2 "Free"]
-        [:p "Public graphs are free. GraphBrain is ideal for online communities."]]]
+        [:p "Public graphs are free. GraphBrain is ideal for online communities."]]]]
 
-      ]
-
-
+    [:div {:class "container"}
+     [:div {:class "row"}
+      [:div {:class "col-md-12"}
+       [:br] [:br] [:br] [:br]
+       [:p {:style "text-align:center"}
+        "GraphBrain was created under the "
+        [:a {:href "http://algopol.fr"} "Algopol"]
+        " research project."]
+       [:br] [:br]
+       ]]]
      ]))
