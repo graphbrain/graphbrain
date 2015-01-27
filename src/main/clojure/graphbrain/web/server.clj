@@ -28,7 +28,7 @@
 
 (defroutes app-routes
   (GET "/" request (landing/handle request))
-  (GET "/demo" request (home/handle request))
+  (GET "/demo" request (pres/handle request))
   (POST "/n/*" request (nodeactions/handle request))
   (GET "/n/*" request (nodepage/handle request))
   (GET "/x" request (intersect/handle request))
