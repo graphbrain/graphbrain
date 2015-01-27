@@ -34,6 +34,7 @@
                   [hiccup "1.0.5"]
                   [garden "1.1.5" :exclusions [org.clojure/clojure]]
                   [com.cemerick/url "0.1.1"]
+                  [markdown-clj "0.9.62"]
                   ;; ClojureScript
                   [org.clojure/clojurescript "0.0-2173"]
                   [jayq "2.5.0"]

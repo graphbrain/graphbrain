@@ -10,14 +10,14 @@
      email ((request :form-params) "email")
      password ((request :form-params) "password")]
     (common/log request (str "create user: " username))
-    (gb/create-user! gbdb username name email password "user")
+    (gb/create-user! common/gbdb username name email password "user")
     "ok"))
 
 (defn handle-check-username
   [request]
   (let
     [username ((request :form-params) "username")]
-    (if (gb/username-exists? gbdb username)
+    (if (gb/username-exists? common/gbdb username)
       (do
         (common/log request (str "check username: " username "; EXISTS"))
         (str "exists " username))
@@ -29,7 +29,7 @@
   [request]
   (let
     [email ((request :form-params) "email")]
-    (if (gb/email-exists? gbdb email)
+    (if (gb/email-exists? common/gbdb email)
       (do
         (common/log request (str "check email: " email "; EXISTS"))
         (str "exists " email))
@@ -42,7 +42,7 @@
   (let
     [login ((request :form-params) "login")
      password ((request :form-params) "password")
-     user (gb/attempt-login! gbdb login password)]
+     user (gb/attempt-login! common/gbdb login password)]
     (if user
       (do
         (common/log request (str "login: " (:id user)))
