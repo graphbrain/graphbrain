@@ -15,4 +15,4 @@
       (redirect (str "/n/" (:id user)))
       (if (= (:server-name request) "graphbrain.com")
         (lp/page)
-        (redirect "/demo")))))
+        (redirect "/presentation")))))
