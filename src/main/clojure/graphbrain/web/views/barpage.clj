@@ -67,7 +67,7 @@
          :aria-labelledby "context-menu"}
     [:li {:role "presentation"
           :class "dropdown-header"}
-     "GraphBrains"]
+     "Knowledge Graphs"]
     [:li {:role "presentation"}
      [:a {:href "#"
           :id "switch-context-link"

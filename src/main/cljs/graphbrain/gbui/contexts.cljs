@@ -23,7 +23,7 @@
     [:div {:class "modal-content"}
      [:div {:class "modal-header"}
       [:a {:class "close" :data-dismiss "modal"} "×"]
-      [:h3 "Create Context"]]
+      [:h3 "Create Knowledge Graph"]]
      [:form {:id "create-context-form"
              :action "/create-context"
              :method "post"}
