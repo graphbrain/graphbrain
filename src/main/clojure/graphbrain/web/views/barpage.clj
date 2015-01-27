@@ -38,9 +38,13 @@
             :role "menu"}
         "About GraphBrain"]]
       [:li {:role "presentation"}
-       [:a {:href (str "/x/u/" (:username user))
+       [:a {:href (str "/n/u/" (:username user))
             :role "menu"}
         "Home"]]
+      [:li {:role "presentation"}
+       [:a {:href "/docs/help"
+            :role "menu"}
+        "Help"]]
       [:li {:role "presentation"}
        [:a {:href "#"
             :id "logoutLink"
