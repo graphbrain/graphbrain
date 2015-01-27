@@ -34,7 +34,7 @@
            :role "menu"
            :aria-labelledby "user-menu"}
       [:li {:role "presentation"}
-       [:a {:href "http://graphbrain.com"
+       [:a {:href "/presentation"
             :role "menu"}
         "About GraphBrain"]]
       [:li {:role "presentation"}
