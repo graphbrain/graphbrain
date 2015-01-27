@@ -23,7 +23,8 @@
             [graphbrain.web.handlers.contexts :as contexts]
             [graphbrain.web.handlers.grantperm :as gp]
             [graphbrain.web.handlers.followunfollow :as fu]
-            [graphbrain.web.handlers.edgedata :as ed]))
+            [graphbrain.web.handlers.edgedata :as ed]
+            [graphbrain.web.handlers.docs :as docs]))
 
 (defroutes app-routes
   (GET "/" request (landing/handle request))
@@ -49,6 +50,7 @@
   (POST "/follow-unfollow" request (fu/handle request))
   (POST "/edge-data" request (ed/handle request))
   (GET "/presentation" request (pres/handle request))
+  (GET "/docs/*" request (docs/handle request))
   (route/not-found "<h1>Page not found</h1>"))
 
 (def app
