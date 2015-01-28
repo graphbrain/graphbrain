@@ -94,7 +94,8 @@
 
 (defn intersect
   [gbdb ids ctxts]
-  (let [edgesets (map #(id->edges gbdb % ctxts) ids)
+  (let [ids (map id/local->global ids)
+        edgesets (map #(id->edges gbdb % ctxts) ids)
         vemap (reduce edges->vemap {} edgesets)
         eids (map #(db/id->eid gbdb %) ids)
         walks (walks vemap eids [(first eids)] #{})
