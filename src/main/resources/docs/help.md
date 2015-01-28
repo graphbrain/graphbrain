@@ -59,15 +59,34 @@ This allows you to crete a knowledge graph that combines pure concepts with web 
 
 ### Explore and navigate
 
+There are currently 3 main modes of exploration and navigation:
+
+* Simple search
+* Network of entity pages
+* Intersections
+
+We expect to keep adding more visualization modes to GraphBrain.
+
+#### Search
+
 Graphbrain offers a conventional search interface. If instead of a fact or a URL you just type a search term, for example:
 
     Stanley Kubrick
 
-GraphBrain will understand that you are searching for this term and will display a dialog containing the possible meanings of "Stanley Kubrick". Maybe it will just know about Stanley Kubrick the film maker. Clicking on that meaning will send you to the related entity page. This page will show you how all the relevant relations between Stanley Kubrick and other entities.
+GraphBrain will understand that you are searching for this term and will display a dialog containing the possible meanings of "Stanley Kubrick". Maybe it will just know about Stanley Kubrick the film maker. Clicking on that meaning will send you to the appropriate entity page.
+
+#### Network of entity pages
+
+Entity pages show you how all the relevant relations between a certain entity (e.g. Stanley Kubrick) and all other connected entities.
 
 Simply clicking through these entities allows to explore the network of relationships.
 
-TBD: intersect
+#### Intersections
+
+It is possible to see what two entities have in common. This is a powerful exploration mode that can be accessed very easily, because it works in a very similar fashion to simple search.
+
+Try doing a simple search for "violin" and select the musical instrument. Then, from the violin node page search for "piano". This time, on top of the Search Results dialog, switch from "Simple" to "Intersect". Now select piano the musical instrument. A graph will be generated showing how the copncepts of piano and violing are connected through the concepts of "Bowed Stringed Instrument" and "Stringed Instrument". 
+
 
 ### Change meanings
 
