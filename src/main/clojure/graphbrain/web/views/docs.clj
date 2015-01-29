@@ -5,12 +5,11 @@
 (def style "
 <style>
   body, html {
-    background-image:url('../images/bg.png')
-    #background-color: rgba(200, 200, 255, 0.85);
-    #background-attachment: fixed;
+    background-image:url('../images/bg.png');
+    background-attachment: fixed;
   }
   #nodeback {
-    background-color: transparent;    
+    background-color: transparent;
   }
 </style>
 ")
@@ -23,8 +22,11 @@
    
    [:div {:class "container"}
     [:div {:class "row"}
-     [:div {:class "col-sm-8"}
-      html-str]]]))
+     [:div {:class "col-sm-8"
+            :style "background-color: rgba(255, 255, 255, 0.90)"}
+      html-str]]]
+
+   [:br] [:br]))
 
 (defn docs
   [& {:keys [title css-and-js user ctxt js html]}]

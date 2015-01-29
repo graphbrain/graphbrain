@@ -88,18 +88,56 @@ It is possible to see what two entities have in common. This is a powerful explo
 Try doing a simple search for "violin" and select the musical instrument. Then, from the violin node page search for "piano". This time, on top of the Search Results dialog, switch from "Simple" to "Intersect". Now select piano the musical instrument. A graph will be generated showing how the copncepts of piano and violing are connected through the concepts of "Bowed Stringed Instrument" and "Stringed Instrument". 
 
 
-### Change meanings
+### Define and change meanings
 
-TBD...
+On node pages, entites are presented as having certain meanings. From previous examples, "Stanley Kubrick" is presented as the film maker. This is displayed in smaller font in front of the entity name.
 
-If you inserted the previous fact, it will show Eyes Wise Shut as a movie directed by Stanley Kubrick.
+But what if you insert this fact?
+
+    Stanley Kubrick manages the blue project.
+
+You will end up on Stanley Kubrick's page, with a reference to him being the manager of a "blue project". Blue project will probably have an undefined meaning.
+
+#### Define a new entity
+
+Click on "blue project" and insert the following fact:
+
+    This is a project.
+
+You will be presented with a dialog with the possible meanings of "project". After choosing one, "blue project" will be defined as a type of project. You can always use the "this is something" pattern to define undefined entitties.
+
+#### Change meaning
+
+Now maybe this Stanley Kubrick who manages the "blue project" is not the film director. Of course, sometimes the same names refer to different entities. You can redefine that easily. Click the star icon next to Stanleu Kubrick to access the relationship dialog.
+
+By clicking "New Meaning", the Stanley Kubrick that manages "blue project" will be switched to undefined meaning. Then you can define him to mean someone else, as before. For example:
+
+    He is a project manager.
+
+It could have been that other Stanley Kubricks were already known about. In this case, you could have simply selected one from the list instead of creating a new meaning.
+
+Naturally, all of these changes only affect the current relationship, and not other relationships where the previous entities participate.
+
+
+### Remove facts
+
+To remove a fact you use the same relatinship dialog you used above to change meanings. Click the star next to the fact you want to remove and then click "Remove".
 
 
 ### Switch to other graphs
 
-TBD
+To switch to other graphs that you follow, click the current knowledge graph indicator and select "Switch".
 
 
 ### Add collaborators, manage permissions
 
-TBD
+If you have administrator privileges on a graph, you can add more collaborators to it. Collaborators have one of two possible roles:
+
+* Editor
+* Administrator
+
+Editors can add knowledge to the graph. Administrator can also add new collaborators.
+
+You can go to the root page of the current graph by selecting "Graph Home" on the current graph indicator menu. There, if you are an administrator, you will be presented with a simple interface to add collaborators with the above permission levels.
+
+To revoke a permission, just remove it as you would a fact.
