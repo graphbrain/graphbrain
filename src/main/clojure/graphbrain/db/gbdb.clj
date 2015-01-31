@@ -20,9 +20,9 @@
             vertex nil]
        (if (or vertex (empty? cs))
          (if vertex vertex
-           (let [id (mysql/first-alt gbdb (id/local->global id))
-                 vertex (if id (maps/local->global (getv gbdb id)))]
-             vertex))
+             (let [id (mysql/first-alt gbdb (id/local->global id))
+                   vertex (if id (maps/local->global (getv gbdb id)))]
+               vertex))
          (recur (rest cs) (getv gbdb (id/global->local id (first cs))))))))
 
 (defn exists?
