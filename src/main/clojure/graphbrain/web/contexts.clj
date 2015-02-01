@@ -19,25 +19,30 @@
 
 (defn context-data
   [id user-id]
-  (let [ctxt-id (id/context id)
-        ctxt-id (if ctxt-id ctxt-id user-id)
-        name (if (= ctxt-id user-id)
-               "Personal"
-               (context/label ctxt-id))
-        admin (admin? id user-id ctxt-id)
-        follow-unfollow (follow-unfollow? id ctxt-id admin)]
-    {:id ctxt-id
-     :name name
-     :admin admin
-     :follow-unfollow follow-unfollow
-     :following (if follow-unfollow
-                  (perms/is-following? common/gbdb user-id ctxt-id))}))
+  (if id
+    (let [ctxt-id (id/context id)
+          ctxt-id (if ctxt-id ctxt-id user-id)
+          name (if (= ctxt-id user-id)
+                 "Personal"
+                 (context/label ctxt-id))
+          admin (admin? id user-id ctxt-id)
+          follow-unfollow (follow-unfollow? id ctxt-id admin)]
+      {:id ctxt-id
+       :name name
+       :admin admin
+       :follow-unfollow follow-unfollow
+       :following (if follow-unfollow
+                    (perms/is-following? common/gbdb user-id ctxt-id))})))
 
 (defn active-ctxts
   [id user]
-  (let [ctxt (id/context id)
+  (let [ctxt (if id
+               (id/context id))
         user-id (:id user)
-        ctxts ["c/wordnet" ctxt]
+        ctxts ["c/wordnet"]
+        ctxts (if ctxt
+                (conj ctxts ctxt)
+                ctxts)
         ctxts (if user
                 (conj ctxts user-id)
                 ctxts)]

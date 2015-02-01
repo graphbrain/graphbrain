@@ -92,8 +92,9 @@
      [:div {:class "pull-right topbar-vcenter topbar-menu"}
       (user-menu user)]
      
-     [:div {:class "pull-right topbar-vcenter topbar-menu"}
-      (context-menu ctxt)]
+     (if ctxt
+       [:div {:class "pull-right topbar-vcenter topbar-menu"}
+        (context-menu ctxt)])
   
      [:div {:class "topbar-element topbar-center topbar-vcenter"}
       [:a {:href "/"}
