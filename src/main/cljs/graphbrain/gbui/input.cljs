@@ -54,6 +54,9 @@
 
 (defn query
   [e]
-  (.preventDefault e)
-  (input-request (jq/val ($ "#main-input-field")))
-  false)
+  (if (= js/ptype "eco")
+    (.submit ($ "#top-input-field"))
+    (do
+      (.preventDefault e)
+      (input-request (jq/val ($ "#main-input-field")))
+      false)))

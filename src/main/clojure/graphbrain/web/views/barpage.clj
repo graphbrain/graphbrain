@@ -104,7 +104,9 @@
      [:div {:class "topbar-input-area topbar-center topbar-vcenter"}
       [:form {:class "top-input"
               :id "top-input-field"
-              :autocomplete "off"}
+              :autocomplete "off"
+              :action "/eco"
+              :method "post"}
        [:input {:type "text"
                 :id "main-input-field"
                 :class "top-input-field"
