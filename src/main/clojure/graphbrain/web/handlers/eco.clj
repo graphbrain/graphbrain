@@ -42,15 +42,18 @@
 
 (defn handle
   [request]
+  (prn (str "eco! " request))
   (let
       [sentence ((request :form-params) "input-field")
        user (common/get-user request)
-       ctxts (contexts/active-ctxts request user)
+       ctxts (contexts/active-ctxts (:id user) user)
+       ctxt (contexts/context-data (:id user) (:id user))
        title "Eco test"
        report (if sentence
                 (report user sentence ctxts))]
     (ecop/page :title title
                :css-and-js (css+js/css+js)
                :user user
+               :ctxt ctxt
                :js (js)
                :report report)))
