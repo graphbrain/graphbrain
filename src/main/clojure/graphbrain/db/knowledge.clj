@@ -5,13 +5,17 @@
 
 (defn addfact!
   [gbdb edge ctxt-id author-id]
-  (if (not (gb/getv gbdb (:id edge) [ctxt-id]))
-    (let [fact-author-id ["r/*author" (:id edge) author-id]]
-      (gb/putv! gbdb edge ctxt-id)
-      (gb/putv! gbdb
-                (maps/id->edge
-                 (id/ids->id fact-author-id))
-                ctxt-id))))
+  (if (= (maps/edge-type edge) "r/*edges")
+    (doseq [e (map maps/id->edge
+                   (maps/participant-ids edge))]
+      (addfact! gbdb e ctxt-id author-id))
+    (if (not (gb/getv gbdb (:id edge) [ctxt-id]))
+      (let [fact-author-id ["r/*author" (:id edge) author-id]]
+        (gb/putv! gbdb edge ctxt-id)
+        (gb/putv! gbdb
+                  (maps/id->edge
+                   (id/ids->id fact-author-id))
+                  ctxt-id)))))
 
 (defn author
   [gbdb edge-id ctxts]

@@ -14,14 +14,25 @@
             [graphbrain.eco.parsers.chat :as chat]
             [graphbrain.string :as gbstr]))
 
+(defn- goto-id
+  [root-id vertex]
+  (if (maps/edge? vertex)
+    (if (= (maps/edge-type vertex) "r/*edges")
+      (goto-id root-id
+               (maps/id->edge
+                (first
+                 (maps/participant-ids vertex))))
+      (id/eid->id
+       (second
+        (maps/ids vertex))))
+    root-id)
+  )
+
 (defn- input-reply-fact
   [root-id vertex]
-  (let [goto-id (if (maps/edge? vertex)
-                  (id/eid->id (second (maps/ids vertex)))
-                  root-id)]
-    (pr-str {:type :fact
-             :newedges (list (:id vertex))
-             :gotoid goto-id})))
+  (pr-str {:type :fact
+           :newedges (list (:id vertex))
+           :gotoid (goto-id root-id vertex)}))
 
 (defn- input-reply-url
   [root-id]

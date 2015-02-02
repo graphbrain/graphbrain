@@ -42,7 +42,6 @@
 
 (defn handle
   [request]
-  (prn (str "eco! " request))
   (let
       [sentence ((request :form-params) "input-field")
        user (common/get-user request)

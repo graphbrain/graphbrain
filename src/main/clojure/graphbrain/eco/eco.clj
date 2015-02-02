@@ -27,6 +27,9 @@
 (defn- cond-weight
   [condf]
   (cond (= condf ?) 0
+        (= condf ??) 10
+        (= condf ???) 100
+        (= condf ????) 1000
         (string? condf) 3
         :else 1))
 
@@ -46,9 +49,10 @@
         (map #(assoc % :priority (rule-priority %)) rules)))
 
 (defmacro pattern
-  [rules desc chunks f]
+  [typ rules desc chunks f]
   `(def ~rules
-     (sorted-rules (conj ~rules
+     (sorted-rules
+      (conj ~rules
             {:chunks
              (let [~'chunk-defs
                    ~(apply vector (map
@@ -67,14 +71,16 @@
                                              first
                                              (partition 2 (destructure chunks)))))
                                     (symbol 'env)
-                                    (symbol 'rules)))
+                                    (symbol 'rules)
+                                    (symbol 'depth)))
                        f)
              :desc ~(str desc " ["
                          (clojure.string/join
                           "-"
                           (map #(name (first %))
                                (partition 2 (destructure chunks))))
-                         "]")}))))
+                         "]")
+             :typ ~typ}))))
 
 (defn eval-chunk-word
   [chunk word]
@@ -84,67 +90,79 @@
 (declare eval-rule)
 
 (defn- add-var-and-parse-more
-  [chunk subsent chunks sentence env]
+  [chunk subsent chunks typ sentence env depth]
   (let [parse (eval-rule
                sentence
                (rest chunks)
+               typ
                []
-               env)]
+               env
+               depth)]
     (if parse (map #(assoc % (:var chunk) subsent) parse))))
 
 (defn eval-rule
-  [sentence chunks subsent env]
-  (let [chunk (first chunks)
-        word (first sentence)
-
-        cur-word-cur-chunk (eval-chunk-word chunk word)
+  [sentence chunks typ subsent env depth]
+  (if (or
+       (not= typ :top)
+       (= depth 0))
+    (let [chunk (first chunks)
+          word (first sentence)
+          
+          cur-word-cur-chunk (eval-chunk-word chunk word)
+          
+          ;; continue chunk
+          continue (if cur-word-cur-chunk
+                     (eval-rule
+                      (rest sentence)
+                      chunks
+                      typ
+                      (conj subsent word)
+                      env
+                      depth))
         
-        ;; continue chunk
-        continue (if cur-word-cur-chunk
-                  (eval-rule
-                   (rest sentence)
-                   chunks
-                   (conj subsent word)
-                   env))
-
-        ;; end current chunk
-        end (if (and (not cur-word-cur-chunk) (not (empty? subsent)))
-              (add-var-and-parse-more chunk subsent chunks sentence env))
+          ;; end current chunk
+          end (if (and (not cur-word-cur-chunk) (not (empty? subsent)))
+                (add-var-and-parse-more
+                 chunk subsent chunks typ sentence env depth))
         
-        ;; fork chunk
-        fork (if (and cur-word-cur-chunk
-                     (not (empty? subsent))
-                     (eval-chunk-word (second chunks) word))
-               (add-var-and-parse-more chunk subsent chunks sentence env))]
-    (if (and (empty? sentence) (empty? chunks))
-      [nil]
-      (let [res (filter #(not (empty? %)) (into (into continue end) fork))]
-        res))))
+          ;; fork chunk
+          fork (if (and cur-word-cur-chunk
+                        (not (empty? subsent))
+                        (eval-chunk-word (second chunks) word))
+                 (add-var-and-parse-more
+                  chunk subsent chunks typ sentence env depth))]
+      (if (and (empty? sentence) (empty? chunks))
+        [nil]
+        (let [res (filter #(not (empty? %)) (into (into continue end) fork))]
+          res)))))
 
 (defn- result->vertex
-  [rules rule result env]
+  [rules rule result env depth]
   (let [ks (sort (keys result))
         vals (map #(% result) ks)
-        verts (apply (:f rule) (conj vals env rules))]
+        verts (apply (:f rule) (conj vals env rules depth))]
     (if (map? verts)
       (assoc verts :rule rule)
       (map #(assoc % :rule rule) verts))))
 
 (defn parse
-  [rules words env]
-  (loop [rs rules
-         res []
-         c 0]
-    (if (or (empty? rs) (> c 1))
-      res
-      (let [rule (first rs)
-            results (eval-rule words (:chunks rule) [] env)
-            newc (if (empty? results) c (inc c))
-            results (flatten (into [] (map #(result->vertex rules rule % env)
-                                           results)))]
-        (recur (rest rs)
-               (set/union res results)
-               newc)))))
+  ([rules words env depth]
+     (loop [rs rules
+            res []
+            c 0]
+       (if (or (empty? rs) (> c 1))
+         res
+         (let [rule (first rs)
+               results (eval-rule words (:chunks rule) (:typ rule) [] env depth)
+               newc (if (empty? results) c (inc c))
+               results (flatten (into []
+                                      (map #(result->vertex rules rule % env depth)
+                                              results)))]
+           (recur (rest rs)
+                  (set/union res results)
+                  newc)))))
+  ([rules words env]
+     (parse rules words env 0)))
 
 (defn parse->vertex
   [par]
@@ -190,4 +208,4 @@
 
 (defmacro !
   [words]
-  `(parse ~'rules ~words ~'env))
+  `(parse ~'rules ~words ~'env ~'(inc depth)))
