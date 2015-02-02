@@ -9,6 +9,18 @@
   [word]
   true)
 
+(defn ??
+  [word]
+  true)
+
+(defn ???
+  [word]
+  true)
+
+(defn ????
+  [word]
+  true)
+
 (defn |
   [& cond-funs]
   (fn [word]
@@ -102,6 +114,10 @@
   [& parts]
   (let [lparts (map #(if (and (coll? %) (not (map? %))) % [%]) parts)]
     (map #(hash-map :vertex %) (apply combs/cartesian-product lparts))))
+
+(defn edges
+  [& parts]
+  (apply edge (conj parts (id->vert "r/*edges"))))
 
 (defn eid
   [rel name & ids]
