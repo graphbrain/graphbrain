@@ -26,8 +26,8 @@
                                 (words->str v)
                                 "_"
                                 (words->str y)))
-               owner (entity x)
-               class (entity y)
+               owner (! x)
+               class (! y)
                thing (entity z)
                e1 (edge r owner thing)
                e2 (edge (id->vert "r/is")
