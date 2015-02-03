@@ -26,6 +26,23 @@
   (fn [word]
     (some #(% word) cond-funs)))
 
+(defn w
+  [word-str]
+  (fn [word] (= (:word word) word-str)))
+
+(defn &
+  [& cond-funs]
+  (fn [word]
+    (loop [conds cond-funs]
+      (if (empty? conds)
+        true
+        (let [cond (first conds)
+              cond (if (string? cond)
+                     (w cond)
+                     cond)]
+            (if (cond word)
+              (recur (rest conds))))))))
+
 (defn verb
   [word]
   (word/verb? word))
@@ -73,10 +90,6 @@
 (defn to
   [word]
   (word/to? word))
-
-(defn w
-  [word-str]
-  (fn [word] (= (:word word) word-str)))
 
 (defn !w
   [word-str]
