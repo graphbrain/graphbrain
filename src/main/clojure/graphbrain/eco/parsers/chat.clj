@@ -28,7 +28,7 @@
                                 (words->str y)))
                owner (! x)
                class (! y)
-               thing (entity z)
+               thing (! z)
                e1 (edge r owner thing)
                e2 (edge (id->vert "r/is")
                         thing class)]
@@ -170,8 +170,21 @@
          (! a))
 
 (pattern :normal chat
-         "remove determinate article"
-         [a det, no-dt ?]
+         "remove 'the' determinate article"
+         [a (& det "the")
+          no-dt ?]
+         (! no-dt))
+
+(pattern :normal chat
+         "remove 'a' determinate article"
+         [a (& det "a")
+          no-dt ?]
+         (! no-dt))
+
+(pattern :normal chat
+         "remove 'an' determinate article"
+         [a (& det "an")
+          no-dt ?]
          (! no-dt))
 
 (pattern :normal chat
