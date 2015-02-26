@@ -12,7 +12,8 @@ public class POSTagger {
     private static StanfordLemmatizer s;
 
     static {
-        tagger = new MaxentTagger("pos_models/english-left3words-distsim.tagger");
+        //tagger = new MaxentTagger("pos_models/english-left3words-distsim.tagger");
+        tagger = new MaxentTagger("pos_models/french.tagger");
         s = new StanfordLemmatizer();
     }
 
