@@ -168,6 +168,7 @@
 (defn run!
   []
   (let [dictionary (Dictionary/getDefaultResourceInstance)
+        ;;dictionary (Dictionary/getFileBackedInstance "/Users/telmo/wordnet/wonef-fscore-0.1.xml")
         gbdb (gb/gbdb)]
     (set-globals! gbdb dictionary)
     (process! gbdb dictionary)))

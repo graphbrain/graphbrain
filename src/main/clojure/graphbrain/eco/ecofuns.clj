@@ -99,7 +99,7 @@
   [words1 words2]
   (= (take-last (count words2) words1) words2))
 
-(defn- words->id
+(defn words->id
   [words]
   (id/sanitize (clojure.string/join " " (map :word words))))
 

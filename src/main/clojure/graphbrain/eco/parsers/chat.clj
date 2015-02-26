@@ -23,9 +23,9 @@
           collon ":"
           z ???]
          (let [r (id->vert (str "r/"
-                                (words->str v)
+                                (words->id v)
                                 "_"
-                                (words->str y)))
+                                (words->id y)))
                owner (! x)
                class (! y)
                thing (! z)
