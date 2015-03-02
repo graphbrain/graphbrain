@@ -1,6 +1,7 @@
 (ns graphbrain.core
   (:require [clojure.tools.cli :as cli]
             [graphbrain.braingenerators.wordnet :as wordnet]
+            [graphbrain.braingenerators.wordnetfr :as wordnetfr]
             [graphbrain.tools.contexts :as ctxts]
             [graphbrain.braingenerators.emmanuel :as emmanuel]
             [graphbrain.web.server :as server]
@@ -24,6 +25,7 @@
         arg (first (:arguments opts))]
     (case arg
       "wordnet" (wordnet/run!)
+      "wordnetfr" (wordnetfr/run!)
       "webapp" (server/run!)
       "addcontext" (ctxts/add-context-to-user!
                     (second (:arguments opts))
