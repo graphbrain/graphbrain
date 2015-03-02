@@ -121,8 +121,11 @@
 
      [:div {:class "row"}
       [:div {:class "col-md-12"}
-       [:img {:src "images/1-logo-v4-noline-md.png" :height 85}]
+       [:a {:href "http://cmb.huma-num.fr"}
+        [:img {:src "images/1-logo-v4-noline-md.png" :height 85}]]
        [:img {:src "images/2-logosCMB-soutiens.png" :height 85}]
-       [:img {:src "images/3-logo-algopol-square-cmbdh.png" :height 85}]
-       [:img {:src "images/4-logo-huma-num-fr.jpeg" :height 85}]]]]
+       [:a {:href "http://algopol.fr"}
+        [:img {:src "images/3-logo-algopol-square-cmbdh.png" :height 85}]]
+       [:a {:href "http://huma-num.fr"}
+        [:img {:src "images/4-logo-huma-num-fr.jpeg" :height 85}]]]]]
      ]))
