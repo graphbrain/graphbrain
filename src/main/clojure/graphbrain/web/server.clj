@@ -69,7 +69,7 @@
                       wrap-params
                       wrap-cookies))))
 
-(defn run!
+(defn start!
   []
   (common/init-graph!)
   (let [port (if common/production? 80 3000)]
