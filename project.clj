@@ -1,6 +1,6 @@
 (defproject graphbrain "0.1.0-SNAPSHOT"
   :description "GraphBrain project"
-  :url "http://graphbrain.com/"
+  :url "http://graphbrain.org"
   :jvm-opts ["-Xmx750M" "-XX:-OmitStackTraceInFastThrow"]
   :dependencies  [[org.clojure/clojure "1.8.0"]
                   ;; Clojure tools
