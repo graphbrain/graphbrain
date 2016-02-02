@@ -20,8 +20,8 @@
   (let [opts (cli/parse-opts args cli-options)
         arg (first (:arguments opts))]
     (case arg
-      "wordnet" (wordnet/run!)
-      "webapp" (server/run!)
+      "wordnet" (wordnet/import!)
+      "webapp" (server/start!)
       "addcontext" (ctxts/add-context-to-user!
                     (second (:arguments opts))
                     (nth (:arguments opts) 2))
