@@ -1,5 +1,5 @@
 (defproject graphbrain "0.1.0-SNAPSHOT"
-  :description "GraphBrain project"
+  :description "Open Knowledge Graph"
   :url "http://graphbrain.org"
   :jvm-opts ["-Xmx750M" "-XX:-OmitStackTraceInFastThrow"]
   :dependencies  [[org.clojure/clojure "1.8.0"]
@@ -63,7 +63,8 @@
   :test-paths ["test" "src/test/clojure"]
   :resource-paths ["src/main/resources"]
   :main graphbrain.core
-  :ring {:handler graphbrain.web.server/handler}
+  :ring {:init graphbrain.web.server/init-server!
+         :handler graphbrain.web.server/handler}
   :aot :all
   :cljsbuild {:builds
               [{:source-paths ["src/main/cljs"]
@@ -79,3 +80,4 @@
                      :stylesheet graphbrain.web.css.main/main
                      :compiler {:output-to "src/main/resources/css/gb.css"
                                 :pretty-print? false}}]})
+
