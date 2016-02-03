@@ -53,6 +53,10 @@
   (GET "/docs/*" request (docs/handle request))
   (route/not-found "<h1>Page not found</h1>"))
 
+(defn init-server!
+  []
+  (common/init-graph!))
+
 (def app
   (-> app-routes
       (wrap-resource "")
@@ -61,16 +65,10 @@
       wrap-cookies))
 
 (def handler
-  (do
-    (common/init-graph!)
-    (handler/site (-> app-routes
-                      (wrap-resource "")
-                      wrap-file-info
-                      wrap-params
-                      wrap-cookies))))
+  (handler/site app))
 
 (defn start!
   []
-  (common/init-graph!)
+  (init-server!)
   (let [port (if common/production? 80 3000)]
     (run-jetty app {:port port})))
