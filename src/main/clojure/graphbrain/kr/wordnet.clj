@@ -1,4 +1,4 @@
-(ns graphbrain.braingenerators.wordnet
+(ns graphbrain.kr.wordnet
   (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.id :as id]
             [graphbrain.db.maps :as maps]

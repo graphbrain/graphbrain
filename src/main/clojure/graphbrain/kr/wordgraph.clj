@@ -1,7 +1,7 @@
-(ns graphbrain.braingenerators.wordgraph
+(ns graphbrain.kr.wordgraph
   (:require [graphbrain.graphtools :as graphtools]
             [graphbrain.pagerank :as pagerank]
-            [graphbrain.braingenerators.nlptools :as nlptools]
+            [graphbrain.kr.nlptools :as nlptools]
             [graphbrain.eco.word :as word]
             [clojure.math.combinatorics :as combo]))
 

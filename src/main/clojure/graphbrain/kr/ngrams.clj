@@ -1,9 +1,9 @@
-(ns graphbrain.braingenerators.ngrams
+(ns graphbrain.kr.ngrams
   (:require [graphbrain.utils :as utils]
             [graphbrain.graphtools :as gt]
             [graphbrain.pagerank :as pr]
-            [graphbrain.braingenerators.wordgraph :as wg]
-            [graphbrain.braingenerators.nlptools :as nlp]))
+            [graphbrain.kr.wordgraph :as wg]
+            [graphbrain.kr.nlptools :as nlp]))
 
 
 ;; build ngrams
