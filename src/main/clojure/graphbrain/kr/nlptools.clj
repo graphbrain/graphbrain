@@ -1,5 +1,5 @@
-(ns graphbrain.braingenerators.nlptools
-  (:require [graphbrain.braingenerators.htmltools :as htmltools]
+(ns graphbrain.kr.nlptools
+  (:require [graphbrain.kr.htmltools :as htmltools]
             [graphbrain.eco.words :as words])
   (:import (java.io StringReader)
            (edu.stanford.nlp.process DocumentPreprocessor)

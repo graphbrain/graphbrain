@@ -1,6 +1,6 @@
-(ns graphbrain.braingenerators.htmltools
-  (:require [graphbrain.braingenerators.webtools :as webtools]
-            [graphbrain.braingenerators.meat :as meat])
+(ns graphbrain.kr.htmltools
+  (:require [graphbrain.kr.webtools :as webtools]
+            [graphbrain.kr.meat :as meat])
   (:import (org.jsoup Jsoup)
            (org.jsoup.nodes TextNode)
            (edu.stanford.nlp.process DocumentPreprocessor)

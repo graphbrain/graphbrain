@@ -1,4 +1,4 @@
-(ns graphbrain.braingenerators.webtools
+(ns graphbrain.kr.webtools
   (:require [clj-http.client :as client])
   (:import (java.net URL)
            (java.io BufferedReader InputStreamReader)))

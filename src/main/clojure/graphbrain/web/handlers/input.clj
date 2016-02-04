@@ -9,7 +9,7 @@
             [graphbrain.db.knowledge :as k]
             [graphbrain.db.perms :as perms]
             [graphbrain.disambig.edgeguesser :as edg]
-            [graphbrain.braingenerators.pagereader :as pr]
+            [graphbrain.kr.pagereader :as pr]
             [graphbrain.eco.eco :as eco]
             [graphbrain.eco.parsers.chat :as chat]
             [graphbrain.string :as gbstr]))

@@ -1,16 +1,16 @@
-(ns graphbrain.braingenerators.pagereader
+(ns graphbrain.kr.pagereader
   (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.urlnode :as url]
             [graphbrain.db.id :as id]
             [graphbrain.db.maps :as maps]
             [graphbrain.db.text :as text]
             [graphbrain.db.constants :as consts]
-            [graphbrain.braingenerators.webtools :as webtools]
-            [graphbrain.braingenerators.htmltools :as htmltools]
-            [graphbrain.braingenerators.nlptools :as nlp]
-            [graphbrain.braingenerators.wordgraph :as wg]
-            [graphbrain.braingenerators.meat :as meat]
-            [graphbrain.braingenerators.ngrams :as ngrams]
+            [graphbrain.kr.webtools :as webtools]
+            [graphbrain.kr.htmltools :as htmltools]
+            [graphbrain.kr.nlptools :as nlp]
+            [graphbrain.kr.wordgraph :as wg]
+            [graphbrain.kr.meat :as meat]
+            [graphbrain.kr.ngrams :as ngrams]
             [graphbrain.disambig.entityguesser :as eg]))
 
 (def g (gb/gbdb))

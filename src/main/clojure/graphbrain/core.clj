@@ -1,6 +1,6 @@
 (ns graphbrain.core
   (:require [clojure.tools.cli :as cli]
-            [graphbrain.braingenerators.wordnet :as wordnet]
+            [graphbrain.kr.wordnet :as wordnet]
             [graphbrain.tools.contexts :as ctxts]
             [graphbrain.web.server :as server]))
 

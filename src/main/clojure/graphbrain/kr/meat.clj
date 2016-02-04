@@ -1,5 +1,5 @@
-(ns graphbrain.braingenerators.meat
-  (:require [graphbrain.braingenerators.webtools :as webtools])
+(ns graphbrain.kr.meat
+  (:require [graphbrain.kr.webtools :as webtools])
   (:import (java.io StringReader)
            (de.l3s.boilerpipe.extractors CommonExtractors)
            (de.l3s.boilerpipe.sax HTMLHighlighter BoilerpipeSAXInput HTMLDocument)))
