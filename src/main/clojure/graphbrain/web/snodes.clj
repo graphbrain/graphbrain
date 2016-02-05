@@ -6,8 +6,7 @@
             [graphbrain.db.maps :as maps]
             [graphbrain.db.id :as id]
             [graphbrain.db.edgetype :as edgetype]
-            [graphbrain.db.vertex :as vertex])
-  (:import (com.graphbrain.web EdgeLabelTable)))
+            [graphbrain.db.vertex :as vertex]))
 
 (def ^:const max-snodes 15)
 
@@ -69,12 +68,6 @@
   [edges root-id]
   (reduce #(add-edge-to-edge-node-map %1 %2 root-id) {} edges))
 
-(defn- fix-label
-  [label]
-  (if (.containsKey EdgeLabelTable/lt label)
-    (.get EdgeLabelTable/lt label)
-    label))
-
 (defn- node-label
   [node]
   (case (:type node)
@@ -88,7 +81,7 @@
   [edge-type rpos root-node]
   (if (empty? edge-type)
     ""
-    (let [rel-label (fix-label (edgetype/label edge-type))
+    (let [rel-label (edgetype/label edge-type)
           text (node-label root-node)]
       (if (= rpos 0)
         (str rel-label " " text)
