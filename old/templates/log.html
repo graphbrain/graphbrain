@@ -1,8 +1,0 @@
-{% extends 'logobase.html' %}
-{% block title %}Log{% endblock %}
-
-{% block content %}
-    {% for l in logs %}
-    <p style='color:{{ l.color }}'>{{ l.ts }} {{ l.user }} {{l.ip_addr}} {{ l.msg }}</p>
-    {% endfor %}
-{% endblock %}
