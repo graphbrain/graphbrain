@@ -1,3 +1,0 @@
-"A", "has a", "B", "B", "belongs to", "A"
-"A", "is colleagues with", "B", "B", "is colleagues with", "A"
-"A", "is mother of", "B", "B", "is child of", "A"
