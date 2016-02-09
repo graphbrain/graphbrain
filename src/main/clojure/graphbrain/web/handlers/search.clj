@@ -1,15 +1,12 @@
 (ns graphbrain.web.handlers.search
   (:require [graphbrain.web.common :as common]
-            [graphbrain.web.contexts :as contexts]
             [graphbrain.db.gbdb :as gb]
             [graphbrain.db.id :as id]
-            [graphbrain.db.maps :as maps]
-            [graphbrain.db.entity :as entity]
             [graphbrain.db.searchinterface :as si]))
 
 (defn results
   [q ctxts]
-  (map #(list (id/eid->id %) (entity/description %))
+  #_(map #(list (id/eid->id %) (entity/description %))
        (si/query common/gbdb q ctxts)))
 
 (defn reply
@@ -26,7 +23,7 @@
 
 (defn handle
   [request]
-  (let [q ((request :form-params) "q")
+  #_(let [q ((request :form-params) "q")
         mode (keyword ((request :form-params) "mode"))
         ctxt ((request :form-params) "ctxt")
         user (common/get-user request)

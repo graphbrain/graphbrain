@@ -1,11 +1,10 @@
 (ns graphbrain.db.knowledge
   (:require [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.id :as id]
-            [graphbrain.db.maps :as maps]))
+            [graphbrain.db.id :as id]))
 
 (defn- edge->def
   [edge defs]
-  (if (= (maps/edge-type edge)
+  #_(if (= (maps/edge-type edge)
          "r/is")
     (let [parts (maps/participant-ids edge)]
       (assoc defs
@@ -19,7 +18,7 @@
 
 (defn- apply-defs-edge
   [defs edge]
-  (maps/ids->edge
+  #_(maps/ids->edge
    (map #(let [name (id/eid->name %)]
            (if (and
                 (defs name)
@@ -42,7 +41,7 @@
 
 (defn addfact!
   [gbdb edge ctxt-id author-id]
-  (if (= (maps/edge-type edge) "r/*edges")
+  #_(if (= (maps/edge-type edge) "r/*edges")
     (doseq [e (pre-process-edges
                (map maps/id->edge
                     (maps/participant-ids
@@ -58,7 +57,7 @@
 
 (defn author
   [gbdb edge-id ctxts]
-  (let [authors (gb/pattern->edges gbdb ["r/*author" edge-id "*"] ctxts)]
+  #_(let [authors (gb/pattern->edges gbdb ["r/*author" edge-id "*"] ctxts)]
     (if authors
       (second
        (maps/participant-ids

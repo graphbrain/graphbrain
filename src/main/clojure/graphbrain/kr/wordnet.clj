@@ -1,8 +1,6 @@
 (ns graphbrain.kr.wordnet
   (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.id :as id]
-            [graphbrain.db.maps :as maps]
-            [graphbrain.db.text :as text]
             [graphbrain.db.constants :as consts])
   (:import (org.w3c.dom ElementTraversal)
            (net.sf.extjwnl.data PointerUtils
@@ -18,7 +16,7 @@
 (defn add-relation!
   [gbdb rel]
   (prn (str "rel: " rel))
-  (if (not dryrun) (gb/putv! gbdb (maps/id->edge rel) "c/wordnet")))
+  (if (not dryrun) (gb/add! gbdb rel)))
 
 (defn super-types
   [word]
@@ -29,40 +27,25 @@
           (if hypernym
             (.getWords (.getSynset hypernym)))))))
 
-(defn example
-  [word]
-  (let [synset (.getSynset word)
-        example (.getGloss synset)]
-    (text/text->vertex example)))
-
 (declare vertex-id)
 
 (defn vertex-id-raw
   [word]
   (let [name (.getLemma word)
         sts (super-types word)
-        stids (if sts (map #(id/eid->id (vertex-id %)) sts))
-        classes (if sts stids)]
-    (id/name+ids->eid consts/type-eid-rel name classes)))
+        stids (if sts (map #(vertex-id %) sts))
+        classes (if sts stids)
+        hash (id/hashed (str name " " (clojure.string/join " " stids)))]
+    (str name "/" hash)))
 
 (def vertex-id (memoize vertex-id-raw))
 
-(defn- major-form-class-id
-  [gbdb dictionary]
-  (id/eid->id
-     (vertex-id (.get
-                  (.getWords
-                   (.get
-                    (.getSenses
-                     (. dictionary getIndexWord POS/NOUN "major form class")) 0)) 0))))
-
 (defn- set-globals!
-  [gbdb dictionary]
-  (let [mfc (major-form-class-id gbdb dictionary)]
-    (def noun (str "(r/+t noun " mfc ")"))
-    (def verb (str "(r/+t verb " mfc ")"))
-    (def adjective (str "(r/+t adjective " mfc ")"))
-    (def adverb (str "(r/+t adverb " mfc ")"))))
+  [gbdb]
+  (def noun "noun/1")
+  (def verb "verb/1")
+  (def adjective "adjective/1")
+  (def adverb "adverb/1"))
 
 (defn process-super-types!
   [gbdb vid word]
@@ -71,7 +54,7 @@
     (doseq [hypernym hypernyms]
       (let [super-word (first (.getWords (.getSynset hypernym)))
             super-id (vertex-id super-word)
-            rel (str "(r/*type_of " vid " " super-id ")")]
+            rel ["type_of/1" vid super-id]]
         (add-relation! gbdb rel)))))
 
 (defn process-synonyms!
@@ -81,7 +64,7 @@
         vid (vertex-id main-word)]
     (doseq [syn word-list]
       (let [syn-id (vertex-id syn)
-            rel (str "(r/*synonym " vid " " syn-id ")")]
+            rel ["synonym/1" vid syn-id]]
         (if (not (= vid syn-id))
                  (add-relation! gbdb rel))))))
 
@@ -92,7 +75,7 @@
     (doseq [result results]
       (let [part-word (first (.getWords (.getSynset result)))
             part-id (vertex-id part-word)
-            rel (str "(r/*part_of " part-id " " vid ")")]
+            rel ["part_of/1" part-id vid]]
         (add-relation! gbdb rel)))))
 
 (defn process-antonyms!
@@ -102,7 +85,7 @@
     (doseq [result results]
       (let [ant-word (first (.getWords (.getSynset result)))
             ant-id (vertex-id ant-word)
-            rel (str "(r/*antonym " vid " " ant-id ")")]
+            rel ["antonym/1" vid ant-id]]
         (add-relation! gbdb rel)))))
 
 (defn process-also-sees!
@@ -112,7 +95,7 @@
     (doseq [result results]
       (let [also-word (first (.getWords (.getSynset result)))
             also-id (vertex-id also-word)
-            rel (str "(r/*also_see " vid " " also-id ")")]
+            rel ["also_see/1" vid also-id]]
         (add-relation! gbdb rel)))))
 
 (defn process-pos!
@@ -124,15 +107,8 @@
                      (.equals pos POS/VERB) verb
                      (.equals pos POS/ADJECTIVE) adjective
                      (.equals pos POS/ADVERB) adverb)
-            rel (str "(r/*pos " vid " " pos-id ")")]
+            rel ["part-of-speech/1" vid pos-id]]
         (add-relation! gbdb rel)))))
-
-(defn process-example!
-  [gbdb vid word]
-  (let [tn (example word)]
-    (if (not dryrun) (gb/putv! gbdb tn "c/wordnet"))
-    (let [rel (str "(r/*example " vid " " (:id tn) ")")]
-      (add-relation! gbdb rel))))
 
 (defn process-synset!
   [gbdb synset]
@@ -142,7 +118,6 @@
     (process-meronyms! gbdb mwid main-word)
     (process-antonyms! gbdb mwid main-word)
     (process-also-sees! gbdb mwid main-word)
-    (process-example! gbdb mwid main-word)
     (let [words (.getWords synset)]
           (doseq [word words]
             (let [vid (vertex-id word)]

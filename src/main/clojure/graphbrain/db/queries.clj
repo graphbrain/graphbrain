@@ -1,7 +1,6 @@
 (ns graphbrain.db.queries
   (:require [graphbrain.db.gbdb :as db]
             [graphbrain.db.id :as id]
-            [graphbrain.db.maps :as maps]
             [graphbrain.utils :as u]))
 
 (def exclude-set
@@ -12,7 +11,7 @@
 
 (defn- exclude-edge
   [edge]
-  (some exclude-set
+  #_(some exclude-set
         (map id/eid->id (maps/participant-ids edge))))
 
 (defn- include-edge
@@ -21,7 +20,7 @@
 
 (defn- add-neighbours
   [neighbours edge]
-  (clojure.set/union neighbours
+  #_(clojure.set/union neighbours
                      (into #{}
                            (maps/participant-ids edge))))
 
@@ -33,7 +32,7 @@
 
 (defn- vemap+edge
   [vemap edge]
-  (reduce #(vemap-assoc-id-edge %1 %2 edge)
+  #_(reduce #(vemap-assoc-id-edge %1 %2 edge)
           vemap
           (maps/participant-ids edge)))
 
@@ -43,12 +42,12 @@
 
 (defn id->edges
   [gbdb id ctxts]
-  (filter include-edge
+  #_(filter include-edge
           (db/id->edges gbdb id ctxts 2)))
 
 (defn- interedge
   [edge interverts]
-  (let [ids (maps/participant-ids edge)]
+  #_(let [ids (maps/participant-ids edge)]
     (every? #(some #{%} interverts) ids)))
 
 (defn walks
@@ -94,7 +93,7 @@
 
 (defn intersect
   [gbdb ids ctxts]
-  (let [ids (map id/local->global ids)
+  #_(let [ids (map id/local->global ids)
         edgesets (map #(id->edges gbdb % ctxts) ids)
         vemap (reduce edges->vemap {} edgesets)
         eids (map #(db/id->eid gbdb %) ids)

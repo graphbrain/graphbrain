@@ -1,13 +1,11 @@
 (ns graphbrain.web.handlers.eco
   (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.id :as id]
-            [graphbrain.db.maps :as maps]
             [graphbrain.disambig.edgeguesser :as edg]
             [graphbrain.eco.eco :as eco]
             [graphbrain.eco.words :as words]
             [graphbrain.eco.parsers.chat :as chat]
             [graphbrain.web.common :as common]
-            [graphbrain.web.contexts :as contexts]
             [graphbrain.web.cssandjs :as css+js]
             [graphbrain.web.views.eco :as ecop]))
 
@@ -17,7 +15,7 @@
 
 (defn- sentence->result
   [user sentence ctxts]
-  (let
+  #_(let
       [env {:root "561852ced99a782d/europe"
             :user (:id user)}
        words (words/str->words sentence)
@@ -44,15 +42,10 @@
   [request]
   (let
       [sentence ((request :form-params) "input-field")
-       user (common/get-user request)
-       ctxts (contexts/active-ctxts (:id user) user)
-       ctxt (contexts/context-data (:id user) (:id user))
        title "Eco test"
        report (if sentence
-                (report user sentence ctxts))]
+                (report sentence))]
     (ecop/page :title title
                :css-and-js (css+js/css+js)
-               :user user
-               :ctxt ctxt
                :js (js)
                :report report)))

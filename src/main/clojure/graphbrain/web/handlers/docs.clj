@@ -1,8 +1,6 @@
 (ns graphbrain.web.handlers.docs
   (:require [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.user :as user]
             [graphbrain.web.common :as common]
-            [graphbrain.web.contexts :as contexts]
             [graphbrain.web.cssandjs :as css+js]
             [graphbrain.web.views.docs :as docs]
             [graphbrain.web.encoder :as enc]
@@ -10,7 +8,7 @@
 
 (defn- data
   [user ctxt ctxts]
-  {:ctxts (contexts/contexts-map ctxts (:id user))
+  #_{:ctxts (contexts/contexts-map ctxts (:id user))
    :context (contexts/context-data (:id user) (:id user))})
 
 (defn- js
@@ -21,7 +19,7 @@
 
 (defn handle
   [request]
-  (let
+  #_(let
       [user (common/get-user request)
        page (:* (:route-params request))
        ctxts (contexts/active-ctxts (:id user) user)

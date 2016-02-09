@@ -1,11 +1,6 @@
 (ns graphbrain.web.handlers.nodepage
   (:require [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.vertex :as vertex]
-            [graphbrain.db.entity :as entity]
-            [graphbrain.db.urlnode :as url]
-            [graphbrain.db.user :as user]
             [graphbrain.web.common :as common]
-            [graphbrain.web.contexts :as contexts]
             [graphbrain.web.snodes :as snodes]
             [graphbrain.web.cssandjs :as css+js]
             [graphbrain.web.views.nodepage :as np]
@@ -13,12 +8,9 @@
 
 (defn- data
   [id user ctxt ctxts]
-  (let [snodes (snodes/generate common/gbdb id ctxt ctxts)
-        context-data (contexts/context-data id (:id user))]
+  (let [snodes (snodes/generate common/gbdb id ctxt ctxts)]
     {:root-id id
-     :snodes snodes
-     :ctxts (contexts/contexts-map ctxts (:id user))
-     :context context-data}))
+     :snodes snodes}))
 
 (defn- js
   [id user ctxt ctxts]
@@ -28,7 +20,7 @@
 
 (defn handle
   [request]
-  (let
+  #_(let
       [user (common/get-user request)
        id (:* (:route-params request))
        ctxts (contexts/active-ctxts id user)

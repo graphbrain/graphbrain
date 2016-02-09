@@ -166,14 +166,14 @@
 
 (defn parse->vertex
   [par]
-  (let [vert (:vertex par)]
+  #_(let [vert (:vertex par)]
     (if (coll? vert)
       (id/ids->id (map parse->vertex vert))
       vert)))
 
 (defn vert+weight
   [par]
-  (let [vert (:vertex par)
+  #_(let [vert (:vertex par)
         rule (:rule par)
         weight (if rule
                  (:priority rule) 0)]

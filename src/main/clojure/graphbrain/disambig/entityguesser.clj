@@ -1,8 +1,6 @@
 (ns graphbrain.disambig.entityguesser
   (:require [graphbrain.db.gbdb :as gbdb]
-            [graphbrain.db.id :as id]
-            [graphbrain.db.maps :as maps]
-            [graphbrain.db.entity :as ent]))
+            [graphbrain.db.id :as id]))
 
 (defn substring?
   [sub st]
@@ -10,7 +8,7 @@
 
 (defn can-mean
   [gbdb name ctxts]
-  (let [base-id (id/sanitize name)
+  #_(let [base-id (id/sanitize name)
         can-mean (gbdb/pattern->edges gbdb ["r/*can_mean" base-id "*"] ctxts)]
     (map #(gbdb/getv gbdb
                      (id/eid->id (nth (maps/ids %) 2))
@@ -19,7 +17,7 @@
 
 (defn vertex->words
   [gbdb vertex ctxts]
-  (let [edges (gbdb/id->edges gbdb (:id vertex) ctxts)
+  #_(let [edges (gbdb/id->edges gbdb (:id vertex) ctxts)
         verts (map maps/participant-ids edges)
         verts (flatten verts)
         verts (set verts)
@@ -45,7 +43,7 @@
 
 (defn guess
   [gbdb name text eid ctxt ctxts]
-  (if (> (id/count-parts name) 1)
+  #_(if (> (id/count-parts name) 1)
     (gbdb/getv gbdb name ctxts)
     (let [text (clojure.string/lower-case text)
          can-mean (can-mean gbdb name ctxts)]
@@ -65,5 +63,5 @@
 
 (defn guess-eid
   [gbdb name text eid ctxt ctxts]
-  (let [entity (guess gbdb name text eid ctxt ctxts)]
+  #_(let [entity (guess gbdb name text eid ctxt ctxts)]
     (id/local->global (:eid entity))))

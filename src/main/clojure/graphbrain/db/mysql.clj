@@ -1,12 +1,9 @@
 (ns graphbrain.db.mysql
   (:use graphbrain.utils)
   (:require [clojure.java.jdbc :as jdbc]
-            [graphbrain.db.maps :as maps]
-            [graphbrain.db.edge :as edge]
-            [graphbrain.db.edgeparser :as edgeparser]
-            [graphbrain.db.id :as id])
-  (:import (com.graphbrain.utils Permutations)
-           (com.mchange.v2.c3p0 ComboPooledDataSource)))
+            [clojure.math.combinatorics :as combo]
+            [graphbrain.db.edgestr :as es])
+  (:import (com.mchange.v2.c3p0 ComboPooledDataSource)))
 
 (def global-context "g")
 
@@ -22,102 +19,17 @@
   ;; Edges table
   (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS edges ("
                        "id VARCHAR(10000),"
-                       "score FLOAT NOT NULL DEFAULT 1.0,"
-                       "degree INT NOT NULL DEFAULT 0,"
-                       "ts BIGINT NOT NULL DEFAULT -1,"
                        "INDEX id_index (id(255))"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
   (safe-exec! dbs (str "CREATE INDEX id_ts_edges_index ON edges (id, ts);"))
   
-  ;; EdgeTypes table
-  (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS edgetypes ("
-                       "id VARCHAR(10000),"
-                       "degree INT NOT NULL DEFAULT 0,"
-                       "ts BIGINT NOT NULL DEFAULT -1,"
-                       "label VARCHAR(255),"
-                       "INDEX id_index (id(255))"
-                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
-
-  ;; Entities table
-  (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS entities ("
-                       "id VARCHAR(10000),"
-                       "eid VARCHAR(10000),"
-                       "degree INT DEFAULT 0,"
-                       "ts BIGINT DEFAULT -1,"
-                       "INDEX index_id_degree (id(255), degree),"
-                       "INDEX index_id_ts (id(255), ts)"
-                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
-
-  ;; URLs table
-  (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS urls ("
-                       "id VARCHAR(10000),"
-                       "degree INT NOT NULL DEFAULT 0,"
-                       "ts BIGINT NOT NULL DEFAULT -1,"
-                       "INDEX index_id_degree (id(255), degree),"
-                       "INDEX index_id_ts (id(255), ts)"
-                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
-
-  ;; Users table
-  (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS users ("
-                       "id VARCHAR(10000),"
-                       "degree INT NOT NULL DEFAULT 0,"
-                       "ts BIGINT NOT NULL DEFAULT -1,"
-                       "username VARCHAR(255),"
-                       "name VARCHAR(255),"
-                       "email VARCHAR(255),"
-                       "pwdhash VARCHAR(255),"
-                       "role VARCHAR(255),"
-                       "session VARCHAR(255),"
-                       "sessionts BIGINT NOT NULL DEFAULT -1,"
-                       "lastseen BIGINT NOT NULL DEFAULT -1,"
-                       "ctxts TEXT,"
-                       "INDEX id_index (id(255)),"
-                       "INDEX email_index (email)"
-                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
-
-  ;; Contexts table
-  (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS contexts ("
-                       "id VARCHAR(10000),"
-                       "name VARCHAR(10000),"
-                       "access CHAR(10),"
-                       "size INT NOT NULL DEFAULT 0,"
-                       "degree INT NOT NULL DEFAULT 0,"
-                       "ts BIGINT NOT NULL DEFAULT -1,"
-                       "INDEX id_index (id(255))"
-                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
-
-  ;; Progs table
-  (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS progs ("
-                       "id VARCHAR(10000),"
-                       "degree INT NOT NULL DEFAULT 0,"
-                       "ts BIGINT NOT NULL DEFAULT -1,"
-                       "prog TEXT,"
-                       "INDEX id_index (id(255))"
-                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
-
-  ;; Texts table
-  (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS texts ("
-                       "id VARCHAR(10000),"
-                       "degree INT NOT NULL DEFAULT 0,"
-                       "ts BIGINT NOT NULL DEFAULT -1,"
-                       "text TEXT,"
-                       "INDEX id_index (id(255))"
-                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
-
   ;; Edge permutations table
-  (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS edgeperms ("
+  (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS perms ("
                        "id VARCHAR(10000),"
-                       "score FLOAT NOT NULL DEFAULT 1.0,"
                        "INDEX id_index (id(255))"
                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
-  ;; Global-Local table
-  (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS globallocal ("
-                       "gid VARCHAR(10000),"
-                       "lid VARCHAR(10000),"
-                       "INDEX global_id_index (gid(255), lid(255))"
-                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
   dbs)
 
 (defn- db-spec
@@ -146,101 +58,66 @@
 
 (defn db-connection [] @pooled-db)
 
-(defn- vtype->tname
-  [vtype]
-  (case vtype
-    :edge "edges"
-    :edge-type "edgetypes"
-    :entity "entities"
-    :url "urls"
-    :user "users"
-    :context "contexts"
-    :prog "progs"
-    :text "texts"))
-
 (defn- do-with-edge-permutations!
   [edge f]
-  (let [edge-id (:id edge)
-        ids (maps/ids (maps/local->global edge))
-        ctxt (id/context edge-id)
-        ctxt (if ctxt ctxt global-context)
-        nperms (Permutations/permutations (count ids))
-        ids (into-array ids)
-        perms (map #(str ctxt " " (Permutations/strArrayPermutationToStr ids %) " " %)
+  (let [nperms (combo/count-permutations edge)
+        perms (map #(str (clojure.string/join " "
+                                              (map es/edge->str (combo/nth-permutation edge %)))
+                         " " %)
                    (range nperms))]
-    (doseq [perm-id perms] (f {:id perm-id, :score (:score edge)}))))
+    (doseq [perm-str perms] (f perm-str))))
 
 (defn- write-edge-permutations!
   [dbs edge]
   (do-with-edge-permutations! edge #(jdbc/execute!
                                      (dbs)
-                                     ["INSERT INTO edgeperms (id, score) VALUES (?, ?)"
-                                      (:id %) (:score %)])))
+                                     ["INSERT INTO perms (id) VALUES (?)"
+                                      (es/edge->str %)])))
 
 (defn- remove-edge-permutations!
   [dbs edge]
   (do-with-edge-permutations! edge #(jdbc/execute!
                                      (dbs)
-                                     ["DELETE FROM edgeperms WHERE id=?" (:id %)])))
+                                     ["DELETE FROM perms WHERE id=?"
+                                      (es/edge->str %)])))
 
-(defn- get-vertex
-  [dbs id table]
-  (first (jdbc/query (dbs) [(str "SELECT * FROM " table " WHERE id=?") id])))
-
-(defn- exists-vertex?
-  [dbs id table]
-  (let [rs (jdbc/query (dbs) [(str "SELECT id FROM " table " WHERE id=?")
-                              id])]
+(defn- exists-str?
+  [dbs edge-str]
+  (let [rs (jdbc/query (dbs) [(str "SELECT id FROM edges WHERE id=?")
+                              edge-str])]
     (not (empty? rs))))
 
-(defn- put-vertex!
-  [dbs vertex table]
-  (jdbc/insert! (dbs) (keyword table) (dissoc vertex :type)))
-
-(defn- update-vertex!
-  [dbs vertex table]
-  (jdbc/update! (dbs) (keyword table) (dissoc vertex :type) ["id = ?" (:id vertex)])
-  vertex)
-
-(defn- remove-vertex!
-  [dbs id table]
-  (jdbc/delete! (dbs) (keyword table) ["id = ?" id]))
-
-(defn getv
-  [dbs id vtype]
-  (let [v (get-vertex dbs id (vtype->tname vtype))]
-    (if v (assoc v :type vtype))))
-
 (defn exists?
-  [dbs id vtype]
-  (exists-vertex? dbs id (vtype->tname vtype)))
+  [dbs edge]
+  (exists-str? (es/edge->str edge)))
 
-(defn putv!
-  [dbs vertex]
-  (let [vtype (:type vertex)]
-    (put-vertex! dbs vertex (vtype->tname vtype))
-    (if (= vtype :edge) (write-edge-permutations! dbs vertex))
-    vertex))
+(defn- add-str!
+  [dbs edge-str]
+  (jdbc/execute! (dbs) ["INSERT INTO edges (id) VALUES (?)" edge-str]))
 
-(defn update!
-  [dbs vertex]
-  (update-vertex! dbs vertex (vtype->tname (:type vertex))))
+(defn add!
+  [dbs edge]
+  (if (not (exists? edge))
+    (do
+      (add-str! dbs edge (es/edge->str edge))
+      (write-edge-permutations! dbs edge)))
+  edge)
+
+(defn- remove-str!
+  [dbs edge-str]
+  (jdbc/delete! (dbs) :edges ["id=?" edge-str]))
 
 (defn remove!
-  [dbs vertex]
-  (let [vtype (:type vertex)]
-    (remove-vertex! dbs (:id vertex) (vtype->tname vtype))
-    (if (= vtype :edge) (remove-edge-permutations! dbs vertex))))
+  [dbs edge]
+  (remove-str! dbs (es/edge->str edge))
+  (remove-edge-permutations! dbs edge))
 
-(defn email->username
-  [dbs email]
-  (:username (first
-              (jdbc/query (dbs) ["SELECT username FROM users WHERE email=?" email]))))
-
-(defn all-users
-  [dbs]
-  (map #(assoc % :type :user)
-       (jdbc/query (dbs) "SELECT * FROM users")))
+(defn- unpermutate
+  [tokens nper]
+  (let [n (count tokens)
+        indices (apply vector (combo/nth-permutation (range n) nper))
+        inv-indices (reduce #(assoc %1 (nth indices %2) %2) {} (range n))]
+    (apply vector (map #(nth tokens (inv-indices %)) (range n)))))
 
 (defn- results->edges
   [rs]
@@ -248,17 +125,12 @@
          edges #{}]
     (if (empty? results) edges
       (let [res (first results)
-            pid (:id res)
-            score (:score res)
-            tokens (edgeparser/split-edge pid)
-            ctxt (first tokens)
-            perm (Integer. (last tokens))
-            tokens (rest (drop-last tokens))
-            tokens (Permutations/strArrayUnpermutate (into-array tokens) perm)
-            tokens (if (= ctxt global-context)
-                     tokens
-                     (map #(id/global->local % ctxt) tokens))
-            edge (maps/ids->edge tokens score)
+            tokens (es/split-edge-inner-str res)
+            nper (Integer. (last tokens))
+            tokens (drop-last tokens)
+            tokens (unpermutate tokens nper)
+            edge (es/str->edge
+                  (str "(" (clojure.string/join " " tokens) ")"))
             edges (conj edges edge)]
         (recur (rest results) edges)))))
 
@@ -267,109 +139,31 @@
   (clojure.string/join
    (concat (drop-last str) (list (char (inc (int (last str))))))))
 
-(defn pattern->edges
-  [dbs pattern ctxt]
-  (let [ids (filter #(not= % "*") pattern)
-        ids (map id/local->global ids)
-        start-str (str ctxt " " (clojure.string/join " " ids) " ")
-        end-str (str+1 start-str)
-        rs (jdbc/query (dbs) ["SELECT id, score FROM edgeperms WHERE id>=? AND id<?"
-                              start-str end-str])]
-    (filter #(edge/matches? % pattern) (results->edges rs))))
+(defn edge-matches-pattern?
+  [edge pattern]
+  (every? identity
+          (map #(or (= %2 "*") (= %1 %2)) (map #(es/edge->str) edge) pattern)))
 
-(defn id->edges
-  [dbs center-id ctxt]
-  (let [gcenter-id (id/local->global center-id)
-        start-str (str ctxt " " gcenter-id " ")
+(defn pattern->edges
+  [dbs pattern]
+  (let [ids (filter #(not= % "*") pattern)
+        start-str (str (clojure.string/join " " ids) " ")
         end-str (str+1 start-str)
-        rs (jdbc/query (dbs) ["SELECT id, score FROM edgeperms WHERE id>=? AND id<?"
+        rs (jdbc/query (dbs) ["SELECT id FROM perms WHERE id>=? AND id<?"
+                              start-str end-str])]
+    (filter #(edge-matches-pattern? % pattern) (results->edges rs))))
+
+(defn- str->edges
+  [dbs center-id]
+  (let [start-str (str center-id " ")
+        end-str (str+1 start-str)
+        rs (jdbc/query (dbs) ["SELECT id FROM perms WHERE id>=? AND id<?"
                               start-str
                               end-str])]
     (results->edges rs)))
 
-(defn recent-n-edges
-  [dbs ctxt n]
-  (let [start-str (str+1 (str "(" ctxt "/r/*"))
-        end-str (str+1 start-str)
-        end-str (str+1 (str "(" ctxt "/"))
-        rs (jdbc/query (dbs) [(str "SELECT * FROM edges WHERE id>=? AND id<=?"
-                                   " ORDER BY ts DESC LIMIT ?")
-                              start-str end-str n])]
-    (map #(assoc % :type :edge) rs)))
-
-(defn popular-n-entities
-  [dbs ctxt n]
-  (let [start-str ctxt
-        end-str (str+1 start-str)
-        rs (jdbc/query (dbs) [(str "SELECT * FROM entities WHERE id>=? AND id<=?"
-                                   " ORDER BY degree DESC LIMIT ?")
-                              start-str end-str n])]
-    (map #(assoc % :type :entity) rs)))
-
-(defn popular-n-urls
-  [dbs ctxt n]
-  (let [start-str ctxt
-        end-str (str+1 start-str)
-        rs (jdbc/query (dbs) [(str "SELECT * FROM urls WHERE id>=? AND id<=?"
-                                   " ORDER BY degree DESC LIMIT ?")
-                              start-str end-str n])]
-    (map #(assoc % :type :url) rs)))
-
-(defn recent-n-entities
-  [dbs ctxt n]
-  (let [start-str ctxt
-        end-str (str+1 start-str)
-        rs (jdbc/query (dbs) [(str "SELECT * FROM entities WHERE id>=? AND id<=?"
-                                   " ORDER BY ts DESC LIMIT ?")
-                              start-str end-str n])]
-    (map #(assoc % :type :entity) rs)))
-
-(defn recent-n-urls
-  [dbs ctxt n]
-  (let [start-str ctxt
-        end-str (str+1 start-str)
-        rs (jdbc/query (dbs) [(str "SELECT * FROM urls WHERE id>=? AND id<=?"
-                                   " ORDER BY ts DESC LIMIT ?")
-                              start-str end-str n])]
-    (map #(assoc % :type :url) rs)))
-
-(defn add-link-to-global!
-  [dbs gid lid]
-  (jdbc/execute! (dbs) ["INSERT INTO globallocal (gid, lid) VALUES (?, ?)"
-                        gid
-                        lid]))
-
-(defn remove-link-to-global!
-  [dbs gid lid]
-  (jdbc/execute! (dbs) ["DELETE FROM globallocal WHERE gid=? AND lid=?"
-                        gid
-                        lid]))
-
-(defn alts
-  [dbs gid]
-  (map :lid (jdbc/query (dbs) ["SELECT lid FROM globallocal WHERE gid=?"
-                               gid])))
-
-(defn first-alt
-  [dbs gid]
-  (:lid (first (jdbc/query (dbs) ["SELECT lid FROM globallocal WHERE gid=? LIMIT 1"
-                                  gid]))))
-
-(defn remove-context!
-  [dbs ctxt]
-  (jdbc/execute! (dbs) ["DELETE FROM edges WHERE id like ?"
-                        (str "(" ctxt "%")])
-  (jdbc/execute! (dbs) ["DELETE FROM edgeperms WHERE id like ?"
-                        (str ctxt "%")])
-  (jdbc/execute! (dbs) ["DELETE FROM edgetypes WHERE id like ?"
-                        (str ctxt "%")])
-  (jdbc/execute! (dbs) ["DELETE FROM entities WHERE id like ?"
-                        (str ctxt "%")])
-  (jdbc/execute! (dbs) ["DELETE FROM texts WHERE id like ?"
-                        (str ctxt "%")])
-  (jdbc/execute! (dbs) ["DELETE FROM urls WHERE id like ?"
-                        (str ctxt "%")])
-  (jdbc/execute! (dbs) ["DELETE FROM globallocal WHERE lid like ?"
-                        (str "(" ctxt "%")])
-  (jdbc/execute! (dbs) ["DELETE FROM globallocal WHERE lid like ?"
-                        (str ctxt "%")]))
+(defn neighbors
+  [dbs center]
+  (if (coll? center)
+    (str->edges dbs (es/edge->str center))
+    (str->edges dbs center)))

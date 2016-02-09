@@ -1,10 +1,7 @@
 (ns graphbrain.web.handlers.define
   (:require [graphbrain.web.common :as common]
-            [graphbrain.web.contexts :as contexts]
             [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.id :as id]
-            [graphbrain.db.maps :as maps]
-            [graphbrain.db.entity :as entity]))
+            [graphbrain.db.id :as id]))
 
 (defn reply
   [id]
@@ -12,7 +9,7 @@
 
 (defn process
   [user rel root-id new-id ctxt ctxts]
-  (let [name (id/last-part root-id)
+  #_(let [name (id/last-part root-id)
         new-eid (id/name+ids->eid rel name [new-id])
         new (maps/eid->entity new-eid)
         old (gb/getv common/gbdb root-id)]
@@ -23,7 +20,7 @@
 
 (defn handle
   [request]
-  (let [rel ((request :form-params) "rel")
+  #_(let [rel ((request :form-params) "rel")
         root-id ((request :form-params) "root-id")
         new-id ((request :form-params) "new-id")
         ctxt ((request :form-params) "ctxt")

@@ -1,12 +1,8 @@
 (ns graphbrain.web.handlers.intersect
   (:require [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.vertex :as vertex]
-            [graphbrain.db.user :as user]
             [graphbrain.db.id :as id]
-            [graphbrain.db.maps :as maps]
             [graphbrain.db.queries :as q]
             [graphbrain.web.common :as common]
-            [graphbrain.web.contexts :as contexts]
             [graphbrain.web.visualvert :as vv]
             [graphbrain.web.cssandjs :as css+js]
             [graphbrain.web.views.intersect :as i]
@@ -15,13 +11,13 @@
 
 (defn- edge->links
   [edge]
-  (combo/combinations
+  #_(combo/combinations
    (map id/eid->id
         (maps/participant-ids edge)) 2))
 
 (defn- inters-data
   [ids user ctxt ctxts]
-  (let [edges (q/intersect common/gbdb ids ctxts)
+  #_(let [edges (q/intersect common/gbdb ids ctxts)
         verts (into #{}
                (flatten
                 (map maps/participant-ids edges)))
@@ -49,7 +45,7 @@
 
 (defn handle
   [request]
-  (let
+  #_(let
       [ids (vals (:query-params request))
        user (common/get-user request)
        ctxt (id/context (first ids))

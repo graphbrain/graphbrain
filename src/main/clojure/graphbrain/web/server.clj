@@ -9,9 +9,7 @@
             [graphbrain.web.handlers.home :as home]
             [graphbrain.web.handlers.presentation :as pres]
             [graphbrain.web.handlers.nodeactions :as nodeactions]
-            [graphbrain.web.handlers.user :as user]
             [graphbrain.web.handlers.raw :as raw]
-            [graphbrain.web.handlers.allusers :as allusers]
             [graphbrain.web.handlers.eco :as eco]
             [graphbrain.web.handlers.nodepage :as nodepage]
             [graphbrain.web.handlers.intersect :as intersect]
@@ -19,10 +17,6 @@
             [graphbrain.web.handlers.search :as search]
             [graphbrain.web.handlers.change :as change]
             [graphbrain.web.handlers.define :as define]
-            [graphbrain.web.handlers.createcontext :as cc]
-            [graphbrain.web.handlers.contexts :as contexts]
-            [graphbrain.web.handlers.grantperm :as gp]
-            [graphbrain.web.handlers.followunfollow :as fu]
             [graphbrain.web.handlers.edgedata :as ed]
             [graphbrain.web.handlers.docs :as docs]))
 
@@ -33,21 +27,12 @@
   (GET "/n/*" request (nodepage/handle request))
   (GET "/x" request (intersect/handle request))
   (GET "/raw/*" request (raw/handle request))
-  (POST "/signup" request (user/handle-signup request))
-  (POST "/checkusername" request (user/handle-check-username request))
-  (POST "/checkemail" request (user/handle-check-email request))
-  (POST "/login" request (user/handle-login request))
   (POST "/input" request (input/handle request))
   (POST "/search" request (search/handle request))
-  (GET "/allusers" request (allusers/handle request))
   (GET "/eco" request (eco/handle request))
   (POST "/eco" request (eco/handle request))
   (POST "/change" request (change/handle request))
   (POST "/define" request (define/handle request))
-  (POST "/create-context" request (cc/handle request))
-  (POST "/contexts" request (contexts/handle request))
-  (POST "/grant-perm" request (gp/handle request))
-  (POST "/follow-unfollow" request (fu/handle request))
   (POST "/edge-data" request (ed/handle request))
   (GET "/presentation" request (pres/handle request))
   (GET "/docs/*" request (docs/handle request))
