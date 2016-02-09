@@ -1,9 +1,9 @@
 (ns graphbrain.web.handlers.input
   (:require [graphbrain.web.common :as common]
             [graphbrain.web.handlers.search :as search]
-            [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.id :as id]
-            [graphbrain.db.knowledge :as k]
+            [graphbrain.hg.ops :as hgops]
+            [graphbrain.hg.id :as id]
+            [graphbrain.hg.knowledge :as k]
             [graphbrain.disambig.edgeguesser :as edg]
             [graphbrain.kr.pagereader :as pr]
             [graphbrain.eco.eco :as eco]

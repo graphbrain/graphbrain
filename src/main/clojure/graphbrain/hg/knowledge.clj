@@ -1,6 +1,6 @@
-(ns graphbrain.db.knowledge
-  (:require [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.id :as id]))
+(ns graphbrain.hg.knowledge
+  (:require [graphbrain.hg.ops :as hgops]
+            [graphbrain.hg.id :as id]))
 
 (defn- edge->def
   [edge defs]

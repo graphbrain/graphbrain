@@ -1,6 +1,6 @@
 (ns graphbrain.eco.ecofuns
   (:use [graphbrain.utils :only [dbg]])
-  (:require [graphbrain.db.id :as id]
+  (:require [graphbrain.hg.id :as id]
             [graphbrain.eco.word :as word]
             [clojure.math.combinatorics :as combs]))
 

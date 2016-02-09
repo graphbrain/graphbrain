@@ -2,8 +2,8 @@
   (:require [graphbrain.web.common :as common]
             [graphbrain.web.visualvert :as vv]
             [graphbrain.web.extrasnodes :as xs]
-            [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.id :as id]))
+            [graphbrain.hg.ops :as hgops]
+            [graphbrain.hg.id :as id]))
 
 (def ^:const max-snodes 15)
 
@@ -85,8 +85,8 @@
         (str text " " rel-label)))))
 
 (defn- node->map
-  [gbdb node-id edge root-id ctxt ctxts]
-  (let [vv (vv/id->visual gbdb node-id ctxt ctxts)
+  [hg node-id edge root-id ctxt ctxts]
+  (let [vv (vv/id->visual hg node-id ctxt ctxts)
         node-edge (:id (:parent edge))
         score (:score edge)
         ectxts (:ctxts edge)]
@@ -102,11 +102,11 @@
   (if (= (second rp) 0) (:id1 se) (:id2 se)))
 
 (defn- snode
-  [gbdb rp sedges root-node ctxt ctxts]
+  [hg rp sedges root-node ctxt ctxts]
   (let [etype (first rp)
         rpos (second rp)
         label (link-label etype rpos root-node)
-        nodes (map #(node->map gbdb
+        nodes (map #(node->map hg
                                (se->node-id % rp)
                                %
                                (:id root-node)
@@ -117,7 +117,7 @@
      :label label}))
 
 (defn- snode-map
-  [gbdb en-map root-node ctxt ctxts]
+  [hg en-map root-node ctxt ctxts]
   (loop [enm en-map
          count 0
          snode-map {}]
@@ -128,7 +128,7 @@
           (recur (rest enm) (inc count)
                  (assoc snode-map
                    snid
-                   (snode gbdb rp (second en) root-node ctxt ctxts)))))))
+                   (snode hg rp (second en) root-node ctxt ctxts)))))))
 
 (defn- snode-limit-size
   [snode]
@@ -153,7 +153,7 @@
                (filter maps/positive? edges))))
 
 (defn generate
-  [gbdb root-id ctxt ctxts]
+  [hg root-id ctxt ctxts]
   #_(let [root-id (->> root-id
                      (gb/id->eid gbdb)
                      (id/local->global))

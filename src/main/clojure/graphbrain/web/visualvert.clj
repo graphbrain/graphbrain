@@ -1,6 +1,6 @@
 (ns graphbrain.web.visualvert
-  (:require [graphbrain.db.gbdb :as db]
-            [graphbrain.db.id :as id]))
+  (:require [graphbrain.hg.ops :as hgops]
+            [graphbrain.hg.id :as id]))
 
 (declare edge-id->text)
 
@@ -36,7 +36,7 @@
                                (rest labels))))))
 
 (defn id->visual
-  [gbdb id ctxt ctxts]
+  [hg id ctxt ctxts]
   #_(let [vtype (id/id->type id)
         vert (maps/id->vertex id)
         vert (maps/local->global vert)]

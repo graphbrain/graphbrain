@@ -1,6 +1,6 @@
-(ns graphbrain.db.queries
-  (:require [graphbrain.db.gbdb :as db]
-            [graphbrain.db.id :as id]
+(ns graphbrain.hg.queries
+  (:require [graphbrain.hg.ops :as hgops]
+            [graphbrain.hg.id :as id]
             [graphbrain.utils :as u]))
 
 (def exclude-set

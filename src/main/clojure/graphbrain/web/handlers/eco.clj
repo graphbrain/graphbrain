@@ -1,6 +1,6 @@
 (ns graphbrain.web.handlers.eco
-  (:require [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.id :as id]
+  (:require [graphbrain.hg.ops :as hgops]
+            [graphbrain.hg.id :as id]
             [graphbrain.disambig.edgeguesser :as edg]
             [graphbrain.eco.eco :as eco]
             [graphbrain.eco.words :as words]

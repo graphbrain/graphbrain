@@ -1,7 +1,7 @@
 (ns graphbrain.web.handlers.nodeactions
   (:use (ring.util response))
-  (:require [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.id :as id]
+  (:require [graphbrain.hg.ops :as hgops]
+            [graphbrain.hg.id :as id]
             [graphbrain.web.common :as common]))
 
 (defn- remove-vertex!

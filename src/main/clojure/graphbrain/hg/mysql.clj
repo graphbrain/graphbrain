@@ -1,8 +1,8 @@
-(ns graphbrain.db.mysql
+(ns graphbrain.hg.mysql
   (:use graphbrain.utils)
   (:require [clojure.java.jdbc :as jdbc]
             [clojure.math.combinatorics :as combo]
-            [graphbrain.db.edgestr :as es])
+            [graphbrain.hg.edgestr :as es])
   (:import (com.mchange.v2.c3p0 ComboPooledDataSource)))
 
 (def global-context "g")

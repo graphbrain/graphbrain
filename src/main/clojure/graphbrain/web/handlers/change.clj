@@ -1,8 +1,8 @@
 (ns graphbrain.web.handlers.change
   (:require [graphbrain.web.common :as common]
-            [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.id :as id]
-            [graphbrain.db.searchinterface :as si]))
+            [graphbrain.hg.ops :as hgops]
+            [graphbrain.hg.id :as id]
+            [graphbrain.hg.searchinterface :as si]))
 
 (defn reply
   []

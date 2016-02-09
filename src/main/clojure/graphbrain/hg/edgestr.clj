@@ -1,4 +1,4 @@
-(ns graphbrain.db.edgestr)
+(ns graphbrain.hg.edgestr)
 
 (defn- open-pars
   [str]

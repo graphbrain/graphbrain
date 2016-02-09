@@ -1,5 +1,5 @@
 (ns graphbrain.web.handlers.docs
-  (:require [graphbrain.db.gbdb :as gb]
+  (:require [graphbrain.hg.ops :as hgops]
             [graphbrain.web.common :as common]
             [graphbrain.web.cssandjs :as css+js]
             [graphbrain.web.views.docs :as docs]

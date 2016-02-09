@@ -1,7 +1,7 @@
 (ns graphbrain.kr.wordnet
-  (:require [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.id :as id]
-            [graphbrain.db.constants :as consts])
+  (:require [graphbrain.hg.ops :as hgops]
+            [graphbrain.hg.id :as id]
+            [graphbrain.hg.constants :as consts])
   (:import (org.w3c.dom ElementTraversal)
            (net.sf.extjwnl.data PointerUtils
                                 POS)
@@ -14,9 +14,9 @@
 (def dryrun false)
 
 (defn add-relation!
-  [gbdb rel]
+  [hg rel]
   (prn (str "rel: " rel))
-  (if (not dryrun) (gb/add! gbdb rel)))
+  (if (not dryrun) (hgops/add! hg rel)))
 
 (defn super-types
   [word]
@@ -79,27 +79,27 @@
         (add-relation! gbdb rel)))))
 
 (defn process-antonyms!
-  [gbdb vid word]
+  [hg vid word]
   (let [concept (.getSynset word)
         results (PointerUtils/getAntonyms concept)]
     (doseq [result results]
       (let [ant-word (first (.getWords (.getSynset result)))
             ant-id (vertex-id ant-word)
             rel ["antonym/1" vid ant-id]]
-        (add-relation! gbdb rel)))))
+        (add-relation! hg rel)))))
 
 (defn process-also-sees!
-  [gbdb vid word]
+  [hg vid word]
   (let [concept (.getSynset word)
         results (PointerUtils/getAlsoSees concept)]
     (doseq [result results]
       (let [also-word (first (.getWords (.getSynset result)))
             also-id (vertex-id also-word)
             rel ["also_see/1" vid also-id]]
-        (add-relation! gbdb rel)))))
+        (add-relation! hg rel)))))
 
 (defn process-pos!
-  [gbdb vid word]
+  [hg vid word]
   (let [pos (.getPOS word)]
     (if pos
       (let [pos-id (cond
@@ -108,41 +108,41 @@
                      (.equals pos POS/ADJECTIVE) adjective
                      (.equals pos POS/ADVERB) adverb)
             rel ["part-of-speech/1" vid pos-id]]
-        (add-relation! gbdb rel)))))
+        (add-relation! hg rel)))))
 
 (defn process-synset!
-  [gbdb synset]
-  (process-synonyms! gbdb synset)
+  [hg synset]
+  (process-synonyms! hg synset)
   (let [main-word (first (.getWords synset))
         mwid (vertex-id main-word)]
-    (process-meronyms! gbdb mwid main-word)
-    (process-antonyms! gbdb mwid main-word)
-    (process-also-sees! gbdb mwid main-word)
+    (process-meronyms! hg mwid main-word)
+    (process-antonyms! hg mwid main-word)
+    (process-also-sees! hg mwid main-word)
     (let [words (.getWords synset)]
           (doseq [word words]
             (let [vid (vertex-id word)]
               (prn vid)
-              (process-super-types! gbdb vid word)
-              (process-pos! gbdb vid word))))))
+              (process-super-types! hg vid word)
+              (process-pos! hg vid word))))))
 
 (defn process-pos-synset!
-  [gbdb dictionary pos]
+  [hg dictionary pos]
   (let [iter (.getSynsetIterator dictionary pos)]
     (while (.hasNext iter)
       (let [synset (.next iter)]
         (prn synset)
-        (process-synset! gbdb synset)))))
+        (process-synset! hg synset)))))
 
 (defn process!
-  [gbdb dictionary]
-  (process-pos-synset! gbdb dictionary (POS/NOUN))
-  (process-pos-synset! gbdb dictionary (POS/VERB))
-  (process-pos-synset! gbdb dictionary (POS/ADJECTIVE))
-  (process-pos-synset! gbdb dictionary (POS/ADVERB)))
+  [hg dictionary]
+  (process-pos-synset! hg dictionary (POS/NOUN))
+  (process-pos-synset! hg dictionary (POS/VERB))
+  (process-pos-synset! hg dictionary (POS/ADJECTIVE))
+  (process-pos-synset! hg dictionary (POS/ADVERB)))
 
 (defn import!
   []
   (let [dictionary (Dictionary/getDefaultResourceInstance)
-        gbdb (gb/gbdb)]
-    (set-globals! gbdb dictionary)
-    (process! gbdb dictionary)))
+        hg (hgops/hg)]
+    (set-globals! hg dictionary)
+    (process! hg dictionary)))
