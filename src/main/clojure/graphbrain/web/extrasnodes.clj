@@ -26,35 +26,35 @@
 
 (defn- popular-entities
   [ctxt]
-  (let [ents (gb/popular-n-entities common/gbdb (:id ctxt) 10)]
+  #_(let [ents (gb/popular-n-entities common/gbdb (:id ctxt) 10)]
     {:nodes (map #(entity->map % ctxt "Popular entity: ") ents)
      :label "Popular entities"
      :static true}))
 
 (defn- popular-urls
   [ctxt]
-  (let [ents (gb/popular-n-urls common/gbdb (:id ctxt) 10)]
+  #_(let [ents (gb/popular-n-urls common/gbdb (:id ctxt) 10)]
     {:nodes (map #(url->map % ctxt "Popular url: ") ents)
      :label "Popular urls"
      :static true}))
 
 (defn- recent-entities
   [ctxt]
-  (let [ents (gb/recent-n-entities common/gbdb (:id ctxt) 10)]
+  #_(let [ents (gb/recent-n-entities common/gbdb (:id ctxt) 10)]
     {:nodes (map #(entity->map % ctxt "Recent entity: ") ents)
      :label "Recent entities"
      :static true}))
 
 (defn- recent-urls
   [ctxt]
-  (let [ents (gb/recent-n-urls common/gbdb (:id ctxt) 10)]
+  #_(let [ents (gb/recent-n-urls common/gbdb (:id ctxt) 10)]
     {:nodes (map #(url->map % ctxt "Recent url: ") ents)
      :label "Recent urls"
      :static true}))
 
 (defn- recent-edges
   [ctxt]
-  (let [edges (gb/recent-n-edges common/gbdb (:id ctxt) 10)]
+  #_(let [edges (gb/recent-n-edges common/gbdb (:id ctxt) 10)]
     {:nodes (map #(edge->map % ctxt) edges)
      :label "Recent additions"
      :static true}))

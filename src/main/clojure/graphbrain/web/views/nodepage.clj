@@ -1,11 +1,10 @@
 (ns graphbrain.web.views.nodepage
   (:use hiccup.core)
-  (:require [graphbrain.db.entity :as entity]
-            [graphbrain.web.views.barpage :as bar]))
+  (:require [graphbrain.web.views.barpage :as bar]))
 
 (defn- subid->link
   [id]
-  [:a {:href (str "/x/" id)}
+  #_[:a {:href (str "/x/" id)}
    (entity/label id)])
 
 (defn- admin-context

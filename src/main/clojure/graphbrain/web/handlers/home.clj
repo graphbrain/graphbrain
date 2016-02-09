@@ -12,14 +12,10 @@
 (defn handle
   [request]
   (common/log request "home")
-  (let
-    [user (common/get-user request)]
-    (if user
-      (redirect (str "/n/" (:id user)))
-      (page
-       :title "Welcome"
-       :css-and-js (css+js/css+js)
-       :user nil
-       :page :home
-       :body-fun home/view
-       :js (js)))))
+  (page
+   :title "Welcome"
+   :css-and-js (css+js/css+js)
+   :user nil
+   :page :home
+   :body-fun home/view
+   :js (js)))

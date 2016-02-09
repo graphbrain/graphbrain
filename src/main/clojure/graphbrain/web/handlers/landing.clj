@@ -10,9 +10,4 @@
 (defn handle
   [request]
   (log request "landing")
-  (let [user (get-user request)]
-    (if user
-      (redirect (str "/n/" (:id user)))
-      (if (= (:server-name request) "graphbrain.com")
-        (lp/page)
-        (redirect "/presentation")))))
+  (redirect "/presentation"))

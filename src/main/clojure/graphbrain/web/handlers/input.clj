@@ -1,13 +1,9 @@
 (ns graphbrain.web.handlers.input
   (:require [graphbrain.web.common :as common]
-            [graphbrain.web.contexts :as contexts]
             [graphbrain.web.handlers.search :as search]
             [graphbrain.db.gbdb :as gb]
             [graphbrain.db.id :as id]
-            [graphbrain.db.maps :as maps]
-            [graphbrain.db.urlnode :as url]
             [graphbrain.db.knowledge :as k]
-            [graphbrain.db.perms :as perms]
             [graphbrain.disambig.edgeguesser :as edg]
             [graphbrain.kr.pagereader :as pr]
             [graphbrain.eco.eco :as eco]
@@ -16,7 +12,7 @@
 
 (defn- goto-id
   [root-id vertex]
-  (if (maps/edge? vertex)
+  #_(if (maps/edge? vertex)
     (if (= (maps/edge-type vertex) "r/*edges")
       (goto-id root-id
                (maps/id->edge
@@ -69,23 +65,23 @@
 
 (defn- is-definer?
   [edge]
-  (= (id/edge-rel edge) "r/is"))
+  #_(= (id/edge-rel edge) "r/is"))
 
 (defn- definer->rel
   [edge]
-  (case (id/edge-rel edge)
+  #_(case (id/edge-rel edge)
     "r/is" "r/+t"))
 
 (defn- definer->param
   [edge]
-  (case (id/edge-rel edge)
+  #_(case (id/edge-rel edge)
     "r/is" (-> edge
                id/id->ids
                (nth 2))))
 
 (defn- process-fact
   [request user root sentence ctxt ctxts]
-  (let
+  #_(let
       [root-id (:id root)
        env {:root root-id
             :user (:id user)}
@@ -138,7 +134,7 @@
 
 (defn process-url
   [request user root sentence ctxt ctxts]
-  (let [url-id (url/url->id sentence)
+  #_(let [url-id (url/url->id sentence)
         root-id (:id root)]
     (pr/extract-knowledge! common/gbdb sentence ctxt ctxts (:id user))
     (common/log request (str "extract knowledge from url "
@@ -149,7 +145,7 @@
 
 (defn handle
   [request]
-  (let [sentence ((request :form-params) "sentence")
+  #_(let [sentence ((request :form-params) "sentence")
         root-id ((request :form-params) "root")
         targ-ctxt ((request :form-params) "targ-ctxt")
         user (common/get-user request)

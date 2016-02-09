@@ -37,8 +37,6 @@
                   ;; WordNet
                   [net.sf.extjwnl/extjwnl "1.9.1"]
                   [net.sf.extjwnl/extjwnl-data-wn31 "1.2"]
-                  ;; Crypto
-                  [org.mindrot/jbcrypt "0.3m"]
                   ;; Web App
                   [javax.servlet/servlet-api "2.5"]
                   [ring/ring-core "1.4.0"]

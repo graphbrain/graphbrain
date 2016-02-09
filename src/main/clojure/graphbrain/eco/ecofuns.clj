@@ -1,7 +1,6 @@
 (ns graphbrain.eco.ecofuns
   (:use [graphbrain.utils :only [dbg]])
   (:require [graphbrain.db.id :as id]
-            [graphbrain.db.text :as text]
             [graphbrain.eco.word :as word]
             [clojure.math.combinatorics :as combs]))
 
@@ -134,7 +133,7 @@
 
 (defn eid
   [rel name & ids]
-  (let [lparts (map #(if (and (coll? %) (not (map? %))) % [%]) ids)]
+  #_(let [lparts (map #(if (and (coll? %) (not (map? %))) % [%]) ids)]
     (map #(hash-map :vertex
                     (apply id/name+ids->eid
                            (conj [rel name] (map :vertex %))))
@@ -147,5 +146,5 @@
 
 (defn text
   [words]
-  {:vertex (text/text->pseudo
+  #_{:vertex (text/text->pseudo
             (words->str words))})

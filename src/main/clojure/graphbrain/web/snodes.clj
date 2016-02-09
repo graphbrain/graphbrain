@@ -3,16 +3,13 @@
             [graphbrain.web.visualvert :as vv]
             [graphbrain.web.extrasnodes :as xs]
             [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.maps :as maps]
-            [graphbrain.db.id :as id]
-            [graphbrain.db.edgetype :as edgetype]
-            [graphbrain.db.vertex :as vertex]))
+            [graphbrain.db.id :as id]))
 
 (def ^:const max-snodes 15)
 
 (defn- hide?
   [edge]
-  (let [et (maps/edge-type edge)]
+  #_(let [et (maps/edge-type edge)]
     (or (= et "r/*title")
         (= et "r/*author"))))
 
@@ -28,7 +25,7 @@
 
 (defn- edge->visual
   [edge root-id]
-  (let [c (count (maps/participant-ids edge))]
+  #_(let [c (count (maps/participant-ids edge))]
     (cond
      (> c 2)
      (let [parts (.split (maps/edge-type edge) "~")]
@@ -79,7 +76,7 @@
 
 (defn- link-label
   [edge-type rpos root-node]
-  (if (empty? edge-type)
+  #_(if (empty? edge-type)
     ""
     (let [rel-label (edgetype/label edge-type)
           text (node-label root-node)]
@@ -151,13 +148,13 @@
 
 (defn- edges->visual
   [root-id edges]
-  (filter (complement nil?)
+  #_(filter (complement nil?)
           (map #(edge->visual % root-id)
                (filter maps/positive? edges))))
 
 (defn generate
   [gbdb root-id ctxt ctxts]
-  (let [root-id (->> root-id
+  #_(let [root-id (->> root-id
                      (gb/id->eid gbdb)
                      (id/local->global))
         edges (hide-edges

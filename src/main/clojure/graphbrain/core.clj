@@ -1,7 +1,6 @@
 (ns graphbrain.core
   (:require [clojure.tools.cli :as cli]
             [graphbrain.kr.wordnet :as wordnet]
-            [graphbrain.tools.contexts :as ctxts]
             [graphbrain.web.server :as server]))
 
 (def cli-options
@@ -22,7 +21,4 @@
     (case arg
       "wordnet" (wordnet/import!)
       "webapp" (server/start!)
-      "addcontext" (ctxts/add-context-to-user!
-                    (second (:arguments opts))
-                    (nth (:arguments opts) 2))
       (prn (str "Unknown command: " arg)))))

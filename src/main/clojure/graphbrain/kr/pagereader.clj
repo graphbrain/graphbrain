@@ -1,9 +1,6 @@
 (ns graphbrain.kr.pagereader
   (:require [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.urlnode :as url]
             [graphbrain.db.id :as id]
-            [graphbrain.db.maps :as maps]
-            [graphbrain.db.text :as text]
             [graphbrain.db.constants :as consts]
             [graphbrain.kr.webtools :as webtools]
             [graphbrain.kr.htmltools :as htmltools]
@@ -22,7 +19,7 @@
 
 (defn ngram->entity
   [gbdb ngrams-graph ng-ent-map ngram text ctxts]
-  (if (ng-ent-map ngram) ng-ent-map
+  #_(if (ng-ent-map ngram) ng-ent-map
       (let [ngram-str (ngrams/ngram->str ngram) 
             components (keys (:out (ngrams-graph ngram)))
             components (filter #(leaf? ngrams-graph components %) components)
@@ -93,7 +90,7 @@
 
 (defn url+html->edges
   [gbdb url-str html ctxts]
-  (let [url-id (url/url->id url-str)
+  #_(let [url-id (url/url->id url-str)
         entities (html->entities gbdb html ctxts)]
     (map #(maps/id->edge
            (id/ids->id ["r/has_topic" url-id (:eid (second %))])
@@ -101,7 +98,7 @@
 
 (defn assoc-title!
   [gbdb url-str title user-id ctxt]
-  (let [url-id (url/url->id url-str)
+  #_(let [url-id (url/url->id url-str)
         title-node (text/text->vertex title)
         edge-id (id/ids->id ["r/*title" url-id (:id title-node)])]
     (gb/putv! gbdb title-node ctxt)
@@ -109,13 +106,13 @@
 
 (defn bookmark!
   [gbdb url-str user-id ctxt]
-  (let [url-id (url/url->id url-str)
+  #_(let [url-id (url/url->id url-str)
         edge-id (id/ids->id ["r/bookmarked" user-id url-id])]
     (gb/putv! gbdb (maps/id->edge edge-id) ctxt)))
 
 (defn extract-knowledge!
   [gbdb url-str ctxt ctxts user-id]
-  (let [html (webtools/slurp-url url-str)
+  #_(let [html (webtools/slurp-url url-str)
         jsoup (htmltools/html->jsoup html)
         title (htmltools/jsoup->title jsoup)
         meat (meat/extract-meat html)

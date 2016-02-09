@@ -2,23 +2,19 @@
   (:use (ring.util response))
   (:require [graphbrain.db.gbdb :as gb]
             [graphbrain.db.id :as id]
-            [graphbrain.db.maps :as maps]
-            [graphbrain.db.perms :as perms]
             [graphbrain.web.common :as common]))
 
 (defn- remove-vertex!
-  [request edge-id targ-ctxt]
-  (common/log request (str "remove vertex: " edge-id
-                           "; ctxt: " targ-ctxt))
-  (gb/remove! common/gbdb
+  [request edge-str]
+  (common/log request (str "remove vertex: " edge-str))
+  #_(gb/remove! common/gbdb
               (maps/id->edge edge-id)
               targ-ctxt))
 
 (defn- new-meaning!
-  [request edge-id targ-ctxt]
-  (common/log request (str "new meaning: " edge-id
-                           "; ctxt: " targ-ctxt))
-  (let [eid ((request :form-params) "eid")
+  [request edge-str]
+  (common/log request (str "new meaning: " edge-str))
+  #_(let [eid ((request :form-params) "eid")
         score ((request :form-params) "score")
         edge (maps/id->edge edge-id score)
         new-eid (id/new-meaning eid targ-ctxt)]
@@ -26,19 +22,10 @@
 
 (defn handle
   [request]
-  (let [user (common/get-user request)
-        vert-id (:* (:route-params request))
-        edge-id ((request :form-params) "edge")
-        op ((request :form-params) "op")
-        targ-ctxt ((request :form-params) "targ-ctxt")]
-    (if (perms/can-edit? common/gbdb edge-id (:id user) targ-ctxt)
-      (case op
-        "remove" (remove-vertex! request edge-id targ-ctxt)
-        "new-meaning" (new-meaning! request edge-id targ-ctxt))
-      (common/log request (str "FAILED NODE ACTION (no permissions) " op
-                               "; edge-id: " edge-id
-                               "; ctxt: " targ-ctxt)))
-    (redirect (str "/n/" (if (= targ-ctxt vert-id)
-                           ""
-                           (str targ-ctxt "/"))
-                   (id/local->global vert-id)))))
+  (let [vert-id (:* (:route-params request))
+        edge-str ((request :form-params) "edge")
+        op ((request :form-params) "op")]
+    (case op
+      "remove" (remove-vertex! request edge-str)
+      "new-meaning" (new-meaning! request edge-str))
+    (redirect (str "/n/" vert-id))))

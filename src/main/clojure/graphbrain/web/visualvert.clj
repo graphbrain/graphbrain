@@ -1,17 +1,12 @@
 (ns graphbrain.web.visualvert
   (:require [graphbrain.db.gbdb :as db]
-            [graphbrain.db.id :as id]
-            [graphbrain.db.maps :as maps]
-            [graphbrain.db.entity :as entity]
-            [graphbrain.db.urlnode :as url]
-            [graphbrain.db.text :as text]
-            [graphbrain.db.context :as context]))
+            [graphbrain.db.id :as id]))
 
 (declare edge-id->text)
 
 (defn id->label
   [id ctxt]
-  (case (id/id->type id)
+  #_(case (id/id->type id)
     :entity (entity/label id)
     :edge (edge-id->text id ctxt)
     :context (context/label id)
@@ -22,7 +17,7 @@
 
 (defn id->html
   [id ctxt]
-  (if (= (id/id->type id) :edge-type)
+  #_(if (= (id/id->type id) :edge-type)
     (id->label id ctxt)
     (str "<a href='/n/" (:id ctxt) "/" id "'>"
          (id->label id ctxt)
@@ -30,7 +25,7 @@
 
 (defn edge-id->text
   [edge-id ctxt]
-  (let [labels (map #(id->html (id/eid->id %) ctxt)
+  #_(let [labels (map #(id->html (id/eid->id %) ctxt)
                     (id/id->ids edge-id))]
     (str (second labels)
          " "
@@ -42,7 +37,7 @@
 
 (defn id->visual
   [gbdb id ctxt ctxts]
-  (let [vtype (id/id->type id)
+  #_(let [vtype (id/id->type id)
         vert (maps/id->vertex id)
         vert (maps/local->global vert)]
     (case (:type vert)

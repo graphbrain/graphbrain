@@ -1,8 +1,6 @@
 (ns graphbrain.web.views.barpage
   (:use hiccup.core
-        (graphbrain.web.views page))
-  (:require [graphbrain.db.vertex :as vertex]
-            [graphbrain.db.entity :as entity]))
+        (graphbrain.web.views page)))
 
 (def ^:private style "
 <style type=\"text/css\">

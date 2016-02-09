@@ -1,25 +1,16 @@
 (ns graphbrain.web.handlers.change
   (:require [graphbrain.web.common :as common]
-            [graphbrain.web.contexts :as contexts]
             [graphbrain.db.gbdb :as gb]
             [graphbrain.db.id :as id]
-            [graphbrain.db.maps :as maps]
-            [graphbrain.db.entity :as entity]
-            [graphbrain.db.searchinterface :as si]
-            [graphbrain.db.perms :as perms]))
+            [graphbrain.db.searchinterface :as si]))
 
 (defn reply
   []
   (pr-str {:type :change}))
 
-(defn reply-no-perms
-  []
-  (pr-str {:type :error
-           :msg "Sorry, you don't have permissions to edit this GraphBrain."}))
-
 (defn process
   [edge-id old-id new-id targ-ctxt]
-  (let [edge (maps/id->edge edge-id)
+  #_(let [edge (maps/id->edge edge-id)
         old-eid (gb/id->eid common/gbdb old-id)
         new-eid (gb/id->eid common/gbdb new-id)
         ids (id/id->ids edge-id)
@@ -31,7 +22,7 @@
 
 (defn handle
   [request]
-  (let [user (common/get-user request)
+  #_(let [user (common/get-user request)
         edge ((request :form-params) "edge")
         old-id ((request :form-params) "old-id")
         new-id ((request :form-params) "new-id")
