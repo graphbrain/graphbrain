@@ -1,5 +1,5 @@
 (ns graphbrain.web.extrasnodes
-  (:require [graphbrain.db.gbdb :as gb]
+  (:require [graphbrain.hg.ops :as hgops]
             [graphbrain.web.common :as common]
             [graphbrain.web.visualvert :as vv]))
 
@@ -60,7 +60,7 @@
      :static true}))
 
 (defn extrasnodes
-  [gbdb root-id ctxt ctxts snodes]
+  [hg root-id ctxt ctxts snodes]
   (if (= root-id (:id ctxt))
     (assoc snodes
       "recent" (recent-edges ctxt)

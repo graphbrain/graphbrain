@@ -1,5 +1,5 @@
 (ns graphbrain.web.common
-  (:require [graphbrain.db.gbdb :as gb]
+  (:require [graphbrain.hg.ops :as hgops]
             [clojure.tools.logging :as log]))
 
 (def production?
@@ -10,7 +10,7 @@
 
 (defn init-graph!
   []
-  (def gbdb (gb/gbdb)))
+  (def hg (hgops/hg)))
 
 (defn log
   [request msg]

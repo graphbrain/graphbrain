@@ -1,13 +1,13 @@
 (ns graphbrain.disambig.entityguesser
-  (:require [graphbrain.db.gbdb :as gbdb]
-            [graphbrain.db.id :as id]))
+  (:require [graphbrain.hg.ops :as hgops]
+            [graphbrain.hg.id :as id]))
 
 (defn substring?
   [sub st]
   (not= (.indexOf st sub) -1))
 
 (defn can-mean
-  [gbdb name ctxts]
+  [hg name ctxts]
   #_(let [base-id (id/sanitize name)
         can-mean (gbdb/pattern->edges gbdb ["r/*can_mean" base-id "*"] ctxts)]
     (map #(gbdb/getv gbdb
@@ -16,7 +16,7 @@
          can-mean)))
 
 (defn vertex->words
-  [gbdb vertex ctxts]
+  [hg vertex ctxts]
   #_(let [edges (gbdb/id->edges gbdb (:id vertex) ctxts)
         verts (map maps/participant-ids edges)
         verts (flatten verts)
@@ -37,12 +37,12 @@
   (if (substring? word text) 1.0 0.0))
 
 (defn text-score
-  [gbdb text vertex ctxts]
-  (let [words (vertex->words gbdb vertex ctxts)]
+  [hg text vertex ctxts]
+  (let [words (vertex->words hg vertex ctxts)]
     (apply + (map #(text-word-score text %) words))))
 
 (defn guess
-  [gbdb name text eid ctxt ctxts]
+  [hg name text eid ctxt ctxts]
   #_(if (> (id/count-parts name) 1)
     (gbdb/getv gbdb name ctxts)
     (let [text (clojure.string/lower-case text)
@@ -62,6 +62,6 @@
          (apply max-key :degree (map :vertex high-scores)))))))
 
 (defn guess-eid
-  [gbdb name text eid ctxt ctxts]
+  [hg name text eid ctxt ctxts]
   #_(let [entity (guess gbdb name text eid ctxt ctxts)]
     (id/local->global (:eid entity))))

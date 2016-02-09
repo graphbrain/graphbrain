@@ -1,5 +1,5 @@
 (ns graphbrain.web.handlers.nodepage
-  (:require [graphbrain.db.gbdb :as gb]
+  (:require [graphbrain.hg.ops :as hgops]
             [graphbrain.web.common :as common]
             [graphbrain.web.snodes :as snodes]
             [graphbrain.web.cssandjs :as css+js]
@@ -8,7 +8,7 @@
 
 (defn- data
   [id user ctxt ctxts]
-  (let [snodes (snodes/generate common/gbdb id ctxt ctxts)]
+  (let [snodes (snodes/generate common/hg id ctxt ctxts)]
     {:root-id id
      :snodes snodes}))
 

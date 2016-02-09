@@ -1,7 +1,7 @@
 (ns graphbrain.web.handlers.intersect
-  (:require [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.id :as id]
-            [graphbrain.db.queries :as q]
+  (:require [graphbrain.hg.ops :as hgops]
+            [graphbrain.hg.id :as id]
+            [graphbrain.hg.queries :as q]
             [graphbrain.web.common :as common]
             [graphbrain.web.visualvert :as vv]
             [graphbrain.web.cssandjs :as css+js]

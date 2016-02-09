@@ -1,8 +1,8 @@
 (ns graphbrain.web.handlers.raw
   (:use [clojure.string :only [join]]
         (graphbrain.web.views page raw))
-  (:require [graphbrain.db.gbdb :as gb]
-            [graphbrain.db.edgestr :as es]
+  (:require [graphbrain.hg.ops :as hgops]
+            [graphbrain.hg.edgestr :as es]
             [graphbrain.web.common :as common]
             [graphbrain.web.cssandjs :as css+js]
             [graphbrain.web.views.barpage :as bar]))
@@ -14,7 +14,7 @@
 (defn- raw-html
   [request vertex-id]
   (str "<h2>Vertex: " vertex-id "</h2><br/><br/>"
-       (let [edges (gb/neighbors common/gbdb vertex-id)]
+       (let [edges (hgops/neighbors common/hg vertex-id)]
          (join (map #(str (es/edge->str %) "<br />") edges)))))
 
 (defn handle

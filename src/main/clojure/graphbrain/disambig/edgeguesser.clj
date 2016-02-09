@@ -1,10 +1,10 @@
 (ns graphbrain.disambig.edgeguesser
-  (:require [graphbrain.db.gbdb :as gbdb]
-            [graphbrain.db.id :as id]
+  (:require [graphbrain.hg.ops :as hgops]
+            [graphbrain.hg.id :as id]
             [graphbrain.disambig.entityguesser :as eg]))
 
 (defn eid->guess-eid
-  [gbdb eid text ctxt ctxts]
+  [hg eid text ctxt ctxts]
   #_(let [ids (id/id->ids eid)
         guess (eg/guess-eid gbdb (second ids) text nil ctxt ctxts)]
     (if (id/eid? guess) guess
@@ -14,7 +14,7 @@
          (map #(eg/guess-eid gbdb % text nil ctxt ctxts) (drop 2 ids))))))
 
 (defn guess
-  [gbdb id text ctxt ctxts]
+  [hg id text ctxt ctxts]
   #_(case (id/id->type id)
     :entity (eg/guess-eid gbdb id text nil ctxt ctxts)
     :text (:id (gbdb/putv!

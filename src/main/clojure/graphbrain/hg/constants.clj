@@ -1,4 +1,4 @@
-(ns graphbrain.db.constants)
+(ns graphbrain.hg.constants)
 
 (def ^:const type-eid-rel "r/+t")
 
