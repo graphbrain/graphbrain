@@ -1,4 +1,5 @@
 (ns graphbrain.hg.mysql
+  "Implements MySQL hypergraph storage."
   (:use graphbrain.utils)
   (:require [clojure.java.jdbc :as jdbc]
             [clojure.math.combinatorics :as combo]
@@ -8,11 +9,13 @@
 (def MYSQL_ENGINE "InnoDB")
 
 (defn- safe-exec!
+  "Tries to execute an SQL command and ignores exceptions."
   [dbs sql]
   (try (jdbc/db-do-commands dbs sql)
     (catch Exception e (exception->str e))))
 
 (defn- create-tables!
+  "Created the tables necessary to store the hypergraph."
   [conn]
   ;; Edges table
   (safe-exec! conn (str "CREATE TABLE IF NOT EXISTS edges ("
@@ -31,6 +34,7 @@
   conn)
 
 (defn- db-spec
+  "Generates MySQL connection specifications map."
   [name]
   (let [conn {:classname "com.mysql.jdbc.Driver"
               :subprotocol "mysql"
@@ -40,6 +44,7 @@
     (create-tables! conn)))
 
 (defn- pool
+  "Creates a connection poll for the given specifications."
   [spec]
   (let [cpds (doto (ComboPooledDataSource.)
                (.setDriverClass (:classname spec))
@@ -54,9 +59,13 @@
 
 (def pooled-db (delay (pool (db-spec "gbnode"))))
 
-(defn- db-connection [] @pooled-db)
+(defn- db-connection
+  "Create a database connection."
+  []
+  @pooled-db)
 
 (defn- do-with-edge-permutations!
+  "Applies the function f to all permutations of the given edge."
   [edge f]
   (let [nperms (combo/count-permutations edge)
         perms (map #(str (clojure.string/join " "
@@ -66,6 +75,7 @@
     (doseq [perm-str perms] (f perm-str))))
 
 (defn- write-edge-permutations!
+  "Writes all permutations of the given edge."
   [conn edge]
   (do-with-edge-permutations! edge #(jdbc/execute!
                                      (conn)
@@ -73,6 +83,7 @@
                                       (es/edge->str %)])))
 
 (defn- remove-edge-permutations!
+  "Removes all permutations of the given edge."
   [conn edge]
   (do-with-edge-permutations! edge #(jdbc/execute!
                                      (conn)
@@ -80,20 +91,24 @@
                                       (es/edge->str %)])))
 
 (defn- exists-str?
+  "Check if the given edge, represented as a string, exists."
   [conn edge-str]
   (let [rs (jdbc/query (conn) [(str "SELECT id FROM edges WHERE id=?")
                               edge-str])]
     (not (empty? rs))))
 
 (defn exists?
+  "Checks if the given edge exists in the hypergraph."
   [hg edge]
   (exists-str? (:conn hg) (es/edge->str edge)))
 
 (defn- add-str!
+  "Adds the given edge, represented as a string."
   [conn edge-str]
   (jdbc/execute! (conn) ["INSERT INTO edges (id) VALUES (?)" edge-str]))
 
 (defn add!
+  "Adds an edge to the hypergraph if it does not exist yet."
   [hg edge]
   (if (not (exists? hg edge))
     (let [conn (:conn hg)]
@@ -102,16 +117,19 @@
   edge)
 
 (defn- remove-str!
+  "Removes the given edge, represented as a string."
   [conn edge-str]
   (jdbc/delete! (conn) :edges ["id=?" edge-str]))
 
 (defn remove!
+  "Removes an edge from the hypergraph."
   [hg edge]
   (let [conn (:conn hg)]
     (remove-str! conn (es/edge->str edge))
     (remove-edge-permutations! conn edge)))
 
 (defn- unpermutate
+  "Reorder the tokens vector to revert a permutation, specified by nper."
   [tokens nper]
   (let [n (count tokens)
         indices (apply vector (combo/nth-permutation (range n) nper))
@@ -119,6 +137,7 @@
     (apply vector (map #(nth tokens (inv-indices %)) (range n)))))
 
 (defn- results->edges
+  "Transforms a results object from a database query into a set of edges."
   [rs]
   (loop [results rs
          edges #{}]
@@ -134,16 +153,20 @@
         (recur (rest results) edges)))))
 
 (defn- str+1
+  "Increment a string by one, regaring lexicographical ordering."
   [str]
   (clojure.string/join
-   (concat (drop-last str) (list (char (inc (int (last str))))))))
+   (concat (drop-last str)
+           (list (char (inc (int (last str))))))))
 
 (defn edge-matches-pattern?
+  "Check if an edge matches a pattern."
   [edge pattern]
   (every? identity
           (map #(or (= %2 "*") (= %1 %2)) (map #(es/edge->str) edge) pattern)))
 
 (defn pattern->edges
+  "Return all the edges that match a pattern. A pattern is a collection of entity ids and wildcards ('*')."
   [hg pattern]
   (let [ids (filter #(not= % "*") pattern)
         start-str (str (clojure.string/join " " ids) " ")
@@ -152,7 +175,8 @@
                               start-str end-str])]
     (filter #(edge-matches-pattern? % pattern) (results->edges rs))))
 
-(defn- str->edges
+(defn- str->perms
+  "Query database for all the edge permutations that contain a given entity, represented as a string."
   [conn center-id]
   (let [start-str (str center-id " ")
         end-str (str+1 start-str)
@@ -160,18 +184,20 @@
                               start-str end-str])]
     (results->edges rs)))
 
-(defn neighbors
+(defn star
+  "Return all the edges that contain a given entity. Entity can be atomic or an edge."
   [hg center]
   (let [conn (:conn hg)]
     (if (coll? center)
-      (str->edges conn (es/edge->str center))
-      (str->edges conn center))))
+      (str->perms conn (es/edge->str center))
+      (str->perms conn center))))
 
 (defn mysql-hg
+  "Obtain a reference to a MySQL hypergraph."
   [dbname]
   {:conn (db-connection)
    :exists? exists?
    :add! add!
    :remove! remove!
    :pattern->edges pattern->edges
-   :neighbors neighbors})
+   :star star})
