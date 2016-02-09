@@ -5,41 +5,39 @@
             [graphbrain.hg.edgestr :as es])
   (:import (com.mchange.v2.c3p0 ComboPooledDataSource)))
 
-(def global-context "g")
-
 (def MYSQL_ENGINE "InnoDB")
 
-(defn safe-exec!
+(defn- safe-exec!
   [dbs sql]
   (try (jdbc/db-do-commands dbs sql)
     (catch Exception e (exception->str e))))
 
-(defn create-tables!
-  [dbs]
+(defn- create-tables!
+  [conn]
   ;; Edges table
-  (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS edges ("
-                       "id VARCHAR(10000),"
-                       "INDEX id_index (id(255))"
-                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
+  (safe-exec! conn (str "CREATE TABLE IF NOT EXISTS edges ("
+                        "id VARCHAR(10000),"
+                        "INDEX id_index (id(255))"
+                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
-  (safe-exec! dbs (str "CREATE INDEX id_ts_edges_index ON edges (id, ts);"))
+  (safe-exec! conn (str "CREATE INDEX id_ts_edges_index ON edges (id, ts);"))
   
   ;; Edge permutations table
-  (safe-exec! dbs (str "CREATE TABLE IF NOT EXISTS perms ("
-                       "id VARCHAR(10000),"
-                       "INDEX id_index (id(255))"
-                       ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
+  (safe-exec! conn (str "CREATE TABLE IF NOT EXISTS perms ("
+                        "id VARCHAR(10000),"
+                        "INDEX id_index (id(255))"
+                        ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
-  dbs)
+  conn)
 
 (defn- db-spec
   [name]
-  (let [dbs {:classname "com.mysql.jdbc.Driver"
-             :subprotocol "mysql"
-             :subname (str "//127.0.0.1:3306/" name)
-             :user "gb"
-             :password "gb"}]
-    (create-tables! dbs)))
+  (let [conn {:classname "com.mysql.jdbc.Driver"
+              :subprotocol "mysql"
+              :subname (str "//127.0.0.1:3306/" name)
+              :user "gb"
+              :password "gb"}]
+    (create-tables! conn)))
 
 (defn- pool
   [spec]
@@ -56,7 +54,7 @@
 
 (def pooled-db (delay (pool (db-spec "gbnode"))))
 
-(defn db-connection [] @pooled-db)
+(defn- db-connection [] @pooled-db)
 
 (defn- do-with-edge-permutations!
   [edge f]
@@ -68,49 +66,50 @@
     (doseq [perm-str perms] (f perm-str))))
 
 (defn- write-edge-permutations!
-  [dbs edge]
+  [conn edge]
   (do-with-edge-permutations! edge #(jdbc/execute!
-                                     (dbs)
+                                     (conn)
                                      ["INSERT INTO perms (id) VALUES (?)"
                                       (es/edge->str %)])))
 
 (defn- remove-edge-permutations!
-  [dbs edge]
+  [conn edge]
   (do-with-edge-permutations! edge #(jdbc/execute!
-                                     (dbs)
+                                     (conn)
                                      ["DELETE FROM perms WHERE id=?"
                                       (es/edge->str %)])))
 
 (defn- exists-str?
-  [dbs edge-str]
-  (let [rs (jdbc/query (dbs) [(str "SELECT id FROM edges WHERE id=?")
+  [conn edge-str]
+  (let [rs (jdbc/query (conn) [(str "SELECT id FROM edges WHERE id=?")
                               edge-str])]
     (not (empty? rs))))
 
 (defn exists?
-  [dbs edge]
-  (exists-str? (es/edge->str edge)))
+  [hg edge]
+  (exists-str? (:conn hg) (es/edge->str edge)))
 
 (defn- add-str!
-  [dbs edge-str]
-  (jdbc/execute! (dbs) ["INSERT INTO edges (id) VALUES (?)" edge-str]))
+  [conn edge-str]
+  (jdbc/execute! (conn) ["INSERT INTO edges (id) VALUES (?)" edge-str]))
 
 (defn add!
-  [dbs edge]
-  (if (not (exists? edge))
-    (do
-      (add-str! dbs edge (es/edge->str edge))
-      (write-edge-permutations! dbs edge)))
+  [hg edge]
+  (if (not (exists? hg edge))
+    (let [conn (:conn hg)]
+      (add-str! conn edge (es/edge->str edge))
+      (write-edge-permutations! conn edge)))
   edge)
 
 (defn- remove-str!
-  [dbs edge-str]
-  (jdbc/delete! (dbs) :edges ["id=?" edge-str]))
+  [conn edge-str]
+  (jdbc/delete! (conn) :edges ["id=?" edge-str]))
 
 (defn remove!
-  [dbs edge]
-  (remove-str! dbs (es/edge->str edge))
-  (remove-edge-permutations! dbs edge))
+  [hg edge]
+  (let [conn (:conn hg)]
+    (remove-str! conn (es/edge->str edge))
+    (remove-edge-permutations! conn edge)))
 
 (defn- unpermutate
   [tokens nper]
@@ -145,25 +144,34 @@
           (map #(or (= %2 "*") (= %1 %2)) (map #(es/edge->str) edge) pattern)))
 
 (defn pattern->edges
-  [dbs pattern]
+  [hg pattern]
   (let [ids (filter #(not= % "*") pattern)
         start-str (str (clojure.string/join " " ids) " ")
         end-str (str+1 start-str)
-        rs (jdbc/query (dbs) ["SELECT id FROM perms WHERE id>=? AND id<?"
+        rs (jdbc/query (:conn hg) ["SELECT id FROM perms WHERE id>=? AND id<?"
                               start-str end-str])]
     (filter #(edge-matches-pattern? % pattern) (results->edges rs))))
 
 (defn- str->edges
-  [dbs center-id]
+  [conn center-id]
   (let [start-str (str center-id " ")
         end-str (str+1 start-str)
-        rs (jdbc/query (dbs) ["SELECT id FROM perms WHERE id>=? AND id<?"
-                              start-str
-                              end-str])]
+        rs (jdbc/query (conn) ["SELECT id FROM perms WHERE id>=? AND id<?"
+                              start-str end-str])]
     (results->edges rs)))
 
 (defn neighbors
-  [dbs center]
-  (if (coll? center)
-    (str->edges dbs (es/edge->str center))
-    (str->edges dbs center)))
+  [hg center]
+  (let [conn (:conn hg)]
+    (if (coll? center)
+      (str->edges conn (es/edge->str center))
+      (str->edges conn center))))
+
+(defn mysql-hg
+  [dbname]
+  {:conn (db-connection)
+   :exists? exists?
+   :add! add!
+   :remove! remove!
+   :pattern->edges pattern->edges
+   :neighbors neighbors})
