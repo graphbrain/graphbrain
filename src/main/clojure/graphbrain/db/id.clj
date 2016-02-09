@@ -1,5 +1,5 @@
 (ns graphbrain.db.id
-  (:import (com.graphbrain.utils RandUtils)))
+  (:import (java.security SecureRandom)))
 
 (defn hashed
   [str]
@@ -13,7 +13,7 @@
   []
   (hashed
    (.toString
-    (BigInteger. 130 (RandUtils/secRand)) 32)))
+    (BigInteger. 130 (new SecureRandom)) 32)))
 
 (defn- count-end-slashes
   [str]
