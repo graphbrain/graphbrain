@@ -2,25 +2,28 @@
   (:require [graphbrain.hg.mysql :as mysql]))
 
 (defn hg
-  ([] (hg "gbnode"))
-  ([name] mysql/db-connection))
+  ([] (hg :mysql "gbnode"))
+  ([storage-type name]
+     (case storage-type
+       :mysql (mysql/mysql-hg name)
+       (throw (Exception. (str "Unknown storage type: " storage-type))))))
 
 (defn exists?
   [hg edge]
-  (mysql/exists? hg edge))
+  ((:exists? hg) hg edge))
 
 (defn add!
   [hg edge]
-  (mysql/add! hg edge))
+  ((:add! hg) hg edge))
 
 (defn remove!
   [hg edge]
-  (mysql/remove! hg edge))
+  ((:remove! hg) hg edge))
 
 (defn pattern->edges
   [hg pattern]
-  (mysql/pattern->edges hg pattern))
+  ((:pattern->edges hg) hg pattern))
 
 (defn neighbors
   [hg center]
-  (mysql/neighbors hg center))
+  ((:neighbors hg) hg center))
