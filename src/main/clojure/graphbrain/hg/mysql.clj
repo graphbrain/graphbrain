@@ -145,7 +145,7 @@
          edges #{}]
     (if (empty? results) edges
         (let [res (:id (first results))
-              tokens (es/split-edge-inner-str res)
+              tokens (es/split-edge-str res)
               nper (Integer. (last tokens))
               tokens (drop-last tokens)
               tokens (unpermutate tokens nper)
