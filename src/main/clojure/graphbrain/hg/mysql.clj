@@ -68,17 +68,20 @@
   "Applies the function f to all permutations of the given edge."
   [edge f]
   (let [nperms (combo/count-permutations edge)
-        perms (map #(str (clojure.string/join " "
-                                              (map es/edge->str (combo/nth-permutation edge %)))
-                         " " %)
-                   (range nperms))]
+        perms (map
+               #(str
+                 (clojure.string/join " "
+                                      (map es/edge->str
+                                           (combo/nth-permutation edge %)))
+                 " " %)
+               (range nperms))]
     (doseq [perm-str perms] (f perm-str))))
 
 (defn- write-edge-permutations!
   "Writes all permutations of the given edge."
   [conn edge]
   (do-with-edge-permutations! edge #(jdbc/execute!
-                                     (conn)
+                                     conn
                                      ["INSERT INTO perms (id) VALUES (?)"
                                       (es/edge->str %)])))
 
@@ -86,15 +89,14 @@
   "Removes all permutations of the given edge."
   [conn edge]
   (do-with-edge-permutations! edge #(jdbc/execute!
-                                     (conn)
+                                     conn
                                      ["DELETE FROM perms WHERE id=?"
                                       (es/edge->str %)])))
 
 (defn- exists-str?
   "Check if the given edge, represented as a string, exists."
   [conn edge-str]
-  (let [rs (jdbc/query (conn) [(str "SELECT id FROM edges WHERE id=?")
-                              edge-str])]
+  (let [rs (jdbc/query conn ["SELECT id FROM edges WHERE id=?" edge-str])]
     (not (empty? rs))))
 
 (defn exists?
@@ -105,21 +107,21 @@
 (defn- add-str!
   "Adds the given edge, represented as a string."
   [conn edge-str]
-  (jdbc/execute! (conn) ["INSERT INTO edges (id) VALUES (?)" edge-str]))
+  (jdbc/execute! conn ["INSERT INTO edges (id) VALUES (?)" edge-str]))
 
 (defn add!
   "Adds an edge to the hypergraph if it does not exist yet."
   [hg edge]
   (if (not (exists? hg edge))
     (let [conn (:conn hg)]
-      (add-str! conn edge (es/edge->str edge))
+      (add-str! conn (es/edge->str edge))
       (write-edge-permutations! conn edge)))
   edge)
 
 (defn- remove-str!
   "Removes the given edge, represented as a string."
   [conn edge-str]
-  (jdbc/delete! (conn) :edges ["id=?" edge-str]))
+  (jdbc/delete! conn :edges ["id=?" edge-str]))
 
 (defn remove!
   "Removes an edge from the hypergraph."
@@ -142,15 +144,15 @@
   (loop [results rs
          edges #{}]
     (if (empty? results) edges
-      (let [res (first results)
-            tokens (es/split-edge-inner-str res)
-            nper (Integer. (last tokens))
-            tokens (drop-last tokens)
-            tokens (unpermutate tokens nper)
-            edge (es/str->edge
-                  (str "(" (clojure.string/join " " tokens) ")"))
-            edges (conj edges edge)]
-        (recur (rest results) edges)))))
+        (let [res (:id (first results))
+              tokens (es/split-edge-inner-str res)
+              nper (Integer. (last tokens))
+              tokens (drop-last tokens)
+              tokens (unpermutate tokens nper)
+              edge (es/str->edge
+                    (str "(" (clojure.string/join " " tokens) ")"))
+              edges (conj edges edge)]
+          (recur (rest results) edges)))))
 
 (defn- str+1
   "Increment a string by one, regaring lexicographical ordering."
@@ -180,7 +182,7 @@
   [conn center-id]
   (let [start-str (str center-id " ")
         end-str (str+1 start-str)
-        rs (jdbc/query (conn) ["SELECT id FROM perms WHERE id>=? AND id<?"
+        rs (jdbc/query conn ["SELECT id FROM perms WHERE id>=? AND id<?"
                               start-str end-str])]
     (results->edges rs)))
 

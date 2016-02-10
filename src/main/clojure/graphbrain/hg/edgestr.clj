@@ -27,7 +27,7 @@
       (if point :double :integer)
       (let [c (first s)]
         (cond (and (= c \-) (> pos 0)) :string
-              (or (< c \0) (> c \9)) :string
+              (or (< (int c) (int \0)) (> (int c) (int \9))) :string
               (= c \.) (if point
                          :string
                          (recur (rest s) (inc pos) true)))))))
@@ -67,5 +67,5 @@
   [edge]
   (if (coll? edge)
     (str "(" (clojure.string/join " "
-                                  #(if (coll? %) (edge->str %) (str %)) edge) ")")
+                                  (map #(if (coll? %) (edge->str %) (str %)) edge)) ")")
     (str edge)))
