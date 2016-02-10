@@ -14,7 +14,7 @@
 (defn- raw-html
   [request vertex-id]
   (str "<h2>Vertex: " vertex-id "</h2><br/><br/>"
-       (let [edges (hgops/neighbors common/hg vertex-id)]
+       (let [edges (hgops/star common/hg vertex-id)]
          (join (map #(str (es/edge->str %) "<br />") edges)))))
 
 (defn handle
