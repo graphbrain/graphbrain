@@ -57,12 +57,10 @@
                (.setMaxIdleTime (* 3 60 60)))]
     {:datasource cpds}))
 
-(def pooled-db (delay (pool (db-spec "gbnode"))))
-
 (defn- db-connection
   "Create a database connection."
-  []
-  @pooled-db)
+  [name]
+  @(delay (pool (db-spec name))))
 
 (defn- do-with-edge-permutations!
   "Applies the function f to all permutations of the given edge."
@@ -198,7 +196,7 @@
 (defn mysql-hg
   "Obtain a reference to a MySQL hypergraph."
   [dbname]
-  {:conn (db-connection)
+  {:conn (db-connection dbname)
    :exists? exists?
    :add! add!
    :remove! remove!

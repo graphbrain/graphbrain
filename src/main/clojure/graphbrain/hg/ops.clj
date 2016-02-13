@@ -39,4 +39,4 @@
   "Removes from the hypergraph all edges that match the pattern."
   [hg pattern]
   (doseq [edge (pattern->edges hg pattern)]
-    (remove! edge)))
+    (remove! hg edge)))
