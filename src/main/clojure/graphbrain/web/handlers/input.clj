@@ -3,7 +3,6 @@
             [graphbrain.web.handlers.search :as search]
             [graphbrain.hg.ops :as hgops]
             [graphbrain.hg.symbol :as sym]
-            [graphbrain.hg.knowledge :as k]
             [graphbrain.disambig.edgeguesser :as edg]
             [graphbrain.kr.pagereader :as pr]
             [graphbrain.eco.eco :as eco]
