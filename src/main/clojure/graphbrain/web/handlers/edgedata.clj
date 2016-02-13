@@ -1,8 +1,7 @@
 (ns graphbrain.web.handlers.edgedata
   (:require [graphbrain.web.common :as common]
             [graphbrain.web.handlers.search :as search]
-            [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.knowledge :as k]))
+            [graphbrain.hg.ops :as hgops]))
 
 (defn- author
   [edge-id ctxts]
