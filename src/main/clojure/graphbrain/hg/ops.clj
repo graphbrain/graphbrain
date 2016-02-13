@@ -34,3 +34,9 @@
   "Return all the edges that contain a given entity. Entity can be atomic or an edge."
   [hg center]
   ((:star hg) hg center))
+
+(defn remove-by-pattern!
+  "Removes from the hypergraph all edges that match the pattern."
+  [hg pattern]
+  (doseq [edge (pattern->edges hg pattern)]
+    (remove! edge)))
