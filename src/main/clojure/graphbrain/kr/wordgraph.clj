@@ -1,6 +1,6 @@
 (ns graphbrain.kr.wordgraph
-  (:require [graphbrain.graphtools :as graphtools]
-            [graphbrain.pagerank :as pagerank]
+  (:require [graphbrain.graphs.graphtools :as graphtools]
+            [graphbrain.graphs.pagerank :as pagerank]
             [graphbrain.kr.nlptools :as nlptools]
             [graphbrain.eco.word :as word]
             [clojure.math.combinatorics :as combo]))

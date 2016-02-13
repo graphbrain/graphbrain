@@ -7,7 +7,7 @@
             [graphbrain.kr.pagereader :as pr]
             [graphbrain.eco.eco :as eco]
             [graphbrain.eco.parsers.chat :as chat]
-            [graphbrain.string :as gbstr]))
+            [graphbrain.utils.string :as gbstr]))
 
 (defn- goto-id
   [root-id vertex]

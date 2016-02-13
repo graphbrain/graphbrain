@@ -1,5 +1,5 @@
-(ns graphbrain.graphtools
-  (:use graphbrain.utils))
+(ns graphbrain.graphs.graphtools
+  (:use graphbrain.utils.utils))
 
 (defn node-in-arcs
   [node]

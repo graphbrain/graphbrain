@@ -1,5 +1,5 @@
 (ns graphbrain.eco.eco
-  (:use [graphbrain.utils :only [dbg]]
+  (:use [graphbrain.utils.utils :only [dbg]]
         graphbrain.eco.ecofuns)
   (:require [graphbrain.hg.symbol :as sym]
             [graphbrain.eco.words :as words]

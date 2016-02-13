@@ -1,6 +1,6 @@
-(ns graphbrain.pagerank
-  (:use graphbrain.utils
-        graphbrain.graphtools))
+(ns graphbrain.graphs.pagerank
+  (:use graphbrain.utils.utils
+        graphbrain.graphs.graphtools))
 
 (defn init-pr
   [graph]
