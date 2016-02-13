@@ -26,7 +26,8 @@
   ((:remove! hg) hg edge))
 
 (defn pattern->edges
-  "Return all the edges that match a pattern. A pattern is a collection of entity ids and wildcards ('*')."
+  "Return all the edges that match a pattern.
+   A pattern is a collection of entity ids and wildcards (nil)."
   [hg pattern]
   ((:pattern->edges hg) hg pattern))
 
