@@ -74,10 +74,17 @@
   (apply vector
          (map parsed-token (split-edge-str edge-str))))
 
+(declare edge->str)
+
+(defn nodes->str
+  "Convert a collection of nodes to a string representation (no outer parenthesis)."
+  [edge]
+  (clojure.string/join " "
+                       (map #(if (coll? %) (edge->str %) (str %)) edge)))
+
 (defn edge->str
   "Convert an edge to its string representation."
   [edge]
   (if (coll? edge)
-    (str "(" (clojure.string/join " "
-                                  (map #(if (coll? %) (edge->str %) (str %)) edge)) ")")
+    (str "(" (nodes->str edge) ")")
     (str edge)))

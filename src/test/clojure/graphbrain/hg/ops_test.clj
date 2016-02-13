@@ -47,13 +47,17 @@
 (deftest pattern->edges-test
   (let [hg (hg :mysql "gbtest")]
     (add! hg ["is" "graphbrain/1" "great/1"])
+    (add! hg ["says" "mary/1" ["is" "graphbrain/1" "great/1"]])
     (is (= (pattern->edges hg ["*" "graphbrain/1" "*"])
            '(["is" "graphbrain/1" "great/1"])))
     (is (= (pattern->edges hg ["is" "graphbrain/1" "*"])
            '(["is" "graphbrain/1" "great/1"])))
     (is (= (pattern->edges hg ["x" "*" "*"])
            '()))
-    (remove! hg ["is" "graphbrain/1" "great/1"])))
+    (is (= (pattern->edges hg ["says" "*" ["is" "graphbrain/1" "great/1"]])
+           '(["says" "mary/1" ["is" "graphbrain/1" "great/1"]])))
+    (remove! hg ["is" "graphbrain/1" "great/1"])
+    (remove! hg ["says" "mary/1" ["is" "graphbrain/1" "great/1"]])))
 
 (deftest star-test
   (let [hg (hg :mysql "gbtest")]
