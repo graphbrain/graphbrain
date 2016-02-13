@@ -100,7 +100,7 @@
 
 (defn words->id
   [words]
-  (sym/sanitize (clojure.string/join " " (map :word words))))
+  (sym/str->symbol (clojure.string/join " " (map :word words))))
 
 (defn entity
   [words]

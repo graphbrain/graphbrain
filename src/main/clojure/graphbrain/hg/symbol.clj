@@ -2,6 +2,7 @@
   (:import (java.security SecureRandom)))
 
 (defn hashed
+  "Creates an hash code for a string."
   [str]
   (let [h (loop [s str
                  x 1125899906842597]  ;; prime
@@ -10,36 +11,47 @@
     (Long/toHexString h)))
 
 (defn random-hash
+  "Creates random hash code."
   []
   (hashed
    (.toString
     (BigInteger. 130 (new SecureRandom)) 32)))
 
-(defn- count-end-slashes
-  [str]
-  (loop [s (reverse str)
-         c 0]
-    (if (= (first s) \/)
-      (recur (rest s) (inc c))
-      c)))
+(defn sym-type
+  "Type of symbol: :concept, :integer, :float or :url"
+  [sym]
+  (cond
+   (integer? sym) :integer
+   (float? sym) :float
+   (clojure.string/starts-with? sym "http://") :url
+   (clojure.string/starts-with? sym "https://") :url
+   :else :concept))
 
 (defn parts
-  [id]
-  (let [ps (clojure.string/split id #"/")
-        c (count-end-slashes id)]
-    (if (> c 0)
-      (apply conj ps (repeat c ""))
-      ps)))
+  "Splits a symbol into its parts.
+  All symbol types except :concept only have one part."
+  [sym]
+  (if (= (sym-type sym) :concept)
+    (clojure.string/split sym #"/")
+    [sym]))
 
-(defn count-parts
-  [id]
-  (count (parts id)))
+(defn root
+  "Extracts the root of a symbol (e.g. the root of graphbrain/1 is graphbrain)"
+  [sym]
+  (first (parts sym)))
+
+(defn root?
+  "Is the symbol the root of itself?"
+  [sym]
+  (= sym (root sym)))
 
 (defn build
+  "Build a concept symbol for a collection of strings."
   [parts]
   (clojure.string/join "/" parts))
 
-(defn sanitize
+(defn str->symbol
+  "Converts a string into a valid symbol"
   [str]
   (clojure.string/replace
    (clojure.string/replace (.toLowerCase str) "/" "_") " " "_"))
