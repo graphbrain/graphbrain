@@ -18,9 +18,10 @@
     (BigInteger. 130 (new SecureRandom)) 32)))
 
 (defn sym-type
-  "Type of symbol: :concept, :integer, :float or :url"
+  "Type of symbol: :concept, :edge, :integer, :float or :url"
   [sym]
   (cond
+   (coll? sym) :edge
    (integer? sym) :integer
    (float? sym) :float
    (clojure.string/starts-with? sym "http://") :url

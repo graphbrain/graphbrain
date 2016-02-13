@@ -1,5 +1,7 @@
 (ns graphbrain.hg.constants)
 
-(def ^:const type-eid-rel "r/+t")
+(def ^:const degree "deg")
 
-(def ^:const composed-eid-rel "r/+c")
+(def ^:const index "ind")
+
+(def ^:const source "src")
