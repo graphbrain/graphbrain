@@ -1,8 +1,7 @@
 (ns graphbrain.web.handlers.change
   (:require [graphbrain.web.common :as common]
             [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.symbol :as sym]
-            [graphbrain.hg.searchinterface :as si]))
+            [graphbrain.hg.symbol :as sym]))
 
 (defn reply
   []
