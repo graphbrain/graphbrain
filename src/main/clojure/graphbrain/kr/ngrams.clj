@@ -1,7 +1,7 @@
 (ns graphbrain.kr.ngrams
-  (:require [graphbrain.utils :as utils]
-            [graphbrain.graphtools :as gt]
-            [graphbrain.pagerank :as pr]
+  (:require [graphbrain.utils.utils :as utils]
+            [graphbrain.graphs.graphtools :as gt]
+            [graphbrain.graphs.pagerank :as pr]
             [graphbrain.kr.wordgraph :as wg]
             [graphbrain.kr.nlptools :as nlp]))
 

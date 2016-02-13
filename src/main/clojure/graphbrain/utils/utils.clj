@@ -1,4 +1,4 @@
-(ns graphbrain.utils
+(ns graphbrain.utils.utils
   (:import (java.io StringWriter PrintWriter)))
 
 (defmacro dbg[x] `(let [x# ~x] (println "dbg:" '~x "=" x#) x#))

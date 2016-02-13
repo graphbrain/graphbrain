@@ -1,6 +1,6 @@
 (ns graphbrain.hg.mysql
   "Implements MySQL hypergraph storage."
-  (:use graphbrain.utils)
+  (:use graphbrain.utils.utils)
   (:require [clojure.java.jdbc :as jdbc]
             [clojure.math.combinatorics :as combo]
             [graphbrain.hg.edgestr :as es])

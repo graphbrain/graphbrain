@@ -1,7 +1,7 @@
 (ns graphbrain.eco.parsers.chat
   (:use graphbrain.eco.eco
         graphbrain.eco.ecofuns
-        [graphbrain.utils :only [dbg]]))
+        [graphbrain.utils.utils :only [dbg]]))
 
 (ecoparser chat)
 

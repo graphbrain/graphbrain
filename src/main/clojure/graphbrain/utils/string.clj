@@ -1,4 +1,4 @@
-(ns graphbrain.string)
+(ns graphbrain.utils.string)
 
 (defn contains-char?
   [s c]

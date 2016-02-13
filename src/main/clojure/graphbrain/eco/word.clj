@@ -1,5 +1,5 @@
 (ns graphbrain.eco.word
-  (:use [graphbrain.utils :only [dbg]])
+  (:use [graphbrain.utils.utils :only [dbg]])
   (:import (com.graphbrain.eco Word)))
 
 (defn pos-first-char-is?
