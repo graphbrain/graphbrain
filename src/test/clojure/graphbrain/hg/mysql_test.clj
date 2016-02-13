@@ -45,20 +45,20 @@
     (is (not (exists? hg ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]])))))
 
 (deftest edge-matches-pattern?-test
-  (is (edge-matches-pattern? ["a" "b" "c"] ["*" "b" "*"]))
-  (is (edge-matches-pattern? ["a" "b" "c"] ["*" "*" "*"]))
+  (is (edge-matches-pattern? ["a" "b" "c"] [nil "b" nil]))
+  (is (edge-matches-pattern? ["a" "b" "c"] [nil nil nil]))
   (is (edge-matches-pattern? ["a" "b" "c"] ["a" "b" "c"]))
-  (is (edge-matches-pattern? ["a" "b" "c"] ["a" "*" "*"]))
-  (is (not (edge-matches-pattern? ["a" "b" "c"] ["*" "x" "*"]))))
+  (is (edge-matches-pattern? ["a" "b" "c"] ["a" nil nil]))
+  (is (not (edge-matches-pattern? ["a" "b" "c"] [nil "x" nil]))))
 
 (deftest pattern->edges-test
   (let [hg (mysql-hg "gbtest")]
     (add! hg ["is" "graphbrain/1" "great/1"])
-    (is (= (pattern->edges hg ["*" "graphbrain/1" "*"])
+    (is (= (pattern->edges hg [nil "graphbrain/1" nil])
            '(["is" "graphbrain/1" "great/1"])))
-    (is (= (pattern->edges hg ["is" "graphbrain/1" "*"])
+    (is (= (pattern->edges hg ["is" "graphbrain/1" nil])
            '(["is" "graphbrain/1" "great/1"])))
-    (is (= (pattern->edges hg ["x" "*" "*"])
+    (is (= (pattern->edges hg ["x" nil nil])
            '()))
     (remove! hg ["is" "graphbrain/1" "great/1"])))
 

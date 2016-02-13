@@ -163,12 +163,13 @@
   "Check if an edge matches a pattern."
   [edge pattern]
   (every? identity
-          (map #(or (= %2 "*") (= %1 %2)) edge pattern)))
+          (map #(or (nil? %2) (= %1 %2)) edge pattern)))
 
 (defn pattern->edges
-  "Return all the edges that match a pattern. A pattern is a collection of entity ids and wildcards ('*')."
+  "Return all the edges that match a pattern.
+A pattern is a collection of entity ids and wildcards (nil)."
   [hg pattern]
-  (let [nodes (filter #(not= % "*") pattern)
+  (let [nodes (filter #(not (nil? %)) pattern)
         start-str (es/nodes->str nodes)
         end-str (str+1 start-str)
         rs (jdbc/query (:conn hg) ["SELECT id FROM perms WHERE id>=? AND id<?"

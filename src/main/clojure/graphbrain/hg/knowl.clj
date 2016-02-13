@@ -7,7 +7,7 @@
 (defn degree
   "Degree of a node."
   [hg node]
-  (let [deg-edges (ops/pattern->edges hg [const/degree node "*"])]
+  (let [deg-edges (ops/pattern->edges hg [const/degree node nil])]
     (if (empty? deg-edges)
       0
       (nth (first deg-edges) 2))))
@@ -15,7 +15,7 @@
 (defn- set-degree!
   "Sets the degree of a node."
   [hg node degree]
-  (ops/remove-by-pattern! hg [const/degree node "*"])
+  (ops/remove-by-pattern! hg [const/degree node nil])
   (if (> degree 0)
     (ops/add! hg [const/degree node degree]))
   degree)
@@ -69,7 +69,7 @@
 
 (defn pattern->edges
   "Return all the edges that match a pattern.
-  A pattern is a collection of entity ids and wildcards ('*')."
+  A pattern is a collection of entity ids and wildcards (nil)."
   [hg pattern]
   (ops/pattern->edges hg pattern))
 
@@ -87,7 +87,7 @@
   "Find all the symbols with the given root."
   [hg root]
   (set (map #(nth % 2)
-            (ops/pattern->edges hg [const/index root "*"]))))
+            (ops/pattern->edges hg [const/index root nil]))))
 
 (defn add-belief!
   "A belif is a fact with a source. The fact is created as a normal edge
@@ -101,7 +101,7 @@
   "Set of sources (nodes) that support a statement (edge)."
   [hg edge]
   (set (map #(nth % 2)
-        (ops/pattern->edges hg [const/source edge "*"]))))
+        (ops/pattern->edges hg [const/source edge nil]))))
 
 (defn remove-belief!
   "A belif is a fact with a source. Two link from the source to the fact
