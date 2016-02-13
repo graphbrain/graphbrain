@@ -3,7 +3,7 @@
             [graphbrain.web.visualvert :as vv]
             [graphbrain.web.extrasnodes :as xs]
             [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.id :as id]))
+            [graphbrain.hg.symbol :as sym]))
 
 (def ^:const max-snodes 15)
 

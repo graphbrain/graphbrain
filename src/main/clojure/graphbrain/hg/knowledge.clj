@@ -1,6 +1,6 @@
 (ns graphbrain.hg.knowledge
   (:require [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.id :as id]))
+            [graphbrain.hg.symbol :as sym]))
 
 (defn- edge->def
   [edge defs]

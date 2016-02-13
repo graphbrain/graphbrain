@@ -1,6 +1,6 @@
 (ns graphbrain.kr.pagereader
   (:require [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.id :as id]
+            [graphbrain.hg.symbol :as sym]
             [graphbrain.hg.constants :as consts]
             [graphbrain.kr.webtools :as webtools]
             [graphbrain.kr.htmltools :as htmltools]

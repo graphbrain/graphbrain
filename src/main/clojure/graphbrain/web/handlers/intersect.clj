@@ -1,6 +1,6 @@
 (ns graphbrain.web.handlers.intersect
   (:require [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.id :as id]
+            [graphbrain.hg.symbol :as sym]
             [graphbrain.hg.queries :as q]
             [graphbrain.web.common :as common]
             [graphbrain.web.visualvert :as vv]

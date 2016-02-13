@@ -1,4 +1,4 @@
-(ns graphbrain.hg.id
+(ns graphbrain.hg.symbol
   (:import (java.security SecureRandom)))
 
 (defn hashed
