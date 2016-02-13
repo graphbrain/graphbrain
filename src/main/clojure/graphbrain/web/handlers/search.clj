@@ -1,7 +1,7 @@
 (ns graphbrain.web.handlers.search
   (:require [graphbrain.web.common :as common]
             [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.id :as id]
+            [graphbrain.hg.symbol :as sym]
             [graphbrain.hg.searchinterface :as si]))
 
 (defn results

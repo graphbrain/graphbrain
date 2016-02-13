@@ -1,6 +1,6 @@
 (ns graphbrain.kr.wordnet
   (:require [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.id :as id]
+            [graphbrain.hg.symbol :as sym]
             [graphbrain.hg.constants :as consts])
   (:import (org.w3c.dom ElementTraversal)
            (net.sf.extjwnl.data PointerUtils
@@ -35,7 +35,7 @@
         sts (super-types word)
         stids (if sts (map #(vertex-id %) sts))
         classes (if sts stids)
-        hash (id/hashed (str name " " (clojure.string/join " " stids)))]
+        hash (sym/hashed (str name " " (clojure.string/join " " stids)))]
     (str name "/" hash)))
 
 (def vertex-id (memoize vertex-id-raw))

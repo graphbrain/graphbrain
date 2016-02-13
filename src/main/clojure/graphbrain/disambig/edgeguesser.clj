@@ -1,6 +1,6 @@
 (ns graphbrain.disambig.edgeguesser
   (:require [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.id :as id]
+            [graphbrain.hg.symbol :as sym]
             [graphbrain.disambig.entityguesser :as eg]))
 
 (defn eid->guess-eid

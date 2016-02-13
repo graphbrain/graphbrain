@@ -1,7 +1,7 @@
 (ns graphbrain.eco.eco
   (:use [graphbrain.utils :only [dbg]]
         graphbrain.eco.ecofuns)
-  (:require [graphbrain.hg.id :as id]
+  (:require [graphbrain.hg.symbol :as sym]
             [graphbrain.eco.words :as words]
             [clojure.set :as set]))
 

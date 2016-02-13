@@ -1,5 +1,5 @@
 (ns graphbrain.hg.searchinterface
-  (:require [graphbrain.hg.id :as id]
+  (:require [graphbrain.hg.symbol :as sym]
             [graphbrain.hg.ops :as hgops]))
 
 (defn query

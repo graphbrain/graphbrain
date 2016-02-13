@@ -1,6 +1,6 @@
 (ns graphbrain.eco.ecofuns
   (:use [graphbrain.utils :only [dbg]])
-  (:require [graphbrain.hg.id :as id]
+  (:require [graphbrain.hg.symbol :as sym]
             [graphbrain.eco.word :as word]
             [clojure.math.combinatorics :as combs]))
 
@@ -100,7 +100,7 @@
 
 (defn words->id
   [words]
-  (id/sanitize (clojure.string/join " " (map :word words))))
+  (sym/sanitize (clojure.string/join " " (map :word words))))
 
 (defn entity
   [words]

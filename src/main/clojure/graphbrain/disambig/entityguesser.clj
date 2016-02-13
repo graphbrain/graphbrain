@@ -1,6 +1,6 @@
 (ns graphbrain.disambig.entityguesser
   (:require [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.id :as id]))
+            [graphbrain.hg.symbol :as sym]))
 
 (defn substring?
   [sub st]

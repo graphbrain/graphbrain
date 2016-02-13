@@ -1,7 +1,7 @@
 (ns graphbrain.web.handlers.define
   (:require [graphbrain.web.common :as common]
             [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.id :as id]))
+            [graphbrain.hg.symbol :as sym]))
 
 (defn reply
   [id]

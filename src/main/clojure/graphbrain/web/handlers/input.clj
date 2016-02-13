@@ -2,7 +2,7 @@
   (:require [graphbrain.web.common :as common]
             [graphbrain.web.handlers.search :as search]
             [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.id :as id]
+            [graphbrain.hg.symbol :as sym]
             [graphbrain.hg.knowledge :as k]
             [graphbrain.disambig.edgeguesser :as edg]
             [graphbrain.kr.pagereader :as pr]

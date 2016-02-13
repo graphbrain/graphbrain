@@ -1,6 +1,6 @@
 (ns graphbrain.hg.queries
   (:require [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.id :as id]
+            [graphbrain.hg.symbol :as sym]
             [graphbrain.utils :as u]))
 
 (def exclude-set

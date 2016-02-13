@@ -1,6 +1,6 @@
 (ns graphbrain.web.visualvert
   (:require [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.id :as id]))
+            [graphbrain.hg.symbol :as sym]))
 
 (declare edge-id->text)
 
