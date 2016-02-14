@@ -1,6 +1,6 @@
-(ns graphbrain.hg.knowl-test
+(ns graphbrain.hg.knowledge-test
   (:use clojure.test
-        graphbrain.hg.knowl)
+        graphbrain.hg.knowledge)
   (:require [graphbrain.hg.ops :as ops]))
 
 (deftest degree-test
