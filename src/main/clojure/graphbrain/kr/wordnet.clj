@@ -1,7 +1,7 @@
 (ns graphbrain.kr.wordnet
-  (:require [graphbrain.hg.ops :as hgops]
+  (:require [graphbrain.hg.knowledge :as k]
             [graphbrain.hg.symbol :as sym]
-            [graphbrain.hg.constants :as consts])
+            [graphbrain.hg.constants :as const])
   (:import (org.w3c.dom ElementTraversal)
            (net.sf.extjwnl.data PointerUtils
                                 POS)
@@ -11,14 +11,12 @@
            (java.io FileInputStream)
            (java.security NoSuchAlgorithmException)))
 
-(def dryrun false)
+(defn- add-fact!
+  [hg fact]
+  (println (str "fact: " fact))
+  (k/add-belief! hg const/wordnet fact))
 
-(defn add-relation!
-  [hg rel]
-  (prn (str "rel: " rel))
-  (if (not dryrun) (hgops/add! hg rel)))
-
-(defn super-types
+(defn- super-types
   [word]
   (let [concept (.getSynset word)
         hypernyms (PointerUtils/getDirectHypernyms concept)]
@@ -27,113 +25,106 @@
           (if hypernym
             (.getWords (.getSynset hypernym)))))))
 
-(declare vertex-id)
+(declare word->symb)
 
-(defn vertex-id-raw
+(defn- word->symb-raw
   [word]
-  (let [name (.getLemma word)
+  (let [symb (sym/str->symbol (.getLemma word))
         sts (super-types word)
-        stids (if sts (map #(vertex-id %) sts))
+        stids (if sts (map #(word->symb %) sts))
         classes (if sts stids)
-        hash (sym/hashed (str name " " (clojure.string/join " " stids)))]
-    (str name "/" hash)))
+        hash (sym/hashed (str symb " " (clojure.string/join " " stids)))]
+    (str symb "/" hash)))
 
-(def vertex-id (memoize vertex-id-raw))
+(def word->symb (memoize word->symb-raw))
 
-(defn- set-globals!
-  [gbdb]
-  (def noun "noun/1")
-  (def verb "verb/1")
-  (def adjective "adjective/1")
-  (def adverb "adverb/1"))
-
-(defn process-super-types!
-  [gbdb vid word]
+(defn- process-super-types!
+  [hg symb word]
   (let [concept (.getSynset word)
         hypernyms (PointerUtils/getDirectHypernyms concept)]
     (doseq [hypernym hypernyms]
       (let [super-word (first (.getWords (.getSynset hypernym)))
-            super-id (vertex-id super-word)
-            rel ["type_of/1" vid super-id]]
-        (add-relation! gbdb rel)))))
+            super-id (word->symb super-word)
+            fact [const/type-of symb super-id]]
+        (add-fact! hg fact)))))
 
-(defn process-synonyms!
-  [gbdb synset]
+(defn- process-synonyms!
+  [hg synset]
   (let [word-list (.getWords synset)
         main-word (nth word-list 0)
-        vid (vertex-id main-word)]
+        symb (word->symb main-word)]
     (doseq [syn word-list]
-      (let [syn-id (vertex-id syn)
-            rel ["synonym/1" vid syn-id]]
-        (if (not (= vid syn-id))
-                 (add-relation! gbdb rel))))))
+      (let [syn-id (word->symb syn)
+            fact [const/synonym symb syn-id]]
+        (if (not (= symb syn-id))
+                 (add-fact! hg fact))))))
 
-(defn process-meronyms!
-  [gbdb vid word]
+(defn- process-meronyms!
+  [hg symb word]
   (let [concept (.getSynset word)
         results (PointerUtils/getMeronyms concept)]
     (doseq [result results]
       (let [part-word (first (.getWords (.getSynset result)))
-            part-id (vertex-id part-word)
-            rel ["part_of/1" part-id vid]]
-        (add-relation! gbdb rel)))))
+            part-id (word->symb part-word)
+            fact [const/part-of part-id symb]]
+        (add-fact! hg fact)))))
 
-(defn process-antonyms!
-  [hg vid word]
+(defn- process-antonyms!
+  [hg symb word]
   (let [concept (.getSynset word)
         results (PointerUtils/getAntonyms concept)]
     (doseq [result results]
       (let [ant-word (first (.getWords (.getSynset result)))
-            ant-id (vertex-id ant-word)
-            rel ["antonym/1" vid ant-id]]
-        (add-relation! hg rel)))))
+            ant-id (word->symb ant-word)
+            fact [const/antonym symb ant-id]]
+        (add-fact! hg fact)))))
 
-(defn process-also-sees!
-  [hg vid word]
+(defn- process-also-sees!
+  [hg symb word]
   (let [concept (.getSynset word)
         results (PointerUtils/getAlsoSees concept)]
     (doseq [result results]
       (let [also-word (first (.getWords (.getSynset result)))
-            also-id (vertex-id also-word)
-            rel ["also_see/1" vid also-id]]
-        (add-relation! hg rel)))))
+            also-id (word->symb also-word)
+            fact [const/related symb also-id]]
+        (add-fact! hg fact)))))
 
-(defn process-pos!
-  [hg vid word]
+(defn- process-pos!
+  [hg symb word]
   (let [pos (.getPOS word)]
     (if pos
       (let [pos-id (cond
-                     (.equals pos POS/NOUN) noun
-                     (.equals pos POS/VERB) verb
-                     (.equals pos POS/ADJECTIVE) adjective
-                     (.equals pos POS/ADVERB) adverb)
-            rel ["part-of-speech/1" vid pos-id]]
-        (add-relation! hg rel)))))
+                     (.equals pos POS/NOUN) const/noun
+                     (.equals pos POS/VERB) const/verb
+                     (.equals pos POS/ADJECTIVE) const/adjective
+                     (.equals pos POS/ADVERB) const/adverb)
+            fact [const/part-of-speech symb pos-id]]
+        (add-fact! hg fact)))))
 
-(defn process-synset!
+(defn- process-synset!
   [hg synset]
   (process-synonyms! hg synset)
   (let [main-word (first (.getWords synset))
-        mwid (vertex-id main-word)]
+        mwid (word->symb main-word)]
     (process-meronyms! hg mwid main-word)
     (process-antonyms! hg mwid main-word)
     (process-also-sees! hg mwid main-word)
     (let [words (.getWords synset)]
           (doseq [word words]
-            (let [vid (vertex-id word)]
-              (prn vid)
-              (process-super-types! hg vid word)
-              (process-pos! hg vid word))))))
+            (let [symb (word->symb word)]
+              (println (str "symbol: " symb))
+              (process-super-types! hg symb word)
+              (process-pos! hg symb word))))))
 
-(defn process-pos-synset!
+(defn- process-pos-synset!
   [hg dictionary pos]
   (let [iter (.getSynsetIterator dictionary pos)]
     (while (.hasNext iter)
       (let [synset (.next iter)]
-        (prn synset)
+        (println (str "synset: " synset))
         (process-synset! hg synset)))))
 
-(defn process!
+(defn- process!
   [hg dictionary]
   (process-pos-synset! hg dictionary (POS/NOUN))
   (process-pos-synset! hg dictionary (POS/VERB))
@@ -141,8 +132,6 @@
   (process-pos-synset! hg dictionary (POS/ADVERB)))
 
 (defn import!
-  []
-  (let [dictionary (Dictionary/getDefaultResourceInstance)
-        hg (hgops/hg)]
-    (set-globals! hg dictionary)
+  [hg]
+  (let [dictionary (Dictionary/getDefaultResourceInstance)]
     (process! hg dictionary)))
