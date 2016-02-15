@@ -18,16 +18,28 @@
 ;   You should have received a copy of the GNU Affero General Public License
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns graphbrain.hg.connection
-  "Hypergraph connection."
-  (:require [graphbrain.hg.mysql :as mysql]
-            [graphbrain.hg.null :as null]))
+(ns graphbrain.hg.null
+  "Implements null hypergraph storage.
+   Nothing is written, and queries return nothing.
+   Useful for dry runs."
+  (:require [graphbrain.hg.ops :as ops]))
 
-(defn create
-  "Create a connection to a specific hypergraph."
-  ([] (mysql/connection "gbnode"))
-  ([storage-type name]
-     (case storage-type
-       :mysql (mysql/connection name)
-       :null (null/connection)
-       (throw (Exception. (str "Unknown storage type: " storage-type))))))
+(deftype NullOps []
+  ops/Ops
+
+  (exists? [hg edge] false)
+
+  (add! [hg edge] edge)
+
+  (remove! [hg edge])
+
+  (pattern->edges [hg pattern] #{})
+
+  (star [hg center] #{})
+
+  (destroy! [hg]))
+
+(defn connection
+  "Obtain a null hypergraph connection."
+  []
+  (NullOps.))
