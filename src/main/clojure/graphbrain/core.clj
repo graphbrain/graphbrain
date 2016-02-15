@@ -1,4 +1,5 @@
-;   Copyright (c) 2016 CNRS. All rights reserved.
+;   Copyright (c) 2016 CNRS - Centre national de la recherche scientifique.
+;   All rights reserved.
 ;
 ;   Written by Telmo Menezes <telmo@telmomenezes.com>
 ;
