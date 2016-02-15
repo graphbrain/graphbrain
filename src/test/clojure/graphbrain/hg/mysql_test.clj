@@ -45,6 +45,13 @@
     (ops/remove! hg ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]])
     (is (not (ops/exists? hg ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]])))))
 
+(deftest destroy-test
+  (let [hg (connection "gbtest")]
+    (ops/add! hg ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]])
+    (is (ops/exists? hg ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]]))
+    (ops/destroy! hg)
+    (is (not (ops/exists? hg ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]])))))
+
 (deftest edge-matches-pattern?-test
   (is (edge-matches-pattern? ["a" "b" "c"] [nil "b" nil]))
   (is (edge-matches-pattern? ["a" "b" "c"] [nil nil nil]))
