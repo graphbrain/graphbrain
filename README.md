@@ -4,12 +4,12 @@ This project is aligned with a fundamentally interdisciplinary research program,
 
 In its current state, Graphbrain provides the following:
 
-– An hypergraph knowledge base, capable of representing and efficiently querying complex relationships between entities;
-– Knowledge extraction algorithms for popular data sets such as WordNet and DBPedia;
-– Entity disambiguation algorithms;
-– An entity extraction algorithm for free-form text, such as news items and blog posts;
-– A domain specific language to define knowledge extraction rules for free-form text;
-– A web-based interface to navigate the knowledge graph.
+* An hypergraph knowledge base, capable of representing and efficiently querying complex relationships between entities
+* Knowledge extraction algorithms for popular data sets such as WordNet and DBPedia
+* Entity disambiguation algorithms
+* An entity extraction algorithm for free-form text, such as news items and blog posts
+* A domain specific language to define knowledge extraction rules for free-form text
+* A web-based interface to navigate the knowledge graph
 
 The main ambition of this software project is to provide a robust base upon which new methods of socio-semantic analysis of digital media can be easily defined. At its core, GraphBrain contains an expressive knowledge representation system that easily lends itself to the organization of entities in terms of relationships, sources and conflicting beliefs.
 
