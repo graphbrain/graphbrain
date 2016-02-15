@@ -214,7 +214,12 @@
     [hg center]
     (if (coll? center)
       (str->perms conn (es/edge->str center))
-      (str->perms conn center))))
+      (str->perms conn center)))
+
+  (destroy!
+    [hg]
+    (jdbc/execute! conn ["DELETE FROM edges"])
+    (jdbc/execute! conn ["DELETE FROM perms"])))
 
 (defn connection
   "Obtain a MySQL hypergraph connection."

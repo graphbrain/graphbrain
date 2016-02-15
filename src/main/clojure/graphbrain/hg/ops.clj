@@ -37,7 +37,10 @@
 
   ;; Return all the edges that contain a given entity.
   ;; Entity can be atomic or an edge.
-  (star [hg center]))
+  (star [hg center])
+
+  ;; Erase the hypergraph.
+  (destroy! [hg]))
 
 (defn remove-by-pattern!
   "Removes from the hypergraph all edges that match the pattern."
