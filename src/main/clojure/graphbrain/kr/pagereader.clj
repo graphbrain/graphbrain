@@ -19,7 +19,8 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.kr.pagereader
-  (:require [graphbrain.hg.ops :as hgops]
+  (:require [graphbrain.hg.connection :as conn]
+            [graphbrain.hg.ops :as ops]
             [graphbrain.hg.symbol :as sym]
             [graphbrain.hg.constants :as consts]
             [graphbrain.kr.webtools :as webtools]
@@ -30,7 +31,7 @@
             [graphbrain.kr.ngrams :as ngrams]
             [graphbrain.disambig.entityguesser :as eg]))
 
-(def g (hgops/hg))
+(def g (conn/create))
 
 (defn leaf?
   [ngrams-graph ngram-set ngram]

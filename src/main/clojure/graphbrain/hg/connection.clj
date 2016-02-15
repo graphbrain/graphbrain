@@ -18,29 +18,14 @@
 ;   You should have received a copy of the GNU Affero General Public License
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns graphbrain.hg.ops
-  "Hypergraph low-level operations.")
+(ns graphbrain.hg.connection
+  "Hypergraph connection."
+  (:require [graphbrain.hg.mysql :as mysql]))
 
-(defprotocol Ops
-  ;; Checks if the given edge exists in the hypergraph.
-  (exists? [hg edge])
-
-  ;; Adds an edge to the hypergraph if it does not exist yet.
-  (add! [hg edge])
-
-  ;; Removes an edge from the hypergraph.
-  (remove! [hg edge])
-
-  ;; Return all the edges that match a pattern.
-  ;; A pattern is a collection of entity ids and wildcards (nil).
-  (pattern->edges [hg pattern])
-
-  ;; Return all the edges that contain a given entity.
-  ;; Entity can be atomic or an edge.
-  (star [hg center]))
-
-(defn remove-by-pattern!
-  "Removes from the hypergraph all edges that match the pattern."
-  [hg pattern]
-  (doseq [edge (pattern->edges hg pattern)]
-    (remove! hg edge)))
+(defn create
+  "Create a connection to a specific hypergraph."
+  ([] (mysql/connection "gbnode"))
+  ([storage-type name]
+     (case storage-type
+       :mysql (mysql/connection name)
+       (throw (Exception. (str "Unknown storage type: " storage-type))))))
