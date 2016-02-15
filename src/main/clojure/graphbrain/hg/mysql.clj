@@ -23,6 +23,7 @@
   (:use graphbrain.utils.utils)
   (:require [clojure.java.jdbc :as jdbc]
             [clojure.math.combinatorics :as combo]
+            [graphbrain.hg.ops :as ops]
             [graphbrain.hg.edgestr :as es])
   (:import (com.mchange.v2.c3p0 ComboPooledDataSource)))
 
@@ -117,36 +118,15 @@
   (let [rs (jdbc/query conn ["SELECT id FROM edges WHERE id=?" edge-str])]
     (not (empty? rs))))
 
-(defn exists?
-  "Checks if the given edge exists in the hypergraph."
-  [hg edge]
-  (exists-str? (:conn hg) (es/edge->str edge)))
-
 (defn- add-str!
   "Adds the given edge, represented as a string."
   [conn edge-str]
   (jdbc/execute! conn ["INSERT INTO edges (id) VALUES (?)" edge-str]))
 
-(defn add!
-  "Adds an edge to the hypergraph if it does not exist yet."
-  [hg edge]
-  (if (not (exists? hg edge))
-    (let [conn (:conn hg)]
-      (add-str! conn (es/edge->str edge))
-      (write-edge-permutations! conn edge)))
-  edge)
-
 (defn- remove-str!
   "Removes the given edge, represented as a string."
   [conn edge-str]
   (jdbc/delete! conn :edges ["id=?" edge-str]))
-
-(defn remove!
-  "Removes an edge from the hypergraph."
-  [hg edge]
-  (let [conn (:conn hg)]
-    (remove-str! conn (es/edge->str edge))
-    (remove-edge-permutations! conn edge)))
 
 (defn- unpermutate
   "Reorder the tokens vector to revert a permutation, specified by nper."
@@ -185,18 +165,6 @@
   (every? identity
           (map #(or (nil? %2) (= %1 %2)) edge pattern)))
 
-(defn pattern->edges
-  "Return all the edges that match a pattern.
-A pattern is a collection of entity ids and wildcards (nil)."
-  [hg pattern]
-  (let [nodes (filter #(not (nil? %)) pattern)
-        start-str (es/nodes->str nodes)
-        end-str (str+1 start-str)
-        rs (jdbc/query (:conn hg) ["SELECT id FROM perms WHERE id>=? AND id<?"
-                                   start-str end-str])
-        edges (results->edges rs)]
-    (filter #(edge-matches-pattern? % pattern) edges)))
-
 (defn- str->perms
   "Query database for all the edge permutations that contain a given entity, represented as a string."
   [conn center-id]
@@ -206,20 +174,49 @@ A pattern is a collection of entity ids and wildcards (nil)."
                               start-str end-str])]
     (results->edges rs)))
 
-(defn star
-  "Return all the edges that contain a given entity. Entity can be atomic or an edge."
-  [hg center]
-  (let [conn (:conn hg)]
+(defn- exists-mysql?
+  "Internal implementation of exists? function."
+  [conn edge]
+  (exists-str? conn (es/edge->str edge)))
+
+(deftype MySQLOps [conn]
+  ops/Ops
+
+  (exists?
+    [hg edge]
+    (exists-mysql? conn edge))
+
+  (add!
+    [hg edge]
+    (if (not (exists-mysql? conn edge))
+      (do
+        (add-str! conn (es/edge->str edge))
+        (write-edge-permutations! conn edge)))
+    edge)
+
+  (remove!
+    [hg edge]
+    (do
+      (remove-str! conn (es/edge->str edge))
+      (remove-edge-permutations! conn edge)))
+
+  (pattern->edges
+    [hg pattern]
+    (let [nodes (filter #(not (nil? %)) pattern)
+          start-str (es/nodes->str nodes)
+          end-str (str+1 start-str)
+          rs (jdbc/query conn ["SELECT id FROM perms WHERE id>=? AND id<?"
+                               start-str end-str])
+          edges (results->edges rs)]
+      (filter #(edge-matches-pattern? % pattern) edges)))
+
+  (star
+    [hg center]
     (if (coll? center)
       (str->perms conn (es/edge->str center))
       (str->perms conn center))))
 
-(defn mysql-hg
-  "Obtain a reference to a MySQL hypergraph."
+(defn connection
+  "Obtain a MySQL hypergraph connection."
   [dbname]
-  {:conn (db-connection dbname)
-   :exists? exists?
-   :add! add!
-   :remove! remove!
-   :pattern->edges pattern->edges
-   :star star})
+  (MySQLOps. (db-connection dbname)))

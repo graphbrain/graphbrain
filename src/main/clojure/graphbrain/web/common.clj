@@ -19,7 +19,7 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.web.common
-  (:require [graphbrain.hg.ops :as hgops]
+  (:require [graphbrain.hg.connection :as conn]
             [clojure.tools.logging :as log]))
 
 (def production?
@@ -30,7 +30,7 @@
 
 (defn init-graph!
   []
-  (def hg (hgops/hg)))
+  (def hg (conn/create)))
 
 (defn log
   [request msg]

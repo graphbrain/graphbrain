@@ -21,6 +21,7 @@
 (ns graphbrain.core
   (:require [clojure.tools.cli :as cli]
             [graphbrain.hg.constants :as const]
+            [graphbrain.hg.connection :as conn]
             [graphbrain.hg.ops :as ops]
             [graphbrain.kr.wordnet :as wordnet]
             [graphbrain.web.server :as server]))
@@ -46,7 +47,7 @@
 
 (defn opts->hg
   [opts]
-  (ops/hg (keyword (:storage opts)) (:dbname opts)))
+  (conn/create (keyword (:storage opts)) (:dbname opts)))
 
 (defn -main
   [& args]
