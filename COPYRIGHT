@@ -1,0 +1,8 @@
+GraphBrain is copyright CNRS, 2016, and files herein are licensed
+under the Affero General Public License version 3, the text of which can
+be found in GNU-AGPL-3.0, or any later version of the AGPL, unless otherwise
+noted.  Components of GraphBrain, including boilerpipe and NekoHTML, are
+licensed under the Apache License, Version 2.0.  All unmodified files from these
+and other sources retain their original copyright and license notices: see
+the relevant individual files.  Attribution information for GraphBrain is
+contained in the AUTHORS file.
