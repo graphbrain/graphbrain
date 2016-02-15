@@ -24,7 +24,9 @@
             [graphbrain.hg.connection :as conn]
             [graphbrain.hg.ops :as ops]
             [graphbrain.kr.wordnet :as wordnet]
-            [graphbrain.web.server :as server]))
+            [graphbrain.tools.destroy :as destroy]
+            [graphbrain.web.server :as server]
+            [clojure.term.colors :refer :all]))
 
 (def cli-options
   [["-s" "--storage STORAGE" "Storage type"
@@ -54,9 +56,10 @@
   (let [cli-data (cli/parse-opts args cli-options)
         opts (:options cli-data)
         command (first (:arguments cli-data))]
-    (println const/ascii-logo)
+    (println (cyan const/ascii-logo))
     (println)
     (case command
       "wordnet" (wordnet/import! (opts->hg opts))
+      "destroy" (destroy/do-it! (opts->hg opts))
       "webapp" (server/start!)
       (println (str "Unknown command: " command)))))
