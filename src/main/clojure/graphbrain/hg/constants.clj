@@ -20,9 +20,7 @@
 
 (ns graphbrain.hg.constants)
 
-;; Hypergraph
-(def ^:const degree "deg/1")
-(def ^:const index "ind/1")
+;; Knowledge
 (def ^:const source "src/1")
 
 ;; Relations

@@ -68,3 +68,13 @@
     (is (= (star hg "graphbrain/2")
            #{}))
     (remove! hg ["is" "graphbrain/1" "great/1"])))
+
+(deftest index-test
+  (let [hg (conn/create :mysql "gbtest")]
+    (add! hg ["is" "graphbrain/1" "great/1"])
+    (is (= (symbols-with-root hg "graphbrain") #{"graphbrain/1"}))
+    (add! hg ["is" "graphbrain/2" "great/1"])
+    (is (= (symbols-with-root hg "graphbrain") #{"graphbrain/1" "graphbrain/2"}))
+    (remove! hg ["is" "graphbrain/1" "great/1"])
+    (remove! hg ["is" "graphbrain/2" "great/1"])
+    (is (= (symbols-with-root hg "graphbrain") #{}))))

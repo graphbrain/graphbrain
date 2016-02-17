@@ -174,7 +174,30 @@
     (str->perms conn (es/edge->str center))
     (str->perms conn center)))
 
+(defn symbols-with-root
+  [conn root]
+  (let [start-str (str root "/")
+        end-str (str+1 start-str)
+        results (jdbc/query conn ["SELECT id FROM perms WHERE id>=? AND id<?"
+                                  start-str end-str])
+        symbs (map #(first (es/split-edge-str (:id %))) results)]
+    (set symbs)))
+
 (defn destroy!
   [conn]
   (jdbc/execute! conn ["DELETE FROM edges"])
   (jdbc/execute! conn ["DELETE FROM perms"]))
+
+(defn- exec-op!
+  [conn op]
+  (case (:op op)
+    :add (add-raw! conn (:edge op))
+    :remove (remove-raw! conn (:edge op))))
+
+(defn exec!
+  [conn ops]
+  (if (map? ops)
+    (exec-op! conn ops)
+    (jdbc/with-db-transaction [trans-conn conn]
+      (doseq [op ops]
+        (exec-op! conn op)))))
