@@ -218,8 +218,9 @@
 
   (destroy!
     [hg]
-    (jdbc/execute! conn ["DELETE FROM edges"])
-    (jdbc/execute! conn ["DELETE FROM perms"])))
+    (jdbc/execute! conn ["DROP TABLE edges"])
+    (jdbc/execute! conn ["DROP TABLE perms"])
+    (create-tables! conn)))
 
 (defn connection
   "Obtain a MySQL hypergraph connection."
