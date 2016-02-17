@@ -18,29 +18,29 @@
 ;   You should have received a copy of the GNU Affero General Public License
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns graphbrain.hg.knowledge
-  "Hypergraph higher-level operations, with degrees and indexing."
-  (:require [graphbrain.hg.constants :as const])
-  (:use graphbrain.hg.ops))
+(ns graphbrain.hg.beliefs
+  "Belief-level operations -- facts supported by sources."
+  (:require [graphbrain.hg.constants :as const]
+            [graphbrain.hg.ops :as ops]))
 
-(defn add-belief!
+(defn add!
   "A belif is a fact with a source. The fact is created as a normal edge
    if it does not exist yet. Another edge is created to assign the fact to
    the source."
   [hg source edge]
-  (add! hg [edge [const/source edge source]]))
+  (ops/add! hg [edge [const/source edge source]]))
 
 (defn sources
   "Set of sources (nodes) that support a statement (edge)."
   [hg edge]
   (set (map #(nth % 2)
-        (pattern->edges hg [const/source edge nil]))))
+        (ops/pattern->edges hg [const/source edge nil]))))
 
-(defn remove-belief!
+(defn remove!
   "A belif is a fact with a source. The link from the source to the fact
    is removed. If no more sources support the fact, then the fact is also
    removed."
   [hg source edge]
-  (remove! hg [const/source edge source])
+  (ops/remove! hg [const/source edge source])
   (if (empty? (sources hg edge))
-    (remove! hg edge)))
+    (ops/remove! hg edge)))
