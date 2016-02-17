@@ -26,18 +26,14 @@
 
 (deftype NullOps []
   ops/Ops
-
   (exists? [hg edge] false)
-
   (add! [hg edge] edge)
-
   (remove! [hg edge])
-
   (pattern->edges [hg pattern] #{})
-
   (star [hg center] #{})
-
-  (destroy! [hg]))
+  (symbols-with-root [hg root] #{})
+  (destroy! [hg])
+  (exec! [hg ops]))
 
 (defn connection
   "Obtain a null hypergraph connection."
