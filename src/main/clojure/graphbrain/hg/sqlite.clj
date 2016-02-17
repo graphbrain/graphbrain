@@ -49,8 +49,8 @@
 (deftype SQLiteOps [conn]
   ops/Ops
   (exists? [hg edge] (sql/exists? conn edge))
-  (add! [hg edge] (sql/add! conn edge))
-  (remove! [hg edge] (sql/remove! conn edge))
+  (add! [hg edges] (sql/add! conn edges))
+  (remove! [hg edges] (sql/remove! conn edges))
   (pattern->edges [hg pattern] (sql/pattern->edges conn pattern))
   (star [hg center] (sql/star conn center))
   (destroy! [hg] (sql/destroy! conn)))

@@ -127,20 +127,36 @@
   [conn edge]
   (exists-str? conn (es/edge->str edge)))
 
-(defn add!
+(defn- add-raw!
   [conn edge]
-  (jdbc/with-db-transaction [trans-conn conn]
-    (if (not (exists? trans-conn edge))
-      (do
-        (add-str! trans-conn (es/edge->str edge))
-        (write-edge-permutations! trans-conn edge))))
+  (if (not (exists? conn edge))
+    (do
+      (add-str! conn (es/edge->str edge))
+      (write-edge-permutations! conn edge)))
   edge)
 
-(defn remove!
+(defn add!
+  [conn edges]
+  (jdbc/with-db-transaction [trans-conn conn]
+    (if (coll? (first edges))
+      (doseq [edge edges]
+        (add-raw! trans-conn edge))
+      (add-raw! trans-conn edges)))
+  edges)
+
+(defn- remove-raw!
   [conn edge]
   (do
     (remove-str! conn (es/edge->str edge))
     (remove-edge-permutations! conn edge)))
+
+(defn remove!
+  [conn edges]
+  (jdbc/with-db-transaction [trans-conn conn]
+    (if (coll? (first edges))
+      (doseq [edge edges]
+        (remove-raw! trans-conn edge))
+      (remove-raw! trans-conn edges))))
 
 (defn pattern->edges
   [conn pattern]
