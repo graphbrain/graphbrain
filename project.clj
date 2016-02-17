@@ -17,6 +17,7 @@
                   ;; DB
                   [org.clojure/java.jdbc "0.4.2"]
                   [mysql/mysql-connector-java "5.1.38"]
+                  [org.xerial/sqlite-jdbc "3.8.11.2"]
                   [com.mchange/c3p0 "0.9.5.2"]
                   [com.zaxxer/HikariCP "2.4.3"]
                   ;; JSON
