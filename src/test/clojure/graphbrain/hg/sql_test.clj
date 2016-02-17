@@ -9,4 +9,3 @@
   (is (edge-matches-pattern? ["a" "b" "c"] ["a" "b" "c"]))
   (is (edge-matches-pattern? ["a" "b" "c"] ["a" nil nil]))
   (is (not (edge-matches-pattern? ["a" "b" "c"] [nil "x" nil]))))
-

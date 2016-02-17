@@ -25,11 +25,13 @@
   ;; Checks if the given edge exists in the hypergraph.
   (exists? [hg edge])
 
-  ;; Adds an edge to the hypergraph if it does not exist yet.
-  (add! [hg edge])
+  ;; Adds one or multiple edges to the hypergraph if it does not exist yet.
+  ;; Adding multiple edges at the same time might be faster.
+  (add! [hg edges])
 
-  ;; Removes an edge from the hypergraph.
-  (remove! [hg edge])
+  ;; Removes one or multiple edges from the hypergraph.
+  ;; Removing multiple edges at the same time might be faster.
+  (remove! [hg edges])
 
   ;; Return all the edges that match a pattern.
   ;; A pattern is a collection of entity ids and wildcards (nil).
