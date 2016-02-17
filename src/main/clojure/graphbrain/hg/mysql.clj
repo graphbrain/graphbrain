@@ -83,8 +83,7 @@
   (pattern->edges [hg pattern] (sql/pattern->edges conn pattern))
   (star [hg center] (sql/star conn center))
   (symbols-with-root [hg root] (sql/symbols-with-root conn root))
-  (destroy! [hg] (sql/destroy! conn))
-  (exec! [hg ops] (sql/exec! conn ops)))
+  (destroy! [hg] (sql/destroy! conn)))
 
 (defn connection
   "Obtain a MySQL hypergraph connection."

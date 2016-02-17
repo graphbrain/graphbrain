@@ -32,8 +32,7 @@
   (pattern->edges [hg pattern] #{})
   (star [hg center] #{})
   (symbols-with-root [hg root] #{})
-  (destroy! [hg])
-  (exec! [hg ops]))
+  (destroy! [hg]))
 
 (defn connection
   "Obtain a null hypergraph connection."

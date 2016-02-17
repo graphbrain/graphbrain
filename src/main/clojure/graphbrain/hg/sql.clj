@@ -187,17 +187,3 @@
   [conn]
   (jdbc/execute! conn ["DELETE FROM edges"])
   (jdbc/execute! conn ["DELETE FROM perms"]))
-
-(defn- exec-op!
-  [conn op]
-  (case (:op op)
-    :add (add-raw! conn (:edge op))
-    :remove (remove-raw! conn (:edge op))))
-
-(defn exec!
-  [conn ops]
-  (if (map? ops)
-    (exec-op! conn ops)
-    (jdbc/with-db-transaction [trans-conn conn]
-      (doseq [op ops]
-        (exec-op! conn op)))))
