@@ -21,6 +21,16 @@
 (ns graphbrain.hg.ops
   "Hypergraph low-level operations.")
 
+(defn add-op
+  [edge]
+  {:op :add
+   :edge edge})
+
+(defn remove-op
+  [edge]
+  {:op :remove
+   :edge edge})
+
 (defprotocol Ops
   ;; Checks if the given edge exists in the hypergraph.
   (exists? [hg edge])
@@ -41,8 +51,14 @@
   ;; Entity can be atomic or an edge.
   (star [hg center])
 
+  ;; Find all symbols with the given root
+  (symbols-with-root [hg root])
+  
   ;; Erase the hypergraph.
-  (destroy! [hg]))
+  (destroy! [hg])
+
+  ;; Execute one or multilpe operations.
+  (exec! [hg ops]))
 
 (defn remove-by-pattern!
   "Removes from the hypergraph all edges that match the pattern."
