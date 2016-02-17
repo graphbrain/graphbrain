@@ -41,7 +41,7 @@
   ;; Entity can be atomic or an edge.
   (star [hg center])
 
-  ;; Find all symbols with the given root
+  ;; Find all symbols with the given root.
   (symbols-with-root [hg root])
   
   ;; Erase the hypergraph.

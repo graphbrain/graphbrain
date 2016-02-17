@@ -115,7 +115,8 @@
           (map #(or (nil? %2) (= %1 %2)) edge pattern)))
 
 (defn- str->perms
-  "Query database for all the edge permutations that contain a given entity, represented as a string."
+  "Query database for all the edge permutations that contain a given entity,
+   represented as a string."
   [conn center-id]
   (let [start-str (str center-id " ")
         end-str (str+1 start-str)
@@ -124,10 +125,12 @@
     (results->edges rs)))
 
 (defn exists?
+  "Checks if the given edge exists in the hypergraph."
   [conn edge]
   (exists-str? conn (es/edge->str edge)))
 
 (defn- add-raw!
+  "Auxiliary function for add! to call from inside a transaction."
   [conn edge]
   (if (not (exists? conn edge))
     (do
@@ -136,6 +139,8 @@
   edge)
 
 (defn add!
+  "Adds one or multiple edges to the hypergraph if it does not exist yet.
+   Adding multiple edges at the same time might be faster."
   [conn edges]
   (jdbc/with-db-transaction [trans-conn conn]
     (if (coll? (first edges))
@@ -145,12 +150,15 @@
   edges)
 
 (defn- remove-raw!
+  "Auxiliary function for remove! to call from inside a transaction."
   [conn edge]
   (do
     (remove-str! conn (es/edge->str edge))
     (remove-edge-permutations! conn edge)))
 
 (defn remove!
+  "Removes one or multiple edges from the hypergraph.
+   Removing multiple edges at the same time might be faster."
   [conn edges]
   (jdbc/with-db-transaction [trans-conn conn]
     (if (coll? (first edges))
@@ -159,6 +167,8 @@
       (remove-raw! trans-conn edges))))
 
 (defn pattern->edges
+  "Return all the edges that match a pattern.
+   A pattern is a collection of entity ids and wildcards (nil)."
   [conn pattern]
   (let [nodes (filter #(not (nil? %)) pattern)
         start-str (es/nodes->str nodes)
@@ -169,12 +179,15 @@
     (filter #(edge-matches-pattern? % pattern) edges)))
 
 (defn star
+  "Return all the edges that contain a given entity.
+   Entity can be atomic or an edge."
   [conn center]
   (if (coll? center)
     (str->perms conn (es/edge->str center))
     (str->perms conn center)))
 
 (defn symbols-with-root
+  "Find all symbols with the given root."
   [conn root]
   (let [start-str (str root "/")
         end-str (str+1 start-str)
@@ -184,6 +197,7 @@
     (set symbs)))
 
 (defn destroy!
+  "Erase the hypergraph."
   [conn]
   (jdbc/execute! conn ["DELETE FROM edges"])
   (jdbc/execute! conn ["DELETE FROM perms"]))
