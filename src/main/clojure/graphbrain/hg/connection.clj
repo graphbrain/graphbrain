@@ -21,6 +21,7 @@
 (ns graphbrain.hg.connection
   "Hypergraph connection."
   (:require [graphbrain.hg.mysql :as mysql]
+            [graphbrain.hg.sqlite :as sqlite]
             [graphbrain.hg.null :as null]))
 
 (defn create
@@ -29,5 +30,6 @@
   ([storage-type name]
      (case storage-type
        :mysql (mysql/connection name)
+       :sqlite (sqlite/connection name)
        :null (null/connection)
        (throw (Exception. (str "Unknown storage type: " storage-type))))))
