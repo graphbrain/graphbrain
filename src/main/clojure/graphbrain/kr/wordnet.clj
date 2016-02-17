@@ -19,7 +19,7 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.kr.wordnet
-  (:require [graphbrain.hg.knowledge :as k]
+  (:require [graphbrain.hg.beliefs :as beliefs]
             [graphbrain.hg.symbol :as sym]
             [graphbrain.hg.constants :as const])
   (:import (org.w3c.dom ElementTraversal)
@@ -34,7 +34,7 @@
 (defn- add-fact!
   [hg fact]
   (println (str "fact: " fact))
-  (k/add-belief! hg const/wordnet fact))
+  (beliefs/add! hg const/wordnet fact))
 
 (defn- super-types
   [word]
