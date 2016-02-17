@@ -28,8 +28,7 @@
    if it does not exist yet. Another edge is created to assign the fact to
    the source."
   [hg source edge]
-  (add! hg edge)
-  (add! hg [const/source edge source]))
+  (add! hg [edge [const/source edge source]]))
 
 (defn sources
   "Set of sources (nodes) that support a statement (edge)."
@@ -38,7 +37,7 @@
         (pattern->edges hg [const/source edge nil]))))
 
 (defn remove-belief!
-  "A belif is a fact with a source. Two link from the source to the fact
+  "A belif is a fact with a source. The link from the source to the fact
    is removed. If no more sources support the fact, then the fact is also
    removed."
   [hg source edge]
