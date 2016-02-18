@@ -25,9 +25,7 @@
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
             [graphbrain.web.common :as common]
-            [graphbrain.web.handlers.landing :as landing]
             [graphbrain.web.handlers.home :as home]
-            [graphbrain.web.handlers.presentation :as pres]
             [graphbrain.web.handlers.nodeactions :as nodeactions]
             [graphbrain.web.handlers.raw :as raw]
             [graphbrain.web.handlers.eco :as eco]
@@ -37,12 +35,10 @@
             [graphbrain.web.handlers.search :as search]
             [graphbrain.web.handlers.change :as change]
             [graphbrain.web.handlers.define :as define]
-            [graphbrain.web.handlers.edgedata :as ed]
-            [graphbrain.web.handlers.docs :as docs]))
+            [graphbrain.web.handlers.edgedata :as ed]))
 
 (defroutes app-routes
-  (GET "/" request (landing/handle request))
-  (GET "/demo" request (pres/handle request))
+  (GET "/" request (home/handle request))
   (POST "/n/*" request (nodeactions/handle request))
   (GET "/n/*" request (nodepage/handle request))
   (GET "/x" request (intersect/handle request))
@@ -54,8 +50,6 @@
   (POST "/change" request (change/handle request))
   (POST "/define" request (define/handle request))
   (POST "/edge-data" request (ed/handle request))
-  (GET "/presentation" request (pres/handle request))
-  (GET "/docs/*" request (docs/handle request))
   (route/not-found "<h1>Page not found</h1>"))
 
 (defn init-server!
