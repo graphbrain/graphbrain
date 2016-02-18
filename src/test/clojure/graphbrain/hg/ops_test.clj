@@ -45,6 +45,17 @@
     (remove! hg ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]])
     (is (not (exists? hg ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]])))))
 
+(deftest ops-test-add-remove-multiple
+  (let [hg (conn/create :mysql "gbtest")]
+    (add! hg [["is" "graphbrain/1" "great/1"]
+              ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]]])
+    (is (exists? hg ["is" "graphbrain/1" "great/1"]))
+    (is (exists? hg ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]]))
+    (remove! hg [["is" "graphbrain/1" "great/1"]
+                 ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]]])
+    (is (not (exists? hg ["is" "graphbrain/1" "great/1"])))
+    (is (not (exists? hg ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]])))))
+
 (deftest pattern->edges-test
   (let [hg (conn/create :mysql "gbtest")]
     (add! hg ["is" "graphbrain/1" "great/1"])
@@ -69,7 +80,7 @@
            #{}))
     (remove! hg ["is" "graphbrain/1" "great/1"])))
 
-(deftest index-test
+(deftest symbols-with-root-test
   (let [hg (conn/create :mysql "gbtest")]
     (add! hg ["is" "graphbrain/1" "great/1"])
     (is (= (symbols-with-root hg "graphbrain") #{"graphbrain/1"}))

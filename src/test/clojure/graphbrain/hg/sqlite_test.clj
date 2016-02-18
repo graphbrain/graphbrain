@@ -1,6 +1,6 @@
-(ns graphbrain.hg.mysql-test
+(ns graphbrain.hg.sqlite-test
   (:use clojure.test
-        graphbrain.hg.mysql)
+        graphbrain.hg.sqlite)
   (:require [graphbrain.hg.ops :as ops]))
 
 (deftest mysql-test-1
