@@ -20,15 +20,23 @@
 
 (ns graphbrain.hg.beliefs
   "Belief-level operations -- facts supported by sources."
-  (:require [graphbrain.hg.constants :as const]
+  (:require [clojure.set :refer [union]]
+            [graphbrain.hg.constants :as const]
             [graphbrain.hg.ops :as ops]))
 
 (defn add!
   "A belif is a fact with a source. The fact is created as a normal edge
    if it does not exist yet. Another edge is created to assign the fact to
-   the source."
-  [hg source edge]
-  (ops/add! hg [edge [const/source edge source]]))
+   the source.
+
+   Multiple edges can be provided, in which case all the beliefs will be
+   inserted at once. This may be faster."
+  [hg source edges]
+  (if (coll? (first edges))
+    (let [sources (map #(vector const/source % source) edges)
+          all-edges (union edges sources)]
+      (ops/add! hg all-edges))
+    (ops/add! hg [edges [const/source edges source]])))
 
 (defn sources
   "Set of sources (nodes) that support a statement (edge)."
