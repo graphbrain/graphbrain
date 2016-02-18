@@ -19,7 +19,7 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.graphs.graphtools
-  (:use graphbrain.utils.utils))
+  #_(:use graphbrain.utils.utils))
 
 (defn node-in-arcs
   [node]
@@ -56,6 +56,10 @@
   [graph pair]
   (let [g (add-arc graph pair)
         g (add-arc g (reverse pair))] g))
+
+(defn map-map-vals
+  [f m]
+  (into {} (for [[k v] m] [k (f v)])))
 
 (defn add-field-all-nodes
   [graph field value]

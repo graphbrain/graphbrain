@@ -20,7 +20,6 @@
 
 (ns graphbrain.hg.sql
   "Generic functions for SQL database storage."
-  (:use graphbrain.utils.utils)
   (:require [clojure.java.jdbc :as jdbc]
             [clojure.math.combinatorics :as combo]
             [graphbrain.hg.ops :as ops]
@@ -30,7 +29,7 @@
   "Tries to execute an SQL command and ignores exceptions."
   [dbs sql]
   (try (jdbc/db-do-commands dbs sql)
-    (catch Exception e (exception->str e))))
+    (catch Exception e)))
 
 (defn- do-with-edge-permutations!
   "Applies the function f to all permutations of the given edge."
