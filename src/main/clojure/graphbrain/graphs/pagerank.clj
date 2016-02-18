@@ -19,8 +19,7 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.graphs.pagerank
-  (:use graphbrain.utils.utils
-        graphbrain.graphs.graphtools))
+  (:use graphbrain.graphs.graphtools))
 
 (defn init-pr
   [graph]

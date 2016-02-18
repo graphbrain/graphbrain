@@ -19,7 +19,6 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.eco.ecofuns
-  (:use [graphbrain.utils.utils :only [dbg]])
   (:require [graphbrain.hg.symbol :as sym]
             [graphbrain.eco.word :as word]
             [clojure.math.combinatorics :as combs]))

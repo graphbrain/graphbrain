@@ -19,8 +19,7 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.kr.ngrams
-  (:require [graphbrain.utils.utils :as utils]
-            [graphbrain.graphs.graphtools :as gt]
+  (:require [graphbrain.graphs.graphtools :as gt]
             [graphbrain.graphs.pagerank :as pr]
             [graphbrain.kr.wordgraph :as wg]
             [graphbrain.kr.nlptools :as nlp]))

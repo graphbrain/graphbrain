@@ -19,7 +19,6 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.eco.word
-  (:use [graphbrain.utils.utils :only [dbg]])
   (:import (com.graphbrain.eco Word)))
 
 (defn pos-first-char-is?
