@@ -31,10 +31,16 @@
            (java.io FileInputStream)
            (java.security NoSuchAlgorithmException)))
 
+(def facts (atom '()))
+
 (defn- add-fact!
   [hg fact]
   (println (str "fact: " fact))
-  (beliefs/add! hg const/wordnet fact))
+  (swap! facts #(conj % fact))
+  (if (> (count @facts) 1000)
+    (do
+      (beliefs/add! hg const/wordnet @facts)
+      (reset! facts '()))))
 
 (defn- super-types
   [word]
