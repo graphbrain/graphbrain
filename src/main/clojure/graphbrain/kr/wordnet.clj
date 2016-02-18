@@ -37,7 +37,7 @@
   [hg fact]
   (println (str "fact: " fact))
   (swap! facts #(conj % fact))
-  (if (> (count @facts) 1000)
+  (if (> (count @facts) 100)
     (do
       (beliefs/add! hg const/wordnet @facts)
       (reset! facts '()))))
