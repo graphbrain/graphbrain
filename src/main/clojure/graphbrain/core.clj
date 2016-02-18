@@ -61,5 +61,5 @@
     (case command
       "wordnet" (wordnet/import! (opts->hg opts))
       "destroy" (destroy/do-it! (opts->hg opts))
-      "webapp" (server/start!)
+      "webserver" (server/start!)
       (println (str "Unknown command: " command)))))
