@@ -26,8 +26,7 @@
             [graphbrain.disambig.edgeguesser :as edg]
             [graphbrain.kr.pagereader :as pr]
             [graphbrain.eco.eco :as eco]
-            [graphbrain.eco.parsers.chat :as chat]
-            [graphbrain.utils.string :as gbstr]))
+            [graphbrain.eco.parsers.chat :as chat]))
 
 (defn- goto-id
   [root-id vertex]
@@ -76,7 +75,7 @@
 (defn- sentence-type
   [sentence]
   (cond
-   (and (gbstr/no-spaces? sentence)
+   (and (not (some #(= \space %) sentence))
         (or (.startsWith sentence "http://")
             (.startsWith sentence "https://"))) :url
             (.startsWith sentence "x ") :intersect
