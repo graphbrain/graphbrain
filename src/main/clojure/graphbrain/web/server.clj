@@ -51,7 +51,7 @@
           (POST "/change" request (change/handle request hg))
           (POST "/define" request (define/handle request hg))
           (POST "/edge-data" request (ed/handle request hg))
-          #_(route/not-found "<h1>Page not found</h1>")))
+          (route/not-found "<h1>Page not found</h1>")))
 
 (defn app
   [hg]

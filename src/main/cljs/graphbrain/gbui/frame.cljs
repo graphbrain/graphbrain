@@ -34,7 +34,7 @@
    [:div {:class "frame-inner"}]])
 
 (defn place!
-  [snode-pair ctxts]
+  [snode-pair]
   (let [snode-id (first snode-pair)
         snode (second snode-pair)
         relpos (:rpos snode)
@@ -42,4 +42,4 @@
         html (frame-html snode-id rel-text)]
     (jq/append ($ "#frames") html)
     (doseq [node (:nodes snode)]
-      (item/item-place node snode-id snode ctxts))))
+      (item/item-place node snode-id snode))))

@@ -25,11 +25,11 @@
   (:use [jayq.core :only [$]]))
 
 (defn- place-frames!
-  [snodes ctxts]
+  [snodes]
   (doseq [snode snodes]
-    (frame/place! snode ctxts)))
+    (frame/place! snode)))
 
 (defn init-nodepage!
   []
   (reset! g/root-id (:root-id @g/data))
-  (place-frames! (:snodes @g/data) (:ctxts @g/data)))
+  (place-frames! (:snodes @g/data)))
