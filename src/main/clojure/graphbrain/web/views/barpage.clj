@@ -22,98 +22,11 @@
   (:use hiccup.core
         (graphbrain.web.views page)))
 
-(def ^:private style "
-<style type=\"text/css\">
-  body {
-    background:#FFF;
-    #overflow:hidden;
-  }
-</style>")
-
-(defn- user-menu
-  [user]
-  (if (nil? user)
-    [:span
-     [:a {:class "signupLink" :href "#"} "sign up"]
-     "&nbsp; | &nbsp;"
-     [:a {:id "loginLink" :href "#"} "login"]]
-    
-    [:div {:class "dropdown"}
-     [:a {:href "#"
-          :class ""
-          :id "user-menu"
-          :data-toggle "dropdown"}
-      ;;[:img {:src "http://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=25"}]
-      ;;"&nbsp;"
-      ;;[:i {:class "icon-user"}]
-      (str (:name user) " ")
-      [:span {:class "caret"}]]
-     [:ul {:class "dropdown-menu dropdown-menu-right"
-           :role "menu"
-           :aria-labelledby "user-menu"}
-      [:li {:role "presentation"}
-       [:a {:href "/presentation"
-            :role "menu"}
-        "About GraphBrain"]]
-      [:li {:role "presentation"}
-       [:a {:href (str "/n/u/" (:username user))
-            :role "menu"}
-        "Home"]]
-      [:li {:role "presentation"}
-       [:a {:href "/docs/help"
-            :role "menu"}
-        "Help"]]
-      [:li {:role "presentation"}
-       [:a {:href "#"
-            :id "logoutLink"
-            :role "menu"}
-        "Logout"]]]]))
-
-(defn- context-menu
-  [ctxt]
-  [:div {:class "dropdown"}
-   [:button {:type "button"
-             :class "btn btn-info dropdown-toggle"
-             :aria-label "Left Align"
-             :id "context-menu"
-             :data-toggle "dropdown"
-             :aria-expanded "true"}
-    (str (:name ctxt) " ")
-    [:span {:class "caret"}]]
-   [:ul {:class "dropdown-menu dropdown-menu-right"
-         :role "menu"
-         :aria-labelledby "context-menu"}
-    [:li {:role "presentation"
-          :class "dropdown-header"}
-     "Knowledge Graphs"]
-    [:li {:role "presentation"}
-     [:a {:href "#"
-          :id "switch-context-link"
-          :role "menu"}
-      "Switch"]]
-    [:li {:role "presentation"}
-     [:a {:href "#"
-          :id "create-context-link"
-          :role "menu"}
-      "Create"]]
-    [:li {:role "presentation"}
-     [:a {:href (str "/n/" (:id ctxt))
-          :role "menu"}
-      (str (:name ctxt) " Home")]]]])
-
 (defn view
-  [user ctxt content-fun]
+  [content-fun]
   (html
    [:div {:id "nodeback"}
     [:div {:id "topbar"}
-
-     [:div {:class "pull-right topbar-vcenter topbar-menu"}
-      (user-menu user)]
-     
-     (if ctxt
-       [:div {:class "pull-right topbar-vcenter topbar-menu"}
-        (context-menu ctxt)])
-  
      [:div {:class "topbar-element topbar-center topbar-vcenter"}
       [:a {:href "/"}
        [:img {:src "/images/GB_logo_XS.png"
@@ -139,8 +52,8 @@
     (content-fun)]))
 
 (defn barpage
-  [& {:keys [title css-and-js user ctxt js content-fun]}]
+  [& {:keys [title css-and-js js content-fun]}]
   (page :title title
         :css-and-js css-and-js
-        :body-fun #(view user ctxt content-fun)
+        :body-fun #(view content-fun)
         :js js))
