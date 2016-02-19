@@ -26,7 +26,7 @@
 
 (defn create
   "Create a connection to a specific hypergraph."
-  ([] (mysql/connection "gbnode"))
+  ([] (sqlite/connection "gb.db"))
   ([storage-type name]
      (case storage-type
        :mysql (mysql/connection name)

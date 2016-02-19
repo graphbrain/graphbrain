@@ -19,46 +19,30 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.web.handlers.nodepage
-  (:require [graphbrain.hg.ops :as hgops]
+  (:require [graphbrain.hg.ops :as ops]
             [graphbrain.web.snodes :as snodes]
             [graphbrain.web.cssandjs :as css+js]
             [graphbrain.web.views.nodepage :as np]
             [graphbrain.web.encoder :as enc]))
 
 (defn- data
-  [id hg user ctxt ctxts]
-  (let [snodes (snodes/generate hg id ctxt ctxts)]
+  [hg id]
+  (let [snodes (snodes/generate hg id)]
     {:root-id id
      :snodes snodes}))
 
 (defn- js
-  [id user ctxt ctxts]
+  [hg id]
   (str "var ptype='node';"
        "var data='" (enc/encode (pr-str
-                      (data id user ctxt ctxts))) "';"))
+                      (data hg id))) "';"))
 
 (defn handle
   [request hg]
-  #_(let
-      [user (common/get-user request)
-       id (:* (:route-params request))
-       ctxts (contexts/active-ctxts id user)
-       vert (gb/getv common/gbdb
-                     id
-                     ctxts)
-       title (case (:type vert)
-               :url (url/title common/gbdb (:id vert) ctxts)
-               (vertex/label vert))
-       desc (case (:type vert)
-              :entity (entity/subentities vert)
-              :url "web page"
-              :user "GraphBrain user"
-              nil)
-       ctxt (contexts/context-data id (:id user))]
-    (common/log request (str "nodepage: " id))
+  (let [id (:* (:route-params request))
+        title id
+        desc "desc"]
     (np/nodepage :title title
                  :css-and-js (css+js/css+js)
-                 :user user
-                 :ctxt ctxt
-                 :js (js id user ctxt ctxts)
+                 :js (js hg id)
                  :desc desc)))

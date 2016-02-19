@@ -38,7 +38,7 @@
   [name]
   (let [conn {:classname "org.sqlite.JDBC"
               :subprotocol "sqlite"
-              :subname (str name ".db")}]
+              :subname name}]
     (create-tables! conn)))
 
 (defn- db-connection

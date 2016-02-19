@@ -73,9 +73,7 @@
   [:div {:class "item clearfix"}
    [:div {:class "item-main clearfix"}
     [:span {:class "item-title" :id (str "t" div-id)}
-     [:a {:href (if (= @g/context (:id node))
-                  (str "/n/" @g/context)
-                  (str "/n/" @g/context "/" (:id node)))
+     [:a {:href (str "/n/" (:id node))
           :id div-id}
       (:text node)]]
     (if sub-txt
@@ -90,18 +88,13 @@
       (url-item-html item div-id)
       (entity-item-html item div-id (subtext (:sub item))))))
 
-(defn- item-color
-  [item ctxts]
-  (:color (ctxts (first (:ctxts item)))))
-
 (defn item-place
-  [item frame-id snode ctxts]
+  [item frame-id snode]
   (let [class "item"
         div-id (item-div-id (:edge item))
         html (item-html item div-id)]
     (jq/append ($ (str "#" frame-id " .frame-inner")) html)
-;;    (jq/css ($ (str "#t" div-id)) {:background (item-color item ctxts)})
-    (jq/css ($ (str "#chg" div-id)) {:color (item-color item ctxts)})
+    ;;(jq/css ($ (str "#chg" div-id)) {:color (item-color item ctxts)})
     (jq/bind ($ (str "#chg" div-id))
              :click
              #(ed/clicked item snode))

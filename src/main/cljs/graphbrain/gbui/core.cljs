@@ -33,8 +33,7 @@
   [data-str]
   (let [data (cljs.reader/read-string
               (enc/decode data-str))]
-    (reset! g/data data)
-    (reset! g/context (:id (:context data)))))
+    (reset! g/data data)))
 
 (defn start
   []

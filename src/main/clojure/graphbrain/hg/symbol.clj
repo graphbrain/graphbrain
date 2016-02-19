@@ -76,3 +76,11 @@
   [str]
   (clojure.string/replace
    (clojure.string/replace (.toLowerCase str) "/" "_") " " "_"))
+
+(defn symbol->str
+  "Converts a symbol into a string representation"
+  [sym]
+  (case (sym-type sym)
+    :concept (clojure.string/replace (root sym) "_" " ")
+    :url sym
+    (str sym)))
