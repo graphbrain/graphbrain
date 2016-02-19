@@ -38,7 +38,7 @@
    ["-p" "--dbpass" "Database password"
     :default "gb"]
    ["-P" "--port PORT" "Port number"
-    :default 80
+    :default 3000
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ["-v" nil "Verbosity level"
@@ -55,11 +55,12 @@
   [& args]
   (let [cli-data (cli/parse-opts args cli-options)
         opts (:options cli-data)
+        port (:port opts)
         command (first (:arguments cli-data))]
     (println (cyan const/ascii-logo))
     (println)
     (case command
       "wordnet" (wordnet/import! (opts->hg opts))
       "destroy" (destroy/do-it! (opts->hg opts))
-      "webserver" (server/start!)
+      "webserver" (server/start! port)
       (println (str "Unknown command: " command)))))

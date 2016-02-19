@@ -19,8 +19,7 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.web.handlers.input
-  (:require [graphbrain.web.common :as common]
-            [graphbrain.web.handlers.search :as search]
+  (:require [graphbrain.web.handlers.search :as search]
             [graphbrain.hg.ops :as hgops]
             [graphbrain.hg.symbol :as sym]
             [graphbrain.disambig.edgeguesser :as edg]
@@ -144,10 +143,6 @@
     (if (empty? results)
       (process-fact request user root q ctxt ctxts)
       (do
-        (common/log request (str "search "
-                                 "input: " q
-                                 "; ctxt: " ctxt
-                                 (if root-id (str "; root: " root-id))))
         (search/reply results mode)))))
 
 (defn process-url

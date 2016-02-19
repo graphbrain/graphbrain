@@ -22,8 +22,7 @@
   (:use (ring.util response)
         (graphbrain.web.views page))
   (:require [graphbrain.web.cssandjs :as css+js]
-            [graphbrain.web.views.home :as home]
-            [graphbrain.web.common :as common]))
+            [graphbrain.web.views.home :as home]))
 
 (defn- js
   []
@@ -31,7 +30,6 @@
 
 (defn handle
   [request]
-  (common/log request "home")
   (page
    :title "Welcome"
    :css-and-js (css+js/css+js)

@@ -24,7 +24,7 @@
         (ring.middleware resource file-info cookies params))
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
-            [graphbrain.web.common :as common]
+            [graphbrain.hg.connection :as conn]
             [graphbrain.web.handlers.home :as home]
             [graphbrain.web.handlers.nodeactions :as nodeactions]
             [graphbrain.web.handlers.raw :as raw]
@@ -37,37 +37,35 @@
             [graphbrain.web.handlers.define :as define]
             [graphbrain.web.handlers.edgedata :as ed]))
 
-(defroutes app-routes
-  (GET "/" request (home/handle request))
-  (POST "/n/*" request (nodeactions/handle request))
-  (GET "/n/*" request (nodepage/handle request))
-  (GET "/x" request (intersect/handle request))
-  (GET "/raw/*" request (raw/handle request))
-  (POST "/input" request (input/handle request))
-  (POST "/search" request (search/handle request))
-  (GET "/eco" request (eco/handle request))
-  (POST "/eco" request (eco/handle request))
-  (POST "/change" request (change/handle request))
-  (POST "/define" request (define/handle request))
-  (POST "/edge-data" request (ed/handle request))
-  (route/not-found "<h1>Page not found</h1>"))
+(defn app-routes
+  [hg]
+  (routes (GET "/" request (home/handle request))
+          (POST "/n/*" request (nodeactions/handle request hg))
+          (GET "/n/*" request (nodepage/handle request hg))
+          (GET "/x" request (intersect/handle request hg))
+          (GET "/raw/*" request (raw/handle request hg))
+          (POST "/input" request (input/handle request hg))
+          (POST "/search" request (search/handle request hg))
+          (GET "/eco" request (eco/handle request hg))
+          (POST "/eco" request (eco/handle request hg))
+          (POST "/change" request (change/handle request hg))
+          (POST "/define" request (define/handle request hg))
+          (POST "/edge-data" request (ed/handle request hg))
+          #_(route/not-found "<h1>Page not found</h1>")))
 
-(defn init-server!
-  []
-  (common/init-graph!))
-
-(def app
-  (-> app-routes
+(defn app
+  [hg]
+  (-> hg
+      app-routes
       (wrap-resource "")
       wrap-file-info
       wrap-params
       wrap-cookies))
 
 (def handler
-  (handler/site app))
+  (handler/site (app (conn/create))))
 
 (defn start!
-  []
-  (init-server!)
-  (let [port (if common/production? 80 3000)]
-    (run-jetty app {:port port})))
+  [port]
+  (println (str "Starting web server on port " port))
+  (run-jetty (app (conn/create)) {:port port}))

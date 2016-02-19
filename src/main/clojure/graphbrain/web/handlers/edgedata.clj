@@ -19,8 +19,7 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.web.handlers.edgedata
-  (:require [graphbrain.web.common :as common]
-            [graphbrain.web.handlers.search :as search]
+  (:require [graphbrain.web.handlers.search :as search]
             [graphbrain.hg.ops :as hgops]))
 
 (defn- author

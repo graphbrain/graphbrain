@@ -20,15 +20,14 @@
 
 (ns graphbrain.web.handlers.nodepage
   (:require [graphbrain.hg.ops :as hgops]
-            [graphbrain.web.common :as common]
             [graphbrain.web.snodes :as snodes]
             [graphbrain.web.cssandjs :as css+js]
             [graphbrain.web.views.nodepage :as np]
             [graphbrain.web.encoder :as enc]))
 
 (defn- data
-  [id user ctxt ctxts]
-  (let [snodes (snodes/generate common/hg id ctxt ctxts)]
+  [id hg user ctxt ctxts]
+  (let [snodes (snodes/generate hg id ctxt ctxts)]
     {:root-id id
      :snodes snodes}))
 
@@ -39,7 +38,7 @@
                       (data id user ctxt ctxts))) "';"))
 
 (defn handle
-  [request]
+  [request hg]
   #_(let
       [user (common/get-user request)
        id (:* (:route-params request))
