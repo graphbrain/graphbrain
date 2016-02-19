@@ -21,7 +21,6 @@
 (ns graphbrain.web.handlers.intersect
   (:require [graphbrain.hg.ops :as hgops]
             [graphbrain.hg.symbol :as sym]
-            [graphbrain.web.common :as common]
             [graphbrain.web.visualvert :as vv]
             [graphbrain.web.cssandjs :as css+js]
             [graphbrain.web.views.intersect :as i]

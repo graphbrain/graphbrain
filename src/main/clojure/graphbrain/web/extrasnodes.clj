@@ -20,7 +20,6 @@
 
 (ns graphbrain.web.extrasnodes
   (:require [graphbrain.hg.ops :as hgops]
-            [graphbrain.web.common :as common]
             [graphbrain.web.visualvert :as vv]))
 
 (defn- edge->map

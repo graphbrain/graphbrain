@@ -23,14 +23,14 @@
 
 (defn view []
   (html
-    [:br]
+   [:br]
     [:div
-      [:div {:class "hero-unit landing" :style "background-color: rgba(255, 255, 255, 0.8)"}
-        [:div
-          [:div {:style "float:left; height:180px; padding-right:70px"}
-            [:img {:src "/images/GB_logo_L.png" :width "209" :height "56" :alt "GraphBrain"}]]
-            [:div {:style "color:#555; padding-top:0px; margin-top:0px;"}]]
-        [:div {:style "text-align:center; clear:both;"}
-          [:h1 "Graphbrain"]]
-        [:div {:style "text-align:center"}
-          [:h3 "Open Knowledge Hypergraph"]]]]))
+     [:div {:class "hero-unit landing" :style "background-color: rgba(255, 255, 255, 0.8)"}
+       [:div
+         [:div {:style "float:left; height:180px; padding-right:70px"}
+           [:img {:src "/images/GB_logo_L.png" :width "209" :height "56" :alt "GraphBrain"}]]
+         [:div {:style "color:#555; padding-top:0px; margin-top:0px;"}]]
+       [:div {:style "text-align:center; clear:both;"}
+         [:h1 "Graphbrain"]]
+       [:div {:style "text-align:center"}
+         [:h3 "Open Knowledge Hypergraph"]]]]))

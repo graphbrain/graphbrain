@@ -19,8 +19,7 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.web.snodes
-  (:require [graphbrain.web.common :as common]
-            [graphbrain.web.visualvert :as vv]
+  (:require [graphbrain.web.visualvert :as vv]
             [graphbrain.web.extrasnodes :as xs]
             [graphbrain.hg.ops :as hgops]
             [graphbrain.hg.symbol :as sym]))

@@ -63,8 +63,7 @@
   :test-paths ["test" "src/test/clojure"]
   :resource-paths ["src/main/resources"]
   :main graphbrain.core
-  :ring {:init graphbrain.web.server/init-server!
-         :handler graphbrain.web.server/handler}
+  :ring {:handler graphbrain.web.server/handler}
   :aot :all
   :cljsbuild {:builds
               [{:source-paths ["src/main/cljs"]

@@ -25,7 +25,6 @@
             [graphbrain.eco.eco :as eco]
             [graphbrain.eco.words :as words]
             [graphbrain.eco.parsers.chat :as chat]
-            [graphbrain.web.common :as common]
             [graphbrain.web.cssandjs :as css+js]
             [graphbrain.web.views.eco :as ecop]))
 

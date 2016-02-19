@@ -21,19 +21,16 @@
 (ns graphbrain.web.handlers.nodeactions
   (:use (ring.util response))
   (:require [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.symbol :as sym]
-            [graphbrain.web.common :as common]))
+            [graphbrain.hg.symbol :as sym]))
 
 (defn- remove-vertex!
   [request edge-str]
-  (common/log request (str "remove vertex: " edge-str))
   #_(gb/remove! common/gbdb
               (maps/id->edge edge-id)
               targ-ctxt))
 
 (defn- new-meaning!
   [request edge-str]
-  (common/log request (str "new meaning: " edge-str))
   #_(let [eid ((request :form-params) "eid")
         score ((request :form-params) "score")
         edge (maps/id->edge edge-id score)
