@@ -45,7 +45,6 @@
           [:meta {:description ""}]
           [:meta {:author ""}]
           [:title (str title " - Graphbrain")]
-          [:link {:href "/css/bootstrap.min.css" :type "text/css" :rel "Stylesheet"}]
           (css+js dev)
           [:script {:src "http://html5shim.googlecode.com/svn/trunk/html5.js"}]]
          [:body
