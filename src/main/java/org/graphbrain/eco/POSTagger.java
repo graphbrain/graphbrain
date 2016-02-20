@@ -34,7 +34,7 @@ public class POSTagger {
     private static StanfordLemmatizer s;
 
     static {
-        tagger = new MaxentTagger("pos_models/english-left3words-distsim.tagger");
+	tagger = new MaxentTagger(MaxentTagger.DEFAULT_JAR_PATH);
         s = new StanfordLemmatizer();
     }
 

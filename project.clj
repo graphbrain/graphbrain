@@ -33,8 +33,6 @@
                   ;; NLP
                   [edu.stanford.nlp/stanford-corenlp "3.6.0"]
                   [edu.stanford.nlp/stanford-corenlp "3.6.0" :classifier "models"]
-                  [edu.stanford.nlp/stanford-parser "3.6.0"]
-                  [edu.stanford.nlp/stanford-parser "3.6.0" :classifier "models"]
                   ;; WordNet
                   [net.sf.extjwnl/extjwnl "1.9.1"]
                   [net.sf.extjwnl/extjwnl-data-wn31 "1.2"]
@@ -70,7 +68,6 @@
                 :compiler {:output-to "src/main/resources/js/gbui.js"
                            :libs [""]
                            :externs ["src/main/resources/js/jquery-1.7.2.min.js"
-                                     "src/main/resources/js/jquery-ui-1.8.18.custom.min.js"
                                      "src/main/resources/js/bootstrap.min.js"]
                            :optimizations :whitespace
                            :pretty-print true}}]}
