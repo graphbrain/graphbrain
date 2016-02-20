@@ -56,8 +56,7 @@
             :url "/define"
             :data (str "rel=" (js/encodeURIComponent (:rel msg))
                        "&root-id=" (js/encodeURIComponent (:root-id msg))
-                       "&new-id=" (js/encodeURIComponent new-id)
-                       "&ctxt=" @g/context)
+                       "&new-id=" (js/encodeURIComponent new-id))
             :dataType "text"
             :success on-defined}))
 

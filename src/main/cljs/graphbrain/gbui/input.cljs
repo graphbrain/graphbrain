@@ -25,7 +25,6 @@
             [graphbrain.gbui.globals :as g]
             [graphbrain.gbui.search :as search]
             [graphbrain.gbui.define :as define]
-            [graphbrain.gbui.contexts :as contexts]
             [graphbrain.gbui.messages :as msg])
   (:use [jayq.core :only [$]]))
 
@@ -41,7 +40,7 @@
   (let [goto-id (:gotoid msg)]
     (if (not (empty? goto-id))
       (set! (.-href js/window.location)
-            (str "/n/" @g/context "/" goto-id)))))
+            (str "/n/" goto-id)))))
 
 (defn- def-results-received
   [msg]
@@ -67,8 +66,7 @@
   (jq/ajax {:type "POST"
             :url "/input"
             :data (str "sentence=" sentence
-                       "&root=" @g/root-id
-                       "&targ-ctxt=" (contexts/targ-ctxt))
+                       "&root=" @g/root-id)
             :dataType "text"
             :success results-received}))
 

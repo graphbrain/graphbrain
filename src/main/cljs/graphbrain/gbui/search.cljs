@@ -136,7 +136,6 @@
   (jq/ajax {:type "POST"
             :url "/search"
             :data (str "q=" (.toLowerCase query)
-                       "&mode=" (name mode)
-                       "&ctxt=" @g/context)
+                       "&mode=" (name mode))
             :dataType "text"
             :success f}))

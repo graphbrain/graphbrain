@@ -19,13 +19,14 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.gbui.gbui
-  (:require [graphbrain.gbui.interface :as intf]
+  (:require [jayq.core :as jq]
             [graphbrain.gbui.globals :as g]
             [graphbrain.gbui.animation :as anim]
             [graphbrain.gbui.inters :as inters]
             [graphbrain.gbui.nodepage :as nodepage]
             [graphbrain.gbui.eco :as eco]
             [graphbrain.gbui.encoder :as enc]
+            [graphbrain.gbui.input :as input]
             [cemerick.pprng :as rng])
   (:use [jayq.core :only [$]]))
 
@@ -34,6 +35,10 @@
   (let [data (cljs.reader/read-string
               (enc/decode data-str))]
     (reset! g/data data)))
+
+(defn init-interface
+  []
+  (jq/bind ($ "#top-input-field") "submit" input/query))
 
 (defn start
   []
@@ -49,6 +54,6 @@
     "eco" (eco/init-eco!)
     nil)
   
-  (intf/init-interface))
+  (init-interface))
 
 ($ start)
