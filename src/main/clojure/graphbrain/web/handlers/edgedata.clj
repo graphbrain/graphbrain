@@ -20,29 +20,17 @@
 
 (ns graphbrain.web.handlers.edgedata
   (:require [graphbrain.web.handlers.search :as search]
-            [graphbrain.hg.ops :as hgops]))
-
-(defn- author
-  [edge-id ctxts]
-  #_(let [author-id (k/author common/gbdb edge-id ctxts)]
-    (if author-id
-      (let [auth (gb/getv common/gbdb author-id)]
-        {:id (:id auth)
-         :username (:username auth)}))))
+            [graphbrain.hg.ops :as ops]
+            [graphbrain.hg.symbol :as symb]))
 
 (defn reply
-  [id edge-id user-id ctxt ctxts]
-  #_(pr-str {:results (search/results
-                     (entity/text id)
-                     ctxts)
-           :author (author edge-id ctxts)
-           :can-edit (perms/can-edit? common/gbdb edge-id user-id ctxt)}))
+  [hg id edge-id]
+  (pr-str {:results (search/query
+                     hg
+                     (symb/symbol->str id))}))
 
 (defn handle
-  [request]
-  #_(let [id ((request :form-params) "id")
-        edge-id ((request :form-params) "edge")
-        ctxt ((request :form-params) "ctxt")
-        user (common/get-user request)
-        ctxts (contexts/active-ctxts ctxt user)]
-    (reply id edge-id (:id user) ctxt ctxts)))
+  [request hg]
+  (let [id ((request :form-params) "id")
+        edge-id ((request :form-params) "edge")]
+    (reply hg id edge-id)))

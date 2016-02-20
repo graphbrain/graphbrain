@@ -57,8 +57,6 @@
     "" "undefined meaning"
     "#" (:text sub)
     (str "<a href='/n/"
-         @g/context
-         "/"
          (:id sub)
          "'>"
          (:text sub)
@@ -94,7 +92,6 @@
         div-id (item-div-id (:edge item))
         html (item-html item div-id)]
     (jq/append ($ (str "#" frame-id " .frame-inner")) html)
-    ;;(jq/css ($ (str "#chg" div-id)) {:color (item-color item ctxts)})
     (jq/bind ($ (str "#chg" div-id))
              :click
              #(ed/clicked item snode))
