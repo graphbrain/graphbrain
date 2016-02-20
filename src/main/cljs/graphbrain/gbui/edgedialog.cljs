@@ -23,8 +23,7 @@
   (:require [jayq.core :as jq]
             [hiccups.runtime :as hiccupsrt]
             [graphbrain.gbui.globals :as g]
-            [graphbrain.gbui.search :as search]
-            [graphbrain.gbui.contexts :as contexts])
+            [graphbrain.gbui.search :as search])
   (:use [jayq.core :only [$]]))
 
 (def initialised (atom false))
