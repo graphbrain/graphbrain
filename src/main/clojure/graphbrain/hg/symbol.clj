@@ -78,9 +78,17 @@
    (clojure.string/replace (.toLowerCase str) "/" "_") " " "_"))
 
 (defn symbol->str
-  "Converts a symbol into a string representation"
+  "Converts a symbol into a string representation."
   [sym]
   (case (sym-type sym)
     :concept (clojure.string/replace (root sym) "_" " ")
     :url sym
     (str sym)))
+
+(defn new-meaning
+  "Creates a new symbol for the given root.
+   If given symbols is not a root, return it unchanged."
+  [symb]
+  (if (root? symb)
+    (build symb (random-hash))
+    symb))
