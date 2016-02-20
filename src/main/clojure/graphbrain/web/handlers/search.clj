@@ -19,13 +19,13 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.web.handlers.search
-  (:require [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.symbol :as sym]))
+  (:require [graphbrain.hg.ops :as ops]
+            [graphbrain.hg.symbol :as symb]))
 
-(defn results
-  [q ctxts]
-  #_(map #(list (id/eid->id %) (entity/description %))
-       (si/query common/gbdb q ctxts)))
+(defn query
+  [hg q]
+  (map #(list % %)
+       (ops/symbols-with-root hg (symb/str->symbol q))))
 
 (defn reply
   [results mode]
@@ -33,17 +33,8 @@
            :mode mode
            :results results}))
 
-(defn process
-  [q ctxts mode]
-  (reply
-   (results q ctxts)
-   mode))
-
 (defn handle
-  [request]
-  #_(let [q ((request :form-params) "q")
-        mode (keyword ((request :form-params) "mode"))
-        ctxt ((request :form-params) "ctxt")
-        user (common/get-user request)
-        ctxts (contexts/active-ctxts ctxt user)]
-    (process q ctxts mode)))
+  [request hg]
+  (let [q ((request :form-params) "q")
+        mode (keyword ((request :form-params) "mode"))]
+    (reply (query hg q) mode)))

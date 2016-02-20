@@ -86,8 +86,8 @@
 (defn- link
   [result mode]
   (case mode
-    :search (str "/n/" @g/context "/" (first result))
-    :intersect (str "/x?id1=" @g/context "/" (first result)
+    :search (str "/n/" (first result))
+    :intersect (str "/x?id1=" (first result)
                     "&id2=" @g/root-id)
     :change "#"
     :define "#"
