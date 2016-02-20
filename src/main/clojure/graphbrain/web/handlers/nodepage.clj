@@ -20,6 +20,7 @@
 
 (ns graphbrain.web.handlers.nodepage
   (:require [graphbrain.hg.ops :as ops]
+            [graphbrain.hg.symbol :as symb]
             [graphbrain.web.snodes :as snodes]
             [graphbrain.web.views.nodepage :as np]
             [graphbrain.web.encoder :as enc]))
@@ -39,8 +40,8 @@
 (defn handle
   [request hg]
   (let [id (:* (:route-params request))
-        title id
-        desc "desc"]
+        title (symb/symbol->str id)
+        desc "description"]
     (np/nodepage :title title
                  :js (js hg id)
                  :desc desc
