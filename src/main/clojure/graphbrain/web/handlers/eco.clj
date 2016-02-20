@@ -32,10 +32,10 @@
   (str "var ptype='eco';"))
 
 (defn- sentence->result
-  [user sentence ctxts]
+  [sentence]
   #_(let
       [env {:root "561852ced99a782d/europe"
-            :user (:id user)}
+            :user "eco/1"}
        words (words/str->words sentence)
        par (eco/parse chat/chat words env)
        vws (map eco/vert+weight par)
@@ -53,11 +53,11 @@
        :vws vws})))
 
 (defn report
-  [user sentence ctxts]
-  (sentence->result user sentence ctxts))
+  [user sentence]
+  (sentence->result sentence))
 
 (defn handle
-  [request]
+  [request hg]
   (let
       [sentence ((request :form-params) "input-field")
        title "Eco test"
