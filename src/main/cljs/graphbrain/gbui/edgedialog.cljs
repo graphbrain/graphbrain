@@ -41,8 +41,6 @@
        [:input {:id "op-field" :type "hidden" :name "op"}]
        [:input {:id "eid-field" :type "hidden" :name "eid"}]
        [:input {:id "edge-field" :type "hidden" :name "edge"}]
-       [:input {:id "score-field" :type "hidden" :name "score"}]
-       [:input {:id "targ-ctxt-field" :type "hidden" :name "targ-ctxt"}]
        [:div {:class "modal-body"}
         [:p {:id "edge-author"}]
         [:br]
@@ -81,7 +79,7 @@
             :data (str "edge=" (js/encodeURIComponent (:edge node))
                        "&old-id=" (js/encodeURIComponent (:id node))
                        "&new-id=" (js/encodeURIComponent new-id)
-                       "&targ-ctxt=" (contexts/targ-ctxt (:ctxts node)))
+)
             :dataType "text"
             :success on-changed}))
 
@@ -97,41 +95,24 @@
       (reset! initialised true)))
   (let [eid (:eid node)
         edge (:edge node)
-        score (:score node)
-        targ-ctxt (contexts/targ-ctxt (:ctxts node))
         link (:label snode)
-        mod (= :entity (:type node))
+        mod (= :concept (:type node))
         mod-button ($ "#new-meaning-button")
         rem-button ($ "#remove-button")]
     (if mod
       (jq/show mod-button)
       (jq/hide mod-button))
 
-    (if (or (:static snode)
-            (and msg
-                 (not (:can-edit msg))))
+    (if (:static snode)
       (jq/hide rem-button)
       (jq/show rem-button))
     
     (jq/val ($ "#eid-field") eid)
     (jq/val ($ "#edge-field") edge)
-    (jq/val ($ "#score-field") score)
-    (jq/val ($ "#targ-ctxt-field") targ-ctxt)
     (jq/html ($ "#edge-dialog-title") (:edge-text node))
     
-    (if (:author msg)
-      (jq/html ($ "#edge-author")
-               (str "created by:  <a href='/n/"
-                    @g/context
-                    "/"
-                    (:id (:author msg))
-                    "'>"
-                    (:username (:author msg))
-                    "</a>")))
-     
     (let [cm ($ "#change-meaning-label")]
-      (if (and (not (:static snode))
-               (:can-edit msg))
+      (if (not (:static snode))
         (let [res (search/rendered-results msg)]
           (if (empty? res)
             (jq/hide cm)
@@ -162,13 +143,12 @@
   (jq/ajax {:type "POST"
             :url "/edge-data"
             :data (str "id=" (:id node)
-                       "&edge=" (.encodeURIComponent js/window (:edge node))
-                       "&ctxt=" @g/context)
+                       "&edge=" (.encodeURIComponent js/window (:edge node)))
             :dataType "text"
             :success #(results-received % node snode)}))
 
 (defn clicked
   [node snode]
-  (if (some #{(:type node)} [:entity :edge :user])
+  (if (some #{(:type node)} [:concept])
     (request! node snode)
     (show-edge-dialog nil node snode)))
