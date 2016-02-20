@@ -45,8 +45,7 @@
           [:meta {:description ""}]
           [:meta {:author ""}]
           [:title (str title " - Graphbrain")]
-          (css+js dev)
-          [:script {:src "http://html5shim.googlecode.com/svn/trunk/html5.js"}]]
+          (css+js dev)]
          [:body
           (body-fun)
           [:script {:language "javascript"} js]]))
