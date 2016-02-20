@@ -97,7 +97,7 @@
                (nth 2))))
 
 (defn- process-fact
-  [request user root sentence ctxt ctxts]
+  [hg request root sentence]
   #_(let
       [root-id (:id root)
        env {:root root-id
@@ -134,19 +134,17 @@
         (input-reply-error "Sorry, I don't understand.")))))
 
 (defn process-search
-  [request user root q ctxt ctxts mode]
+  [hg request root q mode]
   (let [q (if (= mode :intersect)
             (clojure.string/trim (subs q 1))
             q)
-        results (search/results q ctxts)
-        root-id (:id root)]
+        results (search/query hg q)]
     (if (empty? results)
-      (process-fact request user root q ctxt ctxts)
-      (do
-        (search/reply results mode)))))
+      (process-fact hg request root q)
+      (search/reply results mode))))
 
 (defn process-url
-  [request user root sentence ctxt ctxts]
+  [hg request root sentence]
   #_(let [url-id (url/url->id sentence)
         root-id (:id root)]
     (pr/extract-knowledge! common/gbdb sentence ctxt ctxts (:id user))
@@ -157,18 +155,10 @@
     (input-reply-url url-id)))
 
 (defn handle
-  [request]
-  #_(let [sentence ((request :form-params) "sentence")
-        root-id ((request :form-params) "root")
-        targ-ctxt ((request :form-params) "targ-ctxt")
-        user (common/get-user request)
-        ctxts (contexts/active-ctxts targ-ctxt user)
-        root (if root-id (gb/getv common/gbdb root-id ctxts))]
-    (common/log request (str "input: " sentence
-                             "; ctxt: " targ-ctxt
-                             (if root-id (str "; root: " root-id))))
+  [request hg]
+  (let [sentence ((request :form-params) "sentence")
+        root ((request :form-params) "root")]
     (case (sentence-type sentence)
-      :fact (process-search request user root sentence targ-ctxt ctxts :search)
-      :url (process-url request user root sentence targ-ctxt ctxts)
-      :intersect (process-search
-                  request user root sentence targ-ctxt ctxts :intersect))))
+      :fact (process-search hg request root sentence :search)
+      :url (process-url hg request root sentence)
+      :intersect (process-search hg request root sentence :intersect))))
