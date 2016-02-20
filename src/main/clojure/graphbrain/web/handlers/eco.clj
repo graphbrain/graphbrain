@@ -20,7 +20,7 @@
 
 (ns graphbrain.web.handlers.eco
   (:require [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.symbol :as sym]
+            [graphbrain.hg.symbol :as symb]
             [graphbrain.disambig.edgeguesser :as edg]
             [graphbrain.eco.eco :as eco]
             [graphbrain.eco.words :as words]
@@ -32,18 +32,16 @@
   (str "var ptype='eco';"))
 
 (defn- sentence->result
-  [sentence]
-  #_(let
+  [hg sentence]
+  (let
       [env {:root "561852ced99a782d/europe"
             :user "eco/1"}
        words (words/str->words sentence)
        par (eco/parse chat/chat words env)
        vws (map eco/vert+weight par)
        res (eco/verts+weights->vertex chat/chat vws env)]
-    (if (id/edge? res)
-      (let [edge-id (edg/guess common/gbdb res sentence (:id user) ctxts)
-            edge (maps/id->vertex edge-id)
-            edge (assoc edge :score 1)]
+    (if (= (symb/sym-type res) :edge)
+      (let [edge (edg/guess hg res sentence)]
         {:words words
          :res res
          :vws vws
@@ -52,17 +50,11 @@
        :res res
        :vws vws})))
 
-(defn report
-  [user sentence]
-  (sentence->result sentence))
-
 (defn handle
   [request hg]
-  (let
-      [sentence ((request :form-params) "input-field")
-       title "Eco test"
-       report (if sentence
-                (report sentence))]
+  (let [sentence ((request :form-params) "input-field")
+        title "Eco test"
+        report (if sentence (sentence->result hg sentence))]
     (ecop/page :title title
                :js (js)
                :report report
