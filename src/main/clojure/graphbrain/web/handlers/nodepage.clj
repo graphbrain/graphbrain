@@ -21,7 +21,6 @@
 (ns graphbrain.web.handlers.nodepage
   (:require [graphbrain.hg.ops :as ops]
             [graphbrain.web.snodes :as snodes]
-            [graphbrain.web.cssandjs :as css+js]
             [graphbrain.web.views.nodepage :as np]
             [graphbrain.web.encoder :as enc]))
 
@@ -35,7 +34,7 @@
   [hg id]
   (str "var ptype='node';"
        "var data='" (enc/encode (pr-str
-                      (data hg id))) "';"))
+                                 (data hg id))) "';"))
 
 (defn handle
   [request hg]
@@ -43,6 +42,6 @@
         title id
         desc "desc"]
     (np/nodepage :title title
-                 :css-and-js (css+js/css+js)
                  :js (js hg id)
-                 :desc desc)))
+                 :desc desc
+                 :dev (:dev request))))

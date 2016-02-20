@@ -22,7 +22,6 @@
   (:require [graphbrain.hg.ops :as hgops]
             [graphbrain.hg.symbol :as sym]
             [graphbrain.web.visualvert :as vv]
-            [graphbrain.web.cssandjs :as css+js]
             [graphbrain.web.views.intersect :as i]
             [graphbrain.web.encoder :as enc]
             [clojure.math.combinatorics :as combo]))
@@ -34,7 +33,7 @@
         (maps/participant-ids edge)) 2))
 
 (defn- inters-data
-  [ids user ctxt ctxts]
+  [ids]
   #_(let [edges (q/intersect common/gbdb ids ctxts)
         verts (into #{}
                (flatten

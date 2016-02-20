@@ -40,32 +40,42 @@
 (defn app-routes
   [hg]
   (routes (GET "/" request (home/handle request))
-          (POST "/n/*" request (nodeactions/handle request hg))
           (GET "/n/*" request (nodepage/handle request hg))
           (GET "/x" request (intersect/handle request hg))
           (GET "/raw/*" request (raw/handle request hg))
+          (GET "/eco" request (eco/handle request hg))
+          
+          (POST "/n/*" request (nodeactions/handle request hg))
           (POST "/input" request (input/handle request hg))
           (POST "/search" request (search/handle request hg))
-          (GET "/eco" request (eco/handle request hg))
           (POST "/eco" request (eco/handle request hg))
           (POST "/change" request (change/handle request hg))
           (POST "/define" request (define/handle request hg))
           (POST "/edge-data" request (ed/handle request hg))
+
           (route/not-found "<h1>Page not found</h1>")))
 
+(defn wrap-dev
+  [handler dev]
+  (fn [request]
+    (let [response (handler request)]
+      (assoc response :dev dev))))
+
 (defn app
-  [hg]
+  [hg dev]
   (-> hg
       app-routes
       (wrap-resource "")
       wrap-file-info
       wrap-params
-      wrap-cookies))
+      wrap-cookies
+      (wrap-dev dev)))
 
 (def handler
-  (handler/site (app (conn/create))))
+  (handler/site
+   (app (conn/create) true)))
 
 (defn start!
   [port]
   (println (str "Starting web server on port " port))
-  (run-jetty (app (conn/create)) {:port port}))
+  (run-jetty (app (conn/create) false) {:port port}))

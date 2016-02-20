@@ -25,7 +25,6 @@
             [graphbrain.eco.eco :as eco]
             [graphbrain.eco.words :as words]
             [graphbrain.eco.parsers.chat :as chat]
-            [graphbrain.web.cssandjs :as css+js]
             [graphbrain.web.views.eco :as ecop]))
 
 (defn- js
@@ -65,6 +64,6 @@
        report (if sentence
                 (report sentence))]
     (ecop/page :title title
-               :css-and-js (css+js/css+js)
                :js (js)
-               :report report)))
+               :report report
+               :dev (:dev request))))

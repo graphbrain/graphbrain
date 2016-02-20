@@ -29,10 +29,8 @@
     [:div {:id "inters-view"}]]))
 
 (defn intersect
-  [& {:keys [title css-and-js user ctxt js text]}]
+  [& {:keys [title js text dev]}]
   (bar/barpage :title title
-               :css-and-js css-and-js
-               :user user
-               :ctxt ctxt
                :js js
-               :content-fun #(view text)))
+               :content-fun #(view text)
+               :dev dev))

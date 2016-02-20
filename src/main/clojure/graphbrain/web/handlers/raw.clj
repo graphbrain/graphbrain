@@ -23,7 +23,6 @@
         (graphbrain.web.views page raw))
   (:require [graphbrain.hg.ops :as ops]
             [graphbrain.hg.edgestr :as es]
-            [graphbrain.web.cssandjs :as css+js]
             [graphbrain.web.views.barpage :as bar]))
 
 (defn- js
@@ -40,6 +39,6 @@
   [request hg]
   (let [vertex-id (:* (:route-params request))]
     (bar/barpage :title vertex-id
-                 :css-and-js (css+js/css+js)
                  :content-fun #(raw-view (raw-html request hg vertex-id))
-                 :js (js))))
+                 :js (js)
+                 :dev (:dev request))))
