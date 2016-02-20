@@ -22,7 +22,22 @@
   (:use hiccup.core
         hiccup.page))
 
-(defn page [& {:keys [title css-and-js body-fun js]}]
+(defn- version
+  [dev]
+  (if dev
+    (str "?" (rand-int 999999999))
+    ""))
+
+(defn css+js
+  [dev]
+  (str
+   "<link href='/css/bootstrap.min.css' type='text/css' rel='Stylesheet' />"
+   "<link href='/css/gb.css" (version dev) "' type='text/css' rel='Stylesheet' />"
+   "<script src='/js/jquery-1.11.1.min.js' type='text/javascript'></script>"
+   "<script src='/js/bootstrap.min.js' type='text/javascript' ></script>"
+   "<script src='/js/gbui.js" (version dev) "' type='text/javascript' ></script>"))
+
+(defn page [& {:keys [title body-fun js dev]}]
   (html5 {:lang "en"}
          [:head
           [:meta {:charset "utf-8"}]
@@ -31,7 +46,7 @@
           [:meta {:author ""}]
           [:title (str title " - Graphbrain")]
           [:link {:href "/css/bootstrap.min.css" :type "text/css" :rel "Stylesheet"}]
-          css-and-js
+          (css+js dev)
           [:script {:src "http://html5shim.googlecode.com/svn/trunk/html5.js"}]]
          [:body
           (body-fun)

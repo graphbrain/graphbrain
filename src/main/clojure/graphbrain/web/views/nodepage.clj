@@ -42,8 +42,8 @@
     [:div {:id "frames"}]]))
 
 (defn nodepage
-  [& {:keys [title css-and-js js desc]}]
+  [& {:keys [title js desc dev]}]
   (bar/barpage :title title
-               :css-and-js css-and-js
                :js js
-               :content-fun #(view title desc)))
+               :content-fun #(view title desc)
+               :dev dev))

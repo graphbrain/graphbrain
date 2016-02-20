@@ -52,8 +52,8 @@
     (content-fun)]))
 
 (defn barpage
-  [& {:keys [title css-and-js js content-fun]}]
+  [& {:keys [title js content-fun dev]}]
   (page :title title
-        :css-and-js css-and-js
+        :dev dev
         :body-fun #(view content-fun)
         :js js))

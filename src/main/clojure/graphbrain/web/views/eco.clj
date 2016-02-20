@@ -57,10 +57,8 @@
     [:div {:class "eco-section"} (trace (:vws report))]]))
 
 (defn page
-  [& {:keys [title css-and-js user ctxt js report]}]
+  [& {:keys [title js report dev]}]
   (bar/barpage :title title
-               :css-and-js css-and-js
-               :user user
-               :ctxt ctxt
                :js js
-               :content-fun #(view report)))
+               :content-fun #(view report)
+               :dev dev))
