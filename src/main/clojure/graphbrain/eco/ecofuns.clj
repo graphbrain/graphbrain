@@ -135,11 +135,7 @@
 
 (defn rel
   [words]
-  {:vertex (str "r/" (words->id words))})
-
-(defn id->vert
-  [id]
-  {:vertex id})
+  {:vertex (str (words->id words) "/eco")})
 
 (defn edge
   [& parts]
@@ -148,22 +144,9 @@
 
 (defn edges
   [& parts]
-  (apply edge (conj parts (id->vert "r/*edges"))))
-
-(defn eid
-  [rel name & ids]
-  #_(let [lparts (map #(if (and (coll? %) (not (map? %))) % [%]) ids)]
-    (map #(hash-map :vertex
-                    (apply id/name+ids->eid
-                           (conj [rel name] (map :vertex %))))
-         (apply combs/cartesian-product lparts))))
+  (apply edge (conj parts "edges/1")))
 
 (defn words->str
   [& words]
   (clojure.string/join " "
    (map #(clojure.string/join " " (map :word %)) words)))
-
-(defn text
-  [words]
-  #_{:vertex (text/text->pseudo
-            (words->str words))})

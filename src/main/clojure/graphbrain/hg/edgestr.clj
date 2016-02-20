@@ -69,7 +69,8 @@
       :double (Double. token))))
 
 (defn split-edge-str
-  "Shallow split into tokens of a string representation of an edge, with or without outer parenthesis."
+  "Shallow split into tokens of a string representation of an edge,
+   with or without outer parenthesis."
   [edge-str]
   (let [edge-inner-str (if (= (first edge-str) \()
                          (.substring edge-str 1 (dec (count edge-str)))
@@ -108,3 +109,4 @@
   (if (coll? edge)
     (str "(" (nodes->str edge) ")")
     (str edge)))
+

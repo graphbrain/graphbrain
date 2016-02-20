@@ -41,27 +41,16 @@
           y ???
           collon ":"
           z ???]
-         (let [r (id->vert (str "r/"
-                                (words->id v)
-                                "_"
-                                (words->id y)))
+         (let [r (str (words->id v)
+                      "_"
+                      (words->id y)
+                      "/eco")
                owner (! x)
                class (! y)
                thing (! z)
                e1 (edge r owner thing)
-               e2 (edge (id->vert "r/is")
-                        thing class)]
+               e2 (edge "is/eco" thing class)]
            (edges e1 e2)))
-
-(pattern :normal chat
-         "TODO:"
-         [todo "todo"
-          colon ":"
-          task ?]
-         (let [r (id->vert "r/has_todo")
-               actor (user env)
-               task (text task)]
-           (edge r actor task)))
 
 (pattern :normal chat
          "have to -> task"
@@ -69,48 +58,48 @@
           have "have"
           to "to"
           task ?]
-         (let [r (id->vert "r/has_task")
+         (let [r "has_task/eco"
                actor (! actor)
                task (! task)]
            (edge r actor task)))
 
-#_(pattern :normal chat
-           "with a"
-           [xwith "with", x1 "a", a ?, x2 ",", b ?, verb verb, c ?]
-           (let [x (! a)
-                 y (! b)
-                 z (! (concat b verb c))
-                 k ["r/has" y x]]
-             (edge "r/+list" k z)))
+(pattern :normal chat
+         "with a"
+         [xwith "with", x1 "a", a ?, x2 ",", b ?, verb verb, c ?]
+         (let [x (! a)
+               y (! b)
+               z (! (concat b verb c))
+               k ["has/eco" y x]]
+           (edge "list/eco" k z)))
 
-#_(pattern :normal chat
-           "something verb something AND verb something"
-           [a ?, verb1 verb, b ?, xand1 "and", verb2 verb, c ?]
-           (let [x (concat a verb1 b)
-                 y (concat a verb2 c)]
-             (edge "r/+list" (! x) (! y))))
+(pattern :normal chat
+         "something verb something AND verb something"
+         [a ?, verb1 verb, b ?, xand1 "and", verb2 verb, c ?]
+         (let [x (concat a verb1 b)
+               y (concat a verb2 c)]
+           (edge "list/eco" (! x) (! y))))
 
-#_(pattern :normal chat
-           "something verb something IND something AND something IND something"
-           [a ?, verb verb, b ?, in1 ind, c ?, xand3 "and", d ?, in2 ind, e ?]
-           (if (not (ends-with (concat in1 c) (concat in2 e)))
-             (let [x (! (concat a verb b in1 c))
-                   y (! (concat a verb d in2 e))]
-               (edge "r/+list" x y))))
+(pattern :normal chat
+         "something verb something IND something AND something IND something"
+         [a ?, verb verb, b ?, in1 ind, c ?, xand3 "and", d ?, in2 ind, e ?]
+         (if (not (ends-with (concat in1 c) (concat in2 e)))
+           (let [x (! (concat a verb b in1 c))
+                 y (! (concat a verb d in2 e))]
+             (edge "list/eco" x y))))
 
-#_(pattern :normal chat
-           "something verb something AND something IND something"
-           [a ?, verb verb, b ?, xand4 "and", c ?, in ind, d ?]
-           (let [x (! (concat a verb b in d))
-                 y (! (concat a verb c in d))]
-             (edge "r/+list" x y)))
+(pattern :normal chat
+         "something verb something AND something IND something"
+         [a ?, verb verb, b ?, xand4 "and", c ?, in ind, d ?]
+         (let [x (! (concat a verb b in d))
+               y (! (concat a verb c in d))]
+           (edge "list/eco" x y)))
 
-#_(pattern :normal chat
-           "something verb something and something"
-           [a ?, verb verb, b ?, xand5 "and", c ?]
-           (let [x (concat a verb b)
-                 y (concat a verb c)]
-             (edge "r/+list" x y)))
+(pattern :normal chat
+         "something verb something and something"
+         [a ?, verb verb, b ?, xand5 "and", c ?]
+         (let [x (concat a verb b)
+               y (concat a verb c)]
+           (edge "list/eco" x y)))
 
 (pattern :normal chat
          "something verb IND something"
@@ -144,21 +133,21 @@
                targ (! c)]
            (edge rel orig targ)))
 
-(pattern :normal chat
+#_(pattern :normal chat
          "of"
          [a ?, xof "of", b verb]
          (let [x (! a)
                y (! b)]
            (eid "r/+of" (words->str a xof b) x y)))
 
-(pattern :normal chat
+#_(pattern :normal chat
          "possessive with 's"
          [a ?, xs "'s", b ?]
          (let [x (! a)
                y (! b)]
            (eid "r/+poss" (str (words->str a) "'s " (words->str b)) x y)))
 
-(pattern :normal chat
+#_(pattern :normal chat
          "action"
          [v verb, obj ?]
          (let [v-vert (! v)
@@ -175,7 +164,7 @@
                r (rel xin)]
            (edge r x y)))
 
-(pattern :normal chat
+#_(pattern :normal chat
          "property"
          [prop (| adj adv), obj ?]
          (let [x (! prop)
