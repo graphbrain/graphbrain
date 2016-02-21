@@ -21,7 +21,6 @@
 (ns graphbrain.eco.eco
   (:use graphbrain.eco.ecofuns)
   (:require [graphbrain.hg.symbol :as symb]
-            [graphbrain.hg.edgestr :as es]
             [graphbrain.eco.words :as words]
             [clojure.set :as set]))
 
@@ -188,7 +187,7 @@
   [par]
   (let [vert (:vertex par)]
     (if (coll? vert)
-      (es/edge->str (map parse->vertex vert))
+      (map parse->vertex vert)
       vert)))
 
 (defn vert+weight
@@ -198,10 +197,10 @@
         weight (if rule (:priority rule) 0)]
     (if (coll? vert)
       (let [vws (map vert+weight vert)
-            id (es/edge->str (map :vert vws))
+            edge (map :vert vws)
             w (reduce + (map :weight vws))]
         (assoc par
-          :vert id
+          :vert edge
           :weight (+ w weight)))
       (assoc par
         :vert vert

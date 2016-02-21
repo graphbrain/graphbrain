@@ -20,7 +20,8 @@
 
 (ns graphbrain.web.views.eco
   (:use hiccup.core)
-  (:require [graphbrain.web.views.barpage :as bar]))
+  (:require [graphbrain.hg.edgestr :as es]
+            [graphbrain.web.views.barpage :as bar]))
 
 (defn sentence
   [words]
@@ -39,11 +40,11 @@
                 " "
                 [:span {:class "eco-rule"} (:desc (:rule %))]
                 " "
-                [:span {:class "eco-vertex"} (:vert %)]
+                [:span {:class "eco-vertex"} (es/edge->str (:vert %))]
                 [:div {:class "eco-trace-box"}
                  (let [v (:vertex %)]
                    (if (coll? v)
-                     (trace v) v))])
+                     (trace v) (es/edge->str v)))])
        (sort-by #(if (:weight %)
                    (:weight %) 0) > rs)))
 
@@ -53,7 +54,7 @@
    [:div {:id "eco-results"}
     [:div {:class "eco-section"} (sentence (:words report))]
     [:div {:class "eco-section"} (:res report)]
-    [:div {:class "eco-section"} (:id (:edge report))]
+    [:div {:class "eco-section"} (:edge report)]
     [:div {:class "eco-section"} (trace (:vws report))]]))
 
 (defn page

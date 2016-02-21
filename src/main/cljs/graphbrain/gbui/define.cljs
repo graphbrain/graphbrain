@@ -55,7 +55,7 @@
   (jq/ajax {:type "POST"
             :url "/define"
             :data (str "rel=" (js/encodeURIComponent (:rel msg))
-                       "&root-id=" (js/encodeURIComponent (:root-id msg))
+                       "&root-id=" (js/encodeURIComponent (:root msg))
                        "&new-id=" (js/encodeURIComponent new-id))
             :dataType "text"
             :success on-defined}))
@@ -78,10 +78,11 @@
 
 (defn- results-received
   [results msg]
-  (show-dialog! (cljs.reader/read-string results) msg))
+  (show-dialog!
+   (cljs.reader/read-string results) msg))
 
 (defn show!
   [msg]
-  (search/request! (:param msg)
+  (search/request! (:root msg)
                    :define
                    #(results-received % msg)))
