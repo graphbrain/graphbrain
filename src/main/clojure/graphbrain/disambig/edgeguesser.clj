@@ -25,6 +25,6 @@
 (defn guess
   [hg sym text]
   (case (symb/sym-type sym)
-    :entity (eg/guess hg sym text)
+    :concept (eg/guess hg sym text)
     :edge (map #(guess hg % text) sym)
     sym))

@@ -19,8 +19,8 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.web.handlers.eco
-  (:require [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.symbol :as symb]
+  (:require [graphbrain.hg.symbol :as symb]
+            [graphbrain.hg.edgestr :as es]
             [graphbrain.disambig.edgeguesser :as edg]
             [graphbrain.eco.eco :as eco]
             [graphbrain.eco.words :as words]
@@ -33,19 +33,18 @@
 
 (defn- sentence->result
   [hg sentence]
-  (let
-      [env {:root "561852ced99a782d/europe"
-            :user "eco/1"}
-       words (words/str->words sentence)
-       par (eco/parse chat/chat words env)
-       vws (map eco/vert+weight par)
-       res (eco/verts+weights->vertex chat/chat vws env)]
+  (let [env {:root "561852ced99a782d/europe"
+             :user "eco/1"}
+        words (words/str->words sentence)
+        par (eco/parse chat/chat words env)
+        vws (map eco/vert+weight par)
+        res (eco/verts+weights->vertex chat/chat vws env)]
     (if (= (symb/sym-type res) :edge)
       (let [edge (edg/guess hg res sentence)]
         {:words words
-         :res res
+         :res (es/edge->str res)
          :vws vws
-         :edge edge})
+         :edge (es/edge->str edge)})
       {:words words
        :res res
        :vws vws})))
@@ -54,7 +53,8 @@
   [request hg]
   (let [sentence ((request :form-params) "input-field")
         title "Eco test"
-        report (if sentence (sentence->result hg sentence))]
+        report (if sentence
+                 (sentence->result hg sentence))]
     (ecop/page :title title
                :js (js)
                :report report

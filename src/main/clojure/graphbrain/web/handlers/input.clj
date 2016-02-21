@@ -19,38 +19,33 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.web.handlers.input
-  (:require [graphbrain.web.handlers.search :as search]
-            [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.symbol :as sym]
-            [graphbrain.disambig.edgeguesser :as edg]
+  (:require [graphbrain.hg.symbol :as symb]
+            [graphbrain.hg.constants :as const]
+            [graphbrain.hg.beliefs :as beliefs]
             [graphbrain.kr.pagereader :as pr]
             [graphbrain.eco.eco :as eco]
-            [graphbrain.eco.parsers.chat :as chat]))
+            [graphbrain.eco.parsers.chat :as chat]
+            [graphbrain.disambig.edgeguesser :as edg]
+            [graphbrain.web.handlers.search :as search]))
 
 (defn- goto-id
-  [root-id vertex]
-  #_(if (maps/edge? vertex)
-    (if (= (maps/edge-type vertex) "r/*edges")
-      (goto-id root-id
-               (maps/id->edge
-                (first
-                 (maps/participant-ids vertex))))
-      (id/eid->id
-       (second
-        (maps/ids vertex))))
-    root-id)
-  )
+  [root edge]
+  (if (coll? edge)
+    (if (= (first edge) "edges/1")
+      (goto-id root (first edge))
+      (second edge))
+    root))
 
 (defn- input-reply-fact
-  [root-id vertex]
+  [root edge]
   (pr-str {:type :fact
-           :newedges (list (:id vertex))
-           :gotoid (goto-id root-id vertex)}))
+           :newedges (list edge)
+           :gotoid (goto-id root edge)}))
 
 (defn- input-reply-url
-  [root-id]
+  [root]
   (pr-str {:type :url
-           :gotoid root-id}))
+           :gotoid root}))
 
 (defn- input-reply-search
   [count results mode]
@@ -60,11 +55,10 @@
            :results results}))
 
 (defn- input-reply-definition
-  [root-id rel param]
+  [root rel]
   (pr-str {:type :def
-           :root-id root-id
-           :rel rel
-           :param param}))
+           :root-id root
+           :rel rel}))
 
 (defn- input-reply-error
   [msg]
@@ -80,58 +74,29 @@
             (.startsWith sentence "x ") :intersect
             :else :fact))
 
-(defn- is-definer?
+(defn- definer?
   [edge]
-  #_(= (id/edge-rel edge) "r/is"))
+  (= (first edge) "is/eco"))
 
 (defn- definer->rel
   [edge]
-  #_(case (id/edge-rel edge)
-    "r/is" "r/+t"))
-
-(defn- definer->param
-  [edge]
-  #_(case (id/edge-rel edge)
-    "r/is" (-> edge
-               id/id->ids
-               (nth 2))))
+  (case (first edge)
+    "is/eco" const/type-of))
 
 (defn- process-fact
   [hg request root sentence]
-  #_(let
-      [root-id (:id root)
-       env {:root root-id
-            :user (:id user)}
-       res (eco/parse-str chat/chat sentence env)]
-    (if (id/edge? res)
-      (if (perms/can-edit? common/gbdb (:id user) ctxt)
-        (if (and (id/undefined-eid? (:eid root))
-                 (is-definer? res))
-          (input-reply-definition root-id
-                                  (definer->rel res)
-                                  (definer->param res))
-          (let [edge-id (edg/guess common/gbdb res sentence (:id user) ctxts)
-                edge (maps/id->vertex edge-id)
-                edge (assoc edge :score 1)]
-            (k/addfact! common/gbdb edge ctxt (:id user))
-            (common/log request (str "fact added: " edge
-                                     "; input: " sentence
-                                     "; ctxt: " ctxt
-                                     (if root-id (str "; root: " root-id))))
-            (input-reply-fact root-id edge)))
-        (do
-          (common/log request (str "INPUT FAILED (no permissions). "
-                                   "input: " sentence
-                                   "; ctxt: " ctxt
-                                   (if root-id (str "; root: " root-id))))
-          (input-reply-error
-           "Sorry, you don't have permissions to edit this GraphBrain.")))
-      (do
-        (common/log request (str "INPUT FAILED (don't understand). "
-                                 "input: " sentence
-                                 "; ctxt: " ctxt
-                                 (if root-id (str "; root: " root-id))))
-        (input-reply-error "Sorry, I don't understand.")))))
+  (let [env {:root root
+             :user "user/1"}
+        res (eco/parse-str chat/chat sentence env)]
+    (println (str "parse>> " res))
+    (if (coll? res)
+      (if (and (symb/root? root) (definer? res))
+        (input-reply-definition root
+                                (definer->rel res))
+        (let [edge (edg/guess hg res sentence)]
+          (beliefs/add! hg "user/1" edge)
+          (input-reply-fact root edge)))
+      (input-reply-error "Sorry, I don't understand."))))
 
 (defn process-search
   [hg request root q mode]
