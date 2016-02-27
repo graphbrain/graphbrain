@@ -90,5 +90,5 @@
    If given symbols is not a root, return it unchanged."
   [symb]
   (if (root? symb)
-    (build symb (random-hash))
+    (build [symb (random-hash)])
     symb))
