@@ -20,7 +20,7 @@
 
 (ns graphbrain.kr.pagereader
   (:require [graphbrain.hg.connection :as conn]
-            [graphbrain.hg.ops :as ops]
+            [graphbrain.hg.beliefs :as beliefs]
             [graphbrain.hg.symbol :as sym]
             [graphbrain.hg.constants :as consts]
             [graphbrain.kr.webtools :as webtools]
@@ -31,16 +31,14 @@
             [graphbrain.kr.ngrams :as ngrams]
             [graphbrain.disambig.entityguesser :as eg]))
 
-(def g (conn/create))
-
 (defn leaf?
   [ngrams-graph ngram-set ngram]
   (let [part-of (set (keys (:in (ngrams-graph ngram))))]
     (not (some part-of ngram-set))))
 
 (defn ngram->entity
-  [hg ngrams-graph ng-ent-map ngram text ctxts]
-  #_(if (ng-ent-map ngram) ng-ent-map
+  [hg ngrams-graph ng-ent-map ngram text]
+  (if (ng-ent-map ngram) ng-ent-map
       (let [ngram-str (ngrams/ngram->str ngram) 
             components (keys (:out (ngrams-graph ngram)))
             components (filter #(leaf? ngrams-graph components %) components)
@@ -50,22 +48,17 @@
                            nem
                            (recur
                             (ngram->entity
-                             gbdb
+                             hg
                              ngrams-graph
                              nem
                              (first comps)
-                             text
-                             ctxts)
-                            (rest comps))))
-            eid (if (empty? components)
-                  nil
-                  (id/name+ids->eid consts/composed-eid-rel ngram-str
-                                    (map #(:eid (ng-ent-map %))
-                                         components)))]
-        (assoc ng-ent-map ngram (eg/guess gbdb ngram-str text eid nil ctxts)))))
+                             text)
+                            (rest comps))))]
+        (assoc ng-ent-map ngram
+               (eg/guess hg ngram-str text)))))
 
 (defn ngrams-graph->entities
-  [hg ngrams-graph text ctxts]
+  [hg ngrams-graph text]
   (loop [ngs ngrams-graph
          ng-ent-map {}]
     (if (empty? ngs)
@@ -76,8 +69,7 @@
               ngrams-graph
               ng-ent-map
               (first (first ngs))
-              text
-              ctxts)))))
+              text)))))
 
 
 (defn ngram->text
@@ -96,7 +88,7 @@
                          (map #(str (:word %) " " (:lemma %)) words))))
 
 (defn html->entities
-  [hg html ctxts]
+  [hg html]
   (let [sentences (nlp/html->sentences html)
         prgraph (wg/words->prgraph (nlp/sentences->words sentences))
         twords (wg/prgraph->topwords prgraph)
@@ -107,37 +99,28 @@
         text (prgraph->text prgraph)
         ngrams-graph (ngrams/ngrams->graph ngrams)
         ngrams (ngrams/sorted-ngrams (keys ngrams-graph))]
-    (ngrams-graph->entities hg ngrams-graph text ctxts)))
+    (ngrams-graph->entities hg ngrams-graph text)))
 
 (defn url+html->edges
-  [hg url-str html ctxts]
-  #_(let [url-id (url/url->id url-str)
-        entities (html->entities gbdb html ctxts)]
-    (map #(maps/id->edge
-           (id/ids->id ["r/has_topic" url-id (:eid (second %))])
-           (:score (first %))) entities)))
+  [hg url-str html]
+  (map #(vector "has_topic/1" url-str (second %))
+       (html->entities hg html)))
 
 (defn assoc-title!
-  [hg url-str title user-id ctxt]
+  [hg url-str title]
   #_(let [url-id (url/url->id url-str)
-        title-node (text/text->vertex title)
-        edge-id (id/ids->id ["r/*title" url-id (:id title-node)])]
-    (gb/putv! gbdb title-node ctxt)
-    (gb/putv! gbdb (maps/id->edge edge-id) ctxt)))
-
-(defn bookmark!
-  [hg url-str user-id ctxt]
-  #_(let [url-id (url/url->id url-str)
-        edge-id (id/ids->id ["r/bookmarked" user-id url-id])]
-    (gb/putv! gbdb (maps/id->edge edge-id) ctxt)))
+          title-node (text/text->vertex title)
+          edge ["title/1" url-id (:id title-node)]]
+    (text/add! hg title-node)
+    (beliefs/add! hg "pagereader/1" edge)))
 
 (defn extract-knowledge!
-  [hg url-str ctxt ctxts user-id]
-  #_(let [html (webtools/slurp-url url-str)
+  [hg url-str]
+  (let [html (webtools/slurp-url url-str)
         jsoup (htmltools/html->jsoup html)
         title (htmltools/jsoup->title jsoup)
         meat (meat/extract-meat html)
-        edges (url+html->edges gbdb url-str meat ctxts)]
-    (assoc-title! gbdb url-str title user-id ctxt)
-    (doseq [edge edges] (gb/putv! gbdb edge ctxt))
-    (bookmark! gbdb url-str user-id ctxt)))
+        edges (url+html->edges hg url-str meat)]
+    (assoc-title! hg url-str title)
+    (doseq [edge edges]
+      (beliefs/add! hg "pagereader/1" edge))))

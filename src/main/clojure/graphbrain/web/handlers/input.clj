@@ -88,7 +88,6 @@
   (let [env {:root root
              :user "user/1"}
         res (eco/parse-str chat/chat sentence env)]
-    (println (str "parse>> " res))
     (if (coll? res)
       (if (and (symb/root? root) (definer? res))
         (input-reply-definition root
@@ -109,15 +108,9 @@
       (search/reply results mode))))
 
 (defn process-url
-  [hg request root sentence]
-  #_(let [url-id (url/url->id sentence)
-        root-id (:id root)]
-    (pr/extract-knowledge! common/gbdb sentence ctxt ctxts (:id user))
-    (common/log request (str "extract knowledge from url "
-                             "input: " sentence
-                             "; ctxt: " ctxt
-                             (if root-id (str "; root: " root-id))))
-    (input-reply-url url-id)))
+  [hg request root url]
+  (pr/extract-knowledge! hg url)
+  (input-reply-url url))
 
 (defn handle
   [request hg]
