@@ -38,7 +38,7 @@
 (defn- add-neighbours
   [neighbours edge]
   (clojure.set/union neighbours
-                     (into #{} (rest edge))))
+                     (set (rest edge))))
 
 (defn- vemap-assoc-id-edge
   [vemap id edge]
@@ -56,26 +56,25 @@
   [vemap edges]
   (reduce #(vemap+edge %1 %2) vemap edges))
 
-(defn id->edges
-  [hg id]
+(defn node->edges
+  [hg node]
   (filter include-edge
-          (ops/ego hg id 2)))
+          (ops/ego hg node 2)))
 
 (defn- interedge
   [edge interverts]
-  (let [ids (rest edge)]
-    (every? #(some #{%} interverts) ids)))
+  (every? #(some #{%} interverts) (rest edge)))
 
 (defn walks
-  [vemap ids walk all-walks]
-  (if (every? #(some #{%} walk) ids)
+  [vemap nodes walk all-walks]
+  (if (every? #(some #{%} walk) nodes)
     (conj all-walks walk)
     (let [neighbours (:neighbours (vemap (last walk)))
          next-steps (filter #(not (some #{%} walk)) neighbours)]
      (if (empty? next-steps)
        all-walks
        (reduce #(clojure.set/union %1
-                                   (walks vemap ids
+                                   (walks vemap nodes
                                           (conj walk %2)
                                           #{}))
                all-walks next-steps)))))
@@ -98,22 +97,22 @@
   (reduce walk->wmap {} walks))
 
 (defn- valid-step?
-  [wmap ids walk-length step]
-  (or (some #{step} ids)
+  [wmap nodes walk-length step]
+  (or (some #{step} nodes)
       (= walk-length (wmap step))))
 
 (defn- valid-walk?
-  [wmap ids walk]
+  [wmap nodes walk]
   (let [walk-length (count walk)]
-    (every? #(valid-step? wmap ids walk-length %) walk)))
+    (every? #(valid-step? wmap nodes walk-length %) walk)))
 
 (defn intersect
-  [hg ids]
-  (let [edgesets (map #(id->edges hg %) ids)
+  [hg seeds]
+  (let [edgesets (map #(node->edges hg %) seeds)
         vemap (reduce edges->vemap {} edgesets)
-        walks (walks vemap ids [(first ids)] #{})
+        walks (walks vemap seeds [(first seeds)] #{})
         wmap (walks->wmap walks)
-        walks (filter #(valid-walk? wmap ids %) walks)
+        walks (filter #(valid-walk? wmap seeds %) walks)
         interverts (into #{}
                          (flatten
                           (into [] walks)))
