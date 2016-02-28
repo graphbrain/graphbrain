@@ -19,7 +19,8 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.hg.ops
-  "Hypergraph low-level operations.")
+  "Hypergraph low-level operations."
+  (:require [clojure.set :as set]))
 
 (defprotocol Ops
   ;; Checks if the given edge exists in the hypergraph.
@@ -52,3 +53,13 @@
   [hg pattern]
   (doseq [edge (pattern->edges hg pattern)]
     (remove! hg edge)))
+
+;; TODO: this can be optimized
+(defn ego
+  [hg center depth]
+  (if (> depth 0)
+    (let [edges (star hg center)
+          ids (set (flatten (map rest edges)))
+          ;;ids (filter #(< (degree hg %) 9999) ids)
+          next-edges (map #(ego hg % (dec depth)) ids)]
+      (apply set/union (conj next-edges edges)))))

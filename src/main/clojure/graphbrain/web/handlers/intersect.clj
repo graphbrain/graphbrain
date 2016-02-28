@@ -19,8 +19,8 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.web.handlers.intersect
-  (:require [graphbrain.hg.ops :as hgops]
-            [graphbrain.hg.symbol :as sym]
+  (:require [graphbrain.hg.symbol :as sym]
+            [graphbrain.hg.queries :as q]
             [graphbrain.web.visualvert :as vv]
             [graphbrain.web.views.intersect :as i]
             [graphbrain.web.encoder :as enc]
@@ -28,25 +28,20 @@
 
 (defn- edge->links
   [edge]
-  #_(combo/combinations
-   (map id/eid->id
-        (maps/participant-ids edge)) 2))
+  (combo/combinations (rest edge) 2))
 
 (defn- inters-data
-  [ids]
-  #_(let [edges (q/intersect common/gbdb ids ctxts)
+  [hg ids]
+  (let [edges (q/intersect hg ids)
         verts (into #{}
                (flatten
-                (map maps/participant-ids edges)))
-        verts (map #(vv/id->visual common/gbdb % ctxt ctxts) verts)
+                (map rest edges)))
+        verts (map #(vv/sym->visual hg %) verts)
         links (mapcat identity
                       (map edge->links edges))]
     {:vertices verts
      :links links
-     :seeds (map id/local->global ids)
-     :context (contexts/context-data
-               (first ids)
-               (:id user))}))
+     :seeds ids}))
 
 (defn- data->str
   [data]
@@ -54,25 +49,14 @@
                           "'" ""))
 
 (defn- js
-  [ids user ctxt ctxts]
+  [hg ids]
   (str "var ptype='intersect';"
        "var data='" (enc/encode
-                     (inters-data ids user ctxt ctxts))
+                     (inters-data hg ids))
        "';"))
 
 (defn handle
-  [request]
-  #_(let
-      [ids (vals (:query-params request))
-       user (common/get-user request)
-       ctxt (id/context (first ids))
-       ctxts (contexts/active-ctxts ctxt user)]
-    (common/log request (str "intersect: " ids
-                             "; ctxt: " ctxt))
+  [request hg]
+  (let [ids (vals (:query-params request))]
     (i/intersect :title "intersect"
-                 :css-and-js (css+js/css+js)
-                 :user user
-                 :ctxt (contexts/context-data
-                        (first ids)
-                        (:id user))
-                 :js (js ids user ctxt ctxts))))
+                 :js (js hg ids))))
