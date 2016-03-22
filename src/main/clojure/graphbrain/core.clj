@@ -24,6 +24,7 @@
             [graphbrain.hg.connection :as conn]
             [graphbrain.hg.ops :as ops]
             [graphbrain.kr.wordnet :as wordnet]
+            [graphbrain.kr.wikipedia :as wikipedia]
             [graphbrain.tools.destroy :as destroy]
             [graphbrain.web.server :as server]
             [clojure.term.colors :refer :all]))
@@ -45,7 +46,8 @@
     :id :verbosity
     :default 0
     :assoc-fn (fn [m k _] (update-in m [k] inc))]
-   ["-h" "--help"]])
+   ["-h" "--help"]
+   ["-S" "--source SOURCE" "Source"]])
 
 (defn opts->hg
   [opts]
@@ -63,4 +65,5 @@
       "wordnet" (wordnet/import! (opts->hg opts))
       "destroy" (destroy/do-it! (opts->hg opts))
       "webserver" (server/start! port)
+      "wikipedia" (wikipedia/process! (opts->hg opts) (:source opts))
       (println (str "Unknown command: " command)))))
