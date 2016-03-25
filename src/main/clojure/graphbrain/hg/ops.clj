@@ -24,7 +24,7 @@
 
 (defprotocol Ops
   ;; Checks if the given edge exists in the hypergraph.
-  (exists? [hg edge])
+  (exists? [hg vertex])
 
   ;; Adds one or multiple edges to the hypergraph if it does not exist yet.
   ;; Adding multiple edges at the same time might be faster.
@@ -46,7 +46,10 @@
   (symbols-with-root [hg root])
   
   ;; Erase the hypergraph.
-  (destroy! [hg]))
+  (destroy! [hg])
+
+  ;; Returns the degree of a vertex
+  (degree [hg vertex]))
 
 (defn remove-by-pattern!
   "Removes from the hypergraph all edges that match the pattern."

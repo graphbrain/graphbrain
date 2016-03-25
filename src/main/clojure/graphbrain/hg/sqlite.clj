@@ -28,7 +28,11 @@
   "Created the tables necessary to store the hypergraph."
   [conn]
   ;; Vertices table
-  (sql/safe-exec! conn "CREATE TABLE vertices (id TEXT PRIMARY KEY)")
+  (sql/safe-exec! conn (str "CREATE TABLE vertices ("
+                            "id TEXT PRIMARY KEY,"
+                            "degree INT DEFAULT 0"
+                            ")"))
+  
   ;; Edge permutations table
   (sql/safe-exec! conn "CREATE TABLE perms (id TEXT PRIMARY KEY)")
   conn)
@@ -46,10 +50,15 @@
   [name]
   (db-spec name))
 
+(defn- add-str!
+  "Adds the given vertex, represented as a string."
+  [conn vert-str]
+  (jdbc/execute! conn ["INSERT OR IGNORE INTO vertices (id) VALUES (?)" vert-str]))
+
 (deftype SQLiteOps [conn]
   ops/Ops
   (exists? [hg edge] (sql/exists? conn edge))
-  (add! [hg edges] (sql/add! conn edges))
+  (add! [hg edges] (sql/add! conn edges add-str!))
   (remove! [hg edges] (sql/remove! conn edges))
   (pattern->edges [hg pattern] (sql/pattern->edges conn pattern))
   (star [hg center] (sql/star conn center))

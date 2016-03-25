@@ -33,6 +33,7 @@
   ;; Vertices table
   (sql/safe-exec! conn (str "CREATE TABLE IF NOT EXISTS vertices ("
                             "id VARCHAR(10000),"
+                            "degree INT DEFAULT 0,"
                             "UNIQUE KEY id_index (id(255))"
                             ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
@@ -72,10 +73,15 @@
   [name]
   @(delay (pool (db-spec name))))
 
+(defn- add-str!
+  "Adds the given vertex, represented as a string."
+  [conn vert-str]
+  (jdbc/execute! conn ["INSERT IGNORE INTO vertices (id) VALUES (?)" vert-str]))
+
 (deftype MySQLOps [conn]
   ops/Ops
   (exists? [hg edge] (sql/exists? conn edge))
-  (add! [hg edges] (sql/add! conn edges))
+  (add! [hg edges] (sql/add! conn edges add-str!))
   (remove! [hg edges] (sql/remove! conn edges))
   (pattern->edges [hg pattern] (sql/pattern->edges conn pattern))
   (star [hg center] (sql/star conn center))
