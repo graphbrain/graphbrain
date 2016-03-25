@@ -30,20 +30,17 @@
 (defn- create-tables!
   "Created the tables necessary to store the hypergraph."
   [conn]
-  ;; Edges table
-  (sql/safe-exec! conn (str "CREATE TABLE IF NOT EXISTS edges ("
+  ;; Vertices table
+  (sql/safe-exec! conn (str "CREATE TABLE IF NOT EXISTS vertices ("
                             "id VARCHAR(10000),"
-                            "INDEX id_index (id(255))"
+                            "UNIQUE KEY id_index (id(255))"
                             ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
-  (sql/safe-exec! conn (str "CREATE INDEX id_ts_edges_index ON edges (id, ts);"))
-  
   ;; Edge permutations table
   (sql/safe-exec! conn (str "CREATE TABLE IF NOT EXISTS perms ("
                             "id VARCHAR(10000),"
-                            "INDEX id_index (id(255))"
+                            "UNIQUE KEY id_index (id(255))"
                             ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
-
   conn)
 
 (defn- db-spec

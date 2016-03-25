@@ -27,8 +27,8 @@
 (defn- create-tables!
   "Created the tables necessary to store the hypergraph."
   [conn]
-  ;; Edges table
-  (sql/safe-exec! conn "CREATE TABLE edges (id TEXT PRIMARY KEY)")
+  ;; Vertices table
+  (sql/safe-exec! conn "CREATE TABLE vertices (id TEXT PRIMARY KEY)")
   ;; Edge permutations table
   (sql/safe-exec! conn "CREATE TABLE perms (id TEXT PRIMARY KEY)")
   conn)
