@@ -63,18 +63,18 @@
 (defn- exists-str?
   "Check if the given edge, represented as a string, exists."
   [conn edge-str]
-  (let [rs (jdbc/query conn ["SELECT id FROM edges WHERE id=?" edge-str])]
+  (let [rs (jdbc/query conn ["SELECT id FROM vertices WHERE id=?" edge-str])]
     (not (empty? rs))))
 
 (defn- add-str!
   "Adds the given edge, represented as a string."
   [conn edge-str]
-  (jdbc/execute! conn ["INSERT INTO edges (id) VALUES (?)" edge-str]))
+  (jdbc/execute! conn ["INSERT INTO vertices (id) VALUES (?)" edge-str]))
 
 (defn- remove-str!
   "Removes the given edge, represented as a string."
   [conn edge-str]
-  (jdbc/delete! conn :edges ["id=?" edge-str]))
+  (jdbc/delete! conn :vertices ["id=?" edge-str]))
 
 (defn- unpermutate
   "Reorder the tokens vector to revert a permutation, specified by nper."
@@ -198,5 +198,5 @@
 (defn destroy!
   "Erase the hypergraph."
   [conn]
-  (jdbc/execute! conn ["DELETE FROM edges"])
+  (jdbc/execute! conn ["DELETE FROM vertices"])
   (jdbc/execute! conn ["DELETE FROM perms"]))
