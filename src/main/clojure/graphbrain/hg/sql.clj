@@ -25,6 +25,8 @@
             [graphbrain.hg.ops :as ops]
             [graphbrain.hg.edgestr :as es]))
 
+(declare degree)
+
 (defn safe-exec!
   "Tries to execute an SQL command and ignores exceptions."
   [dbs sql]
@@ -59,12 +61,6 @@
                                      conn
                                      ["DELETE FROM perms WHERE id=?"
                                       (es/edge->str %)])))
-
-(defn- exists-str?
-  "Check if the given vertex, represented as a string, exists."
-  [conn vert-str]
-  (let [rs (jdbc/query conn ["SELECT id FROM vertices WHERE id=?" vert-str])]
-    (not (empty? rs))))
 
 (defn- remove-str!
   "Removes the given vertex, represented as a string."
@@ -118,63 +114,6 @@
                               start-str end-str])]
     (results->edges rs)))
 
-(defn exists?
-  "Checks if the given vertex exists in the hypergraph."
-  [conn vertex]
-  (exists-str? conn (es/edge->str vertex)))
-
-(defn- inc-degree!
-  "Increments the degree of a vertex."
-  [conn vert-str]
-  (jdbc/execute! conn ["UPDATE vertices SET degree=degree+1 WHERE id=?" vert-str]))
-
-(defn- dec-degree!
-  "Decrements the degree of a vertex."
-  [conn vert-str]
-  (jdbc/execute! conn ["UPDATE vertices SET degree=degree-1 WHERE id=?" vert-str]))
-
-(defn- add-raw!
-  "Auxiliary function for add! to call from inside a transaction."
-  [conn edge add-str!]
-  (if (not (exists? conn edge))
-    (do
-      (add-str! conn (es/edge->str edge))
-      (doseq [vert edge]
-        (add-str! conn (es/edge->str vert))
-        (inc-degree! conn (es/edge->str vert)))
-      (write-edge-permutations! conn edge)))
-  edge)
-
-(defn add!
-  "Adds one or multiple edges to the hypergraph if it does not exist yet.
-   Adding multiple edges at the same time might be faster."
-  [conn edges add-str!]
-  (jdbc/with-db-transaction [trans-conn conn]
-    (if (coll? (first edges))
-      (doseq [edge edges]
-        (add-raw! trans-conn edge add-str!))
-      (add-raw! trans-conn edges add-str!)))
-  edges)
-
-(defn- remove-raw!
-  "Auxiliary function for remove! to call from inside a transaction."
-  [conn edge]
-  (do
-    (remove-str! conn (es/edge->str edge))
-    (doseq [vert edge]
-      (dec-degree! conn (es/edge->str vert)))
-    (remove-edge-permutations! conn edge)))
-
-(defn remove!
-  "Removes one or multiple edges from the hypergraph.
-   Removing multiple edges at the same time might be faster."
-  [conn edges]
-  (jdbc/with-db-transaction [trans-conn conn]
-    (if (coll? (first edges))
-      (doseq [edge edges]
-        (remove-raw! trans-conn edge))
-      (remove-raw! trans-conn edges))))
-
 (defn pattern->edges
   "Return all the edges that match a pattern.
    A pattern is a collection of entity ids and wildcards (nil)."
@@ -186,6 +125,72 @@
                              start-str end-str])
         edges (results->edges rs)]
     (filter #(edge-matches-pattern? % pattern) edges)))
+
+(defn exists?
+  "Checks if the given vertex exists in the hypergraph."
+  [conn vertex]
+  (> (count
+      (pattern->edges conn vertex))
+     0))
+
+(defn- inc-degree!
+  "Increments the degree of a vertex."
+  [conn vert-str]
+  (jdbc/execute! conn ["UPDATE vertices SET degree=degree+1 WHERE id=?" vert-str]))
+
+(defn- dec-degree!
+  "Decrements the degree of a vertex."
+  [conn vert-str]
+  (jdbc/execute! conn ["UPDATE vertices SET degree=degree-1 WHERE id=?" vert-str]))
+
+(defn- add-str!
+  "Adds the given vertex, represented as a string."
+  [conn vert-str degree]
+  (jdbc/insert! conn :vertices {:id vert-str
+                                :degree degree}))
+
+(defn- add-raw!
+  "Auxiliary function for add! to call from inside a transaction."
+  [conn edge]
+  (if (not (exists? conn edge))
+    (do
+      (doseq [vert edge]
+        (let [result (inc-degree! conn (es/edge->str vert))]
+          (if (zero? (first result))
+            (add-str! conn (es/edge->str vert) 1))))
+      (write-edge-permutations! conn edge)))
+  edge)
+
+(defn add!
+  "Adds one or multiple edges to the hypergraph if it does not exist yet.
+   Adding multiple edges at the same time might be faster."
+  [conn edges]
+  (jdbc/with-db-transaction [trans-conn conn]
+    (if (coll? (first edges))
+      (doseq [edge edges]
+        (add-raw! trans-conn edge))
+      (add-raw! trans-conn edges)))
+  edges)
+
+(defn- remove-raw!
+  "Auxiliary function for remove! to call from inside a transaction."
+  [conn edge]
+  (do
+    (if (exists? conn edge)
+      (do
+        (doseq [vert edge]
+          (dec-degree! conn (es/edge->str vert)))
+        (remove-edge-permutations! conn edge)))))
+
+(defn remove!
+  "Removes one or multiple edges from the hypergraph.
+   Removing multiple edges at the same time might be faster."
+  [conn edges]
+  (jdbc/with-db-transaction [trans-conn conn]
+    (if (coll? (first edges))
+      (doseq [edge edges]
+        (remove-raw! trans-conn edge))
+      (remove-raw! trans-conn edges))))
 
 (defn star
   "Return all the edges that contain a given entity.
@@ -215,5 +220,6 @@
   "Returns the degree of a vertex."
   [conn vertex]
   (let [vert-str (es/edge->str vertex)
-        rs (jdbc/query conn ["SELECT id FROM vertices WHERE id=?" vert-str])]
-    (:degree (first rs))))
+        rs (jdbc/query conn ["SELECT degree FROM vertices WHERE id=?" vert-str])
+        degree (:degree (first rs))]
+    (if degree degree 0)))
