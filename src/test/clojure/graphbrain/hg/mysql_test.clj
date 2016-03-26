@@ -55,13 +55,17 @@
 (deftest pattern->edges-test
   (let [hg (connection "gbtest")]
     (ops/add! hg ["is" "graphbrain/1" "great/1"])
+    (ops/add! hg ["says" "mary/1" ["is" "graphbrain/1" "great/1"]])
     (is (= (ops/pattern->edges hg [nil "graphbrain/1" nil])
            '(["is" "graphbrain/1" "great/1"])))
     (is (= (ops/pattern->edges hg ["is" "graphbrain/1" nil])
            '(["is" "graphbrain/1" "great/1"])))
     (is (= (ops/pattern->edges hg ["x" nil nil])
            '()))
-    (ops/remove! hg ["is" "graphbrain/1" "great/1"])))
+    (is (= (ops/pattern->edges hg ["says" nil ["is" "graphbrain/1" "great/1"]])
+           '(["says" "mary/1" ["is" "graphbrain/1" "great/1"]])))
+    (ops/remove! hg ["is" "graphbrain/1" "great/1"])
+    (ops/remove! hg ["says" "mary/1" ["is" "graphbrain/1" "great/1"]])))
 
 (deftest star-test
   (let [hg (connection "gbtest")]
@@ -81,3 +85,18 @@
     (ops/remove! hg ["is" "graphbrain/1" "great/1"])
     (ops/remove! hg ["is" "graphbrain/2" "great/1"])
     (is (= (ops/symbols-with-root hg "graphbrain") #{}))))
+
+(deftest degree-test
+  (let [hg (connection "gbtest")]
+    (is (= (ops/degree hg "graphbrain/1") 0))
+    (ops/add! hg ["is" "graphbrain/1" "great/1"])
+    (is (= (ops/degree hg "graphbrain/1") 1))
+    (is (= (ops/degree hg "great/1") 1))
+    (ops/add! hg ["size" "graphbrain/1" 7])
+    (is (= (ops/degree hg "graphbrain/1") 2))
+    (is (= (ops/degree hg "great/1") 1))
+    (ops/remove! hg ["is" "graphbrain/1" "great/1"])
+    (is (= (ops/degree hg "graphbrain/1") 1))
+    (is (= (ops/degree hg "great/1") 0))
+    (ops/remove! hg ["size" "graphbrain/1" 7])
+    (is (= (ops/degree hg "graphbrain/1") 0))))
