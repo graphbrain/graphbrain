@@ -20,19 +20,35 @@
 
 (ns graphbrain.repl
   (:require [graphbrain.hg.ops :as ops]
-            [graphbrain.hg.symbol :as symb]))
+            [graphbrain.hg.symbol :as symb]
+            [graphbrain.hg.constants :as const]
+            [graphbrain.hg.connection :as conn]
+            [clojure.term.colors :refer :all]
+            [clojure.string :as string]))
 
 (defn init!
-  [hg]
-  (ns graphbrain.repl)
-  (def hg hg))
+  ([hg]
+     (ns graphbrain.repl)
+     (def hg hg))
+  ([]
+     (println (cyan const/ascii-logo))
+     (println)
+     (def hg (conn/create :mysql "gb"))))
 
 (defn ?
   [query]
   (println
-   (ops/symbols-with-root hg (symb/str->symbol query))))
+   (ops/symbols-with-root hg
+                          (symb/str->symbol
+                           (string/join "_"
+                                     (string/split query #" "))))))
 
 (defn edges
   [symbol]
   (println
    (ops/star hg symbol)))
+
+(defn degree
+  [symbol]
+  (println
+   (ops/degree hg symbol)))

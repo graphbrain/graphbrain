@@ -63,7 +63,8 @@
   :test-paths ["test" "src/test/clojure"]
   :resource-paths ["src/main/resources"]
   :main graphbrain.core
-  :repl-options {:init-ns graphbrain.repl}
+  :repl-options {:init-ns graphbrain.repl
+                 :init (graphbrain.repl/init!)}
   :ring {:handler graphbrain.web.server/handler}
   :aot :all
   :cljsbuild {:builds
