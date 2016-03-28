@@ -26,6 +26,7 @@
             [graphbrain.kr.wordnet :as wordnet]
             [graphbrain.kr.wikipedia :as wikipedia]
             [graphbrain.tools.destroy :as destroy]
+            [graphbrain.repl :as repl]
             [graphbrain.web.server :as server]
             [clojure.term.colors :refer :all]))
 
@@ -66,4 +67,5 @@
       "destroy" (destroy/do-it! (opts->hg opts))
       "webserver" (server/start! port)
       "wikipedia" (wikipedia/process! (opts->hg opts) (:source opts))
+      "repl" (clojure.main/repl :init #(repl/init! (opts->hg opts)))
       (println (str "Unknown command: " command)))))
