@@ -18,7 +18,8 @@
 ;   You should have received a copy of the GNU Affero General Public License
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns graphbrain.hg.edge)
+(ns graphbrain.hg.edge
+  (:require [graphbrain.hg.symbol :as sym]))
 
 (defn- open-pars
   "Number of consecutive open parenthesis at the beginning of the string."
@@ -109,4 +110,17 @@
   (if (coll? edge)
     (str "(" (nodes->str edge) ")")
     (str edge)))
+
+(defn negative?
+  "Check if edge is negative."
+  [edge]
+  (sym/negative?
+   (first edge)))
+
+(defn negative
+  "Produces the negative of the given edge."
+  [edge]
+  (assoc edge 0
+         (sym/negative
+          (first edge))))
 

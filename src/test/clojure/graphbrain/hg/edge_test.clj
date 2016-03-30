@@ -27,3 +27,13 @@
   (is (= (edge->str ["size" "graphbrain/1" -7.]) "(size graphbrain/1 -7.0)"))
   (is (= (edge->str ["src" "graphbrain/1" ["is" "graphbrain/1" "great/1"]])
          "(src graphbrain/1 (is graphbrain/1 great/1))")))
+
+(deftest negative?-test
+  (is (negative? ["~is" "graphbrain/1" "great/1"]))
+  (is (not (negative? ["is" "graphbrain/1" "great/1"]))))
+
+(deftest negative-test
+  (is (= (negative ["~is" "graphbrain/1" "great/1"])
+         ["is" "graphbrain/1" "great/1"]))
+  (is (= (negative ["is" "graphbrain/1" "great/1"])
+         ["~is" "graphbrain/1" "great/1"])))

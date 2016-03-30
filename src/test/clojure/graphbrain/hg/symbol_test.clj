@@ -35,3 +35,11 @@
 
 (deftest build-test
   (is (= (build ["graphbrain" "1"]) "graphbrain/1")))
+
+(deftest negative?-test
+  (is (negative? "~is"))
+  (is (not (negative? "is"))))
+
+(deftest negative-test
+  (is (= (negative "~is") "is"))
+  (is (= (negative "is") "~is")))
