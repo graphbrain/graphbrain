@@ -26,7 +26,37 @@
            (org.sweble.wikitext.engine WtEngineImpl)
            (org.sweble.wikitext.engine PageTitle)
            (org.sweble.wikitext.engine PageId)
-           (org.graphbrain.kr WikiTextConverter)))
+           (org.graphbrain.kr WikiTextConverter)
+           (org.wikipedia Wiki)))
+
+(defn parse
+  [title text]
+  (let [config (DefaultConfigEnWp/generate)
+        engine (WtEngineImpl. config)
+        page-title (PageTitle/make config title)
+        page-id (PageId. page-title -1)
+        cp (.postprocess engine page-id text nil)
+        wrap-col 80
+        p (WikiTextConverter. config wrap-col)
+        wiki-text (.go p (.getPage cp))
+        links (into #{} (.getLinks p))]
+    {:links links}))
+
+(defn revisions
+  [title]
+  (let [wiki (Wiki. "en.wikipedia.org")
+        hist (.getPageHistory wiki title)]
+    (map #(let [text (.getText %)
+                parsed (parse title text)]
+            (hash-map :user (.getUser %)
+                      :timestamp (.getTimeInMillis
+                                  (.getTimestamp %))
+                      :links (:links parsed)))
+         hist)))
+
+(defn read!
+  [hg title]
+  (println (map #(:user %) (revisions title))))
 
 (defn process!
   [hg page]
