@@ -18,7 +18,7 @@
 ;   You should have received a copy of the GNU Affero General Public License
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns graphbrain.hg.edgestr)
+(ns graphbrain.hg.edge)
 
 (defn- open-pars
   "Number of consecutive open parenthesis at the beginning of the string."

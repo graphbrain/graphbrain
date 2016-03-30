@@ -1,6 +1,6 @@
-(ns graphbrain.hg.edgestr-test
+(ns graphbrain.hg.edge-test
   (:use clojure.test
-        graphbrain.hg.edgestr))
+        graphbrain.hg.edge))
 
 (deftest split-edge-str-test
   (is (= (split-edge-str "(is graphbrain/1 great/1)") ["is" "graphbrain/1" "great/1"]))

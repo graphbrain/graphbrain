@@ -22,7 +22,7 @@
   (:use [clojure.string :only [join]]
         (graphbrain.web.views page raw))
   (:require [graphbrain.hg.ops :as ops]
-            [graphbrain.hg.edgestr :as es]
+            [graphbrain.hg.edge :as ed]
             [graphbrain.web.views.barpage :as bar]))
 
 (defn- js
@@ -33,7 +33,7 @@
   [request hg vertex-id]
   (str "<h2>Vertex: " vertex-id "</h2><br/><br/>"
        (let [edges (ops/star hg vertex-id)]
-         (join (map #(str (es/edge->str %) "<br />") edges)))))
+         (join (map #(str (ed/edge->str %) "<br />") edges)))))
 
 (defn handle
   [request hg]
