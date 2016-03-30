@@ -32,7 +32,7 @@
 
 (def cli-options
   [["-s" "--storage STORAGE" "Storage type"
-    :default "mysql"]
+    :default "sqlite"]
    ["-d" "--dbname" "Database name"
     :default "gb"]
    ["-u" "--dbuser" "Database user"
@@ -66,6 +66,6 @@
       "wordnet" (wordnet/import! (opts->hg opts))
       "destroy" (destroy/do-it! (opts->hg opts))
       "webserver" (server/start! port)
-      "wikipedia" (wikipedia/process! (opts->hg opts) (:source opts))
+      "wikipedia" (wikipedia/read! (opts->hg opts) (:source opts))
       "repl" (clojure.main/repl :init #(repl/init! (opts->hg opts)))
       (println (str "Unknown command: " command)))))
