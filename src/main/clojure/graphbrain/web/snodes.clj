@@ -22,7 +22,7 @@
   (:require [graphbrain.web.visualvert :as vv]
             [graphbrain.hg.ops :as ops]
             [graphbrain.hg.symbol :as symb]
-            [graphbrain.hg.edgestr :as es]))
+            [graphbrain.hg.edge :as ed]))
 
 (defn- snode-id
   [rel-pos]
@@ -77,7 +77,7 @@
   (let [vv (vv/sym->visual node-id)
         node-edge (:parent edge)]
     (assoc vv
-      :edge (es/edge->str node-edge))))
+      :edge (ed/edge->str node-edge))))
 
 (defn- se->node-id
   [se rp]

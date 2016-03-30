@@ -23,7 +23,7 @@
   (:require [clojure.java.jdbc :as jdbc]
             [clojure.math.combinatorics :as combo]
             [graphbrain.hg.ops :as ops]
-            [graphbrain.hg.edgestr :as es]))
+            [graphbrain.hg.edge :as ed]))
 
 (declare degree)
 
@@ -40,7 +40,7 @@
         perms (map
                #(str
                  (clojure.string/join " "
-                                      (map es/edge->str
+                                      (map ed/edge->str
                                            (combo/nth-permutation edge %)))
                  " " %)
                (range nperms))]
@@ -52,7 +52,7 @@
   (do-with-edge-permutations! edge #(jdbc/execute!
                                      conn
                                      ["INSERT INTO perms (id) VALUES (?)"
-                                      (es/edge->str %)])))
+                                      (ed/edge->str %)])))
 
 (defn- remove-edge-permutations!
   "Removes all permutations of the given edge."
@@ -60,7 +60,7 @@
   (do-with-edge-permutations! edge #(jdbc/execute!
                                      conn
                                      ["DELETE FROM perms WHERE id=?"
-                                      (es/edge->str %)])))
+                                      (ed/edge->str %)])))
 
 (defn- remove-str!
   "Removes the given vertex, represented as a string."
@@ -82,11 +82,11 @@
          edges #{}]
     (if (empty? results) edges
         (let [res (:id (first results))
-              tokens (es/split-edge-str res)
+              tokens (ed/split-edge-str res)
               nper (Integer. (last tokens))
               tokens (drop-last tokens)
               tokens (unpermutate tokens nper)
-              edge (es/str->edge
+              edge (ed/str->edge
                     (str "(" (clojure.string/join " " tokens) ")"))
               edges (conj edges edge)]
           (recur (rest results) edges)))))
@@ -119,7 +119,7 @@
    A pattern is a collection of entity ids and wildcards (nil)."
   [conn pattern]
   (let [nodes (filter #(not (nil? %)) pattern)
-        start-str (es/nodes->str nodes)
+        start-str (ed/nodes->str nodes)
         end-str (str+1 start-str)
         rs (jdbc/query conn ["SELECT id FROM perms WHERE id>=? AND id<?"
                              start-str end-str])
@@ -155,9 +155,9 @@
   (if (not (exists? conn edge))
     (do
       (doseq [vert edge]
-        (let [result (inc-degree! conn (es/edge->str vert))]
+        (let [result (inc-degree! conn (ed/edge->str vert))]
           (if (zero? (first result))
-            (add-str! conn (es/edge->str vert) 1))))
+            (add-str! conn (ed/edge->str vert) 1))))
       (write-edge-permutations! conn edge)))
   edge)
 
@@ -179,7 +179,7 @@
     (if (exists? conn edge)
       (do
         (doseq [vert edge]
-          (dec-degree! conn (es/edge->str vert)))
+          (dec-degree! conn (ed/edge->str vert)))
         (remove-edge-permutations! conn edge)))))
 
 (defn remove!
@@ -197,7 +197,7 @@
    Entity can be atomic or an edge."
   [conn center]
   (if (coll? center)
-    (str->perms conn (es/edge->str center))
+    (str->perms conn (ed/edge->str center))
     (str->perms conn center)))
 
 (defn symbols-with-root
@@ -207,7 +207,7 @@
         end-str (str+1 start-str)
         results (jdbc/query conn ["SELECT id FROM perms WHERE id>=? AND id<?"
                                   start-str end-str])
-        symbs (map #(first (es/split-edge-str (:id %))) results)]
+        symbs (map #(first (ed/split-edge-str (:id %))) results)]
     (set symbs)))
 
 (defn destroy!
@@ -219,7 +219,7 @@
 (defn degree
   "Returns the degree of a vertex."
   [conn vertex]
-  (let [vert-str (es/edge->str vertex)
+  (let [vert-str (ed/edge->str vertex)
         rs (jdbc/query conn ["SELECT degree FROM vertices WHERE id=?" vert-str])
         degree (:degree (first rs))]
     (if degree degree 0)))

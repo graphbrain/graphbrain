@@ -20,7 +20,7 @@
 
 (ns graphbrain.web.handlers.eco
   (:require [graphbrain.hg.symbol :as symb]
-            [graphbrain.hg.edgestr :as es]
+            [graphbrain.hg.edge :as ed]
             [graphbrain.disambig.edgeguesser :as edg]
             [graphbrain.eco.eco :as eco]
             [graphbrain.eco.words :as words]
@@ -42,9 +42,9 @@
     (if (= (symb/sym-type res) :edge)
       (let [edge (edg/guess hg res sentence)]
         {:words words
-         :res (es/edge->str res)
+         :res (ed/edge->str res)
          :vws vws
-         :edge (es/edge->str edge)})
+         :edge (ed/edge->str edge)})
       {:words words
        :res res
        :vws vws})))

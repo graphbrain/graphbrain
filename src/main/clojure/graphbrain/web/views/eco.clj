@@ -20,7 +20,7 @@
 
 (ns graphbrain.web.views.eco
   (:use hiccup.core)
-  (:require [graphbrain.hg.edgestr :as es]
+  (:require [graphbrain.hg.edge :as ed]
             [graphbrain.web.views.barpage :as bar]))
 
 (defn sentence
@@ -40,11 +40,11 @@
                 " "
                 [:span {:class "eco-rule"} (:desc (:rule %))]
                 " "
-                [:span {:class "eco-vertex"} (es/edge->str (:vert %))]
+                [:span {:class "eco-vertex"} (ed/edge->str (:vert %))]
                 [:div {:class "eco-trace-box"}
                  (let [v (:vertex %)]
                    (if (coll? v)
-                     (trace v) (es/edge->str v)))])
+                     (trace v) (ed/edge->str v)))])
        (sort-by #(if (:weight %)
                    (:weight %) 0) > rs)))
 
