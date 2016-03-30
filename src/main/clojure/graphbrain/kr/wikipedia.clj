@@ -45,7 +45,8 @@
 (defn revisions
   [title]
   (let [wiki (Wiki. "en.wikipedia.org")
-        hist (.getPageHistory wiki title)]
+        hist (reverse
+              (.getPageHistory wiki title))]
     (map #(let [text (.getText %)
                 parsed (parse title text)]
             (hash-map :user (.getUser %)
@@ -54,22 +55,60 @@
                       :links (:links parsed)))
          hist)))
 
+(defn title->symbol
+  [title]
+  (sym/build
+   [(sym/str->symbol title) "enwiki"]))
+
+(defn revision->beliefs
+  [title rev]
+  (map
+   #(vector "related/1" (title->symbol title) (title->symbol %))
+   (:links rev)))
+
+(defn with-beliefs
+  [title revs]
+  (map #(assoc % :beliefs (revision->beliefs title %))
+       revs))
+
+(defn rev-with-belief-changes
+  [prev-rev rev]
+  (let [prev-beliefs (into #{} (:beliefs prev-rev))
+        beliefs (into #{} (:beliefs rev))
+        new-beliefs (filter #(not (contains? prev-beliefs %)) beliefs)
+        lost-beliefs (filter #(not (contains? beliefs %)) prev-beliefs)]
+    (assoc rev
+      :new-beliefs (into #{} new-beliefs)
+      :lost-beliefs (into #{} lost-beliefs))))
+
+(defn with-belief-changes
+  [revs]
+  (loop [prev-rev {}
+         rev (first revs)
+         rest-revs (rest revs)
+         result []]
+    (if (nil? rev)
+      result
+      (recur rev
+             (first rest-revs)
+             (rest rest-revs)
+             (conj result (rev-with-belief-changes prev-rev rev))))))
+
+(defn user->symbol
+  [user]
+  (if (re-matches
+       #"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+       user)
+    "anon/enwiki_usr_spec"
+    (sym/build
+     [(sym/str->symbol user) "enwiki_usr"])))
+
 (defn read!
   [hg title]
-  (println (map #(:user %) (revisions title))))
+  (println (map #(str "+" (count (:new-beliefs %))
+                      " -" (count (:lost-beliefs %))
+                      " [" (user->symbol (:user %)) "]")
+                (with-belief-changes
+                  (with-beliefs title
+                    (revisions title))))))
 
-(defn process!
-  [hg page]
-  (let [wiki-text (slurp
-                   (str "https://en.wikipedia.org/wiki/" page "?action=raw"))
-        config (DefaultConfigEnWp/generate)
-        engine (WtEngineImpl. config)
-        page-title (PageTitle/make config page)
-        page-id (PageId. page-title -1)
-        cp (.postprocess engine page-id wiki-text nil)
-        wrap-col 80
-        p (WikiTextConverter. config wrap-col)
-        text (.go p (.getPage cp))
-        links (.getLinks p)]
-    (prn links)
-    (prn "done.")))
