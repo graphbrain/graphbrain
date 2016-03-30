@@ -92,3 +92,15 @@
   (if (root? symb)
     (build [symb (random-hash)])
     symb))
+
+(defn negative?
+  "Check if symbol is negative."
+  [symb]
+  (= (first symb) \~))
+
+(defn negative
+  "Produces the negative of the given symbol."
+  [symb]
+  (if (negative? symb)
+    (subs symb 1)
+    (str "~" symb)))
