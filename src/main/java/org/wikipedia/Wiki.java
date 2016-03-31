@@ -437,7 +437,7 @@ public class Wiki implements Serializable
     private boolean markminor = false, markbot = false;
     private boolean resolveredirect = false;
     private String protocol = "https://";
-    private Level loglevel = Level.ALL;
+    private Level loglevel = Level.WARNING;
     private static final Logger logger = Logger.getLogger("wiki");
 
     // Store time when the last throttled action was executed
