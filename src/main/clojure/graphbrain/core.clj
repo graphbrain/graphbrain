@@ -66,6 +66,6 @@
       "wordnet" (wordnet/import! (opts->hg opts))
       "destroy" (destroy/do-it! (opts->hg opts))
       "webserver" (server/start! port)
-      "wikipedia" (wikipedia/read! (opts->hg opts) (:source opts))
+      "wikipedia" (wikipedia/start! (opts->hg opts) (:source opts))
       "repl" (clojure.main/repl :init #(repl/init! (opts->hg opts)))
       (println (str "Unknown command: " command)))))

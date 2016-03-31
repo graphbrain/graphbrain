@@ -154,6 +154,7 @@
   [conn edge]
   (if (not (exists? conn edge))
     (do
+      (println (str "add-raw!" edge))
       (doseq [vert edge]
         (let [result (inc-degree! conn (ed/edge->str vert))]
           (if (zero? (first result))
