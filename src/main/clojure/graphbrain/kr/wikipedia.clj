@@ -21,6 +21,7 @@
 (ns graphbrain.kr.wikipedia
   (:require [graphbrain.hg.beliefs :as beliefs]
             [graphbrain.hg.symbol :as sym]
+            [graphbrain.hg.edge :as edge]
             [graphbrain.hg.constants :as const]
             [graphbrain.hg.beliefs :as beliefs])
   (:import (org.sweble.wikitext.engine.utils DefaultConfigEnWp)
@@ -135,16 +136,16 @@
                (with-beliefs title
                  (revisions title)))]
     (doseq [rev revs]
-             (let [user (:user rev)
+             (let [user (user->symbol (:user rev))
                    new-beliefs (:new-beliefs rev)
                    lost-beliefs (:lost-beliefs rev)]
                ;; add new beliefs
                (doseq [b new-beliefs]
                         (beliefs/add! hg user b)
-                        (beliefs/add! hg user (sym/negative b)))
+                        (beliefs/add! hg user (edge/negative b)))
                ;; add lost beliefs
                (doseq [b lost-beliefs]
-                        (beliefs/add! hg user (sym/negative b))
+                        (beliefs/add! hg user (edge/negative b))
                         (beliefs/add! hg user b))))
     (reduce #(clojure.set/union %1 (:links %2)) #{} revs)))
 
