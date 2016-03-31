@@ -1,7 +1,7 @@
 (defproject graphbrain "0.1.0-SNAPSHOT"
-  :description "Open Knowledge Graph"
+  :description "Open Knowledge Hypergraph"
   :url "http://graphbrain.org"
-  :jvm-opts ["-Xmx750M" "-XX:-OmitStackTraceInFastThrow"]
+  :jvm-opts ["-Xmx2000M" "-XX:-OmitStackTraceInFastThrow"]
   :dependencies [[org.clojure/clojure "1.8.0"]
                  ;; Clojure tools
                  [org.clojure/tools.trace "0.7.9"]
