@@ -14,6 +14,7 @@
                  [commons-io/commons-io "2.4"]
                  [org.apache.commons/commons-lang3 "3.4"]
                  [commons-lang/commons-lang "2.6"]
+                 [org.apache.commons/commons-compress "1.10"]
                  ;; DB
                  [org.clojure/java.jdbc "0.4.2"]
                  [mysql/mysql-connector-java "5.1.38"]
@@ -24,6 +25,8 @@
                  [org.json/json "20151123"]
                  [org.clojure/data.json "0.2.6"]
                  ;; XML
+                 [org.clojure/data.xml "0.0.8"]
+                 [org.clojure/data.zip "0.1.1"]
                  [xml-apis/xml-apis "1.4.01"]
                  ;; CSV
                  [clojure-csv/clojure-csv "2.0.1"]

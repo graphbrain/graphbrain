@@ -24,7 +24,7 @@
             [graphbrain.hg.connection :as conn]
             [graphbrain.hg.ops :as ops]
             [graphbrain.kr.wordnet :as wordnet]
-            [graphbrain.kr.wikipedia :as wikipedia]
+            [graphbrain.kr.wikidump :as wikidump]
             [graphbrain.tools.destroy :as destroy]
             [graphbrain.repl :as repl]
             [graphbrain.web.server :as server]
@@ -48,7 +48,7 @@
     :default 0
     :assoc-fn (fn [m k _] (update-in m [k] inc))]
    ["-h" "--help"]
-   ["-S" "--source SOURCE" "Source"]])
+   ["-f" "--file FILE" "File"]])
 
 (defn opts->hg
   [opts]
@@ -66,6 +66,6 @@
       "wordnet" (wordnet/import! (opts->hg opts))
       "destroy" (destroy/do-it! (opts->hg opts))
       "webserver" (server/start! port)
-      "wikipedia" (wikipedia/start! (opts->hg opts) (:source opts))
+      "process_wikidump" (wikidump/process! (opts->hg opts) (:file opts))
       "repl" (clojure.main/repl :init #(repl/init! (opts->hg opts)))
       (println (str "Unknown command: " command)))))
