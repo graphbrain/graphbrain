@@ -28,59 +28,38 @@
            (org.sweble.wikitext.engine WtEngineImpl)
            (org.sweble.wikitext.engine PageTitle)
            (org.sweble.wikitext.engine PageId)
-           (org.graphbrain.kr WikiTextConverter)
-           (org.wikipedia Wiki)
-           (java.io IOException)))
+           (org.graphbrain.kr WikiTextConverter)))
+
+(defn follow?
+  [title]
+  (not
+   ((into #{} title) \:)))
 
 (defn parse
   [title text]
-  (let [config (DefaultConfigEnWp/generate)
-        engine (WtEngineImpl. config)
-        page-title (PageTitle/make config title)
-        page-id (PageId. page-title -1)
-        cp (.postprocess engine page-id text nil)
-        wrap-col 80
-        p (WikiTextConverter. config wrap-col)
-        wiki-text (.go p (.getPage cp))
-        links (into #{} (.getLinks p))]
-    {:links links}))
-
-(defn keep-trying*
-  "Executes thunk. If an exception is thrown, will retry. At most n retries
-  are done. If still some exception is thrown it is bubbled upwards in
-  the call chain."
-  [thunk]
-  (loop [n 0]
-    (if (> n 0)
+  (try
+    (let [config (DefaultConfigEnWp/generate)
+          engine (WtEngineImpl. config)
+          page-title (PageTitle/make config title)
+          page-id (PageId. page-title -1)
+          cp (.postprocess engine page-id text nil)
+          wrap-col 80
+          p (WikiTextConverter. config wrap-col)
+          wiki-text (.go p (.getPage cp))
+          links (into #{} (filter follow? (.getLinks p)))]
+      {:links links})
+    (catch Exception e
       (do
-        (println (str "sleeping for " n " secs."))
-        (Thread/sleep (* n 1000))
-        (println (str "retry #" n))))
-    (if-let [result (try
-                      [(thunk)]
-                      (catch Exception e nil))]
-      (result 0)
-      (recur (inc n)))))
+        (println "parsing failed!")
+        {:links #{}}))))
 
-(defmacro keep-trying
-  "Executes body. If an exception is thrown, will retry. At most n retries
-  are done. If still some exception is thrown it is bubbled upwards in
-  the call chain."
-  [& body]
-  `(keep-trying* (fn [] ~@body)))
-
-(defn revisions
-  [title]
-  (let [wiki (Wiki. "en.wikipedia.org")
-        hist (reverse
-              (keep-trying (.getPageHistory wiki title)))]
-    (map #(let [text (keep-trying (.getText %))
-                parsed (parse title text)]
-            (hash-map :user (.getUser %)
-                      :timestamp (.getTimeInMillis
-                                  (.getTimestamp %))
-                      :links (:links parsed)))
-         hist)))
+(defn with-links
+  [revs title]
+  (map
+   #(assoc %
+      :links (:links
+             (parse title (:text %))))
+   revs))
 
 (defn title->symbol
   [title]
@@ -94,7 +73,7 @@
    (:links rev)))
 
 (defn with-beliefs
-  [title revs]
+  [revs title]
   (map #(assoc % :beliefs (revision->beliefs title %))
        revs))
 
@@ -123,61 +102,33 @@
 
 (defn user->symbol
   [user]
-  (if (re-matches
-       #"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
-       user)
+  (if (nil? user)
     "anon/enwiki_usr_spec"
-    (sym/build
-     [(sym/str->symbol user) "enwiki_usr"])))
+    (if (re-matches
+         #"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+         user)
+      "anon/enwiki_usr_spec"
+      (sym/build
+       [(sym/str->symbol user) "enwiki_usr"]))))
 
 (defn process-page!
-  [hg title]
-  (let [revs (with-belief-changes
-               (with-beliefs title
-                 (revisions title)))]
+  [hg page]
+  (let [title (:title page)
+        revs (-> (:revisions page)
+                 (with-links title)
+                 (with-beliefs title)
+                 with-belief-changes)]
     (doseq [rev revs]
-             (let [user (user->symbol (:user rev))
-                   new-beliefs (:new-beliefs rev)
-                   lost-beliefs (:lost-beliefs rev)]
-               ;; add new beliefs
-               (doseq [b new-beliefs]
-                        (beliefs/add! hg user b)
-                        (beliefs/add! hg user (edge/negative b)))
-               ;; add lost beliefs
-               (doseq [b lost-beliefs]
-                        (beliefs/add! hg user (edge/negative b))
-                        (beliefs/add! hg user b))))
+      (let [user (user->symbol (:user rev))
+            new-beliefs (:new-beliefs rev)
+            lost-beliefs (:lost-beliefs rev)]
+        ;; add new beliefs
+        (doseq [b new-beliefs]
+          (beliefs/add! hg user b)
+          (beliefs/add! hg user (edge/negative b)))
+        ;; add lost beliefs
+        (doseq [b lost-beliefs]
+          (beliefs/add! hg user (edge/negative b))
+          (beliefs/add! hg user b))))
     (reduce #(clojure.set/union %1 (:links %2)) #{} revs)))
 
-(defn follow
-  [title]
-  (not
-   ((into #{} title) \:)))
-
-(defn process!
-  [hg titles]
-  (loop [queue titles
-         done #{}
-         n 1]
-    (if (empty? queue)
-      (println "done.")
-      (do
-        (println (str "queue: " (count queue) "; done: " (count done)))
-        (let [title-depth (first queue)
-              title (first title-depth)
-              depth (second title-depth)
-              new-queue (rest queue)
-              new-done (conj done title)
-              dummy (println
-                     (str "processing page #" n ": " title " [depth: " depth "]"))
-              new-titles (process-page! hg title)
-              new-queue (if (> depth 1)
-                          new-queue
-                          (reduce #(if (or (new-done %2) (not (follow %2))) %1
-                                       (conj %1 [%2 (inc depth)]))
-                                  new-queue new-titles))]
-          (recur new-queue new-done (inc n)))))))
-
-(defn start!
-  [hg title]
-  (process! hg [[title 0]]))
