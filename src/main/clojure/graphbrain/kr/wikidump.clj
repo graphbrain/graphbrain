@@ -37,9 +37,8 @@
 
 (defn process?
   [page]
-  (and (empty? (:redirect page))
-       (not
-        ((into #{} (:title page)) \:))))
+  (not
+   ((into #{} (:title page)) \:)))
 
 (defn process-page!
   [hg page]
