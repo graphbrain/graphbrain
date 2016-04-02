@@ -68,20 +68,6 @@
   (sym/build
    [(sym/str->symbol title) "enwiki"]))
 
-(defn revision->beliefs
-  [title rev key]
-  (map
-   #(vector "related/1" (title->symbol title) (title->symbol %))
-   (key rev)))
-
-(defn with-beliefs
-  [revs title]
-  ;;(println "with-beliefs...")
-  (map #(assoc %
-          :new-beliefs (into #{} (revision->beliefs title % :new-links))
-          :lost-beliefs (into #{} (revision->beliefs title % :lost-links)))
-       revs))
-
 (defn rev-with-link-changes
   [prev-rev rev]
   (let [prev-links (:links prev-rev)
@@ -107,6 +93,20 @@
              (rest rest-revs)
              (conj result (rev-with-link-changes prev-rev rev))))))
 
+(defn revision->beliefs
+  [title rev key]
+  (map
+   #(vector "related/1" (title->symbol title) (title->symbol %))
+   (key rev)))
+
+(defn with-beliefs
+  [revs title]
+  ;;(println "with-beliefs...")
+  (map #(assoc %
+          :new-beliefs (into #{} (revision->beliefs title % :new-links))
+          :lost-beliefs (into #{} (revision->beliefs title % :lost-links)))
+       revs))
+
 (defn user->symbol
   [user]
   (if (nil? user)
@@ -120,24 +120,28 @@
 
 (defn process-page!
   [hg page]
-  (let [title (:title page)
-        revs (-> (:revisions page)
-                 (with-links title)
-                 with-link-changes
-                 (with-beliefs title))]
-    (doseq [rev revs]
-      (let [user (user->symbol (:user rev))
-            new-beliefs (:new-beliefs rev)
-            lost-beliefs (:lost-beliefs rev)]
-        ;; add new beliefs
-        (doseq [b new-beliefs]
-          ;;(println (str "new belief: " b "; user: " user))
-          (beliefs/add! hg user b)
-          (beliefs/add! hg user (edge/negative b)))
-        ;; add lost beliefs
-        (doseq [b lost-beliefs]
-          ;;(println (str "lost belief: " b "; user: " user))
-          (beliefs/add! hg user (edge/negative b))
-          (beliefs/add! hg user b))))
-    (reduce #(clojure.set/union %1 (:links %2)) #{} revs)))
+  (if-let [redirect (:redirect page)]
+    (let [b [const/synonym (title->symbol (:title page)) (title->symbol redirect)]
+          user "anon/enwiki_usr_spec"]
+      (beliefs/add! hg user b))
+    (let [title (:title page)
+          revs (-> (:revisions page)
+                   (with-links title)
+                   with-link-changes
+                   (with-beliefs title))]
+      (doseq [rev revs]
+        (let [user (user->symbol (:user rev))
+              new-beliefs (:new-beliefs rev)
+              lost-beliefs (:lost-beliefs rev)]
+          ;; add new beliefs
+          (doseq [b new-beliefs]
+            ;;(println (str "new belief: " b "; user: " user))
+            (beliefs/add! hg user b)
+            (beliefs/add! hg user (edge/negative b)))
+          ;; add lost beliefs
+          (doseq [b lost-beliefs]
+            ;;(println (str "lost belief: " b "; user: " user))
+            (beliefs/add! hg user (edge/negative b))
+            (beliefs/add! hg user b))))
+      (reduce #(clojure.set/union %1 (:links %2)) #{} revs))))
 
