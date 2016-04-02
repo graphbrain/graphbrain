@@ -141,11 +141,11 @@
           (doseq [b new-beliefs]
             ;;(println (str "new belief: " b "; user: " user))
             (beliefs/add! hg user b)
-            (beliefs/add! hg user (edge/negative b)))
+            (beliefs/remove! hg user (edge/negative b)))
           ;; add lost beliefs
           (doseq [b lost-beliefs]
             ;;(println (str "lost belief: " b "; user: " user))
             (beliefs/add! hg user (edge/negative b))
-            (beliefs/add! hg user b))))
+            (beliefs/remove! hg user b))))
       (reduce #(clojure.set/union %1 (:links %2)) #{} revs))))
 
