@@ -19,6 +19,7 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.hg.symbol
+  (:require [clojure.string :as s])
   (:import (java.security SecureRandom)))
 
 (defn hashed
@@ -74,8 +75,12 @@
 (defn str->symbol
   "Converts a string into a valid symbol"
   [str]
-  (clojure.string/replace
-   (clojure.string/replace (.toLowerCase str) "/" "_") " " "_"))
+  (-> str
+      .toLowerCase
+      (s/replace "/" "_")
+      (s/replace " " "_")
+      (s/replace "(" "_")
+      (s/replace ")" "_")))
 
 (defn symbol->str
   "Converts a symbol into a string representation."

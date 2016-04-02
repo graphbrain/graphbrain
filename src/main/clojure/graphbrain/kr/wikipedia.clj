@@ -55,10 +55,12 @@
 
 (defn with-links
   [revs title]
+  ;;(println "with-links...")
   (map
-   #(assoc %
-      :links (:links
-             (parse title (:text %))))
+   #(dissoc (assoc %
+              :links (:links
+                      (parse title (:text %))))
+            :text)
    revs))
 
 (defn title->symbol
@@ -67,28 +69,33 @@
    [(sym/str->symbol title) "enwiki"]))
 
 (defn revision->beliefs
-  [title rev]
+  [title rev key]
   (map
    #(vector "related/1" (title->symbol title) (title->symbol %))
-   (:links rev)))
+   (key rev)))
 
 (defn with-beliefs
   [revs title]
-  (map #(assoc % :beliefs (revision->beliefs title %))
+  ;;(println "with-beliefs...")
+  (map #(assoc %
+          :new-beliefs (into #{} (revision->beliefs title % :new-links))
+          :lost-beliefs (into #{} (revision->beliefs title % :lost-links)))
        revs))
 
-(defn rev-with-belief-changes
+(defn rev-with-link-changes
   [prev-rev rev]
-  (let [prev-beliefs (into #{} (:beliefs prev-rev))
-        beliefs (into #{} (:beliefs rev))
-        new-beliefs (filter #(not (contains? prev-beliefs %)) beliefs)
-        lost-beliefs (filter #(not (contains? beliefs %)) prev-beliefs)]
-    (assoc rev
-      :new-beliefs (into #{} new-beliefs)
-      :lost-beliefs (into #{} lost-beliefs))))
+  (let [prev-links (:links prev-rev)
+        links (:links rev)
+        new-links (clojure.set/difference links prev-links)
+        lost-links (clojure.set/difference prev-links links)]
+    (dissoc (assoc rev
+              :new-links (into #{} new-links)
+              :lost-links (into #{} lost-links))
+            :links)))
 
-(defn with-belief-changes
+(defn with-link-changes
   [revs]
+  ;;(println "with-link-changes...")
   (loop [prev-rev {}
          rev (first revs)
          rest-revs (rest revs)
@@ -98,7 +105,7 @@
       (recur rev
              (first rest-revs)
              (rest rest-revs)
-             (conj result (rev-with-belief-changes prev-rev rev))))))
+             (conj result (rev-with-link-changes prev-rev rev))))))
 
 (defn user->symbol
   [user]
@@ -116,18 +123,20 @@
   (let [title (:title page)
         revs (-> (:revisions page)
                  (with-links title)
-                 (with-beliefs title)
-                 with-belief-changes)]
+                 with-link-changes
+                 (with-beliefs title))]
     (doseq [rev revs]
       (let [user (user->symbol (:user rev))
             new-beliefs (:new-beliefs rev)
             lost-beliefs (:lost-beliefs rev)]
         ;; add new beliefs
         (doseq [b new-beliefs]
+          ;;(println (str "new belief: " b "; user: " user))
           (beliefs/add! hg user b)
           (beliefs/add! hg user (edge/negative b)))
         ;; add lost beliefs
         (doseq [b lost-beliefs]
+          ;;(println (str "lost belief: " b "; user: " user))
           (beliefs/add! hg user (edge/negative b))
           (beliefs/add! hg user b))))
     (reduce #(clojure.set/union %1 (:links %2)) #{} revs)))
