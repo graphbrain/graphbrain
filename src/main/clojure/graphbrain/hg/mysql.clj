@@ -39,7 +39,7 @@
 
   ;; Edge permutations table
   (sql/safe-exec! conn (str "CREATE TABLE IF NOT EXISTS perms ("
-                            "id VARCHAR(10000),"
+                            "id VARCHAR(10000)"
                             ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
   conn)
 
