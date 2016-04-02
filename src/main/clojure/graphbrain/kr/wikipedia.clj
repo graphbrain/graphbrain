@@ -65,8 +65,11 @@
 
 (defn title->symbol
   [title]
-  (sym/build
-   [(sym/str->symbol title) "enwiki"]))
+  (let [link (first
+              (clojure.string/split title #"#"))]
+    (if (not (empty? link))
+      (sym/build
+       [(sym/str->symbol link) "enwiki"]))))
 
 (defn rev-with-link-changes
   [prev-rev rev]
@@ -95,9 +98,10 @@
 
 (defn revision->beliefs
   [title rev key]
-  (map
-   #(vector "related/1" (title->symbol title) (title->symbol %))
-   (key rev)))
+  (filter #(% 2)
+          (map
+           #(vector "related/1" (title->symbol title) (title->symbol %))
+           (key rev))))
 
 (defn with-beliefs
   [revs title]
