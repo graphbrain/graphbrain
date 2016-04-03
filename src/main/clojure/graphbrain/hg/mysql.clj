@@ -81,7 +81,9 @@
   (star [hg center] (sql/star conn center))
   (symbols-with-root [hg root] (sql/symbols-with-root conn root))
   (destroy! [hg] (sql/destroy! conn))
-  (degree [hg vertex] (sql/degree conn vertex)))
+  (degree [hg vertex] (sql/degree conn vertex))
+  (create [hg aconn] (MySQLOps. aconn))
+  (batch-exec! [hg funs] (sql/batch-exec! hg conn funs)))
 
 (defn connection
   "Obtain a MySQL hypergraph connection."

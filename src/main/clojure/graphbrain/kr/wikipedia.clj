@@ -19,7 +19,8 @@
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns graphbrain.kr.wikipedia
-  (:require [graphbrain.hg.beliefs :as beliefs]
+  (:require [graphbrain.hg.ops :as ops]
+            [graphbrain.hg.beliefs :as beliefs]
             [graphbrain.hg.symbol :as sym]
             [graphbrain.hg.edge :as edge]
             [graphbrain.hg.constants :as const]
@@ -34,6 +35,18 @@
   [title]
   (not
    ((into #{} title) \:)))
+
+(defn parse-link
+  [link]
+  (first
+   (clojure.string/split link #"\|")))
+
+(defn parse2
+  [title text]
+  {:links (into #{}
+                (map parse-link
+                     (filter follow?
+                             (map #(% 1) (re-seq #"\[\[([^\]]*)\]\]" text)))))})
 
 (defn parse
   [title text]
@@ -59,7 +72,7 @@
   (map
    #(dissoc (assoc %
               :links (:links
-                      (parse title (:text %))))
+                      (parse2 title (:text %))))
             :text)
    revs))
 
@@ -133,19 +146,17 @@
                    (with-links title)
                    with-link-changes
                    (with-beliefs title))]
-      (doseq [rev revs]
-        (let [user (user->symbol (:user rev))
-              new-beliefs (:new-beliefs rev)
-              lost-beliefs (:lost-beliefs rev)]
-          ;; add new beliefs
-          (doseq [b new-beliefs]
-            ;;(println (str "new belief: " b "; user: " user))
-            (beliefs/add! hg user b)
-            (beliefs/remove! hg user (edge/negative b)))
-          ;; add lost beliefs
-          (doseq [b lost-beliefs]
-            ;;(println (str "lost belief: " b "; user: " user))
-            (beliefs/add! hg user (edge/negative b))
-            (beliefs/remove! hg user b))))
-      (reduce #(clojure.set/union %1 (:links %2)) #{} revs))))
+      (ops/batch-exec!
+       hg
+       (flatten
+        (map
+         (fn [rev]
+           (let [user (user->symbol (:user rev))
+                 new-beliefs (:new-beliefs rev)
+                 lost-beliefs (:lost-beliefs rev)]
+             [(map #(fn [x] (beliefs/add! x user %)) new-beliefs)
+              (map #(fn [x] (beliefs/remove! x user (edge/negative %))) new-beliefs)
+              (map #(fn [x] (beliefs/add! x user (edge/negative %))) lost-beliefs)
+              (map #(fn [x] (beliefs/remove! x user %)) lost-beliefs)]))
+         revs))))))
 
