@@ -1,7 +1,12 @@
 (defproject graphbrain "0.1.0-SNAPSHOT"
   :description "Open Knowledge Hypergraph"
   :url "http://graphbrain.org"
-  :jvm-opts ["-Xmx2000M" "-XX:-OmitStackTraceInFastThrow"]
+  :jvm-opts ["-Xmx4000M" "-XX:-OmitStackTraceInFastThrow"
+;;             "-Dcom.sun.management.jmxremote"
+;;             "-Dcom.sun.management.jmxremote.ssl=false"
+;;             "-Dcom.sun.management.jmxremote.authenticate=false"
+;;             "-Dcom.sun.management.jmxremote.port=43210"
+             ]
   :dependencies [[org.clojure/clojure "1.8.0"]
                  ;; Clojure tools
                  [org.clojure/tools.trace "0.7.9"]

@@ -165,11 +165,11 @@
   "Adds one or multiple edges to the hypergraph if it does not exist yet.
    Adding multiple edges at the same time might be faster."
   [conn edges]
-  (jdbc/with-db-transaction [trans-conn conn]
-    (if (coll? (first edges))
+  (if (coll? (first edges))
+    (jdbc/with-db-transaction [trans-conn conn]
       (doseq [edge edges]
-        (add-raw! trans-conn edge))
-      (add-raw! trans-conn edges)))
+        (add-raw! trans-conn edge)))
+    (add-raw! conn edges))
   edges)
 
 (defn- remove-raw!
@@ -186,11 +186,11 @@
   "Removes one or multiple edges from the hypergraph.
    Removing multiple edges at the same time might be faster."
   [conn edges]
-  (jdbc/with-db-transaction [trans-conn conn]
-    (if (coll? (first edges))
+  (if (coll? (first edges))
+    (jdbc/with-db-transaction [trans-conn conn]
       (doseq [edge edges]
-        (remove-raw! trans-conn edge))
-      (remove-raw! trans-conn edges))))
+        (remove-raw! trans-conn edge)))
+    (remove-raw! conn edges)))
 
 (defn star
   "Return all the edges that contain a given entity.
@@ -223,3 +223,9 @@
         rs (jdbc/query conn ["SELECT degree FROM vertices WHERE id=?" vert-str])
         degree (:degree (first rs))]
     (if degree degree 0)))
+
+(defn batch-exec!
+  [hg conn funs]
+  (jdbc/with-db-transaction [trans-conn conn]
+    (let [trans-hg (ops/create hg trans-conn)]
+      (doseq [f funs] (f trans-hg)))))

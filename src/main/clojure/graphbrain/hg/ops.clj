@@ -49,7 +49,11 @@
   (destroy! [hg])
 
   ;; Returns the degree of a vertex
-  (degree [hg vertex]))
+  (degree [hg vertex])
+
+  (create [hg aconn])
+  
+  (batch-exec! [hg funs]))
 
 (defn remove-by-pattern!
   "Removes from the hypergraph all edges that match the pattern."
