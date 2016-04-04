@@ -33,11 +33,11 @@
 (def cli-options
   [["-s" "--storage STORAGE" "Storage type"
     :default "sqlite"]
-   ["-d" "--dbname" "Database name"
+   ["-d" "--dbname DBNAME" "Database name"
     :default "gb"]
-   ["-u" "--dbuser" "Database user"
+   ["-u" "--dbuser DBUSER" "Database user"
     :default "gb"]
-   ["-p" "--dbpass" "Database password"
+   ["-p" "--dbpass DBPASS" "Database password"
     :default "gb"]
    ["-P" "--port PORT" "Port number"
     :default 3000
