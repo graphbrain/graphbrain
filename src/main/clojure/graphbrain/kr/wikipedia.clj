@@ -128,20 +128,22 @@
   [user]
   (if (nil? user)
     "anon/enwiki_usr_spec"
-    (if (re-matches
+    (if #_(re-matches
          #"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
          user)
-      "anon/enwiki_usr_spec"
+        (= (count (filter #(= \. %) user)) 3)
+      "anon/enwikiusr*"
       (sym/build
-       [(sym/str->symbol user) "enwiki_usr"]))))
+       [(sym/str->symbol user) "enwikiusr"]))))
 
 (defn process-page!
   [hg page]
   (if-let [redirect (:redirect page)]
     (let [b [const/synonym (title->symbol (:title page)) (title->symbol redirect)]
-          user "anon/enwiki_usr_spec"]
+          user "wiki/enwikiusr*"]
       (beliefs/add! hg user b))
     (let [title (:title page)
+          title-sym (title->symbol title)
           revs (-> (:revisions page)
                    (with-links title)
                    with-link-changes
@@ -154,7 +156,8 @@
            (let [user (user->symbol (:user rev))
                  new-beliefs (:new-beliefs rev)
                  lost-beliefs (:lost-beliefs rev)]
-             [(map #(fn [x] (beliefs/add! x user %)) new-beliefs)
+             [#(beliefs/add! % "wiki/enwikiusr*" ["editor/1" user title-sym])
+              (map #(fn [x] (beliefs/add! x user %)) new-beliefs)
               (map #(fn [x] (beliefs/remove! x user (edge/negative %))) new-beliefs)
               (map #(fn [x] (beliefs/add! x user (edge/negative %))) lost-beliefs)
               (map #(fn [x] (beliefs/remove! x user %)) lost-beliefs)]))

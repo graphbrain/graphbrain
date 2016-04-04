@@ -33,8 +33,8 @@
   ;; Vertices table
   (sql/safe-exec! conn (str "CREATE TABLE IF NOT EXISTS vertices ("
                             "id VARCHAR(10000),"
-                            "degree INT DEFAULT 0,"
-                            "UNIQUE KEY id_index (id(255))"
+                            "degree INT DEFAULT 0"
+                            ;;"UNIQUE KEY id_index (id(255))"
                             ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
   ;; Edge permutations table
