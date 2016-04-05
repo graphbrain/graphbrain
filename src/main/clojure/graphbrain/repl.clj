@@ -20,6 +20,7 @@
 
 (ns graphbrain.repl
   (:require [graphbrain.hg.ops :as ops]
+            [graphbrain.hg.beliefs :as beliefs]
             [graphbrain.hg.symbol :as symb]
             [graphbrain.hg.constants :as const]
             [graphbrain.hg.connection :as conn]
@@ -48,7 +49,17 @@
   (println
    (ops/star hg symbol)))
 
+(defn edges-srcs
+  [symbol]
+  (doseq [edge (ops/star hg symbol)]
+    (println (str edge " {" (beliefs/sources hg edge)  "}"))))
+
+
 (defn degree
   [symbol]
   (println
    (ops/degree hg symbol)))
+
+(defn sources
+  [edge]
+  (beliefs/sources hg edge))

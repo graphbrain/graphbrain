@@ -26,6 +26,7 @@
   (:import (com.mchange.v2.c3p0 ComboPooledDataSource)))
 
 (def MYSQL_ENGINE "InnoDB")
+;;(def MYSQL_ENGINE "MyISAM")
 
 (defn- create-tables!
   "Created the tables necessary to store the hypergraph."
@@ -33,13 +34,15 @@
   ;; Vertices table
   (sql/safe-exec! conn (str "CREATE TABLE IF NOT EXISTS vertices ("
                             "id VARCHAR(10000),"
-                            "degree INT DEFAULT 0"
+                            "degree INT DEFAULT 0,"
+                            "PRIMARY KEY (id(250))"
                             ;;"UNIQUE KEY id_index (id(255))"
                             ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
   ;; Edge permutations table
   (sql/safe-exec! conn (str "CREATE TABLE IF NOT EXISTS perms ("
-                            "id VARCHAR(10000)"
+                            "id VARCHAR(10000),"
+                            "PRIMARY KEY(id(250))"
                             ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
   conn)
 
