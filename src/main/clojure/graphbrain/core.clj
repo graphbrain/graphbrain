@@ -26,6 +26,7 @@
             [graphbrain.kr.wordnet :as wordnet]
             [graphbrain.kr.wikidump :as wikidump]
             [graphbrain.tools.destroy :as destroy]
+            [graphbrain.tools.script :as script]
             [graphbrain.repl :as repl]
             [graphbrain.web.server :as server]
             [clojure.term.colors :refer :all]))
@@ -68,4 +69,5 @@
       "webserver" (server/start! port)
       "process_wikidump" (wikidump/process! (opts->hg opts) (:file opts))
       "repl" (clojure.main/repl :init #(repl/init! (opts->hg opts)))
+      "script" (script/exec! (opts->hg opts) (:file opts))
       (println (str "Unknown command: " command)))))
