@@ -62,6 +62,11 @@
   [sym]
   (first (parts sym)))
 
+(defn nspace
+  "Extracts the namespace of a symbol (e.g. the namespace of graphbrain/1 is 1)"
+  [sym]
+  (second (parts sym)))
+
 (defn root?
   "Is the symbol the root of itself?"
   [sym]

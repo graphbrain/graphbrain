@@ -26,6 +26,13 @@
   (is (= (root 1)) 1)
   (is (= (root 1.)) 1.))
 
+(deftest nspace-test
+  (is (= (nspace "graphbrain/1") "1"))
+  (is (= (nspace "graphbrain") nil))
+  (is (= (nspace "http://graphbrain.org") nil))
+  (is (= (nspace 1)) nil)
+  (is (= (nspace 1.)) nil))
+
 (deftest root?-test
   (is (not (root? "graphbrain/1")))
   (is (root? "graphbrain"))
