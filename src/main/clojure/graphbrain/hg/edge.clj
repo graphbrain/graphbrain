@@ -93,8 +93,10 @@
 (defn str->edge
   "Convert a string representation of an edge to an edge."
   [edge-str]
-  (apply vector
-         (map parsed-token (split-edge-str edge-str))))
+  (let [elements (map parsed-token (split-edge-str edge-str))]
+    (if (> (count elements) 1)
+      (apply vector elements)
+      (first elements))))
 
 (declare edge->str)
 

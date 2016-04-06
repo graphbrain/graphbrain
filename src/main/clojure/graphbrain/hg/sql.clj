@@ -232,4 +232,9 @@
 
 (defn f-all
   [conn f]
-  (jdbc/query conn ["SELECT id, degree FROM vertices"] :row-fn f))
+  (jdbc/query conn ["SELECT id, degree FROM vertices"]
+              :result-set-fn vec
+              :row-fn #(f (hash-map :vertex (ed/str->edge (:id %))
+                                    :degree (:degree %)))))
+
+
