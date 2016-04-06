@@ -86,7 +86,8 @@
   (destroy! [hg] (sql/destroy! conn))
   (degree [hg vertex] (sql/degree conn vertex))
   (create [hg aconn] (MySQLOps. aconn))
-  (batch-exec! [hg funs] (sql/batch-exec! hg conn funs)))
+  (batch-exec! [hg funs] (sql/batch-exec! hg conn funs))
+  (f-all [hg f] (sql/f-all conn f)))
 
 (defn connection
   "Obtain a MySQL hypergraph connection."

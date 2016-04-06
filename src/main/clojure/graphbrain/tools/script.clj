@@ -20,6 +20,7 @@
 
 (ns graphbrain.tools.script
   (:require [graphbrain.hg.ops :as ops]
+            [graphbrain.hg.beliefs :as beliefs]
             [clojure.term.colors :refer :all]))
 
 (defn exec!

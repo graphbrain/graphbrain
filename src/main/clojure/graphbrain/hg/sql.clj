@@ -229,3 +229,7 @@
   (jdbc/with-db-transaction [trans-conn conn]
     (let [trans-hg (ops/create hg trans-conn)]
       (doseq [f funs] (f trans-hg)))))
+
+(defn f-all
+  [conn f]
+  (jdbc/query conn ["SELECT id, degree FROM vertices"] :row-fn f))
