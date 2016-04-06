@@ -53,7 +53,9 @@
 
   (create [hg aconn])
   
-  (batch-exec! [hg funs]))
+  (batch-exec! [hg funs])
+
+  (f-all [hg f]))
 
 (defn remove-by-pattern!
   "Removes from the hypergraph all edges that match the pattern."
