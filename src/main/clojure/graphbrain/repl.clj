@@ -28,6 +28,8 @@
             [clojure.string :as string]))
 
 (defn init!
+  ([storage-type database]
+     (def hg (conn/create storage-type database)))
   ([hg]
      (ns graphbrain.repl)
      (def hg hg))
