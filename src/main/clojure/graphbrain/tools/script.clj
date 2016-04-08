@@ -21,6 +21,8 @@
 (ns graphbrain.tools.script
   (:require [graphbrain.hg.ops :as ops]
             [graphbrain.hg.beliefs :as beliefs]
+            [graphbrain.hg.symbol :as symbol]
+            [graphbrain.hg.edge :as edge]
             [clojure.term.colors :refer :all]))
 
 (defn exec!
