@@ -25,36 +25,61 @@
             [graphbrain.hg.constants :as const]
             [clojure.math.combinatorics :as combs]))
 
-(defn related
-  [hg symbol]
-  (clojure.set/union
-   (ops/pattern->edges hg ["related/1" symbol nil])
-   (ops/pattern->edges hg ["related/1" nil symbol])))
+(def in-related
+  (memoize
+   (fn [hg symbol]
+     (ops/pattern->edges hg ["related/1" nil symbol]))))
 
-(defn not-related
-  [hg symbol]
-  (clojure.set/union
-   (ops/pattern->edges hg ["~related/1" symbol nil])
-   (ops/pattern->edges hg ["~related/1" nil symbol])))
+(def out-related
+  (memoize
+   (fn [hg symbol]
+     (ops/pattern->edges hg ["related/1" symbol nil]))))
 
-(defn neighbors
-  [hg symbol]
-  (disj
-   (into #{}
-         (flatten (clojure.set/union
-                   (map rest (related hg symbol))
-                   (map rest (not-related hg symbol)))))
-   symbol))
+(def in-not-related
+  (memoize
+   (fn [hg symbol]
+     (ops/pattern->edges hg ["~related/1" nil symbol]))))
 
-(defn editors
-  [hg symbol]
-  (into #{}
-        (map second (ops/pattern->edges hg ["editor/1" nil symbol]))))
+(def out-not-related
+  (memoize
+   (fn [hg symbol]
+     (ops/pattern->edges hg ["~related/1" symbol nil]))))
 
-(defn edited-by
-  [hg symbol]
-  (into #{}
-        (map #(nth % 2) (ops/pattern->edges hg ["editor/1" symbol nil]))))
+(def related
+  (memoize
+   (fn [hg symbol]
+     (clojure.set/union
+      (in-related hg symbol)
+      (out-related hg symbol)))))
+
+(def not-related
+  (memoize
+   (fn [hg symbol]
+     (clojure.set/union
+      (in-not-related hg symbol)
+      (out-not-related hg symbol)))))
+
+(def neighbors
+  (memoize
+   (fn [hg symbol]
+     (disj
+      (into #{}
+            (flatten (clojure.set/union
+                      (map rest (related hg symbol))
+                      (map rest (not-related hg symbol)))))
+      symbol))))
+
+(def editors
+  (memoize
+   (fn [hg symbol]
+     (into #{}
+           (map second (ops/pattern->edges hg ["editor/1" nil symbol]))))))
+
+(def edited-by
+  (memoize
+   (fn [hg symbol]
+     (into #{}
+           (map #(nth % 2) (ops/pattern->edges hg ["editor/1" symbol nil]))))))
 
 (defn semantic-overlap
   [hg symb1 symb2]
@@ -76,16 +101,18 @@
      (float (count
              (clojure.set/union n1 n2))))))
 
-(defn claims
-  [hg author]
-  (filter
-   #(= (first (second %))
-       "related/1")
-   (ops/pattern->edges hg [const/source nil author])))
+(def claims
+  (memoize
+   (fn [hg author]
+     (filter
+      #(= (first (second %))
+          "related/1")
+      (ops/pattern->edges hg [const/source nil author])))))
 
-(defn refutations
-  [hg author]
-  (filter
-   #(= (first (second %))
-       "~related/1")
-   (ops/pattern->edges hg [const/source nil author])))
+(def refutations
+  (memoize
+   (fn [hg author]
+     (filter
+      #(= (first (second %))
+          "~related/1")
+      (ops/pattern->edges hg [const/source nil author])))))
