@@ -12,7 +12,7 @@
               (not (ops/exists? hg (edge/negative vert)))
               (not
                (= (beliefs/sources hg (edge/negative vert)) #{"anon/enwiki_usr_spec"}))))
-          (< (rand) 0.01))))))
+          (< (rand) 0.1))))))
 
 (defn edge->id
   [edge]
