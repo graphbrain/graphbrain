@@ -12,7 +12,7 @@
               (not (ops/exists? hg (edge/negative vert)))
               (not
                (= (beliefs/sources hg (edge/negative vert)) #{"anon/enwiki_usr_spec"}))))
-          (< (rand) 0.1))))))
+          (< (rand) 0.01))))))
 
 (defn edge->id
   [edge]
@@ -66,6 +66,14 @@
         posdeg2 (count (wiki/related hg v2))
         negdeg1 (count (wiki/not-related hg v1))
         negdeg2 (count (wiki/not-related hg v2))
+        inposdeg1 (count (wiki/in-related hg v1))
+        inposdeg2 (count (wiki/in-related hg v2))
+        innegdeg1 (count (wiki/in-not-related hg v1))
+        innegdeg2 (count (wiki/in-not-related hg v2))
+        outposdeg1 (count (wiki/out-related hg v1))
+        outposdeg2 (count (wiki/out-related hg v2))
+        outnegdeg1 (count (wiki/out-not-related hg v1))
+        outnegdeg2 (count (wiki/out-not-related hg v2))
         eds1 (count (wiki/editors hg v1))
         eds2 (count (wiki/editors hg v2))
         auths (said-who hg edge)
@@ -79,8 +87,10 @@
     (println
      (clojure.string/join ","
                           [id neg for against so eo deg1 deg2
-                           posdeg1 posdeg2 negdeg1 negdeg2 eds1 eds2
-                           claims refutations editedby
+                           posdeg1 posdeg2 negdeg1 negdeg2
+                           inposdeg1 inposdeg2 innegdeg1 innegdeg2
+                           outposdeg1 outposdeg2 outnegdeg1 outnegdeg2
+                           eds1 eds2 claims refutations editedby
                            nclaims nrefutations neditedby]))))
 
 (ops/f-all hg #(if (sample-vertex? %)
