@@ -18,32 +18,16 @@
 ;   You should have received a copy of the GNU Affero General Public License
 ;   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns graphbrain.web.handlers.nodepage
+(ns graphbrain.nlp.summaries
   (:require [graphbrain.hg.ops :as ops]
             [graphbrain.hg.symbol :as symb]
-            [graphbrain.nlp.summaries :as summ]
-            [graphbrain.web.snodes :as snodes]
-            [graphbrain.web.views.nodepage :as np]
-            [graphbrain.web.encoder :as enc]))
+            [graphbrain.hg.constants :as const]))
 
-(defn- data
-  [hg id]
-  (let [snodes (snodes/generate hg id)]
-    {:root-id id
-     :snodes snodes}))
-
-(defn- js
-  [hg id]
-  (str "var ptype='node';"
-       "var data='" (enc/encode (pr-str
-                                 (data hg id))) "';"))
-
-(defn handle
-  [request hg]
-  (let [id (:* (:route-params request))
-        title (symb/symbol->str id)
-        desc (summ/label hg id)]
-    (np/nodepage :title title
-                 :js (js hg id)
-                 :desc desc
-                 :dev (:dev request))))
+(defn label
+  [hg symbol]
+  (let [types (ops/pattern->edges hg [const/type-of symbol nil])]
+    (if (empty? types)
+      "?"
+      (clojure.string/join ", "
+                           (map #(symb/symbol->str
+                                  (symb/root (% 2))) types)))))
