@@ -20,11 +20,15 @@
 
 (ns graphbrain.web.handlers.search
   (:require [graphbrain.hg.ops :as ops]
-            [graphbrain.hg.symbol :as symb]))
+            [graphbrain.hg.symbol :as symb]
+            [graphbrain.nlp.summaries :as summ]))
 
 (defn query
   [hg q]
-  (map #(list % %)
+  (map #(list % (str
+                 (symb/symbol->str
+                  (symb/root %))
+                 " (" (summ/label hg %) ")"))
        (ops/symbols-with-root hg (symb/str->symbol q))))
 
 (defn reply
