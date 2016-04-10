@@ -35,7 +35,7 @@
   [["-s" "--storage STORAGE" "Storage type"
     :default "sqlite"]
    ["-d" "--dbname DBNAME" "Database name"
-    :default "gb"]
+    :default "gb.db"]
    ["-u" "--dbuser DBUSER" "Database user"
     :default "gb"]
    ["-p" "--dbpass DBPASS" "Database password"
