@@ -51,10 +51,15 @@
   ;; Returns the degree of a vertex
   (degree [hg vertex])
 
-  (create [hg aconn])
-  
+  ;; Evaluates all the functions 'funs', which must be of arity 1.
+  ;; The functions are passed hg as a parameters and are evaluated
+  ;; as a batch.
+  ;; Evaluating function as a batch might be faster.
   (batch-exec! [hg funs])
 
+  ;; Returns a lazy sequence resulting from applying f to every
+  ;; vertex map (including non-atomic) in the hypergraph.
+  ;; A vertex map contains the keys :vertex and :degree.
   (f-all [hg f]))
 
 (defn remove-by-pattern!

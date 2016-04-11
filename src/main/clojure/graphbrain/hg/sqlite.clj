@@ -50,6 +50,8 @@
   [name]
   (db-spec name))
 
+(declare create-with-conn)
+
 (deftype SQLiteOps [conn]
   ops/Ops
   (exists? [hg edge] (sql/exists? conn edge))
@@ -60,11 +62,16 @@
   (symbols-with-root [hg root] (sql/symbols-with-root conn root))
   (destroy! [hg] (sql/destroy! conn))
   (degree [hg vertex] (sql/degree conn vertex))
-  (create [hg aconn] (SQLiteOps. aconn))
-  (batch-exec! [hg funs] (sql/batch-exec! hg conn funs))
+  (batch-exec! [hg funs] (sql/batch-exec! conn funs create-with-conn))
   (f-all [hg f] (sql/f-all conn f)))
 
 (defn connection
   "Obtain a SQLite hypergraph connection."
   [dbname]
   (SQLiteOps. (db-connection dbname)))
+
+(defn- create-with-conn
+  ;; Cretes an intance of the hypergraph using the provided
+  ;; sqlite-specific connection 'aconn'
+  [aconn]
+  (SQLiteOps. aconn))

@@ -225,12 +225,18 @@
     (if degree degree 0)))
 
 (defn batch-exec!
-  [hg conn funs]
+  "Auxiliary function to implement ops/batch-exec! in SQL environments.
+   The function create-f creates an appropriate hypergraph instance
+   given a storage-specific connection."
+  [conn funs create-f]
   (jdbc/with-db-transaction [trans-conn conn]
-    (let [trans-hg (ops/create hg trans-conn)]
+    (let [trans-hg (create-f trans-conn)]
       (doseq [f funs] (f trans-hg)))))
 
 (defn f-all
+  "Returns a lazy sequence resulting from applying f to every
+   vertex map (including non-atomic) in the hypergraph.
+   A vertex map contains the keys :vertex and :degree."
   [conn f]
   (jdbc/query conn ["SELECT id, degree FROM vertices"]
               :result-set-fn vec

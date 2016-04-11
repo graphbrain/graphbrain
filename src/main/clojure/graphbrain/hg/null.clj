@@ -34,8 +34,8 @@
   (symbols-with-root [hg root] #{})
   (destroy! [hg])
   (degree [hg vertex] 0)
-  (create [hg aconn] (NullOps.))
-  (batch-exec! [conn funs]))
+  (batch-exec! [hg funs])
+  (f-all [hg f]))
 
 (defn connection
   "Obtain a null hypergraph connection."
