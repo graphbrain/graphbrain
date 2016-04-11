@@ -75,6 +75,8 @@
   [name]
   @(delay (pool (db-spec name))))
 
+(declare create-with-conn)
+
 (deftype MySQLOps [conn]
   ops/Ops
   (exists? [hg edge] (sql/exists? conn edge))
@@ -85,11 +87,16 @@
   (symbols-with-root [hg root] (sql/symbols-with-root conn root))
   (destroy! [hg] (sql/destroy! conn))
   (degree [hg vertex] (sql/degree conn vertex))
-  (create [hg aconn] (MySQLOps. aconn))
-  (batch-exec! [hg funs] (sql/batch-exec! hg conn funs))
+  (batch-exec! [hg funs] (sql/batch-exec! conn funs create-with-conn))
   (f-all [hg f] (sql/f-all conn f)))
 
 (defn connection
   "Obtain a MySQL hypergraph connection."
   [dbname]
   (MySQLOps. (db-connection dbname)))
+
+(defn- create-with-conn
+  ;; Cretes an intance of the hypergraph using the provided
+  ;; mysql-specific connection 'aconn'
+  [aconn]
+  (MySQLOps. aconn))
