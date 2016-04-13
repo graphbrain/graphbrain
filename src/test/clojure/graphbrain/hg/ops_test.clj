@@ -101,7 +101,7 @@
   (remove! hg ["size" "graphbrain/1" 7])
   (is (= (degree hg "graphbrain/1") 0)))
 
-(defn ops-test-add-remove-multiple
+(defn add-remove-multiple-test
   [hg]
   (add! hg [["is" "graphbrain/1" "great/1"]
             ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]]])
@@ -111,6 +111,41 @@
                ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]]])
   (is (not (exists? hg ["is" "graphbrain/1" "great/1"])))
   (is (not (exists? hg ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]]))))
+
+(defn batch-exec-test
+  [hg]
+  (let [f1 #(add! % ["is" "graphbrain/1" "great/1"])
+        f2 #(add! % ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]])]
+    (batch-exec! hg [f1 f2]))
+  (is (exists? hg ["is" "graphbrain/1" "great/1"]))
+  (is (exists? hg ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]]))
+  (let [f1 #(remove! % ["is" "graphbrain/1" "great/1"])
+        f2 #(remove! % ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]])]
+    (batch-exec! hg [f1 f2]))
+  (is (not (exists? hg ["is" "graphbrain/1" "great/1"])))
+  (is (not (exists? hg ["src" "graphbrain/1" ["size" "graphbrain/1" -7.0]]))))
+
+(defn f-all-test
+  [hg]
+  (destroy! hg)
+  (add! hg ["size" "graphbrain/1" -7.0])
+  (add! hg ["is" "graphbrain/1" "great/1"])
+  (add! hg ["src" "mary/1" ["is" "graphbrain/1" "great/1"]])
+  (let [labels (f-all hg #(str (str (:vertex %)) " " (:degree %)))
+        labels (into #{} labels)]
+    (is (= labels
+           #{"size 1"
+             "graphbrain/1 2"
+             "-7.0 1"
+             "is 1"
+             "great/1 1"
+             "src 1"
+             "mary/1 1"
+             "[\"is\" \"graphbrain/1\" \"great/1\"] 1"})))
+  (destroy! hg)
+  (let [labels (f-all hg #(str (str (:vertex %)) " " (:degree %)))
+        labels (into #{} labels)]
+    (is (= labels #{}))))
 
 (defn ops-tests
   [hg]
@@ -125,4 +160,6 @@
   (star-test hg)
   (symbols-with-root-test hg)
   (degree-test hg)
-  (ops-test-add-remove-multiple hg))
+  (add-remove-multiple-test hg)
+  (batch-exec-test hg)
+  (f-all-test hg))
