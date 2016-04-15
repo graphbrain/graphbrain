@@ -28,7 +28,7 @@
 
   ;; Adds one or multiple edges to the hypergraph if it does not exist yet.
   ;; Adding multiple edges at the same time might be faster.
-  (add! [hg edges])
+  (add!* [hg edges timestamp])
 
   ;; Removes one or multiple edges from the hypergraph.
   ;; Removing multiple edges at the same time might be faster.
@@ -51,6 +51,9 @@
   ;; Returns the degree of a vertex
   (degree [hg vertex])
 
+  ;; Returns the timestamp of a vertex
+  (timestamp [hg vertex])
+
   ;; Evaluates all the functions 'funs', which must be of arity 1.
   ;; The functions are passed hg as a parameters and are evaluated
   ;; as a batch.
@@ -61,6 +64,12 @@
   ;; vertex map (including non-atomic) in the hypergraph.
   ;; A vertex map contains the keys :vertex and :degree.
   (f-all [hg f]))
+
+(defn add!
+  "Adds one or multiple edges to the hypergraph if it does not exist yet.
+   Adding multiple edges at the same time might be faster."
+  [hg edges & {:keys [timestamp] :or {timestamp -1}}]
+  (add!* hg edges timestamp))
 
 (defn remove-by-pattern!
   "Removes from the hypergraph all edges that match the pattern."

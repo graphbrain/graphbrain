@@ -35,8 +35,8 @@
   (sql/safe-exec! conn (str "CREATE TABLE IF NOT EXISTS vertices ("
                             "id VARCHAR(10000),"
                             "degree INT DEFAULT 0,"
+                            "timestamp BIGINT DEFAULT -1,"
                             "PRIMARY KEY (id(250))"
-                            ;;"UNIQUE KEY id_index (id(255))"
                             ") ENGINE=" MYSQL_ENGINE " DEFAULT CHARSET=utf8;"))
 
   ;; Edge permutations table
@@ -80,13 +80,14 @@
 (deftype MySQLOps [conn]
   ops/Ops
   (exists? [hg edge] (sql/exists? conn edge))
-  (add! [hg edges] (sql/add! conn edges))
+  (add!* [hg edges timestamp] (sql/add!* conn edges timestamp))
   (remove! [hg edges] (sql/remove! conn edges))
   (pattern->edges [hg pattern] (sql/pattern->edges conn pattern))
   (star [hg center] (sql/star conn center))
   (symbols-with-root [hg root] (sql/symbols-with-root conn root))
   (destroy! [hg] (sql/destroy! conn))
   (degree [hg vertex] (sql/degree conn vertex))
+  (timestamp [hg vertex] (sql/timestamp conn vertex))
   (batch-exec! [hg funs] (sql/batch-exec! conn funs create-with-conn))
   (f-all [hg f] (sql/f-all conn f)))
 

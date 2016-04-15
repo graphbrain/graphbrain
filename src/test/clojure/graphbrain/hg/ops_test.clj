@@ -101,6 +101,19 @@
   (remove! hg ["size" "graphbrain/1" 7])
   (is (= (degree hg "graphbrain/1") 0)))
 
+(defn timestamp-test
+  [hg]
+  (destroy! hg)
+  (is (= (timestamp hg "graphbrain/1") -1))
+  (add! hg ["is" "graphbrain/1" "great/1"] :timestamp 123456789)
+  (is (= (timestamp hg "graphbrain/1") 123456789))
+  (is (= (timestamp hg "great/1") 123456789))
+  (is (= (timestamp hg ["is" "graphbrain/1" "great/1"]) 123456789))
+  (remove! hg ["is" "graphbrain/1" "great/1"])
+  (is (= (timestamp hg "graphbrain/1") 123456789))
+  (is (= (timestamp hg "great/1") 123456789))
+  (is (= (timestamp hg ["is" "graphbrain/1" "great/1"]) -1)))
+
 (defn add-remove-multiple-test
   [hg]
   (add! hg [["is" "graphbrain/1" "great/1"]
@@ -141,7 +154,9 @@
              "great/1 1"
              "src 1"
              "mary/1 1"
-             "[\"is\" \"graphbrain/1\" \"great/1\"] 1"})))
+             "[\"size\" \"graphbrain/1\" -7.0] 0"
+             "[\"is\" \"graphbrain/1\" \"great/1\"] 1"
+             "[\"src\" \"mary/1\" [\"is\" \"graphbrain/1\" \"great/1\"]] 0"})))
   (destroy! hg)
   (let [labels (f-all hg #(str (str (:vertex %)) " " (:degree %)))
         labels (into #{} labels)]
@@ -160,6 +175,7 @@
   (star-test hg)
   (symbols-with-root-test hg)
   (degree-test hg)
+  (timestamp-test hg)
   (add-remove-multiple-test hg)
   (batch-exec-test hg)
   (f-all-test hg))

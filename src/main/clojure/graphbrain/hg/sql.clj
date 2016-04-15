@@ -145,31 +145,33 @@
 
 (defn- add-str!
   "Adds the given vertex, represented as a string."
-  [conn vert-str degree]
+  [conn vert-str degree timestamp]
   (jdbc/insert! conn :vertices {:id vert-str
-                                :degree degree}))
+                                :degree degree
+                                :timestamp timestamp}))
 
 (defn- add-raw!
   "Auxiliary function for add! to call from inside a transaction."
-  [conn edge]
+  [conn edge timestamp]
   (if (not (exists? conn edge))
     (do
       (doseq [vert edge]
         (let [result (inc-degree! conn (ed/edge->str vert))]
           (if (zero? (first result))
-            (add-str! conn (ed/edge->str vert) 1))))
+            (add-str! conn (ed/edge->str vert) 1 timestamp))))
+      (add-str! conn (ed/edge->str edge) 0 timestamp)
       (write-edge-permutations! conn edge)))
   edge)
 
-(defn add!
+(defn add!*
   "Adds one or multiple edges to the hypergraph if it does not exist yet.
    Adding multiple edges at the same time might be faster."
-  [conn edges]
+  [conn edges timestamp]
   (if (coll? (first edges))
     (jdbc/with-db-transaction [trans-conn conn]
       (doseq [edge edges]
-        (add-raw! trans-conn edge)))
-    (add-raw! conn edges))
+        (add-raw! trans-conn edge timestamp)))
+    (add-raw! conn edges timestamp))
   edges)
 
 (defn- remove-raw!
@@ -180,7 +182,8 @@
       (do
         (doseq [vert edge]
           (dec-degree! conn (ed/edge->str vert)))
-        (remove-edge-permutations! conn edge)))))
+        (remove-edge-permutations! conn edge)
+        (remove-str! conn (ed/edge->str edge))))))
 
 (defn remove!
   "Removes one or multiple edges from the hypergraph.
@@ -223,6 +226,14 @@
         rs (jdbc/query conn ["SELECT degree FROM vertices WHERE id=?" vert-str])
         degree (:degree (first rs))]
     (if degree degree 0)))
+
+(defn timestamp
+  "Returns the timestamp of a vertex."
+  [conn vertex]
+  (let [vert-str (ed/edge->str vertex)
+        rs (jdbc/query conn ["SELECT timestamp FROM vertices WHERE id=?" vert-str])
+        timestamp (:timestamp (first rs))]
+    (if timestamp timestamp -1)))
 
 (defn batch-exec!
   "Auxiliary function to implement ops/batch-exec! in SQL environments.

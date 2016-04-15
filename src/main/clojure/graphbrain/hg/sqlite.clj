@@ -30,7 +30,8 @@
   ;; Vertices table
   (sql/safe-exec! conn (str "CREATE TABLE vertices ("
                             "id TEXT PRIMARY KEY,"
-                            "degree INT DEFAULT 0"
+                            "degree INTEGER DEFAULT 0,"
+                            "timestamp INTEGER DEFAULT -1"
                             ")"))
   
   ;; Edge permutations table
@@ -55,13 +56,14 @@
 (deftype SQLiteOps [conn]
   ops/Ops
   (exists? [hg edge] (sql/exists? conn edge))
-  (add! [hg edges] (sql/add! conn edges))
+  (add!* [hg edges timestamp] (sql/add!* conn edges timestamp))
   (remove! [hg edges] (sql/remove! conn edges))
   (pattern->edges [hg pattern] (sql/pattern->edges conn pattern))
   (star [hg center] (sql/star conn center))
   (symbols-with-root [hg root] (sql/symbols-with-root conn root))
   (destroy! [hg] (sql/destroy! conn))
   (degree [hg vertex] (sql/degree conn vertex))
+  (timestamp [hg vertex] (sql/timestamp conn vertex))
   (batch-exec! [hg funs] (sql/batch-exec! conn funs create-with-conn))
   (f-all [hg f] (sql/f-all conn f)))
 
