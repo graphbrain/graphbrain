@@ -27,13 +27,14 @@
 (deftype NullOps []
   ops/Ops
   (exists? [hg vertex] false)
-  (add! [hg edge] edge)
+  (add!* [hg edge timestamp] edge)
   (remove! [hg edge])
   (pattern->edges [hg pattern] #{})
   (star [hg center] #{})
   (symbols-with-root [hg root] #{})
   (destroy! [hg])
   (degree [hg vertex] 0)
+  (timestamp [hg vertex] -1)
   (batch-exec! [hg funs])
   (f-all [hg f]))
 
