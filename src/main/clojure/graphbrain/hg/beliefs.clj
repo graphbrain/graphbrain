@@ -31,12 +31,12 @@
 
    Multiple edges can be provided, in which case all the beliefs will be
    inserted at once. This may be faster."
-  [hg source edges]
+  [hg source edges & {:keys [timestamp] :or {timestamp -1}}]
   (if (coll? (first edges))
     (let [sources (map #(vector const/source % source) edges)
           all-edges (union edges sources)]
-      (ops/add! hg all-edges))
-    (ops/add! hg [edges [const/source edges source]])))
+      (ops/add! hg all-edges :timestamp timestamp))
+    (ops/add! hg [edges [const/source edges source]] :timestamp timestamp)))
 
 (defn sources
   "Set of sources (nodes) that support a statement (edge)."
