@@ -50,10 +50,9 @@
 (defn process!
   [hg file-path]
   (with-open [rdr (bz2-reader file-path)]
-    (doall
-     (->> rdr
-          parse
-          :content
-          (filter #(= :page (:tag %)))
-          (map page->map)
-          (map #(process-page! hg %))))))
+    (->> rdr
+         parse
+         :content
+         (filter #(= :page (:tag %)))
+         (map page->map)
+         (map #(process-page! hg %)))))
