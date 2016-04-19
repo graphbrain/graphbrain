@@ -50,12 +50,10 @@
 (defn process!
   [hg file-path]
   (with-open [rdr (bz2-reader file-path)]
-    (loop [pages (->> rdr
-                      parse
-                      :content
-                      (filter #(= :page (:tag %)))
-                      (map page->map))]
-      (if (not (empty? pages))
-        (do
-          (process-page! hg (first pages))
-          (recur (rest pages)))))))
+    (dorun
+     (->> rdr
+          parse
+          :content
+          (filter #(= :page (:tag %)))
+          (map page->map)
+          (map #(process-page! hg %))))))
