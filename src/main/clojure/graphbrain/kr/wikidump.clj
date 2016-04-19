@@ -56,5 +56,6 @@
                       (filter #(= :page (:tag %)))
                       (map page->map))]
       (if (not (empty? pages))
-        (process-page! hg (first pages))
-        (recur (rest pages))))))
+        (do
+          (process-page! hg (first pages))
+          (recur (rest pages)))))))
