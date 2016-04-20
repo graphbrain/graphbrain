@@ -14,7 +14,7 @@
   (-> filename
       io/file
       io/input-stream 
-      BZip2CompressorInputStream.
+      (BZip2CompressorInputStream. true)
       io/reader))
 
 (defn revision->map
@@ -27,25 +27,29 @@
                    1000)
      :text (xml1-> revision :text text)}))
 
+(defn- process?
+  [page-title]
+  (not
+   ((into #{} page-title) \:)))
+
 (defn page->map
   [page]
-  (let [z (xml-zip page)]
-    {:title (xml1-> z :title text)
-     :redirect (xml1-> z :redirect (attr :title))
-     :ns (xml1-> z :ns text)
-     :revisions (xml-> z :revision revision->map)}))
-
-(defn process?
-  [page]
-  (not
-   ((into #{} (:title page)) \:)))
+  (let [z (xml-zip page)
+        title (xml1-> z :title text)]
+    (println (str "visiting: " title))
+    (if (process? title)
+      (do
+        (println (str "processing article: " title))
+        (let [revs (xml-> z :revision revision->map)]
+          (println (str "#revs " (count revs)))
+          {:title title
+           :redirect (xml1-> z :redirect (attr :title))
+           :ns (xml1-> z :ns text)
+           :revisions revs})))))
 
 (defn process-page!
   [hg page]
-  (if (process? page)
-    (do
-      (println (str "processing article: " (:title page)))
-      (w/process-page! hg page))))
+  (w/process-page! hg page))
 
 (defn process!
   [hg file-path]
@@ -56,4 +60,5 @@
           :content
           (filter #(= :page (:tag %)))
           (map page->map)
+          (filter #(not (nil? %)))
           (map #(process-page! hg %))))))

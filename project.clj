@@ -1,7 +1,7 @@
 (defproject graphbrain "0.1.0-SNAPSHOT"
   :description "Open Knowledge Hypergraph"
   :url "http://graphbrain.org"
-  :jvm-opts ["-Xmx4000M" "-XX:-OmitStackTraceInFastThrow"
+  :jvm-opts ["-Xmx20000M" "-server" "-XX:-OmitStackTraceInFastThrow"
 ;;             "-Dcom.sun.management.jmxremote"
 ;;             "-Dcom.sun.management.jmxremote.ssl=false"
 ;;             "-Dcom.sun.management.jmxremote.authenticate=false"
