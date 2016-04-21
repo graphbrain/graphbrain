@@ -60,7 +60,7 @@
                  [net.sf.extjwnl/extjwnl "1.9.1"]
                  [net.sf.extjwnl/extjwnl-data-wn31 "1.2"]
                  ;; Wikipedia
-                 [org.sweble.wikitext/swc-engine "2.0.0"]
+                 [org.sweble.wikitext/swc-engine "2.1.0"]
                  ;; CLI
                  [clojure-term-colors "0.1.0-SNAPSHOT"]
                  ;; Web App

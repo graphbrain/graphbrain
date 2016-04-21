@@ -87,8 +87,6 @@ public class WikiTextConverter extends AstVisitor<WtNode>
 	
     private final WikiConfig config;
 	
-    private final int wrapCol;
-	
     private StringBuilder sb;
 	
     private StringBuilder line;
@@ -112,11 +110,22 @@ public class WikiTextConverter extends AstVisitor<WtNode>
 	
     // =========================================================================
 	
-    public WikiTextConverter(WikiConfig config, int wrapCol) {
+    public WikiTextConverter(WikiConfig config) {
 	this.config = config;
-	this.wrapCol = wrapCol;
+
+	sb = new StringBuilder();
+	line = new StringBuilder();
+	extLinkNum = 1;
+	pastBod = false;
+	needNewlines = 0;
+	needSpace = false;
+	noWrap = false;
+	sections = new LinkedList<Integer>();
+	links = new LinkedList<String>();
+	//return super.before(node);
     }
-	
+
+    /*
     @Override
     protected boolean before(WtNode node) {
 	// This method is called by go() before visitation starts
@@ -130,7 +139,7 @@ public class WikiTextConverter extends AstVisitor<WtNode>
 	sections = new LinkedList<Integer>();
 	links = new LinkedList<String>();
 	return super.before(node);
-    }
+	}*/
 	
     @Override
     protected Object after(WtNode node, Object result) {
@@ -234,7 +243,9 @@ public class WikiTextConverter extends AstVisitor<WtNode>
 
 	links.add(((WtText)link.getTarget().get(0)).getContent());
 
-	System.out.println(link.getTarget());
+	System.out.println(((WtText)link.getTarget().get(0)).getContent());
+	
+	/*
 	write(link.getPrefix());
 	if (!link.hasTitle()) {
 	    iterate(link.getTarget());
@@ -243,6 +254,7 @@ public class WikiTextConverter extends AstVisitor<WtNode>
 	    iterate(link.getTitle());
 	}
 	write(link.getPostfix());
+	*/
     }
     
     public void visit(WtSection s) {
@@ -259,8 +271,8 @@ public class WikiTextConverter extends AstVisitor<WtNode>
 		
 	sb = saveSb;
 
-	// System.out.println(title);
-	// System.out.println(s.getLevel());
+	System.out.println(title);
+	System.out.println(s.getLevel());
 	
 	if (s.getLevel() >= 1) {
 	    while (sections.size() > s.getLevel())
@@ -301,11 +313,7 @@ public class WikiTextConverter extends AstVisitor<WtNode>
 	newline(2);
     }
 	
-    public void visit(WtHorizontalRule hr) {
-	newline(1);
-	write(StringUtils.strrep('-', wrapCol));
-	newline(2);
-    }
+    public void visit(WtHorizontalRule hr) {}
 	
     public void visit(WtXmlElement e) {
 	if (e.getName().equalsIgnoreCase("br")) {

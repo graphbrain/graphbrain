@@ -56,8 +56,7 @@
           page-title (PageTitle/make config title)
           page-id (PageId. page-title -1)
           cp (.postprocess engine page-id text nil)
-          wrap-col 80
-          p (WikiTextConverter. config wrap-col)
+          p (WikiTextConverter. config)
           wiki-text (.go p (.getPage cp))
           links (into #{} (filter follow? (.getLinks p)))]
       {:links links})
