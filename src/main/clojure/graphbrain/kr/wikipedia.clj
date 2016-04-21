@@ -45,7 +45,7 @@
 (defn parse2
   [title text]
   (doseq [header (map #(% 1) (re-seq #"==([^=]*)==" text))]
-    (print header))
+    (println header))
   {:links (into #{}
                 (map parse-link
                      (filter follow?
