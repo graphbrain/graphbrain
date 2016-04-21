@@ -25,12 +25,7 @@
             [graphbrain.hg.edge :as edge]
             [graphbrain.hg.constants :as const]
             [graphbrain.hg.beliefs :as beliefs]
-            [clojure.string :as str])
-  (:import (org.sweble.wikitext.engine.utils DefaultConfigEnWp)
-           (org.sweble.wikitext.engine WtEngineImpl)
-           (org.sweble.wikitext.engine PageTitle)
-           (org.sweble.wikitext.engine PageId)
-           (org.graphbrain.kr WikiTextConverter)))
+            [clojure.string :as str]))
 
 (defn follow?
   [title]
@@ -42,18 +37,11 @@
   (first
    (clojure.string/split link #"\|")))
 
-(defn parse2
-  [title text]
-  {:links (into #{}
-                (map parse-link
-                     (filter follow?
-                             (map #(% 1) (re-seq #"\[\[([^\]]*)\]\]" text)))))})
-
 (defn link-tuple
   [state link]
   (if (:cur-section state)
     [(:cur-section state) link]
-    link))
+    [link]))
 
 (defn parse-item
   [state item]
@@ -65,31 +53,13 @@
                (conj (:links state) (link-tuple state link)))
         state))))
 
-(defn parse3
-  [title text]
-  (print (reduce parse-item
-                 {:links #{}
-                  :cur-section nil}
-                 (re-seq #"==([^=]*)==|\[\[([^\]]*)\]\]" text)))
-  {:links #{}})
-
-
 (defn parse
   [title text]
-  (try
-    (let [config (DefaultConfigEnWp/generate)
-          engine (WtEngineImpl. config)
-          page-title (PageTitle/make config title)
-          page-id (PageId. page-title -1)
-          cp (.postprocess engine page-id text nil)
-          p (WikiTextConverter. config)
-          wiki-text (.go p (.getPage cp))
-          links (into #{} (filter follow? (.getLinks p)))]
-      {:links links})
-    (catch Exception e
-      (do
-        (println "parsing failed!")
-        {:links #{}}))))
+  (:links
+   (reduce parse-item
+           {:links #{}
+            :cur-section nil}
+           (re-seq #"==([^=]*)==|\[\[([^\]]*)\]\]" text))))
 
 (defn with-links
   [revs title]
@@ -97,7 +67,7 @@
   (map
    #(dissoc (assoc %
               :links (:links
-                      (parse3 title (:text %))))
+                      (parse title (:text %))))
             :text)
    revs))
 
@@ -139,7 +109,8 @@
   [title rev key]
   (filter #(% 2)
           (map
-           #(vector "related/1" (title->symbol title) (title->symbol %))
+           #(flatten
+             ["related/1" (title->symbol title) (map title->symbol %)])
            (key rev))))
 
 (defn with-beliefs
@@ -174,6 +145,9 @@
                    (with-links title)
                    with-link-changes
                    (with-beliefs title))]
+      (doseq [r revs]
+        (doseq [b (:new-beliefs r)]
+          (println b)))
       (ops/batch-exec!
        hg
        (flatten
