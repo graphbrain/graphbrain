@@ -67,7 +67,7 @@
   [title text]
   (print (reduce parse-item
                  {:links #{}
-                  :cur-section Nil}
+                  :cur-section nil}
                  (re-seq #"==([^=]*)==|\[\[([^\]]*)\]\]" text)))
   {:links #{}})
 
