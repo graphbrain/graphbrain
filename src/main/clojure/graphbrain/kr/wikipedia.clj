@@ -108,8 +108,9 @@
   [title rev key]
   (filter #(% 2)
           (map
-           #(flatten
-             ["related/1" (title->symbol title) (map title->symbol %)])
+           #(apply vector
+                   (flatten
+                    ["related/1" (title->symbol title) (map title->symbol %)]))
            (key rev))))
 
 (defn with-beliefs
