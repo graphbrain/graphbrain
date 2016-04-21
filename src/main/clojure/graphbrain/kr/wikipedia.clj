@@ -24,7 +24,8 @@
             [graphbrain.hg.symbol :as sym]
             [graphbrain.hg.edge :as edge]
             [graphbrain.hg.constants :as const]
-            [graphbrain.hg.beliefs :as beliefs])
+            [graphbrain.hg.beliefs :as beliefs]
+            [clojure.string :as str])
   (:import (org.sweble.wikitext.engine.utils DefaultConfigEnWp)
            (org.sweble.wikitext.engine WtEngineImpl)
            (org.sweble.wikitext.engine PageTitle)
@@ -49,10 +50,12 @@
                              (map #(% 1) (re-seq #"\[\[([^\]]*)\]\]" text)))))})
 
 (defn parse
-  [title text]
-  (println text)
+  [title text*]
+  ;;(println text)
   (try
-    (let [config (DefaultConfigEnWp/generate)
+    (let [text (str/join "\n"
+                (str/split text* #"\."))
+          config (DefaultConfigEnWp/generate)
           engine (WtEngineImpl. config)
           page-title (PageTitle/make config title)
           page-id (PageId. page-title -1)
