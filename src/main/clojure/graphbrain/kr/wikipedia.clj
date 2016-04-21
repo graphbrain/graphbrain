@@ -43,7 +43,6 @@
 
 (defn parse2
   [title text]
-  (println text)
   {:links (into #{}
                 (map parse-link
                      (filter follow?
@@ -51,6 +50,7 @@
 
 (defn parse
   [title text]
+  (println text)
   (try
     (let [config (DefaultConfigEnWp/generate)
           engine (WtEngineImpl. config)
