@@ -44,18 +44,17 @@
 
 (defn parse2
   [title text]
+  (doseq [header (map #(% 1) (re-seq #"==([^=]*)==" text))]
+    (print header))
   {:links (into #{}
                 (map parse-link
                      (filter follow?
                              (map #(% 1) (re-seq #"\[\[([^\]]*)\]\]" text)))))})
 
 (defn parse
-  [title text*]
-  ;;(println text)
+  [title text]
   (try
-    (let [text (str/join "\n"
-                (str/split text* #"\."))
-          config (DefaultConfigEnWp/generate)
+    (let [config (DefaultConfigEnWp/generate)
           engine (WtEngineImpl. config)
           page-title (PageTitle/make config title)
           page-id (PageId. page-title -1)
@@ -75,7 +74,7 @@
   (map
    #(dissoc (assoc %
               :links (:links
-                      (parse title (:text %))))
+                      (parse2 title (:text %))))
             :text)
    revs))
 
