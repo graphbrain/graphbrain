@@ -234,7 +234,7 @@ public class WikiTextConverter extends AstVisitor<WtNode>
 
 	links.add(((WtText)link.getTarget().get(0)).getContent());
 
-	System.out.println(link.getPrefix());
+	System.out.println(link.getTarget());
 	write(link.getPrefix());
 	if (!link.hasTitle()) {
 	    iterate(link.getTarget());
