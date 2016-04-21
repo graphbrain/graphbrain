@@ -21,6 +21,13 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+# SYNOPSIS
+# ========
+#
+# This script reads a XML dump file in MediaWiki format and outputs it to
+# stdout, filtering out pages that are not part of the main namespace.
+
+
 import sys
 import re
 import sys
