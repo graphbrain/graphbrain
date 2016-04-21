@@ -320,6 +320,7 @@ public class WikiTextConverter extends AstVisitor<WtNode>
     */
 	
     public void visit(WtParagraph p) {
+	System.out.println(p);
 	iterate(p);
     }
 	
