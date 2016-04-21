@@ -261,7 +261,8 @@ public class WikiTextConverter extends AstVisitor<WtNode>
     public void visit(WtHeading heading) {
 	System.out.println(heading);
     }
-    
+
+    /*
     public void visit(WtSection s) {
 	finishLine();
 	StringBuilder saveSb = sb;
@@ -312,10 +313,10 @@ public class WikiTextConverter extends AstVisitor<WtNode>
 	    sections.removeLast();
 	sections.add(sections.removeLast() + 1);
     }
+    */
 	
     public void visit(WtParagraph p) {
 	iterate(p);
-	newline(2);
     }
 	
     public void visit(WtHorizontalRule hr) {}
@@ -332,7 +333,7 @@ public class WikiTextConverter extends AstVisitor<WtNode>
     // =========================================================================
     // Stuff we want to hide
 	
-    public void visit(WtImageLink n) {System.out.println(n);}
+    public void visit(WtImageLink n) {}
 	
     public void visit(WtIllegalCodePoint n) {}
 	
