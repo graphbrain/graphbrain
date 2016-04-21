@@ -51,7 +51,7 @@
 
 (defn parse3
   [title text]
-  (doseq [item (map #(% 1) (re-seq #"==([^=]*)==|\[\[([^\]]*)\]\]" text))]
+  (doseq [item (re-seq #"==([^=]*)==|\[\[([^\]]*)\]\]" text)]
     (println item))
   {:links #{}})
 
