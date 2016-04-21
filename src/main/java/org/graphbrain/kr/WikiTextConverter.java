@@ -155,6 +155,7 @@ public class WikiTextConverter extends AstVisitor<WtNode>
 	
     public void visit(WtNode n) {
 	// Fallback for all nodes that are not explicitly handled below
+	System.out.println(n);
 	write("<");
 	write(n.getNodeName());
 	write(" />");
