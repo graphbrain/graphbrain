@@ -44,12 +44,17 @@
 
 (defn parse2
   [title text]
-  (doseq [header (map #(% 1) (re-seq #"==([^=]*)==" text))]
-    (println header))
   {:links (into #{}
                 (map parse-link
                      (filter follow?
                              (map #(% 1) (re-seq #"\[\[([^\]]*)\]\]" text)))))})
+
+(defn parse3
+  [title text]
+  (doseq [item (map #(% 1) (re-seq #"==([^=]*)==|\[\[([^\]]*)\]\]" text))]
+    (println item))
+  {:links #{}})
+
 
 (defn parse
   [title text]
@@ -74,7 +79,7 @@
   (map
    #(dissoc (assoc %
               :links (:links
-                      (parse2 title (:text %))))
+                      (parse3 title (:text %))))
             :text)
    revs))
 
