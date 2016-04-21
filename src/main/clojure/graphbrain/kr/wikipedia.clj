@@ -72,7 +72,7 @@
   (map
    #(dissoc (assoc %
               :links (:links
-                      (parse2 title (:text %))))
+                      (parse title (:text %))))
             :text)
    revs))
 

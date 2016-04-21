@@ -56,20 +56,14 @@
   [page]
   (let [z (xml-zip page)
         title (xml1-> z :title text)]
-    (println (str "visiting: " title))
     (if (process? title)
       (do
         (println (str "processing article: " title))
         (let [revs (xml-> z :revision revision->map)]
-          (println (str "#revs " (count revs)))
           {:title title
            :redirect (xml1-> z :redirect (attr :title))
            :ns (xml1-> z :ns text)
            :revisions revs})))))
-
-(defn process-page!
-  [hg page]
-  (w/process-page! hg page))
 
 (defn process!
   [hg file-path]
@@ -81,4 +75,4 @@
           (filter #(= :page (:tag %)))
           (map page->map)
           (filter #(not (nil? %)))
-          (map #(process-page! hg %))))))
+          (map #(w/process-page! hg %))))))
