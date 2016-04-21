@@ -258,8 +258,8 @@ public class WikiTextConverter extends AstVisitor<WtNode>
 		
 	sb = saveSb;
 
-	// System.out.println(title);
-	// System.out.println(s.getLevel());
+	System.out.println(title);
+	System.out.println(s.getLevel());
 	
 	if (s.getLevel() >= 1) {
 	    while (sections.size() > s.getLevel())
