@@ -36,6 +36,7 @@ import org.sweble.wikitext.parser.nodes.WtNodeList;
 import org.sweble.wikitext.parser.nodes.WtOrderedList;
 import org.sweble.wikitext.parser.nodes.WtPageSwitch;
 import org.sweble.wikitext.parser.nodes.WtParagraph;
+import org.sweble.wikitext.parser.nodes.WtHeading;
 import org.sweble.wikitext.parser.nodes.WtSection;
 import org.sweble.wikitext.parser.nodes.WtTagExtension;
 import org.sweble.wikitext.parser.nodes.WtTemplate;
@@ -255,6 +256,10 @@ public class WikiTextConverter extends AstVisitor<WtNode>
 	}
 	write(link.getPostfix());
 	*/
+    }
+
+    public void visit(WtHeading heading) {
+	System.out.println(heading);
     }
     
     public void visit(WtSection s) {
