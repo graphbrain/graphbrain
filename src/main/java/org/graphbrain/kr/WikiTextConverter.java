@@ -378,8 +378,8 @@ public class WikiTextConverter extends AstVisitor<WtNode>
 	    if (needSpace)
 		length += 1;
 			
-	    if (line.length() + length >= wrapCol && line.length() > 0)
-		writeNewlines(1);
+	    /*if (line.length() + length >= wrapCol && line.length() > 0)
+	      writeNewlines(1);*/
 	}
 		
 	if (needSpace && needNewlines <= 0)
