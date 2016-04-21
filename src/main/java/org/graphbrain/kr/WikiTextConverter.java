@@ -182,6 +182,7 @@ public class WikiTextConverter extends AstVisitor<WtNode>
     }
     
     public void visit(WtText text) {
+	System.out.println(text);
 	write(text.getContent());
     }
 	
