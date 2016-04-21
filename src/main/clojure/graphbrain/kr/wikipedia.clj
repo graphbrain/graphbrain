@@ -146,8 +146,7 @@
                    with-link-changes
                    (with-beliefs title))]
       (doseq [r revs]
-        (doseq [b (:new-beliefs r)]
-          (println b)))
+        (println r))
       (ops/batch-exec!
        hg
        (flatten
