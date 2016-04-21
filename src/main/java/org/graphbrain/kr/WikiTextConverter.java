@@ -332,7 +332,7 @@ public class WikiTextConverter extends AstVisitor<WtNode>
     // =========================================================================
     // Stuff we want to hide
 	
-    public void visit(WtImageLink n) {}
+    public void visit(WtImageLink n) {System.out.println(n);}
 	
     public void visit(WtIllegalCodePoint n) {}
 	
