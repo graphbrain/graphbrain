@@ -55,11 +55,10 @@
 
 (defn parse
   [title text]
-  (:links
-   (reduce parse-item
-           {:links #{}
-            :cur-section nil}
-           (re-seq #"==([^=]*)==|\[\[([^\]]*)\]\]" text))))
+  (reduce parse-item
+          {:links #{}
+           :cur-section nil}
+          (re-seq #"==([^=]*)==|\[\[([^\]]*)\]\]" text)))
 
 (defn with-links
   [revs title]
