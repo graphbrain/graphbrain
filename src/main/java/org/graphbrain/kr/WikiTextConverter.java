@@ -172,7 +172,6 @@ public class WikiTextConverter extends AstVisitor<WtNode>
     }
     
     public void visit(WtText text) {
-	System.out.println("hhh");
 	write(text.getContent());
     }
 	
@@ -234,7 +233,8 @@ public class WikiTextConverter extends AstVisitor<WtNode>
 	catch (LinkTargetException e) {}
 
 	links.add(((WtText)link.getTarget().get(0)).getContent());
-	
+
+	System.out.println(link.getPrefix());
 	write(link.getPrefix());
 	if (!link.hasTitle()) {
 	    iterate(link.getTarget());
