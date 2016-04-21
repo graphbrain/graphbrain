@@ -25,7 +25,7 @@
             [graphbrain.hg.edge :as edge]
             [graphbrain.hg.constants :as const]
             [graphbrain.hg.beliefs :as beliefs])
-  (:import (org.sweble.wikitext.engine.utils DefaultConfigEnWp)
+  (:import (org.sweble.wikitext.engine.utils DefaultConfig)
            (org.sweble.wikitext.engine WtEngineImpl)
            (org.sweble.wikitext.engine PageTitle)
            (org.sweble.wikitext.engine PageId)
@@ -51,7 +51,7 @@
 (defn parse
   [title text]
   (try
-    (let [config (DefaultConfigEnWp/generate)
+    (let [config (DefaultConfig/generate)
           engine (WtEngineImpl. config)
           page-title (PageTitle/make config title)
           page-id (PageId. page-title -1)
