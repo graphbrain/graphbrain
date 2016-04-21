@@ -172,6 +172,7 @@ public class WikiTextConverter extends AstVisitor<WtNode>
     }
     
     public void visit(WtText text) {
+	System.out.println("hhh");
 	write(text.getContent());
     }
 	
@@ -245,8 +246,6 @@ public class WikiTextConverter extends AstVisitor<WtNode>
     }
     
     public void visit(WtSection s) {
-	System.out.println("hello!");
-	
 	finishLine();
 	StringBuilder saveSb = sb;
 	boolean saveNoWrap = noWrap;
@@ -260,8 +259,8 @@ public class WikiTextConverter extends AstVisitor<WtNode>
 		
 	sb = saveSb;
 
-	System.out.println(title);
-	System.out.println(s.getLevel());
+	// System.out.println(title);
+	// System.out.println(s.getLevel());
 	
 	if (s.getLevel() >= 1) {
 	    while (sections.size() > s.getLevel())
