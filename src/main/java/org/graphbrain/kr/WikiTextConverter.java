@@ -245,6 +245,8 @@ public class WikiTextConverter extends AstVisitor<WtNode>
     }
     
     public void visit(WtSection s) {
+	System.out.println("hello!");
+	
 	finishLine();
 	StringBuilder saveSb = sb;
 	boolean saveNoWrap = noWrap;
