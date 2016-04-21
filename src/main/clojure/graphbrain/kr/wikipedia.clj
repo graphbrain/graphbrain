@@ -78,11 +78,12 @@
 
 (defn title->symbol
   [title]
-  (let [link (first
-              (clojure.string/split title #"#"))]
-    (if (not (empty? link))
-      (sym/build
-       [(sym/str->symbol link) "enwiki"]))))
+  (if title
+    (let [link (first
+                (clojure.string/split title #"#"))]
+      (if (not (empty? link))
+        (sym/build
+         [(sym/str->symbol link) "enwiki"])))))
 
 (defn rev-with-link-changes
   [prev-rev rev]
