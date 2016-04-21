@@ -49,19 +49,21 @@
                      (filter follow?
                              (map #(% 1) (re-seq #"\[\[([^\]]*)\]\]" text)))))})
 
-(defn gen-link
-  [state item]
-  (let [link (parse-link item)]
-    (if (:cur-section state)
-      [(:cur-section state) link]
-      link)))
+(defn link-tuple
+  [state link]
+  (if (:cur-section state)
+    [(:cur-section state) link]
+    link))
 
 (defn parse-item
   [state item]
   (if (item 1)
     (assoc state :cur-section (item 1))
-    (assoc state :links
-           (conj (:links state) (gen-link state (item 2))))))
+    (let [link (parse-link (item 2))]
+      (if (follow? link)
+        (assoc state :links
+               (conj (:links state) (link-tuple state link)))
+        state))))
 
 (defn parse3
   [title text]
