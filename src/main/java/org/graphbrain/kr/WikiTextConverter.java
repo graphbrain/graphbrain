@@ -155,7 +155,6 @@ public class WikiTextConverter extends AstVisitor<WtNode>
 	
     public void visit(WtNode n) {
 	// Fallback for all nodes that are not explicitly handled below
-	System.out.println(n);
 	write("<");
 	write(n.getNodeName());
 	write(" />");
@@ -259,12 +258,15 @@ public class WikiTextConverter extends AstVisitor<WtNode>
 	*/
     }
 
+    /*
     public void visit(WtHeading heading) {
 	System.out.println(heading);
-    }
+    }*/
 
-    /*
     public void visit(WtSection s) {
+	System.out.println(s);
+    }
+	/*
 	finishLine();
 	StringBuilder saveSb = sb;
 	boolean saveNoWrap = noWrap;
