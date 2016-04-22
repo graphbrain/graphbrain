@@ -137,6 +137,10 @@
   [words]
   {:vertex (str (words->id words) "/eco")})
 
+(defn id->vertex
+  [id]
+  {:vertex id})
+
 (defn edge
   [& parts]
   (let [lparts (map #(if (and (coll? %) (not (map? %))) % [%]) parts)]
