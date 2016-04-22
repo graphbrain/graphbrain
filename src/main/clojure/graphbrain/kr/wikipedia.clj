@@ -25,6 +25,9 @@
             [graphbrain.hg.edge :as edge]
             [graphbrain.hg.constants :as const]
             [graphbrain.hg.beliefs :as beliefs]
+            [graphbrain.eco.eco :as eco]
+            [graphbrain.eco.words :as words]
+            [graphbrain.eco.parsers.header :as parser]
             [clojure.string :as str]))
 
 (defn follow?
@@ -37,16 +40,59 @@
   (first
    (clojure.string/split link #"\|")))
 
+(defn title->symbol
+  [title]
+  (if title
+    (let [link (first
+                (clojure.string/split title #"#"))]
+      (if (not (empty? link))
+        (sym/build
+         [(sym/str->symbol link) "enwiki"])))))
+
 (defn link-tuple
   [state link]
-  (if (:cur-section state)
-    [(:cur-section state) link]
-    [link]))
+  (let [link* (title->symbol link)]
+    (if (:cur-section state)
+      [(:cur-section state) link*]
+      [link*])))
+
+(defn clean-header
+  [header]
+  (str/replace-first
+   (str/replace-first header #"'*$" "")
+   #"^'*" ""))
+
+(defn- sentence->result
+  [sentence]
+  (let [env {:root "eco/1"
+             :user "eco/1"}
+        words (words/str->words sentence)
+        par (eco/parse parser/header words env)
+        vws (map eco/vert+weight par)
+        res (eco/verts+weights->vertex parser/header vws env)]
+    res))
+
+(defn header->symbol
+  [header]
+  (println (sentence->result header))
+  (sym/build
+   [(sym/str->symbol header) "header"]))
+
+(defn parse-header
+  [header]
+  (let [header* (str/trim header)
+        link (re-find #"\[\[([^\]]*)\]\]" header*)]
+    (if link
+      (title->symbol
+       (parse-link (link 1)))
+      (header->symbol
+       (clean-header header*)))))
 
 (defn parse-item
   [state item]
   (if (item 1)
-    (assoc state :cur-section (item 1))
+    (assoc state :cur-section
+           (parse-header (item 1)))
     (let [link (parse-link (item 2))]
       (if (follow? link)
         (assoc state :links
@@ -62,22 +108,12 @@
 
 (defn with-links
   [revs title]
-  ;;(println "with-links...")
   (map
    #(dissoc (assoc %
               :links (:links
                       (parse title (:text %))))
             :text)
    revs))
-
-(defn title->symbol
-  [title]
-  (if title
-    (let [link (first
-                (clojure.string/split title #"#"))]
-      (if (not (empty? link))
-        (sym/build
-         [(sym/str->symbol link) "enwiki"])))))
 
 (defn rev-with-link-changes
   [prev-rev rev]
@@ -92,7 +128,6 @@
 
 (defn with-link-changes
   [revs]
-  ;;(println "with-link-changes...")
   (loop [prev-rev {}
          rev (first revs)
          rest-revs (rest revs)
@@ -110,12 +145,11 @@
           (map
            #(apply vector
                    (flatten
-                    ["related/1" (title->symbol title) (map title->symbol %)]))
+                    ["related/1" (title->symbol title) %]))
            (key rev))))
 
 (defn with-beliefs
   [revs title]
-  ;;(println "with-beliefs...")
   (map #(assoc %
           :new-beliefs (into #{} (revision->beliefs title % :new-links))
           :lost-beliefs (into #{} (revision->beliefs title % :lost-links)))
@@ -145,7 +179,7 @@
                    (with-links title)
                    with-link-changes
                    (with-beliefs title))]
-      (doseq [r revs]
+      #_(doseq [r revs]
         (println r))
       (ops/batch-exec!
        hg
