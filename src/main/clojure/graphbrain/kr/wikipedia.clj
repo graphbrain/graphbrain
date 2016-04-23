@@ -74,9 +74,14 @@
 
 (defn header->symbol
   [header]
-  (println (sentence->result header))
-  (sym/build
-   [(sym/str->symbol header) "header"]))
+  (if (and
+       (> (count header) 0)
+       (< (count header) 150))
+    (do
+      (println (str ">>>" header "<<<"))
+      (println (sentence->result header))
+      (sym/build
+       [(sym/str->symbol header) "header"]))))
 
 (defn parse-header
   [header]
@@ -85,8 +90,9 @@
     (if link
       (title->symbol
        (parse-link (link 1)))
-      (header->symbol
-       (clean-header header*)))))
+      (if header*
+        (header->symbol
+         (clean-header header*))))))
 
 (defn parse-item
   [state item]
