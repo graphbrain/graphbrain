@@ -118,12 +118,16 @@
   (= (take-last (count words2) words1) words2))
 
 (defn words->id
-  [words]
-  (sym/str->symbol (clojure.string/join " " (map :word words))))
+  [words key]
+  (sym/str->symbol (clojure.string/join " " (map key words))))
 
 (defn entity
   [words]
-  {:vertex (words->id words)})
+  {:vertex (words->id words :word)})
+
+(defn lemma
+  [words]
+  {:vertex (words->id words :lemma)})
 
 (defn user
   [env]
@@ -135,7 +139,7 @@
 
 (defn rel
   [words]
-  {:vertex (str (words->id words) "/eco")})
+  {:vertex (str (words->id words :word) "/eco")})
 
 (defn id->vertex
   [id]

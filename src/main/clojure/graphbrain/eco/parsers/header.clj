@@ -25,70 +25,18 @@
 (ecoparser header)
 
 (pattern :normal header
-         "(object) [rel] (object)"
-         [x0 "-lcb-", a ?, x1 "-rcb-",
-          x2 "-lsb-", r ?, x3 "-rsb-"
-          x4 "-lcb-", b ?, x5 "-rcb-"]
-         (let [orig (! a)
-               targ (! b)
-               rel (rel r)]
-           (edge rel orig targ)))
-
-(pattern :top header
-         "x verb y: z"
-         [x ???
-          v verb
-          y ???
-          collon ":"
-          z ???]
-         (let [r (str (words->id v)
-                      "_"
-                      (words->id y)
-                      "/eco")
-               owner (! x)
-               class (! y)
-               thing (! z)
-               e1 (edge r owner thing)
-               e2 (edge "is/eco" thing class)]
-           (edges e1 e2)))
-
-(pattern :normal header
-         "with a"
-         [xwith "with", x1 "a", a ?, x2 ",", b ?, verb verb, c ?]
-         (let [x (! a)
-               y (! b)
-               z (! (concat b verb c))
-               k ["has/eco" y x]]
-           (edge "list/eco" k z)))
-
-(pattern :normal header
-         "something verb something AND verb something"
-         [a ?, verb1 verb, b ?, xand1 "and", verb2 verb, c ?]
-         (let [x (concat a verb1 b)
-               y (concat a verb2 c)]
-           (edge "list/eco" (! x) (! y))))
-
-(pattern :normal header
-         "something verb something IND something AND something IND something"
-         [a ?, verb verb, b ?, in1 ind, c ?, xand3 "and", d ?, in2 ind, e ?]
-         (if (not (ends-with (concat in1 c) (concat in2 e)))
-           (let [x (! (concat a verb b in1 c))
-                 y (! (concat a verb d in2 e))]
-             (edge "list/eco" x y))))
-
-(pattern :normal header
          "something verb something AND something IND something"
          [a ?, verb verb, b ?, xand4 "and", c ?, in ind, d ?]
          (let [x (! (concat a verb b in d))
                y (! (concat a verb c in d))]
-           (edge "list/eco" x y)))
+           (edge (id->vertex "list/eco") x y)))
 
 (pattern :normal header
          "something verb something and something"
          [a ?, verb verb, b ?, xand5 "and", c ?]
          (let [x (concat a verb b)
                y (concat a verb c)]
-           (edge "list/eco" x y)))
+           (edge (id->vertex "list/eco") x y)))
 
 (pattern :normal header
          "something verb IND something"
@@ -124,10 +72,25 @@
 
 (pattern :normal header
          "of"
-         [a ?, xof "of", b verb]
+         [a ?, xof "of", b ?]
          (let [x (! a)
                y (! b)]
            (edge (id->vertex "of/eco") x y)))
+
+(pattern :normal header
+         "something IND something"
+         [a ?, ind ind, c ?]
+         (let [orig (! a)
+               rel (rel ind)
+               targ (! c)]
+           (edge rel orig targ)))
+
+(pattern :normal header
+         "IND something"
+         [ind ind, a ?]
+         (let [rel (rel ind)
+               targ (! a)]
+           (edge rel targ)))
 
 (pattern :normal header
          "possessive with 's"
@@ -159,10 +122,18 @@
            (edge (id->vertex "prop/eco") x y)))
 
 (pattern :normal header
-         "remove stuff in parenthesis"
-         [a ?,
-          x0 "-lrb-", b ?, x1 "-rrb-"]
-         (! a))
+         "parenthesis after"
+         [a ?, x0 "-lrb-", b ?, x1 "-rrb-"]
+         (let [main-fact (! a)
+               related (! b)]
+           (edge (id->vertex "related/eco") main-fact related)))
+
+(pattern :normal header
+         "parenthesis before"
+         [x0 "-lrb-", b ?, x1 "-rrb-", a ?]
+         (let [main-fact (! b)
+               related (! a)]
+           (edge (id->vertex "related/eco") main-fact related)))
 
 (pattern :normal header
          "remove 'the' determinate article"
@@ -188,12 +159,17 @@
          (! no-stop))
 
 (pattern :normal header
+         "remove question mark"
+         [no-qm ?, qm "?"]
+         (! no-qm))
+
+(pattern :normal header
          "object with no verb"
          [obj !verb]
-         (entity obj))
+         (lemma obj))
 
 (pattern :normal header
          "object"
          [obj ?]
-         (entity obj))
+         (lemma obj))
 
