@@ -69,4 +69,3 @@
           ;; TODO: in case of tie, return highest degree
           ;;(apply max-key :degree high-scores))
           (:symbol (first high-scores)))))))
-

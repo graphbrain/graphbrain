@@ -28,6 +28,7 @@
             [graphbrain.eco.eco :as eco]
             [graphbrain.eco.words :as words]
             [graphbrain.eco.parsers.header :as parser]
+            [graphbrain.disambig.edgeguesser :as eg]
             [clojure.string :as str]))
 
 (defn follow?
@@ -72,33 +73,37 @@
         res (eco/verts+weights->vertex parser/header vws env)]
     res))
 
-(defn header->symbol
-  [header]
-  (if (and
-       (> (count header) 0)
-       (< (count header) 150))
-    (do
-      (println (str ">>>" header "<<<"))
-      (println (sentence->result header))
-      (sym/build
-       [(sym/str->symbol header) "header"]))))
+(defn header->symbol+def
+  [hg header text]
+  (let [link (re-find #"\[\[([^\]]*)\]\]" header)]
+    (if link
+      [(title->symbol
+        (parse-link (link 1)))
+       nil]
+      (if (and
+           (> (count header) 0)
+           (< (count header) 150))
+        (let [header* (clean-header header)
+              symbol (sym/build
+                      [(sym/str->symbol header*) "header"])
+              definition (eg/guess hg (sentence->result header*) text)]
+          (println definition)
+          [symbol definition])))))
 
 (defn parse-header
-  [header]
-  (let [header* (str/trim header)
-        link (re-find #"\[\[([^\]]*)\]\]" header*)]
-    (if link
-      (title->symbol
-       (parse-link (link 1)))
-      (if header*
-        (header->symbol
-         (clean-header header*))))))
+  [hg state header text]
+  (let [headers (:headers state)
+        header* (str/trim header)
+        headers* (if (headers header*) headers
+                     (assoc headers header* (header->symbol+def hg header* text)))]
+    (assoc state
+      :cur-section (first (headers* header*))
+      :headers headers*)))
 
 (defn parse-item
-  [state item]
+  [hg state item text]
   (if (item 1)
-    (assoc state :cur-section
-           (parse-header (item 1)))
+    (parse-header hg state (item 1) text)
     (let [link (parse-link (item 2))]
       (if (follow? link)
         (assoc state :links
@@ -106,20 +111,24 @@
         state))))
 
 (defn parse
-  [title text]
-  (reduce parse-item
-          {:links #{}
-           :cur-section nil}
-          (re-seq #"==([^=]*)==|\[\[([^\]]*)\]\]" text)))
+  [hg page revision text]
+  (let [state (reduce #(parse-item hg %1 %2 text)
+                      {:links #{}
+                       :cur-section nil
+                       :headers (:headers page)}
+                      (re-seq #"==([^=]*)==|\[\[([^\]]*)\]\]" (:text revision)))]
+    (assoc page
+      :revisions (conj (:revisions page) (assoc revision :links (:links state)))
+      :headers (:headers state))))
 
-(defn with-links
-  [revs title]
-  (map
-   #(dissoc (assoc %
-              :links (:links
-                      (parse title (:text %))))
-            :text)
-   revs))
+(defn with-links-and-headers
+  [hg page]
+  (let [text (:text (last (:revisions page)))]
+    (reduce #(parse hg %1 %2 text)
+            (assoc page
+              :revisions []
+              :headers {})
+            (:revisions page))))
 
 (defn rev-with-link-changes
   [prev-rev rev]
@@ -133,17 +142,18 @@
             :links)))
 
 (defn with-link-changes
-  [revs]
-  (loop [prev-rev {}
-         rev (first revs)
-         rest-revs (rest revs)
-         result []]
-    (if (nil? rev)
-      result
-      (recur rev
-             (first rest-revs)
-             (rest rest-revs)
-             (conj result (rev-with-link-changes prev-rev rev))))))
+  [page]
+  (let [revs (:revisions page)]
+    (loop [prev-rev {}
+           rev (first revs)
+           rest-revs (rest revs)
+           result []]
+      (if (nil? rev)
+        (assoc page :revisions result)
+        (recur rev
+               (first rest-revs)
+               (rest rest-revs)
+               (conj result (rev-with-link-changes prev-rev rev)))))))
 
 (defn revision->beliefs
   [title rev key]
@@ -155,11 +165,13 @@
            (key rev))))
 
 (defn with-beliefs
-  [revs title]
-  (map #(assoc %
-          :new-beliefs (into #{} (revision->beliefs title % :new-links))
-          :lost-beliefs (into #{} (revision->beliefs title % :lost-links)))
-       revs))
+  [page]
+  (assoc page :revisions
+         (let [title (:title page)]
+           (map #(assoc %
+                   :new-beliefs (into #{} (revision->beliefs title % :new-links))
+                   :lost-beliefs (into #{} (revision->beliefs title % :lost-links)))
+                (:revisions page)))))
 
 (defn user->symbol
   [user]
@@ -181,12 +193,13 @@
       (beliefs/add! hg user b))
     (let [title (:title page)
           title-sym (title->symbol title)
-          revs (-> (:revisions page)
-                   (with-links title)
-                   with-link-changes
-                   (with-beliefs title))]
+          revs (:revisions
+                (->> page
+                     (with-links-and-headers hg)
+                     with-link-changes
+                     with-beliefs))]
       #_(doseq [r revs]
-        (println r))
+        (println (:new-beliefs r)))
       (ops/batch-exec!
        hg
        (flatten
