@@ -58,6 +58,9 @@
     name
     (let [text (clojure.string/lower-case text)
           can-mean (ops/symbols-with-root hg name)]
+      (println (str "name: " name))
+      (doseq [cm can-mean]
+            (println (str "===} " cm)))
       (if (empty? can-mean)
         (symb/new-meaning (symb/str->symbol name))
         (let [scored (map #(hash-map
@@ -65,7 +68,12 @@
                             :score (text-score hg text %))
                           can-mean)
               max-score (apply max (map :score scored))
-              high-scores (filter #(>= (:score %) max-score) scored)]
-          ;; TODO: in case of tie, return highest degree
-          ;;(apply max-key :degree high-scores))
+              high-scores (filter #(>= (:score %) max-score) scored)
+              high-scores (map
+                           #(assoc %
+                              :degree (ops/degree hg (:symbol %)))
+                           high-scores)]
+          ;; in case of tie, return highest degree
+          (println (str "max-key: " (apply max-key :degree high-scores)
+                        "; max-score: " max-score))
           (:symbol (first high-scores)))))))

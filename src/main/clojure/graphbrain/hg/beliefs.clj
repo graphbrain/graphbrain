@@ -34,7 +34,7 @@
   [hg source edges & {:keys [timestamp] :or {timestamp -1}}]
   (if (coll? (first edges))
     (let [sources (map #(vector const/source % source) edges)
-          all-edges (union edges sources)]
+          all-edges (into [] (union edges sources))]
       (ops/add! hg all-edges :timestamp timestamp))
     (ops/add! hg [edges [const/source edges source]] :timestamp timestamp)))
 
