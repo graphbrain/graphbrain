@@ -20,7 +20,6 @@
 
 (ns graphbrain.kr.wordnet
   (:require [graphbrain.hg.beliefs :as beliefs]
-            [graphbrain.hg.ops :as ops]
             [graphbrain.hg.symbol :as sym]
             [graphbrain.hg.constants :as const])
   (:import (org.w3c.dom ElementTraversal)
@@ -61,7 +60,7 @@
         sts (super-types word)
         stids (if sts (map #(word->symb %) sts))
         classes (if sts stids)
-        hash (sym/hashed (str symb " " (clojure.string/join " " stids)))]
+        hash (sym/hashed "WN" (str symb " " (clojure.string/join " " stids)))]
     (str symb "/" hash)))
 
 (def word->symb (memoize word->symb-raw))

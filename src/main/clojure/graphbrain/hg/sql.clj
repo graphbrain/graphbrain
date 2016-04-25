@@ -143,12 +143,22 @@
   [conn vert-str]
   (jdbc/execute! conn ["UPDATE vertices SET degree=degree-1 WHERE id=?" vert-str]))
 
+(defn- update-or-insert!
+  "Updates columns or inserts a new row in the specified table"
+  [conn table row where-clause]
+  (jdbc/with-db-transaction [trans-conn conn]
+    (let [result (jdbc/update! trans-conn table row where-clause)]
+      (if (zero? (first result))
+        (jdbc/insert! trans-conn table row)
+        result))))
+
 (defn- add-str!
   "Adds the given vertex, represented as a string."
   [conn vert-str degree timestamp]
-  (jdbc/insert! conn :vertices {:id vert-str
-                                :degree degree
-                                :timestamp timestamp}))
+  (update-or-insert! conn :vertices {:id vert-str
+                                     :degree degree
+                                     :timestamp timestamp}
+                     ["id=?" vert-str]))
 
 (defn- add-raw!
   "Auxiliary function for add! to call from inside a transaction."

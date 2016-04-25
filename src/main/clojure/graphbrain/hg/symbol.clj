@@ -24,12 +24,14 @@
 
 (defn hashed
   "Creates an hash code for a string."
-  [str]
-  (let [h (loop [s str
-                 x 1125899906842597]  ;; prime
-            (if (empty? s) x
-              (recur (rest s) (unchecked-multiply 31 (+ x (long (first s)))))))]
-    (Long/toHexString h)))
+  ([txt]
+     (let [h (loop [s txt
+                    x 1125899906842597]  ;; prime
+               (if (empty? s) x
+                   (recur (rest s) (unchecked-multiply 31 (+ x (long (first s)))))))]
+       (Long/toHexString h)))
+  ([prefix txt]
+     (str prefix (hashed txt))))
 
 (defn random-hash
   "Creates random hash code."
