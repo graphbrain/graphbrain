@@ -20,6 +20,7 @@
 
 (ns graphbrain.kr.wordnet
   (:require [graphbrain.hg.beliefs :as beliefs]
+            [graphbrain.hg.ops :as ops]
             [graphbrain.hg.symbol :as sym]
             [graphbrain.hg.constants :as const])
   (:import (org.w3c.dom ElementTraversal)
@@ -37,6 +38,7 @@
   [hg fact]
   (println (str "fact: " fact))
   (swap! facts #(conj % fact))
+  ;;(beliefs/add! hg const/wordnet fact)
   (if (> (count @facts) 100)
     (do
       (beliefs/add! hg const/wordnet @facts)
@@ -160,4 +162,6 @@
 (defn import!
   [hg]
   (let [dictionary (Dictionary/getDefaultResourceInstance)]
-    (process! hg dictionary)))
+    (process! hg dictionary)
+    ;; add remaining facts
+    (beliefs/add! hg const/wordnet @facts)))

@@ -129,10 +129,9 @@
 (defn exists?
   "Checks if the given vertex exists in the hypergraph."
   [conn vertex]
-  (pos?
-   (count
-    (jdbc/query conn ["SELECT id FROM vertices WHERE id=?"
-                      (ed/edge->str vertex)]))))
+  (> (count
+      (pattern->edges conn vertex))
+     0))
 
 (defn- inc-degree!
   "Increments the degree of a vertex."
