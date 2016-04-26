@@ -65,7 +65,7 @@
 
 (defn- sentence->result
   [sentence]
-  (println (str "+" sentence))
+  #_(println (str "+" sentence))
   (let [env {:root "eco/1"
              :user "eco/1"}
         words (words/str->words sentence)
@@ -83,7 +83,7 @@
        nil]
       (if (and
            (> (count header) 0)
-           (< (count header) 150))
+           (< (count header) 70))
         (let [header* (clean-header header)
               definition (sentence->result header*)
               definition* (eg/guess hg definition text)
@@ -217,17 +217,18 @@
 
 (defn process-title!
   [hg symbol title text]
-  (let [title* (str/trim title)
-        title* (clean-header title*)
-        definition (sentence->result title*)
-        definition* (eg/guess hg definition text)
-        parts (participants definition*)
-        parts (filter #(not (nil? %)) parts)
-        facts (map #(vector "related/2" symbol %) parts)
-        facts (conj facts ["definition/1" symbol definition*])]
-    #_(println facts)
-    (if (not (empty? facts))
-      (beliefs/add! hg "graphbrain/1" facts))))
+  (if (< (count title) 70)
+    (let [title* (str/trim title)
+          title* (clean-header title*)
+          definition (sentence->result title*)
+          definition* (eg/guess hg definition text)
+          parts (participants definition*)
+          parts (filter #(not (nil? %)) parts)
+          facts (map #(vector "related/2" symbol %) parts)
+          facts (conj facts ["definition/1" symbol definition*])]
+      #_(println facts)
+      (if (not (empty? facts))
+        (beliefs/add! hg "graphbrain/1" facts)))))
 
 (defn process-page!
   [hg page]
