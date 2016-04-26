@@ -65,7 +65,7 @@
 
 (defn- sentence->result
   [sentence]
-  #_(println (str "+" sentence))
+  (println (str "+" sentence "+"))
   (let [env {:root "eco/1"
              :user "eco/1"}
         words (words/str->words sentence)
@@ -98,7 +98,8 @@
   (let [headers (:headers state)
         header* (str/trim header)
         headers* (if (headers header*) headers
-                     (assoc headers header* (header->symbol+def hg header* text)))]
+                     (assoc headers header*
+                            (header->symbol+def hg header* text)))]
     (assoc state
       :cur-section (first (headers* header*))
       :headers headers*)))
