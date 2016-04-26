@@ -84,11 +84,13 @@
            (> (count header) 0)
            (< (count header) 150))
         (let [header* (clean-header header)
+              definition (sentence->result header*)
+              definition* (eg/guess hg definition text)
               symbol (sym/build
-                      [(sym/str->symbol header*) "header"])
-              definition (eg/guess hg (sentence->result header*) text)]
-          (println definition)
-          [symbol definition])))))
+                      [(sym/str->symbol header*)
+                       (sym/hashed "header" (sym/symbol->str definition))])]
+          ;;(println definition*)
+          [symbol definition*])))))
 
 (defn parse-header
   [hg state header text]
@@ -122,13 +124,12 @@
       :headers (:headers state))))
 
 (defn with-links-and-headers
-  [hg page]
-  (let [text (:text (last (:revisions page)))]
-    (reduce #(parse hg %1 %2 text)
-            (assoc page
-              :revisions []
-              :headers {})
-            (:revisions page))))
+  [hg text page]
+  (reduce #(parse hg %1 %2 text)
+          (assoc page
+            :revisions []
+            :headers {})
+          (:revisions page)))
 
 (defn rev-with-link-changes
   [prev-rev rev]
@@ -185,6 +186,48 @@
       (sym/build
        [(sym/str->symbol user) "enwikiusr"]))))
 
+(defn participants
+  [edge]
+  (if (coll? edge)
+    (into []
+          (flatten (clojure.set/union
+                    (map participants (rest edge)))))
+    [edge]))
+
+(defn process-headers!
+  [hg headers]
+  (let [facts (loop [headers* headers
+                     facts []]
+                (if (empty? headers*)
+                  facts
+                  (let [header (first headers*)
+                        s+d (second header)
+                        symbol (first s+d)
+                        definition (second s+d)
+                        parts (participants definition)
+                        parts (filter #(not (nil? %)) parts)
+                        facts* (map #(vector "related/2" symbol %) parts)
+                        facts* (conj facts* ["definition/1" symbol definition])]
+                    (recur (rest headers*)
+                           (into [] (clojure.set/union facts facts*))))))]
+    (println facts)
+    (if (not (empty? facts))
+      (beliefs/add! hg "graphbrain/1" facts))))
+
+(defn process-title!
+  [hg symbol title text]
+  (let [title* (str/trim title)
+        title* (clean-header title*)
+        definition (sentence->result title*)
+        definition* (eg/guess hg definition text)
+        parts (participants definition*)
+        parts (filter #(not (nil? %)) parts)
+        facts (map #(vector "related/2" symbol %) parts)
+        facts (conj facts ["definition/1" symbol definition*])]
+    #_(println facts)
+    (if (not (empty? facts))
+      (beliefs/add! hg "graphbrain/1" facts))))
+
 (defn process-page!
   [hg page]
   (if-let [redirect (:redirect page)]
@@ -193,13 +236,18 @@
       (beliefs/add! hg user b))
     (let [title (:title page)
           title-sym (title->symbol title)
-          revs (:revisions
-                (->> page
-                     (with-links-and-headers hg)
-                     with-link-changes
-                     with-beliefs))]
+          text (:text (last (:revisions page)))
+          page (->> page
+                    (with-links-and-headers hg text)
+                    with-link-changes
+                    with-beliefs)
+          revs (:revisions page)]
+      (process-title! hg title-sym title text)
+      #_(println "HEADERS")
+      #_(println (:headers page))
       #_(doseq [r revs]
-        (println (:new-beliefs r)))
+        (println (str "NEW BELIEFS =>"(:new-beliefs r))))
+      (process-headers! hg (:headers page))
       (ops/batch-exec!
        hg
        (flatten
