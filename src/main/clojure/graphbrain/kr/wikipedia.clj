@@ -65,6 +65,7 @@
 
 (defn- sentence->result
   [sentence]
+  (println (str "+" sentence))
   (let [env {:root "eco/1"
              :user "eco/1"}
         words (words/str->words sentence)
