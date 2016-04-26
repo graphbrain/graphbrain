@@ -62,7 +62,7 @@
           can-mean (filter #(clojure.string/starts-with? (symb/nspace %) "WN")
                            can-mean)]
       (if (empty? can-mean)
-        (symb/new-meaning (symb/str->symbol name))
+        (symb/new-meaning "WN?" (symb/str->symbol name))
         (let [scored (map #(hash-map
                             :symbol %
                             :score (text-score hg text %))
