@@ -33,6 +33,15 @@
   (try (jdbc/db-do-commands dbs sql)
     (catch Exception e)))
 
+(defn- update-or-insert!
+  "Updates columns or inserts a new row in the specified table"
+  [conn table row where-clause]
+  (jdbc/with-db-transaction [trans-conn conn]
+    (let [result (jdbc/update! trans-conn table row where-clause)]
+      (if (zero? (first result))
+        (jdbc/insert! trans-conn table row)
+        result))))
+
 (defn- do-with-edge-permutations!
   "Applies the function f to all permutations of the given edge."
   [edge f]
@@ -46,13 +55,22 @@
                (range nperms))]
     (doseq [perm-str perms] (f perm-str))))
 
+(defn- add-str!
+  "Adds the given vertex, represented as a string."
+  [conn vert-str degree timestamp]
+  (update-or-insert! conn :vertices {:id vert-str
+                                     :degree degree
+                                     :timestamp timestamp}
+                     ["id=?" vert-str]))
+
+
 (defn- write-edge-permutations!
   "Writes all permutations of the given edge."
   [conn edge]
-  (do-with-edge-permutations! edge #(jdbc/execute!
-                                     conn
-                                     ["INSERT INTO perms (id) VALUES (?)"
-                                      (ed/edge->str %)])))
+  (do-with-edge-permutations! edge #(let [id (ed/edge->str %)]
+                                      (update-or-insert! conn :perms
+                                                         {:id id}
+                                                         ["id=?" id]))))
 
 (defn- remove-edge-permutations!
   "Removes all permutations of the given edge."
@@ -142,15 +160,6 @@
   "Decrements the degree of a vertex."
   [conn vert-str]
   (jdbc/execute! conn ["UPDATE vertices SET degree=degree-1 WHERE id=?" vert-str]))
-
-(defn- update-or-insert!
-  "Updates columns or inserts a new row in the specified table"
-  [conn table row where-clause]
-  (jdbc/with-db-transaction [trans-conn conn]
-    (let [result (jdbc/update! trans-conn table row where-clause)]
-      (if (zero? (first result))
-        (jdbc/insert! trans-conn table row)
-        result))))
 
 (defn- add-str!
   "Adds the given vertex, represented as a string."

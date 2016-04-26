@@ -57,10 +57,10 @@
   (if (not (symb/root? name))
     name
     (let [text (clojure.string/lower-case text)
-          can-mean (ops/symbols-with-root hg name)]
-      (println (str "name: " name))
-      (doseq [cm can-mean]
-            (println (str "===} " cm)))
+          can-mean (ops/symbols-with-root hg name)
+          ;; Only match WordNet entitites for now
+          can-mean (filter #(clojure.string/starts-with? (symb/nspace %) "WN")
+                           can-mean)]
       (if (empty? can-mean)
         (symb/new-meaning (symb/str->symbol name))
         (let [scored (map #(hash-map
@@ -74,6 +74,4 @@
                               :degree (ops/degree hg (:symbol %)))
                            high-scores)]
           ;; in case of tie, return highest degree
-          (println (str "max-key: " (apply max-key :degree high-scores)
-                        "; max-score: " max-score))
-          (:symbol (first high-scores)))))))
+          (:symbol (apply max-key :degree high-scores)))))))
