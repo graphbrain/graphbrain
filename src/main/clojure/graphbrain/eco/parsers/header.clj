@@ -104,7 +104,7 @@
          [v verb, obj ?]
          (let [v-vert (! v)
                obj-vert (! obj)]
-           (edge (id->vertex "action/eco") v-vert obj-vert)))
+           (edge v-vert obj-vert)))
 
 (pattern :normal header
          "something in something"

@@ -101,10 +101,12 @@
 (defn new-meaning
   "Creates a new symbol for the given root.
    If given symbols is not a root, return it unchanged."
-  [symb]
-  (if (root? symb)
-    (build [symb (random-hash)])
-    symb))
+  ([prefix symb]
+     (if (root? symb)
+       (build [symb (str prefix (random-hash))])
+       symb))
+  ([symb]
+     (new-meaning "" symb)))
 
 (defn negative?
   "Check if symbol is negative."
