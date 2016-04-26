@@ -210,7 +210,7 @@
                         facts* (conj facts* ["definition/1" symbol definition])]
                     (recur (rest headers*)
                            (into [] (clojure.set/union facts facts*))))))]
-    (println facts)
+    #_(println facts)
     (if (not (empty? facts))
       (beliefs/add! hg "graphbrain/1" facts))))
 

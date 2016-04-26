@@ -100,6 +100,13 @@
            (edge (id->vertex "poss/eco") x y)))
 
 (pattern :normal header
+         "possessive with '"
+         [a ?, xs "'", b ?]
+         (let [x (! a)
+               y (! b)]
+           (edge (id->vertex "poss/eco") x y)))
+
+(pattern :normal header
          "action"
          [v verb, obj ?]
          (let [v-vert (! v)
@@ -108,10 +115,18 @@
 
 (pattern :normal header
          "something in something"
-         [a ?, xin "in", b !verb]
+         [a ?, xin "in", b ?]
          (let [x (! a)
                y (! b)
                r (rel xin)]
+           (edge r x y)))
+
+(pattern :normal header
+         "something and something"
+         [a ?, xand "and", b ?]
+         (let [x (! a)
+               y (! b)
+               r (rel xand)]
            (edge r x y)))
 
 (pattern :normal header
