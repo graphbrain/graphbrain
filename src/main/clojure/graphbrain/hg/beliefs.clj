@@ -42,7 +42,7 @@
   "Set of sources (nodes) that support a statement (edge)."
   [hg edge]
   (set (map #(nth % 2)
-        (ops/pattern->edges hg [const/source edge nil]))))
+            (ops/pattern->edges hg [const/source edge nil]))))
 
 (defn remove!
   "A belif is a fact with a source. The link from the source to the fact
