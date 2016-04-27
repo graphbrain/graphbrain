@@ -44,8 +44,11 @@ public class POSTagger {
     public static Word[] annotate(String stringToAnnotate) {
         // taggedTokens
         String taggedString = tagger.tagString(stringToAnnotate);
+	if (taggedString.length() == 0) {
+	    return new Word[0];
+	}
         String[] wordTagPairs = taggedString.split(" ");
-
+	
         int length = wordTagPairs.length;
         Word[] annotated = new Word[length];
 

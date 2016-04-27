@@ -65,7 +65,7 @@
 
 (defn- sentence->result
   [sentence]
-  (println (str "+" sentence "+"))
+  #_(println (str "+" sentence "+"))
   (let [env {:root "eco/1"
              :user "eco/1"}
         words (words/str->words sentence)
@@ -85,13 +85,14 @@
            (> (count header) 0)
            (< (count header) 70))
         (let [header* (clean-header header)
-              definition (sentence->result header*)
-              definition* (eg/guess hg definition text)
-              symbol (sym/build
-                      [(sym/str->symbol header*)
-                       (sym/hashed "header" (sym/symbol->str definition))])]
-          ;;(println definition*)
-          [symbol definition*])))))
+              definition (sentence->result header*)]
+          (if definition
+            (let [definition* (eg/guess hg definition text)
+                  symbol (sym/build
+                          [(sym/str->symbol header*)
+                           (sym/hashed "header" (sym/symbol->str definition))])]
+              ;;(println definition*)
+              [symbol definition*])))))))
 
 (defn parse-header
   [hg state header text]
