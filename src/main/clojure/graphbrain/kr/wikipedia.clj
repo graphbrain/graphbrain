@@ -250,7 +250,7 @@
       #_(println "HEADERS")
       #_(println (:headers page))
       #_(doseq [r revs]
-        (println (str "NEW BELIEFS =>"(:new-beliefs r))))
+          (println (str "NEW BELIEFS =>"(:new-beliefs r))))
       (process-headers! hg (:headers page))
       (ops/batch-exec!
        hg

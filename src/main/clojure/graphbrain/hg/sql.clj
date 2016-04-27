@@ -187,9 +187,14 @@
    Adding multiple edges at the same time might be faster."
   [conn edges timestamp]
   (if (coll? (first edges))
-    (jdbc/with-db-transaction [trans-conn conn]
+    ;; TODO
+    ;; Don't use transactions for now
+    ;; Problems with SQLite and multiple connections...
+    #_(jdbc/with-db-transaction [trans-conn conn]
       (doseq [edge edges]
         (add-raw! trans-conn edge timestamp)))
+    (doseq [edge edges]
+        (add-raw! conn edge timestamp))
     (add-raw! conn edges timestamp))
   edges)
 
