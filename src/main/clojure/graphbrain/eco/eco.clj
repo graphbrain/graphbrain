@@ -208,9 +208,10 @@
 
 (defn verts+weights->vertex
   [rules vws env]
-  (let [best (apply max (map :weight vws))
-        vws (filter #(= (:weight %) best) vws)]
-    (:vert (first vws))))
+  (if (> (count vws) 0)
+    (let [best (apply max (map :weight vws))
+          vws (filter #(= (:weight %) best) vws)]
+      (:vert (first vws)))))
 
 (defn parse-words
   [rules words env]
@@ -220,9 +221,8 @@
 
 (defn parse-str
   [rules s env]
-  (parse-words rules
-               (words/str->words s)
-               env))
+  (if-let [words (words/str->words s)]
+    (parse-words rules words env)))
 
 (defmacro !
   [words]
