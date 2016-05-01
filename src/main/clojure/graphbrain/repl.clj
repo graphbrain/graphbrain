@@ -65,3 +65,9 @@
 (defn sources
   [edge]
   (beliefs/sources hg edge))
+
+(defn synonyms
+  [symbol]
+  (clojure.set/union
+   (map #(nth % 2) (ops/pattern->edges hg ["synonym/1" symbol nil]))
+   (map #(nth % 1) (ops/pattern->edges hg ["synonym/1" nil symbol]))))

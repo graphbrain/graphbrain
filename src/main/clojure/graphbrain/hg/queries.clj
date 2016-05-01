@@ -28,12 +28,12 @@
     "other"})
 
 (defn- exclude-edge
-  [edge]
-  (some exclude-set (rest edge)))
+  [hg edge]
+  (some #(> (ops/degree hg %) 250) (rest edge)))
 
 (defn- include-edge
-  [edge]
-  (not (exclude-edge edge)))
+  [hg edge]
+  (not (exclude-edge hg edge)))
 
 (defn- add-neighbours
   [neighbours edge]
@@ -58,7 +58,7 @@
 
 (defn node->edges
   [hg node]
-  (filter include-edge
+  (filter #(include-edge hg %)
           (ops/ego hg node 2)))
 
 (defn- interedge
