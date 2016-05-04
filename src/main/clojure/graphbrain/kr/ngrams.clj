@@ -71,7 +71,9 @@
   [ngrams graph]
   (map #(assoc % :words (words-with-pr (:words %) graph)) ngrams))
 
-(defn- average [coll]
+(defn- average
+  [coll]
+  (println (str coll " " (reduce + coll)  " " (count coll)))
   (/ (reduce + coll) (count coll)))
 
 (defn- ngram-score

@@ -87,6 +87,20 @@
     (clojure.string/join " "
                          (map #(str (:word %) " " (:lemma %)) words))))
 
+(defn html->ngrams
+  [hg html]
+  (let [sentences (nlp/html->sentences html)
+        prgraph (wg/words->prgraph (nlp/sentences->words sentences))
+        twords (wg/prgraph->topwords prgraph)
+        ngrams (ngrams/sorted-ngrams
+                (ngrams/scored-ngrams
+                 (ngrams/ngrams-with-pr
+                  (ngrams/topwords->ngrams twords sentences) prgraph)))
+        text (prgraph->text prgraph)
+        ngrams-graph (ngrams/ngrams->graph ngrams)
+        ngrams (ngrams/sorted-ngrams (keys ngrams-graph))]
+    ngrams))
+
 (defn html->entities
   [hg html]
   (let [sentences (nlp/html->sentences html)
@@ -99,6 +113,7 @@
         text (prgraph->text prgraph)
         ngrams-graph (ngrams/ngrams->graph ngrams)
         ngrams (ngrams/sorted-ngrams (keys ngrams-graph))]
+    ;; TODO: BUG?? What about ngrams?
     (ngrams-graph->entities hg ngrams-graph text)))
 
 (defn url+html->edges
@@ -124,3 +139,21 @@
     (assoc-title! hg url-str title)
     (doseq [edge edges]
       (beliefs/add! hg "pagereader/1" edge))))
+
+(defn ngrams->str
+  [ngrams]
+  (clojure.string/join
+   " " (map :word (:words ngrams))))
+
+(defn print-topics!
+  [hg url-str]
+  (let [html (webtools/slurp-url url-str)
+        jsoup (htmltools/html->jsoup html)
+        title (htmltools/jsoup->title jsoup)
+        meat (meat/extract-meat html)
+        ngrams (reverse (html->ngrams hg meat))
+        edges (url+html->edges hg url-str meat)]
+    (doseq [ngram ngrams]
+      (println (str (ngrams->str ngram) " (" (:score ngram) ")")))
+    (doseq [edge edges]
+      (println edge))))

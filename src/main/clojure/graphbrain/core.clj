@@ -25,6 +25,7 @@
             [graphbrain.hg.ops :as ops]
             [graphbrain.kr.wordnet :as wordnet]
             [graphbrain.kr.wikidump :as wikidump]
+            [graphbrain.kr.pagereader :as pr]
             [graphbrain.tools.destroy :as destroy]
             [graphbrain.tools.script :as script]
             [graphbrain.repl :as repl]
@@ -49,7 +50,8 @@
     :default 0
     :assoc-fn (fn [m k _] (update-in m [k] inc))]
    ["-h" "--help"]
-   ["-f" "--file FILE" "File"]])
+   ["-f" "--file FILE" "File"]
+   ["-U" "--url URL" "URL"]])
 
 (defn opts->hg
   [opts]
@@ -70,4 +72,5 @@
       "process_wikidump" (wikidump/process! (opts->hg opts) (:file opts))
       "repl" (clojure.main/repl :init #(repl/init! (opts->hg opts)))
       "script" (script/exec! (opts->hg opts) (:file opts))
+      "topics" (pr/print-topics! (opts->hg opts) (:url opts))
       (println (str "Unknown command: " command)))))
