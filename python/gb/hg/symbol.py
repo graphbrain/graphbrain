@@ -25,6 +25,9 @@ import numpy as np
 
 
 class SymbolType:
+    def __init__(self):
+        pass
+
     UNKNOWN = 0
     CONCEPT = 1
     EDGE = 2
