@@ -57,7 +57,7 @@ class Ops:
         """Erase the hypergraph."""
         raise NotImplementedError()
 
-    def degree(self):
+    def degree(self, vertex):
         """Returns the degree of a vertex."""
         raise NotImplementedError()
 
@@ -65,18 +65,18 @@ class Ops:
         """Returns the timestamp of a vertex."""
         raise NotImplementedError()
 
-    def batch_exec(self, funs):
+    # def batch_exec(self, funs):
         """Evaluates all the functions 'funs', which must be of arity 1.
         The functions are passed hg as a parameters and are evaluated
         as a batch.
         Evaluating function as a batch might be faster."""
-        raise NotImplementedError()
+    #    raise NotImplementedError()
 
-    def f_all(self, f):
+    # def f_all(self, f):
         """Returns a lazy sequence resulting from applying f to every
         vertex map (including non-atomic) in the hypergraph.
         A vertex map contains the keys :vertex and :degree."""
-        raise NotImplementedError()
+    #    raise NotImplementedError()
 
     def remove_by_pattern(self, pattern):
         """Removes from the hypergraph all edges that match the pattern."""
