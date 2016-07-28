@@ -1,0 +1,63 @@
+#   Written by Telmo Menezes <telmo@telmomenezes.com>
+#
+#   This file is part of GraphBrain.
+#
+#   GraphBrain is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   GraphBrain is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
+
+
+import MySQLdb
+import _mysql_exceptions
+from sql import SQL
+
+
+def exec_or_ignore(cur, query):
+    print('Executing query: %s' % query)
+    try:
+        cur.execute(query)
+        print('executed.')
+    except _mysql_exceptions.OperationalError:
+        print('ignored.')
+    except _mysql_exceptions.ProgrammingError:
+        print('ignored.')
+
+
+class MySQL(SQL):
+    """Implements MySQL hypergraph storage."""
+
+    def __init__(self, params):
+        host = params['host']
+        user = params['user']
+        password = params['password']
+        dbname = params['dbname']
+        conn = MySQLdb.connect(host=host, user=user, passwd=password, db=dbname)
+        SQL.__init__(self, conn)
+
+    def create_tables(self):
+        """Created the tables necessary to store the hypergraph."""
+        cur = self.conn.cursor()
+
+        # Vertices table
+        create_table = '%s %s' % ('CREATE TABLE vertices (id VARCHAR(10000), PRIMARY KEY (id(250)))',
+                                  'ENGINE=InnoDB DEFAULT CHARSET=utf8;')
+        exec_or_ignore(cur, create_table)
+        exec_or_ignore(cur, 'ALTER TABLE vertices ADD COLUMN degree INT DEFAULT 0')
+        exec_or_ignore(cur, 'ALTER TABLE vertices ADD COLUMN timestamp BIGINT DEFAULT -1')
+
+        # Edge permutations table
+        create_table = '%s %s' % ('CREATE TABLE perms (id VARCHAR(10000), PRIMARY KEY (id(250)))',
+                                  'ENGINE=InnoDB DEFAULT CHARSET=utf8;')
+        exec_or_ignore(cur, create_table)
+
+        self.conn.commit()
+        cur.close()
