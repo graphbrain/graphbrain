@@ -60,7 +60,7 @@ class Null(Ops):
         """Erase the hypergraph."""
         pass
 
-    def degree(self):
+    def degree(self, vertex):
         """Returns the degree of a vertex."""
         return 0
 
