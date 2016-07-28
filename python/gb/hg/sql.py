@@ -287,19 +287,24 @@ class SQL(Ops):
         cur.close()
         return -1
 
-    # def batch_exec(self, funs):
-    #     """Auxiliary function to implement ops.batch_exec in SQL environments."""
-    #    pass
+    def batch_exec(self, funs):
+        """Auxiliary function to implement ops.batch_exec in SQL environments."""
+        pass
         # (jdbc/with-db-transaction [trans-conn conn]
         #     (let [trans-hg (create-f trans-conn)]
         #     (doseq [f funs] (f trans-hg)))))
 
-# (defn f-all
-#   "Returns a lazy sequence resulting from applying f to every
-#    vertex map (including non-atomic) in the hypergraph.
-#    A vertex map contains the keys :vertex and :degree."
-#   [conn f]
-#   (jdbc/query conn ["SELECT id, degree FROM vertices"]
-#               :result-set-fn vec
-#               :row-fn #(f (hash-map :vertex (ed/str->edge (:id %))
-#                                     :degree (:degree %)))))
+    def f_all(self, f):
+        """Returns a lazy sequence resulting from applying f to every
+           vertex map (including non-atomic) in the hypergraph.
+           A vertex map contains the keys vertex and degree."""
+        pass
+        # (defn f-all
+        #   "Returns a lazy sequence resulting from applying f to every
+        #    vertex map (including non-atomic) in the hypergraph.
+        #    A vertex map contains the keys :vertex and :degree."
+        #   [conn f]
+        #   (jdbc/query conn ["SELECT id, degree FROM vertices"]
+        #               :result-set-fn vec
+        #               :row-fn #(f (hash-map :vertex (ed/str->edge (:id %))
+        #                                     :degree (:degree %)))))
