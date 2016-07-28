@@ -21,10 +21,11 @@
 
 from sqlite import SQLite
 from null import Null
+import constants as const
 
 
 class HyperGraph:
-    """Hypergraph low-level operations."""
+    """Hypergraph operations."""
 
     def __init__(self, params):
         backend = params['backend']
@@ -103,3 +104,34 @@ class HyperGraph:
             ids = set(ids)
             next_edges = [self.ego(vid, depth - 1) for vid in ids]
             return ids.union(next_edges)
+
+    def add_belief(self, source, edges, timestamp=-1):
+        """A belif is a fact with a source. The fact is created as a normal edge
+           if it does not exist yet. Another edge is created to assign the fact to
+           the source.
+
+           Multiple edges can be provided, in which case all the beliefs will be
+           inserted at once. This may be faster."""
+
+        if isinstance(edges, (list, tuple)):
+            new_edges = []
+            for edge in edges:
+                new_edges.append(edge)
+                new_edges.append([const.source, edge, source])
+            self.add(new_edges, timestamp)
+        else:
+            self.add([edges, [const.source, edges, source]], timestamp)
+
+    def sources(self, edge):
+        """Set of sources (nodes) that support a statement (edge)."""
+        edges = self.pattern2edges([const.source, edge, None])
+        sources = [edge[2] for edge in edges]
+        return set(sources)
+
+    def remove_belief(self, source, edge):
+        """A belif is a fact with a source. The link from the source to the fact
+           is removed. If no more sources support the fact, then the fact is also
+           removed."""
+        self.remove([const.source, edge, source])
+        if len(self.sources(edge)) == 0:
+            self.remove(edge)
