@@ -19,8 +19,9 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from sqlite import SQLite
 from null import Null
+from sqlite import SQLite
+from mysql import MySQL
 import constants as const
 
 
@@ -29,10 +30,12 @@ class HyperGraph:
 
     def __init__(self, params):
         backend = params['backend']
-        if backend == 'sqlite':
-            self.ops = SQLite(params)
-        elif backend == 'null':
+        if backend == 'null':
             self.ops = Null()
+        elif backend == 'sqlite':
+            self.ops = SQLite(params)
+        elif backend == 'mysql':
+            self.ops = MySQL(params)
         else:
             raise RuntimeError('Unkown hypergraph backend: %s' % backend)
 

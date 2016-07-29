@@ -115,13 +115,13 @@ def split_edge_str(edge_str):
             curtok = None
         stoks = stoks[1:]
 
-    return tokens
+    return tuple(tokens)
 
 
 def str2edge(edge_str):
     """Convert a string representation of an edge to an edge."""
     tokens = split_edge_str(edge_str)
-    elements = [parsed_token(token) for token in tokens]
+    elements = tuple(parsed_token(token) for token in tokens)
     if len(elements) > 1:
         return elements
     else:
@@ -154,6 +154,4 @@ def is_negative(edge):
 
 def negative(edge):
     """Produces the negative of the given edge."""
-    nedge = edge[:]
-    nedge[0] = sym.negative(edge[0])
-    return nedge
+    return (sym.negative(edge[0]),) + edge[1:]
