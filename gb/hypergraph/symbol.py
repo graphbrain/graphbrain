@@ -44,7 +44,7 @@ def hashed(txt):
         c = ord(s[0])
         h = np.dot(np.array([[31]], dtype=np.uint64), (h + np.array([[c]], dtype=np.uint64)))
         s = s[1:]
-    return hex(h[0][0])[2:]
+    return hex(h[0][0])[2:-1]
 
 
 def random_hash():
@@ -143,7 +143,7 @@ def is_negative(symb):
 
 def negative(symb):
     """Produces the negative of the given symbol."""
-    if negative(symb):
+    if is_negative(symb):
         return symb[1:]
     else:
         return '~%s' % symb
