@@ -20,28 +20,28 @@
 
 
 import math
+import itertools
 import edge as ed
 from ops import Ops
 
 
 def nthperm(li, n):
-    n -= 1
-    s = len(li)
-    res = []
-    for x in range(s-1, -1, -1):
-        f = math.factorial(x)
-        d = n / f
-        n -= d * f
-        res.append(li[d])
-        del(li[d])
-    return res
+    # TODO: make this more efficient
+    indices = [i for i in range(len(li))]
+    pos = 0
+    for perm in itertools.permutations(indices):
+        if pos >= n:
+            indices = perm
+            break
+        pos += 1
+    return [li[indices[i]] for i in range(len(li))]
 
 
 def do_with_edge_permutations(edge, f):
     """Applies the function f to all permutations of the given edge."""
     nperms = math.factorial(len(edge))
     for nperm in range(nperms):
-        perm_str = ''.join([ed.edge2str(e) for e in nthperm(edge, nperm)])
+        perm_str = ' '.join([ed.edge2str(e) for e in nthperm(edge, nperm)])
         perm_str = '%s %s' % (perm_str, nperm)
         f(perm_str)
 
@@ -51,12 +51,12 @@ def unpermutate(tokens, nper):
     n = len(tokens)
     rg = [x for x in range(n)]
     indices = nthperm(rg, nper)
-    ntokens = tokens[:]
+    ntokens = [None] * len(tokens)
     pos = 0
     for i in indices:
         ntokens[pos] = tokens[i]
         pos += 1
-    return ntokens
+    return tuple(ntokens)
 
 
 def cur2edges(cur):
@@ -77,7 +77,7 @@ def str_plus_1(s):
     """Increment a string by one, regaring lexicographical ordering."""
     last_char = s[-1]
     last_char = chr(ord(last_char) + 1)
-    return '%s%s' % (last_char[:-1], last_char)
+    return '%s%s' % (s[:-1], last_char)
 
 
 def edge_matches_pattern(edge, pattern):
@@ -97,6 +97,10 @@ class SQL(Ops):
     def __init__(self, conn):
         Ops.__init__(self)
         self.conn = conn
+        self.create_tables()
+
+    def create_tables(self):
+        raise NotImplementedError()
 
     def update_or_insert(self, table, row, vid):
         """Updates columns or inserts a new row in the vertices table"""
@@ -132,7 +136,7 @@ class SQL(Ops):
     def remove_edge_permutation(self, perm):
         eid = ed.edge2str(perm)
         cur = self.conn.cursor()
-        cur.execute('DELETE FROM perms WHERE id=?', eid)
+        cur.execute('DELETE FROM perms WHERE id=?', (eid,))
         self.conn.commit()
         cur.close()
 
@@ -143,7 +147,7 @@ class SQL(Ops):
     def remove_str(self, vert_str):
         """Removes the given vertex, represented as a string."""
         cur = self.conn.cursor()
-        cur.execute('DELETE FROM vertices WHERE id=?', vert_str)
+        cur.execute('DELETE FROM vertices WHERE id=?', (vert_str,))
         self.conn.commit()
         cur.close()
 
@@ -165,7 +169,6 @@ class SQL(Ops):
         nodes = [node for node in pattern if node is not None]
         start_str = ed.nodes2str(nodes)
         end_str = str_plus_1(start_str)
-
         cur = self.conn.cursor()
         cur.execute('SELECT id FROM perms WHERE id>=? AND id<?', (start_str, end_str))
         edges = cur2edges(cur)
@@ -179,7 +182,7 @@ class SQL(Ops):
     def inc_degree(self, vert_str):
         """Increments the degree of a vertex."""
         cur = self.conn.cursor()
-        cur.execute('UPDATE vertices SET degree=degree+1 WHERE id=?', vert_str)
+        cur.execute('UPDATE vertices SET degree=degree+1 WHERE id=?', (vert_str,))
         res = cur.rowcount > 0
         self.conn.commit()
         cur.close()
@@ -188,7 +191,7 @@ class SQL(Ops):
     def dec_degree(self, vert_str):
         """Decrements the degree of a vertex."""
         cur = self.conn.cursor()
-        cur.execute('UPDATE vertices SET degree=degree-1 WHERE id=?', vert_str)
+        cur.execute('UPDATE vertices SET degree=degree-1 WHERE id=?', (vert_str,))
         res = cur.rowcount > 0
         self.conn.commit()
         cur.close()
@@ -267,7 +270,7 @@ class SQL(Ops):
         """Returns the degree of a vertex."""
         vert_str = ed.edge2str(vertex)
         cur = self.conn.cursor()
-        cur.execute('SELECT degree FROM vertices WHERE id=?', vert_str)
+        cur.execute('SELECT degree FROM vertices WHERE id=?', (vert_str,))
         for row in cur:
             deg = row[0]
             cur.close()
@@ -279,7 +282,7 @@ class SQL(Ops):
         """Returns the timestamp of a vertex."""
         vert_str = ed.edge2str(vertex)
         cur = self.conn.cursor()
-        cur.execute('SELECT timestamp FROM vertices WHERE id=?', vert_str)
+        cur.execute('SELECT timestamp FROM vertices WHERE id=?', (vert_str,))
         for row in cur:
             ts = row[0]
             cur.close()

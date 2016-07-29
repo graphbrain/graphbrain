@@ -23,7 +23,7 @@ class Ops:
     """Hypergraph low-level operations."""
 
     def __init__(self):
-        raise NotImplementedError()
+        pass
 
     def exists(self, vertex):
         """Checks if the given edge exists in the hypergraph."""
