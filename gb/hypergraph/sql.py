@@ -102,13 +102,37 @@ class SQL(Ops):
         Ops.__init__(self)
         self.conn = conn
         self.create_tables()
+        self.cur = None
 
     def create_tables(self):
         raise NotImplementedError()
 
+    def open_cursor(self, local=True):
+        if local:
+            if self.cur is None:
+                return self.conn.cursor()
+            else:
+                return self.cur
+        else:
+            if self.cur is None:
+                self.cur = self.conn.cursor()
+            return self.cur
+
+    def close_cursor(self, cur, local=True, commit=False):
+        if local:
+            if self.cur is None:
+                cur.close()
+                if commit:
+                    self.conn.commit()
+        else:
+            if commit:
+                self.conn.commit()
+            self.cur.close()
+            self.cur = None
+
     def update_or_insert(self, table, row, vid):
         """Updates columns or inserts a new row in the vertices table"""
-        cur = self.conn.cursor()
+        cur = self.open_cursor()
 
         row_str = ','.join(['%s=?' % k for k in row.keys()])
         values = [v for v in row.values()]
@@ -120,8 +144,7 @@ class SQL(Ops):
             placeholder_str = ','.join(['?'] * len(row.keys()))
             cur.execute('INSERT INTO %s (%s) values (%s)' % (table, key_str, placeholder_str), values)
 
-        self.conn.commit()
-        cur.close()
+        self.close_cursor(cur, local=True, commit=True)
 
     def add_str(self, vert_str, degree, timestamp):
         """Adds the given vertex, represented as a string."""
@@ -150,10 +173,9 @@ class SQL(Ops):
 
     def remove_str(self, vert_str):
         """Removes the given vertex, represented as a string."""
-        cur = self.conn.cursor()
+        cur = self.open_cursor()
         cur.execute('DELETE FROM vertices WHERE id=?', (vert_str,))
-        self.conn.commit()
-        cur.close()
+        self.close_cursor(cur, local=True, commit=True)
 
     def str2perms(self, center_id):
         """Query database for all the edge permutations that contain a given entity,
@@ -161,10 +183,10 @@ class SQL(Ops):
         start_str = '%s ' % center_id
         end_str = str_plus_1(start_str)
 
-        cur = self.conn.cursor()
+        cur = self.open_cursor()
         cur.execute('SELECT id FROM perms WHERE id>=? AND id<?', (start_str, end_str))
         edges = cur2edges(cur)
-        cur.close()
+        self.close_cursor(cur, local=True, commit=False)
         return set(edges)
 
     def pattern2edges(self, pattern):
@@ -173,10 +195,10 @@ class SQL(Ops):
         nodes = [node for node in pattern if node is not None]
         start_str = ed.nodes2str(nodes)
         end_str = str_plus_1(start_str)
-        cur = self.conn.cursor()
+        cur = self.open_cursor()
         cur.execute('SELECT id FROM perms WHERE id>=? AND id<?', (start_str, end_str))
         edges = cur2edges(cur)
-        cur.close()
+        self.close_cursor(cur, local=True, commit=False)
         return set([edge for edge in edges if edge_matches_pattern(edge, pattern)])
 
     def exists(self, vertex):
@@ -185,20 +207,18 @@ class SQL(Ops):
 
     def inc_degree(self, vert_str):
         """Increments the degree of a vertex."""
-        cur = self.conn.cursor()
+        cur = self.open_cursor()
         cur.execute('UPDATE vertices SET degree=degree+1 WHERE id=?', (vert_str,))
         res = cur.rowcount > 0
-        self.conn.commit()
-        cur.close()
+        self.close_cursor(cur, local=True, commit=True)
         return res
 
     def dec_degree(self, vert_str):
         """Decrements the degree of a vertex."""
-        cur = self.conn.cursor()
+        cur = self.open_cursor()
         cur.execute('UPDATE vertices SET degree=degree-1 WHERE id=?', (vert_str,))
         res = cur.rowcount > 0
-        self.conn.commit()
-        cur.close()
+        self.close_cursor(cur, local=True, commit=True)
         return res
 
     def add_raw(self, edge, timestamp):
@@ -252,54 +272,53 @@ class SQL(Ops):
         """Find all symbols with the given root."""
         start_str = '%s/' % root
         end_str = str_plus_1(start_str)
-        cur = self.conn.cursor()
+        cur = self.open_cursor()
         cur.execute('SELECT id FROM perms WHERE id>=? AND id<?', (start_str, end_str))
         symbs = []
         for row in cur:
             res = row[0]
             symb = ed.split_edge_str(res)[0]
             symbs.append(symb)
-        cur.close()
+        self.close_cursor(cur, local=True, commit=False)
         return set(symbs)
 
     def destroy(self):
         """Erase the hypergraph."""
-        cur = self.conn.cursor()
+        cur = self.open_cursor()
         cur.execute('DELETE FROM vertices')
         cur.execute('DELETE FROM perms')
-        self.conn.commit()
-        cur.close()
+        self.close_cursor(cur, local=True, commit=True)
 
     def degree(self, vertex):
         """Returns the degree of a vertex."""
         vert_str = ed.edge2str(vertex)
-        cur = self.conn.cursor()
+        cur = self.open_cursor()
         cur.execute('SELECT degree FROM vertices WHERE id=?', (vert_str,))
         for row in cur:
             deg = row[0]
             cur.close()
             return deg
-        cur.close()
+        self.close_cursor(cur, local=True, commit=False)
         return 0
 
     def timestamp(self, vertex):
         """Returns the timestamp of a vertex."""
         vert_str = ed.edge2str(vertex)
-        cur = self.conn.cursor()
+        cur = self.open_cursor()
         cur.execute('SELECT timestamp FROM vertices WHERE id=?', (vert_str,))
         for row in cur:
             ts = row[0]
             cur.close()
             return ts
-        cur.close()
+        self.close_cursor(cur, local=True, commit=False)
         return -1
 
     def batch_exec(self, funs):
         """Auxiliary function to implement ops.batch_exec in SQL environments."""
-        pass
-        # (jdbc/with-db-transaction [trans-conn conn]
-        #     (let [trans-hg (create-f trans-conn)]
-        #     (doseq [f funs] (f trans-hg)))))
+        cur = self.open_cursor(local=False)
+        for f in funs:
+            f(self)
+        self.close_cursor(cur, local=False, commit=True)
 
     def f_all(self, f):
         """Returns a lazy sequence resulting from applying f to every

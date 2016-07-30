@@ -182,7 +182,7 @@ class TestHypergraph(unittest.TestCase):
         self.degree_test(hg)
         self.timestamp_test(hg)
         self.add_remove_multiple_test(hg)
-        # self.batch_exec_test(hg)
+        self.batch_exec_test(hg)
         # self.f_all_test(hg)
 
 
