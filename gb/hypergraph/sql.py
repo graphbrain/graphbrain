@@ -324,13 +324,9 @@ class SQL(Ops):
         """Returns a lazy sequence resulting from applying f to every
            vertex map (including non-atomic) in the hypergraph.
            A vertex map contains the keys vertex and degree."""
-        pass
-        # (defn f-all
-        #   "Returns a lazy sequence resulting from applying f to every
-        #    vertex map (including non-atomic) in the hypergraph.
-        #    A vertex map contains the keys :vertex and :degree."
-        #   [conn f]
-        #   (jdbc/query conn ["SELECT id, degree FROM vertices"]
-        #               :result-set-fn vec
-        #               :row-fn #(f (hash-map :vertex (ed/str->edge (:id %))
-        #                                     :degree (:degree %)))))
+        cur = self.open_cursor()
+        cur.execute('SELECT id, degree FROM vertices')
+        for row in cur:
+            vmap = {'vertex': ed.str2edge(row[0]), 'degree': row[1]}
+            yield f(vmap)
+        self.close_cursor(cur, local=True, commit=False)

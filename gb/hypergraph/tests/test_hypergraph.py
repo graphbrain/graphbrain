@@ -21,6 +21,7 @@
 
 import unittest
 import gb.hypergraph.hypergraph as hyperg
+import gb.hypergraph.edge as ed
 
 
 class TestHypergraph(unittest.TestCase):
@@ -155,12 +156,12 @@ class TestHypergraph(unittest.TestCase):
         hg.add(('src', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
 
         def f(x):
-            return '%s %s' % (x('vertex'), x('degree'))
+            return '%s %s' % (ed.edge2str(x['vertex']), x['degree'])
 
         labels = set(hg.f_all(f))
         self.assertEqual(labels, {'size 1', 'graphbrain/1 2', '-7.0 1', 'is 1', 'great/1 1', 'src 1', 'mary/1 1',
-                                  '("size" "graphbrain/1" -7.0) 0', '("is" "graphbrain/1" "great/1") 1',
-                                  '("src" "mary/1" ("is" "graphbrain/1" "great/1")) 0'})
+                                  '(size graphbrain/1 -7.0) 0', '(is graphbrain/1 great/1) 1',
+                                  '(src mary/1 (is graphbrain/1 great/1)) 0'})
         hg.destroy()
         labels = set(hg.f_all(f))
         self.assertEqual(labels, set())
@@ -183,7 +184,7 @@ class TestHypergraph(unittest.TestCase):
         self.timestamp_test(hg)
         self.add_remove_multiple_test(hg)
         self.batch_exec_test(hg)
-        # self.f_all_test(hg)
+        self.f_all_test(hg)
 
 
 if __name__ == '__main__':
