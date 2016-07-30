@@ -31,66 +31,66 @@ class HyperGraph:
     def __init__(self, params):
         backend = params['backend']
         if backend == 'null':
-            self.ops = Null()
+            self.backend = Null()
         elif backend == 'sqlite':
-            self.ops = SQLite(params)
+            self.backend = SQLite(params)
         elif backend == 'mysql':
-            self.ops = MySQL(params)
+            self.backend = MySQL(params)
         else:
             raise RuntimeError('Unkown hypergraph backend: %s' % backend)
 
     def exists(self, vertex):
         """Checks if the given edge exists in the hypergraph."""
-        return self.ops.exists(vertex)
+        return self.backend.exists(vertex)
 
     def add(self, edges, timestamp=-1):
         """Adds one or multiple edges to the hypergraph if it does not exist yet.
                 Adding multiple edges at the same time might be faster."""
-        return self.ops.add(edges, timestamp)
+        return self.backend.add(edges, timestamp)
 
     def remove(self, edges):
         """Removes one or multiple edges from the hypergraph.
            Removing multiple edges at the same time might be faster."""
-        self.ops.remove(edges)
+        self.backend.remove(edges)
 
     def pattern2edges(self, pattern):
         """Return all the edges that match a pattern.
         A pattern is a collection of entity ids and wildcards (None)."""
-        return self.ops.pattern2edges(pattern)
+        return self.backend.pattern2edges(pattern)
 
     def star(self, center):
         """Return all the edges that contain a given entity.
         Entity can be atomic or an edge."""
-        return self.ops.star(center)
+        return self.backend.star(center)
 
     def symbols_with_root(self, root):
         """Find all symbols with the given root."""
-        return self.ops.symbols_with_root(root)
+        return self.backend.symbols_with_root(root)
 
     def destroy(self):
         """Erase the hypergraph."""
-        self.ops.destroy()
+        self.backend.destroy()
 
     def degree(self, vertex):
         """Returns the degree of a vertex."""
-        return self.ops.degree(vertex)
+        return self.backend.degree(vertex)
 
     def timestamp(self, vertex):
         """Returns the timestamp of a vertex."""
-        return self.ops.timestamp(vertex)
+        return self.backend.timestamp(vertex)
 
     def batch_exec(self, funs):
         """Evaluates all the functions 'funs', which must be of arity 1.
         The functions are passed hg as a parameters and are evaluated
         as a batch.
         Evaluating function as a batch might be faster."""
-        self.ops.batch_exec(funs)
+        self.backend.batch_exec(funs)
 
     def f_all(self, f):
         """Returns a lazy sequence resulting from applying f to every
         vertex map (including non-atomic) in the hypergraph.
         A vertex map contains the keys :vertex and :degree."""
-        return self.ops.f_all(f)
+        return self.backend.f_all(f)
 
     def remove_by_pattern(self, pattern):
         """Removes from the hypergraph all edges that match the pattern."""
