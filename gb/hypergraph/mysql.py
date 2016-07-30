@@ -39,7 +39,7 @@ class MySQL(SQL):
         password = params['password']
         dbname = params['dbname']
         conn = MySQLdb.connect(host=host, user=user, passwd=password, db=dbname)
-        SQL.__init__(self, conn)
+        SQL.__init__(self, conn, '%s')
 
     def create_tables(self):
         """Created the tables necessary to store the hypergraph."""
