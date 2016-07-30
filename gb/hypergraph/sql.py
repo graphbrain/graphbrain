@@ -60,7 +60,6 @@ def unpermutate(tokens, nper):
         pos += 1
 
     return tuple(res)
-    # return tuple(tokens[i] for i in indices)
 
 
 def cur2edges(cur):
@@ -98,11 +97,12 @@ def edge_matches_pattern(edge, pattern):
 class SQL(Backend):
     """Implements generic SQL hypergraph storage."""
 
-    def __init__(self, conn):
+    def __init__(self, conn, ph='?'):
         Backend.__init__(self)
         self.conn = conn
         self.create_tables()
         self.cur = None
+        self.ph = ph
 
     def create_tables(self):
         raise NotImplementedError()
@@ -134,14 +134,14 @@ class SQL(Backend):
         """Updates columns or inserts a new row in the vertices table"""
         cur = self.open_cursor()
 
-        row_str = ','.join(['%s=?' % k for k in row.keys()])
+        row_str = ','.join(['%s=%s' % (k, self.ph) for k in row.keys()])
         values = [v for v in row.values()]
         values.append(vid)
-        cur.execute('UPDATE %s SET %s WHERE id=?' % (table, row_str), values)
+        cur.execute('UPDATE %s SET %s WHERE id=%s' % (table, row_str, self.ph), values)
         if cur.rowcount == 0:
             values = values[:-1]
             key_str = ','.join([k for k in row.keys()])
-            placeholder_str = ','.join(['?'] * len(row.keys()))
+            placeholder_str = ','.join([self.ph] * len(row.keys()))
             cur.execute('INSERT INTO %s (%s) values (%s)' % (table, key_str, placeholder_str), values)
 
         self.close_cursor(cur, local=True, commit=True)
@@ -163,7 +163,7 @@ class SQL(Backend):
     def remove_edge_permutation(self, perm):
         eid = ed.edge2str(perm)
         cur = self.conn.cursor()
-        cur.execute('DELETE FROM perms WHERE id=?', (eid,))
+        cur.execute('DELETE FROM perms WHERE id=%s' % (self.ph,), (eid,))
         self.conn.commit()
         cur.close()
 
@@ -174,7 +174,7 @@ class SQL(Backend):
     def remove_str(self, vert_str):
         """Removes the given vertex, represented as a string."""
         cur = self.open_cursor()
-        cur.execute('DELETE FROM vertices WHERE id=?', (vert_str,))
+        cur.execute('DELETE FROM vertices WHERE id=%s' % (self.ph,), (vert_str,))
         self.close_cursor(cur, local=True, commit=True)
 
     def str2perms(self, center_id):
@@ -184,7 +184,7 @@ class SQL(Backend):
         end_str = str_plus_1(start_str)
 
         cur = self.open_cursor()
-        cur.execute('SELECT id FROM perms WHERE id>=? AND id<?', (start_str, end_str))
+        cur.execute('SELECT id FROM perms WHERE id>=%s AND id<%s' % (self.ph, self.ph), (start_str, end_str))
         edges = cur2edges(cur)
         self.close_cursor(cur, local=True, commit=False)
         return set(edges)
@@ -196,7 +196,7 @@ class SQL(Backend):
         start_str = ed.nodes2str(nodes)
         end_str = str_plus_1(start_str)
         cur = self.open_cursor()
-        cur.execute('SELECT id FROM perms WHERE id>=? AND id<?', (start_str, end_str))
+        cur.execute('SELECT id FROM perms WHERE id>=%s AND id<%s' % (self.ph, self.ph), (start_str, end_str))
         edges = cur2edges(cur)
         self.close_cursor(cur, local=True, commit=False)
         return set([edge for edge in edges if edge_matches_pattern(edge, pattern)])
@@ -208,7 +208,7 @@ class SQL(Backend):
     def inc_degree(self, vert_str):
         """Increments the degree of a vertex."""
         cur = self.open_cursor()
-        cur.execute('UPDATE vertices SET degree=degree+1 WHERE id=?', (vert_str,))
+        cur.execute('UPDATE vertices SET degree=degree+1 WHERE id=%s' % (self.ph,), (vert_str,))
         res = cur.rowcount > 0
         self.close_cursor(cur, local=True, commit=True)
         return res
@@ -216,7 +216,7 @@ class SQL(Backend):
     def dec_degree(self, vert_str):
         """Decrements the degree of a vertex."""
         cur = self.open_cursor()
-        cur.execute('UPDATE vertices SET degree=degree-1 WHERE id=?', (vert_str,))
+        cur.execute('UPDATE vertices SET degree=degree-1 WHERE id=%s' % (self.ph,), (vert_str,))
         res = cur.rowcount > 0
         self.close_cursor(cur, local=True, commit=True)
         return res
@@ -273,7 +273,7 @@ class SQL(Backend):
         start_str = '%s/' % root
         end_str = str_plus_1(start_str)
         cur = self.open_cursor()
-        cur.execute('SELECT id FROM perms WHERE id>=? AND id<?', (start_str, end_str))
+        cur.execute('SELECT id FROM perms WHERE id>=%s AND id<%s' % (self.ph, self.ph), (start_str, end_str))
         symbs = []
         for row in cur:
             res = row[0]
@@ -293,7 +293,7 @@ class SQL(Backend):
         """Returns the degree of a vertex."""
         vert_str = ed.edge2str(vertex)
         cur = self.open_cursor()
-        cur.execute('SELECT degree FROM vertices WHERE id=?', (vert_str,))
+        cur.execute('SELECT degree FROM vertices WHERE id=%s' % (self.ph,), (vert_str,))
         for row in cur:
             deg = row[0]
             cur.close()
@@ -305,7 +305,7 @@ class SQL(Backend):
         """Returns the timestamp of a vertex."""
         vert_str = ed.edge2str(vertex)
         cur = self.open_cursor()
-        cur.execute('SELECT timestamp FROM vertices WHERE id=?', (vert_str,))
+        cur.execute('SELECT timestamp FROM vertices WHERE id=%s' % (self.ph,), (vert_str,))
         for row in cur:
             ts = row[0]
             cur.close()
