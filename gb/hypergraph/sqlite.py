@@ -24,12 +24,10 @@ from sql import SQL
 
 
 def exec_or_ignore(cur, query):
-    print('Executing query: %s' % query)
     try:
         cur.execute(query)
-        print('executed.')
     except sqlite3.OperationalError:
-        print('ignored.')
+        pass
 
 
 class SQLite(SQL):
