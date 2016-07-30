@@ -90,7 +90,7 @@ class HyperGraph:
         """Returns a lazy sequence resulting from applying f to every
         vertex map (including non-atomic) in the hypergraph.
         A vertex map contains the keys :vertex and :degree."""
-        self.ops.f_all(f)
+        return self.ops.f_all(f)
 
     def remove_by_pattern(self, pattern):
         """Removes from the hypergraph all edges that match the pattern."""
