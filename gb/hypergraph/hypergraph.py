@@ -119,14 +119,14 @@ class HyperGraph:
             new_edges = []
             for edge in edges:
                 new_edges.append(edge)
-                new_edges.append([const.source, edge, source])
+                new_edges.append((const.source, edge, source))
             self.add(new_edges, timestamp)
         else:
-            self.add([edges, [const.source, edges, source]], timestamp)
+            self.add((edges, (const.source, edges, source)), timestamp)
 
     def sources(self, edge):
         """Set of sources (nodes) that support a statement (edge)."""
-        edges = self.pattern2edges([const.source, edge, None])
+        edges = self.pattern2edges((const.source, edge, None))
         sources = [edge[2] for edge in edges]
         return set(sources)
 
@@ -134,6 +134,6 @@ class HyperGraph:
         """A belif is a fact with a source. The link from the source to the fact
            is removed. If no more sources support the fact, then the fact is also
            removed."""
-        self.remove([const.source, edge, source])
+        self.remove((const.source, edge, source))
         if len(self.sources(edge)) == 0:
             self.remove(edge)
