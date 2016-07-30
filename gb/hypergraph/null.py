@@ -45,16 +45,16 @@ class Null(Backend):
     def pattern2edges(self, pattern):
         """Return all the edges that match a pattern.
         A pattern is a collection of entity ids and wildcards (None)."""
-        return []
+        return set()
 
     def star(self, center):
         """Return all the edges that contain a given entity.
         Entity can be atomic or an edge."""
-        return []
+        return set()
 
     def symbols_with_root(self, root):
         """Find all symbols with the given root."""
-        return []
+        return set()
 
     def destroy(self):
         """Erase the hypergraph."""
