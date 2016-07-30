@@ -29,12 +29,13 @@ def nthperm(li, n):
     # TODO: make this more efficient
     indices = [i for i in range(len(li))]
     pos = 0
+    pindices = None
     for perm in itertools.permutations(indices):
         if pos >= n:
-            indices = perm
+            pindices = perm
             break
         pos += 1
-    return [li[indices[i]] for i in range(len(li))]
+    return tuple(li[pindices[i]] for i in range(len(li)))
 
 
 def do_with_edge_permutations(edge, f):
@@ -51,12 +52,15 @@ def unpermutate(tokens, nper):
     n = len(tokens)
     rg = [x for x in range(n)]
     indices = nthperm(rg, nper)
-    ntokens = [None] * len(tokens)
+
+    res = [None] * n
     pos = 0
     for i in indices:
-        ntokens[pos] = tokens[i]
+        res[i] = tokens[pos]
         pos += 1
-    return tuple(ntokens)
+
+    return tuple(res)
+    # return tuple(tokens[i] for i in indices)
 
 
 def cur2edges(cur):
@@ -68,7 +72,7 @@ def cur2edges(cur):
         nper = int(tokens[-1])
         tokens = tokens[:-1]
         tokens = unpermutate(tokens, nper)
-        edge = ed.str2edge('(%s)' % ' '.join(tokens))
+        edge = ed.str2edge(' '.join(tokens))
         edges.append(edge)
     return set(edges)
 
@@ -161,7 +165,7 @@ class SQL(Ops):
         cur.execute('SELECT id FROM perms WHERE id>=? AND id<?', (start_str, end_str))
         edges = cur2edges(cur)
         cur.close()
-        return edges
+        return set(edges)
 
     def pattern2edges(self, pattern):
         """Return all the edges that match a pattern.
@@ -173,7 +177,7 @@ class SQL(Ops):
         cur.execute('SELECT id FROM perms WHERE id>=? AND id<?', (start_str, end_str))
         edges = cur2edges(cur)
         cur.close()
-        return [edge for edge in edges if edge_matches_pattern(edge, pattern)]
+        return set([edge for edge in edges if edge_matches_pattern(edge, pattern)])
 
     def exists(self, vertex):
         """Checks if the given vertex exists in the hypergraph."""

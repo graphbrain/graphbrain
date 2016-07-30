@@ -22,14 +22,12 @@ from sql import SQL
 
 
 def exec_or_ignore(cur, query):
-    print('Executing query: %s' % query)
     try:
         cur.execute(query)
-        print('executed.')
     except _mysql_exceptions.OperationalError:
-        print('ignored.')
+        pass
     except _mysql_exceptions.ProgrammingError:
-        print('ignored.')
+        pass
 
 
 class MySQL(SQL):
