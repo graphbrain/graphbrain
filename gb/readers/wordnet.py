@@ -19,24 +19,11 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from setuptools import setup, find_packages
+from nltk.corpus import wordnet as wn
 
 
-setup(
-    name='graphbrain',
-    version='0.1',
-    packages=find_packages(),
-    install_requires=[
-        'numpy',
-        'scipy',
-        'click',
-        'mysqlclient',
-        'matplotlib',
-        'python-igraph',
-        'nltk'
-    ],
-    entry_points='''
-        [console_scripts]
-        gb=gb.main:cli
-    ''',
-)
+#print('#1')
+#print(wn.synsets('dog'))
+
+for synset in list(wn.all_synsets('n'))[:10]:
+    print(synset)
