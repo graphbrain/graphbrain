@@ -22,7 +22,7 @@
 import math
 import itertools
 import edge as ed
-from ops import Ops
+from backend import Backend
 
 
 def nthperm(li, n):
@@ -95,11 +95,11 @@ def edge_matches_pattern(edge, pattern):
     return True
 
 
-class SQL(Ops):
+class SQL(Backend):
     """Implements generic SQL hypergraph storage."""
 
     def __init__(self, conn):
-        Ops.__init__(self)
+        Backend.__init__(self)
         self.conn = conn
         self.create_tables()
         self.cur = None

@@ -19,7 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class Ops:
+class Backend:
     """Hypergraph low-level operations."""
 
     def __init__(self):

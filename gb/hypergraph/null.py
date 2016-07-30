@@ -19,14 +19,14 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from ops import Ops
+from backend import Backend
 
 
-class Null(Ops):
+class Null(Backend):
     """Hypergraph low-level operations."""
 
     def __init__(self):
-        Ops.__init__(self)
+        Backend.__init__(self)
 
     def exists(self, vertex):
         """Checks if the given edge exists in the hypergraph."""
