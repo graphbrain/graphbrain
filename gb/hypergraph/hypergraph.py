@@ -115,8 +115,7 @@ class HyperGraph:
 
            Multiple edges can be provided, in which case all the beliefs will be
            inserted at once. This may be faster."""
-
-        if isinstance(edges, (list, tuple)):
+        if isinstance(edges[0], (list, tuple)):
             new_edges = []
             for edge in edges:
                 new_edges.append(edge)
