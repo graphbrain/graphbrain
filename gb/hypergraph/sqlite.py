@@ -34,7 +34,7 @@ class SQLite(SQL):
     """Implements SQLite hypergraph storage."""
 
     def __init__(self, params):
-        file_path = params['file_path']
+        file_path = params['db']
         SQL.__init__(self, sqlite3.connect(file_path))
 
     def create_tables(self):

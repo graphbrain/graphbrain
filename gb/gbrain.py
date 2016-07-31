@@ -19,24 +19,31 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from setuptools import setup, find_packages
+import click
+import hypergraph as hyper
 
 
-setup(
-    name='graphbrain',
-    version='0.1',
-    packages=find_packages(),
-    install_requires=[
-        'numpy',
-        'scipy',
-        'click',
-        'mysqlclient',
-        'matplotlib',
-        'python-igraph',
-        'nltk'
-    ],
-    entry_points='''
-        [console_scripts]
-        gbrain=gb.gbrain:cli
-    ''',
-)
+@click.group()
+@click.option('--backend', help='Hypergraph Backend (sqlite, mysql, null).', default='sqlite')
+@click.option('--db', help='Database name.', default='gb')
+@click.option('--dbuser', help='Database user.', default='gb')
+@click.option('--dbpass', help='Database password.', default='gb')
+@click.pass_context
+def cli(ctx, backend, db, dbuser, dbpass):
+    ctx.obj = {
+        'backend': backend,
+        'db': db,
+        'dbuser': dbuser,
+        'dbpass': dbpass
+    }
+
+
+@cli.command()
+@click.pass_context
+def create(ctx):
+    click.echo('Creating Hypergraph')
+    hyper.HyperGraph(ctx.obj)
+    click.echo('done.')
+
+if __name__ == '__main__':
+    cli()
