@@ -46,10 +46,13 @@ def show_logo():
 @cli.command()
 @click.pass_context
 def create(ctx):
-    show_logo()
     click.echo('Creating Hypergraph')
     hyper.HyperGraph(ctx.obj)
     click.echo('done.')
+
+
+show_logo()
+
 
 if __name__ == '__main__':
     cli()
