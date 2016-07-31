@@ -28,7 +28,7 @@ class TestHypergraph(ab.AuxBackend):
 
     def setUp(self):
         params = {'backend': 'sqlite',
-                  'file_path': 'test.db'}
+                  'db': 'test.db'}
         self.hg = hyperg.HyperGraph(params)
 
 

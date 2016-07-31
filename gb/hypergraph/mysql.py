@@ -37,7 +37,7 @@ class MySQL(SQL):
         host = params['host']
         user = params['user']
         password = params['password']
-        dbname = params['dbname']
+        dbname = params['db']
         conn = MySQLdb.connect(host=host, user=user, passwd=password, db=dbname)
         SQL.__init__(self, conn, '%s')
 

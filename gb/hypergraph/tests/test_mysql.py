@@ -31,7 +31,7 @@ class TestHypergraph(ab.AuxBackend):
                   'host': 'localhost',
                   'user': 'gb',
                   'password': 'gb',
-                  'dbname': 'gbtest'}
+                  'db': 'gbtest'}
         self.hg = hyperg.HyperGraph(params)
 
 
