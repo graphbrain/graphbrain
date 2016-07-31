@@ -38,9 +38,15 @@ def cli(ctx, backend, db, dbuser, dbpass):
     }
 
 
+def show_logo():
+    click.echo(click.style(hyper.constants.ascii_logo, fg='cyan'))
+    click.echo()
+
+
 @cli.command()
 @click.pass_context
 def create(ctx):
+    show_logo()
     click.echo('Creating Hypergraph')
     hyper.HyperGraph(ctx.obj)
     click.echo('done.')
