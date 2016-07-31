@@ -19,12 +19,4 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from nltk.corpus import wordnet as wn
-
-
-def read(hg):
-    # print('#1')
-    # print(wn.synsets('dog'))
-
-    for synset in list(wn.all_synsets('n'))[:10]:
-        print(synset)
+__all__ = ['wordnet']
