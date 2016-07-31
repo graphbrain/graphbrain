@@ -29,6 +29,7 @@ setup(
     install_requires=[
         'numpy',
         'scipy',
+        'colorama',
         'click',
         'mysqlclient',
         'matplotlib',
