@@ -21,6 +21,7 @@
 
 from nltk.corpus import wordnet as wn
 import gb.hypergraph.symbol as sym
+import gb.hypergraph.batch_hypergraph as batchhg
 
 
 def lemma2symbol(lemma):
@@ -91,5 +92,7 @@ def process_synset(hg, synset):
 
 
 def read(hg):
+    bhg = batchhg.BatchHyperGraph(hg)
     for synset in list(wn.all_synsets()):
-        process_synset(hg, synset)
+        process_synset(bhg, synset)
+    bhg.flush()

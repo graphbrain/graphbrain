@@ -39,6 +39,7 @@ class MySQL(SQL):
         password = params['password']
         dbname = params['db']
         conn = MySQLdb.connect(host=host, user=user, passwd=password, db=dbname)
+        conn.autocommit(True)
         SQL.__init__(self, conn, '%s')
 
     def create_tables(self):
