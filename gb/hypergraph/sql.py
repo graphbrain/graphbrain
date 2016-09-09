@@ -236,8 +236,10 @@ class SQL(Backend):
         """Adds one or multiple edges to the hypergraph if it does not exist yet.
         Adding multiple edges at the same time might be faster."""
         if isinstance(edges[0], (list, tuple)):
+            cur = self.open_cursor(local=False)
             for edge in edges:
                 self.add_raw(edge, timestamp)
+            self.close_cursor(cur, local=False, commit=True)
         else:
             self.add_raw(edges, timestamp)
         return edges

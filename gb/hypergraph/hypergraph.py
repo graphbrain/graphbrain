@@ -30,7 +30,9 @@ class HyperGraph:
 
     def __init__(self, params):
         backend = params['backend']
-        if backend == 'null':
+        if backend == 'none':
+            pass
+        elif backend == 'null':
             self.backend = Null()
         elif backend == 'sqlite':
             self.backend = SQLite(params)
