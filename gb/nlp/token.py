@@ -19,26 +19,23 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from setuptools import setup, find_packages
+class Token:
+    """Generic NLP token."""
 
+    def __init__(self):
+        self.word = None
+        self.lemma = None
+        self.shape = None
+        self.logprob = None
+        self.pos = None
+        self.dep = None
+        self.parent = None
+        self.left_children = None
+        self.right_children = None
+        self.entity_type = None
 
-setup(
-    name='graphbrain',
-    version='0.1',
-    packages=find_packages(),
-    install_requires=[
-        'numpy',
-        'scipy',
-        'colorama',
-        'click',
-        'mysqlclient',
-        'matplotlib',
-        'python-igraph',
-        'nltk',
-        'spacy'
-    ],
-    entry_points='''
-        [console_scripts]
-        gbrain=gb.gbrain:cli
-    ''',
-)
+    def __str__(self):
+        return '%s %s %s %s %s' % (self.word, self.lemma, self.pos, self.dep, self.entity_type)
+
+    def __repr__(self):
+        return self.__str__()

@@ -19,26 +19,4 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from setuptools import setup, find_packages
-
-
-setup(
-    name='graphbrain',
-    version='0.1',
-    packages=find_packages(),
-    install_requires=[
-        'numpy',
-        'scipy',
-        'colorama',
-        'click',
-        'mysqlclient',
-        'matplotlib',
-        'python-igraph',
-        'nltk',
-        'spacy'
-    ],
-    entry_points='''
-        [console_scripts]
-        gbrain=gb.gbrain:cli
-    ''',
-)
+__all__ = ['parser', 'token']
