@@ -35,7 +35,8 @@ setup(
         'matplotlib',
         'python-igraph',
         'nltk',
-        'spacy'
+        'spacy',
+        'asciitree'
     ],
     entry_points='''
         [console_scripts]

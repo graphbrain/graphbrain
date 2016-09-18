@@ -35,7 +35,7 @@ class Token:
         self.entity_type = None
 
     def __str__(self):
-        return '%s %s %s %s %s' % (self.word, self.lemma, self.pos, self.dep, self.entity_type)
+        return '%s/%s (%s) {%s}' % (self.word.strip(), self.pos, self.dep, self.entity_type)
 
     def __repr__(self):
         return self.__str__()
