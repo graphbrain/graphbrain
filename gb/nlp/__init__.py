@@ -19,4 +19,4 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-__all__ = ['parser', 'token']
+__all__ = ['parser', 'token', 'sentence']

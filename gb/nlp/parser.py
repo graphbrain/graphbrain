@@ -21,6 +21,7 @@
 
 from spacy.en import English
 from token import Token
+from sentence import Sentence
 
 
 class Parser:
@@ -72,5 +73,13 @@ if __name__ == '__main__':
     and artificial intelligence.
     """
 
-    result = Parser().parse_text(test_text)
-    print(result)
+    print('Starting parser...')
+    parser = Parser()
+    print('Parsing...')
+    result = parser.parse_text(test_text)
+
+    for r in result:
+        sentence = Sentence(r)
+        print(sentence)
+        sentence.print_tree()
+        print('')
