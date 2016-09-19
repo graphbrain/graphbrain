@@ -36,7 +36,7 @@ class Parser:
             return None
         elif stoken not in self.token_table:
             token = Token()
-            token.word = stoken.orth_
+            token.word = stoken.orth_.lower().strip()
             token.lemma = stoken.lemma_
             token.shape = stoken.shape_
             token.logprob = stoken.prob
@@ -71,6 +71,9 @@ if __name__ == '__main__':
     formalisation of the concepts of algorithm and computation with the Turing machine, which can be considered a model
     of a general purpose computer. Turing is widely considered to be the father of theoretical computer science
     and artificial intelligence.
+    The psychologist George Kelley (1955) noted that humans do not enter a world that is inherently structured; we must
+    give the world a structure that we ourselves create.
+    Some subspecies of mosquito might be 1st to be genetically wiped out.
     """
 
     print('Starting parser...')
