@@ -83,7 +83,7 @@ def process_token(token):
         return edge
 
 
-class TokenGraph:
+class TokenTree:
     def __init__(self, sentence):
         self.root = process_token(sentence.root())
 
@@ -105,5 +105,5 @@ if __name__ == '__main__':
         sentence = Sentence(r)
         print(sentence)
         sentence.print_tree()
-        tg = TokenGraph(sentence)
-        print(tg)
+        tree = TokenTree(sentence)
+        print(tree)
