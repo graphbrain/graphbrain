@@ -43,8 +43,15 @@ class TokenNode:
 
 
 class TokenEdge:
-    def __init__(self):
-        self.nodes = []
+    def __init__(self, nodes=None):
+        if nodes is None:
+            self.nodes = []
+        else:
+            self.nodes = nodes
+        self.pointer = self.nodes
+
+    def is_singleton(self):
+        return len(self.nodes) == 1
 
     def __str__(self):
         strs = [str(node) for node in self.nodes]
@@ -52,40 +59,64 @@ class TokenEdge:
 
 
 def process_leaf(edge, root, leaf, left):
-    # tokens to ignore
+    # ignore
     if (len(leaf.dep) == 0) or (leaf.dep == 'punct'):
-        return
-
-    # add to relationship node
-    if (leaf.dep == 'aux') or (leaf.dep == 'auxpass'):
-        edge.nodes[0].add_token(leaf, left)
         return
 
     # process subtree
     child = process_token(leaf)
 
+    # add to relationship node
+    if (leaf.dep == 'aux') \
+            or (leaf.dep == 'auxpass') \
+            or ((leaf.dep == 'prep') and (root.pos == 'VERB')):
+        edge.pointer[0].add_token(leaf, left)
+        if not child.is_singleton():
+            edge.pointer += child.nodes[1:]
+        return
+
+    # modifier
+    if (leaf.dep == 'det') or (leaf.dep == 'advmod'):
+        edge.nodes = [child, TokenEdge(edge.pointer)]
+        return
+
+    # preposition
+    if leaf.dep == 'prep':
+        edge.pointer.insert(0, child.nodes[0])
+        if not child.is_singleton():
+            edge.pointer += child.nodes[1:]
+        return
+
     # add as child
-    edge.nodes.append(child)
+    edge.pointer.append(child)
 
 
 def process_token(token):
     edge = TokenEdge()
     node = TokenNode(token)
-    edge.nodes.append(node)
+    edge.pointer.append(node)
     for leaf in token.left_children:
         process_leaf(edge, token, leaf, True)
     for leaf in token.right_children:
         process_leaf(edge, token, leaf, False)
 
-    if len(edge.nodes) == 1:
+    return edge
+
+
+def remove_singletons(edge):
+    if isinstance(edge, TokenNode):
+        return edge
+    elif edge.is_singleton():
         return edge.nodes[0]
     else:
+        edge.nodes = [remove_singletons(node) for node in edge.nodes]
         return edge
 
 
 class TokenTree:
     def __init__(self, sentence):
         self.root = process_token(sentence.root())
+        remove_singletons(self.root)
 
     def __str__(self):
         return str(self.root)
@@ -94,6 +125,7 @@ class TokenTree:
 if __name__ == '__main__':
     test_text = u"""
     Some subspecies of mosquito might be 1st to be genetically wiped out.
+    Telmo is going to the gym.
     """
 
     print('Starting parser...')
@@ -102,8 +134,8 @@ if __name__ == '__main__':
     result = parser.parse_text(test_text)
 
     for r in result:
-        sentence = Sentence(r)
-        print(sentence)
-        sentence.print_tree()
-        tree = TokenTree(sentence)
+        s = Sentence(r)
+        print(s)
+        s.print_tree()
+        tree = TokenTree(s)
         print(tree)
