@@ -35,6 +35,13 @@ class TokenNode:
         else:
             self.right.append(token)
 
+    def merge_node(self, node, left):
+        for token in node.left:
+            self.add_token(token, left)
+        self.add_token(node.pivot, left)
+        for token in node.right:
+            self.add_token(token, left)
+
     def __str__(self):
         words = [token.word for token in self.left]
         words.append(self.pivot.word)
@@ -53,6 +60,12 @@ class TokenEdge:
     def is_singleton(self):
         return len(self.nodes) == 1
 
+    def root(self):
+        if len(self.nodes) > 0:
+            return self.nodes[0]
+        else:
+            return None
+
     def __str__(self):
         strs = [str(node) for node in self.nodes]
         return '(%s)' % ' '.join(strs)
@@ -69,14 +82,20 @@ def process_leaf(edge, root, leaf, left):
     # add to relationship node
     if (leaf.dep == 'aux') \
             or (leaf.dep == 'auxpass') \
-            or ((leaf.dep == 'prep') and (root.pos == 'VERB')):
-        edge.pointer[0].add_token(leaf, left)
+            or ((leaf.dep == 'prep') and (root.pos == 'VERB'))\
+            or (leaf.dep == 'agent') \
+            or (leaf.dep == 'pcomp') \
+            or (leaf.dep == 'compound') \
+            or (leaf.dep == 'amod'):
+        edge.pointer[0].merge_node(child.root(), left)
         if not child.is_singleton():
             edge.pointer += child.nodes[1:]
         return
 
     # modifier
-    if (leaf.dep == 'det') or (leaf.dep == 'advmod'):
+    if (leaf.dep == 'det') \
+            or (leaf.dep == 'advmod') \
+            or (leaf.dep == 'poss'):
         edge.nodes = [child, TokenEdge(edge.pointer)]
         return
 
@@ -99,7 +118,6 @@ def process_token(token):
         process_leaf(edge, token, leaf, True)
     for leaf in token.right_children:
         process_leaf(edge, token, leaf, False)
-
     return edge
 
 
@@ -126,6 +144,7 @@ if __name__ == '__main__':
     test_text = u"""
     Some subspecies of mosquito might be 1st to be genetically wiped out.
     Telmo is going to the gym.
+    Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate.
     """
 
     print('Starting parser...')
