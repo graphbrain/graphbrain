@@ -20,6 +20,7 @@
 
 
 from gb.nlp.parser import Parser
+from gb.nlp.token import Token
 from gb.nlp.sentence import Sentence
 
 
@@ -56,6 +57,7 @@ class TokenEdge:
         else:
             self.nodes = nodes
         self.pointer = self.nodes
+        self.rel_continuity = False
 
     def is_singleton(self):
         return len(self.nodes) == 1
@@ -71,56 +73,6 @@ class TokenEdge:
         return '(%s)' % ' '.join(strs)
 
 
-def process_leaf(edge, root, leaf, left):
-    # ignore
-    if (len(leaf.dep) == 0) or (leaf.dep == 'punct'):
-        return
-
-    # process subtree
-    child = process_token(leaf)
-
-    # add to relationship node
-    if (leaf.dep == 'aux') \
-            or (leaf.dep == 'auxpass') \
-            or ((leaf.dep == 'prep') and (root.pos == 'VERB'))\
-            or (leaf.dep == 'agent') \
-            or (leaf.dep == 'pcomp') \
-            or (leaf.dep == 'compound') \
-            or (leaf.dep == 'amod'):
-        edge.pointer[0].merge_node(child.root(), left)
-        if not child.is_singleton():
-            edge.pointer += child.nodes[1:]
-        return
-
-    # modifier
-    if (leaf.dep == 'det') \
-            or (leaf.dep == 'advmod') \
-            or (leaf.dep == 'poss'):
-        edge.nodes = [child, TokenEdge(edge.pointer)]
-        return
-
-    # preposition
-    if leaf.dep == 'prep':
-        edge.pointer.insert(0, child.nodes[0])
-        if not child.is_singleton():
-            edge.pointer += child.nodes[1:]
-        return
-
-    # add as child
-    edge.pointer.append(child)
-
-
-def process_token(token):
-    edge = TokenEdge()
-    node = TokenNode(token)
-    edge.pointer.append(node)
-    for leaf in token.left_children:
-        process_leaf(edge, token, leaf, True)
-    for leaf in token.right_children:
-        process_leaf(edge, token, leaf, False)
-    return edge
-
-
 def remove_singletons(edge):
     if isinstance(edge, TokenNode):
         return edge
@@ -133,11 +85,69 @@ def remove_singletons(edge):
 
 class TokenTree:
     def __init__(self, sentence):
-        self.root = process_token(sentence.root())
+        self.root = self.process_token(sentence.root())
         remove_singletons(self.root)
 
     def __str__(self):
         return str(self.root)
+
+    def process_leaf(self, edge, root, leaf, left):
+        # ignore
+        if (len(leaf.dep) == 0) or (leaf.dep == 'punct'):
+            return
+
+        # process subtree
+        child = self.process_token(leaf)
+
+        # add to relationship node
+        if (leaf.dep == 'aux') \
+                or (leaf.dep == 'auxpass') \
+                or ((leaf.dep == 'prep') and (root.pos == 'VERB')) \
+                or (leaf.dep == 'agent') \
+                or (leaf.dep == 'pcomp') \
+                or (leaf.dep == 'compound') \
+                or (leaf.dep == 'amod'):
+            rel_node = edge.pointer[0]
+            if not edge.rel_continuity:
+                if (not left) or (len(rel_node.left) > 0):
+                    sep = Token('_')
+                    sep.separator = True
+                    rel_node.add_token(sep, left)
+            rel_node.merge_node(child.root(), left)
+            if not child.is_singleton():
+                edge.pointer += child.nodes[1:]
+            edge.rel_continuity = True
+            return
+
+        edge.rel_continuity = False
+
+        # modifier
+        if (leaf.dep == 'det') \
+                or (leaf.dep == 'advmod') \
+                or (leaf.dep == 'poss'):
+            edge.nodes = [child, TokenEdge(edge.pointer)]
+            return
+
+        # preposition
+        if leaf.dep == 'prep':
+            edge.pointer.insert(0, child.nodes[0])
+            if not child.is_singleton():
+                edge.pointer += child.nodes[1:]
+            return
+
+        # add as child
+        edge.pointer.append(child)
+
+    def process_token(self, token):
+        edge = TokenEdge()
+        node = TokenNode(token)
+        edge.pointer.append(node)
+        edge.rel_continuity = True
+        for leaf in token.left_children:
+            self.process_leaf(edge, token, leaf, True)
+        for leaf in token.right_children:
+            self.process_leaf(edge, token, leaf, False)
+        return edge
 
 
 if __name__ == '__main__':

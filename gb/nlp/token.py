@@ -22,8 +22,8 @@
 class Token:
     """Generic NLP token."""
 
-    def __init__(self):
-        self.word = None
+    def __init__(self, word=None):
+        self.word = word
         self.lemma = None
         self.shape = None
         self.logprob = None
@@ -33,6 +33,7 @@ class Token:
         self.left_children = None
         self.right_children = None
         self.entity_type = None
+        self.separator = False
 
     def __str__(self):
         return '%s/%s (%s) {%s}' % (self.word.strip(), self.pos, self.dep, self.entity_type)
