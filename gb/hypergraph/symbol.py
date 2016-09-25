@@ -24,7 +24,7 @@ import random
 import numpy as np
 
 
-class SymbolType:
+class SymbolType(object):
     def __init__(self):
         pass
 

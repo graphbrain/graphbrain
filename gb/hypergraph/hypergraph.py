@@ -25,7 +25,7 @@ from mysql import MySQL
 import constants as const
 
 
-class HyperGraph:
+class HyperGraph(object):
     """Hypergraph operations."""
 
     def __init__(self, params):

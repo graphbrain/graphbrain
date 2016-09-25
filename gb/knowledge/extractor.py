@@ -23,7 +23,7 @@ from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
 
 
-class Extractor:
+class Extractor(object):
 
     def __init__(self):
         self.parser = Parser()
