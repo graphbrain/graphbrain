@@ -27,8 +27,9 @@ from gb.knowledge.tokentree import TokenTree
 
 class TestTokenTree(unittest.TestCase):
 
-    def setUp(self):
-        self.parser = Parser()
+    @classmethod
+    def setUpClass(cls):
+        cls.parser = Parser()
 
     def do_test(self, text, expected):
         result = self.parser.parse_text(text)
@@ -47,12 +48,15 @@ class TestTokenTree(unittest.TestCase):
 
     def test_3(self):
         text = u"Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate."
-        expected = u"(due_to___is_influenced_by (its (in location (the european_plain))) berlin (a temperate_seasonal_climate))"
+        expected = u"(due_to___is_influenced_by (its (in location (the european_plain))) berlin " \
+                   u"(a temperate_seasonal_climate))"
         self.do_test(text, expected)
 
     def test_4(self):
-        text = u"OpenCola is a brand of open-source cola, where the instructions for making it are freely available and modifiable."
-        expected = u"(is opencola (a (of brand ((where_are (the (for_making instructions)) it (freely (and available modifiable))) open_source_cola))))"
+        text = u"OpenCola is a brand of open-source cola, where the instructions for making it are freely available " \
+               u"and modifiable."
+        expected = u"(is opencola (a (of brand ((where_are (the (for_making instructions)) it " \
+                   u"(freely (and available modifiable))) open_source_cola))))"
         self.do_test(text, expected)
 
     def test_5(self):
