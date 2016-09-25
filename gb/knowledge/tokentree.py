@@ -24,24 +24,30 @@ from gb.nlp.token import Token
 from gb.nlp.sentence import Sentence
 
 
-class TokenNode:
+class Position(object):
+    LEFT, RIGHT = range(2)
+
+
+class TokenNode(object):
     def __init__(self, pivot):
         self.pivot = pivot
         self.left = []
         self.right = []
 
-    def add_token(self, token, left):
-        if left:
+    def add_token(self, token, pos):
+        if pos == Position.LEFT:
             self.left.append(token)
         else:
             self.right.append(token)
 
-    def merge_node(self, node, left):
+    def merge_node(self, node, pos):
+        if isinstance(node, TokenEdge):
+            node = node.root()
         for token in node.left:
-            self.add_token(token, left)
-        self.add_token(node.pivot, left)
+            self.add_token(token, pos)
+        self.add_token(node.pivot, pos)
         for token in node.right:
-            self.add_token(token, left)
+            self.add_token(token, pos)
 
     def __str__(self):
         words = [token.word for token in self.left]
@@ -50,7 +56,7 @@ class TokenNode:
         return '_'.join(words)
 
 
-class TokenEdge:
+class TokenEdge(object):
     def __init__(self, nodes=None):
         if nodes is None:
             self.nodes = []
@@ -66,7 +72,13 @@ class TokenEdge:
         if len(self.nodes) > 0:
             return self.nodes[0]
         else:
-            return None
+            raise IndexError('Requesting root on an empty TokenEdge')
+
+    def rest(self):
+        if len(self.nodes) > 1:
+            return self.nodes[1:]
+        else:
+            raise IndexError('Requesting rest on a TokenEdge with %s nodes.' % len(self.nodes))
 
     def __str__(self):
         strs = [str(node) for node in self.nodes]
@@ -83,7 +95,7 @@ def remove_singletons(edge):
         return edge
 
 
-class TokenTree:
+class TokenTree(object):
     def __init__(self, sentence):
         self.root = self.process_token(sentence.root())
         remove_singletons(self.root)
@@ -91,7 +103,7 @@ class TokenTree:
     def __str__(self):
         return str(self.root)
 
-    def process_leaf(self, edge, root, leaf, left):
+    def process_leaf(self, parent, leaf, pos):
         # ignore
         if (len(leaf.dep) == 0) or (leaf.dep == 'punct'):
             return
@@ -99,44 +111,49 @@ class TokenTree:
         # process subtree
         child = self.process_token(leaf)
 
-        # add to relationship node
+        rel_node = parent.pointer[0]
+
+        # addition to relationship
         if (leaf.dep == 'aux') \
                 or (leaf.dep == 'auxpass') \
-                or ((leaf.dep == 'prep') and (root.pos == 'VERB')) \
+                or ((leaf.dep == 'prep') and (rel_node.pivot.pos == 'VERB')) \
+                or ((leaf.dep == 'prep') and (rel_node.pivot.dep == 'prep')) \
                 or (leaf.dep == 'agent') \
                 or (leaf.dep == 'pcomp') \
                 or (leaf.dep == 'compound') \
-                or (leaf.dep == 'amod'):
-            rel_node = edge.pointer[0]
-            if not edge.rel_continuity:
-                if (not left) or (len(rel_node.left) > 0):
+                or (leaf.dep == 'amod') \
+                or ((leaf.dep == 'advmod') and (rel_node.pivot.pos == 'VERB')):
+            if not parent.rel_continuity:
+                if (pos == Position.RIGHT) or (len(rel_node.left) > 0):
                     sep = Token('_')
                     sep.separator = True
-                    rel_node.add_token(sep, left)
-            rel_node.merge_node(child.root(), left)
+                    rel_node.add_token(sep, pos)
+            rel_node.merge_node(child.root(), pos)
             if not child.is_singleton():
-                edge.pointer += child.nodes[1:]
-            edge.rel_continuity = True
+                parent.pointer += child.rest()
+            parent.rel_continuity = True
             return
 
-        edge.rel_continuity = False
+        parent.rel_continuity = False
 
         # modifier
         if (leaf.dep == 'det') \
                 or (leaf.dep == 'advmod') \
-                or (leaf.dep == 'poss'):
-            edge.nodes = [child, TokenEdge(edge.pointer)]
+                or (leaf.dep == 'poss') \
+                or (leaf.dep == 'relcl'):
+            parent.nodes = [child, TokenEdge(parent.pointer)]
             return
 
-        # preposition
-        if leaf.dep == 'prep':
-            edge.pointer.insert(0, child.nodes[0])
+        # application
+        if (leaf.dep == 'prep') \
+                or (leaf.dep == 'cc'):
+            parent.pointer.insert(0, child.root())
             if not child.is_singleton():
-                edge.pointer += child.nodes[1:]
+                parent.pointer += child.rest()
             return
 
-        # add as child
-        edge.pointer.append(child)
+        # as child
+        parent.pointer.append(child)
 
     def process_token(self, token):
         edge = TokenEdge()
@@ -144,17 +161,16 @@ class TokenTree:
         edge.pointer.append(node)
         edge.rel_continuity = True
         for leaf in token.left_children:
-            self.process_leaf(edge, token, leaf, True)
+            self.process_leaf(edge, leaf, Position.LEFT)
         for leaf in token.right_children:
-            self.process_leaf(edge, token, leaf, False)
+            self.process_leaf(edge, leaf, Position.RIGHT)
         return edge
 
 
 if __name__ == '__main__':
     test_text = u"""
-    Some subspecies of mosquito might be 1st to be genetically wiped out.
-    Telmo is going to the gym.
-    Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate.
+    OpenCola is a brand of open-source cola, where the instructions for making it are freely available and modifiable.
+    Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan.
     """
 
     print('Starting parser...')
