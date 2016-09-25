@@ -22,7 +22,7 @@
 import symbol as sym
 
 
-class TokenType:
+class TokenType(object):
     def __init__(self):
         pass
 

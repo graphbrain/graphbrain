@@ -19,7 +19,6 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import constants as const
 import hypergraph
 
 
