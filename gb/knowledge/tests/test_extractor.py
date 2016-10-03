@@ -22,10 +22,10 @@
 import unittest
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
-from gb.knowledge.stage_alpha import alpha_transform
+from gb.knowledge.stages.alpha import transform as alpha_transform
 
 
-class TestTokenTree(unittest.TestCase):
+class TestExtractor(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -64,7 +64,8 @@ class TestTokenTree(unittest.TestCase):
 
     def test_6(self):
         text = u"Sweden wants to fight our disposable culture with tax breaks for repairing old stuff."
-        alpha = u"(wants sweden (to (fight (our (disposable culture)) (with ((for (repairing (old stuff))) (tax breaks))))))"
+        alpha = u"(wants sweden (to (fight (our (disposable culture)) (with ((for (repairing (old stuff))) " \
+                u"(tax breaks))))))"
         self.do_test(text, alpha)
 
     def test_7(self):

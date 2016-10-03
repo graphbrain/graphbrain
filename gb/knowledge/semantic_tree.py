@@ -26,7 +26,7 @@ class Position(object):
     LEFT, RIGHT = range(2)
 
 
-class TokenNode(object):
+class Leaf(object):
     def __init__(self, pivot):
         self.pivot = pivot
         self.left = []
@@ -39,7 +39,7 @@ class TokenNode(object):
             self.right.append(token)
 
     def merge_node(self, node, pos):
-        if isinstance(node, TokenEdge):
+        if isinstance(node, Node):
             node = node.root()
         for token in node.left:
             self.add_token(token, pos)
@@ -55,19 +55,19 @@ class TokenNode(object):
 
 
 def create_placeholder():
-    return TokenEdge(None, None, None, True)
+    return Node(None, None, None, True)
 
 
 def apply_layer(nodes, layer):
     for i in range(len(layer.nodes)):
-        if isinstance(layer.nodes[i], TokenEdge):
+        if isinstance(layer.nodes[i], Node):
             if layer.nodes[i].placeholder:
-                layer.nodes[i] = TokenEdge(None, None, nodes)
+                layer.nodes[i] = Node(None, None, nodes)
                 return
             apply_layer(nodes, layer.nodes[i])
 
 
-class TokenEdge(object):
+class Node(object):
     def __init__(self, pos, base_token, nodes=None, placeholder=False):
         self.pos = pos
         self.base_token = base_token
@@ -101,7 +101,7 @@ class TokenEdge(object):
     def root(self):
         if len(self.nodes) > 0:
             node0 = self.nodes[0]
-            if isinstance(node0, TokenNode):
+            if isinstance(node0, Leaf):
                 return node0
             else:
                 return node0.root()
@@ -110,8 +110,8 @@ class TokenEdge(object):
 
     def append_to_root(self, node, pos):
         if len(self.nodes) > 0:
-            if isinstance(self.nodes[0], TokenNode):
-                self.nodes[0] = TokenEdge(None, None, [self.nodes[0]])
+            if isinstance(self.nodes[0], Leaf):
+                self.nodes[0] = Node(None, None, [self.nodes[0]])
             if pos == Position.RIGHT:
                 self.nodes[0].nodes.append(node)
             else:
@@ -134,7 +134,7 @@ class TokenEdge(object):
 
 
 def remove_singletons(edge):
-    if isinstance(edge, TokenNode):
+    if isinstance(edge, Leaf):
         return edge
     elif edge.is_singleton():
         return remove_singletons(edge.nodes[0])
