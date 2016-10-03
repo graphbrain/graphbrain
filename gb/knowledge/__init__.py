@@ -19,4 +19,4 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-__all__ = ['extractor']
+__all__ = ['extractor', 'tokentree', 'stage_alpha']
