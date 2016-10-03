@@ -22,13 +22,13 @@
 from __future__ import print_function
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
-from tokentree import remove_singletons, Position, TokenEdge, TokenNode
+from gb.knowledge.semantic_tree import remove_singletons, Position, Node, Leaf
 
 
 def apply_modifier(root, child):
     rel = child.nodes[0]
     rest = child.nodes[1:]
-    root.layer = TokenEdge(root.pos, None, [rel, root.layer] + rest)
+    root.layer = Node(root.pos, None, [rel, root.layer] + rest)
 
 
 def process_leaf(parent, leaf, root, pos):
@@ -57,7 +57,7 @@ def process_leaf(parent, leaf, root, pos):
 
     # append to parent's root edge
     if (leaf.dep == 'pcomp') \
-        or (leaf.dep == 'compound'):
+            or (leaf.dep == 'compound'):
         parent.append_to_root(child, pos)
         return
 
@@ -66,8 +66,8 @@ def process_leaf(parent, leaf, root, pos):
 
 
 def process_token(token, pos=None, root=None):
-    edge = TokenEdge(pos, token)
-    node = TokenNode(token)
+    edge = Node(pos, token)
+    node = Leaf(token)
     edge.nodes.append(node)
     if root is None:
         root = edge
@@ -79,9 +79,10 @@ def process_token(token, pos=None, root=None):
     return edge
 
 
-def alpha_transform(sentence):
+def transform(sentence):
     tree = process_token(sentence.root())
     return remove_singletons(tree)
+
 
 if __name__ == '__main__':
     test_text = u"""
@@ -97,5 +98,5 @@ if __name__ == '__main__':
         s = Sentence(r)
         print(s)
         s.print_tree()
-        t = alpha_transform(s)
+        t = transform(s)
         print(t)
