@@ -62,14 +62,7 @@ def process_leaf(parent, leaf, root, pos):
         return
 
     # as child
-    insertion_pos = Position.RIGHT
-    if (((parent.pos == Position.RIGHT) and (pos == Position.LEFT))
-            or ((parent.pos == Position.LEFT) and (pos == Position.LEFT))):
-        insertion_pos = Position.LEFT
-    if insertion_pos == Position.RIGHT:
-        parent.nodes.append(child)
-    else:
-        parent.nodes.insert(0, child)
+    parent.nodes.append(child)
 
 
 def process_token(token, pos=None, root=None):
@@ -93,7 +86,6 @@ def alpha_transform(sentence):
 if __name__ == '__main__':
     test_text = u"""
     OpenCola is a brand of open-source cola, where the instructions for making it are freely available and modifiable.
-    Sweden wants to fight our disposable culture with tax breaks for repairing old stuff.
     """
 
     print('Starting parser...')
