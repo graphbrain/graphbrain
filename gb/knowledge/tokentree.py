@@ -108,11 +108,14 @@ class TokenEdge(object):
         else:
             raise IndexError('Requesting root on an empty TokenEdge')
 
-    def append_to_root(self, node):
+    def append_to_root(self, node, pos):
         if len(self.nodes) > 0:
             if isinstance(self.nodes[0], TokenNode):
                 self.nodes[0] = TokenEdge(None, None, [self.nodes[0]])
-            self.nodes[0].nodes.append(node)
+            if pos == Position.RIGHT:
+                self.nodes[0].nodes.append(node)
+            else:
+                self.nodes[0].nodes.insert(0, node)
         else:
             raise IndexError('Requesting root on an empty TokenEdge')
 
