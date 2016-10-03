@@ -47,8 +47,7 @@ def process_leaf(parent, leaf, root, pos):
             or (leaf.dep == 'det') \
             or (leaf.dep == 'advmod') \
             or (leaf.dep == 'amod') \
-            or (leaf.dep == 'poss') \
-            or (leaf.dep == 'relcl'):
+            or (leaf.dep == 'poss'):
         child = process_token(leaf, pos, root)
         apply_modifier(root, child)
         root.new_layer()
@@ -57,8 +56,9 @@ def process_leaf(parent, leaf, root, pos):
     child = process_token(leaf, pos)
 
     # append to parent's root edge
-    if leaf.dep == 'pcomp':
-        parent.append_to_root(child)
+    if (leaf.dep == 'pcomp') \
+        or (leaf.dep == 'compound'):
+        parent.append_to_root(child, pos)
         return
 
     # as child
@@ -93,11 +93,7 @@ def alpha_transform(sentence):
 if __name__ == '__main__':
     test_text = u"""
     OpenCola is a brand of open-source cola, where the instructions for making it are freely available and modifiable.
-    Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan.
     Sweden wants to fight our disposable culture with tax breaks for repairing old stuff.
-    Sweden is the third-largest country in the European Union by area.
-    OpenCola is a brand of open-source cola, where the instructions for making it are freely available and modifiable.
-    Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan.
     """
 
     print('Starting parser...')

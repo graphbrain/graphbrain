@@ -52,16 +52,26 @@ class TestTokenTree(unittest.TestCase):
                 u"(a (temperate (seasonal climate)))))"
         self.do_test(text, alpha)
 
-    # def test_4(self):
+    def test_4(self):
+        text = u"Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan."
+        alpha = u"(is ((koikuchi shoyu) (best (known (as (soy sauce))))) (the (of (in mother japan) (all sauces))))"
+        self.do_test(text, alpha)
+
+    def test_5(self):
+        text = u"Sweden is the third-largest country in the European Union by area."
+        alpha = u"(is sweden (the (third (largest (in (by country area) (the (european union)))))))"
+        self.do_test(text, alpha)
+
+    def test_6(self):
+        text = u"Sweden wants to fight our disposable culture with tax breaks for repairing old stuff."
+        alpha = u"(wants sweden (to (fight (our (disposable culture)) (with ((for (repairing (old stuff))) (tax breaks))))))"
+        self.do_test(text, alpha)
+
+    # def test_XXX(self):
     #     text = u"OpenCola is a brand of open-source cola, where the instructions for making it are freely available " \
     #            u"and modifiable."
     #     alpha = u"(is opencola (a (of brand ((where_are (the (for_making instructions)) it " \
     #             u"(freely (and available modifiable))) open_source_cola))))"
-    #     self.do_test(text, alpha)
-
-    # def test_5(self):
-    #     text = u"Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan."
-    #     alpha = u"(is (koikuchi_shoyu (best_known_as soy_sauce)) (the (of___in mother (all sauces) japan)))"
     #     self.do_test(text, alpha)
 
 
