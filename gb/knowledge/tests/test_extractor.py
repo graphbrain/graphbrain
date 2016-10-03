@@ -67,12 +67,12 @@ class TestTokenTree(unittest.TestCase):
         alpha = u"(wants sweden (to (fight (our (disposable culture)) (with ((for (repairing (old stuff))) (tax breaks))))))"
         self.do_test(text, alpha)
 
-    # def test_XXX(self):
-    #     text = u"OpenCola is a brand of open-source cola, where the instructions for making it are freely available " \
-    #            u"and modifiable."
-    #     alpha = u"(is opencola (a (of brand ((where_are (the (for_making instructions)) it " \
-    #             u"(freely (and available modifiable))) open_source_cola))))"
-    #     self.do_test(text, alpha)
+    def test_7(self):
+        text = u"OpenCola is a brand of open-source cola, where the instructions for making it are freely available " \
+               u"and modifiable."
+        alpha = u"(is opencola (a (of brand (((open source) cola) (where (are (the ((for making) instructions)) " \
+                u"it (freely (and (available modifiable)))))))))"
+        self.do_test(text, alpha)
 
 
 if __name__ == '__main__':
