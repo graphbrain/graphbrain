@@ -19,9 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from gb.nlp.parser import Parser
-from gb.nlp.token import Token
-from gb.nlp.sentence import Sentence
+from __future__ import print_function
 
 
 class Position(object):
@@ -56,21 +54,65 @@ class TokenNode(object):
         return '_'.join(words)
 
 
+def create_placeholder():
+    return TokenEdge(None, None, None, True)
+
+
+def apply_layer(nodes, layer):
+    for i in range(len(layer.nodes)):
+        if isinstance(layer.nodes[i], TokenEdge):
+            if layer.nodes[i].placeholder:
+                layer.nodes[i] = TokenEdge(None, None, nodes)
+                return
+            apply_layer(nodes, layer.nodes[i])
+
+
 class TokenEdge(object):
-    def __init__(self, nodes=None):
+    def __init__(self, pos, base_token, nodes=None, placeholder=False):
+        self.pos = pos
+        self.base_token = base_token
         if nodes is None:
             self.nodes = []
         else:
             self.nodes = nodes
-        self.pointer = self.nodes
-        self.rel_continuity = False
+        self.placeholder = placeholder
+        self.layers = []
+        self.layer = None
+        if not placeholder:
+            self.layer = create_placeholder()
+
+    def new_layer(self):
+        if not self.layer.placeholder:
+            self.layers.append(self.layer)
+            self.layer = create_placeholder()
+
+    def apply_layers(self):
+        self.layers.reverse()
+        nodes = self.nodes
+        for layer in self.layers:
+            apply_layer(nodes, layer)
+            nodes = layer.nodes
+        self.nodes = nodes
 
     def is_singleton(self):
         return len(self.nodes) == 1
 
+    # TODO: hack
     def root(self):
         if len(self.nodes) > 0:
-            return self.nodes[0]
+            node0 = self.nodes[0]
+            if isinstance(node0, TokenNode):
+                return node0
+            else:
+                return node0.root()
+        else:
+            raise IndexError('Requesting root on an empty TokenEdge')
+
+    def append_to_root(self, node):
+        if len(self.nodes) > 0:
+            if isinstance(self.nodes[0], TokenNode):
+                self.nodes[0] = TokenEdge(None, None, [self.nodes[0]])
+            self.nodes[0].nodes.append(node)
         else:
             raise IndexError('Requesting root on an empty TokenEdge')
 
@@ -81,106 +123,18 @@ class TokenEdge(object):
             raise IndexError('Requesting rest on a TokenEdge with %s nodes.' % len(self.nodes))
 
     def __str__(self):
-        strs = [str(node) for node in self.nodes]
-        return '(%s)' % ' '.join(strs)
+        if self.placeholder:
+            return '[*]'
+        else:
+            strs = [str(node) for node in self.nodes]
+            return '(%s)' % ' '.join(strs)
 
 
 def remove_singletons(edge):
     if isinstance(edge, TokenNode):
         return edge
     elif edge.is_singleton():
-        return edge.nodes[0]
+        return remove_singletons(edge.nodes[0])
     else:
         edge.nodes = [remove_singletons(node) for node in edge.nodes]
         return edge
-
-
-class TokenTree(object):
-    def __init__(self, sentence):
-        self.root = self.process_token(sentence.root())
-        remove_singletons(self.root)
-
-    def __str__(self):
-        return str(self.root)
-
-    def process_leaf(self, parent, leaf, pos):
-        # ignore
-        if (len(leaf.dep) == 0) or (leaf.dep == 'punct'):
-            return
-
-        # process subtree
-        child = self.process_token(leaf)
-
-        rel_node = parent.pointer[0]
-
-        # addition to relationship
-        if (leaf.dep == 'aux') \
-                or (leaf.dep == 'auxpass') \
-                or ((leaf.dep == 'prep') and (rel_node.pivot.pos == 'VERB')) \
-                or ((leaf.dep == 'prep') and (rel_node.pivot.dep == 'prep')) \
-                or (leaf.dep == 'agent') \
-                or (leaf.dep == 'pcomp') \
-                or (leaf.dep == 'compound') \
-                or (leaf.dep == 'amod') \
-                or ((leaf.dep == 'advmod') and (rel_node.pivot.pos == 'VERB')):
-            if not parent.rel_continuity:
-                if (pos == Position.RIGHT) or (len(rel_node.left) > 0):
-                    sep = Token('_')
-                    sep.separator = True
-                    rel_node.add_token(sep, pos)
-            rel_node.merge_node(child.root(), pos)
-            if not child.is_singleton():
-                parent.pointer += child.rest()
-            parent.rel_continuity = True
-            return
-
-        parent.rel_continuity = False
-
-        # modifier
-        if (leaf.dep == 'det') \
-                or (leaf.dep == 'advmod') \
-                or (leaf.dep == 'poss') \
-                or (leaf.dep == 'relcl'):
-            parent.nodes = [child, TokenEdge(parent.pointer)]
-            return
-
-        # application
-        if (leaf.dep == 'prep') \
-                or (leaf.dep == 'cc'):
-            parent.pointer.insert(0, child.root())
-            if not child.is_singleton():
-                parent.pointer += child.rest()
-            return
-
-        # as child
-        parent.pointer.append(child)
-
-    def process_token(self, token):
-        edge = TokenEdge()
-        node = TokenNode(token)
-        edge.pointer.append(node)
-        edge.rel_continuity = True
-        for leaf in token.left_children:
-            self.process_leaf(edge, leaf, Position.LEFT)
-        for leaf in token.right_children:
-            self.process_leaf(edge, leaf, Position.RIGHT)
-        return edge
-
-
-if __name__ == '__main__':
-    test_text = u"""
-    OpenCola is a brand of open-source cola, where the instructions for making it are freely available and modifiable.
-    Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan.
-    """
-
-    print('Starting parser...')
-    parser = Parser()
-    print('Parsing...')
-    result = parser.parse_text(test_text)
-
-    for r in result:
-        s = Sentence(r)
-        print(s)
-        s.print_tree()
-        tree = TokenTree(s)
-        print(tree)

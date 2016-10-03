@@ -22,7 +22,7 @@
 import unittest
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
-from gb.knowledge.tokentree import TokenTree
+from gb.knowledge.stage_alpha import alpha_transform
 
 
 class TestTokenTree(unittest.TestCase):
@@ -31,38 +31,38 @@ class TestTokenTree(unittest.TestCase):
     def setUpClass(cls):
         cls.parser = Parser()
 
-    def do_test(self, text, expected):
+    def do_test(self, text, alpha):
         result = self.parser.parse_text(text)
-        tree = TokenTree(Sentence(result[0]))
-        self.assertEqual(str(tree), expected)
+        tree_alpha = alpha_transform(Sentence(result[0]))
+        self.assertEqual(str(tree_alpha), alpha)
 
     def test_1(self):
         text = u"Some subspecies of mosquito might be 1st to be genetically wiped out."
-        expected = u"(might_be (some (of subspecies mosquito)) (1st (to_be_genetically_wiped out)))"
-        self.do_test(text, expected)
+        alpha = u"(might (be (some (of subspecies mosquito)) (1st (to (be (genetically (wiped out)))))))"
+        self.do_test(text, alpha)
 
     def test_2(self):
         text = u"Telmo is going to the gym."
-        expected = u"(is_going_to telmo (the gym))"
-        self.do_test(text, expected)
+        alpha = u"(is (going telmo (to (the gym))))"
+        self.do_test(text, alpha)
 
     def test_3(self):
         text = u"Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate."
-        expected = u"(due_to___is_influenced_by (its (in location (the european_plain))) berlin " \
-                   u"(a temperate_seasonal_climate))"
-        self.do_test(text, expected)
+        alpha = u"(is (by (influenced ((due to) (its (in location (the (european plain))))) berlin) " \
+                u"(a (temperate (seasonal climate)))))"
+        self.do_test(text, alpha)
 
-    def test_4(self):
-        text = u"OpenCola is a brand of open-source cola, where the instructions for making it are freely available " \
-               u"and modifiable."
-        expected = u"(is opencola (a (of brand ((where_are (the (for_making instructions)) it " \
-                   u"(freely (and available modifiable))) open_source_cola))))"
-        self.do_test(text, expected)
+    # def test_4(self):
+    #     text = u"OpenCola is a brand of open-source cola, where the instructions for making it are freely available " \
+    #            u"and modifiable."
+    #     alpha = u"(is opencola (a (of brand ((where_are (the (for_making instructions)) it " \
+    #             u"(freely (and available modifiable))) open_source_cola))))"
+    #     self.do_test(text, alpha)
 
-    def test_5(self):
-        text = u"Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan."
-        expected = u"(is (koikuchi_shoyu (best_known_as soy_sauce)) (the (of___in mother (all sauces) japan)))"
-        self.do_test(text, expected)
+    # def test_5(self):
+    #     text = u"Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan."
+    #     alpha = u"(is (koikuchi_shoyu (best_known_as soy_sauce)) (the (of___in mother (all sauces) japan)))"
+    #     self.do_test(text, alpha)
 
 
 if __name__ == '__main__':
