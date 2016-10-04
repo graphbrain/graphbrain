@@ -55,21 +55,20 @@ class Leaf(object):
 
 
 def create_placeholder():
-    return Node(None, None, None, True)
+    return Node(None, None, True)
 
 
 def apply_layer(nodes, layer):
     for i in range(len(layer.nodes)):
         if isinstance(layer.nodes[i], Node):
             if layer.nodes[i].placeholder:
-                layer.nodes[i] = Node(None, None, nodes)
+                layer.nodes[i] = Node(None, nodes)
                 return
             apply_layer(nodes, layer.nodes[i])
 
 
 class Node(object):
-    def __init__(self, pos, base_token, nodes=None, placeholder=False):
-        self.pos = pos
+    def __init__(self, base_token, nodes=None, placeholder=False):
         self.base_token = base_token
         if nodes is None:
             self.nodes = []
@@ -111,7 +110,7 @@ class Node(object):
     def append_to_root(self, node, pos):
         if len(self.nodes) > 0:
             if isinstance(self.nodes[0], Leaf):
-                self.nodes[0] = Node(None, None, [self.nodes[0]])
+                self.nodes[0] = Node(None, [self.nodes[0]])
             if pos == Position.RIGHT:
                 self.nodes[0].nodes.append(node)
             else:
