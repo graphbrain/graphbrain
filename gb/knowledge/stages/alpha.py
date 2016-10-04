@@ -26,8 +26,8 @@ from gb.knowledge.semantic_tree import remove_singletons, Position, Node, Leaf
 
 
 def apply_modifier(root, child):
-    rel = child.nodes[0]
-    rest = child.nodes[1:]
+    rel = child.children[0]
+    rest = child.children[1:]
     root.layer = Node(None, [rel, root.layer] + rest)
 
 
@@ -55,20 +55,20 @@ def process_child(parent, leaf, root, pos):
 
     child = process_token(leaf)
 
-    # append to parent's root edge
+    # append to parent's root node
     if (leaf.dep == 'pcomp') \
             or (leaf.dep == 'compound'):
         parent.append_to_root(child, pos)
         return
 
     # as child
-    parent.nodes.append(child)
+    parent.children.append(child)
 
 
 def process_token(token, root=None):
     node = Node(token)
     leaf = Leaf(token)
-    node.nodes.append(leaf)
+    node.children.append(leaf)
     if root is None:
         root = node
     for leaf in token.left_children:

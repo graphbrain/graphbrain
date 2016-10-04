@@ -59,21 +59,21 @@ def create_placeholder():
 
 
 def apply_layer(nodes, layer):
-    for i in range(len(layer.nodes)):
-        if isinstance(layer.nodes[i], Node):
-            if layer.nodes[i].placeholder:
-                layer.nodes[i] = Node(None, nodes)
+    for i in range(len(layer.children)):
+        if isinstance(layer.children[i], Node):
+            if layer.children[i].placeholder:
+                layer.children[i] = Node(None, nodes)
                 return
-            apply_layer(nodes, layer.nodes[i])
+            apply_layer(nodes, layer.children[i])
 
 
 class Node(object):
-    def __init__(self, base_token, nodes=None, placeholder=False):
+    def __init__(self, base_token, children=None, placeholder=False):
         self.base_token = base_token
-        if nodes is None:
-            self.nodes = []
+        if children is None:
+            self.children = []
         else:
-            self.nodes = nodes
+            self.children = children
         self.placeholder = placeholder
         self.layers = []
         self.layer = None
@@ -87,56 +87,56 @@ class Node(object):
 
     def apply_layers(self):
         self.layers.reverse()
-        nodes = self.nodes
+        nodes = self.children
         for layer in self.layers:
             apply_layer(nodes, layer)
-            nodes = layer.nodes
-        self.nodes = nodes
+            nodes = layer.children
+        self.children = nodes
 
     def is_singleton(self):
-        return len(self.nodes) == 1
+        return len(self.children) == 1
 
     # TODO: hack
     def root(self):
-        if len(self.nodes) > 0:
-            node0 = self.nodes[0]
+        if len(self.children) > 0:
+            node0 = self.children[0]
             if isinstance(node0, Leaf):
                 return node0
             else:
                 return node0.root()
         else:
-            raise IndexError('Requesting root on an empty TokenEdge')
+            raise IndexError('Requesting root on an empty Node')
 
     def append_to_root(self, node, pos):
-        if len(self.nodes) > 0:
-            if isinstance(self.nodes[0], Leaf):
-                self.nodes[0] = Node(None, [self.nodes[0]])
+        if len(self.children) > 0:
+            if isinstance(self.children[0], Leaf):
+                self.children[0] = Node(None, [self.children[0]])
             if pos == Position.RIGHT:
-                self.nodes[0].nodes.append(node)
+                self.children[0].children.append(node)
             else:
-                self.nodes[0].nodes.insert(0, node)
+                self.children[0].children.insert(0, node)
         else:
-            raise IndexError('Requesting root on an empty TokenEdge')
+            raise IndexError('Requesting root on an empty Node')
 
     def rest(self):
-        if len(self.nodes) > 1:
-            return self.nodes[1:]
+        if len(self.children) > 1:
+            return self.children[1:]
         else:
-            raise IndexError('Requesting rest on a TokenEdge with %s nodes.' % len(self.nodes))
+            raise IndexError('Requesting rest on a Node with %s children.' % len(self.children))
 
     def __str__(self):
         if self.placeholder:
             return '[*]'
         else:
-            strs = [str(node) for node in self.nodes]
+            strs = [str(node) for node in self.children]
             return '(%s)' % ' '.join(strs)
 
 
-def remove_singletons(edge):
-    if isinstance(edge, Leaf):
-        return edge
-    elif edge.is_singleton():
-        return remove_singletons(edge.nodes[0])
+def remove_singletons(node):
+    if isinstance(node, Leaf):
+        return node
+    elif node.is_singleton():
+        return remove_singletons(node.children[0])
     else:
-        edge.nodes = [remove_singletons(node) for node in edge.nodes]
-        return edge
+        node.children = [remove_singletons(child) for child in node.children]
+        return node
