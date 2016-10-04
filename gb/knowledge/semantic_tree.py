@@ -87,11 +87,11 @@ class Node(object):
 
     def apply_layers(self):
         self.layers.reverse()
-        nodes = self.children
+        children = self.children
         for layer in self.layers:
-            apply_layer(nodes, layer)
-            nodes = layer.children
-        self.children = nodes
+            apply_layer(children, layer)
+            children = layer.children
+        self.children = children
 
     def is_singleton(self):
         return len(self.children) == 1
@@ -128,7 +128,7 @@ class Node(object):
         if self.placeholder:
             return '[*]'
         else:
-            strs = [str(node) for node in self.children]
+            strs = [str(child) for child in self.children]
             return '(%s)' % ' '.join(strs)
 
 
