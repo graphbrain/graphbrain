@@ -28,10 +28,10 @@ from gb.knowledge.semantic_tree import remove_singletons, Position, Node, Leaf
 def apply_modifier(root, child):
     rel = child.nodes[0]
     rest = child.nodes[1:]
-    root.layer = Node(root.pos, None, [rel, root.layer] + rest)
+    root.layer = Node(None, [rel, root.layer] + rest)
 
 
-def process_leaf(parent, leaf, root, pos):
+def process_child(parent, leaf, root, pos):
     # ignore
     if (len(leaf.dep) == 0) or (leaf.dep == 'punct'):
         return
@@ -48,12 +48,12 @@ def process_leaf(parent, leaf, root, pos):
             or (leaf.dep == 'advmod') \
             or (leaf.dep == 'amod') \
             or (leaf.dep == 'poss'):
-        child = process_token(leaf, pos, root)
+        child = process_token(leaf, root)
         apply_modifier(root, child)
         root.new_layer()
         return
 
-    child = process_token(leaf, pos)
+    child = process_token(leaf)
 
     # append to parent's root edge
     if (leaf.dep == 'pcomp') \
@@ -65,18 +65,18 @@ def process_leaf(parent, leaf, root, pos):
     parent.nodes.append(child)
 
 
-def process_token(token, pos=None, root=None):
-    edge = Node(pos, token)
-    node = Leaf(token)
-    edge.nodes.append(node)
+def process_token(token, root=None):
+    node = Node(token)
+    leaf = Leaf(token)
+    node.nodes.append(leaf)
     if root is None:
-        root = edge
+        root = node
     for leaf in token.left_children:
-        process_leaf(edge, leaf, root, Position.LEFT)
+        process_child(node, leaf, root, Position.LEFT)
     for leaf in token.right_children:
-        process_leaf(edge, leaf, root, Position.RIGHT)
-    edge.apply_layers()
-    return edge
+        process_child(node, leaf, root, Position.RIGHT)
+    node.apply_layers()
+    return node
 
 
 def transform(sentence):
@@ -86,7 +86,7 @@ def transform(sentence):
 
 if __name__ == '__main__':
     test_text = u"""
-    OpenCola is a brand of open-source cola, where the instructions for making it are freely available and modifiable.
+    2016 Nobel Prize in Physiology or Medicine Is Awarded to Yoshinori Ohsumi.
     """
 
     print('Starting parser...')
