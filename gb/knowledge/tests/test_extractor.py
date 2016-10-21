@@ -75,6 +75,10 @@ class TestExtractor(unittest.TestCase):
                 u"it (freely (and (available modifiable)))))))))"
         self.do_test(text, alpha)
 
+    def test_8(self):
+        text = u"2016 Nobel Prize in Physiology or Medicine Is Awarded to Yoshinori Ohsumi."
+        alpha = u"(is (awarded (2016 (in (nobel prize) (or (physiology medicine)))) (to (yoshinori ohsumi))))"
+        self.do_test(text, alpha)
 
 if __name__ == '__main__':
     unittest.main()

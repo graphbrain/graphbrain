@@ -22,66 +22,63 @@
 from __future__ import print_function
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
-from gb.knowledge.semantic_tree import remove_singletons, Position, Node, Leaf
+from gb.knowledge.semantic_tree import Position, Elements
 
 
-def apply_modifier(root, child):
-    rel = child.children[0]
-    rest = child.children[1:]
-    root.layer = Node(None, [rel, root.layer] + rest)
-
-
-def process_child(parent, leaf, root, pos):
+def process_child_token(elems, parent_elem_id, token, root_id, pos):
     # ignore
-    if (len(leaf.dep) == 0) or (leaf.dep == 'punct'):
+    if (len(token.dep) == 0) or (token.dep == 'punct'):
         return
 
-    parent_token = parent.root().pivot
+    parent_elem = elems.get(parent_elem_id)
+    parent_token = parent_elem.root_token()
 
     # modifier
-    if (leaf.dep == 'aux') \
-            or (leaf.dep == 'auxpass') \
-            or ((leaf.dep == 'prep') and (parent_token.pos != 'VERB')) \
-            or (leaf.dep == 'cc') \
-            or (leaf.dep == 'agent') \
-            or (leaf.dep == 'det') \
-            or (leaf.dep == 'advmod') \
-            or (leaf.dep == 'amod') \
-            or (leaf.dep == 'poss'):
-        child = process_token(leaf, root)
-        apply_modifier(root, child)
-        root.new_layer()
+    if (token.dep == 'aux') \
+            or (token.dep == 'auxpass') \
+            or ((token.dep == 'prep') and (parent_token.pos != 'VERB')) \
+            or (token.dep == 'cc') \
+            or (token.dep == 'agent') \
+            or (token.dep == 'det') \
+            or (token.dep == 'advmod') \
+            or (token.dep == 'amod') \
+            or (token.dep == 'poss') \
+            or (token.dep == 'nummod'):
+        child_elem_id = process_token(elems, token, parent_elem_id, root_id)
+        elems.get(root_id).apply_modifier(child_elem_id)
+        elems.get(root_id).new_layer()
         return
 
-    child = process_token(leaf)
+    child_elem_id = process_token(elems, token, parent_elem_id)
 
-    # append to parent's root node
-    if (leaf.dep == 'pcomp') \
-            or (leaf.dep == 'compound'):
-        parent.append_to_root(child, pos)
+    # append to parent's root element
+    if (token.dep == 'pcomp') \
+            or (token.dep == 'compound'):
+        parent_elem.append_to_root(child_elem_id, pos)
         return
 
     # as child
-    parent.children.append(child)
+    parent_elem.append_child(child_elem_id)
 
 
-def process_token(token, root=None):
-    node = Node(token)
-    leaf = Leaf(token)
-    node.children.append(leaf)
-    if root is None:
-        root = node
-    for leaf in token.left_children:
-        process_child(node, leaf, root, Position.LEFT)
-    for leaf in token.right_children:
-        process_child(node, leaf, root, Position.RIGHT)
-    node.apply_layers()
-    return node
+def process_token(elems, token, parent_id=None, root_id=None):
+    elem_id = elems.create_leaf(parent_id, token)
+    if root_id is None:
+        root_id = elem_id
+    for child_token in token.left_children:
+        process_child_token(elems, elem_id, child_token, root_id, Position.LEFT)
+    for child_token in token.right_children:
+        process_child_token(elems, elem_id, child_token, root_id, Position.RIGHT)
+    elems.get(elem_id).apply_layers()
+    return elem_id
 
 
 def transform(sentence):
-    tree = process_token(sentence.root())
-    return remove_singletons(tree)
+    elems = Elements()
+    tree_id = process_token(elems, sentence.root())
+    tree = elems.get(tree_id)
+    tree.remove_redundant_nesting()
+    return tree
 
 
 if __name__ == '__main__':
@@ -99,4 +96,5 @@ if __name__ == '__main__':
         print(s)
         s.print_tree()
         t = transform(s)
+        t.print_tree()
         print(t)
