@@ -35,6 +35,32 @@ class Token:
         self.entity_type = None
         self.separator = False
 
+    def to_list(self):
+        tokens = []
+        for token in self.left_children:
+            tokens += token.to_list()
+        tokens += [self]
+        for token in self.right_children:
+            tokens += token.to_list()
+        return tokens
+
+    def is_word(self):
+        if self.separator:
+            return False
+        if self.pos == 'PUNCT':
+            return False
+        if self.pos == 'SPACE':
+            return False
+        return True
+
+    def to_word_token_list(self):
+        tokens = self.to_list()
+        return [token for token in tokens if token.is_word()]
+
+    def chunk_str(self):
+        words = [token.word for token in self.to_word_token_list()]
+        return ' '.join(words)
+
     def __str__(self):
         return '%s/%s (%s) {%s}' % (self.word.strip(), self.pos, self.dep, self.entity_type)
 
