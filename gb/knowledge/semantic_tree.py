@@ -19,10 +19,6 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from asciitree import LeftAligned
-from collections import OrderedDict
-
-
 LEAF = 0
 NODE = 1
 
@@ -60,10 +56,9 @@ class Tree(object):
         self.add(leaf)
         return leaf.id
 
-    def create_node(self, children=None, placeholder=False):
-        node = Node(children, placeholder)
+    def create_node(self, children=None):
+        node = Node(children)
         node.tree = self
-        node.init_layers()
         self.add(node)
         return node.id
 
@@ -76,16 +71,16 @@ class Tree(object):
 
     def disenclose(self, node):
         assert(node.is_node())
-        assert(len(node.children) > 0)
+        assert(len(node.children_ids) > 0)
         entity_id = node.id
-        inner_entity = self.get(node.children[0])
+        inner_entity = self.get(node.children_ids[0])
         self.set(entity_id, inner_entity)
 
     def remove_redundant_nesting(self):
         self.root().remove_redundant_nesting()
 
-    def create_placeholder(self):
-        return self.create_node(None, True)
+    def __str__(self):
+        return str(self.get(self.root_id))
 
 
 class Element(object):
@@ -108,10 +103,6 @@ class Element(object):
         # if not implemented, do nothing.
         pass
 
-    def first_leaf(self):
-        # throw exception
-        pass
-
     def add_child(self, elem_id):
         # throw exception
         pass
@@ -124,11 +115,7 @@ class Element(object):
         # throw exception
         pass
 
-    def label_tree(self):
-        # throw exception
-        pass
-
-    def str_with_layers(self):
+    def has_pos(self, pos):
         # throw exception
         pass
 
@@ -140,10 +127,6 @@ class Leaf(Element):
         self.pivot = token
         self.left = []
         self.right = []
-
-    # override
-    def first_leaf(self):
-        return self
 
     # override
     def add_child(self, elem_id):
@@ -161,12 +144,16 @@ class Leaf(Element):
         return node.nest(elem_id)
 
     # override
-    def label_tree(self):
-        return '{leaf} %s' % str(self), OrderedDict([])
-
-    # override
-    def str_with_layers(self):
-        return str(self)
+    def has_pos(self, pos):
+        if self.pivot.pos == pos:
+            return True
+        for token in self.left:
+            if token.pos == pos:
+                return True
+        for token in self.right:
+            if token.pos == pos:
+                return True
+        return False
 
     def __str__(self):
         words = [token.word for token in self.left]
@@ -176,85 +163,78 @@ class Leaf(Element):
 
 
 class Node(Element):
-    def __init__(self, children=None, placeholder=False):
+    def __init__(self, children_ids=None):
         super(Node, self).__init__()
         self.type = NODE
-        if children is None:
-            self.children = []
+        if children_ids is None:
+            self.children_ids = []
         else:
-            self.children = children
-        self.placeholder = placeholder
-        self.layers = []
+            self.children_ids = children_ids
+        self.layer_ids = []
         self.layer_id = -1
 
-    def init_layers(self):
-        if not self.placeholder:
-            self.layer_id = self.tree.create_placeholder()
-
     def get_child(self, i):
-        return self.tree.get(self.children[i])
+        return self.tree.get(self.children_ids[i])
+
+    def children(self):
+        return [self.tree.get(child_id) for child_id in self.children_ids]
 
     def set_child(self, i, elem_id):
-        self.children[i] = elem_id
+        self.children_ids[i] = elem_id
 
     def new_layer(self):
-        if not self.tree.get(self.layer_id).placeholder:
-            self.layers.append(self.layer_id)
-            self.layer_id = self.tree.create_placeholder()
+        if self.layer_id >= 0:
+            self.layer_ids.append(self.layer_id)
+            self.layer_id = -1
 
     def apply_layer(self, entity, layer):
-        for i in range(len(layer.children)):
-            if layer.get_child(i).is_node():
-                if layer.get_child(i).placeholder:
-                    child_id = self.tree.create_node(entity.children)
+        if layer.is_node():
+            for i in range(len(layer.children_ids)):
+                if layer.children_ids[i] < 0:
+                    child_id = self.tree.create_node(entity.children_ids)
                     child = self.tree.get(child_id)
                     if child.is_singleton():
-                        child_id = child.children[0]
+                        child_id = child.children_ids[0]
                     layer.set_child(i, child_id)
-                    return
-                self.apply_layer(entity, layer.get_child(i))
+                    return True
+                if self.apply_layer(entity, layer.get_child(i)):
+                    return True
+        return False
 
     def apply_layers(self):
-        self.layers.reverse()
+        self.layer_ids.reverse()
         prev_layer = self
-        for layer_id in self.layers:
+        for layer_id in self.layer_ids:
             layer = self.tree.get(layer_id)
             self.apply_layer(prev_layer, layer)
             prev_layer = layer
-        self.children = prev_layer.children
-        self.layers = []
+        self.children_ids = prev_layer.children_ids
+        self.layer_ids = []
 
     def is_singleton(self):
-        return len(self.children) == 1
+        return len(self.children_ids) == 1
 
     def is_node_singleton(self):
         if not self.is_singleton():
             return False
-        child = self.tree.get(self.children[0])
+        child = self.tree.get(self.children_ids[0])
         return child.is_node()
 
     # override
-    def first_leaf(self):
-        if len(self.children) > 0:
-            return self.get_child(0).first_leaf()
-        else:
-            raise IndexError('Requesting root on an empty Node')
-
-    # override
     def add_child(self, elem_id):
-        self.children.append(elem_id)
+        self.children_ids.append(elem_id)
 
     # override
     def add_to_first_child(self, elem_id, pos):
-        if len(self.children) > 0:
+        if len(self.children_ids) > 0:
             if self.get_child(0).is_leaf():
                 self.set_child(0, self.tree.enclose(self.get_child(0)).id)
             if pos == Position.RIGHT:
                 self.tree.get(elem_id).parent = self
-                self.get_child(0).children.append(elem_id)
+                self.get_child(0).children_ids.append(elem_id)
             else:
                 self.tree.get(elem_id).parent = self
-                self.get_child(0).children.insert(0, elem_id)
+                self.get_child(0).children_ids.insert(0, elem_id)
         else:
             raise IndexError('Requesting root on an empty Node')
         return self
@@ -266,41 +246,26 @@ class Node(Element):
             rel = elem_id
             rest = []
         else:
-            rel = elem.children[0]
-            rest = elem.children[1:]
-        self.layer_id = self.tree.create_node([rel, self.layer_id] + rest)
+            rel = elem.children_ids[0]
+            rest = elem.children_ids[1:]
+        self.layer_id = self.tree.create_node([rel, -1] + rest)
         return self
 
     # override
     def remove_redundant_nesting(self):
-        for child_id in self.children:
+        for child_id in self.children_ids:
             child = self.tree.get(child_id)
             child.remove_redundant_nesting()
         if self.is_node_singleton():
             self.tree.disenclose(self)
 
-    def label(self):
-        return '[%s]' % str(self.get_child(0))
-
     # override
-    def label_tree(self):
-        children = [self.tree.get(child_id).label_tree() for child_id in self.children]
-        return self.label(), OrderedDict(children)
-
-    def print_tree(self):
-        label, children = self.label_tree()
-        tr = LeftAligned()
-        print(tr({label: children}))
-
-    # override
-    def str_with_layers(self):
-        layers = [str(self.tree.get(layer)) for layer in self.layers]
-        layers_str = ' '.join(layers)
-        return '%s {%s}' % (str(self), layers_str)
+    def has_pos(self, pos):
+        for child in self.children():
+            if child.has_pos(pos):
+                return True
+        return False
 
     def __str__(self):
-        if self.placeholder:
-            return '[*]'
-        else:
-            strs = [str(self.tree.get(child_id)) for child_id in self.children]
-            return '(%s)' % ' '.join(strs)
+        strs = [str(self.tree.get(child_id)) for child_id in self.children_ids]
+        return '(%s)' % ' '.join(strs)
