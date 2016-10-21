@@ -281,12 +281,6 @@ class Node(Element):
         if self.is_node_singleton():
             self.elems.disenclose(self)
 
-    def rest(self):
-        if len(self.children) > 1:
-            return self.children[1:]
-        else:
-            raise IndexError('Requesting rest on a Node with %s children.' % len(self.children))
-
     def label(self):
         chunk_str = 'N/A'
         if self.base_token is not None:
