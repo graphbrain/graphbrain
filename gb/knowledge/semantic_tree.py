@@ -54,14 +54,14 @@ class Tree(object):
         assert(self.root_id is not None)
         return self.get(self.root_id)
 
-    def create_leaf(self, pivot):
-        leaf = Leaf(pivot)
+    def create_leaf(self, token):
+        leaf = Leaf(token)
         leaf.tree = self
         self.add(leaf)
         return leaf.id
 
-    def create_node(self, base_token, children=None, placeholder=False):
-        node = Node(base_token, children, placeholder)
+    def create_node(self, children=None, placeholder=False):
+        node = Node(children, placeholder)
         node.tree = self
         node.init_layers()
         self.add(node)
@@ -70,7 +70,7 @@ class Tree(object):
     def enclose(self, entity):
         node_id = entity.id
         self.add(entity)
-        node = self.get(self.create_node(entity.base_token, [entity.id]))
+        node = self.get(self.create_node([entity.id]))
         self.set(node_id, node)
         return node
 
@@ -85,13 +85,12 @@ class Tree(object):
         self.root().remove_redundant_nesting()
 
     def create_placeholder(self):
-        return self.create_node(None, None, True)
+        return self.create_node(None, True)
 
 
 class Element(object):
-    def __init__(self, base_token):
+    def __init__(self):
         self.type = None
-        self.base_token = base_token
         self.id = None
         self.tree = None
 
@@ -135,10 +134,10 @@ class Element(object):
 
 
 class Leaf(Element):
-    def __init__(self, pivot):
-        super(Leaf, self).__init__(pivot)
+    def __init__(self, token):
+        super(Leaf, self).__init__()
         self.type = LEAF
-        self.pivot = pivot
+        self.pivot = token
         self.left = []
         self.right = []
 
@@ -163,7 +162,7 @@ class Leaf(Element):
 
     # override
     def label_tree(self):
-        return '* %s' % self.base_token.chunk_str(), OrderedDict([])
+        return '{leaf} %s' % str(self), OrderedDict([])
 
     # override
     def str_with_layers(self):
@@ -177,8 +176,8 @@ class Leaf(Element):
 
 
 class Node(Element):
-    def __init__(self, base_token, children=None, placeholder=False):
-        super(Node, self).__init__(base_token)
+    def __init__(self, children=None, placeholder=False):
+        super(Node, self).__init__()
         self.type = NODE
         if children is None:
             self.children = []
@@ -207,7 +206,7 @@ class Node(Element):
         for i in range(len(layer.children)):
             if layer.get_child(i).is_node():
                 if layer.get_child(i).placeholder:
-                    child_id = self.tree.create_node(entity.base_token, entity.children)
+                    child_id = self.tree.create_node(entity.children)
                     child = self.tree.get(child_id)
                     if child.is_singleton():
                         child_id = child.children[0]
@@ -277,7 +276,7 @@ class Node(Element):
         else:
             rel = elem.children[0]
             rest = elem.children[1:]
-        self.layer_id = self.tree.create_node(elem.base_token, [rel, self.layer_id] + rest)
+        self.layer_id = self.tree.create_node([rel, self.layer_id] + rest)
         return self
 
     # override
@@ -289,10 +288,7 @@ class Node(Element):
             self.tree.disenclose(self)
 
     def label(self):
-        chunk_str = 'N/A'
-        if self.base_token is not None:
-            chunk_str = self.base_token.chunk_str()
-        return '[%s] {%s}' % (str(self.get_child(0)), chunk_str)
+        return '[%s]' % str(self.get_child(0))
 
     # override
     def label_tree(self):
