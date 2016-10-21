@@ -50,14 +50,14 @@ class Elements(object):
         self.set(self.cur_id, elem)
         self.cur_id += 1
 
-    def create_leaf(self, parent_id, pivot):
-        leaf = Leaf(parent_id, pivot)
+    def create_leaf(self, pivot):
+        leaf = Leaf(pivot)
         leaf.elems = self
         self.add(leaf)
         return leaf.id
 
-    def create_node(self, parent_id, base_token, children=None, placeholder=False):
-        node = Node(parent_id, base_token, children, placeholder)
+    def create_node(self, base_token, children=None, placeholder=False):
+        node = Node(base_token, children, placeholder)
         node.elems = self
         node.init_layers()
         self.add(node)
@@ -66,9 +66,8 @@ class Elements(object):
     def enclose(self, entity):
         node_id = entity.id
         self.add(entity)
-        node = self.get(self.create_node(entity.parent_id, entity.base_token, [entity.id]))
+        node = self.get(self.create_node(entity.base_token, [entity.id]))
         self.set(node_id, node)
-        entity.parent = node
         return node
 
     def disenclose(self, node):
@@ -79,13 +78,12 @@ class Elements(object):
         self.set(entity_id, inner_entity)
 
     def create_placeholder(self):
-        return self.create_node(None, None, None, True)
+        return self.create_node(None, None, True)
 
 
 class Element(object):
-    def __init__(self, parent_id, base_token):
+    def __init__(self, base_token):
         self.type = None
-        self.parent_id = parent_id
         self.base_token = base_token
         self.id = None
         self.elems = None
@@ -130,8 +128,8 @@ class Element(object):
 
 
 class Leaf(Element):
-    def __init__(self, parent_id, pivot):
-        super(Leaf, self).__init__(parent_id, pivot)
+    def __init__(self, pivot):
+        super(Leaf, self).__init__(pivot)
         self.type = LEAF
         self.pivot = pivot
         self.left = []
@@ -172,8 +170,8 @@ class Leaf(Element):
 
 
 class Node(Element):
-    def __init__(self, parent_id, base_token, children=None, placeholder=False):
-        super(Node, self).__init__(parent_id, base_token)
+    def __init__(self, base_token, children=None, placeholder=False):
+        super(Node, self).__init__(base_token)
         self.type = NODE
         if children is None:
             self.children = []
@@ -202,7 +200,7 @@ class Node(Element):
         for i in range(len(layer.children)):
             if layer.get_child(i).is_node():
                 if layer.get_child(i).placeholder:
-                    child_id = self.elems.create_node(layer.id, entity.base_token, entity.children)
+                    child_id = self.elems.create_node(entity.base_token, entity.children)
                     child = self.elems.get(child_id)
                     if child.is_singleton():
                         child_id = child.children[0]
@@ -217,9 +215,6 @@ class Node(Element):
             layer = self.elems.get(layer_id)
             self.apply_layer(prev_layer, layer)
             prev_layer = layer
-        for child_id in prev_layer.children:
-            child = self.elems.get(child_id)
-            child.parent = self
         self.children = prev_layer.children
         self.layers = []
 
@@ -275,7 +270,7 @@ class Node(Element):
         else:
             rel = elem.children[0]
             rest = elem.children[1:]
-        self.layer_id = self.elems.create_node(None, elem.base_token, [rel, self.layer_id] + rest)
+        self.layer_id = self.elems.create_node(elem.base_token, [rel, self.layer_id] + rest)
         return self
 
     # override

@@ -44,12 +44,12 @@ def process_child_token(elems, parent_elem_id, token, root_id, pos):
             or (token.dep == 'amod') \
             or (token.dep == 'poss') \
             or (token.dep == 'nummod'):
-        child_elem_id = process_token(elems, token, parent_elem_id, root_id)
+        child_elem_id = process_token(elems, token, root_id)
         elems.get(root_id).apply_modifier(child_elem_id)
         elems.get(root_id).new_layer()
         return
 
-    child_elem_id = process_token(elems, token, parent_elem_id)
+    child_elem_id = process_token(elems, token)
 
     # append to parent's root element
     if (token.dep == 'pcomp') \
@@ -61,8 +61,8 @@ def process_child_token(elems, parent_elem_id, token, root_id, pos):
     parent_elem.append_child(child_elem_id)
 
 
-def process_token(elems, token, parent_id=None, root_id=None):
-    elem_id = elems.create_leaf(parent_id, token)
+def process_token(elems, token, root_id=None):
+    elem_id = elems.create_leaf(token)
     if root_id is None:
         root_id = elem_id
     for child_token in token.left_children:
