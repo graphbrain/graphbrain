@@ -19,7 +19,6 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import print_function
 from asciitree import LeftAligned
 from collections import OrderedDict
 
@@ -34,6 +33,7 @@ class Position(object):
 
 class Tree(object):
     def __init__(self):
+        self.root_id = None
         self.cur_id = 0
         self.table = {}
 
@@ -49,6 +49,10 @@ class Tree(object):
     def add(self, elem):
         self.set(self.cur_id, elem)
         self.cur_id += 1
+
+    def root(self):
+        assert(self.root_id is not None)
+        return self.get(self.root_id)
 
     def create_leaf(self, pivot):
         leaf = Leaf(pivot)
@@ -76,6 +80,9 @@ class Tree(object):
         entity_id = node.id
         inner_entity = self.get(node.children[0])
         self.set(entity_id, inner_entity)
+
+    def remove_redundant_nesting(self):
+        self.root().remove_redundant_nesting()
 
     def create_placeholder(self):
         return self.create_node(None, None, True)

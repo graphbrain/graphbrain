@@ -20,7 +20,7 @@
 
 
 import sqlite3
-from sql import SQL
+from gb.hypergraph.sql import SQL
 
 
 def exec_or_ignore(cur, query):

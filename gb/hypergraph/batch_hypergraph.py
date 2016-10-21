@@ -19,7 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import hypergraph
+import gb.hypergraph.hypergraph as hypergraph
 
 
 class BatchHyperGraph(hypergraph.HyperGraph):

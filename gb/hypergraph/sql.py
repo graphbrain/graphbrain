@@ -21,8 +21,8 @@
 
 import math
 import itertools
-import edge as ed
-from backend import Backend
+import gb.hypergraph.edge as ed
+from gb.hypergraph.backend import Backend
 
 
 def nthperm(li, n):

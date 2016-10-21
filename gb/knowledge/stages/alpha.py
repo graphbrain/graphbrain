@@ -25,71 +25,77 @@ from gb.nlp.sentence import Sentence
 from gb.knowledge.semantic_tree import Position, Tree
 
 
-def process_child_token(elems, parent_elem_id, token, root_id, pos):
-    # ignore
-    if (len(token.dep) == 0) or (token.dep == 'punct'):
-        return
+class AlphaStage(object):
+    def __init__(self):
+        self.tree = Tree()
 
-    parent_elem = elems.get(parent_elem_id)
-    parent_token = parent_elem.root_token()
+    def process_child_token(self, parent_elem_id, token, root_id, pos):
+        # ignore
+        if (len(token.dep) == 0) or (token.dep == 'punct'):
+            return
 
-    # modifier
-    if (token.dep == 'aux') \
-            or (token.dep == 'auxpass') \
-            or ((token.dep == 'prep') and (parent_token.pos != 'VERB')) \
-            or (token.dep == 'cc') \
-            or (token.dep == 'agent') \
-            or (token.dep == 'det') \
-            or (token.dep == 'advmod') \
-            or (token.dep == 'amod') \
-            or (token.dep == 'poss') \
-            or (token.dep == 'nummod'):
-        child_elem_id = process_token(elems, token, root_id)
-        elems.get(root_id).apply_modifier(child_elem_id)
-        elems.get(root_id).new_layer()
-        return
+        parent_elem = self.tree.get(parent_elem_id)
+        parent_token = parent_elem.root_token()
 
-    child_elem_id = process_token(elems, token)
+        # modifier
+        if (token.dep == 'aux') \
+                or (token.dep == 'auxpass') \
+                or ((token.dep == 'prep') and (parent_token.pos != 'VERB')) \
+                or (token.dep == 'cc') \
+                or (token.dep == 'agent') \
+                or (token.dep == 'det') \
+                or (token.dep == 'advmod') \
+                or (token.dep == 'amod') \
+                or (token.dep == 'poss') \
+                or (token.dep == 'nummod'):
+            child_elem_id = self.process_token(token, root_id)
+            self.tree.get(root_id).apply_modifier(child_elem_id)
+            self.tree.get(root_id).new_layer()
+            return
 
-    # append to parent's root element
-    if (token.dep == 'pcomp') \
-            or (token.dep == 'compound'):
-        parent_elem.append_to_root(child_elem_id, pos)
-        return
+        child_elem_id = self.process_token(token)
 
-    # as child
-    parent_elem.append_child(child_elem_id)
+        # append to parent's root element
+        if (token.dep == 'pcomp') \
+                or (token.dep == 'compound'):
+            parent_elem.append_to_root(child_elem_id, pos)
+            return
 
+        # as child
+        parent_elem.append_child(child_elem_id)
 
-def process_token(elems, token, root_id=None):
-    elem_id = elems.create_leaf(token)
-    if root_id is None:
-        root_id = elem_id
-    for child_token in token.left_children:
-        process_child_token(elems, elem_id, child_token, root_id, Position.LEFT)
-    for child_token in token.right_children:
-        process_child_token(elems, elem_id, child_token, root_id, Position.RIGHT)
-    elems.get(elem_id).apply_layers()
-    return elem_id
+    def process_token(self, token, root_id=None):
+        elem_id = self.tree.create_leaf(token)
+        if self.tree.root_id is None:
+            self.tree.root_id = elem_id
+        if root_id is None:
+            root_id = elem_id
+        for child_token in token.left_children:
+            self.process_child_token(elem_id, child_token, root_id, Position.LEFT)
+        for child_token in token.right_children:
+            self.process_child_token(elem_id, child_token, root_id, Position.RIGHT)
+        self.tree.get(elem_id).apply_layers()
+        return elem_id
 
 
 def transform(sentence):
-    elems = Tree()
-    tree_id = process_token(elems, sentence.root())
-    tree = elems.get(tree_id)
-    tree.remove_redundant_nesting()
-    return tree
+    alpha = AlphaStage()
+    elem_id = alpha.process_token(sentence.root())
+    alpha.tree.remove_redundant_nesting()
+    return alpha.tree.get(elem_id)
 
 
 if __name__ == '__main__':
-    test_text = u"""
-    2016 Nobel Prize in Physiology or Medicine Is Awarded to Yoshinori Ohsumi.
+    test_text = """
+    Telmo is going to the gym.
     """
 
     print('Starting parser...')
     parser = Parser()
     print('Parsing...')
     result = parser.parse_text(test_text)
+
+    print(result)
 
     for r in result:
         s = Sentence(r)
