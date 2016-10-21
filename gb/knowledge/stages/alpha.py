@@ -22,7 +22,7 @@
 from __future__ import print_function
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
-from gb.knowledge.semantic_tree import Position, Elements
+from gb.knowledge.semantic_tree import Position, Tree
 
 
 def process_child_token(elems, parent_elem_id, token, root_id, pos):
@@ -74,7 +74,7 @@ def process_token(elems, token, root_id=None):
 
 
 def transform(sentence):
-    elems = Elements()
+    elems = Tree()
     tree_id = process_token(elems, sentence.root())
     tree = elems.get(tree_id)
     tree.remove_redundant_nesting()
