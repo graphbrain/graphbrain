@@ -113,15 +113,15 @@ class Element(object):
         # throw exception
         pass
 
-    def append_child(self, elem_id):
+    def add_child(self, elem_id):
         # throw exception
         pass
 
-    def append_to_root(self, elem_id, pos):
+    def add_to_first_child(self, elem_id, pos):
         # throw exception
         pass
 
-    def apply_modifier(self, elem_id):
+    def nest(self, elem_id):
         # throw exception
         pass
 
@@ -147,19 +147,19 @@ class Leaf(Element):
         return self.pivot
 
     # override
-    def append_child(self, elem_id):
+    def add_child(self, elem_id):
         node = self.tree.enclose(self)
-        node.append_child(elem_id)
+        node.add_child(elem_id)
 
     # override
-    def append_to_root(self, elem_id, pos):
+    def add_to_first_child(self, elem_id, pos):
         node = self.tree.enclose(self)
-        return node.append_to_root(elem_id, pos)
+        return node.add_to_first_child(elem_id, pos)
 
     # override
-    def apply_modifier(self, elem_id):
+    def nest(self, elem_id):
         node = self.tree.enclose(self)
-        return node.apply_modifier(elem_id)
+        return node.nest(elem_id)
 
     # override
     def label_tree(self):
@@ -250,11 +250,11 @@ class Node(Element):
         return self.root().pivot
 
     # override
-    def append_child(self, elem_id):
+    def add_child(self, elem_id):
         self.children.append(elem_id)
 
     # override
-    def append_to_root(self, elem_id, pos):
+    def add_to_first_child(self, elem_id, pos):
         if len(self.children) > 0:
             if self.get_child(0).is_leaf():
                 self.set_child(0, self.tree.enclose(self.get_child(0)).id)
@@ -269,7 +269,7 @@ class Node(Element):
         return self
 
     # override
-    def apply_modifier(self, elem_id):
+    def nest(self, elem_id):
         elem = self.tree.get(elem_id)
         if elem.is_leaf():
             rel = elem_id

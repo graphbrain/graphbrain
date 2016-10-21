@@ -37,7 +37,7 @@ class AlphaStage(object):
         parent_elem = self.tree.get(parent_elem_id)
         parent_token = parent_elem.root_token()
 
-        # modifier
+        # nest
         if (token.dep == 'aux') \
                 or (token.dep == 'auxpass') \
                 or ((token.dep == 'prep') and (parent_token.pos != 'VERB')) \
@@ -49,20 +49,20 @@ class AlphaStage(object):
                 or (token.dep == 'poss') \
                 or (token.dep == 'nummod'):
             child_elem_id = self.process_token(token, root_id)
-            self.tree.get(root_id).apply_modifier(child_elem_id)
+            self.tree.get(root_id).nest(child_elem_id)
             self.tree.get(root_id).new_layer()
             return
 
         child_elem_id = self.process_token(token)
 
-        # append to parent's root element
+        # append to parent's first child
         if (token.dep == 'pcomp') \
                 or (token.dep == 'compound'):
-            parent_elem.append_to_root(child_elem_id, pos)
+            parent_elem.add_to_first_child(child_elem_id, pos)
             return
 
-        # as child
-        parent_elem.append_child(child_elem_id)
+        # add child
+        parent_elem.add_child(child_elem_id)
 
     def process_token(self, token, root_id=None):
         elem_id = self.tree.create_leaf(token)
