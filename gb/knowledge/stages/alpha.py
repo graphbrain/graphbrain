@@ -37,10 +37,9 @@ class AlphaStage(object):
             return
 
         parent_elem = self.tree.get(parent_elem_id)
-        parent_token = parent_elem.first_leaf().pivot
 
         # nest
-        if (token.dep in self.nest_deps) or ((token.dep == 'prep') and (parent_token.pos != 'VERB')):
+        if (token.dep in self.nest_deps) or ((token.dep == 'prep') and (not parent_elem.has_pos('VERB'))):
             child_elem_id = self.process_token(token, root_id)
             self.tree.get(root_id).nest(child_elem_id)
             self.tree.get(root_id).new_layer()
@@ -58,8 +57,7 @@ class AlphaStage(object):
 
     def process_token(self, token, root_id=None):
         elem_id = self.tree.create_leaf(token)
-        if self.tree.root_id is None:
-            self.tree.root_id = elem_id
+
         if root_id is None:
             root_id = elem_id
         for child_token in token.left_children:
@@ -69,12 +67,15 @@ class AlphaStage(object):
         self.tree.get(elem_id).apply_layers()
         return elem_id
 
+    def process_sentence(self, sentence):
+        self.tree.root_id = self.process_token(sentence.root())
+        self.tree.remove_redundant_nesting()
+        return self.tree
+
 
 def transform(sentence):
     alpha = AlphaStage()
-    elem_id = alpha.process_token(sentence.root())
-    alpha.tree.remove_redundant_nesting()
-    return alpha.tree.get(elem_id)
+    return alpha.process_sentence(sentence)
 
 
 if __name__ == '__main__':
@@ -94,5 +95,4 @@ if __name__ == '__main__':
         print(s)
         s.print_tree()
         t = transform(s)
-        t.print_tree()
         print(t)
