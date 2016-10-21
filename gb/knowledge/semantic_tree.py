@@ -32,7 +32,7 @@ class Position(object):
     LEFT, RIGHT = range(2)
 
 
-class Elements(object):
+class Tree(object):
     def __init__(self):
         self.cur_id = 0
         self.table = {}
@@ -52,13 +52,13 @@ class Elements(object):
 
     def create_leaf(self, pivot):
         leaf = Leaf(pivot)
-        leaf.elems = self
+        leaf.tree = self
         self.add(leaf)
         return leaf.id
 
     def create_node(self, base_token, children=None, placeholder=False):
         node = Node(base_token, children, placeholder)
-        node.elems = self
+        node.tree = self
         node.init_layers()
         self.add(node)
         return node.id
@@ -86,7 +86,7 @@ class Element(object):
         self.type = None
         self.base_token = base_token
         self.id = None
-        self.elems = None
+        self.tree = None
 
     def is_leaf(self):
         return self.type == LEAF
@@ -141,17 +141,17 @@ class Leaf(Element):
 
     # override
     def append_child(self, elem_id):
-        node = self.elems.enclose(self)
+        node = self.tree.enclose(self)
         node.append_child(elem_id)
 
     # override
     def append_to_root(self, elem_id, pos):
-        node = self.elems.enclose(self)
+        node = self.tree.enclose(self)
         return node.append_to_root(elem_id, pos)
 
     # override
     def apply_modifier(self, elem_id):
-        node = self.elems.enclose(self)
+        node = self.tree.enclose(self)
         return node.apply_modifier(elem_id)
 
     # override
@@ -183,25 +183,25 @@ class Node(Element):
 
     def init_layers(self):
         if not self.placeholder:
-            self.layer_id = self.elems.create_placeholder()
+            self.layer_id = self.tree.create_placeholder()
 
     def get_child(self, i):
-        return self.elems.get(self.children[i])
+        return self.tree.get(self.children[i])
 
     def set_child(self, i, elem_id):
         self.children[i] = elem_id
 
     def new_layer(self):
-        if not self.elems.get(self.layer_id).placeholder:
+        if not self.tree.get(self.layer_id).placeholder:
             self.layers.append(self.layer_id)
-            self.layer_id = self.elems.create_placeholder()
+            self.layer_id = self.tree.create_placeholder()
 
     def apply_layer(self, entity, layer):
         for i in range(len(layer.children)):
             if layer.get_child(i).is_node():
                 if layer.get_child(i).placeholder:
-                    child_id = self.elems.create_node(entity.base_token, entity.children)
-                    child = self.elems.get(child_id)
+                    child_id = self.tree.create_node(entity.base_token, entity.children)
+                    child = self.tree.get(child_id)
                     if child.is_singleton():
                         child_id = child.children[0]
                     layer.set_child(i, child_id)
@@ -212,7 +212,7 @@ class Node(Element):
         self.layers.reverse()
         prev_layer = self
         for layer_id in self.layers:
-            layer = self.elems.get(layer_id)
+            layer = self.tree.get(layer_id)
             self.apply_layer(prev_layer, layer)
             prev_layer = layer
         self.children = prev_layer.children
@@ -224,7 +224,7 @@ class Node(Element):
     def is_node_singleton(self):
         if not self.is_singleton():
             return False
-        child = self.elems.get(self.children[0])
+        child = self.tree.get(self.children[0])
         return child.is_node()
 
     # TODO: hack
@@ -250,12 +250,12 @@ class Node(Element):
     def append_to_root(self, elem_id, pos):
         if len(self.children) > 0:
             if self.get_child(0).is_leaf():
-                self.set_child(0, self.elems.enclose(self.get_child(0)).id)
+                self.set_child(0, self.tree.enclose(self.get_child(0)).id)
             if pos == Position.RIGHT:
-                self.elems.get(elem_id).parent = self
+                self.tree.get(elem_id).parent = self
                 self.get_child(0).children.append(elem_id)
             else:
-                self.elems.get(elem_id).parent = self
+                self.tree.get(elem_id).parent = self
                 self.get_child(0).children.insert(0, elem_id)
         else:
             raise IndexError('Requesting root on an empty Node')
@@ -263,23 +263,23 @@ class Node(Element):
 
     # override
     def apply_modifier(self, elem_id):
-        elem = self.elems.get(elem_id)
+        elem = self.tree.get(elem_id)
         if elem.is_leaf():
             rel = elem_id
             rest = []
         else:
             rel = elem.children[0]
             rest = elem.children[1:]
-        self.layer_id = self.elems.create_node(elem.base_token, [rel, self.layer_id] + rest)
+        self.layer_id = self.tree.create_node(elem.base_token, [rel, self.layer_id] + rest)
         return self
 
     # override
     def remove_redundant_nesting(self):
         for child_id in self.children:
-            child = self.elems.get(child_id)
+            child = self.tree.get(child_id)
             child.remove_redundant_nesting()
         if self.is_node_singleton():
-            self.elems.disenclose(self)
+            self.tree.disenclose(self)
 
     def label(self):
         chunk_str = 'N/A'
@@ -289,7 +289,7 @@ class Node(Element):
 
     # override
     def label_tree(self):
-        children = [self.elems.get(child_id).label_tree() for child_id in self.children]
+        children = [self.tree.get(child_id).label_tree() for child_id in self.children]
         return self.label(), OrderedDict(children)
 
     def print_tree(self):
@@ -299,7 +299,7 @@ class Node(Element):
 
     # override
     def str_with_layers(self):
-        layers = [str(self.elems.get(layer)) for layer in self.layers]
+        layers = [str(self.tree.get(layer)) for layer in self.layers]
         layers_str = ' '.join(layers)
         return '%s {%s}' % (str(self), layers_str)
 
@@ -307,5 +307,5 @@ class Node(Element):
         if self.placeholder:
             return '[*]'
         else:
-            strs = [str(self.elems.get(child_id)) for child_id in self.children]
+            strs = [str(self.tree.get(child_id)) for child_id in self.children]
             return '(%s)' % ' '.join(strs)
