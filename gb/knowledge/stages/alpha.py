@@ -35,7 +35,7 @@ class AlphaStage(object):
             return
 
         parent_elem = self.tree.get(parent_elem_id)
-        parent_token = parent_elem.root_token()
+        parent_token = parent_elem.first_leaf().pivot
 
         # nest
         if (token.dep == 'aux') \

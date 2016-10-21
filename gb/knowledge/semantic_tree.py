@@ -108,7 +108,7 @@ class Element(object):
         # if not implemented, do nothing.
         pass
 
-    def root_token(self):
+    def first_leaf(self):
         # throw exception
         pass
 
@@ -142,8 +142,8 @@ class Leaf(Element):
         self.right = []
 
     # override
-    def root_token(self):
-        return self.pivot
+    def first_leaf(self):
+        return self
 
     # override
     def add_child(self, elem_id):
@@ -233,20 +233,12 @@ class Node(Element):
         child = self.tree.get(self.children[0])
         return child.is_node()
 
-    # TODO: hack
-    def root(self):
+    # override
+    def first_leaf(self):
         if len(self.children) > 0:
-            node0 = self.get_child(0)
-            if node0.is_leaf():
-                return node0
-            else:
-                return node0.root()
+            return self.get_child(0).first_leaf()
         else:
             raise IndexError('Requesting root on an empty Node')
-
-    # override
-    def root_token(self):
-        return self.root().pivot
 
     # override
     def add_child(self, elem_id):
