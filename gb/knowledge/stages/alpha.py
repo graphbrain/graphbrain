@@ -28,6 +28,8 @@ from gb.knowledge.semantic_tree import Position, Tree
 class AlphaStage(object):
     def __init__(self):
         self.tree = Tree()
+        self.nest_deps = ['aux', 'auxpass', 'cc', 'agent', 'det', 'advmod', 'amod', 'poss', 'nummod']
+        self.add_to_first_deps = ['pcomp', 'compound']
 
     def process_child_token(self, parent_elem_id, token, root_id, pos):
         # ignore
@@ -38,16 +40,7 @@ class AlphaStage(object):
         parent_token = parent_elem.first_leaf().pivot
 
         # nest
-        if (token.dep == 'aux') \
-                or (token.dep == 'auxpass') \
-                or ((token.dep == 'prep') and (parent_token.pos != 'VERB')) \
-                or (token.dep == 'cc') \
-                or (token.dep == 'agent') \
-                or (token.dep == 'det') \
-                or (token.dep == 'advmod') \
-                or (token.dep == 'amod') \
-                or (token.dep == 'poss') \
-                or (token.dep == 'nummod'):
+        if (token.dep in self.nest_deps) or ((token.dep == 'prep') and (parent_token.pos != 'VERB')):
             child_elem_id = self.process_token(token, root_id)
             self.tree.get(root_id).nest(child_elem_id)
             self.tree.get(root_id).new_layer()
@@ -55,9 +48,8 @@ class AlphaStage(object):
 
         child_elem_id = self.process_token(token)
 
-        # append to parent's first child
-        if (token.dep == 'pcomp') \
-                or (token.dep == 'compound'):
+        # add to parent's first child
+        if token.dep in self.add_to_first_deps:
             parent_elem.add_to_first_child(child_elem_id, pos)
             return
 
