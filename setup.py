@@ -36,7 +36,8 @@ setup(
         'python-igraph',
         'nltk',
         'spacy',
-        'asciitree'
+        'asciitree',
+        'ujson'
     ],
     entry_points='''
         [console_scripts]

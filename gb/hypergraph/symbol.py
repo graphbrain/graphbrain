@@ -44,7 +44,7 @@ def hashed(txt):
         c = ord(s[0])
         h = np.dot(np.array([[31]], dtype=np.uint64), (h + np.array([[c]], dtype=np.uint64)))
         s = s[1:]
-    return hex(h[0][0])[2:-1]
+    return hex(h[0][0])[2:]
 
 
 def random_hash():

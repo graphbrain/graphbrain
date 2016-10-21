@@ -19,17 +19,17 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from spacy.en import English
-from token import Token
-from sentence import Sentence
+import spacy
+from gb.nlp.nlp_token import Token
+from gb.nlp.sentence import Sentence
 
 
 class Parser:
     """Generic NLP parser."""
 
     def __init__(self):
-        self.parser = English()
         self.token_table = {}
+        self.parser = spacy.load('en')
 
     def __spacy2token(self, stoken):
         if stoken is None:

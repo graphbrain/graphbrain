@@ -19,10 +19,10 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from null import Null
-from sqlite import SQLite
-from mysql import MySQL
-import constants as const
+from gb.hypergraph.null import Null
+from gb.hypergraph.sqlite import SQLite
+from gb.hypergraph.mysql import MySQL
+import gb.hypergraph.constants as const
 
 
 class HyperGraph(object):

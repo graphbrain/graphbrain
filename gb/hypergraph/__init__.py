@@ -20,4 +20,3 @@
 
 
 __all__ = ['hypergraph', 'constants', 'edge', 'symbol', 'queries']
-from hypergraph import HyperGraph

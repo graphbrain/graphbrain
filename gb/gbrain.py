@@ -20,8 +20,9 @@
 
 
 import click
-import hypergraph as hyper
-import readers.wordnet as wn
+import gb.hypergraph as hyper
+from gb.hypergraph.hypergraph import HyperGraph
+import gb.readers.wordnet as wn
 
 
 @click.group()
@@ -48,7 +49,7 @@ def show_logo():
 @click.pass_context
 def create(ctx):
     click.echo('creating hypergraph...')
-    hyper.HyperGraph(ctx.obj)
+    HyperGraph(ctx.obj)
     click.echo('done.')
 
 
@@ -56,7 +57,7 @@ def create(ctx):
 @click.pass_context
 def wordnet(ctx):
     click.echo('reading wordnet...')
-    hg = hyper.HyperGraph(ctx.obj)
+    hg = HyperGraph(ctx.obj)
     wn.read(hg)
     click.echo('done.')
 

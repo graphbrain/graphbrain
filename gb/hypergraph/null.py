@@ -19,7 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from backend import Backend
+from gb.hypergraph.backend import Backend
 
 
 class Null(Backend):
