@@ -80,7 +80,7 @@ def transform(sentence):
 
 if __name__ == '__main__':
     test_text = """
-    Telmo is going to the gym.
+    My name is James Bond.
     """
 
     print('Starting parser...')
