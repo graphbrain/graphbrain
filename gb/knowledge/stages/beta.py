@@ -25,13 +25,25 @@ from gb.nlp.sentence import Sentence
 
 
 class BetaStage(object):
-    def __init__(self, tree):
+    def __init__(self, hg, tree):
+        self.hg = hg
         self.tree = tree
 
+    def is_compound(self, node):
+        return False
+
     def process_entity(self, entity_id):
-        pass
+        entity = self.tree.get(entity_id)
+
+        entity.namespace = '1'
+
+        if entity.is_node():
+            entity.compound = self.is_compound(entity)
+            for child_id in entity.children_ids:
+                self.process_entity(child_id)
 
     def process(self):
+        self.process_entity(self.tree.root_id)
         return self.tree
 
 
