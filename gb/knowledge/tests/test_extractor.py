@@ -29,54 +29,66 @@ class TestExtractor(unittest.TestCase):
     def setUpClass(cls):
         cls.extractor = Extractor(None)
 
-    def do_test(self, text, alpha):
+    def do_test(self, text, alpha, beta):
         result = self.extractor.read_text(text)
         self.assertEqual(len(result), 1)
         self.assertEqual(str(self.extractor.alpha_output), alpha)
+        self.assertEqual(str(self.extractor.beta_output), beta)
 
     def test_1(self):
         text = u"Some subspecies of mosquito might be 1st to be genetically wiped out."
         alpha = u"(might (be (some (of subspecies mosquito)) (1st (to (be (genetically (wiped out)))))))"
-        self.do_test(text, alpha)
+        beta = u"(might (be (some (of subspecies mosquito)) (1st (to (be (genetically (wiped out)))))))"
+        self.do_test(text, alpha, beta)
 
     def test_2(self):
         text = u"Telmo is going to the gym."
         alpha = u"(is (going telmo (to (the gym))))"
-        self.do_test(text, alpha)
+        beta = u"(is (going telmo (to (the gym))))"
+        self.do_test(text, alpha, beta)
 
     def test_3(self):
         text = u"Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate."
         alpha = u"(is (by (influenced ((due to) (its (in location (the (european plain))))) berlin) " \
                 u"(a (temperate (seasonal climate)))))"
-        self.do_test(text, alpha)
+        beta = u"(is (by (influenced ((due to) (its (in location (the european_plain)))) berlin) " \
+               u"(a (temperate (seasonal climate)))))"
+        self.do_test(text, alpha, beta)
 
     def test_4(self):
         text = u"Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan."
         alpha = u"(is ((koikuchi shoyu) (best (known (as (soy sauce))))) (the (of (in mother japan) (all sauces))))"
-        self.do_test(text, alpha)
+        beta = u"(is (koikuchi_shoyu (best (known (as soy_sauce)))) (the (of (in mother japan) (all sauces))))"
+        self.do_test(text, alpha, beta)
 
     def test_5(self):
         text = u"Sweden is the third-largest country in the European Union by area."
         alpha = u"(is sweden (the (third (largest (in (by country area) (the (european union)))))))"
-        self.do_test(text, alpha)
+        beta = u"(is sweden (the (third (largest (in (by country area) (the european_union))))))"
+        self.do_test(text, alpha, beta)
 
     def test_6(self):
         text = u"Sweden wants to fight our disposable culture with tax breaks for repairing old stuff."
         alpha = u"(wants sweden (to (fight (our (disposable culture)) (with ((for (repairing (old stuff))) " \
                 u"(tax breaks))))))"
-        self.do_test(text, alpha)
+        beta = u"(wants sweden (to (fight (our (disposable culture)) (with ((for " \
+               u"(repairing (old stuff))) tax_breaks)))))"
+        self.do_test(text, alpha, beta)
 
     def test_7(self):
         text = u"OpenCola is a brand of open-source cola, where the instructions for making it are freely available " \
                u"and modifiable."
         alpha = u"(is opencola (a (of brand (((open source) cola) (where (are (the ((for making) instructions)) " \
                 u"it (freely (and (available modifiable)))))))))"
-        self.do_test(text, alpha)
+        beta = u"(is opencola (a (of brand (((open source) cola) (where (are (the ((for making) instructions)) " \
+               u"it (freely (and (available modifiable)))))))))"
+        self.do_test(text, alpha, beta)
 
     def test_8(self):
         text = u"2016 Nobel Prize in Physiology or Medicine Is Awarded to Yoshinori Ohsumi."
         alpha = u"(is (awarded (2016 (in (nobel prize) (or (physiology medicine)))) (to (yoshinori ohsumi))))"
-        self.do_test(text, alpha)
+        beta = u"(is (awarded (2016 (in nobel_prize (or (physiology medicine)))) (to yoshinori_ohsumi)))"
+        self.do_test(text, alpha, beta)
 
 if __name__ == '__main__':
     unittest.main()
