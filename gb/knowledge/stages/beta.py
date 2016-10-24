@@ -19,18 +19,39 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import print_function
-from gb.nlp.parser import Parser
-from gb.nlp.sentence import Sentence
+def is_compound_by_entity_type(node):
+    first_child = node.get_child(0)
+    if first_child.is_node():
+        return False
+    entity_type = first_child.token.entity_type
+    if (entity_type is None) or (len(entity_type) == 0):
+        return False
+    for child in node.children():
+        if child.is_node():
+            return False
+        if child.token.entity_type != entity_type:
+            return False
+    return True
 
 
 class BetaStage(object):
     def __init__(self, hg, tree):
         self.hg = hg
         self.tree = tree
+        self.compound_deps = ['pobj', 'compound', 'dobj', 'nsubj']
+
+    def is_compound_by_deps(self, node):
+        for child in node.children():
+            if child.is_leaf():
+                if child.token.dep not in self.compound_deps:
+                    return False
+            else:
+                if not self.is_compound_by_deps(child):
+                    return False
+        return True
 
     def is_compound(self, node):
-        return False
+        return is_compound_by_entity_type(node) or self.is_compound_by_deps(node)
 
     def process_entity(self, entity_id):
         entity = self.tree.get(entity_id)
@@ -45,27 +66,3 @@ class BetaStage(object):
     def process(self):
         self.process_entity(self.tree.root_id)
         return self.tree
-
-
-def transform(tree):
-    return BetaStage(tree).process()
-
-
-if __name__ == '__main__':
-    test_text = """
-    My name is James Bond.
-    """
-
-    print('Starting parser...')
-    parser = Parser()
-    print('Parsing...')
-    result = parser.parse_text(test_text)
-
-    print(result)
-
-    for r in result:
-        s = Sentence(r)
-        print(s)
-        s.print_tree()
-        t = transform(s)
-        print(t)

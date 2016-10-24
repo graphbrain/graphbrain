@@ -128,9 +128,7 @@ class Leaf(Element):
     def __init__(self, token):
         super(Leaf, self).__init__()
         self.type = LEAF
-        self.pivot = token
-        self.left = []
-        self.right = []
+        self.token = token
 
     # override
     def add_child(self, elem_id):
@@ -149,21 +147,10 @@ class Leaf(Element):
 
     # override
     def has_pos(self, pos):
-        if self.pivot.pos == pos:
-            return True
-        for token in self.left:
-            if token.pos == pos:
-                return True
-        for token in self.right:
-            if token.pos == pos:
-                return True
-        return False
+        return self.token.pos == pos
 
     def __str__(self):
-        words = [token.word for token in self.left]
-        words.append(self.pivot.word)
-        words += [token.word for token in self.right]
-        return '_'.join(words)
+        return self.token.word
 
 
 class Node(Element):
@@ -176,7 +163,7 @@ class Node(Element):
             self.children_ids = children_ids
         self.layer_ids = []
         self.layer_id = -1
-        self.compound = False
+        self.__compound = False
 
     def get_child(self, i):
         return self.tree.get(self.children_ids[i])
@@ -224,6 +211,17 @@ class Node(Element):
             return False
         child = self.tree.get(self.children_ids[0])
         return child.is_node()
+
+    @property
+    def compound(self):
+        return self.__compound
+
+    @compound.setter
+    def compound(self, compound):
+        self.__compound = compound
+        for child in self.children():
+            if child.is_node():
+                child.compound = compound
 
     # override
     def is_compound(self):
@@ -277,4 +275,7 @@ class Node(Element):
 
     def __str__(self):
         strs = [str(self.tree.get(child_id)) for child_id in self.children_ids]
-        return '(%s)' % ' '.join(strs)
+        if self.compound:
+            return '_'.join(strs)
+        else:
+            return '(%s)' % ' '.join(strs)

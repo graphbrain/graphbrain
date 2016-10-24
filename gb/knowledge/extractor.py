@@ -94,7 +94,7 @@ class Extractor(object):
 
 if __name__ == '__main__':
     test_text = """
-    2016 Nobel Prize in Physiology or Medicine Is Awarded to Yoshinori Ohsumi.
+    Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan.
     """
 
     print(test_text)
