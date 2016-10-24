@@ -20,21 +20,19 @@
 
 
 import unittest
-from gb.nlp.parser import Parser
-from gb.nlp.sentence import Sentence
-from gb.knowledge.stages.alpha import transform as alpha_transform
+from gb.knowledge.extractor import Extractor
 
 
 class TestExtractor(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.parser = Parser()
+        cls.extractor = Extractor(None)
 
     def do_test(self, text, alpha):
-        result = self.parser.parse_text(text)
-        tree_alpha = alpha_transform(Sentence(result[0]))
-        self.assertEqual(str(tree_alpha), alpha)
+        result = self.extractor.read_text(text)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(str(self.extractor.alpha_output), alpha)
 
     def test_1(self):
         text = u"Some subspecies of mosquito might be 1st to be genetically wiped out."

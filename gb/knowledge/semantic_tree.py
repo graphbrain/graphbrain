@@ -88,12 +88,16 @@ class Element(object):
         self.type = None
         self.id = None
         self.tree = None
+        self.namespace = None
 
     def is_leaf(self):
         return self.type == LEAF
 
     def is_node(self):
         return self.type == NODE
+
+    def is_compound(self):
+        return True
 
     def apply_layers(self):
         # if not implemented, do nothing.
@@ -172,6 +176,7 @@ class Node(Element):
             self.children_ids = children_ids
         self.layer_ids = []
         self.layer_id = -1
+        self.compound = False
 
     def get_child(self, i):
         return self.tree.get(self.children_ids[i])
@@ -219,6 +224,10 @@ class Node(Element):
             return False
         child = self.tree.get(self.children_ids[0])
         return child.is_node()
+
+    # override
+    def is_compound(self):
+        return self.compound
 
     # override
     def add_child(self, elem_id):
