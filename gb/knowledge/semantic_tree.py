@@ -99,6 +99,9 @@ class Element(object):
     def is_compound(self):
         return True
 
+    def is_terminal(self):
+        return self.is_leaf() or self.is_compound()
+
     def apply_layers(self):
         # if not implemented, do nothing.
         pass
@@ -120,6 +123,10 @@ class Element(object):
         pass
 
     def has_pos(self, pos):
+        # throw exception
+        pass
+
+    def has_dep(self, dep):
         # throw exception
         pass
 
@@ -148,6 +155,10 @@ class Leaf(Element):
     # override
     def has_pos(self, pos):
         return self.token.pos == pos
+
+    # override
+    def has_dep(self, dep):
+        return self.token.dep == dep
 
     def __str__(self):
         return self.token.word
@@ -234,13 +245,11 @@ class Node(Element):
     # override
     def add_to_first_child(self, elem_id, pos):
         if len(self.children_ids) > 0:
-            if self.get_child(0).is_leaf():
+            if self.get_child(0).is_terminal():
                 self.set_child(0, self.tree.enclose(self.get_child(0)).id)
             if pos == Position.RIGHT:
-                self.tree.get(elem_id).parent = self
                 self.get_child(0).children_ids.append(elem_id)
             else:
-                self.tree.get(elem_id).parent = self
                 self.get_child(0).children_ids.insert(0, elem_id)
         else:
             raise IndexError('Requesting root on an empty Node')
@@ -270,6 +279,13 @@ class Node(Element):
     def has_pos(self, pos):
         for child in self.children():
             if child.has_pos(pos):
+                return True
+        return False
+
+    # override
+    def has_dep(self, dep):
+        for child in self.children():
+            if child.has_dep(dep):
                 return True
         return False
 
