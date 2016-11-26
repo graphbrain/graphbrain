@@ -93,9 +93,11 @@ class Extractor(object):
 
 
 if __name__ == '__main__':
-    test_text = """
-    Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan.
-    """
+    # test_text = """
+    # Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan.
+    # """
+
+    test_text = "Sweden wants to fight our disposable culture with tax breaks for repairing old stuff."
 
     print(test_text)
 
