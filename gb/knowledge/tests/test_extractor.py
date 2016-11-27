@@ -29,17 +29,20 @@ class TestExtractor(unittest.TestCase):
     def setUpClass(cls):
         cls.extractor = Extractor(None)
 
-    def do_test(self, text, alpha, beta):
+    def do_test(self, text, alpha, beta, gamma=None):
         result = self.extractor.read_text(text)
         self.assertEqual(len(result), 1)
         self.assertEqual(str(self.extractor.alpha_output), alpha)
         self.assertEqual(str(self.extractor.beta_output), beta)
+        if gamma is not None:
+            self.assertEqual(str(self.extractor.gamma_output), gamma)
 
     def test_1(self):
         text = u"Some subspecies of mosquito might be 1st to be genetically wiped out."
         alpha = u"(might (be (some (of subspecies mosquito)) (1st (to (be (genetically (wiped out)))))))"
         beta = u"(might (be (some (of subspecies mosquito)) (1st (to (be (genetically (wiped out)))))))"
-        self.do_test(text, alpha, beta)
+        gamma = u"(might_be (some (of subspecies mosquito)) (1st (to_be_genetically_wiped out)))"
+        self.do_test(text, alpha, beta, gamma)
 
     def test_2(self):
         text = u"Telmo is going to the gym."
@@ -73,7 +76,8 @@ class TestExtractor(unittest.TestCase):
                 u"(tax breaks))))))"
         beta = u"(wants sweden (to (fight (our (disposable culture)) (with ((for " \
                u"(repairing (old stuff))) tax_breaks)))))"
-        self.do_test(text, alpha, beta)
+        gamma = u"((wants_to_fight with) sweden (our (disposable culture)) ((for_repairing (old stuff)) tax_breaks))"
+        self.do_test(text, alpha, beta, gamma)
 
     def test_7(self):
         text = u"OpenCola is a brand of open-source cola, where the instructions for making it are freely available " \
