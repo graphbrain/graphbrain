@@ -122,11 +122,15 @@ class Element(object):
         # throw exception
         pass
 
-    def has_pos(self, pos):
+    def has_pos(self, pos, shallow=False):
         # throw exception
         pass
 
-    def has_dep(self, dep):
+    def has_dep(self, dep, shallow=False):
+        # throw exception
+        pass
+
+    def arity(self):
         # throw exception
         pass
 
@@ -153,12 +157,16 @@ class Leaf(Element):
         return node.nest(elem_id)
 
     # override
-    def has_pos(self, pos):
+    def has_pos(self, pos, shallow=False):
         return self.token.pos == pos
 
     # override
-    def has_dep(self, dep):
+    def has_dep(self, dep, shallow=False):
         return self.token.dep == dep
+
+    # override
+    def arity(self):
+        return 1
 
     def __str__(self):
         return self.token.word
@@ -276,18 +284,27 @@ class Node(Element):
             self.tree.disenclose(self)
 
     # override
-    def has_pos(self, pos):
+    def has_pos(self, pos, shallow=False):
         for child in self.children():
-            if child.has_pos(pos):
-                return True
+            if (not shallow) or child.is_leaf():
+                if child.has_pos(pos):
+                    return True
         return False
 
     # override
-    def has_dep(self, dep):
+    def has_dep(self, dep, shallow=False):
         for child in self.children():
-            if child.has_dep(dep):
-                return True
+            if (not shallow) or child.is_leaf():
+                if child.has_dep(dep):
+                    return True
         return False
+
+    # override
+    def arity(self):
+        if self.compound:
+            return 1
+        else:
+            return len(self.children_ids)
 
     def __str__(self):
         strs = [str(self.tree.get(child_id)) for child_id in self.children_ids]

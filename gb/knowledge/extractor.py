@@ -24,19 +24,25 @@ from gb.nlp.sentence import Sentence
 from gb.knowledge.stages.alpha import AlphaStage
 from gb.knowledge.stages.beta import BetaStage
 from gb.knowledge.stages.gamma import GammaStage
+from gb.knowledge.stages.delta import DeltaStage
+from gb.knowledge.stages.epsilon import EpsilonStage
 
 
 class Extractor(object):
-    def __init__(self, hg, alpha='default', beta='default', gamma='default'):
+    def __init__(self, hg, alpha='default', beta='default', gamma='default', delta='default', epsilon='default'):
         self.hg = hg
         self.alpha = alpha
         self.beta = beta
         self.gamma = gamma
+        self.delta = delta
+        self.epsilon = epsilon
         self.parser = None
         self.debug = False
         self.alpha_output = None
         self.beta_output = None
         self.gamma_output = None
+        self.delta_output = None
+        self.epsilon_output = None
 
     def debug_msg(self, msg):
         if self.debug:
@@ -59,6 +65,18 @@ class Extractor(object):
             return GammaStage(tree)
         else:
             raise RuntimeError('unknnown gamma stage type: %s' % self.gamma)
+
+    def create_delta_stage(self, tree):
+        if self.delta == 'default':
+            return DeltaStage(tree)
+        else:
+            raise RuntimeError('unknnown delta stage type: %s' % self.delta)
+
+    def create_epsilon_stage(self, tree):
+        if self.epsilon == 'default':
+            return EpsilonStage(tree)
+        else:
+            raise RuntimeError('unknnown epsilon stage type: %s' % self.epsilon)
 
     def read_text(self, text):
         if self.parser is None:
@@ -89,6 +107,19 @@ class Extractor(object):
         tree = gamma_stage.process()
         self.gamma_output = str(tree)
         self.debug_msg(self.gamma_output)
+
+        delta_stage = self.create_delta_stage(tree)
+        self.debug_msg('executing delta stage...')
+        tree = delta_stage.process()
+        self.delta_output = str(tree)
+        self.debug_msg(self.delta_output)
+
+        epsilon_stage = self.create_epsilon_stage(tree)
+        self.debug_msg('executing epsilon stage...')
+        tree = epsilon_stage.process()
+        self.epsilon_output = str(tree)
+        self.debug_msg(self.epsilon_output)
+
         return tree
 
 
@@ -97,7 +128,8 @@ if __name__ == '__main__':
     # Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan.
     # """
 
-    test_text = "Sweden wants to fight our disposable culture with tax breaks for repairing old stuff."
+    test_text = "Telmo is going to the gym." \
+                "Sweden wants to fight our disposable culture with tax breaks for repairing old stuff."
 
     print(test_text)
 
