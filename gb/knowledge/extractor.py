@@ -29,54 +29,30 @@ from gb.knowledge.stages.epsilon import EpsilonStage
 
 
 class Extractor(object):
-    def __init__(self, hg, alpha='default', beta='default', gamma='default', delta='default', epsilon='default'):
+    def __init__(self, hg, stages=('alpha', 'beta', 'gamma', 'delta')):
         self.hg = hg
-        self.alpha = alpha
-        self.beta = beta
-        self.gamma = gamma
-        self.delta = delta
-        self.epsilon = epsilon
+        self.stages = stages
         self.parser = None
         self.debug = False
-        self.alpha_output = None
-        self.beta_output = None
-        self.gamma_output = None
-        self.delta_output = None
-        self.epsilon_output = None
+        self.outputs = []
+
+    def create_stage(self, name, tree):
+        if name == 'alpha':
+            return AlphaStage()
+        elif name == 'beta':
+            return BetaStage(self.hg, tree)
+        elif name == 'gamma':
+            return GammaStage(tree)
+        elif name == 'delta':
+            return DeltaStage(tree)
+        elif name == 'epsilon':
+            return EpsilonStage(tree)
+        else:
+            raise RuntimeError('unknnown alpha stage name: %s' % name)
 
     def debug_msg(self, msg):
         if self.debug:
             print(msg)
-
-    def create_alpha_stage(self):
-        if self.alpha == 'default':
-            return AlphaStage()
-        else:
-            raise RuntimeError('unknnown alpha stage type: %s' % self.alpha)
-
-    def create_beta_stage(self, tree):
-        if self.beta == 'default':
-            return BetaStage(self.hg, tree)
-        else:
-            raise RuntimeError('unknnown beta stage type: %s' % self.beta)
-
-    def create_gamma_stage(self, tree):
-        if self.gamma == 'default':
-            return GammaStage(tree)
-        else:
-            raise RuntimeError('unknnown gamma stage type: %s' % self.gamma)
-
-    def create_delta_stage(self, tree):
-        if self.delta == 'default':
-            return DeltaStage(tree)
-        else:
-            raise RuntimeError('unknnown delta stage type: %s' % self.delta)
-
-    def create_epsilon_stage(self, tree):
-        if self.epsilon == 'default':
-            return EpsilonStage(tree)
-        else:
-            raise RuntimeError('unknnown epsilon stage type: %s' % self.epsilon)
 
     def read_text(self, text):
         if self.parser is None:
@@ -90,46 +66,28 @@ class Extractor(object):
         if self.debug:
             sentence.print_tree()
 
-        alpha_stage = self.create_alpha_stage()
-        self.debug_msg('executing alpha stage...')
-        tree = alpha_stage.process_sentence(sentence)
-        self.alpha_output = str(tree)
-        self.debug_msg(self.alpha_output)
+        self.outputs = []
 
-        beta_stage = self.create_beta_stage(tree)
-        self.debug_msg('executing beta stage...')
-        tree = beta_stage.process()
-        self.beta_output = str(tree)
-        self.debug_msg(self.beta_output)
+        stage = self.create_stage(self.stages[0], None)
+        self.debug_msg('executing %s stage...' % self.stages[0])
+        tree = stage.process_sentence(sentence)
+        output = str(tree)
+        self.outputs.append(output)
+        self.debug_msg(output)
 
-        gamma_stage = self.create_gamma_stage(tree)
-        self.debug_msg('executing gamma stage...')
-        tree = gamma_stage.process()
-        self.gamma_output = str(tree)
-        self.debug_msg(self.gamma_output)
-
-        delta_stage = self.create_delta_stage(tree)
-        self.debug_msg('executing delta stage...')
-        tree = delta_stage.process()
-        self.delta_output = str(tree)
-        self.debug_msg(self.delta_output)
-
-        epsilon_stage = self.create_epsilon_stage(tree)
-        self.debug_msg('executing epsilon stage...')
-        tree = epsilon_stage.process()
-        self.epsilon_output = str(tree)
-        self.debug_msg(self.epsilon_output)
+        for name in self.stages[1:]:
+            stage = self.create_stage(name, tree)
+            self.debug_msg('executing %s stage...' % name)
+            tree = stage.process()
+            output = str(tree)
+            self.outputs.append(output)
+            self.debug_msg(output)
 
         return tree
 
 
 if __name__ == '__main__':
-    # test_text = """
-    # Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan.
-    # """
-
-    test_text = "Telmo is going to the gym." \
-                "Sweden wants to fight our disposable culture with tax breaks for repairing old stuff."
+    test_text = "Sweden wants to fight our disposable culture with tax breaks for repairing old stuff."
 
     print(test_text)
 
