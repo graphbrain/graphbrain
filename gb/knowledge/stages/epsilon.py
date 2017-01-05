@@ -36,30 +36,39 @@ class EpsilonStage(object):
                     return False
             return True
         else:
-            return entity.token.pos in self.rel_pos
+            return (entity.token.pos in self.rel_pos) and (entity.token.dep != 'advmod')
 
-    def add_to_relationships(self, base_id, add_id):
+    def add_to_relationships(self, base_id, child_id, extra_params):
         base = self.tree.get(base_id)
-        add = self.tree.get(add_id)
+        child = self.tree.get(child_id)
+        rel_id = child.children_ids[0]
+        rel = self.tree.get(rel_id)
 
         base_rel_id = base.children_ids[0]
         base_rel = self.tree.get(base_rel_id)
-        arity = base_rel.arity()
-        params = len(base.children_ids) - 1
 
-        if add.is_node() and not add.compound:
-            for child_id in add.children_ids:
-                self.add_to_relationships(base_id, child_id)
+        extra_param_count = 0
+        for param_id in extra_params:
+            extra_param = self.tree.get(param_id)
+            if extra_param.is_node()  and (len(extra_param.children_ids) > 2) and not self.is_relationship(extra_param.children_ids[0]):
+                extra_param_count += 1
+
+        arity = base_rel.arity()
+        params = len(base.children_ids) + len(child.children_ids) + extra_param_count - 2
+
+        if rel.is_node() and not rel.compound:
+            for cid in rel.children_ids:
+                self.add_to_relationships(base_id, cid, extra_params)
         else:
             pos = Position.RIGHT
-            if params == 0:
+            if len(base.children_ids) == 1:
                 pos = Position.LEFT
-            if params <= arity:
-                base.add_to_first_child(add.id, pos)
+            if params - arity == 1:
+                base.add_to_first_child(rel_id, pos)
                 first_child = self.tree.get(base.children_ids[0])
                 first_child.compound = True
             else:
-                base.add_to_first_child(add.id, pos)
+                base.add_to_first_child(rel_id, pos)
 
     def process_entity(self, entity_id):
         entity = self.tree.get(entity_id)
@@ -78,7 +87,7 @@ class EpsilonStage(object):
                 if (not child.has_dep('nsubj', shallow=True))\
                         and child.is_node()\
                         and self.is_relationship(child.children_ids[0]):
-                    self.add_to_relationships(entity.id, child.children_ids[0])
+                    self.add_to_relationships(entity.id, child_id, to_process)
                     to_process = child.children_ids[1:] + to_process
                 else:
                     entity.children_ids.append(child_id)

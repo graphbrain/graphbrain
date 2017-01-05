@@ -54,18 +54,18 @@ class Tree(object):
         leaf = Leaf(token)
         leaf.tree = self
         self.add(leaf)
-        return leaf.id
+        return leaf
 
     def create_node(self, children=None):
         node = Node(children)
         node.tree = self
         self.add(node)
-        return node.id
+        return node
 
     def enclose(self, entity):
         node_id = entity.id
         self.add(entity)
-        node = self.get(self.create_node([entity.id]))
+        node = self.create_node([entity.id])
         self.set(node_id, node)
         return node
 
@@ -110,6 +110,10 @@ class Element(object):
         # if not implemented, do nothing.
         pass
 
+    def flatten(self):
+        # if not implemented, do nothing.
+        pass
+
     def add_child(self, elem_id):
         # throw exception
         pass
@@ -133,6 +137,15 @@ class Element(object):
     def arity(self):
         # throw exception
         pass
+
+    def __eq__(self, other):
+        return NotImplemented
+
+    def __ne__(self, other):
+        result = self.__eq__(other)
+        if result is NotImplemented:
+            return result
+        return not result
 
 
 class Leaf(Element):
@@ -168,6 +181,13 @@ class Leaf(Element):
     def arity(self):
         return 1
 
+    def __eq__(self, other):
+        if isinstance(other, Leaf):
+            return self.token == other.token
+        elif isinstance(other, Node):
+            return False
+        return NotImplemented
+
     def __str__(self):
         return self.token.word
 
@@ -183,6 +203,11 @@ class Node(Element):
         self.layer_ids = []
         self.layer_id = -1
         self.__compound = False
+
+    def clone(self):
+        new_node = self.tree.create_node(self.children_ids[:])
+        new_node.__compound = self.__compound
+        return new_node
 
     def get_child(self, i):
         return self.tree.get(self.children_ids[i])
@@ -202,8 +227,8 @@ class Node(Element):
         if layer.is_node():
             for i in range(len(layer.children_ids)):
                 if layer.children_ids[i] < 0:
-                    child_id = self.tree.create_node(entity.children_ids)
-                    child = self.tree.get(child_id)
+                    child = self.tree.create_node(entity.children_ids)
+                    child_id = child.id
                     if child.is_singleton():
                         child_id = child.children_ids[0]
                     layer.set_child(i, child_id)
@@ -272,7 +297,7 @@ class Node(Element):
         else:
             rel = elem.children_ids[0]
             rest = elem.children_ids[1:]
-        self.layer_id = self.tree.create_node([rel, -1] + rest)
+        self.layer_id = self.tree.create_node([rel, -1] + rest).id
         return self
 
     # override
@@ -305,6 +330,32 @@ class Node(Element):
             return 1
         else:
             return len(self.children_ids)
+
+    # override
+    def flatten(self):
+        new_children_ids = []
+        for child_id in self.children_ids:
+            child = self.tree.get(child_id)
+            child.flatten()
+            if child.is_terminal():
+                new_children_ids.append(child.id)
+            else:
+                new_children_ids += child.children_ids
+        self.children_ids = new_children_ids
+
+    def __eq__(self, other):
+        if isinstance(other, Leaf):
+            return False
+        elif isinstance(other, Node):
+            c1 = self.children()
+            c2 = other.children()
+            if len(c1) != len(c2):
+                return False
+            for i in range(len(c1)):
+                if c1[i] != c2[i]:
+                    return False
+            return True
+        return NotImplemented
 
     def __str__(self):
         strs = [str(self.tree.get(child_id)) for child_id in self.children_ids]

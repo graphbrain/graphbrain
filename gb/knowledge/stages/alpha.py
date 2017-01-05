@@ -56,7 +56,8 @@ class AlphaStage(object):
         parent_elem.add_child(child_elem_id)
 
     def process_token(self, token, root_id=None):
-        elem_id = self.tree.create_leaf(token)
+        elem = self.tree.create_leaf(token)
+        elem_id = elem.id
 
         if root_id is None:
             root_id = elem_id

@@ -16,3 +16,85 @@ The main ambition of this software project is to provide a robust base upon whic
 The GraphBrain knowledge graph is designed to avoid notions of ground truth, instead allowing for the representation of all beliefs as relative to a source. Then, it is possible to define algorithms to determine consensus according to certain criteria or methods. This matches the current situation of digital spaces, where a very large amount of information is available, but knowledge discovery by human actors is constrained by centralized algorithms with poorly understood dynamics (e.g. search engines and recommendation systems).
 
 Beyond the scientific study of collective knowledge phenomena in digital media, GraphBrain could enable the creation of systems of knowledge exploration that are less centralized, less dependent of private actors and more transparent to the users.
+
+# Installation #
+
+For now, these instructions are just for macOS. Installing on Linux should be quite similar. Everything is done on the terminal.
+
+## Prerequisites ##
+
+Some of these prerequisites may be already installed. In that case, just skip the appropriate step.
+
+### XCode ###
+
+Use the app store.
+
+### Command Line Tools ###
+
+    $ xcode-select --install
+
+### Homebrew (macOS package manager) ###
+
+http://brew.sh/
+
+### Python 3 ###
+
+    $ brew install python3
+
+### pip (Python package manager) ###
+
+    $ sudo easy_install pip
+
+### virtualenv (Virtual Python Environment builder) ###
+
+    $ sudo -H pip install virtualenv
+
+### FreeType (library) ###
+
+    $ brew install freetype
+
+### MariaDB / MySQL ###
+
+GraphBrain uses either [MariaDB](http://mariadb.org) or [MySQL](http://mysql.com) as one of its data storage backends. We recommend MariaDB:
+
+    $ brew install mariadb
+
+Create user and database for tests:
+
+    $ mysql -u root
+    MariaDB [(none)]> CREATE USER 'gb'@'localhost' IDENTIFIED BY 'gb';
+    MariaDB [(none)]> create database gbtest;
+    MariaDB [(none)]> grant all privileges on gbtest.* to gb@localhost;
+    
+It is, of course, advisable to protect your database server with a password. We are assuming an experimental environment here.
+
+This will be made optional in the future.
+
+## Download, build and install ##
+
+For now we only distribute GraphBrain as source code from our git repository.
+Start by cloning the source code to your current local directory.
+
+    $ git clone https://github.com/graphbrain/graphbrain.git
+    $ cd graphbrain
+
+It is advisable to work with virtual environments. To create one in the current directory you can do this:
+
+    $ virtualenv -p /usr/local/bin/python3 venv
+
+Then to activate it:
+
+    $ source venv/bin/activate
+    
+Now we can build and install GraphBrain:
+
+    $ pip install --editable .
+    
+It is still necessary to download spacy data files:
+    $ python -m spacy.en.download all
+
+## Run tests ##
+
+Use the script provided:
+
+    $ ./run_tests.sh

@@ -61,6 +61,13 @@ class Token:
         words = [token.word for token in self.to_word_token_list()]
         return ' '.join(words)
 
+    def __eq__(self, other):
+        if isinstance(other, Token):
+            return (self.word == other.word)\
+                   and (self.pos == other.pos)\
+                   and (self.dep == other.dep)
+        return NotImplemented
+
     def __str__(self):
         return '%s/%s (%s) {%s}' % (self.word.strip(), self.pos, self.dep, self.entity_type)
 
