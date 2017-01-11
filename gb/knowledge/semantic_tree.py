@@ -79,6 +79,10 @@ class Tree(object):
     def remove_redundant_nesting(self):
         self.root().remove_redundant_nesting()
 
+    def clone_id(self, elem_id):
+        elem = self.get(elem_id)
+        return elem.clone().id
+
     def __str__(self):
         return str(self.get(self.root_id))
 
@@ -101,6 +105,9 @@ class Element(object):
 
     def is_terminal(self):
         return self.is_leaf() or self.is_compound()
+
+    def is_not_terminal(self):
+        return not self.is_terminal()
 
     def apply_layers(self):
         # if not implemented, do nothing.
@@ -154,6 +161,10 @@ class Leaf(Element):
         self.type = LEAF
         self.token = token
 
+    # Leaf is immutable
+    def clone(self):
+        return self
+
     # override
     def add_child(self, elem_id):
         node = self.tree.enclose(self)
@@ -205,7 +216,7 @@ class Node(Element):
         self.__compound = False
 
     def clone(self):
-        new_node = self.tree.create_node(self.children_ids[:])
+        new_node = self.tree.create_node([self.tree.clone_id(child_id) for child_id in self.children_ids])
         new_node.__compound = self.__compound
         return new_node
 
