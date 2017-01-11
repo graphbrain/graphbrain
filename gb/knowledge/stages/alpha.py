@@ -81,7 +81,7 @@ def transform(sentence):
 
 if __name__ == '__main__':
     test_text = """
-    My name is James Bond.
+    Satellites from NASA and other agencies have been tracking sea ice changes since 1979.
     """
 
     print('Starting parser...')
