@@ -57,20 +57,26 @@ class TestExtractor(unittest.TestCase):
                 u"(a (temperate (seasonal climate)))))"
         beta = u"(is (by (influenced ((due to) (its (in location (the european_plain)))) berlin) " \
                u"(a (temperate (seasonal climate)))))"
-        gamma = u"((is_due_to influenced_by) (its (in location european_plain)) berlin (temperate (seasonal climate)))"
-        self.do_test(text, (alpha, beta, gamma))
+        gamma = u"(is_by (influenced (due_to (its (in location european_plain))) berlin) (temperate " \
+                u"(seasonal climate)))"
+        delta = u"((influenced_due_to is_by) (its (in location european_plain)) berlin (temperate (seasonal climate)))"
+        self.do_test(text, (alpha, beta, gamma, delta))
 
     def test_4(self):
         text = u"Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan."
         alpha = u"(is ((koikuchi shoyu) (best (known (as (soy sauce))))) (the (of (in mother japan) (all sauces))))"
         beta = u"(is (koikuchi_shoyu (best (known (as soy_sauce)))) (the (of (in mother japan) (all sauces))))"
-        self.do_test(text, (alpha, beta))
+        gamma = u"(is (koikuchi_shoyu (best_known_as soy_sauce)) (of (in mother japan) (all sauces)))"
+        delta = u"((is of) (koikuchi_shoyu (best_known_as soy_sauce)) (in mother japan) (all sauces))"
+        self.do_test(text, (alpha, beta, gamma, delta))
 
     def test_5(self):
         text = u"Sweden is the third-largest country in the European Union by area."
         alpha = u"(is sweden (the (third (largest (in (by country area) (the (european union)))))))"
         beta = u"(is sweden (the (third (largest (in (by country area) (the european_union))))))"
-        self.do_test(text, (alpha, beta))
+        gamma = u"(is sweden (third (largest (in (by country area) european_union))))"
+        delta = u"(is_third sweden (largest (in (by country area) european_union)))"
+        self.do_test(text, (alpha, beta, gamma, delta))
 
     def test_6(self):
         text = u"Sweden wants to fight our disposable culture with tax breaks for repairing old stuff."
@@ -78,7 +84,9 @@ class TestExtractor(unittest.TestCase):
                 u"(tax breaks))))))"
         beta = u"(wants sweden (to (fight (our (disposable culture)) (with ((for " \
                u"(repairing (old stuff))) tax_breaks)))))"
-        self.do_test(text, (alpha, beta))
+        gamma = u"(wants sweden (to_fight (our (disposable culture)) (with ((for_repairing (old stuff)) tax_breaks))))"
+        delta = u"((wants_to_fight with) sweden (our (disposable culture)) ((for_repairing (old stuff)) tax_breaks))"
+        self.do_test(text, (alpha, beta, gamma, delta))
 
     def test_7(self):
         text = u"OpenCola is a brand of open-source cola, where the instructions for making it are freely available " \
@@ -87,13 +95,19 @@ class TestExtractor(unittest.TestCase):
                 u"it (freely (and (available modifiable)))))))))"
         beta = u"(is opencola (a (of brand (((open source) cola) (where (are (the ((for making) instructions)) " \
                u"it (freely (and (available modifiable)))))))))"
-        self.do_test(text, (alpha, beta))
+        gamma = u"(is opencola (of brand (((open source) cola) (where_are (for_making instructions) it " \
+                u"(freely (and (available modifiable)))))))"
+        delta = u"((is of) opencola brand ((open source cola) (where_are (for_making instructions) it " \
+                u"(freely (and (available modifiable))))))"
+        self.do_test(text, (alpha, beta, gamma, delta))
 
     def test_8(self):
         text = u"2016 Nobel Prize in Physiology or Medicine Is Awarded to Yoshinori Ohsumi."
         alpha = u"(is (awarded (2016 (in (nobel prize) (or (physiology medicine)))) (to (yoshinori ohsumi))))"
         beta = u"(is (awarded (2016 (in nobel_prize (or (physiology medicine)))) (to yoshinori_ohsumi)))"
-        self.do_test(text, (alpha, beta))
+        gamma = u"(is_awarded (2016 (in nobel_prize (or (physiology medicine)))) (to yoshinori_ohsumi))"
+        delta = u"(is_awarded_to (2016 (in nobel_prize (or (physiology medicine)))) yoshinori_ohsumi)"
+        self.do_test(text, (alpha, beta, gamma, delta))
 
 if __name__ == '__main__':
     unittest.main()
