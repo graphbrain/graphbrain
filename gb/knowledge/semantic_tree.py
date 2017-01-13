@@ -145,6 +145,10 @@ class Element(object):
         # throw exception
         pass
 
+    def flat_leafs(self):
+        # throw exception
+        pass
+
     def __eq__(self, other):
         return NotImplemented
 
@@ -191,6 +195,10 @@ class Leaf(Element):
     # override
     def arity(self):
         return 1
+
+    # override
+    def flat_leafs(self):
+        return [self]
 
     def __eq__(self, other):
         if isinstance(other, Leaf):
@@ -353,6 +361,13 @@ class Node(Element):
             else:
                 new_children_ids += child.children_ids
         self.children_ids = new_children_ids
+
+    # override
+    def flat_leafs(self):
+        leafs = []
+        for child in self.children():
+            leafs += child.flat_leafs()
+        return leafs
 
     def __eq__(self, other):
         if isinstance(other, Leaf):
