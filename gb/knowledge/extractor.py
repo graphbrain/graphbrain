@@ -25,10 +25,11 @@ from gb.knowledge.stages.alpha import AlphaStage
 from gb.knowledge.stages.beta import BetaStage
 from gb.knowledge.stages.gamma import GammaStage
 from gb.knowledge.stages.delta import DeltaStage
+from gb.knowledge.stages.epsilon import EpsilonStage
 
 
 class Extractor(object):
-    def __init__(self, hg, stages=('alpha', 'beta', 'gamma', 'delta')):
+    def __init__(self, hg, stages=('alpha', 'beta', 'gamma', 'delta', 'epsilon')):
         self.hg = hg
         self.stages = stages
         self.parser = None
@@ -44,8 +45,10 @@ class Extractor(object):
             return GammaStage(tree)
         elif name == 'delta':
             return DeltaStage(tree)
+        elif name == 'epsilon':
+            return EpsilonStage(self.hg, tree)
         else:
-            raise RuntimeError('unknnown alpha stage name: %s' % name)
+            raise RuntimeError('unknnown stage name: %s' % name)
 
     def debug_msg(self, msg):
         if self.debug:
@@ -67,20 +70,20 @@ class Extractor(object):
 
         stage = self.create_stage(self.stages[0], None)
         self.debug_msg('executing %s stage...' % self.stages[0])
-        tree = stage.process_sentence(sentence)
-        output = str(tree)
+        last_stage_output = stage.process_sentence(sentence)
+        output = str(last_stage_output)
         self.outputs.append(output)
         self.debug_msg(output)
 
         for name in self.stages[1:]:
-            stage = self.create_stage(name, tree)
+            stage = self.create_stage(name, last_stage_output)
             self.debug_msg('executing %s stage...' % name)
-            tree = stage.process()
-            output = str(tree)
+            last_stage_output = stage.process()
+            output = str(last_stage_output)
             self.outputs.append(output)
             self.debug_msg(output)
 
-        return tree
+        return last_stage_output
 
 
 if __name__ == '__main__':
