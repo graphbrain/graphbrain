@@ -28,7 +28,7 @@ class EpsilonStage(object):
         self.tree = tree
 
     def leaf_to_hyperedges(self, leaf):
-        main_edge = '%s/%s' % (leaf.token.word, leaf.namespace)
+        main_edge = sym.build((leaf.token.word, leaf.namespace))
         return {'main_edge': main_edge}
 
     def node_to_hyperedges(self, node):
