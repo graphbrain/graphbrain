@@ -44,8 +44,6 @@ class Extractor(object):
             return GammaStage(tree)
         elif name == 'delta':
             return DeltaStage(tree)
-        elif name == 'epsilon':
-            return EpsilonStage(tree)
         else:
             raise RuntimeError('unknnown alpha stage name: %s' % name)
 
