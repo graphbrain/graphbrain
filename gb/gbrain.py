@@ -23,11 +23,12 @@ import click
 import gb.hypergraph as hyper
 from gb.hypergraph.hypergraph import HyperGraph
 import gb.readers.wordnet as wn
+from gb.tools.shell import Shell
 
 
 @click.group()
 @click.option('--backend', help='Hypergraph Backend (sqlite, mysql, null).', default='sqlite')
-@click.option('--db', help='Database name.', default='gb')
+@click.option('--db', help='Database name.', default='gb.db')
 @click.option('--dbuser', help='Database user.', default='gb')
 @click.option('--dbpass', help='Database password.', default='gb')
 @click.pass_context
@@ -59,6 +60,15 @@ def wordnet(ctx):
     click.echo('reading wordnet...')
     hg = HyperGraph(ctx.obj)
     wn.read(hg)
+    click.echo('done.')
+
+
+@cli.command()
+@click.pass_context
+def shell(ctx):
+    hg = HyperGraph(ctx.obj)
+    cli = Shell(hg)
+    cli.run()
     click.echo('done.')
 
 
