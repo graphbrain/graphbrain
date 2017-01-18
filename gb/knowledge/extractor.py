@@ -25,7 +25,6 @@ from gb.knowledge.stages.alpha import AlphaStage
 from gb.knowledge.stages.beta import BetaStage
 from gb.knowledge.stages.gamma import GammaStage
 from gb.knowledge.stages.delta import DeltaStage
-from gb.knowledge.stages.epsilon import EpsilonStage
 
 
 class Extractor(object):
