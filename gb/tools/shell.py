@@ -19,9 +19,45 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from gb.knowledge.extractor import Extractor
+
+
 class Shell(object):
     def __init__(self, hg):
         self.hg = hg
+        self.extractor = None
+
+    def get_extractor(self):
+        if self.extractor is None:
+            self.extractor = Extractor(None)
+        return self.extractor
+
+    def command_parse(self, params):
+        extractor = self.get_extractor()
+        sentence = ' '.join(params)
+        result = extractor.read_text(sentence)
+        print(result)
+
+    def eval(self, line):
+        tokens = line.split()
+        if len(tokens) > 0:
+            command = tokens[0]
+            params = tokens[1:]
+            if command == 'exit':
+                return True
+            elif command == 'parse':
+                self.command_parse(params)
+            else:
+                print("error: uknown command: '%s'." % command)
+
+        return False
 
     def run(self):
         print('Welcome to the GraphBrain shell.')
+        print()
+
+        done = False
+        while not done:
+            print('> ', end='')
+            line = input()
+            done = self.eval(line)

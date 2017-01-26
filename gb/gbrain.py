@@ -67,8 +67,8 @@ def wordnet(ctx):
 @click.pass_context
 def shell(ctx):
     hg = HyperGraph(ctx.obj)
-    cli = Shell(hg)
-    cli.run()
+    sh = Shell(hg)
+    sh.run()
     click.echo('done.')
 
 
