@@ -23,6 +23,7 @@ import click
 import gb.hypergraph as hyper
 from gb.hypergraph.hypergraph import HyperGraph
 import gb.readers.wordnet as wn
+import gb.readers.wikidata as wd
 from gb.tools.shell import Shell
 
 
@@ -31,13 +32,15 @@ from gb.tools.shell import Shell
 @click.option('--db', help='Database name.', default='gb.db')
 @click.option('--dbuser', help='Database user.', default='gb')
 @click.option('--dbpass', help='Database password.', default='gb')
+@click.option('--infile', help='Input file.')
 @click.pass_context
-def cli(ctx, backend, db, dbuser, dbpass):
+def cli(ctx, backend, db, dbuser, dbpass, infile):
     ctx.obj = {
         'backend': backend,
         'db': db,
         'dbuser': dbuser,
-        'dbpass': dbpass
+        'dbpass': dbpass,
+        'infile': infile
     }
 
 
@@ -60,6 +63,16 @@ def wordnet(ctx):
     click.echo('reading wordnet...')
     hg = HyperGraph(ctx.obj)
     wn.read(hg)
+    click.echo('done.')
+
+
+@cli.command()
+@click.pass_context
+def wikidata(ctx):
+    click.echo('reading wordnet...')
+    hg = HyperGraph(ctx.obj)
+    infile = ctx.obj['infile']
+    wd.read(hg, infile)
     click.echo('done.')
 
 
