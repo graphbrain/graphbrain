@@ -19,15 +19,23 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import os.path
 import bz2
 import json
 import sqlite3
 import gb.hypergraph.symbol as sym
 
 
+ENTITY_TABLE_PATH = 'wikidata_entity_table.temp'
+
+
+def entity_table_exists():
+    return os.path.isfile(ENTITY_TABLE_PATH)
+
+
 class EntityTable(object):
     def __init__(self):
-        self.conn = sqlite3.connect('wikidata_entity_table.temp')
+        self.conn = sqlite3.connect(ENTITY_TABLE_PATH)
         cur = self.conn.cursor()
         try:
             cur.execute('CREATE TABLE entities (wikidata_id TEXT PRIMARY KEY, symbol TEXT)')
@@ -102,6 +110,7 @@ class WikidataReader(object):
         self.hg = hg
         self.entity_table = EntityTable()
         self.entities_found = 0
+        self.edges_found = 0
 
     def extract_entity(self, line):
         try:
@@ -143,22 +152,41 @@ class WikidataReader(object):
                 edge = self.triplet_to_edge(trip)
                 if edge:
                     self.hg.add_belief(u'wikidata/gb', edge)
-                # print(edge)
+                    self.edges_found += 1
         except (KeyError, ValueError) as e:
             print('exception: %s' % e)
 
-    def process_dump(self, filename):
+    def create_entities_table(self, filename):
         source_file = bz2.BZ2File(filename, 'r')
         count = 0
         for line in source_file:
-            self.extract_triplets(line)
+            self.extract_entity(line)
             count += 1
-            if (count % 1000) == 0:
+            if (count % 10000) == 0:
                 print('%s [%s]' % (count, self.entities_found))
 
         source_file.close()
         print('%s entities found' % self.entities_found)
 
+    def create_edges(self, filename):
+        source_file = bz2.BZ2File(filename, 'r')
+        count = 0
+        for line in source_file:
+            self.extract_triplets(line)
+            count += 1
+            if (count % 10000) == 0:
+                print('%s [%s]' % (count, self.edges_found))
+
+        source_file.close()
+        print('%s edges found' % self.edges_found)
+
 
 def read(hg, filename):
-    WikidataReader(hg).process_dump(filename)
+    if not entity_table_exists():
+        print('creating entity table...')
+        WikidataReader(hg).create_entities_table(filename)
+        print('done creating entity table.')
+    else:
+        print('entity table found, skipping entity table creation.')
+    print('extracting edges...')
+    WikidataReader(hg).create_edges(filename)
