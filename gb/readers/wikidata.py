@@ -111,6 +111,7 @@ class WikidataReader(object):
         self.entity_table = EntityTable()
         self.entities_found = 0
         self.edges_found = 0
+        self.edge_buffer = []
 
     def extract_entity(self, line):
         try:
@@ -151,7 +152,7 @@ class WikidataReader(object):
             for trip in trips:
                 edge = self.triplet_to_edge(trip)
                 if edge:
-                    self.hg.add_belief(u'wikidata/gb', edge)
+                    self.edge_buffer.append(edge)
                     self.edges_found += 1
         except (KeyError, ValueError) as e:
             print('exception: %s' % e)
@@ -168,6 +169,10 @@ class WikidataReader(object):
         source_file.close()
         print('%s entities found' % self.entities_found)
 
+    def flush_edge_buffer(self):
+        self.hg.add_belief(u'wikidata/gb', self.edge_buffer)
+        self.edge_buffer = []
+
     def create_edges(self, filename):
         source_file = bz2.BZ2File(filename, 'r')
         count = 0
@@ -175,8 +180,9 @@ class WikidataReader(object):
             self.extract_triplets(line)
             count += 1
             if (count % 10000) == 0:
+                self.flush_edge_buffer()
                 print('%s [%s]' % (count, self.edges_found))
-
+        self.flush_edge_buffer()
         source_file.close()
         print('%s edges found' % self.edges_found)
 
