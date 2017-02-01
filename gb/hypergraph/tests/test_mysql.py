@@ -28,9 +28,9 @@ class TestHypergraph(ab.AuxBackend):
 
     def setUp(self):
         params = {'backend': 'mysql',
-                  'host': 'localhost',
-                  'user': 'gb',
-                  'password': 'gb',
+                  'dbhost': 'localhost',
+                  'dbuser': 'gb',
+                  'dbpassword': 'gb',
                   'db': 'gbtest'}
         self.hg = hyperg.HyperGraph(params)
 

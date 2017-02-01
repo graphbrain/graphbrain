@@ -34,9 +34,9 @@ class MySQL(SQL):
     """Implements MySQL hypergraph storage."""
 
     def __init__(self, params):
-        host = params['host']
-        user = params['user']
-        password = params['password']
+        host = params['dbhost']
+        user = params['dbuser']
+        password = params['dbpassword']
         dbname = params['db']
         conn = MySQLdb.connect(host=host, user=user, passwd=password, db=dbname)
         conn.autocommit(True)
