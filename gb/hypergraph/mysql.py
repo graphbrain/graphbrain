@@ -36,7 +36,7 @@ class MySQL(SQL):
     def __init__(self, params):
         host = params['dbhost']
         user = params['dbuser']
-        password = params['dbpassword']
+        password = params['dbpass']
         dbname = params['db']
         conn = MySQLdb.connect(host=host, user=user, passwd=password, db=dbname)
         conn.autocommit(True)
