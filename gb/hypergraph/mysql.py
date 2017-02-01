@@ -39,7 +39,7 @@ class MySQL(SQL):
         password = params['dbpass']
         dbname = params['db']
         conn = MySQLdb.connect(host=host, user=user, passwd=password, db=dbname)
-        conn.autocommit(True)
+        conn.autocommit(False)
         conn.set_character_set('utf8')
         cur = conn.cursor()
         cur.execute('SET NAMES utf8;')
