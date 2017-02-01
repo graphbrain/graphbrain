@@ -132,6 +132,9 @@ class SQL(Backend):
 
     def update_or_insert(self, table, row, vid):
         """Updates columns or inserts a new row in the vertices table"""
+        if len(vid) == 0:
+            return
+
         cur = self.open_cursor()
 
         row_str = ','.join(['%s=%s' % (k, self.ph) for k in row.keys()])
@@ -148,10 +151,9 @@ class SQL(Backend):
 
     def add_str(self, vert_str, degree, timestamp):
         """Adds the given vertex, represented as a string."""
-        if len(vert_str) > 0:
-            self.update_or_insert('vertices',
-                                  {'id': vert_str, 'degree': degree, 'timestamp': timestamp},
-                                  vert_str)
+        self.update_or_insert('vertices',
+                              {'id': vert_str, 'degree': degree, 'timestamp': timestamp},
+                              vert_str)
 
     def write_edge_permutation(self, perm):
         eid = ed.edge2str(perm)
