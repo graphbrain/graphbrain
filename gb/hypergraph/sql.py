@@ -148,9 +148,10 @@ class SQL(Backend):
 
     def add_str(self, vert_str, degree, timestamp):
         """Adds the given vertex, represented as a string."""
-        self.update_or_insert('vertices',
-                              {'id': vert_str, 'degree': degree, 'timestamp': timestamp},
-                              vert_str)
+        if len(vert_str) > 0:
+            self.update_or_insert('vertices',
+                                  {'id': vert_str, 'degree': degree, 'timestamp': timestamp},
+                                  vert_str)
 
     def write_edge_permutation(self, perm):
         eid = ed.edge2str(perm)
