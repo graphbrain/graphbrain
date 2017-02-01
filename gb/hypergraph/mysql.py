@@ -40,6 +40,11 @@ class MySQL(SQL):
         dbname = params['db']
         conn = MySQLdb.connect(host=host, user=user, passwd=password, db=dbname)
         conn.autocommit(True)
+        conn.set_character_set('utf8')
+        cur = conn.cursor()
+        cur.execute('SET NAMES utf8;')
+        cur.execute('SET CHARACTER SET utf8;')
+        cur.execute('SET character_set_connection=utf8;')
         SQL.__init__(self, conn, '%s')
 
     def create_tables(self):
