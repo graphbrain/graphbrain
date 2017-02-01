@@ -32,14 +32,16 @@ from gb.tools.shell import Shell
 @click.option('--db', help='Database name.', default='gb.db')
 @click.option('--dbuser', help='Database user.', default='gb')
 @click.option('--dbpass', help='Database password.', default='gb')
+@click.option('--dbhost', help='Database host.', default='localhost')
 @click.option('--infile', help='Input file.')
 @click.pass_context
-def cli(ctx, backend, db, dbuser, dbpass, infile):
+def cli(ctx, backend, db, dbuser, dbpass, dbhost, infile):
     ctx.obj = {
         'backend': backend,
         'db': db,
         'dbuser': dbuser,
         'dbpass': dbpass,
+        'dbhost': dbhost,
         'infile': infile
     }
 
