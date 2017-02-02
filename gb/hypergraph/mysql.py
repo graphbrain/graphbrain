@@ -65,3 +65,17 @@ class MySQL(SQL):
 
         self.conn.commit()
         cur.close()
+
+    # override
+    def update_or_insert(self, table, row, vid):
+        """Updates columns or inserts a new row in the vertices table"""
+        cur = self.open_cursor()
+
+        values = [v for v in row.values()]
+        key_str = ','.join([k for k in row.keys()])
+        placeholder_str = ','.join([self.ph] * len(row.keys()))
+        update_str = ','.join(['%s=%s' % (k, 'VALUES(%s)' % k) for k in row.keys()])
+        cur.execute('INSERT INTO %s (%s) values (%s) ON DUPLICATE KEY UPDATE %s'
+                    % (table, key_str, placeholder_str, update_str), values)
+
+        self.close_cursor(cur, local=True, commit=True)
