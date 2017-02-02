@@ -132,22 +132,19 @@ class SQL(Backend):
 
     def update_or_insert(self, table, row, vid):
         """Updates columns or inserts a new row in the vertices table"""
-        try:
-            cur = self.open_cursor()
+        cur = self.open_cursor()
 
-            row_str = ','.join(['%s=%s' % (k, self.ph) for k in row.keys()])
-            values = [v for v in row.values()]
-            values.append(vid)
-            cur.execute('UPDATE %s SET %s WHERE id=%s' % (table, row_str, self.ph), values)
-            if cur.rowcount == 0:
-                values = values[:-1]
-                key_str = ','.join([k for k in row.keys()])
-                placeholder_str = ','.join([self.ph] * len(row.keys()))
-                cur.execute('INSERT INTO %s (%s) values (%s)' % (table, key_str, placeholder_str), values)
+        row_str = ','.join(['%s=%s' % (k, self.ph) for k in row.keys()])
+        values = [v for v in row.values()]
+        values.append(vid)
+        cur.execute('UPDATE %s SET %s WHERE id=%s' % (table, row_str, self.ph), values)
+        if cur.rowcount == 0:
+            values = values[:-1]
+            key_str = ','.join([k for k in row.keys()])
+            placeholder_str = ','.join([self.ph] * len(row.keys()))
+            cur.execute('INSERT INTO %s (%s) values (%s)' % (table, key_str, placeholder_str), values)
 
-            self.close_cursor(cur, local=True, commit=True)
-        except Exception:
-            print('>>> %s /// %s ' % (vid, row))
+        self.close_cursor(cur, local=True, commit=True)
 
     def add_str(self, vert_str, degree, timestamp):
         """Adds the given vertex, represented as a string."""
