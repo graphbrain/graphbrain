@@ -25,6 +25,9 @@ class Backend(object):
     def __init__(self):
         pass
 
+    def close(self):
+        pass
+
     def exists(self, vertex):
         """Checks if the given edge exists in the hypergraph."""
         raise NotImplementedError()

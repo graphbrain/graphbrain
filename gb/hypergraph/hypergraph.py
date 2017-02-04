@@ -22,6 +22,7 @@
 from gb.hypergraph.null import Null
 from gb.hypergraph.sqlite import SQLite
 from gb.hypergraph.mysql import MySQL
+from gb.hypergraph.leveldb import LevelDB
 import gb.hypergraph.constants as const
 
 
@@ -38,8 +39,13 @@ class HyperGraph(object):
             self.backend = SQLite(params)
         elif backend == 'mysql':
             self.backend = MySQL(params)
+        elif backend == 'leveldb':
+            self.backend = LevelDB(params)
         else:
             raise RuntimeError('Unkown hypergraph backend: %s' % backend)
+
+    def close(self):
+        self.backend.close()
 
     def exists(self, vertex):
         """Checks if the given edge exists in the hypergraph."""

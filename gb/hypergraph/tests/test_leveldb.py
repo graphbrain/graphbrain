@@ -19,29 +19,20 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from setuptools import setup, find_packages
+import unittest
+import gb.hypergraph.hypergraph as hyperg
+import gb.hypergraph.tests.aux_backend as ab
 
 
-setup(
-    name='graphbrain',
-    version='0.1',
-    packages=find_packages(),
-    install_requires=[
-        'numpy',
-        'scipy',
-        'colorama',
-        'click',
-        'mysqlclient',
-        'matplotlib',
-        'python-igraph',
-        'nltk',
-        'spacy',
-        'asciitree',
-        'ujson',
-        'plyvel'
-    ],
-    entry_points='''
-        [console_scripts]
-        gbrain=gb.gbrain:cli
-    ''',
-)
+class TestHypergraph(ab.AuxBackend):
+
+    def setUp(self):
+        params = {'backend': 'leveldb',
+                  'db': 'test_leveldb.db'}
+        self.hg = hyperg.HyperGraph(params)
+
+    def tearDown(self):
+        self.hg.close()
+
+if __name__ == '__main__':
+    unittest.main()

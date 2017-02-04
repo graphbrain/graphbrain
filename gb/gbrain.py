@@ -28,7 +28,7 @@ from gb.tools.shell import Shell
 
 
 @click.group()
-@click.option('--backend', help='Hypergraph Backend (sqlite, mysql, null).', default='sqlite')
+@click.option('--backend', help='Hypergraph Backend (sqlite, mysql, null).', default='leveldb')
 @click.option('--db', help='Database name.', default='gb.db')
 @click.option('--dbuser', help='Database user.', default='gb')
 @click.option('--dbpass', help='Database password.', default='gb')
