@@ -58,6 +58,26 @@ class Null(Backend):
         """Erase the hypergraph."""
         pass
 
+    def set_metric(self, vertex, metric, value):
+        """Sets the value of a metric."""
+        return False
+
+    def inc_metric(self, vertex, metric):
+        """Increments a metric of a vertex."""
+        return False
+
+    def dec_metric(self, vertex, metric):
+        """Increments a metric of a vertex."""
+        return False
+
+    def get_int_metric(self, vertex, metric, or_else=None):
+        """Returns value of metric as integer value."""
+        return or_else
+
+    def get_float_metric(self, vertex, metric, or_else=None):
+        """Returns value of metric as float value."""
+        return or_else
+
     def degree(self, vertex):
         """Returns the degree of a vertex."""
         return 0
@@ -65,12 +85,6 @@ class Null(Backend):
     def timestamp(self, vertex):
         """Returns the timestamp of a vertex."""
         return -1
-
-    def batch_exec(self, funs):
-        """Evaluates all the functions 'funs', which must be of arity 1.
-        The functions are passed hg as a parameters and are evaluated
-        as a batch."""
-        pass
 
     def f_all(self, f):
         """Returns a lazy sequence resulting from applying f to every

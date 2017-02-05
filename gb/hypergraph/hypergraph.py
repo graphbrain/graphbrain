@@ -71,6 +71,26 @@ class HyperGraph(object):
         """Erase the hypergraph."""
         self.backend.destroy()
 
+    def set_metric(self, vertex, metric, value):
+        """Sets the value of a metric."""
+        return self.backend.set_metric(vertex, metric, value)
+
+    def inc_metric(self, vertex, metric):
+        """Increments a metric of a vertex."""
+        return self.backend.inc_metric(vertex, metric)
+
+    def dec_metric(self, vertex, metric):
+        """Increments a metric of a vertex."""
+        return self.backend.dec_metric(vertex, metric)
+
+    def get_int_metric(self, vertex, metric, or_else=None):
+        """Returns value of metric as integer value."""
+        return self.backend.get_int_metric(vertex, metric, or_else)
+
+    def get_float_metric(self, vertex, metric, or_else=None):
+        """Returns value of metric as float value."""
+        return self.backend.get_float_metric(vertex, metric, or_else)
+
     def degree(self, vertex):
         """Returns the degree of a vertex."""
         return self.backend.degree(vertex)
@@ -78,12 +98,6 @@ class HyperGraph(object):
     def timestamp(self, vertex):
         """Returns the timestamp of a vertex."""
         return self.backend.timestamp(vertex)
-
-    def batch_exec(self, funs):
-        """Evaluates all the functions 'funs', which must be of arity 1.
-        The functions are passed hg as a parameters and are evaluated
-        as a batch."""
-        self.backend.batch_exec(funs)
 
     def f_all(self, f):
         """Returns a lazy sequence resulting from applying f to every

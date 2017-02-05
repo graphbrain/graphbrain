@@ -97,6 +97,32 @@ class AuxBackend(unittest.TestCase):
         self.hg.remove(('is', 'graphbrain/2', 'great/1'))
         self.assertEqual(self.hg.symbols_with_root('graphbrain'), set())
 
+    def test_metrics_vertex(self):
+        self.hg.add(('is', 'graphbrain/1', 'great/1'))
+        self.assertEqual(self.hg.get_int_metric('graphbrain/1', 'foo'), None)
+        self.assertEqual(self.hg.get_int_metric('graphbrain/1', 'foo', 0), 0)
+        self.hg.set_metric('graphbrain/1', 'foo', 66)
+        self.assertEqual(self.hg.get_int_metric('graphbrain/1', 'foo'), 66)
+        self.hg.inc_metric('graphbrain/1', 'foo')
+        self.assertEqual(self.hg.get_int_metric('graphbrain/1', 'foo'), 67)
+        self.hg.dec_metric('graphbrain/1', 'foo')
+        self.assertEqual(self.hg.get_int_metric('graphbrain/1', 'foo'), 66)
+        self.hg.set_metric('graphbrain/1', 'bar', -.77)
+        self.assertEqual(self.hg.get_float_metric('graphbrain/1', 'bar'), -.77)
+
+    def test_metrics_edge(self):
+        self.hg.add(('is', 'graphbrain/1', 'great/1'))
+        self.assertEqual(self.hg.get_int_metric(('is', 'graphbrain/1', 'great/1'), 'foo'), None)
+        self.assertEqual(self.hg.get_int_metric(('is', 'graphbrain/1', 'great/1'), 'foo', 0), 0)
+        self.hg.set_metric(('is', 'graphbrain/1', 'great/1'), 'foo', 66)
+        self.assertEqual(self.hg.get_int_metric(('is', 'graphbrain/1', 'great/1'), 'foo'), 66)
+        self.hg.inc_metric(('is', 'graphbrain/1', 'great/1'), 'foo')
+        self.assertEqual(self.hg.get_int_metric(('is', 'graphbrain/1', 'great/1'), 'foo'), 67)
+        self.hg.dec_metric(('is', 'graphbrain/1', 'great/1'), 'foo')
+        self.assertEqual(self.hg.get_int_metric(('is', 'graphbrain/1', 'great/1'), 'foo'), 66)
+        self.hg.set_metric(('is', 'graphbrain/1', 'great/1'), 'bar', -.77)
+        self.assertEqual(self.hg.get_float_metric(('is', 'graphbrain/1', 'great/1'), 'bar'), -.77)
+
     def test_degree(self):
         self.assertEqual(self.hg.degree('graphbrain/1'), 0)
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
@@ -122,27 +148,6 @@ class AuxBackend(unittest.TestCase):
         self.assertEqual(self.hg.timestamp('graphbrain/1'), 123456789)
         self.assertEqual(self.hg.timestamp('great/1'), 123456789)
         self.assertEqual(self.hg.timestamp(('is', 'graphbrain/1', 'great/1')), -1)
-
-    def test_batch_exec(self):
-        def f1(x):
-            x.add(('is', 'graphbrain/1', 'great/1'))
-
-        def f2(x):
-            x.add(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0)))
-
-        self.hg.batch_exec((f1, f2))
-        self.assertTrue(self.hg.exists(('is', 'graphbrain/1', 'great/1')))
-        self.assertTrue(self.hg.exists(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0))))
-
-        def f1(x):
-            x.remove(('is', 'graphbrain/1', 'great/1'))
-
-        def f2(x):
-            x.remove(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0)))
-
-        self.hg.batch_exec((f1, f2))
-        self.assertFalse(self.hg.exists(('is', 'graphbrain/1', 'great/1')))
-        self.assertFalse(self.hg.exists(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0))))
 
     def test_f_all(self):
         self.hg.destroy()
