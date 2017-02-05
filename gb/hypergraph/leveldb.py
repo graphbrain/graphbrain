@@ -272,7 +272,6 @@ class LevelDB(Backend):
 
     def batch_exec(self, funs):
         """Auxiliary function to implement ops.batch_exec in SQL environments."""
-
         for f in funs:
             f(self)
 
