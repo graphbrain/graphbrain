@@ -32,14 +32,12 @@ class Null(Backend):
         """Checks if the given edge exists in the hypergraph."""
         return False
 
-    def add(self, edges, timestamp=-1):
-        """Adds one or multiple edges to the hypergraph if it does not exist yet.
-                Adding multiple edges at the same time might be faster."""
-        return edges
+    def add(self, edge, timestamp=-1):
+        """Adds an edges to the hypergraph if it does not exist yet."""
+        return edge
 
-    def remove(self, edges):
-        """Removes one or multiple edges from the hypergraph.
-           Removing multiple edges at the same time might be faster."""
+    def remove(self, edge):
+        """Removes an edges from the hypergraph."""
         pass
 
     def pattern2edges(self, pattern):
@@ -71,12 +69,11 @@ class Null(Backend):
     def batch_exec(self, funs):
         """Evaluates all the functions 'funs', which must be of arity 1.
         The functions are passed hg as a parameters and are evaluated
-        as a batch.
-        Evaluating function as a batch might be faster."""
+        as a batch."""
         pass
 
     def f_all(self, f):
         """Returns a lazy sequence resulting from applying f to every
         vertex map (including non-atomic) in the hypergraph.
-        A vertex map contains the keys :vertex and :degree."""
+        A vertex map contains the keys 'vertex' and 'degree'."""
         return []
