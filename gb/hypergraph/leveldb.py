@@ -210,16 +210,13 @@ class LevelDB(Backend):
     def remove(self, edges):
         """Removes one or multiple edges from the hypergraph
         Removing multiple edges at the same time might be faster."""
-        # print('#1')
         if isinstance(edges, (list, tuple)) and isinstance(edges[0], (list, tuple)):
             for edge in edges:
                 self.remove(edge)
             return
 
-        # print('#2 %s' % str(edges))
         edge_key = vertex2key(edges)
         if self.exists_key(edge_key):
-            # print('#3 %s' % str(edge_key))
             for vert in edges:
                 vert_key = vertex2key(vert)
                 self.dec_degree(vert_key)
@@ -280,9 +277,6 @@ class LevelDB(Backend):
 
     def batch_exec(self, funs):
         """Auxiliary function to implement ops.batch_exec in SQL environments."""
-
-        # for key, value in self.db:
-        #    print('??? %s = %s' % (key.decode("utf-8"), value.decode("utf-8")))
 
         for f in funs:
             f(self)
