@@ -45,15 +45,13 @@ class HyperGraph(object):
         """Checks if the given edge exists in the hypergraph."""
         return self.backend.exists(vertex)
 
-    def add(self, edges, timestamp=-1):
-        """Adds one or multiple edges to the hypergraph if it does not exist yet.
-                Adding multiple edges at the same time might be faster."""
-        return self.backend.add(edges, timestamp)
+    def add(self, edge, timestamp=-1):
+        """Adds and edge to the hypergraph if it does not exist yet."""
+        return self.backend.add(edge, timestamp)
 
-    def remove(self, edges):
-        """Removes one or multiple edges from the hypergraph.
-           Removing multiple edges at the same time might be faster."""
-        self.backend.remove(edges)
+    def remove(self, edge):
+        """Removes and edge from the hypergraph."""
+        self.backend.remove(edge)
 
     def pattern2edges(self, pattern):
         """Return all the edges that match a pattern.
@@ -84,14 +82,13 @@ class HyperGraph(object):
     def batch_exec(self, funs):
         """Evaluates all the functions 'funs', which must be of arity 1.
         The functions are passed hg as a parameters and are evaluated
-        as a batch.
-        Evaluating function as a batch might be faster."""
+        as a batch."""
         self.backend.batch_exec(funs)
 
     def f_all(self, f):
         """Returns a lazy sequence resulting from applying f to every
         vertex map (including non-atomic) in the hypergraph.
-        A vertex map contains the keys :vertex and :degree."""
+        A vertex map contains the keys 'vertex' and 'degree'."""
         return self.backend.f_all(f)
 
     def remove_by_pattern(self, pattern):
@@ -110,21 +107,12 @@ class HyperGraph(object):
             next_edges = [self.ego(vid, depth - 1) for vid in ids]
             return ids.union(next_edges)
 
-    def add_belief(self, source, edges, timestamp=-1):
+    def add_belief(self, source, edge, timestamp=-1):
         """A belif is a fact with a source. The fact is created as a normal edge
            if it does not exist yet. Another edge is created to assign the fact to
-           the source.
-
-           Multiple edges can be provided, in which case all the beliefs will be
-           inserted at once. This may be faster."""
-        if isinstance(edges[0], (list, tuple)):
-            new_edges = []
-            for edge in edges:
-                new_edges.append(edge)
-                new_edges.append((const.source, edge, source))
-            self.add(new_edges, timestamp)
-        else:
-            self.add((edges, (const.source, edges, source)), timestamp)
+           the source."""
+        self.add(edge, timestamp)
+        self.add((const.source, edge, source), timestamp)
 
     def sources(self, edge):
         """Set of sources (nodes) that support a statement (edge)."""

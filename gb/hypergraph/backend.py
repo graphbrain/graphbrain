@@ -32,14 +32,12 @@ class Backend(object):
         """Checks if the given edge exists in the hypergraph."""
         raise NotImplementedError()
 
-    def add(self, edges, timestamp=-1):
-        """Adds one or multiple edges to the hypergraph if it does not exist yet.
-                Adding multiple edges at the same time might be faster."""
+    def add(self, edge, timestamp=-1):
+        """Adds an edges to the hypergraph if it does not exist yet."""
         raise NotImplementedError()
 
-    def remove(self, edges):
-        """Removes one or multiple edges from the hypergraph.
-           Removing multiple edges at the same time might be faster."""
+    def remove(self, edge):
+        """Removes an edges from the hypergraph."""
         raise NotImplementedError()
 
     def pattern2edges(self, pattern):
@@ -71,12 +69,11 @@ class Backend(object):
     def batch_exec(self, funs):
         """Evaluates all the functions 'funs', which must be of arity 1.
         The functions are passed hg as a parameters and are evaluated
-        as a batch.
-        Evaluating function as a batch might be faster."""
+        as a batch."""
         raise NotImplementedError()
 
     def f_all(self, f):
         """Returns a lazy sequence resulting from applying f to every
         vertex map (including non-atomic) in the hypergraph.
-        A vertex map contains the keys :vertex and :degree."""
+        A vertex map contains the keys 'vertex' and 'degree'."""
         raise NotImplementedError()

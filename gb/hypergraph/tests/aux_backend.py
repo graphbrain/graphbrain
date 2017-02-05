@@ -123,14 +123,6 @@ class AuxBackend(unittest.TestCase):
         self.assertEqual(self.hg.timestamp('great/1'), 123456789)
         self.assertEqual(self.hg.timestamp(('is', 'graphbrain/1', 'great/1')), -1)
 
-    def test_add_remove_multiple(self):
-        self.hg.add((('is', 'graphbrain/1', 'great/1'), ('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0))))
-        self.assertTrue(self.hg.exists(('is', 'graphbrain/1', 'great/1')))
-        self.assertTrue(self.hg.exists(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0))))
-        self.hg.remove((('is', 'graphbrain/1', 'great/1'), ('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0))))
-        self.assertFalse(self.hg.exists(('is', 'graphbrain/1', 'great/1')))
-        self.assertFalse(self.hg.exists(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0))))
-
     def test_batch_exec(self):
         def f1(x):
             x.add(('is', 'graphbrain/1', 'great/1'))

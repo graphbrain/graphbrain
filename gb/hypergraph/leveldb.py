@@ -191,31 +191,20 @@ class LevelDB(Backend):
         else:
             return False
 
-    def add(self, edges, timestamp=-1):
-        """Auxiliary function for add to call from inside a transaction."""
-        if isinstance(edges, (list, tuple)) and isinstance(edges[0], (list, tuple)):
-            for edge in edges:
-                self.add(edge, timestamp)
-            return
-
-        edge_key = vertex2key(edges)
+    def add(self, edge, timestamp=-1):
+        """Adds an edges to the hypergraph if it does not exist yet."""
+        edge_key = vertex2key(edge)
         if not self.exists_key(edge_key):
-            for vert in edges:
+            for vert in edge:
                 vert_key = vertex2key(vert)
                 if not self.inc_degree(vert_key):
                     self.add_key(vert_key, 1, timestamp)
             self.add_key(edge_key, 0, timestamp)
-            self.write_edge_permutations(edges)
-        return edges
+            self.write_edge_permutations(edge)
+        return edge
 
     def remove(self, edges):
-        """Removes one or multiple edges from the hypergraph
-        Removing multiple edges at the same time might be faster."""
-        if isinstance(edges, (list, tuple)) and isinstance(edges[0], (list, tuple)):
-            for edge in edges:
-                self.remove(edge)
-            return
-
+        """Removes an edges from the hypergraph."""
         edge_key = vertex2key(edges)
         if self.exists_key(edge_key):
             for vert in edges:
