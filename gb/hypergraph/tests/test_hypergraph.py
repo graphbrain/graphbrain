@@ -27,8 +27,8 @@ import gb.hypergraph.constants as const
 class TestHypergraph(unittest.TestCase):
 
     def test_beliefs(self):
-        hg = hyperg.HyperGraph({'backend': 'sqlite',
-                                'db': 'test.db'})
+        hg = hyperg.HyperGraph({'backend': 'leveldb',
+                                'db': 'test.hg'})
         hg.add_belief("mary/1", ("is", "graphbrain/1", "great/1"))
         self.assertEqual(hg.sources(("is", "graphbrain/1", "great/1")), {"mary/1"})
         hg.add_belief("john/1", ("is", "graphbrain/1", "great/1"))
@@ -39,8 +39,8 @@ class TestHypergraph(unittest.TestCase):
         self.assertFalse(hg.exists(("is", "graphbrain/1", "great/1")))
 
     def test_timestamp_beliefs(self):
-        hg = hyperg.HyperGraph({'backend': 'sqlite',
-                                'db': 'test.db'})
+        hg = hyperg.HyperGraph({'backend': 'leveldb',
+                                'db': 'test.hg'})
         hg.destroy()
         self.assertEqual(hg.timestamp("graphbrain/1"), -1)
         hg.add_belief("mary/1", ("is", "graphbrain/1", "great/1"), timestamp=123456789)
