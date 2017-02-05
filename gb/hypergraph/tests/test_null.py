@@ -132,27 +132,6 @@ class TestNull(unittest.TestCase):
         self.assertFalse(self.hg.exists(('is', 'graphbrain/1', 'great/1')))
         self.assertFalse(self.hg.exists(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0))))
 
-    def test_batch_exec(self):
-        def f1(x):
-            x.add(('is', 'graphbrain/1', 'great/1'))
-
-        def f2(x):
-            x.add(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0)))
-
-        self.hg.batch_exec((f1, f2))
-        self.assertFalse(self.hg.exists(('is', 'graphbrain/1', 'great/1')))
-        self.assertFalse(self.hg.exists(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0))))
-
-        def f1(x):
-            x.remove(('is', 'graphbrain/1', 'great/1'))
-
-        def f2(x):
-            x.remove(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0)))
-
-        self.hg.batch_exec((f1, f2))
-        self.assertFalse(self.hg.exists(('is', 'graphbrain/1', 'great/1')))
-        self.assertFalse(self.hg.exists(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0))))
-
     def test_f_all(self):
         self.hg.destroy()
         self.hg.add(('size', 'graphbrain/1', -7.0))

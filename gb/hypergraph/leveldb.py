@@ -97,6 +97,20 @@ def vertex2key(vertex):
     return ('v%s' % ed.edge2str(vertex)).encode('utf-8')
 
 
+def encode_metrics(metrics):
+    str_list = ['%s:%s' % (key, metrics[key]) for key in metrics]
+    return ' '.join(str_list).encode('utf-8')
+
+
+def decode_metrics(value):
+    tokens = value.decode('utf-8').split(' ')
+    metrics = {}
+    for token in tokens:
+        parts = token.split(':')
+        metrics[parts[0]] = parts[1]
+    return metrics
+
+
 class LevelDB(Backend):
     """Implements LevelDB hypergraph storage."""
 
@@ -109,9 +123,9 @@ class LevelDB(Backend):
     def close(self):
         self.db.close()
 
-    def add_key(self, vert_key, degree, timestamp):
+    def add_key(self, vert_key, metrics):
         """Adds the given vertex, given its key."""
-        value = (u'%s %s' % (degree, timestamp)).encode('utf-8')
+        value = encode_metrics(metrics)
         self.db.put(vert_key, value)
 
     def write_edge_permutation(self, perm):
@@ -135,8 +149,7 @@ class LevelDB(Backend):
         self.db.delete(vert_key)
 
     def str2perms(self, center_id):
-        """Query database for all the edge permutations that contain a given entity,
-        represented as a string."""
+        """Query database for all the edge permutations that contain a given entity, represented as a string."""
         start_str = '%s ' % center_id
         end_str = str_plus_1(start_str)
         start_key = (u'p%s' % start_str).encode('utf-8')
@@ -150,8 +163,7 @@ class LevelDB(Backend):
         return set(edges)
 
     def pattern2edges(self, pattern):
-        """Return all the edges that match a pattern.
-        A pattern is a collection of entity ids and wildcards (None)."""
+        """Return all the edges that match a pattern. A pattern is a collection of entity ids and wildcards (None)."""
         nodes = [node for node in pattern if node is not None]
         start_str = ed.nodes2str(nodes)
         end_str = str_plus_1(start_str)
@@ -173,23 +185,52 @@ class LevelDB(Backend):
         """Checks if the given vertex exists in the hypergraph."""
         return self.exists_key(vertex2key(vertex))
 
-    def inc_degree(self, vertex_key):
-        """Increments the degree of a vertex."""
-        if self.exists_key(vertex_key):
-            degree, timestamp = self.degree_timestamp_key(vertex_key)
-            self.add_key(vertex_key, degree + 1, timestamp)
+    def set_metric_key(self, vert_key, metric, value):
+        """Sets the value of a metric by vertex_key."""
+        if self.exists_key(vert_key):
+            metrics = self.metrics_key(vert_key)
+            metrics[metric] = value
+            self.add_key(vert_key, metrics)
             return True
         else:
             return False
 
-    def dec_degree(self, vertex_key):
-        """Decrements the degree of a vertex."""
-        if self.exists_key(vertex_key):
-            degree, timestamp = self.degree_timestamp_key(vertex_key)
-            self.add_key(vertex_key, degree - 1, timestamp)
+    def set_metric(self, vertex, metric, value):
+        """Sets the value of a metric."""
+        vert_key = vertex2key(vertex)
+        return self.set_metric_key(vert_key, metric, value)
+
+    def inc_metric_key(self, vert_key, metric):
+        """Increments a metric of a vertex."""
+        if self.exists_key(vert_key):
+            metrics = self.metrics_key(vert_key)
+            cur_value = int(metrics[metric])
+            metrics[metric] = cur_value + 1
+            self.add_key(vert_key, metrics)
             return True
         else:
             return False
+
+    def dec_metric_key(self, vert_key, metric):
+        """Decrements a metric of a vertex."""
+        if self.exists_key(vert_key):
+            metrics = self.metrics_key(vert_key)
+            cur_value = int(metrics[metric])
+            metrics[metric] = cur_value - 1
+            self.add_key(vert_key, metrics)
+            return True
+        else:
+            return False
+
+    def inc_metric(self, vertex, metric):
+        """Increments a metric of a vertex."""
+        vert_key = vertex2key(vertex)
+        return self.inc_metric_key(vert_key, metric)
+
+    def dec_metric(self, vertex, metric):
+        """Decrements a metric of a vertex."""
+        vert_key = vertex2key(vertex)
+        return self.dec_metric_key(vert_key, metric)
 
     def add(self, edge, timestamp=-1):
         """Adds an edges to the hypergraph if it does not exist yet."""
@@ -197,9 +238,9 @@ class LevelDB(Backend):
         if not self.exists_key(edge_key):
             for vert in edge:
                 vert_key = vertex2key(vert)
-                if not self.inc_degree(vert_key):
-                    self.add_key(vert_key, 1, timestamp)
-            self.add_key(edge_key, 0, timestamp)
+                if not self.inc_metric_key(vert_key, 'd'):
+                    self.add_key(vert_key, {'d': 1, 't': timestamp})
+            self.add_key(edge_key, {'d': 0, 't': timestamp})
             self.write_edge_permutations(edge)
         return edge
 
@@ -209,7 +250,7 @@ class LevelDB(Backend):
         if self.exists_key(edge_key):
             for vert in edges:
                 vert_key = vertex2key(vert)
-                self.dec_degree(vert_key)
+                self.dec_metric_key(vert_key, 'd')
             self.remove_edge_permutations(edges)
             self.remove_key(edge_key)
 
@@ -242,27 +283,49 @@ class LevelDB(Backend):
         plyvel.destroy_db(self.dir_path)
         self.db = plyvel.DB(self.dir_path, create_if_missing=True)
 
-    def degree_timestamp_key(self, vert_key):
+    def metrics_key(self, vert_key):
         value = self.db.get(vert_key)
-        if value is None:
-            return 0, -1
+        return decode_metrics(value)
+
+    def metrics(self, vertex):
+        vert_key = vertex2key(vertex)
+        return self.metrics_key(vert_key)
+
+    def get_int_metric(self, vertex, metric, or_else=None):
+        vert_key = vertex2key(vertex)
+        return self.get_int_metric_key(vert_key, metric, or_else)
+
+    def get_int_metric_key(self, vert_key, metric, or_else=None):
+        if self.exists_key(vert_key):
+            metrics = self.metrics_key(vert_key)
+            if metric in metrics:
+                return int(metrics[metric])
+            else:
+                return or_else
         else:
-            return [int(token) for token in value.decode('utf-8').split(' ')]
+            return or_else
+
+    def get_float_metric(self, vertex, metric, or_else=None):
+        vert_key = vertex2key(vertex)
+        return self.get_float_metric_key(vert_key, metric, or_else)
+
+    def get_float_metric_key(self, vert_key, metric, or_else=None):
+        if self.exists_key(vert_key):
+            metrics = self.metrics_key(vert_key)
+            if metric in metrics:
+                return float(metrics[metric])
+            else:
+                return or_else
+        else:
+            return or_else
 
     def degree(self, vertex):
         """Returns the degree of a vertex."""
-        vert_key = vertex2key(vertex)
-        return self.degree_timestamp_key(vert_key)[0]
+        return self.get_int_metric(vertex, 'd', 0)
 
     def timestamp(self, vertex):
         """Returns the timestamp of a vertex."""
-        vert_key = vertex2key(vertex)
-        return self.degree_timestamp_key(vert_key)[1]
-
-    def batch_exec(self, funs):
-        """Auxiliary function to implement ops.batch_exec in SQL environments."""
-        for f in funs:
-            f(self)
+        return self.get_int_metric(vertex, 't', -1)
 
     def f_all(self, f):
         """Returns a lazy sequence resulting from applying f to every
@@ -275,7 +338,6 @@ class LevelDB(Backend):
 
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             vert = ed.str2edge(key.decode('utf-8')[1:])
-            value = value.decode('utf-8')
-            degree, timestamp = [int(token) for token in value.split(' ')]
-            vmap = {'vertex': vert, 'degree': degree, 'timestamp': timestamp}
+            metrics = decode_metrics(value)
+            vmap = {'vertex': vert, 'degree': int(metrics['d']), 'timestamp': int(metrics['t'])}
             yield f(vmap)

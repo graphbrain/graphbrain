@@ -58,18 +58,32 @@ class Backend(object):
         """Erase the hypergraph."""
         raise NotImplementedError()
 
+    def set_metric(self, vertex, metric, value):
+        """Sets the value of a metric."""
+        raise NotImplementedError()
+
+    def inc_metric(self, vertex, metric):
+        """Increments a metric of a vertex."""
+        raise NotImplementedError()
+
+    def dec_metric(self, vertex, metric):
+        """Increments a metric of a vertex."""
+        raise NotImplementedError()
+
+    def get_int_metric(self, vertex, metric, or_else=None):
+        """Returns value of metric as integer value."""
+        raise NotImplementedError()
+
+    def get_float_metric(self, vertex, metric, or_else=None):
+        """Returns value of metric as float value."""
+        raise NotImplementedError()
+
     def degree(self, vertex):
         """Returns the degree of a vertex."""
         raise NotImplementedError()
 
     def timestamp(self, vertex):
         """Returns the timestamp of a vertex."""
-        raise NotImplementedError()
-
-    def batch_exec(self, funs):
-        """Evaluates all the functions 'funs', which must be of arity 1.
-        The functions are passed hg as a parameters and are evaluated
-        as a batch."""
         raise NotImplementedError()
 
     def f_all(self, f):
