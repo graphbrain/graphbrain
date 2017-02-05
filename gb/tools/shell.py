@@ -45,6 +45,10 @@ class Shell(object):
         symbols = self.hg.symbols_with_root(root)
         [print(str(symbol)) for symbol in symbols]
 
+    def command_star(self, params):
+        edges = self.hg.star(params[0])
+        [print(str(edge)) for edge in edges]
+
     def eval(self, line):
         tokens = line.split()
         if len(tokens) > 0:
@@ -56,6 +60,8 @@ class Shell(object):
                 self.command_parse(params)
             elif command == 'search':
                 self.command_search(params)
+            elif command == 'star':
+                self.command_star(params)
             else:
                 print("error: uknown command: '%s'." % command)
 
