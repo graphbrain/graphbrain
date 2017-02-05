@@ -20,6 +20,7 @@
 
 
 from gb.knowledge.extractor import Extractor
+import gb.hypergraph.symbol as sym
 
 
 class Shell(object):
@@ -38,6 +39,12 @@ class Shell(object):
         result = extractor.read_text(sentence)
         print(result)
 
+    def command_search(self, params):
+        term = ' '.join(params)
+        root = sym.str2symbol(term)
+        symbols = self.hg.symbols_with_root(root)
+        [print(str(symbol)) for symbol in symbols]
+
     def eval(self, line):
         tokens = line.split()
         if len(tokens) > 0:
@@ -47,6 +54,8 @@ class Shell(object):
                 return True
             elif command == 'parse':
                 self.command_parse(params)
+            elif command == 'search':
+                self.command_search(params)
             else:
                 print("error: uknown command: '%s'." % command)
 
