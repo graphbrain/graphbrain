@@ -102,9 +102,9 @@ class LevelDB(Backend):
 
     def __init__(self, params):
         Backend.__init__(self)
-        file_path = params['db']
+        self.dir_path = params['db']
         # plyvel.repair_db(file_path)
-        self.db = plyvel.DB(file_path, create_if_missing=True)
+        self.db = plyvel.DB(self.dir_path, create_if_missing=True)
 
     def close(self):
         self.db.close()
@@ -249,15 +249,9 @@ class LevelDB(Backend):
 
     def destroy(self):
         """Erase the hypergraph."""
-        # TODO: This is very inefficient!
-        start_str = 'v'
-        end_str = str_plus_1(start_str)
-        start_key = (u'%s' % start_str).encode('utf-8')
-        end_key = (u'%s' % end_str).encode('utf-8')
-
-        keys = [key for key, value in self.db.iterator(start=start_key, stop=end_key)]
-        for key in keys:
-            self.remove_key(key)
+        self.db.close()
+        plyvel.destroy_db(self.dir_path)
+        self.db = plyvel.DB(self.dir_path, create_if_missing=True)
 
     def degree_timestamp_key(self, vert_key):
         value = self.db.get(vert_key)
