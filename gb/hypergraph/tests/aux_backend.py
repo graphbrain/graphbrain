@@ -98,6 +98,7 @@ class AuxBackend(unittest.TestCase):
         self.assertEqual(self.hg.symbols_with_root('graphbrain'), set())
 
     def test_metrics_vertex(self):
+        self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.assertEqual(self.hg.get_int_metric('graphbrain/1', 'foo'), None)
         self.assertEqual(self.hg.get_int_metric('graphbrain/1', 'foo', 0), 0)
@@ -111,17 +112,18 @@ class AuxBackend(unittest.TestCase):
         self.assertEqual(self.hg.get_float_metric('graphbrain/1', 'bar'), -.77)
 
     def test_metrics_edge(self):
+        self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.assertEqual(self.hg.get_int_metric(('is', 'graphbrain/1', 'great/1'), 'foo'), None)
         self.assertEqual(self.hg.get_int_metric(('is', 'graphbrain/1', 'great/1'), 'foo', 0), 0)
-        self.hg.set_metric(('is', 'graphbrain/1', 'great/1'), 'foo', 66)
-        self.assertEqual(self.hg.get_int_metric(('is', 'graphbrain/1', 'great/1'), 'foo'), 66)
-        self.hg.inc_metric(('is', 'graphbrain/1', 'great/1'), 'foo')
-        self.assertEqual(self.hg.get_int_metric(('is', 'graphbrain/1', 'great/1'), 'foo'), 67)
-        self.hg.dec_metric(('is', 'graphbrain/1', 'great/1'), 'foo')
-        self.assertEqual(self.hg.get_int_metric(('is', 'graphbrain/1', 'great/1'), 'foo'), 66)
-        self.hg.set_metric(('is', 'graphbrain/1', 'great/1'), 'bar', -.77)
-        self.assertEqual(self.hg.get_float_metric(('is', 'graphbrain/1', 'great/1'), 'bar'), -.77)
+        self.hg.set_metric('graphbrain/1', 'foo', 66)
+        self.assertEqual(self.hg.get_int_metric('graphbrain/1', 'foo'), 66)
+        self.hg.inc_metric('graphbrain/1', 'foo')
+        self.assertEqual(self.hg.get_int_metric('graphbrain/1', 'foo'), 67)
+        self.hg.dec_metric('graphbrain/1', 'foo')
+        self.assertEqual(self.hg.get_int_metric('graphbrain/1', 'foo'), 66)
+        self.hg.set_metric('graphbrain/1', 'bar', -.77)
+        self.assertEqual(self.hg.get_float_metric('graphbrain/1', 'bar'), -.77)
 
     def test_degree(self):
         self.assertEqual(self.hg.degree('graphbrain/1'), 0)
@@ -149,19 +151,30 @@ class AuxBackend(unittest.TestCase):
         self.assertEqual(self.hg.timestamp('great/1'), 123456789)
         self.assertEqual(self.hg.timestamp(('is', 'graphbrain/1', 'great/1')), -1)
 
-    def test_f_all(self):
+    def test_all(self):
         self.hg.destroy()
         self.hg.add(('size', 'graphbrain/1', -7.0))
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.hg.add(('src', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
 
-        def f(x):
-            return '%s %s' % (ed.edge2str(x['vertex']), x['degree'])
+        labels = set([ed.edge2str(v) for v in self.hg.all()])
+        self.assertEqual(labels, {'size', 'graphbrain/1', '-7.0', 'is', 'great/1', 'src', 'mary/1',
+                                  '(size graphbrain/1 -7.0)', '(is graphbrain/1 great/1)',
+                                  '(src mary/1 (is graphbrain/1 great/1))'})
+        self.hg.destroy()
+        labels = set(self.hg.all())
+        self.assertEqual(labels, set())
 
-        labels = set(self.hg.f_all(f))
+    def test_all_metrics(self):
+        self.hg.destroy()
+        self.hg.add(('size', 'graphbrain/1', -7.0))
+        self.hg.add(('is', 'graphbrain/1', 'great/1'))
+        self.hg.add(('src', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
+
+        labels = set(['%s %s' % (ed.edge2str(t[0]), t[1]['d']) for t in self.hg.all_metrics()])
         self.assertEqual(labels, {'size 1', 'graphbrain/1 2', '-7.0 1', 'is 1', 'great/1 1', 'src 1', 'mary/1 1',
                                   '(size graphbrain/1 -7.0) 0', '(is graphbrain/1 great/1) 1',
                                   '(src mary/1 (is graphbrain/1 great/1)) 0'})
         self.hg.destroy()
-        labels = set(self.hg.f_all(f))
+        labels = set(self.hg.all_metrics())
         self.assertEqual(labels, set())

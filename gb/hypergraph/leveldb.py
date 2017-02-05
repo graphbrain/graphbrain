@@ -327,10 +327,21 @@ class LevelDB(Backend):
         """Returns the timestamp of a vertex."""
         return self.get_int_metric(vertex, 't', -1)
 
-    def f_all(self, f):
-        """Returns a lazy sequence resulting from applying f to every
-           vertex map (including non-atomic) in the hypergraph.
-           A vertex map contains the keys vertex and degree."""
+    def all(self):
+        """Returns a lazy sequence of all the vertices in the hypergraph."""
+        start_str = 'v'
+        end_str = str_plus_1(start_str)
+        start_key = (u'%s' % start_str).encode('utf-8')
+        end_key = (u'%s' % end_str).encode('utf-8')
+
+        for key, value in self.db.iterator(start=start_key, stop=end_key):
+            vert = ed.str2edge(key.decode('utf-8')[1:])
+            yield vert
+
+    def all_metrics(self):
+        """Returns a lazy sequence with a tuple for each vertex in the hypergraph.
+           The first element of the tuple is the vertex itself,
+           the second is a dictionary of metrics values (as strings)."""
         start_str = 'v'
         end_str = str_plus_1(start_str)
         start_key = (u'%s' % start_str).encode('utf-8')
@@ -339,5 +350,4 @@ class LevelDB(Backend):
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             vert = ed.str2edge(key.decode('utf-8')[1:])
             metrics = decode_metrics(value)
-            vmap = {'vertex': vert, 'degree': int(metrics['d']), 'timestamp': int(metrics['t'])}
-            yield f(vmap)
+            yield (vert, metrics)

@@ -86,8 +86,12 @@ class Backend(object):
         """Returns the timestamp of a vertex."""
         raise NotImplementedError()
 
-    def f_all(self, f):
-        """Returns a lazy sequence resulting from applying f to every
-        vertex map (including non-atomic) in the hypergraph.
-        A vertex map contains the keys 'vertex' and 'degree'."""
+    def all(self):
+        """Returns a lazy sequence of all the vertices in the hypergraph."""
+        raise NotImplementedError()
+
+    def all_metrics(self):
+        """Returns a lazy sequence with a tuple for each vertex in the hypergraph.
+           The first element of the tuple is the vertex itself,
+           the second is a dictionary of metrics values (as strings)."""
         raise NotImplementedError()

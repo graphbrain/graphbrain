@@ -132,19 +132,30 @@ class TestNull(unittest.TestCase):
         self.assertFalse(self.hg.exists(('is', 'graphbrain/1', 'great/1')))
         self.assertFalse(self.hg.exists(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0))))
 
-    def test_f_all(self):
+    def test_all(self):
         self.hg.destroy()
         self.hg.add(('size', 'graphbrain/1', -7.0))
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.hg.add(('src', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
 
-        def f(x):
-            return '%s %s' % (ed.edge2str(x['vertex']), x['degree'])
-
-        labels = set(self.hg.f_all(f))
-        self.assertNotEqual(labels, {'size 1', 'graphbrain/1 2', '-7.0 1', 'is 1', 'great/1 1', 'src 1', 'mary/1 1',
-                                     '(size graphbrain/1 -7.0) 0', '(is graphbrain/1 great/1) 1',
-                                     '(src mary/1 (is graphbrain/1 great/1)) 0'})
+        labels = set([ed.edge2str(v) for v in self.hg.all()])
+        self.assertNotEqual(labels, {'size', 'graphbrain/1', '-7.0', 'is', 'great/1', 'src', 'mary/1',
+                                    '(size graphbrain/1 -7.0)', '(is graphbrain/1 great/1)',
+                                    '(src mary/1 (is graphbrain/1 great/1))'})
         self.hg.destroy()
-        labels = set(self.hg.f_all(f))
+        labels = set(self.hg.all())
+        self.assertEqual(labels, set())
+
+    def test_all_metrics(self):
+        self.hg.destroy()
+        self.hg.add(('size', 'graphbrain/1', -7.0))
+        self.hg.add(('is', 'graphbrain/1', 'great/1'))
+        self.hg.add(('src', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
+
+        labels = set(['%s %s' % (ed.edge2str(t[0]), t[1]['d']) for t in self.hg.all_metrics()])
+        self.assertNotEqual(labels, {'size 1', 'graphbrain/1 2', '-7.0 1', 'is 1', 'great/1 1', 'src 1', 'mary/1 1',
+                                    '(size graphbrain/1 -7.0) 0', '(is graphbrain/1 great/1) 1',
+                                    '(src mary/1 (is graphbrain/1 great/1)) 0'})
+        self.hg.destroy()
+        labels = set(self.hg.all_metrics())
         self.assertEqual(labels, set())
