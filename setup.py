@@ -31,7 +31,6 @@ setup(
         'scipy',
         'colorama',
         'click',
-        'mysqlclient',
         'matplotlib',
         'python-igraph',
         'nltk',

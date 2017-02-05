@@ -53,23 +53,6 @@ http://brew.sh/
 
     $ brew install freetype
 
-### MariaDB / MySQL ###
-
-GraphBrain uses either [MariaDB](http://mariadb.org) or [MySQL](http://mysql.com) as one of its data storage backends. We recommend MariaDB:
-
-    $ brew install mariadb
-
-Create user and database for tests:
-
-    $ mysql -u root
-    MariaDB [(none)]> CREATE USER 'gb'@'localhost' IDENTIFIED BY 'gb';
-    MariaDB [(none)]> create database gbtest;
-    MariaDB [(none)]> grant all privileges on gbtest.* to gb@localhost;
-    
-It is, of course, advisable to protect your database server with a password. We are assuming an experimental environment here.
-
-This will be made optional in the future.
-
 ## Download, build and install ##
 
 For now we only distribute GraphBrain as source code from our git repository.

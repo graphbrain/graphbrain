@@ -28,7 +28,7 @@ class TestHypergraph(ab.AuxBackend):
 
     def setUp(self):
         params = {'backend': 'leveldb',
-                  'db': 'test_leveldb.db'}
+                  'db': 'test.hg'}
         self.hg = hyperg.HyperGraph(params)
 
     def tearDown(self):
