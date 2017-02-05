@@ -102,7 +102,7 @@ class LevelDB(Backend):
 
     def __init__(self, params):
         Backend.__init__(self)
-        self.dir_path = params['db']
+        self.dir_path = params['hg']
         # plyvel.repair_db(file_path)
         self.db = plyvel.DB(self.dir_path, create_if_missing=True)
 
