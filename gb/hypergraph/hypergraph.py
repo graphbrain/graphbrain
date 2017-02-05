@@ -99,12 +99,6 @@ class HyperGraph(object):
         """Returns the timestamp of a vertex."""
         return self.backend.timestamp(vertex)
 
-    def f_all(self, f):
-        """Returns a lazy sequence resulting from applying f to every
-        vertex map (including non-atomic) in the hypergraph.
-        A vertex map contains the keys 'vertex' and 'degree'."""
-        return self.backend.f_all(f)
-
     def remove_by_pattern(self, pattern):
         """Removes from the hypergraph all edges that match the pattern."""
         edges = self.pattern2edges(pattern)
@@ -141,3 +135,13 @@ class HyperGraph(object):
         self.remove((const.source, edge, source))
         if len(self.sources(edge)) == 0:
             self.remove(edge)
+
+    def all(self):
+        """Returns a lazy sequence of all the vertices in the hypergraph."""
+        return self.backend.all()
+
+    def all_metrics(self):
+        """Returns a lazy sequence with a tuple for each vertex in the hypergraph.
+           The first element of the tuple is the vertex itself,
+           the second is a dictionary of metrics values (as strings)."""
+        return self.backend.all_metrics()
