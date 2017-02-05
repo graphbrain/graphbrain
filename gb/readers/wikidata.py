@@ -144,7 +144,6 @@ class WikidataReader(object):
     def extract_triplets(self, line):
         try:
             ent = json.loads(line.decode().rstrip('\n,'))
-            # print(json.dumps(ent, sort_keys=False, indent=4))
             if not ent['id'].startswith('Q'):
                 print("Skipping item with id {}".format(ent['id']))
                 return
@@ -153,7 +152,6 @@ class WikidataReader(object):
                 edge = self.triplet_to_edge(trip)
                 if edge:
                     self.hg.add_belief(u'wikidata/gb', edge)
-                    # self.edge_buffer.append(edge)
                     self.edges_found += 1
         except (KeyError, ValueError) as e:
             print('exception: %s' % e)
@@ -181,9 +179,7 @@ class WikidataReader(object):
             self.extract_triplets(line)
             count += 1
             if (count % 10000) == 0:
-                # self.flush_edge_buffer()
                 print('%s [%s]' % (count, self.edges_found))
-        # self.flush_edge_buffer()
         source_file.close()
         print('%s edges found' % self.edges_found)
 
