@@ -155,3 +155,15 @@ def is_negative(edge):
 def negative(edge):
     """Produces the negative of the given edge."""
     return (sym.negative(edge[0]),) + edge[1:]
+
+
+def symbols(edge):
+    """Return set of symbols contained in edge."""
+    if sym.sym_type(edge) == sym.SymbolType.EDGE:
+        symbs = set()
+        for entity in edge:
+            for symb in symbols(entity):
+                symbs.add(symb)
+        return symbs
+    else:
+        return {edge}
