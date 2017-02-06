@@ -61,6 +61,12 @@ class TestEdge(unittest.TestCase):
         self.assertEqual(ed.negative(('is', 'graphbrain/1', 'great/1')),
                          ('~is', 'graphbrain/1', 'great/1'))
 
+    def test_symbols(self):
+        self.assertEqual(ed.symbols(('is', 'graphbrain/1', 'great/1')), {'is', 'graphbrain/1', 'great/1'})
+        self.assertEqual(ed.symbols(('src', 'graphbrain/2', ('is', 'graphbrain/1', 'great/1'))),
+                         {'is', 'graphbrain/1', 'great/1', 'src', 'graphbrain/2'})
+        self.assertEqual(ed.symbols('graphbrain/1'), {'graphbrain/1'})
+
 
 if __name__ == '__main__':
     unittest.main()
