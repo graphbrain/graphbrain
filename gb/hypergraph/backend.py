@@ -95,3 +95,11 @@ class Backend(object):
            The first element of the tuple is the vertex itself,
            the second is a dictionary of metrics values (as strings)."""
         raise NotImplementedError()
+
+    def symbol_count(self):
+        """Total number of symbols in the hypergraph"""
+        raise NotImplementedError()
+
+    def edge_count(self):
+        """Total number of edge in the hypergraph"""
+        raise NotImplementedError()

@@ -126,6 +126,7 @@ class AuxBackend(unittest.TestCase):
         self.assertEqual(self.hg.get_float_metric('graphbrain/1', 'bar'), -.77)
 
     def test_degree(self):
+        self.hg.destroy()
         self.assertEqual(self.hg.degree('graphbrain/1'), 0)
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.assertEqual(self.hg.degree('graphbrain/1'), 1)
@@ -178,3 +179,16 @@ class AuxBackend(unittest.TestCase):
         self.hg.destroy()
         labels = set(self.hg.all_metrics())
         self.assertEqual(labels, set())
+
+    def test_counters(self):
+        self.hg.destroy()
+        self.hg.add(('is', 'graphbrain/1', 'great/1'))
+        self.assertEqual(self.hg.symbol_count(), 3)
+        self.assertEqual(self.hg.edge_count(), 1)
+        self.hg.add(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
+        self.assertEqual(self.hg.symbol_count(), 5)
+        self.assertEqual(self.hg.edge_count(), 2)
+        self.hg.remove(('is', 'graphbrain/1', 'great/1'))
+        self.assertEqual(self.hg.edge_count(), 1)
+        self.hg.remove(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
+        self.assertEqual(self.hg.edge_count(), 0)

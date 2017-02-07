@@ -22,6 +22,7 @@
 import math
 import itertools
 import plyvel
+import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
 from gb.hypergraph.backend import Backend
 
@@ -233,12 +234,17 @@ class LevelDB(Backend):
         return self.dec_metric_key(vert_key, metric)
 
     def add(self, edge, timestamp=-1):
-        """Adds an edges to the hypergraph if it does not exist yet."""
+        """Adds an edge to the hypergraph if it does not exist yet."""
         edge_key = vertex2key(edge)
         if not self.exists_key(edge_key):
+            self.inc_counter('edge_count')
             for vert in edge:
                 vert_key = vertex2key(vert)
                 if not self.inc_metric_key(vert_key, 'd'):
+                    if sym.sym_type(vert) == sym.SymbolType.EDGE:
+                        self.inc_counter('edge_count')
+                    else:
+                        self.inc_counter('symbol_count')
                     self.add_key(vert_key, {'d': 1, 't': timestamp})
             self.add_key(edge_key, {'d': 0, 't': timestamp})
             self.write_edge_permutations(edge)
@@ -248,6 +254,7 @@ class LevelDB(Backend):
         """Removes an edges from the hypergraph."""
         edge_key = vertex2key(edges)
         if self.exists_key(edge_key):
+            self.dec_counter('edge_count')
             for vert in edges:
                 vert_key = vertex2key(vert)
                 self.dec_metric_key(vert_key, 'd')
@@ -351,3 +358,35 @@ class LevelDB(Backend):
             vert = ed.str2edge(key.decode('utf-8')[1:])
             metrics = decode_metrics(value)
             yield (vert, metrics)
+
+    def read_counter_key(self, counter_key):
+        """Reads a counter by key."""
+        value = self.db.get(counter_key)
+        if value is None:
+            return 0
+        else:
+            return int(value.decode('utf-8'))
+
+    def read_counter(self, counter):
+        """Reads a counter by name."""
+        return self.read_counter_key(counter.encode('utf-8'))
+
+    def inc_counter(self, counter):
+        """Increments a counter."""
+        counter_key = counter.encode('utf-8')
+        value = self.read_counter_key(counter_key)
+        self.db.put(counter_key, str(value + 1).encode('utf-8'))
+
+    def dec_counter(self, counter):
+        """Decrements a counter."""
+        counter_key = counter.encode('utf-8')
+        value = self.read_counter_key(counter_key)
+        self.db.put(counter_key, str(value - 1).encode('utf-8'))
+
+    def symbol_count(self):
+        """Total number of symbols in the hypergraph"""
+        return self.read_counter('symbol_count')
+
+    def edge_count(self):
+        """Total number of edge in the hypergraph"""
+        return self.read_counter('edge_count')
