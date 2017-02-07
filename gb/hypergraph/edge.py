@@ -57,7 +57,7 @@ def token_type(token):
     while len(s) > 0:
         c = s[0]
         if c == '-':
-            if pos > 0:
+            if pos > 0 or len(token) == 1:
                 return TokenType.STRING
         elif c == '.':
             if point:

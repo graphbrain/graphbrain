@@ -145,3 +145,11 @@ class HyperGraph(object):
            The first element of the tuple is the vertex itself,
            the second is a dictionary of metrics values (as strings)."""
         return self.backend.all_metrics()
+
+    def symbol_count(self):
+        """Total number of symbols in the hypergraph"""
+        return self.backend.symbol_count()
+
+    def edge_count(self):
+        """Total number of edge in the hypergraph"""
+        return self.backend.edge_count()

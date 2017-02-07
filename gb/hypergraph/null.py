@@ -95,3 +95,11 @@ class Null(Backend):
            The first element of the tuple is the vertex itself,
            the second is a dictionary of metrics values (as strings)."""
         return []
+
+    def symbol_count(self):
+        """Total number of symbols in the hypergraph"""
+        return 0
+
+    def edge_count(self):
+        """Total number of edge in the hypergraph"""
+        return 0

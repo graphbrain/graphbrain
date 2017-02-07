@@ -159,3 +159,16 @@ class TestNull(unittest.TestCase):
         self.hg.destroy()
         labels = set(self.hg.all_metrics())
         self.assertEqual(labels, set())
+
+    def test_counters(self):
+        self.hg.destroy()
+        self.hg.add(('is', 'graphbrain/1', 'great/1'))
+        self.assertEqual(self.hg.symbol_count(), 0)
+        self.assertEqual(self.hg.edge_count(), 0)
+        self.hg.add(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
+        self.assertEqual(self.hg.symbol_count(), 0)
+        self.assertEqual(self.hg.edge_count(), 0)
+        self.hg.remove(('is', 'graphbrain/1', 'great/1'))
+        self.assertEqual(self.hg.edge_count(), 0)
+        self.hg.remove(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
+        self.assertEqual(self.hg.edge_count(), 0)
