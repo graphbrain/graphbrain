@@ -103,3 +103,7 @@ class Backend(object):
     def edge_count(self):
         """Total number of edge in the hypergraph"""
         raise NotImplementedError()
+
+    def total_degree(self):
+        """Total degree of the hypergraph"""
+        raise NotImplementedError()

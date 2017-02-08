@@ -103,3 +103,7 @@ class Null(Backend):
     def edge_count(self):
         """Total number of edge in the hypergraph"""
         return 0
+
+    def total_degree(self):
+        """Total degree of the hypergraph"""
+        return 0

@@ -153,3 +153,7 @@ class HyperGraph(object):
     def edge_count(self):
         """Total number of edge in the hypergraph"""
         return self.backend.edge_count()
+
+    def total_degree(self):
+        """Total degree of the hypergraph"""
+        return self.backend.total_degree()
