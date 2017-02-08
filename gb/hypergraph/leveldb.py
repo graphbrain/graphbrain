@@ -238,6 +238,7 @@ class LevelDB(Backend):
         edge_key = vertex2key(edge)
         if not self.exists_key(edge_key):
             self.inc_counter('edge_count')
+            self.inc_counter('total_degree', by=len(edge))
             for vert in edge:
                 vert_key = vertex2key(vert)
                 if not self.inc_metric_key(vert_key, 'd'):
@@ -250,15 +251,16 @@ class LevelDB(Backend):
             self.write_edge_permutations(edge)
         return edge
 
-    def remove(self, edges):
-        """Removes an edges from the hypergraph."""
-        edge_key = vertex2key(edges)
+    def remove(self, edge):
+        """Removes an edge from the hypergraph."""
+        edge_key = vertex2key(edge)
         if self.exists_key(edge_key):
             self.dec_counter('edge_count')
-            for vert in edges:
+            self.dec_counter('total_degree', by=len(edge))
+            for vert in edge:
                 vert_key = vertex2key(vert)
                 self.dec_metric_key(vert_key, 'd')
-            self.remove_edge_permutations(edges)
+            self.remove_edge_permutations(edge)
             self.remove_key(edge_key)
 
     def star(self, center):
@@ -371,17 +373,17 @@ class LevelDB(Backend):
         """Reads a counter by name."""
         return self.read_counter_key(counter.encode('utf-8'))
 
-    def inc_counter(self, counter):
+    def inc_counter(self, counter, by=1):
         """Increments a counter."""
         counter_key = counter.encode('utf-8')
         value = self.read_counter_key(counter_key)
-        self.db.put(counter_key, str(value + 1).encode('utf-8'))
+        self.db.put(counter_key, str(value + by).encode('utf-8'))
 
-    def dec_counter(self, counter):
+    def dec_counter(self, counter, by=1):
         """Decrements a counter."""
         counter_key = counter.encode('utf-8')
         value = self.read_counter_key(counter_key)
-        self.db.put(counter_key, str(value - 1).encode('utf-8'))
+        self.db.put(counter_key, str(value - by).encode('utf-8'))
 
     def symbol_count(self):
         """Total number of symbols in the hypergraph"""
@@ -390,3 +392,7 @@ class LevelDB(Backend):
     def edge_count(self):
         """Total number of edge in the hypergraph"""
         return self.read_counter('edge_count')
+
+    def total_degree(self):
+        """Total degree of the hypergraph"""
+        return self.read_counter('total_degree')
