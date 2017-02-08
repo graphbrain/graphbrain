@@ -78,6 +78,7 @@ def info(ctx):
     hg = HyperGraph(ctx.obj)
     print('symbols: %s' % hg.symbol_count())
     print('edges: %s' % hg.edge_count())
+    print('total degree: %s' % hg.total_degree())
 
 
 @cli.command()
