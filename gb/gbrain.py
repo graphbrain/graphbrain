@@ -74,6 +74,14 @@ def wikidata(ctx):
 
 @cli.command()
 @click.pass_context
+def info(ctx):
+    hg = HyperGraph(ctx.obj)
+    print('symbols: %s' % hg.symbol_count())
+    print('edges: %s' % hg.edge_count())
+
+
+@cli.command()
+@click.pass_context
 def shell(ctx):
     hg = HyperGraph(ctx.obj)
     sh = Shell(hg)
