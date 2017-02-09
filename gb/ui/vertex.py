@@ -19,26 +19,25 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import gb.hypergraph.symbol as sym
+def edge_html(hg, edge):
+    degree = hg.degree(edge)
+    html_symbols = ['<a href="/vertex?id=%s">%s</a>' % (symbol, symbol) for symbol in edge]
+    html_edge = '(%s)' % ' '.join(html_symbols)
+    return '<p>%s [degree: %s]</p>' % (html_edge, degree)
 
 
-def search_result(hg, symbol):
-    degree = hg.degree(symbol)
-    return '<p><a href="/vertex?id=%s">%s</a> [degree: %s]</p>' % (symbol, symbol, degree)
-
-
-def search_results(hg, query):
-    symbols = hg.symbols_with_root(sym.str2symbol(query))
-    html_lines = [search_result(hg, symbol) for symbol in symbols]
+def edges_html(hg, eid):
+    edges = hg.star(eid)
+    html_lines = [edge_html(hg, e) for e in edges]
     return '\n'.join(html_lines)
 
 
-def html(hg, query):
+def html(hg, eid):
     return """
 <div class="container" role="main">
     <div class="page-header">
-        <h1>Search results for '%s'</h1>
+        <h1>Vertex: %s</h1>
       </div>
     %s
 </div>
-    """ % (query, search_results(hg, query))
+    """ % (eid, edges_html(hg, eid))

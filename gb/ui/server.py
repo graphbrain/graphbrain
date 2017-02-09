@@ -21,7 +21,7 @@
 
 import bottle
 from bottle import route, run, request, get, static_file
-from gb.ui import page, home, search
+from gb.ui import page, home, search, vertex
 from gb.ui.hgplugin import HGPlugin
 
 
@@ -56,6 +56,12 @@ def home_page(hg):
 def search_page(hg):
     query = request.query.query
     return page.html('GraphBrain', search.html(hg, query))
+
+
+@get('/vertex')
+def vertex_page(hg):
+    eid = request.query.id
+    return page.html('GraphBrain', vertex.html(hg, eid))
 
 
 def start_ui(hg):
