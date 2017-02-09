@@ -28,6 +28,12 @@ class Null(Backend):
     def __init__(self):
         Backend.__init__(self)
 
+    def close(self):
+        pass
+
+    def name(self):
+        return 'Null hypergraph (does nothing, just for testing purposes)'
+
     def exists(self, vertex):
         """Checks if the given edge exists in the hypergraph."""
         return False

@@ -21,5 +21,12 @@
 
 def html(hg):
     return """
-    Hello world!
-    """
+<div class="jumbotron">
+    <div class="container">
+        <h1>%s</h1>
+        <p>Symbols: %s</p>
+        <p>Edges: %s</p>
+        <p>Total degree: %s</p>
+    </div>
+</div>
+    """ % (hg.name(), hg.symbol_count(), hg.edge_count(), hg.total_degree())

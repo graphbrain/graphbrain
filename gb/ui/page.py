@@ -19,54 +19,52 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-def css():
-    return """
-    body {
-        background-color: #FFF;
-    }
-    input {
-        width: 100%;
-        font-family:"Arial Black", Gadget, sans-serif;
-        font-size:x-large;
-    }
-    input[type=submit] {
-        margin-top:2em;
-    }
-    h3 {
-        font-family:"Arial Black", Gadget, sans-serif;
-        font-size:x-large;
-        color: #555;
-        margin-bottom:0px;
-    }
-    .last-event {
-        font-family:"Arial Black", Gadget, sans-serif;
-        font-size:x-large;
-        color: #33A;
-        margin-top:2em;
-    }
-    """
-
-
 def html(title, body):
     return """
-    <!DOCTYPE html>
-    <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/static/img/favicon.png">
 
-    <head>
-        <meta charset="utf-8">
-        <title>
-            %s
-        </title>
-        <style TYPE="text/css">
-        <!--
-        %s
-        -->
-        </style>
-    </head>
+    <title>%s</title>
 
-    <body>
-        %s
-    </body>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+  </head>
 
-    </html>
-    """ % (title, css(), body)
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+          aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-left" href="#"><img src="/static/img/GB_logo.png" height="50px"></a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <form class="navbar-form navbar-right">
+            <div class="form-group">
+              <input type="text" placeholder="Search" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-success">Search</button>
+          </form>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
+
+    %s
+
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+  </body>
+</html>
+    """ % (title, body)
