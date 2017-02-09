@@ -20,8 +20,8 @@
 
 
 import bottle
-from bottle import route, run, request, post, redirect, get, static_file
-from gb.ui import page, home
+from bottle import route, run, request, get, static_file
+from gb.ui import page, home, search
 from gb.ui.hgplugin import HGPlugin
 
 
@@ -52,14 +52,10 @@ def home_page(hg):
     return page.html('GraphBrain', home.html(hg))
 
 
-# @post('/new_event')
-# def new_event(db):
-#     name = request.forms.get('name')
-#     quantity = request.forms.get('quantity')
-#     value = request.forms.get('value')
-#     details = request.forms.get('details')
-#     newevent.add(db, name, quantity, value, details)
-#     redirect('/')
+@get('/search')
+def search_page(hg):
+    query = request.query.query
+    return page.html('GraphBrain', search.html(hg, query))
 
 
 def start_ui(hg):
