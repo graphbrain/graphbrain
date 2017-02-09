@@ -25,6 +25,7 @@ from gb.hypergraph.hypergraph import HyperGraph
 import gb.readers.wordnet as wn
 import gb.readers.wikidata as wd
 from gb.tools.shell import Shell
+from gb.ui.server import start_ui
 
 
 @click.group()
@@ -88,6 +89,13 @@ def shell(ctx):
     sh = Shell(hg)
     sh.run()
     click.echo('done.')
+
+
+@cli.command()
+@click.pass_context
+def ui(ctx):
+    hg = HyperGraph(ctx.obj)
+    start_ui(hg)
 
 
 show_logo()

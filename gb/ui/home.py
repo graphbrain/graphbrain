@@ -19,29 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from setuptools import setup, find_packages
-
-
-setup(
-    name='graphbrain',
-    version='0.1',
-    packages=find_packages(),
-    install_requires=[
-        'numpy',
-        'scipy',
-        'colorama',
-        'click',
-        'matplotlib',
-        'python-igraph',
-        'nltk',
-        'spacy',
-        'asciitree',
-        'ujson',
-        'plyvel',
-        'bottle'
-    ],
-    entry_points='''
-        [console_scripts]
-        gbrain=gb.gbrain:cli
-    ''',
-)
+def html(hg):
+    return """
+    Hello world!
+    """

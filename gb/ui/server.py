@@ -19,29 +19,28 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from setuptools import setup, find_packages
+import bottle
+from bottle import route, run, request, post, redirect
+from gb.ui import page, home
+from gb.ui.hgplugin import HGPlugin
 
 
-setup(
-    name='graphbrain',
-    version='0.1',
-    packages=find_packages(),
-    install_requires=[
-        'numpy',
-        'scipy',
-        'colorama',
-        'click',
-        'matplotlib',
-        'python-igraph',
-        'nltk',
-        'spacy',
-        'asciitree',
-        'ujson',
-        'plyvel',
-        'bottle'
-    ],
-    entry_points='''
-        [console_scripts]
-        gbrain=gb.gbrain:cli
-    ''',
-)
+@route('/')
+def home_page(hg):
+    return page.html('GraphBrain', home.html(hg))
+
+
+# @post('/new_event')
+# def new_event(db):
+#     name = request.forms.get('name')
+#     quantity = request.forms.get('quantity')
+#     value = request.forms.get('value')
+#     details = request.forms.get('details')
+#     newevent.add(db, name, quantity, value, details)
+#     redirect('/')
+
+
+def start_ui(hg):
+    hgplugin = HGPlugin(hg)
+    bottle.install(hgplugin)
+    run(host='localhost', port=8080, debug=True)
