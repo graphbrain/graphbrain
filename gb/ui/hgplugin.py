@@ -19,29 +19,33 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from setuptools import setup, find_packages
+import inspect
 
 
-setup(
-    name='graphbrain',
-    version='0.1',
-    packages=find_packages(),
-    install_requires=[
-        'numpy',
-        'scipy',
-        'colorama',
-        'click',
-        'matplotlib',
-        'python-igraph',
-        'nltk',
-        'spacy',
-        'asciitree',
-        'ujson',
-        'plyvel',
-        'bottle'
-    ],
-    entry_points='''
-        [console_scripts]
-        gbrain=gb.gbrain:cli
-    ''',
-)
+class HGPlugin(object):
+    """
+    This plugin passes an hypergraph object to route callbacks
+    that accept a `hg` keyword argument.
+    """
+
+    name = 'hg'
+    api = 2
+
+    def __init__(self, hg):
+        self.hg = hg
+
+    def apply(self, callback, context):
+        # Test if the original callback accepts an 'hg' keyword.
+        # Ignore it if it does not need a database handle.
+        callback_args = inspect.signature(context.callback).parameters
+        if 'hg' not in callback_args:
+            return callback
+
+        def wrapper(*args, **kwargs):
+            # Add the connection handle as a keyword argument.
+            kwargs['hg'] = self.hg
+
+            return callback(*args, **kwargs)
+
+        # Replace the route callback with the wrapped one.
+        return wrapper
