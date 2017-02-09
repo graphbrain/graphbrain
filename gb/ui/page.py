@@ -38,7 +38,7 @@ def html(title, body):
   </head>
 
   <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-default navbar-static-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
@@ -48,12 +48,12 @@ def html(title, body):
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-left" href="#"><img src="/static/img/GB_logo.png" height="50px"></a>
+          <a class="navbar-left" href="/"><img src="/static/img/GB_logo.png" height="50px"></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <form class="navbar-form navbar-right">
+          <form class="navbar-form navbar-right" action="/search" method="get">
             <div class="form-group">
-              <input type="text" placeholder="Search" class="form-control">
+              <input type="text" placeholder="Search" class="form-control" name="query">
             </div>
             <button type="submit" class="btn btn-success">Search</button>
           </form>
