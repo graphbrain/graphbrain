@@ -124,6 +124,9 @@ class LevelDB(Backend):
     def close(self):
         self.db.close()
 
+    def name(self):
+        return self.dir_path
+
     def add_key(self, vert_key, metrics):
         """Adds the given vertex, given its key."""
         value = encode_metrics(metrics)

@@ -41,6 +41,9 @@ class HyperGraph(object):
     def close(self):
         self.backend.close()
 
+    def name(self):
+        return self.backend.name()
+
     def exists(self, vertex):
         """Checks if the given edge exists in the hypergraph."""
         return self.backend.exists(vertex)
