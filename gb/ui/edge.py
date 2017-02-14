@@ -19,21 +19,12 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from .edge import edge_html
+def symbol_html(symbol):
+    return '<a href="/vertex?id=%s">%s</a>' % (symbol, symbol)
 
 
-def edges_html(hg, eid):
-    edges = hg.star(eid)
-    html_lines = [edge_html(hg, e) for e in edges]
-    return '\n'.join(html_lines)
-
-
-def html(hg, eid):
-    return """
-<div class="container" role="main">
-    <div class="page-header">
-        <h1>Vertex: %s</h1>
-    </div>
-    %s
-</div>
-    """ % (eid, edges_html(hg, eid))
+def edge_html(hg, edge):
+    degree = hg.degree(edge)
+    html_symbols = [symbol_html(symbol) for symbol in edge]
+    html_edge = '(%s)' % ' '.join(html_symbols)
+    return '<p>%s [degree: %s]</p>' % (html_edge, degree)

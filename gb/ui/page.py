@@ -32,7 +32,7 @@ def html(title, body):
     <meta name="author" content="">
     <link rel="icon" href="/static/img/favicon.png">
 
-    <title>%s</title>
+    <title>%s - GraphBrain</title>
 
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
   </head>
