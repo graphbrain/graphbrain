@@ -94,6 +94,10 @@ class Element(object):
         self.tree = None
         self.namespace = None
 
+    def as_text(self):
+        # throw exception
+        pass
+
     def is_leaf(self):
         return self.type == LEAF
 
@@ -170,6 +174,10 @@ class Leaf(Element):
         return self
 
     # override
+    def as_text(self):
+        return self.token.word.lower()
+
+    # override
     def add_child(self, elem_id):
         node = self.tree.enclose(self)
         node.add_child(elem_id)
@@ -226,7 +234,12 @@ class Node(Element):
     def clone(self):
         new_node = self.tree.create_node([self.tree.clone_id(child_id) for child_id in self.children_ids])
         new_node.__compound = self.__compound
+        new_node.namespace = self.namespace
         return new_node
+
+    # override
+    def as_text(self):
+        return ' '.join([child.as_text() for child in self.children()])
 
     def get_child(self, i):
         return self.tree.get(self.children_ids[i])
@@ -288,7 +301,7 @@ class Node(Element):
 
     # override
     def is_compound(self):
-        return self.compound
+        return self.__compound
 
     # override
     def add_child(self, elem_id):

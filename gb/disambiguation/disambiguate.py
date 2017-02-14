@@ -58,26 +58,30 @@ def assign_probabilities(neighb, total_degree, degrees):
         neighb[symb]['prob'] = prob
 
 
-def probability_of_meaning(symbol, text):
+def probability_of_meaning(hg, symbol, bag_of_words):
     neighb = {}
     term_neighborhood(hg, symbol, neighb)
     degrees = degree_by_depth(neighb)
     assign_probabilities(neighb, hg.total_degree(), degrees)
 
+    symbol_root = sym.root(symbol)
     prob = 1.
     for symb in neighb:
-        term = sym.symbol2str(sym.root(symb))
-        if term in text:
-            prob *= neighb[symb]['prob']
+        symb_root = sym.root(symb)
+        if symb_root != symbol_root:
+            term = sym.symbol2str(symb_root)
+            if term in bag_of_words:
+                # print('+ %s %s' % (term, symb))
+                prob *= neighb[symb]['prob']
     return prob
 
 
-def disambiguate(hg, root, text):
+def disambiguate(hg, root, bag_of_words):
     candidates = hg.symbols_with_root(root)
     min_prob = float('inf')
     best = None
     for candidate in candidates:
-        prob = probability_of_meaning(candidate, text)
+        prob = probability_of_meaning(hg, candidate, bag_of_words)
         if prob < min_prob:
             min_prob = prob
             best = candidate
@@ -91,11 +95,13 @@ def disambiguate(hg, root, text):
                 max_degree = degree
                 best = candidate
 
-    return best
+    return best, min_prob
 
 
 if __name__ == '__main__':
-    hg = hyperg.HyperGraph({'backend': 'leveldb',
-                            'hg': 'wordnet.hg'})
-    print(disambiguate(hg, 'space', 'space is the place'))
-    print(disambiguate(hg, 'space', 'going to outer space'))
+    hgr = hyperg.HyperGraph({'backend': 'leveldb',
+                             'hg': 'wikidata.hg'})
+    bag_of_words1 = {'berlin', 'city'}
+    print(disambiguate(hgr, 'berlin', bag_of_words1))
+    bag_of_words2 = {'berlin', 'car'}
+    print(disambiguate(hgr, 'berlin', bag_of_words2))
