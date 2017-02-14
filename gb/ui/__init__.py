@@ -19,21 +19,4 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from .edge import edge_html
-
-
-def edges_html(hg, eid):
-    edges = hg.star(eid)
-    html_lines = [edge_html(hg, e) for e in edges]
-    return '\n'.join(html_lines)
-
-
-def html(hg, eid):
-    return """
-<div class="container" role="main">
-    <div class="page-header">
-        <h1>Vertex: %s</h1>
-    </div>
-    %s
-</div>
-    """ % (eid, edges_html(hg, eid))
+__all__ = ['edge']

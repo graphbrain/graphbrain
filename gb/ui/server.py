@@ -21,7 +21,7 @@
 
 import bottle
 from bottle import route, run, request, get, static_file
-from gb.ui import page, home, search, vertex
+from gb.ui import page, home, search, vertex, parser
 from gb.ui.hgplugin import HGPlugin
 
 
@@ -49,19 +49,25 @@ def js(filepath):
 # Home page
 @route('/')
 def home_page(hg):
-    return page.html('GraphBrain', home.html(hg))
+    return page.html('Home', home.html(hg))
 
 
 @get('/search')
 def search_page(hg):
     query = request.query.query
-    return page.html('GraphBrain', search.html(hg, query))
+    return page.html('Search results', search.html(hg, query))
 
 
 @get('/vertex')
 def vertex_page(hg):
     eid = request.query.id
-    return page.html('GraphBrain', vertex.html(hg, eid))
+    return page.html('Vertex', vertex.html(hg, eid))
+
+
+@get('/parser')
+def parser_page(hg):
+    text = request.query.text
+    return page.html('Parser', parser.html(hg, text))
 
 
 def start_ui(hg):

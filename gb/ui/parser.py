@@ -19,21 +19,33 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from gb.knowledge.extractor import Extractor
 from .edge import edge_html
 
 
-def edges_html(hg, eid):
-    edges = hg.star(eid)
-    html_lines = [edge_html(hg, e) for e in edges]
-    return '\n'.join(html_lines)
+def edges_html(hg, edges):
+    html_list = [edge_html(hg, edge) for edge in edges]
+    return '\n'.join(html_list)
 
 
-def html(hg, eid):
+def html(hg, text):
+    if text != '':
+        extractor = Extractor(hg)
+        edges = extractor.read_text(text)
+        extra_html = edges_html(hg, edges)
+    else:
+        extra_html = ''
+
     return """
 <div class="container" role="main">
     <div class="page-header">
-        <h1>Vertex: %s</h1>
+        <h1>Text parser</h1>
     </div>
+    <form action="/parser" method="get">
+        <textarea class="form-control" name="text" rows="5">%s</textarea>
+        <br />
+        <button type="submit" class="btn btn-success">Parse</button>
+    </form>
     %s
 </div>
-    """ % (eid, edges_html(hg, eid))
+    """ % (text, extra_html)
