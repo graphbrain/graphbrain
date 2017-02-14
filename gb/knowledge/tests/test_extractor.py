@@ -27,7 +27,7 @@ class TestExtractor(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.extractor = Extractor(None)
+        cls.extractor = Extractor(None, stages=('alpha', 'beta-simple', 'gamma', 'delta', 'epsilon'))
 
     def do_test(self, text, expected_stage_outputs):
         result = self.extractor.read_text(text)

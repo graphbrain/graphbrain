@@ -19,10 +19,12 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import gb.hypergraph.hypergraph as hyperg
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
 from gb.knowledge.stages.alpha import AlphaStage
 from gb.knowledge.stages.beta import BetaStage
+from gb.knowledge.stages.beta_simple import BetaStageSimple
 from gb.knowledge.stages.gamma import GammaStage
 from gb.knowledge.stages.delta import DeltaStage
 from gb.knowledge.stages.epsilon import EpsilonStage
@@ -35,12 +37,15 @@ class Extractor(object):
         self.parser = None
         self.debug = False
         self.outputs = []
+        self.bag_of_words = None
 
     def create_stage(self, name, tree):
         if name == 'alpha':
             return AlphaStage()
         elif name == 'beta':
-            return BetaStage(self.hg, tree)
+            return BetaStage(self.hg, self.bag_of_words, tree)
+        elif name == 'beta-simple':
+            return BetaStageSimple(tree)
         elif name == 'gamma':
             return GammaStage(tree)
         elif name == 'delta':
@@ -54,11 +59,19 @@ class Extractor(object):
         if self.debug:
             print(msg)
 
+    def generate_bag_of_words(self, sentences):
+        word_list = []
+        for sentence in sentences:
+            for token in sentence:
+                word_list += [token.word.lower(), token.lemma.lower()]
+        self.bag_of_words = set(word_list)
+
     def read_text(self, text):
         if self.parser is None:
             self.debug_msg('creating parser...')
             self.parser = Parser()
         sents = self.parser.parse_text(text)
+        self.generate_bag_of_words(sents)
         return [self.read_sentence(Sentence(sent)) for sent in sents]
 
     def read_sentence(self, sentence):
@@ -87,11 +100,13 @@ class Extractor(object):
 
 
 if __name__ == '__main__':
-    test_text = "Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate."
+    # test_text = "Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate."
+    test_text = "Mulholland Drive is a movie by David Lynch."
 
     print(test_text)
 
-    hgraph = None
+    hgraph = hyperg.HyperGraph({'backend': 'leveldb',
+                                'hg': 'wikidata.hg'})
     extractor = Extractor(hgraph)
     extractor.debug = True
     extractor.read_text(test_text)

@@ -19,10 +19,6 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import gb.hypergraph.symbol as sym
-import gb.disambiguation.disambiguate as disamb
-
-
 def is_compound_by_entity_type(node):
     first_child = node.get_child(0)
     if first_child.is_node():
@@ -38,12 +34,10 @@ def is_compound_by_entity_type(node):
     return True
 
 
-class BetaStage(object):
-    def __init__(self, hg, bag_of_words, tree):
-        self.hg = hg
+class BetaStageSimple(object):
+    def __init__(self, tree):
         self.tree = tree
         self.compound_deps = ['pobj', 'compound', 'dobj', 'nsubj']
-        self.bag_of_words = bag_of_words
 
     def is_compound_by_deps(self, node):
         for child in node.children():
@@ -60,31 +54,13 @@ class BetaStage(object):
 
     def process_entity(self, entity_id):
         entity = self.tree.get(entity_id)
-        root = sym.str2symbol(entity.as_text())
-        disamb_ent, prob = disamb.disambiguate(self.hg, root, self.bag_of_words)
 
-        # print('>>> %s %s %s' % (entity.as_text(), disamb_ent, prob))
+        entity.namespace = '1'
 
-        make_entity = True
         if entity.is_node():
+            entity.compound = self.is_compound(entity)
             for child_id in entity.children_ids:
-                p = self.process_entity(child_id)
-                if p < prob:
-                    make_entity = False
-                    prob = p
-
-        if make_entity:
-            if disamb_ent is None:
-                entity.namespace = sym.random_hash()
-            else:
-                entity.namespace = sym.nspace(disamb_ent)
-            if entity.is_node():
-                entity.compound = True
-        elif entity.is_node():
-            if self.is_compound(entity):
-                entity.compound = True
-
-        return prob
+                self.process_entity(child_id)
 
     def process(self):
         self.process_entity(self.tree.root_id)

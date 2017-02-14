@@ -19,4 +19,4 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-__all__ = ['extractor', 'semantic_tree']
+__all__ = ['disambiguate']

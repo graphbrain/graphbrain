@@ -51,6 +51,10 @@ def html(title, body):
           <a class="navbar-left" href="/"><img src="/static/img/GB_logo.png" height="50px"></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/">Home</a></li>
+            <li><a href="/parser">Parser</a></li>
+          </ul>
           <form class="navbar-form navbar-right" action="/search" method="get">
             <div class="form-group">
               <input type="text" placeholder="Search" class="form-control" name="query">
