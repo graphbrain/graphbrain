@@ -38,12 +38,26 @@ def is_compound_by_entity_type(node):
     return True
 
 
+def element_to_bag_of_words(element, bow):
+    bow.add(element.as_text())
+    if element.is_node():
+        for child in element.children():
+            element_to_bag_of_words(child, bow)
+
+
+def trees_to_bag_of_words(trees):
+    bow = set()
+    for tree in trees:
+        element_to_bag_of_words(tree.root(), bow)
+    return bow
+
+
 class BetaStage(object):
-    def __init__(self, hg, bag_of_words, tree):
+    def __init__(self, hg, trees, tree):
         self.hg = hg
         self.tree = tree
         self.compound_deps = ['pobj', 'compound', 'dobj', 'nsubj']
-        self.bag_of_words = bag_of_words
+        self.bag_of_words = trees_to_bag_of_words(trees)
 
     def is_compound_by_deps(self, node):
         for child in node.children():
@@ -58,17 +72,20 @@ class BetaStage(object):
     def is_compound(self, node):
         return is_compound_by_entity_type(node) or self.is_compound_by_deps(node)
 
-    def process_entity(self, entity_id):
+    def process_entity(self, entity_id, exclude):
         entity = self.tree.get(entity_id)
         root = sym.str2symbol(entity.as_text())
-        disamb_ent, prob = disamb.disambiguate(self.hg, root, self.bag_of_words)
+        disamb_ent, prob = disamb.disambiguate(self.hg, root, self.bag_of_words, exclude)
 
         # print('>>> %s %s %s' % (entity.as_text(), disamb_ent, prob))
+
+        exclude = exclude[:]
+        exclude.append(entity.as_text())
 
         make_entity = True
         if entity.is_node():
             for child_id in entity.children_ids:
-                p = self.process_entity(child_id)
+                p = self.process_entity(child_id, exclude)
                 if p < prob:
                     make_entity = False
                     prob = p
@@ -87,5 +104,5 @@ class BetaStage(object):
         return prob
 
     def process(self):
-        self.process_entity(self.tree.root_id)
+        self.process_entity(self.tree.root_id, [])
         return self.tree

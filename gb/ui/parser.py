@@ -23,6 +23,16 @@ from gb.knowledge.extractor import Extractor
 from .edge import edge_html
 
 
+extractor = None
+
+
+def get_extractor(hg):
+    global extractor
+    if extractor is None:
+        extractor = Extractor(hg)
+    return extractor
+
+
 def edges_html(hg, edges):
     html_list = [edge_html(hg, edge) for edge in edges]
     return '\n'.join(html_list)
@@ -30,8 +40,7 @@ def edges_html(hg, edges):
 
 def html(hg, text):
     if text != '':
-        extractor = Extractor(hg)
-        edges = extractor.read_text(text)
+        edges = get_extractor(hg).read_text(text)
         extra_html = edges_html(hg, edges)
     else:
         extra_html = ''
