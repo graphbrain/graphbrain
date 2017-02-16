@@ -278,16 +278,14 @@ class LevelDB(Backend):
         """Find all symbols with the given root."""
         start_str = '%s/' % root
         end_str = str_plus_1(start_str)
-        start_key = (u'p%s' % start_str).encode('utf-8')
-        end_key = (u'p%s' % end_str).encode('utf-8')
+        start_key = (u'v%s' % start_str).encode('utf-8')
+        end_key = (u'v%s' % end_str).encode('utf-8')
 
-        symbs = []
+        symbs = set()
         for key, value in self.db.iterator(start=start_key, stop=end_key):
-            perm_str = key.decode('utf-8')
-            symb = ed.split_edge_str(perm_str)[0][1:]
-            symbs.append(symb)
-
-        return set(symbs)
+            symb = ed.str2edge(key.decode('utf-8')[1:])
+            symbs.add(symb)
+        return symbs
 
     def edges_with_symbols(self, symbols, root=None):
         """Find all edges containing the given symbols, and optionally a given root"""

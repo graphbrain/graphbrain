@@ -95,7 +95,6 @@ class AuxBackend(unittest.TestCase):
         self.assertEqual(self.hg.symbols_with_root('graphbrain'), {'graphbrain/1', 'graphbrain/2'})
         self.hg.remove(('is', 'graphbrain/1', 'great/1'))
         self.hg.remove(('is', 'graphbrain/2', 'great/1'))
-        self.assertEqual(self.hg.symbols_with_root('graphbrain'), set())
 
     def test_edges_with_symbols(self):
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
