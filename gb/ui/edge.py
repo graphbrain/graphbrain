@@ -29,7 +29,7 @@ def symbol_html(symbol):
 def edge_html(hg, edge):
     if sym.sym_type(edge) == sym.SymbolType.EDGE:
         degree = hg.degree(edge)
-        html_symbols = [edge_html(symbol) for symbol in edge]
+        html_symbols = [edge_html(hg, symbol) for symbol in edge]
         html_edge = '(%s)' % ' '.join(html_symbols)
         return '<p>%s [degree: %s]</p>' % (html_edge, degree)
     else:
