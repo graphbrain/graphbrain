@@ -289,6 +289,23 @@ class LevelDB(Backend):
 
         return set(symbs)
 
+    def edges_with_symbols(self, symbols, root=None):
+        """Find all edges containing the given symbols, and optionally a given root"""
+        if root:
+            start_str = '%s %s/' % (' '.join(symbols), root)
+        else:
+            start_str = ' '.join(symbols)
+        end_str = str_plus_1(start_str)
+        start_key = (u'p%s' % start_str).encode('utf-8')
+        end_key = (u'p%s' % end_str).encode('utf-8')
+
+        edges = set()
+        for key, value in self.db.iterator(start=start_key, stop=end_key):
+            perm_str = key.decode('utf-8')
+            edges.add(perm2edge(perm_str))
+
+        return edges
+
     def destroy(self):
         """Erase the hypergraph."""
         self.db.close()

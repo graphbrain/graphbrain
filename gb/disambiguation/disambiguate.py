@@ -85,8 +85,8 @@ def probability_of_meaning(hg, symbol, bag_of_words, exclude):
         if not is_part_of(symb_root, symbol_root):
             term = sym.symbol2str(symb_root)
             if (term in bag_of_words) and (term not in exclude):
-                print('+ %s %s' % (term, symb))
                 prob *= neighb[symb]['prob']
+                print('+ %s %s %s' % (term, symb, prob))
     return prob
 
 
@@ -94,20 +94,18 @@ def disambiguate(hg, root, bag_of_words, exclude):
     candidates = hg.symbols_with_root(root)
     min_prob = float('inf')
     best = None
+    best_degree = -1
     for candidate in candidates:
         prob = probability_of_meaning(hg, candidate, bag_of_words, exclude)
         if prob < min_prob:
             min_prob = prob
             best = candidate
-
-    if min_prob >= 1.:
-        max_degree = -1
-        best = None
-        for candidate in candidates:
-            degree = hg.degree(candidate)
-            if degree > max_degree:
-                max_degree = degree
+            best_degree = hg.degree(candidate)
+        elif prob == min_prob:
+            deg = hg.degree(candidate)
+            if deg > best_degree:
                 best = candidate
+                best_degree = deg
 
     return best, min_prob
 

@@ -70,6 +70,10 @@ class HyperGraph(object):
         """Find all symbols with the given root."""
         return self.backend.symbols_with_root(root)
 
+    def edges_with_symbols(self, symbols, root=None):
+        """Find all edges containing the given symbols, and optionally a given root"""
+        return self.backend.edges_with_symbols(symbols, root)
+
     def destroy(self):
         """Erase the hypergraph."""
         self.backend.destroy()
