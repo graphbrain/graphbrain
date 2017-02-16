@@ -43,7 +43,7 @@ class Extractor(object):
         if name == 'alpha':
             return AlphaStage()
         elif name == 'beta':
-            return BetaStage(self.hg, self.bag_of_words, tree)
+            return BetaStage(self.hg, [tree], tree)
         elif name == 'beta-simple':
             return BetaStageSimple(tree)
         elif name == 'gamma':

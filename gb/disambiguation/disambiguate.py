@@ -24,7 +24,10 @@ import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
 
 
-def term_neighborhood(hg, symbol, neighb, max_depth=1, depth=0):
+def term_neighborhood(hg, symbol, neighb, max_depth=0, depth=0):
+    if len(sym.root(symbol)) <= 3:
+        return
+
     if hg.degree(symbol) > 2500:
         return
 
@@ -58,7 +61,18 @@ def assign_probabilities(neighb, total_degree, degrees):
         neighb[symb]['prob'] = prob
 
 
-def probability_of_meaning(hg, symbol, bag_of_words):
+def is_part_of(root, main_root):
+    if root == main_root:
+        return True
+    root_parts = main_root.split('_')
+    for part in root_parts:
+        if root == part:
+            return True
+    return False
+
+
+def probability_of_meaning(hg, symbol, bag_of_words, exclude):
+    print('probability_of_meaning: %s' % symbol)
     neighb = {}
     term_neighborhood(hg, symbol, neighb)
     degrees = degree_by_depth(neighb)
@@ -68,20 +82,20 @@ def probability_of_meaning(hg, symbol, bag_of_words):
     prob = 1.
     for symb in neighb:
         symb_root = sym.root(symb)
-        if symb_root != symbol_root:
+        if not is_part_of(symb_root, symbol_root):
             term = sym.symbol2str(symb_root)
-            if term in bag_of_words:
-                # print('+ %s %s' % (term, symb))
+            if (term in bag_of_words) and (term not in exclude):
+                print('+ %s %s' % (term, symb))
                 prob *= neighb[symb]['prob']
     return prob
 
 
-def disambiguate(hg, root, bag_of_words):
+def disambiguate(hg, root, bag_of_words, exclude):
     candidates = hg.symbols_with_root(root)
     min_prob = float('inf')
     best = None
     for candidate in candidates:
-        prob = probability_of_meaning(hg, candidate, bag_of_words)
+        prob = probability_of_meaning(hg, candidate, bag_of_words, exclude)
         if prob < min_prob:
             min_prob = prob
             best = candidate
@@ -102,6 +116,6 @@ if __name__ == '__main__':
     hgr = hyperg.HyperGraph({'backend': 'leveldb',
                              'hg': 'wikidata.hg'})
     bag_of_words1 = {'berlin', 'city'}
-    print(disambiguate(hgr, 'berlin', bag_of_words1))
+    print(disambiguate(hgr, 'berlin', bag_of_words1, ()))
     bag_of_words2 = {'berlin', 'car'}
-    print(disambiguate(hgr, 'berlin', bag_of_words2))
+    print(disambiguate(hgr, 'berlin', bag_of_words2, ()))
