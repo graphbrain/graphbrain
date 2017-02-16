@@ -26,11 +26,14 @@ def symbol_html(symbol):
     return '<a href="/vertex?id=%s">%s</a>' % (symbol, symbol)
 
 
-def edge_html(hg, edge):
+def edge_html(hg, edge, show_degree=True):
     if sym.sym_type(edge) == sym.SymbolType.EDGE:
-        degree = hg.degree(edge)
-        html_symbols = [edge_html(hg, symbol) for symbol in edge]
+        html_symbols = [edge_html(hg, symbol, show_degree=False) for symbol in edge]
         html_edge = '(%s)' % ' '.join(html_symbols)
-        return '<p>%s [degree: %s]</p>' % (html_edge, degree)
+        extra_html = ''
+        if show_degree:
+            degree = hg.degree(edge)
+            extra_html = ' [degree: %s]' % degree
+        return '<span>%s%s</span>' % (html_edge, extra_html)
     else:
         return symbol_html(edge)

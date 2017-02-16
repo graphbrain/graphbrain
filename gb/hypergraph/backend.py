@@ -57,6 +57,10 @@ class Backend(object):
         """Find all symbols with the given root."""
         raise NotImplementedError()
 
+    def edges_with_symbols(self, symbols, root=None):
+        """Find all edges containing the given symbols, and optionally a given root"""
+        raise NotImplementedError()
+
     def destroy(self):
         """Erase the hypergraph."""
         raise NotImplementedError()

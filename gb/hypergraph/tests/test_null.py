@@ -98,6 +98,15 @@ class TestNull(unittest.TestCase):
         self.hg.remove(('is', 'graphbrain/2', 'great/1'))
         self.assertEqual(self.hg.symbols_with_root('graphbrain'), set())
 
+    def test_edges_with_symbols(self):
+        self.hg.add(('is', 'graphbrain/1', 'great/1'))
+        self.hg.add(('is', 'graphbrain/1', 'great/2'))
+        self.assertEqual(self.hg.edges_with_symbols(('graphbrain/1',), 'great'), set())
+        self.assertEqual(self.hg.edges_with_symbols(('graphbrain/1', 'is'), 'great'), set())
+        self.assertEqual(self.hg.edges_with_symbols(('graphbrain/1',), 'grea'), set())
+        self.hg.remove(('is', 'graphbrain/1', 'great/1'))
+        self.hg.remove(('is', 'graphbrain/1', 'great/2'))
+
     def test_degree(self):
         self.assertEqual(self.hg.degree('graphbrain/1'), 0)
         self.hg.add(('is', 'graphbrain/1', 'great/1'))

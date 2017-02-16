@@ -97,6 +97,17 @@ class AuxBackend(unittest.TestCase):
         self.hg.remove(('is', 'graphbrain/2', 'great/1'))
         self.assertEqual(self.hg.symbols_with_root('graphbrain'), set())
 
+    def test_edges_with_symbols(self):
+        self.hg.add(('is', 'graphbrain/1', 'great/1'))
+        self.hg.add(('is', 'graphbrain/1', 'great/2'))
+        self.assertEqual(self.hg.edges_with_symbols(('graphbrain/1',), 'great'),
+                         {('is', 'graphbrain/1', 'great/1'), ('is', 'graphbrain/1', 'great/2')})
+        self.assertEqual(self.hg.edges_with_symbols(('graphbrain/1', 'is'), 'great'),
+                         {('is', 'graphbrain/1', 'great/1'), ('is', 'graphbrain/1', 'great/2')})
+        self.assertEqual(self.hg.edges_with_symbols(('graphbrain/1',), 'grea'), set())
+        self.hg.remove(('is', 'graphbrain/1', 'great/1'))
+        self.hg.remove(('is', 'graphbrain/1', 'great/2'))
+
     def test_metrics_vertex(self):
         self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))

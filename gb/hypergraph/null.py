@@ -60,6 +60,10 @@ class Null(Backend):
         """Find all symbols with the given root."""
         return set()
 
+    def edges_with_symbols(self, symbols, root=None):
+        """Find all edges containing the given symbols, and optionally a given root"""
+        return set()
+
     def destroy(self):
         """Erase the hypergraph."""
         pass
