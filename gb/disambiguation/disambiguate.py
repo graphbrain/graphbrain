@@ -24,43 +24,6 @@ import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
 
 
-def term_neighborhood(hg, symbol, neighb, max_depth=0, depth=0):
-    if len(sym.root(symbol)) <= 3:
-        return
-
-    if hg.degree(symbol) > 2500:
-        return
-
-    if depth > max_depth:
-        return
-
-    edges = hg.star(symbol)
-    for edge in edges:
-        symbs = ed.symbols(edge)
-        for symb in symbs:
-            term_neighborhood(hg, symb, neighb, max_depth, depth + 1)
-            if (symb not in neighb) or (neighb[symb]['depth'] > depth):
-                neighb[symb] = {'degree': hg.degree(symb), 'depth': depth}
-
-
-def degree_by_depth(neighb):
-    degrees = {}
-    for symb in neighb:
-        depth = neighb[symb]['depth']
-        if depth in degrees:
-            degrees[depth] += 1
-        else:
-            degrees[depth] = 1
-    return degrees
-
-
-def assign_probabilities(neighb, total_degree, degrees):
-    for symb in neighb:
-        degree = float(neighb[symb]['degree'])
-        prob = (degree / float(total_degree)) * float(degrees[neighb[symb]['depth']])
-        neighb[symb]['prob'] = prob
-
-
 def is_part_of(root, main_root):
     if root == main_root:
         return True
@@ -71,22 +34,28 @@ def is_part_of(root, main_root):
     return False
 
 
-def probability_of_meaning(hg, symbol, bag_of_words, exclude):
-    print('probability_of_meaning: %s' % symbol)
-    neighb = {}
-    term_neighborhood(hg, symbol, neighb)
-    degrees = degree_by_depth(neighb)
-    assign_probabilities(neighb, hg.total_degree(), degrees)
+def connected_symbols_with_root(hg, symbol, root):
+    symbols = {}
+    edges = hg.edges_with_symbols((symbol,), root=root)
+    for edge in edges:
+        symbs = ed.symbols(edge)
+        for symb in symbs:
+            if sym.root(symb) == root:
+                if symb not in symbols:
+                    symbols[symb] = hg.degree(symb)
+    return symbols
 
+
+def probability_of_meaning(hg, symbol, bag_of_words, exclude):
+    total_degree = hg.total_degree()
     symbol_root = sym.root(symbol)
     prob = 1.
-    for symb in neighb:
-        symb_root = sym.root(symb)
-        if not is_part_of(symb_root, symbol_root):
-            term = sym.symbol2str(symb_root)
-            if (term in bag_of_words) and (term not in exclude):
-                prob *= neighb[symb]['prob']
-                print('+ %s %s %s' % (term, symb, prob))
+    for ngram in bag_of_words:
+        ngram_symbol = sym.str2symbol(ngram)
+        if not ((ngram in exclude) or is_part_of(ngram_symbol, symbol_root)):
+            neighbors = connected_symbols_with_root(hg, symbol, ngram_symbol)
+            for neighb in neighbors:
+                prob *= float(neighbors[neighb]) / float(total_degree)
     return prob
 
 
