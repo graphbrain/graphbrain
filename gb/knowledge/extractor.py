@@ -101,7 +101,7 @@ class Extractor(object):
 
 if __name__ == '__main__':
     # test_text = "Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate."
-    test_text = "Mulholland Drive is a movie by David Lynch."
+    test_text = "Berlin is the capital of the Federation of Germany."
 
     print(test_text)
 

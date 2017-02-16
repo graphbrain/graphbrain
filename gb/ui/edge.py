@@ -19,12 +19,18 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import gb.hypergraph.symbol as sym
+
+
 def symbol_html(symbol):
     return '<a href="/vertex?id=%s">%s</a>' % (symbol, symbol)
 
 
 def edge_html(hg, edge):
-    degree = hg.degree(edge)
-    html_symbols = [symbol_html(symbol) for symbol in edge]
-    html_edge = '(%s)' % ' '.join(html_symbols)
-    return '<p>%s [degree: %s]</p>' % (html_edge, degree)
+    if sym.sym_type(edge) == sym.SymbolType.EDGE:
+        degree = hg.degree(edge)
+        html_symbols = [edge_html(symbol) for symbol in edge]
+        html_edge = '(%s)' % ' '.join(html_symbols)
+        return '<p>%s [degree: %s]</p>' % (html_edge, degree)
+    else:
+        return symbol_html(edge)
