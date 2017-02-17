@@ -35,6 +35,7 @@ def html(title, body):
     <title>%s - GraphBrain</title>
 
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/graphbrain.css" rel="stylesheet">
   </head>
 
   <body>

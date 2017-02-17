@@ -24,7 +24,7 @@ from .edge import edge_html
 
 def edges_html(hg, eid):
     edges = hg.star(eid)
-    html_lines = [edge_html(hg, e) for e in edges]
+    html_lines = [edge_html(hg, e, show_degree=True) for e in edges]
     return '\n'.join(html_lines)
 
 

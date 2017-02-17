@@ -19,21 +19,52 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import hashlib
 import gb.hypergraph.symbol as sym
 
 
-def symbol_html(symbol):
-    return '<a href="/vertex?id=%s">%s</a>' % (symbol, symbol)
+SYMBOL_CLASSES = ('btn-primary', 'btn-success', 'btn-info', 'btn-warning', 'btn-danger')
 
 
-def edge_html(hg, edge, show_degree=True):
-    if sym.sym_type(edge) == sym.SymbolType.EDGE:
-        html_symbols = [edge_html(hg, symbol, show_degree=False) for symbol in edge]
-        html_edge = '(%s)' % ' '.join(html_symbols)
-        extra_html = ''
-        if show_degree:
-            degree = hg.degree(edge)
-            extra_html = ' [degree: %s]' % degree
-        return '<span>%s%s</span>' % (html_edge, extra_html)
+def symbol_to_int(symbol):
+    hasher = hashlib.sha1()
+    hasher.update(symbol.encode('utf-8'))
+    return int(hasher.hexdigest(), 16)
+
+
+def symbol_html(symbol, rel):
+    label = sym.symbol2str(symbol)
+    if rel:
+        return '<div class="rel"><a href="/vertex?id=%s">%s</a></div><div class="arrow"></div>'\
+               % (symbol, label)
     else:
-        return symbol_html(edge)
+        extra_class = SYMBOL_CLASSES[symbol_to_int(symbol) % 5]
+        return '<button type="button" class="btn %s symbol"><a class="symbol" href="/vertex?id=%s">%s</a></button>'\
+               % (extra_class, symbol, label)
+
+
+def edge_to_visual(hg, edge):
+    rels = edge[0]
+    entities = edge[1:]
+    if sym.sym_type(rels) != sym.SymbolType.EDGE:
+        rels = (rels,)
+    visual_edge = []
+    for i in range(len(entities)):
+        visual_edge.append(edge_html(hg, entities[i], show_degree=False, outer=False, rel=False))
+        if len(rels) > i:
+            visual_edge.append(edge_html(hg, rels[i], show_degree=False, outer=False, rel=True))
+    return visual_edge
+
+
+def edge_html(hg, edge, show_degree=False, outer=True, rel=False):
+    if sym.sym_type(edge) == sym.SymbolType.EDGE:
+        html_edge = '<div class="hyperedge">%s</div>' % ' '.join(edge_to_visual(hg, edge))
+        if outer:
+            extra_html = ''
+            if show_degree:
+                degree = hg.degree(edge)
+                extra_html = '<span class="badge">%s</span>' % degree
+            html_edge = '<div class="outer-hyperedge">%s%s</div>' % (html_edge, extra_html)
+        return html_edge
+    else:
+        return symbol_html(edge, rel)
