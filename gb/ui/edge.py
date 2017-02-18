@@ -45,28 +45,33 @@ def symbol_html(symbol, rel):
                % (extra_class, symbol, label)
 
 
-def edge_to_visual(hg, edge):
+def edge_to_visual(hg, edge, depth):
     rels = edge[0]
     entities = edge[1:]
     if sym.sym_type(rels) != sym.SymbolType.EDGE:
         rels = (rels,)
     visual_edge = []
     for i in range(len(entities)):
-        visual_edge.append(edge_html(hg, entities[i], show_degree=False, outer=False, rel=False))
+        visual_edge.append(edge_html(hg, entities[i], show_degree=False, outer=False, rel=False, depth=depth + 1))
         if len(rels) > i:
-            visual_edge.append(edge_html(hg, rels[i], show_degree=False, outer=False, rel=True))
+            visual_edge.append(edge_html(hg, rels[i], show_degree=False, outer=False, rel=True, depth=depth + 1))
+    if depth > 0:
+        zoom_in_html = '<a href="/vertex?id=%s"><span class="glyphicon glyphicon-zoom-in zoom-in" aria-hidden="true"></span></a>'\
+                       % urllib.parse.quote_plus(ed.edge2str(edge))
+        visual_edge.append(zoom_in_html)
     return visual_edge
 
 
-def edge_html(hg, edge, show_degree=False, outer=True, rel=False):
+def edge_html(hg, edge, show_degree=False, outer=True, rel=False, depth=0):
     if sym.sym_type(edge) == sym.SymbolType.EDGE:
-        html_edge = '<div class="hyperedge">%s</div>' % ' '.join(edge_to_visual(hg, edge))
+        depth_class = 'depth%s' % str(depth)
+        html_edge = '<div class="hyperedge %s">%s</div>' % (depth_class, ' '.join(edge_to_visual(hg, edge, depth)))
         if outer:
             extra_html = ''
             if show_degree:
                 degree = hg.degree(edge)
                 extra_html = '<span class="badge">%s</span>' % degree
-            html_outer = '<a href="/vertex?id=%s"><span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span></a>'\
+            html_outer = '<a href="/vertex?id=%s"><span class="glyphicon glyphicon-zoom-out zoom-out" aria-hidden="true"></span></a>'\
                          % urllib.parse.quote_plus(ed.edge2str(edge))
             html_edge = '<div class="outer-hyperedge">%s%s%s</div>' % (html_edge, html_outer, extra_html)
         return html_edge
