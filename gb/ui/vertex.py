@@ -20,17 +20,22 @@
 
 
 from .edge import edge_html
+import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
 
 
-def edges_html(hg, eid):
-    vertex = ed.str2edge(eid)
+def edges_html(hg, vertex):
     edges = hg.star(vertex)
     html_lines = [edge_html(hg, e, show_degree=True) for e in edges]
     return '\n'.join(html_lines)
 
 
 def html(hg, eid):
+    vertex = ed.str2edge(eid)
+    if sym.sym_type(vertex) != sym.SymbolType.EDGE:
+        title = edge_html(hg, vertex)
+    else:
+        title = '<h1>%s</h1>' % ed.edge2str(eid)
     return """
 <div class="container" role="main">
     <div class="page-header">
@@ -39,4 +44,4 @@ def html(hg, eid):
     </div>
     %s
 </div>
-    """ % (ed.edge2str(eid), eid, edges_html(hg, eid))
+    """ % (title, eid, edges_html(hg, vertex))
