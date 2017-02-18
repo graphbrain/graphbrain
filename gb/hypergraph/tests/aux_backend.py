@@ -87,6 +87,9 @@ class AuxBackend(unittest.TestCase):
         self.assertEqual(self.hg.star('graphbrain/1'), {('is', 'graphbrain/1', 'great/1')})
         self.assertEqual(self.hg.star('graphbrain/2'), set())
         self.hg.remove(('is', 'graphbrain/1', 'great/1'))
+        self.hg.add(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
+        self.assertEqual(self.hg.star(('is', 'graphbrain/1', 'great/1')),
+                         {('says', 'mary/1', ('is', 'graphbrain/1', 'great/1'))})
 
     def test_symbols_with_root(self):
         self.hg.add(('is', 'graphbrain/1', 'great/1'))

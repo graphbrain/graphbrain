@@ -94,7 +94,7 @@ def split_edge_str(edge_str):
     with or without outer parenthesis."""
 
     edge_inner_str = edge_str
-    if edge_str[0] == '(':
+    if (edge_str[0] == '(') and (edge_str[-1] == ')'):
         edge_inner_str = edge_str[1:-1]
     stoks = edge_inner_str.split()
 

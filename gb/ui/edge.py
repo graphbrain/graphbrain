@@ -20,7 +20,9 @@
 
 
 import hashlib
+import urllib.parse
 import gb.hypergraph.symbol as sym
+import gb.hypergraph.edge as ed
 
 
 SYMBOL_CLASSES = ('btn-primary', 'btn-success', 'btn-info', 'btn-warning', 'btn-danger')
@@ -64,7 +66,9 @@ def edge_html(hg, edge, show_degree=False, outer=True, rel=False):
             if show_degree:
                 degree = hg.degree(edge)
                 extra_html = '<span class="badge">%s</span>' % degree
-            html_edge = '<div class="outer-hyperedge">%s%s</div>' % (html_edge, extra_html)
+            html_outer = '<a href="/vertex?id=%s"><span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span></a>'\
+                         % urllib.parse.quote_plus(ed.edge2str(edge))
+            html_edge = '<div class="outer-hyperedge">%s%s%s</div>' % (html_edge, html_outer, extra_html)
         return html_edge
     else:
         return symbol_html(edge, rel)
