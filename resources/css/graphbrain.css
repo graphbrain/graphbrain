@@ -1,13 +1,25 @@
 .hyperedge {
     display: inline-block;
-    border-width: thin;
-    border-style: solid;
-    border-color: #DDD;
     border-radius: 7px;
     margin: 5px;
     padding: 5px;
     max-width: 90%;
+}
+
+.depth0 {
     background: #DDD;
+}
+
+.depth1 {
+    background: #BBB;
+}
+
+.depth2 {
+    background: #999;
+}
+
+.depth3 {
+    background: #777;
 }
 
 .outer-hyperedge {
@@ -41,4 +53,8 @@
     border-left: 12px solid white;
     position: relative;
     top: 8px;
+}
+
+.zoom-out {
+    margin-right: 5px;
 }
