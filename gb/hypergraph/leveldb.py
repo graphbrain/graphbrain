@@ -72,8 +72,8 @@ def perm2edge(perm_str):
         tokens = tokens[:-1]
         tokens = unpermutate(tokens, nper)
         return ed.str2edge(' '.join(tokens))
-    except ValueError:
-        print(u'VALUE ERROR! perm2edge %s' % perm_str)
+    except ValueError as v:
+        print(u'VALUE ERROR! %s perm2edge %s' % (v, perm_str))
 
 
 def str_plus_1(s):

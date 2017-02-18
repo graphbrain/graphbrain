@@ -20,10 +20,12 @@
 
 
 from .edge import edge_html
+import gb.hypergraph.edge as ed
 
 
 def edges_html(hg, eid):
-    edges = hg.star(eid)
+    vertex = ed.str2edge(eid)
+    edges = hg.star(vertex)
     html_lines = [edge_html(hg, e, show_degree=True) for e in edges]
     return '\n'.join(html_lines)
 
@@ -32,8 +34,9 @@ def html(hg, eid):
     return """
 <div class="container" role="main">
     <div class="page-header">
-        <h1>Vertex: %s</h1>
+        <h1>%s</h1>
+        <h4>%s</h4>
     </div>
     %s
 </div>
-    """ % (eid, edges_html(hg, eid))
+    """ % (ed.edge2str(eid), eid, edges_html(hg, eid))
