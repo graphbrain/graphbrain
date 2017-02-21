@@ -32,14 +32,14 @@ def edges_html(hg, vertex):
 
 def html(hg, eid):
     vertex = ed.str2edge(eid)
-    if sym.sym_type(vertex) != sym.SymbolType.EDGE:
+    if sym.sym_type(vertex) == sym.SymbolType.EDGE:
         title = edge_html(hg, vertex)
     else:
-        title = '<h1>%s</h1>' % ed.edge2str(eid)
+        title = '<h1>%s</h1>' % sym.symbol2str(eid)
     return """
 <div class="container" role="main">
     <div class="page-header">
-        <h1>%s</h1>
+        %s
         <h4>%s</h4>
     </div>
     %s

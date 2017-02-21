@@ -51,13 +51,19 @@ def edge_to_visual(hg, edge, depth):
     if sym.sym_type(rels) != sym.SymbolType.EDGE:
         rels = (rels,)
     visual_edge = []
-    for i in range(len(entities)):
-        visual_edge.append(edge_html(hg, entities[i], show_degree=False, outer=False, rel=False, depth=depth + 1))
-        if len(rels) > i:
-            visual_edge.append(edge_html(hg, rels[i], show_degree=False, outer=False, rel=True, depth=depth + 1))
+
+    if len(entities) == 1 and len(rels) == 1:
+        visual_edge.append(edge_html(hg, rels[0], show_degree=False, outer=False, rel=True, depth=depth + 1))
+        visual_edge.append(edge_html(hg, entities[0], show_degree=False, outer=False, rel=False, depth=depth + 1))
+    else:
+        for i in range(len(entities)):
+            visual_edge.append(edge_html(hg, entities[i], show_degree=False, outer=False, rel=False, depth=depth + 1))
+            if len(rels) > i:
+                visual_edge.append(edge_html(hg, rels[i], show_degree=False, outer=False, rel=True, depth=depth + 1))
     if depth > 0:
-        zoom_in_html = '<a href="/vertex?id=%s"><span class="glyphicon glyphicon-zoom-in zoom-in" aria-hidden="true"></span></a>'\
-                       % urllib.parse.quote_plus(ed.edge2str(edge))
+        zoom_in_html = '<a href="/vertex?id=%s">%s</a>'\
+                       % (urllib.parse.quote_plus(ed.edge2str(edge)),
+                          '<span class="glyphicon glyphicon-zoom-in zoom-in" aria-hidden="true" />')
         visual_edge.append(zoom_in_html)
     return visual_edge
 
@@ -71,8 +77,9 @@ def edge_html(hg, edge, show_degree=False, outer=True, rel=False, depth=0):
             if show_degree:
                 degree = hg.degree(edge)
                 extra_html = '<span class="badge">%s</span>' % degree
-            html_outer = '<a href="/vertex?id=%s"><span class="glyphicon glyphicon-zoom-out zoom-out" aria-hidden="true"></span></a>'\
-                         % urllib.parse.quote_plus(ed.edge2str(edge))
+            html_outer = '<a href="/vertex?id=%s">%s</a>'\
+                         % (urllib.parse.quote_plus(ed.edge2str(edge)),
+                            '<span class="glyphicon glyphicon-zoom-out zoom-out" aria-hidden="true" />')
             html_edge = '<div class="outer-hyperedge">%s%s%s</div>' % (html_edge, html_outer, extra_html)
         return html_edge
     else:
