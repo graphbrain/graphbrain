@@ -24,6 +24,7 @@ import gb.hypergraph as hyper
 from gb.hypergraph.hypergraph import HyperGraph
 import gb.readers.wordnet as wn
 import gb.readers.wikidata as wd
+import gb.readers.dbpedia as dbp
 from gb.tools.shell import Shell
 from gb.ui.server import start_ui
 
@@ -66,10 +67,20 @@ def wordnet(ctx):
 @cli.command()
 @click.pass_context
 def wikidata(ctx):
-    click.echo('reading wordnet...')
+    click.echo('reading wikidata...')
     hg = HyperGraph(ctx.obj)
     infile = ctx.obj['infile']
     wd.read(hg, infile)
+    click.echo('done.')
+
+
+@cli.command()
+@click.pass_context
+def dbpedia(ctx):
+    click.echo('reading DBPedia...')
+    hg = HyperGraph(ctx.obj)
+    infile = ctx.obj['infile']
+    dbp.read(hg, infile)
     click.echo('done.')
 
 
