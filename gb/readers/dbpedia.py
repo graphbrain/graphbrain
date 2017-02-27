@@ -21,6 +21,7 @@
 
 import bz2
 import re
+import gb.constants as const
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
 
@@ -30,7 +31,7 @@ def convert_camel_case(name):
 
 
 def process_ontology(name):
-    return convert_camel_case(name), 'DBPO'
+    return convert_camel_case(name), 'dbp.o'
 
 
 class DBPediaReader(object):
@@ -56,14 +57,14 @@ class DBPediaReader(object):
                 ns_extra = ',_'.join(tokens[1:])
             else:
                 ns_extra = '%s_%s' % (ns_extra, ',_'.join(tokens[1:]))
-        namespace = 'DBPR%s' % ns_extra.lower()
+        namespace = 'dbp.r.%s' % ns_extra.lower()
         return name, namespace
 
     def process_entity(self, entity):
         if entity == '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>':
-            return 'is_type_of/gb'
+            return const.is_type_of
         elif entity == '<http://www.w3.org/2000/01/rdf-schema#seeAlso>':
-            return 'is_related_to/gb'
+            return const.are_related
         elif entity == '<http://www.w3.org/2002/07/owl#Thing>':
             return None
         if '#' in entity:
@@ -96,7 +97,7 @@ class DBPediaReader(object):
         if None in edge:
             return
 
-        self.hg.add_belief(u'dbpedia/gb', edge)
+        self.hg.add_belief(const.dbpedia, edge)
         print(ed.edge2str(edge))
 
     def create_edges(self, filename):
