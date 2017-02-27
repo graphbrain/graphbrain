@@ -21,7 +21,7 @@
 
 from gb.hypergraph.null import Null
 from gb.hypergraph.leveldb import LevelDB
-import gb.hypergraph.constants as const
+import gb.constants as const
 
 
 class HyperGraph(object):

@@ -20,29 +20,30 @@
 
 
 from nltk.corpus import wordnet as wn
+import gb.constants as const
 import gb.hypergraph.symbol as sym
 
 
 def lemma2symbol(lemma):
     lemma_id = 'wn.%s' % lemma.synset().name()
-    return sym.build([lemma.name(), lemma_id])
+    return sym.build([lemma.name().lower(), lemma_id])
 
 
 def pos2symbol(pos):
     if pos == 'n':
-        return 'noun/gb'
+        return const.noun
     if pos == 'v':
-        return 'verb/gb'
+        return const.verb
     if (pos == 'a') or (pos == 's'):
-        return 'adjective/gb'
+        return const.adjective
     if pos == 'r':
-        return 'adverb/gb'
+        return const.adverb
 
 
 def add_relationship(hg, rel, lemma1, lemma2):
     edge = (rel, lemma2symbol(lemma1), lemma2symbol(lemma2))
     # print(edge)
-    hg.add_belief(u'wordnet/gb', edge)
+    hg.add_belief(const.wordnet, edge)
 
 
 def process_relationships(hg, root_lemma, synsets, rel):
@@ -64,30 +65,33 @@ def process_synset(hg, synset):
 
     # process part-of-speech
     pos = pos2symbol(synset.pos())
-    edge = (u'pos/gb', lemma2symbol(root_lemma), pos)
+    edge = (const.pos, lemma2symbol(root_lemma), pos)
     # print(edge)
-    hg.add_belief(u'wordnet/gb', edge)
+    hg.add_belief(const.wordnet, edge)
 
     # process synonyms
     for lemma in lemmas[1:]:
-        add_relationship(hg, u'synonym/gb', root_lemma, lemma)
+        add_relationship(hg, const.are_synonyms, root_lemma, lemma)
 
     # process other synset relationships
-    process_relationships(hg, root_lemma, synset.hypernyms(), u'hypernym/gb')
-    process_relationships(hg, root_lemma, synset.instance_hypernyms(), u'instance_hypernym/gb')
-    process_relationships(hg, root_lemma, synset.member_meronyms(), u'member_meronym/gb')
-    process_relationships(hg, root_lemma, synset.attributes(), u'attribute/gb')
-    process_relationships(hg, root_lemma, synset.entailments(), u'entailment/gb')
-    process_relationships(hg, root_lemma, synset.causes(), u'cause/gb')
-    process_relationships(hg, root_lemma, synset.also_sees(), u'also_see/gb')
-    process_relationships(hg, root_lemma, synset.verb_groups(), u'verb_group/gb')
-    process_relationships(hg, root_lemma, synset.similar_tos(), u'similar_to/gb')
+    process_relationships(hg, root_lemma, synset.hypernyms(), const.is_type_of)
+    process_relationships(hg, root_lemma, synset.instance_hypernyms(), const.is_instance_of)
+    process_relationships(hg, root_lemma, synset.part_meronyms(), const.has_part)
+    process_relationships(hg, root_lemma, synset.member_meronyms(), const.has_member)
+    process_relationships(hg, root_lemma, synset.substance_meronyms(), const.has_substance)
+    process_relationships(hg, root_lemma, synset.attributes(), const.has_attribute)
+    process_relationships(hg, root_lemma, synset.entailments(), const.entails)
+    process_relationships(hg, root_lemma, synset.causes(), const.causes)
+    process_relationships(hg, root_lemma, synset.also_sees(), const.are_related)
+    process_relationships(hg, root_lemma, synset.verb_groups(), const.verb_group)
+    process_relationships(hg, root_lemma, synset.similar_tos(), const.are_similar)
 
     # process lemma relationships
     for lemma in lemmas:
-        process_lemma_relationships(hg, lemma, lemma.antonyms(), u'antonym/gb')
-        process_lemma_relationships(hg, lemma, lemma.pertainyms(), u'pertainym/gb')
-        process_lemma_relationships(hg, lemma, lemma.derivationally_related_forms(), u'derivationally_related_form/gb')
+        process_lemma_relationships(hg, lemma, lemma.antonyms(), const.are_antonyms)
+        process_lemma_relationships(hg, lemma, lemma.pertainyms(), const.pertains_to)
+        process_lemma_relationships(hg, lemma, lemma.derivationally_related_forms(),
+                                    const.has_derivationally_related_form)
 
 
 def read(hg):
