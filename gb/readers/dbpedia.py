@@ -57,7 +57,10 @@ class DBPediaReader(object):
                 ns_extra = ',_'.join(tokens[1:])
             else:
                 ns_extra = '%s_%s' % (ns_extra, ',_'.join(tokens[1:]))
-        namespace = 'dbp.r.%s' % ns_extra.lower()
+        if ns_extra == '':
+            namespace = 'dbp.r'
+        else:
+            namespace = 'dbp.r.%s' % ns_extra.lower()
         return name, namespace
 
     def process_entity(self, entity):
