@@ -74,6 +74,8 @@ class DBPediaReader(object):
             parts = entity.split('#')
         else:
             parts = entity.split('/')
+        if len(parts) < 2:
+            return None
         namespace = parts[-2]
         name = parts[-1]
         if len(namespace) == 0:
