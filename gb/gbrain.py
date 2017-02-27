@@ -20,7 +20,7 @@
 
 
 import click
-import gb.hypergraph as hyper
+import gb.constants as const
 from gb.hypergraph.hypergraph import HyperGraph
 import gb.readers.wordnet as wn
 import gb.readers.wikidata as wd
@@ -30,7 +30,7 @@ from gb.ui.server import start_ui
 
 
 @click.group()
-@click.option('--backend', help='Hypergraph Backend (sqlite, mysql, null).', default='leveldb')
+@click.option('--backend', help='Hypergraph Backend (leveldb, null).', default='leveldb')
 @click.option('--hg', help='Hypergraph name.', default='gb.hg')
 @click.option('--infile', help='Input file.')
 @click.pass_context
@@ -43,7 +43,7 @@ def cli(ctx, backend, hg, infile):
 
 
 def show_logo():
-    click.echo(click.style(hyper.constants.ascii_logo, fg='cyan'))
+    click.echo(click.style(const.ascii_logo, fg='cyan'))
     click.echo()
 
 

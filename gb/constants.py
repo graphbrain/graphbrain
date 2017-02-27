@@ -20,24 +20,36 @@
 
 
 # Knowledge
-source = 'src/1'
+source = 'src/gb'
 
 # Relations
-type_of = 'type_of/1'
-synonym = 'synonym/1'
-part_of = 'part_of/1'
-antonym = 'antonym/1'
-related = 'related/1'
-part_of_speech = 'pos/1'
+is_type_of = 'is_type_of/gb'
+is_instance_of = 'is_instance_of/gb'
+are_synonyms = 'are_synonyms/gb'
+are_antonyms = 'are_antonyms/gb'
+has_part = 'has_part/gb'
+has_member = 'has_member/gb'
+has_substance = 'has_substance/gb'
+are_related = 'are_related/gb'
+pos = 'pos/GB'
+has_attribute = 'has_attribute/gb'
+entails = 'entails/gb'
+causes = 'causes/gb'
+verb_group = 'verb_group/gb'
+are_similar = 'are_similar/gb'
+pertains_to = 'pertains/gb'
+has_derivationally_related_form = 'has_derivationally_related_form/gb'
 
 # Parts-of-speech
-noun = 'noun/1'
-verb = 'verb/1'
-adjective = 'adjective/1'
-adverb = 'adverb/1'
+noun = 'noun/gb'
+verb = 'verb/gb'
+adjective = 'adjective/gb'
+adverb = 'adverb/gb'
 
-# WordNet
-wordnet = 'wordnet/1'
+# Souces
+wordnet = 'wordnet/gb'
+wikidata = 'wikidata/gb'
+dbpedia = 'dbpedia/gb'
 
 # Logo
 ascii_logo = """ __   __        __        __   __

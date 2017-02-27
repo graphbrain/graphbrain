@@ -21,7 +21,7 @@
 
 import unittest
 import gb.hypergraph.hypergraph as hyperg
-import gb.hypergraph.constants as const
+import gb.constants as const
 
 
 class TestHypergraph(unittest.TestCase):
