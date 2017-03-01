@@ -70,9 +70,9 @@ class AlphaStage(object):
         return elem_id
 
     def process_sentence(self, sentence):
-        self.tree.root_id = self.process_token(sentence.root())
+        self.tree.root_id = self.process_token(Sentence(sentence).root())
         self.tree.remove_redundant_nesting()
-        return ParserOutput(self.tree)
+        return ParserOutput(sentence, self.tree)
 
 
 def transform(sentence):
