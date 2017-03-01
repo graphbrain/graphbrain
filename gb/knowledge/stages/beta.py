@@ -53,9 +53,9 @@ def trees_to_bag_of_words(trees):
 
 
 class BetaStage(object):
-    def __init__(self, hg, trees, tree):
+    def __init__(self, hg, output, trees):
         self.hg = hg
-        self.tree = tree
+        self.output = output
         self.compound_deps = ['pobj', 'compound', 'dobj', 'nsubj']
         self.bag_of_words = trees_to_bag_of_words(trees)
 
@@ -73,9 +73,11 @@ class BetaStage(object):
         return is_compound_by_entity_type(node) or self.is_compound_by_deps(node)
 
     def process_entity(self, entity_id, exclude):
-        entity = self.tree.get(entity_id)
-        root = sym.str2symbol(entity.as_text())
-        disamb_ent, prob = disamb.disambiguate(self.hg, root, self.bag_of_words, exclude)
+        entity = self.output.tree.get(entity_id)
+        roots = {sym.str2symbol(entity.as_text())}
+        if entity.is_leaf():
+            roots.add(entity.token.lemma)
+        disamb_ent, prob = disamb.disambiguate(self.hg, roots, self.bag_of_words, exclude)
 
         # print('>>> %s %s %s' % (entity.as_text(), disamb_ent, prob))
 
@@ -104,5 +106,5 @@ class BetaStage(object):
         return prob
 
     def process(self):
-        self.process_entity(self.tree.root_id, [])
-        return self.tree
+        self.process_entity(self.output.tree.root_id, [])
+        return self.output

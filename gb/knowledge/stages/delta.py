@@ -19,17 +19,28 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import print_function
 from gb.knowledge.semantic_tree import Position
 
 
+def is_part_of_rel(rel, part):
+    rel_elems = rel.flat_leafs()
+    part_elems = part.flat_leafs()
+
+    for relem in rel_elems:
+        for pelem in part_elems:
+            if relem == pelem:
+                return True
+
+    return False
+
+
 class DeltaStage(object):
-    def __init__(self, tree):
+    def __init__(self, output):
         self.rel_pos = ['VERB', 'ADV', 'ADP', 'PART']
-        self.tree = tree
+        self.output = output
 
     def is_relationship(self, entity_id):
-        entity = self.tree.get(entity_id)
+        entity = self.output.tree.get(entity_id)
         if entity.is_node():
             for child_id in entity.children_ids:
                 if not self.is_relationship(child_id):
@@ -38,30 +49,19 @@ class DeltaStage(object):
         else:
             return entity.token.pos in self.rel_pos
 
-    def is_part_of_rel(self, rel, part):
-        rel_elems = rel.flat_leafs()
-        part_elems = part.flat_leafs()
-
-        for relem in rel_elems:
-            for pelem in part_elems:
-                if relem == pelem:
-                    return True
-
-        return False
-
     def is_directly_under(self, node, parent, child):
         if node.arity() < 2:
             return False
 
-        rel = self.tree.get(node.children_ids[0])
-        if self.is_part_of_rel(rel, parent):
+        rel = self.output.tree.get(node.children_ids[0])
+        if is_part_of_rel(rel, parent):
             for i in range(1, len(node.children_ids)):
-                elem = self.tree.get(node.children_ids[i])
+                elem = self.output.tree.get(node.children_ids[i])
                 if elem == child:
                     return True
 
         for i in range(1, len(node.children_ids)):
-            elem = self.tree.get(node.children_ids[i])
+            elem = self.output.tree.get(node.children_ids[i])
             if self.is_directly_under(elem, parent, child):
                 return True
 
@@ -70,7 +70,7 @@ class DeltaStage(object):
     def node_fit(self, node, original):
         fit = 0
         if node.is_node() and self.is_relationship(node.children_ids[0]):
-            rel = self.tree.get(node.children_ids[0])
+            rel = self.output.tree.get(node.children_ids[0])
             if rel.arity() == 1 and (len(node.children_ids) == 2):
                 fit += 1000
             elif rel.arity() == (len(node.children_ids) - 2):
@@ -96,7 +96,7 @@ class DeltaStage(object):
 
         # initialize node, to_process and candidates
         to_process = original_node.children_ids[1:]
-        new_node = self.tree.create_node(original_node.children_ids[:1])
+        new_node = self.output.tree.create_node(original_node.children_ids[:1])
         candidates = []
         return self.find_candidates_r(original_node, new_node, to_process, candidates)
 
@@ -109,19 +109,19 @@ class DeltaStage(object):
     def find_candidates_r(self, original_node, working_node, to_process, candidates):
         if len(to_process) > 0:
             child_id = to_process[0]
-            child = self.tree.get(child_id)
+            child = self.output.tree.get(child_id)
             child_candidates = self.find_candidates(child)
 
             for child in child_candidates:
                 if child.is_node() and self.is_relationship(child.children_ids[0]):
                     # generate several possibilities for relationships
 
-                    rel_left = self.tree.get(working_node.children_ids[0])
-                    rel_right = self.tree.get(child.children_ids[0])
+                    rel_left = self.output.tree.get(working_node.children_ids[0])
+                    rel_right = self.output.tree.get(child.children_ids[0])
 
                     # insert before
                     if len(working_node.children_ids) == 1:
-                        rel = self.tree.create_node([working_node.children_ids[0]])
+                        rel = self.output.tree.create_node([working_node.children_ids[0]])
                         rel.children_ids.insert(0, child.children_ids[0])
                         self.build_candidate(original_node, working_node, rel.id, child, to_process, candidates)
 
@@ -131,10 +131,10 @@ class DeltaStage(object):
                             rel = rel_left
                         else:
                             rel_id = rel_left.children_ids[-1]
-                            rel = self.tree.get(rel_id)
+                            rel = self.output.tree.get(rel_id)
                         rel = rel.clone()
                         if rel.is_terminal():
-                            rel = self.tree.create_node([rel.id])
+                            rel = self.output.tree.create_node([rel.id])
                         rel.add_child(child.children_ids[0])
                         rel.compound = True
                         self.build_candidate(original_node, working_node, rel.id, child, to_process, candidates)
@@ -154,11 +154,11 @@ class DeltaStage(object):
                             rel_right_a = rel_right.children_ids[0]
                             rel_right_b = rel_right.children_ids[1:]
 
-                        center_rel_node = self.tree.create_node([rel_left_b, rel_right_a])
+                        center_rel_node = self.output.tree.create_node([rel_left_b, rel_right_a])
                         center_rel_node.compound = True
 
                         rel_ids = rel_left_a + [center_rel_node.id] + rel_right_b
-                        rel = self.tree.create_node(rel_ids)
+                        rel = self.output.tree.create_node(rel_ids)
 
                         self.build_candidate(original_node, working_node, rel.id, child, to_process, candidates)
 
@@ -166,11 +166,11 @@ class DeltaStage(object):
                     if rel_right.is_terminal():
                         new_node = working_node.clone()
                         rel_id = working_node.children_ids[0]
-                        rel = self.tree.get(rel_id)
+                        rel = self.output.tree.get(rel_id)
                         if not rel.is_terminal():
                             rel = rel.clone()
                         else:
-                            rel = self.tree.create_node([rel.id])
+                            rel = self.output.tree.create_node([rel.id])
                         new_node.children_ids[0] = rel.id
                         new_node.add_to_first_child(child.children_ids[0], Position.RIGHT)
                         rel_id = new_node.children_ids[0]
@@ -187,7 +187,7 @@ class DeltaStage(object):
         return candidates
 
     def process_entity(self, entity_id):
-        entity = self.tree.get(entity_id)
+        entity = self.output.tree.get(entity_id)
 
         if not entity.is_terminal() and self.is_relationship(entity.children_ids[0]):
             best_node = None
@@ -204,9 +204,5 @@ class DeltaStage(object):
         return entity_id
 
     def process(self):
-        self.tree.root_id = self.process_entity(self.tree.root_id)
-        return self.tree
-
-
-def transform(tree):
-    return DeltaStage(tree).process()
+        self.output.tree.root_id = self.process_entity(self.output.tree.root_id)
+        return self.output

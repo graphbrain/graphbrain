@@ -40,7 +40,8 @@ def edges_html(hg, edges):
 
 def html(hg, text):
     if text != '':
-        edges = get_extractor(hg).read_text(text)
+        results = get_extractor(hg).read_text(text)
+        edges = [result.main_edge for result in results]
         extra_html = edges_html(hg, edges)
     else:
         extra_html = ''

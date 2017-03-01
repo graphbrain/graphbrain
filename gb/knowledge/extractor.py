@@ -39,19 +39,19 @@ class Extractor(object):
         self.outputs = []
         self.bag_of_words = None
 
-    def create_stage(self, name, tree):
+    def create_stage(self, name, output):
         if name == 'alpha':
             return AlphaStage()
         elif name == 'beta':
-            return BetaStage(self.hg, [tree], tree)
+            return BetaStage(self.hg, output, [output.tree])
         elif name == 'beta-simple':
-            return BetaStageSimple(tree)
+            return BetaStageSimple(output)
         elif name == 'gamma':
-            return GammaStage(tree)
+            return GammaStage(output)
         elif name == 'delta':
-            return DeltaStage(tree)
+            return DeltaStage(output)
         elif name == 'epsilon':
-            return EpsilonStage(self.hg, tree)
+            return EpsilonStage(self.hg, output)
         else:
             raise RuntimeError('unknnown stage name: %s' % name)
 
@@ -84,7 +84,7 @@ class Extractor(object):
         stage = self.create_stage(self.stages[0], None)
         self.debug_msg('executing %s stage...' % self.stages[0])
         last_stage_output = stage.process_sentence(sentence)
-        output = str(last_stage_output)
+        output = str(last_stage_output.tree)
         self.outputs.append(output)
         self.debug_msg(output)
 
@@ -92,7 +92,7 @@ class Extractor(object):
             stage = self.create_stage(name, last_stage_output)
             self.debug_msg('executing %s stage...' % name)
             last_stage_output = stage.process()
-            output = str(last_stage_output)
+            output = str(last_stage_output.tree)
             self.outputs.append(output)
             self.debug_msg(output)
 
@@ -101,12 +101,14 @@ class Extractor(object):
 
 if __name__ == '__main__':
     # test_text = "Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate."
-    test_text = "Berlin is the capital of the Federation of Germany."
+    test_text = "Lots of cars require lots of paved roadways and parking lots."
 
     print(test_text)
 
     hgraph = hyperg.HyperGraph({'backend': 'leveldb',
-                                'hg': 'wikidata.hg'})
+                                'hg': 'wordnet_dbpedia.hg'})
     extractor = Extractor(hgraph)
     extractor.debug = True
-    extractor.read_text(test_text)
+    results = extractor.read_text(test_text)
+    for result in results:
+        print('result: %s' % str(result.main_edge))

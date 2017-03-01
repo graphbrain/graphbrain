@@ -35,8 +35,8 @@ def is_compound_by_entity_type(node):
 
 
 class BetaStageSimple(object):
-    def __init__(self, tree):
-        self.tree = tree
+    def __init__(self, output):
+        self.output = output
         self.compound_deps = ['pobj', 'compound', 'dobj', 'nsubj']
 
     def is_compound_by_deps(self, node):
@@ -53,7 +53,7 @@ class BetaStageSimple(object):
         return is_compound_by_entity_type(node) or self.is_compound_by_deps(node)
 
     def process_entity(self, entity_id):
-        entity = self.tree.get(entity_id)
+        entity = self.output.tree.get(entity_id)
 
         entity.namespace = '1'
 
@@ -63,5 +63,5 @@ class BetaStageSimple(object):
                 self.process_entity(child_id)
 
     def process(self):
-        self.process_entity(self.tree.root_id)
-        return self.tree
+        self.process_entity(self.output.tree.root_id)
+        return self.output
