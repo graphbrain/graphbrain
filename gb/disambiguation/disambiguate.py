@@ -59,8 +59,10 @@ def probability_of_meaning(hg, symbol, bag_of_words, exclude):
     return prob
 
 
-def disambiguate(hg, root, bag_of_words, exclude):
-    candidates = hg.symbols_with_root(root)
+def disambiguate(hg, roots, bag_of_words, exclude):
+    candidates = set()
+    for root in roots:
+        candidates = candidates.union(hg.symbols_with_root(root))
     min_prob = float('inf')
     best = None
     best_degree = -1

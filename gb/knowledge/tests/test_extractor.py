@@ -30,8 +30,8 @@ class TestExtractor(unittest.TestCase):
         cls.extractor = Extractor(None, stages=('alpha', 'beta-simple', 'gamma', 'delta', 'epsilon'))
 
     def do_test(self, text, expected_stage_outputs):
-        result = self.extractor.read_text(text)
-        self.assertEqual(len(result), 1)
+        results = self.extractor.read_text(text)
+        self.assertEqual(len(results), 1)
         for i in range(len(expected_stage_outputs)):
             self.assertEqual(str(self.extractor.outputs[i]), expected_stage_outputs[i])
 

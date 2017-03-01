@@ -23,18 +23,17 @@ import gb.hypergraph.symbol as sym
 
 
 def leaf_to_hyperedges(leaf):
-    main_edge = sym.build((leaf.token.word, leaf.namespace))
-    return {'main_edge': main_edge}
+    return sym.build((leaf.token.word, leaf.namespace))
 
 
 class EpsilonStage(object):
-    def __init__(self, hg, tree):
+    def __init__(self, hg, output):
         self.hg = hg
-        self.tree = tree
+        self.output = output
 
-    def node_to_hyperedges(self, node):
-        main_edge = [self.build_hyperedges(child)['main_edge'] for child in node.children()]
-        return {'main_edge': tuple(main_edge)}
+    def node_to_hyperedge(self, node):
+        main_edge = [self.build_hyperedge(child) for child in node.children()]
+        return tuple(main_edge)
 
     def compound_entity_to_leafs(self, entity):
         if entity.is_leaf():
@@ -45,22 +44,23 @@ class EpsilonStage(object):
                 leafs += self.compound_entity_to_leafs(child)
             return leafs
 
-    def compound_node_to_hyperedges(self, node):
+    def compound_node_to_hyperedge(self, node):
         leafs = self.compound_entity_to_leafs(node)
         words = [leaf.token.word for leaf in leafs]
         ns = '?'
         if node.namespace:
             ns = node.namespace
         symbol = sym.build(('_'.join(words), ns))
-        return {'main_edge': symbol}
+        return symbol
 
-    def build_hyperedges(self, entity):
+    def build_hyperedge(self, entity):
         if entity.is_leaf():
             return leaf_to_hyperedges(entity)
         elif entity.compound:
-            return self.compound_node_to_hyperedges(entity)
+            return self.compound_node_to_hyperedge(entity)
         else:
-            return self.node_to_hyperedges(entity)
+            return self.node_to_hyperedge(entity)
 
     def process(self):
-        return self.build_hyperedges(self.tree.root())['main_edge']
+        self.output.main_edge = self.build_hyperedge(self.output.tree.root())
+        return self.output

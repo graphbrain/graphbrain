@@ -22,6 +22,7 @@
 from __future__ import print_function
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
+from gb.knowledge.parser_output import ParserOutput
 from gb.knowledge.semantic_tree import Position, Tree
 
 
@@ -71,7 +72,7 @@ class AlphaStage(object):
     def process_sentence(self, sentence):
         self.tree.root_id = self.process_token(sentence.root())
         self.tree.remove_redundant_nesting()
-        return self.tree
+        return ParserOutput(self.tree)
 
 
 def transform(sentence):
