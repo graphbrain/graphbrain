@@ -39,6 +39,7 @@ verb_group = 'verb_group/gb'
 are_similar = 'are_similar/gb'
 pertains_to = 'pertains/gb'
 has_derivationally_related_form = 'has_derivationally_related_form/gb'
+have_same_lemma = 'have_same_lemma/gb'
 
 # Parts-of-speech
 noun = 'noun/gb'
@@ -50,6 +51,9 @@ adverb = 'adverb/gb'
 wordnet = 'wordnet/gb'
 wikidata = 'wikidata/gb'
 dbpedia = 'dbpedia/gb'
+
+# Namespaces
+lemma_derived_namespace = 'lem'
 
 # Logo
 ascii_logo = """ __   __        __        __   __

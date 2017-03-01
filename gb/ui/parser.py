@@ -39,12 +39,13 @@ def edges_html(hg, edges):
 
 
 def html(hg, text):
+    extra_html = ''
     if text != '':
         results = get_extractor(hg).read_text(text)
-        edges = [result.main_edge for result in results]
-        extra_html = edges_html(hg, edges)
-    else:
-        extra_html = ''
+        for result in results:
+            extra_html += '<h3>%s</h3>' % result.sentence
+            extra_html += edges_html(hg, (result.main_edge,))
+            extra_html += edges_html(hg, result.edges)
 
     return """
 <div class="container" role="main">

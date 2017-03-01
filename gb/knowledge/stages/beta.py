@@ -19,6 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import gb.constants as const
 import gb.hypergraph.symbol as sym
 import gb.disambiguation.disambiguate as disamb
 
@@ -96,7 +97,13 @@ class BetaStage(object):
             if disamb_ent is None:
                 entity.namespace = sym.random_hash()
             else:
-                entity.namespace = sym.nspace(disamb_ent)
+                if entity.as_text() == sym.root(disamb_ent):
+                    entity.namespace = sym.nspace(disamb_ent)
+                # entity with shared lemma
+                else:
+                    entity.namespace = '%s.%s' % (const.lemma_derived_namespace, sym.nspace(disamb_ent))
+                    # additional edge for shared lemma
+                    self.output.edges.append((const.have_same_lemma, entity.to_hyperedge(), disamb_ent))
             if entity.is_node():
                 entity.compound = True
         elif entity.is_node():

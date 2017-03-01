@@ -19,6 +19,9 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import gb.hypergraph.symbol as sym
+
+
 LEAF = 0
 NODE = 1
 
@@ -153,6 +156,14 @@ class Element(object):
         # throw exception
         pass
 
+    def to_leafs(self):
+        # throw exception
+        pass
+
+    def to_hyperedge(self):
+        # throw exception
+        pass
+
     def __eq__(self, other):
         return NotImplemented
 
@@ -207,6 +218,14 @@ class Leaf(Element):
     # override
     def flat_leafs(self):
         return [self]
+
+    # override
+    def to_leafs(self):
+        return [self]
+
+    # override
+    def to_hyperedge(self):
+        return sym.build((self.token.word, self.namespace))
 
     def __eq__(self, other):
         if isinstance(other, Leaf):
@@ -381,6 +400,24 @@ class Node(Element):
         for child in self.children():
             leafs += child.flat_leafs()
         return leafs
+
+    # override
+    def to_leafs(self):
+        leafs = []
+        for child in self.children():
+            leafs += child.to_leafs()
+        return leafs
+
+    # override
+    def to_hyperedge(self):
+        if self.compound:
+            words = [leaf.token.word for leaf in self.to_leafs()]
+            ns = '?'
+            if self.namespace:
+                ns = self.namespace
+            return sym.build(('_'.join(words), ns))
+        else:
+            return tuple([child.to_hyperedge() for child in self.children()])
 
     def __eq__(self, other):
         if isinstance(other, Leaf):
