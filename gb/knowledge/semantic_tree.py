@@ -97,6 +97,10 @@ class Element(object):
         self.tree = None
         self.namespace = None
 
+    def as_label_list(self, lemmas=False):
+        # throw exception
+        pass
+
     def as_text(self):
         # throw exception
         pass
@@ -185,6 +189,13 @@ class Leaf(Element):
         return self
 
     # override
+    def as_label_list(self, lemmas=False):
+        if lemmas:
+            return [self.token.lemma.lower()]
+        else:
+            return [self.token.word.lower()]
+
+    # override
     def as_text(self):
         return self.token.word.lower()
 
@@ -257,8 +268,35 @@ class Node(Element):
         return new_node
 
     # override
+    def as_label_list(self, lemmas=False):
+        label_list = []
+        children = self.children()
+        rel = children[0]
+        if rel.is_leaf():
+            rel = (rel,)
+        entities = children[1:]
+        if len(rel) == 1 and len(entities) == 1:
+            entity = entities[0]
+            # TODO: make this better...
+            if rel[0].is_leaf() and rel[0].as_text() == 'and' and entity.is_node() and entity.arity() == 2:
+                ent_children = entity.children()
+                label_list += ent_children[0].as_label_list(lemmas)
+                label_list += rel[0].as_label_list(lemmas)
+                label_list += ent_children[1].as_label_list(lemmas)
+            else:
+                label_list += rel[0].as_label_list(lemmas)
+                label_list += entity.as_label_list(lemmas)
+        else:
+            for i in range(len(entities)):
+                label_list += entities[i].as_label_list(lemmas)
+                if len(rel) > i:
+                    label_list += rel[i].as_label_list(lemmas)
+        return label_list
+
+    # override
     def as_text(self):
-        return ' '.join([child.as_text() for child in self.children()])
+        label_list = self.as_label_list()
+        return ' '.join(label_list)
 
     def get_child(self, i):
         return self.tree.get(self.children_ids[i])

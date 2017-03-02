@@ -77,7 +77,12 @@ class BetaStage(object):
         entity = self.output.tree.get(entity_id)
         roots = {sym.str2symbol(entity.as_text())}
         if entity.is_leaf():
-            roots.add(entity.token.lemma)
+            roots.add(sym.str2symbol(entity.token.lemma))
+        else:
+            words = entity.as_label_list()
+            lemmas = entity.as_label_list(lemmas=True)
+            lemma_at_end = ' '.join(words[:-1] + [lemmas[-1]])
+            roots.add(sym.str2symbol(lemma_at_end))
         disamb_ent, prob = disamb.disambiguate(self.hg, roots, self.bag_of_words, exclude)
 
         # print('>>> %s %s %s' % (entity.as_text(), disamb_ent, prob))
