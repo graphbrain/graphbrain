@@ -75,7 +75,7 @@ class BetaStage(object):
     def is_compound(self, node):
         return is_compound_by_entity_type(node) or self.is_compound_by_deps(node)
 
-    def process_entity(self, entity_id, exclude):
+    def process_entity(self, entity_id, exclude, rel=False):
         entity = self.output.tree.get(entity_id)
         roots = {sym.str2symbol(entity.as_text())}
         if entity.is_leaf():
@@ -85,7 +85,10 @@ class BetaStage(object):
             lemmas = entity.as_label_list(lemmas=True)
             lemma_at_end = ' '.join(words[:-1] + [lemmas[-1]])
             roots.add(sym.str2symbol(lemma_at_end))
-        disamb_ent, metrics = disamb.disambiguate(self.hg, roots, self.bag_of_words, exclude)
+        namespaces = None
+        if rel:
+            namespaces = ('wn.', 'lem.wn.')
+        disamb_ent, metrics = disamb.disambiguate(self.hg, roots, self.bag_of_words, exclude, namespaces)
 
         # print('>>> %s %s %s' % (entity.as_text(), disamb_ent, metrics))
 
@@ -94,8 +97,10 @@ class BetaStage(object):
 
         make_entity = True
         if entity.is_node():
+            first = True
             for child_id in entity.children_ids:
-                m = self.process_entity(child_id, exclude)
+                m = self.process_entity(child_id, exclude, rel=rel or first)
+                first = False
                 if m.better_than(metrics):
                     make_entity = False
                     metrics = m

@@ -83,7 +83,18 @@ def candidate_metrics(hg, symbol, bag_of_words, exclude):
     return cm
 
 
-def disambiguate(hg, roots, bag_of_words, exclude):
+def check_namespace(symbol, namespaces):
+    symb_ns = sym.nspace(symbol)
+    if namespaces:
+        for ns in namespaces:
+            if symb_ns.startswith(ns):
+                return True
+        return False
+    else:
+        return True
+
+
+def disambiguate(hg, roots, bag_of_words, exclude, namespaces=None):
     # print('*** %s' % str(bag_of_words))
     candidates = set()
     for root in roots:
@@ -91,11 +102,12 @@ def disambiguate(hg, roots, bag_of_words, exclude):
     best = None
     best_cm = CandidateMetrics()
     for candidate in candidates:
-        cm = candidate_metrics(hg, candidate, bag_of_words, exclude)
-        # print('%s %s' % (candidate, cm))
-        if cm.better_than(best_cm):
-            best_cm = cm
-            best = candidate
+        if check_namespace(candidate, namespaces):
+            cm = candidate_metrics(hg, candidate, bag_of_words, exclude)
+            # print('%s %s' % (candidate, cm))
+            if cm.better_than(best_cm):
+                best_cm = cm
+                best = candidate
 
     return best, best_cm
 
