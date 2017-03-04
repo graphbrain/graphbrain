@@ -20,7 +20,7 @@
 
 
 import unittest
-from gb.knowledge.extractor import Extractor
+from gb.reader.extractor import Extractor
 
 
 class TestExtractor(unittest.TestCase):

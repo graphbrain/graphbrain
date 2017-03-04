@@ -19,7 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from gb.knowledge.extractor import Extractor
+from gb.reader.extractor import Extractor
 from .edge import edge_html
 
 

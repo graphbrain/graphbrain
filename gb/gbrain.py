@@ -22,10 +22,10 @@
 import click
 import gb.constants as const
 from gb.hypergraph.hypergraph import HyperGraph
-import gb.readers.wordnet as wn
-import gb.readers.wikidata as wd
-import gb.readers.dbpedia as dbp
-import gb.readers.dbpedia_wordnet as dbpwn
+import gb.importers.wordnet as wn
+import gb.importers.wikidata as wd
+import gb.importers.dbpedia as dbp
+import gb.importers.dbpedia_wordnet as dbpwn
 from gb.tools.shell import Shell
 from gb.ui.server import start_ui
 
