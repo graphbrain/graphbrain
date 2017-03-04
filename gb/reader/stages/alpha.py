@@ -22,8 +22,8 @@
 from __future__ import print_function
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
-from gb.knowledge.parser_output import ParserOutput
-from gb.knowledge.semantic_tree import Position, Tree
+from gb.reader.parser_output import ParserOutput
+from gb.reader.semantic_tree import Position, Tree
 
 
 class AlphaStage(object):

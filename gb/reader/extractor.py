@@ -22,12 +22,12 @@
 import gb.hypergraph.hypergraph as hyperg
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
-from gb.knowledge.stages.alpha import AlphaStage
-from gb.knowledge.stages.beta import BetaStage
-from gb.knowledge.stages.beta_simple import BetaStageSimple
-from gb.knowledge.stages.gamma import GammaStage
-from gb.knowledge.stages.delta import DeltaStage
-from gb.knowledge.stages.epsilon import EpsilonStage
+from gb.reader.stages.alpha import AlphaStage
+from gb.reader.stages.beta import BetaStage
+from gb.reader.stages.beta_simple import BetaStageSimple
+from gb.reader.stages.gamma import GammaStage
+from gb.reader.stages.delta import DeltaStage
+from gb.reader.stages.epsilon import EpsilonStage
 
 
 class Extractor(object):

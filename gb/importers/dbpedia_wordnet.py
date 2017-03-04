@@ -22,7 +22,7 @@
 import gb.constants as const
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
-from gb.readers.dbpedia import DBPediaReader
+from gb.importers.dbpedia import DBPediaReader
 
 
 def process_wordnet_instance(instance):

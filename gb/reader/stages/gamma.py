@@ -19,7 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from gb.knowledge.semantic_tree import Position
+from gb.reader.semantic_tree import Position
 
 
 class GammaStage(object):
