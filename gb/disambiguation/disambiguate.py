@@ -22,6 +22,7 @@
 import gb.hypergraph.hypergraph as hyperg
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
+from gb.disambiguation.candidate_metrics import CandidateMetrics
 
 
 def is_part_of(root, main_root):
@@ -59,26 +60,42 @@ def probability_of_meaning(hg, symbol, bag_of_words, exclude):
     return prob
 
 
+def word_overlap(hg, symbol, bag_of_words, exclude):
+    symbols = hg.ego(symbol)
+    roots = [sym.root(s) for s in symbols]
+    words = set()
+    for root in roots:
+        ngram = sym.symbol2str(root)
+        if ngram not in exclude:
+            for word in root.split('_'):
+                words.add(word)
+    return len(bag_of_words.intersection(words))
+
+
+def candidate_metrics(hg, symbol, bag_of_words, exclude):
+    cm = CandidateMetrics()
+    cm.prob_meaning = probability_of_meaning(hg, symbol, bag_of_words, exclude)
+    cm.degree = hg.degree(symbol)
+    if cm.degree < 1000:
+        cm.word_overlap = word_overlap(hg, symbol, bag_of_words, exclude)
+    return cm
+
+
 def disambiguate(hg, roots, bag_of_words, exclude):
+    # print('*** %s' % str(bag_of_words))
     candidates = set()
     for root in roots:
         candidates = candidates.union(hg.symbols_with_root(root))
-    min_prob = float('inf')
     best = None
-    best_degree = -1
+    best_cm = CandidateMetrics()
     for candidate in candidates:
-        prob = probability_of_meaning(hg, candidate, bag_of_words, exclude)
-        if prob < min_prob:
-            min_prob = prob
+        cm = candidate_metrics(hg, candidate, bag_of_words, exclude)
+        # print('%s %s' % (candidate, cm))
+        if cm.better_than(best_cm):
+            best_cm = cm
             best = candidate
-            best_degree = hg.degree(candidate)
-        elif prob == min_prob:
-            deg = hg.degree(candidate)
-            if deg > best_degree:
-                best = candidate
-                best_degree = deg
 
-    return best, min_prob
+    return best, best_cm
 
 
 if __name__ == '__main__':
