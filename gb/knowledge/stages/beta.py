@@ -41,6 +41,8 @@ def is_compound_by_entity_type(node):
 
 def element_to_bag_of_words(element, bow):
     bow.add(element.as_text())
+    for lemma in element.as_label_list(lemmas=True):
+        bow.add(lemma)
     if element.is_node():
         for child in element.children():
             element_to_bag_of_words(child, bow)
@@ -83,9 +85,9 @@ class BetaStage(object):
             lemmas = entity.as_label_list(lemmas=True)
             lemma_at_end = ' '.join(words[:-1] + [lemmas[-1]])
             roots.add(sym.str2symbol(lemma_at_end))
-        disamb_ent, prob = disamb.disambiguate(self.hg, roots, self.bag_of_words, exclude)
+        disamb_ent, metrics = disamb.disambiguate(self.hg, roots, self.bag_of_words, exclude)
 
-        # print('>>> %s %s %s' % (entity.as_text(), disamb_ent, prob))
+        # print('>>> %s %s %s' % (entity.as_text(), disamb_ent, metrics))
 
         exclude = exclude[:]
         exclude.append(entity.as_text())
@@ -93,10 +95,10 @@ class BetaStage(object):
         make_entity = True
         if entity.is_node():
             for child_id in entity.children_ids:
-                p = self.process_entity(child_id, exclude)
-                if p < prob:
+                m = self.process_entity(child_id, exclude)
+                if m.better_than(metrics):
                     make_entity = False
-                    prob = p
+                    metrics = m
 
         if make_entity:
             if disamb_ent is None:
@@ -115,7 +117,7 @@ class BetaStage(object):
             if self.is_compound(entity):
                 entity.compound = True
 
-        return prob
+        return metrics
 
     def process(self):
         self.process_entity(self.output.tree.root_id, [])

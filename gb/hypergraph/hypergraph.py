@@ -19,6 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import gb.hypergraph.edge as ed
 from gb.hypergraph.null import Null
 from gb.hypergraph.leveldb import LevelDB
 import gb.constants as const
@@ -112,15 +113,13 @@ class HyperGraph(object):
         for edge in edges:
             self.remove(edge)
 
-    # TODO: this can be optimized
-    def ego(self, center, depth):
-        if depth > 0:
-            edges = self.star(center)
-            edges = edges[1:]
-            ids = [item for sublist in edges for item in sublist]
-            ids = set(ids)
-            next_edges = [self.ego(vid, depth - 1) for vid in ids]
-            return ids.union(next_edges)
+    def ego(self, center):
+        edges = self.star(center)
+        symbols = set()
+        for edge in edges:
+            for symbol in ed.symbols(edge):
+                symbols.add(symbol)
+        return symbols
 
     def add_belief(self, source, edge, timestamp=-1):
         """A belif is a fact with a source. The fact is created as a normal edge
