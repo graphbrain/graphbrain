@@ -282,6 +282,8 @@ class Node(Element):
         rel = children[0]
         if rel.is_leaf():
             rel = (rel,)
+        else:
+            rel = rel.children()
         entities = children[1:]
         if len(rel) == 1 and len(entities) == 1:
             entity = entities[0]
