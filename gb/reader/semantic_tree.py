@@ -168,6 +168,10 @@ class Element(object):
         # throw exception
         pass
 
+    def generate_namespace(self):
+        # throw exception
+        pass
+
     def __eq__(self, other):
         return NotImplemented
 
@@ -237,6 +241,10 @@ class Leaf(Element):
     # override
     def to_hyperedge(self):
         return sym.build((self.token.word, self.namespace))
+
+    # override
+    def generate_namespace(self):
+        self.namespace = 'nlp.%s.%s' % (self.token.lemma.lower(), self.token.pos.lower())
 
     def __eq__(self, other):
         if isinstance(other, Leaf):
@@ -456,6 +464,11 @@ class Node(Element):
             return sym.build(('_'.join(words), ns))
         else:
             return tuple([child.to_hyperedge() for child in self.children()])
+
+            # override
+
+    def generate_namespace(self):
+        self.namespace = '?'
 
     def __eq__(self, other):
         if isinstance(other, Leaf):

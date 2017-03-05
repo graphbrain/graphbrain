@@ -107,7 +107,7 @@ class BetaStage(object):
 
         if make_entity:
             if disamb_ent is None:
-                entity.namespace = sym.random_hash()
+                entity.generate_namespace()
             else:
                 if entity.as_text() == sym.root(disamb_ent):
                     entity.namespace = sym.nspace(disamb_ent)
