@@ -101,7 +101,8 @@ class Extractor(object):
 
 if __name__ == '__main__':
     # test_text = "Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate."
-    test_text = "Lots of cars require lots of paved roadways and parking lots."
+    # test_text = "Lots of cars require lots of paved roadways and parking lots."
+    test_text = "Sweden wants to fight our disposable culture with tax breaks for repairing old stuff."
 
     print(test_text)
 
