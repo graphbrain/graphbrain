@@ -120,6 +120,11 @@ class Element(object):
     def is_not_terminal(self):
         return not self.is_terminal()
 
+    def get_namespace(self):
+        if not self.namespace:
+            self.generate_namespace()
+        return self.namespace
+
     def apply_layers(self):
         # if not implemented, do nothing.
         pass
@@ -460,17 +465,15 @@ class Node(Element):
     def to_hyperedge(self):
         if self.compound:
             words = [leaf.token.word for leaf in self.to_leafs()]
-            ns = '?'
-            if self.namespace:
-                ns = self.namespace
-            return sym.build(('_'.join(words), ns))
+            if not self.namespace:
+                self.generate_namespace()
+            return sym.build(('_'.join(words), self.namespace))
         else:
             return tuple([child.to_hyperedge() for child in self.children()])
 
-            # override
-
+    # override
     def generate_namespace(self):
-        self.namespace = '?'
+        self.namespace = 'comb.%s' % '+'.join([child.get_namespace() for child in self.children()])
 
     def __eq__(self, other):
         if isinstance(other, Leaf):
