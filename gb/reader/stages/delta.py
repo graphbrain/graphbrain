@@ -20,6 +20,7 @@
 
 
 from gb.reader.semantic_tree import Position
+import gb.reader.stages.common as co
 
 
 def is_part_of_rel(rel, part):
@@ -36,18 +37,7 @@ def is_part_of_rel(rel, part):
 
 class DeltaStage(object):
     def __init__(self, output):
-        self.rel_pos = ['VERB', 'ADV', 'ADP', 'PART']
         self.output = output
-
-    def is_relationship(self, entity_id):
-        entity = self.output.tree.get(entity_id)
-        if entity.is_node():
-            for child_id in entity.children_ids:
-                if not self.is_relationship(child_id):
-                    return False
-            return True
-        else:
-            return entity.token.pos in self.rel_pos
 
     def is_directly_under(self, node, parent, child):
         if node.arity() < 2:
@@ -69,7 +59,7 @@ class DeltaStage(object):
 
     def node_fit(self, node, original):
         fit = 0
-        if node.is_node() and self.is_relationship(node.children_ids[0]):
+        if node.is_node() and co.is_relationship(node.children()[0]):
             rel = self.output.tree.get(node.children_ids[0])
             if rel.arity() == 1 and (len(node.children_ids) == 2):
                 fit += 1000
@@ -113,7 +103,7 @@ class DeltaStage(object):
             child_candidates = self.find_candidates(child)
 
             for child in child_candidates:
-                if child.is_node() and self.is_relationship(child.children_ids[0]):
+                if child.is_node() and co.is_relationship(child.children()[0]):
                     # generate several possibilities for relationships
 
                     rel_left = self.output.tree.get(working_node.children_ids[0])
@@ -189,7 +179,7 @@ class DeltaStage(object):
     def process_entity(self, entity_id):
         entity = self.output.tree.get(entity_id)
 
-        if not entity.is_terminal() and self.is_relationship(entity.children_ids[0]):
+        if not entity.is_terminal() and co.is_relationship(entity.children()[0]):
             best_node = None
             best_fit = -1
             candidates = self.find_candidates(entity)

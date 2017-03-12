@@ -27,6 +27,7 @@ import gb.importers.wikidata as wd
 import gb.importers.dbpedia as dbp
 import gb.importers.dbpedia_wordnet as dbpwn
 from gb.tools.shell import Shell
+from gb.tools.reader_tests import ReaderTests
 from gb.ui.server import start_ui
 
 
@@ -110,6 +111,15 @@ def shell(ctx):
     hg = HyperGraph(ctx.obj)
     sh = Shell(hg)
     sh.run()
+    click.echo('done.')
+
+
+@cli.command()
+@click.pass_context
+def reader_tests(ctx):
+    hg = HyperGraph(ctx.obj)
+    rt = ReaderTests(hg)
+    rt.run()
     click.echo('done.')
 
 
