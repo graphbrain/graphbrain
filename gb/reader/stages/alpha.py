@@ -29,7 +29,7 @@ from gb.reader.semantic_tree import Position, Tree
 class AlphaStage(object):
     def __init__(self):
         self.tree = Tree()
-        self.nest_deps = ['aux', 'auxpass', 'cc', 'agent', 'det', 'advmod', 'amod', 'poss', 'nummod']
+        self.nest_deps = ['aux', 'auxpass', 'cc', 'agent', 'det', 'advmod', 'amod', 'poss', 'nummod', 'prt']
         self.add_to_first_deps = ['pcomp', 'compound']
 
     def process_child_token(self, parent_elem_id, token, root_id, pos):
@@ -41,12 +41,12 @@ class AlphaStage(object):
 
         # nest
         if (token.dep in self.nest_deps) or ((token.dep == 'prep') and (not parent_elem.has_pos('VERB'))):
-            child_elem_id = self.process_token(token, root_id)
+            child_elem_id = self.process_token(token, pos, root_id)
             self.tree.get(root_id).nest(child_elem_id)
             self.tree.get(root_id).new_layer()
             return
 
-        child_elem_id = self.process_token(token)
+        child_elem_id = self.process_token(token, pos)
 
         # add to parent's first child
         if token.dep in self.add_to_first_deps:
@@ -56,8 +56,9 @@ class AlphaStage(object):
         # add child
         parent_elem.add_child(child_elem_id)
 
-    def process_token(self, token, root_id=None):
+    def process_token(self, token, pos=None, root_id=None):
         elem = self.tree.create_leaf(token)
+        elem.position = pos
         elem_id = elem.id
 
         if root_id is None:

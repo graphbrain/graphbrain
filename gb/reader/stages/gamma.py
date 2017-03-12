@@ -20,24 +20,12 @@
 
 
 from gb.reader.semantic_tree import Position
+import gb.reader.stages.common as co
 
 
 class GammaStage(object):
     def __init__(self, ouput):
-        self.rel_pos = ['VERB', 'ADV', 'ADP', 'PART']
         self.ouput = ouput
-
-    def is_relationship(self, entity_id, shallow=False, depth=0):
-        entity = self.ouput.tree.get(entity_id)
-        if entity.is_node():
-            if shallow and depth > 0:
-                return False
-            for child_id in entity.children_ids:
-                if not self.is_relationship(child_id, shallow, depth + 1):
-                    return False
-            return True
-        else:
-            return entity.token.pos in self.rel_pos
 
     def combine_relationships(self, first_id, second_id):
         first = self.ouput.tree.get(first_id)
@@ -47,7 +35,7 @@ class GammaStage(object):
             self.combine_relationships(first.id, first_child.id)
             return second.id
 
-        second.add_to_first_child(first.id, Position.LEFT)
+        second.add_to_first_child(first.id, first.position  )
         first_child = self.ouput.tree.get(second.children_ids[0])
         first_child.compound = True
         return second.id
@@ -56,7 +44,7 @@ class GammaStage(object):
         entity = self.ouput.tree.get(entity_id)
 
         # create trivial compounds
-        if entity.is_node() and self.is_relationship(entity.id, shallow=True):
+        if entity.is_node() and co.is_relationship(entity, shallow=True):
             entity.compound = True
             return entity_id
 
@@ -70,56 +58,10 @@ class GammaStage(object):
                     return second.id
             # combine relationships
             if second.is_node() and not second.compound:
-                if self.is_relationship(first.id) and self.is_relationship(second.children_ids[0]):
+                if co.is_relationship(first) and co.is_relationship(second.children()[0]):
                     return self.combine_relationships(first.id, second.id)
 
         return entity_id
-
-    def add_to_relationships(self, base_id, child_id, extra_param_ids):
-        base = self.ouput.tree.get(base_id)
-        child = self.ouput.tree.get(child_id)
-        rel_id = child.children_ids[0]
-        rel = self.ouput.tree.get(rel_id)
-
-        extra_param_strs = [str(self.ouput.tree.get(param_id)) for param_id in extra_param_ids]
-        print('base: %s; child: %s; extra: %s' % (base, child, extra_param_strs))
-
-        base_rel_id = base.children_ids[0]
-        base_rel = self.ouput.tree.get(base_rel_id)
-
-        extra_param_count = 0
-        for param_id in extra_param_ids:
-            extra_param = self.ouput.tree.get(param_id)
-            if extra_param.is_node()\
-                    and (len(extra_param.children_ids) > 2)\
-                    and not self.is_relationship(extra_param.children_ids[0]):
-                extra_param_count += 1
-
-        #
-        extra_param_count = len(extra_param_ids)
-
-        arity = base_rel.arity()
-        params = len(base.children_ids) + len(child.children_ids) + extra_param_count - 2
-        print('arity: %s; params: %s' % (arity, params))
-
-        if rel.is_node() and not rel.compound and (params - arity == 1):
-            new_rel = self.ouput.tree.create_node(rel.children_ids)
-            last_rel_child = self.ouput.tree.get(new_rel.children_ids[-1])
-            last_rel_child.add_child(base_rel_id)
-            last_rel_child = self.ouput.tree.get(new_rel.children_ids[-1])
-            if params - arity == 1:
-                last_rel_child.compound = True
-            base.children_ids[0] = new_rel.id
-        else:
-            pos = Position.RIGHT
-            if len(base.children_ids) == 1:
-                pos = Position.LEFT
-            if params - arity == 1:
-                base.add_to_first_child(rel_id, pos)
-                first_child = self.ouput.tree.get(base.children_ids[0])
-                first_child.compound = True
-            else:
-                base.add_to_first_child(rel_id, pos)
 
     def process_entity(self, entity_id):
         # process children first

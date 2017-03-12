@@ -96,6 +96,7 @@ class Element(object):
         self.id = None
         self.tree = None
         self.namespace = None
+        self.position = None
 
     def as_label_list(self, lemmas=False):
         # throw exception
@@ -278,6 +279,7 @@ class Node(Element):
         new_node = self.tree.create_node([self.tree.clone_id(child_id) for child_id in self.children_ids])
         new_node.__compound = self.__compound
         new_node.namespace = self.namespace
+        new_node.position = self.position
         return new_node
 
     # override
