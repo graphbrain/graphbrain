@@ -22,6 +22,7 @@
 import gb.constants as const
 import gb.hypergraph.symbol as sym
 import gb.disambiguation.disambiguate as disamb
+from gb.disambiguation.candidate_metrics import CandidateMetrics
 
 
 def is_compound_by_entity_type(node):
@@ -88,7 +89,12 @@ class BetaStage(object):
         namespaces = None
         if rel:
             namespaces = ('wn.', 'lem.wn.')
-        disamb_ent, metrics = disamb.disambiguate(self.hg, roots, self.bag_of_words, exclude, namespaces)
+
+        if entity.is_leaf() and entity.token.pos in {'ADP', 'CONJ'}:
+            disamb_ent = None
+            metrics = CandidateMetrics()
+        else:
+            disamb_ent, metrics = disamb.disambiguate(self.hg, roots, self.bag_of_words, exclude, namespaces)
 
         # print('>>> %s %s %s' % (entity.as_text(), disamb_ent, metrics))
 

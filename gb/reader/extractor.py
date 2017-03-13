@@ -103,7 +103,8 @@ if __name__ == '__main__':
     # test_text = "Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate."
     # test_text = "Lots of cars require lots of paved roadways and parking lots."
     # test_text = "Critics have pointed out the dangers of group forming among like-minded in Internet. "
-    test_text = "Recently online platforms such as Facebook and Google have been criticized."
+    # test_text = "Recently online platforms such as Facebook and Google have been criticized."
+    test_text = "Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan."
 
     print(test_text)
 
