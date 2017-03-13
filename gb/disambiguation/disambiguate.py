@@ -22,7 +22,6 @@
 import gb.hypergraph.hypergraph as hyperg
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
-import gb.knowledge.synonyms as syns
 import gb.knowledge.neighborhoods as knei
 from gb.disambiguation.candidate_metrics import CandidateMetrics
 
@@ -70,14 +69,21 @@ def word_overlap(hg, symbol, bag_of_words, exclude):
         ngram = sym.symbol2str(root)
         if ngram not in exclude:
             for word in root.split('_'):
-                words.add(word)
+                if len(word) > 2:
+                    words.add(word)
+    # print(str(bag_of_words.intersection(words)))
     return len(bag_of_words.intersection(words))
 
 
 def candidate_metrics(hg, symbol, bag_of_words, exclude):
     cm = CandidateMetrics()
+
+    symb_ns = sym.nspace(symbol)
+    if symb_ns.startswith('wn.'):
+        cm.priority = 1
+
     cm.prob_meaning = probability_of_meaning(hg, symbol, bag_of_words, exclude)
-    cm.degree = syns.degree(hg, symbol)
+    cm.degree = hg.degree(symbol)
     if cm.degree < 1000:
         cm.word_overlap = word_overlap(hg, symbol, bag_of_words, exclude)
     return cm
