@@ -25,8 +25,13 @@ from gb.reader.extractor import Extractor
 class ReaderTests(object):
     def __init__(self, hg):
         self.hg = hg
-        self.extractor = Extractor(None)
+        self.extractor = Extractor(hg, stages=('alpha', 'beta-simple', 'gamma', 'delta', 'epsilon'))
+        self.extractor.debug = True
 
-    def run(self):
-        print('Reader tests tool.')
-        print()
+    def generate_parsed_sentences_file(self, infile, outfile):
+        with open(infile, 'r') as f:
+            text = f.read()
+        sents_parses = self.extractor.read_text(text)
+        with open(outfile, 'w') as f:
+            for sent_parse in sents_parses:
+                f.write('%s\n%s\n' % sent_parse)
