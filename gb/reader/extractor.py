@@ -72,7 +72,7 @@ class Extractor(object):
             self.parser = Parser()
         sents = self.parser.parse_text(text)
         self.generate_bag_of_words(sents)
-        return [self.read_sentence(sent) for sent in sents]
+        return [(sent, self.read_sentence(sent)) for sent in sents]
 
     def read_sentence(self, sentence):
         self.debug_msg('parsing sentence: %s' % sentence)
@@ -114,6 +114,6 @@ if __name__ == '__main__':
     extractor.debug = True
     results = extractor.read_text(test_text)
     for result in results:
-        print('result: %s' % str(result.main_edge))
-        for edge in result.edges:
+        print('result: %s' % str(result[1].main_edge))
+        for edge in result[1].edges:
             print('extra edge: %s' % str(edge))

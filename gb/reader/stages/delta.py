@@ -38,6 +38,7 @@ def is_part_of_rel(rel, part):
 class DeltaStage(object):
     def __init__(self, output):
         self.output = output
+        self.visited = set()
 
     def is_directly_under(self, node, parent, child):
         if node.arity() < 2:
@@ -78,6 +79,7 @@ class DeltaStage(object):
                     if self.is_directly_under(original, rel_part, param2):
                         fit += 100
 
+        # print('node_fit => %s [%s]' % (str(node), fit))
         return fit
 
     def find_candidates(self, original_node):
@@ -91,6 +93,10 @@ class DeltaStage(object):
         return self.find_candidates_r(original_node, new_node, to_process, candidates)
 
     def build_candidate(self, original_node, working_node, rel_id, child, to_process, candidates):
+        position = '%s %s' % (str(original_node), str(self.output.tree.get(rel_id)))
+        if position in self.visited:
+            return
+        self.visited.add(position)
         new_node = working_node.clone()
         new_node.children_ids[0] = rel_id
         new_node.children_ids += child.children_ids[1:]
@@ -194,5 +200,6 @@ class DeltaStage(object):
         return entity_id
 
     def process(self):
+        self.visited = set()
         self.output.tree.root_id = self.process_entity(self.output.tree.root_id)
         return self.output

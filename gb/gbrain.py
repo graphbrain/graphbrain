@@ -35,12 +35,14 @@ from gb.ui.server import start_ui
 @click.option('--backend', help='Hypergraph Backend (leveldb, null).', default='leveldb')
 @click.option('--hg', help='Hypergraph name.', default='gb.hg')
 @click.option('--infile', help='Input file.')
+@click.option('--outfile', help='Output file.')
 @click.pass_context
-def cli(ctx, backend, hg, infile):
+def cli(ctx, backend, hg, infile, outfile):
     ctx.obj = {
         'backend': backend,
         'hg': hg,
-        'infile': infile
+        'infile': infile,
+        'outfile': outfile
     }
 
 
@@ -116,10 +118,10 @@ def shell(ctx):
 
 @cli.command()
 @click.pass_context
-def reader_tests(ctx):
+def generate_parsed_sentences_file(ctx):
     hg = HyperGraph(ctx.obj)
     rt = ReaderTests(hg)
-    rt.run()
+    rt.generate_parsed_sentences_file(ctx.obj['infile'], ctx.obj['outfile'])
     click.echo('done.')
 
 
