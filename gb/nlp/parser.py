@@ -56,10 +56,13 @@ class Parser:
     def parse_text(self, text):
         parsed_data = self.parser(text)
 
+        print(parsed_data)
+
         sents = []
         for span in parsed_data.sents:
-            sent = [self.__spacy2token(parsed_data[i]) for i in range(span.start, span.end)]
-            sents.append(sent)
+            sentence_text = text[span.start_char:span.end_char].strip()
+            token_seq = [self.__spacy2token(parsed_data[i]) for i in range(span.start, span.end)]
+            sents.append((sentence_text, token_seq))
 
         return sents
 
@@ -82,7 +85,7 @@ if __name__ == '__main__':
     result = parser.parse_text(test_text)
 
     for r in result:
-        sentence = Sentence(r)
-        print(sentence)
+        sentence = Sentence(r[1])
+        print(r[0])
         sentence.print_tree()
         print('')

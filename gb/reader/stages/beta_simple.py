@@ -55,7 +55,7 @@ class BetaStageSimple(object):
     def process_entity(self, entity_id):
         entity = self.output.tree.get(entity_id)
 
-        entity.namespace = '1'
+        entity.namespace = '?'
 
         if entity.is_node():
             entity.compound = self.is_compound(entity)
