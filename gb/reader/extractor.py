@@ -59,10 +59,10 @@ class Extractor(object):
         if self.debug:
             print(msg)
 
-    def generate_bag_of_words(self, sentences):
+    def generate_bag_of_words(self, parse):
         word_list = []
-        for sentence in sentences:
-            for token in sentence:
+        for p in parse:
+            for token in p[1]:
                 word_list += [token.word.lower(), token.lemma.lower()]
         self.bag_of_words = set(word_list)
 
@@ -70,14 +70,14 @@ class Extractor(object):
         if self.parser is None:
             self.debug_msg('creating parser...')
             self.parser = Parser()
-        sents = self.parser.parse_text(text)
-        self.generate_bag_of_words(sents)
-        return [(sent, self.read_sentence(sent)) for sent in sents]
+        parse = self.parser.parse_text(text)
+        self.generate_bag_of_words(parse)
+        return [(p[0], self.read_sentence(Sentence(p[1]))) for p in parse]
 
     def read_sentence(self, sentence):
         self.debug_msg('parsing sentence: %s' % sentence)
         if self.debug:
-            Sentence(sentence).print_tree()
+            sentence.print_tree()
 
         self.outputs = []
 
