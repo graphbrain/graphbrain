@@ -34,4 +34,7 @@ class ReaderTests(object):
         sents_parses = self.extractor.read_text(text)
         with open(outfile, 'w') as f:
             for sent_parse in sents_parses:
-                f.write('%s\n%s\n' % (sent_parse[0], sent_parse[1].tree))
+                f.write(':sentence\n')
+                f.write('%s\n' % sent_parse[0])
+                f.write(':parses\n')
+                f.write('%s\n' % sent_parse[1].tree)
