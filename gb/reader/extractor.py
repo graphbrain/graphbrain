@@ -104,7 +104,8 @@ if __name__ == '__main__':
     # test_text = "Lots of cars require lots of paved roadways and parking lots."
     # test_text = "Critics have pointed out the dangers of group forming among like-minded in Internet. "
     # test_text = "Recently online platforms such as Facebook and Google have been criticized."
-    test_text = "Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan."
+    # test_text = "Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan."
+    test_text = "Satellites from NASA and other agencies have been tracking sea ice changes since 1979."
 
     print(test_text)
 

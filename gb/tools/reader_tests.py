@@ -22,11 +22,17 @@
 from gb.reader.extractor import Extractor
 
 
+FIND_CASE = 0
+READ_SENTENCE = 1
+READ_PARSES = 2
+
+
 class ReaderTests(object):
     def __init__(self, hg):
         self.hg = hg
         self.extractor = Extractor(hg, stages=('alpha', 'beta-simple', 'gamma', 'delta'))
         self.extractor.debug = True
+        self.cases = None
 
     def generate_parsed_sentences_file(self, infile, outfile):
         with open(infile, 'r') as f:
@@ -38,3 +44,32 @@ class ReaderTests(object):
                 f.write('%s\n' % sent_parse[0])
                 f.write(':parses\n')
                 f.write('%s\n' % sent_parse[1].tree)
+
+    def read_dataset(self, infile):
+        with open(infile) as f:
+            content = f.readlines()
+        content = [x.strip() for x in content]
+
+        self.cases = {}
+        state = FIND_CASE
+        cur_sentence = None
+        for line in content:
+            if len(line) > 0:
+                if line[0] == ':':
+                    key = line[1:]
+                    if key == 'sentence':
+                        state = READ_SENTENCE
+                    elif key == 'parses':
+                        state = READ_PARSES
+                    else:
+                        # error!
+                        pass
+                else:
+                    if state == READ_SENTENCE:
+                        cur_sentence = line
+                        self.cases[cur_sentence] = []
+                    elif state == READ_PARSES:
+                        self.cases[cur_sentence].append(line)
+                    else:
+                        # error!
+                        pass
