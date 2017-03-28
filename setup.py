@@ -38,7 +38,8 @@ setup(
         'asciitree',
         'ujson',
         'plyvel',
-        'bottle'
+        'bottle',
+        'praw'
     ],
     entry_points='''
         [console_scripts]
