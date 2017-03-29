@@ -100,16 +100,19 @@ class RedditRetriever(object):
 
     def run(self):
         print('writing to file: %s' % self.output_file)
-        try:
-            self.retrieve_posts()
-        except KeyboardInterrupt:
-            exit()
-        except SystemExit:
-            exit()
-        except Exception as e:
-            print('exception: %s' % str(e))
-            print('retrying in %s seconds...' % self.retry_wait)
-            time.sleep(self.retry_wait)
+        while True:
+            try:
+                self.retrieve_posts()
+                print('done.')
+                exit()
+            except KeyboardInterrupt:
+                exit()
+            except SystemExit:
+                exit()
+            except Exception as e:
+                print('exception: %s' % str(e))
+                print('retrying in %s seconds...' % self.retry_wait)
+                time.sleep(self.retry_wait)
 
 
 if __name__ == '__main__':
