@@ -29,6 +29,7 @@ import gb.importers.dbpedia_wordnet as dbpwn
 from gb.tools.shell import Shell
 from gb.tools.reader_tests import ReaderTests
 from gb.ui.server import start_ui
+from gb.retrievers.reddit import RedditRetriever
 
 
 @click.group()
@@ -36,13 +37,19 @@ from gb.ui.server import start_ui
 @click.option('--hg', help='Hypergraph name.', default='gb.hg')
 @click.option('--infile', help='Input file.')
 @click.option('--outfile', help='Output file.')
+@click.option('--startdate', help='Start date.')
+@click.option('--enddate', help='End date.')
+@click.option('--source', help='Source can have multiple meanings.')
 @click.pass_context
-def cli(ctx, backend, hg, infile, outfile):
+def cli(ctx, backend, hg, infile, outfile, startdate, enddate, source):
     ctx.obj = {
         'backend': backend,
         'hg': hg,
         'infile': infile,
-        'outfile': outfile
+        'outfile': outfile,
+        'startdate': startdate,
+        'enddate': enddate,
+        'source': source
     }
 
 
@@ -130,6 +137,17 @@ def generate_parsed_sentences_file(ctx):
 def ui(ctx):
     hg = HyperGraph(ctx.obj)
     start_ui(hg)
+
+
+@cli.command()
+@click.pass_context
+def reddit_retriever(ctx):
+    subreddit = ctx.obj['source']
+    outfile = ctx.obj['outfile']
+    startdate = ctx.obj['startdate']
+    enddate = ctx.obj['enddate']
+    rr = RedditRetriever(subreddit, outfile, startdate, enddate)
+    rr.run()
 
 
 show_logo()
