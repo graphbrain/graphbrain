@@ -134,6 +134,15 @@ def generate_parsed_sentences_file(ctx):
 
 @cli.command()
 @click.pass_context
+def reader_tests(ctx):
+    hg = HyperGraph(ctx.obj)
+    rt = ReaderTests(hg)
+    rt.run_tests(ctx.obj['infile'])
+    click.echo('done.')
+
+
+@cli.command()
+@click.pass_context
 def ui(ctx):
     hg = HyperGraph(ctx.obj)
     start_ui(hg)

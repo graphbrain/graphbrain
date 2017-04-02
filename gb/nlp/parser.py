@@ -56,7 +56,7 @@ class Parser:
     def parse_text(self, text):
         parsed_data = self.parser(text)
 
-        print(parsed_data)
+        # print(parsed_data)
 
         sents = []
         for span in parsed_data.sents:

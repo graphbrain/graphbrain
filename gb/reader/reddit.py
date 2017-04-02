@@ -29,7 +29,6 @@ class RedditReader(object):
         self.extractor = Extractor(hg)
 
     def process_post(self, post):
-        print(post['title'])
         parses = self.extractor.read_text(post['title'])
         for p in parses:
             print(p[1].main_edge)
