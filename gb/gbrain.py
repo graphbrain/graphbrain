@@ -143,6 +143,15 @@ def reader_tests(ctx):
 
 @cli.command()
 @click.pass_context
+def reader_debug(ctx):
+    hg = HyperGraph(ctx.obj)
+    rt = ReaderTests(hg)
+    rt.reader_debug(ctx.obj['infile'])
+    click.echo('done.')
+
+
+@cli.command()
+@click.pass_context
 def ui(ctx):
     hg = HyperGraph(ctx.obj)
     start_ui(hg)
