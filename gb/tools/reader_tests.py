@@ -19,6 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import click
 from gb.reader.extractor import Extractor
 
 
@@ -83,11 +84,14 @@ class ReaderTests(object):
             if result in self.cases[sentence]:
                 correct += 1
             else:
-                print('failed test for sentence:\n%s' % sentence)
-                print('expected:')
+                click.echo()
+                click.echo('failed test for sentence:')
+                click.echo(click.style(sentence, fg='cyan'))
+                click.echo('expected:')
                 for parse in self.cases[sentence]:
-                    print(parse)
-                print('result:\n%s' % result)
+                    click.echo(click.style(parse, fg='green'))
+                    click.echo('result:')
+                    click.echo(click.style(result, fg='red'))
         total = len(self.cases)
         percentage = (float(correct) / float(total)) * 100.
         print('%s out of %s correct parses (%.2f%%)' % (correct, total, percentage))
