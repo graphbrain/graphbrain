@@ -19,7 +19,6 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import print_function
 from gb.nlp.parser import Parser
 from gb.reader.parser_output import ParserOutput
 from gb.reader.semantic_tree import Position, Tree

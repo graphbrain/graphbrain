@@ -31,7 +31,7 @@ class ReaderTests(object):
     def __init__(self, hg):
         self.hg = hg
         self.extractor = Extractor(hg, stages=('alpha', 'beta-simple', 'gamma', 'delta'))
-        self.extractor.debug = True
+        # self.extractor.debug = True
         self.cases = None
 
     def generate_parsed_sentences_file(self, infile, outfile):
@@ -53,6 +53,7 @@ class ReaderTests(object):
         self.cases = {}
         state = FIND_CASE
         cur_sentence = None
+        line_number = 0
         for line in content:
             if len(line) > 0:
                 if line[0] == ':':
@@ -62,8 +63,7 @@ class ReaderTests(object):
                     elif key == 'parses':
                         state = READ_PARSES
                     else:
-                        # error!
-                        pass
+                        raise RuntimeError('Unkown keyword in reader test file: %s (line %s)' % (key, str(line_number)))
                 else:
                     if state == READ_SENTENCE:
                         cur_sentence = line
@@ -71,5 +71,23 @@ class ReaderTests(object):
                     elif state == READ_PARSES:
                         self.cases[cur_sentence].append(line)
                     else:
-                        # error!
-                        pass
+                        raise RuntimeError('Malformed reader test file (line %s)' % str(line_number))
+            line_number += 1
+
+    def run_tests(self, infile):
+        self.read_dataset(infile)
+        correct = 0
+        for sentence in self.cases:
+            sent_parses = self.extractor.read_text(sentence)
+            result = str(sent_parses[0][1].tree)
+            if result in self.cases[sentence]:
+                correct += 1
+            else:
+                print('failed test for sentence:\n%s' % sentence)
+                print('expected:')
+                for parse in self.cases[sentence]:
+                    print(parse)
+                print('result:\n%s' % result)
+        total = len(self.cases)
+        percentage = (float(correct) / float(total)) * 100.
+        print('%s out of %s correct parses (%.2f%%)' % (correct, total, percentage))
