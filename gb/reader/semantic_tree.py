@@ -86,6 +86,9 @@ class Tree(object):
         elem = self.get(elem_id)
         return elem.clone().id
 
+    def to_hyperedge(self, namespace=True):
+        return self.root().to_hyperedge(namespace=namespace)
+
     def __str__(self):
         return str(self.get(self.root_id))
 
@@ -170,7 +173,7 @@ class Element(object):
         # throw exception
         pass
 
-    def to_hyperedge(self):
+    def to_hyperedge(self, namespace=True):
         # throw exception
         pass
 
@@ -245,7 +248,9 @@ class Leaf(Element):
         return [self]
 
     # override
-    def to_hyperedge(self):
+    def to_hyperedge(self, namespace=True):
+        if not namespace:
+            return sym.str2symbol(self.token.word)
         return sym.build((self.token.word, self.namespace))
 
     # override
@@ -464,14 +469,16 @@ class Node(Element):
         return leafs
 
     # override
-    def to_hyperedge(self):
+    def to_hyperedge(self, namespace=True):
         if self.compound:
             words = [leaf.token.word for leaf in self.to_leafs()]
-            if not self.namespace:
+            if not namespace:
+                return sym.str2symbol('_'.join(words))
+            elif not self.namespace:
                 self.generate_namespace()
             return sym.build(('_'.join(words), self.namespace))
         else:
-            return tuple([child.to_hyperedge() for child in self.children()])
+            return tuple([child.to_hyperedge(namespace=namespace) for child in self.children()])
 
     # override
     def generate_namespace(self):
