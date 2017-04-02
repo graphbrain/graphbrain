@@ -95,3 +95,9 @@ class ReaderTests(object):
         total = len(self.cases)
         percentage = (float(correct) / float(total)) * 100.
         print('%s out of %s correct parses (%.2f%%)' % (correct, total, percentage))
+
+    def reader_debug(self, infile):
+        with open(infile, 'r') as f:
+            text = f.read()
+        self.extractor.debug = True
+        self.extractor.read_text(text)
