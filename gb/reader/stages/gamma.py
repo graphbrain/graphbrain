@@ -19,7 +19,6 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from gb.reader.semantic_tree import Position
 import gb.reader.stages.common as co
 
 
@@ -35,12 +34,12 @@ class GammaStage(object):
             self.combine_relationships(first.id, first_child.id)
             return second.id
 
-        second.add_to_first_child(first.id, first.position  )
+        second.add_to_first_child(first.id, first.position)
         first_child = self.ouput.tree.get(second.children_ids[0])
         first_child.compound = True
         return second.id
 
-    def process_entity1(self, entity_id):
+    def process_entity_inner(self, entity_id):
         entity = self.ouput.tree.get(entity_id)
 
         # create trivial compounds
@@ -71,7 +70,7 @@ class GammaStage(object):
                 entity.children_ids[i] = self.process_entity(entity.children_ids[i])
 
         eid = entity_id
-        eid = self.process_entity1(eid)
+        eid = self.process_entity_inner(eid)
         return eid
 
     def process(self):

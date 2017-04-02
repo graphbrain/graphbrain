@@ -103,7 +103,7 @@ def is_root(sym):
 
 def build(pts):
     """Build a concept symbol for a collection of strings."""
-    return '/'.join([symbol2str(p) for p in pts])
+    return '/'.join([str2symbol(p) for p in pts])
 
 
 def str2symbol(s):
