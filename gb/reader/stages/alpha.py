@@ -24,11 +24,23 @@ from gb.reader.parser_output import ParserOutput
 from gb.reader.semantic_tree import Position, Tree
 
 
+def nest(token, parent_elem):
+    if token.dep in ['aux', 'auxpass', 'cc', 'agent', 'det', 'advmod', 'amod', 'poss', 'nummod', 'prt']:
+        return True
+    if (token.dep == 'prep') and (not parent_elem.has_pos('VERB')):
+        return True
+    return False
+
+
+def add_to_first(token):
+    if token.dep in ['pcomp', 'compound']:
+        return True
+    return False
+
+
 class AlphaStage(object):
     def __init__(self):
         self.tree = Tree()
-        self.nest_deps = ['aux', 'auxpass', 'cc', 'agent', 'det', 'advmod', 'amod', 'poss', 'nummod', 'prt']
-        self.add_to_first_deps = ['pcomp', 'compound']
 
     def process_child_token(self, parent_elem_id, token, root_id, pos):
         # ignore
@@ -38,7 +50,7 @@ class AlphaStage(object):
         parent_elem = self.tree.get(parent_elem_id)
 
         # nest
-        if (token.dep in self.nest_deps) or ((token.dep == 'prep') and (not parent_elem.has_pos('VERB'))):
+        if nest(token, parent_elem):
             child_elem_id = self.process_token(token, pos, root_id)
             self.tree.get(root_id).nest(child_elem_id)
             self.tree.get(root_id).new_layer()
@@ -47,7 +59,7 @@ class AlphaStage(object):
         child_elem_id = self.process_token(token, pos)
 
         # add to parent's first child
-        if token.dep in self.add_to_first_deps:
+        if add_to_first(token):
             parent_elem.add_to_first_child(child_elem_id, pos)
             return
 
