@@ -80,7 +80,7 @@ class ReaderTests(object):
         correct = 0
         for sentence in self.cases:
             sent_parses = self.extractor.read_text(sentence)
-            result = str(sent_parses[0][1].tree)
+            result = sent_parses[0][1].tree.to_hyperedge_str(with_namespaces=False)
             if result in self.cases[sentence]:
                 correct += 1
             else:
