@@ -34,9 +34,18 @@ def token2label_tree(token, prefix='*'):
     return node_label(token, prefix), OrderedDict(children)
 
 
+def assign_depths(token, depth):
+    token.depth = depth
+    for leaf in token.left_children:
+        assign_depths(leaf, depth + 1)
+    for leaf in token.right_children:
+        assign_depths(leaf, depth + 1)
+
+
 class Sentence:
     def __init__(self, tokens):
         self.tokens = tokens
+        assign_depths(self.root(), 0)
 
     def root(self):
         for token in self.tokens:

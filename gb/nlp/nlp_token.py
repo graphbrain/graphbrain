@@ -24,6 +24,7 @@ class Token:
 
     def __init__(self, word=None):
         self.word = word
+        self.depth = -1
         self.lemma = None
         self.shape = None
         self.logprob = None
@@ -69,7 +70,7 @@ class Token:
         return NotImplemented
 
     def __str__(self):
-        return '%s/%s (%s) {%s}' % (self.word.strip(), self.pos, self.dep, self.entity_type)
+        return '%s/%s (%s) {%s} [%s]' % (self.word.strip(), self.pos, self.dep, self.entity_type, self.depth)
 
     def __repr__(self):
         return self.__str__()
