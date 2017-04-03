@@ -10,6 +10,7 @@ Telmo is going to the gym.
 Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate.
 :parses
 ((influenced_due_to is_by) (its (in location european_plain)) berlin (temperate (seasonal climate)))
+((due_to_influenced is_by) (its (in location european_plain)) berlin (temperate (seasonal climate)))
 :sentence
 Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan.
 :parses

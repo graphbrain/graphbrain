@@ -31,4 +31,4 @@ def is_relationship(entity, shallow=False, depth=0):
                 return False
         return True
     else:
-        return (entity.token.pos in REL_POS) and (entity.token.dep != 'conj') and (entity.token.dep != 'acl') and (entity.token.dep != 'amod')
+        return (entity.token.pos in REL_POS) and (entity.token.dep != 'conj') and (entity.token.dep != 'amod')
