@@ -20,6 +20,7 @@
 
 
 import gb.hypergraph.symbol as sym
+import gb.hypergraph.edge as ed
 
 
 LEAF = 0
@@ -86,8 +87,11 @@ class Tree(object):
         elem = self.get(elem_id)
         return elem.clone().id
 
-    def to_hyperedge(self, namespace=True):
-        return self.root().to_hyperedge(namespace=namespace)
+    def to_hyperedge(self, with_namespaces=True):
+        return self.root().to_hyperedge(with_namespaces=with_namespaces)
+
+    def to_hyperedge_str(self, with_namespaces=True):
+        return ed.edge2str(self.to_hyperedge(with_namespaces=with_namespaces))
 
     def __str__(self):
         return str(self.get(self.root_id))
@@ -173,7 +177,7 @@ class Element(object):
         # throw exception
         pass
 
-    def to_hyperedge(self, namespace=True):
+    def to_hyperedge(self, with_namespaces=True):
         # throw exception
         pass
 
@@ -248,8 +252,8 @@ class Leaf(Element):
         return [self]
 
     # override
-    def to_hyperedge(self, namespace=True):
-        if not namespace:
+    def to_hyperedge(self, with_namespaces=True):
+        if not with_namespaces:
             return sym.str2symbol(self.token.word)
         return sym.build((self.token.word, self.namespace))
 
@@ -468,17 +472,23 @@ class Node(Element):
             leafs += child.to_leafs()
         return leafs
 
+    # replicate sequence in original sentence
+    def natural_leaf_sequence(self):
+        leafs = self.to_leafs()
+        leafs.sort(key=lambda x: x.token.position_in_sentence)
+        return leafs
+
     # override
-    def to_hyperedge(self, namespace=True):
+    def to_hyperedge(self, with_namespaces=True):
         if self.compound:
-            words = [leaf.token.word for leaf in self.to_leafs()]
-            if not namespace:
+            words = [leaf.token.word for leaf in self.natural_leaf_sequence()]
+            if not with_namespaces:
                 return sym.str2symbol('_'.join(words))
             elif not self.namespace:
                 self.generate_namespace()
             return sym.build(('_'.join(words), self.namespace))
         else:
-            return tuple([child.to_hyperedge(namespace=namespace) for child in self.children()])
+            return tuple([child.to_hyperedge(with_namespaces=with_namespaces) for child in self.children()])
 
     # override
     def generate_namespace(self):

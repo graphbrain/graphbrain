@@ -20,7 +20,6 @@
 
 
 import gb.hypergraph.hypergraph as hyperg
-import gb.hypergraph.edge as ed
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
 from gb.reader.stages.alpha import AlphaStage
@@ -90,7 +89,7 @@ class Extractor(object):
             stage = self.create_stage(name, last_stage_output)
             self.debug_msg('executing %s stage...' % name)
             last_stage_output = stage.process()
-            output = str(ed.edge2str(last_stage_output.tree.to_hyperedge(namespace=False)))
+            output = last_stage_output.tree.to_hyperedge_str(with_namespaces=False)
             self.outputs.append(output)
             self.debug_msg(output)
 
