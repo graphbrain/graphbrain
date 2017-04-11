@@ -24,6 +24,12 @@ from gb.reader.parser_output import ParserOutput
 from gb.reader.semantic_tree import Position, Tree
 
 
+def ignore(token):
+    if (len(token.dep) == 0) or (token.dep == 'punct') or (token.word == "'"):
+        return True
+    return False
+
+
 def nest(token, parent_elem):
     if token.dep in ['aux', 'auxpass', 'cc', 'agent', 'det', 'advmod', 'amod', 'poss', 'nummod', 'prt']:
         return True
@@ -46,7 +52,7 @@ class AlphaStage(object):
 
     def process_child_token(self, parent_elem_id, token, root_id, pos):
         # ignore
-        if (len(token.dep) == 0) or (token.dep == 'punct'):
+        if ignore(token):
             return
 
         parent_elem = self.tree.get(parent_elem_id)
