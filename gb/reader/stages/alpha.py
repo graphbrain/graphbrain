@@ -32,8 +32,10 @@ def nest(token, parent_elem):
     return False
 
 
-def add_to_first(token):
+def add_to_first(token, parent_elem):
     if token.dep in ['pcomp', 'compound']:
+        return True
+    if parent_elem.has_dep('poss') and token.dep == 'case':
         return True
     return False
 
@@ -59,7 +61,7 @@ class AlphaStage(object):
         child_elem_id = self.process_token(token, pos)
 
         # add to parent's first child
-        if add_to_first(token):
+        if add_to_first(token, parent_elem):
             parent_elem.add_to_first_child(child_elem_id, pos)
             return
 

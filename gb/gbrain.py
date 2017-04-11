@@ -30,6 +30,7 @@ from gb.tools.shell import Shell
 from gb.tools.reader_tests import ReaderTests
 from gb.ui.server import start_ui
 from gb.retrievers.reddit import RedditRetriever
+from gb.reader.reddit import RedditReader
 
 
 @click.group()
@@ -166,6 +167,14 @@ def reddit_retriever(ctx):
     enddate = ctx.obj['enddate']
     rr = RedditRetriever(subreddit, outfile, startdate, enddate)
     rr.run()
+
+
+@cli.command()
+@click.pass_context
+def reddit_reader(ctx):
+    hg = HyperGraph(ctx.obj)
+    infile = ctx.obj['infile']
+    RedditReader(hg).read_file(infile)
 
 
 show_logo()
