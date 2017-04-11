@@ -31,7 +31,8 @@ class RedditReader(object):
     def process_post(self, post):
         parses = self.extractor.read_text(post['title'])
         for p in parses:
-            print(p[1].main_edge)
+            print(p[0])
+            print(p[1].tree.to_hyperedge_str())
 
     def read_file(self, filename):
         with open(filename, 'r') as f:
@@ -42,5 +43,5 @@ class RedditReader(object):
 
 if __name__ == '__main__':
     from gb.hypergraph.hypergraph import HyperGraph
-    hg = HyperGraph({'backend': 'leveldb', 'hg': 'wikidata.hg'})
-    RedditReader(hg).read_file('reddit-wordlnews-27032017-28032017.json')
+    hgr = HyperGraph({'backend': 'leveldb', 'hg': 'wikidata.hg'})
+    RedditReader(hgr).read_file('reddit-wordlnews-27032017-28032017.json')
