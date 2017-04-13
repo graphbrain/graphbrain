@@ -31,3 +31,7 @@ OpenCola is a brand of open-source cola, where the instructions for making it ar
 2016 Nobel Prize in Physiology or Medicine Is Awarded to Yoshinori Ohsumi.
 :parses
 (is_awarded_to (2016 (in nobel_prize (or (physiology medicine)))) yoshinori_ohsumi)
+:sentence
+France's Le Pen says people no longer want the EU
+:parses
+((says no_longer_want) (+poss france le_pen) people eu)

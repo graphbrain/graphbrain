@@ -31,4 +31,15 @@ def is_relationship(entity, shallow=False, depth=0):
                 return False
         return True
     else:
-        return (entity.token.pos in REL_POS) and (entity.token.dep != 'conj') and (entity.token.dep != 'amod')
+        return (entity.token.pos in REL_POS)\
+               and (entity.token.dep != 'conj')\
+               and (entity.token.dep != 'amod')\
+               and (entity.token.dep != 'case')
+
+
+def is_possessive(entity):
+    if entity.is_node():
+        return False
+    if entity.token.pos == 'PART' and entity.token.dep == 'case':
+        return True
+    return False
