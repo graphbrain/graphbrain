@@ -165,6 +165,10 @@ class Element(object):
         # throw exception
         pass
 
+    def has_dep_in(self, deps, shallow=False):
+        # throw exception
+        pass
+
     def arity(self):
         # throw exception
         pass
@@ -238,6 +242,9 @@ class Leaf(Element):
     # override
     def has_dep(self, dep, shallow=False):
         return self.token.dep == dep
+
+    def has_dep_in(self, deps, shallow=False):
+        return self.token.dep in deps
 
     # override
     def arity(self):
@@ -436,6 +443,14 @@ class Node(Element):
         for child in self.children():
             if (not shallow) or child.is_leaf():
                 if child.has_dep(dep):
+                    return True
+        return False
+
+    # override
+    def has_dep_in(self, deps, shallow=False):
+        for child in self.children():
+            if (not shallow) or child.is_leaf():
+                if child.has_dep_in(deps):
                     return True
         return False
 

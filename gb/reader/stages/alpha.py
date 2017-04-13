@@ -31,18 +31,22 @@ def ignore(token):
 
 
 def nest(token, parent_elem):
-    if token.dep in ['aux', 'auxpass', 'cc', 'agent', 'det', 'advmod', 'amod', 'poss', 'nummod', 'prt']:
+    if token.dep in ['aux', 'auxpass', 'cc', 'agent', 'det', 'advmod', 'amod', 'poss', 'nummod', 'prt', 'neg']:
         return True
     if (token.dep == 'prep') and (not parent_elem.has_pos('VERB')):
+        return True
+    if parent_elem.has_dep('poss') and token.dep == 'case':
         return True
     return False
 
 
 def add_to_first(token, parent_elem):
-    if token.dep in ['pcomp', 'compound']:
+    if token.dep == 'pcomp':
         return True
-    if parent_elem.has_dep('poss') and token.dep == 'case':
+    if token.dep == 'compound' and parent_elem.has_dep_in(['nsubj', 'pobj']):
         return True
+    # if parent_elem.has_dep('poss') and token.dep == 'case':
+    #     return True
     return False
 
 
