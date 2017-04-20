@@ -27,10 +27,11 @@ from gb.reader.stages.beta import BetaStage
 from gb.reader.stages.beta_simple import BetaStageSimple
 from gb.reader.stages.gamma import GammaStage
 from gb.reader.stages.delta import DeltaStage
+from gb.reader.stages.epsilon import EpsilonStage
 
 
 class Extractor(object):
-    def __init__(self, hg, stages=('alpha', 'beta', 'gamma', 'delta')):
+    def __init__(self, hg, stages=('alpha', 'beta', 'gamma', 'delta', 'epsilon')):
         self.hg = hg
         self.stages = stages
         self.parser = None
@@ -49,6 +50,8 @@ class Extractor(object):
             return GammaStage(output)
         elif name == 'delta':
             return DeltaStage(output)
+        elif name == 'epsilon':
+            return EpsilonStage(output)
         else:
             raise RuntimeError('unknnown stage name: %s' % name)
 

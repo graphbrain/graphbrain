@@ -45,9 +45,9 @@ class Parser:
             token.left_children = [self.__spacy2token(t) for t in stoken.lefts]
             token.right_children = [self.__spacy2token(t) for t in stoken.rights]
             for t in token.left_children:
-                t.parent = self
+                t.parent = token
             for t in token.right_children:
-                t.parent = self
+                t.parent = token
             token.entity_type = stoken.ent_type_
             self.token_table[stoken] = token
 

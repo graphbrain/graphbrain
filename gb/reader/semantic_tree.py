@@ -104,6 +104,7 @@ class Element(object):
         self.tree = None
         self.namespace = None
         self.position = None
+        self.connector = False
 
     def as_label_list(self, lemmas=False):
         # throw exception
@@ -121,6 +122,9 @@ class Element(object):
 
     def is_compound(self):
         return True
+
+    def is_connector(self):
+        return self.connector
 
     def is_terminal(self):
         return self.is_leaf() or self.is_compound()
@@ -261,8 +265,12 @@ class Leaf(Element):
     # override
     def to_hyperedge(self, with_namespaces=True):
         if not with_namespaces:
-            return sym.str2symbol(self.token.word)
-        return sym.build((self.token.word, self.namespace))
+            s = sym.str2symbol(self.token.word)
+        else:
+            s = sym.build((self.token.word, self.namespace))
+        if self.connector:
+            s = '+%s' % s
+        return s
 
     # override
     def generate_namespace(self):
@@ -276,7 +284,10 @@ class Leaf(Element):
         return NotImplemented
 
     def __str__(self):
-        return self.token.word
+        s = self.token.word
+        if self.connector:
+            s = '+%s' % s
+        return s
 
 
 class Node(Element):
@@ -296,6 +307,7 @@ class Node(Element):
         new_node.__compound = self.__compound
         new_node.namespace = self.namespace
         new_node.position = self.position
+        new_node.connector = self.connector
         return new_node
 
     # override
@@ -498,10 +510,14 @@ class Node(Element):
         if self.compound:
             words = [leaf.token.word for leaf in self.natural_leaf_sequence()]
             if not with_namespaces:
-                return sym.str2symbol('_'.join(words))
-            elif not self.namespace:
-                self.generate_namespace()
-            return sym.build(('_'.join(words), self.namespace))
+                s = sym.str2symbol('_'.join(words))
+            else:
+                if not self.namespace:
+                    self.generate_namespace()
+                s = sym.build(('_'.join(words), self.namespace))
+            if self.connector:
+                s = '+%s' % s
+            return s
         else:
             return tuple([child.to_hyperedge(with_namespaces=with_namespaces) for child in self.children()])
 
@@ -526,6 +542,9 @@ class Node(Element):
     def __str__(self):
         strs = [str(self.tree.get(child_id)) for child_id in self.children_ids]
         if self.compound:
-            return '_'.join(strs)
+            s = '_'.join(strs)
+            if self.connector:
+                s = '+%s' % s
+            return s
         else:
             return '(%s)' % ' '.join(strs)
