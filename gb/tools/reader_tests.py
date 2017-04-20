@@ -31,7 +31,7 @@ READ_PARSES = 2
 class ReaderTests(object):
     def __init__(self, hg):
         self.hg = hg
-        self.extractor = Extractor(hg, stages=('alpha', 'beta-simple', 'gamma', 'delta'))
+        self.extractor = Extractor(hg, stages=('alpha', 'beta-simple', 'gamma', 'delta', 'epsilon'))
         # self.extractor.debug = True
         self.cases = None
 

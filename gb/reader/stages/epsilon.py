@@ -19,47 +19,65 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from gb.nlp.nlp_token import Token
 import gb.reader.stages.common as co
 
 
-class GammaStage(object):
+def flatten_concept(edge):
+    children_ids = []
+    for child in edge.children():
+        if child.is_leaf() or child.compound:
+            children_ids.append(child.id)
+        else:
+            for cid in child.children_ids[1:]:
+                children_ids.append(cid)
+    edge.children_ids = children_ids
+    return edge
+
+
+class EpsilonStage(object):
     def __init__(self, output):
         self.output = output
 
-    def combine_relationships(self, first_id, second_id):
-        first = self.output.tree.get(first_id)
-        second = self.output.tree.get(second_id)
-        first_child = self.output.tree.get(second.children_ids[0])
-        if first_child.is_node() and (not first_child.compound):
-            self.combine_relationships(first.id, first_child.id)
-            return second.id
+    def make_combinator_leaf(self):
+        leaf = self.output.tree.create_leaf(Token(''))
+        leaf.connector = True
+        return leaf
 
-        second.add_to_first_child(first.id, first.position)
-        first_child = self.output.tree.get(second.children_ids[0])
-        first_child.compound = True
-        return second.id
+    def build_concept(self, connector_id, edge_id):
+        edge = self.output.tree.get(edge_id)
+        edge.children_ids.insert(0, connector_id)
+        return edge_id
 
     def process_entity_inner(self, entity_id):
         entity = self.output.tree.get(entity_id)
 
-        # create trivial compounds
-        if entity.is_node() and co.is_relationship(entity, shallow=True):
-            entity.compound = True
-            return entity_id
-
         # process node
         if entity.is_node() and not entity.compound:
+            # build concept
+            if len(entity.children_ids) > 1:
+                if co.is_concept(entity):
+                    self.build_concept(self.make_combinator_leaf().id, entity.id)
+                    #flatten_concept(entity)
+                    return entity.id
             first = entity.get_child(0)
+            # make connector
+            if first.is_leaf() and (not co.is_relationship(first)):
+                first.connector = True
             if len(entity.children_ids) == 2:
+                if co.is_relationship(first) and (not co.is_relationship(entity)):
+                    first.connector = True
                 second = entity.get_child(1)
-                if first.is_leaf():
-                    # remove
-                    if (first.token.pos == 'DET') and (first.token.lemma in ('the', 'an', 'a')):
-                        return second.id
                 if second.is_node():
-                    # combine relationships
-                    if not second.compound and co.is_relationship(first) and co.is_relationship(second.children()[0]):
-                        return self.combine_relationships(first.id, second.id)
+                    # (connector (+ a b)) -> (connector a b)
+                    if first.is_leaf()\
+                            and not co.is_qualifier(first)\
+                            and first.is_connector()\
+                            and first.token.word != '':
+                        second_rel = second.children()[0]
+                        if second_rel.is_leaf() and second_rel.is_connector() and second_rel.token.word == '':
+                            second.children_ids[0] = first.id
+                            return second.id
 
         return entity_id
 
