@@ -42,6 +42,7 @@ class EpsilonStage(object):
     def make_combinator_leaf(self):
         leaf = self.output.tree.create_leaf(Token(''))
         leaf.connector = True
+        leaf.namespace = 'gb'
         return leaf
 
     def build_concept(self, connector_id, edge_id):
@@ -58,7 +59,6 @@ class EpsilonStage(object):
             if len(entity.children_ids) > 1:
                 if co.is_concept(entity):
                     self.build_concept(self.make_combinator_leaf().id, entity.id)
-                    #flatten_concept(entity)
                     return entity.id
             first = entity.get_child(0)
             # make connector
