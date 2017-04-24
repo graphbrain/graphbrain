@@ -96,6 +96,8 @@ class Extractor(object):
             self.outputs.append(output)
             self.debug_msg(output)
 
+        last_stage_output.main_edge = last_stage_output.tree.to_hyperedge()
+
         return last_stage_output
 
 

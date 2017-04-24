@@ -340,8 +340,9 @@ class Node(Element):
 
     # override
     def as_text(self):
-        label_list = self.as_label_list()
-        return ' '.join(label_list)
+        words = [leaf.token.word for leaf in self.natural_leaf_sequence()]
+        words = [word for word in words if len(word) > 0]
+        return ' '.join(words)
 
     def get_child(self, i):
         return self.tree.get(self.children_ids[i])
