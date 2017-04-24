@@ -20,6 +20,9 @@
 
 
 from gb.nlp.nlp_token import Token
+import gb.constants as cons
+import gb.hypergraph.symbol as sym
+import gb.hypergraph.edge as ed
 import gb.reader.stages.common as co
 
 
@@ -92,6 +95,23 @@ class EpsilonStage(object):
         eid = self.process_entity_inner(eid)
         return eid
 
+    def generate_synonyms(self, entity_id):
+        # process children first
+        entity = self.output.tree.get(entity_id)
+        if entity.is_node():
+            for i in range(len(entity.children_ids)):
+                self.generate_synonyms(entity.children_ids[i])
+
+        entity = self.output.tree.get(entity_id)
+        if entity.is_node() and entity.children()[0].is_connector():
+            edge = entity.to_hyperedge()
+            text = entity.as_text()
+            ns = 'gb%s' % sym.hashed(ed.edge2str(edge))
+            symbol = sym.build([text, ns])
+            syn_edge = [cons.are_synonyms, edge, symbol]
+            self.output.edges.append(syn_edge)
+
     def process(self):
         self.output.tree.root_id = self.process_entity(self.output.tree.root_id)
+        self.generate_synonyms(self.output.tree.root_id)
         return self.output

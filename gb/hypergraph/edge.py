@@ -89,12 +89,25 @@ def parsed_token(token):
             return float(token)
 
 
+def edge_str_has_outer_parens(edge_str):
+    """Check if string representation of edge is delimited by outer parenthesis."""
+    depth = 0
+    for i in range(len(edge_str) - 1):
+        if edge_str[i] == '(':
+            depth += 1
+        elif edge_str[i] == ')':
+            depth -= 1
+        if depth == 0:
+            return False
+    return True
+
+
 def split_edge_str(edge_str):
     """Shallow split into tokens of a string representation of an edge,
     with or without outer parenthesis."""
 
     edge_inner_str = edge_str
-    if (edge_str[0] == '(') and (edge_str[-1] == ')'):
+    if edge_str_has_outer_parens(edge_str):
         edge_inner_str = edge_str[1:-1]
     stoks = edge_inner_str.split()
 
