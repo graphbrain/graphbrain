@@ -19,6 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import logging
 import gb.hypergraph.hypergraph as hyperg
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
@@ -56,6 +57,7 @@ class Extractor(object):
             raise RuntimeError('unknnown stage name: %s' % name)
 
     def debug_msg(self, msg):
+        logging.info(msg)
         if self.debug:
             print(msg)
 
