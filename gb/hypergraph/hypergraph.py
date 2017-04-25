@@ -54,12 +54,16 @@ class HyperGraph(object):
     def add(self, edge, timestamp=-1):
         """Adds and edge to the hypergraph if it does not exist yet."""
         logging.debug('[hypergraph add()] %s ts: %s' % (ed.edge2str(edge), timestamp))
-        return self.backend.add(edge, timestamp)
+        if isinstance(edge, (list, tuple)):
+            return self.backend.add(edge, timestamp)
+        else:
+            return edge
 
     def remove(self, edge):
         """Removes and edge from the hypergraph."""
         logging.debug('[hypergraph remove()] %s' % ed.edge2str(edge))
-        self.backend.remove(edge)
+        if isinstance(edge, (list, tuple)):
+            self.backend.remove(edge)
 
     def pattern2edges(self, pattern):
         """Return all the edges that match a pattern.
