@@ -19,6 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import logging
 import click
 import gb.constants as const
 from gb.hypergraph.hypergraph import HyperGraph
@@ -41,8 +42,9 @@ from gb.reader.reddit import RedditReader
 @click.option('--startdate', help='Start date.')
 @click.option('--enddate', help='End date.')
 @click.option('--source', help='Source can have multiple meanings.')
+@click.option('--log', help='Logging level.', default='WARNING')
 @click.pass_context
-def cli(ctx, backend, hg, infile, outfile, startdate, enddate, source):
+def cli(ctx, backend, hg, infile, outfile, startdate, enddate, source, log):
     ctx.obj = {
         'backend': backend,
         'hg': hg,
@@ -50,8 +52,15 @@ def cli(ctx, backend, hg, infile, outfile, startdate, enddate, source):
         'outfile': outfile,
         'startdate': startdate,
         'enddate': enddate,
-        'source': source
+        'source': source,
+        'log': log
     }
+
+    # configure logging
+    numeric_level = getattr(logging, log.upper(), None)
+    if not isinstance(numeric_level, int):
+        raise ValueError('Invalid log level: %s' % log)
+    logging.basicConfig(level=numeric_level)
 
 
 def show_logo():
