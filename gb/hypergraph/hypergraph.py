@@ -19,6 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import logging
 import gb.hypergraph.edge as ed
 from gb.hypergraph.null import Null
 from gb.hypergraph.leveldb import LevelDB
@@ -47,73 +48,93 @@ class HyperGraph(object):
 
     def exists(self, vertex):
         """Checks if the given edge exists in the hypergraph."""
+        logging.debug('[hypergraph exists()] %s' % ed.edge2str(vertex))
         return self.backend.exists(vertex)
 
     def add(self, edge, timestamp=-1):
         """Adds and edge to the hypergraph if it does not exist yet."""
+        logging.debug('[hypergraph add()] %s ts: %s' % (ed.edge2str(edge), timestamp))
         return self.backend.add(edge, timestamp)
 
     def remove(self, edge):
         """Removes and edge from the hypergraph."""
+        logging.debug('[hypergraph remove()] %s' % ed.edge2str(edge))
         self.backend.remove(edge)
 
     def pattern2edges(self, pattern):
         """Return all the edges that match a pattern.
         A pattern is a collection of entity ids and wildcards (None)."""
+        logging.debug('[hypergraph pattern2edges()] %s' % ed.edge2str(pattern))
         return self.backend.pattern2edges(pattern)
 
     def star(self, center):
         """Return all the edges that contain a given entity.
         Entity can be atomic or an edge."""
+        logging.debug('[hypergraph star()] %s' % ed.edge2str(center))
         return self.backend.star(center)
 
     def symbols_with_root(self, root):
         """Find all symbols with the given root."""
+        logging.debug('[hypergraph symbols_with_root()] %s' % ed.edge2str(root))
         return self.backend.symbols_with_root(root)
 
     def edges_with_symbols(self, symbols, root=None):
         """Find all edges containing the given symbols, and optionally a given root"""
+        logging.debug('[hypergraph edges_with_symbols()] %s root: %s' % (symbols, ed.edge2str(root)))
         return self.backend.edges_with_symbols(symbols, root)
 
     def destroy(self):
         """Erase the hypergraph."""
+        logging.debug('[hypergraph destroy()]')
         self.backend.destroy()
 
     def set_metric(self, vertex, metric, value):
         """Sets the value of a metric."""
+        logging.debug('[hypergraph set_metric()] %s %s=%s' % (ed.edge2str(vertex), metric, value))
         return self.backend.set_metric(vertex, metric, value)
 
     def inc_metric(self, vertex, metric):
         """Increments a metric of a vertex."""
+        logging.debug('[hypergraph inc_metric()] %s metric: %s' % (ed.edge2str(vertex), metric))
         return self.backend.inc_metric(vertex, metric)
 
     def dec_metric(self, vertex, metric):
         """Increments a metric of a vertex."""
+        logging.debug('[hypergraph dec_metric()] %s metric: %s' % (ed.edge2str(vertex), metric))
         return self.backend.dec_metric(vertex, metric)
 
     def get_int_metric(self, vertex, metric, or_else=None):
         """Returns value of metric as integer value."""
+        logging.debug('[hypergraph get_int_metric()] %s metric: %s; or_else: %s'
+                      % (ed.edge2str(vertex), metric, or_else))
         return self.backend.get_int_metric(vertex, metric, or_else)
 
     def get_float_metric(self, vertex, metric, or_else=None):
         """Returns value of metric as float value."""
+        logging.debug('[hypergraph get_float_metric()] %s metric: %s; or_else: %s'
+                      % (ed.edge2str(vertex), metric, or_else))
         return self.backend.get_float_metric(vertex, metric, or_else)
 
     def degree(self, vertex):
         """Returns the degree of a vertex."""
+        logging.debug('[hypergraph degree()] %s' % ed.edge2str(vertex))
         return self.backend.degree(vertex)
 
     def timestamp(self, vertex):
         """Returns the timestamp of a vertex."""
+        logging.debug('[hypergraph timestamp()] %s' % ed.edge2str(vertex))
         return self.backend.timestamp(vertex)
 
     def remove_by_pattern(self, pattern):
         """Removes from the hypergraph all edges that match the pattern."""
+        logging.debug('[hypergraph remove_by_pattern()] %s' % ed.edge2str(pattern))
         edges = self.pattern2edges(pattern)
         for edge in edges:
             self.remove(edge)
 
     def ego(self, center):
+        """Returns all symbols directly connected to centre by hyperedges."""
+        logging.debug('[hypergraph ego()] %s' % ed.edge2str(center))
         edges = self.star(center)
         symbols = set()
         for edge in edges:
@@ -125,11 +146,13 @@ class HyperGraph(object):
         """A belif is a fact with a source. The fact is created as a normal edge
            if it does not exist yet. Another edge is created to assign the fact to
            the source."""
+        logging.debug('[hypergraph add_belief()] %s source: %s; ts: %s' % (ed.edge2str(edge), source, timestamp))
         self.add(edge, timestamp)
         self.add((const.source, edge, source), timestamp)
 
     def sources(self, edge):
         """Set of sources (nodes) that support a statement (edge)."""
+        logging.debug('[hypergraph sources()] %s' % ed.edge2str(edge))
         edges = self.pattern2edges((const.source, edge, None))
         sources = [edge[2] for edge in edges]
         return set(sources)
@@ -138,28 +161,34 @@ class HyperGraph(object):
         """A belif is a fact with a source. The link from the source to the fact
            is removed. If no more sources support the fact, then the fact is also
            removed."""
+        logging.debug('[hypergraph remove_belief()] %s source: %s' % (ed.edge2str(edge), source))
         self.remove((const.source, edge, source))
         if len(self.sources(edge)) == 0:
             self.remove(edge)
 
     def all(self):
         """Returns a lazy sequence of all the vertices in the hypergraph."""
+        logging.debug('[hypergraph all()]')
         return self.backend.all()
 
     def all_metrics(self):
         """Returns a lazy sequence with a tuple for each vertex in the hypergraph.
            The first element of the tuple is the vertex itself,
            the second is a dictionary of metrics values (as strings)."""
+        logging.debug('[hypergraph all_metrics()]')
         return self.backend.all_metrics()
 
     def symbol_count(self):
         """Total number of symbols in the hypergraph"""
+        logging.debug('[hypergraph symbol_count()]')
         return self.backend.symbol_count()
 
     def edge_count(self):
         """Total number of edge in the hypergraph"""
+        logging.debug('[hypergraph edge_count()]')
         return self.backend.edge_count()
 
     def total_degree(self):
         """Total degree of the hypergraph"""
+        logging.debug('[hypergraph total_degree()]')
         return self.backend.total_degree()
