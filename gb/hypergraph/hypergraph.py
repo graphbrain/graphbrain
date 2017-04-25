@@ -76,6 +76,8 @@ class HyperGraph(object):
     def symbols_with_root(self, root):
         """Find all symbols with the given root."""
         logging.debug('[hypergraph symbols_with_root()] %s' % ed.edge2str(root))
+        if len(root) == 0:
+            return {}
         return self.backend.symbols_with_root(root)
 
     def edges_with_symbols(self, symbols, root=None):
