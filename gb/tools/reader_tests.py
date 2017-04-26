@@ -29,9 +29,13 @@ READ_PARSES = 2
 
 
 class ReaderTests(object):
-    def __init__(self, hg):
+    def __init__(self, hg, disamb):
         self.hg = hg
-        self.extractor = Extractor(hg, stages=('alpha', 'beta-simple', 'gamma', 'delta', 'epsilon'))
+        if disamb:
+            beta = 'beta'
+        else:
+            beta = 'beta-simple'
+        self.extractor = Extractor(hg, stages=('alpha', beta, 'gamma', 'delta', 'epsilon'), show_namespaces=disamb)
         # self.extractor.debug = True
         self.cases = None
 
