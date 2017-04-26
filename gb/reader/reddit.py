@@ -31,6 +31,7 @@ class RedditReader(object):
         self.extractor = Extractor(hg)
         self.main_edges = 0
         self.extra_edges = 0
+        self.ignored = 0
 
     def process_post(self, post):
         parses = self.extractor.read_text(post['title'])
@@ -40,13 +41,16 @@ class RedditReader(object):
             print('\n')
             print('sentence: %s' % p[0])
             print(ed.edge2str(p[1].main_edge))
-            self.hg.add_belief(author, p[1].main_edge)
-            self.main_edges += 1
-            print('== extra ==')
-            for edge in p[1].edges:
-                print(ed.edge2str(edge))
-                self.hg.add_belief('gb', edge)
-                self.extra_edges += 1
+            if len(p[1].main_edge) < 8:
+                self.hg.add_belief(author, p[1].main_edge)
+                self.main_edges += 1
+                print('== extra ==')
+                for edge in p[1].edges:
+                    print(ed.edge2str(edge))
+                    self.hg.add_belief('gb', edge)
+                    self.extra_edges += 1
+            else:
+                self.ignored += 1
 
     def read_file(self, filename):
         with open(filename, 'r') as f:
@@ -56,6 +60,7 @@ class RedditReader(object):
 
         print('main edges created: %s' % self.main_edges)
         print('extra edges created: %s' % self.extra_edges)
+        print('ignored edges: %s' % self.ignored)
 
 
 if __name__ == '__main__':
