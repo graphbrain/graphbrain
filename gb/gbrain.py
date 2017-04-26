@@ -43,8 +43,9 @@ from gb.reader.reddit import RedditReader
 @click.option('--enddate', help='End date.')
 @click.option('--source', help='Source can have multiple meanings.')
 @click.option('--log', help='Logging level.', default='WARNING')
+@click.option('--disamb/--no_disamb', help='Perform disambiguation.', default=False)
 @click.pass_context
-def cli(ctx, backend, hg, infile, outfile, startdate, enddate, source, log):
+def cli(ctx, backend, hg, infile, outfile, startdate, enddate, source, log, disamb):
     ctx.obj = {
         'backend': backend,
         'hg': hg,
@@ -53,7 +54,8 @@ def cli(ctx, backend, hg, infile, outfile, startdate, enddate, source, log):
         'startdate': startdate,
         'enddate': enddate,
         'source': source,
-        'log': log
+        'log': log,
+        'disamb': disamb
     }
 
     # configure logging
@@ -137,7 +139,7 @@ def shell(ctx):
 @click.pass_context
 def generate_parsed_sentences_file(ctx):
     hg = HyperGraph(ctx.obj)
-    rt = ReaderTests(hg)
+    rt = ReaderTests(hg, ctx.obj['disamb'])
     rt.generate_parsed_sentences_file(ctx.obj['infile'], ctx.obj['outfile'])
     click.echo('done.')
 
@@ -146,7 +148,7 @@ def generate_parsed_sentences_file(ctx):
 @click.pass_context
 def reader_tests(ctx):
     hg = HyperGraph(ctx.obj)
-    rt = ReaderTests(hg)
+    rt = ReaderTests(hg, ctx.obj['disamb'])
     rt.run_tests(ctx.obj['infile'])
     click.echo('done.')
 
@@ -155,7 +157,7 @@ def reader_tests(ctx):
 @click.pass_context
 def reader_debug(ctx):
     hg = HyperGraph(ctx.obj)
-    rt = ReaderTests(hg)
+    rt = ReaderTests(hg, ctx.obj['disamb'])
     rt.reader_debug(ctx.obj['infile'])
     click.echo('done.')
 

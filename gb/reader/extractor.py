@@ -32,13 +32,14 @@ from gb.reader.stages.epsilon import EpsilonStage
 
 
 class Extractor(object):
-    def __init__(self, hg, stages=('alpha', 'beta', 'gamma', 'delta', 'epsilon')):
+    def __init__(self, hg, stages=('alpha', 'beta', 'gamma', 'delta', 'epsilon'), show_namespaces=False):
         self.hg = hg
         self.stages = stages
         self.parser = None
         self.debug = False
         self.outputs = []
         self.bag_of_words = None
+        self.show_namespaces = show_namespaces
 
     def create_stage(self, name, output):
         if name == 'alpha':
@@ -94,7 +95,7 @@ class Extractor(object):
             stage = self.create_stage(name, last_stage_output)
             self.debug_msg('executing %s stage...' % name)
             last_stage_output = stage.process()
-            output = last_stage_output.tree.to_hyperedge_str(with_namespaces=False)
+            output = last_stage_output.tree.to_hyperedge_str(with_namespaces=self.show_namespaces)
             self.outputs.append(output)
             self.debug_msg(output)
 
