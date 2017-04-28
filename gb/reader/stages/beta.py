@@ -19,6 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import logging
 import gb.constants as const
 import gb.hypergraph.symbol as sym
 import gb.disambiguation.disambiguate as disamb
@@ -96,7 +97,7 @@ class BetaStage(object):
         else:
             disamb_ent, metrics = disamb.disambiguate(self.hg, roots, self.bag_of_words, exclude, namespaces)
 
-        # print('>>> %s %s %s' % (entity.as_text(), disamb_ent, metrics))
+        logging.info('[disamb] text: %s; entity: %s; metrics: %s' % (entity.as_text(), disamb_ent, metrics))
 
         exclude = exclude[:]
         exclude.append(entity.as_text())

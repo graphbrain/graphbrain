@@ -19,6 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import logging
 import gb.hypergraph.hypergraph as hyperg
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
@@ -69,9 +70,11 @@ def word_overlap(hg, symbol, bag_of_words, exclude):
         ngram = sym.symbol2str(root)
         if ngram not in exclude:
             for word in root.split('_'):
-                if len(word) > 2:
-                    words.add(word)
-    # print(str(bag_of_words.intersection(words)))
+                if word != sym.symbol2str(symbol):
+                    if len(word) > 2:
+                        words.add(word)
+    logging.info('overlapping words for symbol %s: %s'
+                 % (symbol, str(bag_of_words.intersection(words))))
     return len(bag_of_words.intersection(words))
 
 
