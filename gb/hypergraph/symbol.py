@@ -101,9 +101,9 @@ def is_root(sym):
     return sym == root(sym)
 
 
-def build(pts):
-    """Build a concept symbol for a collection of strings."""
-    return '/'.join([str2symbol(p) for p in pts])
+def build(text, namespace):
+    """Build a concept symbol from text and a namespace."""
+    return '%s/%s' % (str2symbol(text), namespace)
 
 
 def str2symbol(s):
@@ -131,7 +131,7 @@ def new_meaning(symb, prefix=''):
     """Creates a new symbol for the given root.
     If given symbols is not a root, return it unchanged."""
     if is_root(symb):
-        return build([symb, '%s%s' % (prefix, random_hash())])
+        return build(symb, '%s%s' % (prefix, random_hash()))
     else:
         return symb
 
