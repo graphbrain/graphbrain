@@ -267,7 +267,7 @@ class Leaf(Element):
         if not with_namespaces:
             s = sym.str2symbol(self.token.word)
         else:
-            s = sym.build((self.token.word, self.namespace))
+            s = sym.build(self.token.word, self.namespace)
         if self.connector:
             s = '+%s' % s
         return s
@@ -515,7 +515,7 @@ class Node(Element):
             else:
                 if not self.namespace:
                     self.generate_namespace()
-                s = sym.build(('_'.join(words), self.namespace))
+                s = sym.build('_'.join(words), self.namespace)
             if self.connector:
                 s = '+%s' % s
             return s

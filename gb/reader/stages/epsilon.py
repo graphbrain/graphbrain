@@ -107,7 +107,7 @@ class EpsilonStage(object):
             edge = entity.to_hyperedge()
             text = entity.as_text()
             ns = 'gb%s' % sym.hashed(ed.edge2str(edge))
-            symbol = sym.build([text, ns])
+            symbol = sym.build(text, ns)
             syn_edge = [cons.are_synonyms, edge, symbol]
             self.output.edges.append(syn_edge)
 
