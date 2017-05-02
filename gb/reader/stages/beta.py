@@ -27,6 +27,15 @@ from gb.disambiguation.candidate_metrics import CandidateMetrics
 import gb.reader.stages.common as co
 
 
+def force_wordnet(entity):
+    if co.is_relationship(entity):
+        return True
+    if entity.is_leaf():
+        if entity.token.pos == 'PART' and entity.token.dep == 'case':
+            return True
+    return False
+
+
 def is_compound_by_entity_type(node):
     first_child = node.get_child(0)
     if first_child.is_node():
@@ -89,7 +98,7 @@ class BetaStage(object):
             lemma_at_end = ' '.join(words[:-1] + [lemmas[-1]])
             roots.add(sym.str2symbol(lemma_at_end))
         namespaces = None
-        if co.is_relationship(entity):
+        if force_wordnet(entity):
             namespaces = ('wn.', 'lem.wn.')
 
         if entity.is_leaf() and entity.token.pos in {'ADP', 'CONJ'}:
