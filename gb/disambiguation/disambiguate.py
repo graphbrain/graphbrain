@@ -81,10 +81,6 @@ def word_overlap(hg, symbol, bag_of_words, exclude):
 def candidate_metrics(hg, symbol, bag_of_words, exclude):
     cm = CandidateMetrics()
 
-    symb_ns = sym.nspace(symbol)
-    if symb_ns.startswith('wn.'):
-        cm.priority = 1
-
     cm.prob_meaning = probability_of_meaning(hg, symbol, bag_of_words, exclude)
     cm.degree = hg.degree(symbol)
     if cm.degree < 1000:
@@ -104,7 +100,6 @@ def check_namespace(symbol, namespaces):
 
 
 def disambiguate(hg, roots, bag_of_words, exclude, namespaces=None):
-    # print('*** %s' % str(bag_of_words))
     candidates = set()
     for root in roots:
         candidates = candidates.union(hg.symbols_with_root(root))
@@ -113,7 +108,7 @@ def disambiguate(hg, roots, bag_of_words, exclude, namespaces=None):
     for candidate in candidates:
         if check_namespace(candidate, namespaces):
             cm = candidate_metrics(hg, candidate, bag_of_words, exclude)
-            # print('%s %s' % (candidate, cm))
+            logging.info('%s %s' % (candidate, cm))
             if cm.better_than(best_cm):
                 best_cm = cm
                 best = candidate
