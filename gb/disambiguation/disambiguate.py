@@ -82,8 +82,14 @@ def candidate_metrics(hg, symbol, bag_of_words, exclude):
     cm = CandidateMetrics()
 
     cm.prob_meaning = probability_of_meaning(hg, symbol, bag_of_words, exclude)
+
+    # cm.degree = 0
+    # for neighb in hg.ego(symbol):
+    #     cm.degree += hg.degree(neighb)
     cm.degree = hg.degree(symbol)
-    if cm.degree < 1000:
+
+    degree = hg.degree(symbol)
+    if degree < 1000:
         cm.word_overlap = word_overlap(hg, symbol, bag_of_words, exclude)
     return cm
 

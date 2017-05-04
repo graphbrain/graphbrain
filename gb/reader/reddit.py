@@ -25,6 +25,17 @@ import gb.hypergraph.edge as ed
 from gb.reader.extractor import Extractor
 
 
+def comments_to_text(comments):
+    chunks = []
+    for comment in comments:
+        if comment:
+            if 'body' in comment:
+                chunks.append(comment['body'])
+            if 'comments' in comment:
+                chunks.append(comments_to_text(comment['comments']))
+    return '\n'.join(chunks)
+
+
 class RedditReader(object):
     def __init__(self, hg):
         self.hg = hg
@@ -33,10 +44,18 @@ class RedditReader(object):
         self.extra_edges = 0
         self.ignored = 0
 
+    def generate_bag_of_words(self, post):
+        pass
+
     def process_post(self, post):
-        parses = self.extractor.read_text(post['title'])
-        author = sym.build([post['author'], 'reddit_user'])
+        author = sym.build(post['author'], 'reddit_user')
         print('author: %s' % author)
+
+        if 'comments' in post:
+            print('comments:')
+            print(comments_to_text(post['comments']))
+
+        parses = self.extractor.read_text(post['title'])
         for p in parses:
             print('\n')
             print('sentence: %s' % p[0])
