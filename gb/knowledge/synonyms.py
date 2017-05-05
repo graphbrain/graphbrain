@@ -20,14 +20,20 @@
 
 
 import gb.constants as const
+import gb.hypergraph.symbol as sym
+from gb.hypergraph.symbol import SymbolType
 
 
 def synonyms(hg, symbol):
-    syns1 = [edge[2] for edge in hg.pattern2edges((const.are_synonyms, symbol, None))]
-    syns2 = [edge[1] for edge in hg.pattern2edges((const.are_synonyms, None, symbol))]
-    syns3 = [edge[2] for edge in hg.pattern2edges((const.have_same_lemma, symbol, None))]
-    syns4 = [edge[1] for edge in hg.pattern2edges((const.have_same_lemma, None, symbol))]
-    return set([symbol]).union(syns1).union(syns2).union(syns3).union(syns4)
+    syns1 = [edge[2] for edge in hg.pattern2edges((const.are_synonyms, symbol, None))
+             if sym.sym_type(edge[2]) == SymbolType.CONCEPT]
+    syns2 = [edge[1] for edge in hg.pattern2edges((const.are_synonyms, None, symbol))
+             if sym.sym_type(edge[1]) == SymbolType.CONCEPT]
+    syns3 = [edge[2] for edge in hg.pattern2edges((const.have_same_lemma, symbol, None))
+             if sym.sym_type(edge[2]) == SymbolType.CONCEPT]
+    syns4 = [edge[1] for edge in hg.pattern2edges((const.have_same_lemma, None, symbol))
+             if sym.sym_type(edge[1]) == SymbolType.CONCEPT]
+    return {symbol}.union(syns1).union(syns2).union(syns3).union(syns4)
 
 
 def degree(hg, symbol):
