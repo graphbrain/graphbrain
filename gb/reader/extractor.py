@@ -38,14 +38,24 @@ class Extractor(object):
         self.parser = None
         self.debug = False
         self.outputs = []
-        self.bag_of_words = None
+        self.aux_trees = []
         self.show_namespaces = show_namespaces
+
+    def generate_aux_trees(self, text):
+        trees = []
+        alpha = self.create_stage('alpha', None)
+        rs = self.parser.parse_text(text)
+        for r in rs:
+            sentence = Sentence(r[1])
+            output = alpha.process_sentence(sentence)
+            trees.append(output.tree)
+        return trees
 
     def create_stage(self, name, output):
         if name == 'alpha':
             return AlphaStage()
         elif name == 'beta':
-            return BetaStage(self.hg, output, [output.tree])
+            return BetaStage(self.hg, output, [output.tree] + self.aux_trees)
         elif name == 'beta-simple':
             return BetaStageSimple(output)
         elif name == 'gamma':
@@ -62,19 +72,13 @@ class Extractor(object):
         if self.debug:
             print(msg)
 
-    def generate_bag_of_words(self, parse):
-        word_list = []
-        for p in parse:
-            for token in p[1]:
-                word_list += [token.word.lower(), token.lemma.lower()]
-        self.bag_of_words = set(word_list)
-
-    def read_text(self, text):
+    def read_text(self, text, aux_text=None):
         if self.parser is None:
             self.debug_msg('creating parser...')
             self.parser = Parser()
         parse = self.parser.parse_text(text)
-        self.generate_bag_of_words(parse)
+        if aux_text:
+            self.aux_trees = self.generate_aux_trees(aux_text)
         return [(p[0], self.read_sentence(Sentence(p[1]))) for p in parse]
 
     def read_sentence(self, sentence):
