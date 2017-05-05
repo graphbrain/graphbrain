@@ -91,7 +91,7 @@ class DBPediaReader(object):
         if name is None:
             return None
         name = name.lower()
-        return sym.build((name, namespace))
+        return sym.build(name, namespace)
 
     def process_line(self, line):
         line_str = line.decode()

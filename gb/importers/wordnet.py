@@ -26,7 +26,7 @@ import gb.hypergraph.symbol as sym
 
 def lemma2symbol(lemma):
     lemma_id = 'wn.%s' % lemma.synset().name()
-    return sym.build([lemma.name().lower(), lemma_id])
+    return sym.build(lemma.name().lower(), lemma_id)
 
 
 def pos2symbol(pos):

@@ -87,7 +87,7 @@ def concat_claims(claims):
 
 def to_symbol(wikidata_id, label):
     ns = 'wd%s' % wikidata_id
-    return sym.build((label, ns))
+    return sym.build(label, ns)
 
 
 def to_triplets(ent):
