@@ -51,20 +51,19 @@ def is_compound_by_entity_type(node):
     return True
 
 
-def element_to_bag_of_words(element, bow):
-    bow.add(element.as_text())
-    for lemma in element.as_label_list(lemmas=True):
-        bow.add(lemma)
+def element_to_bag_of_ngrams(element, bon):
+    bon.add(element.as_text())
+    bon.add(element.as_text(True))
     if element.is_node():
         for child in element.children():
-            element_to_bag_of_words(child, bow)
+            element_to_bag_of_ngrams(child, bon)
 
 
-def trees_to_bag_of_words(trees):
-    bow = set()
+def trees_to_bag_of_ngrams(trees):
+    bon = set()
     for tree in trees:
-        element_to_bag_of_words(tree.root(), bow)
-    return bow
+        element_to_bag_of_ngrams(tree.root(), bon)
+    return bon
 
 
 class BetaStage(object):
@@ -72,7 +71,7 @@ class BetaStage(object):
         self.hg = hg
         self.output = output
         self.compound_deps = ['pobj', 'compound', 'dobj', 'nsubj']
-        self.bag_of_words = trees_to_bag_of_words(trees)
+        self.bag_of_ngrams = trees_to_bag_of_ngrams(trees)
 
     def is_compound_by_deps(self, node):
         for child in node.children():
@@ -105,7 +104,7 @@ class BetaStage(object):
             disamb_ent = None
             metrics = CandidateMetrics()
         else:
-            disamb_ent, metrics = disamb.disambiguate(self.hg, roots, self.bag_of_words, exclude, namespaces)
+            disamb_ent, metrics = disamb.disambiguate(self.hg, roots, self.bag_of_ngrams, exclude, namespaces)
 
         logging.info('[disamb] text: %s; entity: %s; metrics: %s' % (entity.as_text(), disamb_ent, metrics))
 

@@ -110,7 +110,7 @@ class Element(object):
         # throw exception
         pass
 
-    def as_text(self):
+    def as_text(self, lemmas=False):
         # throw exception
         pass
 
@@ -221,8 +221,11 @@ class Leaf(Element):
             return [self.token.word.lower()]
 
     # override
-    def as_text(self):
-        return self.token.word.lower()
+    def as_text(self, lemmas=False):
+        if lemmas:
+            return self.token.lemma.lower()
+        else:
+            return self.token.word.lower()
 
     # override
     def add_child(self, elem_id):
@@ -339,8 +342,11 @@ class Node(Element):
         return label_list
 
     # override
-    def as_text(self):
-        words = [leaf.token.word for leaf in self.natural_leaf_sequence()]
+    def as_text(self, lemmas=False):
+        if lemmas:
+            words = [leaf.token.lemma for leaf in self.natural_leaf_sequence()]
+        else:
+            words = [leaf.token.word for leaf in self.natural_leaf_sequence()]
         words = [word for word in words if len(word) > 0]
         return ' '.join(words)
 

@@ -36,6 +36,13 @@ def comments_to_text(comments):
     return '\n'.join(chunks)
 
 
+def generate_aux_text(post):
+    text = None
+    if 'comments' in post:
+        text = '%s\n%s' % (text, comments_to_text(post['comments']))
+    return text
+
+
 class RedditReader(object):
     def __init__(self, hg):
         self.hg = hg
@@ -44,18 +51,13 @@ class RedditReader(object):
         self.extra_edges = 0
         self.ignored = 0
 
-    def generate_bag_of_words(self, post):
-        pass
-
     def process_post(self, post):
         author = sym.build(post['author'], 'reddit_user')
         print('author: %s' % author)
 
-        if 'comments' in post:
-            print('comments:')
-            print(comments_to_text(post['comments']))
+        aux_text = generate_aux_text(post)
 
-        parses = self.extractor.read_text(post['title'])
+        parses = self.extractor.read_text(post['title'], aux_text)
         for p in parses:
             print('\n')
             print('sentence: %s' % p[0])
