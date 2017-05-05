@@ -21,7 +21,6 @@
 class CandidateMetrics(object):
     def __init__(self):
         self.prob_meaning = float('inf')
-        self.word_overlap = 0
         self.degree = 0
 
     def better_than(self, other):
@@ -29,12 +28,10 @@ class CandidateMetrics(object):
             return NotImplemented
         if self.prob_meaning != other.prob_meaning:
             return self.prob_meaning < other.prob_meaning
-        elif self.word_overlap != other.word_overlap:
-            return self.word_overlap > other.word_overlap
         elif self.degree != other.degree:
             return self.degree > other.degree
         else:
             return False
 
     def __str__(self):
-        return 'prob_meaning: %s; word_overlap: %s; degree: %s' % (self.prob_meaning, self.word_overlap, self.degree)
+        return 'prob_meaning: %s; degree: %s' % (self.prob_meaning, self.degree)

@@ -23,7 +23,7 @@ import logging
 import gb.hypergraph.hypergraph as hyperg
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
-import gb.knowledge.neighborhoods as knei
+import gb.knowledge.synonyms as ksyn
 from gb.disambiguation.candidate_metrics import CandidateMetrics
 
 
@@ -51,46 +51,24 @@ def connected_symbols_with_root(hg, symbol, root):
 
 def probability_of_meaning(hg, symbol, bag_of_words, exclude):
     total_degree = hg.total_degree()
+    synonyms = ksyn.synonyms(hg, symbol)
     symbol_root = sym.root(symbol)
     prob = 1.
     for ngram in bag_of_words:
         ngram_symbol = sym.str2symbol(ngram)
         if not ((ngram in exclude) or is_part_of(ngram_symbol, symbol_root)):
-            neighbors = connected_symbols_with_root(hg, symbol, ngram_symbol)
-            for neighb in neighbors:
-                prob *= float(neighbors[neighb]) / float(total_degree)
+            for synonym in synonyms:
+                neighbors = connected_symbols_with_root(hg, synonym, ngram_symbol)
+                for neighb in neighbors:
+                    logging.info('neighbour found for %s: %s [%s]' % (symbol, neighb, neighbors[neighb]))
+                    prob *= float(neighbors[neighb]) / float(total_degree)
     return prob
-
-
-def word_overlap(hg, symbol, bag_of_words, exclude):
-    symbols = knei.ego(hg, symbol)
-    roots = [sym.root(s) for s in symbols]
-    words = set()
-    for root in roots:
-        ngram = sym.symbol2str(root)
-        if ngram not in exclude:
-            for word in root.split('_'):
-                if word != sym.symbol2str(symbol):
-                    if len(word) > 2:
-                        words.add(word)
-    logging.info('overlapping words for symbol %s: %s'
-                 % (symbol, str(bag_of_words.intersection(words))))
-    return len(bag_of_words.intersection(words))
 
 
 def candidate_metrics(hg, symbol, bag_of_words, exclude):
     cm = CandidateMetrics()
-
     cm.prob_meaning = probability_of_meaning(hg, symbol, bag_of_words, exclude)
-
-    # cm.degree = 0
-    # for neighb in hg.ego(symbol):
-    #     cm.degree += hg.degree(neighb)
-    cm.degree = hg.degree(symbol)
-
-    degree = hg.degree(symbol)
-    if degree < 1000:
-        cm.word_overlap = word_overlap(hg, symbol, bag_of_words, exclude)
+    cm.degree = ksyn.degree(hg, symbol)
     return cm
 
 
