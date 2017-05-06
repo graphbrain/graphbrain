@@ -77,6 +77,7 @@ class Extractor(object):
             self.debug_msg('creating parser...')
             self.parser = Parser()
         parse = self.parser.parse_text(text)
+        self.aux_trees = []
         if aux_text:
             self.aux_trees = self.generate_aux_trees(aux_text)
         return [(p[0], self.read_sentence(Sentence(p[1]))) for p in parse]
