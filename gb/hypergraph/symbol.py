@@ -72,6 +72,11 @@ def sym_type(sym):
         return SymbolType.UNKNOWN
 
 
+def is_edge(sym):
+    """Checks if symbol is an edge."""
+    return sym_type(sym) == SymbolType.EDGE
+
+
 def parts(sym):
     """Splits a symbol into its parts.
     All symbol types except CONCEPT only have one part."""
