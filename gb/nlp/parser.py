@@ -31,7 +31,7 @@ class Parser:
         self.token_table = {}
         self.parser = spacy.load('en')
 
-    def __spacy2token(self, stoken):
+    def __spacy2token(self, stoken, depth=0):
         if stoken is None:
             return None
         elif stoken not in self.token_table:
@@ -42,8 +42,12 @@ class Parser:
             token.logprob = stoken.prob
             token.pos = stoken.pos_
             token.dep = stoken.dep_
-            token.left_children = [self.__spacy2token(t) for t in stoken.lefts]
-            token.right_children = [self.__spacy2token(t) for t in stoken.rights]
+            if depth < 20:
+                token.left_children = [self.__spacy2token(t, depth + 1) for t in stoken.lefts]
+                token.right_children = [self.__spacy2token(t, depth + 1) for t in stoken.rights]
+            else:
+                token.left_children = []
+                token.right_children = []
             for t in token.left_children:
                 t.parent = token
             for t in token.right_children:
