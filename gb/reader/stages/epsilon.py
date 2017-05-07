@@ -103,7 +103,8 @@ class EpsilonStage(object):
                 self.generate_synonyms(entity.children_ids[i])
 
         edge = entity.to_hyperedge()
-        for synonym in entity.to_synonyms():
+        synonym = entity.to_synonym()
+        if synonym:
             self.output.edges.append([cons.are_synonyms, edge, synonym])
 
         if entity.is_node() and entity.children()[0].is_connector():
