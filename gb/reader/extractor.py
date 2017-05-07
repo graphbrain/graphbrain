@@ -72,12 +72,13 @@ class Extractor(object):
         if self.debug:
             print(msg)
 
-    def read_text(self, text, aux_text=None):
+    def read_text(self, text, aux_text=None, reset_context=True):
         if self.parser is None:
             self.debug_msg('creating parser...')
             self.parser = Parser()
         parse = self.parser.parse_text(text)
-        self.aux_trees = []
+        if reset_context:
+            self.aux_trees = []
         if aux_text:
             self.aux_trees = self.generate_aux_trees(aux_text)
         return [(p[0], self.read_sentence(Sentence(p[1]))) for p in parse]
