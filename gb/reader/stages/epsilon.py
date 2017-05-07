@@ -102,9 +102,11 @@ class EpsilonStage(object):
             for i in range(len(entity.children_ids)):
                 self.generate_synonyms(entity.children_ids[i])
 
-        entity = self.output.tree.get(entity_id)
+        edge = entity.to_hyperedge()
+        for synonym in entity.to_synonyms():
+            self.output.edges.append([cons.are_synonyms, edge, synonym])
+
         if entity.is_node() and entity.children()[0].is_connector():
-            edge = entity.to_hyperedge()
             text = entity.as_text()
             ns = 'gb%s' % sym.hashed(ed.edge2str(edge))
             symbol = sym.build(text, ns)

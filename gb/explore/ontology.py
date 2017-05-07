@@ -25,17 +25,38 @@ def is_concept(edge):
     return rel[0] == '+'
 
 
-def down(hg, symbol):
-    synonyms = syn.synonyms(hg, symbol)
-    edges = hg.star(symbol)
+def down(hg, symbol, visited=None):
+    if not visited:
+        visited = set()
+    if sym.symbol2str(symbol) in visited:
+        return None
+    print(symbol)
+    visited.add(sym.symbol2str(symbol))
+    synonyms = [synonym for synonym in syn.synonyms(hg, symbol)]
+    edges = [s for s in hg.star(symbol)]
     edges = [edge for edge in edges if is_concept(edge)]
     return {'symbol': symbol,
-            'synonyms': [down(hg, synonym) for synonym in synonyms],
-            'derived_symbols': [down(hg, edge) for edge in edges]}
+            'synonyms': [down(hg, synonym, visited) for synonym in synonyms],
+            'derived_symbols': [down(hg, edge, visited) for edge in edges]}
+
+
+def derived_symbols(hg, ont, symbols=None, depth=0):
+    if not symbols:
+        symbols = {}
+    symbol = ont['symbol']
+    degree = syn.degree(hg, symbol)
+    symbols[sym.symbol2str(symbol)] = {'degree': degree, 'depth': depth}
+    for subont in ont['derived_symbols']:
+        derived_symbols(hg, subont, symbols, depth + 1)
+    return symbols
 
 
 if __name__ == '__main__':
     params = {'backend': 'leveldb',
-              'hg': 'test.hg'}
-    hg = HyperGraph(params)
-    print(down(hg, 'xpto'))
+              'hg': 'reddit-test.hg'}
+    hyper = HyperGraph(params)
+    onto = down(hyper, 'government/wdQ7188')
+    ds = derived_symbols(hyper, onto)
+    # print(ds)
+    for s in ds:
+        print('%s %s' % (s, ds[s]['degree']))

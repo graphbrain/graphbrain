@@ -137,6 +137,9 @@ class Element(object):
             self.generate_namespace()
         return self.namespace
 
+    def to_synonyms(self):
+        return []
+
     def apply_layers(self):
         # if not implemented, do nothing.
         pass
@@ -527,6 +530,15 @@ class Node(Element):
             return s
         else:
             return tuple([child.to_hyperedge(with_namespaces=with_namespaces) for child in self.children()])
+
+    # override
+    def to_synonyms(self):
+        if self.compound and ((not self.namespace) or self.namespace.startswith('comb.')):
+            edge = ['+/gb']
+            for child in self.children():
+                edge.append(child.to_hyperedge)
+            return edge
+        return []
 
     # override
     def generate_namespace(self):
