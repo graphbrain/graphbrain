@@ -60,7 +60,7 @@ class Parser:
     def parse_text(self, text):
         parsed_data = self.parser(text)
 
-        # print(parsed_data)
+        self.token_table = {}
 
         sents = []
         for span in parsed_data.sents:
