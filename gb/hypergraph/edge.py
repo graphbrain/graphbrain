@@ -77,7 +77,7 @@ def token_type(token):
 
 def parsed_token(token):
     """Transform a string token into a value of the correct type."""
-    if token[0] == '(':
+    if edge_str_has_outer_parens(token):
         return str2edge(token)
     else:
         toktype = token_type(token)
@@ -91,6 +91,8 @@ def parsed_token(token):
 
 def edge_str_has_outer_parens(edge_str):
     """Check if string representation of edge is delimited by outer parenthesis."""
+    if len(edge_str) < 2:
+        return False
     depth = 0
     for i in range(len(edge_str) - 1):
         if edge_str[i] == '(':
