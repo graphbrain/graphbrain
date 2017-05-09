@@ -31,7 +31,7 @@ def ignore(token):
 
 
 def nest(token, parent_elem):
-    if token.dep in ['aux', 'auxpass', 'cc', 'agent', 'det', 'advmod', 'amod', 'poss', 'nummod', 'prt', 'neg']:
+    if token.dep in ['aux', 'auxpass', 'cc', 'agent', 'det', 'advmod', 'amod', 'poss', 'nummod', 'prt', 'neg', 'mark']:
         return True
     if (token.dep == 'prep') and (not parent_elem.has_pos('VERB')):
         return True
