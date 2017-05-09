@@ -44,8 +44,9 @@ from gb.reader.reddit import RedditReader
 @click.option('--source', help='Source can have multiple meanings.')
 @click.option('--log', help='Logging level.', default='WARNING')
 @click.option('--disamb/--no_disamb', help='Perform disambiguation.', default=False)
+@click.option('--comments/--no_comments', help='Include comments.', default=False)
 @click.pass_context
-def cli(ctx, backend, hg, infile, outfile, startdate, enddate, source, log, disamb):
+def cli(ctx, backend, hg, infile, outfile, startdate, enddate, source, log, disamb, comments):
     ctx.obj = {
         'backend': backend,
         'hg': hg,
@@ -55,7 +56,8 @@ def cli(ctx, backend, hg, infile, outfile, startdate, enddate, source, log, disa
         'enddate': enddate,
         'source': source,
         'log': log,
-        'disamb': disamb
+        'disamb': disamb,
+        'comments': comments
     }
 
     # configure logging
@@ -185,7 +187,8 @@ def reddit_retriever(ctx):
 def reddit_reader(ctx):
     hg = HyperGraph(ctx.obj)
     infile = ctx.obj['infile']
-    RedditReader(hg).read_file(infile)
+    comments = ctx.obj['comments']
+    RedditReader(hg, comments=comments).read_file(infile)
 
 
 show_logo()

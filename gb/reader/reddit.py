@@ -44,30 +44,19 @@ def generate_aux_text(post):
 
 
 class RedditReader(object):
-    def __init__(self, hg):
+    def __init__(self, hg, comments):
         self.hg = hg
+        self.comments = comments
         self.extractor = Extractor(hg, stages=('alpha', 'beta', 'gamma', 'delta', 'epsilon'))
         self.main_edges = 0
         self.extra_edges = 0
         self.ignored = 0
 
-    def process_comments(self, post, parses):
-        if 'body' in post:
-            parses += self.extractor.read_text(post['body'], reset_context=False)
-        if 'comments' in post:
-            for comment in post['comments']:
-                if comment:
-                    self.process_comments(comment, parses)
-
-    def process_post(self, post):
-        author = sym.build(post['author'], 'reddit_user')
-        print('author: %s' % author)
-
-        aux_text = generate_aux_text(post)
-
-        # self.extractor.debug = True
-        parses = self.extractor.read_text(post['title'], aux_text)
-        # self.process_comments(post, parses)
+    def process_text(self, text, author, aux_text=None):
+        if aux_text:
+            parses = self.extractor.read_text(text, aux_text)
+        else:
+            parses = self.extractor.read_text(text, reset_context=False)
         for p in parses:
             print('\n')
             print('sentence: %s' % p[0])
@@ -83,7 +72,33 @@ class RedditReader(object):
             else:
                 self.ignored += 1
 
+    def process_comments(self, post):
+        if 'body' in post:
+            author = sym.build(post['author'], 'reddit_user')
+            self.process_text(post['body'], author)
+        if 'comments' in post:
+            for comment in post['comments']:
+                if comment:
+                    self.process_comments(comment)
+
+    def process_post(self, post):
+        author = sym.build(post['author'], 'reddit_user')
+        print('author: %s' % author)
+
+        aux_text = generate_aux_text(post)
+
+        self.process_text(post['title'], aux_text)
+        if self.comments:
+            self.process_comments(post)
+
     def read_file(self, filename):
+        # self.extractor.debug = True
+
+        if self.comments:
+            print('Including comments.')
+        else:
+            print('Not including comments.')
+
         with open(filename, 'r') as f:
             for line in f:
                 post = json.loads(line)
@@ -97,4 +112,4 @@ class RedditReader(object):
 if __name__ == '__main__':
     from gb.hypergraph.hypergraph import HyperGraph
     hgr = HyperGraph({'backend': 'leveldb', 'hg': 'wikidata.hg'})
-    RedditReader(hgr).read_file('reddit-wordlnews-27032017-28032017.json')
+    RedditReader(hgr, comments=False).read_file('reddit-wordlnews-27032017-28032017.json')
