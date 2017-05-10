@@ -38,7 +38,7 @@ def comments_to_text(comments):
 
 
 def generate_aux_text(post):
-    text = None
+    text = ''
     if 'comments' in post:
         text = '%s\n%s' % (text, comments_to_text(post['comments']))
     return text
@@ -103,7 +103,7 @@ class RedditReader(object):
 
         aux_text = generate_aux_text(post)
 
-        self.process_text(post['title'], aux_text)
+        self.process_text(post['title'], author, aux_text)
         if self.comments:
             self.process_comments(post)
 

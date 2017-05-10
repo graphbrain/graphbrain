@@ -20,21 +20,21 @@
 
 class CandidateMetrics(object):
     def __init__(self):
-        self.prob_meaning = float('inf')
+        self.score = 0.
         self.degree = 0
 
     def better_than(self, other):
         if not isinstance(other, CandidateMetrics):
             return NotImplemented
-        if self.prob_meaning != other.prob_meaning:
-            return self.prob_meaning < other.prob_meaning
+        if self.score != other.score:
+            return self.score > other.score
         elif self.degree != other.degree:
             return self.degree > other.degree
         else:
             return False
 
     def __str__(self):
-        return 'prob_meaning: %s; degree: %s' % (self.prob_meaning, self.degree)
+        return 'score: %s; degree: %s' % (self.score, self.degree)
 
     def __repr__(self):
         return self.__str__()
