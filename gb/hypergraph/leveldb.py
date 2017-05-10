@@ -152,7 +152,7 @@ class LevelDB(Backend):
         """Removes a vertex, given its key."""
         self.db.delete(vert_key)
 
-    def str2perms(self, center_id):
+    def str2perms(self, center_id, limit=None):
         """Query database for all the edge permutations that contain a given entity, represented as a string."""
         start_str = '%s ' % center_id
         end_str = str_plus_1(start_str)
@@ -160,9 +160,14 @@ class LevelDB(Backend):
         end_key = (u'p%s' % end_str).encode('utf-8')
 
         edges = []
+        count = 0
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             perm_str = key.decode('utf-8')
             edges.append(perm2edge(perm_str))
+            if limit:
+                count += 1
+                if count >= limit:
+                    break
 
         return set(edges)
 
@@ -266,13 +271,13 @@ class LevelDB(Backend):
             self.remove_edge_permutations(edge)
             self.remove_key(edge_key)
 
-    def star(self, center):
+    def star(self, center, limit=None):
         """Return all the edges that contain a given entity.
         Entity can be atomic or an edge."""
         center_id = center
         if isinstance(center, (list, tuple)):
             center_id = ed.edge2str(center)
-        return self.str2perms(center_id)
+        return self.str2perms(center_id, limit)
 
     def symbols_with_root(self, root):
         """Find all symbols with the given root."""

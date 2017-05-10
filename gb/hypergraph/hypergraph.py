@@ -71,11 +71,11 @@ class HyperGraph(object):
         logging.debug('[hypergraph pattern2edges()] %s' % ed.edge2str(pattern))
         return self.backend.pattern2edges(pattern)
 
-    def star(self, center):
+    def star(self, center, limit=None):
         """Return all the edges that contain a given entity.
         Entity can be atomic or an edge."""
         logging.debug('[hypergraph star()] %s' % ed.edge2str(center))
-        return self.backend.star(center)
+        return self.backend.star(center, limit=limit)
 
     def symbols_with_root(self, root):
         """Find all symbols with the given root."""

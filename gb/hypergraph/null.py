@@ -51,7 +51,7 @@ class Null(Backend):
         A pattern is a collection of entity ids and wildcards (None)."""
         return set()
 
-    def star(self, center):
+    def star(self, center, limit=None):
         """Return all the edges that contain a given entity.
         Entity can be atomic or an edge."""
         return set()
