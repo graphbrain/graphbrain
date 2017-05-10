@@ -43,7 +43,7 @@ from gb.reader.reddit import RedditReader
 @click.option('--enddate', help='End date.')
 @click.option('--source', help='Source can have multiple meanings.')
 @click.option('--log', help='Logging level.', default='WARNING')
-@click.option('--disamb/--no_disamb', help='Perform disambiguation.', default=False)
+@click.option('--disamb/--no_disamb', help='Perform sense.', default=False)
 @click.option('--comments/--no_comments', help='Include comments.', default=False)
 @click.pass_context
 def cli(ctx, backend, hg, infile, outfile, startdate, enddate, source, log, disamb, comments):

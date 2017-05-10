@@ -27,7 +27,7 @@ import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
 import gb.nlp.parser as par
 import gb.knowledge.synonyms as ksyn
-from gb.disambiguation.candidate_metrics import CandidateMetrics
+from gb.sense.candidate_metrics import CandidateMetrics
 
 
 MAX_PROB = -5.
@@ -90,7 +90,7 @@ def words_similarity(words1, words2, exclude):
     return score
 
 
-def disambiguate(hg, parser, roots, aux_text, namespaces=None):
+def best_sense(hg, parser, roots, aux_text, namespaces=None):
     candidates = set()
     exclude = set()
     for root in roots:
@@ -127,4 +127,4 @@ if __name__ == '__main__':
     text2 = "Cambridge near Boston in the United States."
     text3 = "Cambridge near London in England."
 
-    print(disambiguate(hgr, p, r2, text3))
+    print(best_sense(hgr, p, r2, text3))
