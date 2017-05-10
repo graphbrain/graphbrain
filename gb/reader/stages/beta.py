@@ -22,8 +22,8 @@
 import logging
 import gb.constants as const
 import gb.hypergraph.symbol as sym
-import gb.disambiguation.disambiguate as disamb
-from gb.disambiguation.candidate_metrics import CandidateMetrics
+import gb.sense.disambiguation as disamb
+from gb.sense.candidate_metrics import CandidateMetrics
 import gb.reader.stages.common as co
 
 
@@ -105,7 +105,7 @@ class BetaStage(object):
             disamb_ent = None
             metrics = CandidateMetrics()
         else:
-            disamb_ent, metrics = disamb.disambiguate(self.hg, self.parser, roots, self.aux_text, namespaces)
+            disamb_ent, metrics = disamb.best_sense(self.hg, self.parser, roots, self.aux_text, namespaces)
 
         logging.info('[disamb] text: %s; entity: %s; metrics: %s' % (entity.as_text(), disamb_ent, metrics))
 
