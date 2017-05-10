@@ -20,6 +20,7 @@
 
 
 import spacy
+from gb.nlp.word import Word
 from gb.nlp.nlp_token import Token
 from gb.nlp.sentence import Sentence
 
@@ -42,6 +43,7 @@ class Parser:
             token.logprob = stoken.prob
             token.pos = stoken.pos_
             token.dep = stoken.dep_
+            token.vector = stoken.vector
             if depth < 20:
                 token.left_children = [self.__spacy2token(t, depth + 1) for t in stoken.lefts]
                 token.right_children = [self.__spacy2token(t, depth + 1) for t in stoken.rights]
@@ -56,6 +58,15 @@ class Parser:
             self.token_table[stoken] = token
 
         return self.token_table[stoken]
+
+    def make_word(self, text):
+        word = Word()
+        word.text = text.lower()
+        sword =  self.parser.vocab[word.text]
+        word.prob = sword.prob
+        word.vector = sword.vector
+        word.sword = sword
+        return word
 
     def parse_text(self, text):
         parsed_data = self.parser(text)

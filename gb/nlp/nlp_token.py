@@ -36,6 +36,7 @@ class Token:
         self.entity_type = None
         self.separator = False
         self.position_in_sentence = -1
+        self.vector = None
 
     def to_list(self):
         tokens = []

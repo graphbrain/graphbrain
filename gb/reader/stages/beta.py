@@ -67,11 +67,12 @@ def trees_to_bag_of_ngrams(trees):
 
 
 class BetaStage(object):
-    def __init__(self, hg, output, trees):
+    def __init__(self, hg, parser, output, aux_text):
         self.hg = hg
+        self.parser = parser
         self.output = output
         self.compound_deps = ['pobj', 'compound', 'dobj', 'nsubj']
-        self.bag_of_ngrams = trees_to_bag_of_ngrams(trees)
+        self.aux_text = aux_text
 
     def is_compound_by_deps(self, node):
         for child in node.children():
@@ -104,7 +105,7 @@ class BetaStage(object):
             disamb_ent = None
             metrics = CandidateMetrics()
         else:
-            disamb_ent, metrics = disamb.disambiguate(self.hg, roots, self.bag_of_ngrams, exclude, namespaces)
+            disamb_ent, metrics = disamb.disambiguate(self.hg, self.parser, roots, self.aux_text, namespaces)
 
         logging.info('[disamb] text: %s; entity: %s; metrics: %s' % (entity.as_text(), disamb_ent, metrics))
 
