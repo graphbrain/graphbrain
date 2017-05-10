@@ -39,6 +39,7 @@ class Extractor(object):
         self.debug = False
         self.outputs = []
         self.aux_trees = []
+        self.aux_text = ''
         self.show_namespaces = show_namespaces
 
     def generate_aux_trees(self, text):
@@ -55,7 +56,7 @@ class Extractor(object):
         if name == 'alpha':
             return AlphaStage()
         elif name == 'beta':
-            return BetaStage(self.hg, output, [output.tree] + self.aux_trees)
+            return BetaStage(self.hg, self.parser, output, self.aux_text)
         elif name == 'beta-simple':
             return BetaStageSimple(output)
         elif name == 'gamma':
@@ -78,9 +79,12 @@ class Extractor(object):
             self.parser = Parser()
         parse = self.parser.parse_text(text)
         if reset_context:
-            self.aux_trees = []
+            # self.aux_trees = []
+            self.aux_text = ''
             if aux_text:
-                self.aux_trees = self.generate_aux_trees(aux_text)
+                # self.aux_trees = self.generate_aux_trees(aux_text)
+                self.aux_text = '%s\n%s' % (text, aux_text)
+                # self.aux_text = text
         return [(p[0], self.read_sentence(Sentence(p[1]))) for p in parse]
 
     def read_sentence(self, sentence):

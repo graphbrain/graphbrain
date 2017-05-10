@@ -16,25 +16,31 @@
 #   GNU Affero General Public License for more details.
 #
 #   You should have received a copy of the GNU Affero General Public License
+#   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class CandidateMetrics(object):
+class Word:
+    """Generic NLP word."""
+
     def __init__(self):
-        self.prob_meaning = float('inf')
-        self.degree = 0
+        self.text = None
+        self.prob = None
+        self.vector = None
+        self.sword = None
 
-    def better_than(self, other):
-        if not isinstance(other, CandidateMetrics):
-            return NotImplemented
-        if self.prob_meaning != other.prob_meaning:
-            return self.prob_meaning < other.prob_meaning
-        elif self.degree != other.degree:
-            return self.degree > other.degree
-        else:
-            return False
+    def similarity(self, other):
+        return self.sword.similarity(other.sword)
+
+    def __eq__(self, other):
+        if isinstance(other, Word):
+            return self.text == other.text
+        return NotImplemented
 
     def __str__(self):
-        return 'prob_meaning: %s; degree: %s' % (self.prob_meaning, self.degree)
+        return self.text
 
     def __repr__(self):
         return self.__str__()
+
+    def __hash__(self):
+        return hash(self.text)

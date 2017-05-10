@@ -19,6 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import time
 import json
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
@@ -51,8 +52,12 @@ class RedditReader(object):
         self.main_edges = 0
         self.extra_edges = 0
         self.ignored = 0
+        self.time_acc = 0
+        self.items_processed = 0
+        self.first_item = True
 
     def process_text(self, text, author, aux_text=None):
+        start_t = time.time()
         if aux_text:
             parses = self.extractor.read_text(text, aux_text)
         else:
@@ -71,6 +76,17 @@ class RedditReader(object):
                     self.extra_edges += 1
             else:
                 self.ignored += 1
+
+        if self.first_item:
+            self.first_item = False
+        else:
+            delta_t = time.time() - start_t
+            self.time_acc += delta_t
+            self.items_processed += 1
+            items_per_min = float(self.items_processed) / float(self.time_acc)
+            items_per_min *= 60.
+            print('total items: %s' % self.items_processed)
+            print('items per minute: %s' % items_per_min)
 
     def process_comments(self, post):
         if 'body' in post:

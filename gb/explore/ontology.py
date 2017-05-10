@@ -30,7 +30,7 @@ def down(hg, symbol, visited=None):
         visited = set()
     if sym.symbol2str(symbol) in visited:
         return None
-    print(symbol)
+    # print(symbol)
     visited.add(sym.symbol2str(symbol))
     synonyms = [synonym for synonym in syn.synonyms(hg, symbol)]
     edges = [s for s in hg.star(symbol)]
@@ -53,9 +53,9 @@ def derived_symbols(hg, ont, symbols=None, depth=0):
 
 if __name__ == '__main__':
     params = {'backend': 'leveldb',
-              'hg': 'reddit-test.hg'}
+              'hg': 'reddit-worldnews-01012017-28032017.hg'}
     hyper = HyperGraph(params)
-    onto = down(hyper, 'government/wdQ7188')
+    onto = down(hyper, 'israel/wdQ801')
     ds = derived_symbols(hyper, onto)
     # print(ds)
     for s in ds:
