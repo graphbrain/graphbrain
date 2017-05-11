@@ -30,8 +30,10 @@ import gb.knowledge.synonyms as ksyn
 from gb.sense.candidate_metrics import CandidateMetrics
 
 
-MAX_PROB = -5.
+MAX_PROB = -7.
 SIMILARITY_THRESHOLD = 0.7
+MAX_COUNT = 5000
+STAR_LIMIT = 1000
 
 
 def check_namespace(symbol, namespaces):
@@ -46,7 +48,7 @@ def check_namespace(symbol, namespaces):
 
 
 def words_around_symbol(hg, parser, symbol):
-    edges = hg.star(symbol, limit=1000)
+    edges = hg.star(symbol, limit=STAR_LIMIT)
     logging.debug('starting to create word list')
     words = set()
     for edge in edges:
@@ -77,6 +79,7 @@ def words_from_text(parser, text):
 def words_similarity(words1, words2, exclude):
     logging.debug('starting to compute words similarity')
     score = 0.
+    count = 0
     for word1 in words1:
         for word2 in words2:
             if (word1.text not in exclude) or (word2.text not in exclude):
@@ -86,7 +89,12 @@ def words_similarity(words1, words2, exclude):
                 if sim > SIMILARITY_THRESHOLD:
                     local_score = 1. / (prob1 * prob2 * sim)
                     score += local_score
-    logging.debug('words similarity computed')
+                count += 1
+                if count >= MAX_COUNT:
+                    logging.debug('words similarity computed [interrupted. MAX_COUNT] (count: %s)' % count)
+                    return score
+
+    logging.debug('words similarity computed (count: %s)' % count)
     return score
 
 
@@ -127,4 +135,4 @@ if __name__ == '__main__':
     text2 = "Cambridge near Boston in the United States."
     text3 = "Cambridge near London in England."
 
-    print(best_sense(hgr, p, r2, text3))
+    print(best_sense(hgr, p, r2, text2))
