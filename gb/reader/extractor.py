@@ -23,6 +23,7 @@ import logging
 import gb.hypergraph.hypergraph as hyperg
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
+from gb.sense.disambiguation import Disambiguation
 from gb.reader.stages.alpha import AlphaStage
 from gb.reader.stages.beta import BetaStage
 from gb.reader.stages.beta_simple import BetaStageSimple
@@ -36,27 +37,17 @@ class Extractor(object):
         self.hg = hg
         self.stages = stages
         self.parser = None
+        self.disamb = None
         self.debug = False
         self.outputs = []
-        self.aux_trees = []
         self.aux_text = ''
         self.show_namespaces = show_namespaces
-
-    def generate_aux_trees(self, text):
-        trees = []
-        alpha = self.create_stage('alpha', None)
-        rs = self.parser.parse_text(text)
-        for r in rs:
-            sentence = Sentence(r[1])
-            output = alpha.process_sentence(sentence)
-            trees.append(output.tree)
-        return trees
 
     def create_stage(self, name, output):
         if name == 'alpha':
             return AlphaStage()
         elif name == 'beta':
-            return BetaStage(self.hg, self.parser, output, self.aux_text)
+            return BetaStage(self.hg, self.parser, self.disamb, output, self.aux_text)
         elif name == 'beta-simple':
             return BetaStageSimple(output)
         elif name == 'gamma':
@@ -77,14 +68,12 @@ class Extractor(object):
         if self.parser is None:
             self.debug_msg('creating parser...')
             self.parser = Parser()
+            self.disamb = Disambiguation(self.hg, self.parser)
         parse = self.parser.parse_text(text)
         if reset_context:
-            # self.aux_trees = []
-            self.aux_text = ''
+            self.aux_text = text
             if aux_text:
-                # self.aux_trees = self.generate_aux_trees(aux_text)
                 self.aux_text = '%s\n%s' % (text, aux_text)
-                # self.aux_text = text
         return [(p[0], self.read_sentence(Sentence(p[1]))) for p in parse]
 
     def read_sentence(self, sentence):

@@ -39,7 +39,8 @@ setup(
         'ujson',
         'plyvel',
         'bottle',
-        'praw'
+        'praw',
+        'cachetools'
     ],
     entry_points='''
         [console_scripts]
