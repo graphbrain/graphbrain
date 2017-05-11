@@ -39,8 +39,8 @@ def comments_to_text(comments):
 
 def generate_aux_text(post):
     text = ''
-    if 'comments' in post:
-        text = '%s\n%s' % (text, comments_to_text(post['comments']))
+    # if 'comments' in post:
+    #     text = '%s\n%s' % (text, comments_to_text(post['comments']))
     return text
 
 
@@ -56,12 +56,9 @@ class RedditReader(object):
         self.items_processed = 0
         self.first_item = True
 
-    def process_text(self, text, author, aux_text=None):
+    def process_text(self, text, author, reset_context=False, aux_text=None):
         start_t = time.time()
-        if aux_text:
-            parses = self.extractor.read_text(text, aux_text)
-        else:
-            parses = self.extractor.read_text(text, reset_context=False)
+        parses = self.extractor.read_text(text, aux_text, reset_context=reset_context)
         for p in parses:
             print('\n')
             print('sentence: %s' % p[0])
@@ -91,7 +88,7 @@ class RedditReader(object):
     def process_comments(self, post):
         if 'body' in post:
             author = sym.build(post['author'], 'reddit_user')
-            self.process_text(post['body'], author)
+            self.process_text(post['body'], author, reset_context=False)
         if 'comments' in post:
             for comment in post['comments']:
                 if comment:
@@ -103,7 +100,7 @@ class RedditReader(object):
 
         aux_text = generate_aux_text(post)
 
-        self.process_text(post['title'], author, aux_text)
+        self.process_text(post['title'], author, reset_context=True, aux_text=aux_text)
         if self.comments:
             self.process_comments(post)
 
