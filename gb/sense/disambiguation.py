@@ -76,7 +76,7 @@ class Disambiguation(object):
             .replace('!', ' ').split()
 
         if 0 < MAX_WORDS <= len(tokens):
-            return tokens[:MAX_WORDS]
+            tokens = tokens[:MAX_WORDS]
 
         for token in tokens:
             word = self.parser.make_word(token)
@@ -153,4 +153,4 @@ if __name__ == '__main__':
     text2 = "Cambridge near Boston in the United States."
     text3 = "Cambridge near London in England."
 
-    print(d.best_sense(r2, text3))
+    print(d.best_sense(r2, text2))
