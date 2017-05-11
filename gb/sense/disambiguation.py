@@ -32,7 +32,7 @@ from gb.sense.candidate_metrics import CandidateMetrics
 
 MAX_PROB = -7.
 SIMILARITY_THRESHOLD = 0.7
-MAX_COUNT = 5000
+MAX_COUNT = 2500
 STAR_LIMIT = 1000
 
 
@@ -135,4 +135,4 @@ if __name__ == '__main__':
     text2 = "Cambridge near Boston in the United States."
     text3 = "Cambridge near London in England."
 
-    print(best_sense(hgr, p, r2, text2))
+    print(best_sense(hgr, p, r2, text1))
