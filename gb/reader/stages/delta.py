@@ -116,17 +116,18 @@ class DeltaStage(object):
                     rel_right = self.output.tree.get(child.children_ids[0])
 
                     # insert before
-                    # (r1 (r2 i1 ...) i2 ...) -> ((r2 r1) i1 ... i2 ...)
+                    # (r1 a1 ... (r2 b1 ...)) -> ((r2 r1) a1 ... b1 ...)
+                    # ((r1 ...) a1 ... (r2 b1 ...)) -> ((r2 r1 ...) a1 ... b1 ...)
                     if len(working_node.children_ids) == 1:
                         rel = self.output.tree.create_node([working_node.children_ids[0]])
                         rel.children_ids.insert(0, child.children_ids[0])
                         self.build_candidate(original_node, working_node, rel.id, child, to_process, candidates)
 
                     # merge at the center
-                    # (r1 (r2 i1 ...) i2 ...) -> (r1_r2 i1 ... i2 ...)
-                    # ((r1 r2) ((r3 r4) i1 ...) i2 ...) -> ((r1 r2_r3 r4) i1 ... i2 ...)
-                    # (r1 ((r2 r3) i1 ...) i2 ...) -> ((r1_r2 r3 r4) i1 ... i2 ...)
-                    # ((r1 r2) (r3 i1 ...) i2 ...) -> ((r1 r2_r3) i1 ... i2 ...)
+                    # (r1 a1 ... (r2 b1 ...)) -> (r1_r2 a1 ... b1 ...)
+                    # ((r1 r2) a1 ... ((r3 r4) b1 ...)) -> ((r1 r2_r3 r4) a1 ... b1 ...)
+                    # (r1 a1 ... ((r2 r3) b1 ...)) -> ((r1_r2 r3 r4) a1 ... b1 ...)
+                    # ((r1 r2) a1 ... (r3 b1 ...)) -> ((r1 r2_r3) a1 ... b1 ...)
                     if rel_left.is_terminal():
                         rel_left_a = []
                         rel_left_b = rel_left.id
@@ -152,8 +153,8 @@ class DeltaStage(object):
                     self.build_candidate(original_node, working_node, rel.id, child, to_process, candidates)
 
                     # insert after
-                    # (r1 (r2 i1 ...) i2 ...) -> ((r1 r2) i1 ... i2 ...)
-                    # ((r1 ...) (r2 i1 ...) i2 ...) -> ((r1 ... r2) i1 ... i2 ...)
+                    # (r1 a1 ... (r2 b1 ...)) -> ((r1 r2) a1 ... b1 ...)
+                    # ((r1 ...) a1 ... (r2 b1 ...)) -> ((r1 ... r2) a1 ... b1 ...)
                     if rel_right.is_terminal():
                         new_node = working_node.clone()
                         rel_id = working_node.children_ids[0]
@@ -167,11 +168,12 @@ class DeltaStage(object):
                         rel_id = new_node.children_ids[0]
                         self.build_candidate(original_node, working_node, rel_id, child, to_process, candidates)
                 # just append new child
-                # (r1 (r2 i1 ...) i2 ...) -> (r1 (r2 i1 ...) i2 ...)
+                # (r a1 b) -> (r a1 b)
                 new_node = working_node.clone()
                 new_node.children_ids.append(child_id)
                 self.find_candidates_r(original_node, new_node, to_process[1:], candidates)
         else:
+            # nothing left to process, append working node
             working_node.get_child(0).flatten()
             candidates.append(working_node)
 
