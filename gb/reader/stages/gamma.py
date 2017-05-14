@@ -49,8 +49,8 @@ class GammaStage(object):
 
         # process node
         if entity.is_node() and not entity.compound:
-            first = entity.get_child(0)
             if len(entity.children_ids) == 2:
+                first = entity.get_child(0)
                 second = entity.get_child(1)
                 if first.is_leaf():
                     # remove
