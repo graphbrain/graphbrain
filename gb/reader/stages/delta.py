@@ -116,12 +116,14 @@ class DeltaStage(object):
                     rel_right = self.output.tree.get(child.children_ids[0])
 
                     # insert before
+                    # (r1 (r2 i1 ...) i2 ...) -> ((r2 r1) i1 ... i2 ...)
                     if len(working_node.children_ids) == 1:
                         rel = self.output.tree.create_node([working_node.children_ids[0]])
                         rel.children_ids.insert(0, child.children_ids[0])
                         self.build_candidate(original_node, working_node, rel.id, child, to_process, candidates)
 
                     # make compound
+                    # (r1 (r2 i1 ...) i2 ...) -> (r1_r2 i1 ... i2 ...)
                     if rel_left.is_terminal() and rel_right.is_terminal():
                         if rel_left.is_terminal():
                             rel = rel_left
