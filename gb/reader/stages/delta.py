@@ -125,14 +125,7 @@ class DeltaStage(object):
                     # make compound
                     # (r1 (r2 i1 ...) i2 ...) -> (r1_r2 i1 ... i2 ...)
                     if rel_left.is_terminal() and rel_right.is_terminal():
-                        if rel_left.is_terminal():
-                            rel = rel_left
-                        else:
-                            rel_id = rel_left.children_ids[-1]
-                            rel = self.output.tree.get(rel_id)
-                        rel = rel.clone()
-                        if rel.is_terminal():
-                            rel = self.output.tree.create_node([rel.id])
+                        rel = self.output.tree.create_node([rel_left.clone().id])
                         rel.add_child(child.children_ids[0])
                         rel.compound = True
                         self.build_candidate(original_node, working_node, rel.id, child, to_process, candidates)
