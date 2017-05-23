@@ -19,6 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import time
 import logging
 import gb.constants as const
 import gb.hypergraph.symbol as sym
@@ -73,6 +74,7 @@ class BetaStage(object):
         self.output = output
         self.compound_deps = ['pobj', 'compound', 'dobj', 'nsubj']
         self.aux_text = aux_text
+        self.profiling = {}
 
     def is_compound_by_deps(self, node):
         for child in node.children():
@@ -88,7 +90,16 @@ class BetaStage(object):
         return is_compound_by_entity_type(node) or self.is_compound_by_deps(node)
 
     def process_entity(self, entity_id, exclude):
+        start = time.time()
         entity = self.output.tree.get(entity_id)
+
+        # profiling
+        prof_key = entity.as_text()
+        self.profiling[prof_key] = {}
+        self.profiling[prof_key]['candidates'] = 0
+        self.profiling[prof_key]['words1'] = 0
+        self.profiling[prof_key]['words2'] = 0
+
         roots = {sym.str2symbol(entity.as_text())}
         if entity.is_leaf():
             roots.add(sym.str2symbol(entity.token.lemma))
@@ -106,6 +117,10 @@ class BetaStage(object):
             metrics = CandidateMetrics()
         else:
             disamb_ent, metrics = self.disamb.best_sense(roots, self.aux_text, namespaces)
+            # profiling
+            self.profiling[prof_key]['candidates'] = self.disamb.candidates
+            self.profiling[prof_key]['words1'] = self.disamb.words1
+            self.profiling[prof_key]['words2'] = self.disamb.words2
 
         logging.info('[disamb] text: %s; entity: %s; metrics: %s' % (entity.as_text(), disamb_ent, metrics))
 
@@ -137,8 +152,18 @@ class BetaStage(object):
             if self.is_compound(entity):
                 entity.compound = True
 
+        # profiling
+        self.profiling[prof_key]['time'] = time.time() - start
+
         return metrics
 
     def process(self):
+        self.profiling = {}
         self.process_entity(self.output.tree.root_id, [])
+
+        for entity_id in self.profiling.keys():
+            print('%s => %s' % (entity_id, self.profiling[entity_id]))
+
+        print(self.disamb.profile_string())
+
         return self.output
