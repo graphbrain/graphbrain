@@ -55,7 +55,7 @@ if __name__ == '__main__':
     params = {'backend': 'leveldb',
               'hg': 'reddit-worldnews-01012017-28032017.hg'}
     hyper = HyperGraph(params)
-    onto = down(hyper, 'israel/wdQ801')
+    onto = down(hyper, 'south_korea/lem.wdQ884')
     ds = derived_symbols(hyper, onto)
     # print(ds)
     for s in ds:

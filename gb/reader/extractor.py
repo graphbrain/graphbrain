@@ -83,17 +83,16 @@ class Extractor(object):
 
         self.outputs = []
 
-        stage = self.create_stage(self.stages[0], None)
-        self.debug_msg('executing %s stage...' % self.stages[0])
-        last_stage_output = stage.process_sentence(sentence)
-        output = str(last_stage_output.tree)
-        self.outputs.append(output)
-        self.debug_msg(output)
-
-        for name in self.stages[1:]:
+        last_stage_output = None
+        first = True
+        for name in self.stages:
             stage = self.create_stage(name, last_stage_output)
             self.debug_msg('executing %s stage...' % name)
-            last_stage_output = stage.process()
+            if first:
+                last_stage_output = stage.process_sentence(sentence)
+                first = False
+            else:
+                last_stage_output = stage.process()
             output = last_stage_output.tree.to_hyperedge_str(with_namespaces=self.show_namespaces)
             self.outputs.append(output)
             self.debug_msg(output)

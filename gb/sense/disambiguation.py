@@ -19,10 +19,10 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import time
 import math
 import logging
 import numpy as np
-from cachetools import LRUCache
 import gb.hypergraph.hypergraph as hyperg
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
@@ -53,9 +53,22 @@ class Disambiguation(object):
     def __init__(self, hg, parser):
         self.hg = hg
         self.parser = parser
-        self.cache = LRUCache(maxsize=100000000)
+
+        # profiling
+        self.candidates = 0
+        self.words1 = 0
+        self.words2 = 0
+        self.words_around_symbol_t = 0
+        self.words_from_text_t = 0
+        self.words_similarity_t = 0
+        self.best_sense_t = 0
+
+    def profile_string(self):
+        return 'words_around_symbol: %s; words_from_text: %s; words_similarity: %s; best_sense: %s'\
+               % (self.words_around_symbol_t, self.words_from_text_t, self.words_similarity_t, self.best_sense_t)
 
     def words_around_symbol(self, symbol):
+        start = time.time()
         edges = self.hg.star(symbol, limit=STAR_LIMIT)
         words = set()
         for edge in edges:
@@ -67,9 +80,11 @@ class Disambiguation(object):
                         if word.prob < MAX_PROB and np.count_nonzero(word.vector) > 0:
                             words.add(word)
 
+        self.words_around_symbol_t += time.time() - start
         return words
 
     def words_from_text(self, text):
+        start = time.time()
         words = set()
 
         tokens = text.replace(':', ' ').replace(';', ' ').replace(',', ' ').replace('.', ' ').replace('?', ' ')\
@@ -82,9 +97,12 @@ class Disambiguation(object):
             word = self.parser.make_word(token)
             if word.prob < MAX_PROB and np.count_nonzero(word.vector) > 0:
                 words.add(word)
+
+        self.words_from_text_t += time.time() - start
         return words
 
     def words_similarity(self, words1, words2, exclude):
+        start = time.time()
         # print('sizes %s %s' % (len(words1), len(words2)))
         logging.debug('starting to compute words similarity')
         score = 0.
@@ -92,20 +110,12 @@ class Disambiguation(object):
         for word1 in words1:
             for word2 in words2:
                 if (word1.text not in exclude) or (word2.text not in exclude):
-                    pair_id1 = '%s %s' % (word1.text, word2.text)
-                    pair_id2 = '%s %s' % (word2.text, word1.text)
-                    if pair_id1 in self.cache:
-                        local_score = self.cache[pair_id1]
-                    elif pair_id2 in self.cache:
-                        local_score = self.cache[pair_id2]
-                    else:
-                        sim = word1.similarity(word2)
-                        prob1 = math.exp(word1.prob)
-                        prob2 = math.exp(word2.prob)
-                        local_score = 0.
-                        if sim > SIMILARITY_THRESHOLD:
-                            local_score = 1. / (prob1 * prob2 * sim)
-                            self.cache[pair_id1] = local_score
+                    sim = word1.similarity(word2)
+                    prob1 = math.exp(word1.prob)
+                    prob2 = math.exp(word2.prob)
+                    local_score = 0.
+                    if sim > SIMILARITY_THRESHOLD:
+                        local_score = 1. / (prob1 * prob2 * sim)
                     score += local_score
                     count += 1
                     if 0 < MAX_COUNT <= count:
@@ -113,9 +123,16 @@ class Disambiguation(object):
                         return score
 
         logging.debug('words similarity computed (count: %s)' % count)
+        self.words_similarity_t += time.time() - start
         return score
 
     def best_sense(self, roots, aux_text, namespaces=None):
+        start = time.time()
+        # reset profiling
+        self.candidates = 0
+        self.words1 = 0
+        self.words2 = 0
+
         candidates = set()
         exclude = set()
         for root in roots:
@@ -123,12 +140,15 @@ class Disambiguation(object):
             text = sym.symbol2str(root)
             for token in text.split():
                 exclude.add(token)
+        self.candidates = len(candidates)
         words1 = self.words_from_text(aux_text)
+        self.words1 = len(words1)
         best = None
         best_cm = CandidateMetrics()
         for candidate in candidates:
             if check_namespace(candidate, namespaces):
                 words2 = self.words_around_symbol(candidate)
+                self.words2 += len(words1)
                 cm = CandidateMetrics()
                 cm.score = self.words_similarity(words1, words2, exclude)
                 cm.degree = ksyn.degree(self.hg, candidate)
@@ -137,6 +157,7 @@ class Disambiguation(object):
                     best_cm = cm
                     best = candidate
 
+        self.best_sense_t += time.time() - start
         return best, best_cm
 
 

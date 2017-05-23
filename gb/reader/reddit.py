@@ -48,7 +48,7 @@ class RedditReader(object):
     def __init__(self, hg, comments):
         self.hg = hg
         self.comments = comments
-        self.extractor = Extractor(hg, stages=('alpha', 'beta', 'gamma', 'delta', 'epsilon'))
+        self.extractor = Extractor(hg, stages=('alpha', 'beta-simple', 'gamma', 'delta', 'epsilon'))
         self.main_edges = 0
         self.extra_edges = 0
         self.ignored = 0

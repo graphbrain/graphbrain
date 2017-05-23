@@ -41,6 +41,23 @@ def is_adp_token_relationship(token):
         return is_adp_token_relationship(token.parent)
 
 
+def is_adj_token_relationship(token):
+    if not token.parent:
+        return False
+    if token.parent.pos in REL_POS:
+        return True
+    if token.left_children:
+        for child in token.left_children:
+            if child.pos in REL_POS:
+                return True
+    if token.right_children:
+        for child in token.right_children:
+            if child.pos in REL_POS:
+                return True
+    if token.parent.pos == 'ADJ':
+        return is_adj_token_relationship(token.parent)
+
+
 def is_relationship(entity, shallow=False, depth=0):
     if entity.is_node():
         if shallow and depth > 0:
@@ -52,6 +69,9 @@ def is_relationship(entity, shallow=False, depth=0):
     else:
         if entity.token.pos == 'ADP':
             return is_adp_token_relationship(entity.token)
+
+        if entity.token.pos == 'ADJ':
+            return is_adj_token_relationship(entity.token)
 
         return (entity.token.pos in REL_POS)\
             and (entity.token.dep != 'conj')\

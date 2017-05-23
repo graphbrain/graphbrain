@@ -63,9 +63,9 @@ class DeltaStage(object):
         if node.is_node() and co.is_relationship(node.children()[0]):
             rel = self.output.tree.get(node.children_ids[0])
             if rel.arity() == 1 and (len(node.children_ids) == 2):
-                fit += 1000
+                fit += 100000
             elif rel.arity() == (len(node.children_ids) - 2):
-                fit += 1000
+                fit += 100000
 
             if rel.is_not_terminal():
                 count = min(rel.arity(), node.arity() - 2)
