@@ -34,8 +34,8 @@ class ReaderTests(object):
         if disamb:
             beta = 'beta'
         else:
-            beta = 'beta-simple'
-        self.extractor = Extractor(hg, stages=('alpha', beta, 'gamma', 'delta', 'epsilon'), show_namespaces=disamb)
+            beta = 'beta-naive'
+        self.extractor = Extractor(hg, stages=('alpha', beta, 'gamma', 'delta', 'epsilon'), show_namespaces=True)
         # self.extractor.debug = True
         self.cases = None
 
