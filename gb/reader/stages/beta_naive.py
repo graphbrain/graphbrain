@@ -19,31 +19,27 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from setuptools import setup, find_packages
+import gb.constants as const
+import gb.hypergraph.symbol as sym
 
 
-setup(
-    name='graphbrain',
-    version='0.1',
-    packages=find_packages(),
-    install_requires=[
-        'numpy',
-        'scipy',
-        'colorama',
-        'click',
-        'matplotlib',
-        'python-igraph',
-        'nltk',
-        'spacy',
-        'asciitree',
-        'ujson',
-        'plyvel',
-        'bottle',
-        'praw',
-        'jupyter'
-    ],
-    entry_points='''
-        [console_scripts]
-        gbrain=gb.gbrain:cli
-    ''',
-)
+class BetaStageNaive(object):
+    def __init__(self, output):
+        self.output = output
+
+    def process_entity(self, entity_id):
+        entity = self.output.tree.get(entity_id)
+
+        entity.generate_namespace()
+
+        if entity.is_leaf():
+            if entity.token.word.lower() != entity.token.lemma.lower():
+                lemma_ent = sym.build(entity.token.lemma.lower(), entity.namespace)
+                self.output.edges.append((const.have_same_lemma, entity.to_hyperedge(), lemma_ent))
+        else:
+            for child_id in entity.children_ids:
+                self.process_entity(child_id)
+
+    def process(self):
+        self.process_entity(self.output.tree.root_id)
+        return self.output

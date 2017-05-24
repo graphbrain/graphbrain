@@ -533,7 +533,7 @@ class Node(Element):
 
     # override
     def to_synonym(self):
-        if self.compound and ((not self.namespace) or self.namespace.startswith('comb.')):
+        if self.compound and ((not self.namespace) or '+' in self.namespace):
             edge = ['+/gb']
             for child in self.children():
                 edge.append(child.to_hyperedge())
@@ -542,7 +542,7 @@ class Node(Element):
 
     # override
     def generate_namespace(self):
-        self.namespace = 'comb.%s' % '+'.join([child.get_namespace() for child in self.children()])
+        self.namespace = '+'.join([child.get_namespace() for child in self.children()])
 
     def __eq__(self, other):
         if isinstance(other, Leaf):

@@ -39,8 +39,8 @@ def comments_to_text(comments):
 
 def generate_aux_text(post):
     text = ''
-    # if 'comments' in post:
-    #     text = '%s\n%s' % (text, comments_to_text(post['comments']))
+    if 'comments' in post:
+        text = '%s\n%s' % (text, comments_to_text(post['comments']))
     return text
 
 
@@ -48,7 +48,7 @@ class RedditReader(object):
     def __init__(self, hg, comments):
         self.hg = hg
         self.comments = comments
-        self.extractor = Extractor(hg, stages=('alpha', 'beta-simple', 'gamma', 'delta', 'epsilon'))
+        self.extractor = Extractor(hg, stages=('alpha', 'beta-naive', 'gamma', 'delta', 'epsilon'))
         self.main_edges = 0
         self.extra_edges = 0
         self.ignored = 0
@@ -66,9 +66,7 @@ class RedditReader(object):
             if len(p[1].main_edge) < 8:
                 self.hg.add_belief(author, p[1].main_edge)
                 self.main_edges += 1
-                print('== extra ==')
                 for edge in p[1].edges:
-                    print(ed.edge2str(edge))
                     self.hg.add_belief('gb', edge)
                     self.extra_edges += 1
             else:
@@ -98,9 +96,9 @@ class RedditReader(object):
         author = sym.build(post['author'], 'reddit_user')
         print('author: %s' % author)
 
-        aux_text = generate_aux_text(post)
+        # aux_text = generate_aux_text(post)
 
-        self.process_text(post['title'], author, reset_context=True, aux_text=aux_text)
+        self.process_text(post['title'], author, reset_context=True, aux_text='')
         if self.comments:
             self.process_comments(post)
 

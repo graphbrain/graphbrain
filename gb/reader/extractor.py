@@ -21,19 +21,21 @@
 
 import logging
 import gb.hypergraph.hypergraph as hyperg
+import gb.hypergraph.edge as ed
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
 from gb.sense.disambiguation import Disambiguation
 from gb.reader.stages.alpha import AlphaStage
 from gb.reader.stages.beta import BetaStage
 from gb.reader.stages.beta_simple import BetaStageSimple
+from gb.reader.stages.beta_naive import BetaStageNaive
 from gb.reader.stages.gamma import GammaStage
 from gb.reader.stages.delta import DeltaStage
 from gb.reader.stages.epsilon import EpsilonStage
 
 
 class Extractor(object):
-    def __init__(self, hg, stages=('alpha', 'beta', 'gamma', 'delta', 'epsilon'), show_namespaces=False):
+    def __init__(self, hg, stages=('alpha', 'beta-naive', 'gamma', 'delta', 'epsilon'), show_namespaces=False):
         self.hg = hg
         self.stages = stages
         self.parser = None
@@ -50,6 +52,8 @@ class Extractor(object):
             return BetaStage(self.hg, self.parser, self.disamb, output, self.aux_text)
         elif name == 'beta-simple':
             return BetaStageSimple(output)
+        elif name == 'beta-naive':
+            return BetaStageNaive(output)
         elif name == 'gamma':
             return GammaStage(output)
         elif name == 'delta':
@@ -69,12 +73,20 @@ class Extractor(object):
             self.debug_msg('creating parser...')
             self.parser = Parser()
             self.disamb = Disambiguation(self.hg, self.parser)
-        parse = self.parser.parse_text(text)
+        nlp_parses = self.parser.parse_text(text)
         if reset_context:
             self.aux_text = text
             if aux_text:
                 self.aux_text = '%s\n%s' % (text, aux_text)
-        return [(p[0], self.read_sentence(Sentence(p[1]))) for p in parse]
+
+        parses = [(p[0], self.read_sentence(Sentence(p[1]))) for p in nlp_parses]
+
+        for p in parses:
+            self.debug_msg('== extra ==')
+            for edg in p[1].edges:
+                self.debug_msg(ed.edge2str(edg))
+
+        return parses
 
     def read_sentence(self, sentence):
         self.debug_msg('parsing sentence: %s' % sentence)
@@ -98,7 +110,6 @@ class Extractor(object):
             self.debug_msg(output)
 
         last_stage_output.main_edge = last_stage_output.tree.to_hyperedge()
-
         return last_stage_output
 
 
