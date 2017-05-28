@@ -21,6 +21,7 @@
 
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
+from gb.nlp.nlp_token import Token
 
 
 LEAF = 0
@@ -196,6 +197,18 @@ class Element(object):
         # throw exception
         pass
 
+    def grow_(self, child_id, pos):
+        # throw exception
+        pass
+
+    def apply_(self, child_id, pos):
+        # throw exception
+        pass
+
+    def nest_(self, child_id, pos):
+        # throw exception
+        pass
+
     def __eq__(self, other):
         return NotImplemented
 
@@ -281,6 +294,22 @@ class Leaf(Element):
     # override
     def generate_namespace(self):
         self.namespace = 'nlp.%s.%s' % (self.token.lemma.lower(), self.token.pos.lower())
+
+    def grow_(self, child_id, pos):
+        node = self.tree.enclose(self)
+        leaf = self.tree.create_leaf(Token(''))
+        leaf.connector = True
+        leaf.namespace = 'gb'
+        node.children_ids.insert(0, leaf.id)
+        node.grow_(child_id, pos)
+
+    def apply_(self, child_id, pos):
+        node = self.tree.enclose(self)
+        node.apply_(child_id, pos)
+
+    def nest_(self, child_id, pos):
+        node = self.tree.enclose(self)
+        node.nest_(child_id, pos)
 
     def __eq__(self, other):
         if isinstance(other, Leaf):
@@ -543,6 +572,56 @@ class Node(Element):
     # override
     def generate_namespace(self):
         self.namespace = '+'.join([child.get_namespace() for child in self.children()])
+
+    def inner_nested_node(self, elem_id):
+        elem = self.tree.get(elem_id)
+        if len(elem.children_ids) != 2:
+            return elem
+
+        first = elem.get_child(0)
+        if first.is_node() or first.connector:
+            return elem
+        second = elem.get_child(1)
+        if second.is_node():
+            inner_rel = second.get_child(0)
+            if inner_rel.connector or inner_rel.is_node():
+                return elem
+            return self.inner_nested_node(second.id)
+        return elem
+
+    def grow_(self, child_id, pos):
+        if pos == Position.LEFT:
+            self.children_ids.insert(1, child_id)
+        else:
+            self.children_ids.append(child_id)
+
+    def apply_(self, child_id, pos):
+        self.inner_nested_node(self.id).children_ids.append(child_id)
+
+    def nest_(self, child_id, pos):
+        enclose = True
+        if pos == Position.LEFT:
+            node = self
+        else:
+            node = self.inner_nested_node(self.id)
+            if node.is_node():
+                inner_rel = node.get_child(0)
+                if inner_rel.is_leaf() and not inner_rel.connector and len(node.children_ids) > 1:
+                    inner_node = self.tree.create_node(node.children_ids[1:])
+                    node.children_ids = [node.children_ids[0], inner_node.id]
+                    node = inner_node
+                    enclose = False
+
+        if enclose and len(node.children_ids) > 1:
+            node = self.tree.enclose(node)
+
+        child = self.tree.get(child_id)
+        if child.is_leaf():
+            node.children_ids.insert(0, child_id)
+        else:
+            node.children_ids.insert(0, child.children_ids[0])
+            for cid in child.children_ids[1:]:
+                node.children_ids.append(cid)
 
     def __eq__(self, other):
         if isinstance(other, Leaf):
