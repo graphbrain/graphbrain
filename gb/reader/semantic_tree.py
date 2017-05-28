@@ -336,6 +336,7 @@ class Node(Element):
         self.layer_ids = []
         self.layer_id = -1
         self.__compound = False
+        self.inner_nested_node = -1
 
     def clone(self):
         new_node = self.tree.create_node([self.tree.clone_id(child_id) for child_id in self.children_ids])
@@ -343,6 +344,7 @@ class Node(Element):
         new_node.namespace = self.namespace
         new_node.position = self.position
         new_node.connector = self.connector
+        new_node.inner_nested_node = self.inner_nested_node
         return new_node
 
     # override
@@ -573,21 +575,18 @@ class Node(Element):
     def generate_namespace(self):
         self.namespace = '+'.join([child.get_namespace() for child in self.children()])
 
-    def inner_nested_node(self, elem_id):
+    def get_inner_nested_node(self, elem_id):
         elem = self.tree.get(elem_id)
-        if len(elem.children_ids) != 2:
+        if elem.inner_nested_node >= 0:
+            return self.tree.get(elem.inner_nested_node)
+        else:
             return elem
 
-        first = elem.get_child(0)
-        if first.is_node() or first.connector:
-            return elem
-        second = elem.get_child(1)
-        if second.is_node():
-            inner_rel = second.get_child(0)
-            if inner_rel.connector or inner_rel.is_node():
-                return elem
-            return self.inner_nested_node(second.id)
-        return elem
+    def set_inner_nested_node(self, elem_id, first=True):
+        if self.inner_nested_node >= 0 or first:
+            self.inner_nested_node = elem_id
+            if self.get_child(1).is_node():
+                self.get_child(1).set_inner_nested_node(elem_id, False)
 
     def grow_(self, child_id, pos):
         if pos == Position.LEFT:
@@ -596,30 +595,40 @@ class Node(Element):
             self.children_ids.append(child_id)
 
     def apply_(self, child_id, pos):
-        self.inner_nested_node(self.id).children_ids.append(child_id)
+        self.get_inner_nested_node(self.id).children_ids.append(child_id)
 
     def nest_(self, child_id, pos):
         enclose = True
         if pos == Position.LEFT:
             node = self
         else:
-            node = self.inner_nested_node(self.id)
+            node = self.get_inner_nested_node(self.id)
             if node.is_node():
                 inner_rel = node.get_child(0)
                 if inner_rel.is_leaf() and not inner_rel.connector and len(node.children_ids) > 1:
                     inner_node = self.tree.create_node(node.children_ids[1:])
+                    self.set_inner_nested_node(inner_node.id)
                     node.children_ids = [node.children_ids[0], inner_node.id]
                     node = inner_node
+                    # placeholder
+                    node.children_ids.insert(0, -1)
                     enclose = False
 
-        if enclose and len(node.children_ids) > 1:
-            node = self.tree.enclose(node)
+        if enclose:
+            if len(node.children_ids) > 1:
+                node = self.tree.enclose(node)
+                # placeholder
+                node.children_ids.insert(0, -1)
+                node.set_inner_nested_node(self.get_inner_nested_node(node.children_ids[1]).id)
+            else:
+                # placeholder
+                node.children_ids.insert(0, -1)
 
         child = self.tree.get(child_id)
         if child.is_leaf():
-            node.children_ids.insert(0, child_id)
+            node.children_ids[0] = child_id
         else:
-            node.children_ids.insert(0, child.children_ids[0])
+            node.children_ids[0] = child.children_ids[0]
             for cid in child.children_ids[1:]:
                 node.children_ids.append(cid)
 

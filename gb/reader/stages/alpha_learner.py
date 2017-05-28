@@ -50,7 +50,7 @@ def find_parent_and_child(edge, parent, child, positions, depth=0, index=0):
 def is_nested(edge, outer, inner, parent_found=False):
     if parent_found:
         if sym.is_edge(edge):
-            if (edge[0] == '+'):
+            if edge[0] == '+':
                 return False
             return is_nested(edge[0], outer, inner, True)
         else:
@@ -103,51 +103,89 @@ class CaseGenerator(object):
         elem_id = elem.id
 
         # process children first
+        nested_left = False
         for child_token in token.left_children:
-            self.process_token(child_token, token, elem_id, Position.LEFT)
+            if nested_left:
+                pos = Position.RIGHT
+            else:
+                pos = Position.LEFT
+            _, t = self.process_token(child_token, token, elem_id, pos)
+            if t == NEST:
+                nested_left = True
         for child_token in token.right_children:
             self.process_token(child_token, token, elem_id, Position.RIGHT)
 
         # infer and apply transformation
+        transf = -1
         if parent_token:
             parent = self.tree.get(parent_id)
             transf = self.infer_transformation(parent_token, token)
-            # print('%s <- %s' % (parent_token.word, token.word))
-            # print('%s <- %s' % (parent, self.tree.get(elem_id)))
+            print('%s <- %s' % (parent_token.word, token.word))
+            print('%s <- %s' % (parent, self.tree.get(elem_id)))
+            if parent.is_node():
+                print('inn: %s' % str(parent.get_inner_nested_node(parent.id)))
             if transf == GROW:
-                # print('grow')
+                print('grow')
                 parent.grow_(elem_id, position)
             elif transf == APPLY:
-                # print('apply')
+                print('apply')
                 parent.apply_(elem_id, position)
             elif transf == NEST:
-                # print('nest')
+                print('nest')
                 parent.nest_(elem_id, position)
             else:
-                # print('ignore')
+                print('ignore')
                 pass
-            # print(self.tree.get(parent_id))
-            # print()
+            print(self.tree.get(parent_id))
+            print()
 
-        return elem_id
+        return elem_id, transf
 
     def generate(self, sentence_str, outcome_str):
         self.tree = Tree()
         sentence = Sentence(self.parser.parse_text(sentence_str)[0][1])
-        # sentence.print_tree()
+        sentence.print_tree()
         self.outcome_str = outcome_str
         self.outcome = ed.str2edge(outcome_str)
-        self.tree.root_id = self.process_token(sentence.root())
+        self.tree.root_id, _ = self.process_token(sentence.root())
 
     def validate(self):
         return self.tree.to_hyperedge_str(with_namespaces=False) == self.outcome_str
 
-if __name__ == '__main__':
-    sentence = 'donald trump may go ahead with mexican wall and registry for muslims without congress approval'
-    outcome = '(may (go (ahead (+ donald trump) (with (and (+ mexican wall) (for registry muslims))) (without ' \
-              '(+ congress approval)))))'
+
+def generate_cases(infile):
+    current_case = []
+    cases = []
+    with open(infile) as f:
+        for line in f:
+            current_case.append(line)
+            if len(current_case) == 2:
+                cases.append(current_case)
+                current_case = []
+
+    total = 0
+    correct = 0
     cg = CaseGenerator()
-    cg.generate(sentence, outcome)
-    print(outcome)
-    print(cg.tree.to_hyperedge_str(with_namespaces=False))
-    print(cg.validate())
+    for case in cases:
+        sentence_str = case[0].strip()
+        outcome_str = case[1].strip()
+        cg.generate(sentence_str, outcome_str)
+        if cg.validate():
+            correct += 1
+        else:
+            print('could not generate correct cases for: %s' % sentence_str)
+            print(outcome_str)
+            print(cg.tree.to_hyperedge_str(with_namespaces=False))
+        total += 1
+
+    print('%s out of %s correct cases.' % (correct, total))
+
+
+if __name__ == '__main__':
+    generate_cases('parses.txt')
+    # sentence_str = 'Some subspecies of mosquito might be 1st to be genetically wiped out.'
+    # outcome_str = '(might (be (some (of subspecies mosquito)) (1st (to (be (genetically (out wiped)))))))'
+    # cg = CaseGenerator()
+    # cg.generate(sentence_str, outcome_str)
+    # print(outcome_str)
+    # print(cg.tree.to_hyperedge_str(with_namespaces=False))
