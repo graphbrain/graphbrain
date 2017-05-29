@@ -33,20 +33,6 @@ NEST = 2
 IGNORE = 3
 
 
-def find_parent_and_child(edge, parent, child, positions, depth=0, index=0):
-    if len(positions) == 2:
-        return positions
-    if sym.is_edge(edge):
-        for i in range(len(edge)):
-            find_parent_and_child(edge[i], parent, child, positions, depth + 1, i)
-    else:
-        if edge == parent:
-            positions['parent'] = {'depth': depth, 'index': index}
-        if edge == child:
-            positions['child'] = {'depth': depth, 'index': index}
-    return positions
-
-
 def is_nested(edge, outer, inner, parent_found=False):
     if parent_found:
         if sym.is_edge(edge):
@@ -71,19 +57,41 @@ class CaseGenerator(object):
         self.parser = Parser()
         self.outcome = None
         self.outcome_str = None
+        self.parent_id = -1
+
+    def find_parent_and_child(self, edge, parent, child, positions, depth=0, index=0, parent_id=0):
+        if len(positions) == 2:
+            return positions
+        if parent_id == 0:
+            self.parent_id = 0
+        if sym.is_edge(edge):
+            self.parent_id += 1
+            inner_parent_id = self.parent_id
+            for i in range(len(edge)):
+                self.find_parent_and_child(edge[i], parent, child, positions, depth + 1, i, inner_parent_id)
+        else:
+            if edge == parent:
+                positions['parent'] = {'depth': depth, 'index': index, 'parent': parent_id}
+            if edge == child:
+                positions['child'] = {'depth': depth, 'index': index, 'parent': parent_id}
+        return positions
 
     def infer_transformation(self, parent, child):
         positions = {}
-        find_parent_and_child(self.outcome, parent.word, child.word, positions)
+        self.find_parent_and_child(self.outcome, parent.word, child.word, positions)
         if len(positions) != 2:
             return IGNORE
         parent_depth = positions['parent']['depth']
         parent_index = positions['parent']['index']
+        parent_parent = positions['parent']['parent']
         child_depth = positions['child']['depth']
         child_index = positions['child']['index']
+        child_parent = positions['child']['parent']
 
         if parent_depth == child_depth:
-            if parent_index > 0 and child_index > 0:
+            if parent_parent != child_parent:
+                return GROW
+            elif parent_index > 0 and child_index > 0:
                 return GROW
             elif parent_index == 0:
                 return APPLY
@@ -96,6 +104,8 @@ class CaseGenerator(object):
         elif parent_depth > child_depth and child_index == 0:
             return NEST
         else:
+            if parent_index > 0:
+                return GROW
             return APPLY
 
     def process_token(self, token, parent_token=None, parent_id=None, position=None):
@@ -119,6 +129,7 @@ class CaseGenerator(object):
         transf = -1
         if parent_token:
             parent = self.tree.get(parent_id)
+            child = self.tree.get(elem_id)
             transf = self.infer_transformation(parent_token, token)
             print('%s <- %s' % (parent_token.word, token.word))
             print('%s <- %s' % (parent, self.tree.get(elem_id)))
