@@ -205,7 +205,7 @@ class Element(object):
         # throw exception
         pass
 
-    def nest_(self, child_id, pos):
+    def nest_(self, child_id, pos, child_token):
         # throw exception
         pass
 
@@ -307,9 +307,9 @@ class Leaf(Element):
         node = self.tree.enclose(self)
         node.apply_(child_id, pos)
 
-    def nest_(self, child_id, pos):
+    def nest_(self, child_id, pos, child_token):
         node = self.tree.enclose(self)
-        node.nest_(child_id, pos)
+        node.nest_(child_id, pos, child_token)
 
     def __eq__(self, other):
         if isinstance(other, Leaf):
@@ -597,7 +597,23 @@ class Node(Element):
     def apply_(self, child_id, pos):
         self.get_inner_nested_node(self.id).children_ids.append(child_id)
 
-    def nest_(self, child_id, pos):
+    def nest_(self, child_id, pos, child_token):
+        child = self.tree.get(child_id)
+        if child.is_leaf():
+            self.nest__(child_id, pos)
+        else:
+            first = child.get_child(0)
+            if first.is_leaf() and first.token != child_token:
+                parent_id = self.id
+                parent = self.tree.get(parent_id)
+                parent.nest__(first.id, pos)
+                new_child = self.tree.create_node(child.children_ids[1:])
+                parent = self.tree.get(parent_id)
+                parent.nest_(new_child.id, pos, child_token)
+            else:
+                self.nest__(child_id, pos)
+
+    def nest__(self, child_id, pos):
         enclose = True
         if pos == Position.LEFT:
             node = self

@@ -27,10 +27,8 @@ from gb.reader.semantic_tree import Tree
 from gb.reader.semantic_tree import Position
 
 
-GROW = 0
-APPLY = 1
-NEST = 2
-IGNORE = 3
+class Transformation(object):
+    GROW, APPLY, NEST, IGNORE = range(4)
 
 
 def is_nested(edge, outer, inner, parent_found=False):
@@ -80,7 +78,7 @@ class CaseGenerator(object):
         positions = {}
         self.find_parent_and_child(self.outcome, parent.word, child.word, positions)
         if len(positions) != 2:
-            return IGNORE
+            return Transformation.IGNORE
         parent_depth = positions['parent']['depth']
         parent_index = positions['parent']['index']
         parent_parent = positions['parent']['parent']
@@ -90,23 +88,23 @@ class CaseGenerator(object):
 
         if parent_depth == child_depth:
             if parent_parent != child_parent:
-                return GROW
+                return Transformation.GROW
             elif parent_index > 0 and child_index > 0:
-                return GROW
+                return Transformation.GROW
             elif parent_index == 0:
-                return APPLY
+                return Transformation.APPLY
             else:
-                return NEST
+                return Transformation.NEST
         if parent_depth > child_depth and is_nested(self.outcome, child.word, parent.word):
-            return NEST
+            return Transformation.NEST
         elif parent_depth < child_depth and is_nested(self.outcome, parent.word, child.word):
-            return NEST
+            return Transformation.NEST
         elif parent_depth > child_depth and child_index == 0:
-            return NEST
+            return Transformation.NEST
         else:
             if parent_index > 0:
-                return GROW
-            return APPLY
+                return Transformation.GROW
+            return Transformation.APPLY
 
     def process_token(self, token, parent_token=None, parent_id=None, position=None):
         elem = self.tree.create_leaf(token)
@@ -120,7 +118,7 @@ class CaseGenerator(object):
             else:
                 pos = Position.LEFT
             _, t = self.process_token(child_token, token, elem_id, pos)
-            if t == NEST:
+            if t == Transformation.NEST:
                 nested_left = True
         for child_token in token.right_children:
             self.process_token(child_token, token, elem_id, Position.RIGHT)
@@ -129,21 +127,20 @@ class CaseGenerator(object):
         transf = -1
         if parent_token:
             parent = self.tree.get(parent_id)
-            child = self.tree.get(elem_id)
             transf = self.infer_transformation(parent_token, token)
             print('%s <- %s' % (parent_token.word, token.word))
             print('%s <- %s' % (parent, self.tree.get(elem_id)))
             if parent.is_node():
                 print('inn: %s' % str(parent.get_inner_nested_node(parent.id)))
-            if transf == GROW:
+            if transf == Transformation.GROW:
                 print('grow')
                 parent.grow_(elem_id, position)
-            elif transf == APPLY:
+            elif transf == Transformation.APPLY:
                 print('apply')
                 parent.apply_(elem_id, position)
-            elif transf == NEST:
+            elif transf == Transformation.NEST:
                 print('nest')
-                parent.nest_(elem_id, position)
+                parent.nest_(elem_id, position, token)
             else:
                 print('ignore')
                 pass
