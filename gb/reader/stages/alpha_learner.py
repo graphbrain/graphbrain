@@ -76,33 +76,26 @@ def path2tedge(path, tedge):
     return tedge
 
 
-def score_transformation(test_parent, target_tedge, test_index=0, target_index=0):
-    # print('score_transformation %s %s %s %s' % (test_parent, target_tedge, test_index, target_index))
+def score_transformation(test_parent, target_tedge, test_index=0, target_index=0, dist=0):
     if test_parent.is_leaf():
         if type(target_tedge) is Token:
             if test_parent.token.word == target_tedge.word:
-                # print('#1 score: 1')
-                return 1
+                return 1000 - dist
             else:
-                # print('#2 score: 0')
                 return 0
         else:
             best_score = 0
             for tedge in target_tedge:
-                score = score_transformation(test_parent, tedge)
+                score = score_transformation(test_parent, tedge, 0, 0, dist + 1)
                 best_score = max(score, best_score)
-            # print('#3 score: 0')
             return best_score
 
     if type(target_tedge) is Token:
-        # print('#4 score: 0')
         return 0
 
     if test_index >= len(test_parent.children_ids):
-        # print('#5 score: 0')
         return 0
     if target_index >= len(target_tedge):
-        # print('#6 score: 0')
         return 0
 
     best_score = 0
@@ -115,10 +108,9 @@ def score_transformation(test_parent, target_tedge, test_index=0, target_index=0
     score = score_transformation(test_parent.children()[test_index], target_tedge[target_index]) +\
             score_transformation(test_parent, target_tedge, test_index + 1, target_index + 1)
     best_score = max(score, best_score)
-    score = score_transformation(test_parent, target_tedge, test_index, target_index + 1)
+    score = score_transformation(test_parent, target_tedge, test_index, target_index + 1, dist + 1)
     best_score = max(score, best_score)
 
-    # print('#7 score: %s' % best_score)
     return best_score
 
 
@@ -304,7 +296,7 @@ class CaseGenerator(object):
                           'edepth': len(child_epath), 'eindex': child_eindex, 'epath': child_epath,
                           'edge': child_edge, 'tedge': child_tedge, 'eenclosed': child_eenclosed}}
 
-    def infer_transformation(self, parent, child, parent_token, child_token):
+    def infer_transformation(self, parent, child, parent_token, child_token, position):
         positions = self.find_parent_and_child(self.outcome, parent, child, parent_token, child_token)
         if not positions:
             return Transformation.IGNORE
@@ -314,55 +306,7 @@ class CaseGenerator(object):
         cp = common_path(positions['parent']['epath'], positions['child']['epath'])
         common_tedge = path2tedge(cp, self.build_tedge(self.outcome))
 
-        if common_tedge[0].word == '+':
-            print('#1')
-            return Transformation.GROW
-
-        if positions['child']['enclosed'] and positions['parent']['max_depth'] > positions['child']['max_depth']:
-            print('#2')
-            return Transformation.NEST
-
-        if positions['parent']['enclosed']:
-            print('#3')
-            return Transformation.NEST
-
-        if positions['parent']['depth'] == positions['child']['depth']\
-                and positions['parent']['path'] == positions['child']['path']:
-            if positions['parent']['index'] < positions['child']['index']:
-                print('#4A')
-                return Transformation.APPLY
-            else:
-                print('#4B')
-                return Transformation.NEST
-
-        if positions['parent']['eenclosed']:
-            print('#5')
-            return Transformation.NEST
-
-        if positions['parent']['edepth'] < positions['child']['edepth']:
-            print('#6')
-            return Transformation.APPLY
-
-        if positions['parent']['edepth'] == positions['child']['edepth']:
-            if positions['parent']['epath'][-1] < positions['child']['epath'][-1]:
-                print('#7A')
-                return Transformation.APPLY
-            else:
-                print('#7B')
-                return Transformation.NEST
-
-        print('#8')
-        return Transformation.NEST
-
-    def infer_transformation_(self, parent, child, parent_token, child_token, position):
-        positions = self.find_parent_and_child(self.outcome, parent, child, parent_token, child_token)
-        if not positions:
-            return Transformation.IGNORE
-        print('[ed] %s <- %s' % (positions['parent']['edge'], positions['child']['edge']))
-        print('[pt] %s <- %s' % (positions['parent']['epath'], positions['child']['epath']))
-
-        cp = common_path(positions['parent']['epath'], positions['child']['epath'])
-        common_tedge = path2tedge(cp, self.build_tedge(self.outcome))
+        print('[^] %s' % tedge2str(common_tedge))
 
         best_score = 0
         best_transf = Transformation.IGNORE
@@ -419,8 +363,7 @@ class CaseGenerator(object):
         transf = -1
         if parent_token:
             parent = self.tree.get(parent_id)
-            print('%s <<- %s' % (parent, self.tree.get(elem_id)))
-            transf = self.infer_transformation_(parent, self.tree.get(elem_id), parent_token, token, position)
+            transf = self.infer_transformation(parent, self.tree.get(elem_id), parent_token, token, position)
             print('%s <- %s' % (parent_token.word, token.word))
             print('%s <- %s' % (parent, self.tree.get(elem_id)))
             if parent.is_node():
@@ -448,6 +391,7 @@ class CaseGenerator(object):
         self.sentence.print_tree()
         self.outcome_str = outcome_str
         self.outcome = ed.str2edge(outcome_str)
+        self.toutcome = self.build_tedge(self.outcome)
         self.tree.root_id, _ = self.process_token(self.sentence.root())
 
     def validate(self):
