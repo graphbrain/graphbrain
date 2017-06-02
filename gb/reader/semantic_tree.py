@@ -33,10 +33,28 @@ class Position(object):
 
 
 class Tree(object):
-    def __init__(self):
+    def __init__(self, elem=None):
         self.root_id = None
         self.cur_id = 0
         self.table = {}
+        if elem:
+            self.root_id = elem.id
+            self.import_element(elem)
+
+    def import_element(self, elem):
+        if elem.is_leaf():
+            new_elem = Leaf(elem.token)
+        else:
+            new_elem = Node(elem.children_ids)
+        new_elem.copy(elem)
+        new_elem.tree = self
+        self.set(elem.id, new_elem)
+        if elem.is_node():
+            for child in elem.children():
+                self.import_element(child)
+        if elem.id >= self.cur_id:
+            self.cur_id = elem.id + 1
+        return new_elem
 
     def get(self, elem_id):
         if elem_id is None:
@@ -197,6 +215,10 @@ class Element(object):
         # throw exception
         pass
 
+    def all_tokens(self):
+        # throw exception
+        pass
+
     def grow_(self, child_id, pos):
         # throw exception
         pass
@@ -224,6 +246,12 @@ class Leaf(Element):
         super(Leaf, self).__init__()
         self.type = LEAF
         self.token = token
+
+    def copy(self, source):
+        self.token = source.token
+        self.namespace = source.namespace
+        self.position = source.position
+        self.connector = source.connector
 
     # Leaf is immutable
     def clone(self):
@@ -295,6 +323,9 @@ class Leaf(Element):
     def generate_namespace(self):
         self.namespace = 'nlp.%s.%s' % (self.token.lemma.lower(), self.token.pos.lower())
 
+    def all_tokens(self):
+        return [self.token]
+
     def grow_(self, child_id, pos):
         node = self.tree.enclose(self)
         leaf = self.tree.create_leaf(Token(''))
@@ -332,19 +363,22 @@ class Node(Element):
         if children_ids is None:
             self.children_ids = []
         else:
-            self.children_ids = children_ids
+            self.children_ids = children_ids[:]
         self.layer_ids = []
         self.layer_id = -1
         self.__compound = False
-        self.inner_nested_node = -1
+        self.inner_nested_node_id = -1
+
+    def copy(self, source):
+        self.__compound = source.__compound
+        self.namespace = source.namespace
+        self.position = source.position
+        self.connector = source.connector
+        self.inner_nested_node_id = source.inner_nested_node_id
 
     def clone(self):
         new_node = self.tree.create_node([self.tree.clone_id(child_id) for child_id in self.children_ids])
-        new_node.__compound = self.__compound
-        new_node.namespace = self.namespace
-        new_node.position = self.position
-        new_node.connector = self.connector
-        new_node.inner_nested_node = self.inner_nested_node
+        new_node.copy(self)
         return new_node
 
     # override
@@ -577,16 +611,22 @@ class Node(Element):
 
     def get_inner_nested_node(self, elem_id):
         elem = self.tree.get(elem_id)
-        if elem.inner_nested_node >= 0:
-            return self.tree.get(elem.inner_nested_node)
+        if elem.inner_nested_node_id >= 0:
+            return self.tree.get(elem.inner_nested_node_id)
         else:
             return elem
 
     def set_inner_nested_node(self, elem_id, first=True):
-        if self.inner_nested_node >= 0 or first:
-            self.inner_nested_node = elem_id
+        if self.inner_nested_node_id >= 0 or first:
+            self.inner_nested_node_id = elem_id
             if self.get_child(1).is_node():
                 self.get_child(1).set_inner_nested_node(elem_id, False)
+
+    def all_tokens(self):
+        tokens = []
+        for child in self.children():
+            tokens = tokens + child.all_tokens()
+        return tokens
 
     def grow_(self, child_id, pos):
         if pos == Position.LEFT:
@@ -595,7 +635,8 @@ class Node(Element):
             self.children_ids.append(child_id)
 
     def apply_(self, child_id, pos):
-        self.get_inner_nested_node(self.id).children_ids.append(child_id)
+        # self.get_inner_nested_node(self.id).children_ids.append(child_id)
+        self.children_ids.append(child_id)
 
     def nest_(self, child_id, pos, child_token):
         child = self.tree.get(child_id)
