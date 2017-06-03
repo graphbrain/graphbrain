@@ -47,12 +47,6 @@ def tedge2tokens(tedge):
     return tokens
 
 
-def tedge_depth(tedge):
-    if type(tedge) is Token:
-        return 0
-    return max([tedge_depth(t) for t in tedge]) + 1
-
-
 def add_word_counts(word_counts_targ, word_counts):
     for word in word_counts.keys():
         if word in word_counts_targ:
@@ -76,7 +70,7 @@ def path2tedge(path, tedge):
     return tedge
 
 
-def score_transformation(test_parent, target_tedge, test_index=0, target_index=0, dist=0):
+def match_score(test_parent, target_tedge, test_index=0, target_index=0, dist=0):
     if test_parent.is_leaf():
         if type(target_tedge) is Token:
             if test_parent.token.word == target_tedge.word:
@@ -86,7 +80,7 @@ def score_transformation(test_parent, target_tedge, test_index=0, target_index=0
         else:
             best_score = 0
             for tedge in target_tedge:
-                score = score_transformation(test_parent, tedge, 0, 0, dist + 1)
+                score = match_score(test_parent, tedge, 0, 0, dist + 1)
                 best_score = max(score, best_score)
             return best_score
 
@@ -102,16 +96,30 @@ def score_transformation(test_parent, target_tedge, test_index=0, target_index=0
 
     if test_index == 0 and target_index == 0:
         for tedge in target_tedge:
-            score = score_transformation(test_parent, tedge)
+            score = match_score(test_parent, tedge)
             best_score = max(score, best_score)
 
-    score = score_transformation(test_parent.children()[test_index], target_tedge[target_index]) +\
-            score_transformation(test_parent, target_tedge, test_index + 1, target_index + 1)
+    score = match_score(test_parent.children()[test_index], target_tedge[target_index]) + \
+            match_score(test_parent, target_tedge, test_index + 1, target_index + 1)
     best_score = max(score, best_score)
-    score = score_transformation(test_parent, target_tedge, test_index, target_index + 1, dist + 1)
+    score = match_score(test_parent, target_tedge, test_index, target_index + 1, dist + 1)
     best_score = max(score, best_score)
 
     return best_score
+
+
+def score_transformation(parent, child, position, common_tedge, child_token, transf):
+    test_tree = Tree(parent)
+    test_tree.import_element(child)
+    test_parent = test_tree.root()
+    if transf == Transformation.APPLY:
+        test_parent.apply_(child.id, position)
+    elif transf == Transformation.GROW:
+        test_parent.grow_(child.id, position)
+    elif transf == Transformation.NEST:
+        test_parent.nest_(child.id, position, child_token)
+    test_parent = test_tree.root()
+    return match_score(test_parent, common_tedge)
 
 
 class Fit(object):
@@ -122,13 +130,6 @@ class Fit(object):
             if word in outcome_word_counts:
                 self.matches += min(word_counts[word], outcome_word_counts[word])
             self.size += word_counts[word]
-        self.complete_match = True
-        for word in outcome_word_counts:
-            if word in word_counts:
-                if word_counts[word] < outcome_word_counts[word]:
-                    self.complete_match = False
-            else:
-                self.complete_match = False
 
     def better_than(self, fit):
         if self.matches == fit.matches:
@@ -144,31 +145,6 @@ class CaseGenerator(object):
         self.sentence = None
         self.outcome = None
         self.outcome_str = None
-        self.counter = -1
-
-    def find_word(self, edge, token, path=None):
-        if not path:
-            path = []
-            self.counter = 0
-            for i in range(token.position_in_sentence):
-                if self.sentence.tokens[i].word == token.word:
-                    self.counter += 1
-
-        if sym.is_edge(edge):
-            for i in range(len(edge)):
-                down_path = path[:]
-                down_path.append(i)
-                res = self.find_word(edge[i], token, down_path)
-                if res:
-                    return res
-        else:
-            if edge == token.word:
-                if self.counter == 0:
-                    return path
-                else:
-                    self.counter -= 1
-
-        return None
 
     def build_tedge(self, edge, counts=None):
         if not counts:
@@ -199,7 +175,7 @@ class CaseGenerator(object):
 
         if type(tedge) is Token:
             word_counts = {tedge.word: 1}
-            return path, word_counts, tedge
+            return path, word_counts
 
         word_counts = {}
         path_wcs = []
@@ -210,7 +186,7 @@ class CaseGenerator(object):
             path_wcs.append(path_wc)
             add_word_counts(word_counts, path_wc[1])
 
-        best_path_wc = (path, word_counts, tedge)
+        best_path_wc = (path, word_counts)
         best_fit = Fit(word_counts, outcome_word_counts)
         for path_wc in path_wcs:
             fit = Fit(path_wc[1], outcome_word_counts)
@@ -232,112 +208,55 @@ class CaseGenerator(object):
             else:
                 word_counts[token.word] = 1
 
-        path_wc = self.best_node_subedge_fit(tedge, word_counts)
-        path_fit = (path_wc[0], Fit(path_wc[1], word_counts), path_wc[2])
-        if path_fit[1]:
-            return path_fit
-        else:
+        path, _ = self.best_node_subedge_fit(tedge, word_counts)
+        return path
+
+    def find_path(self, node):
+        epath = self.find_subedge(node)
+        if epath is None:
             return None
 
-    def is_enclosed(self, node, tedge):
-        path_fit = self.find_subedge(node, tedge)
-        if path_fit:
-            return path_fit[1].complete_match
-        else:
-            return False
+        words_path = [token.word for token in tedge2tokens(path2tedge(epath, self.build_tedge(self.outcome)))]
+        words_edge = [token.word for token in node.all_tokens()]
+        for word in words_edge:
+            if word != '+' and word != '':
+                if words_edge.count(word) > words_path.count(word):
+                    return None
 
-    def find_parent_and_child(self, edge, parent_node, child_node, parent_token, child_token):
-        res = self.find_subedge(parent_node)
-        if not res:
-            return None
-        parent_epath, _, parent_tedge = res
-        res = self.find_subedge(child_node)
-        if not res:
-            return None
-        child_epath, _, child_tedge = res
+        return epath
 
-        parent_path = self.find_word(edge, parent_token)
-        if not parent_path:
+    def common_path(self, parent_node, child_node):
+        parent_path = self.find_path(parent_node)
+        if parent_path is None:
             return None
-        child_path = self.find_word(edge, child_token)
-        if not child_path:
+        child_path = self.find_path(child_node)
+        if child_path is None:
             return None
 
-        parent_eindex = 0
-        child_eindex = 0
-        if len(parent_epath) > 0:
-            parent_eindex = parent_epath[-1]
-        if len(child_epath) > 0:
-            child_eindex = child_epath[-1]
+        cp = common_path(parent_path, child_path)
+        return path2tedge(cp, self.build_tedge(self.outcome))
 
-        parent_edge = tedge2str(parent_tedge)
-        child_edge = tedge2str(child_tedge)
-
-        parent_enclosed = False
-        child_enclosed = False
-        if parent_token in tedge2tokens(child_tedge):
-            parent_enclosed = True
-        if child_token in tedge2tokens(parent_tedge):
-            child_enclosed = True
-
-        parent_eenclosed = False
-        child_eenclosed = False
-        if self.is_enclosed(parent_node, child_tedge):
-            parent_eenclosed = True
-        if self.is_enclosed(child_node, parent_tedge):
-            child_eenclosed = True
-
-        return {'parent': {'depth': len(parent_path), 'index': parent_path[-1], 'path': parent_path[:-1],
-                           'enclosed': parent_enclosed, 'max_depth': len(parent_epath) + tedge_depth(parent_tedge),
-                           'edepth': len(parent_epath), 'eindex': parent_eindex, 'epath': parent_epath,
-                           'edge': parent_edge, 'tedge': parent_tedge, 'eenclosed': parent_eenclosed},
-                'child': {'depth': len(child_path), 'index': child_path[-1], 'path': child_path[:-1],
-                          'enclosed': child_enclosed, 'max_depth': len(child_epath) + tedge_depth(child_tedge),
-                          'edepth': len(child_epath), 'eindex': child_eindex, 'epath': child_epath,
-                          'edge': child_edge, 'tedge': child_tedge, 'eenclosed': child_eenclosed}}
-
-    def infer_transformation(self, parent, child, parent_token, child_token, position):
-        positions = self.find_parent_and_child(self.outcome, parent, child, parent_token, child_token)
-        if not positions:
+    def infer_transformation(self, parent, child, child_token, position):
+        common_tedge = self.common_path(parent, child)
+        if common_tedge is None:
             return Transformation.IGNORE
-        print('[ed] %s <- %s' % (positions['parent']['edge'], positions['child']['edge']))
-        print('[pt] %s <- %s' % (positions['parent']['epath'], positions['child']['epath']))
-
-        cp = common_path(positions['parent']['epath'], positions['child']['epath'])
-        common_tedge = path2tedge(cp, self.build_tedge(self.outcome))
 
         print('[^] %s' % tedge2str(common_tedge))
 
         best_score = 0
         best_transf = Transformation.IGNORE
 
-        test_tree = Tree(parent)
-        test_tree.import_element(child)
-        test_parent = test_tree.root()
-        test_parent.apply_(child.id, position)
-        test_parent = test_tree.root()
-        score = score_transformation(test_parent, common_tedge)
+        score = score_transformation(parent, child, position, common_tedge, child_token, Transformation.APPLY)
         if score > best_score:
             best_score = score
             best_transf = Transformation.APPLY
-
-        test_tree = Tree(parent)
-        test_tree.import_element(child)
-        test_parent = test_tree.root()
-        test_parent.grow_(child.id, position)
-        test_parent = test_tree.root()
-        score = score_transformation(test_parent, common_tedge)
+        score = score_transformation(parent, child, position, common_tedge, child_token, Transformation.GROW)
         if score > best_score:
             best_score = score
             best_transf = Transformation.GROW
-
-        test_tree = Tree(parent)
-        test_tree.import_element(child)
-        test_parent = test_tree.root()
-        test_parent.nest_(child.id, position, child_token)
-        test_parent = test_tree.root()
-        score = score_transformation(test_parent, common_tedge)
+        score = score_transformation(parent, child, position, common_tedge, child_token, Transformation.NEST)
         if score > best_score:
+            best_score = score
             best_transf = Transformation.NEST
 
         return best_transf
@@ -363,7 +282,7 @@ class CaseGenerator(object):
         transf = -1
         if parent_token:
             parent = self.tree.get(parent_id)
-            transf = self.infer_transformation(parent, self.tree.get(elem_id), parent_token, token, position)
+            transf = self.infer_transformation(parent, self.tree.get(elem_id), token, position)
             print('%s <- %s' % (parent_token.word, token.word))
             print('%s <- %s' % (parent, self.tree.get(elem_id)))
             if parent.is_node():
@@ -427,17 +346,4 @@ def generate_cases(infile):
 
 
 if __name__ == '__main__':
-    # cg = CaseGenerator()
-    # edge = ed.str2edge('(might (be (some (of subspecies mosquito)) (1st (to (be (genetically (out wiped)))))))')
-    # sentence = cg.parser.parse_text('Some subspecies of mosquito might be 1st to be genetically wiped out.')[0][1]
-    # cg.find_parent_and_child_(edge, 'be', '1st', candidates)
-    # print(cg.find_word(sentence, edge, sentence[8]))
-
     generate_cases('parses.txt')
-
-    # sentence_str = 'Some subspecies of mosquito might be 1st to be genetically wiped out.'
-    # outcome_str = '(might (be (some (of subspecies mosquito)) (1st (to (be (genetically (out wiped)))))))'
-    # cg = CaseGenerator()
-    # cg.generate(sentence_str, outcome_str)
-    # print(outcome_str)
-    # print(cg.tree.to_hyperedge_str(with_namespaces=False))
