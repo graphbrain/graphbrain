@@ -29,7 +29,7 @@ from gb.reader.semantic_tree import Position
 
 
 class Transformation(object):
-    GROW, APPLY, NEST, IGNORE = range(4)
+    GROW, APPLY, NEST, NEST_DEEP, IGNORE = range(5)
 
 
 def tedge2str(tedge):
@@ -108,17 +108,25 @@ def match_score(test_parent, target_tedge, test_index=0, target_index=0, dist=0)
     return best_score
 
 
-def score_transformation(parent, child, position, common_tedge, child_token, transf):
+def test_transformation(parent, child, position, transf):
     test_tree = Tree(parent)
     test_tree.import_element(child)
     test_parent = test_tree.root()
-    if transf == Transformation.APPLY:
+    if transf == Transformation.IGNORE:
+        pass
+    elif transf == Transformation.APPLY:
         test_parent.apply_(child.id, position)
     elif transf == Transformation.GROW:
         test_parent.grow_(child.id, position)
     elif transf == Transformation.NEST:
-        test_parent.nest_(child.id, position, child_token)
-    test_parent = test_tree.root()
+        test_parent.nest_(child.id, position)
+    elif transf == Transformation.NEST_DEEP:
+        test_parent.nest_deep(child.id, position)
+    return test_tree.root()
+
+
+def score_transformation(parent, child, position, common_tedge, transf):
+    test_parent = test_transformation(parent, child, position, transf)
     return match_score(test_parent, common_tedge)
 
 
@@ -142,9 +150,11 @@ class CaseGenerator(object):
     def __init__(self):
         self.tree = None
         self.parser = Parser()
+        self.sentence_str = None
         self.sentence = None
         self.outcome = None
         self.outcome_str = None
+        self.interactive = False
 
     def build_tedge(self, edge, counts=None):
         if not counts:
@@ -163,7 +173,7 @@ class CaseGenerator(object):
             for token in self.sentence.tokens:
                 if edge == '+':
                     return Token('+')
-                if token.word == edge:
+                if token.word == str(edge):
                     if count == tcount:
                         return token
                     else:
@@ -236,7 +246,7 @@ class CaseGenerator(object):
         cp = common_path(parent_path, child_path)
         return path2tedge(cp, self.build_tedge(self.outcome))
 
-    def infer_transformation(self, parent, child, child_token, position):
+    def infer_transformation(self, parent, child, position):
         common_tedge = self.common_path(parent, child)
         if common_tedge is None:
             return Transformation.IGNORE
@@ -246,20 +256,59 @@ class CaseGenerator(object):
         best_score = 0
         best_transf = Transformation.IGNORE
 
-        score = score_transformation(parent, child, position, common_tedge, child_token, Transformation.APPLY)
+        score = score_transformation(parent, child, position, common_tedge, Transformation.APPLY)
         if score > best_score:
             best_score = score
             best_transf = Transformation.APPLY
-        score = score_transformation(parent, child, position, common_tedge, child_token, Transformation.GROW)
+        score = score_transformation(parent, child, position, common_tedge, Transformation.GROW)
         if score > best_score:
             best_score = score
             best_transf = Transformation.GROW
-        score = score_transformation(parent, child, position, common_tedge, child_token, Transformation.NEST)
+        score = score_transformation(parent, child, position, common_tedge, Transformation.NEST)
         if score > best_score:
             best_score = score
             best_transf = Transformation.NEST
+        score = score_transformation(parent, child, position, common_tedge, Transformation.NEST_DEEP)
+        if score > best_score:
+            best_transf = Transformation.NEST_DEEP
 
         return best_transf
+
+    def choose_transformation(self, parent, child, position):
+        print('target sentence:')
+        print(self.sentence_str)
+        print('parent <- child')
+        print('%s <- %s' % (parent, child))
+
+        test_node = test_transformation(parent, child, position, Transformation.IGNORE)
+        print('0) IGNORE -> %s' % test_node.tree.to_hyperedge_str(with_namespaces=False))
+
+        test_node = test_transformation(parent, child, position, Transformation.APPLY)
+        print('1) APPLY -> %s' % test_node.tree.to_hyperedge_str(with_namespaces=False))
+
+        test_node = test_transformation(parent, child, position, Transformation.GROW)
+        print('2) GROW -> %s' % test_node.tree.to_hyperedge_str(with_namespaces=False))
+
+        test_node = test_transformation(parent, child, position, Transformation.NEST)
+        print('3) NEST -> %s' % test_node.tree.to_hyperedge_str(with_namespaces=False))
+
+        test_node = test_transformation(parent, child, position, Transformation.NEST_DEEP)
+        print('4) NEST_DEEP -> %s' % test_node.tree.to_hyperedge_str(with_namespaces=False))
+
+        choice = int(input('> '))
+
+        if choice == 0:
+            return Transformation.IGNORE
+        if choice == 1:
+            return Transformation.APPLY
+        if choice == 2:
+            return Transformation.GROW
+        if choice == 3:
+            return Transformation.NEST
+        if choice == 4:
+            return Transformation.NEST_DEEP
+        else:
+            return Transformation.IGNORE
 
     def process_token(self, token, parent_token=None, parent_id=None, position=None):
         elem = self.tree.create_leaf(token)
@@ -282,11 +331,14 @@ class CaseGenerator(object):
         transf = -1
         if parent_token:
             parent = self.tree.get(parent_id)
-            transf = self.infer_transformation(parent, self.tree.get(elem_id), token, position)
+            if self.interactive:
+                transf = self.choose_transformation(parent, self.tree.get(elem_id), position)
+            else:
+                transf = self.infer_transformation(parent, self.tree.get(elem_id), position)
             print('%s <- %s' % (parent_token.word, token.word))
             print('%s <- %s' % (parent, self.tree.get(elem_id)))
             if parent.is_node():
-                print('inn: %s' % str(parent.get_inner_nested_node(parent.id)))
+                print('inn: %s' % str(parent.get_inner_nested_node()))
             if transf == Transformation.GROW:
                 print('grow')
                 parent.grow_(elem_id, position)
@@ -295,7 +347,10 @@ class CaseGenerator(object):
                 parent.apply_(elem_id, position)
             elif transf == Transformation.NEST:
                 print('nest')
-                parent.nest_(elem_id, position, token)
+                parent.nest_(elem_id, position)
+            elif transf == Transformation.NEST_DEEP:
+                print('nest_deep')
+                parent.nest_deep(elem_id, position)
             else:
                 print('ignore')
                 pass
@@ -304,13 +359,14 @@ class CaseGenerator(object):
 
         return elem_id, transf
 
-    def generate(self, sentence_str, outcome_str):
+    def generate(self, sentence_str, outcome_str=None):
         self.tree = Tree()
+        self.sentence_str = sentence_str
         self.sentence = Sentence(self.parser.parse_text(sentence_str)[0][1])
         self.sentence.print_tree()
-        self.outcome_str = outcome_str
-        self.outcome = ed.str2edge(outcome_str)
-        self.toutcome = self.build_tedge(self.outcome)
+        if outcome_str:
+            self.outcome_str = outcome_str
+            self.outcome = ed.str2edge(outcome_str)
         self.tree.root_id, _ = self.process_token(self.sentence.root())
 
     def validate(self):
@@ -345,5 +401,23 @@ def generate_cases(infile):
     print('%s out of %s correct cases.' % (correct, total))
 
 
+def interactive_edge_builder(outfile):
+    print('writing to file: %s' % outfile)
+    cg = CaseGenerator()
+    cg.interactive = True
+    while True:
+        sentence_str = input('sentence> ').strip()
+        cg.generate(sentence_str)
+        outcome = cg.tree.to_hyperedge_str(with_namespaces=False)
+        print('outcome:')
+        print(outcome)
+        write = input('write [y/N]? ')
+        if write == 'y':
+            f = open(outfile, 'w')
+            f.write('%s\n' % sentence_str)
+            f.write('%s\n' % outcome)
+            f.close()
+
+
 if __name__ == '__main__':
-    generate_cases('parses.txt')
+    generate_cases('parses1.txt')
