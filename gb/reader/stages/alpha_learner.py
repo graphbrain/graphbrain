@@ -161,7 +161,7 @@ class Fit(object):
             return self.matches > fit.matches
 
 
-CASE_FIELDS = ('transformation', 'child_pos', 'child_dep', 'parent_pos', 'parent_dep')
+CASE_FIELDS = ('transformation', 'child_pos', 'child_dep', 'parent_pos', 'parent_dep', 'child_position')
 
 
 class CaseGenerator(object):
@@ -378,11 +378,16 @@ class CaseGenerator(object):
 
             # add case
             if parent_token:
-                case = {'transformation': transf2str(transf),
+                if position == Position.LEFT:
+                    child_position = 'left'
+                else:
+                    child_position = 'right'
+                case = {'transformation': str(transf),
                         'child_pos': token.pos,
                         'child_dep': token.dep,
                         'parent_pos': parent_token.pos,
-                        'parent_dep': parent_token.dep}
+                        'parent_dep': parent_token.dep,
+                        'child_position': child_position}
                 self.cases.append(case)
 
         return elem_id, transf
