@@ -21,7 +21,7 @@
 
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
-from gb.nlp.nlp_token import Token
+from gb.nlp.token import Token
 
 
 LEAF = 0

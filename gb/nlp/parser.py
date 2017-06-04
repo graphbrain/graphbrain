@@ -21,7 +21,7 @@
 
 import spacy
 from gb.nlp.word import Word
-from gb.nlp.nlp_token import Token
+from gb.nlp.token import Token
 from gb.nlp.sentence import Sentence
 
 
