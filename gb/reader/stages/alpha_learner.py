@@ -19,33 +19,31 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from setuptools import setup, find_packages
+import pickle
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
 
 
-setup(
-    name='graphbrain',
-    version='0.1',
-    packages=find_packages(),
-    install_requires=[
-        'numpy',
-        'scipy',
-        'sklearn',
-        'pandas',
-        'colorama',
-        'click',
-        'matplotlib',
-        'python-igraph',
-        'nltk',
-        'spacy',
-        'asciitree',
-        'ujson',
-        'plyvel',
-        'bottle',
-        'praw',
-        'jupyter'
-    ],
-    entry_points='''
-        [console_scripts]
-        gbrain=gb.gbrain:cli
-    ''',
-)
+def learn(infile, outfile):
+    train = pd.read_csv(infile)
+    train = pd.get_dummies(train, columns=train.columns.values[1:])
+
+    feature_cols = train.columns.values[1:]
+    target_cols = [train.columns.values[0]]
+
+    features = train.as_matrix(feature_cols)
+    targets = train.as_matrix(target_cols)
+
+    rf = RandomForestClassifier(n_estimators=100)
+    rf.fit(features, targets)
+
+    # results = rf.predict(features)
+    score = rf.score(features, targets)
+    print('score: %s' % score)
+
+    with open(outfile, 'wb') as f:
+        pickle.dump(rf, f)
+
+
+if __name__ == '__main__':
+    learn('cases.csv', 'alpha_forest.model')
