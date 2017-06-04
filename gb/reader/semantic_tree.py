@@ -211,6 +211,10 @@ class Element(object):
         # throw exception
         pass
 
+    def get_inner_nested_node(self):
+        # throw exception
+        pass
+
     def generate_namespace(self):
         # throw exception
         pass
@@ -227,7 +231,11 @@ class Element(object):
         # throw exception
         pass
 
-    def nest_(self, child_id, pos, child_token):
+    def nest_(self, child_id, pos):
+        # throw exception
+        pass
+
+    def nest_deep(self, child_id, pos):
         # throw exception
         pass
 
@@ -323,6 +331,10 @@ class Leaf(Element):
     def generate_namespace(self):
         self.namespace = 'nlp.%s.%s' % (self.token.lemma.lower(), self.token.pos.lower())
 
+    # override
+    def get_inner_nested_node(self):
+        return self
+
     def all_tokens(self):
         return [self.token]
 
@@ -338,9 +350,13 @@ class Leaf(Element):
         node = self.tree.enclose(self)
         node.apply_(child_id, pos)
 
-    def nest_(self, child_id, pos, child_token):
+    def nest_(self, child_id, pos):
         node = self.tree.enclose(self)
-        node.nest_(child_id, pos, child_token)
+        node.nest_(child_id, pos)
+
+    def nest_deep(self, child_id, pos):
+        node = self.tree.enclose(self)
+        node.nest_deep(child_id, pos)
 
     def __eq__(self, other):
         if isinstance(other, Leaf):
@@ -609,12 +625,12 @@ class Node(Element):
     def generate_namespace(self):
         self.namespace = '+'.join([child.get_namespace() for child in self.children()])
 
-    def get_inner_nested_node(self, elem_id):
-        elem = self.tree.get(elem_id)
-        if elem.inner_nested_node_id >= 0:
-            return self.tree.get(elem.inner_nested_node_id)
+    # override
+    def get_inner_nested_node(self):
+        if self.inner_nested_node_id >= 0:
+            return self.tree.get(self.inner_nested_node_id)
         else:
-            return elem
+            return self
 
     def set_inner_nested_node(self, elem_id, first=True):
         if self.inner_nested_node_id >= 0 or first:
@@ -638,28 +654,12 @@ class Node(Element):
         # self.get_inner_nested_node(self.id).children_ids.append(child_id)
         self.children_ids.append(child_id)
 
-    def nest_(self, child_id, pos, child_token):
-        child = self.tree.get(child_id)
-        if child.is_leaf():
-            self.nest__(child_id, pos)
-        else:
-            first = child.get_child(0)
-            if first.is_leaf() and first.token != child_token:
-                parent_id = self.id
-                parent = self.tree.get(parent_id)
-                parent.nest__(first.id, pos)
-                new_child = self.tree.create_node(child.children_ids[1:])
-                parent = self.tree.get(parent_id)
-                parent.nest_(new_child.id, pos, child_token)
-            else:
-                self.nest__(child_id, pos)
-
-    def nest__(self, child_id, pos):
+    def nest_(self, child_id, pos):
         enclose = True
         if pos == Position.LEFT:
             node = self
         else:
-            node = self.get_inner_nested_node(self.id)
+            node = self.get_inner_nested_node()
             if node.is_node():
                 inner_rel = node.get_child(0)
                 if inner_rel.is_leaf() and not inner_rel.connector and len(node.children_ids) > 1:
@@ -672,14 +672,17 @@ class Node(Element):
                     enclose = False
 
         if enclose:
+            if node.is_leaf():
+                node = self.tree.enclose(node)
             if len(node.children_ids) > 1:
                 node = self.tree.enclose(node)
                 # placeholder
                 node.children_ids.insert(0, -1)
-                node.set_inner_nested_node(self.get_inner_nested_node(node.children_ids[1]).id)
+                node.set_inner_nested_node(node.get_child(1).get_inner_nested_node().id)
             else:
                 # placeholder
                 node.children_ids.insert(0, -1)
+                node.set_inner_nested_node(node.children_ids[1])
 
         child = self.tree.get(child_id)
         if child.is_leaf():
@@ -688,6 +691,26 @@ class Node(Element):
             node.children_ids[0] = child.children_ids[0]
             for cid in child.children_ids[1:]:
                 node.children_ids.append(cid)
+
+    def nest_deep(self, child_id, pos):
+        child = self.tree.get(child_id)
+        if child.is_leaf():
+            self.nest_(child_id, pos)
+            return
+
+        parent_id = self.id
+        if pos == Position.LEFT:
+            parent = self
+            for i in range(len(child.children_ids)):
+                index = -i - 1
+                parent.nest_(child.children_ids[index], pos)
+                parent = self.tree.get(parent_id)
+        else:
+            parent = self.get_inner_nested_node()
+            for i in range(len(child.children_ids)):
+                parent.nest_(child.children_ids[i], pos)
+                parent = self.tree.get(parent_id)
+                parent = parent.get_inner_nested_node()
 
     def __eq__(self, other):
         if isinstance(other, Leaf):

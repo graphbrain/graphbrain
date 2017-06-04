@@ -32,6 +32,7 @@ from gb.tools.reader_tests import ReaderTests
 from gb.ui.server import start_ui
 from gb.retrievers.reddit import RedditRetriever
 from gb.reader.reddit import RedditReader
+import gb.reader.stages.alpha_learner as alpha_learner
 
 
 @click.group()
@@ -189,6 +190,13 @@ def reddit_reader(ctx):
     infile = ctx.obj['infile']
     comments = ctx.obj['comments']
     RedditReader(hg, comments=comments).read_file(infile)
+
+
+@cli.command()
+@click.pass_context
+def interactive_edge_builder(ctx):
+    outfile = ctx.obj['outfile']
+    alpha_learner.interactive_edge_builder(outfile)
 
 
 show_logo()
