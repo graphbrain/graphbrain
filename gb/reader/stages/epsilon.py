@@ -19,7 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from gb.nlp.nlp_token import Token
+from gb.nlp.token import Token
 import gb.constants as cons
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed

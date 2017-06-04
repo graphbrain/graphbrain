@@ -23,7 +23,7 @@ import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
-from gb.nlp.nlp_token import Token
+from gb.nlp.token import Token
 from gb.reader.semantic_tree import Tree
 from gb.reader.semantic_tree import Position
 
