@@ -199,6 +199,14 @@ def interactive_edge_builder(ctx):
     alpha_learner.interactive_edge_builder(outfile)
 
 
+@cli.command()
+@click.pass_context
+def generate_alpha_cases(ctx):
+    infile = ctx.obj['infile']
+    outfile = ctx.obj['outfile']
+    alpha_learner.generate_cases(infile, outfile)
+
+
 show_logo()
 
 

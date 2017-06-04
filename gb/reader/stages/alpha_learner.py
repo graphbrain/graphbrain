@@ -29,7 +29,22 @@ from gb.reader.semantic_tree import Position
 
 
 class Transformation(object):
-    GROW, APPLY, NEST, NEST_DEEP, IGNORE = range(5)
+    IGNORE, GROW, APPLY, NEST, NEST_DEEP = range(5)
+
+
+def transf2str(transf):
+    if transf == Transformation.IGNORE:
+        return 'ignore'
+    elif transf == Transformation.GROW:
+        return 'grow'
+    elif transf == Transformation.APPLY:
+        return 'apply'
+    elif transf == Transformation.NEST:
+        return 'nest'
+    elif transf == Transformation.NEST_DEEP:
+        return 'nest_deep'
+    else:
+        return '?'
 
 
 def tedge2str(tedge):
@@ -146,6 +161,9 @@ class Fit(object):
             return self.matches > fit.matches
 
 
+CASE_FIELDS = ('transformation', 'child_pos', 'child_dep', 'parent_pos', 'parent_dep')
+
+
 class CaseGenerator(object):
     def __init__(self):
         self.tree = None
@@ -155,6 +173,7 @@ class CaseGenerator(object):
         self.outcome = None
         self.outcome_str = None
         self.interactive = False
+        self.cases = None
 
     def build_tedge(self, edge, counts=None):
         if not counts:
@@ -357,6 +376,15 @@ class CaseGenerator(object):
             print(self.tree.get(parent_id))
             print()
 
+            # add case
+            if parent_token:
+                case = {'transformation': transf2str(transf),
+                        'child_pos': token.pos,
+                        'child_dep': token.dep,
+                        'parent_pos': parent_token.pos,
+                        'parent_dep': parent_token.dep}
+                self.cases.append(case)
+
         return elem_id, transf
 
     def generate(self, sentence_str, outcome_str=None):
@@ -372,26 +400,39 @@ class CaseGenerator(object):
     def validate(self):
         return self.tree.to_hyperedge_str(with_namespaces=False) == self.outcome_str
 
+    def write_cases(self, outfile):
+        for case in self.cases:
+            values = [case[field] for field in CASE_FIELDS]
+            f = open(outfile, 'a')
+            f.write('%s\n' % ','.join(values))
+            f.close()
 
-def generate_cases(infile):
-    current_case = []
-    cases = []
+
+def generate_cases(infile, outfile):
+    f = open(outfile, 'w')
+    f.write('%s\n' % ','.join(CASE_FIELDS))
+    f.close()
+
+    current_parse = []
+    parses = []
     with open(infile) as f:
         for line in f:
-            current_case.append(line)
-            if len(current_case) == 2:
-                cases.append(current_case)
-                current_case = []
+            current_parse.append(line)
+            if len(current_parse) == 2:
+                parses.append(current_parse)
+                current_parse = []
 
     total = 0
     correct = 0
     cg = CaseGenerator()
-    for case in cases:
-        sentence_str = case[0].strip()
-        outcome_str = case[1].strip()
+    for parse in parses:
+        sentence_str = parse[0].strip()
+        outcome_str = parse[1].strip()
+        cg.cases = []
         cg.generate(sentence_str, outcome_str)
         if cg.validate():
             correct += 1
+            cg.write_cases(outfile)
         else:
             print('could not generate correct cases for: %s' % sentence_str)
             print(outcome_str)
@@ -413,11 +454,11 @@ def interactive_edge_builder(outfile):
         print(outcome)
         write = input('write [y/N]? ')
         if write == 'y':
-            f = open(outfile, 'w')
+            f = open(outfile, 'a')
             f.write('%s\n' % sentence_str)
             f.write('%s\n' % outcome)
             f.close()
 
 
 if __name__ == '__main__':
-    generate_cases('parses1.txt')
+    generate_cases('parses1.txt', 'dummy.txt')
