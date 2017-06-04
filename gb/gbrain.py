@@ -32,7 +32,7 @@ from gb.tools.reader_tests import ReaderTests
 from gb.ui.server import start_ui
 from gb.retrievers.reddit import RedditRetriever
 from gb.reader.reddit import RedditReader
-import gb.reader.stages.alpha_learner as alpha_learner
+import gb.reader.stages.alpha_case_generator as alpha_cg
 
 
 @click.group()
@@ -196,7 +196,7 @@ def reddit_reader(ctx):
 @click.pass_context
 def interactive_edge_builder(ctx):
     outfile = ctx.obj['outfile']
-    alpha_learner.interactive_edge_builder(outfile)
+    alpha_cg.interactive_edge_builder(outfile)
 
 
 @cli.command()
@@ -204,7 +204,7 @@ def interactive_edge_builder(ctx):
 def generate_alpha_cases(ctx):
     infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
-    alpha_learner.generate_cases(infile, outfile)
+    alpha_cg.generate_cases(infile, outfile)
 
 
 show_logo()
