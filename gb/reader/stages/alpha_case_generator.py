@@ -24,12 +24,9 @@ import gb.hypergraph.edge as ed
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
 from gb.nlp.token import Token
-from gb.reader.semantic_tree import Tree
-from gb.reader.semantic_tree import Position
-
-
-class Transformation(object):
-    IGNORE, GROW, APPLY, NEST, NEST_DEEP = range(5)
+from gb.reader.semantic_tree import Tree, Position
+from gb.reader.stages.common import Transformation
+from gb.reader.stages.alpha_forest import expanded_fields, build_case
 
 
 def transf2str(transf):
@@ -159,9 +156,6 @@ class Fit(object):
             return self.size < fit.size
         else:
             return self.matches > fit.matches
-
-
-CASE_FIELDS = ('transformation', 'child_pos', 'child_dep', 'parent_pos', 'parent_dep', 'child_position')
 
 
 class CaseGenerator(object):
@@ -378,16 +372,8 @@ class CaseGenerator(object):
 
             # add case
             if parent_token:
-                if position == Position.LEFT:
-                    child_position = 'left'
-                else:
-                    child_position = 'right'
-                case = {'transformation': str(transf),
-                        'child_pos': token.pos,
-                        'child_dep': token.dep,
-                        'parent_pos': parent_token.pos,
-                        'parent_dep': parent_token.dep,
-                        'child_position': child_position}
+                case = build_case(parent_token, token, position)
+                case['transformation'] = str(transf)
                 self.cases.append(case)
 
         return elem_id, transf
@@ -407,7 +393,7 @@ class CaseGenerator(object):
 
     def write_cases(self, outfile):
         for case in self.cases:
-            values = [case[field] for field in CASE_FIELDS]
+            values = [str(case[field]) for field in expanded_fields()]
             f = open(outfile, 'a')
             f.write('%s\n' % ','.join(values))
             f.close()
@@ -415,7 +401,7 @@ class CaseGenerator(object):
 
 def generate_cases(infile, outfile):
     f = open(outfile, 'w')
-    f.write('%s\n' % ','.join(CASE_FIELDS))
+    f.write('%s\n' % ','.join(expanded_fields()))
     f.close()
 
     current_parse = []

@@ -24,6 +24,10 @@ CONCEPT_POS = ['NOUN', 'PROPN']
 QUALIFIER_POS = ['ADJ']
 
 
+class Transformation(object):
+    IGNORE, GROW, APPLY, NEST, NEST_DEEP = range(5)
+
+
 def is_adp_token_relationship(token):
     if not token.parent:
         return False
