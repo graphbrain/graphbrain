@@ -33,6 +33,7 @@ from gb.ui.server import start_ui
 from gb.retrievers.reddit import RedditRetriever
 from gb.reader.reddit import RedditReader
 import gb.reader.stages.alpha_case_generator as alpha_cg
+import gb.reader.stages.alpha_forest as alpha_for
 
 
 @click.group()
@@ -205,6 +206,14 @@ def generate_alpha_cases(ctx):
     infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
     alpha_cg.generate_cases(infile, outfile)
+
+
+@cli.command()
+@click.pass_context
+def learn_alpha_forest(ctx):
+    infile = ctx.obj['infile']
+    outfile = ctx.obj['outfile']
+    alpha_for.learn(infile, outfile)
 
 
 show_logo()
