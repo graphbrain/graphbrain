@@ -439,6 +439,7 @@ def interactive_edge_builder(outfile):
     cg.interactive = True
     while True:
         sentence_str = input('sentence> ').strip()
+        cg.cases = []
         cg.generate(sentence_str)
         outcome = cg.tree.to_hyperedge_str(with_namespaces=False)
         print('outcome:')
