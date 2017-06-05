@@ -32,8 +32,6 @@ from gb.reader.stages.alpha_forest import expanded_fields, build_case
 def transf2str(transf):
     if transf == Transformation.IGNORE:
         return 'ignore'
-    elif transf == Transformation.GROW:
-        return 'grow'
     elif transf == Transformation.APPLY:
         return 'apply'
     elif transf == Transformation.NEST:
@@ -128,8 +126,6 @@ def test_transformation(parent, child, position, transf):
         pass
     elif transf == Transformation.APPLY:
         test_parent.apply_(child.id, position)
-    elif transf == Transformation.GROW:
-        test_parent.grow_(child.id, position)
     elif transf == Transformation.NEST:
         test_parent.nest_(child.id, position)
     elif transf == Transformation.NEST_DEEP:
@@ -273,10 +269,6 @@ class CaseGenerator(object):
         if score > best_score:
             best_score = score
             best_transf = Transformation.APPLY
-        score = score_transformation(parent, child, position, common_tedge, Transformation.GROW)
-        if score > best_score:
-            best_score = score
-            best_transf = Transformation.GROW
         score = score_transformation(parent, child, position, common_tedge, Transformation.NEST)
         if score > best_score:
             best_score = score
@@ -299,14 +291,11 @@ class CaseGenerator(object):
         test_node = test_transformation(parent, child, position, Transformation.APPLY)
         print('1) APPLY -> %s' % test_node.tree.to_hyperedge_str(with_namespaces=False))
 
-        test_node = test_transformation(parent, child, position, Transformation.GROW)
-        print('2) GROW -> %s' % test_node.tree.to_hyperedge_str(with_namespaces=False))
-
         test_node = test_transformation(parent, child, position, Transformation.NEST)
-        print('3) NEST -> %s' % test_node.tree.to_hyperedge_str(with_namespaces=False))
+        print('2) NEST -> %s' % test_node.tree.to_hyperedge_str(with_namespaces=False))
 
         test_node = test_transformation(parent, child, position, Transformation.NEST_DEEP)
-        print('4) NEST_DEEP -> %s' % test_node.tree.to_hyperedge_str(with_namespaces=False))
+        print('3) NEST_DEEP -> %s' % test_node.tree.to_hyperedge_str(with_namespaces=False))
 
         choice = int(input('> '))
 
@@ -315,10 +304,8 @@ class CaseGenerator(object):
         if choice == 1:
             return Transformation.APPLY
         if choice == 2:
-            return Transformation.GROW
-        if choice == 3:
             return Transformation.NEST
-        if choice == 4:
+        if choice == 3:
             return Transformation.NEST_DEEP
         else:
             return Transformation.IGNORE
@@ -352,10 +339,7 @@ class CaseGenerator(object):
             print('%s <- %s' % (parent, self.tree.get(elem_id)))
             if parent.is_node():
                 print('inn: %s' % str(parent.get_inner_nested_node()))
-            if transf == Transformation.GROW:
-                print('grow')
-                parent.grow_(elem_id, position)
-            elif transf == Transformation.APPLY:
+            if transf == Transformation.APPLY:
                 print('apply')
                 parent.apply_(elem_id, position)
             elif transf == Transformation.NEST:

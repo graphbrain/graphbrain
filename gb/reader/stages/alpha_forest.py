@@ -124,9 +124,7 @@ class AlphaForest(object):
         if parent_token:
             parent = self.tree.get(parent_id)
             transf = self.predict_transformation(parent_token, token, position)
-            if transf == Transformation.GROW:
-                parent.grow_(elem_id, position)
-            elif transf == Transformation.APPLY:
+            if transf == Transformation.APPLY:
                 parent.apply_(elem_id, position)
             elif transf == Transformation.NEST:
                 parent.nest_(elem_id, position)

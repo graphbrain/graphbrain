@@ -21,7 +21,6 @@
 
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
-from gb.nlp.token import Token
 
 
 LEAF = 0
@@ -223,10 +222,6 @@ class Element(object):
         # throw exception
         pass
 
-    def grow_(self, child_id, pos):
-        # throw exception
-        pass
-
     def apply_(self, child_id, pos):
         # throw exception
         pass
@@ -337,14 +332,6 @@ class Leaf(Element):
 
     def all_tokens(self):
         return [self.token]
-
-    def grow_(self, child_id, pos):
-        node = self.tree.enclose(self)
-        leaf = self.tree.create_leaf(Token(''))
-        leaf.connector = True
-        leaf.namespace = 'gb'
-        node.children_ids.insert(0, leaf.id)
-        node.grow_(child_id, pos)
 
     def apply_(self, child_id, pos):
         node = self.tree.enclose(self)
@@ -644,14 +631,7 @@ class Node(Element):
             tokens = tokens + child.all_tokens()
         return tokens
 
-    def grow_(self, child_id, pos):
-        if pos == Position.LEFT:
-            self.children_ids.insert(1, child_id)
-        else:
-            self.children_ids.append(child_id)
-
     def apply_(self, child_id, pos):
-        # self.get_inner_nested_node(self.id).children_ids.append(child_id)
         self.children_ids.append(child_id)
 
     def nest_(self, child_id, pos):
