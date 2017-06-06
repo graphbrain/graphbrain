@@ -230,6 +230,10 @@ class Element(object):
         # throw exception
         pass
 
+    def nest_shallow(self, child_id):
+        # throw exception
+        pass
+
     def nest_deep(self, child_id, pos):
         # throw exception
         pass
@@ -340,6 +344,10 @@ class Leaf(Element):
     def nest_(self, child_id, pos):
         node = self.tree.enclose(self)
         node.nest_(child_id, pos)
+
+    def nest_shallow(self, child_id):
+        node = self.tree.enclose(self)
+        node.nest_shallow(child_id)
 
     def nest_deep(self, child_id, pos):
         node = self.tree.enclose(self)
@@ -632,7 +640,10 @@ class Node(Element):
         return tokens
 
     def apply_(self, child_id, pos):
-        self.children_ids.append(child_id)
+        if pos == Position.LEFT:
+            self.children_ids.insert(1, child_id)
+        elif pos == Position.RIGHT:
+            self.children_ids.append(child_id)
 
     def nest_(self, child_id, pos):
         enclose = True
@@ -671,6 +682,9 @@ class Node(Element):
             node.children_ids[0] = child.children_ids[0]
             for cid in child.children_ids[1:]:
                 node.children_ids.append(cid)
+
+    def nest_shallow(self, child_id):
+        self.children_ids.insert(0, child_id)
 
     def nest_deep(self, child_id, pos):
         child = self.tree.get(child_id)
