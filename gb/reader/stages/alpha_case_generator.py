@@ -139,21 +139,21 @@ def test_transformation(parent, child, position, transf):
     if transf == Transformation.IGNORE:
         pass
     elif transf == Transformation.APPLY:
-        test_parent.apply_(child.id, position)
+        test_parent.apply(child.id, position)
     elif transf == Transformation.NEST:
-        test_parent.nest_(child.id, position)
+        test_parent.nest(child.id, position)
     elif transf == Transformation.SHALLOW:
         test_parent.nest_shallow(child.id)
     elif transf == Transformation.DEEP:
         test_parent.nest_deep(child.id, position)
     elif transf == Transformation.APPLY_R:
-        test_parent.apply_(child.id, Position.RIGHT)
+        test_parent.apply(child.id, Position.RIGHT)
     elif transf == Transformation.APPLY_L:
-        test_parent.apply_(child.id, Position.LEFT)
+        test_parent.apply(child.id, Position.LEFT)
     elif transf == Transformation.NEST_R:
-        test_parent.nest_(child.id, Position.RIGHT)
+        test_parent.nest(child.id, Position.RIGHT)
     elif transf == Transformation.NEST_L:
-        test_parent.nest_(child.id, Position.LEFT)
+        test_parent.nest(child.id, Position.LEFT)
     elif transf == Transformation.DEEP_R:
         test_parent.nest_deep(child.id, Position.RIGHT)
     elif transf == Transformation.DEEP_L:
@@ -450,22 +450,22 @@ class CaseGenerator(object):
                 print('inn: %s' % str(parent.get_inner_nested_node()))
             if transf == Transformation.APPLY:
                 print('apply')
-                parent.apply_(elem_id, position)
+                parent.apply(elem_id, position)
             elif transf == Transformation.APPLY_R:
                 print('apply [R]')
-                parent.apply_(elem_id, Position.RIGHT)
+                parent.apply(elem_id, Position.RIGHT)
             elif transf == Transformation.APPLY_L:
                 print('apply [L]')
-                parent.apply_(elem_id, Position.LEFT)
+                parent.apply(elem_id, Position.LEFT)
             elif transf == Transformation.NEST:
                 print('nest')
-                parent.nest_(elem_id, position)
+                parent.nest(elem_id, position)
             elif transf == Transformation.NEST_R:
                 print('nest [R]')
-                parent.nest_(elem_id, Position.RIGHT)
+                parent.nest(elem_id, Position.RIGHT)
             elif transf == Transformation.NEST_L:
                 print('nest [L]')
-                parent.nest_(elem_id, Position.LEFT)
+                parent.nest(elem_id, Position.LEFT)
             elif transf == Transformation.SHALLOW:
                 print('shallow')
                 parent.nest_shallow(elem_id)

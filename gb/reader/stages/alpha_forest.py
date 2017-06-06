@@ -125,17 +125,17 @@ class AlphaForest(object):
             parent = self.tree.get(parent_id)
             transf = self.predict_transformation(parent_token, token, position)
             if transf == Transformation.APPLY:
-                parent.apply_(elem_id, position)
+                parent.apply(elem_id, position)
             elif transf == Transformation.APPLY_R:
-                parent.apply_(elem_id, Position.RIGHT)
+                parent.apply(elem_id, Position.RIGHT)
             elif transf == Transformation.APPLY_L:
-                parent.apply_(elem_id, Position.LEFT)
+                parent.apply(elem_id, Position.LEFT)
             elif transf == Transformation.NEST:
-                parent.nest_(elem_id, position)
+                parent.nest(elem_id, position)
             elif transf == Transformation.NEST_R:
-                parent.nest_(elem_id, Position.RIGHT)
+                parent.nest(elem_id, Position.RIGHT)
             elif transf == Transformation.NEST_L:
-                parent.nest_(elem_id, Position.LEFT)
+                parent.nest(elem_id, Position.LEFT)
             elif transf == Transformation.SHALLOW:
                 parent.nest_shallow(elem_id)
             elif transf == Transformation.DEEP:

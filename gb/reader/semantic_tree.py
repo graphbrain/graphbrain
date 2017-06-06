@@ -125,12 +125,10 @@ class Element(object):
         self.connector = False
 
     def as_label_list(self, lemmas=False):
-        # throw exception
-        pass
+        raise NotImplementedError()
 
     def as_text(self, lemmas=False):
-        # throw exception
-        pass
+        raise NotImplementedError()
 
     def is_leaf(self):
         return self.type == LEAF
@@ -158,85 +156,50 @@ class Element(object):
     def to_synonym(self):
         return None
 
-    def apply_layers(self):
-        # if not implemented, do nothing.
-        pass
-
-    def remove_redundant_nesting(self):
-        # if not implemented, do nothing.
-        pass
-
-    def flatten(self):
-        # if not implemented, do nothing.
-        pass
-
-    def add_child(self, elem_id):
-        # throw exception
-        pass
-
     def add_to_first_child(self, elem_id, pos):
-        # throw exception
-        pass
-
-    def nest(self, elem_id):
-        # throw exception
-        pass
+        raise NotImplementedError()
 
     def has_pos(self, pos, shallow=False):
-        # throw exception
-        pass
+        raise NotImplementedError()
 
     def has_dep(self, dep, shallow=False):
-        # throw exception
-        pass
+        raise NotImplementedError()
 
     def has_dep_in(self, deps, shallow=False):
-        # throw exception
-        pass
+        raise NotImplementedError()
 
     def arity(self):
-        # throw exception
-        pass
+        raise NotImplementedError()
 
     def flat_leafs(self):
-        # throw exception
-        pass
+        raise NotImplementedError()
 
     def to_leafs(self):
-        # throw exception
-        pass
+        raise NotImplementedError()
 
     def to_hyperedge(self, with_namespaces=True):
-        # throw exception
-        pass
+        raise NotImplementedError()
 
     def get_inner_nested_node(self):
-        # throw exception
-        pass
+        raise NotImplementedError()
 
     def generate_namespace(self):
-        # throw exception
-        pass
+        raise NotImplementedError()
 
     def all_tokens(self):
-        # throw exception
-        pass
+        raise NotImplementedError()
 
-    def apply_(self, child_id, pos):
-        # throw exception
-        pass
+    def apply(self, child_id, pos):
+        raise NotImplementedError()
 
-    def nest_(self, child_id, pos):
-        # throw exception
-        pass
+    def nest(self, child_id, pos):
+        raise NotImplementedError()
 
     def nest_shallow(self, child_id):
-        # throw exception
-        pass
+        raise NotImplementedError()
 
     def nest_deep(self, child_id, pos):
-        # throw exception
-        pass
+        raise NotImplementedError()
 
     def __eq__(self, other):
         return NotImplemented
@@ -279,19 +242,9 @@ class Leaf(Element):
             return self.token.word.lower()
 
     # override
-    def add_child(self, elem_id):
-        node = self.tree.enclose(self)
-        node.add_child(elem_id)
-
-    # override
     def add_to_first_child(self, elem_id, pos):
         node = self.tree.enclose(self)
         return node.add_to_first_child(elem_id, pos)
-
-    # override
-    def nest(self, elem_id):
-        node = self.tree.enclose(self)
-        return node.nest(elem_id)
 
     # override
     def has_pos(self, pos, shallow=False):
@@ -337,13 +290,13 @@ class Leaf(Element):
     def all_tokens(self):
         return [self.token]
 
-    def apply_(self, child_id, pos):
+    def apply(self, child_id, pos):
         node = self.tree.enclose(self)
-        node.apply_(child_id, pos)
+        node.apply(child_id, pos)
 
-    def nest_(self, child_id, pos):
+    def nest(self, child_id, pos):
         node = self.tree.enclose(self)
-        node.nest_(child_id, pos)
+        node.nest(child_id, pos)
 
     def nest_shallow(self, child_id):
         node = self.tree.enclose(self)
@@ -375,8 +328,6 @@ class Node(Element):
             self.children_ids = []
         else:
             self.children_ids = children_ids[:]
-        self.layer_ids = []
-        self.layer_id = -1
         self.__compound = False
         self.inner_nested_node_id = -1
 
@@ -438,35 +389,6 @@ class Node(Element):
     def set_child(self, i, elem_id):
         self.children_ids[i] = elem_id
 
-    def new_layer(self):
-        if self.layer_id >= 0:
-            self.layer_ids.append(self.layer_id)
-            self.layer_id = -1
-
-    def apply_layer(self, entity, layer):
-        if layer.is_node():
-            for i in range(len(layer.children_ids)):
-                if layer.children_ids[i] < 0:
-                    child = self.tree.create_node(entity.children_ids)
-                    child_id = child.id
-                    if child.is_singleton():
-                        child_id = child.children_ids[0]
-                    layer.set_child(i, child_id)
-                    return True
-                if self.apply_layer(entity, layer.get_child(i)):
-                    return True
-        return False
-
-    def apply_layers(self):
-        self.layer_ids.reverse()
-        prev_layer = self
-        for layer_id in self.layer_ids:
-            layer = self.tree.get(layer_id)
-            self.apply_layer(prev_layer, layer)
-            prev_layer = layer
-        self.children_ids = prev_layer.children_ids
-        self.layer_ids = []
-
     def is_singleton(self):
         return len(self.children_ids) == 1
 
@@ -492,10 +414,6 @@ class Node(Element):
         return self.__compound
 
     # override
-    def add_child(self, elem_id):
-        self.children_ids.append(elem_id)
-
-    # override
     def add_to_first_child(self, elem_id, pos):
         if len(self.children_ids) > 0:
             if self.get_child(0).is_terminal():
@@ -507,26 +425,6 @@ class Node(Element):
         else:
             raise IndexError('Requesting root on an empty Node')
         return self
-
-    # override
-    def nest(self, elem_id):
-        elem = self.tree.get(elem_id)
-        if elem.is_leaf():
-            rel = elem_id
-            rest = []
-        else:
-            rel = elem.children_ids[0]
-            rest = elem.children_ids[1:]
-        self.layer_id = self.tree.create_node([rel, -1] + rest).id
-        return self
-
-    # override
-    def remove_redundant_nesting(self):
-        for child_id in self.children_ids:
-            child = self.tree.get(child_id)
-            child.remove_redundant_nesting()
-        if self.is_node_singleton():
-            self.tree.disenclose(self)
 
     # override
     def has_pos(self, pos, shallow=False):
@@ -558,18 +456,6 @@ class Node(Element):
             return 1
         else:
             return len(self.children_ids)
-
-    # override
-    def flatten(self):
-        new_children_ids = []
-        for child_id in self.children_ids:
-            child = self.tree.get(child_id)
-            child.flatten()
-            if child.is_terminal():
-                new_children_ids.append(child.id)
-            else:
-                new_children_ids += child.children_ids
-        self.children_ids = new_children_ids
 
     # override
     def flat_leafs(self):
@@ -639,13 +525,13 @@ class Node(Element):
             tokens = tokens + child.all_tokens()
         return tokens
 
-    def apply_(self, child_id, pos):
+    def apply(self, child_id, pos):
         if pos == Position.LEFT:
             self.children_ids.insert(1, child_id)
         elif pos == Position.RIGHT:
             self.children_ids.append(child_id)
 
-    def nest_(self, child_id, pos):
+    def nest(self, child_id, pos):
         enclose = True
         if pos == Position.LEFT:
             node = self
@@ -689,7 +575,7 @@ class Node(Element):
     def nest_deep(self, child_id, pos):
         child = self.tree.get(child_id)
         if child.is_leaf():
-            self.nest_(child_id, pos)
+            self.nest(child_id, pos)
             return
 
         parent_id = self.id
@@ -697,12 +583,12 @@ class Node(Element):
             parent = self
             for i in range(len(child.children_ids)):
                 index = -i - 1
-                parent.nest_(child.children_ids[index], pos)
+                parent.nest(child.children_ids[index], pos)
                 parent = self.tree.get(parent_id)
         else:
             parent = self.get_inner_nested_node()
             for i in range(len(child.children_ids)):
-                parent.nest_(child.children_ids[i], pos)
+                parent.nest(child.children_ids[i], pos)
                 parent = self.tree.get(parent_id)
                 parent = parent.get_inner_nested_node()
 
