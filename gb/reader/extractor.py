@@ -25,7 +25,7 @@ import gb.hypergraph.edge as ed
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
 from gb.sense.disambiguation import Disambiguation
-from gb.reader.stages.alpha import AlphaStage
+from gb.reader.stages.alpha_forest import AlphaForest
 from gb.reader.stages.beta import BetaStage
 from gb.reader.stages.beta_simple import BetaStageSimple
 from gb.reader.stages.beta_naive import BetaStageNaive
@@ -35,7 +35,7 @@ from gb.reader.stages.epsilon import EpsilonStage
 
 
 class Extractor(object):
-    def __init__(self, hg, stages=('alpha', 'beta-naive', 'gamma', 'delta', 'epsilon'), show_namespaces=False):
+    def __init__(self, hg, stages=('alpha-forest', 'beta-naive', 'gamma', 'delta', 'epsilon'), show_namespaces=False):
         self.hg = hg
         self.stages = stages
         self.parser = None
@@ -46,8 +46,8 @@ class Extractor(object):
         self.show_namespaces = show_namespaces
 
     def create_stage(self, name, output):
-        if name == 'alpha':
-            return AlphaStage()
+        if name == 'alpha-forest':
+            return AlphaForest()
         elif name == 'beta':
             return BetaStage(self.hg, self.parser, self.disamb, output, self.aux_text)
         elif name == 'beta-simple':
