@@ -36,8 +36,22 @@ def transf2str(transf):
         return 'apply'
     elif transf == Transformation.NEST:
         return 'nest'
-    elif transf == Transformation.NEST_DEEP:
-        return 'nest_deep'
+    elif transf == Transformation.SHALLOW:
+        return 'shallow'
+    elif transf == Transformation.DEEP:
+        return 'deep'
+    elif transf == Transformation.APPLY_R:
+        return 'apply[R]'
+    elif transf == Transformation.APPLY_L:
+        return 'apply[L]'
+    elif transf == Transformation.NEST_R:
+        return 'nest[R]'
+    elif transf == Transformation.NEST_L:
+        return 'nest[L]'
+    elif transf == Transformation.DEEP_R:
+        return 'deep[R]'
+    elif transf == Transformation.DEEP_L:
+        return 'deep[L]'
     else:
         return '?'
 
@@ -128,9 +142,28 @@ def test_transformation(parent, child, position, transf):
         test_parent.apply_(child.id, position)
     elif transf == Transformation.NEST:
         test_parent.nest_(child.id, position)
-    elif transf == Transformation.NEST_DEEP:
+    elif transf == Transformation.SHALLOW:
+        test_parent.nest_shallow(child.id)
+    elif transf == Transformation.DEEP:
         test_parent.nest_deep(child.id, position)
+    elif transf == Transformation.APPLY_R:
+        test_parent.apply_(child.id, Position.RIGHT)
+    elif transf == Transformation.APPLY_L:
+        test_parent.apply_(child.id, Position.LEFT)
+    elif transf == Transformation.NEST_R:
+        test_parent.nest_(child.id, Position.RIGHT)
+    elif transf == Transformation.NEST_L:
+        test_parent.nest_(child.id, Position.LEFT)
+    elif transf == Transformation.DEEP_R:
+        test_parent.nest_deep(child.id, Position.RIGHT)
+    elif transf == Transformation.DEEP_L:
+        test_parent.nest_deep(child.id, Position.LEFT)
     return test_tree.root()
+
+
+def test_transformation_str(parent, child, position, transf):
+    test_node = test_transformation(parent, child, position, transf)
+    return test_node.tree.to_hyperedge_str(with_namespaces=False)
 
 
 def score_transformation(parent, child, position, common_tedge, transf):
@@ -164,6 +197,7 @@ class CaseGenerator(object):
         self.outcome_str = None
         self.interactive = False
         self.cases = None
+        self.transfs = None
 
     def build_tedge(self, edge, counts=None):
         if not counts:
@@ -238,9 +272,8 @@ class CaseGenerator(object):
         words_path = [token.word for token in tedge2tokens(path2tedge(epath, self.build_tedge(self.outcome)))]
         words_edge = [token.word for token in node.all_tokens()]
         for word in words_edge:
-            if word != '+' and word != '':
-                if words_edge.count(word) > words_path.count(word):
-                    return None
+            if words_edge.count(word) > words_path.count(word):
+                return None
 
         return epath
 
@@ -273,9 +306,37 @@ class CaseGenerator(object):
         if score > best_score:
             best_score = score
             best_transf = Transformation.NEST
-        score = score_transformation(parent, child, position, common_tedge, Transformation.NEST_DEEP)
+        score = score_transformation(parent, child, position, common_tedge, Transformation.SHALLOW)
         if score > best_score:
-            best_transf = Transformation.NEST_DEEP
+            best_score = score
+            best_transf = Transformation.SHALLOW
+        score = score_transformation(parent, child, position, common_tedge, Transformation.DEEP)
+        if score > best_score:
+            best_score = score
+            best_transf = Transformation.DEEP
+        score = score_transformation(parent, child, position, common_tedge, Transformation.APPLY_R)
+        if score > best_score:
+            best_score = score
+            best_transf = Transformation.APPLY_R
+        score = score_transformation(parent, child, position, common_tedge, Transformation.APPLY_L)
+        if score > best_score:
+            best_score = score
+            best_transf = Transformation.APPLY_L
+        score = score_transformation(parent, child, position, common_tedge, Transformation.NEST_R)
+        if score > best_score:
+            best_score = score
+            best_transf = Transformation.NEST_R
+        score = score_transformation(parent, child, position, common_tedge, Transformation.NEST_L)
+        if score > best_score:
+            best_score = score
+            best_transf = Transformation.NEST_L
+        score = score_transformation(parent, child, position, common_tedge, Transformation.DEEP_R)
+        if score > best_score:
+            best_score = score
+            best_transf = Transformation.DEEP_R
+        score = score_transformation(parent, child, position, common_tedge, Transformation.DEEP_L)
+        if score > best_score:
+            best_transf = Transformation.DEEP_L
 
         return best_transf
 
@@ -285,29 +346,75 @@ class CaseGenerator(object):
         print('parent <- child')
         print('%s <- %s' % (parent, child))
 
-        test_node = test_transformation(parent, child, position, Transformation.IGNORE)
-        print('0) IGNORE -> %s' % test_node.tree.to_hyperedge_str(with_namespaces=False))
+        ignore_str = test_transformation_str(parent, child, position, Transformation.IGNORE)
+        print('i) IGNORE -> %s' % ignore_str)
 
-        test_node = test_transformation(parent, child, position, Transformation.APPLY)
-        print('1) APPLY -> %s' % test_node.tree.to_hyperedge_str(with_namespaces=False))
+        apply_str = test_transformation_str(parent, child, position, Transformation.APPLY)
+        print('a) APPLY -> %s' % apply_str)
 
-        test_node = test_transformation(parent, child, position, Transformation.NEST)
-        print('2) NEST -> %s' % test_node.tree.to_hyperedge_str(with_namespaces=False))
+        nest_str = test_transformation_str(parent, child, position, Transformation.NEST)
+        print('n) NEST -> %s' % nest_str)
 
-        test_node = test_transformation(parent, child, position, Transformation.NEST_DEEP)
-        print('3) NEST_DEEP -> %s' % test_node.tree.to_hyperedge_str(with_namespaces=False))
+        shallow_str = test_transformation_str(parent, child, position, Transformation.SHALLOW)
+        if shallow_str != nest_str:
+            print('s) SHALLOW -> %s' % shallow_str)
 
-        choice = int(input('> '))
+        deep_str = test_transformation_str(parent, child, position, Transformation.DEEP)
+        if deep_str != nest_str:
+            print('d) DEEP -> %s' % deep_str)
 
-        if choice == 0:
+        print('')
+
+        apply_r_str = test_transformation_str(parent, child, position, Transformation.APPLY_R)
+        if apply_r_str != apply_str:
+            print('ar) APPLY [R] -> %s' % apply_r_str)
+
+        apply_l_str = test_transformation_str(parent, child, position, Transformation.APPLY_L)
+        if apply_l_str != apply_str and apply_l_str != apply_r_str:
+            print('al) APPLY [L] -> %s' % apply_l_str)
+
+        nest_r_str = test_transformation_str(parent, child, position, Transformation.NEST_R)
+        if nest_r_str != nest_str:
+            print('nr) NEST [R] -> %s' % nest_r_str)
+
+        nest_l_str = test_transformation_str(parent, child, position, Transformation.NEST_L)
+        if nest_l_str != nest_str and nest_l_str != nest_r_str:
+            print('nl) NEST [L] -> %s' % nest_l_str)
+
+        deep_r_str = test_transformation_str(parent, child, position, Transformation.DEEP_R)
+        if deep_r_str != deep_str and deep_r_str != nest_str and deep_r_str != nest_r_str:
+            print('dr) DEEP [R] -> %s' % deep_r_str)
+
+        deep_l_str = test_transformation_str(parent, child, position, Transformation.DEEP_L)
+        if deep_l_str != deep_str and deep_l_str != nest_str  and deep_l_str != nest_l_str and deep_l_str != deep_r_str:
+            print('dl) DEEP [L] -> %s' % deep_l_str)
+
+        choice = input('> ').lower()
+
+        if choice == 'i':
             return Transformation.IGNORE
-        if choice == 1:
+        if choice == 'a':
             return Transformation.APPLY
-        if choice == 2:
+        if choice == 'ar':
+            return Transformation.APPLY_R
+        if choice == 'al':
+            return Transformation.APPLY_L
+        if choice == 'n':
             return Transformation.NEST
-        if choice == 3:
-            return Transformation.NEST_DEEP
+        if choice == 'nr':
+            return Transformation.NEST_R
+        if choice == 'nl':
+            return Transformation.NEST_L
+        if choice == 's':
+            return Transformation.SHALLOW
+        if choice == 'd':
+            return Transformation.DEEP
+        if choice == 'dp':
+            return Transformation.DEEP_R
+        if choice == 'dl':
+            return Transformation.DEEP_L
         else:
+            print('unknown choice: "%s". ignoring' % choice)
             return Transformation.IGNORE
 
     def process_token(self, token, parent_token=None, parent_id=None, position=None):
@@ -322,7 +429,7 @@ class CaseGenerator(object):
             else:
                 pos = Position.LEFT
             _, t = self.process_token(child_token, token, elem_id, pos)
-            if t == Transformation.NEST:
+            if t == Transformation.NEST or t == Transformation.NEST_R or t == Transformation.NEST_L:
                 nested_left = True
         for child_token in token.right_children:
             self.process_token(child_token, token, elem_id, Position.RIGHT)
@@ -333,8 +440,10 @@ class CaseGenerator(object):
             parent = self.tree.get(parent_id)
             if self.interactive:
                 transf = self.choose_transformation(parent, self.tree.get(elem_id), position)
+                self.transfs.append(transf)
             else:
-                transf = self.infer_transformation(parent, self.tree.get(elem_id), position)
+                # transf = self.infer_transformation(parent, self.tree.get(elem_id), position)
+                transf = self.transfs.pop(0)
             print('%s <- %s' % (parent_token.word, token.word))
             print('%s <- %s' % (parent, self.tree.get(elem_id)))
             if parent.is_node():
@@ -342,12 +451,36 @@ class CaseGenerator(object):
             if transf == Transformation.APPLY:
                 print('apply')
                 parent.apply_(elem_id, position)
+            elif transf == Transformation.APPLY_R:
+                print('apply [R]')
+                parent.apply_(elem_id, Position.RIGHT)
+            elif transf == Transformation.APPLY_L:
+                print('apply [L]')
+                parent.apply_(elem_id, Position.LEFT)
             elif transf == Transformation.NEST:
                 print('nest')
                 parent.nest_(elem_id, position)
-            elif transf == Transformation.NEST_DEEP:
-                print('nest_deep')
+            elif transf == Transformation.NEST_R:
+                print('nest [R]')
+                parent.nest_(elem_id, Position.RIGHT)
+            elif transf == Transformation.NEST_L:
+                print('nest [L]')
+                parent.nest_(elem_id, Position.LEFT)
+            elif transf == Transformation.SHALLOW:
+                print('shallow')
+                parent.nest_shallow(elem_id)
+            elif transf == Transformation.DEEP:
+                print('deep')
                 parent.nest_deep(elem_id, position)
+            elif transf == Transformation.DEEP_R:
+                print('deep [R]')
+                parent.nest_deep(elem_id, Position.RIGHT)
+            elif transf == Transformation.DEEP_L:
+                print('deep [L]')
+                parent.nest_deep(elem_id, Position.LEFT)
+            elif transf == Transformation.SHALLOW:
+                print('shallow')
+                parent.nest_shallow(elem_id, position)
             else:
                 print('ignore')
                 pass
@@ -393,7 +526,7 @@ def generate_cases(infile, outfile):
     with open(infile) as f:
         for line in f:
             current_parse.append(line)
-            if len(current_parse) == 2:
+            if len(current_parse) == 3:
                 parses.append(current_parse)
                 current_parse = []
 
@@ -403,6 +536,7 @@ def generate_cases(infile, outfile):
     for parse in parses:
         sentence_str = parse[0].strip()
         outcome_str = parse[1].strip()
+        cg.transfs = [int(token) for token in parse[2].split(',')]
         cg.cases = []
         cg.generate(sentence_str, outcome_str)
         if cg.validate():
@@ -424,6 +558,7 @@ def interactive_edge_builder(outfile):
     while True:
         sentence_str = input('sentence> ').strip()
         cg.cases = []
+        cg.transfs = []
         cg.generate(sentence_str)
         outcome = cg.tree.to_hyperedge_str(with_namespaces=False)
         print('outcome:')
@@ -433,6 +568,7 @@ def interactive_edge_builder(outfile):
             f = open(outfile, 'a')
             f.write('%s\n' % sentence_str)
             f.write('%s\n' % outcome)
+            f.write('%s\n' % ','.join([str(transf) for transf in cg.transfs]))
             f.close()
 
 

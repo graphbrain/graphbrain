@@ -114,7 +114,7 @@ class AlphaForest(object):
             else:
                 pos = Position.LEFT
             _, t = self.process_token(child_token, token, elem_id, pos)
-            if t == Transformation.NEST:
+            if t == Transformation.NEST_R or t == Transformation.NEST_L:
                 nested_left = True
         for child_token in token.right_children:
             self.process_token(child_token, token, elem_id, Position.RIGHT)
@@ -126,10 +126,24 @@ class AlphaForest(object):
             transf = self.predict_transformation(parent_token, token, position)
             if transf == Transformation.APPLY:
                 parent.apply_(elem_id, position)
+            elif transf == Transformation.APPLY_R:
+                parent.apply_(elem_id, Position.RIGHT)
+            elif transf == Transformation.APPLY_L:
+                parent.apply_(elem_id, Position.LEFT)
             elif transf == Transformation.NEST:
                 parent.nest_(elem_id, position)
-            elif transf == Transformation.NEST_DEEP:
+            elif transf == Transformation.NEST_R:
+                parent.nest_(elem_id, Position.RIGHT)
+            elif transf == Transformation.NEST_L:
+                parent.nest_(elem_id, Position.LEFT)
+            elif transf == Transformation.SHALLOW:
+                parent.nest_shallow(elem_id)
+            elif transf == Transformation.DEEP:
                 parent.nest_deep(elem_id, position)
+            elif transf == Transformation.DEEP_R:
+                parent.nest_deep(elem_id, Position.RIGHT)
+            elif transf == Transformation.DEEP_L:
+                parent.nest_deep(elem_id, Position.LEFT)
             else:
                 pass
 
