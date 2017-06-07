@@ -35,7 +35,7 @@ class ReaderTests(object):
             beta = 'beta'
         else:
             beta = 'beta-naive'
-        self.extractor = Extractor(hg, stages=('alpha', beta, 'gamma', 'delta', 'epsilon'), show_namespaces=True)
+        self.extractor = Extractor(hg, stages=('alpha-forest', beta, 'gamma', 'delta', 'epsilon'), show_namespaces=True)
         # self.extractor.debug = True
         self.cases = None
 
