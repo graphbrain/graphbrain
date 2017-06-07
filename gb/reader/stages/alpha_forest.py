@@ -33,8 +33,11 @@ from gb.reader.stages.common import Transformation
 # CASE_FIELDS = ('transformation', 'child_pos', 'child_dep', 'child_tag',
 #                'parent_pos', 'parent_dep', 'parent_tag', 'child_position')
 
-CASE_FIELDS = ('transformation', 'child_dep', 'child_tag', 'parent_dep', 'parent_tag',
-               'child_position', 'child_is_atom', 'parent_is_atom')
+CASE_FIELDS = ('transformation',
+               'child_dep', 'child_tag', 'parent_dep', 'parent_tag',
+               'child_head_dep', 'child_head_tag', 'parent_head_dep', 'parent_head_tag',
+               'child_position',
+               'child_is_atom', 'parent_is_atom')
 
 # CASE_FIELDS = ('transformation', 'child_pos', 'child_dep', 'parent_pos', 'parent_dep', 'child_position')
 
@@ -72,7 +75,7 @@ def build_case(parent, child, parent_token, child_token, position):
     if position == Position.LEFT:
         set_case_field_on(case, 'child_position')
 
-    # tags and dependencies
+    # token tags and dependencies
     set_case_field_on(case, 'child_pos_%s' % child_token.pos)
     set_case_field_on(case, 'child_dep_%s' % child_token.dep)
     if child_token.tag != ',':
@@ -81,6 +84,22 @@ def build_case(parent, child, parent_token, child_token, position):
     set_case_field_on(case, 'parent_dep_%s' % parent_token.dep)
     if parent_token.tag != ',':
         set_case_field_on(case, 'parent_tag_%s' % parent_token.tag)
+
+    # head tags and dependencies
+    if child.is_node():
+        head = child.get_child(0)
+        if head.is_leaf():
+            set_case_field_on(case, 'child_head_pos_%s' % head.token.pos)
+            set_case_field_on(case, 'child_head_dep_%s' % head.token.dep)
+            if child_token.tag != ',':
+                set_case_field_on(case, 'child_tag_%s' % head.token.tag)
+    if parent.is_node():
+        head = parent.get_child(0)
+        if head.is_leaf():
+            set_case_field_on(case, 'parent_head_pos_%s' % head.token.pos)
+            set_case_field_on(case, 'parent_head_dep_%s' % head.token.dep)
+            if parent_token.tag != ',':
+                set_case_field_on(case, 'parent_head_tag_%s' % head.token.tag)
 
     # parent and node are atoms?
     if parent.is_leaf():
