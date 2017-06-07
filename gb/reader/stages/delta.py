@@ -174,7 +174,7 @@ class DeltaStage(object):
                 self.find_candidates_r(original_node, new_node, to_process[1:], candidates)
         else:
             # nothing left to process, append working node
-            working_node.get_child(0).flatten()
+            # working_node.get_child(0).flatten()
             candidates.append(working_node)
 
         return candidates
