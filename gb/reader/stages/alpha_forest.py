@@ -30,7 +30,13 @@ from gb.reader.parser_output import ParserOutput
 from gb.reader.stages.common import Transformation
 
 
-CASE_FIELDS = ('transformation', 'child_pos', 'child_dep', 'parent_pos', 'parent_dep', 'child_position')
+# CASE_FIELDS = ('transformation', 'child_pos', 'child_dep', 'child_tag',
+#                'parent_pos', 'parent_dep', 'parent_tag', 'child_position')
+
+CASE_FIELDS = ('transformation', 'child_dep', 'child_tag', 'parent_dep', 'parent_tag',
+               'child_position', 'child_is_atom', 'parent_is_atom')
+
+# CASE_FIELDS = ('transformation', 'child_pos', 'child_dep', 'parent_pos', 'parent_dep', 'child_position')
 
 
 def generate_fields(prefix, values):
@@ -42,28 +48,45 @@ def expanded_fields():
     for field in CASE_FIELDS:
         if field[-4:] == '_pos':
             fields += generate_fields(field, nlp_consts.POS_TAGS)
-        elif field[-4:] == '_pos':
-            fields += generate_fields(field, nlp_consts.POS_TAGS)
+        elif field[-4:] == '_dep':
+            fields += generate_fields(field, nlp_consts.DEPENDENCY_LABELS)
+        elif field[-4:] == '_tag':
+            fields += generate_fields(field, nlp_consts.TAGS)
         else:
             fields.append(field)
     return fields
 
 
-def build_case(parent_token, child_token, position):
+def set_case_field_on(case, field):
+    if field in case:
+        case[field] = 1.
+
+
+def build_case(parent, child, parent_token, child_token, position):
     case = {}
     fields = expanded_fields()
     for field in fields:
         case[field] = 0.
 
+    # position
     if position == Position.LEFT:
-        case['child_position'] = 0.
-    else:
-        case['child_position'] = 1.
+        set_case_field_on(case, 'child_position')
 
-    case['child_pos_%s' % child_token.pos] = 1.
-    case['child_dep_%s' % child_token.dep] = 1.
-    case['parent_pos_%s' % parent_token.pos] = 1.
-    case['parent_dep_%s' % parent_token.dep] = 1.
+    # tags and dependencies
+    set_case_field_on(case, 'child_pos_%s' % child_token.pos)
+    set_case_field_on(case, 'child_dep_%s' % child_token.dep)
+    if child_token.tag != ',':
+        set_case_field_on(case, 'child_tag_%s' % child_token.tag)
+    set_case_field_on(case, 'parent_pos_%s' % parent_token.pos)
+    set_case_field_on(case, 'parent_dep_%s' % parent_token.dep)
+    if parent_token.tag != ',':
+        set_case_field_on(case, 'parent_tag_%s' % parent_token.tag)
+
+    # parent and node are atoms?
+    if parent.is_leaf():
+        set_case_field_on(case, 'parent_is_atom')
+    if child.is_leaf():
+        set_case_field_on(case, 'child_is_atom')
 
     return case
 
@@ -93,9 +116,9 @@ class AlphaForest(object):
         with open(model_file, 'rb') as f:
             self.rf = pickle.load(f)
 
-    def predict_transformation(self, parent_token, child_token, position):
+    def predict_transformation(self, parent, child, parent_token, child_token, position):
         fields = expanded_fields()
-        case = build_case(parent_token, child_token, position)
+        case = build_case(parent, child, parent_token, child_token, position)
         values = [[case[field] for field in fields[1:]]]
         data = pd.DataFrame(values, columns=fields[1:])
         data = data.as_matrix(data.columns.values)
@@ -123,7 +146,8 @@ class AlphaForest(object):
         transf = -1
         if parent_token:
             parent = self.tree.get(parent_id)
-            transf = self.predict_transformation(parent_token, token, position)
+            child = self.tree.get(elem_id)
+            transf = self.predict_transformation(parent, child, parent_token, token, position)
             if transf == Transformation.APPLY:
                 parent.apply(elem_id, position)
             elif transf == Transformation.APPLY_R:
@@ -165,6 +189,7 @@ if __name__ == '__main__':
     test_text = """
         Satellites from NASA and other agencies have been tracking sea ice changes since 1979.
         """
+    # test_text = 'Telmo is going to the gym.'
 
     print('Starting parser...')
     parser = Parser()

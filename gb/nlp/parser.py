@@ -43,6 +43,7 @@ class Parser:
             token.logprob = stoken.prob
             token.pos = stoken.pos_
             token.dep = stoken.dep_
+            token.tag = stoken.tag_
             token.vector = stoken.vector
             if depth < 20:
                 token.left_children = [self.__spacy2token(t, depth + 1) for t in stoken.lefts]

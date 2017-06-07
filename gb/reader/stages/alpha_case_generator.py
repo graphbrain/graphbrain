@@ -438,12 +438,20 @@ class CaseGenerator(object):
         transf = -1
         if parent_token:
             parent = self.tree.get(parent_id)
+            child = self.tree.get(elem_id)
             if self.interactive:
                 transf = self.choose_transformation(parent, self.tree.get(elem_id), position)
                 self.transfs.append(transf)
             else:
                 # transf = self.infer_transformation(parent, self.tree.get(elem_id), position)
                 transf = self.transfs.pop(0)
+
+            # add case
+            if parent_token:
+                case = build_case(parent, child, parent_token, token, position)
+                case['transformation'] = str(transf)
+                self.cases.append(case)
+
             print('%s <- %s' % (parent_token.word, token.word))
             print('%s <- %s' % (parent, self.tree.get(elem_id)))
             if parent.is_node():
@@ -486,12 +494,6 @@ class CaseGenerator(object):
                 pass
             print(self.tree.get(parent_id))
             print()
-
-            # add case
-            if parent_token:
-                case = build_case(parent_token, token, position)
-                case['transformation'] = str(transf)
-                self.cases.append(case)
 
         return elem_id, transf
 
