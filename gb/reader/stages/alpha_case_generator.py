@@ -198,6 +198,8 @@ class CaseGenerator(object):
         self.interactive = False
         self.cases = None
         self.transfs = None
+        self.restart = False
+        self.abort = False
 
     def build_tedge(self, edge, counts=None):
         if not counts:
@@ -389,6 +391,8 @@ class CaseGenerator(object):
         if deep_l_str != deep_str and deep_l_str != nest_str  and deep_l_str != nest_l_str and deep_l_str != deep_r_str:
             print('dl) DEEP [L] -> %s' % deep_l_str)
 
+        print('\nr) RESTART    x) ABORT')
+
         choice = input('> ').lower()
 
         if choice == 'i':
@@ -413,9 +417,15 @@ class CaseGenerator(object):
             return Transformation.DEEP_R
         if choice == 'dl':
             return Transformation.DEEP_L
+        if choice == 'r':
+            self.restart = True
+            return Transformation.IGNORE
+        if choice == 'x':
+            self.abort = True
+            return Transformation.IGNORE
         else:
             print('unknown choice: "%s". ignoring' % choice)
-            return Transformation.IGNORE
+            return self.choose_transformation(parent, child, position)
 
     def process_token(self, token, parent_token=None, parent_id=None, position=None):
         elem = self.tree.create_leaf(token)
@@ -429,10 +439,14 @@ class CaseGenerator(object):
             else:
                 pos = Position.LEFT
             _, t = self.process_token(child_token, token, elem_id, pos)
+            if self.restart or self.abort:
+                return -1, -1
             if t == Transformation.NEST or t == Transformation.NEST_R or t == Transformation.NEST_L:
                 nested_left = True
         for child_token in token.right_children:
             self.process_token(child_token, token, elem_id, Position.RIGHT)
+            if self.restart or self.abort:
+                return -1, -1
 
         # infer and apply transformation
         transf = -1
@@ -441,6 +455,8 @@ class CaseGenerator(object):
             child = self.tree.get(elem_id)
             if self.interactive:
                 transf = self.choose_transformation(parent, self.tree.get(elem_id), position)
+                if self.restart or self.abort:
+                    return -1, -1
                 self.transfs.append(transf)
             else:
                 # transf = self.infer_transformation(parent, self.tree.get(elem_id), position)
@@ -491,7 +507,6 @@ class CaseGenerator(object):
                 parent.nest_shallow(elem_id, position)
             else:
                 print('ignore')
-                pass
             print(self.tree.get(parent_id))
             print()
 
@@ -559,19 +574,30 @@ def interactive_edge_builder(outfile):
     cg.interactive = True
     while True:
         sentence_str = input('sentence> ').strip()
-        cg.cases = []
-        cg.transfs = []
-        cg.generate(sentence_str)
-        outcome = cg.tree.to_hyperedge_str(with_namespaces=False)
-        print('outcome:')
-        print(outcome)
-        write = input('write [y/N]? ')
-        if write == 'y':
-            f = open(outfile, 'a')
-            f.write('%s\n' % sentence_str)
-            f.write('%s\n' % outcome)
-            f.write('%s\n' % ','.join([str(transf) for transf in cg.transfs]))
-            f.close()
+        done = False
+        while not done:
+            cg.cases = []
+            cg.transfs = []
+            cg.restart = False
+            cg.abort = False
+            cg.generate(sentence_str)
+            if cg.restart:
+                print('restarting.')
+            elif cg.abort:
+                print('aborting.')
+                done = True
+            else:
+                done = True
+                outcome = cg.tree.to_hyperedge_str(with_namespaces=False)
+                print('outcome:')
+                print(outcome)
+                write = input('write [y/N]? ')
+                if write == 'y':
+                    f = open(outfile, 'a')
+                    f.write('%s\n' % sentence_str)
+                    f.write('%s\n' % outcome)
+                    f.write('%s\n' % ','.join([str(transf) for transf in cg.transfs]))
+                    f.close()
 
 
 if __name__ == '__main__':
