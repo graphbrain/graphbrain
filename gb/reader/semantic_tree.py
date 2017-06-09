@@ -156,6 +156,9 @@ class Element(object):
     def to_synonym(self):
         return None
 
+    def first_child(self):
+        raise NotImplementedError()
+
     def add_to_first_child(self, elem_id, pos):
         raise NotImplementedError()
 
@@ -187,6 +190,9 @@ class Element(object):
         raise NotImplementedError()
 
     def all_tokens(self):
+        raise NotImplementedError()
+
+    def insert(self, child_id, pos):
         raise NotImplementedError()
 
     def apply(self, child_id, pos):
@@ -242,6 +248,10 @@ class Leaf(Element):
             return self.token.word.lower()
 
     # override
+    def first_child(self):
+        return self
+
+    # override
     def add_to_first_child(self, elem_id, pos):
         node = self.tree.enclose(self)
         return node.add_to_first_child(elem_id, pos)
@@ -289,6 +299,10 @@ class Leaf(Element):
 
     def all_tokens(self):
         return [self.token]
+
+    def insert(self, child_id, pos):
+        node = self.tree.enclose(self)
+        node.insert(child_id, pos)
 
     def apply(self, child_id, pos):
         node = self.tree.enclose(self)
@@ -414,6 +428,10 @@ class Node(Element):
         return self.__compound
 
     # override
+    def first_child(self):
+        return self.get_child(0)
+
+    # override
     def add_to_first_child(self, elem_id, pos):
         if len(self.children_ids) > 0:
             if self.get_child(0).is_terminal():
@@ -524,6 +542,12 @@ class Node(Element):
         for child in self.children():
             tokens = tokens + child.all_tokens()
         return tokens
+
+    def insert(self, child_id, pos):
+        if pos == Position.LEFT:
+            self.children_ids.insert(0, child_id)
+        elif pos == Position.RIGHT:
+            self.children_ids.append(child_id)
 
     def apply(self, child_id, pos):
         if pos == Position.LEFT:
