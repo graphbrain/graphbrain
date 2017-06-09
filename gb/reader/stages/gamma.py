@@ -19,6 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from gb.reader.semantic_tree import Position
 import gb.reader.stages.common as co
 
 
@@ -26,54 +27,33 @@ class GammaStage(object):
     def __init__(self, output):
         self.output = output
 
-    def combine_relationships(self, first_id, second_id):
-        first = self.output.tree.get(first_id)
-        second = self.output.tree.get(second_id)
-        first_child = self.output.tree.get(second.children_ids[0])
-        if first_child.is_node() and (not first_child.compound):
-            self.combine_relationships(first.id, first_child.id)
-            return second.id
-
-        second.add_to_first_child(first.id, first.position)
-        first_child = self.output.tree.get(second.children_ids[0])
-        first_child.compound = True
-        return second.id
-
-    def process_entity_inner(self, entity_id):
-        entity = self.output.tree.get(entity_id)
-
-        # create trivial compounds
-        if entity.is_node() and co.is_relationship(entity, shallow=True):
-            entity.compound = True
-            return entity_id
-
-        # process node
-        if entity.is_node() and not entity.compound:
-            if len(entity.children_ids) == 2:
-                first = entity.get_child(0)
-                second = entity.get_child(1)
-                if first.is_leaf():
-                    # remove
-                    if (first.token.pos == 'DET') and (first.token.lemma in ('the', 'an', 'a')):
-                        return second.id
-                if second.is_node():
-                    # combine relationships
-                    if not second.compound and co.is_relationship(first) and co.is_relationship(second.children()[0]):
-                        return self.combine_relationships(first.id, second.id)
-
-        return entity_id
-
     def process_entity(self, entity_id):
         # process children first
         entity = self.output.tree.get(entity_id)
         if entity.is_node():
             for i in range(len(entity.children_ids)):
-                entity.children_ids[i] = self.process_entity(entity.children_ids[i])
+                self.process_entity(entity.children_ids[i])
 
-        eid = entity_id
-        eid = self.process_entity_inner(eid)
-        return eid
+        # combine relationships
+        entity = self.output.tree.get(entity_id)
+
+        if entity.is_node() and len(entity.children_ids) > 1:
+            first = entity.first_child()
+            second = entity.get_child(1).first_child()
+            if co.is_relationship(first) and co.is_relationship(second):
+                pos = Position.RIGHT
+                first.insert(second.id, pos)
+                entity = self.output.tree.get(entity_id)
+                first = entity.first_child()
+                first.compound = True
+                entity_children_ids = entity.children_ids[2:]
+                if entity.get_child(1).is_node():
+                    second_children_ids = entity.get_child(1).children_ids[1:]
+                else:
+                    second_children_ids = []
+                new_children_ids = [first.id] + second_children_ids + entity_children_ids
+                entity.children_ids = new_children_ids
 
     def process(self):
-        self.output.tree.root_id = self.process_entity(self.output.tree.root_id)
+        self.process_entity(self.output.tree.root_id)
         return self.output
