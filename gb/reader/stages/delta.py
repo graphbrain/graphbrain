@@ -60,7 +60,7 @@ class DeltaStage(object):
 
     def node_fit(self, node, original):
         fit = 0
-        if node.is_node() and co.is_relationship(node.children()[0]):
+        if node.is_node() and co.is_relationship(node.children()[0], node):
             rel = self.output.tree.get(node.children_ids[0])
             if rel.arity() == 1 and (len(node.children_ids) == 2):
                 fit += 100000
@@ -109,7 +109,7 @@ class DeltaStage(object):
             child_candidates = self.find_candidates(child)
 
             for child in child_candidates:
-                if child.is_node() and co.is_relationship(child.children()[0]):
+                if child.is_node() and co.is_relationship(child.children()[0], child):
                     # generate several possibilities for relationships
 
                     rel_left = self.output.tree.get(working_node.children_ids[0])
@@ -182,7 +182,7 @@ class DeltaStage(object):
     def process_entity(self, entity_id):
         entity = self.output.tree.get(entity_id)
 
-        if not entity.is_terminal() and co.is_relationship(entity.children()[0]):
+        if not entity.is_terminal() and co.is_relationship(entity.children()[0], entity):
             best_node = None
             best_fit = -1
             candidates = self.find_candidates(entity)
