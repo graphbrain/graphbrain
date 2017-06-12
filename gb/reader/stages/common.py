@@ -20,6 +20,9 @@
 
 
 REL_POS = ['VERB', 'ADV', 'PART']
+NON_REL_DEPS = ['conj', 'amod', 'case']
+AUX_REL_POS = ['ADP', 'ADJ']
+
 CONCEPT_POS = ['NOUN', 'PROPN']
 QUALIFIER_POS = ['ADJ']
 
@@ -28,38 +31,25 @@ class Transformation(object):
     IGNORE, APPLY, NEST, SHALLOW, DEEP, FIRST, APPLY_R, APPLY_L, NEST_R, NEST_L, DEEP_R, DEEP_L = range(12)
 
 
-def is_adp_token_relationship(token):
+def is_related_to_relationship(token):
     if not token.parent:
         return False
-    if token.parent.pos in REL_POS:
+    if is_token_relationship(token.parent):
         return True
     if token.left_children:
         for child in token.left_children:
-            if child.pos in REL_POS:
+            if is_token_relationship(child):
                 return True
     if token.right_children:
         for child in token.right_children:
-            if child.pos in REL_POS:
+            if is_token_relationship(child):
                 return True
-    if token.parent.pos == 'ADP':
-        return is_adp_token_relationship(token.parent)
 
 
-def is_adj_token_relationship(token):
-    if not token.parent:
-        return False
-    if token.parent.pos in REL_POS:
-        return True
-    if token.left_children:
-        for child in token.left_children:
-            if child.pos in REL_POS:
-                return True
-    if token.right_children:
-        for child in token.right_children:
-            if child.pos in REL_POS:
-                return True
-    if token.parent.pos == 'ADJ':
-        return is_adj_token_relationship(token.parent)
+def is_token_relationship(token):
+    if token.pos in AUX_REL_POS:
+        return is_related_to_relationship(token)
+    return token.pos in REL_POS and token.dep not in NON_REL_DEPS
 
 
 def is_relationship(entity, shallow=False, depth=0):
@@ -71,16 +61,7 @@ def is_relationship(entity, shallow=False, depth=0):
                 return False
         return True
     else:
-        if entity.token.pos == 'ADP':
-            return is_adp_token_relationship(entity.token)
-
-        if entity.token.pos == 'ADJ':
-            return is_adj_token_relationship(entity.token)
-
-        return (entity.token.pos in REL_POS)\
-            and (entity.token.dep != 'conj')\
-            and (entity.token.dep != 'amod')\
-            and (entity.token.dep != 'case')
+        return is_token_relationship(entity.token)
 
 
 def is_qualifier(entity):
