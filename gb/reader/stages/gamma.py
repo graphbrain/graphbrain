@@ -38,11 +38,18 @@ class GammaStage(object):
         entity = self.output.tree.get(entity_id)
 
         if entity.is_node() and len(entity.children_ids) > 1:
-            first = entity.first_child()
-            second = entity.get_child(1).first_child()
-            if co.is_relationship(first) and co.is_relationship(second):
+            first_head = entity.first_child()
+
+            second = entity.get_child(1)
+            if second.is_node():
+                second_parent = second
+            else:
+                second_parent = entity
+
+            second_head = second.first_child()
+            if co.is_relationship(first_head, entity) and co.is_relationship(second_head, second_parent):
                 pos = Position.RIGHT
-                first.insert(second.id, pos)
+                first_head.insert(second_head.id, pos)
                 entity = self.output.tree.get(entity_id)
                 first = entity.first_child()
                 first.compound = True

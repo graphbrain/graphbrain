@@ -53,8 +53,9 @@ class EpsilonStage(object):
         edge.children_ids.insert(0, connector_id)
         return edge_id
 
-    def process_entity_inner(self, entity_id):
+    def process_entity_inner(self, entity_id, parent_id):
         entity = self.output.tree.get(entity_id)
+        parent = self.output.tree.get(parent_id)
 
         # process node
         if entity.is_node() and not entity.compound:
@@ -65,10 +66,10 @@ class EpsilonStage(object):
                     return entity.id
             first = entity.get_child(0)
             # make connector
-            if first.is_leaf() and (not co.is_relationship(first)):
+            if first.is_leaf() and (not co.is_relationship(first, entity)):
                 first.connector = True
             if len(entity.children_ids) == 2:
-                if co.is_relationship(first) and (not co.is_relationship(entity)):
+                if co.is_relationship(first, entity) and (not co.is_relationship(entity, parent)):
                     first.connector = True
                 second = entity.get_child(1)
                 if second.is_node():
@@ -84,16 +85,14 @@ class EpsilonStage(object):
 
         return entity_id
 
-    def process_entity(self, entity_id):
+    def process_entity(self, entity_id, parent_id=None):
         # process children first
         entity = self.output.tree.get(entity_id)
         if entity.is_node():
             for i in range(len(entity.children_ids)):
-                entity.children_ids[i] = self.process_entity(entity.children_ids[i])
+                entity.children_ids[i] = self.process_entity(entity.children_ids[i], entity.id)
 
-        eid = entity_id
-        eid = self.process_entity_inner(eid)
-        return eid
+        return self.process_entity_inner(entity_id, parent_id)
 
     def generate_synonyms(self, entity_id):
         # process children first

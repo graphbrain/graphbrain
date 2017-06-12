@@ -31,37 +31,37 @@ class Transformation(object):
     IGNORE, APPLY, NEST, SHALLOW, DEEP, FIRST, APPLY_R, APPLY_L, NEST_R, NEST_L, DEEP_R, DEEP_L = range(12)
 
 
-def is_related_to_relationship(token):
+def is_related_to_relationship(token, parent):
     if not token.parent:
         return False
-    if is_token_relationship(token.parent):
+    if is_token_relationship(token.parent, parent):
         return True
     if token.left_children:
         for child in token.left_children:
-            if is_token_relationship(child):
+            if is_token_relationship(child, parent):
                 return True
     if token.right_children:
         for child in token.right_children:
-            if is_token_relationship(child):
+            if is_token_relationship(child, parent):
                 return True
 
 
-def is_token_relationship(token):
+def is_token_relationship(token, parent):
     if token.pos in AUX_REL_POS:
-        return is_related_to_relationship(token)
+        if parent and len(parent.children_ids) > 2:
+            return False
+        return is_related_to_relationship(token, parent)
     return token.pos in REL_POS and token.dep not in NON_REL_DEPS
 
 
-def is_relationship(entity, shallow=False, depth=0):
+def is_relationship(entity, parent):
     if entity.is_node():
-        if shallow and depth > 0:
-            return False
         for child in entity.children():
-            if not is_relationship(child, shallow, depth + 1):
+            if not is_relationship(child, entity):
                 return False
         return True
     else:
-        return is_token_relationship(entity.token)
+        return is_token_relationship(entity.token, parent)
 
 
 def is_qualifier(entity):
