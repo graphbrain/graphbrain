@@ -1,60 +1,60 @@
 Some subspecies of mosquito might be 1st to be genetically wiped out.
 (might (be (some (of subspecies mosquito))) (1st (to (be (genetically (out wiped))))))
-2,1,2,1,2,2,2,2,2,1,1,0
+9,6,8,7,9,9,8,8,8,6,6,0
 Telmo is going to the gym.
 (is (going (to telmo (the gym))))
-1,2,2,1,2,0
+7,9,9,6,8,0
 Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate.
 (is (influenced berlin (due to (its (in location (the (european plain)))))) (by (a (temperate (seasonal climate)))))
-1,2,2,2,1,2,1,1,0,1,2,2,2,2,1,1,0
+6,9,9,8,6,8,6,7,0,7,9,9,8,8,6,6,0
 Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan.
 (is (koikuchi shoyu (best known (as (soy sauce)))) (the (of mother (all sauces)) (in japan)))
-2,0,2,2,1,1,1,1,0,2,2,1,2,1,1,1,0
+9,0,9,9,6,6,6,7,0,9,9,6,8,6,6,6,0
 Sweden is the third-largest country in the European Union by area.
 (is sweden (the (third (largest country)) (in (the (european union))) (by area)))
-1,2,2,0,4,2,2,1,1,1,1,1,0
+7,9,9,0,10,9,8,6,6,6,6,6,0
 Sweden wants to fight our disposable culture with tax breaks for repairing old stuff.
 (wants sweden (to fight (our (disposable culture)) (with (for (tax breaks) (repairing (old stuff))))))
-1,2,2,2,1,2,2,1,1,8,1,1,1,0
+7,9,9,8,6,9,9,6,6,9,6,6,6,0
 OpenCola is a brand of open-source cola, where the instructions for making it are freely available and modifiable.
-(is (a opencola (of brand ((open source) cola (where are (the (for instructions making)) it (freely (and (modifiable available))))))))
-1,2,2,0,3,0,2,2,1,2,1,1,2,2,2,1,1,1,2,2,0
+(is opencola (a (of brand ((open source) cola (where are (the (for instructions making)) it (freely (and (modifiable available))))))))
+7,9,9,0,5,0,9,9,6,8,6,6,9,8,8,6,6,6,8,6,0
 2016 Nobel Prize in Physiology or Medicine Is Awarded to Yoshinori Ohsumi.
-(is (awarded (in (2016 (nobel prize)) (or physiology medicine))) (to (yoshinori ohsumi)))
-2,2,2,1,1,8,1,2,2,1,1,0
+(is (awarded (2016 (nobel prize) (in (or (medicine physiology))))) (to (yoshinori ohsumi)))
+9,8,8,8,6,6,7,9,9,6,6,0
 France's Le Pen says people no longer want the EU
 (says ('s (le pen) france) (no (longer (want people)) (the eu)))
-2,2,2,1,1,2,4,2,1,1
+8,9,8,7,7,9,11,9,6,6
 Satellites from NASA and other agencies have been tracking sea ice changes since 1979.
 (have (tracking (been (from satellites (and nasa (other agencies))))) ((sea ice) changes) (since 1979))
-2,2,1,1,2,1,2,2,2,3,1,1,1,0
+8,9,6,6,8,7,9,8,9,5,6,6,6,0
 Carl Gustav Jung was a Swiss psychiatrist and psychoanalyst who founded analytical psychology.
 (was (carl (gustav jung)) (a (swiss (and (psychoanalyst psychiatrist))) (who founded (analytical psychology))))
-2,2,1,2,2,2,2,2,2,1,1,1,0
+9,8,7,9,8,8,8,9,9,6,6,6,0
 His work has been influential not only in psychiatry but also in anthropology, archaeology, literature, philosophy and religious studies.
-(has (been (influential (his work) (in (not only) psychiatry (but also) (in (and anthropology archaeology literature philosophy (religious studies)))))))
-2,1,2,1,1,1,1,1,0,0,0,2,2,1,2,2,2,1,1,1,2,0
+(has (been (influential (his work) ((not only) in psychiatry (but also) (in (and anthropology archaeology literature philosophy (religious studies)))))))
+9,7,9,6,5,6,6,6,0,0,0,8,9,6,8,8,8,6,6,6,8,0
 As a notable research scientist based at the famous Burghölzli hospital, under Eugen Bleuler, he came to the attention of the Viennese founder of psychoanalysis, Sigmund Freud.
-(as (to came (the (of attention (the (viennese (of founder psychoanalysis)) (sigmund freud))))) (a (notable (research scientist)) (based (at (the (famous (burghölzli hospital)))))) (under (eugen bleuler)) he)
-2,2,2,2,2,2,2,1,1,1,1,0,2,1,1,0,1,2,2,2,1,2,0,2,1,1,2,1,2,0
+(as came (a (notable (research scientist)) (based (at (the (famous (burghölzli hospital)))))) (under (eugen bleuler)) he (to (the (of attention (the (viennese (of founder psychoanalysis)) (sigmund freud))))))
+9,9,8,8,9,8,8,6,6,6,6,0,9,6,6,0,6,9,9,8,6,8,0,9,6,6,8,6,6,0
 The two men conducted a lengthy correspondence and collaborated on an initially joint vision of human psychology.
 (and (conducted (the (two men)) (a (lengthy correspondence))) (collaborated (on (an (initially (of (joint vision) (human psychology)))))))
-2,2,1,2,2,1,8,2,2,4,2,1,2,1,1,1,0
+9,8,7,9,8,6,9,9,9,10,9,6,8,6,6,6,0
 My name is Telmo.
 (is (my name) telmo)
-2,1,1,0
+9,7,6,0
 Freud saw in the younger man the potential heir he had been seeking to carry on his "new science" of psychoanalysis.
-(saw freud (in (the (younger man))) (the (potential heir) (had (seeking (been he)) (to (on carry) (his (new (of science psychoanalysis)))))))
-1,2,2,1,1,2,2,1,2,2,2,2,2,0,2,0,1,2,1,1,1,1,0
+(saw freud (in (the (younger man))) (the (potential heir) (had (seeking (been he)) (to (on carry) (of (his (new science)) psychoanalysis)))))
+7,9,8,6,6,9,8,7,9,8,9,8,9,0,8,0,6,9,6,6,6,6,0
 Exposure to the bacteria in soil can be good for mental health
-(can (be (to exposure (the bacteria) (in soil))) (for good (mental health)))
-2,1,2,1,1,1,2,2,1,2,1
+(can (be (exposure (to (the bacteria)) (in soil))) (for good (mental health)))
+9,6,6,6,6,7,9,9,6,8,6
 What happens when literary novelists experiment with science fiction.
-(happens (when experiment (literary novelists) (with (science fiction))) what)
-1,2,2,1,2,1,1,6,0
+(happens what (when experiment (literary novelists) (with (science fiction))))
+7,9,9,6,9,6,6,6,0
 North Korea accuses Trump of being 'selfish' over Paris climate pact
 (accuses (north korea) trump (of (being (over selfish (paris (climate pact))))))
-2,1,1,0,0,2,2,1,2,1,1,1
+9,7,6,0,0,9,8,6,8,6,6,6
 US Suspects Russian Hackers Planted Fake News Behind Qatar Crisis
-(suspects us (planted (russian hackers) (fake news) (behind (qatar crisis))))
-1,2,2,2,2,1,1,8,1
+(suspects us (planted (russian hackers) (fake (behind news (qatar crisis)))))
+7,9,9,8,9,6,8,9,6
