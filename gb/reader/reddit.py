@@ -98,7 +98,10 @@ class RedditReader(object):
 
         # aux_text = generate_aux_text(post)
 
-        self.process_text(post['title'], author, reset_context=True, aux_text='')
+        text = post['title'].lower().strip()
+        if text[-1].isalnum():
+            text += '.'
+        self.process_text(text, author, reset_context=True, aux_text='')
         if self.comments:
             self.process_comments(post)
 
