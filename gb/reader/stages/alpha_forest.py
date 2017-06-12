@@ -35,7 +35,8 @@ from gb.reader.stages.common import Transformation
 
 CASE_FIELDS = ('transformation',
                'child_dep', 'child_tag', 'parent_dep', 'parent_tag',
-               'child_head_dep', 'child_head_tag', 'parent_head_dep', 'parent_head_tag',
+               # 'child_head_dep', 'child_head_tag', 'parent_head_dep', 'parent_head_tag',
+               # 'child_all_dep', 'child_all_tag', 'parent_all_dep', 'parent_all_tag',
                'child_position',
                'child_is_atom', 'parent_is_atom')
 
@@ -63,6 +64,15 @@ def expanded_fields():
 def set_case_field_on(case, field):
     if field in case:
         case[field] = 1.
+
+
+def entity2case(entity, case, prefix):
+    if entity.is_leaf():
+        set_case_field_on(case, '%s_all_tag_%s' % (prefix, entity.token.tag))
+        set_case_field_on(case, '%s_all_dep_%s' % (prefix, entity.token.dep))
+    else:
+        for child in entity.children():
+            entity2case(child, case, prefix)
 
 
 def build_case(parent, child, parent_token, child_token, position):
@@ -100,6 +110,10 @@ def build_case(parent, child, parent_token, child_token, position):
             set_case_field_on(case, 'parent_head_dep_%s' % head.token.dep)
             if parent_token.tag != ',':
                 set_case_field_on(case, 'parent_head_tag_%s' % head.token.tag)
+
+    # all tags and dependencies
+    entity2case(parent, case, 'parent')
+    entity2case(child, case, 'child')
 
     # parent and node are atoms?
     if parent.is_leaf():

@@ -25,7 +25,7 @@ QUALIFIER_POS = ['ADJ']
 
 
 class Transformation(object):
-    IGNORE, APPLY, NEST, SHALLOW, DEEP, APPLY_R, APPLY_L, NEST_R, NEST_L, DEEP_R, DEEP_L = range(11)
+    IGNORE, APPLY, NEST, SHALLOW, DEEP, FIRST, APPLY_R, APPLY_L, NEST_R, NEST_L, DEEP_R, DEEP_L = range(12)
 
 
 def is_adp_token_relationship(token):
