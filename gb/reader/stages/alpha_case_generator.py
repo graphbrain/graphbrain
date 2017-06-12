@@ -19,6 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import click
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
 from gb.nlp.parser import Parser
@@ -40,6 +41,8 @@ def transf2str(transf):
         return 'shallow'
     elif transf == Transformation.DEEP:
         return 'deep'
+    elif transf == Transformation.FIRST:
+        return 'first'
     elif transf == Transformation.APPLY_R:
         return 'apply[R]'
     elif transf == Transformation.APPLY_L:
@@ -123,8 +126,8 @@ def match_score(test_parent, target_tedge, test_index=0, target_index=0, dist=0)
             score = match_score(test_parent, tedge)
             best_score = max(score, best_score)
 
-    score = match_score(test_parent.children()[test_index], target_tedge[target_index]) + \
-            match_score(test_parent, target_tedge, test_index + 1, target_index + 1)
+    score = match_score(test_parent.children()[test_index], target_tedge[target_index])
+    score += match_score(test_parent, target_tedge, test_index + 1, target_index + 1)
     best_score = max(score, best_score)
     score = match_score(test_parent, target_tedge, test_index, target_index + 1, dist + 1)
     best_score = max(score, best_score)
@@ -146,6 +149,8 @@ def test_transformation(parent, child, position, transf):
         test_parent.nest_shallow(child.id)
     elif transf == Transformation.DEEP:
         test_parent.nest_deep(child.id, position)
+    elif transf == Transformation.FIRST:
+        test_parent.insert(child.id, Position.LEFT)
     elif transf == Transformation.APPLY_R:
         test_parent.apply(child.id, Position.RIGHT)
     elif transf == Transformation.APPLY_L:
@@ -169,6 +174,26 @@ def test_transformation_str(parent, child, position, transf):
 def score_transformation(parent, child, position, common_tedge, transf):
     test_parent = test_transformation(parent, child, position, transf)
     return match_score(test_parent, common_tedge)
+
+
+def with_position(transf, position):
+    if transf == Transformation.APPLY:
+        if position == Position.LEFT:
+            return Transformation.APPLY_L
+        else:
+            return Transformation.APPLY_R
+
+    elif transf == Transformation.NEST:
+        if position == Position.LEFT:
+            return Transformation.NEST_L
+        else:
+            return Transformation.NEST_R
+
+    elif transf == Transformation.DEEP:
+        if position == Position.LEFT:
+            return Transformation.DEEP_L
+        else:
+            return Transformation.DEEP_R
 
 
 class Fit(object):
@@ -200,6 +225,7 @@ class CaseGenerator(object):
         self.transfs = None
         self.restart = False
         self.abort = False
+        self.transformation_outcomes = None
 
     def build_tedge(self, edge, counts=None):
         if not counts:
@@ -316,6 +342,10 @@ class CaseGenerator(object):
         if score > best_score:
             best_score = score
             best_transf = Transformation.DEEP
+        score = score_transformation(parent, child, position, common_tedge, Transformation.FIRST)
+        if score > best_score:
+            best_score = score
+            best_transf = Transformation.FIRST
         score = score_transformation(parent, child, position, common_tedge, Transformation.APPLY_R)
         if score > best_score:
             best_score = score
@@ -342,54 +372,41 @@ class CaseGenerator(object):
 
         return best_transf
 
+    def show_option(self, key, name, parent, child, position, transf):
+        res = test_transformation_str(parent, child, position, transf)
+        if res not in self.transformation_outcomes:
+            self.transformation_outcomes.append(res)
+            click.echo(click.style(key, fg='cyan'), nl=False)
+            click.echo(') ', nl=False)
+            click.echo(click.style(name, fg='green'), nl=False)
+            click.secho('   %s' % res, bold=True)
+
     def choose_transformation(self, parent, child, position):
         print('target sentence:')
         print(self.sentence_str)
         print('parent <- child')
         print('%s <- %s' % (parent, child))
 
-        ignore_str = test_transformation_str(parent, child, position, Transformation.IGNORE)
-        print('i) IGNORE -> %s' % ignore_str)
+        self.transformation_outcomes = []
 
-        apply_str = test_transformation_str(parent, child, position, Transformation.APPLY)
-        print('a) APPLY -> %s' % apply_str)
-
-        nest_str = test_transformation_str(parent, child, position, Transformation.NEST)
-        print('n) NEST -> %s' % nest_str)
-
-        shallow_str = test_transformation_str(parent, child, position, Transformation.SHALLOW)
-        if shallow_str != nest_str:
-            print('s) SHALLOW -> %s' % shallow_str)
-
-        deep_str = test_transformation_str(parent, child, position, Transformation.DEEP)
-        if deep_str != nest_str:
-            print('d) DEEP -> %s' % deep_str)
+        self.show_option('i', 'IGNORE', parent, child, position, Transformation.IGNORE)
+        self.show_option('a', 'APPLY', parent, child, position, Transformation.APPLY)
+        self.show_option('n', 'NEST', parent, child, position, Transformation.NEST)
+        self.show_option('f', 'FIRST', parent, child, position, Transformation.FIRST)
+        self.show_option('s', 'SHALLOW', parent, child, position, Transformation.SHALLOW)
+        self.show_option('d', 'DEEP', parent, child, position, Transformation.DEEP)
 
         print('')
 
-        apply_r_str = test_transformation_str(parent, child, position, Transformation.APPLY_R)
-        if apply_r_str != apply_str:
-            print('ar) APPLY [R] -> %s' % apply_r_str)
+        if position == Position.LEFT:
+            self.show_option('ar', 'APPLY_R', parent, child, position, Transformation.APPLY_R)
+            self.show_option('nr', 'NEST_R', parent, child, position, Transformation.NEST_R)
+            self.show_option('dr', 'DEEP_R', parent, child, position, Transformation.DEEP_R)
 
-        apply_l_str = test_transformation_str(parent, child, position, Transformation.APPLY_L)
-        if apply_l_str != apply_str and apply_l_str != apply_r_str:
-            print('al) APPLY [L] -> %s' % apply_l_str)
-
-        nest_r_str = test_transformation_str(parent, child, position, Transformation.NEST_R)
-        if nest_r_str != nest_str:
-            print('nr) NEST [R] -> %s' % nest_r_str)
-
-        nest_l_str = test_transformation_str(parent, child, position, Transformation.NEST_L)
-        if nest_l_str != nest_str and nest_l_str != nest_r_str:
-            print('nl) NEST [L] -> %s' % nest_l_str)
-
-        deep_r_str = test_transformation_str(parent, child, position, Transformation.DEEP_R)
-        if deep_r_str != deep_str and deep_r_str != nest_str and deep_r_str != nest_r_str:
-            print('dr) DEEP [R] -> %s' % deep_r_str)
-
-        deep_l_str = test_transformation_str(parent, child, position, Transformation.DEEP_L)
-        if deep_l_str != deep_str and deep_l_str != nest_str  and deep_l_str != nest_l_str and deep_l_str != deep_r_str:
-            print('dl) DEEP [L] -> %s' % deep_l_str)
+        if position == Position.RIGHT:
+            self.show_option('al', 'APPLY_L', parent, child, position, Transformation.APPLY_L)
+            self.show_option('nl', 'NEST_L', parent, child, position, Transformation.NEST_L)
+            self.show_option('dl', 'DEEP_L', parent, child, position, Transformation.DEEP_L)
 
         print('\nr) RESTART    x) ABORT')
 
@@ -398,22 +415,24 @@ class CaseGenerator(object):
         if choice == 'i':
             return Transformation.IGNORE
         if choice == 'a':
-            return Transformation.APPLY
+            return with_position(Transformation.APPLY, position)
         if choice == 'ar':
             return Transformation.APPLY_R
         if choice == 'al':
             return Transformation.APPLY_L
         if choice == 'n':
-            return Transformation.NEST
+            return with_position(Transformation.NEST, position)
         if choice == 'nr':
             return Transformation.NEST_R
         if choice == 'nl':
             return Transformation.NEST_L
         if choice == 's':
             return Transformation.SHALLOW
+        if choice == 'f':
+            return Transformation.FIRST
         if choice == 'd':
-            return Transformation.DEEP
-        if choice == 'dp':
+            return with_position(Transformation.DEEP, position)
+        if choice == 'dr':
             return Transformation.DEEP_R
         if choice == 'dl':
             return Transformation.DEEP_L
@@ -493,6 +512,9 @@ class CaseGenerator(object):
             elif transf == Transformation.SHALLOW:
                 print('shallow')
                 parent.nest_shallow(elem_id)
+            elif transf == Transformation.FIRST:
+                print('first')
+                parent.insert(elem_id, Position.LEFT)
             elif transf == Transformation.DEEP:
                 print('deep')
                 parent.nest_deep(elem_id, position)
