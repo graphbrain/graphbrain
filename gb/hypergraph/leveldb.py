@@ -319,6 +319,20 @@ class LevelDB(Backend):
         value = self.db.get(vert_key)
         return decode_attributes(value)
 
+    def get_str_attribute_key(self, vert_key, attribute, or_else=None):
+        if self.exists_key(vert_key):
+            attributes = self.attribute_key(vert_key)
+            if attribute in attributes:
+                return attributes[attribute]
+            else:
+                return or_else
+        else:
+            return or_else
+
+    def get_str_attribute(self, vertex, attribute, or_else=None):
+        vert_key = vertex2key(vertex)
+        return self.get_str_attribute_key(vert_key, attribute, or_else)
+
     def get_int_attribute(self, vertex, attribute, or_else=None):
         vert_key = vertex2key(vertex)
         return self.get_int_attribute_key(vert_key, attribute, or_else)

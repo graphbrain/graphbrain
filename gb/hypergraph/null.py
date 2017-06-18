@@ -80,6 +80,10 @@ class Null(Backend):
         """Decrements attribute of a vertex."""
         return False
 
+    def get_str_attribute(self, vertex, attribute, or_else=None):
+        """Returns attribute as string."""
+        return or_else
+
     def get_int_attribute(self, vertex, attribute, or_else=None):
         """Returns attribute as integer value."""
         return or_else
