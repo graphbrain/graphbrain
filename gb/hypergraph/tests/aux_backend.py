@@ -120,33 +120,33 @@ class AuxBackend(unittest.TestCase):
         self.hg.remove(('is', 'graphbrain/1', 'great/1'))
         self.hg.remove(('is', 'graphbrain/1', 'great/2'))
 
-    def test_metrics_vertex(self):
+    def test_attributes_vertex(self):
         self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
-        self.assertEqual(self.hg.get_int_metric('graphbrain/1', 'foo'), None)
-        self.assertEqual(self.hg.get_int_metric('graphbrain/1', 'foo', 0), 0)
-        self.hg.set_metric('graphbrain/1', 'foo', 66)
-        self.assertEqual(self.hg.get_int_metric('graphbrain/1', 'foo'), 66)
-        self.hg.inc_metric('graphbrain/1', 'foo')
-        self.assertEqual(self.hg.get_int_metric('graphbrain/1', 'foo'), 67)
-        self.hg.dec_metric('graphbrain/1', 'foo')
-        self.assertEqual(self.hg.get_int_metric('graphbrain/1', 'foo'), 66)
-        self.hg.set_metric('graphbrain/1', 'bar', -.77)
-        self.assertEqual(self.hg.get_float_metric('graphbrain/1', 'bar'), -.77)
+        self.assertEqual(self.hg.get_int_attribute('graphbrain/1', 'foo'), None)
+        self.assertEqual(self.hg.get_int_attribute('graphbrain/1', 'foo', 0), 0)
+        self.hg.set_attribute('graphbrain/1', 'foo', 66)
+        self.assertEqual(self.hg.get_int_attribute('graphbrain/1', 'foo'), 66)
+        self.hg.inc_attribute('graphbrain/1', 'foo')
+        self.assertEqual(self.hg.get_int_attribute('graphbrain/1', 'foo'), 67)
+        self.hg.dec_attribute('graphbrain/1', 'foo')
+        self.assertEqual(self.hg.get_int_attribute('graphbrain/1', 'foo'), 66)
+        self.hg.set_attribute('graphbrain/1', 'bar', -.77)
+        self.assertEqual(self.hg.get_float_attribute('graphbrain/1', 'bar'), -.77)
 
-    def test_metrics_edge(self):
+    def test_attributes_edge(self):
         self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
-        self.assertEqual(self.hg.get_int_metric(('is', 'graphbrain/1', 'great/1'), 'foo'), None)
-        self.assertEqual(self.hg.get_int_metric(('is', 'graphbrain/1', 'great/1'), 'foo', 0), 0)
-        self.hg.set_metric('graphbrain/1', 'foo', 66)
-        self.assertEqual(self.hg.get_int_metric('graphbrain/1', 'foo'), 66)
-        self.hg.inc_metric('graphbrain/1', 'foo')
-        self.assertEqual(self.hg.get_int_metric('graphbrain/1', 'foo'), 67)
-        self.hg.dec_metric('graphbrain/1', 'foo')
-        self.assertEqual(self.hg.get_int_metric('graphbrain/1', 'foo'), 66)
-        self.hg.set_metric('graphbrain/1', 'bar', -.77)
-        self.assertEqual(self.hg.get_float_metric('graphbrain/1', 'bar'), -.77)
+        self.assertEqual(self.hg.get_int_attribute(('is', 'graphbrain/1', 'great/1'), 'foo'), None)
+        self.assertEqual(self.hg.get_int_attribute(('is', 'graphbrain/1', 'great/1'), 'foo', 0), 0)
+        self.hg.set_attribute('graphbrain/1', 'foo', 66)
+        self.assertEqual(self.hg.get_int_attribute('graphbrain/1', 'foo'), 66)
+        self.hg.inc_attribute('graphbrain/1', 'foo')
+        self.assertEqual(self.hg.get_int_attribute('graphbrain/1', 'foo'), 67)
+        self.hg.dec_attribute('graphbrain/1', 'foo')
+        self.assertEqual(self.hg.get_int_attribute('graphbrain/1', 'foo'), 66)
+        self.hg.set_attribute('graphbrain/1', 'bar', -.77)
+        self.assertEqual(self.hg.get_float_attribute('graphbrain/1', 'bar'), -.77)
 
     def test_degree(self):
         self.hg.destroy()
@@ -189,18 +189,18 @@ class AuxBackend(unittest.TestCase):
         labels = set(self.hg.all())
         self.assertEqual(labels, set())
 
-    def test_all_metrics(self):
+    def test_all_attributes(self):
         self.hg.destroy()
         self.hg.add(('size', 'graphbrain/1', -7.0))
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.hg.add(('src', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
 
-        labels = set(['%s %s' % (ed.edge2str(t[0]), t[1]['d']) for t in self.hg.all_metrics()])
+        labels = set(['%s %s' % (ed.edge2str(t[0]), t[1]['d']) for t in self.hg.all_attributes()])
         self.assertEqual(labels, {'size 1', 'graphbrain/1 2', '-7.0 1', 'is 1', 'great/1 1', 'src 1', 'mary/1 1',
                                   '(size graphbrain/1 -7.0) 0', '(is graphbrain/1 great/1) 1',
                                   '(src mary/1 (is graphbrain/1 great/1)) 0'})
         self.hg.destroy()
-        labels = set(self.hg.all_metrics())
+        labels = set(self.hg.all_attributes())
         self.assertEqual(labels, set())
 
     def test_counters(self):

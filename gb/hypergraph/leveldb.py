@@ -98,18 +98,18 @@ def vertex2key(vertex):
     return ('v%s' % ed.edge2str(vertex)).encode('utf-8')
 
 
-def encode_metrics(metrics):
-    str_list = ['%s:%s' % (key, metrics[key]) for key in metrics]
+def encode_attributes(attributes):
+    str_list = ['%s:%s' % (key, attributes[key]) for key in attributes]
     return ' '.join(str_list).encode('utf-8')
 
 
-def decode_metrics(value):
+def decode_attributes(value):
     tokens = value.decode('utf-8').split(' ')
-    metrics = {}
+    attributes = {}
     for token in tokens:
         parts = token.split(':')
-        metrics[parts[0]] = parts[1]
-    return metrics
+        attributes[parts[0]] = parts[1]
+    return attributes
 
 
 class LevelDB(Backend):
@@ -127,9 +127,9 @@ class LevelDB(Backend):
     def name(self):
         return self.dir_path
 
-    def add_key(self, vert_key, metrics):
+    def add_key(self, vert_key, attributes):
         """Adds the given vertex, given its key."""
-        value = encode_metrics(metrics)
+        value = encode_attributes(attributes)
         self.db.put(vert_key, value)
 
     def write_edge_permutation(self, perm):
@@ -194,52 +194,52 @@ class LevelDB(Backend):
         """Checks if the given vertex exists in the hypergraph."""
         return self.exists_key(vertex2key(vertex))
 
-    def set_metric_key(self, vert_key, metric, value):
-        """Sets the value of a metric by vertex_key."""
+    def set_attribute_key(self, vert_key, attribute, value):
+        """Sets the value of an attribute by vertex_key."""
         if self.exists_key(vert_key):
-            metrics = self.metrics_key(vert_key)
-            metrics[metric] = value
-            self.add_key(vert_key, metrics)
+            attributes = self.attribute_key(vert_key)
+            attributes[attribute] = value
+            self.add_key(vert_key, attributes)
             return True
         else:
             return False
 
-    def set_metric(self, vertex, metric, value):
-        """Sets the value of a metric."""
+    def set_attribute(self, vertex, attribute, value):
+        """Sets the value of an attribute."""
         vert_key = vertex2key(vertex)
-        return self.set_metric_key(vert_key, metric, value)
+        return self.set_attribute_key(vert_key, attribute, value)
 
-    def inc_metric_key(self, vert_key, metric):
-        """Increments a metric of a vertex."""
+    def inc_attribute_key(self, vert_key, attribute):
+        """Increments an attribute of a vertex."""
         if self.exists_key(vert_key):
-            metrics = self.metrics_key(vert_key)
-            cur_value = int(metrics[metric])
-            metrics[metric] = cur_value + 1
-            self.add_key(vert_key, metrics)
+            attributes = self.attribute_key(vert_key)
+            cur_value = int(attributes[attribute])
+            attributes[attribute] = cur_value + 1
+            self.add_key(vert_key, attributes)
             return True
         else:
             return False
 
-    def dec_metric_key(self, vert_key, metric):
-        """Decrements a metric of a vertex."""
+    def dec_attribute_key(self, vert_key, attribute):
+        """Decrements an attribute of a vertex."""
         if self.exists_key(vert_key):
-            metrics = self.metrics_key(vert_key)
-            cur_value = int(metrics[metric])
-            metrics[metric] = cur_value - 1
-            self.add_key(vert_key, metrics)
+            attributes = self.attribute_key(vert_key)
+            cur_value = int(attributes[attribute])
+            attributes[attribute] = cur_value - 1
+            self.add_key(vert_key, attributes)
             return True
         else:
             return False
 
-    def inc_metric(self, vertex, metric):
-        """Increments a metric of a vertex."""
+    def inc_attribute(self, vertex, attribute):
+        """Increments an attribute of a vertex."""
         vert_key = vertex2key(vertex)
-        return self.inc_metric_key(vert_key, metric)
+        return self.inc_attribute_key(vert_key, attribute)
 
-    def dec_metric(self, vertex, metric):
-        """Decrements a metric of a vertex."""
+    def dec_attribute(self, vertex, attribute):
+        """Decrements an attribute of a vertex."""
         vert_key = vertex2key(vertex)
-        return self.dec_metric_key(vert_key, metric)
+        return self.dec_attribute_key(vert_key, attribute)
 
     def add(self, edge, timestamp=-1):
         """Adds an edge to the hypergraph if it does not exist yet."""
@@ -249,7 +249,7 @@ class LevelDB(Backend):
             self.inc_counter('total_degree', by=len(edge))
             for vert in edge:
                 vert_key = vertex2key(vert)
-                if not self.inc_metric_key(vert_key, 'd'):
+                if not self.inc_attribute_key(vert_key, 'd'):
                     if sym.sym_type(vert) == sym.SymbolType.EDGE:
                         self.inc_counter('edge_count')
                     else:
@@ -267,7 +267,7 @@ class LevelDB(Backend):
             self.dec_counter('total_degree', by=len(edge))
             for vert in edge:
                 vert_key = vertex2key(vert)
-                self.dec_metric_key(vert_key, 'd')
+                self.dec_attribute_key(vert_key, 'd')
             self.remove_edge_permutations(edge)
             self.remove_key(edge_key)
 
@@ -315,37 +315,33 @@ class LevelDB(Backend):
         plyvel.destroy_db(self.dir_path)
         self.db = plyvel.DB(self.dir_path, create_if_missing=True)
 
-    def metrics_key(self, vert_key):
+    def attribute_key(self, vert_key):
         value = self.db.get(vert_key)
-        return decode_metrics(value)
+        return decode_attributes(value)
 
-    def metrics(self, vertex):
+    def get_int_attribute(self, vertex, attribute, or_else=None):
         vert_key = vertex2key(vertex)
-        return self.metrics_key(vert_key)
+        return self.get_int_attribute_key(vert_key, attribute, or_else)
 
-    def get_int_metric(self, vertex, metric, or_else=None):
-        vert_key = vertex2key(vertex)
-        return self.get_int_metric_key(vert_key, metric, or_else)
-
-    def get_int_metric_key(self, vert_key, metric, or_else=None):
+    def get_int_attribute_key(self, vert_key, attribute, or_else=None):
         if self.exists_key(vert_key):
-            metrics = self.metrics_key(vert_key)
-            if metric in metrics:
-                return int(metrics[metric])
+            attributes = self.attribute_key(vert_key)
+            if attribute in attributes:
+                return int(attributes[attribute])
             else:
                 return or_else
         else:
             return or_else
 
-    def get_float_metric(self, vertex, metric, or_else=None):
+    def get_float_attribute(self, vertex, attribute, or_else=None):
         vert_key = vertex2key(vertex)
-        return self.get_float_metric_key(vert_key, metric, or_else)
+        return self.get_float_attribute_key(vert_key, attribute, or_else)
 
-    def get_float_metric_key(self, vert_key, metric, or_else=None):
+    def get_float_attribute_key(self, vert_key, attribute, or_else=None):
         if self.exists_key(vert_key):
-            metrics = self.metrics_key(vert_key)
-            if metric in metrics:
-                return float(metrics[metric])
+            attributes = self.attribute_key(vert_key)
+            if attribute in attributes:
+                return float(attributes[attribute])
             else:
                 return or_else
         else:
@@ -353,11 +349,11 @@ class LevelDB(Backend):
 
     def degree(self, vertex):
         """Returns the degree of a vertex."""
-        return self.get_int_metric(vertex, 'd', 0)
+        return self.get_int_attribute(vertex, 'd', 0)
 
     def timestamp(self, vertex):
         """Returns the timestamp of a vertex."""
-        return self.get_int_metric(vertex, 't', -1)
+        return self.get_int_attribute(vertex, 't', -1)
 
     def all(self):
         """Returns a lazy sequence of all the vertices in the hypergraph."""
@@ -370,10 +366,10 @@ class LevelDB(Backend):
             vert = ed.str2edge(key.decode('utf-8')[1:])
             yield vert
 
-    def all_metrics(self):
+    def all_attributes(self):
         """Returns a lazy sequence with a tuple for each vertex in the hypergraph.
            The first element of the tuple is the vertex itself,
-           the second is a dictionary of metrics values (as strings)."""
+           the second is a dictionary of attribute values (as strings)."""
         start_str = 'v'
         end_str = str_plus_1(start_str)
         start_key = (u'%s' % start_str).encode('utf-8')
@@ -381,8 +377,8 @@ class LevelDB(Backend):
 
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             vert = ed.str2edge(key.decode('utf-8')[1:])
-            metrics = decode_metrics(value)
-            yield (vert, metrics)
+            attributes = decode_attributes(value)
+            yield (vert, attributes)
 
     def read_counter_key(self, counter_key):
         """Reads a counter by key."""

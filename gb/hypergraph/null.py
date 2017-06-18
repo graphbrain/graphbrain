@@ -68,24 +68,24 @@ class Null(Backend):
         """Erase the hypergraph."""
         pass
 
-    def set_metric(self, vertex, metric, value):
-        """Sets the value of a metric."""
+    def set_attribute(self, vertex, attribute, value):
+        """Sets the value of an attribute."""
         return False
 
-    def inc_metric(self, vertex, metric):
-        """Increments a metric of a vertex."""
+    def inc_attribute(self, vertex, attribute):
+        """Increments attribute of a vertex."""
         return False
 
-    def dec_metric(self, vertex, metric):
-        """Increments a metric of a vertex."""
+    def dec_attribute(self, vertex, attribute):
+        """Decrements attribute of a vertex."""
         return False
 
-    def get_int_metric(self, vertex, metric, or_else=None):
-        """Returns value of metric as integer value."""
+    def get_int_attribute(self, vertex, attribute, or_else=None):
+        """Returns attribute as integer value."""
         return or_else
 
-    def get_float_metric(self, vertex, metric, or_else=None):
-        """Returns value of metric as float value."""
+    def get_float_attribute(self, vertex, attribute, or_else=None):
+        """Returns attribute as float value."""
         return or_else
 
     def degree(self, vertex):
@@ -100,10 +100,10 @@ class Null(Backend):
         """Returns a lazy sequence of all the vertices in the hypergraph."""
         return []
 
-    def all_metrics(self):
+    def all_attributes(self):
         """Returns a lazy sequence with a tuple for each vertex in the hypergraph.
            The first element of the tuple is the vertex itself,
-           the second is a dictionary of metrics values (as strings)."""
+           the second is a dictionary of attribute values (as strings)."""
         return []
 
     def symbol_count(self):
