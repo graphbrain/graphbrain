@@ -99,15 +99,15 @@ def vertex2key(vertex):
 
 
 def encode_attributes(attributes):
-    str_list = ['%s:%s' % (key, attributes[key]) for key in attributes]
-    return ' '.join(str_list).encode('utf-8')
+    str_list = ['%s|%s' % (key, attributes[key]) for key in attributes]
+    return '\\'.join(str_list).encode('utf-8')
 
 
 def decode_attributes(value):
-    tokens = value.decode('utf-8').split(' ')
+    tokens = value.decode('utf-8').split('\\')
     attributes = {}
     for token in tokens:
-        parts = token.split(':')
+        parts = token.split('|')
         attributes[parts[0]] = parts[1]
     return attributes
 
@@ -198,6 +198,8 @@ class LevelDB(Backend):
         """Sets the value of an attribute by vertex_key."""
         if self.exists_key(vert_key):
             attributes = self.attribute_key(vert_key)
+            if isinstance(value, str):
+                value = value.replace('|', ' ').replace('\\', ' ')
             attributes[attribute] = value
             self.add_key(vert_key, attributes)
             return True

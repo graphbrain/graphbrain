@@ -133,8 +133,8 @@ class AuxBackend(unittest.TestCase):
         self.assertEqual(self.hg.get_int_attribute('graphbrain/1', 'foo'), 66)
         self.hg.set_attribute('graphbrain/1', 'bar', -.77)
         self.assertEqual(self.hg.get_float_attribute('graphbrain/1', 'bar'), -.77)
-        self.hg.set_attribute('graphbrain/1', 'label', 'x0x0')
-        self.assertEqual(self.hg.get_str_attribute('graphbrain/1', 'label'), 'x0x0')
+        self.hg.set_attribute('graphbrain/1', 'label', 'x0 x0 | test \\ test')
+        self.assertEqual(self.hg.get_str_attribute('graphbrain/1', 'label'), 'x0 x0   test   test')
 
     def test_attributes_edge(self):
         self.hg.destroy()
@@ -149,8 +149,8 @@ class AuxBackend(unittest.TestCase):
         self.assertEqual(self.hg.get_int_attribute(('is', 'graphbrain/1', 'great/1'), 'foo'), 66)
         self.hg.set_attribute(('is', 'graphbrain/1', 'great/1'), 'bar', -.77)
         self.assertEqual(self.hg.get_float_attribute(('is', 'graphbrain/1', 'great/1'), 'bar'), -.77)
-        self.hg.set_attribute(('is', 'graphbrain/1', 'great/1'), 'label', 'x0x0')
-        self.assertEqual(self.hg.get_str_attribute(('is', 'graphbrain/1', 'great/1'), 'label'), 'x0x0')
+        self.hg.set_attribute(('is', 'graphbrain/1', 'great/1'), 'label', 'x0 x0 | test \\ test')
+        self.assertEqual(self.hg.get_str_attribute(('is', 'graphbrain/1', 'great/1'), 'label'), 'x0 x0   test   test')
 
     def test_degree(self):
         self.hg.destroy()
