@@ -109,6 +109,12 @@ class HyperGraph(object):
         logging.debug('[hypergraph dec_attribute()] %s attribute: %s' % (ed.edge2str(vertex), attribute))
         return self.backend.dec_attribute(vertex, attribute)
 
+    def get_str_attribute(self, vertex, attribute, or_else=None):
+        """Returns attribute as string."""
+        logging.debug('[hypergraph get_str_attribute()] %s attribute: %s; or_else: %s'
+                      % (ed.edge2str(vertex), attribute, or_else))
+        return self.backend.get_str_attribute(vertex, attribute, or_else)
+
     def get_int_attribute(self, vertex, attribute, or_else=None):
         """Returns attribute as integer value."""
         logging.debug('[hypergraph get_int_attribute()] %s attribute: %s; or_else: %s'

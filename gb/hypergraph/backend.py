@@ -77,6 +77,10 @@ class Backend(object):
         """Decrements an attribute of a vertex."""
         raise NotImplementedError()
 
+    def get_str_attribute(self, vertex, attribute, or_else=None):
+        """Returns attribute as string."""
+        raise NotImplementedError()
+
     def get_int_attribute(self, vertex, attribute, or_else=None):
         """Returns attribute as integer value."""
         raise NotImplementedError()
