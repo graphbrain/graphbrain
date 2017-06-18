@@ -58,7 +58,7 @@ class RedditReader(object):
 
     def process_text(self, text, author, reset_context=False, aux_text=None):
         start_t = time.time()
-        parses = self.extractor.read_text(text, aux_text, reset_context=reset_context)
+        parses = self.extractor.read_text(text.lower(), aux_text, reset_context=reset_context)
         for p in parses:
             print('\n')
             print('sentence: %s' % p[0])
@@ -69,6 +69,7 @@ class RedditReader(object):
                 for edge in p[1].edges:
                     self.hg.add_belief('gb', edge)
                     self.extra_edges += 1
+                self.hg.set_attribute(p[1].main_edge, 'text', text)
             else:
                 self.ignored += 1
 
@@ -98,7 +99,7 @@ class RedditReader(object):
 
         # aux_text = generate_aux_text(post)
 
-        text = post['title'].lower().strip()
+        text = post['title'].strip()
         if text[-1].isalnum():
             text += '.'
         self.process_text(text, author, reset_context=True, aux_text='')
