@@ -94,32 +94,32 @@ class HyperGraph(object):
         logging.debug('[hypergraph destroy()]')
         self.backend.destroy()
 
-    def set_metric(self, vertex, metric, value):
-        """Sets the value of a metric."""
-        logging.debug('[hypergraph set_metric()] %s %s=%s' % (ed.edge2str(vertex), metric, value))
-        return self.backend.set_metric(vertex, metric, value)
+    def set_attribute(self, vertex, attribute, value):
+        """Sets the value of an attribute."""
+        logging.debug('[hypergraph set_attribute()] %s %s=%s' % (ed.edge2str(vertex), attribute, value))
+        return self.backend.set_attribute(vertex, attribute, value)
 
-    def inc_metric(self, vertex, metric):
-        """Increments a metric of a vertex."""
-        logging.debug('[hypergraph inc_metric()] %s metric: %s' % (ed.edge2str(vertex), metric))
-        return self.backend.inc_metric(vertex, metric)
+    def inc_attribute(self, vertex, attribute):
+        """Increments an attribute of a vertex."""
+        logging.debug('[hypergraph inc_attribute()] %s attribute: %s' % (ed.edge2str(vertex), attribute))
+        return self.backend.inc_attribute(vertex, attribute)
 
-    def dec_metric(self, vertex, metric):
-        """Increments a metric of a vertex."""
-        logging.debug('[hypergraph dec_metric()] %s metric: %s' % (ed.edge2str(vertex), metric))
-        return self.backend.dec_metric(vertex, metric)
+    def dec_attribute(self, vertex, attribute):
+        """Increments an attribute of a vertex."""
+        logging.debug('[hypergraph dec_attribute()] %s attribute: %s' % (ed.edge2str(vertex), attribute))
+        return self.backend.dec_attribute(vertex, attribute)
 
-    def get_int_metric(self, vertex, metric, or_else=None):
-        """Returns value of metric as integer value."""
-        logging.debug('[hypergraph get_int_metric()] %s metric: %s; or_else: %s'
-                      % (ed.edge2str(vertex), metric, or_else))
-        return self.backend.get_int_metric(vertex, metric, or_else)
+    def get_int_attribute(self, vertex, attribute, or_else=None):
+        """Returns attribute as integer value."""
+        logging.debug('[hypergraph get_int_attribute()] %s attribute: %s; or_else: %s'
+                      % (ed.edge2str(vertex), attribute, or_else))
+        return self.backend.get_int_attribute(vertex, attribute, or_else)
 
-    def get_float_metric(self, vertex, metric, or_else=None):
-        """Returns value of metric as float value."""
-        logging.debug('[hypergraph get_float_metric()] %s metric: %s; or_else: %s'
-                      % (ed.edge2str(vertex), metric, or_else))
-        return self.backend.get_float_metric(vertex, metric, or_else)
+    def get_float_attribute(self, vertex, attribute, or_else=None):
+        """Returns attribute as float value."""
+        logging.debug('[hypergraph get_float_attribute()] %s attribute: %s; or_else: %s'
+                      % (ed.edge2str(vertex), attribute, or_else))
+        return self.backend.get_float_attribute(vertex, attribute, or_else)
 
     def degree(self, vertex):
         """Returns the degree of a vertex."""
@@ -177,12 +177,12 @@ class HyperGraph(object):
         logging.debug('[hypergraph all()]')
         return self.backend.all()
 
-    def all_metrics(self):
+    def all_attributes(self):
         """Returns a lazy sequence with a tuple for each vertex in the hypergraph.
            The first element of the tuple is the vertex itself,
-           the second is a dictionary of metrics values (as strings)."""
-        logging.debug('[hypergraph all_metrics()]')
-        return self.backend.all_metrics()
+           the second is a dictionary of attribute values (as strings)."""
+        logging.debug('[hypergraph all_attributes()]')
+        return self.backend.all_attributes()
 
     def symbol_count(self):
         """Total number of symbols in the hypergraph"""
