@@ -34,6 +34,7 @@ from gb.retrievers.reddit import RedditRetriever
 from gb.reader.reddit import RedditReader
 import gb.reader.stages.alpha_case_generator as alpha_cg
 import gb.reader.stages.alpha_forest as alpha_for
+import gb.tools.json as json_tools
 
 
 @click.group()
@@ -47,8 +48,9 @@ import gb.reader.stages.alpha_forest as alpha_for
 @click.option('--log', help='Logging level.', default='WARNING')
 @click.option('--disamb/--no_disamb', help='Perform sense.', default=False)
 @click.option('--comments/--no_comments', help='Include comments.', default=False)
+@click.option('--fields', help='Field names.')
 @click.pass_context
-def cli(ctx, backend, hg, infile, outfile, startdate, enddate, source, log, disamb, comments):
+def cli(ctx, backend, hg, infile, outfile, startdate, enddate, source, log, disamb, comments, fields):
     ctx.obj = {
         'backend': backend,
         'hg': hg,
@@ -59,7 +61,8 @@ def cli(ctx, backend, hg, infile, outfile, startdate, enddate, source, log, disa
         'source': source,
         'log': log,
         'disamb': disamb,
-        'comments': comments
+        'comments': comments,
+        'fields': fields
     }
 
     # configure logging
@@ -214,6 +217,15 @@ def learn_alpha_forest(ctx):
     infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
     alpha_for.learn(infile, outfile)
+
+
+@cli.command()
+@click.pass_context
+def extract_json_fields(ctx):
+    infile = ctx.obj['infile']
+    outfile = ctx.obj['outfile']
+    fields = ctx.obj['fields']
+    json_tools.extract_fields(infile, outfile, fields)
 
 
 show_logo()
