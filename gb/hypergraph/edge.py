@@ -143,23 +143,29 @@ def str2edge(edge_str):
         return elements[0]
 
 
-def nodes2str(edge):
+def nodes2str(edge, namespaces=True):
     """Convert a collection of nodes to a string representation (no outer parenthesis)."""
     node_strings = []
     for node in edge:
         if sym.sym_type(node) == sym.SymbolType.EDGE:
-            node_strings.append(edge2str(node))
+            node_strings.append(edge2str(node, namespaces))
         else:
-            node_strings.append(str(node))
+            if namespaces:
+                node_strings.append(str(node))
+            else:
+                node_strings.append(str(sym.root(node)))
     return ' '.join(node_strings)
 
 
-def edge2str(edge):
+def edge2str(edge, namespaces=True):
     """Convert an edge to its string representation."""
     if sym.sym_type(edge) == sym.SymbolType.EDGE:
-        return '(%s)' % nodes2str(edge)
+        return '(%s)' % nodes2str(edge, namespaces)
     else:
-        return str(edge)
+        if namespaces:
+            return str(edge)
+        else:
+            return str(sym.root(edge))
 
 
 def is_negative(edge):

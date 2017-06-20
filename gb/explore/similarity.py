@@ -10,7 +10,13 @@ import gb.nlp.parser as par
 EXCLUDE_RELS = ['are_synonyms/gb', 'src/gb', 'have_same_lemma/gb']
 
 
-def edge_similarity(eedge1, eedge2):
+def edge_similarity(parser, edge1, edge2):
+    eedge1 = enrich_edge(parser, edge1)
+    eedge2 = enrich_edge(parser, edge2)
+    return eedge_similarity(eedge1, eedge2)
+
+
+def eedge_similarity(eedge1, eedge2):
     words1 = eedge1['words']
     words2 = eedge2['words']
     sims = {}
@@ -20,11 +26,14 @@ def edge_similarity(eedge1, eedge2):
         for word2 in words2:
             key = '%s_%s' % (word1, word2)
             weight = abs(word1.prob)
-            sim = weight * word1.similarity(word2)
+            sim = word1.similarity(word2)
+            if sim < 0.:
+                sim = 0.
+            sim = weight * sim
             sims[key] = sim
 
-    words1 = [str(word) for word in words1]
-    words2 = [str(word) for word in words2]
+    words1 = set([str(word) for word in words1])
+    words2 = set([str(word) for word in words2])
 
     total_sim = 0.
     while len(words1) > 0 and len(words2) > 0:
@@ -39,8 +48,48 @@ def edge_similarity(eedge1, eedge2):
                 search = False
                 words1.remove(word1)
                 words2.remove(word2)
+                # print('*** %s' % best_pair)
+                # print(words1)
+                # print(words2)
             del sims[best_key]
     return total_sim / total_weight
+
+
+def enrich_edge(parser, edge):
+    if sym.is_edge(edge):
+        eedge = [enrich_edge(parser, item) for item in edge]
+        prob = 1.
+        total_prob = 0.
+        word_count = 0
+        words = []
+        for item in eedge:
+            word_count += item['word_count']
+            prob *= item['prob']
+            total_prob += item['prob'] * item['word_count']
+            words += item['words']
+        mean_prob = total_prob / word_count
+        return {'edge': edge, 'eedge': eedge, 'words': words, 'prob': prob, 'word_count': word_count,
+                'mean_prob': mean_prob}
+
+    ngram = sym.symbol2str(edge)
+    tokens = [token for token in ngram.split(' ') if len(token) > 0]
+    for i in range(len(tokens)):
+        if tokens[i][0] == '+':
+            tokens[i] = tokens[i][1:]
+    tokens = [token for token in tokens if len(token) > 0]
+    words = [parser.make_word(token) for token in tokens]
+    prob = 1.
+    total_prob = 0.
+    for word in words:
+        p = math.exp(word.prob)
+        prob *= p
+        total_prob += p
+    word_count = len(words)
+    if word_count > 0:
+        mean_prob = total_prob / word_count
+    else:
+        mean_prob = 1.
+    return {'symbol': edge, 'words': words, 'prob': prob, 'word_count': word_count, 'mean_prob': mean_prob}
 
 
 def is_concept(eedge):
@@ -74,7 +123,7 @@ def edge_concepts_similarity(eedge1, eedge2):
             concept1_str = concept2str(concept1)
             concept2_str = concept2str(concept2)
             key = '%s_%s' % (concept1_str, concept2_str)
-            sims[key] = {'sim': edge_similarity(concept1, concept2),
+            sims[key] = {'sim': eedge_similarity(concept1, concept2),
                          'concept1': concept1_str,
                          'concept2': concept2_str}
 
@@ -127,52 +176,16 @@ class Similarity(object):
         self.parser = parser
         self.sim_threshold = sim_threshold
 
-    def enrich_edge(self, edge):
-        if sym.is_edge(edge):
-            eedge = [self.enrich_edge(item) for item in edge]
-            prob = 1.
-            total_prob = 0.
-            word_count = 0
-            words = []
-            for item in eedge:
-                word_count += item['word_count']
-                prob *= item['prob']
-                total_prob += item['prob'] * item['word_count']
-                words += item['words']
-            mean_prob = total_prob / word_count
-            return {'edge': edge, 'eedge': eedge, 'words': words, 'prob': prob, 'word_count': word_count,
-                    'mean_prob': mean_prob}
-
-        ngram = sym.symbol2str(edge)
-        tokens = [token for token in ngram.split(' ') if len(token) > 0]
-        for i in range(len(tokens)):
-            if tokens[i][0] == '+':
-                tokens[i] = tokens[i][1:]
-        tokens = [token for token in tokens if len(token) > 0]
-        words = [self.parser.make_word(token) for token in tokens]
-        prob = 1.
-        total_prob = 0.
-        for word in words:
-            p = math.exp(word.prob)
-            prob *= p
-            total_prob += p
-        word_count = len(words)
-        if word_count > 0:
-            mean_prob = total_prob / word_count
-        else:
-            mean_prob = 1.
-        return {'symbol': edge, 'words': words, 'prob': prob, 'word_count': word_count, 'mean_prob': mean_prob}
-
     def similar_edges(self, targ_edge):
         edges = self.hg.all()
 
-        targ_eedge = self.enrich_edge(targ_edge)
+        targ_eedge = enrich_edge(self.parser, targ_edge)
 
         sims = {}
         for edge in edges:
             if edge != targ_edge and not exclude(edge):
-                eedge = self.enrich_edge(edge)
-                total_sim = edge_similarity(targ_eedge, eedge)
+                eedge = enrich_edge(self.parser, edge)
+                total_sim = eedge_similarity(targ_eedge, eedge)
                 if total_sim >= self.sim_threshold:
                     sims[ed.edge2str(edge)] = total_sim
 
@@ -189,12 +202,12 @@ class Similarity(object):
     def edges_with_similar_concepts(self, targ_edge):
         edges = self.hg.all()
 
-        targ_eedge = self.enrich_edge(targ_edge)
+        targ_eedge = enrich_edge(self.parser, targ_edge)
 
         sims = {}
         for edge in edges:
             if edge != targ_edge and not exclude(edge):
-                eedge = self.enrich_edge(edge)
+                eedge = enrich_edge(self.parser, edge)
                 total_sim, worst_sim, complete, matches = edge_concepts_similarity(targ_eedge, eedge)
                 if complete and worst_sim >= self.sim_threshold:
                     sims[ed.edge2str(edge)] = (worst_sim, total_sim, matches)
