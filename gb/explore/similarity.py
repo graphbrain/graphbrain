@@ -10,16 +10,17 @@ import gb.nlp.parser as par
 EXCLUDE_RELS = ['are_synonyms/gb', 'src/gb', 'have_same_lemma/gb']
 
 
-def edge_similarity(parser, edge1, edge2):
+def edge_similarity(parser, edge1, edge2, best=False):
     eedge1 = enrich_edge(parser, edge1)
     eedge2 = enrich_edge(parser, edge2)
-    return eedge_similarity(eedge1, eedge2)
+    return eedge_similarity(eedge1, eedge2, best)
 
 
-def eedge_similarity(eedge1, eedge2):
+def eedge_similarity(eedge1, eedge2, best=False):
     words1 = eedge1['words']
     words2 = eedge2['words']
     sims = {}
+    best_sim = 0.
     total_weight = 0.
     for word1 in words1:
         total_weight += abs(word1.prob)
@@ -30,7 +31,12 @@ def eedge_similarity(eedge1, eedge2):
             if sim < 0.:
                 sim = 0.
             sim = weight * sim
+            if sim > best_sim:
+                best_sim = sim
             sims[key] = sim
+
+    if best:
+        return best_sim
 
     words1 = set([str(word) for word in words1])
     words2 = set([str(word) for word in words2])
@@ -48,9 +54,6 @@ def eedge_similarity(eedge1, eedge2):
                 search = False
                 words1.remove(word1)
                 words2.remove(word2)
-                # print('*** %s' % best_pair)
-                # print(words1)
-                # print(words2)
             del sims[best_key]
     return total_sim / total_weight
 
