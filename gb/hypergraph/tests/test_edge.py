@@ -59,6 +59,14 @@ class TestEdge(unittest.TestCase):
         self.assertEqual(ed.edge2str(('src', 'graphbrain/1', ('is', 'graphbrain/1', 'great/1'))),
                          '(src graphbrain/1 (is graphbrain/1 great/1))')
 
+    def test_edge2str_roots(self):
+        self.assertEqual(ed.edge2str(('is', 'graphbrain/1', 'great/1'), namespaces=False), '(is graphbrain great)')
+        self.assertEqual(ed.edge2str(('size', 'graphbrain/1', 7), namespaces=False), '(size graphbrain 7)')
+        self.assertEqual(ed.edge2str(('size', 'graphbrain/1', 7.), namespaces=False), '(size graphbrain 7.0)')
+        self.assertEqual(ed.edge2str(('size', 'graphbrain/1', -7.), namespaces=False), '(size graphbrain -7.0)')
+        self.assertEqual(ed.edge2str(('src', 'graphbrain/1', ('is', 'graphbrain/1', 'great/1')), namespaces=False),
+                         '(src graphbrain (is graphbrain great))')
+
     def test_is_negative(self):
         self.assertTrue(ed.is_negative(('~is', 'graphbrain/1', 'great/1')))
         self.assertFalse(ed.is_negative(('is', 'graphbrain/1', 'great/1')))

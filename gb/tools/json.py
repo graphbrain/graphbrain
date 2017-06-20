@@ -22,6 +22,15 @@
 import json
 
 
+def read(input_file):
+    items = []
+    with open(input_file, 'r') as inf:
+        for line in inf:
+            item = json.loads(line)
+            items.append(item)
+    return items
+
+
 def extract_fields(input_file, output_file, field_names):
     fields = field_names.split(',')
 
@@ -30,5 +39,6 @@ def extract_fields(input_file, output_file, field_names):
         for line in inf:
             item = json.loads(line)
             values = [item[field] for field in fields]
-            outf.write('%s\n' % ' '.join(values))
+            if None not in values:
+                outf.write('%s\n' % ' '.join(values))
     outf.close()
