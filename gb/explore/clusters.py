@@ -19,13 +19,47 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import math
 import operator
 import numpy as np
-from sklearn.cluster import DBSCAN
+import igraph
+from sklearn.cluster import DBSCAN, KMeans
 import gb.tools.json as json_tools
 import gb.hypergraph.edge as ed
 import gb.nlp.parser as par
-from gb.explore.similarity import edge_similarity
+import gb.explore.similarity as simil
+
+
+def build_graph(vertices, edges):
+    vert_bimap = {}
+    for i in range(len(vertices)):
+        vert_str = ed.edge2str(vertices[i])
+        vert_bimap[i] = vert_str
+        vert_bimap[vert_str] = i
+
+    _edges = [(vert_bimap[ed.edge2str(edge[0])], vert_bimap[ed.edge2str(edge[1])]) for edge in edges]
+
+    g = igraph.Graph()
+    g.add_vertices(len(vertices))
+    g.add_edges(_edges)
+    return g, vert_bimap
+
+
+def find_communities(vertices, edges):
+    g, vert_bimap = build_graph(vertices, edges)
+
+    comms = igraph.Graph.community_multilevel(g, return_levels=False)
+    memb = comms.membership
+    mod = g.modularity(memb)
+
+    communities = {}
+    for i in range(len(memb)):
+        comm = memb[i]
+        if comm not in communities:
+            communities[comm] = []
+        communities[comm].append(vert_bimap[i])
+
+    return communities, mod
 
 
 if __name__ == '__main__':
@@ -47,37 +81,62 @@ if __name__ == '__main__':
                 else:
                     extra_edges[key] = 1
 
-    sorted_edges = sorted(extra_edges.items(), key=operator.itemgetter(1), reverse=False)
-    print(sorted_edges)
-    print(len(sorted_edges))
+    # sorted_edges = sorted(extra_edges.items(), key=operator.itemgetter(1), reverse=False)
+    # print(sorted_edges)
+    # print(len(sorted_edges))
+
+    edges = [ed.str2edge(edge_str) for edge_str in extra_edges.keys()]
+    edges = [edge for edge in edges if simil.edge_min_prob(par, edge) < -8]
 
     print('creating distance matrix...')
-    size = len(sorted_edges)
+    size = len(edges)
+    print(size)
     dists = np.zeros((size, size))
+    graph_edges = []
     for i in range(size):
-        ei = ed.str2edge(sorted_edges[i][0])
         for j in range(size):
-            ej = ed.str2edge(sorted_edges[j][0])
-            sim = edge_similarity(par, ei, ej, best=True)
-            dists[i][j] = 1. - sim
+            sim = simil.edge_x_similarity(par, edges[i], edges[j])
+            dist = 1.
+            if sim < 1.:
+                dist = 1. / abs(math.log(sim))
+            dists[i][j] = dist
+            if dist < 1. and edges[i] != edges[j]:
+                print('%s ||| %s ==>> %s' % (edges[i], edges[j], dist))
+                graph_edges.append((edges[i], edges[j]))
     print('distance matrix created.')
 
-    print('clustering...')
-    dbscan = DBSCAN(eps=0.2, min_samples=2, metric='precomputed')
-    dbscan.fit(dists)
-    print('clustering done.')
+    comms, modul = find_communities(edges, graph_edges)
+    for comm in comms:
+        print('COMMUNITY: %s' % comm)
+        for item in comms[comm]:
+            print(item)
+    print('number of communities: %s' % len(comms))
 
+    exit(0)
+
+    print('clustering...')
+    # kmeans = KMeans(n_clusters=10)
+    # kmeans.fit(dists)
+    # labels = kmeans.labels_
+    dbscan = DBSCAN(eps=0.1, min_samples=3, metric='precomputed')
+    dbscan.fit(dists)
     labels = dbscan.labels_
+    print('clustering done.')
 
     # Number of clusters in labels, ignoring noise if present.
     print(labels)
     n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
-    print('Estimated number of clusters: %d' % n_clusters_)
 
     clusters = {}
     for i in range(len(labels)):
         label = labels[i]
         if label not in clusters:
             clusters[label] = []
-        clusters[label].append(ed.edge2str(ed.str2edge(sorted_edges[i][0]), namespaces=False))
-    print(clusters)
+        clusters[label].append(ed.edge2str(edges[i], namespaces=False))
+
+    for cluster in clusters:
+        print('CLUSTER %s' % cluster)
+        for edge in clusters[cluster]:
+            print(edge)
+
+    print('Estimated number of clusters: %d' % n_clusters_)
