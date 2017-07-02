@@ -83,6 +83,11 @@ class TestEdge(unittest.TestCase):
                          {'is', 'graphbrain/1', 'great/1', 'src', 'graphbrain/2'})
         self.assertEqual(ed.symbols('graphbrain/1'), {'graphbrain/1'})
 
+    def test_max_depth(self):
+        self.assertEqual(ed.depth('graphbrain/1'), 0)
+        self.assertEqual(ed.depth(('is', 'graphbrain/1', 'great/1')), 1)
+        self.assertEqual(ed.depth(('is', 'graphbrain/1', ('super', 'great/1'))), 2)
+
 
 if __name__ == '__main__':
     unittest.main()

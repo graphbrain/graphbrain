@@ -93,13 +93,13 @@ def edge_str_has_outer_parens(edge_str):
     """Check if string representation of edge is delimited by outer parenthesis."""
     if len(edge_str) < 2:
         return False
-    depth = 0
+    par_depth = 0
     for i in range(len(edge_str) - 1):
         if edge_str[i] == '(':
-            depth += 1
+            par_depth += 1
         elif edge_str[i] == ')':
-            depth -= 1
-        if depth == 0:
+            par_depth -= 1
+        if par_depth == 0:
             return False
     return True
 
@@ -115,11 +115,11 @@ def split_edge_str(edge_str):
 
     tokens = []
     curtok = None
-    depth = 0
+    par_depth = 0
     while len(stoks) > 0:
         tok = stoks[0]
-        depth = depth + open_pars(tok) - close_pars(tok)
-        bottom = depth == 0
+        par_depth = par_depth + open_pars(tok) - close_pars(tok)
+        bottom = par_depth == 0
         if curtok is None:
             curtok = tok
         else:
@@ -188,3 +188,16 @@ def symbols(edge):
         return symbs
     else:
         return {edge}
+
+
+def depth(edge):
+    """Returns maximal depth of the edge, a symbol has depth 0"""
+    if sym.sym_type(edge) == sym.SymbolType.EDGE:
+        max_d = 0
+        for item in edge:
+            d = depth(item)
+            if d > max_d:
+                max_d = d
+        return max_d + 1
+    else:
+        return 0
