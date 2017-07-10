@@ -1,13 +1,27 @@
+#   Copyright (c) 2016 CNRS - Centre national de la recherche scientifique.
+#   All rights reserved.
+#
+#   Written by Telmo Menezes <telmo@telmomenezes.com>
+#
+#   This file is part of GraphBrain.
+#
+#   GraphBrain is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   GraphBrain is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
+
+
 import math
-import operator
-import json
-import gb.hypergraph.hypergraph as hyperg
-import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
-import gb.nlp.parser as par
-
-
-EXCLUDE_RELS = ['are_synonyms/gb', 'src/gb', 'have_same_lemma/gb']
+from gb.nlp.enrich_edge import enrich_edge
 
 
 def edge_min_prob(parser, edge):
@@ -126,43 +140,6 @@ def eedge_similarity_with_weight(eedge1, eedge2):
     return total_sim, total_weight
 
 
-def enrich_edge(parser, edge):
-    if sym.is_edge(edge):
-        eedge = [enrich_edge(parser, item) for item in edge]
-        prob = 1.
-        total_prob = 0.
-        word_count = 0
-        words = []
-        for item in eedge:
-            word_count += item['word_count']
-            prob *= item['prob']
-            total_prob += item['prob'] * item['word_count']
-            words += item['words']
-        mean_prob = total_prob / word_count
-        return {'edge': edge, 'eedge': eedge, 'words': words, 'prob': prob, 'word_count': word_count,
-                'mean_prob': mean_prob}
-
-    ngram = sym.symbol2str(edge)
-    tokens = [token for token in ngram.split(' ') if len(token) > 0]
-    for i in range(len(tokens)):
-        if tokens[i][0] == '+':
-            tokens[i] = tokens[i][1:]
-    tokens = [token for token in tokens if len(token) > 0]
-    words = [parser.make_word(token) for token in tokens]
-    prob = 1.
-    total_prob = 0.
-    for word in words:
-        p = math.exp(word.prob)
-        prob *= p
-        total_prob += p
-    word_count = len(words)
-    if word_count > 0:
-        mean_prob = total_prob / word_count
-    else:
-        mean_prob = 1.
-    return {'symbol': edge, 'words': words, 'prob': prob, 'word_count': word_count, 'mean_prob': mean_prob}
-
-
 def is_concept(eedge):
     first = eedge['eedge'][0]
     if 'symbol' in first:
@@ -222,98 +199,3 @@ def edge_concepts_similarity(eedge1, eedge2):
             del sims[best_key]
     complete = len(concepts1) == 0
     return total_sim, worst_sim, complete, matches
-
-
-def exclude(edge):
-    if sym.is_edge(edge):
-        rel = edge[0]
-        if sym.is_edge(rel):
-            return False
-        return rel in EXCLUDE_RELS
-    else:
-        return True
-
-
-def write_edge_data(edge_data, file_path):
-    f = open(file_path, 'w')
-    for e in edge_data:
-        f.write('%s\n' % json.dumps(e, separators=(',', ':')))
-    f.close()
-
-
-class Similarity(object):
-    def __init__(self, hg, parser, sim_threshold=.7):
-        self.hg = hg
-        self.parser = parser
-        self.sim_threshold = sim_threshold
-
-    def similar_edges(self, targ_edge):
-        edges = self.hg.all()
-
-        targ_eedge = enrich_edge(self.parser, targ_edge)
-
-        sims = {}
-        for edge in edges:
-            if edge != targ_edge and not exclude(edge):
-                eedge = enrich_edge(self.parser, edge)
-                total_sim = eedge_similarity(targ_eedge, eedge)
-                if total_sim >= self.sim_threshold:
-                    sims[ed.edge2str(edge)] = total_sim
-
-        sorted_edges = sorted(sims.items(), key=operator.itemgetter(1), reverse=True)
-
-        result = []
-        for e in sorted_edges:
-            edge_data = {'edge': e[0],
-                         'sim': e[1],
-                         'text': self.hg.get_str_attribute(ed.str2edge(e[0]), 'text')}
-            result.append(edge_data)
-        return result
-
-    def edges_with_similar_concepts(self, targ_edge):
-        edges = self.hg.all()
-
-        targ_eedge = enrich_edge(self.parser, targ_edge)
-
-        sims = {}
-        for edge in edges:
-            if edge != targ_edge and not exclude(edge):
-                eedge = enrich_edge(self.parser, edge)
-                total_sim, worst_sim, complete, matches = edge_concepts_similarity(targ_eedge, eedge)
-                if complete and worst_sim >= self.sim_threshold:
-                    sims[ed.edge2str(edge)] = (worst_sim, total_sim, matches)
-
-        sorted_edges = sorted(sims.items(), key=operator.itemgetter(1), reverse=True)
-
-        result = []
-        for e in sorted_edges:
-            edge_data = {'edge': e[0],
-                         'worst_sim': e[1][0],
-                         'sim': e[1][1],
-                         'matches': e[1][2],
-                         'text': self.hg.get_str_attribute(ed.str2edge(e[0]), 'text')}
-            result.append(edge_data)
-        return result
-
-    def write_similar_edges(self, targ_edge, file_path):
-        edge_data = self.similar_edges(targ_edge)
-        write_edge_data(edge_data, file_path)
-
-    def write_edges_with_similar_concepts(self, targ_edge, file_path):
-        edge_data = self.edges_with_similar_concepts(targ_edge)
-        write_edge_data(edge_data, file_path)
-
-
-if __name__ == '__main__':
-    hgr = hyperg.HyperGraph({'backend': 'leveldb', 'hg': 'reddit-politics.hg'})
-
-    print('creating parser...')
-    par = par.Parser()
-    print('parser created.')
-
-    te = '(clinches/nlp.clinch.verb clinton/nlp.clinton.noun ' \
-         '(+/gb democratic/nlp.democratic.adj nomination/nlp.nomination.noun))'
-
-    s = Similarity(hgr, par)
-    # s.write_edges_with_similar_concepts(ed.str2edge(te), 'edges_similar_concepts.json')
-    s.write_similar_edges(ed.str2edge(te), 'similar_edges.json')
