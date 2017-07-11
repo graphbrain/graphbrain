@@ -201,3 +201,8 @@ def depth(edge):
         return max_d + 1
     else:
         return 0
+
+
+def without_namespaces(edge):
+    """Returns edge stripped of namespaces"""
+    return str2edge(edge2str(edge, namespaces=False))
