@@ -88,6 +88,12 @@ class TestEdge(unittest.TestCase):
         self.assertEqual(ed.depth(('is', 'graphbrain/1', 'great/1')), 1)
         self.assertEqual(ed.depth(('is', 'graphbrain/1', ('super', 'great/1'))), 2)
 
+    def test_without_namespaces(self):
+        self.assertEqual(ed.without_namespaces('graphbrain/1'), 'graphbrain')
+        self.assertEqual(ed.without_namespaces(('is', 'graphbrain/1', 'great/1')), ('is', 'graphbrain', 'great'))
+        self.assertEqual(ed.without_namespaces(('is', 'graphbrain/1', ('super', 'great/1'))),
+                         ('is', 'graphbrain', ('super', 'great')))
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -28,7 +28,6 @@ import gb.tools.json as json_tools
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
 import gb.nlp.parser as par
-from gb.nlp.enrich_edge import enrich_edge
 
 
 MAX_PROB = -12
@@ -57,6 +56,7 @@ class AtomGroups(object):
         self.synonym_sets = None
         self.synonym_map = None
         self.atom_groups = None
+        self.atom_group_clusters = None
 
     def add_edges(self, edge):
         if sym.is_edge(edge):
@@ -187,6 +187,7 @@ class AtomGroups(object):
         g.es['weight'] = weights
 
         # community detection
+        # noinspection PyArgumentList
         comms = igraph.Graph.community_multilevel(g, weights='weight', return_levels=False)
 
         # build atom_groups
@@ -213,7 +214,8 @@ class AtomGroups(object):
             atom_group = {'label': label,
                           'syns': syns,
                           'count': count,
-                          'sentences': sentences}
+                          'sentences': sentences,
+                          'edges': edges}
             self.atom_groups[i] = atom_group
 
     def print_atom_groups(self):
@@ -231,16 +233,69 @@ class AtomGroups(object):
                     print('* %s' % sentence)
                 print()
 
-    # build atom_group coocurrence sparse matrix
-    # nag = len(atom_groups)
-    # ag_cooc = sps.lil_matrix((nag, nag))
-    # for edat in edge_data:
-    #     edge = ed.str2edge(ed.edge2str(ed.str2edge(edat['edge']), namespaces=False))
-    #     co_ags = find_co_atom_groups(atom_groups, edge)
-    #     if len(co_ags) > 1:
-    #         for pair in itertools.combinations(co_synonyms, 2):
-    #             synonym_cooc[pair[0], pair[1]] += 1
-    #             synonym_cooc[pair[1], pair[0]] += 1
+    def atom_groups_present_in(self, edge):
+        group_indices = set()
+        for i in range(len(self.atom_groups)):
+            for atom_edge in self.atom_groups[i]['edges']:
+                if edge_contains(edge, atom_edge, deep=True):
+                    group_indices.add(i)
+        return group_indices
+
+    def find_co_atom_groups(self, edge):
+        agps = [self.atom_groups_present_in(element) for element in edge]
+        agps = [agp for agp in agps if len(agp) > 0]
+        if len(agps) < 2:
+            return []
+        groups = itertools.product(*agps)
+        pairs = []
+        for group in groups:
+            pairs += itertools.combinations(group, 2)
+        return pairs
+
+    def generate_atom_group_clusters(self, edges):
+        # build atom_group coocurrence sparse matrix
+        nag = len(self.atom_groups)
+        ag_cooc = sps.lil_matrix((nag, nag))
+        for edge in edges:
+            edge = ed.without_namespaces(edge)
+            co_ags = self.find_co_atom_groups(edge)
+            for pair in co_ags:
+                ag_cooc[pair[0], pair[1]] += 1
+                ag_cooc[pair[1], pair[0]] += 1
+
+        # normalize matrix
+        ag_cooc = normalize(ag_cooc, norm='l1', axis=1, copy=False)
+
+        # iterate matrix, build graph
+        gedges = []
+        weights = []
+        cx = ag_cooc.tocoo()
+        for i, j, v in zip(cx.row, cx.col, cx.data):
+            gedges.append((i, j))
+            weights.append(v)
+        g = igraph.Graph()
+        g.add_vertices(nag)
+        g.add_edges(gedges)
+        g.es['weight'] = weights
+
+        # community detection
+        # noinspection PyArgumentList
+        comms = igraph.Graph.community_multilevel(g, weights='weight', return_levels=False)
+
+        # build atom_group_clusters
+        self.atom_group_clusters = {}
+        for i in range(len(comms)):
+            comm = comms[i]
+            labels = []
+            for item in comm:
+                labels.append('[%s]{%s}' % (self.atom_groups[item]['label'], self.atom_groups[item]['count']))
+            label = ' + '.join(labels)
+            atom_group_cluster = {'label': label}
+            self.atom_group_clusters[i] = atom_group_cluster
+
+    def print_atom_group_clusters(self):
+        for k in self.atom_group_clusters:
+            print('AG_CLUSTER: %s' % self.atom_group_clusters[k]['label'])
 
 
 if __name__ == '__main__':
@@ -253,13 +308,14 @@ if __name__ == '__main__':
 
     # build extra edges list
     extra_edges = []
+    full_edges = []
     for it in edge_data:
         e = ed.str2edge(it['edge'])
+        full_edges.append(e)
         matched = [ed.str2edge(match[1]) for match in it['matches']]
         for part in e[1:]:
             if part not in matched:
                 extra_edges.append(part)
-    eedges = [enrich_edge(par, edge) for edge in extra_edges]
 
     ag = AtomGroups(par)
     ag.set_edges(extra_edges)
@@ -267,3 +323,5 @@ if __name__ == '__main__':
     ag.generate_synonyms()
     ag.generate_atom_groups()
     ag.print_atom_groups()
+    ag.generate_atom_group_clusters(full_edges)
+    ag.print_atom_group_clusters()
