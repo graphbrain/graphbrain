@@ -45,17 +45,51 @@ def write_edge_data(edge_data, file_path):
     f.close()
 
 
-class TermFilter(object):
+class Filter(object):
     def __init__(self, hg):
         self.hg = hg
 
-    def edges_with_term(self, term):
+    def write_edges(self, file_path):
+        pass
+
+
+class AllFilter(Filter):
+    def __init__(self, hg):
+        Filter.__init__(self, hg)
+
+    def all_edges(self):
         edges = self.hg.all()
 
         filtered_edges = []
         for edge in edges:
             if not exclude(edge):
-                if ed.contains(ed.without_namespaces(edge), term):
+                filtered_edges.append(edge)
+
+        result = []
+        for e in filtered_edges:
+            edge_data = {'edge': ed.edge2str(e),
+                         'text': self.hg.get_str_attribute(e, 'text')}
+            result.append(edge_data)
+        return result
+
+    # override
+    def write_edges(self, file_path):
+        edge_data = self.all_edges()
+        write_edge_data(edge_data, file_path)
+
+
+class TermFilter(Filter):
+    def __init__(self, hg, term):
+        Filter.__init__(self, hg)
+        self.term = term
+
+    def edges_with_term(self):
+        edges = self.hg.all()
+
+        filtered_edges = []
+        for edge in edges:
+            if not exclude(edge):
+                if ed.contains(ed.without_namespaces(edge), self.term):
                     print(edge)
                     filtered_edges.append(edge)
 
@@ -66,12 +100,16 @@ class TermFilter(object):
             result.append(edge_data)
         return result
 
-    def write_edges_with_term(self, term, file_path):
-        edge_data = self.edges_with_term(term)
+    # override
+    def write_edges(self, file_path):
+        edge_data = self.edges_with_term()
         write_edge_data(edge_data, file_path)
 
 
 if __name__ == '__main__':
     hgr = hyperg.HyperGraph({'backend': 'leveldb', 'hg': 'reddit-politics.hg'})
-    s = TermFilter(hgr)
-    s.write_edges_with_term('china', 'china.json')
+    # s = TermFilter(hgr, 'china')
+    # s.write_edges('china.json')
+
+    filt = AllFilter(hgr)
+    filt.write_edges('all.json')

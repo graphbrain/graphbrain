@@ -64,6 +64,9 @@ class Meronomy(object):
         if len(s) == 0:
             return None
 
+        if s == 'china':
+            return None
+
         word = self.parser.make_word(s)
         if word.prob < MAX_PROB:
             return s
@@ -117,7 +120,8 @@ if __name__ == '__main__':
     print('parser created.')
 
     # read data
-    edge_data = json_tools.read('edges_similar_concepts.json')
+    # edge_data = json_tools.read('edges_similar_concepts.json')
+    edge_data = json_tools.read('china.json')
 
     # build extra edges list
     full_edges = []
@@ -135,7 +139,7 @@ if __name__ == '__main__':
     pr_pairs = sorted(pr_pairs, key=lambda x: x[1], reverse=True)
 
     covered = set()
-    for pr_pair in pr_pairs[:100]:
+    for pr_pair in pr_pairs:
         label = pr_pair[0]
         edge = ed.str2edge(label)
         count = 0
