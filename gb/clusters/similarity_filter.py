@@ -20,7 +20,6 @@
 
 
 import operator
-import json
 import gb.hypergraph.hypergraph as hyperg
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
@@ -45,7 +44,10 @@ def exclude(edge):
 def write_edge_data(edge_data, file_path):
     f = open(file_path, 'w')
     for e in edge_data:
-        f.write('%s\n' % json.dumps(e, separators=(',', ':')))
+        # f.write('%s\n' % json.dumps(e, separators=(',', ':')))
+        f.write('%s\n' % str(e['sim']))
+        f.write('%s\n' % e['text'])
+        f.write('%s\n' % ed.edge2str(ed.without_namespaces(ed.str2edge(e['edge']))))
     f.close()
 
 
@@ -123,5 +125,5 @@ if __name__ == '__main__':
          '(+/gb democratic/nlp.democratic.adj nomination/nlp.nomination.noun))'
 
     s = SimilarityFilter(hgr, par)
-    # s.write_edges_with_similar_concepts(ed.str2edge(te), 'edges_similar_concepts.json')
-    s.write_similar_edges(ed.str2edge(te), 'similar_edges.json')
+    s.write_edges_with_similar_concepts(ed.str2edge(te), 'edges_similar_concepts.json')
+    # s.write_similar_edges(ed.str2edge(te), 'similar_edges.json')

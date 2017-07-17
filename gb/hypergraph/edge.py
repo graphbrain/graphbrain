@@ -206,3 +206,16 @@ def depth(edge):
 def without_namespaces(edge):
     """Returns edge stripped of namespaces"""
     return str2edge(edge2str(edge, namespaces=False))
+
+
+def contains(edge, concept, deep=False):
+    if sym.is_edge(edge):
+        for x in edge:
+            if x == concept:
+                return True
+            if deep:
+                if contains(x, concept, True):
+                    return True
+        return False
+    else:
+        return edge == concept

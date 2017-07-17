@@ -33,19 +33,6 @@ import gb.nlp.parser as par
 MAX_PROB = -12
 
 
-def edge_contains(edge, concept, deep=False):
-    if sym.is_edge(edge):
-        for x in edge:
-            if x == concept:
-                return True
-            if deep:
-                if edge_contains(x, concept, True):
-                    return True
-        return False
-    else:
-        return edge == concept
-
-
 class AtomGroups(object):
     def __init__(self, parser):
         self.parser = parser
@@ -187,7 +174,6 @@ class AtomGroups(object):
         g.es['weight'] = weights
 
         # community detection
-        # noinspection PyArgumentList
         comms = igraph.Graph.community_multilevel(g, weights='weight', return_levels=False)
 
         # build atom_groups
@@ -203,9 +189,9 @@ class AtomGroups(object):
 
                 for atom in self.synonym_map[item]['edges']:
                     for edat in edge_data:
-                        if edge_contains(ed.str2edge(ed.edge2str(ed.str2edge(edat['edge']), namespaces=False)),
-                                         ed.str2edge(atom),
-                                         deep=True):
+                        if ed.contains(ed.str2edge(ed.edge2str(ed.str2edge(edat['edge']), namespaces=False)),
+                                       ed.str2edge(atom),
+                                       deep=True):
                             if edat['text']:
                                 sentences.add(edat['text'])
                 syns.append(self.synonym_map[item])
@@ -225,19 +211,22 @@ class AtomGroups(object):
             size = len(atom_group['sentences'])
             if size > 3:
                 n += 1
-                print('CLUSTER id: %s' % n)
+                print('ATOM_GROUP id: %s' % n)
                 print('Base concepts: %s' % atom_group['label'])
                 print('size: %s' % size)
                 print('sentences:')
                 for sentence in atom_group['sentences']:
                     print('* %s' % sentence)
+                print('edges:')
+                for edge in atom_group['edges']:
+                    print('* %s' % ed.edge2str(ed.without_namespaces(ed.str2edge(edge))))
                 print()
 
     def atom_groups_present_in(self, edge):
         group_indices = set()
         for i in range(len(self.atom_groups)):
             for atom_edge in self.atom_groups[i]['edges']:
-                if edge_contains(edge, atom_edge, deep=True):
+                if ed.contains(edge, atom_edge, deep=True):
                     group_indices.add(i)
         return group_indices
 
