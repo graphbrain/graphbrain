@@ -268,7 +268,6 @@ class AtomGroups(object):
         g.es['weight'] = weights
 
         # community detection
-        # noinspection PyArgumentList
         comms = igraph.Graph.community_multilevel(g, weights='weight', return_levels=False)
 
         # build atom_group_clusters
