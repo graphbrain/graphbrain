@@ -19,6 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import itertools
 import igraph
 import gb.tools.json as json_tools
 import gb.hypergraph.symbol as sym
@@ -29,7 +30,7 @@ import gb.nlp.parser as par
 MAX_PROB = -12
 
 
-class Meronomy(object):
+class Graph(object):
     def __init__(self, parser, claims):
         self.parser = parser
         self.graph = None
@@ -40,7 +41,7 @@ class Meronomy(object):
     def init_graph(self, claims):
         for claim in claims:
             self.add_claim(claim)
-        self.graph = igraph.Graph(directed=True)
+        self.graph = igraph.Graph()  #(directed=True)
         self.graph.add_vertices(list(self.vertices))
         self.vertices = None
         self.graph.add_edges(self.edges.keys())
@@ -64,7 +65,7 @@ class Meronomy(object):
         if len(s) == 0:
             return None
 
-        if s == 'china':
+        if not s[0].isalnum():
             return None
 
         word = self.parser.make_word(s)
@@ -79,13 +80,21 @@ class Meronomy(object):
             return
         self.vertices.add(orig)
         if sym.is_edge(edge):
+            elements = []
+            # links from part to whole
             for element in edge:
                 targ = self.edge2str(element)
                 if not targ:
                     return
+                elements.append(targ)
                 self.vertices.add(targ)
                 self.add_link(orig, targ)
                 self.add_claim(element)
+
+            # links between peers
+            combs = itertools.combinations(elements, 2)
+            for comb in combs:
+                self.add_link(*comb)
 
     def normalize_graph(self):
         for orig in self.graph.vs:
@@ -120,22 +129,22 @@ if __name__ == '__main__':
     print('parser created.')
 
     # read data
-    edge_data = json_tools.read('edges_similar_concepts.json')
-    # edge_data = json_tools.read('all.json')
+    # edge_data = json_tools.read('edges_similar_concepts.json')
+    edge_data = json_tools.read('all.json')
 
     # build extra edges list
     full_edges = []
     for it in edge_data:
         full_edges.append(ed.without_namespaces(ed.str2edge(it['edge'])))
 
-    # build meronomy
-    mer = Meronomy(par, full_edges)
-    # mer.normalize_graph()
+    # build graph
+    g = Graph(par, full_edges)
+    # g.normalize_graph()
 
-    print(mer.similarity('hillary', ['+', 'hillary', 'clinton']))
+    print(g.similarity('hillary', ['+', 'hillary', 'clinton']))
 
-    pr = mer.graph.pagerank(weights='weight')
-    pr_pairs = [(mer.graph.vs[i]['name'], pr[i]) for i in range(len(pr))]
+    pr = g.graph.pagerank(weights='weight')
+    pr_pairs = [(g.graph.vs[i]['name'], pr[i]) for i in range(len(pr))]
     pr_pairs = sorted(pr_pairs, key=lambda x: x[1], reverse=True)
 
     covered = set()
@@ -152,6 +161,5 @@ if __name__ == '__main__':
                                          (float(len(covered)) / float(len(full_edges))) * 100., pr))
 
     # community detection
-    # comms = igraph.Graph.community_multilevel(mer.graph.as_undirected(combine_edges=max),
-    #                                           weights='weight', return_levels=False)
+    # comms = igraph.Graph.community_multilevel(g.graph, weights='weight', return_levels=False)
     # print(comms)
