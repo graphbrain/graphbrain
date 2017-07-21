@@ -25,6 +25,7 @@ import gb.tools.json as json_tools
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
 import gb.nlp.parser as par
+from gb.clusters.meronomy import Meronomy
 
 
 MAX_PROB = -12
@@ -33,26 +34,32 @@ MAX_PROB = -12
 class Graph(object):
     def __init__(self, parser, claims):
         self.parser = parser
+        self.meronomy = None
         self.graph = None
         self.edges = {}
         self.vertices = set()
         self.init_graph(claims)
 
     def init_graph(self, claims):
+        # build meronomy
+        self.meronomy = Meronomy(par, claims)
+        self.meronomy.normalize_graph()
+        self.meronomy.generate_synonyms()
+
         for claim in claims:
             self.add_claim(claim)
-        self.graph = igraph.Graph()  #(directed=True)
+        self.graph = igraph.Graph()
         self.graph.add_vertices(list(self.vertices))
         self.vertices = None
         self.graph.add_edges(self.edges.keys())
         self.graph.es['weight'] = list(self.edges.values())
         self.edges = None
 
-    # orig --[has part]--> targ
     def add_link(self, orig, targ):
-        if (orig, targ) not in self.edges:
-            self.edges[(orig, targ)] = 0.
-        self.edges[(orig, targ)] += 1.
+        if orig != targ:
+            if (orig, targ) not in self.edges:
+                self.edges[(orig, targ)] = 0.
+            self.edges[(orig, targ)] += 1.
 
     def edge2str(self, edge):
         s = ed.edge2str(edge, namespaces=False)
@@ -74,8 +81,16 @@ class Graph(object):
 
         return None
 
+    def edge2syn(self, edge):
+        atom = self.edge2str(edge)
+        if atom:
+            syn_id = self.meronomy.syn_id(atom)
+            if syn_id:
+                return str(syn_id)
+        return None
+
     def add_claim(self, edge):
-        orig = self.edge2str(edge)
+        orig = self.edge2syn(edge)
         if not orig:
             return
         self.vertices.add(orig)
@@ -83,12 +98,11 @@ class Graph(object):
             elements = []
             # links from part to whole
             for element in edge:
-                targ = self.edge2str(element)
-                if not targ:
-                    return
-                elements.append(targ)
-                self.vertices.add(targ)
-                self.add_link(orig, targ)
+                targ = self.edge2syn(element)
+                if targ:
+                    elements.append(targ)
+                    self.vertices.add(targ)
+                    self.add_link(orig, targ)
                 self.add_claim(element)
 
             # links between peers
@@ -96,31 +110,12 @@ class Graph(object):
             for comb in combs:
                 self.add_link(*comb)
 
-    def normalize_graph(self):
-        for orig in self.graph.vs:
-            edges = self.graph.incident(orig.index, mode='in')
-            total = sum([self.graph.es[edge]['weight'] for edge in edges])
-            for edge in edges:
-                self.graph.es[edge]['weight'] = self.graph.es[edge]['weight'] / total
-
-    def find_edge(self, orig, targ):
-        try:
-            orig_id = self.graph.vs.find(orig).index
-            targ_id = self.graph.vs.find(targ).index
-            return self.graph.es.find(_between=((orig_id,), (targ_id,)))
-        except:
-            return None
-
-    def similarity(self, edge1, edge2):
-        e1 = ed.edge2str(edge1, namespaces=False)
-        e2 = ed.edge2str(edge2, namespaces=False)
-        edge = self.find_edge(e1, e2)
-        if edge:
-            return edge['weight']
-        edge = self.find_edge(e2, e1)
-        if edge:
-            return edge['weight']
-        return 0.
+    def contains_synonym(self, full_edge, syn_id):
+        for atom in self.meronomy.synonym_sets[syn_id]:
+            edge = ed.str2edge(atom)
+            if ed.contains(full_edge, edge, deep=True):
+                return True
+        return False
 
 
 if __name__ == '__main__':
@@ -129,8 +124,8 @@ if __name__ == '__main__':
     print('parser created.')
 
     # read data
-    # edge_data = json_tools.read('edges_similar_concepts.json')
-    edge_data = json_tools.read('all.json')
+    edge_data = json_tools.read('edges_similar_concepts.json')
+    # edge_data = json_tools.read('all.json')
 
     # build full edges list
     full_edges = []
@@ -139,9 +134,6 @@ if __name__ == '__main__':
 
     # build graph
     g = Graph(par, full_edges)
-    # g.normalize_graph()
-
-    print(g.similarity('hillary', ['+', 'hillary', 'clinton']))
 
     pr = g.graph.pagerank(weights='weight')
     pr_pairs = [(g.graph.vs[i]['name'], pr[i]) for i in range(len(pr))]
@@ -150,21 +142,16 @@ if __name__ == '__main__':
     remaining_edges = full_edges[:]
     covered = set()
     for pr_pair in pr_pairs:
-        label = pr_pair[0]
+        syn_id = int(pr_pair[0])
         pr = pr_pair[1]
-        edge = ed.str2edge(label)
         count = 0
         new_remaining_edges = []
         for full_edge in remaining_edges:
-            if ed.contains(full_edge, edge, deep=True):
+            if g.contains_synonym(full_edge, syn_id):
                 count += 1
                 covered.add(ed.edge2str(full_edge, namespaces=False))
             else:
                 new_remaining_edges.append(full_edge)
         remaining_edges = new_remaining_edges
-        print('%s [%s]{%s} %.2f%% %s' % (label, count, len(covered),
+        print('%s [%s]{%s} %.2f%% %s' % (g.meronomy.synonym_label(syn_id), count, len(covered),
                                          (float(len(covered)) / float(len(full_edges))) * 100., pr))
-
-    # community detection
-    # comms = igraph.Graph.community_multilevel(g.graph, weights='weight', return_levels=False)
-    # print(comms)

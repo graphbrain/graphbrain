@@ -40,7 +40,6 @@ class Meronomy(object):
         self.syn_ids = {}
         self.synonym_sets = {}
         self.cur_syn_id = 0
-
         self.init_graph(claims)
 
     def init_graph(self, claims):
@@ -89,7 +88,7 @@ class Meronomy(object):
                     self.vertices.add(targ)
                     self.atoms[targ] = ed.depth(element)
                     self.add_link(orig, targ)
-                    self.add_claim(element)
+                self.add_claim(element)
 
     def normalize_graph(self):
         for orig in self.graph.vs:
@@ -141,7 +140,7 @@ class Meronomy(object):
                 max_weight = max([self.graph.es[e]['weight'] for e in edges])
             else:
                 max_weight = 0.
-            if max_weight > .25:
+            if max_weight > .1:
                 for e in edges:
                     edge = self.graph.es[e]
                     if edge['weight'] == max_weight:
@@ -172,13 +171,13 @@ class Meronomy(object):
                 delete_synonyms.add(self.syn_ids[atom])
 
         # generate synonym sets
-        for atom in self.syn_ids:
+        for atom in self.atoms:
             syn_id = self.syn_id(atom)
             if syn_id:
                 if syn_id in delete_synonyms:
                     new_id = self.new_syn_id()
                     self.syn_ids[atom] = new_id
-                    self.synonym_sets[syn_id] = {new_id}
+                    self.synonym_sets[new_id] = {atom}
                 else:
                     if syn_id not in self.synonym_sets:
                         self.synonym_sets[syn_id] = set()
@@ -186,7 +185,10 @@ class Meronomy(object):
             else:
                 new_id = self.new_syn_id()
                 self.syn_ids[atom] = new_id
-                self.synonym_sets[syn_id] = {new_id}
+                self.synonym_sets[new_id] = {atom}
+
+    def synonym_label(self, syn_id):
+        return '{%s}' % ', '.join([atom for atom in self.synonym_sets[syn_id]])
 
 
 if __name__ == '__main__':
@@ -195,8 +197,8 @@ if __name__ == '__main__':
     print('parser created.')
 
     # read data
-    edge_data = json_tools.read('edges_similar_concepts.json')
-    # edge_data = json_tools.read('all.json')
+    # edge_data = json_tools.read('edges_similar_concepts.json')
+    edge_data = json_tools.read('all.json')
 
     # build extra edges list
     full_edges = []
@@ -204,13 +206,15 @@ if __name__ == '__main__':
         full_edges.append(ed.without_namespaces(ed.str2edge(it['edge'])))
 
     # build meronomy
+    print('creating meronomy...')
     mer = Meronomy(par, full_edges)
     mer.normalize_graph()
+    print('meronomy created.')
 
     # generate synonyms
     mer.generate_synonyms()
     for synid in mer.synonym_sets:
         synonym_set = mer.synonym_sets[synid]
-        if len(synonym_set) > 1:
+        if len(synonym_set) > 0:
             print('syn_set #%s' % synid)
             print(synonym_set)
