@@ -132,7 +132,7 @@ if __name__ == '__main__':
     # edge_data = json_tools.read('edges_similar_concepts.json')
     edge_data = json_tools.read('all.json')
 
-    # build extra edges list
+    # build full edges list
     full_edges = []
     for it in edge_data:
         full_edges.append(ed.without_namespaces(ed.str2edge(it['edge'])))
@@ -147,16 +147,21 @@ if __name__ == '__main__':
     pr_pairs = [(g.graph.vs[i]['name'], pr[i]) for i in range(len(pr))]
     pr_pairs = sorted(pr_pairs, key=lambda x: x[1], reverse=True)
 
+    remaining_edges = full_edges[:]
     covered = set()
     for pr_pair in pr_pairs:
         label = pr_pair[0]
         pr = pr_pair[1]
         edge = ed.str2edge(label)
         count = 0
-        for full_edge in full_edges:
+        new_remaining_edges = []
+        for full_edge in remaining_edges:
             if ed.contains(full_edge, edge, deep=True):
                 count += 1
                 covered.add(ed.edge2str(full_edge, namespaces=False))
+            else:
+                new_remaining_edges.append(full_edge)
+        remaining_edges = new_remaining_edges
         print('%s [%s]{%s} %.2f%% %s' % (label, count, len(covered),
                                          (float(len(covered)) / float(len(full_edges))) * 100., pr))
 
