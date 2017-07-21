@@ -118,6 +118,7 @@ class AtomGroups(object):
             self.synonym_sets.append({'edges': synonyms,
                                       'count': count,
                                       'index': len(self.synonym_sets)})
+            print(synonyms)
 
         for atom in self.atoms:
             self.synonym_sets.append({'edges': [atom],
@@ -292,24 +293,36 @@ if __name__ == '__main__':
     print('parser created.')
 
     # read data
-    edge_data = json_tools.read('edges_similar_concepts.json')
+    # edge_data = json_tools.read('edges_similar_concepts.json')
 
     # build extra edges list
+    # extra_edges = []
+    # full_edges = []
+    # for it in edge_data:
+    #     e = ed.str2edge(it['edge'])
+    #     full_edges.append(e)
+    #     matched = [ed.str2edge(match[1]) for match in it['matches']]
+    #     for part in e[1:]:
+    #         if part not in matched:
+    #             extra_edges.append(part)
+
+    edge_data = json_tools.read('all.json')
+    # build full edges list
     extra_edges = []
-    full_edges = []
     for it in edge_data:
-        e = ed.str2edge(it['edge'])
-        full_edges.append(e)
-        matched = [ed.str2edge(match[1]) for match in it['matches']]
-        for part in e[1:]:
-            if part not in matched:
-                extra_edges.append(part)
+        extra_edges.append(ed.without_namespaces(ed.str2edge(it['edge'])))
+    full_edges = extra_edges
 
     ag = AtomGroups(par)
+    print('set edges')
     ag.set_edges(extra_edges)
+    print('generate_atoms')
     ag.generate_atoms()
+    print('generate synonyms')
     ag.generate_synonyms()
+    print('generate atom groups')
     ag.generate_atom_groups()
     ag.print_atom_groups()
+    print('generate atom group clusters')
     ag.generate_atom_group_clusters(full_edges)
     ag.print_atom_group_clusters()

@@ -19,6 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import operator
 import igraph
 import gb.tools.json as json_tools
 import gb.hypergraph.symbol as sym
@@ -35,6 +36,11 @@ class Meronomy(object):
         self.graph = None
         self.edges = {}
         self.vertices = set()
+        self.atoms = {}
+        self.syn_ids = {}
+        self.synonym_sets = {}
+        self.cur_syn_id = 0
+
         self.init_graph(claims)
 
     def init_graph(self, claims):
@@ -64,9 +70,6 @@ class Meronomy(object):
         if len(s) == 0:
             return None
 
-        if s == 'china':
-            return None
-
         word = self.parser.make_word(s)
         if word.prob < MAX_PROB:
             return s
@@ -78,14 +81,15 @@ class Meronomy(object):
         if not orig:
             return
         self.vertices.add(orig)
+        self.atoms[orig] = ed.depth(edge)
         if sym.is_edge(edge):
             for element in edge:
                 targ = self.edge2str(element)
-                if not targ:
-                    return
-                self.vertices.add(targ)
-                self.add_link(orig, targ)
-                self.add_claim(element)
+                if targ:
+                    self.vertices.add(targ)
+                    self.atoms[targ] = ed.depth(element)
+                    self.add_link(orig, targ)
+                    self.add_claim(element)
 
     def normalize_graph(self):
         for orig in self.graph.vs:
@@ -102,16 +106,83 @@ class Meronomy(object):
         except:
             return None
 
-    def similarity(self, edge1, edge2):
-        e1 = ed.edge2str(edge1, namespaces=False)
-        e2 = ed.edge2str(edge2, namespaces=False)
-        edge = self.find_edge(e1, e2)
-        if edge:
-            return edge['weight']
-        edge = self.find_edge(e2, e1)
-        if edge:
-            return edge['weight']
-        return 0.
+    def syn_id(self, atom):
+        if atom in self.syn_ids:
+            return self.syn_ids[atom]
+        return None
+
+    def valid_synonym_parent(self, parent):
+        orig = self.graph.vs.find(parent)
+        edges = self.graph.incident(orig.index, mode='out')
+        edges = [self.graph.es[edge] for edge in edges]
+        targets = [self.graph.vs[edge.target]['name'] for edge in edges]
+        syn_ids = [self.syn_id(target) for target in targets]
+        syn_ids = [syn_id for syn_id in syn_ids if syn_id]
+        return len(set(syn_ids)) < 2
+
+    def synonym_ids_in(self, edge):
+        sids = set()
+        atom = self.edge2str(edge)
+        atom_syn_id = self.syn_id(atom)
+        if atom_syn_id:
+            sids.add(atom_syn_id)
+        if sym.is_edge(edge):
+            for element in edge:
+                atom = self.edge2str(element)
+                atom_syn_id = self.syn_id(atom)
+                if atom_syn_id:
+                    sids.add(atom_syn_id)
+                sids = sids.union(self.synonym_ids_in(element))
+        return sids
+
+    def generate_synonyms(self):
+        sorted_atoms = sorted(self.atoms.items(), key=operator.itemgetter(1), reverse=False)
+        for atom_pair in sorted_atoms:
+            orig = self.graph.vs.find(atom_pair[0])
+            edges = self.graph.incident(orig.index, mode='in')
+            if len(edges) > 0:
+                max_weight = max([self.graph.es[e]['weight'] for e in edges])
+            else:
+                max_weight = 0.
+            if max_weight > .25:
+                for e in edges:
+                    edge = self.graph.es[e]
+                    if edge['weight'] == max_weight:
+                        source = self.graph.vs[edge.source]['name']
+                        target = self.graph.vs[edge.target]['name']
+                        source_syn_id = self.syn_id(source)
+                        target_syn_id = self.syn_id(target)
+
+                        if not (source_syn_id and target_syn_id):
+                            if self.valid_synonym_parent(source):
+                                if source_syn_id:
+                                    self.syn_ids[target] = source_syn_id
+                                elif target_syn_id:
+                                    self.syn_ids[source] = target_syn_id
+                                else:
+                                    syn_id = self.cur_syn_id
+                                    self.cur_syn_id += 1
+                                    self.syn_ids[source] = syn_id
+                                    self.syn_ids[target] = syn_id
+                            else:
+                                if not target_syn_id:
+                                    syn_id = self.cur_syn_id
+                                    self.cur_syn_id += 1
+                                    self.syn_ids[target] = syn_id
+
+        # filter out multiple synonyms
+        for atom in self.syn_ids:
+            if len(self.synonym_ids_in(ed.str2edge(atom))) > 1:
+                self.syn_ids[atom] = self.cur_syn_id
+                self.cur_syn_id += 1
+
+        # generate synonym sets
+        for atom in self.syn_ids:
+            syn_id = self.syn_id(atom)
+            if syn_id:
+                if syn_id not in self.synonym_sets:
+                    self.synonym_sets[syn_id] = set()
+                self.synonym_sets[syn_id].add(atom)
 
 
 if __name__ == '__main__':
@@ -130,28 +201,12 @@ if __name__ == '__main__':
 
     # build meronomy
     mer = Meronomy(par, full_edges)
-    # mer.normalize_graph()
+    mer.normalize_graph()
 
-    print(mer.similarity('hillary', ['+', 'hillary', 'clinton']))
-
-    pr = mer.graph.pagerank(weights='weight')
-    pr_pairs = [(mer.graph.vs[i]['name'], pr[i]) for i in range(len(pr))]
-    pr_pairs = sorted(pr_pairs, key=lambda x: x[1], reverse=True)
-
-    covered = set()
-    for pr_pair in pr_pairs:
-        label = pr_pair[0]
-        pr = pr_pair[1]
-        edge = ed.str2edge(label)
-        count = 0
-        for full_edge in full_edges:
-            if ed.contains(full_edge, edge, deep=True):
-                count += 1
-                covered.add(ed.edge2str(full_edge, namespaces=False))
-        print('%s [%s]{%s} %.2f%% %s' % (label, count, len(covered),
-                                         (float(len(covered)) / float(len(full_edges))) * 100., pr))
-
-    # community detection
-    # comms = igraph.Graph.community_multilevel(mer.graph.as_undirected(combine_edges=max),
-    #                                           weights='weight', return_levels=False)
-    # print(comms)
+    # generate synonyms
+    mer.generate_synonyms()
+    for syn_id in mer.synonym_sets:
+        synonym_set = mer.synonym_sets[syn_id]
+        if len(synonym_set) > 1:
+            print('syn_set #%s' % syn_id)
+            print(synonym_set)
