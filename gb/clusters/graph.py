@@ -124,8 +124,8 @@ if __name__ == '__main__':
     print('parser created.')
 
     # read data
-    edge_data = json_tools.read('edges_similar_concepts.json')
-    # edge_data = json_tools.read('all.json')
+    # edge_data = json_tools.read('edges_similar_concepts.json')
+    edge_data = json_tools.read('all.json')
 
     # build full edges list
     full_edges = []
