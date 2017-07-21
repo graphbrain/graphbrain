@@ -98,14 +98,6 @@ class Meronomy(object):
             for edge in edges:
                 self.graph.es[edge]['weight'] = self.graph.es[edge]['weight'] / total
 
-    def find_edge(self, orig, targ):
-        try:
-            orig_id = self.graph.vs.find(orig).index
-            targ_id = self.graph.vs.find(targ).index
-            return self.graph.es.find(_between=((orig_id,), (targ_id,)))
-        except:
-            return None
-
     def syn_id(self, atom):
         if atom in self.syn_ids:
             return self.syn_ids[atom]
@@ -135,6 +127,11 @@ class Meronomy(object):
                 sids = sids.union(self.synonym_ids_in(element))
         return sids
 
+    def new_syn_id(self):
+        syn_id = self.cur_syn_id
+        self.cur_syn_id += 1
+        return syn_id
+
     def generate_synonyms(self):
         sorted_atoms = sorted(self.atoms.items(), key=operator.itemgetter(1), reverse=False)
         for atom_pair in sorted_atoms:
@@ -160,29 +157,36 @@ class Meronomy(object):
                                 elif target_syn_id:
                                     self.syn_ids[source] = target_syn_id
                                 else:
-                                    syn_id = self.cur_syn_id
-                                    self.cur_syn_id += 1
+                                    syn_id = self.new_syn_id()
                                     self.syn_ids[source] = syn_id
                                     self.syn_ids[target] = syn_id
                             else:
                                 if not target_syn_id:
-                                    syn_id = self.cur_syn_id
-                                    self.cur_syn_id += 1
+                                    syn_id = self.new_syn_id()
                                     self.syn_ids[target] = syn_id
 
         # filter out multiple synonyms
+        delete_synonyms = set()
         for atom in self.syn_ids:
             if len(self.synonym_ids_in(ed.str2edge(atom))) > 1:
-                self.syn_ids[atom] = self.cur_syn_id
-                self.cur_syn_id += 1
+                delete_synonyms.add(self.syn_ids[atom])
 
         # generate synonym sets
         for atom in self.syn_ids:
             syn_id = self.syn_id(atom)
             if syn_id:
-                if syn_id not in self.synonym_sets:
-                    self.synonym_sets[syn_id] = set()
-                self.synonym_sets[syn_id].add(atom)
+                if syn_id in delete_synonyms:
+                    new_id = self.new_syn_id()
+                    self.syn_ids[atom] = new_id
+                    self.synonym_sets[syn_id] = {new_id}
+                else:
+                    if syn_id not in self.synonym_sets:
+                        self.synonym_sets[syn_id] = set()
+                    self.synonym_sets[syn_id].add(atom)
+            else:
+                new_id = self.new_syn_id()
+                self.syn_ids[atom] = new_id
+                self.synonym_sets[syn_id] = {new_id}
 
 
 if __name__ == '__main__':
@@ -205,8 +209,8 @@ if __name__ == '__main__':
 
     # generate synonyms
     mer.generate_synonyms()
-    for syn_id in mer.synonym_sets:
-        synonym_set = mer.synonym_sets[syn_id]
+    for synid in mer.synonym_sets:
+        synonym_set = mer.synonym_sets[synid]
         if len(synonym_set) > 1:
-            print('syn_set #%s' % syn_id)
+            print('syn_set #%s' % synid)
             print(synonym_set)
