@@ -106,10 +106,46 @@ class TermFilter(Filter):
         write_edge_data(edge_data, file_path)
 
 
+class RelFilter(Filter):
+    def __init__(self, hg, term):
+        Filter.__init__(self, hg)
+        self.term = term
+
+    def rel_has_term(self, edge):
+        if sym.is_edge(edge) and len(edge) > 2:
+            if len(edge) > 3 or sym.is_edge(edge[2]):
+                rel = edge[0]
+                if sym.is_edge(rel):
+                    return self.term in rel
+                else:
+                    return rel == self.term
+        return False
+
+    def edges_with_rel(self):
+        edges = self.hg.all()
+
+        filtered_edges = []
+        for edge in edges:
+            if not exclude(edge):
+                if self.rel_has_term(edge):
+                    print(edge)
+                    filtered_edges.append(edge)
+
+        result = []
+        for e in filtered_edges:
+            edge_data = {'edge': ed.edge2str(e),
+                         'text': self.hg.get_str_attribute(e, 'text')}
+            result.append(edge_data)
+        return result
+
+    # override
+    def write_edges(self, file_path):
+        edge_data = self.edges_with_rel()
+        write_edge_data(edge_data, file_path)
+
+
 if __name__ == '__main__':
     hgr = hyperg.HyperGraph({'backend': 'leveldb', 'hg': 'reddit-politics.hg'})
-    # s = TermFilter(hgr, 'china')
-    # s.write_edges('china.json')
 
-    filt = AllFilter(hgr)
-    filt.write_edges('all.json')
+    filt = RelFilter(hgr, 'says')
+    filt.write_edges('says.json')
