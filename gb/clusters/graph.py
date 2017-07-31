@@ -32,8 +32,12 @@ MAX_PROB = -12
 
 
 class Graph(object):
-    def __init__(self, parser, claims):
+    def __init__(self, parser, claims, black_list=None):
         self.parser = parser
+        if black_list:
+            self.black_list = black_list
+        else:
+            self.black_list = []
         self.meronomy = None
         self.graph = None
         self.edges = {}
@@ -84,6 +88,8 @@ class Graph(object):
     def edge2syn(self, edge):
         atom = self.edge2str(edge)
         if atom:
+            if atom in self.black_list:
+                return None
             syn_id = self.meronomy.syn_id(atom)
             if syn_id:
                 return str(syn_id)
@@ -117,6 +123,26 @@ class Graph(object):
                 return True
         return False
 
+    def synset_pr_pairs(self):
+        pr = g.graph.pagerank(weights='weight')
+        pairs = [(g.graph.vs[i]['name'], pr[i]) for i in range(len(pr))]
+        return sorted(pairs, key=lambda x: x[1], reverse=True)
+
+
+def contains_one_of(edge, concepts):
+    for concept in concepts:
+        if ed.contains(edge, concept):
+            return True
+    return False
+
+
+def contains_all_concept_sets(edge, concept_sets):
+    for concept_set in concept_sets:
+        if concept_set:
+            if not contains_one_of(edge, concept_set):
+                return False
+    return True
+
 
 if __name__ == '__main__':
     print('creating parser...')
@@ -132,16 +158,33 @@ if __name__ == '__main__':
     for it in edge_data:
         full_edges.append(ed.without_namespaces(ed.str2edge(it['edge'])))
 
-    # build graph
-    g = Graph(par, full_edges)
+    # synonym_set
+    synset1 = []
+    synset2 = []
+    synset3 = []
 
-    pr = g.graph.pagerank(weights='weight')
-    pr_pairs = [(g.graph.vs[i]['name'], pr[i]) for i in range(len(pr))]
-    pr_pairs = sorted(pr_pairs, key=lambda x: x[1], reverse=True)
+    synset1 = ['trump', 'donald', '(+ donald trump)']
+    # synset2 = ['ryan', '(+ paul ryan)', 'paul']
+    synset2 = ['vladimir', '(+ vladimir putin)', 'putin']
+    concepts1 = [ed.str2edge(x) for x in synset1]
+    concepts2 = [ed.str2edge(x) for x in synset2]
+    concepts3 = [ed.str2edge(x) for x in synset3]
+
+    concept_sets = [concepts1, concepts2, concepts3]
+
+    # filter edges
+    print('before filter: %s' % len(full_edges))
+    full_edges = [edge for edge in full_edges if contains_all_concept_sets(edge, concept_sets)]
+    print('after filter: %s' % len(full_edges))
+
+    # build graph
+    g = Graph(par, full_edges, black_list=synset1+synset2)
+
+    pr_pairs = g.synset_pr_pairs()
 
     remaining_edges = full_edges[:]
     covered = set()
-    for pr_pair in pr_pairs:
+    for pr_pair in pr_pairs[:50]:
         syn_id = int(pr_pair[0])
         pr = pr_pair[1]
         count = 0
@@ -153,5 +196,6 @@ if __name__ == '__main__':
             else:
                 new_remaining_edges.append(full_edge)
         remaining_edges = new_remaining_edges
-        print('%s [%s]{%s} %.2f%% %s' % (g.meronomy.synonym_label(syn_id), count, len(covered),
-                                         (float(len(covered)) / float(len(full_edges))) * 100., pr))
+        if count > 0:
+            print('%s [%s]{%s} %.2f%% %s' % (g.meronomy.synonym_label(syn_id), count, len(covered),
+                                             (float(len(covered)) / float(len(full_edges))) * 100., pr))
