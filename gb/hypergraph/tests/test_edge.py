@@ -94,6 +94,12 @@ class TestEdge(unittest.TestCase):
         self.assertEqual(ed.without_namespaces(('is', 'graphbrain/1', ('super', 'great/1'))),
                          ('is', 'graphbrain', ('super', 'great')))
 
+    def test_size(self):
+        self.assertEqual(ed.size('graphbrain/1'), 1)
+        self.assertEqual(ed.size(('is', 'graphbrain/1', 'great/1')), 3)
+        self.assertEqual(ed.size(('is', 'graphbrain/1', ('super', 'great/1'))), 3)
+        self.assertEqual(ed.size(('super', 'great/1')), 2)
+
 
 if __name__ == '__main__':
     unittest.main()
