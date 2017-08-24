@@ -219,3 +219,10 @@ def contains(edge, concept, deep=False):
         return False
     else:
         return edge == concept
+
+
+def size(edge):
+    """size of edge, if symbol size is 1"""
+    if sym.is_edge(edge):
+        return len(edge)
+    return 1

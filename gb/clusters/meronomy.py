@@ -187,7 +187,10 @@ class Meronomy(object):
                 self.syn_ids[atom] = new_id
                 self.synonym_sets[new_id] = {atom}
 
-    def synonym_label(self, syn_id):
+    def synonym_label(self, syn_id, short=False):
+        if short:
+            for atom in self.synonym_sets[syn_id][0]:
+
         return '{%s}' % ', '.join([atom for atom in self.synonym_sets[syn_id]])
 
 
