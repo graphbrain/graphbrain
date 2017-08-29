@@ -25,7 +25,7 @@ import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
 import gb.nlp.parser as par
 from gb.nlp.enrich_edge import enrich_edge
-import gb.metrics.similarity as simil
+import gb.metrics.word2vec_similarity as simil
 
 
 EXCLUDE_RELS = ['are_synonyms/gb', 'src/gb', 'have_same_lemma/gb']
