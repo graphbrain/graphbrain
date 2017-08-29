@@ -30,6 +30,19 @@ import gb.nlp.parser as par
 MAX_PROB = -12
 
 
+def edge2label(edge):
+    if sym.is_edge(edge):
+        _edge = list(edge[:])
+        if _edge[0] == '+':
+            _edge = _edge[1:]
+        if not sym.is_edge(_edge[0]):
+            if _edge[0][0] == '+':
+                _edge[0] = _edge[0][1:]
+        return ' '.join([edge2label(item) for item in _edge])
+    else:
+        return str(edge)
+
+
 class Meronomy(object):
     def __init__(self, parser, claims):
         self.parser = parser
@@ -189,8 +202,14 @@ class Meronomy(object):
 
     def synonym_label(self, syn_id, short=False):
         if short:
-            for atom in self.synonym_sets[syn_id][0]:
-
+            best_size = 0
+            best_edge = None
+            for atom in self.synonym_sets[syn_id]:
+                edge = ed.str2edge(atom)
+                if ed.size(edge) > best_size:
+                    best_edge = edge
+                    best_size = ed.size(edge)
+            return edge2label(best_edge).replace('"', ' ')
         return '{%s}' % ', '.join([atom for atom in self.synonym_sets[syn_id]])
 
 
