@@ -35,6 +35,7 @@ from gb.reader.reddit import RedditReader
 import gb.reader.stages.alpha_case_generator as alpha_cg
 import gb.reader.stages.alpha_forest as alpha_for
 import gb.tools.json as json_tools
+from gb.filters.filters import AllFilter
 
 
 @click.group()
@@ -226,6 +227,15 @@ def extract_json_fields(ctx):
     outfile = ctx.obj['outfile']
     fields = ctx.obj['fields']
     json_tools.extract_fields(infile, outfile, fields)
+
+
+@cli.command()
+@click.pass_context
+def all2json(ctx):
+    hg = HyperGraph(ctx.obj)
+    outfile = ctx.obj['outfile']
+    filt = AllFilter(hg)
+    filt.write_edges(outfile)
 
 
 show_logo()
