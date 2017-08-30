@@ -50,6 +50,7 @@ class TestEdge(unittest.TestCase):
                          ('src', 'graphbrain/1', ('is', 'graphbrain/1', 'great/1')))
         self.assertEqual(ed.str2edge('(is my) graphbrain/1 (super great/1)'),
                          (('is', 'my'), 'graphbrain/1', ('super', 'great/1')))
+        self.assertEqual(ed.str2edge('.'), '.')
 
     def test_edge2str(self):
         self.assertEqual(ed.edge2str(('is', 'graphbrain/1', 'great/1')), '(is graphbrain/1 great/1)')
