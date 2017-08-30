@@ -101,6 +101,14 @@ class TestEdge(unittest.TestCase):
         self.assertEqual(ed.size(('is', 'graphbrain/1', ('super', 'great/1'))), 3)
         self.assertEqual(ed.size(('super', 'great/1')), 2)
 
+    def test_subedges(self):
+        self.assertEqual(ed.subedges('graphbrain/1'), {'graphbrain/1'})
+        self.assertEqual(ed.subedges(('is', 'graphbrain/1', 'great/1')),
+                         {'is', 'graphbrain/1', 'great/1', ('is', 'graphbrain/1', 'great/1')})
+        self.assertEqual(ed.subedges(('is', 'graphbrain/1', ('super', 'great/1'))),
+                         {'is', 'graphbrain/1', 'super', 'great/1', ('super', 'great/1'),
+                          ('is', 'graphbrain/1', ('super', 'great/1'))})
+
 
 if __name__ == '__main__':
     unittest.main()

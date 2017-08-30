@@ -27,15 +27,25 @@ def similarity(hg, edge1, edge2):
     neighb2 = hg.star(edge2)
 
 
+def sphere(hg, edge):
+    edges = set(hg.star(edge))
+    for e in edges:
+        if hg.degree(e) > 0:
+            edges = edges.union(sphere(hg, e))
+    return edges
+
+
 if __name__ == '__main__':
-    hg = hyperg.HyperGraph({'backend': 'leveldb', 'hg': 'reddit-worldnews.hg'})
+    hg = hyperg.HyperGraph({'backend': 'leveldb', 'hg': 'reddit-worldnews-01012013-01082017.hg'})
 
     # e = 'clinton/nlp.clinton.noun'
 
     print('starting...')
 
-    e = '(+/gb prime/nlp.prime.adj minister/nlp.minister.noun)'
-    # e = 'europe/nlp.europe.noun'
+    # e = '(+/gb prime/nlp.prime.adj minister/nlp.minister.noun)'
+    e = 'europe/nlp.europe.noun'
+
+    print(len(sphere(hg, e)))
 
     best_item = None
     best_degree = -1
