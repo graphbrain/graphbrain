@@ -20,6 +20,8 @@
 
 
 import gb.hypergraph.edge as ed
+import gb.nlp.parser as par
+from gb.nlp.enrich_edge import enrich_edge
 
 
 def eedge_similarity(eedge1, eedge2):
@@ -122,3 +124,20 @@ def edge_concepts_similarity(eedge1, eedge2):
             del sims[best_key]
     complete = len(concepts1) == 0
     return total_sim, worst_sim, complete, matches
+
+
+def similarity(parser, edge1, edge2):
+    eedge1 = enrich_edge(parser, edge1)
+    eedge2 = enrich_edge(parser, edge2)
+    return edge_concepts_similarity(eedge1, eedge2)
+
+
+if __name__ == '__main__':
+    print('creating parser...')
+    par = par.Parser()
+    print('parser created.')
+
+    edge1 = 'berlin'
+    edge2 = 'germany'
+
+    print(similarity(par, edge1, edge2))
