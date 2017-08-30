@@ -53,6 +53,7 @@ def token_type(token):
     s = token
     pos = 0
     point = False
+    numbers = False
 
     while len(s) > 0:
         c = s[0]
@@ -66,8 +67,13 @@ def token_type(token):
                 point = True
         elif c < '0' or c > '9':
             return TokenType.STRING
+        else:
+            numbers = True
         s = s[1:]
         pos += 1
+
+    if not numbers:
+        return TokenType.STRING
 
     if point:
         return TokenType.DOUBLE
