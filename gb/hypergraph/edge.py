@@ -232,3 +232,12 @@ def size(edge):
     if sym.is_edge(edge):
         return len(edge)
     return 1
+
+
+def subedges(edge):
+    """all the subedges contained in the edge, including atoms and itself"""
+    edges = {edge}
+    if sym.is_edge(edge):
+        for item in edge:
+            edges = edges.union(subedges(item))
+    return edges
