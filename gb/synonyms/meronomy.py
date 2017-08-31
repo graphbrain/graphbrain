@@ -21,10 +21,8 @@
 
 import operator
 import igraph
-import gb.tools.json as json_tools
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
-import gb.nlp.parser as par
 
 
 MAX_PROB = -12
@@ -44,32 +42,52 @@ def edge2label(edge):
 
 
 class Meronomy(object):
-    def __init__(self, parser, claims):
+    def __init__(self, parser):
         self.parser = parser
         self.graph = None
-        self.edges = {}
+        self.graph_edges = {}
         self.vertices = set()
         self.atoms = {}
         self.syn_ids = {}
         self.synonym_sets = {}
         self.cur_syn_id = 0
-        self.init_graph(claims)
-
-    def init_graph(self, claims):
-        for claim in claims:
-            self.add_claim(claim)
-        self.graph = igraph.Graph(directed=True)
-        self.graph.add_vertices(list(self.vertices))
-        self.vertices = None
-        self.graph.add_edges(self.edges.keys())
-        self.graph.es['weight'] = list(self.edges.values())
-        self.edges = None
+        self.edge_map = {}
 
     # orig --[has part]--> targ
     def add_link(self, orig, targ):
-        if (orig, targ) not in self.edges:
-            self.edges[(orig, targ)] = 0.
-        self.edges[(orig, targ)] += 1.
+        if (orig, targ) not in self.graph_edges:
+            self.graph_edges[(orig, targ)] = 0.
+        self.graph_edges[(orig, targ)] += 1.
+
+    def add_edge(self, edge_ns):
+        edge = ed.without_namespaces(edge_ns)
+        orig = self.edge2str(edge)
+        if not orig:
+            return
+
+        if edge not in self.edge_map:
+            self.edge_map[edge] = set()
+        self.edge_map[edge].add(edge_ns)
+
+        self.vertices.add(orig)
+        self.atoms[orig] = ed.depth(edge)
+        if sym.is_edge(edge):
+            for element in edge:
+                targ = self.edge2str(element)
+                if targ:
+                    self.add_link(orig, targ)
+                    self.add_edge(element)
+
+    def generate(self):
+        self.graph = igraph.Graph(directed=True)
+        self.graph.add_vertices(list(self.vertices))
+        self.vertices = None
+        self.graph.add_edges(self.graph_edges.keys())
+        self.graph.es['weight'] = list(self.graph_edges.values())
+        self.graph_edges = None
+
+        self.normalize_graph()
+        self.generate_synonyms()
 
     def edge2str(self, edge):
         s = ed.edge2str(edge, namespaces=False)
@@ -87,21 +105,6 @@ class Meronomy(object):
             return s
 
         return None
-
-    def add_claim(self, edge):
-        orig = self.edge2str(edge)
-        if not orig:
-            return
-        self.vertices.add(orig)
-        self.atoms[orig] = ed.depth(edge)
-        if sym.is_edge(edge):
-            for element in edge:
-                targ = self.edge2str(element)
-                if targ:
-                    self.vertices.add(targ)
-                    self.atoms[targ] = ed.depth(element)
-                    self.add_link(orig, targ)
-                self.add_claim(element)
 
     def normalize_graph(self):
         for orig in self.graph.vs:
@@ -211,32 +214,3 @@ class Meronomy(object):
                     best_size = ed.size(edge)
             return edge2label(best_edge).replace('"', ' ')
         return '{%s}' % ', '.join([atom for atom in self.synonym_sets[syn_id]])
-
-
-if __name__ == '__main__':
-    print('creating parser...')
-    par = par.Parser()
-    print('parser created.')
-
-    # read data
-    # edge_data = json_tools.read('edges_similar_concepts.json')
-    edge_data = json_tools.read('all.json')
-
-    # build extra edges list
-    full_edges = []
-    for it in edge_data:
-        full_edges.append(ed.without_namespaces(ed.str2edge(it['edge'])))
-
-    # build meronomy
-    print('creating meronomy...')
-    mer = Meronomy(par, full_edges)
-    mer.normalize_graph()
-    print('meronomy created.')
-
-    # generate synonyms
-    mer.generate_synonyms()
-    for synid in mer.synonym_sets:
-        synonym_set = mer.synonym_sets[synid]
-        if len(synonym_set) > 0:
-            print('syn_set #%s' % synid)
-            print(synonym_set)

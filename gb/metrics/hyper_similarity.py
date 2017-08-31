@@ -20,41 +20,65 @@
 
 
 import gb.hypergraph.hypergraph as hyperg
+import gb.hypergraph.edge as ed
 
 
-def similarity(hg, edge1, edge2):
-    neighb1 = hg.star(edge1)
-    neighb2 = hg.star(edge2)
+class HyperSimilarity:
+    def __init__(self, hg):
+        self.hg = hg
+        self.cs_cache = {}
 
+    def sphere(self, edge):
+        edges = set(self.hg.star(edge))
+        for e in edges:
+            if self.hg.degree(e) > 0:
+                edges = edges.union(self.sphere(e))
+        return edges
 
-def sphere(hg, edge):
-    edges = set(hg.star(edge))
-    for e in edges:
-        if hg.degree(e) > 0:
-            edges = edges.union(sphere(hg, e))
-    return edges
+    def concept_sphere(self, edge):
+        if edge in self.cs_cache:
+            return self.cs_cache[edge]
+
+        concepts = set()
+        for item in self.sphere(edge):
+            concepts = concepts.union(ed.subedges(item))
+
+        self.cs_cache[edge] = concepts
+
+        return concepts
+
+    def similarity(self, edge1, edge2):
+        cs1 = self.concept_sphere(edge1)
+        cs2 = self.concept_sphere(edge2)
+
+        # csu = cs1.union(cs2)
+        csi = cs1.intersection(cs2)
+
+        return float(len(csi)) / float(min(len(cs1), len(cs2)))
+
+    def nsimilarity(self, edges1, edges2):
+        cs1 = set()
+        for edge in edges1:
+            cs1 = cs1.union(self.concept_sphere(edge))
+        cs2 = set()
+        for edge in edges2:
+            cs2 = cs2.union(self.concept_sphere(edge))
+
+        # csu = cs1.union(cs2)
+        csi = cs1.intersection(cs2)
+
+        return float(len(csi)) / float(min(len(cs1), len(cs2)))
 
 
 if __name__ == '__main__':
-    hg = hyperg.HyperGraph({'backend': 'leveldb', 'hg': 'reddit-worldnews-01012013-01082017.hg'})
+    hgr = hyperg.HyperGraph({'backend': 'leveldb', 'hg': 'reddit-worldnews-01012013-01082017.hg'})
+    hs = HyperSimilarity(hgr)
 
     # e = 'clinton/nlp.clinton.noun'
 
     print('starting...')
 
-    # e = '(+/gb prime/nlp.prime.adj minister/nlp.minister.noun)'
-    e = 'europe/nlp.europe.noun'
+    e1 = '(+/gb prime/nlp.prime.adj minister/nlp.minister.noun)'
+    e2 = 'europe/nlp.europe.noun'
 
-    print(len(sphere(hg, e)))
-
-    best_item = None
-    best_degree = -1
-    neighb = hg.star(e)
-    print(len(neighb))
-    for item in neighb:
-        deg = hg.degree(item)
-        if deg > best_degree:
-            best_item = item
-            best_degree = deg
-
-    print('%s %s' % (best_item, best_degree))
+    print(hs.similarity(e1, e2))
