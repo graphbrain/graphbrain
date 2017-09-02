@@ -214,3 +214,10 @@ class Meronomy(object):
                     best_size = ed.size(edge)
             return edge2label(best_edge).replace('"', ' ')
         return '{%s}' % ', '.join([atom for atom in self.synonym_sets[syn_id]])
+
+    def synonym_full_edges(self, syn_id):
+        edges = set()
+        for atom in self.synonym_sets[syn_id]:
+            edge = ed.str2edge(atom)
+            edges = edges.union(self.edge_map[edge])
+        return edges
