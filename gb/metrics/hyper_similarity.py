@@ -47,14 +47,23 @@ class HyperSimilarity:
 
         return concepts
 
+    def setweight(self, cs):
+        weight = 0.
+        for item in cs:
+            deg = self.hg.degree(item)
+            if deg > 0:
+                weight += 1. / float(deg)
+        return weight
+
+    def setsimilarity(self, cs1, cs2):
+        csu = cs1.union(cs2)
+        csi = cs1.intersection(cs2)
+        return self.setweight(csi) / self.setweight(csu)
+
     def similarity(self, edge1, edge2):
         cs1 = self.concept_sphere(edge1)
         cs2 = self.concept_sphere(edge2)
-
-        # csu = cs1.union(cs2)
-        csi = cs1.intersection(cs2)
-
-        return float(len(csi)) / float(min(len(cs1), len(cs2)))
+        return self.setsimilarity(cs1, cs2)
 
     def nsimilarity(self, edges1, edges2):
         cs1 = set()
@@ -64,10 +73,10 @@ class HyperSimilarity:
         for edge in edges2:
             cs2 = cs2.union(self.concept_sphere(edge))
 
-        # csu = cs1.union(cs2)
-        csi = cs1.intersection(cs2)
+        return self.setsimilarity(cs1, cs2)
 
-        return float(len(csi)) / float(min(len(cs1), len(cs2)))
+    def synonym_similarity(self, meronomy, syn_id_1, syn_id_2):
+        return self.nsimilarity(meronomy.synonym_full_edges(syn_id_1), meronomy.synonym_full_edges(syn_id_2))
 
 
 if __name__ == '__main__':
