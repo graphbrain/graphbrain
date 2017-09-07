@@ -20,7 +20,30 @@
 
 
 import gb.hypergraph.hypergraph as hyperg
+import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
+
+
+def valid_symbol(s):
+    if sym.is_edge(s):
+        return True
+    if sym.is_root(s):
+        return False
+    if sym.nspace(s) == 'gb':
+        return False
+    if s[0] == '+':
+        return False
+    if sym.nspace(s)[:3] != 'nlp':
+        return False
+    if sym.nspace(s)[-3:] == 'adp':
+        return False
+    if sym.nspace(s)[-3:] == 'det':
+        return False
+    if sym.nspace(s)[-4:] == 'verb':
+        return False
+    if sym.nspace(s)[-4:] == 'pron':
+        return False
+    return True
 
 
 class HyperSimilarity:
@@ -55,10 +78,27 @@ class HyperSimilarity:
                 weight += 1. / float(deg)
         return weight
 
+    def setsimilarity_(self, cs1, cs2):
+        csi = [v for v in cs1.intersection(cs2) if valid_symbol(v)]
+        csu = [v for v in cs1.union(cs2) if valid_symbol(v)]
+        for v in csi:
+            deg = float(self.hg.degree(v))
+            print('%s %s' % (v, deg))
+        w_i = self.setweight(csi)
+        w_u = self.setweight(csu)
+        if w_u == 0.:
+            return 0.
+        return w_i / w_u
+
     def setsimilarity(self, cs1, cs2):
-        csu = cs1.union(cs2)
-        csi = cs1.intersection(cs2)
-        return self.setweight(csi) / self.setweight(csu)
+        csi = [v for v in cs1.intersection(cs2) if valid_symbol(v)]
+        simil = 0.
+        for v in csi:
+            deg = float(self.hg.degree(v))
+            # print('%s %s' % (v, deg))
+            if deg > 0.:
+                simil += 1. / deg
+        return simil
 
     def similarity(self, edge1, edge2):
         cs1 = self.concept_sphere(edge1)

@@ -145,8 +145,10 @@ def str2edge(edge_str):
     elements = tuple(parsed_token(token) for token in tokens)
     if len(elements) > 1:
         return elements
-    else:
+    elif len(elements) > 0:
         return elements[0]
+    else:
+        return None
 
 
 def nodes2str(edge, namespaces=True):

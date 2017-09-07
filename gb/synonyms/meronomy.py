@@ -71,10 +71,11 @@ class Meronomy(object):
 
         self.vertices.add(orig)
         self.atoms[orig] = ed.depth(edge)
-        if sym.is_edge(edge):
-            for element in edge:
-                targ = self.edge2str(element)
+        if sym.is_edge(edge_ns):
+            for element in edge_ns:
+                targ = ed.without_namespaces(element)
                 if targ:
+                    targ = self.edge2str(targ)
                     self.add_link(orig, targ)
                     self.add_edge(element)
 
