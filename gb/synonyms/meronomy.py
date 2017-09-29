@@ -220,5 +220,6 @@ class Meronomy(object):
         edges = set()
         for atom in self.synonym_sets[syn_id]:
             edge = ed.str2edge(atom)
-            edges = edges.union(self.edge_map[edge])
+            if edge in self.edge_map:
+                edges = edges.union(self.edge_map[edge])
         return edges
