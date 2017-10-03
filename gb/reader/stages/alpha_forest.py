@@ -30,17 +30,8 @@ from gb.reader.parser_output import ParserOutput
 from gb.reader.stages.common import Transformation
 
 
-# CASE_FIELDS = ('transformation', 'child_pos', 'child_dep', 'child_tag',
-#                'parent_pos', 'parent_dep', 'parent_tag', 'child_position')
-
-CASE_FIELDS = ('transformation',
-               'child_dep', 'child_tag', 'parent_dep', 'parent_tag',
-               # 'child_head_dep', 'child_head_tag', 'parent_head_dep', 'parent_head_tag',
-               # 'child_all_dep', 'child_all_tag', 'parent_all_dep', 'parent_all_tag',
-               'child_position',
-               'child_is_atom', 'parent_is_atom')
-
-# CASE_FIELDS = ('transformation', 'child_pos', 'child_dep', 'parent_pos', 'parent_dep', 'child_position')
+CASE_FIELDS = ('transformation', 'child_dep', 'child_tag', 'parent_dep', 'parent_tag',
+               'child_position', 'child_is_atom', 'parent_is_atom')
 
 
 def generate_fields(prefix, values):
@@ -231,5 +222,5 @@ if __name__ == '__main__':
 
     for r in result:
         s = Sentence(r[1])
-        t = transform(s)
-        print(t.tree.to_hyperedge_str(with_namespaces=False))
+        tr = transform(s)
+        print(tr.tree.to_hyperedge_str(with_namespaces=False))

@@ -41,7 +41,6 @@ class Extractor(object):
         self.parser = None
         self.disamb = None
         self.debug = False
-        self.outputs = []
         self.aux_text = ''
         self.show_namespaces = show_namespaces
 
@@ -93,8 +92,6 @@ class Extractor(object):
         if self.debug:
             sentence.print_tree()
 
-        self.outputs = []
-
         last_stage_output = None
         first = True
         for name in self.stages:
@@ -106,10 +103,14 @@ class Extractor(object):
             else:
                 last_stage_output = stage.process()
             output = last_stage_output.tree.to_hyperedge_str(with_namespaces=self.show_namespaces)
-            self.outputs.append(output)
             self.debug_msg(output)
 
         last_stage_output.main_edge = last_stage_output.tree.to_hyperedge()
+
+        # TODO: ugly...
+        last_stage_output.sentence = None
+        last_stage_output.tree = None
+
         return last_stage_output
 
 
