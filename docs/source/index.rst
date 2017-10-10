@@ -10,6 +10,7 @@ Welcome to GraphBrain's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   install.rst
    api.rst
 
 
