@@ -42,7 +42,9 @@ setup(
         'plyvel',
         'bottle',
         'praw',
-        'jupyter'
+        'jupyter',
+        'Sphinx',
+        'sphinx_rtd_theme'
     ],
     entry_points='''
         [console_scripts]
