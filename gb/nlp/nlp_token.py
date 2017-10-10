@@ -19,6 +19,25 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+def token_from_dict(token_dict):
+    token = Token()
+    token.word = token_dict['word']
+    token.depth = token_dict['depth']
+    token.lemma = token_dict['lemma']
+    token.shape = token_dict['shape']
+    token.logprob = token_dict['logprob']
+    token.pos = token_dict['pos']
+    token.dep = token_dict['dep']
+    token.tag = token_dict['tag']
+    token.parent = token_dict['parent']
+    token.left_children = token_dict['left_children']
+    token.right_children = token_dict['right_children']
+    token.entity_type = token_dict['entity_type']
+    token.separator = token_dict['separator']
+    token.position_in_sentence = token_dict['position_in_sentence']
+    return token
+
+
 class Token:
     """Generic NLP token."""
 
@@ -38,6 +57,28 @@ class Token:
         self.separator = False
         self.position_in_sentence = -1
         self.vector = None
+
+    def to_dict(self):
+        token_dict = {
+            'word': self.word,
+            'depth': self.depth,
+            'lemma': self.lemma,
+            'shape': self.shape,
+            'logprob': self.logprob,
+            'pos': self.pos,
+            'dep': self.dep,
+            'tag': self.tag,
+            'parent': -1,
+            'left_children': [child.position_in_sentence for child in self.left_children],
+            'right_children': [child.position_in_sentence for child in self.right_children],
+            'entity_type': self.entity_type,
+            'separator': self.separator,
+            'position_in_sentence': self.position_in_sentence
+            # 'vector': self.vector
+        }
+        if self.parent:
+            token_dict['parent'] = self.parent.position_in_sentence
+        return token_dict
 
     def to_list(self):
         tokens = []
