@@ -45,9 +45,12 @@ def assign_depths(token, depth):
 
 
 class Sentence:
-    def __init__(self, tokens):
-        self.tokens = tokens
-        assign_depths(self.root(), 0)
+    def __init__(self, tokens=None, json_str=None):
+        if tokens:
+            self.tokens = tokens
+            assign_depths(self.root(), 0)
+        if json_str:
+            self.from_json(json_str)
 
     def to_json(self):
         data = [token.to_dict() for token in self.tokens]
