@@ -534,10 +534,13 @@ class CaseGenerator(object):
 
         return elem_id, transf
 
-    def generate(self, sentence_str, outcome_str=None):
+    def generate(self, sentence_str, json_str=None, outcome_str=None):
         self.tree = Tree()
         self.sentence_str = sentence_str
-        self.sentence = Sentence(self.parser.parse_text(sentence_str)[0][1])
+        if json_str:
+            self.sentence = Sentence(json_str=json_str)
+        else:
+            self.sentence = Sentence(self.parser.parse_text(sentence_str)[0][1])
         self.sentence.print_tree()
         if outcome_str:
             self.outcome_str = outcome_str
@@ -565,7 +568,7 @@ def generate_cases(infile, outfile):
     with open(infile) as f:
         for line in f:
             current_parse.append(line)
-            if len(current_parse) == 3:
+            if len(current_parse) == 4:
                 parses.append(current_parse)
                 current_parse = []
 
@@ -574,10 +577,11 @@ def generate_cases(infile, outfile):
     cg = CaseGenerator()
     for parse in parses:
         sentence_str = parse[0].strip()
-        outcome_str = parse[1].strip()
-        cg.transfs = [int(token) for token in parse[2].split(',')]
+        json_str = parse[1].strip()
+        outcome_str = parse[2].strip()
+        cg.transfs = [int(token) for token in parse[3].split(',')]
         cg.cases = []
-        cg.generate(sentence_str, outcome_str)
+        cg.generate(sentence_str, json_str, outcome_str)
         if cg.validate():
             correct += 1
             cg.write_cases(outfile)
@@ -617,6 +621,7 @@ def interactive_edge_builder(outfile):
                 if write == 'y':
                     f = open(outfile, 'a')
                     f.write('%s\n' % sentence_str)
+                    f.write('%s\n' % cg.sentence.to_json())
                     f.write('%s\n' % outcome)
                     f.write('%s\n' % ','.join([str(transf) for transf in cg.transfs]))
                     f.close()
