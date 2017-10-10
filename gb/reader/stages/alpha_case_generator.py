@@ -24,7 +24,7 @@ import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
-from gb.nlp.token import Token
+from gb.nlp.nlp_token import Token
 from gb.reader.semantic_tree import Tree, Position
 from gb.reader.stages.common import Transformation
 from gb.reader.stages.alpha_forest import expanded_fields, build_case

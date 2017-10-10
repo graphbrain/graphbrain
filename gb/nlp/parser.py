@@ -21,7 +21,7 @@
 
 import spacy
 from gb.nlp.word import Word
-from gb.nlp.token import Token
+from gb.nlp.nlp_token import Token
 from gb.nlp.sentence import Sentence
 
 
@@ -86,14 +86,15 @@ class Parser:
 
 
 if __name__ == '__main__':
+    # test_text = u"""
+    # Alan Mathison Turing was a pioneering English computer scientist, mathematician, logician, cryptanalyst and
+    # theoretical biologist. He was highly influential in the development of theoretical computer science, providing a
+    # formalisation of the concepts of algorithm and computation with the Turing machine, which can be considered a model
+    # of a general purpose computer. Turing is widely considered to be the father of theoretical computer science
+    # and artificial intelligence.
+    # The psychologist George Kelley (1955) noted that humans do not enter a world that is inherently structured; we must
+    # give the world a structure that we ourselves create."""
     test_text = u"""
-    Alan Mathison Turing was a pioneering English computer scientist, mathematician, logician, cryptanalyst and
-    theoretical biologist. He was highly influential in the development of theoretical computer science, providing a
-    formalisation of the concepts of algorithm and computation with the Turing machine, which can be considered a model
-    of a general purpose computer. Turing is widely considered to be the father of theoretical computer science
-    and artificial intelligence.
-    The psychologist George Kelley (1955) noted that humans do not enter a world that is inherently structured; we must
-    give the world a structure that we ourselves create.
     Some subspecies of mosquito might be 1st to be genetically wiped out.
     """
 

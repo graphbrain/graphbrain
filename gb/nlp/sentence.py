@@ -19,8 +19,10 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import json
 from asciitree import LeftAligned
 from collections import OrderedDict
+from gb.nlp.nlp_token import token_from_dict
 
 
 def node_label(token, prefix):
@@ -46,6 +48,19 @@ class Sentence:
     def __init__(self, tokens):
         self.tokens = tokens
         assign_depths(self.root(), 0)
+
+    def to_json(self):
+        data = [token.to_dict() for token in self.tokens]
+        return json.dumps(data)
+
+    def from_json(self, json_str):
+        token_dicts = json.loads(json_str)
+        self.tokens = [token_from_dict(token_dict) for token_dict in token_dicts]
+        for token in self.tokens:
+            if token.parent >= 0:
+                token.parent = self.tokens[token.parent]
+            token.left_children = [self.tokens[i] for i in token.left_children]
+            token.right_children = [self.tokens[i] for i in token.right_children]
 
     def root(self):
         for token in self.tokens:
