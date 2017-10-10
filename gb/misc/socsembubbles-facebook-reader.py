@@ -19,15 +19,14 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import sys
-import csv
+import json
 import time
-import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
 from gb.reader.extractor import Extractor
 
 
-class SemBubbleReader(object):
+# Reader of Facebook data for SocSemBubbles project
+class FacebookReader(object):
     def __init__(self, hg):
         self.hg = hg
         self.extractor = Extractor(hg, stages=('alpha-forest', 'beta-naive', 'gamma', 'delta', 'epsilon'))
@@ -38,7 +37,7 @@ class SemBubbleReader(object):
         self.items_processed = 0
         self.first_item = True
 
-    def process_text(self, text, author):
+    def process_text(self, parent, author, text):
         start_t = time.time()
         parses = self.extractor.read_text(text.lower(), aux_text=None, reset_context=True)
         for p in parses:
@@ -47,6 +46,7 @@ class SemBubbleReader(object):
             print(ed.edge2str(p[1].main_edge))
             if len(p[1].main_edge) < 8:
                 self.hg.add_belief(author, p[1].main_edge)
+                self.hg.add(('parent/gb', p[1].main_edge, parent))
                 self.main_edges += 1
                 for edge in p[1].edges:
                     self.hg.add_belief('gb', edge)
@@ -66,31 +66,27 @@ class SemBubbleReader(object):
             print('total items: %s' % self.items_processed)
             print('items per minute: %s' % items_per_min)
 
-    def process_post(self, post):
-        web_entity = sym.build(post['web_entity'], 'web_entity')
-        print('web_entity: %s' % web_entity)
+    def process_comment(self, parent, author, message):
+        print('author: %s' % author)
 
-        text = post['text'].strip()
+        text = message.strip()
+        if len(text) == 0:
+            return
         if text[-1].isalnum():
             text += '.'
-        self.process_text(text, web_entity)
+        self.process_text(parent, author, text)
 
     def read_file(self, filename):
         # self.extractor.debug = True
 
-        csv.field_size_limit(sys.maxsize)
-        with open(filename, 'r') as csvfile:
-            first = True
-            for row in csv.reader(csvfile, delimiter=',', quotechar='"'):
-                if first:
-                    first = False
-                else:
-                    post = {'id': row[0],
-                            'url': row[1],
-                            'web_entity_id': row[2],
-                            'web_entity': row[3],
-                            'text': row[4]}
-                    self.process_post(post)
+        with open(filename, 'r') as f:
+            for entry in f:
+                entry = json.loads(entry)
+                parent = entry['begin']['from']
+                for comment in entry['comments']:
+                    author = comment['from']
+                    message = comment['message']
+                    self.process_comment(parent, author, message)
 
         print('main edges created: %s' % self.main_edges)
         print('extra edges created: %s' % self.extra_edges)
@@ -99,5 +95,5 @@ class SemBubbleReader(object):
 
 if __name__ == '__main__':
     from gb.hypergraph.hypergraph import HyperGraph
-    hgr = HyperGraph({'backend': 'leveldb', 'hg': 'card_and_id_fraud.hg'})
-    SemBubbleReader(hgr).read_file('Card_and_ID_fraud.csv')
+    hgr = HyperGraph({'backend': 'leveldb', 'hg': 'facebook.hg'})
+    FacebookReader(hgr).read_file('statuses.json')
