@@ -166,7 +166,7 @@ class HypergenForest(object):
         for child_token in token.right_children:
             self.process_token(child_token, token, elem_id, Position.RIGHT)
 
-        # infer and apply transformation
+        # predict and apply transformation
         transf = -1
         if parent_token:
             parent = self.tree.get(parent_id)
