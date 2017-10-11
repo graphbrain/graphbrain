@@ -38,7 +38,7 @@ def flatten_concept(edge):
     return edge
 
 
-class EpsilonStage(object):
+class Concepts(object):
     def __init__(self, output):
         self.output = output
 

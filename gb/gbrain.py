@@ -32,8 +32,8 @@ from gb.tools.reader_tests import ReaderTests
 from gb.ui.server import start_ui
 from gb.retrievers.reddit import RedditRetriever
 from gb.reader.reddit import RedditReader
-import gb.reader.stages.alpha_case_generator as alpha_cg
-import gb.reader.stages.alpha_forest as alpha_for
+import gb.reader.stages.hypergen_case_generator as hypergen_cg
+import gb.reader.stages.hypergen_forest as hypergen_for
 import gb.tools.json as json_tools
 from gb.filters.filters import AllFilter
 
@@ -201,23 +201,23 @@ def reddit_reader(ctx):
 @click.pass_context
 def interactive_edge_builder(ctx):
     outfile = ctx.obj['outfile']
-    alpha_cg.interactive_edge_builder(outfile)
+    hypergen_cg.interactive_edge_builder(outfile)
 
 
 @cli.command()
 @click.pass_context
-def generate_alpha_cases(ctx):
+def generate_hypergen_cases(ctx):
     infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
-    alpha_cg.generate_cases(infile, outfile)
+    hypergen_cg.generate_cases(infile, outfile)
 
 
 @cli.command()
 @click.pass_context
-def learn_alpha_forest(ctx):
+def learn_hypergen_forest(ctx):
     infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
-    alpha_for.learn(infile, outfile)
+    hypergen_for.learn(infile, outfile)
 
 
 @cli.command()

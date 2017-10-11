@@ -36,14 +36,6 @@ def is_related_to_relationship(token, parent):
         return False
     if is_token_relationship(token.parent, None):
         return True
-    # if token.left_children:
-    #     for child in token.left_children:
-    #         if is_token_relationship(child, token):
-    #             return True
-    # if token.right_children:
-    #     for child in token.right_children:
-    #         if is_token_relationship(child, token):
-    #             return True
 
 
 def is_token_relationship(token, parent):

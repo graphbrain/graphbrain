@@ -25,17 +25,18 @@ import gb.hypergraph.edge as ed
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
 from gb.sense.disambiguation import Disambiguation
-from gb.reader.stages.alpha_forest import AlphaForest
-from gb.reader.stages.beta import BetaStage
-from gb.reader.stages.beta_simple import BetaStageSimple
-from gb.reader.stages.beta_naive import BetaStageNaive
-from gb.reader.stages.gamma import GammaStage
-from gb.reader.stages.delta import DeltaStage
-from gb.reader.stages.epsilon import EpsilonStage
+from gb.reader.stages.hypergen_forest import HypergenForest
+from gb.reader.stages.disamb import Disamb
+from gb.reader.stages.disamb_simple import DisambSimple
+from gb.reader.stages.disamb_naive import DisambNaive
+from gb.reader.stages.merge import Merge
+from gb.reader.stages.shallow import Shallow
+from gb.reader.stages.concepts import Concepts
 
 
 class Extractor(object):
-    def __init__(self, hg, stages=('alpha-forest', 'beta-naive', 'gamma', 'delta', 'epsilon'), show_namespaces=False):
+    def __init__(self, hg, stages=('hypergen-forest', 'disamb-naive', 'merge', 'shallow', 'concepts'),
+                 show_namespaces=False):
         self.hg = hg
         self.stages = stages
         self.parser = None
@@ -45,20 +46,20 @@ class Extractor(object):
         self.show_namespaces = show_namespaces
 
     def create_stage(self, name, output):
-        if name == 'alpha-forest':
-            return AlphaForest()
-        elif name == 'beta':
-            return BetaStage(self.hg, self.parser, self.disamb, output, self.aux_text)
-        elif name == 'beta-simple':
-            return BetaStageSimple(output)
-        elif name == 'beta-naive':
-            return BetaStageNaive(output)
-        elif name == 'gamma':
-            return GammaStage(output)
-        elif name == 'delta':
-            return DeltaStage(output)
-        elif name == 'epsilon':
-            return EpsilonStage(output)
+        if name == 'hypergen-forest':
+            return HypergenForest()
+        elif name == 'disamb':
+            return Disamb(self.hg, self.parser, self.disamb, output, self.aux_text)
+        elif name == 'disamb-simple':
+            return DisambSimple(output)
+        elif name == 'disamb-naive':
+            return DisambNaive(output)
+        elif name == 'merge':
+            return Merge(output)
+        elif name == 'shallow':
+            return Shallow(output)
+        elif name == 'concepts':
+            return Concepts(output)
         else:
             raise RuntimeError('unknnown stage name: %s' % name)
 

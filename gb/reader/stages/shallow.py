@@ -35,7 +35,7 @@ def is_part_of_rel(rel, part):
     return False
 
 
-class DeltaStage(object):
+class Shallow(object):
     def __init__(self, output):
         self.output = output
         self.visited = set()
