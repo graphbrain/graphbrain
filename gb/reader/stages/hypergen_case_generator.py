@@ -24,7 +24,7 @@ import gb.hypergraph.edge as ed
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
 from gb.reader.semantic_tree import Tree, Position
-from gb.reader.stages.common import Transformation
+import gb.reader.stages.hypergen_transformation as hgtransf
 from gb.reader.stages.hypergen_forest import expanded_fields, build_case
 
 
@@ -32,51 +32,8 @@ def test_transformation(parent, child, position, transf):
     test_tree = Tree(parent)
     test_tree.import_element(child)
     test_parent = test_tree.root()
-    if transf == Transformation.IGNORE:
-        pass
-    elif transf == Transformation.APPLY:
-        test_parent.apply(child.id, position)
-    elif transf == Transformation.NEST:
-        test_parent.nest(child.id, position)
-    elif transf == Transformation.SHALLOW:
-        test_parent.nest_shallow(child.id)
-    elif transf == Transformation.DEEP:
-        test_parent.nest_deep(child.id, position)
-    elif transf == Transformation.FIRST:
-        test_parent.insert(child.id, Position.LEFT)
-    elif transf == Transformation.APPLY_R:
-        test_parent.apply(child.id, Position.RIGHT)
-    elif transf == Transformation.APPLY_L:
-        test_parent.apply(child.id, Position.LEFT)
-    elif transf == Transformation.NEST_R:
-        test_parent.nest(child.id, Position.RIGHT)
-    elif transf == Transformation.NEST_L:
-        test_parent.nest(child.id, Position.LEFT)
-    elif transf == Transformation.DEEP_R:
-        test_parent.nest_deep(child.id, Position.RIGHT)
-    elif transf == Transformation.DEEP_L:
-        test_parent.nest_deep(child.id, Position.LEFT)
+    hgtransf.apply(test_parent, child.id, position, transf)
     return test_tree.to_hyperedge_str(with_namespaces=False)
-
-
-def with_position(transf, position):
-    if transf == Transformation.APPLY:
-        if position == Position.LEFT:
-            return Transformation.APPLY_L
-        else:
-            return Transformation.APPLY_R
-
-    elif transf == Transformation.NEST:
-        if position == Position.LEFT:
-            return Transformation.NEST_L
-        else:
-            return Transformation.NEST_R
-
-    elif transf == Transformation.DEEP:
-        if position == Position.LEFT:
-            return Transformation.DEEP_L
-        else:
-            return Transformation.DEEP_R
 
 
 class CaseGenerator(object):
@@ -111,59 +68,59 @@ class CaseGenerator(object):
 
         self.transformation_outcomes = []
 
-        self.show_option('i', 'IGNORE', parent, child, position, Transformation.IGNORE)
-        self.show_option('a', 'APPLY', parent, child, position, Transformation.APPLY)
-        self.show_option('n', 'NEST', parent, child, position, Transformation.NEST)
-        self.show_option('f', 'FIRST', parent, child, position, Transformation.FIRST)
-        self.show_option('s', 'SHALLOW', parent, child, position, Transformation.SHALLOW)
-        self.show_option('d', 'DEEP', parent, child, position, Transformation.DEEP)
+        self.show_option('i', 'IGNORE', parent, child, position, hgtransf.IGNORE)
+        self.show_option('a', 'APPLY', parent, child, position, hgtransf.APPLY)
+        self.show_option('n', 'NEST', parent, child, position, hgtransf.NEST)
+        self.show_option('f', 'FIRST', parent, child, position, hgtransf.FIRST)
+        self.show_option('s', 'SHALLOW', parent, child, position, hgtransf.SHALLOW)
+        self.show_option('d', 'DEEP', parent, child, position, hgtransf.DEEP)
 
         print('')
 
         if position == Position.LEFT:
-            self.show_option('ar', 'APPLY_R', parent, child, position, Transformation.APPLY_R)
-            self.show_option('nr', 'NEST_R', parent, child, position, Transformation.NEST_R)
-            self.show_option('dr', 'DEEP_R', parent, child, position, Transformation.DEEP_R)
+            self.show_option('ar', 'APPLY_R', parent, child, position, hgtransf.APPLY_R)
+            self.show_option('nr', 'NEST_R', parent, child, position, hgtransf.NEST_R)
+            self.show_option('dr', 'DEEP_R', parent, child, position, hgtransf.DEEP_R)
 
         if position == Position.RIGHT:
-            self.show_option('al', 'APPLY_L', parent, child, position, Transformation.APPLY_L)
-            self.show_option('nl', 'NEST_L', parent, child, position, Transformation.NEST_L)
-            self.show_option('dl', 'DEEP_L', parent, child, position, Transformation.DEEP_L)
+            self.show_option('al', 'APPLY_L', parent, child, position, hgtransf.APPLY_L)
+            self.show_option('nl', 'NEST_L', parent, child, position, hgtransf.NEST_L)
+            self.show_option('dl', 'DEEP_L', parent, child, position, hgtransf.DEEP_L)
 
         print('\nr) RESTART    x) ABORT')
 
         choice = input('> ').lower()
 
         if choice == 'i':
-            return Transformation.IGNORE
+            return hgtransf.IGNORE
         if choice == 'a':
-            return with_position(Transformation.APPLY, position)
+            return hgtransf.with_position(hgtransf.APPLY, position)
         if choice == 'ar':
-            return Transformation.APPLY_R
+            return hgtransf.APPLY_R
         if choice == 'al':
-            return Transformation.APPLY_L
+            return hgtransf.APPLY_L
         if choice == 'n':
-            return with_position(Transformation.NEST, position)
+            return hgtransf.with_position(hgtransf.NEST, position)
         if choice == 'nr':
-            return Transformation.NEST_R
+            return hgtransf.NEST_R
         if choice == 'nl':
-            return Transformation.NEST_L
+            return hgtransf.NEST_L
         if choice == 's':
-            return Transformation.SHALLOW
+            return hgtransf.SHALLOW
         if choice == 'f':
-            return Transformation.FIRST
+            return hgtransf.FIRST
         if choice == 'd':
-            return with_position(Transformation.DEEP, position)
+            return hgtransf.with_position(hgtransf.DEEP, position)
         if choice == 'dr':
-            return Transformation.DEEP_R
+            return hgtransf.DEEP_R
         if choice == 'dl':
-            return Transformation.DEEP_L
+            return hgtransf.DEEP_L
         if choice == 'r':
             self.restart = True
-            return Transformation.IGNORE
+            return hgtransf.IGNORE
         if choice == 'x':
             self.abort = True
-            return Transformation.IGNORE
+            return hgtransf.IGNORE
         else:
             print('unknown choice: "%s". ignoring' % choice)
             return self.choose_transformation(parent, child, position)
@@ -182,14 +139,14 @@ class CaseGenerator(object):
             _, t = self.process_token(child_token, token, elem_id, pos)
             if self.restart or self.abort:
                 return -1, -1
-            if t == Transformation.NEST or t == Transformation.NEST_R or t == Transformation.NEST_L:
+            if t in (hgtransf.NEST, hgtransf.NEST_R, hgtransf.NEST_L):
                 nested_left = True
         for child_token in token.right_children:
             self.process_token(child_token, token, elem_id, Position.RIGHT)
             if self.restart or self.abort:
                 return -1, -1
 
-        # infer and apply transformation
+        # choose and apply transformation
         transf = -1
         if parent_token:
             parent = self.tree.get(parent_id)
@@ -212,44 +169,8 @@ class CaseGenerator(object):
             print('%s <- %s' % (parent, self.tree.get(elem_id)))
             if parent.is_node():
                 print('inn: %s' % str(parent.get_inner_nested_node()))
-            if transf == Transformation.APPLY:
-                print('apply')
-                parent.apply(elem_id, position)
-            elif transf == Transformation.APPLY_R:
-                print('apply [R]')
-                parent.apply(elem_id, Position.RIGHT)
-            elif transf == Transformation.APPLY_L:
-                print('apply [L]')
-                parent.apply(elem_id, Position.LEFT)
-            elif transf == Transformation.NEST:
-                print('nest')
-                parent.nest(elem_id, position)
-            elif transf == Transformation.NEST_R:
-                print('nest [R]')
-                parent.nest(elem_id, Position.RIGHT)
-            elif transf == Transformation.NEST_L:
-                print('nest [L]')
-                parent.nest(elem_id, Position.LEFT)
-            elif transf == Transformation.SHALLOW:
-                print('shallow')
-                parent.nest_shallow(elem_id)
-            elif transf == Transformation.FIRST:
-                print('first')
-                parent.insert(elem_id, Position.LEFT)
-            elif transf == Transformation.DEEP:
-                print('deep')
-                parent.nest_deep(elem_id, position)
-            elif transf == Transformation.DEEP_R:
-                print('deep [R]')
-                parent.nest_deep(elem_id, Position.RIGHT)
-            elif transf == Transformation.DEEP_L:
-                print('deep [L]')
-                parent.nest_deep(elem_id, Position.LEFT)
-            elif transf == Transformation.SHALLOW:
-                print('shallow')
-                parent.nest_shallow(elem_id, position)
-            else:
-                print('ignore')
+            print(hgtransf.to_string(transf))
+            hgtransf.apply(parent, elem_id, position, transf)
             print(self.tree.get(parent_id))
             print()
 

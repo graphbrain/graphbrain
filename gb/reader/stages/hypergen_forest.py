@@ -27,7 +27,7 @@ from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
 from gb.reader.semantic_tree import Position, Tree
 from gb.reader.parser_output import ParserOutput
-from gb.reader.stages.common import Transformation
+import gb.reader.stages.hypergen_transformation as hgtransf
 
 
 CASE_FIELDS = ('transformation', 'child_dep', 'child_tag', 'parent_dep', 'parent_tag',
@@ -161,7 +161,7 @@ class HypergenForest(object):
             else:
                 pos = Position.LEFT
             _, t = self.process_token(child_token, token, elem_id, pos)
-            if t == Transformation.NEST_R or t == Transformation.NEST_L:
+            if t == hgtransf.NEST_R or t == hgtransf.NEST_L:
                 nested_left = True
         for child_token in token.right_children:
             self.process_token(child_token, token, elem_id, Position.RIGHT)
@@ -172,28 +172,7 @@ class HypergenForest(object):
             parent = self.tree.get(parent_id)
             child = self.tree.get(elem_id)
             transf = self.predict_transformation(parent, child, parent_token, token, position)
-            if transf == Transformation.APPLY:
-                parent.apply(elem_id, position)
-            elif transf == Transformation.APPLY_R:
-                parent.apply(elem_id, Position.RIGHT)
-            elif transf == Transformation.APPLY_L:
-                parent.apply(elem_id, Position.LEFT)
-            elif transf == Transformation.NEST:
-                parent.nest(elem_id, position)
-            elif transf == Transformation.NEST_R:
-                parent.nest(elem_id, Position.RIGHT)
-            elif transf == Transformation.NEST_L:
-                parent.nest(elem_id, Position.LEFT)
-            elif transf == Transformation.SHALLOW:
-                parent.nest_shallow(elem_id)
-            elif transf == Transformation.DEEP:
-                parent.nest_deep(elem_id, position)
-            elif transf == Transformation.DEEP_R:
-                parent.nest_deep(elem_id, Position.RIGHT)
-            elif transf == Transformation.DEEP_L:
-                parent.nest_deep(elem_id, Position.LEFT)
-            else:
-                pass
+            hgtransf.apply(parent, elem_id, position, transf)
 
         return elem_id, transf
 
