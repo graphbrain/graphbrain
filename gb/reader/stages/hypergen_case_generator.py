@@ -20,119 +20,12 @@
 
 
 import click
-import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
-from gb.nlp.nlp_token import Token
 from gb.reader.semantic_tree import Tree, Position
 from gb.reader.stages.common import Transformation
 from gb.reader.stages.hypergen_forest import expanded_fields, build_case
-
-
-def transf2str(transf):
-    if transf == Transformation.IGNORE:
-        return 'ignore'
-    elif transf == Transformation.APPLY:
-        return 'apply'
-    elif transf == Transformation.NEST:
-        return 'nest'
-    elif transf == Transformation.SHALLOW:
-        return 'shallow'
-    elif transf == Transformation.DEEP:
-        return 'deep'
-    elif transf == Transformation.FIRST:
-        return 'first'
-    elif transf == Transformation.APPLY_R:
-        return 'apply[R]'
-    elif transf == Transformation.APPLY_L:
-        return 'apply[L]'
-    elif transf == Transformation.NEST_R:
-        return 'nest[R]'
-    elif transf == Transformation.NEST_L:
-        return 'nest[L]'
-    elif transf == Transformation.DEEP_R:
-        return 'deep[R]'
-    elif transf == Transformation.DEEP_L:
-        return 'deep[L]'
-    else:
-        return '?'
-
-
-def tedge2str(tedge):
-    if type(tedge) is Token:
-        return tedge.word
-    return '(%s)' % ' '.join([tedge2str(t) for t in tedge])
-
-
-def tedge2tokens(tedge):
-    if type(tedge) is Token:
-        return [tedge]
-    tokens = []
-    for t in tedge:
-        tokens = tokens + tedge2tokens(t)
-    return tokens
-
-
-def add_word_counts(word_counts_targ, word_counts):
-    for word in word_counts.keys():
-        if word in word_counts_targ:
-            word_counts_targ[word] += 1
-        else:
-            word_counts_targ[word] = 1
-
-
-def common_path(path1, path2):
-    cp = []
-    d = min(len(path1), len(path2))
-    for i in range(d):
-        if path1[i] == path2[i]:
-            cp.append(path1[i])
-    return cp
-
-
-def path2tedge(path, tedge):
-    if path:
-        return path2tedge(path[1:], tedge[path[0]])
-    return tedge
-
-
-def match_score(test_parent, target_tedge, test_index=0, target_index=0, dist=0):
-    if test_parent.is_leaf():
-        if type(target_tedge) is Token:
-            if test_parent.token.word == target_tedge.word:
-                return 1000 - dist
-            else:
-                return 0
-        else:
-            best_score = 0
-            for tedge in target_tedge:
-                score = match_score(test_parent, tedge, 0, 0, dist + 1)
-                best_score = max(score, best_score)
-            return best_score
-
-    if type(target_tedge) is Token:
-        return 0
-
-    if test_index >= len(test_parent.children_ids):
-        return 0
-    if target_index >= len(target_tedge):
-        return 0
-
-    best_score = 0
-
-    if test_index == 0 and target_index == 0:
-        for tedge in target_tedge:
-            score = match_score(test_parent, tedge)
-            best_score = max(score, best_score)
-
-    score = match_score(test_parent.children()[test_index], target_tedge[target_index])
-    score += match_score(test_parent, target_tedge, test_index + 1, target_index + 1)
-    best_score = max(score, best_score)
-    score = match_score(test_parent, target_tedge, test_index, target_index + 1, dist + 1)
-    best_score = max(score, best_score)
-
-    return best_score
 
 
 def test_transformation(parent, child, position, transf):
@@ -163,17 +56,7 @@ def test_transformation(parent, child, position, transf):
         test_parent.nest_deep(child.id, Position.RIGHT)
     elif transf == Transformation.DEEP_L:
         test_parent.nest_deep(child.id, Position.LEFT)
-    return test_tree.root()
-
-
-def test_transformation_str(parent, child, position, transf):
-    test_node = test_transformation(parent, child, position, transf)
-    return test_node.tree.to_hyperedge_str(with_namespaces=False)
-
-
-def score_transformation(parent, child, position, common_tedge, transf):
-    test_parent = test_transformation(parent, child, position, transf)
-    return match_score(test_parent, common_tedge)
+    return test_tree.to_hyperedge_str(with_namespaces=False)
 
 
 def with_position(transf, position):
@@ -196,22 +79,6 @@ def with_position(transf, position):
             return Transformation.DEEP_R
 
 
-class Fit(object):
-    def __init__(self, word_counts, outcome_word_counts):
-        self.matches = 0
-        self.size = 0
-        for word in word_counts:
-            if word in outcome_word_counts:
-                self.matches += min(word_counts[word], outcome_word_counts[word])
-            self.size += word_counts[word]
-
-    def better_than(self, fit):
-        if self.matches == fit.matches:
-            return self.size < fit.size
-        else:
-            return self.matches > fit.matches
-
-
 class CaseGenerator(object):
     def __init__(self):
         self.tree = None
@@ -227,153 +94,8 @@ class CaseGenerator(object):
         self.abort = False
         self.transformation_outcomes = None
 
-    def build_tedge(self, edge, counts=None):
-        if not counts:
-            counts = {}
-        if sym.is_edge(edge):
-            return [self.build_tedge(e, counts) for e in edge]
-        else:
-            if edge in counts:
-                count = counts[edge]
-                counts[edge] += 1
-            else:
-                count = 0
-                counts[edge] = 1
-
-            tcount = 0
-            for token in self.sentence.tokens:
-                if edge == '+':
-                    return Token('+')
-                if token.word == str(edge):
-                    if count == tcount:
-                        return token
-                    else:
-                        tcount += 1
-
-    def best_node_subedge_fit(self, tedge, outcome_word_counts, path=None):
-        if not path:
-            path = []
-
-        if type(tedge) is Token:
-            word_counts = {tedge.word: 1}
-            return path, word_counts
-
-        word_counts = {}
-        path_wcs = []
-        for i in range(len(tedge)):
-            down_path = path[:]
-            down_path.append(i)
-            path_wc = self.best_node_subedge_fit(tedge[i], outcome_word_counts, down_path)
-            path_wcs.append(path_wc)
-            add_word_counts(word_counts, path_wc[1])
-
-        best_path_wc = (path, word_counts)
-        best_fit = Fit(word_counts, outcome_word_counts)
-        for path_wc in path_wcs:
-            fit = Fit(path_wc[1], outcome_word_counts)
-            if fit.better_than(best_fit):
-                best_fit = fit
-                best_path_wc = path_wc
-
-        return best_path_wc
-
-    def find_subedge(self, node, tedge=None):
-        if not tedge:
-            tedge = self.build_tedge(self.outcome)
-
-        tokens = node.all_tokens()
-        word_counts = {}
-        for token in tokens:
-            if token.word in word_counts:
-                word_counts[token.word] += 1
-            else:
-                word_counts[token.word] = 1
-
-        path, _ = self.best_node_subedge_fit(tedge, word_counts)
-        return path
-
-    def find_path(self, node):
-        epath = self.find_subedge(node)
-        if epath is None:
-            return None
-
-        words_path = [token.word for token in tedge2tokens(path2tedge(epath, self.build_tedge(self.outcome)))]
-        words_edge = [token.word for token in node.all_tokens()]
-        for word in words_edge:
-            if words_edge.count(word) > words_path.count(word):
-                return None
-
-        return epath
-
-    def common_path(self, parent_node, child_node):
-        parent_path = self.find_path(parent_node)
-        if parent_path is None:
-            return None
-        child_path = self.find_path(child_node)
-        if child_path is None:
-            return None
-
-        cp = common_path(parent_path, child_path)
-        return path2tedge(cp, self.build_tedge(self.outcome))
-
-    def infer_transformation(self, parent, child, position):
-        common_tedge = self.common_path(parent, child)
-        if common_tedge is None:
-            return Transformation.IGNORE
-
-        print('[^] %s' % tedge2str(common_tedge))
-
-        best_score = 0
-        best_transf = Transformation.IGNORE
-
-        score = score_transformation(parent, child, position, common_tedge, Transformation.APPLY)
-        if score > best_score:
-            best_score = score
-            best_transf = Transformation.APPLY
-        score = score_transformation(parent, child, position, common_tedge, Transformation.NEST)
-        if score > best_score:
-            best_score = score
-            best_transf = Transformation.NEST
-        score = score_transformation(parent, child, position, common_tedge, Transformation.SHALLOW)
-        if score > best_score:
-            best_score = score
-            best_transf = Transformation.SHALLOW
-        score = score_transformation(parent, child, position, common_tedge, Transformation.DEEP)
-        if score > best_score:
-            best_score = score
-            best_transf = Transformation.DEEP
-        score = score_transformation(parent, child, position, common_tedge, Transformation.FIRST)
-        if score > best_score:
-            best_score = score
-            best_transf = Transformation.FIRST
-        score = score_transformation(parent, child, position, common_tedge, Transformation.APPLY_R)
-        if score > best_score:
-            best_score = score
-            best_transf = Transformation.APPLY_R
-        score = score_transformation(parent, child, position, common_tedge, Transformation.APPLY_L)
-        if score > best_score:
-            best_score = score
-            best_transf = Transformation.APPLY_L
-        score = score_transformation(parent, child, position, common_tedge, Transformation.NEST_R)
-        if score > best_score:
-            best_score = score
-            best_transf = Transformation.NEST_R
-        score = score_transformation(parent, child, position, common_tedge, Transformation.NEST_L)
-        if score > best_score:
-            best_score = score
-            best_transf = Transformation.NEST_L
-        score = score_transformation(parent, child, position, common_tedge, Transformation.DEEP_R)
-        if score > best_score:
-            best_score = score
-            best_transf = Transformation.DEEP_R
-        score = score_transformation(parent, child, position, common_tedge, Transformation.DEEP_L)
-        if score > best_score:
-            best_transf = Transformation.DEEP_L
-
-        return best_transf
-
     def show_option(self, key, name, parent, child, position, transf):
-        res = test_transformation_str(parent, child, position, transf)
+        res = test_transformation(parent, child, position, transf)
         if res not in self.transformation_outcomes:
             self.transformation_outcomes.append(res)
             click.echo(click.style(key, fg='cyan'), nl=False)
@@ -478,7 +200,6 @@ class CaseGenerator(object):
                     return -1, -1
                 self.transfs.append(transf)
             else:
-                # transf = self.infer_transformation(parent, self.tree.get(elem_id), position)
                 transf = self.transfs.pop(0)
 
             # add case
