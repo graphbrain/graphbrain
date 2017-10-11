@@ -66,7 +66,7 @@ def trees_to_bag_of_ngrams(trees):
     return bon
 
 
-class BetaStage(object):
+class Disamb(object):
     def __init__(self, hg, parser, disamb, output, aux_text):
         self.hg = hg
         self.parser = parser

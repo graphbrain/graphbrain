@@ -134,8 +134,8 @@ def learn(infile, outfile):
         pickle.dump(rf, f)
 
 
-class AlphaForest(object):
-    def __init__(self, model_file='alpha_forest.model'):
+class HypergenForest(object):
+    def __init__(self, model_file='hypergen_forest.model'):
         self.tree = Tree()
         with open(model_file, 'rb') as f:
             self.rf = pickle.load(f)
@@ -203,7 +203,7 @@ class AlphaForest(object):
 
 
 def transform(sentence):
-    alpha = AlphaForest()
+    alpha = HypergenForest()
     return alpha.process_sentence(sentence)
 
 

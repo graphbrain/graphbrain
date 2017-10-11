@@ -23,7 +23,7 @@ from gb.reader.semantic_tree import Position
 import gb.reader.stages.common as co
 
 
-class GammaStage(object):
+class Merge(object):
     def __init__(self, output):
         self.output = output
 

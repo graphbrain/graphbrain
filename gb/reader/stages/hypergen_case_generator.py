@@ -27,7 +27,7 @@ from gb.nlp.sentence import Sentence
 from gb.nlp.nlp_token import Token
 from gb.reader.semantic_tree import Tree, Position
 from gb.reader.stages.common import Transformation
-from gb.reader.stages.alpha_forest import expanded_fields, build_case
+from gb.reader.stages.hypergen_forest import expanded_fields, build_case
 
 
 def transf2str(transf):
