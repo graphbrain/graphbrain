@@ -198,6 +198,9 @@ class Element(object):
     def apply_tail(self, child_id):
         raise NotImplementedError()
 
+    def reverse_apply(self, child_id, head):
+        raise NotImplementedError()
+
     def nest(self, child_id, outer):
         raise NotImplementedError()
 
@@ -310,6 +313,11 @@ class Leaf(Element):
     def apply_tail(self, child_id):
         node = self.tree.enclose(self)
         node.apply_tail(child_id)
+
+    # override
+    def reverse_apply(self, child_id, head):
+        node = self.tree.enclose(self)
+        node.reverse_apply(child_id, head)
 
     # override
     def nest(self, child_id, outer):
@@ -561,6 +569,26 @@ class Node(Element):
     # override
     def apply_tail(self, child_id):
         self.children_ids.append(child_id)
+
+    # override
+    # (a b) <- (c d) => (c d (a b))
+    def reverse_apply(self, child_id, head):
+        child = self.tree.get(child_id)
+        if child.is_leaf():
+            new_children_ids = [child_id]
+        else:
+            new_children_ids = child.children_ids[:]
+
+        if len(self.children_ids) == 1:
+            new_parent_id = self.children_ids[0]
+        else:
+            new_parent_id = self.tree.create_node(self.children_ids).id
+
+        if head:
+            new_children_ids.insert(1, new_parent_id)
+        else:
+            new_children_ids.append(new_parent_id)
+        self.children_ids = new_children_ids
 
     # override
     def nest(self, child_id, outer):
