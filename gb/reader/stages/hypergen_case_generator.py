@@ -20,6 +20,7 @@
 
 
 import click
+import pandas as pd
 import gb.hypergraph.edge as ed
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
@@ -28,11 +29,11 @@ import gb.reader.stages.hypergen_transformation as hgtransf
 from gb.reader.stages.hypergen_forest import expanded_fields, build_case
 
 
-def test_transformation(parent, child, position, transf):
+def test_transformation(parent, child, transf):
     test_tree = Tree(parent)
     test_tree.import_element(child)
     test_parent = test_tree.root()
-    hgtransf.apply(test_parent, child.id, position, transf)
+    hgtransf.apply(test_parent, child.id, transf)
     return test_tree.to_hyperedge_str(with_namespaces=False)
 
 
@@ -51,8 +52,8 @@ class CaseGenerator(object):
         self.abort = False
         self.transformation_outcomes = None
 
-    def show_option(self, key, name, parent, child, position, transf):
-        res = test_transformation(parent, child, position, transf)
+    def show_option(self, key, name, parent, child, transf):
+        res = test_transformation(parent, child, transf)
         if res not in self.transformation_outcomes:
             self.transformation_outcomes.append(res)
             click.echo(click.style(key, fg='cyan'), nl=False)
@@ -68,24 +69,23 @@ class CaseGenerator(object):
 
         self.transformation_outcomes = []
 
-        self.show_option('i', 'IGNORE', parent, child, position, hgtransf.IGNORE)
-        self.show_option('a', 'APPLY', parent, child, position, hgtransf.APPLY)
-        self.show_option('n', 'NEST', parent, child, position, hgtransf.NEST)
-        self.show_option('f', 'FIRST', parent, child, position, hgtransf.FIRST)
-        self.show_option('s', 'SHALLOW', parent, child, position, hgtransf.SHALLOW)
-        self.show_option('d', 'DEEP', parent, child, position, hgtransf.DEEP)
+        self.show_option('i', 'IGNORE', parent, child, hgtransf.IGNORE)
+        self.show_option('a', 'APPLY', parent, child, hgtransf.with_position('APPLY', position))
+        self.show_option('n', 'NEST', parent, child, hgtransf.with_position('NEST', position))
+        self.show_option('s', 'NEST SHALLOW', parent, child, hgtransf.NEST_SHALLOW)
+        self.show_option('m', 'MULTINEST', parent, child, hgtransf.with_position('MULTINEST', position))
 
         print('')
 
         if position == Position.LEFT:
-            self.show_option('ar', 'APPLY_R', parent, child, position, hgtransf.APPLY_R)
-            self.show_option('nr', 'NEST_R', parent, child, position, hgtransf.NEST_R)
-            self.show_option('dr', 'DEEP_R', parent, child, position, hgtransf.DEEP_R)
+            self.show_option('at', 'APPLY TAIL', parent, child, hgtransf.APPLY_TAIL)
+            self.show_option('no', 'NEST OUTER', parent, child, hgtransf.NEST_OUTER)
+            self.show_option('mo', 'MULTINEST OUTER', parent, child, hgtransf.MULTINEST_OUTER)
 
         if position == Position.RIGHT:
-            self.show_option('al', 'APPLY_L', parent, child, position, hgtransf.APPLY_L)
-            self.show_option('nl', 'NEST_L', parent, child, position, hgtransf.NEST_L)
-            self.show_option('dl', 'DEEP_L', parent, child, position, hgtransf.DEEP_L)
+            self.show_option('ah', 'APPLY HEAD', parent, child, hgtransf.APPLY_HEAD)
+            self.show_option('ni', 'NEST INNER', parent, child, hgtransf.NEST_INNER)
+            self.show_option('mi', 'MULTINEST INNER', parent, child, hgtransf.MULTINEST_INNER)
 
         print('\nr) RESTART    x) ABORT')
 
@@ -94,27 +94,25 @@ class CaseGenerator(object):
         if choice == 'i':
             return hgtransf.IGNORE
         if choice == 'a':
-            return hgtransf.with_position(hgtransf.APPLY, position)
-        if choice == 'ar':
-            return hgtransf.APPLY_R
-        if choice == 'al':
-            return hgtransf.APPLY_L
+            return hgtransf.with_position('APPLY', position)
+        if choice == 'ah':
+            return hgtransf.APPLY_HEAD
+        if choice == 'at':
+            return hgtransf.APPLY_TAIL
         if choice == 'n':
-            return hgtransf.with_position(hgtransf.NEST, position)
-        if choice == 'nr':
-            return hgtransf.NEST_R
-        if choice == 'nl':
-            return hgtransf.NEST_L
+            return hgtransf.with_position('NEST', position)
+        if choice == 'ni':
+            return hgtransf.NEST_INNER
+        if choice == 'no':
+            return hgtransf.NEST_OUTER
         if choice == 's':
-            return hgtransf.SHALLOW
-        if choice == 'f':
-            return hgtransf.FIRST
-        if choice == 'd':
-            return hgtransf.with_position(hgtransf.DEEP, position)
-        if choice == 'dr':
-            return hgtransf.DEEP_R
-        if choice == 'dl':
-            return hgtransf.DEEP_L
+            return hgtransf.NEST_SHALLOW
+        if choice == 'm':
+            return hgtransf.with_position('MULTINEST', position)
+        if choice == 'mi':
+            return hgtransf.MULTINEST_INNER
+        if choice == 'mo':
+            return hgtransf.MULTINEST_OUTER
         if choice == 'r':
             self.restart = True
             return hgtransf.IGNORE
@@ -139,7 +137,7 @@ class CaseGenerator(object):
             _, t = self.process_token(child_token, token, elem_id, pos)
             if self.restart or self.abort:
                 return -1, -1
-            if t in (hgtransf.NEST, hgtransf.NEST_R, hgtransf.NEST_L):
+            if t in (hgtransf.NEST_INNER, hgtransf.NEST_OUTER):
                 nested_left = True
         for child_token in token.right_children:
             self.process_token(child_token, token, elem_id, Position.RIGHT)
@@ -170,7 +168,7 @@ class CaseGenerator(object):
             if parent.is_node():
                 print('inn: %s' % str(parent.get_inner_nested_node()))
             print(hgtransf.to_string(transf))
-            hgtransf.apply(parent, elem_id, position, transf)
+            hgtransf.apply(parent, elem_id, transf)
             print(self.tree.get(parent_id))
             print()
 
@@ -236,6 +234,18 @@ def generate_cases(infile, outfile):
     print('%s out of %s correct cases.' % (correct, total))
 
 
+def cases_summary(infile):
+    summary = {}
+    cases = pd.read_csv(infile)
+    transfs = cases['transformation']
+    for transf in transfs:
+        transf_name = hgtransf.to_string(transf)
+        if transf_name not in summary:
+            summary[transf_name] = 0
+        summary[transf_name] += 1
+    print(summary)
+
+
 def interactive_edge_builder(outfile):
     print('writing to file: %s' % outfile)
     cg = CaseGenerator()
@@ -270,4 +280,5 @@ def interactive_edge_builder(outfile):
 
 
 if __name__ == '__main__':
-    generate_cases('parses1.txt', 'dummy.txt')
+    # generate_cases('parses1.txt', 'dummy.txt')
+    cases_summary('cases.csv')

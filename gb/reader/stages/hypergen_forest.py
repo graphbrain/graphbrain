@@ -161,7 +161,7 @@ class HypergenForest(object):
             else:
                 pos = Position.LEFT
             _, t = self.process_token(child_token, token, elem_id, pos)
-            if t == hgtransf.NEST_R or t == hgtransf.NEST_L:
+            if t == hgtransf.NEST_INNER or t == hgtransf.NEST_OUTER:
                 nested_left = True
         for child_token in token.right_children:
             self.process_token(child_token, token, elem_id, Position.RIGHT)
@@ -172,7 +172,7 @@ class HypergenForest(object):
             parent = self.tree.get(parent_id)
             child = self.tree.get(elem_id)
             transf = self.predict_transformation(parent, child, parent_token, token, position)
-            hgtransf.apply(parent, elem_id, position, transf)
+            hgtransf.apply(parent, elem_id, transf)
 
         return elem_id, transf
 
