@@ -74,6 +74,7 @@ class CaseGenerator(object):
         self.show_option('n', 'NEST', parent, child, hgtransf.with_position('NEST', position))
         self.show_option('s', 'NEST SHALLOW', parent, child, hgtransf.NEST_SHALLOW)
         self.show_option('m', 'MULTINEST', parent, child, hgtransf.with_position('MULTINEST', position))
+        self.show_option('r', 'REVERSE APPLY', parent, child, hgtransf.with_position('REVERSE_APPLY', position))
 
         print('')
 
@@ -81,13 +82,15 @@ class CaseGenerator(object):
             self.show_option('at', 'APPLY TAIL', parent, child, hgtransf.APPLY_TAIL)
             self.show_option('no', 'NEST OUTER', parent, child, hgtransf.NEST_OUTER)
             self.show_option('mo', 'MULTINEST OUTER', parent, child, hgtransf.MULTINEST_OUTER)
+            self.show_option('rt', 'REVERSE APPLY TAIL', parent, child, hgtransf.REVERSE_APPLY_TAIL)
 
         if position == Position.RIGHT:
             self.show_option('ah', 'APPLY HEAD', parent, child, hgtransf.APPLY_HEAD)
             self.show_option('ni', 'NEST INNER', parent, child, hgtransf.NEST_INNER)
             self.show_option('mi', 'MULTINEST INNER', parent, child, hgtransf.MULTINEST_INNER)
+            self.show_option('rh', 'REVERSE APPLY HEAD', parent, child, hgtransf.REVERSE_APPLY_HEAD)
 
-        print('\nr) RESTART    x) ABORT')
+        print('\n0) RESTART    x) ABORT')
 
         choice = input('> ').lower()
 
@@ -99,6 +102,12 @@ class CaseGenerator(object):
             return hgtransf.APPLY_HEAD
         if choice == 'at':
             return hgtransf.APPLY_TAIL
+        if choice == 'r':
+            return hgtransf.with_position('REVERSE_APPLY', position)
+        if choice == 'rh':
+            return hgtransf.REVERSE_APPLY_HEAD
+        if choice == 'rt':
+            return hgtransf.REVERSE_APPLY_TAIL
         if choice == 'n':
             return hgtransf.with_position('NEST', position)
         if choice == 'ni':
@@ -113,7 +122,7 @@ class CaseGenerator(object):
             return hgtransf.MULTINEST_INNER
         if choice == 'mo':
             return hgtransf.MULTINEST_OUTER
-        if choice == 'r':
+        if choice == '0':
             self.restart = True
             return hgtransf.IGNORE
         if choice == 'x':

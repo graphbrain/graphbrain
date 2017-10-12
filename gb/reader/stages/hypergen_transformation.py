@@ -22,7 +22,8 @@
 from gb.reader.semantic_tree import Position
 
 
-IGNORE, APPLY_HEAD, APPLY_TAIL, NEST_INNER, NEST_OUTER, NEST_SHALLOW, MULTINEST_INNER, MULTINEST_OUTER = range(8)
+IGNORE, APPLY_HEAD, APPLY_TAIL, REVERSE_APPLY_HEAD, REVERSE_APPLY_TAIL,\
+NEST_INNER, NEST_OUTER, NEST_SHALLOW, MULTINEST_INNER, MULTINEST_OUTER = range(10)
 
 
 def apply(parent, child_id, transf):
@@ -32,6 +33,10 @@ def apply(parent, child_id, transf):
         parent.apply_head(child_id)
     elif transf == APPLY_TAIL:
         parent.apply_tail(child_id)
+    elif transf == REVERSE_APPLY_HEAD:
+        parent.reverse_apply(child_id, head=True)
+    elif transf == REVERSE_APPLY_TAIL:
+        parent.reverse_apply(child_id, head=False)
     elif transf == NEST_INNER:
         parent.nest(child_id, outer=False)
     elif transf == NEST_OUTER:
@@ -50,6 +55,12 @@ def with_position(transf, position):
             return APPLY_HEAD
         else:
             return APPLY_TAIL
+
+    elif transf == 'REVERSE_APPLY':
+        if position == Position.LEFT:
+            return REVERSE_APPLY_HEAD
+        else:
+            return REVERSE_APPLY_TAIL
 
     elif transf == 'NEST':
         if position == Position.LEFT:
@@ -71,6 +82,10 @@ def to_string(transf):
         return 'apply [head]'
     elif transf == APPLY_TAIL:
         return 'apply [tail]'
+    elif transf == REVERSE_APPLY_HEAD:
+        return 'reverse apply [head]'
+    elif transf == REVERSE_APPLY_TAIL:
+        return 'reverse apply [tail]'
     elif transf == NEST_INNER:
         return 'nest [inner]'
     elif transf == NEST_OUTER:
