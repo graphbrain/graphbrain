@@ -34,6 +34,21 @@ CASE_FIELDS = ('transformation', 'child_dep', 'child_tag', 'parent_dep', 'parent
                'child_position', 'child_is_atom', 'parent_is_atom')
 
 
+def read_parses(infile, test_set=False):
+    current_parse = []
+    parses = []
+    with open(infile) as f:
+        i = 0
+        for line in f:
+            current_parse.append(line)
+            if len(current_parse) == 4:
+                if (i % 3 == 0 and test_set) or (i % 3 != 0 and not test_set):
+                    parses.append(current_parse)
+                current_parse = []
+                i += 1
+    return parses
+
+
 def generate_fields(prefix, values):
     return ['%s_%s' % (prefix, value) for value in values]
 
@@ -137,6 +152,8 @@ def learn(infile, outfile):
 class HypergenForest(object):
     def __init__(self, model_file='hypergen_forest.model'):
         self.tree = Tree()
+        self.transfs = None
+        self.wrong = 0
         with open(model_file, 'rb') as f:
             self.rf = pickle.load(f)
 
@@ -149,7 +166,7 @@ class HypergenForest(object):
         pred = self.rf.predict(data)
         return pred[0]
 
-    def process_token(self, token, parent_token=None, parent_id=None, position=None):
+    def process_token(self, token, parent_token=None, parent_id=None, position=None, testing=False):
         elem = self.tree.create_leaf(token)
         elem_id = elem.id
 
@@ -160,7 +177,7 @@ class HypergenForest(object):
                 pos = Position.RIGHT
             else:
                 pos = Position.LEFT
-            _, t = self.process_token(child_token, token, elem_id, pos)
+            _, t = self.process_token(child_token, token, elem_id, pos, testing)
             if t == hgtransf.NEST_INNER or t == hgtransf.NEST_OUTER:
                 nested_left = True
         for child_token in token.right_children:
@@ -172,6 +189,13 @@ class HypergenForest(object):
             parent = self.tree.get(parent_id)
             child = self.tree.get(elem_id)
             transf = self.predict_transformation(parent, child, parent_token, token, position)
+
+            if testing:
+                if transf != self.transfs[0]:
+                    self.wrong += 1
+                    transf = self.transfs[0]
+                self.transfs = self.transfs[1:]
+
             hgtransf.apply(parent, elem_id, transf)
 
         return elem_id, transf
@@ -180,10 +204,37 @@ class HypergenForest(object):
         self.tree.root_id = self.process_token(sentence.root())[0]
         return ParserOutput(sentence, self.tree)
 
+    def test(self, sentence, transfs):
+        self.transfs = transfs
+        self.process_token(sentence.root(), testing=True)
+
 
 def transform(sentence):
-    alpha = HypergenForest()
-    return alpha.process_sentence(sentence)
+    hgforest = HypergenForest()
+    return hgforest.process_sentence(sentence)
+
+
+def test(infile):
+    parses = read_parses(infile, test_set=True)
+
+    acc_total = 0
+    acc_wrong = 0
+    for parse in parses:
+        # sentence_str = parse[0].strip()
+        json_str = parse[1].strip()
+        # outcome_str = parse[2].strip()
+        sentence = Sentence(json_str=json_str)
+        transfs = [int(token) for token in parse[3].split(',')]
+        total = len(transfs)
+        hgforest = HypergenForest()
+        hgforest.test(sentence, transfs)
+        wrong = hgforest.wrong
+        print('%s / %s' % (wrong, total))
+        acc_total += total
+        acc_wrong += wrong
+
+    error_rate = (float(acc_wrong) / float(acc_total)) * 100.
+    print('error rate: %.3f%%' % error_rate)
 
 
 if __name__ == '__main__':
