@@ -42,9 +42,9 @@ def apply(parent, child_id, transf):
     elif transf == NEST_OUTER:
         parent.nest(child_id, outer=True)
     elif transf == MULTINEST_INNER:
-        parent.nest_deep(child_id, outer=False)
+        parent.multinest(child_id, outer=False)
     elif transf == MULTINEST_OUTER:
-        parent.nest_deep(child_id, outer=True)
+        parent.multinest(child_id, outer=True)
     elif transf == NEST_SHALLOW:
         parent.nest_shallow(child_id)
 
