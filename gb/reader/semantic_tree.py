@@ -207,7 +207,7 @@ class Element(object):
     def nest_shallow(self, child_id):
         raise NotImplementedError()
 
-    def nest_deep(self, child_id, outer):
+    def multinest(self, child_id, outer):
         raise NotImplementedError()
 
     def __eq__(self, other):
@@ -330,9 +330,9 @@ class Leaf(Element):
         node.nest_shallow(child_id)
 
     # override
-    def nest_deep(self, child_id, outer):
+    def multinest(self, child_id, outer):
         node = self.tree.enclose(self)
-        node.nest_deep(child_id, outer)
+        node.multinest(child_id, outer)
 
     # override
     def __eq__(self, other):
@@ -634,7 +634,7 @@ class Node(Element):
         self.children_ids.insert(0, child_id)
 
     # override
-    def nest_deep(self, child_id, outer):
+    def multinest(self, child_id, outer):
         child = self.tree.get(child_id)
         if child.is_leaf():
             self.nest(child_id, outer)
