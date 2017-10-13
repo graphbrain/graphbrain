@@ -26,7 +26,7 @@ from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
 from gb.reader.semantic_tree import Tree, Position
 import gb.reader.stages.hypergen_transformation as hgtransf
-from gb.reader.stages.hypergen_forest import expanded_fields, build_case
+from gb.reader.stages.hypergen_forest import expanded_fields, build_case, read_parses
 
 
 def test_transformation(parent, child, transf):
@@ -212,14 +212,7 @@ def generate_cases(infile, outfile):
     f.write('%s\n' % ','.join(expanded_fields()))
     f.close()
 
-    current_parse = []
-    parses = []
-    with open(infile) as f:
-        for line in f:
-            current_parse.append(line)
-            if len(current_parse) == 4:
-                parses.append(current_parse)
-                current_parse = []
+    parses = read_parses(infile, test_set=False)
 
     total = 0
     correct = 0

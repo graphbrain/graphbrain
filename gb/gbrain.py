@@ -222,6 +222,13 @@ def learn_hypergen_forest(ctx):
 
 @cli.command()
 @click.pass_context
+def test_hypergen_forest(ctx):
+    infile = ctx.obj['infile']
+    hypergen_for.test(infile)
+
+
+@cli.command()
+@click.pass_context
 def extract_json_fields(ctx):
     infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
