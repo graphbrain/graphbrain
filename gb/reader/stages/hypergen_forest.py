@@ -20,6 +20,7 @@
 
 
 import pickle
+from collections import Counter
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 import gb.nlp.constants as nlp_consts
@@ -154,6 +155,8 @@ class HypergenForest(object):
         self.tree = Tree()
         self.transfs = None
         self.wrong = 0
+        self.test_predictions = Counter()
+        self.test_true_values = Counter()
         with open(model_file, 'rb') as f:
             self.rf = pickle.load(f)
 
@@ -181,7 +184,7 @@ class HypergenForest(object):
             if t == hgtransf.NEST_INNER or t == hgtransf.NEST_OUTER:
                 nested_left = True
         for child_token in token.right_children:
-            self.process_token(child_token, token, elem_id, Position.RIGHT)
+            self.process_token(child_token, token, elem_id, Position.RIGHT, testing)
 
         # predict and apply transformation
         transf = -1
@@ -191,10 +194,14 @@ class HypergenForest(object):
             transf = self.predict_transformation(parent, child, parent_token, token, position)
 
             if testing:
+                self.test_predictions[transf] += 1
                 if transf != self.transfs[0]:
+                    print('predicted: %s; should be: %s'
+                          % (hgtransf.to_string(transf), hgtransf.to_string(self.transfs[0])))
                     self.wrong += 1
                     transf = self.transfs[0]
                 self.transfs = self.transfs[1:]
+                self.test_true_values[transf] += 1
 
             hgtransf.apply(parent, elem_id, transf)
 
@@ -219,6 +226,8 @@ def test(infile):
 
     acc_total = 0
     acc_wrong = 0
+    acc_predictions = Counter()
+    acc_true_values = Counter()
     for parse in parses:
         # sentence_str = parse[0].strip()
         json_str = parse[1].strip()
@@ -232,6 +241,18 @@ def test(infile):
         print('%s / %s' % (wrong, total))
         acc_total += total
         acc_wrong += wrong
+        acc_predictions = sum((acc_predictions, Counter(hgforest.test_predictions)), Counter())
+        acc_true_values = sum((acc_true_values, Counter(hgforest.test_true_values)), Counter())
+
+    acc_predictions = dict(acc_predictions)
+    acc_true_values = dict(acc_true_values)
+
+    print('PREDICTIONS:')
+    for transf in acc_predictions:
+        print('%s: %s' % (hgtransf.to_string(transf), acc_predictions[transf]))
+    print('TRUE_VALUES:')
+    for transf in acc_true_values:
+        print('%s: %s' % (hgtransf.to_string(transf), acc_true_values[transf]))
 
     error_rate = (float(acc_wrong) / float(acc_total)) * 100.
     print('error rate: %.3f%%' % error_rate)
