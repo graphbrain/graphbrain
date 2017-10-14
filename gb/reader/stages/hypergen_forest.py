@@ -31,7 +31,10 @@ from gb.reader.parser_output import ParserOutput
 import gb.reader.stages.hypergen_transformation as hgtransf
 
 
-CASE_FIELDS = ('transformation', 'child_dep', 'child_tag', 'parent_dep', 'parent_tag',
+CASE_FIELDS = ('transformation', 'child_pos', 'child_dep', 'child_tag', 'parent_pos', 'parent_dep', 'parent_tag',
+               'child_edge_pos', 'child_edge_dep', 'child_edge_tag', 'child_edge_depth',
+               'parent_edge_pos', 'parent_edge_dep', 'parent_edge_tag', 'parent_edge_depth',
+               'child_inedge', 'parent_inedge',
                'child_position', 'child_is_atom', 'parent_is_atom')
 
 
@@ -82,6 +85,18 @@ def entity2case(entity, case, prefix):
             entity2case(child, case, prefix)
 
 
+def set_case_fields_edge(elem, case, feature, depth=0):
+    set_case_field_on(case, '%s_depth_%s' % (feature, depth))
+    if elem.is_node():
+        for child in elem.children():
+            set_case_fields_edge(child, case, feature, depth + 1)
+    else:
+        set_case_field_on(case, '%s_pos_%s' % (feature, elem.token.pos))
+        set_case_field_on(case, '%s_dep_%s' % (feature, elem.token.dep))
+        if elem.token.tag != ',':
+            set_case_field_on(case, '%s_tag_%s' % (feature, elem.token.tag))
+
+
 def build_case(parent, child, parent_token, child_token, position):
     case = {}
     fields = expanded_fields()
@@ -109,7 +124,7 @@ def build_case(parent, child, parent_token, child_token, position):
             set_case_field_on(case, 'child_head_pos_%s' % head.token.pos)
             set_case_field_on(case, 'child_head_dep_%s' % head.token.dep)
             if child_token.tag != ',':
-                set_case_field_on(case, 'child_tag_%s' % head.token.tag)
+                set_case_field_on(case, 'child_head_tag_%s' % head.token.tag)
     if parent.is_node():
         head = parent.get_child(0)
         if head.is_leaf():
@@ -118,15 +133,27 @@ def build_case(parent, child, parent_token, child_token, position):
             if parent_token.tag != ',':
                 set_case_field_on(case, 'parent_head_tag_%s' % head.token.tag)
 
+    # edge depths, tags and dependencies
+    set_case_fields_edge(child, case, 'child_edge')
+    set_case_fields_edge(parent, case, 'child_parent')
+    set_case_fields_edge(child.get_inner_nested_node(), case, 'child_inedge')
+    set_case_fields_edge(parent.get_inner_nested_node(), case, 'child_inparent')
+
     # all tags and dependencies
     entity2case(parent, case, 'parent')
     entity2case(child, case, 'child')
 
-    # parent and node are atoms?
+    # parent and child are atoms?
     if parent.is_leaf():
         set_case_field_on(case, 'parent_is_atom')
     if child.is_leaf():
         set_case_field_on(case, 'child_is_atom')
+
+    # parent and child have inner edges?
+    if parent.is_node() and parent.inner_nested_node_id >= 0:
+        set_case_field_on(case, 'parent_inedge')
+    if child.is_node() and child.inner_nested_node_id >= 0:
+        set_case_field_on(case, 'child_inedge')
 
     return case
 
@@ -140,7 +167,7 @@ def learn(infile, outfile):
     features = train.as_matrix(feature_cols)
     targets = train.as_matrix(target_cols)
 
-    rf = RandomForestClassifier(n_estimators=15)
+    rf = RandomForestClassifier(n_estimators=50)
     rf.fit(features, targets)
 
     score = rf.score(features, targets)
