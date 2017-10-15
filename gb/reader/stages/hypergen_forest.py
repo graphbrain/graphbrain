@@ -46,7 +46,7 @@ def read_parses(infile, test_set=False):
         for line in f:
             current_parse.append(line)
             if len(current_parse) == 4:
-                if (i % 3 == 0 and test_set) or (i % 3 != 0 and not test_set):
+                if (i % 4 == 0 and test_set) or (i % 4 != 0 and not test_set):
                     parses.append(current_parse)
                 current_parse = []
                 i += 1
