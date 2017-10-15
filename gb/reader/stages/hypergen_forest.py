@@ -221,16 +221,22 @@ class HypergenForest(object):
             transf = self.predict_transformation(parent, child, parent_token, token, position)
 
             if testing:
+                test_tree = parent.tree.clone()
+                test_parent = test_tree.get(parent.id)
+                hgtransf.apply(test_parent, elem_id, transf)
+                hgtransf.apply(parent, elem_id, self.transfs[0])
                 self.test_predictions[transf] += 1
-                if transf != self.transfs[0]:
+                if str(parent) != str(test_parent):
+                    # print('%s <- %s' % (parent_token, token))
+                    # print('%s <- %s' % (parent, child))
                     print('predicted: %s; should be: %s'
                           % (hgtransf.to_string(transf), hgtransf.to_string(self.transfs[0])))
                     self.wrong += 1
                     transf = self.transfs[0]
                 self.transfs = self.transfs[1:]
                 self.test_true_values[transf] += 1
-
-            hgtransf.apply(parent, elem_id, transf)
+            else:
+                hgtransf.apply(parent, elem_id, transf)
 
         return elem_id, transf
 

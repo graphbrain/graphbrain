@@ -40,6 +40,21 @@ class Tree(object):
             self.root_id = elem.id
             self.import_element(elem)
 
+    def clone(self):
+        tree = Tree()
+        tree.root_id = self.root_id
+        tree.cur_id = self.cur_id
+        for elem_id in self.table:
+            elem = self.table[elem_id]
+            if elem.is_leaf():
+                new_elem = Leaf(elem.token)
+            else:
+                new_elem = Node(elem.children_ids)
+            new_elem.id = elem_id
+            new_elem.tree = tree
+            tree.table[elem_id] = new_elem
+        return tree
+
     def import_element(self, elem):
         if elem.is_leaf():
             new_elem = Leaf(elem.token)
