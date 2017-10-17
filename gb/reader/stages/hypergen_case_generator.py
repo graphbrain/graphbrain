@@ -26,7 +26,7 @@ from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
 from gb.reader.semantic_tree import Tree, Position
 import gb.reader.stages.hypergen_transformation as hgtransf
-from gb.reader.stages.hypergen_forest import expanded_fields, build_case, read_parses
+from gb.reader.stages.hypergen import expanded_fields, build_case, read_parses
 
 
 def test_transformation(parent, child, transf):

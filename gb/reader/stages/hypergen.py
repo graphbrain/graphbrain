@@ -23,6 +23,9 @@ import pickle
 from collections import Counter
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
+import keras
+from keras.models import Sequential
+from keras.layers import Dense, Activation
 import gb.nlp.constants as nlp_consts
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
@@ -36,6 +39,10 @@ CASE_FIELDS = ('transformation', 'child_pos', 'child_dep', 'child_tag', 'parent_
                'parent_edge_pos', 'parent_edge_dep', 'parent_edge_tag', 'parent_edge_depth',
                'child_inedge', 'parent_inedge',
                'child_position', 'child_is_atom', 'parent_is_atom')
+
+
+RANDOM_FOREST_MODEL_FILE = 'hypergen_random_forest.model'
+NEURAL_NETWORK_MODEL_FILE = 'hypergen_neural_network.model'
 
 
 def read_parses(infile, test_set=False):
@@ -158,7 +165,7 @@ def build_case(parent, child, parent_token, child_token, position):
     return case
 
 
-def learn(infile, outfile):
+def learn_rf(infile, outfile):
     train = pd.read_csv(infile)
 
     feature_cols = train.columns.values[1:]
@@ -173,19 +180,75 @@ def learn(infile, outfile):
     score = rf.score(features, targets)
     print('score: %s' % score)
 
+    # save model
+    if outfile is None:
+        outfile = RANDOM_FOREST_MODEL_FILE
     with open(outfile, 'wb') as f:
         pickle.dump(rf, f)
 
 
-class HypergenForest(object):
-    def __init__(self, model_file='hypergen_forest.model'):
+def learn_nn(infile, outfile):
+    train = pd.read_csv(infile)
+
+    feature_cols = train.columns.values[1:]
+    target_cols = [train.columns.values[0]]
+
+    features = train.as_matrix(feature_cols)
+    targets = train.as_matrix(target_cols)
+
+    model = Sequential()
+    model.add(Dense(units=len(feature_cols), input_dim=len(feature_cols)))
+    model.add(Activation('relu'))
+    for i in range(3):
+        model.add(Dense(units=len(feature_cols)))
+        model.add(Activation('relu'))
+    model.add(Dense(units=10))
+    model.add(Activation('softmax'))
+    model.compile(optimizer='rmsprop',
+                  loss='categorical_crossentropy',
+                  metrics=['accuracy'])
+
+    # Convert labels to categorical one-hot encoding
+    one_hot_targets = keras.utils.to_categorical(targets, num_classes=10)
+    model.fit(features, one_hot_targets, epochs=100, batch_size=32)
+
+    # save model to file
+    if outfile is None:
+        outfile = NEURAL_NETWORK_MODEL_FILE
+    model.save(outfile)
+
+
+def learn(infile, outfile=None, model_type='rf'):
+    if model_type == 'nn':
+        learn_nn(infile, outfile)
+    elif model_type == 'rf':
+        learn_rf(infile, outfile)
+    else:
+        raise ValueError('unknown machine learning model type: %s' % model_type)
+
+
+class Hypergen(object):
+    def __init__(self, model_file=None, model_type='rf'):
+        self.model_type = model_type
         self.tree = Tree()
         self.transfs = None
         self.wrong = 0
         self.test_predictions = Counter()
         self.test_true_values = Counter()
-        with open(model_file, 'rb') as f:
-            self.rf = pickle.load(f)
+
+        if model_type == 'nn':
+            print('using neural network model type.')
+            if model_file is None:
+                model_file = NEURAL_NETWORK_MODEL_FILE
+            self.nn = keras.models.load_model(model_file)
+        elif model_type == 'rf':
+            print('using random forest model type.')
+            if model_file is None:
+                model_file = RANDOM_FOREST_MODEL_FILE
+            with open(model_file, 'rb') as f:
+                self.rf = pickle.load(f)
+        else:
+            raise ValueError('unknown machine learning model type: %s' % model_type)
 
     def predict_transformation(self, parent, child, parent_token, child_token, position):
         fields = expanded_fields()
@@ -193,8 +256,18 @@ class HypergenForest(object):
         values = [[case[field] for field in fields[1:]]]
         data = pd.DataFrame(values, columns=fields[1:])
         data = data.as_matrix(data.columns.values)
-        pred = self.rf.predict(data)
-        return pred[0]
+        if self.model_type == 'nn':
+            output = self.nn.predict(data)[0]
+            max_out = 0.
+            transf = -1
+            for i in range(10):
+                if output[i] > max_out:
+                    max_out = output[i]
+                    transf = i
+            return transf
+        elif self.model_type == 'rf':
+            pred = self.rf.predict(data)
+            return pred[0]
 
     def process_token(self, token, parent_token=None, parent_id=None, position=None, testing=False):
         elem = self.tree.create_leaf(token)
@@ -250,11 +323,11 @@ class HypergenForest(object):
 
 
 def transform(sentence):
-    hgforest = HypergenForest()
+    hgforest = Hypergen()
     return hgforest.process_sentence(sentence)
 
 
-def test(infile):
+def test(infile, model_type='rf'):
     parses = read_parses(infile, test_set=True)
 
     acc_total = 0
@@ -268,7 +341,7 @@ def test(infile):
         sentence = Sentence(json_str=json_str)
         transfs = [int(token) for token in parse[3].split(',')]
         total = len(transfs)
-        hgforest = HypergenForest()
+        hgforest = Hypergen(model_type=model_type)
         hgforest.test(sentence, transfs)
         wrong = hgforest.wrong
         print('%s / %s' % (wrong, total))
