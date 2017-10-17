@@ -23,9 +23,6 @@ import pickle
 from collections import Counter
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-import keras
-from keras.models import Sequential
-from keras.layers import Dense, Activation
 import gb.nlp.constants as nlp_consts
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
@@ -188,6 +185,8 @@ def learn_rf(infile, outfile):
 
 
 def learn_nn(infile, outfile):
+    import keras
+
     train = pd.read_csv(infile)
 
     feature_cols = train.columns.values[1:]
@@ -196,14 +195,14 @@ def learn_nn(infile, outfile):
     features = train.as_matrix(feature_cols)
     targets = train.as_matrix(target_cols)
 
-    model = Sequential()
-    model.add(Dense(units=len(feature_cols), input_dim=len(feature_cols)))
-    model.add(Activation('relu'))
+    model = keras.models.Sequential()
+    model.add(keras.layers.Dense(units=len(feature_cols), input_dim=len(feature_cols)))
+    model.add(keras.layers.Activation('relu'))
     for i in range(3):
-        model.add(Dense(units=len(feature_cols)))
-        model.add(Activation('relu'))
-    model.add(Dense(units=10))
-    model.add(Activation('softmax'))
+        model.add(keras.layers.Dense(units=len(feature_cols)))
+        model.add(keras.layers.Activation('relu'))
+    model.add(keras.layers.Dense(units=10))
+    model.add(keras.layers.Activation('softmax'))
     model.compile(optimizer='rmsprop',
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
@@ -237,6 +236,7 @@ class Hypergen(object):
         self.test_true_values = Counter()
 
         if model_type == 'nn':
+            import keras
             print('using neural network model type.')
             if model_file is None:
                 model_file = NEURAL_NETWORK_MODEL_FILE

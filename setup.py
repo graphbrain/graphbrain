@@ -32,7 +32,7 @@ setup(
         'sklearn',
         'pandas',
         'colorama',
-        'click',
+        'termcolor',
         'matplotlib',
         'python-igraph',
         'nltk',

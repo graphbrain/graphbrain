@@ -20,7 +20,8 @@
 
 
 import logging
-import click
+import argparse
+from termcolor import colored
 import gb.constants as const
 from gb.hypergraph.hypergraph import HyperGraph
 import gb.importers.wordnet as wn
@@ -38,214 +39,224 @@ import gb.tools.json as json_tools
 from gb.filters.filters import AllFilter
 
 
-@click.group()
-@click.option('--backend', help='Hypergraph Backend (leveldb, null).', default='leveldb')
-@click.option('--hg', help='Hypergraph name.', default='gb.hg')
-@click.option('--infile', help='Input file.')
-@click.option('--outfile', help='Output file.')
-@click.option('--startdate', help='Start date.')
-@click.option('--enddate', help='End date.')
-@click.option('--source', help='Source can have multiple meanings.')
-@click.option('--log', help='Logging level.', default='WARNING')
-@click.option('--disamb/--no_disamb', help='Perform sense disambiguation.', default=False)
-@click.option('--comments/--no_comments', help='Include comments.', default=False)
-@click.option('--fields', help='Field names.')
-@click.option('--model_type', help='Machine learning model type.', default='rf')
-@click.pass_context
-def cli(ctx, backend, hg, infile, outfile, startdate, enddate, source, log, disamb, comments, fields, model_type):
-    ctx.obj = {
-        'backend': backend,
-        'hg': hg,
-        'infile': infile,
-        'outfile': outfile,
-        'startdate': startdate,
-        'enddate': enddate,
-        'source': source,
-        'log': log,
-        'disamb': disamb,
-        'comments': comments,
-        'fields': fields,
-        'model_type': model_type
-    }
-
-    # configure logging
-    numeric_level = getattr(logging, log.upper(), None)
-    if not isinstance(numeric_level, int):
-        raise ValueError('Invalid log level: %s' % log)
-    logging.basicConfig(level=numeric_level)
-
-
 def show_logo():
-    click.echo(click.style(const.ascii_logo, fg='cyan'))
-    click.echo()
+    print(colored(const.ascii_logo, 'cyan'))
+    print()
 
 
-@cli.command()
-@click.pass_context
-def create(ctx):
-    click.echo('creating hypergraph...')
-    HyperGraph(ctx.obj)
-    click.echo('done.')
+# commands
+def create(params):
+    print('creating hypergraph...')
+    HyperGraph(params)
+    print('done.')
 
 
-@cli.command()
-@click.pass_context
-def wordnet(ctx):
-    click.echo('reading wordnet...')
-    hg = HyperGraph(ctx.obj)
+def wordnet(params):
+    print('reading wordnet...')
+    hg = HyperGraph(params)
     wn.read(hg)
-    click.echo('done.')
+    print('done.')
 
 
-@cli.command()
-@click.pass_context
-def wikidata(ctx):
-    click.echo('reading wikidata...')
-    hg = HyperGraph(ctx.obj)
-    infile = ctx.obj['infile']
+def wikidata(params):
+    print('reading wikidata...')
+    hg = HyperGraph(params)
+    infile = params['infile']
     wd.read(hg, infile)
-    click.echo('done.')
+    print('done.')
 
 
-@cli.command()
-@click.pass_context
-def dbpedia(ctx):
-    click.echo('reading DBPedia...')
-    hg = HyperGraph(ctx.obj)
-    infile = ctx.obj['infile']
+def dbpedia(params):
+    print('reading DBPedia...')
+    hg = HyperGraph(params)
+    infile = params['infile']
     dbp.read(hg, infile)
-    click.echo('done.')
+    print('done.')
 
 
-@cli.command()
-@click.pass_context
-def dbpedia_wordnet(ctx):
-    click.echo('reading DBPedia...')
-    hg = HyperGraph(ctx.obj)
-    infile = ctx.obj['infile']
+def dbpedia_wordnet(params):
+    print('reading DBPedia...')
+    hg = HyperGraph(params)
+    infile = params['infile']
     dbpwn.read(hg, infile)
-    click.echo('done.')
+    print('done.')
 
 
-@cli.command()
-@click.pass_context
-def info(ctx):
-    hg = HyperGraph(ctx.obj)
+def info(params):
+    hg = HyperGraph(params)
     print('symbols: %s' % hg.symbol_count())
     print('edges: %s' % hg.edge_count())
     print('total degree: %s' % hg.total_degree())
 
 
-@cli.command()
-@click.pass_context
-def shell(ctx):
-    hg = HyperGraph(ctx.obj)
+def shell(params):
+    hg = HyperGraph(params)
     sh = Shell(hg)
     sh.run()
-    click.echo('done.')
+    print('done.')
 
 
-@cli.command()
-@click.pass_context
-def generate_parsed_sentences_file(ctx):
-    hg = HyperGraph(ctx.obj)
-    rt = ReaderTests(hg, ctx.obj['disamb'])
-    rt.generate_parsed_sentences_file(ctx.obj['infile'], ctx.obj['outfile'])
-    click.echo('done.')
+def generate_parsed_sentences_file(params):
+    hg = HyperGraph(params)
+    rt = ReaderTests(hg, params['disamb'])
+    rt.generate_parsed_sentences_file(params['infile'], params['outfile'])
+    print('done.')
 
 
-@cli.command()
-@click.pass_context
-def reader_tests(ctx):
-    hg = HyperGraph(ctx.obj)
-    rt = ReaderTests(hg, ctx.obj['disamb'])
-    rt.run_tests(ctx.obj['infile'])
-    click.echo('done.')
+def reader_tests(params):
+    hg = HyperGraph(params)
+    rt = ReaderTests(hg, params['disamb'])
+    rt.run_tests(params['infile'])
+    print('done.')
 
 
-@cli.command()
-@click.pass_context
-def reader_debug(ctx):
-    hg = HyperGraph(ctx.obj)
-    rt = ReaderTests(hg, ctx.obj['disamb'])
-    rt.reader_debug(ctx.obj['infile'])
-    click.echo('done.')
+def reader_debug(params):
+    hg = HyperGraph(params)
+    rt = ReaderTests(hg, params['disamb'])
+    rt.reader_debug(params['infile'])
+    print('done.')
 
 
-@cli.command()
-@click.pass_context
-def ui(ctx):
-    hg = HyperGraph(ctx.obj)
+def ui(params):
+    hg = HyperGraph(params)
     start_ui(hg)
 
 
-@cli.command()
-@click.pass_context
-def reddit_retriever(ctx):
-    subreddit = ctx.obj['source']
-    outfile = ctx.obj['outfile']
-    startdate = ctx.obj['startdate']
-    enddate = ctx.obj['enddate']
+def reddit_retriever(params):
+    subreddit = params['source']
+    outfile = params['outfile']
+    startdate = params['startdate']
+    enddate = params['enddate']
     rr = RedditRetriever(subreddit, outfile, startdate, enddate)
     rr.run()
 
 
-@cli.command()
-@click.pass_context
-def reddit_reader(ctx):
-    hg = HyperGraph(ctx.obj)
-    infile = ctx.obj['infile']
-    comments = ctx.obj['comments']
+def reddit_reader(params):
+    hg = HyperGraph(params)
+    infile = params['infile']
+    comments = params['comments']
     RedditReader(hg, comments=comments).read_file(infile)
 
 
-@cli.command()
-@click.pass_context
-def interactive_edge_builder(ctx):
-    outfile = ctx.obj['outfile']
+def interactive_edge_builder(params):
+    outfile = params['outfile']
     hypergen_cg.interactive_edge_builder(outfile)
 
 
-@cli.command()
-@click.pass_context
-def generate_hypergen_cases(ctx):
-    infile = ctx.obj['infile']
-    outfile = ctx.obj['outfile']
+def generate_hypergen_cases(params):
+    infile = params['infile']
+    outfile = params['outfile']
     hypergen_cg.generate_cases(infile, outfile)
 
 
-@cli.command()
-@click.pass_context
-def learn_hypergen(ctx):
-    infile = ctx.obj['infile']
-    model_type = ctx.obj['model_type']
+def learn_hypergen(params):
+    infile = params['infile']
+    model_type = params['model_type']
     hypergen.learn(infile, model_type=model_type)
 
 
-@cli.command()
-@click.pass_context
-def test_hypergen(ctx):
-    infile = ctx.obj['infile']
-    model_type = ctx.obj['model_type']
+def test_hypergen(params):
+    infile = params['infile']
+    model_type = params['model_type']
     hypergen.test(infile, model_type=model_type)
 
 
-@cli.command()
-@click.pass_context
-def extract_json_fields(ctx):
-    infile = ctx.obj['infile']
-    outfile = ctx.obj['outfile']
-    fields = ctx.obj['fields']
+def extract_json_fields(params):
+    infile = params['infile']
+    outfile = params['outfile']
+    fields = params['fields']
     json_tools.extract_fields(infile, outfile, fields)
 
 
-@cli.command()
-@click.pass_context
-def all2json(ctx):
-    hg = HyperGraph(ctx.obj)
-    outfile = ctx.obj['outfile']
+def all2json(params):
+    hg = HyperGraph(params)
+    outfile = params['outfile']
     filt = AllFilter(hg)
     filt.write_edges(outfile)
+
+
+def cli():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('command', type=str, help='command to execute')
+    parser.add_argument('--backend', type=str, help='hypergraph backend (leveldb, null)', default='leveldb')
+    parser.add_argument('--hg', type=str, help='hypergraph name', default='gb.hg')
+    parser.add_argument('--infile', type=str, help='input file', default=None)
+    parser.add_argument('--outfile', type=str, help='output file', default=None)
+    parser.add_argument('--startdate', type=str, help='start date', default=None)
+    parser.add_argument('--enddate', type=str, help='end date', default=None)
+    parser.add_argument('--source', type=str, help='source can have multiple meanings.', default=None)
+    parser.add_argument('--log', type=str, help='logging level.', default='WARNING')
+    parser.add_argument('--disamb', help='perform sense disambiguation', action='store_true')
+    parser.add_argument('--comments', help='include comments', action='store_true')
+    parser.add_argument('--fields', type=str, help='field names', default=None)
+    parser.add_argument('--model_type', type=str, help='machine learning model type', default='rf')
+
+    args = parser.parse_args()
+
+    params = {
+        'backend': args.backend,
+        'hg': args.hg,
+        'infile': args.infile,
+        'outfile': args.outfile,
+        'startdate': args.startdate,
+        'enddate': args.enddate,
+        'source': args.source,
+        'log': args.log,
+        'disamb': args.disamb,
+        'comments': args.comments,
+        'fields': args.fields,
+        'model_type': args.model_type
+    }
+
+    # configure logging
+    numeric_level = getattr(logging, args.log.upper(), None)
+    if not isinstance(numeric_level, int):
+        raise ValueError('Invalid log level: %s' % args.log)
+    logging.basicConfig(level=numeric_level)
+
+    command = args.command
+
+    if command == 'create':
+        create(params)
+    elif command == 'wordnet':
+        wordnet(params)
+    elif command == 'wikidata':
+        wikidata(params)
+    elif command == 'dbpedia':
+        dbpedia(params)
+    elif command == 'dbpedia_wordnet':
+        dbpedia_wordnet(params)
+    elif command == 'info':
+        info(params)
+    elif command == 'shell':
+        shell(params)
+    elif command == 'generate_parsed_sentences_file':
+        generate_parsed_sentences_file(params)
+    elif command == 'reader_tests':
+        reader_tests(params)
+    elif command == 'reader_debug':
+        reader_debug(params)
+    elif command == 'ui':
+        ui(params)
+    elif command == 'reddit_retriever':
+        reddit_retriever(params)
+    elif command == 'reddit_reader':
+        reddit_reader(params)
+    elif command == 'interactive_edge_builder':
+        interactive_edge_builder(params)
+    elif command == 'generate_hypergen_cases':
+        generate_hypergen_cases(params)
+    elif command == 'learn_hypergen':
+        learn_hypergen(params)
+    elif command == 'test_hypergen':
+        test_hypergen(params)
+    elif command == 'extract_json_fields':
+        extract_json_fields(params)
+    elif command == 'all2json':
+        all2json(params)
+    else:
+        print('unkown command: %s' % command)
 
 
 show_logo()
