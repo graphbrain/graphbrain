@@ -91,11 +91,3 @@ Run tests
 Use the script provided::
 
   $ ./run_tests.sh
-
-Common problems
-===============
-
-ValueError: unknown locale: UTF-8
----------------------------------
-
-Solution if you have this problem: http://stackoverflow.com/questions/19961239/pelican-3-3-pelican-quickstart-error-valueerror-unknown-locale-utf-8

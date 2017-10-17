@@ -19,7 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import click
+from termcolor import colored
 from gb.reader.extractor import Extractor
 
 
@@ -88,14 +88,14 @@ class ReaderTests(object):
             if result in self.cases[sentence]:
                 correct += 1
             else:
-                click.echo()
-                click.echo('failed test for sentence:')
-                click.echo(click.style(sentence, fg='cyan'))
-                click.echo('expected:')
+                print()
+                print('failed test for sentence:')
+                print(colored(sentence, 'cyan'))
+                print('expected:')
                 for parse in self.cases[sentence]:
-                    click.echo(click.style(parse, fg='green'))
-                    click.echo('result:')
-                    click.echo(click.style(result, fg='red'))
+                    print(colored(parse, 'green'))
+                    print('result:')
+                    print(print(result, 'red'))
         total = len(self.cases)
         percentage = (float(correct) / float(total)) * 100.
         print('%s out of %s correct parses (%.2f%%)' % (correct, total, percentage))

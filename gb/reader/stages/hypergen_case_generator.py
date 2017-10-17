@@ -19,7 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import click
+from termcolor import colored
 import pandas as pd
 import gb.hypergraph.edge as ed
 from gb.nlp.parser import Parser
@@ -56,10 +56,10 @@ class CaseGenerator(object):
         res = test_transformation(parent, child, transf)
         if res not in self.transformation_outcomes:
             self.transformation_outcomes.append(res)
-            click.echo(click.style(key, fg='cyan'), nl=False)
-            click.echo(') ', nl=False)
-            click.echo(click.style(name, fg='green'), nl=False)
-            click.secho('   %s' % res, bold=True)
+            print(colored(key, 'cyan'), end='')
+            print(') ', end='')
+            print(colored(name, 'green'), end='')
+            print(colored('   %s' % res, 'white', attrs=['bold']))
 
     def choose_transformation(self, parent, child, position):
         print('target sentence:')
