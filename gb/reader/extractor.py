@@ -25,7 +25,7 @@ import gb.hypergraph.edge as ed
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
 from gb.sense.disambiguation import Disambiguation
-from gb.reader.stages.hypergen_forest import HypergenForest
+from gb.reader.stages.hypergen import Hypergen
 from gb.reader.stages.disamb import Disamb
 from gb.reader.stages.disamb_simple import DisambSimple
 from gb.reader.stages.disamb_naive import DisambNaive
@@ -47,7 +47,7 @@ class Extractor(object):
 
     def create_stage(self, name, output):
         if name == 'hypergen-forest':
-            return HypergenForest()
+            return Hypergen()
         elif name == 'disamb':
             return Disamb(self.hg, self.parser, self.disamb, output, self.aux_text)
         elif name == 'disamb-simple':

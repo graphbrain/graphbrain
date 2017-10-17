@@ -44,7 +44,11 @@ setup(
         'praw',
         'jupyter',
         'Sphinx',
-        'sphinx_rtd_theme'
+        'sphinx_rtd_theme',
+        'tensorflow',
+        'keras',
+        'bleach==1.5.0',
+        'h5py'
     ],
     entry_points='''
         [console_scripts]

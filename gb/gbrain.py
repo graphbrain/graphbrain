@@ -33,7 +33,7 @@ from gb.ui.server import start_ui
 from gb.retrievers.reddit import RedditRetriever
 from gb.reader.reddit import RedditReader
 import gb.reader.stages.hypergen_case_generator as hypergen_cg
-import gb.reader.stages.hypergen_forest as hypergen_for
+import gb.reader.stages.hypergen as hypergen
 import gb.tools.json as json_tools
 from gb.filters.filters import AllFilter
 
@@ -47,11 +47,12 @@ from gb.filters.filters import AllFilter
 @click.option('--enddate', help='End date.')
 @click.option('--source', help='Source can have multiple meanings.')
 @click.option('--log', help='Logging level.', default='WARNING')
-@click.option('--disamb/--no_disamb', help='Perform sense.', default=False)
+@click.option('--disamb/--no_disamb', help='Perform sense disambiguation.', default=False)
 @click.option('--comments/--no_comments', help='Include comments.', default=False)
 @click.option('--fields', help='Field names.')
+@click.option('--model_type', help='Machine learning model type.', default='rf')
 @click.pass_context
-def cli(ctx, backend, hg, infile, outfile, startdate, enddate, source, log, disamb, comments, fields):
+def cli(ctx, backend, hg, infile, outfile, startdate, enddate, source, log, disamb, comments, fields, model_type):
     ctx.obj = {
         'backend': backend,
         'hg': hg,
@@ -63,7 +64,8 @@ def cli(ctx, backend, hg, infile, outfile, startdate, enddate, source, log, disa
         'log': log,
         'disamb': disamb,
         'comments': comments,
-        'fields': fields
+        'fields': fields,
+        'model_type': model_type
     }
 
     # configure logging
@@ -214,17 +216,18 @@ def generate_hypergen_cases(ctx):
 
 @cli.command()
 @click.pass_context
-def learn_hypergen_forest(ctx):
+def learn_hypergen(ctx):
     infile = ctx.obj['infile']
-    outfile = ctx.obj['outfile']
-    hypergen_for.learn(infile, outfile)
+    model_type = ctx.obj['model_type']
+    hypergen.learn(infile, model_type=model_type)
 
 
 @cli.command()
 @click.pass_context
-def test_hypergen_forest(ctx):
+def test_hypergen(ctx):
     infile = ctx.obj['infile']
-    hypergen_for.test(infile)
+    model_type = ctx.obj['model_type']
+    hypergen.test(infile, model_type=model_type)
 
 
 @cli.command()
