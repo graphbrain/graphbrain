@@ -29,9 +29,9 @@ import gb.importers.wikidata as wd
 import gb.importers.dbpedia as dbp
 import gb.importers.dbpedia_wordnet as dbpwn
 from gb.tools.shell import Shell
-from gb.tools.reader_tests import ReaderTests
 from gb.ui.server import start_ui
 from gb.retrievers.reddit import RedditRetriever
+import gb.reader.reader_tests as rtests
 from gb.reader.reddit import RedditReader
 import gb.reader.stages.hypergen_case_generator as hypergen_cg
 import gb.reader.stages.hypergen as hypergen
@@ -93,28 +93,13 @@ def shell(params):
     hg = HyperGraph(params)
     sh = Shell(hg)
     sh.run()
-    print('done.')
-
-
-def generate_parsed_sentences_file(params):
-    hg = HyperGraph(params)
-    rt = ReaderTests(hg, params['disamb'])
-    rt.generate_parsed_sentences_file(params['infile'], params['outfile'])
-    print('done.')
 
 
 def reader_tests(params):
     hg = HyperGraph(params)
-    rt = ReaderTests(hg, params['disamb'])
-    rt.run_tests(params['infile'])
-    print('done.')
-
-
-def reader_debug(params):
-    hg = HyperGraph(params)
-    rt = ReaderTests(hg, params['disamb'])
-    rt.reader_debug(params['infile'])
-    print('done.')
+    infile = params['infile']
+    show_namespaces = params['show_namespaces']
+    rtests.reader_tests(hg, infile, show_namespaces)
 
 
 def ui(params):
@@ -187,10 +172,10 @@ def cli():
     parser.add_argument('--enddate', type=str, help='end date', default=None)
     parser.add_argument('--source', type=str, help='source can have multiple meanings.', default=None)
     parser.add_argument('--log', type=str, help='logging level.', default='WARNING')
-    parser.add_argument('--disamb', help='perform sense disambiguation', action='store_true')
     parser.add_argument('--comments', help='include comments', action='store_true')
     parser.add_argument('--fields', type=str, help='field names', default=None)
     parser.add_argument('--model_type', type=str, help='machine learning model type', default='rf')
+    parser.add_argument('--show_namespaces', help='show namespaces', action='store_true')
 
     args = parser.parse_args()
 
@@ -203,10 +188,10 @@ def cli():
         'enddate': args.enddate,
         'source': args.source,
         'log': args.log,
-        'disamb': args.disamb,
         'comments': args.comments,
         'fields': args.fields,
-        'model_type': args.model_type
+        'model_type': args.model_type,
+        'show_namespaces': args.show_namespaces
     }
 
     # configure logging
@@ -231,12 +216,8 @@ def cli():
         info(params)
     elif command == 'shell':
         shell(params)
-    elif command == 'generate_parsed_sentences_file':
-        generate_parsed_sentences_file(params)
     elif command == 'reader_tests':
         reader_tests(params)
-    elif command == 'reader_debug':
-        reader_debug(params)
     elif command == 'ui':
         ui(params)
     elif command == 'reddit_retriever':
