@@ -23,9 +23,9 @@ from gb.reader.reader import Reader
 
 
 def reader_tests(hg, infile, show_namespaces):
-    print('show namespaces? %s' % show_namespaces)
     extractor = Reader(hg, show_namespaces=show_namespaces)
     extractor.debug = True
     with open(infile, 'r') as f:
         for line in f:
             extractor.read_text(line)
+            print('\n\n')
