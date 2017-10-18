@@ -24,13 +24,13 @@ import csv
 import time
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
-from gb.reader.extractor import Extractor
+from gb.reader.reader import Reader
 
 
 class SemBubbleReader(object):
     def __init__(self, hg):
         self.hg = hg
-        self.extractor = Extractor(hg, stages=('alpha-forest', 'beta-naive', 'gamma', 'delta', 'epsilon'))
+        self.extractor = Reader(hg, stages=('alpha-forest', 'beta-naive', 'gamma', 'delta', 'epsilon'))
         self.main_edges = 0
         self.extra_edges = 0
         self.ignored = 0

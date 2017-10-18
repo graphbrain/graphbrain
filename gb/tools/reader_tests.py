@@ -20,7 +20,7 @@
 
 
 from termcolor import colored
-from gb.reader.extractor import Extractor
+from gb.reader.reader import Reader
 
 
 FIND_CASE = 0
@@ -35,7 +35,7 @@ class ReaderTests(object):
             beta = 'beta'
         else:
             beta = 'beta-naive'
-        self.extractor = Extractor(hg, stages=('alpha-forest', beta, 'gamma', 'delta', 'epsilon'), show_namespaces=True)
+        self.extractor = Reader(hg, stages=('alpha-forest', beta, 'gamma', 'delta', 'epsilon'), show_namespaces=True)
         # self.extractor.debug = True
         self.cases = None
 

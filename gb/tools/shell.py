@@ -19,7 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from gb.reader.extractor import Extractor
+from gb.reader.reader import Reader
 import gb.hypergraph.symbol as sym
 
 
@@ -30,7 +30,7 @@ class Shell(object):
 
     def get_extractor(self):
         if self.extractor is None:
-            self.extractor = Extractor(None)
+            self.extractor = Reader(None)
         return self.extractor
 
     def command_parse(self, params):
