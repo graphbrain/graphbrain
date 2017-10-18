@@ -47,7 +47,9 @@ class Reader(object):
 
     def create_stage(self, name, output):
         if name == 'hypergen-forest':
-            return Hypergen()
+            return Hypergen(model_type='rf')
+        elif name == 'hypergen-nn':
+            return Hypergen(model_type='nn')
         elif name == 'disamb':
             return Disamb(self.hg, self.parser, self.disamb, output, self.aux_text)
         elif name == 'disamb-simple':

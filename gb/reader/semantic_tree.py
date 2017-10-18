@@ -207,6 +207,9 @@ class Element(object):
     def all_tokens(self):
         raise NotImplementedError()
 
+    def insert(self, child_id, pos):
+        raise NotImplementedError()
+
     def apply_head(self, child_id):
         raise NotImplementedError()
 
@@ -318,6 +321,11 @@ class Leaf(Element):
     # override
     def all_tokens(self):
         return [self.token]
+
+    # override
+    def insert(self, child_id, pos):
+        node = self.tree.enclose(self)
+        node.insert(child_id, pos)
 
     # override
     def apply_head(self, child_id):
@@ -574,6 +582,13 @@ class Node(Element):
         for child in self.children():
             tokens = tokens + child.all_tokens()
         return tokens
+
+    # override
+    def insert(self, child_id, pos):
+        if pos == Position.LEFT:
+            self.children_ids.insert(0, child_id)
+        elif pos == Position.RIGHT:
+            self.children_ids.append(child_id)
 
     # hyperedge generator operations
 
