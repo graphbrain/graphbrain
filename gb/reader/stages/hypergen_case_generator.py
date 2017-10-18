@@ -236,6 +236,14 @@ def generate_cases(infile, outfile):
     print('%s out of %s correct cases.' % (correct, total))
 
 
+def extract_test_sentences(infile, outfile):
+    parses = read_parses(infile, test_set=False)
+    with open(outfile, 'w') as f:
+        for parse in parses:
+            sentence_str = parse[0].strip()
+            f.write('%s\n' % sentence_str)
+
+
 def cases_summary(infile):
     summary = {}
     cases = pd.read_csv(infile)
