@@ -34,7 +34,7 @@ from gb.reader.stages.shallow import Shallow
 from gb.reader.stages.concepts import Concepts
 
 
-class Extractor(object):
+class Reader(object):
     def __init__(self, hg, stages=('hypergen-forest', 'disamb-naive', 'merge', 'shallow', 'concepts'),
                  show_namespaces=False):
         self.hg = hg
@@ -127,7 +127,7 @@ if __name__ == '__main__':
 
     hgraph = hyperg.HyperGraph({'backend': 'leveldb',
                                 'hg': 'wordnet_dbpedia.hg'})
-    extractor = Extractor(hgraph)
+    extractor = Reader(hgraph)
     extractor.debug = True
     results = extractor.read_text(test_text)
     for result in results:

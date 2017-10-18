@@ -19,7 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from gb.reader.extractor import Extractor
+from gb.reader.reader import Reader
 from .edge import edge_html
 
 
@@ -29,7 +29,7 @@ extractor = None
 def get_extractor(hg):
     global extractor
     if extractor is None:
-        extractor = Extractor(hg)
+        extractor = Reader(hg)
     return extractor
 
 
