@@ -75,7 +75,7 @@ class Reader(object):
             self.debug_msg('creating parser...')
             self.parser = Parser()
             self.disamb = Disambiguation(self.hg, self.parser)
-        nlp_parses = self.parser.parse_text(text)
+        nlp_parses = self.parser.parse_text(text.strip())
         if reset_context:
             self.aux_text = text
             if aux_text:
