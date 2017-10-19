@@ -11,6 +11,7 @@ Welcome to GraphBrain's documentation!
    :caption: Contents:
 
    install.rst
+   cli.rst
    api.rst
 
 
