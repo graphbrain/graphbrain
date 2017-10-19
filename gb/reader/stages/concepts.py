@@ -26,18 +26,6 @@ import gb.hypergraph.edge as ed
 import gb.reader.stages.common as co
 
 
-def flatten_concept(edge):
-    children_ids = []
-    for child in edge.children():
-        if child.is_leaf() or child.compound:
-            children_ids.append(child.id)
-        else:
-            for cid in child.children_ids[1:]:
-                children_ids.append(cid)
-    edge.children_ids = children_ids
-    return edge
-
-
 class Concepts(object):
     def __init__(self, output):
         self.output = output
@@ -53,46 +41,25 @@ class Concepts(object):
         edge.children_ids.insert(0, connector_id)
         return edge_id
 
-    def process_entity_inner(self, entity_id, parent_id):
+    def process_entity_inner(self, entity_id):
         entity = self.output.tree.get(entity_id)
-        parent = self.output.tree.get(parent_id)
-
         # process node
         if entity.is_node() and not entity.compound:
             # build concept
             if len(entity.children_ids) > 1:
-                if co.is_concept(entity):
+                if not co.is_relationship(entity.get_child(0), entity):
                     self.build_concept(self.make_combinator_leaf().id, entity.id)
                     return entity.id
-            first = entity.get_child(0)
-            # make connector
-            if first.is_leaf() and (not co.is_relationship(first, entity)):
-                first.connector = True
-            if len(entity.children_ids) == 2:
-                if co.is_relationship(first, entity) and (not co.is_relationship(entity, parent)):
-                    first.connector = True
-                second = entity.get_child(1)
-                if second.is_node():
-                    # (connector (+ a b)) -> (connector a b)
-                    if first.is_leaf()\
-                            and not co.is_qualifier(first)\
-                            and first.is_connector()\
-                            and first.token.word != '':
-                        second_rel = second.children()[0]
-                        if second_rel.is_leaf() and second_rel.is_connector() and second_rel.token.word == '':
-                            second.children_ids[0] = first.id
-                            return second.id
-
         return entity_id
 
-    def process_entity(self, entity_id, parent_id=None):
+    def process_entity(self, entity_id):
         # process children first
         entity = self.output.tree.get(entity_id)
         if entity.is_node():
             for i in range(len(entity.children_ids)):
-                entity.children_ids[i] = self.process_entity(entity.children_ids[i], entity.id)
+                entity.children_ids[i] = self.process_entity(entity.children_ids[i])
 
-        return self.process_entity_inner(entity_id, parent_id)
+        return self.process_entity_inner(entity_id)
 
     def generate_synonyms(self, entity_id):
         # process children first

@@ -23,11 +23,8 @@ REL_POS = ['VERB', 'ADV', 'PART']
 NON_REL_DEPS = ['conj', 'amod', 'case']
 AUX_REL_POS = ['ADP', 'ADJ']
 
-CONCEPT_POS = ['NOUN', 'PROPN']
-QUALIFIER_POS = ['ADJ']
 
-
-def is_related_to_relationship(token, parent):
+def is_related_to_relationship(token):
     if not token.parent:
         return False
     if is_token_relationship(token.parent, None):
@@ -38,7 +35,7 @@ def is_token_relationship(token, parent):
     if token.pos in AUX_REL_POS:
         if parent and len(parent.children_ids) > 2:
             return False
-        return is_related_to_relationship(token, parent)
+        return is_related_to_relationship(token)
     return token.pos in REL_POS and token.dep not in NON_REL_DEPS
 
 
@@ -50,18 +47,3 @@ def is_relationship(entity, parent):
         return True
     else:
         return is_token_relationship(entity.token, parent)
-
-
-def is_qualifier(entity):
-    if entity.is_node():
-        return False
-    return entity.token.pos in QUALIFIER_POS
-
-
-def is_concept(entity):
-    if entity.is_node():
-        for child in entity.children():
-            if not is_concept(child) and not is_qualifier(child):
-                return False
-        return True
-    return entity.token.pos in CONCEPT_POS
