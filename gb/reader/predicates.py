@@ -24,26 +24,26 @@ NON_REL_DEPS = ['conj', 'amod', 'case']
 AUX_REL_POS = ['ADP', 'ADJ']
 
 
-def is_related_to_relationship(token):
+def is_related_to_predicate(token):
     if not token.parent:
         return False
-    if is_token_relationship(token.parent, None):
+    if is_token_predicate(token.parent, None):
         return True
 
 
-def is_token_relationship(token, parent):
+def is_token_predicate(token, parent):
     if token.pos in AUX_REL_POS:
         if parent and len(parent.children_ids) > 2:
             return False
-        return is_related_to_relationship(token)
+        return is_related_to_predicate(token)
     return token.pos in REL_POS and token.dep not in NON_REL_DEPS
 
 
-def is_relationship(entity, parent):
+def is_predicate(entity, parent):
     if entity.is_node():
         for child in entity.children():
-            if not is_relationship(child, entity):
+            if not is_predicate(child, entity):
                 return False
         return True
     else:
-        return is_token_relationship(entity.token, parent)
+        return is_token_predicate(entity.token, parent)

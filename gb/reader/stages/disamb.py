@@ -24,11 +24,11 @@ import logging
 import gb.constants as const
 import gb.hypergraph.symbol as sym
 from gb.sense.candidate_metrics import CandidateMetrics
-import gb.reader.stages.common as co
+import gb.reader.predicates as pred
 
 
 def force_wordnet(entity):
-    if co.is_relationship(entity):
+    if pred.is_predicate(entity):
         return True
     if entity.is_leaf():
         if entity.token.pos == 'PART' and entity.token.dep == 'case':
