@@ -28,11 +28,14 @@ class Merge(object):
         self.output = output
 
     def process_entity(self, entity_id):
+        changes = False
+
         # process children first
         entity = self.output.tree.get(entity_id)
         if entity.is_node():
             for i in range(len(entity.children_ids)):
-                self.process_entity(entity.children_ids[i])
+                if self.process_entity(entity.children_ids[i]):
+                    changes = True
 
         # combine relationships
         entity = self.output.tree.get(entity_id)
@@ -47,7 +50,9 @@ class Merge(object):
                 second_parent = entity
 
             second_head = second.first_child()
-            if co.is_relationship(first_head, entity) and co.is_relationship(second_head, second_parent):
+            if not entity.is_compound()\
+                    and co.is_relationship(first_head, entity)\
+                    and co.is_relationship(second_head, second_parent):
                 pos = Position.RIGHT
                 first_head.insert(second_head.id, pos)
                 entity = self.output.tree.get(entity_id)
@@ -60,7 +65,11 @@ class Merge(object):
                     second_children_ids = []
                 new_children_ids = [first.id] + second_children_ids + entity_children_ids
                 entity.children_ids = new_children_ids
+                changes = True
+
+        return changes
 
     def process(self):
-        self.process_entity(self.output.tree.root_id)
+        while self.process_entity(self.output.tree.root_id):
+            pass
         return self.output
