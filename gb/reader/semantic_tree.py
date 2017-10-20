@@ -137,7 +137,6 @@ class Element(object):
         self.tree = None
         self.namespace = None
         self.position = None
-        self.connector = False
 
     def as_label_list(self, lemmas=False):
         raise NotImplementedError()
@@ -155,7 +154,7 @@ class Element(object):
         return True
 
     def is_connector(self):
-        return self.connector
+        return False
 
     def is_terminal(self):
         return self.is_leaf() or self.is_compound()
@@ -168,8 +167,8 @@ class Element(object):
             self.generate_namespace()
         return self.namespace
 
-    def to_synonym(self):
-        return None
+    def is_compound_concept(self):
+        return False
 
     def first_child(self):
         raise NotImplementedError()
@@ -243,6 +242,7 @@ class Leaf(Element):
         super(Leaf, self).__init__()
         self.type = LEAF
         self.token = token
+        self.connector = False
 
     def copy(self, source):
         self.token = source.token
@@ -253,6 +253,10 @@ class Leaf(Element):
     # Leaf is immutable
     def clone(self):
         return self
+
+    # override
+    def is_connector(self):
+        return self.connector
 
     # override
     def as_label_list(self, lemmas=False):
@@ -388,7 +392,6 @@ class Node(Element):
         self.__compound = source.__compound
         self.namespace = source.namespace
         self.position = source.position
-        self.connector = source.connector
         self.inner_nested_node_id = source.inner_nested_node_id
 
     def clone(self):
@@ -544,20 +547,14 @@ class Node(Element):
                 if not self.namespace:
                     self.generate_namespace()
                 s = sym.build('_'.join(words), self.namespace)
-            if self.connector:
-                s = '+%s' % s
             return s
         else:
             return tuple([child.to_hyperedge(with_namespaces=with_namespaces) for child in self.children()])
 
     # override
-    def to_synonym(self):
-        if self.compound and ((not self.namespace) or '+' in self.namespace):
-            edge = ['+/gb']
-            for child in self.children():
-                edge.append(child.to_hyperedge())
-            return edge
-        return None
+    def is_compound_concept(self):
+        first = self.get_child(0)
+        return first.is_connector()
 
     # override
     def generate_namespace(self):
@@ -704,8 +701,6 @@ class Node(Element):
         strs = [str(self.tree.get(child_id)) for child_id in self.children_ids]
         if self.compound:
             s = '_'.join(strs)
-            if self.connector:
-                s = '+%s' % s
             return s
         else:
             return '(%s)' % ' '.join(strs)

@@ -40,6 +40,7 @@ are_similar = 'are_similar/gb'
 pertains_to = 'pertains/gb'
 has_derivationally_related_form = 'has_derivationally_related_form/gb'
 have_same_lemma = 'have_same_lemma/gb'
+has_label = 'has_label/gb'
 
 # Parts-of-speech
 noun = 'noun/gb'
@@ -54,6 +55,7 @@ dbpedia = 'dbpedia/gb'
 
 # Namespaces
 lemma_derived_namespace = 'lem'
+label_namespace = 'gb_label'
 
 # Logo
 ascii_logo = """ __   __        __        __   __
