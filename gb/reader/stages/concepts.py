@@ -22,7 +22,6 @@
 from gb.nlp.nlp_token import Token
 import gb.constants as cons
 import gb.hypergraph.symbol as sym
-import gb.hypergraph.edge as ed
 import gb.reader.stages.common as co
 
 
@@ -61,26 +60,21 @@ class Concepts(object):
 
         return self.process_entity_inner(entity_id)
 
-    def generate_synonyms(self, entity_id):
-        # process children first
+    def generate_labels(self, entity_id):
         entity = self.output.tree.get(entity_id)
         if entity.is_node():
+            # process children first
             for i in range(len(entity.children_ids)):
-                self.generate_synonyms(entity.children_ids[i])
+                self.generate_labels(entity.children_ids[i])
 
-        edge = entity.to_hyperedge()
-        synonym = entity.to_synonym()
-        if synonym:
-            self.output.edges.append([cons.are_synonyms, edge, synonym])
-
-        if entity.is_node() and entity.children()[0].is_connector():
-            text = entity.as_text()
-            ns = 'gb%s' % sym.hashed(ed.edge2str(edge))
-            symbol = sym.build(text, ns)
-            syn_edge = [cons.are_synonyms, edge, symbol]
-            self.output.edges.append(syn_edge)
+            if entity.is_compound_concept():
+                edge = entity.to_hyperedge()
+                text = entity.as_text()
+                label = sym.build(text, cons.label_namespace)
+                syn_edge = [cons.has_label, edge, label]
+                self.output.edges.append(syn_edge)
 
     def process(self):
         self.output.tree.root_id = self.process_entity(self.output.tree.root_id)
-        self.generate_synonyms(self.output.tree.root_id)
+        self.generate_labels(self.output.tree.root_id)
         return self.output
