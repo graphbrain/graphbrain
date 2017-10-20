@@ -22,7 +22,7 @@
 from gb.nlp.nlp_token import Token
 import gb.constants as cons
 import gb.hypergraph.symbol as sym
-import gb.reader.stages.common as co
+import gb.reader.predicates as pred
 
 
 class Concepts(object):
@@ -46,7 +46,7 @@ class Concepts(object):
         if entity.is_node() and not entity.compound:
             # build concept
             if len(entity.children_ids) > 1:
-                if not co.is_relationship(entity.get_child(0), entity):
+                if not pred.is_predicate(entity.get_child(0), entity):
                     self.build_concept(self.make_combinator_leaf().id, entity.id)
                     return entity.id
         return entity_id
