@@ -24,18 +24,34 @@ NON_REL_DEPS = ['conj', 'amod', 'case']
 AUX_REL_POS = ['ADP', 'ADJ']
 
 
-def is_related_to_predicate(token):
+def is_parent_predicate(token):
     if not token.parent:
         return False
     if is_token_predicate(token.parent, None):
-        return True
+        for child_token in token.parent.left_children:
+            if child_token == token:
+                return True
+            if not is_token_predicate(child_token, None):
+                return False
+        for child_token in token.parent.right_children:
+            if child_token == token:
+                return True
+            if not is_token_predicate(child_token, None):
+                return False
+            return False
+    else:
+        return False
 
 
 def is_token_predicate(token, parent):
+    # print('is_token_predicate? %s -> ' % token, end='')
     if token.pos in AUX_REL_POS:
-        if parent and len(parent.children_ids) > 2:
+        if parent and not parent.compound and len(parent.children_ids) > 2:
+            # print('%s (1)' % False)
             return False
-        return is_related_to_predicate(token)
+        # print('%s (2)' % is_parent_predicate(token))
+        return is_parent_predicate(token)
+    # print('%s (3)' % (token.pos in REL_POS and token.dep not in NON_REL_DEPS))
     return token.pos in REL_POS and token.dep not in NON_REL_DEPS
 
 
