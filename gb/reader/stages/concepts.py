@@ -40,7 +40,7 @@ class Concepts(object):
         edge.children_ids.insert(0, connector_id)
         return edge_id
 
-    def process_entity_inner(self, entity_id):
+    def build_concepts_inner(self, entity_id):
         entity = self.output.tree.get(entity_id)
         # process node
         if entity.is_node() and not entity.compound:
@@ -51,14 +51,52 @@ class Concepts(object):
                     return entity.id
         return entity_id
 
-    def process_entity(self, entity_id):
+    def build_concepts(self, entity_id):
         # process children first
         entity = self.output.tree.get(entity_id)
         if entity.is_node():
             for i in range(len(entity.children_ids)):
-                entity.children_ids[i] = self.process_entity(entity.children_ids[i])
+                entity.children_ids[i] = self.build_concepts(entity.children_ids[i])
 
-        return self.process_entity_inner(entity_id)
+        return self.build_concepts_inner(entity_id)
+
+    def combine_concepts_inner(self, entity_id):
+        entity = self.output.tree.get(entity_id)
+        # process node
+        if entity.is_node() and entity.first_child().is_connector():
+            new_children_ids = [entity.children_ids[0]]
+            leaf_concept_seq = []
+            for child_id in entity.children_ids[1:]:
+                child = self.output.tree.get(child_id)
+                if child.is_leaf():
+                    leaf_concept_seq.append(child_id)
+                elif not child.first_child().is_connector():
+                    if len(leaf_concept_seq) > 1:
+                        new_concept_id = self.output.tree.create_node(leaf_concept_seq).id
+                        self.build_concept(self.make_combinator_leaf().id, new_concept_id)
+                        new_children_ids.append(new_concept_id)
+                    elif len(leaf_concept_seq) > 0:
+                        new_children_ids.append(leaf_concept_seq[0])
+                    new_children_ids.append(child_id)
+                    leaf_concept_seq = []
+                else:
+                    for leaf_concept_id in leaf_concept_seq:
+                        new_children_ids.append(leaf_concept_id)
+                    new_children_ids.append(child_id)
+                    leaf_concept_seq = []
+
+            for leaf_concept_id in leaf_concept_seq:
+                new_children_ids.append(leaf_concept_id)
+            entity.children_ids = new_children_ids
+
+
+    def combine_concepts(self, entity_id):
+        # process children first
+        entity = self.output.tree.get(entity_id)
+        if entity.is_node():
+            for i in range(len(entity.children_ids)):
+                self.combine_concepts(entity.children_ids[i])
+            self.combine_concepts_inner(entity_id)
 
     def generate_labels(self, entity_id):
         entity = self.output.tree.get(entity_id)
@@ -75,6 +113,7 @@ class Concepts(object):
                 self.output.edges.append(syn_edge)
 
     def process(self):
-        self.output.tree.root_id = self.process_entity(self.output.tree.root_id)
+        self.output.tree.root_id = self.build_concepts(self.output.tree.root_id)
+        self.combine_concepts(self.output.tree.root_id)
         self.generate_labels(self.output.tree.root_id)
         return self.output
