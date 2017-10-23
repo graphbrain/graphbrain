@@ -171,7 +171,7 @@ def learn_rf(infile, outfile):
     features = train.as_matrix(feature_cols)
     targets = train.as_matrix(target_cols)
 
-    rf = RandomForestClassifier(n_estimators=50)
+    rf = RandomForestClassifier(n_estimators=10)
     rf.fit(features, targets)
 
     score = rf.score(features, targets)
