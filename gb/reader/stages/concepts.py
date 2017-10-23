@@ -66,11 +66,14 @@ class Concepts(object):
         if entity.is_node() and entity.first_child().is_connector():
             new_children_ids = [entity.children_ids[0]]
             leaf_concept_seq = []
+            last_was_concept = True
             for child_id in entity.children_ids[1:]:
                 child = self.output.tree.get(child_id)
                 if child.is_leaf():
+                    last_was_concept = True
                     leaf_concept_seq.append(child_id)
                 elif not child.first_child().is_connector():
+                    last_was_concept = False
                     if len(leaf_concept_seq) > 1:
                         new_concept_id = self.output.tree.create_node(leaf_concept_seq).id
                         self.build_concept(self.make_combinator_leaf().id, new_concept_id)
@@ -80,13 +83,19 @@ class Concepts(object):
                     new_children_ids.append(child_id)
                     leaf_concept_seq = []
                 else:
+                    last_was_concept = True
                     for leaf_concept_id in leaf_concept_seq:
                         new_children_ids.append(leaf_concept_id)
                     new_children_ids.append(child_id)
                     leaf_concept_seq = []
 
-            for leaf_concept_id in leaf_concept_seq:
-                new_children_ids.append(leaf_concept_id)
+            if last_was_concept or len(leaf_concept_seq) < 2:
+                for leaf_concept_id in leaf_concept_seq:
+                    new_children_ids.append(leaf_concept_id)
+            else:
+                new_concept_id = self.output.tree.create_node(leaf_concept_seq).id
+                self.build_concept(self.make_combinator_leaf().id, new_concept_id)
+                new_children_ids.append(new_concept_id)
             entity.children_ids = new_children_ids
 
 
