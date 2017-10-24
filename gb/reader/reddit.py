@@ -48,7 +48,7 @@ class RedditReader(object):
     def __init__(self, hg, comments):
         self.hg = hg
         self.comments = comments
-        self.extractor = Reader(hg, stages=('alpha-forest', 'beta-naive', 'gamma', 'delta', 'epsilon'))
+        self.reader = Reader(hg)
         self.main_edges = 0
         self.extra_edges = 0
         self.ignored = 0
@@ -58,7 +58,7 @@ class RedditReader(object):
 
     def process_text(self, text, author, reset_context=False, aux_text=None):
         start_t = time.time()
-        parses = self.extractor.read_text(text.lower(), aux_text, reset_context=reset_context)
+        parses = self.reader.read_text(text.lower(), aux_text, reset_context=reset_context)
         for p in parses:
             print('\n')
             print('sentence: %s' % p[0])
