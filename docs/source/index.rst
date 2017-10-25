@@ -1,18 +1,22 @@
-.. GraphBrain documentation master file, created by
-   sphinx-quickstart on Tue Oct 10 12:25:39 2017.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+GraphBrain -- Knowledge Hypergraphs
+===================================
 
-Welcome to GraphBrain's documentation!
-======================================
+GraphBrain is a set of research tools aimed at text understanding and the exploration of knowledge. Its purpose is to
+facilitate experiments with novel ways to extract and analyze the knowledge contained in human-produced text.
+
+GraphBrain is experimental in nature, but with a unifying concept: the *semantic hypergraph*.
+
+GraphBrain is an open scientific project, open to all that are interested in collaborating.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   overview.rst
    install.rst
    cli.rst
    api.rst
+   authors.rst
 
 
 Indices and tables

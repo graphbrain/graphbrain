@@ -48,10 +48,10 @@ reader package
 
 .. automodule:: gb.reader
 
-Extractor class
----------------
+Reader class
+------------
 
-.. autoclass:: gb.reader.extractor.Extractor
+.. autoclass:: gb.reader.reader.Reader
     :members:
 
 Semantic tree module -- Tree class
