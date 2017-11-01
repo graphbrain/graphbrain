@@ -20,6 +20,7 @@
 
 
 import logging
+import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
 from gb.hypergraph.null import Null
 from gb.hypergraph.leveldb import LevelDB
@@ -204,3 +205,11 @@ class HyperGraph(object):
         """Total degree of the hypergraph"""
         logging.debug('[hypergraph total_degree()]')
         return self.backend.total_degree()
+
+    def get_label(self, edge):
+        edges = self.pattern2edges([const.has_label, edge, None])
+        if len(edges) > 0:
+            label_symbol = edges.pop()[2]
+            if not sym.is_edge(label_symbol):
+                return sym.symbol2str(label_symbol)
+        return sym.symbol2str(edge)

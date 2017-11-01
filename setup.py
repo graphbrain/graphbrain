@@ -48,7 +48,8 @@ setup(
         'tensorflow',
         'keras',
         'bleach==1.5.0',
-        'h5py'
+        'h5py',
+        'progressbar2'
     ],
     entry_points='''
         [console_scripts]

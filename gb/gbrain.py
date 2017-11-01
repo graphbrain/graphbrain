@@ -37,6 +37,7 @@ import gb.reader.stages.hypergen_case_generator as hypergen_cg
 import gb.reader.stages.hypergen as hypergen
 import gb.tools.json as json_tools
 from gb.filters.filters import AllFilter
+import gb.synonyms.synonyms as synonyms
 
 
 def show_logo():
@@ -166,6 +167,11 @@ def all2json(params):
     filt.write_edges(outfile)
 
 
+def generate_synonyms(params):
+    hg = HyperGraph(params)
+    synonyms.generate(hg)
+
+
 def cli():
     parser = argparse.ArgumentParser()
 
@@ -244,6 +250,8 @@ def cli():
         extract_json_fields(params)
     elif command == 'all2json':
         all2json(params)
+    elif command == 'generate_synonyms':
+        generate_synonyms(params)
     else:
         print('unkown command: %s' % command)
 
