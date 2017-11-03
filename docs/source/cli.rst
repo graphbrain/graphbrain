@@ -128,7 +128,12 @@ hypergraphs.
 reader_tests
 ------------
 
-TBD
+Tests the reader by applying it to a file containing example sentences::
+
+   gbrain --infile <example sentences file>  [--show_namespaces] reader_tests
+
+If the optional ``--show_namespaces`` option is specified, the resulting hyperedges will contain symbols qualified
+with their namespaces, otherwise no namespaces will be shown.
 
 interactive_edge_builder
 ------------------------
@@ -149,22 +154,40 @@ A sentence parses dataset with a number of cases is provided with GraphBrain, at
 generate_hypergen_cases
 -----------------------
 
-TBD
+Generate training datasets from sentence parse transformations file created with ``interactive_edge_builder``.  This
+command breaks down each transformation into atomic cases, with respective feature values and expected output::
+
+   gbrain --infile <sentence transformations file> --outfile <training cases file> generate_hypergen_cases
+
+The output of this command can then be used to train a machine learning model using the command ``learn_hypergen``.
+
+Only 75% os the sentence parse transformations are used to generate the training cases. The remining 25% are reserved
+as a test dataset, to be used by ``test_hypergen``.
 
 learn_hypergen
 --------------
 
-TBD
+Trains a machine learning model for the hypergen reader stage using a training cases file produced by
+``generate_hypergen_cases``::
+
+   gbrain --infile <training cases file> [--model_type <model type>] learn_hypergen
+
+The optional ``--model_type`` parameter can be used to specify the type of machine learning model to use. Currently
+there are two options available: ``rf`` for random forest and ``nn`` for neural network. If not specified, random
+forest is assumed.
 
 test_hypergen
 -------------
 
-TBD
+Tests a machine learning model for the hypergen reader stage using 25% of the examples in a sentence parse
+transformations file::
 
-extract_hypergen_test_sentences
--------------------------------
+   gbrain --infile <sentence transformations file> [--model_type <model type>] test_hypergen
 
-TBD
+The optional ``--model_type`` parameter can be used to specify the type of machine learning model to use. Currently
+there are two options available: ``rf`` for random forest and ``nn`` for neural network. If not specified, random
+forest is assumed.
+
 
 Tools
 =====
