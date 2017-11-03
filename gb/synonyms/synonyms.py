@@ -69,3 +69,10 @@ def generate(hg):
 
     print('%s synonym sets created' % len(mer.synonym_sets))
     print('done.')
+
+
+def main_synonym(hg, edge):
+    edges = hg.pattern2edges([cons.are_synonyms, edge, None])
+    if len(edges) > 0:
+        return edges.pop()[2]
+    return edge
