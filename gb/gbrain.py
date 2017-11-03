@@ -147,12 +147,6 @@ def test_hypergen(params):
     hypergen.test(infile, model_type=model_type)
 
 
-def extract_hypergen_test_sentences(params):
-    infile = params['infile']
-    outfile = params['outfile']
-    hypergen_cg.extract_test_sentences(infile, outfile)
-
-
 def extract_json_fields(params):
     infile = params['infile']
     outfile = params['outfile']
@@ -244,8 +238,6 @@ def cli():
         learn_hypergen(params)
     elif command == 'test_hypergen':
         test_hypergen(params)
-    elif command == 'extract_hypergen_test_sentences':
-        extract_hypergen_test_sentences(params)
     elif command == 'extract_json_fields':
         extract_json_fields(params)
     elif command == 'all2json':
