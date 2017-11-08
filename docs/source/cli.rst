@@ -83,6 +83,19 @@ dbpedia_wordnet
 
 TBD
 
+Knowledge inference
+===================
+
+These commands correspond to various knowledge inference strategies that can be performed on hypergraphs.
+
+generate_synonyms
+-----------------
+
+Finds synonyms in the hypergraph and connects them to synonym set identifiers::
+
+   gbrain --hg <hypergraph> generate_synonyms
+
+
 Data retrieval
 ==============
 
@@ -191,11 +204,6 @@ forest is assumed.
 
 Tools
 =====
-
-extract_json_fields
--------------------
-
-TBD
 
 all2json
 --------

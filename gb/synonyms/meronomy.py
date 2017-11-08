@@ -20,6 +20,7 @@
 
 
 import operator
+import progressbar
 import igraph
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
@@ -48,10 +49,11 @@ class Meronomy(object):
         self.graph_edges = {}
         self.vertices = set()
         self.atoms = {}
-        self.syn_ids = {}
-        self.synonym_sets = {}
-        self.cur_syn_id = 0
         self.edge_map = {}
+
+        self.syn_ids = None
+        self.synonym_sets = None
+        self.cur_syn_id = 0
 
     # orig --[has part]--> targ
     def add_link(self, orig, targ):
@@ -88,7 +90,6 @@ class Meronomy(object):
         self.graph_edges = None
 
         self.normalize_graph()
-        self.generate_synonyms()
 
     def edge2str(self, edge):
         s = ed.edge2str(edge, namespaces=False)
@@ -128,19 +129,20 @@ class Meronomy(object):
         syn_ids = [syn_id for syn_id in syn_ids if syn_id]
         return len(set(syn_ids)) < 2
 
-    def synonym_ids_in(self, edge):
+    def synonym_ids_in(self, atom):
         sids = set()
-        atom = self.edge2str(edge)
         atom_syn_id = self.syn_id(atom)
         if atom_syn_id:
             sids.add(atom_syn_id)
-        if sym.is_edge(edge):
-            for element in edge:
-                atom = self.edge2str(element)
-                atom_syn_id = self.syn_id(atom)
-                if atom_syn_id:
-                    sids.add(atom_syn_id)
-                sids = sids.union(self.synonym_ids_in(element))
+        if type(atom) is str and len(atom) > 0 and atom[0] == '(':
+            edge = ed.str2edge(atom)
+            if sym.is_edge(edge):
+                for element in edge:
+                    atom_ = self.edge2str(element)
+                    atom_syn_id_ = self.syn_id(atom_)
+                    if atom_syn_id_:
+                        sids.add(atom_syn_id_)
+                    sids = sids.union(self.synonym_ids_in(element))
         return sids
 
     def new_syn_id(self):
@@ -149,60 +151,87 @@ class Meronomy(object):
         return syn_id
 
     def generate_synonyms(self):
-        sorted_atoms = sorted(self.atoms.items(), key=operator.itemgetter(1), reverse=False)
-        for atom_pair in sorted_atoms:
-            orig = self.graph.vs.find(atom_pair[0])
-            edges = self.graph.incident(orig.index, mode='in')
-            if len(edges) > 0:
-                max_weight = max([self.graph.es[e]['weight'] for e in edges])
-            else:
-                max_weight = 0.
-            if max_weight > .1:
-                for e in edges:
-                    edge = self.graph.es[e]
-                    if edge['weight'] == max_weight:
-                        source = self.graph.vs[edge.source]['name']
-                        target = self.graph.vs[edge.target]['name']
-                        source_syn_id = self.syn_id(source)
-                        target_syn_id = self.syn_id(target)
+        # init synonym data
+        self.syn_ids = {}
+        self.synonym_sets = {}
+        self.cur_syn_id = 0
 
-                        if not (source_syn_id and target_syn_id):
-                            if self.valid_synonym_parent(source):
-                                if source_syn_id:
-                                    self.syn_ids[target] = source_syn_id
-                                elif target_syn_id:
-                                    self.syn_ids[source] = target_syn_id
+        total_atoms = len(self.atoms)
+
+        # generate synonyms
+        print('generating synonyms')
+        i = 0
+        with progressbar.ProgressBar(max_value=total_atoms) as bar:
+            sorted_atoms = sorted(self.atoms.items(), key=operator.itemgetter(1), reverse=False)
+            for atom_pair in sorted_atoms:
+                orig = self.graph.vs.find(atom_pair[0])
+                edges = self.graph.incident(orig.index, mode='in')
+                if len(edges) > 0:
+                    weights = [self.graph.es[e]['weight'] for e in edges]
+                    max_weight = max(weights)
+                    # inverse of Herfinhal index
+                    h_ = 1. / sum([w * w for w in weights])
+                else:
+                    max_weight = 0.
+                    h_ = float('inf')
+                if h_ < 1.5:
+                    for e in edges:
+                        edge = self.graph.es[e]
+                        if edge['weight'] == max_weight:
+                            source = self.graph.vs[edge.source]['name']
+                            target = self.graph.vs[edge.target]['name']
+                            source_syn_id = self.syn_id(source)
+                            target_syn_id = self.syn_id(target)
+
+                            if not (source_syn_id and target_syn_id):
+                                if self.valid_synonym_parent(source):
+                                    if source_syn_id:
+                                        self.syn_ids[target] = source_syn_id
+                                    elif target_syn_id:
+                                        self.syn_ids[source] = target_syn_id
+                                    else:
+                                        syn_id = self.new_syn_id()
+                                        self.syn_ids[source] = syn_id
+                                        self.syn_ids[target] = syn_id
                                 else:
-                                    syn_id = self.new_syn_id()
-                                    self.syn_ids[source] = syn_id
-                                    self.syn_ids[target] = syn_id
-                            else:
-                                if not target_syn_id:
-                                    syn_id = self.new_syn_id()
-                                    self.syn_ids[target] = syn_id
+                                    if not target_syn_id:
+                                        syn_id = self.new_syn_id()
+                                        self.syn_ids[target] = syn_id
+                i += 1
+                bar.update(i)
 
         # filter out multiple synonyms
         delete_synonyms = set()
-        for atom in self.syn_ids:
-            if len(self.synonym_ids_in(ed.str2edge(atom))) > 1:
-                delete_synonyms.add(self.syn_ids[atom])
+        print('filtering out multiple synonyms')
+        i = 0
+        with progressbar.ProgressBar(max_value=total_atoms) as bar:
+            for atom in self.syn_ids:
+                if len(self.synonym_ids_in(atom)) > 1:
+                    delete_synonyms.add(self.syn_ids[atom])
+                i += 1
+                bar.update(i)
 
         # generate synonym sets
-        for atom in self.atoms:
-            syn_id = self.syn_id(atom)
-            if syn_id:
-                if syn_id in delete_synonyms:
+        print('generating synonym sets')
+        i = 0
+        with progressbar.ProgressBar(max_value=total_atoms) as bar:
+            for atom in self.atoms:
+                syn_id = self.syn_id(atom)
+                if syn_id:
+                    if syn_id in delete_synonyms:
+                        new_id = self.new_syn_id()
+                        self.syn_ids[atom] = new_id
+                        self.synonym_sets[new_id] = {atom}
+                    else:
+                        if syn_id not in self.synonym_sets:
+                            self.synonym_sets[syn_id] = set()
+                        self.synonym_sets[syn_id].add(atom)
+                else:
                     new_id = self.new_syn_id()
                     self.syn_ids[atom] = new_id
                     self.synonym_sets[new_id] = {atom}
-                else:
-                    if syn_id not in self.synonym_sets:
-                        self.synonym_sets[syn_id] = set()
-                    self.synonym_sets[syn_id].add(atom)
-            else:
-                new_id = self.new_syn_id()
-                self.syn_ids[atom] = new_id
-                self.synonym_sets[new_id] = {atom}
+                i += 1
+                bar.update(i)
 
     def synonym_label(self, syn_id, short=False):
         if short:
