@@ -48,6 +48,9 @@ def generate(hg):
     print('generating meronomy...')
     mer.generate()
 
+    print('generating synonyms...')
+    mer.generate_synonyms()
+
     print('writing synonyms...')
     for syn_id in mer.synonym_sets:
         edges = set()
