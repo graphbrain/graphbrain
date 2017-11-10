@@ -52,23 +52,25 @@ def generate(hg):
     mer.generate_synonyms()
 
     print('writing synonyms...')
-    for syn_id in mer.synonym_sets:
-        edges = set()
-        for atom in mer.synonym_sets[syn_id]:
-            edge = ed.str2edge(atom)
-            if edge in mer.edge_map:
-                edges = edges.union(mer.edge_map[edge])
-        labels = [hg.get_label(edge) for edge in edges]
-        label = min(labels, key=len)
-        syn_symbol = sym.build(label, 'syn%s' % syn_id)
-        for edge in edges:
-            syn_edge = (cons.are_synonyms, edge, syn_symbol)
-            hg.add(syn_edge)
-            print(syn_edge)
-        label_symbol = sym.build(label, cons.label_namespace)
-        label_edge = (cons.has_label, syn_symbol, label_symbol)
-        hg.add(label_edge)
-        print(label_edge)
+    i = 0
+    with progressbar.ProgressBar(max_value=len(mer.synonym_sets)) as bar:
+        for syn_id in mer.synonym_sets:
+            edges = set()
+            for atom in mer.synonym_sets[syn_id]:
+                edge = ed.str2edge(atom)
+                if edge in mer.edge_map:
+                    edges = edges.union(mer.edge_map[edge])
+            labels = [hg.get_label(edge) for edge in edges]
+            label = min(labels, key=len)
+            syn_symbol = sym.build(label, 'syn%s' % syn_id)
+            for edge in edges:
+                syn_edge = (cons.are_synonyms, edge, syn_symbol)
+                hg.add(syn_edge)
+            label_symbol = sym.build(label, cons.label_namespace)
+            label_edge = (cons.has_label, syn_symbol, label_symbol)
+            hg.add(label_edge)
+            i += 1
+            bar.update(i)
 
     print('%s synonym sets created' % len(mer.synonym_sets))
     print('done.')
