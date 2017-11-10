@@ -32,6 +32,13 @@ extensions = [
         libraries=[],
         library_dirs=[],
     ),
+    Extension(
+        'gb.hypergraph.symbol',
+        ['gb/hypergraph/symbol.pyx'],
+        include_dirs=[],
+        libraries=[],
+        library_dirs=[],
+    ),
 ]
 
 
@@ -69,5 +76,5 @@ setup(
         [console_scripts]
         gbrain=gb.gbrain:cli
     ''',
-    ext_modules = cythonize(extensions)
+    ext_modules=cythonize(extensions)
 )
