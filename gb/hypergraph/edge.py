@@ -99,49 +99,44 @@ def edge_str_has_outer_parens(edge_str):
     """Check if string representation of edge is delimited by outer parenthesis."""
     if len(edge_str) < 2:
         return False
-    par_depth = 0
-    for i in range(len(edge_str) - 1):
-        if edge_str[i] == '(':
-            par_depth += 1
-        elif edge_str[i] == ')':
-            par_depth -= 1
-        if par_depth == 0:
-            return False
-    return True
+    return edge_str[0] == '('
 
 
 def split_edge_str(edge_str):
-    """Shallow split into tokens of a string representation of an edge,
-    with or without outer parenthesis."""
-
-    edge_inner_str = edge_str
-    if edge_str_has_outer_parens(edge_str):
-        edge_inner_str = edge_str[1:-1]
-    stoks = edge_inner_str.split()
-
+    """Shallow split into tokens of a string representation of an edge, without outer parenthesis."""
+    start = 0
+    depth = 0
     tokens = []
-    curtok = None
-    par_depth = 0
-    while len(stoks) > 0:
-        tok = stoks[0]
-        par_depth = par_depth + open_pars(tok) - close_pars(tok)
-        bottom = par_depth == 0
-        if curtok is None:
-            curtok = tok
-        else:
-            curtok = '%s %s' % (curtok, tok)
-        if bottom:
-            tokens.append(curtok)
-        if bottom:
-            curtok = None
-        stoks = stoks[1:]
+    str_length = len(edge_str)
+    for i in range(str_length):
+        c = edge_str[i]
+        if c == ' ':
+            if depth == 0:
+                if start < i:
+                    tokens.append(edge_str[start:i])
+                start = i + 1
+        elif c == '(':
+            depth += 1
+        elif c == ')':
+            depth -= 1
+            if depth == 0:
+                tokens.append(edge_str[start:i + 1])
+                start = i + 1
+
+    if start < str_length:
+        tokens.append(edge_str[start:str_length])
 
     return tuple(tokens)
 
 
 def str2edge(edge_str):
     """Convert a string representation of an edge to an edge."""
-    tokens = split_edge_str(edge_str)
+
+    edge_inner_str = edge_str
+    if edge_str_has_outer_parens(edge_str):
+        edge_inner_str = edge_str[1:-1]
+
+    tokens = split_edge_str(edge_inner_str)
     elements = tuple(parsed_token(token) for token in tokens)
     if len(elements) > 1:
         return elements

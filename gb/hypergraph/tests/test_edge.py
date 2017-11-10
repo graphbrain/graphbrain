@@ -26,19 +26,19 @@ import gb.hypergraph.edge as ed
 class TestEdge(unittest.TestCase):
 
     def test_split_edge_str(self):
-        self.assertEqual(ed.split_edge_str('(is graphbrain/1 great/1)'), ('is', 'graphbrain/1', 'great/1'))
-        self.assertEqual(ed.split_edge_str('(size graphbrain/1 7)'), ('size', 'graphbrain/1', '7'))
-        self.assertEqual(ed.split_edge_str('(size graphbrain/1 7.0)'), ('size', 'graphbrain/1', '7.0'))
-        self.assertEqual(ed.split_edge_str('(size graphbrain/1 -7)'), ('size', 'graphbrain/1', '-7'))
-        self.assertEqual(ed.split_edge_str('(size graphbrain/1 -7.0)'), ('size', 'graphbrain/1', '-7.0'))
-        self.assertEqual(ed.split_edge_str('(src graphbrain/1 (is graphbrain/1 great/1))'),
+        self.assertEqual(ed.split_edge_str('is graphbrain/1 great/1'), ('is', 'graphbrain/1', 'great/1'))
+        self.assertEqual(ed.split_edge_str('size graphbrain/1 7'), ('size', 'graphbrain/1', '7'))
+        self.assertEqual(ed.split_edge_str('size graphbrain/1 7.0'), ('size', 'graphbrain/1', '7.0'))
+        self.assertEqual(ed.split_edge_str('size graphbrain/1 -7'), ('size', 'graphbrain/1', '-7'))
+        self.assertEqual(ed.split_edge_str('size graphbrain/1 -7.0'), ('size', 'graphbrain/1', '-7.0'))
+        self.assertEqual(ed.split_edge_str('src graphbrain/1 (is graphbrain/1 great/1)'),
                          ('src', 'graphbrain/1', '(is graphbrain/1 great/1)'))
 
     def test_edge_str_has_outer_parens(self):
         self.assertTrue(ed.edge_str_has_outer_parens('(is graphbrain/1 great/1)'))
-        self.assertFalse(ed.edge_str_has_outer_parens('is graphbrain/1 great/1'))
+        self.assertFalse(ed.edge_str_has_outer_parens('graphbrain/1'))
         self.assertTrue(ed.edge_str_has_outer_parens('((is my) graphbrain/1 (super great/1))'))
-        self.assertFalse(ed.edge_str_has_outer_parens('(is my) graphbrain/1 (super great/1)'))
+        self.assertFalse(ed.edge_str_has_outer_parens(''))
 
     def test_str2edge(self):
         self.assertEqual(ed.str2edge('(is graphbrain/1 great/1)'), ('is', 'graphbrain/1', 'great/1'))
@@ -48,7 +48,7 @@ class TestEdge(unittest.TestCase):
         self.assertEqual(ed.str2edge('(size graphbrain/1 -7.0)'), ('size', 'graphbrain/1', -7.))
         self.assertEqual(ed.str2edge('(src graphbrain/1 (is graphbrain/1 great/1))'),
                          ('src', 'graphbrain/1', ('is', 'graphbrain/1', 'great/1')))
-        self.assertEqual(ed.str2edge('(is my) graphbrain/1 (super great/1)'),
+        self.assertEqual(ed.str2edge('((is my) graphbrain/1 (super great/1))'),
                          (('is', 'my'), 'graphbrain/1', ('super', 'great/1')))
         self.assertEqual(ed.str2edge('.'), '.')
 

@@ -62,10 +62,14 @@ class Meronomy(object):
         self.graph_edges[(orig, targ)] += 1.
 
     def add_edge(self, edge_ns):
+        if not sym.is_edge(edge_ns):
+            return False
         edge = ed.without_namespaces(edge_ns)
+        if edge[0] != '+':
+            return False
         orig = self.edge2str(edge)
         if not orig:
-            return
+            return False
 
         if edge not in self.edge_map:
             self.edge_map[edge] = set()
@@ -78,16 +82,17 @@ class Meronomy(object):
                 targ = ed.without_namespaces(element)
                 if targ:
                     targ = self.edge2str(targ)
-                    self.add_link(orig, targ)
-                    self.add_edge(element)
+                    if self.add_edge(element):
+                        self.add_link(orig, targ)
+        return True
 
     def generate(self):
         self.graph = igraph.Graph(directed=True)
         self.graph.add_vertices(list(self.vertices))
-        self.vertices = None
+        # self.vertices = None
         self.graph.add_edges(self.graph_edges.keys())
         self.graph.es['weight'] = list(self.graph_edges.values())
-        self.graph_edges = None
+        # self.graph_edges = None
 
         self.normalize_graph()
 
@@ -111,9 +116,13 @@ class Meronomy(object):
     def normalize_graph(self):
         for orig in self.graph.vs:
             edges = self.graph.incident(orig.index, mode='in')
-            total = sum([self.graph.es[edge]['weight'] for edge in edges])
+            weights = [self.graph.es[edge]['weight'] for edge in edges]
+            total = sum([w for w in weights if w > 1])
             for edge in edges:
-                self.graph.es[edge]['weight'] = self.graph.es[edge]['weight'] / total
+                if self.graph.es[edge]['weight'] == 1:
+                    self.graph.es[edge]['weight'] = 0.
+                else:
+                    self.graph.es[edge]['weight'] = self.graph.es[edge]['weight'] / total
 
     def syn_id(self, atom):
         if atom in self.syn_ids:
@@ -168,13 +177,17 @@ class Meronomy(object):
                 edges = self.graph.incident(orig.index, mode='in')
                 if len(edges) > 0:
                     weights = [self.graph.es[e]['weight'] for e in edges]
-                    max_weight = max(weights)
-                    # inverse of Herfinhal index
-                    h_ = 1. / sum([w * w for w in weights])
+                    if sum(weights) > 0.:
+                        max_weight = max(weights)
+                        # inverse of Herfinhal index
+                        h_ = 1. / sum([w * w for w in weights])
+                    else:
+                        max_weight = 0.
+                        h_ = float('inf')
                 else:
                     max_weight = 0.
                     h_ = float('inf')
-                if h_ < 1.5:
+                if h_ < 2.:
                     for e in edges:
                         edge = self.graph.es[e]
                         if edge['weight'] == max_weight:
