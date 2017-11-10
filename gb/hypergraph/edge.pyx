@@ -95,19 +95,20 @@ def parsed_token(token):
             return float(token)
 
 
-def edge_str_has_outer_parens(edge_str):
+def edge_str_has_outer_parens(str edge_str):
     """Check if string representation of edge is delimited by outer parenthesis."""
     if len(edge_str) < 2:
         return False
     return edge_str[0] == '('
 
 
-def split_edge_str(edge_str):
+def split_edge_str(str edge_str):
     """Shallow split into tokens of a string representation of an edge, without outer parenthesis."""
-    start = 0
-    depth = 0
+    cdef int start = 0
+    cdef int depth = 0
+    cdef int str_length = len(edge_str)
+    cdef str c
     tokens = []
-    str_length = len(edge_str)
     for i in range(str_length):
         c = edge_str[i]
         if c == ' ':
@@ -129,10 +130,10 @@ def split_edge_str(edge_str):
     return tuple(tokens)
 
 
-def str2edge(edge_str):
+def str2edge(str edge_str):
     """Convert a string representation of an edge to an edge."""
 
-    edge_inner_str = edge_str
+    cdef str edge_inner_str = edge_str
     if edge_str_has_outer_parens(edge_str):
         edge_inner_str = edge_str[1:-1]
 
