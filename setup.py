@@ -20,6 +20,19 @@
 
 
 from setuptools import setup, find_packages
+from setuptools.extension import Extension
+from Cython.Build import cythonize
+
+
+extensions = [
+    Extension(
+        'gb.hypergraph.edge',
+        ['gb/hypergraph/edge.pyx'],
+        include_dirs=[],
+        libraries=[],
+        library_dirs=[],
+    ),
+]
 
 
 setup(
@@ -49,10 +62,12 @@ setup(
         'keras',
         'bleach==1.5.0',
         'h5py',
-        'progressbar2'
+        'progressbar2',
+        'cython'
     ],
     entry_points='''
         [console_scripts]
         gbrain=gb.gbrain:cli
     ''',
+    ext_modules = cythonize(extensions)
 )
