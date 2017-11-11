@@ -108,24 +108,38 @@ def split_edge_str(str edge_str):
     cdef int depth = 0
     cdef int str_length = len(edge_str)
     cdef str c
+    cdef int active = 0
     tokens = []
     for i in range(str_length):
         c = edge_str[i]
         if c == ' ':
-            if depth == 0:
-                if start < i:
-                    tokens.append(edge_str[start:i])
-                start = i + 1
+            if active and depth == 0:
+                tokens.append(edge_str[start:i])
+                active = 0
         elif c == '(':
+            if depth == 0:
+                active = 1
+                start = i
             depth += 1
         elif c == ')':
             depth -= 1
             if depth == 0:
                 tokens.append(edge_str[start:i + 1])
-                start = i + 1
+                active = 0
+            elif depth < 0:
+                # TODO: throw exception?
+                return None
+        else:
+            if not active:
+                active = 1
+                start = i
 
-    if start < str_length:
-        tokens.append(edge_str[start:str_length])
+    if active:
+        if depth > 0:
+            # TODO: throw exception?
+            return None
+        else:
+            tokens.append(edge_str[start:])
 
     return tuple(tokens)
 
@@ -138,6 +152,8 @@ def str2edge(str edge_str):
         edge_inner_str = edge_str[1:-1]
 
     tokens = split_edge_str(edge_inner_str)
+    if not tokens:
+        return None
     elements = tuple(parsed_token(token) for token in tokens)
     if len(elements) > 1:
         return elements
@@ -152,12 +168,14 @@ def nodes2str(edge, namespaces=True):
     node_strings = []
     for node in edge:
         if sym.sym_type(node) == sym.SymbolType.EDGE:
-            node_strings.append(edge2str(node, namespaces))
+            edge_str = edge2str(node, namespaces)
         else:
             if namespaces:
-                node_strings.append(str(node))
+                edge_str = str(node).strip()
             else:
-                node_strings.append(str(sym.root(node)))
+                edge_str = str(sym.root(node)).strip()
+        if edge_str != '':
+                node_strings.append(edge_str)
     return ' '.join(node_strings)
 
 
@@ -167,9 +185,9 @@ def edge2str(edge, namespaces=True):
         return '(%s)' % nodes2str(edge, namespaces)
     else:
         if namespaces:
-            return str(edge)
+            return str(edge).strip()
         else:
-            return str(sym.root(edge))
+            return str(sym.root(edge)).strip()
 
 
 def is_negative(edge):
@@ -209,7 +227,10 @@ def depth(edge):
 
 def without_namespaces(edge):
     """Returns edge stripped of namespaces"""
-    return str2edge(edge2str(edge, namespaces=False))
+    if sym.sym_type(edge) == sym.SymbolType.EDGE:
+        return tuple(without_namespaces(item) for item in edge)
+    else:
+        return sym.root(edge)
 
 
 def contains(edge, concept, deep=False):

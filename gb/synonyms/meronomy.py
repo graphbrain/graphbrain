@@ -62,10 +62,8 @@ class Meronomy(object):
         self.graph_edges[(orig, targ)] += 1.
 
     def add_edge(self, edge_ns):
-        if not sym.is_edge(edge_ns):
-            return False
         edge = ed.without_namespaces(edge_ns)
-        if edge[0] != '+':
+        if sym.is_edge(edge) and edge[0] != '+':
             return False
         orig = self.edge2str(edge)
         if not orig:
@@ -78,11 +76,10 @@ class Meronomy(object):
         self.vertices.add(orig)
         self.atoms[orig] = ed.depth(edge)
         if sym.is_edge(edge_ns):
-            for element in edge_ns:
-                targ = ed.without_namespaces(element)
+            for e in edge_ns:
+                targ = self.edge2str(e)
                 if targ:
-                    targ = self.edge2str(targ)
-                    if self.add_edge(element):
+                    if self.add_edge(e):
                         self.add_link(orig, targ)
         return True
 
@@ -101,10 +98,7 @@ class Meronomy(object):
         if sym.is_edge(edge):
             return s
 
-        if s[0] == '+':
-            s = s[1:]
-
-        if len(s) == 0:
+        if len(s) == 0 or s == '+':
             return None
 
         word = self.parser.make_word(s)
@@ -117,12 +111,9 @@ class Meronomy(object):
         for orig in self.graph.vs:
             edges = self.graph.incident(orig.index, mode='in')
             weights = [self.graph.es[edge]['weight'] for edge in edges]
-            total = sum([w for w in weights if w > 1])
+            total = sum(weights)
             for edge in edges:
-                if self.graph.es[edge]['weight'] == 1:
-                    self.graph.es[edge]['weight'] = 0.
-                else:
-                    self.graph.es[edge]['weight'] = self.graph.es[edge]['weight'] / total
+                self.graph.es[edge]['weight'] = self.graph.es[edge]['weight'] / total
 
     def syn_id(self, atom):
         if atom in self.syn_ids:
@@ -175,19 +166,23 @@ class Meronomy(object):
             for atom_pair in sorted_atoms:
                 orig = self.graph.vs.find(atom_pair[0])
                 edges = self.graph.incident(orig.index, mode='in')
+
+                max_weight = 0.
+                exists_synonym = False
                 if len(edges) > 0:
                     weights = [self.graph.es[e]['weight'] for e in edges]
-                    if sum(weights) > 0.:
-                        max_weight = max(weights)
-                        # inverse of Herfinhal index
-                        h_ = 1. / sum([w * w for w in weights])
-                    else:
-                        max_weight = 0.
-                        h_ = float('inf')
-                else:
-                    max_weight = 0.
-                    h_ = float('inf')
-                if h_ < 2.:
+                    max_weight = max(weights)
+                    if len(weights) == 1:
+                        exists_synonym = True
+                    elif len(weights) > 1:
+                        weights = sorted(weights)
+                        w1 = weights[-1]
+                        if w1 > 0.:
+                            w2 = weights[-2]
+                            if w1 / w2 > 2.:
+                                exists_synonym = True
+
+                if exists_synonym > 0.:
                     for e in edges:
                         edge = self.graph.es[e]
                         if edge['weight'] == max_weight:
