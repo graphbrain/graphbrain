@@ -37,13 +37,13 @@ def generate(hg):
     total_verts = hg.symbol_count() + hg.edge_count()
     i = 0
     with progressbar.ProgressBar(max_value=total_verts) as bar:
-        for vertex in hg.all():
-            if sym.is_edge(vertex):
-                edge = vertex
-                if (not sym.is_edge(edge[0])) and (sym.nspace(edge[0]) != 'gb'):
-                    mer.add_edge(edge)
+        for edge in hg.all():
+            if sym.is_edge(edge):
+                mer.add_edge(edge)
             i += 1
-            bar.update(i)
+            if i % 1000 == 0:
+                bar.update(i)
+        bar.update(i)
 
     print('generating meronomy...')
     mer.generate()
@@ -57,9 +57,8 @@ def generate(hg):
         for syn_id in mer.synonym_sets:
             edges = set()
             for atom in mer.synonym_sets[syn_id]:
-                edge = ed.str2edge(atom)
-                if edge in mer.edge_map:
-                    edges = edges.union(mer.edge_map[edge])
+                if atom in mer.edge_map:
+                    edges |= mer.edge_map[atom]
             labels = [hg.get_label(edge) for edge in edges]
             label = min(labels, key=len)
             syn_symbol = sym.build(label, 'syn%s' % syn_id)
@@ -70,7 +69,9 @@ def generate(hg):
             label_edge = (cons.has_label, syn_symbol, label_symbol)
             hg.add(label_edge)
             i += 1
-            bar.update(i)
+            if i % 1000 == 0:
+                bar.update(i)
+        bar.update(i)
 
     print('%s synonym sets created' % len(mer.synonym_sets))
     print('done.')
