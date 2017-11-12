@@ -68,12 +68,14 @@ def perm2edge(perm_str):
     """Transforms a permutation string from a database query into an edge."""
     try:
         tokens = ed.split_edge_str(perm_str[1:])
+        if tokens is None:
+            return None
         nper = int(tokens[-1])
         tokens = tokens[:-1]
         tokens = unpermutate(tokens, nper)
         return ed.str2edge(' '.join(tokens))
     except ValueError as v:
-        pass
+        return None
         # print(u'VALUE ERROR! %s perm2edge %s' % (v, perm_str))
 
 
@@ -164,7 +166,9 @@ class LevelDB(Backend):
         count = 0
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             perm_str = key.decode('utf-8')
-            edges.append(perm2edge(perm_str))
+            edge = perm2edge(perm_str)
+            if edge:
+                edges.append(edge)
             if limit:
                 count += 1
                 if count >= limit:
@@ -183,7 +187,9 @@ class LevelDB(Backend):
         edges = []
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             perm_str = key.decode('utf-8')
-            edges.append(perm2edge(perm_str))
+            edge = perm2edge(perm_str)
+            if edge:
+                edges.append(edge)
 
         return set([edge for edge in edges if edge_matches_pattern(edge, pattern)])
 
@@ -308,7 +314,9 @@ class LevelDB(Backend):
         edges = set()
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             perm_str = key.decode('utf-8')
-            edges.add(perm2edge(perm_str))
+            edge = perm2edge(perm_str)
+            if edge:
+                edges.add(edge)
 
         return edges
 
