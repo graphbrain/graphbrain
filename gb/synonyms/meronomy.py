@@ -42,6 +42,16 @@ def edge2label(edge):
         return str(edge)
 
 
+def discard_edge(edge):
+    if sym.is_edge(edge):
+        if edge[0] != '+':
+            return True
+        # discard posessives
+        if len(edge) > 1 and edge[1] == "'s":
+            return True
+    return False
+
+
 class Meronomy(object):
     def __init__(self, parser):
         self.parser = parser
@@ -63,15 +73,15 @@ class Meronomy(object):
 
     def add_edge(self, edge_ns):
         edge = ed.without_namespaces(edge_ns)
-        if sym.is_edge(edge) and edge[0] != '+':
+        if discard_edge(edge):
             return False
         orig = self.edge2str(edge)
         if not orig:
             return False
 
-        if edge not in self.edge_map:
-            self.edge_map[edge] = set()
-        self.edge_map[edge].add(edge_ns)
+        if orig not in self.edge_map:
+            self.edge_map[orig] = set()
+        self.edge_map[orig].add(edge_ns)
 
         self.vertices.add(orig)
         self.atoms[orig] = ed.depth(edge)
@@ -179,10 +189,10 @@ class Meronomy(object):
                         w1 = weights[-1]
                         if w1 > 0.:
                             w2 = weights[-2]
-                            if w1 / w2 > 2.:
+                            if w2 > 0. and w1 / w2 > 2.:
                                 exists_synonym = True
 
-                if exists_synonym > 0.:
+                if exists_synonym:
                     for e in edges:
                         edge = self.graph.es[e]
                         if edge['weight'] == max_weight:
@@ -256,7 +266,6 @@ class Meronomy(object):
     def synonym_full_edges(self, syn_id):
         edges = set()
         for atom in self.synonym_sets[syn_id]:
-            edge = ed.str2edge(atom)
-            if edge in self.edge_map:
-                edges = edges.union(self.edge_map[edge])
+            if atom in self.edge_map:
+                edges = edges.union(self.edge_map[atom])
         return edges
