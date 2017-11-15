@@ -2,7 +2,9 @@
 Install
 =======
 
-For now, these instructions are just for macOS. Installing on Linux should be quite similar. Everything is done on the terminal.
+For now, these instructions are just for macOS and Linux. Everything is done on the terminal.
+It should be possible to install GraphBrain on a Windows machine. If you are a Windows user and would like to help,
+don't hesitate to contact us.
 
 Prerequisites (macOS)
 =====================
@@ -55,6 +57,21 @@ FreeType (library)
 
    $ brew install freetype
 
+Prerequisites (Linux)
+=====================
+
+Linux distributions are diverse in terms of package managers. Please use the appropriate package manager for your
+distribution to install the prerequisites. Naturally, you can ignore the prerequisites that are already installed in
+your machine.
+
+If you have specific details for your distribution, don't hesitate to contact us.
+
+* gcc
+* Python 3
+* pip (Python package manager)
+* virtualenv (Virtual Python Environment builder)
+* freetype
+
 Download, build and install
 ===========================
 
@@ -67,7 +84,12 @@ Start by cloning the source code to your current local directory.
 
 It is advisable to work with virtual environments. To create one in the current directory you can do this::
 
-   $ virtualenv -p /usr/local/bin/python3 venv
+   $ virtualenv -p <path to python3> venv
+
+Common locations for python3:
+
+* /usr/local/bin/python3
+* /usr/bin/python3
 
 If you are on macOS, do this instead (for the reason `explained here <http://matplotlib.org/faq/osx_framework.html#osxframework-faq>`_)::
 
@@ -81,9 +103,9 @@ Now we can build and install GraphBrain::
 
    $ pip install --editable .
 
-It is still necessary to download spacy data files::
+It is still necessary to download spacy models::
 
-   $ python -m spacy.en.download all
+   $ python -m spacy download en
 
 Run tests
 =========
