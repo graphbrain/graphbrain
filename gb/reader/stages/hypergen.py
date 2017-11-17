@@ -171,7 +171,7 @@ def learn_rf(infile, outfile):
     features = train.as_matrix(feature_cols)
     targets = train.as_matrix(target_cols)
 
-    rf = RandomForestClassifier(n_estimators=10)
+    rf = RandomForestClassifier(n_estimators=50)
     rf.fit(features, targets)
 
     score = rf.score(features, targets)
@@ -198,7 +198,7 @@ def learn_nn(infile, outfile):
     model = keras.models.Sequential()
     model.add(keras.layers.Dense(units=len(feature_cols), input_dim=len(feature_cols)))
     model.add(keras.layers.Activation('relu'))
-    for i in range(3):
+    for i in range(2):
         model.add(keras.layers.Dense(units=len(feature_cols)))
         model.add(keras.layers.Activation('relu'))
     model.add(keras.layers.Dense(units=10))
