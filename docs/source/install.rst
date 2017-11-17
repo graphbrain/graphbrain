@@ -99,9 +99,18 @@ Then to activate it::
 
    $ source venv/bin/activate
 
+Install Cython::
+
+   $ pip install cython
+
 Now we can build and install GraphBrain::
 
    $ pip install --editable .
+
+Add these lines to your ~/.bash_profile::
+
+   export LC_ALL=en_US.UTF-8
+   export LANG=en_US.UTF-8
 
 It is still necessary to download spacy models::
 
