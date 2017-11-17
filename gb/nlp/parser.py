@@ -30,7 +30,7 @@ class Parser:
 
     def __init__(self):
         self.token_table = {}
-        self.parser = spacy.load('en')
+        self.parser = spacy.load('en_core_web_lg')
 
     def __spacy2token(self, stoken, depth=0):
         if stoken is None:

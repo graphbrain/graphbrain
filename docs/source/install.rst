@@ -114,7 +114,7 @@ Add these lines to your ~/.bash_profile::
 
 It is still necessary to download spacy models::
 
-   $ python -m spacy download en
+   $ python -m spacy download en_core_web_lg
 
 Run tests
 =========
