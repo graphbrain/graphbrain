@@ -22,6 +22,7 @@
 import operator
 import progressbar
 import igraph
+from unidecode import unidecode
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
 
@@ -60,7 +61,6 @@ class Meronomy(object):
         self.vertices = set()
         self.atoms = {}
         self.edge_map = {}
-        self.singletons = {}
 
         self.syn_ids = None
         self.synonym_sets = None
@@ -72,7 +72,7 @@ class Meronomy(object):
             self.graph_edges[(orig, targ)] = 0.
         self.graph_edges[(orig, targ)] += 1.
 
-    def add_edge(self, edge_ns, depth=0):
+    def add_edge(self, edge_ns):
         edge = ed.without_namespaces(edge_ns)
         if discard_edge(edge):
             return False
@@ -84,18 +84,13 @@ class Meronomy(object):
             self.edge_map[orig] = set()
         self.edge_map[orig].add(edge_ns)
 
-        if depth == 1:
-            if orig not in self.singletons:
-                self.singletons[orig] = 0
-            self.singletons[orig] += 1
-
         self.vertices.add(orig)
         self.atoms[orig] = ed.depth(edge)
         if sym.is_edge(edge_ns):
             for e in edge_ns:
                 targ = self.edge2str(e)
                 if targ:
-                    if self.add_edge(e, depth=depth+1):
+                    if self.add_edge(e):
                         self.add_link(orig, targ)
         return True
 
@@ -111,17 +106,17 @@ class Meronomy(object):
 
     def edge2str(self, edge):
         s = ed.edge2str(edge, namespaces=False)
-        if sym.is_edge(edge):
-            return s
+        if not sym.is_edge(edge):
+            if len(s) == 0 or s == '+':
+                return None
 
-        if len(s) == 0 or s == '+':
-            return None
+            word = self.parser.make_word(s)
+            if word.prob > MAX_PROB:
+                return None
 
-        word = self.parser.make_word(s)
-        if word.prob < MAX_PROB:
-            return s
-
-        return None
+        s = unidecode(s)
+        s = s.replace('.', '')
+        return s
 
     def normalize_graph(self):
         for orig in self.graph.vs:
