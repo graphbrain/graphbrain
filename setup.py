@@ -70,7 +70,9 @@ setup(
         'bleach==1.5.0',
         'h5py',
         'progressbar2',
-        'cython'
+        'cython',
+        'unidecode',
+        'progressbar2'
     ],
     entry_points='''
         [console_scripts]
