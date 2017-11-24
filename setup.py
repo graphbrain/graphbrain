@@ -72,7 +72,9 @@ setup(
         'progressbar2',
         'cython',
         'unidecode',
-        'progressbar2'
+        'progressbar2',
+        'networkx',
+        'visJS2jupyter'
     ],
     entry_points='''
         [console_scripts]
