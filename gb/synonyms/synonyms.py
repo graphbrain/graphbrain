@@ -22,7 +22,6 @@
 import progressbar
 import gb.constants as cons
 import gb.hypergraph.symbol as sym
-import gb.hypergraph.edge as ed
 import gb.nlp.parser as par
 from gb.synonyms.meronomy import Meronomy
 
@@ -34,19 +33,30 @@ def generate(hg):
     mer = Meronomy(parser)
 
     print('reading edges...')
+    total_edges = 0
+    total_beliefs = 0
+
     total_verts = hg.symbol_count() + hg.edge_count()
     i = 0
     with progressbar.ProgressBar(max_value=total_verts) as bar:
-        for edge in hg.all():
-            if sym.is_edge(edge):
-                mer.add_edge(edge)
+        for vertex in hg.all():
+            if sym.is_edge(vertex):
+                edge = vertex
+                total_edges += 1
+                if hg.is_belief(edge):
+                    mer.add_edge(edge)
+                    total_beliefs += 1
             i += 1
-            if i % 1000 == 0:
+            if (i % 1000) == 0:
                 bar.update(i)
-        bar.update(i)
 
-    print('generating meronomy...')
+    print('edges: %s; beliefs: %s' % (total_edges, total_beliefs))
+
+    print('generating meronomy graph...')
     mer.generate()
+
+    print('normalizing meronomy graph...')
+    mer.normalize_graph()
 
     print('generating synonyms...')
     mer.generate_synonyms()

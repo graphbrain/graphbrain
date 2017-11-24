@@ -28,6 +28,15 @@ import gb.hypergraph.edge as ed
 
 
 MAX_PROB = -12
+NORM_WEIGHT_THRESHOLD = .1
+WEIGHT_THRESHOLD = 10
+
+
+def edge2str(edge):
+    s = ed.edge2str(edge, namespaces=False)
+    s = unidecode(s)
+    s = s.replace('.', '')
+    return s
 
 
 def edge2label(edge):
@@ -43,14 +52,35 @@ def edge2label(edge):
         return str(edge)
 
 
-def discard_edge(edge):
-    if sym.is_edge(edge):
-        if edge[0] != '+':
-            return True
+def is_candidate(edge):
+    if sym.is_edge(edge) and len(edge) > 1:
         # discard posessives
-        if len(edge) > 1 and edge[1] == "'s":
-            return True
+        if edge[1] in {"'s", 'in', 'of', 'with', 'and', 'a', 'on', 'for', 'to', 'from'}:
+            return False
+    return True
+
+
+def next_candidate_pos(edges, pos):
+    for i in range(pos + 1, len(edges)):
+        if is_candidate(ed.str2edge(edges[i][0])):
+            return i
+    return -1
+
+
+def semantic_synonyms(source, target):
+    if source == '(+ the %s)' % target:
+        return True
     return False
+
+
+def is_concept(edge):
+    if sym.is_edge(edge):
+        if len(edge) > 1:
+            for item in edge[1:]:
+                if not is_concept(item):
+                    return False
+        return edge[0] == '+'
+    return True
 
 
 class Meronomy(object):
@@ -73,50 +103,41 @@ class Meronomy(object):
         self.graph_edges[(orig, targ)] += 1.
 
     def add_edge(self, edge_ns):
+        is_edge = sym.is_edge(edge_ns)
         edge = ed.without_namespaces(edge_ns)
-        if discard_edge(edge):
-            return False
-        orig = self.edge2str(edge)
-        if not orig:
-            return False
 
+        # discard common words
+        if not is_edge:
+            word = self.parser.make_word(edge)
+            if word.prob > MAX_PROB:
+                return False
+
+        orig = edge2str(edge)
+
+        # add to edge_map
         if orig not in self.edge_map:
             self.edge_map[orig] = set()
         self.edge_map[orig].add(edge_ns)
 
+        concept = is_concept(edge)
+
         self.vertices.add(orig)
         self.atoms[orig] = ed.depth(edge)
-        if sym.is_edge(edge_ns):
+
+        if is_edge:
             for e in edge_ns:
-                targ = self.edge2str(e)
+                targ = edge2str(e)
                 if targ:
                     if self.add_edge(e):
-                        self.add_link(orig, targ)
+                        if concept:
+                            self.add_link(orig, targ)
         return True
 
     def generate(self):
         self.graph = igraph.Graph(directed=True)
         self.graph.add_vertices(list(self.vertices))
-        # self.vertices = None
         self.graph.add_edges(self.graph_edges.keys())
         self.graph.es['weight'] = list(self.graph_edges.values())
-        # self.graph_edges = None
-
-        # self.normalize_graph()
-
-    def edge2str(self, edge):
-        s = ed.edge2str(edge, namespaces=False)
-        if not sym.is_edge(edge):
-            if len(s) == 0 or s == '+':
-                return None
-
-            word = self.parser.make_word(s)
-            if word.prob > MAX_PROB:
-                return None
-
-        s = unidecode(s)
-        s = s.replace('.', '')
-        return s
 
     def normalize_graph(self):
         for orig in self.graph.vs:
@@ -124,37 +145,12 @@ class Meronomy(object):
             weights = [self.graph.es[edge]['weight'] for edge in edges]
             total = sum(weights)
             for edge in edges:
-                self.graph.es[edge]['weight'] = self.graph.es[edge]['weight'] / total
+                self.graph.es[edge]['norm_weight'] = self.graph.es[edge]['weight'] / total
 
     def syn_id(self, atom):
         if atom in self.syn_ids:
             return self.syn_ids[atom]
         return None
-
-    def valid_synonym_parent(self, parent):
-        orig = self.graph.vs.find(parent)
-        edges = self.graph.incident(orig.index, mode='out')
-        edges = [self.graph.es[edge] for edge in edges]
-        targets = [self.graph.vs[edge.target]['name'] for edge in edges]
-        syn_ids = [self.syn_id(target) for target in targets]
-        syn_ids = [syn_id for syn_id in syn_ids if syn_id]
-        return len(set(syn_ids)) < 2
-
-    def synonym_ids_in(self, atom):
-        sids = set()
-        atom_syn_id = self.syn_id(atom)
-        if atom_syn_id:
-            sids.add(atom_syn_id)
-        if type(atom) is str and len(atom) > 0 and atom[0] == '(':
-            edge = ed.str2edge(atom)
-            if sym.is_edge(edge):
-                for element in edge:
-                    atom_ = self.edge2str(element)
-                    atom_syn_id_ = self.syn_id(atom_)
-                    if atom_syn_id_:
-                        sids.add(atom_syn_id_)
-                    sids = sids.union(self.synonym_ids_in(element))
-        return sids
 
     def new_syn_id(self):
         syn_id = self.cur_syn_id
@@ -177,58 +173,56 @@ class Meronomy(object):
             for atom_pair in sorted_atoms:
                 orig = self.graph.vs.find(atom_pair[0])
                 edges = self.graph.incident(orig.index, mode='in')
+                edges = [self.graph.es[edge] for edge in edges]
+                edges = [(self.graph.vs[edge.source]['name'],
+                          self.graph.vs[edge.target]['name'],
+                          edge['weight'],
+                          edge['norm_weight']) for edge in edges]
+                edges = sorted(edges, key=operator.itemgetter(3), reverse=True)
 
-                max_weight = 0.
-                exists_synonym = False
-                if len(edges) > 0:
-                    weights = [self.graph.es[e]['weight'] for e in edges]
-                    max_weight = max(weights)
-                    if len(weights) == 1:
-                        exists_synonym = True
-                    elif len(weights) > 1:
-                        weights = sorted(weights)
-                        w1 = weights[-1]
-                        if w1 > 0.:
-                            w2 = weights[-2]
-                            if w2 > 0. and w1 / w2 > 2.:
-                                exists_synonym = True
+                ambiguous = False
 
-                if exists_synonym:
-                    for e in edges:
-                        edge = self.graph.es[e]
-                        if edge['weight'] == max_weight:
-                            source = self.graph.vs[edge.source]['name']
-                            target = self.graph.vs[edge.target]['name']
-                            source_syn_id = self.syn_id(source)
-                            target_syn_id = self.syn_id(target)
+                for pos in range(len(edges)):
+                    is_synonym = False
 
-                            if not (source_syn_id and target_syn_id):
-                                if self.valid_synonym_parent(source):
-                                    if source_syn_id:
-                                        self.syn_ids[target] = source_syn_id
-                                    elif target_syn_id:
-                                        self.syn_ids[source] = target_syn_id
-                                    else:
-                                        syn_id = self.new_syn_id()
-                                        self.syn_ids[source] = syn_id
-                                        self.syn_ids[target] = syn_id
-                                else:
-                                    if not target_syn_id:
-                                        syn_id = self.new_syn_id()
-                                        self.syn_ids[target] = syn_id
+                    edge = edges[pos]
+                    source = edge[0]
+                    target = edge[1]
+                    weight = edge[2]
+                    norm_weight = edge[3]
+
+                    source_edge = ed.str2edge(source)
+                    if semantic_synonyms(source, target):
+                        is_synonym = True
+                    elif not ambiguous and norm_weight >= NORM_WEIGHT_THRESHOLD \
+                            and weight >= WEIGHT_THRESHOLD and is_candidate(source_edge):
+                        pos_next = next_candidate_pos(edges, pos)
+                        if pos_next < 0:
+                            is_synonym = True
+                        else:
+                            next_weight = edges[pos_next][3]
+                            if next_weight < NORM_WEIGHT_THRESHOLD:
+                                is_synonym = True
+                            else:
+                                ambiguous = True
+
+                    if is_synonym:
+                        source_syn_id = self.syn_id(source)
+                        target_syn_id = self.syn_id(target)
+
+                        if target_syn_id:
+                            self.syn_ids[source] = target_syn_id
+                        elif source_syn_id:
+                            self.syn_ids[target] = source_syn_id
+                        else:
+                            syn_id = self.new_syn_id()
+                            self.syn_ids[source] = syn_id
+                            self.syn_ids[target] = syn_id
+
                 i += 1
-                bar.update(i)
-
-        # filter out multiple synonyms
-        delete_synonyms = set()
-        print('filtering out multiple synonyms')
-        i = 0
-        with progressbar.ProgressBar(max_value=total_atoms) as bar:
-            for atom in self.syn_ids:
-                if len(self.synonym_ids_in(atom)) > 1:
-                    delete_synonyms.add(self.syn_ids[atom])
-                i += 1
-                bar.update(i)
+                if (i % 1000) == 0:
+                    bar.update(i)
+            bar.update(i)
 
         # generate synonym sets
         print('generating synonym sets')
@@ -237,20 +231,17 @@ class Meronomy(object):
             for atom in self.atoms:
                 syn_id = self.syn_id(atom)
                 if syn_id:
-                    if syn_id in delete_synonyms:
-                        new_id = self.new_syn_id()
-                        self.syn_ids[atom] = new_id
-                        self.synonym_sets[new_id] = {atom}
-                    else:
-                        if syn_id not in self.synonym_sets:
-                            self.synonym_sets[syn_id] = set()
-                        self.synonym_sets[syn_id].add(atom)
+                    if syn_id not in self.synonym_sets:
+                        self.synonym_sets[syn_id] = set()
+                    self.synonym_sets[syn_id].add(atom)
                 else:
                     new_id = self.new_syn_id()
                     self.syn_ids[atom] = new_id
                     self.synonym_sets[new_id] = {atom}
                 i += 1
-                bar.update(i)
+                if (i % 1000) == 0:
+                    bar.update(i)
+            bar.update(i)
 
     def synonym_label(self, syn_id, short=False):
         if short:
