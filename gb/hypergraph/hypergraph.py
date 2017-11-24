@@ -170,6 +170,10 @@ class HyperGraph(object):
         sources = [edge[2] for edge in edges]
         return set(sources)
 
+    def is_belief(self, edge):
+        """Check if hyperedge is a belief (has sources)."""
+        return len(self.pattern2edges((const.source, edge, None))) > 0
+
     def remove_belief(self, source, edge):
         """A belif is a fact with a source. The link from the source to the fact
            is removed. If no more sources support the fact, then the fact is also
