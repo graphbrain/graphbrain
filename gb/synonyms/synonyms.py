@@ -52,6 +52,18 @@ def generate(hg):
 
     print('edges: %s; beliefs: %s' % (total_edges, total_beliefs))
 
+    print('recovering words...')
+    i = 0
+    with progressbar.ProgressBar(max_value=total_verts) as bar:
+        for vertex in hg.all():
+            if sym.is_edge(vertex):
+                edge = vertex
+                if hg.is_belief(edge):
+                    mer.recover_words(edge)
+            i += 1
+            if (i % 1000) == 0:
+                bar.update(i)
+
     print('generating meronomy graph...')
     mer.generate()
 
