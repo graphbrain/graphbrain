@@ -133,6 +133,16 @@ class Meronomy(object):
                             self.add_link(orig, targ)
         return True
 
+    def recover_words(self, edge):
+        if sym.is_edge(edge):
+            for e in edge:
+                self.recover_words(e)
+        else:
+            term = edge2str(edge)
+            if term in self.edge_map:
+                if edge[-4:] == 'noun' or edge[-5:] == 'propn':
+                    self.edge_map[term].add(edge)
+
     def generate(self):
         self.graph = igraph.Graph(directed=True)
         self.graph.add_vertices(list(self.vertices))
@@ -192,19 +202,19 @@ class Meronomy(object):
                     norm_weight = edge[3]
 
                     source_edge = ed.str2edge(source)
-                    if semantic_synonyms(source, target):
-                        is_synonym = True
-                    elif not ambiguous and norm_weight >= NORM_WEIGHT_THRESHOLD \
-                            and weight >= WEIGHT_THRESHOLD and is_candidate(source_edge):
-                        pos_next = next_candidate_pos(edges, pos)
-                        if pos_next < 0:
+                    if weight >= WEIGHT_THRESHOLD:
+                        if semantic_synonyms(source, target):
                             is_synonym = True
-                        else:
-                            next_weight = edges[pos_next][3]
-                            if next_weight < NORM_WEIGHT_THRESHOLD:
+                        elif not ambiguous and norm_weight >= NORM_WEIGHT_THRESHOLD and is_candidate(source_edge):
+                            pos_next = next_candidate_pos(edges, pos)
+                            if pos_next < 0:
                                 is_synonym = True
                             else:
-                                ambiguous = True
+                                next_weight = edges[pos_next][3]
+                                if next_weight < NORM_WEIGHT_THRESHOLD:
+                                    is_synonym = True
+                                else:
+                                    ambiguous = True
 
                     if is_synonym:
                         source_syn_id = self.syn_id(source)
