@@ -58,7 +58,7 @@ class RedditReader(object):
 
     def process_text(self, text, author, reset_context=False, aux_text=None):
         start_t = time.time()
-        parses = self.reader.read_text(text.lower(), aux_text, reset_context=reset_context)
+        parses = self.reader.read_text(text, aux_text, reset_context=reset_context)
         for p in parses:
             print('\n')
             print('sentence: %s' % p[0])
