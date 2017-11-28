@@ -57,6 +57,13 @@ FreeType (library)
 
    $ brew install freetype
 
+LevelDB (database engine)
+-------------------------
+
+::
+
+   $ brew install leveldb
+
 Prerequisites (Linux)
 =====================
 
@@ -71,6 +78,7 @@ If you have specific details for your distribution, don't hesitate to contact us
 * pip (Python package manager)
 * virtualenv (Virtual Python Environment builder)
 * freetype
+* LevelDB
 
 Download, build and install
 ===========================
@@ -122,3 +130,16 @@ Run tests
 Use the script provided::
 
   $ ./run_tests.sh
+
+Known issues
+============
+
+LevelDB errors on macOS
+-----------------------
+
+https://github.com/wbolster/plyvel/issues/27#issuecomment-188709935
+
+Solution::
+
+   $ pip uninstall plyvel
+   $ CFLAGS='-mmacosx-version-min=10.7 -stdlib=libc++' pip install --no-use-wheel plyvel
