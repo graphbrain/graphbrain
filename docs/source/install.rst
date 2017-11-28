@@ -131,8 +131,8 @@ Use the script provided::
 
   $ ./run_tests.sh
 
-Known issues
-============
+Known Issues and Solutions
+==========================
 
 LevelDB errors on macOS
 -----------------------
@@ -143,3 +143,13 @@ Solution::
 
    $ pip uninstall plyvel
    $ CFLAGS='-mmacosx-version-min=10.7 -stdlib=libc++' pip install --no-use-wheel plyvel
+
+ValueError: unknown locale: UTF-8
+---------------------------------
+
+https://stackoverflow.com/questions/19961239/pelican-3-3-pelican-quickstart-error-valueerror-unknown-locale-utf-8
+
+Solution::
+
+   $ export LC_ALL=en_US.UTF-8
+   $ export LANG=en_US.UTF-8
