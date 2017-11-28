@@ -202,7 +202,7 @@ class Meronomy(object):
                     norm_weight = edge[3]
 
                     source_edge = ed.str2edge(source)
-                    if weight >= WEIGHT_THRESHOLD:
+                    if weight > WEIGHT_THRESHOLD:
                         if semantic_synonyms(source, target):
                             is_synonym = True
                         elif not ambiguous and norm_weight >= NORM_WEIGHT_THRESHOLD and is_candidate(source_edge):
