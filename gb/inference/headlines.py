@@ -19,13 +19,14 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import progressbar
+from collections import Counter
 from unidecode import unidecode
+import progressbar
 import pandas as pd
-# from gb.hypergraph.hypergraph import HyperGraph
+from gb.hypergraph.hypergraph import HyperGraph
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
-# import gb.nlp.parser as par
+import gb.nlp.parser as par
 import gb.synonyms.synonyms as syn
 
 
@@ -52,12 +53,24 @@ def read_predicate_table(file_path):
     return pred_table
 
 
+def herfindhal_and_total(counter):
+    weights = tuple(counter.values())
+    total = sum(weights)
+    h = 0.
+    if total > 0:
+        h_weights = [float(i) / float(total) for i in weights]
+        h_weights = [i * i for i in h_weights]
+        h = 1. / sum(h_weights)
+    return h, total
+
+
 class Headlines(object):
     def __init__(self, hg, parser, pred_table_path):
         self.hg = hg
         self.parser = parser
         self.pred_table = read_predicate_table(pred_table_path)
         self.actors = None
+        self.entities = {}
         self.claims = 0
         self.conflicts = 0
 
@@ -75,7 +88,7 @@ class Headlines(object):
                             actor = syn.main_synonym(self.hg, edge[1])
                             if actor not in self.actors:
                                 self.actors[actor] = 0
-                                self.actors[actor] += 1
+                            self.actors[actor] += 1
                     if self.pred_table[pred]['4']:
                         edges = self.hg.pattern2edges((pred, None, None, None))
                         for edge in edges:
@@ -85,6 +98,8 @@ class Headlines(object):
                             self.actors[actor] += 1
                 i += 1
                 bar.update(i)
+
+        print('%s actors found.' % len(self.actors))
 
     def is_actor(self, entity):
         if entity in self.actors:
@@ -108,12 +123,42 @@ class Headlines(object):
             else:
                 return {syn.main_synonym(self.hg, edge)}
 
+    def add_entity(self, entity):
+        if entity not in self.entities:
+            actor = self.is_actor(entity)
+            self.entities[entity] = {'mentions': Counter(),
+                                     'mentioned_by': Counter(),
+                                     'actor': actor,
+                                     'conflict_to': Counter(),
+                                     'conflict_from': Counter(),
+                                     'conflict_over': Counter(),
+                                     'conflict_for': Counter()}
+
     def add_mention(self, actor, concept, edge):
+        self.add_entity(actor)
+        self.add_entity(concept)
+        self.entities[actor]['mentions'][concept] += 1
+        self.entities[concept]['mentioned_by'][actor] += 1
+
         mention = ('mention/gb.inf', actor, concept)
         self.hg.add(mention)
         self.hg.add(('source/gb.inf', mention, edge))
 
-    def add_conflict(self, orig, targ, concept, edge):
+    def add_conflict(self, orig, targ):
+        self.add_entity(orig)
+        self.add_entity(targ)
+        self.entities[orig]['conflict_to'][targ] += 1
+        self.entities[targ]['conflict_from'][orig] += 1
+
+    def add_conflict_over(self, orig, targ, concept, edge):
+        self.add_entity(orig)
+        self.add_entity(targ)
+        self.add_entity(concept)
+        self.entities[orig]['conflict_over'][concept] += 1
+        self.entities[targ]['conflict_over'][concept] += 1
+        self.entities[concept]['conflict_for'][orig] += 1
+        self.entities[concept]['conflict_for'][targ] += 1
+
         conflict = ('conflict/gb.inf', orig, targ, concept)
         self.hg.add(conflict)
         self.hg.add(('source/gb.inf', conflict, edge))
@@ -140,12 +185,11 @@ class Headlines(object):
             if self.pred_table[pred]['conflict']:
                 for actor in actor_targs:
                     self.conflicts += 1
+                    self.add_conflict(actor_orig, actor)
                     for concept in concepts:
-                        self.add_conflict(actor_orig, actor, concept, edge)
+                        self.add_conflict_over(actor_orig, actor, concept, edge)
 
     def infer(self):
-        self.find_actors()
-
         self.claims = 0
         self.conflicts = 0
 
@@ -165,27 +209,74 @@ class Headlines(object):
         print('claims: %s' % self.claims)
         print('conflicts: %s' % self.conflicts)
 
+    def write_metrics(self, entity):
+        if self.entities[entity]['actor']:
+            self.hg.add(('is_actor/gb.inf', entity))
+        self.hg.set_attribute(entity, 'h_mentions', self.entities[entity]['h_mentions'])
+        self.hg.set_attribute(entity, 'total_mentions', self.entities[entity]['total_mentions'])
+        self.hg.set_attribute(entity, 'h_mentioned_by', self.entities[entity]['h_mentioned_by'])
+        self.hg.set_attribute(entity, 'total_mentioned_by', self.entities[entity]['total_mentioned_by'])
+        self.hg.set_attribute(entity, 'h_conflict_to', self.entities[entity]['h_conflict_to'])
+        self.hg.set_attribute(entity, 'total_conflict_to', self.entities[entity]['total_conflict_to'])
+        self.hg.set_attribute(entity, 'h_conflict_from', self.entities[entity]['h_conflict_from'])
+        self.hg.set_attribute(entity, 'total_conflict_from', self.entities[entity]['total_conflict_from'])
+        self.hg.set_attribute(entity, 'h_conflict', self.entities[entity]['h_conflict'])
+        self.hg.set_attribute(entity, 'total_conflict', self.entities[entity]['total_conflict'])
+        self.hg.set_attribute(entity, 'h_conflict_over', self.entities[entity]['h_conflict_over'])
+        self.hg.set_attribute(entity, 'total_conflict_over', self.entities[entity]['total_conflict_over'])
+        self.hg.set_attribute(entity, 'h_conflict_for', self.entities[entity]['h_conflict_for'])
+        self.hg.set_attribute(entity, 'total_conflict_for', self.entities[entity]['total_conflict_for'])
 
-# metrics
-# def compute_metrics(entity):
-#     mentioned_by = entities[entity]['mentioned_by']
-#     weights = [mentioned_by[item] for item in mentioned_by]
-#     total = sum(weights)
-#     h = 0.
-#     if total > 0:
-#         h_weights = [float(i) / float(total) for i in weights]
-#         h_weights = [i * i for i in h_weights]
-#         h = 1. / sum(h_weights)
-#     entities[entity]['h'] = h
-#     entities[entity]['total'] = total
+    def compute_metrics(self):
+        i = 0
+        print('compute metrics...')
+        with progressbar.ProgressBar(max_value=len(self.entities)) as bar:
+            for entity in self.entities:
+                h, total = herfindhal_and_total(self.entities[entity]['mentions'])
+                self.entities[entity]['h_mentions'] = h
+                self.entities[entity]['total_mentions'] = total
 
-# i = 0
-# with progressbar.ProgressBar(max_value=len(entities)) as bar:
-#     for entity in entities:
-#         compute_metrics(entity)
-#         i += 1
-#         bar.update(i)
+                h, total = herfindhal_and_total(self.entities[entity]['mentioned_by'])
+                self.entities[entity]['h_mentioned_by'] = h
+                self.entities[entity]['total_mentioned_by'] = total
 
-# hg = HyperGraph({'backend': 'leveldb', 'hg': '../reddit-worldnews-01012013-01082017-3-synonyms.hg'})
+                h, total = herfindhal_and_total(self.entities[entity]['mentioned_by'])
+                self.entities[entity]['h_mentioned_by'] = h
+                self.entities[entity]['total_mentioned_by'] = total
 
-# parser = par.Parser()
+                h, total = herfindhal_and_total(self.entities[entity]['conflict_to'])
+                self.entities[entity]['h_conflict_to'] = h
+                self.entities[entity]['total_conflict_to'] = total
+
+                h, total = herfindhal_and_total(self.entities[entity]['conflict_from'])
+                self.entities[entity]['h_conflict_from'] = h
+                self.entities[entity]['total_conflict_from'] = total
+
+                h, total = herfindhal_and_total(self.entities[entity]['conflict_to']
+                                                + self.entities[entity]['conflict_from'])
+                self.entities[entity]['h_conflict'] = h
+                self.entities[entity]['total_conflict'] = total
+
+                h, total = herfindhal_and_total(self.entities[entity]['conflict_over'])
+                self.entities[entity]['h_conflict_over'] = h
+                self.entities[entity]['total_conflict_over'] = total
+
+                h, total = herfindhal_and_total(self.entities[entity]['conflict_for'])
+                self.entities[entity]['h_conflict_for'] = h
+                self.entities[entity]['total_conflict_for'] = total
+
+                self.write_metrics(entity)
+
+                i += 1
+                bar.update(i)
+
+    def process(self):
+        self.find_actors()
+        self.infer()
+        self.compute_metrics()
+
+
+if __name__ == '__main__':
+    hgr = HyperGraph({'backend': 'leveldb', 'hg': 'infer.hg'})
+    parse = par.Parser()
+    Headlines(hgr, parse, 'predicate_patterns.csv').process()
