@@ -20,11 +20,11 @@ The above command will create the ``cases.txt`` file on the current directory. W
 
    $ gbrain --infile cases.txt learn_hypergen
 
-This will create the ``hypergen_random_forest.model`` file on the current directory, which will be used by deafult by
+This will create the ``hypergen_random_forest.model`` file on the current directory, which will be used by default by
 the natural language parser.
 
 You can test the precision of this model with::
 
    $ gbrain --infile datasets/training_data/hyperedge_generator/parses.txt test_hypergen
 
-Notice that the model is trained with 75% of the dataset and its precison is tested with the remining 25%.
+Notice that the model is trained with 75% of the dataset and its precison is tested with the remaining 25%.
