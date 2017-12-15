@@ -240,10 +240,6 @@ class Headlines(object):
                 self.entities[entity]['h_mentioned_by'] = h
                 self.entities[entity]['total_mentioned_by'] = total
 
-                h, total = herfindhal_and_total(self.entities[entity]['mentioned_by'])
-                self.entities[entity]['h_mentioned_by'] = h
-                self.entities[entity]['total_mentioned_by'] = total
-
                 h, total = herfindhal_and_total(self.entities[entity]['conflict_to'])
                 self.entities[entity]['h_conflict_to'] = h
                 self.entities[entity]['total_conflict_to'] = total
