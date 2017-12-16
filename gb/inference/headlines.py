@@ -210,6 +210,7 @@ class Headlines(object):
         print('conflicts: %s' % self.conflicts)
 
     def write_metrics(self, entity):
+        self.hg.add(('is_entity/gb.inf', entity))
         if self.entities[entity]['actor']:
             self.hg.add(('is_actor/gb.inf', entity))
         self.hg.set_attribute(entity, 'h_mentions', self.entities[entity]['h_mentions'])
