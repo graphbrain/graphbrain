@@ -20,6 +20,7 @@
 
 
 import operator
+from collections import Counter
 import progressbar
 import igraph
 from unidecode import unidecode
@@ -91,6 +92,7 @@ class Meronomy(object):
         self.vertices = set()
         self.atoms = {}
         self.edge_map = {}
+        self.edge_counts = Counter()
 
         self.syn_ids = None
         self.synonym_sets = None
@@ -119,18 +121,19 @@ class Meronomy(object):
             self.edge_map[orig] = set()
         self.edge_map[orig].add(edge_ns)
 
-        concept = is_concept(edge)
-
         self.vertices.add(orig)
         self.atoms[orig] = ed.depth(edge)
 
         if is_edge:
-            for e in edge_ns:
-                targ = edge2str(e)
+            for e_ns in edge_ns:
+                targ = edge2str(e_ns)
                 if targ:
-                    if self.add_edge(e):
-                        if concept:
+                    if self.add_edge(e_ns):
+                        e = ed.without_namespaces(e_ns)
+                        if is_concept(edge):
                             self.add_link(orig, targ)
+                        elif is_concept(e):
+                            self.edge_counts[e_ns] += 1
         return True
 
     def recover_words(self, edge):
