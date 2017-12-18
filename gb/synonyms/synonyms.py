@@ -81,8 +81,13 @@ def generate(hg):
             for atom in mer.synonym_sets[syn_id]:
                 if atom in mer.edge_map:
                     edges |= mer.edge_map[atom]
-            labels = [hg.get_label(edge) for edge in edges]
-            label = min(labels, key=len)
+            best_count = -1
+            best_label_edge = None
+            for edge in edges:
+                if mer.edge_counts[edge] > best_count:
+                    best_count = mer.edge_counts[edge]
+                    best_label_edge = edge
+            label = hg.get_label(best_label_edge)
             syn_symbol = sym.build(label, 'syn%s' % syn_id)
             for edge in edges:
                 syn_edge = (cons.are_synonyms, edge, syn_symbol)
