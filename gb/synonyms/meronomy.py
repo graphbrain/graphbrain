@@ -24,6 +24,7 @@ from collections import Counter
 import progressbar
 import igraph
 from unidecode import unidecode
+import gb.constants as const
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
 
@@ -31,13 +32,6 @@ import gb.hypergraph.edge as ed
 MAX_PROB = -12
 NORM_WEIGHT_THRESHOLD = .1
 WEIGHT_THRESHOLD = 10
-
-
-def edge2str(edge):
-    s = ed.edge2str(edge, namespaces=False)
-    s = unidecode(s)
-    s = s.replace('.', '')
-    return s
 
 
 def edge2label(edge):
@@ -85,7 +79,8 @@ def is_concept(edge):
 
 
 class Meronomy(object):
-    def __init__(self, parser):
+    def __init__(self, hg, parser):
+        self.hg = hg
         self.parser = parser
         self.graph = None
         self.graph_edges = {}
@@ -97,6 +92,36 @@ class Meronomy(object):
         self.syn_ids = None
         self.synonym_sets = None
         self.cur_syn_id = 0
+
+        self.lemmas = {}
+        self.edge_strings = {}
+
+    def lemmatize(self, edge):
+        if edge in self.lemmas:
+            return self.lemmas[edge]
+
+        lemma = edge
+        if sym.is_edge(edge):
+            lemma = tuple([self.lemmatize(item) for item in edge])
+        else:
+            edges = self.hg.pattern2edges((const.have_same_lemma, edge, None))
+            if len(edges) > 0:
+                lemma = edges.pop()[2]
+
+        self.lemmas[edge] = lemma
+        return lemma
+
+    def edge2str(self, edge):
+        if edge in self.edge_strings:
+            return self.edge_strings[edge]
+
+        s = ed.edge2str(self.lemmatize(edge), namespaces=False)
+        s = unidecode(s)
+        s = s.replace('.', '')
+
+        self.edge_strings[edge] = s
+
+        return s
 
     # orig --[has part]--> targ
     def add_link(self, orig, targ):
@@ -114,7 +139,7 @@ class Meronomy(object):
             if word.prob > MAX_PROB:
                 return False
 
-        orig = edge2str(edge)
+        orig = self.edge2str(edge_ns)
 
         # add to edge_map
         if orig not in self.edge_map:
@@ -126,7 +151,7 @@ class Meronomy(object):
 
         if is_edge:
             for e_ns in edge_ns:
-                targ = edge2str(e_ns)
+                targ = self.edge2str(e_ns)
                 if targ:
                     if self.add_edge(e_ns):
                         e = ed.without_namespaces(e_ns)
@@ -136,12 +161,12 @@ class Meronomy(object):
                             self.edge_counts[e_ns] += 1
         return True
 
-    def recover_words(self, edge):
+    def post_assignments(self, edge):
         if sym.is_edge(edge):
             for e in edge:
-                self.recover_words(e)
+                self.post_assignments(e)
         else:
-            term = edge2str(edge)
+            term = self.edge2str(edge)
             if term in self.edge_map:
                 if edge[-4:] == 'noun' or edge[-5:] == 'propn':
                     self.edge_map[term].add(edge)

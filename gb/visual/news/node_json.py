@@ -45,9 +45,8 @@ def json_str(hg, symbol):
             if targ not in conflict_map:
                 conflict_map[targ] = {'topics': set()}
             topic = edge[3]
-            if not sym.is_edge(topic):
-                labels[topic] = hg.get_label(topic)
-                conflict_map[targ]['topics'].add(topic)
+            labels[topic] = hg.get_label(topic)
+            conflict_map[targ]['topics'].add(topic)
     for edge in hg.pattern2edges(('conflict/gb.inf', None, symbol, None)):
         targ = edge[1]
         if not sym.is_edge(targ):
@@ -56,9 +55,8 @@ def json_str(hg, symbol):
             if targ not in conflict_map:
                 conflict_map[targ] = {'topics': set()}
             topic = edge[3]
-            if not sym.is_edge(topic):
-                labels[topic] = hg.get_label(topic)
-                conflict_map[targ]['topics'].add(topic)
+            labels[topic] = hg.get_label(topic)
+            conflict_map[targ]['topics'].add(topic)
 
     conflict = [{'target': targ, 'topics': tuple(conflict_map[targ]['topics'])} for targ in conflict_map]
 
@@ -81,9 +79,5 @@ def json_str(hg, symbol):
             'labels': labels,
             'conflict': conflict,
             'conflict_graph': {'nodes': nodes, 'links': links}}
-
-    for label in data['labels']:
-        if type(label) is not str:
-            print('!!! %s' % str(label))
 
     return data

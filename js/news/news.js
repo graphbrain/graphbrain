@@ -19,7 +19,7 @@ function generate_visualisation(entity) {
 function visualValue(data, column, value) {
     if (column == 'topics') {
         return value.map(function(element) {
-            return data['labels'][element];
+            return '<a href="/node/' + element + '">' + data['labels'][element] + '</a>';
         }).join();
     }
     return '<a href="/node/' + value + '">' + data['labels'][value] + '</a>';
