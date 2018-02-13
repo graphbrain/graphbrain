@@ -30,7 +30,7 @@ def generate(hg):
     print('starting parser...')
     parser = par.Parser()
 
-    mer = Meronomy(parser)
+    mer = Meronomy(hg, parser)
 
     print('reading edges...')
     total_edges = 0
@@ -52,14 +52,14 @@ def generate(hg):
 
     print('edges: %s; beliefs: %s' % (total_edges, total_beliefs))
 
-    print('recovering words...')
+    print('post assignments...')
     i = 0
     with progressbar.ProgressBar(max_value=total_verts) as bar:
         for vertex in hg.all():
             if sym.is_edge(vertex):
                 edge = vertex
                 if hg.is_belief(edge):
-                    mer.recover_words(edge)
+                    mer.post_assignments(edge)
             i += 1
             if (i % 1000) == 0:
                 bar.update(i)
@@ -104,7 +104,32 @@ def generate(hg):
     print('done.')
 
 
-def main_synonym(hg, edge):
+def synonyms(hg, edge):
+    edges = hg.pattern2edges([cons.are_synonyms, None, edge])
+    return set([e[1] for e in edges]).union({edge})
+
+
+def synonyms_degree(hg, edge):
+    syns = synonyms(hg, edge)
+    degs = [hg.degree(syn) for syn in syns]
+    return sum(degs)
+
+
+def main_synonym(hg, edge, in_adp=False):
+    """Finds the main synonym of an edge or symbol. The main synonym is usually a specil type
+       of symbol that all synonyms point to, used as an identifier for the synonym set.
+
+       If parameter in_adp is True, in case of adpoistional phrases this function looks for the main
+       synonym contained in the phrase. E.g. in (+/gb with/nlp.with.adp india/nlp.india.propn)
+       the main synonym for india/nlp.india.propn is returned.
+
+       In case no main synonym exists, the edge or symbol itself is returned."""
+    if in_adp and sym.is_edge(edge):
+        if len(edge) == 3 and edge[0] == '+/gb':
+            if not sym.is_edge(edge[1]) and edge[1][-4:] == '.adp':
+                return main_synonym(hg, edge[2])
+            elif not sym.is_edge(edge[2]) and edge[2][-4:] == '.adp':
+                return main_synonym(hg, edge[1])
     edges = hg.pattern2edges([cons.are_synonyms, edge, None])
     if len(edges) > 0:
         return edges.pop()[2]

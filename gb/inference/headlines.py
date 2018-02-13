@@ -274,6 +274,6 @@ class Headlines(object):
 
 
 if __name__ == '__main__':
-    hgr = HyperGraph({'backend': 'leveldb', 'hg': 'infer.hg'})
+    hgr = HyperGraph({'backend': 'leveldb', 'hg': 'infer2.hg'})
     parse = par.Parser()
     Headlines(hgr, parse, 'predicate_patterns.csv').process()
