@@ -25,7 +25,7 @@ from termcolor import colored
 import gb.constants as const
 from gb.hypergraph.hypergraph import HyperGraph
 # import gb.importers.wordnet as wn
-import gb.importers.wikidata as wd
+# import gb.importers.wikidata as wd
 import gb.importers.dbpedia as dbp
 import gb.importers.dbpedia_wordnet as dbpwn
 from gb.tools.shell import Shell
@@ -60,12 +60,12 @@ def create(params):
 #     print('done.')
 
 
-def wikidata(params):
-    print('reading wikidata...')
-    hg = HyperGraph(params)
-    infile = params['infile']
-    wd.read(hg, infile)
-    print('done.')
+# def wikidata(params):
+#     print('reading wikidata...')
+#     hg = HyperGraph(params)
+#     infile = params['infile']
+#     wd.read(hg, infile)
+#     print('done.')
 
 
 def dbpedia(params):
@@ -219,8 +219,8 @@ def cli():
         create(params)
     # elif command == 'wordnet':
     #     wordnet(params)
-    elif command == 'wikidata':
-        wikidata(params)
+    # elif command == 'wikidata':
+    #     wikidata(params)
     elif command == 'dbpedia':
         dbpedia(params)
     elif command == 'dbpedia_wordnet':
