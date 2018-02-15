@@ -38,6 +38,7 @@ import gb.reader.stages.hypergen as hypergen
 import gb.tools.json as json_tools
 from gb.filters.filters import AllFilter
 import gb.synonyms.synonyms as synonyms
+import gb.inference.headlines as hl
 
 
 def show_logo():
@@ -166,6 +167,12 @@ def generate_synonyms(params):
     synonyms.generate(hg)
 
 
+def headlines_inference(params):
+    hg = HyperGraph(params)
+    infile = params['infile']
+    hl.headlines_inference(hg, infile)
+
+
 def cli():
     parser = argparse.ArgumentParser()
 
@@ -244,6 +251,8 @@ def cli():
         all2json(params)
     elif command == 'generate_synonyms':
         generate_synonyms(params)
+    elif command == 'headlines_inference':
+        headlines_inference(params)
     else:
         print('unkown command: %s' % command)
 

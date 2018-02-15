@@ -85,14 +85,14 @@ class Headlines(object):
                     if self.pred_table[pred]['3']:
                         edges = self.hg.pattern2edges((pred, None, None))
                         for edge in edges:
-                            actor = syn.main_synonym(self.hg, edge[1])
+                            actor = syn.main_synonym(self.hg, edge[1], in_adp=True)
                             if actor not in self.actors:
                                 self.actors[actor] = 0
                             self.actors[actor] += 1
                     if self.pred_table[pred]['4']:
                         edges = self.hg.pattern2edges((pred, None, None, None))
                         for edge in edges:
-                            actor = syn.main_synonym(self.hg, edge[1])
+                            actor = syn.main_synonym(self.hg, edge[1], in_adp=True)
                             if actor not in self.actors:
                                 self.actors[actor] = 0
                             self.actors[actor] += 1
@@ -109,7 +109,7 @@ class Headlines(object):
 
     def get_concepts(self, edge):
         if sym.is_edge(edge):
-            concepts = {syn.main_synonym(self.hg, edge)}
+            concepts = {syn.main_synonym(self.hg, edge, in_adp=True)}
             if len(edge) > 1:
                 for item in edge[1:]:
                     concepts |= self.get_concepts(item)
@@ -121,7 +121,7 @@ class Headlines(object):
             if edge[0] in {'`', '_', "'"}:
                 return set()
             else:
-                return {syn.main_synonym(self.hg, edge)}
+                return {syn.main_synonym(self.hg, edge, in_adp=True)}
 
     def add_entity(self, entity):
         if entity not in self.entities:
@@ -167,12 +167,12 @@ class Headlines(object):
         pred = edge[0]
         if not self.pred_table[pred][str(arity)]:
             return
-        actor_orig = syn.main_synonym(self.hg, edge[1])
+        actor_orig = syn.main_synonym(self.hg, edge[1], in_adp=True)
         if self.is_actor(actor_orig):
             actor_targs = set()
             concepts = set()
             for entity in edge[2:]:
-                syn_entity = syn.main_synonym(self.hg, entity)
+                syn_entity = syn.main_synonym(self.hg, entity, in_adp=True)
                 if self.is_actor(syn_entity):
                     actor_targs.add(syn_entity)
                 else:
@@ -273,7 +273,12 @@ class Headlines(object):
         self.compute_metrics()
 
 
+def headlines_inference(hg, predicates_file):
+    parser = par.Parser()
+    Headlines(hg, parser, predicates_file).process()
+
+
 if __name__ == '__main__':
-    hgr = HyperGraph({'backend': 'leveldb', 'hg': 'infer2.hg'})
+    hgr = HyperGraph({'backend': 'leveldb', 'hg': 'infer3.hg'})
     parse = par.Parser()
     Headlines(hgr, parse, 'predicate_patterns.csv').process()
