@@ -24,7 +24,7 @@ import argparse
 from termcolor import colored
 import gb.constants as const
 from gb.hypergraph.hypergraph import HyperGraph
-import gb.importers.wordnet as wn
+# import gb.importers.wordnet as wn
 import gb.importers.wikidata as wd
 import gb.importers.dbpedia as dbp
 import gb.importers.dbpedia_wordnet as dbpwn
@@ -53,11 +53,11 @@ def create(params):
     print('done.')
 
 
-def wordnet(params):
-    print('reading wordnet...')
-    hg = HyperGraph(params)
-    wn.read(hg)
-    print('done.')
+# def wordnet(params):
+#     print('reading wordnet...')
+#     hg = HyperGraph(params)
+#     wn.read(hg)
+#     print('done.')
 
 
 def wikidata(params):
@@ -217,8 +217,8 @@ def cli():
 
     if command == 'create':
         create(params)
-    elif command == 'wordnet':
-        wordnet(params)
+    # elif command == 'wordnet':
+    #     wordnet(params)
     elif command == 'wikidata':
         wikidata(params)
     elif command == 'dbpedia':
