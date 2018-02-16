@@ -250,3 +250,12 @@ def subedges(edge):
         for item in edge:
             edges = edges.union(subedges(item))
     return edges
+
+
+def is_concept(edge):
+    """Checks if edge represents a concept, i.e. if it starts with +/gb.
+       Symbols are not considered concepts by this function."""
+    if sym.is_edge(edge) and len(edge) > 1:
+        if edge[0] == '+/gb':
+            return True
+    return False
