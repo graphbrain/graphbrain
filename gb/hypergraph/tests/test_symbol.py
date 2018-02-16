@@ -66,14 +66,6 @@ class TestSymbol(unittest.TestCase):
     def test_build(self):
         self.assertEqual(sym.build('graphbrain', '1'), 'graphbrain/1')
 
-    def test_is_negative(self):
-        self.assertTrue(sym.is_negative('~is'))
-        self.assertFalse(sym.is_negative('is'))
-
-    def test_negative(self):
-        self.assertEqual(sym.negative('~is'), 'is')
-        self.assertEqual(sym.negative('is'), '~is')
-
 
 if __name__ == '__main__':
     unittest.main()

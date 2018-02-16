@@ -139,16 +139,3 @@ def new_meaning(symb, prefix=''):
         return build(symb, '%s%s' % (prefix, random_hash()))
     else:
         return symb
-
-
-def is_negative(symb):
-    """Check if symbol is negative."""
-    return symb[0] == '~'
-
-
-def negative(symb):
-    """Produces the negative of the given symbol."""
-    if is_negative(symb):
-        return symb[1:]
-    else:
-        return '~%s' % symb
