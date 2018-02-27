@@ -109,7 +109,11 @@ class Headlines(object):
 
     def get_concepts(self, edge):
         if sym.is_edge(edge):
-            concepts = {syn.main_synonym(self.hg, edge, in_adp=True)}
+            if ed.is_concept(edge) and self.hg.has_label(edge):
+                concepts = {syn.main_synonym(self.hg, edge, in_adp=True)}
+                return concepts
+            else:
+                concepts = set()
             if len(edge) > 1:
                 for item in edge[1:]:
                     concepts |= self.get_concepts(item)

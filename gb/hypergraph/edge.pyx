@@ -253,9 +253,9 @@ def subedges(edge):
 
 
 def is_concept(edge):
-    """Checks if edge represents a concept, i.e. if it starts with +/gb.
-       Symbols are not considered concepts by this function."""
-    if sym.is_edge(edge) and len(edge) > 1:
-        if edge[0] == '+/gb':
-            return True
-    return False
+    """Checks if edge represents a concept, i.e. if it is a symbol or if
+       it is an edge that starts with +/gb."""
+    if sym.is_edge(edge):
+        return len(edge) > 1 and edge[0] == '+/gb'
+    else:
+        return True
