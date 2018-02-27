@@ -155,10 +155,10 @@ class Meronomy(object):
                 if targ:
                     if self.add_edge(e_ns):
                         e = ed.without_namespaces(e_ns)
-                        if is_concept(edge):
-                            self.add_link(orig, targ)
-                        elif is_concept(e):
-                            self.edge_counts[e_ns] += 1
+                        # if is_concept(edge):
+                        self.add_link(orig, targ)
+                        # elif is_concept(e):
+                        self.edge_counts[e_ns] += 1
         return True
 
     def post_assignments(self, edge):

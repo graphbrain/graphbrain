@@ -210,6 +210,10 @@ class HyperGraph(object):
         logging.debug('[hypergraph total_degree()]')
         return self.backend.total_degree()
 
+    def has_label(self, edge):
+        edges = self.pattern2edges([const.has_label, edge, None])
+        return len(edges) > 0
+
     def get_label(self, edge):
         edges = self.pattern2edges([const.has_label, edge, None])
         if len(edges) > 0:

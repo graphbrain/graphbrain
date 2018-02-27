@@ -114,12 +114,12 @@ class Concepts(object):
             for i in range(len(entity.children_ids)):
                 self.generate_labels(entity.children_ids[i])
 
-            if entity.is_compound_concept():
-                edge = entity.to_hyperedge()
-                text = entity.as_text()
-                label = sym.build(text, cons.label_namespace)
-                syn_edge = [cons.has_label, edge, label]
-                self.output.edges.append(syn_edge)
+            # if entity.is_compound_concept():
+            edge = entity.to_hyperedge()
+            text = entity.as_text()
+            label = sym.build(text, cons.label_namespace)
+            syn_edge = [cons.has_label, edge, label]
+            self.output.edges.append(syn_edge)
 
     def process(self):
         self.output.tree.root_id = self.build_concepts(self.output.tree.root_id)

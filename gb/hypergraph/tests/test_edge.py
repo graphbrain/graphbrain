@@ -102,9 +102,7 @@ class TestEdge(unittest.TestCase):
     def test_is_concept(self):
         self.assertTrue(ed.is_concept(('+/gb', 'of/1', 'user/1' 'graphbrain/1')))
         self.assertFalse(ed.is_concept(('is', 'graphbrain/1', 'great/1')))
-        self.assertFalse(ed.is_concept(('+/gb')))
-        self.assertFalse(ed.is_concept('+/gb'))
-        self.assertFalse(ed.is_concept('graphbrain/1'))
+        self.assertTrue(ed.is_concept('graphbrain/1'))
 
 
 if __name__ == '__main__':

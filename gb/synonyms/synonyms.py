@@ -22,6 +22,7 @@
 import progressbar
 import gb.constants as cons
 import gb.hypergraph.symbol as sym
+# import gb.hypergraph.edge as ed
 import gb.nlp.parser as par
 from gb.synonyms.meronomy import Meronomy
 
@@ -116,10 +117,10 @@ def synonyms_degree(hg, edge):
 
 
 def main_synonym(hg, edge, in_adp=False):
-    """Finds the main synonym of an edge or symbol. The main synonym is usually a specil type
+    """Finds the main synonym of an edge or symbol. The main synonym is usually a special type
        of symbol that all synonyms point to, used as an identifier for the synonym set.
 
-       If parameter in_adp is True, in case of adpoistional phrases this function looks for the main
+       If parameter in_adp is True, in case of adpositional phrases this function looks for the main
        synonym contained in the phrase. E.g. in (+/gb with/nlp.with.adp india/nlp.india.propn)
        the main synonym for india/nlp.india.propn is returned.
 
@@ -127,8 +128,10 @@ def main_synonym(hg, edge, in_adp=False):
     if in_adp and sym.is_edge(edge):
         if len(edge) == 3 and edge[0] == '+/gb':
             if not sym.is_edge(edge[1]) and edge[1][-4:] == '.adp':
+                # if ed.is_concept(edge[2]):
                 return main_synonym(hg, edge[2])
             elif not sym.is_edge(edge[2]) and edge[2][-4:] == '.adp':
+                # if ed.is_concept(edge[1]):
                 return main_synonym(hg, edge[1])
     edges = hg.pattern2edges([cons.are_synonyms, edge, None])
     if len(edges) > 0:
