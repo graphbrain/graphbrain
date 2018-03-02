@@ -28,9 +28,14 @@ from gb.nlp.sentence import Sentence
 class Parser:
     """Generic NLP parser."""
 
-    def __init__(self):
+    def __init__(self, lang='en'):
         self.token_table = {}
-        self.parser = spacy.load('en_core_web_lg')
+        if lang == 'en':
+            self.parser = spacy.load('en_core_web_lg')
+        elif lang == 'fr':
+            self.parser = spacy.load('fr_core_news_md')
+        else:
+            raise RuntimeError('unkown language: %s' % lang)
 
     def __spacy2token(self, stoken, depth=0):
         if stoken is None:
@@ -63,7 +68,7 @@ class Parser:
     def make_word(self, text):
         word = Word()
         word.text = text.lower()
-        sword =  self.parser.vocab[word.text]
+        sword = self.parser.vocab[word.text]
         word.prob = sword.prob
         word.vector = sword.vector
         word.sword = sword
@@ -84,19 +89,19 @@ class Parser:
 
         return sents
 
+    def print_trees(self, text):
+        parses = self.parse_text(text)
+
+        for p in parses:
+            s = Sentence(p[1])
+            print(p[0])
+            s.print_tree()
+            print('')
+
 
 if __name__ == '__main__':
-    # test_text = u"""
-    # Alan Mathison Turing was a pioneering English computer scientist, mathematician, logician, cryptanalyst and
-    # theoretical biologist. He was highly influential in the development of theoretical computer science, providing a
-    # formalisation of the concepts of algorithm and computation with the Turing machine, which can be considered a model
-    # of a general purpose computer. Turing is widely considered to be the father of theoretical computer science
-    # and artificial intelligence.
-    # The psychologist George Kelley (1955) noted that humans do not enter a world that is inherently structured; we must
-    # give the world a structure that we ourselves create."""
-    test_text = u"""
-    Some subspecies of mosquito might be 1st to be genetically wiped out.
-    """
+    test_text = u"""Some subspecies of mosquito might be 1st to be genetically wiped out."""
+    # test_text = u"""Des millions de Français n’ont pas accès à une connexion."""
 
     print('Starting parser...')
     parser = Parser()
