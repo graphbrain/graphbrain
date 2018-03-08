@@ -114,8 +114,9 @@ class Token:
         return NotImplemented
 
     def __str__(self):
-        return '%s/%s/%s (%s) {%s} [%s]'\
-               % (self.word.strip(), self.pos, self.tag, self.dep, self.entity_type, self.position_in_sentence)
+        return '%s/%s/%s/%s (%s) {%s} [%s]'\
+               % (self.word.strip(), self.lemma, self.pos, self.tag, self.dep, self.entity_type,
+                  self.position_in_sentence)
 
     def __repr__(self):
         return self.__str__()
