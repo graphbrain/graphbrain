@@ -57,6 +57,7 @@ setup(
         'python-igraph',
         'nltk',
         'spacy==2.0.7',
+        'msgpack-python==0.5.4',
         'asciitree',
         'ujson',
         'plyvel',
