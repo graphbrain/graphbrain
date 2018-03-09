@@ -56,7 +56,7 @@ setup(
         'matplotlib',
         'python-igraph',
         'nltk',
-        'spacy',
+        'spacy==2.0.7',
         'asciitree',
         'ujson',
         'plyvel',
@@ -73,8 +73,7 @@ setup(
         'cython',
         'unidecode',
         'progressbar2',
-        'networkx',
-        'visJS2jupyter'
+        'networkx'
     ],
     entry_points='''
         [console_scripts]
