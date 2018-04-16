@@ -73,7 +73,6 @@ setup(
         'progressbar2',
         'cython',
         'unidecode',
-        'progressbar2',
         'networkx'
     ],
     entry_points='''
