@@ -36,7 +36,7 @@ from gb.reader.stages.concepts import Concepts
 
 class Reader(object):
     def __init__(self, hg, stages=('hypergen-forest', 'disamb-naive', 'merge', 'shallow', 'concepts'),
-                 show_namespaces=False):
+                 show_namespaces=False, lang='en'):
         self.hg = hg
         self.stages = stages
         self.parser = None
@@ -44,6 +44,7 @@ class Reader(object):
         self.debug = False
         self.aux_text = ''
         self.show_namespaces = show_namespaces
+        self.lang = lang
 
     def create_stage(self, name, output):
         if name == 'hypergen-forest':
@@ -73,7 +74,7 @@ class Reader(object):
     def read_text(self, text, aux_text=None, reset_context=True):
         if self.parser is None:
             self.debug_msg('creating parser...')
-            self.parser = Parser()
+            self.parser = Parser(lang=self.lang)
             self.disamb = Disambiguation(self.hg, self.parser)
         nlp_parses = self.parser.parse_text(text.strip())
         if reset_context:
