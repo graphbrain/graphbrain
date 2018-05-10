@@ -127,7 +127,8 @@ def reddit_reader(params):
 
 def interactive_edge_builder(params):
     outfile = params['outfile']
-    hypergen_cg.interactive_edge_builder(outfile)
+    lang = params['lang']
+    hypergen_cg.interactive_edge_builder(outfile, lang=lang)
 
 
 def generate_hypergen_cases(params):
@@ -189,6 +190,7 @@ def cli():
     parser.add_argument('--fields', type=str, help='field names', default=None)
     parser.add_argument('--model_type', type=str, help='machine learning model type', default='rf')
     parser.add_argument('--show_namespaces', help='show namespaces', action='store_true')
+    parser.add_argument('--lang', type=str, help='language', default='en')
 
     args = parser.parse_args()
 
@@ -204,7 +206,8 @@ def cli():
         'comments': args.comments,
         'fields': args.fields,
         'model_type': args.model_type,
-        'show_namespaces': args.show_namespaces
+        'show_namespaces': args.show_namespaces,
+        'lang': args.lang
     }
 
     # configure logging

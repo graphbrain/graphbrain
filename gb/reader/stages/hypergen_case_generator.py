@@ -38,9 +38,9 @@ def test_transformation(parent, child, transf):
 
 
 class CaseGenerator(object):
-    def __init__(self):
+    def __init__(self, lang='en'):
         self.tree = None
-        self.parser = Parser()
+        self.parser = Parser(lang=lang)
         self.sentence_str = None
         self.sentence = None
         self.outcome = None
@@ -248,9 +248,9 @@ def cases_summary(infile):
     print(summary)
 
 
-def interactive_edge_builder(outfile):
+def interactive_edge_builder(outfile, lang='en'):
     print('writing to file: %s' % outfile)
-    cg = CaseGenerator()
+    cg = CaseGenerator(lang=lang)
     cg.interactive = True
     while True:
         sentence_str = input('sentence> ').strip()
