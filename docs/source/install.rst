@@ -153,3 +153,15 @@ Solution::
 
    $ export LC_ALL=en_US.UTF-8
    $ export LANG=en_US.UTF-8
+
+Unicode errors when using the Interactive Edge Generator
+--------------------------------------------------------
+
+Example::
+
+   UnicodeEncodeError: 'utf-8' codec can't encode characters in position 5-6: surrogates not allowed
+
+Solution::
+
+   export PYTHONIOENCODING=utf-8
+
