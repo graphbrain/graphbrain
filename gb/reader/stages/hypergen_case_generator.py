@@ -19,6 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import traceback
 from termcolor import colored
 import pandas as pd
 import gb.hypergraph.edge as ed
@@ -256,29 +257,34 @@ def interactive_edge_builder(outfile, lang='en'):
         sentence_str = input('sentence> ').strip()
         done = False
         while not done:
-            cg.cases = []
-            cg.transfs = []
-            cg.restart = False
-            cg.abort = False
-            cg.generate(sentence_str)
-            if cg.restart:
-                print('restarting.')
-            elif cg.abort:
-                print('aborting.')
+            try:
+                cg.cases = []
+                cg.transfs = []
+                cg.restart = False
+                cg.abort = False
+                cg.generate(sentence_str)
+                if cg.restart:
+                    print('restarting.')
+                elif cg.abort:
+                    print('aborting.')
+                    done = True
+                else:
+                    done = True
+                    outcome = cg.tree.to_hyperedge_str(with_namespaces=False)
+                    print('outcome:')
+                    print(outcome)
+                    write = input('write [y/N]? ')
+                    if write == 'y':
+                        f = open(outfile, 'a', encoding='utf-8')
+                        f.write('%s\n' % sentence_str)
+                        f.write('%s\n' % cg.sentence.to_json())
+                        f.write('%s\n' % outcome)
+                        f.write('%s\n' % ','.join([str(transf) for transf in cg.transfs]))
+                        f.close()
+            except UnicodeEncodeError as e:
+                print(e)
+                traceback.print_exc()
                 done = True
-            else:
-                done = True
-                outcome = cg.tree.to_hyperedge_str(with_namespaces=False)
-                print('outcome:')
-                print(outcome)
-                write = input('write [y/N]? ')
-                if write == 'y':
-                    f = open(outfile, 'a')
-                    f.write('%s\n' % sentence_str)
-                    f.write('%s\n' % cg.sentence.to_json())
-                    f.write('%s\n' % outcome)
-                    f.write('%s\n' % ','.join([str(transf) for transf in cg.transfs]))
-                    f.close()
 
 
 if __name__ == '__main__':
