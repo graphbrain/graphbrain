@@ -20,12 +20,13 @@
 
 
 from gb.reader.semantic_tree import Position
-import gb.reader.predicates as pred
+from gb.reader.predicates import Predicates
 
 
 class Merge(object):
-    def __init__(self, output):
+    def __init__(self, output, lang):
         self.output = output
+        self.pred = Predicates(lang=lang)
 
     def process_entity(self, entity_id):
         changes = False
@@ -51,8 +52,8 @@ class Merge(object):
 
             second_head = second.first_child()
             if not entity.is_compound()\
-                    and pred.is_predicate(first_head, entity)\
-                    and pred.is_predicate(second_head, second_parent):
+                    and self.pred.is_predicate(first_head, entity)\
+                    and self.pred.is_predicate(second_head, second_parent):
                 pos = Position.RIGHT
                 first_head.insert(second_head.id, pos)
                 entity = self.output.tree.get(entity_id)

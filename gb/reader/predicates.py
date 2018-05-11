@@ -19,47 +19,63 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-REL_POS = ['VERB', 'ADV', 'PART']
-NON_REL_DEPS = ['conj', 'amod', 'case']
-AUX_REL_POS = ['ADP', 'ADJ']
+# English
+REL_POS_EN = ['VERB', 'ADV', 'PART']
+NON_REL_DEPS_EN = ['conj', 'amod', 'case']
+AUX_REL_POS_EN = ['ADP', 'ADJ']
 
 
-def is_parent_predicate(token):
-    if not token.parent:
-        return False
-    if is_token_predicate(token.parent, None):
-        for child_token in token.parent.left_children:
-            if child_token == token:
-                return True
-            if not is_token_predicate(child_token, None):
-                return False
-        for child_token in token.parent.right_children:
-            if child_token == token:
-                return True
-            if not is_token_predicate(child_token, None):
-                return False
+# French
+REL_POS_FR = ['VERB', 'ADV', 'PART', 'AUX']
+NON_REL_DEPS_FR = ['conj', 'amod', 'case']
+AUX_REL_POS_FR = ['ADP', 'ADJ']
+
+
+class Predicates(object):
+    def __init__(self, lang='en'):
+        if lang == 'en':
+            self.rel_pos = REL_POS_EN
+            self.non_rel_deps = NON_REL_DEPS_EN
+            self.aux_rel_pos = AUX_REL_POS_EN
+        elif lang == 'fr':
+            self.rel_pos = REL_POS_FR
+            self.non_rel_deps = NON_REL_DEPS_FR
+            self.aux_rel_pos = AUX_REL_POS_FR
+
+    def is_parent_predicate(self, token):
+        if not token.parent:
             return False
-    else:
-        return False
-
-
-def is_token_predicate(token, parent):
-    # print('is_token_predicate? %s -> ' % token, end='')
-    if token.pos in AUX_REL_POS:
-        if parent and not parent.compound and len(parent.children_ids) > 2:
-            # print('%s (1)' % False)
-            return False
-        # print('%s (2)' % is_parent_predicate(token))
-        return is_parent_predicate(token)
-    # print('%s (3)' % (token.pos in REL_POS and token.dep not in NON_REL_DEPS))
-    return token.pos in REL_POS and token.dep not in NON_REL_DEPS
-
-
-def is_predicate(entity, parent):
-    if entity.is_node():
-        for child in entity.children():
-            if not is_predicate(child, entity):
+        if self.is_token_predicate(token.parent, None):
+            for child_token in token.parent.left_children:
+                if child_token == token:
+                    return True
+                if not self.is_token_predicate(child_token, None):
+                    return False
+            for child_token in token.parent.right_children:
+                if child_token == token:
+                    return True
+                if not self.is_token_predicate(child_token, None):
+                    return False
                 return False
-        return True
-    else:
-        return is_token_predicate(entity.token, parent)
+        else:
+            return False
+
+    def is_token_predicate(self, token, parent):
+        # print('is_token_predicate? %s -> ' % token, end='')
+        if token.pos in self.aux_rel_pos:
+            if parent and not parent.compound and len(parent.children_ids) > 2:
+                # print('%s (1)' % False)
+                return False
+            # print('%s (2)' % is_parent_predicate(token))
+            return self.is_parent_predicate(token)
+        # print('%s (3)' % (token.pos in REL_POS and token.dep not in NON_REL_DEPS))
+        return token.pos in self.rel_pos and token.dep not in self.non_rel_deps
+
+    def is_predicate(self, entity, parent):
+        if entity.is_node():
+            for child in entity.children():
+                if not self.is_predicate(child, entity):
+                    return False
+            return True
+        else:
+            return self.is_token_predicate(entity.token, parent)

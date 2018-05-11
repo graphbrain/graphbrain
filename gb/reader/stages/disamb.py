@@ -24,16 +24,7 @@ import logging
 import gb.constants as const
 import gb.hypergraph.symbol as sym
 from gb.sense.candidate_metrics import CandidateMetrics
-import gb.reader.predicates as pred
-
-
-def force_wordnet(entity):
-    if pred.is_predicate(entity):
-        return True
-    if entity.is_leaf():
-        if entity.token.pos == 'PART' and entity.token.dep == 'case':
-            return True
-    return False
+from gb.reader.predicates import Predicates
 
 
 def is_compound_by_entity_type(node):
@@ -67,7 +58,7 @@ def trees_to_bag_of_ngrams(trees):
 
 
 class Disamb(object):
-    def __init__(self, hg, parser, disamb, output, aux_text):
+    def __init__(self, hg, parser, disamb, output, aux_text, lang):
         self.hg = hg
         self.parser = parser
         self.disamb = disamb
@@ -75,6 +66,7 @@ class Disamb(object):
         self.compound_deps = ['pobj', 'compound', 'dobj', 'nsubj']
         self.aux_text = aux_text
         self.profiling = {}
+        self.pred = Predicates(lang=lang)
 
     def is_compound_by_deps(self, node):
         for child in node.children():
@@ -88,6 +80,14 @@ class Disamb(object):
 
     def is_compound(self, node):
         return is_compound_by_entity_type(node) or self.is_compound_by_deps(node)
+
+    def force_wordnet(self, entity):
+        if self.pred.is_predicate(entity):
+            return True
+        if entity.is_leaf():
+            if entity.token.pos == 'PART' and entity.token.dep == 'case':
+                return True
+        return False
 
     def process_entity(self, entity_id, exclude):
         start = time.time()
@@ -109,7 +109,7 @@ class Disamb(object):
             lemma_at_end = ' '.join(words[:-1] + [lemmas[-1]])
             roots.add(sym.str2symbol(lemma_at_end))
         namespaces = None
-        if force_wordnet(entity):
+        if self.force_wordnet(entity):
             namespaces = ('wn.', 'lem.wn.')
 
         if entity.is_leaf() and entity.token.pos in {'ADP', 'CONJ'}:
