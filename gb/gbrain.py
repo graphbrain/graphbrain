@@ -101,7 +101,9 @@ def reader_tests(params):
     hg = HyperGraph(params)
     infile = params['infile']
     show_namespaces = params['show_namespaces']
-    rtests.reader_tests(hg, infile, show_namespaces)
+    lang = params['lang']
+    model_file = params['model_file']
+    rtests.reader_tests(hg, infile, show_namespaces, lang=lang, model_file=model_file)
 
 
 def ui(params):
