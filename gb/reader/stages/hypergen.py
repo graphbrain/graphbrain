@@ -45,7 +45,7 @@ NEURAL_NETWORK_MODEL_FILE = 'hypergen_neural_network.model'
 def read_parses(infile, test_set=False):
     current_parse = []
     parses = []
-    with open(infile) as f:
+    with open(infile, encoding='utf-8') as f:
         i = 0
         for line in f:
             current_parse.append(line)
