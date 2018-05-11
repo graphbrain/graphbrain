@@ -141,13 +141,15 @@ def generate_hypergen_cases(params):
 def learn_hypergen(params):
     infile = params['infile']
     model_type = params['model_type']
-    hypergen.learn(infile, model_type=model_type)
+    outfile = params['outfile']
+    hypergen.learn(infile, model_type=model_type, outfile=outfile)
 
 
 def test_hypergen(params):
     infile = params['infile']
     model_type = params['model_type']
-    hypergen.test(infile, model_type=model_type)
+    model_file = params['model_file']
+    hypergen.test(infile, model_type=model_type, model_file=model_file)
 
 
 def extract_json_fields(params):
@@ -190,6 +192,7 @@ def cli():
     parser.add_argument('--comments', help='include comments', action='store_true')
     parser.add_argument('--fields', type=str, help='field names', default=None)
     parser.add_argument('--model_type', type=str, help='machine learning model type', default='rf')
+    parser.add_argument('--model_file', type=str, help='machine learning model file', default=None)
     parser.add_argument('--show_namespaces', help='show namespaces', action='store_true')
     parser.add_argument('--lang', type=str, help='language', default='en')
 
@@ -207,6 +210,7 @@ def cli():
         'comments': args.comments,
         'fields': args.fields,
         'model_type': args.model_type,
+        'model_file': args.model_file,
         'show_namespaces': args.show_namespaces,
         'lang': args.lang
     }

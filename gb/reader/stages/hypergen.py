@@ -327,7 +327,7 @@ def transform(sentence):
     return hgforest.process_sentence(sentence)
 
 
-def test(infile, model_type='rf'):
+def test(infile, model_type='rf', model_file=None):
     parses = read_parses(infile, test_set=True)
 
     acc_total = 0
@@ -341,7 +341,7 @@ def test(infile, model_type='rf'):
         sentence = Sentence(json_str=json_str)
         transfs = [int(token) for token in parse[3].split(',')]
         total = len(transfs)
-        hgforest = Hypergen(model_type=model_type)
+        hgforest = Hypergen(model_type=model_type, model_file=model_file)
         hgforest.test(sentence, transfs)
         wrong = hgforest.wrong
         print('%s / %s' % (wrong, total))
