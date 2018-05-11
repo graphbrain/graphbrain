@@ -36,7 +36,7 @@ from gb.reader.stages.concepts import Concepts
 
 class Reader(object):
     def __init__(self, hg, stages=('hypergen-forest', 'disamb-naive', 'merge', 'shallow', 'concepts'),
-                 show_namespaces=False, lang='en'):
+                 show_namespaces=False, lang='en', model_file=None):
         self.hg = hg
         self.stages = stages
         self.parser = None
@@ -45,12 +45,13 @@ class Reader(object):
         self.aux_text = ''
         self.show_namespaces = show_namespaces
         self.lang = lang
+        self.model_file = model_file
 
     def create_stage(self, name, output):
         if name == 'hypergen-forest':
-            return Hypergen(model_type='rf')
+            return Hypergen(model_type='rf', model_file=self.model_file)
         elif name == 'hypergen-nn':
-            return Hypergen(model_type='nn')
+            return Hypergen(model_type='nn', model_file=self.model_file)
         elif name == 'disamb':
             return Disamb(self.hg, self.parser, self.disamb, output, self.aux_text)
         elif name == 'disamb-simple':
