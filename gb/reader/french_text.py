@@ -28,10 +28,13 @@ if __name__ == '__main__':
     filename = 'nuclear.txt'
     hgr = HyperGraph({'backend': 'leveldb', 'hg': 'nuclear.hg'})
 
-    reader = Reader(hgr, lang='fr')
+    reader = Reader(hgr, lang='fr', model_file='hypergen_random_forest_fr.model')
 
+    n = 0
     with io.open(filename, 'r', encoding='utf-8') as f:
         for line in f:
+            n += 1
+            print('LINE #%s' % n)
             parses = reader.read_text(line, None, reset_context=False)
             for p in parses:
                 print('\n')
