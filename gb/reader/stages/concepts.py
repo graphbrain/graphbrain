@@ -22,12 +22,13 @@
 from gb.nlp.nlp_token import Token
 import gb.constants as cons
 import gb.hypergraph.symbol as sym
-import gb.reader.predicates as pred
+from gb.reader.predicates import Predicates
 
 
 class Concepts(object):
-    def __init__(self, output):
+    def __init__(self, output, lang):
         self.output = output
+        self.pred = Predicates(lang=lang)
 
     def make_combinator_leaf(self):
         leaf = self.output.tree.create_leaf(Token(''))
@@ -46,7 +47,7 @@ class Concepts(object):
         if entity.is_node() and not entity.compound:
             # build concept
             if len(entity.children_ids) > 1:
-                if not pred.is_predicate(entity.get_child(0), entity):
+                if not self.pred.is_predicate(entity.get_child(0), entity):
                     self.build_concept(self.make_combinator_leaf().id, entity.id)
                     return entity.id
         return entity_id
@@ -97,7 +98,6 @@ class Concepts(object):
                 self.build_concept(self.make_combinator_leaf().id, new_concept_id)
                 new_children_ids.append(new_concept_id)
             entity.children_ids = new_children_ids
-
 
     def combine_concepts(self, entity_id):
         # process children first

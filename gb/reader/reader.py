@@ -53,17 +53,17 @@ class Reader(object):
         elif name == 'hypergen-nn':
             return Hypergen(model_type='nn', model_file=self.model_file)
         elif name == 'disamb':
-            return Disamb(self.hg, self.parser, self.disamb, output, self.aux_text)
+            return Disamb(self.hg, self.parser, self.disamb, output, self.aux_text, lang=self.lang)
         elif name == 'disamb-simple':
             return DisambSimple(output)
         elif name == 'disamb-naive':
             return DisambNaive(output)
         elif name == 'merge':
-            return Merge(output)
+            return Merge(output, lang=self.lang)
         elif name == 'shallow':
-            return Shallow(output)
+            return Shallow(output, lang=self.lang)
         elif name == 'concepts':
-            return Concepts(output)
+            return Concepts(output, lang=self.lang)
         else:
             raise RuntimeError('unknnown stage name: %s' % name)
 

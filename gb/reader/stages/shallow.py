@@ -20,7 +20,7 @@
 
 
 from gb.reader.semantic_tree import Position
-import gb.reader.predicates as pred
+from gb.reader.predicates import Predicates
 
 
 def is_part_of_rel(rel, part):
@@ -36,9 +36,10 @@ def is_part_of_rel(rel, part):
 
 
 class Shallow(object):
-    def __init__(self, output):
+    def __init__(self, output, lang):
         self.output = output
         self.visited = set()
+        self.pred = Predicates(lang=lang)
 
     def is_directly_under(self, node, parent, child):
         if node.arity() < 2:
@@ -60,7 +61,7 @@ class Shallow(object):
 
     def node_fit(self, node, original):
         fit = 0
-        if node.is_node() and pred.is_predicate(node.children()[0], node):
+        if node.is_node() and self.pred.is_predicate(node.children()[0], node):
             rel = self.output.tree.get(node.children_ids[0])
             if rel.arity() == 1 and (len(node.children_ids) == 2):
                 fit += 100000
@@ -109,7 +110,7 @@ class Shallow(object):
             child_candidates = self.find_candidates(child)
 
             for child in child_candidates:
-                if child.is_node() and pred.is_predicate(child.children()[0], child):
+                if child.is_node() and self.pred.is_predicate(child.children()[0], child):
                     # generate several possibilities for relationships
 
                     rel_left = self.output.tree.get(working_node.children_ids[0])
@@ -182,7 +183,7 @@ class Shallow(object):
     def process_entity(self, entity_id):
         entity = self.output.tree.get(entity_id)
 
-        if not entity.is_terminal() and pred.is_predicate(entity.children()[0], entity):
+        if not entity.is_terminal() and self.pred.is_predicate(entity.children()[0], entity):
             best_node = None
             best_fit = -1
             candidates = self.find_candidates(entity)
