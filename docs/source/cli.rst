@@ -9,28 +9,29 @@ Here's an overview of the interface::
    gbrain [-h] [--backend BACKEND] [--hg HG] [--infile INFILE]
                [--outfile OUTFILE] [--startdate STARTDATE] [--enddate ENDDATE]
                [--source SOURCE] [--log LOG] [--comments] [--fields FIELDS]
-               [--model_type MODEL_TYPE] [--show_namespaces]
+               [--model_type MODEL_TYPE] [--model_file MODEL_FILE]
+               [--show_namespaces] [--lang LANG]
                command
 
    positional arguments:
-     command               command to execute
+     command                  command to execute
 
    optional arguments:
-     -h, --help            show help message
-     --backend BACKEND     hypergraph backend (leveldb, null)
-     --hg HG               hypergraph name
-     --infile INFILE       input file
-     --outfile OUTFILE     output file
-     --startdate STARTDATE
-                           start date
-     --enddate ENDDATE     end date
-     --source SOURCE       source can have multiple meanings.
-     --log LOG             logging level.
-     --comments            include comments
-     --fields FIELDS       field names
-     --model_type MODEL_TYPE
-                           machine learning model type
-     --show_namespaces     show namespaces
+     -h, --help               show help message
+     --backend BACKEND        hypergraph backend (leveldb, null)
+     --hg HG                  hypergraph name
+     --infile INFILE          input file
+     --outfile OUTFILE        output file
+     --startdate STARTDATE    start date
+     --enddate ENDDATE        end date
+     --source SOURCE          source can have multiple meanings
+     --log LOG                logging level
+     --comments               include comments
+     --fields FIELDS          field names
+     --model_type MODEL_TYPE  machine learning model type
+     --model_file MODEL_FILE  machine learning model file
+     --show_namespaces        show namespaces
+     --lang LANG              language
 
 The only obligatory argument, command, is used to specify the task to perform. Each command uses a subset of the
 optional arguments. Presented below are the details for each command.
@@ -143,7 +144,7 @@ reader_tests
 
 Tests the reader by applying it to a file containing example sentences::
 
-   gbrain --infile <example sentences file>  [--show_namespaces] reader_tests
+   gbrain --infile <example sentences file> [--lang <language>] [--model_file <file>] [--show_namespaces] reader_tests
 
 If the optional ``--show_namespaces`` option is specified, the resulting hyperedges will contain symbols qualified
 with their namespaces, otherwise no namespaces will be shown.
@@ -153,7 +154,7 @@ interactive_edge_builder
 
 Extracts posts and comments from Reddit, including metadata such as authors and timestamps::
 
-   gbrain --outfile <sentence transformations file> interactive_edge_builder
+   gbrain --outfile <sentence transformations file> [--lang <language>] interactive_edge_builder
 
 This command opens an interactive session that allows the user to provide sentences and then manually perform the
 appropriate transformations from the parse tree of these sentences into an initial hyperedge. For each sentence that
@@ -183,11 +184,11 @@ learn_hypergen
 Trains a machine learning model for the hypergen reader stage using a training cases file produced by
 ``generate_hypergen_cases``::
 
-   gbrain --infile <training cases file> [--model_type <model type>] learn_hypergen
+   gbrain --infile <training cases file> [--output <model_file>] [--model_type <model type>] learn_hypergen
 
 The optional ``--model_type`` parameter can be used to specify the type of machine learning model to use. Currently
 there are two options available: ``rf`` for random forest and ``nn`` for neural network. If not specified, random
-forest is assumed.
+forest is assumed. If ``--output`` is not specified, the default file name for the model type is used.
 
 test_hypergen
 -------------
@@ -195,7 +196,7 @@ test_hypergen
 Tests a machine learning model for the hypergen reader stage using 25% of the examples in a sentence parse
 transformations file::
 
-   gbrain --infile <sentence transformations file> [--model_type <model type>] test_hypergen
+   gbrain --infile <sentence transformations file> [--lang <language>] [--model_file <file>] [--model_type <model type>] test_hypergen
 
 The optional ``--model_type`` parameter can be used to specify the type of machine learning model to use. Currently
 there are two options available: ``rf`` for random forest and ``nn`` for neural network. If not specified, random
