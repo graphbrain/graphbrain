@@ -208,7 +208,7 @@ class CaseGenerator(object):
             f.close()
 
 
-def generate_cases(infile, outfile):
+def generate_cases(infile, outfile, lang='en'):
     f = open(outfile, 'w')
     f.write('%s\n' % ','.join(expanded_fields()))
     f.close()
@@ -217,7 +217,7 @@ def generate_cases(infile, outfile):
 
     total = 0
     correct = 0
-    cg = CaseGenerator()
+    cg = CaseGenerator(lang=lang)
     for parse in parses:
         sentence_str = parse[0].strip()
         json_str = parse[1].strip()
