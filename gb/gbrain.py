@@ -136,8 +136,7 @@ def interactive_edge_builder(params):
 def generate_hypergen_cases(params):
     infile = params['infile']
     outfile = params['outfile']
-    lang = params['lang']
-    hypergen_cg.generate_cases(infile, outfile, lang=lang)
+    hypergen_cg.generate_cases(infile, outfile)
 
 
 def learn_hypergen(params):
