@@ -7,31 +7,28 @@ GraphBrain provides a command-line interface that can be used to execute a varie
 Here's an overview of the interface::
 
    gbrain [-h] [--backend BACKEND] [--hg HG] [--infile INFILE]
-               [--outfile OUTFILE] [--startdate STARTDATE] [--enddate ENDDATE]
-               [--source SOURCE] [--log LOG] [--comments] [--fields FIELDS]
-               [--model_type MODEL_TYPE] [--model_file MODEL_FILE]
-               [--show_namespaces] [--lang LANG]
-               command
+              [--outfile OUTFILE] [--log LOG] [--fields FIELDS]
+              [--model_type MODEL_TYPE] [--model_file MODEL_FILE]
+              [--show_namespaces] [--lang LANG]
+              command
 
    positional arguments:
-     command                  command to execute
+     command               command to execute
 
    optional arguments:
-     -h, --help               show help message
-     --backend BACKEND        hypergraph backend (leveldb, null)
-     --hg HG                  hypergraph name
-     --infile INFILE          input file
-     --outfile OUTFILE        output file
-     --startdate STARTDATE    start date
-     --enddate ENDDATE        end date
-     --source SOURCE          source can have multiple meanings
-     --log LOG                logging level
-     --comments               include comments
-     --fields FIELDS          field names
-     --model_type MODEL_TYPE  machine learning model type
-     --model_file MODEL_FILE  machine learning model file
-     --show_namespaces        show namespaces
-     --lang LANG              language
+     -h, --help            show this help message and exit
+     --backend BACKEND     hypergraph backend (leveldb, null)
+     --hg HG               hypergraph name
+     --infile INFILE       input file
+     --outfile OUTFILE     output file
+     --log LOG             logging level.
+     --fields FIELDS       field names
+     --model_type MODEL_TYPE
+                           machine learning model type
+     --model_file MODEL_FILE
+                           machine learning model file
+     --show_namespaces     show namespaces
+     --lang LANG           language
 
 The only obligatory argument, command, is used to specify the task to perform. Each command uses a subset of the
 optional arguments. Presented below are the details for each command.
@@ -42,27 +39,24 @@ Hypergraphs
 create
 ------
 
-TBD
+Creates an empty hypergraph::
+
+   gbrain --hg <hypergraph> create
+
 
 info
 ----
 
-TBD
+Displays simple information about an hypergraph::
+
+   gbrain --hg <hypergraph> info
+
 
 Knowledge extraction
 ====================
 
-These are commands that extract knowledge from various source into hypergraphs.
+These are commands that extract knowledge from various sources into hypergraphs.
 
-reddit_reader
--------------
-
-Applies a GraphBrain reader to the text of posts and comments extracted from Reddit::
-
-   gbrain --hg <target hypergraph> --infile <reddit json file> [--comments] reddit_reader
-
-The input file is a json file produced by the ``reddit_retriever`` command.
-Comments are only processed if the optional ``--comments`` argument is used.
 
 wordnet
 -------
@@ -95,42 +89,6 @@ generate_synonyms
 Finds synonyms in the hypergraph and connects them to synonym set identifiers::
 
    gbrain --hg <hypergraph> generate_synonyms
-
-
-Data retrieval
-==============
-
-These are comands that retrieve data from external sources. This data can then be imported into hypergraphs through the
-use of appropriate knowledge extraction commands.
-
-reddit_retriever
-----------------
-
-Extracts posts and comments from Reddit, including metadata such as authors and timestamps::
-
-   gbrain --source <subreddit> --outfile <reddit json file> --startdate <date> --enddate <date> reddit_retriever
-
-``--source`` is used to specify the subreddit from where to retrieve posts and comments.
-The output is a json file, that can then be used by the ``reddit_reader`` command.
-``--startdate`` and ``--enddate`` are used to specify the time interval for data retrieval, in the format *yyyymmdd*.
-
-For example, to retrieve data from http://reddit.com/r/worldnews, between 1-Jan-2017 and 15-Feb-2017::
-
-   gbrain --source worldnews --outfile worldnews.json --startdate 20170101 --enddate 20170215 reddit_retriever
-
-Interfaces
-==========
-
-ui
---
-
-TBD
-
-
-shell
------
-
-TBD
 
 Reader
 ======
