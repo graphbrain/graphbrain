@@ -1,38 +1,21 @@
-#   Copyright (c) 2016 CNRS - Centre national de la recherche scientifique.
-#   All rights reserved.
-#
-#   Written by Telmo Menezes <telmo@telmomenezes.com>
-#
-#   This file is part of GraphBrain.
-#
-#   GraphBrain is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   GraphBrain is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
+# TODO: this is no longer woring due to recent Reddit API changes
 
 
 import time
 import datetime
-import praw
 import json
+import argparse
+import praw
 
 
 class RedditRetriever(object):
-    def __init__(self, subreddit, outfile, start_date, end_date, step=3600):
+    def __init__(self, _subreddit, _outfile, _start_date, _end_date, step=3600):
         self.r = praw.Reddit(site_name='graphbrain', user_agent='GraphBrain (http://graphbrain.org)')
-        self.subreddit = subreddit
-        self.output_file = outfile
+        self.subreddit = _subreddit
+        self.output_file = _outfile
         self.step = step
-        self.start_ts = int(time.mktime(datetime.datetime.strptime(start_date, "%d/%m/%Y").timetuple()))
-        self.end_ts = int(time.mktime(datetime.datetime.strptime(end_date, "%d/%m/%Y").timetuple()))
+        self.start_ts = int(time.mktime(datetime.datetime.strptime(_start_date, "%d/%m/%Y").timetuple()))
+        self.end_ts = int(time.mktime(datetime.datetime.strptime(_end_date, "%d/%m/%Y").timetuple()))
         self.cur_ts = self.start_ts
         self.posts = 0
         self.comments = 0
@@ -116,4 +99,18 @@ class RedditRetriever(object):
 
 
 if __name__ == '__main__':
-    RedditRetriever('worldnews', 'test.json', '25/01/2016', '26/01/2016').run()
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--outfile', type=str, help='output file', default=None)
+    parser.add_argument('--startdate', type=str, help='start date', default=None)
+    parser.add_argument('--enddate', type=str, help='end date', default=None)
+    parser.add_argument('--subreddit', type=str, help='subreddit to retrieve.', default=None)
+
+    args = parser.parse_args()
+
+    subreddit = args.subreddit
+    outfile = args.outfile
+    startdate = args.startdate
+    enddate = args.enddate
+    rr = RedditRetriever(subreddit, outfile, startdate, enddate)
+    rr.run()

@@ -1,24 +1,4 @@
-#   Copyright (c) 2016 CNRS - Centre national de la recherche scientifique.
-#   All rights reserved.
-#
-#   Written by Telmo Menezes <telmo@telmomenezes.com>
-#
-#   This file is part of GraphBrain.
-#
-#   GraphBrain is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   GraphBrain is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
-
-
+import argparse
 from collections import Counter
 from unidecode import unidecode
 import progressbar
@@ -283,6 +263,20 @@ def headlines_inference(hg, predicates_file):
 
 
 if __name__ == '__main__':
-    hgr = HyperGraph({'backend': 'leveldb', 'hg': 'infer3.hg'})
-    parse = par.Parser()
-    Headlines(hgr, parse, 'predicate_patterns.csv').process()
+    argparser = argparse.ArgumentParser()
+
+    argparser.add_argument('--backend', type=str, help='hypergraph backend (leveldb, null)', default='leveldb')
+    argparser.add_argument('--hg', type=str, help='hypergraph name', default='gb.hg')
+    argparser.add_argument('--infile', type=str, help='input file', default=None)
+
+    args = argparser.parse_args()
+
+    params = {
+        'backend': args.backend,
+        'hg': args.hg,
+        'infile': args.infile,
+    }
+
+    hgraph = HyperGraph(params)
+    infile = params['infile']
+    headlines_inference(hgraph, infile)

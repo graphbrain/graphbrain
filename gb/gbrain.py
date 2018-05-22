@@ -30,15 +30,12 @@ import gb.importers.dbpedia as dbp
 import gb.importers.dbpedia_wordnet as dbpwn
 from gb.tools.shell import Shell
 from gb.ui.server import start_ui
-from gb.retrievers.reddit import RedditRetriever
 import gb.reader.reader_tests as rtests
-from gb.reader.reddit import RedditReader
 import gb.reader.stages.hypergen_case_generator as hypergen_cg
 import gb.reader.stages.hypergen as hypergen
 import gb.tools.json as json_tools
 from gb.filters.filters import AllFilter
 import gb.synonyms.synonyms as synonyms
-import gb.inference.headlines as hl
 
 
 def show_logo():
@@ -111,22 +108,6 @@ def ui(params):
     start_ui(hg)
 
 
-def reddit_retriever(params):
-    subreddit = params['source']
-    outfile = params['outfile']
-    startdate = params['startdate']
-    enddate = params['enddate']
-    rr = RedditRetriever(subreddit, outfile, startdate, enddate)
-    rr.run()
-
-
-def reddit_reader(params):
-    hg = HyperGraph(params)
-    infile = params['infile']
-    comments = params['comments']
-    RedditReader(hg, comments=comments).read_file(infile)
-
-
 def interactive_edge_builder(params):
     outfile = params['outfile']
     lang = params['lang']
@@ -172,12 +153,6 @@ def generate_synonyms(params):
     synonyms.generate(hg)
 
 
-def headlines_inference(params):
-    hg = HyperGraph(params)
-    infile = params['infile']
-    hl.headlines_inference(hg, infile)
-
-
 def cli():
     parser = argparse.ArgumentParser()
 
@@ -186,11 +161,7 @@ def cli():
     parser.add_argument('--hg', type=str, help='hypergraph name', default='gb.hg')
     parser.add_argument('--infile', type=str, help='input file', default=None)
     parser.add_argument('--outfile', type=str, help='output file', default=None)
-    parser.add_argument('--startdate', type=str, help='start date', default=None)
-    parser.add_argument('--enddate', type=str, help='end date', default=None)
-    parser.add_argument('--source', type=str, help='source can have multiple meanings.', default=None)
     parser.add_argument('--log', type=str, help='logging level.', default='WARNING')
-    parser.add_argument('--comments', help='include comments', action='store_true')
     parser.add_argument('--fields', type=str, help='field names', default=None)
     parser.add_argument('--model_type', type=str, help='machine learning model type', default='rf')
     parser.add_argument('--model_file', type=str, help='machine learning model file', default=None)
@@ -204,11 +175,7 @@ def cli():
         'hg': args.hg,
         'infile': args.infile,
         'outfile': args.outfile,
-        'startdate': args.startdate,
-        'enddate': args.enddate,
-        'source': args.source,
         'log': args.log,
-        'comments': args.comments,
         'fields': args.fields,
         'model_type': args.model_type,
         'model_file': args.model_file,
@@ -242,10 +209,6 @@ def cli():
         reader_tests(params)
     elif command == 'ui':
         ui(params)
-    elif command == 'reddit_retriever':
-        reddit_retriever(params)
-    elif command == 'reddit_reader':
-        reddit_reader(params)
     elif command == 'interactive_edge_builder':
         interactive_edge_builder(params)
     elif command == 'generate_hypergen_cases':
@@ -260,8 +223,6 @@ def cli():
         all2json(params)
     elif command == 'generate_synonyms':
         generate_synonyms(params)
-    elif command == 'headlines_inference':
-        headlines_inference(params)
     else:
         print('unkown command: %s' % command)
 

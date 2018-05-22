@@ -1,26 +1,7 @@
-#   Copyright (c) 2016 CNRS - Centre national de la recherche scientifique.
-#   All rights reserved.
-#
-#   Written by Telmo Menezes <telmo@telmomenezes.com>
-#
-#   This file is part of GraphBrain.
-#
-#   GraphBrain is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   GraphBrain is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
-
-
 import time
 import json
+import argparse
+from gb.hypergraph.hypergraph import HyperGraph
 import gb.hypergraph.symbol as sym
 import gb.hypergraph.edge as ed
 from gb.reader.reader import Reader
@@ -125,6 +106,23 @@ class RedditReader(object):
 
 
 if __name__ == '__main__':
-    from gb.hypergraph.hypergraph import HyperGraph
-    hgr = HyperGraph({'backend': 'leveldb', 'hg': 'wikidata.hg'})
-    RedditReader(hgr, comments=False).read_file('reddit-wordlnews-27032017-28032017.json')
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--backend', type=str, help='hypergraph backend (leveldb, null)', default='leveldb')
+    parser.add_argument('--hg', type=str, help='hypergraph name', default='gb.hg')
+    parser.add_argument('--infile', type=str, help='input file', default=None)
+    parser.add_argument('--comments', help='include comments', action='store_true')
+
+    args = parser.parse_args()
+
+    params = {
+        'backend': args.backend,
+        'hg': args.hg,
+        'infile': args.infile,
+        'comments': args.comments
+    }
+
+    hgraph = HyperGraph(params)
+    infile = params['infile']
+    read_comments = params['comments']
+    RedditReader(hgraph, comments=read_comments).read_file(infile)
