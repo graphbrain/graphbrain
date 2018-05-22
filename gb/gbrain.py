@@ -29,7 +29,6 @@ from gb.hypergraph.hypergraph import HyperGraph
 import gb.importers.dbpedia as dbp
 import gb.importers.dbpedia_wordnet as dbpwn
 from gb.tools.shell import Shell
-from gb.ui.server import start_ui
 import gb.reader.reader_tests as rtests
 import gb.reader.stages.hypergen_case_generator as hypergen_cg
 import gb.reader.stages.hypergen as hypergen
@@ -101,11 +100,6 @@ def reader_tests(params):
     lang = params['lang']
     model_file = params['model_file']
     rtests.reader_tests(hg, infile, show_namespaces, lang=lang, model_file=model_file)
-
-
-def ui(params):
-    hg = HyperGraph(params)
-    start_ui(hg)
 
 
 def interactive_edge_builder(params):
@@ -207,8 +201,6 @@ def cli():
         shell(params)
     elif command == 'reader_tests':
         reader_tests(params)
-    elif command == 'ui':
-        ui(params)
     elif command == 'interactive_edge_builder':
         interactive_edge_builder(params)
     elif command == 'generate_hypergen_cases':
