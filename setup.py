@@ -62,7 +62,6 @@ setup(
         'ujson',
         'plyvel',
         'bottle',
-        'praw',
         'jupyter',
         'Sphinx',
         'sphinx_rtd_theme',
