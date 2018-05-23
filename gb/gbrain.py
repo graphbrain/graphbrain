@@ -28,11 +28,9 @@ from gb.hypergraph.hypergraph import HyperGraph
 # import gb.importers.wikidata as wd
 import gb.importers.dbpedia as dbp
 import gb.importers.dbpedia_wordnet as dbpwn
-from gb.tools.shell import Shell
 import gb.reader.reader_tests as rtests
 import gb.reader.stages.hypergen_case_generator as hypergen_cg
 import gb.reader.stages.hypergen as hypergen
-import gb.tools.json as json_tools
 from gb.filters.filters import AllFilter
 import gb.synonyms.synonyms as synonyms
 
@@ -87,12 +85,6 @@ def info(params):
     print('total degree: %s' % hg.total_degree())
 
 
-def shell(params):
-    hg = HyperGraph(params)
-    sh = Shell(hg)
-    sh.run()
-
-
 def reader_tests(params):
     hg = HyperGraph(params)
     infile = params['infile']
@@ -126,13 +118,6 @@ def test_hypergen(params):
     model_type = params['model_type']
     model_file = params['model_file']
     hypergen.test(infile, model_type=model_type, model_file=model_file)
-
-
-def extract_json_fields(params):
-    infile = params['infile']
-    outfile = params['outfile']
-    fields = params['fields']
-    json_tools.extract_fields(infile, outfile, fields)
 
 
 def all2json(params):
@@ -197,8 +182,6 @@ def cli():
         dbpedia_wordnet(params)
     elif command == 'info':
         info(params)
-    elif command == 'shell':
-        shell(params)
     elif command == 'reader_tests':
         reader_tests(params)
     elif command == 'interactive_edge_builder':
@@ -209,8 +192,6 @@ def cli():
         learn_hypergen(params)
     elif command == 'test_hypergen':
         test_hypergen(params)
-    elif command == 'extract_json_fields':
-        extract_json_fields(params)
     elif command == 'all2json':
         all2json(params)
     elif command == 'generate_synonyms':

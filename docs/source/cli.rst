@@ -159,12 +159,3 @@ transformations file::
 The optional ``--model_type`` parameter can be used to specify the type of machine learning model to use. Currently
 there are two options available: ``rf`` for random forest and ``nn`` for neural network. If not specified, random
 forest is assumed.
-
-
-Tools
-=====
-
-all2json
---------
-
-TBD
