@@ -237,12 +237,10 @@ class Hypergen(object):
 
         if model_type == 'nn':
             import keras
-            print('using neural network model type.')
             if model_file is None:
                 model_file = NEURAL_NETWORK_MODEL_FILE
             self.nn = keras.models.load_model(model_file)
         elif model_type == 'rf':
-            print('using random forest model type.')
             if model_file is None:
                 model_file = RANDOM_FOREST_MODEL_FILE
             with open(model_file, 'rb') as f:
