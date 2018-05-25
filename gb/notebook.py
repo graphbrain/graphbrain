@@ -19,6 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import sys
 from IPython.core.display import display, HTML
 from gb.hypergraph.hypergraph import HyperGraph
 from gb.hypergraph.symbol import *
@@ -27,6 +28,24 @@ from gb.reader.reader import Reader
 
 
 EDGE_COLORS = ['#F25A00', '#AE81FF', '#F92672', '#28C6E4']
+
+
+# module variables
+hypergraph = None
+reader = None
+
+
+def init_hypergraph(hg, backend='leveldb'):
+    global hypergraph
+    params = {'backend': backend, 'hg': hg}
+    hypergraph = HyperGraph(params)
+
+
+def init_reader(stages=('hypergen-forest', 'disamb-naive', 'merge', 'shallow', 'concepts'),
+                 show_namespaces=False, lang='en', model_file=None):
+    global reader
+    reader = Reader(hg=hypergraph, stages=stages, show_namespaces=show_namespaces, lang=lang, model_file=model_file)
+
 
 def _edge2html(edge, namespaces=True, indent=False, close=True, depth=0):
     """Convert an edge to an html representation."""
@@ -81,3 +100,19 @@ def edge2html(edge, namespaces=True):
 def show(edge):
     html = edge2html(edge)
     display(HTML(html))
+
+
+def check_reader():
+    global reader
+    if not reader:
+        print('Error: no reader initialized. Please use init_reader().', file=sys.stderr)
+    return reader is not None
+
+
+def read_and_show(text):
+    if not check_reader():
+        return
+    outputs = reader.read_text(text)
+    edges = [output[1].main_edge for output in outputs]
+    for edge in edges:
+        show(edge)
