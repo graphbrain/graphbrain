@@ -110,13 +110,12 @@ with their namespaces, otherwise no namespaces will be shown.
 interactive_edge_builder
 ------------------------
 
-Extracts posts and comments from Reddit, including metadata such as authors and timestamps::
+This command opens an interactive session that allows the user to provide sentences and then manually perform the
+appropriate transformations from the parse tree of these sentences into an initial hyperedge::
 
    gbrain --outfile <sentence transformations file> [--lang <language>] interactive_edge_builder
 
-This command opens an interactive session that allows the user to provide sentences and then manually perform the
-appropriate transformations from the parse tree of these sentences into an initial hyperedge. For each sentence that
-is manually parsed, a case is generated and appended to the output file.
+For each sentence that is manually parsed, a case is generated and appended to the output file.
 
 The command ``generate_hypergen_cases`` can then be used to generate a training dataset from the ouput of this command.
 
