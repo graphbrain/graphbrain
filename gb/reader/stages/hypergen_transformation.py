@@ -22,79 +22,39 @@
 from gb.reader.semantic_tree import Position
 
 
-IGNORE, APPLY_HEAD, APPLY_TAIL, REVERSE_APPLY_HEAD, REVERSE_APPLY_TAIL,\
-NEST_INNER, NEST_OUTER, NEST_SHALLOW, MULTINEST_INNER, MULTINEST_OUTER = range(10)
+IGNORE, APPLY_NODE, NEST_NODE, APPLY_ROOT, NEST_ROOT, APPEND = range(6)
 
 
-def apply(parent, child_id, transf):
+def apply(parent, root, child_id, pos, transf):
     if transf == IGNORE:
         pass
-    elif transf == APPLY_HEAD:
-        parent.apply_head(child_id)
-    elif transf == APPLY_TAIL:
-        parent.apply_tail(child_id)
-    elif transf == REVERSE_APPLY_HEAD:
-        parent.reverse_apply(child_id, head=True)
-    elif transf == REVERSE_APPLY_TAIL:
-        parent.reverse_apply(child_id, head=False)
-    elif transf == NEST_INNER:
-        parent.nest(child_id, outer=False)
-    elif transf == NEST_OUTER:
-        parent.nest(child_id, outer=True)
-    elif transf == MULTINEST_INNER:
-        parent.multinest(child_id, outer=False)
-    elif transf == MULTINEST_OUTER:
-        parent.multinest(child_id, outer=True)
-    elif transf == NEST_SHALLOW:
-        parent.nest_shallow(child_id)
-
-
-def with_position(transf, position):
-    if transf == 'APPLY':
-        if position == Position.LEFT:
-            return APPLY_HEAD
+    elif transf == APPLY_NODE:
+        if pos == Position.LEFT:
+            parent.apply_head(child_id)
         else:
-            return APPLY_TAIL
-
-    elif transf == 'REVERSE_APPLY':
-        if position == Position.LEFT:
-            return REVERSE_APPLY_HEAD
-        else:
-            return REVERSE_APPLY_TAIL
-
-    elif transf == 'NEST':
-        if position == Position.LEFT:
-            return NEST_OUTER
-        else:
-            return NEST_INNER
-
-    elif transf == 'MULTINEST':
-        if position == Position.LEFT:
-            return MULTINEST_OUTER
-        else:
-            return MULTINEST_INNER
+            parent.apply_tail(child_id)
+    elif transf == NEST_NODE:
+        parent.nest(child_id)
+    elif transf == APPLY_ROOT:
+        root.apply_tail(child_id)
+    elif transf == NEST_ROOT:
+        root.nest(child_id)
+    elif transf == APPEND:
+        parent.reverse_apply(child_id)
 
 
 def to_string(transf):
     if transf == IGNORE:
         return 'ignore'
-    elif transf == APPLY_HEAD:
-        return 'apply [head]'
-    elif transf == APPLY_TAIL:
-        return 'apply [tail]'
-    elif transf == REVERSE_APPLY_HEAD:
-        return 'reverse apply [head]'
-    elif transf == REVERSE_APPLY_TAIL:
-        return 'reverse apply [tail]'
-    elif transf == NEST_INNER:
-        return 'nest [inner]'
-    elif transf == NEST_OUTER:
-        return 'nest [outer]'
-    elif transf == MULTINEST_INNER:
-        return 'multinest [inner]'
-    elif transf == MULTINEST_OUTER:
-        return 'multinest [outer]'
-    elif transf == NEST_SHALLOW:
-        return 'nest [shallow]'
+    elif transf == APPLY_NODE:
+        return 'apply node'
+    elif transf == NEST_NODE:
+        return 'next node'
+    elif transf == APPLY_ROOT:
+        return 'apply root'
+    elif transf == NEST_ROOT:
+        return 'nest root'
+    elif transf == APPEND:
+        return 'append'
     else:
         return '?'

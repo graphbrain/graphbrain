@@ -30,11 +30,12 @@ import gb.reader.stages.hypergen_transformation as hgtransf
 from gb.reader.stages.hypergen import expanded_fields, build_case, read_parses
 
 
-def test_transformation(parent, child, transf):
+def test_transformation(parent, parent_token, child, position, transf):
     test_tree = Tree(parent)
     test_tree.import_element(child)
     test_parent = test_tree.root()
-    hgtransf.apply(test_parent, child.id, transf)
+    test_root = test_tree.token2leaf(parent_token)
+    hgtransf.apply(test_parent, test_root, child.id, position, transf)
     return test_tree.to_hyperedge_str(with_namespaces=False)
 
 
@@ -53,8 +54,8 @@ class CaseGenerator(object):
         self.abort = False
         self.transformation_outcomes = None
 
-    def show_option(self, key, name, parent, child, transf):
-        res = test_transformation(parent, child, transf)
+    def show_option(self, key, name, parent, parent_token, child, position, transf):
+        res = test_transformation(parent, parent_token, child, position, transf)
         if res not in self.transformation_outcomes:
             self.transformation_outcomes.append(res)
             print(colored(key, 'cyan'), end='')
@@ -62,7 +63,7 @@ class CaseGenerator(object):
             print(colored(name, 'green'), end='')
             print(colored('   %s' % res, 'white', attrs=['bold']))
 
-    def choose_transformation(self, parent, child, position):
+    def choose_transformation(self, parent, parent_token, child, position):
         print('target sentence:')
         print(self.sentence_str)
         print('parent <- child')
@@ -70,26 +71,12 @@ class CaseGenerator(object):
 
         self.transformation_outcomes = []
 
-        self.show_option('i', 'IGNORE', parent, child, hgtransf.IGNORE)
-        self.show_option('a', 'APPLY', parent, child, hgtransf.with_position('APPLY', position))
-        self.show_option('n', 'NEST', parent, child, hgtransf.with_position('NEST', position))
-        self.show_option('s', 'NEST SHALLOW', parent, child, hgtransf.NEST_SHALLOW)
-        self.show_option('m', 'MULTINEST', parent, child, hgtransf.with_position('MULTINEST', position))
-        self.show_option('r', 'REVERSE APPLY', parent, child, hgtransf.with_position('REVERSE_APPLY', position))
-
-        print('')
-
-        if position == Position.LEFT:
-            self.show_option('at', 'APPLY TAIL', parent, child, hgtransf.APPLY_TAIL)
-            self.show_option('no', 'NEST OUTER', parent, child, hgtransf.NEST_OUTER)
-            self.show_option('mo', 'MULTINEST OUTER', parent, child, hgtransf.MULTINEST_OUTER)
-            self.show_option('rt', 'REVERSE APPLY TAIL', parent, child, hgtransf.REVERSE_APPLY_TAIL)
-
-        if position == Position.RIGHT:
-            self.show_option('ah', 'APPLY HEAD', parent, child, hgtransf.APPLY_HEAD)
-            self.show_option('ni', 'NEST INNER', parent, child, hgtransf.NEST_INNER)
-            self.show_option('mi', 'MULTINEST INNER', parent, child, hgtransf.MULTINEST_INNER)
-            self.show_option('rh', 'REVERSE APPLY HEAD', parent, child, hgtransf.REVERSE_APPLY_HEAD)
+        self.show_option('i', 'IGNORE', parent, parent_token, child, position, hgtransf.IGNORE)
+        self.show_option('a', 'APPLY NODE', parent, parent_token, child, position, hgtransf.APPLY_NODE)
+        self.show_option('n', 'NEST NODE', parent, parent_token, child, position, hgtransf.NEST_NODE)
+        self.show_option('p', 'APPEND', parent, parent_token, child, position, hgtransf.APPEND)
+        self.show_option('ar', 'APPLY ROOT', parent, parent_token, child, position, hgtransf.APPLY_ROOT)
+        self.show_option('nr', 'NEST ROOT', parent, parent_token, child, position, hgtransf.NEST_ROOT)
 
         print('\n0) RESTART    x) ABORT')
 
@@ -98,31 +85,15 @@ class CaseGenerator(object):
         if choice == 'i':
             return hgtransf.IGNORE
         if choice == 'a':
-            return hgtransf.with_position('APPLY', position)
-        if choice == 'ah':
-            return hgtransf.APPLY_HEAD
-        if choice == 'at':
-            return hgtransf.APPLY_TAIL
-        if choice == 'r':
-            return hgtransf.with_position('REVERSE_APPLY', position)
-        if choice == 'rh':
-            return hgtransf.REVERSE_APPLY_HEAD
-        if choice == 'rt':
-            return hgtransf.REVERSE_APPLY_TAIL
+            return hgtransf.APPLY_NODE
         if choice == 'n':
-            return hgtransf.with_position('NEST', position)
-        if choice == 'ni':
-            return hgtransf.NEST_INNER
-        if choice == 'no':
-            return hgtransf.NEST_OUTER
-        if choice == 's':
-            return hgtransf.NEST_SHALLOW
-        if choice == 'm':
-            return hgtransf.with_position('MULTINEST', position)
-        if choice == 'mi':
-            return hgtransf.MULTINEST_INNER
-        if choice == 'mo':
-            return hgtransf.MULTINEST_OUTER
+            return hgtransf.NEST_NODE
+        if choice == 'ar':
+            return hgtransf.APPLY_ROOT
+        if choice == 'nr':
+            return hgtransf.NEST_ROOT
+        if choice == 'p':
+            return hgtransf.APPEND
         if choice == '0':
             self.restart = True
             return hgtransf.IGNORE
@@ -131,24 +102,17 @@ class CaseGenerator(object):
             return hgtransf.IGNORE
         else:
             print('unknown choice: "%s". ignoring' % choice)
-            return self.choose_transformation(parent, child, position)
+            return self.choose_transformation(parent, parent_token, child, position)
 
     def process_token(self, token, parent_token=None, parent_id=None, position=None):
         elem = self.tree.create_leaf(token)
         elem_id = elem.id
 
         # process children first
-        nested_left = False
         for child_token in token.left_children:
-            if nested_left:
-                pos = Position.RIGHT
-            else:
-                pos = Position.LEFT
-            _, t = self.process_token(child_token, token, elem_id, pos)
+            _, t = self.process_token(child_token, token, elem_id, Position.LEFT)
             if self.restart or self.abort:
                 return -1, -1
-            if t in (hgtransf.NEST_INNER, hgtransf.NEST_OUTER):
-                nested_left = True
         for child_token in token.right_children:
             self.process_token(child_token, token, elem_id, Position.RIGHT)
             if self.restart or self.abort:
@@ -158,9 +122,10 @@ class CaseGenerator(object):
         transf = -1
         if parent_token:
             parent = self.tree.get(parent_id)
+            root = self.tree.token2leaf(parent_token)
             child = self.tree.get(elem_id)
             if self.interactive:
-                transf = self.choose_transformation(parent, self.tree.get(elem_id), position)
+                transf = self.choose_transformation(parent, parent_token, self.tree.get(elem_id), position)
                 if self.restart or self.abort:
                     return -1, -1
                 self.transfs.append(transf)
@@ -175,10 +140,9 @@ class CaseGenerator(object):
 
             print('%s <- %s' % (parent_token.word, token.word))
             print('%s <- %s' % (parent, self.tree.get(elem_id)))
-            if parent.is_node():
-                print('inn: %s' % str(parent.get_inner_nested_node()))
+            print(root)
             print(hgtransf.to_string(transf))
-            hgtransf.apply(parent, elem_id, transf)
+            hgtransf.apply(parent, root, elem_id, position, transf)
             print(self.tree.get(parent_id))
             print()
 

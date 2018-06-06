@@ -106,11 +106,18 @@ class Token:
         words = [token.word for token in self.to_word_token_list()]
         return ' '.join(words)
 
+    def __hash__(self):
+        return hash((self.word, self.pos, self.dep, self.position_in_sentence))
+
     def __eq__(self, other):
         if isinstance(other, Token):
-            return (self.word == other.word)\
-                   and (self.pos == other.pos)\
-                   and (self.dep == other.dep)
+            return (self.word, self.pos, self.dep, self.position_in_sentence)\
+                   == (other.word, other.pos, other.dep, other.position_in_sentence)
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, Token):
+            return not (self == other)
         return NotImplemented
 
     def __str__(self):

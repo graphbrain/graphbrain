@@ -34,7 +34,6 @@ import gb.reader.stages.hypergen_transformation as hgtransf
 CASE_FIELDS = ('transformation', 'child_pos', 'child_dep', 'child_tag', 'parent_pos', 'parent_dep', 'parent_tag',
                'child_edge_pos', 'child_edge_dep', 'child_edge_tag', 'child_edge_depth',
                'parent_edge_pos', 'parent_edge_dep', 'parent_edge_tag', 'parent_edge_depth',
-               'child_inedge', 'parent_inedge',
                'child_position', 'child_is_atom', 'parent_is_atom')
 
 
@@ -140,8 +139,6 @@ def build_case(parent, child, parent_token, child_token, position):
     # edge depths, tags and dependencies
     set_case_fields_edge(child, case, 'child_edge')
     set_case_fields_edge(parent, case, 'child_parent')
-    set_case_fields_edge(child.get_inner_nested_node(), case, 'child_inedge')
-    set_case_fields_edge(parent.get_inner_nested_node(), case, 'child_inparent')
 
     # all tags and dependencies
     entity2case(parent, case, 'parent')
@@ -152,12 +149,6 @@ def build_case(parent, child, parent_token, child_token, position):
         set_case_field_on(case, 'parent_is_atom')
     if child.is_leaf():
         set_case_field_on(case, 'child_is_atom')
-
-    # parent and child have inner edges?
-    if parent.is_node() and parent.inner_nested_node_id >= 0:
-        set_case_field_on(case, 'parent_inedge')
-    if child.is_node() and child.inner_nested_node_id >= 0:
-        set_case_field_on(case, 'child_inedge')
 
     return case
 
@@ -272,15 +263,8 @@ class Hypergen(object):
         elem_id = elem.id
 
         # process children first
-        nested_left = False
         for child_token in token.left_children:
-            if nested_left:
-                pos = Position.RIGHT
-            else:
-                pos = Position.LEFT
-            _, t = self.process_token(child_token, token, elem_id, pos, testing)
-            if t == hgtransf.NEST_INNER or t == hgtransf.NEST_OUTER:
-                nested_left = True
+            _, t = self.process_token(child_token, token, elem_id, Position.LEFT, testing)
         for child_token in token.right_children:
             self.process_token(child_token, token, elem_id, Position.RIGHT, testing)
 
@@ -288,14 +272,16 @@ class Hypergen(object):
         transf = -1
         if parent_token:
             parent = self.tree.get(parent_id)
+            root = self.tree.token2leaf(parent_token)
             child = self.tree.get(elem_id)
             transf = self.predict_transformation(parent, child, parent_token, token, position)
 
             if testing:
                 test_tree = parent.tree.clone()
                 test_parent = test_tree.get(parent.id)
-                hgtransf.apply(test_parent, elem_id, transf)
-                hgtransf.apply(parent, elem_id, self.transfs[0])
+                test_root = test_tree.token2leaf(parent_token)
+                hgtransf.apply(test_parent, test_root, elem_id, position, transf)
+                hgtransf.apply(parent, root, elem_id, position, self.transfs[0])
                 self.test_predictions[transf] += 1
                 if str(parent) != str(test_parent):
                     # print('%s <- %s' % (parent_token, token))
@@ -307,7 +293,7 @@ class Hypergen(object):
                 self.transfs = self.transfs[1:]
                 self.test_true_values[transf] += 1
             else:
-                hgtransf.apply(parent, elem_id, transf)
+                hgtransf.apply(parent, root, elem_id, position, transf)
 
         return elem_id, transf
 

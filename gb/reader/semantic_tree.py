@@ -36,6 +36,7 @@ class Tree(object):
         self.root_id = None
         self.cur_id = 0
         self.table = {}
+        self.token2leaf_id = {}
         if elem:
             self.root_id = elem.id
             self.import_element(elem)
@@ -48,6 +49,7 @@ class Tree(object):
             elem = self.table[elem_id]
             if elem.is_leaf():
                 new_elem = Leaf(elem.token)
+                tree.token2leaf_id[elem.token] = elem_id
             else:
                 new_elem = Node(elem.children_ids)
             new_elem.id = elem_id
@@ -66,6 +68,8 @@ class Tree(object):
         if elem.is_node():
             for child in elem.children():
                 self.import_element(child)
+        else:
+            self.token2leaf_id[elem.token] = elem.id
         if elem.id >= self.cur_id:
             self.cur_id = elem.id + 1
         return new_elem
@@ -78,6 +82,8 @@ class Tree(object):
     def set(self, elem_id, elem):
         elem.id = elem_id
         self.table[elem_id] = elem
+        if elem.is_leaf():
+            self.token2leaf_id[elem.token] = elem_id
 
     def add(self, elem):
         self.set(self.cur_id, elem)
@@ -125,6 +131,9 @@ class Tree(object):
 
     def to_hyperedge_str(self, with_namespaces=True):
         return ed.edge2str(self.to_hyperedge(with_namespaces=with_namespaces))
+
+    def token2leaf(self, token):
+        return self.get(self.token2leaf_id[token])
 
     def __str__(self):
         return str(self.get(self.root_id))
@@ -197,9 +206,6 @@ class Element(object):
     def to_hyperedge(self, with_namespaces=True):
         raise NotImplementedError()
 
-    def get_inner_nested_node(self):
-        raise NotImplementedError()
-
     def generate_namespace(self):
         raise NotImplementedError()
 
@@ -215,16 +221,10 @@ class Element(object):
     def apply_tail(self, child_id):
         raise NotImplementedError()
 
-    def reverse_apply(self, child_id, head):
+    def reverse_apply(self, child_id):
         raise NotImplementedError()
 
-    def nest(self, child_id, outer):
-        raise NotImplementedError()
-
-    def nest_shallow(self, child_id):
-        raise NotImplementedError()
-
-    def multinest(self, child_id, outer):
+    def nest(self, child_id):
         raise NotImplementedError()
 
     def __eq__(self, other):
@@ -319,10 +319,6 @@ class Leaf(Element):
         self.namespace = 'nlp.%s.%s' % (self.token.lemma.lower(), self.token.pos.lower())
 
     # override
-    def get_inner_nested_node(self):
-        return self
-
-    # override
     def all_tokens(self):
         return [self.token]
 
@@ -342,24 +338,14 @@ class Leaf(Element):
         node.apply_tail(child_id)
 
     # override
-    def reverse_apply(self, child_id, head):
+    def reverse_apply(self, child_id):
         node = self.tree.enclose(self)
-        node.reverse_apply(child_id, head)
+        node.reverse_apply(child_id)
 
     # override
-    def nest(self, child_id, outer):
+    def nest(self, child_id):
         node = self.tree.enclose(self)
-        node.nest(child_id, outer)
-
-    # override
-    def nest_shallow(self, child_id):
-        node = self.tree.enclose(self)
-        node.nest_shallow(child_id)
-
-    # override
-    def multinest(self, child_id, outer):
-        node = self.tree.enclose(self)
-        node.multinest(child_id, outer)
+        node.nest(child_id)
 
     # override
     def __eq__(self, other):
@@ -386,13 +372,11 @@ class Node(Element):
         else:
             self.children_ids = children_ids[:]
         self.__compound = False
-        self.inner_nested_node_id = -1
 
     def copy(self, source):
         self.__compound = source.__compound
         self.namespace = source.namespace
         self.position = source.position
-        self.inner_nested_node_id = source.inner_nested_node_id
 
     def clone(self):
         new_node = self.tree.create_node([self.tree.clone_id(child_id) for child_id in self.children_ids])
@@ -561,19 +545,6 @@ class Node(Element):
         self.namespace = '+'.join([child.get_namespace() for child in self.children()])
 
     # override
-    def get_inner_nested_node(self):
-        if self.inner_nested_node_id >= 0:
-            return self.tree.get(self.inner_nested_node_id)
-        else:
-            return self
-
-    def set_inner_nested_node(self, elem_id, first=True):
-        if self.inner_nested_node_id >= 0 or first:
-            self.inner_nested_node_id = elem_id
-            if self.get_child(1).is_node():
-                self.get_child(1).set_inner_nested_node(elem_id, False)
-
-    # override
     def all_tokens(self):
         tokens = []
         for child in self.children():
@@ -599,7 +570,7 @@ class Node(Element):
 
     # override
     # (a b) <- (c d) => (c d (a b))
-    def reverse_apply(self, child_id, head):
+    def reverse_apply(self, child_id):
         child = self.tree.get(child_id)
         if child.is_leaf():
             new_children_ids = [child_id]
@@ -611,42 +582,19 @@ class Node(Element):
         else:
             new_parent_id = self.tree.create_node(self.children_ids).id
 
-        if head:
-            new_children_ids.insert(1, new_parent_id)
-        else:
-            new_children_ids.append(new_parent_id)
+        new_children_ids.append(new_parent_id)
         self.children_ids = new_children_ids
 
     # override
-    def nest(self, child_id, outer):
-        enclose = True
-        if outer:
-            node = self
-        else:
-            node = self.get_inner_nested_node()
-            if node.is_node():
-                inner_rel = node.get_child(0)
-                if inner_rel.is_leaf() and not inner_rel.connector and len(node.children_ids) > 1:
-                    inner_node = self.tree.create_node(node.children_ids[1:])
-                    self.set_inner_nested_node(inner_node.id)
-                    node.children_ids = [node.children_ids[0], inner_node.id]
-                    node = inner_node
-                    # placeholder
-                    node.children_ids.insert(0, -1)
-                    enclose = False
+    def nest(self, child_id):
+        node = self
 
-        if enclose:
-            if node.is_leaf():
-                node = self.tree.enclose(node)
-            if len(node.children_ids) > 1:
-                node = self.tree.enclose(node)
-                # placeholder
-                node.children_ids.insert(0, -1)
-                node.set_inner_nested_node(node.get_child(1).get_inner_nested_node().id)
-            else:
-                # placeholder
-                node.children_ids.insert(0, -1)
-                node.set_inner_nested_node(node.children_ids[1])
+        if node.is_leaf():
+            node = self.tree.enclose(node)
+        if len(node.children_ids) > 1:
+            node = self.tree.enclose(node)
+        # placeholder
+        node.children_ids.insert(0, -1)
 
         child = self.tree.get(child_id)
         if child.is_leaf():
@@ -655,31 +603,6 @@ class Node(Element):
             node.children_ids[0] = child.children_ids[0]
             for cid in child.children_ids[1:]:
                 node.children_ids.append(cid)
-
-    # override
-    def nest_shallow(self, child_id):
-        self.children_ids.insert(0, child_id)
-
-    # override
-    def multinest(self, child_id, outer):
-        child = self.tree.get(child_id)
-        if child.is_leaf():
-            self.nest(child_id, outer)
-            return
-
-        parent_id = self.id
-        if outer:
-            parent = self
-            for i in range(len(child.children_ids)):
-                index = -i - 1
-                parent.nest(child.children_ids[index], outer)
-                parent = self.tree.get(parent_id)
-        else:
-            parent = self.get_inner_nested_node()
-            for i in range(len(child.children_ids)):
-                parent.nest(child.children_ids[i], outer)
-                parent = self.tree.get(parent_id)
-                parent = parent.get_inner_nested_node()
 
     # override
     def __eq__(self, other):
