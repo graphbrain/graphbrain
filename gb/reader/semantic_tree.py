@@ -113,11 +113,12 @@ class Tree(object):
         return node
 
     def disenclose(self, node):
-        assert(node.is_node())
-        assert(len(node.children_ids) > 0)
-        entity_id = node.id
-        inner_entity = self.get(node.children_ids[0])
-        self.set(entity_id, inner_entity)
+        if node.is_node() and len(node.children_ids) == 1:
+            node_id = node.id
+            inner_entity = self.get(node.children_ids[0])
+            self.set(node_id, inner_entity)
+            return inner_entity
+        return self
 
     def remove_redundant_nesting(self):
         self.root().remove_redundant_nesting()
@@ -207,6 +208,9 @@ class Element(object):
         raise NotImplementedError()
 
     def generate_namespace(self):
+        raise NotImplementedError()
+
+    def remove_redundant_nesting(self):
         raise NotImplementedError()
 
     def all_tokens(self):
@@ -317,6 +321,10 @@ class Leaf(Element):
     # override
     def generate_namespace(self):
         self.namespace = 'nlp.%s.%s' % (self.token.lemma.lower(), self.token.pos.lower())
+
+    # override
+    def remove_redundant_nesting(self):
+        return self
 
     # override
     def all_tokens(self):
@@ -543,6 +551,14 @@ class Node(Element):
     # override
     def generate_namespace(self):
         self.namespace = '+'.join([child.get_namespace() for child in self.children()])
+
+    # override
+    def remove_redundant_nesting(self):
+        for child in self.children():
+            child.remove_redundant_nesting()
+        if len(self.children_ids) == 1:
+            return self.tree.disenclose(self)
+        return self
 
     # override
     def all_tokens(self):

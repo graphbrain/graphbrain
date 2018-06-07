@@ -200,4 +200,5 @@ class Shallow(object):
     def process(self):
         self.visited = set()
         self.output.tree.root_id = self.process_entity(self.output.tree.root_id)
+        self.output.tree.remove_redundant_nesting()
         return self.output
