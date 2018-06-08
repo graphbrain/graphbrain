@@ -66,7 +66,10 @@ def _edge2html(edge, namespaces=True, compact=False, indent=False, close=True, d
                 inner_html, inner_closes = _edge2html(item, namespaces=namespaces, compact=compact, indent=True,
                                                       close=inner_close, depth=depth + 1)
                 closes += inner_closes
-                html = '%s%s' % (html, inner_html)
+                sep = ''
+                if i > 0:
+                    sep = ' '
+                html = '%s%s%s' % (html, sep, inner_html)
                 after_atom = False
             else:
                 sep = ''
