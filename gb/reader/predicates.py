@@ -21,25 +21,21 @@
 
 # English
 REL_POS_EN = ['VERB', 'ADV', 'PART']
-NON_REL_DEPS_EN = ['conj', 'amod', 'case']
-AUX_REL_POS_EN = ['ADP', 'ADJ']
+AUX_REL_POS_EN = ['ADP']
 
 
 # French
 REL_POS_FR = ['VERB', 'ADV', 'PART', 'AUX']
-NON_REL_DEPS_FR = ['conj', 'amod', 'case']
-AUX_REL_POS_FR = ['ADP', 'ADJ']
+AUX_REL_POS_FR = ['ADP']
 
 
 class Predicates(object):
     def __init__(self, lang='en'):
         if lang == 'en':
             self.rel_pos = REL_POS_EN
-            self.non_rel_deps = NON_REL_DEPS_EN
             self.aux_rel_pos = AUX_REL_POS_EN
         elif lang == 'fr':
             self.rel_pos = REL_POS_FR
-            self.non_rel_deps = NON_REL_DEPS_FR
             self.aux_rel_pos = AUX_REL_POS_FR
 
     def is_parent_predicate(self, token):
@@ -61,15 +57,11 @@ class Predicates(object):
             return False
 
     def is_token_predicate(self, token, parent):
-        # print('is_token_predicate? %s -> ' % token, end='')
         if token.pos in self.aux_rel_pos:
             if parent and not parent.compound and len(parent.children_ids) > 2:
-                # print('%s (1)' % False)
                 return False
-            # print('%s (2)' % is_parent_predicate(token))
             return self.is_parent_predicate(token)
-        # print('%s (3)' % (token.pos in REL_POS and token.dep not in NON_REL_DEPS))
-        return token.pos in self.rel_pos and token.dep not in self.non_rel_deps
+        return token.pos in self.rel_pos
 
     def is_predicate(self, entity, parent):
         if entity.is_node():
