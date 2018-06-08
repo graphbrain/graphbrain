@@ -23,7 +23,6 @@ import logging
 import gb.hypergraph.hypergraph as hyperg
 import gb.hypergraph.edge as ed
 from gb.nlp.parser import Parser
-from gb.nlp.sentence import Sentence
 from gb.sense.disambiguation import Disambiguation
 from gb.reader.stages.hypergen import Hypergen
 from gb.reader.stages.disamb import Disamb
@@ -83,7 +82,7 @@ class Reader(object):
             if aux_text:
                 self.aux_text = '%s\n%s' % (text, aux_text)
 
-        parses = [(p[0], self.read_sentence(Sentence(p[1]))) for p in nlp_parses]
+        parses = [(p[0], self.read_sentence(p[1])) for p in nlp_parses]
 
         for p in parses:
             self.debug_msg('== extra ==')
@@ -98,6 +97,7 @@ class Reader(object):
             sentence.print_tree()
 
         last_stage_output = None
+        stage_outputs = []
         first = True
         for name in self.stages:
             stage = self.create_stage(name, last_stage_output)
@@ -107,16 +107,19 @@ class Reader(object):
                 first = False
             else:
                 last_stage_output = stage.process()
-            output = last_stage_output.tree.to_hyperedge_str(with_namespaces=self.show_namespaces)
-            self.debug_msg(output)
+            output = last_stage_output.tree.to_hyperedge(with_namespaces=self.show_namespaces)
+            stage_outputs.append(output)
+            self.debug_msg(ed.edge2str(output))
 
         last_stage_output.main_edge = last_stage_output.tree.to_hyperedge()
 
         # TODO: ugly...
-        last_stage_output.sentence = None
         last_stage_output.tree = None
 
-        return last_stage_output
+        output = last_stage_output
+        output.stage_outputs = stage_outputs
+
+        return output
 
 
 if __name__ == '__main__':

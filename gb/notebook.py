@@ -47,11 +47,14 @@ def init_reader(stages=('hypergen-forest', 'disamb-naive', 'merge', 'shallow', '
     reader = Reader(hg=hypergraph, stages=stages, show_namespaces=show_namespaces, lang=lang, model_file=model_file)
 
 
-def _edge2html(edge, namespaces=True, indent=False, close=True, depth=0):
+def _edge2html(edge, namespaces=True, compact=False, indent=False, close=True, depth=0):
     """Convert an edge to an html representation."""
     closes = 0
     color = EDGE_COLORS[depth % len(EDGE_COLORS)]
-    font_size = 14 - depth
+    if compact:
+        font_size = 11
+    else:
+        font_size = 14 - depth
     if sym_type(edge) == SymbolType.EDGE:
         closes = 1
         html = '<span style="font-size:%spt">(</span>' % str(font_size)
@@ -60,7 +63,8 @@ def _edge2html(edge, namespaces=True, indent=False, close=True, depth=0):
             item = edge[i]
             if sym_type(item) == SymbolType.EDGE:
                 inner_close = i < (len(edge) - 1)
-                inner_html, inner_closes = _edge2html(item, indent=True, close=inner_close, depth=depth + 1)
+                inner_html, inner_closes = _edge2html(item, namespaces=namespaces, compact=compact, indent=True,
+                                                      close=inner_close, depth=depth + 1)
                 closes += inner_closes
                 html = '%s%s' % (html, inner_html)
                 after_atom = False
@@ -68,7 +72,7 @@ def _edge2html(edge, namespaces=True, indent=False, close=True, depth=0):
                 sep = ''
                 if after_atom:
                     sep = ' '
-                inner_html, _ = _edge2html(item, depth=depth)
+                inner_html, _ = _edge2html(item, namespaces=namespaces, compact=compact, depth=depth)
                 html = '%s%s%s' % (html, sep, inner_html)
                 after_atom = True
         if indent:
@@ -77,9 +81,15 @@ def _edge2html(edge, namespaces=True, indent=False, close=True, depth=0):
             margin = 0
         close_html = ''
         if close:
-            close_html = '</div>' * closes
+            if compact:
+                close_html = '</span>' * closes
+            else:
+                close_html = '</div>' * closes
         html = '%s<span style="color:%s"><span style="font-size:%spt">)</span></span>' % (html, color, str(font_size))
-        html = '<div style="margin-left:%spx;color:%s">%s%s' % (str(margin), color, html, close_html)
+        if compact:
+            html = '<span style="color:%s">%s%s' % (color, html, close_html)
+        else:
+            html = '<div style="margin-left:%spx;color:%s">%s%s' % (str(margin), color, html, close_html)
     else:
         html = '<span style="font-weight:bold">%s</span>' % str(root(edge)).strip()
         if namespaces:
@@ -93,12 +103,12 @@ def _edge2html(edge, namespaces=True, indent=False, close=True, depth=0):
         return html, closes
 
 
-def edge2html(edge, namespaces=True):
-    return _edge2html(edge, namespaces=namespaces)[0]
+def edge2html(edge, namespaces=True, compact=False):
+    return _edge2html(edge, namespaces=namespaces, compact=compact)[0]
 
 
-def show(edge):
-    html = edge2html(edge)
+def show(edge, compact=False):
+    html = edge2html(edge, compact=compact)
     display(HTML(html))
 
 
@@ -109,10 +119,19 @@ def check_reader():
     return reader is not None
 
 
-def read_and_show(text):
+def read_and_show(text, compact=False, show_stages=False):
     if not check_reader():
         return
     outputs = reader.read_text(text)
-    edges = [output[1].main_edge for output in outputs]
-    for edge in edges:
-        show(edge)
+    for output in outputs:
+        if show_stages:
+            display(HTML('<h3>Parse Tree</h3>'))
+            output[1].sentence.print_tree()
+        if show_stages:
+            for i in range(len(reader.stages)):
+                stage_label = 'stage #%s: %s' % (i + 1, reader.stages[i])
+                display(HTML('<h3>%s</h3>' % stage_label))
+                edge = output[1].stage_outputs[i]
+                show(edge, compact=True)
+        edge = output[1].main_edge
+        show(edge, compact=compact)

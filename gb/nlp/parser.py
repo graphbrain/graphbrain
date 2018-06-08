@@ -85,7 +85,7 @@ class Parser:
             token_seq = [self.__spacy2token(parsed_data[i]) for i in range(span.start, span.end)]
             for i in range(len(token_seq)):
                 token_seq[i].position_in_sentence = i
-            sents.append((sentence_text, token_seq))
+            sents.append((sentence_text, Sentence(token_seq)))
 
         return sents
 
@@ -93,7 +93,7 @@ class Parser:
         parses = self.parse_text(text)
 
         for p in parses:
-            s = Sentence(p[1])
+            s = p[1]
             print(p[0])
             s.print_tree()
             print('')
@@ -109,7 +109,6 @@ if __name__ == '__main__':
     result = parser.parse_text(test_text)
 
     for r in result:
-        sentence = Sentence(r[1])
         print(r[0])
-        sentence.print_tree()
+        r[1].print_tree()
         print('')

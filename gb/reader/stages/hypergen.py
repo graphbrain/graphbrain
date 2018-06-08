@@ -219,6 +219,7 @@ def learn(infile, outfile=None, model_type='rf'):
 
 class Hypergen(object):
     def __init__(self, model_file=None, model_type='rf'):
+        self.name = 'hypergen'
         self.model_type = model_type
         self.tree = Tree()
         self.transfs = None
@@ -362,6 +363,5 @@ if __name__ == '__main__':
     result = parser.parse_text(test_text)
 
     for r in result:
-        s = Sentence(r[1])
-        tr = transform(s)
+        tr = transform(r[1])
         print(tr.tree.to_hyperedge_str(with_namespaces=False))
