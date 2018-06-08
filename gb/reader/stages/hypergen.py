@@ -245,7 +245,7 @@ class Hypergen(object):
         case = build_case(parent, child, parent_token, child_token, position)
         values = [[case[field] for field in fields[1:]]]
         data = pd.DataFrame(values, columns=fields[1:])
-        data = data.as_matrix(data.columns.values)
+        data = data.values
         if self.model_type == 'nn':
             output = self.nn.predict(data)[0]
             max_out = 0.
