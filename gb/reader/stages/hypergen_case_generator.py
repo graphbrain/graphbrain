@@ -154,7 +154,7 @@ class CaseGenerator(object):
         if json_str:
             self.sentence = Sentence(json_str=json_str)
         else:
-            self.sentence = Sentence(self.parser.parse_text(sentence_str)[0][1])
+            self.sentence = self.parser.parse_text(sentence_str)[0][1]
         self.sentence.print_tree()
         if outcome_str:
             self.outcome_str = outcome_str
