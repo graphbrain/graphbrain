@@ -23,11 +23,12 @@ import time
 import math
 import logging
 import numpy as np
+import gb.constants as const
 import gb.hypergraph.hypergraph as hyperg
 import gb.hypergraph.symbol as sym
+from gb.hypergraph.symbol import SymbolType
 import gb.hypergraph.edge as ed
 import gb.nlp.parser as par
-import gb.knowledge.synonyms as ksyn
 from gb.sense.candidate_metrics import CandidateMetrics
 
 
@@ -36,6 +37,26 @@ SIMILARITY_THRESHOLD = 0.7
 MAX_COUNT = -1
 STAR_LIMIT = 1000
 MAX_WORDS = 50
+
+
+def synonyms(hg, symbol):
+    syns1 = [edge[2] for edge in hg.pattern2edges((const.are_synonyms, symbol, None))
+             if sym.sym_type(edge[2]) == SymbolType.CONCEPT]
+    syns2 = [edge[1] for edge in hg.pattern2edges((const.are_synonyms, None, symbol))
+             if sym.sym_type(edge[1]) == SymbolType.CONCEPT]
+    syns3 = [edge[2] for edge in hg.pattern2edges((const.have_same_lemma, symbol, None))
+             if sym.sym_type(edge[2]) == SymbolType.CONCEPT]
+    syns4 = [edge[1] for edge in hg.pattern2edges((const.have_same_lemma, None, symbol))
+             if sym.sym_type(edge[1]) == SymbolType.CONCEPT]
+    return {symbol}.union(syns1).union(syns2).union(syns3).union(syns4)
+
+
+def degree(hg, symbol):
+    syns = synonyms(hg, symbol)
+    total_degree = 0
+    for syn in syns:
+        total_degree += hg.degree(syn)
+    return total_degree
 
 
 def check_namespace(symbol, namespaces):
@@ -151,7 +172,7 @@ class Disambiguation(object):
                 self.words2 += len(words1)
                 cm = CandidateMetrics()
                 cm.score = self.words_similarity(words1, words2, exclude)
-                cm.degree = ksyn.degree(self.hg, candidate)
+                cm.degree = degree(self.hg, candidate)
                 logging.info('%s %s' % (candidate, cm))
                 if cm.better_than(best_cm):
                     best_cm = cm
