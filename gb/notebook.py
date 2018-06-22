@@ -19,32 +19,11 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import sys
 from IPython.core.display import display, HTML
-from gb.hypergraph.hypergraph import HyperGraph
-from gb.hypergraph.symbol import *
-from gb.hypergraph.edge import *
-from gb.reader.reader import Reader
+import gb.hypergraph.symbol as sym
 
 
 EDGE_COLORS = ['#F25A00', '#AE81FF', '#F92672', '#28C6E4']
-
-
-# module variables
-hypergraph = None
-reader = None
-
-
-def init_hypergraph(hg, backend='leveldb'):
-    global hypergraph
-    params = {'backend': backend, 'hg': hg}
-    hypergraph = HyperGraph(params)
-
-
-def init_reader(stages=('hypergen-forest', 'disamb-naive', 'merge', 'shallow', 'concepts'),
-                 show_namespaces=False, lang='en', model_file=None):
-    global reader
-    reader = Reader(hg=hypergraph, stages=stages, show_namespaces=show_namespaces, lang=lang, model_file=model_file)
 
 
 def _edge2html(edge, namespaces=True, compact=False, indent=False, close=True, depth=0):
@@ -55,13 +34,13 @@ def _edge2html(edge, namespaces=True, compact=False, indent=False, close=True, d
         font_size = 11
     else:
         font_size = 14 - depth
-    if sym_type(edge) == SymbolType.EDGE:
+    if sym.sym_type(edge) == sym.SymbolType.EDGE:
         closes = 1
         html = '<span style="font-size:%spt">(</span>' % str(font_size)
         after_atom = False
         for i in range(len(edge)):
             item = edge[i]
-            if sym_type(item) == SymbolType.EDGE:
+            if sym.sym_type(item) == sym.SymbolType.EDGE:
                 inner_close = i < (len(edge) - 1)
                 inner_html, inner_closes = _edge2html(item, namespaces=namespaces, compact=compact, indent=True,
                                                       close=inner_close, depth=depth + 1)
@@ -94,11 +73,10 @@ def _edge2html(edge, namespaces=True, compact=False, indent=False, close=True, d
         else:
             html = '<div style="margin-left:%spx;color:%s">%s%s' % (str(margin), color, html, close_html)
     else:
-        html = '<span style="font-weight:bold">%s</span>' % str(root(edge)).strip()
+        html = '<span style="font-weight:bold">%s</span>' % str(sym.root(edge)).strip()
         if namespaces:
-            html = '%s<span style="color:#9F9F8F;font-size:7pt">/%s</span>' % (html, str(nspace(edge)).strip())
+            html = '%s<span style="color:#9F9F8F;font-size:7pt">/%s</span>' % (html, str(sym.nspace(edge)).strip())
         html = '<span style="font-size:%spt">%s</span>' % (str(font_size), html)
-
 
     if close:
         return html, 0
@@ -115,16 +93,7 @@ def show(edge, compact=False):
     display(HTML(html))
 
 
-def check_reader():
-    global reader
-    if not reader:
-        print('Error: no reader initialized. Please use init_reader().', file=sys.stderr)
-    return reader is not None
-
-
-def read_and_show(text, compact=False, show_stages=False):
-    if not check_reader():
-        return
+def read_and_show(reader, text, compact=False, show_stages=False):
     outputs = reader.read_text(text)
     for output in outputs:
         if show_stages:
