@@ -27,6 +27,11 @@ from gb.hypergraph.leveldb import LevelDB
 import gb.constants as const
 
 
+def init_hypergraph(hg, backend='leveldb'):
+    params = {'backend': backend, 'hg': hg}
+    return HyperGraph(params)
+
+
 class HyperGraph(object):
     """Hypergraph operations."""
 
