@@ -20,13 +20,13 @@
 
 
 from nltk.corpus import wordnet as wn
+from gb.funs import *
 import gb.constants as const
-import gb.hypergraph.symbol as sym
 
 
 def lemma2symbol(lemma):
     lemma_id = 'wn.%s' % lemma.synset().name()
-    return sym.build(lemma.name().lower(), lemma_id)
+    return build_symbol(lemma.name().lower(), lemma_id)
 
 
 def pos2symbol(pos):

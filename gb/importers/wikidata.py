@@ -23,7 +23,7 @@ import os.path
 import bz2
 import json
 import sqlite3
-import gb.hypergraph.symbol as sym
+from gb.funs import *
 
 
 ENTITY_TABLE_PATH = 'wikidata_entity_table.temp'
@@ -60,7 +60,7 @@ class EntityTable(object):
 
     def add(self, wikidata_id, label):
         cur = self.grab_cursor()
-        symbol = sym.str2symbol(label)
+        symbol = str2symbol(label)
         cur.execute('INSERT INTO entities (wikidata_id, symbol) VALUES (?, ?)', (wikidata_id, symbol))
         self.release_cursor()
 
@@ -87,7 +87,7 @@ def concat_claims(claims):
 
 def to_symbol(wikidata_id, label):
     ns = 'wd%s' % wikidata_id
-    return sym.build(label, ns)
+    return build_symbol(label, ns)
 
 
 def to_triplets(ent):

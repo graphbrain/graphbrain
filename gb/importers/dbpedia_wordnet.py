@@ -20,8 +20,7 @@
 
 
 import gb.constants as const
-import gb.hypergraph.symbol as sym
-import gb.hypergraph.edge as ed
+from gb.funs import *
 from gb.importers.dbpedia import DBPediaReader
 
 
@@ -65,7 +64,7 @@ class DBPediaWordnetReader(DBPediaReader):
         if name is None:
             return None
         name = name.lower()
-        return sym.build(name, namespace)
+        return build_symbol(name, namespace)
 
     def process_line(self, line):
         line_str = line.decode()
@@ -77,7 +76,7 @@ class DBPediaWordnetReader(DBPediaReader):
             return
 
         self.hg.add_belief(const.dbpedia, edge)
-        print(ed.edge2str(edge))
+        print(edge2str(edge))
 
 
 def read(hg, filename):

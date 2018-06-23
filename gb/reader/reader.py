@@ -20,8 +20,7 @@
 
 
 import logging
-import gb.hypergraph.hypergraph as hyperg
-import gb.hypergraph.edge as ed
+from gb.funs import *
 from gb.nlp.parser import Parser
 from gb.sense.disambiguation import Disambiguation
 from gb.reader.stages.hypergen import Hypergen
@@ -87,7 +86,7 @@ class Reader(object):
         for p in parses:
             self.debug_msg('== extra ==')
             for edg in p[1].edges:
-                self.debug_msg(ed.edge2str(edg))
+                self.debug_msg(edge2str(edg))
 
         return parses
 
@@ -109,7 +108,7 @@ class Reader(object):
                 last_stage_output = stage.process()
             output = last_stage_output.tree.to_hyperedge(with_namespaces=self.show_namespaces)
             stage_outputs.append(output)
-            self.debug_msg(ed.edge2str(output))
+            self.debug_msg(edge2str(output))
 
         last_stage_output.main_edge = last_stage_output.tree.to_hyperedge()
 
@@ -120,24 +119,3 @@ class Reader(object):
         output.stage_outputs = stage_outputs
 
         return output
-
-
-if __name__ == '__main__':
-    # test_text = "Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate."
-    # test_text = "Lots of cars require lots of paved roadways and parking lots."
-    # test_text = "Critics have pointed out the dangers of group forming among like-minded in Internet. "
-    # test_text = "Recently online platforms such as Facebook and Google have been criticized."
-    # test_text = "Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan."
-    test_text = "Satellites from NASA and other agencies have been tracking sea ice changes since 1979."
-
-    print(test_text)
-
-    hgraph = hyperg.HyperGraph({'backend': 'leveldb',
-                                'hg': 'wordnet_dbpedia.hg'})
-    extractor = Reader(hgraph)
-    extractor.debug = True
-    results = extractor.read_text(test_text)
-    for result in results:
-        print('result: %s' % str(result[1].main_edge))
-        for edge in result[1].edges:
-            print('extra edge: %s' % str(edge))

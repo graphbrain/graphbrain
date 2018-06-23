@@ -19,8 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import gb.hypergraph.symbol as sym
-import gb.hypergraph.edge as ed
+from gb.funs import *
 
 
 LEAF = 0
@@ -131,7 +130,7 @@ class Tree(object):
         return self.root().to_hyperedge(with_namespaces=with_namespaces)
 
     def to_hyperedge_str(self, with_namespaces=True):
-        return ed.edge2str(self.to_hyperedge(with_namespaces=with_namespaces))
+        return edge2str(self.to_hyperedge(with_namespaces=with_namespaces))
 
     def token2leaf(self, token):
         return self.get(self.token2leaf_id[token])
@@ -311,9 +310,9 @@ class Leaf(Element):
     # override
     def to_hyperedge(self, with_namespaces=True):
         if not with_namespaces:
-            s = sym.str2symbol(self.token.word)
+            s = str2symbol(self.token.word)
         else:
-            s = sym.build(self.token.word, self.namespace)
+            s = build_symbol(self.token.word, self.namespace)
         if self.connector:
             s = '+%s' % s
         return s
@@ -534,11 +533,11 @@ class Node(Element):
         if self.compound:
             words = [leaf.token.word for leaf in self.natural_leaf_sequence()]
             if not with_namespaces:
-                s = sym.str2symbol('_'.join(words))
+                s = str2symbol('_'.join(words))
             else:
                 if not self.namespace:
                     self.generate_namespace()
-                s = sym.build('_'.join(words), self.namespace)
+                s = build_symbol('_'.join(words), self.namespace)
             return s
         else:
             return tuple([child.to_hyperedge(with_namespaces=with_namespaces) for child in self.children()])

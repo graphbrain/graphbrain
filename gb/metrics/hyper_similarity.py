@@ -19,29 +19,27 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import gb.hypergraph.hypergraph as hyperg
-import gb.hypergraph.symbol as sym
-import gb.hypergraph.edge as ed
+from gb.funs import *
 
 
 def valid_symbol(s):
-    if sym.is_edge(s):
+    if is_edge(s):
         return True
-    if sym.is_root(s):
+    if is_root(s):
         return False
-    if sym.nspace(s) == 'gb':
+    if symbol_namespace(s) == 'gb':
         return False
     if s[0] == '+':
         return False
-    if sym.nspace(s)[:3] != 'nlp':
+    if symbol_namespace(s)[:3] != 'nlp':
         return False
-    if sym.nspace(s)[-3:] == 'adp':
+    if symbol_namespace(s)[-3:] == 'adp':
         return False
-    if sym.nspace(s)[-3:] == 'det':
+    if symbol_namespace(s)[-3:] == 'det':
         return False
-    if sym.nspace(s)[-4:] == 'verb':
+    if symbol_namespace(s)[-4:] == 'verb':
         return False
-    if sym.nspace(s)[-4:] == 'pron':
+    if symbol_namespace(s)[-4:] == 'pron':
         return False
     return True
 
@@ -64,7 +62,7 @@ class HyperSimilarity:
 
         concepts = set()
         for item in self.sphere(edge):
-            concepts = concepts.union(ed.subedges(item))
+            concepts = concepts.union(subedges(item))
 
         self.cs_cache[edge] = concepts
 
@@ -117,17 +115,3 @@ class HyperSimilarity:
 
     def synonym_similarity(self, meronomy, syn_id_1, syn_id_2):
         return self.nsimilarity(meronomy.synonym_full_edges(syn_id_1), meronomy.synonym_full_edges(syn_id_2))
-
-
-if __name__ == '__main__':
-    hgr = hyperg.HyperGraph({'backend': 'leveldb', 'hg': 'reddit-worldnews-01012013-01082017.hg'})
-    hs = HyperSimilarity(hgr)
-
-    # e = 'clinton/nlp.clinton.noun'
-
-    print('starting...')
-
-    e1 = '(+/gb prime/nlp.prime.adj minister/nlp.minister.noun)'
-    e2 = 'europe/nlp.europe.noun'
-
-    print(hs.similarity(e1, e2))

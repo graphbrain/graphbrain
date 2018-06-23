@@ -20,9 +20,8 @@
 
 
 import progressbar
+from gb.funs import *
 import gb.constants as cons
-import gb.hypergraph.symbol as sym
-# import gb.hypergraph.edge as ed
 import gb.nlp.parser as par
 from gb.synonyms.meronomy import Meronomy
 
@@ -41,7 +40,7 @@ def generate(hg):
     i = 0
     with progressbar.ProgressBar(max_value=total_verts) as bar:
         for vertex in hg.all():
-            if sym.is_edge(vertex):
+            if is_edge(vertex):
                 edge = vertex
                 total_edges += 1
                 if hg.is_belief(edge):
@@ -57,7 +56,7 @@ def generate(hg):
     i = 0
     with progressbar.ProgressBar(max_value=total_verts) as bar:
         for vertex in hg.all():
-            if sym.is_edge(vertex):
+            if is_edge(vertex):
                 edge = vertex
                 if hg.is_belief(edge):
                     mer.post_assignments(edge)
@@ -89,11 +88,11 @@ def generate(hg):
                     best_count = mer.edge_counts[edge]
                     best_label_edge = edge
             label = hg.get_label(best_label_edge)
-            syn_symbol = sym.build(label, 'syn%s' % syn_id)
+            syn_symbol = build_symbol(label, 'syn%s' % syn_id)
             for edge in edges:
                 syn_edge = (cons.are_synonyms, edge, syn_symbol)
                 hg.add(syn_edge)
-            label_symbol = sym.build(label, cons.label_namespace)
+            label_symbol = build_symbol(label, cons.label_namespace)
             label_edge = (cons.has_label, syn_symbol, label_symbol)
             hg.add(label_edge)
             i += 1
@@ -125,12 +124,12 @@ def main_synonym(hg, edge, in_adp=False):
        the main synonym for india/nlp.india.propn is returned.
 
        In case no main synonym exists, the edge or symbol itself is returned."""
-    if in_adp and sym.is_edge(edge):
+    if in_adp and is_edge(edge):
         if len(edge) == 3 and edge[0] == '+/gb':
-            if not sym.is_edge(edge[1]) and edge[1][-4:] == '.adp':
+            if not is_edge(edge[1]) and edge[1][-4:] == '.adp':
                 # if ed.is_concept(edge[2]):
                 return main_synonym(hg, edge[2])
-            elif not sym.is_edge(edge[2]) and edge[2][-4:] == '.adp':
+            elif not is_edge(edge[2]) and edge[2][-4:] == '.adp':
                 # if ed.is_concept(edge[1]):
                 return main_synonym(hg, edge[1])
     edges = hg.pattern2edges([cons.are_synonyms, edge, None])

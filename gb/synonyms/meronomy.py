@@ -24,9 +24,8 @@ from collections import Counter
 import progressbar
 import igraph
 from unidecode import unidecode
+from gb.funs import *
 import gb.constants as const
-import gb.hypergraph.symbol as sym
-import gb.hypergraph.edge as ed
 
 
 MAX_PROB = -12
@@ -35,11 +34,11 @@ WEIGHT_THRESHOLD = 10
 
 
 def edge2label(edge):
-    if sym.is_edge(edge):
+    if is_edge(edge):
         _edge = list(edge[:])
         if _edge[0] == '+':
             _edge = _edge[1:]
-        if not sym.is_edge(_edge[0]):
+        if not is_edge(_edge[0]):
             if _edge[0][0] == '+':
                 _edge[0] = _edge[0][1:]
         return ' '.join([edge2label(item) for item in _edge])
@@ -48,7 +47,7 @@ def edge2label(edge):
 
 
 def is_candidate(edge):
-    if sym.is_edge(edge) and len(edge) > 1:
+    if is_edge(edge) and len(edge) > 1:
         # discard posessives
         if edge[1] in {"'s", 'in', 'of', 'with', 'and', 'a', 'on', 'for', 'to', 'from'}:
             return False
@@ -57,7 +56,7 @@ def is_candidate(edge):
 
 def next_candidate_pos(edges, pos):
     for i in range(pos + 1, len(edges)):
-        if is_candidate(ed.str2edge(edges[i][0])):
+        if is_candidate(str2edge(edges[i][0])):
             return i
     return -1
 
@@ -69,7 +68,7 @@ def semantic_synonyms(source, target):
 
 
 def is_concept(edge):
-    if sym.is_edge(edge):
+    if is_edge(edge):
         if len(edge) > 1:
             for item in edge[1:]:
                 if not is_concept(item):
@@ -101,7 +100,7 @@ class Meronomy(object):
             return self.lemmas[edge]
 
         lemma = edge
-        if sym.is_edge(edge):
+        if is_edge(edge):
             lemma = tuple([self.lemmatize(item) for item in edge])
         else:
             edges = self.hg.pattern2edges((const.have_same_lemma, edge, None))
@@ -115,7 +114,7 @@ class Meronomy(object):
         if edge in self.edge_strings:
             return self.edge_strings[edge]
 
-        s = ed.edge2str(self.lemmatize(edge), namespaces=False)
+        s = edge2str(self.lemmatize(edge), namespaces=False)
         s = unidecode(s)
         s = s.replace('.', '')
 
@@ -130,11 +129,11 @@ class Meronomy(object):
         self.graph_edges[(orig, targ)] += 1.
 
     def add_edge(self, edge_ns):
-        is_edge = sym.is_edge(edge_ns)
-        edge = ed.without_namespaces(edge_ns)
+        isedge = is_edge(edge_ns)
+        edge = without_namespaces(edge_ns)
 
         # discard common words
-        if not is_edge:
+        if not isedge:
             word = self.parser.make_word(edge)
             if word.prob > MAX_PROB:
                 return False
@@ -147,14 +146,14 @@ class Meronomy(object):
         self.edge_map[orig].add(edge_ns)
 
         self.vertices.add(orig)
-        self.atoms[orig] = ed.depth(edge)
+        self.atoms[orig] = edge_depth(edge)
 
-        if is_edge:
+        if isedge:
             for e_ns in edge_ns:
                 targ = self.edge2str(e_ns)
                 if targ:
                     if self.add_edge(e_ns):
-                        e = ed.without_namespaces(e_ns)
+                        # e = without_namespaces(e_ns)
                         # if is_concept(edge):
                         self.add_link(orig, targ)
                         # elif is_concept(e):
@@ -162,7 +161,7 @@ class Meronomy(object):
         return True
 
     def post_assignments(self, edge):
-        if sym.is_edge(edge):
+        if is_edge(edge):
             for e in edge:
                 self.post_assignments(e)
         else:
@@ -229,7 +228,7 @@ class Meronomy(object):
                     weight = edge[2]
                     norm_weight = edge[3]
 
-                    source_edge = ed.str2edge(source)
+                    source_edge = str2edge(source)
                     if weight > WEIGHT_THRESHOLD:
                         if semantic_synonyms(source, target):
                             is_synonym = True
@@ -286,10 +285,10 @@ class Meronomy(object):
             best_size = 0
             best_edge = None
             for atom in self.synonym_sets[syn_id]:
-                edge = ed.str2edge(atom)
-                if ed.size(edge) > best_size:
+                edge = str2edge(atom)
+                if edge_size(edge) > best_size:
                     best_edge = edge
-                    best_size = ed.size(edge)
+                    best_size = edge_size(edge)
             return edge2label(best_edge).replace('"', ' ')
         return '{%s}' % ', '.join([atom for atom in self.synonym_sets[syn_id]])
 

@@ -20,18 +20,17 @@
 
 
 import json
-import gb.hypergraph.hypergraph as hyperg
-import gb.hypergraph.symbol as sym
-import gb.hypergraph.edge as ed
+from gb.hypergraph import HyperGraph
+from gb.funs import *
 
 
 EXCLUDE_RELS = ['are_synonyms/gb', 'src/gb', 'have_same_lemma/gb']
 
 
 def exclude(edge):
-    if sym.is_edge(edge):
+    if is_edge(edge):
         rel = edge[0]
-        if sym.is_edge(rel):
+        if is_edge(rel):
             return False
         return rel in EXCLUDE_RELS
     else:
@@ -67,7 +66,7 @@ class AllFilter(Filter):
 
         result = []
         for e in filtered_edges:
-            edge_data = {'edge': ed.edge2str(e),
+            edge_data = {'edge': edge2str(e),
                          'text': self.hg.get_str_attribute(e, 'text')}
             result.append(edge_data)
         return result
@@ -89,13 +88,13 @@ class TermFilter(Filter):
         filtered_edges = []
         for edge in edges:
             if not exclude(edge):
-                if ed.contains(ed.without_namespaces(edge), self.term):
+                if edge_contains(without_namespaces(edge), self.term):
                     print(edge)
                     filtered_edges.append(edge)
 
         result = []
         for e in filtered_edges:
-            edge_data = {'edge': ed.edge2str(e),
+            edge_data = {'edge': edge2str(e),
                          'text': self.hg.get_str_attribute(e, 'text')}
             result.append(edge_data)
         return result
@@ -112,10 +111,10 @@ class RelFilter(Filter):
         self.term = term
 
     def rel_has_term(self, edge):
-        if sym.is_edge(edge) and len(edge) > 2:
-            if len(edge) > 3 or sym.is_edge(edge[2]):
+        if is_edge(edge) and len(edge) > 2:
+            if len(edge) > 3 or is_edge(edge[2]):
                 rel = edge[0]
-                if sym.is_edge(rel):
+                if is_edge(rel):
                     return self.term in rel
                 else:
                     return rel == self.term
@@ -133,7 +132,7 @@ class RelFilter(Filter):
 
         result = []
         for e in filtered_edges:
-            edge_data = {'edge': ed.edge2str(e),
+            edge_data = {'edge': edge2str(e),
                          'text': self.hg.get_str_attribute(e, 'text')}
             result.append(edge_data)
         return result
@@ -145,7 +144,7 @@ class RelFilter(Filter):
 
 
 if __name__ == '__main__':
-    hgr = hyperg.HyperGraph({'backend': 'leveldb', 'hg': 'reddit-politics.hg'})
+    hgr = HyperGraph({'backend': 'leveldb', 'hg': 'reddit-politics.hg'})
 
     filt = RelFilter(hgr, 'says')
     filt.write_edges('says.json')

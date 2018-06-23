@@ -3,9 +3,8 @@ from collections import Counter
 from unidecode import unidecode
 import progressbar
 import pandas as pd
-from gb.hypergraph.hypergraph import HyperGraph
-import gb.hypergraph.symbol as sym
-import gb.hypergraph.edge as ed
+from gb.hypergraph import HyperGraph
+from gb.funs import *
 import gb.nlp.parser as par
 import gb.synonyms.synonyms as syn
 
@@ -88,8 +87,8 @@ class Headlines(object):
         return False
 
     def get_concepts(self, edge):
-        if sym.is_edge(edge):
-            if ed.is_concept(edge) and self.hg.has_label(edge):
+        if is_edge(edge):
+            if is_concept(edge) and self.hg.has_label(edge):
                 concepts = {syn.main_synonym(self.hg, edge, in_adp=True)}
                 return concepts
             else:
@@ -99,7 +98,7 @@ class Headlines(object):
                     concepts |= self.get_concepts(item)
             return concepts
         else:
-            word = self.parser.make_word(unidecode(ed.without_namespaces(edge)))
+            word = self.parser.make_word(unidecode(without_namespaces(edge)))
             if word.prob > MAX_PROB:
                 return set()
             if edge[0] in {'`', '_', "'"}:
@@ -162,7 +161,7 @@ class Headlines(object):
                 else:
                     concepts |= self.get_concepts(entity)
             if self.pred_table[pred]['claim']:
-                if len(edge) > 2 and sym.is_edge(edge[2]):
+                if len(edge) > 2 and is_edge(edge[2]):
                     self.claims += 1
                     for concept in concepts:
                         self.add_mention(actor_orig, concept, edge)

@@ -21,8 +21,8 @@
 
 import time
 import logging
+from gb.funs import *
 import gb.constants as const
-import gb.hypergraph.symbol as sym
 from gb.sense.candidate_metrics import CandidateMetrics
 from gb.reader.predicates import Predicates
 
@@ -100,14 +100,14 @@ class Disamb(object):
         self.profiling[prof_key]['words1'] = 0
         self.profiling[prof_key]['words2'] = 0
 
-        roots = {sym.str2symbol(entity.as_text())}
+        roots = {str2symbol(entity.as_text())}
         if entity.is_leaf():
-            roots.add(sym.str2symbol(entity.token.lemma))
+            roots.add(str2symbol(entity.token.lemma))
         else:
             words = entity.as_label_list()
             lemmas = entity.as_label_list(lemmas=True)
             lemma_at_end = ' '.join(words[:-1] + [lemmas[-1]])
-            roots.add(sym.str2symbol(lemma_at_end))
+            roots.add(str2symbol(lemma_at_end))
         namespaces = None
         if self.force_wordnet(entity):
             namespaces = ('wn.', 'lem.wn.')
@@ -139,11 +139,11 @@ class Disamb(object):
             if disamb_ent is None:
                 entity.generate_namespace()
             else:
-                if entity.as_text() == sym.root(disamb_ent):
-                    entity.namespace = sym.nspace(disamb_ent)
+                if entity.as_text() == symbol_root(disamb_ent):
+                    entity.namespace = symbol_namespace(disamb_ent)
                 # entity with shared lemma
                 else:
-                    entity.namespace = '%s.%s' % (const.lemma_derived_namespace, sym.nspace(disamb_ent))
+                    entity.namespace = '%s.%s' % (const.lemma_derived_namespace, symbol_namespace(disamb_ent))
                     # additional edge for shared lemma
                     self.output.edges.append((const.have_same_lemma, entity.to_hyperedge(), disamb_ent))
             if entity.is_node():
