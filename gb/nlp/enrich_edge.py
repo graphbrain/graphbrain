@@ -20,11 +20,11 @@
 
 
 import math
-import gb.hypergraph.symbol as sym
+from gb.funs import *
 
 
 def enrich_edge(parser, edge):
-    if sym.is_edge(edge):
+    if is_edge(edge):
         eedge = [enrich_edge(parser, item) for item in edge]
         prob = 1.
         total_prob = 0.
@@ -39,7 +39,7 @@ def enrich_edge(parser, edge):
         return {'edge': edge, 'eedge': eedge, 'words': words, 'prob': prob, 'word_count': word_count,
                 'mean_prob': mean_prob}
 
-    ngram = sym.symbol2str(edge)
+    ngram = symbol2str(edge)
     tokens = [token for token in ngram.split(' ') if len(token) > 0]
     for i in range(len(tokens)):
         if tokens[i][0] == '+':

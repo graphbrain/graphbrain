@@ -1,9 +1,8 @@
 import time
 import json
 import argparse
-from gb.hypergraph.hypergraph import HyperGraph
-import gb.hypergraph.symbol as sym
-import gb.hypergraph.edge as ed
+from gb.hypergraph import HyperGraph
+from gb.funs import *
 from gb.reader.reader import Reader
 
 
@@ -43,7 +42,7 @@ class RedditReader(object):
         for p in parses:
             print('\n')
             print('sentence: %s' % p[0])
-            print(ed.edge2str(p[1].main_edge))
+            print(edge2str(p[1].main_edge))
             if len(p[1].main_edge) < 8:
                 self.hg.add_belief(author, p[1].main_edge)
                 self.main_edges += 1
@@ -67,7 +66,7 @@ class RedditReader(object):
 
     def process_comments(self, post):
         if 'body' in post:
-            author = sym.build(post['author'], 'reddit_user')
+            author = build_symbol(post['author'], 'reddit_user')
             self.process_text(post['body'], author, reset_context=False)
         if 'comments' in post:
             for comment in post['comments']:
@@ -75,7 +74,7 @@ class RedditReader(object):
                     self.process_comments(comment)
 
     def process_post(self, post):
-        author = sym.build(post['author'], 'reddit_user')
+        author = build_symbol(post['author'], 'reddit_user')
         print('author: %s' % author)
 
         # aux_text = generate_aux_text(post)

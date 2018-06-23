@@ -19,8 +19,7 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import gb.hypergraph.edge as ed
-import gb.nlp.parser as par
+from gb.funs import *
 from gb.nlp.enrich_edge import enrich_edge
 
 
@@ -83,7 +82,7 @@ def get_concepts(eedge):
 def concept2str(concept):
     if 'symbol' in concept:
         return concept['symbol']
-    return ed.edge2str(concept['edge'])
+    return edge2str(concept['edge'])
 
 
 def edge_concepts_similarity(eedge1, eedge2):
@@ -130,14 +129,3 @@ def similarity(parser, edge1, edge2):
     eedge1 = enrich_edge(parser, edge1)
     eedge2 = enrich_edge(parser, edge2)
     return edge_concepts_similarity(eedge1, eedge2)
-
-
-if __name__ == '__main__':
-    print('creating parser...')
-    par = par.Parser()
-    print('parser created.')
-
-    edge1 = 'berlin'
-    edge2 = 'germany'
-
-    print(similarity(par, edge1, edge2))

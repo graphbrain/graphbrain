@@ -1,6 +1,6 @@
 import io
-from gb.hypergraph.hypergraph import HyperGraph
-import gb.hypergraph.edge as ed
+from gb.hypergraph import HyperGraph
+from gb.funs import *
 from gb.reader.reader import Reader
 
 
@@ -22,7 +22,7 @@ if __name__ == '__main__':
             for p in parses:
                 print('\n')
                 print('sentence: %s' % p[0])
-                print(ed.edge2str(p[1].main_edge))
+                print(edge2str(p[1].main_edge))
                 if len(p[1].main_edge) < 8:
                     hg.add_belief('unknown', p[1].main_edge)
                     main_edges += 1

@@ -19,8 +19,8 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from gb.funs import *
 import gb.constants as const
-import gb.hypergraph.symbol as sym
 
 
 class DisambNaive(object):
@@ -34,7 +34,7 @@ class DisambNaive(object):
 
         if entity.is_leaf():
             if entity.token.word.lower() != entity.token.lemma.lower():
-                lemma_ent = sym.build(entity.token.lemma.lower(), entity.namespace)
+                lemma_ent = build_symbol(entity.token.lemma.lower(), entity.namespace)
                 self.output.edges.append((const.have_same_lemma, entity.to_hyperedge(), lemma_ent))
         else:
             for child_id in entity.children_ids:

@@ -1,8 +1,7 @@
 import sys
 import csv
 import time
-import gb.hypergraph.symbol as sym
-import gb.hypergraph.edge as ed
+from gb.funs import *
 from gb.reader.reader import Reader
 
 
@@ -23,7 +22,7 @@ class SemBubbleReader(object):
         for p in parses:
             print('\n')
             print('sentence: %s' % p[0])
-            print(ed.edge2str(p[1].main_edge))
+            print(edge2str(p[1].main_edge))
             if len(p[1].main_edge) < 8:
                 self.hg.add_belief(author, p[1].main_edge)
                 self.main_edges += 1
@@ -46,7 +45,7 @@ class SemBubbleReader(object):
             print('items per minute: %s' % items_per_min)
 
     def process_post(self, post):
-        web_entity = sym.build(post['web_entity'], 'web_entity')
+        web_entity = build_symbol(post['web_entity'], 'web_entity')
         print('web_entity: %s' % web_entity)
 
         text = post['text'].strip()
@@ -79,6 +78,6 @@ class SemBubbleReader(object):
 
 
 if __name__ == '__main__':
-    from gb.hypergraph.hypergraph import HyperGraph
+    from gb.hypergraph import HyperGraph
     hgr = HyperGraph({'backend': 'leveldb', 'hg': 'card_and_id_fraud.hg'})
     SemBubbleReader(hgr).read_file('Card_and_ID_fraud.csv')

@@ -22,13 +22,8 @@
 import time
 import math
 import logging
-import numpy as np
 import gb.constants as const
-import gb.hypergraph.hypergraph as hyperg
-import gb.hypergraph.symbol as sym
-from gb.hypergraph.symbol import SymbolType
-import gb.hypergraph.edge as ed
-import gb.nlp.parser as par
+from gb.funs import *
 from gb.sense.candidate_metrics import CandidateMetrics
 
 
@@ -41,13 +36,13 @@ MAX_WORDS = 50
 
 def synonyms(hg, symbol):
     syns1 = [edge[2] for edge in hg.pattern2edges((const.are_synonyms, symbol, None))
-             if sym.sym_type(edge[2]) == SymbolType.CONCEPT]
+             if symbol_type(edge[2]) == SymbolType.CONCEPT]
     syns2 = [edge[1] for edge in hg.pattern2edges((const.are_synonyms, None, symbol))
-             if sym.sym_type(edge[1]) == SymbolType.CONCEPT]
+             if symbol_type(edge[1]) == SymbolType.CONCEPT]
     syns3 = [edge[2] for edge in hg.pattern2edges((const.have_same_lemma, symbol, None))
-             if sym.sym_type(edge[2]) == SymbolType.CONCEPT]
+             if symbol_type(edge[2]) == SymbolType.CONCEPT]
     syns4 = [edge[1] for edge in hg.pattern2edges((const.have_same_lemma, None, symbol))
-             if sym.sym_type(edge[1]) == SymbolType.CONCEPT]
+             if symbol_type(edge[1]) == SymbolType.CONCEPT]
     return {symbol}.union(syns1).union(syns2).union(syns3).union(syns4)
 
 
@@ -60,7 +55,7 @@ def degree(hg, symbol):
 
 
 def check_namespace(symbol, namespaces):
-    symb_ns = sym.nspace(symbol)
+    symb_ns = symbol_namespace(symbol)
     if namespaces:
         for ns in namespaces:
             if symb_ns.startswith(ns):
@@ -94,8 +89,8 @@ class Disambiguation(object):
         words = set()
         for edge in edges:
             for entity in edge:
-                for symbol in ed.symbols(entity):
-                    term = sym.symbol2str(symbol)
+                for symbol in edge_symbols(entity):
+                    term = symbol2str(symbol)
                     for token in term.split():
                         word = self.parser.make_word(token)
                         if word.prob < MAX_PROB and np.count_nonzero(word.vector) > 0:
@@ -158,7 +153,7 @@ class Disambiguation(object):
         exclude = set()
         for root in roots:
             candidates = candidates.union(self.hg.symbols_with_root(root))
-            text = sym.symbol2str(root)
+            text = symbol2str(root)
             for token in text.split():
                 exclude.add(token)
         self.candidates = len(candidates)
@@ -180,19 +175,3 @@ class Disambiguation(object):
 
         self.best_sense_t += time.time() - start
         return best, best_cm
-
-
-if __name__ == '__main__':
-    hgr = hyperg.HyperGraph({'backend': 'leveldb',
-                             'hg': 'wordnet_wikidata.hg'})
-    p = par.Parser()
-    d = Disambiguation(hgr, p)
-
-    r1 = ['stocks', 'stock']
-    text1 = "Chinese stocks end year with double-digit losses"
-
-    r2 = ['cambridge']
-    text2 = "Cambridge near Boston in the United States."
-    text3 = "Cambridge near London in England."
-
-    print(d.best_sense(r2, text2))

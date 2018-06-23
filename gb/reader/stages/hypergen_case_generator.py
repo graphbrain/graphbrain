@@ -22,7 +22,7 @@
 import traceback
 from termcolor import colored
 import pandas as pd
-import gb.hypergraph.edge as ed
+from gb.funs import *
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
 from gb.reader.semantic_tree import Tree, Position
@@ -158,7 +158,7 @@ class CaseGenerator(object):
         self.sentence.print_tree()
         if outcome_str:
             self.outcome_str = outcome_str
-            self.outcome = ed.str2edge(outcome_str)
+            self.outcome = str2edge(outcome_str)
         self.tree.root_id, _ = self.process_token(self.sentence.root())
 
     def validate(self):

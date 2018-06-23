@@ -21,9 +21,8 @@
 
 import bz2
 import re
+from gb.funs import *
 import gb.constants as const
-import gb.hypergraph.symbol as sym
-import gb.hypergraph.edge as ed
 
 
 def convert_camel_case(name):
@@ -91,7 +90,7 @@ class DBPediaReader(object):
         if name is None:
             return None
         name = name.lower()
-        return sym.build(name, namespace)
+        return build_symbol(name, namespace)
 
     def process_line(self, line):
         line_str = line.decode()
@@ -103,7 +102,7 @@ class DBPediaReader(object):
             return
 
         self.hg.add_belief(const.dbpedia, edge)
-        print(ed.edge2str(edge))
+        print(edge2str(edge))
 
     def create_edges(self, filename):
         source_file = bz2.BZ2File(filename, 'r')

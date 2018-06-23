@@ -20,8 +20,8 @@
 
 
 from gb.nlp.nlp_token import Token
+from gb.funs import *
 import gb.constants as cons
-import gb.hypergraph.symbol as sym
 from gb.reader.predicates import Predicates
 
 
@@ -117,7 +117,7 @@ class Concepts(object):
             # if entity.is_compound_concept():
             edge = entity.to_hyperedge()
             text = entity.as_text()
-            label = sym.build(text, cons.label_namespace)
+            label = build_symbol(text, cons.label_namespace)
             syn_edge = [cons.has_label, edge, label]
             self.output.edges.append(syn_edge)
 
