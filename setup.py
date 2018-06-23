@@ -26,19 +26,12 @@ from Cython.Build import cythonize
 
 extensions = [
     Extension(
-        'gb.hypergraph.edge',
-        ['gb/hypergraph/edge.pyx'],
+        'gb.funs',
+        ['gb/funs.pyx'],
         include_dirs=[],
         libraries=[],
-        library_dirs=[],
-    ),
-    Extension(
-        'gb.hypergraph.symbol',
-        ['gb/hypergraph/symbol.pyx'],
-        include_dirs=[],
-        libraries=[],
-        library_dirs=[],
-    ),
+        library_dirs=[]
+    )
 ]
 
 

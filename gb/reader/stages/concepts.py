@@ -45,7 +45,7 @@ class Concepts(object):
         entity = self.output.tree.get(entity_id)
         # process node
         if entity.is_node() and not entity.compound:
-            # build concept
+            # build_symbol concept
             if len(entity.children_ids) > 1:
                 if not self.pred.is_predicate(entity.get_child(0), entity):
                     self.build_concept(self.make_combinator_leaf().id, entity.id)
