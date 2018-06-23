@@ -19,102 +19,105 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class Backend(object):
+from gb.backends.backend import Backend
+
+
+class Null(Backend):
     """Hypergraph low-level operations."""
 
     def __init__(self):
-        pass
+        Backend.__init__(self)
 
     def close(self):
-        raise NotImplementedError()
+        pass
 
     def name(self):
-        raise NotImplementedError()
+        return 'Null hypergraph (does nothing, just for testing purposes)'
 
     def exists(self, vertex):
         """Checks if the given edge exists in the hypergraph."""
-        raise NotImplementedError()
+        return False
 
     def add(self, edge, timestamp=-1):
         """Adds an edges to the hypergraph if it does not exist yet."""
-        raise NotImplementedError()
+        return edge
 
     def remove(self, edge):
         """Removes an edges from the hypergraph."""
-        raise NotImplementedError()
+        pass
 
     def pattern2edges(self, pattern):
         """Return all the edges that match a pattern.
         A pattern is a collection of entity ids and wildcards (None)."""
-        raise NotImplementedError()
+        return set()
 
-    def star(self, center):
+    def star(self, center, limit=None):
         """Return all the edges that contain a given entity.
         Entity can be atomic or an edge."""
-        raise NotImplementedError()
+        return set()
 
     def symbols_with_root(self, root):
-        """Find all symbols with the given root."""
-        raise NotImplementedError()
+        """Find all edge_symbols with the given root."""
+        return set()
 
     def edges_with_symbols(self, symbols, root=None):
-        """Find all edges containing the given symbols, and optionally a given root"""
-        raise NotImplementedError()
+        """Find all edges containing the given edge_symbols, and optionally a given root"""
+        return set()
 
     def destroy(self):
         """Erase the hypergraph."""
-        raise NotImplementedError()
+        pass
 
     def set_attribute(self, vertex, attribute, value):
         """Sets the value of an attribute."""
-        raise NotImplementedError()
+        return False
 
     def inc_attribute(self, vertex, attribute):
-        """Increments an attribute of a vertex."""
-        raise NotImplementedError()
+        """Increments attribute of a vertex."""
+        return False
 
     def dec_attribute(self, vertex, attribute):
-        """Decrements an attribute of a vertex."""
-        raise NotImplementedError()
+        """Decrements attribute of a vertex."""
+        return False
 
     def get_str_attribute(self, vertex, attribute, or_else=None):
         """Returns attribute as string."""
-        raise NotImplementedError()
+        return or_else
 
     def get_int_attribute(self, vertex, attribute, or_else=None):
         """Returns attribute as integer value."""
-        raise NotImplementedError()
+        return or_else
 
     def get_float_attribute(self, vertex, attribute, or_else=None):
         """Returns attribute as float value."""
-        raise NotImplementedError()
+        return or_else
 
     def degree(self, vertex):
         """Returns the degree of a vertex."""
-        raise NotImplementedError()
+        return 0
 
     def timestamp(self, vertex):
         """Returns the timestamp of a vertex."""
-        raise NotImplementedError()
+        return -1
 
     def all(self):
         """Returns a lazy sequence of all the vertices in the hypergraph."""
-        raise NotImplementedError()
+        return []
 
     def all_attributes(self):
         """Returns a lazy sequence with a tuple for each vertex in the hypergraph.
            The first element of the tuple is the vertex itself,
            the second is a dictionary of attribute values (as strings)."""
-        raise NotImplementedError()
+        return []
 
     def symbol_count(self):
-        """Total number of symbols in the hypergraph"""
-        raise NotImplementedError()
+        """Total number of edge_symbols in the hypergraph"""
+        return 0
 
     def edge_count(self):
         """Total number of edge in the hypergraph"""
-        raise NotImplementedError()
+        return 0
 
     def total_degree(self):
         """Total degree of the hypergraph"""
-        raise NotImplementedError()
+        return 0

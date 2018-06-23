@@ -20,7 +20,7 @@
 
 
 import unittest
-import gb.hypergraph.hypergraph as hyperg
+from gb.hypergraph import HyperGraph
 import gb.constants as const
 
 
@@ -29,7 +29,7 @@ class TestHypergraph(unittest.TestCase):
     def setUp(self):
         params = {'backend': 'leveldb',
                   'hg': 'test.hg'}
-        self.hg = hyperg.HyperGraph(params)
+        self.hg = HyperGraph(params)
 
     def tearDown(self):
         self.hg.close()

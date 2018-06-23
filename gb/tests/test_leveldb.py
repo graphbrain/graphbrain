@@ -20,8 +20,8 @@
 
 
 import unittest
-import gb.hypergraph.hypergraph as hyperg
-import gb.hypergraph.tests.aux_backend as ab
+from gb.hypergraph import HyperGraph
+import gb.tests.aux_backend as ab
 
 
 class TestHypergraph(ab.AuxBackend):
@@ -29,7 +29,7 @@ class TestHypergraph(ab.AuxBackend):
     def setUp(self):
         params = {'backend': 'leveldb',
                   'hg': 'test.hg'}
-        self.hg = hyperg.HyperGraph(params)
+        self.hg = HyperGraph(params)
 
     def tearDown(self):
         self.hg.close()

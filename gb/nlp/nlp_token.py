@@ -22,7 +22,7 @@
 def token_from_dict(token_dict):
     token = Token()
     token.word = token_dict['word']
-    token.depth = token_dict['depth']
+    token.depth = token_dict['edge_depth']
     token.lemma = token_dict['lemma']
     token.shape = token_dict['shape']
     token.logprob = token_dict['logprob']
@@ -61,7 +61,7 @@ class Token:
     def to_dict(self):
         token_dict = {
             'word': self.word,
-            'depth': self.depth,
+            'edge_depth': self.depth,
             'lemma': self.lemma,
             'shape': self.shape,
             'logprob': self.logprob,

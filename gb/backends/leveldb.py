@@ -22,9 +22,8 @@
 import math
 import itertools
 import plyvel
-import gb.hypergraph.symbol as sym
-import gb.hypergraph.edge as ed
-from gb.hypergraph.backend import Backend
+from gb.funs import *
+from gb.backends.backend import Backend
 
 
 def nthperm(li, n):
@@ -44,7 +43,7 @@ def do_with_edge_permutations(edge, f):
     """Applies the function f to all permutations of the given edge."""
     nperms = math.factorial(len(edge))
     for nperm in range(nperms):
-        perm_str = ' '.join([ed.edge2str(e) for e in nthperm(edge, nperm)])
+        perm_str = ' '.join([edge2str(e) for e in nthperm(edge, nperm)])
         perm_str = '%s %s' % (perm_str, nperm)
         f(perm_str)
 
@@ -67,13 +66,13 @@ def unpermutate(tokens, nper):
 def perm2edge(perm_str):
     """Transforms a permutation string from a database query into an edge."""
     try:
-        tokens = ed.split_edge_str(perm_str[1:])
+        tokens = split_edge_str(perm_str[1:])
         if tokens is None:
             return None
         nper = int(tokens[-1])
         tokens = tokens[:-1]
         tokens = unpermutate(tokens, nper)
-        return ed.str2edge(' '.join(tokens))
+        return str2edge(' '.join(tokens))
     except ValueError as v:
         return None
         # print(u'VALUE ERROR! %s perm2edge %s' % (v, perm_str))
@@ -98,7 +97,7 @@ def edge_matches_pattern(edge, pattern):
 
 
 def vertex2key(vertex):
-    return ('v%s' % ed.edge2str(vertex)).encode('utf-8')
+    return ('v%s' % edge2str(vertex)).encode('utf-8')
 
 
 def encode_attributes(attributes):
@@ -136,7 +135,7 @@ class LevelDB(Backend):
         self.db.put(vert_key, value)
 
     def write_edge_permutation(self, perm):
-        perm_key = (u'p%s' % ed.edge2str(perm)).encode('utf-8')
+        perm_key = (u'p%s' % edge2str(perm)).encode('utf-8')
         self.db.put(perm_key, b'x')
 
     def write_edge_permutations(self, edge):
@@ -144,7 +143,7 @@ class LevelDB(Backend):
         do_with_edge_permutations(edge, self.write_edge_permutation)
 
     def remove_edge_permutation(self, perm):
-        perm_key = (u'p%s' % ed.edge2str(perm)).encode('utf-8')
+        perm_key = (u'p%s' % edge2str(perm)).encode('utf-8')
         self.db.delete(perm_key)
 
     def remove_edge_permutations(self, edge):
@@ -179,7 +178,7 @@ class LevelDB(Backend):
     def pattern2edges(self, pattern):
         """Return all the edges that match a pattern. A pattern is a collection of entity ids and wildcards (None)."""
         nodes = [node for node in pattern if node is not None]
-        start_str = ed.nodes2str(nodes)
+        start_str = edges2str(nodes)
         end_str = str_plus_1(start_str)
         start_key = (u'p%s' % start_str).encode('utf-8')
         end_key = (u'p%s' % end_str).encode('utf-8')
@@ -259,7 +258,7 @@ class LevelDB(Backend):
             for vert in edge:
                 vert_key = vertex2key(vert)
                 if not self.inc_attribute_key(vert_key, 'd'):
-                    if sym.sym_type(vert) == sym.SymbolType.EDGE:
+                    if symbol_type(vert) == SymbolType.EDGE:
                         self.inc_counter('edge_count')
                     else:
                         self.inc_counter('symbol_count')
@@ -285,11 +284,11 @@ class LevelDB(Backend):
         Entity can be atomic or an edge."""
         center_id = center
         if isinstance(center, (list, tuple)):
-            center_id = ed.edge2str(center)
+            center_id = edge2str(center)
         return self.str2perms(center_id, limit)
 
     def symbols_with_root(self, root):
-        """Find all symbols with the given root."""
+        """Find all edge_symbols with the given root."""
         start_str = '%s/' % root
         end_str = str_plus_1(start_str)
         start_key = (u'v%s' % start_str).encode('utf-8')
@@ -297,12 +296,12 @@ class LevelDB(Backend):
 
         symbs = set()
         for key, value in self.db.iterator(start=start_key, stop=end_key):
-            symb = ed.str2edge(key.decode('utf-8')[1:])
+            symb = str2edge(key.decode('utf-8')[1:])
             symbs.add(symb)
         return symbs
 
     def edges_with_symbols(self, symbols, root=None):
-        """Find all edges containing the given symbols, and optionally a given root"""
+        """Find all edges containing the given edge_symbols, and optionally a given root"""
         if root:
             start_str = '%s %s/' % (' '.join(symbols), root)
         else:
@@ -388,7 +387,7 @@ class LevelDB(Backend):
         end_key = (u'%s' % end_str).encode('utf-8')
 
         for key, value in self.db.iterator(start=start_key, stop=end_key):
-            vert = ed.str2edge(key.decode('utf-8')[1:])
+            vert = str2edge(key.decode('utf-8')[1:])
             yield vert
 
     def all_attributes(self):
@@ -401,7 +400,7 @@ class LevelDB(Backend):
         end_key = (u'%s' % end_str).encode('utf-8')
 
         for key, value in self.db.iterator(start=start_key, stop=end_key):
-            vert = ed.str2edge(key.decode('utf-8')[1:])
+            vert = str2edge(key.decode('utf-8')[1:])
             attributes = decode_attributes(value)
             yield (vert, attributes)
 
@@ -430,7 +429,7 @@ class LevelDB(Backend):
         self.db.put(counter_key, str(value - by).encode('utf-8'))
 
     def symbol_count(self):
-        """Total number of symbols in the hypergraph"""
+        """Total number of edge_symbols in the hypergraph"""
         return self.read_counter('symbol_count')
 
     def edge_count(self):

@@ -19,10 +19,145 @@
 #   along with GraphBrain.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import gb.hypergraph.symbol as sym
+import string
+import random
+import numpy as np
 
 
-class TokenType(object):
+class SymbolType(object):
+    def __init__(self):
+        pass
+
+    UNKNOWN = 0
+    CONCEPT = 1
+    EDGE = 2
+    INTEGER = 3
+    FLOAT = 4
+    URL = 5
+
+
+def hashed(txt):
+    """Creates an hash code for a string."""
+    s = txt
+    h = np.array([[1125899906842597]], dtype=np.uint64)  # prime
+    while len(s) > 0:
+        c = ord(s[0])
+        h = np.dot(np.array([[31]], dtype=np.uint64), (h + np.array([[c]], dtype=np.uint64)))
+        s = s[1:]
+    return hex(h[0][0])[2:]
+
+
+def __random_hash():
+    """Creates random hash code."""
+    s = ''.join(random.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits) for _ in range(100))
+    return hashed(s)
+
+
+def symbol_type(sym):
+    """Type of symbol: CONCEPT, EDGE, INTEGER, FLOAT or URL"""
+    if isinstance(sym, (list, tuple)):
+        return SymbolType.EDGE
+    elif isinstance(sym, str):
+        if sym[:7] == 'http://':
+            return SymbolType.URL
+        elif sym[:8] == 'https://':
+            return SymbolType.URL
+        else:
+            return SymbolType.CONCEPT
+    elif isinstance(sym, int):
+        return SymbolType.INTEGER
+    elif isinstance(sym, float):
+        return SymbolType.FLOAT
+    else:
+        return SymbolType.UNKNOWN
+
+
+def is_edge(entity):
+    """Checks if entity is an edge."""
+    return symbol_type(entity) == SymbolType.EDGE
+
+
+def symbol_parts(sym):
+    """Splits a symbol into its parts.
+    All symbol types except CONCEPT only have one part."""
+    if symbol_type(sym) == SymbolType.CONCEPT:
+        return sym.split('/')
+    else:
+        return [sym]
+
+
+def symbol_root(sym):
+    """Extracts the root of a symbol (e.g. the root of graphbrain/1 is graphbrain)"""
+    return symbol_parts(sym)[0]
+
+
+def symbol_namespace(sym):
+    """Extracts the namespace of a symbol (e.g. the namespace of graphbrain/1 is 1)
+    Returns None if symbol has no namespace."""
+    ps = symbol_parts(sym)
+    if len(ps) > 1:
+        return symbol_parts(sym)[1]
+    else:
+        return None
+
+
+def is_root(sym):
+    """Is the symbol the root of itself?"""
+    return sym == symbol_root(sym)
+
+
+def build_symbol(text, namespace):
+    """Build a concept symbol from text and a namespace."""
+    return '%s/%s' % (str2symbol(text), namespace)
+
+
+def str2symbol(s):
+    """Converts a string into a valid symbol"""
+    sym = s.lower()
+    sym = sym.replace("/", "_")
+    sym = sym.replace(" ", "_")
+    sym = sym.replace("(", "_")
+    sym = sym.replace(")", "_")
+    return sym
+
+
+def symbol2str(sym):
+    """Converts a symbol into a string representation."""
+    stype = symbol_type(sym)
+    if stype == SymbolType.CONCEPT:
+        return symbol_root(sym).replace('_', ' ')
+    elif stype == SymbolType.URL:
+        return sym
+    else:
+        return str(sym)
+
+
+def new_meaning(sym, prefix=''):
+    """Creates a new symbol for the given root.
+    If given edge_symbols is not a root, return it unchanged."""
+    if is_root(sym):
+        return build_symbol(sym, '%s%s' % (prefix, __random_hash()))
+    else:
+        return sym
+
+
+def __open_pars(s):
+    """Number of consecutive open parenthesis at the beginning of the string."""
+    pos = 0
+    while s[pos] == '(':
+        pos += 1
+    return pos
+
+
+def __close_pars(s):
+    """Number of consecutive close parenthesis at the end of the string."""
+    pos = -1
+    while s[pos] == ')':
+        pos -= 1
+    return -pos - 1
+
+
+class __TokenType(object):
     def __init__(self):
         pass
 
@@ -31,23 +166,7 @@ class TokenType(object):
     STRING = 2
 
 
-def open_pars(s):
-    """Number of consecutive open parenthesis at the beginning of the string."""
-    pos = 0
-    while s[pos] == '(':
-        pos += 1
-    return pos
-
-
-def close_pars(s):
-    """Number of consecutive close parenthesis at the end of the string."""
-    pos = -1
-    while s[pos] == ')':
-        pos -= 1
-    return -pos - 1
-
-
-def token_type(token):
+def __token_type(token):
     """Determine the type of a string token: STRING, INTEGER or DOUBLE."""
 
     s = token
@@ -59,43 +178,43 @@ def token_type(token):
         c = s[0]
         if c == '-':
             if pos > 0 or len(token) == 1:
-                return TokenType.STRING
+                return __TokenType.STRING
         elif c == '.':
             if point:
-                return TokenType.STRING
+                return __TokenType.STRING
             else:
                 point = True
         elif c < '0' or c > '9':
-            return TokenType.STRING
+            return __TokenType.STRING
         else:
             numbers = True
         s = s[1:]
         pos += 1
 
     if not numbers:
-        return TokenType.STRING
+        return __TokenType.STRING
 
     if point:
-        return TokenType.DOUBLE
+        return __TokenType.DOUBLE
     else:
-        return TokenType.INTEGER
+        return __TokenType.INTEGER
 
 
-def parsed_token(token):
+def __parsed_token(token):
     """Transform a string token into a value of the correct type."""
-    if edge_str_has_outer_parens(token):
+    if __edge_str_has_outer_parens(token):
         return str2edge(token)
     else:
-        toktype = token_type(token)
-        if toktype == TokenType.STRING:
+        toktype = __token_type(token)
+        if toktype == __TokenType.STRING:
             return token
-        elif toktype == TokenType.INTEGER:
+        elif toktype == __TokenType.INTEGER:
             return int(token)
-        elif toktype == TokenType.DOUBLE:
+        elif toktype == __TokenType.DOUBLE:
             return float(token)
 
 
-def edge_str_has_outer_parens(str edge_str):
+def __edge_str_has_outer_parens(str edge_str):
     """Check if string representation of edge is delimited by outer parenthesis."""
     if len(edge_str) < 2:
         return False
@@ -109,6 +228,7 @@ def split_edge_str(str edge_str):
     cdef int str_length = len(edge_str)
     cdef str c
     cdef int active = 0
+
     tokens = []
     for i in range(str_length):
         c = edge_str[i]
@@ -148,13 +268,14 @@ def str2edge(str edge_str):
     """Convert a string representation of an edge to an edge."""
 
     cdef str edge_inner_str = edge_str
-    if edge_str_has_outer_parens(edge_str):
+
+    if __edge_str_has_outer_parens(edge_str):
         edge_inner_str = edge_str[1:-1]
 
     tokens = split_edge_str(edge_inner_str)
     if not tokens:
         return None
-    elements = tuple(parsed_token(token) for token in tokens)
+    elements = tuple(__parsed_token(token) for token in tokens)
     if len(elements) > 1:
         return elements
     elif len(elements) > 0:
@@ -163,51 +284,51 @@ def str2edge(str edge_str):
         return None
 
 
-def nodes2str(edge, namespaces=True):
-    """Convert a collection of nodes to a string representation (no outer parenthesis)."""
-    node_strings = []
-    for node in edge:
-        if sym.sym_type(node) == sym.SymbolType.EDGE:
-            edge_str = edge2str(node, namespaces)
+def edges2str(edges, namespaces=True):
+    """Convert a collection of edges to a string representation (no outer parenthesis)."""
+    edges_string = []
+    for edge in edges:
+        if symbol_type(edge) == SymbolType.EDGE:
+            edge_str = edge2str(edge, namespaces)
         else:
             if namespaces:
-                edge_str = str(node).strip()
+                edge_str = str(edge).strip()
             else:
-                edge_str = str(sym.root(node)).strip()
+                edge_str = str(symbol_root(edge)).strip()
         if edge_str != '':
-                node_strings.append(edge_str)
-    return ' '.join(node_strings)
+                edges_string.append(edge_str)
+    return ' '.join(edges_string)
 
 
 def edge2str(edge, namespaces=True):
     """Convert an edge to its string representation."""
-    if sym.sym_type(edge) == sym.SymbolType.EDGE:
-        return '(%s)' % nodes2str(edge, namespaces)
+    if symbol_type(edge) == SymbolType.EDGE:
+        return '(%s)' % edges2str(edge, namespaces)
     else:
         if namespaces:
             return str(edge).strip()
         else:
-            return str(sym.root(edge)).strip()
+            return str(symbol_root(edge)).strip()
 
 
-def symbols(edge):
-    """Return set of symbols contained in edge."""
-    if sym.sym_type(edge) == sym.SymbolType.EDGE:
+def edge_symbols(edge):
+    """Return set of edge_symbols contained in edge."""
+    if symbol_type(edge) == SymbolType.EDGE:
         symbs = set()
         for entity in edge:
-            for symb in symbols(entity):
+            for symb in edge_symbols(entity):
                 symbs.add(symb)
         return symbs
     else:
         return {edge}
 
 
-def depth(edge):
+def edge_depth(edge):
     """Returns maximal depth of the edge, a symbol has depth 0"""
-    if sym.sym_type(edge) == sym.SymbolType.EDGE:
+    if symbol_type(edge) == SymbolType.EDGE:
         max_d = 0
         for item in edge:
-            d = depth(item)
+            d = edge_depth(item)
             if d > max_d:
                 max_d = d
         return max_d + 1
@@ -217,28 +338,28 @@ def depth(edge):
 
 def without_namespaces(edge):
     """Returns edge stripped of namespaces"""
-    if sym.sym_type(edge) == sym.SymbolType.EDGE:
+    if symbol_type(edge) == SymbolType.EDGE:
         return tuple(without_namespaces(item) for item in edge)
     else:
-        return sym.root(edge)
+        return symbol_root(edge)
 
 
-def contains(edge, concept, deep=False):
-    if sym.is_edge(edge):
+def edge_contains(edge, concept, deep=False):
+    if is_edge(edge):
         for x in edge:
             if x == concept:
                 return True
             if deep:
-                if contains(x, concept, True):
+                if edge_contains(x, concept, True):
                     return True
         return False
     else:
         return edge == concept
 
 
-def size(edge):
+def edge_size(edge):
     """size of edge, if symbol size is 1"""
-    if sym.is_edge(edge):
+    if is_edge(edge):
         return len(edge)
     return 1
 
@@ -246,7 +367,7 @@ def size(edge):
 def subedges(edge):
     """all the subedges contained in the edge, including atoms and itself"""
     edges = {edge}
-    if sym.is_edge(edge):
+    if is_edge(edge):
         for item in edge:
             edges = edges.union(subedges(item))
     return edges
@@ -255,7 +376,7 @@ def subedges(edge):
 def is_concept(edge):
     """Checks if edge represents a concept, i.e. if it is a symbol or if
        it is an edge that starts with +/gb."""
-    if sym.is_edge(edge):
+    if is_edge(edge):
         return len(edge) > 1 and edge[0] == '+/gb'
     else:
         return True

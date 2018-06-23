@@ -80,7 +80,7 @@ def dbpedia_wordnet(params):
 
 def info(params):
     hg = HyperGraph(params)
-    print('symbols: %s' % hg.symbol_count())
+    print('edge_symbols: %s' % hg.symbol_count())
     print('edges: %s' % hg.edge_count())
     print('total degree: %s' % hg.total_degree())
 
