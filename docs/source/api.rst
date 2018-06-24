@@ -2,45 +2,41 @@
 API reference
 =============
 
-hypergraph package
-==================
+generic functions (funs) module
+===============================
 
-HyperGraph class
-----------------
+.. automodule:: gb.funs
+    :members:
+
+
+hypergraph module
+=================
 
 .. automodule:: gb.hypergraph
-
-.. autoclass:: gb.hypergraph.hypergraph.HyperGraph
     :members:
 
-symbol module
--------------
-
-.. automodule:: gb.hypergraph.symbol
+.. autoclass:: gb.hypergraph.HyperGraph
     :members:
 
-edge module
------------
-
-.. automodule:: gb.hypergraph.edge
-    :members:
+backends package
+================
 
 Backend class
 -------------
 
-.. autoclass:: gb.hypergraph.backend.Backend
+.. autoclass:: gb.backends.backend.Backend
     :members:
 
 LevelDB class
 -------------
 
-.. autoclass:: gb.hypergraph.leveldb.LevelDB
+.. autoclass:: gb.backends.leveldb.LevelDB
     :members:
 
 Null class
 ----------
 
-.. autoclass:: gb.hypergraph.null.Null
+.. autoclass:: gb.backends.null.Null
     :members:
 
 reader package
