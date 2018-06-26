@@ -72,6 +72,11 @@ def symbol_type(sym):
         return SymbolType.UNKNOWN
 
 
+def is_symbol(entity):
+    """Checks if entity is a symbol."""
+    return symbol_type(entity) != SymbolType.EDGE
+
+
 def is_edge(entity):
     """Checks if entity is an edge."""
     return symbol_type(entity) == SymbolType.EDGE
