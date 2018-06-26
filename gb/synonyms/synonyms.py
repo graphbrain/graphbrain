@@ -105,8 +105,9 @@ def generate(hg):
 
 
 def synonyms(hg, edge):
-    edges = hg.pattern2edges([cons.are_synonyms, None, edge])
-    return set([e[1] for e in edges]).union({edge})
+    edges1 = hg.pattern2edges([cons.are_synonyms, None, edge])
+    edges2 = hg.pattern2edges([cons.are_synonyms, edge, None])
+    return set([e[1] for e in edges1]).union(set([e[2] for e in edges2])).union({edge})
 
 
 def synonyms_degree(hg, edge):
@@ -127,10 +128,8 @@ def main_synonym(hg, edge, in_adp=False):
     if in_adp and is_edge(edge):
         if len(edge) == 3 and edge[0] == '+/gb':
             if not is_edge(edge[1]) and edge[1][-4:] == '.adp':
-                # if ed.is_concept(edge[2]):
                 return main_synonym(hg, edge[2])
             elif not is_edge(edge[2]) and edge[2][-4:] == '.adp':
-                # if ed.is_concept(edge[1]):
                 return main_synonym(hg, edge[1])
     edges = hg.pattern2edges([cons.are_synonyms, edge, None])
     if len(edges) > 0:
