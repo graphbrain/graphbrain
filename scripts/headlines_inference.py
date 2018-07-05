@@ -159,7 +159,8 @@ class Headlines(object):
                 if self.is_actor(syn_entity):
                     actor_targs.add(syn_entity)
                 else:
-                    concepts |= self.get_concepts(entity)
+                    # concepts |= self.get_concepts(entity)
+                    concepts.add(entity)
             if self.pred_table[pred]['claim']:
                 if len(edge) > 2 and is_edge(edge[2]):
                     self.claims += 1
