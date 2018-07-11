@@ -43,7 +43,7 @@ class Backend(object):
         """Removes an edges from the hypergraph."""
         raise NotImplementedError()
 
-    def pattern2edges(self, pattern):
+    def pattern2edges(self, pattern, open_ended):
         """Return all the edges that match a pattern.
         A pattern is a collection of entity ids and wildcards (None)."""
         raise NotImplementedError()

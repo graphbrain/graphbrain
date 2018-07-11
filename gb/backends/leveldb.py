@@ -85,12 +85,16 @@ def str_plus_1(s):
     return '%s%s' % (s[:-1], last_char)
 
 
-def edge_matches_pattern(edge, pattern):
+def edge_matches_pattern(edge, pattern, open_ended):
     """Check if an edge matches a pattern."""
-    n = len(edge)
-    if n != len(pattern):
-        return False
-    for i in range(n):
+    if open_ended:
+        if len(edge) < len(pattern):
+            return False
+    else:
+        if len(edge) != len(pattern):
+            return False
+
+    for i in range(len(pattern)):
         if (pattern[i] is not None) and (pattern[i] != edge[i]):
             return False
     return True
@@ -175,7 +179,7 @@ class LevelDB(Backend):
 
         return set(edges)
 
-    def pattern2edges(self, pattern):
+    def pattern2edges(self, pattern, open_ended):
         """Return all the edges that match a pattern. A pattern is a collection of entity ids and wildcards (None)."""
         nodes = [node for node in pattern if node is not None]
         start_str = edges2str(nodes)
@@ -190,7 +194,7 @@ class LevelDB(Backend):
             if edge:
                 edges.append(edge)
 
-        return set([edge for edge in edges if edge_matches_pattern(edge, pattern)])
+        return set([edge for edge in edges if edge_matches_pattern(edge, pattern, open_ended)])
 
     def exists_key(self, vertex_key):
         """Checks if the given vertex exists in the hypergraph."""

@@ -70,11 +70,11 @@ class HyperGraph(object):
         if isinstance(edge, (list, tuple)):
             self.backend.remove(edge)
 
-    def pattern2edges(self, pattern):
+    def pattern2edges(self, pattern, open_ended=False):
         """Return all the edges that match a pattern.
         A pattern is a collection of entity ids and wildcards (None)."""
         logging.debug('[hypergraph pattern2edges()] %s' % edge2str(pattern))
-        return self.backend.pattern2edges(pattern)
+        return self.backend.pattern2edges(pattern, open_ended)
 
     def star(self, center, limit=None):
         """Return all the edges that contain a given entity.

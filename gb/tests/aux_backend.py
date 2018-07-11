@@ -73,14 +73,37 @@ class AuxBackend(unittest.TestCase):
 
     def test_pattern2edges(self):
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
+        self.hg.add(('says', 'mary/1'))
         self.hg.add(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
+        self.hg.add(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1'), 'extra/1'))
         self.assertEqual(self.hg.pattern2edges((None, 'graphbrain/1', None)), {('is', 'graphbrain/1', 'great/1')})
         self.assertEqual(self.hg.pattern2edges(('is', 'graphbrain/1', None)), {('is', 'graphbrain/1', 'great/1')})
         self.assertEqual(self.hg.pattern2edges(('x', None, None)), set())
         self.assertEqual(self.hg.pattern2edges(('says', None, ('is', 'graphbrain/1', 'great/1'))),
                          {('says', 'mary/1', ('is', 'graphbrain/1', 'great/1'))})
         self.hg.remove(('is', 'graphbrain/1', 'great/1'))
+        self.hg.remove(('says', 'mary/1'))
         self.hg.remove(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
+        self.hg.remove(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1'), 'extra/1'))
+
+    def test_pattern2edges_open_ended(self):
+        self.hg.add(('is', 'graphbrain/1', 'great/1'))
+        self.hg.add(('says', 'mary/1'))
+        self.hg.add(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
+        self.hg.add(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1'), 'extra/1'))
+        self.assertEqual(self.hg.pattern2edges((None, 'graphbrain/1', None), open_ended=True),
+                         {('is', 'graphbrain/1', 'great/1')})
+        self.assertEqual(self.hg.pattern2edges(('is', 'graphbrain/1', None), open_ended=True),
+                         {('is', 'graphbrain/1', 'great/1')})
+        self.assertEqual(self.hg.pattern2edges(('x', None, None), open_ended=True),
+                         set())
+        self.assertEqual(self.hg.pattern2edges(('says', None, ('is', 'graphbrain/1', 'great/1')), open_ended=True),
+                         {('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')),
+                          ('says', 'mary/1', ('is', 'graphbrain/1', 'great/1'), 'extra/1')})
+        self.hg.remove(('is', 'graphbrain/1', 'great/1'))
+        self.hg.remove(('says', 'mary/1'))
+        self.hg.remove(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
+        self.hg.remove(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1'), 'extra/1'))
 
     def test_star(self):
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
