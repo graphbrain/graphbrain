@@ -46,7 +46,7 @@ class Null(Backend):
         """Removes an edges from the hypergraph."""
         pass
 
-    def pattern2edges(self, pattern):
+    def pattern2edges(self, pattern, open_ended):
         """Return all the edges that match a pattern.
         A pattern is a collection of entity ids and wildcards (None)."""
         return set()

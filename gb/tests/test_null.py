@@ -20,7 +20,7 @@
 
 
 import unittest
-import gb.backends.null as null
+from gb.hypergraph import HyperGraph
 from gb.funs import *
 
 
@@ -28,7 +28,8 @@ class TestNull(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
         super(TestNull, self).__init__(*args, **kwargs)
-        self.hg = null.Null()
+        params = {'backend': 'null'}
+        self.hg = HyperGraph(params)
 
     def test_ops_1(self):
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
@@ -149,8 +150,8 @@ class TestNull(unittest.TestCase):
 
         labels = set([edge2str(v) for v in self.hg.all()])
         self.assertNotEqual(labels, {'size', 'graphbrain/1', '-7.0', 'is', 'great/1', 'src', 'mary/1',
-                                    '(size graphbrain/1 -7.0)', '(is graphbrain/1 great/1)',
-                                    '(src mary/1 (is graphbrain/1 great/1))'})
+                                     '(size graphbrain/1 -7.0)', '(is graphbrain/1 great/1)',
+                                     '(src mary/1 (is graphbrain/1 great/1))'})
         self.hg.destroy()
         labels = set(self.hg.all())
         self.assertEqual(labels, set())
@@ -163,8 +164,8 @@ class TestNull(unittest.TestCase):
 
         labels = set(['%s %s' % (edge2str(t[0]), t[1]['d']) for t in self.hg.all_attributes()])
         self.assertNotEqual(labels, {'size 1', 'graphbrain/1 2', '-7.0 1', 'is 1', 'great/1 1', 'src 1', 'mary/1 1',
-                                    '(size graphbrain/1 -7.0) 0', '(is graphbrain/1 great/1) 1',
-                                    '(src mary/1 (is graphbrain/1 great/1)) 0'})
+                                     '(size graphbrain/1 -7.0) 0', '(is graphbrain/1 great/1) 1',
+                                     '(src mary/1 (is graphbrain/1 great/1)) 0'})
         self.hg.destroy()
         labels = set(self.hg.all_attributes())
         self.assertEqual(labels, set())
