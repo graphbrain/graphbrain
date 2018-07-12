@@ -26,33 +26,39 @@ from gb.funs import *
 from gb.backends.backend import Backend
 
 
-def nthperm(li, n):
-    # TODO: make this more efficient
-    indices = [i for i in range(len(li))]
+permcache = {}
+
+
+def nthperm(n, nper):
+    if n in permcache and nper in permcache[n]:
+        return permcache[n][nper]
+
     pos = 0
     pindices = None
-    for perm in itertools.permutations(indices):
-        if pos >= n:
+    for perm in itertools.permutations(range(n)):
+        if pos >= nper:
             pindices = perm
             break
         pos += 1
-    return tuple(li[pindices[i]] for i in range(len(li)))
+    perm = tuple(pindices[i] for i in range(n))
+    if n not in permcache:
+        permcache[n] = {}
+    permcache[n][nper] = perm
+    return perm
 
 
-def do_with_edge_permutations(edge, f):
-    """Applies the function f to all permutations of the given edge."""
-    nperms = math.factorial(len(edge))
-    for nperm in range(nperms):
-        perm_str = ' '.join([edge2str(e) for e in nthperm(edge, nperm)])
-        perm_str = '%s %s' % (perm_str, nperm)
-        f(perm_str)
+def permutate(tokens, nper):
+    """Reorder the tokens vector to perform a permutation, specified by nper."""
+    n = len(tokens)
+    indices = nthperm(n, nper)
+    return tuple(tokens[i] for i in indices)
 
 
 def unpermutate(tokens, nper):
     """Reorder the tokens vector to revert a permutation, specified by nper."""
     n = len(tokens)
-    rg = [x for x in range(n)]
-    indices = nthperm(rg, nper)
+    # rg = [x for x in range(n)]
+    indices = nthperm(n, nper)
 
     res = [None] * n
     pos = 0
@@ -61,6 +67,15 @@ def unpermutate(tokens, nper):
         pos += 1
 
     return tuple(res)
+
+
+def do_with_edge_permutations(edge, f):
+    """Applies the function f to all permutations of the given edge."""
+    nperms = math.factorial(len(edge))
+    for nperm in range(nperms):
+        perm_str = ' '.join([edge2str(e) for e in permutate(edge, nperm)])
+        perm_str = '%s %s' % (perm_str, nperm)
+        f(perm_str)
 
 
 def perm2edge(perm_str):
