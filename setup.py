@@ -31,6 +31,13 @@ extensions = [
         include_dirs=[],
         libraries=[],
         library_dirs=[]
+    ),
+    Extension(
+        'gb.backends.leveldb',
+        ['gb/backends/leveldb.pyx'],
+        include_dirs=[],
+        libraries=[],
+        library_dirs=[]
     )
 ]
 
