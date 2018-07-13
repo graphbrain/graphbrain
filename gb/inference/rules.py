@@ -24,7 +24,7 @@ import progressbar
 from gb.funs import *
 
 
-class RuleOutput(object):
+class Actions(object):
     def __init__(self):
         self.create_edges = []
 
@@ -103,15 +103,15 @@ class Rules(object):
             return f
         return decorator
 
-    def apply_to(self, hg):
-        i = 0
-        with progressbar.ProgressBar(max_value=len(self.rules)) as bar:
-            for rule in self.rules:
-                for edge in self.rules[rule]['pattern'].apply_to(hg):
-                    output = RuleOutput()
-                    self.rules[rule]['fun'](hg, edge, output)
-                    for _ in output.create_edges:
-                        self.created += 1
-                print('%s [%s]' % (rule, self.created))
-                i += 1
-                bar.update(i)
+    def apply_to(self, hg, dry_run=False):
+        rules = tuple(self.rules.keys())
+        for i in progressbar.progressbar(range(len(rules)), redirect_stdout=True):
+            rule = rules[i]
+            for edge in self.rules[rule]['pattern'].apply_to(hg):
+                actions = Actions()
+                self.rules[rule]['fun'](hg, edge, actions)
+                for new_edge in actions.create_edges:
+                    self.created += 1
+                    if not dry_run:
+                        hg.add(new_edge)
+            print('applied rule: %s; new edges: %s' % (rule, self.created))
