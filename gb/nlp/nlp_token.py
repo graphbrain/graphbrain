@@ -22,7 +22,10 @@
 def token_from_dict(token_dict):
     token = Token()
     token.word = token_dict['word']
-    token.depth = token_dict['edge_depth']
+    if 'edge_depth' in token_dict:
+        token.depth = token_dict['edge_depth']
+    else:
+        token.depth = -1
     token.lemma = token_dict['lemma']
     token.shape = token_dict['shape']
     token.logprob = token_dict['logprob']
