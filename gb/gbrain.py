@@ -23,7 +23,7 @@ import logging
 import argparse
 from termcolor import colored
 import gb.constants as const
-from gb.hypergraph.hypergraph import HyperGraph
+from gb.hypergraph import HyperGraph
 # import gb.importers.wordnet as wn
 # import gb.importers.wikidata as wd
 import gb.importers.dbpedia as dbp
