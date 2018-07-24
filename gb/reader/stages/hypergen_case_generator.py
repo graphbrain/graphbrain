@@ -72,11 +72,11 @@ class CaseGenerator(object):
         self.transformation_outcomes = []
 
         self.show_option('i', 'IGNORE', parent, parent_token, child, position, hgtransf.IGNORE)
-        self.show_option('a', 'APPLY NODE', parent, parent_token, child, position, hgtransf.APPLY_NODE)
-        self.show_option('n', 'NEST NODE', parent, parent_token, child, position, hgtransf.NEST_NODE)
-        self.show_option('p', 'APPEND', parent, parent_token, child, position, hgtransf.APPEND)
-        self.show_option('ar', 'APPLY ROOT', parent, parent_token, child, position, hgtransf.APPLY_ROOT)
-        self.show_option('nr', 'NEST ROOT', parent, parent_token, child, position, hgtransf.NEST_ROOT)
+        self.show_option('a', 'APPLY NODE', parent, parent_token, child, position, hgtransf.APPLY_HYPEREDGE)
+        self.show_option('n', 'NEST NODE', parent, parent_token, child, position, hgtransf.NEST_HYPEREDGE)
+        self.show_option('p', 'APPEND', parent, parent_token, child, position, hgtransf.HEAD)
+        self.show_option('ar', 'APPLY ROOT', parent, parent_token, child, position, hgtransf.APPLY_TOKEN)
+        self.show_option('nr', 'NEST ROOT', parent, parent_token, child, position, hgtransf.NEST_TOKEN)
 
         print('\n0) RESTART    x) ABORT')
 
@@ -85,15 +85,15 @@ class CaseGenerator(object):
         if choice == 'i':
             return hgtransf.IGNORE
         if choice == 'a':
-            return hgtransf.APPLY_NODE
+            return hgtransf.APPLY_HYPEREDGE
         if choice == 'n':
-            return hgtransf.NEST_NODE
+            return hgtransf.NEST_HYPEREDGE
         if choice == 'ar':
-            return hgtransf.APPLY_ROOT
+            return hgtransf.APPLY_TOKEN
         if choice == 'nr':
-            return hgtransf.NEST_ROOT
+            return hgtransf.NEST_TOKEN
         if choice == 'p':
-            return hgtransf.APPEND
+            return hgtransf.HEAD
         if choice == '0':
             self.restart = True
             return hgtransf.IGNORE
