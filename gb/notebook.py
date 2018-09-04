@@ -90,12 +90,12 @@ def edge2html(edge, namespaces=True, compact=False):
     return _edge2html(edge, namespaces=namespaces, compact=compact)[0]
 
 
-def show(edge, compact=False):
-    html = edge2html(edge, compact=compact)
+def show(edge, namespaces=True, compact=False):
+    html = edge2html(edge, namespaces=namespaces, compact=compact)
     display(HTML(html))
 
 
-def read_and_show(reader, text, compact=False, show_stages=False):
+def read_and_show(reader, text,  namespaces=True, compact=False, show_stages=False):
     outputs = reader.read_text(text)
     for output in outputs:
         if show_stages:
@@ -106,6 +106,6 @@ def read_and_show(reader, text, compact=False, show_stages=False):
                 stage_label = 'stage #%s: %s' % (i + 1, reader.stages[i])
                 display(HTML('<h3>%s</h3>' % stage_label))
                 edge = output[1].stage_outputs[i]
-                show(edge, compact=True)
+                show(edge, namespaces=namespaces, compact=True)
         edge = output[1].main_edge
         show(edge, compact=compact)
