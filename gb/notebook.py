@@ -24,7 +24,7 @@ from gb.hypergraph import *
 from gb.funs import *
 
 
-EDGE_COLORS = ['#F25A00', '#AE81FF', '#F92672', '#28C6E4']
+EDGE_COLORS = ['#008cff', '#891100', '#028401', '#002eff', '#ff8802', '#008688']
 
 
 def _edge2html(edge, namespaces=True, compact=False, indent=False, close=True, depth=0):
