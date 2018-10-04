@@ -530,17 +530,7 @@ class Node(Element):
 
     # override
     def to_hyperedge(self, with_namespaces=True):
-        if self.compound:
-            words = [leaf.token.word for leaf in self.natural_leaf_sequence()]
-            if not with_namespaces:
-                s = str2symbol('_'.join(words))
-            else:
-                if not self.namespace:
-                    self.generate_namespace()
-                s = build_symbol('_'.join(words), self.namespace)
-            return s
-        else:
-            return tuple([child.to_hyperedge(with_namespaces=with_namespaces) for child in self.children()])
+        return tuple([child.to_hyperedge(with_namespaces=with_namespaces) for child in self.children()])
 
     # override
     def is_compound_concept(self):
