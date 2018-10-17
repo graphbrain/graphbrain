@@ -523,11 +523,11 @@ def claim(_, edge, actions):
             actions.create(mention)
             actions.create(('source/gb.inf', mention, edge))
     if predicates[pred]['conflict'] and len(edge) > 3:
-            targ_actor = edge[2]
-            for concept in edge[3:]:
-                conflict = ('conflict/gb.inf', orig_actor, targ_actor, concept)
-                actions.create(conflict)
-                actions.create(('source/gb.inf', conflict, edge))
+        targ_actor = edge[2]
+        for concept in edge[3:]:
+            conflict = ('conflict/gb.inf', orig_actor, targ_actor, concept)
+            actions.create(conflict)
+            actions.create(('source/gb.inf', conflict, edge))
 
 
 if __name__ == '__main__':
