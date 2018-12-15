@@ -1,0 +1,433 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Command-line interface &mdash; GraphBrain 0.1 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API reference" href="api.html" />
+    <link rel="prev" title="Tutorials" href="tutorials.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/GB_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Command-line interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#hypergraphs">Hypergraphs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#create">create</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#info">info</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#knowledge-extraction">Knowledge extraction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#wordnet">wordnet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wikidata">wikidata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dbpedia">dbpedia</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dbpedia-wordnet">dbpedia_wordnet</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#knowledge-inference">Knowledge inference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#generate-synonyms">generate_synonyms</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#reader">Reader</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#reader-tests">reader_tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#interactive-edge-builder">interactive_edge_builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-hypergen-cases">generate_hypergen_cases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#learn-hypergen">learn_hypergen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#test-hypergen">test_hypergen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GraphBrain</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Command-line interface</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/graphbrain/graphbrain" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="command-line-interface">
+<h1>Command-line interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">¶</a></h1>
+<p>GraphBrain provides a command-line interface that can be used to execute a variety of tasks.</p>
+<p>Here’s an overview of the interface:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gbrain</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">backend</span> <span class="n">BACKEND</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">hg</span> <span class="n">HG</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">infile</span> <span class="n">INFILE</span><span class="p">]</span>
+           <span class="p">[</span><span class="o">--</span><span class="n">outfile</span> <span class="n">OUTFILE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">log</span> <span class="n">LOG</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">fields</span> <span class="n">FIELDS</span><span class="p">]</span>
+           <span class="p">[</span><span class="o">--</span><span class="n">model_type</span> <span class="n">MODEL_TYPE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">model_file</span> <span class="n">MODEL_FILE</span><span class="p">]</span>
+           <span class="p">[</span><span class="o">--</span><span class="n">show_namespaces</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">lang</span> <span class="n">LANG</span><span class="p">]</span>
+           <span class="n">command</span>
+
+<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="n">command</span>               <span class="n">command</span> <span class="n">to</span> <span class="n">execute</span>
+
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">--</span><span class="n">backend</span> <span class="n">BACKEND</span>     <span class="n">hypergraph</span> <span class="n">backend</span> <span class="p">(</span><span class="n">leveldb</span><span class="p">,</span> <span class="n">null</span><span class="p">)</span>
+  <span class="o">--</span><span class="n">hg</span> <span class="n">HG</span>               <span class="n">hypergraph</span> <span class="n">name</span>
+  <span class="o">--</span><span class="n">infile</span> <span class="n">INFILE</span>       <span class="nb">input</span> <span class="n">file</span>
+  <span class="o">--</span><span class="n">outfile</span> <span class="n">OUTFILE</span>     <span class="n">output</span> <span class="n">file</span>
+  <span class="o">--</span><span class="n">log</span> <span class="n">LOG</span>             <span class="n">logging</span> <span class="n">level</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">fields</span> <span class="n">FIELDS</span>       <span class="n">field</span> <span class="n">names</span>
+  <span class="o">--</span><span class="n">model_type</span> <span class="n">MODEL_TYPE</span>
+                        <span class="n">machine</span> <span class="n">learning</span> <span class="n">model</span> <span class="nb">type</span>
+  <span class="o">--</span><span class="n">model_file</span> <span class="n">MODEL_FILE</span>
+                        <span class="n">machine</span> <span class="n">learning</span> <span class="n">model</span> <span class="n">file</span>
+  <span class="o">--</span><span class="n">show_namespaces</span>     <span class="n">show</span> <span class="n">namespaces</span>
+  <span class="o">--</span><span class="n">lang</span> <span class="n">LANG</span>           <span class="n">language</span>
+</pre></div>
+</div>
+<p>The only obligatory argument, command, is used to specify the task to perform. Each command uses a subset of the
+optional arguments. Presented below are the details for each command.</p>
+<div class="section" id="hypergraphs">
+<h2>Hypergraphs<a class="headerlink" href="#hypergraphs" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="create">
+<h3>create<a class="headerlink" href="#create" title="Permalink to this headline">¶</a></h3>
+<p>Creates an empty hypergraph:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph</span><span class="o">&gt;</span> <span class="n">create</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="info">
+<h3>info<a class="headerlink" href="#info" title="Permalink to this headline">¶</a></h3>
+<p>Displays simple information about an hypergraph:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph</span><span class="o">&gt;</span> <span class="n">info</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="knowledge-extraction">
+<h2>Knowledge extraction<a class="headerlink" href="#knowledge-extraction" title="Permalink to this headline">¶</a></h2>
+<p>These are commands that extract knowledge from various sources into hypergraphs.</p>
+<div class="section" id="wordnet">
+<h3>wordnet<a class="headerlink" href="#wordnet" title="Permalink to this headline">¶</a></h3>
+<p>TBD</p>
+</div>
+<div class="section" id="wikidata">
+<h3>wikidata<a class="headerlink" href="#wikidata" title="Permalink to this headline">¶</a></h3>
+<p>TBD</p>
+</div>
+<div class="section" id="dbpedia">
+<h3>dbpedia<a class="headerlink" href="#dbpedia" title="Permalink to this headline">¶</a></h3>
+<p>TBD</p>
+</div>
+<div class="section" id="dbpedia-wordnet">
+<h3>dbpedia_wordnet<a class="headerlink" href="#dbpedia-wordnet" title="Permalink to this headline">¶</a></h3>
+<p>TBD</p>
+</div>
+</div>
+<div class="section" id="knowledge-inference">
+<h2>Knowledge inference<a class="headerlink" href="#knowledge-inference" title="Permalink to this headline">¶</a></h2>
+<p>These commands correspond to various knowledge inference strategies that can be performed on hypergraphs.</p>
+<div class="section" id="generate-synonyms">
+<h3>generate_synonyms<a class="headerlink" href="#generate-synonyms" title="Permalink to this headline">¶</a></h3>
+<p>Finds synonyms in the hypergraph and connects them to synonym set identifiers:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph</span><span class="o">&gt;</span> <span class="n">generate_synonyms</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="reader">
+<h2>Reader<a class="headerlink" href="#reader" title="Permalink to this headline">¶</a></h2>
+<p>These commands are used to create datasets, perform learning and test the performance of the reader.
+The reader is an AI module that consists of a pipline of stages that transform text in natural language into
+hypergraphs.</p>
+<div class="section" id="reader-tests">
+<h3>reader_tests<a class="headerlink" href="#reader-tests" title="Permalink to this headline">¶</a></h3>
+<p>Tests the reader by applying it to a file containing example sentences:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gbrain</span> <span class="o">--</span><span class="n">infile</span> <span class="o">&lt;</span><span class="n">example</span> <span class="n">sentences</span> <span class="n">file</span><span class="o">&gt;</span> <span class="p">[</span><span class="o">--</span><span class="n">lang</span> <span class="o">&lt;</span><span class="n">language</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">model_file</span> <span class="o">&lt;</span><span class="n">file</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">show_namespaces</span><span class="p">]</span> <span class="n">reader_tests</span>
+</pre></div>
+</div>
+<p>If the optional <code class="docutils literal notranslate"><span class="pre">--show_namespaces</span></code> option is specified, the resulting hyperedges will contain symbols qualified
+with their namespaces, otherwise no namespaces will be shown.</p>
+</div>
+<div class="section" id="interactive-edge-builder">
+<h3>interactive_edge_builder<a class="headerlink" href="#interactive-edge-builder" title="Permalink to this headline">¶</a></h3>
+<p>This command opens an interactive session that allows the user to provide sentences and then manually perform the
+appropriate transformations from the parse tree of these sentences into an initial hyperedge:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gbrain</span> <span class="o">--</span><span class="n">outfile</span> <span class="o">&lt;</span><span class="n">sentence</span> <span class="n">transformations</span> <span class="n">file</span><span class="o">&gt;</span> <span class="p">[</span><span class="o">--</span><span class="n">lang</span> <span class="o">&lt;</span><span class="n">language</span><span class="o">&gt;</span><span class="p">]</span> <span class="n">interactive_edge_builder</span>
+</pre></div>
+</div>
+<p>For each sentence that is manually parsed, a case is generated and appended to the output file.</p>
+<p>The command <code class="docutils literal notranslate"><span class="pre">generate_hypergen_cases</span></code> can then be used to generate a training dataset from the ouput of this command.</p>
+<p>A sentence parses dataset with a number of cases is provided with GraphBrain, at
+<code class="docutils literal notranslate"><span class="pre">datasets/training_data/hyperedge_generator/parses.txt</span></code>.</p>
+</div>
+<div class="section" id="generate-hypergen-cases">
+<h3>generate_hypergen_cases<a class="headerlink" href="#generate-hypergen-cases" title="Permalink to this headline">¶</a></h3>
+<p>Generate training datasets from sentence parse transformations file created with <code class="docutils literal notranslate"><span class="pre">interactive_edge_builder</span></code>.  This
+command breaks down each transformation into atomic cases, with respective feature values and expected output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gbrain</span> <span class="o">--</span><span class="n">infile</span> <span class="o">&lt;</span><span class="n">sentence</span> <span class="n">transformations</span> <span class="n">file</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">outfile</span> <span class="o">&lt;</span><span class="n">training</span> <span class="n">cases</span> <span class="n">file</span><span class="o">&gt;</span> <span class="n">generate_hypergen_cases</span>
+</pre></div>
+</div>
+<p>The output of this command can then be used to train a machine learning model using the command <code class="docutils literal notranslate"><span class="pre">learn_hypergen</span></code>.</p>
+<p>Only 75% os the sentence parse transformations are used to generate the training cases. The remining 25% are reserved
+as a test dataset, to be used by <code class="docutils literal notranslate"><span class="pre">test_hypergen</span></code>.</p>
+</div>
+<div class="section" id="learn-hypergen">
+<h3>learn_hypergen<a class="headerlink" href="#learn-hypergen" title="Permalink to this headline">¶</a></h3>
+<p>Trains a machine learning model for the hypergen reader stage using a training cases file produced by
+<code class="docutils literal notranslate"><span class="pre">generate_hypergen_cases</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gbrain</span> <span class="o">--</span><span class="n">infile</span> <span class="o">&lt;</span><span class="n">training</span> <span class="n">cases</span> <span class="n">file</span><span class="o">&gt;</span> <span class="p">[</span><span class="o">--</span><span class="n">output</span> <span class="o">&lt;</span><span class="n">model_file</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">model_type</span> <span class="o">&lt;</span><span class="n">model</span> <span class="nb">type</span><span class="o">&gt;</span><span class="p">]</span> <span class="n">learn_hypergen</span>
+</pre></div>
+</div>
+<p>The optional <code class="docutils literal notranslate"><span class="pre">--model_type</span></code> parameter can be used to specify the type of machine learning model to use. Currently
+there are two options available: <code class="docutils literal notranslate"><span class="pre">rf</span></code> for random forest and <code class="docutils literal notranslate"><span class="pre">nn</span></code> for neural network. If not specified, random
+forest is assumed. If <code class="docutils literal notranslate"><span class="pre">--output</span></code> is not specified, the default file name for the model type is used.</p>
+</div>
+<div class="section" id="test-hypergen">
+<h3>test_hypergen<a class="headerlink" href="#test-hypergen" title="Permalink to this headline">¶</a></h3>
+<p>Tests a machine learning model for the hypergen reader stage using 25% of the examples in a sentence parse
+transformations file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gbrain</span> <span class="o">--</span><span class="n">infile</span> <span class="o">&lt;</span><span class="n">sentence</span> <span class="n">transformations</span> <span class="n">file</span><span class="o">&gt;</span> <span class="p">[</span><span class="o">--</span><span class="n">lang</span> <span class="o">&lt;</span><span class="n">language</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">model_file</span> <span class="o">&lt;</span><span class="n">file</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">model_type</span> <span class="o">&lt;</span><span class="n">model</span> <span class="nb">type</span><span class="o">&gt;</span><span class="p">]</span> <span class="n">test_hypergen</span>
+</pre></div>
+</div>
+<p>The optional <code class="docutils literal notranslate"><span class="pre">--model_type</span></code> parameter can be used to specify the type of machine learning model to use. Currently
+there are two options available: <code class="docutils literal notranslate"><span class="pre">rf</span></code> for random forest and <code class="docutils literal notranslate"><span class="pre">nn</span></code> for neural network. If not specified, random
+forest is assumed.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api.html" class="btn btn-neutral float-right" title="API reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tutorials.html" class="btn btn-neutral" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, CNRS
+
+    </p>
+  </div>
+
+<p>Acknowledgements:</p>
+
+<table>
+    <tr>
+        <td style="width:45%;" align="center">
+            <a href="http://cmb.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cmb-dh-compact.png" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="http://www.cnrs.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cnrs.jpg" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="https://www.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-ehess2.png" />
+            </a>
+        </td>
+        <td style="width:21%;" align="center">
+            <a href="http://cams.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/CAMS_nveau_logo.jpg" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <td style="width:35%;" align="center">
+            <a href="http://algopol.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algopol.png" />
+            </a>
+        </td>
+        <td style="width:29%;" align="center">
+            <a href="http://algodiv.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algodiv.png" />
+            </a>
+        </td>
+        <td style="width:35%;" align="center">
+            <a href="http://www.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px; margin-top: 15px; margin-bottom:15px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/huma-num.png" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

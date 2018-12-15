@@ -1,0 +1,440 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Install &mdash; GraphBrain 0.1 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tutorials" href="tutorials.html" />
+    <link rel="prev" title="Overview" href="overview.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/GB_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Install</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites-macos">Prerequisites (macOS)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xcode">XCode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#command-line-tools">Command Line Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#homebrew-macos-package-manager">Homebrew (macOS package manager)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#python-3">Python 3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pip-python-package-manager">pip (Python package manager)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#virtualenv-virtual-python-environment-builder">virtualenv (Virtual Python Environment builder)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#freetype-library">FreeType (library)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#leveldb-database-engine">LevelDB (database engine)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites-linux">Prerequisites (Linux)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#download-build-and-install">Download, build and install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-tests">Run tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#known-issues-and-solutions">Known Issues and Solutions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#leveldb-errors-on-macos">LevelDB errors on macOS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#valueerror-unknown-locale-utf-8">ValueError: unknown locale: UTF-8</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unicode-errors-when-using-the-interactive-edge-generator">Unicode errors when using the Interactive Edge Generator</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command-line interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GraphBrain</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Install</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/graphbrain/graphbrain" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="install">
+<h1>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h1>
+<p>For now, these instructions are just for macOS and Linux. Everything is done on the terminal.
+It should be possible to install GraphBrain on a Windows machine. If you are a Windows user and would like to help,
+don’t hesitate to contact us.</p>
+<div class="section" id="prerequisites-macos">
+<h2>Prerequisites (macOS)<a class="headerlink" href="#prerequisites-macos" title="Permalink to this headline">¶</a></h2>
+<p>Some of these prerequisites may be already installed. In that case, just skip the appropriate step.</p>
+<div class="section" id="xcode">
+<h3>XCode<a class="headerlink" href="#xcode" title="Permalink to this headline">¶</a></h3>
+<p>Use the app store.</p>
+</div>
+<div class="section" id="command-line-tools">
+<h3>Command Line Tools<a class="headerlink" href="#command-line-tools" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ xcode-select --install
+</pre></div>
+</div>
+</div>
+<div class="section" id="homebrew-macos-package-manager">
+<h3>Homebrew (macOS package manager)<a class="headerlink" href="#homebrew-macos-package-manager" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://brew.sh/">http://brew.sh/</a></p>
+</div>
+<div class="section" id="python-3">
+<h3>Python 3<a class="headerlink" href="#python-3" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew install python3
+</pre></div>
+</div>
+</div>
+<div class="section" id="pip-python-package-manager">
+<h3>pip (Python package manager)<a class="headerlink" href="#pip-python-package-manager" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo easy_install pip
+</pre></div>
+</div>
+</div>
+<div class="section" id="virtualenv-virtual-python-environment-builder">
+<h3>virtualenv (Virtual Python Environment builder)<a class="headerlink" href="#virtualenv-virtual-python-environment-builder" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo -H pip install virtualenv
+</pre></div>
+</div>
+</div>
+<div class="section" id="freetype-library">
+<h3>FreeType (library)<a class="headerlink" href="#freetype-library" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew install freetype
+</pre></div>
+</div>
+</div>
+<div class="section" id="leveldb-database-engine">
+<h3>LevelDB (database engine)<a class="headerlink" href="#leveldb-database-engine" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew install leveldb
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="prerequisites-linux">
+<h2>Prerequisites (Linux)<a class="headerlink" href="#prerequisites-linux" title="Permalink to this headline">¶</a></h2>
+<p>Linux distributions are diverse in terms of package managers. Please use the appropriate package manager for your
+distribution to install the prerequisites. Naturally, you can ignore the prerequisites that are already installed in
+your machine.</p>
+<p>If you have specific details for your distribution, don’t hesitate to contact us.</p>
+<ul class="simple">
+<li>gcc</li>
+<li>Python 3</li>
+<li>pip (Python package manager)</li>
+<li>virtualenv (Virtual Python Environment builder)</li>
+<li>freetype</li>
+<li>LevelDB</li>
+</ul>
+</div>
+<div class="section" id="download-build-and-install">
+<h2>Download, build and install<a class="headerlink" href="#download-build-and-install" title="Permalink to this headline">¶</a></h2>
+<p>For now we only distribute GraphBrain as source code from our git repository.
+Start by cloning the source code to your current local directory.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/graphbrain/graphbrain.git
+$ cd graphbrain
+</pre></div>
+</div>
+<p>It is advisable to work with virtual environments. To create one in the current directory you can do this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ virtualenv -p &lt;path to python3&gt; venv
+</pre></div>
+</div>
+<p>Common locations for python3:</p>
+<ul class="simple">
+<li>/usr/local/bin/python3</li>
+<li>/usr/bin/python3</li>
+</ul>
+<p>If you are on macOS, do this instead (for the reason <a class="reference external" href="http://matplotlib.org/faq/osx_framework.html#osxframework-faq">explained here</a>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">venv</span> <span class="n">venv</span>
+</pre></div>
+</div>
+<p>Then to activate it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ source venv/bin/activate
+</pre></div>
+</div>
+<p>Install Cython:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install cython
+</pre></div>
+</div>
+<p>Now we can build and install GraphBrain:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install --editable .
+</pre></div>
+</div>
+<p>Add these lines to your ~/.bash_profile:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">LC_ALL</span><span class="o">=</span><span class="n">en_US</span><span class="o">.</span><span class="n">UTF</span><span class="o">-</span><span class="mi">8</span>
+<span class="n">export</span> <span class="n">LANG</span><span class="o">=</span><span class="n">en_US</span><span class="o">.</span><span class="n">UTF</span><span class="o">-</span><span class="mi">8</span>
+</pre></div>
+</div>
+<p>It is still necessary to download spacy models:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m spacy download en_core_web_lg
+</pre></div>
+</div>
+</div>
+<div class="section" id="run-tests">
+<h2>Run tests<a class="headerlink" href="#run-tests" title="Permalink to this headline">¶</a></h2>
+<p>Use the script provided:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./run_tests.sh
+</pre></div>
+</div>
+</div>
+<div class="section" id="known-issues-and-solutions">
+<h2>Known Issues and Solutions<a class="headerlink" href="#known-issues-and-solutions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="leveldb-errors-on-macos">
+<h3>LevelDB errors on macOS<a class="headerlink" href="#leveldb-errors-on-macos" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://github.com/wbolster/plyvel/issues/27#issuecomment-188709935">https://github.com/wbolster/plyvel/issues/27#issuecomment-188709935</a></p>
+<p>Solution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip uninstall plyvel
+$ CFLAGS=&#39;-mmacosx-version-min=10.7 -stdlib=libc++&#39; pip install --no-use-wheel plyvel
+</pre></div>
+</div>
+</div>
+<div class="section" id="valueerror-unknown-locale-utf-8">
+<h3>ValueError: unknown locale: UTF-8<a class="headerlink" href="#valueerror-unknown-locale-utf-8" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://stackoverflow.com/questions/19961239/pelican-3-3-pelican-quickstart-error-valueerror-unknown-locale-utf-8">https://stackoverflow.com/questions/19961239/pelican-3-3-pelican-quickstart-error-valueerror-unknown-locale-utf-8</a></p>
+<p>Solution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ export LC_ALL=en_US.UTF-8
+$ export LANG=en_US.UTF-8
+</pre></div>
+</div>
+</div>
+<div class="section" id="unicode-errors-when-using-the-interactive-edge-generator">
+<h3>Unicode errors when using the Interactive Edge Generator<a class="headerlink" href="#unicode-errors-when-using-the-interactive-edge-generator" title="Permalink to this headline">¶</a></h3>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">UnicodeEncodeError</span><span class="p">:</span> <span class="s1">&#39;utf-8&#39;</span> <span class="n">codec</span> <span class="n">can</span><span class="s1">&#39;t encode characters in position 5-6: surrogates not allowed</span>
+</pre></div>
+</div>
+<p>Solution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">PYTHONIOENCODING</span><span class="o">=</span><span class="n">utf</span><span class="o">-</span><span class="mi">8</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tutorials.html" class="btn btn-neutral float-right" title="Tutorials" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="overview.html" class="btn btn-neutral" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, CNRS
+
+    </p>
+  </div>
+
+<p>Acknowledgements:</p>
+
+<table>
+    <tr>
+        <td style="width:45%;" align="center">
+            <a href="http://cmb.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cmb-dh-compact.png" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="http://www.cnrs.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cnrs.jpg" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="https://www.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-ehess2.png" />
+            </a>
+        </td>
+        <td style="width:21%;" align="center">
+            <a href="http://cams.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/CAMS_nveau_logo.jpg" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <td style="width:35%;" align="center">
+            <a href="http://algopol.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algopol.png" />
+            </a>
+        </td>
+        <td style="width:29%;" align="center">
+            <a href="http://algodiv.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algodiv.png" />
+            </a>
+        </td>
+        <td style="width:35%;" align="center">
+            <a href="http://www.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px; margin-top: 15px; margin-bottom:15px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/huma-num.png" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

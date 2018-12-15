@@ -1,0 +1,1313 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API reference &mdash; GraphBrain 0.1 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Authors" href="authors.html" />
+    <link rel="prev" title="Command-line interface" href="cli.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/GB_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command-line interface</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-gb.funs">generic functions (funs) module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-gb.hypergraph">hypergraph module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#backends-package">backends package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#backend-class">Backend class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#leveldb-class">LevelDB class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#null-class">Null class</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-gb.reader">reader package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#reader-class">Reader class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#semantic-tree-module-tree-class">Semantic tree module – Tree class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#semantic-tree-module-element-class">Semantic tree module – Element class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#semantic-tree-module-leaf-class">Semantic tree module – Leaf class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#semantic-tree-module-node-class">Semantic tree module – Node class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parseroutput-class">ParserOutput class</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GraphBrain</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>API reference</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/graphbrain/graphbrain" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api-reference">
+<h1>API reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-gb.funs">
+<span id="generic-functions-funs-module"></span><h2>generic functions (funs) module<a class="headerlink" href="#module-gb.funs" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="gb.funs.build_symbol">
+<code class="descclassname">gb.funs.</code><code class="descname">build_symbol</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.build_symbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a concept symbol from text and a namespace.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.edge2str">
+<code class="descclassname">gb.funs.</code><code class="descname">edge2str</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.edge2str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an edge to its string representation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.edge_depth">
+<code class="descclassname">gb.funs.</code><code class="descname">edge_depth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.edge_depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns maximal depth of the edge, a symbol has depth 0</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.edge_size">
+<code class="descclassname">gb.funs.</code><code class="descname">edge_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.edge_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>size of edge, if symbol size is 1</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.edge_symbols">
+<code class="descclassname">gb.funs.</code><code class="descname">edge_symbols</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.edge_symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return set of edge_symbols contained in edge.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.edges2str">
+<code class="descclassname">gb.funs.</code><code class="descname">edges2str</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.edges2str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a collection of edges to a string representation (no outer parenthesis).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.hashed">
+<code class="descclassname">gb.funs.</code><code class="descname">hashed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.hashed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an hash code for a string.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.is_concept">
+<code class="descclassname">gb.funs.</code><code class="descname">is_concept</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.is_concept" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if edge represents a concept, i.e. if it is a symbol or if
+it is an edge that starts with +/gb.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.is_edge">
+<code class="descclassname">gb.funs.</code><code class="descname">is_edge</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.is_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if entity is an edge.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.is_root">
+<code class="descclassname">gb.funs.</code><code class="descname">is_root</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.is_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the symbol the root of itself?</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.is_symbol">
+<code class="descclassname">gb.funs.</code><code class="descname">is_symbol</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.is_symbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if entity is a symbol.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.new_meaning">
+<code class="descclassname">gb.funs.</code><code class="descname">new_meaning</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.new_meaning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new symbol for the given root.
+If given edge_symbols is not a root, return it unchanged.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.split_edge_str">
+<code class="descclassname">gb.funs.</code><code class="descname">split_edge_str</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.split_edge_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shallow split into tokens of a string representation of an edge, without outer parenthesis.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.str2edge">
+<code class="descclassname">gb.funs.</code><code class="descname">str2edge</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.str2edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a string representation of an edge to an edge.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.str2symbol">
+<code class="descclassname">gb.funs.</code><code class="descname">str2symbol</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.str2symbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a string into a valid symbol</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.subedges">
+<code class="descclassname">gb.funs.</code><code class="descname">subedges</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.subedges" title="Permalink to this definition">¶</a></dt>
+<dd><p>all the subedges contained in the edge, including atoms and itself</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.symbol2str">
+<code class="descclassname">gb.funs.</code><code class="descname">symbol2str</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.symbol2str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a symbol into a string representation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.symbol_namespace">
+<code class="descclassname">gb.funs.</code><code class="descname">symbol_namespace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.symbol_namespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the namespace of a symbol (e.g. the namespace of graphbrain/1 is 1)
+Returns None if symbol has no namespace.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.symbol_parts">
+<code class="descclassname">gb.funs.</code><code class="descname">symbol_parts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.symbol_parts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits a symbol into its parts.
+All symbol types except CONCEPT only have one part.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.symbol_root">
+<code class="descclassname">gb.funs.</code><code class="descname">symbol_root</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.symbol_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the root of a symbol (e.g. the root of graphbrain/1 is graphbrain)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.symbol_type">
+<code class="descclassname">gb.funs.</code><code class="descname">symbol_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.symbol_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type of symbol: CONCEPT, EDGE, INTEGER, FLOAT or URL</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gb.funs.without_namespaces">
+<code class="descclassname">gb.funs.</code><code class="descname">without_namespaces</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gb.funs.without_namespaces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns edge stripped of namespaces</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-gb.hypergraph">
+<span id="hypergraph-module"></span><h2>hypergraph module<a class="headerlink" href="#module-gb.hypergraph" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="gb.hypergraph.HyperGraph">
+<em class="property">class </em><code class="descclassname">gb.hypergraph.</code><code class="descname">HyperGraph</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hypergraph operations.</p>
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>edge</em>, <em>timestamp=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds and edge to the hypergraph if it does not exist yet.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.add_belief">
+<code class="descname">add_belief</code><span class="sig-paren">(</span><em>source</em>, <em>edge</em>, <em>timestamp=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.add_belief"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.add_belief" title="Permalink to this definition">¶</a></dt>
+<dd><p>A belif is a fact with a source. The fact is created as a normal edge
+if it does not exist yet. Another edge is created to assign the fact to
+the source.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.all">
+<code class="descname">all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a lazy sequence of all the vertices in the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.all_attributes">
+<code class="descname">all_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.all_attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.all_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a lazy sequence with a tuple for each vertex in the hypergraph.
+The first element of the tuple is the vertex itself,
+the second is a dictionary of attribute values (as strings).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.dec_attribute">
+<code class="descname">dec_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.dec_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.dec_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increments an attribute of a vertex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.degree">
+<code class="descname">degree</code><span class="sig-paren">(</span><em>vertex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.degree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.degree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the degree of a vertex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.destroy">
+<code class="descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.destroy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Erase the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.edge_count">
+<code class="descname">edge_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.edge_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.edge_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total number of edge in the hypergraph</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.edges_with_symbols">
+<code class="descname">edges_with_symbols</code><span class="sig-paren">(</span><em>symbols</em>, <em>root=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.edges_with_symbols"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.edges_with_symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find all edges containing the given edge_symbols, and optionally a given root</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.ego">
+<code class="descname">ego</code><span class="sig-paren">(</span><em>center</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.ego"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.ego" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all edge_symbols directly connected to centre by hyperedges.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.exists">
+<code class="descname">exists</code><span class="sig-paren">(</span><em>vertex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the given edge exists in the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.get_float_attribute">
+<code class="descname">get_float_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em>, <em>or_else=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.get_float_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.get_float_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns attribute as float value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.get_int_attribute">
+<code class="descname">get_int_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em>, <em>or_else=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.get_int_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.get_int_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns attribute as integer value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.get_str_attribute">
+<code class="descname">get_str_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em>, <em>or_else=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.get_str_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.get_str_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns attribute as string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.inc_attribute">
+<code class="descname">inc_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.inc_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.inc_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increments an attribute of a vertex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.is_belief">
+<code class="descname">is_belief</code><span class="sig-paren">(</span><em>edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.is_belief"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.is_belief" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if hyperedge is a belief (has sources).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.pattern2edges">
+<code class="descname">pattern2edges</code><span class="sig-paren">(</span><em>pattern</em>, <em>open_ended=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.pattern2edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.pattern2edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all the edges that match a pattern.
+A pattern is a collection of entity ids and wildcards (None).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.remove">
+<code class="descname">remove</code><span class="sig-paren">(</span><em>edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes and edge from the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.remove_belief">
+<code class="descname">remove_belief</code><span class="sig-paren">(</span><em>source</em>, <em>edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.remove_belief"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.remove_belief" title="Permalink to this definition">¶</a></dt>
+<dd><p>A belif is a fact with a source. The link from the source to the fact
+is removed. If no more sources support the fact, then the fact is also
+removed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.remove_by_pattern">
+<code class="descname">remove_by_pattern</code><span class="sig-paren">(</span><em>pattern</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.remove_by_pattern"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.remove_by_pattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes from the hypergraph all edges that match the pattern.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.set_attribute">
+<code class="descname">set_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.set_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.set_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the value of an attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.sources">
+<code class="descname">sources</code><span class="sig-paren">(</span><em>edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.sources"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.sources" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set of sources (nodes) that support a statement (edge).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.star">
+<code class="descname">star</code><span class="sig-paren">(</span><em>center</em>, <em>limit=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.star"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.star" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all the edges that contain a given entity.
+Entity can be atomic or an edge.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.symbol_count">
+<code class="descname">symbol_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.symbol_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.symbol_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total number of edge_symbols in the hypergraph</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.symbols_with_root">
+<code class="descname">symbols_with_root</code><span class="sig-paren">(</span><em>root</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.symbols_with_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.symbols_with_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find all edge_symbols with the given root.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.timestamp">
+<code class="descname">timestamp</code><span class="sig-paren">(</span><em>vertex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.timestamp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the timestamp of a vertex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.hypergraph.HyperGraph.total_degree">
+<code class="descname">total_degree</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.total_degree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.hypergraph.HyperGraph.total_degree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total degree of the hypergraph</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descclassname">gb.hypergraph.</code><code class="descname">HyperGraph</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Hypergraph operations.</p>
+<dl class="method">
+<dt>
+<code class="descname">add</code><span class="sig-paren">(</span><em>edge</em>, <em>timestamp=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.add"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Adds and edge to the hypergraph if it does not exist yet.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">add_belief</code><span class="sig-paren">(</span><em>source</em>, <em>edge</em>, <em>timestamp=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.add_belief"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>A belif is a fact with a source. The fact is created as a normal edge
+if it does not exist yet. Another edge is created to assign the fact to
+the source.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.all"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns a lazy sequence of all the vertices in the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">all_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.all_attributes"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns a lazy sequence with a tuple for each vertex in the hypergraph.
+The first element of the tuple is the vertex itself,
+the second is a dictionary of attribute values (as strings).</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">dec_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.dec_attribute"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Increments an attribute of a vertex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">degree</code><span class="sig-paren">(</span><em>vertex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.degree"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns the degree of a vertex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.destroy"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Erase the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">edge_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.edge_count"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Total number of edge in the hypergraph</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">edges_with_symbols</code><span class="sig-paren">(</span><em>symbols</em>, <em>root=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.edges_with_symbols"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Find all edges containing the given edge_symbols, and optionally a given root</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">ego</code><span class="sig-paren">(</span><em>center</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.ego"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns all edge_symbols directly connected to centre by hyperedges.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">exists</code><span class="sig-paren">(</span><em>vertex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.exists"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Checks if the given edge exists in the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">get_float_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em>, <em>or_else=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.get_float_attribute"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns attribute as float value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">get_int_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em>, <em>or_else=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.get_int_attribute"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns attribute as integer value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">get_str_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em>, <em>or_else=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.get_str_attribute"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns attribute as string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">inc_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.inc_attribute"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Increments an attribute of a vertex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">is_belief</code><span class="sig-paren">(</span><em>edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.is_belief"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Check if hyperedge is a belief (has sources).</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">pattern2edges</code><span class="sig-paren">(</span><em>pattern</em>, <em>open_ended=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.pattern2edges"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Return all the edges that match a pattern.
+A pattern is a collection of entity ids and wildcards (None).</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">remove</code><span class="sig-paren">(</span><em>edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.remove"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Removes and edge from the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">remove_belief</code><span class="sig-paren">(</span><em>source</em>, <em>edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.remove_belief"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>A belif is a fact with a source. The link from the source to the fact
+is removed. If no more sources support the fact, then the fact is also
+removed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">remove_by_pattern</code><span class="sig-paren">(</span><em>pattern</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.remove_by_pattern"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Removes from the hypergraph all edges that match the pattern.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">set_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.set_attribute"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Sets the value of an attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">sources</code><span class="sig-paren">(</span><em>edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.sources"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Set of sources (nodes) that support a statement (edge).</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">star</code><span class="sig-paren">(</span><em>center</em>, <em>limit=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.star"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Return all the edges that contain a given entity.
+Entity can be atomic or an edge.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">symbol_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.symbol_count"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Total number of edge_symbols in the hypergraph</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">symbols_with_root</code><span class="sig-paren">(</span><em>root</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.symbols_with_root"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Find all edge_symbols with the given root.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">timestamp</code><span class="sig-paren">(</span><em>vertex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.timestamp"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns the timestamp of a vertex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">total_degree</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/hypergraph.html#HyperGraph.total_degree"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Total degree of the hypergraph</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="backends-package">
+<h2>backends package<a class="headerlink" href="#backends-package" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="backend-class">
+<h3>Backend class<a class="headerlink" href="#backend-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="gb.backends.backend.Backend">
+<em class="property">class </em><code class="descclassname">gb.backends.backend.</code><code class="descname">Backend</code><a class="reference internal" href="_modules/gb/backends/backend.html#Backend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hypergraph low-level operations.</p>
+<dl class="method">
+<dt id="gb.backends.backend.Backend.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>edge</em>, <em>timestamp=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an edges to the hypergraph if it does not exist yet.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.all">
+<code class="descname">all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a lazy sequence of all the vertices in the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.all_attributes">
+<code class="descname">all_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.all_attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.all_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a lazy sequence with a tuple for each vertex in the hypergraph.
+The first element of the tuple is the vertex itself,
+the second is a dictionary of attribute values (as strings).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.dec_attribute">
+<code class="descname">dec_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.dec_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.dec_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decrements an attribute of a vertex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.degree">
+<code class="descname">degree</code><span class="sig-paren">(</span><em>vertex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.degree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.degree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the degree of a vertex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.destroy">
+<code class="descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.destroy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Erase the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.edge_count">
+<code class="descname">edge_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.edge_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.edge_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total number of edge in the hypergraph</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.edges_with_symbols">
+<code class="descname">edges_with_symbols</code><span class="sig-paren">(</span><em>symbols</em>, <em>root=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.edges_with_symbols"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.edges_with_symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find all edges containing the given edge_symbols, and optionally a given root</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.exists">
+<code class="descname">exists</code><span class="sig-paren">(</span><em>vertex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the given edge exists in the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.get_float_attribute">
+<code class="descname">get_float_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em>, <em>or_else=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.get_float_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.get_float_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns attribute as float value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.get_int_attribute">
+<code class="descname">get_int_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em>, <em>or_else=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.get_int_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.get_int_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns attribute as integer value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.get_str_attribute">
+<code class="descname">get_str_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em>, <em>or_else=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.get_str_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.get_str_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns attribute as string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.inc_attribute">
+<code class="descname">inc_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.inc_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.inc_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increments an attribute of a vertex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.pattern2edges">
+<code class="descname">pattern2edges</code><span class="sig-paren">(</span><em>pattern</em>, <em>open_ended</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.pattern2edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.pattern2edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all the edges that match a pattern.
+A pattern is a collection of entity ids and wildcards (None).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.remove">
+<code class="descname">remove</code><span class="sig-paren">(</span><em>edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes an edges from the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.set_attribute">
+<code class="descname">set_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.set_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.set_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the value of an attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.star">
+<code class="descname">star</code><span class="sig-paren">(</span><em>center</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.star"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.star" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all the edges that contain a given entity.
+Entity can be atomic or an edge.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.symbol_count">
+<code class="descname">symbol_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.symbol_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.symbol_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total number of edge_symbols in the hypergraph</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.symbols_with_root">
+<code class="descname">symbols_with_root</code><span class="sig-paren">(</span><em>root</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.symbols_with_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.symbols_with_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find all edge_symbols with the given root.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.timestamp">
+<code class="descname">timestamp</code><span class="sig-paren">(</span><em>vertex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.timestamp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the timestamp of a vertex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.backend.Backend.total_degree">
+<code class="descname">total_degree</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/backend.html#Backend.total_degree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.backend.Backend.total_degree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total degree of the hypergraph</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="leveldb-class">
+<h3>LevelDB class<a class="headerlink" href="#leveldb-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="gb.backends.leveldb.LevelDB">
+<em class="property">class </em><code class="descclassname">gb.backends.leveldb.</code><code class="descname">LevelDB</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements LevelDB hypergraph storage.</p>
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.add">
+<code class="descname">add</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an edge to the hypergraph if it does not exist yet.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.add_key">
+<code class="descname">add_key</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.add_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds the given vertex, given its key.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.all">
+<code class="descname">all</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a lazy sequence of all the vertices in the hypergraph.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.all_attributes">
+<code class="descname">all_attributes</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.all_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a lazy sequence with a tuple for each vertex in the hypergraph.
+The first element of the tuple is the vertex itself,
+the second is a dictionary of attribute values (as strings).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.dec_attribute">
+<code class="descname">dec_attribute</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.dec_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decrements an attribute of a vertex.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.dec_attribute_key">
+<code class="descname">dec_attribute_key</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.dec_attribute_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decrements an attribute of a vertex.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.dec_counter">
+<code class="descname">dec_counter</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.dec_counter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decrements a counter.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.degree">
+<code class="descname">degree</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.degree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the degree of a vertex.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.destroy">
+<code class="descname">destroy</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Erase the hypergraph.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.edge_count">
+<code class="descname">edge_count</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.edge_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total number of edge in the hypergraph</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.edges_with_symbols">
+<code class="descname">edges_with_symbols</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.edges_with_symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find all edges containing the given edge_symbols, and optionally a given root</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.exists">
+<code class="descname">exists</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the given vertex exists in the hypergraph.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.exists_key">
+<code class="descname">exists_key</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.exists_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the given vertex exists in the hypergraph.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.inc_attribute">
+<code class="descname">inc_attribute</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.inc_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increments an attribute of a vertex.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.inc_attribute_key">
+<code class="descname">inc_attribute_key</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.inc_attribute_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increments an attribute of a vertex.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.inc_counter">
+<code class="descname">inc_counter</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.inc_counter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increments a counter.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.pattern2edges">
+<code class="descname">pattern2edges</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.pattern2edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all the edges that match a pattern. A pattern is a collection of entity ids and wildcards (None).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.read_counter">
+<code class="descname">read_counter</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.read_counter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a counter by name.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.read_counter_key">
+<code class="descname">read_counter_key</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.read_counter_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a counter by key.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.remove">
+<code class="descname">remove</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes an edge from the hypergraph.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.remove_edge_permutations">
+<code class="descname">remove_edge_permutations</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.remove_edge_permutations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes all permutations of the given edge.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.remove_key">
+<code class="descname">remove_key</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.remove_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes a vertex, given its key.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.set_attribute">
+<code class="descname">set_attribute</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.set_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the value of an attribute.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.set_attribute_key">
+<code class="descname">set_attribute_key</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.set_attribute_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the value of an attribute by vertex_key.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.star">
+<code class="descname">star</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.star" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all the edges that contain a given entity.
+Entity can be atomic or an edge.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.str2perms">
+<code class="descname">str2perms</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.str2perms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query database for all the edge permutations that contain a given entity, represented as a string.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.symbol_count">
+<code class="descname">symbol_count</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.symbol_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total number of edge_symbols in the hypergraph</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.symbols_with_root">
+<code class="descname">symbols_with_root</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.symbols_with_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find all edge_symbols with the given root.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.timestamp">
+<code class="descname">timestamp</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the timestamp of a vertex.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.total_degree">
+<code class="descname">total_degree</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.total_degree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total degree of the hypergraph</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gb.backends.leveldb.LevelDB.write_edge_permutations">
+<code class="descname">write_edge_permutations</code><a class="headerlink" href="#gb.backends.leveldb.LevelDB.write_edge_permutations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes all permutations of the given edge.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="null-class">
+<h3>Null class<a class="headerlink" href="#null-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="gb.backends.null.Null">
+<em class="property">class </em><code class="descclassname">gb.backends.null.</code><code class="descname">Null</code><a class="reference internal" href="_modules/gb/backends/null.html#Null"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hypergraph low-level operations.</p>
+<dl class="method">
+<dt id="gb.backends.null.Null.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>edge</em>, <em>timestamp=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an edges to the hypergraph if it does not exist yet.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.all">
+<code class="descname">all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a lazy sequence of all the vertices in the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.all_attributes">
+<code class="descname">all_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.all_attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.all_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a lazy sequence with a tuple for each vertex in the hypergraph.
+The first element of the tuple is the vertex itself,
+the second is a dictionary of attribute values (as strings).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.dec_attribute">
+<code class="descname">dec_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.dec_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.dec_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decrements attribute of a vertex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.degree">
+<code class="descname">degree</code><span class="sig-paren">(</span><em>vertex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.degree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.degree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the degree of a vertex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.destroy">
+<code class="descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.destroy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Erase the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.edge_count">
+<code class="descname">edge_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.edge_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.edge_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total number of edge in the hypergraph</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.edges_with_symbols">
+<code class="descname">edges_with_symbols</code><span class="sig-paren">(</span><em>symbols</em>, <em>root=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.edges_with_symbols"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.edges_with_symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find all edges containing the given edge_symbols, and optionally a given root</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.exists">
+<code class="descname">exists</code><span class="sig-paren">(</span><em>vertex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the given edge exists in the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.get_float_attribute">
+<code class="descname">get_float_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em>, <em>or_else=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.get_float_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.get_float_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns attribute as float value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.get_int_attribute">
+<code class="descname">get_int_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em>, <em>or_else=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.get_int_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.get_int_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns attribute as integer value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.get_str_attribute">
+<code class="descname">get_str_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em>, <em>or_else=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.get_str_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.get_str_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns attribute as string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.inc_attribute">
+<code class="descname">inc_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.inc_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.inc_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increments attribute of a vertex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.pattern2edges">
+<code class="descname">pattern2edges</code><span class="sig-paren">(</span><em>pattern</em>, <em>open_ended</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.pattern2edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.pattern2edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all the edges that match a pattern.
+A pattern is a collection of entity ids and wildcards (None).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.remove">
+<code class="descname">remove</code><span class="sig-paren">(</span><em>edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes an edges from the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.set_attribute">
+<code class="descname">set_attribute</code><span class="sig-paren">(</span><em>vertex</em>, <em>attribute</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.set_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.set_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the value of an attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.star">
+<code class="descname">star</code><span class="sig-paren">(</span><em>center</em>, <em>limit=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.star"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.star" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all the edges that contain a given entity.
+Entity can be atomic or an edge.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.symbol_count">
+<code class="descname">symbol_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.symbol_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.symbol_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total number of edge_symbols in the hypergraph</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.symbols_with_root">
+<code class="descname">symbols_with_root</code><span class="sig-paren">(</span><em>root</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.symbols_with_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.symbols_with_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find all edge_symbols with the given root.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.timestamp">
+<code class="descname">timestamp</code><span class="sig-paren">(</span><em>vertex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.timestamp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the timestamp of a vertex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gb.backends.null.Null.total_degree">
+<code class="descname">total_degree</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/backends/null.html#Null.total_degree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.backends.null.Null.total_degree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total degree of the hypergraph</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-gb.reader">
+<span id="reader-package"></span><h2>reader package<a class="headerlink" href="#module-gb.reader" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="reader-class">
+<h3>Reader class<a class="headerlink" href="#reader-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="gb.reader.reader.Reader">
+<em class="property">class </em><code class="descclassname">gb.reader.reader.</code><code class="descname">Reader</code><span class="sig-paren">(</span><em>hg</em>, <em>stages=('hypergen-forest'</em>, <em>'disamb-naive'</em>, <em>'merge'</em>, <em>'shallow'</em>, <em>'concepts')</em>, <em>show_namespaces=False</em>, <em>lang='en'</em>, <em>model_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/reader/reader.html#Reader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.reader.reader.Reader" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="semantic-tree-module-tree-class">
+<h3>Semantic tree module – Tree class<a class="headerlink" href="#semantic-tree-module-tree-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="gb.reader.semantic_tree.Tree">
+<em class="property">class </em><code class="descclassname">gb.reader.semantic_tree.</code><code class="descname">Tree</code><span class="sig-paren">(</span><em>elem=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/reader/semantic_tree.html#Tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.reader.semantic_tree.Tree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="semantic-tree-module-element-class">
+<h3>Semantic tree module – Element class<a class="headerlink" href="#semantic-tree-module-element-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="gb.reader.semantic_tree.Element">
+<em class="property">class </em><code class="descclassname">gb.reader.semantic_tree.</code><code class="descname">Element</code><a class="reference internal" href="_modules/gb/reader/semantic_tree.html#Element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.reader.semantic_tree.Element" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="semantic-tree-module-leaf-class">
+<h3>Semantic tree module – Leaf class<a class="headerlink" href="#semantic-tree-module-leaf-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="gb.reader.semantic_tree.Leaf">
+<em class="property">class </em><code class="descclassname">gb.reader.semantic_tree.</code><code class="descname">Leaf</code><span class="sig-paren">(</span><em>token</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/reader/semantic_tree.html#Leaf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.reader.semantic_tree.Leaf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="semantic-tree-module-node-class">
+<h3>Semantic tree module – Node class<a class="headerlink" href="#semantic-tree-module-node-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="gb.reader.semantic_tree.Node">
+<em class="property">class </em><code class="descclassname">gb.reader.semantic_tree.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>children_ids=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/reader/semantic_tree.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.reader.semantic_tree.Node" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="parseroutput-class">
+<h3>ParserOutput class<a class="headerlink" href="#parseroutput-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="gb.reader.parser_output.ParserOutput">
+<em class="property">class </em><code class="descclassname">gb.reader.parser_output.</code><code class="descname">ParserOutput</code><span class="sig-paren">(</span><em>sentence</em>, <em>tree</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gb/reader/parser_output.html#ParserOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gb.reader.parser_output.ParserOutput" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="authors.html" class="btn btn-neutral float-right" title="Authors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="cli.html" class="btn btn-neutral" title="Command-line interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, CNRS
+
+    </p>
+  </div>
+
+<p>Acknowledgements:</p>
+
+<table>
+    <tr>
+        <td style="width:45%;" align="center">
+            <a href="http://cmb.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cmb-dh-compact.png" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="http://www.cnrs.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cnrs.jpg" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="https://www.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-ehess2.png" />
+            </a>
+        </td>
+        <td style="width:21%;" align="center">
+            <a href="http://cams.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/CAMS_nveau_logo.jpg" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <td style="width:35%;" align="center">
+            <a href="http://algopol.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algopol.png" />
+            </a>
+        </td>
+        <td style="width:29%;" align="center">
+            <a href="http://algodiv.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algodiv.png" />
+            </a>
+        </td>
+        <td style="width:35%;" align="center">
+            <a href="http://www.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px; margin-top: 15px; margin-bottom:15px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/huma-num.png" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

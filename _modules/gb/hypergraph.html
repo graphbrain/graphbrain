@@ -1,0 +1,456 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>gb.hypergraph &mdash; GraphBrain 0.1 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html">
+          
+
+          
+            
+            <img src="../../_static/GB_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">Command-line interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GraphBrain</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>gb.hypergraph</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for gb.hypergraph</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">gb.funs</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">gb.constants</span> <span class="k">as</span> <span class="nn">const</span>
+<span class="kn">from</span> <span class="nn">gb.backends.null</span> <span class="k">import</span> <span class="n">Null</span>
+<span class="kn">from</span> <span class="nn">gb.backends.leveldb</span> <span class="k">import</span> <span class="n">LevelDB</span>
+
+
+<span class="k">def</span> <span class="nf">init_hypergraph</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;leveldb&#39;</span><span class="p">):</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;backend&#39;</span><span class="p">:</span> <span class="n">backend</span><span class="p">,</span> <span class="s1">&#39;hg&#39;</span><span class="p">:</span> <span class="n">hg</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">HyperGraph</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="HyperGraph"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph">[docs]</a><span class="k">class</span> <span class="nc">HyperGraph</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Hypergraph operations.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="n">backend</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;backend&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;null&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">Null</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;leveldb&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">LevelDB</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Unkown hypergraph backend: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">backend</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+
+<div class="viewcode-block" id="HyperGraph.exists"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.exists">[docs]</a>    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Checks if the given edge exists in the hypergraph.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph exists()] </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">edge2str</span><span class="p">(</span><span class="n">vertex</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">vertex</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HyperGraph.add"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds and edge to the hypergraph if it does not exist yet.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph add()] </span><span class="si">%s</span><span class="s1"> ts: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">edge2str</span><span class="p">(</span><span class="n">edge</span><span class="p">),</span> <span class="n">timestamp</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">edge</span></div>
+
+<div class="viewcode-block" id="HyperGraph.remove"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Removes and edge from the hypergraph.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph remove()] </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">edge2str</span><span class="p">(</span><span class="n">edge</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HyperGraph.pattern2edges"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.pattern2edges">[docs]</a>    <span class="k">def</span> <span class="nf">pattern2edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">open_ended</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return all the edges that match a pattern.</span>
+<span class="sd">        A pattern is a collection of entity ids and wildcards (None).&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph pattern2edges()] </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">edge2str</span><span class="p">(</span><span class="n">pattern</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">pattern2edges</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">open_ended</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HyperGraph.star"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.star">[docs]</a>    <span class="k">def</span> <span class="nf">star</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return all the edges that contain a given entity.</span>
+<span class="sd">        Entity can be atomic or an edge.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph star()] </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">edge2str</span><span class="p">(</span><span class="n">center</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">star</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HyperGraph.symbols_with_root"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.symbols_with_root">[docs]</a>    <span class="k">def</span> <span class="nf">symbols_with_root</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Find all edge_symbols with the given root.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph symbols_with_root()] </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">edge2str</span><span class="p">(</span><span class="n">root</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">symbols_with_root</span><span class="p">(</span><span class="n">root</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HyperGraph.edges_with_symbols"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.edges_with_symbols">[docs]</a>    <span class="k">def</span> <span class="nf">edges_with_symbols</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symbols</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Find all edges containing the given edge_symbols, and optionally a given root&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph edges_with_symbols()] </span><span class="si">%s</span><span class="s1"> root: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">symbols</span><span class="p">,</span> <span class="n">edge2str</span><span class="p">(</span><span class="n">root</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">edges_with_symbols</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HyperGraph.destroy"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Erase the hypergraph.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph destroy()]&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="HyperGraph.set_attribute"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.set_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">set_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the value of an attribute.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph set_attribute()] </span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">edge2str</span><span class="p">(</span><span class="n">vertex</span><span class="p">),</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="n">vertex</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HyperGraph.inc_attribute"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.inc_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">inc_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Increments an attribute of a vertex.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph inc_attribute()] </span><span class="si">%s</span><span class="s1"> attribute: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">edge2str</span><span class="p">(</span><span class="n">vertex</span><span class="p">),</span> <span class="n">attribute</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">inc_attribute</span><span class="p">(</span><span class="n">vertex</span><span class="p">,</span> <span class="n">attribute</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HyperGraph.dec_attribute"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.dec_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">dec_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Increments an attribute of a vertex.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph dec_attribute()] </span><span class="si">%s</span><span class="s1"> attribute: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">edge2str</span><span class="p">(</span><span class="n">vertex</span><span class="p">),</span> <span class="n">attribute</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">dec_attribute</span><span class="p">(</span><span class="n">vertex</span><span class="p">,</span> <span class="n">attribute</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HyperGraph.get_str_attribute"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.get_str_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">get_str_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">or_else</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns attribute as string.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph get_str_attribute()] </span><span class="si">%s</span><span class="s1"> attribute: </span><span class="si">%s</span><span class="s1">; or_else: </span><span class="si">%s</span><span class="s1">&#39;</span>
+                      <span class="o">%</span> <span class="p">(</span><span class="n">edge2str</span><span class="p">(</span><span class="n">vertex</span><span class="p">),</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">or_else</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">get_str_attribute</span><span class="p">(</span><span class="n">vertex</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">or_else</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HyperGraph.get_int_attribute"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.get_int_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">get_int_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">or_else</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns attribute as integer value.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph get_int_attribute()] </span><span class="si">%s</span><span class="s1"> attribute: </span><span class="si">%s</span><span class="s1">; or_else: </span><span class="si">%s</span><span class="s1">&#39;</span>
+                      <span class="o">%</span> <span class="p">(</span><span class="n">edge2str</span><span class="p">(</span><span class="n">vertex</span><span class="p">),</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">or_else</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">get_int_attribute</span><span class="p">(</span><span class="n">vertex</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">or_else</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HyperGraph.get_float_attribute"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.get_float_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">get_float_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">or_else</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns attribute as float value.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph get_float_attribute()] </span><span class="si">%s</span><span class="s1"> attribute: </span><span class="si">%s</span><span class="s1">; or_else: </span><span class="si">%s</span><span class="s1">&#39;</span>
+                      <span class="o">%</span> <span class="p">(</span><span class="n">edge2str</span><span class="p">(</span><span class="n">vertex</span><span class="p">),</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">or_else</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">get_float_attribute</span><span class="p">(</span><span class="n">vertex</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">or_else</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HyperGraph.degree"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.degree">[docs]</a>    <span class="k">def</span> <span class="nf">degree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the degree of a vertex.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph degree()] </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">edge2str</span><span class="p">(</span><span class="n">vertex</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">vertex</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HyperGraph.timestamp"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.timestamp">[docs]</a>    <span class="k">def</span> <span class="nf">timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the timestamp of a vertex.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph timestamp()] </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">edge2str</span><span class="p">(</span><span class="n">vertex</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timestamp</span><span class="p">(</span><span class="n">vertex</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HyperGraph.remove_by_pattern"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.remove_by_pattern">[docs]</a>    <span class="k">def</span> <span class="nf">remove_by_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Removes from the hypergraph all edges that match the pattern.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph remove_by_pattern()] </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">edge2str</span><span class="p">(</span><span class="n">pattern</span><span class="p">))</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern2edges</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HyperGraph.ego"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.ego">[docs]</a>    <span class="k">def</span> <span class="nf">ego</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">center</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns all edge_symbols directly connected to centre by hyperedges.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph ego()] </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">edge2str</span><span class="p">(</span><span class="n">center</span><span class="p">))</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">star</span><span class="p">(</span><span class="n">center</span><span class="p">)</span>
+        <span class="n">symbols</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="n">edge_symbols</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+                <span class="n">symbols</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">symbols</span></div>
+
+<div class="viewcode-block" id="HyperGraph.add_belief"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.add_belief">[docs]</a>    <span class="k">def</span> <span class="nf">add_belief</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A belif is a fact with a source. The fact is created as a normal edge</span>
+<span class="sd">           if it does not exist yet. Another edge is created to assign the fact to</span>
+<span class="sd">           the source.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph add_belief()] </span><span class="si">%s</span><span class="s1"> source: </span><span class="si">%s</span><span class="s1">; ts: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">edge2str</span><span class="p">(</span><span class="n">edge</span><span class="p">),</span> <span class="n">source</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">source</span><span class="p">),</span> <span class="n">timestamp</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HyperGraph.sources"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.sources">[docs]</a>    <span class="k">def</span> <span class="nf">sources</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set of sources (nodes) that support a statement (edge).&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph sources()] </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">edge2str</span><span class="p">(</span><span class="n">edge</span><span class="p">))</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern2edges</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HyperGraph.is_belief"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.is_belief">[docs]</a>    <span class="k">def</span> <span class="nf">is_belief</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check if hyperedge is a belief (has sources).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pattern2edges</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="kc">None</span><span class="p">)))</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="HyperGraph.remove_belief"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.remove_belief">[docs]</a>    <span class="k">def</span> <span class="nf">remove_belief</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A belif is a fact with a source. The link from the source to the fact</span>
+<span class="sd">           is removed. If no more sources support the fact, then the fact is also</span>
+<span class="sd">           removed.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph remove_belief()] </span><span class="si">%s</span><span class="s1"> source: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">edge2str</span><span class="p">(</span><span class="n">edge</span><span class="p">),</span> <span class="n">source</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">source</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">(</span><span class="n">edge</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HyperGraph.all"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.all">[docs]</a>    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a lazy sequence of all the vertices in the hypergraph.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph all()]&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="HyperGraph.all_attributes"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.all_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">all_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a lazy sequence with a tuple for each vertex in the hypergraph.</span>
+<span class="sd">           The first element of the tuple is the vertex itself,</span>
+<span class="sd">           the second is a dictionary of attribute values (as strings).&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph all_attributes()]&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">all_attributes</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="HyperGraph.symbol_count"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.symbol_count">[docs]</a>    <span class="k">def</span> <span class="nf">symbol_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Total number of edge_symbols in the hypergraph&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph symbol_count()]&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">symbol_count</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="HyperGraph.edge_count"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.edge_count">[docs]</a>    <span class="k">def</span> <span class="nf">edge_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Total number of edge in the hypergraph&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph edge_count()]&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">edge_count</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="HyperGraph.total_degree"><a class="viewcode-back" href="../../api.html#gb.hypergraph.HyperGraph.total_degree">[docs]</a>    <span class="k">def</span> <span class="nf">total_degree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Total degree of the hypergraph&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;[hypergraph total_degree()]&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">total_degree</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">has_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern2edges</span><span class="p">([</span><span class="n">const</span><span class="o">.</span><span class="n">has_label</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">get_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern2edges</span><span class="p">([</span><span class="n">const</span><span class="o">.</span><span class="n">has_label</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">label_symbol</span> <span class="o">=</span> <span class="n">edges</span><span class="o">.</span><span class="n">pop</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_edge</span><span class="p">(</span><span class="n">label_symbol</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">symbol2str</span><span class="p">(</span><span class="n">label_symbol</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">symbol2str</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, CNRS
+
+    </p>
+  </div>
+
+<p>Acknowledgements:</p>
+
+<table>
+    <tr>
+        <td style="width:45%;" align="center">
+            <a href="http://cmb.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cmb-dh-compact.png" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="http://www.cnrs.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cnrs.jpg" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="https://www.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-ehess2.png" />
+            </a>
+        </td>
+        <td style="width:21%;" align="center">
+            <a href="http://cams.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/CAMS_nveau_logo.jpg" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <td style="width:35%;" align="center">
+            <a href="http://algopol.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algopol.png" />
+            </a>
+        </td>
+        <td style="width:29%;" align="center">
+            <a href="http://algodiv.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algodiv.png" />
+            </a>
+        </td>
+        <td style="width:35%;" align="center">
+            <a href="http://www.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px; margin-top: 15px; margin-bottom:15px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/huma-num.png" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
