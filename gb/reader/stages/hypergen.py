@@ -1,3 +1,4 @@
+import pkg_resources
 import pickle
 from collections import Counter
 import pandas as pd
@@ -209,11 +210,11 @@ class Hypergen(object):
         if model_type == 'nn':
             import keras
             if model_file is None:
-                model_file = NEURAL_NETWORK_MODEL_FILE
+                model_file = pkg_resources.resource_filename('gb.data', NEURAL_NETWORK_MODEL_FILE)
             self.nn = keras.models.load_model(model_file)
         elif model_type == 'rf':
             if model_file is None:
-                model_file = RANDOM_FOREST_MODEL_FILE
+                model_file = pkg_resources.resource_filename('gb.data', RANDOM_FOREST_MODEL_FILE)
             with open(model_file, 'rb') as f:
                 self.rf = pickle.load(f)
         else:
