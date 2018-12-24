@@ -3,6 +3,9 @@ from setuptools.extension import Extension
 from Cython.Build import cythonize
 
 
+PACKAGE_DATA = {'': ['*.model']}
+
+
 extensions = [
     Extension(
         'gb.funs',
@@ -25,6 +28,7 @@ setup(
     name='graphbrain',
     version='0.1',
     packages=find_packages(),
+    package_data=PACKAGE_DATA,
     install_requires=[
         'numpy',
         'scipy',
@@ -34,24 +38,26 @@ setup(
         'termcolor',
         'matplotlib',
         'python-igraph',
-        'nltk',
-        'spacy',
+        'spacy==2.0.18',
         'msgpack-python==0.5.4',
         'asciitree',
         'ujson',
         'plyvel',
         'jupyter',
-        'Sphinx',
-        'sphinx_rtd_theme',
         'tensorflow',
         'keras',
         'bleach==1.5.0',
         'h5py',
         'progressbar2',
         'cython',
-        'unidecode',
-        'networkx'
+        'unidecode'
     ],
+    extras_require={
+        'dev': [
+            'Sphinx',
+            'sphinx_rtd_theme',
+        ]
+    },
     entry_points='''
         [console_scripts]
         gbrain=gb.gbrain:cli
