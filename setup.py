@@ -33,7 +33,7 @@ setup(
     version='0.0.1',
     author='Telmo Menezes et al.',
     author_email='telmo@telmomenezes.net',
-    description='Symbolic generators for complex networks',
+    description='Knowledge System + Natural Language Understanding',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='http://graphbrain.org',
