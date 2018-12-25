@@ -3,6 +3,10 @@ from setuptools.extension import Extension
 from Cython.Build import cythonize
 
 
+with open('README.md', 'r') as fh:
+    long_description = fh.read()
+
+
 PACKAGE_DATA = {'': ['*.model']}
 
 
@@ -26,7 +30,24 @@ extensions = [
 
 setup(
     name='graphbrain',
-    version='0.1',
+    version='0.0.1',
+    author='Telmo Menezes et al.',
+    author_email='telmo@telmomenezes.net',
+    description='Symbolic generators for complex networks',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
+    url='http://graphbrain.org',
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Programming Language :: Python :: 3',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+        'Environment :: Console',
+        'Intended Audience :: Science/Research',
+        'Topic :: Scientific/Engineering :: Artificial Intelligence',
+        'Topic :: Scientific/Engineering :: Information Analysis',
+        'Topic :: Sociology'
+    ],
     packages=find_packages(),
     package_data=PACKAGE_DATA,
     install_requires=[
@@ -46,7 +67,8 @@ setup(
         'jupyter',
         'tensorflow',
         'keras',
-        'bleach==1.5.0',
+        # 'bleach==1.5.0',
+        'bleach',
         'h5py',
         'progressbar2',
         'cython',
