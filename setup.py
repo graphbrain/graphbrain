@@ -72,7 +72,7 @@ setup(
         'asciitree',
         'ujson',
         'plyvel',
-        'jupyter',
+        'ipython',
         'tensorflow',
         'keras',
         # 'bleach==1.5.0',
