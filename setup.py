@@ -6,7 +6,7 @@ from setuptools.extension import Extension
 
 # True to enable building extensions using Cython.
 # False to build extensions from the C files that were previously created by Cython.
-USE_CYTHON = True
+USE_CYTHON = False
 
 
 PACKAGE_DATA = {'': ['*.model']}
@@ -36,7 +36,7 @@ with open('README.md', 'r') as fh:
 
 setup(
     name='graphbrain',
-    version='0.0.2',
+    version='0.0.3',
     author='Telmo Menezes et al.',
     author_email='telmo@telmomenezes.net',
     description='Knowledge System + Natural Language Understanding',
