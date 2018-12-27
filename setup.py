@@ -1,42 +1,50 @@
+#!/usr/bin/env python
+
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
-from Cython.Build import cythonize
+
+
+# True to enable building extensions using Cython.
+# False to build extensions from the C files that were previously created by Cython.
+USE_CYTHON = True
+
+
+PACKAGE_DATA = {'': ['*.model']}
+
+
+if USE_CYTHON:
+    from Cython.Distutils import build_ext
+
+
+if USE_CYTHON:
+    ext_modules = [
+        Extension('gb.funs', ['gb/funs.pyx'],),
+        Extension('gb.backends.leveldb', ['gb/backends/leveldb.pyx'])
+    ]
+    cmdclass = {'build_ext': build_ext}
+else:
+    ext_modules = [
+        Extension('gb.funs', ['gb/funs.c'], ),
+        Extension('gb.backends.leveldb', ['gb/backends/leveldb.c'])
+    ]
+    cmdclass = {}
 
 
 with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 
-PACKAGE_DATA = {'': ['*.model']}
-
-
-extensions = [
-    Extension(
-        'gb.funs',
-        ['gb/funs.pyx'],
-        include_dirs=[],
-        libraries=[],
-        library_dirs=[]
-    ),
-    Extension(
-        'gb.backends.leveldb',
-        ['gb/backends/leveldb.pyx'],
-        include_dirs=[],
-        libraries=[],
-        library_dirs=[]
-    )
-]
-
-
 setup(
     name='graphbrain',
-    version='0.0.1',
+    version='0.0.2',
     author='Telmo Menezes et al.',
     author_email='telmo@telmomenezes.net',
     description='Knowledge System + Natural Language Understanding',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='http://graphbrain.org',
+    url='https://github.com/ai4socialscience/graphbrain',
+    license='MIT',
+    keywords=['NLP', 'AI', 'Knowledge Representation', 'Natural Language Understanding', 'Text Analysis'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Programming Language :: Python :: 3',
@@ -84,5 +92,7 @@ setup(
         [console_scripts]
         gbrain=gb.gbrain:cli
     ''',
-    ext_modules=cythonize(extensions)
+    cmdclass=cmdclass,
+    ext_modules=ext_modules,
+    test_suite='gb.tests'
 )
