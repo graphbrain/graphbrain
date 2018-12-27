@@ -79,13 +79,13 @@ setup(
         'bleach',
         'h5py',
         'progressbar2',
-        'cython',
         'unidecode'
     ],
     extras_require={
         'dev': [
             'Sphinx',
             'sphinx_rtd_theme',
+            'cython'
         ]
     },
     entry_points='''
