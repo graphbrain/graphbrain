@@ -1,7 +1,8 @@
+import csv
+import numpy as np
 import pkg_resources
 import pickle
 from collections import Counter
-import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 import gb.nlp.constants as nlp_consts
 from gb.nlp.parser import Parser
@@ -133,14 +134,19 @@ def build_case(parent, child, parent_token, child_token, position):
     return case
 
 
+def read_cases_file(filename):
+    with open(filename, 'r') as dest_f:
+        row_iter = csv.reader(dest_f, delimiter=',')
+        data = [row for row in row_iter]
+    features = [row[1:] for row in data[1:]]
+    targets = [row[0] for row in data[1:]]
+    features = np.asarray(features, dtype='float64')
+    targets = np.asarray(targets, dtype='float64')
+    return features, targets
+
+
 def learn_rf(infile, outfile):
-    train = pd.read_csv(infile)
-
-    feature_cols = train.columns.values[1:]
-    target_cols = [train.columns.values[0]]
-
-    features = train.as_matrix(feature_cols)
-    targets = train.as_matrix(target_cols)
+    features, targets = read_cases_file(infile)
 
     rf = RandomForestClassifier(n_estimators=50)
     rf.fit(features, targets)
@@ -158,19 +164,14 @@ def learn_rf(infile, outfile):
 def learn_nn(infile, outfile):
     import keras
 
-    train = pd.read_csv(infile)
-
-    feature_cols = train.columns.values[1:]
-    target_cols = [train.columns.values[0]]
-
-    features = train.as_matrix(feature_cols)
-    targets = train.as_matrix(target_cols)
+    features, targets = read_cases_file(infile)
+    n_features = features.shape[1]
 
     model = keras.models.Sequential()
-    model.add(keras.layers.Dense(units=len(feature_cols), input_dim=len(feature_cols)))
+    model.add(keras.layers.Dense(units=n_features, input_dim=n_features))
     model.add(keras.layers.Activation('relu'))
     for i in range(2):
-        model.add(keras.layers.Dense(units=len(feature_cols)))
+        model.add(keras.layers.Dense(units=n_features))
         model.add(keras.layers.Activation('relu'))
     model.add(keras.layers.Dense(units=10))
     model.add(keras.layers.Activation('softmax'))
@@ -224,8 +225,7 @@ class Hypergen(object):
         fields = expanded_fields()
         case = build_case(parent, child, parent_token, child_token, position)
         values = [[case[field] for field in fields[1:]]]
-        data = pd.DataFrame(values, columns=fields[1:])
-        data = data.values
+        data = np.asarray(values, dtype='float64')
         if self.model_type == 'nn':
             output = self.nn.predict(data)[0]
             max_out = 0.

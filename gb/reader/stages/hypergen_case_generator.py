@@ -1,6 +1,5 @@
 import traceback
 from termcolor import colored
-import pandas as pd
 from gb.funs import *
 from gb.nlp.parser import Parser
 from gb.nlp.sentence import Sentence
@@ -180,18 +179,6 @@ def generate_cases(infile, outfile, lang='en'):
     print('%s out of %s correct cases.' % (correct, total))
 
 
-def cases_summary(infile):
-    summary = {}
-    cases = pd.read_csv(infile)
-    transfs = cases['transformation']
-    for transf in transfs:
-        transf_name = hgtransf.to_string(transf)
-        if transf_name not in summary:
-            summary[transf_name] = 0
-        summary[transf_name] += 1
-    print(summary)
-
-
 def interactive_edge_builder(outfile, lang='en'):
     print('writing to file: %s' % outfile)
     cg = CaseGenerator(lang=lang)
@@ -228,8 +215,3 @@ def interactive_edge_builder(outfile, lang='en'):
                 print(e)
                 traceback.print_exc()
                 done = True
-
-
-if __name__ == '__main__':
-    # generate_cases('parses1.txt', 'dummy.txt')
-    cases_summary('cases.csv')
