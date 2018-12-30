@@ -12,7 +12,7 @@ from gb.reader.stages.concepts import Concepts
 
 
 class Reader(object):
-    def __init__(self, hg, stages=('hypergen-forest', 'disamb-naive', 'merge', 'shallow', 'concepts'),
+    def __init__(self, hg=None, stages=('hypergen-forest', 'disamb-naive', 'merge', 'shallow', 'concepts'),
                  show_namespaces=False, lang='en', model_file=None):
         self.hg = hg
         self.stages = stages
