@@ -3,40 +3,45 @@ from gb.hypergraph import *
 from gb.funs import *
 
 
-EDGE_COLORS = ['#008cff', '#891100', '#028401', '#002eff', '#ff8802', '#008688']
+SYMBOL_COLOR = '#404040'
+NAMESPACE_COLOR = '#7F7F6F'
+EDGE_COLORS = ['#a65628', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#e41a1c', '#f781bf']
 
 
-def _edge2html(edge, namespaces=True, compact=False, indent=False, close=True, depth=0):
+def _edge2html(edge, namespaces=True, compact=False, indent=False, close=True, depth=0, color='#000', conn=False):
     """Convert an edge to an html representation."""
     closes = 0
-    color = EDGE_COLORS[depth % len(EDGE_COLORS)]
     if compact:
         font_size = 11
     else:
         font_size = 14 - depth
     if symbol_type(edge) == SymbolType.EDGE:
+        color = EDGE_COLORS[depth % len(EDGE_COLORS)]
         closes = 1
-        html = '<span style="font-size:%spt">(</span>' % str(font_size)
-        after_atom = False
+        html = '<span style="font-weight:bold;font-size:%spt">(</span>' % str(font_size)
         for i in range(len(edge)):
+            if i == 0:
+                inner_indent = False
+                inner_color = color
+                inner_conn = True
+                sep = ''
+            else:
+                inner_indent = True
+                inner_color = SYMBOL_COLOR
+                inner_conn = conn
+                sep = ' '
+            if len(edge) <= 2:
+                inner_indent = False
             item = edge[i]
             if symbol_type(item) == SymbolType.EDGE:
-                inner_close = i < (len(edge) - 1)
-                inner_html, inner_closes = _edge2html(item, namespaces=namespaces, compact=compact, indent=True,
-                                                      close=inner_close, depth=depth + 1)
+                inner_close = i < len(edge) - 1
+                inner_html, inner_closes = _edge2html(item, namespaces=namespaces, compact=compact, indent=inner_indent,
+                                                      close=inner_close, depth=depth + 1, conn=inner_conn)
                 closes += inner_closes
-                sep = ''
-                if i > 0:
-                    sep = ' '
-                html = '%s%s%s' % (html, sep, inner_html)
-                after_atom = False
             else:
-                sep = ''
-                if after_atom:
-                    sep = ' '
-                inner_html, _ = _edge2html(item, namespaces=namespaces, compact=compact, depth=depth)
-                html = '%s%s%s' % (html, sep, inner_html)
-                after_atom = True
+                inner_html, _ = _edge2html(item, namespaces=namespaces, compact=compact, depth=depth, color=inner_color,
+                                           conn=inner_conn)
+            html = '%s%s%s' % (html, sep, inner_html)
         if indent:
             margin = 20
         else:
@@ -47,16 +52,21 @@ def _edge2html(edge, namespaces=True, compact=False, indent=False, close=True, d
                 close_html = '</span>' * closes
             else:
                 close_html = '</div>' * closes
-        html = '%s<span style="color:%s"><span style="font-size:%spt">)</span></span>' % (html, color, str(font_size))
-        if compact:
+        html = '%s<span style="color:%s"><span style="font-weight:bold;font-size:%spt">)</span></span>'\
+               % (html, color, str(font_size))
+        if compact or (not indent):
             html = '<span style="color:%s">%s%s' % (color, html, close_html)
         else:
             html = '<div style="margin-left:%spx;color:%s">%s%s' % (str(margin), color, html, close_html)
     else:
-        html = '<span style="font-weight:bold">%s</span>' % str(symbol_root(edge)).strip()
+        if conn:
+            bold_style = 'font-weight:bold;'
+        else:
+            bold_style = ''
+        html = '<span style="%scolor:%s">%s</span>' % (bold_style, color, str(symbol_root(edge)).strip())
         if namespaces:
-            html = '%s<span style="color:#9F9F8F;font-size:7pt">/%s</span>'\
-                   % (html, str(symbol_namespace(edge)).strip())
+            html = '%s<span style="color:%s;font-size:8pt">/%s</span>'\
+                   % (html, NAMESPACE_COLOR, str(symbol_namespace(edge)).strip())
         html = '<span style="font-size:%spt">%s</span>' % (str(font_size), html)
 
     if close:
@@ -80,11 +90,10 @@ def read_and_show(reader, text,  namespaces=True, compact=False, show_stages=Fal
         if show_stages:
             display(HTML('<h3>Parse Tree</h3>'))
             output[1].sentence.print_tree()
-        if show_stages:
             for i in range(len(reader.stages)):
                 stage_label = 'stage #%s: %s' % (i + 1, reader.stages[i])
                 display(HTML('<h3>%s</h3>' % stage_label))
                 edge = output[1].stage_outputs[i]
                 show(edge, namespaces=namespaces, compact=True)
         edge = output[1].main_edge
-        show(edge, compact=compact)
+        show(edge, namespaces=namespaces, compact=compact)
