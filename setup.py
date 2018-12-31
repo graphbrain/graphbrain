@@ -2,6 +2,7 @@
 
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
+from gb.version import VERSION
 
 
 # True to enable building extensions using Cython.
@@ -36,7 +37,7 @@ with open('README.md', 'r') as fh:
 
 setup(
     name='graphbrain',
-    version='0.0.5',
+    version=VERSION,
     author='Telmo Menezes et al.',
     author_email='telmo@telmomenezes.net',
     description='Knowledge System + Natural Language Understanding',
