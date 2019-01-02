@@ -2,7 +2,7 @@
 Installation
 ============
 
-GraphBrain is compatible with 64-bit CPython 3.3+ and runs on Linux, macOS and Windows(untested). GraphBrain is available over pip. Installation requires a working build environment. `For both installation methods, check the prerequisites for your OS <#Prerequisites>`_. Make sure you are using Python 3.
+GraphBrain is compatible with 64-bit CPython 3.3+ and runs on Linux, macOS and Windows(untested). GraphBrain is available over pip. Installation requires a working build environment. `For both installation methods, check the prerequisites for your OS <#prerequisites>`_. Make sure you are using Python 3.
 
 Install with pip (recommended)
 ==============================
