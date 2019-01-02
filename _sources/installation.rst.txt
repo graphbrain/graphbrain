@@ -2,7 +2,7 @@
 Installation
 ============
 
-GraphBrain is compatible with 64-bit CPython 3.3+ and runs on Linux, macOS and Windows(untested). GraphBrain is available over pip. Installation requires a working build environment. For both installation methods, check the prerequisites for your OS below. Make sure you are using Python 3.
+GraphBrain is compatible with 64-bit CPython 3.3+ and runs on Linux, macOS and Windows(untested). GraphBrain is available over pip. Installation requires a working build environment. `For both installation methods, check the prerequisites for your OS <#Prerequisites>`_. Make sure you are using Python 3.
 
 Install with pip (recommended)
 ==============================
@@ -37,13 +37,15 @@ It is still necessary to download a spaCy language model::
    $ python -m spacy download en_core_web_lg
 
 
-Install from code repository (github)
-=====================================
+Install from the code repository (github)
+=========================================
+
+Another way to install GraphBrain is to build it from the GitHub repository source. You should use this method if you wish to make changes to the code base.
 
 Start by cloning the source code to your current local directory.
 ::
 
-   $ git clone https://github.com/graphbrain/graphbrain.git
+   $ git clone https://github.com/ai4socialscience/graphbrain.git
    $ cd graphbrain
 
 It is advisable to work with virtual environments, for reasons that are explained in the previous section. Please refer to it for details.
@@ -109,3 +111,8 @@ macOS
 * LevelDB (database engine)::
 
    $ brew install leveldb
+
+Windows
+-------
+
+*To be done...*
