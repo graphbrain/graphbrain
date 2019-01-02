@@ -13,7 +13,7 @@ GraphBrain is an open scientific project, open to all that are interested in col
    :caption: Contents:
 
    overview.rst
-   install.rst
+   installation.rst
    tutorials.rst
    cli.rst
    api.rst
