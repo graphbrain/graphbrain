@@ -1,0 +1,388 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Installation &mdash; GraphBrain 0.0.6 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tutorials" href="tutorials.html" />
+    <link rel="prev" title="Overview" href="overview.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/GB_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#install-with-pip-recommended">Install with pip (recommended)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-from-code-repository-github">Install from code repository (github)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#run-tests">Run tests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#linux">Linux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#macos">macOS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command-line interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GraphBrain</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Installation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/graphbrain/graphbrain" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>GraphBrain is compatible with 64-bit CPython 3.3+ and runs on Linux, macOS and Windows(untested). GraphBrain is available over pip. Installation requires a working build environment. For both installation methods, check the prerequisites for your OS below. Make sure you are using Python 3.</p>
+<div class="section" id="install-with-pip-recommended">
+<h2>Install with pip (recommended)<a class="headerlink" href="#install-with-pip-recommended" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo pip install graphbrain
+</pre></div>
+</div>
+<p>It is advisable to work with virtual environments. This avoids conflicts with the system-wide installed packages and creates a nice self-contained environment for you to work on. It is particularly important with GraphBrain because we maintain dependencies to specific versions of downstream machine learning tools, as to keep results consistent.</p>
+<p>To create a virtual environment in the current directory you can do this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ virtualenv -p &lt;path to python3&gt; venv
+</pre></div>
+</div>
+<p>Common locations for python3:</p>
+<ul class="simple">
+<li>/usr/local/bin/python3</li>
+<li>/usr/bin/python3</li>
+</ul>
+<p>If you are on macOS, do this instead (for the reason <a class="reference external" href="http://matplotlib.org/faq/osx_framework.html#osxframework-faq">explained here</a>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 -m venv venv
+</pre></div>
+</div>
+<p>Then to switch to the virtual environment and install GraphBrain:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ source venv/bin/activate
+$ pip install graphbrain
+</pre></div>
+</div>
+<p>It is still necessary to download a spaCy language model:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m spacy download en_core_web_lg
+</pre></div>
+</div>
+</div>
+<div class="section" id="install-from-code-repository-github">
+<h2>Install from code repository (github)<a class="headerlink" href="#install-from-code-repository-github" title="Permalink to this headline">¶</a></h2>
+<p>Start by cloning the source code to your current local directory.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/graphbrain/graphbrain.git
+$ cd graphbrain
+</pre></div>
+</div>
+<p>It is advisable to work with virtual environments, for reasons that are explained in the previous section. Please refer to it for details.</p>
+<p>Install Cython:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install cython
+</pre></div>
+</div>
+<p>Now we can build and install GraphBrain:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install .
+</pre></div>
+</div>
+<p>It is still necessary to download a spaCy language model:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m spacy download en_core_web_lg
+</pre></div>
+</div>
+<div class="section" id="run-tests">
+<h3>Run tests<a class="headerlink" href="#run-tests" title="Permalink to this headline">¶</a></h3>
+<p>From the project’s root directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./setup.py test
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>Naturally, you can ignore the prerequisites that are already installed in your machine.</p>
+<div class="section" id="linux">
+<h3>Linux<a class="headerlink" href="#linux" title="Permalink to this headline">¶</a></h3>
+<p>Linux distributions are diverse in terms of package managers. Please use the appropriate package manager for your
+distribution to install the prerequisites.</p>
+<ul class="simple">
+<li>gcc</li>
+<li>Python 3</li>
+<li>pip (Python package manager)</li>
+<li>virtualenv (Virtual Python Environment builder)</li>
+</ul>
+</div>
+<div class="section" id="macos">
+<h3>macOS<a class="headerlink" href="#macos" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">XCode and the “Command Line Tools”:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ xcode-select --install
+</pre></div>
+</div>
+</li>
+<li><p class="first">The <cite>Homebrew package manager &lt;http://brew.sh/&gt;</cite>.</p>
+</li>
+<li><p class="first">Python 3:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew install python3
+</pre></div>
+</div>
+</li>
+<li><p class="first">pip (Python package manager):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo easy_install pip
+</pre></div>
+</div>
+</li>
+<li><p class="first">virtualenv (Virtual Python Environment builder):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo -H pip install virtualenv
+</pre></div>
+</div>
+</li>
+<li><p class="first">LevelDB (database engine):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew install leveldb
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tutorials.html" class="btn btn-neutral float-right" title="Tutorials" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="overview.html" class="btn btn-neutral" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 
+
+    </p>
+  </div>
+
+<p>Acknowledgements:</p>
+
+<table>
+    <tr>
+        <td style="width:45%;" align="center">
+            <a href="http://cmb.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cmb-dh-compact.png" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="http://www.cnrs.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cnrs.jpg" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="https://www.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-ehess2.png" />
+            </a>
+        </td>
+        <td style="width:21%;" align="center">
+            <a href="http://cams.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/CAMS_nveau_logo.jpg" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <td style="width:35%;" align="center">
+            <a href="http://algopol.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algopol.png" />
+            </a>
+        </td>
+        <td style="width:29%;" align="center">
+            <a href="http://algodiv.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algodiv.png" />
+            </a>
+        </td>
+        <td style="width:35%;" align="center">
+            <a href="http://www.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px; margin-top: 15px; margin-bottom:15px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/huma-num.png" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
