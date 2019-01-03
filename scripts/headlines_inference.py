@@ -3,10 +3,10 @@ from collections import Counter
 from unidecode import unidecode
 import progressbar
 import pandas as pd
-from gb.hypergraph import HyperGraph
-from gb.funs import *
-import gb.nlp.parser as par
-import gb.synonyms.synonyms as syn
+from graphbrain.hypergraph import HyperGraph
+from graphbrain.funs import *
+import graphbrain.nlp.parser as par
+import graphbrain.synonyms.synonyms as syn
 
 
 MAX_PROB = -12

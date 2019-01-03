@@ -19,7 +19,7 @@
 #
 import os
 import sys
-from gb.version import VERSION
+from graphbrain.version import VERSION
 
 
 sys.path.insert(0, os.path.abspath('.'))

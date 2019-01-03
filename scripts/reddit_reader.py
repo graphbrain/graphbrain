@@ -1,9 +1,9 @@
 import time
 import json
 import argparse
-from gb.hypergraph import HyperGraph
-from gb.funs import *
-from gb.reader.reader import Reader
+from graphbrain.hypergraph import HyperGraph
+from graphbrain.funs import *
+from graphbrain.reader.reader import Reader
 
 
 def comments_to_text(comments):

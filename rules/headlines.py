@@ -1,5 +1,5 @@
-from gb.hypergraph import *
-from gb.inference.rules import Rules
+from graphbrain.hypergraph import *
+from graphbrain.inference.rules import Rules
 
 
 rules = Rules()

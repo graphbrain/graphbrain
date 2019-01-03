@@ -3,8 +3,8 @@
 
 import json
 import time
-from gb.funs import *
-from gb.reader.reader import Reader
+from graphbrain.funs import *
+from graphbrain.reader.reader import Reader
 
 
 class FacebookReader(object):
@@ -75,6 +75,6 @@ class FacebookReader(object):
 
 
 if __name__ == '__main__':
-    from gb.hypergraph import HyperGraph
+    from graphbrain.hypergraph import HyperGraph
     hgr = HyperGraph({'backend': 'leveldb', 'hg': 'facebook.hg'})
     FacebookReader(hgr).read_file('statuses.json')
