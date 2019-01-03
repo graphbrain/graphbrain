@@ -74,14 +74,14 @@ setup(
     ],
     extras_require={
         'dev': [
+            'cython',
             'Sphinx',
-            'sphinx_rtd_theme',
-            'cython'
+            'sphinx_rtd_theme'
         ]
     },
     entry_points='''
         [console_scripts]
-        gbrain=gb.gbrain:cli
+        gbrain=gb.__main__:cli
     ''',
     cmdclass=cmdclass,
     ext_modules=ext_modules,
