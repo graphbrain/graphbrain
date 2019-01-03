@@ -1,9 +1,9 @@
 import argparse
 import progressbar
 import pandas as pd
-from gb.hypergraph import HyperGraph
-from gb.funs import *
-import gb.nlp.parser as par
+from graphbrain.hypergraph import HyperGraph
+from graphbrain.funs import *
+import graphbrain.nlp.parser as par
 
 
 def read_predicate_table(file_path):

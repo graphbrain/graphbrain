@@ -2,7 +2,7 @@
 
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
-from gb.version import VERSION
+from graphbrain.version import VERSION
 
 
 # True to enable building extensions using Cython.
@@ -19,14 +19,14 @@ if USE_CYTHON:
 
 if USE_CYTHON:
     ext_modules = [
-        Extension('gb.funs', ['gb/funs.pyx'],),
-        Extension('gb.backends.leveldb', ['gb/backends/leveldb.pyx'])
+        Extension('graphbrain.funs', ['graphbrain/funs.pyx'],),
+        Extension('graphbrain.backends.leveldb', ['graphbrain/backends/leveldb.pyx'])
     ]
     cmdclass = {'build_ext': build_ext}
 else:
     ext_modules = [
-        Extension('gb.funs', ['gb/funs.c'], ),
-        Extension('gb.backends.leveldb', ['gb/backends/leveldb.c'])
+        Extension('graphbrain.funs', ['graphbrain/funs.c'], ),
+        Extension('graphbrain.backends.leveldb', ['graphbrain/backends/leveldb.c'])
     ]
     cmdclass = {}
 
@@ -81,9 +81,9 @@ setup(
     },
     entry_points='''
         [console_scripts]
-        gbrain=gb.__main__:cli
+        gbrain=graphbrain.__main__:cli
     ''',
     cmdclass=cmdclass,
     ext_modules=ext_modules,
-    test_suite='gb.tests'
+    test_suite='graphbrain.tests'
 )

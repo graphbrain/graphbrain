@@ -1,8 +1,8 @@
 import sys
 import csv
 import time
-from gb.funs import *
-from gb.reader.reader import Reader
+from graphbrain.funs import *
+from graphbrain.reader.reader import Reader
 
 
 class SemBubbleReader(object):
@@ -78,6 +78,6 @@ class SemBubbleReader(object):
 
 
 if __name__ == '__main__':
-    from gb.hypergraph import HyperGraph
+    from graphbrain.hypergraph import HyperGraph
     hgr = HyperGraph({'backend': 'leveldb', 'hg': 'card_and_id_fraud.hg'})
     SemBubbleReader(hgr).read_file('Card_and_ID_fraud.csv')

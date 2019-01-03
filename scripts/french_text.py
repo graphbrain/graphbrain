@@ -1,7 +1,7 @@
 import io
-from gb.hypergraph import HyperGraph
-from gb.funs import *
-from gb.reader.reader import Reader
+from graphbrain.hypergraph import HyperGraph
+from graphbrain.funs import *
+from graphbrain.reader.reader import Reader
 
 
 if __name__ == '__main__':
