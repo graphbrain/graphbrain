@@ -62,6 +62,13 @@ It is still necessary to download a spaCy language model::
 
    $ python -m spacy download en_core_web_lg
 
+For developers
+--------------
+
+If you want to help develop GraphBrain, you should also install the development dependencies::
+
+   $ pip install '.[dev]'
+
 Run tests
 ---------
 
