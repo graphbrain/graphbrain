@@ -2,11 +2,19 @@
 Command-line interface
 ======================
 
-GraphBrain provides a command-line interface that can be used to execute a variety of tasks.
+GraphBrain provides a command-line interface that can be used to execute a variety of tasks. You can accesst it either by using python to run the graphbrain root module as a script::
+
+   python -m graphbrain ...
+
+or using the provided command::
+
+   graphbrain ...
+
+All cases below work with both.
 
 Here's an overview of the interface::
 
-   gbrain [-h] [--backend BACKEND] [--hg HG] [--infile INFILE]
+   graphbrain [-h] [--backend BACKEND] [--hg HG] [--infile INFILE]
               [--outfile OUTFILE] [--log LOG] [--fields FIELDS]
               [--model_type MODEL_TYPE] [--model_file MODEL_FILE]
               [--show_namespaces] [--lang LANG]
@@ -41,7 +49,7 @@ create
 
 Creates an empty hypergraph::
 
-   gbrain --hg <hypergraph> create
+   graphbrain --hg <hypergraph> create
 
 
 info
@@ -49,34 +57,16 @@ info
 
 Displays simple information about an hypergraph::
 
-   gbrain --hg <hypergraph> info
+   graphbrain --hg <hypergraph> info
 
 
-Knowledge extraction
-====================
-
-These are commands that extract knowledge from various sources into hypergraphs.
-
-
-wordnet
+hg2json
 -------
 
-TBD
+Export hypergraph to a json file::
 
-wikidata
---------
+   graphbrain --hg <hypergraph> --outfile <target json file> hg2json
 
-TBD
-
-dbpedia
--------
-
-TBD
-
-dbpedia_wordnet
----------------
-
-TBD
 
 Knowledge inference
 ===================
@@ -88,7 +78,7 @@ generate_synonyms
 
 Finds synonyms in the hypergraph and connects them to synonym set identifiers::
 
-   gbrain --hg <hypergraph> generate_synonyms
+   graphbrain --hg <hypergraph> generate_synonyms
 
 Reader
 ======
@@ -102,7 +92,7 @@ reader_tests
 
 Tests the reader by applying it to a file containing example sentences::
 
-   gbrain --infile <example sentences file> [--lang <language>] [--model_file <file>] [--show_namespaces] reader_tests
+   graphbrain --infile <example sentences file> [--lang <language>] [--model_file <file>] [--show_namespaces] reader_tests
 
 If the optional ``--show_namespaces`` option is specified, the resulting hyperedges will contain symbols qualified
 with their namespaces, otherwise no namespaces will be shown.
@@ -113,7 +103,7 @@ interactive_edge_builder
 This command opens an interactive session that allows the user to provide sentences and then manually perform the
 appropriate transformations from the parse tree of these sentences into an initial hyperedge::
 
-   gbrain --outfile <sentence transformations file> [--lang <language>] interactive_edge_builder
+   graphbrain --outfile <sentence transformations file> [--lang <language>] interactive_edge_builder
 
 For each sentence that is manually parsed, a case is generated and appended to the output file.
 
@@ -128,7 +118,7 @@ generate_hypergen_cases
 Generate training datasets from sentence parse transformations file created with ``interactive_edge_builder``.  This
 command breaks down each transformation into atomic cases, with respective feature values and expected output::
 
-   gbrain --infile <sentence transformations file> --outfile <training cases file> generate_hypergen_cases
+   graphbrain --infile <sentence transformations file> --outfile <training cases file> generate_hypergen_cases
 
 The output of this command can then be used to train a machine learning model using the command ``learn_hypergen``.
 
@@ -141,7 +131,7 @@ learn_hypergen
 Trains a machine learning model for the hypergen reader stage using a training cases file produced by
 ``generate_hypergen_cases``::
 
-   gbrain --infile <training cases file> [--output <model_file>] [--model_type <model type>] learn_hypergen
+   graphbrain --infile <training cases file> [--output <model file>] [--model_type <model type>] learn_hypergen
 
 The optional ``--model_type`` parameter can be used to specify the type of machine learning model to use. Currently
 there are two options available: ``rf`` for random forest and ``nn`` for neural network. If not specified, random
@@ -153,7 +143,7 @@ test_hypergen
 Tests a machine learning model for the hypergen reader stage using 25% of the examples in a sentence parse
 transformations file::
 
-   gbrain --infile <sentence transformations file> [--lang <language>] [--model_file <file>] [--model_type <model type>] test_hypergen
+   graphbrain --infile <sentence transformations file> [--lang <language>] [--model_file <file>] [--model_type <model type>] test_hypergen
 
 The optional ``--model_type`` parameter can be used to specify the type of machine learning model to use. Currently
 there are two options available: ``rf`` for random forest and ``nn`` for neural network. If not specified, random
