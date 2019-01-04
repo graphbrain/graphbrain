@@ -1,72 +1,18 @@
+import importlib
 import logging
 import argparse
 from termcolor import colored
 import graphbrain.constants as const
-from graphbrain.hypergraph import HyperGraph
-import graphbrain.reader.stages.hypergen_case_generator as hypergen_cg
-import graphbrain.reader.stages.hypergen as hypergen
-from graphbrain.filters.filters import AllFilter
-import graphbrain.synonyms.synonyms as synonyms
 
 
-def show_logo():
+def _show_logo():
     print(colored(const.ascii_logo, 'cyan'))
     print()
 
 
-# commands
-def create(params):
-    print('creating hypergraph...')
-    HyperGraph(params)
-    print('done.')
-
-
-def info(params):
-    hg = HyperGraph(params)
-    print('edge_symbols: %s' % hg.symbol_count())
-    print('edges: %s' % hg.edge_count())
-    print('total degree: %s' % hg.total_degree())
-
-
-def interactive_edge_builder(params):
-    outfile = params['outfile']
-    lang = params['lang']
-    hypergen_cg.interactive_edge_builder(outfile, lang=lang)
-
-
-def generate_hypergen_cases(params):
-    infile = params['infile']
-    outfile = params['outfile']
-    hypergen_cg.generate_cases(infile, outfile)
-
-
-def learn_hypergen(params):
-    infile = params['infile']
-    model_type = params['model_type']
-    outfile = params['outfile']
-    hypergen.learn(infile, model_type=model_type, outfile=outfile)
-
-
-def test_hypergen(params):
-    infile = params['infile']
-    model_type = params['model_type']
-    model_file = params['model_file']
-    hypergen.test(infile, model_type=model_type, model_file=model_file)
-
-
-def all2json(params):
-    hg = HyperGraph(params)
-    outfile = params['outfile']
-    filt = AllFilter(hg)
-    filt.write_edges(outfile)
-
-
-def generate_synonyms(params):
-    hg = HyperGraph(params)
-    synonyms.generate(hg)
-
-
 def cli():
+    _show_logo()
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument('command', type=str, help='command to execute')
@@ -104,27 +50,11 @@ def cli():
 
     command = args.command
 
-    if command == 'create':
-        create(params)
-    elif command == 'info':
-        info(params)
-    elif command == 'interactive_edge_builder':
-        interactive_edge_builder(params)
-    elif command == 'generate_hypergen_cases':
-        generate_hypergen_cases(params)
-    elif command == 'learn_hypergen':
-        learn_hypergen(params)
-    elif command == 'test_hypergen':
-        test_hypergen(params)
-    elif command == 'all2json':
-        all2json(params)
-    elif command == 'generate_synonyms':
-        generate_synonyms(params)
-    else:
+    try:
+        cmd_module = importlib.import_module('graphbrain.commands.%s' % command)
+        cmd_module.run(params)
+    except ModuleNotFoundError:
         print('unkown command: %s' % command)
-
-
-show_logo()
 
 
 if __name__ == '__main__':
