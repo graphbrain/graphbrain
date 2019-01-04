@@ -3,10 +3,6 @@ import argparse
 from termcolor import colored
 import graphbrain.constants as const
 from graphbrain.hypergraph import HyperGraph
-# import gb.importers.wordnet as wn
-# import gb.importers.wikidata as wd
-import graphbrain.importers.dbpedia as dbp
-import graphbrain.importers.dbpedia_wordnet as dbpwn
 import graphbrain.reader.reader_tests as rtests
 import graphbrain.reader.stages.hypergen_case_generator as hypergen_cg
 import graphbrain.reader.stages.hypergen as hypergen
@@ -23,37 +19,6 @@ def show_logo():
 def create(params):
     print('creating hypergraph...')
     HyperGraph(params)
-    print('done.')
-
-
-# def wordnet(params):
-#     print('reading wordnet...')
-#     hg = HyperGraph(params)
-#     wn.read(hg)
-#     print('done.')
-
-
-# def wikidata(params):
-#     print('reading wikidata...')
-#     hg = HyperGraph(params)
-#     infile = params['infile']
-#     wd.read(hg, infile)
-#     print('done.')
-
-
-def dbpedia(params):
-    print('reading DBPedia...')
-    hg = HyperGraph(params)
-    infile = params['infile']
-    dbp.read(hg, infile)
-    print('done.')
-
-
-def dbpedia_wordnet(params):
-    print('reading DBPedia...')
-    hg = HyperGraph(params)
-    infile = params['infile']
-    dbpwn.read(hg, infile)
     print('done.')
 
 
@@ -151,14 +116,6 @@ def cli():
 
     if command == 'create':
         create(params)
-    # elif command == 'wordnet':
-    #     wordnet(params)
-    # elif command == 'wikidata':
-    #     wikidata(params)
-    elif command == 'dbpedia':
-        dbpedia(params)
-    elif command == 'dbpedia_wordnet':
-        dbpedia_wordnet(params)
     elif command == 'info':
         info(params)
     elif command == 'reader_tests':
