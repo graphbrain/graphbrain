@@ -170,17 +170,17 @@ train the model. The training data can be generated with the help of the dataset
 <code class="docutils literal notranslate"><span class="pre">datasets/training_data/hyperedge_generator/parses.txt</span></code>.</p>
 <p>Such parse datasets can be created or extended with the interactive edge builder. For now let’s use the provided one
 to generate the training data:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ gbrain --infile datasets/training_data/hyperedge_generator/parses.txt --outfile cases.txt generate_hypergen_cases
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ graphbrain --infile datasets/training_data/hyperedge_generator/parses.txt --outfile cases.txt generate_hypergen_cases
 </pre></div>
 </div>
 <p>The above command will create the <code class="docutils literal notranslate"><span class="pre">cases.txt</span></code> file on the current directory. We can now use it to train the model:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ gbrain --infile cases.txt learn_hypergen
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ graphbrain --infile cases.txt learn_hypergen
 </pre></div>
 </div>
 <p>This will create the <code class="docutils literal notranslate"><span class="pre">hypergen_random_forest.model</span></code> file on the current directory, which will be used by default by
 the natural language parser.</p>
 <p>You can test the precision of this model with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ gbrain --infile datasets/training_data/hyperedge_generator/parses.txt test_hypergen
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ graphbrain --infile datasets/training_data/hyperedge_generator/parses.txt test_hypergen
 </pre></div>
 </div>
 <p>Notice that the model is trained with 75% of the dataset and its precison is tested with the remaining 25%.</p>
