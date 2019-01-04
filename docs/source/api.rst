@@ -5,17 +5,17 @@ API reference
 generic functions (funs) module
 ===============================
 
-.. automodule:: gb.funs
+.. automodule:: graphbrain.funs
     :members:
 
 
 hypergraph module
 =================
 
-.. automodule:: gb.hypergraph
+.. automodule:: graphbrain.hypergraph
     :members:
 
-.. autoclass:: gb.hypergraph.HyperGraph
+.. autoclass:: graphbrain.hypergraph.HyperGraph
     :members:
 
 backends package
@@ -24,58 +24,58 @@ backends package
 Backend class
 -------------
 
-.. autoclass:: gb.backends.backend.Backend
+.. autoclass:: graphbrain.backends.backend.Backend
     :members:
 
 LevelDB class
 -------------
 
-.. autoclass:: gb.backends.leveldb.LevelDB
+.. autoclass:: graphbrain.backends.leveldb.LevelDB
     :members:
 
 Null class
 ----------
 
-.. autoclass:: gb.backends.null.Null
+.. autoclass:: graphbrain.backends.null.Null
     :members:
 
 reader package
 ==============
 
-.. automodule:: gb.reader
+.. automodule:: graphbrain.reader
 
 Reader class
 ------------
 
-.. autoclass:: gb.reader.reader.Reader
+.. autoclass:: graphbrain.reader.reader.Reader
     :members:
 
 Semantic tree module -- Tree class
 ----------------------------------
 
-.. autoclass:: gb.reader.semantic_tree.Tree
+.. autoclass:: graphbrain.reader.semantic_tree.Tree
     :members:
 
 Semantic tree module -- Element class
 -------------------------------------
 
-.. autoclass:: gb.reader.semantic_tree.Element
+.. autoclass:: graphbrain.reader.semantic_tree.Element
     :members:
 
 Semantic tree module -- Leaf class
 ----------------------------------
 
-.. autoclass:: gb.reader.semantic_tree.Leaf
+.. autoclass:: graphbrain.reader.semantic_tree.Leaf
     :members:
 
 Semantic tree module -- Node class
 ----------------------------------
 
-.. autoclass:: gb.reader.semantic_tree.Node
+.. autoclass:: graphbrain.reader.semantic_tree.Node
     :members:
 
 ParserOutput class
 ------------------
 
-.. autoclass:: gb.reader.parser_output.ParserOutput
+.. autoclass:: graphbrain.reader.parser_output.ParserOutput
     :members:
