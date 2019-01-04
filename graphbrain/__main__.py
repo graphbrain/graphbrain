@@ -3,7 +3,6 @@ import argparse
 from termcolor import colored
 import graphbrain.constants as const
 from graphbrain.hypergraph import HyperGraph
-import graphbrain.reader.reader_tests as rtests
 import graphbrain.reader.stages.hypergen_case_generator as hypergen_cg
 import graphbrain.reader.stages.hypergen as hypergen
 from graphbrain.filters.filters import AllFilter
@@ -27,15 +26,6 @@ def info(params):
     print('edge_symbols: %s' % hg.symbol_count())
     print('edges: %s' % hg.edge_count())
     print('total degree: %s' % hg.total_degree())
-
-
-def reader_tests(params):
-    hg = HyperGraph(params)
-    infile = params['infile']
-    show_namespaces = params['show_namespaces']
-    lang = params['lang']
-    model_file = params['model_file']
-    rtests.reader_tests(hg, infile, show_namespaces, lang=lang, model_file=model_file)
 
 
 def interactive_edge_builder(params):
@@ -118,8 +108,6 @@ def cli():
         create(params)
     elif command == 'info':
         info(params)
-    elif command == 'reader_tests':
-        reader_tests(params)
     elif command == 'interactive_edge_builder':
         interactive_edge_builder(params)
     elif command == 'generate_hypergen_cases':
