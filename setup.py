@@ -81,7 +81,7 @@ setup(
     },
     entry_points='''
         [console_scripts]
-        gbrain=graphbrain.__main__:cli
+        graphbrain=graphbrain.__main__:cli
     ''',
     cmdclass=cmdclass,
     ext_modules=ext_modules,
