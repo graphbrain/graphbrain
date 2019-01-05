@@ -95,8 +95,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#null-class">Null class</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#module-graphbrain.reader">reader package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#reader-class">Reader class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-graphbrain.parsers">parsers package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#stagewiseparser-class">StagewiseParser class</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#semantic-tree-module-tree-class">Semantic tree module – Tree class</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#semantic-tree-module-element-class">Semantic tree module – Element class</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#semantic-tree-module-leaf-class">Semantic tree module – Leaf class</a></li>
@@ -1015,53 +1015,53 @@ Entity can be atomic or an edge.</p>
 
 </div>
 </div>
-<div class="section" id="module-graphbrain.reader">
-<span id="reader-package"></span><h2>reader package<a class="headerlink" href="#module-graphbrain.reader" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="reader-class">
-<h3>Reader class<a class="headerlink" href="#reader-class" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="module-graphbrain.parsers">
+<span id="parsers-package"></span><h2>parsers package<a class="headerlink" href="#module-graphbrain.parsers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="stagewiseparser-class">
+<h3>StagewiseParser class<a class="headerlink" href="#stagewiseparser-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
-<dt id="graphbrain.reader.reader.Reader">
-<em class="property">class </em><code class="descclassname">graphbrain.reader.reader.</code><code class="descname">Reader</code><span class="sig-paren">(</span><em>hg=None</em>, <em>stages=('hypergen-forest'</em>, <em>'disamb-naive'</em>, <em>'merge'</em>, <em>'shallow'</em>, <em>'concepts')</em>, <em>show_namespaces=False</em>, <em>lang='en'</em>, <em>model_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/reader/reader.html#Reader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.reader.reader.Reader" title="Permalink to this definition">¶</a></dt>
+<dt id="graphbrain.parsers.StagewiseParser">
+<em class="property">class </em><code class="descclassname">graphbrain.parsers.</code><code class="descname">StagewiseParser</code><span class="sig-paren">(</span><em>hg=None</em>, <em>stages=('hypergen-forest'</em>, <em>'disamb-naive'</em>, <em>'merge'</em>, <em>'shallow'</em>, <em>'concepts')</em>, <em>show_namespaces=False</em>, <em>lang='en'</em>, <em>model_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/parsers/stagewise_parser.html#StagewiseParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.StagewiseParser" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
 <div class="section" id="semantic-tree-module-tree-class">
 <h3>Semantic tree module – Tree class<a class="headerlink" href="#semantic-tree-module-tree-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
-<dt id="graphbrain.reader.semantic_tree.Tree">
-<em class="property">class </em><code class="descclassname">graphbrain.reader.semantic_tree.</code><code class="descname">Tree</code><span class="sig-paren">(</span><em>elem=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/reader/semantic_tree.html#Tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.reader.semantic_tree.Tree" title="Permalink to this definition">¶</a></dt>
+<dt id="graphbrain.parsers.semantic_tree.Tree">
+<em class="property">class </em><code class="descclassname">graphbrain.parsers.semantic_tree.</code><code class="descname">Tree</code><span class="sig-paren">(</span><em>elem=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/parsers/semantic_tree.html#Tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.semantic_tree.Tree" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
 <div class="section" id="semantic-tree-module-element-class">
 <h3>Semantic tree module – Element class<a class="headerlink" href="#semantic-tree-module-element-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
-<dt id="graphbrain.reader.semantic_tree.Element">
-<em class="property">class </em><code class="descclassname">graphbrain.reader.semantic_tree.</code><code class="descname">Element</code><a class="reference internal" href="_modules/graphbrain/reader/semantic_tree.html#Element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.reader.semantic_tree.Element" title="Permalink to this definition">¶</a></dt>
+<dt id="graphbrain.parsers.semantic_tree.Element">
+<em class="property">class </em><code class="descclassname">graphbrain.parsers.semantic_tree.</code><code class="descname">Element</code><a class="reference internal" href="_modules/graphbrain/parsers/semantic_tree.html#Element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.semantic_tree.Element" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
 <div class="section" id="semantic-tree-module-leaf-class">
 <h3>Semantic tree module – Leaf class<a class="headerlink" href="#semantic-tree-module-leaf-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
-<dt id="graphbrain.reader.semantic_tree.Leaf">
-<em class="property">class </em><code class="descclassname">graphbrain.reader.semantic_tree.</code><code class="descname">Leaf</code><span class="sig-paren">(</span><em>token</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/reader/semantic_tree.html#Leaf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.reader.semantic_tree.Leaf" title="Permalink to this definition">¶</a></dt>
+<dt id="graphbrain.parsers.semantic_tree.Leaf">
+<em class="property">class </em><code class="descclassname">graphbrain.parsers.semantic_tree.</code><code class="descname">Leaf</code><span class="sig-paren">(</span><em>token</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/parsers/semantic_tree.html#Leaf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.semantic_tree.Leaf" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
 <div class="section" id="semantic-tree-module-node-class">
 <h3>Semantic tree module – Node class<a class="headerlink" href="#semantic-tree-module-node-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
-<dt id="graphbrain.reader.semantic_tree.Node">
-<em class="property">class </em><code class="descclassname">graphbrain.reader.semantic_tree.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>children_ids=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/reader/semantic_tree.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.reader.semantic_tree.Node" title="Permalink to this definition">¶</a></dt>
+<dt id="graphbrain.parsers.semantic_tree.Node">
+<em class="property">class </em><code class="descclassname">graphbrain.parsers.semantic_tree.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>children_ids=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/parsers/semantic_tree.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.semantic_tree.Node" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
 <div class="section" id="parseroutput-class">
 <h3>ParserOutput class<a class="headerlink" href="#parseroutput-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
-<dt id="graphbrain.reader.parser_output.ParserOutput">
-<em class="property">class </em><code class="descclassname">graphbrain.reader.parser_output.</code><code class="descname">ParserOutput</code><span class="sig-paren">(</span><em>sentence</em>, <em>tree</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/reader/parser_output.html#ParserOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.reader.parser_output.ParserOutput" title="Permalink to this definition">¶</a></dt>
+<dt id="graphbrain.parsers.parser_output.ParserOutput">
+<em class="property">class </em><code class="descclassname">graphbrain.parsers.parser_output.</code><code class="descname">ParserOutput</code><span class="sig-paren">(</span><em>sentence</em>, <em>tree</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/parsers/parser_output.html#ParserOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.parser_output.ParserOutput" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
