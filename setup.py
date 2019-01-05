@@ -57,6 +57,7 @@ setup(
         'Topic :: Scientific/Engineering :: Information Analysis',
         'Topic :: Sociology'
     ],
+    python_requires='>=3.3',
     packages=find_packages(),
     package_data=PACKAGE_DATA,
     install_requires=[
