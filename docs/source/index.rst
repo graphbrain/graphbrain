@@ -1,5 +1,5 @@
-GraphBrain -- Knowledge Hypergraphs
-===================================
+GraphBrain -- Knowledge System + Natural Language Understanding
+===============================================================
 
 GraphBrain is a set of research tools aimed at text understanding and the exploration of knowledge. Its purpose is to
 facilitate experiments with novel ways to extract and analyze the knowledge contained in human-produced text.
