@@ -2,16 +2,10 @@ import logging
 from graphbrain.funs import *
 from graphbrain.nlp.parser import Parser
 from graphbrain.sense.disambiguation import Disambiguation
-from graphbrain.reader.stages.hypergen import Hypergen
-from graphbrain.reader.stages.disamb import Disamb
-from graphbrain.reader.stages.disamb_simple import DisambSimple
-from graphbrain.reader.stages.disamb_naive import DisambNaive
-from graphbrain.reader.stages.merge import Merge
-from graphbrain.reader.stages.shallow import Shallow
-from graphbrain.reader.stages.concepts import Concepts
+from graphbrain.parsers.stages import *
 
 
-class Reader(object):
+class StagewiseParser(object):
     def __init__(self, hg=None, stages=('hypergen-forest', 'disamb-naive', 'merge', 'shallow', 'concepts'),
                  show_namespaces=False, lang='en', model_file=None):
         self.hg = hg

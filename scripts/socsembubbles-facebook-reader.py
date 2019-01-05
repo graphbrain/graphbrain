@@ -4,13 +4,13 @@
 import json
 import time
 from graphbrain.funs import *
-from graphbrain.reader.reader import Reader
+from graphbrain.parsers.stagewise_parser import StagewiseParser
 
 
 class FacebookReader(object):
     def __init__(self, hg):
         self.hg = hg
-        self.extractor = Reader(hg, stages=('alpha-forest', 'beta-naive', 'gamma', 'delta', 'epsilon'))
+        self.extractor = StagewiseParser(hg, stages=('alpha-forest', 'beta-naive', 'gamma', 'delta', 'epsilon'))
         self.main_edges = 0
         self.extra_edges = 0
         self.ignored = 0

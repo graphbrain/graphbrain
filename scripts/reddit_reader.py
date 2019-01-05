@@ -3,7 +3,7 @@ import json
 import argparse
 from graphbrain.hypergraph import HyperGraph
 from graphbrain.funs import *
-from graphbrain.reader.reader import Reader
+from graphbrain.parsers.stagewise_parser import StagewiseParser
 
 
 def comments_to_text(comments):
@@ -28,7 +28,7 @@ class RedditReader(object):
     def __init__(self, hg, comments):
         self.hg = hg
         self.comments = comments
-        self.reader = Reader(hg)
+        self.reader = StagewiseParser(hg)
         self.main_edges = 0
         self.extra_edges = 0
         self.ignored = 0

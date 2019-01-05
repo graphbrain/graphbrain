@@ -3,7 +3,7 @@ import logging
 from graphbrain.funs import *
 import graphbrain.constants as const
 from graphbrain.sense.candidate_metrics import CandidateMetrics
-from graphbrain.reader.predicates import Predicates
+from graphbrain.parsers.predicates import Predicates
 
 
 def is_compound_by_entity_type(node):

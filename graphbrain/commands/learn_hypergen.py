@@ -1,4 +1,4 @@
-import graphbrain.reader.stages.hypergen as hypergen
+import graphbrain.parsers.stages.hypergen as hypergen
 
 
 def run(params):
