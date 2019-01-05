@@ -39,43 +39,43 @@ Null class
 .. autoclass:: graphbrain.backends.null.Null
     :members:
 
-reader package
-==============
+parsers package
+===============
 
-.. automodule:: graphbrain.reader
+.. automodule:: graphbrain.parsers
 
-Reader class
-------------
+StagewiseParser class
+---------------------
 
-.. autoclass:: graphbrain.reader.reader.Reader
+.. autoclass:: graphbrain.parsers.StagewiseParser
     :members:
 
 Semantic tree module -- Tree class
 ----------------------------------
 
-.. autoclass:: graphbrain.reader.semantic_tree.Tree
+.. autoclass:: graphbrain.parsers.semantic_tree.Tree
     :members:
 
 Semantic tree module -- Element class
 -------------------------------------
 
-.. autoclass:: graphbrain.reader.semantic_tree.Element
+.. autoclass:: graphbrain.parsers.semantic_tree.Element
     :members:
 
 Semantic tree module -- Leaf class
 ----------------------------------
 
-.. autoclass:: graphbrain.reader.semantic_tree.Leaf
+.. autoclass:: graphbrain.parsers.semantic_tree.Leaf
     :members:
 
 Semantic tree module -- Node class
 ----------------------------------
 
-.. autoclass:: graphbrain.reader.semantic_tree.Node
+.. autoclass:: graphbrain.parsers.semantic_tree.Node
     :members:
 
 ParserOutput class
 ------------------
 
-.. autoclass:: graphbrain.reader.parser_output.ParserOutput
+.. autoclass:: graphbrain.parsers.parser_output.ParserOutput
     :members:
