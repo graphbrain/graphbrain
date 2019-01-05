@@ -7,9 +7,46 @@ from sklearn.ensemble import RandomForestClassifier
 import graphbrain.nlp.constants as nlp_consts
 from graphbrain.nlp.parser import Parser
 from graphbrain.nlp.sentence import Sentence
-from graphbrain.reader.semantic_tree import Position, Tree
-from graphbrain.reader.parser_output import ParserOutput
-import graphbrain.reader.stages.hypergen_transformation as hgtransf
+from graphbrain.parsers.semantic_tree import Position, Tree
+from graphbrain.parsers.parser_output import ParserOutput
+
+
+IGNORE, APPLY_HYPEREDGE, NEST_HYPEREDGE, APPLY_TOKEN, NEST_TOKEN, HEAD = range(6)
+
+
+def apply_transformation(parent, root, child_id, pos, transf):
+    if transf == IGNORE:
+        pass
+    elif transf == APPLY_HYPEREDGE:
+        if pos == Position.LEFT:
+            parent.apply_head(child_id)
+        else:
+            parent.apply_tail(child_id)
+    elif transf == NEST_HYPEREDGE:
+        parent.nest(child_id)
+    elif transf == APPLY_TOKEN:
+        root.apply_tail(child_id)
+    elif transf == NEST_TOKEN:
+        root.nest(child_id)
+    elif transf == HEAD:
+        parent.reverse_apply(child_id)
+
+
+def transformation_to_string(transf):
+    if transf == IGNORE:
+        return 'ignore'
+    elif transf == APPLY_HYPEREDGE:
+        return 'apply hyperedge'
+    elif transf == NEST_HYPEREDGE:
+        return 'nest hyperedge'
+    elif transf == APPLY_TOKEN:
+        return 'apply token'
+    elif transf == NEST_TOKEN:
+        return 'nest token'
+    elif transf == HEAD:
+        return 'head'
+    else:
+        return '?'
 
 
 CASE_FIELDS = ('transformation', 'child_pos', 'child_dep', 'child_tag', 'parent_pos', 'parent_dep', 'parent_tag',
@@ -261,20 +298,20 @@ class Hypergen(object):
                 test_tree = parent.tree.clone()
                 test_parent = test_tree.get(parent.id)
                 test_root = test_tree.token2leaf(parent_token)
-                hgtransf.apply(test_parent, test_root, elem_id, position, transf)
-                hgtransf.apply(parent, root, elem_id, position, self.transfs[0])
+                apply_transformation(test_parent, test_root, elem_id, position, transf)
+                apply_transformation(parent, root, elem_id, position, self.transfs[0])
                 self.test_predictions[transf] += 1
                 if str(parent) != str(test_parent):
                     # print('%s <- %s' % (parent_token, token))
                     # print('%s <- %s' % (parent, child))
                     print('predicted: %s; should be: %s'
-                          % (hgtransf.to_string(transf), hgtransf.to_string(self.transfs[0])))
+                          % (transformation_to_string(transf), transformation_to_string(self.transfs[0])))
                     self.wrong += 1
                     transf = self.transfs[0]
                 self.transfs = self.transfs[1:]
                 self.test_true_values[transf] += 1
             else:
-                hgtransf.apply(parent, root, elem_id, position, transf)
+                apply_transformation(parent, root, elem_id, position, transf)
 
         return elem_id, transf
 
@@ -320,10 +357,10 @@ def test(infile, model_type='rf', model_file=None):
 
     print('PREDICTIONS:')
     for transf in acc_predictions:
-        print('%s: %s' % (hgtransf.to_string(transf), acc_predictions[transf]))
+        print('%s: %s' % (transformation_to_string(transf), acc_predictions[transf]))
     print('TRUE_VALUES:')
     for transf in acc_true_values:
-        print('%s: %s' % (hgtransf.to_string(transf), acc_true_values[transf]))
+        print('%s: %s' % (transformation_to_string(transf), acc_true_values[transf]))
 
     error_rate = (float(acc_wrong) / float(acc_total)) * 100.
     print('error rate: %.3f%%' % error_rate)

@@ -1,5 +1,5 @@
-from graphbrain.reader.semantic_tree import Position
-from graphbrain.reader.predicates import Predicates
+from graphbrain.parsers.semantic_tree import Position
+from graphbrain.parsers.predicates import Predicates
 
 
 class Merge(object):

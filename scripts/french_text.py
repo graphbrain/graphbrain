@@ -1,14 +1,14 @@
 import io
 from graphbrain.hypergraph import HyperGraph
 from graphbrain.funs import *
-from graphbrain.reader.reader import Reader
+from graphbrain.parsers.stagewise_parser import StagewiseParser
 
 
 if __name__ == '__main__':
     filename = 'nuclear.txt'
     hg = HyperGraph({'backend': 'leveldb', 'hg': 'nuclear.hg'})
 
-    reader = Reader(hg, lang='fr', model_file='hypergen_random_forest_fr.model')
+    reader = StagewiseParser(hg, lang='fr', model_file='hypergen_random_forest_fr.model')
 
     lines = 0
     main_edges = 0

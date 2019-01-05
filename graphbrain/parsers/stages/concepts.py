@@ -1,7 +1,7 @@
 from graphbrain.nlp.nlp_token import Token
 from graphbrain.funs import *
 import graphbrain.constants as cons
-from graphbrain.reader.predicates import Predicates
+from graphbrain.parsers.predicates import Predicates
 
 
 class Concepts(object):

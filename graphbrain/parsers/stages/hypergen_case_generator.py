@@ -1,11 +1,7 @@
 import traceback
 from termcolor import colored
 from graphbrain.funs import *
-from graphbrain.nlp.parser import Parser
-from graphbrain.nlp.sentence import Sentence
-from graphbrain.reader.semantic_tree import Tree, Position
-import graphbrain.reader.stages.hypergen_transformation as hgtransf
-from graphbrain.reader.stages.hypergen import expanded_fields, build_case, read_parses
+from graphbrain.parsers.stages.hypergen import *
 
 
 def test_transformation(parent, parent_token, child, position, transf):
@@ -13,7 +9,7 @@ def test_transformation(parent, parent_token, child, position, transf):
     test_tree.import_element(child)
     test_parent = test_tree.root()
     test_root = test_tree.token2leaf(parent_token)
-    hgtransf.apply(test_parent, test_root, child.id, position, transf)
+    apply_transformation(test_parent, test_root, child.id, position, transf)
     return test_tree.to_hyperedge_str(with_namespaces=False)
 
 
@@ -49,35 +45,35 @@ class CaseGenerator(object):
 
         self.transformation_outcomes = []
 
-        self.show_option('i', 'IGNORE', parent, parent_token, child, position, hgtransf.IGNORE)
-        self.show_option('a', 'APPLY NODE', parent, parent_token, child, position, hgtransf.APPLY_HYPEREDGE)
-        self.show_option('n', 'NEST NODE', parent, parent_token, child, position, hgtransf.NEST_HYPEREDGE)
-        self.show_option('p', 'APPEND', parent, parent_token, child, position, hgtransf.HEAD)
-        self.show_option('ar', 'APPLY ROOT', parent, parent_token, child, position, hgtransf.APPLY_TOKEN)
-        self.show_option('nr', 'NEST ROOT', parent, parent_token, child, position, hgtransf.NEST_TOKEN)
+        self.show_option('i', 'IGNORE', parent, parent_token, child, position, IGNORE)
+        self.show_option('a', 'APPLY NODE', parent, parent_token, child, position, APPLY_HYPEREDGE)
+        self.show_option('n', 'NEST NODE', parent, parent_token, child, position, NEST_HYPEREDGE)
+        self.show_option('p', 'APPEND', parent, parent_token, child, position, HEAD)
+        self.show_option('ar', 'APPLY ROOT', parent, parent_token, child, position, APPLY_TOKEN)
+        self.show_option('nr', 'NEST ROOT', parent, parent_token, child, position, NEST_TOKEN)
 
         print('\n0) RESTART    x) ABORT')
 
         choice = input('> ').lower()
 
         if choice == 'i':
-            return hgtransf.IGNORE
+            return IGNORE
         if choice == 'a':
-            return hgtransf.APPLY_HYPEREDGE
+            return APPLY_HYPEREDGE
         if choice == 'n':
-            return hgtransf.NEST_HYPEREDGE
+            return NEST_HYPEREDGE
         if choice == 'ar':
-            return hgtransf.APPLY_TOKEN
+            return APPLY_TOKEN
         if choice == 'nr':
-            return hgtransf.NEST_TOKEN
+            return NEST_TOKEN
         if choice == 'p':
-            return hgtransf.HEAD
+            return HEAD
         if choice == '0':
             self.restart = True
-            return hgtransf.IGNORE
+            return IGNORE
         if choice == 'x':
             self.abort = True
-            return hgtransf.IGNORE
+            return IGNORE
         else:
             print('unknown choice: "%s". ignoring' % choice)
             return self.choose_transformation(parent, parent_token, child, position)
@@ -119,8 +115,8 @@ class CaseGenerator(object):
             print('%s <- %s' % (parent_token.word, token.word))
             print('%s <- %s' % (parent, self.tree.get(elem_id)))
             print(root)
-            print(hgtransf.to_string(transf))
-            hgtransf.apply(parent, root, elem_id, position, transf)
+            print(transformation_to_string(transf))
+            apply_transformation(parent, root, elem_id, position, transf)
             print(self.tree.get(parent_id))
             print()
 
