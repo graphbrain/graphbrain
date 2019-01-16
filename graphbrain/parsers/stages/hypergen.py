@@ -156,7 +156,7 @@ def build_case(parent, child, parent_token, child_token, position):
 
     # edge depths, tags and dependencies
     set_case_fields_edge(child, case, 'child_edge')
-    set_case_fields_edge(parent, case, 'child_parent')
+    set_case_fields_edge(parent, case, 'parent_edge')
 
     # all tags and dependencies
     entity2case(parent, case, 'parent')
