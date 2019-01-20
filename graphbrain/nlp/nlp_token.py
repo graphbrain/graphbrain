@@ -39,6 +39,8 @@ class Token:
         self.separator = False
         self.position_in_sentence = -1
         self.vector = None
+        self.prev = None
+        self.next = None
 
     def to_dict(self):
         token_dict = {
