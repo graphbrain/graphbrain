@@ -264,6 +264,7 @@ class Hypergen(object):
         values = [[case[field] for field in fields[1:]]]
         data = np.asarray(values, dtype='float64')
         if self.model_type == 'nn':
+            # WARNING: outdated, needs work!
             output = self.nn.predict(data)[0]
             max_out = 0.
             transf = -1
@@ -273,8 +274,9 @@ class Hypergen(object):
                     transf = i
             return transf
         elif self.model_type == 'rf':
-            pred = self.rf.predict(data)
-            return pred[0]
+            probs = self.rf.predict_proba(data)
+            transfs = np.argsort(probs)[0][::-1]
+            return transfs[0]
 
     def process_token(self, token, parent_token=None, parent_id=None, position=None, testing=False):
         elem = self.tree.create_leaf(token)
@@ -301,7 +303,8 @@ class Hypergen(object):
                 apply_transformation(test_parent, test_root, elem_id, position, transf)
                 apply_transformation(parent, root, elem_id, position, self.transfs[0])
                 self.test_predictions[transf] += 1
-                if str(parent) != str(test_parent):
+                # if str(parent) != str(test_parent):
+                if transf != self.transfs[0]:
                     # print('%s <- %s' % (parent_token, token))
                     # print('%s <- %s' % (parent, child))
                     print('predicted: %s; should be: %s'
