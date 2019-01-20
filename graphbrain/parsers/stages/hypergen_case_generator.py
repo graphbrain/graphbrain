@@ -1,7 +1,6 @@
 import traceback
 from termcolor import colored
-from graphbrain.funs import *
-from graphbrain.parsers.stages.hypergen import *
+from .hypergen import *
 
 
 def test_transformation(parent, parent_token, child, position, transf):
@@ -46,6 +45,7 @@ class CaseGenerator(object):
         self.transformation_outcomes = []
 
         self.show_option('i', 'IGNORE', parent, parent_token, child, position, IGNORE)
+        self.show_option('s', 'SEQUENCE', parent, parent_token, child, position, SEQ)
         self.show_option('a', 'APPLY NODE', parent, parent_token, child, position, APPLY_HYPEREDGE)
         self.show_option('n', 'NEST NODE', parent, parent_token, child, position, NEST_HYPEREDGE)
         self.show_option('p', 'APPEND', parent, parent_token, child, position, HEAD)
@@ -58,6 +58,8 @@ class CaseGenerator(object):
 
         if choice == 'i':
             return IGNORE
+        if choice == 's':
+            return SEQ
         if choice == 'a':
             return APPLY_HYPEREDGE
         if choice == 'n':

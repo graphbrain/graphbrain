@@ -4,37 +4,21 @@ import pkg_resources
 import pickle
 from collections import Counter
 from sklearn.ensemble import RandomForestClassifier
-import graphbrain.nlp.constants as nlp_consts
-from graphbrain.nlp.parser import Parser
-from graphbrain.nlp.sentence import Sentence
-from graphbrain.parsers.semantic_tree import Position, Tree
-from graphbrain.parsers.parser_output import ParserOutput
+from ...nlp import constants as nlp_consts
+from ...nlp.parser import Parser
+from ...nlp.sentence import Sentence
+from ..semantic_tree import Position, Tree
+from ..parser_output import ParserOutput
 
 
-IGNORE, APPLY_HYPEREDGE, NEST_HYPEREDGE, APPLY_TOKEN, NEST_TOKEN, HEAD = range(6)
-
-
-def apply_transformation(parent, root, child_id, pos, transf):
-    if transf == IGNORE:
-        pass
-    elif transf == APPLY_HYPEREDGE:
-        if pos == Position.LEFT:
-            parent.apply_head(child_id)
-        else:
-            parent.apply_tail(child_id)
-    elif transf == NEST_HYPEREDGE:
-        parent.nest(child_id)
-    elif transf == APPLY_TOKEN:
-        root.apply_tail(child_id)
-    elif transf == NEST_TOKEN:
-        root.nest(child_id)
-    elif transf == HEAD:
-        parent.reverse_apply(child_id)
+IGNORE, APPLY_HYPEREDGE, NEST_HYPEREDGE, APPLY_TOKEN, NEST_TOKEN, HEAD, SEQ = range(7)
 
 
 def transformation_to_string(transf):
     if transf == IGNORE:
         return 'ignore'
+    elif transf == SEQ:
+        return 'sequence'
     elif transf == APPLY_HYPEREDGE:
         return 'apply hyperedge'
     elif transf == NEST_HYPEREDGE:
@@ -236,6 +220,10 @@ def learn(infile, outfile=None, model_type='rf'):
 
 
 def transformation_is_valid(transf, parent, child, parent_token, child_token, position):
+    if transf != SEQ:
+        return True
+
+    # TODO
     return True
 
 
@@ -286,6 +274,32 @@ class Hypergen(object):
                     return transf
             raise RuntimeError('Hypergenerator: no valid transformation found.')
 
+    def apply_transformation(self, parent, root, child_id, pos, transf):
+        if transf == IGNORE:
+            pass
+        elif transf == SEQ:
+            # TODO
+            child = self.tree.get(child_id)
+            if child.is_leaf():
+                child.create_sequence(parent)
+            elif parent.is_leaf():
+                parent.create_sequence(child)
+            else:
+                raise RuntimeError('Hypergen: attempting to apply sequence transformation to two non-leafs.')
+        elif transf == APPLY_HYPEREDGE:
+            if pos == Position.LEFT:
+                parent.apply_head(child_id)
+            else:
+                parent.apply_tail(child_id)
+        elif transf == NEST_HYPEREDGE:
+            parent.nest(child_id)
+        elif transf == APPLY_TOKEN:
+            root.apply_tail(child_id)
+        elif transf == NEST_TOKEN:
+            root.nest(child_id)
+        elif transf == HEAD:
+            parent.reverse_apply(child_id)
+
     def process_token(self, token, parent_token=None, parent_id=None, position=None, testing=False):
         elem = self.tree.create_leaf(token)
         elem_id = elem.id
@@ -308,8 +322,8 @@ class Hypergen(object):
                 test_tree = parent.tree.clone()
                 test_parent = test_tree.get(parent.id)
                 test_root = test_tree.token2leaf(parent_token)
-                apply_transformation(test_parent, test_root, elem_id, position, transf)
-                apply_transformation(parent, root, elem_id, position, self.transfs[0])
+                self.apply_transformation(test_parent, test_root, elem_id, position, transf)
+                self.apply_transformation(parent, root, elem_id, position, self.transfs[0])
                 self.test_predictions[transf] += 1
                 # if str(parent) != str(test_parent):
                 if transf != self.transfs[0]:
@@ -322,7 +336,7 @@ class Hypergen(object):
                 self.transfs = self.transfs[1:]
                 self.test_true_values[transf] += 1
             else:
-                apply_transformation(parent, root, elem_id, position, transf)
+                self.apply_transformation(parent, root, elem_id, position, transf)
 
         return elem_id, transf
 

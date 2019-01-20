@@ -1,4 +1,4 @@
-from graphbrain.funs import *
+from .. import funs
 
 
 LEAF = 0
@@ -109,7 +109,7 @@ class Tree(object):
         return self.root().to_hyperedge(with_namespaces=with_namespaces)
 
     def to_hyperedge_str(self, with_namespaces=True):
-        return edge2str(self.to_hyperedge(with_namespaces=with_namespaces))
+        return funs.edge2str(self.to_hyperedge(with_namespaces=with_namespaces))
 
     def token2leaf(self, token):
         return self.get(self.token2leaf_id[token])
@@ -289,9 +289,9 @@ class Leaf(Element):
     # override
     def to_hyperedge(self, with_namespaces=True):
         if not with_namespaces:
-            s = str2symbol(self.token.word)
+            s = funs.str2symbol(self.token.word)
         else:
-            s = build_symbol(self.token.word, self.namespace)
+            s = funs.build_symbol(self.token.word, self.namespace)
         if self.connector:
             s = '+%s' % s
         return s
@@ -332,6 +332,10 @@ class Leaf(Element):
     def nest(self, child_id):
         node = self.tree.enclose(self)
         node.nest(child_id)
+
+    def create_sequence(self, element):
+        # xpto
+        pass
 
     # override
     def __eq__(self, other):

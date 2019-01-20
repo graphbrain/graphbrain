@@ -62,8 +62,13 @@ class Parser:
         for span in parsed_data.sents:
             sentence_text = text[span.start_char:span.end_char].strip()
             token_seq = [self.__spacy2token(parsed_data[i]) for i in range(span.start, span.end)]
-            for i in range(len(token_seq)):
+            sent_len = len(token_seq)
+            for i in range(sent_len):
                 token_seq[i].position_in_sentence = i
+                if i > 0:
+                    token_seq[i].prev = token_seq[i - 1]
+                if i < sent_len - 1:
+                    token_seq[i].next = token_seq[i + 1]
             sents.append((sentence_text, Sentence(token_seq)))
 
         return sents
