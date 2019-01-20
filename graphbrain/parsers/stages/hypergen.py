@@ -235,6 +235,10 @@ def learn(infile, outfile=None, model_type='rf'):
         raise ValueError('unknown machine learning model type: %s' % model_type)
 
 
+def transformation_is_valid(transf, parent, child, parent_token, child_token, position):
+    return True
+
+
 class Hypergen(object):
     def __init__(self, model_file=None, model_type='rf'):
         self.name = 'hypergen'
@@ -276,7 +280,11 @@ class Hypergen(object):
         elif self.model_type == 'rf':
             probs = self.rf.predict_proba(data)
             transfs = np.argsort(probs)[0][::-1]
-            return transfs[0]
+            for i in range(len(transfs)):
+                transf = transfs[i]
+                if transformation_is_valid(transf, parent, child, parent_token, child_token, position):
+                    return transf
+            raise RuntimeError('Hypergenerator: no valid transformation found.')
 
     def process_token(self, token, parent_token=None, parent_id=None, position=None, testing=False):
         elem = self.tree.create_leaf(token)
