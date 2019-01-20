@@ -219,12 +219,61 @@ def learn(infile, outfile=None, model_type='rf'):
         raise ValueError('unknown machine learning model type: %s' % model_type)
 
 
-def transformation_is_valid(transf, parent, child, parent_token, child_token, position):
+def transformation_is_valid(transf, parent, child):
+    # ony SEQ needs checking
     if transf != SEQ:
         return True
 
-    # TODO
-    return True
+    # conditions for SEQ to be possible
+    if parent.is_leaf():
+        if child.find_token_leaf(parent.token.prev):
+            return True
+        if child.find_token_leaf(parent.token.next):
+            return True
+    elif child.is_leaf():
+        if parent.find_token_leaf(child.token.prev):
+            return True
+        if parent.find_token_leaf(child.token.next):
+            return True
+
+    # otherwise, invalid
+    return False
+
+
+def apply_transformation(tree, parent, root, child_id, pos, transf):
+    if transf == IGNORE:
+        pass
+    elif transf == SEQ:
+        child = tree.get(child_id)
+        parent_is_leaf = parent.is_leaf()
+        child_is_leaf = child.is_leaf()
+        if parent_is_leaf:
+            if child_is_leaf:
+                parent.create_sequence(child)
+            else:
+                parent_id = parent.id
+                # update parent to new id
+                tree.add(parent)
+                parent.create_sequence(child, change_target=True)
+                # parent should now point to outer child
+                tree.set(parent_id, child)
+        elif child_is_leaf:  # parent is not leaf
+            child.create_sequence(parent, change_target=True)
+        else:
+            raise RuntimeError('Hypergen: attempting to apply sequence transformation to two non-leafs.')
+    elif transf == APPLY_HYPEREDGE:
+        if pos == Position.LEFT:
+            parent.apply_head(child_id)
+        else:
+            parent.apply_tail(child_id)
+    elif transf == NEST_HYPEREDGE:
+        parent.nest(child_id)
+    elif transf == APPLY_TOKEN:
+        root.apply_tail(child_id)
+    elif transf == NEST_TOKEN:
+        root.nest(child_id)
+    elif transf == HEAD:
+        parent.reverse_apply(child_id)
 
 
 class Hypergen(object):
@@ -270,35 +319,9 @@ class Hypergen(object):
             transfs = np.argsort(probs)[0][::-1]
             for i in range(len(transfs)):
                 transf = transfs[i]
-                if transformation_is_valid(transf, parent, child, parent_token, child_token, position):
+                if transformation_is_valid(transf, parent, child):
                     return transf
             raise RuntimeError('Hypergenerator: no valid transformation found.')
-
-    def apply_transformation(self, parent, root, child_id, pos, transf):
-        if transf == IGNORE:
-            pass
-        elif transf == SEQ:
-            # TODO
-            child = self.tree.get(child_id)
-            if child.is_leaf():
-                child.create_sequence(parent)
-            elif parent.is_leaf():
-                parent.create_sequence(child)
-            else:
-                raise RuntimeError('Hypergen: attempting to apply sequence transformation to two non-leafs.')
-        elif transf == APPLY_HYPEREDGE:
-            if pos == Position.LEFT:
-                parent.apply_head(child_id)
-            else:
-                parent.apply_tail(child_id)
-        elif transf == NEST_HYPEREDGE:
-            parent.nest(child_id)
-        elif transf == APPLY_TOKEN:
-            root.apply_tail(child_id)
-        elif transf == NEST_TOKEN:
-            root.nest(child_id)
-        elif transf == HEAD:
-            parent.reverse_apply(child_id)
 
     def process_token(self, token, parent_token=None, parent_id=None, position=None, testing=False):
         elem = self.tree.create_leaf(token)
@@ -322,8 +345,8 @@ class Hypergen(object):
                 test_tree = parent.tree.clone()
                 test_parent = test_tree.get(parent.id)
                 test_root = test_tree.token2leaf(parent_token)
-                self.apply_transformation(test_parent, test_root, elem_id, position, transf)
-                self.apply_transformation(parent, root, elem_id, position, self.transfs[0])
+                apply_transformation(test_tree, test_parent, test_root, elem_id, position, transf)
+                apply_transformation(self.tree, parent, root, elem_id, position, self.transfs[0])
                 self.test_predictions[transf] += 1
                 # if str(parent) != str(test_parent):
                 if transf != self.transfs[0]:
@@ -336,7 +359,7 @@ class Hypergen(object):
                 self.transfs = self.transfs[1:]
                 self.test_true_values[transf] += 1
             else:
-                self.apply_transformation(parent, root, elem_id, position, transf)
+                apply_transformation(self.tree, parent, root, elem_id, position, transf)
 
         return elem_id, transf
 
