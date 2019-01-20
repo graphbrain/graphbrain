@@ -1,15 +1,16 @@
 import traceback
 from termcolor import colored
+from ... import funs
 from .hypergen import *
 
 
-def test_transformation(parent, parent_token, child, position, transf):
-    test_tree = Tree(parent)
-    test_tree.import_element(child)
-    test_parent = test_tree.root()
+def test_transformation(tree, parent, parent_token, child, position, transf):
+    test_tree = tree.clone()
+    test_parent = test_tree.get(parent.id)
     test_root = test_tree.token2leaf(parent_token)
-    apply_transformation(test_parent, test_root, child.id, position, transf)
-    return test_tree.to_hyperedge_str(with_namespaces=False)
+    apply_transformation(test_tree, test_parent, test_root, child.id, position, transf)
+    test_parent = test_tree.get(parent.id)
+    return funs.edge2str(test_parent.to_hyperedge(with_namespaces=False))
 
 
 class CaseGenerator(object):
@@ -28,7 +29,7 @@ class CaseGenerator(object):
         self.transformation_outcomes = None
 
     def show_option(self, key, name, parent, parent_token, child, position, transf):
-        res = test_transformation(parent, parent_token, child, position, transf)
+        res = test_transformation(self.tree, parent, parent_token, child, position, transf)
         if res not in self.transformation_outcomes:
             self.transformation_outcomes.append(res)
             print(colored(key, 'cyan'), end='')
@@ -45,12 +46,13 @@ class CaseGenerator(object):
         self.transformation_outcomes = []
 
         self.show_option('i', 'IGNORE', parent, parent_token, child, position, IGNORE)
-        self.show_option('s', 'SEQUENCE', parent, parent_token, child, position, SEQ)
         self.show_option('a', 'APPLY NODE', parent, parent_token, child, position, APPLY_HYPEREDGE)
         self.show_option('n', 'NEST NODE', parent, parent_token, child, position, NEST_HYPEREDGE)
         self.show_option('p', 'APPEND', parent, parent_token, child, position, HEAD)
         self.show_option('ar', 'APPLY ROOT', parent, parent_token, child, position, APPLY_TOKEN)
         self.show_option('nr', 'NEST ROOT', parent, parent_token, child, position, NEST_TOKEN)
+        if transformation_is_valid(SEQ, parent, child):
+            self.show_option('s', 'SEQUENCE', parent, parent_token, child, position, SEQ)
 
         print('\n0) RESTART    x) ABORT')
 
@@ -118,7 +120,7 @@ class CaseGenerator(object):
             print('%s <- %s' % (parent, self.tree.get(elem_id)))
             print(root)
             print(transformation_to_string(transf))
-            apply_transformation(parent, root, elem_id, position, transf)
+            apply_transformation(self.tree, parent, root, elem_id, position, transf)
             print(self.tree.get(parent_id))
             print()
 

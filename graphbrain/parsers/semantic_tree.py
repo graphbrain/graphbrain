@@ -194,6 +194,9 @@ class Element(object):
     def all_tokens(self):
         raise NotImplementedError()
 
+    def find_token_leaf(self, token):
+        raise NotImplementedError()
+
     def insert(self, child_id, pos):
         raise NotImplementedError()
 
@@ -309,6 +312,13 @@ class Leaf(Element):
         return [self.token]
 
     # override
+    def find_token_leaf(self, token):
+        if self.token == token:
+            return self
+        else:
+            return None
+
+    # override
     def insert(self, child_id, pos):
         node = self.tree.enclose(self)
         node.insert(child_id, pos)
@@ -333,9 +343,21 @@ class Leaf(Element):
         node = self.tree.enclose(self)
         node.nest(child_id)
 
-    def create_sequence(self, element):
-        # xpto
-        pass
+    def create_sequence(self, element, change_target=False):
+        prev_leaf = element.find_token_leaf(self.token.prev)
+        if prev_leaf:
+            if change_target:
+                prev_leaf.apply_tail(self.id)
+            else:
+                self.nest(prev_leaf.id)
+            return
+
+        next_leaf = element.find_token_leaf(self.token.next)
+        if next_leaf:
+            if change_target:
+                next_leaf.nest(self.id)
+            else:
+                self.apply_tail(next_leaf.id)
 
     # override
     def __eq__(self, other):
@@ -538,6 +560,14 @@ class Node(Element):
         for child in self.children():
             tokens = tokens + child.all_tokens()
         return tokens
+
+    # override
+    def find_token_leaf(self, token):
+        for child in self.children():
+            leaf = child.find_token_leaf(token)
+            if leaf:
+                return leaf
+        return None
 
     # override
     def insert(self, child_id, pos):
