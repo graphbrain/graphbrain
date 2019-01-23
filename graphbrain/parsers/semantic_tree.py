@@ -106,7 +106,7 @@ class Tree(object):
         return elem.clone().id
 
     def to_hyperedge(self, with_namespaces=True):
-        return self.root().to_hyperedge(with_namespaces=with_namespaces)
+        return self.root().to_hyperedge(namespaces=with_namespaces)
 
     def to_hyperedge_str(self, with_namespaces=True):
         return funs.edge2str(self.to_hyperedge(with_namespaces=with_namespaces))
@@ -182,8 +182,11 @@ class Element(object):
     def to_leafs(self):
         raise NotImplementedError()
 
-    def to_hyperedge(self, with_namespaces=True):
+    def to_hyperedge(self, namespaces=True):
         raise NotImplementedError()
+
+    def to_hyperedge_str(self, namespaces=True):
+        return funs.edge2str(self.to_hyperedge(namespaces=namespaces))
 
     def generate_namespace(self):
         raise NotImplementedError()
@@ -290,8 +293,8 @@ class Leaf(Element):
         return [self]
 
     # override
-    def to_hyperedge(self, with_namespaces=True):
-        if not with_namespaces:
+    def to_hyperedge(self, namespaces=True):
+        if not namespaces:
             s = funs.str2symbol(self.token.word)
         else:
             s = funs.build_symbol(self.token.word, self.namespace)
@@ -534,8 +537,8 @@ class Node(Element):
         return leafs
 
     # override
-    def to_hyperedge(self, with_namespaces=True):
-        return tuple([child.to_hyperedge(with_namespaces=with_namespaces) for child in self.children()])
+    def to_hyperedge(self, namespaces=True):
+        return tuple([child.to_hyperedge(namespaces=namespaces) for child in self.children()])
 
     # override
     def is_compound_concept(self):
