@@ -36,7 +36,14 @@ def transformation_to_string(transf):
 CASE_FIELDS = ('transformation', 'child_pos', 'child_dep', 'child_tag', 'parent_pos', 'parent_dep', 'parent_tag',
                'child_edge_pos', 'child_edge_dep', 'child_edge_tag', 'child_edge_depth',
                'parent_edge_pos', 'parent_edge_dep', 'parent_edge_tag', 'parent_edge_depth',
-               'child_position', 'child_is_atom', 'parent_is_atom')
+               'child_position', 'child_is_atom', 'parent_is_atom',
+               'child_head_pos', 'child_head_dep', 'child_head_tag',
+               'parent_head_pos', 'parent_head_dep', 'parent_head_tag',
+               'child_prev_pos', 'child_prev_dep', 'child_prev_tag',
+               'child_next_pos', 'child_next_dep', 'child_next_tag',
+               'parent_prev_pos', 'parent_prev_dep', 'parent_prev_tag',
+               'parent_next_pos', 'parent_next_dep', 'parent_next_tag',
+               'child_before', 'adjacent')
 
 
 RANDOM_FOREST_MODEL_FILE = 'hypergen_random_forest.model'
@@ -121,6 +128,34 @@ def build_case(parent, child, parent_token, child_token, position):
     set_case_field_on(case, 'parent_dep_%s' % parent_token.dep)
     if parent_token.tag != ',':
         set_case_field_on(case, 'parent_tag_%s' % parent_token.tag)
+
+    # prev / next
+    if child_token.prev:
+        set_case_field_on(case, 'child_prev_pos_%s' % child_token.prev.pos)
+        set_case_field_on(case, 'child_prev_dep_%s' % child_token.prev.dep)
+        if child_token.prev.tag != ',':
+            set_case_field_on(case, 'child_prev_tag_%s' % child_token.prev.tag)
+    if child_token.next:
+        set_case_field_on(case, 'child_next_pos_%s' % child_token.next.pos)
+        set_case_field_on(case, 'child_next_dep_%s' % child_token.next.dep)
+        if child_token.next.tag != ',':
+            set_case_field_on(case, 'child_next_tag_%s' % child_token.next.tag)
+    if parent_token.prev:
+        set_case_field_on(case, 'parent_prev_pos_%s' % parent_token.prev.pos)
+        set_case_field_on(case, 'parent_prev_dep_%s' % parent_token.prev.dep)
+        if parent_token.prev.tag != ',':
+            set_case_field_on(case, 'parent_prev_tag_%s' % parent_token.prev.tag)
+    if parent_token.next:
+        set_case_field_on(case, 'parent_next_pos_%s' % parent_token.next.pos)
+        set_case_field_on(case, 'parent_next_dep_%s' % parent_token.next.dep)
+        if parent_token.next.tag != ',':
+            set_case_field_on(case, 'parent_next_tag_%s' % parent_token.next.tag)
+
+    # position in sentence
+    if child_token.position_in_sentence < parent_token.position_in_sentence:
+        set_case_field_on(case, 'child_before')
+    if abs(child_token.position_in_sentence - parent_token.position_in_sentence) == 1:
+        set_case_field_on(case, 'adjacent')
 
     # head tags and dependencies
     if child.is_node():
@@ -346,16 +381,14 @@ class Hypergen(object):
                 test_parent = test_tree.get(parent.id)
                 test_root = test_tree.token2leaf(parent_token)
                 apply_transformation(test_tree, test_parent, test_root, elem_id, position, transf)
-                apply_transformation(self.tree, parent, root, elem_id, position, self.transfs[0])
+                apply_transformation(self.tree, parent, root, elem_id, position, self.transfs[0][0])
                 self.test_predictions[transf] += 1
-                # if str(parent) != str(test_parent):
-                if transf != self.transfs[0]:
-                    # print('%s <- %s' % (parent_token, token))
-                    # print('%s <- %s' % (parent, child))
-                    print('predicted: %s; should be: %s'
-                          % (transformation_to_string(transf), transformation_to_string(self.transfs[0])))
+                if str(parent) != str(test_parent):
+                    print('predicted: %s; should be one of: %s'
+                          % (transformation_to_string(transf),
+                             ', '.join([transformation_to_string(transf) for transf in self.transfs[0]])))
                     self.wrong += 1
-                    transf = self.transfs[0]
+                    transf = self.transfs[0][0]
                 self.transfs = self.transfs[1:]
                 self.test_true_values[transf] += 1
             else:
@@ -389,7 +422,7 @@ def test(infile, model_type='rf', model_file=None):
         json_str = parse[1].strip()
         # outcome_str = parse[2].strip()
         sentence = Sentence(json_str=json_str)
-        transfs = [int(token) for token in parse[3].split(',')]
+        transfs = [[int(transf) for transf in transfs.split(',')] for transfs in parse[3].split(';')]
         total = len(transfs)
         hgforest = Hypergen(model_type=model_type, model_file=model_file)
         hgforest.test(sentence, transfs)

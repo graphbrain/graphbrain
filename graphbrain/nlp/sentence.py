@@ -1,7 +1,7 @@
 import json
 from asciitree import LeftAligned
 from collections import OrderedDict
-from graphbrain.nlp.nlp_token import token_from_dict
+from .nlp_token import token_from_dict
 
 
 def node_label(token, prefix):
@@ -43,6 +43,11 @@ class Sentence:
                 token.parent = self.tokens[token.parent]
             token.left_children = [self.tokens[i] for i in token.left_children]
             token.right_children = [self.tokens[i] for i in token.right_children]
+        for i in range(len(self.tokens)):
+            if i > 0:
+                self.tokens[i].prev = self.tokens[i - 1]
+            if i < len(self.tokens) - 1:
+                self.tokens[i].next = self.tokens[i + 1]
 
     def root(self):
         for token in self.tokens:

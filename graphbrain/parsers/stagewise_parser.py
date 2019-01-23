@@ -79,7 +79,7 @@ class StagewiseParser(object):
                 first = False
             else:
                 last_stage_output = stage.process()
-            output = last_stage_output.tree.to_hyperedge(with_namespaces=self.show_namespaces)
+            output = last_stage_output.tree.to_hyperedge(namespaces=self.show_namespaces)
             stage_outputs.append(output)
             self.debug_msg(edge2str(output))
 
