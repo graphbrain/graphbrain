@@ -105,11 +105,11 @@ class Tree(object):
         elem = self.get(elem_id)
         return elem.clone().id
 
-    def to_hyperedge(self, with_namespaces=True):
-        return self.root().to_hyperedge(namespaces=with_namespaces)
+    def to_hyperedge(self, namespaces=True):
+        return self.root().to_hyperedge(namespaces=namespaces)
 
-    def to_hyperedge_str(self, with_namespaces=True):
-        return funs.edge2str(self.to_hyperedge(with_namespaces=with_namespaces))
+    def to_hyperedge_str(self, namespaces=True):
+        return funs.edge2str(self.to_hyperedge(namespaces=namespaces))
 
     def token2leaf(self, token):
         return self.get(self.token2leaf_id[token])

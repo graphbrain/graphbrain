@@ -147,7 +147,7 @@ class CaseGenerator(object):
         self.tree.root_id = self.process_token(self.sentence.root())
 
     def validate(self):
-        return self.tree.to_hyperedge_str(with_namespaces=False) == self.outcome_str
+        return self.tree.to_hyperedge_str(namespaces=False) == self.outcome_str
 
     def write_cases(self, outfile):
         for case in self.cases:
@@ -180,7 +180,7 @@ def generate_cases(infile, outfile, lang='en'):
         else:
             print('could not generate correct cases for: %s' % sentence_str)
             print(outcome_str)
-            print(cg.tree.to_hyperedge_str(with_namespaces=False))
+            print(cg.tree.to_hyperedge_str(namespaces=False))
         total += 1
 
     print('%s out of %s correct cases.' % (correct, total))
@@ -207,7 +207,7 @@ def interactive_edge_builder(outfile, lang='en'):
                     done = True
                 else:
                     done = True
-                    outcome = cg.tree.to_hyperedge_str(with_namespaces=False)
+                    outcome = cg.tree.to_hyperedge_str(namespaces=False)
                     print('outcome:')
                     print(outcome)
                     write = input('write [y/N]? ')
