@@ -1,8 +1,8 @@
 import logging
-from graphbrain.funs import *
-from graphbrain.nlp.parser import Parser
-from graphbrain.sense.disambiguation import Disambiguation
-from graphbrain.parsers.stages import *
+from .. import funs
+from ..nlp.parser import Parser
+from ..sense.disambiguation import Disambiguation
+from .stages import *
 
 
 class StagewiseParser(object):
@@ -59,7 +59,7 @@ class StagewiseParser(object):
         for p in parses:
             self.debug_msg('== extra ==')
             for edg in p[1].edges:
-                self.debug_msg(edge2str(edg))
+                self.debug_msg(funs.edge2str(edg))
 
         return parses
 
@@ -81,7 +81,7 @@ class StagewiseParser(object):
                 last_stage_output = stage.process()
             output = last_stage_output.tree.to_hyperedge(namespaces=self.show_namespaces)
             stage_outputs.append(output)
-            self.debug_msg(edge2str(output))
+            self.debug_msg(funs.edge2str(output))
 
         last_stage_output.main_edge = last_stage_output.tree.to_hyperedge()
 

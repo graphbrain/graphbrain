@@ -475,4 +475,4 @@ if __name__ == '__main__':
 
     for r in result:
         tr = transform(r[1])
-        print(tr.tree.to_hyperedge_str(with_namespaces=False))
+        print(tr.tree.to_hyperedge_str(namespaces=False))
