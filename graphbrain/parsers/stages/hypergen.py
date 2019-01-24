@@ -4,6 +4,7 @@ import pkg_resources
 import pickle
 from collections import Counter
 from sklearn.ensemble import RandomForestClassifier
+from ... import funs
 from ...nlp import constants as nlp_consts
 from ...nlp.parser import Parser
 from ...nlp.sentence import Sentence
@@ -34,8 +35,10 @@ def transformation_to_string(transf):
 
 
 CASE_FIELDS = ('transformation', 'child_pos', 'child_dep', 'child_tag', 'parent_pos', 'parent_dep', 'parent_tag',
-               'child_edge_pos', 'child_edge_dep', 'child_edge_tag', 'child_edge_depth',
-               'parent_edge_pos', 'parent_edge_dep', 'parent_edge_tag', 'parent_edge_depth',
+               'child_edge_depth', 'parent_edge_depth',
+               'child_edge_size', 'parent_edge_size',
+               'child_edge_pos', 'child_edge_dep', 'child_edge_tag',
+               'parent_edge_pos', 'parent_edge_dep', 'parent_edge_tag',
                'child_position', 'child_is_atom', 'parent_is_atom',
                'child_head_pos', 'child_head_dep', 'child_head_tag',
                'parent_head_pos', 'parent_head_dep', 'parent_head_tag',
@@ -43,7 +46,11 @@ CASE_FIELDS = ('transformation', 'child_pos', 'child_dep', 'child_tag', 'parent_
                'child_next_pos', 'child_next_dep', 'child_next_tag',
                'parent_prev_pos', 'parent_prev_dep', 'parent_prev_tag',
                'parent_next_pos', 'parent_next_dep', 'parent_next_tag',
-               'child_before', 'adjacent')
+               'child_before', 'adjacent', 'distance_in_sentence', 'abs_distance_in_sentence',
+               # 'child_logprob', 'child_length', 'child_position_in_sentence',
+               # 'parent_logprob', 'parent_length', 'parent_position_in_sentence'
+               'child_length', 'parent_length'
+               )
 
 
 RANDOM_FOREST_MODEL_FILE = 'hypergen_random_forest.model'
@@ -83,22 +90,17 @@ def expanded_fields():
     return fields
 
 
+def set_case_field(case, field, value):
+    if field in case:
+        case[field] = value
+
+
 def set_case_field_on(case, field):
     if field in case:
         case[field] = 1.
 
 
-def entity2case(entity, case, prefix):
-    if entity.is_leaf():
-        set_case_field_on(case, '%s_all_tag_%s' % (prefix, entity.token.tag))
-        set_case_field_on(case, '%s_all_dep_%s' % (prefix, entity.token.dep))
-    else:
-        for child in entity.children():
-            entity2case(child, case, prefix)
-
-
 def set_case_fields_edge(elem, case, feature, depth=0):
-    set_case_field_on(case, '%s_depth_%s' % (feature, depth))
     if elem.is_node():
         for child in elem.children():
             set_case_fields_edge(child, case, feature, depth + 1)
@@ -151,11 +153,22 @@ def build_case(parent, child, parent_token, child_token, position):
         if parent_token.next.tag != ',':
             set_case_field_on(case, 'parent_next_tag_%s' % parent_token.next.tag)
 
+    # token metrics
+    set_case_field(case, 'child_logprob', child_token.logprob)
+    set_case_field(case, 'child_length', len(child_token.word))
+    set_case_field(case, 'child_position_in_sentence', child_token.position_in_sentence)
+    set_case_field(case, 'parent_logprob', parent_token.logprob)
+    set_case_field(case, 'parent_length', len(parent_token.word))
+    set_case_field(case, 'parent_position_in_sentence', parent_token.position_in_sentence)
+
     # position in sentence
     if child_token.position_in_sentence < parent_token.position_in_sentence:
         set_case_field_on(case, 'child_before')
     if abs(child_token.position_in_sentence - parent_token.position_in_sentence) == 1:
         set_case_field_on(case, 'adjacent')
+    position_delta = parent_token.position_in_sentence - child_token.position_in_sentence
+    set_case_field(case, 'distance_in_sentence', position_delta)
+    set_case_field(case, 'abs_distance_in_sentence', abs(position_delta))
 
     # head tags and dependencies
     if child.is_node():
@@ -173,13 +186,13 @@ def build_case(parent, child, parent_token, child_token, position):
             if parent_token.tag != ',':
                 set_case_field_on(case, 'parent_head_tag_%s' % head.token.tag)
 
-    # edge depths, tags and dependencies
+    # edge depths, sizes, tags and dependencies
+    set_case_field(case, 'child_edge_depth', funs.edge_depth(child))
+    set_case_field(case, 'parent_edge_depth', funs.edge_depth(parent))
+    set_case_field(case, 'child_edge_size', funs.edge_size(child))
+    set_case_field(case, 'parent_edge_size', funs.edge_size(parent))
     set_case_fields_edge(child, case, 'child_edge')
     set_case_fields_edge(parent, case, 'parent_edge')
-
-    # all tags and dependencies
-    entity2case(parent, case, 'parent')
-    entity2case(child, case, 'child')
 
     # parent and child are atoms?
     if parent.is_leaf():
