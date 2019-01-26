@@ -2,7 +2,7 @@ import importlib
 import logging
 import argparse
 from termcolor import colored
-import graphbrain.constants as const
+from . import constants as const
 
 
 def _show_logo():
@@ -53,7 +53,7 @@ def cli():
     try:
         cmd_module = importlib.import_module('graphbrain.commands.%s' % command)
         cmd_module.run(params)
-    except ModuleNotFoundError:
+    except ImportError:
         print('unkown command: %s' % command)
 
 
