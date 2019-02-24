@@ -117,7 +117,7 @@ class CaseGenerator(object):
 
             # add cases
             # for transf in transfs:
-            transf = transfs[0]
+            transf = tuple(transfs)[0]
             if parent_token:
                 case = build_case(parent, child, parent_token, token, position)
                 case['transformation'] = str(transf)
@@ -126,8 +126,8 @@ class CaseGenerator(object):
             print('%s <- %s' % (parent_token.word, token.word))
             print('%s <- %s' % (parent, self.tree.get(elem_id)))
             print(root)
-            print(transformation_to_string(transfs[0]))
-            apply_transformation(self.tree, parent, root, elem_id, position, transfs[0])
+            print(transformation_to_string(transf))
+            apply_transformation(self.tree, parent, root, elem_id, position, transf)
             print(self.tree.get(parent_id))
             print()
 
