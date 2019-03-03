@@ -1,5 +1,6 @@
+import spacy
 from graphbrain.funs import edge2str
-from graphbrain.nlp.parser import Parser
+from graphbrain.parser.vis import print_tree
 
 
 deps_types = {'acl': 'p',  # concept-predicate? ###
@@ -94,9 +95,9 @@ def connector_type(entity):
 
 
 def token_type(token):
-    dep = token.dep
+    dep = token.dep_
     if dep == 'ROOT':
-        if token.pos == 'VERB':
+        if token.pos_ == 'VERB':
             return 'p'
         else:
             return 'c'
@@ -138,7 +139,7 @@ def sequence(target, entity, before):
         return parens(target) + parens(entity)
 
 
-def process_token(token):
+def parse_token(nlp, token):
     entities = []
     modifiers = []
     builders = []
@@ -149,10 +150,10 @@ def process_token(token):
 
     parent_type = token_type(token)
 
-    child_tokens = tuple((t, True) for t in token.left_children) + tuple((t, False) for t in token.right_children)
+    child_tokens = tuple((t, True) for t in token.lefts) + tuple((t, False) for t in token.rights)
 
     for child_token, pos in child_tokens:
-        child = process_token(child_token)
+        child = parse_token(nlp, child_token)
         positions[child] = pos
         if child:
             child_type = entity_type(child)
@@ -181,7 +182,7 @@ def process_token(token):
     metas.reverse()
     subpredicates.reverse()
 
-    parent = '%s/%s' % (token.word, parent_type)
+    parent = '%s/%s' % (token.text.lower(), parent_type)
 
     # print('')
     # print('=> %s' % parent_type)
@@ -243,12 +244,12 @@ def process_token(token):
         pass
 
     # print(edge2str(parent))
-
     return parent
 
 
-def process_sentence(sentence):
-    return process_token(sentence.root())
+def parse(nlp, text):
+    doc = nlp(text)
+    return [(parse_token(nlp, sent.root), sent) for sent in doc.sents]
 
 
 if __name__ == '__main__':
@@ -260,15 +261,10 @@ if __name__ == '__main__':
     #    The algorithm can play both black and white.
     #    """
 
-    test_text = "Britain's hopes of a trade deal with America just suffered a big blow"
+    # test_text = "Britain's hopes of a trade deal with America just suffered a big blow"
 
-    print('Starting parser...')
-    parser = Parser()
-    print('Parsing...')
-    result = parser.parse_text(test_text)
-    sent = result[0][1]
+    nlp = spacy.load('en_core_web_lg')
 
-    sent.print_tree()
-
-    edge = process_sentence(sent)
+    edge, sent = parse(nlp, test_text)[0]
+    print_tree(sent.root)
     print(edge2str(edge))
