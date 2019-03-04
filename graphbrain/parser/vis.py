@@ -4,9 +4,8 @@ from termcolor import colored
 
 
 def token2str(token):
-    word = colored(token.text.strip(), 'cyan')
+    word = colored(token.lower_.strip(), 'cyan')
     lemma = token.lemma_.strip()
-    pos = token.pos_
     tag = colored(token.tag_, 'green')
     dep = colored(token.dep_, 'yellow')
     named_entity = token.ent_type_
@@ -14,7 +13,7 @@ def token2str(token):
     if named_entity != '':
         named_entity = colored('{%s}' % named_entity, 'magenta')
 
-    return '%s/%s/%s/%s (%s) %s' % (word, lemma, pos, tag, dep, named_entity)
+    return '%s/%s/%s (%s) %s' % (word, lemma, tag, dep, named_entity)
 
 
 def token2label_tree(token, prefix='*'):
