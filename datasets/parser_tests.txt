@@ -1,6 +1,6 @@
 Satellites from NASA and other agencies have been tracking sea ice changes since 1979.
-((have/a (been/a tracking/p)) (from/b satellites/c (and/b nasa/c (other/m agencies/c))) (sea/c ice/c changes/c) (since/b 1979/c))
+((have/a (been/a tracking/p.d.sox)) (from/b satellites/c (and/b nasa/c (other/m agencies/c))) (+/b/gb sea/c ice/c changes/c) (since/x 1979/c))
 The algorithm can play both black and white.
-((can/a play/p) (the/m algorithm/c) (both/m (and/b black/c white/c)))
+((can/a play/p.d.so) (the/m algorithm/c) (both/m (and/b black/c white/c)))
 Britain's hopes of a trade deal with America just suffered a big blow.
 (suffered/p ('s/b britain/c (of/b hopes/c (a/m (with/b (trade/c deal/c) america/c)))) (a/m (big/m blow/c)))
