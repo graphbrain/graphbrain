@@ -1,6 +1,7 @@
 from IPython.core.display import display, HTML
 from graphbrain.hypergraph import *
 from graphbrain.funs import *
+from graphbrain.parser.vis import print_tree
 
 
 SYMBOL_COLOR = '#404040'
@@ -84,16 +85,10 @@ def show(edge, namespaces=True, compact=False):
     display(HTML(html))
 
 
-def read_and_show(reader, text,  namespaces=True, compact=False, show_stages=False):
-    outputs = reader.read_text(text)
-    for output in outputs:
-        if show_stages:
+def parse_and_show(parser, text,  namespaces=True, compact=False, verbose=False):
+    parses = parser.parse(text)
+    for parse in parses:
+        if verbose:
             display(HTML('<h3>Parse Tree</h3>'))
-            output[1].sentence.print_tree()
-            for i in range(len(reader.stages)):
-                stage_label = 'stage #%s: %s' % (i + 1, reader.stages[i])
-                display(HTML('<h3>%s</h3>' % stage_label))
-                edge = output[1].stage_outputs[i]
-                show(edge, namespaces=namespaces, compact=True)
-        edge = output[1].main_edge
-        show(edge, namespaces=namespaces, compact=compact)
+            print_tree(parse[1].root)
+        show(parse[0], namespaces=namespaces, compact=compact)
