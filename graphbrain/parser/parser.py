@@ -245,6 +245,9 @@ class Parser(object):
             for modifier in modifiers:
                 parent = nest(parent, modifier, positions[modifier])
 
+            if not is_atom(parent) and connector_type(parent) == 'c':
+                parent = apply_n('+/b/gb', parent)
+
         elif parent_type == 'p':
             subtype = 'd'  # TODO
             args_string = ''.join([arg_type(tokens[entity]) for entity in entities])
