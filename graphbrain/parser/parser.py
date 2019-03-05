@@ -1,5 +1,5 @@
 import spacy
-from graphbrain.funs import edge2str
+# from graphbrain.funs import ent2str
 
 
 deps_arg_types = {

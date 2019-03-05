@@ -2,15 +2,15 @@
 
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
-from graphbrain.version import VERSION
+
+
+# Current GraphBrain version
+VERSION = '0.0.7'
 
 
 # True to enable building extensions using Cython.
 # False to build extensions from the C files that were previously created by Cython.
 USE_CYTHON = True
-
-
-PACKAGE_DATA = {'': ['*.model']}
 
 
 if USE_CYTHON:
@@ -59,7 +59,6 @@ setup(
     ],
     python_requires='>=3.4',
     packages=find_packages(),
-    package_data=PACKAGE_DATA,
     install_requires=[
         'numpy',
         'termcolor',

@@ -1,5 +1,4 @@
 import importlib
-import logging
 import argparse
 from termcolor import colored
 from . import constants as const
@@ -20,10 +19,7 @@ def cli():
     parser.add_argument('--hg', type=str, help='hypergraph name', default='gb.hg')
     parser.add_argument('--infile', type=str, help='input file', default=None)
     parser.add_argument('--outfile', type=str, help='output file', default=None)
-    parser.add_argument('--log', type=str, help='logging level.', default='WARNING')
     parser.add_argument('--fields', type=str, help='field names', default=None)
-    parser.add_argument('--model_type', type=str, help='machine learning model type', default='rf')
-    parser.add_argument('--model_file', type=str, help='machine learning model file', default=None)
     parser.add_argument('--show_namespaces', help='show namespaces', action='store_true')
     parser.add_argument('--lang', type=str, help='language', default='en')
 
@@ -41,12 +37,6 @@ def cli():
         'show_namespaces': args.show_namespaces,
         'lang': args.lang
     }
-
-    # configure logging
-    numeric_level = getattr(logging, args.log.upper(), None)
-    if not isinstance(numeric_level, int):
-        raise ValueError('Invalid log level: %s' % args.log)
-    logging.basicConfig(level=numeric_level)
 
     command = args.command
 
