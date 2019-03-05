@@ -228,3 +228,99 @@ def subedges(edge):
         for item in edge:
             edges = edges.union(subedges(item))
     return edges
+
+
+def atom_role(atom):
+    parts = atom.split('/')
+    if len(parts) < 2:
+        return tuple('c')
+    else:
+        return parts[1].split('.')
+
+
+def atom_type(atom):
+    return atom_role(atom)[0]
+
+
+def entity_type(entity):
+    if is_atom(entity):
+        return atom_type(entity)
+    else:
+        ptype = entity_type(entity[0])
+        if len(entity) < 2:
+            return ptype
+        else:
+            if ptype == 'p':
+                return 'r'
+            elif ptype == 'a':
+                return 'p'
+            elif ptype == 'w':
+                return 'm'
+            elif ptype == 'x':
+                return 'd'
+            elif ptype == 't':
+                return 's'
+            else:
+                return 'c'
+
+
+def connector_type(entity):
+    if is_atom(entity):
+        return entity_type(entity)
+    else:
+        return entity_type(entity[0])
+
+
+def nest(inner, outer, before):
+    if is_atom(outer):
+        return outer, inner
+    else:
+        if before:
+            return outer + (inner,)
+        else:
+            return (outer[0], inner) + outer[1:]
+
+
+def nest_predicate(inner, outer, before):
+    if entity_type(inner) == 'p':
+        return nest(inner, outer, before)
+    else:
+        return (nest(inner[0], outer, before),) + inner[1:]
+
+
+def parens(entity):
+    if is_atom(entity):
+        return (entity,)
+    else:
+        return tuple(entity)
+
+
+def insert_first_argument(entity, argument):
+    if is_atom(entity):
+        return (entity, argument)
+    else:
+        return (entity[0], argument) + entity[1:]
+
+
+def connect(entity, arguments):
+    if len(arguments) == 0:
+        return entity
+    else:
+        return parens(entity) + parens(arguments)
+
+
+def sequence(target, entity, before):
+    if before:
+        return parens(entity) + parens(target)
+    else:
+        return parens(target) + parens(entity)
+
+
+def apply_fun_to_atom(fun, atom, target):
+    if is_atom(target):
+        if target == atom:
+            return fun(target)
+        else:
+            return target
+    else:
+        return tuple(apply_fun_to_atom(fun, atom, item) for item in target)
