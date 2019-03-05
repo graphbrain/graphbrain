@@ -20,40 +20,16 @@ class TestLevelDB(unittest.TestCase):
         self.assertFalse(self.hg.exists(('is', 'graphbrain/1', 'great/1')))
 
     def test_ops_2(self):
-        self.hg.add(('size', 'graphbrain/1', 7))
-        self.assertTrue(self.hg.exists(('size', 'graphbrain/1', 7)))
-        self.hg.remove(('size', 'graphbrain/1', 7))
-        self.assertFalse(self.hg.exists(('size', 'graphbrain/1', 7)))
-
-    def test_ops_3(self):
-        self.hg.add(('size', 'graphbrain/1', 7.0))
-        self.assertTrue(self.hg.exists(('size', 'graphbrain/1', 7.0)))
-        self.hg.remove(('size', 'graphbrain/1', 7.0))
-        self.assertFalse(self.hg.exists(('size', 'graphbrain/1', 7.0)))
-
-    def test_ops_4(self):
-        self.hg.add(('size', 'graphbrain/1', -7))
-        self.assertTrue(self.hg.exists(('size', 'graphbrain/1', -7)))
-        self.hg.remove(('size', 'graphbrain/1', -7))
-        self.assertFalse(self.hg.exists(('size', 'graphbrain/1', -7)))
-
-    def test_ops_5(self):
-        self.hg.add(('size', 'graphbrain/1', -7.0))
-        self.assertTrue(self.hg.exists(('size', 'graphbrain/1', -7.0)))
-        self.hg.remove(('size', 'graphbrain/1', -7.0))
-        self.assertFalse(self.hg.exists(('size', 'graphbrain/1', -7.0)))
-
-    def test_ops_6(self):
-        self.hg.add(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0)))
-        self.assertTrue(self.hg.exists(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0))))
-        self.hg.remove(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0)))
-        self.assertFalse(self.hg.exists(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0))))
+        self.hg.add(('src', 'graphbrain/1', ('size', 'graphbrain/1', '7')))
+        self.assertTrue(self.hg.exists(('src', 'graphbrain/1', ('size', 'graphbrain/1', '7'))))
+        self.hg.remove(('src', 'graphbrain/1', ('size', 'graphbrain/1', '7')))
+        self.assertFalse(self.hg.exists(('src', 'graphbrain/1', ('size', 'graphbrain/1', '7'))))
 
     def test_destroy(self):
-        self.hg.add(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0)))
-        self.assertTrue(self.hg.exists(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0))))
+        self.hg.add(('src', 'graphbrain/1', ('size', 'graphbrain/1', '7')))
+        self.assertTrue(self.hg.exists(('src', 'graphbrain/1', ('size', 'graphbrain/1', '7'))))
         self.hg.destroy()
-        self.assertFalse(self.hg.exists(('src', 'graphbrain/1', ('size', 'graphbrain/1', -7.0))))
+        self.assertFalse(self.hg.exists(('src', 'graphbrain/1', ('size', 'graphbrain/1', '7'))))
 
     def test_pattern2edges(self):
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
@@ -165,13 +141,13 @@ class TestLevelDB(unittest.TestCase):
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.assertEqual(self.hg.degree('graphbrain/1'), 1)
         self.assertEqual(self.hg.degree('great/1'), 1)
-        self.hg.add(('size', 'graphbrain/1', 7))
+        self.hg.add(('size', 'graphbrain/1', '7'))
         self.assertEqual(self.hg.degree('graphbrain/1'), 2)
         self.assertEqual(self.hg.degree('great/1'), 1)
         self.hg.remove(('is', 'graphbrain/1', 'great/1'))
         self.assertEqual(self.hg.degree('graphbrain/1'), 1)
         self.assertEqual(self.hg.degree('great/1'), 0)
-        self.hg.remove(('size', 'graphbrain/1', 7))
+        self.hg.remove(('size', 'graphbrain/1', '7'))
         self.assertEqual(self.hg.degree('graphbrain/1'), 0)
 
     def test_timestamp(self):
@@ -188,13 +164,13 @@ class TestLevelDB(unittest.TestCase):
 
     def test_all(self):
         self.hg.destroy()
-        self.hg.add(('size', 'graphbrain/1', -7.0))
+        self.hg.add(('size', 'graphbrain/1', '7'))
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.hg.add(('src', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
 
-        labels = set([edge2str(v) for v in self.hg.all()])
-        self.assertEqual(labels, {'size', 'graphbrain/1', '-7.0', 'is', 'great/1', 'src', 'mary/1',
-                                  '(size graphbrain/1 -7.0)', '(is graphbrain/1 great/1)',
+        labels = set([ent2str(v) for v in self.hg.all()])
+        self.assertEqual(labels, {'size', 'graphbrain/1', '7', 'is', 'great/1', 'src', 'mary/1',
+                                  '(size graphbrain/1 7)', '(is graphbrain/1 great/1)',
                                   '(src mary/1 (is graphbrain/1 great/1))'})
         self.hg.destroy()
         labels = set(self.hg.all())
@@ -202,13 +178,13 @@ class TestLevelDB(unittest.TestCase):
 
     def test_all_attributes(self):
         self.hg.destroy()
-        self.hg.add(('size', 'graphbrain/1', -7.0))
+        self.hg.add(('size', 'graphbrain/1', '7'))
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.hg.add(('src', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
 
-        labels = set(['%s %s' % (edge2str(t[0]), t[1]['d']) for t in self.hg.all_attributes()])
-        self.assertEqual(labels, {'size 1', 'graphbrain/1 2', '-7.0 1', 'is 1', 'great/1 1', 'src 1', 'mary/1 1',
-                                  '(size graphbrain/1 -7.0) 0', '(is graphbrain/1 great/1) 1',
+        labels = set(['%s %s' % (ent2str(t[0]), t[1]['d']) for t in self.hg.all_attributes()])
+        self.assertEqual(labels, {'size 1', 'graphbrain/1 2', '7 1', 'is 1', 'great/1 1', 'src 1', 'mary/1 1',
+                                  '(size graphbrain/1 7) 0', '(is graphbrain/1 great/1) 1',
                                   '(src mary/1 (is graphbrain/1 great/1)) 0'})
         self.hg.destroy()
         labels = set(self.hg.all_attributes())

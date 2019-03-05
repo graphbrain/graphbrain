@@ -22,7 +22,7 @@ if __name__ == '__main__':
         for line in f:
             if sentence:
                 total += 1
-                correct_edge = str2edge(line.strip())
+                correct_edge = str2ent(line.strip())
                 edge, sent = parser.parse(sentence)[0]
                 if edge != correct_edge:
                     wrong += 1

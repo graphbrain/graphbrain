@@ -20,7 +20,7 @@ class TestHypergraph(unittest.TestCase):
         self.hg.remove(('is', 'graphbrain/1', 'great/1'))
         self.hg.remove(('is', 'graphbrain/1', 'great/2'))
         self.hg.add_belief("mary/1", ("is", "graphbrain/1", "great/1"))
-        self.assertEqual(self.hg.ego('mary/1'), {'mary/1', 'src/gb', 'graphbrain/1', 'is', 'great/1'})
+        self.assertEqual(self.hg.ego('mary/1'), {'mary/1', 'src/p/.', 'graphbrain/1', 'is', 'great/1'})
         self.hg.remove_belief("mary/1", ("is", "graphbrain/1", "great/1"))
 
     def test_beliefs(self):

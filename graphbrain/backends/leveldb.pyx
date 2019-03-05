@@ -52,7 +52,7 @@ def do_with_edge_permutations(edge, f):
     """Applies the function f to all permutations of the given edge."""
     nperms = math.factorial(len(edge))
     for nperm in range(nperms):
-        perm_str = ' '.join([edge2str(e) for e in permutate(edge, nperm)])
+        perm_str = ' '.join([ent2str(e) for e in permutate(edge, nperm)])
         perm_str = '%s %s' % (perm_str, nperm)
         f(perm_str)
 
@@ -66,7 +66,7 @@ def perm2edge(perm_str):
         nper = int(tokens[-1])
         tokens = tokens[:-1]
         tokens = unpermutate(tokens, nper)
-        return str2edge(' '.join(tokens))
+        return str2ent(' '.join(tokens))
     except ValueError as v:
         return None
         # print(u'VALUE ERROR! %s perm2edge %s' % (v, perm_str))
@@ -95,7 +95,7 @@ def edge_matches_pattern(edge, pattern, open_ended):
 
 
 def vertex2key(vertex):
-    return ('v%s' % edge2str(vertex)).encode('utf-8')
+    return ('v%s' % ent2str(vertex)).encode('utf-8')
 
 
 def encode_attributes(attributes):
@@ -133,7 +133,7 @@ class LevelDB(Backend):
         self.db.put(vert_key, value)
 
     def write_edge_permutation(self, perm):
-        perm_key = (u'p%s' % edge2str(perm)).encode('utf-8')
+        perm_key = (u'p%s' % ent2str(perm)).encode('utf-8')
         self.db.put(perm_key, b'x')
 
     def write_edge_permutations(self, edge):
@@ -141,7 +141,7 @@ class LevelDB(Backend):
         do_with_edge_permutations(edge, self.write_edge_permutation)
 
     def remove_edge_permutation(self, perm):
-        perm_key = (u'p%s' % edge2str(perm)).encode('utf-8')
+        perm_key = (u'p%s' % ent2str(perm)).encode('utf-8')
         self.db.delete(perm_key)
 
     def remove_edge_permutations(self, edge):
@@ -256,10 +256,10 @@ class LevelDB(Backend):
             for vert in edge:
                 vert_key = vertex2key(vert)
                 if not self.inc_attribute_key(vert_key, 'd'):
-                    if symbol_type(vert) == SymbolType.EDGE:
-                        self.inc_counter('edge_count')
-                    else:
+                    if is_atom(vert):
                         self.inc_counter('symbol_count')
+                    else:
+                        self.inc_counter('edge_count')
                     self.add_key(vert_key, {'d': 1, 't': timestamp})
             self.add_key(edge_key, {'d': 0, 't': timestamp})
             self.write_edge_permutations(edge)
@@ -282,7 +282,7 @@ class LevelDB(Backend):
         Entity can be atomic or an edge."""
         center_id = center
         if isinstance(center, (list, tuple)):
-            center_id = edge2str(center)
+            center_id = ent2str(center)
         return self.str2perms(center_id, limit)
 
     def symbols_with_root(self, root):
@@ -294,7 +294,7 @@ class LevelDB(Backend):
 
         symbs = set()
         for key, value in self.db.iterator(start=start_key, stop=end_key):
-            symb = str2edge(key.decode('utf-8')[1:])
+            symb = str2ent(key.decode('utf-8')[1:])
             symbs.add(symb)
         return symbs
 
@@ -385,7 +385,7 @@ class LevelDB(Backend):
         end_key = (u'%s' % end_str).encode('utf-8')
 
         for key, value in self.db.iterator(start=start_key, stop=end_key):
-            vert = str2edge(key.decode('utf-8')[1:])
+            vert = str2ent(key.decode('utf-8')[1:])
             yield vert
 
     def all_attributes(self):
@@ -398,7 +398,7 @@ class LevelDB(Backend):
         end_key = (u'%s' % end_str).encode('utf-8')
 
         for key, value in self.db.iterator(start=start_key, stop=end_key):
-            vert = str2edge(key.decode('utf-8')[1:])
+            vert = str2ent(key.decode('utf-8')[1:])
             attributes = decode_attributes(value)
             yield (vert, attributes)
 
