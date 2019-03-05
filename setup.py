@@ -57,19 +57,17 @@ setup(
         'Topic :: Scientific/Engineering :: Information Analysis',
         'Topic :: Sociology'
     ],
-    python_requires='>=3.3',
+    python_requires='>=3.4',
     packages=find_packages(),
     package_data=PACKAGE_DATA,
     install_requires=[
         'numpy',
-        'sklearn',
         'termcolor',
         'python-igraph',
-        'spacy==2.0.18',
+        'spacy',
         'asciitree',
         'plyvel',
         'ipython',
-        'keras',
         'progressbar2',
         'unidecode'
     ],

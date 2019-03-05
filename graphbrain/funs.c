@@ -2806,7 +2806,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_4symbol_type(CYTHON_UNUSED PyObject
  * 
  * def is_symbol(entity):             # <<<<<<<<<<<<<<
  *     """Checks if entity is a symbol."""
- *     return not is_edge(entity)
+ *     return symbol_type(entity) != SymbolType.EDGE
  */
 
 /* Python wrapper */
@@ -2830,18 +2830,17 @@ static PyObject *__pyx_pf_10graphbrain_4funs_6is_symbol(CYTHON_UNUSED PyObject *
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
-  int __pyx_t_4;
   __Pyx_RefNannySetupContext("is_symbol", 0);
 
   /* "graphbrain/funs.pyx":56
  * def is_symbol(entity):
  *     """Checks if entity is a symbol."""
- *     return not is_edge(entity)             # <<<<<<<<<<<<<<
+ *     return symbol_type(entity) != SymbolType.EDGE             # <<<<<<<<<<<<<<
  * 
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_is_edge); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 56, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_symbol_type); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -2858,12 +2857,16 @@ static PyObject *__pyx_pf_10graphbrain_4funs_6is_symbol(CYTHON_UNUSED PyObject *
   if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 56, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_SymbolType); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 56, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_EDGE); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 56, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = PyObject_RichCompare(__pyx_t_1, __pyx_t_3, Py_NE); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyBool_FromLong((!__pyx_t_4)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 56, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_r = __pyx_t_2;
+  __pyx_t_2 = 0;
   goto __pyx_L0;
 
   /* "graphbrain/funs.pyx":54
@@ -2871,7 +2874,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_6is_symbol(CYTHON_UNUSED PyObject *
  * 
  * def is_symbol(entity):             # <<<<<<<<<<<<<<
  *     """Checks if entity is a symbol."""
- *     return not is_edge(entity)
+ *     return symbol_type(entity) != SymbolType.EDGE
  */
 
   /* function exit code */
@@ -2892,7 +2895,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_6is_symbol(CYTHON_UNUSED PyObject *
  * 
  * def is_edge(entity):             # <<<<<<<<<<<<<<
  *     """Checks if entity is an edge."""
- *     return isinstance(entity, (list, tuple))
+ *     return symbol_type(entity) == SymbolType.EDGE
  */
 
 /* Python wrapper */
@@ -2913,35 +2916,46 @@ static PyObject *__pyx_pw_10graphbrain_4funs_9is_edge(PyObject *__pyx_self, PyOb
 static PyObject *__pyx_pf_10graphbrain_4funs_8is_edge(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_entity) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  int __pyx_t_1;
-  int __pyx_t_2;
-  int __pyx_t_3;
-  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
   __Pyx_RefNannySetupContext("is_edge", 0);
 
   /* "graphbrain/funs.pyx":61
  * def is_edge(entity):
  *     """Checks if entity is an edge."""
- *     return isinstance(entity, (list, tuple))             # <<<<<<<<<<<<<<
+ *     return symbol_type(entity) == SymbolType.EDGE             # <<<<<<<<<<<<<<
  * 
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = PyList_Check(__pyx_v_entity); 
-  __pyx_t_3 = (__pyx_t_2 != 0);
-  if (!__pyx_t_3) {
-  } else {
-    __pyx_t_1 = __pyx_t_3;
-    goto __pyx_L3_bool_binop_done;
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_symbol_type); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 61, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+    }
   }
-  __pyx_t_3 = PyTuple_Check(__pyx_v_entity); 
-  __pyx_t_2 = (__pyx_t_3 != 0);
-  __pyx_t_1 = __pyx_t_2;
-  __pyx_L3_bool_binop_done:;
-  __pyx_t_4 = __Pyx_PyBool_FromLong(__pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 61, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __pyx_r = __pyx_t_4;
-  __pyx_t_4 = 0;
+  __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_entity) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_entity);
+  __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 61, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_SymbolType); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 61, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_EDGE); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 61, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = PyObject_RichCompare(__pyx_t_1, __pyx_t_3, Py_EQ); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 61, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_r = __pyx_t_2;
+  __pyx_t_2 = 0;
   goto __pyx_L0;
 
   /* "graphbrain/funs.pyx":59
@@ -2949,12 +2963,14 @@ static PyObject *__pyx_pf_10graphbrain_4funs_8is_edge(CYTHON_UNUSED PyObject *__
  * 
  * def is_edge(entity):             # <<<<<<<<<<<<<<
  *     """Checks if entity is an edge."""
- *     return isinstance(entity, (list, tuple))
+ *     return symbol_type(entity) == SymbolType.EDGE
  */
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
   __Pyx_AddTraceback("graphbrain.funs.is_edge", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
@@ -9648,7 +9664,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  * def is_symbol(entity):             # <<<<<<<<<<<<<<
  *     """Checks if entity is a symbol."""
- *     return not is_edge(entity)
+ *     return symbol_type(entity) != SymbolType.EDGE
  */
   __pyx_tuple__27 = PyTuple_Pack(1, __pyx_n_s_entity); if (unlikely(!__pyx_tuple__27)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__27);
@@ -9660,7 +9676,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  * def is_edge(entity):             # <<<<<<<<<<<<<<
  *     """Checks if entity is an edge."""
- *     return isinstance(entity, (list, tuple))
+ *     return symbol_type(entity) == SymbolType.EDGE
  */
   __pyx_tuple__29 = PyTuple_Pack(1, __pyx_n_s_entity); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(0, 59, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__29);
@@ -10465,7 +10481,7 @@ if (!__Pyx_RefNanny) {
  * 
  * def is_symbol(entity):             # <<<<<<<<<<<<<<
  *     """Checks if entity is a symbol."""
- *     return not is_edge(entity)
+ *     return symbol_type(entity) != SymbolType.EDGE
  */
   __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10graphbrain_4funs_7is_symbol, NULL, __pyx_n_s_graphbrain_funs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -10477,7 +10493,7 @@ if (!__Pyx_RefNanny) {
  * 
  * def is_edge(entity):             # <<<<<<<<<<<<<<
  *     """Checks if entity is an edge."""
- *     return isinstance(entity, (list, tuple))
+ *     return symbol_type(entity) == SymbolType.EDGE
  */
   __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10graphbrain_4funs_9is_edge, NULL, __pyx_n_s_graphbrain_funs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
