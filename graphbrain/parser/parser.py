@@ -88,21 +88,19 @@ def token_type(token):
         return 'p'
     elif dep in {'amod', 'det', 'npadvmod', 'nummod', 'preconj', 'predet'}:
         return 'm'
-    elif dep in {'aux', 'auxpass', 'expl', 'neg', 'prt'}:
+    elif dep in {'aux', 'auxpass', 'expl', 'neg', 'prt', 'quantmod'}:
         return 'a'
-    elif dep in {'case', 'cc'}:
+    elif dep in {'case', 'cc', 'mark'}:
         return 'b'
-    elif dep in {'agent', 'mark'}:
+    elif dep == 'agent':
         return 'x'
-    elif dep == 'quantmod':
-        return 'w'
     elif dep in {'intj', 'punct'}:
         return ''
     elif dep == 'advmod':
         if token_head_type(token) == 'p':
             return 'a'
         else:
-            return 'w'
+            return 'm'
     elif dep == 'poss':
         if is_noun(token):
             return 'c'

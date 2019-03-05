@@ -6,3 +6,7 @@ Britain's hopes of a trade deal with America just suffered a big blow.
 ((just/a suffered/p.d.so) ('s/b britain/c (of/b hopes/c (a/m (with/b (+/b/. trade/c deal/c) america/c)))) (a/m (big/m blow/c)))
 My name is Telmo.
 (is/p.d.sc (my/m name/c) telmo/c)
+I admire the fact that you are honest.
+(admire/p.d.so i/c (the/m (that/b fact/c (are/p.d.sc you/c honest/c))))
+She looks very beautiful.
+(looks/p.d.sc she/c (very/m beautiful/c))
