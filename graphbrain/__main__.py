@@ -1,4 +1,4 @@
-import importlib
+from importlib import import_module
 import argparse
 from termcolor import colored
 from . import constants as const
@@ -15,12 +15,17 @@ def cli():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('command', type=str, help='command to execute')
-    parser.add_argument('--backend', type=str, help='hypergraph backend (leveldb, null)', default='leveldb')
-    parser.add_argument('--hg', type=str, help='hypergraph name', default='gb.hg')
+    parser.add_argument('--backend', type=str,
+                        help='hypergraph backend (leveldb, null)',
+                        default='leveldb')
+    parser.add_argument('--hg', type=str,
+                        help='hypergraph name', default='gb.hg')
     parser.add_argument('--infile', type=str, help='input file', default=None)
-    parser.add_argument('--outfile', type=str, help='output file', default=None)
+    parser.add_argument('--outfile', type=str,
+                        help='output file', default=None)
     parser.add_argument('--fields', type=str, help='field names', default=None)
-    parser.add_argument('--show_namespaces', help='show namespaces', action='store_true')
+    parser.add_argument('--show_namespaces',
+                        help='show namespaces', action='store_true')
     parser.add_argument('--lang', type=str, help='language', default='en')
 
     args = parser.parse_args()
@@ -41,7 +46,7 @@ def cli():
     command = args.command
 
     try:
-        cmd_module = importlib.import_module('graphbrain.commands.%s' % command)
+        cmd_module = import_module('graphbrain.commands.%s' % command)
         cmd_module.run(params)
     except ImportError:
         print('unkown command: %s' % command)

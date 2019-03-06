@@ -18,7 +18,8 @@ def atom_parts(atom):
 
 
 def root(atom):
-    """Extracts the root of an atom (e.g. the root of graphbrain/c/1 is graphbrain)."""
+    """Extracts the root of an atom
+    (e.g. the root of graphbrain/c/1 is graphbrain)."""
     return atom_parts(atom)[0]
 
 
@@ -46,7 +47,9 @@ def label(atom):
 
 
 def _open_pars(s):
-    """Number of consecutive open parenthesis at the beginning of the string."""
+    """Returns number of consecutive open parenthesis at the beginning of the
+    string.
+    """
     pos = 0
     while s[pos] == '(':
         pos += 1
@@ -69,14 +72,18 @@ def _parsed_token(token):
 
 
 def _edge_str_has_outer_parens(str edge_str):
-    """Check if string representation of edge is delimited by outer parenthesis."""
+    """Check if string representation of edge is delimited by outer
+    parenthesis.
+    """
     if len(edge_str) < 2:
         return False
     return edge_str[0] == '('
 
 
 def split_edge_str(str edge_str):
-    """Shallow split into tokens of a string representation of an edge, without outer parenthesis."""
+    """Shallow split into tokens of a string representation of an edge,
+    without outer parenthesis.
+    """
     cdef int start = 0
     cdef int depth = 0
     cdef int str_length = len(edge_str)
@@ -139,7 +146,9 @@ def str2ent(str ent_str):
 
 
 def edges2str(edges, roots_only=False):
-    """Convert a collection of edges to a string representation (no outer parenthesis)."""
+    """Convert a collection of edges to a string representation
+    (no outer parenthesis).
+    """
     edges_string = []
     for entity in edges:
         if is_edge(entity):
@@ -222,7 +231,9 @@ def size(entity):
 
 
 def subedges(edge):
-    """Returns all the subedges contained in the edge, including atoms and itself."""
+    """Returns all the subedges contained in the edge, including atoms and
+    itself.
+    """
     edges = {edge}
     if is_edge(edge):
         for item in edge:
@@ -252,10 +263,8 @@ def entity_type(entity):
         else:
             if ptype == 'p':
                 return 'r'
-            elif ptype == 'a':
-                return 'p'
-            elif ptype == 'w':
-                return 'm'
+            elif ptype in {'a', 'm', 'w'}:
+                return entity_type(entity[1])
             elif ptype == 'x':
                 return 'd'
             elif ptype == 't':
@@ -279,13 +288,6 @@ def nest(inner, outer, before):
             return outer + (inner,)
         else:
             return (outer[0], inner) + outer[1:]
-
-
-def nest_predicate(inner, outer, before):
-    if entity_type(inner) == 'p':
-        return nest(inner, outer, before)
-    else:
-        return (nest(inner[0], outer, before),) + inner[1:]
 
 
 def parens(entity):
