@@ -3,10 +3,24 @@ Satellites from NASA and other agencies have been tracking sea ice changes since
 The algorithm can play both black and white.
 ((can/a play/p.d.so) (the/m algorithm/c) (both/m (and/b black/c white/c)))
 Britain's hopes of a trade deal with America just suffered a big blow.
-((just/a suffered/p.d.so) ('s/b britain/c (of/b hopes/c (a/m (with/b (+/b/. trade/c deal/c) america/c)))) (a/m (big/m blow/c)))
+((just/a suffered/p.d.so) (of/b ('s/b britain/c hopes/c) (a/m (with/b (+/b/. trade/c deal/c) america/c))) (a/m (big/m blow/c)))
 My name is Telmo.
 (is/p.d.sc (my/m name/c) telmo/c)
 I admire the fact that you are honest.
-(admire/p.d.so i/c (the/m (that/b fact/c (are/p.d.sc you/c honest/c))))
+(admire/p.d.so i/c (the/m (that/b fact/c (are/p.c.sc you/c honest/c))))
 She looks very beautiful.
 (looks/p.d.sc she/c (very/m beautiful/c))
+Sweden wants to fight our disposable culture with tax breaks for repairing old stuff.
+(wants/p.d.sr sweden/c ((to/a fight/p.c.ox) (our/m (disposable/m culture/c)) (with/x (for/b (+/b/. tax/c breaks/c) (repairing/p.c.o (old/m stuff/c))))))
+Loving is the new fighting.
+(is/p.d.sc loving/c (the/m (new/m fighting/c)))
+Sweden is the third-largest country in the European Union by area.
+(is/p.d.sc sweden/c (the/m ((third/w largest/m) (by/b (in/b country/c (the/m (+/b/. european/c union/c))) area/c))))
+France's Le Pen says people no longer want the EU
+(says/p.d.sr ('s/b france/c (+/b/. le/c pen/c)) (((no/a.n longer/a) want/p.d.so) people/c (the/m eu/c)))
+Wii will fail just like the arcade games of yesteryear.
+((will/a fail/p.d.sx) wii/c ((just/w like/x) (the/m (of/b (+/b/. arcade/c games/c) yesteryear/c))))
+Mary will come if the weather is good.
+((will/a come/p.d.sx) mary/c (if/x (is/p.d.sc (the/m weather/c) good/c)))
+Mary will come if it doesn't rain.
+((will/a come/p.d.sx) mary/c (if/x ((does/a (n't/a.n rain/p.d.s)) it/c)))

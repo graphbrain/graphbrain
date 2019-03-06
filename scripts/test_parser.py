@@ -28,9 +28,9 @@ if __name__ == '__main__':
                     wrong += 1
                     print_tree(sent.root)
                     print('expected:')
-                    print(edge2str(correct_edge))
+                    print(ent2str(correct_edge))
                     print('result:')
-                    print(edge2str(edge))
+                    print(ent2str(edge))
                 sentence = None
             else:
                 sentence = line
