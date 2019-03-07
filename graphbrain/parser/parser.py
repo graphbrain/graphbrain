@@ -41,8 +41,7 @@ def token_type(token):
     elif dep in {'acomp', 'appos', 'attr', 'compound', 'conj', 'dative', 'dep',
                  'dobj', 'nsubj', 'nsubjpass', 'oprd', 'pobj', 'meta'}:
         return 'c'
-    elif dep in {'advcl', 'ccomp', 'csubj', 'csubjpass', 'parataxis',
-                 'relcl'}:
+    elif dep in {'advcl', 'ccomp', 'csubj', 'csubjpass', 'parataxis', 'relcl'}:
         return 'p'
     elif dep in {'acl', 'pcomp', 'xcomp'}:
         return 'p.c'
@@ -61,7 +60,7 @@ def token_type(token):
     elif dep == 'advmod':
         if token_head_type(token)[0] == 'p':
             return 'a'
-        elif token_head_type(token) in {'m', 'x'}:
+        elif token_head_type(token) in {'m', 'x', 't'}:
             return 'w'
         else:
             return 'm'
@@ -72,7 +71,7 @@ def token_type(token):
             return 'm'
     elif dep == 'prep':
         if token_head_type(token)[0] == 'p':
-            return 'x'
+            return 't'
         else:
             return 'b'
     elif dep == 'mark':
@@ -145,7 +144,7 @@ class Parser(object):
                 child_type = entity_type(child)
                 if child_type:
                     children.append(child)
-                    if child_type in {'c', 'r', 'd'}:
+                    if child_type in {'c', 'r', 'd', 's'}:
                         entities.append(child)
 
         children.reverse()
@@ -171,7 +170,7 @@ class Parser(object):
         for child in children:
             # print('%s <- %s' % (parent, child))
             child_type = entity_type(child)
-            if child_type in {'c', 'r', 'd'}:
+            if child_type in {'c', 'r', 'd', 's'}:
                 if parent_type == 'c':
                     if connector_type(child) == 'b':
                         if connector_type(parent) == 'c':
@@ -181,21 +180,26 @@ class Parser(object):
                                 lambda target:
                                     nest(target, child, positions[child]),
                                     parent_atom, parent)
-                    elif connector_type(child) == 'x':
+                    elif connector_type(child) in {'x', 't'}:
                         parent = nest(parent, child, positions[child])
                     else:
                         if (entity_type(parent_atom) == 'c' and
                                 connector_type(child) == 'c'):
-                            parent = apply_fun_to_atom(
-                                lambda target:
-                                    sequence(target, child, positions[child]),
-                                    parent_atom, parent)
+                            if connector_type(parent) == 'c':
+                                parent = sequence(parent, child,
+                                                  positions[child])
+                            else:
+                                parent = apply_fun_to_atom(
+                                    lambda target:
+                                        sequence(target, child,
+                                                 positions[child]),
+                                        parent_atom, parent)
                         else:
                             parent = apply_fun_to_atom(
                                 lambda target:
                                     connect(target, (child,)),
                                     parent_atom, parent)
-                elif parent_type in {'p', 'p.c', 'r', 'd'}:
+                elif parent_type in {'p', 'p.c', 'r', 'd', 's'}:
                     parent = insert_after_predicate(parent, child)
                 else:
                     parent = insert_first_argument(parent, child)
@@ -206,12 +210,12 @@ class Parser(object):
                     parent = nest(parent, child, positions[child])
             elif child_type == 'm':
                 parent = (child, parent)
-            elif child_type == 'x':
+            elif child_type in {'x', 't'}:
                 parent = (child, parent)
             elif child_type[0] == 'a':
                 parent = nest_predicate(parent, child, positions[child])
             elif child_type == 'w':
-                if parent_type == 'd':
+                if parent_type in {'d', 's'}:
                     parent = nest_predicate(parent, child, positions[child])
                     # pass
                 else:
@@ -231,7 +235,7 @@ class Parser(object):
 
 
 if __name__ == '__main__':
-    text = "Mary will come if the weather is good."
+    text = "North Korea accuses Trump of being selfish over Paris climate pact"
 
     parser = Parser(lang='en')
     edge, _ = parser.parse(text)[0]
