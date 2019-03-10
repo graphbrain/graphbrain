@@ -9,7 +9,7 @@ def is_atom(entity):
 
 def is_edge(entity):
     """Checks if entity is an edge."""
-    return not is_atom(entity)
+    return isinstance(entity, (tuple, list))
 
 
 def atom_parts(atom):
@@ -256,21 +256,25 @@ def atom_type(atom):
 def entity_type(entity):
     if is_atom(entity):
         return atom_type(entity)
-    else:
+    elif is_edge(entity):
         ptype = entity_type(entity[0])
         if len(entity) < 2:
             return ptype
         else:
-            if ptype == 'p':
-                return 'r'
-            elif ptype in {'a', 'm', 'w'}:
+            if ptype[0] == 'p':
+                outter_type = 'r'
+            elif ptype[0] in {'a', 'm', 'w'}:
                 return entity_type(entity[1])
-            elif ptype == 'x':
-                return 'd'
-            elif ptype == 't':
-                return 's'
+            elif ptype[0] == 'x':
+                outter_type = 'd'
+            elif ptype[0] == 't':
+                outter_type = 's'
             else:
                 return 'c'
+
+            return '{}{}'.format(outter_type, ptype[1:])
+    else:
+        return None
 
 
 def connector_type(entity):
@@ -300,8 +304,10 @@ def parens(entity):
 def insert_first_argument(entity, argument):
     if is_atom(entity):
         return (entity, argument)
-    else:
+    elif is_edge(entity):
         return (entity[0], argument) + entity[1:]
+    else:
+        return None
 
 
 def connect(entity, arguments):
@@ -311,11 +317,17 @@ def connect(entity, arguments):
         return parens(entity) + parens(arguments)
 
 
-def sequence(target, entity, before):
-    if before:
-        return parens(entity) + parens(target)
+def sequence(target, entity, before, flat=True):
+    if flat:
+        if before:
+            return parens(entity) + parens(target)
+        else:
+            return parens(target) + parens(entity)
     else:
-        return parens(target) + parens(entity)
+        if before:
+            return (entity, target)
+        else:
+            return (target, entity)
 
 
 def apply_fun_to_atom(fun, atom, target):

@@ -867,7 +867,7 @@ struct __pyx_obj_10graphbrain_4funs___pyx_scope_struct_3_genexpr {
 };
 
 
-/* "graphbrain/funs.pyx":321
+/* "graphbrain/funs.pyx":333
  * 
  * 
  * def apply_fun_to_atom(fun, atom, target):             # <<<<<<<<<<<<<<
@@ -882,7 +882,7 @@ struct __pyx_obj_10graphbrain_4funs___pyx_scope_struct_4_apply_fun_to_atom {
 };
 
 
-/* "graphbrain/funs.pyx":328
+/* "graphbrain/funs.pyx":340
  *             return target
  *     else:
  *         return tuple(apply_fun_to_atom(fun, atom, item) for item in target)             # <<<<<<<<<<<<<<
@@ -971,53 +971,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject
 /* GetBuiltinName.proto */
 static PyObject *__Pyx_GetBuiltinName(PyObject *name);
 
-/* PyDictVersioning.proto */
-#if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
-#define __PYX_DICT_VERSION_INIT  ((PY_UINT64_T) -1)
-#define __PYX_GET_DICT_VERSION(dict)  (((PyDictObject*)(dict))->ma_version_tag)
-#define __PYX_UPDATE_DICT_CACHE(dict, value, cache_var, version_var)\
-    (version_var) = __PYX_GET_DICT_VERSION(dict);\
-    (cache_var) = (value);
-#define __PYX_PY_DICT_LOOKUP_IF_MODIFIED(VAR, DICT, LOOKUP) {\
-    static PY_UINT64_T __pyx_dict_version = 0;\
-    static PyObject *__pyx_dict_cached_value = NULL;\
-    if (likely(__PYX_GET_DICT_VERSION(DICT) == __pyx_dict_version)) {\
-        (VAR) = __pyx_dict_cached_value;\
-    } else {\
-        (VAR) = __pyx_dict_cached_value = (LOOKUP);\
-        __pyx_dict_version = __PYX_GET_DICT_VERSION(DICT);\
-    }\
-}
-static CYTHON_INLINE PY_UINT64_T __Pyx_get_tp_dict_version(PyObject *obj);
-static CYTHON_INLINE PY_UINT64_T __Pyx_get_object_dict_version(PyObject *obj);
-static CYTHON_INLINE int __Pyx_object_dict_version_matches(PyObject* obj, PY_UINT64_T tp_dict_version, PY_UINT64_T obj_dict_version);
-#else
-#define __PYX_GET_DICT_VERSION(dict)  (0)
-#define __PYX_UPDATE_DICT_CACHE(dict, value, cache_var, version_var)
-#define __PYX_PY_DICT_LOOKUP_IF_MODIFIED(VAR, DICT, LOOKUP)  (VAR) = (LOOKUP);
-#endif
-
-/* GetModuleGlobalName.proto */
-#if CYTHON_USE_DICT_VERSIONS
-#define __Pyx_GetModuleGlobalName(var, name)  {\
-    static PY_UINT64_T __pyx_dict_version = 0;\
-    static PyObject *__pyx_dict_cached_value = NULL;\
-    (var) = (likely(__pyx_dict_version == __PYX_GET_DICT_VERSION(__pyx_d))) ?\
-        (likely(__pyx_dict_cached_value) ? __Pyx_NewRef(__pyx_dict_cached_value) : __Pyx_GetBuiltinName(name)) :\
-        __Pyx__GetModuleGlobalName(name, &__pyx_dict_version, &__pyx_dict_cached_value);\
-}
-#define __Pyx_GetModuleGlobalNameUncached(var, name)  {\
-    PY_UINT64_T __pyx_dict_version;\
-    PyObject *__pyx_dict_cached_value;\
-    (var) = __Pyx__GetModuleGlobalName(name, &__pyx_dict_version, &__pyx_dict_cached_value);\
-}
-static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value);
-#else
-#define __Pyx_GetModuleGlobalName(var, name)  (var) = __Pyx__GetModuleGlobalName(name)
-#define __Pyx_GetModuleGlobalNameUncached(var, name)  (var) = __Pyx__GetModuleGlobalName(name)
-static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name);
-#endif
-
 /* PyCFunctionFastCall.proto */
 #if CYTHON_FAST_PYCCALL
 static CYTHON_INLINE PyObject *__Pyx_PyCFunction_FastCall(PyObject *func, PyObject **args, Py_ssize_t nargs);
@@ -1065,6 +1018,53 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject
 
 /* PyObjectCallOneArg.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg);
+
+/* PyDictVersioning.proto */
+#if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
+#define __PYX_DICT_VERSION_INIT  ((PY_UINT64_T) -1)
+#define __PYX_GET_DICT_VERSION(dict)  (((PyDictObject*)(dict))->ma_version_tag)
+#define __PYX_UPDATE_DICT_CACHE(dict, value, cache_var, version_var)\
+    (version_var) = __PYX_GET_DICT_VERSION(dict);\
+    (cache_var) = (value);
+#define __PYX_PY_DICT_LOOKUP_IF_MODIFIED(VAR, DICT, LOOKUP) {\
+    static PY_UINT64_T __pyx_dict_version = 0;\
+    static PyObject *__pyx_dict_cached_value = NULL;\
+    if (likely(__PYX_GET_DICT_VERSION(DICT) == __pyx_dict_version)) {\
+        (VAR) = __pyx_dict_cached_value;\
+    } else {\
+        (VAR) = __pyx_dict_cached_value = (LOOKUP);\
+        __pyx_dict_version = __PYX_GET_DICT_VERSION(DICT);\
+    }\
+}
+static CYTHON_INLINE PY_UINT64_T __Pyx_get_tp_dict_version(PyObject *obj);
+static CYTHON_INLINE PY_UINT64_T __Pyx_get_object_dict_version(PyObject *obj);
+static CYTHON_INLINE int __Pyx_object_dict_version_matches(PyObject* obj, PY_UINT64_T tp_dict_version, PY_UINT64_T obj_dict_version);
+#else
+#define __PYX_GET_DICT_VERSION(dict)  (0)
+#define __PYX_UPDATE_DICT_CACHE(dict, value, cache_var, version_var)
+#define __PYX_PY_DICT_LOOKUP_IF_MODIFIED(VAR, DICT, LOOKUP)  (VAR) = (LOOKUP);
+#endif
+
+/* GetModuleGlobalName.proto */
+#if CYTHON_USE_DICT_VERSIONS
+#define __Pyx_GetModuleGlobalName(var, name)  {\
+    static PY_UINT64_T __pyx_dict_version = 0;\
+    static PyObject *__pyx_dict_cached_value = NULL;\
+    (var) = (likely(__pyx_dict_version == __PYX_GET_DICT_VERSION(__pyx_d))) ?\
+        (likely(__pyx_dict_cached_value) ? __Pyx_NewRef(__pyx_dict_cached_value) : __Pyx_GetBuiltinName(name)) :\
+        __Pyx__GetModuleGlobalName(name, &__pyx_dict_version, &__pyx_dict_cached_value);\
+}
+#define __Pyx_GetModuleGlobalNameUncached(var, name)  {\
+    PY_UINT64_T __pyx_dict_version;\
+    PyObject *__pyx_dict_cached_value;\
+    (var) = __Pyx__GetModuleGlobalName(name, &__pyx_dict_version, &__pyx_dict_cached_value);\
+}
+static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value);
+#else
+#define __Pyx_GetModuleGlobalName(var, name)  (var) = __Pyx__GetModuleGlobalName(name)
+#define __Pyx_GetModuleGlobalNameUncached(var, name)  (var) = __Pyx__GetModuleGlobalName(name)
+static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name);
+#endif
 
 /* GetItemInt.proto */
 #define __Pyx_GetItemInt(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
@@ -1443,6 +1443,7 @@ static const char __pyx_k__8[] = ")";
 static const char __pyx_k_np[] = "np";
 static const char __pyx_k__11[] = "";
 static const char __pyx_k__12[] = ".";
+static const char __pyx_k__13[] = "{}{}";
 static const char __pyx_k_fun[] = "fun";
 static const char __pyx_k_pos[] = "pos";
 static const char __pyx_k_s_2[] = "s";
@@ -1451,6 +1452,7 @@ static const char __pyx_k_args[] = "args";
 static const char __pyx_k_atom[] = "atom";
 static const char __pyx_k_deep[] = "deep";
 static const char __pyx_k_edge[] = "edge";
+static const char __pyx_k_flat[] = "flat";
 static const char __pyx_k_item[] = "item";
 static const char __pyx_k_join[] = "join";
 static const char __pyx_k_main[] = "__main__";
@@ -1484,6 +1486,7 @@ static const char __pyx_k_union[] = "union";
 static const char __pyx_k_active[] = "active";
 static const char __pyx_k_before[] = "before";
 static const char __pyx_k_entity[] = "entity";
+static const char __pyx_k_format[] = "format";
 static const char __pyx_k_import[] = "__import__";
 static const char __pyx_k_needle[] = "needle";
 static const char __pyx_k_parens[] = "parens";
@@ -1519,6 +1522,7 @@ static const char __pyx_k_entity_str[] = "entity_str";
 static const char __pyx_k_roots_only[] = "roots_only";
 static const char __pyx_k_str_length[] = "str_length";
 static const char __pyx_k_entity_type[] = "entity_type";
+static const char __pyx_k_outter_type[] = "outter_type";
 static const char __pyx_k_edges_string[] = "edges_string";
 static const char __pyx_k_parsed_token[] = "_parsed_token";
 static const char __pyx_k_connector_type[] = "connector_type";
@@ -1536,6 +1540,7 @@ static const char __pyx_k_apply_fun_to_atom_locals_genexpr[] = "apply_fun_to_ato
 static PyObject *__pyx_kp_s_;
 static PyObject *__pyx_kp_s__11;
 static PyObject *__pyx_kp_s__12;
+static PyObject *__pyx_kp_s__13;
 static PyObject *__pyx_n_s__2;
 static PyObject *__pyx_kp_s__4;
 static PyObject *__pyx_kp_s__6;
@@ -1578,6 +1583,8 @@ static PyObject *__pyx_n_s_ent_str;
 static PyObject *__pyx_n_s_entity;
 static PyObject *__pyx_n_s_entity_str;
 static PyObject *__pyx_n_s_entity_type;
+static PyObject *__pyx_n_s_flat;
+static PyObject *__pyx_n_s_format;
 static PyObject *__pyx_n_s_fun;
 static PyObject *__pyx_n_s_genexpr;
 static PyObject *__pyx_n_s_graphbrain_funs;
@@ -1603,6 +1610,7 @@ static PyObject *__pyx_n_s_np;
 static PyObject *__pyx_n_s_numpy;
 static PyObject *__pyx_n_s_open_pars;
 static PyObject *__pyx_n_s_outer;
+static PyObject *__pyx_n_s_outter_type;
 static PyObject *__pyx_n_s_p;
 static PyObject *__pyx_n_s_parens;
 static PyObject *__pyx_n_s_parsed_token;
@@ -1673,7 +1681,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_50nest(CYTHON_UNUSED PyObject *__py
 static PyObject *__pyx_pf_10graphbrain_4funs_52parens(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_entity); /* proto */
 static PyObject *__pyx_pf_10graphbrain_4funs_54insert_first_argument(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_entity, PyObject *__pyx_v_argument); /* proto */
 static PyObject *__pyx_pf_10graphbrain_4funs_56connect(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_entity, PyObject *__pyx_v_arguments); /* proto */
-static PyObject *__pyx_pf_10graphbrain_4funs_58sequence(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_target, PyObject *__pyx_v_entity, PyObject *__pyx_v_before); /* proto */
+static PyObject *__pyx_pf_10graphbrain_4funs_58sequence(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_target, PyObject *__pyx_v_entity, PyObject *__pyx_v_before, PyObject *__pyx_v_flat); /* proto */
 static PyObject *__pyx_pf_10graphbrain_4funs_17apply_fun_to_atom_genexpr(PyObject *__pyx_self); /* proto */
 static PyObject *__pyx_pf_10graphbrain_4funs_60apply_fun_to_atom(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_fun, PyObject *__pyx_v_atom, PyObject *__pyx_v_target); /* proto */
 static PyObject *__pyx_tp_new_10graphbrain_4funs___pyx_scope_struct__str2ent(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
@@ -1689,70 +1697,70 @@ static PyObject *__pyx_tuple__3;
 static PyObject *__pyx_tuple__5;
 static PyObject *__pyx_tuple__7;
 static PyObject *__pyx_tuple__9;
-static PyObject *__pyx_slice__13;
+static PyObject *__pyx_slice__14;
 static PyObject *__pyx_tuple__10;
-static PyObject *__pyx_tuple__14;
-static PyObject *__pyx_tuple__16;
-static PyObject *__pyx_tuple__18;
-static PyObject *__pyx_tuple__20;
-static PyObject *__pyx_tuple__22;
-static PyObject *__pyx_tuple__24;
-static PyObject *__pyx_tuple__26;
-static PyObject *__pyx_tuple__28;
-static PyObject *__pyx_tuple__30;
-static PyObject *__pyx_tuple__32;
-static PyObject *__pyx_tuple__34;
-static PyObject *__pyx_tuple__36;
-static PyObject *__pyx_tuple__38;
-static PyObject *__pyx_tuple__40;
-static PyObject *__pyx_tuple__42;
-static PyObject *__pyx_tuple__44;
-static PyObject *__pyx_tuple__46;
-static PyObject *__pyx_tuple__48;
-static PyObject *__pyx_tuple__50;
-static PyObject *__pyx_tuple__52;
-static PyObject *__pyx_tuple__54;
-static PyObject *__pyx_tuple__56;
-static PyObject *__pyx_tuple__58;
-static PyObject *__pyx_tuple__60;
-static PyObject *__pyx_tuple__62;
-static PyObject *__pyx_tuple__64;
-static PyObject *__pyx_tuple__66;
-static PyObject *__pyx_tuple__68;
-static PyObject *__pyx_tuple__70;
-static PyObject *__pyx_tuple__72;
-static PyObject *__pyx_tuple__74;
-static PyObject *__pyx_codeobj__15;
-static PyObject *__pyx_codeobj__17;
-static PyObject *__pyx_codeobj__19;
-static PyObject *__pyx_codeobj__21;
-static PyObject *__pyx_codeobj__23;
-static PyObject *__pyx_codeobj__25;
-static PyObject *__pyx_codeobj__27;
-static PyObject *__pyx_codeobj__29;
-static PyObject *__pyx_codeobj__31;
-static PyObject *__pyx_codeobj__33;
-static PyObject *__pyx_codeobj__35;
-static PyObject *__pyx_codeobj__37;
-static PyObject *__pyx_codeobj__39;
-static PyObject *__pyx_codeobj__41;
-static PyObject *__pyx_codeobj__43;
-static PyObject *__pyx_codeobj__45;
-static PyObject *__pyx_codeobj__47;
-static PyObject *__pyx_codeobj__49;
-static PyObject *__pyx_codeobj__51;
-static PyObject *__pyx_codeobj__53;
-static PyObject *__pyx_codeobj__55;
-static PyObject *__pyx_codeobj__57;
-static PyObject *__pyx_codeobj__59;
-static PyObject *__pyx_codeobj__61;
-static PyObject *__pyx_codeobj__63;
-static PyObject *__pyx_codeobj__65;
-static PyObject *__pyx_codeobj__67;
-static PyObject *__pyx_codeobj__69;
-static PyObject *__pyx_codeobj__71;
-static PyObject *__pyx_codeobj__73;
-static PyObject *__pyx_codeobj__75;
+static PyObject *__pyx_tuple__15;
+static PyObject *__pyx_tuple__17;
+static PyObject *__pyx_tuple__19;
+static PyObject *__pyx_tuple__21;
+static PyObject *__pyx_tuple__23;
+static PyObject *__pyx_tuple__25;
+static PyObject *__pyx_tuple__27;
+static PyObject *__pyx_tuple__29;
+static PyObject *__pyx_tuple__31;
+static PyObject *__pyx_tuple__33;
+static PyObject *__pyx_tuple__35;
+static PyObject *__pyx_tuple__37;
+static PyObject *__pyx_tuple__39;
+static PyObject *__pyx_tuple__41;
+static PyObject *__pyx_tuple__43;
+static PyObject *__pyx_tuple__45;
+static PyObject *__pyx_tuple__47;
+static PyObject *__pyx_tuple__49;
+static PyObject *__pyx_tuple__51;
+static PyObject *__pyx_tuple__53;
+static PyObject *__pyx_tuple__55;
+static PyObject *__pyx_tuple__57;
+static PyObject *__pyx_tuple__59;
+static PyObject *__pyx_tuple__61;
+static PyObject *__pyx_tuple__63;
+static PyObject *__pyx_tuple__65;
+static PyObject *__pyx_tuple__67;
+static PyObject *__pyx_tuple__69;
+static PyObject *__pyx_tuple__71;
+static PyObject *__pyx_tuple__73;
+static PyObject *__pyx_tuple__75;
+static PyObject *__pyx_codeobj__16;
+static PyObject *__pyx_codeobj__18;
+static PyObject *__pyx_codeobj__20;
+static PyObject *__pyx_codeobj__22;
+static PyObject *__pyx_codeobj__24;
+static PyObject *__pyx_codeobj__26;
+static PyObject *__pyx_codeobj__28;
+static PyObject *__pyx_codeobj__30;
+static PyObject *__pyx_codeobj__32;
+static PyObject *__pyx_codeobj__34;
+static PyObject *__pyx_codeobj__36;
+static PyObject *__pyx_codeobj__38;
+static PyObject *__pyx_codeobj__40;
+static PyObject *__pyx_codeobj__42;
+static PyObject *__pyx_codeobj__44;
+static PyObject *__pyx_codeobj__46;
+static PyObject *__pyx_codeobj__48;
+static PyObject *__pyx_codeobj__50;
+static PyObject *__pyx_codeobj__52;
+static PyObject *__pyx_codeobj__54;
+static PyObject *__pyx_codeobj__56;
+static PyObject *__pyx_codeobj__58;
+static PyObject *__pyx_codeobj__60;
+static PyObject *__pyx_codeobj__62;
+static PyObject *__pyx_codeobj__64;
+static PyObject *__pyx_codeobj__66;
+static PyObject *__pyx_codeobj__68;
+static PyObject *__pyx_codeobj__70;
+static PyObject *__pyx_codeobj__72;
+static PyObject *__pyx_codeobj__74;
+static PyObject *__pyx_codeobj__76;
 /* Late includes */
 
 /* "graphbrain/funs.pyx":5
@@ -1824,7 +1832,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_is_atom(CYTHON_UNUSED PyObject *__p
  * 
  * def is_edge(entity):             # <<<<<<<<<<<<<<
  *     """Checks if entity is an edge."""
- *     return not is_atom(entity)
+ *     return isinstance(entity, (tuple, list))
  */
 
 /* Python wrapper */
@@ -1845,43 +1853,35 @@ static PyObject *__pyx_pw_10graphbrain_4funs_3is_edge(PyObject *__pyx_self, PyOb
 static PyObject *__pyx_pf_10graphbrain_4funs_2is_edge(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_entity) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
-  PyObject *__pyx_t_2 = NULL;
-  PyObject *__pyx_t_3 = NULL;
-  int __pyx_t_4;
+  int __pyx_t_1;
+  int __pyx_t_2;
+  int __pyx_t_3;
+  PyObject *__pyx_t_4 = NULL;
   __Pyx_RefNannySetupContext("is_edge", 0);
 
   /* "graphbrain/funs.pyx":12
  * def is_edge(entity):
  *     """Checks if entity is an edge."""
- *     return not is_atom(entity)             # <<<<<<<<<<<<<<
+ *     return isinstance(entity, (tuple, list))             # <<<<<<<<<<<<<<
  * 
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_is_atom); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 12, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = NULL;
-  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
-    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
-    if (likely(__pyx_t_3)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-      __Pyx_INCREF(__pyx_t_3);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_2, function);
-    }
+  __pyx_t_2 = PyTuple_Check(__pyx_v_entity); 
+  __pyx_t_3 = (__pyx_t_2 != 0);
+  if (!__pyx_t_3) {
+  } else {
+    __pyx_t_1 = __pyx_t_3;
+    goto __pyx_L3_bool_binop_done;
   }
-  __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_entity) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_entity);
-  __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 12, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 12, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyBool_FromLong((!__pyx_t_4)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 12, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __pyx_t_3 = PyList_Check(__pyx_v_entity); 
+  __pyx_t_2 = (__pyx_t_3 != 0);
+  __pyx_t_1 = __pyx_t_2;
+  __pyx_L3_bool_binop_done:;
+  __pyx_t_4 = __Pyx_PyBool_FromLong(__pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 12, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __pyx_r = __pyx_t_4;
+  __pyx_t_4 = 0;
   goto __pyx_L0;
 
   /* "graphbrain/funs.pyx":10
@@ -1889,14 +1889,12 @@ static PyObject *__pyx_pf_10graphbrain_4funs_2is_edge(CYTHON_UNUSED PyObject *__
  * 
  * def is_edge(entity):             # <<<<<<<<<<<<<<
  *     """Checks if entity is an edge."""
- *     return not is_atom(entity)
+ *     return isinstance(entity, (tuple, list))
  */
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
   __Pyx_AddTraceback("graphbrain.funs.is_edge", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
@@ -6540,6 +6538,7 @@ static PyObject *__pyx_pw_10graphbrain_4funs_47entity_type(PyObject *__pyx_self,
 
 static PyObject *__pyx_pf_10graphbrain_4funs_46entity_type(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_entity) {
   PyObject *__pyx_v_ptype = NULL;
+  PyObject *__pyx_v_outter_type = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -6549,6 +6548,8 @@ static PyObject *__pyx_pf_10graphbrain_4funs_46entity_type(CYTHON_UNUSED PyObjec
   PyObject *__pyx_t_5 = NULL;
   Py_ssize_t __pyx_t_6;
   int __pyx_t_7;
+  int __pyx_t_8;
+  PyObject *__pyx_t_9 = NULL;
   __Pyx_RefNannySetupContext("entity_type", 0);
 
   /* "graphbrain/funs.pyx":257
@@ -6556,7 +6557,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_46entity_type(CYTHON_UNUSED PyObjec
  * def entity_type(entity):
  *     if is_atom(entity):             # <<<<<<<<<<<<<<
  *         return atom_type(entity)
- *     else:
+ *     elif is_edge(entity):
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_is_atom); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 257, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -6583,7 +6584,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_46entity_type(CYTHON_UNUSED PyObjec
  * def entity_type(entity):
  *     if is_atom(entity):
  *         return atom_type(entity)             # <<<<<<<<<<<<<<
- *     else:
+ *     elif is_edge(entity):
  *         ptype = entity_type(entity[0])
  */
     __Pyx_XDECREF(__pyx_r);
@@ -6613,18 +6614,45 @@ static PyObject *__pyx_pf_10graphbrain_4funs_46entity_type(CYTHON_UNUSED PyObjec
  * def entity_type(entity):
  *     if is_atom(entity):             # <<<<<<<<<<<<<<
  *         return atom_type(entity)
- *     else:
+ *     elif is_edge(entity):
  */
   }
 
-  /* "graphbrain/funs.pyx":260
+  /* "graphbrain/funs.pyx":259
+ *     if is_atom(entity):
  *         return atom_type(entity)
- *     else:
+ *     elif is_edge(entity):             # <<<<<<<<<<<<<<
+ *         ptype = entity_type(entity[0])
+ *         if len(entity) < 2:
+ */
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_is_edge); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 259, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+    }
+  }
+  __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_entity) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_entity);
+  __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 259, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 259, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  if (__pyx_t_4) {
+
+    /* "graphbrain/funs.pyx":260
+ *         return atom_type(entity)
+ *     elif is_edge(entity):
  *         ptype = entity_type(entity[0])             # <<<<<<<<<<<<<<
  *         if len(entity) < 2:
  *             return ptype
  */
-  /*else*/ {
     __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_entity_type); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 260, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_entity, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 260, __pyx_L1_error)
@@ -6649,7 +6677,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_46entity_type(CYTHON_UNUSED PyObjec
     __pyx_t_1 = 0;
 
     /* "graphbrain/funs.pyx":261
- *     else:
+ *     elif is_edge(entity):
  *         ptype = entity_type(entity[0])
  *         if len(entity) < 2:             # <<<<<<<<<<<<<<
  *             return ptype
@@ -6664,7 +6692,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_46entity_type(CYTHON_UNUSED PyObjec
  *         if len(entity) < 2:
  *             return ptype             # <<<<<<<<<<<<<<
  *         else:
- *             if ptype == 'p':
+ *             if ptype[0] == 'p':
  */
       __Pyx_XDECREF(__pyx_r);
       __Pyx_INCREF(__pyx_v_ptype);
@@ -6672,7 +6700,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_46entity_type(CYTHON_UNUSED PyObjec
       goto __pyx_L0;
 
       /* "graphbrain/funs.pyx":261
- *     else:
+ *     elif is_edge(entity):
  *         ptype = entity_type(entity[0])
  *         if len(entity) < 2:             # <<<<<<<<<<<<<<
  *             return ptype
@@ -6683,44 +6711,46 @@ static PyObject *__pyx_pf_10graphbrain_4funs_46entity_type(CYTHON_UNUSED PyObjec
     /* "graphbrain/funs.pyx":264
  *             return ptype
  *         else:
- *             if ptype == 'p':             # <<<<<<<<<<<<<<
- *                 return 'r'
- *             elif ptype in {'a', 'm', 'w'}:
+ *             if ptype[0] == 'p':             # <<<<<<<<<<<<<<
+ *                 outter_type = 'r'
+ *             elif ptype[0] in {'a', 'm', 'w'}:
  */
     /*else*/ {
-      __pyx_t_4 = (__Pyx_PyString_Equals(__pyx_v_ptype, __pyx_n_s_p, Py_EQ)); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 264, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_ptype, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 264, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_4 = (__Pyx_PyString_Equals(__pyx_t_1, __pyx_n_s_p, Py_EQ)); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 264, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       if (__pyx_t_4) {
 
         /* "graphbrain/funs.pyx":265
  *         else:
- *             if ptype == 'p':
- *                 return 'r'             # <<<<<<<<<<<<<<
- *             elif ptype in {'a', 'm', 'w'}:
+ *             if ptype[0] == 'p':
+ *                 outter_type = 'r'             # <<<<<<<<<<<<<<
+ *             elif ptype[0] in {'a', 'm', 'w'}:
  *                 return entity_type(entity[1])
  */
-        __Pyx_XDECREF(__pyx_r);
         __Pyx_INCREF(__pyx_n_s_r);
-        __pyx_r = __pyx_n_s_r;
-        goto __pyx_L0;
+        __pyx_v_outter_type = __pyx_n_s_r;
 
         /* "graphbrain/funs.pyx":264
  *             return ptype
  *         else:
- *             if ptype == 'p':             # <<<<<<<<<<<<<<
- *                 return 'r'
- *             elif ptype in {'a', 'm', 'w'}:
+ *             if ptype[0] == 'p':             # <<<<<<<<<<<<<<
+ *                 outter_type = 'r'
+ *             elif ptype[0] in {'a', 'm', 'w'}:
  */
+        goto __pyx_L5;
       }
 
       /* "graphbrain/funs.pyx":266
- *             if ptype == 'p':
- *                 return 'r'
- *             elif ptype in {'a', 'm', 'w'}:             # <<<<<<<<<<<<<<
+ *             if ptype[0] == 'p':
+ *                 outter_type = 'r'
+ *             elif ptype[0] in {'a', 'm', 'w'}:             # <<<<<<<<<<<<<<
  *                 return entity_type(entity[1])
- *             elif ptype == 'x':
+ *             elif ptype[0] == 'x':
  */
-      __Pyx_INCREF(__pyx_v_ptype);
-      __pyx_t_1 = __pyx_v_ptype;
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_ptype, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 266, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
       __pyx_t_7 = (__Pyx_PyString_Equals(__pyx_t_1, __pyx_n_s_a, Py_EQ)); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 266, __pyx_L1_error)
       if (!__pyx_t_7) {
       } else {
@@ -6741,11 +6771,11 @@ static PyObject *__pyx_pf_10graphbrain_4funs_46entity_type(CYTHON_UNUSED PyObjec
       if (__pyx_t_7) {
 
         /* "graphbrain/funs.pyx":267
- *                 return 'r'
- *             elif ptype in {'a', 'm', 'w'}:
+ *                 outter_type = 'r'
+ *             elif ptype[0] in {'a', 'm', 'w'}:
  *                 return entity_type(entity[1])             # <<<<<<<<<<<<<<
- *             elif ptype == 'x':
- *                 return 'd'
+ *             elif ptype[0] == 'x':
+ *                 outter_type = 'd'
  */
         __Pyx_XDECREF(__pyx_r);
         __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_entity_type); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 267, __pyx_L1_error)
@@ -6773,82 +6803,86 @@ static PyObject *__pyx_pf_10graphbrain_4funs_46entity_type(CYTHON_UNUSED PyObjec
         goto __pyx_L0;
 
         /* "graphbrain/funs.pyx":266
- *             if ptype == 'p':
- *                 return 'r'
- *             elif ptype in {'a', 'm', 'w'}:             # <<<<<<<<<<<<<<
+ *             if ptype[0] == 'p':
+ *                 outter_type = 'r'
+ *             elif ptype[0] in {'a', 'm', 'w'}:             # <<<<<<<<<<<<<<
  *                 return entity_type(entity[1])
- *             elif ptype == 'x':
+ *             elif ptype[0] == 'x':
  */
       }
 
       /* "graphbrain/funs.pyx":268
- *             elif ptype in {'a', 'm', 'w'}:
+ *             elif ptype[0] in {'a', 'm', 'w'}:
  *                 return entity_type(entity[1])
- *             elif ptype == 'x':             # <<<<<<<<<<<<<<
- *                 return 'd'
- *             elif ptype == 't':
+ *             elif ptype[0] == 'x':             # <<<<<<<<<<<<<<
+ *                 outter_type = 'd'
+ *             elif ptype[0] == 't':
  */
-      __pyx_t_7 = (__Pyx_PyString_Equals(__pyx_v_ptype, __pyx_n_s_x, Py_EQ)); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 268, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_ptype, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 268, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_7 = (__Pyx_PyString_Equals(__pyx_t_1, __pyx_n_s_x, Py_EQ)); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 268, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       if (__pyx_t_7) {
 
         /* "graphbrain/funs.pyx":269
  *                 return entity_type(entity[1])
- *             elif ptype == 'x':
- *                 return 'd'             # <<<<<<<<<<<<<<
- *             elif ptype == 't':
- *                 return 's'
+ *             elif ptype[0] == 'x':
+ *                 outter_type = 'd'             # <<<<<<<<<<<<<<
+ *             elif ptype[0] == 't':
+ *                 outter_type = 's'
  */
-        __Pyx_XDECREF(__pyx_r);
         __Pyx_INCREF(__pyx_n_s_d);
-        __pyx_r = __pyx_n_s_d;
-        goto __pyx_L0;
+        __pyx_v_outter_type = __pyx_n_s_d;
 
         /* "graphbrain/funs.pyx":268
- *             elif ptype in {'a', 'm', 'w'}:
+ *             elif ptype[0] in {'a', 'm', 'w'}:
  *                 return entity_type(entity[1])
- *             elif ptype == 'x':             # <<<<<<<<<<<<<<
- *                 return 'd'
- *             elif ptype == 't':
+ *             elif ptype[0] == 'x':             # <<<<<<<<<<<<<<
+ *                 outter_type = 'd'
+ *             elif ptype[0] == 't':
  */
+        goto __pyx_L5;
       }
 
       /* "graphbrain/funs.pyx":270
- *             elif ptype == 'x':
- *                 return 'd'
- *             elif ptype == 't':             # <<<<<<<<<<<<<<
- *                 return 's'
+ *             elif ptype[0] == 'x':
+ *                 outter_type = 'd'
+ *             elif ptype[0] == 't':             # <<<<<<<<<<<<<<
+ *                 outter_type = 's'
  *             else:
  */
-      __pyx_t_7 = (__Pyx_PyString_Equals(__pyx_v_ptype, __pyx_n_s_t, Py_EQ)); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 270, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_ptype, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 270, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_7 = (__Pyx_PyString_Equals(__pyx_t_1, __pyx_n_s_t, Py_EQ)); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 270, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       if (__pyx_t_7) {
 
         /* "graphbrain/funs.pyx":271
- *                 return 'd'
- *             elif ptype == 't':
- *                 return 's'             # <<<<<<<<<<<<<<
+ *                 outter_type = 'd'
+ *             elif ptype[0] == 't':
+ *                 outter_type = 's'             # <<<<<<<<<<<<<<
  *             else:
  *                 return 'c'
  */
-        __Pyx_XDECREF(__pyx_r);
         __Pyx_INCREF(__pyx_n_s_s_2);
-        __pyx_r = __pyx_n_s_s_2;
-        goto __pyx_L0;
+        __pyx_v_outter_type = __pyx_n_s_s_2;
 
         /* "graphbrain/funs.pyx":270
- *             elif ptype == 'x':
- *                 return 'd'
- *             elif ptype == 't':             # <<<<<<<<<<<<<<
- *                 return 's'
+ *             elif ptype[0] == 'x':
+ *                 outter_type = 'd'
+ *             elif ptype[0] == 't':             # <<<<<<<<<<<<<<
+ *                 outter_type = 's'
  *             else:
  */
+        goto __pyx_L5;
       }
 
       /* "graphbrain/funs.pyx":273
- *                 return 's'
+ *                 outter_type = 's'
  *             else:
  *                 return 'c'             # <<<<<<<<<<<<<<
  * 
- * 
+ *             return '{}{}'.format(outter_type, ptype[1:])
  */
       /*else*/ {
         __Pyx_XDECREF(__pyx_r);
@@ -6856,7 +6890,92 @@ static PyObject *__pyx_pf_10graphbrain_4funs_46entity_type(CYTHON_UNUSED PyObjec
         __pyx_r = __pyx_n_s_c;
         goto __pyx_L0;
       }
+      __pyx_L5:;
+
+      /* "graphbrain/funs.pyx":275
+ *                 return 'c'
+ * 
+ *             return '{}{}'.format(outter_type, ptype[1:])             # <<<<<<<<<<<<<<
+ *     else:
+ *         return None
+ */
+      __Pyx_XDECREF(__pyx_r);
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s__13, __pyx_n_s_format); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 275, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_3 = __Pyx_PyObject_GetSlice(__pyx_v_ptype, 1, 0, NULL, NULL, &__pyx_slice__14, 1, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 275, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_5 = NULL;
+      __pyx_t_8 = 0;
+      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+        __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_2);
+        if (likely(__pyx_t_5)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+          __Pyx_INCREF(__pyx_t_5);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_2, function);
+          __pyx_t_8 = 1;
+        }
+      }
+      #if CYTHON_FAST_PYCALL
+      if (PyFunction_Check(__pyx_t_2)) {
+        PyObject *__pyx_temp[3] = {__pyx_t_5, __pyx_v_outter_type, __pyx_t_3};
+        __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_8, 2+__pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 275, __pyx_L1_error)
+        __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+        __Pyx_GOTREF(__pyx_t_1);
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      } else
+      #endif
+      #if CYTHON_FAST_PYCCALL
+      if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
+        PyObject *__pyx_temp[3] = {__pyx_t_5, __pyx_v_outter_type, __pyx_t_3};
+        __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_8, 2+__pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 275, __pyx_L1_error)
+        __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+        __Pyx_GOTREF(__pyx_t_1);
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      } else
+      #endif
+      {
+        __pyx_t_9 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 275, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_9);
+        if (__pyx_t_5) {
+          __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_5); __pyx_t_5 = NULL;
+        }
+        __Pyx_INCREF(__pyx_v_outter_type);
+        __Pyx_GIVEREF(__pyx_v_outter_type);
+        PyTuple_SET_ITEM(__pyx_t_9, 0+__pyx_t_8, __pyx_v_outter_type);
+        __Pyx_GIVEREF(__pyx_t_3);
+        PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_8, __pyx_t_3);
+        __pyx_t_3 = 0;
+        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_9, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 275, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      }
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __pyx_r = __pyx_t_1;
+      __pyx_t_1 = 0;
+      goto __pyx_L0;
     }
+
+    /* "graphbrain/funs.pyx":259
+ *     if is_atom(entity):
+ *         return atom_type(entity)
+ *     elif is_edge(entity):             # <<<<<<<<<<<<<<
+ *         ptype = entity_type(entity[0])
+ *         if len(entity) < 2:
+ */
+  }
+
+  /* "graphbrain/funs.pyx":277
+ *             return '{}{}'.format(outter_type, ptype[1:])
+ *     else:
+ *         return None             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  /*else*/ {
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+    goto __pyx_L0;
   }
 
   /* "graphbrain/funs.pyx":256
@@ -6873,16 +6992,18 @@ static PyObject *__pyx_pf_10graphbrain_4funs_46entity_type(CYTHON_UNUSED PyObjec
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_9);
   __Pyx_AddTraceback("graphbrain.funs.entity_type", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_ptype);
+  __Pyx_XDECREF(__pyx_v_outter_type);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "graphbrain/funs.pyx":276
+/* "graphbrain/funs.pyx":280
  * 
  * 
  * def connector_type(entity):             # <<<<<<<<<<<<<<
@@ -6914,14 +7035,14 @@ static PyObject *__pyx_pf_10graphbrain_4funs_48connector_type(CYTHON_UNUSED PyOb
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("connector_type", 0);
 
-  /* "graphbrain/funs.pyx":277
+  /* "graphbrain/funs.pyx":281
  * 
  * def connector_type(entity):
  *     if is_atom(entity):             # <<<<<<<<<<<<<<
  *         return entity_type(entity)
  *     else:
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_is_atom); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 277, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_is_atom); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 281, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -6935,14 +7056,14 @@ static PyObject *__pyx_pf_10graphbrain_4funs_48connector_type(CYTHON_UNUSED PyOb
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_entity) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_entity);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 277, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 281, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 277, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 281, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_4) {
 
-    /* "graphbrain/funs.pyx":278
+    /* "graphbrain/funs.pyx":282
  * def connector_type(entity):
  *     if is_atom(entity):
  *         return entity_type(entity)             # <<<<<<<<<<<<<<
@@ -6950,7 +7071,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_48connector_type(CYTHON_UNUSED PyOb
  *         return entity_type(entity[0])
  */
     __Pyx_XDECREF(__pyx_r);
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_entity_type); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 278, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_entity_type); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 282, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_3 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -6964,14 +7085,14 @@ static PyObject *__pyx_pf_10graphbrain_4funs_48connector_type(CYTHON_UNUSED PyOb
     }
     __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_entity) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_entity);
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 278, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 282, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_r = __pyx_t_1;
     __pyx_t_1 = 0;
     goto __pyx_L0;
 
-    /* "graphbrain/funs.pyx":277
+    /* "graphbrain/funs.pyx":281
  * 
  * def connector_type(entity):
  *     if is_atom(entity):             # <<<<<<<<<<<<<<
@@ -6980,7 +7101,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_48connector_type(CYTHON_UNUSED PyOb
  */
   }
 
-  /* "graphbrain/funs.pyx":280
+  /* "graphbrain/funs.pyx":284
  *         return entity_type(entity)
  *     else:
  *         return entity_type(entity[0])             # <<<<<<<<<<<<<<
@@ -6989,9 +7110,9 @@ static PyObject *__pyx_pf_10graphbrain_4funs_48connector_type(CYTHON_UNUSED PyOb
  */
   /*else*/ {
     __Pyx_XDECREF(__pyx_r);
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_entity_type); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 280, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_entity_type); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 284, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_entity, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 280, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_entity, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 284, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_5 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -7006,7 +7127,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_48connector_type(CYTHON_UNUSED PyOb
     __pyx_t_1 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_5, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 280, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 284, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_r = __pyx_t_1;
@@ -7014,7 +7135,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_48connector_type(CYTHON_UNUSED PyOb
     goto __pyx_L0;
   }
 
-  /* "graphbrain/funs.pyx":276
+  /* "graphbrain/funs.pyx":280
  * 
  * 
  * def connector_type(entity):             # <<<<<<<<<<<<<<
@@ -7036,7 +7157,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_48connector_type(CYTHON_UNUSED PyOb
   return __pyx_r;
 }
 
-/* "graphbrain/funs.pyx":283
+/* "graphbrain/funs.pyx":287
  * 
  * 
  * def nest(inner, outer, before):             # <<<<<<<<<<<<<<
@@ -7079,17 +7200,17 @@ static PyObject *__pyx_pw_10graphbrain_4funs_51nest(PyObject *__pyx_self, PyObje
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_outer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("nest", 1, 3, 3, 1); __PYX_ERR(0, 283, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("nest", 1, 3, 3, 1); __PYX_ERR(0, 287, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_before)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("nest", 1, 3, 3, 2); __PYX_ERR(0, 283, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("nest", 1, 3, 3, 2); __PYX_ERR(0, 287, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "nest") < 0)) __PYX_ERR(0, 283, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "nest") < 0)) __PYX_ERR(0, 287, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -7104,7 +7225,7 @@ static PyObject *__pyx_pw_10graphbrain_4funs_51nest(PyObject *__pyx_self, PyObje
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("nest", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 283, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("nest", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 287, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("graphbrain.funs.nest", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -7126,14 +7247,14 @@ static PyObject *__pyx_pf_10graphbrain_4funs_50nest(CYTHON_UNUSED PyObject *__py
   int __pyx_t_4;
   __Pyx_RefNannySetupContext("nest", 0);
 
-  /* "graphbrain/funs.pyx":284
+  /* "graphbrain/funs.pyx":288
  * 
  * def nest(inner, outer, before):
  *     if is_atom(outer):             # <<<<<<<<<<<<<<
  *         return outer, inner
  *     else:
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_is_atom); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 284, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_is_atom); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 288, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -7147,14 +7268,14 @@ static PyObject *__pyx_pf_10graphbrain_4funs_50nest(CYTHON_UNUSED PyObject *__py
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_outer) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_outer);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 284, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 288, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 284, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 288, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_4) {
 
-    /* "graphbrain/funs.pyx":285
+    /* "graphbrain/funs.pyx":289
  * def nest(inner, outer, before):
  *     if is_atom(outer):
  *         return outer, inner             # <<<<<<<<<<<<<<
@@ -7162,7 +7283,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_50nest(CYTHON_UNUSED PyObject *__py
  *         if before:
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 285, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 289, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_INCREF(__pyx_v_outer);
     __Pyx_GIVEREF(__pyx_v_outer);
@@ -7174,7 +7295,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_50nest(CYTHON_UNUSED PyObject *__py
     __pyx_t_1 = 0;
     goto __pyx_L0;
 
-    /* "graphbrain/funs.pyx":284
+    /* "graphbrain/funs.pyx":288
  * 
  * def nest(inner, outer, before):
  *     if is_atom(outer):             # <<<<<<<<<<<<<<
@@ -7183,7 +7304,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_50nest(CYTHON_UNUSED PyObject *__py
  */
   }
 
-  /* "graphbrain/funs.pyx":287
+  /* "graphbrain/funs.pyx":291
  *         return outer, inner
  *     else:
  *         if before:             # <<<<<<<<<<<<<<
@@ -7191,10 +7312,10 @@ static PyObject *__pyx_pf_10graphbrain_4funs_50nest(CYTHON_UNUSED PyObject *__py
  *         else:
  */
   /*else*/ {
-    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_v_before); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 287, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_v_before); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 291, __pyx_L1_error)
     if (__pyx_t_4) {
 
-      /* "graphbrain/funs.pyx":288
+      /* "graphbrain/funs.pyx":292
  *     else:
  *         if before:
  *             return outer + (inner,)             # <<<<<<<<<<<<<<
@@ -7202,19 +7323,19 @@ static PyObject *__pyx_pf_10graphbrain_4funs_50nest(CYTHON_UNUSED PyObject *__py
  *             return (outer[0], inner) + outer[1:]
  */
       __Pyx_XDECREF(__pyx_r);
-      __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 288, __pyx_L1_error)
+      __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 292, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_INCREF(__pyx_v_inner);
       __Pyx_GIVEREF(__pyx_v_inner);
       PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_inner);
-      __pyx_t_2 = PyNumber_Add(__pyx_v_outer, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 288, __pyx_L1_error)
+      __pyx_t_2 = PyNumber_Add(__pyx_v_outer, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 292, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __pyx_r = __pyx_t_2;
       __pyx_t_2 = 0;
       goto __pyx_L0;
 
-      /* "graphbrain/funs.pyx":287
+      /* "graphbrain/funs.pyx":291
  *         return outer, inner
  *     else:
  *         if before:             # <<<<<<<<<<<<<<
@@ -7223,7 +7344,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_50nest(CYTHON_UNUSED PyObject *__py
  */
     }
 
-    /* "graphbrain/funs.pyx":290
+    /* "graphbrain/funs.pyx":294
  *             return outer + (inner,)
  *         else:
  *             return (outer[0], inner) + outer[1:]             # <<<<<<<<<<<<<<
@@ -7232,9 +7353,9 @@ static PyObject *__pyx_pf_10graphbrain_4funs_50nest(CYTHON_UNUSED PyObject *__py
  */
     /*else*/ {
       __Pyx_XDECREF(__pyx_r);
-      __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_outer, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 290, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_outer, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 294, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 290, __pyx_L1_error)
+      __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 294, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_GIVEREF(__pyx_t_2);
       PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_2);
@@ -7242,9 +7363,9 @@ static PyObject *__pyx_pf_10graphbrain_4funs_50nest(CYTHON_UNUSED PyObject *__py
       __Pyx_GIVEREF(__pyx_v_inner);
       PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_v_inner);
       __pyx_t_2 = 0;
-      __pyx_t_2 = __Pyx_PyObject_GetSlice(__pyx_v_outer, 1, 0, NULL, NULL, &__pyx_slice__13, 1, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 290, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_GetSlice(__pyx_v_outer, 1, 0, NULL, NULL, &__pyx_slice__14, 1, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 294, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_3 = PyNumber_Add(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 290, __pyx_L1_error)
+      __pyx_t_3 = PyNumber_Add(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 294, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -7254,7 +7375,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_50nest(CYTHON_UNUSED PyObject *__py
     }
   }
 
-  /* "graphbrain/funs.pyx":283
+  /* "graphbrain/funs.pyx":287
  * 
  * 
  * def nest(inner, outer, before):             # <<<<<<<<<<<<<<
@@ -7275,7 +7396,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_50nest(CYTHON_UNUSED PyObject *__py
   return __pyx_r;
 }
 
-/* "graphbrain/funs.pyx":293
+/* "graphbrain/funs.pyx":297
  * 
  * 
  * def parens(entity):             # <<<<<<<<<<<<<<
@@ -7306,14 +7427,14 @@ static PyObject *__pyx_pf_10graphbrain_4funs_52parens(CYTHON_UNUSED PyObject *__
   int __pyx_t_4;
   __Pyx_RefNannySetupContext("parens", 0);
 
-  /* "graphbrain/funs.pyx":294
+  /* "graphbrain/funs.pyx":298
  * 
  * def parens(entity):
  *     if is_atom(entity):             # <<<<<<<<<<<<<<
  *         return (entity,)
  *     else:
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_is_atom); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 294, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_is_atom); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 298, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -7327,14 +7448,14 @@ static PyObject *__pyx_pf_10graphbrain_4funs_52parens(CYTHON_UNUSED PyObject *__
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_entity) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_entity);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 294, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 298, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 294, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 298, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_4) {
 
-    /* "graphbrain/funs.pyx":295
+    /* "graphbrain/funs.pyx":299
  * def parens(entity):
  *     if is_atom(entity):
  *         return (entity,)             # <<<<<<<<<<<<<<
@@ -7342,7 +7463,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_52parens(CYTHON_UNUSED PyObject *__
  *         return tuple(entity)
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 295, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 299, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_INCREF(__pyx_v_entity);
     __Pyx_GIVEREF(__pyx_v_entity);
@@ -7351,7 +7472,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_52parens(CYTHON_UNUSED PyObject *__
     __pyx_t_1 = 0;
     goto __pyx_L0;
 
-    /* "graphbrain/funs.pyx":294
+    /* "graphbrain/funs.pyx":298
  * 
  * def parens(entity):
  *     if is_atom(entity):             # <<<<<<<<<<<<<<
@@ -7360,7 +7481,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_52parens(CYTHON_UNUSED PyObject *__
  */
   }
 
-  /* "graphbrain/funs.pyx":297
+  /* "graphbrain/funs.pyx":301
  *         return (entity,)
  *     else:
  *         return tuple(entity)             # <<<<<<<<<<<<<<
@@ -7369,14 +7490,14 @@ static PyObject *__pyx_pf_10graphbrain_4funs_52parens(CYTHON_UNUSED PyObject *__
  */
   /*else*/ {
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_1 = __Pyx_PySequence_Tuple(__pyx_v_entity); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 297, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PySequence_Tuple(__pyx_v_entity); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 301, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_r = __pyx_t_1;
     __pyx_t_1 = 0;
     goto __pyx_L0;
   }
 
-  /* "graphbrain/funs.pyx":293
+  /* "graphbrain/funs.pyx":297
  * 
  * 
  * def parens(entity):             # <<<<<<<<<<<<<<
@@ -7397,7 +7518,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_52parens(CYTHON_UNUSED PyObject *__
   return __pyx_r;
 }
 
-/* "graphbrain/funs.pyx":300
+/* "graphbrain/funs.pyx":304
  * 
  * 
  * def insert_first_argument(entity, argument):             # <<<<<<<<<<<<<<
@@ -7437,11 +7558,11 @@ static PyObject *__pyx_pw_10graphbrain_4funs_55insert_first_argument(PyObject *_
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_argument)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("insert_first_argument", 1, 2, 2, 1); __PYX_ERR(0, 300, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("insert_first_argument", 1, 2, 2, 1); __PYX_ERR(0, 304, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "insert_first_argument") < 0)) __PYX_ERR(0, 300, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "insert_first_argument") < 0)) __PYX_ERR(0, 304, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -7454,7 +7575,7 @@ static PyObject *__pyx_pw_10graphbrain_4funs_55insert_first_argument(PyObject *_
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("insert_first_argument", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 300, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("insert_first_argument", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 304, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("graphbrain.funs.insert_first_argument", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -7476,14 +7597,14 @@ static PyObject *__pyx_pf_10graphbrain_4funs_54insert_first_argument(CYTHON_UNUS
   int __pyx_t_4;
   __Pyx_RefNannySetupContext("insert_first_argument", 0);
 
-  /* "graphbrain/funs.pyx":301
+  /* "graphbrain/funs.pyx":305
  * 
  * def insert_first_argument(entity, argument):
  *     if is_atom(entity):             # <<<<<<<<<<<<<<
  *         return (entity, argument)
- *     else:
+ *     elif is_edge(entity):
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_is_atom); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 301, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_is_atom); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 305, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -7497,22 +7618,22 @@ static PyObject *__pyx_pf_10graphbrain_4funs_54insert_first_argument(CYTHON_UNUS
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_entity) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_entity);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 301, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 305, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 301, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 305, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_4) {
 
-    /* "graphbrain/funs.pyx":302
+    /* "graphbrain/funs.pyx":306
  * def insert_first_argument(entity, argument):
  *     if is_atom(entity):
  *         return (entity, argument)             # <<<<<<<<<<<<<<
- *     else:
+ *     elif is_edge(entity):
  *         return (entity[0], argument) + entity[1:]
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 302, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 306, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_INCREF(__pyx_v_entity);
     __Pyx_GIVEREF(__pyx_v_entity);
@@ -7524,27 +7645,54 @@ static PyObject *__pyx_pf_10graphbrain_4funs_54insert_first_argument(CYTHON_UNUS
     __pyx_t_1 = 0;
     goto __pyx_L0;
 
-    /* "graphbrain/funs.pyx":301
+    /* "graphbrain/funs.pyx":305
  * 
  * def insert_first_argument(entity, argument):
  *     if is_atom(entity):             # <<<<<<<<<<<<<<
  *         return (entity, argument)
- *     else:
+ *     elif is_edge(entity):
  */
   }
 
-  /* "graphbrain/funs.pyx":304
+  /* "graphbrain/funs.pyx":307
+ *     if is_atom(entity):
  *         return (entity, argument)
+ *     elif is_edge(entity):             # <<<<<<<<<<<<<<
+ *         return (entity[0], argument) + entity[1:]
  *     else:
- *         return (entity[0], argument) + entity[1:]             # <<<<<<<<<<<<<<
- * 
- * 
  */
-  /*else*/ {
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_is_edge); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 307, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+    }
+  }
+  __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_entity) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_entity);
+  __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 307, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 307, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  if (__pyx_t_4) {
+
+    /* "graphbrain/funs.pyx":308
+ *         return (entity, argument)
+ *     elif is_edge(entity):
+ *         return (entity[0], argument) + entity[1:]             # <<<<<<<<<<<<<<
+ *     else:
+ *         return None
+ */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_entity, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 304, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_entity, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 308, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 304, __pyx_L1_error)
+    __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 308, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
@@ -7552,18 +7700,39 @@ static PyObject *__pyx_pf_10graphbrain_4funs_54insert_first_argument(CYTHON_UNUS
     __Pyx_GIVEREF(__pyx_v_argument);
     PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_v_argument);
     __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_entity, 1, 0, NULL, NULL, &__pyx_slice__13, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 304, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_entity, 1, 0, NULL, NULL, &__pyx_slice__14, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 308, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = PyNumber_Add(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 304, __pyx_L1_error)
+    __pyx_t_3 = PyNumber_Add(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 308, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_r = __pyx_t_3;
     __pyx_t_3 = 0;
     goto __pyx_L0;
+
+    /* "graphbrain/funs.pyx":307
+ *     if is_atom(entity):
+ *         return (entity, argument)
+ *     elif is_edge(entity):             # <<<<<<<<<<<<<<
+ *         return (entity[0], argument) + entity[1:]
+ *     else:
+ */
   }
 
-  /* "graphbrain/funs.pyx":300
+  /* "graphbrain/funs.pyx":310
+ *         return (entity[0], argument) + entity[1:]
+ *     else:
+ *         return None             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  /*else*/ {
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+    goto __pyx_L0;
+  }
+
+  /* "graphbrain/funs.pyx":304
  * 
  * 
  * def insert_first_argument(entity, argument):             # <<<<<<<<<<<<<<
@@ -7584,7 +7753,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_54insert_first_argument(CYTHON_UNUS
   return __pyx_r;
 }
 
-/* "graphbrain/funs.pyx":307
+/* "graphbrain/funs.pyx":313
  * 
  * 
  * def connect(entity, arguments):             # <<<<<<<<<<<<<<
@@ -7624,11 +7793,11 @@ static PyObject *__pyx_pw_10graphbrain_4funs_57connect(PyObject *__pyx_self, PyO
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_arguments)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("connect", 1, 2, 2, 1); __PYX_ERR(0, 307, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("connect", 1, 2, 2, 1); __PYX_ERR(0, 313, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "connect") < 0)) __PYX_ERR(0, 307, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "connect") < 0)) __PYX_ERR(0, 313, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -7641,7 +7810,7 @@ static PyObject *__pyx_pw_10graphbrain_4funs_57connect(PyObject *__pyx_self, PyO
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("connect", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 307, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("connect", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 313, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("graphbrain.funs.connect", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -7665,18 +7834,18 @@ static PyObject *__pyx_pf_10graphbrain_4funs_56connect(CYTHON_UNUSED PyObject *_
   PyObject *__pyx_t_6 = NULL;
   __Pyx_RefNannySetupContext("connect", 0);
 
-  /* "graphbrain/funs.pyx":308
+  /* "graphbrain/funs.pyx":314
  * 
  * def connect(entity, arguments):
  *     if len(arguments) == 0:             # <<<<<<<<<<<<<<
  *         return entity
  *     else:
  */
-  __pyx_t_1 = PyObject_Length(__pyx_v_arguments); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 308, __pyx_L1_error)
+  __pyx_t_1 = PyObject_Length(__pyx_v_arguments); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 314, __pyx_L1_error)
   __pyx_t_2 = ((__pyx_t_1 == 0) != 0);
   if (__pyx_t_2) {
 
-    /* "graphbrain/funs.pyx":309
+    /* "graphbrain/funs.pyx":315
  * def connect(entity, arguments):
  *     if len(arguments) == 0:
  *         return entity             # <<<<<<<<<<<<<<
@@ -7688,7 +7857,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_56connect(CYTHON_UNUSED PyObject *_
     __pyx_r = __pyx_v_entity;
     goto __pyx_L0;
 
-    /* "graphbrain/funs.pyx":308
+    /* "graphbrain/funs.pyx":314
  * 
  * def connect(entity, arguments):
  *     if len(arguments) == 0:             # <<<<<<<<<<<<<<
@@ -7697,7 +7866,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_56connect(CYTHON_UNUSED PyObject *_
  */
   }
 
-  /* "graphbrain/funs.pyx":311
+  /* "graphbrain/funs.pyx":317
  *         return entity
  *     else:
  *         return parens(entity) + parens(arguments)             # <<<<<<<<<<<<<<
@@ -7706,7 +7875,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_56connect(CYTHON_UNUSED PyObject *_
  */
   /*else*/ {
     __Pyx_XDECREF(__pyx_r);
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_parens); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 311, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_parens); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 317, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
@@ -7720,10 +7889,10 @@ static PyObject *__pyx_pf_10graphbrain_4funs_56connect(CYTHON_UNUSED PyObject *_
     }
     __pyx_t_3 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_5, __pyx_v_entity) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_v_entity);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 311, __pyx_L1_error)
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 317, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_parens); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 311, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_parens); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 317, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_6 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_5))) {
@@ -7737,10 +7906,10 @@ static PyObject *__pyx_pf_10graphbrain_4funs_56connect(CYTHON_UNUSED PyObject *_
     }
     __pyx_t_4 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_6, __pyx_v_arguments) : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_v_arguments);
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 311, __pyx_L1_error)
+    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 317, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = PyNumber_Add(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 311, __pyx_L1_error)
+    __pyx_t_5 = PyNumber_Add(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 317, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -7749,7 +7918,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_56connect(CYTHON_UNUSED PyObject *_
     goto __pyx_L0;
   }
 
-  /* "graphbrain/funs.pyx":307
+  /* "graphbrain/funs.pyx":313
  * 
  * 
  * def connect(entity, arguments):             # <<<<<<<<<<<<<<
@@ -7771,12 +7940,12 @@ static PyObject *__pyx_pf_10graphbrain_4funs_56connect(CYTHON_UNUSED PyObject *_
   return __pyx_r;
 }
 
-/* "graphbrain/funs.pyx":314
+/* "graphbrain/funs.pyx":320
  * 
  * 
- * def sequence(target, entity, before):             # <<<<<<<<<<<<<<
- *     if before:
- *         return parens(entity) + parens(target)
+ * def sequence(target, entity, before, flat=True):             # <<<<<<<<<<<<<<
+ *     if flat:
+ *         if before:
  */
 
 /* Python wrapper */
@@ -7786,16 +7955,20 @@ static PyObject *__pyx_pw_10graphbrain_4funs_59sequence(PyObject *__pyx_self, Py
   PyObject *__pyx_v_target = 0;
   PyObject *__pyx_v_entity = 0;
   PyObject *__pyx_v_before = 0;
+  PyObject *__pyx_v_flat = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("sequence (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_target,&__pyx_n_s_entity,&__pyx_n_s_before,0};
-    PyObject* values[3] = {0,0,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_target,&__pyx_n_s_entity,&__pyx_n_s_before,&__pyx_n_s_flat,0};
+    PyObject* values[4] = {0,0,0,0};
+    values[3] = ((PyObject *)Py_True);
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
       const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
       switch (pos_args) {
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
         case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
         CYTHON_FALLTHROUGH;
         case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
@@ -7814,45 +7987,56 @@ static PyObject *__pyx_pw_10graphbrain_4funs_59sequence(PyObject *__pyx_self, Py
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_entity)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("sequence", 1, 3, 3, 1); __PYX_ERR(0, 314, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("sequence", 0, 3, 4, 1); __PYX_ERR(0, 320, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_before)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("sequence", 1, 3, 3, 2); __PYX_ERR(0, 314, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("sequence", 0, 3, 4, 2); __PYX_ERR(0, 320, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  3:
+        if (kw_args > 0) {
+          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_flat);
+          if (value) { values[3] = value; kw_args--; }
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "sequence") < 0)) __PYX_ERR(0, 314, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "sequence") < 0)) __PYX_ERR(0, 320, __pyx_L3_error)
       }
-    } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
-      goto __pyx_L5_argtuple_error;
     } else {
-      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      switch (PyTuple_GET_SIZE(__pyx_args)) {
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        break;
+        default: goto __pyx_L5_argtuple_error;
+      }
     }
     __pyx_v_target = values[0];
     __pyx_v_entity = values[1];
     __pyx_v_before = values[2];
+    __pyx_v_flat = values[3];
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("sequence", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 314, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("sequence", 0, 3, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 320, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("graphbrain.funs.sequence", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_10graphbrain_4funs_58sequence(__pyx_self, __pyx_v_target, __pyx_v_entity, __pyx_v_before);
+  __pyx_r = __pyx_pf_10graphbrain_4funs_58sequence(__pyx_self, __pyx_v_target, __pyx_v_entity, __pyx_v_before, __pyx_v_flat);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10graphbrain_4funs_58sequence(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_target, PyObject *__pyx_v_entity, PyObject *__pyx_v_before) {
+static PyObject *__pyx_pf_10graphbrain_4funs_58sequence(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_target, PyObject *__pyx_v_entity, PyObject *__pyx_v_before, PyObject *__pyx_v_flat) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
@@ -7862,133 +8046,215 @@ static PyObject *__pyx_pf_10graphbrain_4funs_58sequence(CYTHON_UNUSED PyObject *
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("sequence", 0);
 
-  /* "graphbrain/funs.pyx":315
+  /* "graphbrain/funs.pyx":321
  * 
- * def sequence(target, entity, before):
- *     if before:             # <<<<<<<<<<<<<<
- *         return parens(entity) + parens(target)
- *     else:
+ * def sequence(target, entity, before, flat=True):
+ *     if flat:             # <<<<<<<<<<<<<<
+ *         if before:
+ *             return parens(entity) + parens(target)
  */
-  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_before); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 315, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_flat); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 321, __pyx_L1_error)
   if (__pyx_t_1) {
 
-    /* "graphbrain/funs.pyx":316
- * def sequence(target, entity, before):
- *     if before:
- *         return parens(entity) + parens(target)             # <<<<<<<<<<<<<<
- *     else:
- *         return parens(target) + parens(entity)
+    /* "graphbrain/funs.pyx":322
+ * def sequence(target, entity, before, flat=True):
+ *     if flat:
+ *         if before:             # <<<<<<<<<<<<<<
+ *             return parens(entity) + parens(target)
+ *         else:
  */
-    __Pyx_XDECREF(__pyx_r);
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_parens); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 316, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = NULL;
-    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
-      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
-      if (likely(__pyx_t_4)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-        __Pyx_INCREF(__pyx_t_4);
-        __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_3, function);
-      }
-    }
-    __pyx_t_2 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_v_entity) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_entity);
-    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 316, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_parens); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 316, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = NULL;
-    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_4);
-      if (likely(__pyx_t_5)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-        __Pyx_INCREF(__pyx_t_5);
-        __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_4, function);
-      }
-    }
-    __pyx_t_3 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_5, __pyx_v_target) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_v_target);
-    __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 316, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = PyNumber_Add(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 316, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_r = __pyx_t_4;
-    __pyx_t_4 = 0;
-    goto __pyx_L0;
+    __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_before); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 322, __pyx_L1_error)
+    if (__pyx_t_1) {
 
-    /* "graphbrain/funs.pyx":315
- * 
- * def sequence(target, entity, before):
- *     if before:             # <<<<<<<<<<<<<<
- *         return parens(entity) + parens(target)
+      /* "graphbrain/funs.pyx":323
+ *     if flat:
+ *         if before:
+ *             return parens(entity) + parens(target)             # <<<<<<<<<<<<<<
+ *         else:
+ *             return parens(target) + parens(entity)
+ */
+      __Pyx_XDECREF(__pyx_r);
+      __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_parens); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 323, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_4 = NULL;
+      if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+        __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+        if (likely(__pyx_t_4)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+          __Pyx_INCREF(__pyx_t_4);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_3, function);
+        }
+      }
+      __pyx_t_2 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_v_entity) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_entity);
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 323, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_parens); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 323, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_t_5 = NULL;
+      if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
+        __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_4);
+        if (likely(__pyx_t_5)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
+          __Pyx_INCREF(__pyx_t_5);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_4, function);
+        }
+      }
+      __pyx_t_3 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_5, __pyx_v_target) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_v_target);
+      __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 323, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __pyx_t_4 = PyNumber_Add(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 323, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __pyx_r = __pyx_t_4;
+      __pyx_t_4 = 0;
+      goto __pyx_L0;
+
+      /* "graphbrain/funs.pyx":322
+ * def sequence(target, entity, before, flat=True):
+ *     if flat:
+ *         if before:             # <<<<<<<<<<<<<<
+ *             return parens(entity) + parens(target)
+ *         else:
+ */
+    }
+
+    /* "graphbrain/funs.pyx":325
+ *             return parens(entity) + parens(target)
+ *         else:
+ *             return parens(target) + parens(entity)             # <<<<<<<<<<<<<<
  *     else:
+ *         if before:
+ */
+    /*else*/ {
+      __Pyx_XDECREF(__pyx_r);
+      __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_parens); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 325, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_2 = NULL;
+      if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+        __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+        if (likely(__pyx_t_2)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+          __Pyx_INCREF(__pyx_t_2);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_3, function);
+        }
+      }
+      __pyx_t_4 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_v_target) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_target);
+      __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 325, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_parens); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 325, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_5 = NULL;
+      if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
+        __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_2);
+        if (likely(__pyx_t_5)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+          __Pyx_INCREF(__pyx_t_5);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_2, function);
+        }
+      }
+      __pyx_t_3 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_5, __pyx_v_entity) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_entity);
+      __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 325, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __pyx_t_2 = PyNumber_Add(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 325, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __pyx_r = __pyx_t_2;
+      __pyx_t_2 = 0;
+      goto __pyx_L0;
+    }
+
+    /* "graphbrain/funs.pyx":321
+ * 
+ * def sequence(target, entity, before, flat=True):
+ *     if flat:             # <<<<<<<<<<<<<<
+ *         if before:
+ *             return parens(entity) + parens(target)
  */
   }
 
-  /* "graphbrain/funs.pyx":318
- *         return parens(entity) + parens(target)
+  /* "graphbrain/funs.pyx":327
+ *             return parens(target) + parens(entity)
  *     else:
- *         return parens(target) + parens(entity)             # <<<<<<<<<<<<<<
- * 
- * 
+ *         if before:             # <<<<<<<<<<<<<<
+ *             return (entity, target)
+ *         else:
  */
   /*else*/ {
-    __Pyx_XDECREF(__pyx_r);
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_parens); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 318, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_2 = NULL;
-    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
-      __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
-      if (likely(__pyx_t_2)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-        __Pyx_INCREF(__pyx_t_2);
-        __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_3, function);
-      }
+    __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_before); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 327, __pyx_L1_error)
+    if (__pyx_t_1) {
+
+      /* "graphbrain/funs.pyx":328
+ *     else:
+ *         if before:
+ *             return (entity, target)             # <<<<<<<<<<<<<<
+ *         else:
+ *             return (target, entity)
+ */
+      __Pyx_XDECREF(__pyx_r);
+      __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 328, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_INCREF(__pyx_v_entity);
+      __Pyx_GIVEREF(__pyx_v_entity);
+      PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_entity);
+      __Pyx_INCREF(__pyx_v_target);
+      __Pyx_GIVEREF(__pyx_v_target);
+      PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_v_target);
+      __pyx_r = __pyx_t_2;
+      __pyx_t_2 = 0;
+      goto __pyx_L0;
+
+      /* "graphbrain/funs.pyx":327
+ *             return parens(target) + parens(entity)
+ *     else:
+ *         if before:             # <<<<<<<<<<<<<<
+ *             return (entity, target)
+ *         else:
+ */
     }
-    __pyx_t_4 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_v_target) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_target);
-    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 318, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_parens); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 318, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_5 = NULL;
-    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
-      __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_2);
-      if (likely(__pyx_t_5)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-        __Pyx_INCREF(__pyx_t_5);
-        __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_2, function);
-      }
+
+    /* "graphbrain/funs.pyx":330
+ *             return (entity, target)
+ *         else:
+ *             return (target, entity)             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+    /*else*/ {
+      __Pyx_XDECREF(__pyx_r);
+      __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 330, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_INCREF(__pyx_v_target);
+      __Pyx_GIVEREF(__pyx_v_target);
+      PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_target);
+      __Pyx_INCREF(__pyx_v_entity);
+      __Pyx_GIVEREF(__pyx_v_entity);
+      PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_v_entity);
+      __pyx_r = __pyx_t_2;
+      __pyx_t_2 = 0;
+      goto __pyx_L0;
     }
-    __pyx_t_3 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_5, __pyx_v_entity) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_entity);
-    __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 318, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyNumber_Add(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 318, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_r = __pyx_t_2;
-    __pyx_t_2 = 0;
-    goto __pyx_L0;
   }
 
-  /* "graphbrain/funs.pyx":314
+  /* "graphbrain/funs.pyx":320
  * 
  * 
- * def sequence(target, entity, before):             # <<<<<<<<<<<<<<
- *     if before:
- *         return parens(entity) + parens(target)
+ * def sequence(target, entity, before, flat=True):             # <<<<<<<<<<<<<<
+ *     if flat:
+ *         if before:
  */
 
   /* function exit code */
@@ -8005,7 +8271,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_58sequence(CYTHON_UNUSED PyObject *
   return __pyx_r;
 }
 
-/* "graphbrain/funs.pyx":321
+/* "graphbrain/funs.pyx":333
  * 
  * 
  * def apply_fun_to_atom(fun, atom, target):             # <<<<<<<<<<<<<<
@@ -8048,17 +8314,17 @@ static PyObject *__pyx_pw_10graphbrain_4funs_61apply_fun_to_atom(PyObject *__pyx
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_atom)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("apply_fun_to_atom", 1, 3, 3, 1); __PYX_ERR(0, 321, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("apply_fun_to_atom", 1, 3, 3, 1); __PYX_ERR(0, 333, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_target)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("apply_fun_to_atom", 1, 3, 3, 2); __PYX_ERR(0, 321, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("apply_fun_to_atom", 1, 3, 3, 2); __PYX_ERR(0, 333, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "apply_fun_to_atom") < 0)) __PYX_ERR(0, 321, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "apply_fun_to_atom") < 0)) __PYX_ERR(0, 333, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -8073,7 +8339,7 @@ static PyObject *__pyx_pw_10graphbrain_4funs_61apply_fun_to_atom(PyObject *__pyx
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("apply_fun_to_atom", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 321, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("apply_fun_to_atom", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 333, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("graphbrain.funs.apply_fun_to_atom", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -8087,7 +8353,7 @@ static PyObject *__pyx_pw_10graphbrain_4funs_61apply_fun_to_atom(PyObject *__pyx
 }
 static PyObject *__pyx_gb_10graphbrain_4funs_17apply_fun_to_atom_2generator2(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value); /* proto */
 
-/* "graphbrain/funs.pyx":328
+/* "graphbrain/funs.pyx":340
  *             return target
  *     else:
  *         return tuple(apply_fun_to_atom(fun, atom, item) for item in target)             # <<<<<<<<<<<<<<
@@ -8102,7 +8368,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_17apply_fun_to_atom_genexpr(PyObjec
   if (unlikely(!__pyx_cur_scope)) {
     __pyx_cur_scope = ((struct __pyx_obj_10graphbrain_4funs___pyx_scope_struct_5_genexpr *)Py_None);
     __Pyx_INCREF(Py_None);
-    __PYX_ERR(0, 328, __pyx_L1_error)
+    __PYX_ERR(0, 340, __pyx_L1_error)
   } else {
     __Pyx_GOTREF(__pyx_cur_scope);
   }
@@ -8110,7 +8376,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_17apply_fun_to_atom_genexpr(PyObjec
   __Pyx_INCREF(((PyObject *)__pyx_cur_scope->__pyx_outer_scope));
   __Pyx_GIVEREF(__pyx_cur_scope->__pyx_outer_scope);
   {
-    __pyx_CoroutineObject *gen = __Pyx_Generator_New((__pyx_coroutine_body_t) __pyx_gb_10graphbrain_4funs_17apply_fun_to_atom_2generator2, NULL, (PyObject *) __pyx_cur_scope, __pyx_n_s_genexpr, __pyx_n_s_apply_fun_to_atom_locals_genexpr, __pyx_n_s_graphbrain_funs); if (unlikely(!gen)) __PYX_ERR(0, 328, __pyx_L1_error)
+    __pyx_CoroutineObject *gen = __Pyx_Generator_New((__pyx_coroutine_body_t) __pyx_gb_10graphbrain_4funs_17apply_fun_to_atom_2generator2, NULL, (PyObject *) __pyx_cur_scope, __pyx_n_s_genexpr, __pyx_n_s_apply_fun_to_atom_locals_genexpr, __pyx_n_s_graphbrain_funs); if (unlikely(!gen)) __PYX_ERR(0, 340, __pyx_L1_error)
     __Pyx_DECREF(__pyx_cur_scope);
     __Pyx_RefNannyFinishContext();
     return (PyObject *) gen;
@@ -8148,32 +8414,32 @@ static PyObject *__pyx_gb_10graphbrain_4funs_17apply_fun_to_atom_2generator2(__p
     return NULL;
   }
   __pyx_L3_first_run:;
-  if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 328, __pyx_L1_error)
-  if (unlikely(!__pyx_cur_scope->__pyx_outer_scope->__pyx_v_target)) { __Pyx_RaiseClosureNameError("target"); __PYX_ERR(0, 328, __pyx_L1_error) }
+  if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 340, __pyx_L1_error)
+  if (unlikely(!__pyx_cur_scope->__pyx_outer_scope->__pyx_v_target)) { __Pyx_RaiseClosureNameError("target"); __PYX_ERR(0, 340, __pyx_L1_error) }
   if (likely(PyList_CheckExact(__pyx_cur_scope->__pyx_outer_scope->__pyx_v_target)) || PyTuple_CheckExact(__pyx_cur_scope->__pyx_outer_scope->__pyx_v_target)) {
     __pyx_t_1 = __pyx_cur_scope->__pyx_outer_scope->__pyx_v_target; __Pyx_INCREF(__pyx_t_1); __pyx_t_2 = 0;
     __pyx_t_3 = NULL;
   } else {
-    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_cur_scope->__pyx_outer_scope->__pyx_v_target); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 328, __pyx_L1_error)
+    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_cur_scope->__pyx_outer_scope->__pyx_v_target); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 340, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 328, __pyx_L1_error)
+    __pyx_t_3 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 340, __pyx_L1_error)
   }
   for (;;) {
     if (likely(!__pyx_t_3)) {
       if (likely(PyList_CheckExact(__pyx_t_1))) {
         if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 328, __pyx_L1_error)
+        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 340, __pyx_L1_error)
         #else
-        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 328, __pyx_L1_error)
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 340, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         #endif
       } else {
         if (__pyx_t_2 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 328, __pyx_L1_error)
+        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 340, __pyx_L1_error)
         #else
-        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 328, __pyx_L1_error)
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 340, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         #endif
       }
@@ -8183,7 +8449,7 @@ static PyObject *__pyx_gb_10graphbrain_4funs_17apply_fun_to_atom_2generator2(__p
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 328, __pyx_L1_error)
+          else __PYX_ERR(0, 340, __pyx_L1_error)
         }
         break;
       }
@@ -8193,10 +8459,10 @@ static PyObject *__pyx_gb_10graphbrain_4funs_17apply_fun_to_atom_2generator2(__p
     __Pyx_XDECREF_SET(__pyx_cur_scope->__pyx_v_item, __pyx_t_4);
     __Pyx_GIVEREF(__pyx_t_4);
     __pyx_t_4 = 0;
-    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_apply_fun_to_atom); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 328, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_apply_fun_to_atom); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 340, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    if (unlikely(!__pyx_cur_scope->__pyx_outer_scope->__pyx_v_fun)) { __Pyx_RaiseClosureNameError("fun"); __PYX_ERR(0, 328, __pyx_L1_error) }
-    if (unlikely(!__pyx_cur_scope->__pyx_outer_scope->__pyx_v_atom)) { __Pyx_RaiseClosureNameError("atom"); __PYX_ERR(0, 328, __pyx_L1_error) }
+    if (unlikely(!__pyx_cur_scope->__pyx_outer_scope->__pyx_v_fun)) { __Pyx_RaiseClosureNameError("fun"); __PYX_ERR(0, 340, __pyx_L1_error) }
+    if (unlikely(!__pyx_cur_scope->__pyx_outer_scope->__pyx_v_atom)) { __Pyx_RaiseClosureNameError("atom"); __PYX_ERR(0, 340, __pyx_L1_error) }
     __pyx_t_6 = NULL;
     __pyx_t_7 = 0;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_5))) {
@@ -8212,7 +8478,7 @@ static PyObject *__pyx_gb_10graphbrain_4funs_17apply_fun_to_atom_2generator2(__p
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_5)) {
       PyObject *__pyx_temp[4] = {__pyx_t_6, __pyx_cur_scope->__pyx_outer_scope->__pyx_v_fun, __pyx_cur_scope->__pyx_outer_scope->__pyx_v_atom, __pyx_cur_scope->__pyx_v_item};
-      __pyx_t_4 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 3+__pyx_t_7); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 328, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 3+__pyx_t_7); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 340, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_GOTREF(__pyx_t_4);
     } else
@@ -8220,13 +8486,13 @@ static PyObject *__pyx_gb_10graphbrain_4funs_17apply_fun_to_atom_2generator2(__p
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_5)) {
       PyObject *__pyx_temp[4] = {__pyx_t_6, __pyx_cur_scope->__pyx_outer_scope->__pyx_v_fun, __pyx_cur_scope->__pyx_outer_scope->__pyx_v_atom, __pyx_cur_scope->__pyx_v_item};
-      __pyx_t_4 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 3+__pyx_t_7); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 328, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 3+__pyx_t_7); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 340, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_GOTREF(__pyx_t_4);
     } else
     #endif
     {
-      __pyx_t_8 = PyTuple_New(3+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 328, __pyx_L1_error)
+      __pyx_t_8 = PyTuple_New(3+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 340, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       if (__pyx_t_6) {
         __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -8240,7 +8506,7 @@ static PyObject *__pyx_gb_10graphbrain_4funs_17apply_fun_to_atom_2generator2(__p
       __Pyx_INCREF(__pyx_cur_scope->__pyx_v_item);
       __Pyx_GIVEREF(__pyx_cur_scope->__pyx_v_item);
       PyTuple_SET_ITEM(__pyx_t_8, 2+__pyx_t_7, __pyx_cur_scope->__pyx_v_item);
-      __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 328, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 340, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     }
@@ -8263,7 +8529,7 @@ static PyObject *__pyx_gb_10graphbrain_4funs_17apply_fun_to_atom_2generator2(__p
     __Pyx_XGOTREF(__pyx_t_1);
     __pyx_t_2 = __pyx_cur_scope->__pyx_t_1;
     __pyx_t_3 = __pyx_cur_scope->__pyx_t_2;
-    if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 328, __pyx_L1_error)
+    if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 340, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   CYTHON_MAYBE_UNUSED_VAR(__pyx_cur_scope);
@@ -8289,7 +8555,7 @@ static PyObject *__pyx_gb_10graphbrain_4funs_17apply_fun_to_atom_2generator2(__p
   return __pyx_r;
 }
 
-/* "graphbrain/funs.pyx":321
+/* "graphbrain/funs.pyx":333
  * 
  * 
  * def apply_fun_to_atom(fun, atom, target):             # <<<<<<<<<<<<<<
@@ -8310,7 +8576,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_60apply_fun_to_atom(CYTHON_UNUSED P
   if (unlikely(!__pyx_cur_scope)) {
     __pyx_cur_scope = ((struct __pyx_obj_10graphbrain_4funs___pyx_scope_struct_4_apply_fun_to_atom *)Py_None);
     __Pyx_INCREF(Py_None);
-    __PYX_ERR(0, 321, __pyx_L1_error)
+    __PYX_ERR(0, 333, __pyx_L1_error)
   } else {
     __Pyx_GOTREF(__pyx_cur_scope);
   }
@@ -8324,14 +8590,14 @@ static PyObject *__pyx_pf_10graphbrain_4funs_60apply_fun_to_atom(CYTHON_UNUSED P
   __Pyx_INCREF(__pyx_cur_scope->__pyx_v_target);
   __Pyx_GIVEREF(__pyx_cur_scope->__pyx_v_target);
 
-  /* "graphbrain/funs.pyx":322
+  /* "graphbrain/funs.pyx":334
  * 
  * def apply_fun_to_atom(fun, atom, target):
  *     if is_atom(target):             # <<<<<<<<<<<<<<
  *         if target == atom:
  *             return fun(target)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_is_atom); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 322, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_is_atom); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 334, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -8345,26 +8611,26 @@ static PyObject *__pyx_pf_10graphbrain_4funs_60apply_fun_to_atom(CYTHON_UNUSED P
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_cur_scope->__pyx_v_target) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_cur_scope->__pyx_v_target);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 322, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 334, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 322, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 334, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_4) {
 
-    /* "graphbrain/funs.pyx":323
+    /* "graphbrain/funs.pyx":335
  * def apply_fun_to_atom(fun, atom, target):
  *     if is_atom(target):
  *         if target == atom:             # <<<<<<<<<<<<<<
  *             return fun(target)
  *         else:
  */
-    __pyx_t_1 = PyObject_RichCompare(__pyx_cur_scope->__pyx_v_target, __pyx_cur_scope->__pyx_v_atom, Py_EQ); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 323, __pyx_L1_error)
-    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 323, __pyx_L1_error)
+    __pyx_t_1 = PyObject_RichCompare(__pyx_cur_scope->__pyx_v_target, __pyx_cur_scope->__pyx_v_atom, Py_EQ); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 335, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 335, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     if (__pyx_t_4) {
 
-      /* "graphbrain/funs.pyx":324
+      /* "graphbrain/funs.pyx":336
  *     if is_atom(target):
  *         if target == atom:
  *             return fun(target)             # <<<<<<<<<<<<<<
@@ -8385,14 +8651,14 @@ static PyObject *__pyx_pf_10graphbrain_4funs_60apply_fun_to_atom(CYTHON_UNUSED P
       }
       __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_cur_scope->__pyx_v_target) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_cur_scope->__pyx_v_target);
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 324, __pyx_L1_error)
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 336, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_1;
       __pyx_t_1 = 0;
       goto __pyx_L0;
 
-      /* "graphbrain/funs.pyx":323
+      /* "graphbrain/funs.pyx":335
  * def apply_fun_to_atom(fun, atom, target):
  *     if is_atom(target):
  *         if target == atom:             # <<<<<<<<<<<<<<
@@ -8401,7 +8667,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_60apply_fun_to_atom(CYTHON_UNUSED P
  */
     }
 
-    /* "graphbrain/funs.pyx":326
+    /* "graphbrain/funs.pyx":338
  *             return fun(target)
  *         else:
  *             return target             # <<<<<<<<<<<<<<
@@ -8415,7 +8681,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_60apply_fun_to_atom(CYTHON_UNUSED P
       goto __pyx_L0;
     }
 
-    /* "graphbrain/funs.pyx":322
+    /* "graphbrain/funs.pyx":334
  * 
  * def apply_fun_to_atom(fun, atom, target):
  *     if is_atom(target):             # <<<<<<<<<<<<<<
@@ -8424,16 +8690,16 @@ static PyObject *__pyx_pf_10graphbrain_4funs_60apply_fun_to_atom(CYTHON_UNUSED P
  */
   }
 
-  /* "graphbrain/funs.pyx":328
+  /* "graphbrain/funs.pyx":340
  *             return target
  *     else:
  *         return tuple(apply_fun_to_atom(fun, atom, item) for item in target)             # <<<<<<<<<<<<<<
  */
   /*else*/ {
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_1 = __pyx_pf_10graphbrain_4funs_17apply_fun_to_atom_genexpr(((PyObject*)__pyx_cur_scope)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 328, __pyx_L1_error)
+    __pyx_t_1 = __pyx_pf_10graphbrain_4funs_17apply_fun_to_atom_genexpr(((PyObject*)__pyx_cur_scope)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 340, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = __Pyx_PySequence_Tuple(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 328, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PySequence_Tuple(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 340, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_r = __pyx_t_2;
@@ -8441,7 +8707,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_60apply_fun_to_atom(CYTHON_UNUSED P
     goto __pyx_L0;
   }
 
-  /* "graphbrain/funs.pyx":321
+  /* "graphbrain/funs.pyx":333
  * 
  * 
  * def apply_fun_to_atom(fun, atom, target):             # <<<<<<<<<<<<<<
@@ -9147,6 +9413,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_, __pyx_k_, sizeof(__pyx_k_), 0, 0, 1, 0},
   {&__pyx_kp_s__11, __pyx_k__11, sizeof(__pyx_k__11), 0, 0, 1, 0},
   {&__pyx_kp_s__12, __pyx_k__12, sizeof(__pyx_k__12), 0, 0, 1, 0},
+  {&__pyx_kp_s__13, __pyx_k__13, sizeof(__pyx_k__13), 0, 0, 1, 0},
   {&__pyx_n_s__2, __pyx_k__2, sizeof(__pyx_k__2), 0, 0, 1, 1},
   {&__pyx_kp_s__4, __pyx_k__4, sizeof(__pyx_k__4), 0, 0, 1, 0},
   {&__pyx_kp_s__6, __pyx_k__6, sizeof(__pyx_k__6), 0, 0, 1, 0},
@@ -9189,6 +9456,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_entity, __pyx_k_entity, sizeof(__pyx_k_entity), 0, 0, 1, 1},
   {&__pyx_n_s_entity_str, __pyx_k_entity_str, sizeof(__pyx_k_entity_str), 0, 0, 1, 1},
   {&__pyx_n_s_entity_type, __pyx_k_entity_type, sizeof(__pyx_k_entity_type), 0, 0, 1, 1},
+  {&__pyx_n_s_flat, __pyx_k_flat, sizeof(__pyx_k_flat), 0, 0, 1, 1},
+  {&__pyx_n_s_format, __pyx_k_format, sizeof(__pyx_k_format), 0, 0, 1, 1},
   {&__pyx_n_s_fun, __pyx_k_fun, sizeof(__pyx_k_fun), 0, 0, 1, 1},
   {&__pyx_n_s_genexpr, __pyx_k_genexpr, sizeof(__pyx_k_genexpr), 0, 0, 1, 1},
   {&__pyx_n_s_graphbrain_funs, __pyx_k_graphbrain_funs, sizeof(__pyx_k_graphbrain_funs), 0, 0, 1, 1},
@@ -9214,6 +9483,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_numpy, __pyx_k_numpy, sizeof(__pyx_k_numpy), 0, 0, 1, 1},
   {&__pyx_n_s_open_pars, __pyx_k_open_pars, sizeof(__pyx_k_open_pars), 0, 0, 1, 1},
   {&__pyx_n_s_outer, __pyx_k_outer, sizeof(__pyx_k_outer), 0, 0, 1, 1},
+  {&__pyx_n_s_outter_type, __pyx_k_outter_type, sizeof(__pyx_k_outter_type), 0, 0, 1, 1},
   {&__pyx_n_s_p, __pyx_k_p, sizeof(__pyx_k_p), 0, 0, 1, 1},
   {&__pyx_n_s_parens, __pyx_k_parens, sizeof(__pyx_k_parens), 0, 0, 1, 1},
   {&__pyx_n_s_parsed_token, __pyx_k_parsed_token, sizeof(__pyx_k_parsed_token), 0, 0, 1, 1},
@@ -9321,16 +9591,16 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__10);
   __Pyx_GIVEREF(__pyx_tuple__10);
 
-  /* "graphbrain/funs.pyx":290
- *             return outer + (inner,)
- *         else:
- *             return (outer[0], inner) + outer[1:]             # <<<<<<<<<<<<<<
+  /* "graphbrain/funs.pyx":275
+ *                 return 'c'
  * 
- * 
+ *             return '{}{}'.format(outter_type, ptype[1:])             # <<<<<<<<<<<<<<
+ *     else:
+ *         return None
  */
-  __pyx_slice__13 = PySlice_New(__pyx_int_1, Py_None, Py_None); if (unlikely(!__pyx_slice__13)) __PYX_ERR(0, 290, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__13);
-  __Pyx_GIVEREF(__pyx_slice__13);
+  __pyx_slice__14 = PySlice_New(__pyx_int_1, Py_None, Py_None); if (unlikely(!__pyx_slice__14)) __PYX_ERR(0, 275, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__14);
+  __Pyx_GIVEREF(__pyx_slice__14);
 
   /* "graphbrain/funs.pyx":5
  * 
@@ -9339,22 +9609,22 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Checks if entity is an atom."""
  *     return isinstance(entity, str)
  */
-  __pyx_tuple__14 = PyTuple_Pack(1, __pyx_n_s_entity); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 5, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__14);
-  __Pyx_GIVEREF(__pyx_tuple__14);
-  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_is_atom, 5, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 5, __pyx_L1_error)
+  __pyx_tuple__15 = PyTuple_Pack(1, __pyx_n_s_entity); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 5, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__15);
+  __Pyx_GIVEREF(__pyx_tuple__15);
+  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__15, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_is_atom, 5, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 5, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":10
  * 
  * 
  * def is_edge(entity):             # <<<<<<<<<<<<<<
  *     """Checks if entity is an edge."""
- *     return not is_atom(entity)
+ *     return isinstance(entity, (tuple, list))
  */
-  __pyx_tuple__16 = PyTuple_Pack(1, __pyx_n_s_entity); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 10, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__16);
-  __Pyx_GIVEREF(__pyx_tuple__16);
-  __pyx_codeobj__17 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__16, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_is_edge, 10, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__17)) __PYX_ERR(0, 10, __pyx_L1_error)
+  __pyx_tuple__17 = PyTuple_Pack(1, __pyx_n_s_entity); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(0, 10, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__17);
+  __Pyx_GIVEREF(__pyx_tuple__17);
+  __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_is_edge, 10, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) __PYX_ERR(0, 10, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":15
  * 
@@ -9363,10 +9633,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Splits an atom into its parts."""
  *     return atom.split('/')
  */
-  __pyx_tuple__18 = PyTuple_Pack(1, __pyx_n_s_atom); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(0, 15, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__18);
-  __Pyx_GIVEREF(__pyx_tuple__18);
-  __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__18, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_atom_parts, 15, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) __PYX_ERR(0, 15, __pyx_L1_error)
+  __pyx_tuple__19 = PyTuple_Pack(1, __pyx_n_s_atom); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 15, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__19);
+  __Pyx_GIVEREF(__pyx_tuple__19);
+  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_atom_parts, 15, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(0, 15, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":20
  * 
@@ -9375,10 +9645,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Extracts the root of an atom
  *     (e.g. the root of graphbrain/c/1 is graphbrain)."""
  */
-  __pyx_tuple__20 = PyTuple_Pack(1, __pyx_n_s_atom); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(0, 20, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__20);
-  __Pyx_GIVEREF(__pyx_tuple__20);
-  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_root, 20, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(0, 20, __pyx_L1_error)
+  __pyx_tuple__21 = PyTuple_Pack(1, __pyx_n_s_atom); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 20, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__21);
+  __Pyx_GIVEREF(__pyx_tuple__21);
+  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_root, 20, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 20, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":26
  * 
@@ -9387,10 +9657,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Build an atom from text, role and namespace."""
  *     atom = '%s/%s' % (str2atom(text), role)
  */
-  __pyx_tuple__22 = PyTuple_Pack(4, __pyx_n_s_text, __pyx_n_s_role, __pyx_n_s_namespace, __pyx_n_s_atom); if (unlikely(!__pyx_tuple__22)) __PYX_ERR(0, 26, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__22);
-  __Pyx_GIVEREF(__pyx_tuple__22);
-  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(3, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__22, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_build_atom, 26, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) __PYX_ERR(0, 26, __pyx_L1_error)
+  __pyx_tuple__23 = PyTuple_Pack(4, __pyx_n_s_text, __pyx_n_s_role, __pyx_n_s_namespace, __pyx_n_s_atom); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(0, 26, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__23);
+  __Pyx_GIVEREF(__pyx_tuple__23);
+  __pyx_codeobj__24 = (PyObject*)__Pyx_PyCode_New(3, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__23, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_build_atom, 26, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__24)) __PYX_ERR(0, 26, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":34
  * 
@@ -9399,10 +9669,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Converts a string into a valid atom."""
  *     atom = s.lower()
  */
-  __pyx_tuple__24 = PyTuple_Pack(2, __pyx_n_s_s_2, __pyx_n_s_atom); if (unlikely(!__pyx_tuple__24)) __PYX_ERR(0, 34, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__24);
-  __Pyx_GIVEREF(__pyx_tuple__24);
-  __pyx_codeobj__25 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__24, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_str2atom, 34, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__25)) __PYX_ERR(0, 34, __pyx_L1_error)
+  __pyx_tuple__25 = PyTuple_Pack(2, __pyx_n_s_s_2, __pyx_n_s_atom); if (unlikely(!__pyx_tuple__25)) __PYX_ERR(0, 34, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__25);
+  __Pyx_GIVEREF(__pyx_tuple__25);
+  __pyx_codeobj__26 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__25, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_str2atom, 34, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__26)) __PYX_ERR(0, 34, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":44
  * 
@@ -9411,10 +9681,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Converts an atom into a string representation."""
  *     return root(atom).replace('_', ' ')
  */
-  __pyx_tuple__26 = PyTuple_Pack(1, __pyx_n_s_atom); if (unlikely(!__pyx_tuple__26)) __PYX_ERR(0, 44, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__26);
-  __Pyx_GIVEREF(__pyx_tuple__26);
-  __pyx_codeobj__27 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__26, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_label, 44, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__27)) __PYX_ERR(0, 44, __pyx_L1_error)
+  __pyx_tuple__27 = PyTuple_Pack(1, __pyx_n_s_atom); if (unlikely(!__pyx_tuple__27)) __PYX_ERR(0, 44, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__27);
+  __Pyx_GIVEREF(__pyx_tuple__27);
+  __pyx_codeobj__28 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__27, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_label, 44, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__28)) __PYX_ERR(0, 44, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":49
  * 
@@ -9423,10 +9693,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Returns number of consecutive open parenthesis at the beginning of the
  *     string.
  */
-  __pyx_tuple__28 = PyTuple_Pack(2, __pyx_n_s_s_2, __pyx_n_s_pos); if (unlikely(!__pyx_tuple__28)) __PYX_ERR(0, 49, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__28);
-  __Pyx_GIVEREF(__pyx_tuple__28);
-  __pyx_codeobj__29 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__28, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_open_pars, 49, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__29)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __pyx_tuple__29 = PyTuple_Pack(2, __pyx_n_s_s_2, __pyx_n_s_pos); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__29);
+  __Pyx_GIVEREF(__pyx_tuple__29);
+  __pyx_codeobj__30 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__29, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_open_pars, 49, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__30)) __PYX_ERR(0, 49, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":59
  * 
@@ -9435,10 +9705,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Number of consecutive close parenthesis at the end of the string."""
  *     pos = -1
  */
-  __pyx_tuple__30 = PyTuple_Pack(2, __pyx_n_s_s_2, __pyx_n_s_pos); if (unlikely(!__pyx_tuple__30)) __PYX_ERR(0, 59, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__30);
-  __Pyx_GIVEREF(__pyx_tuple__30);
-  __pyx_codeobj__31 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__30, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_close_pars, 59, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__31)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_tuple__31 = PyTuple_Pack(2, __pyx_n_s_s_2, __pyx_n_s_pos); if (unlikely(!__pyx_tuple__31)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__31);
+  __Pyx_GIVEREF(__pyx_tuple__31);
+  __pyx_codeobj__32 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__31, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_close_pars, 59, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__32)) __PYX_ERR(0, 59, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":67
  * 
@@ -9447,10 +9717,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     if _edge_str_has_outer_parens(token):
  *         return str2ent(token)
  */
-  __pyx_tuple__32 = PyTuple_Pack(1, __pyx_n_s_token); if (unlikely(!__pyx_tuple__32)) __PYX_ERR(0, 67, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__32);
-  __Pyx_GIVEREF(__pyx_tuple__32);
-  __pyx_codeobj__33 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__32, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_parsed_token, 67, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__33)) __PYX_ERR(0, 67, __pyx_L1_error)
+  __pyx_tuple__33 = PyTuple_Pack(1, __pyx_n_s_token); if (unlikely(!__pyx_tuple__33)) __PYX_ERR(0, 67, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__33);
+  __Pyx_GIVEREF(__pyx_tuple__33);
+  __pyx_codeobj__34 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__33, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_parsed_token, 67, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__34)) __PYX_ERR(0, 67, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":74
  * 
@@ -9459,10 +9729,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Check if string representation of edge is delimited by outer
  *     parenthesis.
  */
-  __pyx_tuple__34 = PyTuple_Pack(1, __pyx_n_s_edge_str); if (unlikely(!__pyx_tuple__34)) __PYX_ERR(0, 74, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__34);
-  __Pyx_GIVEREF(__pyx_tuple__34);
-  __pyx_codeobj__35 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__34, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_edge_str_has_outer_parens, 74, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__35)) __PYX_ERR(0, 74, __pyx_L1_error)
+  __pyx_tuple__35 = PyTuple_Pack(1, __pyx_n_s_edge_str); if (unlikely(!__pyx_tuple__35)) __PYX_ERR(0, 74, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__35);
+  __Pyx_GIVEREF(__pyx_tuple__35);
+  __pyx_codeobj__36 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__35, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_edge_str_has_outer_parens, 74, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__36)) __PYX_ERR(0, 74, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":83
  * 
@@ -9471,10 +9741,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Shallow split into tokens of a string representation of an edge,
  *     without outer parenthesis.
  */
-  __pyx_tuple__36 = PyTuple_Pack(8, __pyx_n_s_edge_str, __pyx_n_s_start, __pyx_n_s_depth, __pyx_n_s_str_length, __pyx_n_s_c, __pyx_n_s_active, __pyx_n_s_tokens, __pyx_n_s_i); if (unlikely(!__pyx_tuple__36)) __PYX_ERR(0, 83, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__36);
-  __Pyx_GIVEREF(__pyx_tuple__36);
-  __pyx_codeobj__37 = (PyObject*)__Pyx_PyCode_New(1, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__36, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_split_edge_str, 83, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__37)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_tuple__37 = PyTuple_Pack(8, __pyx_n_s_edge_str, __pyx_n_s_start, __pyx_n_s_depth, __pyx_n_s_str_length, __pyx_n_s_c, __pyx_n_s_active, __pyx_n_s_tokens, __pyx_n_s_i); if (unlikely(!__pyx_tuple__37)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__37);
+  __Pyx_GIVEREF(__pyx_tuple__37);
+  __pyx_codeobj__38 = (PyObject*)__Pyx_PyCode_New(1, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__37, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_split_edge_str, 83, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__38)) __PYX_ERR(0, 83, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":128
  * 
@@ -9483,10 +9753,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Convert a string representation of an entity to an entity."""
  * 
  */
-  __pyx_tuple__38 = PyTuple_Pack(6, __pyx_n_s_ent_str, __pyx_n_s_edge_inner_str, __pyx_n_s_tokens, __pyx_n_s_elements, __pyx_n_s_genexpr, __pyx_n_s_genexpr); if (unlikely(!__pyx_tuple__38)) __PYX_ERR(0, 128, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__38);
-  __Pyx_GIVEREF(__pyx_tuple__38);
-  __pyx_codeobj__39 = (PyObject*)__Pyx_PyCode_New(1, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__38, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_str2ent, 128, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__39)) __PYX_ERR(0, 128, __pyx_L1_error)
+  __pyx_tuple__39 = PyTuple_Pack(6, __pyx_n_s_ent_str, __pyx_n_s_edge_inner_str, __pyx_n_s_tokens, __pyx_n_s_elements, __pyx_n_s_genexpr, __pyx_n_s_genexpr); if (unlikely(!__pyx_tuple__39)) __PYX_ERR(0, 128, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__39);
+  __Pyx_GIVEREF(__pyx_tuple__39);
+  __pyx_codeobj__40 = (PyObject*)__Pyx_PyCode_New(1, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__39, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_str2ent, 128, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__40)) __PYX_ERR(0, 128, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":148
  * 
@@ -9495,10 +9765,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Convert a collection of edges to a string representation
  *     (no outer parenthesis).
  */
-  __pyx_tuple__40 = PyTuple_Pack(5, __pyx_n_s_edges, __pyx_n_s_roots_only, __pyx_n_s_edges_string, __pyx_n_s_entity, __pyx_n_s_entity_str); if (unlikely(!__pyx_tuple__40)) __PYX_ERR(0, 148, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__40);
-  __Pyx_GIVEREF(__pyx_tuple__40);
-  __pyx_codeobj__41 = (PyObject*)__Pyx_PyCode_New(2, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__40, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_edges2str, 148, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__41)) __PYX_ERR(0, 148, __pyx_L1_error)
+  __pyx_tuple__41 = PyTuple_Pack(5, __pyx_n_s_edges, __pyx_n_s_roots_only, __pyx_n_s_edges_string, __pyx_n_s_entity, __pyx_n_s_entity_str); if (unlikely(!__pyx_tuple__41)) __PYX_ERR(0, 148, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__41);
+  __Pyx_GIVEREF(__pyx_tuple__41);
+  __pyx_codeobj__42 = (PyObject*)__Pyx_PyCode_New(2, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__41, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_edges2str, 148, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__42)) __PYX_ERR(0, 148, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":167
  * 
@@ -9507,10 +9777,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Convert an entity to its string representation."""
  *     if is_atom(entity):
  */
-  __pyx_tuple__42 = PyTuple_Pack(2, __pyx_n_s_entity, __pyx_n_s_roots_only); if (unlikely(!__pyx_tuple__42)) __PYX_ERR(0, 167, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__42);
-  __Pyx_GIVEREF(__pyx_tuple__42);
-  __pyx_codeobj__43 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__42, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_ent2str, 167, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__43)) __PYX_ERR(0, 167, __pyx_L1_error)
+  __pyx_tuple__43 = PyTuple_Pack(2, __pyx_n_s_entity, __pyx_n_s_roots_only); if (unlikely(!__pyx_tuple__43)) __PYX_ERR(0, 167, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__43);
+  __Pyx_GIVEREF(__pyx_tuple__43);
+  __pyx_codeobj__44 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__43, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_ent2str, 167, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__44)) __PYX_ERR(0, 167, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":178
  * 
@@ -9519,10 +9789,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Returns set of atoms contained in an entity."""
  *     if is_atom(entity):
  */
-  __pyx_tuple__44 = PyTuple_Pack(4, __pyx_n_s_entity, __pyx_n_s_atom_set, __pyx_n_s_item, __pyx_n_s_atom); if (unlikely(!__pyx_tuple__44)) __PYX_ERR(0, 178, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__44);
-  __Pyx_GIVEREF(__pyx_tuple__44);
-  __pyx_codeobj__45 = (PyObject*)__Pyx_PyCode_New(1, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__44, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_atoms, 178, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__45)) __PYX_ERR(0, 178, __pyx_L1_error)
+  __pyx_tuple__45 = PyTuple_Pack(4, __pyx_n_s_entity, __pyx_n_s_atom_set, __pyx_n_s_item, __pyx_n_s_atom); if (unlikely(!__pyx_tuple__45)) __PYX_ERR(0, 178, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__45);
+  __Pyx_GIVEREF(__pyx_tuple__45);
+  __pyx_codeobj__46 = (PyObject*)__Pyx_PyCode_New(1, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__45, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_atoms, 178, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__46)) __PYX_ERR(0, 178, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":190
  * 
@@ -9531,10 +9801,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Returns maximal depth of an entity, an atom has depth 0."""
  *     if is_atom(edge):
  */
-  __pyx_tuple__46 = PyTuple_Pack(4, __pyx_n_s_edge, __pyx_n_s_max_d, __pyx_n_s_item, __pyx_n_s_d); if (unlikely(!__pyx_tuple__46)) __PYX_ERR(0, 190, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__46);
-  __Pyx_GIVEREF(__pyx_tuple__46);
-  __pyx_codeobj__47 = (PyObject*)__Pyx_PyCode_New(1, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__46, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_depth, 190, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__47)) __PYX_ERR(0, 190, __pyx_L1_error)
+  __pyx_tuple__47 = PyTuple_Pack(4, __pyx_n_s_edge, __pyx_n_s_max_d, __pyx_n_s_item, __pyx_n_s_d); if (unlikely(!__pyx_tuple__47)) __PYX_ERR(0, 190, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__47);
+  __Pyx_GIVEREF(__pyx_tuple__47);
+  __pyx_codeobj__48 = (PyObject*)__Pyx_PyCode_New(1, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__47, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_depth, 190, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__48)) __PYX_ERR(0, 190, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":203
  * 
@@ -9543,10 +9813,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Returns entity with root-only atoms."""
  *     if is_atom(entity):
  */
-  __pyx_tuple__48 = PyTuple_Pack(3, __pyx_n_s_entity, __pyx_n_s_genexpr, __pyx_n_s_genexpr); if (unlikely(!__pyx_tuple__48)) __PYX_ERR(0, 203, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__48);
-  __Pyx_GIVEREF(__pyx_tuple__48);
-  __pyx_codeobj__49 = (PyObject*)__Pyx_PyCode_New(1, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__48, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_roots, 203, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__49)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __pyx_tuple__49 = PyTuple_Pack(3, __pyx_n_s_entity, __pyx_n_s_genexpr, __pyx_n_s_genexpr); if (unlikely(!__pyx_tuple__49)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__49);
+  __Pyx_GIVEREF(__pyx_tuple__49);
+  __pyx_codeobj__50 = (PyObject*)__Pyx_PyCode_New(1, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__49, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_roots, 203, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__50)) __PYX_ERR(0, 203, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":211
  * 
@@ -9555,10 +9825,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Checks if 'needle' is contained in entity."""
  *     if is_atom(entity):
  */
-  __pyx_tuple__50 = PyTuple_Pack(4, __pyx_n_s_entity, __pyx_n_s_needle, __pyx_n_s_deep, __pyx_n_s_item); if (unlikely(!__pyx_tuple__50)) __PYX_ERR(0, 211, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__50);
-  __Pyx_GIVEREF(__pyx_tuple__50);
-  __pyx_codeobj__51 = (PyObject*)__Pyx_PyCode_New(3, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__50, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_contains, 211, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__51)) __PYX_ERR(0, 211, __pyx_L1_error)
+  __pyx_tuple__51 = PyTuple_Pack(4, __pyx_n_s_entity, __pyx_n_s_needle, __pyx_n_s_deep, __pyx_n_s_item); if (unlikely(!__pyx_tuple__51)) __PYX_ERR(0, 211, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__51);
+  __Pyx_GIVEREF(__pyx_tuple__51);
+  __pyx_codeobj__52 = (PyObject*)__Pyx_PyCode_New(3, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__51, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_contains, 211, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__52)) __PYX_ERR(0, 211, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":225
  * 
@@ -9567,10 +9837,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Size of an entity, atom size is 1."""
  *     if is_atom(entity):
  */
-  __pyx_tuple__52 = PyTuple_Pack(1, __pyx_n_s_entity); if (unlikely(!__pyx_tuple__52)) __PYX_ERR(0, 225, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__52);
-  __Pyx_GIVEREF(__pyx_tuple__52);
-  __pyx_codeobj__53 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__52, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_size, 225, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__53)) __PYX_ERR(0, 225, __pyx_L1_error)
+  __pyx_tuple__53 = PyTuple_Pack(1, __pyx_n_s_entity); if (unlikely(!__pyx_tuple__53)) __PYX_ERR(0, 225, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__53);
+  __Pyx_GIVEREF(__pyx_tuple__53);
+  __pyx_codeobj__54 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__53, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_size, 225, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__54)) __PYX_ERR(0, 225, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":233
  * 
@@ -9579,10 +9849,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Returns all the subedges contained in the edge, including atoms and
  *     itself.
  */
-  __pyx_tuple__54 = PyTuple_Pack(3, __pyx_n_s_edge, __pyx_n_s_edges, __pyx_n_s_item); if (unlikely(!__pyx_tuple__54)) __PYX_ERR(0, 233, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__54);
-  __Pyx_GIVEREF(__pyx_tuple__54);
-  __pyx_codeobj__55 = (PyObject*)__Pyx_PyCode_New(1, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__54, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_subedges, 233, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__55)) __PYX_ERR(0, 233, __pyx_L1_error)
+  __pyx_tuple__55 = PyTuple_Pack(3, __pyx_n_s_edge, __pyx_n_s_edges, __pyx_n_s_item); if (unlikely(!__pyx_tuple__55)) __PYX_ERR(0, 233, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__55);
+  __Pyx_GIVEREF(__pyx_tuple__55);
+  __pyx_codeobj__56 = (PyObject*)__Pyx_PyCode_New(1, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__55, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_subedges, 233, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__56)) __PYX_ERR(0, 233, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":244
  * 
@@ -9591,10 +9861,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     parts = atom.split('/')
  *     if len(parts) < 2:
  */
-  __pyx_tuple__56 = PyTuple_Pack(2, __pyx_n_s_atom, __pyx_n_s_parts); if (unlikely(!__pyx_tuple__56)) __PYX_ERR(0, 244, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__56);
-  __Pyx_GIVEREF(__pyx_tuple__56);
-  __pyx_codeobj__57 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__56, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_atom_role, 244, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__57)) __PYX_ERR(0, 244, __pyx_L1_error)
+  __pyx_tuple__57 = PyTuple_Pack(2, __pyx_n_s_atom, __pyx_n_s_parts); if (unlikely(!__pyx_tuple__57)) __PYX_ERR(0, 244, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__57);
+  __Pyx_GIVEREF(__pyx_tuple__57);
+  __pyx_codeobj__58 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__57, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_atom_role, 244, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__58)) __PYX_ERR(0, 244, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":252
  * 
@@ -9603,10 +9873,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     return atom_role(atom)[0]
  * 
  */
-  __pyx_tuple__58 = PyTuple_Pack(1, __pyx_n_s_atom); if (unlikely(!__pyx_tuple__58)) __PYX_ERR(0, 252, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__58);
-  __Pyx_GIVEREF(__pyx_tuple__58);
-  __pyx_codeobj__59 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__58, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_atom_type, 252, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__59)) __PYX_ERR(0, 252, __pyx_L1_error)
+  __pyx_tuple__59 = PyTuple_Pack(1, __pyx_n_s_atom); if (unlikely(!__pyx_tuple__59)) __PYX_ERR(0, 252, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__59);
+  __Pyx_GIVEREF(__pyx_tuple__59);
+  __pyx_codeobj__60 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__59, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_atom_type, 252, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__60)) __PYX_ERR(0, 252, __pyx_L1_error)
 
   /* "graphbrain/funs.pyx":256
  * 
@@ -9615,94 +9885,94 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     if is_atom(entity):
  *         return atom_type(entity)
  */
-  __pyx_tuple__60 = PyTuple_Pack(2, __pyx_n_s_entity, __pyx_n_s_ptype); if (unlikely(!__pyx_tuple__60)) __PYX_ERR(0, 256, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__60);
-  __Pyx_GIVEREF(__pyx_tuple__60);
-  __pyx_codeobj__61 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__60, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_entity_type, 256, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__61)) __PYX_ERR(0, 256, __pyx_L1_error)
+  __pyx_tuple__61 = PyTuple_Pack(3, __pyx_n_s_entity, __pyx_n_s_ptype, __pyx_n_s_outter_type); if (unlikely(!__pyx_tuple__61)) __PYX_ERR(0, 256, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__61);
+  __Pyx_GIVEREF(__pyx_tuple__61);
+  __pyx_codeobj__62 = (PyObject*)__Pyx_PyCode_New(1, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__61, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_entity_type, 256, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__62)) __PYX_ERR(0, 256, __pyx_L1_error)
 
-  /* "graphbrain/funs.pyx":276
+  /* "graphbrain/funs.pyx":280
  * 
  * 
  * def connector_type(entity):             # <<<<<<<<<<<<<<
  *     if is_atom(entity):
  *         return entity_type(entity)
  */
-  __pyx_tuple__62 = PyTuple_Pack(1, __pyx_n_s_entity); if (unlikely(!__pyx_tuple__62)) __PYX_ERR(0, 276, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__62);
-  __Pyx_GIVEREF(__pyx_tuple__62);
-  __pyx_codeobj__63 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__62, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_connector_type, 276, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__63)) __PYX_ERR(0, 276, __pyx_L1_error)
+  __pyx_tuple__63 = PyTuple_Pack(1, __pyx_n_s_entity); if (unlikely(!__pyx_tuple__63)) __PYX_ERR(0, 280, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__63);
+  __Pyx_GIVEREF(__pyx_tuple__63);
+  __pyx_codeobj__64 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__63, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_connector_type, 280, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__64)) __PYX_ERR(0, 280, __pyx_L1_error)
 
-  /* "graphbrain/funs.pyx":283
+  /* "graphbrain/funs.pyx":287
  * 
  * 
  * def nest(inner, outer, before):             # <<<<<<<<<<<<<<
  *     if is_atom(outer):
  *         return outer, inner
  */
-  __pyx_tuple__64 = PyTuple_Pack(3, __pyx_n_s_inner, __pyx_n_s_outer, __pyx_n_s_before); if (unlikely(!__pyx_tuple__64)) __PYX_ERR(0, 283, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__64);
-  __Pyx_GIVEREF(__pyx_tuple__64);
-  __pyx_codeobj__65 = (PyObject*)__Pyx_PyCode_New(3, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__64, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_nest, 283, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__65)) __PYX_ERR(0, 283, __pyx_L1_error)
+  __pyx_tuple__65 = PyTuple_Pack(3, __pyx_n_s_inner, __pyx_n_s_outer, __pyx_n_s_before); if (unlikely(!__pyx_tuple__65)) __PYX_ERR(0, 287, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__65);
+  __Pyx_GIVEREF(__pyx_tuple__65);
+  __pyx_codeobj__66 = (PyObject*)__Pyx_PyCode_New(3, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__65, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_nest, 287, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__66)) __PYX_ERR(0, 287, __pyx_L1_error)
 
-  /* "graphbrain/funs.pyx":293
+  /* "graphbrain/funs.pyx":297
  * 
  * 
  * def parens(entity):             # <<<<<<<<<<<<<<
  *     if is_atom(entity):
  *         return (entity,)
  */
-  __pyx_tuple__66 = PyTuple_Pack(1, __pyx_n_s_entity); if (unlikely(!__pyx_tuple__66)) __PYX_ERR(0, 293, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__66);
-  __Pyx_GIVEREF(__pyx_tuple__66);
-  __pyx_codeobj__67 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__66, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_parens, 293, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__67)) __PYX_ERR(0, 293, __pyx_L1_error)
+  __pyx_tuple__67 = PyTuple_Pack(1, __pyx_n_s_entity); if (unlikely(!__pyx_tuple__67)) __PYX_ERR(0, 297, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__67);
+  __Pyx_GIVEREF(__pyx_tuple__67);
+  __pyx_codeobj__68 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__67, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_parens, 297, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__68)) __PYX_ERR(0, 297, __pyx_L1_error)
 
-  /* "graphbrain/funs.pyx":300
+  /* "graphbrain/funs.pyx":304
  * 
  * 
  * def insert_first_argument(entity, argument):             # <<<<<<<<<<<<<<
  *     if is_atom(entity):
  *         return (entity, argument)
  */
-  __pyx_tuple__68 = PyTuple_Pack(2, __pyx_n_s_entity, __pyx_n_s_argument); if (unlikely(!__pyx_tuple__68)) __PYX_ERR(0, 300, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__68);
-  __Pyx_GIVEREF(__pyx_tuple__68);
-  __pyx_codeobj__69 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__68, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_insert_first_argument, 300, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__69)) __PYX_ERR(0, 300, __pyx_L1_error)
+  __pyx_tuple__69 = PyTuple_Pack(2, __pyx_n_s_entity, __pyx_n_s_argument); if (unlikely(!__pyx_tuple__69)) __PYX_ERR(0, 304, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__69);
+  __Pyx_GIVEREF(__pyx_tuple__69);
+  __pyx_codeobj__70 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__69, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_insert_first_argument, 304, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__70)) __PYX_ERR(0, 304, __pyx_L1_error)
 
-  /* "graphbrain/funs.pyx":307
+  /* "graphbrain/funs.pyx":313
  * 
  * 
  * def connect(entity, arguments):             # <<<<<<<<<<<<<<
  *     if len(arguments) == 0:
  *         return entity
  */
-  __pyx_tuple__70 = PyTuple_Pack(2, __pyx_n_s_entity, __pyx_n_s_arguments); if (unlikely(!__pyx_tuple__70)) __PYX_ERR(0, 307, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__70);
-  __Pyx_GIVEREF(__pyx_tuple__70);
-  __pyx_codeobj__71 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__70, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_connect, 307, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__71)) __PYX_ERR(0, 307, __pyx_L1_error)
+  __pyx_tuple__71 = PyTuple_Pack(2, __pyx_n_s_entity, __pyx_n_s_arguments); if (unlikely(!__pyx_tuple__71)) __PYX_ERR(0, 313, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__71);
+  __Pyx_GIVEREF(__pyx_tuple__71);
+  __pyx_codeobj__72 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__71, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_connect, 313, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__72)) __PYX_ERR(0, 313, __pyx_L1_error)
 
-  /* "graphbrain/funs.pyx":314
+  /* "graphbrain/funs.pyx":320
  * 
  * 
- * def sequence(target, entity, before):             # <<<<<<<<<<<<<<
- *     if before:
- *         return parens(entity) + parens(target)
+ * def sequence(target, entity, before, flat=True):             # <<<<<<<<<<<<<<
+ *     if flat:
+ *         if before:
  */
-  __pyx_tuple__72 = PyTuple_Pack(3, __pyx_n_s_target, __pyx_n_s_entity, __pyx_n_s_before); if (unlikely(!__pyx_tuple__72)) __PYX_ERR(0, 314, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__72);
-  __Pyx_GIVEREF(__pyx_tuple__72);
-  __pyx_codeobj__73 = (PyObject*)__Pyx_PyCode_New(3, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__72, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_sequence, 314, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__73)) __PYX_ERR(0, 314, __pyx_L1_error)
+  __pyx_tuple__73 = PyTuple_Pack(4, __pyx_n_s_target, __pyx_n_s_entity, __pyx_n_s_before, __pyx_n_s_flat); if (unlikely(!__pyx_tuple__73)) __PYX_ERR(0, 320, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__73);
+  __Pyx_GIVEREF(__pyx_tuple__73);
+  __pyx_codeobj__74 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__73, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_sequence, 320, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__74)) __PYX_ERR(0, 320, __pyx_L1_error)
 
-  /* "graphbrain/funs.pyx":321
+  /* "graphbrain/funs.pyx":333
  * 
  * 
  * def apply_fun_to_atom(fun, atom, target):             # <<<<<<<<<<<<<<
  *     if is_atom(target):
  *         if target == atom:
  */
-  __pyx_tuple__74 = PyTuple_Pack(5, __pyx_n_s_fun, __pyx_n_s_atom, __pyx_n_s_target, __pyx_n_s_genexpr, __pyx_n_s_genexpr); if (unlikely(!__pyx_tuple__74)) __PYX_ERR(0, 321, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__74);
-  __Pyx_GIVEREF(__pyx_tuple__74);
-  __pyx_codeobj__75 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__74, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_apply_fun_to_atom, 321, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__75)) __PYX_ERR(0, 321, __pyx_L1_error)
+  __pyx_tuple__75 = PyTuple_Pack(5, __pyx_n_s_fun, __pyx_n_s_atom, __pyx_n_s_target, __pyx_n_s_genexpr, __pyx_n_s_genexpr); if (unlikely(!__pyx_tuple__75)) __PYX_ERR(0, 333, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__75);
+  __Pyx_GIVEREF(__pyx_tuple__75);
+  __pyx_codeobj__76 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__75, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_funs_pyx, __pyx_n_s_apply_fun_to_atom, 333, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__76)) __PYX_ERR(0, 333, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -9780,13 +10050,13 @@ static int __Pyx_modinit_type_init_code(void) {
     __pyx_type_10graphbrain_4funs___pyx_scope_struct_3_genexpr.tp_getattro = __Pyx_PyObject_GenericGetAttrNoDict;
   }
   __pyx_ptype_10graphbrain_4funs___pyx_scope_struct_3_genexpr = &__pyx_type_10graphbrain_4funs___pyx_scope_struct_3_genexpr;
-  if (PyType_Ready(&__pyx_type_10graphbrain_4funs___pyx_scope_struct_4_apply_fun_to_atom) < 0) __PYX_ERR(0, 321, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_10graphbrain_4funs___pyx_scope_struct_4_apply_fun_to_atom) < 0) __PYX_ERR(0, 333, __pyx_L1_error)
   __pyx_type_10graphbrain_4funs___pyx_scope_struct_4_apply_fun_to_atom.tp_print = 0;
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_10graphbrain_4funs___pyx_scope_struct_4_apply_fun_to_atom.tp_dictoffset && __pyx_type_10graphbrain_4funs___pyx_scope_struct_4_apply_fun_to_atom.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_10graphbrain_4funs___pyx_scope_struct_4_apply_fun_to_atom.tp_getattro = __Pyx_PyObject_GenericGetAttrNoDict;
   }
   __pyx_ptype_10graphbrain_4funs___pyx_scope_struct_4_apply_fun_to_atom = &__pyx_type_10graphbrain_4funs___pyx_scope_struct_4_apply_fun_to_atom;
-  if (PyType_Ready(&__pyx_type_10graphbrain_4funs___pyx_scope_struct_5_genexpr) < 0) __PYX_ERR(0, 328, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_10graphbrain_4funs___pyx_scope_struct_5_genexpr) < 0) __PYX_ERR(0, 340, __pyx_L1_error)
   __pyx_type_10graphbrain_4funs___pyx_scope_struct_5_genexpr.tp_print = 0;
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_10graphbrain_4funs___pyx_scope_struct_5_genexpr.tp_dictoffset && __pyx_type_10graphbrain_4funs___pyx_scope_struct_5_genexpr.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_10graphbrain_4funs___pyx_scope_struct_5_genexpr.tp_getattro = __Pyx_PyObject_GenericGetAttrNoDict;
@@ -10059,7 +10329,7 @@ if (!__Pyx_RefNanny) {
  * 
  * def is_edge(entity):             # <<<<<<<<<<<<<<
  *     """Checks if entity is an edge."""
- *     return not is_atom(entity)
+ *     return isinstance(entity, (tuple, list))
  */
   __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10graphbrain_4funs_3is_edge, NULL, __pyx_n_s_graphbrain_funs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -10330,88 +10600,88 @@ if (!__Pyx_RefNanny) {
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_entity_type, __pyx_t_1) < 0) __PYX_ERR(0, 256, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "graphbrain/funs.pyx":276
+  /* "graphbrain/funs.pyx":280
  * 
  * 
  * def connector_type(entity):             # <<<<<<<<<<<<<<
  *     if is_atom(entity):
  *         return entity_type(entity)
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10graphbrain_4funs_49connector_type, NULL, __pyx_n_s_graphbrain_funs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 276, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10graphbrain_4funs_49connector_type, NULL, __pyx_n_s_graphbrain_funs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 280, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_connector_type, __pyx_t_1) < 0) __PYX_ERR(0, 276, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_connector_type, __pyx_t_1) < 0) __PYX_ERR(0, 280, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "graphbrain/funs.pyx":283
+  /* "graphbrain/funs.pyx":287
  * 
  * 
  * def nest(inner, outer, before):             # <<<<<<<<<<<<<<
  *     if is_atom(outer):
  *         return outer, inner
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10graphbrain_4funs_51nest, NULL, __pyx_n_s_graphbrain_funs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 283, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10graphbrain_4funs_51nest, NULL, __pyx_n_s_graphbrain_funs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 287, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_nest, __pyx_t_1) < 0) __PYX_ERR(0, 283, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_nest, __pyx_t_1) < 0) __PYX_ERR(0, 287, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "graphbrain/funs.pyx":293
+  /* "graphbrain/funs.pyx":297
  * 
  * 
  * def parens(entity):             # <<<<<<<<<<<<<<
  *     if is_atom(entity):
  *         return (entity,)
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10graphbrain_4funs_53parens, NULL, __pyx_n_s_graphbrain_funs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 293, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10graphbrain_4funs_53parens, NULL, __pyx_n_s_graphbrain_funs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 297, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_parens, __pyx_t_1) < 0) __PYX_ERR(0, 293, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_parens, __pyx_t_1) < 0) __PYX_ERR(0, 297, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "graphbrain/funs.pyx":300
+  /* "graphbrain/funs.pyx":304
  * 
  * 
  * def insert_first_argument(entity, argument):             # <<<<<<<<<<<<<<
  *     if is_atom(entity):
  *         return (entity, argument)
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10graphbrain_4funs_55insert_first_argument, NULL, __pyx_n_s_graphbrain_funs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 300, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10graphbrain_4funs_55insert_first_argument, NULL, __pyx_n_s_graphbrain_funs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 304, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_insert_first_argument, __pyx_t_1) < 0) __PYX_ERR(0, 300, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_insert_first_argument, __pyx_t_1) < 0) __PYX_ERR(0, 304, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "graphbrain/funs.pyx":307
+  /* "graphbrain/funs.pyx":313
  * 
  * 
  * def connect(entity, arguments):             # <<<<<<<<<<<<<<
  *     if len(arguments) == 0:
  *         return entity
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10graphbrain_4funs_57connect, NULL, __pyx_n_s_graphbrain_funs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 307, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10graphbrain_4funs_57connect, NULL, __pyx_n_s_graphbrain_funs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 313, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_connect, __pyx_t_1) < 0) __PYX_ERR(0, 307, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_connect, __pyx_t_1) < 0) __PYX_ERR(0, 313, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "graphbrain/funs.pyx":314
+  /* "graphbrain/funs.pyx":320
  * 
  * 
- * def sequence(target, entity, before):             # <<<<<<<<<<<<<<
- *     if before:
- *         return parens(entity) + parens(target)
+ * def sequence(target, entity, before, flat=True):             # <<<<<<<<<<<<<<
+ *     if flat:
+ *         if before:
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10graphbrain_4funs_59sequence, NULL, __pyx_n_s_graphbrain_funs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 314, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10graphbrain_4funs_59sequence, NULL, __pyx_n_s_graphbrain_funs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 320, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_sequence, __pyx_t_1) < 0) __PYX_ERR(0, 314, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_sequence, __pyx_t_1) < 0) __PYX_ERR(0, 320, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "graphbrain/funs.pyx":321
+  /* "graphbrain/funs.pyx":333
  * 
  * 
  * def apply_fun_to_atom(fun, atom, target):             # <<<<<<<<<<<<<<
  *     if is_atom(target):
  *         if target == atom:
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10graphbrain_4funs_61apply_fun_to_atom, NULL, __pyx_n_s_graphbrain_funs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 321, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10graphbrain_4funs_61apply_fun_to_atom, NULL, __pyx_n_s_graphbrain_funs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 333, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_apply_fun_to_atom, __pyx_t_1) < 0) __PYX_ERR(0, 321, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_apply_fun_to_atom, __pyx_t_1) < 0) __PYX_ERR(0, 333, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "graphbrain/funs.pyx":1
@@ -10492,67 +10762,6 @@ static PyObject *__Pyx_GetBuiltinName(PyObject *name) {
 #endif
     }
     return result;
-}
-
-/* PyDictVersioning */
-#if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
-static CYTHON_INLINE PY_UINT64_T __Pyx_get_tp_dict_version(PyObject *obj) {
-    PyObject *dict = Py_TYPE(obj)->tp_dict;
-    return likely(dict) ? __PYX_GET_DICT_VERSION(dict) : 0;
-}
-static CYTHON_INLINE PY_UINT64_T __Pyx_get_object_dict_version(PyObject *obj) {
-    PyObject **dictptr = NULL;
-    Py_ssize_t offset = Py_TYPE(obj)->tp_dictoffset;
-    if (offset) {
-#if CYTHON_COMPILING_IN_CPYTHON
-        dictptr = (likely(offset > 0)) ? (PyObject **) ((char *)obj + offset) : _PyObject_GetDictPtr(obj);
-#else
-        dictptr = _PyObject_GetDictPtr(obj);
-#endif
-    }
-    return (dictptr && *dictptr) ? __PYX_GET_DICT_VERSION(*dictptr) : 0;
-}
-static CYTHON_INLINE int __Pyx_object_dict_version_matches(PyObject* obj, PY_UINT64_T tp_dict_version, PY_UINT64_T obj_dict_version) {
-    PyObject *dict = Py_TYPE(obj)->tp_dict;
-    if (unlikely(!dict) || unlikely(tp_dict_version != __PYX_GET_DICT_VERSION(dict)))
-        return 0;
-    return obj_dict_version == __Pyx_get_object_dict_version(obj);
-}
-#endif
-
-/* GetModuleGlobalName */
-#if CYTHON_USE_DICT_VERSIONS
-static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value)
-#else
-static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name)
-#endif
-{
-    PyObject *result;
-#if !CYTHON_AVOID_BORROWED_REFS
-#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030500A1
-    result = _PyDict_GetItem_KnownHash(__pyx_d, name, ((PyASCIIObject *) name)->hash);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    } else if (unlikely(PyErr_Occurred())) {
-        return NULL;
-    }
-#else
-    result = PyDict_GetItem(__pyx_d, name);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    }
-#endif
-#else
-    result = PyObject_GetItem(__pyx_d, name);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    }
-    PyErr_Clear();
-#endif
-    return __Pyx_GetBuiltinName(name);
 }
 
 /* PyCFunctionFastCall */
@@ -10805,6 +11014,67 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObjec
     return result;
 }
 #endif
+
+/* PyDictVersioning */
+#if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
+static CYTHON_INLINE PY_UINT64_T __Pyx_get_tp_dict_version(PyObject *obj) {
+    PyObject *dict = Py_TYPE(obj)->tp_dict;
+    return likely(dict) ? __PYX_GET_DICT_VERSION(dict) : 0;
+}
+static CYTHON_INLINE PY_UINT64_T __Pyx_get_object_dict_version(PyObject *obj) {
+    PyObject **dictptr = NULL;
+    Py_ssize_t offset = Py_TYPE(obj)->tp_dictoffset;
+    if (offset) {
+#if CYTHON_COMPILING_IN_CPYTHON
+        dictptr = (likely(offset > 0)) ? (PyObject **) ((char *)obj + offset) : _PyObject_GetDictPtr(obj);
+#else
+        dictptr = _PyObject_GetDictPtr(obj);
+#endif
+    }
+    return (dictptr && *dictptr) ? __PYX_GET_DICT_VERSION(*dictptr) : 0;
+}
+static CYTHON_INLINE int __Pyx_object_dict_version_matches(PyObject* obj, PY_UINT64_T tp_dict_version, PY_UINT64_T obj_dict_version) {
+    PyObject *dict = Py_TYPE(obj)->tp_dict;
+    if (unlikely(!dict) || unlikely(tp_dict_version != __PYX_GET_DICT_VERSION(dict)))
+        return 0;
+    return obj_dict_version == __Pyx_get_object_dict_version(obj);
+}
+#endif
+
+/* GetModuleGlobalName */
+#if CYTHON_USE_DICT_VERSIONS
+static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value)
+#else
+static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name)
+#endif
+{
+    PyObject *result;
+#if !CYTHON_AVOID_BORROWED_REFS
+#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030500A1
+    result = _PyDict_GetItem_KnownHash(__pyx_d, name, ((PyASCIIObject *) name)->hash);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    } else if (unlikely(PyErr_Occurred())) {
+        return NULL;
+    }
+#else
+    result = PyDict_GetItem(__pyx_d, name);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    }
+#endif
+#else
+    result = PyObject_GetItem(__pyx_d, name);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    }
+    PyErr_Clear();
+#endif
+    return __Pyx_GetBuiltinName(name);
+}
 
 /* GetItemInt */
 static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j) {

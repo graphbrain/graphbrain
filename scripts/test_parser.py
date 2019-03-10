@@ -33,6 +33,6 @@ if __name__ == '__main__':
                     print(ent2str(edge))
                 sentence = None
             else:
-                sentence = line
+                sentence = line.strip()
 
     print('%s wrong out of %s.' % (wrong, total))
