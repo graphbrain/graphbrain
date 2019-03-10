@@ -54,7 +54,7 @@ class RedditReader(object):
 
     def process_comments(self, post):
         if 'body' in post:
-            author = build_symbol(post['author'], 'reddit_user')
+            author = build_atom(post['author'], 'c', 'reddit_user')
             self.process_text(post['body'], author)
         if 'comments' in post:
             for comment in post['comments']:
@@ -62,7 +62,7 @@ class RedditReader(object):
                     self.process_comments(comment)
 
     def process_post(self, post):
-        author = build_symbol(post['author'], 'reddit_user')
+        author = build_atom(post['author'], 'c', 'reddit_user')
         print('author: %s' % author)
 
         text = post['title'].strip()
