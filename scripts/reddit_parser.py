@@ -1,9 +1,8 @@
 import time
 import json
 import argparse
-from graphbrain.hypergraph import HyperGraph
-from graphbrain.funs import *
-from graphbrain.parsers.stagewise_parser import StagewiseParser
+from graphbrain import *
+from graphbrain.parser import *
 
 
 def comments_to_text(comments):
@@ -17,41 +16,30 @@ def comments_to_text(comments):
     return '\n'.join(chunks)
 
 
-def generate_aux_text(post):
-    text = ''
-    if 'comments' in post:
-        text = '%s\n%s' % (text, comments_to_text(post['comments']))
-    return text
-
-
 class RedditReader(object):
     def __init__(self, hg, comments):
         self.hg = hg
         self.comments = comments
-        self.reader = StagewiseParser(hg)
+        self.parser = Parser(lang='en')
         self.main_edges = 0
         self.extra_edges = 0
-        self.ignored = 0
         self.time_acc = 0
         self.items_processed = 0
         self.first_item = True
 
-    def process_text(self, text, author, reset_context=False, aux_text=None):
+    def process_text(self, text, author):
         start_t = time.time()
-        parses = self.reader.read_text(text, aux_text, reset_context=reset_context)
-        for p in parses:
+        parses = self.parser.parse(text)
+        for parse, sent in parses:
             print('\n')
-            print('sentence: %s' % p[0])
-            print(edge2str(p[1].main_edge))
-            if len(p[1].main_edge) < 8:
-                self.hg.add_belief(author, p[1].main_edge)
-                self.main_edges += 1
-                for edge in p[1].edges:
-                    self.hg.add_belief('gb', edge)
-                    self.extra_edges += 1
-                self.hg.set_attribute(p[1].main_edge, 'text', text)
-            else:
-                self.ignored += 1
+            print('sentence: {}'.format(sent))
+            print(ent2str(parse))
+            self.hg.add_belief(author, parse)
+            self.main_edges += 1
+            # for edge in p[1].edges:
+            #     self.hg.add_belief('gb', edge)
+            #     self.extra_edges += 1
+            # self.hg.set_attribute(p[1].main_edge, 'text', text)
 
         if self.first_item:
             self.first_item = False
@@ -67,7 +55,7 @@ class RedditReader(object):
     def process_comments(self, post):
         if 'body' in post:
             author = build_symbol(post['author'], 'reddit_user')
-            self.process_text(post['body'], author, reset_context=False)
+            self.process_text(post['body'], author)
         if 'comments' in post:
             for comment in post['comments']:
                 if comment:
@@ -77,18 +65,14 @@ class RedditReader(object):
         author = build_symbol(post['author'], 'reddit_user')
         print('author: %s' % author)
 
-        # aux_text = generate_aux_text(post)
-
         text = post['title'].strip()
         if text[-1].isalnum():
             text += '.'
-        self.process_text(text, author, reset_context=True, aux_text='')
+        self.process_text(text, author)
         if self.comments:
             self.process_comments(post)
 
     def read_file(self, filename):
-        # self.extractor.debug = True
-
         if self.comments:
             print('Including comments.')
         else:
@@ -101,16 +85,19 @@ class RedditReader(object):
 
         print('main edges created: %s' % self.main_edges)
         print('extra edges created: %s' % self.extra_edges)
-        print('ignored edges: %s' % self.ignored)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--backend', type=str, help='hypergraph backend (leveldb, null)', default='leveldb')
-    parser.add_argument('--hg', type=str, help='hypergraph name', default='gb.hg')
+    parser.add_argument('--backend', type=str,
+                        help='hypergraph backend (leveldb, null)',
+                        default='leveldb')
+    parser.add_argument('--hg', type=str, help='hypergraph name',
+                        default='gb.hg')
     parser.add_argument('--infile', type=str, help='input file', default=None)
-    parser.add_argument('--comments', help='include comments', action='store_true')
+    parser.add_argument('--comments', help='include comments',
+                        action='store_true')
 
     args = parser.parse_args()
 
