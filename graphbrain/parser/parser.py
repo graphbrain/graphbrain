@@ -1,5 +1,11 @@
+import sys
+import logging
 import spacy
 from graphbrain import *
+from graphbrain.parser.vis import print_tree
+
+
+logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
 
 
 deps_arg_types = {
@@ -9,6 +15,7 @@ deps_arg_types = {
     'acomp': 'c',      # subject complement
     'attr': 'c',       # subject complement
     'dobj': 'o',       # direct object
+    'prt': 'o',       # direct object
     'dative': 'i',     # indirect object
     'advcl': 'x',      # specifier
     'prep': 'x',       # specifier
@@ -31,6 +38,15 @@ def is_noun(token):
     return token.tag_[:2] == 'NN'
 
 
+# TODO: check if complete
+def is_verb(token):
+    return token.tag_[0] == 'V'
+
+
+def is_compound(token):
+    return token.dep_ == 'compound'
+
+
 def token_type(token):
     dep = token.dep_
     if dep == 'ROOT':
@@ -38,29 +54,51 @@ def token_type(token):
             return 'p'
         else:
             return 'c'
-    elif dep in {'acomp', 'appos', 'attr', 'compound', 'conj', 'dative', 'dep',
+    elif dep in {'acomp', 'appos', 'attr', 'compound', 'dative', 'dep',
                  'dobj', 'nsubj', 'nsubjpass', 'oprd', 'pobj', 'meta'}:
         return 'c'
-    elif dep in {'advcl', 'ccomp', 'csubj', 'csubjpass', 'parataxis', 'relcl'}:
+    elif dep in {'advcl', 'ccomp', 'csubj', 'csubjpass', 'parataxis'}:
         return 'p'
+    elif dep == 'relcl':
+        if is_verb(token):
+            return 'pr'
+        else:
+            return 'c'
     elif dep in {'acl', 'pcomp', 'xcomp'}:
-        return 'p.c'
-    elif dep in {'amod', 'det', 'npadvmod', 'nummod', 'preconj', 'predet'}:
+        if token.tag_ == 'IN':
+            return 'a'
+        else:
+            return 'pc'
+    elif dep in {'amod', 'det', 'npadvmod', 'nummod', 'nmod', 'preconj',
+                 'predet'}:
         return 'm'
     elif dep in {'aux', 'auxpass', 'expl', 'prt', 'quantmod'}:
-        return 'a'
-    elif dep in {'case', 'cc'}:
-        return 'b'
+        if token.n_lefts + token.n_rights == 0:
+            return 'a'
+        else:
+            return 'x'
+    elif dep == 'cc':
+        if token_head_type(token)[0] == 'p':
+            return 'pm'
+        else:
+            return 'b'
+    elif dep == 'case':
+        if token.head.dep_ == 'poss':
+            return 'bp'
+        else:
+            return 'b'
     elif dep == 'neg':
-        return 'a.n'
+        return 'an'
     elif dep == 'agent':
         return 'x'
     elif dep in {'intj', 'punct'}:
         return ''
     elif dep == 'advmod':
-        if token_head_type(token)[0] == 'p':
+        if token.head.dep_ == 'advcl':
+            return 't'
+        elif token_head_type(token)[0] == 'p':
             return 'a'
-        elif token_head_type(token) in {'m', 'x', 't'}:
+        elif token_head_type(token)[0] in {'m', 'x', 't'}:
             return 'w'
         else:
             return 'm'
@@ -68,12 +106,17 @@ def token_type(token):
         if is_noun(token):
             return 'c'
         else:
-            return 'm'
+            return 'mp'
     elif dep == 'prep':
         if token_head_type(token)[0] == 'p':
             return 't'
         else:
             return 'b'
+    elif dep == 'conj':
+        if token_head_type(token)[0] == 'p' and is_verb(token):
+            return 'p'
+        else:
+            return 'c'
     elif dep == 'mark':
         if token_head_type(token) == 'p':
             return 'x'
@@ -84,6 +127,10 @@ def token_type(token):
         pass
 
 
+def is_relative_concept(token):
+    return token.dep_ == 'appos'
+
+
 def arg_type(token):
     return deps_arg_types.get(token.dep_, '?')
 
@@ -92,16 +139,23 @@ def insert_after_predicate(targ, orig):
     targ_type = entity_type(targ)
     if targ_type[0] == 'p':
         return (targ, orig)
-    elif targ_type == 'r':
-        return insert_first_argument(targ, orig)
+    elif targ_type[0] == 'r':
+        if targ_type == 'rm':
+            inner_rel = insert_after_predicate(targ[1], orig)
+            return (targ[0], inner_rel) + tuple(targ[2:])
+        else:
+            return insert_first_argument(targ, orig)
     else:
         # TODO: error / warning
         print('ERROR %s %s' % (targ, orig))
-        return None
+        return targ
 
 
 def nest_predicate(inner, outer, before):
-    if is_atom(inner) or entity_type(inner) == 'p':
+    if entity_type(inner) == 'rm':
+        first_rel = nest_predicate(inner[1], outer, before)
+        return (inner[0], first_rel) + tuple(inner[2:])
+    elif is_atom(inner) or entity_type(inner)[0] == 'p':
         return outer, inner
     else:
         return ((outer, inner[0]),) + inner[1:]
@@ -112,7 +166,7 @@ def post_process(entity):
         return entity
     else:
         entity = tuple(post_process(item) for item in entity)
-        if connector_type(entity) == 'c':
+        if connector_type(entity)[0] == 'c':
             return connect('+/b/.', entity)
         else:
             return entity
@@ -144,7 +198,7 @@ class Parser(object):
                 child_type = entity_type(child)
                 if child_type:
                     children.append(child)
-                    if child_type in {'c', 'r', 'd', 's'}:
+                    if child_type[0] in {'c', 'r', 'd', 's'}:
                         entities.append(child)
 
         children.reverse()
@@ -153,79 +207,126 @@ class Parser(object):
         if parent_type == '' or parent_type is None:
             return None
 
-        role = parent_type.split('.')
-
-        if parent_type[0] == 'p':
-            if len(role) == 1:
-                role.append('d')  # TODO: questions, imperative...
-            args_string = ''.join([arg_type(tokens[entity])
-                                   for entity in entities])
-            role.append(args_string)
-            parent_atom = build_atom(token.text.lower(), '.'.join(role))
+        # build atom
+        if parent_type[0] == 'p' and parent_type != 'pm':
+            if len(parent_type) == 1:
+                parent_type = 'pd'  # TODO: questions, imperative...
+            args = [arg_type(tokens[entity]) for entity in entities]
+            args_string = ''.join([arg for arg in args if arg != '?'])
+            parent_atom = build_atom(token.text.lower(),
+                                     '%s.%s' % (parent_type, args_string))
         else:
             parent_atom = build_atom(token.text.lower(), parent_type)
 
         parent = parent_atom
 
+        relative_to_concept = []
+
+        # process children
         for child in children:
-            # print('%s <- %s' % (parent, child))
             child_type = entity_type(child)
-            if child_type in {'c', 'r', 'd', 's'}:
-                if parent_type == 'c':
-                    if connector_type(child) == 'b':
-                        if connector_type(parent) == 'c':
+
+            logging.debug('TARGET <-: [%s] %s', parent_type, parent)
+            logging.debug('<- ORIG: [%s] %s', child_type, child)
+
+            if child_type[0] in {'c', 'r', 'd', 's'}:
+                if parent_type[0] == 'c':
+                    if (connector_type(child) in {'pc', 'pr'} or
+                            is_relative_concept(tokens[child])):
+                        logging.debug('CHOICE #1')
+                        relative_to_concept.append(child)
+                    elif connector_type(child)[0] == 'b':
+                        if connector_type(parent)[0] == 'c':
+                            logging.debug('CHOICE #2')
                             parent = nest(parent, child, positions[child])
                         else:
+                            logging.debug('CHOICE #3')
                             parent = apply_fun_to_atom(
                                 lambda target:
                                     nest(target, child, positions[child]),
                                     parent_atom, parent)
-                    elif connector_type(child) in {'x', 't'}:
+                    elif connector_type(child)[0] in {'x', 't'}:
+                        logging.debug('CHOICE #4')
                         parent = nest(parent, child, positions[child])
                     else:
-                        if (entity_type(parent_atom) == 'c' and
-                                connector_type(child) == 'c'):
-                            if connector_type(parent) == 'c':
-                                parent = sequence(parent, child,
-                                                  positions[child])
+                        if ((entity_type(parent_atom)[0] == 'c' and
+                                connector_type(child)[0] == 'c') or
+                                is_compound(tokens[child])):
+                            if connector_type(parent)[0] == 'c':
+                                if connector_type(child)[0] == 'c':
+                                    logging.debug('CHOICE #5a')
+                                    parent = sequence(parent, child,
+                                                      positions[child])
+                                else:
+                                    logging.debug('CHOICE #5b')
+                                    parent = sequence(parent, child,
+                                                      positions[child],
+                                                      flat=False)
                             else:
+                                logging.debug('CHOICE #6')
                                 parent = apply_fun_to_atom(
                                     lambda target:
                                         sequence(target, child,
                                                  positions[child]),
                                         parent_atom, parent)
                         else:
+                            logging.debug('CHOICE #7')
                             parent = apply_fun_to_atom(
                                 lambda target:
                                     connect(target, (child,)),
                                     parent_atom, parent)
-                elif parent_type in {'p', 'p.c', 'r', 'd', 's'}:
+                elif parent_type[0] in {'p', 'r', 'd', 's'}:
+                    logging.debug('CHOICE #8')
                     parent = insert_after_predicate(parent, child)
                 else:
+                    logging.debug('CHOICE #9')
                     parent = insert_first_argument(parent, child)
-            elif child_type == 'b':
+            elif child_type[0] == 'b':
                 if connector_type(parent) == 'c':
+                    logging.debug('CHOICE #10')
                     parent = connect(child, parent)
                 else:
+                    logging.debug('CHOICE #11')
                     parent = nest(parent, child, positions[child])
-            elif child_type == 'm':
+            elif child_type[0] == 'p':
+                # TODO: Pathological case
+                # e.g. "Some subspecies of mosquito might be 1s..."
+                if child_type == 'pm':
+                    logging.debug('CHOICE #12')
+                    # parent = nest(parent, child, positions[child])
+                    parent = (child,) + parent
+                else:
+                    logging.debug('CHOICE #13')
+                    parent = connect(parent, (child,))
+            elif child_type[0] == 'm':
+                logging.debug('CHOICE #14')
                 parent = (child, parent)
-            elif child_type in {'x', 't'}:
+            elif child_type[0] in {'x', 't'}:
+                logging.debug('CHOICE #15')
                 parent = (child, parent)
             elif child_type[0] == 'a':
+                logging.debug('CHOICE #16')
                 parent = nest_predicate(parent, child, positions[child])
             elif child_type == 'w':
-                if parent_type in {'d', 's'}:
+                if parent_type[0] in {'d', 's'}:
+                    logging.debug('CHOICE #17')
                     parent = nest_predicate(parent, child, positions[child])
                     # pass
                 else:
+                    logging.debug('CHOICE #18')
                     parent = nest(parent, child, positions[child])
             else:
                 # TODO: warning ?
+                logging.debug('CHOICE #19')
                 pass
 
             parent_type = entity_type(parent)
-            # print(parent)
+
+            logging.debug('=== [%s] %s', parent_type, parent)
+
+        if len(relative_to_concept) > 0:
+            relative_to_concept.reverse()
+            parent = (':/b/.', parent) + tuple(relative_to_concept)
 
         return post_process(parent)
 
@@ -235,8 +336,13 @@ class Parser(object):
 
 
 if __name__ == '__main__':
-    text = "North Korea accuses Trump of being selfish over Paris climate pact"
+    text = """
+    The Ethereum network will be undergoing a planned hard fork at block number
+    4.37mil (4,370,000), which will likely occur between 12:00 UTC and 13:00
+    UTC on Monday, October 16, 2017.
+    """
 
     parser = Parser(lang='en')
-    edge, _ = parser.parse(text)[0]
+    edge, sent = parser.parse(text)[0]
+    print_tree(sent.root)
     print(ent2str(edge))

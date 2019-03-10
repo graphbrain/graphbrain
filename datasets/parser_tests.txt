@@ -1,30 +1,80 @@
 Satellites from NASA and other agencies have been tracking sea ice changes since 1979.
-((have/a (been/a tracking/p.d.sox)) (from/b satellites/c (and/b nasa/c (other/m agencies/c))) (+/b/. sea/c ice/c changes/c) (since/t 1979/c))
+((have/a (been/a tracking/pd.sox)) (from/b satellites/c (and/b nasa/c (other/m agencies/c))) (+/b/. sea/c ice/c changes/c) (since/t 1979/c))
 The algorithm can play both black and white.
-((can/a play/p.d.so) (the/m algorithm/c) (both/m (and/b black/c white/c)))
+((can/a play/pd.so) (the/m algorithm/c) (both/m (and/b black/c white/c)))
 Britain's hopes of a trade deal with America just suffered a big blow.
-((just/a suffered/p.d.so) (of/b ('s/b britain/c hopes/c) (a/m (with/b (+/b/. trade/c deal/c) america/c))) (a/m (big/m blow/c)))
+((just/a suffered/pd.so) (of/b ('s/bp britain/c hopes/c) (a/m (with/b (+/b/. trade/c deal/c) america/c))) (a/m (big/m blow/c)))
 My name is Telmo.
-(is/p.d.sc (my/m name/c) telmo/c)
+(is/pd.sc (my/mp name/c) telmo/c)
 I admire the fact that you are honest.
-(admire/p.d.so i/c (the/m (that/b fact/c (are/p.c.sc you/c honest/c))))
+(admire/pd.so i/c (the/m (that/b fact/c (are/pc.sc you/c honest/c))))
 She looks very beautiful.
-(looks/p.d.sc she/c (very/m beautiful/c))
+(looks/pd.sc she/c (very/m beautiful/c))
 Sweden wants to fight our disposable culture with tax breaks for repairing old stuff.
-(wants/p.d.sr sweden/c ((to/a fight/p.c.ox) (our/m (disposable/m culture/c)) (with/t (for/b (+/b/. tax/c breaks/c) (repairing/p.c.o (old/m stuff/c))))))
+(wants/pd.sr sweden/c ((to/a fight/pc.ox) (our/mp (disposable/m culture/c)) (with/t (for/b (+/b/. tax/c breaks/c) (repairing/pc.o (old/m stuff/c))))))
 Loving is the new fighting.
-(is/p.d.sc loving/c (the/m (new/m fighting/c)))
+(is/pd.sc loving/c (the/m (new/m fighting/c)))
 Sweden is the third-largest country in the European Union by area.
-(is/p.d.sc sweden/c (the/m ((third/w largest/m) (by/b (in/b country/c (the/m (+/b/. european/c union/c))) area/c))))
+(is/pd.sc sweden/c (the/m ((third/w largest/m) (by/b (in/b country/c (the/m (+/b/. european/c union/c))) area/c))))
 France's Le Pen says people no longer want the EU
-(says/p.d.sr ('s/b france/c (+/b/. le/c pen/c)) (((no/a.n longer/a) want/p.d.so) people/c (the/m eu/c)))
+(says/pd.sr ('s/bp france/c (+/b/. le/c pen/c)) (((no/an longer/a) want/pd.so) people/c (the/m eu/c)))
 Wii will fail just like the arcade games of yesteryear.
-((will/a fail/p.d.sx) wii/c ((just/w like/t) (the/m (of/b (+/b/. arcade/c games/c) yesteryear/c))))
+((will/a fail/pd.sx) wii/c ((just/w like/t) (the/m (of/b (+/b/. arcade/c games/c) yesteryear/c))))
 Mary will come if the weather is good.
-((will/a come/p.d.sx) mary/c (if/x (is/p.d.sc (the/m weather/c) good/c)))
+((will/a come/pd.sx) mary/c (if/x (is/pd.sc (the/m weather/c) good/c)))
 Mary will come if it doesn't rain.
-((will/a come/p.d.sx) mary/c (if/x ((does/a (n't/a.n rain/p.d.s)) it/c)))
+((will/a come/pd.sx) mary/c (if/x ((does/a (n't/an rain/pd.s)) it/c)))
 US suspects Russian hackers planted fake news behind Qatar crisis.
-(suspects/p.d.sr us/c (planted/p.d.so (russian/m hackers/c) (fake/m (behind/b news/c (+/b/. qatar/c crisis/c)))))
+(suspects/pd.sr us/c (planted/pd.so (russian/m hackers/c) (fake/m (behind/b news/c (+/b/. qatar/c crisis/c)))))
 North Korea accuses Trump of being 'selfish' over Paris climate pact
-(accuses/p.d.sox (+/b/. north/c korea/c) trump/c (of/t (being/p.c.c (over/b selfish/c (+/b/. paris/c climate/c pact/c)))))
+(accuses/pd.sox (+/b/. north/c korea/c) trump/c (of/t (being/pc.c (over/b selfish/c (+/b/. paris/c climate/c pact/c)))))
+What happens when literary novelists experiment with science fiction.
+(happens/pd.sx what/c (when/t (experiment/pd.sx (literary/m novelists/c) (with/t (+/b/. science/c fiction/c)))))
+Exposure to the bacteria in soil can be good for mental health
+((can/a be/pd.sc) (to/b exposure/c (the/m (in/b bacteria/c soil/c))) (for/b good/c (mental/m health/c)))
+Some subspecies of mosquito might be 1st to be genetically wiped out.
+((might/a be/pd.sc) (some/m (of/b subspecies/c mosquito/c)) 1st/c (to/a (be/a (genetically/a (out/a wiped/pc.)))))
+Telmo is going to the gym.
+((is/a going/pd.sx) telmo/c (to/t (the/m gym/c)))
+Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate.
+((is/a influenced/pd.xpa) ((to/a due/t) (its/mp (in/b location/c (the/m (+/b/. european/c plain/c))))) berlin/c (by/x (a/m (temperate/m (seasonal/m climate/c)))))
+Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan.
+(is/pd.sc (:/b/. (+/b/. koikuchi/c shoyu/c) ((best/a known/pc.x) (as/t (+/b/. soy/c sauce/c)))) (the/m (of/b mother/c (all/m (in/b sauces/c japan/c)))))
+Carl Gustav Jung was a Swiss psychiatrist and psychoanalyst who founded analytical psychology.
+(was/pd.sc (+/b/. carl/c gustav/c jung/c) (:/b/. (a/m (swiss/m (and/b psychiatrist/c psychoanalyst/c))) (founded/pr.so who/c (analytical/m psychology/c))))
+As a notable research scientist based at the famous Burghölzli hospital, under Eugen Bleuler, he came to the attention of the Viennese founder of psychoanalysis, Sigmund Freud.
+(came/pd.xxsx (as/t (:/b/. (a/m (notable/m (+/b/. research/c scientist/c))) (based/pc.x (at/t (the/m (famous/m (+/b/. burghölzli/c hospital/c))))))) (under/t (+/b/. eugen/c bleuler/c)) he/c (to/t (the/m (of/b attention/c (:/b/. (the/m (viennese/m (of/b founder/c psychoanalysis/c))) (+/b/. sigmund/c freud/c))))))
+The two men conducted a lengthy correspondence and collaborated on an initially joint vision of human psychology.
+(and/pm (conducted/pd.so (the/m (two/m men/c)) (a/m (lengthy/m correspondence/c))) (collaborated/pd.x (on/t (an/m ((initially/w joint/m) (of/b vision/c (human/m psychology/c)))))))
+Freud saw in the younger man the potential heir he had been seeking to carry on his "new science" of psychoanalysis.
+(saw/pd.sxo freud/c (in/t (the/m (younger/m man/c))) (:/b/. (the/m (potential/m heir/c)) ((had/a (been/a seeking/pr.sr)) he/c ((to/a (on/a carry/pc.o)) (his/mp (new/m (of/b science/c psychoanalysis/c)))))))
+I will never stop laughing at this.
+((will/a (never/an stop/pd.sr)) i/c (laughing/pc.x (at/t this/c)))
+Unbeknownst to most, their brains are a battleground.
+(are/pd.xsc (unbeknownst/t (to/b most/c)) (their/mp brains/c) (a/m battleground/c))
+Lady shows you the oldest living wolf.
+(shows/pd.sio lady/c you/c (the/m (oldest/m (living/m wolf/c))))
+Lawyers say they will issue judicial review proceedings if Brexit secretary fails to release 50 studies of effect on industry
+(say/pd.sr lawyers/c ((will/a issue/pd.sox) they/c (+/b/. (judicial/m review/c) proceedings/c) (if/x (fails/pd.sr (+/b/. brexit/c secretary/c) ((to/a release/pc.o) (50/m (of/b studies/c (on/b effect/c industry/c))))))))
+In September 2016, we learned that the University of New Hampshire was going to use $1 million that an incredibly frugal librarian saved while working as a library cataloger for 50 years to buy a new scoreboard for its stadium.
+(learned/pd.xsr (in/t (2016/m september/c)) we/c (that/x ((was/a going/pd.sr) (the/m (of/b university/c (+/b/. new/c hampshire/c))) ((to/a use/pc.or) (+/b/. ($/a 1/c) million/c) (saved/pd.osx that/c (an/m ((incredibly/w frugal/m) librarian/c)) (while/x (working/pd.xxx (as/t (a/m (+/b/. library/c cataloger/c))) (for/t (50/m years/c)) ((to/a buy/pd.o) (a/m (new/m (for/b scoreboard/c (its/mp stadium/c))))))))))))
+An anarchist takes on Big Pharma by teaching patients to make their own meds
+(takes/pd.sox (an/m anarchist/c) (on/x (+/b/. big/c pharma/c)) (by/t (teaching/pc.or patients/c ((to/a make/pc.o) (their/mp (own/m meds/c))))))
+That seems both super dangerous, and super awesome.
+(seems/pd.s that/c (both/m (super/m (and/b dangerous/c (super/m awesome/c)))))
+Briton dies in fall from Indian temple while taking selfie
+(dies/pd.sxx briton/c (in/t (from/b fall/c (indian/m temple/c))) (while/x (taking/pd.o selfie/c)))
+I hate everyone in the White House!
+(hate/pd.so i/c (in/b everyone/c (the/m (+/b/. white/c house/c))))
+There are a few exceptions, but I hate them!
+(but/pm ((there/a are/pd.c) (a/m (few/m exceptions/c))) (hate/pd.so i/c them/c))
+Tourists taking a picture of the Eiffel Tower get photobombed by a cyclist.
+(taking/pd.sox tourists/c (a/m (of/b picture/c (the/m (+/b/. eiffel/c tower/c)))) ((get/a photobombed/pd.a) (by/x (a/m cyclist/c))))
+Americans are willing to pay $177 a year to avoid climate change
+(are/pd.sc americans/c (:/b/. willing/c ((to/a pay/pc.ox) ($/m ((a/m year/m) 177/c)) ((to/a avoid/pd.o) (+/b/. climate/c change/c)))))
+This guy should be the new team mascot
+((should/a be/pd.sc) (this/m guy/c) (the/m (new/m (+/b/. team/c mascot/c))))
+Take pictures of your hair after a good haircut.
+(take/pd.ox (of/b pictures/c (your/mp hair/c)) (after/t (a/m (good/m haircut/c))))
+I think that's supposed to be difficult.
+(think/pd.sr i/c (('s/a supposed/pd.pr) that/c ((to/a be/pc.c) difficult/c)))
