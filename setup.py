@@ -62,7 +62,6 @@ setup(
     install_requires=[
         'numpy',
         'termcolor',
-        'python-igraph',
         'spacy',
         'asciitree',
         'plyvel',
