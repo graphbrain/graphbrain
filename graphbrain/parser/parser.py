@@ -49,6 +49,10 @@ def is_compound(token):
 
 def token_type(token):
     dep = token.dep_
+    head_type = token_head_type(token)
+    if len(head_type) > 0:
+        head_type = head_type[0]
+
     if dep == 'ROOT':
         if token.pos_ == 'VERB':  # TODO: generalize!
             return 'p'
@@ -78,7 +82,7 @@ def token_type(token):
         else:
             return 'x'
     elif dep == 'cc':
-        if token_head_type(token)[0] == 'p':
+        if head_type == 'p':
             return 'pm'
         else:
             return 'b'
@@ -96,9 +100,9 @@ def token_type(token):
     elif dep == 'advmod':
         if token.head.dep_ == 'advcl':
             return 't'
-        elif token_head_type(token)[0] == 'p':
+        elif head_type == 'p':
             return 'a'
-        elif token_head_type(token)[0] in {'m', 'x', 't'}:
+        elif head_type in {'m', 'x', 't'}:
             return 'w'
         else:
             return 'm'
@@ -108,17 +112,17 @@ def token_type(token):
         else:
             return 'mp'
     elif dep == 'prep':
-        if token_head_type(token)[0] == 'p':
+        if head_type == 'p':
             return 't'
         else:
             return 'b'
     elif dep == 'conj':
-        if token_head_type(token)[0] == 'p' and is_verb(token):
+        if head_type == 'p' and is_verb(token):
             return 'p'
         else:
             return 'c'
     elif dep == 'mark':
-        if token_head_type(token) == 'p':
+        if head_type == 'p':
             return 'x'
         else:
             return 'b'
