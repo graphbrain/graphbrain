@@ -2,7 +2,7 @@ import sys
 import logging
 import spacy
 from graphbrain import *
-from graphbrain.parser.vis import print_tree
+from .vis import print_tree
 
 
 logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
@@ -40,7 +40,11 @@ def is_noun(token):
 
 # TODO: check if complete
 def is_verb(token):
-    return token.tag_[0] == 'V'
+    tag = token.tag_
+    if len(tag) > 0:
+        return token.tag_[0] == 'V'
+    else:
+        return False
 
 
 def is_compound(token):

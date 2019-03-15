@@ -2,7 +2,7 @@ import time
 import json
 import argparse
 from graphbrain import *
-from graphbrain.parser import *
+from graphbrain.meaning import *
 
 
 def comments_to_text(comments):
@@ -16,7 +16,7 @@ def comments_to_text(comments):
     return '\n'.join(chunks)
 
 
-class RedditReader(object):
+class RedditParser(object):
     def __init__(self, hg, comments):
         self.hg = hg
         self.comments = comments
@@ -111,4 +111,4 @@ if __name__ == '__main__':
     hgraph = HyperGraph(params)
     infile = params['infile']
     read_comments = params['comments']
-    RedditReader(hgraph, comments=read_comments).read_file(infile)
+    RedditParser(hgraph, comments=read_comments).read_file(infile)
