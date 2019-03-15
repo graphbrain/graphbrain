@@ -1,7 +1,7 @@
 import argparse
 from graphbrain import *
-from graphbrain.parser.parser import Parser
-from graphbrain.parser.vis import print_tree
+from graphbrain.meaning.parser import Parser
+from graphbrain.meaning.vis import print_tree
 
 
 if __name__ == '__main__':
