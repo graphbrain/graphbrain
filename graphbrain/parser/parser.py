@@ -15,7 +15,7 @@ deps_arg_types = {
     'acomp': 'c',      # subject complement
     'attr': 'c',       # subject complement
     'dobj': 'o',       # direct object
-    'prt': 'o',       # direct object
+    'prt': 'o',        # direct object
     'dative': 'i',     # indirect object
     'advcl': 'x',      # specifier
     'prep': 'x',       # specifier
@@ -28,7 +28,7 @@ deps_arg_types = {
 
 def token_head_type(token):
     head = token.head
-    if head:
+    if head and head != token:
         return token_type(head)
     else:
         return ''
@@ -50,6 +50,10 @@ def is_compound(token):
 def token_type(token):
     dep = token.dep_
     head_type = token_head_type(token)
+    if len(head_type) > 1:
+        head_subtype = head_type[1]
+    else:
+        head_subtype = ''
     if len(head_type) > 0:
         head_type = head_type[0]
 
@@ -122,7 +126,7 @@ def token_type(token):
         else:
             return 'c'
     elif dep == 'mark':
-        if head_type == 'p':
+        if head_type == 'p' and head_subtype != 'c':
             return 'x'
         else:
             return 'b'
