@@ -302,7 +302,7 @@ class Parser(object):
                 if child_type == 'pm':
                     logging.debug('CHOICE #12')
                     # parent = nest(parent, child, positions[child])
-                    parent = (child,) + parent
+                    parent = (child,) + parens(parent)
                 else:
                     logging.debug('CHOICE #13')
                     parent = connect(parent, (child,))
