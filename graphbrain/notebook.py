@@ -19,11 +19,22 @@ def _ent2html(entity, roots_only=True, compact=False, indent=False, close=True,
     else:
         font_size = 14 - depth
     if is_edge(entity):
+        et = entity_type(entity)[0]
+        if et == 'c':
+            open_symbol = '['
+            close_symbol = ']'
+        elif et in {'s', 'x'}:
+            open_symbol = '{'
+            close_symbol = '}'
+        else:
+            open_symbol = '('
+            close_symbol = ')'
+
         color = EDGE_COLORS[depth % len(EDGE_COLORS)]
         closes = 1
         html = """
-        <span style="font-weight:bold;font-size:{}pt">(</span>
-        """.format(str(font_size)).strip()
+        <span style="font-weight:bold;font-size:{}pt">{}</span>
+        """.format(str(font_size), open_symbol).strip()
         for i in range(len(entity)):
             if i == 0:
                 inner_indent = False
@@ -67,9 +78,9 @@ def _ent2html(entity, roots_only=True, compact=False, indent=False, close=True,
                 close_html = '</div>' * closes
         html = """
         {}<span style="color:{}">
-            <span style="font-weight:bold;font-size:{}pt">)</span>
+            <span style="font-weight:bold;font-size:{}pt">{}</span>
         </span>
-        """.format(html, color, str(font_size)).strip()
+        """.format(html, color, str(font_size), close_symbol).strip()
         if compact or (not indent):
             html = """
             <span style="color:{}">{}{}
@@ -94,7 +105,7 @@ def _ent2html(entity, roots_only=True, compact=False, indent=False, close=True,
                        str('/'.join(atom_parts(entity)[1:])).strip()).strip()
         html = """
         <span style="font-size:{}pt">{}</span>
-        """ .format(str(font_size), html).strip()
+        """.format(str(font_size), html).strip()
 
     if close:
         return html, 0
