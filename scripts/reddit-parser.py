@@ -30,16 +30,16 @@ class RedditParser(object):
     def process_text(self, text, author):
         start_t = time.time()
         parses = self.parser.parse(text)
-        for parse, sent in parses:
+        for parse in parses:
             print('\n')
-            print('sentence: {}'.format(sent))
-            print(ent2str(parse))
-            self.hg.add_belief(author, parse)
+            print('sentence: {}'.format(parse['sentence']))
+            print(ent2str(parse['main_edge']))
+            self.hg.add_belief(author, parse['main_edge'])
             self.main_edges += 1
-            # for edge in p[1].edges:
-            #     self.hg.add_belief('gb', edge)
-            #     self.extra_edges += 1
-            # self.hg.set_attribute(p[1].main_edge, 'text', text)
+            for edge in parse['extra_edges']:
+                self.hg.add_belief('gb', edge)
+                self.extra_edges += 1
+            self.hg.set_attribute(parse['main_edge'], 'text', text)
 
         if self.first_item:
             self.first_item = False

@@ -23,7 +23,10 @@ if __name__ == '__main__':
             if sentence:
                 total += 1
                 correct_edge = str2ent(line.strip())
-                edge, sent = parser.parse(sentence)[0]
+                parser_output = parser.parse(sentence)
+                parsed_sentence = parser_output[0]
+                edge = parsed_sentence['main_edge']
+                sent = parsed_sentence['spacy_sentence']
                 if edge != correct_edge:
                     wrong += 1
                     print_tree(sent.root)
