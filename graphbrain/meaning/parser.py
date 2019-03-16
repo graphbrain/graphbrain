@@ -194,6 +194,8 @@ class Parser(object):
             raise RuntimeError('unkown language: %s' % lang)
 
     def parse_token(self, token):
+        extra_edges = set()
+
         positions = {}
         tokens = {}
         children = []
@@ -203,10 +205,11 @@ class Parser(object):
         child_tokens += tuple((t, False) for t in token.rights)
 
         for child_token, pos in child_tokens:
-            child = self.parse_token(child_token)
-            positions[child] = pos
-            tokens[child] = child_token
+            child, child_extra_edges = self.parse_token(child_token)
             if child:
+                extra_edges |= child_extra_edges
+                positions[child] = pos
+                tokens[child] = child_token
                 child_type = entity_type(child)
                 if child_type:
                     children.append(child)
@@ -217,7 +220,7 @@ class Parser(object):
 
         parent_type = token_type(token)
         if parent_type == '' or parent_type is None:
-            return None
+            return None, None
 
         # build atom
         if parent_type[0] == 'p' and parent_type != 'pm':
@@ -340,11 +343,18 @@ class Parser(object):
             relative_to_concept.reverse()
             parent = (':/b/.', parent) + tuple(relative_to_concept)
 
-        return post_process(parent)
+        return post_process(parent), extra_edges
+
+    def parse_sentence(self, sent):
+        main_edge, extra_edges = self.parse_token(sent.root)
+        return {'main_edge': main_edge,
+                'extra_edges': extra_edges,
+                'text': str(sent),
+                'spacy_sentence': sent}
 
     def parse(self, text):
         doc = self.nlp(text)
-        return [(self.parse_token(sent.root), sent) for sent in doc.sents]
+        return tuple(self.parse_sentence(sent) for sent in doc.sents)
 
 
 if __name__ == '__main__':
