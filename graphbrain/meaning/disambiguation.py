@@ -1,9 +1,11 @@
+# !!!NOTE!!!
+# This is experimental code, not yet ready to be used.
+
+
 import time
 import math
-import logging
 import graphbrain.constants as const
 from graphbrain.funs import *
-from graphbrain.sense.candidate_metrics import CandidateMetrics
 
 
 MAX_PROB = -7.
@@ -13,14 +15,40 @@ STAR_LIMIT = 1000
 MAX_WORDS = 50
 
 
+class CandidateMetrics(object):
+    def __init__(self):
+        self.score = 0.
+        self.degree = 0
+
+    def better_than(self, other):
+        if not isinstance(other, CandidateMetrics):
+            return NotImplemented
+        if self.score != other.score:
+            return self.score > other.score
+        elif self.degree != other.degree:
+            return self.degree > other.degree
+        else:
+            return False
+
+    def __str__(self):
+        return 'score: {}; degree: {}'.format(self.score, self.degree)
+
+    def __repr__(self):
+        return self.__str__()
+
+
 def synonyms(hg, symbol):
-    syns1 = [edge[2] for edge in hg.pattern2edges((const.are_synonyms, symbol, None))
+    syns1 = [edge[2] for edge
+             in hg.pattern2edges((const.are_synonyms, symbol, None))
              if symbol_type(edge[2]) == SymbolType.CONCEPT]
-    syns2 = [edge[1] for edge in hg.pattern2edges((const.are_synonyms, None, symbol))
+    syns2 = [edge[1] for edge
+             in hg.pattern2edges((const.are_synonyms, None, symbol))
              if symbol_type(edge[1]) == SymbolType.CONCEPT]
-    syns3 = [edge[2] for edge in hg.pattern2edges((const.have_same_lemma, symbol, None))
+    syns3 = [edge[2] for edge
+             in hg.pattern2edges((const.have_same_lemma, symbol, None))
              if symbol_type(edge[2]) == SymbolType.CONCEPT]
-    syns4 = [edge[1] for edge in hg.pattern2edges((const.have_same_lemma, None, symbol))
+    syns4 = [edge[1] for edge
+             in hg.pattern2edges((const.have_same_lemma, None, symbol))
              if symbol_type(edge[1]) == SymbolType.CONCEPT]
     return {symbol}.union(syns1).union(syns2).union(syns3).union(syns4)
 
@@ -59,8 +87,11 @@ class Disambiguation(object):
         self.best_sense_t = 0
 
     def profile_string(self):
-        return 'words_around_symbol: %s; words_from_text: %s; words_similarity: %s; best_sense: %s'\
-               % (self.words_around_symbol_t, self.words_from_text_t, self.words_similarity_t, self.best_sense_t)
+        return """
+        words_around_symbol: {}; words_from_text: {};
+        words_similarity: {}; best_sense: {}
+        """.format(self.words_around_symbol_t, self.words_from_text_t,
+                   self.words_similarity_t, self.best_sense_t).strip()
 
     def words_around_symbol(self, symbol):
         start = time.time()
@@ -72,7 +103,8 @@ class Disambiguation(object):
                     term = symbol2str(symbol)
                     for token in term.split():
                         word = self.parser.make_word(token)
-                        if word.prob < MAX_PROB and np.count_nonzero(word.vector) > 0:
+                        if (word.prob < MAX_PROB and
+                                np.count_nonzero(word.vector) > 0):
                             words.add(word)
 
         self.words_around_symbol_t += time.time() - start
@@ -82,8 +114,8 @@ class Disambiguation(object):
         start = time.time()
         words = set()
 
-        tokens = text.replace(':', ' ').replace(';', ' ').replace(',', ' ').replace('.', ' ').replace('?', ' ')\
-            .replace('!', ' ').split()
+        tokens = text.replace(':', ' ').replace(';', ' ').replace(',', ' ')\
+            .replace('.', ' ').replace('?', ' ').replace('!', ' ').split()
 
         if 0 < MAX_WORDS <= len(tokens):
             tokens = tokens[:MAX_WORDS]
@@ -99,7 +131,6 @@ class Disambiguation(object):
     def words_similarity(self, words1, words2, exclude):
         start = time.time()
         # print('sizes %s %s' % (len(words1), len(words2)))
-        logging.debug('starting to compute words similarity')
         score = 0.
         count = 0
         for word1 in words1:
@@ -114,10 +145,8 @@ class Disambiguation(object):
                     score += local_score
                     count += 1
                     if 0 < MAX_COUNT <= count:
-                        logging.debug('words similarity computed [interrupted: MAX_COUNT] (count: %s)' % count)
                         return score
 
-        logging.debug('words similarity computed (count: %s)' % count)
         self.words_similarity_t += time.time() - start
         return score
 
