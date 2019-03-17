@@ -23,11 +23,12 @@ def root(atom):
     return atom_parts(atom)[0]
 
 
-def build_atom(text, role, namespace=None):
-    """Build an atom from text, role and namespace."""
-    atom = '%s/%s' % (str2atom(text), role)
-    if namespace:
-        atom = '%s/%s' % (atom, namespace)
+def build_atom(text, *parts):
+    """Build an atom from text and other parts."""
+    atom = str2atom(text)
+    parts_str = '/'.join([part for part in parts if part])
+    if len(parts_str) > 0:
+        atom = '{}/{}'.format(atom, parts_str)
     return atom
 
 
