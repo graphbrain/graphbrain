@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API reference &mdash; GraphBrain 0.0.7 documentation</title>
+  <title>API reference &mdash; GraphBrain 0.1.0 documentation</title>
   
 
   
@@ -19,34 +19,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Authors" href="authors.html" />
     <link rel="prev" title="Command-line interface" href="cli.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search"  style="background: #333" >
           
 
           
@@ -55,7 +57,7 @@
 
           
             
-            <img src="_static/GB_logo.png" class="logo" alt="Logo"/>
+            <img src="_static/graphbrain-logo.gif" class="logo" alt="Logo"/>
           
           </a>
 
@@ -95,7 +97,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#null-class">Null class</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#module-graphbrain.parsers">parsers package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#parsers-package">parsers package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#stagewiseparser-class">StagewiseParser class</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#semantic-tree-module-tree-class">Semantic tree module – Tree class</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#semantic-tree-module-element-class">Semantic tree module – Element class</a></li>
@@ -180,6 +182,112 @@
 <h1>API reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-graphbrain.funs">
 <span id="generic-functions-funs-module"></span><h2>generic functions (funs) module<a class="headerlink" href="#module-graphbrain.funs" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="graphbrain.funs.atom_parts">
+<code class="descclassname">graphbrain.funs.</code><code class="descname">atom_parts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.funs.atom_parts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits an atom into its parts.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.funs.atoms">
+<code class="descclassname">graphbrain.funs.</code><code class="descname">atoms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.funs.atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns set of atoms contained in an entity.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.funs.build_atom">
+<code class="descclassname">graphbrain.funs.</code><code class="descname">build_atom</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.funs.build_atom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build an atom from text and other parts.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.funs.contains">
+<code class="descclassname">graphbrain.funs.</code><code class="descname">contains</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.funs.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if ‘needle’ is contained in entity.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.funs.depth">
+<code class="descclassname">graphbrain.funs.</code><code class="descname">depth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.funs.depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns maximal depth of an entity, an atom has depth 0.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.funs.edges2str">
+<code class="descclassname">graphbrain.funs.</code><code class="descname">edges2str</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.funs.edges2str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a collection of edges to a string representation
+(no outer parenthesis).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.funs.ent2str">
+<code class="descclassname">graphbrain.funs.</code><code class="descname">ent2str</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.funs.ent2str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an entity to its string representation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.funs.is_atom">
+<code class="descclassname">graphbrain.funs.</code><code class="descname">is_atom</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.funs.is_atom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if entity is an atom.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.funs.is_edge">
+<code class="descclassname">graphbrain.funs.</code><code class="descname">is_edge</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.funs.is_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if entity is an edge.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.funs.label">
+<code class="descclassname">graphbrain.funs.</code><code class="descname">label</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.funs.label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an atom into a string representation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.funs.root">
+<code class="descclassname">graphbrain.funs.</code><code class="descname">root</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.funs.root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the root of an atom
+(e.g. the root of graphbrain/c/1 is graphbrain).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.funs.roots">
+<code class="descclassname">graphbrain.funs.</code><code class="descname">roots</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.funs.roots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns entity with root-only atoms.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.funs.size">
+<code class="descclassname">graphbrain.funs.</code><code class="descname">size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.funs.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Size of an entity, atom size is 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.funs.split_edge_str">
+<code class="descclassname">graphbrain.funs.</code><code class="descname">split_edge_str</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.funs.split_edge_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shallow split into tokens of a string representation of an edge,
+without outer parenthesis.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.funs.str2atom">
+<code class="descclassname">graphbrain.funs.</code><code class="descname">str2atom</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.funs.str2atom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a string into a valid atom.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.funs.str2ent">
+<code class="descclassname">graphbrain.funs.</code><code class="descname">str2ent</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.funs.str2ent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a string representation of an entity to an entity.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.funs.subedges">
+<code class="descclassname">graphbrain.funs.</code><code class="descname">subedges</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.funs.subedges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the subedges contained in the edge, including atoms and
+itself.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-graphbrain.hypergraph">
 <span id="hypergraph-module"></span><h2>hypergraph module<a class="headerlink" href="#module-graphbrain.hypergraph" title="Permalink to this headline">¶</a></h2>
@@ -248,7 +356,7 @@ the second is a dictionary of attribute values (as strings).</p>
 <dl class="method">
 <dt id="graphbrain.hypergraph.HyperGraph.ego">
 <code class="descname">ego</code><span class="sig-paren">(</span><em>center</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#HyperGraph.ego"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.HyperGraph.ego" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all edge_symbols directly connected to centre by hyperedges.</p>
+<dd><p>Returns all atoms directly connected to centre by hyperedges.</p>
 </dd></dl>
 
 <dl class="method">
@@ -424,7 +532,7 @@ the second is a dictionary of attribute values (as strings).</p>
 <dl class="method">
 <dt>
 <code class="descname">ego</code><span class="sig-paren">(</span><em>center</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#HyperGraph.ego"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns all edge_symbols directly connected to centre by hyperedges.</p>
+<dd><p>Returns all atoms directly connected to centre by hyperedges.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1015,55 +1123,25 @@ Entity can be atomic or an edge.</p>
 
 </div>
 </div>
-<div class="section" id="module-graphbrain.parsers">
-<span id="parsers-package"></span><h2>parsers package<a class="headerlink" href="#module-graphbrain.parsers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="parsers-package">
+<h2>parsers package<a class="headerlink" href="#parsers-package" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="stagewiseparser-class">
 <h3>StagewiseParser class<a class="headerlink" href="#stagewiseparser-class" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="graphbrain.parsers.StagewiseParser">
-<em class="property">class </em><code class="descclassname">graphbrain.parsers.</code><code class="descname">StagewiseParser</code><span class="sig-paren">(</span><em>hg=None</em>, <em>stages=('hypergen-forest'</em>, <em>'disamb-naive'</em>, <em>'merge'</em>, <em>'shallow'</em>, <em>'concepts')</em>, <em>show_namespaces=False</em>, <em>lang='en'</em>, <em>model_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/parsers/stagewise_parser.html#StagewiseParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.StagewiseParser" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </div>
 <div class="section" id="semantic-tree-module-tree-class">
 <h3>Semantic tree module – Tree class<a class="headerlink" href="#semantic-tree-module-tree-class" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="graphbrain.parsers.semantic_tree.Tree">
-<em class="property">class </em><code class="descclassname">graphbrain.parsers.semantic_tree.</code><code class="descname">Tree</code><span class="sig-paren">(</span><em>elem=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/parsers/semantic_tree.html#Tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.semantic_tree.Tree" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </div>
 <div class="section" id="semantic-tree-module-element-class">
 <h3>Semantic tree module – Element class<a class="headerlink" href="#semantic-tree-module-element-class" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="graphbrain.parsers.semantic_tree.Element">
-<em class="property">class </em><code class="descclassname">graphbrain.parsers.semantic_tree.</code><code class="descname">Element</code><a class="reference internal" href="_modules/graphbrain/parsers/semantic_tree.html#Element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.semantic_tree.Element" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </div>
 <div class="section" id="semantic-tree-module-leaf-class">
 <h3>Semantic tree module – Leaf class<a class="headerlink" href="#semantic-tree-module-leaf-class" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="graphbrain.parsers.semantic_tree.Leaf">
-<em class="property">class </em><code class="descclassname">graphbrain.parsers.semantic_tree.</code><code class="descname">Leaf</code><span class="sig-paren">(</span><em>token</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/parsers/semantic_tree.html#Leaf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.semantic_tree.Leaf" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </div>
 <div class="section" id="semantic-tree-module-node-class">
 <h3>Semantic tree module – Node class<a class="headerlink" href="#semantic-tree-module-node-class" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="graphbrain.parsers.semantic_tree.Node">
-<em class="property">class </em><code class="descclassname">graphbrain.parsers.semantic_tree.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>children_ids=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/parsers/semantic_tree.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.semantic_tree.Node" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </div>
 <div class="section" id="parseroutput-class">
 <h3>ParserOutput class<a class="headerlink" href="#parseroutput-class" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="graphbrain.parsers.parser_output.ParserOutput">
-<em class="property">class </em><code class="descclassname">graphbrain.parsers.parser_output.</code><code class="descname">ParserOutput</code><span class="sig-paren">(</span><em>sentence</em>, <em>tree</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/parsers/parser_output.html#ParserOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.parser_output.ParserOutput" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </div>
 </div>
 </div>
@@ -1079,7 +1157,7 @@ Entity can be atomic or an edge.</p>
         <a href="authors.html" class="btn btn-neutral float-right" title="Authors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="cli.html" class="btn btn-neutral" title="Command-line interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="cli.html" class="btn btn-neutral float-left" title="Command-line interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -1088,7 +1166,7 @@ Entity can be atomic or an edge.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 
+        &copy; Copyright CNRS
 
     </p>
   </div>
@@ -1153,26 +1231,16 @@ Entity can be atomic or an edge.</p>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
