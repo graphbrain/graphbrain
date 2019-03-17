@@ -19,7 +19,10 @@
 #
 import os
 import sys
-from graphbrain.version import VERSION
+
+
+with open('../../VERSION', 'r') as version_file:
+    VERSION = version_file.read()
 
 
 sys.path.insert(0, os.path.abspath('.'))
@@ -52,7 +55,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'GraphBrain'
-# copyright = ''
+copyright = 'CNRS'
 author = 'Telmo Menezes et al.'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -95,7 +98,8 @@ html_theme = 'sphinx_rtd_theme'
 #
 html_theme_options = {
     'display_version': False,
-    'logo_only': True
+    'logo_only': True,
+    'style_nav_header_background': '#333'
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -103,7 +107,7 @@ html_theme_options = {
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-html_logo = '_static/GB_logo.png'
+html_logo = '_static/graphbrain-logo.gif'
 
 html_favicon = '_static/favicon.png'
 

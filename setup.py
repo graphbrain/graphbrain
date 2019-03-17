@@ -5,11 +5,13 @@ from setuptools.extension import Extension
 
 
 # Current GraphBrain version
-VERSION = '0.0.7'
+with open('VERSION', 'r') as version_file:
+    VERSION = version_file.read()
 
 
 # True to enable building extensions using Cython.
-# False to build extensions from the C files that were previously created by Cython.
+# False to build extensions from the C files that were previously created by
+# Cython.
 USE_CYTHON = True
 
 
@@ -20,13 +22,15 @@ if USE_CYTHON:
 if USE_CYTHON:
     ext_modules = [
         Extension('graphbrain.funs', ['graphbrain/funs.pyx'],),
-        Extension('graphbrain.backends.leveldb', ['graphbrain/backends/leveldb.pyx'])
+        Extension('graphbrain.backends.leveldb',
+                  ['graphbrain/backends/leveldb.pyx'])
     ]
     cmdclass = {'build_ext': build_ext}
 else:
     ext_modules = [
         Extension('graphbrain.funs', ['graphbrain/funs.c'], ),
-        Extension('graphbrain.backends.leveldb', ['graphbrain/backends/leveldb.c'])
+        Extension('graphbrain.backends.leveldb',
+                  ['graphbrain/backends/leveldb.c'])
     ]
     cmdclass = {}
 
@@ -43,9 +47,10 @@ setup(
     description='Knowledge System + Natural Language Understanding',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/ai4socialscience/graphbrain',
+    url='https://github.com/graphbrain/graphbrain',
     license='MIT',
-    keywords=['NLP', 'AI', 'Knowledge Representation', 'Natural Language Understanding', 'Text Analysis'],
+    keywords=['NLP', 'AI', 'Knowledge Representation', 'Knowledge Systems',
+              'Natural Language Understanding', 'Text Analysis', 'Cognition'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Programming Language :: Python :: 3',

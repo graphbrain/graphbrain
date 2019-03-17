@@ -1,12 +1,12 @@
-GraphBrain -- Knowledge System + Natural Language Understanding
-===============================================================
+Graphbrain -- Language, Knowledge, Cognition
+============================================
 
-GraphBrain is a set of research tools aimed at text understanding and the exploration of knowledge. Its purpose is to
+Graphbrain is a set of research tools aimed at text understanding and the exploration of knowledge. Its purpose is to
 facilitate experiments with novel ways to extract and analyze the knowledge contained in human-produced text.
 
-GraphBrain is experimental in nature, but with a unifying concept: the *semantic hypergraph*.
+Graphbrain is experimental in nature, but with a unifying concept: the *semantic hypergraph*.
 
-GraphBrain is an open scientific project, open to all that are interested in collaborating.
+Graphbrain is an open scientific project, open to all that are interested in collaborating.
 
 .. toctree::
    :maxdepth: 2
