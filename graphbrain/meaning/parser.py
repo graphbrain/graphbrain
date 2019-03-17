@@ -2,7 +2,7 @@ import sys
 import logging
 import spacy
 from graphbrain import *
-from .vis import print_tree
+from graphbrain.meaning.vis import print_tree
 
 
 logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
@@ -185,7 +185,10 @@ def post_process(entity):
 
 
 class Parser(object):
-    def __init__(self, lang):
+    def __init__(self, lang, pos=False):
+        self.lang = lang
+        self.pos = pos
+
         if lang == 'en':
             self.nlp = spacy.load('en_core_web_lg')
         elif lang == 'fr':
@@ -223,15 +226,21 @@ class Parser(object):
             return None, None
 
         # build atom
+        text = token.text.lower()
+        et = parent_type
+        if self.pos:
+            pos = '{}.{}'.format(self.lang, token.tag_.lower())
+        else:
+            pos = None
+
         if parent_type[0] == 'p' and parent_type != 'pm':
             if len(parent_type) == 1:
                 parent_type = 'pd'  # TODO: questions, imperative...
             args = [arg_type(tokens[entity]) for entity in entities]
             args_string = ''.join([arg for arg in args if arg != '?'])
-            parent_atom = build_atom(token.text.lower(),
-                                     '%s.%s' % (parent_type, args_string))
-        else:
-            parent_atom = build_atom(token.text.lower(), parent_type)
+            et = '{}.{}'.format(parent_type, args_string)
+
+        parent_atom = build_atom(text, et, pos)
 
         parent = parent_atom
 
@@ -359,12 +368,11 @@ class Parser(object):
 
 if __name__ == '__main__':
     text = """
-    The Ethereum network will be undergoing a planned hard fork at block number
-    4.37mil (4,370,000), which will likely occur between 12:00 UTC and 13:00
-    UTC on Monday, October 16, 2017.
+    Satellites from NASA and other agencies have been tracking sea ice changes
+    since 1979.
     """
 
-    parser = Parser(lang='en')
-    edge, sent = parser.parse(text)[0]
-    print_tree(sent.root)
-    print(ent2str(edge))
+    parser = Parser(lang='en', pos=True)
+    parse = parser.parse(text)[0]
+    print_tree(parse['spacy_sentence'].root)
+    print(ent2str(parse['main_edge']))
