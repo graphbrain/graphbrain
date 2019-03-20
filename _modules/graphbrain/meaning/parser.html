@@ -1,0 +1,621 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>graphbrain.meaning.parser &mdash; GraphBrain 0.1.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #333" >
+          
+
+          
+            <a href="../../../index.html">
+          
+
+          
+            
+            <img src="../../../_static/graphbrain-logo.gif" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command-line interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Team</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GraphBrain</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>graphbrain.meaning.parser</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for graphbrain.meaning.parser</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">spacy</span>
+<span class="kn">from</span> <span class="nn">graphbrain</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">graphbrain.meaning.vis</span> <span class="k">import</span> <span class="n">print_tree</span>
+
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+
+
+<span class="n">deps_arg_types</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;nsubj&#39;</span><span class="p">:</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span>      <span class="c1"># subject</span>
+    <span class="s1">&#39;nsubjpass&#39;</span><span class="p">:</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span>  <span class="c1"># passive subject</span>
+    <span class="s1">&#39;agent&#39;</span><span class="p">:</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span>      <span class="c1"># agent</span>
+    <span class="s1">&#39;acomp&#39;</span><span class="p">:</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span>      <span class="c1"># subject complement</span>
+    <span class="s1">&#39;attr&#39;</span><span class="p">:</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span>       <span class="c1"># subject complement</span>
+    <span class="s1">&#39;dobj&#39;</span><span class="p">:</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span>       <span class="c1"># direct object</span>
+    <span class="s1">&#39;prt&#39;</span><span class="p">:</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span>        <span class="c1"># direct object</span>
+    <span class="s1">&#39;dative&#39;</span><span class="p">:</span> <span class="s1">&#39;i&#39;</span><span class="p">,</span>     <span class="c1"># indirect object</span>
+    <span class="s1">&#39;advcl&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span>      <span class="c1"># specifier</span>
+    <span class="s1">&#39;prep&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span>       <span class="c1"># specifier</span>
+    <span class="s1">&#39;parataxis&#39;</span><span class="p">:</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span>  <span class="c1"># parataxis</span>
+    <span class="s1">&#39;intj&#39;</span><span class="p">:</span> <span class="s1">&#39;j&#39;</span><span class="p">,</span>       <span class="c1"># interjection</span>
+    <span class="s1">&#39;xcomp&#39;</span><span class="p">:</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span>      <span class="c1"># clausal complement</span>
+    <span class="s1">&#39;ccomp&#39;</span><span class="p">:</span> <span class="s1">&#39;r&#39;</span>       <span class="c1"># clausal complement</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">token_head_type</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+    <span class="n">head</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">head</span>
+    <span class="k">if</span> <span class="n">head</span> <span class="ow">and</span> <span class="n">head</span> <span class="o">!=</span> <span class="n">token</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">token_type</span><span class="p">(</span><span class="n">head</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">is_noun</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">tag_</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;NN&#39;</span>
+
+
+<span class="c1"># TODO: check if complete</span>
+<span class="k">def</span> <span class="nf">is_verb</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+    <span class="n">tag</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">tag_</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">tag_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;V&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span> <span class="nf">is_compound</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">dep_</span> <span class="o">==</span> <span class="s1">&#39;compound&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">token_type</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+    <span class="n">dep</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">dep_</span>
+    <span class="n">head_type</span> <span class="o">=</span> <span class="n">token_head_type</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">head_type</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">head_subtype</span> <span class="o">=</span> <span class="n">head_type</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">head_subtype</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">head_type</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">head_type</span> <span class="o">=</span> <span class="n">head_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">dep</span> <span class="o">==</span> <span class="s1">&#39;ROOT&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">pos_</span> <span class="o">==</span> <span class="s1">&#39;VERB&#39;</span><span class="p">:</span>  <span class="c1"># TODO: generalize!</span>
+            <span class="k">return</span> <span class="s1">&#39;p&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;c&#39;</span>
+    <span class="k">elif</span> <span class="n">dep</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;acomp&#39;</span><span class="p">,</span> <span class="s1">&#39;appos&#39;</span><span class="p">,</span> <span class="s1">&#39;attr&#39;</span><span class="p">,</span> <span class="s1">&#39;compound&#39;</span><span class="p">,</span> <span class="s1">&#39;dative&#39;</span><span class="p">,</span> <span class="s1">&#39;dep&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;dobj&#39;</span><span class="p">,</span> <span class="s1">&#39;nsubj&#39;</span><span class="p">,</span> <span class="s1">&#39;nsubjpass&#39;</span><span class="p">,</span> <span class="s1">&#39;oprd&#39;</span><span class="p">,</span> <span class="s1">&#39;pobj&#39;</span><span class="p">,</span> <span class="s1">&#39;meta&#39;</span><span class="p">}:</span>
+        <span class="k">return</span> <span class="s1">&#39;c&#39;</span>
+    <span class="k">elif</span> <span class="n">dep</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;advcl&#39;</span><span class="p">,</span> <span class="s1">&#39;ccomp&#39;</span><span class="p">,</span> <span class="s1">&#39;csubj&#39;</span><span class="p">,</span> <span class="s1">&#39;csubjpass&#39;</span><span class="p">,</span> <span class="s1">&#39;parataxis&#39;</span><span class="p">}:</span>
+        <span class="k">return</span> <span class="s1">&#39;p&#39;</span>
+    <span class="k">elif</span> <span class="n">dep</span> <span class="o">==</span> <span class="s1">&#39;relcl&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">is_verb</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s1">&#39;pr&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;c&#39;</span>
+    <span class="k">elif</span> <span class="n">dep</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;acl&#39;</span><span class="p">,</span> <span class="s1">&#39;pcomp&#39;</span><span class="p">,</span> <span class="s1">&#39;xcomp&#39;</span><span class="p">}:</span>
+        <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">tag_</span> <span class="o">==</span> <span class="s1">&#39;IN&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;a&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;pc&#39;</span>
+    <span class="k">elif</span> <span class="n">dep</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;amod&#39;</span><span class="p">,</span> <span class="s1">&#39;det&#39;</span><span class="p">,</span> <span class="s1">&#39;npadvmod&#39;</span><span class="p">,</span> <span class="s1">&#39;nummod&#39;</span><span class="p">,</span> <span class="s1">&#39;nmod&#39;</span><span class="p">,</span> <span class="s1">&#39;preconj&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;predet&#39;</span><span class="p">}:</span>
+        <span class="k">return</span> <span class="s1">&#39;m&#39;</span>
+    <span class="k">elif</span> <span class="n">dep</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;aux&#39;</span><span class="p">,</span> <span class="s1">&#39;auxpass&#39;</span><span class="p">,</span> <span class="s1">&#39;expl&#39;</span><span class="p">,</span> <span class="s1">&#39;prt&#39;</span><span class="p">,</span> <span class="s1">&#39;quantmod&#39;</span><span class="p">}:</span>
+        <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">n_lefts</span> <span class="o">+</span> <span class="n">token</span><span class="o">.</span><span class="n">n_rights</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;a&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;x&#39;</span>
+    <span class="k">elif</span> <span class="n">dep</span> <span class="o">==</span> <span class="s1">&#39;cc&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">head_type</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;pm&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;b&#39;</span>
+    <span class="k">elif</span> <span class="n">dep</span> <span class="o">==</span> <span class="s1">&#39;case&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">dep_</span> <span class="o">==</span> <span class="s1">&#39;poss&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;bp&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;b&#39;</span>
+    <span class="k">elif</span> <span class="n">dep</span> <span class="o">==</span> <span class="s1">&#39;neg&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;an&#39;</span>
+    <span class="k">elif</span> <span class="n">dep</span> <span class="o">==</span> <span class="s1">&#39;agent&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;x&#39;</span>
+    <span class="k">elif</span> <span class="n">dep</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;intj&#39;</span><span class="p">,</span> <span class="s1">&#39;punct&#39;</span><span class="p">}:</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">elif</span> <span class="n">dep</span> <span class="o">==</span> <span class="s1">&#39;advmod&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">dep_</span> <span class="o">==</span> <span class="s1">&#39;advcl&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;t&#39;</span>
+        <span class="k">elif</span> <span class="n">head_type</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;a&#39;</span>
+        <span class="k">elif</span> <span class="n">head_type</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;t&#39;</span><span class="p">}:</span>
+            <span class="k">return</span> <span class="s1">&#39;w&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;m&#39;</span>
+    <span class="k">elif</span> <span class="n">dep</span> <span class="o">==</span> <span class="s1">&#39;poss&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">is_noun</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s1">&#39;c&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;mp&#39;</span>
+    <span class="k">elif</span> <span class="n">dep</span> <span class="o">==</span> <span class="s1">&#39;prep&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">head_type</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;t&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;b&#39;</span>
+    <span class="k">elif</span> <span class="n">dep</span> <span class="o">==</span> <span class="s1">&#39;conj&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">head_type</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span> <span class="ow">and</span> <span class="n">is_verb</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s1">&#39;p&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;c&#39;</span>
+    <span class="k">elif</span> <span class="n">dep</span> <span class="o">==</span> <span class="s1">&#39;mark&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">head_type</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span> <span class="ow">and</span> <span class="n">head_subtype</span> <span class="o">!=</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;x&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;b&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1">#  error / warning</span>
+        <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">is_relative_concept</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">dep_</span> <span class="o">==</span> <span class="s1">&#39;appos&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">arg_type</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">deps_arg_types</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">dep_</span><span class="p">,</span> <span class="s1">&#39;?&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">insert_after_predicate</span><span class="p">(</span><span class="n">targ</span><span class="p">,</span> <span class="n">orig</span><span class="p">):</span>
+    <span class="n">targ_type</span> <span class="o">=</span> <span class="n">entity_type</span><span class="p">(</span><span class="n">targ</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">targ_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">targ</span><span class="p">,</span> <span class="n">orig</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">targ_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">targ_type</span> <span class="o">==</span> <span class="s1">&#39;rm&#39;</span><span class="p">:</span>
+            <span class="n">inner_rel</span> <span class="o">=</span> <span class="n">insert_after_predicate</span><span class="p">(</span><span class="n">targ</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">orig</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">targ</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">inner_rel</span><span class="p">)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">targ</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">insert_first_argument</span><span class="p">(</span><span class="n">targ</span><span class="p">,</span> <span class="n">orig</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># TODO: error / warning</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR </span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">targ</span><span class="p">,</span> <span class="n">orig</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">targ</span>
+
+
+<span class="k">def</span> <span class="nf">nest_predicate</span><span class="p">(</span><span class="n">inner</span><span class="p">,</span> <span class="n">outer</span><span class="p">,</span> <span class="n">before</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">entity_type</span><span class="p">(</span><span class="n">inner</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;rm&#39;</span><span class="p">:</span>
+        <span class="n">first_rel</span> <span class="o">=</span> <span class="n">nest_predicate</span><span class="p">(</span><span class="n">inner</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">outer</span><span class="p">,</span> <span class="n">before</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">inner</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">first_rel</span><span class="p">)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inner</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+    <span class="k">elif</span> <span class="n">is_atom</span><span class="p">(</span><span class="n">inner</span><span class="p">)</span> <span class="ow">or</span> <span class="n">entity_type</span><span class="p">(</span><span class="n">inner</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">outer</span><span class="p">,</span> <span class="n">inner</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">((</span><span class="n">outer</span><span class="p">,</span> <span class="n">inner</span><span class="p">[</span><span class="mi">0</span><span class="p">]),)</span> <span class="o">+</span> <span class="n">inner</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+
+<span class="k">def</span> <span class="nf">post_process</span><span class="p">(</span><span class="n">entity</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">is_atom</span><span class="p">(</span><span class="n">entity</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">entity</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">entity</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">post_process</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">entity</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">connector_type</span><span class="p">(</span><span class="n">entity</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">connect</span><span class="p">(</span><span class="s1">&#39;+/b/.&#39;</span><span class="p">,</span> <span class="n">entity</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">entity</span>
+
+
+<div class="viewcode-block" id="Parser"><a class="viewcode-back" href="../../../api.html#graphbrain.meaning.Parser">[docs]</a><span class="k">class</span> <span class="nc">Parser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lang</span> <span class="o">=</span> <span class="n">lang</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span>
+
+        <span class="k">if</span> <span class="n">lang</span> <span class="o">==</span> <span class="s1">&#39;en&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;en_core_web_lg&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">lang</span> <span class="o">==</span> <span class="s1">&#39;fr&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;fr_core_news_md&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;unkown language: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">lang</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">parse_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+        <span class="n">extra_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="n">positions</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">children</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">entities</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">child_tokens</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">((</span><span class="n">t</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">token</span><span class="o">.</span><span class="n">lefts</span><span class="p">)</span>
+        <span class="n">child_tokens</span> <span class="o">+=</span> <span class="nb">tuple</span><span class="p">((</span><span class="n">t</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">token</span><span class="o">.</span><span class="n">rights</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">child_token</span><span class="p">,</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">child_tokens</span><span class="p">:</span>
+            <span class="n">child</span><span class="p">,</span> <span class="n">child_extra_edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_token</span><span class="p">(</span><span class="n">child_token</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">child</span><span class="p">:</span>
+                <span class="n">extra_edges</span> <span class="o">|=</span> <span class="n">child_extra_edges</span>
+                <span class="n">positions</span><span class="p">[</span><span class="n">child</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos</span>
+                <span class="n">tokens</span><span class="p">[</span><span class="n">child</span><span class="p">]</span> <span class="o">=</span> <span class="n">child_token</span>
+                <span class="n">child_type</span> <span class="o">=</span> <span class="n">entity_type</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">child_type</span><span class="p">:</span>
+                    <span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">child_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">}:</span>
+                        <span class="n">entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+
+        <span class="n">children</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+
+        <span class="n">parent_type</span> <span class="o">=</span> <span class="n">token_type</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">parent_type</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">parent_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+        <span class="c1"># build atom</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">et</span> <span class="o">=</span> <span class="n">parent_type</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">:</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lang</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">tag_</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">parent_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span> <span class="ow">and</span> <span class="n">parent_type</span> <span class="o">!=</span> <span class="s1">&#39;pm&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parent_type</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">parent_type</span> <span class="o">=</span> <span class="s1">&#39;pd&#39;</span>  <span class="c1"># TODO: questions, imperative...</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg_type</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="n">entity</span><span class="p">])</span> <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">entities</span><span class="p">]</span>
+            <span class="n">args_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span> <span class="k">if</span> <span class="n">arg</span> <span class="o">!=</span> <span class="s1">&#39;?&#39;</span><span class="p">])</span>
+            <span class="n">et</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parent_type</span><span class="p">,</span> <span class="n">args_string</span><span class="p">)</span>
+
+        <span class="n">parent_atom</span> <span class="o">=</span> <span class="n">build_atom</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">et</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+
+        <span class="n">parent</span> <span class="o">=</span> <span class="n">parent_atom</span>
+
+        <span class="n">relative_to_concept</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># process children</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
+            <span class="n">child_type</span> <span class="o">=</span> <span class="n">entity_type</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;TARGET &lt;-: [</span><span class="si">%s</span><span class="s1">] </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">parent_type</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;&lt;- ORIG: [</span><span class="si">%s</span><span class="s1">] </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">child_type</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">child_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">}:</span>
+                <span class="k">if</span> <span class="n">parent_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">connector_type</span><span class="p">(</span><span class="n">child</span><span class="p">)</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;pc&#39;</span><span class="p">,</span> <span class="s1">&#39;pr&#39;</span><span class="p">}</span> <span class="ow">or</span>
+                            <span class="n">is_relative_concept</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="n">child</span><span class="p">])):</span>
+                        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #1&#39;</span><span class="p">)</span>
+                        <span class="n">relative_to_concept</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">connector_type</span><span class="p">(</span><span class="n">child</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">connector_type</span><span class="p">(</span><span class="n">parent</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span>
+                            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #2&#39;</span><span class="p">)</span>
+                            <span class="n">parent</span> <span class="o">=</span> <span class="n">nest</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span> <span class="n">positions</span><span class="p">[</span><span class="n">child</span><span class="p">])</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #3&#39;</span><span class="p">)</span>
+                            <span class="n">parent</span> <span class="o">=</span> <span class="n">apply_fun_to_atom</span><span class="p">(</span>
+                                <span class="k">lambda</span> <span class="n">target</span><span class="p">:</span>
+                                    <span class="n">nest</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span> <span class="n">positions</span><span class="p">[</span><span class="n">child</span><span class="p">]),</span>
+                                    <span class="n">parent_atom</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">connector_type</span><span class="p">(</span><span class="n">child</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;t&#39;</span><span class="p">}:</span>
+                        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #4&#39;</span><span class="p">)</span>
+                        <span class="n">parent</span> <span class="o">=</span> <span class="n">nest</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span> <span class="n">positions</span><span class="p">[</span><span class="n">child</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="p">((</span><span class="n">entity_type</span><span class="p">(</span><span class="n">parent_atom</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span> <span class="ow">and</span>
+                                <span class="n">connector_type</span><span class="p">(</span><span class="n">child</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span> <span class="ow">or</span>
+                                <span class="n">is_compound</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="n">child</span><span class="p">])):</span>
+                            <span class="k">if</span> <span class="n">connector_type</span><span class="p">(</span><span class="n">parent</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="n">connector_type</span><span class="p">(</span><span class="n">child</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span>
+                                    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #5a&#39;</span><span class="p">)</span>
+                                    <span class="n">parent</span> <span class="o">=</span> <span class="n">sequence</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span>
+                                                      <span class="n">positions</span><span class="p">[</span><span class="n">child</span><span class="p">])</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #5b&#39;</span><span class="p">)</span>
+                                    <span class="n">parent</span> <span class="o">=</span> <span class="n">sequence</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span>
+                                                      <span class="n">positions</span><span class="p">[</span><span class="n">child</span><span class="p">],</span>
+                                                      <span class="n">flat</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #6&#39;</span><span class="p">)</span>
+                                <span class="n">parent</span> <span class="o">=</span> <span class="n">apply_fun_to_atom</span><span class="p">(</span>
+                                    <span class="k">lambda</span> <span class="n">target</span><span class="p">:</span>
+                                        <span class="n">sequence</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span>
+                                                 <span class="n">positions</span><span class="p">[</span><span class="n">child</span><span class="p">]),</span>
+                                        <span class="n">parent_atom</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #7&#39;</span><span class="p">)</span>
+                            <span class="n">parent</span> <span class="o">=</span> <span class="n">apply_fun_to_atom</span><span class="p">(</span>
+                                <span class="k">lambda</span> <span class="n">target</span><span class="p">:</span>
+                                    <span class="n">connect</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="p">(</span><span class="n">child</span><span class="p">,)),</span>
+                                    <span class="n">parent_atom</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">parent_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">}:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #8&#39;</span><span class="p">)</span>
+                    <span class="n">parent</span> <span class="o">=</span> <span class="n">insert_after_predicate</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #9&#39;</span><span class="p">)</span>
+                    <span class="n">parent</span> <span class="o">=</span> <span class="n">insert_first_argument</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">child_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">connector_type</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #10&#39;</span><span class="p">)</span>
+                    <span class="n">parent</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #11&#39;</span><span class="p">)</span>
+                    <span class="n">parent</span> <span class="o">=</span> <span class="n">nest</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span> <span class="n">positions</span><span class="p">[</span><span class="n">child</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">child_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span><span class="p">:</span>
+                <span class="c1"># TODO: Pathological case</span>
+                <span class="c1"># e.g. &quot;Some subspecies of mosquito might be 1s...&quot;</span>
+                <span class="k">if</span> <span class="n">child_type</span> <span class="o">==</span> <span class="s1">&#39;pm&#39;</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #12&#39;</span><span class="p">)</span>
+                    <span class="c1"># parent = nest(parent, child, positions[child])</span>
+                    <span class="n">parent</span> <span class="o">=</span> <span class="p">(</span><span class="n">child</span><span class="p">,)</span> <span class="o">+</span> <span class="n">parens</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #13&#39;</span><span class="p">)</span>
+                    <span class="n">parent</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="p">(</span><span class="n">child</span><span class="p">,))</span>
+            <span class="k">elif</span> <span class="n">child_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;m&#39;</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #14&#39;</span><span class="p">)</span>
+                <span class="n">parent</span> <span class="o">=</span> <span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">child_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;t&#39;</span><span class="p">}:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #15&#39;</span><span class="p">)</span>
+                <span class="n">parent</span> <span class="o">=</span> <span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">child_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #16&#39;</span><span class="p">)</span>
+                <span class="n">parent</span> <span class="o">=</span> <span class="n">nest_predicate</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span> <span class="n">positions</span><span class="p">[</span><span class="n">child</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">child_type</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">parent_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">}:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #17&#39;</span><span class="p">)</span>
+                    <span class="n">parent</span> <span class="o">=</span> <span class="n">nest_predicate</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span> <span class="n">positions</span><span class="p">[</span><span class="n">child</span><span class="p">])</span>
+                    <span class="c1"># pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #18&#39;</span><span class="p">)</span>
+                    <span class="n">parent</span> <span class="o">=</span> <span class="n">nest</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span> <span class="n">positions</span><span class="p">[</span><span class="n">child</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># TODO: warning ?</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;CHOICE #19&#39;</span><span class="p">)</span>
+                <span class="k">pass</span>
+
+            <span class="n">parent_type</span> <span class="o">=</span> <span class="n">entity_type</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;=== [</span><span class="si">%s</span><span class="s1">] </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">parent_type</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">relative_to_concept</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">relative_to_concept</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+            <span class="n">parent</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;:/b/.&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">relative_to_concept</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">post_process</span><span class="p">(</span><span class="n">parent</span><span class="p">),</span> <span class="n">extra_edges</span>
+
+    <span class="k">def</span> <span class="nf">parse_sentence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sent</span><span class="p">):</span>
+        <span class="n">main_edge</span><span class="p">,</span> <span class="n">extra_edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_token</span><span class="p">(</span><span class="n">sent</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;main_edge&#39;</span><span class="p">:</span> <span class="n">main_edge</span><span class="p">,</span>
+                <span class="s1">&#39;extra_edges&#39;</span><span class="p">:</span> <span class="n">extra_edges</span><span class="p">,</span>
+                <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">sent</span><span class="p">),</span>
+                <span class="s1">&#39;spacy_sentence&#39;</span><span class="p">:</span> <span class="n">sent</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parse_sentence</span><span class="p">(</span><span class="n">sent</span><span class="p">)</span> <span class="k">for</span> <span class="n">sent</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">sents</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    Satellites from NASA and other agencies have been tracking sea ice changes</span>
+<span class="s2">    since 1979.</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">lang</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">parse</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">print_tree</span><span class="p">(</span><span class="n">parse</span><span class="p">[</span><span class="s1">&#39;spacy_sentence&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ent2str</span><span class="p">(</span><span class="n">parse</span><span class="p">[</span><span class="s1">&#39;main_edge&#39;</span><span class="p">]))</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright CNRS
+
+    </p>
+  </div>
+
+<p>Acknowledgements:</p>
+
+<table>
+    <tr>
+        <td style="width:45%;" align="center">
+            <a href="http://cmb.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cmb-dh-compact.png" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="http://www.cnrs.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cnrs.jpg" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="https://www.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-ehess2.png" />
+            </a>
+        </td>
+        <td style="width:21%;" align="center">
+            <a href="http://cams.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/CAMS_nveau_logo.jpg" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <td style="width:35%;" align="center">
+            <a href="http://algopol.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algopol.png" />
+            </a>
+        </td>
+        <td style="width:29%;" align="center">
+            <a href="http://algodiv.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algodiv.png" />
+            </a>
+        </td>
+        <td style="width:35%;" align="center">
+            <a href="http://www.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px; margin-top: 15px; margin-bottom:15px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/huma-num.png" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

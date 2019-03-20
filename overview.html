@@ -38,7 +38,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Installation" href="installation.html" />
-    <link rel="prev" title="GraphBrain – Language, Knowledge, Cognition" href="index.html" /> 
+    <link rel="prev" title="Graphbrain – Language, Knowledge, Cognition" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -85,14 +85,20 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#hypergraphs">Hypergraphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-semantic-hypergraph">The Semantic Hypergraph</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#hypergraphs">Hypergraphs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#as-language-syntactic-rules">As language: syntactic rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#as-knowledge-model">As knowledge model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#as-database">As database</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Command-line interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="team.html">Team</a></li>
 </ul>
 
             
@@ -164,9 +170,51 @@
             
   <div class="section" id="overview">
 <h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="the-semantic-hypergraph">
+<h2>The Semantic Hypergraph<a class="headerlink" href="#the-semantic-hypergraph" title="Permalink to this headline">¶</a></h2>
+<p>The <em>Semantic Hypergraph</em> is central to Graphbrain, both conceptually and functionally. It can be seen from three different perspectives:</p>
+<ul class="simple">
+<li>as an intermediary between natural and formal languages</li>
+<li>as a knowledge model</li>
+<li>as a type of database</li>
+</ul>
+<p>We will elaborate, but first let us discuss the general concept of <em>hypergraph</em>.</p>
 <div class="section" id="hypergraphs">
-<h2>Hypergraphs<a class="headerlink" href="#hypergraphs" title="Permalink to this headline">¶</a></h2>
+<h3>Hypergraphs<a class="headerlink" href="#hypergraphs" title="Permalink to this headline">¶</a></h3>
+<p>The richness of information contained in natural language cannot be fully captured and analyzed using traditional graph-based network methods or distributional frameworks.  On one hand, natural language is recursive, allowing for concepts constructed from other concepts as well as statements about statements and, on the other hand, it can express <img class="math" src="_images/math/e11f2701c4a39c7fe543a6c4150b421d50f1c159.png" alt="n"/>-ary relationships.</p>
+<p>While a graph is based on a set of vertices and a set of edges describing dyadic connections, a hypergraph generalizes such structure by allowing <img class="math" src="_images/math/e11f2701c4a39c7fe543a6c4150b421d50f1c159.png" alt="n"/>-ary connections.</p>
+<p>We further generalize hypergraphs in two ways: hyperedges may be ordered and recursive. Ordering entails that the position in which a vertex participates in the hyperedge is relevant (a similarity can be drawn with the concept of directed graphs). Recursivity means that hyperedges can participate as vertices in other hyperedges, which is to say: relationships between entities can themselves play the role of entities in higher-order relationships.</p>
+</div>
+<div class="section" id="as-language-syntactic-rules">
+<h3>As language: syntactic rules<a class="headerlink" href="#as-language-syntactic-rules" title="Permalink to this headline">¶</a></h3>
+<p>In a general sense, the hyperedge is the fundamental and unifying construct that carries meaning within the formalism we propose. In Cognitive Science terms, it plays the role of <em>mental representation</em>. The syntactic rules are simple and universal: the first element in the hyperedge is a connector, followed by one or more arguments, possibly in a recursive fashion. It is syntactically valid to place any entity (i.e.: any arbitrary hyperedge or atom) in any of these two roles. A hyperedge defines a semantic construct by combining other semantic constructs. The purpose of the connector is to specify <em>in which sense</em> these inner constructs are connected.</p>
+<p>We illustrate with specific roles that a connector can play. For example, <strong>as predicate</strong>: in this case the hyperedge defines a proposition. For instance, the simple sentence “Berlin is nice” is represented as:</p>
+<p><code class="docutils literal notranslate"><span class="pre">(is</span> <span class="pre">berlin</span> <span class="pre">nice)</span></code></p>
+<p>To <strong>combine concepts</strong> in a specific way as to define a new concept, for example “capital of Germany”:</p>
+<p><code class="docutils literal notranslate"><span class="pre">(of</span> <span class="pre">capital</span> <span class="pre">germany)</span></code></p>
+<p>To <strong>build concepts</strong> from other concepts, for example “meat and potatoes”:</p>
+<p><code class="docutils literal notranslate"><span class="pre">(and</span> <span class="pre">meat</span> <span class="pre">potatoes)</span></code></p>
+<p>As a <strong>concept modifier</strong>, to represent a more specific instance of a concept, for example “highest mountain in Brazil”:</p>
+<p><code class="docutils literal notranslate"><span class="pre">(highest</span> <span class="pre">(in</span> <span class="pre">mountain</span> <span class="pre">brazil))</span></code></p>
+<p>To <strong>specify conditions</strong> that can be part of a proposition, for example “when the sky is blue”:</p>
+<p><code class="docutils literal notranslate"><span class="pre">(when</span> <span class="pre">(is</span> <span class="pre">(the</span> <span class="pre">sky)</span> <span class="pre">blue))</span></code></p>
+<p>These structures can be arbitrarily nested, for instance “Mary climbs the highest mountain in Brazil” yields:</p>
+<p><code class="docutils literal notranslate"><span class="pre">(climbs</span> <span class="pre">mary</span> <span class="pre">(the</span> <span class="pre">(highest</span> <span class="pre">(in</span> <span class="pre">mountain</span> <span class="pre">brazil))))</span></code></p>
+<p>In these examples we only show the human-friendly labels of atoms. Atoms contain additional annotations, e.g. specifying their type. We leave these details out of this overview, but we provide a full and formal specification of Semantic Hypergraph syntax and semantics elsewhere.</p>
+<p>Readers who are familiar with Lisp will likely have noticed that hyperedges are isomophic to <em>S-expressions</em>. This is not purely accidental. Lisp is very close to <img class="math" src="_images/math/76f1d8ace30435987c01a00ca53a71cba1f40e6c.png" alt="\lambda"/>-calculus, a formal and minimalistic model of computation that is based on function abstraction and application. The first item of an s-expression specifics a function, the following ones its arguments. One can think of a function as an association between objects. Although hyperedges do not specify computations, connectors are similar to functions at a very abstract level, in that they define associations. The concepts of “race to space” and “race in space” are both associated to the concepts “race” and “space”, but the combination of these two concepts yields different meaning by application of either the connector “in” or “to”.</p>
+</div>
+<div class="section" id="as-knowledge-model">
+<h3>As knowledge model<a class="headerlink" href="#as-knowledge-model" title="Permalink to this headline">¶</a></h3>
+<img alt="Hypergraph vs. Graph" src="_images/hyper-vs-graph.png" />
+<p>As cab be seen in the third example above, and thanks to nesting, it is possible to represent facts about facts. for instance, the fact that Mary states that Berlin is nice could be expressed by:</p>
+<p><code class="docutils literal notranslate"><span class="pre">(claims</span> <span class="pre">mary</span> <span class="pre">(is</span> <span class="pre">berlin</span> <span class="pre">nice))</span></code></p>
+<p>This makes it possible to attribute facts to sources. Sources are themselves hyperedges, potentially also connected in other ways.</p>
+<p>Thus, another relevant concept is that of a <em>claim</em>. A claim is an assertion that can be attributed to a source. We thus have a knowledge representation without the need for a notion of ground truth, where instead every assertion can be modeled as a claim by a hyperedge (source) of a hyperedge (fact). This is of particular importance, e.g. for the analysis of discussions on controversial topics, where multiple actors have contradictory views on a same issue.</p>
+</div>
+<div class="section" id="as-database">
+<h3>As database<a class="headerlink" href="#as-database" title="Permalink to this headline">¶</a></h3>
 <p>TODO</p>
+</div>
 </div>
 </div>
 
@@ -181,7 +229,7 @@
         <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral float-left" title="GraphBrain – Language, Knowledge, Cognition" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Graphbrain – Language, Knowledge, Cognition" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -38,7 +38,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="API reference" href="api.html" />
-    <link rel="prev" title="Tutorials" href="tutorials.html" /> 
+    <link rel="prev" title="Examples" href="examples.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -86,7 +86,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Command-line interface</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#hypergraphs">Hypergraphs</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#create">create</a></li>
@@ -98,18 +98,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#generate-synonyms">generate_synonyms</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#reader">Reader</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#reader-tests">reader_tests</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#interactive-edge-builder">interactive_edge_builder</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#generate-hypergen-cases">generate_hypergen_cases</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#learn-hypergen">learn_hypergen</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#test-hypergen">test_hypergen</a></li>
-</ul>
-</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="team.html">Team</a></li>
 </ul>
 
             
@@ -253,66 +245,6 @@ optional arguments. Presented below are the details for each command.</p>
 </div>
 </div>
 </div>
-<div class="section" id="reader">
-<h2>Reader<a class="headerlink" href="#reader" title="Permalink to this headline">¶</a></h2>
-<p>These commands are used to create datasets, perform learning and test the performance of the reader.
-The reader is an AI module that consists of a pipline of stages that transform text in natural language into
-hypergraphs.</p>
-<div class="section" id="reader-tests">
-<h3>reader_tests<a class="headerlink" href="#reader-tests" title="Permalink to this headline">¶</a></h3>
-<p>Tests the reader by applying it to a file containing example sentences:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">infile</span> <span class="o">&lt;</span><span class="n">example</span> <span class="n">sentences</span> <span class="n">file</span><span class="o">&gt;</span> <span class="p">[</span><span class="o">--</span><span class="n">lang</span> <span class="o">&lt;</span><span class="n">language</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">model_file</span> <span class="o">&lt;</span><span class="n">file</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">show_namespaces</span><span class="p">]</span> <span class="n">reader_tests</span>
-</pre></div>
-</div>
-<p>If the optional <code class="docutils literal notranslate"><span class="pre">--show_namespaces</span></code> option is specified, the resulting hyperedges will contain symbols qualified
-with their namespaces, otherwise no namespaces will be shown.</p>
-</div>
-<div class="section" id="interactive-edge-builder">
-<h3>interactive_edge_builder<a class="headerlink" href="#interactive-edge-builder" title="Permalink to this headline">¶</a></h3>
-<p>This command opens an interactive session that allows the user to provide sentences and then manually perform the
-appropriate transformations from the parse tree of these sentences into an initial hyperedge:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">outfile</span> <span class="o">&lt;</span><span class="n">sentence</span> <span class="n">transformations</span> <span class="n">file</span><span class="o">&gt;</span> <span class="p">[</span><span class="o">--</span><span class="n">lang</span> <span class="o">&lt;</span><span class="n">language</span><span class="o">&gt;</span><span class="p">]</span> <span class="n">interactive_edge_builder</span>
-</pre></div>
-</div>
-<p>For each sentence that is manually parsed, a case is generated and appended to the output file.</p>
-<p>The command <code class="docutils literal notranslate"><span class="pre">generate_hypergen_cases</span></code> can then be used to generate a training dataset from the ouput of this command.</p>
-<p>A sentence parses dataset with a number of cases is provided with GraphBrain, at
-<code class="docutils literal notranslate"><span class="pre">datasets/training_data/hyperedge_generator/parses.txt</span></code>.</p>
-</div>
-<div class="section" id="generate-hypergen-cases">
-<h3>generate_hypergen_cases<a class="headerlink" href="#generate-hypergen-cases" title="Permalink to this headline">¶</a></h3>
-<p>Generate training datasets from sentence parse transformations file created with <code class="docutils literal notranslate"><span class="pre">interactive_edge_builder</span></code>.  This
-command breaks down each transformation into atomic cases, with respective feature values and expected output:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">infile</span> <span class="o">&lt;</span><span class="n">sentence</span> <span class="n">transformations</span> <span class="n">file</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">outfile</span> <span class="o">&lt;</span><span class="n">training</span> <span class="n">cases</span> <span class="n">file</span><span class="o">&gt;</span> <span class="n">generate_hypergen_cases</span>
-</pre></div>
-</div>
-<p>The output of this command can then be used to train a machine learning model using the command <code class="docutils literal notranslate"><span class="pre">learn_hypergen</span></code>.</p>
-<p>Only 75% os the sentence parse transformations are used to generate the training cases. The remining 25% are reserved
-as a test dataset, to be used by <code class="docutils literal notranslate"><span class="pre">test_hypergen</span></code>.</p>
-</div>
-<div class="section" id="learn-hypergen">
-<h3>learn_hypergen<a class="headerlink" href="#learn-hypergen" title="Permalink to this headline">¶</a></h3>
-<p>Trains a machine learning model for the hypergen reader stage using a training cases file produced by
-<code class="docutils literal notranslate"><span class="pre">generate_hypergen_cases</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">infile</span> <span class="o">&lt;</span><span class="n">training</span> <span class="n">cases</span> <span class="n">file</span><span class="o">&gt;</span> <span class="p">[</span><span class="o">--</span><span class="n">output</span> <span class="o">&lt;</span><span class="n">model</span> <span class="n">file</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">model_type</span> <span class="o">&lt;</span><span class="n">model</span> <span class="nb">type</span><span class="o">&gt;</span><span class="p">]</span> <span class="n">learn_hypergen</span>
-</pre></div>
-</div>
-<p>The optional <code class="docutils literal notranslate"><span class="pre">--model_type</span></code> parameter can be used to specify the type of machine learning model to use. Currently
-there are two options available: <code class="docutils literal notranslate"><span class="pre">rf</span></code> for random forest and <code class="docutils literal notranslate"><span class="pre">nn</span></code> for neural network. If not specified, random
-forest is assumed. If <code class="docutils literal notranslate"><span class="pre">--output</span></code> is not specified, the default file name for the model type is used.</p>
-</div>
-<div class="section" id="test-hypergen">
-<h3>test_hypergen<a class="headerlink" href="#test-hypergen" title="Permalink to this headline">¶</a></h3>
-<p>Tests a machine learning model for the hypergen reader stage using 25% of the examples in a sentence parse
-transformations file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">infile</span> <span class="o">&lt;</span><span class="n">sentence</span> <span class="n">transformations</span> <span class="n">file</span><span class="o">&gt;</span> <span class="p">[</span><span class="o">--</span><span class="n">lang</span> <span class="o">&lt;</span><span class="n">language</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">model_file</span> <span class="o">&lt;</span><span class="n">file</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">model_type</span> <span class="o">&lt;</span><span class="n">model</span> <span class="nb">type</span><span class="o">&gt;</span><span class="p">]</span> <span class="n">test_hypergen</span>
-</pre></div>
-</div>
-<p>The optional <code class="docutils literal notranslate"><span class="pre">--model_type</span></code> parameter can be used to specify the type of machine learning model to use. Currently
-there are two options available: <code class="docutils literal notranslate"><span class="pre">rf</span></code> for random forest and <code class="docutils literal notranslate"><span class="pre">nn</span></code> for neural network. If not specified, random
-forest is assumed.</p>
-</div>
-</div>
 </div>
 
 
@@ -326,7 +258,7 @@ forest is assumed.</p>
         <a href="api.html" class="btn btn-neutral float-right" title="API reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="tutorials.html" class="btn btn-neutral float-left" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="examples.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
