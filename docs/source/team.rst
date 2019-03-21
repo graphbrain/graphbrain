@@ -1,6 +1,6 @@
-=======
-Authors
-=======
+====
+Team
+====
 
 .. raw:: html
 
@@ -8,26 +8,25 @@ Authors
       <tr>
          <td><img src="_static/authors/telmo.jpg" width="200px" height="200px" /></td>
          <td>
-            <strong>Telmo Menezes</strong> (Founder / Maintainer) <br />
-            Researcher at Centre Marc Bloch, Berlin<br />
+            <strong>Dr. Telmo Menezes</strong> (Founder / Maintainer) <br />
+            Researcher at Centre Marc Bloch Berlin / CNRS / Humboldt University and member of its Computational Social Sciences research group<br />
             <br />
-            <a href="">http://www.telmomenezes.org</a>
+            <a href="">http://www.telmomenezes.net</a>
          </td>
       </tr>
       <tr>
          <td><img src="_static/authors/camille.jpg" width="200px" height="200px" /></td>
          <td>
-            <strong>Camille Roth</strong> <br />
-            Associate Professor in Computational Social Sciences at Sciences Po Paris
-            / Tenured CNRS Researcher on secondment<br />
+            <strong>Prof. Dr. Camille Roth</strong> <br />
+            Tenured CNRS Researcher, leader of the Computational Social Sciences research group at Centre March Bloch Berlin<br />
             <br />
-            <a href="http://camille.roth.free.fr">http://camille.roth.free.fr</a>
+            <a href="http://camilleroth.eu">http://camille.roth.free.fr</a>
          </td>
       </tr>
       <tr>
          <td><img src="_static/authors/chih-chun.jpg" width="200px" height="200px" /></td>
          <td>
-            <strong>Chih-Chun Chen</strong> <br />
+            <strong>Dr. Chih-Chun Chen</strong> <br />
             Research Associate at the Engineering Design Centre (EDC), Department of Engineering,
             University of Cambridge<br />
             <br />
