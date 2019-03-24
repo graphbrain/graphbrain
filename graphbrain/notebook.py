@@ -5,8 +5,8 @@ from graphbrain.funs import *
 
 SYMBOL_COLOR = '#404040'
 NAMESPACE_COLOR = '#7F7F6F'
-EDGE_COLORS = ['#4a9ac2', '#c97326', '#608629', '#085566', '#7bdddc',
-               '#9195b1', '#054424', '#dccb8c', '#aacece']
+EDGE_COLORS = ['#a65628', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00',
+               '#ffff33', '#e41a1c', '#f781bf']
 
 
 def _ent2html(entity, roots_only=True, compact=False, indent=False, close=True,
