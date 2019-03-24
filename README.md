@@ -1,8 +1,11 @@
-GraphBrain is a set of research tools aimed at text understanding and the exploration of knowledge. Its purpose is to
-facilitate experiments with novel ways to extract and analyze the knowledge contained in human-produced text.
+Graphbrain is an Artificial Intelligence open-source software library and scientific research tool. Its aim is to facilitate automated meaning extraction and text understanding, as well as the exploration and inference of knowledge.
 
-GraphBrain is experimental in nature, but with a unifying concept: the *semantic hypergraph*.
+The ambition of this project is not simply to contribute to advancing the state-of-the-art in AI, but principally to be an effective interdisciplinary research tool. More specifically, we are interested in advancing the possibilities of automated meaning extraction for research in fields such as Computational Social Sciences, Cognitive Science and the Humanities.
 
-GraphBrain is an open scientific project, open to all that are interested in collaborating.
+![Graphbrain overview](http://graphbrain.org/_images/graphbrain.png)
+
+Graphbrain is experimental in nature, but with a unifying concept: the semantic hypergraph. It follows a hybrid approach, combining symbolic AI and statistical/connectionist Machine Learning methods. This is for two main reasons: to facilitate understandability and reproducibility for human researchers and to combine the strengths of both approaches.
+
+Graphbrain is written in Python, to both take advantage and facilitate integration with the rich environment of scientific libraries available in this language. It is released under the highly permissive MIT open source license.
 
 For installation instructions and more information: http://graphbrain.org.
