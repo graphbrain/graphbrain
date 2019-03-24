@@ -2,7 +2,7 @@ import sys
 import logging
 import spacy
 from graphbrain import *
-from graphbrain.meaning.vis import print_tree
+from graphbrain.meaning.nlpvis import print_tree
 
 
 logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
