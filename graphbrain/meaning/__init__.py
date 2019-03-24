@@ -1,2 +1,2 @@
 from .parser import Parser
-from .vis import print_tree
+from .nlpvis import print_tree
