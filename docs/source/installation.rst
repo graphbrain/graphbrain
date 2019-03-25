@@ -145,17 +145,19 @@ Windows
 Please note that: i) use your own VS version number (e.g. 14.1) ii) use your own directory of _cl.exe_.
 
 **step 6** (be careful: this step may take 1 - 3 hours depends on computers) create a folder named build in current directory. And run command:: 
+
    $ b2.exe stage --toolset=msvc-14.1 address-model=64 --stagedir="E:\mylib\boost\bin1.64.0\VC14.
    $ 1" threading=multi --build-type=complete --build-dir="E:\mylib\boost\boost_1_64_0\build"
 
 Please note that: i) use your own directory names ii) be careful about the VS version number
 
+
 * leveldb.lib
 
-(1) download source codes of _LevelDB_ for windows: https://github.com/vaskomitanov/leveldb  
+**step 1** download source codes of _LevelDB_ for windows: https://github.com/vaskomitanov/leveldb  
 
-(2) open Visual Studio (2017). Create a project: 
-      •	file – new – project from existing code
+**step 2** open Visual Studio (2017). Create a project: 
+    - file – new – project from existing code
       •	choose the type of project: Visual C++
       •	project file location: the directory of LevelDB
       •	project name: LevelDB
@@ -164,18 +166,18 @@ Please note that: i) use your own directory names ii) be careful about the VS ve
       •	include search path: E:\LIB\leveldb-windows;E:\LIB\leveldb-windows\include (the directory of LevelDB and its include)
       •	finish
 
-(3) set _LevelDB.lib_:
+**step 3** set _LevelDB.lib_:
       •	project – properties – configuration properties – configuration type: LIB
       •	configuration properties – C/C++ - General – preprocessor – preprocessor definition: LEVELDB_PLATFORM_WINDOWS;OS_WIN; WIN32
       •	linker – general – additional library directory: E:\LIB\boost64\stage\lib (use your own path)
 
-(3) open _solution explorer_, exclude the following files (tips: you can search and right click on the target files):
+**step 4** open _solution explorer_, exclude the following files (tips: you can search and right click on the target files):
       •	files ends with _%_test.cc and _bench.cc%_
       •	_port/port_android.cc_
       •	_port/port_posix.cc_
       •	_util/env_posix.cc_
 
-(4) modify codes:
+**step 5** modify codes:
    i. _db\c.cc_: 
    $ delete #include < unistd.h>
    
@@ -183,7 +185,7 @@ Please note that: i) use your own directory names ii) be careful about the VS ve
    $ elif defined(LEVELDB_PLATFORM_WINDOWS)
    $ include "port/port_win.h"
    
-(5) note: remember to compile as _release x64_
+**step 6** note: remember to compile as _release x64_
 
 * plyvel
 modify _setup.py_:
