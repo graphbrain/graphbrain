@@ -124,8 +124,7 @@ Windows
 
 *plyvel* is required for installing *graphbrain* on Windows. To install *plyvel*, *boost.lib* and *leveldb.lib* should be compiled first. 
 
-* boost.lib (x64)
------------------
+* **boost.lib (x64)**
 
 **step 1** download and unzip *Boost* library:  https://www.boost.org/
 
@@ -157,8 +156,8 @@ Please note that: i) use your own VS version number (e.g. 14.1) ii) use your own
 Please note that: i) use your own directory names ii) be careful about the VS version number
 
 
-* leveldb.lib
--------------
+
+* **leveldb.lib**
 
 **step 1** download source codes of *LevelDB* for windows: https://github.com/vaskomitanov/leveldb  
 
@@ -199,8 +198,8 @@ in *port\port.h* - add the lines below before first ``#endif``::
    
 **step 6** note: remember to compile as *release x64*
 
-* plyvel
---------
+
+* **plyvel**
 
 modify *setup.py*::
      
@@ -215,7 +214,8 @@ modify *setup.py*::
 		    ...
         )
        
-* you may also need to install Cmake, please check the official guidance here: https://cgold.readthedocs.io/en/latest/first-step/installation.html#windows
+* **Cmake**
+you may also need to install Cmake, please check the official guidance here: https://cgold.readthedocs.io/en/latest/first-step/installation.html#windows
  
 
 
