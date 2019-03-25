@@ -126,7 +126,7 @@ Windows
 
 * boost.lib (x64)
 
-    (1) download and unzip *Boost* library:  https://www.boost.org/
+(1) download and unzip *Boost* library:  https://www.boost.org/
 
     (2) make sure *cl* is the environment variable
 
