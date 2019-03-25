@@ -128,23 +128,23 @@ Windows
 
 **step 1** download and unzip *Boost* library:  https://www.boost.org/
 
-    (2) make sure *cl* is the environment variable
+**step 2** make sure *cl* is the environment variable
 
-    (3) open *x64 Native Tools Command Prompt* for *VS2017*. Get into the directory of the unzipped *Boost*
+**step 3** open *x64 Native Tools Command Prompt* for *VS2017*. Get into the directory of the unzipped *Boost*
 
-    (4) run command: ``$ bootstrap.bat``. *b2.exe* and *bjam.exe* will be added after this step.
+**step 4** run command: ``$ bootstrap.bat``. *b2.exe* and *bjam.exe* will be added after this step.
     
-    (5) open and modify *project-config.jam* in current directory:
+**step 5** open and modify *project-config.jam* in current directory::
    
-``
+
    $ import option ;
    $ using msvc : 14.1 : “E: \VS2017\VC\Tools\MSVC\14.1-.250117\bin\HostX64\x64\cl.exe” ;
    $ option.set keep-going : false ;
-``
+
 
 Please note that: i) use your own VS version number (e.g. 14.1) ii) use your own directory of _cl.exe_.
 
-(6) (be careful: this step may take 1 - 3 hours depends on computers) create a folder named build in current directory. And run command: 
+**step 6** (be careful: this step may take 1 - 3 hours depends on computers) create a folder named build in current directory. And run command:: 
    $ b2.exe stage --toolset=msvc-14.1 address-model=64 --stagedir="E:\mylib\boost\bin1.64.0\VC14.
    $ 1" threading=multi --build-type=complete --build-dir="E:\mylib\boost\boost_1_64_0\build"
 
