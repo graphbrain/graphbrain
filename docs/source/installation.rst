@@ -187,12 +187,12 @@ Please note that: i) use your own directory names ii) be careful about the VS ve
       •	*util/env_posix.cc*
 
 **step 5** modify codes:
-     
-      •	*db\c.cc*::
+
+in *db\c.cc*::
    
    $ delete #include < unistd.h>
    
-      •	*port\port.h* - add the lines below before first ``#endif``::
+in *port\port.h* - add the lines below before first ``#endif``::
       
    $ elif defined(LEVELDB_PLATFORM_WINDOWS)
    $ include "port/port_win.h"
@@ -206,12 +206,12 @@ modify *setup.py*::
      
     Extension(
 		    ...
-		   $ libraries=['leveldb vaskomitanov-r x64',
-				      $ 'libboost_chrono-vc141-mt-x64-1_69',
-				      $ 'libboost_date_time-vc141-mt-x64-1_69',
-				      $ 'libboost_filesystem-vc141-mt-x64-1_69',
-				      $ 'libboost_system-vc141-mt-x64-1_69',
-				      $ 'libboost_thread-vc141-mt-x64-1_69'],
+		    libraries=['leveldb vaskomitanov-r x64',
+				       'libboost_chrono-vc141-mt-x64-1_69',
+				       'libboost_date_time-vc141-mt-x64-1_69',
+				       'libboost_filesystem-vc141-mt-x64-1_69',
+				       'libboost_system-vc141-mt-x64-1_69',
+				       'libboost_thread-vc141-mt-x64-1_69'],
 		    ...
         )
        
