@@ -122,19 +122,21 @@ macOS
 Windows
 -------
 
-$plyvel$ is required for installing _graphbrain_ on Windows. To install _plyvel_, _boost.lib_ and _leveldb.lib_ should be compiled first. 
+*plyvel* is required for installing *graphbrain* on Windows. To install *plyvel*, *boost.lib* and *leveldb.lib* should be compiled first. 
 
 * boost.lib (x64)
 
-(1) download and unzip Boost library:  https://www.boost.org/
+    * download and unzip *Boost* library:  https://www.boost.org/
 
-(2) make sure _cl_ is the environment variable
+    * make sure *cl* is the environment variable
 
-(3) open _x64 Native Tools Command Prompt_ for VS 2017. Get into the directory of the unzipped Boost
+    * open *x64 Native Tools Command Prompt* for *VS2017*. Get into the directory of the unzipped *Boost*
 
-(4) run command: (_b2.exe_ and _bjam.exe_ will be added after this step)
-   $ bootstrap.bat
-
+    * run command: 
+   	``$ bootstrap.bat``
+	
+      (*b2.exe* and *bjam.exe* will be added after this step)
+      
 (5) open and modify _project-config.jam_ in the directory:
    $ import option ;
    $ using msvc : 14.1 : “E: \VS2017\VC\Tools\MSVC\14.1-.250117\bin\HostX64\x64\cl.exe” ;
