@@ -122,7 +122,7 @@ macOS
 Windows
 -------
 
-_plyvel_ is required for installing _graphbrain_ on Windows. To install _plyvel_, _boost.lib_ and _leveldb.lib_ should be compiled first. 
+$plyvel$ is required for installing _graphbrain_ on Windows. To install _plyvel_, _boost.lib_ and _leveldb.lib_ should be compiled first. 
 
 * boost.lib (x64)
 
