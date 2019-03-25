@@ -38,13 +38,16 @@ def is_noun(token):
     return token.tag_[:2] == 'NN'
 
 
-# TODO: check if complete
 def is_verb(token):
     tag = token.tag_
     if len(tag) > 0:
         return token.tag_[0] == 'V'
     else:
         return False
+
+
+def is_infinitive(token):
+    return token.tag_ == 'VB'
 
 
 def is_compound(token):
@@ -234,10 +237,26 @@ class Parser(object):
             pos = None
 
         if parent_type[0] == 'p' and parent_type != 'pm':
-            if len(parent_type) == 1:
-                parent_type = 'pd'  # TODO: questions, imperative...
             args = [arg_type(tokens[entity]) for entity in entities]
             args_string = ''.join([arg for arg in args if arg != '?'])
+
+            # assign predicate subtype
+            # (declarative, imperative, interrogative, ...)
+            if len(parent_type) == 1:
+                # interrogative cases
+                last_token = child_tokens[-1][0]
+                if (last_token.tag_ == '.' and
+                        last_token.dep_ == 'punct' and
+                        last_token.lemma_.strip() == '?'):
+                    parent_type = 'p?'
+                # imperative cases
+                elif (is_infinitive(token) and 's' not in args_string and
+                        'TO' not in [child[0].tag_ for child in child_tokens]):
+                    parent_type = 'p!'
+                # declarative (by default)
+                else:
+                    parent_type = 'pd'
+
             et = '{}.{}'.format(parent_type, args_string)
 
         parent_atom = build_atom(text, et, pos)

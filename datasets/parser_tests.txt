@@ -75,6 +75,16 @@ Americans are willing to pay $177 a year to avoid climate change
 This guy should be the new team mascot
 ((should/a be/pd.sc) (this/m guy/c) (the/m (new/m (+/b/. team/c mascot/c))))
 Take pictures of your hair after a good haircut.
-(take/pd.ox (of/b pictures/c (your/mp hair/c)) (after/t (a/m (good/m haircut/c))))
+(take/p!.ox (of/b pictures/c (your/mp hair/c)) (after/t (a/m (good/m haircut/c))))
 I think that's supposed to be difficult.
 (think/pd.sr i/c (('s/a supposed/pd.pr) that/c ((to/a be/pc.c) difficult/c)))
+The food, I opined to my wife, was premium mediocre.
+(was/pd.stc (the/m food/c) (opined/pd.sx i/c (to/t (my/mp wife/c))) (premium/m mediocre/c))
+Catalonia calls for talks with Madrid but warns against Spanish direct rule
+(but/pm (calls/pd.sx catalonia/c (for/t (with/b talks/c madrid/c))) (warns/pd.x (against/t (spanish/m (direct/m rule/c)))))
+Imagine you want to send a letter anonymously.
+(imagine/p!.r (want/pd.sr you/c ((to/a (anonymously/a send/pc.o)) (a/m letter/c))))
+Do what I say.
+(do/p!.r (say/pd.os what/c i/c))
+What time is it?
+(is/p?.cs (what/m time/c) it/c)
