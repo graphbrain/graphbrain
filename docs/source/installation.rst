@@ -125,6 +125,7 @@ Windows
 *plyvel* is required for installing *graphbrain* on Windows. To install *plyvel*, *boost.lib* and *leveldb.lib* should be compiled first. 
 
 * boost.lib (x64)
+-----------------
 
 **step 1** download and unzip *Boost* library:  https://www.boost.org/
 
@@ -157,6 +158,7 @@ Please note that: i) use your own directory names ii) be careful about the VS ve
 
 
 * leveldb.lib
+-------------
 
 **step 1** download source codes of *LevelDB* for windows: https://github.com/vaskomitanov/leveldb  
 
@@ -179,38 +181,39 @@ Please note that: i) use your own directory names ii) be careful about the VS ve
 
 **step 4** open *solution explorer*, exclude the following files (tips - you can search and right click on the target files):
       
-      •	files ends with _%_test.cc and _bench.cc%_
+      •	files ends with *_test.cc* and *_bench.cc*
       •	*port/port_android.cc*
       •	*port/port_posix.cc*
       •	*util/env_posix.cc*
 
 **step 5** modify codes:
      
-     •	*db\c.cc*::
+      •	*db\c.cc*::
    
    $ delete #include < unistd.h>
    
-      •	 *port\port.h* - add the lines below before first ``#endif``::
+      •	*port\port.h* - add the lines below before first ``#endif``::
       
    $ elif defined(LEVELDB_PLATFORM_WINDOWS)
    $ include "port/port_win.h"
    
 **step 6** note: remember to compile as *release x64*
 
-* then plyvel can be installed after this step:
+* plyvel
+--------
 
-     •	modify *setup.py*::
+modify *setup.py*::
      
-   $ Extension(
-		   $ ...
+    Extension(
+		    ...
 		   $ libraries=['leveldb vaskomitanov-r x64',
 				      $ 'libboost_chrono-vc141-mt-x64-1_69',
 				      $ 'libboost_date_time-vc141-mt-x64-1_69',
 				      $ 'libboost_filesystem-vc141-mt-x64-1_69',
 				      $ 'libboost_system-vc141-mt-x64-1_69',
 				      $ 'libboost_thread-vc141-mt-x64-1_69'],
-		   $ ...
-       $ )
+		    ...
+        )
        
 * you may also need to install Cmake, please check the official guidance here: https://cgold.readthedocs.io/en/latest/first-step/installation.html#windows
  
