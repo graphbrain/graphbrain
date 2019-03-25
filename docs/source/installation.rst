@@ -132,7 +132,11 @@ Windows
 
 **step 3** open *x64 Native Tools Command Prompt* for *VS2017*. Get into the directory of the unzipped *Boost*
 
-**step 4** run command: ``$ bootstrap.bat``. *b2.exe* and *bjam.exe* will be added after this step.
+**step 4** run command::
+
+$ bootstrap.bat 
+
+*b2.exe* and *bjam.exe* will be added after this step.
     
 **step 5** open and modify *project-config.jam* in current directory::
    
@@ -154,41 +158,49 @@ Please note that: i) use your own directory names ii) be careful about the VS ve
 
 * leveldb.lib
 
-**step 1** download source codes of _LevelDB_ for windows: https://github.com/vaskomitanov/leveldb  
+**step 1** download source codes of *LevelDB* for windows: https://github.com/vaskomitanov/leveldb  
 
-**step 2** open Visual Studio (2017). Create a project: 
-    - file – new – project from existing code
-      •	choose the type of project: Visual C++
-      •	project file location: the directory of LevelDB
-      •	project name: LevelDB
-      •	project type: LIB
-      •	preprocessor definition: LEVELDB_PLATFORM_WINDOWS;OS_WIN; WIN32
-      •	include search path: E:\LIB\leveldb-windows;E:\LIB\leveldb-windows\include (the directory of LevelDB and its include)
-      •	finish
+**step 2** open *Visual Studio* (2017). Create a project: 
 
-**step 3** set _LevelDB.lib_:
-      •	project – properties – configuration properties – configuration type: LIB
-      •	configuration properties – C/C++ - General – preprocessor – preprocessor definition: LEVELDB_PLATFORM_WINDOWS;OS_WIN; WIN32
-      •	linker – general – additional library directory: E:\LIB\boost64\stage\lib (use your own path)
+      •	file – new – project from existing code
+      •	choose the type of project: *Visual C++*
+      •	project file location: the directory of *LevelDB*
+      •	project name: *LevelDB*
+      •	project type: *LIB*
+      •	preprocessor definition: *LEVELDB_PLATFORM_WINDOWS;OS_WIN; WIN32*
+      •	include search path: *E:\LIB\leveldb-windows;E:\LIB\leveldb-windows\include* (the directory of *LevelDB* and its *include*)
+      •	click *finish*
 
-**step 4** open _solution explorer_, exclude the following files (tips: you can search and right click on the target files):
+**step 3** set *LevelDB.lib*:
+
+      •	project – properties – configuration properties – configuration type: *LIB*
+      •	configuration properties – C/C++ - General – preprocessor – preprocessor definition: *LEVELDB_PLATFORM_WINDOWS;OS_WIN; WIN32*
+      •	linker – general – additional library directory: *E:\LIB\boost64\stage\lib* (use your own path)
+
+**step 4** open *solution explorer*, exclude the following files (tips - you can search and right click on the target files):
+      
       •	files ends with _%_test.cc and _bench.cc%_
-      •	_port/port_android.cc_
-      •	_port/port_posix.cc_
-      •	_util/env_posix.cc_
+      •	*port/port_android.cc*
+      •	*port/port_posix.cc*
+      •	*util/env_posix.cc*
 
 **step 5** modify codes:
-   i. _db\c.cc_: 
+     
+     •	*db\c.cc*::
+   
    $ delete #include < unistd.h>
    
-   ii. _port\port.h_: add the lines below before first #endif
+      •	 *port\port.h* - add the lines below before first ``#endif``::
+      
    $ elif defined(LEVELDB_PLATFORM_WINDOWS)
    $ include "port/port_win.h"
    
-**step 6** note: remember to compile as _release x64_
+**step 6** note: remember to compile as *release x64*
 
-* plyvel
-modify _setup.py_:
+* then plyvel can be installed after this step:
+
+     •	modify *setup.py*::
+     
    $ Extension(
 		   $ ...
 		   $ libraries=['leveldb vaskomitanov-r x64',
