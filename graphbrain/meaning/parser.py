@@ -277,7 +277,6 @@ class Parser(object):
             et = '{}.{}'.format(parent_type, args_string)
 
         parent_atom = build_atom(text, et, pos)
-
         parent = parent_atom
 
         relative_to_concept = []
