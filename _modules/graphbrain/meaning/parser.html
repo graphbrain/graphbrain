@@ -357,9 +357,10 @@
 
 
 <div class="viewcode-block" id="Parser"><a class="viewcode-back" href="../../../api.html#graphbrain.meaning.Parser">[docs]</a><span class="k">class</span> <span class="nc">Parser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">lemmas</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lang</span> <span class="o">=</span> <span class="n">lang</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lemmas</span> <span class="o">=</span> <span class="n">lemmas</span>
 
         <span class="k">if</span> <span class="n">lang</span> <span class="o">==</span> <span class="s1">&#39;en&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;en_core_web_lg&#39;</span><span class="p">)</span>
@@ -429,8 +430,15 @@
             <span class="n">et</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parent_type</span><span class="p">,</span> <span class="n">args_string</span><span class="p">)</span>
 
         <span class="n">parent_atom</span> <span class="o">=</span> <span class="n">build_atom</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">et</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
-
         <span class="n">parent</span> <span class="o">=</span> <span class="n">parent_atom</span>
+
+        <span class="c1"># lemma</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lemmas</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">lemma_</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="n">lemma</span> <span class="o">=</span> <span class="n">build_atom</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">et</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pos</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">parent</span> <span class="o">!=</span> <span class="n">lemma</span><span class="p">:</span>
+                <span class="n">lemma_edge</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;lemma/p/.&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">lemma</span><span class="p">)</span>
+                <span class="n">extra_edges</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">lemma_edge</span><span class="p">)</span>
 
         <span class="n">relative_to_concept</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -560,10 +568,13 @@
 <span class="s2">    There’s also a link to the Turing Test that we finished up with last week.</span>
 <span class="s2">    &quot;&quot;&quot;</span>
 
-    <span class="n">parser</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">lang</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">lang</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lemmas</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">parse</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">print_tree</span><span class="p">(</span><span class="n">parse</span><span class="p">[</span><span class="s1">&#39;spacy_sentence&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">ent2str</span><span class="p">(</span><span class="n">parse</span><span class="p">[</span><span class="s1">&#39;main_edge&#39;</span><span class="p">]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;EXTRA EDGES:&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;extra_edges&#39;</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ent2str</span><span class="p">(</span><span class="n">edge</span><span class="p">))</span>
 </pre></div>
 
            </div>
