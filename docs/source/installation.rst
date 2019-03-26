@@ -123,13 +123,11 @@ macOS
 Windows
 -------
 
- 
-
-*plyvel* is required for installing *graphbrain* on Windows. To install *plyvel*, *boost.lib* and *leveldb.lib* should be compiled first. 
+*plyvel* is required for installing *graphbrain* on Windows. Unfortunately, this currently requires more effort than in the other platforms. To install *plyvel*, *boost.lib* and *leveldb.lib* must be compiled first. 
 
 * **boost.lib (x64)**
 
-**step 1** download and unzip *Boost* library:  https://www.boost.org/
+**step 1** download and unzip the *Boost* library:  https://www.boost.org/
 
 **step 2** make sure *cl* is the environment variable
 
@@ -141,7 +139,7 @@ $ bootstrap.bat
 
 *b2.exe* and *bjam.exe* will be added after this step.
     
-**step 5** open and modify *project-config.jam* in current directory::
+**step 5** open and modify *project-config.jam* in the current directory::
    
 
    $ import option ;
@@ -149,20 +147,19 @@ $ bootstrap.bat
    $ option.set keep-going : false ;
 
 
-Please note that: i) use your own VS version number (e.g. 14.1) ii) use your own directory of _cl.exe_.
+Please note that you should: i) use your own VS version number (e.g. 14.1) ii) use your own directory of _cl.exe_.
 
-**step 6** (be careful: this step may take 1 - 3 hours depends on computers) create a folder named build in current directory. And run command:: 
+**step 6** *(note: this step may take 1 - 3 hours)* create a folder named build in the current directory, then run command:: 
 
    $ b2.exe stage --toolset=msvc-14.1 address-model=64 --stagedir="E:\mylib\boost\bin1.64.0\VC14.
    $ 1" threading=multi --build-type=complete --build-dir="E:\mylib\boost\boost_1_64_0\build"
 
-Please note that: i) use your own directory names ii) be careful about the VS version number
-
+Please note that you should: i) use your own directory names ii) be careful about the VS version number
 
 
 * **leveldb.lib**
 
-**step 1** download source codes of *LevelDB* for windows: https://github.com/vaskomitanov/leveldb  
+**step 1** download the source code of *LevelDB* for windows: https://github.com/vaskomitanov/leveldb  
 
 **step 2** open *Visual Studio* (2017). Create a project: 
 
@@ -181,14 +178,14 @@ Please note that: i) use your own directory names ii) be careful about the VS ve
       •	configuration properties – C/C++ - General – preprocessor – preprocessor definition: *LEVELDB_PLATFORM_WINDOWS;OS_WIN; WIN32*
       •	linker – general – additional library directory: *E:\LIB\boost64\stage\lib* (use your own path)
 
-**step 4** open *solution explorer*, exclude the following files (tips - you can search and right click on the target files):
+**step 4** open *solution explorer*, exclude the following files *(tip: you can search and right click on the target files)*:
       
       •	files ends with *_test.cc* and *_bench.cc*
       •	*port/port_android.cc*
       •	*port/port_posix.cc*
       •	*util/env_posix.cc*
 
-**step 5** modify codes:
+**step 5** modify code:
 
 in *db\c.cc*::
    
@@ -218,8 +215,5 @@ modify *setup.py*::
         )
        
 * **Cmake**
+
 you may also need to install Cmake, please check the official guidance here: https://cgold.readthedocs.io/en/latest/first-step/installation.html#windows
-
-
-
-

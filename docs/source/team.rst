@@ -33,4 +33,14 @@ Team
             <a href="http://abmcet.net">http://abmcet.net</a>
          </td>
       </tr>
+      <tr>
+         <td><img src="_static/authors/kexinren.jpg" width="200px" height="200px" /></td>
+         <td>
+            <strong>Kexin Ren</strong> <br />
+            Master's student in Cognitive Sciences (Cogmaster) ENS Paris,
+            Intern at Centre Marc Bloch Berlin<br />
+            <br />
+            <a href="https://www.linkedin.com/in/kexinren">https://www.linkedin.com/in/kexinren</a>
+         </td>
+      </tr>
    </table>
