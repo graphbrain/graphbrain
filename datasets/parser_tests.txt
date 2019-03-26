@@ -50,8 +50,8 @@ Freud saw in the younger man the potential heir he had been seeking to carry on 
 (saw/pd.sxo freud/c (in/t (the/m (younger/m man/c))) (:/b/. (the/m (potential/m heir/c)) ((had/a (been/a seeking/pr.sr)) he/c ((to/a (on/a carry/pc.o)) (his/mp (new/m (of/b science/c psychoanalysis/c)))))))
 I will never stop laughing at this.
 ((will/a (never/an stop/pd.sr)) i/c (laughing/pc.x (at/t this/c)))
-Unbeknownst to most, their brains are a battleground.
-(are/pd.xsc (unbeknownst/t (to/b most/c)) (their/mp brains/c) (a/m battleground/c))
+Unknown to most, their brains are a battleground.
+(are/pd.xsc (unknown/pd.x (to/t most/c)) (their/mp brains/c) (a/m battleground/c))
 Lady shows you the oldest living wolf.
 (shows/pd.sio lady/c you/c (the/m (oldest/m (living/m wolf/c))))
 Lawyers say they will issue judicial review proceedings if Brexit secretary fails to release 50 studies of effect on industry
@@ -71,7 +71,7 @@ There are a few exceptions, but I hate them!
 Tourists taking a picture of the Eiffel Tower get photobombed by a cyclist.
 (taking/pd.sox tourists/c (a/m (of/b picture/c (the/m (+/b/. eiffel/c tower/c)))) ((get/a photobombed/pd.a) (by/x (a/m cyclist/c))))
 Americans are willing to pay $177 a year to avoid climate change
-(are/pd.sc americans/c (:/b/. willing/c ((to/a pay/pc.ox) ($/m ((a/m year/m) 177/c)) ((to/a avoid/pd.o) (+/b/. climate/c change/c)))))
+(are/pd.sc americans/c (:/b/. willing/c ((to/a pay/pc.ox) ($/m (+/b/. 177/c (a/m year/c))) ((to/a avoid/pd.o) (+/b/. climate/c change/c)))))
 This guy should be the new team mascot
 ((should/a be/pd.sc) (this/m guy/c) (the/m (new/m (+/b/. team/c mascot/c))))
 Take pictures of your hair after a good haircut.
@@ -88,3 +88,13 @@ Do what I say.
 (do/p!.r (say/pd.os what/c i/c))
 What time is it?
 (is/p?.cs (what/m time/c) it/c)
+A new Einstein cross is discovered
+((is/a discovered/pd.p) (a/m (new/m (+/b/. einstein/c cross/c))))
+An Elusive Whale Is Found All Around the World 
+(is/pd.sc (an/m (+/b/. elusive/c whale/c)) (found/x ((all/w around/m) (the/m world/c))))
+According to people present, she simply ploughed on with her intention to hold a third vote on her deal this week.
+((simply/a (on/a ploughed/pd.xsx)) (according/t (to/m (present/m people/c))) she/c (with/t (:/b/. (her/mp intention/c) ((to/a hold/pc.ox) (a/m (third/m (on/b vote/c (her/mp deal/c)))) (this/m week/c)))))
+Our brains are always looking for relative rewards.
+((are/a (always/a looking/pd.sx)) (our/mp brains/c) (for/t (relative/m rewards/c)))
+Scientists rise up against statistical significance
+((up/a rise/pd.sx) scientists/c (against/t (statistical/m significance/c)))

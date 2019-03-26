@@ -5,7 +5,7 @@ from graphbrain import *
 from graphbrain.meaning.nlpvis import print_tree
 
 
-logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
+logging.basicConfig(stream=sys.stderr, level=logging.WARNING)
 
 
 deps_arg_types = {
@@ -19,6 +19,7 @@ deps_arg_types = {
     'dative': 'i',     # indirect object
     'advcl': 'x',      # specifier
     'prep': 'x',       # specifier
+    'npadvmod': 'x',   # specifier
     'parataxis': 't',  # parataxis
     'intj': 'j',       # interjection
     'xcomp': 'r',      # clausal complement
@@ -54,7 +55,10 @@ def is_compound(token):
     return token.dep_ == 'compound'
 
 
-def token_type(token):
+def token_type(token, head=False):
+    if is_noun(token):
+        return 'c'
+
     dep = token.dep_
     head_type = token_head_type(token)
     if len(head_type) > 1:
@@ -69,8 +73,8 @@ def token_type(token):
             return 'p'
         else:
             return 'c'
-    elif dep in {'acomp', 'appos', 'attr', 'compound', 'dative', 'dep',
-                 'dobj', 'nsubj', 'nsubjpass', 'oprd', 'pobj', 'meta'}:
+    elif dep in {'appos', 'attr', 'compound', 'dative', 'dep', 'dobj',
+                 'nsubj', 'nsubjpass', 'oprd', 'pobj', 'meta'}:
         return 'c'
     elif dep in {'advcl', 'ccomp', 'csubj', 'csubjpass', 'parataxis'}:
         return 'p'
@@ -113,7 +117,7 @@ def token_type(token):
             return 't'
         elif head_type == 'p':
             return 'a'
-        elif head_type in {'m', 'x', 't'}:
+        elif head_type in {'m', 'x', 't', 'b'}:
             return 'w'
         else:
             return 'm'
@@ -137,8 +141,13 @@ def token_type(token):
             return 'x'
         else:
             return 'b'
+    elif dep == 'acomp':
+        if is_verb(token):
+            return 'x'
+        else:
+            return 'c'
     else:
-        #  error / warning
+        #  error / warning ?
         pass
 
 
@@ -181,8 +190,16 @@ def post_process(entity):
         return entity
     else:
         entity = tuple(post_process(item) for item in entity)
-        if connector_type(entity)[0] == 'c':
+        ct = connector_type(entity)
+        if ct[0] == 'c':
             return connect('+/b/.', entity)
+        elif ct[0] == 'b' and is_atom(entity[0]) and len(entity) == 2:
+            ps = atom_parts(entity[0])
+            ps[1] = 'm' + ct[1:]
+            return ('/'.join(ps),) + entity[1:]
+        elif (ct[0] == 'w' and is_atom(entity[0]) and len(entity) == 2 and
+                is_edge(entity[1]) and connector_type(entity[1])[0] == 'm'):
+            return ((entity[0], entity[1][0]),) + entity[1][1:]
         else:
             return entity
 
@@ -371,24 +388,24 @@ class Parser(object):
             relative_to_concept.reverse()
             parent = (':/b/.', parent) + tuple(relative_to_concept)
 
-        return post_process(parent), extra_edges
+        return parent, extra_edges
 
     def parse_sentence(self, sent):
         main_edge, extra_edges = self.parse_token(sent.root)
+        main_edge = post_process(main_edge)
         return {'main_edge': main_edge,
                 'extra_edges': extra_edges,
                 'text': str(sent),
                 'spacy_sentence': sent}
 
     def parse(self, text):
-        doc = self.nlp(text)
+        doc = self.nlp(text.strip())
         return tuple(self.parse_sentence(sent) for sent in doc.sents)
 
 
 if __name__ == '__main__':
     text = """
-    Satellites from NASA and other agencies have been tracking sea ice changes
-    since 1979.
+    There’s also a link to the Turing Test that we finished up with last week.
     """
 
     parser = Parser(lang='en', pos=True)
