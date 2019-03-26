@@ -205,9 +205,10 @@ def post_process(entity):
 
 
 class Parser(object):
-    def __init__(self, lang, pos=False):
+    def __init__(self, lang, pos=False, lemmas=False):
         self.lang = lang
         self.pos = pos
+        self.lemmas = lemmas
 
         if lang == 'en':
             self.nlp = spacy.load('en_core_web_lg')
@@ -278,6 +279,14 @@ class Parser(object):
 
         parent_atom = build_atom(text, et, pos)
         parent = parent_atom
+
+        # lemma
+        if self.lemmas:
+            text = token.lemma_.lower()
+            lemma = build_atom(text, et[0], pos)
+            if parent != lemma:
+                lemma_edge = ('lemma/p/.', parent, lemma)
+                extra_edges.add(lemma_edge)
 
         relative_to_concept = []
 
@@ -407,7 +416,10 @@ if __name__ == '__main__':
     There’s also a link to the Turing Test that we finished up with last week.
     """
 
-    parser = Parser(lang='en', pos=True)
+    parser = Parser(lang='en', pos=True, lemmas=True)
     parse = parser.parse(text)[0]
     print_tree(parse['spacy_sentence'].root)
     print(ent2str(parse['main_edge']))
+    print('EXTRA EDGES:')
+    for edge in parse['extra_edges']:
+        print(ent2str(edge))
