@@ -38,7 +38,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Examples" href="examples.html" />
-    <link rel="prev" title="Overview" href="overview.html" /> 
+    <link rel="prev" title="Graphbrain – Language, Knowledge, Cognition" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,7 +84,6 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#install-with-pip-recommended">Install with pip (recommended)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#install-from-the-code-repository-github">Install from the code repository (github)</a><ul>
@@ -289,7 +288,96 @@ distribution to install the prerequisites.</p>
 </div>
 <div class="section" id="windows">
 <h3>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h3>
-<p><em>To be done…</em></p>
+<p><em>plyvel</em> is required for installing <em>graphbrain</em> on Windows. To install <em>plyvel</em>, <em>boost.lib</em> and <em>leveldb.lib</em> should be compiled first.</p>
+<ul class="simple">
+<li><strong>boost.lib (x64)</strong></li>
+</ul>
+<p><strong>step 1</strong> download and unzip <em>Boost</em> library:  <a class="reference external" href="https://www.boost.org/">https://www.boost.org/</a></p>
+<p><strong>step 2</strong> make sure <em>cl</em> is the environment variable</p>
+<p><strong>step 3</strong> open <em>x64 Native Tools Command Prompt</em> for <em>VS2017</em>. Get into the directory of the unzipped <em>Boost</em></p>
+<p><strong>step 4</strong> run command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ bootstrap.bat
+</pre></div>
+</div>
+<p><em>b2.exe</em> and <em>bjam.exe</em> will be added after this step.</p>
+<p><strong>step 5</strong> open and modify <em>project-config.jam</em> in current directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ import option ;
+$ using msvc : 14.1 : “E: \VS2017\VC\Tools\MSVC\14.1-.250117\bin\HostX64\x64\cl.exe” ;
+$ option.set keep-going : false ;
+</pre></div>
+</div>
+<p>Please note that: i) use your own VS version number (e.g. 14.1) ii) use your own directory of _cl.exe_.</p>
+<p><strong>step 6</strong> (be careful: this step may take 1 - 3 hours depends on computers) create a folder named build in current directory. And run command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ b2.exe stage --toolset=msvc-14.1 address-model=64 --stagedir=&quot;E:\mylib\boost\bin1.64.0\VC14.
+$ 1&quot; threading=multi --build-type=complete --build-dir=&quot;E:\mylib\boost\boost_1_64_0\build&quot;
+</pre></div>
+</div>
+<p>Please note that: i) use your own directory names ii) be careful about the VS version number</p>
+<ul class="simple">
+<li><strong>leveldb.lib</strong></li>
+</ul>
+<p><strong>step 1</strong> download source codes of <em>LevelDB</em> for windows: <a class="reference external" href="https://github.com/vaskomitanov/leveldb">https://github.com/vaskomitanov/leveldb</a></p>
+<p><strong>step 2</strong> open <em>Visual Studio</em> (2017). Create a project:</p>
+<blockquote>
+<div><ul class="simple">
+<li>file – new – project from existing code</li>
+<li>choose the type of project: <em>Visual C++</em></li>
+<li>project file location: the directory of <em>LevelDB</em></li>
+<li>project name: <em>LevelDB</em></li>
+<li>project type: <em>LIB</em></li>
+<li>preprocessor definition: <em>LEVELDB_PLATFORM_WINDOWS;OS_WIN; WIN32</em></li>
+<li>include search path: <em>E:LIBleveldb-windows;E:LIBleveldb-windowsinclude</em> (the directory of <em>LevelDB</em> and its <em>include</em>)</li>
+<li>click <em>finish</em></li>
+</ul>
+</div></blockquote>
+<p><strong>step 3</strong> set <em>LevelDB.lib</em>:</p>
+<blockquote>
+<div><ul class="simple">
+<li>project – properties – configuration properties – configuration type: <em>LIB</em></li>
+<li>configuration properties – C/C++ - General – preprocessor – preprocessor definition: <em>LEVELDB_PLATFORM_WINDOWS;OS_WIN; WIN32</em></li>
+<li>linker – general – additional library directory: <em>E:LIBboost64stagelib</em> (use your own path)</li>
+</ul>
+</div></blockquote>
+<p><strong>step 4</strong> open <em>solution explorer</em>, exclude the following files (tips - you can search and right click on the target files):</p>
+<blockquote>
+<div><ul class="simple">
+<li>files ends with <em>_test.cc</em> and <em>_bench.cc</em></li>
+<li><em>port/port_android.cc</em></li>
+<li><em>port/port_posix.cc</em></li>
+<li><em>util/env_posix.cc</em></li>
+</ul>
+</div></blockquote>
+<p><strong>step 5</strong> modify codes:</p>
+<p>in <em>dbc.cc</em>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ delete #include &lt; unistd.h&gt;
+</pre></div>
+</div>
+<p>in <em>portport.h</em> - add the lines below before first <code class="docutils literal notranslate"><span class="pre">#endif</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ elif defined(LEVELDB_PLATFORM_WINDOWS)
+$ include &quot;port/port_win.h&quot;
+</pre></div>
+</div>
+<p><strong>step 6</strong> note: remember to compile as <em>release x64</em></p>
+<ul class="simple">
+<li><strong>plyvel</strong></li>
+</ul>
+<p>modify <em>setup.py</em>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Extension</span><span class="p">(</span>
+                <span class="o">...</span>
+                <span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;leveldb vaskomitanov-r x64&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;libboost_chrono-vc141-mt-x64-1_69&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;libboost_date_time-vc141-mt-x64-1_69&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;libboost_filesystem-vc141-mt-x64-1_69&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;libboost_system-vc141-mt-x64-1_69&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;libboost_thread-vc141-mt-x64-1_69&#39;</span><span class="p">],</span>
+                <span class="o">...</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><strong>Cmake</strong></li>
+</ul>
+<p>you may also need to install Cmake, please check the official guidance here: <a class="reference external" href="https://cgold.readthedocs.io/en/latest/first-step/installation.html#windows">https://cgold.readthedocs.io/en/latest/first-step/installation.html#windows</a></p>
 </div>
 </div>
 </div>
@@ -305,7 +393,7 @@ distribution to install the prerequisites.</p>
         <a href="examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="overview.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Graphbrain – Language, Knowledge, Cognition" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -157,7 +157,7 @@
 <span class="kn">from</span> <span class="nn">graphbrain.meaning.nlpvis</span> <span class="k">import</span> <span class="n">print_tree</span>
 
 
-<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
 
 
 <span class="n">deps_arg_types</span> <span class="o">=</span> <span class="p">{</span>
@@ -171,6 +171,7 @@
     <span class="s1">&#39;dative&#39;</span><span class="p">:</span> <span class="s1">&#39;i&#39;</span><span class="p">,</span>     <span class="c1"># indirect object</span>
     <span class="s1">&#39;advcl&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span>      <span class="c1"># specifier</span>
     <span class="s1">&#39;prep&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span>       <span class="c1"># specifier</span>
+    <span class="s1">&#39;npadvmod&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span>   <span class="c1"># specifier</span>
     <span class="s1">&#39;parataxis&#39;</span><span class="p">:</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span>  <span class="c1"># parataxis</span>
     <span class="s1">&#39;intj&#39;</span><span class="p">:</span> <span class="s1">&#39;j&#39;</span><span class="p">,</span>       <span class="c1"># interjection</span>
     <span class="s1">&#39;xcomp&#39;</span><span class="p">:</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span>      <span class="c1"># clausal complement</span>
@@ -190,7 +191,6 @@
     <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">tag_</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;NN&#39;</span>
 
 
-<span class="c1"># TODO: check if complete</span>
 <span class="k">def</span> <span class="nf">is_verb</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
     <span class="n">tag</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">tag_</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -199,11 +199,18 @@
         <span class="k">return</span> <span class="kc">False</span>
 
 
+<span class="k">def</span> <span class="nf">is_infinitive</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">tag_</span> <span class="o">==</span> <span class="s1">&#39;VB&#39;</span>
+
+
 <span class="k">def</span> <span class="nf">is_compound</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">dep_</span> <span class="o">==</span> <span class="s1">&#39;compound&#39;</span>
 
 
-<span class="k">def</span> <span class="nf">token_type</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">token_type</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">head</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">is_noun</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;c&#39;</span>
+
     <span class="n">dep</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">dep_</span>
     <span class="n">head_type</span> <span class="o">=</span> <span class="n">token_head_type</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">head_type</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -218,8 +225,8 @@
             <span class="k">return</span> <span class="s1">&#39;p&#39;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="s1">&#39;c&#39;</span>
-    <span class="k">elif</span> <span class="n">dep</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;acomp&#39;</span><span class="p">,</span> <span class="s1">&#39;appos&#39;</span><span class="p">,</span> <span class="s1">&#39;attr&#39;</span><span class="p">,</span> <span class="s1">&#39;compound&#39;</span><span class="p">,</span> <span class="s1">&#39;dative&#39;</span><span class="p">,</span> <span class="s1">&#39;dep&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;dobj&#39;</span><span class="p">,</span> <span class="s1">&#39;nsubj&#39;</span><span class="p">,</span> <span class="s1">&#39;nsubjpass&#39;</span><span class="p">,</span> <span class="s1">&#39;oprd&#39;</span><span class="p">,</span> <span class="s1">&#39;pobj&#39;</span><span class="p">,</span> <span class="s1">&#39;meta&#39;</span><span class="p">}:</span>
+    <span class="k">elif</span> <span class="n">dep</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;appos&#39;</span><span class="p">,</span> <span class="s1">&#39;attr&#39;</span><span class="p">,</span> <span class="s1">&#39;compound&#39;</span><span class="p">,</span> <span class="s1">&#39;dative&#39;</span><span class="p">,</span> <span class="s1">&#39;dep&#39;</span><span class="p">,</span> <span class="s1">&#39;dobj&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;nsubj&#39;</span><span class="p">,</span> <span class="s1">&#39;nsubjpass&#39;</span><span class="p">,</span> <span class="s1">&#39;oprd&#39;</span><span class="p">,</span> <span class="s1">&#39;pobj&#39;</span><span class="p">,</span> <span class="s1">&#39;meta&#39;</span><span class="p">}:</span>
         <span class="k">return</span> <span class="s1">&#39;c&#39;</span>
     <span class="k">elif</span> <span class="n">dep</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;advcl&#39;</span><span class="p">,</span> <span class="s1">&#39;ccomp&#39;</span><span class="p">,</span> <span class="s1">&#39;csubj&#39;</span><span class="p">,</span> <span class="s1">&#39;csubjpass&#39;</span><span class="p">,</span> <span class="s1">&#39;parataxis&#39;</span><span class="p">}:</span>
         <span class="k">return</span> <span class="s1">&#39;p&#39;</span>
@@ -262,7 +269,7 @@
             <span class="k">return</span> <span class="s1">&#39;t&#39;</span>
         <span class="k">elif</span> <span class="n">head_type</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span><span class="p">:</span>
             <span class="k">return</span> <span class="s1">&#39;a&#39;</span>
-        <span class="k">elif</span> <span class="n">head_type</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;t&#39;</span><span class="p">}:</span>
+        <span class="k">elif</span> <span class="n">head_type</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">}:</span>
             <span class="k">return</span> <span class="s1">&#39;w&#39;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="s1">&#39;m&#39;</span>
@@ -286,8 +293,13 @@
             <span class="k">return</span> <span class="s1">&#39;x&#39;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="s1">&#39;b&#39;</span>
+    <span class="k">elif</span> <span class="n">dep</span> <span class="o">==</span> <span class="s1">&#39;acomp&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">is_verb</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s1">&#39;x&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;c&#39;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="c1">#  error / warning</span>
+        <span class="c1">#  error / warning ?</span>
         <span class="k">pass</span>
 
 
@@ -330,8 +342,16 @@
         <span class="k">return</span> <span class="n">entity</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">entity</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">post_process</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">entity</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">connector_type</span><span class="p">(</span><span class="n">entity</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span>
+        <span class="n">ct</span> <span class="o">=</span> <span class="n">connector_type</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ct</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">connect</span><span class="p">(</span><span class="s1">&#39;+/b/.&#39;</span><span class="p">,</span> <span class="n">entity</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">ct</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;b&#39;</span> <span class="ow">and</span> <span class="n">is_atom</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">ps</span> <span class="o">=</span> <span class="n">atom_parts</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">ps</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;m&#39;</span> <span class="o">+</span> <span class="n">ct</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ps</span><span class="p">),)</span> <span class="o">+</span> <span class="n">entity</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">ct</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span> <span class="ow">and</span> <span class="n">is_atom</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span>
+                <span class="n">is_edge</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">and</span> <span class="n">connector_type</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;m&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">((</span><span class="n">entity</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">entity</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]),)</span> <span class="o">+</span> <span class="n">entity</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">entity</span>
 
@@ -386,10 +406,26 @@
             <span class="n">pos</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">parent_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span> <span class="ow">and</span> <span class="n">parent_type</span> <span class="o">!=</span> <span class="s1">&#39;pm&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parent_type</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">parent_type</span> <span class="o">=</span> <span class="s1">&#39;pd&#39;</span>  <span class="c1"># TODO: questions, imperative...</span>
             <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg_type</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="n">entity</span><span class="p">])</span> <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">entities</span><span class="p">]</span>
             <span class="n">args_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span> <span class="k">if</span> <span class="n">arg</span> <span class="o">!=</span> <span class="s1">&#39;?&#39;</span><span class="p">])</span>
+
+            <span class="c1"># assign predicate subtype</span>
+            <span class="c1"># (declarative, imperative, interrogative, ...)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parent_type</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># interrogative cases</span>
+                <span class="n">last_token</span> <span class="o">=</span> <span class="n">child_tokens</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">last_token</span><span class="o">.</span><span class="n">tag_</span> <span class="o">==</span> <span class="s1">&#39;.&#39;</span> <span class="ow">and</span>
+                        <span class="n">last_token</span><span class="o">.</span><span class="n">dep_</span> <span class="o">==</span> <span class="s1">&#39;punct&#39;</span> <span class="ow">and</span>
+                        <span class="n">last_token</span><span class="o">.</span><span class="n">lemma_</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;?&#39;</span><span class="p">):</span>
+                    <span class="n">parent_type</span> <span class="o">=</span> <span class="s1">&#39;p?&#39;</span>
+                <span class="c1"># imperative cases</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">is_infinitive</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;s&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args_string</span> <span class="ow">and</span>
+                        <span class="s1">&#39;TO&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">child</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tag_</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">child_tokens</span><span class="p">]):</span>
+                    <span class="n">parent_type</span> <span class="o">=</span> <span class="s1">&#39;p!&#39;</span>
+                <span class="c1"># declarative (by default)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">parent_type</span> <span class="o">=</span> <span class="s1">&#39;pd&#39;</span>
+
             <span class="n">et</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parent_type</span><span class="p">,</span> <span class="n">args_string</span><span class="p">)</span>
 
         <span class="n">parent_atom</span> <span class="o">=</span> <span class="n">build_atom</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">et</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
@@ -504,24 +540,24 @@
             <span class="n">relative_to_concept</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
             <span class="n">parent</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;:/b/.&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">relative_to_concept</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">post_process</span><span class="p">(</span><span class="n">parent</span><span class="p">),</span> <span class="n">extra_edges</span>
+        <span class="k">return</span> <span class="n">parent</span><span class="p">,</span> <span class="n">extra_edges</span>
 
     <span class="k">def</span> <span class="nf">parse_sentence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sent</span><span class="p">):</span>
         <span class="n">main_edge</span><span class="p">,</span> <span class="n">extra_edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_token</span><span class="p">(</span><span class="n">sent</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+        <span class="n">main_edge</span> <span class="o">=</span> <span class="n">post_process</span><span class="p">(</span><span class="n">main_edge</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;main_edge&#39;</span><span class="p">:</span> <span class="n">main_edge</span><span class="p">,</span>
                 <span class="s1">&#39;extra_edges&#39;</span><span class="p">:</span> <span class="n">extra_edges</span><span class="p">,</span>
                 <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">sent</span><span class="p">),</span>
                 <span class="s1">&#39;spacy_sentence&#39;</span><span class="p">:</span> <span class="n">sent</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parse_sentence</span><span class="p">(</span><span class="n">sent</span><span class="p">)</span> <span class="k">for</span> <span class="n">sent</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">sents</span><span class="p">)</span></div>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    Satellites from NASA and other agencies have been tracking sea ice changes</span>
-<span class="s2">    since 1979.</span>
+<span class="s2">    There’s also a link to the Turing Test that we finished up with last week.</span>
 <span class="s2">    &quot;&quot;&quot;</span>
 
     <span class="n">parser</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">lang</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
