@@ -20,7 +20,7 @@ class RedditParser(object):
     def __init__(self, hg, comments):
         self.hg = hg
         self.comments = comments
-        self.parser = Parser(lang='en')
+        self.parser = Parser(lang='en', pos=True, lemmas=True)
         self.main_edges = 0
         self.extra_edges = 0
         self.time_acc = 0
@@ -34,7 +34,7 @@ class RedditParser(object):
         prev = None
         for parse in parses:
             main_edge = parse['main_edge']
-            sentence = parse['sentence']
+            text = parse['text']
 
             print('\nsentence: {}'.format(sentence))
             print(ent2str(main_edge))
@@ -48,8 +48,8 @@ class RedditParser(object):
                 self.hg.add(('seq/p/.', prev, edge))
             prev = edge
 
-            # attach sentence to edge
-            self.hg.set_attribute(main_edge, 'sentence', sentence)
+            # attach text to edge
+            self.hg.set_attribute(main_edge, 'text', text)
 
             # extra edges
             for edge in parse['extra_edges']:
