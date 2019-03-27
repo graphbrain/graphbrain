@@ -260,10 +260,14 @@ class Parser(object):
 
             # assign predicate subtype
             # (declarative, imperative, interrogative, ...)
+            if len(child_tokens) > 0:
+                last_token = child_tokens[-1][0]
+            else:
+                last_token = None
             if len(parent_type) == 1:
                 # interrogative cases
-                last_token = child_tokens[-1][0]
-                if (last_token.tag_ == '.' and
+                if (last_token and
+                        last_token.tag_ == '.' and
                         last_token.dep_ == 'punct' and
                         last_token.lemma_.strip() == '?'):
                     parent_type = 'p?'
