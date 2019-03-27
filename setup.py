@@ -23,14 +23,18 @@ if USE_CYTHON:
     ext_modules = [
         Extension('graphbrain.funs', ['graphbrain/funs.pyx'],),
         Extension('graphbrain.backends.leveldb',
-                  ['graphbrain/backends/leveldb.pyx'])
+                  ['graphbrain/backends/leveldb.pyx']),
+        Extension('graphbrain.meaning.parser',
+                  ['graphbrain/meaning/parser.pyx'])
     ]
     cmdclass = {'build_ext': build_ext}
 else:
     ext_modules = [
         Extension('graphbrain.funs', ['graphbrain/funs.c'], ),
         Extension('graphbrain.backends.leveldb',
-                  ['graphbrain/backends/leveldb.c'])
+                  ['graphbrain/backends/leveldb.c']),
+        Extension('graphbrain.meaning.parser',
+                  ['graphbrain/meaning/parser.c'])
     ]
     cmdclass = {}
 
