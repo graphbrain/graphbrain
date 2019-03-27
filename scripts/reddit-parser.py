@@ -36,7 +36,7 @@ class RedditParser(object):
             main_edge = parse['main_edge']
             text = parse['text']
 
-            print('\nsentence: {}'.format(sentence))
+            print('\ntext: {}'.format(text))
             print(ent2str(main_edge))
 
             # add main edge
