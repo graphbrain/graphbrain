@@ -45,7 +45,7 @@ class RedditParser(object):
 
             # connect to previous
             if prev:
-                self.hg.add(('seq/p/.', prev, edge))
+                self.hg.add(('seq/p/.', prev, main_edge))
             prev = main_edge
 
             # attach text to edge
