@@ -33,9 +33,13 @@ class HyperGraph(object):
         """Checks if the given edge exists in the hypergraph."""
         return self.backend.exists(vertex)
 
-    def add(self, edge):
-        """Adds and edge to the hypergraph if it does not exist yet."""
-        if isinstance(edge, (list, tuple)):
+    def add(self, edge, deep=False):
+        """Adds edge to the hypergraph if it does not exist yet.
+           Returns same edge."""
+        if is_edge(edge):
+            if deep:
+                for entity in edge:
+                    self.add(entity)
             return self.backend.add(edge)
         else:
             return edge

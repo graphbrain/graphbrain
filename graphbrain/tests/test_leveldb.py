@@ -14,12 +14,14 @@ class TestLevelDB(unittest.TestCase):
         self.hg.close()
 
     def test_ops_1(self):
+        self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.assertTrue(self.hg.exists(('is', 'graphbrain/1', 'great/1')))
         self.hg.remove(('is', 'graphbrain/1', 'great/1'))
         self.assertFalse(self.hg.exists(('is', 'graphbrain/1', 'great/1')))
 
     def test_ops_2(self):
+        self.hg.destroy()
         self.hg.add(('src', 'graphbrain/1', ('size', 'graphbrain/1', '7')))
         self.assertTrue(self.hg.exists(('src', 'graphbrain/1',
                                         ('size', 'graphbrain/1', '7'))))
@@ -28,6 +30,7 @@ class TestLevelDB(unittest.TestCase):
                                          ('size', 'graphbrain/1', '7'))))
 
     def test_destroy(self):
+        self.hg.destroy()
         self.hg.add(('src', 'graphbrain/1', ('size', 'graphbrain/1', '7')))
         self.assertTrue(self.hg.exists(('src', 'graphbrain/1',
                                         ('size', 'graphbrain/1', '7'))))
@@ -36,6 +39,7 @@ class TestLevelDB(unittest.TestCase):
                                          ('size', 'graphbrain/1', '7'))))
 
     def test_pattern2edges(self):
+        self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.hg.add(('says', 'mary/1'))
         self.hg.add(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
@@ -57,6 +61,7 @@ class TestLevelDB(unittest.TestCase):
                         ('is', 'graphbrain/1', 'great/1'), 'extra/1'))
 
     def test_pattern2edges_open_ended(self):
+        self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.hg.add(('says', 'mary/1'))
         self.hg.add(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
@@ -86,6 +91,7 @@ class TestLevelDB(unittest.TestCase):
                         'extra/1'))
 
     def test_star(self):
+        self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.assertEqual(self.hg.star('graphbrain/1'),
                          {('is', 'graphbrain/1', 'great/1')})
@@ -107,6 +113,7 @@ class TestLevelDB(unittest.TestCase):
         self.assertEqual(len(self.hg.star('graphbrain/1', limit=10)), 3)
 
     def test_symbols_with_root(self):
+        self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.assertEqual(self.hg.symbols_with_root('graphbrain'),
                          {'graphbrain/1'})
@@ -117,6 +124,7 @@ class TestLevelDB(unittest.TestCase):
         self.hg.remove(('is', 'graphbrain/2', 'great/1'))
 
     def test_edges_with_symbols(self):
+        self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.hg.add(('is', 'graphbrain/1', 'great/2'))
         self.assertEqual(self.hg.edges_with_symbols(('graphbrain/1',),
