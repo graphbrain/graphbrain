@@ -105,7 +105,7 @@ class HyperGraph(object):
             self.remove(edge)
 
     def ego(self, center):
-        """Returns all atoms directly connected to centre by hyperedges."""
+        """Returns all atoms directly connected to center by hyperedges."""
         edges = self.star(center)
         atom_set = set()
         for edge in edges:
@@ -113,37 +113,12 @@ class HyperGraph(object):
                 atom_set.add(atom)
         return atom_set
 
-    def add_belief(self, source, edge):
-        """A belif is a fact with a source. The fact is created as a
-           normal edge if it does not exist yet. Another edge is created
-           to assign the fact to the source."""
-        self.add(edge)
-        self.add((const.source, edge, source))
-
-    def sources(self, edge):
-        """Set of sources (nodes) that support a statement (edge)."""
-        edges = self.pattern2edges((const.source, edge, None))
-        sources = [edge[2] for edge in edges]
-        return set(sources)
-
-    def is_belief(self, edge):
-        """Check if hyperedge is a belief (has sources)."""
-        return len(self.pattern2edges((const.source, edge, None))) > 0
-
-    def remove_belief(self, source, edge):
-        """A belif is a fact with a source. The link from the source to the fact
-           is removed. If no more sources support the fact, then the fact is also
-           removed."""
-        self.remove((const.source, edge, source))
-        if len(self.sources(edge)) == 0:
-            self.remove(edge)
-
     def all(self):
-        """Returns a lazy sequence of all the vertices in the hypergraph."""
+        """Returns a lazy sequence of all the edges in the hypergraph."""
         return self.backend.all()
 
     def all_attributes(self):
-        """Returns a lazy sequence with a tuple for each vertex in the hypergraph.
+        """Returns a lazy sequence of tuples, one per edge in the hypergraph.
            The first element of the tuple is the vertex itself,
            the second is a dictionary of attribute values (as strings)."""
         return self.backend.all_attributes()
