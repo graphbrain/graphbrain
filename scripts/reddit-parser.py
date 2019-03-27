@@ -27,19 +27,34 @@ class RedditParser(object):
         self.items_processed = 0
         self.first_item = True
 
-    def process_text(self, text, author):
+    def process_text(self, text, author, main_connector):
         start_t = time.time()
         parses = self.parser.parse(text)
+
+        prev = None
         for parse in parses:
-            print('\n')
-            print('sentence: {}'.format(parse['sentence']))
-            print(ent2str(parse['main_edge']))
-            self.hg.add_belief(author, parse['main_edge'])
+            main_edge = parse['main_edge']
+            sentence = parse['sentence']
+
+            print('\nsentence: {}'.format(sentence))
+            print(ent2str(main_edge))
+
+            # add main edge
+            self.hg.add((main_connector, author, main_edge), deep=True)
             self.main_edges += 1
+
+            # connect to previous
+            if prev:
+                self.hg.add(('seq/p/.', prev, edge))
+            prev = edge
+
+            # attach sentence to edge
+            self.hg.set_attribute(main_edge, 'sentence', sentence)
+
+            # extra edges
             for edge in parse['extra_edges']:
-                self.hg.add_belief('gb', edge)
+                self.hg.add(edge)
                 self.extra_edges += 1
-            self.hg.set_attribute(parse['main_edge'], 'text', text)
 
         if self.first_item:
             self.first_item = False
@@ -53,22 +68,24 @@ class RedditParser(object):
             print('items per minute: %s' % items_per_min)
 
     def process_comments(self, post):
+        # TODO: connect to parent
+
         if 'body' in post:
-            author = build_atom(post['author'], 'c', 'reddit_user')
-            self.process_text(post['body'], author)
+            author = build_atom(post['author'], 'c', 'reddit.user')
+            self.process_text(post['body'], author, 'comment/p/.reddit')
         if 'comments' in post:
             for comment in post['comments']:
                 if comment:
                     self.process_comments(comment)
 
     def process_post(self, post):
-        author = build_atom(post['author'], 'c', 'reddit_user')
+        author = build_atom(post['author'], 'c', 'reddit.user')
         print('author: %s' % author)
 
         text = post['title'].strip()
         if text[-1].isalnum():
             text += '.'
-        self.process_text(text, author)
+        self.process_text(text, author, 'headline/p/.reddit')
         if self.comments:
             self.process_comments(post)
 
@@ -101,14 +118,5 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    params = {
-        'backend': args.backend,
-        'hg': args.hg,
-        'infile': args.infile,
-        'comments': args.comments
-    }
-
-    hgraph = HyperGraph(params)
-    infile = params['infile']
-    read_comments = params['comments']
-    RedditParser(hgraph, comments=read_comments).read_file(infile)
+    hgraph = HyperGraph({'backend': args.backend, 'hg': args.hg})
+    RedditParser(hgraph, comments=args.comments).read_file(args.infile)
