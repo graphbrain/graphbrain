@@ -33,10 +33,10 @@ class HyperGraph(object):
         """Checks if the given edge exists in the hypergraph."""
         return self.backend.exists(vertex)
 
-    def add(self, edge, timestamp=-1):
+    def add(self, edge):
         """Adds and edge to the hypergraph if it does not exist yet."""
         if isinstance(edge, (list, tuple)):
-            return self.backend.add(edge, timestamp)
+            return self.backend.add(edge)
         else:
             return edge
 
@@ -62,7 +62,8 @@ class HyperGraph(object):
         return self.backend.symbols_with_root(root)
 
     def edges_with_symbols(self, symbols, root=None):
-        """Find all edges containing the given edge_symbols, and optionally a given root"""
+        """Find all edges containing the given edge_symbols, and
+           optionally a given root"""
         return self.backend.edges_with_symbols(symbols, root)
 
     def destroy(self):
@@ -97,10 +98,6 @@ class HyperGraph(object):
         """Returns the degree of a vertex."""
         return self.backend.degree(vertex)
 
-    def timestamp(self, vertex):
-        """Returns the timestamp of a vertex."""
-        return self.backend.timestamp(vertex)
-
     def remove_by_pattern(self, pattern):
         """Removes from the hypergraph all edges that match the pattern."""
         edges = self.pattern2edges(pattern)
@@ -116,12 +113,12 @@ class HyperGraph(object):
                 atom_set.add(atom)
         return atom_set
 
-    def add_belief(self, source, edge, timestamp=-1):
-        """A belif is a fact with a source. The fact is created as a normal edge
-           if it does not exist yet. Another edge is created to assign the fact to
-           the source."""
-        self.add(edge, timestamp)
-        self.add((const.source, edge, source), timestamp)
+    def add_belief(self, source, edge):
+        """A belif is a fact with a source. The fact is created as a
+           normal edge if it does not exist yet. Another edge is created
+           to assign the fact to the source."""
+        self.add(edge)
+        self.add((const.source, edge, source))
 
     def sources(self, edge):
         """Set of sources (nodes) that support a statement (edge)."""

@@ -14,7 +14,7 @@ class Backend(object):
         """Checks if the given edge exists in the hypergraph."""
         raise NotImplementedError()
 
-    def add(self, edge, timestamp=-1):
+    def add(self, edge):
         """Adds an edges to the hypergraph if it does not exist yet."""
         raise NotImplementedError()
 
@@ -37,7 +37,8 @@ class Backend(object):
         raise NotImplementedError()
 
     def edges_with_symbols(self, symbols, root=None):
-        """Find all edges containing the given edge_symbols, and optionally a given root"""
+        """Find all edges containing the given edge_symbols,
+           and optionally a given root"""
         raise NotImplementedError()
 
     def destroy(self):
@@ -70,10 +71,6 @@ class Backend(object):
 
     def degree(self, vertex):
         """Returns the degree of a vertex."""
-        raise NotImplementedError()
-
-    def timestamp(self, vertex):
-        """Returns the timestamp of a vertex."""
         raise NotImplementedError()
 
     def all(self):

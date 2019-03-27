@@ -27,7 +27,8 @@ def nthperm(n, nper):
 
 
 def permutate(tokens, nper):
-    """Reorder the tokens vector to perform a permutation, specified by nper."""
+    """Reorder the tokens vector to perform a permutation,
+       specified by nper."""
     n = len(tokens)
     indices = nthperm(n, nper)
     return tuple(tokens[i] for i in indices)
@@ -153,7 +154,8 @@ class LevelDB(Backend):
         self.db.delete(vert_key)
 
     def str2perms(self, center_id, limit=None):
-        """Query database for all the edge permutations that contain a given entity, represented as a string."""
+        """Query database for all the edge permutations that contain a
+           given entity, represented as a string."""
         start_str = '%s ' % center_id
         end_str = str_plus_1(start_str)
         start_key = (u'p%s' % start_str).encode('utf-8')
@@ -174,7 +176,8 @@ class LevelDB(Backend):
         return set(edges)
 
     def pattern2edges(self, pattern, open_ended):
-        """Return all the edges that match a pattern. A pattern is a collection of entity ids and wildcards (None)."""
+        """Return all the edges that match a pattern. A pattern is a
+           collection of entity ids and wildcards (None)."""
         nodes = [node for node in pattern if node is not None]
         start_str = edges2str(nodes)
         end_str = str_plus_1(start_str)
@@ -188,7 +191,8 @@ class LevelDB(Backend):
             if edge:
                 edges.append(edge)
 
-        return set([edge for edge in edges if edge_matches_pattern(edge, pattern, open_ended)])
+        return set(edge for edge in edges
+                   if edge_matches_pattern(edge, pattern, open_ended))
 
     def exists_key(self, vertex_key):
         """Checks if the given vertex exists in the hypergraph."""
@@ -247,7 +251,7 @@ class LevelDB(Backend):
         vert_key = vertex2key(vertex)
         return self.dec_attribute_key(vert_key, attribute)
 
-    def add(self, edge, timestamp=-1):
+    def add(self, edge):
         """Adds an edge to the hypergraph if it does not exist yet."""
         edge_key = vertex2key(edge)
         if not self.exists_key(edge_key):
@@ -260,8 +264,8 @@ class LevelDB(Backend):
                         self.inc_counter('symbol_count')
                     else:
                         self.inc_counter('edge_count')
-                    self.add_key(vert_key, {'d': 1, 't': timestamp})
-            self.add_key(edge_key, {'d': 0, 't': timestamp})
+                    self.add_key(vert_key, {'d': 1})
+            self.add_key(edge_key, {'d': 0})
             self.write_edge_permutations(edge)
         return edge
 
@@ -299,7 +303,8 @@ class LevelDB(Backend):
         return symbs
 
     def edges_with_symbols(self, symbols, root=None):
-        """Find all edges containing the given edge_symbols, and optionally a given root"""
+        """Find all edges containing the given edge_symbols, and
+           optionally a given root"""
         if root:
             start_str = '%s %s/' % (' '.join(symbols), root)
         else:
@@ -372,10 +377,6 @@ class LevelDB(Backend):
     def degree(self, vertex):
         """Returns the degree of a vertex."""
         return self.get_int_attribute(vertex, 'd', 0)
-
-    def timestamp(self, vertex):
-        """Returns the timestamp of a vertex."""
-        return self.get_int_attribute(vertex, 't', -1)
 
     def all(self):
         """Returns a lazy sequence of all the vertices in the hypergraph."""
