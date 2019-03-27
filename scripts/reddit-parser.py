@@ -82,7 +82,7 @@ class RedditParser(object):
         author = build_atom(post['author'], 'c', 'reddit.user')
         print('author: %s' % author)
 
-        text = post['title'].strip()
+        text = post['title'].lower().strip()
         if text[-1].isalnum():
             text += '.'
         self.process_text(text, author, 'headline/p/.reddit')
