@@ -5,6 +5,10 @@ from graphbrain.funs import *
 from graphbrain.backends.backend import Backend
 
 
+# maximum permutations of an edge that are written to the database
+MAX_PERMS = 1000
+
+
 permcache = {}
 
 
@@ -51,7 +55,7 @@ def unpermutate(tokens, nper):
 
 def do_with_edge_permutations(edge, f):
     """Applies the function f to all permutations of the given edge."""
-    nperms = math.factorial(len(edge))
+    nperms = min(math.factorial(len(edge)), MAX_PERMS)
     for nperm in range(nperms):
         perm_str = ' '.join([ent2str(e) for e in permutate(edge, nperm)])
         perm_str = '%s %s' % (perm_str, nperm)

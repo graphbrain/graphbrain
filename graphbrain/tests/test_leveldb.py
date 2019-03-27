@@ -1,6 +1,7 @@
 import unittest
 from graphbrain.hypergraph import HyperGraph
 from graphbrain.funs import *
+from graphbrain.backends.leveldb import *
 
 
 class TestLevelDB(unittest.TestCase):
@@ -140,7 +141,7 @@ class TestLevelDB(unittest.TestCase):
         self.hg.remove(('is', 'graphbrain/1', 'great/1'))
         self.hg.remove(('is', 'graphbrain/1', 'great/2'))
 
-    def test_attributes_vertex(self):
+    def test_attributes_atom(self):
         self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.assertEqual(self.hg.get_int_attribute('graphbrain/1', 'foo'),
@@ -262,6 +263,31 @@ class TestLevelDB(unittest.TestCase):
         self.hg.remove(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
         self.assertEqual(self.hg.edge_count(), 0)
         self.assertEqual(self.hg.total_degree(), 0)
+
+    def test_permutations(self):
+        perm = permutate(('a', 'b'), 0)
+        self.assertEqual(perm, ('a', 'b'))
+        perm = permutate(('a', 'b'), 1)
+        self.assertEqual(perm, ('b', 'a'))
+
+        perm = permutate(('a', 'b', 'c'), 0)
+        self.assertEqual(perm, ('a', 'b', 'c'))
+        perm = permutate(('a', 'b', 'c'), 1)
+        self.assertEqual(perm, ('a', 'c', 'b'))
+        perm = permutate(('a', 'b', 'c'), 2)
+        self.assertEqual(perm, ('b', 'a', 'c'))
+        perm = permutate(('a', 'b', 'c'), 3)
+        self.assertEqual(perm, ('b', 'c', 'a'))
+        perm = permutate(('a', 'b', 'c'), 4)
+        self.assertEqual(perm, ('c', 'a', 'b'))
+        perm = permutate(('a', 'b', 'c'), 5)
+        self.assertEqual(perm, ('c', 'b', 'a'))
+
+        perm = permutate(('a', 'b', 'c', 'd'), 0)
+        self.assertEqual(perm, ('a', 'b', 'c', 'd'))
+
+        perm = permutate(('a', 'b', 'c', 'd'), 1)
+        self.assertEqual(perm, ('a', 'b', 'd', 'c'))
 
 
 if __name__ == '__main__':
