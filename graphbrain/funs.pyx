@@ -339,3 +339,33 @@ def apply_fun_to_atom(fun, atom, target):
             return target
     else:
         return tuple(apply_fun_to_atom(fun, atom, item) for item in target)
+
+
+def predicate(entity):
+    et = entity_type(entity)[0]
+
+    if is_atom(entity):
+        if et == 'p':
+            return entity
+    elif et == 'r':
+        return predicate(entity[0])
+    elif et == 'p':
+        return predicate(entity[1])
+
+    return None
+
+
+def rel_arg_role(relation, position):
+    """Relation argument role.
+       Returns None if no role can be determined."""
+    if entity_type(relation)[0] != 'r':
+        return None
+    else:
+        pred = predicate(relation)
+        if pred:
+            role = atom_role(pred)
+            if len(role) > 1:
+                arg_roles = role[1]
+                if position < len(arg_roles):
+                    return arg_roles[position]
+        return None

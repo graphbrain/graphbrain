@@ -185,30 +185,12 @@ def nest_predicate(inner, outer, before):
         return ((outer, inner[0]),) + inner[1:]
 
 
-def post_process(entity):
-    if is_atom(entity):
-        return entity
-    else:
-        entity = tuple(post_process(item) for item in entity)
-        ct = connector_type(entity)
-        if ct[0] == 'c':
-            return connect('+/b/.', entity)
-        elif ct[0] == 'b' and is_atom(entity[0]) and len(entity) == 2:
-            ps = atom_parts(entity[0])
-            ps[1] = 'm' + ct[1:]
-            return ('/'.join(ps),) + entity[1:]
-        elif (ct[0] == 'w' and is_atom(entity[0]) and len(entity) == 2 and
-                is_edge(entity[1]) and connector_type(entity[1])[0] == 'm'):
-            return ((entity[0], entity[1][0]),) + entity[1][1:]
-        else:
-            return entity
-
-
 class Parser(object):
     def __init__(self, lang, pos=False, lemmas=False):
         self.lang = lang
         self.pos = pos
         self.lemmas = lemmas
+        self.tokens = {}
 
         if lang == 'en':
             self.nlp = spacy.load('en_core_web_lg')
@@ -217,11 +199,56 @@ class Parser(object):
         else:
             raise RuntimeError('unkown language: %s' % lang)
 
+    def post_process(self, entity):
+        if is_atom(entity):
+            return entity
+        else:
+            entity = tuple(self.post_process(item) for item in entity)
+            ct = connector_type(entity)
+            # Multi-nooun concept, e.g.: (south america) -> (+ south america)
+            if ct[0] == 'c':
+                return connect('+/b/.', entity)
+            # Builders with one argument become modifiers
+            # e.g. (on/b ice) -> (on/m ice)
+            elif ct[0] == 'b' and is_atom(entity[0]) and len(entity) == 2:
+                ps = atom_parts(entity[0])
+                ps[1] = 'm' + ct[1:]
+                return ('/'.join(ps),) + entity[1:]
+            # A meta-modifier applied to a concept defined my a modifier
+            # should apply to the modifier instead.
+            # e.g.: (stricking/w (red/m dress)) -> ((stricking/w red/m) dress)
+            elif (ct[0] == 'w' and
+                    is_atom(entity[0]) and
+                    len(entity) == 2 and
+                    is_edge(entity[1]) and
+                    connector_type(entity[1])[0] == 'm'):
+                return ((entity[0], entity[1][0]),) + entity[1][1:]
+            # Make sure that specifier arguments are of the specifier type,
+            # entities are surrounded by an edge with a trigger connector if
+            # necessary. E.g.: today -> {t/t/. today}
+            elif ct[0] == 'p':
+                pred = predicate(entity)
+                if pred:
+                    role = atom_role(pred)
+                    if len(role) > 1:
+                        arg_roles = role[1]
+                        if 'x' in arg_roles:
+                            proc_edge = list(entity)
+                            for i, arg_role in enumerate(arg_roles):
+                                arg_pos = i + 1
+                                if (arg_role == 'x' and
+                                        is_atom(proc_edge[arg_pos])):
+                                    proc_edge[arg_pos] = ('t/t/.',
+                                                          proc_edge[arg_pos])
+                            return tuple(proc_edge)
+                return entity
+            else:
+                return entity
+
     def parse_token(self, token):
         extra_edges = set()
 
         positions = {}
-        tokens = {}
         children = []
         entities = []
 
@@ -233,7 +260,7 @@ class Parser(object):
             if child:
                 extra_edges |= child_extra_edges
                 positions[child] = pos
-                tokens[child] = child_token
+                self.tokens[child] = child_token
                 child_type = entity_type(child)
                 if child_type:
                     children.append(child)
@@ -255,7 +282,7 @@ class Parser(object):
             pos = None
 
         if parent_type[0] == 'p' and parent_type != 'pm':
-            args = [arg_type(tokens[entity]) for entity in entities]
+            args = [arg_type(self.tokens[entity]) for entity in entities]
             args_string = ''.join([arg for arg in args if arg != '?'])
 
             # assign predicate subtype
@@ -304,7 +331,7 @@ class Parser(object):
             if child_type[0] in {'c', 'r', 'd', 's'}:
                 if parent_type[0] == 'c':
                     if (connector_type(child) in {'pc', 'pr'} or
-                            is_relative_concept(tokens[child])):
+                            is_relative_concept(self.tokens[child])):
                         logging.debug('CHOICE #1')
                         relative_to_concept.append(child)
                     elif connector_type(child)[0] == 'b':
@@ -323,7 +350,7 @@ class Parser(object):
                     else:
                         if ((entity_type(parent_atom)[0] == 'c' and
                                 connector_type(child)[0] == 'c') or
-                                is_compound(tokens[child])):
+                                is_compound(self.tokens[child])):
                             if connector_type(parent)[0] == 'c':
                                 if connector_type(child)[0] == 'c':
                                     logging.debug('CHOICE #5a')
@@ -403,8 +430,9 @@ class Parser(object):
         return parent, extra_edges
 
     def parse_sentence(self, sent):
+        self.tokens = {}
         main_edge, extra_edges = self.parse_token(sent.root)
-        main_edge = post_process(main_edge)
+        main_edge = self.post_process(main_edge)
         return {'main_edge': main_edge,
                 'extra_edges': extra_edges,
                 'text': str(sent),
@@ -413,17 +441,3 @@ class Parser(object):
     def parse(self, text):
         doc = self.nlp(text.strip())
         return tuple(self.parse_sentence(sent) for sent in doc.sents)
-
-
-if __name__ == '__main__':
-    text = """
-    There’s also a link to the Turing Test that we finished up with last week.
-    """
-
-    parser = Parser(lang='en', pos=True, lemmas=True)
-    parse = parser.parse(text)[0]
-    print_tree(parse['spacy_sentence'].root)
-    print(ent2str(parse['main_edge']))
-    print('EXTRA EDGES:')
-    for edge in parse['extra_edges']:
-        print(ent2str(edge))
