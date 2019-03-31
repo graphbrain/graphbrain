@@ -299,6 +299,7 @@ class Parser(object):
                             for i, arg_role in enumerate(arg_roles):
                                 arg_pos = i + 1
                                 if (arg_role == 'x' and
+                                        arg_pos < len(proc_edge) and
                                         is_atom(proc_edge[arg_pos])):
                                     proc_edge[arg_pos] = (trigger,
                                                           proc_edge[arg_pos])
