@@ -56,9 +56,57 @@ def is_compound(token):
     return token.dep_ == 'compound'
 
 
+def concept_type_and_subtype(token):
+    tag = token.tag_
+    if tag[:2] == 'NN':
+        subtype = 'p' if 'P' in tag else 'n'
+        sing_plur = 'p' if tag[-1] == 'S' else 's'
+        return 'c{}.{}'.format(subtype, sing_plur)
+    elif tag == 'CD':
+        return 'c#'
+    elif tag[:2] == 'JJ':
+        return 'ca'
+    elif tag == 'DT':
+        return 'cd'
+    elif tag == 'WP':
+        return 'cw'
+    elif tag == 'PRP':
+        return 'ci'
+    else:
+        return 'c'
+
+
+def modifier_type_and_subtype(token):
+    tag = token.tag_
+    if tag == 'JJ':
+        return 'ma'
+    elif tag == 'JJR':
+        return 'mc'
+    elif tag == 'JJS':
+        return 'ms'
+    elif tag == 'DT':
+        return 'md'
+    elif tag == 'WDT':
+        return 'mw'
+    elif tag == 'CD':
+        return 'm#'
+    else:
+        return 'm'
+
+
+def builder_type_and_subtype(token):
+    tag = token.tag_
+    if tag == 'IN':
+        return 'br'  # relational (proposition)
+    elif tag == 'CC':
+        return 'b+'
+    else:
+        return 'b'
+
+
 def token_type(token, head=False):
     if is_noun(token):
-        return 'c'
+        return concept_type_and_subtype(token)
 
     dep = token.dep_
     head_type = token_head_type(token)
@@ -70,20 +118,20 @@ def token_type(token, head=False):
         head_type = head_type[0]
 
     if dep == 'ROOT':
-        if token.pos_ == 'VERB':  # TODO: generalize!
+        if is_verb(token):
             return 'p'
         else:
-            return 'c'
+            return concept_type_and_subtype(token)
     elif dep in {'appos', 'attr', 'compound', 'dative', 'dep', 'dobj',
                  'nsubj', 'nsubjpass', 'oprd', 'pobj', 'meta'}:
-        return 'c'
+        return concept_type_and_subtype(token)
     elif dep in {'advcl', 'ccomp', 'csubj', 'csubjpass', 'parataxis'}:
         return 'p'
     elif dep == 'relcl':
         if is_verb(token):
             return 'pr'
         else:
-            return 'c'
+            return concept_type_and_subtype(token)
     elif dep in {'acl', 'pcomp', 'xcomp'}:
         if token.tag_ == 'IN':
             return 'a'
@@ -91,7 +139,7 @@ def token_type(token, head=False):
             return 'pc'
     elif dep in {'amod', 'det', 'npadvmod', 'nummod', 'nmod', 'preconj',
                  'predet'}:
-        return 'm'
+        return modifier_type_and_subtype(token)
     elif dep in {'aux', 'auxpass', 'expl', 'prt', 'quantmod'}:
         if token.n_lefts + token.n_rights == 0:
             return 'a'
@@ -101,12 +149,12 @@ def token_type(token, head=False):
         if head_type == 'p':
             return 'pm'
         else:
-            return 'b'
+            return builder_type_and_subtype(token)
     elif dep == 'case':
         if token.head.dep_ == 'poss':
             return 'bp'
         else:
-            return 'b'
+            return builder_type_and_subtype(token)
     elif dep == 'neg':
         return 'an'
     elif dep == 'agent':
@@ -121,32 +169,32 @@ def token_type(token, head=False):
         elif head_type in {'m', 'x', 't', 'b'}:
             return 'w'
         else:
-            return 'm'
+            return modifier_type_and_subtype(token)
     elif dep == 'poss':
         if is_noun(token):
-            return 'c'
+            return concept_type_and_subtype(token)
         else:
             return 'mp'
     elif dep == 'prep':
         if head_type == 'p':
             return 't'
         else:
-            return 'b'
+            return builder_type_and_subtype(token)
     elif dep == 'conj':
         if head_type == 'p' and is_verb(token):
             return 'p'
         else:
-            return 'c'
+            return concept_type_and_subtype(token)
     elif dep == 'mark':
         if head_type == 'p' and head_subtype != 'c':
             return 'x'
         else:
-            return 'b'
+            return builder_type_and_subtype(token)
     elif dep == 'acomp':
         if is_verb(token):
             return 'x'
         else:
-            return 'c'
+            return concept_type_and_subtype(token)
     else:
         #  error / warning ?
         pass
@@ -426,7 +474,7 @@ class Parser(object):
                     logging.debug('choice: 9')
                     entity = insert_first_argument(entity, child)
             elif child_type[0] == 'b':
-                if connector_type(entity) == 'c':
+                if connector_type(entity)[0] == 'c':
                     logging.debug('choice: 10')
                     entity = connect(child, entity)
                 else:
@@ -441,26 +489,23 @@ class Parser(object):
                 else:
                     logging.debug('choice: 13')
                     entity = connect(entity, (child,))
-            elif child_type[0] == 'm':
+            elif child_type[0] in {'m', 'x', 't'}:
                 logging.debug('choice: 14')
                 entity = (child, entity)
-            elif child_type[0] in {'x', 't'}:
-                logging.debug('choice: 15')
-                entity = (child, entity)
             elif child_type[0] == 'a':
-                logging.debug('choice: 16')
+                logging.debug('choice: 15')
                 entity = nest_predicate(entity, child, ps.positions[child])
             elif child_type == 'w':
                 if ent_type[0] in {'d', 's'}:
-                    logging.debug('choice: 17')
+                    logging.debug('choice: 16')
                     entity = nest_predicate(entity, child, ps.positions[child])
                     # pass
                 else:
-                    logging.debug('choice: 18')
+                    logging.debug('choice: 17')
                     entity = nest(entity, child, ps.positions[child])
             else:
                 # TODO: warning ?
-                logging.debug('choice: 19')
+                logging.debug('choice: 18')
                 pass
 
             ent_type = entity_type(entity)
