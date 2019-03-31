@@ -2,13 +2,12 @@ import sys
 import logging
 import spacy
 from graphbrain import *
-from graphbrain.meaning.nlpvis import print_tree
 
 
 logging.basicConfig(stream=sys.stderr, level=logging.WARNING)
 
 
-deps_arg_types = {
+deps_arg_roles = {
     'nsubj': 's',      # subject
     'nsubjpass': 'p',  # passive subject
     'agent': 'a',      # agent
@@ -156,7 +155,7 @@ def is_relative_concept(token):
 
 
 def arg_type(token):
-    return deps_arg_types.get(token.dep_, '?')
+    return deps_arg_roles.get(token.dep_, '?')
 
 
 def insert_after_predicate(targ, orig):
@@ -199,7 +198,7 @@ class Parser(object):
         else:
             raise RuntimeError('unkown language: %s' % lang)
 
-    def post_process(self, entity):
+    def _post_process(self, entity):
         if is_atom(entity):
             token = self.atom2token.get(entity)
             if token:
@@ -209,7 +208,7 @@ class Parser(object):
                 temporal = False
             return entity, temporal
         else:
-            entity, temps = zip(*[self.post_process(item) for item in entity])
+            entity, temps = zip(*[self._post_process(item) for item in entity])
             temporal = True in temps
             ct = connector_type(entity)
             # Multi-nooun concept, e.g.: (south america) -> (+ south america)
@@ -266,7 +265,7 @@ class Parser(object):
             else:
                 return entity, temporal
 
-    def parse_token(self, token):
+    def _parse_token(self, token):
         extra_edges = set()
 
         tokens = {}
@@ -278,7 +277,7 @@ class Parser(object):
         child_tokens += tuple((t, False) for t in token.rights)
 
         for child_token, pos in child_tokens:
-            child, child_extra_edges = self.parse_token(child_token)
+            child, child_extra_edges = self._parse_token(child_token)
             if child:
                 extra_edges |= child_extra_edges
                 positions[child] = pos
@@ -455,8 +454,8 @@ class Parser(object):
 
     def parse_sentence(self, sent):
         self.atom2token = {}
-        main_edge, extra_edges = self.parse_token(sent.root)
-        main_edge, _ = self.post_process(main_edge)
+        main_edge, extra_edges = self._parse_token(sent.root)
+        main_edge, _ = self._post_process(main_edge)
         return {'main_edge': main_edge,
                 'extra_edges': extra_edges,
                 'text': str(sent),
