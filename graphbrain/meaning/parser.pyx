@@ -1,4 +1,6 @@
 import sys
+from itertools import repeat
+from collections import namedtuple
 import logging
 import spacy
 from graphbrain import *
@@ -198,6 +200,11 @@ class Parser(object):
         else:
             raise RuntimeError('unkown language: %s' % lang)
 
+        # named tuple used to pass parser state internally
+        self._ParseState = namedtuple('_ParseState',
+                                      ['extra_edges', 'tokens', 'child_tokens',
+                                       'positions', 'children', 'entities'])
+
     def _post_process(self, entity):
         if is_atom(entity):
             token = self.atom2token.get(entity)
@@ -265,192 +272,205 @@ class Parser(object):
             else:
                 return entity, temporal
 
-    def _parse_token(self, token):
-        extra_edges = set()
+    def _clean_parse_state(self):
+        return self._ParseState(extra_edges=set(),
+                                tokens={},
+                                child_tokens=[],
+                                positions={},
+                                children=[],
+                                entities=[])
 
-        tokens = {}
-        positions = {}
-        children = []
-        entities = []
+    def _parse_token_children(self, token, ps):
+        ps.child_tokens.extend(zip(token.lefts, repeat(True)))
+        ps.child_tokens.extend(zip(token.rights, repeat(False)))
 
-        child_tokens = tuple((t, True) for t in token.lefts)
-        child_tokens += tuple((t, False) for t in token.rights)
-
-        for child_token, pos in child_tokens:
+        for child_token, pos in ps.child_tokens:
             child, child_extra_edges = self._parse_token(child_token)
             if child:
-                extra_edges |= child_extra_edges
-                positions[child] = pos
-                tokens[child] = child_token
+                ps.extra_edges.update(child_extra_edges)
+                ps.positions[child] = pos
+                ps.tokens[child] = child_token
                 child_type = entity_type(child)
                 if child_type:
-                    children.append(child)
+                    ps.children.append(child)
                     if child_type[0] in {'c', 'r', 'd', 's'}:
-                        entities.append(child)
+                        ps.entities.append(child)
 
-        children.reverse()
+        ps.children.reverse()
 
-        parent_type = token_type(token)
-        if parent_type == '' or parent_type is None:
-            return None, None
-
-        # build atom
+    def _build_atom(self, token, ent_type, pos, ps):
         text = token.text.lower()
-        et = parent_type
-        if self.pos:
-            pos = '{}.{}'.format(self.lang, token.tag_.lower())
-        else:
-            pos = None
+        et = ent_type
 
-        if parent_type[0] == 'p' and parent_type != 'pm':
-            args = [arg_type(tokens[entity]) for entity in entities]
+        if ent_type[0] == 'p' and ent_type != 'pm':
+            args = [arg_type(ps.tokens[entity]) for entity in ps.entities]
             args_string = ''.join([arg for arg in args if arg != '?'])
 
             # assign predicate subtype
             # (declarative, imperative, interrogative, ...)
-            if len(child_tokens) > 0:
-                last_token = child_tokens[-1][0]
+            if len(ps.child_tokens) > 0:
+                last_token = ps.child_tokens[-1][0]
             else:
                 last_token = None
-            if len(parent_type) == 1:
+            if len(ent_type) == 1:
                 # interrogative cases
                 if (last_token and
                         last_token.tag_ == '.' and
                         last_token.dep_ == 'punct' and
                         last_token.lemma_.strip() == '?'):
-                    parent_type = 'p?'
+                    ent_type = 'p?'
                 # imperative cases
                 elif (is_infinitive(token) and 's' not in args_string and
-                        'TO' not in [child[0].tag_ for child in child_tokens]):
-                    parent_type = 'p!'
+                        'TO' not in [child[0].tag_
+                                     for child in ps.child_tokens]):
+                    ent_type = 'p!'
                 # declarative (by default)
                 else:
-                    parent_type = 'pd'
+                    ent_type = 'pd'
 
-            et = '{}.{}'.format(parent_type, args_string)
+            et = '{}.{}'.format(ent_type, args_string)
 
-        parent_atom = build_atom(text, et, pos)
-        parent = parent_atom
+        atom = build_atom(text, et, pos)
+        self.atom2token[atom] = token
+        return atom
 
-        self.atom2token[parent] = token
+    def _add_lemmas(self, token, entity, ent_type, pos, ps):
+        text = token.lemma_.lower()
+        lemma = build_atom(text, ent_type[0], pos)
+        if entity != lemma:
+            lemma_edge = ('lemma/p/.', entity, lemma)
+            ps.extra_edges.add(lemma_edge)
 
-        # lemma
+    def _parse_token(self, token):
+        # check what type token maps to, return None if if maps to nothing
+        ent_type = token_type(token)
+        if ent_type == '' or ent_type is None:
+            return None, None
+
+        # create clean parse state
+        ps = self._clean_parse_state()
+
+        # parse token children
+        self._parse_token_children(token, ps)
+
+        # build atom
+        if self.pos:
+            pos = '{}.{}'.format(self.lang, token.tag_.lower())
+        else:
+            pos = None
+        atom = self._build_atom(token, ent_type, pos, ps)
+        entity = atom
+
+        # lemmas
         if self.lemmas:
-            text = token.lemma_.lower()
-            lemma = build_atom(text, et[0], pos)
-            if parent != lemma:
-                lemma_edge = ('lemma/p/.', parent, lemma)
-                extra_edges.add(lemma_edge)
-
-        relative_to_concept = []
+            self._add_lemmas(token, entity, ent_type, pos, ps)
 
         # process children
-        for child in children:
+        relative_to_concept = []
+        for child in ps.children:
             child_type = entity_type(child)
 
-            logging.debug('TARGET <-: [%s] %s', parent_type, parent)
-            logging.debug('<- ORIG: [%s] %s', child_type, child)
+            logging.debug('entity: [%s] %s', ent_type, entity)
+            logging.debug('child: [%s] %s', child_type, child)
 
             if child_type[0] in {'c', 'r', 'd', 's'}:
-                if parent_type[0] == 'c':
+                if ent_type[0] == 'c':
                     if (connector_type(child) in {'pc', 'pr'} or
-                            is_relative_concept(tokens[child])):
-                        logging.debug('CHOICE #1')
+                            is_relative_concept(ps.tokens[child])):
+                        logging.debug('choice: 1')
                         relative_to_concept.append(child)
                     elif connector_type(child)[0] == 'b':
-                        if connector_type(parent)[0] == 'c':
-                            logging.debug('CHOICE #2')
-                            parent = nest(parent, child, positions[child])
+                        if connector_type(entity)[0] == 'c':
+                            logging.debug('choice: 2')
+                            entity = nest(entity, child, ps.positions[child])
                         else:
-                            logging.debug('CHOICE #3')
-                            parent = apply_fun_to_atom(
+                            logging.debug('choice: 3')
+                            entity = apply_fun_to_atom(
                                 lambda target:
-                                    nest(target, child, positions[child]),
-                                    parent_atom, parent)
+                                    nest(target, child, ps.positions[child]),
+                                    atom, entity)
                     elif connector_type(child)[0] in {'x', 't'}:
-                        logging.debug('CHOICE #4')
-                        parent = nest(parent, child, positions[child])
+                        logging.debug('choice: 4')
+                        entity = nest(entity, child, ps.positions[child])
                     else:
-                        if ((entity_type(parent_atom)[0] == 'c' and
+                        if ((entity_type(atom)[0] == 'c' and
                                 connector_type(child)[0] == 'c') or
-                                is_compound(tokens[child])):
-                            if connector_type(parent)[0] == 'c':
+                                is_compound(ps.tokens[child])):
+                            if connector_type(entity)[0] == 'c':
                                 if connector_type(child)[0] == 'c':
-                                    logging.debug('CHOICE #5a')
-                                    parent = sequence(parent, child,
-                                                      positions[child])
+                                    logging.debug('choice: 5a')
+                                    entity = sequence(entity, child,
+                                                      ps.positions[child])
                                 else:
-                                    logging.debug('CHOICE #5b')
-                                    parent = sequence(parent, child,
-                                                      positions[child],
+                                    logging.debug('choice: 5b')
+                                    entity = sequence(entity, child,
+                                                      ps.positions[child],
                                                       flat=False)
                             else:
-                                logging.debug('CHOICE #6')
-                                parent = apply_fun_to_atom(
+                                logging.debug('choice: 6')
+                                entity = apply_fun_to_atom(
                                     lambda target:
                                         sequence(target, child,
-                                                 positions[child]),
-                                        parent_atom, parent)
+                                                 ps.positions[child]),
+                                        atom, entity)
                         else:
-                            logging.debug('CHOICE #7')
-                            parent = apply_fun_to_atom(
+                            logging.debug('choice: 7')
+                            entity = apply_fun_to_atom(
                                 lambda target:
                                     connect(target, (child,)),
-                                    parent_atom, parent)
-                elif parent_type[0] in {'p', 'r', 'd', 's'}:
-                    logging.debug('CHOICE #8')
-                    parent = insert_after_predicate(parent, child)
+                                    atom, entity)
+                elif ent_type[0] in {'p', 'r', 'd', 's'}:
+                    logging.debug('choice: 8')
+                    entity = insert_after_predicate(entity, child)
                 else:
-                    logging.debug('CHOICE #9')
-                    parent = insert_first_argument(parent, child)
+                    logging.debug('choice: 9')
+                    entity = insert_first_argument(entity, child)
             elif child_type[0] == 'b':
-                if connector_type(parent) == 'c':
-                    logging.debug('CHOICE #10')
-                    parent = connect(child, parent)
+                if connector_type(entity) == 'c':
+                    logging.debug('choice: 10')
+                    entity = connect(child, entity)
                 else:
-                    logging.debug('CHOICE #11')
-                    parent = nest(parent, child, positions[child])
+                    logging.debug('choice: 11')
+                    entity = nest(entity, child, ps.positions[child])
             elif child_type[0] == 'p':
                 # TODO: Pathological case
                 # e.g. "Some subspecies of mosquito might be 1s..."
                 if child_type == 'pm':
-                    logging.debug('CHOICE #12')
-                    # parent = nest(parent, child, positions[child])
-                    parent = (child,) + parens(parent)
+                    logging.debug('choice: 12')
+                    entity = (child,) + parens(entity)
                 else:
-                    logging.debug('CHOICE #13')
-                    parent = connect(parent, (child,))
+                    logging.debug('choice: 13')
+                    entity = connect(entity, (child,))
             elif child_type[0] == 'm':
-                logging.debug('CHOICE #14')
-                parent = (child, parent)
+                logging.debug('choice: 14')
+                entity = (child, entity)
             elif child_type[0] in {'x', 't'}:
-                logging.debug('CHOICE #15')
-                parent = (child, parent)
+                logging.debug('choice: 15')
+                entity = (child, entity)
             elif child_type[0] == 'a':
-                logging.debug('CHOICE #16')
-                parent = nest_predicate(parent, child, positions[child])
+                logging.debug('choice: 16')
+                entity = nest_predicate(entity, child, ps.positions[child])
             elif child_type == 'w':
-                if parent_type[0] in {'d', 's'}:
-                    logging.debug('CHOICE #17')
-                    parent = nest_predicate(parent, child, positions[child])
+                if ent_type[0] in {'d', 's'}:
+                    logging.debug('choice: 17')
+                    entity = nest_predicate(entity, child, ps.positions[child])
                     # pass
                 else:
-                    logging.debug('CHOICE #18')
-                    parent = nest(parent, child, positions[child])
+                    logging.debug('choice: 18')
+                    entity = nest(entity, child, ps.positions[child])
             else:
                 # TODO: warning ?
-                logging.debug('CHOICE #19')
+                logging.debug('choice: 19')
                 pass
 
-            parent_type = entity_type(parent)
-
-            logging.debug('=== [%s] %s', parent_type, parent)
+            ent_type = entity_type(entity)
+            logging.debug('result: [%s] %s\n', ent_type, entity)
 
         if len(relative_to_concept) > 0:
             relative_to_concept.reverse()
-            parent = (':/b/.', parent) + tuple(relative_to_concept)
+            entity = (':/b/.', entity) + tuple(relative_to_concept)
 
-        return parent, extra_edges
+        return entity, ps.extra_edges
 
     def parse_sentence(self, sent):
         self.atom2token = {}

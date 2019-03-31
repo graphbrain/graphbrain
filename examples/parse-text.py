@@ -9,6 +9,7 @@ if __name__ == '__main__':
     conference.
     Satellites from NASA and other agencies have been tracking sea ice changes
     since 1979.
+    Wii will fail just like the arcade games of yesteryear.
     """
 
     parser = Parser(lang='en', pos=True, lemmas=True)
