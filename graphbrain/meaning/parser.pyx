@@ -190,7 +190,6 @@ class Parser(object):
         self.lang = lang
         self.pos = pos
         self.lemmas = lemmas
-        self.tokens = {}
         self.atom2token = {}
 
         if lang == 'en':
@@ -270,6 +269,7 @@ class Parser(object):
     def parse_token(self, token):
         extra_edges = set()
 
+        tokens = {}
         positions = {}
         children = []
         entities = []
@@ -282,7 +282,7 @@ class Parser(object):
             if child:
                 extra_edges |= child_extra_edges
                 positions[child] = pos
-                self.tokens[child] = child_token
+                tokens[child] = child_token
                 child_type = entity_type(child)
                 if child_type:
                     children.append(child)
@@ -304,7 +304,7 @@ class Parser(object):
             pos = None
 
         if parent_type[0] == 'p' and parent_type != 'pm':
-            args = [arg_type(self.tokens[entity]) for entity in entities]
+            args = [arg_type(tokens[entity]) for entity in entities]
             args_string = ''.join([arg for arg in args if arg != '?'])
 
             # assign predicate subtype
@@ -355,7 +355,7 @@ class Parser(object):
             if child_type[0] in {'c', 'r', 'd', 's'}:
                 if parent_type[0] == 'c':
                     if (connector_type(child) in {'pc', 'pr'} or
-                            is_relative_concept(self.tokens[child])):
+                            is_relative_concept(tokens[child])):
                         logging.debug('CHOICE #1')
                         relative_to_concept.append(child)
                     elif connector_type(child)[0] == 'b':
@@ -374,7 +374,7 @@ class Parser(object):
                     else:
                         if ((entity_type(parent_atom)[0] == 'c' and
                                 connector_type(child)[0] == 'c') or
-                                is_compound(self.tokens[child])):
+                                is_compound(tokens[child])):
                             if connector_type(parent)[0] == 'c':
                                 if connector_type(child)[0] == 'c':
                                     logging.debug('CHOICE #5a')
@@ -454,7 +454,6 @@ class Parser(object):
         return parent, extra_edges
 
     def parse_sentence(self, sent):
-        self.tokens = {}
         self.atom2token = {}
         main_edge, extra_edges = self.parse_token(sent.root)
         main_edge, _ = self.post_process(main_edge)
