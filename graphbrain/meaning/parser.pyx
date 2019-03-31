@@ -309,15 +309,14 @@ class Parser(object):
             # e.g.: (in/t 1976) -> (in/tt 1976)
             elif ct[0] == 't':
                 if temporal:
-                    trigger = entity[0]  # TODO: make sure it's enough
-                    triparts = atom_parts(trigger)
+                    trigger_atom = atom_with_type(entity[0], 't')
+                    triparts = atom_parts(trigger_atom)
                     newparts = (triparts[0], 'tt')
                     if len(triparts) > 2:
                         newparts += tuple(triparts[2:])
                     trigger = '/'.join(newparts)
-                    return (trigger,) + entity[1:], False
-                else:
-                    return entity, False
+                    entity = replace_atom(entity, trigger_atom, trigger)
+                return entity, False
             else:
                 return entity, temporal
 

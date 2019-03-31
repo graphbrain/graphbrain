@@ -341,6 +341,30 @@ def apply_fun_to_atom(fun, atom, target):
         return tuple(apply_fun_to_atom(fun, atom, item) for item in target)
 
 
+def replace_atom(entity, old, new):
+    if is_atom(entity):
+        if entity == old:
+            return new
+        else:
+            return entity
+    else:
+        return tuple(replace_atom(item, old, new) for item in entity)
+
+
+def atom_with_type(entity, typ):
+    if is_atom(entity):
+        n = len(typ)
+        et = entity_type(entity)
+        if len(et) >= n and et[:n] == typ:
+            return entity
+    else:
+        for item in entity:
+            atom = atom_with_type(entity)
+            if atom:
+                return atom
+    return None
+
+
 def predicate(entity):
     et = entity_type(entity)[0]
 
