@@ -359,7 +359,7 @@ def atom_with_type(entity, typ):
             return entity
     else:
         for item in entity:
-            atom = atom_with_type(entity, typ)
+            atom = atom_with_type(item, typ)
             if atom:
                 return atom
     return None
