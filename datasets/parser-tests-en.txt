@@ -1,5 +1,5 @@
 Satellites from NASA and other agencies have been tracking sea ice changes since 1979.
-((have/a (been/a tracking/pd.sox)) (from/b satellites/c (and/b nasa/c (other/m agencies/c))) (+/b/. sea/c ice/c changes/c) (since/t 1979/c))
+((have/a (been/a tracking/pd.sox)) (from/b satellites/c (and/b nasa/c (other/m agencies/c))) (+/b/. sea/c ice/c changes/c) (since/tt 1979/c))
 The algorithm can play both black and white.
 ((can/a play/pd.so) (the/m algorithm/c) (both/m (and/b black/c white/c)))
 Britain's hopes of a trade deal with America just suffered a big blow.
@@ -57,7 +57,7 @@ Lady shows you the oldest living wolf.
 Lawyers say they will issue judicial review proceedings if Brexit secretary fails to release 50 studies of effect on industry
 (say/pd.sr lawyers/c ((will/a issue/pd.sox) they/c (+/b/. (judicial/m review/c) proceedings/c) (if/x (fails/pd.sr (+/b/. brexit/c secretary/c) ((to/a release/pc.o) (50/m (of/b studies/c (on/b effect/c industry/c))))))))
 In September 2016, we learned that the University of New Hampshire was going to use $1 million that an incredibly frugal librarian saved while working as a library cataloger for 50 years to buy a new scoreboard for its stadium.
-(learned/pd.xsr (in/t (2016/m september/c)) we/c (that/x ((was/a going/pd.sr) (the/m (of/b university/c (+/b/. new/c hampshire/c))) ((to/a use/pc.or) (+/b/. ($/a 1/c) million/c) (saved/pd.osx that/c (an/m ((incredibly/w frugal/m) librarian/c)) (while/x (working/pd.xxx (as/t (a/m (+/b/. library/c cataloger/c))) (for/t (50/m years/c)) ((to/a buy/pd.o) (a/m (new/m (for/b scoreboard/c (its/mp stadium/c))))))))))))
+(learned/pd.xsr (in/tt (2016/m september/c)) we/c (that/x ((was/a going/pd.sr) (the/m (of/b university/c (+/b/. new/c hampshire/c))) ((to/a use/pc.or) (+/b/. ($/a 1/c) million/c) (saved/pd.osx that/c (an/m ((incredibly/w frugal/m) librarian/c)) (while/x (working/pd.xxx (as/t (a/m (+/b/. library/c cataloger/c))) (for/tt (50/m years/c)) ((to/a buy/pd.o) (a/m (new/m (for/b scoreboard/c (its/mp stadium/c))))))))))))
 An anarchist takes on Big Pharma by teaching patients to make their own meds
 (takes/pd.sox (an/m anarchist/c) (on/x (+/b/. big/c pharma/c)) (by/t (teaching/pc.or patients/c ((to/a make/pc.o) (their/mp (own/m meds/c))))))
 That seems both super dangerous, and super awesome.

@@ -191,6 +191,7 @@ class Parser(object):
         self.pos = pos
         self.lemmas = lemmas
         self.tokens = {}
+        self.atom2token = {}
 
         if lang == 'en':
             self.nlp = spacy.load('en_core_web_lg')
@@ -201,19 +202,26 @@ class Parser(object):
 
     def post_process(self, entity):
         if is_atom(entity):
-            return entity
+            token = self.atom2token.get(entity)
+            if token:
+                ent_type = self.atom2token[entity].ent_type_
+                temporal = ent_type in {'DATE', 'TIME'}
+            else:
+                temporal = False
+            return entity, temporal
         else:
-            entity = tuple(self.post_process(item) for item in entity)
+            entity, temps = zip(*[self.post_process(item) for item in entity])
+            temporal = True in temps
             ct = connector_type(entity)
             # Multi-nooun concept, e.g.: (south america) -> (+ south america)
             if ct[0] == 'c':
-                return connect('+/b/.', entity)
+                return connect('+/b/.', entity), temporal
             # Builders with one argument become modifiers
             # e.g. (on/b ice) -> (on/m ice)
             elif ct[0] == 'b' and is_atom(entity[0]) and len(entity) == 2:
                 ps = atom_parts(entity[0])
                 ps[1] = 'm' + ct[1:]
-                return ('/'.join(ps),) + entity[1:]
+                return ('/'.join(ps),) + entity[1:], temporal
             # A meta-modifier applied to a concept defined my a modifier
             # should apply to the modifier instead.
             # e.g.: (stricking/w (red/m dress)) -> ((stricking/w red/m) dress)
@@ -222,7 +230,7 @@ class Parser(object):
                     len(entity) == 2 and
                     is_edge(entity[1]) and
                     connector_type(entity[1])[0] == 'm'):
-                return ((entity[0], entity[1][0]),) + entity[1][1:]
+                return ((entity[0], entity[1][0]),) + entity[1][1:], temporal
             # Make sure that specifier arguments are of the specifier type,
             # entities are surrounded by an edge with a trigger connector if
             # necessary. E.g.: today -> {t/t/. today}
@@ -234,16 +242,30 @@ class Parser(object):
                         arg_roles = role[1]
                         if 'x' in arg_roles:
                             proc_edge = list(entity)
+                            trigger = 't/tt/.' if temporal else 't/t/.'
                             for i, arg_role in enumerate(arg_roles):
                                 arg_pos = i + 1
                                 if (arg_role == 'x' and
                                         is_atom(proc_edge[arg_pos])):
-                                    proc_edge[arg_pos] = ('t/t/.',
+                                    proc_edge[arg_pos] = (trigger,
                                                           proc_edge[arg_pos])
-                            return tuple(proc_edge)
-                return entity
+                            return tuple(proc_edge), False
+                return entity, temporal
+            # Make triggers temporal, if appropriate.
+            # e.g.: (in/t 1976) -> (in/tt 1976)
+            elif ct[0] == 't':
+                if temporal:
+                    trigger = entity[0]  # TODO: make sure it's enough
+                    triparts = atom_parts(trigger)
+                    newparts = (triparts[0], 'tt')
+                    if len(triparts) > 2:
+                        newparts += tuple(triparts[2:])
+                    trigger = '/'.join(newparts)
+                    return (trigger,) + entity[1:], False
+                else:
+                    return entity, False
             else:
-                return entity
+                return entity, temporal
 
     def parse_token(self, token):
         extra_edges = set()
@@ -310,6 +332,8 @@ class Parser(object):
 
         parent_atom = build_atom(text, et, pos)
         parent = parent_atom
+
+        self.atom2token[parent] = token
 
         # lemma
         if self.lemmas:
@@ -431,8 +455,9 @@ class Parser(object):
 
     def parse_sentence(self, sent):
         self.tokens = {}
+        self.atom2token = {}
         main_edge, extra_edges = self.parse_token(sent.root)
-        main_edge = self.post_process(main_edge)
+        main_edge, _ = self.post_process(main_edge)
         return {'main_edge': main_edge,
                 'extra_edges': extra_edges,
                 'text': str(sent),
