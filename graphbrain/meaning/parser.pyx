@@ -334,10 +334,10 @@ class Parser(object):
         self.atom2token[atom] = token
         return atom
 
-    def _add_lemmas(self, token, entity, ent_type, pos, ps):
+    def _add_lemmas(self, token, entity, ent_type, ps):
         text = token.lemma_.lower()
-        lemma = build_atom(text, ent_type[0], pos)
-        if entity != lemma:
+        if text != token.text.lower():
+            lemma = build_atom(text, ent_type[0], '{}.lemma'.format(self.lang))
             lemma_edge = ('lemma/p/.', entity, lemma)
             ps.extra_edges.add(lemma_edge)
 
@@ -363,7 +363,7 @@ class Parser(object):
 
         # lemmas
         if self.lemmas:
-            self._add_lemmas(token, entity, ent_type, pos, ps)
+            self._add_lemmas(token, entity, ent_type, ps)
 
         # process children
         relative_to_concept = []
