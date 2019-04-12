@@ -9406,7 +9406,7 @@ static PyObject *__pyx_pw_10graphbrain_4funs_65atom_with_type(PyObject *__pyx_se
 static PyObject *__pyx_pf_10graphbrain_4funs_64atom_with_type(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_entity, PyObject *__pyx_v_typ) {
   Py_ssize_t __pyx_v_n;
   PyObject *__pyx_v_et = NULL;
-  CYTHON_UNUSED PyObject *__pyx_v_item = NULL;
+  PyObject *__pyx_v_item = NULL;
   PyObject *__pyx_v_atom = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -9546,7 +9546,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_64atom_with_type(CYTHON_UNUSED PyOb
  *             return entity
  *     else:
  *         for item in entity:             # <<<<<<<<<<<<<<
- *             atom = atom_with_type(entity, typ)
+ *             atom = atom_with_type(item, typ)
  *             if atom:
  */
   /*else*/ {
@@ -9595,7 +9595,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_64atom_with_type(CYTHON_UNUSED PyOb
       /* "graphbrain/funs.pyx":362
  *     else:
  *         for item in entity:
- *             atom = atom_with_type(entity, typ)             # <<<<<<<<<<<<<<
+ *             atom = atom_with_type(item, typ)             # <<<<<<<<<<<<<<
  *             if atom:
  *                 return atom
  */
@@ -9615,7 +9615,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_64atom_with_type(CYTHON_UNUSED PyOb
       }
       #if CYTHON_FAST_PYCALL
       if (PyFunction_Check(__pyx_t_3)) {
-        PyObject *__pyx_temp[3] = {__pyx_t_8, __pyx_v_entity, __pyx_v_typ};
+        PyObject *__pyx_temp[3] = {__pyx_t_8, __pyx_v_item, __pyx_v_typ};
         __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_9, 2+__pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 362, __pyx_L1_error)
         __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
         __Pyx_GOTREF(__pyx_t_1);
@@ -9623,7 +9623,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_64atom_with_type(CYTHON_UNUSED PyOb
       #endif
       #if CYTHON_FAST_PYCCALL
       if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
-        PyObject *__pyx_temp[3] = {__pyx_t_8, __pyx_v_entity, __pyx_v_typ};
+        PyObject *__pyx_temp[3] = {__pyx_t_8, __pyx_v_item, __pyx_v_typ};
         __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_9, 2+__pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 362, __pyx_L1_error)
         __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
         __Pyx_GOTREF(__pyx_t_1);
@@ -9635,9 +9635,9 @@ static PyObject *__pyx_pf_10graphbrain_4funs_64atom_with_type(CYTHON_UNUSED PyOb
         if (__pyx_t_8) {
           __Pyx_GIVEREF(__pyx_t_8); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_8); __pyx_t_8 = NULL;
         }
-        __Pyx_INCREF(__pyx_v_entity);
-        __Pyx_GIVEREF(__pyx_v_entity);
-        PyTuple_SET_ITEM(__pyx_t_10, 0+__pyx_t_9, __pyx_v_entity);
+        __Pyx_INCREF(__pyx_v_item);
+        __Pyx_GIVEREF(__pyx_v_item);
+        PyTuple_SET_ITEM(__pyx_t_10, 0+__pyx_t_9, __pyx_v_item);
         __Pyx_INCREF(__pyx_v_typ);
         __Pyx_GIVEREF(__pyx_v_typ);
         PyTuple_SET_ITEM(__pyx_t_10, 1+__pyx_t_9, __pyx_v_typ);
@@ -9651,7 +9651,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_64atom_with_type(CYTHON_UNUSED PyOb
 
       /* "graphbrain/funs.pyx":363
  *         for item in entity:
- *             atom = atom_with_type(entity, typ)
+ *             atom = atom_with_type(item, typ)
  *             if atom:             # <<<<<<<<<<<<<<
  *                 return atom
  *     return None
@@ -9660,7 +9660,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_64atom_with_type(CYTHON_UNUSED PyOb
       if (__pyx_t_4) {
 
         /* "graphbrain/funs.pyx":364
- *             atom = atom_with_type(entity, typ)
+ *             atom = atom_with_type(item, typ)
  *             if atom:
  *                 return atom             # <<<<<<<<<<<<<<
  *     return None
@@ -9674,7 +9674,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_64atom_with_type(CYTHON_UNUSED PyOb
 
         /* "graphbrain/funs.pyx":363
  *         for item in entity:
- *             atom = atom_with_type(entity, typ)
+ *             atom = atom_with_type(item, typ)
  *             if atom:             # <<<<<<<<<<<<<<
  *                 return atom
  *     return None
@@ -9685,7 +9685,7 @@ static PyObject *__pyx_pf_10graphbrain_4funs_64atom_with_type(CYTHON_UNUSED PyOb
  *             return entity
  *     else:
  *         for item in entity:             # <<<<<<<<<<<<<<
- *             atom = atom_with_type(entity, typ)
+ *             atom = atom_with_type(item, typ)
  *             if atom:
  */
     }
