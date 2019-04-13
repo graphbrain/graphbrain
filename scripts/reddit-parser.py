@@ -4,11 +4,19 @@ import json
 import argparse
 from graphbrain import *
 from graphbrain.meaning import *
+from graphbrain.cli import show_logo
+
+
+def file_len(fname):
+    with open(fname) as f:
+        for i, l in enumerate(f, 1):
+            pass
+    return i
 
 
 def title_parts(title):
     parts = re.split('\|| - | -- |^\[([^\]]*)\] | \[([^\]]*)\]$', title)
-    parts = [part.strip() for part in parts if part]
+    parts = [part.strip().lower() for part in parts if part]
     return parts
 
 
@@ -43,6 +51,7 @@ class RedditParser(object):
 
                 # add extra edges
                 for edge in parse['extra_edges']:
+                    print(ent2str(edge))
                     self.hg.add(edge)
                     self.extra_edges += 1
 
@@ -99,6 +108,8 @@ if __name__ == '__main__':
     parser.add_argument('--infile', type=str, help='input file', default=None)
 
     args = parser.parse_args()
+
+    show_logo()
 
     hgraph = HyperGraph({'backend': args.backend, 'hg': args.hg})
     RedditParser(hgraph).parse_file(args.infile)
