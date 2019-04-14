@@ -1,11 +1,10 @@
 import re
 import time
 import json
-import argparse
 import progressbar
 from graphbrain import *
 from graphbrain.meaning import *
-from graphbrain.cli import show_logo
+from graphbrain.cli import wrapper
 
 
 def file_lines(filename):
@@ -103,22 +102,12 @@ class RedditParser(object):
         print('extra edges created: %s' % self.extra_edges)
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--backend', type=str,
-                        help='hypergraph backend (leveldb, null)',
-                        default='leveldb')
-    parser.add_argument('--hg', type=str, help='hypergraph name',
-                        default='gb.hg')
-    parser.add_argument('--infile', type=str, help='input file', default=None)
-
-    args = parser.parse_args()
-
-    show_logo()
-
+def _parse(args):
     print('Reddit parser')
     print('parsing file: {}'.format(args.infile))
-
-    hgraph = HyperGraph({'backend': args.backend, 'hg': args.hg})
+    hgraph = hypergraph(args.hg)
     RedditParser(hgraph).parse_file(args.infile)
+
+
+if __name__ == '__main__':
+    wrapper(_parse)

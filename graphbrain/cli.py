@@ -4,22 +4,20 @@ from termcolor import colored
 from . import constants as const
 
 
-def show_logo():
+def _show_logo():
     print(colored(const.ascii_logo, 'cyan'))
     print()
 
 
-def cli():
-    show_logo()
+def wrapper(fun, command=False):
+    _show_logo()
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('command', type=str, help='command to execute')
-    parser.add_argument('--backend', type=str,
-                        help='hypergraph backend (leveldb, null)',
-                        default='leveldb')
+    if command:
+        parser.add_argument('command', type=str, help='command to execute')
     parser.add_argument('--hg', type=str,
-                        help='hypergraph name', default='gb.hg')
+                        help='hypergraph db', default='gb.hg')
     parser.add_argument('--infile', type=str, help='input file', default=None)
     parser.add_argument('--outfile', type=str,
                         help='output file', default=None)
@@ -30,23 +28,17 @@ def cli():
 
     args = parser.parse_args()
 
-    params = {
-        'backend': args.backend,
-        'hg': args.hg,
-        'infile': args.infile,
-        'outfile': args.outfile,
-        'log': args.log,
-        'fields': args.fields,
-        'model_type': args.model_type,
-        'model_file': args.model_file,
-        'show_namespaces': args.show_namespaces,
-        'lang': args.lang
-    }
+    fun(args)
 
+
+def _cli(args):
     command = args.command
-
     try:
         cmd_module = import_module('graphbrain.commands.%s' % command)
-        cmd_module.run(params)
+        cmd_module.run(args)
     except ImportError:
         print('unkown command: %s' % command)
+
+
+def cli():
+    wrapper(_cli, command=True)

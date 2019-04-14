@@ -1,15 +1,12 @@
 import unittest
-from graphbrain.hypergraph import HyperGraph
-from graphbrain.funs import *
-from graphbrain.backends.leveldb import *
+from graphbrain import *
+from graphbrain.hypergraphs.leveldb import *
 
 
 class TestLevelDB(unittest.TestCase):
 
     def setUp(self):
-        params = {'backend': 'leveldb',
-                  'hg': 'test.hg'}
-        self.hg = HyperGraph(params)
+        self.hg = hypergraph('test.hg')
 
     def tearDown(self):
         self.hg.close()

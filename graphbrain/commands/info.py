@@ -1,8 +1,8 @@
-from graphbrain.hypergraph import HyperGraph
+from graphbrain import *
 
 
-def run(params):
-    hg = HyperGraph(params)
-    print('edge_symbols: %s' % hg.symbol_count())
-    print('edges: %s' % hg.edge_count())
-    print('total degree: %s' % hg.total_degree())
+def run(args):
+    hg = hypergraph(args.hg)
+    print('edge_symbols: {}'.format(hg.symbol_count()))
+    print('edges: {}'.format(hg.edge_count()))
+    print('total degree: {}'.format(hg.total_degree()))

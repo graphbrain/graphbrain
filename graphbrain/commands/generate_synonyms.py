@@ -1,7 +1,7 @@
-from graphbrain.hypergraph import HyperGraph
+from graphbrain import *
 import graphbrain.synonyms.synonyms as synonyms
 
 
-def run(params):
-    hg = HyperGraph(params)
+def run(args):
+    hg = hypergraph(args.hg)
     synonyms.generate(hg)

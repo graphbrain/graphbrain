@@ -1,24 +1,17 @@
-import argparse
 from graphbrain import *
+from graphbrain.cli import wrapper
 from graphbrain.meaning.parser import Parser
 from graphbrain.meaning.nlpvis import print_tree
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('file', type=str, help='dataset file')
-    parser.add_argument('--lang', type=str, help='language', default='en')
-
-    args = parser.parse_args()
-
+def test_parser(args):
     parser = Parser(lang=args.lang)
 
     total = 0
     wrong = 0
 
     sentence = None
-    with open(args.file) as f:
+    with open(args.infile) as f:
         for line in f:
             if sentence:
                 total += 1
@@ -39,3 +32,7 @@ if __name__ == '__main__':
                 sentence = line.strip()
 
     print('%s wrong out of %s.' % (wrong, total))
+
+
+if __name__ == '__main__':
+    wrapper(test_parser)

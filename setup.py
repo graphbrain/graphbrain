@@ -22,8 +22,8 @@ if USE_CYTHON:
 if USE_CYTHON:
     ext_modules = [
         Extension('graphbrain.funs', ['graphbrain/funs.pyx'],),
-        Extension('graphbrain.backends.leveldb',
-                  ['graphbrain/backends/leveldb.pyx']),
+        Extension('graphbrain.hypergraphs.leveldb',
+                  ['graphbrain/hypergraphs/leveldb.pyx']),
         Extension('graphbrain.meaning.parser',
                   ['graphbrain/meaning/parser.pyx'])
     ]
@@ -31,8 +31,8 @@ if USE_CYTHON:
 else:
     ext_modules = [
         Extension('graphbrain.funs', ['graphbrain/funs.c'], ),
-        Extension('graphbrain.backends.leveldb',
-                  ['graphbrain/backends/leveldb.c']),
+        Extension('graphbrain.hypergraphs.leveldb',
+                  ['graphbrain/hypergraphs/leveldb.c']),
         Extension('graphbrain.meaning.parser',
                   ['graphbrain/meaning/parser.c'])
     ]

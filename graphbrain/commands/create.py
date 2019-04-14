@@ -1,7 +1,7 @@
-from graphbrain.hypergraph import HyperGraph
+from graphbrain import *
 
 
-def run(params):
+def run(args):
     print('creating hypergraph...')
-    HyperGraph(params)
+    hypergraph(args.hg)
     print('done.')
