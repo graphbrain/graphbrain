@@ -196,8 +196,8 @@ def token_type(token, head=False):
         else:
             return concept_type_and_subtype(token)
     else:
-        #  error / warning ?
-        pass
+        logging.warning('Unknown dependency (insert_after_predicate): {}'
+                        .format(dep))
 
 
 def is_relative_concept(token):
@@ -219,8 +219,8 @@ def insert_after_predicate(targ, orig):
         else:
             return insert_first_argument(targ, orig)
     else:
-        # TODO: error / warning
-        print('ERROR %s %s' % (targ, orig))
+        logging.warning(('Wrong target type (insert_after_predicate).'
+                         ' orig: {}; targ: {}').format(targ, orig))
         return targ
 
 
@@ -505,6 +505,8 @@ class Parser(object):
                     entity = nest(entity, child, ps.positions[child])
             else:
                 # TODO: warning ?
+                logging.warning('Failed to parse token (_parse_token): {}'
+                                .format(token))
                 logging.debug('choice: 18')
                 pass
 

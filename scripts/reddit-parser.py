@@ -2,14 +2,15 @@ import re
 import time
 import json
 import argparse
+import progressbar
 from graphbrain import *
 from graphbrain.meaning import *
 from graphbrain.cli import show_logo
 
 
-def file_len(fname):
-    with open(fname) as f:
-        for i, l in enumerate(f, 1):
+def file_lines(filename):
+    with open(filename, 'r') as f:
+        for i, _ in enumerate(f, 1):
             pass
     return i
 
@@ -30,7 +31,7 @@ class RedditParser(object):
         self.items_processed = 0
 
     def parse_title(self, text, author):
-        print('\ntext: {}'.format(text))
+        # print('\n{}'.format(text))
 
         parts = title_parts(text)
 
@@ -51,7 +52,7 @@ class RedditParser(object):
 
                 # add extra edges
                 for edge in parse['extra_edges']:
-                    print(ent2str(edge))
+                    # print(ent2str(edge))
                     self.hg.add(edge)
                     self.extra_edges += 1
 
@@ -62,13 +63,13 @@ class RedditParser(object):
 
         if len(title_edge) > 2:
             # add title edge
-            print(ent2str(title_edge))
+            # print(ent2str(title_edge))
             self.hg.add(title_edge)
 
             # add title tags
             if len(tags) > 0:
                 tags_edge = ['tags/p/.reddit', title_edge] + tags
-                print(ent2str(tags_edge))
+                # print(ent2str(tags_edge))
                 self.hg.add(tags_edge)
 
     def parse_post(self, post):
@@ -83,15 +84,20 @@ class RedditParser(object):
             self.time_acc += delta_t
             items_per_min = float(self.items_processed) / float(self.time_acc)
             items_per_min *= 60.
-            print('total items: %s' % self.items_processed)
-            print('items per minute: %s' % items_per_min)
+            # print('total items: %s' % self.items_processed)
+            # print('items per minute: %s' % items_per_min)
         self.items_processed += 1
 
     def parse_file(self, filename):
-        with open(filename, 'r') as f:
-            for line in f:
-                post = json.loads(line)
-                self.parse_post(post)
+        lines = file_lines(filename)
+        i = 0
+        with progressbar.ProgressBar(max_value=lines) as bar:
+            with open(filename, 'r') as f:
+                for line in f:
+                    post = json.loads(line)
+                    self.parse_post(post)
+                    i += 1
+                    bar.update(i)
 
         print('main edges created: %s' % self.main_edges)
         print('extra edges created: %s' % self.extra_edges)
@@ -110,6 +116,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     show_logo()
+
+    print('Reddit parser')
+    print('parsing file: {}'.format(args.infile))
 
     hgraph = HyperGraph({'backend': args.backend, 'hg': args.hg})
     RedditParser(hgraph).parse_file(args.infile)
