@@ -1,4 +1,3 @@
-import abc
 from graphbrain.funs import *
 
 
@@ -8,116 +7,95 @@ class Hypergraph(object):
     # ================================================================
     # Interface abstract methods, to be implemented in derived classes
     # ================================================================
-    @abc.abstractmethod
+
     def close(self):
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def name(self):
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def destroy(self):
         """Erase the hypergraph."""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def all(self):
         """Returns a lazy sequence of all the edges in the hypergraph."""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def all_attributes(self):
         """Returns a lazy sequence of tuples, one per edge in the hypergraph.
            The first element of the tuple is the vertex itself,
            the second is a dictionary of attribute values (as strings)."""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def symbol_count(self):
         """Total number of edge_symbols in the hypergraph"""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def edge_count(self):
         """Total number of edge in the hypergraph"""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def total_degree(self):
         """Total degree of the hypergraph"""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def _exists(self, edge):
         """Checks if the given edge exists in the hypergraph."""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def _add(self, edge):
         """Adds edge to the hypergraph if it does not exist yet.
            Returns same edge."""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def _remove(self, edge):
         """Removes and edge from the hypergraph."""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def _pattern2edges(self, pattern, open_ended=False):
         """Return all the edges that match a pattern.
         A pattern is a collection of entity ids and wildcards (None)."""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def _star(self, center, limit=None):
         """Return all the edges that contain a given entity.
         Entity can be atomic or an edge."""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def _symbols_with_root(self, root):
         """Find all edge_symbols with the given root."""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def _edges_with_symbols(self, symbols, root):
         """Find all edges containing the given edge_symbols,
            and optionally a given root"""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def _set_attribute(self, entity, attribute, value):
         """Sets the value of an attribute."""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def _inc_attribute(self, entity, attribute):
         """Increments an attribute of an entity."""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def _dec_attribute(self, entity, attribute):
         """Increments an attribute of an entity."""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def _get_str_attribute(self, entity, attribute, or_else=None):
         """Returns attribute as string."""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def _get_int_attribute(self, entity, attribute, or_else=None):
         """Returns attribute as integer value."""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def _get_float_attribute(self, entity, attribute, or_else=None):
         """Returns attribute as float value."""
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def _degree(self, entity):
         """Returns the degree of an entity."""
         raise NotImplementedError()
