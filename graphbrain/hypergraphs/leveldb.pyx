@@ -151,8 +151,8 @@ class LevelDB(Hypergraph):
         end_key = (u'%s' % end_str).encode('utf-8')
 
         for key, value in self.db.iterator(start=start_key, stop=end_key):
-            vert = str2ent(key.decode('utf-8')[1:])
-            yield vert
+            entity = str2ent(key.decode('utf-8')[1:])
+            yield entity
 
     def all_attributes(self):
         """Returns a lazy sequence with a tuple for each entity
@@ -166,9 +166,9 @@ class LevelDB(Hypergraph):
         end_key = (u'%s' % end_str).encode('utf-8')
 
         for key, value in self.db.iterator(start=start_key, stop=end_key):
-            vert = str2ent(key.decode('utf-8')[1:])
+            entity = str2ent(key.decode('utf-8')[1:])
             attributes = _decode_attributes(value)
-            yield (vert, attributes)
+            yield (entity, attributes)
 
     def symbol_count(self):
         """Total number of edge_symbols in the hypergraph"""
@@ -192,10 +192,10 @@ class LevelDB(Hypergraph):
         if not self._exists_key(edge_key):
             self._inc_counter('edge_count')
             self._inc_counter('total_degree', by=len(edge))
-            for vert in edge:
-                ent_key = _ent2key(vert)
+            for entity in edge:
+                ent_key = _ent2key(entity)
                 if not self._inc_attribute_key(ent_key, 'd'):
-                    if is_atom(vert):
+                    if is_atom(entity):
                         self._inc_counter('symbol_count')
                     else:
                         self._inc_counter('edge_count')
@@ -210,8 +210,8 @@ class LevelDB(Hypergraph):
         if self._exists_key(edge_key):
             self._dec_counter('edge_count')
             self._dec_counter('total_degree', by=len(edge))
-            for vert in edge:
-                ent_key = _ent2key(vert)
+            for entity in edge:
+                ent_key = _ent2key(entity)
                 self._dec_attribute_key(ent_key, 'd')
             self._remove_edge_permutations(edge)
             self._remove_key(edge_key)

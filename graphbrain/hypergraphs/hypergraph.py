@@ -24,7 +24,7 @@ class Hypergraph(object):
 
     def all_attributes(self):
         """Returns a lazy sequence of tuples, one per edge in the hypergraph.
-           The first element of the tuple is the vertex itself,
+           The first element of the tuple is the edge itself,
            the second is a dictionary of attribute values (as strings)."""
         raise NotImplementedError()
 
