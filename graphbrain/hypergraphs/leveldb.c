@@ -1655,6 +1655,7 @@ static const char __pyx_k_star[] = "_star";
 static const char __pyx_k_stop[] = "stop";
 static const char __pyx_k_symb[] = "symb";
 static const char __pyx_k_test[] = "__test__";
+static const char __pyx_k_atoms[] = "atoms";
 static const char __pyx_k_close[] = "close";
 static const char __pyx_k_count[] = "count";
 static const char __pyx_k_edges[] = "edges";
@@ -1705,7 +1706,6 @@ static const char __pyx_k_pattern[] = "pattern";
 static const char __pyx_k_prepare[] = "__prepare__";
 static const char __pyx_k_replace[] = "replace";
 static const char __pyx_k_str2ent[] = "str2ent";
-static const char __pyx_k_symbols[] = "symbols";
 static const char __pyx_k_edge_key[] = "edge_key";
 static const char __pyx_k_iterator[] = "iterator";
 static const char __pyx_k_perm_key[] = "perm_key";
@@ -1730,6 +1730,7 @@ static const char __pyx_k_start_str[] = "start_str";
 static const char __pyx_k_str2perms[] = "_str2perms";
 static const char __pyx_k_Hypergraph[] = "Hypergraph";
 static const char __pyx_k_ValueError[] = "ValueError";
+static const char __pyx_k_atom_count[] = "atom_count";
 static const char __pyx_k_attributes[] = "attributes";
 static const char __pyx_k_destroy_db[] = "destroy_db";
 static const char __pyx_k_edge_count[] = "edge_count";
@@ -1747,7 +1748,6 @@ static const char __pyx_k_LevelDB__add[] = "LevelDB._add";
 static const char __pyx_k_LevelDB_name[] = "LevelDB.name";
 static const char __pyx_k_permutations[] = "permutations";
 static const char __pyx_k_read_counter[] = "_read_counter";
-static const char __pyx_k_symbol_count[] = "symbol_count";
 static const char __pyx_k_total_degree[] = "total_degree";
 static const char __pyx_k_LevelDB__star[] = "LevelDB._star";
 static const char __pyx_k_LevelDB_close[] = "LevelDB.close";
@@ -1764,8 +1764,10 @@ static const char __pyx_k_LevelDB__degree[] = "LevelDB._degree";
 static const char __pyx_k_LevelDB__exists[] = "LevelDB._exists";
 static const char __pyx_k_LevelDB__remove[] = "LevelDB._remove";
 static const char __pyx_k_LevelDB_destroy[] = "LevelDB.destroy";
+static const char __pyx_k_atoms_with_root[] = "_atoms_with_root";
 static const char __pyx_k_graphbrain_funs[] = "graphbrain.funs";
 static const char __pyx_k_LevelDB__add_key[] = "LevelDB._add_key";
+static const char __pyx_k_edges_with_atoms[] = "_edges_with_atoms";
 static const char __pyx_k_read_counter_key[] = "__read_counter_key";
 static const char __pyx_k_create_if_missing[] = "create_if_missing";
 static const char __pyx_k_dec_attribute_key[] = "_dec_attribute_key";
@@ -1775,18 +1777,16 @@ static const char __pyx_k_get_int_attribute[] = "get_int_attribute";
 static const char __pyx_k_get_str_attribute[] = "_get_str_attribute";
 static const char __pyx_k_inc_attribute_key[] = "_inc_attribute_key";
 static const char __pyx_k_set_attribute_key[] = "_set_attribute_key";
-static const char __pyx_k_symbols_with_root[] = "_symbols_with_root";
 static const char __pyx_k_LevelDB__str2perms[] = "LevelDB._str2perms";
+static const char __pyx_k_LevelDB_atom_count[] = "LevelDB.atom_count";
 static const char __pyx_k_LevelDB_edge_count[] = "LevelDB.edge_count";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
-static const char __pyx_k_edges_with_symbols[] = "_edges_with_symbols";
 static const char __pyx_k_LevelDB__exists_key[] = "LevelDB._exists_key";
 static const char __pyx_k_LevelDB__remove_key[] = "LevelDB._remove_key";
 static const char __pyx_k_get_float_attribute[] = "_get_float_attribute";
 static const char __pyx_k_get_int_attribute_2[] = "_get_int_attribute";
 static const char __pyx_k_LevelDB__dec_counter[] = "LevelDB._dec_counter";
 static const char __pyx_k_LevelDB__inc_counter[] = "LevelDB._inc_counter";
-static const char __pyx_k_LevelDB_symbol_count[] = "LevelDB.symbol_count";
 static const char __pyx_k_LevelDB_total_degree[] = "LevelDB.total_degree";
 static const char __pyx_k_edge_matches_pattern[] = "_edge_matches_pattern";
 static const char __pyx_k_LevelDB__read_counter[] = "LevelDB._read_counter";
@@ -1803,8 +1803,10 @@ static const char __pyx_k_write_edge_permutation[] = "_write_edge_permutation";
 static const char __pyx_k_get_float_attribute_key[] = "_get_float_attribute_key";
 static const char __pyx_k_remove_edge_permutation[] = "_remove_edge_permutation";
 static const char __pyx_k_write_edge_permutations[] = "_write_edge_permutations";
+static const char __pyx_k_LevelDB__atoms_with_root[] = "LevelDB._atoms_with_root";
 static const char __pyx_k_permutate_locals_genexpr[] = "permutate.<locals>.genexpr";
 static const char __pyx_k_remove_edge_permutations[] = "_remove_edge_permutations";
+static const char __pyx_k_LevelDB__edges_with_atoms[] = "LevelDB._edges_with_atoms";
 static const char __pyx_k_LevelDB__read_counter_key[] = "_LevelDB__read_counter_key";
 static const char __pyx_k_do_with_edge_permutations[] = "_do_with_edge_permutations";
 static const char __pyx_k_LevelDB___read_counter_key[] = "LevelDB.__read_counter_key";
@@ -1813,8 +1815,6 @@ static const char __pyx_k_LevelDB__get_int_attribute[] = "LevelDB._get_int_attri
 static const char __pyx_k_LevelDB__get_str_attribute[] = "LevelDB._get_str_attribute";
 static const char __pyx_k_LevelDB__inc_attribute_key[] = "LevelDB._inc_attribute_key";
 static const char __pyx_k_LevelDB__set_attribute_key[] = "LevelDB._set_attribute_key";
-static const char __pyx_k_LevelDB__symbols_with_root[] = "LevelDB._symbols_with_root";
-static const char __pyx_k_LevelDB__edges_with_symbols[] = "LevelDB._edges_with_symbols";
 static const char __pyx_k_LevelDB__get_float_attribute[] = "LevelDB._get_float_attribute";
 static const char __pyx_k_LevelDB__get_int_attribute_key[] = "LevelDB._get_int_attribute_key";
 static const char __pyx_k_LevelDB__get_str_attribute_key[] = "LevelDB._get_str_attribute_key";
@@ -1836,12 +1836,13 @@ static PyObject *__pyx_n_s_LevelDB___init;
 static PyObject *__pyx_n_s_LevelDB___read_counter_key;
 static PyObject *__pyx_n_s_LevelDB__add;
 static PyObject *__pyx_n_s_LevelDB__add_key;
+static PyObject *__pyx_n_s_LevelDB__atoms_with_root;
 static PyObject *__pyx_n_s_LevelDB__attribute_key;
 static PyObject *__pyx_n_s_LevelDB__dec_attribute;
 static PyObject *__pyx_n_s_LevelDB__dec_attribute_key;
 static PyObject *__pyx_n_s_LevelDB__dec_counter;
 static PyObject *__pyx_n_s_LevelDB__degree;
-static PyObject *__pyx_n_s_LevelDB__edges_with_symbols;
+static PyObject *__pyx_n_s_LevelDB__edges_with_atoms;
 static PyObject *__pyx_n_s_LevelDB__exists;
 static PyObject *__pyx_n_s_LevelDB__exists_key;
 static PyObject *__pyx_n_s_LevelDB__get_float_attribute;
@@ -1865,16 +1866,15 @@ static PyObject *__pyx_n_s_LevelDB__set_attribute;
 static PyObject *__pyx_n_s_LevelDB__set_attribute_key;
 static PyObject *__pyx_n_s_LevelDB__star;
 static PyObject *__pyx_n_s_LevelDB__str2perms;
-static PyObject *__pyx_n_s_LevelDB__symbols_with_root;
 static PyObject *__pyx_n_s_LevelDB__write_edge_permutation;
 static PyObject *__pyx_n_s_LevelDB__write_edge_permutations;
 static PyObject *__pyx_n_s_LevelDB_all;
 static PyObject *__pyx_n_s_LevelDB_all_attributes;
+static PyObject *__pyx_n_s_LevelDB_atom_count;
 static PyObject *__pyx_n_s_LevelDB_close;
 static PyObject *__pyx_n_s_LevelDB_destroy;
 static PyObject *__pyx_n_s_LevelDB_edge_count;
 static PyObject *__pyx_n_s_LevelDB_name;
-static PyObject *__pyx_n_s_LevelDB_symbol_count;
 static PyObject *__pyx_n_s_LevelDB_total_degree;
 static PyObject *__pyx_n_s_MAX_PERMS;
 static PyObject *__pyx_n_s_ValueError;
@@ -1886,6 +1886,9 @@ static PyObject *__pyx_n_s_add_key;
 static PyObject *__pyx_n_s_all;
 static PyObject *__pyx_n_s_all_attributes;
 static PyObject *__pyx_n_s_args;
+static PyObject *__pyx_n_s_atom_count;
+static PyObject *__pyx_n_s_atoms;
+static PyObject *__pyx_n_s_atoms_with_root;
 static PyObject *__pyx_n_s_attribute;
 static PyObject *__pyx_n_s_attribute_key;
 static PyObject *__pyx_n_s_attributes;
@@ -1920,7 +1923,7 @@ static PyObject *__pyx_n_s_edge_key;
 static PyObject *__pyx_n_s_edge_matches_pattern;
 static PyObject *__pyx_n_s_edges;
 static PyObject *__pyx_n_s_edges2str;
-static PyObject *__pyx_n_s_edges_with_symbols;
+static PyObject *__pyx_n_s_edges_with_atoms;
 static PyObject *__pyx_n_s_encode;
 static PyObject *__pyx_n_s_encode_attributes;
 static PyObject *__pyx_n_s_end_key;
@@ -2029,9 +2032,6 @@ static PyObject *__pyx_n_s_str2perms;
 static PyObject *__pyx_n_s_str_list;
 static PyObject *__pyx_n_s_str_plus_1;
 static PyObject *__pyx_n_s_symb;
-static PyObject *__pyx_n_s_symbol_count;
-static PyObject *__pyx_n_s_symbols;
-static PyObject *__pyx_n_s_symbols_with_root;
 static PyObject *__pyx_n_s_symbs;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_throw;
@@ -2065,7 +2065,7 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_4name(CYT
 static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_6destroy(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_8all(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_11all_attributes(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_14symbol_count(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_14atom_count(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_16edge_count(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_18total_degree(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_20_exists(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_entity); /* proto */
@@ -2074,8 +2074,8 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_24_remove
 static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_14_pattern2edges_genexpr(PyObject *__pyx_self); /* proto */
 static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_26_pattern2edges(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_pattern, PyObject *__pyx_v_open_ended); /* proto */
 static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_28_star(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_center, PyObject *__pyx_v_limit); /* proto */
-static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_30_symbols_with_root(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_root); /* proto */
-static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_32_edges_with_symbols(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_symbols, PyObject *__pyx_v_root); /* proto */
+static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_30_atoms_with_root(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_root); /* proto */
+static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_32_edges_with_atoms(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_atoms, PyObject *__pyx_v_root); /* proto */
 static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_34_set_attribute(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_entity, PyObject *__pyx_v_attribute, PyObject *__pyx_v_value); /* proto */
 static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_36_inc_attribute(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_entity, PyObject *__pyx_v_attribute); /* proto */
 static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_38_dec_attribute(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_entity, PyObject *__pyx_v_attribute); /* proto */
@@ -6292,7 +6292,7 @@ static PyObject *__pyx_gb_10graphbrain_11hypergraphs_7leveldb_7LevelDB_13generat
  *             attributes = _decode_attributes(value)
  *             yield (entity, attributes)             # <<<<<<<<<<<<<<
  * 
- *     def symbol_count(self):
+ *     def atom_count(self):
  */
     __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 171, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
@@ -6366,38 +6366,38 @@ static PyObject *__pyx_gb_10graphbrain_11hypergraphs_7leveldb_7LevelDB_13generat
 /* "graphbrain/hypergraphs/leveldb.pyx":173
  *             yield (entity, attributes)
  * 
- *     def symbol_count(self):             # <<<<<<<<<<<<<<
- *         """Total number of edge_symbols in the hypergraph"""
- *         return self._read_counter('symbol_count')
+ *     def atom_count(self):             # <<<<<<<<<<<<<<
+ *         """Total number of atoms in the hypergraph"""
+ *         return self._read_counter('atom_count')
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_15symbol_count(PyObject *__pyx_self, PyObject *__pyx_v_self); /*proto*/
-static char __pyx_doc_10graphbrain_11hypergraphs_7leveldb_7LevelDB_14symbol_count[] = "Total number of edge_symbols in the hypergraph";
-static PyMethodDef __pyx_mdef_10graphbrain_11hypergraphs_7leveldb_7LevelDB_15symbol_count = {"symbol_count", (PyCFunction)__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_15symbol_count, METH_O, __pyx_doc_10graphbrain_11hypergraphs_7leveldb_7LevelDB_14symbol_count};
-static PyObject *__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_15symbol_count(PyObject *__pyx_self, PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_15atom_count(PyObject *__pyx_self, PyObject *__pyx_v_self); /*proto*/
+static char __pyx_doc_10graphbrain_11hypergraphs_7leveldb_7LevelDB_14atom_count[] = "Total number of atoms in the hypergraph";
+static PyMethodDef __pyx_mdef_10graphbrain_11hypergraphs_7leveldb_7LevelDB_15atom_count = {"atom_count", (PyCFunction)__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_15atom_count, METH_O, __pyx_doc_10graphbrain_11hypergraphs_7leveldb_7LevelDB_14atom_count};
+static PyObject *__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_15atom_count(PyObject *__pyx_self, PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("symbol_count (wrapper)", 0);
-  __pyx_r = __pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_14symbol_count(__pyx_self, ((PyObject *)__pyx_v_self));
+  __Pyx_RefNannySetupContext("atom_count (wrapper)", 0);
+  __pyx_r = __pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_14atom_count(__pyx_self, ((PyObject *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_14symbol_count(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self) {
+static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_14atom_count(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
-  __Pyx_RefNannySetupContext("symbol_count", 0);
+  __Pyx_RefNannySetupContext("atom_count", 0);
 
   /* "graphbrain/hypergraphs/leveldb.pyx":175
- *     def symbol_count(self):
- *         """Total number of edge_symbols in the hypergraph"""
- *         return self._read_counter('symbol_count')             # <<<<<<<<<<<<<<
+ *     def atom_count(self):
+ *         """Total number of atoms in the hypergraph"""
+ *         return self._read_counter('atom_count')             # <<<<<<<<<<<<<<
  * 
  *     def edge_count(self):
  */
@@ -6414,7 +6414,7 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_14symbol_
       __Pyx_DECREF_SET(__pyx_t_2, function);
     }
   }
-  __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_n_s_symbol_count) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_n_s_symbol_count);
+  __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_n_s_atom_count) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_n_s_atom_count);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
   if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 175, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -6426,9 +6426,9 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_14symbol_
   /* "graphbrain/hypergraphs/leveldb.pyx":173
  *             yield (entity, attributes)
  * 
- *     def symbol_count(self):             # <<<<<<<<<<<<<<
- *         """Total number of edge_symbols in the hypergraph"""
- *         return self._read_counter('symbol_count')
+ *     def atom_count(self):             # <<<<<<<<<<<<<<
+ *         """Total number of atoms in the hypergraph"""
+ *         return self._read_counter('atom_count')
  */
 
   /* function exit code */
@@ -6436,7 +6436,7 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_14symbol_
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_AddTraceback("graphbrain.hypergraphs.leveldb.LevelDB.symbol_count", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("graphbrain.hypergraphs.leveldb.LevelDB.atom_count", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -6445,7 +6445,7 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_14symbol_
 }
 
 /* "graphbrain/hypergraphs/leveldb.pyx":177
- *         return self._read_counter('symbol_count')
+ *         return self._read_counter('atom_count')
  * 
  *     def edge_count(self):             # <<<<<<<<<<<<<<
  *         """Total number of edge in the hypergraph"""
@@ -6505,7 +6505,7 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_16edge_co
   goto __pyx_L0;
 
   /* "graphbrain/hypergraphs/leveldb.pyx":177
- *         return self._read_counter('symbol_count')
+ *         return self._read_counter('atom_count')
  * 
  *     def edge_count(self):             # <<<<<<<<<<<<<<
  *         """Total number of edge in the hypergraph"""
@@ -7032,7 +7032,7 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_22_add(CY
  *                 ent_key = _ent2key(entity)
  *                 if not self._inc_attribute_key(ent_key, 'd'):             # <<<<<<<<<<<<<<
  *                     if is_atom(entity):
- *                         self._inc_counter('symbol_count')
+ *                         self._inc_counter('atom_count')
  */
       __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_inc_attribute_key); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 197, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
@@ -7090,7 +7090,7 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_22_add(CY
  *                 ent_key = _ent2key(entity)
  *                 if not self._inc_attribute_key(ent_key, 'd'):
  *                     if is_atom(entity):             # <<<<<<<<<<<<<<
- *                         self._inc_counter('symbol_count')
+ *                         self._inc_counter('atom_count')
  *                     else:
  */
         __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_is_atom); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 198, __pyx_L1_error)
@@ -7117,7 +7117,7 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_22_add(CY
           /* "graphbrain/hypergraphs/leveldb.pyx":199
  *                 if not self._inc_attribute_key(ent_key, 'd'):
  *                     if is_atom(entity):
- *                         self._inc_counter('symbol_count')             # <<<<<<<<<<<<<<
+ *                         self._inc_counter('atom_count')             # <<<<<<<<<<<<<<
  *                     else:
  *                         self._inc_counter('edge_count')
  */
@@ -7133,7 +7133,7 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_22_add(CY
               __Pyx_DECREF_SET(__pyx_t_1, function);
             }
           }
-          __pyx_t_2 = (__pyx_t_10) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_10, __pyx_n_s_symbol_count) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_n_s_symbol_count);
+          __pyx_t_2 = (__pyx_t_10) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_10, __pyx_n_s_atom_count) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_n_s_atom_count);
           __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
           if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 199, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
@@ -7144,14 +7144,14 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_22_add(CY
  *                 ent_key = _ent2key(entity)
  *                 if not self._inc_attribute_key(ent_key, 'd'):
  *                     if is_atom(entity):             # <<<<<<<<<<<<<<
- *                         self._inc_counter('symbol_count')
+ *                         self._inc_counter('atom_count')
  *                     else:
  */
           goto __pyx_L7;
         }
 
         /* "graphbrain/hypergraphs/leveldb.pyx":201
- *                         self._inc_counter('symbol_count')
+ *                         self._inc_counter('atom_count')
  *                     else:
  *                         self._inc_counter('edge_count')             # <<<<<<<<<<<<<<
  *                     self._add_key(ent_key, {'d': 1})
@@ -7245,7 +7245,7 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_22_add(CY
  *                 ent_key = _ent2key(entity)
  *                 if not self._inc_attribute_key(ent_key, 'd'):             # <<<<<<<<<<<<<<
  *                     if is_atom(entity):
- *                         self._inc_counter('symbol_count')
+ *                         self._inc_counter('atom_count')
  */
       }
 
@@ -8728,7 +8728,7 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_28_star(C
  *             center_id = ent2str(center)
  *         return self._str2perms(center_id, limit)             # <<<<<<<<<<<<<<
  * 
- *     def _symbols_with_root(self, root):
+ *     def _atoms_with_root(self, root):
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_str2perms); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 244, __pyx_L1_error)
@@ -8808,21 +8808,21 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_28_star(C
 /* "graphbrain/hypergraphs/leveldb.pyx":246
  *         return self._str2perms(center_id, limit)
  * 
- *     def _symbols_with_root(self, root):             # <<<<<<<<<<<<<<
- *         """Find all edge_symbols with the given root."""
+ *     def _atoms_with_root(self, root):             # <<<<<<<<<<<<<<
+ *         """Find all atoms with the given root."""
  *         start_str = '%s/' % root
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_31_symbols_with_root(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_10graphbrain_11hypergraphs_7leveldb_7LevelDB_30_symbols_with_root[] = "Find all edge_symbols with the given root.";
-static PyMethodDef __pyx_mdef_10graphbrain_11hypergraphs_7leveldb_7LevelDB_31_symbols_with_root = {"_symbols_with_root", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_31_symbols_with_root, METH_VARARGS|METH_KEYWORDS, __pyx_doc_10graphbrain_11hypergraphs_7leveldb_7LevelDB_30_symbols_with_root};
-static PyObject *__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_31_symbols_with_root(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_31_atoms_with_root(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_10graphbrain_11hypergraphs_7leveldb_7LevelDB_30_atoms_with_root[] = "Find all atoms with the given root.";
+static PyMethodDef __pyx_mdef_10graphbrain_11hypergraphs_7leveldb_7LevelDB_31_atoms_with_root = {"_atoms_with_root", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_31_atoms_with_root, METH_VARARGS|METH_KEYWORDS, __pyx_doc_10graphbrain_11hypergraphs_7leveldb_7LevelDB_30_atoms_with_root};
+static PyObject *__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_31_atoms_with_root(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_root = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("_symbols_with_root (wrapper)", 0);
+  __Pyx_RefNannySetupContext("_atoms_with_root (wrapper)", 0);
   {
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_self,&__pyx_n_s_root,0};
     PyObject* values[2] = {0,0};
@@ -8846,11 +8846,11 @@ static PyObject *__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_31_symbol
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_root)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_symbols_with_root", 1, 2, 2, 1); __PYX_ERR(0, 246, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_atoms_with_root", 1, 2, 2, 1); __PYX_ERR(0, 246, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_symbols_with_root") < 0)) __PYX_ERR(0, 246, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_atoms_with_root") < 0)) __PYX_ERR(0, 246, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -8863,20 +8863,20 @@ static PyObject *__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_31_symbol
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_symbols_with_root", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 246, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_atoms_with_root", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 246, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("graphbrain.hypergraphs.leveldb.LevelDB._symbols_with_root", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("graphbrain.hypergraphs.leveldb.LevelDB._atoms_with_root", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_30_symbols_with_root(__pyx_self, __pyx_v_self, __pyx_v_root);
+  __pyx_r = __pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_30_atoms_with_root(__pyx_self, __pyx_v_self, __pyx_v_root);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_30_symbols_with_root(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_root) {
+static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_30_atoms_with_root(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_root) {
   PyObject *__pyx_v_start_str = NULL;
   PyObject *__pyx_v_end_str = NULL;
   PyObject *__pyx_v_start_key = NULL;
@@ -8897,11 +8897,11 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_30_symbol
   PyObject *(*__pyx_t_8)(PyObject *);
   PyObject *__pyx_t_9 = NULL;
   int __pyx_t_10;
-  __Pyx_RefNannySetupContext("_symbols_with_root", 0);
+  __Pyx_RefNannySetupContext("_atoms_with_root", 0);
 
   /* "graphbrain/hypergraphs/leveldb.pyx":248
- *     def _symbols_with_root(self, root):
- *         """Find all edge_symbols with the given root."""
+ *     def _atoms_with_root(self, root):
+ *         """Find all atoms with the given root."""
  *         start_str = '%s/' % root             # <<<<<<<<<<<<<<
  *         end_str = _str_plus_1(start_str)
  *         start_key = (u'v%s' % start_str).encode('utf-8')
@@ -8912,7 +8912,7 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_30_symbol
   __pyx_t_1 = 0;
 
   /* "graphbrain/hypergraphs/leveldb.pyx":249
- *         """Find all edge_symbols with the given root."""
+ *         """Find all atoms with the given root."""
  *         start_str = '%s/' % root
  *         end_str = _str_plus_1(start_str)             # <<<<<<<<<<<<<<
  *         start_key = (u'v%s' % start_str).encode('utf-8')
@@ -9163,7 +9163,7 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_30_symbol
  *             symbs.add(symb)
  *         return symbs             # <<<<<<<<<<<<<<
  * 
- *     def _edges_with_symbols(self, symbols, root):
+ *     def _edges_with_atoms(self, atoms, root):
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v_symbs);
@@ -9173,8 +9173,8 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_30_symbol
   /* "graphbrain/hypergraphs/leveldb.pyx":246
  *         return self._str2perms(center_id, limit)
  * 
- *     def _symbols_with_root(self, root):             # <<<<<<<<<<<<<<
- *         """Find all edge_symbols with the given root."""
+ *     def _atoms_with_root(self, root):             # <<<<<<<<<<<<<<
+ *         """Find all atoms with the given root."""
  *         start_str = '%s/' % root
  */
 
@@ -9186,7 +9186,7 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_30_symbol
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_AddTraceback("graphbrain.hypergraphs.leveldb.LevelDB._symbols_with_root", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("graphbrain.hypergraphs.leveldb.LevelDB._atoms_with_root", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_start_str);
@@ -9205,24 +9205,24 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_30_symbol
 /* "graphbrain/hypergraphs/leveldb.pyx":259
  *         return symbs
  * 
- *     def _edges_with_symbols(self, symbols, root):             # <<<<<<<<<<<<<<
- *         """Find all edges containing the given edge_symbols,
+ *     def _edges_with_atoms(self, atoms, root):             # <<<<<<<<<<<<<<
+ *         """Find all edges containing the given atoms,
  *            and a given root"""
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_33_edges_with_symbols(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_10graphbrain_11hypergraphs_7leveldb_7LevelDB_32_edges_with_symbols[] = "Find all edges containing the given edge_symbols,\n           and a given root";
-static PyMethodDef __pyx_mdef_10graphbrain_11hypergraphs_7leveldb_7LevelDB_33_edges_with_symbols = {"_edges_with_symbols", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_33_edges_with_symbols, METH_VARARGS|METH_KEYWORDS, __pyx_doc_10graphbrain_11hypergraphs_7leveldb_7LevelDB_32_edges_with_symbols};
-static PyObject *__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_33_edges_with_symbols(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_33_edges_with_atoms(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_10graphbrain_11hypergraphs_7leveldb_7LevelDB_32_edges_with_atoms[] = "Find all edges containing the given atoms,\n           and a given root";
+static PyMethodDef __pyx_mdef_10graphbrain_11hypergraphs_7leveldb_7LevelDB_33_edges_with_atoms = {"_edges_with_atoms", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_33_edges_with_atoms, METH_VARARGS|METH_KEYWORDS, __pyx_doc_10graphbrain_11hypergraphs_7leveldb_7LevelDB_32_edges_with_atoms};
+static PyObject *__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_33_edges_with_atoms(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
-  PyObject *__pyx_v_symbols = 0;
+  PyObject *__pyx_v_atoms = 0;
   PyObject *__pyx_v_root = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("_edges_with_symbols (wrapper)", 0);
+  __Pyx_RefNannySetupContext("_edges_with_atoms (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_self,&__pyx_n_s_symbols,&__pyx_n_s_root,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_self,&__pyx_n_s_atoms,&__pyx_n_s_root,0};
     PyObject* values[3] = {0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
@@ -9244,19 +9244,19 @@ static PyObject *__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_33_edges_
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
-        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_symbols)) != 0)) kw_args--;
+        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_atoms)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_edges_with_symbols", 1, 3, 3, 1); __PYX_ERR(0, 259, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_edges_with_atoms", 1, 3, 3, 1); __PYX_ERR(0, 259, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_root)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_edges_with_symbols", 1, 3, 3, 2); __PYX_ERR(0, 259, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_edges_with_atoms", 1, 3, 3, 2); __PYX_ERR(0, 259, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_edges_with_symbols") < 0)) __PYX_ERR(0, 259, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_edges_with_atoms") < 0)) __PYX_ERR(0, 259, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -9266,25 +9266,25 @@ static PyObject *__pyx_pw_10graphbrain_11hypergraphs_7leveldb_7LevelDB_33_edges_
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
     __pyx_v_self = values[0];
-    __pyx_v_symbols = values[1];
+    __pyx_v_atoms = values[1];
     __pyx_v_root = values[2];
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_edges_with_symbols", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 259, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_edges_with_atoms", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 259, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("graphbrain.hypergraphs.leveldb.LevelDB._edges_with_symbols", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("graphbrain.hypergraphs.leveldb.LevelDB._edges_with_atoms", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_32_edges_with_symbols(__pyx_self, __pyx_v_self, __pyx_v_symbols, __pyx_v_root);
+  __pyx_r = __pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_32_edges_with_atoms(__pyx_self, __pyx_v_self, __pyx_v_atoms, __pyx_v_root);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_32_edges_with_symbols(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_symbols, PyObject *__pyx_v_root) {
+static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_32_edges_with_atoms(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_atoms, PyObject *__pyx_v_root) {
   PyObject *__pyx_v_start_str = NULL;
   PyObject *__pyx_v_end_str = NULL;
   PyObject *__pyx_v_start_key = NULL;
@@ -9306,13 +9306,13 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_32_edges_
   PyObject *__pyx_t_8 = NULL;
   PyObject *(*__pyx_t_9)(PyObject *);
   int __pyx_t_10;
-  __Pyx_RefNannySetupContext("_edges_with_symbols", 0);
+  __Pyx_RefNannySetupContext("_edges_with_atoms", 0);
 
   /* "graphbrain/hypergraphs/leveldb.pyx":262
- *         """Find all edges containing the given edge_symbols,
+ *         """Find all edges containing the given atoms,
  *            and a given root"""
  *         if root:             # <<<<<<<<<<<<<<
- *             start_str = '%s %s/' % (' '.join(symbols), root)
+ *             start_str = '%s %s/' % (' '.join(atoms), root)
  *         else:
  */
   __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_root); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 262, __pyx_L1_error)
@@ -9321,11 +9321,11 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_32_edges_
     /* "graphbrain/hypergraphs/leveldb.pyx":263
  *            and a given root"""
  *         if root:
- *             start_str = '%s %s/' % (' '.join(symbols), root)             # <<<<<<<<<<<<<<
+ *             start_str = '%s %s/' % (' '.join(atoms), root)             # <<<<<<<<<<<<<<
  *         else:
- *             start_str = ' '.join(symbols)
+ *             start_str = ' '.join(atoms)
  */
-    __pyx_t_2 = __Pyx_PyString_Join(__pyx_kp_s_, __pyx_v_symbols); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 263, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyString_Join(__pyx_kp_s_, __pyx_v_atoms); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 263, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 263, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
@@ -9342,24 +9342,24 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_32_edges_
     __pyx_t_2 = 0;
 
     /* "graphbrain/hypergraphs/leveldb.pyx":262
- *         """Find all edges containing the given edge_symbols,
+ *         """Find all edges containing the given atoms,
  *            and a given root"""
  *         if root:             # <<<<<<<<<<<<<<
- *             start_str = '%s %s/' % (' '.join(symbols), root)
+ *             start_str = '%s %s/' % (' '.join(atoms), root)
  *         else:
  */
     goto __pyx_L3;
   }
 
   /* "graphbrain/hypergraphs/leveldb.pyx":265
- *             start_str = '%s %s/' % (' '.join(symbols), root)
+ *             start_str = '%s %s/' % (' '.join(atoms), root)
  *         else:
- *             start_str = ' '.join(symbols)             # <<<<<<<<<<<<<<
+ *             start_str = ' '.join(atoms)             # <<<<<<<<<<<<<<
  *         end_str = _str_plus_1(start_str)
  *         start_key = (u'p%s' % start_str).encode('utf-8')
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyString_Join(__pyx_kp_s_, __pyx_v_symbols); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 265, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyString_Join(__pyx_kp_s_, __pyx_v_atoms); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 265, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_v_start_str = ((PyObject*)__pyx_t_2);
     __pyx_t_2 = 0;
@@ -9368,7 +9368,7 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_32_edges_
 
   /* "graphbrain/hypergraphs/leveldb.pyx":266
  *         else:
- *             start_str = ' '.join(symbols)
+ *             start_str = ' '.join(atoms)
  *         end_str = _str_plus_1(start_str)             # <<<<<<<<<<<<<<
  *         start_key = (u'p%s' % start_str).encode('utf-8')
  *         end_key = (u'p%s' % end_str).encode('utf-8')
@@ -9394,7 +9394,7 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_32_edges_
   __pyx_t_2 = 0;
 
   /* "graphbrain/hypergraphs/leveldb.pyx":267
- *             start_str = ' '.join(symbols)
+ *             start_str = ' '.join(atoms)
  *         end_str = _str_plus_1(start_str)
  *         start_key = (u'p%s' % start_str).encode('utf-8')             # <<<<<<<<<<<<<<
  *         end_key = (u'p%s' % end_str).encode('utf-8')
@@ -9653,8 +9653,8 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_32_edges_
   /* "graphbrain/hypergraphs/leveldb.pyx":259
  *         return symbs
  * 
- *     def _edges_with_symbols(self, symbols, root):             # <<<<<<<<<<<<<<
- *         """Find all edges containing the given edge_symbols,
+ *     def _edges_with_atoms(self, atoms, root):             # <<<<<<<<<<<<<<
+ *         """Find all edges containing the given atoms,
  *            and a given root"""
  */
 
@@ -9665,7 +9665,7 @@ static PyObject *__pyx_pf_10graphbrain_11hypergraphs_7leveldb_7LevelDB_32_edges_
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_8);
-  __Pyx_AddTraceback("graphbrain.hypergraphs.leveldb.LevelDB._edges_with_symbols", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("graphbrain.hypergraphs.leveldb.LevelDB._edges_with_atoms", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_start_str);
@@ -16622,12 +16622,13 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_LevelDB___read_counter_key, __pyx_k_LevelDB___read_counter_key, sizeof(__pyx_k_LevelDB___read_counter_key), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__add, __pyx_k_LevelDB__add, sizeof(__pyx_k_LevelDB__add), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__add_key, __pyx_k_LevelDB__add_key, sizeof(__pyx_k_LevelDB__add_key), 0, 0, 1, 1},
+  {&__pyx_n_s_LevelDB__atoms_with_root, __pyx_k_LevelDB__atoms_with_root, sizeof(__pyx_k_LevelDB__atoms_with_root), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__attribute_key, __pyx_k_LevelDB__attribute_key, sizeof(__pyx_k_LevelDB__attribute_key), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__dec_attribute, __pyx_k_LevelDB__dec_attribute, sizeof(__pyx_k_LevelDB__dec_attribute), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__dec_attribute_key, __pyx_k_LevelDB__dec_attribute_key, sizeof(__pyx_k_LevelDB__dec_attribute_key), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__dec_counter, __pyx_k_LevelDB__dec_counter, sizeof(__pyx_k_LevelDB__dec_counter), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__degree, __pyx_k_LevelDB__degree, sizeof(__pyx_k_LevelDB__degree), 0, 0, 1, 1},
-  {&__pyx_n_s_LevelDB__edges_with_symbols, __pyx_k_LevelDB__edges_with_symbols, sizeof(__pyx_k_LevelDB__edges_with_symbols), 0, 0, 1, 1},
+  {&__pyx_n_s_LevelDB__edges_with_atoms, __pyx_k_LevelDB__edges_with_atoms, sizeof(__pyx_k_LevelDB__edges_with_atoms), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__exists, __pyx_k_LevelDB__exists, sizeof(__pyx_k_LevelDB__exists), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__exists_key, __pyx_k_LevelDB__exists_key, sizeof(__pyx_k_LevelDB__exists_key), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__get_float_attribute, __pyx_k_LevelDB__get_float_attribute, sizeof(__pyx_k_LevelDB__get_float_attribute), 0, 0, 1, 1},
@@ -16651,16 +16652,15 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_LevelDB__set_attribute_key, __pyx_k_LevelDB__set_attribute_key, sizeof(__pyx_k_LevelDB__set_attribute_key), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__star, __pyx_k_LevelDB__star, sizeof(__pyx_k_LevelDB__star), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__str2perms, __pyx_k_LevelDB__str2perms, sizeof(__pyx_k_LevelDB__str2perms), 0, 0, 1, 1},
-  {&__pyx_n_s_LevelDB__symbols_with_root, __pyx_k_LevelDB__symbols_with_root, sizeof(__pyx_k_LevelDB__symbols_with_root), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__write_edge_permutation, __pyx_k_LevelDB__write_edge_permutation, sizeof(__pyx_k_LevelDB__write_edge_permutation), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__write_edge_permutations, __pyx_k_LevelDB__write_edge_permutations, sizeof(__pyx_k_LevelDB__write_edge_permutations), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB_all, __pyx_k_LevelDB_all, sizeof(__pyx_k_LevelDB_all), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB_all_attributes, __pyx_k_LevelDB_all_attributes, sizeof(__pyx_k_LevelDB_all_attributes), 0, 0, 1, 1},
+  {&__pyx_n_s_LevelDB_atom_count, __pyx_k_LevelDB_atom_count, sizeof(__pyx_k_LevelDB_atom_count), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB_close, __pyx_k_LevelDB_close, sizeof(__pyx_k_LevelDB_close), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB_destroy, __pyx_k_LevelDB_destroy, sizeof(__pyx_k_LevelDB_destroy), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB_edge_count, __pyx_k_LevelDB_edge_count, sizeof(__pyx_k_LevelDB_edge_count), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB_name, __pyx_k_LevelDB_name, sizeof(__pyx_k_LevelDB_name), 0, 0, 1, 1},
-  {&__pyx_n_s_LevelDB_symbol_count, __pyx_k_LevelDB_symbol_count, sizeof(__pyx_k_LevelDB_symbol_count), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB_total_degree, __pyx_k_LevelDB_total_degree, sizeof(__pyx_k_LevelDB_total_degree), 0, 0, 1, 1},
   {&__pyx_n_s_MAX_PERMS, __pyx_k_MAX_PERMS, sizeof(__pyx_k_MAX_PERMS), 0, 0, 1, 1},
   {&__pyx_n_s_ValueError, __pyx_k_ValueError, sizeof(__pyx_k_ValueError), 0, 0, 1, 1},
@@ -16672,6 +16672,9 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_all, __pyx_k_all, sizeof(__pyx_k_all), 0, 0, 1, 1},
   {&__pyx_n_s_all_attributes, __pyx_k_all_attributes, sizeof(__pyx_k_all_attributes), 0, 0, 1, 1},
   {&__pyx_n_s_args, __pyx_k_args, sizeof(__pyx_k_args), 0, 0, 1, 1},
+  {&__pyx_n_s_atom_count, __pyx_k_atom_count, sizeof(__pyx_k_atom_count), 0, 0, 1, 1},
+  {&__pyx_n_s_atoms, __pyx_k_atoms, sizeof(__pyx_k_atoms), 0, 0, 1, 1},
+  {&__pyx_n_s_atoms_with_root, __pyx_k_atoms_with_root, sizeof(__pyx_k_atoms_with_root), 0, 0, 1, 1},
   {&__pyx_n_s_attribute, __pyx_k_attribute, sizeof(__pyx_k_attribute), 0, 0, 1, 1},
   {&__pyx_n_s_attribute_key, __pyx_k_attribute_key, sizeof(__pyx_k_attribute_key), 0, 0, 1, 1},
   {&__pyx_n_s_attributes, __pyx_k_attributes, sizeof(__pyx_k_attributes), 0, 0, 1, 1},
@@ -16706,7 +16709,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_edge_matches_pattern, __pyx_k_edge_matches_pattern, sizeof(__pyx_k_edge_matches_pattern), 0, 0, 1, 1},
   {&__pyx_n_s_edges, __pyx_k_edges, sizeof(__pyx_k_edges), 0, 0, 1, 1},
   {&__pyx_n_s_edges2str, __pyx_k_edges2str, sizeof(__pyx_k_edges2str), 0, 0, 1, 1},
-  {&__pyx_n_s_edges_with_symbols, __pyx_k_edges_with_symbols, sizeof(__pyx_k_edges_with_symbols), 0, 0, 1, 1},
+  {&__pyx_n_s_edges_with_atoms, __pyx_k_edges_with_atoms, sizeof(__pyx_k_edges_with_atoms), 0, 0, 1, 1},
   {&__pyx_n_s_encode, __pyx_k_encode, sizeof(__pyx_k_encode), 0, 0, 1, 1},
   {&__pyx_n_s_encode_attributes, __pyx_k_encode_attributes, sizeof(__pyx_k_encode_attributes), 0, 0, 1, 1},
   {&__pyx_n_s_end_key, __pyx_k_end_key, sizeof(__pyx_k_end_key), 0, 0, 1, 1},
@@ -16815,9 +16818,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_str_list, __pyx_k_str_list, sizeof(__pyx_k_str_list), 0, 0, 1, 1},
   {&__pyx_n_s_str_plus_1, __pyx_k_str_plus_1, sizeof(__pyx_k_str_plus_1), 0, 0, 1, 1},
   {&__pyx_n_s_symb, __pyx_k_symb, sizeof(__pyx_k_symb), 0, 0, 1, 1},
-  {&__pyx_n_s_symbol_count, __pyx_k_symbol_count, sizeof(__pyx_k_symbol_count), 0, 0, 1, 1},
-  {&__pyx_n_s_symbols, __pyx_k_symbols, sizeof(__pyx_k_symbols), 0, 0, 1, 1},
-  {&__pyx_n_s_symbols_with_root, __pyx_k_symbols_with_root, sizeof(__pyx_k_symbols_with_root), 0, 0, 1, 1},
   {&__pyx_n_s_symbs, __pyx_k_symbs, sizeof(__pyx_k_symbs), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_n_s_throw, __pyx_k_throw, sizeof(__pyx_k_throw), 0, 0, 1, 1},
@@ -17090,17 +17090,17 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "graphbrain/hypergraphs/leveldb.pyx":173
  *             yield (entity, attributes)
  * 
- *     def symbol_count(self):             # <<<<<<<<<<<<<<
- *         """Total number of edge_symbols in the hypergraph"""
- *         return self._read_counter('symbol_count')
+ *     def atom_count(self):             # <<<<<<<<<<<<<<
+ *         """Total number of atoms in the hypergraph"""
+ *         return self._read_counter('atom_count')
  */
   __pyx_tuple__42 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__42)) __PYX_ERR(0, 173, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__42);
   __Pyx_GIVEREF(__pyx_tuple__42);
-  __pyx_codeobj__43 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__42, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_hypergraphs_leveldb_p, __pyx_n_s_symbol_count, 173, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__43)) __PYX_ERR(0, 173, __pyx_L1_error)
+  __pyx_codeobj__43 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__42, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_hypergraphs_leveldb_p, __pyx_n_s_atom_count, 173, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__43)) __PYX_ERR(0, 173, __pyx_L1_error)
 
   /* "graphbrain/hypergraphs/leveldb.pyx":177
- *         return self._read_counter('symbol_count')
+ *         return self._read_counter('atom_count')
  * 
  *     def edge_count(self):             # <<<<<<<<<<<<<<
  *         """Total number of edge in the hypergraph"""
@@ -17189,26 +17189,26 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "graphbrain/hypergraphs/leveldb.pyx":246
  *         return self._str2perms(center_id, limit)
  * 
- *     def _symbols_with_root(self, root):             # <<<<<<<<<<<<<<
- *         """Find all edge_symbols with the given root."""
+ *     def _atoms_with_root(self, root):             # <<<<<<<<<<<<<<
+ *         """Find all atoms with the given root."""
  *         start_str = '%s/' % root
  */
   __pyx_tuple__59 = PyTuple_Pack(10, __pyx_n_s_self, __pyx_n_s_root, __pyx_n_s_start_str, __pyx_n_s_end_str, __pyx_n_s_start_key, __pyx_n_s_end_key, __pyx_n_s_symbs, __pyx_n_s_key, __pyx_n_s_value, __pyx_n_s_symb); if (unlikely(!__pyx_tuple__59)) __PYX_ERR(0, 246, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__59);
   __Pyx_GIVEREF(__pyx_tuple__59);
-  __pyx_codeobj__60 = (PyObject*)__Pyx_PyCode_New(2, 0, 10, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__59, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_hypergraphs_leveldb_p, __pyx_n_s_symbols_with_root, 246, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__60)) __PYX_ERR(0, 246, __pyx_L1_error)
+  __pyx_codeobj__60 = (PyObject*)__Pyx_PyCode_New(2, 0, 10, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__59, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_hypergraphs_leveldb_p, __pyx_n_s_atoms_with_root, 246, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__60)) __PYX_ERR(0, 246, __pyx_L1_error)
 
   /* "graphbrain/hypergraphs/leveldb.pyx":259
  *         return symbs
  * 
- *     def _edges_with_symbols(self, symbols, root):             # <<<<<<<<<<<<<<
- *         """Find all edges containing the given edge_symbols,
+ *     def _edges_with_atoms(self, atoms, root):             # <<<<<<<<<<<<<<
+ *         """Find all edges containing the given atoms,
  *            and a given root"""
  */
-  __pyx_tuple__61 = PyTuple_Pack(12, __pyx_n_s_self, __pyx_n_s_symbols, __pyx_n_s_root, __pyx_n_s_start_str, __pyx_n_s_end_str, __pyx_n_s_start_key, __pyx_n_s_end_key, __pyx_n_s_edges, __pyx_n_s_key, __pyx_n_s_value, __pyx_n_s_perm_str, __pyx_n_s_edge); if (unlikely(!__pyx_tuple__61)) __PYX_ERR(0, 259, __pyx_L1_error)
+  __pyx_tuple__61 = PyTuple_Pack(12, __pyx_n_s_self, __pyx_n_s_atoms, __pyx_n_s_root, __pyx_n_s_start_str, __pyx_n_s_end_str, __pyx_n_s_start_key, __pyx_n_s_end_key, __pyx_n_s_edges, __pyx_n_s_key, __pyx_n_s_value, __pyx_n_s_perm_str, __pyx_n_s_edge); if (unlikely(!__pyx_tuple__61)) __PYX_ERR(0, 259, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__61);
   __Pyx_GIVEREF(__pyx_tuple__61);
-  __pyx_codeobj__62 = (PyObject*)__Pyx_PyCode_New(3, 0, 12, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__61, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_hypergraphs_leveldb_p, __pyx_n_s_edges_with_symbols, 259, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__62)) __PYX_ERR(0, 259, __pyx_L1_error)
+  __pyx_codeobj__62 = (PyObject*)__Pyx_PyCode_New(3, 0, 12, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__61, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_hypergraphs_leveldb_p, __pyx_n_s_edges_with_atoms, 259, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__62)) __PYX_ERR(0, 259, __pyx_L1_error)
 
   /* "graphbrain/hypergraphs/leveldb.pyx":279
  *         return edges
@@ -18189,17 +18189,17 @@ if (!__Pyx_RefNanny) {
   /* "graphbrain/hypergraphs/leveldb.pyx":173
  *             yield (entity, attributes)
  * 
- *     def symbol_count(self):             # <<<<<<<<<<<<<<
- *         """Total number of edge_symbols in the hypergraph"""
- *         return self._read_counter('symbol_count')
+ *     def atom_count(self):             # <<<<<<<<<<<<<<
+ *         """Total number of atoms in the hypergraph"""
+ *         return self._read_counter('atom_count')
  */
-  __pyx_t_4 = __Pyx_CyFunction_NewEx(&__pyx_mdef_10graphbrain_11hypergraphs_7leveldb_7LevelDB_15symbol_count, 0, __pyx_n_s_LevelDB_symbol_count, NULL, __pyx_n_s_graphbrain_hypergraphs_leveldb, __pyx_d, ((PyObject *)__pyx_codeobj__43)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 173, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_CyFunction_NewEx(&__pyx_mdef_10graphbrain_11hypergraphs_7leveldb_7LevelDB_15atom_count, 0, __pyx_n_s_LevelDB_atom_count, NULL, __pyx_n_s_graphbrain_hypergraphs_leveldb, __pyx_d, ((PyObject *)__pyx_codeobj__43)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 173, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (__Pyx_SetNameInClass(__pyx_t_3, __pyx_n_s_symbol_count, __pyx_t_4) < 0) __PYX_ERR(0, 173, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_3, __pyx_n_s_atom_count, __pyx_t_4) < 0) __PYX_ERR(0, 173, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
   /* "graphbrain/hypergraphs/leveldb.pyx":177
- *         return self._read_counter('symbol_count')
+ *         return self._read_counter('atom_count')
  * 
  *     def edge_count(self):             # <<<<<<<<<<<<<<
  *         """Total number of edge in the hypergraph"""
@@ -18286,25 +18286,25 @@ if (!__Pyx_RefNanny) {
   /* "graphbrain/hypergraphs/leveldb.pyx":246
  *         return self._str2perms(center_id, limit)
  * 
- *     def _symbols_with_root(self, root):             # <<<<<<<<<<<<<<
- *         """Find all edge_symbols with the given root."""
+ *     def _atoms_with_root(self, root):             # <<<<<<<<<<<<<<
+ *         """Find all atoms with the given root."""
  *         start_str = '%s/' % root
  */
-  __pyx_t_4 = __Pyx_CyFunction_NewEx(&__pyx_mdef_10graphbrain_11hypergraphs_7leveldb_7LevelDB_31_symbols_with_root, 0, __pyx_n_s_LevelDB__symbols_with_root, NULL, __pyx_n_s_graphbrain_hypergraphs_leveldb, __pyx_d, ((PyObject *)__pyx_codeobj__60)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 246, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_CyFunction_NewEx(&__pyx_mdef_10graphbrain_11hypergraphs_7leveldb_7LevelDB_31_atoms_with_root, 0, __pyx_n_s_LevelDB__atoms_with_root, NULL, __pyx_n_s_graphbrain_hypergraphs_leveldb, __pyx_d, ((PyObject *)__pyx_codeobj__60)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 246, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (__Pyx_SetNameInClass(__pyx_t_3, __pyx_n_s_symbols_with_root, __pyx_t_4) < 0) __PYX_ERR(0, 246, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_3, __pyx_n_s_atoms_with_root, __pyx_t_4) < 0) __PYX_ERR(0, 246, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
   /* "graphbrain/hypergraphs/leveldb.pyx":259
  *         return symbs
  * 
- *     def _edges_with_symbols(self, symbols, root):             # <<<<<<<<<<<<<<
- *         """Find all edges containing the given edge_symbols,
+ *     def _edges_with_atoms(self, atoms, root):             # <<<<<<<<<<<<<<
+ *         """Find all edges containing the given atoms,
  *            and a given root"""
  */
-  __pyx_t_4 = __Pyx_CyFunction_NewEx(&__pyx_mdef_10graphbrain_11hypergraphs_7leveldb_7LevelDB_33_edges_with_symbols, 0, __pyx_n_s_LevelDB__edges_with_symbols, NULL, __pyx_n_s_graphbrain_hypergraphs_leveldb, __pyx_d, ((PyObject *)__pyx_codeobj__62)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 259, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_CyFunction_NewEx(&__pyx_mdef_10graphbrain_11hypergraphs_7leveldb_7LevelDB_33_edges_with_atoms, 0, __pyx_n_s_LevelDB__edges_with_atoms, NULL, __pyx_n_s_graphbrain_hypergraphs_leveldb, __pyx_d, ((PyObject *)__pyx_codeobj__62)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 259, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (__Pyx_SetNameInClass(__pyx_t_3, __pyx_n_s_edges_with_symbols, __pyx_t_4) < 0) __PYX_ERR(0, 259, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_3, __pyx_n_s_edges_with_atoms, __pyx_t_4) < 0) __PYX_ERR(0, 259, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
   /* "graphbrain/hypergraphs/leveldb.pyx":279

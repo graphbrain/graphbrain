@@ -113,10 +113,10 @@ class TestLevelDB(unittest.TestCase):
     def test_symbols_with_root(self):
         self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
-        self.assertEqual(self.hg.symbols_with_root('graphbrain'),
+        self.assertEqual(self.hg.atoms_with_root('graphbrain'),
                          {'graphbrain/1'})
         self.hg.add(('is', 'graphbrain/2', 'great/1'))
-        self.assertEqual(self.hg.symbols_with_root('graphbrain'),
+        self.assertEqual(self.hg.atoms_with_root('graphbrain'),
                          {'graphbrain/1', 'graphbrain/2'})
         self.hg.remove(('is', 'graphbrain/1', 'great/1'))
         self.hg.remove(('is', 'graphbrain/2', 'great/1'))
@@ -125,15 +125,15 @@ class TestLevelDB(unittest.TestCase):
         self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.hg.add(('is', 'graphbrain/1', 'great/2'))
-        self.assertEqual(self.hg.edges_with_symbols(('graphbrain/1',),
-                                                    'great'),
+        self.assertEqual(self.hg.edges_with_atoms(('graphbrain/1',),
+                                                  'great'),
                          {('is', 'graphbrain/1', 'great/1'),
                           ('is', 'graphbrain/1', 'great/2')})
-        self.assertEqual(self.hg.edges_with_symbols(('graphbrain/1', 'is'),
-                                                    'great'),
+        self.assertEqual(self.hg.edges_with_atoms(('graphbrain/1', 'is'),
+                                                  'great'),
                          {('is', 'graphbrain/1', 'great/1'),
                           ('is', 'graphbrain/1', 'great/2')})
-        self.assertEqual(self.hg.edges_with_symbols(('graphbrain/1',), 'grea'),
+        self.assertEqual(self.hg.edges_with_atoms(('graphbrain/1',), 'grea'),
                          set())
         self.hg.remove(('is', 'graphbrain/1', 'great/1'))
         self.hg.remove(('is', 'graphbrain/1', 'great/2'))
@@ -247,11 +247,11 @@ class TestLevelDB(unittest.TestCase):
     def test_counters(self):
         self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
-        self.assertEqual(self.hg.symbol_count(), 3)
+        self.assertEqual(self.hg.atom_count(), 3)
         self.assertEqual(self.hg.edge_count(), 1)
         self.assertEqual(self.hg.total_degree(), 3)
         self.hg.add(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
-        self.assertEqual(self.hg.symbol_count(), 5)
+        self.assertEqual(self.hg.atom_count(), 5)
         self.assertEqual(self.hg.edge_count(), 2)
         self.assertEqual(self.hg.total_degree(), 6)
         self.hg.remove(('is', 'graphbrain/1', 'great/1'))

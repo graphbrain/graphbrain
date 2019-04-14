@@ -170,9 +170,9 @@ class LevelDB(Hypergraph):
             attributes = _decode_attributes(value)
             yield (entity, attributes)
 
-    def symbol_count(self):
-        """Total number of edge_symbols in the hypergraph"""
-        return self._read_counter('symbol_count')
+    def atom_count(self):
+        """Total number of atoms in the hypergraph"""
+        return self._read_counter('atom_count')
 
     def edge_count(self):
         """Total number of edge in the hypergraph"""
@@ -196,7 +196,7 @@ class LevelDB(Hypergraph):
                 ent_key = _ent2key(entity)
                 if not self._inc_attribute_key(ent_key, 'd'):
                     if is_atom(entity):
-                        self._inc_counter('symbol_count')
+                        self._inc_counter('atom_count')
                     else:
                         self._inc_counter('edge_count')
                     self._add_key(ent_key, {'d': 1})
@@ -243,8 +243,8 @@ class LevelDB(Hypergraph):
             center_id = ent2str(center)
         return self._str2perms(center_id, limit)
 
-    def _symbols_with_root(self, root):
-        """Find all edge_symbols with the given root."""
+    def _atoms_with_root(self, root):
+        """Find all atoms with the given root."""
         start_str = '%s/' % root
         end_str = _str_plus_1(start_str)
         start_key = (u'v%s' % start_str).encode('utf-8')
@@ -256,13 +256,13 @@ class LevelDB(Hypergraph):
             symbs.add(symb)
         return symbs
 
-    def _edges_with_symbols(self, symbols, root):
-        """Find all edges containing the given edge_symbols,
+    def _edges_with_atoms(self, atoms, root):
+        """Find all edges containing the given atoms,
            and a given root"""
         if root:
-            start_str = '%s %s/' % (' '.join(symbols), root)
+            start_str = '%s %s/' % (' '.join(atoms), root)
         else:
-            start_str = ' '.join(symbols)
+            start_str = ' '.join(atoms)
         end_str = _str_plus_1(start_str)
         start_key = (u'p%s' % start_str).encode('utf-8')
         end_key = (u'p%s' % end_str).encode('utf-8')

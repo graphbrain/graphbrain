@@ -28,8 +28,8 @@ class Hypergraph(object):
            the second is a dictionary of attribute values (as strings)."""
         raise NotImplementedError()
 
-    def symbol_count(self):
-        """Total number of edge_symbols in the hypergraph"""
+    def atom_count(self):
+        """Total number of atoms in the hypergraph"""
         raise NotImplementedError()
 
     def edge_count(self):
@@ -63,12 +63,12 @@ class Hypergraph(object):
         Entity can be atomic or an edge."""
         raise NotImplementedError()
 
-    def _symbols_with_root(self, root):
-        """Find all edge_symbols with the given root."""
+    def _atoms_with_root(self, root):
+        """Find all atoms with the given root."""
         raise NotImplementedError()
 
-    def _edges_with_symbols(self, symbols, root):
-        """Find all edges containing the given edge_symbols,
+    def _edges_with_atoms(self, atoms, root):
+        """Find all edges containing the given atoms,
            and optionally a given root"""
         raise NotImplementedError()
 
@@ -136,16 +136,16 @@ class Hypergraph(object):
         Entity can be atomic or an edge."""
         return self._star(center, limit=limit)
 
-    def symbols_with_root(self, root):
-        """Find all edge_symbols with the given root."""
+    def atoms_with_root(self, root):
+        """Find all atoms with the given root."""
         if len(root) == 0:
             return {}
-        return self._symbols_with_root(root)
+        return self._atoms_with_root(root)
 
-    def edges_with_symbols(self, symbols, root=None):
-        """Find all edges containing the given edge_symbols, and
+    def edges_with_atoms(self, atoms, root=None):
+        """Find all edges containing the given atoms, and
            optionally a given root"""
-        return self._edges_with_symbols(symbols, root)
+        return self._edges_with_atoms(atoms, root)
 
     def set_attribute(self, entity, attribute, value):
         """Sets the value of an attribute."""

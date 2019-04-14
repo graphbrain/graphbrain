@@ -4,19 +4,19 @@ from setuptools import setup, find_packages
 from setuptools.extension import Extension
 
 
-# Current GraphBrain version
+# Current Graphbrain version
 with open('VERSION', 'r') as version_file:
     VERSION = version_file.read()
 
 
 # True to enable building extensions using Cython.
-# False to build extensions from the C files that were previously created by
-# Cython.
+# False to build extensions from the C files that were previously
+# created by Cython.
 USE_CYTHON = True
 
 
 if USE_CYTHON:
-    from Cython.Distutils import build_ext
+    from Cython.Build import cythonize
 
 
 if USE_CYTHON:
@@ -27,7 +27,8 @@ if USE_CYTHON:
         Extension('graphbrain.meaning.parser',
                   ['graphbrain/meaning/parser.pyx'])
     ]
-    cmdclass = {'build_ext': build_ext}
+    ext_modules = cythonize(ext_modules,
+                            compiler_directives={'language_level': '3'})
 else:
     ext_modules = [
         Extension('graphbrain.funs', ['graphbrain/funs.c'], ),
@@ -36,7 +37,6 @@ else:
         Extension('graphbrain.meaning.parser',
                   ['graphbrain/meaning/parser.c'])
     ]
-    cmdclass = {}
 
 
 with open('README.md', 'r') as fh:
@@ -89,7 +89,6 @@ setup(
         [console_scripts]
         graphbrain=graphbrain.__main__:cli
     ''',
-    cmdclass=cmdclass,
     ext_modules=ext_modules,
     test_suite='graphbrain.tests'
 )
