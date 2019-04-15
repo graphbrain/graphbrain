@@ -106,10 +106,14 @@ def builder_type_and_subtype(token):
 
 
 def token_type(token, head=False):
+    dep = token.dep_
+
+    if dep == '':
+        return None
+
     if is_noun(token):
         return concept_type_and_subtype(token)
 
-    dep = token.dep_
     head_type = token_head_type(token)
     if len(head_type) > 1:
         head_subtype = head_type[1]
@@ -199,6 +203,7 @@ def token_type(token, head=False):
     else:
         logging.warning('Unknown dependency (token_type): token: {}'
                         .format(token2str(token)))
+        return None
 
 
 def is_relative_concept(token):
