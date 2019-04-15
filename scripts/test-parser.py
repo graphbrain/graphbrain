@@ -1,7 +1,7 @@
 from graphbrain import *
 from graphbrain.cli import wrapper
 from graphbrain.meaning.parser import Parser
-from graphbrain.meaning.nlpvis import print_tree
+from graphbrain.meaning.nlp import print_tree
 
 
 def test_parser(args):

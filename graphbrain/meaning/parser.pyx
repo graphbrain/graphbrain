@@ -4,7 +4,7 @@ from collections import namedtuple
 import logging
 import spacy
 from graphbrain import *
-from graphbrain.meaning.nlpvis import token2str
+from graphbrain.meaning.nlp import token2str
 
 
 logging.basicConfig(stream=sys.stderr, level=logging.WARNING)
