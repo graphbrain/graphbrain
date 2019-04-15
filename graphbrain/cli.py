@@ -11,7 +11,7 @@ def _show_logo():
     print()
 
 
-def wrapper(fun, command=False):
+def wrapper(fun, command=False, text=None):
     _show_logo()
 
     parser = argparse.ArgumentParser()
@@ -29,6 +29,20 @@ def wrapper(fun, command=False):
     parser.add_argument('--lang', type=str, help='language', default='en')
 
     args = parser.parse_args()
+
+    if text is None and command:
+        text = 'command: {}'.format(args.command)
+    if text:
+        print(colored('{}\n'.format(text), 'white'))
+
+    if args.hg:
+        print('hypergraph: {}'.format(args.hg))
+    if args.infile:
+        print('input file: {}'.format(args.infile))
+    if args.outfile:
+        print('output file: {}'.format(args.outfile))
+
+    print()
 
     fun(args)
 

@@ -35,4 +35,4 @@ def test_parser(args):
 
 
 if __name__ == '__main__':
-    wrapper(test_parser)
+    wrapper(test_parser, text='parser tests')

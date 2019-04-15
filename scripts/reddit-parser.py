@@ -110,4 +110,4 @@ def _parse(args):
 
 
 if __name__ == '__main__':
-    wrapper(_parse)
+    wrapper(_parse, text='reddit parser')
