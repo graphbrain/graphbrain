@@ -36,10 +36,10 @@ def wrapper(fun, command=False):
 def _cli(args):
     command = args.command
     try:
-        cmd_module = import_module('graphbrain.commands.%s' % command)
+        cmd_module = import_module('graphbrain.commands.{}'.format(command))
         cmd_module.run(args)
     except ImportError:
-        print('unkown command: %s' % command)
+        print('unkown command: {}'.format(command))
 
 
 def cli():
