@@ -196,7 +196,7 @@ def token_type(token, head=False):
         else:
             return concept_type_and_subtype(token)
     else:
-        logging.warning('Unknown dependency (insert_after_predicate): {}'
+        logging.warning('Unknown dependency (token_type): {}'
                         .format(dep))
 
 
@@ -215,13 +215,18 @@ def insert_after_predicate(targ, orig):
     elif targ_type[0] == 'r':
         if targ_type == 'rm':
             inner_rel = insert_after_predicate(targ[1], orig)
-            return (targ[0], inner_rel) + tuple(targ[2:])
+            if inner_rel:
+                return (targ[0], inner_rel) + tuple(targ[2:])
+            else:
+                return None
         else:
             return insert_first_argument(targ, orig)
     else:
-        logging.warning(('Wrong target type (insert_after_predicate).'
-                         ' orig: {}; targ: {}').format(targ, orig))
-        return targ
+        return insert_first_argument(targ, orig)
+    # else:
+    #     logging.warning(('Wrong target type (insert_after_predicate).'
+    #                      ' orig: {}; targ: {}').format(targ, orig))
+    #     return None
 
 
 def nest_predicate(inner, outer, before):
@@ -240,6 +245,7 @@ class Parser(object):
         self.pos = pos
         self.lemmas = lemmas
         self.atom2token = {}
+        self.cur_text = None
 
         if lang == 'en':
             self.nlp = spacy.load('en_core_web_lg')
@@ -469,7 +475,12 @@ class Parser(object):
                                     atom, entity)
                 elif ent_type[0] in {'p', 'r', 'd', 's'}:
                     logging.debug('choice: 8')
-                    entity = insert_after_predicate(entity, child)
+                    result = insert_after_predicate(entity, child)
+                    if result:
+                        entity = result
+                    else:
+                        logging.warning(('insert_after_predicate failed'
+                                         'with: {}').format(self.cur_text))
                 else:
                     logging.debug('choice: 9')
                     entity = insert_first_argument(entity, child)
@@ -529,5 +540,6 @@ class Parser(object):
                 'spacy_sentence': sent}
 
     def parse(self, text):
+        self.cur_text = text
         doc = self.nlp(text.strip())
         return tuple(self.parse_sentence(sent) for sent in doc.sents)

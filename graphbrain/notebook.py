@@ -1,6 +1,5 @@
 from IPython.core.display import display, HTML
-from graphbrain.hypergraph import *
-from graphbrain.funs import *
+from graphbrain import *
 
 
 SYMBOL_COLOR = '#404040'
