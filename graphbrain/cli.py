@@ -5,7 +5,9 @@ from . import constants as const
 
 
 def _show_logo():
-    print(colored(const.ascii_logo, 'cyan'))
+    for line in const.ascii_logo.split('\n'):
+        print(colored(line[:29], 'cyan'), end='')
+        print(colored(line[29:], 'green'))
     print()
 
 
