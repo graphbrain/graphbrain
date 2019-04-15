@@ -103,8 +103,6 @@ class RedditParser(object):
 
 
 def _parse(args):
-    print('Reddit parser')
-    print('parsing file: {}'.format(args.infile))
     hgraph = hypergraph(args.hg)
     RedditParser(hgraph).parse_file(args.infile)
 

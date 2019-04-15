@@ -46,6 +46,8 @@ def wrapper(fun, command=False, text=None):
 
     fun(args)
 
+    print()
+
 
 def _cli(args):
     command = args.command
