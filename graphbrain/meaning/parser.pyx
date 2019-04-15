@@ -4,6 +4,7 @@ from collections import namedtuple
 import logging
 import spacy
 from graphbrain import *
+from graphbrain.meaning.nlpvis import token2str
 
 
 logging.basicConfig(stream=sys.stderr, level=logging.WARNING)
@@ -196,8 +197,8 @@ def token_type(token, head=False):
         else:
             return concept_type_and_subtype(token)
     else:
-        logging.warning('Unknown dependency (token_type): {}'
-                        .format(dep))
+        logging.warning('Unknown dependency (token_type): token: {}'
+                        .format(token2str(token)))
 
 
 def is_relative_concept(token):
@@ -515,7 +516,6 @@ class Parser(object):
                     logging.debug('choice: 17')
                     entity = nest(entity, child, ps.positions[child])
             else:
-                # TODO: warning ?
                 logging.warning('Failed to parse token (_parse_token): {}'
                                 .format(token))
                 logging.debug('choice: 18')
