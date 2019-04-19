@@ -43,52 +43,6 @@ class Hypergraph(object):
         """Returns sum of all degrees."""
         raise NotImplementedError()
 
-    # ==============================================================
-    # Private abstract methods, to be implemented in derived classes
-    # ==============================================================
-
-    def _exists(self, edge):
-        raise NotImplementedError()
-
-    def _add(self, edge):
-        raise NotImplementedError()
-
-    def _remove(self, edge):
-        raise NotImplementedError()
-
-    def _pattern2edges(self, pattern, open_ended=False):
-        raise NotImplementedError()
-
-    def _star(self, center, limit=None):
-        raise NotImplementedError()
-
-    def _atoms_with_root(self, root):
-        raise NotImplementedError()
-
-    def _edges_with_atoms(self, atoms, root):
-        raise NotImplementedError()
-
-    def _set_attribute(self, entity, attribute, value):
-        raise NotImplementedError()
-
-    def _inc_attribute(self, entity, attribute):
-        raise NotImplementedError()
-
-    def _dec_attribute(self, entity, attribute):
-        raise NotImplementedError()
-
-    def _get_str_attribute(self, entity, attribute, or_else=None):
-        raise NotImplementedError()
-
-    def _get_int_attribute(self, entity, attribute, or_else=None):
-        raise NotImplementedError()
-
-    def _get_float_attribute(self, entity, attribute, or_else=None):
-        raise NotImplementedError()
-
-    def _degree(self, entity):
-        raise NotImplementedError()
-
     # ============================
     # High-level interface methods
     # ============================
@@ -209,3 +163,49 @@ class Hypergraph(object):
         edges = self.pattern2edges(pattern)
         for edge in edges:
             self.remove(edge)
+
+    # ==============================================================
+    # Private abstract methods, to be implemented in derived classes
+    # ==============================================================
+
+    def _exists(self, edge):
+        raise NotImplementedError()
+
+    def _add(self, edge):
+        raise NotImplementedError()
+
+    def _remove(self, edge):
+        raise NotImplementedError()
+
+    def _pattern2edges(self, pattern, open_ended=False):
+        raise NotImplementedError()
+
+    def _star(self, center, limit=None):
+        raise NotImplementedError()
+
+    def _atoms_with_root(self, root):
+        raise NotImplementedError()
+
+    def _edges_with_atoms(self, atoms, root):
+        raise NotImplementedError()
+
+    def _set_attribute(self, entity, attribute, value):
+        raise NotImplementedError()
+
+    def _inc_attribute(self, entity, attribute):
+        raise NotImplementedError()
+
+    def _dec_attribute(self, entity, attribute):
+        raise NotImplementedError()
+
+    def _get_str_attribute(self, entity, attribute, or_else=None):
+        raise NotImplementedError()
+
+    def _get_int_attribute(self, entity, attribute, or_else=None):
+        raise NotImplementedError()
+
+    def _get_float_attribute(self, entity, attribute, or_else=None):
+        raise NotImplementedError()
+
+    def _degree(self, entity):
+        raise NotImplementedError()
