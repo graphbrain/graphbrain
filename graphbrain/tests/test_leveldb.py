@@ -43,14 +43,16 @@ class TestLevelDB(unittest.TestCase):
         self.hg.add(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
         self.hg.add(('says', 'mary/1',
                      ('is', 'graphbrain/1', 'great/1'), 'extra/1'))
-        self.assertEqual(self.hg.pattern2edges((None, 'graphbrain/1', None)),
+        self.assertEqual(set(self.hg.pattern2edges((None, 'graphbrain/1',
+                                                    None))),
                          {('is', 'graphbrain/1', 'great/1')})
-        self.assertEqual(self.hg.pattern2edges(('is', 'graphbrain/1', None)),
+        self.assertEqual(set(self.hg.pattern2edges(('is', 'graphbrain/1',
+                                                    None))),
                          {('is', 'graphbrain/1', 'great/1')})
-        self.assertEqual(self.hg.pattern2edges(('x', None, None)), set())
+        self.assertEqual(set(self.hg.pattern2edges(('x', None, None))), set())
         self.assertEqual(
-            self.hg.pattern2edges(('says', None,
-                                   ('is', 'graphbrain/1', 'great/1'))),
+            set(self.hg.pattern2edges(('says', None,
+                                       ('is', 'graphbrain/1', 'great/1')))),
             {('says', 'mary/1', ('is', 'graphbrain/1', 'great/1'))})
         self.hg.remove(('is', 'graphbrain/1', 'great/1'))
         self.hg.remove(('says', 'mary/1'))
@@ -65,19 +67,21 @@ class TestLevelDB(unittest.TestCase):
         self.hg.add(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
         self.hg.add(('says', 'mary/1',
                      ('is', 'graphbrain/1', 'great/1'), 'extra/1'))
-        self.assertEqual(self.hg.pattern2edges((None, 'graphbrain/1', None),
-                                               open_ended=True),
+        self.assertEqual(set(self.hg.pattern2edges((None, 'graphbrain/1',
+                                                    None),
+                                                   open_ended=True)),
                          {('is', 'graphbrain/1', 'great/1')})
-        self.assertEqual(self.hg.pattern2edges(('is', 'graphbrain/1', None),
-                                               open_ended=True),
+        self.assertEqual(set(self.hg.pattern2edges(('is', 'graphbrain/1',
+                                                    None),
+                                                   open_ended=True)),
                          {('is', 'graphbrain/1', 'great/1')})
-        self.assertEqual(self.hg.pattern2edges(('x', None, None),
-                                               open_ended=True),
+        self.assertEqual(set(self.hg.pattern2edges(('x', None, None),
+                                                   open_ended=True)),
                          set())
-        self.assertEqual(self.hg.pattern2edges(('says', None,
-                                                ('is',
-                                                 'graphbrain/1', 'great/1')),
-                                               open_ended=True),
+        self.assertEqual(set(self.hg.pattern2edges(('says', None,
+                                                    ('is', 'graphbrain/1',
+                                                     'great/1')),
+                                                   open_ended=True)),
                          {('says', 'mary/1',
                            ('is', 'graphbrain/1', 'great/1')),
                           ('says', 'mary/1', ('is', 'graphbrain/1', 'great/1'),

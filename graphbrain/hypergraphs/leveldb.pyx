@@ -217,8 +217,10 @@ class LevelDB(Hypergraph):
             self._remove_key(edge_key)
 
     def _pattern2edges(self, pattern, open_ended):
-        """Return all the edges that match a pattern. A pattern is a
-           collection of entity ids and wildcards (None)."""
+        """Return generator for all the edges that match a pattern.
+           A pattern is a collection of entity ids and wildcards.
+           Wildcards are represented by None.
+           Pattern example: ('is/p', None, None)"""
         nodes = [node for node in pattern if node is not None]
         start_str = edges2str(nodes)
         end_str = _str_plus_1(start_str)
@@ -232,8 +234,8 @@ class LevelDB(Hypergraph):
             if edge:
                 edges.append(edge)
 
-        return set(edge for edge in edges
-                   if _edge_matches_pattern(edge, pattern, open_ended))
+        return (edge for edge in edges
+                if _edge_matches_pattern(edge, pattern, open_ended))
 
     def _star(self, center, limit=None):
         """Return all the edges that contain a given entity.

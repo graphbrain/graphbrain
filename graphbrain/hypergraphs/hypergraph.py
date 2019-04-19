@@ -127,8 +127,10 @@ class Hypergraph(object):
             self._remove(edge)
 
     def pattern2edges(self, pattern, open_ended=False):
-        """Return all the edges that match a pattern.
-        A pattern is a collection of entity ids and wildcards (None)."""
+        """Return generator for all the edges that match a pattern.
+           A pattern is a collection of entity ids and wildcards.
+           Wildcards are represented by None.
+           Pattern example: ('is/p', None, None)"""
         return self._pattern2edges(pattern, open_ended=open_ended)
 
     def star(self, center, limit=None):
