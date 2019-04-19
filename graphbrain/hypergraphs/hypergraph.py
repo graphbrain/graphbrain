@@ -9,110 +9,101 @@ class Hypergraph(object):
     # ================================================================
 
     def close(self):
+        """Closes the hypergraph."""
         raise NotImplementedError()
 
     def name(self):
+        """Returns name of the hypergraph."""
         raise NotImplementedError()
 
     def destroy(self):
-        """Erase the hypergraph."""
+        """Erase the entire hypergraph."""
         raise NotImplementedError()
 
     def all(self):
-        """Returns a lazy sequence of all the edges in the hypergraph."""
+        """Returns a generator of all the entities."""
         raise NotImplementedError()
 
     def all_attributes(self):
-        """Returns a lazy sequence of tuples, one per edge in the hypergraph.
-           The first element of the tuple is the edge itself,
-           the second is a dictionary of attribute values (as strings)."""
+        """Returns a generator with a tuple for each entity.
+           The first element of the tuple is the entity itself,
+           the second is a dictionary of attribute values
+           (as strings)."""
         raise NotImplementedError()
 
     def atom_count(self):
-        """Total number of atoms in the hypergraph"""
+        """Returns total number of atoms."""
         raise NotImplementedError()
 
     def edge_count(self):
-        """Total number of edge in the hypergraph"""
+        """Returns total number of edges."""
         raise NotImplementedError()
 
     def total_degree(self):
-        """Total degree of the hypergraph"""
+        """Returns sum of all degrees."""
         raise NotImplementedError()
 
+    # ==============================================================
+    # Private abstract methods, to be implemented in derived classes
+    # ==============================================================
+
     def _exists(self, edge):
-        """Checks if the given edge exists in the hypergraph."""
         raise NotImplementedError()
 
     def _add(self, edge):
-        """Adds edge to the hypergraph if it does not exist yet.
-           Returns same edge."""
         raise NotImplementedError()
 
     def _remove(self, edge):
-        """Removes and edge from the hypergraph."""
         raise NotImplementedError()
 
     def _pattern2edges(self, pattern, open_ended=False):
-        """Return all the edges that match a pattern.
-        A pattern is a collection of entity ids and wildcards (None)."""
         raise NotImplementedError()
 
     def _star(self, center, limit=None):
-        """Return all the edges that contain a given entity.
-        Entity can be atomic or an edge."""
         raise NotImplementedError()
 
     def _atoms_with_root(self, root):
-        """Find all atoms with the given root."""
         raise NotImplementedError()
 
     def _edges_with_atoms(self, atoms, root):
-        """Find all edges containing the given atoms,
-           and optionally a given root"""
         raise NotImplementedError()
 
     def _set_attribute(self, entity, attribute, value):
-        """Sets the value of an attribute."""
         raise NotImplementedError()
 
     def _inc_attribute(self, entity, attribute):
-        """Increments an attribute of an entity."""
         raise NotImplementedError()
 
     def _dec_attribute(self, entity, attribute):
-        """Increments an attribute of an entity."""
         raise NotImplementedError()
 
     def _get_str_attribute(self, entity, attribute, or_else=None):
-        """Returns attribute as string."""
         raise NotImplementedError()
 
     def _get_int_attribute(self, entity, attribute, or_else=None):
-        """Returns attribute as integer value."""
         raise NotImplementedError()
 
     def _get_float_attribute(self, entity, attribute, or_else=None):
-        """Returns attribute as float value."""
         raise NotImplementedError()
 
     def _degree(self, entity):
-        """Returns the degree of an entity."""
         raise NotImplementedError()
-    # ================================
-    # End of intrface abstract mehtods
-    # ================================
 
-    # ==================
-    # High-level methods
-    # ==================
-    def exists(self, edge):
-        """Checks if the given edge exists in the hypergraph."""
-        return self._exists(edge)
+    # ============================
+    # High-level interface methods
+    # ============================
+
+    def exists(self, entity):
+        """Checks if the given entity exists."""
+        return self._exists(entity)
 
     def add(self, edge, deep=False):
-        """Adds edge to the hypergraph if it does not exist yet.
-           Returns same edge."""
+        """Adds an edge if it does not exist yet,
+        returns same edge.
+
+        Keyword argument:
+        deep -- recursively add all edges (default False)
+        """
         if is_edge(edge):
             if deep:
                 for entity in edge:
@@ -122,31 +113,43 @@ class Hypergraph(object):
             return edge
 
     def remove(self, edge):
-        """Removes and edge from the hypergraph."""
+        """Removes an edge."""
         if isinstance(edge, (list, tuple)):
             self._remove(edge)
 
     def pattern2edges(self, pattern, open_ended=False):
-        """Return generator for all the edges that match a pattern.
-           A pattern is a collection of entity ids and wildcards.
-           Wildcards are represented by None.
-           Pattern example: ('is/p', None, None)"""
+        """Returns generator for all the edges that match a pattern.
+        A pattern is a collection of entity ids and wildcards.
+        Wildcards are represented by None.
+        Pattern example: ('is/p', None, None)
+
+        Keyword argument:
+        open_ended -- treat pattern as suffix (default False)
+        """
         return self._pattern2edges(pattern, open_ended=open_ended)
 
     def star(self, center, limit=None):
-        """Return all the edges that contain a given entity.
-        Entity can be atomic or an edge."""
+        """Returns generator of the edges that contain the entity.
+
+        Keyword argument:
+        deep -- recursively add all edges (default False)
+        """
         return self._star(center, limit=limit)
 
     def atoms_with_root(self, root):
-        """Find all atoms with the given root."""
+        """Returns generator of all atoms with the given root."""
         if len(root) == 0:
             return {}
         return self._atoms_with_root(root)
 
     def edges_with_atoms(self, atoms, root=None):
-        """Find all edges containing the given atoms, and
-           optionally a given root"""
+        """Returns generator of all edges containing the given atoms,
+        and optionally a given root.
+
+        Keyword argument:
+        root -- edge must also contain an atom with this root
+                (default None)
+        """
         return self._edges_with_atoms(atoms, root)
 
     def set_attribute(self, entity, attribute, value):
@@ -162,15 +165,28 @@ class Hypergraph(object):
         return self._dec_attribute(entity, attribute)
 
     def get_str_attribute(self, entity, attribute, or_else=None):
-        """Returns attribute as string."""
+        """Returns attribute as string.
+
+        Keyword argument:
+        or_else -- value to return if the entity does not have
+                   the give attribute. (default None)
+        """
         return self._get_str_attribute(entity, attribute, or_else=or_else)
 
     def get_int_attribute(self, entity, attribute, or_else=None):
-        """Returns attribute as integer value."""
+        """Returns attribute as integer value.
+
+        or_else -- value to return if the entity does not have
+                   the give attribute. (default None)
+        """
         return self._get_int_attribute(entity, attribute, or_else=or_else)
 
     def get_float_attribute(self, entity, attribute, or_else=None):
-        """Returns attribute as float value."""
+        """Returns attribute as float value.
+
+        or_else -- value to return if the entity does not have
+                   the give attribute. (default None)
+        """
         return self._get_float_attribute(entity, attribute, or_else=or_else)
 
     def degree(self, entity):
@@ -178,7 +194,9 @@ class Hypergraph(object):
         return self._degree(entity)
 
     def ego(self, center):
-        """Returns all atoms directly connected to center by hyperedges."""
+        """Returns all atoms directly connected to center
+           by hyperedges.
+        """
         edges = self.star(center)
         atom_set = set()
         for edge in edges:
@@ -187,7 +205,7 @@ class Hypergraph(object):
         return atom_set
 
     def remove_by_pattern(self, pattern):
-        """Removes from the hypergraph all edges that match the pattern."""
+        """Removes all edges that match the pattern."""
         edges = self.pattern2edges(pattern)
         for edge in edges:
             self.remove(edge)
