@@ -1,105 +1,7 @@
-import math
-import itertools
 import plyvel
 from .hypergraph import Hypergraph
 from graphbrain.funs import *
-
-
-# maximum permutations of an edge that are written to the database
-MAX_PERMS = 1000
-
-
-permcache = {}
-
-
-def _nthperm(n, nper):
-    if n in permcache and nper in permcache[n]:
-        return permcache[n][nper]
-
-    pos = 0
-    pindices = None
-    for perm in itertools.permutations(range(n)):
-        if pos >= nper:
-            pindices = perm
-            break
-        pos += 1
-    perm = tuple(pindices[i] for i in range(n))
-    if n not in permcache:
-        permcache[n] = {}
-    permcache[n][nper] = perm
-    return perm
-
-
-def permutate(tokens, nper):
-    """Reorder the tokens vector to perform a permutation,
-       specified by nper.
-    """
-    n = len(tokens)
-    indices = _nthperm(n, nper)
-    return tuple(tokens[i] for i in indices)
-
-
-def _unpermutate(tokens, nper):
-    """Reorder the tokens vector to revert a permutation,
-       specified by nper.
-    """
-    n = len(tokens)
-    indices = _nthperm(n, nper)
-
-    res = [None] * n
-    pos = 0
-    for i in indices:
-        res[i] = tokens[pos]
-        pos += 1
-
-    return tuple(res)
-
-
-def _do_with_edge_permutations(edge, f):
-    """Applies the function f to all permutations of the given edge."""
-    nperms = min(math.factorial(len(edge)), MAX_PERMS)
-    for nperm in range(nperms):
-        perm_str = ' '.join([ent2str(e) for e in permutate(edge, nperm)])
-        perm_str = '%s %s' % (perm_str, nperm)
-        f(perm_str)
-
-
-def _perm2edge(perm_str):
-    """Transforms a permutation string from a database query
-       into an edge.
-    """
-    try:
-        tokens = split_edge_str(perm_str[1:])
-        if tokens is None:
-            return None
-        nper = int(tokens[-1])
-        tokens = tokens[:-1]
-        tokens = _unpermutate(tokens, nper)
-        return str2ent(' '.join(tokens))
-    except ValueError as v:
-        return None
-
-
-def _str_plus_1(s):
-    """Increment a string by one, regaring lexicographical ordering."""
-    last_char = s[-1]
-    last_char = chr(ord(last_char) + 1)
-    return '%s%s' % (s[:-1], last_char)
-
-
-def _edge_matches_pattern(edge, pattern, open_ended):
-    """Check if an edge matches a pattern."""
-    if open_ended:
-        if len(edge) < len(pattern):
-            return False
-    else:
-        if len(edge) != len(pattern):
-            return False
-
-    for i in range(len(pattern)):
-        if (pattern[i] is not None) and (pattern[i] != edge[i]):
-            return False
-    return True
+from graphbrain.hypergraphs.permutations import *
 
 
 def _ent2key(entity):
@@ -144,7 +46,7 @@ class LevelDB(Hypergraph):
 
     def all(self):
         start_str = 'v'
-        end_str = _str_plus_1(start_str)
+        end_str = str_plus_1(start_str)
         start_key = (u'%s' % start_str).encode('utf-8')
         end_key = (u'%s' % end_str).encode('utf-8')
 
@@ -154,7 +56,7 @@ class LevelDB(Hypergraph):
 
     def all_attributes(self):
         start_str = 'v'
-        end_str = _str_plus_1(start_str)
+        end_str = str_plus_1(start_str)
         start_key = (u'%s' % start_str).encode('utf-8')
         end_key = (u'%s' % end_str).encode('utf-8')
 
@@ -210,19 +112,19 @@ class LevelDB(Hypergraph):
     def _pattern2edges(self, pattern, open_ended):
         nodes = [node for node in pattern if node is not None]
         start_str = edges2str(nodes)
-        end_str = _str_plus_1(start_str)
+        end_str = str_plus_1(start_str)
         start_key = (u'p%s' % start_str).encode('utf-8')
         end_key = (u'p%s' % end_str).encode('utf-8')
 
         edges = []
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             perm_str = key.decode('utf-8')
-            edge = _perm2edge(perm_str)
+            edge = perm2edge(perm_str)
             if edge:
                 edges.append(edge)
 
         return (edge for edge in edges
-                if _edge_matches_pattern(edge, pattern, open_ended))
+                if edge_matches_pattern(edge, pattern, open_ended))
 
     def _star(self, center, limit=None):
         center_id = center
@@ -232,7 +134,7 @@ class LevelDB(Hypergraph):
 
     def _atoms_with_root(self, root):
         start_str = '%s/' % root
-        end_str = _str_plus_1(start_str)
+        end_str = str_plus_1(start_str)
         start_key = (u'v%s' % start_str).encode('utf-8')
         end_key = (u'v%s' % end_str).encode('utf-8')
 
@@ -245,13 +147,13 @@ class LevelDB(Hypergraph):
             start_str = '%s %s/' % (' '.join(atoms), root)
         else:
             start_str = ' '.join(atoms)
-        end_str = _str_plus_1(start_str)
+        end_str = str_plus_1(start_str)
         start_key = (u'p%s' % start_str).encode('utf-8')
         end_key = (u'p%s' % end_str).encode('utf-8')
 
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             perm_str = key.decode('utf-8')
-            edge = _perm2edge(perm_str)
+            edge = perm2edge(perm_str)
             if edge:
                 yield(edge)
 
@@ -298,7 +200,7 @@ class LevelDB(Hypergraph):
 
     def _write_edge_permutations(self, edge):
         """Writes all permutations of the edge."""
-        _do_with_edge_permutations(edge, self._write_edge_permutation)
+        do_with_edge_permutations(edge, self._write_edge_permutation)
 
     def _remove_edge_permutation(self, perm):
         """Removes a given permutation."""
@@ -307,7 +209,7 @@ class LevelDB(Hypergraph):
 
     def _remove_edge_permutations(self, edge):
         """Removes all permutations of the edge."""
-        _do_with_edge_permutations(edge, self._remove_edge_permutation)
+        do_with_edge_permutations(edge, self._remove_edge_permutation)
 
     def _remove_key(self, ent_key):
         """Removes an entity, given its key."""
@@ -317,14 +219,14 @@ class LevelDB(Hypergraph):
         """Returns generator of all the edge permutations that contain
            the given entity, represented as a string."""
         start_str = '%s ' % center_id
-        end_str = _str_plus_1(start_str)
+        end_str = str_plus_1(start_str)
         start_key = (u'p%s' % start_str).encode('utf-8')
         end_key = (u'p%s' % end_str).encode('utf-8')
 
         count = 0
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             perm_str = key.decode('utf-8')
-            edge = _perm2edge(perm_str)
+            edge = perm2edge(perm_str)
             if edge:
                 yield(edge)
             if limit:

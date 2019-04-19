@@ -24,6 +24,8 @@ if USE_CYTHON:
         Extension('graphbrain.funs', ['graphbrain/funs.pyx'],),
         Extension('graphbrain.hypergraphs.leveldb',
                   ['graphbrain/hypergraphs/leveldb.pyx']),
+        Extension('graphbrain.hypergraphs.permutations',
+                  ['graphbrain/hypergraphs/permutations.pyx']),
         Extension('graphbrain.meaning.parser',
                   ['graphbrain/meaning/parser.pyx'])
     ]
@@ -34,6 +36,8 @@ else:
         Extension('graphbrain.funs', ['graphbrain/funs.c'], ),
         Extension('graphbrain.hypergraphs.leveldb',
                   ['graphbrain/hypergraphs/leveldb.c']),
+        Extension('graphbrain.hypergraphs.permutations',
+                  ['graphbrain/hypergraphs/permutations.c']),
         Extension('graphbrain.meaning.parser',
                   ['graphbrain/meaning/parser.c'])
     ]

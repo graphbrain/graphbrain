@@ -1,16 +1,9 @@
 import unittest
 from graphbrain import *
-from graphbrain.hypergraphs.leveldb import *
+from graphbrain.hypergraphs.permutations import *
 
 
-class TestLevelDB(unittest.TestCase):
-
-    def setUp(self):
-        self.hg = hypergraph('test.hg')
-
-    def tearDown(self):
-        self.hg.close()
-
+class TestPermutations(unittest.TestCase):
     def test_permutations(self):
         perm = permutate(('a', 'b'), 0)
         self.assertEqual(perm, ('a', 'b'))
