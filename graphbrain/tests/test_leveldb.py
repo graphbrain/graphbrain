@@ -95,12 +95,12 @@ class TestLevelDB(unittest.TestCase):
     def test_star(self):
         self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
-        self.assertEqual(self.hg.star('graphbrain/1'),
+        self.assertEqual(set(self.hg.star('graphbrain/1')),
                          {('is', 'graphbrain/1', 'great/1')})
-        self.assertEqual(self.hg.star('graphbrain/2'), set())
+        self.assertEqual(set(self.hg.star('graphbrain/2')), set())
         self.hg.remove(('is', 'graphbrain/1', 'great/1'))
         self.hg.add(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
-        self.assertEqual(self.hg.star(('is', 'graphbrain/1', 'great/1')),
+        self.assertEqual(set(self.hg.star(('is', 'graphbrain/1', 'great/1'))),
                          {('says', 'mary/1',
                            ('is', 'graphbrain/1', 'great/1'))})
 
@@ -109,10 +109,10 @@ class TestLevelDB(unittest.TestCase):
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.hg.add(('is', 'graphbrain/1', 'great/2'))
         self.hg.add(('is', 'graphbrain/1', 'great/3'))
-        self.assertEqual(len(self.hg.star('graphbrain/1')), 3)
-        self.assertEqual(len(self.hg.star('graphbrain/1', limit=1)), 1)
-        self.assertEqual(len(self.hg.star('graphbrain/1', limit=2)), 2)
-        self.assertEqual(len(self.hg.star('graphbrain/1', limit=10)), 3)
+        self.assertEqual(len(set(self.hg.star('graphbrain/1'))), 3)
+        self.assertEqual(len(set(self.hg.star('graphbrain/1', limit=1))), 1)
+        self.assertEqual(len(set(self.hg.star('graphbrain/1', limit=2))), 2)
+        self.assertEqual(len(set(self.hg.star('graphbrain/1', limit=10))), 3)
 
     def test_symbols_with_root(self):
         self.hg.destroy()

@@ -143,8 +143,7 @@ class LevelDB(Hypergraph):
         self.db = plyvel.DB(self.locator_string, create_if_missing=True)
 
     def all(self):
-        """Returns a lazy sequence of all the entities
-           in the hypergraph."""
+        """Returns a generator of all the entities."""
         start_str = 'v'
         end_str = _str_plus_1(start_str)
         start_key = (u'%s' % start_str).encode('utf-8')
@@ -155,8 +154,7 @@ class LevelDB(Hypergraph):
             yield entity
 
     def all_attributes(self):
-        """Returns a lazy sequence with a tuple for each entity
-           in the hypergraph.
+        """Returns a generator with a tuple for each entity.
            The first element of the tuple is the entity itself,
            the second is a dictionary of attribute values
            (as strings)."""
@@ -183,11 +181,11 @@ class LevelDB(Hypergraph):
         return self._read_counter('total_degree')
 
     def _exists(self, entity):
-        """Checks if the given entity exists in the hypergraph."""
+        """Checks if the given entity exists."""
         return self._exists_key(_ent2key(entity))
 
     def _add(self, edge):
-        """Adds an edge to the hypergraph if it does not exist yet."""
+        """Adds an edge if it does not exist yet."""
         edge_key = _ent2key(edge)
         if not self._exists_key(edge_key):
             self._inc_counter('edge_count')
@@ -205,7 +203,7 @@ class LevelDB(Hypergraph):
         return edge
 
     def _remove(self, edge):
-        """Removes an edge from the hypergraph."""
+        """Removes an edge."""
         edge_key = _ent2key(edge)
         if self._exists_key(edge_key):
             self._dec_counter('edge_count')
@@ -217,7 +215,7 @@ class LevelDB(Hypergraph):
             self._remove_key(edge_key)
 
     def _pattern2edges(self, pattern, open_ended):
-        """Return generator for all the edges that match a pattern.
+        """Returns generator for all the edges that match a pattern.
            A pattern is a collection of entity ids and wildcards.
            Wildcards are represented by None.
            Pattern example: ('is/p', None, None)"""
@@ -238,8 +236,7 @@ class LevelDB(Hypergraph):
                 if _edge_matches_pattern(edge, pattern, open_ended))
 
     def _star(self, center, limit=None):
-        """Return all the edges that contain a given entity.
-        Entity can be atomic or an edge."""
+        """Returns all the edges that contain the given entity."""
         center_id = center
         if isinstance(center, (list, tuple)):
             center_id = ent2str(center)
@@ -345,19 +342,20 @@ class LevelDB(Hypergraph):
         start_key = (u'p%s' % start_str).encode('utf-8')
         end_key = (u'p%s' % end_str).encode('utf-8')
 
-        edges = []
+        # edges = []
         count = 0
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             perm_str = key.decode('utf-8')
             edge = _perm2edge(perm_str)
             if edge:
-                edges.append(edge)
+                # edges.append(edge)
+                yield(edge)
             if limit:
                 count += 1
                 if count >= limit:
                     break
 
-        return set(edges)
+        # return set(edges)
 
     def _exists_key(self, ent_key):
         """Checks if the given entity exists in the hypergraph."""
