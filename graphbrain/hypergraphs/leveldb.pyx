@@ -236,7 +236,8 @@ class LevelDB(Hypergraph):
                 if _edge_matches_pattern(edge, pattern, open_ended))
 
     def _star(self, center, limit=None):
-        """Returns all the edges that contain the given entity."""
+        """Returns generator of all the edges that contain the given
+           entity."""
         center_id = center
         if isinstance(center, (list, tuple)):
             center_id = ent2str(center)
@@ -249,11 +250,9 @@ class LevelDB(Hypergraph):
         start_key = (u'v%s' % start_str).encode('utf-8')
         end_key = (u'v%s' % end_str).encode('utf-8')
 
-        symbs = set()
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             symb = str2ent(key.decode('utf-8')[1:])
-            symbs.add(symb)
-        return symbs
+            yield(symb)
 
     def _edges_with_atoms(self, atoms, root):
         """Find all edges containing the given atoms,
@@ -335,27 +334,23 @@ class LevelDB(Hypergraph):
         self.db.delete(ent_key)
 
     def _str2perms(self, center_id, limit=None):
-        """Query database for all the edge permutations that contain a
-           given entity, represented as a string."""
+        """Returns generator of all the edge permutations that contain
+           the given entity, represented as a string."""
         start_str = '%s ' % center_id
         end_str = _str_plus_1(start_str)
         start_key = (u'p%s' % start_str).encode('utf-8')
         end_key = (u'p%s' % end_str).encode('utf-8')
 
-        # edges = []
         count = 0
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             perm_str = key.decode('utf-8')
             edge = _perm2edge(perm_str)
             if edge:
-                # edges.append(edge)
                 yield(edge)
             if limit:
                 count += 1
                 if count >= limit:
                     break
-
-        # return set(edges)
 
     def _exists_key(self, ent_key):
         """Checks if the given entity exists in the hypergraph."""
