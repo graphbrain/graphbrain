@@ -265,14 +265,11 @@ class LevelDB(Hypergraph):
         start_key = (u'p%s' % start_str).encode('utf-8')
         end_key = (u'p%s' % end_str).encode('utf-8')
 
-        edges = set()
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             perm_str = key.decode('utf-8')
             edge = _perm2edge(perm_str)
             if edge:
-                edges.add(edge)
-
-        return edges
+                yield(edge)
 
     def _set_attribute(self, entity, attribute, value):
         """Sets the value of an attribute."""

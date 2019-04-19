@@ -129,15 +129,16 @@ class TestLevelDB(unittest.TestCase):
         self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.hg.add(('is', 'graphbrain/1', 'great/2'))
-        self.assertEqual(self.hg.edges_with_atoms(('graphbrain/1',),
-                                                  'great'),
+        self.assertEqual(set(self.hg.edges_with_atoms(('graphbrain/1',),
+                                                      'great')),
                          {('is', 'graphbrain/1', 'great/1'),
                           ('is', 'graphbrain/1', 'great/2')})
-        self.assertEqual(self.hg.edges_with_atoms(('graphbrain/1', 'is'),
-                                                  'great'),
+        self.assertEqual(set(self.hg.edges_with_atoms(('graphbrain/1', 'is'),
+                                                      'great')),
                          {('is', 'graphbrain/1', 'great/1'),
                           ('is', 'graphbrain/1', 'great/2')})
-        self.assertEqual(self.hg.edges_with_atoms(('graphbrain/1',), 'grea'),
+        self.assertEqual(set(self.hg.edges_with_atoms(('graphbrain/1',),
+                                                      'grea')),
                          set())
         self.hg.remove(('is', 'graphbrain/1', 'great/1'))
         self.hg.remove(('is', 'graphbrain/1', 'great/2'))
