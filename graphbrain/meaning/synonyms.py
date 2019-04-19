@@ -86,7 +86,8 @@ def generate(hg):
 def synonyms(hg, edge):
     edges1 = hg.pattern2edges([cons.are_synonyms, None, edge])
     edges2 = hg.pattern2edges([cons.are_synonyms, edge, None])
-    return set([e[1] for e in edges1]).union(set([e[2] for e in edges2])).union({edge})
+    return set([e[1] for e in edges1]).\
+        union(set([e[2] for e in edges2])).union({edge})
 
 
 def synonyms_degree(hg, edge):
@@ -96,14 +97,18 @@ def synonyms_degree(hg, edge):
 
 
 def main_synonym(hg, edge, in_adp=False):
-    """Finds the main synonym of an edge or symbol. The main synonym is usually a special type
-       of symbol that all synonyms point to, used as an identifier for the synonym set.
+    """Finds the main synonym of an edge or symbol.
+       The main synonym is usually a special type of symbol that all
+       synonyms point to, used as an identifier for the synonym set.
 
-       If parameter in_adp is True, in case of adpositional phrases this function looks for the main
-       synonym contained in the phrase. E.g. in (+/gb with/nlp.with.adp india/nlp.india.propn)
+       If parameter in_adp is True, in case of adpositional phrases
+       this function looks for the main synonym contained in the
+       phrase.
+       E.g. in (+/gb with/nlp.with.adp india/nlp.india.propn)
        the main synonym for india/nlp.india.propn is returned.
 
-       In case no main synonym exists, the edge or symbol itself is returned."""
+       In case no main synonym exists, the edge or symbol itself
+       is returned."""
     if in_adp and is_edge(edge):
         if len(edge) == 3 and edge[0] == '+/gb':
             if not is_edge(edge[1]) and edge[1][-4:] == '.adp':

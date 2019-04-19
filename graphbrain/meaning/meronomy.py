@@ -28,7 +28,8 @@ def edge2label(edge):
 def is_candidate(edge):
     if is_edge(edge) and len(edge) > 1:
         # discard posessives
-        if edge[1] in {"'s", 'in', 'of', 'with', 'and', 'a', 'on', 'for', 'to', 'from'}:
+        if edge[1] in {"'s", 'in', 'of', 'with', 'and', 'a', 'on', 'for',
+                       'to', 'from'}:
             return False
     return True
 
@@ -161,7 +162,8 @@ class Meronomy(object):
             weights = [self.graph.es[edge]['weight'] for edge in edges]
             total = sum(weights)
             for edge in edges:
-                self.graph.es[edge]['norm_weight'] = self.graph.es[edge]['weight'] / total
+                self.graph.es[edge]['norm_weight'] = \
+                    self.graph.es[edge]['weight'] / total
 
     def syn_id(self, atom):
         if atom in self.syn_ids:
@@ -185,7 +187,9 @@ class Meronomy(object):
         print('generating synonyms')
         i = 0
         with progressbar.ProgressBar(max_value=total_atoms) as bar:
-            sorted_atoms = sorted(self.atoms.items(), key=operator.itemgetter(1), reverse=False)
+            sorted_atoms = sorted(self.atoms.items(),
+                                  key=operator.itemgetter(1),
+                                  reverse=False)
             for atom_pair in sorted_atoms:
                 orig = self.graph.vs.find(atom_pair[0])
                 edges = self.graph.incident(orig.index, mode='in')
@@ -211,7 +215,9 @@ class Meronomy(object):
                     if weight > WEIGHT_THRESHOLD:
                         if semantic_synonyms(source, target):
                             is_synonym = True
-                        elif not ambiguous and norm_weight >= NORM_WEIGHT_THRESHOLD and is_candidate(source_edge):
+                        elif (not ambiguous and
+                                norm_weight >= NORM_WEIGHT_THRESHOLD and
+                                is_candidate(source_edge)):
                             pos_next = next_candidate_pos(edges, pos)
                             if pos_next < 0:
                                 is_synonym = True
