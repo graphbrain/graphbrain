@@ -242,6 +242,21 @@ def subedges(edge):
     return edges
 
 
+def edge_matches_pattern(edge, pattern, open_ended):
+    """Check if an edge matches a pattern."""
+    if open_ended:
+        if len(edge) < len(pattern):
+            return False
+    else:
+        if len(edge) != len(pattern):
+            return False
+
+    for i in range(len(pattern)):
+        if (pattern[i] is not None) and (pattern[i] != edge[i]):
+            return False
+    return True
+
+
 def atom_role(atom):
     parts = atom.split('/')
     if len(parts) < 2:

@@ -3,7 +3,7 @@
 #
 # For example, the edge:
 # (is/pd.sc (my/m name/cn.s) mary/cp.s)
-# 
+#
 # can be represented by permutation 0:
 # is/pd.sc (my/m name/cn.s) mary/cp.s
 #
@@ -14,6 +14,7 @@
 # (my/m name/cn.s) is/pd.sc mary/cp.s
 #
 # and so on...
+
 
 import math
 import itertools
@@ -100,18 +101,3 @@ def str_plus_1(s):
     last_char = s[-1]
     last_char = chr(ord(last_char) + 1)
     return '%s%s' % (s[:-1], last_char)
-
-
-def edge_matches_pattern(edge, pattern, open_ended):
-    """Check if an edge matches a pattern."""
-    if open_ended:
-        if len(edge) < len(pattern):
-            return False
-    else:
-        if len(edge) != len(pattern):
-            return False
-
-    for i in range(len(pattern)):
-        if (pattern[i] is not None) and (pattern[i] != edge[i]):
-            return False
-    return True
