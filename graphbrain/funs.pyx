@@ -35,10 +35,11 @@ def build_atom(text, *parts):
 def str2atom(s):
     """Converts a string into a valid atom."""
     atom = s.lower()
-    atom = atom.replace("/", "_")
-    atom = atom.replace(" ", "_")
-    atom = atom.replace("(", "_")
-    atom = atom.replace(")", "_")
+    atom = atom.replace('/', '_')
+    atom = atom.replace(' ', '_')
+    atom = atom.replace('(', '_')
+    atom = atom.replace(')', '_')
+    atom = atom.replace('.', '_')
     return atom
 
 
