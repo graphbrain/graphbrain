@@ -243,19 +243,56 @@ def subedges(edge):
     return edges
 
 
-def edge_matches_pattern(edge, pattern, open_ended):
-    """Check if an edge matches a pattern."""
-    if open_ended:
-        if len(edge) < len(pattern):
+def edge_matches_pattern(edge, pattern):
+    """Check if an edge matches a pattern.
+
+    Patterns are themselves edges. They can match families of edges
+    by employing special atoms:
+        -> '*' represents a general wildcard (matches any entity)
+        -> '@' represents an atomic wildcard (matches any atom)
+        -> '&' represents an edge wildcard (matches any edge)
+        -> '...' at the end indicates an open-ended pattern.
+
+    The pattern can be a valid edge.
+    Examples: ('is/pd', 'graphbrain/c', '@')
+              ('says/pd', '*', '...')
+
+    The pattern can be a string, that must represent an edge.
+    Examples: '(is/pd graphbrain/c @)'
+              '(says/pd * ...)'
+    """
+
+    # if pattern is string, convert to edge and make recursive call.
+    if type(pattern) == str:
+        edge = str2ent(pattern)
+        if is_edge(edge):
+            return edge_matches_pattern(edge)
+        else:
+            # TODO: error or warning?
             return False
     else:
-        if len(edge) != len(pattern):
-            return False
+        # open ended?
+        if pattern[-1] == '...':
+            pattern = pattern[:-1]
+            if len(edge) < len(pattern):
+                return False
+        else:
+            if len(edge) != len(pattern):
+                return False
 
-    for i in range(len(pattern)):
-        if (pattern[i] is not None) and (pattern[i] != edge[i]):
-            return False
-    return True
+        for i in range(len(pattern)):
+            pitem = pattern[i]
+            eitem = edge[i]
+            if pitem == '@':
+                if not is_atom(eitem):
+                    return False
+            elif pitem == '&':
+                if not is_edge(eitem):
+                    return False
+            elif pitem != '*':
+                if eitem != pitem:
+                    return False
+        return True
 
 
 def atom_role(atom):

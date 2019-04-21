@@ -109,8 +109,9 @@ class LevelDB(Hypergraph):
             self._remove_edge_permutations(edge)
             self._remove_key(edge_key)
 
-    def _pattern2edges(self, pattern, open_ended):
-        nodes = [node for node in pattern if node is not None]
+    def _pattern2edges(self, pattern):
+        nodes = [node for node in pattern
+                 if node not in {'*', '@', '&', '...'}]
         start_str = edges2str(nodes)
         end_str = str_plus_1(start_str)
         start_key = (u'p%s' % start_str).encode('utf-8')
@@ -124,7 +125,7 @@ class LevelDB(Hypergraph):
                 edges.append(edge)
 
         return (edge for edge in edges
-                if edge_matches_pattern(edge, pattern, open_ended))
+                if edge_matches_pattern(edge, pattern))
 
     def _star(self, center, limit=None):
         center_id = center

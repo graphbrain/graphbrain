@@ -71,16 +71,25 @@ class Hypergraph(object):
         if isinstance(edge, (list, tuple)):
             self._remove(edge)
 
-    def pattern2edges(self, pattern, open_ended=False):
+    def pattern2edges(self, pattern):
         """Returns generator for all the edges that match a pattern.
-        A pattern is a collection of entity ids and wildcards.
-        Wildcards are represented by None.
-        Pattern example: ('is/p', None, None)
 
-        Keyword argument:
-        open_ended -- treat pattern as suffix (default False)
+        Patterns are themselves edges. They can match families of edges
+        by employing special atoms:
+            -> '*' represents a general wildcard (matches any entity)
+            -> '@' represents an atomic wildcard (matches any atom)
+            -> '&' represents an edge wildcard (matches any edge)
+            -> '...' at the end indicates an open-ended pattern.
+
+        The pattern can be a valid edge.
+        Examples: ('is/pd', 'graphbrain/c', '@')
+                  ('says/pd', '*', '...')
+
+        The pattern can be a string, that must represent an edge.
+        Examples: '(is/pd graphbrain/c @)'
+                  '(says/pd * ...)'
         """
-        return self._pattern2edges(pattern, open_ended=open_ended)
+        return self._pattern2edges(pattern)
 
     def star(self, center, limit=None):
         """Returns generator of the edges that contain the entity.
@@ -177,7 +186,7 @@ class Hypergraph(object):
     def _remove(self, edge):
         raise NotImplementedError()
 
-    def _pattern2edges(self, pattern, open_ended=False):
+    def _pattern2edges(self, pattern):
         raise NotImplementedError()
 
     def _star(self, center, limit=None):

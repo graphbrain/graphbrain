@@ -112,15 +112,15 @@ class TestHypergraph(unittest.TestCase):
                      ('is/pd', 'graphbrain/cp', 'great/c')))
         self.hg.add(('says/pd', 'mary/cp',
                      ('is/pd', 'graphbrain/cp', 'great/c'), 'extra/c'))
-        self.assertEqual(set(self.hg.pattern2edges((None, 'graphbrain/cp',
-                                                    None))),
+        self.assertEqual(set(self.hg.pattern2edges(('*', 'graphbrain/cp',
+                                                    '*'))),
                          {('is/pd', 'graphbrain/cp', 'great/c')})
         self.assertEqual(set(self.hg.pattern2edges(('is/pd', 'graphbrain/cp',
-                                                    None))),
+                                                    '*'))),
                          {('is/pd', 'graphbrain/cp', 'great/c')})
-        self.assertEqual(set(self.hg.pattern2edges(('x', None, None))), set())
+        self.assertEqual(set(self.hg.pattern2edges(('x', '*', '*'))), set())
         self.assertEqual(
-            set(self.hg.pattern2edges(('says/pd', None,
+            set(self.hg.pattern2edges(('says/pd', '*',
                                        ('is/pd',
                                         'graphbrain/cp', 'great/c')))),
             {('says/pd', 'mary/cp', ('is/pd', 'graphbrain/cp', 'great/c'))})
@@ -139,21 +139,17 @@ class TestHypergraph(unittest.TestCase):
                      ('is/pd', 'graphbrain/cp', 'great/c')))
         self.hg.add(('says/pd', 'mary/cp',
                      ('is/pd', 'graphbrain/cp', 'great/c'), 'extra/c'))
-        self.assertEqual(set(self.hg.pattern2edges((None, 'graphbrain/cp',
-                                                    None),
-                                                   open_ended=True)),
+        self.assertEqual(set(self.hg.pattern2edges(('*', 'graphbrain/cp',
+                                                    '*', '...'))),
                          {('is/pd', 'graphbrain/cp', 'great/c')})
         self.assertEqual(set(self.hg.pattern2edges(('is/pd', 'graphbrain/cp',
-                                                    None),
-                                                   open_ended=True)),
+                                                    '*', '...'))),
                          {('is/pd', 'graphbrain/cp', 'great/c')})
-        self.assertEqual(set(self.hg.pattern2edges(('x', None, None),
-                                                   open_ended=True)),
+        self.assertEqual(set(self.hg.pattern2edges(('x', '*', '*', '...'))),
                          set())
-        self.assertEqual(set(self.hg.pattern2edges(('says/pd', None,
+        self.assertEqual(set(self.hg.pattern2edges(('says/pd', '*',
                                                     ('is/pd', 'graphbrain/cp',
-                                                     'great/c')),
-                                                   open_ended=True)),
+                                                     'great/c'), '...'))),
                          {('says/pd', 'mary/cp',
                            ('is/pd', 'graphbrain/cp', 'great/c')),
                           ('says/pd', 'mary/cp',
@@ -313,11 +309,11 @@ class TestHypergraph(unittest.TestCase):
         self.hg.add(('says/pd', 'mary/cp',
                      ('is/pd', 'graphbrain/cp', 'great/c'), 'extra/c'))
         self.assertEqual(
-            set(self.hg.pattern2edges(('says/pd', None,
+            set(self.hg.pattern2edges(('says/pd', '*',
                                        ('is/pd',
                                         'graphbrain/cp', 'great/c')))),
             {('says/pd', 'mary/cp', ('is/pd', 'graphbrain/cp', 'great/c'))})
-        self.hg.remove_by_pattern(('says/pd', None, None))
+        self.hg.remove_by_pattern(('says/pd', '*', '*'))
         self.assertFalse(self.hg.exists(('says/pd', 'mary/cp',
                                          ('is/pd',
                                           'graphbrain/cp', 'great/c'))))
