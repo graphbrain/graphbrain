@@ -2,6 +2,10 @@ import string
 import numpy as np
 
 
+# ======================
+# Syntax-level functions
+# ======================
+
 def is_atom(entity):
     """Checks if entity is an atom."""
     return isinstance(entity, str)
@@ -167,7 +171,12 @@ def edges2str(edges, roots_only=False):
 
 
 def ent2str(entity, roots_only=False):
-    """Convert an entity to its string representation."""
+    """Convert an entity to its string representation.
+
+    Keyword argument:
+    roots_only -- only the roots of the atoms will be used to create
+                  the string representation.
+    """
     if is_atom(entity):
         if roots_only:
             return root(entity)
@@ -211,7 +220,10 @@ def roots(entity):
 
 
 def contains(entity, needle, deep=False):
-    """Checks if 'needle' is contained in entity."""
+    """Checks if 'needle' is contained in entity.
+
+    Keyword argument:
+    deep -- search recursively (default False)"""
     if is_atom(entity):
         return entity == needle
     else:
@@ -295,19 +307,198 @@ def edge_matches_pattern(edge, pattern):
         return True
 
 
+def nest(inner, outer, before=False):
+    """Returns a new entity built by nesting the given 'inner' entity
+    inside the given 'outer' entity.
+
+    Nesting the 'inner' atom a in the 'outer' atom b produces:
+    (b a)
+
+    Nesting the 'inner' edge (a b) in the 'outer' atom c produces:
+    (c (a b))
+
+    If the outer entity is an edge, the result depends on the 'before'
+    parameter. Considering the 'inner' entity (a b) and the 'outer'
+    entity (c d), nesting if 'before' is True produces:
+    (c d (a b))
+    If 'before' is False it produces:
+    (c (a b) d)
+
+    Keyword argument:
+    before -- controls how outer edges are handled, as per above.
+              (default: False)
+    """
+    if is_atom(outer):
+        return outer, inner
+    else:
+        if before:
+            return outer + (inner,)
+        else:
+            return (outer[0], inner) + outer[1:]
+
+
+def parens(entity):
+    """Returns a tuple. Used when one wants to guarantee one is working
+    with an edge-like structure, i.e. a tuple.
+    If entity is an  atom, it returns (atom).
+    If entity is an edge, it returns the same edge.
+    """
+    if is_atom(entity):
+        return (entity,)
+    else:
+        return tuple(entity)
+
+
+def insert_first_argument(entity, argument):
+    """Returns an edge built by placing 'argument' as the first item
+    after the connector of 'entity'. If 'entity' is an atom, then
+    it becomes the connector of the returned edge.returned
+
+    For example, considering the 'entity' a and the 'argument' b, this
+    function returns:
+    (a b)
+
+    Considering the 'entity' (a b c) and the 'argument' (d e), it
+    returns:
+    (a (d e) b c)
+    """
+    if is_atom(entity):
+        return (entity, argument)
+    elif is_edge(entity):
+        return (entity[0], argument) + entity[1:]
+    else:
+        return None
+
+
+def connect(entity, arguments):
+    """Returns an edge built by adding the items in 'arguments' to the
+    end of 'entity'. 'arguments' must be a collection.
+
+    For example, connecting the 'entity' (a b) with the 'arguments'
+    (c d) produces:
+    (a b c d)
+    """
+    if len(arguments) == 0:
+        return entity
+    else:
+        return parens(entity) + parens(arguments)
+
+
+def sequence(target, entity, before, flat=True):
+    """Returns an edge built by sequencing the 'entity', if it's an
+    edge, or the elements of 'entity' if it is an edge, either before
+    or after the elements of 'target'.
+
+    If flat is False, then both 'target' and 'entity' are treated as
+    self-contained entities when building the new edge.
+
+    For example, connecting the 'target' (a b) and the 'entity' c
+    produces, if before is True:
+    (c a b)
+    and if before is False:
+    (a b c)
+    Connecting the 'target' (a b) and the 'entity' (c d)
+    produces, if before is True:
+    (c d a b)
+    and if before is False:
+    (a b c d)
+    This last example, if 'flat' is False, becomes respectively:
+    ((c d) (a b))
+    ((a b) (c d))
+    """
+    if flat:
+        if before:
+            return parens(entity) + parens(target)
+        else:
+            return parens(target) + parens(entity)
+    else:
+        if before:
+            return (entity, target)
+        else:
+            return (target, entity)
+
+
+def apply_fun_to_atom(fun, atom, target):
+    """Returns edge built by replacing every instance of 'atom' in
+    'target' with the output of calling 'fun' to 'atom'.
+    """
+    if is_atom(target):
+        if target == atom:
+            return fun(atom)
+        else:
+            return target
+    else:
+        return tuple(apply_fun_to_atom(fun, atom, item) for item in target)
+
+
+def replace_atom(entity, old, new):
+    """Returns edge built by replacing every instance of 'old' in
+    'entity' with 'new'.
+    """
+    if is_atom(entity):
+        if entity == old:
+            return new
+        else:
+            return entity
+    else:
+        return tuple(replace_atom(item, old, new) for item in entity)
+
+
+# ========================
+# Semantic-level functions
+# ========================
+
 def atom_role(atom):
+    """Returns the role of an atom as a list of the subrole strings.
+
+    The role of an atom is its second part, right after the root.
+    A dot notation is used to separate the subroles. For example,
+    the role of graphbrain/cp.s/1 is:
+
+        cp.s
+
+    For this case, this function returns:
+
+        ['cp', 's']
+
+    If the atom only has a root, it is assumed to be a concept.
+    In this case, this function returns the role with just the
+    generic concept type:
+
+        ['c'].
+    """
     parts = atom.split('/')
     if len(parts) < 2:
-        return tuple('c')
+        return list('c')
     else:
         return parts[1].split('.')
 
 
 def atom_type(atom):
+    """Returns the type of the atom.
+
+    The type of an atom is its first subrole. For example, the
+    type of graphbrain/cp.s/1 is 'cp'.
+
+    If the atom only has a root, it is assumed to be a concept.
+    In this case, this function returns the generic concept type: 'c'.
+    """
     return atom_role(atom)[0]
 
 
 def entity_type(entity):
+    """Returns the type of the entity as a string.entity
+
+    If the entity is an atom, atom_type(atom) is returned.
+    If it is an edge, then the type is derived from the type of the
+    connector. This applies recursively, as necessary.
+
+    For example:
+    graphbrain/cp.s/1 has type 'cp'
+    (is/pd.so graphbrain/cp.s great/c) has type 'rd'
+    (red/m shoes/cn.p) has type 'cn'
+    (before/tt noon/c) has type 'st'
+    """
     if is_atom(entity):
         return atom_type(entity)
     elif is_edge(entity):
@@ -332,93 +523,45 @@ def entity_type(entity):
 
 
 def connector_type(entity):
+    """Returns the type of the entity's connector.
+    If the entity has no connector (i.e. it's an atom), then the entity
+    type is returned.
+    """
     if is_atom(entity):
         return entity_type(entity)
     else:
         return entity_type(entity[0])
 
 
-def nest(inner, outer, before):
-    if is_atom(outer):
-        return outer, inner
-    else:
-        if before:
-            return outer + (inner,)
-        else:
-            return (outer[0], inner) + outer[1:]
+def atom_with_type(entity, atom_type):
+    """Returns the first atom found in 'entity' that has the given
+    'atom_type', or whose type starts with 'atom_type'.
+    If no such atom is found, returns None.
 
-
-def parens(entity):
+    For example, given the 'entity' (+/b a/cn b/cp) and the 'atom_type'
+    c, this function returns:
+    a/cn
+    If the 'atom_type' is 'cp', the it will return:
+    b/cp
+    """
     if is_atom(entity):
-        return (entity,)
-    else:
-        return tuple(entity)
-
-
-def insert_first_argument(entity, argument):
-    if is_atom(entity):
-        return (entity, argument)
-    elif is_edge(entity):
-        return (entity[0], argument) + entity[1:]
-    else:
-        return None
-
-
-def connect(entity, arguments):
-    if len(arguments) == 0:
-        return entity
-    else:
-        return parens(entity) + parens(arguments)
-
-
-def sequence(target, entity, before, flat=True):
-    if flat:
-        if before:
-            return parens(entity) + parens(target)
-        else:
-            return parens(target) + parens(entity)
-    else:
-        if before:
-            return (entity, target)
-        else:
-            return (target, entity)
-
-
-def apply_fun_to_atom(fun, atom, target):
-    if is_atom(target):
-        if target == atom:
-            return fun(target)
-        else:
-            return target
-    else:
-        return tuple(apply_fun_to_atom(fun, atom, item) for item in target)
-
-
-def replace_atom(entity, old, new):
-    if is_atom(entity):
-        if entity == old:
-            return new
-        else:
-            return entity
-    else:
-        return tuple(replace_atom(item, old, new) for item in entity)
-
-
-def atom_with_type(entity, typ):
-    if is_atom(entity):
-        n = len(typ)
+        n = len(atom_type)
         et = entity_type(entity)
-        if len(et) >= n and et[:n] == typ:
+        if len(et) >= n and et[:n] == atom_type:
             return entity
     else:
         for item in entity:
-            atom = atom_with_type(item, typ)
+            atom = atom_with_type(item, atom_type)
             if atom:
                 return atom
     return None
 
 
 def predicate(entity):
+    """Returns predicate atom if 'entity' is a relation or edge of type
+    predicate, or the 'entity' itself if it is an atom of type
+    predicate. Returns None otherwise.
+    """
     et = entity_type(entity)[0]
 
     if is_atom(entity):
@@ -433,8 +576,15 @@ def predicate(entity):
 
 
 def rel_arg_role(relation, position):
-    """Relation argument role.
-       Returns None if no role can be determined."""
+    """Returns argument role of argument in a given 'position' of 'relation'.
+    Returns None if argument role cannot be determined.
+
+    Example:
+    The argument role of argument at position 0 in:
+    (is/pd.sc graphbrain/c great/c)
+    is:
+    s
+    """
     if entity_type(relation)[0] != 'r':
         return None
     else:

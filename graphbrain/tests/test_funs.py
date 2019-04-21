@@ -141,6 +141,200 @@ class TestFuns(unittest.TestCase):
                           ('super', 'great/1'),
                           ('is', 'graphbrain/1', ('super', 'great/1'))})
 
+    def test_edge_matches_pattern_simple(self):
+        self.assertTrue(edge_matches_pattern(('a', 'b'), ('a', 'b')))
+        self.assertFalse(edge_matches_pattern(('a', 'b'), ('a', 'a')))
+
+    def test_edge_matches_pattern_wildcard(self):
+        self.assertTrue(edge_matches_pattern(('is/pd.sc',
+                                              'graphbrain/cp.s', 'great/c'),
+                                             ('is/pd.sc',
+                                              'graphbrain/cp.s', '*')))
+        self.assertFalse(edge_matches_pattern(('was/pd.sc',
+                                               'graphbrain/cp.s', 'great/c'),
+                                              ('is/pd.sc',
+                                               'graphbrain/cp.s', '*')))
+
+    def test_edge_matches_pattern_atomic_wildcard(self):
+        self.assertTrue(edge_matches_pattern(('is/pd.sc',
+                                              'graphbrain/cp.s', 'great/c'),
+                                             ('is/pd.sc',
+                                              'graphbrain/cp.s', '@')))
+        self.assertFalse(edge_matches_pattern(('was/pd.sc',
+                                               'graphbrain/cp.s', 'great/c'),
+                                              ('is/pd.sc',
+                                               'graphbrain/cp.s', '@')))
+
+        self.assertFalse(edge_matches_pattern(('is/pd.sc', 'graphbrain/cp.s',
+                                               ('fairly/m', 'great/c')),
+                                              ('is/pd.sc',
+                                               'graphbrain/cp.s', '@')))
+
+    def test_edge_matches_pattern_edge_wildcard(self):
+        self.assertTrue(edge_matches_pattern(('is/pd.sc', 'graphbrain/cp.s',
+                                              ('fairly/m', 'great/c')),
+                                             ('is/pd.sc',
+                                              'graphbrain/cp.s', '&')))
+        self.assertFalse(edge_matches_pattern(('is/pd.sc',
+                                               'graphbrain/cp.s', 'great/c'),
+                                              ('is/pd.sc',
+                                               'graphbrain/cp.s', '&')))
+
+    def test_edge_matches_pattern_open_ended(self):
+        self.assertTrue(edge_matches_pattern(('is/pd.sc',
+                                              'graphbrain/cp.s', 'great/c'),
+                                             ('is/pd.sc',
+                                              'graphbrain/cp.s', '*', '...')))
+        self.assertTrue(edge_matches_pattern(('is/pd.sc', 'graphbrain/cp.s',
+                                              'great/c', 'extra/c'),
+                                             ('is/pd.sc',
+                                              'graphbrain/cp.s', '*', '...')))
+        self.assertFalse(edge_matches_pattern(('is/pd.sc', 'humanity/cp.s',
+                                               'great/c', 'extra/c'),
+                                              ('is/pd.sc',
+                                               'graphbrain/cp.s', '*', '...')))
+
+    def test_nest(self):
+        self.assertEqual(nest('a', 'b'), ('b', 'a'))
+        self.assertEqual(nest(('a', 'b'), 'c'), ('c', ('a', 'b')))
+        self.assertEqual(nest(('a', 'b'), ('c', 'd'), before=True),
+                         ('c', 'd', ('a', 'b')))
+        self.assertEqual(nest(('a', 'b'), ('c', 'd'), before=False),
+                         (('c', ('a', 'b'), 'd')))
+
+    def test_parens(self):
+        self.assertEquals(parens('a'), ('a',))
+        self.assertEquals(parens(('a')), ('a',))
+        self.assertEquals(parens(('a', 'b')), ('a', 'b'))
+
+    def test_insert_first_argument(self):
+        self.assertEquals(insert_first_argument('a', 'b'), ('a', 'b'))
+        self.assertEquals(insert_first_argument(('a', 'b'), ('c', 'd')),
+                          ('a', ('c', 'd'), 'b'))
+
+    def test_connect(self):
+        self.assertEquals(connect(('a', 'b'), ('c', 'd')),
+                          ('a', 'b', 'c', 'd'))
+        self.assertEquals(connect(('a', 'b'), ()), ('a', 'b'))
+
+    def test_sequence(self):
+        self.assertEquals(sequence(('a', 'b'), 'c',
+                                   before=True),
+                          ('c', 'a', 'b'))
+        self.assertEquals(sequence(('a', 'b'), 'c',
+                                   before=False),
+                          ('a', 'b', 'c'))
+        self.assertEquals(sequence(('a', 'b'), ('c', 'd'),
+                                   before=True),
+                          ('c', 'd', 'a', 'b'))
+        self.assertEquals(sequence(('a', 'b'), ('c', 'd'),
+                                   before=False),
+                          ('a', 'b', 'c', 'd'))
+        self.assertEquals(sequence(('a', 'b'), ('c', 'd'),
+                                   before=True, flat=False),
+                          (('c', 'd'), ('a', 'b')))
+        self.assertEquals(sequence(('a', 'b'), ('c', 'd'),
+                                   before=False, flat=False),
+                          (('a', 'b'), ('c', 'd')))
+
+    def test_apply_fun_to_atom(self):
+        def fun(atom):
+            return '{}/c'.format(atom)
+
+        self.assertEquals(apply_fun_to_atom(fun, 'x', 'x'), 'x/c')
+        self.assertEquals(apply_fun_to_atom(fun, 'x', ('a', 'b', 'x')),
+                          ('a', 'b', 'x/c'))
+        self.assertEquals(apply_fun_to_atom(fun, 'x', ('a', 'b', 'c')),
+                          ('a', 'b', 'c'))
+        self.assertEquals(apply_fun_to_atom(fun, 'x', ('a', 'x', ('b', 'x'))),
+                          ('a', 'x/c', ('b', 'x/c')))
+
+    def test_replace_atom(self):
+        def fun(atom):
+            return '{}/c'.format(atom)
+
+        self.assertEquals(replace_atom('x', 'x', 'x/c'), 'x/c')
+        self.assertEquals(replace_atom(('a', 'b', 'x'), 'x', 'x/c'),
+                          ('a', 'b', 'x/c'))
+        self.assertEquals(replace_atom(('a', 'b', 'c'), 'x', 'x/c'),
+                          ('a', 'b', 'c'))
+        self.assertEquals(replace_atom(('a', 'x', ('b', 'x')), 'x', 'x/c'),
+                          ('a', 'x/c', ('b', 'x/c')))
+
+    def test_atom_role(self):
+        self.assertEqual(atom_role('graphbrain/cp.s/1'), ['cp', 's'])
+        self.assertEqual(atom_role('graphbrain'), ['c'])
+
+    def test_atom_type(self):
+        self.assertEqual(atom_type('graphbrain/cp.s/1'), 'cp')
+        self.assertEqual(atom_type('graphbrain'), 'c')
+
+    def test_entity_type(self):
+        self.assertEqual(entity_type('graphbrain/cp.s/1'), 'cp')
+        self.assertEqual(entity_type('graphbrain'), 'c')
+        self.assertEqual(entity_type(('is/pd.so',
+                                      'graphbrain/cp.s', 'great/c')), 'rd')
+        self.assertEqual(entity_type(('red/m', 'shoes/cn.p')), 'cn')
+        self.assertEqual(entity_type(('before/tt', 'noon/c')), 'st')
+        self.assertEqual(entity_type(('very/w', 'large/m')), 'm')
+        self.assertEqual(entity_type((('very/w', 'large/m'), 'shoes/cn.p')),
+                         'cn')
+        self.assertEqual(entity_type(('will/a', 'be/pd.sc')), 'pd')
+        self.assertEqual(entity_type((('will/a', 'be/pd.sc'),
+                                      'john/cp.s', 'rich/c')), 'rd')
+        self.assertEqual(entity_type(('play/x', 'piano/cn.s')), 'd')
+
+    def test_connector_type(self):
+        self.assertEqual(connector_type('graphbrain/cp.s/1'), 'cp')
+        self.assertEqual(connector_type('graphbrain'), 'c')
+        self.assertEqual(connector_type(('is/pd.so',
+                                         'graphbrain/cp.s', 'great/c')), 'pd')
+        self.assertEqual(connector_type(('red/m', 'shoes/cn.p')), 'm')
+        self.assertEqual(connector_type(('before/tt', 'noon/c')), 'tt')
+        self.assertEqual(connector_type(('very/w', 'large/m')), 'w')
+        self.assertEqual(connector_type((('very/w', 'large/m'), 'shoes/cn.p')),
+                         'm')
+        self.assertEqual(connector_type(('will/a', 'be/pd.sc')), 'a')
+        self.assertEqual(connector_type((('will/a', 'be/pd.sc'),
+                                         'john/cp.s', 'rich/c')), 'pd')
+        self.assertEqual(connector_type(('play/x', 'piano/cn.s')), 'x')
+
+    def test_atom_with_type(self):
+        self.assertEqual(atom_with_type(('+/b', 'a/cn', 'b/cp'), 'c'), 'a/cn')
+        self.assertEqual(atom_with_type(('+/b', 'a/c', 'b/cp'), 'cp'), 'b/cp')
+        self.assertEqual(atom_with_type(('+/b', 'a/c', 'b/cp'), 'p'), None)
+        self.assertEqual(atom_with_type('a/cn', 'c'), 'a/cn')
+        self.assertEqual(atom_with_type('a/cn', 'cn'), 'a/cn')
+        self.assertEqual(atom_with_type('a/cn', 'cp'), None)
+        self.assertEqual(atom_with_type('a/cn', 'p'), None)
+
+    def test_predicate(self):
+        self.assertEqual(predicate('graphbrain/cp.s/1'), None)
+        self.assertEqual(predicate('graphbrain'), None)
+        self.assertEqual(predicate(('is/pd.so', 'graphbrain/cp.s', 'great/c')),
+                         'is/pd.so')
+        self.assertEqual(predicate(('red/m', 'shoes/cn.p')), None)
+        self.assertEqual(predicate(('before/tt', 'noon/c')), None)
+        self.assertEqual(predicate(('very/w', 'large/m')), None)
+        self.assertEqual(predicate((('very/w', 'large/m'), 'shoes/cn.p')),
+                         None)
+        self.assertEqual(predicate(('will/a', 'be/pd.sc')), 'be/pd.sc')
+        self.assertEqual(predicate((('will/a', 'be/pd.sc'),
+                                    'john/cp.s', 'rich/c')), 'be/pd.sc')
+        self.assertEqual(predicate(('play/x', 'piano/cn.s')), None)
+
+    def test_rel_arg_role(self):
+        self.assertEquals(rel_arg_role(('is/pd.so',
+                                        'graphbrain/cp.s', 'great/c'), 0), 's')
+        self.assertEquals(rel_arg_role(('is/pd.so',
+                                        'graphbrain/cp.s', 'great/c'), 1), 'o')
+        self.assertEquals(rel_arg_role(('is/pd.so',
+                                        'graphbrain/cp.s', 'great/c'), 2),
+                          None)
+        self.assertEquals(rel_arg_role(('is/b',
+                                        'graphbrain/cp.s', 'great/c'), 0),
+                          None)
+
 
 if __name__ == '__main__':
     unittest.main()
