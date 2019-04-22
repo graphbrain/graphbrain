@@ -40,6 +40,34 @@ class TestHypergraph(unittest.TestCase):
         labels = set(self.hg.all())
         self.assertEqual(labels, set())
 
+    def test_atoms(self):
+        self.hg.destroy()
+        self.hg.add(('size', 'graphbrain/1', '7'))
+        self.hg.add(('is', 'graphbrain/1', 'great/1'))
+        self.hg.add(('src', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
+
+        labels = set([ent2str(v) for v in self.hg.all_atoms()])
+        self.assertEqual(labels,
+                         {'size', 'graphbrain/1', '7', 'is', 'great/1', 'src',
+                          'mary/1'})
+        self.hg.destroy()
+        labels = set(self.hg.all())
+        self.assertEqual(labels, set())
+
+    def test_edges(self):
+        self.hg.destroy()
+        self.hg.add(('size', 'graphbrain/1', '7'))
+        self.hg.add(('is', 'graphbrain/1', 'great/1'))
+        self.hg.add(('src', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
+
+        labels = set([ent2str(v) for v in self.hg.all_edges()])
+        self.assertEqual(labels,
+                         {'(size graphbrain/1 7)', '(is graphbrain/1 great/1)',
+                          '(src mary/1 (is graphbrain/1 great/1))'})
+        self.hg.destroy()
+        labels = set(self.hg.all())
+        self.assertEqual(labels, set())
+
     def test_all_attributes(self):
         self.hg.destroy()
         self.hg.add(('size', 'graphbrain/1', '7'))
@@ -101,8 +129,6 @@ class TestHypergraph(unittest.TestCase):
         self.assertTrue(
             self.hg.exists(('says', 'mary',
                             ('is', 'graphbrain/1', 'great/1'))))
-        self.hg.remove(('is', 'graphbrain/1', 'great/1'))
-        self.hg.remove(('says', 'mary', ('is', 'graphbrain/1', 'great/1')))
 
     def test_pattern2edges(self):
         self.hg.destroy()
@@ -124,12 +150,6 @@ class TestHypergraph(unittest.TestCase):
                                        ('is/pd',
                                         'graphbrain/cp', 'great/c')))),
             {('says/pd', 'mary/cp', ('is/pd', 'graphbrain/cp', 'great/c'))})
-        self.hg.remove(('is/pd', 'graphbrain/cp', 'great/c'))
-        self.hg.remove(('says/pd', 'mary/cp'))
-        self.hg.remove(('says/pd', 'mary/cp',
-                        ('is/pd', 'graphbrain/1', 'great/c')))
-        self.hg.remove(('says/pd', 'mary/cp',
-                        ('is/pd', 'graphbrain/cp', 'great/c'), 'extra/c'))
 
     def test_pattern2edges_open_ended(self):
         self.hg.destroy()
@@ -155,13 +175,51 @@ class TestHypergraph(unittest.TestCase):
                           ('says/pd', 'mary/cp',
                            ('is/pd', 'graphbrain/cp', 'great/c'),
                            'extra/c')})
-        self.hg.remove(('is/pd', 'graphbrain/cp', 'great/c'))
-        self.hg.remove(('says/pd', 'mary/cp'))
-        self.hg.remove(('says/pd', 'mary/cp',
-                        ('is/pd', 'graphbrain/cp', 'great/c')))
-        self.hg.remove(('says/pd', 'mary/cp',
-                        ('is/pd', 'graphbrain/cp', 'great/c'),
-                        'extra/1'))
+
+    def test_pattern2edges_star(self):
+        self.hg.destroy()
+        self.hg.add(('is/pd', 'graphbrain/cp', 'great/c'))
+        self.hg.add(('says/pd', 'mary/cp'))
+        self.hg.add(('says/pd', 'mary/cp',
+                     ('is/pd', 'graphbrain/cp', 'great/c')))
+        self.hg.add(('says/pd', 'mary/cp',
+                     ('is/pd', 'graphbrain/cp', 'great/c'), 'extra/c'))
+        self.assertEqual(set(self.hg.pattern2edges('*')),
+                         {('says/pd', 'mary/cp',
+                           ('is/pd', 'graphbrain/cp', 'great/c')),
+                          ('says/pd', 'mary/cp',
+                           ('is/pd', 'graphbrain/cp', 'great/c'), 'extra/c'),
+                          ('is/pd', 'graphbrain/cp', 'great/c'),
+                          ('says/pd', 'mary/cp'), 'says/pd', 'mary/cp',
+                          'is/pd', 'graphbrain/cp', 'great/c', 'extra/c'})
+
+    def test_pattern2edges_at(self):
+        self.hg.destroy()
+        self.hg.add(('is/pd', 'graphbrain/cp', 'great/c'))
+        self.hg.add(('says/pd', 'mary/cp'))
+        self.hg.add(('says/pd', 'mary/cp',
+                     ('is/pd', 'graphbrain/cp', 'great/c')))
+        self.hg.add(('says/pd', 'mary/cp',
+                     ('is/pd', 'graphbrain/cp', 'great/c'), 'extra/c'))
+        self.assertEqual(set(self.hg.pattern2edges('@')),
+                         {'says/pd', 'mary/cp', 'is/pd', 'graphbrain/cp',
+                          'great/c', 'extra/c'})
+
+    def test_pattern2edges_amp(self):
+        self.hg.destroy()
+        self.hg.add(('is/pd', 'graphbrain/cp', 'great/c'))
+        self.hg.add(('says/pd', 'mary/cp'))
+        self.hg.add(('says/pd', 'mary/cp',
+                     ('is/pd', 'graphbrain/cp', 'great/c')))
+        self.hg.add(('says/pd', 'mary/cp',
+                     ('is/pd', 'graphbrain/cp', 'great/c'), 'extra/c'))
+        self.assertEqual(set(self.hg.pattern2edges('&')),
+                         {('says/pd', 'mary/cp',
+                           ('is/pd', 'graphbrain/cp', 'great/c')),
+                          ('says/pd', 'mary/cp',
+                           ('is/pd', 'graphbrain/cp', 'great/c'), 'extra/c'),
+                          ('is/pd', 'graphbrain/cp', 'great/c'),
+                          ('says/pd', 'mary/cp')})
 
     def test_star(self):
         self.hg.destroy()
@@ -193,8 +251,6 @@ class TestHypergraph(unittest.TestCase):
         self.hg.add(('is', 'graphbrain/2', 'great/1'))
         self.assertEqual(set(self.hg.atoms_with_root('graphbrain')),
                          {'graphbrain/1', 'graphbrain/2'})
-        self.hg.remove(('is', 'graphbrain/1', 'great/1'))
-        self.hg.remove(('is', 'graphbrain/2', 'great/1'))
 
     def test_edges_with_atoms(self):
         self.hg.destroy()
@@ -211,8 +267,6 @@ class TestHypergraph(unittest.TestCase):
         self.assertEqual(set(self.hg.edges_with_atoms(('graphbrain/1',),
                                                       'grea')),
                          set())
-        self.hg.remove(('is', 'graphbrain/1', 'great/1'))
-        self.hg.remove(('is', 'graphbrain/1', 'great/2'))
 
     # set_attribute, inc_attribute, dec_attribute, get_str_attribute,
     # get_int_attribute, get_float_attribute
@@ -297,8 +351,6 @@ class TestHypergraph(unittest.TestCase):
         self.hg.add(('is', 'graphbrain/1', 'great/2'))
         self.assertEqual(self.hg.ego('graphbrain/1'),
                          {'graphbrain/1', 'is', 'great/1', 'great/2'})
-        self.hg.remove(('is', 'graphbrain/1', 'great/1'))
-        self.hg.remove(('is', 'graphbrain/1', 'great/2'))
 
     def test_remove_by_pattern(self):
         self.hg.destroy()

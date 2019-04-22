@@ -27,6 +27,8 @@ def wrapper(fun, command=False, text=None):
     parser.add_argument('--show_namespaces',
                         help='show namespaces', action='store_true')
     parser.add_argument('--lang', type=str, help='language', default='en')
+    parser.add_argument('--pattern', type=str, help='edge pattern',
+                        default='*')
 
     args = parser.parse_args()
 

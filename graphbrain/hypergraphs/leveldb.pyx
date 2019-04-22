@@ -117,15 +117,11 @@ class LevelDB(Hypergraph):
         start_key = (u'p%s' % start_str).encode('utf-8')
         end_key = (u'p%s' % end_str).encode('utf-8')
 
-        edges = []
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             perm_str = key.decode('utf-8')
             edge = perm2edge(perm_str)
-            if edge:
-                edges.append(edge)
-
-        return (edge for edge in edges
-                if edge_matches_pattern(edge, pattern))
+            if edge and edge_matches_pattern(edge, pattern):
+                yield edge
 
     def _star(self, center, limit=None):
         center_id = center

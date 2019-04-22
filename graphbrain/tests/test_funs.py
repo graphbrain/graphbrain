@@ -203,63 +203,63 @@ class TestFuns(unittest.TestCase):
                          (('c', ('a', 'b'), 'd')))
 
     def test_parens(self):
-        self.assertEquals(parens('a'), ('a',))
-        self.assertEquals(parens(('a')), ('a',))
-        self.assertEquals(parens(('a', 'b')), ('a', 'b'))
+        self.assertEqual(parens('a'), ('a',))
+        self.assertEqual(parens(('a')), ('a',))
+        self.assertEqual(parens(('a', 'b')), ('a', 'b'))
 
     def test_insert_first_argument(self):
-        self.assertEquals(insert_first_argument('a', 'b'), ('a', 'b'))
-        self.assertEquals(insert_first_argument(('a', 'b'), ('c', 'd')),
-                          ('a', ('c', 'd'), 'b'))
+        self.assertEqual(insert_first_argument('a', 'b'), ('a', 'b'))
+        self.assertEqual(insert_first_argument(('a', 'b'), ('c', 'd')),
+                         ('a', ('c', 'd'), 'b'))
 
     def test_connect(self):
-        self.assertEquals(connect(('a', 'b'), ('c', 'd')),
-                          ('a', 'b', 'c', 'd'))
-        self.assertEquals(connect(('a', 'b'), ()), ('a', 'b'))
+        self.assertEqual(connect(('a', 'b'), ('c', 'd')),
+                         ('a', 'b', 'c', 'd'))
+        self.assertEqual(connect(('a', 'b'), ()), ('a', 'b'))
 
     def test_sequence(self):
-        self.assertEquals(sequence(('a', 'b'), 'c',
-                                   before=True),
-                          ('c', 'a', 'b'))
-        self.assertEquals(sequence(('a', 'b'), 'c',
-                                   before=False),
-                          ('a', 'b', 'c'))
-        self.assertEquals(sequence(('a', 'b'), ('c', 'd'),
-                                   before=True),
-                          ('c', 'd', 'a', 'b'))
-        self.assertEquals(sequence(('a', 'b'), ('c', 'd'),
-                                   before=False),
-                          ('a', 'b', 'c', 'd'))
-        self.assertEquals(sequence(('a', 'b'), ('c', 'd'),
-                                   before=True, flat=False),
-                          (('c', 'd'), ('a', 'b')))
-        self.assertEquals(sequence(('a', 'b'), ('c', 'd'),
-                                   before=False, flat=False),
-                          (('a', 'b'), ('c', 'd')))
+        self.assertEqual(sequence(('a', 'b'), 'c',
+                                  before=True),
+                         ('c', 'a', 'b'))
+        self.assertEqual(sequence(('a', 'b'), 'c',
+                                  before=False),
+                         ('a', 'b', 'c'))
+        self.assertEqual(sequence(('a', 'b'), ('c', 'd'),
+                                  before=True),
+                         ('c', 'd', 'a', 'b'))
+        self.assertEqual(sequence(('a', 'b'), ('c', 'd'),
+                                  before=False),
+                         ('a', 'b', 'c', 'd'))
+        self.assertEqual(sequence(('a', 'b'), ('c', 'd'),
+                                  before=True, flat=False),
+                         (('c', 'd'), ('a', 'b')))
+        self.assertEqual(sequence(('a', 'b'), ('c', 'd'),
+                                  before=False, flat=False),
+                         (('a', 'b'), ('c', 'd')))
 
     def test_apply_fun_to_atom(self):
         def fun(atom):
             return '{}/c'.format(atom)
 
-        self.assertEquals(apply_fun_to_atom(fun, 'x', 'x'), 'x/c')
-        self.assertEquals(apply_fun_to_atom(fun, 'x', ('a', 'b', 'x')),
-                          ('a', 'b', 'x/c'))
-        self.assertEquals(apply_fun_to_atom(fun, 'x', ('a', 'b', 'c')),
-                          ('a', 'b', 'c'))
-        self.assertEquals(apply_fun_to_atom(fun, 'x', ('a', 'x', ('b', 'x'))),
-                          ('a', 'x/c', ('b', 'x/c')))
+        self.assertEqual(apply_fun_to_atom(fun, 'x', 'x'), 'x/c')
+        self.assertEqual(apply_fun_to_atom(fun, 'x', ('a', 'b', 'x')),
+                         ('a', 'b', 'x/c'))
+        self.assertEqual(apply_fun_to_atom(fun, 'x', ('a', 'b', 'c')),
+                         ('a', 'b', 'c'))
+        self.assertEqual(apply_fun_to_atom(fun, 'x', ('a', 'x', ('b', 'x'))),
+                         ('a', 'x/c', ('b', 'x/c')))
 
     def test_replace_atom(self):
         def fun(atom):
             return '{}/c'.format(atom)
 
-        self.assertEquals(replace_atom('x', 'x', 'x/c'), 'x/c')
-        self.assertEquals(replace_atom(('a', 'b', 'x'), 'x', 'x/c'),
-                          ('a', 'b', 'x/c'))
-        self.assertEquals(replace_atom(('a', 'b', 'c'), 'x', 'x/c'),
-                          ('a', 'b', 'c'))
-        self.assertEquals(replace_atom(('a', 'x', ('b', 'x')), 'x', 'x/c'),
-                          ('a', 'x/c', ('b', 'x/c')))
+        self.assertEqual(replace_atom('x', 'x', 'x/c'), 'x/c')
+        self.assertEqual(replace_atom(('a', 'b', 'x'), 'x', 'x/c'),
+                         ('a', 'b', 'x/c'))
+        self.assertEqual(replace_atom(('a', 'b', 'c'), 'x', 'x/c'),
+                         ('a', 'b', 'c'))
+        self.assertEqual(replace_atom(('a', 'x', ('b', 'x')), 'x', 'x/c'),
+                         ('a', 'x/c', ('b', 'x/c')))
 
     def test_atom_role(self):
         self.assertEqual(atom_role('graphbrain/cp.s/1'), ['cp', 's'])
@@ -324,16 +324,16 @@ class TestFuns(unittest.TestCase):
         self.assertEqual(predicate(('play/x', 'piano/cn.s')), None)
 
     def test_rel_arg_role(self):
-        self.assertEquals(rel_arg_role(('is/pd.so',
-                                        'graphbrain/cp.s', 'great/c'), 0), 's')
-        self.assertEquals(rel_arg_role(('is/pd.so',
-                                        'graphbrain/cp.s', 'great/c'), 1), 'o')
-        self.assertEquals(rel_arg_role(('is/pd.so',
-                                        'graphbrain/cp.s', 'great/c'), 2),
-                          None)
-        self.assertEquals(rel_arg_role(('is/b',
-                                        'graphbrain/cp.s', 'great/c'), 0),
-                          None)
+        self.assertEqual(rel_arg_role(('is/pd.so',
+                                       'graphbrain/cp.s', 'great/c'), 0), 's')
+        self.assertEqual(rel_arg_role(('is/pd.so',
+                                       'graphbrain/cp.s', 'great/c'), 1), 'o')
+        self.assertEqual(rel_arg_role(('is/pd.so',
+                                       'graphbrain/cp.s', 'great/c'), 2),
+                         None)
+        self.assertEqual(rel_arg_role(('is/b',
+                                       'graphbrain/cp.s', 'great/c'), 0),
+                         None)
 
 
 if __name__ == '__main__':

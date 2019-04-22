@@ -47,6 +47,18 @@ class Hypergraph(object):
     # High-level interface methods
     # ============================
 
+    def all_atoms(self):
+        """Returns a generator of all the atoms."""
+        for entity in self.all():
+            if is_atom(entity):
+                yield entity
+
+    def all_edges(self):
+        """Returns a generator of all the edges."""
+        for entity in self.all():
+            if is_edge(entity):
+                yield entity
+
     def exists(self, entity):
         """Checks if the given entity exists."""
         return self._exists(entity)
@@ -81,7 +93,7 @@ class Hypergraph(object):
             -> '&' represents an edge wildcard (matches any edge)
             -> '...' at the end indicates an open-ended pattern.
 
-        The pattern can be a valid edge.
+        The pattern can be an edge.
         Examples: ('is/pd', 'graphbrain/c', '@')
                   ('says/pd', '*', '...')
 
@@ -89,7 +101,14 @@ class Hypergraph(object):
         Examples: '(is/pd graphbrain/c @)'
                   '(says/pd * ...)'
         """
-        return self._pattern2edges(pattern)
+        if pattern == '*':
+            return self.all()
+        elif pattern == '@':
+            return self.all_atoms()
+        elif pattern == '&':
+            return self.all_edges()
+        else:
+            return self._pattern2edges(pattern)
 
     def star(self, center, limit=None):
         """Returns generator of the edges that contain the entity.
