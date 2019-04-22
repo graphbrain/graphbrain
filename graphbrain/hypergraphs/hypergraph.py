@@ -83,8 +83,8 @@ class Hypergraph(object):
         if isinstance(edge, (list, tuple)):
             self._remove(edge)
 
-    def pattern2edges(self, pattern):
-        """Returns generator for all the edges that match a pattern.
+    def pat2ents(self, pattern):
+        """Returns generator for all the entities that match a pattern.
 
         Patterns are themselves edges. They can match families of edges
         by employing special atoms:
@@ -100,6 +100,9 @@ class Hypergraph(object):
         The pattern can be a string, that must represent an edge.
         Examples: '(is/pd graphbrain/c @)'
                   '(says/pd * ...)'
+
+        Atomic patterns can also be used to match all entities in the
+        hypergraph (*), all atoms (@), and all edges (&).
         """
         if pattern == '*':
             return self.all()
@@ -188,7 +191,7 @@ class Hypergraph(object):
 
     def remove_by_pattern(self, pattern):
         """Removes all edges that match the pattern."""
-        edges = self.pattern2edges(pattern)
+        edges = self.pat2ents(pattern)
         for edge in edges:
             self.remove(edge)
 
