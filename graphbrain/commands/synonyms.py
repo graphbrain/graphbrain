@@ -5,7 +5,7 @@ from graphbrain.meaning import *
 
 def run(args):
     hg = hypergraph(args.hg)
-    iter = hg.pattern2edges(args.pattern)
+    iter = hg.pat2ents(args.pattern)
     for edge in iter:
         print(ent2str(edge))
 

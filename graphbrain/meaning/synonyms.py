@@ -5,7 +5,7 @@ import graphbrain.nlp.parser as par
 from graphbrain.synonyms.meronomy import Meronomy
 
 
-def generate(hg):
+def generate(hg, pattern):
     print('starting parser...')
     parser = par.Parser()
 
@@ -15,19 +15,13 @@ def generate(hg):
     total_edges = 0
     total_beliefs = 0
 
-    total_verts = hg.symbol_count() + hg.edge_count()
-    i = 0
-    with progressbar.ProgressBar(max_value=total_verts) as bar:
-        for vertex in hg.all():
-            if is_edge(vertex):
-                edge = vertex
-                total_edges += 1
-                if hg.is_belief(edge):
-                    mer.add_edge(edge)
-                    total_beliefs += 1
-            i += 1
-            if (i % 1000) == 0:
-                bar.update(i)
+    for vertex in hg.pat2ents(pattern):
+        if is_edge(vertex):
+            edge = vertex
+            total_edges += 1
+            if hg.is_belief(edge):
+                mer.add_edge(edge)
+                total_beliefs += 1
 
     print('edges: %s; beliefs: %s' % (total_edges, total_beliefs))
 
