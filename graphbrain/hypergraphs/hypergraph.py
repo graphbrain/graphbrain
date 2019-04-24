@@ -110,6 +110,15 @@ class Hypergraph(object):
             return self.all_atoms()
         elif pattern == '&':
             return self.all_edges()
+        elif type(pattern) == str:
+            entity = str2ent(pattern)
+            if is_edge(entity):
+                return self.pat2ents(entity)
+            else:
+                if self.exists(entity):
+                    return (entity,)
+                else:
+                    return ()
         else:
             return self._pattern2edges(pattern)
 

@@ -56,8 +56,9 @@ def _cli(args):
     try:
         cmd_module = import_module('graphbrain.commands.{}'.format(command))
         cmd_module.run(args)
-    except ImportError:
+    except ImportError as error:
         print('unkown command: {}'.format(command))
+        print(error)
 
 
 def cli():

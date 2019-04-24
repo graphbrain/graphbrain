@@ -3,7 +3,7 @@ from collections import Counter
 import progressbar
 import igraph
 from unidecode import unidecode
-from graphbrain.funs import *
+from graphbrain import *
 import graphbrain.constants as const
 
 
@@ -26,6 +26,7 @@ def edge2label(edge):
 
 
 def is_candidate(edge):
+    return True
     if is_edge(edge) and len(edge) > 1:
         # discard posessives
         if edge[1] in {"'s", 'in', 'of', 'with', 'and', 'a', 'on', 'for',
@@ -36,7 +37,7 @@ def is_candidate(edge):
 
 def next_candidate_pos(edges, pos):
     for i in range(pos + 1, len(edges)):
-        if is_candidate(str2edge(edges[i][0])):
+        if is_candidate(str2ent(edges[i][0])):
             return i
     return -1
 
@@ -63,7 +64,7 @@ class Meronomy(object):
         self.parser = parser
         self.graph = None
         self.graph_edges = {}
-        self.vertices = set()
+        self.entities = set()
         self.atoms = {}
         self.edge_map = {}
         self.edge_counts = Counter()
@@ -83,7 +84,7 @@ class Meronomy(object):
         if is_edge(edge):
             lemma = tuple([self.lemmatize(item) for item in edge])
         else:
-            edges = self.hg.pattern2edges((const.have_same_lemma, edge, None))
+            edges = set(self.hg.pat2ents((const.lemma_pred, edge, '@')))
             if len(edges) > 0:
                 lemma = edges.pop()[2]
 
@@ -94,7 +95,7 @@ class Meronomy(object):
         if edge in self.edge_strings:
             return self.edge_strings[edge]
 
-        s = edge2str(self.lemmatize(edge), namespaces=False)
+        s = ent2str(self.lemmatize(edge), roots_only=True)
         s = unidecode(s)
         s = s.replace('.', '')
 
@@ -108,51 +109,55 @@ class Meronomy(object):
             self.graph_edges[(orig, targ)] = 0.
         self.graph_edges[(orig, targ)] += 1.
 
-    def add_edge(self, edge_ns):
-        isedge = is_edge(edge_ns)
-        edge = without_namespaces(edge_ns)
+    def add_edge(self, edge):
+        if entity_type(edge)[0] == 'c':
+            # redge = roots(edge)
 
-        # discard common words
-        if not isedge:
-            word = self.parser.make_word(edge)
-            if word.prob > MAX_PROB:
-                return False
+            # discard common words
+            # if is_atom(redge):
+            #     word = self.parser.nlp.vocab[redge]
+            #     if word.prob > MAX_PROB:
+            #         return False
 
-        orig = self.edge2str(edge_ns)
+            orig = self.edge2str(edge)
 
-        # add to edge_map
-        if orig not in self.edge_map:
-            self.edge_map[orig] = set()
-        self.edge_map[orig].add(edge_ns)
+            # add to edge_map
+            if orig not in self.edge_map:
+                self.edge_map[orig] = set()
+            self.edge_map[orig].add(edge)
 
-        self.vertices.add(orig)
-        self.atoms[orig] = edge_depth(edge)
+            self.entities.add(orig)
+            self.atoms[orig] = depth(edge)
 
-        if isedge:
-            for e_ns in edge_ns:
-                targ = self.edge2str(e_ns)
-                if targ:
-                    if self.add_edge(e_ns):
-                        # e = without_namespaces(e_ns)
-                        # if is_concept(edge):
-                        self.add_link(orig, targ)
-                        # elif is_concept(e):
-                        self.edge_counts[e_ns] += 1
-        return True
-
-    def post_assignments(self, edge):
-        if is_edge(edge):
-            for e in edge:
-                self.post_assignments(e)
+            added = True
         else:
-            term = self.edge2str(edge)
-            if term in self.edge_map:
-                if edge[-4:] == 'noun' or edge[-5:] == 'propn':
-                    self.edge_map[term].add(edge)
+            orig = False
+            added = False
+
+        if is_edge(edge):
+            # discard connector
+            for entity in edge[1:]:
+                targ = self.edge2str(entity)
+                if targ:
+                    if self.add_edge(entity):
+                        if orig:
+                            self.add_link(orig, targ)
+                            self.edge_counts[entity] += 1
+        return added
+
+    # def post_assignments(self, edge):
+    #     if is_edge(edge):
+    #         for e in edge:
+    #             self.post_assignments(e)
+    #     else:
+    #         term = self.edge2str(edge)
+    #         if term in self.edge_map:
+    #             if edge[-4:] == 'noun' or edge[-5:] == 'propn':
+    #                 self.edge_map[term].add(edge)
 
     def generate(self):
         self.graph = igraph.Graph(directed=True)
-        self.graph.add_vertices(list(self.vertices))
+        self.graph.add_vertices(list(self.entities))
         self.graph.add_edges(self.graph_edges.keys())
         self.graph.es['weight'] = list(self.graph_edges.values())
 
@@ -211,7 +216,7 @@ class Meronomy(object):
                     weight = edge[2]
                     norm_weight = edge[3]
 
-                    source_edge = str2edge(source)
+                    source_edge = str2ent(source)
                     if weight > WEIGHT_THRESHOLD:
                         if semantic_synonyms(source, target):
                             is_synonym = True

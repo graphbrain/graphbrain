@@ -4,6 +4,7 @@ from collections import namedtuple
 import logging
 import spacy
 from graphbrain import *
+import graphbrain.constants as const
 from graphbrain.meaning.nlp import token2str
 
 
@@ -398,7 +399,7 @@ class Parser(object):
         text = token.lemma_.lower()
         if text != token.text.lower():
             lemma = build_atom(text, ent_type[0], '{}.lemma'.format(self.lang))
-            lemma_edge = ('lemma/p/.', entity, lemma)
+            lemma_edge = (const.lemma_pred, entity, lemma)
             ps.extra_edges.add(lemma_edge)
 
     def _parse_token(self, token):

@@ -1,41 +1,38 @@
+import sys
 import progressbar
 from graphbrain.funs import *
 import graphbrain.constants as cons
-import graphbrain.nlp.parser as par
-from graphbrain.synonyms.meronomy import Meronomy
+from .parser import Parser
+from .meronomy import Meronomy
 
 
-def generate(hg, pattern):
+def generate(hg, pattern, lang):
     print('starting parser...')
-    parser = par.Parser()
+    # parser = Parser(lang)
+    parser = None
 
     mer = Meronomy(hg, parser)
 
     print('reading edges...')
+    total_entities = 0
     total_edges = 0
-    total_beliefs = 0
-
-    for vertex in hg.pat2ents(pattern):
-        if is_edge(vertex):
-            edge = vertex
+    for entity in hg.pat2ents(pattern):
+        total_entities += 1
+        if is_edge(entity):
             total_edges += 1
-            if hg.is_belief(edge):
-                mer.add_edge(edge)
-                total_beliefs += 1
+            mer.add_edge(entity)
 
-    print('edges: %s; beliefs: %s' % (total_edges, total_beliefs))
+    print('edges: {}'.format(total_edges))
 
-    print('post assignments...')
-    i = 0
-    with progressbar.ProgressBar(max_value=total_verts) as bar:
-        for vertex in hg.all():
-            if is_edge(vertex):
-                edge = vertex
-                if hg.is_belief(edge):
-                    mer.post_assignments(edge)
-            i += 1
-            if (i % 1000) == 0:
-                bar.update(i)
+    # print('post assignments...')
+    # i = 0
+    # with progressbar.ProgressBar(max_value=total_entities) as bar:
+    #     for entity in hg.pat2ents(pattern):
+    #         if is_edge(entity):
+    #             mer.post_assignments(entity)
+    #         i += 1
+    #         if (i % 1000) == 0:
+    #             bar.update(i)
 
     print('generating meronomy graph...')
     mer.generate()
@@ -45,6 +42,8 @@ def generate(hg, pattern):
 
     print('generating synonyms...')
     mer.generate_synonyms()
+
+    sys.exit(0)
 
     print('writing synonyms...')
     i = 0
