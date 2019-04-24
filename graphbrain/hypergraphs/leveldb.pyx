@@ -1,5 +1,5 @@
 import plyvel
-from .hypergraph import Hypergraph
+from graphbrain.hypergraphs.hypergraph import Hypergraph
 from graphbrain.funs import *
 from graphbrain.hypergraphs.permutations import *
 

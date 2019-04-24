@@ -1674,7 +1674,6 @@ static const char __pyx_k_attributes[] = "attributes";
 static const char __pyx_k_destroy_db[] = "destroy_db";
 static const char __pyx_k_edge_count[] = "edge_count";
 static const char __pyx_k_exists_key[] = "_exists_key";
-static const char __pyx_k_hypergraph[] = "hypergraph";
 static const char __pyx_k_remove_key[] = "_remove_key";
 static const char __pyx_k_str_plus_1[] = "str_plus_1";
 static const char __pyx_k_LevelDB_all[] = "LevelDB.all";
@@ -1757,6 +1756,7 @@ static const char __pyx_k_Implements_LevelDB_hypergraph_st[] = "Implements Level
 static const char __pyx_k_LevelDB__get_float_attribute_key[] = "LevelDB._get_float_attribute_key";
 static const char __pyx_k_LevelDB__remove_edge_permutation[] = "LevelDB._remove_edge_permutation";
 static const char __pyx_k_LevelDB__write_edge_permutations[] = "LevelDB._write_edge_permutations";
+static const char __pyx_k_graphbrain_hypergraphs_hypergrap[] = "graphbrain.hypergraphs.hypergraph";
 static const char __pyx_k_graphbrain_hypergraphs_leveldb_p[] = "graphbrain/hypergraphs/leveldb.pyx";
 static const char __pyx_k_graphbrain_hypergraphs_permutati[] = "graphbrain.hypergraphs.permutations";
 static const char __pyx_k_LevelDB__remove_edge_permutation_2[] = "LevelDB._remove_edge_permutations";
@@ -1877,10 +1877,10 @@ static PyObject *__pyx_n_s_get_int_attribute_key;
 static PyObject *__pyx_n_s_get_str_attribute;
 static PyObject *__pyx_n_s_get_str_attribute_key;
 static PyObject *__pyx_n_s_graphbrain_funs;
+static PyObject *__pyx_n_s_graphbrain_hypergraphs_hypergrap;
 static PyObject *__pyx_n_s_graphbrain_hypergraphs_leveldb;
 static PyObject *__pyx_kp_s_graphbrain_hypergraphs_leveldb_p;
 static PyObject *__pyx_n_s_graphbrain_hypergraphs_permutati;
-static PyObject *__pyx_n_s_hypergraph;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_inc_attribute;
 static PyObject *__pyx_n_s_inc_attribute_key;
@@ -14121,10 +14121,10 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_get_str_attribute, __pyx_k_get_str_attribute, sizeof(__pyx_k_get_str_attribute), 0, 0, 1, 1},
   {&__pyx_n_s_get_str_attribute_key, __pyx_k_get_str_attribute_key, sizeof(__pyx_k_get_str_attribute_key), 0, 0, 1, 1},
   {&__pyx_n_s_graphbrain_funs, __pyx_k_graphbrain_funs, sizeof(__pyx_k_graphbrain_funs), 0, 0, 1, 1},
+  {&__pyx_n_s_graphbrain_hypergraphs_hypergrap, __pyx_k_graphbrain_hypergraphs_hypergrap, sizeof(__pyx_k_graphbrain_hypergraphs_hypergrap), 0, 0, 1, 1},
   {&__pyx_n_s_graphbrain_hypergraphs_leveldb, __pyx_k_graphbrain_hypergraphs_leveldb, sizeof(__pyx_k_graphbrain_hypergraphs_leveldb), 0, 0, 1, 1},
   {&__pyx_kp_s_graphbrain_hypergraphs_leveldb_p, __pyx_k_graphbrain_hypergraphs_leveldb_p, sizeof(__pyx_k_graphbrain_hypergraphs_leveldb_p), 0, 0, 1, 0},
   {&__pyx_n_s_graphbrain_hypergraphs_permutati, __pyx_k_graphbrain_hypergraphs_permutati, sizeof(__pyx_k_graphbrain_hypergraphs_permutati), 0, 0, 1, 1},
-  {&__pyx_n_s_hypergraph, __pyx_k_hypergraph, sizeof(__pyx_k_hypergraph), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_inc_attribute, __pyx_k_inc_attribute, sizeof(__pyx_k_inc_attribute), 0, 0, 1, 1},
   {&__pyx_n_s_inc_attribute_key, __pyx_k_inc_attribute_key, sizeof(__pyx_k_inc_attribute_key), 0, 0, 1, 1},
@@ -15131,7 +15131,7 @@ if (!__Pyx_RefNanny) {
 
   /* "graphbrain/hypergraphs/leveldb.pyx":1
  * import plyvel             # <<<<<<<<<<<<<<
- * from .hypergraph import Hypergraph
+ * from graphbrain.hypergraphs.hypergraph import Hypergraph
  * from graphbrain.funs import *
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_plyvel, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
@@ -15141,7 +15141,7 @@ if (!__Pyx_RefNanny) {
 
   /* "graphbrain/hypergraphs/leveldb.pyx":2
  * import plyvel
- * from .hypergraph import Hypergraph             # <<<<<<<<<<<<<<
+ * from graphbrain.hypergraphs.hypergraph import Hypergraph             # <<<<<<<<<<<<<<
  * from graphbrain.funs import *
  * from graphbrain.hypergraphs.permutations import *
  */
@@ -15150,7 +15150,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_INCREF(__pyx_n_s_Hypergraph);
   __Pyx_GIVEREF(__pyx_n_s_Hypergraph);
   PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_Hypergraph);
-  __pyx_t_2 = __Pyx_Import(__pyx_n_s_hypergraph, __pyx_t_1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 2, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_Import(__pyx_n_s_graphbrain_hypergraphs_hypergrap, __pyx_t_1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_Hypergraph); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 2, __pyx_L1_error)
@@ -15161,7 +15161,7 @@ if (!__Pyx_RefNanny) {
 
   /* "graphbrain/hypergraphs/leveldb.pyx":3
  * import plyvel
- * from .hypergraph import Hypergraph
+ * from graphbrain.hypergraphs.hypergraph import Hypergraph
  * from graphbrain.funs import *             # <<<<<<<<<<<<<<
  * from graphbrain.hypergraphs.permutations import *
  * 
@@ -15178,7 +15178,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "graphbrain/hypergraphs/leveldb.pyx":4
- * from .hypergraph import Hypergraph
+ * from graphbrain.hypergraphs.hypergraph import Hypergraph
  * from graphbrain.funs import *
  * from graphbrain.hypergraphs.permutations import *             # <<<<<<<<<<<<<<
  * 
@@ -15781,7 +15781,7 @@ if (!__Pyx_RefNanny) {
 
   /* "graphbrain/hypergraphs/leveldb.pyx":1
  * import plyvel             # <<<<<<<<<<<<<<
- * from .hypergraph import Hypergraph
+ * from graphbrain.hypergraphs.hypergraph import Hypergraph
  * from graphbrain.funs import *
  */
   __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)

@@ -1,2 +1,2 @@
-from .funs import *
-from .hypergraphs.factory import hypergraph
+from graphbrain.funs import *
+from graphbrain.hypergraphs.factory import hypergraph
