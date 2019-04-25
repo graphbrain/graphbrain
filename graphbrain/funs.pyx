@@ -1,5 +1,6 @@
 import string
 import numpy as np
+import graphbrain.constants as const
 
 
 # ======================
@@ -45,11 +46,6 @@ def str2atom(s):
     atom = atom.replace(')', '_')
     atom = atom.replace('.', '_')
     return atom
-
-
-def label(atom):
-    """Converts an atom into a string representation."""
-    return root(atom).replace('_', ' ')
 
 
 def _open_pars(s):
@@ -183,7 +179,21 @@ def ent2str(entity, roots_only=False):
         else:
             return entity
     else:
-        return '(%s)' % edges2str(entity, roots_only)
+        return '({})'.format(edges2str(entity, roots_only))
+
+
+def label(entity):
+    """Generate human-readable label from entity."""
+    if is_atom(entity):
+        return root(entity).replace('_', ' ')
+    else:
+        if len(entity) == 2:
+            edge = entity
+        elif entity[0] == const.noun_connector_pred:
+            edge = entity[1:]
+        else:
+            edge = (entity[1], entity[0]) + entity[2:]
+        return ' '.join([label(item) for item in edge])
 
 
 def atoms(entity):

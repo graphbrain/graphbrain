@@ -1,4 +1,5 @@
-# Predicates
+# Pre-defined system atoms
+noun_connector_pred = '+/b/.'
 lemma_pred = 'lemma/p/.'
 
 # Logo

@@ -31,9 +31,6 @@ class TestFuns(unittest.TestCase):
     def test_str2atom(self):
         self.assertEqual(str2atom('graph brain/(1).'), 'graph_brain__1__')
 
-    def test_label(self):
-        self.assertEqual(label('graph_brain'), 'graph brain')
-
     def test_split_edge_str(self):
         self.assertEqual(split_edge_str('is graphbrain/1 great/1'),
                          ('is', 'graphbrain/1', 'great/1'))
@@ -85,6 +82,19 @@ class TestFuns(unittest.TestCase):
             ent2str(('src', 'graphbrain/1', ('is', 'graphbrain/1', 'great/1')),
                     roots_only=True),
             '(src graphbrain (is graphbrain great))')
+
+    def test_label(self):
+        self.assertEqual(label('some_thing/cn.s/.'), 'some thing')
+        self.assertEqual(label(('red/m', 'shoes/c')), 'red shoes')
+        self.assertEqual(label(('of/b', 'capital/c', 'germany/c')),
+                         'capital of germany')
+        self.assertEqual(label(('+/b/.', 'capital/c', 'germany/c')),
+                         'capital germany')
+        self.assertEqual(label(('of/b', 'capital/c', 'west/c', 'germany/c')),
+                         'capital of west germany')
+        self.assertEqual(label(('of/b', 'capital/c',
+                                ('and/b', 'belgium/c', 'europe/c'))),
+                         'capital of belgium and europe')
 
     def test_atoms(self):
         self.assertEqual(atoms(('is', 'graphbrain/1', 'great/1')),
