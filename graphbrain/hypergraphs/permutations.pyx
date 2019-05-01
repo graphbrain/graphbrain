@@ -91,7 +91,10 @@ def perm2edge(perm_str):
         nper = int(tokens[-1])
         tokens = tokens[:-1]
         tokens = unpermutate(tokens, nper)
-        return str2ent(' '.join(tokens))
+        edge_str = ' '.join(tokens)
+        if len(tokens) > 1:
+            edge_str = '({})'.format(edge_str)
+        return str2ent(edge_str)
     except ValueError as v:
         return None
 

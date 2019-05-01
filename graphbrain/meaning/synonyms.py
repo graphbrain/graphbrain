@@ -8,8 +8,7 @@ from .meronomy import Meronomy
 
 def generate(hg, pattern, lang):
     print('starting parser...')
-    # parser = Parser(lang)
-    parser = None
+    parser = Parser(lang)
 
     mer = Meronomy(hg, parser)
 

@@ -111,13 +111,13 @@ class Meronomy(object):
 
     def add_edge(self, edge):
         if entity_type(edge)[0] == 'c':
-            # redge = roots(edge)
+            redge = roots(edge)
 
             # discard common words
-            # if is_atom(redge):
-            #     word = self.parser.nlp.vocab[redge]
-            #     if word.prob > MAX_PROB:
-            #         return False
+            if is_atom(redge):
+                word = self.parser.nlp.vocab[redge]
+                if word.prob > MAX_PROB:
+                    return False
 
             orig = self.edge2str(edge)
 
