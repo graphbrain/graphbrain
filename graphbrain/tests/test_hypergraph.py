@@ -219,6 +219,37 @@ class TestHypergraph(unittest.TestCase):
                           ('is/pd', 'graphbrain/cp', 'great/c'),
                           ('says/pd', 'mary/cp')})
 
+    def test_pat2ents_non_atomic_pred(self):
+        self.hg.destroy()
+        edge = str2ent('((is/a playing/pd.so ) mary/cp.s '
+                       '(a/md ((very/w old/ma) violin/cn.s)))')
+        self.hg.add(edge, deep=True)
+        self.assertEqual(set(self.hg.pat2ents('((is/a playing/pd.so) ...)')),
+                         {(('is/a', 'playing/pd.so'), 'mary/cp.s',
+                           ('a/md', (('very/w', 'old/ma'), 'violin/cn.s')))})
+        self.assertEqual(set(self.hg.pat2ents('((is/a playing/pd.so) * *)')),
+                         {(('is/a', 'playing/pd.so'), 'mary/cp.s',
+                           ('a/md', (('very/w', 'old/ma'), 'violin/cn.s')))})
+        self.assertEqual(set(self.hg.pat2ents('((is/a playing/pd.so) @ &)')),
+                         {(('is/a', 'playing/pd.so'), 'mary/cp.s',
+                           ('a/md', (('very/w', 'old/ma'), 'violin/cn.s')))})
+        self.assertEqual(set(self.hg.pat2ents('((is/a playing/pd.so) @ @)')),
+                         set())
+        self.assertEqual(set(self.hg.pat2ents('((is/a playing/pd.so) & &)')),
+                         set())
+        self.assertEqual(set(self.hg.pat2ents('(* mary/cp.s *)')),
+                         {(('is/a', 'playing/pd.so'), 'mary/cp.s',
+                           ('a/md', (('very/w', 'old/ma'), 'violin/cn.s')))})
+        self.assertEqual(set(self.hg.pat2ents('(mary/cp.s * *)')),
+                         set())
+        self.assertEqual(set(self.hg.pat2ents('(* * (a/md ((very/w old/ma) '
+                                              'violin/cn.s)))')),
+                         {(('is/a', 'playing/pd.so'), 'mary/cp.s',
+                           ('a/md', (('very/w', 'old/ma'), 'violin/cn.s')))})
+        self.assertEqual(set(self.hg.pat2ents('((a/md ((very/w old/ma) '
+                                              'violin/cn.s)) * *)')),
+                         set())
+
     def test_star(self):
         self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
