@@ -28,6 +28,15 @@ MAX_PERMS = 1000
 permcache = {}
 
 
+def fact(n):
+    if n < 1:
+        return 0
+    res = 1
+    for i in range(2, n + 1):
+        res *= i
+    return res
+
+
 def nthperm(n, nper):
     if n in permcache and nper in permcache[n]:
         return permcache[n][nper]
@@ -69,6 +78,16 @@ def unpermutate(tokens, nper):
         pos += 1
 
     return tuple(res)
+
+
+def first_permutation(elements, positions):
+    n_elements = elements
+    fp = 0
+    for i in range(len(positions)):
+        position = positions[i]
+        fp += fact(n_elements - 1) * (position - i)
+        n_elements -= 1
+    return fp
 
 
 def do_with_edge_permutations(edge, f):

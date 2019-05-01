@@ -110,8 +110,13 @@ class LevelDB(Hypergraph):
             self._remove_key(edge_key)
 
     def _pattern2edges(self, pattern):
-        nodes = [node for node in pattern
-                 if node not in {'*', '@', '&', '...'}]
+        nodes = []
+        positions = []
+        for i in range(len(pattern)):
+            node = pattern[i]
+            if node not in {'*', '@', '&', '...'}:
+                nodes.append(node)
+                positions.append(i)
         start_str = edges2str(nodes)
         end_str = str_plus_1(start_str)
         start_key = (u'p%s' % start_str).encode('utf-8')
@@ -119,15 +124,35 @@ class LevelDB(Hypergraph):
 
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             perm_str = key.decode('utf-8')
-            edge = perm2edge(perm_str)
-            if edge and edge_matches_pattern(edge, pattern):
-                yield edge
+
+            tokens = split_edge_str(perm_str[1:])
+            nper = int(tokens[-1])
+
+            if nper == first_permutation(len(tokens) - 1, positions):
+                edge = perm2edge(perm_str)
+                if edge and edge_matches_pattern(edge, pattern):
+                    yield edge
 
     def _star(self, center, limit=None):
-        center_id = center
-        if isinstance(center, (list, tuple)):
-            center_id = ent2str(center)
-        return self._str2perms(center_id, limit)
+        center_str = ent2str(center)
+        start_str = '%s ' % center_str
+        end_str = str_plus_1(start_str)
+        start_key = (u'p%s' % start_str).encode('utf-8')
+        end_key = (u'p%s' % end_str).encode('utf-8')
+
+        count = 0
+        for key, value in self.db.iterator(start=start_key, stop=end_key):
+            if limit and count >= limit:
+                break
+            perm_str = key.decode('utf-8')
+            edge = perm2edge(perm_str)
+            if edge:
+                position = edge.index(center)
+                nper = int(split_edge_str(perm_str[1:])[-1])
+                if nper == first_permutation(len(edge), (position,)):
+                    count += 1
+                    yield(edge)
+
 
     def _atoms_with_root(self, root):
         start_str = '%s/' % root
@@ -211,25 +236,6 @@ class LevelDB(Hypergraph):
     def _remove_key(self, ent_key):
         """Removes an entity, given its key."""
         self.db.delete(ent_key)
-
-    def _str2perms(self, center_id, limit=None):
-        """Returns generator of all the edge permutations that contain
-           the given entity, represented as a string."""
-        start_str = '%s ' % center_id
-        end_str = str_plus_1(start_str)
-        start_key = (u'p%s' % start_str).encode('utf-8')
-        end_key = (u'p%s' % end_str).encode('utf-8')
-
-        count = 0
-        for key, value in self.db.iterator(start=start_key, stop=end_key):
-            perm_str = key.decode('utf-8')
-            edge = perm2edge(perm_str)
-            if edge:
-                yield(edge)
-            if limit:
-                count += 1
-                if count >= limit:
-                    break
 
     def _exists_key(self, ent_key):
         """Checks if the given entity exists."""

@@ -138,16 +138,16 @@ class TestHypergraph(unittest.TestCase):
                      ('is/pd', 'graphbrain/cp', 'great/c')))
         self.hg.add(('says/pd', 'mary/cp',
                      ('is/pd', 'graphbrain/cp', 'great/c'), 'extra/c'))
-        self.assertEqual(set(self.hg.pat2ents(('*', 'graphbrain/cp', '*'))),
-                         {('is/pd', 'graphbrain/cp', 'great/c')})
-        self.assertEqual(set(self.hg.pat2ents(('is/pd', 'graphbrain/cp',
-                                               '*'))),
-                         {('is/pd', 'graphbrain/cp', 'great/c')})
-        self.assertEqual(set(self.hg.pat2ents(('x', '*', '*'))), set())
+        self.assertEqual(list(self.hg.pat2ents(('*', 'graphbrain/cp', '*'))),
+                         [('is/pd', 'graphbrain/cp', 'great/c')])
+        self.assertEqual(list(self.hg.pat2ents(('is/pd', 'graphbrain/cp',
+                                                '*'))),
+                         [('is/pd', 'graphbrain/cp', 'great/c')])
+        self.assertEqual(list(self.hg.pat2ents(('x', '*', '*'))), [])
         self.assertEqual(
-            set(self.hg.pat2ents(('says/pd', '*',
-                                  ('is/pd', 'graphbrain/cp', 'great/c')))),
-            {('says/pd', 'mary/cp', ('is/pd', 'graphbrain/cp', 'great/c'))})
+            list(self.hg.pat2ents(('says/pd', '*',
+                                   ('is/pd', 'graphbrain/cp', 'great/c')))),
+            [('says/pd', 'mary/cp', ('is/pd', 'graphbrain/cp', 'great/c'))])
 
     def test_pat2ents_open_ended(self):
         self.hg.destroy()
@@ -157,22 +157,21 @@ class TestHypergraph(unittest.TestCase):
                      ('is/pd', 'graphbrain/cp', 'great/c')))
         self.hg.add(('says/pd', 'mary/cp',
                      ('is/pd', 'graphbrain/cp', 'great/c'), 'extra/c'))
-        self.assertEqual(set(self.hg.pat2ents(('*', 'graphbrain/cp',
-                                                    '*', '...'))),
-                         {('is/pd', 'graphbrain/cp', 'great/c')})
-        self.assertEqual(set(self.hg.pat2ents(('is/pd', 'graphbrain/cp',
-                                               '*', '...'))),
-                         {('is/pd', 'graphbrain/cp', 'great/c')})
-        self.assertEqual(set(self.hg.pat2ents(('x', '*', '*', '...'))),
-                         set())
-        self.assertEqual(set(self.hg.pat2ents(('says/pd', '*',
-                                               ('is/pd', 'graphbrain/cp',
-                                                'great/c'), '...'))),
-                         {('says/pd', 'mary/cp',
+        self.assertEqual(list(self.hg.pat2ents(('*', 'graphbrain/cp',
+                                                     '*', '...'))),
+                         [('is/pd', 'graphbrain/cp', 'great/c')])
+        self.assertEqual(list(self.hg.pat2ents(('is/pd', 'graphbrain/cp',
+                                                '*', '...'))),
+                         [('is/pd', 'graphbrain/cp', 'great/c')])
+        self.assertEqual(list(self.hg.pat2ents(('x', '*', '*', '...'))), [])
+        self.assertEqual(list(self.hg.pat2ents(('says/pd', '*',
+                                                ('is/pd', 'graphbrain/cp',
+                                                 'great/c'), '...'))),
+                         [('says/pd', 'mary/cp',
                            ('is/pd', 'graphbrain/cp', 'great/c')),
                           ('says/pd', 'mary/cp',
                            ('is/pd', 'graphbrain/cp', 'great/c'),
-                           'extra/c')})
+                           'extra/c')])
 
     def test_pat2ents_star(self):
         self.hg.destroy()
@@ -182,14 +181,15 @@ class TestHypergraph(unittest.TestCase):
                      ('is/pd', 'graphbrain/cp', 'great/c')))
         self.hg.add(('says/pd', 'mary/cp',
                      ('is/pd', 'graphbrain/cp', 'great/c'), 'extra/c'))
-        self.assertEqual(set(self.hg.pat2ents('*')),
-                         {('says/pd', 'mary/cp',
-                           ('is/pd', 'graphbrain/cp', 'great/c')),
+        self.assertEqual(list(self.hg.pat2ents('*')),
+                         [('is/pd', 'graphbrain/cp', 'great/c'),
                           ('says/pd', 'mary/cp',
                            ('is/pd', 'graphbrain/cp', 'great/c'), 'extra/c'),
-                          ('is/pd', 'graphbrain/cp', 'great/c'),
-                          ('says/pd', 'mary/cp'), 'says/pd', 'mary/cp',
-                          'is/pd', 'graphbrain/cp', 'great/c', 'extra/c'})
+                          ('says/pd', 'mary/cp',
+                           ('is/pd', 'graphbrain/cp', 'great/c')),
+                          ('says/pd', 'mary/cp'),
+                          'extra/c', 'graphbrain/cp', 'great/c', 'is/pd',
+                          'mary/cp', 'says/pd'])
 
     def test_pat2ents_at(self):
         self.hg.destroy()
@@ -199,9 +199,9 @@ class TestHypergraph(unittest.TestCase):
                      ('is/pd', 'graphbrain/cp', 'great/c')))
         self.hg.add(('says/pd', 'mary/cp',
                      ('is/pd', 'graphbrain/cp', 'great/c'), 'extra/c'))
-        self.assertEqual(set(self.hg.pat2ents('@')),
-                         {'says/pd', 'mary/cp', 'is/pd', 'graphbrain/cp',
-                          'great/c', 'extra/c'})
+        self.assertEqual(list(self.hg.pat2ents('@')),
+                         ['extra/c', 'graphbrain/cp', 'great/c', 'is/pd',
+                          'mary/cp', 'says/pd'])
 
     def test_pat2ents_amp(self):
         self.hg.destroy()
@@ -211,91 +211,91 @@ class TestHypergraph(unittest.TestCase):
                      ('is/pd', 'graphbrain/cp', 'great/c')))
         self.hg.add(('says/pd', 'mary/cp',
                      ('is/pd', 'graphbrain/cp', 'great/c'), 'extra/c'))
-        self.assertEqual(set(self.hg.pat2ents('&')),
-                         {('says/pd', 'mary/cp',
-                           ('is/pd', 'graphbrain/cp', 'great/c')),
+        self.assertEqual(list(self.hg.pat2ents('&')),
+                         [('is/pd', 'graphbrain/cp', 'great/c'),
                           ('says/pd', 'mary/cp',
                            ('is/pd', 'graphbrain/cp', 'great/c'), 'extra/c'),
-                          ('is/pd', 'graphbrain/cp', 'great/c'),
-                          ('says/pd', 'mary/cp')})
+                          ('says/pd', 'mary/cp',
+                           ('is/pd', 'graphbrain/cp', 'great/c')),
+                          ('says/pd', 'mary/cp')])
 
     def test_pat2ents_non_atomic_pred(self):
         self.hg.destroy()
         edge = str2ent('((is/a playing/pd.so ) mary/cp.s '
                        '(a/md ((very/w old/ma) violin/cn.s)))')
         self.hg.add(edge, deep=True)
-        self.assertEqual(set(self.hg.pat2ents('((is/a playing/pd.so) ...)')),
-                         {(('is/a', 'playing/pd.so'), 'mary/cp.s',
-                           ('a/md', (('very/w', 'old/ma'), 'violin/cn.s')))})
-        self.assertEqual(set(self.hg.pat2ents('((is/a playing/pd.so) * *)')),
-                         {(('is/a', 'playing/pd.so'), 'mary/cp.s',
-                           ('a/md', (('very/w', 'old/ma'), 'violin/cn.s')))})
-        self.assertEqual(set(self.hg.pat2ents('((is/a playing/pd.so) @ &)')),
-                         {(('is/a', 'playing/pd.so'), 'mary/cp.s',
-                           ('a/md', (('very/w', 'old/ma'), 'violin/cn.s')))})
-        self.assertEqual(set(self.hg.pat2ents('((is/a playing/pd.so) @ @)')),
-                         set())
-        self.assertEqual(set(self.hg.pat2ents('((is/a playing/pd.so) & &)')),
-                         set())
-        self.assertEqual(set(self.hg.pat2ents('(* mary/cp.s *)')),
-                         {(('is/a', 'playing/pd.so'), 'mary/cp.s',
-                           ('a/md', (('very/w', 'old/ma'), 'violin/cn.s')))})
-        self.assertEqual(set(self.hg.pat2ents('(mary/cp.s * *)')),
-                         set())
-        self.assertEqual(set(self.hg.pat2ents('(* * (a/md ((very/w old/ma) '
-                                              'violin/cn.s)))')),
-                         {(('is/a', 'playing/pd.so'), 'mary/cp.s',
-                           ('a/md', (('very/w', 'old/ma'), 'violin/cn.s')))})
-        self.assertEqual(set(self.hg.pat2ents('((a/md ((very/w old/ma) '
-                                              'violin/cn.s)) * *)')),
-                         set())
+        self.assertEqual(list(self.hg.pat2ents('((is/a playing/pd.so) ...)')),
+                         [(('is/a', 'playing/pd.so'), 'mary/cp.s',
+                           ('a/md', (('very/w', 'old/ma'), 'violin/cn.s')))])
+        self.assertEqual(list(self.hg.pat2ents('((is/a playing/pd.so) * *)')),
+                         [(('is/a', 'playing/pd.so'), 'mary/cp.s',
+                           ('a/md', (('very/w', 'old/ma'), 'violin/cn.s')))])
+        self.assertEqual(list(self.hg.pat2ents('((is/a playing/pd.so) @ &)')),
+                         [(('is/a', 'playing/pd.so'), 'mary/cp.s',
+                           ('a/md', (('very/w', 'old/ma'), 'violin/cn.s')))])
+        self.assertEqual(list(self.hg.pat2ents('((is/a playing/pd.so) @ @)')),
+                         [])
+        self.assertEqual(list(self.hg.pat2ents('((is/a playing/pd.so) & &)')),
+                         [])
+        self.assertEqual(list(self.hg.pat2ents('(* mary/cp.s *)')),
+                         [(('is/a', 'playing/pd.so'), 'mary/cp.s',
+                           ('a/md', (('very/w', 'old/ma'), 'violin/cn.s')))])
+        self.assertEqual(list(self.hg.pat2ents('(mary/cp.s * *)')),
+                         [])
+        self.assertEqual(list(self.hg.pat2ents('(* * (a/md ((very/w old/ma) '
+                                               'violin/cn.s)))')),
+                         [(('is/a', 'playing/pd.so'), 'mary/cp.s',
+                           ('a/md', (('very/w', 'old/ma'), 'violin/cn.s')))])
+        self.assertEqual(list(self.hg.pat2ents('((a/md ((very/w old/ma) '
+                                               'violin/cn.s)) * *)')),
+                         [])
 
     def test_star(self):
         self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
-        self.assertEqual(set(self.hg.star('graphbrain/1')),
-                         {('is', 'graphbrain/1', 'great/1')})
-        self.assertEqual(set(self.hg.star('graphbrain/2')), set())
+        self.assertEqual(list(self.hg.star('graphbrain/1')),
+                         [('is', 'graphbrain/1', 'great/1')])
+        self.assertEqual(list(self.hg.star('graphbrain/2')), [])
         self.hg.remove(('is', 'graphbrain/1', 'great/1'))
         self.hg.add(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
-        self.assertEqual(set(self.hg.star(('is', 'graphbrain/1', 'great/1'))),
-                         {('says', 'mary/1',
-                           ('is', 'graphbrain/1', 'great/1'))})
+        self.assertEqual(list(self.hg.star(('is', 'graphbrain/1', 'great/1'))),
+                         [('says', 'mary/1',
+                           ('is', 'graphbrain/1', 'great/1'))])
 
     def test_star_limit(self):
         self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.hg.add(('is', 'graphbrain/1', 'great/2'))
         self.hg.add(('is', 'graphbrain/1', 'great/3'))
-        self.assertEqual(len(set(self.hg.star('graphbrain/1'))), 3)
-        self.assertEqual(len(set(self.hg.star('graphbrain/1', limit=1))), 1)
-        self.assertEqual(len(set(self.hg.star('graphbrain/1', limit=2))), 2)
-        self.assertEqual(len(set(self.hg.star('graphbrain/1', limit=10))), 3)
+        self.assertEqual(len(list(self.hg.star('graphbrain/1'))), 3)
+        self.assertEqual(len(list(self.hg.star('graphbrain/1', limit=1))), 1)
+        self.assertEqual(len(list(self.hg.star('graphbrain/1', limit=2))), 2)
+        self.assertEqual(len(list(self.hg.star('graphbrain/1', limit=10))), 3)
 
     def test_atoms_with_root(self):
         self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
-        self.assertEqual(set(self.hg.atoms_with_root('graphbrain')),
-                         {'graphbrain/1'})
+        self.assertEqual(list(self.hg.atoms_with_root('graphbrain')),
+                         ['graphbrain/1'])
         self.hg.add(('is', 'graphbrain/2', 'great/1'))
-        self.assertEqual(set(self.hg.atoms_with_root('graphbrain')),
-                         {'graphbrain/1', 'graphbrain/2'})
+        self.assertEqual(list(self.hg.atoms_with_root('graphbrain')),
+                         ['graphbrain/1', 'graphbrain/2'])
 
     def test_edges_with_atoms(self):
         self.hg.destroy()
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
         self.hg.add(('is', 'graphbrain/1', 'great/2'))
-        self.assertEqual(set(self.hg.edges_with_atoms(('graphbrain/1',),
-                                                      'great')),
-                         {('is', 'graphbrain/1', 'great/1'),
-                          ('is', 'graphbrain/1', 'great/2')})
-        self.assertEqual(set(self.hg.edges_with_atoms(('graphbrain/1', 'is'),
-                                                      'great')),
-                         {('is', 'graphbrain/1', 'great/1'),
-                          ('is', 'graphbrain/1', 'great/2')})
-        self.assertEqual(set(self.hg.edges_with_atoms(('graphbrain/1',),
-                                                      'grea')),
-                         set())
+        self.assertEqual(list(self.hg.edges_with_atoms(('graphbrain/1',),
+                                                       'great')),
+                         [('is', 'graphbrain/1', 'great/1'),
+                          ('is', 'graphbrain/1', 'great/2')])
+        self.assertEqual(list(self.hg.edges_with_atoms(('graphbrain/1', 'is'),
+                                                       'great')),
+                         [('is', 'graphbrain/1', 'great/1'),
+                          ('is', 'graphbrain/1', 'great/2')])
+        self.assertEqual(list(self.hg.edges_with_atoms(('graphbrain/1',),
+                                                       'grea')),
+                         [])
 
     # set_attribute, inc_attribute, dec_attribute, get_str_attribute,
     # get_int_attribute, get_float_attribute

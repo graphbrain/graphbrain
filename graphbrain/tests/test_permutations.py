@@ -4,6 +4,15 @@ from graphbrain.hypergraphs.permutations import *
 
 
 class TestPermutations(unittest.TestCase):
+    def test_fact(self):
+        self.assertEqual(fact(-10), 0)
+        self.assertEqual(fact(0), 0)
+        self.assertEqual(fact(1), 1)
+        self.assertEqual(fact(2), 2)
+        self.assertEqual(fact(3), 6)
+        self.assertEqual(fact(4), 24)
+        self.assertEqual(fact(5), 120)
+
     def test_nthperm(self):
         self.assertEqual(nthperm(10, 2), (0, 1, 2, 3, 4, 5, 6, 8, 7, 9))
 
@@ -96,6 +105,18 @@ class TestPermutations(unittest.TestCase):
         edge = unpermutate(('mary/cp.s', ('my/m', 'name/cn.s'), 'is/pd.sc'), 5)
         self.assertEqual(edge, ('is/pd.sc',
                                 ('my/m', 'name/cn.s'), 'mary/cp.s'))
+
+    def test_first_permutation(self):
+        self.assertEqual(first_permutation(2, [0]), 0)
+        self.assertEqual(first_permutation(3, [0]), 0)
+        self.assertEqual(first_permutation(4, [0]), 0)
+        self.assertEqual(first_permutation(4, [1]), 6)
+        self.assertEqual(first_permutation(4, [0, 1]), 0)
+        self.assertEqual(first_permutation(4, [0, 2]), 2)
+        self.assertEqual(first_permutation(4, [1, 2]), 8)
+        self.assertEqual(first_permutation(4, [1, 3]), 10)
+        self.assertEqual(first_permutation(4, [0, 2, 4]), 4)
+        self.assertEqual(first_permutation(4, [1, 2, 4]), 10)
 
     def test_do_with_edge_permutations(self):
         output = []
