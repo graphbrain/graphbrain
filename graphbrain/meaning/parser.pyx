@@ -250,14 +250,6 @@ def nest_predicate(inner, outer, before):
         return ((outer, inner[0]),) + inner[1:]
 
 
-def _compose_concepts(concepts):
-    first = concepts[0]
-    if is_atom(first):
-        return connect('+/b/.', concepts)
-    else:
-        return (first[0], _compose_concepts(first[1:] + concepts[1:]))
-
-
 class Parser(object):
     def __init__(self, lang, pos=False, lemmas=False):
         self.lang = lang
@@ -278,6 +270,26 @@ class Parser(object):
                                       ['extra_edges', 'tokens', 'child_tokens',
                                        'positions', 'children', 'entities'])
 
+    def _concept_role(self, concept):
+        if is_atom(concept):
+            token = self.atom2token[concept]
+            if token.dep_ == 'compound':
+                return 'a'
+            else:
+                return 'm'
+        else:
+            return '?'
+
+    def _compose_concepts(self, concepts):
+        first = concepts[0]
+        if is_atom(first):
+            concept_roles = [self._concept_role(concept)
+                             for concept in concepts]
+            builder = '+/b.{}/.'.format(''.join(concept_roles))
+            return connect(builder, concepts)
+        else:
+            return (first[0], self._compose_concepts(first[1:] + concepts[1:]))
+
     def _post_process(self, entity):
         if is_atom(entity):
             token = self.atom2token.get(entity)
@@ -294,7 +306,7 @@ class Parser(object):
 
             # Multi-noun concept, e.g.: (south america) -> (+ south america)
             if ct[0] == 'c':
-                return _compose_concepts(entity), temporal
+                return self._compose_concepts(entity), temporal
 
             # Builders with one argument become modifiers
             # e.g. (on/b ice) -> (on/m ice)

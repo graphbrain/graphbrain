@@ -1,9 +1,9 @@
 Satellites from NASA and other agencies have been tracking sea ice changes since 1979.
-((have/a (been/a tracking/pd.sox)) (from/br satellites/cn.p (and/b+ nasa/cp.s (other/ma agencies/cn.p))) (+/b/. sea/cn.s ice/cn.s changes/cn.p) (since/tt 1979/c#))
+((have/a (been/a tracking/pd.sox)) (from/br satellites/cn.p (and/b+ nasa/cp.s (other/ma agencies/cn.p))) (+/b.aam/. sea/cn.s ice/cn.s changes/cn.p) (since/tt 1979/c#))
 The algorithm can play both black and white.
 ((can/a play/pd.so) (the/md algorithm/cn.s) (both/md (and/b+ black/ca white/ca)))
 Britain's hopes of a trade deal with America just suffered a big blow.
-((just/a suffered/pd.so) (of/br ('s/bp britain/cp.s hopes/cn.p) (a/md (with/br (+/b/. trade/cn.s deal/cn.s) america/cp.s))) (a/md (big/ma blow/cn.s)))
+((just/a suffered/pd.so) (of/br ('s/bp britain/cp.s hopes/cn.p) (a/md (with/br (+/b.am/. trade/cn.s deal/cn.s) america/cp.s))) (a/md (big/ma blow/cn.s)))
 My name is Telmo.
 (is/pd.sc (my/mp name/cn.s) telmo/cp.s)
 I admire the fact that you are honest.
@@ -11,25 +11,25 @@ I admire the fact that you are honest.
 She looks very beautiful.
 (looks/pd.sc she/ci (very/m beautiful/ca))
 Sweden wants to fight our disposable culture with tax breaks for repairing old stuff.
-(wants/pd.sr sweden/cp.s ((to/a fight/pc.ox) (our/mp (disposable/ma culture/cn.s)) (with/t (for/br (+/b/. tax/cn.s breaks/cn.p) (repairing/pc.o (old/ma stuff/cn.s))))))
+(wants/pd.sr sweden/cp.s ((to/a fight/pc.ox) (our/mp (disposable/ma culture/cn.s)) (with/t (for/br (+/b.am/. tax/cn.s breaks/cn.p) (repairing/pc.o (old/ma stuff/cn.s))))))
 Loving is the new fighting.
 (is/pd.sc loving/c (the/md (new/ma fighting/cn.s)))
 Sweden is the third-largest country in the European Union by area.
-(is/pd.sc sweden/cp.s (the/md ((third/w largest/ms) (by/br (in/br country/cn.s (the/md (+/b/. european/cp.s union/cp.s))) area/cn.s))))
+(is/pd.sc sweden/cp.s (the/md ((third/w largest/ms) (by/br (in/br country/cn.s (the/md (+/b.am/. european/cp.s union/cp.s))) area/cn.s))))
 France's Le Pen says people no longer want the EU
-(says/pd.sr ('s/bp france/cp.s (+/b/. le/cp.s pen/cp.s)) (((no/an longer/a) want/pr.so) people/cn.p (the/md eu/cp.s)))
+(says/pd.sr ('s/bp france/cp.s (+/b.am/. le/cp.s pen/cp.s)) (((no/an longer/a) want/pr.so) people/cn.p (the/md eu/cp.s)))
 Wii will fail just like the arcade games of yesteryear.
-((will/a fail/pd.sx) wii/cp.s ((just/w like/t) (the/md (of/br (+/b/. arcade/cn.s games/cn.p) yesteryear/cn.s))))
+((will/a fail/pd.sx) wii/cp.s ((just/w like/t) (the/md (of/br (+/b.am/. arcade/cn.s games/cn.p) yesteryear/cn.s))))
 Mary will come if the weather is good.
 ((will/a come/pd.sx) mary/cp.s (if/x (is/pd.sc (the/md weather/cn.s) good/ca)))
 Mary will come if it doesn't rain.
 ((will/a come/pd.sx) mary/cp.s (if/x ((does/a (n't/an rain/pd.s)) it/ci)))
 US suspects Russian hackers planted fake news behind Qatar crisis.
-(suspects/pd.sr us/cp.s (planted/pr.so (russian/ma hackers/cn.p) (fake/ma (behind/br news/cn.s (+/b/. qatar/cp.s crisis/cn.s)))))
+(suspects/pd.sr us/cp.s (planted/pr.so (russian/ma hackers/cn.p) (fake/ma (behind/br news/cn.s (+/b.am/. qatar/cp.s crisis/cn.s)))))
 North Korea accuses Trump of being 'selfish' over Paris climate pact
-(accuses/pd.sox (+/b/. north/cp.s korea/cp.s) trump/cp.s (of/t (being/pc.c (over/br selfish/ca (+/b/. paris/cp.s climate/cn.s pact/cn.s)))))
+(accuses/pd.sox (+/b.am/. north/cp.s korea/cp.s) trump/cp.s (of/t (being/pc.c (over/br selfish/ca (+/b.aam/. paris/cp.s climate/cn.s pact/cn.s)))))
 What happens when literary novelists experiment with science fiction.
-(happens/pd.sx what/cw (when/t (experiment/pd.sx (literary/ma novelists/cn.p) (with/t (+/b/. science/cn.s fiction/cn.s)))))
+(happens/pd.sx what/cw (when/t (experiment/pd.sx (literary/ma novelists/cn.p) (with/t (+/b.am/. science/cn.s fiction/cn.s)))))
 Exposure to the bacteria in soil can be good for mental health
 ((can/a be/pd.sc) (to/br exposure/cn.s (the/md (in/br bacteria/cn.p soil/cn.s))) (for/br good/ca (mental/ma health/cn.s)))
 Some subspecies of mosquito might be 1st to be genetically wiped out.
@@ -37,13 +37,13 @@ Some subspecies of mosquito might be 1st to be genetically wiped out.
 Telmo is going to the gym.
 ((is/a going/pd.sx) telmo/cp.s (to/t (the/md gym/cn.s)))
 Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate.
-((is/a influenced/pd.xpa) ((to/a due/t) (its/mp (in/br location/cn.s (the/md (+/b/. european/cp.s plain/cp.s))))) berlin/cp.s (by/x (a/md (temperate/ma (seasonal/ma climate/cn.s)))))
+((is/a influenced/pd.xpa) ((to/a due/t) (its/mp (in/br location/cn.s (the/md (+/b.am/. european/cp.s plain/cp.s))))) berlin/cp.s (by/x (a/md (temperate/ma (seasonal/ma climate/cn.s)))))
 Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan.
-(is/pd.sc (:/b/. (+/b/. koikuchi/cp.s shoyu/cn.s) ((best/a known/pc.x) (as/t (+/b/. soy/cn.s sauce/cn.s)))) (the/md (of/br mother/cn.s (all/md (in/br sauces/cn.p japan/cp.s)))))
+(is/pd.sc (:/b/. (+/b.am/. koikuchi/cp.s shoyu/cn.s) ((best/a known/pc.x) (as/t (+/b.am/. soy/cn.s sauce/cn.s)))) (the/md (of/br mother/cn.s (all/md (in/br sauces/cn.p japan/cp.s)))))
 Carl Gustav Jung was a Swiss psychiatrist and psychoanalyst who founded analytical psychology.
-(was/pd.sc (+/b/. carl/cp.s gustav/cp.s jung/cp.s) (:/b/. (a/md (swiss/ma (and/b+ psychiatrist/cn.s psychoanalyst/cn.s))) (founded/pr.so who/cw (analytical/ma psychology/cn.s))))
+(was/pd.sc (+/b.aam/. carl/cp.s gustav/cp.s jung/cp.s) (:/b/. (a/md (swiss/ma (and/b+ psychiatrist/cn.s psychoanalyst/cn.s))) (founded/pr.so who/cw (analytical/ma psychology/cn.s))))
 As a notable research scientist based at the famous Burghölzli hospital, under Eugen Bleuler, he came to the attention of the Viennese founder of psychoanalysis, Sigmund Freud.
-(came/pd.xxsx (as/t (:/b/. (a/md (notable/ma (+/b/. research/cn.s scientist/cn.s))) (based/pc.x (at/t (the/md (famous/ma (+/b/. burghölzli/cp.s hospital/cn.s))))))) (under/t (+/b/. eugen/cp.s bleuler/cp.s)) he/ci (to/t (the/md (of/br attention/cn.s (:/b/. (the/md (viennese/ma (of/br founder/cn.s psychoanalysis/cn.s))) (+/b/. sigmund/cp.s freud/cp.s))))))
+(came/pd.xxsx (as/t (:/b/. (a/md (notable/ma (+/b.am/. research/cn.s scientist/cn.s))) (based/pc.x (at/t (the/md (famous/ma (+/b.am/. burghölzli/cp.s hospital/cn.s))))))) (under/t (+/b.am/. eugen/cp.s bleuler/cp.s)) he/ci (to/t (the/md (of/br attention/cn.s (:/b/. (the/md (viennese/ma (of/br founder/cn.s psychoanalysis/cn.s))) (+/b.am/. sigmund/cp.s freud/cp.s))))))
 The two men conducted a lengthy correspondence and collaborated on an initially joint vision of human psychology.
 (and/pm (conducted/pd.so (the/md (two/m# men/cn.p)) (a/md (lengthy/ma correspondence/cn.s))) (collaborated/pd.x (on/t (an/md ((initially/w joint/ma) (of/br vision/cn.s (human/ma psychology/cn.s)))))))
 Freud saw in the younger man the potential heir he had been seeking to carry on his "new science" of psychoanalysis.
@@ -55,25 +55,25 @@ Unknown to most, their brains are a battleground.
 Lady shows you the oldest living wolf.
 (shows/pd.sio lady/cn.s you/ci (the/md (oldest/ms (living/m wolf/cn.s))))
 Lawyers say they will issue judicial review proceedings if Brexit secretary fails to release 50 studies of effect on industry
-(say/pd.sr lawyers/cn.p ((will/a issue/pr.sox) they/ci (judicial/ma (+/b/. review/cn.s proceedings/cn.p)) (if/x (fails/pd.sr (+/b/. brexit/cp.s secretary/cn.s) ((to/a release/pc.o) (50/m# (of/br studies/cn.p (on/br effect/cn.s industry/cn.s))))))))
+(say/pd.sr lawyers/cn.p ((will/a issue/pr.sox) they/ci (judicial/ma (+/b.am/. review/cn.s proceedings/cn.p)) (if/x (fails/pd.sr (+/b.am/. brexit/cp.s secretary/cn.s) ((to/a release/pc.o) (50/m# (of/br studies/cn.p (on/br effect/cn.s industry/cn.s))))))))
 In September 2016, we learned that the University of New Hampshire was going to use $1 million that an incredibly frugal librarian saved while working as a library cataloger for 50 years to buy a new scoreboard for its stadium.
-(learned/pd.xsr (in/tt (2016/m# september/cp.s)) we/ci (that/x ((was/a going/pr.sr) (the/md (of/br university/cp.s (+/b/. new/cp.s hampshire/cp.s))) ((to/a use/pc.or) ($/a (+/b/. 1/c# million/c#)) (saved/pr.osx that/c (an/md ((incredibly/w frugal/ma) librarian/cn.s)) (while/x (working/pd.xxx (as/t (a/md (+/b/. library/cn.s cataloger/cn.s))) (for/tt (50/m# years/cn.p)) ((to/a buy/pd.o) (a/md (new/ma (for/br scoreboard/cn.s (its/mp stadium/cn.s))))))))))))
+(learned/pd.xsr (in/tt (2016/m# september/cp.s)) we/ci (that/x ((was/a going/pr.sr) (the/md (of/br university/cp.s (+/b.am/. new/cp.s hampshire/cp.s))) ((to/a use/pc.or) ($/a (+/b.am/. 1/c# million/c#)) (saved/pr.osx that/c (an/md ((incredibly/w frugal/ma) librarian/cn.s)) (while/x (working/pd.xxx (as/t (a/md (+/b.am/. library/cn.s cataloger/cn.s))) (for/tt (50/m# years/cn.p)) ((to/a buy/pd.o) (a/md (new/ma (for/br scoreboard/cn.s (its/mp stadium/cn.s))))))))))))
 An anarchist takes on Big Pharma by teaching patients to make their own meds
-(takes/pd.sox (an/md anarchist/cn.s) (on/x (+/b/. big/cp.s pharma/cp.s)) (by/t (teaching/pc.or patients/cn.p ((to/a make/pc.o) (their/mp (own/ma meds/cn.p))))))
+(takes/pd.sox (an/md anarchist/cn.s) (on/x (+/b.am/. big/cp.s pharma/cp.s)) (by/t (teaching/pc.or patients/cn.p ((to/a make/pc.o) (their/mp (own/ma meds/cn.p))))))
 That seems both super dangerous, and super awesome.
 (seems/pd.s that/cd (both/md (super/m (and/b+ dangerous/ca (super/m awesome/ca)))))
 Briton dies in fall from Indian temple while taking selfie
 (dies/pd.sxx briton/cp.s (in/t (from/br fall/cn.s (indian/ma temple/cn.s))) (while/x (taking/pd.o selfie/cn.s)))
 I hate everyone in the White House!
-(hate/pd.so i/ci (in/br everyone/cn.s (the/md (+/b/. white/cp.s house/cp.s))))
+(hate/pd.so i/ci (in/br everyone/cn.s (the/md (+/b.am/. white/cp.s house/cp.s))))
 There are a few exceptions, but I hate them!
 (but/pm ((there/a are/pd.c) (a/md (few/ma exceptions/cn.p))) (hate/pd.so i/ci them/ci))
 Tourists taking a picture of the Eiffel Tower get photobombed by a cyclist.
-(taking/pd.sox tourists/cn.p (a/md (of/br picture/cn.s (the/md (+/b/. eiffel/cp.s tower/cp.s)))) ((get/a photobombed/pd.a) (by/x (a/md cyclist/cn.s))))
+(taking/pd.sox tourists/cn.p (a/md (of/br picture/cn.s (the/md (+/b.am/. eiffel/cp.s tower/cp.s)))) ((get/a photobombed/pd.a) (by/x (a/md cyclist/cn.s))))
 Americans are willing to pay $177 a year to avoid climate change
-(are/pd.sc americans/cp.p (:/b/. willing/ca ((to/a pay/pc.ox) ($/m (+/b/. 177/c# (a/md year/cn.s))) ((to/a avoid/pd.o) (+/b/. climate/cn.s change/cn.s)))))
+(are/pd.sc americans/cp.p (:/b/. willing/ca ((to/a pay/pc.ox) ($/m (+/b.m?/. 177/c# (a/md year/cn.s))) ((to/a avoid/pd.o) (+/b.am/. climate/cn.s change/cn.s)))))
 This guy should be the new team mascot
-((should/a be/pd.sc) (this/md guy/cn.s) (the/md (new/ma (+/b/. team/cn.s mascot/cn.s))))
+((should/a be/pd.sc) (this/md guy/cn.s) (the/md (new/ma (+/b.am/. team/cn.s mascot/cn.s))))
 Take pictures of your hair after a good haircut.
 (take/p!.ox (of/br pictures/cn.p (your/mp hair/cn.s)) (after/t (a/md (good/ma haircut/cn.s))))
 I think that's supposed to be difficult.
@@ -89,12 +89,14 @@ Do what I say.
 What time is it?
 (is/p?.cs (what/mw time/cn.s) it/ci)
 A new Einstein cross is discovered
-((is/a discovered/pd.p) (a/md (new/ma (+/b/. einstein/cp.s cross/cn.s))))
+((is/a discovered/pd.p) (a/md (new/ma (+/b.am/. einstein/cp.s cross/cn.s))))
 An Elusive Whale Is Found All Around the World 
-(is/pd.sc (an/md (+/b/. elusive/ca whale/cn.s)) (found/x ((all/w around/mr) (the/md world/cn.s))))
+(is/pd.sc (an/md (+/b.am/. elusive/ca whale/cn.s)) (found/x ((all/w around/mr) (the/md world/cn.s))))
 According to people present, she simply ploughed on with her intention to hold a third vote on her deal this week.
 ((simply/a (on/a ploughed/pd.xsx)) (according/t (to/mr (present/ma people/cn.p))) she/ci (with/t (:/b/. (her/mp intention/cn.s) ((to/a hold/pc.ox) (a/md (third/ma (on/br vote/cn.s (her/mp deal/cn.s)))) (this/md week/cn.s)))))
 Our brains are always looking for relative rewards.
 ((are/a (always/a looking/pd.sx)) (our/mp brains/cn.p) (for/t (relative/ma rewards/cn.p)))
 Scientists rise up against statistical significance
 ((up/a rise/pd.sx) scientists/cn.p (against/t (statistical/ma significance/cn.s)))
+A pretty touch screen is ALL the iPhone has to offer.
+(is/pd.sr (a/md (pretty/ma (+/b.am/. touch/cn.s screen/cn.s))) (has/pr.s (all/md (the/md iphone/cp.s)) (to/a offer/pc.)))
