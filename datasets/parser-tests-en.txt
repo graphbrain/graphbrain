@@ -17,7 +17,7 @@ Loving is the new fighting.
 Sweden is the third-largest country in the European Union by area.
 (is/pd.sc sweden/cp.s (the/md ((third/w largest/ms) (by/br (in/br country/cn.s (the/md (+/b/. european/cp.s union/cp.s))) area/cn.s))))
 France's Le Pen says people no longer want the EU
-(says/pd.sr ('s/bp france/cp.s (+/b/. le/cp.s pen/cp.s)) (((no/an longer/a) want/pd.so) people/cn.p (the/md eu/cp.s)))
+(says/pd.sr ('s/bp france/cp.s (+/b/. le/cp.s pen/cp.s)) (((no/an longer/a) want/pr.so) people/cn.p (the/md eu/cp.s)))
 Wii will fail just like the arcade games of yesteryear.
 ((will/a fail/pd.sx) wii/cp.s ((just/w like/t) (the/md (of/br (+/b/. arcade/cn.s games/cn.p) yesteryear/cn.s))))
 Mary will come if the weather is good.
@@ -25,7 +25,7 @@ Mary will come if the weather is good.
 Mary will come if it doesn't rain.
 ((will/a come/pd.sx) mary/cp.s (if/x ((does/a (n't/an rain/pd.s)) it/ci)))
 US suspects Russian hackers planted fake news behind Qatar crisis.
-(suspects/pd.sr us/cp.s (planted/pd.so (russian/ma hackers/cn.p) (fake/ma (behind/br news/cn.s (+/b/. qatar/cp.s crisis/cn.s)))))
+(suspects/pd.sr us/cp.s (planted/pr.so (russian/ma hackers/cn.p) (fake/ma (behind/br news/cn.s (+/b/. qatar/cp.s crisis/cn.s)))))
 North Korea accuses Trump of being 'selfish' over Paris climate pact
 (accuses/pd.sox (+/b/. north/cp.s korea/cp.s) trump/cp.s (of/t (being/pc.c (over/br selfish/ca (+/b/. paris/cp.s climate/cn.s pact/cn.s)))))
 What happens when literary novelists experiment with science fiction.
@@ -55,9 +55,9 @@ Unknown to most, their brains are a battleground.
 Lady shows you the oldest living wolf.
 (shows/pd.sio lady/cn.s you/ci (the/md (oldest/ms (living/m wolf/cn.s))))
 Lawyers say they will issue judicial review proceedings if Brexit secretary fails to release 50 studies of effect on industry
-(say/pd.sr lawyers/cn.p ((will/a issue/pd.sox) they/ci (+/b/. (judicial/ma review/cn.s) proceedings/cn.p) (if/x (fails/pd.sr (+/b/. brexit/cp.s secretary/cn.s) ((to/a release/pc.o) (50/m# (of/br studies/cn.p (on/br effect/cn.s industry/cn.s))))))))
+(say/pd.sr lawyers/cn.p ((will/a issue/pr.sox) they/ci (judicial/ma (+/b/. review/cn.s proceedings/cn.p)) (if/x (fails/pd.sr (+/b/. brexit/cp.s secretary/cn.s) ((to/a release/pc.o) (50/m# (of/br studies/cn.p (on/br effect/cn.s industry/cn.s))))))))
 In September 2016, we learned that the University of New Hampshire was going to use $1 million that an incredibly frugal librarian saved while working as a library cataloger for 50 years to buy a new scoreboard for its stadium.
-(learned/pd.xsr (in/tt (2016/m# september/cp.s)) we/ci (that/x ((was/a going/pd.sr) (the/md (of/br university/cp.s (+/b/. new/cp.s hampshire/cp.s))) ((to/a use/pc.or) (+/b/. ($/a 1/c#) million/c#) (saved/pd.osx that/c (an/md ((incredibly/w frugal/ma) librarian/cn.s)) (while/x (working/pd.xxx (as/t (a/md (+/b/. library/cn.s cataloger/cn.s))) (for/tt (50/m# years/cn.p)) ((to/a buy/pd.o) (a/md (new/ma (for/br scoreboard/cn.s (its/mp stadium/cn.s))))))))))))
+(learned/pd.xsr (in/tt (2016/m# september/cp.s)) we/ci (that/x ((was/a going/pr.sr) (the/md (of/br university/cp.s (+/b/. new/cp.s hampshire/cp.s))) ((to/a use/pc.or) ($/a (+/b/. 1/c# million/c#)) (saved/pr.osx that/c (an/md ((incredibly/w frugal/ma) librarian/cn.s)) (while/x (working/pd.xxx (as/t (a/md (+/b/. library/cn.s cataloger/cn.s))) (for/tt (50/m# years/cn.p)) ((to/a buy/pd.o) (a/md (new/ma (for/br scoreboard/cn.s (its/mp stadium/cn.s))))))))))))
 An anarchist takes on Big Pharma by teaching patients to make their own meds
 (takes/pd.sox (an/md anarchist/cn.s) (on/x (+/b/. big/cp.s pharma/cp.s)) (by/t (teaching/pc.or patients/cn.p ((to/a make/pc.o) (their/mp (own/ma meds/cn.p))))))
 That seems both super dangerous, and super awesome.
@@ -77,15 +77,15 @@ This guy should be the new team mascot
 Take pictures of your hair after a good haircut.
 (take/p!.ox (of/br pictures/cn.p (your/mp hair/cn.s)) (after/t (a/md (good/ma haircut/cn.s))))
 I think that's supposed to be difficult.
-(think/pd.sr i/ci (('s/a supposed/pd.pr) that/cd ((to/a be/pc.c) difficult/ca)))
+(think/pd.sr i/ci (('s/a supposed/pr.pr) that/cd ((to/a be/pc.c) difficult/ca)))
 The food, I opined to my wife, was premium mediocre.
 (was/pd.stc (the/md food/cn.s) (opined/pd.sx i/ci (to/t (my/mp wife/cn.s))) (premium/ma mediocre/ca))
 Catalonia calls for talks with Madrid but warns against Spanish direct rule
 (but/pm (calls/pd.sx catalonia/cp.s (for/t (with/br talks/cn.p madrid/cp.s))) (warns/pd.x (against/t (spanish/ma (direct/ma rule/cn.s)))))
 Imagine you want to send a letter anonymously.
-(imagine/p!.r (want/pd.sr you/ci ((to/a (anonymously/a send/pc.o)) (a/md letter/cn.s))))
+(imagine/p!.r (want/pr.sr you/ci ((to/a (anonymously/a send/pc.o)) (a/md letter/cn.s))))
 Do what I say.
-(do/p!.r (say/pd.os what/cw i/ci))
+(do/p!.r (say/pr.os what/cw i/ci))
 What time is it?
 (is/p?.cs (what/mw time/cn.s) it/ci)
 A new Einstein cross is discovered

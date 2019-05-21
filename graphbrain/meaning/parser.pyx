@@ -60,14 +60,16 @@ def is_compound(token):
 
 def concept_type_and_subtype(token):
     tag = token.tag_
-    if tag[:2] == 'NN':
+    if tag[:2] == 'JJ':
+        return 'ca'
+    # elif is_compound(token):
+    #    return 'cc'
+    elif tag[:2] == 'NN':
         subtype = 'p' if 'P' in tag else 'n'
         sing_plur = 'p' if tag[-1] == 'S' else 's'
         return 'c{}.{}'.format(subtype, sing_plur)
     elif tag == 'CD':
         return 'c#'
-    elif tag[:2] == 'JJ':
-        return 'ca'
     elif tag == 'DT':
         return 'cd'
     elif tag == 'WP':
@@ -88,6 +90,8 @@ def modifier_type_and_subtype(token):
         return 'ms'
     elif tag == 'DT':
         return 'md'
+    elif tag == 'PDT':
+        return 'mp'
     elif tag == 'WDT':
         return 'mw'
     elif tag == 'CD':
@@ -131,9 +135,9 @@ def token_type(token, head=False):
     elif dep in {'appos', 'attr', 'compound', 'dative', 'dep', 'dobj',
                  'nsubj', 'nsubjpass', 'oprd', 'pobj', 'meta'}:
         return concept_type_and_subtype(token)
-    elif dep in {'advcl', 'ccomp', 'csubj', 'csubjpass', 'parataxis'}:
+    elif dep in {'advcl', 'csubj', 'csubjpass', 'parataxis'}:
         return 'p'
-    elif dep == 'relcl':
+    elif dep in {'relcl', 'ccomp'}:
         if is_verb(token):
             return 'pr'
         else:
@@ -246,6 +250,14 @@ def nest_predicate(inner, outer, before):
         return ((outer, inner[0]),) + inner[1:]
 
 
+def _compose_concepts(concepts):
+    first = concepts[0]
+    if is_atom(first):
+        return connect('+/b/.', concepts)
+    else:
+        return (first[0], _compose_concepts(first[1:] + concepts[1:]))
+
+
 class Parser(object):
     def __init__(self, lang, pos=False, lemmas=False):
         self.lang = lang
@@ -279,15 +291,18 @@ class Parser(object):
             entity, temps = zip(*[self._post_process(item) for item in entity])
             temporal = True in temps
             ct = connector_type(entity)
-            # Multi-nooun concept, e.g.: (south america) -> (+ south america)
+
+            # Multi-noun concept, e.g.: (south america) -> (+ south america)
             if ct[0] == 'c':
-                return connect('+/b/.', entity), temporal
+                return _compose_concepts(entity), temporal
+
             # Builders with one argument become modifiers
             # e.g. (on/b ice) -> (on/m ice)
             elif ct[0] == 'b' and is_atom(entity[0]) and len(entity) == 2:
                 ps = atom_parts(entity[0])
                 ps[1] = 'm' + ct[1:]
                 return ('/'.join(ps),) + entity[1:], temporal
+
             # A meta-modifier applied to a concept defined my a modifier
             # should apply to the modifier instead.
             # e.g.: (stricking/w (red/m dress)) -> ((stricking/w red/m) dress)
@@ -297,6 +312,7 @@ class Parser(object):
                     is_edge(entity[1]) and
                     connector_type(entity[1])[0] == 'm'):
                 return ((entity[0], entity[1][0]),) + entity[1][1:], temporal
+
             # Make sure that specifier arguments are of the specifier type,
             # entities are surrounded by an edge with a trigger connector if
             # necessary. E.g.: today -> {t/t/. today}
@@ -318,6 +334,7 @@ class Parser(object):
                                                           proc_edge[arg_pos])
                             return tuple(proc_edge), False
                 return entity, temporal
+
             # Make triggers temporal, if appropriate.
             # e.g.: (in/t 1976) -> (in/tt 1976)
             elif ct[0] == 't':
