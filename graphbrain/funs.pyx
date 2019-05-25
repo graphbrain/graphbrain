@@ -302,17 +302,23 @@ def edge_matches_pattern(edge, pattern):
             if len(edge) != len(pattern):
                 return False
 
-        for i in range(len(pattern)):
-            pitem = pattern[i]
+        for i, pitem in enumerate(pattern):
             eitem = edge[i]
-            if pitem == '@':
-                if not is_atom(eitem):
-                    return False
-            elif pitem == '&':
-                if not is_edge(eitem):
-                    return False
-            elif pitem != '*':
-                if eitem != pitem:
+            if is_atom(pitem):
+                if pitem == '@':
+                    if not is_atom(eitem):
+                        return False
+                elif pitem == '&':
+                    if not is_edge(eitem):
+                        return False
+                elif pitem != '*':
+                    if eitem != pitem:
+                        return False
+            else:
+                if is_edge(eitem):
+                    if not edge_matches_pattern(eitem, pitem):
+                        return False
+                else:
                     return False
         return True
 

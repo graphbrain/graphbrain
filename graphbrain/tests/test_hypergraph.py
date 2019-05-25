@@ -148,6 +148,10 @@ class TestHypergraph(unittest.TestCase):
             list(self.hg.pat2ents(('says/pd', '*',
                                    ('is/pd', 'graphbrain/cp', 'great/c')))),
             [('says/pd', 'mary/cp', ('is/pd', 'graphbrain/cp', 'great/c'))])
+        self.assertEqual(
+            list(self.hg.pat2ents(('says/pd', '*',
+                                   ('is/pd', '*', '*')))),
+            [('says/pd', 'mary/cp', ('is/pd', 'graphbrain/cp', 'great/c'))])
 
     def test_pat2ents_open_ended(self):
         self.hg.destroy()
