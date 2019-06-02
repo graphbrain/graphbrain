@@ -22,13 +22,6 @@ def _decode_attributes(value):
     return attributes
 
 
-def _is_constant(entity):
-    if is_atom(entity):
-        return entity not in {'*', '@', '&', '...'}
-    else:
-        return all(_is_constant(item) for item in entity)
-
-
 class LevelDB(Hypergraph):
     """Implements LevelDB hypergraph storage."""
 
@@ -120,7 +113,7 @@ class LevelDB(Hypergraph):
         nodes = []
         positions = []
         for i, node in enumerate(pattern):
-            if _is_constant(node):
+            if is_constant(node):
                 nodes.append(node)
                 positions.append(i)
         start_str = edges2str(nodes)

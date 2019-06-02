@@ -120,7 +120,10 @@ class Hypergraph(object):
                 else:
                     return ()
         else:
-            return self._pattern2edges(pattern)
+            if (no_constant(pattern)):
+                return self.all()
+            else:
+                return self._pattern2edges(pattern)
 
     def star(self, center, limit=None):
         """Returns generator of the edges that contain the entity.

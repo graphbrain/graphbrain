@@ -130,6 +130,7 @@ def split_edge_str(str edge_str):
 def str2ent(str ent_str):
     """Convert a string representation of an entity to an entity."""
 
+    ent_str = ent_str.replace('\n', ' ')
     cdef str edge_inner_str = ent_str
 
     if _edge_str_has_outer_parens(ent_str):
@@ -612,3 +613,17 @@ def rel_arg_role(relation, position):
                 if position < len(arg_roles):
                     return arg_roles[position]
         return None
+
+
+def is_constant(entity):
+    if is_atom(entity):
+        return entity not in {'*', '@', '&', '...'}
+    else:
+        return all(is_constant(item) for item in entity)
+
+
+def no_constant(entity):
+    if is_atom(entity):
+        return entity in {'*', '@', '&', '...'}
+    else:
+        return all(no_constant(item) for item in entity)
