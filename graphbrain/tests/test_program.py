@@ -1,6 +1,6 @@
 import unittest
 from graphbrain import *
-from graphbrain.logic.program import *
+from graphbrain.hyperlog.program import *
 
 
 class TestProgram(unittest.TestCase):
