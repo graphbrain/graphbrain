@@ -1,6 +1,5 @@
 from enum import Enum
 from graphbrain import *
-import numpy
 
 
 def is_var(atom):
