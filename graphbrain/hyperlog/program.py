@@ -1,5 +1,6 @@
 from enum import Enum
 from graphbrain import *
+import numpy
 
 
 def is_var(atom):
@@ -71,6 +72,10 @@ class Program(object):
         self.triggered = 0
         self.added = 0
         self.added_edges = []
+
+    def load(self, prog_path):
+        with open(prog_path, 'r') as myfile:
+            self.loads(myfile.read())
 
     def loads(self, prog_str):
         str_exp = ''
