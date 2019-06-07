@@ -23,7 +23,7 @@ def title_parts(title):
 class RedditParser(object):
     def __init__(self, hg):
         self.hg = hg
-        self.parser = Parser(lang='en', pos=True, lemmas=True)
+        self.parser = Parser(lang='en', lemmas=True)
         self.main_edges = 0
         self.extra_edges = 0
         self.time_acc = 0

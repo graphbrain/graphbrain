@@ -251,9 +251,8 @@ def nest_predicate(inner, outer, before):
 
 
 class Parser(object):
-    def __init__(self, lang, pos=False, lemmas=False):
+    def __init__(self, lang, lemmas=False):
         self.lang = lang
-        self.pos = pos
         self.lemmas = lemmas
         self.atom2token = {}
         self.cur_text = None
@@ -388,7 +387,7 @@ class Parser(object):
 
         ps.children.reverse()
 
-    def _build_atom(self, token, ent_type, pos, ps):
+    def _build_atom(self, token, ent_type, ps):
         text = token.text.lower()
         et = ent_type
 
@@ -420,7 +419,7 @@ class Parser(object):
 
             et = '{}.{}'.format(ent_type, args_string)
 
-        atom = build_atom(text, et, pos)
+        atom = build_atom(text, et)
         self.atom2token[atom] = token
         return atom
 
@@ -443,12 +442,7 @@ class Parser(object):
         # parse token children
         self._parse_token_children(token, ps)
 
-        # build atom
-        if self.pos:
-            pos = '{}.{}'.format(self.lang, token.tag_.lower())
-        else:
-            pos = None
-        atom = self._build_atom(token, ent_type, pos, ps)
+        atom = self._build_atom(token, ent_type, ps)
         entity = atom
 
         # lemmas
