@@ -250,6 +250,114 @@ def nest_predicate(inner, outer, before):
         return ((outer, inner[0]),) + inner[1:]
 
 
+def _verb_features(token):
+        verb_form = '-'
+        tense = '-'
+        aspect = '-'
+        mood = '-'
+        person = '-'
+        number = '-'
+
+        if token.tag_ == 'VB':
+            verb_form = 'i'  # infinitive
+        elif token.tag_ == 'VBD':
+            verb_form = 'f'  # finite
+            tense = '<'  # past
+        elif token.tag_ == 'VBG':
+            verb_form = 'p'  # participle
+            tense = '|'  # present
+            aspect = 'g'  # progressive
+        elif token.tag_ == 'VBN':
+            verb_form = 'p'  # participle
+            tense = '<'  # past
+            aspect = 'f'  # perfect
+        elif token.tag_ == 'VBP':
+            verb_form = 'f'  # finite
+            tense = '|'  # present
+        elif token.tag_ == 'VBZ':
+            verb_form = 'f'  # finite
+            tense = '|'  # present
+            number = 's'  # singular
+            person = '3'  # third person
+
+        features = (tense, verb_form, aspect, mood, person, number)
+        return ''.join(features)
+
+
+def _build_atom_predicate(token, ent_type, ps):
+        text = token.text.lower()
+        et = ent_type
+
+        # create verb features string
+        verb_features = _verb_features(token)
+
+        # create arguments string
+        args = [arg_type(ps.tokens[entity]) for entity in ps.entities]
+        args_string = ''.join([arg for arg in args if arg != '?'])
+
+        # assign predicate subtype
+        # (declarative, imperative, interrogative, ...)
+        if len(ps.child_tokens) > 0:
+            last_token = ps.child_tokens[-1][0]
+        else:
+            last_token = None
+        if len(ent_type) == 1:
+            # interrogative cases
+            if (last_token and
+                    last_token.tag_ == '.' and
+                    last_token.dep_ == 'punct' and
+                    last_token.lemma_.strip() == '?'):
+                ent_type = 'p?'
+            # imperative cases
+            elif (is_infinitive(token) and 's' not in args_string and
+                    'TO' not in [child[0].tag_
+                                 for child in ps.child_tokens]):
+                ent_type = 'p!'
+            # declarative (by default)
+            else:
+                ent_type = 'pd'
+
+        et = '{}.{}.{}'.format(ent_type, verb_features, args_string)
+
+        return build_atom(text, et)
+
+
+def _build_atom_subpredicate(token, ent_type):
+        text = token.text.lower()
+        et = ent_type
+
+        if is_verb(token):
+            # create verb features string
+            verb_features = _verb_features(token)
+            et = 'xv.{}'.format(verb_features)
+
+        return build_atom(text, et)
+
+
+def _build_atom_auxiliary(token, ent_type):
+        text = token.text.lower()
+        et = ent_type
+
+        if is_verb(token):
+            # create verb features string
+            verb_features = _verb_features(token)
+            et = 'av.{}'.format(verb_features)  # verbal
+        elif token.tag_ == 'MD':
+            et = 'am'  # modal
+        elif token.tag_ == 'TO':
+            et = 'ai'  # infinitive
+        elif token.tag_ == 'RBR':
+            et = 'ac'  # comparative
+        elif token.tag_ == 'RBS':
+            et = 'as'  # superlative
+        elif token.tag_ == 'RP' or token.dep_ == 'prt':
+            et = 'ap'  # particle
+        elif token.tag_ == 'EX':
+            et = 'ae'  # existential
+
+        return build_atom(text, et)
+
+
 class Parser(object):
     def __init__(self, lang, lemmas=False):
         self.lang = lang
@@ -331,8 +439,8 @@ class Parser(object):
                 pred = predicate(entity)
                 if pred:
                     role = atom_role(pred)
-                    if len(role) > 1:
-                        arg_roles = role[1]
+                    if len(role) > 2:
+                        arg_roles = role[2]
                         if 'x' in arg_roles:
                             proc_edge = list(entity)
                             trigger = 't/tt/.' if temporal else 't/t/.'
@@ -392,34 +500,14 @@ class Parser(object):
         et = ent_type
 
         if ent_type[0] == 'p' and ent_type != 'pm':
-            args = [arg_type(ps.tokens[entity]) for entity in ps.entities]
-            args_string = ''.join([arg for arg in args if arg != '?'])
+            atom = _build_atom_predicate(token, ent_type, ps)
+        elif ent_type[0] == 'x':
+            atom = _build_atom_subpredicate(token, ent_type)
+        elif ent_type[0] == 'a':
+            atom = _build_atom_auxiliary(token, ent_type)
+        else:
+            atom = build_atom(text, et)
 
-            # assign predicate subtype
-            # (declarative, imperative, interrogative, ...)
-            if len(ps.child_tokens) > 0:
-                last_token = ps.child_tokens[-1][0]
-            else:
-                last_token = None
-            if len(ent_type) == 1:
-                # interrogative cases
-                if (last_token and
-                        last_token.tag_ == '.' and
-                        last_token.dep_ == 'punct' and
-                        last_token.lemma_.strip() == '?'):
-                    ent_type = 'p?'
-                # imperative cases
-                elif (is_infinitive(token) and 's' not in args_string and
-                        'TO' not in [child[0].tag_
-                                     for child in ps.child_tokens]):
-                    ent_type = 'p!'
-                # declarative (by default)
-                else:
-                    ent_type = 'pd'
-
-            et = '{}.{}'.format(ent_type, args_string)
-
-        atom = build_atom(text, et)
         self.atom2token[atom] = token
         return atom
 
