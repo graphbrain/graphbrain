@@ -90,8 +90,8 @@ def modifier_type_and_subtype(token):
         return 'ms'
     elif tag == 'DT':
         return 'md'
-    elif tag == 'PDT':
-        return 'mp'
+    # elif tag == 'PDT':
+    #     return 'mp'
     elif tag == 'WDT':
         return 'mw'
     elif tag == 'CD':
@@ -116,8 +116,8 @@ def token_type(token, head=False):
     if dep == '':
         return None
 
-    if is_noun(token):
-        return concept_type_and_subtype(token)
+    # if is_noun(token):
+    #    return concept_type_and_subtype(token)
 
     head_type = token_head_type(token)
     if len(head_type) > 1:
@@ -147,14 +147,18 @@ def token_type(token, head=False):
             return 'a'
         else:
             return 'pc'
-    elif dep in {'amod', 'det', 'npadvmod', 'nummod', 'nmod', 'preconj',
-                 'predet'}:
+    elif dep in {'amod', 'det', 'nummod', 'nmod', 'preconj', 'predet'}:
         return modifier_type_and_subtype(token)
     elif dep in {'aux', 'auxpass', 'expl', 'prt', 'quantmod'}:
         if token.n_lefts + token.n_rights == 0:
             return 'a'
         else:
             return 'x'
+    elif dep == 'npadvmod':
+        if is_noun(token):
+            return concept_type_and_subtype(token)
+        else:
+            modifier_type_and_subtype(token)
     elif dep == 'cc':
         if head_type == 'p':
             return 'pm'
