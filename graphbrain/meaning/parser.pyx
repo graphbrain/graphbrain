@@ -116,9 +116,6 @@ def token_type(token, head=False):
     if dep in {'', 'subtok'}:
         return None
 
-    # if is_noun(token):
-    #    return concept_type_and_subtype(token)
-
     head_type = token_head_type(token)
     if len(head_type) > 1:
         head_subtype = head_type[1]
@@ -424,12 +421,13 @@ class Parser(object):
             # (on/br.ma referendum/c (gradual/m (nuclear/m phaseout/c)))
             elif ct[0] == 'b' and len(entity) == 3:
                 connector = entity[0]
-                if ct == 'br':
-                    connector = replace_atom_part(connector, 1,
-                                                  '{}.ma'.format(ct))
-                elif ct == 'bp':
-                    connector = replace_atom_part(connector, 1,
-                                                  '{}.am'.format(ct))
+                if is_atom(connector):
+                    if ct == 'br':
+                        connector = replace_atom_part(connector, 1,
+                                                      '{}.ma'.format(ct))
+                    elif ct == 'bp':
+                        connector = replace_atom_part(connector, 1,
+                                                      '{}.am'.format(ct))
 
                 return (connector,) + entity[1:], temporal
 
