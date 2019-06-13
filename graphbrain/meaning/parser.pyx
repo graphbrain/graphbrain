@@ -113,7 +113,7 @@ def builder_type_and_subtype(token):
 def token_type(token, head=False):
     dep = token.dep_
 
-    if dep == '':
+    if dep in {'', 'subtok'}:
         return None
 
     # if is_noun(token):
