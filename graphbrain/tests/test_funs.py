@@ -28,6 +28,10 @@ class TestFuns(unittest.TestCase):
         self.assertEqual(build_atom('graphbrain', 'c'), 'graphbrain/c')
         self.assertEqual(build_atom('go', 'p.p.so', '1'), 'go/p.p.so/1')
 
+    def test_replace_atom_part(self):
+        self.assertEqual(replace_atom_part('graphbrain/1', 0, 'x'), 'x/1')
+        self.assertEqual(replace_atom_part('xxx/1/yyy', 1, '77'), 'xxx/77/yyy')
+
     def test_str2atom(self):
         self.assertEqual(str2atom('graph brain/(1).'), 'graph_brain__1__')
 

@@ -415,6 +415,20 @@ class Parser(object):
             if ct[0] == 'c':
                 return self._compose_concepts(entity), temporal
 
+            # Assign concept roles where possible
+            # e.g. (on/br referendum/c (gradual/m (nuclear/m phaseout/c))) ->
+            # (on/br.ma referendum/c (gradual/m (nuclear/m phaseout/c)))
+            elif ct[0] == 'b' and len(entity) == 3:
+                connector = entity[0]
+                if ct == 'br':
+                    connector = replace_atom_part(connector, 1,
+                                                  '{}.ma'.format(ct))
+                elif ct == 'bp':
+                    connector = replace_atom_part(connector, 1,
+                                                  '{}.am'.format(ct))
+
+                return (connector,) + entity[1:], temporal
+
             # Builders with one argument become modifiers
             # e.g. (on/b ice) -> (on/m ice)
             elif ct[0] == 'b' and is_atom(entity[0]) and len(entity) == 2:

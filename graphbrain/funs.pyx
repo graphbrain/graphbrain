@@ -37,6 +37,13 @@ def build_atom(text, *parts):
     return atom
 
 
+def replace_atom_part(atom, part_pos, part):
+    """Build a new atom by replacing an atom part in a given atom."""
+    parts = atom_parts(atom)
+    parts[part_pos] = part
+    return '/'.join([part for part in parts if part])
+
+
 def str2atom(s):
     """Converts a string into a valid atom."""
     atom = s.lower()
