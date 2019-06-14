@@ -362,6 +362,7 @@ def _build_atom_auxiliary(token, ent_type):
 class ParserEN(Parser):
     def __init__(self, lemmas=False):
         super().__init__(lemmas=lemmas)
+        self.lang = 'en'
         self.nlp = spacy.load('en_core_web_lg')
 
     def _concept_role(self, concept):

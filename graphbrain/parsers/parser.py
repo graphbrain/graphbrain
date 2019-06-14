@@ -6,7 +6,10 @@ class Parser(object):
         self.lemmas = lemmas
         self.atom2token = {}
         self.cur_text = None
-        self.nlp = None  # to be created by derived classes
+
+        # to be created by derived classes
+        self.lang = None
+        self.nlp = None
 
         # named tuple used to pass parser state internally
         self._ParseState = namedtuple('_ParseState',
