@@ -55,7 +55,7 @@ setup(
     description='Knowledge System + Natural Language Understanding',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/graphbrain/graphbrain',
+    url='http://graphbrain.net',
     license='MIT',
     keywords=['NLP', 'AI', 'Knowledge Representation', 'Knowledge Systems',
               'Natural Language Understanding', 'Text Analysis', 'Cognition'],
