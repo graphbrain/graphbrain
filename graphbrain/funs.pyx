@@ -622,15 +622,70 @@ def rel_arg_role(relation, position):
         return None
 
 
-def is_constant(entity):
-    if is_atom(entity):
-        return entity not in {'*', '@', '&', '...'}
-    else:
-        return all(is_constant(item) for item in entity)
+def is_pattern(entity):
+    """Check if an entity defines a pattern, i.e. if it includes at least
+    one pattern matcher.
 
-
-def no_constant(entity):
+    Pattern matchers are:
+    '*', '@', '&'' and '...'
+    """
     if is_atom(entity):
         return entity in {'*', '@', '&', '...'}
     else:
-        return all(no_constant(item) for item in entity)
+        return any(is_pattern(item) for item in entity)
+
+
+def not_pattern(entity):
+    """Check if an entity does not define a pattern, i.e. it includes no
+    pattern matchers.
+
+    Pattern matchers are:
+    '*', '@', '&'' and '...'
+    """
+    return not is_pattern(entity)
+
+
+def full_pattern(entity):
+    """Check if every atom is a pattern matcher.
+
+    Pattern matchers are:
+    '*', '@', '&'' and '...'
+    """
+    if is_atom(entity):
+        return entity in {'*', '@', '&', '...'}
+    else:
+        return all(full_pattern(item) for item in entity)
+
+
+def main_concept(entity):
+    """Returns the main concept in an edge concept.
+    The main concept is the central concept in a built concept, e.g.:
+    in ('s/bp.am zimbabwe/mp economy/cn.s), economy/cn.s is the main concept.
+
+    If entity is not an edge, or its connector is not of type builder, or
+    the builder does not contain concept role annotations, or no concept
+    is annotated as the main one, then None is returned.
+    """
+
+    # discard trivial cases where main concept does not apply
+    if is_atom(entity):
+        return None
+    connector = entity[0]
+    if is_edge(connector):
+        return None
+    if entity_type(connector)[0] != 'b':
+        return None
+
+    role = atom_role(connector)
+    # discard cases where the builder has no concept type annotations
+    if len(role) < 2:
+        return None
+    concept_roles = role[1]
+    pos = concept_roles.find('m') + 1
+    # check if main concept annotation exists
+    if pos <= 0:
+        return None
+    # main concept does no exist
+    if pos >= len(entity):
+        return None
+    return entity[pos]

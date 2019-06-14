@@ -349,6 +349,62 @@ class TestFuns(unittest.TestCase):
                                        'graphbrain/cp.s', 'great/c'), 0),
                          None)
 
+    def test_is_pattern(self):
+        entity = str2ent("('s/bp.am zimbabwe/m economy/cn.s)")
+        self.assertFalse(is_pattern(entity))
+        entity = str2ent("('s/bp.am * economy/cn.s)")
+        self.assertTrue(is_pattern(entity))
+        entity = str2ent("('s/bp.am * ...)")
+        self.assertTrue(is_pattern(entity))
+        entity = 'thing/c'
+        self.assertFalse(is_pattern(entity))
+        entity = '&'
+        self.assertTrue(is_pattern(entity))
+
+    def test_not_pattern(self):
+        entity = str2ent("('s/bp.am zimbabwe/m economy/cn.s)")
+        self.assertTrue(not_pattern(entity))
+        entity = str2ent("('s/bp.am * economy/cn.s)")
+        self.assertFalse(not_pattern(entity))
+        entity = str2ent("('s/bp.am * ...)")
+        self.assertFalse(not_pattern(entity))
+        entity = str2ent('thing/c')
+        self.assertTrue(not_pattern(entity))
+        entity = str2ent('&')
+        self.assertFalse(not_pattern(entity))
+
+    def test_full_pattern(self):
+        entity = str2ent("('s/bp.am zimbabwe/m economy/cn.s)")
+        self.assertFalse(full_pattern(entity))
+        entity = str2ent("('s/bp.am * economy/cn.s)")
+        self.assertFalse(full_pattern(entity))
+        entity = str2ent("('s/bp.am * ...)")
+        self.assertFalse(full_pattern(entity))
+        entity = str2ent('thing/c')
+        self.assertFalse(full_pattern(entity))
+        entity = str2ent('&')
+        self.assertTrue(full_pattern(entity))
+        entity = str2ent('(* * *')
+        self.assertTrue(full_pattern(entity))
+        entity = str2ent('(* * * ...)')
+        self.assertTrue(full_pattern(entity))
+        entity = str2ent('(@ * & ...)')
+        self.assertTrue(full_pattern(entity))
+
+    def test_main_concept(self):
+        concept = str2ent("('s/bp.am zimbabwe/mp economy/cn.s)")
+        self.assertEqual(main_concept(concept), 'economy/cn.s')
+        concept = str2ent("('s/bp zimbabwe/mp economy/cn.s)")
+        self.assertEqual(main_concept(concept), None)
+        concept = str2ent('(+/b.am?/. hiv/ca kit/cn.s (testing/m self/cn.s))')
+        self.assertEqual(main_concept(concept), 'kit/cn.s')
+        concept = str2ent('(+/b.?a?/. hiv/ca kit/cn.s (testing/m self/cn.s))')
+        self.assertEqual(main_concept(concept), None)
+        concept = str2ent('(a/m thing/c)')
+        self.assertEqual(main_concept(concept), None)
+        concept = 'thing/c'
+        self.assertEqual(main_concept(concept), None)
+
 
 if __name__ == '__main__':
     unittest.main()

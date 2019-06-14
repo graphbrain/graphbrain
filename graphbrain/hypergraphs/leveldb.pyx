@@ -113,7 +113,7 @@ class LevelDB(Hypergraph):
         nodes = []
         positions = []
         for i, node in enumerate(pattern):
-            if is_constant(node):
+            if not_pattern(node):
                 nodes.append(node)
                 positions.append(i)
         start_str = edges2str(nodes)

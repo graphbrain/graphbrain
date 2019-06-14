@@ -120,7 +120,7 @@ class Hypergraph(object):
                 else:
                     return ()
         else:
-            if (no_constant(pattern)):
+            if (full_pattern(pattern)):
                 return self.all()
             else:
                 return self._pattern2edges(pattern)
