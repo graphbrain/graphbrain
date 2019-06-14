@@ -3,7 +3,7 @@ import time
 import json
 import progressbar
 from graphbrain import *
-from graphbrain.meaning import *
+from graphbrain.parsers import *
 from graphbrain.cli import wrapper
 
 
@@ -23,7 +23,8 @@ def title_parts(title):
 class RedditParser(object):
     def __init__(self, hg):
         self.hg = hg
-        self.parser = Parser(lang='en', lemmas=True)
+        # TODO: make parser type configurable
+        self.parser = create_parser(name='en', lemmas=True)
         self.main_edges = 0
         self.extra_edges = 0
         self.time_acc = 0

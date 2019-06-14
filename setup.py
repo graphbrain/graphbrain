@@ -26,8 +26,8 @@ if USE_CYTHON:
                   ['graphbrain/hypergraphs/leveldb.pyx']),
         Extension('graphbrain.hypergraphs.permutations',
                   ['graphbrain/hypergraphs/permutations.pyx']),
-        Extension('graphbrain.meaning.parser',
-                  ['graphbrain/meaning/parser.pyx'])
+        Extension('graphbrain.parsers.parser_en',
+                  ['graphbrain/parsers/parser_en.pyx'])
     ]
     ext_modules = cythonize(ext_modules,
                             compiler_directives={'language_level': '3'})
@@ -38,8 +38,8 @@ else:
                   ['graphbrain/hypergraphs/leveldb.c']),
         Extension('graphbrain.hypergraphs.permutations',
                   ['graphbrain/hypergraphs/permutations.c']),
-        Extension('graphbrain.meaning.parser',
-                  ['graphbrain/meaning/parser.c'])
+        Extension('graphbrain.parsers.parser_en',
+                  ['graphbrain/parsers/parser_en.c'])
     ]
 
 

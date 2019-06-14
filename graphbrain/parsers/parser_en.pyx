@@ -1,11 +1,11 @@
 import sys
 from itertools import repeat
-from collections import namedtuple
 import logging
 import spacy
 from graphbrain import *
 import graphbrain.constants as const
-from graphbrain.meaning.nlp import token2str
+from .parser import Parser
+from .nlp import token2str
 
 
 logging.basicConfig(stream=sys.stderr, level=logging.WARNING)
@@ -359,24 +359,10 @@ def _build_atom_auxiliary(token, ent_type):
         return build_atom(text, et)
 
 
-class Parser(object):
-    def __init__(self, lang, lemmas=False):
-        self.lang = lang
-        self.lemmas = lemmas
-        self.atom2token = {}
-        self.cur_text = None
-
-        if lang == 'en':
-            self.nlp = spacy.load('en_core_web_lg')
-        elif lang == 'fr':
-            self.nlp = spacy.load('fr_core_news_md')
-        else:
-            raise RuntimeError('unkown language: %s' % lang)
-
-        # named tuple used to pass parser state internally
-        self._ParseState = namedtuple('_ParseState',
-                                      ['extra_edges', 'tokens', 'child_tokens',
-                                       'positions', 'children', 'entities'])
+class ParserEN(Parser):
+    def __init__(self, lemmas=False):
+        super().__init__(lemmas=lemmas)
+        self.nlp = spacy.load('en_core_web_lg')
 
     def _concept_role(self, concept):
         if is_atom(concept):
@@ -398,7 +384,7 @@ class Parser(object):
         else:
             return (first[0], self._compose_concepts(first[1:] + concepts[1:]))
 
-    def _post_process(self, entity):
+    def post_process(self, entity):
         if is_atom(entity):
             token = self.atom2token.get(entity)
             if token:
@@ -408,7 +394,7 @@ class Parser(object):
                 temporal = False
             return entity, temporal
         else:
-            entity, temps = zip(*[self._post_process(item) for item in entity])
+            entity, temps = zip(*[self.post_process(item) for item in entity])
             temporal = True in temps
             ct = connector_type(entity)
 
@@ -498,7 +484,7 @@ class Parser(object):
         ps.child_tokens.extend(zip(token.rights, repeat(False)))
 
         for child_token, pos in ps.child_tokens:
-            child, child_extra_edges = self._parse_token(child_token)
+            child, child_extra_edges = self.parse_token(child_token)
             if child:
                 ps.extra_edges.update(child_extra_edges)
                 ps.positions[child] = pos
@@ -534,7 +520,7 @@ class Parser(object):
             lemma_edge = (const.lemma_pred, entity, lemma)
             ps.extra_edges.add(lemma_edge)
 
-    def _parse_token(self, token):
+    def parse_token(self, token):
         # check what type token maps to, return None if if maps to nothing
         ent_type = token_type(token)
         if ent_type == '' or ent_type is None:
@@ -649,7 +635,7 @@ class Parser(object):
                     logging.debug('choice: 17')
                     entity = nest(entity, child, ps.positions[child])
             else:
-                logging.warning('Failed to parse token (_parse_token): {}'
+                logging.warning('Failed to parse token (parse_token): {}'
                                 .format(token))
                 logging.debug('choice: 18')
                 pass
@@ -662,17 +648,3 @@ class Parser(object):
             entity = (':/b/.', entity) + tuple(relative_to_concept)
 
         return entity, ps.extra_edges
-
-    def parse_sentence(self, sent):
-        self.atom2token = {}
-        main_edge, extra_edges = self._parse_token(sent.root)
-        main_edge, _ = self._post_process(main_edge)
-        return {'main_edge': main_edge,
-                'extra_edges': extra_edges,
-                'text': str(sent),
-                'spacy_sentence': sent}
-
-    def parse(self, text):
-        self.cur_text = text
-        doc = self.nlp(text.strip())
-        return tuple(self.parse_sentence(sent) for sent in doc.sents)

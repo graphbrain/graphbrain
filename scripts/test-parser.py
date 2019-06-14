@@ -1,11 +1,10 @@
 from graphbrain import *
 from graphbrain.cli import wrapper
-from graphbrain.meaning.parser import Parser
-from graphbrain.meaning.nlp import print_tree
+from graphbrain.parsers import *
 
 
 def test_parser(args):
-    parser = Parser(lang=args.lang)
+    parser = create_parser(name=args.lang)
 
     total = 0
     wrong = 0
