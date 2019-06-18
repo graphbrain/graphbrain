@@ -85,23 +85,42 @@ class TestHypergraph(unittest.TestCase):
         labels = set(self.hg.all_attributes())
         self.assertEqual(labels, set())
 
-    # atom_count(), edge_count(), total_degrees()
-    def test_counters(self):
+    # atom_count(), edge_count(), primary_atom_count(), primary_edge_count()
+    def test_counters1(self):
         self.hg.destroy()
-        self.hg.add(('is', 'graphbrain/1', 'great/1'))
+        self.hg.add(('is', 'graphbrain/c', 'great/c'))
         self.assertEqual(self.hg.atom_count(), 3)
         self.assertEqual(self.hg.edge_count(), 1)
-        self.assertEqual(self.hg.total_degree(), 3)
-        self.hg.add(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
+        self.assertEqual(self.hg.primary_atom_count(), 0)
+        self.assertEqual(self.hg.primary_edge_count(), 1)
+
+    # atom_count(), edge_count(), primary_atom_count(), primary_edge_count()
+    def test_counters2(self):
+        self.hg.destroy()
+        self.hg.add(('says', 'mary/c', ('is', 'graphbrain/c', 'great/c')))
         self.assertEqual(self.hg.atom_count(), 5)
         self.assertEqual(self.hg.edge_count(), 2)
-        self.assertEqual(self.hg.total_degree(), 6)
-        self.hg.remove(('is', 'graphbrain/1', 'great/1'))
+        self.assertEqual(self.hg.primary_atom_count(), 0)
+        self.assertEqual(self.hg.primary_edge_count(), 1)
+        self.hg.remove(('is', 'graphbrain/c', 'great/c'))
+        self.assertEqual(self.hg.atom_count(), 5)
         self.assertEqual(self.hg.edge_count(), 1)
-        self.assertEqual(self.hg.total_degree(), 3)
-        self.hg.remove(('says', 'mary/1', ('is', 'graphbrain/1', 'great/1')))
+        self.hg.remove(('says', 'mary/c', ('is', 'graphbrain/c', 'great/c')))
+        self.assertEqual(self.hg.atom_count(), 5)
+        self.assertEqual(self.hg.primary_atom_count(), 0)
         self.assertEqual(self.hg.edge_count(), 0)
-        self.assertEqual(self.hg.total_degree(), 0)
+        self.assertEqual(self.hg.primary_edge_count(), 0)
+
+    # atom_count(), edge_count(), primary_atom_count(), primary_edge_count()
+    def test_counters3_non_deep_removal(self):
+        self.hg.destroy()
+        self.hg.add(('says', 'mary/c', ('is', 'graphbrain/c', 'great/c')))
+        self.hg.remove(('says', 'mary/c', ('is', 'graphbrain/c', 'great/c')),
+                       deep=False)
+        self.assertEqual(self.hg.atom_count(), 5)
+        self.assertEqual(self.hg.primary_atom_count(), 0)
+        self.assertEqual(self.hg.edge_count(), 1)
+        self.assertEqual(self.hg.primary_edge_count(), 0)
 
     # exists, add, remove
     def test_ops1(self):
@@ -120,15 +139,6 @@ class TestHypergraph(unittest.TestCase):
         self.hg.remove(('src', 'graphbrain/1', ('size', 'graphbrain/1', '7')))
         self.assertFalse(self.hg.exists(('src', 'graphbrain/1',
                                          ('size', 'graphbrain/1', '7'))))
-
-    def test_add_deep(self):
-        self.hg.destroy()
-        self.hg.add(('says', 'mary', ('is', 'graphbrain/1', 'great/1')),
-                    deep=True)
-        self.assertTrue(self.hg.exists(('is', 'graphbrain/1', 'great/1')))
-        self.assertTrue(
-            self.hg.exists(('says', 'mary',
-                            ('is', 'graphbrain/1', 'great/1'))))
 
     def test_pat2ents(self):
         self.hg.destroy()
@@ -227,7 +237,7 @@ class TestHypergraph(unittest.TestCase):
         self.hg.destroy()
         edge = str2ent('((is/a playing/pd.so ) mary/cp.s '
                        '(a/md ((very/w old/ma) violin/cn.s)))')
-        self.hg.add(edge, deep=True)
+        self.hg.add(edge)
         self.assertEqual(list(self.hg.pat2ents('((is/a playing/pd.so) ...)')),
                          [(('is/a', 'playing/pd.so'), 'mary/cp.s',
                            ('a/md', (('very/w', 'old/ma'), 'violin/cn.s')))])
@@ -363,7 +373,7 @@ class TestHypergraph(unittest.TestCase):
                                                    'label'),
                          'x0 x0   test   test')
 
-    def test_degree(self):
+    def test_degrees(self):
         self.hg.destroy()
         self.assertEqual(self.hg.degree('graphbrain/1'), 0)
         self.hg.add(('is', 'graphbrain/1', 'great/1'))
@@ -377,6 +387,25 @@ class TestHypergraph(unittest.TestCase):
         self.assertEqual(self.hg.degree('great/1'), 0)
         self.hg.remove(('size', 'graphbrain/1', '7'))
         self.assertEqual(self.hg.degree('graphbrain/1'), 0)
+
+    def test_deep_degrees(self):
+        self.hg.destroy()
+        edge1 = str2ent('((is/a going/p) mary/c (to (the/m gym/c)))')
+        self.hg.add(edge1)
+        self.assertEqual(self.hg.deep_degree(edge1), 0)
+        self.assertEqual(self.hg.degree('mary/c'), 1)
+        self.assertEqual(self.hg.deep_degree('mary/c'), 1)
+        self.assertEqual(self.hg.degree('gym/c'), 0)
+        self.assertEqual(self.hg.deep_degree('gym/c'), 1)
+        self.assertEqual(self.hg.degree(str2ent('(is/a going/p)')), 1)
+        self.assertEqual(self.hg.deep_degree(str2ent('(is/a going/p)')), 1)
+        self.assertEqual(self.hg.deep_degree('gym/c'), 1)
+        edge2 = str2ent('((is/a going/p) john/c (to (the/m gym/c)))')
+        self.hg.add(edge2)
+        self.assertEqual(self.hg.degree('gym/c'), 0)
+        self.assertEqual(self.hg.deep_degree('gym/c'), 2)
+        self.assertEqual(self.hg.degree(str2ent('(is/a going/p)')), 2)
+        self.assertEqual(self.hg.deep_degree(str2ent('(is/a going/p)')), 2)
 
     def test_ego(self):
         self.hg.destroy()
@@ -402,6 +431,34 @@ class TestHypergraph(unittest.TestCase):
                                          ('is/pd',
                                           'graphbrain/cp', 'great/c'))))
         self.assertTrue(self.hg.exists(('is/pd', 'graphbrain/cp', 'great/c')))
+
+    def test_primary_1(self):
+        self.hg.destroy()
+        edge1 = str2ent('((is/a going/p) mary/c (to (the/m gym/c)))')
+        self.hg.add(edge1)
+        self.assertTrue(self.hg.is_primary(edge1))
+        self.hg.set_primary(edge1, False)
+        self.assertFalse(self.hg.is_primary(edge1))
+        self.assertFalse(self.hg.is_primary(str2ent('(is/a going/p)')))
+        self.hg.set_primary(str2ent('(is/a going/p)'), True)
+        self.assertTrue(self.hg.is_primary(str2ent('(is/a going/p)')))
+        self.assertFalse(self.hg.is_primary('mary/c'))
+        self.hg.set_primary('mary/c', True)
+        self.assertTrue(self.hg.is_primary('mary/c'))
+
+    def test_primary_2(self):
+        self.hg.destroy()
+        edge1 = str2ent('((is/a going/p) mary/c (to (the/m gym/c)))')
+        self.hg.add(edge1, primary=False)
+        self.assertFalse(self.hg.is_primary(edge1))
+        self.hg.set_primary(edge1, True)
+        self.assertTrue(self.hg.is_primary(edge1))
+        self.assertFalse(self.hg.is_primary(str2ent('(is/a going/p)')))
+        self.hg.set_primary(str2ent('(is/a going/p)'), True)
+        self.assertTrue(self.hg.is_primary(str2ent('(is/a going/p)')))
+        self.assertFalse(self.hg.is_primary('mary/c'))
+        self.hg.set_primary('mary/c', True)
+        self.assertTrue(self.hg.is_primary('mary/c'))
 
 
 if __name__ == '__main__':

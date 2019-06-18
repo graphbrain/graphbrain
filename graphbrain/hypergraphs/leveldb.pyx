@@ -71,8 +71,11 @@ class LevelDB(Hypergraph):
     def edge_count(self):
         return self._read_counter('edge_count')
 
-    def total_degree(self):
-        return self._read_counter('total_degree')
+    def primary_atom_count(self):
+        return self._read_counter('primary_atom_count')
+
+    def primary_edge_count(self):
+        return self._read_counter('primary_edge_count')
 
     # ==========================================
     # Implementation of private abstract methods
@@ -81,33 +84,57 @@ class LevelDB(Hypergraph):
     def _exists(self, entity):
         return self._exists_key(_ent2key(entity))
 
-    def _add(self, edge):
-        edge_key = _ent2key(edge)
-        if not self._exists_key(edge_key):
-            self._inc_counter('edge_count')
-            self._inc_counter('total_degree', by=len(edge))
-            for entity in edge:
-                ent_key = _ent2key(entity)
-                if not self._inc_attribute_key(ent_key, 'd'):
-                    if is_atom(entity):
-                        self._inc_counter('atom_count')
-                    else:
-                        self._inc_counter('edge_count')
-                    self._add_key(ent_key, {'d': 1})
-            self._add_key(edge_key, {'d': 0})
-            self._write_edge_permutations(edge)
-        return edge
+    def _add(self, entity, primary):
+        ent_key = _ent2key(entity)
+        if not self._exists_key(ent_key):
+            if primary:
+                self._add_key(ent_key, {'p': 1, 'd': 0, 'dd': 0})
+                self._inc_degrees(entity)
+            else:
+                self._add_key(ent_key, {'p': 0, 'd': 0, 'dd': 0})
+            if is_atom(entity):
+                if primary:
+                    self._inc_counter('primary_atom_count')
+                self._inc_counter('atom_count')
+            else:
+                self._write_edge_permutations(entity)
+                if primary:
+                    self._inc_counter('primary_edge_count')
+                self._inc_counter('edge_count')
+        # if an entity is to be added as primary, but it already exists as
+        # non-primary, then make it primary and update the degrees
+        elif primary and not self._is_primary(entity):
+            self._set_attribute(entity, 'p', 1)
+            self._inc_degrees(entity)
+        return entity
 
-    def _remove(self, edge):
-        edge_key = _ent2key(edge)
-        if self._exists_key(edge_key):
-            self._dec_counter('edge_count')
-            self._dec_counter('total_degree', by=len(edge))
-            for entity in edge:
-                ent_key = _ent2key(entity)
-                self._dec_attribute_key(ent_key, 'd')
-            self._remove_edge_permutations(edge)
-            self._remove_key(edge_key)
+    def _remove(self, entity, deep):
+        if is_edge(entity):
+            if deep:
+                for child in entity:
+                    self._remove(entity, deep=True)
+            else:
+                self._dec_degrees(entity)
+
+        ent_key = _ent2key(entity)
+        if self._exists_key(ent_key):
+            primary = self.is_primary(entity)
+            if is_atom(entity):
+                self._dec_counter('atom_count')
+                if primary:
+                    self._dec_counter('primary_atom_count')
+            else:
+                self._dec_counter('edge_count')
+                if primary:
+                    self._dec_counter('primary_edge_count')
+                self._remove_edge_permutations(entity)
+            self._remove_key(ent_key)
+
+    def _is_primary(self, entity):
+        return self._get_int_attribute(entity, 'p') == 1
+
+    def _set_primary(self, entity, value):
+        self._set_attribute(entity, 'p', 1 if value else 0)
 
     def _pattern2edges(self, pattern):
         nodes = []
@@ -151,7 +178,6 @@ class LevelDB(Hypergraph):
                 if nper == first_permutation(len(edge), (position,)):
                     count += 1
                     yield(edge)
-
 
     def _atoms_with_root(self, root):
         start_str = '%s/' % root
@@ -205,6 +231,9 @@ class LevelDB(Hypergraph):
     def _degree(self, entity):
         return self.get_int_attribute(entity, 'd', 0)
 
+    def _deep_degree(self, entity):
+        return self.get_int_attribute(entity, 'dd', 0)
+
     # =====================
     # Local private methods
     # =====================
@@ -247,10 +276,9 @@ class LevelDB(Hypergraph):
             if isinstance(value, str):
                 value = value.replace('|', ' ').replace('\\', ' ')
             attributes[attribute] = value
-            self._add_key(ent_key, attributes)
-            return True
         else:
-            return False
+            attributes = {attribute: value}
+        self._add_key(ent_key, attributes)
 
     def _inc_attribute_key(self, ent_key, attribute):
         """Increments an attribute of an entity."""
@@ -331,3 +359,31 @@ class LevelDB(Hypergraph):
         counter_key = counter.encode('utf-8')
         value = self.__read_counter_key(counter_key)
         self.db.put(counter_key, str(value - by).encode('utf-8'))
+
+    def _inc_degrees(self, entity, depth=0):
+        if depth > 0:
+            ent_key = _ent2key(entity)
+            if not self._exists_key(ent_key):
+                d = 1 if depth == 1 else 0
+                self._add_key(ent_key, {'p': 0, 'd': d, 'dd': 1})
+                if is_atom(entity):
+                    self._inc_counter('atom_count')
+                else:
+                    self._inc_counter('edge_count')
+            else:
+                if depth == 1:
+                    self._inc_attribute_key(ent_key, 'd')
+                self._inc_attribute_key(ent_key, 'dd')
+        if is_edge(entity):
+            for child in entity:
+                self._inc_degrees(child, depth + 1)
+
+    def _dec_degrees(self, entity, depth=0):
+        if depth > 0:
+            ent_key = _ent2key(entity)
+            if depth == 1:
+                self._dec_attribute_key(ent_key, 'd')
+            self._dec_attribute_key(ent_key, 'dd')
+        if is_edge(entity):
+            for child in entity:
+                self._dec_degrees(child, depth + 1)

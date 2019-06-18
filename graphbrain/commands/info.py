@@ -5,4 +5,5 @@ def run(args):
     hg = hypergraph(args.hg)
     print('atoms: {}'.format(hg.atom_count()))
     print('edges: {}'.format(hg.edge_count()))
-    print('total degree: {}'.format(hg.total_degree()))
+    print('primary atoms: {}'.format(hg.primary_atom_count()))
+    print('primary edges: {}'.format(hg.primary_edge_count()))

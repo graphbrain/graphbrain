@@ -39,8 +39,12 @@ class Hypergraph(object):
         """Returns total number of edges."""
         raise NotImplementedError()
 
-    def total_degree(self):
-        """Returns sum of all degrees."""
+    def primary_atom_count(self):
+        """Returns number of primary atoms."""
+        raise NotImplementedError()
+
+    def primary_edge_count(self):
+        """Returns number of primary edges."""
         raise NotImplementedError()
 
     # ============================
@@ -63,25 +67,44 @@ class Hypergraph(object):
         """Checks if the given entity exists."""
         return self._exists(entity)
 
-    def add(self, edge, deep=False):
-        """Adds an edge if it does not exist yet,
-        returns same edge.
+    def add(self, entity, primary=True):
+        """Adds an entity if it does not exist yet, returns same entity.
+        All children are recursively added as non-primary entities, for
+        indexing purposes.
 
         Keyword argument:
-        deep -- recursively add all edges (default False)
+        primary -- entity is primary, meaning, for example, that it counts
+                   towards degrees. Non-primary entities are used for
+                   indexing purposes, for example to make it easy to find
+                   the entities contained in primary entities when performing
+                   queries.
         """
-        if is_edge(edge):
-            if deep:
-                for entity in edge:
-                    self.add(entity)
-            return self._add(edge)
+        if is_edge(entity):
+            # recursively add all sub-edges as non-primary edges.
+            for child in entity:
+                self.add(child, primary=False)
+            # add entity itself
+            return self._add(entity, primary=primary)
         else:
-            return edge
+            return entity
 
-    def remove(self, edge):
-        """Removes an edge."""
-        if isinstance(edge, (list, tuple)):
-            self._remove(edge)
+    def remove(self, entity, deep=False):
+        """Removes an entity.
+
+        Keyword argument:
+        deep -- recursively remove all sub-edges (default False)
+        """
+        self._remove(entity, deep=deep)
+
+    def is_primary(self, entity):
+        """Check if an entity is primary."""
+        return self._is_primary(entity)
+
+    def set_primary(self, entity, value):
+        """Make entity primary if value is True, make it non-primary
+        otherwise.
+        """
+        self._set_primary(entity, value)
 
     def pat2ents(self, pattern):
         """Returns generator for all the entities that match a pattern.
@@ -190,6 +213,10 @@ class Hypergraph(object):
         """Returns the degree of an entity."""
         return self._degree(entity)
 
+    def deep_degree(self, entity):
+        """Returns the deep degree of an entity."""
+        return self._deep_degree(entity)
+
     def ego(self, center):
         """Returns all atoms directly connected to center
            by hyperedges.
@@ -211,13 +238,19 @@ class Hypergraph(object):
     # Private abstract methods, to be implemented in derived classes
     # ==============================================================
 
-    def _exists(self, edge):
+    def _exists(self, entity):
         raise NotImplementedError()
 
-    def _add(self, edge):
+    def _add(self, entity, primary):
         raise NotImplementedError()
 
-    def _remove(self, edge):
+    def _remove(self, entity, deep):
+        raise NotImplementedError()
+
+    def _is_primary(self, entity):
+        raise NotImplementedError()
+
+    def _set_primary(self, entity, value):
         raise NotImplementedError()
 
     def _pattern2edges(self, pattern):
@@ -251,4 +284,7 @@ class Hypergraph(object):
         raise NotImplementedError()
 
     def _degree(self, entity):
+        raise NotImplementedError()
+
+    def _deep_degree(self, entity):
         raise NotImplementedError()
