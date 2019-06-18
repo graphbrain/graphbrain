@@ -43,7 +43,7 @@ class RedditParser(object):
                 main_edge = parse['main_edge']
 
                 # add main edge
-                self.hg.add(main_edge, deep=True)
+                self.hg.add(main_edge)
                 self.main_edges += 1
 
                 # attach text to edge
