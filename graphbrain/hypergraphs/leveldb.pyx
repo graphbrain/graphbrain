@@ -277,7 +277,8 @@ class LevelDB(Hypergraph):
                 value = value.replace('|', ' ').replace('\\', ' ')
             attributes[attribute] = value
         else:
-            attributes = {attribute: value}
+            attributes = {'p': 0, 'd': 0, 'dd': 0}
+            attributes[attribute] = value
         self._add_key(ent_key, attributes)
 
     def _inc_attribute_key(self, ent_key, attribute):
