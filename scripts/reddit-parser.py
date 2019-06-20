@@ -16,7 +16,7 @@ def file_lines(filename):
 
 def title_parts(title):
     parts = re.split('\|| - | -- |^\[([^\]]*)\] | \[([^\]]*)\]$', title)
-    parts = [part.strip().lower() for part in parts if part]
+    parts = [part.strip() for part in parts if part]
     return parts
 
 
