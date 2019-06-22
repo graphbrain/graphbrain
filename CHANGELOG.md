@@ -1,6 +1,13 @@
 # Changelog
 
-## [0.1.0] - ongoing development
+## [0.1.1] - ongoing development
+### Added
+- Primary entities and deep degrees.
+
+### Changed
+- Parsers now have own package.
+
+## [0.1.0] - 14-06-2019
 ### Added
 - Hypergraph semantic layer.
 

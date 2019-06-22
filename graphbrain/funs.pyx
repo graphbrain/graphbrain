@@ -581,6 +581,13 @@ def atom_with_type(entity, atom_type):
     return None
 
 
+def contains_atom_type(entity, atom_type):
+    """Checks if the entity contains any atom with the given type.
+    The entity is searched recursively, so the atom can appear at any depth.
+    """
+    return atom_with_type(entity, atom_type) is not None
+
+
 def predicate(entity):
     """Returns predicate atom if 'entity' is a relation or edge of type
     predicate, or the 'entity' itself if it is an atom of type

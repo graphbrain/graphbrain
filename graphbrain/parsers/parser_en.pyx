@@ -60,6 +60,9 @@ def is_compound(token):
 
 def concept_type_and_subtype(token):
     tag = token.tag_
+    dep = token.dep_
+    if dep == 'nmod':
+        return 'cm'
     if tag[:2] == 'JJ':
         return 'ca'
     # elif is_compound(token):
@@ -144,18 +147,18 @@ def token_type(token, head=False):
             return 'a'
         else:
             return 'pc'
-    elif dep in {'amod', 'det', 'nummod', 'nmod', 'preconj', 'predet'}:
+    elif dep in {'amod', 'det', 'nummod', 'preconj', 'predet'}:
         return modifier_type_and_subtype(token)
     elif dep in {'aux', 'auxpass', 'expl', 'prt', 'quantmod'}:
         if token.n_lefts + token.n_rights == 0:
             return 'a'
         else:
             return 'x'
-    elif dep == 'npadvmod':
+    elif dep in {'nmod', 'npadvmod'}:
         if is_noun(token):
             return concept_type_and_subtype(token)
         else:
-            modifier_type_and_subtype(token)
+            return modifier_type_and_subtype(token)
     elif dep == 'cc':
         if head_type == 'p':
             return 'pm'
@@ -359,6 +362,17 @@ def _build_atom_auxiliary(token, ent_type):
         return build_atom(text, et)
 
 
+# example:
+# applying (and/b+ bank/cm (credit/cn.s card/cn.s)) to records/cn.p
+# yields:
+# (and/b+
+#     (+/b.am bank/c records/cn.p)
+#     (+/b.am (credit/cn.s card/cn.s) records/cn.p))
+def _apply_aux_concept_list_to_concept(con_list, concept):
+    concepts = tuple([('+/b.am', item, concept) for item in con_list[1:]])
+    return (con_list[0],) + concepts
+
+
 class ParserEN(Parser):
     def __init__(self, lemmas=False):
         super().__init__(lemmas=lemmas)
@@ -535,6 +549,7 @@ class ParserEN(Parser):
 
         atom = self._build_atom(token, ent_type, ps)
         entity = atom
+        logging.debug('ATOM: {}'.format(atom))
 
         # lemmas
         if self.lemmas:
@@ -555,8 +570,13 @@ class ParserEN(Parser):
                         logging.debug('choice: 1')
                         relative_to_concept.append(child)
                     elif connector_type(child)[0] == 'b':
-                        if connector_type(entity)[0] == 'c':
-                            logging.debug('choice: 2')
+                        if (connector_type(child) == 'b+' and
+                                contains_atom_type(child, 'cm')):
+                            logging.debug('choice: 2a')
+                            entity = _apply_aux_concept_list_to_concept(child,
+                                                                        entity)
+                        elif connector_type(entity)[0] == 'c':
+                            logging.debug('choice: 2b')
                             entity = nest(entity, child, ps.positions[child])
                         else:
                             logging.debug('choice: 3')
@@ -572,7 +592,8 @@ class ParserEN(Parser):
                                 connector_type(child)[0] == 'c') or
                                 is_compound(ps.tokens[child])):
                             if connector_type(entity)[0] == 'c':
-                                if connector_type(child)[0] == 'c':
+                                if (connector_type(child)[0] == 'c' and
+                                        connector_type(entity) != 'cm'):
                                     logging.debug('choice: 5a')
                                     entity = sequence(entity, child,
                                                       ps.positions[child])

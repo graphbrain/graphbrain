@@ -100,3 +100,5 @@ Scientists rise up against statistical significance
 ((up/ap rise/pd.|f----.sx) scientists/cn.p (against/t (statistical/ma significance/cn.s)))
 A pretty touch screen is ALL the iPhone has to offer.
 (is/pd.|f--3s.sr (a/md (pretty/ma (+/b.am/. touch/cn.s screen/cn.s))) (has/pr.|f--3s.s (all/m (the/md iphone/cp.s)) (to/ai offer/pc.-i----.)))
+The application must include bank and credit card records.
+((must/am include/pd.-i----.so) (the/md application/cn.s) (and/b+ (+/b.am bank/cm records/cn.p) (+/b.am (+/b.am/. credit/cn.s card/cn.s) records/cn.p)))

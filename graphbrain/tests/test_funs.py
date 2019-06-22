@@ -322,6 +322,15 @@ class TestFuns(unittest.TestCase):
         self.assertEqual(atom_with_type('a/cn', 'cp'), None)
         self.assertEqual(atom_with_type('a/cn', 'p'), None)
 
+    def test_contains_atom_type(self):
+        self.assertTrue(contains_atom_type(('+/b', 'a/cn', 'b/cp'), 'c'))
+        self.assertTrue(contains_atom_type(('+/b', 'a/c', 'b/cp'), 'cp'))
+        self.assertFalse(contains_atom_type(('+/b', 'a/c', 'b/cp'), 'p'))
+        self.assertTrue(contains_atom_type('a/cn', 'c'))
+        self.assertTrue(contains_atom_type('a/cn', 'cn'))
+        self.assertFalse(contains_atom_type('a/cn', 'cp'))
+        self.assertFalse(contains_atom_type('a/cn', 'p'))
+
     def test_predicate(self):
         self.assertEqual(predicate('graphbrain/cp.s/1'), None)
         self.assertEqual(predicate('graphbrain'), None)
