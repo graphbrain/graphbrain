@@ -400,19 +400,19 @@ class TestFuns(unittest.TestCase):
         entity = str2ent('(@ * & ...)')
         self.assertTrue(full_pattern(entity))
 
-    def test_main_concept(self):
+    def test_main_concepts(self):
         concept = str2ent("('s/bp.am zimbabwe/mp economy/cn.s)")
-        self.assertEqual(main_concept(concept), 'economy/cn.s')
+        self.assertEqual(main_concepts(concept), ['economy/cn.s'])
         concept = str2ent("('s/bp zimbabwe/mp economy/cn.s)")
-        self.assertEqual(main_concept(concept), None)
+        self.assertEqual(main_concepts(concept), [])
         concept = str2ent('(+/b.am?/. hiv/ca kit/cn.s (testing/m self/cn.s))')
-        self.assertEqual(main_concept(concept), 'kit/cn.s')
+        self.assertEqual(main_concepts(concept), ['kit/cn.s'])
         concept = str2ent('(+/b.?a?/. hiv/ca kit/cn.s (testing/m self/cn.s))')
-        self.assertEqual(main_concept(concept), None)
+        self.assertEqual(main_concepts(concept), [])
         concept = str2ent('(a/m thing/c)')
-        self.assertEqual(main_concept(concept), None)
+        self.assertEqual(main_concepts(concept), [])
         concept = 'thing/c'
-        self.assertEqual(main_concept(concept), None)
+        self.assertEqual(main_concepts(concept), [])
 
 
 if __name__ == '__main__':

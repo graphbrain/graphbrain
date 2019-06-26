@@ -664,35 +664,35 @@ def full_pattern(entity):
         return all(full_pattern(item) for item in entity)
 
 
-def main_concept(entity):
-    """Returns the main concept in an edge concept.
-    The main concept is the central concept in a built concept, e.g.:
+def main_concepts(entity):
+    """Returns the list of main concepts in an edge concept.
+    A main concept is a central concept in a built concept, e.g.:
     in ('s/bp.am zimbabwe/mp economy/cn.s), economy/cn.s is the main concept.
 
     If entity is not an edge, or its connector is not of type builder, or
     the builder does not contain concept role annotations, or no concept
-    is annotated as the main one, then None is returned.
+    is annotated as the main one, then an empty list is returned.
     """
+
+    concepts = []
 
     # discard trivial cases where main concept does not apply
     if is_atom(entity):
-        return None
+        return concepts
     connector = entity[0]
     if is_edge(connector):
-        return None
+        return concepts
     if entity_type(connector)[0] != 'b':
-        return None
+        return concepts
 
     role = atom_role(connector)
     # discard cases where the builder has no concept type annotations
     if len(role) < 2:
-        return None
+        return concepts
     concept_roles = role[1]
-    pos = concept_roles.find('m') + 1
-    # check if main concept annotation exists
-    if pos <= 0:
-        return None
-    # main concept does no exist
-    if pos >= len(entity):
-        return None
-    return entity[pos]
+
+    for pos, role in enumerate(concept_roles):
+        if role == 'm':
+            if pos < len(entity) - 1:
+                concepts.append(entity[pos + 1])
+    return concepts

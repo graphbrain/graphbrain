@@ -189,11 +189,10 @@ class LevelDB(Hypergraph):
             symb = str2ent(key.decode('utf-8')[1:])
             yield(symb)
 
-    def _edges_with_atoms(self, atoms, root):
+    def _edges_with_ents(self, ents, root):
+        start_str = ' '.join([ent2str(ent) for ent in ents])
         if root:
-            start_str = '%s %s/' % (' '.join(atoms), root)
-        else:
-            start_str = ' '.join(atoms)
+            start_str = '%s %s/' % (start_str, root)
         end_str = str_plus_1(start_str)
         start_key = (u'p%s' % start_str).encode('utf-8')
         end_key = (u'p%s' % end_str).encode('utf-8')

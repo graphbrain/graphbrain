@@ -1,6 +1,7 @@
 # Pre-defined system atoms
 noun_connector_pred = '+/b/.'
 lemma_pred = 'lemma/p/.'
+synonym_pred = 'syn/p/.'
 
 # Logo
 ascii_logo = """

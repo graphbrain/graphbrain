@@ -76,6 +76,7 @@ setup(
         'numpy',
         'termcolor',
         'spacy',
+        'python-igraph',
         'asciitree',
         'plyvel',
         'ipython',
