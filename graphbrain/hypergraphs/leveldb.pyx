@@ -201,7 +201,14 @@ class LevelDB(Hypergraph):
             perm_str = key.decode('utf-8')
             edge = perm2edge(perm_str)
             if edge:
-                yield(edge)
+                if root is None:
+                    positions = [edge.index(ent) for ent in ents]
+                    nper = int(split_edge_str(perm_str[1:])[-1])
+                    if nper == first_permutation(len(edge), positions):
+                        yield(edge)
+                else:
+                    # TODO: remove redundant results when a root is present
+                    yield(edge)
 
     def _set_attribute(self, entity, attribute, value):
         ent_key = _ent2key(entity)

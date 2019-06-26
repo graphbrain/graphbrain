@@ -327,6 +327,12 @@ class TestHypergraph(unittest.TestCase):
         res = set([ent2str(edge) for edge in res])
         self.assertEqual(res, {'(syns/p (of/b city/c lights/c) paris/c)'})
 
+        res = self.hg.edges_with_ents([str2ent('(of/b city/c lights/c)'),
+                                       'paris/c'],
+                                      'syns')
+        res = set([ent2str(edge) for edge in res])
+        self.assertEqual(res, {'(syns/p (of/b city/c lights/c) paris/c)'})
+
     # set_attribute, inc_attribute, dec_attribute, get_str_attribute,
     # get_int_attribute, get_float_attribute
     def test_attributes_atom(self):
