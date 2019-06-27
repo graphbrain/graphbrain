@@ -72,6 +72,12 @@ class Hypergraph(object):
         All children are recursively added as non-primary entities, for
         indexing purposes.
 
+        Edge entities can be passed in both sequence or string format.
+        For example:
+        hg.add((like/p i/c graphbrain/c))
+        is equivalent to:
+        hg.add('(like/p i/c graphbrain/c)')
+
         Keyword argument:
         primary -- entity is primary, meaning, for example, that it counts
                    towards degrees. Non-primary entities are used for
@@ -85,6 +91,8 @@ class Hypergraph(object):
                 self.add(child, primary=False)
             # add entity itself
             return self._add(entity, primary=primary)
+        elif type(entity) == str and '(' in entity:
+            return self.add(str2ent(entity), primary=primary)
         else:
             return entity
 

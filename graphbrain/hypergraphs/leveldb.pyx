@@ -109,16 +109,18 @@ class LevelDB(Hypergraph):
         return entity
 
     def _remove(self, entity, deep):
+        primary = self.is_primary(entity)
+
         if is_edge(entity):
             if deep:
                 for child in entity:
                     self._remove(entity, deep=True)
             else:
-                self._dec_degrees(entity)
+                if primary:
+                    self._dec_degrees(entity)
 
         ent_key = _ent2key(entity)
         if self._exists_key(ent_key):
-            primary = self.is_primary(entity)
             if is_atom(entity):
                 self._dec_counter('atom_count')
                 if primary:

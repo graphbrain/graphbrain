@@ -2,6 +2,10 @@
 noun_connector_pred = '+/b/.'
 lemma_pred = 'lemma/p/.'
 synonym_pred = 'syn/p/.'
+main_synonym_pred = 'main_syn/p/.'
+
+# Pre-defined entity keys
+syn_set_id_key = 'syn'
 
 # Logo
 ascii_logo = """
