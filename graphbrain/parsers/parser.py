@@ -1,4 +1,9 @@
+import sys
+import logging
 from collections import namedtuple
+
+
+logging.basicConfig(stream=sys.stderr, level=logging.WARNING)
 
 
 class Parser(object):
@@ -25,6 +30,7 @@ class Parser(object):
     def parse_sentence(self, sent):
         self.atom2token = {}
         main_edge, extra_edges = self.parse_token(sent.root)
+
         main_edge, _ = self.post_process(main_edge)
         return {'main_edge': main_edge,
                 'extra_edges': extra_edges,

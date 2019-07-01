@@ -1,3 +1,4 @@
+from html import escape
 from IPython.core.display import display, HTML
 from graphbrain import *
 
@@ -141,15 +142,19 @@ def _ent2html(entity, roots_only=True, formatting='indented', indent=False,
         # render atom root
         html = """
         <span style="{}{}">{}</span>
-        """.format(bold_style, color_html, str(root(entity)).strip()).strip()
+        """.format(bold_style,
+                   color_html,
+                   escape(str(root(entity)).strip())).strip()
 
         # render non-root part, if requested
         if not roots_only:
+            escaped_codes = str('/'.join(atom_parts(entity)[1:])).strip()
+            escaped_codes = escape(escaped_codes).strip()
             html = """
             {}<span style="color:{};font-size:8pt">/{}</span>
             """.format(html,
                        NAMESPACE_COLOR,
-                       str('/'.join(atom_parts(entity)[1:])).strip()).strip()
+                       escaped_codes)
 
         # render atom
         html = """

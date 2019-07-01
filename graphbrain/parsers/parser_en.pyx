@@ -1,4 +1,3 @@
-import sys
 from itertools import repeat
 import logging
 import spacy
@@ -6,9 +5,6 @@ from graphbrain import *
 import graphbrain.constants as const
 from .parser import Parser
 from .nlp import token2str
-
-
-logging.basicConfig(stream=sys.stderr, level=logging.WARNING)
 
 
 deps_arg_roles = {
