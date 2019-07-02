@@ -3,6 +3,7 @@ noun_connector_pred = '+/b/.'
 lemma_pred = 'lemma/p/.'
 synonym_pred = 'syn/p/.'
 main_synonym_pred = 'main_syn/p/.'
+type_of_pred = 'type_of/p/.'
 
 # Pre-defined entity keys
 syn_set_id_key = 'syn'

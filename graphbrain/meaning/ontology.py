@@ -1,5 +1,11 @@
 import progressbar
 from graphbrain import *
+import graphbrain.constants as const
+
+
+def subtypes(hg, ent):
+    ont_edges = hg.pat2ents((const.type_of_pred, '*', ent))
+    return tuple([edge[1] for edge in ont_edges])
 
 
 def generate(hg, verbose=False):
@@ -18,7 +24,7 @@ def generate(hg, verbose=False):
                 elif ct[0] == 'm' and len(edge) == 2:
                     parent = edge[1]
                 if parent:
-                    ont_edge = ('type_of/p/.', edge, parent)
+                    ont_edge = (const.type_of_pred, edge, parent)
                     # print(ent2str(ont_edge))
                     hg.add(ont_edge, primary=False)
                     count += 1
