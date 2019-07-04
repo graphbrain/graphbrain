@@ -8,6 +8,11 @@ def subtypes(hg, ent):
     return tuple([edge[1] for edge in ont_edges])
 
 
+def supertypes(hg, ent):
+    ont_edges = hg.pat2ents((const.type_of_pred, ent, '*'))
+    return tuple([edge[2] for edge in ont_edges])
+
+
 def generate(hg, verbose=False):
     count = 0
     i = 0

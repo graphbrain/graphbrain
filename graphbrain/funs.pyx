@@ -664,6 +664,42 @@ def full_pattern(entity):
         return all(full_pattern(item) for item in entity)
 
 
+def argroles(conn):
+    et = entity_type(conn)[0]
+    if et not in {'b', 'p'}:
+        return []
+    if is_atom(conn):
+        role = atom_role(conn)
+        if et == 'b':
+            if len(role) < 2:
+                return []
+            return role[1]
+        elif et == 'p':
+            if len(role) < 3:
+                return []
+            return role[2]
+    else:
+        return argroles(conn[1])
+
+
+def ents_with_argrole(edge, argrole):
+    """Returns the list of entities with the given argument role in the edge.
+    """
+
+    ents = []
+
+    # discard trivial cases where main concept does not apply
+    if is_atom(edge):
+        return ents
+    connector = edge[0]
+
+    for pos, role in enumerate(argroles(connector)):
+        if role == argrole:
+            if pos < len(edge) - 1:
+                ents.append(edge[pos + 1])
+    return ents
+
+
 def main_concepts(entity):
     """Returns the list of main concepts in an edge concept.
     A main concept is a central concept in a built concept, e.g.:
@@ -685,14 +721,4 @@ def main_concepts(entity):
     if entity_type(connector)[0] != 'b':
         return concepts
 
-    role = atom_role(connector)
-    # discard cases where the builder has no concept type annotations
-    if len(role) < 2:
-        return concepts
-    concept_roles = role[1]
-
-    for pos, role in enumerate(concept_roles):
-        if role == 'm':
-            if pos < len(entity) - 1:
-                concepts.append(entity[pos + 1])
-    return concepts
+    return ents_with_argrole(entity, 'm')

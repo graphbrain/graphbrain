@@ -182,13 +182,11 @@ def generate(hg):
                     # print('syn deep degree: {}'.format(sdd))
                     # print('lemma degree: {}; lemma deep degree: {};'
                     #       ' lemma ratio: {}'.format(ld, ldd, lr))
-            if len(syns) > 1:
+
                 for syn in syns:
                     for ent1, ent2 in combinations(syn, 2):
                         make_synonyms(hg, ent1, ent2)
                         count += 1
-                # print(syns)
-                # print(syn_ratios)
             i += 1
             bar.update(i)
     return count
