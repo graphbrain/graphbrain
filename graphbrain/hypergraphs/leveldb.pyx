@@ -204,10 +204,11 @@ class LevelDB(Hypergraph):
             edge = perm2edge(perm_str)
             if edge:
                 if root is None:
-                    positions = [edge.index(ent) for ent in ents]
-                    nper = int(split_edge_str(perm_str[1:])[-1])
-                    if nper == first_permutation(len(edge), positions):
-                        yield(edge)
+                    if all([ent in edge for ent in ents]):
+                        positions = [edge.index(ent) for ent in ents]
+                        nper = int(split_edge_str(perm_str[1:])[-1])
+                        if nper == first_permutation(len(edge), positions):
+                            yield(edge)
                 else:
                     # TODO: remove redundant results when a root is present
                     yield(edge)
