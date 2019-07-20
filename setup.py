@@ -21,7 +21,7 @@ if USE_CYTHON:
 
 if USE_CYTHON:
     ext_modules = [
-        Extension('graphbrain.funs', ['graphbrain/funs.pyx'],),
+        Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.pyx'],),
         Extension('graphbrain.hypergraphs.leveldb',
                   ['graphbrain/hypergraphs/leveldb.pyx']),
         Extension('graphbrain.hypergraphs.permutations',
@@ -33,7 +33,7 @@ if USE_CYTHON:
                             compiler_directives={'language_level': '3'})
 else:
     ext_modules = [
-        Extension('graphbrain.funs', ['graphbrain/funs.c'], ),
+        Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.c'], ),
         Extension('graphbrain.hypergraphs.leveldb',
                   ['graphbrain/hypergraphs/leveldb.c']),
         Extension('graphbrain.hypergraphs.permutations',
