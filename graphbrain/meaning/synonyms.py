@@ -1,5 +1,6 @@
 import random
 import string
+from graphbrain import *
 from graphbrain.constants import (synonym_pred, syn_set_id_key,
                                   main_synonym_pred)
 
@@ -32,9 +33,9 @@ def _update_main_syn(hg, ent):
             best_degree = d
             best_synonym = syn
 
-    edge = (main_synonym_pred, synid, best_synonym)
+    edge = hedge((main_synonym_pred, synid, best_synonym))
     if not hg.exists(edge):
-        old = set(hg.pat2ents((main_synonym_pred, synid, '*')))
+        old = set(hg.pat2edges('({} {} *)'.format(main_synonym_pred, synid)))
         for old_edge in old:
             hg.remove(old_edge)
         hg.add(edge, primary=False)
@@ -43,8 +44,8 @@ def _update_main_syn(hg, ent):
 def synonym_set(hg, ent, synonyms=None):
     if synonyms is None:
         synonyms = {ent}
-    for edge in hg.edges_with_ents([synonym_pred, ent]):
-        if len(edge) == 3 and edge[0] == synonym_pred:
+    for edge in hg.edges_with_ents((hedge(synonym_pred), ent)):
+        if len(edge) == 3 and edge[0].to_str() == synonym_pred:
             for item in edge[1:]:
                 if item not in synonyms:
                     synonyms.add(item)
@@ -55,8 +56,8 @@ def synonym_set(hg, ent, synonyms=None):
 def are_synonyms(hg, ent1, ent2, synonyms=None):
     if synonyms is None:
         synonyms = {ent1}
-    for edge in hg.edges_with_ents([synonym_pred, ent1]):
-        if len(edge) == 3 and edge[0] == synonym_pred:
+    for edge in hg.edges_with_ents((hedge(synonym_pred), ent1)):
+        if len(edge) == 3 and edge[0].to_str() == synonym_pred:
             for item in edge[1:]:
                 if item not in synonyms:
                     if item == ent2:
@@ -75,7 +76,7 @@ def main_syn(hg, ent):
     synid = syn_id(hg, ent)
     if synid is None:
         return ent
-    for edge in hg.pat2ents((main_synonym_pred, synid, '*')):
+    for edge in hg.pat2edges('({} {} *)'.format(main_synonym_pred, synid)):
         return edge[2]
     return None
 
@@ -107,7 +108,7 @@ def make_synonyms(hg, ent1, ent2):
         _change_syn_id(hg, ent2, new_syn_id)
         update = True
 
-    hg.add((synonym_pred, ent1, ent2), primary=False)
+    hg.add(hedge((synonym_pred, ent1, ent2)), primary=False)
 
     if update:
         _update_main_syn(hg, ent1)

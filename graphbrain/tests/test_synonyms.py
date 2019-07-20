@@ -9,12 +9,12 @@ class TestSynonyms(unittest.TestCase):
         self.hg.destroy()
 
         concepts = []
-        concepts.append(str2ent('paris/c'))
-        concepts.append(str2ent('(of/b city/c paris/c)'))
-        concepts.append(str2ent('(of/b capital/c france/c)'))
-        concepts.append(str2ent('berlin/c'))
-        concepts.append(str2ent('(of/b city/c berlin/c'))
-        concepts.append(str2ent('(of/b capital/c germany/c'))
+        concepts.append(hedge('paris/c'))
+        concepts.append(hedge('(of/b city/c paris/c)'))
+        concepts.append(hedge('(of/b capital/c france/c)'))
+        concepts.append(hedge('berlin/c'))
+        concepts.append(hedge('(of/b city/c berlin/c)'))
+        concepts.append(hedge('(of/b capital/c germany/c)'))
         self.concepts = concepts
 
         self.hg.add('(love/p i/c (of/b city/c paris/c))')

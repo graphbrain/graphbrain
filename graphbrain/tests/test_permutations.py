@@ -124,23 +124,23 @@ class TestPermutations(unittest.TestCase):
         def accumulate(perm_str):
             output.append(perm_str)
 
-        do_with_edge_permutations(('a', 'b', 'c'), accumulate)
+        do_with_edge_permutations(hedge('(a b c)'), accumulate)
         self.assertEqual(output, ['a b c 0', 'a c b 1', 'b a c 2', 'b c a 3',
                                   'c a b 4', 'c b a 5'])
 
     def test_perm2edge(self):
         edge = perm2edge(' a b c 0')
-        self.assertEqual(edge, ('a', 'b', 'c'))
+        self.assertEqual(edge, hedge(('a', 'b', 'c')))
         edge = perm2edge(' a c b 1')
-        self.assertEqual(edge, ('a', 'b', 'c'))
+        self.assertEqual(edge, hedge(('a', 'b', 'c')))
         edge = perm2edge(' b a c 2')
-        self.assertEqual(edge, ('a', 'b', 'c'))
+        self.assertEqual(edge, hedge(('a', 'b', 'c')))
         edge = perm2edge(' b c a 3')
-        self.assertEqual(edge, ('a', 'b', 'c'))
+        self.assertEqual(edge, hedge(('a', 'b', 'c')))
         edge = perm2edge(' c a b 4')
-        self.assertEqual(edge, ('a', 'b', 'c'))
+        self.assertEqual(edge, hedge(('a', 'b', 'c')))
         edge = perm2edge(' c b a 5')
-        self.assertEqual(edge, ('a', 'b', 'c'))
+        self.assertEqual(edge, hedge(('a', 'b', 'c')))
 
     def test_str_plus_1(self):
         self.assertEqual(str_plus_1('graphbrain'), 'graphbraio')

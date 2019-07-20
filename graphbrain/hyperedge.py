@@ -181,22 +181,29 @@ def _parsed_token(token):
         return Atom((token,))
 
 
-def hedge(edge_str):
-    """Create an edge from a string representation."""
-    edge_str = edge_str.replace('\n', ' ')
-    edge_inner_str = edge_str
+def hedge(source):
+    """Create an hyperedge."""
+    if type(source) in {tuple, list}:
+        return Hyperedge(tuple(hedge(item) for item in source))
+    elif type(source) is str:
+        edge_str = source.replace('\n', ' ')
+        edge_inner_str = edge_str
 
-    if _edge_str_has_outer_parens(edge_str):
-        edge_inner_str = edge_str[1:-1]
+        if _edge_str_has_outer_parens(edge_str):
+            edge_inner_str = edge_str[1:-1]
 
-    tokens = split_edge_str(edge_inner_str)
-    if not tokens:
-        return None
-    edges = tuple(_parsed_token(token) for token in tokens)
-    if len(edges) > 1:
-        return Hyperedge(edges)
-    elif len(edges) > 0:
-        return Atom(edges[0])
+        tokens = split_edge_str(edge_inner_str)
+        if not tokens:
+            return None
+        edges = tuple(_parsed_token(token) for token in tokens)
+        if len(edges) > 1:
+            return Hyperedge(edges)
+        elif len(edges) > 0:
+            return Atom(edges[0])
+        else:
+            return None
+    elif type(source) in {Hyperedge, Atom}:
+        return source
     else:
         return None
 

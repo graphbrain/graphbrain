@@ -1,4 +1,4 @@
-from graphbrain.funs import *
+from graphbrain.hyperedge import *
 
 
 class Hypergraph(object):
@@ -53,87 +53,79 @@ class Hypergraph(object):
 
     def all_atoms(self):
         """Returns a generator of all the atoms."""
-        for entity in self.all():
-            if is_atom(entity):
-                yield entity
+        for edge in self.all():
+            if edge.is_atom():
+                yield edge
 
     def all_edges(self):
         """Returns a generator of all the edges."""
-        for entity in self.all():
-            if is_edge(entity):
-                yield entity
+        for edge in self.all():
+            if not edge.is_atom():
+                yield edge
 
-    def exists(self, entity):
-        """Checks if the given entity exists."""
-        return self._exists(entity)
+    def exists(self, edge):
+        """Checks if the given edge exists."""
+        return self._exists(edge)
 
-    def add(self, entity, primary=True):
-        """Adds an entity if it does not exist yet, returns same entity.
-        All children are recursively added as non-primary entities, for
+    def add(self, edge, primary=True):
+        """Adds an edge if it does not exist yet, returns same edge.
+        All children are recursively added as non-primary edge, for
         indexing purposes.
 
-        Edge entities can be passed in both sequence or string format.
-        For example:
-        hg.add((like/p i/c graphbrain/c))
-        is equivalent to:
-        hg.add('(like/p i/c graphbrain/c)')
+        Edges can be passed in both Hyperedge or string format.
 
         Keyword argument:
-        primary -- entity is primary, meaning, for example, that it counts
-                   towards degrees. Non-primary entities are used for
+        primary -- edge is primary, meaning, for example, that it counts
+                   towards degrees. Non-primary edges are used for
                    indexing purposes, for example to make it easy to find
-                   the entities contained in primary entities when performing
+                   the subedges contained in primary edges when performing
                    queries.
         """
-        if is_edge(entity):
+        if type(edge) == str:
+            return self.add(hedge(edge), primary=primary)
+        elif not edge.is_atom():
             # recursively add all sub-edges as non-primary edges.
-            for child in entity:
+            for child in edge:
                 self.add(child, primary=False)
             # add entity itself
-            return self._add(entity, primary=primary)
-        elif type(entity) == str and '(' in entity:
-            return self.add(str2ent(entity), primary=primary)
+            return self._add(edge, primary=primary)
         else:
-            return entity
+            return edge
 
-    def remove(self, entity, deep=False):
-        """Removes an entity.
+    def remove(self, edge, deep=False):
+        """Removes an edge.
 
         Keyword argument:
-        deep -- recursively remove all sub-edges (default False)
+        deep -- recursively remove all subedges (default False)
         """
-        self._remove(entity, deep=deep)
+        self._remove(edge, deep=deep)
 
-    def is_primary(self, entity):
-        """Check if an entity is primary."""
-        return self._is_primary(entity)
+    def is_primary(self, edge):
+        """Check if an edge is primary."""
+        return self._is_primary(edge)
 
-    def set_primary(self, entity, value):
-        """Make entity primary if value is True, make it non-primary
+    def set_primary(self, edge, value):
+        """Make edge primary if value is True, make it non-primary
         otherwise.
         """
-        self._set_primary(entity, value)
+        self._set_primary(edge, value)
 
-    def pat2ents(self, pattern):
-        """Returns generator for all the entities that match a pattern.
+    def pat2edges(self, pattern):
+        """Returns generator for all the edges that match a pattern.
 
         Patterns are themselves edges. They can match families of edges
         by employing special atoms:
-            -> '*' represents a general wildcard (matches any entity)
+            -> '*' represents a general wildcard (matches any edge)
             -> '@' represents an atomic wildcard (matches any atom)
-            -> '&' represents an edge wildcard (matches any edge)
+            -> '&' represents a non-atomic wildcard (matches any non-atom)
             -> '...' at the end indicates an open-ended pattern.
-
-        The pattern can be an edge.
-        Examples: ('is/pd', 'graphbrain/c', '@')
-                  ('says/pd', '*', '...')
 
         The pattern can be a string, that must represent an edge.
         Examples: '(is/pd graphbrain/c @)'
                   '(says/pd * ...)'
 
-        Atomic patterns can also be used to match all entities in the
-        hypergraph (*), all atoms (@), and all edges (&).
+        Atomic patterns can also be used to match all edges in the
+        hypergraph (*), all atoms (@), and all non-atoms (&).
         """
         if pattern == '*':
             return self.all()
@@ -142,22 +134,22 @@ class Hypergraph(object):
         elif pattern == '&':
             return self.all_edges()
         elif type(pattern) == str:
-            entity = str2ent(pattern)
-            if is_edge(entity):
-                return self.pat2ents(entity)
+            edge = hedge(pattern)
+            if not edge.is_atom():
+                return self.pat2edges(edge)
             else:
-                if self.exists(entity):
-                    return (entity,)
+                if self.exists(edge):
+                    return (edge,)
                 else:
                     return ()
         else:
-            if (full_pattern(pattern)):
+            if (pattern.full_pattern()):
                 return self.all()
             else:
                 return self._pattern2edges(pattern)
 
     def star(self, center, limit=None):
-        """Returns generator of the edges that contain the entity.
+        """Returns generator of the edges that contain the center.
 
         Keyword argument:
         deep -- recursively add all edges (default False)
@@ -180,50 +172,50 @@ class Hypergraph(object):
         """
         return self._edges_with_ents(ents, root)
 
-    def set_attribute(self, entity, attribute, value):
+    def set_attribute(self, edge, attribute, value):
         """Sets the value of an attribute."""
-        return self._set_attribute(entity, attribute, value)
+        return self._set_attribute(edge, attribute, value)
 
-    def inc_attribute(self, entity, attribute):
+    def inc_attribute(self, edge, attribute):
         """Increments an attribute of an entity."""
-        return self._inc_attribute(entity, attribute)
+        return self._inc_attribute(edge, attribute)
 
-    def dec_attribute(self, entity, attribute):
+    def dec_attribute(self, edge, attribute):
         """Increments an attribute of an entity."""
-        return self._dec_attribute(entity, attribute)
+        return self._dec_attribute(edge, attribute)
 
-    def get_str_attribute(self, entity, attribute, or_else=None):
+    def get_str_attribute(self, edge, attribute, or_else=None):
         """Returns attribute as string.
 
         Keyword argument:
         or_else -- value to return if the entity does not have
                    the give attribute. (default None)
         """
-        return self._get_str_attribute(entity, attribute, or_else=or_else)
+        return self._get_str_attribute(edge, attribute, or_else=or_else)
 
-    def get_int_attribute(self, entity, attribute, or_else=None):
+    def get_int_attribute(self, edge, attribute, or_else=None):
         """Returns attribute as integer value.
 
         or_else -- value to return if the entity does not have
                    the give attribute. (default None)
         """
-        return self._get_int_attribute(entity, attribute, or_else=or_else)
+        return self._get_int_attribute(edge, attribute, or_else=or_else)
 
-    def get_float_attribute(self, entity, attribute, or_else=None):
+    def get_float_attribute(self, edge, attribute, or_else=None):
         """Returns attribute as float value.
 
         or_else -- value to return if the entity does not have
                    the give attribute. (default None)
         """
-        return self._get_float_attribute(entity, attribute, or_else=or_else)
+        return self._get_float_attribute(edge, attribute, or_else=or_else)
 
-    def degree(self, entity):
+    def degree(self, edge):
         """Returns the degree of an entity."""
-        return self._degree(entity)
+        return self._degree(edge)
 
-    def deep_degree(self, entity):
+    def deep_degree(self, edge):
         """Returns the deep degree of an entity."""
-        return self._deep_degree(entity)
+        return self._deep_degree(edge)
 
     def ego(self, center):
         """Returns all atoms directly connected to center
@@ -232,13 +224,13 @@ class Hypergraph(object):
         edges = self.star(center)
         atom_set = set()
         for edge in edges:
-            for atom in atoms(edge):
+            for atom in edge.atoms():
                 atom_set.add(atom)
         return atom_set
 
     def remove_by_pattern(self, pattern):
         """Removes all edges that match the pattern."""
-        edges = self.pat2ents(pattern)
+        edges = self.pat2edges(pattern)
         for edge in edges:
             self.remove(edge)
 
@@ -246,19 +238,19 @@ class Hypergraph(object):
     # Private abstract methods, to be implemented in derived classes
     # ==============================================================
 
-    def _exists(self, entity):
+    def _exists(self, edge):
         raise NotImplementedError()
 
-    def _add(self, entity, primary):
+    def _add(self, edge, primary):
         raise NotImplementedError()
 
-    def _remove(self, entity, deep):
+    def _remove(self, edge, deep):
         raise NotImplementedError()
 
-    def _is_primary(self, entity):
+    def _is_primary(self, edge):
         raise NotImplementedError()
 
-    def _set_primary(self, entity, value):
+    def _set_primary(self, edge, value):
         raise NotImplementedError()
 
     def _pattern2edges(self, pattern):
@@ -273,26 +265,26 @@ class Hypergraph(object):
     def _edges_with_ents(self, ents, root):
         raise NotImplementedError()
 
-    def _set_attribute(self, entity, attribute, value):
+    def _set_attribute(self, edge, attribute, value):
         raise NotImplementedError()
 
-    def _inc_attribute(self, entity, attribute):
+    def _inc_attribute(self, edge, attribute):
         raise NotImplementedError()
 
-    def _dec_attribute(self, entity, attribute):
+    def _dec_attribute(self, edge, attribute):
         raise NotImplementedError()
 
-    def _get_str_attribute(self, entity, attribute, or_else=None):
+    def _get_str_attribute(self, edge, attribute, or_else=None):
         raise NotImplementedError()
 
-    def _get_int_attribute(self, entity, attribute, or_else=None):
+    def _get_int_attribute(self, edge, attribute, or_else=None):
         raise NotImplementedError()
 
-    def _get_float_attribute(self, entity, attribute, or_else=None):
+    def _get_float_attribute(self, edge, attribute, or_else=None):
         raise NotImplementedError()
 
-    def _degree(self, entity):
+    def _degree(self, edge):
         raise NotImplementedError()
 
-    def _deep_degree(self, entity):
+    def _deep_degree(self, edge):
         raise NotImplementedError()
