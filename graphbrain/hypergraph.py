@@ -81,16 +81,17 @@ class Hypergraph(object):
                    the subedges contained in primary edges when performing
                    queries.
         """
-        if type(edge) == str:
-            return self.add(hedge(edge), primary=primary)
-        elif not edge.is_atom():
-            # recursively add all sub-edges as non-primary edges.
-            for child in edge:
-                self.add(child, primary=False)
-            # add entity itself
-            return self._add(edge, primary=primary)
+        if isinstance(edge, Hyperedge):
+            if edge.is_atom():
+                return edge
+            else:
+                # recursively add all sub-edges as non-primary edges.
+                for child in edge:
+                    self.add(child, primary=False)
+                # add entity itself
+                return self._add(edge, primary=primary)
         else:
-            return edge
+            return self.add(hedge(edge), primary=primary)
 
     def remove(self, edge, deep=False):
         """Removes an edge.
