@@ -524,6 +524,12 @@ class Hyperedge(tuple):
         else:
             return Hyperedge(super(Hyperedge, self).__add__(other))
 
+    def __str__(self):
+        return self.to_str()
+
+    def __repr__(self):
+        return self.to_str()
+
 
 class Atom(Hyperedge):
     def __new__(cls, edge):
