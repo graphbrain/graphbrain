@@ -56,7 +56,7 @@ class RedditParser(object):
                     self.hg.add(edge)
                     self.extra_edges += 1
 
-                if main.type()[0] == 'r':
+                if main_edge.type()[0] == 'r':
                     title_edge.append(main_edge)
                 else:
                     tags.append(main_edge)
