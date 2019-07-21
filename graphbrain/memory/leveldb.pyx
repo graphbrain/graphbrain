@@ -1,7 +1,7 @@
 import plyvel
-from graphbrain.hypergraphs.hypergraph import Hypergraph
+from graphbrain.hypergraph import Hypergraph
 from graphbrain.hyperedge import *
-from graphbrain.hypergraphs.permutations import *
+from graphbrain.memory.permutations import *
 
 
 def _ent2key(entity):

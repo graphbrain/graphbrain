@@ -22,10 +22,10 @@ if USE_CYTHON:
 if USE_CYTHON:
     ext_modules = [
         Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.pyx'],),
-        Extension('graphbrain.hypergraphs.leveldb',
-                  ['graphbrain/hypergraphs/leveldb.pyx']),
-        Extension('graphbrain.hypergraphs.permutations',
-                  ['graphbrain/hypergraphs/permutations.pyx']),
+        Extension('graphbrain.memory.leveldb',
+                  ['graphbrain/memory/leveldb.pyx']),
+        Extension('graphbrain.memory.permutations',
+                  ['graphbrain/memory/permutations.pyx']),
         Extension('graphbrain.parsers.parser_en',
                   ['graphbrain/parsers/parser_en.pyx'])
     ]
@@ -34,10 +34,10 @@ if USE_CYTHON:
 else:
     ext_modules = [
         Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.c'], ),
-        Extension('graphbrain.hypergraphs.leveldb',
-                  ['graphbrain/hypergraphs/leveldb.c']),
-        Extension('graphbrain.hypergraphs.permutations',
-                  ['graphbrain/hypergraphs/permutations.c']),
+        Extension('graphbrain.memory.leveldb',
+                  ['graphbrain/memory/leveldb.c']),
+        Extension('graphbrain.memory.permutations',
+                  ['graphbrain/memory/permutations.c']),
         Extension('graphbrain.parsers.parser_en',
                   ['graphbrain/parsers/parser_en.c'])
     ]

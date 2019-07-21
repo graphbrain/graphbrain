@@ -1,6 +1,6 @@
 import unittest
 from graphbrain import *
-from graphbrain.hypergraphs.permutations import *
+from graphbrain.memory.permutations import *
 
 
 class TestPermutations(unittest.TestCase):

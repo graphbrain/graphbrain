@@ -1,11 +1,17 @@
 # Changelog
 
-## [0.1.1] - ongoing development
+## [0.2.0] - ongoing development
 ### Added
 - Primary entities and deep degrees.
+- Hyperedges have their own class, deriving from tuple.
+- Atoms have a special class, deriving from Hyperedge.
+- Restructuring of code files tree.
 
 ### Changed
 - Parsers now have own package.
+
+### Removed
+- Old experimental code.
 
 ## [0.1.0] - 14-06-2019
 ### Added

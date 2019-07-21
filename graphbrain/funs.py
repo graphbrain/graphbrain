@@ -1,4 +1,4 @@
-from graphbrain.hypergraphs.leveldb import LevelDB
+from graphbrain.memory.leveldb import LevelDB
 
 
 def hypergraph(locator_string):
