@@ -3,6 +3,14 @@ from graphbrain.cli import wrapper
 from graphbrain.parsers import *
 
 
+def inspect(edge):
+    if type(edge) is str:
+        print('FOUND !!! {}'.format(edge))
+    elif type(edge) in {Hyperedge, list, tuple}:
+        for item in edge:
+            inspect(item)
+
+
 def test_parser(args):
     parser = create_parser(name=args.lang)
 
@@ -14,7 +22,7 @@ def test_parser(args):
         for line in f:
             if sentence:
                 total += 1
-                correct_edge = str2ent(line.strip())
+                correct_edge = hedge(line.strip())
                 parser_output = parser.parse(sentence)
                 parsed_sentence = parser_output[0]
                 edge = parsed_sentence['main_edge']
@@ -23,9 +31,10 @@ def test_parser(args):
                     wrong += 1
                     print_tree(sent.root)
                     print('expected:')
-                    print(ent2str(correct_edge))
+                    print(correct_edge.to_str())
                     print('result:')
-                    print(ent2str(edge))
+                    inspect(edge.to_str())
+                    print(edge)
                 sentence = None
             else:
                 sentence = line.strip()

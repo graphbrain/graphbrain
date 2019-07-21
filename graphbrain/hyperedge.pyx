@@ -30,7 +30,7 @@ def _close_pars(s):
     return -pos - 1
 
 
-def _edge_str_has_outer_parens(edge_str):
+def _edge_str_has_outer_parens(str edge_str):
     """Check if string representation of edge is delimited by outer
     parenthesis.
     """
@@ -39,15 +39,15 @@ def _edge_str_has_outer_parens(edge_str):
     return edge_str[0] == '('
 
 
-def split_edge_str(edge_str):
+def split_edge_str(str edge_str):
     """Shallow split into tokens of a string representation of an edge,
     without outer parenthesis.
     """
-    start = 0
-    depth = 0
-    str_length = len(edge_str)
-    c = ''
-    active = 0
+    cdef int start = 0
+    cdef int depth = 0
+    cdef int str_length = len(edge_str)
+    cdef str c
+    cdef int active = 0
 
     tokens = []
     for i in range(str_length):
@@ -183,6 +183,8 @@ def _parsed_token(token):
 
 def hedge(source):
     """Create an hyperedge."""
+    cdef str edge_str
+    cdef str edge_inner_str
     if type(source) in {tuple, list}:
         return Hyperedge(tuple(hedge(item) for item in source))
     elif type(source) is str:
@@ -309,12 +311,13 @@ class Hyperedge(tuple):
         before -- controls how outer edges are handled, as per above.
                   (default: False)
         """
-        if before:
-            return outer + (self,)
-        elif outer.is_atom():
+        if outer.is_atom():
             return Hyperedge((outer, self))
         else:
-            return Hyperedge((outer[0], self)) + outer[1:]
+            if before:
+                return outer + (self,)
+            else:
+                return Hyperedge((outer[0], self)) + outer[1:]
 
     def insert_first_argument(self, argument):
         """Returns an edge built by placing 'argument' as the first item
@@ -587,29 +590,6 @@ class Atom(Hyperedge):
         """
         return {self}
 
-    def nest(self, outer, before=False):
-        """Returns a new entity built by nesting this edge (inner)
-        inside the given (outer) edge.
-
-        Nesting the 'inner' atom (a) in the 'outer' atom (b) produces:
-        (b a)
-
-        Nesting the 'inner' edge (a b) in the 'outer' atom c produces:
-        (c (a b))
-
-        If the outer entity is an edge, the result depends on the 'before'
-        parameter. Considering the 'inner' entity (a b) and the 'outer'
-        entity (c d), nesting if 'before' is True produces:
-        (c d (a b))
-        If 'before' is False it produces:
-        (c (a b) d)
-
-        Keyword argument:
-        before -- controls how outer edges are handled, as per above.
-                  (default: False)
-        """
-        return Hyperedge((outer, self))
-
     def insert_first_argument(self, argument):
         """Returns an edge built by placing 'argument' as the first item
         after the connector of this edge. If this edge is an atom, then
@@ -625,12 +605,12 @@ class Atom(Hyperedge):
         """
         return Hyperedge((self, argument))
 
-    def apply_fun_to_atom(self, fun, atom_str):
-        """Returns edge built by replacing every instance of 'atom_str' in
-        this edge with the output of calling 'fun' to 'atom_str'.
+    def apply_fun_to_atom(self, fun, atom):
+        """Returns edge built by replacing every instance of 'atom' in
+        this edge with the output of calling 'fun' with 'atom'.
         """
-        if self[0] == atom_str:
-            return Atom(fun(atom_str))
+        if self == atom:
+            return fun(atom)
         else:
             return self
 
