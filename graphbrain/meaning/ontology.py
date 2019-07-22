@@ -15,8 +15,9 @@ def supertypes(hg, edge):
 def generate(hg, verbose=False):
     count = 0
     i = 0
-    with progressbar.ProgressBar(max_value=hg.edge_count()) as bar:
-        for edge in hg.all_edges():
+    total_non_atoms = hg.edge_count() - hg.atom_count()
+    with progressbar.ProgressBar(max_value=total_non_atoms) as bar:
+        for edge in hg.all_non_atoms():
             et = edge.type()
             if et[0] == 'c':
                 ct = edge[0].connector_type()

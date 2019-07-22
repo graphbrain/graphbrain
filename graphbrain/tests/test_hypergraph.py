@@ -60,7 +60,7 @@ class TestHypergraph(unittest.TestCase):
         self.hg.add('(is graphbrain/1 great/1)')
         self.hg.add('(src mary/1 (is graphbrain/1 great/1))')
 
-        labels = set([edge.to_str() for edge in self.hg.all_edges()])
+        labels = set([edge.to_str() for edge in self.hg.all_non_atoms()])
         self.assertEqual(labels,
                          {'(size graphbrain/1 7)', '(is graphbrain/1 great/1)',
                           '(src mary/1 (is graphbrain/1 great/1))'})

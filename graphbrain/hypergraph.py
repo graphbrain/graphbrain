@@ -57,8 +57,8 @@ class Hypergraph(object):
             if edge.is_atom():
                 yield edge
 
-    def all_edges(self):
-        """Returns a generator of all the edges."""
+    def all_non_atoms(self):
+        """Returns a generator of all the edges that are not atoms."""
         for edge in self.all():
             if not edge.is_atom():
                 yield edge
@@ -133,7 +133,7 @@ class Hypergraph(object):
         elif pattern == '@':
             return self.all_atoms()
         elif pattern == '&':
-            return self.all_edges()
+            return self.all_non_atoms()
         elif type(pattern) == str:
             edge = hedge(pattern)
             if not edge.is_atom():

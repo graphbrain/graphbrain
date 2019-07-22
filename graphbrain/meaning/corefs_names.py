@@ -80,10 +80,10 @@ def find_seeds(hg):
     seeds = set()
 
     print('finding seeds')
-    edge_count = hg.atom_count() + hg.edge_count() + 1
+    total_non_atoms = hg.edge_count() - hg.atom_count()
     i = 0
-    with progressbar.ProgressBar(max_value=edge_count) as bar:
-        for edge in hg.all_edges():
+    with progressbar.ProgressBar(max_value=total_non_atoms) as bar:
+        for edge in hg.all_non_atoms():
             ct = edge.connector_type()
             if ct[0] == 'b' and edge[0].root() == '+':
                 if len(edge) > 2:
