@@ -215,7 +215,7 @@ def build_atom(text, *parts):
     atom = str2atom(text)
     parts_str = '/'.join([part for part in parts if part])
     if len(parts_str) > 0:
-        atom = '{}/{}'.format(atom, parts_str)
+        atom = ''.join((atom, '/', parts_str))
     return Atom((atom,))
 
 
@@ -235,7 +235,7 @@ class Hyperedge(tuple):
                       the string representation.
         """
         s = ' '.join([edge.to_str(roots_only=roots_only) for edge in self])
-        return '({})'.format(s)
+        return ''.join(('(', s, ')'))
 
     def label(self):
         """Generate human-readable label for edge."""

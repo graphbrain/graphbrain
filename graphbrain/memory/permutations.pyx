@@ -95,7 +95,7 @@ def do_with_edge_permutations(edge, f):
     nperms = min(math.factorial(len(edge)), MAX_PERMS)
     for nperm in range(nperms):
         perm_str = ' '.join([e.to_str() for e in permutate(edge, nperm)])
-        perm_str = '%s %s' % (perm_str, nperm)
+        perm_str = ''.join((perm_str, ' ', str(nperm)))
         f(perm_str)
 
 
@@ -112,7 +112,7 @@ def perm2edge(perm_str):
         tokens = unpermutate(tokens, nper)
         edge_str = ' '.join(tokens)
         if len(tokens) > 1:
-            edge_str = '({})'.format(edge_str)
+            edge_str = ''.join(('(', edge_str, ')'))
         return hedge(edge_str)
     except ValueError:
         return None
@@ -122,4 +122,4 @@ def str_plus_1(s):
     """Increment a string by one, regaring lexicographical ordering."""
     last_char = s[-1]
     last_char = chr(ord(last_char) + 1)
-    return '%s%s' % (s[:-1], last_char)
+    return ''.join((s[:-1], last_char))

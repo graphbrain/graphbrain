@@ -5,11 +5,12 @@ from graphbrain.memory.permutations import *
 
 
 def _ent2key(entity):
-    return ('v%s' % entity.to_str()).encode('utf-8')
+    return (''.join(('v', entity.to_str()))).encode('utf-8')
 
 
 def _encode_attributes(attributes):
-    str_list = ['%s|%s' % (key, attributes[key]) for key in attributes]
+    str_list = [''.join((key, '|', str(attributes[key])))
+                for key in attributes]
     return '\\'.join(str_list).encode('utf-8')
 
 
@@ -47,8 +48,8 @@ class LevelDB(Hypergraph):
     def all(self):
         start_str = 'v'
         end_str = str_plus_1(start_str)
-        start_key = (u'%s' % start_str).encode('utf-8')
-        end_key = (u'%s' % end_str).encode('utf-8')
+        start_key = start_str.encode('utf-8')
+        end_key = end_str.encode('utf-8')
 
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             yield hedge(key.decode('utf-8')[1:])
@@ -56,8 +57,8 @@ class LevelDB(Hypergraph):
     def all_attributes(self):
         start_str = 'v'
         end_str = str_plus_1(start_str)
-        start_key = (u'%s' % start_str).encode('utf-8')
-        end_key = (u'%s' % end_str).encode('utf-8')
+        start_key = start_str.encode('utf-8')
+        end_key = end_str.encode('utf-8')
 
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             edge = hedge(key.decode('utf-8')[1:])
@@ -146,8 +147,8 @@ class LevelDB(Hypergraph):
                 positions.append(i)
         start_str = edges2str(nodes)
         end_str = str_plus_1(start_str)
-        start_key = (u'p{}'.format(start_str)).encode('utf-8')
-        end_key = (u'p{}'.format(end_str)).encode('utf-8')
+        start_key = (''.join(('p', start_str))).encode('utf-8')
+        end_key = (''.join(('p', end_str))).encode('utf-8')
 
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             perm_str = key.decode('utf-8')
@@ -162,10 +163,10 @@ class LevelDB(Hypergraph):
 
     def _star(self, center, limit=None):
         center_str = center.to_str()
-        start_str = '{} '.format(center_str)
+        start_str = ''.join((center_str, ' '))
         end_str = str_plus_1(start_str)
-        start_key = (u'p{}'.format(start_str)).encode('utf-8')
-        end_key = (u'p{}'.format(end_str)).encode('utf-8')
+        start_key = (''.join(('p', start_str))).encode('utf-8')
+        end_key = (''.join(('p', end_str))).encode('utf-8')
 
         count = 0
         for key, value in self.db.iterator(start=start_key, stop=end_key):
@@ -181,10 +182,10 @@ class LevelDB(Hypergraph):
                     yield(edge)
 
     def _atoms_with_root(self, root):
-        start_str = '{}/'.format(root)
+        start_str = ''.join((root, '/'))
         end_str = str_plus_1(start_str)
-        start_key = (u'v{}'.format(start_str)).encode('utf-8')
-        end_key = (u'v{}'.format(end_str)).encode('utf-8')
+        start_key = (''.join(('v', start_str))).encode('utf-8')
+        end_key = (''.join(('v', end_str))).encode('utf-8')
 
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             symb = hedge(key.decode('utf-8')[1:])
@@ -193,10 +194,10 @@ class LevelDB(Hypergraph):
     def _edges_with_ents(self, ents, root):
         start_str = ' '.join([ent.to_str() for ent in ents])
         if root:
-            start_str = '{} {}/'.format(start_str, root)
+            start_str = ''.join((start_str, ' ', root, '/'))
         end_str = str_plus_1(start_str)
-        start_key = (u'p{}'.format(start_str)).encode('utf-8')
-        end_key = (u'p{}'.format(end_str)).encode('utf-8')
+        start_key = (''.join(('p', start_str))).encode('utf-8')
+        end_key = (''.join(('p', end_str))).encode('utf-8')
 
         for key, value in self.db.iterator(start=start_key, stop=end_key):
             perm_str = key.decode('utf-8')
@@ -253,7 +254,7 @@ class LevelDB(Hypergraph):
 
     def _write_edge_permutation(self, perm):
         """Writes a given permutation."""
-        perm_key = (u'p{}'.format(perm)).encode('utf-8')
+        perm_key = (''.join(('p', perm))).encode('utf-8')
         self.db.put(perm_key, b'x')
 
     def _write_edge_permutations(self, edge):
@@ -262,7 +263,7 @@ class LevelDB(Hypergraph):
 
     def _remove_edge_permutation(self, perm):
         """Removes a given permutation."""
-        perm_key = (u'p{}'.format(perm)).encode('utf-8')
+        perm_key = (''.join(('p', perm))).encode('utf-8')
         self.db.delete(perm_key)
 
     def _remove_edge_permutations(self, edge):
