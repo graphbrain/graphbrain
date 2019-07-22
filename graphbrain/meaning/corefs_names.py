@@ -32,7 +32,7 @@ def clique_number(edge, cliques):
 def corefs_from_seed(hg, seed):
     concepts = []
 
-    for edge in set(hg.edges_with_ents([seed])):
+    for edge in set(hg.edges_with_edges([seed])):
         if edge.type()[0] == 'c' and edge.connector_type() == 'b':
             if edge[0].root() == '+':
                 if len(edge) > 2:
@@ -109,7 +109,7 @@ def root_deep_degree(hg, edge):
         atoms = hg.atoms_with_root(edge.root())
         return sum([hg.deep_degree(atom) for atom in atoms])
     else:
-        return hg.deep_degree(ent)
+        return hg.deep_degree(edge)
 
 
 def lemma_degrees(hg, edge):
@@ -117,7 +117,7 @@ def lemma_degrees(hg, edge):
         roots = {edge.root()}
 
         # find lemma
-        for lemma_edge in hg.pat2ents((const.lemma_pred, edge, '*')):
+        for lemma_edge in hg.pat2edges(hedge((const.lemma_pred, edge, '*'))):
             roots.add(lemma_edge[2].root())
 
         # compute degrees

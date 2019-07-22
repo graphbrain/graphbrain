@@ -163,15 +163,15 @@ class Hypergraph(object):
             return {}
         return self._atoms_with_root(root)
 
-    def edges_with_ents(self, ents, root=None):
-        """Returns generator of all edges containing the given entities,
+    def edges_with_edges(self, edges, root=None):
+        """Returns generator of all edges containing the given edges,
         and optionally a given root.
 
         Keyword argument:
         root -- edge must also contain an atom with this root
                 (default None)
         """
-        return self._edges_with_ents(ents, root)
+        return self._edges_with_edges(edges, root)
 
     def set_attribute(self, edge, attribute, value):
         """Sets the value of an attribute."""
@@ -263,7 +263,7 @@ class Hypergraph(object):
     def _atoms_with_root(self, root):
         raise NotImplementedError()
 
-    def _edges_with_ents(self, ents, root):
+    def _edges_with_edges(self, edges, root):
         raise NotImplementedError()
 
     def _set_attribute(self, edge, attribute, value):

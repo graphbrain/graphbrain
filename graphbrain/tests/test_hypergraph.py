@@ -283,42 +283,42 @@ class TestHypergraph(unittest.TestCase):
         self.assertEqual(list(self.hg.atoms_with_root('graphbrain')),
                          [hedge('graphbrain/1'), hedge('graphbrain/2')])
 
-    def test_edges_with_ents(self):
+    def test_edges_with_edges(self):
         self.hg.destroy()
         edge1 = hedge('(is graphbrain/1 great/1)')
         self.hg.add(edge1)
         edge2 = hedge('(is graphbrain/1 great/2)')
         self.hg.add(edge2)
-        self.assertEqual(list(self.hg.edges_with_ents((hedge('graphbrain/1'),),
-                                                      'great')),
+        self.assertEqual(
+            list(self.hg.edges_with_edges((hedge('graphbrain/1'),), 'great')),
+            [edge1, edge2])
+        self.assertEqual(list(self.hg.edges_with_edges((hedge('graphbrain/1'),
+                                                        hedge('is')),
+                                                       'great')),
                          [edge1, edge2])
-        self.assertEqual(list(self.hg.edges_with_ents((hedge('graphbrain/1'),
-                                                       hedge('is')),
-                                                      'great')),
-                         [edge1, edge2])
-        self.assertEqual(list(self.hg.edges_with_ents((hedge('graphbrain/1'),),
-                                                      'grea')),
-                         [])
+        self.assertEqual(
+            list(self.hg.edges_with_edges((hedge('graphbrain/1'),), 'grea')),
+            [])
 
-    def test_edges_with_ents2(self):
+    def test_edges_with_edges2(self):
         self.hg.destroy()
         self.hg.add(hedge('(syns/p (of/b city/c lights/c) paris/c)'))
         self.hg.add(hedge('(syns/p (of/b city/c light/c) paris/c)'))
         self.hg.add(hedge('(going/p i/c (of/b city/c lights/c))'))
 
-        res = self.hg.edges_with_ents([hedge('(of/b city/c lights/c)')])
+        res = self.hg.edges_with_edges([hedge('(of/b city/c lights/c)')])
         res = set([edge.to_str() for edge in res])
         self.assertEqual(res, {'(syns/p (of/b city/c lights/c) paris/c)',
                                '(going/p i/c (of/b city/c lights/c))'})
 
-        res = self.hg.edges_with_ents([hedge('(of/b city/c lights/c)'),
-                                       hedge('paris/c')])
+        res = self.hg.edges_with_edges([hedge('(of/b city/c lights/c)'),
+                                        hedge('paris/c')])
         res = set([edge.to_str() for edge in res])
         self.assertEqual(res, {'(syns/p (of/b city/c lights/c) paris/c)'})
 
-        res = self.hg.edges_with_ents([hedge('(of/b city/c lights/c)'),
-                                       hedge('paris/c')],
-                                      'syns')
+        res = self.hg.edges_with_edges([hedge('(of/b city/c lights/c)'),
+                                        hedge('paris/c')],
+                                       'syns')
         res = set([edge.to_str() for edge in res])
         self.assertEqual(res, {'(syns/p (of/b city/c lights/c) paris/c)'})
 

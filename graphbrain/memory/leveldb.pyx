@@ -191,8 +191,8 @@ class LevelDB(Hypergraph):
             symb = hedge(key.decode('utf-8')[1:])
             yield(symb)
 
-    def _edges_with_ents(self, ents, root):
-        start_str = ' '.join([ent.to_str() for ent in ents])
+    def _edges_with_edges(self, edges, root):
+        start_str = ' '.join([edge.to_str() for edge in edges])
         if root:
             start_str = ''.join((start_str, ' ', root, '/'))
         end_str = str_plus_1(start_str)
@@ -204,8 +204,8 @@ class LevelDB(Hypergraph):
             edge = perm2edge(perm_str)
             if edge:
                 if root is None:
-                    if all([ent in edge for ent in ents]):
-                        positions = [edge.index(ent) for ent in ents]
+                    if all([item in edge for item in edges]):
+                        positions = [edge.index(item) for item in edges]
                         nper = int(split_edge_str(perm_str[1:])[-1])
                         if nper == first_permutation(len(edge), positions):
                             yield(edge)

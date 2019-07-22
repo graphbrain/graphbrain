@@ -43,7 +43,7 @@ def _update_main_coref(hg, edge):
 def coref_set(hg, edge, corefs=None):
     if corefs is None:
         corefs = {edge}
-    for coref_edge in hg.edges_with_ents((hedge(coref_pred), edge)):
+    for coref_edge in hg.edges_with_edges((hedge(coref_pred), edge)):
         if len(coref_edge) == 3 and coref_edge[0].to_str() == coref_pred:
             for item in coref_edge[1:]:
                 if item not in corefs:
@@ -55,7 +55,7 @@ def coref_set(hg, edge, corefs=None):
 def are_corefs(hg, edge1, edge2, corefs=None):
     if corefs is None:
         corefs = {edge1}
-    for coref_edge in hg.edges_with_ents((hedge(coref_pred), edge1)):
+    for coref_edge in hg.edges_with_edges((hedge(coref_pred), edge1)):
         if len(coref_edge) == 3 and coref_edge[0].to_str() == coref_pred:
             for item in coref_edge[1:]:
                 if item not in corefs:
