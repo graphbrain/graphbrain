@@ -98,9 +98,9 @@ class LevelDB(Hypergraph):
                 self._inc_counter('atom_count')
             else:
                 self._write_edge_permutations(edge)
-                if primary:
-                    self._inc_counter('primary_edge_count')
-                self._inc_counter('edge_count')
+            if primary:
+                self._inc_counter('primary_edge_count')
+            self._inc_counter('edge_count')
         # if an entity is to be added as primary, but it already exists as
         # non-primary, then make it primary and update the degrees
         elif primary and not self._is_primary(edge):
@@ -126,10 +126,10 @@ class LevelDB(Hypergraph):
                 if primary:
                     self._dec_counter('primary_atom_count')
             else:
-                self._dec_counter('edge_count')
-                if primary:
-                    self._dec_counter('primary_edge_count')
                 self._remove_edge_permutations(edge)
+            self._dec_counter('edge_count')
+            if primary:
+                self._dec_counter('primary_edge_count')
             self._remove_key(ent_key)
 
     def _is_primary(self, edge):
@@ -378,8 +378,7 @@ class LevelDB(Hypergraph):
                 self._add_key(ent_key, {'p': 0, 'd': d, 'dd': 1})
                 if edge.is_atom():
                     self._inc_counter('atom_count')
-                else:
-                    self._inc_counter('edge_count')
+                self._inc_counter('edge_count')
             else:
                 if depth == 1:
                     self._inc_attribute_key(ent_key, 'd')

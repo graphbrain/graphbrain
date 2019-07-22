@@ -21,12 +21,12 @@ class Hypergraph(object):
         raise NotImplementedError()
 
     def all(self):
-        """Returns a generator of all the entities."""
+        """Returns a generator of all the edges."""
         raise NotImplementedError()
 
     def all_attributes(self):
-        """Returns a generator with a tuple for each entity.
-           The first element of the tuple is the entity itself,
+        """Returns a generator with a tuple for each edge.
+           The first element of the tuple is the edge itself,
            the second is a dictionary of attribute values
            (as strings)."""
         raise NotImplementedError()

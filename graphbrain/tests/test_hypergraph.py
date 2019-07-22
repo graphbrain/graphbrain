@@ -90,7 +90,7 @@ class TestHypergraph(unittest.TestCase):
         self.hg.destroy()
         self.hg.add('(is graphbrain/1 great/1)')
         self.assertEqual(self.hg.atom_count(), 3)
-        self.assertEqual(self.hg.edge_count(), 1)
+        self.assertEqual(self.hg.edge_count(), 4)
         self.assertEqual(self.hg.primary_atom_count(), 0)
         self.assertEqual(self.hg.primary_edge_count(), 1)
 
@@ -99,16 +99,16 @@ class TestHypergraph(unittest.TestCase):
         self.hg.destroy()
         self.hg.add('(says mary/c (is graphbrain/c great/c))')
         self.assertEqual(self.hg.atom_count(), 5)
-        self.assertEqual(self.hg.edge_count(), 2)
+        self.assertEqual(self.hg.edge_count(), 7)
         self.assertEqual(self.hg.primary_atom_count(), 0)
         self.assertEqual(self.hg.primary_edge_count(), 1)
         self.hg.remove(hedge('(is graphbrain/c great/c)'))
         self.assertEqual(self.hg.atom_count(), 5)
-        self.assertEqual(self.hg.edge_count(), 1)
+        self.assertEqual(self.hg.edge_count(), 6)
         self.hg.remove(hedge('(says mary/c (is graphbrain/c great/c))'))
         self.assertEqual(self.hg.atom_count(), 5)
         self.assertEqual(self.hg.primary_atom_count(), 0)
-        self.assertEqual(self.hg.edge_count(), 0)
+        self.assertEqual(self.hg.edge_count(), 5)
         self.assertEqual(self.hg.primary_edge_count(), 0)
 
     # atom_count(), edge_count(), primary_atom_count(), primary_edge_count()
@@ -119,7 +119,7 @@ class TestHypergraph(unittest.TestCase):
                        deep=False)
         self.assertEqual(self.hg.atom_count(), 5)
         self.assertEqual(self.hg.primary_atom_count(), 0)
-        self.assertEqual(self.hg.edge_count(), 1)
+        self.assertEqual(self.hg.edge_count(), 6)
         self.assertEqual(self.hg.primary_edge_count(), 0)
 
     # exists, add, remove
