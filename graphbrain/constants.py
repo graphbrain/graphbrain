@@ -1,12 +1,12 @@
 # Pre-defined system atoms
 noun_connector_pred = '+/b/.'
 lemma_pred = 'lemma/p/.'
-synonym_pred = 'syn/p/.'
-main_synonym_pred = 'main_syn/p/.'
+coref_pred = 'coref/p/.'
+main_coref_pred = 'main_coref/p/.'
 type_of_pred = 'type_of/p/.'
 
 # Pre-defined entity keys
-syn_set_id_key = 'syn'
+coref_set_id_key = 'coref'
 
 # Logo
 ascii_logo = """

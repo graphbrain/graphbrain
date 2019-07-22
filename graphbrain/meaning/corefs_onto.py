@@ -1,46 +1,46 @@
 import progressbar
 from graphbrain import *
 from graphbrain.meaning.ontology import subtypes
-from graphbrain.meaning.synonyms import make_synonyms
+from graphbrain.meaning.corefs import make_corefs
 
 
-def lemma_degrees(hg, ent):
-    if is_edge(ent):
-        return hg.degree(ent), hg.deep_degree(ent)
+def lemma_degrees(hg, edge):
+    if is_atom(edge):
+        roots = {root(ent)}
 
-    roots = {root(ent)}
+        # find lemma
+        for edge in hg.pat2ents((const.lemma_pred, ent, '*')):
+            roots.add(root(edge[2]))
 
-    # find lemma
-    for edge in hg.pat2ents((const.lemma_pred, ent, '*')):
-        roots.add(root(edge[2]))
+        # compute degrees
+        d = 0
+        dd = 0
+        for r in roots:
+            atoms = set(hg.atoms_with_root(r))
+            d += sum([hg.degree(atom) for atom in atoms])
+            dd += sum([hg.deep_degree(atom) for atom in atoms])
 
-    # compute degrees
-    d = 0
-    dd = 0
-    for r in roots:
-        atoms = set(hg.atoms_with_root(r))
-        d += sum([hg.degree(atom) for atom in atoms])
-        dd += sum([hg.deep_degree(atom) for atom in atoms])
-
-    return d, dd
+        return d, dd
+    else:
+        return hg.degree(edge), hg.deep_degree(edge)
 
 
-def root_deep_degree(hg, ent):
-    if is_edge(ent):
+def root_deep_degree(hg, edge):
+    if is_atom(edge):
+        atoms = hg.atoms_with_root(edge.root())
+        return sum([hg.deep_degree(atom) for atom in atoms])
+    else:
         return hg.deep_degree(ent)
-
-    atoms = hg.atoms_with_root(root(ent))
-    return sum([hg.deep_degree(atom) for atom in atoms])
 
 
 def generate(hg):
     count = 0
-    ent_count = hg.atom_count() + hg.edge_count() + 1
+    edge_count = hg.atom_count() + hg.edge_count() + 1
     i = 0
-    with progressbar.ProgressBar(max_value=ent_count) as bar:
-        for ent in hg.all():
-            if entity_type(ent)[0] == 'c':
-                subs = subtypes(hg, ent)
+    with progressbar.ProgressBar(max_value=edge_count) as bar:
+        for edge in hg.all():
+            if edge.type()[0] == 'c':
+                subs = subtypes(hg, edge)
 
                 # check if the concept should be assigned to a synonym set
                 if len(subs) > 0:
@@ -73,17 +73,8 @@ def generate(hg):
                             lr >= .05 and sub_to_root_dd >= .1 and
                             (is_edge(ent) or len(root(ent)) > 2)):
 
-                        make_synonyms(hg, ent, subs[best_pos])
+                        make_corefs(hg, edge, subs[best_pos])
                         count += 1
-                        # print('\n++++++====== {} ======++++++'.format(ent))
-                        # print('SYNONYM: {}'.format(str(subs[best_pos])))
-                        # print('root deep degree: {}'.format(rdd))
-                        # print('sub/root ddegree: {}'.format(sub_to_root_dd))
-                        # print('degree: {}; deep degree: {}; '
-                        #       'ratio: {}'.format(d, dd, r))
-                        # print('sub deep degree: {}'.format(sdd))
-                        # print('lemma degree: {}; lemma deep degree: {};'
-                        #       ' lemma ratio: {}'.format(ld, ldd, lr))
             i += 1
             bar.update(i)
     return count
