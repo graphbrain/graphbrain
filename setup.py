@@ -4,15 +4,25 @@ from setuptools import setup, find_packages
 from setuptools.extension import Extension
 
 
-# Current Graphbrain version
-with open('VERSION', 'r') as version_file:
-    VERSION = version_file.read()
-
-
 # True to enable building extensions using Cython.
 # False to build extensions from the C files that were previously
 # created by Cython.
 USE_CYTHON = True
+
+# "If True, will produce a HTML file for each of the .pyx or .py files
+# compiled. The HTML file gives an indication of how much Python interaction
+# there is in each of the source code lines, compared to plain C code."
+# https://cython.readthedocs.io/en/latest/src/userguide/
+# source_files_and_compilation.html#cythonize-arguments
+CYTHON_ANNOTATE = False
+
+# Force compilation of all Cython code.
+CYTHON_FORCE_COMPILATION = False
+
+
+# Current Graphbrain version
+with open('VERSION', 'r') as version_file:
+    VERSION = version_file.read()
 
 
 if USE_CYTHON:
@@ -30,6 +40,8 @@ if USE_CYTHON:
                   ['graphbrain/parsers/parser_en.pyx'])
     ]
     ext_modules = cythonize(ext_modules,
+                            annotate=CYTHON_ANNOTATE,
+                            force=CYTHON_FORCE_COMPILATION,
                             compiler_directives={'language_level': '3'})
 else:
     ext_modules = [
