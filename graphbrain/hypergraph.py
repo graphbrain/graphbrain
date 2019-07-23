@@ -144,7 +144,7 @@ class Hypergraph(object):
                 else:
                     return ()
         else:
-            if (pattern.full_pattern()):
+            if (pattern.is_full_pattern()):
                 return self.all()
             else:
                 return self._pattern2edges(pattern)

@@ -469,13 +469,13 @@ class Hyperedge(tuple):
         """
         return any(item.is_pattern() for item in self)
 
-    def full_pattern(self):
+    def is_full_pattern(self):
         """Check if every atom is a pattern matcher.
 
         Pattern matchers are:
         '*', '@', '&'' and '...'
         """
-        return all(item.full_pattern() for item in self)
+        return all(item.is_full_pattern() for item in self)
 
     def argroles(self):
         et = self.type()[0]
@@ -706,7 +706,7 @@ class Atom(Hyperedge):
         """
         return self[0] in {'*', '@', '&', '...'}
 
-    def full_pattern(self):
+    def is_full_pattern(self):
         """Check if every atom is a pattern matcher.
 
         Pattern matchers are:
