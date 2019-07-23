@@ -9,7 +9,7 @@ def lemma_degrees(hg, edge):
         roots = {root(ent)}
 
         # find lemma
-        for edge in hg.pat2ents((const.lemma_pred, ent, '*')):
+        for edge in hg.pat2ents(hedge((const.lemma_pred, ent, '*'))):
             roots.add(root(edge[2]))
 
         # compute degrees
@@ -26,7 +26,7 @@ def lemma_degrees(hg, edge):
 
 
 def root_deep_degree(hg, edge):
-    if is_atom(edge):
+    if edge.is_atom():
         atoms = hg.atoms_with_root(edge.root())
         return sum([hg.deep_degree(atom) for atom in atoms])
     else:
@@ -35,7 +35,7 @@ def root_deep_degree(hg, edge):
 
 def generate(hg):
     count = 0
-    edge_count = hg.atom_count() + hg.edge_count() + 1
+    edge_count = hg.edge_count() + 1
     i = 0
     with progressbar.ProgressBar(max_value=edge_count) as bar:
         for edge in hg.all():

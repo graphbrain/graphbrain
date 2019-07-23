@@ -19,7 +19,7 @@ def belongs_to_clique(edge, clique):
     if edge.is_atom():
         return clean_atom(edge) in clique
     else:
-        return all([clean_edge(x) in clique for x in ent[1:]])
+        return all([clean_edge(x) in clique for x in edge[1:]])
 
 
 def clique_number(edge, cliques):
@@ -33,15 +33,16 @@ def corefs_from_seed(hg, seed):
     concepts = []
 
     for edge in set(hg.edges_with_edges([seed])):
-        if edge.type()[0] == 'c' and edge.connector_type() == 'b':
-            if edge[0].root() == '+':
-                if len(edge) > 2:
-                    mc = edge.main_concepts()
-                    if len(mc) == 1 and mc[0] == seed:
-                        d = hg.degree(edge)
-                        dd = hg.deep_degree(edge)
-                        if d > 2 and dd > 2:
-                            concepts.append(edge)
+        conn = edge[0]
+        if (conn.is_atom() and edge.type()[0] == 'c' and
+                edge.connector_type() == 'b' and conn.root() == '+' and
+                len(edge) > 2):
+            mc = edge.main_concepts()
+            if len(mc) == 1 and mc[0] == seed:
+                d = hg.degree(edge)
+                dd = hg.deep_degree(edge)
+                if d > 2 and dd > 2:
+                    concepts.append(edge)
 
     subconcepts = set()
     graph_edges = set()
@@ -84,8 +85,9 @@ def find_seeds(hg):
     i = 0
     with progressbar.ProgressBar(max_value=total_non_atoms) as bar:
         for edge in hg.all_non_atoms():
+            conn = edge[0]
             ct = edge.connector_type()
-            if ct[0] == 'b' and edge[0].root() == '+':
+            if ct[0] == 'b' and conn.is_atom() and conn.root() == '+':
                 if len(edge) > 2:
                     concepts = edge.main_concepts()
                     if (len(concepts) == 1 and
@@ -143,11 +145,11 @@ def generate(hg):
             crefs = corefs_from_seed(hg, seed)
 
             # check if the seed should be assigned to a synonym set
-            if len(corefs) > 0:
+            if len(crefs) > 0:
                 # find set with the highest degree and normalize set degrees by
                 # total degree
-                cref_degs = [coref_degree(hg, syn) for syn in syns]
-                total_deg = sum(coref_degs)
+                cref_degs = [coref_degree(hg, cref) for cref in crefs]
+                total_deg = sum(cref_degs)
                 cref_ratios = [cref_deg / total_deg for cref_deg in cref_degs]
                 max_ratio = 0.
                 best_pos = -1
@@ -157,7 +159,7 @@ def generate(hg):
                         best_pos = pos
 
                 # compute some degree-related metrics
-                sdd = cref_deep_degree(hg, crefs[best_pos])
+                sdd = coref_deep_degree(hg, crefs[best_pos])
                 rdd = root_deep_degree(hg, seed)
                 cref_to_root_dd = 0. if rdd == 0 else float(sdd) / float(rdd)
                 d = hg.degree(seed)
