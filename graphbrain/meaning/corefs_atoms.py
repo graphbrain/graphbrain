@@ -20,8 +20,6 @@ def generate(hg):
                 if hg.exists(coref_atom):
                     make_corefs(hg, atom, coref_atom)
                     count += 1
-            # new atoms can be created during the process, so we just cap
-            # the progressbar at the initial atom_count
             if i < atom_count:
                 i += 1
                 bar.update(i)

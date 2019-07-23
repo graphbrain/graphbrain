@@ -5,12 +5,12 @@ from graphbrain.meaning.corefs import make_corefs
 
 
 def lemma_degrees(hg, edge):
-    if is_atom(edge):
-        roots = {root(ent)}
+    if edge.is_atom():
+        roots = {edge.root()}
 
         # find lemma
-        for edge in hg.pat2ents(hedge((const.lemma_pred, ent, '*'))):
-            roots.add(root(edge[2]))
+        for edge in hg.pat2edges(hedge((const.lemma_pred, edge, '*'))):
+            roots.add(edge[2].root())
 
         # compute degrees
         d = 0
@@ -30,12 +30,12 @@ def root_deep_degree(hg, edge):
         atoms = hg.atoms_with_root(edge.root())
         return sum([hg.deep_degree(atom) for atom in atoms])
     else:
-        return hg.deep_degree(ent)
+        return hg.deep_degree(edge)
 
 
 def generate(hg):
     count = 0
-    edge_count = hg.edge_count() + 1
+    edge_count = hg.edge_count()
     i = 0
     with progressbar.ProgressBar(max_value=edge_count) as bar:
         for edge in hg.all():
@@ -59,22 +59,23 @@ def generate(hg):
 
                     # compute some degree-related metrics
                     sdd = hg.deep_degree(subs[best_pos])
-                    rdd = root_deep_degree(hg, ent)
+                    rdd = root_deep_degree(hg, edge)
                     sub_to_root_dd = \
                         0. if rdd == 0 else float(sdd) / float(rdd)
-                    d = hg.degree(ent)
-                    dd = hg.deep_degree(ent)
+                    d = hg.degree(edge)
+                    dd = hg.deep_degree(edge)
                     r = float(d) / float(dd)
-                    ld, ldd = lemma_degrees(hg, ent)
+                    ld, ldd = lemma_degrees(hg, edge)
                     lr = float(ld) / float(ldd)
 
                     # use metric to decide
                     if (rdd > 5 and max_ratio >= .7 and r >= .05 and
                             lr >= .05 and sub_to_root_dd >= .1 and
-                            (is_edge(ent) or len(root(ent)) > 2)):
+                            (not edge.is_atom() or len(edge.root()) > 2)):
 
                         make_corefs(hg, edge, subs[best_pos])
                         count += 1
-            i += 1
-            bar.update(i)
+            if i < edge_count:
+                i += 1
+                bar.update(i)
     return count
