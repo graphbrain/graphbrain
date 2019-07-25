@@ -39,11 +39,37 @@ def _ent2html(entity, roots_only=True, formatting='indented', indent=False,
     color_html = 'color:{}'.format(color)
 
     # different renders depending on weather:
+    # ... entity is an atom:
+    if entity.is_atom():
+        # connectors are rendered in bold
+        bold_style = 'font-weight:bold;' if conn else ''
+
+        # render atom root
+        html = """
+        <span style="{}{}">{}</span>
+        """.format(bold_style,
+                   color_html,
+                   escape(str(entity.root()).strip())).strip()
+
+        # render non-root part, if requested
+        if not roots_only:
+            escaped_codes = '/'.join(entity.parts()[1:])
+            escaped_codes = escape(escaped_codes).strip()
+            html = """
+            {}<span style="color:{};font-size:8pt">/{}</span>
+            """.format(html,
+                       NAMESPACE_COLOR,
+                       escaped_codes)
+
+        # render atom
+        html = """
+        <{} style="{}{}">{}</{}>
+        """.format(main_tag, margin, font_size, html, main_tag).strip()
     # ... entity is an edge
-    if is_edge(entity):
-        et = entity_type(entity)[0]
+    else:
+        et = entity.type()[0]
         arity = len(entity)
-        contains_edges = any(is_edge(child) for child in entity)
+        contains_edges = any(not child.is_atom() for child in entity)
         color = EDGE_COLORS[depth % len(EDGE_COLORS)]
         color_html = 'color:{}'.format(color)
 
@@ -91,7 +117,15 @@ def _ent2html(entity, roots_only=True, formatting='indented', indent=False,
                 sep = ' '
 
             child = entity[i]
-            if is_edge(child):
+            if child.is_atom():
+                child_html, _ = _ent2html(child,
+                                          roots_only=roots_only,
+                                          formatting=formatting,
+                                          indent=child_indent,
+                                          depth=depth,
+                                          color=child_color,
+                                          conn=child_conn)
+            else:
                 # Do not render closing html of children that are the last
                 # entity in a hyperedge. Instead, let some higher-level edge
                 # render it to avoid ugly multi-line staircases when closing
@@ -107,14 +141,6 @@ def _ent2html(entity, roots_only=True, formatting='indented', indent=False,
                                                          conn=child_conn)
                 # accumulate close_html of child
                 close_html = '{}{}'.format(child_close_html, close_html)
-            else:
-                child_html, _ = _ent2html(child,
-                                          roots_only=roots_only,
-                                          formatting=formatting,
-                                          indent=child_indent,
-                                          depth=depth,
-                                          color=child_color,
-                                          conn=child_conn)
             html = '{}{}{}'.format(html, sep, child_html)
 
         # if closing html should not be rendered at the end o this edge
@@ -135,31 +161,6 @@ def _ent2html(entity, roots_only=True, formatting='indented', indent=False,
         <{} style="{}{}">{}{}
         """.format(main_tag, margin, color_html, html, close_html).strip()
     # ... entity is an atom
-    else:
-        # connectors are rendered in bold
-        bold_style = 'font-weight:bold;' if conn else ''
-
-        # render atom root
-        html = """
-        <span style="{}{}">{}</span>
-        """.format(bold_style,
-                   color_html,
-                   escape(str(root(entity)).strip())).strip()
-
-        # render non-root part, if requested
-        if not roots_only:
-            escaped_codes = str('/'.join(atom_parts(entity)[1:])).strip()
-            escaped_codes = escape(escaped_codes).strip()
-            html = """
-            {}<span style="color:{};font-size:8pt">/{}</span>
-            """.format(html,
-                       NAMESPACE_COLOR,
-                       escaped_codes)
-
-        # render atom
-        html = """
-        <{} style="{}{}">{}</{}>
-        """.format(main_tag, margin, font_size, html, main_tag).strip()
 
     return html, ret_close_html
 
