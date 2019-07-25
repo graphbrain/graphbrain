@@ -687,6 +687,8 @@ class Atom(Hyperedge):
         et = self.type()
         if len(et) >= n and et[:n] == atom_type:
             return self
+        else:
+            return None
 
     def predicate(self):
         """Returns predicate atom if this edge is a non-atom of type
