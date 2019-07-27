@@ -819,7 +819,7 @@ static const char *__pyx_f[] = {
 /*--- Type declarations ---*/
 struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct__all;
 struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_1_all_attributes;
-struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges;
+struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search;
 struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_3__star;
 struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_4__atoms_with_root;
 struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_5__edges_with_edges;
@@ -873,11 +873,11 @@ struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_1_all_attribut
 /* "graphbrain/memory/leveldb.pyx":141
  *         self._set_attribute(edge, 'p', 1 if value else 0)
  * 
- *     def _pattern2edges(self, pattern):             # <<<<<<<<<<<<<<
+ *     def _search(self, pattern):             # <<<<<<<<<<<<<<
  *         nodes = []
  *         positions = []
  */
-struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges {
+struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search {
   PyObject_HEAD
   PyObject *__pyx_v_edge;
   PyObject *__pyx_v_end_key;
@@ -1587,7 +1587,7 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 /* Module declarations from 'graphbrain.memory.leveldb' */
 static PyTypeObject *__pyx_ptype_10graphbrain_6memory_7leveldb___pyx_scope_struct__all = 0;
 static PyTypeObject *__pyx_ptype_10graphbrain_6memory_7leveldb___pyx_scope_struct_1_all_attributes = 0;
-static PyTypeObject *__pyx_ptype_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges = 0;
+static PyTypeObject *__pyx_ptype_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search = 0;
 static PyTypeObject *__pyx_ptype_10graphbrain_6memory_7leveldb___pyx_scope_struct_3__star = 0;
 static PyTypeObject *__pyx_ptype_10graphbrain_6memory_7leveldb___pyx_scope_struct_4__atoms_with_root = 0;
 static PyTypeObject *__pyx_ptype_10graphbrain_6memory_7leveldb___pyx_scope_struct_5__edges_with_edges = 0;
@@ -1664,6 +1664,7 @@ static const char __pyx_k_module[] = "__module__";
 static const char __pyx_k_name_2[] = "name";
 static const char __pyx_k_plyvel[] = "plyvel";
 static const char __pyx_k_remove[] = "_remove";
+static const char __pyx_k_search[] = "_search";
 static const char __pyx_k_to_str[] = "to_str";
 static const char __pyx_k_tokens[] = "tokens";
 static const char __pyx_k_LevelDB[] = "LevelDB";
@@ -1723,7 +1724,6 @@ static const char __pyx_k_LevelDB_close[] = "LevelDB.close";
 static const char __pyx_k_attribute_key[] = "_attribute_key";
 static const char __pyx_k_dec_attribute[] = "_dec_attribute";
 static const char __pyx_k_inc_attribute[] = "_inc_attribute";
-static const char __pyx_k_pattern2edges[] = "_pattern2edges";
 static const char __pyx_k_set_attribute[] = "_set_attribute";
 static const char __pyx_k_LevelDB___init[] = "LevelDB.__init__";
 static const char __pyx_k_all_attributes[] = "all_attributes";
@@ -1732,6 +1732,7 @@ static const char __pyx_k_split_edge_str[] = "split_edge_str";
 static const char __pyx_k_LevelDB__degree[] = "LevelDB._degree";
 static const char __pyx_k_LevelDB__exists[] = "LevelDB._exists";
 static const char __pyx_k_LevelDB__remove[] = "LevelDB._remove";
+static const char __pyx_k_LevelDB__search[] = "LevelDB._search";
 static const char __pyx_k_LevelDB_destroy[] = "LevelDB.destroy";
 static const char __pyx_k_atoms_with_root[] = "_atoms_with_root";
 static const char __pyx_k_LevelDB__add_key[] = "LevelDB._add_key";
@@ -1771,7 +1772,6 @@ static const char __pyx_k_graphbrain_hypergraph[] = "graphbrain.hypergraph";
 static const char __pyx_k_LevelDB__attribute_key[] = "LevelDB._attribute_key";
 static const char __pyx_k_LevelDB__dec_attribute[] = "LevelDB._dec_attribute";
 static const char __pyx_k_LevelDB__inc_attribute[] = "LevelDB._inc_attribute";
-static const char __pyx_k_LevelDB__pattern2edges[] = "LevelDB._pattern2edges";
 static const char __pyx_k_LevelDB__set_attribute[] = "LevelDB._set_attribute";
 static const char __pyx_k_LevelDB_all_attributes[] = "LevelDB.all_attributes";
 static const char __pyx_k_write_edge_permutation[] = "_write_edge_permutation";
@@ -1834,13 +1834,13 @@ static PyObject *__pyx_n_s_LevelDB__inc_attribute_key;
 static PyObject *__pyx_n_s_LevelDB__inc_counter;
 static PyObject *__pyx_n_s_LevelDB__inc_degrees;
 static PyObject *__pyx_n_s_LevelDB__is_primary;
-static PyObject *__pyx_n_s_LevelDB__pattern2edges;
 static PyObject *__pyx_n_s_LevelDB__read_counter;
 static PyObject *__pyx_n_s_LevelDB__read_counter_key;
 static PyObject *__pyx_n_s_LevelDB__remove;
 static PyObject *__pyx_n_s_LevelDB__remove_edge_permutation;
 static PyObject *__pyx_n_s_LevelDB__remove_edge_permutation_2;
 static PyObject *__pyx_n_s_LevelDB__remove_key;
+static PyObject *__pyx_n_s_LevelDB__search;
 static PyObject *__pyx_n_s_LevelDB__set_attribute;
 static PyObject *__pyx_n_s_LevelDB__set_attribute_key;
 static PyObject *__pyx_n_s_LevelDB__set_primary;
@@ -1963,7 +1963,6 @@ static PyObject *__pyx_n_s_or_else;
 static PyObject *__pyx_n_u_p;
 static PyObject *__pyx_n_s_parts;
 static PyObject *__pyx_n_s_pattern;
-static PyObject *__pyx_n_s_pattern2edges;
 static PyObject *__pyx_n_s_perm;
 static PyObject *__pyx_n_s_perm2edge;
 static PyObject *__pyx_n_s_perm_key;
@@ -1987,6 +1986,7 @@ static PyObject *__pyx_n_s_remove_edge_permutations;
 static PyObject *__pyx_n_s_remove_key;
 static PyObject *__pyx_n_s_replace;
 static PyObject *__pyx_n_s_root;
+static PyObject *__pyx_n_s_search;
 static PyObject *__pyx_n_s_self;
 static PyObject *__pyx_n_s_send;
 static PyObject *__pyx_n_s_set_attribute;
@@ -2031,7 +2031,7 @@ static PyObject *__pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_24_add(CYTHON_U
 static PyObject *__pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_26_remove(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_edge, PyObject *__pyx_v_deep); /* proto */
 static PyObject *__pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_28_is_primary(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_edge); /* proto */
 static PyObject *__pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_30_set_primary(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_edge, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_32_pattern2edges(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_pattern); /* proto */
+static PyObject *__pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_32_search(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_pattern); /* proto */
 static PyObject *__pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_35_star(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_center, PyObject *__pyx_v_limit); /* proto */
 static PyObject *__pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_38_atoms_with_root(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_root); /* proto */
 static PyObject *__pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_41_edges_with_edges(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_edges, PyObject *__pyx_v_root); /* proto */
@@ -2065,7 +2065,7 @@ static PyObject *__pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_96_inc_degrees(
 static PyObject *__pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_98_dec_degrees(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_edge, PyObject *__pyx_v_depth); /* proto */
 static PyObject *__pyx_tp_new_10graphbrain_6memory_7leveldb___pyx_scope_struct__all(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_10graphbrain_6memory_7leveldb___pyx_scope_struct_1_all_attributes(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
-static PyObject *__pyx_tp_new_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
+static PyObject *__pyx_tp_new_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_10graphbrain_6memory_7leveldb___pyx_scope_struct_3__star(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_10graphbrain_6memory_7leveldb___pyx_scope_struct_4__atoms_with_root(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_10graphbrain_6memory_7leveldb___pyx_scope_struct_5__edges_with_edges(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
@@ -6029,7 +6029,7 @@ static PyObject *__pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_30_set_primary(
  *     def _set_primary(self, edge, value):
  *         self._set_attribute(edge, 'p', 1 if value else 0)             # <<<<<<<<<<<<<<
  * 
- *     def _pattern2edges(self, pattern):
+ *     def _search(self, pattern):
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_set_attribute); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 139, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -6122,20 +6122,20 @@ static PyObject *__pyx_gb_10graphbrain_6memory_7leveldb_7LevelDB_34generator2(__
 /* "graphbrain/memory/leveldb.pyx":141
  *         self._set_attribute(edge, 'p', 1 if value else 0)
  * 
- *     def _pattern2edges(self, pattern):             # <<<<<<<<<<<<<<
+ *     def _search(self, pattern):             # <<<<<<<<<<<<<<
  *         nodes = []
  *         positions = []
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10graphbrain_6memory_7leveldb_7LevelDB_33_pattern2edges(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_10graphbrain_6memory_7leveldb_7LevelDB_33_pattern2edges = {"_pattern2edges", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_10graphbrain_6memory_7leveldb_7LevelDB_33_pattern2edges, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_10graphbrain_6memory_7leveldb_7LevelDB_33_pattern2edges(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_10graphbrain_6memory_7leveldb_7LevelDB_33_search(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_10graphbrain_6memory_7leveldb_7LevelDB_33_search = {"_search", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_10graphbrain_6memory_7leveldb_7LevelDB_33_search, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_10graphbrain_6memory_7leveldb_7LevelDB_33_search(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_pattern = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("_pattern2edges (wrapper)", 0);
+  __Pyx_RefNannySetupContext("_search (wrapper)", 0);
   {
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_self,&__pyx_n_s_pattern,0};
     PyObject* values[2] = {0,0};
@@ -6159,11 +6159,11 @@ static PyObject *__pyx_pw_10graphbrain_6memory_7leveldb_7LevelDB_33_pattern2edge
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_pattern)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_pattern2edges", 1, 2, 2, 1); __PYX_ERR(0, 141, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_search", 1, 2, 2, 1); __PYX_ERR(0, 141, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_pattern2edges") < 0)) __PYX_ERR(0, 141, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_search") < 0)) __PYX_ERR(0, 141, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -6176,27 +6176,27 @@ static PyObject *__pyx_pw_10graphbrain_6memory_7leveldb_7LevelDB_33_pattern2edge
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_pattern2edges", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 141, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_search", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 141, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("graphbrain.memory.leveldb.LevelDB._pattern2edges", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("graphbrain.memory.leveldb.LevelDB._search", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_32_pattern2edges(__pyx_self, __pyx_v_self, __pyx_v_pattern);
+  __pyx_r = __pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_32_search(__pyx_self, __pyx_v_self, __pyx_v_pattern);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_32_pattern2edges(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_pattern) {
-  struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges *__pyx_cur_scope;
+static PyObject *__pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_32_search(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_pattern) {
+  struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search *__pyx_cur_scope;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("_pattern2edges", 0);
-  __pyx_cur_scope = (struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges *)__pyx_tp_new_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges(__pyx_ptype_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges, __pyx_empty_tuple, NULL);
+  __Pyx_RefNannySetupContext("_search", 0);
+  __pyx_cur_scope = (struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search *)__pyx_tp_new_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search(__pyx_ptype_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search, __pyx_empty_tuple, NULL);
   if (unlikely(!__pyx_cur_scope)) {
-    __pyx_cur_scope = ((struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges *)Py_None);
+    __pyx_cur_scope = ((struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search *)Py_None);
     __Pyx_INCREF(Py_None);
     __PYX_ERR(0, 141, __pyx_L1_error)
   } else {
@@ -6209,7 +6209,7 @@ static PyObject *__pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_32_pattern2edge
   __Pyx_INCREF(__pyx_cur_scope->__pyx_v_pattern);
   __Pyx_GIVEREF(__pyx_cur_scope->__pyx_v_pattern);
   {
-    __pyx_CoroutineObject *gen = __Pyx_Generator_New((__pyx_coroutine_body_t) __pyx_gb_10graphbrain_6memory_7leveldb_7LevelDB_34generator2, __pyx_codeobj__7, (PyObject *) __pyx_cur_scope, __pyx_n_s_pattern2edges, __pyx_n_s_LevelDB__pattern2edges, __pyx_n_s_graphbrain_memory_leveldb); if (unlikely(!gen)) __PYX_ERR(0, 141, __pyx_L1_error)
+    __pyx_CoroutineObject *gen = __Pyx_Generator_New((__pyx_coroutine_body_t) __pyx_gb_10graphbrain_6memory_7leveldb_7LevelDB_34generator2, __pyx_codeobj__7, (PyObject *) __pyx_cur_scope, __pyx_n_s_search, __pyx_n_s_LevelDB__search, __pyx_n_s_graphbrain_memory_leveldb); if (unlikely(!gen)) __PYX_ERR(0, 141, __pyx_L1_error)
     __Pyx_DECREF(__pyx_cur_scope);
     __Pyx_RefNannyFinishContext();
     return (PyObject *) gen;
@@ -6217,7 +6217,7 @@ static PyObject *__pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_32_pattern2edge
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_AddTraceback("graphbrain.memory.leveldb.LevelDB._pattern2edges", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("graphbrain.memory.leveldb.LevelDB._search", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __Pyx_DECREF(((PyObject *)__pyx_cur_scope));
   __Pyx_XGIVEREF(__pyx_r);
@@ -6227,7 +6227,7 @@ static PyObject *__pyx_pf_10graphbrain_6memory_7leveldb_7LevelDB_32_pattern2edge
 
 static PyObject *__pyx_gb_10graphbrain_6memory_7leveldb_7LevelDB_34generator2(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value) /* generator body */
 {
-  struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges *__pyx_cur_scope = ((struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges *)__pyx_generator->closure);
+  struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search *__pyx_cur_scope = ((struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search *)__pyx_generator->closure);
   PyObject *__pyx_r = NULL;
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -6244,7 +6244,7 @@ static PyObject *__pyx_gb_10graphbrain_6memory_7leveldb_7LevelDB_34generator2(__
   int __pyx_t_13;
   PyObject *__pyx_t_14 = NULL;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("_pattern2edges", 0);
+  __Pyx_RefNannySetupContext("_search", 0);
   switch (__pyx_generator->resume_label) {
     case 0: goto __pyx_L3_first_run;
     case 1: goto __pyx_L15_resume_from_yield;
@@ -6257,7 +6257,7 @@ static PyObject *__pyx_gb_10graphbrain_6memory_7leveldb_7LevelDB_34generator2(__
 
   /* "graphbrain/memory/leveldb.pyx":142
  * 
- *     def _pattern2edges(self, pattern):
+ *     def _search(self, pattern):
  *         nodes = []             # <<<<<<<<<<<<<<
  *         positions = []
  *         for i, node in enumerate(pattern):
@@ -6269,7 +6269,7 @@ static PyObject *__pyx_gb_10graphbrain_6memory_7leveldb_7LevelDB_34generator2(__
   __pyx_t_1 = 0;
 
   /* "graphbrain/memory/leveldb.pyx":143
- *     def _pattern2edges(self, pattern):
+ *     def _search(self, pattern):
  *         nodes = []
  *         positions = []             # <<<<<<<<<<<<<<
  *         for i, node in enumerate(pattern):
@@ -6928,7 +6928,7 @@ static PyObject *__pyx_gb_10graphbrain_6memory_7leveldb_7LevelDB_34generator2(__
   /* "graphbrain/memory/leveldb.pyx":141
  *         self._set_attribute(edge, 'p', 1 if value else 0)
  * 
- *     def _pattern2edges(self, pattern):             # <<<<<<<<<<<<<<
+ *     def _search(self, pattern):             # <<<<<<<<<<<<<<
  *         nodes = []
  *         positions = []
  */
@@ -6943,7 +6943,7 @@ static PyObject *__pyx_gb_10graphbrain_6memory_7leveldb_7LevelDB_34generator2(__
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_14);
-  __Pyx_AddTraceback("_pattern2edges", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("_search", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_r); __pyx_r = 0;
   #if !CYTHON_USE_EXC_INFO_STACK
@@ -15973,14 +15973,14 @@ static PyTypeObject __pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_
   #endif
 };
 
-static struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges *__pyx_freelist_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges[8];
-static int __pyx_freecount_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges = 0;
+static struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search *__pyx_freelist_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search[8];
+static int __pyx_freecount_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search = 0;
 
-static PyObject *__pyx_tp_new_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges(PyTypeObject *t, CYTHON_UNUSED PyObject *a, CYTHON_UNUSED PyObject *k) {
+static PyObject *__pyx_tp_new_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search(PyTypeObject *t, CYTHON_UNUSED PyObject *a, CYTHON_UNUSED PyObject *k) {
   PyObject *o;
-  if (CYTHON_COMPILING_IN_CPYTHON && likely((__pyx_freecount_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges > 0) & (t->tp_basicsize == sizeof(struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges)))) {
-    o = (PyObject*)__pyx_freelist_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges[--__pyx_freecount_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges];
-    memset(o, 0, sizeof(struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges));
+  if (CYTHON_COMPILING_IN_CPYTHON && likely((__pyx_freecount_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search > 0) & (t->tp_basicsize == sizeof(struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search)))) {
+    o = (PyObject*)__pyx_freelist_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search[--__pyx_freecount_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search];
+    memset(o, 0, sizeof(struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search));
     (void) PyObject_INIT(o, t);
     PyObject_GC_Track(o);
   } else {
@@ -15990,8 +15990,8 @@ static PyObject *__pyx_tp_new_10graphbrain_6memory_7leveldb___pyx_scope_struct_2
   return o;
 }
 
-static void __pyx_tp_dealloc_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges(PyObject *o) {
-  struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges *p = (struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges *)o;
+static void __pyx_tp_dealloc_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search(PyObject *o) {
+  struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search *p = (struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search *)o;
   PyObject_GC_UnTrack(o);
   Py_CLEAR(p->__pyx_v_edge);
   Py_CLEAR(p->__pyx_v_end_key);
@@ -16010,16 +16010,16 @@ static void __pyx_tp_dealloc_10graphbrain_6memory_7leveldb___pyx_scope_struct_2_
   Py_CLEAR(p->__pyx_v_tokens);
   Py_CLEAR(p->__pyx_v_value);
   Py_CLEAR(p->__pyx_t_0);
-  if (CYTHON_COMPILING_IN_CPYTHON && ((__pyx_freecount_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges < 8) & (Py_TYPE(o)->tp_basicsize == sizeof(struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges)))) {
-    __pyx_freelist_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges[__pyx_freecount_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges++] = ((struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges *)o);
+  if (CYTHON_COMPILING_IN_CPYTHON && ((__pyx_freecount_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search < 8) & (Py_TYPE(o)->tp_basicsize == sizeof(struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search)))) {
+    __pyx_freelist_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search[__pyx_freecount_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search++] = ((struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search *)o);
   } else {
     (*Py_TYPE(o)->tp_free)(o);
   }
 }
 
-static int __pyx_tp_traverse_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges(PyObject *o, visitproc v, void *a) {
+static int __pyx_tp_traverse_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search(PyObject *o, visitproc v, void *a) {
   int e;
-  struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges *p = (struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges *)o;
+  struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search *p = (struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search *)o;
   if (p->__pyx_v_edge) {
     e = (*v)(p->__pyx_v_edge, a); if (e) return e;
   }
@@ -16074,12 +16074,12 @@ static int __pyx_tp_traverse_10graphbrain_6memory_7leveldb___pyx_scope_struct_2_
   return 0;
 }
 
-static PyTypeObject __pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges = {
+static PyTypeObject __pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search = {
   PyVarObject_HEAD_INIT(0, 0)
-  "graphbrain.memory.leveldb.__pyx_scope_struct_2__pattern2edges", /*tp_name*/
-  sizeof(struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges), /*tp_basicsize*/
+  "graphbrain.memory.leveldb.__pyx_scope_struct_2__search", /*tp_name*/
+  sizeof(struct __pyx_obj_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search), /*tp_basicsize*/
   0, /*tp_itemsize*/
-  __pyx_tp_dealloc_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges, /*tp_dealloc*/
+  __pyx_tp_dealloc_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search, /*tp_dealloc*/
   0, /*tp_print*/
   0, /*tp_getattr*/
   0, /*tp_setattr*/
@@ -16101,7 +16101,7 @@ static PyTypeObject __pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_
   0, /*tp_as_buffer*/
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_HAVE_GC, /*tp_flags*/
   0, /*tp_doc*/
-  __pyx_tp_traverse_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges, /*tp_traverse*/
+  __pyx_tp_traverse_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search, /*tp_traverse*/
   0, /*tp_clear*/
   0, /*tp_richcompare*/
   0, /*tp_weaklistoffset*/
@@ -16117,7 +16117,7 @@ static PyTypeObject __pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_
   0, /*tp_dictoffset*/
   0, /*tp_init*/
   0, /*tp_alloc*/
-  __pyx_tp_new_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges, /*tp_new*/
+  __pyx_tp_new_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search, /*tp_new*/
   0, /*tp_free*/
   0, /*tp_is_gc*/
   0, /*tp_bases*/
@@ -16587,7 +16587,7 @@ static PyMethodDef __pyx_methods[] = {
 static int __pyx_import_star_set(PyObject *o, PyObject* py_name, char *name) {
   static const char* internal_type_names[] = {
     "__pyx_scope_struct_1_all_attributes",
-    "__pyx_scope_struct_2__pattern2edges",
+    "__pyx_scope_struct_2__search",
     "__pyx_scope_struct_3__star",
     "__pyx_scope_struct_4__atoms_with_root",
     "__pyx_scope_struct_5__edges_with_edges",
@@ -16790,13 +16790,13 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_LevelDB__inc_counter, __pyx_k_LevelDB__inc_counter, sizeof(__pyx_k_LevelDB__inc_counter), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__inc_degrees, __pyx_k_LevelDB__inc_degrees, sizeof(__pyx_k_LevelDB__inc_degrees), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__is_primary, __pyx_k_LevelDB__is_primary, sizeof(__pyx_k_LevelDB__is_primary), 0, 0, 1, 1},
-  {&__pyx_n_s_LevelDB__pattern2edges, __pyx_k_LevelDB__pattern2edges, sizeof(__pyx_k_LevelDB__pattern2edges), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__read_counter, __pyx_k_LevelDB__read_counter, sizeof(__pyx_k_LevelDB__read_counter), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__read_counter_key, __pyx_k_LevelDB__read_counter_key, sizeof(__pyx_k_LevelDB__read_counter_key), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__remove, __pyx_k_LevelDB__remove, sizeof(__pyx_k_LevelDB__remove), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__remove_edge_permutation, __pyx_k_LevelDB__remove_edge_permutation, sizeof(__pyx_k_LevelDB__remove_edge_permutation), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__remove_edge_permutation_2, __pyx_k_LevelDB__remove_edge_permutation_2, sizeof(__pyx_k_LevelDB__remove_edge_permutation_2), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__remove_key, __pyx_k_LevelDB__remove_key, sizeof(__pyx_k_LevelDB__remove_key), 0, 0, 1, 1},
+  {&__pyx_n_s_LevelDB__search, __pyx_k_LevelDB__search, sizeof(__pyx_k_LevelDB__search), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__set_attribute, __pyx_k_LevelDB__set_attribute, sizeof(__pyx_k_LevelDB__set_attribute), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__set_attribute_key, __pyx_k_LevelDB__set_attribute_key, sizeof(__pyx_k_LevelDB__set_attribute_key), 0, 0, 1, 1},
   {&__pyx_n_s_LevelDB__set_primary, __pyx_k_LevelDB__set_primary, sizeof(__pyx_k_LevelDB__set_primary), 0, 0, 1, 1},
@@ -16919,7 +16919,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_u_p, __pyx_k_p, sizeof(__pyx_k_p), 0, 1, 0, 1},
   {&__pyx_n_s_parts, __pyx_k_parts, sizeof(__pyx_k_parts), 0, 0, 1, 1},
   {&__pyx_n_s_pattern, __pyx_k_pattern, sizeof(__pyx_k_pattern), 0, 0, 1, 1},
-  {&__pyx_n_s_pattern2edges, __pyx_k_pattern2edges, sizeof(__pyx_k_pattern2edges), 0, 0, 1, 1},
   {&__pyx_n_s_perm, __pyx_k_perm, sizeof(__pyx_k_perm), 0, 0, 1, 1},
   {&__pyx_n_s_perm2edge, __pyx_k_perm2edge, sizeof(__pyx_k_perm2edge), 0, 0, 1, 1},
   {&__pyx_n_s_perm_key, __pyx_k_perm_key, sizeof(__pyx_k_perm_key), 0, 0, 1, 1},
@@ -16943,6 +16942,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_remove_key, __pyx_k_remove_key, sizeof(__pyx_k_remove_key), 0, 0, 1, 1},
   {&__pyx_n_s_replace, __pyx_k_replace, sizeof(__pyx_k_replace), 0, 0, 1, 1},
   {&__pyx_n_s_root, __pyx_k_root, sizeof(__pyx_k_root), 0, 0, 1, 1},
+  {&__pyx_n_s_search, __pyx_k_search, sizeof(__pyx_k_search), 0, 0, 1, 1},
   {&__pyx_n_s_self, __pyx_k_self, sizeof(__pyx_k_self), 0, 0, 1, 1},
   {&__pyx_n_s_send, __pyx_k_send, sizeof(__pyx_k_send), 0, 0, 1, 1},
   {&__pyx_n_s_set_attribute, __pyx_k_set_attribute, sizeof(__pyx_k_set_attribute), 0, 0, 1, 1},
@@ -17227,14 +17227,14 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "graphbrain/memory/leveldb.pyx":141
  *         self._set_attribute(edge, 'p', 1 if value else 0)
  * 
- *     def _pattern2edges(self, pattern):             # <<<<<<<<<<<<<<
+ *     def _search(self, pattern):             # <<<<<<<<<<<<<<
  *         nodes = []
  *         positions = []
  */
   __pyx_tuple__50 = PyTuple_Pack(16, __pyx_n_s_self, __pyx_n_s_pattern, __pyx_n_s_nodes, __pyx_n_s_positions, __pyx_n_s_i, __pyx_n_s_node, __pyx_n_s_start_str, __pyx_n_s_end_str, __pyx_n_s_start_key, __pyx_n_s_end_key, __pyx_n_s_key, __pyx_n_s_value, __pyx_n_s_perm_str, __pyx_n_s_tokens, __pyx_n_s_nper, __pyx_n_s_edge); if (unlikely(!__pyx_tuple__50)) __PYX_ERR(0, 141, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__50);
   __Pyx_GIVEREF(__pyx_tuple__50);
-  __pyx_codeobj__7 = (PyObject*)__Pyx_PyCode_New(2, 0, 16, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__50, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_memory_leveldb_pyx, __pyx_n_s_pattern2edges, 141, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__7)) __PYX_ERR(0, 141, __pyx_L1_error)
+  __pyx_codeobj__7 = (PyObject*)__Pyx_PyCode_New(2, 0, 16, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__50, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_graphbrain_memory_leveldb_pyx, __pyx_n_s_search, 141, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__7)) __PYX_ERR(0, 141, __pyx_L1_error)
 
   /* "graphbrain/memory/leveldb.pyx":164
  *                     yield edge
@@ -17708,14 +17708,14 @@ static int __Pyx_modinit_type_init_code(void) {
     __pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_1_all_attributes.tp_getattro = __Pyx_PyObject_GenericGetAttrNoDict;
   }
   __pyx_ptype_10graphbrain_6memory_7leveldb___pyx_scope_struct_1_all_attributes = &__pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_1_all_attributes;
-  if (PyType_Ready(&__pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges) < 0) __PYX_ERR(0, 141, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search) < 0) __PYX_ERR(0, 141, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
-  __pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges.tp_print = 0;
+  __pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search.tp_print = 0;
   #endif
-  if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges.tp_dictoffset && __pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges.tp_getattro == PyObject_GenericGetAttr)) {
-    __pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges.tp_getattro = __Pyx_PyObject_GenericGetAttrNoDict;
+  if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search.tp_dictoffset && __pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search.tp_getattro == PyObject_GenericGetAttr)) {
+    __pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search.tp_getattro = __Pyx_PyObject_GenericGetAttrNoDict;
   }
-  __pyx_ptype_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges = &__pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__pattern2edges;
+  __pyx_ptype_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search = &__pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_2__search;
   if (PyType_Ready(&__pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_3__star) < 0) __PYX_ERR(0, 164, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
   __pyx_type_10graphbrain_6memory_7leveldb___pyx_scope_struct_3__star.tp_print = 0;
@@ -18275,13 +18275,13 @@ if (!__Pyx_RefNanny) {
   /* "graphbrain/memory/leveldb.pyx":141
  *         self._set_attribute(edge, 'p', 1 if value else 0)
  * 
- *     def _pattern2edges(self, pattern):             # <<<<<<<<<<<<<<
+ *     def _search(self, pattern):             # <<<<<<<<<<<<<<
  *         nodes = []
  *         positions = []
  */
-  __pyx_t_4 = __Pyx_CyFunction_NewEx(&__pyx_mdef_10graphbrain_6memory_7leveldb_7LevelDB_33_pattern2edges, 0, __pyx_n_s_LevelDB__pattern2edges, NULL, __pyx_n_s_graphbrain_memory_leveldb, __pyx_d, ((PyObject *)__pyx_codeobj__7)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 141, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_CyFunction_NewEx(&__pyx_mdef_10graphbrain_6memory_7leveldb_7LevelDB_33_search, 0, __pyx_n_s_LevelDB__search, NULL, __pyx_n_s_graphbrain_memory_leveldb, __pyx_d, ((PyObject *)__pyx_codeobj__7)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 141, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (__Pyx_SetNameInClass(__pyx_t_3, __pyx_n_s_pattern2edges, __pyx_t_4) < 0) __PYX_ERR(0, 141, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_3, __pyx_n_s_search, __pyx_t_4) < 0) __PYX_ERR(0, 141, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
   /* "graphbrain/memory/leveldb.pyx":164

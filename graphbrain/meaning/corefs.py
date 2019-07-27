@@ -34,7 +34,7 @@ def _update_main_coref(hg, edge):
 
     coref_edge = hedge((main_coref_pred, cref_id, best_coref))
     if not hg.exists(coref_edge):
-        old = set(hg.pat2edges('({} {} *)'.format(main_coref_pred, cref_id)))
+        old = set(hg.search('({} {} *)'.format(main_coref_pred, cref_id)))
         for old_edge in old:
             hg.remove(old_edge)
         hg.add(coref_edge, primary=False)
@@ -75,7 +75,7 @@ def main_coref(hg, edge):
     cref_id = coref_id(hg, edge)
     if cref_id is None:
         return edge
-    for coref_edge in hg.pat2edges('({} {} *)'.format(main_coref_pred,
+    for coref_edge in hg.search('({} {} *)'.format(main_coref_pred,
                                                       cref_id)):
         return coref_edge[2]
     return None

@@ -111,7 +111,7 @@ class Hypergraph(object):
         """
         self._set_primary(edge, value)
 
-    def pat2edges(self, pattern):
+    def search(self, pattern):
         """Returns generator for all the edges that match a pattern.
 
         Patterns are themselves edges. They can match families of edges
@@ -137,7 +137,7 @@ class Hypergraph(object):
         elif type(pattern) == str:
             edge = hedge(pattern)
             if not edge.is_atom():
-                return self.pat2edges(edge)
+                return self.search(edge)
             else:
                 if self.exists(edge):
                     return (edge,)
@@ -147,7 +147,7 @@ class Hypergraph(object):
             if (pattern.is_full_pattern()):
                 return self.all()
             else:
-                return self._pattern2edges(pattern)
+                return self._search(pattern)
 
     def star(self, center, limit=None):
         """Returns generator of the edges that contain the center.
@@ -231,7 +231,7 @@ class Hypergraph(object):
 
     def remove_by_pattern(self, pattern):
         """Removes all edges that match the pattern."""
-        edges = self.pat2edges(pattern)
+        edges = self.search(pattern)
         for edge in edges:
             self.remove(edge)
 
@@ -254,7 +254,7 @@ class Hypergraph(object):
     def _set_primary(self, edge, value):
         raise NotImplementedError()
 
-    def _pattern2edges(self, pattern):
+    def _search(self, pattern):
         raise NotImplementedError()
 
     def _star(self, center, limit=None):

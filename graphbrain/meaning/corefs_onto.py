@@ -9,7 +9,7 @@ def lemma_degrees(hg, edge):
         roots = {edge.root()}
 
         # find lemma
-        for edge in hg.pat2edges(hedge((const.lemma_pred, edge, '*'))):
+        for edge in hg.search(hedge((const.lemma_pred, edge, '*'))):
             roots.add(edge[2].root())
 
         # compute degrees

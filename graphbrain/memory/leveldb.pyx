@@ -138,7 +138,7 @@ class LevelDB(Hypergraph):
     def _set_primary(self, edge, value):
         self._set_attribute(edge, 'p', 1 if value else 0)
 
-    def _pattern2edges(self, pattern):
+    def _search(self, pattern):
         nodes = []
         positions = []
         for i, node in enumerate(pattern):

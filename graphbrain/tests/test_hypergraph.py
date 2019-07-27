@@ -141,54 +141,54 @@ class TestHypergraph(unittest.TestCase):
         self.assertFalse(self.hg.exists(hedge('(src graphbrain/1 '
                                               '(size graphbrain/1 7))')))
 
-    def test_pat2edges(self):
+    def test_search(self):
         self.hg.destroy()
         self.hg.add('(is/pd graphbrain/cp great/c)')
         self.hg.add('(says/pd mary/cp)')
         self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c))')
         self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c) extra/c)')
-        self.assertEqual(list(self.hg.pat2edges('(* graphbrain/cp *)')),
+        self.assertEqual(list(self.hg.search('(* graphbrain/cp *)')),
                          [hedge('(is/pd graphbrain/cp great/c)')])
-        self.assertEqual(list(self.hg.pat2edges('(is/pd graphbrain/cp *)')),
+        self.assertEqual(list(self.hg.search('(is/pd graphbrain/cp *)')),
                          [hedge('(is/pd graphbrain/cp great/c)')])
-        self.assertEqual(list(self.hg.pat2edges('(x * *)')), [])
+        self.assertEqual(list(self.hg.search('(x * *)')), [])
         self.assertEqual(
             list(
-                self.hg.pat2edges('(says/pd * '
+                self.hg.search('(says/pd * '
                                   '(is/pd graphbrain/cp great/c))')),
             [hedge('(says/pd mary/cp (is/pd graphbrain/cp great/c))')])
         self.assertEqual(
             list(
-                self.hg.pat2edges('(says/pd * (is/pd * *))')),
+                self.hg.search('(says/pd * (is/pd * *))')),
             [hedge('(says/pd mary/cp (is/pd graphbrain/cp great/c))')])
 
-    def test_pat2edges_open_ended(self):
+    def test_search_open_ended(self):
         self.hg.destroy()
         self.hg.add('(is/pd graphbrain/cp great/c)')
         self.hg.add('(says/pd mary/cp)')
         self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c))')
         self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c) extra/c)')
-        self.assertEqual(list(self.hg.pat2edges('(* graphbrain/cp * ...)')),
+        self.assertEqual(list(self.hg.search('(* graphbrain/cp * ...)')),
                          [hedge('(is/pd graphbrain/cp great/c)')])
         self.assertEqual(
-            list(self.hg.pat2edges('(is/pd graphbrain/cp * ...)')),
+            list(self.hg.search('(is/pd graphbrain/cp * ...)')),
             [hedge('(is/pd graphbrain/cp great/c)')])
-        self.assertEqual(list(self.hg.pat2edges('(x * * ...)')), [])
+        self.assertEqual(list(self.hg.search('(x * * ...)')), [])
 
         self.assertEqual(
             list(
-                self.hg.pat2edges(
+                self.hg.search(
                     '(says/pd * (is/pd graphbrain/cp great/c) ...)')),
             [hedge('(says/pd mary/cp (is/pd graphbrain/cp great/c))'),
              hedge('(says/pd mary/cp (is/pd graphbrain/cp great/c) extra/c)')])
 
-    def test_pat2edges_star(self):
+    def test_search_star(self):
         self.hg.destroy()
         self.hg.add('(is/pd graphbrain/cp great/c)')
         self.hg.add('(says/pd mary/cp)')
         self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c))')
         self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c) extra/c)')
-        self.assertEqual(set(self.hg.pat2edges('*')),
+        self.assertEqual(set(self.hg.search('*')),
                          {hedge('(is/pd graphbrain/cp great/c)'),
                           hedge('(says/pd mary/cp)'),
                           hedge('(says/pd mary/cp '
@@ -199,24 +199,24 @@ class TestHypergraph(unittest.TestCase):
                           hedge('great/c'), hedge('is/pd'), hedge('mary/cp'),
                           hedge('says/pd')})
 
-    def test_pat2edges_at(self):
+    def test_search_at(self):
         self.hg.destroy()
         self.hg.add('(is/pd graphbrain/cp great/c)')
         self.hg.add('(says/pd mary/cp)')
         self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c))')
         self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c) extra/c)')
-        self.assertEqual(list(self.hg.pat2edges('@')),
+        self.assertEqual(list(self.hg.search('@')),
                          [hedge('extra/c'), hedge('graphbrain/cp'),
                           hedge('great/c'), hedge('is/pd'), hedge('mary/cp'),
                           hedge('says/pd')])
 
-    def test_pat2edges_amp(self):
+    def test_search_amp(self):
         self.hg.destroy()
         self.hg.add('(is/pd graphbrain/cp great/c)')
         self.hg.add('(says/pd mary/cp)')
         self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c))')
         self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c) extra/c)')
-        self.assertEqual(set(self.hg.pat2edges('&')),
+        self.assertEqual(set(self.hg.search('&')),
                          {hedge('(is/pd graphbrain/cp great/c)'),
                           hedge('(says/pd mary/cp)'),
                           hedge('(says/pd mary/cp '
@@ -224,29 +224,29 @@ class TestHypergraph(unittest.TestCase):
                           hedge('(says/pd mary/cp '
                                 '(is/pd graphbrain/cp great/c) extra/c)')})
 
-    def test_pat2edges_non_atomic_pred(self):
+    def test_search_non_atomic_pred(self):
         self.hg.destroy()
         edge = hedge('((is/a playing/pd.so ) mary/cp.s '
                      '(a/md ((very/w old/ma) violin/cn.s)))')
         self.hg.add(edge)
-        self.assertEqual(list(self.hg.pat2edges('((is/a playing/pd.so) ...)')),
+        self.assertEqual(list(self.hg.search('((is/a playing/pd.so) ...)')),
                          [edge])
-        self.assertEqual(list(self.hg.pat2edges('((is/a playing/pd.so) * *)')),
+        self.assertEqual(list(self.hg.search('((is/a playing/pd.so) * *)')),
                          [edge])
-        self.assertEqual(list(self.hg.pat2edges('((is/a playing/pd.so) @ &)')),
+        self.assertEqual(list(self.hg.search('((is/a playing/pd.so) @ &)')),
                          [edge])
-        self.assertEqual(list(self.hg.pat2edges('((is/a playing/pd.so) @ @)')),
+        self.assertEqual(list(self.hg.search('((is/a playing/pd.so) @ @)')),
                          [])
-        self.assertEqual(list(self.hg.pat2edges('((is/a playing/pd.so) & &)')),
+        self.assertEqual(list(self.hg.search('((is/a playing/pd.so) & &)')),
                          [])
-        self.assertEqual(list(self.hg.pat2edges('(* mary/cp.s *)')),
+        self.assertEqual(list(self.hg.search('(* mary/cp.s *)')),
                          [edge])
-        self.assertEqual(list(self.hg.pat2edges('(mary/cp.s * *)')),
+        self.assertEqual(list(self.hg.search('(mary/cp.s * *)')),
                          [])
-        self.assertEqual(list(self.hg.pat2edges('(* * (a/md ((very/w old/ma) '
+        self.assertEqual(list(self.hg.search('(* * (a/md ((very/w old/ma) '
                                                 'violin/cn.s)))')),
                          [edge])
-        self.assertEqual(list(self.hg.pat2edges('((a/md ((very/w old/ma) '
+        self.assertEqual(list(self.hg.search('((a/md ((very/w old/ma) '
                                                 'violin/cn.s)) * *)')),
                          [])
 
@@ -416,7 +416,7 @@ class TestHypergraph(unittest.TestCase):
         self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c))')
         self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c) extra/c)')
         self.assertEqual(
-            set(self.hg.pat2edges('(says/pd * '
+            set(self.hg.search('(says/pd * '
                                   '(is/pd graphbrain/cp great/c))')),
             {hedge('(says/pd mary/cp (is/pd graphbrain/cp great/c))')})
         self.hg.remove_by_pattern('(says/pd * *)')
