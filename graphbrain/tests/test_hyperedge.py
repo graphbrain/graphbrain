@@ -148,6 +148,70 @@ class TestHyperedge(unittest.TestCase):
                           hedge('great/1'), hedge('(super great/1)'),
                           hedge('(is graphbrain/1 (super great/1))')})
 
+    def test_match_pattern_simple(self):
+        self.assertEqual(match_pattern('(a b)', '(a b)'), {})
+        self.assertEqual(match_pattern('(a b)', '(a a)'), None)
+
+    def test_match_pattern_wildcard(self):
+        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s great/c)',
+                                       '(is/pd.sc graphbrain/cp.s *x)'),
+                         {'x': hedge('great/c')})
+        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s great/c)',
+                                       '(is/pd.sc graphbrain/cp.s *)'),
+                         {})
+        self.assertEqual(match_pattern('(was/pd.sc graphbrain /cp.s great/c)',
+                                       '(is/pd.sc graphbrain/cp.s *x)'),
+                         None)
+
+    def test_match_pattern_atomic_wildcard(self):
+        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s great/c)',
+                                       '(is/pd.sc graphbrain/cp.s @prop)'),
+                         {'prop': hedge('great/c')})
+        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s great/c)',
+                                       '(is/pd.sc graphbrain/cp.s @)'),
+                         {})
+        self.assertEqual(match_pattern('(was/pd.sc graphbrain/cp.s great/c)',
+                                       '(is/pd.sc graphbrain/cp.s @prop)'),
+                         None)
+        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s '
+                                       '(fairly/m great/c))',
+                                       '(is/pd.sc graphbrain/cp.s @prop)'),
+                         None)
+
+    def test_match_pattern_non_atomic_wildcard(self):
+        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s '
+                                       '(fairly/m great/c))',
+                                       '(is/pd.sc graphbrain/cp.s &prop)'),
+                         {'prop': hedge('(fairly/m great/c)')})
+        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s '
+                                       '(fairly/m great/c))',
+                                       '(is/pd.sc graphbrain/cp.s &)'),
+                         {})
+        self.assertEqual(match_pattern('(was/pd.sc graphbrain/cp.s '
+                                       '(fairly/m great/c))',
+                                       '(is/pd.sc graphbrain/cp.s &prop)'),
+                         None)
+        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s great/c)',
+                                       '(is/pd.sc graphbrain/cp.s &prop)'),
+                         None)
+
+    def test_match_pattern_open_ended(self):
+        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s great/c)',
+                                       '(is/pd.sc graphbrain/cp.s *x ...)'),
+                         {'x': hedge('great/c')})
+        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s great/c)',
+                                       '(is/pd.sc graphbrain/cp.s * ...)'),
+                         {})
+        self.assertEqual(match_pattern('(was/pd.sc graphbrain /cp.s great/c)',
+                                       '(is/pd.sc graphbrain/cp.s *x ...)'),
+                         None)
+        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s great/c)',
+                                       '(is/pd.sc @obj ...)'),
+                         {'obj': hedge('graphbrain/cp.s')})
+        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s great/c)',
+                                       '(is/pd.sc @obj)'),
+                         None)
+
     def test_edge_matches_pattern_simple(self):
         self.assertTrue(edge_matches_pattern(hedge('(a b)'), '(a b)'))
         self.assertFalse(edge_matches_pattern(hedge('(a b)'), '(a a)'))

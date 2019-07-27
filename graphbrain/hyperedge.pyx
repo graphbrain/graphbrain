@@ -92,6 +92,87 @@ def edges2str(edges, roots_only=False):
     return ' '.join(edges_strings)
 
 
+def match_pattern(edge, pattern):
+    """Matches an edge to a pattern. This means that, if the edge fits the
+    pattern, then a dictionary will be returned with the values for each
+    pattern variable. If the pattern specifies no variables but the edge
+    matches it, then an empty dictionary is returned. If the edge does
+    not match the pattern, None is returned.
+
+    Patterns are themselves edges. They can match families of edges
+    by employing special atoms:
+        -> '*' represents a general wildcard (matches any entity)
+        -> '@' represents an atomic wildcard (matches any atom)
+        -> '&' represents an edge wildcard (matches any edge)
+        -> '...' at the end indicates an open-ended pattern.
+
+    The three wildcards ('*', '@' and '&') can be used to specify variables,
+    for example '*x', '&claim' or '@actor'. In case of a match, these
+    variables are assigned the hyperedge they correspond to. For example,
+
+    1) the edge: (is/pd (my/mp name/cn) mary/cp)
+       applied to the pattern: (is/pd (my/mp name/cn) *name)
+       produces the result: {'name', mary/cp}
+
+    2) the edge: (is/pd (my/mp name/cn) mary/cp)
+       applied to the pattern: (is/pd (my/mp name/cn) &name)
+       produces the result: {}
+
+    3) the edge: (is/pd (my/mp name/cn) mary/cp)
+       applied to the pattern: (is/pd @ *name)
+       produces the result: None
+    """
+
+    edge = hedge(edge)
+    pattern = hedge(pattern)
+
+    # open ended?
+    if pattern[-1].to_str() == '...':
+        pattern = pattern[:-1]
+        if len(edge) < len(pattern):
+            return None
+    else:
+        if len(edge) != len(pattern):
+            return None
+
+    vars = {}
+    for i, pitem in enumerate(pattern):
+        eitem = edge[i]
+        if pitem.is_atom():
+            if len(pitem.parts()) == 1:
+                pitem_str = pitem.to_str()
+                if pitem_str[0] == '@':
+                    if eitem.is_atom():
+                        if len(pitem_str) > 1:
+                            vars[pitem_str[1:]] = eitem
+                    else:
+                        return None
+                elif pitem_str[0] == '&':
+                    if eitem.is_atom():
+                        return None
+                    else:
+                        if len(pitem_str) > 1:
+                            vars[pitem_str[1:]] = eitem
+                elif pitem_str[0] == '*':
+                    if len(pitem_str) > 1:
+                        vars[pitem_str[1:]] = eitem
+                else:
+                    if eitem != pitem:
+                        return None
+            elif eitem != pitem:
+                return None
+        else:
+            if eitem.is_atom():
+                return None
+            else:
+                sub_vars = match_pattern(eitem, pitem)
+                if sub_vars:
+                    vars = {**vars, **sub_vars}
+                elif type(sub_vars) != dict:
+                    return None
+    return vars
+
+
 def edge_matches_pattern(edge, pattern):
     """Check if an edge matches a pattern.
 
@@ -102,53 +183,11 @@ def edge_matches_pattern(edge, pattern):
         -> '&' represents an edge wildcard (matches any edge)
         -> '...' at the end indicates an open-ended pattern.
 
-    The pattern can be a valid edge.
-    Examples: ('is/pd', 'graphbrain/c', '@')
-              ('says/pd', '*', '...')
-
-    The pattern can be a string, that must represent an edge.
-    Examples: '(is/pd graphbrain/c @)'
-              '(says/pd * ...)'
+    The pattern can be any valid hyperedge, including the above special atoms.
+    Examples: (is/pd graphbrain/c @)
+              (says/pd * ...)
     """
-
-    # if pattern is string, convert to edge and make recursive call.
-    if type(pattern) == str:
-        pedge = hedge(pattern)
-        if pedge.is_atom():
-            # TODO: error or warning?
-            return False
-        else:
-            return edge_matches_pattern(edge, pedge)
-    else:
-        # open ended?
-        if pattern[-1].to_str() == '...':
-            pattern = pattern[:-1]
-            if len(edge) < len(pattern):
-                return False
-        else:
-            if len(edge) != len(pattern):
-                return False
-
-        for i, pitem in enumerate(pattern):
-            eitem = edge[i]
-            if pitem.is_atom():
-                pitem_str = pitem.to_str()
-                if pitem_str == '@':
-                    if not eitem.is_atom():
-                        return False
-                elif pitem_str == '&':
-                    if eitem.is_atom():
-                        return False
-                elif pitem_str != '*':
-                    if eitem != pitem:
-                        return False
-            else:
-                if eitem.is_atom():
-                    return False
-                else:
-                    if not edge_matches_pattern(eitem, pitem):
-                        return False
-        return True
+    return match_pattern(edge, pattern) is not None
 
 
 def rel_arg_role(relation, position):
@@ -706,7 +745,7 @@ class Atom(Hyperedge):
         Pattern matchers are:
         '*', '@', '&'' and '...'
         """
-        return self[0] in {'*', '@', '&', '...'}
+        return self[0][0] in {'*', '@', '&'} or self[0] == '...'
 
     def is_full_pattern(self):
         """Check if every atom is a pattern matcher.
