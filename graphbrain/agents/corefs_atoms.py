@@ -1,16 +1,25 @@
-import progressbar
 from unidecode import unidecode
 from graphbrain import *
 from graphbrain.meaning.corefs import make_corefs
 
 
-def generate(hg):
-    count = 0
-    print('processing atoms')
-    atom_count = hg.atom_count()
-    i = 0
-    with progressbar.ProgressBar(max_value=atom_count) as bar:
-        for atom in hg.all_atoms():
+class CorefsAtoms(Agent):
+    def __init__(self, hg):
+        super().__init__(hg)
+        self.corefs = 0
+
+    def name(self):
+        return 'corefs_atoms'
+
+    def languages(self):
+        return set()
+
+    def start(self):
+        self.corefs = 0
+
+    def input_edge(self, edge):
+        if edge.is_atom():
+            atom = edge
             label = atom.root()
             label = label.replace('_', '')
             label = unidecode(label)
@@ -19,8 +28,7 @@ def generate(hg):
                 coref_atom = hedge('/'.join(parts))
                 if hg.exists(coref_atom):
                     make_corefs(hg, atom, coref_atom)
-                    count += 1
-            if i < atom_count:
-                i += 1
-                bar.update(i)
-    return count
+                    self.corefs += 1
+
+    def report(self):
+        return '{} coreferences were added.'.format(str(self.corefs))

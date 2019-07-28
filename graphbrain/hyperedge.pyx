@@ -127,7 +127,7 @@ def match_pattern(edge, pattern):
     pattern = hedge(pattern)
 
     # open ended?
-    if pattern[-1].to_str() == '...':
+    if not pattern.is_atom() and pattern[-1].to_str() == '...':
         pattern = pattern[:-1]
         if len(edge) < len(pattern):
             return None

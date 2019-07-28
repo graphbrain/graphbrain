@@ -76,7 +76,7 @@ def main_coref(hg, edge):
     if cref_id is None:
         return edge
     for coref_edge in hg.search('({} {} *)'.format(main_coref_pred,
-                                                      cref_id)):
+                                                   cref_id)):
         return coref_edge[2]
     return None
 
@@ -112,3 +112,11 @@ def make_corefs(hg, edge1, edge2):
 
     if update:
         _update_main_coref(hg, edge1)
+
+
+def coref_degree(hg, coref):
+    return sum([hg.degree(edge) for edge in coref])
+
+
+def coref_deep_degree(hg, coref):
+    return sum([hg.deep_degree(edge) for edge in coref])

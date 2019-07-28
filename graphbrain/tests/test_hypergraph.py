@@ -155,7 +155,7 @@ class TestHypergraph(unittest.TestCase):
         self.assertEqual(
             list(
                 self.hg.search('(says/pd * '
-                                  '(is/pd graphbrain/cp great/c))')),
+                               '(is/pd graphbrain/cp great/c))')),
             [hedge('(says/pd mary/cp (is/pd graphbrain/cp great/c))')])
         self.assertEqual(
             list(
@@ -244,10 +244,10 @@ class TestHypergraph(unittest.TestCase):
         self.assertEqual(list(self.hg.search('(mary/cp.s * *)')),
                          [])
         self.assertEqual(list(self.hg.search('(* * (a/md ((very/w old/ma) '
-                                                'violin/cn.s)))')),
+                                             'violin/cn.s)))')),
                          [edge])
         self.assertEqual(list(self.hg.search('((a/md ((very/w old/ma) '
-                                                'violin/cn.s)) * *)')),
+                                             'violin/cn.s)) * *)')),
                          [])
 
     def test_star(self):

@@ -65,7 +65,7 @@ class Hypergraph(object):
 
     def exists(self, edge):
         """Checks if the given edge exists."""
-        return self._exists(edge)
+        return self._exists(hedge(edge))
 
     def add(self, edge, primary=True):
         """Adds an edge if it does not exist yet, returns same edge.
@@ -99,17 +99,17 @@ class Hypergraph(object):
         Keyword argument:
         deep -- recursively remove all subedges (default False)
         """
-        self._remove(edge, deep=deep)
+        self._remove(hedge(edge), deep=deep)
 
     def is_primary(self, edge):
         """Check if an edge is primary."""
-        return self._is_primary(edge)
+        return self._is_primary(hedge(edge))
 
     def set_primary(self, edge, value):
         """Make edge primary if value is True, make it non-primary
         otherwise.
         """
-        self._set_primary(edge, value)
+        self._set_primary(hedge(edge), value)
 
     def search(self, pattern):
         """Returns generator for all the edges that match a pattern.
@@ -128,26 +128,20 @@ class Hypergraph(object):
         Atomic patterns can also be used to match all edges in the
         hypergraph (*), all atoms (@), and all non-atoms (&).
         """
-        if pattern == '*':
-            return self.all()
-        elif pattern == '@':
-            return self.all_atoms()
-        elif pattern == '&':
-            return self.all_non_atoms()
-        elif type(pattern) == str:
-            edge = hedge(pattern)
-            if not edge.is_atom():
-                return self.search(edge)
-            else:
-                if self.exists(edge):
-                    return (edge,)
-                else:
-                    return ()
-        else:
-            if (pattern.is_full_pattern()):
+        pattern = hedge(pattern)
+
+        if pattern.is_atom():
+            if pattern[0][0] == '*':
                 return self.all()
-            else:
-                return self._search(pattern)
+            elif pattern[0][0] == '@':
+                return self.all_atoms()
+            elif pattern[0][0] == '&':
+                return self.all_non_atoms()
+
+        if pattern.is_full_pattern():
+            return self.all()
+        else:
+            return self._search(pattern)
 
     def star(self, center, limit=None):
         """Returns generator of the edges that contain the center.
@@ -155,7 +149,7 @@ class Hypergraph(object):
         Keyword argument:
         deep -- recursively add all edges (default False)
         """
-        return self._star(center, limit=limit)
+        return self._star(hedge(center), limit=limit)
 
     def atoms_with_root(self, root):
         """Returns generator of all atoms with the given root."""
@@ -175,15 +169,15 @@ class Hypergraph(object):
 
     def set_attribute(self, edge, attribute, value):
         """Sets the value of an attribute."""
-        return self._set_attribute(edge, attribute, value)
+        return self._set_attribute(hedge(edge), attribute, value)
 
     def inc_attribute(self, edge, attribute):
         """Increments an attribute of an entity."""
-        return self._inc_attribute(edge, attribute)
+        return self._inc_attribute(hedge(edge), attribute)
 
     def dec_attribute(self, edge, attribute):
         """Increments an attribute of an entity."""
-        return self._dec_attribute(edge, attribute)
+        return self._dec_attribute(hedge(edge), attribute)
 
     def get_str_attribute(self, edge, attribute, or_else=None):
         """Returns attribute as string.
@@ -192,7 +186,7 @@ class Hypergraph(object):
         or_else -- value to return if the entity does not have
                    the give attribute. (default None)
         """
-        return self._get_str_attribute(edge, attribute, or_else=or_else)
+        return self._get_str_attribute(hedge(edge), attribute, or_else=or_else)
 
     def get_int_attribute(self, edge, attribute, or_else=None):
         """Returns attribute as integer value.
@@ -200,7 +194,7 @@ class Hypergraph(object):
         or_else -- value to return if the entity does not have
                    the give attribute. (default None)
         """
-        return self._get_int_attribute(edge, attribute, or_else=or_else)
+        return self._get_int_attribute(hedge(edge), attribute, or_else=or_else)
 
     def get_float_attribute(self, edge, attribute, or_else=None):
         """Returns attribute as float value.
@@ -208,15 +202,16 @@ class Hypergraph(object):
         or_else -- value to return if the entity does not have
                    the give attribute. (default None)
         """
-        return self._get_float_attribute(edge, attribute, or_else=or_else)
+        return self._get_float_attribute(hedge(edge), attribute,
+                                         or_else=or_else)
 
     def degree(self, edge):
         """Returns the degree of an entity."""
-        return self._degree(edge)
+        return self._degree(hedge(edge))
 
     def deep_degree(self, edge):
         """Returns the deep degree of an entity."""
-        return self._deep_degree(edge)
+        return self._deep_degree(hedge(edge))
 
     def ego(self, center):
         """Returns all atoms directly connected to center
@@ -234,6 +229,37 @@ class Hypergraph(object):
         edges = self.search(pattern)
         for edge in edges:
             self.remove(edge)
+
+    def lemma_degrees(self, edge):
+        """TODO: document and test"""
+        if edge.is_atom():
+            roots = {edge.root()}
+
+            # find lemma
+            for edge in self.search((const.lemma_pred, edge, '*')):
+                roots.add(edge[2].root())
+
+            # compute degrees
+            d = 0
+            dd = 0
+            for r in roots:
+                atoms = set(self.atoms_with_root(r))
+                d += sum([self.degree(atom) for atom in atoms])
+                dd += sum([self.deep_degree(atom) for atom in atoms])
+
+            return d, dd
+        else:
+            return self.degree(edge), self.deep_degree(edge)
+
+    def root_degrees(self, edge):
+        """TODO: document and test"""
+        if edge.is_atom():
+            atoms = self.atoms_with_root(edge.root())
+            d = sum([self.degree(atom) for atom in atoms])
+            dd = sum([self.deep_degree(atom) for atom in atoms])
+            return d, dd
+        else:
+            return self.degree(edge), self.deep_degree(edge)
 
     # ==============================================================
     # Private abstract methods, to be implemented in derived classes

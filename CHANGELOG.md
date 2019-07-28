@@ -6,6 +6,7 @@
 - Hyperedges have their own class, deriving from tuple.
 - Atoms have a special class, deriving from Hyperedge.
 - Restructuring of code files tree.
+- Created agent system + first agents.
 
 ### Changed
 - Parsers now have own package.
