@@ -251,40 +251,57 @@ def nest_predicate(inner, outer, before):
 
 
 def _verb_features(token):
-        verb_form = '-'
-        tense = '-'
-        aspect = '-'
-        mood = '-'
-        person = '-'
-        number = '-'
+    verb_form = '-'
+    tense = '-'
+    aspect = '-'
+    mood = '-'
+    person = '-'
+    number = '-'
 
-        if token.tag_ == 'VB':
-            verb_form = 'i'  # infinitive
-        elif token.tag_ == 'VBD':
-            verb_form = 'f'  # finite
-            tense = '<'  # past
-        elif token.tag_ == 'VBG':
-            verb_form = 'p'  # participle
-            tense = '|'  # present
-            aspect = 'g'  # progressive
-        elif token.tag_ == 'VBN':
-            verb_form = 'p'  # participle
-            tense = '<'  # past
-            aspect = 'f'  # perfect
-        elif token.tag_ == 'VBP':
-            verb_form = 'f'  # finite
-            tense = '|'  # present
-        elif token.tag_ == 'VBZ':
-            verb_form = 'f'  # finite
-            tense = '|'  # present
-            number = 's'  # singular
-            person = '3'  # third person
+    if token.tag_ == 'VB':
+        verb_form = 'i'  # infinitive
+    elif token.tag_ == 'VBD':
+        verb_form = 'f'  # finite
+        tense = '<'  # past
+    elif token.tag_ == 'VBG':
+        verb_form = 'p'  # participle
+        tense = '|'  # present
+        aspect = 'g'  # progressive
+    elif token.tag_ == 'VBN':
+        verb_form = 'p'  # participle
+        tense = '<'  # past
+        aspect = 'f'  # perfect
+    elif token.tag_ == 'VBP':
+        verb_form = 'f'  # finite
+        tense = '|'  # present
+    elif token.tag_ == 'VBZ':
+        verb_form = 'f'  # finite
+        tense = '|'  # present
+        number = 's'  # singular
+        person = '3'  # third person
 
-        features = (tense, verb_form, aspect, mood, person, number)
-        return ''.join(features)
+    features = (tense, verb_form, aspect, mood, person, number)
+    return ''.join(features)
 
 
-def _build_atom_predicate(token, ent_type, ps):
+# example:
+# applying (and/b+ bank/cm (credit/cn.s card/cn.s)) to records/cn.p
+# yields:
+# (and/b+
+#     (+/b.am bank/c records/cn.p)
+#     (+/b.am (credit/cn.s card/cn.s) records/cn.p))
+def _apply_aux_concept_list_to_concept(con_list, concept):
+    concepts = tuple([('+/b.am', item, concept) for item in con_list[1:]])
+    return hedge((con_list[0],) + concepts)
+
+
+class ParserEN(Parser):
+    def __init__(self, lemmas=False):
+        super().__init__(lemmas=lemmas)
+        self.lang = 'en'
+        self.nlp = spacy.load('en_core_web_lg')
+
+    def _build_atom_predicate(self, token, ent_type, ps):
         text = token.text.lower()
         et = ent_type
 
@@ -319,10 +336,9 @@ def _build_atom_predicate(token, ent_type, ps):
 
         et = '{}.{}.{}'.format(ent_type, verb_features, args_string)
 
-        return build_atom(text, et)
+        return build_atom(text, et, self.lang)
 
-
-def _build_atom_subpredicate(token, ent_type):
+    def _build_atom_subpredicate(self, token, ent_type):
         text = token.text.lower()
         et = ent_type
 
@@ -331,10 +347,9 @@ def _build_atom_subpredicate(token, ent_type):
             verb_features = _verb_features(token)
             et = 'xv.{}'.format(verb_features)
 
-        return build_atom(text, et)
+        return build_atom(text, et, self.lang)
 
-
-def _build_atom_auxiliary(token, ent_type):
+    def _build_atom_auxiliary(self, token, ent_type):
         text = token.text.lower()
         et = ent_type
 
@@ -355,25 +370,7 @@ def _build_atom_auxiliary(token, ent_type):
         elif token.tag_ == 'EX':
             et = 'ae'  # existential
 
-        return build_atom(text, et)
-
-
-# example:
-# applying (and/b+ bank/cm (credit/cn.s card/cn.s)) to records/cn.p
-# yields:
-# (and/b+
-#     (+/b.am bank/c records/cn.p)
-#     (+/b.am (credit/cn.s card/cn.s) records/cn.p))
-def _apply_aux_concept_list_to_concept(con_list, concept):
-    concepts = tuple([('+/b.am', item, concept) for item in con_list[1:]])
-    return hedge((con_list[0],) + concepts)
-
-
-class ParserEN(Parser):
-    def __init__(self, lemmas=False):
-        super().__init__(lemmas=lemmas)
-        self.lang = 'en'
-        self.nlp = spacy.load('en_core_web_lg')
+        return build_atom(text, et, self.lang)
 
     def _concept_role(self, concept):
         if concept.is_atom():
@@ -517,13 +514,13 @@ class ParserEN(Parser):
         et = ent_type
 
         if ent_type[0] == 'p' and ent_type != 'pm':
-            atom = _build_atom_predicate(token, ent_type, ps)
+            atom = self._build_atom_predicate(token, ent_type, ps)
         elif ent_type[0] == 'x':
-            atom = _build_atom_subpredicate(token, ent_type)
+            atom = self._build_atom_subpredicate(token, ent_type)
         elif ent_type[0] == 'a':
-            atom = _build_atom_auxiliary(token, ent_type)
+            atom = self._build_atom_auxiliary(token, ent_type)
         else:
-            atom = build_atom(text, et)
+            atom = build_atom(text, et, self.lang)
 
         self.atom2token[atom] = token
         return atom
@@ -531,7 +528,7 @@ class ParserEN(Parser):
     def _add_lemmas(self, token, entity, ent_type, ps):
         text = token.lemma_.lower()
         if text != token.text.lower():
-            lemma = build_atom(text, ent_type[0], '{}.lemma'.format(self.lang))
+            lemma = build_atom(text, ent_type[0], self.lang)
             lemma_edge = hedge((const.lemma_pred, entity, lemma))
             ps.extra_edges.add(lemma_edge)
 
