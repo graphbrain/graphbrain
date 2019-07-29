@@ -130,7 +130,7 @@ class Hypergraph(object):
         """
         pattern = hedge(pattern)
 
-        if pattern.is_atom():
+        if pattern.is_atom() and len(pattern.parts()) == 1:
             if pattern[0][0] == '*':
                 return self.all()
             elif pattern[0][0] == '@':

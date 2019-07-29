@@ -5,4 +5,7 @@ from graphbrain.agents import create_agent
 def run(args):
     hg = hypergraph(args.hg)
     agent = create_agent(args.agent, hg)
-    agent.run()
+    if agent is None:
+        print('ERROR: unknown agent: {}'.format(args.agent))
+    else:
+        agent.run()

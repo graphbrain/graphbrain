@@ -1,6 +1,7 @@
 from unidecode import unidecode
 from graphbrain import *
 from graphbrain.meaning.corefs import make_corefs
+from graphbrain.agents.agent import Agent
 
 
 class CorefsAtoms(Agent):
@@ -26,8 +27,8 @@ class CorefsAtoms(Agent):
             if len(label) > 0 and atom.root() != label and label[0].isalpha():
                 parts = (label,) + tuple(atom.parts()[1:])
                 coref_atom = hedge('/'.join(parts))
-                if hg.exists(coref_atom):
-                    make_corefs(hg, atom, coref_atom)
+                if self.hg.exists(coref_atom):
+                    make_corefs(self.hg, atom, coref_atom)
                     self.corefs += 1
 
     def report(self):

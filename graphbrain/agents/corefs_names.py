@@ -4,6 +4,7 @@ import progressbar
 from igraph import *
 from graphbrain import *
 from graphbrain.meaning.corefs import *
+from graphbrain.agents.agent import Agent
 
 
 def clean_edge(edge):
@@ -110,7 +111,7 @@ class CorefsNames(Agent):
         i = 0
         print('processing seeds')
         with progressbar.ProgressBar(max_value=len(self.seeds)) as bar:
-            for seed in seeds:
+            for seed in self.seeds:
                 crefs = self._corefs_from_seed(seed)
 
                 # check if the seed should be assigned to a synonym set

@@ -5,6 +5,7 @@ class Agent(object):
     def __init__(self, hg):
         self.hg = hg
         self.edges_added = 0
+        self.edges_existed = 0
 
     def name(self):
         raise NotImplementedError()
@@ -23,10 +24,14 @@ class Agent(object):
 
     def start_agent(self):
         self.edges_added = 0
+        self.edges_existed = 0
 
     def add(self, edge, primary=True):
-        self.edges_added += 1
-        return self.hg.add(edge, primary=primary)
+        if self.hg.exists(edge):
+            self.edges_existed += 1
+        else:
+            self.edges_added += 1
+            return self.hg.add(edge, primary=primary)
 
     def input(self):
         edge_count = self.hg.edge_count()
@@ -39,7 +44,9 @@ class Agent(object):
                     bar.update(i)
 
     def report(self):
-        return '{} hyperedges were added.'.format(str(self.edges_added))
+        added_s = '{} edges were added.'.format(str(self.edges_added))
+        existed_s = '{} edges already existed.'.format(str(self.edges_existed))
+        return '{}\n{}'.format(added_s, existed_s)
 
     def run(self):
         print('running agent: "{}"'.format(self.name()))

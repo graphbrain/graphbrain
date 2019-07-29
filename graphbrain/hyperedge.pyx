@@ -745,7 +745,8 @@ class Atom(Hyperedge):
         Pattern matchers are:
         '*', '@', '&'' and '...'
         """
-        return self[0][0] in {'*', '@', '&'} or self[0] == '...'
+        return (len(self.parts()) == 1 and
+                (self[0][0] in {'*', '@', '&'} or self[0] == '...'))
 
     def is_full_pattern(self):
         """Check if every atom is a pattern matcher.

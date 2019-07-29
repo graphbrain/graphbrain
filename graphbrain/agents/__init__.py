@@ -1,20 +1,20 @@
 from graphbrain.agents.claims import Claims
-from graphbrain.agents.coref_atoms import CorefAtoms
-from graphbrain.agents.coref_names import CorefNames
-from graphbrain.agents.coref_onto import CorefOnto
+from graphbrain.agents.corefs_atoms import CorefsAtoms
+from graphbrain.agents.corefs_names import CorefsNames
+from graphbrain.agents.corefs_onto import CorefsOnto
 from graphbrain.agents.taxonomy import Taxonomy
 
 
 def create_agent(name, hg):
     if name == 'claims':
         return Claims(hg)
-    elif name == 'coref_atoms':
-        return CorefAtoms(hg)
-    elif name == 'coref_names':
-        return CorefNames(hg)
-    elif name == 'coref_onto':
-        return CorefOnto(hg)
+    elif name == 'corefs_atoms':
+        return CorefsAtoms(hg)
+    elif name == 'corefs_names':
+        return CorefsNames(hg)
+    elif name == 'corefs_onto':
+        return CorefsOnto(hg)
     elif name == 'taxonomy':
         return Taxonomy(hg)
     else:
-        RuntimeError('unknown agent: %s')
+        RuntimeError('unknown agent: {}'.format(name))
