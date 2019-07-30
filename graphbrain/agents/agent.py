@@ -16,6 +16,9 @@ class Agent(object):
     def input_edge(self, edge):
         raise NotImplementedError()
 
+    def input_file(self, file_name):
+        raise NotImplementedError()
+
     def start(self):
         pass
 
@@ -48,10 +51,13 @@ class Agent(object):
         existed_s = '{} edges already existed.'.format(str(self.edges_existed))
         return '{}\n{}'.format(added_s, existed_s)
 
-    def run(self):
+    def run(self, infile=None):
         print('running agent: "{}"'.format(self.name()))
         self.start_agent()
         self.start()
-        self.input()
+        if infile:
+            self.input_file(infile)
+        else:
+            self.input()
         self.end()
         print(self.report())

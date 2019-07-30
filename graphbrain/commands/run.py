@@ -8,4 +8,4 @@ def run(args):
     if agent is None:
         print('ERROR: unknown agent: {}'.format(args.agent))
     else:
-        agent.run()
+        agent.run(infile=args.infile)
