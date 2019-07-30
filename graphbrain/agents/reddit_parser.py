@@ -81,10 +81,10 @@ class RedditParser(Agent):
         self._parse_title(post['title'], author)
 
     def input_file(self, file_name):
-        lines = file_lines(filename)
+        lines = file_lines(file_name)
         i = 0
         with progressbar.ProgressBar(max_value=lines) as bar:
-            with open(filename, 'r') as f:
+            with open(file_name, 'r') as f:
                 for line in f:
                     post = json.loads(line)
                     self._parse_post(post)
