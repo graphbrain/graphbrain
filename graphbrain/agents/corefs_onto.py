@@ -19,7 +19,7 @@ class CorefsOnto(Agent):
 
     def input_edge(self, edge):
         if edge.type()[0] == 'c':
-            subs = subtypes(self.hg, edge)
+            subs = tuple(subtypes(self.hg, edge))
 
             # check if the concept should be assigned to a synonym set
             if len(subs) > 0:

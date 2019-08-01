@@ -71,14 +71,18 @@ def coref_id(hg, edge):
     return hg.get_str_attribute(edge, coref_set_id_key)
 
 
-def main_coref(hg, edge):
-    cref_id = coref_id(hg, edge)
-    if cref_id is None:
-        return edge
+def main_coref_from_id(hg, cref_id):
     for coref_edge in hg.search('({} {} *)'.format(main_coref_pred,
                                                    cref_id)):
         return coref_edge[2]
     return None
+
+
+def main_coref(hg, edge):
+    cref_id = coref_id(hg, edge)
+    if cref_id is None:
+        return edge
+    return main_coref_from_id(hg, cref_id)
 
 
 def make_corefs(hg, edge1, edge2):

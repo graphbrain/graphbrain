@@ -147,7 +147,7 @@ class Hypergraph(object):
         """Returns generator of the edges that contain the center.
 
         Keyword argument:
-        deep -- recursively add all edges (default False)
+        limit -- maximum number of results to return, infinite if None
         """
         return self._star(hedge(center), limit=limit)
 
