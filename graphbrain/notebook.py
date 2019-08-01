@@ -103,11 +103,11 @@ def _ent2html(entity, roots_only=True, formatting='indented', indent=False,
             else:
                 # indent depending on formatting
                 if formatting == 'indented':
-                    child_indent = contains_edges if is_atom(child) else True
+                    child_indent = contains_edges if child.is_atom() else True
                 elif formatting == 'compact':
                     # edges with only two items are rendered in one line
                     child_indent = arity > 2
-                    if child_indent and is_atom(child) and not contains_edges:
+                    if child_indent and child.is_atom() and not contains_edges:
                         child_indent = False
                 elif formatting == 'oneline':
                     child_indent = False
