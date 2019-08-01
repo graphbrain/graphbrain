@@ -93,6 +93,6 @@ class RedditParser(Agent):
 
     def report(self):
         rep_str = ('titles parsed: {}\n'
-                   'titles addes: {}'.format(self.titles_parsed,
+                   'titles added: {}'.format(self.titles_parsed,
                                              self.titles_added))
         return '{}\n\n{}'.format(rep_str, super().report())

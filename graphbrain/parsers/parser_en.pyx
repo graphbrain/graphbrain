@@ -61,10 +61,8 @@ def concept_type_and_subtype(token):
         return 'cm'
     if tag[:2] == 'JJ':
         return 'ca'
-    # elif is_compound(token):
-    #    return 'cc'
     elif tag[:2] == 'NN':
-        subtype = 'p' if 'P' in tag else 'n'
+        subtype = 'p' if 'P' in tag else 'c'
         sing_plur = 'p' if tag[-1] == 'S' else 's'
         return 'c{}.{}'.format(subtype, sing_plur)
     elif tag == 'CD':
