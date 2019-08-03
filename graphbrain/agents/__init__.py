@@ -1,5 +1,6 @@
 from graphbrain.agents.actors import Actors
 from graphbrain.agents.claims import Claims
+from graphbrain.agents.conflicts import Conflicts
 from graphbrain.agents.corefs_atoms import CorefsAtoms
 from graphbrain.agents.corefs_names import CorefsNames
 from graphbrain.agents.corefs_onto import CorefsOnto
@@ -12,6 +13,8 @@ def create_agent(name, hg):
         return Actors(hg)
     elif name == 'claims':
         return Claims(hg)
+    elif name == 'conflicts':
+        return Conflicts(hg)
     elif name == 'corefs_atoms':
         return CorefsAtoms(hg)
     elif name == 'corefs_names':
