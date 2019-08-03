@@ -1,7 +1,33 @@
 from collections import Counter
+import progressbar
 from graphbrain import *
+from graphbrain.meaning.concepts import *
+from graphbrain.meaning.lemmas import deep_lemma
 from graphbrain.meaning.corefs import main_coref
 from graphbrain.agents.agent import Agent
+
+
+CLAIM_PRED_LEMMAS = {'say', 'claim'}
+
+
+def _subject_preposition(claim):
+    subjects = claim.edges_with_argrole('s')
+    if len(subjects) == 1:
+        subject = find_concept(subjects[0])
+        if subject.type() == 'ci':
+            atom = subject.atom_with_type('c')
+            return atom.root()
+    return None
+
+
+def replace_subject(edge, new_subject):
+    connector = edge[0]
+    new_edge = list(edge)
+
+    for pos, role in enumerate(connector.argroles()):
+        if role == 's':
+            new_edge[pos + 1] = new_subject
+    return hedge(new_edge)
 
 
 class Claims(Agent):
@@ -9,12 +35,15 @@ class Claims(Agent):
         super().__init__(hg)
         self.actors = None
         self.female = None
+        self.group = None
         self.male = None
         self.non_human = None
-        self.actor_counter = None
         self.female_counter = None
+        self.group_counter = None
         self.male_counter = None
         self.non_human_counter = None
+        self.claims = None
+        self.anaphoras = 0
 
     def name(self):
         return 'claims'
@@ -22,47 +51,19 @@ class Claims(Agent):
     def languages(self):
         return {'en'}
 
-    def _pred_lemma(self, pred):
-        if pred.is_atom():
-            for edge in self.hg.search((const.lemma_pred, pred, '*')):
-                return edge[2]
-            return pred
+    def _is_actor(self, edge):
+        if edge in self.actors:
+            return True
+
+        if self.hg.exists(('actor/p/.', edge)):
+            self.actors.add(edge)
+            return True
         else:
-            return self._pred_lemma(pred[1])
-
-    def start(self):
-        self.actor_counter = Counter()
-        self.female_counter = Counter()
-        self.male_counter = Counter()
-        self.non_human_counter = Counter()
-
-    def input_edge(self, edge):
-        if not edge.is_atom():
-            ct = edge.connector_type()
-            if ct[:2] == 'pd':
-                pred = edge[0]
-                if (len(edge) > 2 and self._pred_lemma(pred).root() == 'say'):
-                    subjects = edge.edges_with_argrole('s')
-                    claims = edge.edges_with_argrole('r')
-                    if len(subjects) == 1 and len(claims) >= 1:
-                        subject = main_coref(self.hg, subjects[0])
-                        self.actor_counter[subject] += 1
-                        for claim in claims:
-                            claim_subjects = claim.edges_with_argrole('s')
-                            if len(claim_subjects) == 1:
-                                claim_subject = claim_subjects[0]
-                                if claim_subject.type() == 'ci':
-                                    atom = claim_subject.atom_with_type('c')
-                                    ind = atom.root()
-                                    if ind == 'she':
-                                        self.female_counter[subject] += 1
-                                    elif ind == 'he':
-                                        self.male_counter[subject] += 1
-                                    elif ind == 'it':
-                                        self.non_human_counter[subject] += 1
+            return False
 
     def _gender(self, actor):
         counts = (('female', self.female_counter[actor]),
+                  ('group', self.group_counter[actor]),
                   ('male', self.male_counter[actor]),
                   ('non-human', self.non_human_counter[actor]))
         counts = sorted(counts, key=lambda x: x[1], reverse=True)
@@ -71,41 +72,118 @@ class Claims(Agent):
         else:
             return None
 
-    def end(self):
+    def start(self):
         self.actors = set()
+        self.female_counter = Counter()
+        self.group_counter = Counter()
+        self.male_counter = Counter()
+        self.non_human_counter = Counter()
+        self.claims = []
+        self.anaphoras = 0
+
+    def _process_claim(self, actor, claim, edge):
+        # gender detection
+        prep = _subject_preposition(claim)
+        if prep:
+            if prep == 'she':
+                self.female_counter[actor] += 1
+            elif prep == 'they':
+                self.group_counter[actor] += 1
+            elif prep == 'he':
+                self.male_counter[actor] += 1
+            elif prep == 'it':
+                self.non_human_counter[actor] += 1
+
+        # record claim
+        self.claims.append({'actor': actor, 'claim': claim, 'edge': edge})
+
+    def input_edge(self, edge):
+        if not edge.is_atom():
+            ct = edge.connector_type()
+            if ct[:2] == 'pd':
+                pred = edge[0]
+                if (len(edge) > 2 and
+                        deep_lemma(self.hg, pred).root() in CLAIM_PRED_LEMMAS):
+                    subjects = edge.edges_with_argrole('s')
+                    claims = edge.edges_with_argrole('r')
+                    if len(subjects) == 1 and len(claims) >= 1:
+                        subject = find_concept(subjects[0])
+                        if subject and is_proper_concept(subject):
+                            actor = main_coref(self.hg, subjects[0])
+                            if self._is_actor(actor):
+                                for claim in claims:
+                                    self._process_claim(actor, claim, edge)
+
+    def end(self):
+        # assign genders
         self.female = set()
+        self.group = set()
         self.male = set()
         self.non_human = set()
 
-        for actor in self.actor_counter:
-            if self.actor_counter[actor] > 1:
-                self.actors.add(actor)
-                g = self._gender(actor)
-                if g == 'female':
+        print('assigning genders')
+        i = 0
+        with progressbar.ProgressBar(max_value=len(self.actors)) as bar:
+            for actor in self.actors:
+                gender = self._gender(actor)
+                if gender == 'female':
                     self.female.add(actor)
-                elif g == 'male':
+                elif gender == 'group':
+                    self.group.add(actor)
+                elif gender == 'male':
                     self.male.add(actor)
-                elif g == 'non-human':
+                elif gender == 'non-human':
                     self.non_human.add(actor)
 
-        for agent, count in self.actor_counter.most_common(250):
-            atype = '?'
-            if agent in self.female:
-                atype = 'female'
-            elif agent in self.male:
-                atype = 'male'
-            elif agent in self.non_human:
-                atype = 'non-human'
-            print('{} ({}) [{}]'.format(agent, atype, str(count)))
+                # write gender
+                if gender:
+                    gender_atom = '{}/p/.'.format(gender)
+                    self.add((gender_atom, actor))
+
+                i += 1
+                bar.update(i)
+
+        # write claims
+        print('writing claims')
+        i = 0
+        with progressbar.ProgressBar(max_value=len(self.claims)) as bar:
+            for claim_data in self.claims:
+                actor = claim_data['actor']
+                claim = claim_data['claim']
+                edge = claim_data['edge']
+
+                # anaphora resolution
+                prep = _subject_preposition(claim)
+                if prep:
+                    resolve = False
+                    if prep == 'she':
+                        resolve = actor in self.female
+                    elif prep == 'they':
+                        resolve = actor in self.group
+                    elif prep == 'he':
+                        resolve = actor in self.male
+                    elif prep == 'it':
+                        resolve = actor in self.non_human
+
+                    if resolve:
+                        # print('ANAPHORA')
+                        # print('actor: {}'.format(actor))
+                        # print('before: {}'.format(claim))
+                        claim = replace_subject(claim, actor)
+                        # print('after: {}'.format(claim))
+                        self.anaphoras += 1
+
+                # write claim
+                self.add(('claim/p/.', actor, claim, edge))
+
+                i += 1
+                bar.update(i)
 
     def report(self):
-        counts = (len(self.actors), len(self.female), len(self.male),
+        rep_claims = 'claims: {}'.format(len(self.claims))
+        rep_anaph = 'anaphora resolutions: {}'.format(self.anaphoras)
+        counts = (len(self.female), len(self.group), len(self.male),
                   len(self.non_human))
         cs = tuple([str(x) for x in counts])
-        return 'actors: {}; female: {}; male: {}; non-human: {}'.format(*cs)
-
-
-if __name__ == '__main__':
-    hg = hypergraph('reddit-worldnews-01012013-01082017-corefs.hg')
-    ms = Claims(hg)
-    ms.run()
+        rep_gen = 'female: {}; group: {}; male: {}; non-human: {}'.format(*cs)
+        return '\n'.join((rep_claims, rep_anaph, rep_gen))
