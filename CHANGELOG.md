@@ -6,6 +6,7 @@
 ### Changed
 
 ### Removed
+- Obsolete 'work-in-progress' code.
 
 ## [0.2.0] - 04-08-2019
 ### Added
