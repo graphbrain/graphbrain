@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installation &mdash; GraphBrain 0.1.0 documentation</title>
+  <title>Installation &mdash; GraphBrain 0.2.1 documentation</title>
   
 
   
@@ -187,8 +187,8 @@
 </div>
 <p>Common locations for python3:</p>
 <ul class="simple">
-<li>/usr/local/bin/python3</li>
-<li>/usr/bin/python3</li>
+<li><p>/usr/local/bin/python3</p></li>
+<li><p>/usr/bin/python3</p></li>
 </ul>
 <p>If you are on macOS, do this instead (for the reason <a class="reference external" href="http://matplotlib.org/faq/osx_framework.html#osxframework-faq">explained here</a>):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 -m venv venv
@@ -248,38 +248,37 @@ $ cd graphbrain
 <p>Linux distributions are diverse in terms of package managers. Please use the appropriate package manager for your
 distribution to install the prerequisites.</p>
 <ul class="simple">
-<li>gcc</li>
-<li>Python 3</li>
-<li>pip (Python package manager)</li>
-<li>virtualenv (Virtual Python Environment builder)</li>
+<li><p>gcc</p></li>
+<li><p>Python 3</p></li>
+<li><p>pip (Python package manager)</p></li>
+<li><p>virtualenv (Virtual Python Environment builder)</p></li>
 </ul>
 </div>
 <div class="section" id="macos">
 <h3>macOS<a class="headerlink" href="#macos" title="Permalink to this headline">¶</a></h3>
 <ul>
-<li><p class="first">XCode and the “Command Line Tools”:</p>
+<li><p>XCode and the “Command Line Tools”:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ xcode-select --install
 </pre></div>
 </div>
 </li>
-<li><p class="first">The <cite>Homebrew package manager &lt;http://brew.sh/&gt;</cite>.</p>
-</li>
-<li><p class="first">Python 3:</p>
+<li><p>The <cite>Homebrew package manager &lt;http://brew.sh/&gt;</cite>.</p></li>
+<li><p>Python 3:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew install python3
 </pre></div>
 </div>
 </li>
-<li><p class="first">pip (Python package manager):</p>
+<li><p>pip (Python package manager):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo easy_install pip
 </pre></div>
 </div>
 </li>
-<li><p class="first">virtualenv (Virtual Python Environment builder):</p>
+<li><p>virtualenv (Virtual Python Environment builder):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo -H pip install virtualenv
 </pre></div>
 </div>
 </li>
-<li><p class="first">LevelDB (database engine):</p>
+<li><p>LevelDB (database engine):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew install leveldb
 </pre></div>
 </div>
@@ -290,7 +289,7 @@ distribution to install the prerequisites.</p>
 <h3>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h3>
 <p><em>plyvel</em> is required for installing <em>graphbrain</em> on Windows. Unfortunately, this currently requires more effort than in the other platforms. To install <em>plyvel</em>, <em>boost.lib</em> and <em>leveldb.lib</em> must be compiled first.</p>
 <ul class="simple">
-<li><strong>boost.lib (x64)</strong></li>
+<li><p><strong>boost.lib (x64)</strong></p></li>
 </ul>
 <p><strong>step 1</strong> download and unzip the <em>Boost</em> library:  <a class="reference external" href="https://www.boost.org/">https://www.boost.org/</a></p>
 <p><strong>step 2</strong> make sure <em>cl</em> is the environment variable</p>
@@ -314,37 +313,37 @@ $ 1&quot; threading=multi --build-type=complete --build-dir=&quot;E:\mylib\boost
 </div>
 <p>Please note that you should: i) use your own directory names ii) be careful about the VS version number</p>
 <ul class="simple">
-<li><strong>leveldb.lib</strong></li>
+<li><p><strong>leveldb.lib</strong></p></li>
 </ul>
 <p><strong>step 1</strong> download the source code of <em>LevelDB</em> for windows: <a class="reference external" href="https://github.com/vaskomitanov/leveldb">https://github.com/vaskomitanov/leveldb</a></p>
 <p><strong>step 2</strong> open <em>Visual Studio</em> (2017). Create a project:</p>
 <blockquote>
 <div><ul class="simple">
-<li>file – new – project from existing code</li>
-<li>choose the type of project: <em>Visual C++</em></li>
-<li>project file location: the directory of <em>LevelDB</em></li>
-<li>project name: <em>LevelDB</em></li>
-<li>project type: <em>LIB</em></li>
-<li>preprocessor definition: <em>LEVELDB_PLATFORM_WINDOWS;OS_WIN; WIN32</em></li>
-<li>include search path: <em>E:LIBleveldb-windows;E:LIBleveldb-windowsinclude</em> (the directory of <em>LevelDB</em> and its <em>include</em>)</li>
-<li>click <em>finish</em></li>
+<li><p>file – new – project from existing code</p></li>
+<li><p>choose the type of project: <em>Visual C++</em></p></li>
+<li><p>project file location: the directory of <em>LevelDB</em></p></li>
+<li><p>project name: <em>LevelDB</em></p></li>
+<li><p>project type: <em>LIB</em></p></li>
+<li><p>preprocessor definition: <em>LEVELDB_PLATFORM_WINDOWS;OS_WIN; WIN32</em></p></li>
+<li><p>include search path: <em>E:LIBleveldb-windows;E:LIBleveldb-windowsinclude</em> (the directory of <em>LevelDB</em> and its <em>include</em>)</p></li>
+<li><p>click <em>finish</em></p></li>
 </ul>
 </div></blockquote>
 <p><strong>step 3</strong> set <em>LevelDB.lib</em>:</p>
 <blockquote>
 <div><ul class="simple">
-<li>project – properties – configuration properties – configuration type: <em>LIB</em></li>
-<li>configuration properties – C/C++ - General – preprocessor – preprocessor definition: <em>LEVELDB_PLATFORM_WINDOWS;OS_WIN; WIN32</em></li>
-<li>linker – general – additional library directory: <em>E:LIBboost64stagelib</em> (use your own path)</li>
+<li><p>project – properties – configuration properties – configuration type: <em>LIB</em></p></li>
+<li><p>configuration properties – C/C++ - General – preprocessor – preprocessor definition: <em>LEVELDB_PLATFORM_WINDOWS;OS_WIN; WIN32</em></p></li>
+<li><p>linker – general – additional library directory: <em>E:LIBboost64stagelib</em> (use your own path)</p></li>
 </ul>
 </div></blockquote>
 <p><strong>step 4</strong> open <em>solution explorer</em>, exclude the following files <em>(tip: you can search and right click on the target files)</em>:</p>
 <blockquote>
 <div><ul class="simple">
-<li>files ends with <em>_test.cc</em> and <em>_bench.cc</em></li>
-<li><em>port/port_android.cc</em></li>
-<li><em>port/port_posix.cc</em></li>
-<li><em>util/env_posix.cc</em></li>
+<li><p>files ends with <em>_test.cc</em> and <em>_bench.cc</em></p></li>
+<li><p><em>port/port_android.cc</em></p></li>
+<li><p><em>port/port_posix.cc</em></p></li>
+<li><p><em>util/env_posix.cc</em></p></li>
 </ul>
 </div></blockquote>
 <p><strong>step 5</strong> modify code:</p>
@@ -359,7 +358,7 @@ $ include &quot;port/port_win.h&quot;
 </div>
 <p><strong>step 6</strong> note: remember to compile as <em>release x64</em></p>
 <ul class="simple">
-<li><strong>plyvel</strong></li>
+<li><p><strong>plyvel</strong></p></li>
 </ul>
 <p>modify <em>setup.py</em>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Extension</span><span class="p">(</span>
@@ -375,7 +374,7 @@ $ include &quot;port/port_win.h&quot;
 </pre></div>
 </div>
 <ul class="simple">
-<li><strong>Cmake</strong></li>
+<li><p><strong>Cmake</strong></p></li>
 </ul>
 <p>you may also need to install Cmake, please check the official guidance here: <a class="reference external" href="https://cgold.readthedocs.io/en/latest/first-step/installation.html#windows">https://cgold.readthedocs.io/en/latest/first-step/installation.html#windows</a></p>
 </div>

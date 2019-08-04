@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Overview &mdash; GraphBrain 0.1.0 documentation</title>
+  <title>Overview &mdash; GraphBrain 0.2.1 documentation</title>
   
 
   
@@ -162,15 +162,15 @@
 <h2>The Semantic Hypergraph<a class="headerlink" href="#the-semantic-hypergraph" title="Permalink to this headline">¶</a></h2>
 <p>The <em>Semantic Hypergraph</em> is central to Graphbrain, both conceptually and functionally. It can be seen from three different perspectives:</p>
 <ul class="simple">
-<li>as an intermediary between natural and formal languages</li>
-<li>as a knowledge model</li>
-<li>as a type of database</li>
+<li><p>as an intermediary between natural and formal languages</p></li>
+<li><p>as a knowledge model</p></li>
+<li><p>as a type of database</p></li>
 </ul>
 <p>We will elaborate, but first let us discuss the general concept of <em>hypergraph</em>.</p>
 <div class="section" id="hypergraphs">
 <h3>Hypergraphs<a class="headerlink" href="#hypergraphs" title="Permalink to this headline">¶</a></h3>
-<p>The richness of information contained in natural language cannot be fully captured and analyzed using traditional graph-based network methods or distributional frameworks.  On one hand, natural language is recursive, allowing for concepts constructed from other concepts as well as statements about statements and, on the other hand, it can express <img class="math" src="_images/math/e11f2701c4a39c7fe543a6c4150b421d50f1c159.png" alt="n"/>-ary relationships.</p>
-<p>While a graph is based on a set of vertices and a set of edges describing dyadic connections, a hypergraph generalizes such structure by allowing <img class="math" src="_images/math/e11f2701c4a39c7fe543a6c4150b421d50f1c159.png" alt="n"/>-ary connections.</p>
+<p>The richness of information contained in natural language cannot be fully captured and analyzed using traditional graph-based network methods or distributional frameworks.  On one hand, natural language is recursive, allowing for concepts constructed from other concepts as well as statements about statements and, on the other hand, it can express <img class="math" src="_images/math/5a939c5280da7202ca4531f175a7780ad5e1f80a.png" alt="n"/>-ary relationships.</p>
+<p>While a graph is based on a set of vertices and a set of edges describing dyadic connections, a hypergraph generalizes such structure by allowing <img class="math" src="_images/math/5a939c5280da7202ca4531f175a7780ad5e1f80a.png" alt="n"/>-ary connections.</p>
 <p>We further generalize hypergraphs in two ways: hyperedges may be ordered and recursive. Ordering entails that the position in which a vertex participates in the hyperedge is relevant (a similarity can be drawn with the concept of directed graphs). Recursivity means that hyperedges can participate as vertices in other hyperedges, which is to say: relationships between entities can themselves play the role of entities in higher-order relationships.</p>
 </div>
 <div class="section" id="as-language-syntactic-rules">
@@ -189,7 +189,7 @@
 <p>These structures can be arbitrarily nested, for instance “Mary climbs the highest mountain in Brazil” yields:</p>
 <p><code class="docutils literal notranslate"><span class="pre">(climbs</span> <span class="pre">mary</span> <span class="pre">(the</span> <span class="pre">(highest</span> <span class="pre">(in</span> <span class="pre">mountain</span> <span class="pre">brazil))))</span></code></p>
 <p>In these examples we only show the human-friendly labels of atoms. Atoms contain additional annotations, e.g. specifying their type. We leave these details out of this overview, but we provide a full and formal specification of Semantic Hypergraph syntax and semantics elsewhere.</p>
-<p>Readers who are familiar with Lisp will likely have noticed that hyperedges are isomophic to <em>S-expressions</em>. This is not purely accidental. Lisp is very close to <img class="math" src="_images/math/76f1d8ace30435987c01a00ca53a71cba1f40e6c.png" alt="\lambda"/>-calculus, a formal and minimalistic model of computation that is based on function abstraction and application. The first item of an s-expression specifics a function, the following ones its arguments. One can think of a function as an association between objects. Although hyperedges do not specify computations, connectors are similar to functions at a very abstract level, in that they define associations. The concepts of “race to space” and “race in space” are both associated to the concepts “race” and “space”, but the combination of these two concepts yields different meaning by application of either the connector “in” or “to”.</p>
+<p>Readers who are familiar with Lisp will likely have noticed that hyperedges are isomophic to <em>S-expressions</em>. This is not purely accidental. Lisp is very close to <img class="math" src="_images/math/cefc603e5658facb747581f9567192993f21c7ab.png" alt="\lambda"/>-calculus, a formal and minimalistic model of computation that is based on function abstraction and application. The first item of an s-expression specifics a function, the following ones its arguments. One can think of a function as an association between objects. Although hyperedges do not specify computations, connectors are similar to functions at a very abstract level, in that they define associations. The concepts of “race to space” and “race in space” are both associated to the concepts “race” and “space”, but the combination of these two concepts yields different meaning by application of either the connector “in” or “to”.</p>
 </div>
 <div class="section" id="as-knowledge-model">
 <h3>As knowledge model<a class="headerlink" href="#as-knowledge-model" title="Permalink to this headline">¶</a></h3>
