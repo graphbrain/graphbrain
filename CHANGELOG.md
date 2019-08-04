@@ -1,6 +1,13 @@
 # Changelog
 
-## [0.2.0] - ongoing development
+## [0.2.1] - ongoing work
+### Added
+
+### Changed
+
+### Removed
+
+## [0.2.0] - 04-08-2019
 ### Added
 - Primary entities and deep degrees.
 - Hyperedges have their own class, deriving from tuple.
