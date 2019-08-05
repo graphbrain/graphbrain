@@ -4,6 +4,7 @@ import progressbar
 class Agent(object):
     def __init__(self, hg):
         self.hg = hg
+        self.search_pattern = '*'
         self.edges_added = 0
         self.edges_existed = 0
 
@@ -37,10 +38,10 @@ class Agent(object):
             return self.hg.add(edge, primary=primary)
 
     def input(self):
-        edge_count = self.hg.edge_count()
+        edge_count = self.hg.search_count(self.search_pattern)
         i = 0
         with progressbar.ProgressBar(max_value=edge_count) as bar:
-            for edge in self.hg.all():
+            for edge in self.hg.search(self.search_pattern):
                 self.input_edge(edge)
                 if i < edge_count:
                     i += 1

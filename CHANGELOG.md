@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- Fixed example.
 
 ### Removed
 - Obsolete 'work-in-progress' code.

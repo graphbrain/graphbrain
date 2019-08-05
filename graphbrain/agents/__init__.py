@@ -1,4 +1,5 @@
 from graphbrain.agents.actors import Actors
+from graphbrain.agents.claim_actors import ClaimActors
 from graphbrain.agents.claims import Claims
 from graphbrain.agents.conflicts import Conflicts
 from graphbrain.agents.corefs_atoms import CorefsAtoms
@@ -11,6 +12,8 @@ from graphbrain.agents.taxonomy import Taxonomy
 def create_agent(name, hg):
     if name == 'actors':
         return Actors(hg)
+    elif name == 'claim_actors':
+        return ClaimActors(hg)
     elif name == 'claims':
         return Claims(hg)
     elif name == 'conflicts':
