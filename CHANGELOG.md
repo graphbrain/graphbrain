@@ -2,6 +2,7 @@
 
 ## [0.2.1] - ongoing work
 ### Added
+- ClaimActors agent.
 
 ### Changed
 - Fixed example.

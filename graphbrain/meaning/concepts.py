@@ -15,3 +15,13 @@ def is_proper_concept(edge):
             if is_proper_concept(subedge):
                 return True
         return False
+
+
+def all_concepts(edge):
+    concepts = set()
+    if edge.type()[0] == 'c':
+        concepts.add(edge)
+    if not edge.is_atom():
+        for item in edge:
+            concepts |= all_concepts(item)
+    return concepts
