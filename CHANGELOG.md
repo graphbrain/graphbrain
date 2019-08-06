@@ -3,6 +3,7 @@
 ## [0.2.1] - ongoing work
 ### Added
 - ClaimActors agent.
+- meaning.concepts module
 
 ### Changed
 - Fixed example.
