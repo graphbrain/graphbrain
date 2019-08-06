@@ -290,6 +290,14 @@ class Hypergraph(object):
         else:
             return self.degree(edge), self.deep_degree(edge)
 
+    def sum_degree(self, edges):
+        """TODO: document and test"""
+        return sum([hg.degree(edge) for edge in edges])
+
+    def sum_deep_degree(self, edges):
+        """TODO: document and test"""
+        return sum([hg.degree(edge) for edge in edges])
+
     # ==============================================================
     # Private abstract methods, to be implemented in derived classes
     # ==============================================================

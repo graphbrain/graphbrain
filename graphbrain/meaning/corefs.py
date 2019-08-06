@@ -116,11 +116,3 @@ def make_corefs(hg, edge1, edge2):
 
     if update:
         _update_main_coref(hg, edge1)
-
-
-def coref_degree(hg, coref):
-    return sum([hg.degree(edge) for edge in coref])
-
-
-def coref_deep_degree(hg, coref):
-    return sum([hg.deep_degree(edge) for edge in coref])

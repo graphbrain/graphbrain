@@ -118,7 +118,7 @@ class CorefsNames(Agent):
                 if len(crefs) > 0:
                     # find set with the highest degree and normalize set
                     # degrees by total degree
-                    cref_degs = [coref_degree(self.hg, cref) for cref in crefs]
+                    cref_degs = [self.hg.sum_degree(cref) for cref in crefs]
                     total_deg = sum(cref_degs)
                     cref_ratios = [cref_deg / total_deg
                                    for cref_deg in cref_degs]
@@ -130,7 +130,7 @@ class CorefsNames(Agent):
                             best_pos = pos
 
                     # compute some degree-related metrics
-                    sdd = coref_deep_degree(self.hg, crefs[best_pos])
+                    sdd = self.hg.sum_deep_degree(crefs[best_pos])
                     _, rdd = self.hg.root_degrees(seed)
                     cref_to_root_dd = \
                         0. if rdd == 0 else float(sdd) / float(rdd)
