@@ -2,17 +2,21 @@ from graphbrain import *
 from graphbrain.meaning.concepts import *
 from graphbrain.meaning.lemmas import deep_lemma
 from graphbrain.meaning.corefs import main_coref
+from graphbrain.meaning.actors import is_actor
 from graphbrain.agents.agent import Agent
 
 
 CONFLICT_PRED_LEMMAS = {'warn', 'kill', 'accuse', 'condemn', 'slam', 'arrest',
                         'clash'}
 
+CONFLICT_TOPIC_TRIGGERS = {'of/t/en', 'over/t/en', 'against/t/en', 'for/t/en'}
+
 
 class Conflicts(Agent):
     def __init__(self, hg):
         super().__init__(hg)
-        self.actors = None
+        self.conflicts = 0
+        self.conflict_topics = 0
 
     def name(self):
         return 'conflicts'
@@ -20,25 +24,26 @@ class Conflicts(Agent):
     def languages(self):
         return {'en'}
 
-    def _is_actor(self, edge):
-        if edge in self.actors:
-            return True
-
-        if self.hg.exists(('actor/p/.', edge)):
-            self.actors.add(edge)
-            return True
-        else:
-            return False
-
     def start(self):
-        self.actors = set()
+        self.conflicts = 0
+        self.conflict_topics = 0
+
+    def _topics(self, actor_orig, actor_targ, edge):
+        for item in edge[1:]:
+            if item.type()[0] == 's':
+                if item[0].to_str() in CONFLICT_TOPIC_TRIGGERS:
+                    for concept in all_concepts(item[1]):
+                        if self.hg.degree(concept) > 1:
+                            self.add(('conflict-topic/p/.', actor_orig,
+                                      actor_targ, concept, edge))
+                            self.conflict_topics += 1
 
     def input_edge(self, edge):
         if not edge.is_atom():
             ct = edge.connector_type()
             if ct[:2] == 'pd':
                 pred = edge[0]
-                if (len(edge) > 3 and
+                if (len(edge) > 2 and
                         deep_lemma(self.hg,
                                    pred).root() in CONFLICT_PRED_LEMMAS):
                     subjects = edge.edges_with_argrole('s')
@@ -51,7 +56,15 @@ class Conflicts(Agent):
                                 is_proper_concept(obj)):
                             actor_orig = main_coref(self.hg, subject)
                             actor_targ = main_coref(self.hg, obj)
-                            if (self._is_actor(actor_orig) and
-                                    self._is_actor(actor_targ)):
+                            if (is_actor(self.hg, actor_orig) and
+                                    is_actor(self.hg, actor_targ)):
                                 self.add(('conflict/p/.', actor_orig,
                                           actor_targ, edge))
+                                self._topics(actor_orig, actor_targ, edge)
+                                self.conflicts += 1
+
+    def report(self):
+        rep_str = ('conflict edges: {}\n'
+                   'conflict-topic pairs: {}'.format(self.conflicts,
+                                                     self.conflict_topics))
+        return '{}\n\n{}'.format(rep_str, super().report())

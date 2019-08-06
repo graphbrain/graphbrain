@@ -3,13 +3,14 @@
 ## [0.2.1] - ongoing work
 ### Added
 - ClaimActors agent.
-- meaning.concepts module
+- meaning.concepts module.
 
 ### Changed
 - Fixed example.
 
 ### Removed
 - Obsolete 'work-in-progress' code.
+- hg2json command.
 
 ## [0.2.0] - 04-08-2019
 ### Added
