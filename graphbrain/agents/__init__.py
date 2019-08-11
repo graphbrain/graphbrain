@@ -2,6 +2,7 @@ from graphbrain.agents.actors import Actors
 from graphbrain.agents.claim_actors import ClaimActors
 from graphbrain.agents.claims import Claims
 from graphbrain.agents.conflicts import Conflicts
+from graphbrain.agents.corefs_dets import CorefsDets
 from graphbrain.agents.corefs_names import CorefsNames
 from graphbrain.agents.corefs_onto import CorefsOnto
 from graphbrain.agents.reddit_parser import RedditParser
@@ -18,6 +19,8 @@ def create_agent(name, hg):
         return Claims(hg)
     elif name == 'conflicts':
         return Conflicts(hg)
+    elif name == 'corefs_dets':
+        return CorefsDets(hg)
     elif name == 'corefs_names':
         return CorefsNames(hg)
     elif name == 'corefs_onto':

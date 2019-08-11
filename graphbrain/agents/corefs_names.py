@@ -164,10 +164,3 @@ class CorefsNames(Agent):
                             self.corefs += 1
                 i += 1
                 bar.update(i)
-
-
-if __name__ == '__main__':
-    agent = CorefsNames(hypergraph('reddit-worldnews-01012013-01082017.hg'))
-    agent.start()
-    agent.seeds.add(hedge('merkel/cp.s/en'))
-    agent.end()

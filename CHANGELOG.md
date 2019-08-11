@@ -2,14 +2,14 @@
 
 ## [0.2.1] - ongoing work
 ### Added
-- ClaimActors agent.
+- claim_actors and corefs_dets agents.
 - meaning.concepts module.
 
 ### Changed
 - Fixed example.
 - hypergraph.sum_degree() and .sum_deep_degree().
 - Parser improvements.
-- Agent "corefs_atoms" is now "corefs_unidecode".
+- Agent corefs_atoms is now corefs_unidecode.
 
 ### Removed
 - Obsolete 'work-in-progress' code.
