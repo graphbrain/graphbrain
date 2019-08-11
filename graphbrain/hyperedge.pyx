@@ -419,13 +419,6 @@ class Hyperedge(tuple):
             else:
                 return Hyperedge((self, entity))
 
-    def apply_fun_to_atom(self, fun, atom_str):
-        """Returns edge built by replacing every instance of 'atom_str' in
-        this edge with the output of calling 'fun' to 'atom_str'.
-        """
-        return Hyperedge(tuple(item.apply_fun_to_atom(fun, atom_str)
-                               for item in self))
-
     def replace_atom(self, old, new):
         """Returns edge built by replacing every instance of 'old' in
         this edge with 'new'.
@@ -649,15 +642,6 @@ class Atom(Hyperedge):
         (a (d e) b c)
         """
         return Hyperedge((self, argument))
-
-    def apply_fun_to_atom(self, fun, atom):
-        """Returns edge built by replacing every instance of 'atom' in
-        this edge with the output of calling 'fun' with 'atom'.
-        """
-        if self == atom:
-            return fun(atom)
-        else:
-            return self
 
     def replace_atom(self, old, new):
         """Returns edge built by replacing every instance of 'old' in

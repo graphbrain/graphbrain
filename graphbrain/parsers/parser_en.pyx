@@ -144,6 +144,8 @@ def token_type(token, head=False):
     elif dep in {'amod', 'det', 'nummod', 'preconj', 'predet'}:
         return modifier_type_and_subtype(token)
     elif dep in {'aux', 'auxpass', 'expl', 'prt', 'quantmod'}:
+        if head_type == 'c':
+            return 'm'
         if token.n_lefts + token.n_rights == 0:
             return 'a'
         else:
@@ -378,11 +380,14 @@ class ParserEN(Parser):
             else:
                 return 'm'
         else:
-            return '?'
+            for edge in concept[1:]:
+                if self._concept_role(edge) == 'm':
+                    return 'm'
+            return 'a'
 
     def _compose_concepts(self, concepts):
         first = concepts[0]
-        if first.is_atom():
+        if first.is_atom() or first[0].type()[0] != 'm':
             concept_roles = [self._concept_role(concept)
                              for concept in concepts]
             builder = '+/b.{}/.'.format(''.join(concept_roles))
@@ -575,10 +580,8 @@ class ParserEN(Parser):
                             entity = entity.nest(child, ps.positions[child])
                         else:
                             logging.debug('choice: 3')
-                            entity = entity.apply_fun_to_atom(
-                                lambda target:
-                                    target.nest(child, ps.positions[child]),
-                                    atom)
+                            entity = entity.replace_atom(
+                                atom, atom.nest(child, ps.positions[child]))
                     elif child.connector_type()[0] in {'x', 't'}:
                         logging.debug('choice: 4')
                         entity = entity.nest(child, ps.positions[child])
@@ -598,17 +601,13 @@ class ParserEN(Parser):
                                         child, ps.positions[child], flat=False)
                             else:
                                 logging.debug('choice: 6')
-                                entity = entity.apply_fun_to_atom(
-                                    lambda target:
-                                        target.sequence(
-                                            child, ps.positions[child]),
-                                        atom)
+                                entity = entity.replace_atom(
+                                    atom,
+                                    atom.sequence(child, ps.positions[child]))
                         else:
                             logging.debug('choice: 7')
-                            entity = entity.apply_fun_to_atom(
-                                lambda target:
-                                    target.connect((child,)),
-                                    atom)
+                            entity = entity.replace_atom(
+                                atom, atom.connect((child,)))
                 elif ent_type[0] in {'p', 'r', 'd', 's'}:
                     logging.debug('choice: 8')
                     result = insert_after_predicate(entity, child)
