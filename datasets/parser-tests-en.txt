@@ -71,7 +71,7 @@ There are a few exceptions, but I hate them!
 Tourists taking a picture of the Eiffel Tower get photobombed by a cyclist.
 ((get/av.|f----/en photobombed/pd.<pf---.pa/en) (:/b/. tourists/cc.p/en (taking/pc.|pg---.o/en (a/md/en (of/br.ma/en picture/cc.s/en (the/md/en (+/b.am/. eiffel/cp.s/en tower/cp.s/en)))))) (by/x/en (a/md/en cyclist/cc.s/en)))
 Americans are willing to pay $177 a year to avoid climate change
-(are/pd.|f----.sc/en americans/cp.p/en (:/b/. willing/ca/en ((to/ai/en pay/pc.-i----.ox/en) ($/m/en (+/b.m?/. 177/c#/en (a/md/en year/cc.s/en))) ((to/ai/en avoid/pd.-i----.o/en) (+/b.am/. climate/cc.s/en change/cc.s/en)))))
+(are/pd.|f----.sc/en americans/cp.p/en (:/b/. willing/ca/en ((to/ai/en pay/pc.-i----.ox/en) ($/m/en (a/bd/en 177/c#/en year/cc.s/en)) ((to/ai/en avoid/pd.-i----.o/en) (+/b.am/. climate/cc.s/en change/cc.s/en)))))
 This guy should be the new team mascot
 ((should/am/en be/pd.-i----.sc/en) (this/md/en guy/cc.s/en) (the/md/en (new/ma/en (+/b.am/. team/cc.s/en mascot/cc.s/en))))
 Take pictures of your hair after a good haircut.

@@ -103,6 +103,8 @@ def builder_type_and_subtype(token):
         return 'br'  # relational (proposition)
     elif tag == 'CC':
         return 'b+'
+    elif tag == 'DT':
+        return 'bd'
     else:
         return 'b'
 
@@ -141,8 +143,13 @@ def token_type(token, head=False):
             return 'a'
         else:
             return 'pc'
-    elif dep in {'amod', 'det', 'nummod', 'preconj', 'predet'}:
+    elif dep in {'amod', 'nummod', 'preconj', 'predet'}:
         return modifier_type_and_subtype(token)
+    elif dep == 'det':
+        if token.head.dep_ == 'npadvmod':
+            return builder_type_and_subtype(token)
+        else:
+            return modifier_type_and_subtype(token)
     elif dep in {'aux', 'auxpass', 'expl', 'prt', 'quantmod'}:
         if head_type == 'c':
             return 'm'
