@@ -114,6 +114,9 @@ class CorefsNames(Agent):
             for seed in self.seeds:
                 crefs = self._corefs_from_seed(seed)
 
+                # print(seed)
+                # print(crefs)
+
                 # check if the seed should be assigned to a synonym set
                 if len(crefs) > 0:
                     # find set with the highest degree and normalize set
@@ -131,7 +134,10 @@ class CorefsNames(Agent):
 
                     # compute some degree-related metrics
                     sdd = self.hg.sum_deep_degree(crefs[best_pos])
-                    _, rdd = self.hg.root_degrees(seed)
+                    print('sdd: {}'.format(sdd))
+                    rd, rdd = self.hg.root_degrees(seed)
+                    print('rd: {}'.format(rd))
+                    print('rdd: {}'.format(rdd))
                     cref_to_root_dd = \
                         0. if rdd == 0 else float(sdd) / float(rdd)
                     d = self.hg.degree(seed)
@@ -139,6 +145,11 @@ class CorefsNames(Agent):
                     r = float(d) / float(dd)
                     ld, ldd = self.hg.lemma_degrees(seed)
                     lr = float(ld) / float(ldd)
+
+                    # print('max_ratio: {}'.format(max_ratio))
+                    # print('r: {}'.format(r))
+                    # print('lr: {}'.format(lr))
+                    # print('cref_to_root_dd: {}'.format(cref_to_root_dd))
 
                     # use metric to decide
                     if (max_ratio >= .7 and r >= .05 and lr >= .05 and
@@ -153,3 +164,10 @@ class CorefsNames(Agent):
                             self.corefs += 1
                 i += 1
                 bar.update(i)
+
+
+if __name__ == '__main__':
+    agent = CorefsNames(hypergraph('reddit-worldnews-01012013-01082017.hg'))
+    agent.start()
+    agent.seeds.add(hedge('merkel/cp.s/en'))
+    agent.end()

@@ -7,6 +7,7 @@
 
 ### Changed
 - Fixed example.
+- hypergraph.sum_degree() and .sum_deep_degree()
 
 ### Removed
 - Obsolete 'work-in-progress' code.

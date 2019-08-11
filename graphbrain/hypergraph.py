@@ -283,7 +283,7 @@ class Hypergraph(object):
     def root_degrees(self, edge):
         """TODO: document and test"""
         if edge.is_atom():
-            atoms = self.atoms_with_root(edge.root())
+            atoms = tuple(self.atoms_with_root(edge.root()))
             d = sum([self.degree(atom) for atom in atoms])
             dd = sum([self.deep_degree(atom) for atom in atoms])
             return d, dd
@@ -292,11 +292,11 @@ class Hypergraph(object):
 
     def sum_degree(self, edges):
         """TODO: document and test"""
-        return sum([hg.degree(edge) for edge in edges])
+        return sum([self.degree(edge) for edge in edges])
 
     def sum_deep_degree(self, edges):
         """TODO: document and test"""
-        return sum([hg.degree(edge) for edge in edges])
+        return sum([self.deep_degree(edge) for edge in edges])
 
     # ==============================================================
     # Private abstract methods, to be implemented in derived classes
