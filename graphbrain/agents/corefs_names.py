@@ -134,10 +134,10 @@ class CorefsNames(Agent):
 
                     # compute some degree-related metrics
                     sdd = self.hg.sum_deep_degree(crefs[best_pos])
-                    print('sdd: {}'.format(sdd))
+                    # print('sdd: {}'.format(sdd))
                     rd, rdd = self.hg.root_degrees(seed)
-                    print('rd: {}'.format(rd))
-                    print('rdd: {}'.format(rdd))
+                    # print('rd: {}'.format(rd))
+                    # print('rdd: {}'.format(rdd))
                     cref_to_root_dd = \
                         0. if rdd == 0 else float(sdd) / float(rdd)
                     d = self.hg.degree(seed)
