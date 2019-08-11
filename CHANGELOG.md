@@ -9,6 +9,7 @@
 - Fixed example.
 - hypergraph.sum_degree() and .sum_deep_degree().
 - Parser improvements.
+- Agent "corefs_atoms" is now "corefs_unidecode".
 
 ### Removed
 - Obsolete 'work-in-progress' code.
