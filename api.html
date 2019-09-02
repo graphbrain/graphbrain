@@ -85,6 +85,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Command-line interface</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API reference</a><ul>
@@ -409,6 +410,13 @@ hypergraph (*), all atoms (&#64;), and all non-atoms (&amp;).</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="graphbrain.hypergraph.Hypergraph.search_count">
+<code class="sig-name descname">search_count</code><span class="sig-paren">(</span><em class="sig-param">pattern</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.search_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.search_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of edges that match a pattern.
+See search() method for an explanation of patterns.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="graphbrain.hypergraph.Hypergraph.set_attribute">
 <code class="sig-name descname">set_attribute</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">attribute</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.set_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.set_attribute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the value of an attribute.</p>
@@ -427,6 +435,18 @@ otherwise.</p>
 <dd><p>Returns generator of the edges that contain the center.</p>
 <p>Keyword argument:
 limit – maximum number of results to return, infinite if None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="graphbrain.hypergraph.Hypergraph.sum_deep_degree">
+<code class="sig-name descname">sum_deep_degree</code><span class="sig-paren">(</span><em class="sig-param">edges</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.sum_deep_degree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.sum_deep_degree" title="Permalink to this definition">¶</a></dt>
+<dd><p>TODO: document and test</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="graphbrain.hypergraph.Hypergraph.sum_degree">
+<code class="sig-name descname">sum_degree</code><span class="sig-paren">(</span><em class="sig-param">edges</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.sum_degree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.sum_degree" title="Permalink to this definition">¶</a></dt>
+<dd><p>TODO: document and test</p>
 </dd></dl>
 
 </dd></dl>
