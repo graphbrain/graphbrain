@@ -275,10 +275,10 @@
 
 <span class="sd">        Patterns are themselves edges. They can match families of edges</span>
 <span class="sd">        by employing special atoms:</span>
-<span class="sd">            -&gt; &#39;*&#39; represents a general wildcard (matches any edge)</span>
-<span class="sd">            -&gt; &#39;@&#39; represents an atomic wildcard (matches any atom)</span>
-<span class="sd">            -&gt; &#39;&amp;&#39; represents a non-atomic wildcard (matches any non-atom)</span>
-<span class="sd">            -&gt; &#39;...&#39; at the end indicates an open-ended pattern.</span>
+<span class="sd">        -&gt; &#39;*&#39; represents a general wildcard (matches any edge)</span>
+<span class="sd">        -&gt; &#39;@&#39; represents an atomic wildcard (matches any atom)</span>
+<span class="sd">        -&gt; &#39;&amp;&#39; represents a non-atomic wildcard (matches any non-atom)</span>
+<span class="sd">        -&gt; &#39;...&#39; at the end indicates an open-ended pattern.</span>
 
 <span class="sd">        The pattern can be a string, that must represent an edge.</span>
 <span class="sd">        Examples: &#39;(is/pd graphbrain/c @)&#39;</span>
@@ -350,8 +350,7 @@
 <span class="sd">        and optionally a given root.</span>
 
 <span class="sd">        Keyword argument:</span>
-<span class="sd">        root -- edge must also contain an atom with this root</span>
-<span class="sd">                (default None)</span>
+<span class="sd">        root -- edge must also contain an atom with this root (default None)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edges_with_edges</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span></div>
 
@@ -371,8 +370,8 @@
         <span class="sd">&quot;&quot;&quot;Returns attribute as string.</span>
 
 <span class="sd">        Keyword argument:</span>
-<span class="sd">        or_else -- value to return if the entity does not have</span>
-<span class="sd">                   the give attribute. (default None)</span>
+<span class="sd">        or_else -- value to return if the entity does not have the given</span>
+<span class="sd">        attribute. (default None)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_str_attribute</span><span class="p">(</span><span class="n">hedge</span><span class="p">(</span><span class="n">edge</span><span class="p">),</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">or_else</span><span class="o">=</span><span class="n">or_else</span><span class="p">)</span></div>
 

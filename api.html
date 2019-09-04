@@ -286,10 +286,7 @@ the second is a dictionary of attribute values
 <dd><p>Returns generator of all edges containing the given edges,
 and optionally a given root.</p>
 <p>Keyword argument:
-root – edge must also contain an atom with this root</p>
-<blockquote>
-<div><p>(default None)</p>
-</div></blockquote>
+root – edge must also contain an atom with this root (default None)</p>
 </dd></dl>
 
 <dl class="method">
@@ -330,10 +327,8 @@ by hyperedges.</p>
 <code class="sig-name descname">get_str_attribute</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">attribute</em>, <em class="sig-param">or_else=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.get_str_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.get_str_attribute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns attribute as string.</p>
 <p>Keyword argument:
-or_else – value to return if the entity does not have</p>
-<blockquote>
-<div><p>the give attribute. (default None)</p>
-</div></blockquote>
+or_else – value to return if the entity does not have the given
+attribute. (default None)</p>
 </dd></dl>
 
 <dl class="method">
@@ -397,13 +392,11 @@ deep – recursively remove all subedges (default False)</p>
 <code class="sig-name descname">search</code><span class="sig-paren">(</span><em class="sig-param">pattern</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns generator for all the edges that match a pattern.</p>
 <p>Patterns are themselves edges. They can match families of edges
-by employing special atoms:</p>
-<blockquote>
-<div><p>-&gt; ‘*’ represents a general wildcard (matches any edge)
+by employing special atoms:
+-&gt; ‘*’ represents a general wildcard (matches any edge)
 -&gt; ‘&#64;’ represents an atomic wildcard (matches any atom)
 -&gt; ‘&amp;’ represents a non-atomic wildcard (matches any non-atom)
 -&gt; ‘…’ at the end indicates an open-ended pattern.</p>
-</div></blockquote>
 <p>The pattern can be a string, that must represent an edge.
 Examples: ‘(is/pd graphbrain/c &#64;)’</p>
 <blockquote>
