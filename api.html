@@ -358,10 +358,8 @@ and itself.</p>
 <code class="sig-name descname">to_str</code><a class="headerlink" href="#graphbrain.hyperedge.Atom.to_str" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts atom to its string representation.</p>
 <p>Keyword argument:
-roots_only – only the roots of the atoms will be used to create</p>
-<blockquote>
-<div><p>the string representation.</p>
-</div></blockquote>
+roots_only – only the roots of the atoms will be used to create
+the string representation.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -515,10 +513,8 @@ entity (c d), nesting if ‘before’ is True produces:
 If ‘before’ is False it produces:
 (c (a b) d)</p>
 <p>Keyword argument:
-before – controls how outer edges are handled, as per above.</p>
-<blockquote>
-<div><p>(default: False)</p>
-</div></blockquote>
+before – controls how outer edges are handled, as per above.
+(default: False)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -577,10 +573,8 @@ and itself.</p>
 <code class="sig-name descname">to_str</code><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.to_str" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts edge to its string representation.</p>
 <p>Keyword argument:
-roots_only – only the roots of the atoms will be used to create</p>
-<blockquote>
-<div><p>the string representation.</p>
-</div></blockquote>
+roots_only – only the roots of the atoms will be used to create
+the string representation.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -608,18 +602,14 @@ connector. This applies recursively, as necessary.</p>
 <code class="sig-prename descclassname">graphbrain.hyperedge.</code><code class="sig-name descname">edge_matches_pattern</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.edge_matches_pattern" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if an edge matches a pattern.</p>
 <p>Patterns are themselves edges. They can match families of edges
-by employing special atoms:</p>
-<blockquote>
-<div><p>-&gt; ‘*’ represents a general wildcard (matches any entity)
+by employing special atoms:
+-&gt; ‘*’ represents a general wildcard (matches any entity)
 -&gt; ‘&#64;’ represents an atomic wildcard (matches any atom)
 -&gt; ‘&amp;’ represents an edge wildcard (matches any edge)
 -&gt; ‘…’ at the end indicates an open-ended pattern.</p>
-</div></blockquote>
 <p>The pattern can be any valid hyperedge, including the above special atoms.
-Examples: (is/pd graphbrain/c &#64;)</p>
-<blockquote>
-<div><p>(says/pd * …)</p>
-</div></blockquote>
+Examples: (is/pd graphbrain/c &#64;)
+(says/pd * …)</p>
 </dd></dl>
 
 <dl class="function">
@@ -644,27 +634,23 @@ pattern variable. If the pattern specifies no variables but the edge
 matches it, then an empty dictionary is returned. If the edge does
 not match the pattern, None is returned.</p>
 <p>Patterns are themselves edges. They can match families of edges
-by employing special atoms:</p>
-<blockquote>
-<div><p>-&gt; ‘*’ represents a general wildcard (matches any entity)
+by employing special atoms:
+-&gt; ‘*’ represents a general wildcard (matches any entity)
 -&gt; ‘&#64;’ represents an atomic wildcard (matches any atom)
 -&gt; ‘&amp;’ represents an edge wildcard (matches any edge)
 -&gt; ‘…’ at the end indicates an open-ended pattern.</p>
-</div></blockquote>
 <p>The three wildcards (‘*’, ‘&#64;’ and ‘&amp;’) can be used to specify variables,
-for example ‘<a href="#id1"><span class="problematic" id="id2">*</span></a>x’, ‘&amp;claim’ or <a class="reference external" href="mailto:'&#37;&#52;&#48;actor">‘<span>&#64;</span>actor</a>’. In case of a match, these
+for example ‘*x’, ‘&amp;claim’ or <a class="reference external" href="mailto:'&#37;&#52;&#48;actor">‘<span>&#64;</span>actor</a>’. In case of a match, these
 variables are assigned the hyperedge they correspond to. For example,</p>
-<ol class="arabic simple">
-<li><p>the edge: (is/pd (my/mp name/cn) mary/cp)
-applied to the pattern: (is/pd (my/mp name/cn) <a href="#id3"><span class="problematic" id="id4">*</span></a>name)
-produces the result: {‘name’, mary/cp}</p></li>
-<li><p>the edge: (is/pd (my/mp name/cn) mary/cp)
+<p>(1) the edge: (is/pd (my/mp name/cn) mary/cp)
+applied to the pattern: (is/pd (my/mp name/cn) *name)
+produces the result: {‘name’, mary/cp}</p>
+<p>(2) the edge: (is/pd (my/mp name/cn) mary/cp)
 applied to the pattern: (is/pd (my/mp name/cn) &amp;name)
-produces the result: {}</p></li>
-<li><p>the edge: (is/pd (my/mp name/cn) mary/cp)
-applied to the pattern: (is/pd &#64; <a href="#id5"><span class="problematic" id="id6">*</span></a>name)
-produces the result: None</p></li>
-</ol>
+produces the result: {}</p>
+<p>(3) the edge: (is/pd (my/mp name/cn) mary/cp)
+applied to the pattern: (is/pd &#64; *name)
+produces the result: None</p>
 </dd></dl>
 
 <dl class="function">
@@ -906,10 +892,8 @@ by employing special atoms:
 -&gt; ‘&amp;’ represents a non-atomic wildcard (matches any non-atom)
 -&gt; ‘…’ at the end indicates an open-ended pattern.</p>
 <p>The pattern can be a string, that must represent an edge.
-Examples: ‘(is/pd graphbrain/c &#64;)’</p>
-<blockquote>
-<div><p>‘(says/pd * …)’</p>
-</div></blockquote>
+Examples: ‘(is/pd graphbrain/c &#64;)’
+‘(says/pd * …)’</p>
 <p>Atomic patterns can also be used to match all edges in the
 hypergraph (*), all atoms (&#64;), and all non-atoms (&amp;).</p>
 </dd></dl>
@@ -1167,10 +1151,8 @@ by employing special atoms:
 -&gt; ‘&amp;’ represents a non-atomic wildcard (matches any non-atom)
 -&gt; ‘…’ at the end indicates an open-ended pattern.</p>
 <p>The pattern can be a string, that must represent an edge.
-Examples: ‘(is/pd graphbrain/c &#64;)’</p>
-<blockquote>
-<div><p>‘(says/pd * …)’</p>
-</div></blockquote>
+Examples: ‘(is/pd graphbrain/c &#64;)’
+‘(says/pd * …)’</p>
 <p>Atomic patterns can also be used to match all edges in the
 hypergraph (*), all atoms (&#64;), and all non-atoms (&amp;).</p>
 </dd></dl>
