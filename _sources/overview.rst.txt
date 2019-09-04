@@ -27,7 +27,7 @@ We further generalize hypergraphs in two ways: hyperedges may be ordered and rec
 As language: syntactic rules
 ----------------------------
 
-In a general sense, the hyperedge is the fundamental and unifying construct that carries meaning within the formalism we propose. In Cognitive Science terms, it plays the role of *mental representation*. The syntactic rules are simple and universal: the first element in the hyperedge is a connector, followed by one or more arguments, possibly in a recursive fashion. It is syntactically valid to place any entity (i.e.: any arbitrary hyperedge or atom) in any of these two roles. A hyperedge defines a semantic construct by combining other semantic constructs. The purpose of the connector is to specify *in which sense* these inner constructs are connected.
+In a general sense, the hyperedge is the fundamental and unifying construct that carries meaning within the formalism we propose. The syntactic rules are simple and universal: the first element in the hyperedge is a connector, followed by one or more arguments, possibly in a recursive fashion. It is syntactically valid to place any entity (i.e.: any arbitrary hyperedge or atom) in any of these two roles. A hyperedge defines a semantic construct by combining other semantic constructs. The purpose of the connector is to specify *in which sense* these inner constructs are connected.
 
 We illustrate with specific roles that a connector can play. For example, **as predicate**: in this case the hyperedge defines a proposition. For instance, the simple sentence "Berlin is nice" is represented as:
 

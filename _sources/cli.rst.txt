@@ -2,7 +2,7 @@
 Command-line interface
 ======================
 
-GraphBrain provides a command-line interface that can be used to execute a variety of tasks. You can accesst it either by using python to run the graphbrain root module as a script::
+GraphBrain provides a command-line interface that can be used to execute a variety of tasks. You can access it either by using python to run the graphbrain root module as a script::
 
    python -m graphbrain ...
 
@@ -14,10 +14,9 @@ All cases below work with both.
 
 Here's an overview of the interface::
 
-   graphbrain [-h] [--backend BACKEND] [--hg HG] [--infile INFILE]
-              [--outfile OUTFILE] [--log LOG] [--fields FIELDS]
-              [--model_type MODEL_TYPE] [--model_file MODEL_FILE]
-              [--show_namespaces] [--lang LANG]
+   graphbrain [-h] [--hg HG] [--infile INFILE] [--outfile OUTFILE]
+              [--fields FIELDS] [--show_namespaces] [--lang LANG]
+              [--pattern PATTERN] [--agent AGENT]
               command
 
    positional arguments:
@@ -25,24 +24,19 @@ Here's an overview of the interface::
 
    optional arguments:
      -h, --help            show this help message and exit
-     --backend BACKEND     hypergraph backend (leveldb, null)
-     --hg HG               hypergraph name
+     --hg HG               hypergraph db file path
      --infile INFILE       input file
      --outfile OUTFILE     output file
-     --log LOG             logging level.
      --fields FIELDS       field names
-     --model_type MODEL_TYPE
-                           machine learning model type
-     --model_file MODEL_FILE
-                           machine learning model file
      --show_namespaces     show namespaces
      --lang LANG           language
+     --pattern PATTERN     hyperedge pattern
+     --agent AGENT         agent name
 
-The only obligatory argument, command, is used to specify the task to perform. Each command uses a subset of the
-optional arguments. Presented below are the details for each command.
+The only obligatory argument, command, is used to specify the task to perform. Each command uses a subset of the optional arguments. Presented below are the details for each command.
 
-Hypergraphs
-===========
+Commands
+========
 
 create
 ------
@@ -60,22 +54,9 @@ Displays simple information about an hypergraph::
    graphbrain --hg <hypergraph> info
 
 
-hg2json
--------
+run
+---
 
-Export hypergraph to a json file::
+Run an agent::
 
-   graphbrain --hg <hypergraph> --outfile <target json file> hg2json
-
-
-Knowledge inference
-===================
-
-These commands correspond to various knowledge inference strategies that can be performed on hypergraphs.
-
-generate_synonyms
------------------
-
-Finds synonyms in the hypergraph and connects them to synonym set identifiers::
-
-   graphbrain --hg <hypergraph> generate_synonyms
+   graphbrain --hg <hypergraph> --agent <agent name> run
