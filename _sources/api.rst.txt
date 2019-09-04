@@ -21,7 +21,7 @@ hypergraph module
 parsers package
 ===============
 
-.. automodule:: graphbrain.factory
+.. automodule:: graphbrain.parsers.factory
 
 Parser class
 ------------
