@@ -1,6 +1,16 @@
 # Changelog
 
-## [0.2.1] - ongoing work
+## [0.3.0] - Ongoing work
+
+First beta release!
+
+### Added
+
+### Changed
+
+### Removed
+
+## [0.2.1] - 04-09-2019
 ### Added
 - claim_actors and corefs_dets agents.
 - meaning.concepts module.
