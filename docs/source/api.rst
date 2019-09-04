@@ -2,10 +2,10 @@
 API reference
 =============
 
-generic functions (funs) module
+hyperedge module
 ===============================
 
-.. automodule:: graphbrain.funs
+.. automodule:: graphbrain.hyperedge
     :members:
 
 
@@ -15,37 +15,16 @@ hypergraph module
 .. automodule:: graphbrain.hypergraph
     :members:
 
-.. autoclass:: graphbrain.hypergraph.HyperGraph
+.. autoclass:: graphbrain.hypergraph.Hypergraph
     :members:
 
-backends package
-================
-
-Backend class
--------------
-
-.. autoclass:: graphbrain.backends.backend.Backend
-    :members:
-
-LevelDB class
--------------
-
-.. autoclass:: graphbrain.backends.leveldb.LevelDB
-    :members:
-
-Null class
-----------
-
-.. autoclass:: graphbrain.backends.null.Null
-    :members:
-
-meaning package
+parsers package
 ===============
 
-.. automodule:: graphbrain.meaning
+.. automodule:: graphbrain.parsers.factory
 
 Parser class
 ------------
 
-.. autoclass:: graphbrain.meaning.Parser
+.. autoclass:: graphbrain.parsers.parser.Parser
     :members:

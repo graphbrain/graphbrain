@@ -76,10 +76,9 @@ class Hypergraph(object):
 
         Keyword argument:
         primary -- edge is primary, meaning, for example, that it counts
-                   towards degrees. Non-primary edges are used for
-                   indexing purposes, for example to make it easy to find
-                   the subedges contained in primary edges when performing
-                   queries.
+        towards degrees. Non-primary edges are used for indexing purposes,
+        for example to make it easy to find the subedges contained in primary
+        edges when performing queries.
         """
         if isinstance(edge, Hyperedge):
             if edge.is_atom():
@@ -116,14 +115,14 @@ class Hypergraph(object):
 
         Patterns are themselves edges. They can match families of edges
         by employing special atoms:
-            -> '*' represents a general wildcard (matches any edge)
-            -> '@' represents an atomic wildcard (matches any atom)
-            -> '&' represents a non-atomic wildcard (matches any non-atom)
-            -> '...' at the end indicates an open-ended pattern.
+        -> '*' represents a general wildcard (matches any edge)
+        -> '@' represents an atomic wildcard (matches any atom)
+        -> '&' represents a non-atomic wildcard (matches any non-atom)
+        -> '...' at the end indicates an open-ended pattern.
 
         The pattern can be a string, that must represent an edge.
         Examples: '(is/pd graphbrain/c @)'
-                  '(says/pd * ...)'
+        '(says/pd * ...)'
 
         Atomic patterns can also be used to match all edges in the
         hypergraph (*), all atoms (@), and all non-atoms (&).
@@ -191,8 +190,7 @@ class Hypergraph(object):
         and optionally a given root.
 
         Keyword argument:
-        root -- edge must also contain an atom with this root
-                (default None)
+        root -- edge must also contain an atom with this root (default None)
         """
         return self._edges_with_edges(edges, root)
 
@@ -212,8 +210,8 @@ class Hypergraph(object):
         """Returns attribute as string.
 
         Keyword argument:
-        or_else -- value to return if the entity does not have
-                   the give attribute. (default None)
+        or_else -- value to return if the entity does not have the given
+        attribute. (default None)
         """
         return self._get_str_attribute(hedge(edge), attribute, or_else=or_else)
 

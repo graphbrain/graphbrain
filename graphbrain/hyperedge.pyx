@@ -101,26 +101,26 @@ def match_pattern(edge, pattern):
 
     Patterns are themselves edges. They can match families of edges
     by employing special atoms:
-        -> '*' represents a general wildcard (matches any entity)
-        -> '@' represents an atomic wildcard (matches any atom)
-        -> '&' represents an edge wildcard (matches any edge)
-        -> '...' at the end indicates an open-ended pattern.
+    -> '\*' represents a general wildcard (matches any entity)
+    -> '@' represents an atomic wildcard (matches any atom)
+    -> '&' represents an edge wildcard (matches any edge)
+    -> '...' at the end indicates an open-ended pattern.
 
-    The three wildcards ('*', '@' and '&') can be used to specify variables,
-    for example '*x', '&claim' or '@actor'. In case of a match, these
+    The three wildcards ('\*', '@' and '&') can be used to specify variables,
+    for example '\*x', '&claim' or '@actor'. In case of a match, these
     variables are assigned the hyperedge they correspond to. For example,
 
-    1) the edge: (is/pd (my/mp name/cn) mary/cp)
-       applied to the pattern: (is/pd (my/mp name/cn) *name)
-       produces the result: {'name', mary/cp}
+    (1) the edge: (is/pd (my/mp name/cn) mary/cp)
+    applied to the pattern: (is/pd (my/mp name/cn) \*name)
+    produces the result: {'name', mary/cp}
 
-    2) the edge: (is/pd (my/mp name/cn) mary/cp)
-       applied to the pattern: (is/pd (my/mp name/cn) &name)
-       produces the result: {}
+    (2) the edge: (is/pd (my/mp name/cn) mary/cp)
+    applied to the pattern: (is/pd (my/mp name/cn) &name)
+    produces the result: {}
 
-    3) the edge: (is/pd (my/mp name/cn) mary/cp)
-       applied to the pattern: (is/pd @ *name)
-       produces the result: None
+    (3) the edge: (is/pd (my/mp name/cn) mary/cp)
+    applied to the pattern: (is/pd @ \*name)
+    produces the result: None
     """
 
     edge = hedge(edge)
@@ -178,14 +178,14 @@ def edge_matches_pattern(edge, pattern):
 
     Patterns are themselves edges. They can match families of edges
     by employing special atoms:
-        -> '*' represents a general wildcard (matches any entity)
-        -> '@' represents an atomic wildcard (matches any atom)
-        -> '&' represents an edge wildcard (matches any edge)
-        -> '...' at the end indicates an open-ended pattern.
+    -> '*' represents a general wildcard (matches any entity)
+    -> '@' represents an atomic wildcard (matches any atom)
+    -> '&' represents an edge wildcard (matches any edge)
+    -> '...' at the end indicates an open-ended pattern.
 
     The pattern can be any valid hyperedge, including the above special atoms.
     Examples: (is/pd graphbrain/c @)
-              (says/pd * ...)
+    (says/pd * ...)
     """
     return match_pattern(edge, pattern) is not None
 
@@ -271,7 +271,7 @@ class Hyperedge(tuple):
 
         Keyword argument:
         roots_only -- only the roots of the atoms will be used to create
-                      the string representation.
+        the string representation.
         """
         s = ' '.join([edge.to_str(roots_only=roots_only) for edge in self])
         return ''.join(('(', s, ')'))
@@ -348,7 +348,7 @@ class Hyperedge(tuple):
 
         Keyword argument:
         before -- controls how outer edges are handled, as per above.
-                  (default: False)
+        (default: False)
         """
         if outer.is_atom():
             return Hyperedge((outer, self))
@@ -592,7 +592,7 @@ class Atom(Hyperedge):
 
         Keyword argument:
         roots_only -- only the roots of the atoms will be used to create
-                      the string representation.
+        the string representation.
         """
         if roots_only:
             return self.root()

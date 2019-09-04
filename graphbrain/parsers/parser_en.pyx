@@ -575,22 +575,27 @@ class ParserEN(Parser):
                     if (child.connector_type() in {'pc', 'pr'} or
                             is_relative_concept(ps.tokens[child])):
                         logging.debug('choice: 1')
+                        # RELATIVE TO CONCEPT
                         relative_to_concept.append(child)
                     elif child.connector_type()[0] == 'b':
                         if (child.connector_type() == 'b+' and
                                 child.contains_atom_type('cm')):
-                            logging.debug('choice: 2a')
+                            logging.debug('choice: 2')
+                            # CONCEPT LIST
                             entity = _apply_aux_concept_list_to_concept(child,
                                                                         entity)
                         elif entity.connector_type()[0] == 'c':
-                            logging.debug('choice: 2b')
+                            logging.debug('choice: 3')
+                            # NEST
                             entity = entity.nest(child, ps.positions[child])
                         else:
-                            logging.debug('choice: 3')
+                            logging.debug('choice: 4')
+                            # NEST AROUND ORIGINAL ATOM
                             entity = entity.replace_atom(
                                 atom, atom.nest(child, ps.positions[child]))
                     elif child.connector_type()[0] in {'x', 't'}:
-                        logging.debug('choice: 4')
+                        logging.debug('choice: 5')
+                        # NEST
                         entity = entity.nest(child, ps.positions[child])
                     else:
                         if ((atom.type()[0] == 'c' and
@@ -599,24 +604,28 @@ class ParserEN(Parser):
                             if entity.connector_type()[0] == 'c':
                                 if (child.connector_type()[0] == 'c' and
                                         entity.connector_type() != 'cm'):
-                                    logging.debug('choice: 5a')
+                                    logging.debug('choice: 6')
+                                    # SEQUENCE
                                     entity = entity.sequence(
                                         child, ps.positions[child])
                                 else:
-                                    logging.debug('choice: 5b')
+                                    logging.debug('choice: 7')
+                                    # FLAT SEQUENCE
                                     entity = entity.sequence(
                                         child, ps.positions[child], flat=False)
                             else:
-                                logging.debug('choice: 6')
+                                logging.debug('choice: 8')
+                                # SEQUENCE IN ORIGINAL ATOM
                                 entity = entity.replace_atom(
                                     atom,
                                     atom.sequence(child, ps.positions[child]))
                         else:
-                            logging.debug('choice: 7')
+                            logging.debug('choice: 9')
                             entity = entity.replace_atom(
                                 atom, atom.connect((child,)))
                 elif ent_type[0] in {'p', 'r', 'd', 's'}:
-                    logging.debug('choice: 8')
+                    logging.debug('choice: 10')
+                    # INSERT AFTER PREDICATE
                     result = insert_after_predicate(entity, child)
                     if result:
                         entity = result
@@ -624,42 +633,51 @@ class ParserEN(Parser):
                         logging.warning(('insert_after_predicate failed'
                                          'with: {}').format(self.cur_text))
                 else:
-                    logging.debug('choice: 9')
+                    logging.debug('choice: 11')
+                    # INSERT FIRST ARGUMENT
                     entity = entity.insert_first_argument(child)
             elif child_type[0] == 'b':
                 if entity.connector_type()[0] == 'c':
-                    logging.debug('choice: 10')
+                    logging.debug('choice: 12')
+                    # CONNECT
                     entity = child.connect(entity)
                 else:
-                    logging.debug('choice: 11')
+                    logging.debug('choice: 13')
                     entity = entity.nest(child, ps.positions[child])
             elif child_type[0] == 'p':
                 # TODO: Pathological case
                 # e.g. "Some subspecies of mosquito might be 1s..."
                 if child_type == 'pm':
-                    logging.debug('choice: 12')
+                    logging.debug('choice: 14')
+                    # ?
                     entity = child + entity
                 else:
-                    logging.debug('choice: 13')
+                    logging.debug('choice: 15')
+                    # CONNECT
                     entity = entity.connect((child,))
             elif child_type[0] in {'m', 'x', 't'}:
-                logging.debug('choice: 14')
+                logging.debug('choice: 16')
+                # ?
                 entity = hedge((child, entity))
             elif child_type[0] == 'a':
-                logging.debug('choice: 15')
+                logging.debug('choice: 17')
+                # NEST PREDICATE
                 entity = nest_predicate(entity, child, ps.positions[child])
             elif child_type == 'w':
                 if ent_type[0] in {'d', 's'}:
-                    logging.debug('choice: 16')
+                    logging.debug('choice: 18')
+                    # NEST PREDICATE
                     entity = nest_predicate(entity, child, ps.positions[child])
                     # pass
                 else:
-                    logging.debug('choice: 17')
+                    logging.debug('choice: 19')
+                    # NEST
                     entity = entity.nest(child, ps.positions[child])
             else:
                 logging.warning('Failed to parse token (parse_token): {}'
                                 .format(token))
-                logging.debug('choice: 18')
+                logging.debug('choice: 20')
+                # IGNORE
                 pass
 
             ent_type = entity.type()
