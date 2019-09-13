@@ -102,6 +102,7 @@ setup(
             'sphinx_rtd_theme'
         ]
     },
+    include_package_data=True,
     entry_points='''
         [console_scripts]
         graphbrain=graphbrain.__main__:cli

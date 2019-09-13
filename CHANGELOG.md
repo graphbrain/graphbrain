@@ -1,12 +1,13 @@
 # Changelog
 
-## [0.3.0] - Ongoing work
-
-First beta release!
+## [0.2.2] - 13-09-2019
 
 ### Added
+- txt_parser agent.
+- MANIFEST.in to include VERSION file in distribution.
 
 ### Changed
+- Fixing 'pip install graphbrain' on Linux/Windows.
 
 ### Removed
 

@@ -8,6 +8,7 @@ from graphbrain.agents.corefs_onto import CorefsOnto
 from graphbrain.agents.reddit_parser import RedditParser
 from graphbrain.agents.corefs_unidecode import CorefsUnidecode
 from graphbrain.agents.taxonomy import Taxonomy
+from graphbrain.agents.txt_parser import TxtParser
 
 
 def create_agent(name, hg):
@@ -31,5 +32,7 @@ def create_agent(name, hg):
         return RedditParser(hg)
     elif name == 'taxonomy':
         return Taxonomy(hg)
+    elif name == 'txt_parser':
+        return TxtParser(hg)
     else:
         RuntimeError('unknown agent: {}'.format(name))
