@@ -90,7 +90,7 @@ setup(
         'spacy',
         'python-igraph',
         'asciitree',
-        'plyvel',
+        'lmdb',
         'ipython',
         'progressbar2',
         'unidecode'
