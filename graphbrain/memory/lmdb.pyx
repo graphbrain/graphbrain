@@ -6,7 +6,7 @@ from graphbrain.memory.permutations import *
 
 
 def _ent2key(entity):
-    return (''.join(('v', entity.to_str()))).encode()
+    return entity.to_str().encode()
 
 
 def _encode_attributes(attributes):
@@ -29,7 +29,11 @@ class LMDB(Hypergraph):
 
     def __init__(self, locator_string):
         self.locator_string = locator_string
-        self.env = lmdb.open(self.locator_string)
+        self.env = None
+        self.edges_db = None
+        self.perms_db = None
+        self.meta_db = None
+        self._open()
 
     # ============================================
     # Implementation of abstract interface methods
@@ -43,42 +47,21 @@ class LMDB(Hypergraph):
 
     def destroy(self):
         shutil.rmtree(self.locator_string)
-        self.env = lmdb.open(self.locator_string)
+        self._open()
 
     def all(self):
-        start_key = 'v'
-        end_key = str_plus_1(start_key)
-
-        with self.env.begin() as txn:
+        with self.env.begin(db=self.edges_db) as txn:
             cursor = txn.cursor()
-            if cursor.set_range(start_key.encode()):
-                search = True
-                key = cursor.key().decode()
-                while search and key < end_key:
-                    edge = hedge(key[1:])
-                    if cursor.next():
-                        key = cursor.key().decode()
-                    else:
-                        search = False
-                    yield edge
+            for key, _ in cursor:
+                yield hedge(key.decode())
 
     def all_attributes(self):
-        start_key = 'v'
-        end_key = str_plus_1(start_key)
-
-        with self.env.begin() as txn:
+        with self.env.begin(db=self.edges_db) as txn:
             cursor = txn.cursor()
-            if cursor.set_range(start_key.encode()):
-                search = True
-                key = cursor.key().decode()
-                while search and key < end_key:
-                    edge = hedge(key[1:])
-                    attributes = _decode_attributes(cursor.value())
-                    if cursor.next():
-                        key = cursor.key().decode()
-                    else:
-                        search = False
-                    yield (edge, attributes)
+            for key, value in cursor:
+                edge = hedge(key.decode())
+                attributes = _decode_attributes(value)
+                yield (edge, attributes)
 
     def atom_count(self):
         return self._read_counter('atom_count')
@@ -160,23 +143,18 @@ class LMDB(Hypergraph):
             if not node.is_pattern():
                 nodes.append(node)
                 positions.append(i)
+
         start_str = edges2str(nodes)
         end_str = str_plus_1(start_str)
-        start_key = ''.join(('p', start_str))
-        end_key = ''.join(('p', end_str))
 
-        with self.env.begin() as txn:
+        with self.env.begin(db=self.perms_db) as txn:
             cursor = txn.cursor()
-            if cursor.set_range(start_key.encode()):
-                search = True
-                key = cursor.key().decode()
-                while search and key < end_key:
-                    perm_str = key
-                    tokens = split_edge_str(perm_str[1:])
-                    if cursor.next():
-                        key = cursor.key().decode()
-                    else:
-                        search = False
+            if cursor.set_range(start_str.encode()):
+                for key, _ in cursor:
+                    perm_str = key.decode()
+                    if perm_str >= end_str:
+                        break
+                    tokens = split_edge_str(perm_str)
                     nper = int(tokens[-1])
                     if nper == first_permutation(len(tokens) - 1, positions):
                         edge = perm2edge(perm_str)
@@ -187,27 +165,21 @@ class LMDB(Hypergraph):
         center_str = center.to_str()
         start_str = ''.join((center_str, ' '))
         end_str = str_plus_1(start_str)
-        start_key = ''.join(('p', start_str))
-        end_key = ''.join(('p', end_str))
 
-        with self.env.begin() as txn:
+        with self.env.begin(db=self.perms_db) as txn:
             cursor = txn.cursor()
-            if cursor.set_range(start_key.encode()):
-                search = True
-                key = cursor.key().decode()
+            if cursor.set_range(start_str.encode()):
                 count = 0
-                while (search and
-                       key < end_key and
-                       (not limit or count < limit)):
-                    perm_str = key
+                for key, _ in cursor:
+                    if limit and count >= limit:
+                        break
+                    perm_str = key.decode()
+                    if perm_str >= end_str:
+                        break
                     edge = perm2edge(perm_str)
-                    if cursor.next():
-                        key = cursor.key().decode()
-                    else:
-                        search = False
                     if edge:
                         position = edge.index(center)
-                        nper = int(split_edge_str(perm_str[1:])[-1])
+                        nper = int(split_edge_str(perm_str)[-1])
                         if nper == first_permutation(len(edge), (position,)):
                             count += 1
                             yield(edge)
@@ -215,48 +187,36 @@ class LMDB(Hypergraph):
     def _atoms_with_root(self, root):
         start_str = ''.join((root, '/'))
         end_str = str_plus_1(start_str)
-        start_key = ''.join(('v', start_str))
-        end_key = ''.join(('v', end_str))
 
-        with self.env.begin() as txn:
+        with self.env.begin(db=self.edges_db) as txn:
             cursor = txn.cursor()
-            if cursor.set_range(start_key.encode()):
-                search = True
-                key = cursor.key().decode()
-                while search and key < end_key:
-                    symb = hedge(key[1:])
-                    if cursor.next():
-                        key = cursor.key().decode()
-                    else:
-                        search = False
-                    yield symb
+            if cursor.set_range(start_str.encode()):
+                for key, _ in cursor:
+                    skey = key.decode()
+                    if skey >= end_str:
+                        break
+                    yield hedge(skey)
 
     def _edges_with_edges(self, edges, root):
         start_str = ' '.join([edge.to_str() for edge in edges])
         if root:
             start_str = ''.join((start_str, ' ', root, '/'))
         end_str = str_plus_1(start_str)
-        start_key = ''.join(('p', start_str))
-        end_key = ''.join(('p', end_str))
 
-        with self.env.begin() as txn:
+        with self.env.begin(db=self.perms_db) as txn:
             cursor = txn.cursor()
-            if cursor.set_range(start_key.encode()):
-                key = cursor.key().decode()
-                search = True
-                while search and key < end_key:
-                    perm_str = key
+            if cursor.set_range(start_str.encode()):
+                for key, _ in cursor:
+                    perm_str = key.decode()
+                    if perm_str >= end_str:
+                        break
                     edge = perm2edge(perm_str)
-                    if cursor.next():
-                        key = cursor.key().decode()
-                    else:
-                        search = False
                     if edge:
                         if root is None:
                             if all([item in edge for item in edges]):
                                 positions = [edge.index(item)
                                              for item in edges]
-                                nper = int(split_edge_str(perm_str[1:])[-1])
+                                nper = int(split_edge_str(perm_str)[-1])
                                 if nper == first_permutation(len(edge),
                                                              positions):
                                     yield(edge)
@@ -299,17 +259,22 @@ class LMDB(Hypergraph):
     # Local private methods
     # =====================
 
+    def _open(self):
+        self.env = lmdb.open(self.locator_string, max_dbs=3)
+        self.edges_db = self.env.open_db(b'edges')
+        self.perms_db = self.env.open_db(b'perms')
+        self.meta_db = self.env.open_db(b'meta')
+
     def _add_key(self, ent_key, attributes):
         """Adds the given entity, given its key."""
         value = _encode_attributes(attributes)
-        with self.env.begin(write=True) as txn:
+        with self.env.begin(db=self.edges_db, write=True) as txn:
             txn.put(ent_key, value.encode())
 
     def _write_edge_permutation(self, perm):
         """Writes a given permutation."""
-        perm_key = ''.join(('p', perm)).encode()
-        with self.env.begin(write=True) as txn:
-            txn.put(perm_key, b'x')
+        with self.env.begin(db=self.perms_db, write=True) as txn:
+            txn.put(perm.encode(), b'x')
 
     def _write_edge_permutations(self, edge):
         """Writes all permutations of the edge."""
@@ -317,9 +282,8 @@ class LMDB(Hypergraph):
 
     def _remove_edge_permutation(self, perm):
         """Removes a given permutation."""
-        perm_key = ''.join(('p', perm))
-        with self.env.begin(write=True) as txn:
-            txn.delete(perm_key.encode())
+        with self.env.begin(db=self.perms_db, write=True) as txn:
+            txn.delete(perm.encode())
 
     def _remove_edge_permutations(self, edge):
         """Removes all permutations of the edge."""
@@ -327,12 +291,12 @@ class LMDB(Hypergraph):
 
     def _remove_key(self, edge_key):
         """Removes an edge, given its key."""
-        with self.env.begin(write=True) as txn:
+        with self.env.begin(db=self.edges_db, write=True) as txn:
             txn.delete(edge_key)
 
     def _exists_key(self, edge_key):
         """Checks if the given entity exists."""
-        with self.env.begin() as txn:
+        with self.env.begin(db=self.edges_db) as txn:
             return txn.get(edge_key) is not None
 
     def _set_attribute_key(self, ent_key, attribute, value):
@@ -370,7 +334,7 @@ class LMDB(Hypergraph):
             return False
 
     def _attribute_key(self, ent_key):
-        with self.env.begin() as txn:
+        with self.env.begin(db=self.edges_db) as txn:
             value = txn.get(ent_key)
             return _decode_attributes(value)
 
@@ -406,7 +370,7 @@ class LMDB(Hypergraph):
 
     def __read_counter_key(self, counter_key):
         """Reads a counter by key."""
-        with self.env.begin() as txn:
+        with self.env.begin(db=self.meta_db) as txn:
             value = txn.get(counter_key)
             if value is None:
                 return 0
@@ -421,14 +385,14 @@ class LMDB(Hypergraph):
         """Increments a counter."""
         key = counter.encode()
         value = self.__read_counter_key(key)
-        with self.env.begin(write=True) as txn:
+        with self.env.begin(db=self.meta_db, write=True) as txn:
             txn.put(key, str(value + by).encode())
 
     def _dec_counter(self, counter, by=1):
         """Decrements a counter."""
         key = counter.encode()
         value = self.__read_counter_key(key)
-        with self.env.begin(write=True) as txn:
+        with self.env.begin(db=self.meta_db, write=True) as txn:
             txn.put(key, str(value - by).encode())
 
     def _inc_degrees(self, edge, depth=0):
