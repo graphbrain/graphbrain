@@ -417,7 +417,7 @@ class TestHypergraph(unittest.TestCase):
         self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c) extra/c)')
         self.assertEqual(
             set(self.hg.search('(says/pd * '
-                                  '(is/pd graphbrain/cp great/c))')),
+                               '(is/pd graphbrain/cp great/c))')),
             {hedge('(says/pd mary/cp (is/pd graphbrain/cp great/c))')})
         self.hg.remove_by_pattern('(says/pd * *)')
         self.assertFalse(
@@ -452,6 +452,152 @@ class TestHypergraph(unittest.TestCase):
         self.assertFalse(self.hg.is_primary(hedge('mary/c')))
         self.hg.set_primary(hedge('mary/c'), True)
         self.assertTrue(self.hg.is_primary(hedge('mary/c')))
+
+    def test_add_large_edge(self):
+        s1 = ("(title/p/.reddit anutensil/c/reddit.user "
+              "(discovered/pd.<f----.sr/en (+/b.aam/. energy/cp.s/en "
+              "company/cp.s/en staff/cp.s/en) (working/pc.------.x/en "
+              "(at/t/en (+/b.am/. climate/cp.s/en ministry/cp.s/en)))) "
+              "(says/pd.|f--3s.sr/en (green/ma/en "
+              "(+/b.am/. party/cc.s/en mp/cp.s/en)) "
+              "(have/pr.|f----.so/en (+/b.aam/. fossil/ca/en fuel/cc.s/en "
+              "giants/cc.p/en) (no/md/en (there/m/en place/cc.s/en)))) "
+              "((even/m/en 's/pd.|f--3s.s/en more/w/en outrageous/ma/en "
+              "taxpayers/cc.p/en ((are/av.|f----/en footing/pr.|pg---.o/en) "
+              "(the/md/en bill/cc.s/en))) it/ci/en) "
+              "('s/pd.|f--3s.xsr/en (at/t/en (:/b/. (a/md/en time/cc.s/en) "
+              "((are/av.|f----/en struggling/pr.|pg---.s/en) "
+              "(+/b.aam/. british/ca/en gas/cp.s/en customers/cc.p/en)))) "
+              "it/ci/en ((to/ai/en make/pc.-i----.ox/en) "
+              "(£/m/en (+/b.am/. 1_4bn/c#/en profits/cc.p/en)) "
+              "(this/md/en year/cc.s/en))))")
+        self.hg.destroy()
+        self.hg.add(s1)
+        self.assertTrue(self.hg.exists(s1))
+
+    def test_add_large_edges(self):
+        s1 = ("(title/p/.reddit anutensil/c/reddit.user "
+              "(discovered/pd.<f----.sr/en (+/b.aam/. energy/cp.s/en "
+              "company/cp.s/en staff/cp.s/en) (working/pc.------.x/en "
+              "(at/t/en (+/b.am/. climate/cp.s/en ministry/cp.s/en)))) "
+              "(says/pd.|f--3s.sr/en (green/ma/en "
+              "(+/b.am/. party/cc.s/en mp/cp.s/en)) "
+              "(have/pr.|f----.so/en (+/b.aam/. fossil/ca/en fuel/cc.s/en "
+              "giants/cc.p/en) (no/md/en (there/m/en place/cc.s/en)))) "
+              "((even/m/en 's/pd.|f--3s.s/en more/w/en outrageous/ma/en "
+              "taxpayers/cc.p/en ((are/av.|f----/en footing/pr.|pg---.o/en) "
+              "(the/md/en bill/cc.s/en))) it/ci/en) "
+              "('s/pd.|f--3s.xsr/en (at/t/en (:/b/. (a/md/en time/cc.s/en) "
+              "((are/av.|f----/en struggling/pr.|pg---.s/en) "
+              "(+/b.aam/. british/ca/en gas/cp.s/en customers/cc.p/en)))) "
+              "it/ci/en ((to/ai/en make/pc.-i----.ox/en) "
+              "(£/m/en (+/b.am/. 1_4bn/c#/en profits/cc.p/en)) "
+              "(this/md/en year/cc.s/en))))")
+        s2 = ("(titles/p/.reddit anutensil/c/reddit.user "
+              "(discovered/pd.<f----.sr/en (+/b.aam/. energy/cp.s/en "
+              "company/cp.s/en staff/cp.s/en) (working/pc.------.x/en "
+              "(at/t/en (+/b.am/. climate/cp.s/en ministry/cp.s/en)))) "
+              "(says/pd.|f--3s.sr/en (green/ma/en "
+              "(+/b.am/. party/cc.s/en mp/cp.s/en)) "
+              "(have/pr.|f----.so/en (+/b.aam/. fossil/ca/en fuel/cc.s/en "
+              "giants/cc.p/en) (no/md/en (there/m/en place/cc.s/en)))) "
+              "((even/m/en 's/pd.|f--3s.s/en more/w/en outrageous/ma/en "
+              "taxpayers/cc.p/en ((are/av.|f----/en footing/pr.|pg---.o/en) "
+              "(the/md/en bill/cc.s/en))) it/ci/en) "
+              "('s/pd.|f--3s.xsr/en (at/t/en (:/b/. (a/md/en time/cc.s/en) "
+              "((are/av.|f----/en struggling/pr.|pg---.s/en) "
+              "(+/b.aam/. british/ca/en gas/cp.s/en customers/cc.p/en)))) "
+              "it/ci/en ((to/ai/en make/pc.-i----.ox/en) "
+              "(£/m/en (+/b.am/. 1_4bn/c#/en profits/cc.p/en)) "
+              "(this/md/en year/cc.s/en))))")
+        s3 = ("(title/p/.reddit anutensil/c/reddit.user "
+              "(discovered/pd.<f----.sr/en (+/b.aam/. energy/cp.s/en "
+              "company/cp.s/en staff/cp.s/en) (working/pc.------.x/en "
+              "(at/t/en (+/b.am/. climate/cp.s/en ministry/cp.s/en)))) "
+              "(says/pd.|f--3s.sr/en (green/ma/en "
+              "(+/b.am/. party/cc.s/en mp/cp.s/en)) "
+              "(have/pr.|f----.so/en (+/b.aam/. fossil/ca/en fuel/cc.s/en "
+              "giants/cc.p/en) (no/md/en (there/m/en place/cc.s/en)))) "
+              "((even/m/en 's/pd.|f--3s.s/en more/w/en outrageous/ma/en "
+              "taxpayers/cc.p/en ((are/av.|f----/en footing/pr.|pg---.o/en) "
+              "(the/md/en bill/cc.s/en))) it/ci/en) "
+              "('s/pd.|f--3s.xsr/en (at/t/en (:/b/. (a/md/en time/cc.s/en) "
+              "((are/av.|f----/en struggling/pr.|pg---.s/en) "
+              "(+/b.aam/. british/ca/en gas/cp.s/en customers/cc.p/en)))) "
+              "it/ci/en ((to/ai/en make/pc.-i----.ox/en) "
+              "(£/m/en (+/b.am/. 1_4bn/c#/en profits/cc.p/en)) "
+              "(these/md/en years/cc.p/en))))")
+        self.hg.destroy()
+        self.hg.add(s1)
+        self.assertTrue(self.hg.exists(s1))
+        self.assertFalse(self.hg.exists(s2))
+        self.assertFalse(self.hg.exists(s3))
+        self.hg.add(s2)
+        self.assertTrue(self.hg.exists(s2))
+        self.assertFalse(self.hg.exists(s3))
+        self.hg.add(s3)
+        self.assertTrue(self.hg.exists(s3))
+
+    def test_large_edges_all(self):
+        s1 = ("(title/p/.reddit anutensil/c/reddit.user "
+              "(discovered/pd.<f----.sr/en (+/b.aam/. energy/cp.s/en "
+              "company/cp.s/en staff/cp.s/en) (working/pc.------.x/en "
+              "(at/t/en (+/b.am/. climate/cp.s/en ministry/cp.s/en)))) "
+              "(says/pd.|f--3s.sr/en (green/ma/en "
+              "(+/b.am/. party/cc.s/en mp/cp.s/en)) "
+              "(have/pr.|f----.so/en (+/b.aam/. fossil/ca/en fuel/cc.s/en "
+              "giants/cc.p/en) (no/md/en (there/m/en place/cc.s/en)))) "
+              "((even/m/en 's/pd.|f--3s.s/en more/w/en outrageous/ma/en "
+              "taxpayers/cc.p/en ((are/av.|f----/en footing/pr.|pg---.o/en) "
+              "(the/md/en bill/cc.s/en))) it/ci/en) "
+              "('s/pd.|f--3s.xsr/en (at/t/en (:/b/. (a/md/en time/cc.s/en) "
+              "((are/av.|f----/en struggling/pr.|pg---.s/en) "
+              "(+/b.aam/. british/ca/en gas/cp.s/en customers/cc.p/en)))) "
+              "it/ci/en ((to/ai/en make/pc.-i----.ox/en) "
+              "(£/m/en (+/b.am/. 1_4bn/c#/en profits/cc.p/en)) "
+              "(this/md/en year/cc.s/en))))")
+        s2 = ("(titles/p/.reddit anutensil/c/reddit.user "
+              "(discovered/pd.<f----.sr/en (+/b.aam/. energy/cp.s/en "
+              "company/cp.s/en staff/cp.s/en) (working/pc.------.x/en "
+              "(at/t/en (+/b.am/. climate/cp.s/en ministry/cp.s/en)))) "
+              "(says/pd.|f--3s.sr/en (green/ma/en "
+              "(+/b.am/. party/cc.s/en mp/cp.s/en)) "
+              "(have/pr.|f----.so/en (+/b.aam/. fossil/ca/en fuel/cc.s/en "
+              "giants/cc.p/en) (no/md/en (there/m/en place/cc.s/en)))) "
+              "((even/m/en 's/pd.|f--3s.s/en more/w/en outrageous/ma/en "
+              "taxpayers/cc.p/en ((are/av.|f----/en footing/pr.|pg---.o/en) "
+              "(the/md/en bill/cc.s/en))) it/ci/en) "
+              "('s/pd.|f--3s.xsr/en (at/t/en (:/b/. (a/md/en time/cc.s/en) "
+              "((are/av.|f----/en struggling/pr.|pg---.s/en) "
+              "(+/b.aam/. british/ca/en gas/cp.s/en customers/cc.p/en)))) "
+              "it/ci/en ((to/ai/en make/pc.-i----.ox/en) "
+              "(£/m/en (+/b.am/. 1_4bn/c#/en profits/cc.p/en)) "
+              "(this/md/en year/cc.s/en))))")
+        s3 = ("(title/p/.reddit anutensil/c/reddit.user "
+              "(discovered/pd.<f----.sr/en (+/b.aam/. energy/cp.s/en "
+              "company/cp.s/en staff/cp.s/en) (working/pc.------.x/en "
+              "(at/t/en (+/b.am/. climate/cp.s/en ministry/cp.s/en)))) "
+              "(says/pd.|f--3s.sr/en (green/ma/en "
+              "(+/b.am/. party/cc.s/en mp/cp.s/en)) "
+              "(have/pr.|f----.so/en (+/b.aam/. fossil/ca/en fuel/cc.s/en "
+              "giants/cc.p/en) (no/md/en (there/m/en place/cc.s/en)))) "
+              "((even/m/en 's/pd.|f--3s.s/en more/w/en outrageous/ma/en "
+              "taxpayers/cc.p/en ((are/av.|f----/en footing/pr.|pg---.o/en) "
+              "(the/md/en bill/cc.s/en))) it/ci/en) "
+              "('s/pd.|f--3s.xsr/en (at/t/en (:/b/. (a/md/en time/cc.s/en) "
+              "((are/av.|f----/en struggling/pr.|pg---.s/en) "
+              "(+/b.aam/. british/ca/en gas/cp.s/en customers/cc.p/en)))) "
+              "it/ci/en ((to/ai/en make/pc.-i----.ox/en) "
+              "(£/m/en (+/b.am/. 1_4bn/c#/en profits/cc.p/en)) "
+              "(these/md/en years/cc.p/en))))")
+        self.hg.destroy()
+        self.hg.add(s1)
+        self.hg.add(s2)
+        self.hg.add(s3)
+        res = set([edge.to_str() for edge in self.hg.all()])
+        self.assertTrue(s1 in res)
+        self.assertTrue(s2 in res)
+        self.assertTrue(s3 in res)
 
 
 if __name__ == '__main__':
