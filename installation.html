@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installation &mdash; GraphBrain 0.2.1 documentation</title>
+  <title>Installation &mdash; GraphBrain 0.2.2 documentation</title>
   
 
   
@@ -182,13 +182,15 @@
             
   <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p>GraphBrain is compatible with 64-bit CPython 3.3+ and runs on Linux, macOS and Windows(untested). GraphBrain is available over pip. Installation requires a working build environment. <a class="reference external" href="#prerequisites">For both installation methods, check the prerequisites for your OS</a>. Make sure you are using Python 3.</p>
+<p>Graphbrain is compatible with 64-bit CPython 3.4+ and runs on macOS, Linux and Windows.</p>
+<p>We currently have binary releases for macOS only. Given a working build environment, installation on Linux should be equally simple. Installation on Windows is at the moment less straightforward, because of our dependency on LevelDB, which in turn requires a bit of effort to install in this OS. <a class="reference external" href="#prerequisites">For such cases or to build from the sources, check the prerequisites for your OS</a>.</p>
+<p>Make sure you are using Python 3.</p>
 <div class="section" id="install-with-pip-recommended">
 <h2>Install with pip (recommended)<a class="headerlink" href="#install-with-pip-recommended" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo pip install graphbrain
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install graphbrain
 </pre></div>
 </div>
-<p>It is advisable to work with virtual environments. This avoids conflicts with the system-wide installed packages and creates a nice self-contained environment for you to work on. It is particularly important with GraphBrain because we maintain dependencies to specific versions of downstream machine learning tools, as to keep results consistent.</p>
+<p>It is advisable to work with virtual environments. This avoids conflicts with the system-wide installed packages and creates a nice self-contained environment for you to work on. It is particularly important with graphbrain because we maintain dependencies to specific versions of downstream machine learning tools, as to keep results consistent.</p>
 <p>To create a virtual environment in the current directory you can do this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ virtualenv -p &lt;path to python3&gt; venv
 </pre></div>
@@ -202,7 +204,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 -m venv venv
 </pre></div>
 </div>
-<p>Then to switch to the virtual environment and install GraphBrain:</p>
+<p>Then to switch to the virtual environment and install graphbrain:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ source venv/bin/activate
 $ pip install graphbrain
 </pre></div>
@@ -214,9 +216,9 @@ $ pip install graphbrain
 </div>
 <div class="section" id="install-from-the-code-repository-github">
 <h2>Install from the code repository (github)<a class="headerlink" href="#install-from-the-code-repository-github" title="Permalink to this headline">¶</a></h2>
-<p>Another way to install GraphBrain is to build it from the GitHub repository source. You should use this method if you wish to make changes to the code base.</p>
+<p>Another way to install graphbrain is to build it from the GitHub repository source. You should use this method if you wish to make changes to the code base.</p>
 <p>Start by cloning the source code to your current local directory.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/ai4socialscience/graphbrain.git
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/graphbrain/graphbrain.git
 $ cd graphbrain
 </pre></div>
 </div>
@@ -225,7 +227,7 @@ $ cd graphbrain
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install cython
 </pre></div>
 </div>
-<p>Now we can build and install GraphBrain:</p>
+<p>Now we can build and install graphbrain:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install .
 </pre></div>
 </div>
@@ -235,7 +237,7 @@ $ cd graphbrain
 </div>
 <div class="section" id="for-developers">
 <h3>For developers<a class="headerlink" href="#for-developers" title="Permalink to this headline">¶</a></h3>
-<p>If you want to help develop GraphBrain, you should also install the development dependencies:</p>
+<p>If you want to help develop graphbrain, you should also install the development dependencies:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install &#39;.[dev]&#39;
 </pre></div>
 </div>

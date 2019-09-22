@@ -3,7 +3,7 @@ API reference
 =============
 
 hyperedge module
-===============================
+================
 
 .. automodule:: graphbrain.hyperedge
     :members:

@@ -2,17 +2,21 @@
 Installation
 ============
 
-GraphBrain is compatible with 64-bit CPython 3.3+ and runs on Linux, macOS and Windows(untested). GraphBrain is available over pip. Installation requires a working build environment. `For both installation methods, check the prerequisites for your OS <#prerequisites>`_. Make sure you are using Python 3.
+Graphbrain is compatible with 64-bit CPython 3.4+ and runs on macOS, Linux and Windows. 
+
+We currently have binary releases for macOS only. Given a working build environment, installation on Linux should be equally simple. Installation on Windows is at the moment less straightforward, because of our dependency on LevelDB, which in turn requires a bit of effort to install in this OS. `For such cases or to build from the sources, check the prerequisites for your OS <#prerequisites>`_.
+
+Make sure you are using Python 3.
 
 Install with pip (recommended)
 ==============================
 
 ::
 
-   $ sudo pip install graphbrain
+   $ pip install graphbrain
 
 
-It is advisable to work with virtual environments. This avoids conflicts with the system-wide installed packages and creates a nice self-contained environment for you to work on. It is particularly important with GraphBrain because we maintain dependencies to specific versions of downstream machine learning tools, as to keep results consistent.
+It is advisable to work with virtual environments. This avoids conflicts with the system-wide installed packages and creates a nice self-contained environment for you to work on. It is particularly important with graphbrain because we maintain dependencies to specific versions of downstream machine learning tools, as to keep results consistent.
 
 To create a virtual environment in the current directory you can do this::
 
@@ -27,7 +31,7 @@ If you are on macOS, do this instead (for the reason `explained here <http://mat
 
    $ python3 -m venv venv
 
-Then to switch to the virtual environment and install GraphBrain::
+Then to switch to the virtual environment and install graphbrain::
 
    $ source venv/bin/activate
    $ pip install graphbrain
@@ -40,12 +44,12 @@ It is still necessary to download a spaCy language model::
 Install from the code repository (github)
 =========================================
 
-Another way to install GraphBrain is to build it from the GitHub repository source. You should use this method if you wish to make changes to the code base.
+Another way to install graphbrain is to build it from the GitHub repository source. You should use this method if you wish to make changes to the code base.
 
 Start by cloning the source code to your current local directory.
 ::
 
-   $ git clone https://github.com/ai4socialscience/graphbrain.git
+   $ git clone https://github.com/graphbrain/graphbrain.git
    $ cd graphbrain
 
 It is advisable to work with virtual environments, for reasons that are explained in the previous section. Please refer to it for details.
@@ -54,7 +58,7 @@ Install Cython::
 
    $ pip install cython
 
-Now we can build and install GraphBrain::
+Now we can build and install graphbrain::
 
    $ pip install .
 
@@ -65,7 +69,7 @@ It is still necessary to download a spaCy language model::
 For developers
 --------------
 
-If you want to help develop GraphBrain, you should also install the development dependencies::
+If you want to help develop graphbrain, you should also install the development dependencies::
 
    $ pip install '.[dev]'
 
