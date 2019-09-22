@@ -31,7 +31,8 @@ if USE_CYTHON:
 
 if USE_CYTHON:
     ext_modules = [
-        Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.pyx'],),
+        Extension('graphbrain.hyperedge',
+                  ['graphbrain/hyperedge.pyx']),
         Extension('graphbrain.memory.lmdb',
                   ['graphbrain/memory/lmdb.pyx']),
         Extension('graphbrain.memory.permutations',

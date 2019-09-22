@@ -301,7 +301,8 @@ class LMDB(Hypergraph):
 
     def _open(self):
         self.env = lmdb.open(self.locator_string,
-                             max_dbs=3, map_size=int(1e11))
+                             max_dbs=3,
+                             map_size=int(1e11))
         self.edges_db = self.env.open_db(b'edges')
         self.perms_db = self.env.open_db(b'perms')
         self.meta_db = self.env.open_db(b'meta')
@@ -311,25 +312,19 @@ class LMDB(Hypergraph):
         with self.env.begin(db=self.edges_db, write=True) as txn:
             txn.put(key, _encode_attributes(attributes))
 
-    def _write_edge_permutation(self, perm):
-        """Writes a given permutation."""
-        key, attributes = _str2key_attrs(perm)
-        with self.env.begin(db=self.perms_db, write=True) as txn:
-            txn.put(key, _encode_attributes(attributes))
-
     def _write_edge_permutations(self, edge):
         """Writes all permutations of the edge."""
-        do_with_edge_permutations(edge, self._write_edge_permutation)
-
-    def _remove_edge_permutation(self, perm):
-        """Removes a given permutation."""
-        key, _ = _str2key_attrs(perm)
         with self.env.begin(db=self.perms_db, write=True) as txn:
-            txn.delete(key)
+            for perm in edge_permutations(edge):
+                key, attributes = _str2key_attrs(perm)
+                txn.put(key, _encode_attributes(attributes))
 
     def _remove_edge_permutations(self, edge):
         """Removes all permutations of the edge."""
-        do_with_edge_permutations(edge, self._remove_edge_permutation)
+        with self.env.begin(db=self.perms_db, write=True) as txn:
+            for perm in edge_permutations(edge):
+                key, _ = _str2key_attrs(perm)
+                txn.delete(key)
 
     def _remove_key(self, edge_key):
         """Removes an edge, given its key."""

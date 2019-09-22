@@ -118,13 +118,10 @@ class TestPermutations(unittest.TestCase):
         self.assertEqual(first_permutation(4, [0, 2, 4]), 4)
         self.assertEqual(first_permutation(4, [1, 2, 4]), 10)
 
-    def test_do_with_edge_permutations(self):
+    def test_edge_permutations(self):
         output = []
-
-        def accumulate(perm_str):
-            output.append(perm_str)
-
-        do_with_edge_permutations(hedge('(a b c)'), accumulate)
+        for perm in edge_permutations(hedge('(a b c)')):
+            output.append(perm)
         self.assertEqual(output, ['a b c 0', 'a c b 1', 'b a c 2', 'b c a 3',
                                   'c a b 4', 'c b a 5'])
 
