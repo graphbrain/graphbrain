@@ -90,13 +90,13 @@ def first_permutation(elements, positions):
     return fp
 
 
-def edge_permutations(edge):
-    """Generates permutations of the given edge."""
+def do_with_edge_permutations(edge, f):
+    """Applies the function f to all permutations of the given edge."""
     nperms = min(math.factorial(len(edge)), MAX_PERMS)
     for nperm in range(nperms):
         perm_str = ' '.join([e.to_str() for e in permutate(edge, nperm)])
         perm_str = ''.join((perm_str, ' ', str(nperm)))
-        yield perm_str
+        f(perm_str)
 
 
 def perm2edge(perm_str):
@@ -104,7 +104,7 @@ def perm2edge(perm_str):
        into an edge.
     """
     try:
-        tokens = split_edge_str(perm_str)
+        tokens = split_edge_str(perm_str[1:])
         if tokens is None:
             return None
         nper = int(tokens[-1])

@@ -1,5 +1,5 @@
-from graphbrain.memory.lmdb import LMDB
+from graphbrain.memory.leveldb import LevelDB
 
 
 def hypergraph(locator_string):
-    return LMDB(locator_string)
+    return LevelDB(locator_string)

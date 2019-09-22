@@ -31,10 +31,9 @@ if USE_CYTHON:
 
 if USE_CYTHON:
     ext_modules = [
-        Extension('graphbrain.hyperedge',
-                  ['graphbrain/hyperedge.pyx']),
-        Extension('graphbrain.memory.lmdb',
-                  ['graphbrain/memory/lmdb.pyx']),
+        Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.pyx'],),
+        Extension('graphbrain.memory.leveldb',
+                  ['graphbrain/memory/leveldb.pyx']),
         Extension('graphbrain.memory.permutations',
                   ['graphbrain/memory/permutations.pyx']),
         Extension('graphbrain.parsers.parser_en',
@@ -47,8 +46,8 @@ if USE_CYTHON:
 else:
     ext_modules = [
         Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.c'], ),
-        Extension('graphbrain.memory.lmdb',
-                  ['graphbrain/memory/lmdb.c']),
+        Extension('graphbrain.memory.leveldb',
+                  ['graphbrain/memory/leveldb.c']),
         Extension('graphbrain.memory.permutations',
                   ['graphbrain/memory/permutations.c']),
         Extension('graphbrain.parsers.parser_en',
@@ -91,7 +90,7 @@ setup(
         'spacy',
         'python-igraph',
         'asciitree',
-        'lmdb',
+        'plyvel',
         'ipython',
         'progressbar2',
         'unidecode'

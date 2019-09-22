@@ -1,15 +1,5 @@
 # Changelog
 
-## [0.3.0] - ongoing work
-
-### Added
-- LMDB hypergraph backend.
-
-### Changed
-
-### Removed
-- LevelDB hypergraph backend.
-
 ## [0.2.2] - 13-09-2019
 
 ### Added
