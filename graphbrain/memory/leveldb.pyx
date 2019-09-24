@@ -4,8 +4,8 @@ from graphbrain.hyperedge import *
 from graphbrain.memory.permutations import *
 
 
-def _ent2key(entity):
-    return (''.join(('v', entity.to_str()))).encode('utf-8')
+def _edge2key(edge):
+    return (''.join(('v', edge.to_str()))).encode('utf-8')
 
 
 def _encode_attributes(attributes):
@@ -81,17 +81,17 @@ class LevelDB(Hypergraph):
     # Implementation of private abstract methods
     # ==========================================
 
-    def _exists(self, entity):
-        return self._exists_key(_ent2key(entity))
+    def _exists(self, edge):
+        return self._exists_key(_edge2key(edge))
 
     def _add(self, edge, primary):
-        ent_key = _ent2key(edge)
-        if not self._exists_key(ent_key):
+        key = _edge2key(edge)
+        if not self._exists_key(key):
             if primary:
-                self._add_key(ent_key, {'p': 1, 'd': 0, 'dd': 0})
+                self._add_key(key, {'p': 1, 'd': 0, 'dd': 0})
                 self._inc_degrees(edge)
             else:
-                self._add_key(ent_key, {'p': 0, 'd': 0, 'dd': 0})
+                self._add_key(key, {'p': 0, 'd': 0, 'dd': 0})
             if edge.is_atom():
                 if primary:
                     self._inc_counter('primary_atom_count')
@@ -101,7 +101,7 @@ class LevelDB(Hypergraph):
             if primary:
                 self._inc_counter('primary_edge_count')
             self._inc_counter('edge_count')
-        # if an entity is to be added as primary, but it already exists as
+        # if an edge is to be added as primary, but it already exists as
         # non-primary, then make it primary and update the degrees
         elif primary and not self._is_primary(edge):
             self._set_attribute(edge, 'p', 1)
@@ -119,8 +119,8 @@ class LevelDB(Hypergraph):
                 if primary:
                     self._dec_degrees(edge)
 
-        ent_key = _ent2key(edge)
-        if self._exists_key(ent_key):
+        key = _edge2key(edge)
+        if self._exists_key(key):
             if edge.is_atom():
                 self._dec_counter('atom_count')
                 if primary:
@@ -130,7 +130,7 @@ class LevelDB(Hypergraph):
             self._dec_counter('edge_count')
             if primary:
                 self._dec_counter('primary_edge_count')
-            self._remove_key(ent_key)
+            self._remove_key(key)
 
     def _is_primary(self, edge):
         return self._get_int_attribute(edge, 'p') == 1
@@ -214,28 +214,28 @@ class LevelDB(Hypergraph):
                     yield(edge)
 
     def _set_attribute(self, edge, attribute, value):
-        ent_key = _ent2key(edge)
-        return self._set_attribute_key(ent_key, attribute, value)
+        key = _edge2key(edge)
+        return self._set_attribute_key(key, attribute, value)
 
     def _inc_attribute(self, edge, attribute):
-        ent_key = _ent2key(edge)
-        return self._inc_attribute_key(ent_key, attribute)
+        key = _edge2key(edge)
+        return self._inc_attribute_key(key, attribute)
 
     def _dec_attribute(self, edge, attribute):
-        ent_key = _ent2key(edge)
-        return self._dec_attribute_key(ent_key, attribute)
+        key = _edge2key(edge)
+        return self._dec_attribute_key(key, attribute)
 
     def _get_str_attribute(self, edge, attribute, or_else=None):
-        ent_key = _ent2key(edge)
-        return self._get_str_attribute_key(ent_key, attribute, or_else)
+        key = _edge2key(edge)
+        return self._get_str_attribute_key(key, attribute, or_else)
 
     def _get_int_attribute(self, edge, attribute, or_else=None):
-        ent_key = _ent2key(edge)
-        return self._get_int_attribute_key(ent_key, attribute, or_else)
+        key = _edge2key(edge)
+        return self._get_int_attribute_key(key, attribute, or_else)
 
     def _get_float_attribute(self, edge, attribute, or_else=None):
-        ent_key = _ent2key(edge)
-        return self._get_float_attribute_key(ent_key, attribute, or_else)
+        key = _edge2key(edge)
+        return self._get_float_attribute_key(key, attribute, or_else)
 
     def _degree(self, edge):
         return self.get_int_attribute(edge, 'd', 0)
@@ -247,10 +247,10 @@ class LevelDB(Hypergraph):
     # Local private methods
     # =====================
 
-    def _add_key(self, ent_key, attributes):
-        """Adds the given entity, given its key."""
+    def _add_key(self, key, attributes):
+        """Adds the given edge, given its key."""
         value = _encode_attributes(attributes)
-        self.db.put(ent_key, value)
+        self.db.put(key, value)
 
     def _write_edge_permutation(self, perm):
         """Writes a given permutation."""
@@ -270,55 +270,55 @@ class LevelDB(Hypergraph):
         """Removes all permutations of the edge."""
         do_with_edge_permutations(edge, self._remove_edge_permutation)
 
-    def _remove_key(self, ent_key):
-        """Removes an entity, given its key."""
-        self.db.delete(ent_key)
+    def _remove_key(self, key):
+        """Removes an edge, given its key."""
+        self.db.delete(key)
 
-    def _exists_key(self, ent_key):
-        """Checks if the given entity exists."""
-        return self.db.get(ent_key) is not None
+    def _exists_key(self, key):
+        """Checks if the given edge exists."""
+        return self.db.get(key) is not None
 
-    def _set_attribute_key(self, ent_key, attribute, value):
-        """Sets the value of an attribute by ent_key."""
-        if self._exists_key(ent_key):
-            attributes = self._attribute_key(ent_key)
+    def _set_attribute_key(self, key, attribute, value):
+        """Sets the value of an attribute by key."""
+        if self._exists_key(key):
+            attributes = self._attribute_key(key)
             if isinstance(value, str):
                 value = value.replace('|', ' ').replace('\\', ' ')
             attributes[attribute] = value
         else:
             attributes = {'p': 0, 'd': 0, 'dd': 0}
             attributes[attribute] = value
-        self._add_key(ent_key, attributes)
+        self._add_key(key, attributes)
 
-    def _inc_attribute_key(self, ent_key, attribute):
-        """Increments an attribute of an entity."""
-        if self._exists_key(ent_key):
-            attributes = self._attribute_key(ent_key)
+    def _inc_attribute_key(self, key, attribute):
+        """Increments an attribute of an edge."""
+        if self._exists_key(key):
+            attributes = self._attribute_key(key)
             cur_value = int(attributes[attribute])
             attributes[attribute] = cur_value + 1
-            self._add_key(ent_key, attributes)
+            self._add_key(key, attributes)
             return True
         else:
             return False
 
-    def _dec_attribute_key(self, ent_key, attribute):
-        """Decrements an attribute of an entity."""
-        if self._exists_key(ent_key):
-            attributes = self._attribute_key(ent_key)
+    def _dec_attribute_key(self, key, attribute):
+        """Decrements an attribute of an edge."""
+        if self._exists_key(key):
+            attributes = self._attribute_key(key)
             cur_value = int(attributes[attribute])
             attributes[attribute] = cur_value - 1
-            self._add_key(ent_key, attributes)
+            self._add_key(key, attributes)
             return True
         else:
             return False
 
-    def _attribute_key(self, ent_key):
-        value = self.db.get(ent_key)
+    def _attribute_key(self, key):
+        value = self.db.get(key)
         return _decode_attributes(value)
 
-    def _get_str_attribute_key(self, ent_key, attribute, or_else=None):
-        if self._exists_key(ent_key):
-            attributes = self._attribute_key(ent_key)
+    def _get_str_attribute_key(self, key, attribute, or_else=None):
+        if self._exists_key(key):
+            attributes = self._attribute_key(key)
             if attribute in attributes:
                 return attributes[attribute]
             else:
@@ -326,9 +326,9 @@ class LevelDB(Hypergraph):
         else:
             return or_else
 
-    def _get_int_attribute_key(self, ent_key, attribute, or_else=None):
-        if self._exists_key(ent_key):
-            attributes = self._attribute_key(ent_key)
+    def _get_int_attribute_key(self, key, attribute, or_else=None):
+        if self._exists_key(key):
+            attributes = self._attribute_key(key)
             if attribute in attributes:
                 return int(attributes[attribute])
             else:
@@ -336,9 +336,9 @@ class LevelDB(Hypergraph):
         else:
             return or_else
 
-    def _get_float_attribute_key(self, ent_key, attribute, or_else=None):
-        if self._exists_key(ent_key):
-            attributes = self._attribute_key(ent_key)
+    def _get_float_attribute_key(self, key, attribute, or_else=None):
+        if self._exists_key(key):
+            attributes = self._attribute_key(key)
             if attribute in attributes:
                 return float(attributes[attribute])
             else:
@@ -372,27 +372,27 @@ class LevelDB(Hypergraph):
 
     def _inc_degrees(self, edge, depth=0):
         if depth > 0:
-            ent_key = _ent2key(edge)
-            if not self._exists_key(ent_key):
+            key = _edge2key(edge)
+            if not self._exists_key(key):
                 d = 1 if depth == 1 else 0
-                self._add_key(ent_key, {'p': 0, 'd': d, 'dd': 1})
+                self._add_key(key, {'p': 0, 'd': d, 'dd': 1})
                 if edge.is_atom():
                     self._inc_counter('atom_count')
                 self._inc_counter('edge_count')
             else:
                 if depth == 1:
-                    self._inc_attribute_key(ent_key, 'd')
-                self._inc_attribute_key(ent_key, 'dd')
+                    self._inc_attribute_key(key, 'd')
+                self._inc_attribute_key(key, 'dd')
         if not edge.is_atom():
             for child in edge:
                 self._inc_degrees(child, depth + 1)
 
     def _dec_degrees(self, edge, depth=0):
         if depth > 0:
-            ent_key = _ent2key(edge)
+            key = _edge2key(edge)
             if depth == 1:
-                self._dec_attribute_key(ent_key, 'd')
-            self._dec_attribute_key(ent_key, 'dd')
+                self._dec_attribute_key(key, 'd')
+            self._dec_attribute_key(key, 'dd')
         if not edge.is_atom():
             for child in edge:
                 self._dec_degrees(child, depth + 1)
