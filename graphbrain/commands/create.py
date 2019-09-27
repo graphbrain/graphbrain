@@ -3,5 +3,5 @@ from graphbrain import *
 
 def run(args):
     print('creating hypergraph...')
-    hypergraph(args.hg)
+    hgraph(args.hg)
     print('done.')

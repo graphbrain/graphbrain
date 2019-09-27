@@ -5,7 +5,7 @@ from graphbrain.meaning.corefs import *
 
 class TestCorefs(unittest.TestCase):
     def setUp(self):
-        self.hg = hypergraph('test.hg')
+        self.hg = hgraph('test.hg')
         self.hg.destroy()
 
         concepts = []

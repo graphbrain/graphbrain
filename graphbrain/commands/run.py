@@ -3,7 +3,7 @@ from graphbrain.agents import create_agent
 
 
 def run(args):
-    hg = hypergraph(args.hg)
+    hg = hgraph(args.hg)
     agent = create_agent(args.agent, hg)
     if agent is None:
         print('ERROR: unknown agent: {}'.format(args.agent))

@@ -2,7 +2,7 @@ from graphbrain import *
 
 
 def run(args):
-    hg = hypergraph(args.hg)
+    hg = hgraph(args.hg)
     print('atoms: {}'.format(hg.atom_count()))
     print('edges: {}'.format(hg.edge_count()))
     print('primary atoms: {}'.format(hg.primary_atom_count()))

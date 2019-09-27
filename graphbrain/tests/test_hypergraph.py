@@ -4,7 +4,7 @@ from graphbrain import *
 
 class TestHypergraph(unittest.TestCase):
     def setUp(self):
-        self.hg = hypergraph('test.hg')
+        self.hg = hgraph('test.hg')
 
     def tearDown(self):
         self.hg.close()

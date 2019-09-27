@@ -6,6 +6,9 @@
 - Tests.
 
 ### Changed
+- Graphbrain is now beta (main APIs considered stable).
+- Renamed funs.hypergraph() to funs.hgraph().
+- Fixing notebook examples.
 
 ### Removed
 
@@ -17,8 +20,6 @@
 
 ### Changed
 - Fixing 'pip install graphbrain' on Linux/Windows.
-
-### Removed
 
 ## [0.2.1] - 04-09-2019
 ### Added
