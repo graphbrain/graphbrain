@@ -402,7 +402,7 @@ class TestHyperedge(unittest.TestCase):
         edge = hedge('&')
         self.assertTrue(edge.is_pattern())
 
-    def test_full_pattern(self):
+    def test_is_full_pattern(self):
         edge = hedge("('s/bp.am zimbabwe/m economy/cn.s)")
         self.assertFalse(edge.is_full_pattern())
         edge = hedge("('s/bp.am * economy/cn.s)")
@@ -419,6 +419,68 @@ class TestHyperedge(unittest.TestCase):
         self.assertTrue(edge.is_full_pattern())
         edge = hedge('(@ * & ...)')
         self.assertTrue(edge.is_full_pattern())
+
+    def test_argroles_atom(self):
+        edge = hedge('s/bp.am')
+        self.assertEqual(edge.argroles(), 'am')
+        edge = hedge('come/pd.sx.-i----/en')
+        self.assertEqual(edge.argroles(), 'sx')
+        edge = hedge('come/pd')
+        self.assertEqual(edge.argroles(), '')
+        edge = hedge('red/m')
+        self.assertEqual(edge.argroles(), '')
+        edge = hedge('berlin/cp.s/de')
+        self.assertEqual(edge.argroles(), '')
+
+    def test_argroles_edge(self):
+        edge = hedge('(is/av.|f--3s/en influenced/pd.xpa.<pf---/en)')
+        self.assertEqual(edge.argroles(), 'xpa')
+        edge = hedge('(is/av.|f--3s/en influenced/pd)')
+        self.assertEqual(edge.argroles(), '')
+        edge = hedge('(looks/pd.sc.|f--3s she/ci (very/m beautiful/ca))')
+        self.assertEqual(edge.argroles(), '')
+
+    def test_edges_with_argrole(self):
+        edge_str = ("((have/av.|f----/en (been/av.<pf---/en "
+                    "tracking/pd.sox.|pg---/en)) (from/br.ma/en "
+                    "satellites/cc.p/en (and/b+/en nasa/cp.s/en "
+                    "(other/ma/en agencies/cc.p/en))) "
+                    "(+/b.aam/. sea/cc.s/en ice/cc.s/en changes/cc.p/en) "
+                    "(since/tt/en 1979/c#/en))")
+        edge = hedge(edge_str)
+
+        subj = hedge(("(from/br.ma/en satellites/cc.p/en "
+                      "(and/b+/en nasa/cp.s/en (other/ma/en "
+                      "agencies/cc.p/en)))"))
+        obj = hedge("(+/b.aam/. sea/cc.s/en ice/cc.s/en changes/cc.p/en)")
+        spec = hedge("(since/tt/en 1979/c#/en)")
+
+        self.assertEqual(edge.edges_with_argrole('s'), [subj])
+        self.assertEqual(edge.edges_with_argrole('o'), [obj])
+        self.assertEqual(edge.edges_with_argrole('x'), [spec])
+        self.assertEqual(edge.edges_with_argrole('p'), [])
+
+    def test_edges_with_argrole_no_roles(self):
+        edge_str = ("((have/av.|f----/en (been/av.<pf---/en "
+                    "tracking/pd)) (from/br.ma/en "
+                    "satellites/cc.p/en (and/b+/en nasa/cp.s/en "
+                    "(other/ma/en agencies/cc.p/en))) "
+                    "(+/b.aam/. sea/cc.s/en ice/cc.s/en changes/cc.p/en) "
+                    "(since/tt/en 1979/c#/en))")
+        edge = hedge(edge_str)
+
+        self.assertEqual(edge.edges_with_argrole('s'), [])
+        self.assertEqual(edge.edges_with_argrole('o'), [])
+        self.assertEqual(edge.edges_with_argrole('x'), [])
+        self.assertEqual(edge.edges_with_argrole('p'), [])
+
+    def test_edges_with_argrole_atom(self):
+        edge = hedge('tracking/pd.sox.|pg---/en')
+
+        self.assertEqual(edge.edges_with_argrole('s'), [])
+        self.assertEqual(edge.edges_with_argrole('o'), [])
+        self.assertEqual(edge.edges_with_argrole('x'), [])
+        self.assertEqual(edge.edges_with_argrole('p'), [])
 
     def test_main_concepts(self):
         concept = hedge("('s/bp.am zimbabwe/mp economy/cn.s)")

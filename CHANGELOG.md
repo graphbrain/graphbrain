@@ -4,11 +4,14 @@
 
 ### Added
 - Tests.
+- Documentation.
 
 ### Changed
 - Graphbrain is now beta (main APIs considered stable).
 - Renamed funs.hypergraph() to funs.hgraph().
-- Fixing notebook examples.
+- Fixed notebook examples.
+- Moved Hypergraph.lemma_degrees() to meaning.lemmas.
+- Argroles location is normalized (first position in both predicates and builders).
 
 ### Removed
 

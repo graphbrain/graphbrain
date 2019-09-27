@@ -341,7 +341,7 @@ class ParserEN(Parser):
             else:
                 ent_type = 'pd'
 
-        et = '{}.{}.{}'.format(ent_type, verb_features, args_string)
+        et = '{}.{}.{}'.format(ent_type, args_string, verb_features)
 
         return build_atom(text, et, self.lang)
 

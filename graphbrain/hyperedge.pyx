@@ -510,13 +510,16 @@ class Hyperedge(tuple):
         return all(item.is_full_pattern() for item in self)
 
     def argroles(self):
+        """Returns the argument roles string of the edge, if it exists.
+        Otherwise returns empty string.
+        """
         et = self.type()[0]
         if et not in {'b', 'p'}:
-            return []
+            return ''
         return self[1].argroles()
 
     def edges_with_argrole(self, argrole):
-        """Returns the list of edges with the given argument role"""
+        """Returns the list of edges with the given argument role."""
 
         edges = []
         connector = self[0]
@@ -741,18 +744,16 @@ class Atom(Hyperedge):
         return self.is_pattern()
 
     def argroles(self):
+        """Returns the argument roles string of the edge, if it exists.
+        Otherwise returns empty string.
+        """
         et = self.type()[0]
         if et not in {'b', 'p'}:
-            return []
+            return ''
         role = self.role()
-        if et == 'b':
-            if len(role) < 2:
-                return []
-            return role[1]
-        elif et == 'p':
-            if len(role) < 3:
-                return []
-            return role[2]
+        if len(role) < 2:
+            return ''
+        return role[1]
 
     def edges_with_argrole(self, argrole):
         """Returns the list of edges with the given argument role"""
