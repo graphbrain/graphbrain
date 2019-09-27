@@ -1,5 +1,6 @@
 from graphbrain.meaning.ontology import subtypes
 from graphbrain.meaning.corefs import make_corefs
+from graphbrain.meaning.lemmas import lemma_degrees
 from graphbrain.agents.agent import Agent
 
 
@@ -44,7 +45,7 @@ class CorefsOnto(Agent):
                 d = self.hg.degree(edge)
                 dd = self.hg.deep_degree(edge)
                 r = float(d) / float(dd)
-                ld, ldd = self.hg.lemma_degrees(edge)
+                ld, ldd = lemma_degrees(self.hg, edge)
                 lr = float(ld) / float(ldd)
 
                 # use metric to decide

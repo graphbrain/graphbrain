@@ -4,6 +4,7 @@ import progressbar
 from igraph import *
 from graphbrain import *
 from graphbrain.meaning.corefs import *
+from graphbrain.meaning.lemmas import lemma_degrees
 from graphbrain.agents.agent import Agent
 
 
@@ -143,7 +144,7 @@ class CorefsNames(Agent):
                     d = self.hg.degree(seed)
                     dd = self.hg.deep_degree(seed)
                     r = float(d) / float(dd)
-                    ld, ldd = self.hg.lemma_degrees(seed)
+                    ld, ldd = lemma_degrees(self.hg, seed)
                     lr = float(ld) / float(ldd)
 
                     # print('max_ratio: {}'.format(max_ratio))
