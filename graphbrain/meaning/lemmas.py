@@ -23,7 +23,8 @@ def lemma_degrees(hg, edge):
     These two sums are returned.
 
     If the parameter edge is non-atomic, this function simply returns
-    the degree and deep degree of that edge."""
+    the degree and deep degree of that edge.
+    """
     if edge.is_atom():
         roots = {edge.root()}
 

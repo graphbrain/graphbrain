@@ -425,6 +425,34 @@ class TestHypergraph(unittest.TestCase):
                 hedge('(says/pd mary/cp (is/pd graphbrain/cp great/c))')))
         self.assertTrue(self.hg.exists(hedge('(is/pd graphbrain/cp great/c)')))
 
+    def test_root_degrees(self):
+        self.hg.destroy()
+        self.hg.add('(is/pd graphbrain/c great/c/1)')
+        self.hg.add('(says/pd mary/cp)')
+        self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c/2))')
+        self.hg.add('(says/pd mary/cp (is/pd graphbrain/cs great/c) extra/c)')
+        self.assertEqual(self.hg.root_degrees(hedge('graphbrain/cp')), (1, 3))
+        self.assertEqual(self.hg.root_degrees(hedge('great/c')), (1, 3))
+        self.assertEqual(self.hg.root_degrees(hedge('says/pd')), (3, 3))
+
+    def test_sum_degree(self):
+        self.hg.destroy()
+        self.hg.add('(is/pd graphbrain/c great/c/1)')
+        self.hg.add('(says/pd mary/cp)')
+        self.hg.add('(says/pd mary/cp (is/pd graphbrain/c great/c/2))')
+        self.hg.add('(says/pd mary/cp (is/pd graphbrain/c great/c) extra/c)')
+        self.assertEqual(self.hg.sum_degree({hedge('graphbrain/c'),
+                                             hedge('says/pd')}), 4)
+
+    def test_sum_deep_degree(self):
+        self.hg.destroy()
+        self.hg.add('(is/pd graphbrain/c great/c/1)')
+        self.hg.add('(says/pd mary/cp)')
+        self.hg.add('(says/pd mary/cp (is/pd graphbrain/c great/c/2))')
+        self.hg.add('(says/pd mary/cp (is/pd graphbrain/c great/c) extra/c)')
+        self.assertEqual(self.hg.sum_deep_degree({hedge('graphbrain/c'),
+                                                  hedge('says/pd')}), 6)
+
     def test_primary_1(self):
         self.hg.destroy()
         edge1 = hedge('((is/a going/p) mary/c (to (the/m gym/c)))')

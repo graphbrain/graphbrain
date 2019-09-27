@@ -258,9 +258,16 @@ class Hypergraph(object):
             self.remove(edge)
 
     def root_degrees(self, edge):
-        """TODO: document and test"""
+        """Finds all the atoms that share the same root as the given edge
+        and computes the sum of both their degrees and deep degrees.
+        These two sums are returned.
+
+        If the parameter edge is non-atomic, this function simply returns
+        the degree and deep degree of that edge.
+        """
         if edge.is_atom():
             atoms = tuple(self.atoms_with_root(edge.root()))
+            print(atoms)
             d = sum([self.degree(atom) for atom in atoms])
             dd = sum([self.deep_degree(atom) for atom in atoms])
             return d, dd
@@ -268,11 +275,14 @@ class Hypergraph(object):
             return self.degree(edge), self.deep_degree(edge)
 
     def sum_degree(self, edges):
-        """TODO: document and test"""
+        """Returns sum of the degrees of all edges contained in the parameter.
+        """
         return sum([self.degree(edge) for edge in edges])
 
     def sum_deep_degree(self, edges):
-        """TODO: document and test"""
+        """Returns sum of the deep degrees of all edges contained in the
+        parameter.
+        """
         return sum([self.deep_degree(edge) for edge in edges])
 
     # ==============================================================
