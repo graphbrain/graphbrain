@@ -12,6 +12,7 @@
 - Fixed notebook examples.
 - Moved Hypergraph.lemma_degrees() to meaning.lemmas.
 - Argroles location is normalized (first position in both predicates and builders).
+- In the parsers package, create_parser() was moved to __init__ and the factory module was removed.
 
 ### Removed
 

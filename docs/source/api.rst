@@ -19,10 +19,10 @@ hypergraph module
 parsers package
 ===============
 
-factory module
---------------
+package functions
+-----------------
 
-.. automodule:: graphbrain.parsers.factory
+.. automodule:: graphbrain.parsers.__init__
     :members:
 
 parser module
