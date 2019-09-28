@@ -98,6 +98,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-graphbrain.__init__">main functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-graphbrain.hyperedge">hyperedge module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-graphbrain.hypergraph">hypergraph module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-graphbrain.notebook">notebook module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#parsers-package">parsers package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.parsers.__init__">package functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.parsers.parser">parser module</a></li>
@@ -109,6 +110,11 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.meaning.corefs">corefs module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.meaning.lemmas">lemmas module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.meaning.ontology">ontology module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agents-package">agents package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">package functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.agents.agent">agent module</a></li>
 </ul>
 </li>
 </ul>
@@ -978,6 +984,19 @@ parameter.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-graphbrain.notebook">
+<span id="notebook-module"></span><h2>notebook module<a class="headerlink" href="#module-graphbrain.notebook" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="graphbrain.notebook.show">
+<code class="sig-prename descclassname">graphbrain.notebook.</code><code class="sig-name descname">show</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">roots_only=True</em>, <em class="sig-param">style='indented'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/notebook.html#show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.notebook.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays a representation of the edge in the notebook.</p>
+<p>Keyword arguments:</p>
+<p>roots_only – only show roots of atoms (default: True)</p>
+<p>style – render style (‘indented’, ‘compact’ or ‘oneline’)
+(default: ‘indented’)</p>
+</dd></dl>
+
+</div>
 <div class="section" id="parsers-package">
 <h2>parsers package<a class="headerlink" href="#parsers-package" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-graphbrain.parsers.__init__">
@@ -1155,6 +1174,106 @@ the degree and deep degree of that edge.</p>
 <dt id="graphbrain.meaning.ontology.supertypes">
 <code class="sig-prename descclassname">graphbrain.meaning.ontology.</code><code class="sig-name descname">supertypes</code><span class="sig-paren">(</span><em class="sig-param">hg</em>, <em class="sig-param">edge</em>, <em class="sig-param">deep=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/meaning/ontology.html#supertypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.ontology.supertypes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all supertypes of the given edge.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="agents-package">
+<h2>agents package<a class="headerlink" href="#agents-package" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>package functions<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-graphbrain.agents.__init__"></span><dl class="function">
+<dt id="graphbrain.agents.__init__.create_agent">
+<code class="sig-prename descclassname">graphbrain.agents.__init__.</code><code class="sig-name descname">create_agent</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">hg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/agents/__init__.html#create_agent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.__init__.create_agent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates and returns an instance of the agent identified by the given
+name. Throws an exception if no such agent is known.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-graphbrain.agents.agent">
+<span id="agent-module"></span><h3>agent module<a class="headerlink" href="#module-graphbrain.agents.agent" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="graphbrain.agents.agent.Agent">
+<em class="property">class </em><code class="sig-prename descclassname">graphbrain.agents.agent.</code><code class="sig-name descname">Agent</code><span class="sig-paren">(</span><em class="sig-param">hg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/agents/agent.html#Agent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for Graphbrain cognitive agents.</p>
+<p>These agents perform some change to an hypergraph, either by processing
+some external source of information of by inferring new knowledge from
+what is already contained in the hypregraph.</p>
+<dl class="method">
+<dt id="graphbrain.agents.agent.Agent.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">primary=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/agents/agent.html#Agent.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tell agent to add this edge to the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="graphbrain.agents.agent.Agent.end">
+<code class="sig-name descname">end</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/agents/agent.html#Agent.end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.end" title="Permalink to this definition">¶</a></dt>
+<dd><p>End the agent’s current cycle of activities.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="graphbrain.agents.agent.Agent.input">
+<code class="sig-name descname">input</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/agents/agent.html#Agent.input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Input to the agent all the edges corresponding to its current
+search pattern. A typical use is in knowledge inference agents, which
+infer new knowledge from edges already present in the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="graphbrain.agents.agent.Agent.input_edge">
+<code class="sig-name descname">input_edge</code><span class="sig-paren">(</span><em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/agents/agent.html#Agent.input_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.input_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Feeds the agent an edge to process.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="graphbrain.agents.agent.Agent.input_file">
+<code class="sig-name descname">input_file</code><span class="sig-paren">(</span><em class="sig-param">file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/agents/agent.html#Agent.input_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.input_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Feeds the agent a path to a file to process.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="graphbrain.agents.agent.Agent.languages">
+<code class="sig-name descname">languages</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/agents/agent.html#Agent.languages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.languages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns set of languages supported by the agent, or an empty set
+if the agent is language-agnostic.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="graphbrain.agents.agent.Agent.name">
+<code class="sig-name descname">name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/agents/agent.html#Agent.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the agent’s name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="graphbrain.agents.agent.Agent.report">
+<code class="sig-name descname">report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/agents/agent.html#Agent.report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce a report of the agent’s activities.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="graphbrain.agents.agent.Agent.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">infile=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/agents/agent.html#Agent.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>High-level method to run an agent. It will start a cycle of
+activities, provide a full set of inputs, end the cycle of activities
+and print a report.</p>
+<p>Keyword argument:</p>
+<p>infile – if provided, agent inputs information from a file, otherwise
+it goes through all the edges present in the hypergraph that are
+selected by its internal pattern (defaulting to ‘*’, meaning
+all of them).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="graphbrain.agents.agent.Agent.start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/agents/agent.html#Agent.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tell agent that a new cycle of activity is starting. What this
+means in practice depends on the agent. For example, for a
+knowledge inference agent this could mean one full pass through all
+the edges in the hypergraph. For an agent that extracts knowledge
+from external files, this could mean one pass through an entire
+file.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>

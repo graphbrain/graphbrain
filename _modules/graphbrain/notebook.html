@@ -1,0 +1,382 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>graphbrain.notebook &mdash; GraphBrain 0.2.2 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #333" >
+          
+
+          
+            <a href="../../index.html">
+          
+
+          
+            
+            <img src="../../_static/graphbrain-logo.gif" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    <div>
+    <a href="https://socsemics.huma-num.fr/" style="margin:0px; text-align:center">
+        <img style="width: 75%; height: 75%; border-radius: 0px; margin:0px; padding:5px; background:#ffffff" src="_static/socsemics.png"/>
+    </a>
+    </div>
+    
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">Command-line interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../team.html">Team</a></li>
+</ul>
+
+            
+          
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GraphBrain</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>graphbrain.notebook</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for graphbrain.notebook</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">html</span> <span class="k">import</span> <span class="n">escape</span>
+<span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
+<span class="kn">from</span> <span class="nn">graphbrain</span> <span class="k">import</span> <span class="o">*</span>
+
+
+<span class="n">SYMBOL_COLOR</span> <span class="o">=</span> <span class="s1">&#39;#404040&#39;</span>
+<span class="n">NAMESPACE_COLOR</span> <span class="o">=</span> <span class="s1">&#39;#7F7F6F&#39;</span>
+<span class="n">EDGE_COLORS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;#a65628&#39;</span><span class="p">,</span> <span class="s1">&#39;#377eb8&#39;</span><span class="p">,</span> <span class="s1">&#39;#4daf4a&#39;</span><span class="p">,</span> <span class="s1">&#39;#984ea3&#39;</span><span class="p">,</span> <span class="s1">&#39;#ff7f00&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;#ffff33&#39;</span><span class="p">,</span> <span class="s1">&#39;#e41a1c&#39;</span><span class="p">,</span> <span class="s1">&#39;#f781bf&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_edge2html_r</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">roots_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">formatting</span><span class="o">=</span><span class="s1">&#39;indented&#39;</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">close</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#000&#39;</span><span class="p">,</span> <span class="n">conn</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">close_html</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">assert</span><span class="p">(</span><span class="n">formatting</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;indented&#39;</span><span class="p">,</span> <span class="s1">&#39;compact&#39;</span><span class="p">,</span> <span class="s1">&#39;oneline&#39;</span><span class="p">})</span>
+
+    <span class="c1"># default value for close html string that is returned to caller</span>
+    <span class="n">ret_close_html</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="c1"># font size</span>
+    <span class="k">if</span> <span class="n">formatting</span> <span class="o">==</span> <span class="s1">&#39;indented&#39;</span><span class="p">:</span>
+        <span class="n">fs</span> <span class="o">=</span> <span class="mi">14</span> <span class="o">-</span> <span class="n">depth</span>
+    <span class="k">elif</span> <span class="n">formatting</span> <span class="o">==</span> <span class="s1">&#39;compact&#39;</span><span class="p">:</span>
+        <span class="n">fs</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="k">elif</span> <span class="n">formatting</span> <span class="o">==</span> <span class="s1">&#39;oneline&#39;</span><span class="p">:</span>
+        <span class="n">fs</span> <span class="o">=</span> <span class="mi">11</span>
+    <span class="n">font_size</span> <span class="o">=</span> <span class="s1">&#39;font-size:</span><span class="si">{}</span><span class="s1">pt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fs</span><span class="p">)</span>
+
+    <span class="c1"># indent-dependent variables</span>
+    <span class="k">if</span> <span class="n">indent</span><span class="p">:</span>
+        <span class="n">main_tag</span> <span class="o">=</span> <span class="s1">&#39;div&#39;</span>
+        <span class="n">margin</span> <span class="o">=</span> <span class="s1">&#39;margin-left:20px;&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">main_tag</span> <span class="o">=</span> <span class="s1">&#39;span&#39;</span>
+        <span class="n">margin</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="c1"># color</span>
+    <span class="n">color_html</span> <span class="o">=</span> <span class="s1">&#39;color:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+
+    <span class="c1"># different renders depending on weather:</span>
+    <span class="c1"># ... edge is an atom:</span>
+    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
+        <span class="c1"># connectors are rendered in bold</span>
+        <span class="n">bold_style</span> <span class="o">=</span> <span class="s1">&#39;font-weight:bold;&#39;</span> <span class="k">if</span> <span class="n">conn</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1"># render atom root</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;span style=&quot;</span><span class="si">{}{}</span><span class="s2">&quot;&gt;</span><span class="si">{}</span><span class="s2">&lt;/span&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bold_style</span><span class="p">,</span>
+                   <span class="n">color_html</span><span class="p">,</span>
+                   <span class="n">escape</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">root</span><span class="p">())</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="c1"># render non-root part, if requested</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">roots_only</span><span class="p">:</span>
+            <span class="n">escaped_codes</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">parts</span><span class="p">()[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">escaped_codes</span> <span class="o">=</span> <span class="n">escape</span><span class="p">(</span><span class="n">escaped_codes</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            </span><span class="si">{}</span><span class="s2">&lt;span style=&quot;color:</span><span class="si">{}</span><span class="s2">;font-size:8pt&quot;&gt;/</span><span class="si">{}</span><span class="s2">&lt;/span&gt;</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">html</span><span class="p">,</span>
+                       <span class="n">NAMESPACE_COLOR</span><span class="p">,</span>
+                       <span class="n">escaped_codes</span><span class="p">)</span>
+
+        <span class="c1"># render atom</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;</span><span class="si">{}</span><span class="s2"> style=&quot;</span><span class="si">{}{}</span><span class="s2">&quot;&gt;</span><span class="si">{}</span><span class="s2">&lt;/</span><span class="si">{}</span><span class="s2">&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">main_tag</span><span class="p">,</span> <span class="n">margin</span><span class="p">,</span> <span class="n">font_size</span><span class="p">,</span> <span class="n">html</span><span class="p">,</span> <span class="n">main_tag</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="c1"># ... edge is an edge</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">et</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">type</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">arity</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+        <span class="n">contains_edges</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="n">child</span><span class="o">.</span><span class="n">is_atom</span><span class="p">()</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">)</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">EDGE_COLORS</span><span class="p">[</span><span class="n">depth</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">EDGE_COLORS</span><span class="p">)]</span>
+        <span class="n">color_html</span> <span class="o">=</span> <span class="s1">&#39;color:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+
+        <span class="c1"># surroundings symbols depending on edge type</span>
+        <span class="k">if</span> <span class="n">et</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span>
+            <span class="n">open_symbol</span> <span class="o">=</span> <span class="s1">&#39;[&#39;</span>
+            <span class="n">close_symbol</span> <span class="o">=</span> <span class="s1">&#39;]&#39;</span>
+        <span class="k">elif</span> <span class="n">et</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">}:</span>
+            <span class="n">open_symbol</span> <span class="o">=</span> <span class="s1">&#39;{&#39;</span>
+            <span class="n">close_symbol</span> <span class="o">=</span> <span class="s1">&#39;}&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">open_symbol</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span>
+            <span class="n">close_symbol</span> <span class="o">=</span> <span class="s1">&#39;)&#39;</span>
+
+        <span class="c1"># render opening symbol</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;span style=&quot;font-weight:bold;</span><span class="si">{}</span><span class="s2">&quot;&gt;</span><span class="si">{}</span><span class="s2">&lt;/span&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">font_size</span><span class="p">,</span> <span class="n">open_symbol</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="n">close_html</span> <span class="o">=</span> <span class="s1">&#39;&lt;/</span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">main_tag</span><span class="p">)</span>
+
+        <span class="c1"># render edge children</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">arity</span><span class="p">):</span>
+            <span class="c1"># first edge (connector)?</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">child_indent</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">child_color</span> <span class="o">=</span> <span class="n">color</span>
+                <span class="n">child_conn</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="c1"># not connector</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># indent depending on formatting</span>
+                <span class="k">if</span> <span class="n">formatting</span> <span class="o">==</span> <span class="s1">&#39;indented&#39;</span><span class="p">:</span>
+                    <span class="n">child_indent</span> <span class="o">=</span> <span class="n">contains_edges</span> <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">is_atom</span><span class="p">()</span> <span class="k">else</span> <span class="kc">True</span>
+                <span class="k">elif</span> <span class="n">formatting</span> <span class="o">==</span> <span class="s1">&#39;compact&#39;</span><span class="p">:</span>
+                    <span class="c1"># edges with only two items are rendered in one line</span>
+                    <span class="n">child_indent</span> <span class="o">=</span> <span class="n">arity</span> <span class="o">&gt;</span> <span class="mi">2</span>
+                    <span class="k">if</span> <span class="n">child_indent</span> <span class="ow">and</span> <span class="n">child</span><span class="o">.</span><span class="n">is_atom</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">contains_edges</span><span class="p">:</span>
+                        <span class="n">child_indent</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">elif</span> <span class="n">formatting</span> <span class="o">==</span> <span class="s1">&#39;oneline&#39;</span><span class="p">:</span>
+                    <span class="n">child_indent</span> <span class="o">=</span> <span class="kc">False</span>
+
+                <span class="n">child_color</span> <span class="o">=</span> <span class="n">SYMBOL_COLOR</span>
+                <span class="n">child_conn</span> <span class="o">=</span> <span class="n">conn</span>
+                <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
+
+            <span class="n">child</span> <span class="o">=</span> <span class="n">edge</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
+                <span class="n">child_html</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_edge2html_r</span><span class="p">(</span><span class="n">child</span><span class="p">,</span>
+                                             <span class="n">roots_only</span><span class="o">=</span><span class="n">roots_only</span><span class="p">,</span>
+                                             <span class="n">formatting</span><span class="o">=</span><span class="n">formatting</span><span class="p">,</span>
+                                             <span class="n">indent</span><span class="o">=</span><span class="n">child_indent</span><span class="p">,</span>
+                                             <span class="n">depth</span><span class="o">=</span><span class="n">depth</span><span class="p">,</span>
+                                             <span class="n">color</span><span class="o">=</span><span class="n">child_color</span><span class="p">,</span>
+                                             <span class="n">conn</span><span class="o">=</span><span class="n">child_conn</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Do not render closing html of children that are the last</span>
+                <span class="c1"># edge in a hyperedge. Instead, let some higher-level edge</span>
+                <span class="c1"># render it to avoid ugly multi-line staircases when closing</span>
+                <span class="c1"># a sequence of edges.</span>
+                <span class="n">child_close</span> <span class="o">=</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">arity</span> <span class="o">-</span> <span class="mi">1</span>
+
+                <span class="n">child_html</span><span class="p">,</span> <span class="n">child_cl_html</span> <span class="o">=</span> <span class="n">_edge2html_r</span><span class="p">(</span><span class="n">child</span><span class="p">,</span>
+                                                         <span class="n">roots_only</span><span class="o">=</span><span class="n">roots_only</span><span class="p">,</span>
+                                                         <span class="n">formatting</span><span class="o">=</span><span class="n">formatting</span><span class="p">,</span>
+                                                         <span class="n">indent</span><span class="o">=</span><span class="n">child_indent</span><span class="p">,</span>
+                                                         <span class="n">close</span><span class="o">=</span><span class="n">child_close</span><span class="p">,</span>
+                                                         <span class="n">depth</span><span class="o">=</span><span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                                                         <span class="n">conn</span><span class="o">=</span><span class="n">child_conn</span><span class="p">)</span>
+                <span class="c1"># accumulate close_html of child</span>
+                <span class="n">close_html</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">child_cl_html</span><span class="p">,</span> <span class="n">close_html</span><span class="p">)</span>
+            <span class="n">html</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">child_html</span><span class="p">)</span>
+
+        <span class="c1"># if closing html should not be rendered at the end o this edge</span>
+        <span class="c1"># representation, then return it to the parent</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">close</span><span class="p">:</span>
+            <span class="n">ret_close_html</span> <span class="o">=</span> <span class="n">close_html</span>
+            <span class="n">close_html</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1"># render close symbol</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        </span><span class="si">{}</span><span class="s2">&lt;span style=&quot;</span><span class="si">{}</span><span class="s2">&quot;&gt;</span>
+<span class="s2">            &lt;span style=&quot;font-weight:bold;</span><span class="si">{}</span><span class="s2">&quot;&gt;</span><span class="si">{}</span><span class="s2">&lt;/span&gt;</span>
+<span class="s2">        &lt;/span&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="n">color_html</span><span class="p">,</span> <span class="n">font_size</span><span class="p">,</span> <span class="n">close_symbol</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="c1"># render edge</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;</span><span class="si">{}</span><span class="s2"> style=&quot;</span><span class="si">{}{}</span><span class="s2">&quot;&gt;</span><span class="si">{}{}</span><span class="s2"></span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">main_tag</span><span class="p">,</span> <span class="n">margin</span><span class="p">,</span> <span class="n">color_html</span><span class="p">,</span> <span class="n">html</span><span class="p">,</span> <span class="n">close_html</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="c1"># ... edge is an atom</span>
+
+    <span class="k">return</span> <span class="n">html</span><span class="p">,</span> <span class="n">ret_close_html</span>
+
+
+<span class="k">def</span> <span class="nf">_edge2html</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">roots_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">formatting</span><span class="o">=</span><span class="s1">&#39;indented&#39;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_edge2html_r</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">roots_only</span><span class="o">=</span><span class="n">roots_only</span><span class="p">,</span> <span class="n">formatting</span><span class="o">=</span><span class="n">formatting</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="show"><a class="viewcode-back" href="../../api.html#graphbrain.notebook.show">[docs]</a><span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">roots_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;indented&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Displays a representation of the edge in the notebook.</span>
+
+<span class="sd">    Keyword arguments:</span>
+
+<span class="sd">    roots_only -- only show roots of atoms (default: True)</span>
+
+<span class="sd">    style -- render style (&#39;indented&#39;, &#39;compact&#39; or &#39;oneline&#39;)</span>
+<span class="sd">    (default: &#39;indented&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="n">_edge2html</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">roots_only</span><span class="o">=</span><span class="n">roots_only</span><span class="p">,</span> <span class="n">formatting</span><span class="o">=</span><span class="n">style</span><span class="p">)</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="n">html</span><span class="p">))</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019 CNRS
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
