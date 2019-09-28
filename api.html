@@ -103,6 +103,14 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.parsers.parser">parser module</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#meaning-package">meaning package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.meaning.actors">actors module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.meaning.concepts">concepts module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.meaning.corefs">corefs module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.meaning.lemmas">lemmas module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.meaning.ontology">ontology module</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="team.html">Team</a></li>
@@ -1011,6 +1019,142 @@ main_edge, i.e.: the sentence itself.</p>
 enriched with NLP annotations.</p>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="meaning-package">
+<h2>meaning package<a class="headerlink" href="#meaning-package" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-graphbrain.meaning.actors">
+<span id="actors-module"></span><h3>actors module<a class="headerlink" href="#module-graphbrain.meaning.actors" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="graphbrain.meaning.actors.find_actors">
+<code class="sig-prename descclassname">graphbrain.meaning.actors.</code><code class="sig-name descname">find_actors</code><span class="sig-paren">(</span><em class="sig-param">hg</em>, <em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/meaning/actors.html#find_actors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.actors.find_actors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns set of all coreferences to actors found in the edge.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.meaning.actors.is_actor">
+<code class="sig-prename descclassname">graphbrain.meaning.actors.</code><code class="sig-name descname">is_actor</code><span class="sig-paren">(</span><em class="sig-param">hg</em>, <em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/meaning/actors.html#is_actor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.actors.is_actor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the edge is a coreference to an actor.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-graphbrain.meaning.concepts">
+<span id="concepts-module"></span><h3>concepts module<a class="headerlink" href="#module-graphbrain.meaning.concepts" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="graphbrain.meaning.concepts.all_concepts">
+<code class="sig-prename descclassname">graphbrain.meaning.concepts.</code><code class="sig-name descname">all_concepts</code><span class="sig-paren">(</span><em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/meaning/concepts.html#all_concepts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.concepts.all_concepts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively search for all concepts contained in the edge, returning
+a set that can also contain itself.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.meaning.concepts.has_proper_concept">
+<code class="sig-prename descclassname">graphbrain.meaning.concepts.</code><code class="sig-name descname">has_proper_concept</code><span class="sig-paren">(</span><em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/meaning/concepts.html#has_proper_concept"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.concepts.has_proper_concept" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the concept either is a proper edge, or contains one.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.meaning.concepts.strip_concept">
+<code class="sig-prename descclassname">graphbrain.meaning.concepts.</code><code class="sig-name descname">strip_concept</code><span class="sig-paren">(</span><em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/meaning/concepts.html#strip_concept"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.concepts.strip_concept" title="Permalink to this definition">¶</a></dt>
+<dd><p>Strip away nesting edges with connectors such as triggers and
+subpredicates, to expose the outmost and leftmost concept that can be
+found. May be the edge itself.</p>
+<p>For example:</p>
+<p>(against/t (the/m (of/b treaty/c paris/c)))</p>
+<p>becomes</p>
+<p>(the/m (of/b treaty/c paris/c))</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-graphbrain.meaning.corefs">
+<span id="corefs-module"></span><h3>corefs module<a class="headerlink" href="#module-graphbrain.meaning.corefs" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="graphbrain.meaning.corefs.are_corefs">
+<code class="sig-prename descclassname">graphbrain.meaning.corefs.</code><code class="sig-name descname">are_corefs</code><span class="sig-paren">(</span><em class="sig-param">hg</em>, <em class="sig-param">edge1</em>, <em class="sig-param">edge2</em>, <em class="sig-param">corefs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/meaning/corefs.html#are_corefs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.corefs.are_corefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the two given edges are coreferences.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.meaning.corefs.coref_id">
+<code class="sig-prename descclassname">graphbrain.meaning.corefs.</code><code class="sig-name descname">coref_id</code><span class="sig-paren">(</span><em class="sig-param">hg</em>, <em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/meaning/corefs.html#coref_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.corefs.coref_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the coreference identifier of the edge.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.meaning.corefs.coref_set">
+<code class="sig-prename descclassname">graphbrain.meaning.corefs.</code><code class="sig-name descname">coref_set</code><span class="sig-paren">(</span><em class="sig-param">hg</em>, <em class="sig-param">edge</em>, <em class="sig-param">corefs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/meaning/corefs.html#coref_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.corefs.coref_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the set of coreferences that the given edge belongs to.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.meaning.corefs.main_coref">
+<code class="sig-prename descclassname">graphbrain.meaning.corefs.</code><code class="sig-name descname">main_coref</code><span class="sig-paren">(</span><em class="sig-param">hg</em>, <em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/meaning/corefs.html#main_coref"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.corefs.main_coref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns main edge for the coreference set that the given edge
+belongs to.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.meaning.corefs.main_coref_from_id">
+<code class="sig-prename descclassname">graphbrain.meaning.corefs.</code><code class="sig-name descname">main_coref_from_id</code><span class="sig-paren">(</span><em class="sig-param">hg</em>, <em class="sig-param">cref_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/meaning/corefs.html#main_coref_from_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.corefs.main_coref_from_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns main edge in the coreference set for the given identifier.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.meaning.corefs.make_corefs">
+<code class="sig-prename descclassname">graphbrain.meaning.corefs.</code><code class="sig-name descname">make_corefs</code><span class="sig-paren">(</span><em class="sig-param">hg</em>, <em class="sig-param">edge1</em>, <em class="sig-param">edge2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/meaning/corefs.html#make_corefs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.corefs.make_corefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the two given edges belong to the same corefernce set.</p>
+<p>This may trigger further updates to maintain consistency, such as
+merging existing coreference sets and recomputing the main edge of
+a coreference set.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-graphbrain.meaning.lemmas">
+<span id="lemmas-module"></span><h3>lemmas module<a class="headerlink" href="#module-graphbrain.meaning.lemmas" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="graphbrain.meaning.lemmas.deep_lemma">
+<code class="sig-prename descclassname">graphbrain.meaning.lemmas.</code><code class="sig-name descname">deep_lemma</code><span class="sig-paren">(</span><em class="sig-param">hg</em>, <em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/meaning/lemmas.html#deep_lemma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.lemmas.deep_lemma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the lemma of an atomic edge, or the lemma of the first atom
+found by recursively descending the hyperedge, always choosing the
+subedge immediatly after the connector.</p>
+<p>This is useful, for example, to find the lemma of the central verb
+in a non-atomic predicate edge. For example:</p>
+<p>(not/a (is/a going/p))</p>
+<p>could return</p>
+<p>go/p</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.meaning.lemmas.lemma">
+<code class="sig-prename descclassname">graphbrain.meaning.lemmas.</code><code class="sig-name descname">lemma</code><span class="sig-paren">(</span><em class="sig-param">hg</em>, <em class="sig-param">atom</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/meaning/lemmas.html#lemma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.lemmas.lemma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the lemma of the given atom if it exists, None otherwise.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.meaning.lemmas.lemma_degrees">
+<code class="sig-prename descclassname">graphbrain.meaning.lemmas.</code><code class="sig-name descname">lemma_degrees</code><span class="sig-paren">(</span><em class="sig-param">hg</em>, <em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/meaning/lemmas.html#lemma_degrees"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.lemmas.lemma_degrees" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds all the atoms that share the same given lemma
+and computes the sum of both their degrees and deep degrees.
+These two sums are returned.</p>
+<p>If the parameter edge is non-atomic, this function simply returns
+the degree and deep degree of that edge.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-graphbrain.meaning.ontology">
+<span id="ontology-module"></span><h3>ontology module<a class="headerlink" href="#module-graphbrain.meaning.ontology" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="graphbrain.meaning.ontology.subtypes">
+<code class="sig-prename descclassname">graphbrain.meaning.ontology.</code><code class="sig-name descname">subtypes</code><span class="sig-paren">(</span><em class="sig-param">hg</em>, <em class="sig-param">edge</em>, <em class="sig-param">deep=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/meaning/ontology.html#subtypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.ontology.subtypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all subtypes of the given edge.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.meaning.ontology.supertypes">
+<code class="sig-prename descclassname">graphbrain.meaning.ontology.</code><code class="sig-name descname">supertypes</code><span class="sig-paren">(</span><em class="sig-param">hg</em>, <em class="sig-param">edge</em>, <em class="sig-param">deep=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/meaning/ontology.html#supertypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.ontology.supertypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all supertypes of the given edge.</p>
 </dd></dl>
 
 </div>

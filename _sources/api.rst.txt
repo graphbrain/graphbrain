@@ -36,3 +36,37 @@ parser module
 
 .. automodule:: graphbrain.parsers.parser
     :members:
+
+
+meaning package
+===============
+
+actors module
+-------------
+
+.. automodule:: graphbrain.meaning.actors
+    :members:
+
+concepts module
+---------------
+
+.. automodule:: graphbrain.meaning.concepts
+    :members:
+
+corefs module
+-------------
+
+.. automodule:: graphbrain.meaning.corefs
+    :members:
+
+lemmas module
+-------------
+
+.. automodule:: graphbrain.meaning.lemmas
+    :members:
+
+ontology module
+---------------
+
+.. automodule:: graphbrain.meaning.ontology
+    :members:
