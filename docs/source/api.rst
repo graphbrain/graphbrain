@@ -2,6 +2,12 @@
 API reference
 =============
 
+main functions
+==============
+
+.. automodule:: graphbrain.__init__
+    :members:
+
 hyperedge module
 ================
 

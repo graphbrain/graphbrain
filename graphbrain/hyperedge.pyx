@@ -101,9 +101,13 @@ def match_pattern(edge, pattern):
 
     Patterns are themselves edges. They can match families of edges
     by employing special atoms:
+
     -> '\*' represents a general wildcard (matches any entity)
+
     -> '@' represents an atomic wildcard (matches any atom)
+
     -> '&' represents an edge wildcard (matches any edge)
+
     -> '...' at the end indicates an open-ended pattern.
 
     The three wildcards ('\*', '@' and '&') can be used to specify variables,
@@ -178,9 +182,13 @@ def edge_matches_pattern(edge, pattern):
 
     Patterns are themselves edges. They can match families of edges
     by employing special atoms:
+
     -> '*' represents a general wildcard (matches any entity)
+
     -> '@' represents an atomic wildcard (matches any atom)
+
     -> '&' represents an edge wildcard (matches any edge)
+
     -> '...' at the end indicates an open-ended pattern.
 
     The pattern can be any valid hyperedge, including the above special atoms.

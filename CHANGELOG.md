@@ -8,13 +8,14 @@
 
 ### Changed
 - Graphbrain is now beta (main APIs considered stable).
-- Renamed funs.hypergraph() to funs.hgraph().
+- Renamed hypergraph() to hgraph() and moved function to __jnit__.
 - Fixed notebook examples.
 - Moved Hypergraph.lemma_degrees() to meaning.lemmas.
 - Argroles location is normalized (first position in both predicates and builders).
 - In the parsers package, create_parser() was moved to __init__ and the factory module was removed.
 
 ### Removed
+- graphbrain.funs module.
 
 ## [0.2.2] - 13-09-2019
 

@@ -403,7 +403,7 @@ class ParserEN(Parser):
             return hedge((first[0],
                           self._compose_concepts(first[1:] + concepts[1:])))
 
-    def post_process(self, entity):
+    def _post_process(self, entity):
         if entity.is_atom():
             token = self.atom2token.get(entity)
             if token:
@@ -413,7 +413,7 @@ class ParserEN(Parser):
                 temporal = False
             return entity, temporal
         else:
-            entity, temps = zip(*[self.post_process(item) for item in entity])
+            entity, temps = zip(*[self._post_process(item) for item in entity])
             entity = hedge(entity)
             temporal = True in temps
             ct = entity.connector_type()
@@ -506,7 +506,7 @@ class ParserEN(Parser):
         ps.child_tokens.extend(zip(token.rights, repeat(False)))
 
         for child_token, pos in ps.child_tokens:
-            child, child_extra_edges = self.parse_token(child_token)
+            child, child_extra_edges = self._parse_token(child_token)
             if child:
                 ps.extra_edges.update(child_extra_edges)
                 ps.positions[child] = pos
@@ -542,7 +542,7 @@ class ParserEN(Parser):
             lemma_edge = hedge((const.lemma_pred, entity, lemma))
             ps.extra_edges.add(lemma_edge)
 
-    def parse_token(self, token):
+    def _parse_token(self, token):
         # check what type token maps to, return None if if maps to nothing
         ent_type = token_type(token)
         if ent_type == '' or ent_type is None:
@@ -673,7 +673,7 @@ class ParserEN(Parser):
                     # NEST
                     entity = entity.nest(child, ps.positions[child])
             else:
-                logging.warning('Failed to parse token (parse_token): {}'
+                logging.warning('Failed to parse token (_parse_token): {}'
                                 .format(token))
                 logging.debug('choice: 20')
                 # IGNORE
