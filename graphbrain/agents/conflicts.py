@@ -52,8 +52,8 @@ class Conflicts(Agent):
                         subject = find_concept(subjects[0])
                         obj = find_concept(objects[0])
                         if (subject and obj and
-                                is_proper_concept(subject) and
-                                is_proper_concept(obj)):
+                                has_proper_concept(subject) and
+                                has_proper_concept(obj)):
                             actor_orig = main_coref(self.hg, subject)
                             actor_targ = main_coref(self.hg, obj)
                             if (is_actor(self.hg, actor_orig) and

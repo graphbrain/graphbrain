@@ -25,7 +25,7 @@ class Actors(Agent):
                 subjects = edge.edges_with_argrole('s')
                 if len(subjects) == 1:
                     subject = find_concept(subjects[0])
-                    if subject and is_proper_concept(subject):
+                    if subject and has_proper_concept(subject):
                         actor = main_coref(self.hg, subject)
                         self.actor_counter[actor] += 1
 

@@ -1,5 +1,5 @@
 from graphbrain.meaning.corefs import make_corefs
-from graphbrain.meaning.concepts import is_proper_concept
+from graphbrain.meaning.concepts import has_proper_concept
 from graphbrain.agents.agent import Agent
 
 
@@ -22,7 +22,7 @@ class CorefsDets(Agent):
                 len(edge) == 2 and
                 edge[0].is_atom() and
                 edge[0].root() == 'the' and
-                is_proper_concept(edge[1])):
+                has_proper_concept(edge[1])):
             make_corefs(self.hg, edge, edge[1])
             self.corefs += 1
 
