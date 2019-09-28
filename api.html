@@ -97,8 +97,9 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-graphbrain.hyperedge">hyperedge module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-graphbrain.hypergraph">hypergraph module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-graphbrain.parsers.factory">parsers package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#parser-class">Parser class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parsers-package">parsers package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.parsers.__init__">package functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.parsers.parser">parser module</a></li>
 </ul>
 </li>
 </ul>
@@ -181,7 +182,15 @@
 <dl class="class">
 <dt id="graphbrain.hyperedge.Atom">
 <em class="property">class </em><code class="sig-prename descclassname">graphbrain.hyperedge.</code><code class="sig-name descname">Atom</code><a class="headerlink" href="#graphbrain.hyperedge.Atom" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="attribute">
+<dd><p>Atomic hyperedge.</p>
+<dl class="attribute">
+<dt id="graphbrain.hyperedge.Atom.argroles">
+<code class="sig-name descname">argroles</code><a class="headerlink" href="#graphbrain.hyperedge.Atom.argroles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the argument roles string of the edge, if it exists.
+Otherwise returns empty string.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="graphbrain.hyperedge.Atom.atom_with_type">
 <code class="sig-name descname">atom_with_type</code><a class="headerlink" href="#graphbrain.hyperedge.Atom.atom_with_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the first atom found in the edge that has the given
@@ -377,7 +386,15 @@ In this case, this function returns the generic concept type: ‘c’.</p>
 <dl class="class">
 <dt id="graphbrain.hyperedge.Hyperedge">
 <em class="property">class </em><code class="sig-prename descclassname">graphbrain.hyperedge.</code><code class="sig-name descname">Hyperedge</code><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="attribute">
+<dd><p>Non-atomic hyperedge.</p>
+<dl class="attribute">
+<dt id="graphbrain.hyperedge.Hyperedge.argroles">
+<code class="sig-name descname">argroles</code><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.argroles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the argument roles string of the edge, if it exists.
+Otherwise returns empty string.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="graphbrain.hyperedge.Hyperedge.atom_with_type">
 <code class="sig-name descname">atom_with_type</code><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.atom_with_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the first atom found in the edge that has the given
@@ -438,7 +455,7 @@ The edge is searched recursively, so the atom can appear at any depth.</p>
 <dl class="attribute">
 <dt id="graphbrain.hyperedge.Hyperedge.edges_with_argrole">
 <code class="sig-name descname">edges_with_argrole</code><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.edges_with_argrole" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the list of edges with the given argument role</p>
+<dd><p>Returns the list of edges with the given argument role.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -838,12 +855,6 @@ attribute. (default None)</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="graphbrain.hypergraph.Hypergraph.lemma_degrees">
-<code class="sig-name descname">lemma_degrees</code><span class="sig-paren">(</span><em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.lemma_degrees"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.lemma_degrees" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO: document and test</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="graphbrain.hypergraph.Hypergraph.name">
 <code class="sig-name descname">name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns name of the hypergraph.</p>
@@ -878,7 +889,11 @@ deep – recursively remove all subedges (default False)</p>
 <dl class="method">
 <dt id="graphbrain.hypergraph.Hypergraph.root_degrees">
 <code class="sig-name descname">root_degrees</code><span class="sig-paren">(</span><em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.root_degrees"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.root_degrees" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO: document and test</p>
+<dd><p>Finds all the atoms that share the same root as the given edge
+and computes the sum of both their degrees and deep degrees.
+These two sums are returned.</p>
+<p>If the parameter edge is non-atomic, this function simply returns
+the degree and deep degree of that edge.</p>
 </dd></dl>
 
 <dl class="method">
@@ -929,286 +944,39 @@ limit – maximum number of results to return, infinite if None</p>
 <dl class="method">
 <dt id="graphbrain.hypergraph.Hypergraph.sum_deep_degree">
 <code class="sig-name descname">sum_deep_degree</code><span class="sig-paren">(</span><em class="sig-param">edges</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.sum_deep_degree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.sum_deep_degree" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO: document and test</p>
+<dd><p>Returns sum of the deep degrees of all edges contained in the
+parameter.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="graphbrain.hypergraph.Hypergraph.sum_degree">
 <code class="sig-name descname">sum_degree</code><span class="sig-paren">(</span><em class="sig-param">edges</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.sum_degree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.sum_degree" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO: document and test</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt>
-<em class="property">class </em><code class="sig-prename descclassname">graphbrain.hypergraph.</code><code class="sig-name descname">Hypergraph</code><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Hypergraph interface.</p>
-<dl class="method">
-<dt>
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">primary=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.add"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Adds an edge if it does not exist yet, returns same edge.
-All children are recursively added as non-primary edge, for
-indexing purposes.</p>
-<p>Edges can be passed in both Hyperedge or string format.</p>
-<p>Keyword argument:
-primary – edge is primary, meaning, for example, that it counts
-towards degrees. Non-primary edges are used for indexing purposes,
-for example to make it easy to find the subedges contained in primary
-edges when performing queries.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.all"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns a generator of all the edges.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">all_atoms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.all_atoms"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns a generator of all the atoms.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">all_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.all_attributes"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns a generator with a tuple for each edge.
-The first element of the tuple is the edge itself,
-the second is a dictionary of attribute values
-(as strings).</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">all_non_atoms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.all_non_atoms"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns a generator of all the edges that are not atoms.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">atom_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.atom_count"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns total number of atoms.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">atoms_with_root</code><span class="sig-paren">(</span><em class="sig-param">root</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.atoms_with_root"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns generator of all atoms with the given root.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.close"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Closes the hypergraph.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">dec_attribute</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">attribute</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.dec_attribute"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Increments an attribute of an entity.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">deep_degree</code><span class="sig-paren">(</span><em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.deep_degree"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns the deep degree of an entity.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">degree</code><span class="sig-paren">(</span><em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.degree"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns the degree of an entity.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.destroy"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Erase the entire hypergraph.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">edge_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.edge_count"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns total number of edges.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">edges_with_edges</code><span class="sig-paren">(</span><em class="sig-param">edges</em>, <em class="sig-param">root=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.edges_with_edges"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns generator of all edges containing the given edges,
-and optionally a given root.</p>
-<p>Keyword argument:
-root – edge must also contain an atom with this root (default None)</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">ego</code><span class="sig-paren">(</span><em class="sig-param">center</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.ego"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns all atoms directly connected to center
-by hyperedges.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">exists</code><span class="sig-paren">(</span><em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.exists"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Checks if the given edge exists.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">get_float_attribute</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">attribute</em>, <em class="sig-param">or_else=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.get_float_attribute"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns attribute as float value.</p>
-<dl class="simple">
-<dt>or_else – value to return if the entity does not have</dt><dd><p>the give attribute. (default None)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">get_int_attribute</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">attribute</em>, <em class="sig-param">or_else=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.get_int_attribute"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns attribute as integer value.</p>
-<dl class="simple">
-<dt>or_else – value to return if the entity does not have</dt><dd><p>the give attribute. (default None)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">get_str_attribute</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">attribute</em>, <em class="sig-param">or_else=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.get_str_attribute"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns attribute as string.</p>
-<p>Keyword argument:
-or_else – value to return if the entity does not have the given
-attribute. (default None)</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">inc_attribute</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">attribute</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.inc_attribute"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Increments an attribute of an entity.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">is_primary</code><span class="sig-paren">(</span><em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.is_primary"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Check if an edge is primary.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">lemma_degrees</code><span class="sig-paren">(</span><em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.lemma_degrees"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>TODO: document and test</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.name"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns name of the hypergraph.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">primary_atom_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.primary_atom_count"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns number of primary atoms.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">primary_edge_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.primary_edge_count"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns number of primary edges.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">deep=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.remove"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Removes an edge.</p>
-<p>Keyword argument:
-deep – recursively remove all subedges (default False)</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">remove_by_pattern</code><span class="sig-paren">(</span><em class="sig-param">pattern</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.remove_by_pattern"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Removes all edges that match the pattern.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">root_degrees</code><span class="sig-paren">(</span><em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.root_degrees"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>TODO: document and test</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">search</code><span class="sig-paren">(</span><em class="sig-param">pattern</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.search"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns generator for all the edges that match a pattern.</p>
-<p>Patterns are themselves edges. They can match families of edges
-by employing special atoms:
--&gt; ‘*’ represents a general wildcard (matches any edge)
--&gt; ‘&#64;’ represents an atomic wildcard (matches any atom)
--&gt; ‘&amp;’ represents a non-atomic wildcard (matches any non-atom)
--&gt; ‘…’ at the end indicates an open-ended pattern.</p>
-<p>The pattern can be a string, that must represent an edge.
-Examples: ‘(is/pd graphbrain/c &#64;)’
-‘(says/pd * …)’</p>
-<p>Atomic patterns can also be used to match all edges in the
-hypergraph (*), all atoms (&#64;), and all non-atoms (&amp;).</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">search_count</code><span class="sig-paren">(</span><em class="sig-param">pattern</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.search_count"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Number of edges that match a pattern.
-See search() method for an explanation of patterns.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">set_attribute</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">attribute</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.set_attribute"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Sets the value of an attribute.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">set_primary</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.set_primary"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Make edge primary if value is True, make it non-primary
-otherwise.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">star</code><span class="sig-paren">(</span><em class="sig-param">center</em>, <em class="sig-param">limit=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.star"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns generator of the edges that contain the center.</p>
-<p>Keyword argument:
-limit – maximum number of results to return, infinite if None</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">sum_deep_degree</code><span class="sig-paren">(</span><em class="sig-param">edges</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.sum_deep_degree"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>TODO: document and test</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">sum_degree</code><span class="sig-paren">(</span><em class="sig-param">edges</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/hypergraph.html#Hypergraph.sum_degree"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>TODO: document and test</p>
+<dd><p>Returns sum of the degrees of all edges contained in the parameter.</p>
 </dd></dl>
 
 </dd></dl>
 
 </div>
-<div class="section" id="module-graphbrain.parsers.factory">
-<span id="parsers-package"></span><h2>parsers package<a class="headerlink" href="#module-graphbrain.parsers.factory" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="parser-class">
-<h3>Parser class<a class="headerlink" href="#parser-class" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="graphbrain.parsers.parser.Parser">
-<em class="property">class </em><code class="sig-prename descclassname">graphbrain.parsers.parser.</code><code class="sig-name descname">Parser</code><span class="sig-paren">(</span><em class="sig-param">lemmas=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/parsers/parser.html#Parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.parser.Parser" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<div class="section" id="parsers-package">
+<h2>parsers package<a class="headerlink" href="#parsers-package" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-graphbrain.parsers.__init__">
+<span id="package-functions"></span><h3>package functions<a class="headerlink" href="#module-graphbrain.parsers.__init__" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="graphbrain.parsers.__init__.create_parser">
+<code class="sig-prename descclassname">graphbrain.parsers.__init__.</code><code class="sig-name descname">create_parser</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">lemmas=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphbrain/parsers/__init__.html#create_parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.__init__.create_parser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates and returns a parser (as an instanceof a subclass of Parser)
+for the language specified in the parameter. Throws exception if language
+is not implemented.</p>
+<p>Available parsers:
+‘en’ – English</p>
+<p>Keyword argument:
+lemmas – if True, lemma edges are generated by the parser.
+(default: False)</p>
+</dd></dl>
 
+</div>
+<div class="section" id="module-graphbrain.parsers.parser">
+<span id="parser-module"></span><h3>parser module<a class="headerlink" href="#module-graphbrain.parsers.parser" title="Permalink to this headline">¶</a></h3>
 </div>
 </div>
 </div>

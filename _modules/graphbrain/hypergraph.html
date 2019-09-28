@@ -417,31 +417,17 @@
         <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Hypergraph.lemma_degrees"><a class="viewcode-back" href="../../api.html#graphbrain.hypergraph.Hypergraph.lemma_degrees">[docs]</a>    <span class="k">def</span> <span class="nf">lemma_degrees</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;TODO: document and test&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
-            <span class="n">roots</span> <span class="o">=</span> <span class="p">{</span><span class="n">edge</span><span class="o">.</span><span class="n">root</span><span class="p">()}</span>
-
-            <span class="c1"># find lemma</span>
-            <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">lemma_pred</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">)):</span>
-                <span class="n">roots</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">root</span><span class="p">())</span>
-
-            <span class="c1"># compute degrees</span>
-            <span class="n">d</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">dd</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">roots</span><span class="p">:</span>
-                <span class="n">atoms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms_with_root</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
-                <span class="n">d</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span>
-                <span class="n">dd</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">deep_degree</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span>
-
-            <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="n">dd</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">edge</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">deep_degree</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span></div>
-
 <div class="viewcode-block" id="Hypergraph.root_degrees"><a class="viewcode-back" href="../../api.html#graphbrain.hypergraph.Hypergraph.root_degrees">[docs]</a>    <span class="k">def</span> <span class="nf">root_degrees</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;TODO: document and test&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Finds all the atoms that share the same root as the given edge</span>
+<span class="sd">        and computes the sum of both their degrees and deep degrees.</span>
+<span class="sd">        These two sums are returned.</span>
+
+<span class="sd">        If the parameter edge is non-atomic, this function simply returns</span>
+<span class="sd">        the degree and deep degree of that edge.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
             <span class="n">atoms</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms_with_root</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">root</span><span class="p">()))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
             <span class="n">d</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span>
             <span class="n">dd</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">deep_degree</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span>
             <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="n">dd</span>
@@ -449,11 +435,14 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">edge</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">deep_degree</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Hypergraph.sum_degree"><a class="viewcode-back" href="../../api.html#graphbrain.hypergraph.Hypergraph.sum_degree">[docs]</a>    <span class="k">def</span> <span class="nf">sum_degree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edges</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;TODO: document and test&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns sum of the degrees of all edges contained in the parameter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="Hypergraph.sum_deep_degree"><a class="viewcode-back" href="../../api.html#graphbrain.hypergraph.Hypergraph.sum_deep_degree">[docs]</a>    <span class="k">def</span> <span class="nf">sum_deep_degree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edges</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;TODO: document and test&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns sum of the deep degrees of all edges contained in the</span>
+<span class="sd">        parameter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">deep_degree</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">])</span></div>
 
     <span class="c1"># ==============================================================</span>
