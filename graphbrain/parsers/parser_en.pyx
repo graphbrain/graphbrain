@@ -668,7 +668,6 @@ class ParserEN(Parser):
                     logging.debug('choice: 18')
                     # NEST PREDICATE
                     entity = nest_predicate(entity, child, ps.positions[child])
-                    # pass
                 else:
                     logging.debug('choice: 19')
                     # NEST

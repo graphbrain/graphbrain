@@ -15,16 +15,18 @@ hypergraph module
 .. automodule:: graphbrain.hypergraph
     :members:
 
-.. autoclass:: graphbrain.hypergraph.Hypergraph
-    :members:
 
 parsers package
 ===============
 
+factory module
+--------------
+
 .. automodule:: graphbrain.parsers.factory
+    :members:
 
-Parser class
-------------
+parser module
+-------------
 
-.. autoclass:: graphbrain.parsers.parser.Parser
+.. automodule:: graphbrain.parsers.parser
     :members:

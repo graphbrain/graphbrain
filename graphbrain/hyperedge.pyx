@@ -259,6 +259,7 @@ def build_atom(text, *parts):
 
 
 class Hyperedge(tuple):
+    """Non-atomic hyperedge."""
     def __new__(cls, edges):
         return super(Hyperedge, cls).__new__(cls, tuple(edges))
 
@@ -567,6 +568,7 @@ class Hyperedge(tuple):
 
 
 class Atom(Hyperedge):
+    """Atomic hyperedge."""
     def __new__(cls, edge):
         return super(Hyperedge, cls).__new__(cls, tuple(edge))
 
