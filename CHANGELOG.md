@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.3.0] - ongoing work
+## [0.3.0] - 28-09-2019
 
 ### Added
 - Tests.
