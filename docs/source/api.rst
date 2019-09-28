@@ -22,6 +22,13 @@ hypergraph module
     :members:
 
 
+notebook module
+===============
+
+.. automodule:: graphbrain.notebook
+    :members:
+
+
 parsers package
 ===============
 
@@ -69,4 +76,20 @@ ontology module
 ---------------
 
 .. automodule:: graphbrain.meaning.ontology
+    :members:
+
+
+agents package
+==============
+
+package functions
+-----------------
+
+.. automodule:: graphbrain.agents.__init__
+    :members:
+
+agent module
+-------------
+
+.. automodule:: graphbrain.agents.agent
     :members:

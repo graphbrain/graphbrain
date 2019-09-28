@@ -12,6 +12,8 @@ from graphbrain.agents.txt_parser import TxtParser
 
 
 def create_agent(name, hg):
+    """Creates and returns an instance of the agent identified by the given
+    name. Throws an exception if no such agent is known."""
     if name == 'actors':
         return Actors(hg)
     elif name == 'claim_actors':
