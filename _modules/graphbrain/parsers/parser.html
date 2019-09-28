@@ -167,6 +167,10 @@
 
 
 <div class="viewcode-block" id="Parser"><a class="viewcode-back" href="../../../api.html#graphbrain.parsers.parser.Parser">[docs]</a><span class="k">class</span> <span class="nc">Parser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Defines the common interface for parser objects.</span>
+<span class="sd">    Parser transofrm natural text into graphbrain hyperedges.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lemmas</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lemmas</span> <span class="o">=</span> <span class="n">lemmas</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">atom2token</span> <span class="o">=</span> <span class="p">{}</span>
@@ -181,26 +185,43 @@
                                       <span class="p">[</span><span class="s1">&#39;extra_edges&#39;</span><span class="p">,</span> <span class="s1">&#39;tokens&#39;</span><span class="p">,</span> <span class="s1">&#39;child_tokens&#39;</span><span class="p">,</span>
                                        <span class="s1">&#39;positions&#39;</span><span class="p">,</span> <span class="s1">&#39;children&#39;</span><span class="p">,</span> <span class="s1">&#39;entities&#39;</span><span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">post_process</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_post_process</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">parse_token</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_parse_token</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">parse_sentence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sent</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_parse_sentence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sent</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">atom2token</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">main_edge</span><span class="p">,</span> <span class="n">extra_edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_token</span><span class="p">(</span><span class="n">sent</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+        <span class="n">main_edge</span><span class="p">,</span> <span class="n">extra_edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_token</span><span class="p">(</span><span class="n">sent</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
 
-        <span class="n">main_edge</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_process</span><span class="p">(</span><span class="n">main_edge</span><span class="p">)</span>
+        <span class="n">main_edge</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_process</span><span class="p">(</span><span class="n">main_edge</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;main_edge&#39;</span><span class="p">:</span> <span class="n">main_edge</span><span class="p">,</span>
                 <span class="s1">&#39;extra_edges&#39;</span><span class="p">:</span> <span class="n">extra_edges</span><span class="p">,</span>
                 <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">sent</span><span class="p">),</span>
                 <span class="s1">&#39;spacy_sentence&#39;</span><span class="p">:</span> <span class="n">sent</span><span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<div class="viewcode-block" id="Parser.parse"><a class="viewcode-back" href="../../../api.html#graphbrain.parsers.parser.Parser.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Transforms the given text into hyperedges + aditional information.</span>
+<span class="sd">        Returns a sequence of dictionaries, with one dictionary for each</span>
+<span class="sd">        sentence found in the text.</span>
+
+<span class="sd">        Each dictionary contains the following fields:</span>
+
+<span class="sd">        -&gt; main_edge: the hyperedge corresponding to the sentence.</span>
+
+<span class="sd">        -&gt; extra_edges: aditional edges, e.g. connecting atoms that appear</span>
+<span class="sd">        in the main_edge to their lemmas.</span>
+
+<span class="sd">        -&gt; text: the string of natural language text corresponding to the</span>
+<span class="sd">        main_edge, i.e.: the sentence itself.</span>
+
+<span class="sd">        -&gt; spacy_sentence: the spaCy structure representing the sentence</span>
+<span class="sd">        enriched with NLP annotations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cur_text</span> <span class="o">=</span> <span class="n">text</span>
         <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parse_sentence</span><span class="p">(</span><span class="n">sent</span><span class="p">)</span> <span class="k">for</span> <span class="n">sent</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">sents</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_sentence</span><span class="p">(</span><span class="n">sent</span><span class="p">)</span> <span class="k">for</span> <span class="n">sent</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">sents</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
