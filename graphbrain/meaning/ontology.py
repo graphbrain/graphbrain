@@ -2,6 +2,7 @@ import graphbrain.constants as const
 
 
 def subtypes(hg, edge, deep=False):
+    """Returns all subtypes of the given edge."""
     ont_edges = hg.search((const.type_of_pred, '*', edge))
     subs = set([ont_edge[1] for ont_edge in ont_edges])
     if deep:
@@ -13,6 +14,7 @@ def subtypes(hg, edge, deep=False):
 
 
 def supertypes(hg, edge, deep=False):
+    """Returns all supertypes of the given edge."""
     ont_edges = hg.search((const.type_of_pred, edge, '*'))
     sups = set([ont_edge[2] for ont_edge in ont_edges])
     if deep:

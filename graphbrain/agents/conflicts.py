@@ -49,8 +49,8 @@ class Conflicts(Agent):
                     subjects = edge.edges_with_argrole('s')
                     objects = edge.edges_with_argrole('o')
                     if len(subjects) == 1 and len(objects) == 1:
-                        subject = find_concept(subjects[0])
-                        obj = find_concept(objects[0])
+                        subject = strip_concept(subjects[0])
+                        obj = strip_concept(objects[0])
                         if (subject and obj and
                                 has_proper_concept(subject) and
                                 has_proper_concept(obj)):

@@ -1,10 +1,20 @@
-def find_concept(edge):
-    """Find the shalowest, left-most concept in the edge. Can be the edge
-    itself."""
+def strip_concept(edge):
+    """Strip away nesting edges with connectors such as triggers and
+    subpredicates, to expose the outmost and leftmost concept that can be
+    found. May be the edge itself.
+
+    For example:
+
+    (against/t (the/m (of/b treaty/c paris/c)))
+
+    becomes
+
+    (the/m (of/b treaty/c paris/c))
+    """
     if edge.type()[0] == 'c':
         return edge
     elif not edge.is_atom():
-        return find_concept(edge[1])
+        return strip_concept(edge[1])
     else:
         return None
 
@@ -21,6 +31,8 @@ def has_proper_concept(edge):
 
 
 def all_concepts(edge):
+    """Recursively search for all concepts contained in the edge, returning
+    a set that can also contain itself."""
     concepts = set()
     if edge.type()[0] == 'c':
         concepts.add(edge)

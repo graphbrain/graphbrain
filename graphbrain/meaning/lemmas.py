@@ -1,14 +1,28 @@
 import graphbrain.constants as const
 
 
-def lemma(hg, edge):
-    if edge.is_atom():
-        for lemma_edge in hg.search((const.lemma_pred, edge, '*')):
+def lemma(hg, atom):
+    """Returns the lemma of the given atom if it exists, None otherwise."""
+    if atom.is_atom():
+        for lemma_edge in hg.search((const.lemma_pred, atom, '*')):
             return lemma_edge[2]
     return None
 
 
 def deep_lemma(hg, edge):
+    """Returns the lemma of an atomic edge, or the lemma of the first atom
+    found by recursively descending the hyperedge, always choosing the
+    subedge immediatly after the connector.
+
+    This is useful, for example, to find the lemma of the central verb
+    in a non-atomic predicate edge. For example:
+
+    (not/a (is/a going/p))
+
+    could return
+
+    go/p
+    """
     if edge.is_atom():
         for lemma_edge in hg.search((const.lemma_pred, edge, '*')):
             return lemma_edge[2]

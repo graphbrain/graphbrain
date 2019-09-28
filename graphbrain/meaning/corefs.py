@@ -41,6 +41,7 @@ def _update_main_coref(hg, edge):
 
 
 def coref_set(hg, edge, corefs=None):
+    """Returns the set of coreferences that the given edge belongs to."""
     if corefs is None:
         corefs = {edge}
     for coref_edge in hg.edges_with_edges((hedge(coref_pred), edge)):
@@ -53,6 +54,7 @@ def coref_set(hg, edge, corefs=None):
 
 
 def are_corefs(hg, edge1, edge2, corefs=None):
+    """Checks if the two given edges are coreferences."""
     if corefs is None:
         corefs = {edge1}
     for coref_edge in hg.edges_with_edges((hedge(coref_pred), edge1)):
@@ -68,10 +70,12 @@ def are_corefs(hg, edge1, edge2, corefs=None):
 
 
 def coref_id(hg, edge):
+    """Returns the coreference identifier of the edge."""
     return hg.get_str_attribute(edge, coref_set_id_key)
 
 
 def main_coref_from_id(hg, cref_id):
+    """Returns main edge in the coreference set for the given identifier."""
     for coref_edge in hg.search('({} {} *)'.format(main_coref_pred,
                                                    cref_id)):
         return coref_edge[2]
@@ -79,6 +83,9 @@ def main_coref_from_id(hg, cref_id):
 
 
 def main_coref(hg, edge):
+    """Returns main edge for the coreference set that the given edge
+    belongs to.
+    """
     cref_id = coref_id(hg, edge)
     if cref_id is None:
         return edge
@@ -86,6 +93,12 @@ def main_coref(hg, edge):
 
 
 def make_corefs(hg, edge1, edge2):
+    """Make the two given edges belong to the same corefernce set.
+
+    This may trigger further updates to maintain consistency, such as
+    merging existing coreference sets and recomputing the main edge of
+    a coreference set.
+    """
     cref_id_1 = coref_id(hg, edge1)
     cref_id_2 = coref_id(hg, edge2)
 

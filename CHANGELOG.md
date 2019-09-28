@@ -14,6 +14,7 @@
 - Argroles location is normalized (first position in both predicates and builders).
 - In the parsers package, create_parser() was moved to __init__ and the factory module was removed.
 - is_proper_concept() renamed to has_proper_concept() (meaning.concepts module)
+- find_concept() renamed to strip_concept() (meaning.concepts module)
 
 ### Removed
 - graphbrain.funs module.

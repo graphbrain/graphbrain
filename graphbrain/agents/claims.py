@@ -13,7 +13,7 @@ CLAIM_PRED_LEMMAS = {'say', 'claim'}
 def _subject_preposition(claim):
     subjects = claim.edges_with_argrole('s')
     if len(subjects) == 1:
-        subject = find_concept(subjects[0])
+        subject = strip_concept(subjects[0])
         if subject.type() == 'ci':
             atom = subject.atom_with_type('c')
             return atom.root()
@@ -107,7 +107,7 @@ class Claims(Agent):
                     subjects = edge.edges_with_argrole('s')
                     claims = edge.edges_with_argrole('r')
                     if len(subjects) == 1 and len(claims) >= 1:
-                        subject = find_concept(subjects[0])
+                        subject = strip_concept(subjects[0])
                         if subject and has_proper_concept(subject):
                             actor = main_coref(self.hg, subjects[0])
                             if self._is_actor(actor):
