@@ -8,6 +8,7 @@
 
 ### Changed
 - Graphbrain is now beta (main APIs considered stable).
+- LevelDB edge attributes encoded in JSON.
 - Renamed hypergraph() to hgraph() and moved function to __jnit__.
 - Fixed notebook examples.
 - Moved Hypergraph.lemma_degrees() to meaning.lemmas.

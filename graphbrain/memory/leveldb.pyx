@@ -1,3 +1,4 @@
+import json
 import plyvel
 from graphbrain.hypergraph import Hypergraph
 from graphbrain.hyperedge import *
@@ -9,18 +10,14 @@ def _edge2key(edge):
 
 
 def _encode_attributes(attributes):
-    str_list = [''.join((key, '|', str(attributes[key])))
-                for key in attributes]
-    return '\\'.join(str_list).encode('utf-8')
+    return json.dumps(attributes,
+                      ensure_ascii=False,
+                      check_circular=False,
+                      separators=(',', ':')).encode('utf-8')
 
 
 def _decode_attributes(value):
-    tokens = value.decode('utf-8').split('\\')
-    attributes = {}
-    for token in tokens:
-        parts = token.split('|')
-        attributes[parts[0]] = parts[1]
-    return attributes
+    return json.loads(value.decode('utf-8'))
 
 
 class LevelDB(Hypergraph):
@@ -282,8 +279,6 @@ class LevelDB(Hypergraph):
         """Sets the value of an attribute by key."""
         if self._exists_key(key):
             attributes = self._attribute_key(key)
-            if isinstance(value, str):
-                value = value.replace('|', ' ').replace('\\', ' ')
             attributes[attribute] = value
         else:
             attributes = {'p': 0, 'd': 0, 'dd': 0}

@@ -338,9 +338,9 @@ class TestHypergraph(unittest.TestCase):
         self.assertEqual(self.hg.get_int_attribute(atom, 'foo'), 66)
         self.hg.set_attribute(atom, 'bar', -.77)
         self.assertEqual(self.hg.get_float_attribute(atom, 'bar'), -.77)
-        self.hg.set_attribute(atom, 'label', 'x0 x0 | test \\ test')
+        self.hg.set_attribute(atom, 'label', '{"abc": "defg", "": 23}')
         self.assertEqual(self.hg.get_str_attribute(atom, 'label'),
-                         'x0 x0   test   test')
+                         '{"abc": "defg", "": 23}')
 
     # set_attribute, inc_attribute, dec_attribute, get_str_attribute,
     # get_int_attribute, get_float_attribute
@@ -358,9 +358,9 @@ class TestHypergraph(unittest.TestCase):
         self.assertEqual(self.hg.get_int_attribute(edge, 'foo'), 66)
         self.hg.set_attribute(edge, 'bar', -.77)
         self.assertEqual(self.hg.get_float_attribute(edge, 'bar'), -.77)
-        self.hg.set_attribute(edge, 'label', 'x0 x0 | test \\ test')
+        self.hg.set_attribute(edge, 'label', '{"abc": "defg", "": 23}')
         self.assertEqual(self.hg.get_str_attribute(edge, 'label'),
-                         'x0 x0   test   test')
+                         '{"abc": "defg", "": 23}')
 
     def test_degrees(self):
         self.hg.destroy()
