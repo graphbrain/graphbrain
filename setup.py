@@ -36,8 +36,12 @@ if USE_CYTHON:
                   ['graphbrain/memory/leveldb.pyx']),
         Extension('graphbrain.memory.permutations',
                   ['graphbrain/memory/permutations.pyx']),
+        Extension('graphbrain.parsers.alpha_beta',
+                  ['graphbrain/parsers/alpha_beta.pyx']),
         Extension('graphbrain.parsers.parser_en',
-                  ['graphbrain/parsers/parser_en.pyx'])
+                  ['graphbrain/parsers/parser_en.pyx']),
+        Extension('graphbrain.parsers.parser_de',
+                  ['graphbrain/parsers/parser_de.pyx'])
     ]
     ext_modules = cythonize(ext_modules,
                             annotate=CYTHON_ANNOTATE,
@@ -50,8 +54,12 @@ else:
                   ['graphbrain/memory/leveldb.c']),
         Extension('graphbrain.memory.permutations',
                   ['graphbrain/memory/permutations.c']),
+        Extension('graphbrain.parsers.alpha_beta',
+                  ['graphbrain/parsers/alpha_beta.c']),
         Extension('graphbrain.parsers.parser_en',
-                  ['graphbrain/parsers/parser_en.c'])
+                  ['graphbrain/parsers/parser_en.c']),
+        Extension('graphbrain.parsers.parser_de',
+                  ['graphbrain/parsers/parser_de.c'])
     ]
 
 

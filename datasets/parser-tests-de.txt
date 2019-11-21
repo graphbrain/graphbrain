@@ -1,0 +1,4 @@
+Ich bin Telmo.
+(bin/pd.sc.-f-i---/de ich/ci/de telmo/cp/de)
+Kommunikation ist ein Grundbedürfnis des Menschen.
+(ist/pd.sc.-f-i---/de kommunikation/cc/de (ein/md/de (des/bp.ma/de grundbedürfnis/cc/de menschen/cc/de)))

@@ -24,10 +24,12 @@ deps_arg_roles = {
 }
 
 
+# DONE
 def is_noun(token):
-    return token.tag_[:2] == 'NN'
+    return token.tag_[0] == 'N'
 
 
+# DONE
 def is_verb(token):
     tag = token.tag_
     if len(tag) > 0:
@@ -36,8 +38,9 @@ def is_verb(token):
         return False
 
 
+# DONE
 def is_infinitive(token):
-    return token.tag_ == 'VB'
+    return token.tag_ in {'VVINF', 'VVIZU'}
 
 
 def concept_type_and_subtype(token):
@@ -106,7 +109,6 @@ def _verb_features(token):
     mood = '-'
     person = '-'
     number = '-'
-    verb_type = '-'
 
     if token.tag_ == 'VB':
         verb_form = 'i'  # infinitive
@@ -130,15 +132,15 @@ def _verb_features(token):
         number = 's'  # singular
         person = '3'  # third person
 
-    features = (tense, verb_form, aspect, mood, person, number, verb_type)
+    features = (tense, verb_form, aspect, mood, person, number)
     return ''.join(features)
 
 
-class ParserEN(AlphaBeta):
+class ParserDE(AlphaBeta):
     def __init__(self, lemmas=False):
         super().__init__(lemmas=lemmas)
-        self.lang = 'en'
-        self.nlp = spacy.load('en_core_web_lg')
+        self.lang = 'de'
+        self.nlp = spacy.load('de_core_news_md')
 
     # ===========================================
     # Implementation of language-specific methods
@@ -156,18 +158,6 @@ class ParserEN(AlphaBeta):
                 if self._concept_role(edge) == 'm':
                     return 'm'
             return 'a'
-
-    def _builder_arg_roles(self, edge):
-        connector = edge[0]
-        if connector.is_atom():
-            ct = connector.type()
-            if ct == 'br':
-                connector = connector.replace_atom_part(
-                    1, '{}.ma'.format(ct))
-            elif ct == 'bp':
-                connector = connector.replace_atom_part(
-                    1, '{}.am'.format(ct))
-        return hedge((connector,) + edge[1:])
 
     def _build_atom(self, token, ent_type, ps):
         text = token.text.lower()

@@ -1,7 +1,13 @@
 # Changelog
 
-## [0.3.0] - 28-09-2019
+## [0.3.1] - ongoing work
+### Added
 
+### Changed
+
+### Removed
+
+## [0.3.0] - 28-09-2019
 ### Added
 - Tests.
 - Documentation.

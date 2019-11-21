@@ -1,0 +1,29 @@
+from graphbrain import *
+from graphbrain.cli import wrapper
+from graphbrain.parsers import *
+
+
+def update_tests(args):
+    parser = create_parser(name=args.lang)
+
+    total = 0
+
+    sentence = None
+    with open(args.infile) as f_in:
+        with open(args.outfile, 'w') as f_out:
+            for line in f_in:
+                if sentence:
+                    total += 1
+                    parser_output = parser.parse(sentence)
+                    parsed_sentence = parser_output[0]
+                    edge = parsed_sentence['main_edge']
+                    f_out.write('{}\n{}\n'.format(sentence, edge.to_str()))
+                    sentence = None
+                else:
+                    sentence = line.strip()
+
+    print('Total cases processed: {}.'.format(total))
+
+
+if __name__ == '__main__':
+    wrapper(update_tests, text='update tests')
