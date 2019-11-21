@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>graphbrain.parsers.__init__ &mdash; GraphBrain 0.2.2 documentation</title>
+  <title>graphbrain.parsers.__init__ &mdash; GraphBrain 0.3.1 documentation</title>
   
 
   
@@ -160,6 +160,7 @@
   <h1>Source code for graphbrain.parsers.__init__</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">.nlp</span> <span class="k">import</span> <span class="n">print_tree</span>
 <span class="kn">from</span> <span class="nn">.parser_en</span> <span class="k">import</span> <span class="n">ParserEN</span>
+<span class="kn">from</span> <span class="nn">.parser_de</span> <span class="k">import</span> <span class="n">ParserDE</span>
 
 
 <div class="viewcode-block" id="create_parser"><a class="viewcode-back" href="../../../api.html#graphbrain.parsers.__init__.create_parser">[docs]</a><span class="k">def</span> <span class="nf">create_parser</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">lemmas</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -176,6 +177,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;en&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ParserEN</span><span class="p">(</span><span class="n">lemmas</span><span class="o">=</span><span class="n">lemmas</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;de&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ParserDE</span><span class="p">(</span><span class="n">lemmas</span><span class="o">=</span><span class="n">lemmas</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Unknown parser: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span></div>
 </pre></div>
