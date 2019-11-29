@@ -247,12 +247,26 @@ class AlphaBeta(Parser):
                         elif entity.connector_type()[0] == 'c':
                             logging.debug('choice: 3')
                             # NEST
-                            entity = entity.nest(child, ps.positions[child])
+                            # entity = entity.nest(child, ps.positions[child])
+                            new_child = child
+                            if len(child) > 2:
+                                new_child = hedge((child[0], child[1:]))
+                            entity = entity.nest(new_child,
+                                                 ps.positions[child])
                         else:
-                            logging.debug('choice: 4')
+                            logging.debug('choice: 4a')
                             # NEST AROUND ORIGINAL ATOM
-                            entity = entity.replace_atom(
-                                atom, atom.nest(child, ps.positions[child]))
+                            if atom.type()[0] == 'c' and len(child) > 2:
+                                new_child = hedge((child[0], child[1:]))
+                                entity = entity.replace_atom(
+                                    atom,
+                                    atom.nest(new_child, ps.positions[child]))
+                            else:
+                                logging.debug('choice: 4b')
+                                # NEST AROUND ORIGINAL ATOM
+                                entity = entity.replace_atom(
+                                    atom,
+                                    atom.nest(child, ps.positions[child]))
                     elif child.connector_type()[0] in {'x', 't'}:
                         logging.debug('choice: 5')
                         # NEST

@@ -2,6 +2,7 @@
 
 ## [0.3.1] - ongoing work
 ### Added
+- German parser.
 
 ### Changed
 
