@@ -1,4 +1,5 @@
 import logging
+import spacy
 from graphbrain import *
 from .alpha_beta import AlphaBeta
 from .nlp import token2str
@@ -42,10 +43,10 @@ def is_verb(token):
 def is_infinitive(token):
     return token.tag_ in {'VVINF', 'VVIZU'}
 
+
 ##
 def concept_type_and_subtype(token):
     tag = token.tag_
-    dep = token.dep_
     if tag[:3] == 'ADJ':
         return 'ca'
     elif tag == 'NN':
@@ -68,6 +69,10 @@ def modifier_type_and_subtype(token):
     tag = token.tag_
     if tag == 'ART':
         return 'md'
+    elif tag == 'PPOSAT':
+        return 'mp'
+    elif tag == 'PIS':
+        return 'mi'
     else:
         return 'm'
 
@@ -76,7 +81,7 @@ def builder_type_and_subtype(token):
     if token.head:
         if token.head.dep_ == 'ag':
             return 'bp'
-        
+
     tag = token.tag_
     if tag == 'KON':
         return 'b+'
@@ -147,7 +152,7 @@ class ParserDE(AlphaBeta):
     def __init__(self, lemmas=False):
         super().__init__(lemmas=lemmas)
         self.lang = 'de'
-        self.nlp = nlp
+        self.nlp = spacy.load('de_core_news_md')
 
     # ===========================================
     # Implementation of language-specific methods
@@ -177,7 +182,7 @@ class ParserDE(AlphaBeta):
                 connector = connector.replace_atom_part(
                     1, '{}.ma'.format(ct))
         return hedge((connector,) + edge[1:])
-        
+
     def _build_atom(self, token, ent_type, ps):
         text = token.text.lower()
         et = ent_type
@@ -201,10 +206,10 @@ class ParserDE(AlphaBeta):
             return None
 
         head_type = self._token_head_type(token)
-        if len(head_type) > 1:
-            head_subtype = head_type[1]
-        else:
-            head_subtype = ''
+        # if len(head_type) > 1:
+        #     head_subtype = head_type[1]
+        # else:
+        #     head_subtype = ''
         if len(head_type) > 0:
             head_type = head_type[0]
 
@@ -217,8 +222,10 @@ class ParserDE(AlphaBeta):
                 return concept_type_and_subtype(token)
         elif dep in {'sb', 'pd', 'ag'}:
             return concept_type_and_subtype(token)
-        elif dep in {'cj', 'mo'}:
+        elif dep in {'cj'}:
             return modifier_type_and_subtype(token)
+        elif dep in {'mo'}:
+            return 'x'
         elif dep == 'nk':
             if token.head.dep_ == 'ag':
                 return builder_type_and_subtype(token)

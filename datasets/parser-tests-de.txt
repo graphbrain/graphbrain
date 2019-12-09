@@ -2,3 +2,5 @@ Ich bin Telmo.
 (bin/pd.sc.-f-i---/de ich/ci/de telmo/cp/de)
 Kommunikation ist ein Grundbedürfnis des Menschen.
 (ist/pd.sc.-f-i---/de kommunikation/cc/de (ein/md/de (des/bp.ma/de grundbedürfnis/cc/de menschen/cc/de)))
+Berlin ist die Bundeshauptstadt der Bundesrepublik Deutschland und zugleich eines ihrer Länder.
+(ist/pd.sc.-f-i---/de berlin/cp/de (die/md/de (und/b+/de (der/bp.ma/de bundeshauptstadt/cc/de (+/b.mm/. bundesrepublik/cc/de deutschland/cp/de)) (zugleich/x/de (eines/mi/de (ihrer/mp/de länder/cc/de))))))
