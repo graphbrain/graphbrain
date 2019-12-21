@@ -8,6 +8,7 @@ from .nlp import token2str
 deps_arg_roles = {
     'sb': 's',      # subject
     'pd': 'c',      # subject complement
+    'mo': 'x',      # specifier
     # 'nsubjpass': 'p',  # passive subject
     # 'agent': 'a',      # agent
     # 'acomp': 'c',      # subject complement
@@ -73,6 +74,8 @@ def modifier_type_and_subtype(token):
         return 'mp'
     elif tag == 'PIS':
         return 'mi'
+    elif tag == 'CARD':
+        return 'm#'
     else:
         return 'm'
 
@@ -224,15 +227,24 @@ class ParserDE(AlphaBeta):
             return concept_type_and_subtype(token)
         elif dep in {'cj'}:
             return modifier_type_and_subtype(token)
-        elif dep in {'mo'}:
-            return 'x'
+        elif dep in {'mnr', 'cd'}:
+            return builder_type_and_subtype(token)
+        elif dep == 'mo':
+            if token.tag_ == 'APPR':
+                return 't'
+            elif head_type == 'p':
+                return 'a'
+            else:
+                return 'x'
         elif dep == 'nk':
             if token.head.dep_ == 'ag':
                 return builder_type_and_subtype(token)
+            elif token.head.dep_ == 'mo':
+                return concept_type_and_subtype(token)
             else:
                 return modifier_type_and_subtype(token)
-        elif dep == 'cd':
-            return builder_type_and_subtype(token)
+        elif dep == 'ng':
+            return 'an'
         else:
             logging.warning('Unknown dependency (token_type): token: {}'
                             .format(token2str(token)))
