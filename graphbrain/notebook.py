@@ -6,7 +6,7 @@ from graphbrain import *
 SYMBOL_COLOR = '#404040'
 NAMESPACE_COLOR = '#7F7F6F'
 EDGE_COLORS = ['#a65628', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00',
-               '#ffff33', '#e41a1c', '#f781bf']
+               '#e41a1c', '#f781bf']
 
 
 def _edge2html_r(edge, roots_only=True, formatting='indented', indent=False,
@@ -43,26 +43,19 @@ def _edge2html_r(edge, roots_only=True, formatting='indented', indent=False,
         bold_style = 'font-weight:bold;' if conn else ''
 
         # render atom root
-        html = """
-        <span style="{}{}">{}</span>
-        """.format(bold_style,
-                   color_html,
-                   escape(str(edge.root()).strip())).strip()
+        html = '<span style="{}{}">{}</span>'.format(
+            bold_style, color_html, escape(str(edge.root())))
 
         # render non-root part, if requested
         if not roots_only:
             escaped_codes = '/'.join(edge.parts()[1:])
             escaped_codes = escape(escaped_codes).strip()
-            html = """
-            {}<span style="color:{};font-size:8pt">/{}</span>
-            """.format(html,
-                       NAMESPACE_COLOR,
-                       escaped_codes)
+            html = '{}<span style="color:{};font-size:8pt">/{}</span>'.format(
+                html, NAMESPACE_COLOR, escaped_codes)
 
         # render atom
-        html = """
-        <{} style="{}{}">{}</{}>
-        """.format(main_tag, margin, font_size, html, main_tag).strip()
+        html = '<{} style="{}{}">{}</{}>'.format(
+            main_tag, margin, font_size, html, main_tag)
     # ... edge is an edge
     else:
         et = edge.type()[0]
@@ -83,9 +76,8 @@ def _edge2html_r(edge, roots_only=True, formatting='indented', indent=False,
             close_symbol = ')'
 
         # render opening symbol
-        html = """
-        <span style="font-weight:bold;{}">{}</span>
-        """.format(font_size, open_symbol).strip()
+        html = '<span style="font-weight:bold;{}">{}</span>'.format(
+            font_size, open_symbol)
 
         close_html = '</{}>'.format(main_tag)
 
@@ -141,23 +133,20 @@ def _edge2html_r(edge, roots_only=True, formatting='indented', indent=False,
                 close_html = '{}{}'.format(child_cl_html, close_html)
             html = '{}{}{}'.format(html, sep, child_html)
 
-        # if closing html should not be rendered at the end o this edge
+        # if closing html should not be rendered at the end of this edge
         # representation, then return it to the parent
         if not close:
             ret_close_html = close_html
             close_html = ''
 
         # render close symbol
-        html = """
-        {}<span style="{}">
-            <span style="font-weight:bold;{}">{}</span>
-        </span>
-        """.format(html, color_html, font_size, close_symbol).strip()
+        html = '{}<span style="{}">'.format(html, color_html)
+        html = '{}<span style="font-weight:bold;{}">{}</span></span>'.format(
+            html, font_size, close_symbol)
 
         # render edge
-        html = """
-        <{} style="{}{}">{}{}
-        """.format(main_tag, margin, color_html, html, close_html).strip()
+        html = '<{} style="{}{}">{}{}'.format(
+            main_tag, margin, color_html, html, close_html)
     # ... edge is an atom
 
     return html, ret_close_html
