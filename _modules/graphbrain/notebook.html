@@ -90,7 +90,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../cli.html">Command-line interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../team.html">Team</a></li>
@@ -166,7 +166,7 @@
 <span class="n">SYMBOL_COLOR</span> <span class="o">=</span> <span class="s1">&#39;#404040&#39;</span>
 <span class="n">NAMESPACE_COLOR</span> <span class="o">=</span> <span class="s1">&#39;#7F7F6F&#39;</span>
 <span class="n">EDGE_COLORS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;#a65628&#39;</span><span class="p">,</span> <span class="s1">&#39;#377eb8&#39;</span><span class="p">,</span> <span class="s1">&#39;#4daf4a&#39;</span><span class="p">,</span> <span class="s1">&#39;#984ea3&#39;</span><span class="p">,</span> <span class="s1">&#39;#ff7f00&#39;</span><span class="p">,</span>
-               <span class="s1">&#39;#ffff33&#39;</span><span class="p">,</span> <span class="s1">&#39;#e41a1c&#39;</span><span class="p">,</span> <span class="s1">&#39;#f781bf&#39;</span><span class="p">]</span>
+               <span class="s1">&#39;#e41a1c&#39;</span><span class="p">,</span> <span class="s1">&#39;#f781bf&#39;</span><span class="p">]</span>
 
 
 <span class="k">def</span> <span class="nf">_edge2html_r</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">roots_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">formatting</span><span class="o">=</span><span class="s1">&#39;indented&#39;</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -203,26 +203,19 @@
         <span class="n">bold_style</span> <span class="o">=</span> <span class="s1">&#39;font-weight:bold;&#39;</span> <span class="k">if</span> <span class="n">conn</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
 
         <span class="c1"># render atom root</span>
-        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        &lt;span style=&quot;</span><span class="si">{}{}</span><span class="s2">&quot;&gt;</span><span class="si">{}</span><span class="s2">&lt;/span&gt;</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bold_style</span><span class="p">,</span>
-                   <span class="n">color_html</span><span class="p">,</span>
-                   <span class="n">escape</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">root</span><span class="p">())</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="s1">&#39;&lt;span style=&quot;</span><span class="si">{}{}</span><span class="s1">&quot;&gt;</span><span class="si">{}</span><span class="s1">&lt;/span&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">bold_style</span><span class="p">,</span> <span class="n">color_html</span><span class="p">,</span> <span class="n">escape</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">root</span><span class="p">())))</span>
 
         <span class="c1"># render non-root part, if requested</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">roots_only</span><span class="p">:</span>
             <span class="n">escaped_codes</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">parts</span><span class="p">()[</span><span class="mi">1</span><span class="p">:])</span>
             <span class="n">escaped_codes</span> <span class="o">=</span> <span class="n">escape</span><span class="p">(</span><span class="n">escaped_codes</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">            </span><span class="si">{}</span><span class="s2">&lt;span style=&quot;color:</span><span class="si">{}</span><span class="s2">;font-size:8pt&quot;&gt;/</span><span class="si">{}</span><span class="s2">&lt;/span&gt;</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">html</span><span class="p">,</span>
-                       <span class="n">NAMESPACE_COLOR</span><span class="p">,</span>
-                       <span class="n">escaped_codes</span><span class="p">)</span>
+            <span class="n">html</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&lt;span style=&quot;color:</span><span class="si">{}</span><span class="s1">;font-size:8pt&quot;&gt;/</span><span class="si">{}</span><span class="s1">&lt;/span&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">html</span><span class="p">,</span> <span class="n">NAMESPACE_COLOR</span><span class="p">,</span> <span class="n">escaped_codes</span><span class="p">)</span>
 
         <span class="c1"># render atom</span>
-        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        &lt;</span><span class="si">{}</span><span class="s2"> style=&quot;</span><span class="si">{}{}</span><span class="s2">&quot;&gt;</span><span class="si">{}</span><span class="s2">&lt;/</span><span class="si">{}</span><span class="s2">&gt;</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">main_tag</span><span class="p">,</span> <span class="n">margin</span><span class="p">,</span> <span class="n">font_size</span><span class="p">,</span> <span class="n">html</span><span class="p">,</span> <span class="n">main_tag</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="s1">&#39;&lt;</span><span class="si">{}</span><span class="s1"> style=&quot;</span><span class="si">{}{}</span><span class="s1">&quot;&gt;</span><span class="si">{}</span><span class="s1">&lt;/</span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">main_tag</span><span class="p">,</span> <span class="n">margin</span><span class="p">,</span> <span class="n">font_size</span><span class="p">,</span> <span class="n">html</span><span class="p">,</span> <span class="n">main_tag</span><span class="p">)</span>
     <span class="c1"># ... edge is an edge</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">et</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">type</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
@@ -243,9 +236,8 @@
             <span class="n">close_symbol</span> <span class="o">=</span> <span class="s1">&#39;)&#39;</span>
 
         <span class="c1"># render opening symbol</span>
-        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        &lt;span style=&quot;font-weight:bold;</span><span class="si">{}</span><span class="s2">&quot;&gt;</span><span class="si">{}</span><span class="s2">&lt;/span&gt;</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">font_size</span><span class="p">,</span> <span class="n">open_symbol</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="s1">&#39;&lt;span style=&quot;font-weight:bold;</span><span class="si">{}</span><span class="s1">&quot;&gt;</span><span class="si">{}</span><span class="s1">&lt;/span&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">font_size</span><span class="p">,</span> <span class="n">open_symbol</span><span class="p">)</span>
 
         <span class="n">close_html</span> <span class="o">=</span> <span class="s1">&#39;&lt;/</span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">main_tag</span><span class="p">)</span>
 
@@ -301,23 +293,20 @@
                 <span class="n">close_html</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">child_cl_html</span><span class="p">,</span> <span class="n">close_html</span><span class="p">)</span>
             <span class="n">html</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">child_html</span><span class="p">)</span>
 
-        <span class="c1"># if closing html should not be rendered at the end o this edge</span>
+        <span class="c1"># if closing html should not be rendered at the end of this edge</span>
         <span class="c1"># representation, then return it to the parent</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">close</span><span class="p">:</span>
             <span class="n">ret_close_html</span> <span class="o">=</span> <span class="n">close_html</span>
             <span class="n">close_html</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
         <span class="c1"># render close symbol</span>
-        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        </span><span class="si">{}</span><span class="s2">&lt;span style=&quot;</span><span class="si">{}</span><span class="s2">&quot;&gt;</span>
-<span class="s2">            &lt;span style=&quot;font-weight:bold;</span><span class="si">{}</span><span class="s2">&quot;&gt;</span><span class="si">{}</span><span class="s2">&lt;/span&gt;</span>
-<span class="s2">        &lt;/span&gt;</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="n">color_html</span><span class="p">,</span> <span class="n">font_size</span><span class="p">,</span> <span class="n">close_symbol</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&lt;span style=&quot;</span><span class="si">{}</span><span class="s1">&quot;&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="n">color_html</span><span class="p">)</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&lt;span style=&quot;font-weight:bold;</span><span class="si">{}</span><span class="s1">&quot;&gt;</span><span class="si">{}</span><span class="s1">&lt;/span&gt;&lt;/span&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">html</span><span class="p">,</span> <span class="n">font_size</span><span class="p">,</span> <span class="n">close_symbol</span><span class="p">)</span>
 
         <span class="c1"># render edge</span>
-        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        &lt;</span><span class="si">{}</span><span class="s2"> style=&quot;</span><span class="si">{}{}</span><span class="s2">&quot;&gt;</span><span class="si">{}{}</span><span class="s2"></span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">main_tag</span><span class="p">,</span> <span class="n">margin</span><span class="p">,</span> <span class="n">color_html</span><span class="p">,</span> <span class="n">html</span><span class="p">,</span> <span class="n">close_html</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="s1">&#39;&lt;</span><span class="si">{}</span><span class="s1"> style=&quot;</span><span class="si">{}{}</span><span class="s1">&quot;&gt;</span><span class="si">{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">main_tag</span><span class="p">,</span> <span class="n">margin</span><span class="p">,</span> <span class="n">color_html</span><span class="p">,</span> <span class="n">html</span><span class="p">,</span> <span class="n">close_html</span><span class="p">)</span>
     <span class="c1"># ... edge is an atom</span>
 
     <span class="k">return</span> <span class="n">html</span><span class="p">,</span> <span class="n">ret_close_html</span>
