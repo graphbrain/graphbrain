@@ -42,7 +42,7 @@ Working with notebooks
 
 Jupyter notebooks are a particularly handy way to perform exploratory computation with Python, and very popular for scientific applications. Graphbrain is no exception. The notebook corresponding to this tutorial can be found here:
 
-.. _https://github.com/graphbrain/graphbrain/blob/master/notebooks/parser.ipynb
+https://github.com/graphbrain/graphbrain/blob/master/notebooks/parser.ipynb
 
 Notice how to import the utility functions that exist specifically for working with notebooks:
 
