@@ -50,7 +50,7 @@ Notice how to import the utility functions that exist specifically for working w
 
     from graphbrain.notebook import *
 
-The show() function allows one to render hyperedges in a nicer way. In the example above, we could replace the print() call with show(edge), and obtain something like this:
+The ``show()`` function allows one to render hyperedges in a nicer way. In the example above, we could replace the print() call with show(edge), and obtain something like this:
 
 .. raw:: html
 
