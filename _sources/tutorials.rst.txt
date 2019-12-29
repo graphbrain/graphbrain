@@ -121,6 +121,28 @@ Hyoergraph objects include the function all(), which returns an iterator that ca
 
     <div class="output_subarea output_html rendered_html"><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">[</span><span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">(</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#377eb8">very</span><span style="color:#7F7F6F;font-size:8pt">/w/en</span></span> <span style="font-size:11pt;"><span style="font-weight:bold;color:#404040">old</span><span style="color:#7F7F6F;font-size:8pt">/ma/en</span></span><span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">)</span></span></span> <span style="font-size:11pt;"><span style="color:#404040">violin</span><span style="color:#7F7F6F;font-size:8pt">/cc.s/en</span></span><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">]</span></span></span></div>
 
+    <div class="output_subarea output_html rendered_html"><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">[</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#a65628">a</span><span style="color:#7F7F6F;font-size:8pt">/md/en</span></span> <span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">[</span><span style="color:#4daf4a"><span style="font-weight:bold;font-size:11pt;">(</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#4daf4a">very</span><span style="color:#7F7F6F;font-size:8pt">/w/en</span></span> <span style="font-size:11pt;"><span style="font-weight:bold;color:#404040">old</span><span style="color:#7F7F6F;font-size:8pt">/ma/en</span></span><span style="color:#4daf4a"><span style="font-weight:bold;font-size:11pt;">)</span></span></span> <span style="font-size:11pt;"><span style="color:#404040">violin</span><span style="color:#7F7F6F;font-size:8pt">/cc.s/en</span></span><span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">]</span></span><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">]</span></span></span></span></div>
+
+    <div class="output_subarea output_html rendered_html"><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">(</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#a65628">is</span><span style="color:#7F7F6F;font-size:8pt">/av.|f--3s-/en</span></span> <span style="font-size:11pt;"><span style="color:#404040">playing</span><span style="color:#7F7F6F;font-size:8pt">/pd.so.|pg----/en</span></span><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">)</span></span></span></div>
+
+    <div class="output_subarea output_html rendered_html"><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">(</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#a65628">very</span><span style="color:#7F7F6F;font-size:8pt">/w/en</span></span> <span style="font-size:11pt;"><span style="color:#404040">old</span><span style="color:#7F7F6F;font-size:8pt">/ma/en</span></span><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">)</span></span></span></div>
+
+    <div class="output_subarea output_html rendered_html"><span style="font-size:11pt;"><span style="color:#000">a</span><span style="color:#7F7F6F;font-size:8pt">/md/en</span></span></div>
+
+    <div class="output_subarea output_html rendered_html"><span style="font-size:11pt;"><span style="color:#000">is</span><span style="color:#7F7F6F;font-size:8pt">/av.|f--3s-/en</span></span></div>
+
+    <div class="output_subarea output_html rendered_html"><span style="font-size:11pt;"><span style="color:#000">mary</span><span style="color:#7F7F6F;font-size:8pt">/cp.s/en</span></span></div>
+
+    <div class="output_subarea output_html rendered_html"><span style="font-size:11pt;"><span style="color:#000">old</span><span style="color:#7F7F6F;font-size:8pt">/ma/en</span></span></div>
+
+    <div class="output_subarea output_html rendered_html"><span style="font-size:11pt;"><span style="color:#000">playing</span><span style="color:#7F7F6F;font-size:8pt">/pd.so.|pg----/en</span></span></div>
+
+    <div class="output_subarea output_html rendered_html"><span style="font-size:11pt;"><span style="color:#000">very</span><span style="color:#7F7F6F;font-size:8pt">/w/en</span></span></div>
+
+    <div class="output_subarea output_html rendered_html"><span style="font-size:11pt;"><span style="color:#000">violin</span><span style="color:#7F7F6F;font-size:8pt">/cc.s/en</span></span></div>
+
+    <br /><br />
+
 Search with patterns
 --------------------
 
