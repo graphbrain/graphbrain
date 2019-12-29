@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Tutorials &mdash; GraphBrain 0.3.1 documentation</title>
+  <title>Parsing a sentence &mdash; GraphBrain 0.3.1 documentation</title>
   
 
   
@@ -36,9 +36,7 @@
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Command-line interface" href="../cli.html" />
-    <link rel="prev" title="Tutorials" href="../tutorials.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -89,28 +87,10 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html">Tutorials</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Tutorials</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#parsing-a-sentence">Parsing a sentence</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#working-with-notebooks">Working with notebooks</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#hypergraph-operations">Hypergraph operations</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#create-an-hypergraph">Create an hypergraph</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parse-sentence-and-add-hyperedge-to-hypergraph">Parse sentence and add hyperedge to hypergraph</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#iterate-through-all-edges">Iterate through all edges</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#search-with-patterns">Search with patterns</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#parsing-a-book">Parsing a book</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#extracting-claims-and-conflicts-from-news-headers">Extracting claims and conflicts from news headers</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cli.html">Command-line interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
@@ -162,9 +142,7 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="../tutorials.html">Tutorials</a> &raquo;</li>
-        
-      <li>Tutorials</li>
+      <li>Parsing a sentence</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -186,11 +164,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="tutorials">
-<h1>Tutorials<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h1>
-<p>We provide a sequence of tutorials of increasing complexity, to illustrate how to perform common and useful tasks with Graphbrain.</p>
-<div class="section" id="parsing-a-sentence">
-<h2>Parsing a sentence<a class="headerlink" href="#parsing-a-sentence" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="parsing-a-sentence">
+<h1>Parsing a sentence<a class="headerlink" href="#parsing-a-sentence" title="Permalink to this headline">¶</a></h1>
 <p>Transforming a sentence in natural language into an hyperedge is the most fundamental and quintessential task one can perform with Graphbrain.</p>
 <p>We start by creating a parser, in this case for the English language:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain.parsers</span> <span class="k">import</span> <span class="o">*</span>
@@ -211,7 +186,7 @@
 <p>Calling the <code class="docutils literal notranslate"><span class="pre">parse()</span></code> method on a parser object returns a collection of parses – one per sentence. Each parse object is a dictionary, where ‘main_edge’ contains the hyperedge that directly corresponds to the sentence. Hyperedge objects have a <code class="docutils literal notranslate"><span class="pre">to_str()</span></code> method that can be used to produce a string representation. The code above should cause a single hyperedge to be printed to the screen.</p>
 <p>Experiment with changing the text that is passed to the parser object and see what happens.</p>
 <div class="section" id="working-with-notebooks">
-<h3>Working with notebooks<a class="headerlink" href="#working-with-notebooks" title="Permalink to this headline">¶</a></h3>
+<h2>Working with notebooks<a class="headerlink" href="#working-with-notebooks" title="Permalink to this headline">¶</a></h2>
 <p>Jupyter notebooks are a particularly handy way to perform exploratory computation with Python, and very popular for scientific applications. Graphbrain is no exception. The notebook corresponding to this tutorial can be found here:</p>
 <p><a class="reference external" href="https://github.com/graphbrain/graphbrain/blob/master/notebooks/parser.ipynb">https://github.com/graphbrain/graphbrain/blob/master/notebooks/parser.ipynb</a></p>
 <p>Notice how to import the utility functions that exist specifically for working with notebooks:</p>
@@ -223,113 +198,12 @@
 <br /><br /><p>The <code class="docutils literal notranslate"><span class="pre">show()</span></code> function provides several visualization styles, and also the possibility of reducing visual clutter by only displaying the roots of the atoms. Refer to the <a class="reference external" href="https://graphbrain.net/api.html#graphbrain.notebook.show">function signature</a> for all the details.</p>
 </div>
 </div>
-<div class="section" id="hypergraph-operations">
-<h2>Hypergraph operations<a class="headerlink" href="#hypergraph-operations" title="Permalink to this headline">¶</a></h2>
-<p>An hypergraph can also be seen as a type of database, that stores knowledge in the form of sets of hyperedges, and provides functions that make it easy to add and search for hyperedges in useful ways. We will see here how to perform some fundamental tasks with hypergraphs.</p>
-<p>The notebook for this tutorial can be found here:</p>
-<p><a class="reference external" href="https://github.com/graphbrain/graphbrain/blob/master/notebooks/hypergraph.ipynb">https://github.com/graphbrain/graphbrain/blob/master/notebooks/hypergraph.ipynb</a></p>
-<p>Form here on, the following imports are assumed:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">graphbrain.notebook</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">graphbrain.parsers</span> <span class="k">import</span> <span class="o">*</span>
-</pre></div>
-</div>
-<div class="section" id="create-an-hypergraph">
-<h3>Create an hypergraph<a class="headerlink" href="#create-an-hypergraph" title="Permalink to this headline">¶</a></h3>
-<p>Creating an hypergraph is straightforward:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;example.hg&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>This assigns a hypergraph instance to <code class="docutils literal notranslate"><span class="pre">hg</span></code>, which is physically stored as ‘example.hg’. If this hypergraph already exists, it is simply opened. If it does not exist, and empty one is created.</p>
-</div>
-<div class="section" id="parse-sentence-and-add-hyperedge-to-hypergraph">
-<h3>Parse sentence and add hyperedge to hypergraph<a class="headerlink" href="#parse-sentence-and-add-hyperedge-to-hypergraph" title="Permalink to this headline">¶</a></h3>
-<p>Let’s create a parser to obtain an hyperedge from a sentence, and then add it to the hypergraph:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">parser</span> <span class="o">=</span> <span class="n">create_parser</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">)</span>
-<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Mary is playing a very old violin.&quot;</span>
-
-<span class="n">parses</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">parse</span> <span class="ow">in</span> <span class="n">parses</span><span class="p">:</span>
-    <span class="n">edge</span> <span class="o">=</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;main_edge&#39;</span><span class="p">]</span>
-    <span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Notice that the <code class="docutils literal notranslate"><span class="pre">add()</span></code> function works recursively. We will see in the next subsection that not only the top hyperedge, but all of their children are added to the hypergraph.</p>
-</div>
-<div class="section" id="iterate-through-all-edges">
-<h3>Iterate through all edges<a class="headerlink" href="#iterate-through-all-edges" title="Permalink to this headline">¶</a></h3>
-<p>Hyoergraph objects include the function <code class="docutils literal notranslate"><span class="pre">all()</span></code>, which returns an iterator that can be used to transverse all the hyperedges contained in the hypergraph. Let’s see and example, in this case assuming that we are in a notebook environment:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-    <span class="n">show</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;oneline&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="output_subarea output_html rendered_html"><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">(</span><span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">(</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#377eb8">is</span><span style="color:#7F7F6F;font-size:8pt">/av.|f--3s-/en</span></span> <span style="font-size:11pt;"><span style="font-weight:bold;color:#404040">playing</span><span style="color:#7F7F6F;font-size:8pt">/pd.so.|pg----/en</span></span><span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">)</span></span></span> <span style="font-size:11pt;"><span style="color:#404040">mary</span><span style="color:#7F7F6F;font-size:8pt">/cp.s/en</span></span> <span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">[</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#377eb8">a</span><span style="color:#7F7F6F;font-size:8pt">/md/en</span></span> <span style="color:#4daf4a"><span style="font-weight:bold;font-size:11pt;">[</span><span style="color:#984ea3"><span style="font-weight:bold;font-size:11pt;">(</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#984ea3">very</span><span style="color:#7F7F6F;font-size:8pt">/w/en</span></span> <span style="font-size:11pt;"><span style="font-weight:bold;color:#404040">old</span><span style="color:#7F7F6F;font-size:8pt">/ma/en</span></span><span style="color:#984ea3"><span style="font-weight:bold;font-size:11pt;">)</span></span></span> <span style="font-size:11pt;"><span style="color:#404040">violin</span><span style="color:#7F7F6F;font-size:8pt">/cc.s/en</span></span><span style="color:#4daf4a"><span style="font-weight:bold;font-size:11pt;">]</span></span><span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">]</span></span><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">)</span></span></span></span></span></div>
-
-<div class="output_subarea output_html rendered_html"><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">[</span><span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">(</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#377eb8">very</span><span style="color:#7F7F6F;font-size:8pt">/w/en</span></span> <span style="font-size:11pt;"><span style="font-weight:bold;color:#404040">old</span><span style="color:#7F7F6F;font-size:8pt">/ma/en</span></span><span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">)</span></span></span> <span style="font-size:11pt;"><span style="color:#404040">violin</span><span style="color:#7F7F6F;font-size:8pt">/cc.s/en</span></span><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">]</span></span></span></div>
-
-<div class="output_subarea output_html rendered_html"><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">[</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#a65628">a</span><span style="color:#7F7F6F;font-size:8pt">/md/en</span></span> <span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">[</span><span style="color:#4daf4a"><span style="font-weight:bold;font-size:11pt;">(</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#4daf4a">very</span><span style="color:#7F7F6F;font-size:8pt">/w/en</span></span> <span style="font-size:11pt;"><span style="font-weight:bold;color:#404040">old</span><span style="color:#7F7F6F;font-size:8pt">/ma/en</span></span><span style="color:#4daf4a"><span style="font-weight:bold;font-size:11pt;">)</span></span></span> <span style="font-size:11pt;"><span style="color:#404040">violin</span><span style="color:#7F7F6F;font-size:8pt">/cc.s/en</span></span><span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">]</span></span><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">]</span></span></span></span></div>
-
-<div class="output_subarea output_html rendered_html"><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">(</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#a65628">is</span><span style="color:#7F7F6F;font-size:8pt">/av.|f--3s-/en</span></span> <span style="font-size:11pt;"><span style="color:#404040">playing</span><span style="color:#7F7F6F;font-size:8pt">/pd.so.|pg----/en</span></span><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">)</span></span></span></div>
-
-<div class="output_subarea output_html rendered_html"><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">(</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#a65628">very</span><span style="color:#7F7F6F;font-size:8pt">/w/en</span></span> <span style="font-size:11pt;"><span style="color:#404040">old</span><span style="color:#7F7F6F;font-size:8pt">/ma/en</span></span><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">)</span></span></span></div>
-
-<div class="output_subarea output_html rendered_html"><span style="font-size:11pt;"><span style="color:#000">a</span><span style="color:#7F7F6F;font-size:8pt">/md/en</span></span></div>
-
-<div class="output_subarea output_html rendered_html"><span style="font-size:11pt;"><span style="color:#000">is</span><span style="color:#7F7F6F;font-size:8pt">/av.|f--3s-/en</span></span></div>
-
-<div class="output_subarea output_html rendered_html"><span style="font-size:11pt;"><span style="color:#000">mary</span><span style="color:#7F7F6F;font-size:8pt">/cp.s/en</span></span></div>
-
-<div class="output_subarea output_html rendered_html"><span style="font-size:11pt;"><span style="color:#000">old</span><span style="color:#7F7F6F;font-size:8pt">/ma/en</span></span></div>
-
-<div class="output_subarea output_html rendered_html"><span style="font-size:11pt;"><span style="color:#000">playing</span><span style="color:#7F7F6F;font-size:8pt">/pd.so.|pg----/en</span></span></div>
-
-<div class="output_subarea output_html rendered_html"><span style="font-size:11pt;"><span style="color:#000">very</span><span style="color:#7F7F6F;font-size:8pt">/w/en</span></span></div>
-
-<div class="output_subarea output_html rendered_html"><span style="font-size:11pt;"><span style="color:#000">violin</span><span style="color:#7F7F6F;font-size:8pt">/cc.s/en</span></span></div>
-
-<br /><br /></div>
-<div class="section" id="search-with-patterns">
-<h3>Search with patterns<a class="headerlink" href="#search-with-patterns" title="Permalink to this headline">¶</a></h3>
-<p>Hypergraph objects have a generic <code class="docutils literal notranslate"><span class="pre">search()</span></code> function, which returns iterators corresponding to sets of hyperedges that match a given pattern.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">edge_iterator</span> <span class="o">=</span> <span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>For example, with the current hypergraph, the executing the below code would produce the shown result:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># &#39;...&#39; at the end indicates that the edge may have an arbitrary number of extra entities</span>
-<span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;((is/av.|f--3s-/en playing/pd.so.|pg----/en) ...)&#39;</span><span class="p">):</span>
-    <span class="n">show</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;oneline&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="output_subarea output_html rendered_html"><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">(</span><span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">(</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#377eb8">is</span><span style="color:#7F7F6F;font-size:8pt">/av.|f--3s-/en</span></span> <span style="font-size:11pt;"><span style="font-weight:bold;color:#404040">playing</span><span style="color:#7F7F6F;font-size:8pt">/pd.so.|pg----/en</span></span><span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">)</span></span></span> <span style="font-size:11pt;"><span style="color:#404040">mary</span><span style="color:#7F7F6F;font-size:8pt">/cp.s/en</span></span> <span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">[</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#377eb8">a</span><span style="color:#7F7F6F;font-size:8pt">/md/en</span></span> <span style="color:#4daf4a"><span style="font-weight:bold;font-size:11pt;">[</span><span style="color:#984ea3"><span style="font-weight:bold;font-size:11pt;">(</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#984ea3">very</span><span style="color:#7F7F6F;font-size:8pt">/w/en</span></span> <span style="font-size:11pt;"><span style="font-weight:bold;color:#404040">old</span><span style="color:#7F7F6F;font-size:8pt">/ma/en</span></span><span style="color:#984ea3"><span style="font-weight:bold;font-size:11pt;">)</span></span></span> <span style="font-size:11pt;"><span style="color:#404040">violin</span><span style="color:#7F7F6F;font-size:8pt">/cc.s/en</span></span><span style="color:#4daf4a"><span style="font-weight:bold;font-size:11pt;">]</span></span><span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">]</span></span><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">)</span></span></span></span></span></div>
-
-<br /><br /><p>For all the details about how to define search patterns, refer to the <code class="docutils literal notranslate"><span class="pre">search()</span></code> function documentation:</p>
-<p><a class="reference external" href="https://graphbrain.net/api.html#graphbrain.hypergraph.Hypergraph.search">https://graphbrain.net/api.html#graphbrain.hypergraph.Hypergraph.search</a></p>
-</div>
-</div>
-<div class="section" id="parsing-a-book">
-<h2>Parsing a book<a class="headerlink" href="#parsing-a-book" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
-</div>
-<div class="section" id="extracting-claims-and-conflicts-from-news-headers">
-<h2>Extracting claims and conflicts from news headers<a class="headerlink" href="#extracting-claims-and-conflicts-from-news-headers" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
-</div>
-</div>
 
 
            </div>
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../cli.html" class="btn btn-neutral float-right" title="Command-line interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="../tutorials.html" class="btn btn-neutral float-left" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

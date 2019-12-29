@@ -8,4 +8,7 @@ We provide a sequence of tutorials of increasing complexity, to illustrate how t
    :maxdepth: 2
    :caption: Contents:
 
-   tutorials/parsing-a-sentence.rst
+    tutorials/parsing-a-sentence.rst
+    tutorials/hypergraph-operations.rst
+    tutorials/parsing-a-book.rst
+    tutorials/claims-and-conflicts.rst
