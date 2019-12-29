@@ -1,0 +1,241 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Parsing a sentence &mdash; GraphBrain 0.3.1 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #333" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/graphbrain-logo.gif" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    <div>
+    <a href="https://socsemics.huma-num.fr/" style="margin:0px; text-align:center">
+        <img style="width: 75%; height: 75%; border-radius: 0px; margin:0px; padding:5px; background:#ffffff" src="_static/socsemics.png"/>
+    </a>
+    </div>
+    
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command-line interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+</ul>
+
+            
+          
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GraphBrain</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Parsing a sentence</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/graphbrain/graphbrain" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="parsing-a-sentence">
+<h1>Parsing a sentence<a class="headerlink" href="#parsing-a-sentence" title="Permalink to this headline">¶</a></h1>
+<p>Transforming a sentence in natural language into an hyperedge is the most fundamental and quintessential task one can perform with Graphbrain.</p>
+<p>We start by creating a parser, in this case for the English language:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain.parsers</span> <span class="k">import</span> <span class="o">*</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">create_parser</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Initializing the parser requires loading potentially large language models. This can take from a few seconds to a minute. Let’s assign some text to a variable, in this case a simple sentence:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;The Turing test, developed by Alan Turing in 1950, is a test of machine intelligence.&quot;</span>
+</pre></div>
+</div>
+<p>Finally, let us parse the text and print the result:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">parses</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">parse</span> <span class="ow">in</span> <span class="n">parses</span><span class="p">:</span>
+    <span class="n">edge</span> <span class="o">=</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;main_edge&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">to_str</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Calling the <code class="docutils literal notranslate"><span class="pre">parse()</span></code> method on a parser object returns a collection of parses – one per sentence. Each parse object is a dictionary, where ‘main_edge’ contains the hyperedge that directly corresponds to the sentence. Hyperedge objects have a <code class="docutils literal notranslate"><span class="pre">to_str()</span></code> method that can be used to produce a string representation. The code above should cause a single hyperedge to be printed to the screen.</p>
+<p>Experiment with changing the text that is passed to the parser object and see what happens.</p>
+<div class="section" id="working-with-notebooks">
+<h2>Working with notebooks<a class="headerlink" href="#working-with-notebooks" title="Permalink to this headline">¶</a></h2>
+<p>Jupyter notebooks are a particularly handy way to perform exploratory computation with Python, and very popular for scientific applications. Graphbrain is no exception. The notebook corresponding to this tutorial can be found here:</p>
+<p><a class="reference external" href="https://github.com/graphbrain/graphbrain/blob/master/notebooks/parser.ipynb">https://github.com/graphbrain/graphbrain/blob/master/notebooks/parser.ipynb</a></p>
+<p>Notice how to import the utility functions that exist specifically for working with notebooks:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain.notebook</span> <span class="k">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">show()</span></code> function allows one to render hyperedges in a nicer way. In the example above, we could replace the <code class="docutils literal notranslate"><span class="pre">print()</span></code> call with <code class="docutils literal notranslate"><span class="pre">show(edge)</span></code>, and obtain something like this:</p>
+<span style="color:#a65628"><span style="font-weight:bold;font-size:14pt;">(</span><span style="font-size:14pt;"><span style="font-weight:bold;color:#a65628">is</span><span style="color:#7F7F6F;font-size:8pt">/pd.sc.|f--3s-/en</span></span> <div style="margin-left:20px;color:#377eb8"><span style="font-weight:bold;font-size:13pt;">[</span><span style="font-size:13pt;"><span style="font-weight:bold;color:#377eb8">:</span><span style="color:#7F7F6F;font-size:8pt">/b/.</span></span> <div style="margin-left:20px;color:#4daf4a"><span style="font-weight:bold;font-size:12pt;">[</span><span style="font-size:12pt;"><span style="font-weight:bold;color:#4daf4a">the</span><span style="color:#7F7F6F;font-size:8pt">/md/en</span></span> <div style="margin-left:20px;color:#984ea3"><span style="font-weight:bold;font-size:11pt;">[</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#984ea3">+</span><span style="color:#7F7F6F;font-size:8pt">/b.mm/.</span></span> <span style="font-size:11pt;"><span style="color:#404040">turing</span><span style="color:#7F7F6F;font-size:8pt">/cp.s/en</span></span> <span style="font-size:11pt;"><span style="color:#404040">test</span><span style="color:#7F7F6F;font-size:8pt">/cc.s/en</span></span><span style="color:#984ea3"><span style="font-weight:bold;font-size:11pt;">]</span></span><span style="color:#4daf4a"><span style="font-weight:bold;font-size:12pt;">]</span></span></div></div> <div style="margin-left:20px;color:#4daf4a"><span style="font-weight:bold;font-size:12pt;">(</span><span style="font-size:12pt;"><span style="font-weight:bold;color:#4daf4a">developed</span><span style="color:#7F7F6F;font-size:8pt">/pc.ax.&lt;pf----/en</span></span> <div style="margin-left:20px;color:#984ea3"><span style="font-weight:bold;font-size:11pt;">(</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#984ea3">by</span><span style="color:#7F7F6F;font-size:8pt">/x/en</span></span> <div style="margin-left:20px;color:#ff7f00"><span style="font-weight:bold;font-size:10pt;">[</span><span style="font-size:10pt;"><span style="font-weight:bold;color:#ff7f00">+</span><span style="color:#7F7F6F;font-size:8pt">/b.am/.</span></span> <span style="font-size:10pt;"><span style="color:#404040">alan</span><span style="color:#7F7F6F;font-size:8pt">/cp.s/en</span></span> <span style="font-size:10pt;"><span style="color:#404040">turing</span><span style="color:#7F7F6F;font-size:8pt">/cp.s/en</span></span><span style="color:#ff7f00"><span style="font-weight:bold;font-size:10pt;">]</span></span><span style="color:#984ea3"><span style="font-weight:bold;font-size:11pt;">)</span></span></div></div> <div style="margin-left:20px;color:#984ea3"><span style="font-weight:bold;font-size:11pt;">{</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#984ea3">in</span><span style="color:#7F7F6F;font-size:8pt">/tt/en</span></span> <span style="font-size:11pt;"><span style="color:#404040">1950</span><span style="color:#7F7F6F;font-size:8pt">/c#/en</span></span><span style="color:#984ea3"><span style="font-weight:bold;font-size:11pt;">}</span></span><span style="color:#4daf4a"><span style="font-weight:bold;font-size:12pt;">)</span></span><span style="color:#377eb8"><span style="font-weight:bold;font-size:13pt;">]</span></span></div></div></div> <div style="margin-left:20px;color:#377eb8"><span style="font-weight:bold;font-size:13pt;">[</span><span style="font-size:13pt;"><span style="font-weight:bold;color:#377eb8">a</span><span style="color:#7F7F6F;font-size:8pt">/md/en</span></span> <div style="margin-left:20px;color:#4daf4a"><span style="font-weight:bold;font-size:12pt;">[</span><span style="font-size:12pt;"><span style="font-weight:bold;color:#4daf4a">of</span><span style="color:#7F7F6F;font-size:8pt">/br.ma/en</span></span> <div style="margin-left:20px;font-size:12pt;"><span style="color:#404040">test</span><span style="color:#7F7F6F;font-size:8pt">/cc.s/en</span></div> <div style="margin-left:20px;color:#984ea3"><span style="font-weight:bold;font-size:11pt;">[</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#984ea3">+</span><span style="color:#7F7F6F;font-size:8pt">/b.am/.</span></span> <span style="font-size:11pt;"><span style="color:#404040">machine</span><span style="color:#7F7F6F;font-size:8pt">/cc.s/en</span></span> <span style="font-size:11pt;"><span style="color:#404040">intelligence</span><span style="color:#7F7F6F;font-size:8pt">/cc.s/en</span></span><span style="color:#984ea3"><span style="font-weight:bold;font-size:11pt;">]</span></span><span style="color:#4daf4a"><span style="font-weight:bold;font-size:12pt;">]</span></span><span style="color:#377eb8"><span style="font-weight:bold;font-size:13pt;">]</span></span><span style="color:#a65628"><span style="font-weight:bold;font-size:14pt;">)</span></span></div></div></div></span>
+<br /><br /><p>The <code class="docutils literal notranslate"><span class="pre">show()</span></code> function provides several visualization styles, and also the possibility of reducing visual clutter by only displaying the roots of the atoms. Refer to the <a class="reference external" href="https://graphbrain.net/api.html#graphbrain.notebook.show">function signature</a> for all the details.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019 CNRS
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
