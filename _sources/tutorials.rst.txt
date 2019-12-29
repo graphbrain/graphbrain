@@ -9,6 +9,6 @@ We provide a sequence of tutorials of increasing complexity, to illustrate how t
    :caption: Contents:
 
    tutorials/parsing-a-sentence.rst
-   hypergraph-operations.rst
-   parsing-a-book.rst
-   claims-and-conflicts.rst
+   tutorials/hypergraph-operations.rst
+   tutorials/parsing-a-book.rst
+   tutorials/claims-and-conflicts.rst
