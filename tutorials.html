@@ -247,12 +247,16 @@
     <span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Notice that the add() function</p>
+<p>Notice that the add() function works recursively. We will see in the next subsection that not only the top hyperedge, but all of their children are added to the hypergraph.</p>
 </div>
 <div class="section" id="iterate-through-all-edges">
 <h3>Iterate through all edges<a class="headerlink" href="#iterate-through-all-edges" title="Permalink to this headline">¶</a></h3>
-<p>TODO</p>
+<p>Hyoergraph objects include the function all(), which returns an iterator that can be used to transverse all the hyperedges contained in the hypergraph. Let’s see and example, in this case assuming that we are in a notebook environment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+    <span class="n">show</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;oneline&#39;</span><span class="p">)</span>
+</pre></div>
 </div>
+<div class="output_subarea output_html rendered_html"><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">(</span><span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">(</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#377eb8">is</span><span style="color:#7F7F6F;font-size:8pt">/av.|f--3s-/en</span></span> <span style="font-size:11pt;"><span style="font-weight:bold;color:#404040">playing</span><span style="color:#7F7F6F;font-size:8pt">/pd.so.|pg----/en</span></span><span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">)</span></span></span> <span style="font-size:11pt;"><span style="color:#404040">mary</span><span style="color:#7F7F6F;font-size:8pt">/cp.s/en</span></span> <span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">[</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#377eb8">a</span><span style="color:#7F7F6F;font-size:8pt">/md/en</span></span> <span style="color:#4daf4a"><span style="font-weight:bold;font-size:11pt;">[</span><span style="color:#984ea3"><span style="font-weight:bold;font-size:11pt;">(</span><span style="font-size:11pt;"><span style="font-weight:bold;color:#984ea3">very</span><span style="color:#7F7F6F;font-size:8pt">/w/en</span></span> <span style="font-size:11pt;"><span style="font-weight:bold;color:#404040">old</span><span style="color:#7F7F6F;font-size:8pt">/ma/en</span></span><span style="color:#984ea3"><span style="font-weight:bold;font-size:11pt;">)</span></span></span> <span style="font-size:11pt;"><span style="color:#404040">violin</span><span style="color:#7F7F6F;font-size:8pt">/cc.s/en</span></span><span style="color:#4daf4a"><span style="font-weight:bold;font-size:11pt;">]</span></span><span style="color:#377eb8"><span style="font-weight:bold;font-size:11pt;">]</span></span><span style="color:#a65628"><span style="font-weight:bold;font-size:11pt;">)</span></span></span></span></span></div></div>
 <div class="section" id="search-with-patterns">
 <h3>Search with patterns<a class="headerlink" href="#search-with-patterns" title="Permalink to this headline">¶</a></h3>
 <p>TODO</p>
