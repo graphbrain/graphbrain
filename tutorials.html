@@ -290,7 +290,8 @@
 </pre></div>
 </div>
 <p>For example, with the current hypergraph, the executing the below code would produce the shown result:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;((is/av.|f--3s-/en playing/pd.so.|pg----/en) ...)&#39;</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># &#39;...&#39; at the end indicates that the edge may have an arbitrary number of extra entities</span>
+<span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;((is/av.|f--3s-/en playing/pd.so.|pg----/en) ...)&#39;</span><span class="p">):</span>
     <span class="n">show</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;oneline&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
