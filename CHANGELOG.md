@@ -5,7 +5,8 @@
 - German parser.
 
 ### Changed
-- Improving hyperedge visualization in notebook.
+- Improved hyperedge visualization in notebooks.
+- Improved documentation.
 
 ### Removed
 
