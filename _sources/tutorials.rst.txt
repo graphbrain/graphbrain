@@ -62,8 +62,54 @@ The ``show()`` function provides several visualization styles, and also the poss
 Hypergraph operations
 =====================
 
+An hypergraph can also be seen as a type of database, that stores knowledge in the form of sets of hyperedges, and provides functions that make it easy to add and search for hyperedges in useful ways. We will see here how to perform some fundamental tasks with hypergraphs.
+
+Form here on, the following imports are assumed:
+
+::
+
+    from graphbrain import *
+    from graphbrain.notebook import *
+    from graphbrain.parsers import *
+
+Create an hypergraph
+--------------------
+
+Creating an hypergraph is straightforward:
+
+::
+
+    hg = hgraph('example.hg')
+
+This assigns a hypergraph instance to hg, which is physically stored as 'example.hg'. If this hypergraph already exists, it is simply opened. If it does not exist, and empty one is created.
+
+Parse sentence and add hyperedge to hypergraph
+----------------------------------------------
+
+Let's create a parser to obtain an hyperedge from a sentence, and then add it to the hypergraph:
+
+::
+
+
+    parser = create_parser(name='en')
+    text = "Mary is playing a very old violin."
+
+    parses = parser.parse(text)
+    for parse in parses:
+        edge = parse['main_edge']
+        hg.add(edge)
+
+Notice that the add() function 
+
+Iterate through all edges
+-------------------------
+
 TODO
 
+Search with patterns
+--------------------
+
+TODO
 
 Parsing a book
 ==============

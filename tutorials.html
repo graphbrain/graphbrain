@@ -97,7 +97,13 @@
 <li class="toctree-l3"><a class="reference internal" href="#working-with-notebooks">Working with notebooks</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#hypergraph-operations">Hypergraph operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hypergraph-operations">Hypergraph operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#create-an-hypergraph">Create an hypergraph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parse-sentence-and-add-hyperedge-to-hypergraph">Parse sentence and add hyperedge to hypergraph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#iterate-through-all-edges">Iterate through all edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#search-with-patterns">Search with patterns</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#parsing-a-book">Parsing a book</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#extracting-claims-and-conflicts-from-news-headers">Extracting claims and conflicts from news headers</a></li>
 </ul>
@@ -214,7 +220,43 @@
 </div>
 <div class="section" id="hypergraph-operations">
 <h2>Hypergraph operations<a class="headerlink" href="#hypergraph-operations" title="Permalink to this headline">¶</a></h2>
+<p>An hypergraph can also be seen as a type of database, that stores knowledge in the form of sets of hyperedges, and provides functions that make it easy to add and search for hyperedges in useful ways. We will see here how to perform some fundamental tasks with hypergraphs.</p>
+<p>Form here on, the following imports are assumed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">graphbrain.notebook</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">graphbrain.parsers</span> <span class="k">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+<div class="section" id="create-an-hypergraph">
+<h3>Create an hypergraph<a class="headerlink" href="#create-an-hypergraph" title="Permalink to this headline">¶</a></h3>
+<p>Creating an hypergraph is straightforward:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;example.hg&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This assigns a hypergraph instance to hg, which is physically stored as ‘example.hg’. If this hypergraph already exists, it is simply opened. If it does not exist, and empty one is created.</p>
+</div>
+<div class="section" id="parse-sentence-and-add-hyperedge-to-hypergraph">
+<h3>Parse sentence and add hyperedge to hypergraph<a class="headerlink" href="#parse-sentence-and-add-hyperedge-to-hypergraph" title="Permalink to this headline">¶</a></h3>
+<p>Let’s create a parser to obtain an hyperedge from a sentence, and then add it to the hypergraph:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">parser</span> <span class="o">=</span> <span class="n">create_parser</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">)</span>
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Mary is playing a very old violin.&quot;</span>
+
+<span class="n">parses</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">parse</span> <span class="ow">in</span> <span class="n">parses</span><span class="p">:</span>
+    <span class="n">edge</span> <span class="o">=</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;main_edge&#39;</span><span class="p">]</span>
+    <span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Notice that the add() function</p>
+</div>
+<div class="section" id="iterate-through-all-edges">
+<h3>Iterate through all edges<a class="headerlink" href="#iterate-through-all-edges" title="Permalink to this headline">¶</a></h3>
 <p>TODO</p>
+</div>
+<div class="section" id="search-with-patterns">
+<h3>Search with patterns<a class="headerlink" href="#search-with-patterns" title="Permalink to this headline">¶</a></h3>
+<p>TODO</p>
+</div>
 </div>
 <div class="section" id="parsing-a-book">
 <h2>Parsing a book<a class="headerlink" href="#parsing-a-book" title="Permalink to this headline">¶</a></h2>
