@@ -65,7 +65,7 @@ A knowledge agent is a program that manipulates an hypergraph in some way. It ca
 
    graphbrain --hg <hypergraph> --agent taxonomy run
 
-It produces new hyperedges such as:
+It produces new hyperedges such as::
 
    (type_of/p/. city/c (of/b city/c berlin/c))
 

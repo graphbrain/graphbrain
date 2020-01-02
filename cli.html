@@ -234,9 +234,9 @@
 </pre></div>
 </div>
 <p>It produces new hyperedges such as:</p>
-<blockquote>
-<div><p>(type_of/p/. city/c (of/b city/c berlin/c))</p>
-</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">type_of</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="n">city</span><span class="o">/</span><span class="n">c</span> <span class="p">(</span><span class="n">of</span><span class="o">/</span><span class="n">b</span> <span class="n">city</span><span class="o">/</span><span class="n">c</span> <span class="n">berlin</span><span class="o">/</span><span class="n">c</span><span class="p">))</span>
+</pre></div>
+</div>
 <p>Certain agents use outside sources to introduce knowledge into hypergraphs. For example, the <em>txt_parser</em> agent receives as input a simple text file and converters each sentence that it detects in it into an hyperedge. You can run it like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">infile</span> <span class="n">some_test_file</span><span class="o">.</span><span class="n">txt</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">agent</span> <span class="n">txt_parser</span> <span class="n">run</span>
 </pre></div>
