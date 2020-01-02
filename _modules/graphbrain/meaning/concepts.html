@@ -91,10 +91,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notation.html">Semantic Hypergraph Notation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agents.html">Knowledge Agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command-line interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../team.html">Team</a></li>
 </ul>
 
@@ -160,7 +157,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for graphbrain.meaning.concepts</h1><div class="highlight"><pre>
-<div class="viewcode-block" id="strip_concept"><a class="viewcode-back" href="../../../api.html#graphbrain.meaning.concepts.strip_concept">[docs]</a><span></span><span class="k">def</span> <span class="nf">strip_concept</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+<div class="viewcode-block" id="strip_concept"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.meaning.concepts.strip_concept">[docs]</a><span></span><span class="k">def</span> <span class="nf">strip_concept</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Strip away nesting edges with connectors such as triggers and</span>
 <span class="sd">    subpredicates, to expose the outmost and leftmost concept that can be</span>
 <span class="sd">    found. May be the edge itself.</span>
@@ -181,7 +178,7 @@
         <span class="k">return</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="has_proper_concept"><a class="viewcode-back" href="../../../api.html#graphbrain.meaning.concepts.has_proper_concept">[docs]</a><span class="k">def</span> <span class="nf">has_proper_concept</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+<div class="viewcode-block" id="has_proper_concept"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.meaning.concepts.has_proper_concept">[docs]</a><span class="k">def</span> <span class="nf">has_proper_concept</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check if the concept either is a proper edge, or contains one.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">edge</span><span class="o">.</span><span class="n">type</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;cp&#39;</span>
@@ -192,7 +189,7 @@
         <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="all_concepts"><a class="viewcode-back" href="../../../api.html#graphbrain.meaning.concepts.all_concepts">[docs]</a><span class="k">def</span> <span class="nf">all_concepts</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+<div class="viewcode-block" id="all_concepts"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.meaning.concepts.all_concepts">[docs]</a><span class="k">def</span> <span class="nf">all_concepts</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Recursively search for all concepts contained in the edge, returning</span>
 <span class="sd">    a set that can also contain itself.&quot;&quot;&quot;</span>
     <span class="n">concepts</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
