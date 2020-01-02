@@ -75,3 +75,4 @@ Certain agents use outside sources to introduce knowledge into hypergraphs. For 
 
 You can find the full list of agents that are distributed with Graphbrain here:
 
+https://graphbrain.net/reference/agents.html
