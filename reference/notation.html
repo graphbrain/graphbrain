@@ -175,7 +175,92 @@
             
   <div class="section" id="semantic-hypergraph-notation">
 <h1>Semantic Hypergraph Notation<a class="headerlink" href="#semantic-hypergraph-notation" title="Permalink to this headline">¶</a></h1>
-<p>TODO</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 15%" />
+<col style="width: 31%" />
+<col style="width: 31%" />
+<col style="width: 6%" />
+<col style="width: 10%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Code</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Purpose</p></th>
+<th class="head"><p>Example</p></th>
+<th class="head"><p>Atom</p></th>
+<th class="head"><p>Non-atom</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>c
+p
+a
+m
+b
+w
+x
+t
+r</p>
+<p>d
+s</p>
+</td>
+<td><p>concept
+predicate
+auxiliary
+modifier
+builder
+meta-modifier
+subpredicate
+trigger
+relation</p>
+<p>dependent
+specifier</p>
+</td>
+<td><p>Define atomic concepts
+Build relations
+Modify a predicate
+Modify a concept
+Build concepts from concepts
+Modify a modifier
+Auxiliary predicate
+Build specifications
+Express facts, statements,
+questions, orders, …
+Relation argument
+Relation specification
+(e.g. condition, time, …)</p></td>
+<td><p>apple/c
+(<em>is/p</em> berlin/c nice/c)
+(<em>not/a</em> is/p)
+(<em>red/m</em> shoes/c)
+(<em>of/b</em> capital/c germany/c)
+(<em>very/w</em> large/m)
+(<em>by/x</em> john/c)
+(<em>in/t</em> 1994/c)
+<em>(is/p berlin/c nice/c)</em></p>
+<p><em>(by/x scientists/c)</em>
+<em>(in/t 1976/c)</em></p>
+</td>
+<td><p>x
+x
+x
+x
+x
+x
+x
+x</p></td>
+<td><p>x
+x</p>
+<p>x</p>
+<p>x</p>
+<p>x
+x</p>
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 
