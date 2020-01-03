@@ -2,6 +2,9 @@
 Semantic Hypergraph Notation
 ============================
 
+Hyperedge types
+===============
+
 +------+---------------+------------------------------+--------------------------------+
 | Code | Type          | Purpose                      | Example                        |
 +======+===============+==============================+================================+
@@ -37,3 +40,27 @@ Semantic Hypergraph Notation
 +      +               +                              +                                +
 |      |               | (e.g. condition, time, ...)  |                                |
 +------+---------------+------------------------------+--------------------------------+
+
+
+Type inference rules
+====================
+
++---------------+----------------+
+| Element types | Resulting type |
++===============+================+
+| (m  c)        | c              |
++---------------+----------------+
+| (b  c  c+)    | c              |
++---------------+----------------+
+| (w  m)        | m              |
++---------------+----------------+
+| (a  p)        | p              |
++---------------+----------------+
+| (p  [crds]+)  | r              |
++---------------+----------------+
+| (x  [cr]+)    | d              |
++---------------+----------------+
+| (t  [cr]+)    | s              |
++---------------+----------------+
+
+We use the notation of regular expressions: the symbol ``+`` is used to denote an arbitrary number of entities with the type that precedes it, while square brackets indicate several possibilities (for instance, ``[cr]+`` means "at least one of any of both ``c`` or ``r`` types).
