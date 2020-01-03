@@ -5,7 +5,9 @@ Semantic Hypergraph Notation
 Atom structure
 ==============
 
-TODO
+.. image:: /_static/atom-structure.png
+    :align: center
+    :alt: atom structure
 
 
 Hyperedge types
