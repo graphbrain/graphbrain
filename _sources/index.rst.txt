@@ -1,4 +1,4 @@
-**NEW PUBLICATION**: The preprint of our first Graphbrain-related article `"Semantic Hypergraphs" is now available at arXiv <https://arxiv.org/abs/1908.10784>`_.
+.. note:: **NEW PUBLICATION**: The preprint of our first Graphbrain-related article `"Semantic Hypergraphs" is now available at arXiv <https://arxiv.org/abs/1908.10784>`_.
 
 .. raw:: html
 
