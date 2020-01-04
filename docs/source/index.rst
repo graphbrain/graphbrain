@@ -1,4 +1,4 @@
-**NEW PUBLICATION**: The preprint of our first Graphbrain-related article `"Semantic Hypergraphs" is now available at arXiv <https://arxiv.org/abs/1908.10784>`_.
+.. note:: **NEW PUBLICATION**: The preprint of our first Graphbrain-related article `"Semantic Hypergraphs" is now available at arXiv <https://arxiv.org/abs/1908.10784>`_.
 
 .. raw:: html
 
@@ -66,8 +66,8 @@ Graphbrain is written in Python, to both take advantage and facilitate integrati
    installation.rst
    overview.rst
    tutorials.rst
+   reference.rst
    cli.rst
-   api.rst
    team.rst
 
 

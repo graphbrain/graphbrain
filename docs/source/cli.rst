@@ -2,7 +2,7 @@
 Command-line interface
 ======================
 
-GraphBrain provides a command-line interface that can be used to execute a variety of tasks. You can access it either by using python to run the graphbrain root module as a script::
+Graphbrain provides a command-line interface that can be used to execute a variety of tasks. You can access it either by using python to run the graphbrain root module as a script::
 
    python -m graphbrain ...
 
@@ -57,6 +57,22 @@ Displays simple information about an hypergraph::
 run
 ---
 
-Run an agent::
+Run a knowledge agent::
 
    graphbrain --hg <hypergraph> --agent <agent name> run
+
+A knowledge agent is a program that manipulates an hypergraph in some way. It can be introspective, working only on the current contents of the hypergraph to derive new knowledge. For example, the *taxonomy* agent infers simple taxonomies from concepts. It can infer that 'black cat' is a type of 'cat' or that 'city of Berlin' is a type of 'city'. You can run it like this::
+
+   graphbrain --hg <hypergraph> --agent taxonomy run
+
+It produces new hyperedges such as::
+
+   (type_of/p/. city/c (of/b city/c berlin/c))
+
+Certain agents use outside sources to introduce knowledge into hypergraphs. For example, the *txt_parser* agent receives as input a simple text file and converters each sentence that it detects in it into an hyperedge. You can run it like this::
+
+   graphbrain --infile some_test_file.txt --hg <hypergraph> --agent txt_parser run
+
+You can find the full list of agents that are distributed with Graphbrain here:
+
+https://graphbrain.net/reference/agents.html

@@ -3,10 +3,10 @@
 ## [0.3.1] - ongoing work
 ### Added
 - German parser.
+- Documentation.
 
 ### Changed
 - Improved hyperedge visualization in notebooks.
-- Improved documentation.
 
 ### Removed
 
