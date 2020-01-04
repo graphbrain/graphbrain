@@ -183,8 +183,30 @@ When present, the first additional information subpart for concepts indicates nu
 * **s**: singular, example: apple/cc.s
 * **p**: plural, example: apples/cc.p
 
-Predicate and Auxiliary
------------------------
+Predicate
+---------
+
+When present, the first additional information subpart for predicates is used to specify the role played in a relation by each of its parameters, with the following codes:
+
+* **s**: subject
+* **p**: passive subject
+* **a**: agent
+* **c**: subject complement
+* **o**: direct object
+* **i**: indirect object
+* **x**: specifier
+* **t**: parataxis
+* **j**: interjection
+* **r**: clausal complement
+
+These codes are used to build strings, where each character corresponds to the parameter of the relation in the equivalent position. For example, consider the hyperedge:
+
+(is/pd.sc (the/md sky/cc.s) blue/ca.s)
+
+The *sc* subpart indicates that the first parameter ("the sky") plays the role of subject, and the second one ("blue"), plays the role of subject complement.
+
+Auxiliary
+---------
 
 TODO
 

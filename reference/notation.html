@@ -109,8 +109,9 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#type-specific-additional-information">Type-specific additional information</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id1">Concept</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#predicate-and-auxiliary">Predicate and Auxiliary</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id2">Builder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Predicate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Auxiliary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Builder</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#namespaces">Namespaces</a></li>
@@ -551,12 +552,31 @@
 <li><p><strong>p</strong>: plural, example: apples/cc.p</p></li>
 </ul>
 </div>
-<div class="section" id="predicate-and-auxiliary">
-<h3>Predicate and Auxiliary<a class="headerlink" href="#predicate-and-auxiliary" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id2">
+<h3>Predicate<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>When present, the first additional information subpart for predicates is used to specify the role played in a relation by each of its parameters, with the following codes:</p>
+<ul class="simple">
+<li><p><strong>s</strong>: subject</p></li>
+<li><p><strong>p</strong>: passive subject</p></li>
+<li><p><strong>a</strong>: agent</p></li>
+<li><p><strong>c</strong>: subject complement</p></li>
+<li><p><strong>o</strong>: direct object</p></li>
+<li><p><strong>i</strong>: indirect object</p></li>
+<li><p><strong>x</strong>: specifier</p></li>
+<li><p><strong>t</strong>: parataxis</p></li>
+<li><p><strong>j</strong>: interjection</p></li>
+<li><p><strong>r</strong>: clausal complement</p></li>
+</ul>
+<p>These codes are used to build strings, where each character corresponds to the parameter of the relation in the equivalent position. For example, consider the hyperedge:</p>
+<p>(is/pd.sc (the/md sky/cc.s) blue/ca.s)</p>
+<p>The <em>sc</em> subpart indicates that the first parameter (“the sky”) plays the role of subject, and the second one (“blue”), plays the role of subject complement.</p>
+</div>
+<div class="section" id="id3">
+<h3>Auxiliary<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <p>TODO</p>
 </div>
-<div class="section" id="id2">
-<h3>Builder<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id4">
+<h3>Builder<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <p>When present, the first additional information subpart for builders is used to distinguish the main concepts from the auxiliary ones, with the following codes:</p>
 <ul class="simple">
 <li><p><strong>m</strong>: main concept</p></li>
