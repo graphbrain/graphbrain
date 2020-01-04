@@ -205,10 +205,28 @@ These codes are used to build strings, where each character corresponds to the p
 
 The *sc* subpart indicates that the first parameter ("the sky") plays the role of subject, and the second one ("blue"), plays the role of subject complement.
 
+When present, the second additional information subpart for predicates is used to specify the features of the verb underlying the predicate. The following 7 features are specified:
+
+* **tense**: past (<), present (|) or future (>)
+* **verb form**: finite (f) or infinitive (i)
+* **aspect**: perfect (f) or progressive (g)
+* **mood**
+* **person**: first (1), second (2) or third (3)
+* **number**: singular (s) or plural (p)
+* **verb type**
+
+A string is built in the above order to specify the verb features of a predicate. Any feature can be left unspecified, by using a dash character (-). For example, consider the hyperedge:
+
+(**is/p?.cs.|f--3s-** (what/mw time/cc.s) it/ci)
+
+The predicate specifies four verb features: present tense (|), finite form (f), third person (3) and singular number (s).
+
 Auxiliary
 ---------
 
-TODO
+When present, the first additional information subpart for auxiliaries is used to specify the features of the verb underlying the auxiliary. The notation is exactly the same as the one used for predicates, but in predicates this corresponds to the second additional information subpart. For example, consider the non-atomic predicate:
+
+(have/av.|f----- (been/av.<pf---- tracking/pd.sox.|pg----))
 
 Builder
 -------
@@ -232,4 +250,8 @@ TODO
 Special atoms
 =============
 
-TODO
++======+=======================+=============================+
+| Atom | Purpose               | Example                     |
++------+-----------------------+-----------------------------+
+| +/b  | Define compound nouns | (+/b alan/cp.s turing/cp.s) |
++------+-----------------------+-----------------------------+

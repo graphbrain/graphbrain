@@ -570,10 +570,24 @@
 <p>These codes are used to build strings, where each character corresponds to the parameter of the relation in the equivalent position. For example, consider the hyperedge:</p>
 <p>(is/pd.sc (the/md sky/cc.s) blue/ca.s)</p>
 <p>The <em>sc</em> subpart indicates that the first parameter (“the sky”) plays the role of subject, and the second one (“blue”), plays the role of subject complement.</p>
+<p>When present, the second additional information subpart for predicates is used to specify the features of the verb underlying the predicate. The following 7 features are specified:</p>
+<ul class="simple">
+<li><p><strong>tense</strong>: past (&lt;), present (|) or future (&gt;)</p></li>
+<li><p><strong>verb form</strong>: finite (f) or infinitive (i)</p></li>
+<li><p><strong>aspect</strong>: perfect (f) or progressive (g)</p></li>
+<li><p><strong>mood</strong></p></li>
+<li><p><strong>person</strong>: first (1), second (2) or third (3)</p></li>
+<li><p><strong>number</strong>: singular (s) or plural (p)</p></li>
+<li><p><strong>verb type</strong></p></li>
+</ul>
+<p>A string is built in the above order to specify the verb features of a predicate. Any feature can be left unspecified, by using a dash character (-). For example, consider the hyperedge:</p>
+<p>(<strong>is/p?.cs.|f–3s-</strong> (what/mw time/cc.s) it/ci)</p>
+<p>The predicate specifies four verb features: present tense (|), finite form (f), third person (3) and singular number (s).</p>
 </div>
 <div class="section" id="id3">
 <h3>Auxiliary<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
-<p>TODO</p>
+<p>When present, the first additional information subpart for auxiliaries is used to specify the features of the verb underlying the auxiliary. The notation is exactly the same as the one used for predicates, but in predicates this corresponds to the second additional information subpart. For example, consider the non-atomic predicate:</p>
+<p>(have/av.|f—– (been/av.&lt;pf—- tracking/pd.sox.|pg—-))</p>
 </div>
 <div class="section" id="id4">
 <h3>Builder<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
@@ -593,7 +607,11 @@
 </div>
 <div class="section" id="special-atoms">
 <h2>Special atoms<a class="headerlink" href="#special-atoms" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<p>+======+=======================+=============================+
+| Atom | Purpose               | Example                     |
++——+———————–+—————————–+
+| +/b  | Define compound nouns | (+/b alan/cp.s turing/cp.s) |
++——+———————–+—————————–+</p>
 </div>
 </div>
 
