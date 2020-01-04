@@ -77,7 +77,22 @@ We use the notation of regular expressions: the symbol ``+`` is used to denote a
 Subtypes
 ========
 
-TODO
+Concepts
+--------
+
++------+---------------+----------+
+| Code | Subtype       | Example  |
++======+===============+==========+
+| cc   | common        | apple/cc |
++------+---------------+----------+
+| cp   | proper        | mary/cp  |
++------+---------------+----------+
+| cn   | number        | 27/cn    |
++------+---------------+----------+
+| ci   | pronoun       | she/ci   |
++------+---------------+----------+
+| cw   | interrogative | who/cw   |
++------+---------------+----------+
 
 
 Type-specific additional information
