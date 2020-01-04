@@ -173,10 +173,41 @@ Trigger
 Type-specific additional information
 ====================================
 
+The type part of the atom can include subparts after the type specifier. The meaning of these subsequent subparts is type-specific.
+
+Concept
+-------
+
+When present, the first additional information subpart for concepts indicates number, with the following codes:
+
+* **s**: singular, example: apple/cc.s
+* **p**: plural, example: apples/cc.p
+
+Predicate and Auxiliary
+-----------------------
+
 TODO
 
+Builder
+-------
+
+When present, the first additional information subpart for builders is used to distinguish the main concepts from the auxiliary ones, with the following codes:
+
+* **m**: main concept
+* **a**: auxiliary concept
+
+These codes are used to build strings, where each character corresponds to the parameter of the builder in the equivalent position. For example, consider the hyperedge:
+
+(of/br.ma founder/cc.s psychoanalysis/cc.s)
+
+The *ma* subpart indicates that the first concept following the builder should be considered a main concept, and the next one auxiliary. This means that "founder of psychoanalysis" is a type of "founder". In other words, auxiliary concepts serve the role of making the main ones more specific.
 
 Namespaces
 ==========
+
+TODO
+
+Special atoms
+=============
 
 TODO

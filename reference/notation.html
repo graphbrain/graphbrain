@@ -107,8 +107,14 @@
 <li class="toctree-l4"><a class="reference internal" href="#trigger">Trigger</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#type-specific-additional-information">Type-specific additional information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#type-specific-additional-information">Type-specific additional information</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Concept</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#predicate-and-auxiliary">Predicate and Auxiliary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Builder</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#namespaces">Namespaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#special-atoms">Special atoms</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="agents.html">Knowledge Agents</a></li>
@@ -536,10 +542,37 @@
 </div>
 <div class="section" id="type-specific-additional-information">
 <h2>Type-specific additional information<a class="headerlink" href="#type-specific-additional-information" title="Permalink to this headline">¶</a></h2>
+<p>The type part of the atom can include subparts after the type specifier. The meaning of these subsequent subparts is type-specific.</p>
+<div class="section" id="id1">
+<h3>Concept<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>When present, the first additional information subpart for concepts indicates number, with the following codes:</p>
+<ul class="simple">
+<li><p><strong>s</strong>: singular, example: apple/cc.s</p></li>
+<li><p><strong>p</strong>: plural, example: apples/cc.p</p></li>
+</ul>
+</div>
+<div class="section" id="predicate-and-auxiliary">
+<h3>Predicate and Auxiliary<a class="headerlink" href="#predicate-and-auxiliary" title="Permalink to this headline">¶</a></h3>
 <p>TODO</p>
+</div>
+<div class="section" id="id2">
+<h3>Builder<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>When present, the first additional information subpart for builders is used to distinguish the main concepts from the auxiliary ones, with the following codes:</p>
+<ul class="simple">
+<li><p><strong>m</strong>: main concept</p></li>
+<li><p><strong>a</strong>: auxiliary concept</p></li>
+</ul>
+<p>These codes are used to build strings, where each character corresponds to the parameter of the builder in the equivalent position. For example, consider the hyperedge:</p>
+<p>(of/br.ma founder/cc.s psychoanalysis/cc.s)</p>
+<p>The <em>ma</em> subpart indicates that the first concept following the builder should be considered a main concept, and the next one auxiliary. This means that “founder of psychoanalysis” is a type of “founder”. In other words, auxiliary concepts serve the role of making the main ones more specific.</p>
+</div>
 </div>
 <div class="section" id="namespaces">
 <h2>Namespaces<a class="headerlink" href="#namespaces" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="special-atoms">
+<h2>Special atoms<a class="headerlink" href="#special-atoms" title="Permalink to this headline">¶</a></h2>
 <p>TODO</p>
 </div>
 </div>
