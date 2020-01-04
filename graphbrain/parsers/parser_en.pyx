@@ -100,8 +100,8 @@ def arg_type(token):
 
 
 def _verb_features(token):
-    verb_form = '-'
     tense = '-'
+    verb_form = '-'
     aspect = '-'
     mood = '-'
     person = '-'

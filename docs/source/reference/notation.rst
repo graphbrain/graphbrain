@@ -205,10 +205,28 @@ These codes are used to build strings, where each character corresponds to the p
 
 The *sc* subpart indicates that the first parameter ("the sky") plays the role of subject, and the second one ("blue"), plays the role of subject complement.
 
+When present, the second additional information subpart for predicates is used to specify the features of the verb underlying the predicate. The following 7 features are specified:
+
+* **tense**: past (<), present (|) or future (>)
+* **verb form**: finite (f) or infinitive (i)
+* **aspect**: perfect (f) or progressive (g)
+* **mood**
+* **person**: first (1), second (2) or third (3)
+* **number**: singular (s) or plural (p)
+* **verb type**
+
+A string is built in the above order to specify the verb features of a predicate. Any feature can be left unspecified, by using a dash character (-). For example, consider the hyperedge:
+
+(**is/p?.cs.|f--3s-** (what/mw time/cc.s) it/ci)
+
+The predicate specifies four verb features: present tense (|), finite form (f), third person (3) and singular number (s).
+
 Auxiliary
 ---------
 
-TODO
+When present, the first additional information subpart for auxiliaries is used to specify the features of the verb underlying the auxiliary. The notation is exactly the same as the one used for predicates, but in predicates this corresponds to the second additional information subpart. For example, consider the non-atomic predicate:
+
+(have/av.|f----- (been/av.<pf---- tracking/pd.sox.|pg----))
 
 Builder
 -------
@@ -227,9 +245,36 @@ The *ma* subpart indicates that the first concept following the builder should b
 Namespaces
 ==========
 
-TODO
+Namespaces serve two functions:
+
+1. To identify the language or symbolic space to which an atom belongs;
+2. To distinguish atoms that have different meanings, but would otherwise correspond to the exact same string.
+
+In the first case, we can specify that an atom corresponds to an English word like this:
+
+sky/cp.s/en
+
+Or to a German word like this:
+
+himmel/cp.s/de
+
+Or that it is a special atom defined by Graphbrain:
+
++/b/.
+
+In the second case, another subparts can be added to provide a distinction. For example, suppose we want to distinguish Cambridge (UK) from Cambridge (Mass., USA). We could use:
+
+cambridge/cp.s/en.1
+
+cambridge/cp.s/en.2
 
 Special atoms
 =============
 
-TODO
++-------+-----------------------+-------------------------------+
+| Atom  | Purpose               | Example                       |
++=======+=======================+===============================+
+| +/b/. | Define compound nouns | (+/b/. alan/cp.s turing/cp.s) |
++-------+-----------------------+-------------------------------+
+| :/b/. | Tangential concept    |                               |
++-------+-----------------------+-------------------------------+
