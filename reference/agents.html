@@ -190,7 +190,15 @@
 <h1>Knowledge Agents<a class="headerlink" href="#knowledge-agents" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="actors">
 <h2>actors<a class="headerlink" href="#actors" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<p>We define actors as specific entities that are capable of acting in some sense. This simple agent identifies hyperedges corresponding to actor by applying the following criteria:</p>
+<ol class="arabic simple">
+<li><p>The hyperedge or one of its coreferences appears at least two times as the subject of a declarative relation</p></li>
+<li><p>The hyperedge is of type concept and subtype proper concept</p></li>
+<li><p>If coreferences are used, the hyperedge is the main coreference</p></li>
+</ol>
+<p>This agent transverses the entire hypergraph to identify actors, and then adds hyperedges like the following:</p>
+<p>(actor/p/. mary/cp.s/en)</p>
+<p>The above simply means that mary/cp.s/en was identified as an actor.</p>
 </div>
 <div class="section" id="claim-actors">
 <h2>claim_actors<a class="headerlink" href="#claim-actors" title="Permalink to this headline">¶</a></h2>
@@ -226,11 +234,15 @@
 </div>
 <div class="section" id="taxonomy">
 <h2>taxonomy<a class="headerlink" href="#taxonomy" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<p>Derives a taxonomy from concepts defined with builders of modifiers. For example, (of/br.ma founder/cc.s psychoanalysis/cc.s) is a type of founder/cc.s, so the following hyperedge is added:</p>
+<p>(type_of/p/. (of/br.ma founder/cc.s psychoanalysis/cc.s) founder/cc.s)</p>
+<p>Or, if we consider modifier-defined concepts such as (black/ma cat/cc.s):</p>
+<p>(type_of/p/. (black/ma cat/cc.s) cat/cc.s)</p>
 </div>
 <div class="section" id="txt-parser">
 <h2>txt_parser<a class="headerlink" href="#txt-parser" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<p>Takes a text file as input and converts each one of its sentences to hyperedges, adding them to the hypergraph.</p>
+<p>This is a very simple but also useful, general-purpose agent.</p>
 </div>
 </div>
 
