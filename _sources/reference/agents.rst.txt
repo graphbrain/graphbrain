@@ -5,6 +5,10 @@ Knowledge Agents
 actors
 ======
 
+**Type**: introspective
+
+**Languages**: all
+
 We define actors as specific entities that are capable of acting in some sense. This simple agent identifies hyperedges corresponding to actor by applying the following criteria:
 
 1. The hyperedge or one of its coreferences appears at least two times as the subject of a declarative relation
@@ -35,7 +39,11 @@ TODO
 corefs_dets
 ===========
 
-TODO
+**Type**: introspective
+
+**Languages**: English
+
+Performs coreference resolution for specific cases where a determinant can be used with a concept or not (e.g.: "The Beatles" or just "Beatles").
 
 corefs_names
 ============
@@ -60,6 +68,10 @@ TODO
 taxonomy
 ========
 
+**Type**: introspective
+
+**Languages**: all
+
 Derives a taxonomy from concepts defined with builders of modifiers. For example, (of/br.ma founder/cc.s psychoanalysis/cc.s) is a type of founder/cc.s, so the following hyperedge is added:
 
 (type_of/p/. (of/br.ma founder/cc.s psychoanalysis/cc.s) founder/cc.s)
@@ -70,6 +82,10 @@ Or, if we consider modifier-defined concepts such as (black/ma cat/cc.s):
 
 txt_parser
 ==========
+
+**Type**: input
+
+**Languages**: all
 
 Takes a text file as input and converts each one of its sentences to hyperedges, adding them to the hypergraph.
 

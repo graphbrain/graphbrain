@@ -38,7 +38,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="API reference" href="api.html" />
-    <link rel="prev" title="Semantic Hypergraph Notation" href="notation.html" /> 
+    <link rel="prev" title="Special relations" href="special-relations.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -95,6 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../reference.html">Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="notation.html">Semantic Hypergraph Notation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="special-relations.html">Special relations</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Knowledge Agents</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#actors">actors</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#claim-actors">claim_actors</a></li>
@@ -190,6 +191,8 @@
 <h1>Knowledge Agents<a class="headerlink" href="#knowledge-agents" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="actors">
 <h2>actors<a class="headerlink" href="#actors" title="Permalink to this headline">¶</a></h2>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: all</p>
 <p>We define actors as specific entities that are capable of acting in some sense. This simple agent identifies hyperedges corresponding to actor by applying the following criteria:</p>
 <ol class="arabic simple">
 <li><p>The hyperedge or one of its coreferences appears at least two times as the subject of a declarative relation</p></li>
@@ -214,7 +217,9 @@
 </div>
 <div class="section" id="corefs-dets">
 <h2>corefs_dets<a class="headerlink" href="#corefs-dets" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: English</p>
+<p>Performs coreference resolution for specific cases where a determinant can be used with a concept or not (e.g.: “The Beatles” or just “Beatles”).</p>
 </div>
 <div class="section" id="corefs-names">
 <h2>corefs_names<a class="headerlink" href="#corefs-names" title="Permalink to this headline">¶</a></h2>
@@ -234,6 +239,8 @@
 </div>
 <div class="section" id="taxonomy">
 <h2>taxonomy<a class="headerlink" href="#taxonomy" title="Permalink to this headline">¶</a></h2>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: all</p>
 <p>Derives a taxonomy from concepts defined with builders of modifiers. For example, (of/br.ma founder/cc.s psychoanalysis/cc.s) is a type of founder/cc.s, so the following hyperedge is added:</p>
 <p>(type_of/p/. (of/br.ma founder/cc.s psychoanalysis/cc.s) founder/cc.s)</p>
 <p>Or, if we consider modifier-defined concepts such as (black/ma cat/cc.s):</p>
@@ -241,6 +248,8 @@
 </div>
 <div class="section" id="txt-parser">
 <h2>txt_parser<a class="headerlink" href="#txt-parser" title="Permalink to this headline">¶</a></h2>
+<p><strong>Type</strong>: input</p>
+<p><strong>Languages</strong>: all</p>
 <p>Takes a text file as input and converts each one of its sentences to hyperedges, adding them to the hypergraph.</p>
 <p>This is a very simple but also useful, general-purpose agent.</p>
 </div>
@@ -257,7 +266,7 @@
         <a href="api.html" class="btn btn-neutral float-right" title="API reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="notation.html" class="btn btn-neutral float-left" title="Semantic Hypergraph Notation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="special-relations.html" class="btn btn-neutral float-left" title="Special relations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
