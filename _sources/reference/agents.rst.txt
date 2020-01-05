@@ -131,7 +131,7 @@ claims
 
 **Languages**: English
 
-**Depends on**: actors, claims
+**Depends on**: coreference resolution
 
 Identifies hyperedges that represent a claim. Claims are sentences such as: "North Korea says it's not afraid of US military strike". The claim is that "North Korea is not afraid of US military strike" and the author of the claim is "North Korea".
 
@@ -168,7 +168,7 @@ conflicts
 
 **Languages**: English
 
-**Depends on**: actors, claims
+**Depends on**: coreference resolution
 
 Identifies hyperedges that represent a conflict. Conflicts are sentences such as: "Germany warns Russia against military engagement in Syria". The source of the expression of conflict here is "Germany", the target is "Russia" and the topic is "military engagement in Syria".
 
