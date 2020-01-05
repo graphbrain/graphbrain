@@ -97,17 +97,29 @@
 <li class="toctree-l2"><a class="reference internal" href="notation.html">Semantic Hypergraph Notation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="special-relations.html">Special relations</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Knowledge Agents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#actors">actors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#claim-actors">claim_actors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#claims">claims</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#conflicts">conflicts</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#corefs-dets">corefs_dets</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#corefs-names">corefs_names</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#corefs-onto">corefs_onto</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#corefs-unidecode">corefs_unidecode</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#reddit-parser">reddit_parser</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#taxonomy">taxonomy</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#txt-parser">txt_parser</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parsers">Parsers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#reddit-parser">reddit_parser</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#txt-parser">txt_parser</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ontologies">Ontologies</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#taxonomy">taxonomy</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#coreference-resolution">Coreference resolution</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#corefs-dets">corefs_dets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#corefs-names">corefs_names</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#corefs-onto">corefs_onto</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#corefs-unidecode">corefs_unidecode</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#actors-claims-and-conflicts">Actors, claims and conflicts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#actors">actors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#claim-actors">claim_actors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#claims">claims</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conflicts">conflicts</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html">API reference</a></li>
@@ -189,10 +201,73 @@
             
   <div class="section" id="knowledge-agents">
 <h1>Knowledge Agents<a class="headerlink" href="#knowledge-agents" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="actors">
-<h2>actors<a class="headerlink" href="#actors" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="parsers">
+<h2>Parsers<a class="headerlink" href="#parsers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="reddit-parser">
+<h3>reddit_parser<a class="headerlink" href="#reddit-parser" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: input</p>
+<p><strong>Languages</strong>: all</p>
+<p>Takes a Reddit JSON corpus as input and converts each one of thread titles, and optionally thread comments to hyperedges, adding them to the hypergraph. Titles and comments are attributed to authors.</p>
+</div>
+<div class="section" id="txt-parser">
+<h3>txt_parser<a class="headerlink" href="#txt-parser" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: input</p>
+<p><strong>Languages</strong>: all</p>
+<p>Takes a text file as input and converts each one of its sentences to hyperedges, adding them to the hypergraph.</p>
+<p>This is a very simple but also useful, general-purpose agent.</p>
+</div>
+</div>
+<div class="section" id="ontologies">
+<h2>Ontologies<a class="headerlink" href="#ontologies" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="taxonomy">
+<h3>taxonomy<a class="headerlink" href="#taxonomy" title="Permalink to this headline">¶</a></h3>
 <p><strong>Type</strong>: introspective</p>
 <p><strong>Languages</strong>: all</p>
+<p>Derives a taxonomy from concepts defined with builders of modifiers. For example, <code class="docutils literal notranslate"><span class="pre">(of/br.ma</span> <span class="pre">founder/cc.s</span> <span class="pre">psychoanalysis/cc.s)</span></code> is a type of <code class="docutils literal notranslate"><span class="pre">founder/cc.s</span></code>, so the following hyperedge is added:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">type_of</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="p">(</span><span class="n">of</span><span class="o">/</span><span class="n">br</span><span class="o">.</span><span class="n">ma</span> <span class="n">founder</span><span class="o">/</span><span class="n">cc</span><span class="o">.</span><span class="n">s</span> <span class="n">psychoanalysis</span><span class="o">/</span><span class="n">cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="n">founder</span><span class="o">/</span><span class="n">cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or, if we consider modifier-defined concepts such as <code class="docutils literal notranslate"><span class="pre">(black/ma</span> <span class="pre">cat/cc.s)</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">type_of</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="p">(</span><span class="n">black</span><span class="o">/</span><span class="n">ma</span> <span class="n">cat</span><span class="o">/</span><span class="n">cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="n">cat</span><span class="o">/</span><span class="n">cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="coreference-resolution">
+<h2>Coreference resolution<a class="headerlink" href="#coreference-resolution" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="corefs-dets">
+<h3>corefs_dets<a class="headerlink" href="#corefs-dets" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: English</p>
+<p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> for specific cases where a determinant can be used with a concept or not (e.g.: “The Beatles” or just “Beatles”).</p>
+</div>
+<div class="section" id="corefs-names">
+<h3>corefs_names<a class="headerlink" href="#corefs-names" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: all</p>
+<p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> for compound proper name concepts, for example detecting that “Barack Obama” and “Obama” refer to the same person but “Michelle Obama” refers to someone else).</p>
+</div>
+<div class="section" id="corefs-onto">
+<h3>corefs_onto<a class="headerlink" href="#corefs-onto" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: all</p>
+<p><strong>Depends on</strong>: taxonomy</p>
+<p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> based on probabilistic reasoning over taxonomies. For example, detecting that “United States” and “United States of America” refer to the same entity.</p>
+</div>
+<div class="section" id="corefs-unidecode">
+<h3>corefs_unidecode<a class="headerlink" href="#corefs-unidecode" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: all</p>
+<p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> for atoms that become equal after unidecode() is a applied to both labels. For example, it will create a coreference relation between <code class="docutils literal notranslate"><span class="pre">über/c</span></code> and <code class="docutils literal notranslate"><span class="pre">uber/c</span></code>.</p>
+</div>
+</div>
+<div class="section" id="actors-claims-and-conflicts">
+<h2>Actors, claims and conflicts<a class="headerlink" href="#actors-claims-and-conflicts" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="actors">
+<h3>actors<a class="headerlink" href="#actors" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: all</p>
+<p><strong>Depends on</strong>: coreference resolution</p>
 <p>We define actors as specific entities that are capable of acting in some sense. This simple agent identifies hyperedges corresponding to actor by applying the following criteria:</p>
 <ol class="arabic simple">
 <li><p>The hyperedge or one of its coreferences appears at least two times as the subject of a declarative relation</p></li>
@@ -200,62 +275,23 @@
 <li><p>If coreferences are used, the hyperedge is the main coreference</p></li>
 </ol>
 <p>This agent transverses the entire hypergraph to identify actors, and then adds hyperedges like the following:</p>
-<p>(actor/p/. mary/cp.s/en)</p>
-<p>The above simply means that mary/cp.s/en was identified as an actor.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">actor</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="n">mary</span><span class="o">/</span><span class="n">cp</span><span class="o">.</span><span class="n">s</span><span class="o">/</span><span class="n">en</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The above simply means that <code class="docutils literal notranslate"><span class="pre">mary/cp.s/en</span></code> was identified as an actor.</p>
 </div>
 <div class="section" id="claim-actors">
-<h2>claim_actors<a class="headerlink" href="#claim-actors" title="Permalink to this headline">¶</a></h2>
+<h3>claim_actors<a class="headerlink" href="#claim-actors" title="Permalink to this headline">¶</a></h3>
 <p>TODO</p>
 </div>
 <div class="section" id="claims">
-<h2>claims<a class="headerlink" href="#claims" title="Permalink to this headline">¶</a></h2>
+<h3>claims<a class="headerlink" href="#claims" title="Permalink to this headline">¶</a></h3>
 <p>TODO</p>
 </div>
 <div class="section" id="conflicts">
-<h2>conflicts<a class="headerlink" href="#conflicts" title="Permalink to this headline">¶</a></h2>
+<h3>conflicts<a class="headerlink" href="#conflicts" title="Permalink to this headline">¶</a></h3>
 <p>TODO</p>
 </div>
-<div class="section" id="corefs-dets">
-<h2>corefs_dets<a class="headerlink" href="#corefs-dets" title="Permalink to this headline">¶</a></h2>
-<p><strong>Type</strong>: introspective</p>
-<p><strong>Languages</strong>: English</p>
-<p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> for specific cases where a determinant can be used with a concept or not (e.g.: “The Beatles” or just “Beatles”).</p>
-</div>
-<div class="section" id="corefs-names">
-<h2>corefs_names<a class="headerlink" href="#corefs-names" title="Permalink to this headline">¶</a></h2>
-<p><strong>Type</strong>: introspective</p>
-<p><strong>Languages</strong>: all</p>
-<p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> for compound proper name concepts, for example detecting that “Barack Obama” and “Obama” refer to the same person but “Michelle Obama” refers to someone else).</p>
-</div>
-<div class="section" id="corefs-onto">
-<h2>corefs_onto<a class="headerlink" href="#corefs-onto" title="Permalink to this headline">¶</a></h2>
-<p><strong>Type</strong>: introspective</p>
-<p><strong>Languages</strong>: all</p>
-<p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> based on probabilistic reasoning over taxonomies. For example, detecting that “United States” and “United States of America” refer to the same entity.</p>
-</div>
-<div class="section" id="corefs-unidecode">
-<h2>corefs_unidecode<a class="headerlink" href="#corefs-unidecode" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
-</div>
-<div class="section" id="reddit-parser">
-<h2>reddit_parser<a class="headerlink" href="#reddit-parser" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
-</div>
-<div class="section" id="taxonomy">
-<h2>taxonomy<a class="headerlink" href="#taxonomy" title="Permalink to this headline">¶</a></h2>
-<p><strong>Type</strong>: introspective</p>
-<p><strong>Languages</strong>: all</p>
-<p>Derives a taxonomy from concepts defined with builders of modifiers. For example, (of/br.ma founder/cc.s psychoanalysis/cc.s) is a type of founder/cc.s, so the following hyperedge is added:</p>
-<p>(type_of/p/. (of/br.ma founder/cc.s psychoanalysis/cc.s) founder/cc.s)</p>
-<p>Or, if we consider modifier-defined concepts such as (black/ma cat/cc.s):</p>
-<p>(type_of/p/. (black/ma cat/cc.s) cat/cc.s)</p>
-</div>
-<div class="section" id="txt-parser">
-<h2>txt_parser<a class="headerlink" href="#txt-parser" title="Permalink to this headline">¶</a></h2>
-<p><strong>Type</strong>: input</p>
-<p><strong>Languages</strong>: all</p>
-<p>Takes a text file as input and converts each one of its sentences to hyperedges, adding them to the hypergraph.</p>
-<p>This is a very simple but also useful, general-purpose agent.</p>
 </div>
 </div>
 
