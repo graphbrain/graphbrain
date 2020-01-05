@@ -43,17 +43,25 @@ corefs_dets
 
 **Languages**: English
 
-Performs coreference resolution for specific cases where a determinant can be used with a concept or not (e.g.: "The Beatles" or just "Beatles").
+Performs `coreference resolution <https://graphbrain.net/reference/special-relations.html#coreferences>`_ for specific cases where a determinant can be used with a concept or not (e.g.: "The Beatles" or just "Beatles").
 
 corefs_names
 ============
 
-TODO
+**Type**: introspective
+
+**Languages**: all
+
+Performs `coreference resolution <https://graphbrain.net/reference/special-relations.html#coreferences>`_ for compound proper name concepts, for example detecting that "Barack Obama" and "Obama" refer to the same person but "Michelle Obama" refers to someone else).
 
 corefs_onto
 ===========
 
-TODO
+**Type**: introspective
+
+**Languages**: all
+
+Performs `coreference resolution <https://graphbrain.net/reference/special-relations.html#coreferences>`_ based on probabilistic reasoning over taxonomies. For example, detecting that "United States" and "United States of America" refer to the same entity.
 
 corefs_unidecode
 ================
