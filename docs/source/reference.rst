@@ -1,0 +1,12 @@
+=========
+Reference
+=========
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   reference/notation.rst
+   reference/coreferences.rst
+   reference/agents.rst
+   reference/api.rst
