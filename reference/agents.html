@@ -222,7 +222,7 @@
 <div class="section" id="taxonomy">
 <h3>taxonomy<a class="headerlink" href="#taxonomy" title="Permalink to this headline">¶</a></h3>
 <p><strong>Type</strong>: introspective</p>
-<p><strong>Languages</strong>: all</p>
+<p><strong>Languages</strong>: agnostic</p>
 <p>Derives a taxonomy from concepts defined with builders of modifiers. For example, <code class="docutils literal notranslate"><span class="pre">(of/br.ma</span> <span class="pre">founder/cc.s</span> <span class="pre">psychoanalysis/cc.s)</span></code> is a type of <code class="docutils literal notranslate"><span class="pre">founder/cc.s</span></code>, so the following hyperedge is added:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">type_of</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="p">(</span><span class="n">of</span><span class="o">/</span><span class="n">br</span><span class="o">.</span><span class="n">ma</span> <span class="n">founder</span><span class="o">/</span><span class="n">cc</span><span class="o">.</span><span class="n">s</span> <span class="n">psychoanalysis</span><span class="o">/</span><span class="n">cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="n">founder</span><span class="o">/</span><span class="n">cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
@@ -244,20 +244,20 @@
 <div class="section" id="corefs-names">
 <h3>corefs_names<a class="headerlink" href="#corefs-names" title="Permalink to this headline">¶</a></h3>
 <p><strong>Type</strong>: introspective</p>
-<p><strong>Languages</strong>: all</p>
+<p><strong>Languages</strong>: agnostic</p>
 <p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> for compound proper name concepts, for example detecting that “Barack Obama” and “Obama” refer to the same person but “Michelle Obama” refers to someone else).</p>
 </div>
 <div class="section" id="corefs-onto">
 <h3>corefs_onto<a class="headerlink" href="#corefs-onto" title="Permalink to this headline">¶</a></h3>
 <p><strong>Type</strong>: introspective</p>
-<p><strong>Languages</strong>: all</p>
+<p><strong>Languages</strong>: agnostic</p>
 <p><strong>Depends on</strong>: taxonomy</p>
 <p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> based on probabilistic reasoning over taxonomies. For example, detecting that “United States” and “United States of America” refer to the same entity.</p>
 </div>
 <div class="section" id="corefs-unidecode">
 <h3>corefs_unidecode<a class="headerlink" href="#corefs-unidecode" title="Permalink to this headline">¶</a></h3>
 <p><strong>Type</strong>: introspective</p>
-<p><strong>Languages</strong>: all</p>
+<p><strong>Languages</strong>: agnostic</p>
 <p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> for atoms that become equal after unidecode() is a applied to both labels. For example, it will create a coreference relation between <code class="docutils literal notranslate"><span class="pre">über/c</span></code> and <code class="docutils literal notranslate"><span class="pre">uber/c</span></code>.</p>
 </div>
 </div>
@@ -266,7 +266,7 @@
 <div class="section" id="actors">
 <h3>actors<a class="headerlink" href="#actors" title="Permalink to this headline">¶</a></h3>
 <p><strong>Type</strong>: introspective</p>
-<p><strong>Languages</strong>: all</p>
+<p><strong>Languages</strong>: agnostic</p>
 <p><strong>Depends on</strong>: coreference resolution</p>
 <p>We define actors as specific entities that are capable of acting in some sense. This simple agent identifies hyperedges corresponding to actor by applying the following criteria:</p>
 <ol class="arabic simple">
@@ -282,15 +282,68 @@
 </div>
 <div class="section" id="claim-actors">
 <h3>claim_actors<a class="headerlink" href="#claim-actors" title="Permalink to this headline">¶</a></h3>
-<p>TODO</p>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: agnostic</p>
+<p><strong>Depends on</strong>: actors, claims</p>
+<p>Creates relations connecting claims to actors mentioned in the claim. For example, consider the sentence: “Mary says that John is nice.” In this case, the claim “John is nice” (which is attributed to Mary), will be connected to John through a claim-actor relation. Claim-actor relations have the form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">claim</span><span class="o">-</span><span class="n">actor</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="o">*</span><span class="n">main_actor</span><span class="o">*</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span> <span class="o">*</span><span class="n">claim</span><span class="o">*</span> <span class="o">*</span><span class="n">main_edge</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="claims">
 <h3>claims<a class="headerlink" href="#claims" title="Permalink to this headline">¶</a></h3>
-<p>TODO</p>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: English</p>
+<p><strong>Depends on</strong>: actors, claims</p>
+<p>Identifies hyperedges that represent a claim. Claims are sentences such as: “North Korea says it’s not afraid of US military strike”. The claim is that “North Korea is not afraid of US military strike” and the author of the claim is “North Korea”.</p>
+<p>More specifically, claims are detected according to the following criteria:</p>
+<ol class="arabic simple">
+<li><p>Hyperedge is a relation with predicate of type <code class="docutils literal notranslate"><span class="pre">pd</span></code>.</p></li>
+<li><p>The deep predicate atom of the predicate hyperedge has a lemma belonging to a predetermined lists of verb lemmas that denote a claim (e.g.: “say”, “claim”).</p></li>
+<li><p>The hyperedge has a subject and a clausal complement. The first is used to identify the actor making the claim, the second the claim itself.</p></li>
+</ol>
+<p>Claim relations follow the format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">claim</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span> <span class="o">*</span><span class="n">claim</span><span class="o">*</span> <span class="o">*</span><span class="n">edge</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Furthermore, simple anaphora resolution on the claim is performed (e.g. in “Pink Panther says that she loves pink.”, the hyperedge for “she” is replaced with the hyperedge for “Pink Panther” in the claim). In these cases, pronouns are used to guess gender or nature of actors. Actors can be classified as female:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">female</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or as a group:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">group</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or as male:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">male</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or as non-human:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">non</span><span class="o">-</span><span class="n">human</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="conflicts">
 <h3>conflicts<a class="headerlink" href="#conflicts" title="Permalink to this headline">¶</a></h3>
-<p>TODO</p>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: English</p>
+<p><strong>Depends on</strong>: actors, claims</p>
+<p>Identifies hyperedges that represent a conflict. Conflicts are sentences such as: “Germany warns Russia against military engagement in Syria”. The source of the expression of conflict here is “Germany”, the target is “Russia” and the topic is “military engagement in Syria”.</p>
+<p>More specifically, claims are detected according to the following criteria:</p>
+<ol class="arabic simple">
+<li><p>Hyperedge is a relation with predicate of type <code class="docutils literal notranslate"><span class="pre">pd</span></code>.</p></li>
+<li><p>The deep predicate atom of the predicate hyperedge has a lemma belonging to a predetermined lists of verb lemmas that denote an expression of conflict (e.g.: “warn”, “kill”).</p></li>
+<li><p>The hyperedge has a subject and an object. The first is used to identify the actor originating the expression of conflict and the second the actor which is the target of this expression.</p></li>
+<li><p>[optional] Beyond subject and object, if any specifier arguments are present, and their trigger atoms belong to a predetermined list (e.g. “over”, “against”), then topics of conflict are extracted from these specifiers.</p></li>
+</ol>
+<p>Conflict relations follow the format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">conflict</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor_orig</span><span class="o">*</span> <span class="o">*</span><span class="n">actor_targ</span><span class="o">*</span> <span class="o">*</span><span class="n">edge</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>These conflict relations are connected to their topics by further relations with the format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">conflict</span><span class="o">-</span><span class="n">topic</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor_orig</span><span class="o">*</span> <span class="o">*</span><span class="n">actor_targ</span><span class="o">*</span> <span class="o">*</span><span class="n">concept</span><span class="o">*</span> <span class="o">*</span><span class="n">edge</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>
