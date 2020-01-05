@@ -220,7 +220,14 @@
 </div>
 <div class="section" id="as-database">
 <h3>As database<a class="headerlink" href="#as-database" title="Permalink to this headline">¶</a></h3>
-<p>TODO</p>
+<p>At a more concrete level, Graphbrain provides an actual database system that allows for persistent storage and manipulation of semantic hypergraphs.</p>
+<p>The idea is for this database system to guarantee a certain interface (API), and allow for various backend implementations (e.g.: local, distributed, memory-only). This interface allows for fundamental tasks such as:</p>
+<ol class="arabic simple">
+<li><p>Insertion of hyperedges.</p></li>
+<li><p>Removal of hyperedges.</p></li>
+<li><p>Search of hyperedges by pattern.</p></li>
+</ol>
+<p>Currently there is a single backend implementation, that is based on LevelDB (a very efficient sorted key-value store that is stored in a local directory). Hyoergraphs stored in this format can only be accessed by one process/thread at a time.</p>
 </div>
 </div>
 </div>
