@@ -184,9 +184,13 @@
 <div class="section" id="coreferences">
 <h2>Coreferences<a class="headerlink" href="#coreferences" title="Permalink to this headline">¶</a></h2>
 <p>Coreferences indicate hyperedges that refer to the same thing. They are specified in the hypergraph using hyperedges with the special connector <code class="docutils literal notranslate"><span class="pre">coref/p/.</span></code>. For example:</p>
-<p>(coref/p/. turing/cp.s (+/b/. alan/cp.s turing/cp.s))</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">coref</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="n">turing</span><span class="o">/</span><span class="n">cp</span><span class="o">.</span><span class="n">s</span> <span class="p">(</span><span class="o">+/</span><span class="n">b</span><span class="o">/.</span> <span class="n">alan</span><span class="o">/</span><span class="n">cp</span><span class="o">.</span><span class="n">s</span> <span class="n">turing</span><span class="o">/</span><span class="n">cp</span><span class="o">.</span><span class="n">s</span><span class="p">))</span>
+</pre></div>
+</div>
 <p>Coreference pairs such as the above define sets of coreferences that point to the same thing. Naturally, they can have arbitrary sizes. It is useful to specify the hyperedge that acts as the preferred representation for the entire coreference set. An hyperedge can also be connected to its main coreference with hyperedges such as this one:</p>
-<p>(main_coref/p/. (of/b.ma city/cc.s berlin/cp.s) berlin/cp.s)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">main_coref</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="p">(</span><span class="n">of</span><span class="o">/</span><span class="n">b</span><span class="o">.</span><span class="n">ma</span> <span class="n">city</span><span class="o">/</span><span class="n">cc</span><span class="o">.</span><span class="n">s</span> <span class="n">berlin</span><span class="o">/</span><span class="n">cp</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="n">berlin</span><span class="o">/</span><span class="n">cp</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>In the above case, <code class="docutils literal notranslate"><span class="pre">berlin/cp.s</span></code> is the main coreference for the coreference set that <code class="docutils literal notranslate"><span class="pre">(of/b.ma</span> <span class="pre">city/cc.s</span> <span class="pre">berlin/cp.s)</span></code> belongs to.</p>
 </div>
 <div class="section" id="taxonomies">
