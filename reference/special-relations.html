@@ -202,7 +202,13 @@
 </div>
 <div class="section" id="lemmas">
 <h2>Lemmas<a class="headerlink" href="#lemmas" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<p>In informal and simple terms, <em>lemma</em> refers to the root of a word. Words and derived from lemma for example by verb conjugation, gender, number, grammatical case, etc. It can be useful to know that two atoms share the same lemma, e.g. to infer that two predicates refer to the same verb.</p>
+<p>Lemma relations are stored in the hypergraph using the following hyperedge format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">lemma</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="n">asked</span><span class="o">/</span><span class="n">pd</span><span class="o">.</span><span class="n">so</span><span class="o">.&lt;</span><span class="n">pf</span><span class="o">----/</span><span class="n">en</span> <span class="n">ask</span><span class="o">/</span><span class="n">p</span><span class="o">/</span><span class="n">en</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The last parameter of the hyperedge is the lemma atom. Lemma atoms only have the main type, with no further specification (e.g. <code class="docutils literal notranslate"><span class="pre">ask/p/en</span></code> but not <code class="docutils literal notranslate"><span class="pre">ask/pd/en</span></code> or <code class="docutils literal notranslate"><span class="pre">ask/pd.so.|pf----/en</span></code>). The intent is to keep an appropriate level of generality.</p>
+<p>The parsers provided with Graphbrain generate lemma relations by default.</p>
 </div>
 </div>
 

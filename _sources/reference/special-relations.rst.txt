@@ -27,4 +27,12 @@ Taxonomies can be built using *type-of* relations between hyperedges, with the h
 Lemmas
 ======
 
-TODO
+In informal and simple terms, *lemma* refers to the root of a word. Words and derived from lemma for example by verb conjugation, gender, number, grammatical case, etc. It can be useful to know that two atoms share the same lemma, e.g. to infer that two predicates refer to the same verb.
+
+Lemma relations are stored in the hypergraph using the following hyperedge format::
+
+   (lemma/p/. asked/pd.so.<pf----/en ask/p/en)
+
+The last parameter of the hyperedge is the lemma atom. Lemma atoms only have the main type, with no further specification (e.g. ``ask/p/en`` but not ``ask/pd/en`` or ``ask/pd.so.|pf----/en``). The intent is to keep an appropriate level of generality.
+
+The parsers provided with Graphbrain generate lemma relations by default.
