@@ -19,7 +19,9 @@ In the above case, ``berlin/cp.s`` is the main coreference for the coreference s
 Taxonomies
 ==========
 
-TODO
+Taxonomies can be built using *type-of* relations between hyperedges, with the help of the special predicate ``type_of/p/.``. For example::
+
+   (type_of/p/. (of/b.ma city/cc.s berlin/cp.s) city/cc.s)
 
 
 Lemmas
