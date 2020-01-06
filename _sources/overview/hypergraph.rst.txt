@@ -55,7 +55,7 @@ Readers who are familiar with Lisp will likely have noticed that hyperedges are 
 As knowledge model
 ==================
 
-.. image:: _static/hyper-vs-graph.png
+.. image:: /_static/hyper-vs-graph.png
   :alt: Hypergraph vs. Graph
 
 As cab be seen in the third example above, and thanks to nesting, it is possible to represent facts about facts. for instance, the fact that Mary states that Berlin is nice could be expressed by:
