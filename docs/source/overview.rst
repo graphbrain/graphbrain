@@ -74,4 +74,12 @@ Thus, another relevant concept is that of a *claim*. A claim is an assertion tha
 As database
 -----------
 
-TODO
+At a more concrete level, Graphbrain provides an actual database system that allows for persistent storage and manipulation of semantic hypergraphs.
+
+The idea is for this database system to guarantee a certain interface (API), and allow for various backend implementations (e.g.: local, distributed, memory-only). This interface allows for fundamental tasks such as:
+
+1. Insertion of hyperedges.
+2. Removal of hyperedges.
+3. Search of hyperedges by pattern.
+
+Currently there is a single backend implementation, that is based on LevelDB (a very efficient sorted key-value store that is stored in a local directory). Hypergraphs stored in this format can only be accessed by one process/thread at a time.

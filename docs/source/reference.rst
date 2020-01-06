@@ -7,6 +7,6 @@ Reference
    :caption: Contents:
 
    reference/notation.rst
-   reference/coreferences.rst
+   reference/special-relations.rst
    reference/agents.rst
    reference/api.rst
