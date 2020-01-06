@@ -12,5 +12,5 @@ Reference
    :maxdepth: 2
    :caption: Contents:
 
-   reference/hypergraph.rst
-   reference/agents.rst
+   overview/hypergraph.rst
+   overview/agents.rst
