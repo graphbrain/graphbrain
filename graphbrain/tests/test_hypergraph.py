@@ -1,5 +1,6 @@
 import unittest
 from graphbrain import *
+import graphbrain.constants as const
 
 
 class TestHypergraph(unittest.TestCase):
@@ -625,7 +626,46 @@ class TestHypergraph(unittest.TestCase):
         res = set([edge.to_str() for edge in self.hg.all()])
         self.assertTrue(s1 in res)
         self.assertTrue(s2 in res)
-        self.assertTrue(s3 in res)
+
+    def test_sequence1(self):
+        self.hg.destroy()
+        edge1 = hedge('(is/p this/c (first/m element/c))')
+        self.hg.create_sequence('test_seq', edge1)
+        self.assertTrue(self.hg.exists((const.sequence_head_pred,
+                                        build_sequence_atom('test_seq'),
+                                        edge1)))
+
+    def test_sequence2(self):
+        self.hg.destroy()
+        edge1 = hedge('(is/p this/c (first/m element/c))')
+        self.hg.create_sequence('test_seq', edge1)
+        edges = list(self.hg.sequence('test_seq'))
+        self.assertEqual(edges, [edge1])
+
+    def test_sequence3(self):
+        self.hg.destroy()
+        edge1 = hedge('(is/p this/c (first/m element/c))')
+        edge2 = hedge('(is/p this/c (second/m element/c))')
+        self.hg.create_sequence('test_seq', edge1)
+        self.hg.set_next(edge1, edge2)
+        edges = list(self.hg.sequence('test_seq'))
+        self.assertEqual(edges, [edge1, edge2])
+
+    def test_sequence4(self):
+        self.hg.destroy()
+        edge1 = hedge('(is/p this/c (first/m element/c))')
+        edge2 = hedge('(is/p this/c (second/m element/c))')
+        edge3 = hedge('(is/p this/c (third/m element/c))')
+        self.hg.create_sequence('test_seq', edge1)
+        self.hg.set_next(edge1, edge2)
+        self.hg.set_next(edge2, edge3)
+        edges = list(self.hg.sequence('test_seq'))
+        self.assertEqual(edges, [edge1, edge2, edge3])
+
+    def test_sequence5(self):
+        self.hg.destroy()
+        edges = list(self.hg.sequence('test_seq'))
+        self.assertEqual(edges, [])
 
 
 if __name__ == '__main__':

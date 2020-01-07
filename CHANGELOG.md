@@ -4,6 +4,7 @@
 ### Added
 - German parser.
 - Documentation.
+- Hyperedge sequences.
 
 ### Changed
 - Improved hyperedge visualization in notebooks.
