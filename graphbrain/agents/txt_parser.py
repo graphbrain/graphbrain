@@ -17,6 +17,7 @@ class TxtParser(Agent):
         self.parser = None
         self.lines = 0
         self.edges = 0
+        self.last_edge = None
 
     def name(self):
         return 'txt_parser'
@@ -25,6 +26,9 @@ class TxtParser(Agent):
         return set()
 
     def start(self):
+        if not self.sequence:
+            raise RuntimeError('Sequence name must be specified.')
+
         self.parser = create_parser(name=self.lang, lemmas=True)
         self.titles_parsed = 0
         self.titles_added = 0
@@ -36,7 +40,12 @@ class TxtParser(Agent):
             main_edge = parse['main_edge']
 
             # add main edge
-            self.add(main_edge)
+            if self.last_edge:
+                self.add(main_edge)
+                self.hg.set_next(self.last_edge, main_edge)
+            else:
+                self.hg.create_sequence(self.sequence, main_edge)
+            self.last_edge = main_edge
             self.edges += 1
 
             # attach text to edge
@@ -50,6 +59,7 @@ class TxtParser(Agent):
     def input_file(self, file_name):
         lines = file_lines(file_name)
         i = 0
+        self.last_edge = None
         with progressbar.ProgressBar(max_value=lines) as bar:
             with open(file_name, 'r') as f:
                 for line in f:
