@@ -4,8 +4,8 @@ from graphbrain.agents.agent import Agent
 
 
 class CorefsDets(Agent):
-    def __init__(self, hg):
-        super().__init__(hg)
+    def __init__(self, hg, lang, sequence=None):
+        super().__init__(hg, lang, sequence)
         self.corefs = 0
 
     def name(self):

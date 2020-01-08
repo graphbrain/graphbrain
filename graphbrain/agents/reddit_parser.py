@@ -20,8 +20,8 @@ def title_parts(title):
 
 
 class RedditParser(Agent):
-    def __init__(self, hg):
-        super().__init__(hg)
+    def __init__(self, hg, lang, sequence=None):
+        super().__init__(hg, lang, sequence)
         # TODO: make parser type configurable
         self.parser = None
         self.titles_parsed = 0

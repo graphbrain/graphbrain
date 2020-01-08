@@ -11,30 +11,30 @@ from graphbrain.agents.taxonomy import Taxonomy
 from graphbrain.agents.txt_parser import TxtParser
 
 
-def create_agent(name, hg):
+def create_agent(name, hg, lang=None, sequence=None):
     """Creates and returns an instance of the agent identified by the given
     name. Throws an exception if no such agent is known."""
     if name == 'actors':
-        return Actors(hg)
+        return Actors(hg, lang, sequence)
     elif name == 'claim_actors':
-        return ClaimActors(hg)
+        return ClaimActors(hg, lang, sequence)
     elif name == 'claims':
-        return Claims(hg)
+        return Claims(hg, lang, sequence)
     elif name == 'conflicts':
-        return Conflicts(hg)
+        return Conflicts(hg, lang, sequence)
     elif name == 'corefs_dets':
-        return CorefsDets(hg)
+        return CorefsDets(hg, lang, sequence)
     elif name == 'corefs_names':
-        return CorefsNames(hg)
+        return CorefsNames(hg, lang, sequence)
     elif name == 'corefs_onto':
-        return CorefsOnto(hg)
+        return CorefsOnto(hg, lang, sequence)
     elif name == 'corefs_unidecode':
-        return CorefsUnidecode(hg)
+        return CorefsUnidecode(hg, lang, sequence)
     elif name == 'reddit_parser':
-        return RedditParser(hg)
+        return RedditParser(hg, lang, sequence)
     elif name == 'taxonomy':
-        return Taxonomy(hg)
+        return Taxonomy(hg, lang, sequence)
     elif name == 'txt_parser':
-        return TxtParser(hg)
+        return TxtParser(hg, lang, sequence)
     else:
         RuntimeError('unknown agent: {}'.format(name))

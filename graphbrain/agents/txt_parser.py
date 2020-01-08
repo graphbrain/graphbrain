@@ -12,9 +12,8 @@ def file_lines(filename):
 
 
 class TxtParser(Agent):
-    def __init__(self, hg):
-        super().__init__(hg)
-        # TODO: make parser type configurable
+    def __init__(self, hg, lang, sequence=None):
+        super().__init__(hg, lang, sequence)
         self.parser = None
         self.lines = 0
         self.edges = 0
@@ -26,7 +25,7 @@ class TxtParser(Agent):
         return set()
 
     def start(self):
-        self.parser = create_parser(name='en', lemmas=True)
+        self.parser = create_parser(name=self.lang, lemmas=True)
         self.titles_parsed = 0
         self.titles_added = 0
 

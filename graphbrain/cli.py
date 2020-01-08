@@ -30,6 +30,8 @@ def wrapper(fun, command=False, text=None):
     parser.add_argument('--pattern', type=str, help='edge pattern',
                         default='*')
     parser.add_argument('--agent', type=str, help='agent name')
+    parser.add_argument('--sequence', type=str, help='sequence name',
+                        default=None)
 
     args = parser.parse_args()
 

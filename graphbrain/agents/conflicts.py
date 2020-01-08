@@ -13,8 +13,8 @@ CONFLICT_TOPIC_TRIGGERS = {'of/t/en', 'over/t/en', 'against/t/en', 'for/t/en'}
 
 
 class Conflicts(Agent):
-    def __init__(self, hg):
-        super().__init__(hg)
+    def __init__(self, hg, lang, sequence=None):
+        super().__init__(hg, lang, sequence)
         self.conflicts = 0
         self.conflict_topics = 0
 

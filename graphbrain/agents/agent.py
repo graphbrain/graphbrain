@@ -9,8 +9,10 @@ class Agent(object):
     what is already contained in the hypregraph.
     """
 
-    def __init__(self, hg):
+    def __init__(self, hg, lang, sequence=None):
         self.hg = hg
+        self.lang = lang
+        self.sequence = sequence
         self.search_pattern = '*'
         self.edges_added = 0
         self.edges_existed = 0

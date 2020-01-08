@@ -2,12 +2,13 @@
 
 ## [0.3.1] - ongoing work
 ### Added
-- German parser.
+- German parser (experimental and incomplete).
 - Documentation.
 - Hyperedge sequences.
 
 ### Changed
 - Improved hyperedge visualization in notebooks.
+- Agents receive language and sequence.
 
 ### Removed
 
