@@ -1,23 +1,13 @@
-import progressbar
 from graphbrain import *
 from graphbrain.parsers import *
 from graphbrain.agents.agent import Agent
-
-
-def file_lines(filename):
-    with open(filename, 'r') as f:
-        for i, _ in enumerate(f, 1):
-            pass
-    return i
 
 
 class TxtParser(Agent):
     def __init__(self, hg, lang, sequence=None):
         super().__init__(hg, lang, sequence)
         self.parser = None
-        self.lines = 0
         self.edges = 0
-        self.last_edge = None
 
     def name(self):
         return 'txt_parser'
@@ -30,44 +20,32 @@ class TxtParser(Agent):
             raise RuntimeError('Sequence name must be specified.')
 
         self.parser = create_parser(name=self.lang, lemmas=True)
-        self.titles_parsed = 0
-        self.titles_added = 0
-
-    def _parse_line(self, line):
-        self.lines += 1
-        parses = self.parser.parse(line)
-        for parse in parses:
-            main_edge = parse['main_edge']
-
-            # add main edge
-            if self.last_edge:
-                self.add(main_edge)
-                self.hg.set_next(self.last_edge, main_edge)
-            else:
-                self.hg.create_sequence(self.sequence, main_edge)
-            self.last_edge = main_edge
-            self.edges += 1
-
-            # attach text to edge
-            # text = parse['text']
-            # self.hg.set_attribute(main_edge, 'text', text)
-
-            # add extra edges
-            for edge in parse['extra_edges']:
-                self.add(edge)
 
     def input_file(self, file_name):
-        lines = file_lines(file_name)
-        i = 0
-        self.last_edge = None
-        with progressbar.ProgressBar(max_value=lines) as bar:
-            with open(file_name, 'r') as f:
-                for line in f:
-                    self._parse_line(line)
-                    i += 1
-                    bar.update(i)
+        last_edge = None
+        with open(file_name, 'r') as f:
+            text = f.read()
+            parses = self.parser.parse(text)
+            for parse in parses:
+                main_edge = parse['main_edge']
+
+                # add main edge
+                if last_edge:
+                    self.add(main_edge)
+                    self.hg.set_next(last_edge, main_edge)
+                elif main_edge:
+                    self.hg.create_sequence(self.sequence, main_edge)
+                if main_edge:
+                    last_edge = main_edge
+                    self.edges += 1
+
+                    # attach text to edge
+                    self.hg.set_attribute(main_edge, 'text', parse['text'])
+
+                    # add extra edges
+                    for edge in parse['extra_edges']:
+                        self.add(edge)
 
     def report(self):
-        rep_str = ('lines parsed: {}\nedges found: {}'.format(
-            self.lines, self.edges))
+        rep_str = ('edges found: {}'.format(self.edges))
         return '{}\n\n{}'.format(rep_str, super().report())

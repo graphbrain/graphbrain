@@ -38,7 +38,7 @@ class Parser(object):
         main_edge, _ = self._post_process(main_edge)
         return {'main_edge': main_edge,
                 'extra_edges': extra_edges,
-                'text': str(sent),
+                'text': str(sent).strip(),
                 'spacy_sentence': sent}
 
     def parse(self, text):
