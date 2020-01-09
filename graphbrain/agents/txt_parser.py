@@ -22,7 +22,7 @@ class TxtParser(Agent):
         self.parser = create_parser(name=self.lang, lemmas=True)
 
     def input_file(self, file_name):
-        last_edge = None
+        pos = 0
         with open(file_name, 'r') as f:
             text = f.read()
             parses = self.parser.parse(text)
@@ -30,14 +30,10 @@ class TxtParser(Agent):
                 main_edge = parse['main_edge']
 
                 # add main edge
-                if last_edge:
-                    self.add(main_edge)
-                    self.hg.set_next(last_edge, main_edge)
-                elif main_edge:
-                    self.hg.create_sequence(self.sequence, main_edge)
                 if main_edge:
-                    last_edge = main_edge
+                    self.hg.add_to_sequence(self.sequence, pos, main_edge)
                     self.edges += 1
+                    pos += 1
 
                     # attach text to edge
                     self.hg.set_attribute(main_edge, 'text', parse['text'])

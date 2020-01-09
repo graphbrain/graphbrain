@@ -630,15 +630,14 @@ class TestHypergraph(unittest.TestCase):
     def test_sequence1(self):
         self.hg.destroy()
         edge1 = hedge('(is/p this/c (first/m element/c))')
-        self.hg.create_sequence('test_seq', edge1)
-        self.assertTrue(self.hg.exists((const.sequence_head_pred,
-                                        build_sequence_atom('test_seq'),
+        self.hg.add_to_sequence('test_seq', 0, edge1)
+        self.assertTrue(self.hg.exists((const.sequence_pred, 'test_seq', '0',
                                         edge1)))
 
     def test_sequence2(self):
         self.hg.destroy()
         edge1 = hedge('(is/p this/c (first/m element/c))')
-        self.hg.create_sequence('test_seq', edge1)
+        self.hg.add_to_sequence('test_seq', 0, edge1)
         edges = list(self.hg.sequence('test_seq'))
         self.assertEqual(edges, [edge1])
 
@@ -646,8 +645,8 @@ class TestHypergraph(unittest.TestCase):
         self.hg.destroy()
         edge1 = hedge('(is/p this/c (first/m element/c))')
         edge2 = hedge('(is/p this/c (second/m element/c))')
-        self.hg.create_sequence('test_seq', edge1)
-        self.hg.set_next(edge1, edge2)
+        self.hg.add_to_sequence('test_seq', 0, edge1)
+        self.hg.add_to_sequence('test_seq', 1, edge2)
         edges = list(self.hg.sequence('test_seq'))
         self.assertEqual(edges, [edge1, edge2])
 
@@ -656,9 +655,9 @@ class TestHypergraph(unittest.TestCase):
         edge1 = hedge('(is/p this/c (first/m element/c))')
         edge2 = hedge('(is/p this/c (second/m element/c))')
         edge3 = hedge('(is/p this/c (third/m element/c))')
-        self.hg.create_sequence('test_seq', edge1)
-        self.hg.set_next(edge1, edge2)
-        self.hg.set_next(edge2, edge3)
+        self.hg.add_to_sequence('test_seq', 0, edge1)
+        self.hg.add_to_sequence('test_seq', 1, edge2)
+        self.hg.add_to_sequence('test_seq', 2, edge3)
         edges = list(self.hg.sequence('test_seq'))
         self.assertEqual(edges, [edge1, edge2, edge3])
 

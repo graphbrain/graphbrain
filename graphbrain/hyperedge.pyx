@@ -266,13 +266,6 @@ def build_atom(text, *parts):
     return Atom((atom,))
 
 
-def build_sequence_atom(name):
-    """Builds the atom that identifies a sequence from the name of the
-    sequence.
-    """
-    return build_atom(name, 'c', 'seq')
-
-
 class Hyperedge(tuple):
     """Non-atomic hyperedge."""
     def __new__(cls, edges):

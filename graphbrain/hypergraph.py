@@ -286,40 +286,26 @@ class Hypergraph(object):
         """
         return sum([self.deep_degree(edge) for edge in edges])
 
-    def create_sequence(self, name, edge):
-        """Creates a sequence of hyperedges with the given name, and sets
-        the provided edge as its first element (head).
+    def add_to_sequence(self, name, pos, edge):
+        """Adds 'edge' to sequence 'name' at position 'pos'.
         """
-        seq_edge = (const.sequence_head_pred, build_sequence_atom(name), edge)
-        return self.add(seq_edge)
-
-    def set_next(self, edge, next_edge):
-        """Sets next_edge as the next hyperedge after edge, thus extending
-        a sequence. It is assumed that edge already belongs to a sequence.
-        """
-        return self.add((const.sequence_next_pred, edge, next_edge))
+        return self.add((const.sequence_pred, name, str(pos), edge))
 
     def sequence(self, name):
         """Returns an iterator for a sequence of hyperedges, given the name
         of the sequence.
         """
-        cur_edge = None
 
-        iter = self.search((const.sequence_head_pred,
-                            build_sequence_atom(name),
-                            '*'))
-        head_edge = next(iter, None)
-        if head_edge:
-            cur_edge = head_edge[2]
-
-        while cur_edge:
-            yield cur_edge
-            iter = self.search((const.sequence_next_pred, cur_edge, '*'))
+        pos = 0
+        stop = False
+        while not stop:
+            iter = self.search((const.sequence_pred, name, str(pos), '*'))
             next_edge = next(iter, None)
             if next_edge:
-                cur_edge = next_edge[2]
+                yield next_edge[3]
+                pos += 1
             else:
-                cur_edge = None
+                stop = True
 
     # ==============================================================
     # Private abstract methods, to be implemented in derived classes
