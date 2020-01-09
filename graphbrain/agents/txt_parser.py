@@ -24,7 +24,7 @@ class TxtParser(Agent):
     def input_file(self, file_name):
         pos = 0
         with open(file_name, 'r') as f:
-            text = f.read()
+            text = f.read().replace('\n', ' ')
             parses = self.parser.parse(text)
             for parse in parses:
                 main_edge = parse['main_edge']
