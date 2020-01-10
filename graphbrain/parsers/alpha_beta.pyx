@@ -73,13 +73,13 @@ class AlphaBeta(Parser):
     def _token_type(self, token):
         raise NotImplementedError()
 
+    def _auxiliary_type_and_subtype(self, token):
+        raise NotImplementedError()
+
     def _is_relative_concept(self, token):
         raise NotImplementedError()
 
     def _is_compound(self, token):
-        raise NotImplementedError()
-
-    def _build_atom_auxiliary(self, token, ent_type):
         raise NotImplementedError()
 
     def _predicate_type(self, edge, subparts, args_string):
@@ -154,6 +154,21 @@ class AlphaBeta(Parser):
             # create verb features string
             verb_features = self._verb_features(token)
             et = 'xv.{}'.format(verb_features)
+
+        return build_atom(text, et, self.lang)
+
+    def _build_atom_auxiliary(self, token, ent_type):
+        text = token.text.lower()
+
+        if self._is_verb(token):
+            # create verb features string
+            verb_features = self._verb_features(token)
+            et = 'av.{}'.format(verb_features)  # verbal subtype
+        else:
+            et = self._auxiliary_type_and_subtype(token)
+
+        if et == 'a':
+            et = ent_type
 
         return build_atom(text, et, self.lang)
 

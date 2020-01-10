@@ -5,27 +5,6 @@ from .alpha_beta import AlphaBeta
 from .nlp import token2str
 
 
-deps_arg_roles = {
-    'sb': 's',      # subject
-    'pd': 'c',      # subject complement
-    'mo': 'x',      # specifier
-    # 'nsubjpass': 'p',  # passive subject
-    # 'agent': 'a',      # agent
-    # 'acomp': 'c',      # subject complement
-    # 'attr': 'c',       # subject complement
-    # 'dobj': 'o',       # direct object
-    # 'prt': 'o',        # direct object
-    # 'dative': 'i',     # indirect object
-    # 'advcl': 'x',      # specifier
-    # 'prep': 'x',       # specifier
-    # 'npadvmod': 'x',   # specifier
-    # 'parataxis': 't',  # parataxis
-    # 'intj': 'j',       # interjection
-    # 'xcomp': 'r',      # clausal complement
-    # 'ccomp': 'r'       # clausal complement
-}
-
-
 ##
 def is_noun(token):
     return token.tag_[0] == 'N'
@@ -99,7 +78,14 @@ class ParserDE(AlphaBeta):
     # ===========================================
 
     def _arg_type(self, token):
-        return deps_arg_roles.get(token.dep_, '?')
+        if token.dep_ == 'sb':
+            return 's'
+        elif token.dep_ == 'pd':
+            return 'c'
+        elif token.dep_ == 'mo':
+            return 'x'
+        else:
+            return '?'
 
     def _concept_role(self, concept):
         if concept.is_atom():
@@ -174,34 +160,27 @@ class ParserDE(AlphaBeta):
                             .format(token2str(token)))
             return None
 
+    # TODO
+    def _auxiliary_type_and_subtype(self, token):
+        if token.tag_ == 'MD':
+            return 'am'  # modal
+        elif token.tag_ == 'TO':
+            return 'ai'  # infinitive
+        elif token.tag_ == 'RBR':
+            return 'ac'  # comparative
+        elif token.tag_ == 'RBS':
+            return 'as'  # superlative
+        elif token.tag_ == 'RP' or token.dep_ == 'prt':
+            return 'ap'  # particle
+        elif token.tag_ == 'EX':
+            return 'ae'  # existential
+        return 'a'
+
     def _is_relative_concept(self, token):
         return token.dep_ == 'appos'
 
     def _is_compound(self, token):
         return token.dep_ == 'compound'
-
-    def _build_atom_auxiliary(self, token, ent_type):
-        text = token.text.lower()
-        et = ent_type
-
-        if self._is_verb(token):
-            # create verb features string
-            verb_features = self._verb_features(token)
-            et = 'av.{}'.format(verb_features)  # verbal
-        elif token.tag_ == 'MD':
-            et = 'am'  # modal
-        elif token.tag_ == 'TO':
-            et = 'ai'  # infinitive
-        elif token.tag_ == 'RBR':
-            et = 'ac'  # comparative
-        elif token.tag_ == 'RBS':
-            et = 'as'  # superlative
-        elif token.tag_ == 'RP' or token.dep_ == 'prt':
-            et = 'ap'  # particle
-        elif token.tag_ == 'EX':
-            et = 'ae'  # existential
-
-        return build_atom(text, et, self.lang)
 
     def _predicate_type(self, edge, subparts, args_string):
         # detecte imperative

@@ -5,25 +5,6 @@ from .alpha_beta import AlphaBeta
 from .nlp import token2str
 
 
-deps_arg_roles = {
-    'nsubj': 's',      # subject
-    'nsubjpass': 'p',  # passive subject
-    'agent': 'a',      # agent
-    'acomp': 'c',      # subject complement
-    'attr': 'c',       # subject complement
-    'dobj': 'o',       # direct object
-    'prt': 'o',        # direct object
-    'dative': 'i',     # indirect object
-    'advcl': 'x',      # specifier
-    'prep': 'x',       # specifier
-    'npadvmod': 'x',   # specifier
-    'parataxis': 't',  # parataxis
-    'intj': 'j',       # interjection
-    'xcomp': 'r',      # clausal complement
-    'ccomp': 'r'       # clausal complement
-}
-
-
 def is_noun(token):
     return token.tag_[:2] == 'NN'
 
@@ -98,7 +79,38 @@ class ParserEN(AlphaBeta):
     # ===========================================
 
     def _arg_type(self, token):
-        return deps_arg_roles.get(token.dep_, '?')
+        # subject
+        if token.dep_ == 'nsubj':
+            return 's'
+        # passive subject
+        elif token.dep_ == 'nsubjpass':
+            return 'p'
+        # agent
+        elif token.dep_ == 'agent':
+            return 'a'
+        # subject complement
+        elif token.dep_ in {'acomp', 'attr'}:
+            return 'c'
+        # direct object
+        elif token.dep_ in {'dobj', 'prt'}:
+            return 'o'
+        # indirect object
+        elif token.dep_ == 'dative':
+            return 'i'
+        # specifier
+        elif token.dep_ in {'advcl', 'prep', 'npadvmod'}:
+            return 'x'
+        # parataxis
+        elif token.dep_ == 'parataxis':
+            return 't'
+        # interjection
+        elif token.dep_ == 'intj':
+            return 'j'
+        # clausal complement
+        elif token.dep_ in {'xcomp', 'ccomp'}:
+            return 'r'
+        else:
+            return '?'
 
     def _concept_role(self, concept):
         if concept.is_atom():
@@ -233,34 +245,26 @@ class ParserEN(AlphaBeta):
                             .format(token2str(token)))
             return None
 
+    def _auxiliary_type_and_subtype(self, token):
+        if token.tag_ == 'MD':
+            return 'am'  # modal
+        elif token.tag_ == 'TO':
+            return 'ai'  # infinitive
+        elif token.tag_ == 'RBR':
+            return 'ac'  # comparative
+        elif token.tag_ == 'RBS':
+            return 'as'  # superlative
+        elif token.tag_ == 'RP' or token.dep_ == 'prt':
+            return 'ap'  # particle
+        elif token.tag_ == 'EX':
+            return 'ae'  # existential
+        return 'a'
+
     def _is_relative_concept(self, token):
         return token.dep_ == 'appos'
 
     def _is_compound(self, token):
         return token.dep_ == 'compound'
-
-    def _build_atom_auxiliary(self, token, ent_type):
-        text = token.text.lower()
-        et = ent_type
-
-        if self._is_verb(token):
-            # create verb features string
-            verb_features = self._verb_features(token)
-            et = 'av.{}'.format(verb_features)  # verbal
-        elif token.tag_ == 'MD':
-            et = 'am'  # modal
-        elif token.tag_ == 'TO':
-            et = 'ai'  # infinitive
-        elif token.tag_ == 'RBR':
-            et = 'ac'  # comparative
-        elif token.tag_ == 'RBS':
-            et = 'as'  # superlative
-        elif token.tag_ == 'RP' or token.dep_ == 'prt':
-            et = 'ap'  # particle
-        elif token.tag_ == 'EX':
-            et = 'ae'  # existential
-
-        return build_atom(text, et, self.lang)
 
     def _predicate_type(self, edge, subparts, args_string):
         # detecte imperative
