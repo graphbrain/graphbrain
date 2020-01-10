@@ -10,6 +10,7 @@
 - Improved hyperedge visualization in notebooks.
 - Agents receive language and sequence.
 - txt_parser agent creates a sequence.
+- Refactored parsers code.
 
 ### Removed
 
