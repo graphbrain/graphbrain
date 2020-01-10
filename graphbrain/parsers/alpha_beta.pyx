@@ -64,25 +64,37 @@ class AlphaBeta(Parser):
     def _arg_type(self, token):
         raise NotImplementedError()
 
+    def _token_type(self, token):
+        raise NotImplementedError()
+
+    def _concept_type_and_subtype(self, token):
+        raise NotImplementedError()
+
+    def _modifier_type_and_subtype(self, token):
+        raise NotImplementedError()
+
+    def _builder_type_and_subtype(self, token):
+        raise NotImplementedError()
+
+    def _auxiliary_type_and_subtype(self, token):
+        raise NotImplementedError()
+
+    def _predicate_post_type_and_subtype(self, edge, subparts, args_string):
+        raise NotImplementedError()
+
     def _concept_role(self, concept):
         raise NotImplementedError()
 
     def _builder_arg_roles(self, edge):
         raise NotImplementedError()
 
-    def _token_type(self, token):
-        raise NotImplementedError()
-
-    def _auxiliary_type_and_subtype(self, token):
-        raise NotImplementedError()
-
-    def _is_relative_concept(self, token):
+    def _is_noun(token):
         raise NotImplementedError()
 
     def _is_compound(self, token):
         raise NotImplementedError()
 
-    def _predicate_type(self, edge, subparts, args_string):
+    def _is_relative_concept(self, token):
         raise NotImplementedError()
 
     def _is_verb(self, token):
@@ -329,7 +341,7 @@ class AlphaBeta(Parser):
                         args = [self._arg_type(ps.tokens[param])
                                 for param in entity[1:]]
                         args_string = ''.join(args)
-                        pt = self._predicate_type(
+                        pt = self._predicate_post_type_and_subtype(
                             entity, subparts, args_string)
                         new_part = '{}.{}.{}'.format(pt,
                                                      args_string,
