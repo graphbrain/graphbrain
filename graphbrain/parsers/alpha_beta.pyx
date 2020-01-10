@@ -3,6 +3,7 @@ import logging
 from graphbrain import *
 import graphbrain.constants as const
 from .parser import Parser
+from collections import namedtuple
 
 
 def insert_after_predicate(targ, orig):
@@ -51,9 +52,17 @@ class AlphaBeta(Parser):
     def __init__(self, lemmas=False):
         super().__init__(lemmas=lemmas)
 
+        # named tuple used to pass parser state internally
+        self._ParseState = namedtuple('_ParseState',
+                                      ['extra_edges', 'tokens', 'child_tokens',
+                                       'positions', 'children', 'entities'])
+
     # ========================================================================
     # Language-specific abstract methods, to be implemented in derived classes
     # ========================================================================
+
+    def _arg_type(self, token):
+        raise NotImplementedError()
 
     def _concept_role(self, concept):
         raise NotImplementedError()
@@ -64,18 +73,89 @@ class AlphaBeta(Parser):
     def _token_type(self, token):
         raise NotImplementedError()
 
-    def _build_atom(self, token, ent_type, ps):
-        raise NotImplementedError()
-
     def _is_relative_concept(self, token):
         raise NotImplementedError()
 
     def _is_compound(self, token):
         raise NotImplementedError()
 
+    def _build_atom_auxiliary(self, token, ent_type):
+        raise NotImplementedError()
+
+    def _predicate_type(self, edge, subparts, args_string):
+        raise NotImplementedError()
+
+    def _is_verb(self, token):
+        raise NotImplementedError()
+
+    def _verb_features(self, token):
+        raise NotImplementedError()
+
     # =========================
     # Language-agnostic methods
     # =========================
+
+    def _token_head_type(self, token):
+        head = token.head
+        if head and head != token:
+            return self._token_type(head)
+        else:
+            return ''
+
+    def _build_atom(self, token, ent_type, ps):
+        text = token.text.lower()
+        et = ent_type
+
+        if ent_type[0] == 'p' and ent_type != 'pm':
+            atom = self._build_atom_predicate(token, ent_type, ps)
+        elif ent_type[0] == 'x':
+            atom = self._build_atom_subpredicate(token, ent_type)
+        elif ent_type[0] == 'a':
+            atom = self._build_atom_auxiliary(token, ent_type)
+        else:
+            atom = build_atom(text, et, self.lang)
+
+        self.atom2token[atom] = token
+        return atom
+
+    def _build_atom_predicate(self, token, ent_type, ps):
+        text = token.text.lower()
+        et = ent_type
+
+        # create verb features string
+        verb_features = self._verb_features(token)
+
+        # first naive assignment of predicate subtype
+        # (can be revised at post-processing stage)
+        if len(ps.child_tokens) > 0:
+            last_token = ps.child_tokens[-1][0]
+        else:
+            last_token = None
+        if len(ent_type) == 1:
+            # interrogative cases
+            if (last_token and
+                    last_token.tag_ == '.' and
+                    last_token.dep_ == 'punct' and
+                    last_token.lemma_.strip() == '?'):
+                ent_type = 'p?'
+            # declarative (by default)
+            else:
+                ent_type = 'pd'
+
+        et = '{}..{}'.format(ent_type, verb_features)
+
+        return build_atom(text, et, self.lang)
+
+    def _build_atom_subpredicate(self, token, ent_type):
+        text = token.text.lower()
+        et = ent_type
+
+        if self._is_verb(token):
+            # create verb features string
+            verb_features = self._verb_features(token)
+            et = 'xv.{}'.format(verb_features)
+
+        return build_atom(text, et, self.lang)
 
     def _compose_concepts(self, concepts):
         first = concepts[0]
@@ -132,8 +212,8 @@ class AlphaBeta(Parser):
                         temporal)
 
             # Make sure that specifier arguments are of the specifier type,
-            # entities are surrounded by an edge with a trigger connector if
-            # necessary. E.g.: today -> {t/t/. today}
+            # entities are surrounded by an edge with a trigger connector
+            # if necessary. E.g.: today -> {t/t/. today}
             elif ct[0] == 'p':
                 pred = entity.predicate()
                 if pred:
@@ -201,6 +281,52 @@ class AlphaBeta(Parser):
             lemma = build_atom(text, ent_type[0], self.lang)
             lemma_edge = hedge((const.lemma_pred, entity, lemma))
             ps.extra_edges.add(lemma_edge)
+
+    def _post_parse_token_necessary(self, entity, ps):
+        if entity.is_atom():
+            return False
+        else:
+            ct = entity.connector_type()
+            if ct[0] == 'p':
+                # Extend predicate atom with argument types
+                if len(ct) < 2 or ct[1] != 'm':
+                    pred = entity.atom_with_type('p')
+                    subparts = pred.parts()[1].split('.')
+
+                    if subparts[1] == '':
+                        return True
+
+            return any([self._post_parse_token_necessary(subentity, ps)
+                        for subentity in entity])
+
+    def _post_parse_token(self, entity, ps):
+        new_entity = entity
+
+        if self._post_parse_token_necessary(entity, ps):
+            ct = entity.connector_type()
+            if ct[0] == 'p':
+                # Extend predicate atom with argument types
+                if len(ct) < 2 or ct[1] != 'm':
+                    pred = entity.atom_with_type('p')
+                    subparts = pred.parts()[1].split('.')
+
+                    if subparts[1] == '':
+                        args = [self._arg_type(ps.tokens[param])
+                                for param in entity[1:]]
+                        args_string = ''.join(args)
+                        pt = self._predicate_type(
+                            entity, subparts, args_string)
+                        new_part = '{}.{}.{}'.format(pt,
+                                                     args_string,
+                                                     subparts[2])
+                        new_pred = pred.replace_atom_part(1, new_part)
+                        new_entity = entity.replace_atom(pred, new_pred)
+
+            new_args = [self._post_parse_token(subentity, ps)
+                        for subentity in new_entity[1:]]
+            new_entity = hedge([new_entity[0]] + new_args)
+
+        return new_entity
 
     def _parse_token(self, token):
         # check what type token maps to, return None if if maps to nothing
@@ -360,4 +486,5 @@ class AlphaBeta(Parser):
             relative_to_concept.reverse()
             entity = hedge((':/b/.', entity) + tuple(relative_to_concept))
 
+        entity = self._post_parse_token(entity, ps)
         return entity, ps.extra_edges

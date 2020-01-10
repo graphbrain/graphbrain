@@ -28,14 +28,6 @@ def is_noun(token):
     return token.tag_[:2] == 'NN'
 
 
-def is_verb(token):
-    tag = token.tag_
-    if len(tag) > 0:
-        return token.tag_[0] == 'V'
-    else:
-        return False
-
-
 def is_infinitive(token):
     return token.tag_ == 'VB'
 
@@ -95,45 +87,6 @@ def builder_type_and_subtype(token):
         return 'b'
 
 
-def arg_type(token):
-    return deps_arg_roles.get(token.dep_, '?')
-
-
-def _verb_features(token):
-    tense = '-'
-    verb_form = '-'
-    aspect = '-'
-    mood = '-'
-    person = '-'
-    number = '-'
-    verb_type = '-'
-
-    if token.tag_ == 'VB':
-        verb_form = 'i'  # infinitive
-    elif token.tag_ == 'VBD':
-        verb_form = 'f'  # finite
-        tense = '<'  # past
-    elif token.tag_ == 'VBG':
-        verb_form = 'p'  # participle
-        tense = '|'  # present
-        aspect = 'g'  # progressive
-    elif token.tag_ == 'VBN':
-        verb_form = 'p'  # participle
-        tense = '<'  # past
-        aspect = 'f'  # perfect
-    elif token.tag_ == 'VBP':
-        verb_form = 'f'  # finite
-        tense = '|'  # present
-    elif token.tag_ == 'VBZ':
-        verb_form = 'f'  # finite
-        tense = '|'  # present
-        number = 's'  # singular
-        person = '3'  # third person
-
-    features = (tense, verb_form, aspect, mood, person, number, verb_type)
-    return ''.join(features)
-
-
 class ParserEN(AlphaBeta):
     def __init__(self, lemmas=False):
         super().__init__(lemmas=lemmas)
@@ -143,6 +96,9 @@ class ParserEN(AlphaBeta):
     # ===========================================
     # Implementation of language-specific methods
     # ===========================================
+
+    def _arg_type(self, token):
+        return deps_arg_roles.get(token.dep_, '?')
 
     def _concept_role(self, concept):
         if concept.is_atom():
@@ -169,22 +125,6 @@ class ParserEN(AlphaBeta):
                     1, '{}.am'.format(ct))
         return hedge((connector,) + edge[1:])
 
-    def _build_atom(self, token, ent_type, ps):
-        text = token.text.lower()
-        et = ent_type
-
-        if ent_type[0] == 'p' and ent_type != 'pm':
-            atom = self._build_atom_predicate(token, ent_type, ps)
-        elif ent_type[0] == 'x':
-            atom = self._build_atom_subpredicate(token, ent_type)
-        elif ent_type[0] == 'a':
-            atom = self._build_atom_auxiliary(token, ent_type)
-        else:
-            atom = build_atom(text, et, self.lang)
-
-        self.atom2token[atom] = token
-        return atom
-
     def _token_type(self, token, head=False):
         dep = token.dep_
 
@@ -200,7 +140,7 @@ class ParserEN(AlphaBeta):
             head_type = head_type[0]
 
         if dep == 'ROOT':
-            if is_verb(token):
+            if self._is_verb(token):
                 return 'p'
             else:
                 return concept_type_and_subtype(token)
@@ -210,7 +150,7 @@ class ParserEN(AlphaBeta):
         elif dep in {'advcl', 'csubj', 'csubjpass', 'parataxis'}:
             return 'p'
         elif dep in {'relcl', 'ccomp'}:
-            if is_verb(token):
+            if self._is_verb(token):
                 return 'pr'
             else:
                 return concept_type_and_subtype(token)
@@ -274,7 +214,7 @@ class ParserEN(AlphaBeta):
             else:
                 return builder_type_and_subtype(token)
         elif dep == 'conj':
-            if head_type == 'p' and is_verb(token):
+            if head_type == 'p' and self._is_verb(token):
                 return 'p'
             else:
                 return concept_type_and_subtype(token)
@@ -284,7 +224,7 @@ class ParserEN(AlphaBeta):
             else:
                 return builder_type_and_subtype(token)
         elif dep == 'acomp':
-            if is_verb(token):
+            if self._is_verb(token):
                 return 'x'
             else:
                 return concept_type_and_subtype(token)
@@ -299,72 +239,13 @@ class ParserEN(AlphaBeta):
     def _is_compound(self, token):
         return token.dep_ == 'compound'
 
-    # ===============
-    # Private methods
-    # ===============
-
-    def _token_head_type(self, token):
-        head = token.head
-        if head and head != token:
-            return self._token_type(head)
-        else:
-            return ''
-
-    def _build_atom_predicate(self, token, ent_type, ps):
-        text = token.text.lower()
-        et = ent_type
-
-        # create verb features string
-        verb_features = _verb_features(token)
-
-        # create arguments string
-        args = [arg_type(ps.tokens[entity]) for entity in ps.entities]
-        args_string = ''.join([arg for arg in args if arg != '?'])
-
-        # assign predicate subtype
-        # (declarative, imperative, interrogative, ...)
-        if len(ps.child_tokens) > 0:
-            last_token = ps.child_tokens[-1][0]
-        else:
-            last_token = None
-        if len(ent_type) == 1:
-            # interrogative cases
-            if (last_token and
-                    last_token.tag_ == '.' and
-                    last_token.dep_ == 'punct' and
-                    last_token.lemma_.strip() == '?'):
-                ent_type = 'p?'
-            # imperative cases
-            elif (is_infinitive(token) and 's' not in args_string and
-                    'TO' not in [child[0].tag_
-                                 for child in ps.child_tokens]):
-                ent_type = 'p!'
-            # declarative (by default)
-            else:
-                ent_type = 'pd'
-
-        et = '{}.{}.{}'.format(ent_type, args_string, verb_features)
-
-        return build_atom(text, et, self.lang)
-
-    def _build_atom_subpredicate(self, token, ent_type):
-        text = token.text.lower()
-        et = ent_type
-
-        if is_verb(token):
-            # create verb features string
-            verb_features = _verb_features(token)
-            et = 'xv.{}'.format(verb_features)
-
-        return build_atom(text, et, self.lang)
-
     def _build_atom_auxiliary(self, token, ent_type):
         text = token.text.lower()
         et = ent_type
 
-        if is_verb(token):
+        if self._is_verb(token):
             # create verb features string
-            verb_features = _verb_features(token)
+            verb_features = self._verb_features(token)
             et = 'av.{}'.format(verb_features)  # verbal
         elif token.tag_ == 'MD':
             et = 'am'  # modal
@@ -380,3 +261,53 @@ class ParserEN(AlphaBeta):
             et = 'ae'  # existential
 
         return build_atom(text, et, self.lang)
+
+    def _predicate_type(self, edge, subparts, args_string):
+        # detecte imperative
+        if subparts[0] == 'pd':
+            if subparts[2][1] == 'i' and 's' not in args_string:
+                if hedge('to/ai/en') not in edge[0].atoms():
+                    return 'p!'
+        # keep everything else the same
+        return subparts[0]
+
+    def _is_verb(self, token):
+        tag = token.tag_
+        if len(tag) > 0:
+            return token.tag_[0] == 'V'
+        else:
+            return False
+
+    def _verb_features(self, token):
+        tense = '-'
+        verb_form = '-'
+        aspect = '-'
+        mood = '-'
+        person = '-'
+        number = '-'
+        verb_type = '-'
+
+        if token.tag_ == 'VB':
+            verb_form = 'i'  # infinitive
+        elif token.tag_ == 'VBD':
+            verb_form = 'f'  # finite
+            tense = '<'  # past
+        elif token.tag_ == 'VBG':
+            verb_form = 'p'  # participle
+            tense = '|'  # present
+            aspect = 'g'  # progressive
+        elif token.tag_ == 'VBN':
+            verb_form = 'p'  # participle
+            tense = '<'  # past
+            aspect = 'f'  # perfect
+        elif token.tag_ == 'VBP':
+            verb_form = 'f'  # finite
+            tense = '|'  # present
+        elif token.tag_ == 'VBZ':
+            verb_form = 'f'  # finite
+            tense = '|'  # present
+            number = 's'  # singular
+            person = '3'  # third person
+
+        features = (tense, verb_form, aspect, mood, person, number, verb_type)
+        return ''.join(features)

@@ -1,6 +1,5 @@
 import sys
 import logging
-from collections import namedtuple
 
 
 logging.basicConfig(stream=sys.stderr, level=logging.WARNING)
@@ -19,11 +18,6 @@ class Parser(object):
         # to be created by derived classes
         self.lang = None
         self.nlp = None
-
-        # named tuple used to pass parser state internally
-        self._ParseState = namedtuple('_ParseState',
-                                      ['extra_edges', 'tokens', 'child_tokens',
-                                       'positions', 'children', 'entities'])
 
     def _post_process(edge):
         raise NotImplementedError()

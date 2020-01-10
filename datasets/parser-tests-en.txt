@@ -33,7 +33,7 @@ What happens when literary novelists experiment with science fiction.
 Exposure to the bacteria in soil can be good for mental health
 ((can/am/en be/pd.sc.-i-----/en) (to/br.ma/en exposure/cc.s/en (the/md/en (in/br.ma/en bacteria/cc.p/en soil/cc.s/en))) (for/br.ma/en good/ca/en (mental/ma/en health/cc.s/en)))
 Some subspecies of mosquito might be 1st to be genetically wiped out.
-((might/am/en be/pd.sc.-i-----/en) (some/md/en (of/br.ma/en subspecies/cc.p/en mosquito/cc.s/en)) 1st/ca/en (to/ai/en (be/av.-i-----/en (genetically/a/en (out/ap/en wiped/pc..<pf----/en)))))
+((might/am/en be/pd.scr.-i-----/en) (some/md/en (of/br.ma/en subspecies/cc.p/en mosquito/cc.s/en)) 1st/ca/en (to/ai/en (be/av.-i-----/en (genetically/a/en (out/ap/en wiped/pc..<pf----/en)))))
 Telmo is going to the gym.
 ((is/av.|f--3s-/en going/pd.sx.|pg----/en) telmo/cp.s/en (to/t/en (the/md/en gym/cc.s/en)))
 Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate.
@@ -61,7 +61,7 @@ In September 2016, we learned that the University of New Hampshire was going to 
 An anarchist takes on Big Pharma by teaching patients to make their own meds
 ((on/ap/en takes/pd.sox.|f--3s-/en) (an/md/en anarchist/cc.s/en) (+/b.am/. big/cp.s/en pharma/cp.s/en) (by/t/en (teaching/pc.or.|pg----/en patients/cc.p/en ((to/ai/en make/pc.o.-i-----/en) (their/mp/en (own/ma/en meds/cc.p/en))))))
 That seems both super dangerous, and super awesome.
-(seems/pd.s.|f--3s-/en that/cd/en (both/md/en (super/m/en (and/b+/en dangerous/ca/en (super/m/en awesome/ca/en)))))
+(seems/pd.s?.|f--3s-/en that/cd/en (both/md/en (super/m/en (and/b+/en dangerous/ca/en (super/m/en awesome/ca/en)))))
 Briton dies in fall from Indian temple while taking selfie
 (dies/pd.sxxx.|f--3s-/en briton/cp.s/en (in/t/en fall/cc.s/en) (from/t/en (indian/ma/en temple/cc.s/en)) (while/x/en (taking/pd.o.|pg----/en selfie/cc.s/en)))
 I hate everyone in the White House!
@@ -99,6 +99,6 @@ Our brains are always looking for relative rewards.
 Scientists rise up against statistical significance
 ((up/ap/en rise/pd.sx.|f-----/en) scientists/cc.p/en (against/t/en (statistical/ma/en significance/cc.s/en)))
 A pretty touch screen is ALL the iPhone has to offer.
-(is/pd.sr.|f--3s-/en (a/md/en (pretty/ma/en (+/b.am/. touch/cc.s/en screen/cc.s/en))) (has/pr.s.|f--3s-/en (all/m/en (the/md/en iphone/cp.s/en)) (to/ai/en offer/pc..-i-----/en)))
+(is/pd.sr.|f--3s-/en (a/md/en (pretty/ma/en (+/b.am/. touch/cc.s/en screen/cc.s/en))) (has/pr.sr.|f--3s-/en (all/m/en (the/md/en iphone/cp.s/en)) (to/ai/en offer/pc..-i-----/en)))
 The application must include bank and credit card records.
 ((must/am/en include/pd.so.-i-----/en) (the/md/en application/cc.s/en) (and/b+/en (+/b.am bank/cm/en records/cc.p/en) (+/b.am (+/b.am/. credit/cc.s/en card/cc.s/en) records/cc.p/en)))
