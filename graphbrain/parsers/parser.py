@@ -19,17 +19,21 @@ class Parser(object):
         self.lang = None
         self.nlp = None
 
-    def _post_process(edge):
+    def _post_process(self, edge):
         raise NotImplementedError()
 
-    def _parse_token(token):
+    def _parse_token(self, token):
+        raise NotImplementedError()
+
+    def _before_parse_sentence(self):
         raise NotImplementedError()
 
     def _parse_sentence(self, sent):
+        self._before_parse_sentence()
         self.atom2token = {}
         main_edge, extra_edges = self._parse_token(sent.root)
-
         main_edge, _ = self._post_process(main_edge)
+
         return {'main_edge': main_edge,
                 'extra_edges': extra_edges,
                 'text': str(sent).strip(),

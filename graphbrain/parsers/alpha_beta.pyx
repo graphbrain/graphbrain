@@ -3,7 +3,6 @@ import logging
 from graphbrain import *
 import graphbrain.constants as const
 from .parser import Parser
-from collections import namedtuple
 
 
 def insert_after_predicate(targ, orig):
@@ -51,11 +50,7 @@ def _apply_aux_concept_list_to_concept(con_list, concept):
 class AlphaBeta(Parser):
     def __init__(self, lemmas=False):
         super().__init__(lemmas=lemmas)
-
-        # named tuple used to pass parser state internally
-        self._ParseState = namedtuple('_ParseState',
-                                      ['extra_edges', 'tokens', 'child_tokens',
-                                       'positions', 'children'])
+        self.extra_edges = set()
 
     # ========================================================================
     # Language-specific abstract methods, to be implemented in derived classes
@@ -114,12 +109,12 @@ class AlphaBeta(Parser):
         else:
             return ''
 
-    def _build_atom(self, token, ent_type, ps):
+    def _build_atom(self, token, ent_type, last_token):
         text = token.text.lower()
         et = ent_type
 
         if ent_type[0] == 'p' and ent_type != 'pm':
-            atom = self._build_atom_predicate(token, ent_type, ps)
+            atom = self._build_atom_predicate(token, ent_type, last_token)
         elif ent_type[0] == 'x':
             atom = self._build_atom_subpredicate(token, ent_type)
         elif ent_type[0] == 'a':
@@ -130,7 +125,7 @@ class AlphaBeta(Parser):
         self.atom2token[atom] = token
         return atom
 
-    def _build_atom_predicate(self, token, ent_type, ps):
+    def _build_atom_predicate(self, token, ent_type, last_token):
         text = token.text.lower()
         et = ent_type
 
@@ -139,10 +134,6 @@ class AlphaBeta(Parser):
 
         # first naive assignment of predicate subtype
         # (can be revised at post-processing stage)
-        if len(ps.child_tokens) > 0:
-            last_token = ps.child_tokens[-1][0]
-        else:
-            last_token = None
         if len(ent_type) == 1:
             # interrogative cases
             if (last_token and
@@ -276,37 +267,43 @@ class AlphaBeta(Parser):
             else:
                 return entity, temporal
 
-    def _clean_parse_state(self):
-        return self._ParseState(extra_edges=set(),
-                                tokens={},
-                                child_tokens=[],
-                                positions={},
-                                children=[])
+    def _before_parse_sentence(self):
+        self.extra_edges = set()
 
-    def _parse_token_children(self, token, ps):
-        ps.child_tokens.extend(zip(token.lefts, repeat(True)))
-        ps.child_tokens.extend(zip(token.rights, repeat(False)))
+    def _parse_token_children(self, token):
+        children = []
+        token_dict = {}
+        pos_dict = {}
 
-        for child_token, pos in ps.child_tokens:
-            child, child_extra_edges = self._parse_token(child_token)
+        child_tokens = (tuple(zip(token.lefts, repeat(True))) +
+                        tuple(zip(token.rights, repeat(False))))
+
+        for child_token, pos in child_tokens:
+            child, _ = self._parse_token(child_token)
             if child:
-                ps.extra_edges.update(child_extra_edges)
-                ps.positions[child] = pos
-                ps.tokens[child] = child_token
                 child_type = child.type()
                 if child_type:
-                    ps.children.append(child)
+                    children.append(child)
+                    token_dict[child] = child_token
+                    pos_dict[child] = pos
 
-        ps.children.reverse()
+        children.reverse()
 
-    def _add_lemmas(self, token, entity, ent_type, ps):
+        if len(child_tokens) > 0:
+            last_token = child_tokens[-1][0]
+        else:
+            last_token = None
+
+        return children, token_dict, pos_dict, last_token
+
+    def _add_lemmas(self, token, entity, ent_type):
         text = token.lemma_.lower()
         if text != token.text.lower():
             lemma = build_atom(text, ent_type[0], self.lang)
             lemma_edge = hedge((const.lemma_pred, entity, lemma))
-            ps.extra_edges.add(lemma_edge)
+            self.extra_edges.add(lemma_edge)
 
-    def _post_parse_token_necessary(self, entity, ps):
+    def _is_post_parse_token_necessary(self, entity):
         if entity.is_atom():
             return False
         else:
@@ -320,13 +317,13 @@ class AlphaBeta(Parser):
                     if subparts[1] == '':
                         return True
 
-            return any([self._post_parse_token_necessary(subentity, ps)
+            return any([self._is_post_parse_token_necessary(subentity)
                         for subentity in entity])
 
-    def _post_parse_token(self, entity, ps):
+    def _post_parse_token(self, entity, token_dict):
         new_entity = entity
 
-        if self._post_parse_token_necessary(entity, ps):
+        if self._is_post_parse_token_necessary(entity):
             ct = entity.connector_type()
             if ct[0] == 'p':
                 # Extend predicate atom with argument types
@@ -335,7 +332,7 @@ class AlphaBeta(Parser):
                     subparts = pred.parts()[1].split('.')
 
                     if subparts[1] == '':
-                        args = [self._arg_type(ps.tokens[param])
+                        args = [self._arg_type(token_dict[param])
                                 for param in entity[1:]]
                         args_string = ''.join(args)
                         pt = self._predicate_post_type_and_subtype(
@@ -346,7 +343,7 @@ class AlphaBeta(Parser):
                         new_pred = pred.replace_atom_part(1, new_part)
                         new_entity = entity.replace_atom(pred, new_pred)
 
-            new_args = [self._post_parse_token(subentity, ps)
+            new_args = [self._post_parse_token(subentity, token_dict)
                         for subentity in new_entity[1:]]
             new_entity = hedge([new_entity[0]] + new_args)
 
@@ -358,23 +355,24 @@ class AlphaBeta(Parser):
         if ent_type == '' or ent_type is None:
             return None, None
 
-        # create clean parse state
-        ps = self._clean_parse_state()
-
         # parse token children
-        self._parse_token_children(token, ps)
+        children, token_dict, pos_dict, last_token =\
+            self._parse_token_children(token)
 
-        atom = self._build_atom(token, ent_type, ps)
+        atom = self._build_atom(token, ent_type, last_token)
         entity = atom
         logging.debug('ATOM: {}'.format(atom))
 
         # lemmas
         if self.lemmas:
-            self._add_lemmas(token, entity, ent_type, ps)
+            self._add_lemmas(token, entity, ent_type)
 
         # process children
         relative_to_concept = []
-        for child in ps.children:
+        for child in children:
+            child_token = token_dict[child]
+            pos = pos_dict[child]
+
             child_type = child.type()
 
             logging.debug('entity: [%s] %s', ent_type, entity)
@@ -383,7 +381,7 @@ class AlphaBeta(Parser):
             if child_type[0] in {'c', 'r', 'd', 's'}:
                 if ent_type[0] == 'c':
                     if (child.connector_type() in {'pc', 'pr'} or
-                            self._is_relative_concept(ps.tokens[child])):
+                            self._is_relative_concept(child_token)):
                         logging.debug('choice: 1')
                         # RELATIVE TO CONCEPT
                         relative_to_concept.append(child)
@@ -397,12 +395,10 @@ class AlphaBeta(Parser):
                         elif entity.connector_type()[0] == 'c':
                             logging.debug('choice: 3')
                             # NEST
-                            # entity = entity.nest(child, ps.positions[child])
                             new_child = child
                             if len(child) > 2:
                                 new_child = hedge((child[0], child[1:]))
-                            entity = entity.nest(new_child,
-                                                 ps.positions[child])
+                            entity = entity.nest(new_child, pos)
                         else:
                             logging.debug('choice: 4a')
                             # NEST AROUND ORIGINAL ATOM
@@ -410,39 +406,38 @@ class AlphaBeta(Parser):
                                 new_child = hedge((child[0], child[1:]))
                                 entity = entity.replace_atom(
                                     atom,
-                                    atom.nest(new_child, ps.positions[child]))
+                                    atom.nest(new_child, pos))
                             else:
                                 logging.debug('choice: 4b')
                                 # NEST AROUND ORIGINAL ATOM
                                 entity = entity.replace_atom(
                                     atom,
-                                    atom.nest(child, ps.positions[child]))
+                                    atom.nest(child, pos))
                     elif child.connector_type()[0] in {'x', 't'}:
                         logging.debug('choice: 5')
                         # NEST
-                        entity = entity.nest(child, ps.positions[child])
+                        entity = entity.nest(child, pos)
                     else:
                         if ((atom.type()[0] == 'c' and
                                 child.connector_type()[0] == 'c') or
-                                self._is_compound(ps.tokens[child])):
+                                self._is_compound(child_token)):
                             if entity.connector_type()[0] == 'c':
                                 if (child.connector_type()[0] == 'c' and
                                         entity.connector_type() != 'cm'):
                                     logging.debug('choice: 6')
                                     # SEQUENCE
-                                    entity = entity.sequence(
-                                        child, ps.positions[child])
+                                    entity = entity.sequence(child, pos)
                                 else:
                                     logging.debug('choice: 7')
                                     # FLAT SEQUENCE
                                     entity = entity.sequence(
-                                        child, ps.positions[child], flat=False)
+                                        child, pos, flat=False)
                             else:
                                 logging.debug('choice: 8')
                                 # SEQUENCE IN ORIGINAL ATOM
                                 entity = entity.replace_atom(
                                     atom,
-                                    atom.sequence(child, ps.positions[child]))
+                                    atom.sequence(child, pos))
                         else:
                             logging.debug('choice: 9')
                             entity = entity.replace_atom(
@@ -467,7 +462,7 @@ class AlphaBeta(Parser):
                     entity = child.connect(entity)
                 else:
                     logging.debug('choice: 13')
-                    entity = entity.nest(child, ps.positions[child])
+                    entity = entity.nest(child, pos)
             elif child_type[0] == 'p':
                 # TODO: Pathological case
                 # e.g. "Some subspecies of mosquito might be 1s..."
@@ -486,16 +481,16 @@ class AlphaBeta(Parser):
             elif child_type[0] == 'a':
                 logging.debug('choice: 17')
                 # NEST PREDICATE
-                entity = nest_predicate(entity, child, ps.positions[child])
+                entity = nest_predicate(entity, child, pos)
             elif child_type == 'w':
                 if ent_type[0] in {'d', 's'}:
                     logging.debug('choice: 18')
                     # NEST PREDICATE
-                    entity = nest_predicate(entity, child, ps.positions[child])
+                    entity = nest_predicate(entity, child, pos)
                 else:
                     logging.debug('choice: 19')
                     # NEST
-                    entity = entity.nest(child, ps.positions[child])
+                    entity = entity.nest(child, pos)
             else:
                 logging.warning('Failed to parse token (_parse_token): {}'
                                 .format(token))
@@ -510,5 +505,4 @@ class AlphaBeta(Parser):
             relative_to_concept.reverse()
             entity = hedge((':/b/.', entity) + tuple(relative_to_concept))
 
-        entity = self._post_parse_token(entity, ps)
-        return entity, ps.extra_edges
+        return self._post_parse_token(entity, token_dict), self.extra_edges
