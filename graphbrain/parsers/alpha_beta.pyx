@@ -55,7 +55,7 @@ class AlphaBeta(Parser):
         # named tuple used to pass parser state internally
         self._ParseState = namedtuple('_ParseState',
                                       ['extra_edges', 'tokens', 'child_tokens',
-                                       'positions', 'children', 'entities'])
+                                       'positions', 'children'])
 
     # ========================================================================
     # Language-specific abstract methods, to be implemented in derived classes
@@ -281,8 +281,7 @@ class AlphaBeta(Parser):
                                 tokens={},
                                 child_tokens=[],
                                 positions={},
-                                children=[],
-                                entities=[])
+                                children=[])
 
     def _parse_token_children(self, token, ps):
         ps.child_tokens.extend(zip(token.lefts, repeat(True)))
@@ -297,8 +296,6 @@ class AlphaBeta(Parser):
                 child_type = child.type()
                 if child_type:
                     ps.children.append(child)
-                    if child_type[0] in {'c', 'r', 'd', 's'}:
-                        ps.entities.append(child)
 
         ps.children.reverse()
 
