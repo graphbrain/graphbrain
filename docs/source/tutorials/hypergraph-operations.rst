@@ -25,7 +25,7 @@ Creating an hypergraph is straightforward:
 
     hg = hgraph('example.hg')
 
-This assigns a hypergraph instance to ``hg``, which is physically stored as 'example.hg'. If this hypergraph already exists, it is simply opened. If it does not exist, and empty one is created.
+This assigns a hypergraph instance to ``hg``, which is physically stored as 'example.hg'. If this hypergraph already exists, it is simply opened. If it does not exist, an empty one is created.
 
 Parse sentence and add hyperedge to hypergraph
 ==============================================
@@ -48,7 +48,7 @@ Notice that the ``add()`` function works recursively. We will see in the next su
 Iterate through all edges
 =========================
 
-Hyoergraph objects include the function ``all()``, which returns an iterator that can be used to transverse all the hyperedges contained in the hypergraph. Let's see and example, in this case assuming that we are in a notebook environment:
+Hyoergraph objects include the function ``all()``, which returns an iterator that can be used to transverse all the hyperedges contained in the hypergraph. Let's see an example, in this case assuming that we are in a notebook environment:
 
 ::
 
@@ -92,7 +92,7 @@ Hypergraph objects have a generic ``search()`` function, which returns iterators
 
     edge_iterator = hg.search(pattern)
 
-For example, with the current hypergraph, the executing the below code would produce the shown result:
+For example, with the current hypergraph, executing the below code would produce the shown result:
 
 ::
 
