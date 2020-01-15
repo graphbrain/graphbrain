@@ -3,6 +3,21 @@ from graphbrain.parsers import *
 from graphbrain.agents.agent import Agent
 
 
+def paragraphs(file_name):
+    paragraphs = []
+    cur_paragraph = []
+    with open(file_name, 'r') as f:
+        lines = [line.strip() for line in f.readlines()]
+        for line in lines:
+            if len(line) == 0:
+                paragraph = ' '.join(cur_paragraph)
+                paragraphs.append(paragraph)
+                cur_paragraph = []
+            else:
+                cur_paragraph.append(line)
+    return paragraphs
+
+
 class TxtParser(Agent):
     def __init__(self, hg, lang, sequence=None):
         super().__init__(hg, lang, sequence)
@@ -23,9 +38,8 @@ class TxtParser(Agent):
 
     def input_file(self, file_name):
         pos = 0
-        with open(file_name, 'r') as f:
-            text = f.read().replace('\n', ' ')
-            parses = self.parser.parse(text)
+        for paragraph in paragraphs(file_name):
+            parses = self.parser.parse(paragraph)
             for parse in parses:
                 main_edge = parse['main_edge']
 
