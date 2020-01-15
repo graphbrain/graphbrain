@@ -18,3 +18,8 @@ def find_actors(hg, edge):
         for item in edge:
             actors |= find_actors(hg, item)
     return actors
+
+
+def actors(hg):
+    """"Returns an iterator over all actors."""
+    return [edge[1] for edge in hg.search('(actor/p/. *)')]
