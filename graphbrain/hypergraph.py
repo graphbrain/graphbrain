@@ -268,7 +268,6 @@ class Hypergraph(object):
         """
         if edge.is_atom():
             atoms = tuple(self.atoms_with_root(edge.root()))
-            print(atoms)
             d = sum([self.degree(atom) for atom in atoms])
             dd = sum([self.deep_degree(atom) for atom in atoms])
             return d, dd
