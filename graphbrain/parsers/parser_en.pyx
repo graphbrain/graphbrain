@@ -50,6 +50,9 @@ class ParserEN(AlphaBeta):
             return '?'
 
     def _token_type(self, token, head=False):
+        if token.pos_ == 'PUNCT':
+            return None
+
         dep = token.dep_
 
         if dep in {'', 'subtok'}:

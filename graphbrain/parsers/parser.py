@@ -32,7 +32,8 @@ class Parser(object):
         self._before_parse_sentence()
         self.atom2token = {}
         main_edge, extra_edges = self._parse_token(sent.root)
-        main_edge, _ = self._post_process(main_edge)
+        if main_edge:
+            main_edge, _ = self._post_process(main_edge)
 
         return {'main_edge': main_edge,
                 'extra_edges': extra_edges,
