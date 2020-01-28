@@ -29,16 +29,20 @@ class Parser(object):
         raise NotImplementedError()
 
     def _parse_sentence(self, sent):
-        self._before_parse_sentence()
-        self.atom2token = {}
-        main_edge, extra_edges = self._parse_token(sent.root)
-        if main_edge:
-            main_edge, _ = self._post_process(main_edge)
+        try:
+            self._before_parse_sentence()
+            self.atom2token = {}
+            main_edge, extra_edges = self._parse_token(sent.root)
+            if main_edge:
+                main_edge, _ = self._post_process(main_edge)
 
-        return {'main_edge': main_edge,
-                'extra_edges': extra_edges,
-                'text': str(sent).strip(),
-                'spacy_sentence': sent}
+            return {'main_edge': main_edge,
+                    'extra_edges': extra_edges,
+                    'text': str(sent).strip(),
+                    'spacy_sentence': sent}
+        except Exception as e:
+            logging.error('Caught exception: {} while parsing: "{}"'.format(
+                str(e), str(sent)))
 
     def parse(self, text):
         """Transforms the given text into hyperedges + aditional information.
