@@ -49,20 +49,21 @@ class RedditParser(Agent):
                 main_edge = parse['main_edge']
 
                 # add main edge
-                self.add(main_edge)
+                if main_edge:
+                    self.add(main_edge)
 
-                # attach text to edge
-                text = parse['text']
-                self.hg.set_attribute(main_edge, 'text', text)
+                    # attach text to edge
+                    text = parse['text']
+                    self.hg.set_attribute(main_edge, 'text', text)
 
-                # add extra edges
-                for edge in parse['extra_edges']:
-                    self.add(edge)
+                    # add extra edges
+                    for edge in parse['extra_edges']:
+                        self.add(edge)
 
-                if main_edge.type()[0] == 'r':
-                    title_edge.append(main_edge)
-                else:
-                    tags.append(main_edge)
+                    if main_edge.type()[0] == 'r':
+                        title_edge.append(main_edge)
+                    else:
+                        tags.append(main_edge)
 
         if len(title_edge) > 2:
             # add title edge
