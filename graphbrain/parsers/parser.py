@@ -43,6 +43,10 @@ class Parser(object):
         except Exception as e:
             logging.error('Caught exception: {} while parsing: "{}"'.format(
                 str(e), str(sent)))
+            return {'main_edge': None,
+                    'extra_edges': [],
+                    'text': '',
+                    'spacy_sentence': None}
 
     def parse(self, text):
         """Transforms the given text into hyperedges + aditional information.
