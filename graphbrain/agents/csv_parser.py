@@ -1,5 +1,6 @@
 import re
 import csv
+import sys
 import progressbar
 from graphbrain import *
 from graphbrain.parsers import *
@@ -32,9 +33,11 @@ class CsvParser(Agent):
         return set()
 
     def start(self):
+        csv.field_size_limit(sys.maxsize)
         self.parser = create_parser(name=self.lang, lemmas=True)
 
     def _parse_row(self, row):
+        # print(row[self.text])
         parts = text_parts(row[self.text])
 
         for part in parts:
