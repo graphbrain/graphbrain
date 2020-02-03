@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.3.1] - ongoing work
+## [0.3.1] - 03-02-2020
 ### Added
 - German parser (experimental and incomplete).
 - Documentation.
@@ -12,8 +12,7 @@
 - txt_parser agent creates a sequence.
 - Refactored parsers code.
 - Catching and logging exceptions during parse.
-
-### Removed
+- Improved conflict agent.
 
 ## [0.3.0] - 28-09-2019
 ### Added
