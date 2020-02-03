@@ -7,7 +7,7 @@ from graphbrain.agents.agent import Agent
 
 
 CONFLICT_PRED_LEMMAS = {'warn', 'kill', 'accuse', 'condemn', 'slam', 'arrest',
-                        'clash'}
+                        'clash', 'blame'}
 
 CONFLICT_TOPIC_TRIGGERS = {'of/t/en', 'over/t/en', 'against/t/en', 'for/t/en'}
 
@@ -56,10 +56,14 @@ class Conflicts(Agent):
                                 has_proper_concept(obj)):
                             actor_orig = main_coref(self.hg, subject)
                             actor_targ = main_coref(self.hg, obj)
+                            conflict_edge = hedge(
+                                ('conflict/p/.', actor_orig, actor_targ, edge))
+                            print(conflict_edge.to_str())
+                            print('#1')
                             if (is_actor(self.hg, actor_orig) and
                                     is_actor(self.hg, actor_targ)):
-                                self.add(('conflict/p/.', actor_orig,
-                                          actor_targ, edge))
+                                print('#2')
+                                self.add(conflict_edge)
                                 self._topics(actor_orig, actor_targ, edge)
                                 self.conflicts += 1
 
