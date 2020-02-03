@@ -32,6 +32,8 @@ def wrapper(fun, command=False, text=None):
     parser.add_argument('--agent', type=str, help='agent name')
     parser.add_argument('--sequence', type=str, help='sequence name',
                         default=None)
+    parser.add_argument('--text', type=str, help='text identifier',
+                        default='title')
 
     args = parser.parse_args()
 

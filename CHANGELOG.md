@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0] - work in progress
+### Added
+
+### Changed
+
+### Removed
+
 ## [0.3.1] - 03-02-2020
 ### Added
 - German parser (experimental and incomplete).
