@@ -690,6 +690,16 @@ class Atom(Hyperedge):
         else:
             return parts[1].split('.')
 
+    def simplify_role(self):
+        """Returns atom with a simplified role part. In the simplified role,
+        only the type is specified.
+        """
+        parts = self.parts()
+        if len(parts) > 1:
+            parts[1] = self.type()[0]
+        atom_str = '/'.join(parts)
+        return Atom((atom_str,))
+
     def type(self):
         """Returns the type of the atom.
 

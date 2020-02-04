@@ -315,6 +315,14 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(hedge('graphbrain/cp.s/1').role(), ['cp', 's'])
         self.assertEqual(hedge('graphbrain').role(), ['c'])
 
+    def test_atom_simplify_role(self):
+        self.assertEqual(hedge('graphbrain/cp.s/1').simplify_role(),
+                         hedge('graphbrain/c/1'))
+        self.assertEqual(hedge('graphbrain').simplify_role(),
+                         hedge('graphbrain'))
+        self.assertEqual(hedge('say/pd.|f----.sr/en').simplify_role(),
+                         hedge('say/p/en'))
+
     def test_atom_type(self):
         self.assertEqual(hedge('graphbrain/cp.s/1').type(), 'cp')
         self.assertEqual(hedge('graphbrain').type(), 'c')
