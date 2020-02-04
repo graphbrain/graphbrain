@@ -1,9 +1,11 @@
 # Changelog
 
-## [0.4.0] - work in progress
+## [0.3.2] - work in progress
 ### Added
+- simplify_role() on Atom objects produces an atom with only its simple type as role.
 
 ### Changed
+- Lemmas are now based on atoms with simplified roles.
 
 ### Removed
 

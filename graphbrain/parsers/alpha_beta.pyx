@@ -300,7 +300,9 @@ class AlphaBeta(Parser):
         text = token.lemma_.lower()
         if text != token.text.lower():
             lemma = build_atom(text, ent_type[0], self.lang)
-            lemma_edge = hedge((const.lemma_pred, entity, lemma))
+            lemma_edge = hedge((const.lemma_pred,
+                                entity.simplify_role(),
+                                lemma))
             self.extra_edges.add(lemma_edge)
 
     def _is_post_parse_token_necessary(self, entity):
