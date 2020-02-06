@@ -6,6 +6,7 @@
 
 ### Changed
 - Lemmas are now based on atoms with simplified roles.
+- Improved actors agent (more accurate identification of actors, English only for now).
 
 ### Removed
 

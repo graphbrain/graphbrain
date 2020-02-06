@@ -1,7 +1,13 @@
 from collections import Counter
 from graphbrain.meaning.concepts import *
+from graphbrain.meaning.lemmas import deep_lemma
 from graphbrain.meaning.corefs import main_coref
 from graphbrain.agents.agent import Agent
+
+
+ACTOR_PRED_LEMMAS = {'say', 'claim', 'warn', 'kill', 'accuse', 'condemn',
+                     'slam', 'arrest', 'clash', 'blame', 'want', 'call',
+                     'tell'}
 
 
 class Actors(Agent):
@@ -13,7 +19,7 @@ class Actors(Agent):
         return 'actors'
 
     def languages(self):
-        return set()
+        return {'en'}
 
     def start(self):
         self.actor_counter = Counter()
@@ -26,10 +32,15 @@ class Actors(Agent):
                 if len(subjects) == 1:
                     subject = strip_concept(subjects[0])
                     if subject and has_proper_concept(subject):
-                        actor = main_coref(self.hg, subject)
-                        self.actor_counter[actor] += 1
+                        pred = edge[0]
+                        if deep_lemma(hg, pred).root() in ACTOR_PRED_LEMMAS:
+                            try:
+                                actor = main_coref(hg, subject)
+                                actor_counter[actor] += 1
+                            except Exception as e:
+                                print(str(e))
 
     def end(self):
         for actor in self.actor_counter:
-            if self.actor_counter[actor] > 1:
+            if self.actor_counter[actor] > 0:
                 self.add(('actor/p/.', actor))

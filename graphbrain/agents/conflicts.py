@@ -58,11 +58,8 @@ class Conflicts(Agent):
                             actor_targ = main_coref(self.hg, obj)
                             conflict_edge = hedge(
                                 ('conflict/p/.', actor_orig, actor_targ, edge))
-                            print(conflict_edge.to_str())
-                            print('#1')
                             if (is_actor(self.hg, actor_orig) and
                                     is_actor(self.hg, actor_targ)):
-                                print('#2')
                                 self.add(conflict_edge)
                                 self._topics(actor_orig, actor_targ, edge)
                                 self.conflicts += 1
