@@ -37,6 +37,7 @@ class Actors(Agent):
                         if dlemma in ACTOR_PRED_LEMMAS:
                             try:
                                 actor = main_coref(self.hg, subject)
+                                self.actor_counter[actor] += 1
                             except Exception as e:
                                 print(str(e))
 
