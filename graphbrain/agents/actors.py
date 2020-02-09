@@ -33,9 +33,10 @@ class Actors(Agent):
                     subject = strip_concept(subjects[0])
                     if subject and has_proper_concept(subject):
                         pred = edge[0]
-                        if deep_lemma(hg, pred).root() in ACTOR_PRED_LEMMAS:
+                        dlemma = deep_lemma(self.hg, pred).root()
+                        if dlemma in ACTOR_PRED_LEMMAS:
                             try:
-                                actor = main_coref(hg, subject)
+                                actor = main_coref(self.hg, subject)
                                 actor_counter[actor] += 1
                             except Exception as e:
                                 print(str(e))
