@@ -1,14 +1,12 @@
 # Changelog
 
-## [0.3.2] - work in progress
+## [0.3.2] - 10-02-2020
 ### Added
 - simplify_role() on Atom objects produces an atom with only its simple type as role.
 
 ### Changed
 - Lemmas are now based on atoms with simplified roles.
 - Improved actors agent (more accurate identification of actors, English only for now).
-
-### Removed
 
 ## [0.3.1] - 03-02-2020
 ### Added
