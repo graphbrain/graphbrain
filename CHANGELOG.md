@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0] - work in progress
+### Added
+
+### Changed
+
+### Removed
+
 ## [0.3.2] - 10-02-2020
 ### Added
 - simplify_role() on Atom objects produces an atom with only its simple type as role.
