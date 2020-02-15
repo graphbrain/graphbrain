@@ -1,15 +1,14 @@
 import logging
-import spacy
 from graphbrain import *
 from .alpha_beta import AlphaBeta
 from .nlp import token2str
 
 
 class ParserDE(AlphaBeta):
-    def __init__(self, lemmas=False):
-        super().__init__(lemmas=lemmas)
+    def __init__(self, lemmas=False, resolve_corefs=False):
+        super().__init__('de_core_news_md', lemmas=lemmas,
+                         resolve_corefs=resolve_corefs)
         self.lang = 'de'
-        self.nlp = spacy.load('de_core_news_md')
 
     # ===========================================
     # Implementation of language-specific methods

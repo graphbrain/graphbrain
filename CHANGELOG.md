@@ -2,6 +2,7 @@
 
 ## [0.4.0] - work in progress
 ### Added
+- Coreference resolution in the parser.
 
 ### Changed
 

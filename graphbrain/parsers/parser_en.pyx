@@ -1,15 +1,14 @@
 import logging
-import spacy
 from graphbrain import *
 from .alpha_beta import AlphaBeta
 from .nlp import token2str
 
 
 class ParserEN(AlphaBeta):
-    def __init__(self, lemmas=False):
-        super().__init__(lemmas=lemmas)
+    def __init__(self, lemmas=False, resolve_corefs=False):
+        super().__init__('en_core_web_lg', lemmas=lemmas,
+                         resolve_corefs=resolve_corefs)
         self.lang = 'en'
-        self.nlp = spacy.load('en_core_web_lg')
 
     # ===========================================
     # Implementation of language-specific methods

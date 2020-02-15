@@ -90,15 +90,16 @@ setup(
         'Topic :: Scientific/Engineering :: Information Analysis',
         'Topic :: Sociology'
     ],
-    python_requires='>=3.4',
+    python_requires='>=3.6',
     packages=find_packages(),
     install_requires=[
         'numpy',
-        'termcolor',
-        'spacy',
-        'python-igraph',
-        'asciitree',
+        'spacy==2.1',
+        'neuralcoref==4.0.0',
         'plyvel',
+        'python-igraph',
+        'termcolor',
+        'asciitree',
         'ipython',
         'progressbar2',
         'unidecode'
