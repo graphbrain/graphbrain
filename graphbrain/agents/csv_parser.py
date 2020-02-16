@@ -37,12 +37,11 @@ class CsvParser(Agent):
         self.parser = create_parser(name=self.lang, lemmas=True)
 
     def _parse_row(self, row):
-        # print(row[self.text])
         parts = text_parts(row[self.text])
 
         for part in parts:
-            parses = self.parser.parse(part)
-            for parse in parses:
+            parse_results = self.parser.parse(part)
+            for parse in parse_results['parses']:
                 main_edge = parse['main_edge']
 
                 # add main edge

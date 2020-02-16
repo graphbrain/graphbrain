@@ -39,8 +39,8 @@ class TxtParser(Agent):
     def input_file(self, file_name):
         pos = 0
         for paragraph in paragraphs(file_name):
-            parses = self.parser.parse(paragraph)
-            for parse in parses:
+            parse_results = self.parser.parse(paragraph)
+            for parse in parse_results['parses']:
                 main_edge = parse['main_edge']
 
                 # add main edge

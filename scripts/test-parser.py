@@ -16,7 +16,7 @@ def test_parser(args):
                 total += 1
                 correct_edge = hedge(line.strip())
                 parser_output = parser.parse(sentence)
-                parsed_sentence = parser_output[0]
+                parsed_sentence = parser_output['parses'][0]
                 edge = parsed_sentence['main_edge']
                 sent = parsed_sentence['spacy_sentence']
                 if edge != correct_edge:

@@ -7,6 +7,7 @@
 - Coreference inference: gender, number and animacy.
 
 ### Changed
+- parse() now returns a dictionary that can include inferred edges.
 
 ### Removed
 

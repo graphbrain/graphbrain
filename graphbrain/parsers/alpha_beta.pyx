@@ -596,7 +596,8 @@ class AlphaBeta(Parser):
         self.edge2coref = {}
         self.cur_text = text
         doc = self.nlp(text.strip())
-        return tuple(self._parse_sentence(sent) for sent in doc.sents)
+        parses = tuple(self._parse_sentence(sent) for sent in doc.sents)
+        return {'parses': parses, 'inferred_edges': []}
 
     def _find_coref_clusters(self, edge):
         clusters = set()
@@ -701,3 +702,5 @@ class AlphaBeta(Parser):
         for parse in parses:
             parse['resolved_corefs'] = self._resolve_corefs_edge(
                 parse['main_edge'])
+
+        parse['inferred_edges'] = inferred_edges

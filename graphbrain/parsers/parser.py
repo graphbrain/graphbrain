@@ -19,12 +19,20 @@ class Parser(object):
 
     def parse(self, text):
         """Transforms the given text into hyperedges + aditional information.
-        Returns a sequence of dictionaries, with one dictionary for each
+        Returns a dictionary with two fields:
+
+        -> parses: a sequence of dictionaries, with one dictionary for each
         sentence found in the text.
 
-        Each dictionary contains at least the following fields:
+        -> inferred_edges: a sequence of edges inferred during by parsing
+        process (e.g. genders, 'X is Y' relationships)
+
+        Each sentence parse dictionary contains at least the following fields:
 
         -> main_edge: the hyperedge corresponding to the sentence.
+
+        -> resolved_corefs: main_edge with coreferences resolved, can be the
+        same as main_edge if coreference resolution is not performed.
 
         -> extra_edges: aditional edges, e.g. connecting atoms that appear
         in the main_edge to their lemmas.

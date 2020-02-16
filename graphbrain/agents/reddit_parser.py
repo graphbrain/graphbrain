@@ -44,8 +44,8 @@ class RedditParser(Agent):
         title_edge = ['title/p/.reddit', author]
         tags = []
         for part in parts:
-            parses = self.parser.parse(part)
-            for parse in parses:
+            parse_results = self.parser.parse(part)
+            for parse in parse_results['parses']:
                 main_edge = parse['main_edge']
 
                 # add main edge
