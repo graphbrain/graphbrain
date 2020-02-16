@@ -682,9 +682,10 @@ class AlphaBeta(Parser):
                           for subedge in edge])
 
     def _resolve_corefs(self, parses):
-        inferred_edges = []
         for parse in parses:
             self._assign_to_coref(parse['main_edge'])
+
+        inferred_edges = []
 
         for cluster in self.coref_clusters:
             best_concept = None
