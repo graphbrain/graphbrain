@@ -5,6 +5,10 @@ lemma_pred = 'lemma/p/.'
 coref_pred = 'coref/p/.'
 main_coref_pred = 'main_coref/p/.'
 type_of_pred = 'type_of/p/.'
+possessive_builder = 'poss/bp.am/.'
+gender_pred = 'gender/p/.'
+number_pred = 'number/p/.'
+animacy_pred = 'animacy/p/.'
 
 # Pre-defined entity keys
 coref_set_id_key = 'coref'

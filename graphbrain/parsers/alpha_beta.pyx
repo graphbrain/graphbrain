@@ -1,5 +1,5 @@
 from itertools import repeat
-from collections import defaultdict
+from collections import defaultdict, Counter
 import logging
 import spacy
 import neuralcoref
@@ -627,6 +627,44 @@ class AlphaBeta(Parser):
                 if cluster is not None:
                     self.coref_clusters[cluster].add(edge)
 
+    def _coref_inferences(self, main_edge, edges):
+        results = []
+
+        gender_cnt = Counter()
+        number_cnt = Counter()
+        animacy_cnt = Counter()
+        for edge in edges:
+            if edge.is_atom():
+                gender = self.atom_gender(edge)
+                if gender is not None:
+                    gender_cnt[gender] += 1
+                number = self.atom_number(edge)
+                if number is not None:
+                    number_cnt[number] += 1
+                animacy = self.atom_animacy(edge)
+                if animacy is not None:
+                    animacy_cnt[animacy] += 1
+
+        gender_top = gender_cnt.most_common(2)
+        if len(gender_top) == 1 or (len(gender_top) == 2 and
+                                    gender_top[0][1] > gender_top[1][1]):
+            gender = gender_top[0][0]
+            gender_edge = hedge((const.gender_pred, main_edge, gender))
+            results.append(gender_edge)
+        number_top = number_cnt.most_common(2)
+        if len(number_top) == 1 or (len(number_top) == 2 and
+                                    number_top[0][1] > number_top[1][1]):
+            number = number_top[0][0]
+            number_edge = hedge((const.number_pred, main_edge, number))
+            results.append(number_edge)
+        animacy_top = animacy_cnt.most_common(2)
+        if len(animacy_top) == 1 or (len(animacy_top) == 2 and
+                                     animacy_top[0][1] > animacy_top[1][1]):
+            animacy = animacy_top[0][0]
+            animacy_edge = hedge((const.animacy_pred, main_edge, animacy))
+            results.append(animacy_edge)
+        return results
+
     def _resolve_corefs_edge(self, edge):
         if edge in self.edge2coref:
             return self.edge2coref[edge]
@@ -637,12 +675,14 @@ class AlphaBeta(Parser):
         elif (edge[0].type() == 'mp' and
               len(edge) == 2 and
               edge[0] in self.edge2coref):
-            return hedge(('poss/bp.am/.', self.edge2coref[edge[0]], edge[1]))
+            return hedge(
+                (const.possessive_builder, self.edge2coref[edge[0]], edge[1]))
         else:
             return hedge([self._resolve_corefs_edge(subedge)
                           for subedge in edge])
 
     def _resolve_corefs(self, parses):
+        inferred_edges = []
         for parse in parses:
             self._assign_to_coref(parse['main_edge'])
 
@@ -654,6 +694,8 @@ class AlphaBeta(Parser):
             if best_concept is not None:
                 for edge in self.coref_clusters[cluster]:
                     self.edge2coref[edge] = best_concept
+                inferred_edges += self._coref_inferences(
+                    best_concept, self.coref_clusters[cluster])
 
         for parse in parses:
             parse['resolved_corefs'] = self._resolve_corefs_edge(

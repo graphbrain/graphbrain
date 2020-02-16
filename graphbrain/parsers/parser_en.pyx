@@ -4,6 +4,39 @@ from .alpha_beta import AlphaBeta
 from .nlp import token2str
 
 
+_female = {"she/ci/en", "her/ci/en", "herself/ci/en", "hers/ci/en",
+           "her/mp/en"}
+_male = {"he/ci/en", "him/ci/en", "himself/ci/en", "his/mp/en"}
+_neutral = {"it/ci/en", "itself/ci/en", "its/mp/en"}
+
+_singular = {"it/ci/en", "i/ci/en", "she/ci/en", "he/ci/en", "her/ci/en",
+             "herself/ci/en", "me/ci/en", "him/ci/en", "itself/ci/en",
+             "yourself/ci/en", "myself/ci/en", "himself/ci/en", "one/ci/en",
+             "hers/ci/en", "mine/ci/en", "somebody/ci/en", "oneself/ci/en",
+             "yours/ci/en", "her/mp/en", "his/mp/en", "my/mp/en", "its/mp/en"}
+_plural = {"they/ci/en", "them/ci/en", "we/ci/en", "us/ci/en", "'em/ci/en",
+           "themselves/ci/en", "theirs/ci/en", "ourselves/ci/en",
+           "their/mp/en", "our/mp/en"}
+
+_animate = {"i/ci/en", "she/ci/en", "you/ci/en", "he/ci/en", "her/ci/en",
+            "herself/ci/en", "me/ci/en", "him/ci/en", "we/ci/en", "us/ci/en",
+            "yourself/ci/en", "myself/ci/en", "himself/ci/en", "one/ci/en",
+            "themselves/ci/en", "hers/ci/en", "mine/ci/en", "somebody/ci/en",
+            "oneself/ci/en", "yours/ci/en", "ourselves/ci/en", "her/mp/en",
+            "his/mp/en", "your/mp/en", "my/mp/en", "our/mp/en", "thy/mp/en"}
+_inanimate = {"it/ci/en", "itself/ci/en", "its/mp/en"}
+
+_p1 = {"i/ci/en", "me/ci/en", "we/ci/en", "us/ci/en", "myself/ci/en",
+       "mine/ci/en", "oneself/ci/en", "ourselves/ci/en", "my/mp/en",
+       "our/mp/en"}
+_p2 = {"you/ci/en", "yourself/ci/en", "yours/ci/en", "your/mp/en", "thy/mp/en"}
+_p3 = {"it/ci/en", "she/ci/en", "they/ci/en", "he/ci/en", "them/ci/en",
+       "her/ci/en", "herself/ci/en", "him/ci/en", "itself/ci/en",
+       "himself/ci/en", "one/ci/en", "'em/ci/en", "themselves/ci/en",
+       "hers/ci/en", "somebody/ci/en", "theirs/ci/en", "her/mp/en",
+       "his/mp/en", "its/mp/en", "their/mp/en", "whose/mp/en"}
+
+
 class ParserEN(AlphaBeta):
     def __init__(self, lemmas=False, resolve_corefs=False):
         super().__init__('en_core_web_lg', lemmas=lemmas,
@@ -13,6 +46,46 @@ class ParserEN(AlphaBeta):
     # ===========================================
     # Implementation of language-specific methods
     # ===========================================
+
+    def atom_gender(self, atom):
+        atom_str = atom.to_str()
+        if atom_str in _female:
+            return 'female'
+        elif atom_str in _male:
+            return 'male'
+        elif atom_str in _neutral:
+            return 'neutral'
+        else:
+            return None
+
+    def atom_number(self, atom):
+        atom_str = atom.to_str()
+        if atom_str in _singular:
+            return 'singular'
+        elif atom_str in _plural:
+            return 'plural'
+        else:
+            return None
+
+    def atom_person(self, atom):
+        atom_str = atom.to_str()
+        if atom_str in _p1:
+            return 1
+        elif atom_str in _p2:
+            return 2
+        elif atom_str in _p3:
+            return 3
+        else:
+            return None
+
+    def atom_animacy(self, atom):
+        atom_str = atom.to_str()
+        if atom_str in _animate:
+            return 'animate'
+        elif atom_str in _inanimate:
+            return 'inanimate'
+        else:
+            return None
 
     def _arg_type(self, token):
         # subject

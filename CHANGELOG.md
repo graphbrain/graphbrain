@@ -3,6 +3,8 @@
 ## [0.4.0] - work in progress
 ### Added
 - Coreference resolution in the parser.
+- atom_gender(), atom_number(), atom_person(), atom_animacy() in parsers.
+- Coreference inference: gender, number and animacy.
 
 ### Changed
 
