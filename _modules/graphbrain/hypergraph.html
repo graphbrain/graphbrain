@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>graphbrain.hypergraph &mdash; GraphBrain 0.3.1 documentation</title>
+  <title>graphbrain.hypergraph &mdash; GraphBrain 0.4.0 documentation</title>
   
 
   
@@ -23,10 +23,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -158,7 +158,8 @@
            <div itemprop="articleBody">
             
   <h1>Source code for graphbrain.hypergraph</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">graphbrain.hyperedge</span> <span class="k">import</span> <span class="o">*</span>
+<span></span><span class="kn">import</span> <span class="nn">graphbrain.constants</span> <span class="k">as</span> <span class="nn">const</span>
+<span class="kn">from</span> <span class="nn">graphbrain.hyperedge</span> <span class="kn">import</span> <span class="o">*</span>
 
 
 <div class="viewcode-block" id="Hypergraph"><a class="viewcode-back" href="../../reference/api.html#graphbrain.hypergraph.Hypergraph">[docs]</a><span class="k">class</span> <span class="nc">Hypergraph</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -227,18 +228,20 @@
         <span class="sd">&quot;&quot;&quot;Checks if the given edge exists.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">hedge</span><span class="p">(</span><span class="n">edge</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Hypergraph.add"><a class="viewcode-back" href="../../reference/api.html#graphbrain.hypergraph.Hypergraph.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">primary</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Hypergraph.add"><a class="viewcode-back" href="../../reference/api.html#graphbrain.hypergraph.Hypergraph.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">primary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Adds an edge if it does not exist yet, returns same edge.</span>
 <span class="sd">        All children are recursively added as non-primary edge, for</span>
 <span class="sd">        indexing purposes.</span>
 
 <span class="sd">        Edges can be passed in both Hyperedge or string format.</span>
 
-<span class="sd">        Keyword argument:</span>
+<span class="sd">        Keyword arguments:</span>
 <span class="sd">        primary -- edge is primary, meaning, for example, that it counts</span>
 <span class="sd">        towards degrees. Non-primary edges are used for indexing purposes,</span>
 <span class="sd">        for example to make it easy to find the subedges contained in primary</span>
 <span class="sd">        edges when performing queries.</span>
+<span class="sd">        count -- an integer counter attribute is added to the edge. If the</span>
+<span class="sd">        edge already exists, the counter is incremented.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">Hyperedge</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
@@ -248,7 +251,13 @@
                 <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">primary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
                 <span class="c1"># add entity itself</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">primary</span><span class="o">=</span><span class="n">primary</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">primary</span><span class="o">=</span><span class="n">primary</span><span class="p">)</span>
+
+                <span class="c1"># increment counter if requested</span>
+                <span class="k">if</span> <span class="n">count</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">inc_attribute</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">edge</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">hedge</span><span class="p">(</span><span class="n">edge</span><span class="p">),</span> <span class="n">primary</span><span class="o">=</span><span class="n">primary</span><span class="p">)</span></div>
 
@@ -359,7 +368,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_attribute</span><span class="p">(</span><span class="n">hedge</span><span class="p">(</span><span class="n">edge</span><span class="p">),</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Hypergraph.inc_attribute"><a class="viewcode-back" href="../../reference/api.html#graphbrain.hypergraph.Hypergraph.inc_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">inc_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Increments an attribute of an entity.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Increments an attribute of an entity, sets initial value to 1</span>
+<span class="sd">        if attribute does not exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inc_attribute</span><span class="p">(</span><span class="n">hedge</span><span class="p">(</span><span class="n">edge</span><span class="p">),</span> <span class="n">attribute</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Hypergraph.dec_attribute"><a class="viewcode-back" href="../../reference/api.html#graphbrain.hypergraph.Hypergraph.dec_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">dec_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
@@ -427,7 +438,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
             <span class="n">atoms</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms_with_root</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">root</span><span class="p">()))</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
             <span class="n">d</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span>
             <span class="n">dd</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">deep_degree</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span>
             <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="n">dd</span>
@@ -444,6 +454,27 @@
 <span class="sd">        parameter.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">deep_degree</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Hypergraph.add_to_sequence"><a class="viewcode-back" href="../../reference/api.html#graphbrain.hypergraph.Hypergraph.add_to_sequence">[docs]</a>    <span class="k">def</span> <span class="nf">add_to_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds &#39;edge&#39; to sequence &#39;name&#39; at position &#39;pos&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">sequence_pred</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">pos</span><span class="p">),</span> <span class="n">edge</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Hypergraph.sequence"><a class="viewcode-back" href="../../reference/api.html#graphbrain.hypergraph.Hypergraph.sequence">[docs]</a>    <span class="k">def</span> <span class="nf">sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns an iterator for a sequence of hyperedges, given the name</span>
+<span class="sd">        of the sequence.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">stop</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">stop</span><span class="p">:</span>
+            <span class="nb">iter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">sequence_pred</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">pos</span><span class="p">),</span> <span class="s1">&#39;*&#39;</span><span class="p">))</span>
+            <span class="n">next_edge</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">next_edge</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">next_edge</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+                <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">stop</span> <span class="o">=</span> <span class="kc">True</span></div>
 
     <span class="c1"># ==============================================================</span>
     <span class="c1"># Private abstract methods, to be implemented in derived classes</span>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API reference &mdash; GraphBrain 0.3.1 documentation</title>
+  <title>API reference &mdash; GraphBrain 0.4.0 documentation</title>
   
 
   
@@ -23,10 +23,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -391,6 +391,13 @@ generic concept type:</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="graphbrain.hyperedge.Atom.simplify_role">
+<code class="sig-name descname">simplify_role</code><a class="headerlink" href="#graphbrain.hyperedge.Atom.simplify_role" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns atom with a simplified role part. In the simplified role,
+only the type is specified.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="graphbrain.hyperedge.Atom.subedges">
 <code class="sig-name descname">subedges</code><a class="headerlink" href="#graphbrain.hyperedge.Atom.subedges" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all the subedges contained in the edge, including atoms
@@ -739,16 +746,24 @@ without outer parenthesis.</p>
 <dd><p>Hypergraph interface.</p>
 <dl class="method">
 <dt id="graphbrain.hypergraph.Hypergraph.add">
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">primary=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.add" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">primary=True</em>, <em class="sig-param">count=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds an edge if it does not exist yet, returns same edge.
 All children are recursively added as non-primary edge, for
 indexing purposes.</p>
 <p>Edges can be passed in both Hyperedge or string format.</p>
-<p>Keyword argument:
+<p>Keyword arguments:
 primary – edge is primary, meaning, for example, that it counts
 towards degrees. Non-primary edges are used for indexing purposes,
 for example to make it easy to find the subedges contained in primary
-edges when performing queries.</p>
+edges when performing queries.
+count – an integer counter attribute is added to the edge. If the
+edge already exists, the counter is incremented.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="graphbrain.hypergraph.Hypergraph.add_to_sequence">
+<code class="sig-name descname">add_to_sequence</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">pos</em>, <em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.add_to_sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.add_to_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds ‘edge’ to sequence ‘name’ at position ‘pos’.</p>
 </dd></dl>
 
 <dl class="method">
@@ -880,7 +895,8 @@ attribute. (default None)</p>
 <dl class="method">
 <dt id="graphbrain.hypergraph.Hypergraph.inc_attribute">
 <code class="sig-name descname">inc_attribute</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">attribute</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.inc_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.inc_attribute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Increments an attribute of an entity.</p>
+<dd><p>Increments an attribute of an entity, sets initial value to 1
+if attribute does not exist.</p>
 </dd></dl>
 
 <dl class="method">
@@ -956,6 +972,13 @@ See search() method for an explanation of patterns.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="graphbrain.hypergraph.Hypergraph.sequence">
+<code class="sig-name descname">sequence</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterator for a sequence of hyperedges, given the name
+of the sequence.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="graphbrain.hypergraph.Hypergraph.set_attribute">
 <code class="sig-name descname">set_attribute</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">attribute</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.set_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.set_attribute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the value of an attribute.</p>
@@ -1011,7 +1034,7 @@ parameter.</p>
 <span id="package-functions"></span><h3>package functions<a class="headerlink" href="#module-graphbrain.parsers.__init__" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="graphbrain.parsers.__init__.create_parser">
-<code class="sig-prename descclassname">graphbrain.parsers.__init__.</code><code class="sig-name descname">create_parser</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">lemmas=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/parsers/__init__.html#create_parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.__init__.create_parser" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">graphbrain.parsers.__init__.</code><code class="sig-name descname">create_parser</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">lemmas=False</em>, <em class="sig-param">resolve_corefs=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/parsers/__init__.html#create_parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.__init__.create_parser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates and returns a parser (as an instanceof a subclass of Parser)
 for the language specified in the parameter. Throws exception if language
 is not implemented.</p>
@@ -1019,6 +1042,7 @@ is not implemented.</p>
 ‘en’ – English</p>
 <p>Keyword argument:
 lemmas – if True, lemma edges are generated by the parser.
+resolve_corefs – if True, coreference resolution is performed.
 (default: False)</p>
 </dd></dl>
 
@@ -1027,23 +1051,26 @@ lemmas – if True, lemma edges are generated by the parser.
 <span id="parser-module"></span><h3>parser module<a class="headerlink" href="#module-graphbrain.parsers.parser" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="graphbrain.parsers.parser.Parser">
-<em class="property">class </em><code class="sig-prename descclassname">graphbrain.parsers.parser.</code><code class="sig-name descname">Parser</code><span class="sig-paren">(</span><em class="sig-param">lemmas=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/parsers/parser.html#Parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.parser.Parser" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">graphbrain.parsers.parser.</code><code class="sig-name descname">Parser</code><span class="sig-paren">(</span><em class="sig-param">lemmas=False</em>, <em class="sig-param">resolve_corefs=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/parsers/parser.html#Parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.parser.Parser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the common interface for parser objects.
-Parser transofrm natural text into graphbrain hyperedges.</p>
+Parsers transofrm natural text into graphbrain hyperedges.</p>
 <dl class="method">
 <dt id="graphbrain.parsers.parser.Parser.parse">
 <code class="sig-name descname">parse</code><span class="sig-paren">(</span><em class="sig-param">text</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/parsers/parser.html#Parser.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.parser.Parser.parse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transforms the given text into hyperedges + aditional information.
-Returns a sequence of dictionaries, with one dictionary for each
+Returns a dictionary with two fields:</p>
+<p>-&gt; parses: a sequence of dictionaries, with one dictionary for each
 sentence found in the text.</p>
-<p>Each dictionary contains the following fields:</p>
+<p>-&gt; inferred_edges: a sequence of edges inferred during by parsing
+process (e.g. genders, ‘X is Y’ relationships)</p>
+<p>Each sentence parse dictionary contains at least the following fields:</p>
 <p>-&gt; main_edge: the hyperedge corresponding to the sentence.</p>
+<p>-&gt; resolved_corefs: main_edge with coreferences resolved, can be the
+same as main_edge if coreference resolution is not performed.</p>
 <p>-&gt; extra_edges: aditional edges, e.g. connecting atoms that appear
 in the main_edge to their lemmas.</p>
 <p>-&gt; text: the string of natural language text corresponding to the
 main_edge, i.e.: the sentence itself.</p>
-<p>-&gt; spacy_sentence: the spaCy structure representing the sentence
-enriched with NLP annotations.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1054,6 +1081,12 @@ enriched with NLP annotations.</p>
 <h2>meaning package<a class="headerlink" href="#meaning-package" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-graphbrain.meaning.actors">
 <span id="actors-module"></span><h3>actors module<a class="headerlink" href="#module-graphbrain.meaning.actors" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="graphbrain.meaning.actors.actors">
+<code class="sig-prename descclassname">graphbrain.meaning.actors.</code><code class="sig-name descname">actors</code><span class="sig-paren">(</span><em class="sig-param">hg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/meaning/actors.html#actors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.actors.actors" title="Permalink to this definition">¶</a></dt>
+<dd><p>“Returns an iterator over all actors.</p>
+</dd></dl>
+
 <dl class="function">
 <dt id="graphbrain.meaning.actors.find_actors">
 <code class="sig-prename descclassname">graphbrain.meaning.actors.</code><code class="sig-name descname">find_actors</code><span class="sig-paren">(</span><em class="sig-param">hg</em>, <em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/meaning/actors.html#find_actors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.actors.find_actors" title="Permalink to this definition">¶</a></dt>
@@ -1074,6 +1107,12 @@ enriched with NLP annotations.</p>
 <code class="sig-prename descclassname">graphbrain.meaning.concepts.</code><code class="sig-name descname">all_concepts</code><span class="sig-paren">(</span><em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/meaning/concepts.html#all_concepts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.concepts.all_concepts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Recursively search for all concepts contained in the edge, returning
 a set that can also contain itself.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="graphbrain.meaning.concepts.has_common_or_proper_concept">
+<code class="sig-prename descclassname">graphbrain.meaning.concepts.</code><code class="sig-name descname">has_common_or_proper_concept</code><span class="sig-paren">(</span><em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/meaning/concepts.html#has_common_or_proper_concept"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.concepts.has_common_or_proper_concept" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the concept either is a common/proper edge, or contains one.</p>
 </dd></dl>
 
 <dl class="function">
@@ -1190,19 +1229,12 @@ the degree and deep degree of that edge.</p>
 <h2>agents package<a class="headerlink" href="#agents-package" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id1">
 <h3>package functions<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
-<span class="target" id="module-graphbrain.agents.__init__"></span><dl class="function">
-<dt id="graphbrain.agents.__init__.create_agent">
-<code class="sig-prename descclassname">graphbrain.agents.__init__.</code><code class="sig-name descname">create_agent</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">hg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/agents/__init__.html#create_agent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.__init__.create_agent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates and returns an instance of the agent identified by the given
-name. Throws an exception if no such agent is known.</p>
-</dd></dl>
-
-</div>
+<span class="target" id="module-graphbrain.agents.__init__"></span></div>
 <div class="section" id="module-graphbrain.agents.agent">
 <span id="agent-module"></span><h3>agent module<a class="headerlink" href="#module-graphbrain.agents.agent" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="graphbrain.agents.agent.Agent">
-<em class="property">class </em><code class="sig-prename descclassname">graphbrain.agents.agent.</code><code class="sig-name descname">Agent</code><span class="sig-paren">(</span><em class="sig-param">hg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/agents/agent.html#Agent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">graphbrain.agents.agent.</code><code class="sig-name descname">Agent</code><span class="sig-paren">(</span><em class="sig-param">hg</em>, <em class="sig-param">lang</em>, <em class="sig-param">sequence=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/agents/agent.html#Agent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for Graphbrain cognitive agents.</p>
 <p>These agents perform some change to an hypergraph, either by processing
 some external source of information of by inferring new knowledge from

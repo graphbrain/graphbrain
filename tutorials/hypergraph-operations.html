@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Hypergraph operations &mdash; GraphBrain 0.3.1 documentation</title>
+  <title>Hypergraph operations &mdash; GraphBrain 0.4.0 documentation</title>
   
 
   
@@ -23,10 +23,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -186,9 +186,9 @@
 <p>The notebook for this tutorial can be found here:</p>
 <p><a class="reference external" href="https://github.com/graphbrain/graphbrain/blob/master/notebooks/hypergraph.ipynb">https://github.com/graphbrain/graphbrain/blob/master/notebooks/hypergraph.ipynb</a></p>
 <p>Form here on, the following imports are assumed:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">graphbrain.notebook</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">graphbrain.parsers</span> <span class="k">import</span> <span class="o">*</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">graphbrain.notebook</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">graphbrain.parsers</span> <span class="kn">import</span> <span class="o">*</span>
 </pre></div>
 </div>
 <div class="section" id="create-an-hypergraph">
@@ -197,7 +197,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;example.hg&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>This assigns a hypergraph instance to <code class="docutils literal notranslate"><span class="pre">hg</span></code>, which is physically stored as ‘example.hg’. If this hypergraph already exists, it is simply opened. If it does not exist, and empty one is created.</p>
+<p>This assigns a hypergraph instance to <code class="docutils literal notranslate"><span class="pre">hg</span></code>, which is physically stored as ‘example.hg’. If this hypergraph already exists, it is simply opened. If it does not exist, an empty one is created.</p>
 </div>
 <div class="section" id="parse-sentence-and-add-hyperedge-to-hypergraph">
 <h2>Parse sentence and add hyperedge to hypergraph<a class="headerlink" href="#parse-sentence-and-add-hyperedge-to-hypergraph" title="Permalink to this headline">¶</a></h2>
@@ -215,7 +215,7 @@
 </div>
 <div class="section" id="iterate-through-all-edges">
 <h2>Iterate through all edges<a class="headerlink" href="#iterate-through-all-edges" title="Permalink to this headline">¶</a></h2>
-<p>Hyoergraph objects include the function <code class="docutils literal notranslate"><span class="pre">all()</span></code>, which returns an iterator that can be used to transverse all the hyperedges contained in the hypergraph. Let’s see and example, in this case assuming that we are in a notebook environment:</p>
+<p>Hyoergraph objects include the function <code class="docutils literal notranslate"><span class="pre">all()</span></code>, which returns an iterator that can be used to transverse all the hyperedges contained in the hypergraph. Let’s see an example, in this case assuming that we are in a notebook environment:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
     <span class="n">show</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;oneline&#39;</span><span class="p">)</span>
 </pre></div>
@@ -251,7 +251,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">edge_iterator</span> <span class="o">=</span> <span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>For example, with the current hypergraph, the executing the below code would produce the shown result:</p>
+<p>For example, with the current hypergraph, executing the below code would produce the shown result:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># &#39;...&#39; at the end indicates that the edge may have an arbitrary number of extra entities</span>
 <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;((is/av.|f--3s-/en playing/pd.so.|pg----/en) ...)&#39;</span><span class="p">):</span>
     <span class="n">show</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;oneline&#39;</span><span class="p">)</span>

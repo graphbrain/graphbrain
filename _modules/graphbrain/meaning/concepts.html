@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>graphbrain.meaning.concepts &mdash; GraphBrain 0.3.1 documentation</title>
+  <title>graphbrain.meaning.concepts &mdash; GraphBrain 0.4.0 documentation</title>
   
 
   
@@ -23,10 +23,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -183,6 +183,17 @@
     <span class="sd">&quot;&quot;&quot;Check if the concept either is a proper edge, or contains one.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">edge</span><span class="o">.</span><span class="n">type</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;cp&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">subedge</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="k">if</span> <span class="n">has_proper_concept</span><span class="p">(</span><span class="n">subedge</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="has_common_or_proper_concept"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.meaning.concepts.has_common_or_proper_concept">[docs]</a><span class="k">def</span> <span class="nf">has_common_or_proper_concept</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check if the concept either is a common/proper edge, or contains one.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">edge</span><span class="o">.</span><span class="n">type</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;cp&#39;</span> <span class="ow">or</span> <span class="n">edge</span><span class="o">.</span><span class="n">type</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;cc&#39;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">subedge</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
             <span class="k">if</span> <span class="n">has_proper_concept</span><span class="p">(</span><span class="n">subedge</span><span class="p">):</span>
