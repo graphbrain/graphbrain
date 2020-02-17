@@ -30,6 +30,17 @@ def has_proper_concept(edge):
         return False
 
 
+def has_common_or_proper_concept(edge):
+    """Check if the concept either is a common/proper edge, or contains one."""
+    if edge.is_atom():
+        return edge.type()[:2] == 'cp' or edge.type()[:2] == 'cc'
+    else:
+        for subedge in edge[1:]:
+            if has_proper_concept(subedge):
+                return True
+        return False
+
+
 def all_concepts(edge):
     """Recursively search for all concepts contained in the edge, returning
     a set that can also contain itself."""

@@ -5,6 +5,7 @@ import spacy
 import neuralcoref
 from graphbrain import *
 import graphbrain.constants as const
+from graphbrain.meaning.concepts import has_common_or_proper_concept
 from .parser import Parser
 
 
@@ -645,6 +646,9 @@ class AlphaBeta(Parser):
                 animacy = self.atom_animacy(edge)
                 if animacy is not None:
                     animacy_cnt[animacy] += 1
+            if edge != main_edge and has_common_or_proper_concept(edge):
+                is_edge = hedge((const.is_pred, main_edge, edge))
+                results.add(is_edge)
 
         gender_top = gender_cnt.most_common(2)
         if len(gender_top) == 1 or (len(gender_top) == 2 and

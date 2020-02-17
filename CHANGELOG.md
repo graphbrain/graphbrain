@@ -5,9 +5,11 @@
 - Coreference resolution in the parser.
 - atom_gender(), atom_number(), atom_person(), atom_animacy() in parsers.
 - Coreference inference: gender, number and animacy.
+- Coreference inference:'X is Y' relationships.
+- Function meaning.concepts.has_common_or_proper_concept(edge).
 
 ### Changed
-- parse() now returns a dictionary that can include inferred edges.
+- parse() now returns a dictionary that includes inferred edges.
 
 ### Removed
 
