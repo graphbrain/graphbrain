@@ -34,7 +34,7 @@ Team
          </td>
       </tr>
       <tr>
-         <td><img src="_static/authors/chih-chun.jpg" width="200px" height="200px" /></td>
+         <td><img src="_static/authors/yael-stein.jpg" width="200px" height="200px" /></td>
          <td>
             <strong>Yael Stein</strong> <br />
             Web Developer, former journalist<br />
