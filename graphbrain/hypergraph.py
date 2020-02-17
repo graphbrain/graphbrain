@@ -68,18 +68,20 @@ class Hypergraph(object):
         """Checks if the given edge exists."""
         return self._exists(hedge(edge))
 
-    def add(self, edge, primary=True):
+    def add(self, edge, primary=True, count=False):
         """Adds an edge if it does not exist yet, returns same edge.
         All children are recursively added as non-primary edge, for
         indexing purposes.
 
         Edges can be passed in both Hyperedge or string format.
 
-        Keyword argument:
+        Keyword arguments:
         primary -- edge is primary, meaning, for example, that it counts
         towards degrees. Non-primary edges are used for indexing purposes,
         for example to make it easy to find the subedges contained in primary
         edges when performing queries.
+        count -- an integer counter attribute is added to the edge. If the
+        edge already exists, the counter is incremented.
         """
         if isinstance(edge, Hyperedge):
             if edge.is_atom():
@@ -89,7 +91,13 @@ class Hypergraph(object):
                 for child in edge:
                     self.add(child, primary=False)
                 # add entity itself
-                return self._add(edge, primary=primary)
+                self._add(edge, primary=primary)
+
+                # increment counter if requested
+                if count:
+                    self.inc_attribute(edge, 'count')
+
+                return edge
         else:
             return self.add(hedge(edge), primary=primary)
 
@@ -200,7 +208,9 @@ class Hypergraph(object):
         return self._set_attribute(hedge(edge), attribute, value)
 
     def inc_attribute(self, edge, attribute):
-        """Increments an attribute of an entity."""
+        """Increments an attribute of an entity, sets initial value to 1
+        if attribute does not exist.
+        """
         return self._inc_attribute(hedge(edge), attribute)
 
     def dec_attribute(self, edge, attribute):

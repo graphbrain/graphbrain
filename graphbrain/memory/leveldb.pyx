@@ -289,8 +289,11 @@ class LevelDB(Hypergraph):
         """Increments an attribute of an edge."""
         if self._exists_key(key):
             attributes = self._attribute_key(key)
-            cur_value = int(attributes[attribute])
-            attributes[attribute] = cur_value + 1
+            if attribute in attributes:
+                cur_value = int(attributes[attribute])
+                attributes[attribute] = cur_value + 1
+            else:
+                attributes[attribute] = 1
             self._add_key(key, attributes)
             return True
         else:

@@ -142,6 +142,15 @@ class TestHypergraph(unittest.TestCase):
         self.assertFalse(self.hg.exists(hedge('(src graphbrain/1 '
                                               '(size graphbrain/1 7))')))
 
+    # test add with count=True
+    def test_add_count(self):
+        self.hg.destroy()
+        edge = hedge('(is/pd graphbrain/cp great/c)')
+        self.hg.add(edge, count=True)
+        self.assertEqual(self.hg.get_int_attribute(edge, 'count'), 1)
+        self.hg.add(edge, count=True)
+        self.assertEqual(self.hg.get_int_attribute(edge, 'count'), 2)
+
     def test_search(self):
         self.hg.destroy()
         self.hg.add('(is/pd graphbrain/cp great/c)')
@@ -362,6 +371,17 @@ class TestHypergraph(unittest.TestCase):
         self.hg.set_attribute(edge, 'label', '{"abc": "defg", "": 23}')
         self.assertEqual(self.hg.get_str_attribute(edge, 'label'),
                          '{"abc": "defg", "": 23}')
+
+    # increment attribute that does not exist yet
+    def test_inc_attributes_does_not_exist(self):
+        self.hg.destroy()
+        edge = hedge('(is graphbrain/1 great/1)')
+        self.hg.add(edge)
+        self.assertEqual(self.hg.get_int_attribute(edge, 'foo'), None)
+        self.hg.inc_attribute(edge, 'foo')
+        self.assertEqual(self.hg.get_int_attribute(edge, 'foo'), 1)
+        self.hg.inc_attribute(edge, 'foo')
+        self.assertEqual(self.hg.get_int_attribute(edge, 'foo'), 2)
 
     def test_degrees(self):
         self.hg.destroy()
