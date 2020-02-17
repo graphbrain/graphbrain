@@ -34,6 +34,15 @@ Team
          </td>
       </tr>
       <tr>
+         <td><img src="_static/authors/chih-chun.jpg" width="200px" height="200px" /></td>
+         <td>
+            <strong>Yael Stein</strong> <br />
+            Web Developer, former journalist<br />
+            <br />
+            <a href="https://www.linkedin.com/in/yael-stein">https://www.linkedin.com/in/yael-stein</a>
+         </td>
+      </tr>
+      <tr>
          <td><img src="_static/authors/kexinren.jpg" width="200px" height="200px" /></td>
          <td>
             <strong>Kexin Ren</strong> <br />
