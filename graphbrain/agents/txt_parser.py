@@ -34,14 +34,15 @@ class TxtParser(Agent):
         if not self.sequence:
             raise RuntimeError('Sequence name must be specified.')
 
-        self.parser = create_parser(name=self.lang, lemmas=True)
+        self.parser = create_parser(
+            name=self.lang, lemmas=True, resolve_corefs=True)
 
     def input_file(self, file_name):
         pos = 0
         for paragraph in paragraphs(file_name):
             parse_results = self.parser.parse(paragraph)
             for parse in parse_results['parses']:
-                main_edge = parse['main_edge']
+                main_edge = parse['resolved_corefs']
 
                 # add main edge
                 if main_edge:
@@ -50,11 +51,15 @@ class TxtParser(Agent):
                     pos += 1
 
                     # attach text to edge
+                    print('{}\n{}\n'.format(parse['text'], main_edge.to_str()))
                     self.hg.set_attribute(main_edge, 'text', parse['text'])
 
                     # add extra edges
                     for edge in parse['extra_edges']:
                         self.add(edge)
+            for edge in parse_results['inferred_edges']:
+                print('inferred edge: {}'.format(edge.to_str()))
+                self.add(edge, count=True)
 
     def report(self):
         rep_str = ('edges found: {}'.format(self.edges))

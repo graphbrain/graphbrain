@@ -51,13 +51,15 @@ class Agent(object):
         self.edges_added = 0
         self.edges_existed = 0
 
-    def add(self, edge, primary=True):
+    def add(self, edge, primary=True, count=False):
         """Tell agent to add this edge to the hypergraph."""
         if self.hg.exists(edge):
             self.edges_existed += 1
+            if count:
+                return self.hg.add(edge, primary=primary, count=True)
         else:
             self.edges_added += 1
-            return self.hg.add(edge, primary=primary)
+            return self.hg.add(edge, primary=primary, count=count)
 
     def input(self):
         """Input to the agent all the edges corresponding to its current

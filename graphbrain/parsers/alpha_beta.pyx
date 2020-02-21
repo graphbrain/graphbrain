@@ -603,7 +603,8 @@ class AlphaBeta(Parser):
     def _find_coref_clusters(self, edge):
         clusters = set()
         if edge.is_atom():
-            if edge.parts()[2] == '.':
+            parts = edge.parts()
+            if len(parts) > 2 and parts[2] == '.':
                 return clusters
             if edge in self.atom2token:
                 token = self.atom2token[edge]
@@ -622,8 +623,9 @@ class AlphaBeta(Parser):
     def _assign_to_coref(self, edge):
         clusters = self._find_coref_clusters(edge)
         if len(clusters) > 1:
-            for subedge in edge:
-                self._assign_to_coref(subedge)
+            if not edge.is_atom():
+                for subedge in edge:
+                    self._assign_to_coref(subedge)
         else:
             for cluster in clusters:
                 if cluster is not None:
@@ -648,7 +650,7 @@ class AlphaBeta(Parser):
                     animacy_cnt[animacy] += 1
             if edge != main_edge and has_common_or_proper_concept(edge):
                 is_edge = hedge((const.is_pred, main_edge, edge))
-                results.add(is_edge)
+                results.append(is_edge)
 
         gender_top = gender_cnt.most_common(2)
         if len(gender_top) == 1 or (len(gender_top) == 2 and
@@ -671,7 +673,9 @@ class AlphaBeta(Parser):
         return results
 
     def _resolve_corefs_edge(self, edge):
-        if edge in self.edge2coref:
+        if edge is None:
+            return None
+        elif edge in self.edge2coref:
             return self.edge2coref[edge]
         elif edge.is_atom():
             return edge
@@ -686,9 +690,10 @@ class AlphaBeta(Parser):
             return hedge([self._resolve_corefs_edge(subedge)
                           for subedge in edge])
 
-    def _resolve_corefs(self, parses):
-        for parse in parses:
-            self._assign_to_coref(parse['main_edge'])
+    def _resolve_corefs(self, parse_results):
+        for parse in parse_results['parses']:
+            if parse['main_edge'] is not None:
+                self._assign_to_coref(parse['main_edge'])
 
         inferred_edges = []
 
@@ -703,8 +708,8 @@ class AlphaBeta(Parser):
                 inferred_edges += self._coref_inferences(
                     best_concept, self.coref_clusters[cluster])
 
-        for parse in parses:
+        for parse in parse_results['parses']:
             parse['resolved_corefs'] = self._resolve_corefs_edge(
                 parse['main_edge'])
 
-        parse['inferred_edges'] = inferred_edges
+        parse_results['inferred_edges'] = inferred_edges

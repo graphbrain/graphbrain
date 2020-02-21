@@ -40,10 +40,10 @@ class Parser(object):
         -> text: the string of natural language text corresponding to the
         main_edge, i.e.: the sentence itself.
         """
-        parses = self._parse(text)
+        parse_results = self._parse(text)
         if self.resolve_corefs:
-            self._resolve_corefs(parses)
-        return parses
+            self._resolve_corefs(parse_results)
+        return parse_results
 
     def atom_gender(self, atom):
         raise NotImplementedError()
@@ -72,7 +72,7 @@ class Parser(object):
     def _parse(self, text):
         raise NotImplementedError()
 
-    def _resolve_corefs(self, parses):
+    def _resolve_corefs(self, parse_results):
         # do nothing if not implemented in derived classes
-        for parse in parses:
+        for parse in parse_results['parses']:
             parse['resolved_corefs'] = parse['main_edge']
