@@ -34,7 +34,8 @@ class RedditParser(Agent):
         return set()
 
     def start(self):
-        self.parser = create_parser(name='en', lemmas=True)
+        self.parser = create_parser(
+            name='en', lemmas=True, resolve_corefs=True)
         self.titles_parsed = 0
         self.titles_added = 0
 
