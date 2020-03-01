@@ -46,7 +46,7 @@ class RedditParser(Agent):
         for part in parts:
             parse_results = self.parser.parse(part)
             for parse in parse_results['parses']:
-                main_edge = parse['main_edge']
+                main_edge = parse['resolved_corefs']
 
                 # add main edge
                 if main_edge:
@@ -64,6 +64,8 @@ class RedditParser(Agent):
                         title_edge.append(main_edge)
                     else:
                         tags.append(main_edge)
+            for edge in parse_results['inferred_edges']:
+                self.add(edge, count=True)
 
         if len(title_edge) > 2:
             # add title edge
