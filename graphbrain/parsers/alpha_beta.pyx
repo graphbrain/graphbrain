@@ -40,6 +40,13 @@ def nest_predicate(inner, outer, before):
         return hedge(((outer, inner[0]),) + inner[1:])
 
 
+def enclose(connector, edge):
+    if edge.is_atom() or edge[0].type() != 'b+':
+        return hedge((connector, edge))
+    else:
+        return hedge((edge[0], enclose(connector, edge[1])) + edge[2:])
+
+
 # example:
 # applying (and/b+ bank/cm (credit/cn.s card/cn.s)) to records/cn.p
 # yields:
@@ -441,12 +448,18 @@ class AlphaBeta(Parser):
                             entity = _apply_aux_concept_list_to_concept(child,
                                                                         entity)
                         elif entity.connector_type()[0] == 'c':
-                            logging.debug('choice: 3')
                             # NEST
-                            new_child = child
-                            if len(child) > 2:
-                                new_child = hedge((child[0], child[1:]))
-                            entity = entity.nest(new_child, pos)
+                            if len(child) == 2:
+                                logging.debug('choice: 3a')
+                                new_child = child
+                                if len(child) > 2:
+                                    new_child = hedge((child[0], child[1:]))
+                                entity = entity.nest(new_child, pos)
+                            # SEQUENCE
+                            else:
+                                logging.debug('choice: 3b')
+                                entity = entity.sequence(child, pos,
+                                                         flat=False)
                         else:
                             logging.debug('choice: 4a')
                             # NEST AROUND ORIGINAL ATOM
@@ -525,7 +538,7 @@ class AlphaBeta(Parser):
             elif child_type[0] in {'m', 'x', 't'}:
                 logging.debug('choice: 16')
                 # ?
-                entity = hedge((child, entity))
+                entity = enclose(child, entity)
             elif child_type[0] == 'a':
                 logging.debug('choice: 17')
                 # NEST PREDICATE

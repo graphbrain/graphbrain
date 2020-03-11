@@ -1,7 +1,7 @@
 Satellites from NASA and other agencies have been tracking sea ice changes since 1979.
 ((have/av.|f-----/en (been/av.<pf----/en tracking/pd.sox.|pg----/en)) (from/br.ma/en satellites/cc.p/en (and/b+/en nasa/cp.s/en (other/ma/en agencies/cc.p/en))) (+/b.aam/. sea/cc.s/en ice/cc.s/en changes/cc.p/en) (since/tt/en 1979/c#/en))
 The algorithm can play both black and white.
-((can/am/en play/pd.so.-i-----/en) (the/md/en algorithm/cc.s/en) (both/md/en (and/b+/en black/ca/en white/ca/en)))
+((can/am/en play/pd.so.-i-----/en) (the/md/en algorithm/cc.s/en) (and/b+/en (both/md/en black/ca/en) white/ca/en))
 Britain's hopes of a trade deal with America just suffered a big blow.
 ((just/a/en suffered/pd.so.<f-----/en) (of/br.ma/en ('s/bp.am/en britain/cp.s/en hopes/cc.p/en) (a/md/en (with/br.ma/en (+/b.am/. trade/cc.s/en deal/cc.s/en) america/cp.s/en))) (a/md/en (big/ma/en blow/cc.s/en)))
 My name is Telmo.
@@ -41,7 +41,7 @@ Due to its location in the European Plain, Berlin is influenced by a temperate s
 Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan.
 (is/pd.sc.|f--3s-/en (:/b/. (+/b.am/. koikuchi/ca/en shoyu/cc.s/en) ((best/as/en known/pc.x.<pf----/en) (as/t/en (+/b.am/. soy/cc.s/en sauce/cc.s/en)))) (the/md/en (of/br.ma/en mother/cc.s/en (all/md/en (in/br.ma/en sauces/cc.p/en japan/cp.s/en)))))
 Carl Gustav Jung was a Swiss psychiatrist and psychoanalyst who founded analytical psychology.
-(was/pd.sc.<f-----/en (+/b.aam/. carl/cp.s/en gustav/cp.s/en jung/cp.s/en) (:/b/. (a/md/en (swiss/ma/en (and/b+/en psychiatrist/cc.s/en psychoanalyst/cc.s/en))) (founded/pr.so.<f-----/en who/cw/en (analytical/ma/en psychology/cc.s/en))))
+(was/pd.sc.<f-----/en (+/b.aam/. carl/cp.s/en gustav/cp.s/en jung/cp.s/en) (:/b/. (and/b+/en (a/md/en (swiss/ma/en psychiatrist/cc.s/en)) psychoanalyst/cc.s/en) (founded/pr.so.<f-----/en who/cw/en (analytical/ma/en psychology/cc.s/en))))
 As a notable research scientist based at the famous Burghölzli hospital, under Eugen Bleuler, he came to the attention of the Viennese founder of psychoanalysis, Sigmund Freud.
 (came/pd.xxsx.<f-----/en (as/t/en (:/b/. (a/md/en (notable/ma/en (+/b.am/. research/cc.s/en scientist/cc.s/en))) (based/pc.x.<pf----/en (at/t/en (the/md/en (famous/ma/en (+/b.am/. burghölzli/cp.s/en hospital/cc.s/en))))))) (under/t/en (+/b.am/. eugen/cp.s/en bleuler/cp.s/en)) he/ci/en (to/t/en (the/md/en (of/br.ma/en attention/cc.s/en (:/b/. (the/md/en (viennese/ma/en (of/br.ma/en founder/cc.s/en psychoanalysis/cc.s/en))) (+/b.am/. sigmund/cp.s/en freud/cp.s/en))))))
 The two men conducted a lengthy correspondence and collaborated on an initially joint vision of human psychology.
@@ -61,7 +61,7 @@ In September 2016, we learned that the University of New Hampshire was going to 
 An anarchist takes on Big Pharma by teaching patients to make their own meds
 ((on/ap/en takes/pd.sox.|f--3s-/en) (an/md/en anarchist/cc.s/en) (+/b.am/. big/cp.s/en pharma/cp.s/en) (by/t/en (teaching/pc.or.|pg----/en patients/cc.p/en ((to/ai/en make/pc.o.-i-----/en) (their/mp/en (own/ma/en meds/cc.p/en))))))
 That seems both super dangerous, and super awesome.
-(seems/pd.s?.|f--3s-/en that/cd/en (both/md/en (super/m/en (and/b+/en dangerous/ca/en (super/m/en awesome/ca/en)))))
+(seems/pd.s?.|f--3s-/en that/cd/en (and/b+/en (both/md/en (super/m/en dangerous/ca/en)) (super/m/en awesome/ca/en)))
 Briton dies in fall from Indian temple while taking selfie
 (dies/pd.sxxx.|f--3s-/en briton/cp.s/en (in/t/en fall/cc.s/en) (from/t/en (indian/ma/en temple/cc.s/en)) (while/x/en (taking/pd.o.|pg----/en selfie/cc.s/en)))
 I hate everyone in the White House!
@@ -102,3 +102,5 @@ A pretty touch screen is ALL the iPhone has to offer.
 (is/pd.sr.|f--3s-/en (a/md/en (pretty/ma/en (+/b.am/. touch/cc.s/en screen/cc.s/en))) (has/pr.sr.|f--3s-/en (all/m/en (the/md/en iphone/cp.s/en)) (to/ai/en offer/pc..-i-----/en)))
 The application must include bank and credit card records.
 ((must/am/en include/pd.so.-i-----/en) (the/md/en application/cc.s/en) (and/b+/en (+/b.am bank/cm/en records/cc.p/en) (+/b.am (+/b.am/. credit/cc.s/en card/cc.s/en) records/cc.p/en)))
+Berlin is the capital city of Germany and one of its states.
+(is/pd.sc.|f--3s-/en berlin/cp.s/en (and/b+/en (the/md/en (of/br.ma/en (+/b.am/. capital/cc.s/en city/cc.s/en) germany/cp.s/en)) (of/br.ma/en one/c#/en (its/mp/en states/cc.p/en))))
