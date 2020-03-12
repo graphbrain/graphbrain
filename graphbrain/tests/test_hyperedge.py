@@ -501,6 +501,79 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(edge.insert_argrole('s', 100).to_str(),
                          'xxx')
 
+    def test_replace_argroles_edge(self):
+        edge = hedge('(s/bp.am x/c y/c)')
+        self.assertEqual(edge.replace_argroles('ma').to_str(),
+                         '(s/bp.ma x/c y/c)')
+        edge = hedge('(come/pd.sx.-i----/en you/c here/c)')
+        self.assertEqual(edge.replace_argroles('scx').to_str(),
+                         '(come/pd.scx.-i----/en you/c here/c)')
+        edge = hedge('(come/pd/en you/c here/c)')
+        self.assertEqual(edge.replace_argroles('scx').to_str(),
+                         '(come/pd.scx/en you/c here/c)')
+        edge = hedge('(come you/c here/c)')
+        self.assertEqual(edge.replace_argroles('scx').to_str(),
+                         '(come you/c here/c)')
+
+    def test_insert_argrole_edge(self):
+        edge = hedge('(s/bp.am x/c y/c)')
+        self.assertEqual(
+            edge.insert_argrole('m', 0).to_str(), '(s/bp.mam x/c y/c)')
+        edge = hedge('(s/bp.am x/c y/c)')
+        self.assertEqual(
+            edge.insert_argrole('m', 1).to_str(), '(s/bp.amm x/c y/c)')
+        edge = hedge('(s/bp.am x/c y/c)')
+        self.assertEqual(
+            edge.insert_argrole('m', 2).to_str(), '(s/bp.amm x/c y/c)')
+        edge = hedge('(s/bp.am x/c y/c)')
+        self.assertEqual(
+            edge.insert_argrole('m', 3).to_str(), '(s/bp.amm x/c y/c)')
+        edge = hedge('(come/pd.sx.-i----/en you/c here/c)')
+        self.assertEqual(edge.insert_argrole('x', 0).to_str(),
+                         '(come/pd.xsx.-i----/en you/c here/c)')
+        edge = hedge('(come/pd.sx.-i----/en you/c here/c)')
+        self.assertEqual(edge.insert_argrole('x', 1).to_str(),
+                         '(come/pd.sxx.-i----/en you/c here/c)')
+        edge = hedge('(come/pd.sx.-i----/en you/c here/c)')
+        self.assertEqual(edge.insert_argrole('x', 2).to_str(),
+                         '(come/pd.sxx.-i----/en you/c here/c)')
+        edge = hedge('(come/pd.sx.-i----/en you/c here/c)')
+        self.assertEqual(edge.insert_argrole('x', 100).to_str(),
+                         '(come/pd.sxx.-i----/en you/c here/c)')
+        edge = hedge('(come/pd/en you/c here/c)')
+        self.assertEqual(edge.insert_argrole('s', 0).to_str(),
+                         '(come/pd.s/en you/c here/c)')
+        edge = hedge('(come/pd/en you/c here/c)')
+        self.assertEqual(edge.insert_argrole('s', 1).to_str(),
+                         '(come/pd.s/en you/c here/c)')
+        edge = hedge('(come/pd/en you/c here/c)')
+        self.assertEqual(edge.insert_argrole('s', 100).to_str(),
+                         '(come/pd.s/en you/c here/c)')
+        edge = hedge('(come you/c here/c)')
+        self.assertEqual(edge.insert_argrole('s', 0).to_str(),
+                         '(come you/c here/c)')
+        edge = hedge('(come you/c here/c)')
+        self.assertEqual(edge.insert_argrole('s', 1).to_str(),
+                         '(come you/c here/c)')
+        edge = hedge('(come you/c here/c)')
+        self.assertEqual(edge.insert_argrole('s', 100).to_str(),
+                         '(come you/c here/c)')
+
+    def test_insert_edge_with_argrole(self):
+        edge = hedge('(is/pd.sc/en sky/c blue/c)')
+        self.assertEqual(
+            edge.insert_edge_with_argrole(hedge('today/c'), 'x', 0),
+            hedge('(is/pd.xsc/en today/c sky/c blue/c)'))
+        self.assertEqual(
+            edge.insert_edge_with_argrole(hedge('today/c'), 'x', 1),
+            hedge('(is/pd.sxc/en sky/c today/c blue/c)'))
+        self.assertEqual(
+            edge.insert_edge_with_argrole(hedge('today/c'), 'x', 2),
+            hedge('(is/pd.scx/en sky/c blue/c today/c)'))
+        self.assertEqual(
+            edge.insert_edge_with_argrole(hedge('today/c'), 'x', 100),
+            hedge('(is/pd.scx/en sky/c blue/c today/c)'))
+
     def test_edges_with_argrole(self):
         edge_str = ("((have/av.|f----/en (been/av.<pf---/en "
                     "tracking/pd.sox.|pg---/en)) (from/br.ma/en "

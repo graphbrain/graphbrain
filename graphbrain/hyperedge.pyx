@@ -527,6 +527,41 @@ class Hyperedge(tuple):
             return ''
         return self[1].argroles()
 
+    def replace_argroles(self, argroles):
+        """Returns an edge with the argroles of the connector atom replaced
+        with the provided string.
+        Returns same edge if the atom does not contain a role part."""
+        st = self.type()[0]
+        if st in {'c', 'r'}:
+            new_edge = [self[0].replace_argroles(argroles)]
+            new_edge += self[1:]
+            return Hyperedge(new_edge)
+        elif st == 'p':
+            new_edge = [self[0], self[1].replace_argroles(argroles)]
+            return Hyperedge(new_edge)
+        return self
+
+    def insert_argrole(self, argrole, pos):
+        """Returns an edge with the given argrole inserted at the specified
+        position in the argroles of the connector atom.
+        Same restrictions as in replace_argroles() apply."""
+        st = self.type()[0]
+        if st in {'c', 'r'}:
+            new_edge = [self[0].insert_argrole(argrole, pos)]
+            new_edge += self[1:]
+            return Hyperedge(new_edge)
+        elif st == 'p':
+            new_edge = [self[0], self[1].insert_argrole(argrole, pos)]
+            return Hyperedge(new_edge)
+        return self
+
+    def insert_edge_with_argrole(self, edge, argrole, pos):
+        """Returns a new edge with the provided edge and its argroles inserted
+        at the specified position."""
+        new_edge = self.insert_argrole(argrole, pos)
+        new_edge = new_edge[:pos + 1] + (edge,) + new_edge[pos + 1:]
+        return Hyperedge(new_edge)
+
     def edges_with_argrole(self, argrole):
         """Returns the list of edges with the given argument role."""
 

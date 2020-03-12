@@ -8,8 +8,9 @@
 - Coreference inference:'X is Y' relationships.
 - Function meaning.concepts.has_common_or_proper_concept(edge).
 - Function hypergraph.add() now has optional 'count' parameter.
-- Function Atom.replace_argroles().
-- Function Atom.insert_argroles().
+- Function Hyperedge.replace_argroles().
+- Function Hyperedge.insert_argrole().
+- Function Hyperedge.insert_edge_with_argrole().
 
 ### Changed
 - parse() now returns a dictionary that includes inferred edges.
