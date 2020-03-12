@@ -789,6 +789,13 @@ class Atom(Hyperedge):
         parts = [parts[0], '.'.join(role)] + parts[2:]
         return Atom(('/'.join(parts),))
 
+    def insert_argrole(self, argrole, pos):
+        """Returns an atom with the given argrole inserted at the specified
+        position. Same restrictions as in replace_argroles() apply."""
+        argroles = self.argroles()
+        argroles = argroles[:pos] + argrole + argroles[pos:]
+        return self.replace_argroles(argroles)
+
     def edges_with_argrole(self, argrole):
         """Returns the list of edges with the given argument role"""
         return []
