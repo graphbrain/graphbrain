@@ -775,6 +775,20 @@ class Atom(Hyperedge):
             return ''
         return role[1]
 
+    def replace_argroles(self, argroles):
+        """Returns an atom with the argroles replaced with the provided string.
+        Returns same atom if the atom does not contain a role part."""
+        parts = self[0].split('/')
+        if len(parts) < 2:
+            return self
+        role = parts[1].split('.')
+        if len(role) < 2:
+            role.append(argroles)
+        else:
+            role[1] = argroles
+        parts = [parts[0], '.'.join(role)] + parts[2:]
+        return Atom(('/'.join(parts),))
+
     def edges_with_argrole(self, argrole):
         """Returns the list of edges with the given argument role"""
         return []

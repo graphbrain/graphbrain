@@ -448,6 +448,19 @@ class TestHyperedge(unittest.TestCase):
         edge = hedge('(looks/pd.sc.|f--3s she/ci (very/m beautiful/ca))')
         self.assertEqual(edge.argroles(), '')
 
+    def test_replace_argroles_atom(self):
+        edge = hedge('s/bp.am')
+        self.assertEqual(edge.replace_argroles('ma').to_str(), 's/bp.ma')
+        edge = hedge('come/pd.sx.-i----/en')
+        self.assertEqual(edge.replace_argroles('scx').to_str(),
+                         'come/pd.scx.-i----/en')
+        edge = hedge('come/pd/en')
+        self.assertEqual(edge.replace_argroles('scx').to_str(),
+                         'come/pd.scx/en')
+        edge = hedge('xxx')
+        self.assertEqual(edge.replace_argroles('scx').to_str(),
+                         'xxx')
+
     def test_edges_with_argrole(self):
         edge_str = ("((have/av.|f----/en (been/av.<pf---/en "
                     "tracking/pd.sox.|pg---/en)) (from/br.ma/en "
