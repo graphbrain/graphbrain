@@ -47,7 +47,7 @@ As a notable research scientist based at the famous Burghölzli hospital, under 
 The two men conducted a lengthy correspondence and collaborated on an initially joint vision of human psychology.
 (and/pm/en (conducted/pd.so.<f-----/en (the/md/en (two/m#/en men/cc.p/en)) (a/md/en (lengthy/ma/en correspondence/cc.s/en))) (collaborated/pd.x.<f-----/en (on/t/en (an/md/en ((initially/w/en joint/ma/en) (of/br.ma/en vision/cc.s/en (human/ma/en psychology/cc.s/en)))))))
 Freud saw in the younger man the potential heir he had been seeking to carry on his "new science" of psychoanalysis.
-(saw/pd.sxo.<f-----/en freud/cp.s/en (in/t/en (the/md/en (younger/mc/en man/cc.s/en))) (:/b/. (the/md/en (potential/ma/en heir/cc.s/en)) ((had/av.<f-----/en (been/av.<pf----/en seeking/pr.sr.|pg----/en)) he/ci/en ((to/ai/en on/t/en) (carry/pc.o.-i-----/en (his/mp/en (new/ma/en (of/br.ma/en science/cc.s/en psychoanalysis/cc.s/en))))))))
+(saw/pd.sxo.<f-----/en freud/cp.s/en (in/t/en (the/md/en (younger/mc/en man/cc.s/en))) (:/b/. (the/md/en (potential/ma/en heir/cc.s/en)) ((had/av.<f-----/en (been/av.<pf----/en seeking/pr.sr.|pg----/en)) he/ci/en ((to/ai/en (on/ap/en carry/pc.o.-i-----/en)) (his/mp/en (new/ma/en (of/br.ma/en science/cc.s/en psychoanalysis/cc.s/en)))))))
 I will never stop laughing at this.
 ((will/am/en (never/an/en stop/pd.sr.-i-----/en)) i/ci/en (laughing/pc.x.|pg----/en (at/t/en this/cd/en)))
 Unknown to most, their brains are a battleground.

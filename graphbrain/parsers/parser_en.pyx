@@ -209,7 +209,10 @@ class ParserEN(AlphaBeta):
                 return 'mp'
         elif dep == 'prep':
             if head_type == 'p':
-                return 't'
+                if token.n_lefts + token.n_rights == 0:
+                    return 'a'
+                else:
+                    return 't'
             else:
                 return self._builder_type_and_subtype(token)
         elif dep == 'conj':
