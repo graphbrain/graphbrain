@@ -143,8 +143,8 @@ class ParserEN(AlphaBeta):
                 return 'p'
             else:
                 return self._concept_type_and_subtype(token)
-        elif dep in {'appos', 'attr', 'compound', 'dative', 'dep', 'dobj',
-                     'nsubj', 'nsubjpass', 'oprd', 'pobj', 'meta'}:
+        elif dep in {'appos', 'attr', 'dative', 'dep', 'dobj', 'nsubj',
+                     'nsubjpass', 'oprd', 'pobj', 'meta'}:
             return self._concept_type_and_subtype(token)
         elif dep in {'advcl', 'csubj', 'csubjpass', 'parataxis'}:
             return 'p'
@@ -166,7 +166,7 @@ class ParserEN(AlphaBeta):
             else:
                 return self._modifier_type_and_subtype(token)
         elif dep in {'aux', 'auxpass', 'expl', 'prt', 'quantmod'}:
-            if head_type == 'c':
+            if head_type in {'c', 'm'}:
                 return 'm'
             if token.n_lefts + token.n_rights == 0:
                 return 'a'
@@ -177,6 +177,11 @@ class ParserEN(AlphaBeta):
                 return self._concept_type_and_subtype(token)
             else:
                 return self._modifier_type_and_subtype(token)
+        if dep == 'compound':
+            if token.tag_ == 'CD':
+                return self._modifier_type_and_subtype(token)
+            else:
+                return self._concept_type_and_subtype(token)
         elif dep == 'cc':
             if head_type == 'p':
                 return 'pm'
