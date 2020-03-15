@@ -96,6 +96,7 @@ class AlphaBeta(Parser):
     def __init__(self, model_name, lemmas=False, resolve_corefs=False):
         super().__init__(lemmas=lemmas, resolve_corefs=resolve_corefs)
         self.atom2token = None
+        self.edge2text = None
         self.coref_clusters = None
         self.edge2coref = None
         self.cur_text = None
@@ -314,8 +315,11 @@ class AlphaBeta(Parser):
                     newparts = (triparts[0], 'tt')
                     if len(triparts) > 2:
                         newparts += tuple(triparts[2:])
-                    trigger = hedge('/'.join(newparts))
-                    entity = entity.replace_atom(trigger_atom, trigger)
+                    new_trigger = hedge('/'.join(newparts))
+                    if trigger_atom in self.atom2token:
+                        self.atom2token[new_trigger] =\
+                            self.atom2token[trigger_atom]
+                    entity = entity.replace_atom(trigger_atom, new_trigger)
                 return entity, False
             else:
                 return entity, temporal
@@ -396,6 +400,7 @@ class AlphaBeta(Parser):
                                                      args_string,
                                                      subparts[2])
                         new_pred = pred.replace_atom_part(1, new_part)
+                        self.atom2token[new_pred] = self.atom2token[pred]
                         new_entity = entity.replace_atom(pred, new_pred)
 
             new_args = [self._post_parse_token(subentity, token_dict)
@@ -566,7 +571,28 @@ class AlphaBeta(Parser):
             relative_to_concept.reverse()
             entity = hedge((':/b/.', entity) + tuple(relative_to_concept))
 
-        return self._post_parse_token(entity, token_dict), self.extra_edges
+        entity = self._post_parse_token(entity, token_dict)
+
+        return entity, self.extra_edges
+
+    def _edge_text(self, edge):
+        atoms = edge.atoms()
+        tokens = list(self.atom2token[atom]
+                      for atom in atoms
+                      if atom in self.atom2token)
+        tokens.sort(key=lambda token: token.i)
+        return ' '.join([token.text for token in tokens])
+
+    def _generate_edges_text(self, edge, edges_text=None):
+        if edges_text is None:
+            et = {}
+        else:
+            et = edges_text
+        et[edge] = self._edge_text(edge)
+        if not edge.is_atom():
+            for subedge in edge:
+                self._generate_edges_text(subedge, et)
+        return et
 
     def _parse_sentence(self, sent):
         try:
@@ -574,10 +600,14 @@ class AlphaBeta(Parser):
             main_edge, extra_edges = self._parse_token(sent.root)
             if main_edge:
                 main_edge, _ = self._post_process(main_edge)
+                edges_text = self._generate_edges_text(main_edge)
+            else:
+                edges_text = {}
 
             return {'main_edge': main_edge,
                     'extra_edges': extra_edges,
                     'text': str(sent).strip(),
+                    'edges_text': edges_text,
                     'spacy_sentence': sent}
         except Exception as e:
             logging.error('Caught exception: {} while parsing: "{}"'.format(
@@ -585,6 +615,7 @@ class AlphaBeta(Parser):
             return {'main_edge': None,
                     'extra_edges': [],
                     'text': '',
+                    'edges_text': {},
                     'spacy_sentence': None}
 
     def _parse(self, text):
@@ -601,6 +632,9 @@ class AlphaBeta(Parser):
 
         -> text: the string of natural language text corresponding to the
         main_edge, i.e.: the sentence itself.
+
+        -> edges_text: a dictionary of all edges and subedges to their
+        corresponding text.
 
         -> spacy_sentence: the spaCy structure representing the sentence
         enriched with NLP annotations.
@@ -724,5 +758,7 @@ class AlphaBeta(Parser):
         for parse in parse_results['parses']:
             parse['resolved_corefs'] = self._resolve_corefs_edge(
                 parse['main_edge'])
+            self._generate_edges_text(parse['resolved_corefs'],
+                                      parse['edges_text'])
 
         parse_results['inferred_edges'] = inferred_edges

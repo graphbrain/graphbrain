@@ -39,6 +39,9 @@ class Parser(object):
 
         -> text: the string of natural language text corresponding to the
         main_edge, i.e.: the sentence itself.
+
+        -> edges_text: a dictionary of all edges and subedges to their
+        corresponding text.
         """
         parse_results = self._parse(text)
         if self.resolve_corefs:

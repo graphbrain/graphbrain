@@ -331,15 +331,18 @@ class ParserEN(AlphaBeta):
 
     def _builder_arg_roles(self, edge):
         connector = edge[0]
+        new_connector = connector
         if connector.is_atom():
             ct = connector.type()
             if ct == 'br':
-                connector = connector.replace_atom_part(
+                new_connector = connector.replace_atom_part(
                     1, '{}.ma'.format(ct))
             elif ct == 'bp':
-                connector = connector.replace_atom_part(
+                new_connector = connector.replace_atom_part(
                     1, '{}.am'.format(ct))
-        return hedge((connector,) + edge[1:])
+        if connector in self.atom2token:
+            self.atom2token[new_connector] = self.atom2token[connector]
+        return hedge((new_connector,) + edge[1:])
 
     def _is_noun(self, token):
         return token.tag_[:2] == 'NN'
