@@ -2,6 +2,7 @@ import logging
 from graphbrain import *
 from .alpha_beta import AlphaBeta
 from .nlp import token2str
+from .text import UniqueAtom
 
 
 _female = {"she/ci/en", "her/ci/en", "herself/ci/en", "hers/ci/en",
@@ -318,7 +319,7 @@ class ParserEN(AlphaBeta):
 
     def _concept_role(self, concept):
         if concept.is_atom():
-            token = self.atom2token[concept]
+            token = self.atom2token[UniqueAtom(concept)]
             if token.dep_ == 'compound':
                 return 'a'
             else:
@@ -340,8 +341,9 @@ class ParserEN(AlphaBeta):
             elif ct == 'bp':
                 new_connector = connector.replace_atom_part(
                     1, '{}.am'.format(ct))
-        if connector in self.atom2token:
-            self.atom2token[new_connector] = self.atom2token[connector]
+        if UniqueAtom(connector) in self.atom2token:
+            self.atom2token[UniqueAtom(new_connector)] =\
+                self.atom2token[UniqueAtom(connector)]
         return hedge((new_connector,) + edge[1:])
 
     def _is_noun(self, token):

@@ -7,6 +7,7 @@ from graphbrain import *
 import graphbrain.constants as const
 from graphbrain.meaning.concepts import has_common_or_proper_concept
 from .parser import Parser
+from .text import UniqueAtom
 
 
 def insert_after_predicate(targ, orig):
@@ -176,7 +177,7 @@ class AlphaBeta(Parser):
         else:
             atom = build_atom(text, et, self.lang)
 
-        self.atom2token[atom] = token
+        self.atom2token[UniqueAtom(atom)] = token
         return atom
 
     def _build_atom_predicate(self, token, ent_type, last_token):
@@ -242,9 +243,9 @@ class AlphaBeta(Parser):
 
     def _post_process(self, entity):
         if entity.is_atom():
-            token = self.atom2token.get(entity)
+            token = self.atom2token.get(UniqueAtom(entity))
             if token:
-                ent_type = self.atom2token[entity].ent_type_
+                ent_type = self.atom2token[UniqueAtom(entity)].ent_type_
                 temporal = ent_type in {'DATE', 'TIME'}
             else:
                 temporal = False
@@ -316,9 +317,9 @@ class AlphaBeta(Parser):
                     if len(triparts) > 2:
                         newparts += tuple(triparts[2:])
                     new_trigger = hedge('/'.join(newparts))
-                    if trigger_atom in self.atom2token:
-                        self.atom2token[new_trigger] =\
-                            self.atom2token[trigger_atom]
+                    if UniqueAtom(trigger_atom) in self.atom2token:
+                        self.atom2token[UniqueAtom(new_trigger)] =\
+                            self.atom2token[UniqueAtom(trigger_atom)]
                     entity = entity.replace_atom(trigger_atom, new_trigger)
                 return entity, False
             else:
@@ -400,7 +401,8 @@ class AlphaBeta(Parser):
                                                      args_string,
                                                      subparts[2])
                         new_pred = pred.replace_atom_part(1, new_part)
-                        self.atom2token[new_pred] = self.atom2token[pred]
+                        self.atom2token[UniqueAtom(new_pred)] =\
+                            self.atom2token[UniqueAtom(pred)]
                         new_entity = entity.replace_atom(pred, new_pred)
 
             new_args = [self._post_parse_token(subentity, token_dict)
@@ -575,24 +577,16 @@ class AlphaBeta(Parser):
 
         return entity, self.extra_edges
 
-    def _edge_text(self, edge):
-        atoms = edge.atoms()
-        tokens = list(self.atom2token[atom]
-                      for atom in atoms
-                      if atom in self.atom2token)
-        tokens.sort(key=lambda token: token.i)
-        return ' '.join([token.text for token in tokens])
-
-    def _generate_edges_text(self, edge, edges_text=None):
-        if edges_text is None:
-            et = {}
-        else:
-            et = edges_text
-        et[edge] = self._edge_text(edge)
-        if not edge.is_atom():
-            for subedge in edge:
-                self._generate_edges_text(subedge, et)
-        return et
+    def _generate_atom2word(self, edge):
+        atom2word = {}
+        atoms = edge.all_atoms()
+        for atom in atoms:
+            uatom = UniqueAtom(atom)
+            if uatom in self.atom2token:
+                token = self.atom2token[uatom]
+                word = (token.text, token.i)
+                atom2word[uatom] = word
+        return atom2word
 
     def _parse_sentence(self, sent):
         try:
@@ -600,14 +594,14 @@ class AlphaBeta(Parser):
             main_edge, extra_edges = self._parse_token(sent.root)
             if main_edge:
                 main_edge, _ = self._post_process(main_edge)
-                edges_text = self._generate_edges_text(main_edge)
+                atom2word = self._generate_atom2word(main_edge)
             else:
-                edges_text = {}
+                atom2word = {}
 
             return {'main_edge': main_edge,
                     'extra_edges': extra_edges,
                     'text': str(sent).strip(),
-                    'edges_text': edges_text,
+                    'atom2word': atom2word,
                     'spacy_sentence': sent}
         except Exception as e:
             logging.error('Caught exception: {} while parsing: "{}"'.format(
@@ -615,7 +609,7 @@ class AlphaBeta(Parser):
             return {'main_edge': None,
                     'extra_edges': [],
                     'text': '',
-                    'edges_text': {},
+                    'atom2word': {},
                     'spacy_sentence': None}
 
     def _parse(self, text):
@@ -633,8 +627,7 @@ class AlphaBeta(Parser):
         -> text: the string of natural language text corresponding to the
         main_edge, i.e.: the sentence itself.
 
-        -> edges_text: a dictionary of all edges and subedges to their
-        corresponding text.
+        -> atom2word: TODO
 
         -> spacy_sentence: the spaCy structure representing the sentence
         enriched with NLP annotations.
@@ -653,8 +646,8 @@ class AlphaBeta(Parser):
             parts = edge.parts()
             if len(parts) > 2 and parts[2] == '.':
                 return clusters
-            if edge in self.atom2token:
-                token = self.atom2token[edge]
+            if UniqueAtom(edge) in self.atom2token:
+                token = self.atom2token[UniqueAtom(edge)]
                 clusters = set(token._.coref_clusters)
             if len(clusters) == 0:
                 return {None}

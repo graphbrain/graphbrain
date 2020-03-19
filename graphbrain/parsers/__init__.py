@@ -1,3 +1,4 @@
+from .text import edge_text
 from .nlp import print_tree
 from .parser_en import ParserEN
 from .parser_de import ParserDE

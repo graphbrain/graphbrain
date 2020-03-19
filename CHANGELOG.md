@@ -11,6 +11,7 @@
 - Function Hyperedge.replace_argroles().
 - Function Hyperedge.insert_argrole().
 - Function Hyperedge.insert_edge_with_argrole().
+- Function Hyperedge.all_atoms().
 
 ### Changed
 - parse() now returns a dictionary that includes inferred edges.

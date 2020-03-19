@@ -296,12 +296,33 @@ class Hyperedge(tuple):
         return ' '.join([item.label() for item in edge])
 
     def atoms(self):
-        """Returns set of atoms contained in edge."""
+        """Returns the set of atoms contained in the edge.
+
+        For example, consider the edge:
+        (the/md (of/br mayor/cc (the/md city/cs)))
+        in this case, edge.atoms() returns:
+        [the/md, of/br, mayor/cc, city/cs]
+        """
         atom_set = set()
         for item in self:
             for atom in item.atoms():
                 atom_set.add(atom)
         return atom_set
+
+    def all_atoms(self):
+        """Returns a list of all the atoms contained in the edge. Unlike
+        atoms(), which does not return repeated atoms, all_atoms() does
+        return repeated atoms if they are different objects.
+
+        For example, consider the edge:
+        (the/md (of/br mayor/cc (the/md city/cs)))
+        in this case, edge.all_atoms() returns:
+        [the/md, of/br, mayor/cc, the/md, city/cs]
+        """
+        atoms = []
+        for item in self:
+            atoms += item.all_atoms()
+        return atoms
 
     def depth(self):
         """Returns maximal depth of edge, an atom has depth 0."""
@@ -652,8 +673,26 @@ class Atom(Hyperedge):
         return self.root().replace('_', ' ')
 
     def atoms(self):
-        """Returns set of atoms contained in edge."""
+        """Returns the set of atoms contained in the edge.
+
+        For example, consider the edge:
+        (the/md (of/br mayor/cc (the/md city/cs)))
+        in this case, edge.atoms() returns:
+        [the/md, of/br, mayor/cc, city/cs]
+        """
         return {self}
+
+    def all_atoms(self):
+        """Returns a list of all the atoms contained in the edge. Unlike
+        atoms(), which does not return repeated atoms, all_atoms() does
+        return repeated atoms if they are different objects.
+
+        For example, consider the edge:
+        (the/md (of/br mayor/cc (the/md city/cs)))
+        in this case, edge.all_atoms() returns:
+        [the/md, of/br, mayor/cc, the/md, city/cs]
+        """
+        return [self]
 
     def depth(edge):
         """Returns maximal depth of edge, an atom has depth 0."""

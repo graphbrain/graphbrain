@@ -107,6 +107,25 @@ class TestHyperedge(unittest.TestCase):
              hedge('src'), hedge('graphbrain/2')})
         self.assertEqual(hedge('graphbrain/1').atoms(),
                          {hedge('graphbrain/1')})
+        edge = hedge('(the/md (of/br mayor/cc (the/md city/cs)))')
+        self.assertEqual(edge.atoms(),
+                         {hedge('the/md'), hedge('of/br'), hedge('mayor/cc'),
+                          hedge('city/cs')})
+
+    def test_all_atoms(self):
+        self.assertEqual(hedge('(is graphbrain/1 great/1)').all_atoms(),
+                         [hedge('is'), hedge('graphbrain/1'),
+                          hedge('great/1')])
+        self.assertEqual(
+            hedge('(src graphbrain/2 (is graphbrain/1 great/1))').all_atoms(),
+            [hedge('src'), hedge('graphbrain/2'), hedge('is'),
+             hedge('graphbrain/1'), hedge('great/1')])
+        self.assertEqual(hedge('graphbrain/1').all_atoms(),
+                         [hedge('graphbrain/1')])
+        edge = hedge('(the/md (of/br mayor/cc (the/md city/cs)))')
+        self.assertEqual(edge.all_atoms(),
+                         [hedge('the/md'), hedge('of/br'), hedge('mayor/cc'),
+                          hedge('the/md'), hedge('city/cs')])
 
     def test_depth(self):
         self.assertEqual(hedge('graphbrain/1').depth(), 0)
