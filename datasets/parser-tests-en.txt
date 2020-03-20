@@ -106,3 +106,5 @@ Berlin is the capital city of Germany and one of its states.
 (is/pd.sc.|f--3s-/en berlin/cp.s/en (and/b+/en (the/md/en (of/br.ma/en (+/b.am/. capital/cc.s/en city/cc.s/en) germany/cp.s/en)) (of/br.ma/en one/c#/en (its/mp/en states/cc.p/en))))
 The population of the planet is over 170 million people.
 (is/pd.sc.|f--3s-/en (the/md/en (of/br.ma/en population/cc.s/en (the/md/en planet/cc.s/en))) ((over/m/en (170/m#/en million/m#/en)) people/cc.p/en))
+He was given his name by his grandmother.
+((was/av.<f-----/en given/pd.poa.<pf----/en) he/ci/en (his/mp/en name/cc.s/en) (by/x/en (his/mp/en grandmother/cc.s/en)))

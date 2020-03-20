@@ -102,7 +102,7 @@ class ParserEN(AlphaBeta):
         elif token.dep_ in {'acomp', 'attr'}:
             return 'c'
         # direct object
-        elif token.dep_ in {'dobj', 'prt'}:
+        elif token.dep_ in {'dobj', 'pobj', 'prt'}:
             return 'o'
         # indirect object
         elif token.dep_ == 'dative':
