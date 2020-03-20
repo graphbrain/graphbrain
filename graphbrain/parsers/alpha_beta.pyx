@@ -431,9 +431,19 @@ class AlphaBeta(Parser):
 
         # process children
         relative_to_concept = []
-        for child in children:
+        next_child = None
+        for i in range(len(children)):
+            child = children[i]
             child_token = token_dict[child]
             pos = pos_dict[child]
+            if next_child is not None:
+                child = next_child
+                next_child = None
+
+            if i < len(children) - 1:
+                child_up = children[i + 1]
+            else:
+                child_up = None
 
             child_type = child.type()
 
@@ -448,12 +458,23 @@ class AlphaBeta(Parser):
                         # RELATIVE TO CONCEPT
                         relative_to_concept.append(child)
                     elif child.connector_type()[0] == 'b':
-                        if (child.connector_type() == 'b+' and
+                        if (child.connector_type() == 'br' and
+                                len(child) >= 3 and
+                                'b+' not in [c.type() for c in children]):
+                            logging.debug('choice: 2a')
+                            # RELATIVE TO CONCEPT
+                            relative_to_concept.append(child)
+                        elif (child.connector_type() == 'b+' and
                                 child.contains_atom_type('cm')):
-                            logging.debug('choice: 2')
+                            logging.debug('choice: 2b')
                             # CONCEPT LIST
                             entity = _apply_aux_concept_list_to_concept(child,
                                                                         entity)
+                        elif (child_up and
+                              child_up.type()[0] == 'c' and
+                              'b+' in [c.type() for c in children[i + 2:]]):
+                            logging.debug('choice: 2c')
+                            next_child = child_up.nest(child)
                         elif entity.connector_type()[0] == 'c':
                             # NEST
                             if len(child) == 2:
@@ -500,6 +521,11 @@ class AlphaBeta(Parser):
                                     # FLAT SEQUENCE
                                     entity = entity.sequence(
                                         child, pos, flat=False)
+                            elif (entity.connector_type() == 'br' and
+                                  not self._is_compound(child_token)):
+                                logging.debug('choice: 7b')
+                                # NEST
+                                entity = child.nest(entity, before=pos)
                             else:
                                 logging.debug('choice: 8')
                                 # SEQUENCE IN ORIGINAL ATOM

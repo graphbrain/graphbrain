@@ -174,7 +174,9 @@ class ParserEN(AlphaBeta):
             else:
                 return 'x'
         elif dep in {'nmod', 'npadvmod'}:
-            if self._is_noun(token):
+            if token.head.dep_ == 'amod':
+                return 'w'
+            elif self._is_noun(token):
                 return self._concept_type_and_subtype(token)
             else:
                 return self._modifier_type_and_subtype(token)

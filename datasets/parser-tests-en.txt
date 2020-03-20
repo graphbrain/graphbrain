@@ -1,3 +1,35 @@
+The two men conducted a lengthy correspondence and collaborated on an initially joint vision of human psychology.
+(and/pm/en (conducted/pd.so.<f-----/en (the/md/en (two/m#/en men/cc.p/en)) (a/md/en (lengthy/ma/en correspondence/cc.s/en))) (collaborated/pd.x.<f-----/en (on/t/en (an/md/en ((initially/w/en joint/ma/en) (of/br.ma/en vision/cc.s/en (human/ma/en psychology/cc.s/en)))))))
+Freud saw in the younger man the potential heir he had been seeking to carry on his "new science" of psychoanalysis.
+(saw/pd.sxo.<f-----/en freud/cp.s/en (in/t/en (the/md/en (younger/mc/en man/cc.s/en))) (:/b/. (the/md/en (potential/ma/en heir/cc.s/en)) ((had/av.<f-----/en (been/av.<pf----/en seeking/pr.sr.|pg----/en)) he/ci/en ((to/ai/en (on/ap/en carry/pc.o.-i-----/en)) (his/mp/en (new/ma/en (of/br.ma/en science/cc.s/en psychoanalysis/cc.s/en)))))))
+I will never stop laughing at this.
+((will/am/en (never/an/en stop/pd.sr.-i-----/en)) i/ci/en (laughing/pc.x.|pg----/en (at/t/en this/cd/en)))
+Unknown to most, their brains are a battleground.
+(are/pd.xsc.|f-----/en (unknown/pd.x.-------/en (to/t/en most/ca/en)) (their/mp/en brains/cc.p/en) (a/md/en battleground/cc.s/en))
+Lady shows you the oldest living wolf.
+(shows/pd.sio.|f--3s-/en lady/cp.s/en you/ci/en (the/md/en (oldest/ms/en (living/m/en wolf/cc.s/en))))
+Lawyers say they will issue judicial review proceedings if Brexit secretary fails to release 50 studies of effect on industry
+(say/pd.sr.|f-----/en lawyers/cc.p/en ((will/am/en issue/pr.sox.-i-----/en) they/ci/en (judicial/ma/en (+/b.am/. review/cc.s/en proceedings/cc.p/en)) (if/x/en (fails/pd.sr.|f--3s-/en (+/b.am/. brexit/cp.s/en secretary/cc.s/en) ((to/ai/en release/pc.ox.-i-----/en) (50/m#/en (of/br.ma/en studies/cc.p/en effect/cc.s/en)) (on/t/en industry/cc.s/en))))))
+The fifth connects to revived E.U. religions and feelings about French teachers demanding business-destroying regulatory limits.
+(connects/pd.sx.|f--3s-/en (the/md/en fifth/ca/en) (to/t/en (and/b+/en (revived/m/en (+/b.am/. e_u_/cp.s/en religions/cc.p/en)) (about/br.ma/en feelings/cc.p/en (:/b/. (french/ma/en teachers/cc.p/en) (demanding/pc.o.|pg----/en ((business/w/en destroying/m/en) (regulatory/ma/en limits/cc.p/en))))))))
+In September 2016, we learned that the University of New Hampshire was going to use $1 million that an incredibly frugal librarian saved while working as a library cataloger for 50 years to buy a new scoreboard for its stadium.
+(learned/pd.xsr.<f-----/en (in/tt/en (2016/m#/en september/cp.s/en)) we/ci/en (that/x/en ((was/av.<f-----/en going/pr.sr.|pg----/en) (the/md/en (of/br.ma/en university/cp.s/en (+/b.am/. new/cp.s/en hampshire/cp.s/en))) ((to/ai/en use/pc.o.-i-----/en) (:/b/. ($/m/en (1/m#/en million/c#/en)) (saved/pr.osx.<pf----/en that/c/en (an/md/en ((incredibly/w/en frugal/ma/en) librarian/cc.s/en)) (while/x/en (working/pd.xxx.|pg----/en (as/t/en (a/md/en (+/b.am/. library/cc.s/en cataloger/cc.s/en))) (for/tt/en (50/m#/en years/cc.p/en)) ((to/ai/en buy/pd.o.-i-----/en) (a/md/en (new/ma/en (for/br.ma/en scoreboard/cc.s/en (its/mp/en stadium/cc.s/en)))))))))))))
+An anarchist takes on Big Pharma by teaching patients to make their own meds
+((on/ap/en takes/pd.sox.|f--3s-/en) (an/md/en anarchist/cc.s/en) (+/b.am/. big/cp.s/en pharma/cp.s/en) (by/t/en (teaching/pc.or.|pg----/en patients/cc.p/en ((to/ai/en make/pc.o.-i-----/en) (their/mp/en (own/ma/en meds/cc.p/en))))))
+That seems both super dangerous, and super awesome.
+(seems/pd.s?.|f--3s-/en that/cd/en (and/b+/en (both/md/en (super/m/en dangerous/ca/en)) (super/m/en awesome/ca/en)))
+Briton dies in fall from Indian temple while taking selfie
+(dies/pd.sxxx.|f--3s-/en briton/cp.s/en (in/t/en fall/cc.s/en) (from/t/en (indian/ma/en temple/cc.s/en)) (while/x/en (taking/pd.o.|pg----/en selfie/cc.s/en)))
+I hate everyone in the White House!
+(hate/pd.so.|f-----/en i/ci/en (in/br.ma/en everyone/cc.s/en (the/md/en (+/b.am/. white/cp.s/en house/cp.s/en))))
+There are a few exceptions, but I hate them!
+(but/pm/en ((there/ae/en are/pd.c.|f-----/en) (a/md/en (few/ma/en exceptions/cc.p/en))) (hate/pd.so.|f-----/en i/ci/en them/ci/en))
+Tourists taking a picture of the Eiffel Tower get photobombed by a cyclist.
+((get/av.|f-----/en photobombed/pd.pa.<pf----/en) (:/b/. tourists/cc.p/en (taking/pc.o.|pg----/en (a/md/en (of/br.ma/en picture/cc.s/en (the/md/en (+/b.am/. eiffel/cp.s/en tower/cp.s/en)))))) (by/x/en (a/md/en cyclist/cc.s/en)))
+Americans are willing to pay $177 a year to avoid climate change
+(are/pd.sc.|f-----/en americans/cp.p/en (:/b/. willing/ca/en ((to/ai/en pay/pc.ox.-i-----/en) ($/m/en (a/bd/en 177/c#/en year/cc.s/en)) ((to/ai/en avoid/pd.o.-i-----/en) (+/b.am/. climate/cc.s/en change/cc.s/en)))))
+This guy should be the new team mascot
+((should/am/en be/pd.sc.-i-----/en) (this/md/en guy/cc.s/en) (the/md/en (new/ma/en (+/b.am/. team/cc.s/en mascot/cc.s/en))))
 Satellites from NASA and other agencies have been tracking sea ice changes since 1979.
 ((have/av.|f-----/en (been/av.<pf----/en tracking/pd.sox.|pg----/en)) (from/br.ma/en satellites/cc.p/en (and/b+/en nasa/cp.s/en (other/ma/en agencies/cc.p/en))) (+/b.aam/. sea/cc.s/en ice/cc.s/en changes/cc.p/en) (since/tt/en 1979/c#/en))
 The algorithm can play both black and white.
@@ -44,36 +76,6 @@ Carl Gustav Jung was a Swiss psychiatrist and psychoanalyst who founded analytic
 (was/pd.sc.<f-----/en (+/b.aam/. carl/cp.s/en gustav/cp.s/en jung/cp.s/en) (:/b/. (and/b+/en (a/md/en (swiss/ma/en psychiatrist/cc.s/en)) psychoanalyst/cc.s/en) (founded/pr.so.<f-----/en who/cw/en (analytical/ma/en psychology/cc.s/en))))
 As a notable research scientist based at the famous Burghölzli hospital, under Eugen Bleuler, he came to the attention of the Viennese founder of psychoanalysis, Sigmund Freud.
 (came/pd.xxsx.<f-----/en (as/t/en (:/b/. (a/md/en (notable/ma/en (+/b.am/. research/cc.s/en scientist/cc.s/en))) (based/pc.x.<pf----/en (at/t/en (the/md/en (famous/ma/en (+/b.am/. burghölzli/cp.s/en hospital/cc.s/en))))))) (under/t/en (+/b.am/. eugen/cp.s/en bleuler/cp.s/en)) he/ci/en (to/t/en (the/md/en (of/br.ma/en attention/cc.s/en (:/b/. (the/md/en (viennese/ma/en (of/br.ma/en founder/cc.s/en psychoanalysis/cc.s/en))) (+/b.am/. sigmund/cp.s/en freud/cp.s/en))))))
-The two men conducted a lengthy correspondence and collaborated on an initially joint vision of human psychology.
-(and/pm/en (conducted/pd.so.<f-----/en (the/md/en (two/m#/en men/cc.p/en)) (a/md/en (lengthy/ma/en correspondence/cc.s/en))) (collaborated/pd.x.<f-----/en (on/t/en (an/md/en ((initially/w/en joint/ma/en) (of/br.ma/en vision/cc.s/en (human/ma/en psychology/cc.s/en)))))))
-Freud saw in the younger man the potential heir he had been seeking to carry on his "new science" of psychoanalysis.
-(saw/pd.sxo.<f-----/en freud/cp.s/en (in/t/en (the/md/en (younger/mc/en man/cc.s/en))) (:/b/. (the/md/en (potential/ma/en heir/cc.s/en)) ((had/av.<f-----/en (been/av.<pf----/en seeking/pr.sr.|pg----/en)) he/ci/en ((to/ai/en (on/ap/en carry/pc.o.-i-----/en)) (his/mp/en (new/ma/en (of/br.ma/en science/cc.s/en psychoanalysis/cc.s/en)))))))
-I will never stop laughing at this.
-((will/am/en (never/an/en stop/pd.sr.-i-----/en)) i/ci/en (laughing/pc.x.|pg----/en (at/t/en this/cd/en)))
-Unknown to most, their brains are a battleground.
-(are/pd.xsc.|f-----/en (unknown/pd.x.-------/en (to/t/en most/ca/en)) (their/mp/en brains/cc.p/en) (a/md/en battleground/cc.s/en))
-Lady shows you the oldest living wolf.
-(shows/pd.sio.|f--3s-/en lady/cp.s/en you/ci/en (the/md/en (oldest/ms/en (living/m/en wolf/cc.s/en))))
-Lawyers say they will issue judicial review proceedings if Brexit secretary fails to release 50 studies of effect on industry
-(say/pd.sr.|f-----/en lawyers/cc.p/en ((will/am/en issue/pr.sox.-i-----/en) they/ci/en (judicial/ma/en (+/b.am/. review/cc.s/en proceedings/cc.p/en)) (if/x/en (fails/pd.sr.|f--3s-/en (+/b.am/. brexit/cp.s/en secretary/cc.s/en) ((to/ai/en release/pc.ox.-i-----/en) (50/m#/en (of/br.ma/en studies/cc.p/en effect/cc.s/en)) (on/t/en industry/cc.s/en))))))
-In September 2016, we learned that the University of New Hampshire was going to use $1 million that an incredibly frugal librarian saved while working as a library cataloger for 50 years to buy a new scoreboard for its stadium.
-(learned/pd.xsr.<f-----/en (in/tt/en (2016/m#/en september/cp.s/en)) we/ci/en (that/x/en ((was/av.<f-----/en going/pr.sr.|pg----/en) (the/md/en (of/br.ma/en university/cp.s/en (+/b.am/. new/cp.s/en hampshire/cp.s/en))) ((to/ai/en use/pc.o.-i-----/en) (:/b/. ($/m/en (1/m#/en million/c#/en)) (saved/pr.osx.<pf----/en that/c/en (an/md/en ((incredibly/w/en frugal/ma/en) librarian/cc.s/en)) (while/x/en (working/pd.xxx.|pg----/en (as/t/en (a/md/en (+/b.am/. library/cc.s/en cataloger/cc.s/en))) (for/tt/en (50/m#/en years/cc.p/en)) ((to/ai/en buy/pd.o.-i-----/en) (a/md/en (new/ma/en (for/br.ma/en scoreboard/cc.s/en (its/mp/en stadium/cc.s/en)))))))))))))
-An anarchist takes on Big Pharma by teaching patients to make their own meds
-((on/ap/en takes/pd.sox.|f--3s-/en) (an/md/en anarchist/cc.s/en) (+/b.am/. big/cp.s/en pharma/cp.s/en) (by/t/en (teaching/pc.or.|pg----/en patients/cc.p/en ((to/ai/en make/pc.o.-i-----/en) (their/mp/en (own/ma/en meds/cc.p/en))))))
-That seems both super dangerous, and super awesome.
-(seems/pd.s?.|f--3s-/en that/cd/en (and/b+/en (both/md/en (super/m/en dangerous/ca/en)) (super/m/en awesome/ca/en)))
-Briton dies in fall from Indian temple while taking selfie
-(dies/pd.sxxx.|f--3s-/en briton/cp.s/en (in/t/en fall/cc.s/en) (from/t/en (indian/ma/en temple/cc.s/en)) (while/x/en (taking/pd.o.|pg----/en selfie/cc.s/en)))
-I hate everyone in the White House!
-(hate/pd.so.|f-----/en i/ci/en (in/br.ma/en everyone/cc.s/en (the/md/en (+/b.am/. white/cp.s/en house/cp.s/en))))
-There are a few exceptions, but I hate them!
-(but/pm/en ((there/ae/en are/pd.c.|f-----/en) (a/md/en (few/ma/en exceptions/cc.p/en))) (hate/pd.so.|f-----/en i/ci/en them/ci/en))
-Tourists taking a picture of the Eiffel Tower get photobombed by a cyclist.
-((get/av.|f-----/en photobombed/pd.pa.<pf----/en) (:/b/. tourists/cc.p/en (taking/pc.o.|pg----/en (a/md/en (of/br.ma/en picture/cc.s/en (the/md/en (+/b.am/. eiffel/cp.s/en tower/cp.s/en)))))) (by/x/en (a/md/en cyclist/cc.s/en)))
-Americans are willing to pay $177 a year to avoid climate change
-(are/pd.sc.|f-----/en americans/cp.p/en (:/b/. willing/ca/en ((to/ai/en pay/pc.ox.-i-----/en) ($/m/en (a/bd/en 177/c#/en year/cc.s/en)) ((to/ai/en avoid/pd.o.-i-----/en) (+/b.am/. climate/cc.s/en change/cc.s/en)))))
-This guy should be the new team mascot
-((should/am/en be/pd.sc.-i-----/en) (this/md/en guy/cc.s/en) (the/md/en (new/ma/en (+/b.am/. team/cc.s/en mascot/cc.s/en))))
 Take pictures of your hair after a good haircut.
 (take/p!.ox.-i-----/en (of/br.ma/en pictures/cc.p/en (your/mp/en hair/cc.s/en)) (after/t/en (a/md/en (good/ma/en haircut/cc.s/en))))
 I think that's supposed to be difficult.
