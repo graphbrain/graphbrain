@@ -777,7 +777,5 @@ class AlphaBeta(Parser):
         for parse in parse_results['parses']:
             parse['resolved_corefs'] = self._resolve_corefs_edge(
                 parse['main_edge'])
-            self._generate_edges_text(parse['resolved_corefs'],
-                                      parse['edges_text'])
 
         parse_results['inferred_edges'] = inferred_edges
