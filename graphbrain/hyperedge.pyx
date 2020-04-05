@@ -114,16 +114,16 @@ def match_pattern(edge, pattern):
     for example '\*x', '&claim' or '@actor'. In case of a match, these
     variables are assigned the hyperedge they correspond to. For example,
 
-    (1) the edge: (is/pd (my/mp name/cn) mary/cp)
-    applied to the pattern: (is/pd (my/mp name/cn) \*name)
-    produces the result: {'name', mary/cp}
+    (1) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
+    applied to the pattern: (is/Pd (my/Mp name/Cn) \*name)
+    produces the result: {'name', mary/Cp}
 
-    (2) the edge: (is/pd (my/mp name/cn) mary/cp)
-    applied to the pattern: (is/pd (my/mp name/cn) &name)
+    (2) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
+    applied to the pattern: (is/Pd (my/Mp name/Cn) &name)
     produces the result: {}
 
-    (3) the edge: (is/pd (my/mp name/cn) mary/cp)
-    applied to the pattern: (is/pd @ \*name)
+    (3) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
+    applied to the pattern: (is/Pd @ \*name)
     produces the result: None
     """
 
@@ -192,8 +192,8 @@ def edge_matches_pattern(edge, pattern):
     -> '...' at the end indicates an open-ended pattern.
 
     The pattern can be any valid hyperedge, including the above special atoms.
-    Examples: (is/pd graphbrain/c @)
-    (says/pd * ...)
+    Examples: (is/Pd graphbrain/C @)
+    (says/Pd * ...)
     """
     return match_pattern(edge, pattern) is not None
 
@@ -204,11 +204,11 @@ def rel_arg_role(relation, position):
 
     Example:
     The argument role of argument at position 0 in:
-    (is/pd.sc graphbrain/c great/c)
+    (is/Pd.sc graphbrain/C great/C)
     is:
     s
     """
-    if relation.type()[0] != 'r':
+    if relation.type()[0] != 'R':
         return None
     else:
         pred = relation.predicate()
@@ -289,7 +289,7 @@ class Hyperedge(tuple):
         """Generate human-readable label for edge."""
         if len(self) == 2:
             edge = self
-        elif self[0][0][:3] == '+/b':
+        elif self[0][0][:3] == '+/B':
             edge = self[1:]
         else:
             edge = (self[1], self[0]) + self[2:]
@@ -462,21 +462,31 @@ class Hyperedge(tuple):
         connector. This applies recursively, as necessary.
 
         For example:
-        (is/pd.so graphbrain/cp.s great/c) has type 'rd'
-        (red/m shoes/cn.p) has type 'cn'
-        (before/tt noon/c) has type 'st'
+        (is/Pd.so graphbrain/Cp.s great/C) has type 'Rd'
+        (red/M shoes/Cn.p) has type 'Cn'
+        (before/Tt noon/C) has type 'St'
         """
+        # TODO: verify correctness and throw errors
         ptype = self[0].type()
-        if ptype[0] == 'p':
-            outter_type = 'r'
-        elif ptype[0] in {'a', 'm', 'w'}:
+        if ptype[0] == 'P':
+            outter_type = 'R'
+        elif ptype[0] in {'A', 'M'}:
             return self[1].type()
-        elif ptype[0] == 'x':
-            outter_type = 'd'
-        elif ptype[0] == 't':
-            outter_type = 's'
+        elif ptype[0] == 'X':
+            outter_type = 'D'
+        elif ptype[0] == 'T':
+            outter_type = 'S'
+        elif ptype[0] == 'J':
+            inner_type = self[1].type()[0]
+            if inner_type in {'C', 'R'}:
+                return inner_type
+            elif inner_type in {'P', 'S', 'D'}:
+                return 'R'
+            else:
+                # error
+                pass
         else:
-            return 'c'
+            return 'C'
 
         return '{}{}'.format(outter_type, ptype[1:])
 
@@ -492,11 +502,11 @@ class Hyperedge(tuple):
         'atom_type', or whose type starts with 'atom_type'.
         If no such atom is found, returns None.
 
-        For example, given the edge (+/b a/cn b/cp) and the 'atom_type'
+        For example, given the edge (+/B a/Cn b/Cp) and the 'atom_type'
         c, this function returns:
-        a/cn
-        If the 'atom_type' is 'cp', the it will return:
-        b/cp
+        a/Cn
+        If the 'atom_type' is 'Cp', the it will return:
+        b/Cp
         """
         for item in self:
             atom = item.atom_with_type(atom_type)
@@ -516,9 +526,9 @@ class Hyperedge(tuple):
         predicate. Returns None otherwise.
         """
         et = self.type()[0]
-        if et == 'r':
+        if et == 'R':
             return self[0].predicate()
-        elif et == 'p':
+        elif et == 'P':
             return self[1].predicate()
         return None
 
@@ -544,7 +554,7 @@ class Hyperedge(tuple):
         Otherwise returns empty string.
         """
         et = self.type()[0]
-        if et not in {'b', 'p'}:
+        if et not in {'B', 'P'}:
             return ''
         return self[1].argroles()
 
@@ -553,11 +563,11 @@ class Hyperedge(tuple):
         with the provided string.
         Returns same edge if the atom does not contain a role part."""
         st = self.type()[0]
-        if st in {'c', 'r'}:
+        if st in {'C', 'R'}:
             new_edge = [self[0].replace_argroles(argroles)]
             new_edge += self[1:]
             return Hyperedge(new_edge)
-        elif st == 'p':
+        elif st == 'P':
             new_edge = [self[0], self[1].replace_argroles(argroles)]
             return Hyperedge(new_edge)
         return self
@@ -567,11 +577,11 @@ class Hyperedge(tuple):
         position in the argroles of the connector atom.
         Same restrictions as in replace_argroles() apply."""
         st = self.type()[0]
-        if st in {'c', 'r'}:
+        if st in {'C', 'R'}:
             new_edge = [self[0].insert_argrole(argrole, pos)]
             new_edge += self[1:]
             return Hyperedge(new_edge)
-        elif st == 'p':
+        elif st == 'P':
             new_edge = [self[0], self[1].insert_argrole(argrole, pos)]
             return Hyperedge(new_edge)
         return self
@@ -585,7 +595,6 @@ class Hyperedge(tuple):
 
     def edges_with_argrole(self, argrole):
         """Returns the list of edges with the given argument role."""
-
         edges = []
         connector = self[0]
 
@@ -598,7 +607,7 @@ class Hyperedge(tuple):
     def main_concepts(self):
         """Returns the list of main concepts in an concept edge.
         A main concept is a central concept in a built concept, e.g.:
-        in ('s/bp.am zimbabwe/mp economy/cn.s), economy/cn.s is the main
+        in ('s/Bp.am zimbabwe/Mp economy/Cn.s), economy/Cn.s is the main
         concept.
 
         If entity is not an edge, or its connector is not of type builder,
@@ -611,7 +620,7 @@ class Hyperedge(tuple):
         connector = self[0]
         if not connector.is_atom():
             return concepts
-        if connector.type()[0] != 'b':
+        if connector.type()[0] != 'B':
             return concepts
 
         return self.edges_with_argrole('m')
@@ -646,7 +655,7 @@ class Atom(Hyperedge):
 
     def root(self):
         """Extracts the root of an atom
-        (e.g. the root of graphbrain/c/1 is graphbrain)."""
+        (e.g. the root of graphbrain/C/1 is graphbrain)."""
         return self.parts()[0]
 
     def replace_atom_part(self, part_pos, part):
@@ -676,9 +685,9 @@ class Atom(Hyperedge):
         """Returns the set of atoms contained in the edge.
 
         For example, consider the edge:
-        (the/md (of/br mayor/cc (the/md city/cs)))
+        (the/Md (of/Br mayor/Cc (the/Md city/Cs)))
         in this case, edge.atoms() returns:
-        [the/md, of/br, mayor/cc, city/cs]
+        [the/Md, of/Br, mayor/Cc, city/Cs]
         """
         return {self}
 
@@ -688,9 +697,9 @@ class Atom(Hyperedge):
         return repeated atoms if they are different objects.
 
         For example, consider the edge:
-        (the/md (of/br mayor/cc (the/md city/cs)))
+        (the/Md (of/Br mayor/Cc (the/Md city/Cs)))
         in this case, edge.all_atoms() returns:
-        [the/md, of/br, mayor/cc, the/md, city/cs]
+        [the/Md, of/Br, mayor/Cc, the/Md, city/Cs]
         """
         return [self]
 
@@ -744,23 +753,23 @@ class Atom(Hyperedge):
 
         The role of an atom is its second part, right after the root.
         A dot notation is used to separate the subroles. For example,
-        the role of graphbrain/cp.s/1 is:
+        the role of graphbrain/Cp.s/1 is:
 
-            cp.s
+            Cp.s
 
         For this case, this function returns:
 
-            ['cp', 's']
+            ['Cp', 'S']
 
         If the atom only has a root, it is assumed to be a concept.
         In this case, this function returns the role with just the
         generic concept type:
 
-            ['c'].
+            ['C'].
         """
         parts = self[0].split('/')
         if len(parts) < 2:
-            return list('c')
+            return list('C')
         else:
             return parts[1].split('.')
 
@@ -778,10 +787,10 @@ class Atom(Hyperedge):
         """Returns the type of the atom.
 
         The type of an atom is its first subrole. For example, the
-        type of graphbrain/cp.s/1 is 'cp'.
+        type of graphbrain/Cp.s/1 is 'Cp'.
 
         If the atom only has a root, it is assumed to be a concept.
-        In this case, this function returns the generic concept type: 'c'.
+        In this case, this function returns the generic concept type: 'C'.
         """
         return self.role()[0]
 
@@ -797,11 +806,11 @@ class Atom(Hyperedge):
         'atom_type', or whose type starts with 'atom_type'.
         If no such atom is found, returns None.
 
-        For example, given the edge (+/b a/cn b/cp) and the 'atom_type'
-        c, this function returns:
-        a/cn
-        If the 'atom_type' is 'cp', the it will return:
-        b/cp
+        For example, given the edge (+/B a/Cn b/Bp) and the 'atom_type'
+        C, this function returns:
+        a/Cn
+        If the 'atom_type' is 'Cp', the it will return:
+        b/Cp
         """
         n = len(atom_type)
         et = self.type()
@@ -815,7 +824,7 @@ class Atom(Hyperedge):
         relation or predicate. Returns itself if it is an atom of type
         predicate. Returns None otherwise.
         """
-        if self.type()[0] == 'p':
+        if self.type()[0] == 'P':
             return self
         return None
 
@@ -842,7 +851,7 @@ class Atom(Hyperedge):
         Otherwise returns empty string.
         """
         et = self.type()[0]
-        if et not in {'b', 'p'}:
+        if et not in {'B', 'P'}:
             return ''
         role = self.role()
         if len(role) < 2:
@@ -877,7 +886,7 @@ class Atom(Hyperedge):
     def main_concepts(self):
         """Returns the list of main concepts in an concept edge.
         A main concept is a central concept in a built concept, e.g.:
-        in ('s/bp.am zimbabwe/mp economy/cn.s), economy/cn.s is the main
+        in ('s/Bp.am zimbabwe/Mp economy/Cn.s), economy/Cn.s is the main
         concept.
 
         If entity is not an edge, or its connector is not of type builder,

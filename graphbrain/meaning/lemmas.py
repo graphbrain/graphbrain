@@ -19,11 +19,11 @@ def deep_lemma(hg, edge):
     This is useful, for example, to find the lemma of the central verb
     in a non-atomic predicate edge. For example:
 
-    (not/a (is/a going/p))
+    (not/A (is/A going/P))
 
     could return
 
-    go/p
+    go/P
     """
     if edge.is_atom():
         for lemma_edge in hg.search((const.lemma_pred,

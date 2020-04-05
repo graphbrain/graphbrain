@@ -42,24 +42,24 @@ class TestPermutations(unittest.TestCase):
         self.assertEqual(perm, ('a', 'b', 'd', 'c'))
 
     def test_permutations2(self):
-        perm = permutate(('is/pd.sc', ('my/m', 'name/cn.s'), 'mary/cp.s'), 0)
-        self.assertEqual(perm, ('is/pd.sc',
-                                ('my/m', 'name/cn.s'), 'mary/cp.s'))
-        perm = permutate(('is/pd.sc', ('my/m', 'name/cn.s'), 'mary/cp.s'), 1)
-        self.assertEqual(perm, ('is/pd.sc',
-                                'mary/cp.s', ('my/m', 'name/cn.s')))
-        perm = permutate(('is/pd.sc', ('my/m', 'name/cn.s'), 'mary/cp.s'), 2)
-        self.assertEqual(perm, (('my/m', 'name/cn.s'),
-                                'is/pd.sc', 'mary/cp.s'))
-        perm = permutate(('is/pd.sc', ('my/m', 'name/cn.s'), 'mary/cp.s'), 3)
-        self.assertEqual(perm, (('my/m', 'name/cn.s'),
-                                'mary/cp.s', 'is/pd.sc'))
-        perm = permutate(('is/pd.sc', ('my/m', 'name/cn.s'), 'mary/cp.s'), 4)
-        self.assertEqual(perm, ('mary/cp.s',
-                                'is/pd.sc', ('my/m', 'name/cn.s')))
-        perm = permutate(('is/pd.sc', ('my/m', 'name/cn.s'), 'mary/cp.s'), 5)
-        self.assertEqual(perm, ('mary/cp.s',
-                                ('my/m', 'name/cn.s'), 'is/pd.sc'))
+        perm = permutate(('is/Pd.sc', ('my/M', 'name/Cn.s'), 'mary/Cp.s'), 0)
+        self.assertEqual(perm, ('is/Pd.sc',
+                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'))
+        perm = permutate(('is/Pd.sc', ('my/M', 'name/Cn.s'), 'mary/Cp.s'), 1)
+        self.assertEqual(perm, ('is/Pd.sc',
+                                'mary/Cp.s', ('my/M', 'name/Cn.s')))
+        perm = permutate(('is/Pd.sc', ('my/M', 'name/Cn.s'), 'mary/Cp.s'), 2)
+        self.assertEqual(perm, (('my/M', 'name/Cn.s'),
+                                'is/Pd.sc', 'mary/Cp.s'))
+        perm = permutate(('is/Pd.sc', ('my/M', 'name/Cn.s'), 'mary/Cp.s'), 3)
+        self.assertEqual(perm, (('my/M', 'name/Cn.s'),
+                                'mary/Cp.s', 'is/Pd.sc'))
+        perm = permutate(('is/Pd.sc', ('my/M', 'name/Cn.s'), 'mary/Cp.s'), 4)
+        self.assertEqual(perm, ('mary/Cp.s',
+                                'is/Pd.sc', ('my/M', 'name/Cn.s')))
+        perm = permutate(('is/Pd.sc', ('my/M', 'name/Cn.s'), 'mary/Cp.s'), 5)
+        self.assertEqual(perm, ('mary/Cp.s',
+                                ('my/M', 'name/Cn.s'), 'is/Pd.sc'))
 
     def test_unpermutate(self):
         edge = unpermutate(('a', 'b'), 0)
@@ -87,24 +87,24 @@ class TestPermutations(unittest.TestCase):
         self.assertEqual(edge, ('a', 'b', 'c', 'd'))
 
     def test_unpermutate2(self):
-        edge = unpermutate(('is/pd.sc', ('my/m', 'name/cn.s'), 'mary/cp.s'), 0)
-        self.assertEqual(edge, ('is/pd.sc',
-                                ('my/m', 'name/cn.s'), 'mary/cp.s'))
-        edge = unpermutate(('is/pd.sc', 'mary/cp.s', ('my/m', 'name/cn.s')), 1)
-        self.assertEqual(edge, ('is/pd.sc',
-                                ('my/m', 'name/cn.s'), 'mary/cp.s'))
-        edge = unpermutate((('my/m', 'name/cn.s'), 'is/pd.sc', 'mary/cp.s'), 2)
-        self.assertEqual(edge, ('is/pd.sc',
-                                ('my/m', 'name/cn.s'), 'mary/cp.s'))
-        edge = unpermutate((('my/m', 'name/cn.s'), 'mary/cp.s', 'is/pd.sc'), 3)
-        self.assertEqual(edge, ('is/pd.sc',
-                                ('my/m', 'name/cn.s'), 'mary/cp.s'))
-        edge = unpermutate(('mary/cp.s', 'is/pd.sc', ('my/m', 'name/cn.s')), 4)
-        self.assertEqual(edge, ('is/pd.sc',
-                                ('my/m', 'name/cn.s'), 'mary/cp.s'))
-        edge = unpermutate(('mary/cp.s', ('my/m', 'name/cn.s'), 'is/pd.sc'), 5)
-        self.assertEqual(edge, ('is/pd.sc',
-                                ('my/m', 'name/cn.s'), 'mary/cp.s'))
+        edge = unpermutate(('is/Pd.sc', ('my/M', 'name/Cn.s'), 'mary/Cp.s'), 0)
+        self.assertEqual(edge, ('is/Pd.sc',
+                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'))
+        edge = unpermutate(('is/Pd.sc', 'mary/Cp.s', ('my/M', 'name/Cn.s')), 1)
+        self.assertEqual(edge, ('is/Pd.sc',
+                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'))
+        edge = unpermutate((('my/M', 'name/Cn.s'), 'is/Pd.sc', 'mary/Cp.s'), 2)
+        self.assertEqual(edge, ('is/Pd.sc',
+                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'))
+        edge = unpermutate((('my/M', 'name/Cn.s'), 'mary/Cp.s', 'is/Pd.sc'), 3)
+        self.assertEqual(edge, ('is/Pd.sc',
+                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'))
+        edge = unpermutate(('mary/Cp.s', 'is/Pd.sc', ('my/M', 'name/Cn.s')), 4)
+        self.assertEqual(edge, ('is/Pd.sc',
+                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'))
+        edge = unpermutate(('mary/Cp.s', ('my/M', 'name/Cn.s'), 'is/Pd.sc'), 5)
+        self.assertEqual(edge, ('is/Pd.sc',
+                                ('my/M', 'name/Cn.s'), 'mary/Cp.s'))
 
     def test_first_permutation(self):
         self.assertEqual(first_permutation(2, [0]), 0)

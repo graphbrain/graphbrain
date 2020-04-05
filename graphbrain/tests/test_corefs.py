@@ -9,16 +9,16 @@ class TestCorefs(unittest.TestCase):
         self.hg.destroy()
 
         concepts = []
-        concepts.append(hedge('paris/c'))
-        concepts.append(hedge('(of/b city/c paris/c)'))
-        concepts.append(hedge('(of/b capital/c france/c)'))
-        concepts.append(hedge('berlin/c'))
-        concepts.append(hedge('(of/b city/c berlin/c)'))
-        concepts.append(hedge('(of/b capital/c germany/c)'))
+        concepts.append(hedge('paris/C'))
+        concepts.append(hedge('(of/B city/C paris/C)'))
+        concepts.append(hedge('(of/B capital/C france/C)'))
+        concepts.append(hedge('berlin/C'))
+        concepts.append(hedge('(of/B city/C berlin/C)'))
+        concepts.append(hedge('(of/B capital/C germany/C)'))
         self.concepts = concepts
 
-        self.hg.add('(love/p i/c (of/b city/c paris/c))')
-        self.hg.add('(hate/p i/c (of/b city/c paris/c))')
+        self.hg.add('(love/P i/C (of/B city/C paris/C))')
+        self.hg.add('(hate/P i/C (of/B city/C paris/C))')
 
     def tearDown(self):
         self.hg.close()

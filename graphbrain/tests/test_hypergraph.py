@@ -98,15 +98,15 @@ class TestHypergraph(unittest.TestCase):
     # atom_count(), edge_count(), primary_atom_count(), primary_edge_count()
     def test_counters2(self):
         self.hg.destroy()
-        self.hg.add('(says mary/c (is graphbrain/c great/c))')
+        self.hg.add('(says mary/C (is graphbrain/C great/C))')
         self.assertEqual(self.hg.atom_count(), 5)
         self.assertEqual(self.hg.edge_count(), 7)
         self.assertEqual(self.hg.primary_atom_count(), 0)
         self.assertEqual(self.hg.primary_edge_count(), 1)
-        self.hg.remove(hedge('(is graphbrain/c great/c)'))
+        self.hg.remove(hedge('(is graphbrain/C great/C)'))
         self.assertEqual(self.hg.atom_count(), 5)
         self.assertEqual(self.hg.edge_count(), 6)
-        self.hg.remove(hedge('(says mary/c (is graphbrain/c great/c))'))
+        self.hg.remove(hedge('(says mary/C (is graphbrain/C great/C))'))
         self.assertEqual(self.hg.atom_count(), 5)
         self.assertEqual(self.hg.primary_atom_count(), 0)
         self.assertEqual(self.hg.edge_count(), 5)
@@ -115,8 +115,8 @@ class TestHypergraph(unittest.TestCase):
     # atom_count(), edge_count(), primary_atom_count(), primary_edge_count()
     def test_counters3_non_deep_removal(self):
         self.hg.destroy()
-        self.hg.add('(says mary/c (is graphbrain/c great/c))')
-        self.hg.remove(hedge('(says mary/c (is graphbrain/c great/c))'),
+        self.hg.add('(says mary/C (is graphbrain/C great/C))')
+        self.hg.remove(hedge('(says mary/C (is graphbrain/C great/C))'),
                        deep=False)
         self.assertEqual(self.hg.atom_count(), 5)
         self.assertEqual(self.hg.primary_atom_count(), 0)
@@ -126,11 +126,11 @@ class TestHypergraph(unittest.TestCase):
     # exists, add, remove
     def test_ops1(self):
         self.hg.destroy()
-        self.hg.add('(is/pd graphbrain/cp great/c)')
-        self.assertTrue(self.hg.exists(hedge('(is/pd graphbrain/cp great/c)')))
-        self.hg.remove(hedge('(is/pd graphbrain/cp great/c)'))
+        self.hg.add('(is/Pd graphbrain/Cp great/C)')
+        self.assertTrue(self.hg.exists(hedge('(is/Pd graphbrain/Cp great/C)')))
+        self.hg.remove(hedge('(is/Pd graphbrain/Cp great/C)'))
         self.assertFalse(
-            self.hg.exists(hedge('(is/pd graphbrain/cp great/c)')))
+            self.hg.exists(hedge('(is/Pd graphbrain/Cp great/C)')))
 
     # exists, add, remove
     def test_ops_2(self):
@@ -145,7 +145,7 @@ class TestHypergraph(unittest.TestCase):
     # test add with count=True
     def test_add_count(self):
         self.hg.destroy()
-        edge = hedge('(is/pd graphbrain/cp great/c)')
+        edge = hedge('(is/Pd graphbrain/Cp great/C)')
         self.hg.add(edge, count=True)
         self.assertEqual(self.hg.get_int_attribute(edge, 'count'), 1)
         self.hg.add(edge, count=True)
@@ -153,111 +153,111 @@ class TestHypergraph(unittest.TestCase):
 
     def test_search(self):
         self.hg.destroy()
-        self.hg.add('(is/pd graphbrain/cp great/c)')
-        self.hg.add('(says/pd mary/cp)')
-        self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c))')
-        self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c) extra/c)')
-        self.assertEqual(list(self.hg.search('(* graphbrain/cp *)')),
-                         [hedge('(is/pd graphbrain/cp great/c)')])
-        self.assertEqual(list(self.hg.search('(is/pd graphbrain/cp *)')),
-                         [hedge('(is/pd graphbrain/cp great/c)')])
+        self.hg.add('(is/Pd graphbrain/Cp great/C)')
+        self.hg.add('(says/Pd mary/Cp)')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C) extra/C)')
+        self.assertEqual(list(self.hg.search('(* graphbrain/Cp *)')),
+                         [hedge('(is/Pd graphbrain/Cp great/C)')])
+        self.assertEqual(list(self.hg.search('(is/Pd graphbrain/Cp *)')),
+                         [hedge('(is/Pd graphbrain/Cp great/C)')])
         self.assertEqual(list(self.hg.search('(x * *)')), [])
         self.assertEqual(
             list(
-                self.hg.search('(says/pd * '
-                               '(is/pd graphbrain/cp great/c))')),
-            [hedge('(says/pd mary/cp (is/pd graphbrain/cp great/c))')])
+                self.hg.search('(says/Pd * '
+                               '(is/Pd graphbrain/Cp great/C))')),
+            [hedge('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')])
         self.assertEqual(
             list(
-                self.hg.search('(says/pd * (is/pd * *))')),
-            [hedge('(says/pd mary/cp (is/pd graphbrain/cp great/c))')])
+                self.hg.search('(says/Pd * (is/Pd * *))')),
+            [hedge('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')])
 
     def test_search_open_ended(self):
         self.hg.destroy()
-        self.hg.add('(is/pd graphbrain/cp great/c)')
-        self.hg.add('(says/pd mary/cp)')
-        self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c))')
-        self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c) extra/c)')
-        self.assertEqual(list(self.hg.search('(* graphbrain/cp * ...)')),
-                         [hedge('(is/pd graphbrain/cp great/c)')])
+        self.hg.add('(is/Pd graphbrain/Cp great/C)')
+        self.hg.add('(says/Pd mary/Cp)')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C) extra/C)')
+        self.assertEqual(list(self.hg.search('(* graphbrain/Cp * ...)')),
+                         [hedge('(is/Pd graphbrain/Cp great/C)')])
         self.assertEqual(
-            list(self.hg.search('(is/pd graphbrain/cp * ...)')),
-            [hedge('(is/pd graphbrain/cp great/c)')])
+            list(self.hg.search('(is/Pd graphbrain/Cp * ...)')),
+            [hedge('(is/Pd graphbrain/Cp great/C)')])
         self.assertEqual(list(self.hg.search('(x * * ...)')), [])
 
         self.assertEqual(
             list(
                 self.hg.search(
-                    '(says/pd * (is/pd graphbrain/cp great/c) ...)')),
-            [hedge('(says/pd mary/cp (is/pd graphbrain/cp great/c))'),
-             hedge('(says/pd mary/cp (is/pd graphbrain/cp great/c) extra/c)')])
+                    '(says/Pd * (is/Pd graphbrain/Cp great/C) ...)')),
+            [hedge('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))'),
+             hedge('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C) extra/C)')])
 
     def test_search_star(self):
         self.hg.destroy()
-        self.hg.add('(is/pd graphbrain/cp great/c)')
-        self.hg.add('(says/pd mary/cp)')
-        self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c))')
-        self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c) extra/c)')
+        self.hg.add('(is/Pd graphbrain/Cp great/C)')
+        self.hg.add('(says/Pd mary/Cp)')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C) extra/C)')
         self.assertEqual(set(self.hg.search('*')),
-                         {hedge('(is/pd graphbrain/cp great/c)'),
-                          hedge('(says/pd mary/cp)'),
-                          hedge('(says/pd mary/cp '
-                                '(is/pd graphbrain/cp great/c))'),
-                          hedge('(says/pd mary/cp '
-                                '(is/pd graphbrain/cp great/c) extra/c)'),
-                          hedge('extra/c'), hedge('graphbrain/cp'),
-                          hedge('great/c'), hedge('is/pd'), hedge('mary/cp'),
-                          hedge('says/pd')})
+                         {hedge('(is/Pd graphbrain/Cp great/C)'),
+                          hedge('(says/Pd mary/Cp)'),
+                          hedge('(says/Pd mary/Cp '
+                                '(is/Pd graphbrain/Cp great/C))'),
+                          hedge('(says/Pd mary/Cp '
+                                '(is/Pd graphbrain/Cp great/C) extra/C)'),
+                          hedge('extra/C'), hedge('graphbrain/Cp'),
+                          hedge('great/C'), hedge('is/Pd'), hedge('mary/Cp'),
+                          hedge('says/Pd')})
 
     def test_search_at(self):
         self.hg.destroy()
-        self.hg.add('(is/pd graphbrain/cp great/c)')
-        self.hg.add('(says/pd mary/cp)')
-        self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c))')
-        self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c) extra/c)')
+        self.hg.add('(is/Pd graphbrain/Cp great/C)')
+        self.hg.add('(says/Pd mary/Cp)')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C) extra/C)')
         self.assertEqual(list(self.hg.search('@')),
-                         [hedge('extra/c'), hedge('graphbrain/cp'),
-                          hedge('great/c'), hedge('is/pd'), hedge('mary/cp'),
-                          hedge('says/pd')])
+                         [hedge('extra/C'), hedge('graphbrain/Cp'),
+                          hedge('great/C'), hedge('is/Pd'), hedge('mary/Cp'),
+                          hedge('says/Pd')])
 
     def test_search_amp(self):
         self.hg.destroy()
-        self.hg.add('(is/pd graphbrain/cp great/c)')
-        self.hg.add('(says/pd mary/cp)')
-        self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c))')
-        self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c) extra/c)')
+        self.hg.add('(is/Pd graphbrain/Cp great/C)')
+        self.hg.add('(says/Pd mary/Cp)')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C) extra/C)')
         self.assertEqual(set(self.hg.search('&')),
-                         {hedge('(is/pd graphbrain/cp great/c)'),
-                          hedge('(says/pd mary/cp)'),
-                          hedge('(says/pd mary/cp '
-                                '(is/pd graphbrain/cp great/c))'),
-                          hedge('(says/pd mary/cp '
-                                '(is/pd graphbrain/cp great/c) extra/c)')})
+                         {hedge('(is/Pd graphbrain/Cp great/C)'),
+                          hedge('(says/Pd mary/Cp)'),
+                          hedge('(says/Pd mary/Cp '
+                                '(is/Pd graphbrain/Cp great/C))'),
+                          hedge('(says/Pd mary/Cp '
+                                '(is/Pd graphbrain/Cp great/C) extra/C)')})
 
     def test_search_non_atomic_pred(self):
         self.hg.destroy()
-        edge = hedge('((is/a playing/pd.so ) mary/cp.s '
-                     '(a/md ((very/w old/ma) violin/cn.s)))')
+        edge = hedge('((is/A playing/Pd.so ) mary/Cp.s '
+                     '(a/Md ((very/M old/Ma) violin/Cn.s)))')
         self.hg.add(edge)
-        self.assertEqual(list(self.hg.search('((is/a playing/pd.so) ...)')),
+        self.assertEqual(list(self.hg.search('((is/A playing/Pd.so) ...)')),
                          [edge])
-        self.assertEqual(list(self.hg.search('((is/a playing/pd.so) * *)')),
+        self.assertEqual(list(self.hg.search('((is/A playing/Pd.so) * *)')),
                          [edge])
-        self.assertEqual(list(self.hg.search('((is/a playing/pd.so) @ &)')),
+        self.assertEqual(list(self.hg.search('((is/A playing/Pd.so) @ &)')),
                          [edge])
-        self.assertEqual(list(self.hg.search('((is/a playing/pd.so) @ @)')),
+        self.assertEqual(list(self.hg.search('((is/A playing/Pd.so) @ @)')),
                          [])
-        self.assertEqual(list(self.hg.search('((is/a playing/pd.so) & &)')),
+        self.assertEqual(list(self.hg.search('((is/A playing/Pd.so) & &)')),
                          [])
-        self.assertEqual(list(self.hg.search('(* mary/cp.s *)')),
+        self.assertEqual(list(self.hg.search('(* mary/Cp.s *)')),
                          [edge])
-        self.assertEqual(list(self.hg.search('(mary/cp.s * *)')),
+        self.assertEqual(list(self.hg.search('(mary/Cp.s * *)')),
                          [])
-        self.assertEqual(list(self.hg.search('(* * (a/md ((very/w old/ma) '
-                                             'violin/cn.s)))')),
+        self.assertEqual(list(self.hg.search('(* * (a/Md ((very/M old/Ma) '
+                                             'violin/Cn.s)))')),
                          [edge])
-        self.assertEqual(list(self.hg.search('((a/md ((very/w old/ma) '
-                                             'violin/cn.s)) * *)')),
+        self.assertEqual(list(self.hg.search('((a/Md ((very/M old/Ma) '
+                                             'violin/Cn.s)) * *)')),
                          [])
 
     def test_star(self):
@@ -312,25 +312,25 @@ class TestHypergraph(unittest.TestCase):
 
     def test_edges_with_edges2(self):
         self.hg.destroy()
-        self.hg.add(hedge('(syns/p (of/b city/c lights/c) paris/c)'))
-        self.hg.add(hedge('(syns/p (of/b city/c light/c) paris/c)'))
-        self.hg.add(hedge('(going/p i/c (of/b city/c lights/c))'))
+        self.hg.add(hedge('(syns/P (of/B city/C lights/C) paris/C)'))
+        self.hg.add(hedge('(syns/P (of/B city/C light/C) paris/C)'))
+        self.hg.add(hedge('(going/P i/C (of/B city/C lights/C))'))
 
-        res = self.hg.edges_with_edges([hedge('(of/b city/c lights/c)')])
+        res = self.hg.edges_with_edges([hedge('(of/B city/C lights/C)')])
         res = set([edge.to_str() for edge in res])
-        self.assertEqual(res, {'(syns/p (of/b city/c lights/c) paris/c)',
-                               '(going/p i/c (of/b city/c lights/c))'})
+        self.assertEqual(res, {'(syns/P (of/B city/C lights/C) paris/C)',
+                               '(going/P i/C (of/B city/C lights/C))'})
 
-        res = self.hg.edges_with_edges([hedge('(of/b city/c lights/c)'),
-                                        hedge('paris/c')])
+        res = self.hg.edges_with_edges([hedge('(of/B city/C lights/C)'),
+                                        hedge('paris/C')])
         res = set([edge.to_str() for edge in res])
-        self.assertEqual(res, {'(syns/p (of/b city/c lights/c) paris/c)'})
+        self.assertEqual(res, {'(syns/P (of/B city/C lights/C) paris/C)'})
 
-        res = self.hg.edges_with_edges([hedge('(of/b city/c lights/c)'),
-                                        hedge('paris/c')],
+        res = self.hg.edges_with_edges([hedge('(of/B city/C lights/C)'),
+                                        hedge('paris/C')],
                                        'syns')
         res = set([edge.to_str() for edge in res])
-        self.assertEqual(res, {'(syns/p (of/b city/c lights/c) paris/c)'})
+        self.assertEqual(res, {'(syns/P (of/B city/C lights/C) paris/C)'})
 
     # set_attribute, inc_attribute, dec_attribute, get_str_attribute,
     # get_int_attribute, get_float_attribute
@@ -402,11 +402,11 @@ class TestHypergraph(unittest.TestCase):
 
     def test_deep_degrees(self):
         self.hg.destroy()
-        edge1 = hedge('((is/a going/p) mary/c (to (the/m gym/c)))')
+        edge1 = hedge('((is/A going/P) mary/C (to (the/M gym/C)))')
         self.hg.add(edge1)
-        mary = hedge('mary/c')
-        gym = hedge('gym/c')
-        is_going = hedge('(is/a going/p)')
+        mary = hedge('mary/C')
+        gym = hedge('gym/C')
+        is_going = hedge('(is/A going/P)')
         self.assertEqual(self.hg.deep_degree(edge1), 0)
         self.assertEqual(self.hg.degree(mary), 1)
         self.assertEqual(self.hg.deep_degree(mary), 1)
@@ -415,7 +415,7 @@ class TestHypergraph(unittest.TestCase):
         self.assertEqual(self.hg.degree(is_going), 1)
         self.assertEqual(self.hg.deep_degree(is_going), 1)
         self.assertEqual(self.hg.deep_degree(gym), 1)
-        edge2 = hedge('((is/a going/p) john/c (to (the/m gym/c)))')
+        edge2 = hedge('((is/A going/P) john/C (to (the/M gym/C)))')
         self.hg.add(edge2)
         self.assertEqual(self.hg.degree(gym), 0)
         self.assertEqual(self.hg.deep_degree(gym), 2)
@@ -432,150 +432,150 @@ class TestHypergraph(unittest.TestCase):
 
     def test_remove_by_pattern(self):
         self.hg.destroy()
-        self.hg.add('(is/pd graphbrain/cp great/c)')
-        self.hg.add('(says/pd mary/cp)')
-        self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c))')
-        self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c) extra/c)')
+        self.hg.add('(is/Pd graphbrain/Cp great/C)')
+        self.hg.add('(says/Pd mary/Cp)')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C) extra/C)')
         self.assertEqual(
-            set(self.hg.search('(says/pd * '
-                               '(is/pd graphbrain/cp great/c))')),
-            {hedge('(says/pd mary/cp (is/pd graphbrain/cp great/c))')})
-        self.hg.remove_by_pattern('(says/pd * *)')
+            set(self.hg.search('(says/Pd * '
+                               '(is/Pd graphbrain/Cp great/C))')),
+            {hedge('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')})
+        self.hg.remove_by_pattern('(says/Pd * *)')
         self.assertFalse(
             self.hg.exists(
-                hedge('(says/pd mary/cp (is/pd graphbrain/cp great/c))')))
-        self.assertTrue(self.hg.exists(hedge('(is/pd graphbrain/cp great/c)')))
+                hedge('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')))
+        self.assertTrue(self.hg.exists(hedge('(is/Pd graphbrain/Cp great/C)')))
 
     def test_root_degrees(self):
         self.hg.destroy()
-        self.hg.add('(is/pd graphbrain/c great/c/1)')
-        self.hg.add('(says/pd mary/cp)')
-        self.hg.add('(says/pd mary/cp (is/pd graphbrain/cp great/c/2))')
-        self.hg.add('(says/pd mary/cp (is/pd graphbrain/cs great/c) extra/c)')
-        self.assertEqual(self.hg.root_degrees(hedge('graphbrain/cp')), (1, 3))
-        self.assertEqual(self.hg.root_degrees(hedge('great/c')), (1, 3))
-        self.assertEqual(self.hg.root_degrees(hedge('says/pd')), (3, 3))
+        self.hg.add('(is/Pd graphbrain/C great/C/1)')
+        self.hg.add('(says/Pd mary/Cp)')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C/2))')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cs great/C) extra/C)')
+        self.assertEqual(self.hg.root_degrees(hedge('graphbrain/Cp')), (1, 3))
+        self.assertEqual(self.hg.root_degrees(hedge('great/C')), (1, 3))
+        self.assertEqual(self.hg.root_degrees(hedge('says/Pd')), (3, 3))
 
     def test_sum_degree(self):
         self.hg.destroy()
-        self.hg.add('(is/pd graphbrain/c great/c/1)')
-        self.hg.add('(says/pd mary/cp)')
-        self.hg.add('(says/pd mary/cp (is/pd graphbrain/c great/c/2))')
-        self.hg.add('(says/pd mary/cp (is/pd graphbrain/c great/c) extra/c)')
-        self.assertEqual(self.hg.sum_degree({hedge('graphbrain/c'),
-                                             hedge('says/pd')}), 4)
+        self.hg.add('(is/Pd graphbrain/C great/C/1)')
+        self.hg.add('(says/Pd mary/Cp)')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/C great/C/2))')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/C great/C) extra/C)')
+        self.assertEqual(self.hg.sum_degree({hedge('graphbrain/C'),
+                                             hedge('says/Pd')}), 4)
 
     def test_sum_deep_degree(self):
         self.hg.destroy()
-        self.hg.add('(is/pd graphbrain/c great/c/1)')
-        self.hg.add('(says/pd mary/cp)')
-        self.hg.add('(says/pd mary/cp (is/pd graphbrain/c great/c/2))')
-        self.hg.add('(says/pd mary/cp (is/pd graphbrain/c great/c) extra/c)')
-        self.assertEqual(self.hg.sum_deep_degree({hedge('graphbrain/c'),
-                                                  hedge('says/pd')}), 6)
+        self.hg.add('(is/Pd graphbrain/C great/C/1)')
+        self.hg.add('(says/Pd mary/Cp)')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/C great/C/2))')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/C great/C) extra/C)')
+        self.assertEqual(self.hg.sum_deep_degree({hedge('graphbrain/C'),
+                                                  hedge('says/Pd')}), 6)
 
     def test_primary_1(self):
         self.hg.destroy()
-        edge1 = hedge('((is/a going/p) mary/c (to (the/m gym/c)))')
+        edge1 = hedge('((is/A going/P) mary/C (to (the/M gym/C)))')
         self.hg.add(edge1)
         self.assertTrue(self.hg.is_primary(edge1))
         self.hg.set_primary(edge1, False)
         self.assertFalse(self.hg.is_primary(edge1))
-        self.assertFalse(self.hg.is_primary(hedge('(is/a going/p)')))
-        self.hg.set_primary(hedge('(is/a going/p)'), True)
-        self.assertTrue(self.hg.is_primary(hedge('(is/a going/p)')))
-        self.assertFalse(self.hg.is_primary(hedge('mary/c')))
-        self.hg.set_primary(hedge('mary/c'), True)
-        self.assertTrue(self.hg.is_primary(hedge('mary/c')))
+        self.assertFalse(self.hg.is_primary(hedge('(is/A going/P)')))
+        self.hg.set_primary(hedge('(is/A going/P)'), True)
+        self.assertTrue(self.hg.is_primary(hedge('(is/A going/P)')))
+        self.assertFalse(self.hg.is_primary(hedge('mary/C')))
+        self.hg.set_primary(hedge('mary/C'), True)
+        self.assertTrue(self.hg.is_primary(hedge('mary/C')))
 
     def test_primary_2(self):
         self.hg.destroy()
-        edge1 = hedge('((is/a going/p) mary/c (to (the/m gym/c)))')
+        edge1 = hedge('((is/A going/P) mary/C (to (the/M gym/C)))')
         self.hg.add(edge1, primary=False)
         self.assertFalse(self.hg.is_primary(edge1))
         self.hg.set_primary(edge1, True)
         self.assertTrue(self.hg.is_primary(edge1))
-        self.assertFalse(self.hg.is_primary(hedge('(is/a going/p)')))
-        self.hg.set_primary(hedge('(is/a going/p)'), True)
-        self.assertTrue(self.hg.is_primary(hedge('(is/a going/p)')))
-        self.assertFalse(self.hg.is_primary(hedge('mary/c')))
-        self.hg.set_primary(hedge('mary/c'), True)
-        self.assertTrue(self.hg.is_primary(hedge('mary/c')))
+        self.assertFalse(self.hg.is_primary(hedge('(is/A going/P)')))
+        self.hg.set_primary(hedge('(is/A going/P)'), True)
+        self.assertTrue(self.hg.is_primary(hedge('(is/A going/P)')))
+        self.assertFalse(self.hg.is_primary(hedge('mary/C')))
+        self.hg.set_primary(hedge('mary/C'), True)
+        self.assertTrue(self.hg.is_primary(hedge('mary/C')))
 
     def test_add_large_edge(self):
-        s1 = ("(title/p/.reddit anutensil/c/reddit.user "
-              "(discovered/pd.<f----.sr/en (+/b.aam/. energy/cp.s/en "
-              "company/cp.s/en staff/cp.s/en) (working/pc.------.x/en "
-              "(at/t/en (+/b.am/. climate/cp.s/en ministry/cp.s/en)))) "
-              "(says/pd.|f--3s.sr/en (green/ma/en "
-              "(+/b.am/. party/cc.s/en mp/cp.s/en)) "
-              "(have/pr.|f----.so/en (+/b.aam/. fossil/ca/en fuel/cc.s/en "
-              "giants/cc.p/en) (no/md/en (there/m/en place/cc.s/en)))) "
-              "((even/m/en 's/pd.|f--3s.s/en more/w/en outrageous/ma/en "
-              "taxpayers/cc.p/en ((are/av.|f----/en footing/pr.|pg---.o/en) "
-              "(the/md/en bill/cc.s/en))) it/ci/en) "
-              "('s/pd.|f--3s.xsr/en (at/t/en (:/b/. (a/md/en time/cc.s/en) "
-              "((are/av.|f----/en struggling/pr.|pg---.s/en) "
-              "(+/b.aam/. british/ca/en gas/cp.s/en customers/cc.p/en)))) "
-              "it/ci/en ((to/ai/en make/pc.-i----.ox/en) "
-              "(£/m/en (+/b.am/. 1_4bn/c#/en profits/cc.p/en)) "
-              "(this/md/en year/cc.s/en))))")
+        s1 = ("(title/P/.reddit anutensil/C/reddit.user "
+              "(discovered/Pd.<f----.sr/en (+/B.aam/. energy/Cp.s/en "
+              "company/Cp.s/en staff/Cp.s/en) (working/Pc.------.x/en "
+              "(at/T/en (+/B.am/. climate/Cp.s/en ministry/Cp.s/en)))) "
+              "(says/Pd.|f--3s.sr/en (green/Ma/en "
+              "(+/B.am/. party/Cc.s/en mp/Cp.s/en)) "
+              "(have/Pr.|f----.so/en (+/B.aam/. fossil/Ca/en fuel/Cc.s/en "
+              "giants/Cc.p/en) (no/Md/en (there/M/en place/Cc.s/en)))) "
+              "((even/M/en 's/Pd.|f--3s.s/en more/M/en outrageous/Ma/en "
+              "taxpayers/Cc.p/en ((are/Av.|f----/en footing/Pr.|pg---.o/en) "
+              "(the/Md/en bill/Cc.s/en))) it/Ci/en) "
+              "('s/Pd.|f--3s.xsr/en (at/T/en (:/B/. (a/Md/en time/Cc.s/en) "
+              "((are/Av.|f----/en struggling/Pr.|pg---.s/en) "
+              "(+/B.aam/. british/Ca/en gas/Cp.s/en customers/Cc.p/en)))) "
+              "it/Ci/en ((to/Ai/en make/Pc.-i----.ox/en) "
+              "(£/M/en (+/B.am/. 1_4bn/C#/en profits/Cc.p/en)) "
+              "(this/Md/en year/Cc.s/en))))")
         self.hg.destroy()
         self.hg.add(s1)
         self.assertTrue(self.hg.exists(s1))
 
     def test_add_large_edges(self):
-        s1 = ("(title/p/.reddit anutensil/c/reddit.user "
-              "(discovered/pd.<f----.sr/en (+/b.aam/. energy/cp.s/en "
-              "company/cp.s/en staff/cp.s/en) (working/pc.------.x/en "
-              "(at/t/en (+/b.am/. climate/cp.s/en ministry/cp.s/en)))) "
-              "(says/pd.|f--3s.sr/en (green/ma/en "
-              "(+/b.am/. party/cc.s/en mp/cp.s/en)) "
-              "(have/pr.|f----.so/en (+/b.aam/. fossil/ca/en fuel/cc.s/en "
-              "giants/cc.p/en) (no/md/en (there/m/en place/cc.s/en)))) "
-              "((even/m/en 's/pd.|f--3s.s/en more/w/en outrageous/ma/en "
-              "taxpayers/cc.p/en ((are/av.|f----/en footing/pr.|pg---.o/en) "
-              "(the/md/en bill/cc.s/en))) it/ci/en) "
-              "('s/pd.|f--3s.xsr/en (at/t/en (:/b/. (a/md/en time/cc.s/en) "
-              "((are/av.|f----/en struggling/pr.|pg---.s/en) "
-              "(+/b.aam/. british/ca/en gas/cp.s/en customers/cc.p/en)))) "
-              "it/ci/en ((to/ai/en make/pc.-i----.ox/en) "
-              "(£/m/en (+/b.am/. 1_4bn/c#/en profits/cc.p/en)) "
-              "(this/md/en year/cc.s/en))))")
-        s2 = ("(titles/p/.reddit anutensil/c/reddit.user "
-              "(discovered/pd.<f----.sr/en (+/b.aam/. energy/cp.s/en "
-              "company/cp.s/en staff/cp.s/en) (working/pc.------.x/en "
-              "(at/t/en (+/b.am/. climate/cp.s/en ministry/cp.s/en)))) "
-              "(says/pd.|f--3s.sr/en (green/ma/en "
-              "(+/b.am/. party/cc.s/en mp/cp.s/en)) "
-              "(have/pr.|f----.so/en (+/b.aam/. fossil/ca/en fuel/cc.s/en "
-              "giants/cc.p/en) (no/md/en (there/m/en place/cc.s/en)))) "
-              "((even/m/en 's/pd.|f--3s.s/en more/w/en outrageous/ma/en "
-              "taxpayers/cc.p/en ((are/av.|f----/en footing/pr.|pg---.o/en) "
-              "(the/md/en bill/cc.s/en))) it/ci/en) "
-              "('s/pd.|f--3s.xsr/en (at/t/en (:/b/. (a/md/en time/cc.s/en) "
-              "((are/av.|f----/en struggling/pr.|pg---.s/en) "
-              "(+/b.aam/. british/ca/en gas/cp.s/en customers/cc.p/en)))) "
-              "it/ci/en ((to/ai/en make/pc.-i----.ox/en) "
-              "(£/m/en (+/b.am/. 1_4bn/c#/en profits/cc.p/en)) "
-              "(this/md/en year/cc.s/en))))")
-        s3 = ("(title/p/.reddit anutensil/c/reddit.user "
-              "(discovered/pd.<f----.sr/en (+/b.aam/. energy/cp.s/en "
-              "company/cp.s/en staff/cp.s/en) (working/pc.------.x/en "
-              "(at/t/en (+/b.am/. climate/cp.s/en ministry/cp.s/en)))) "
-              "(says/pd.|f--3s.sr/en (green/ma/en "
-              "(+/b.am/. party/cc.s/en mp/cp.s/en)) "
-              "(have/pr.|f----.so/en (+/b.aam/. fossil/ca/en fuel/cc.s/en "
-              "giants/cc.p/en) (no/md/en (there/m/en place/cc.s/en)))) "
-              "((even/m/en 's/pd.|f--3s.s/en more/w/en outrageous/ma/en "
-              "taxpayers/cc.p/en ((are/av.|f----/en footing/pr.|pg---.o/en) "
-              "(the/md/en bill/cc.s/en))) it/ci/en) "
-              "('s/pd.|f--3s.xsr/en (at/t/en (:/b/. (a/md/en time/cc.s/en) "
-              "((are/av.|f----/en struggling/pr.|pg---.s/en) "
-              "(+/b.aam/. british/ca/en gas/cp.s/en customers/cc.p/en)))) "
-              "it/ci/en ((to/ai/en make/pc.-i----.ox/en) "
-              "(£/m/en (+/b.am/. 1_4bn/c#/en profits/cc.p/en)) "
-              "(these/md/en years/cc.p/en))))")
+        s1 = ("(title/P/.reddit anutensil/C/reddit.user "
+              "(discovered/Pd.<f----.sr/en (+/B.aam/. energy/Cp.s/en "
+              "company/Cp.s/en staff/Cp.s/en) (working/Pc.------.x/en "
+              "(at/T/en (+/B.am/. climate/Cp.s/en ministry/Cp.s/en)))) "
+              "(says/Pd.|f--3s.sr/en (green/Ma/en "
+              "(+/B.am/. party/Cc.s/en mp/Cp.s/en)) "
+              "(have/Pr.|f----.so/en (+/B.aam/. fossil/Ca/en fuel/Cc.s/en "
+              "giants/Cc.p/en) (no/Md/en (there/M/en place/Cc.s/en)))) "
+              "((even/M/en 's/Pd.|f--3s.s/en more/M/en outrageous/Ma/en "
+              "taxpayers/Cc.p/en ((are/Av.|f----/en footing/Pr.|pg---.o/en) "
+              "(the/Md/en bill/Cc.s/en))) it/Ci/en) "
+              "('s/Pd.|f--3s.xsr/en (at/T/en (:/B/. (a/Md/en time/Cc.s/en) "
+              "((are/Av.|f----/en struggling/Pr.|pg---.s/en) "
+              "(+/B.aam/. british/Ca/en gas/Cp.s/en customers/Cc.p/en)))) "
+              "it/Ci/en ((to/Ai/en make/Pc.-i----.ox/en) "
+              "(£/M/en (+/B.am/. 1_4bn/C#/en profits/Cc.p/en)) "
+              "(this/Md/en year/Cc.s/en))))")
+        s2 = ("(titles/P/.reddit anutensil/C/reddit.user "
+              "(discovered/Pd.<f----.sr/en (+/B.aam/. energy/Cp.s/en "
+              "company/Cp.s/en staff/Cp.s/en) (working/Pc.------.x/en "
+              "(at/T/en (+/B.am/. climate/Cp.s/en ministry/Cp.s/en)))) "
+              "(says/Pd.|f--3s.sr/en (green/Ma/en "
+              "(+/B.am/. party/Cc.s/en mp/Cp.s/en)) "
+              "(have/Pr.|f----.so/en (+/B.aam/. fossil/Ca/en fuel/Cc.s/en "
+              "giants/Cc.p/en) (no/Md/en (there/M/en place/Cc.s/en)))) "
+              "((even/M/en 's/Pd.|f--3s.s/en more/M/en outrageous/Ma/en "
+              "taxpayers/Cc.p/en ((are/Av.|f----/en footing/Pr.|pg---.o/en) "
+              "(the/Md/en bill/Cc.s/en))) it/Ci/en) "
+              "('s/Pd.|f--3s.xsr/en (at/T/en (:/B/. (a/Md/en time/Cc.s/en) "
+              "((are/Av.|f----/en struggling/Pr.|pg---.s/en) "
+              "(+/B.aam/. british/Ca/en gas/Cp.s/en customers/Cc.p/en)))) "
+              "it/Ci/en ((to/Ai/en make/Pc.-i----.ox/en) "
+              "(£/M/en (+/B.am/. 1_4bn/C#/en profits/Cc.p/en)) "
+              "(this/Md/en year/Cc.s/en))))")
+        s3 = ("(title/P/.reddit anutensil/C/reddit.user "
+              "(discovered/Pd.<f----.sr/en (+/B.aam/. energy/Cp.s/en "
+              "company/Cp.s/en staff/Cp.s/en) (working/Pc.------.x/en "
+              "(at/T/en (+/B.am/. climate/Cp.s/en ministry/Cp.s/en)))) "
+              "(says/Pd.|f--3s.sr/en (green/Ma/en "
+              "(+/B.am/. party/Cc.s/en mp/Cp.s/en)) "
+              "(have/Pr.|f----.so/en (+/B.aam/. fossil/Ca/en fuel/Cc.s/en "
+              "giants/Cc.p/en) (no/Md/en (there/M/en place/Cc.s/en)))) "
+              "((even/M/en 's/Pd.|f--3s.s/en more/M/en outrageous/Ma/en "
+              "taxpayers/Cc.p/en ((are/Av.|f----/en footing/Pr.|pg---.o/en) "
+              "(the/Md/en bill/Cc.s/en))) it/Ci/en) "
+              "('s/Pd.|f--3s.xsr/en (at/T/en (:/B/. (a/Md/en time/Cc.s/en) "
+              "((are/Av.|f----/en struggling/Pr.|pg---.s/en) "
+              "(+/B.aam/. british/Ca/en gas/Cp.s/en customers/Cc.p/en)))) "
+              "it/Ci/en ((to/Ai/en make/Pc.-i----.ox/en) "
+              "(£/M/en (+/B.am/. 1_4bn/C#/en profits/Cc.p/en)) "
+              "(these/Md/en years/Cc.p/en))))")
         self.hg.destroy()
         self.hg.add(s1)
         self.assertTrue(self.hg.exists(s1))
@@ -588,57 +588,57 @@ class TestHypergraph(unittest.TestCase):
         self.assertTrue(self.hg.exists(s3))
 
     def test_large_edges_all(self):
-        s1 = ("(title/p/.reddit anutensil/c/reddit.user "
-              "(discovered/pd.<f----.sr/en (+/b.aam/. energy/cp.s/en "
-              "company/cp.s/en staff/cp.s/en) (working/pc.------.x/en "
-              "(at/t/en (+/b.am/. climate/cp.s/en ministry/cp.s/en)))) "
-              "(says/pd.|f--3s.sr/en (green/ma/en "
-              "(+/b.am/. party/cc.s/en mp/cp.s/en)) "
-              "(have/pr.|f----.so/en (+/b.aam/. fossil/ca/en fuel/cc.s/en "
-              "giants/cc.p/en) (no/md/en (there/m/en place/cc.s/en)))) "
-              "((even/m/en 's/pd.|f--3s.s/en more/w/en outrageous/ma/en "
-              "taxpayers/cc.p/en ((are/av.|f----/en footing/pr.|pg---.o/en) "
-              "(the/md/en bill/cc.s/en))) it/ci/en) "
-              "('s/pd.|f--3s.xsr/en (at/t/en (:/b/. (a/md/en time/cc.s/en) "
-              "((are/av.|f----/en struggling/pr.|pg---.s/en) "
-              "(+/b.aam/. british/ca/en gas/cp.s/en customers/cc.p/en)))) "
-              "it/ci/en ((to/ai/en make/pc.-i----.ox/en) "
-              "(£/m/en (+/b.am/. 1_4bn/c#/en profits/cc.p/en)) "
-              "(this/md/en year/cc.s/en))))")
-        s2 = ("(titles/p/.reddit anutensil/c/reddit.user "
-              "(discovered/pd.<f----.sr/en (+/b.aam/. energy/cp.s/en "
-              "company/cp.s/en staff/cp.s/en) (working/pc.------.x/en "
-              "(at/t/en (+/b.am/. climate/cp.s/en ministry/cp.s/en)))) "
-              "(says/pd.|f--3s.sr/en (green/ma/en "
-              "(+/b.am/. party/cc.s/en mp/cp.s/en)) "
-              "(have/pr.|f----.so/en (+/b.aam/. fossil/ca/en fuel/cc.s/en "
-              "giants/cc.p/en) (no/md/en (there/m/en place/cc.s/en)))) "
-              "((even/m/en 's/pd.|f--3s.s/en more/w/en outrageous/ma/en "
-              "taxpayers/cc.p/en ((are/av.|f----/en footing/pr.|pg---.o/en) "
-              "(the/md/en bill/cc.s/en))) it/ci/en) "
-              "('s/pd.|f--3s.xsr/en (at/t/en (:/b/. (a/md/en time/cc.s/en) "
-              "((are/av.|f----/en struggling/pr.|pg---.s/en) "
-              "(+/b.aam/. british/ca/en gas/cp.s/en customers/cc.p/en)))) "
-              "it/ci/en ((to/ai/en make/pc.-i----.ox/en) "
-              "(£/m/en (+/b.am/. 1_4bn/c#/en profits/cc.p/en)) "
-              "(this/md/en year/cc.s/en))))")
-        s3 = ("(title/p/.reddit anutensil/c/reddit.user "
-              "(discovered/pd.<f----.sr/en (+/b.aam/. energy/cp.s/en "
-              "company/cp.s/en staff/cp.s/en) (working/pc.------.x/en "
-              "(at/t/en (+/b.am/. climate/cp.s/en ministry/cp.s/en)))) "
-              "(says/pd.|f--3s.sr/en (green/ma/en "
-              "(+/b.am/. party/cc.s/en mp/cp.s/en)) "
-              "(have/pr.|f----.so/en (+/b.aam/. fossil/ca/en fuel/cc.s/en "
-              "giants/cc.p/en) (no/md/en (there/m/en place/cc.s/en)))) "
-              "((even/m/en 's/pd.|f--3s.s/en more/w/en outrageous/ma/en "
-              "taxpayers/cc.p/en ((are/av.|f----/en footing/pr.|pg---.o/en) "
-              "(the/md/en bill/cc.s/en))) it/ci/en) "
-              "('s/pd.|f--3s.xsr/en (at/t/en (:/b/. (a/md/en time/cc.s/en) "
-              "((are/av.|f----/en struggling/pr.|pg---.s/en) "
-              "(+/b.aam/. british/ca/en gas/cp.s/en customers/cc.p/en)))) "
-              "it/ci/en ((to/ai/en make/pc.-i----.ox/en) "
-              "(£/m/en (+/b.am/. 1_4bn/c#/en profits/cc.p/en)) "
-              "(these/md/en years/cc.p/en))))")
+        s1 = ("(title/P/.reddit anutensil/C/reddit.user "
+              "(discovered/Pd.<f----.sr/en (+/B.aam/. energy/Cp.s/en "
+              "company/Cp.s/en staff/Cp.s/en) (working/Pc.------.x/en "
+              "(at/T/en (+/B.am/. climate/Cp.s/en ministry/Cp.s/en)))) "
+              "(says/Pd.|f--3s.sr/en (green/Ma/en "
+              "(+/B.am/. party/Cc.s/en mp/Cp.s/en)) "
+              "(have/Pr.|f----.so/en (+/B.aam/. fossil/Ca/en fuel/Cc.s/en "
+              "giants/Cc.p/en) (no/Md/en (there/M/en place/Cc.s/en)))) "
+              "((even/M/en 's/Pd.|f--3s.s/en more/M/en outrageous/Ma/en "
+              "taxpayers/Cc.p/en ((are/Av.|f----/en footing/Pr.|pg---.o/en) "
+              "(the/Md/en bill/Cc.s/en))) it/Ci/en) "
+              "('s/Pd.|f--3s.xsr/en (at/T/en (:/B/. (a/Md/en time/Cc.s/en) "
+              "((are/Av.|f----/en struggling/Pr.|pg---.s/en) "
+              "(+/B.aam/. british/Ca/en gas/Cp.s/en customers/Cc.p/en)))) "
+              "it/Ci/en ((to/Ai/en make/Pc.-i----.ox/en) "
+              "(£/M/en (+/B.am/. 1_4bn/C#/en profits/Cc.p/en)) "
+              "(this/Md/en year/Cc.s/en))))")
+        s2 = ("(titles/P/.reddit anutensil/C/reddit.user "
+              "(discovered/Pd.<f----.sr/en (+/B.aam/. energy/Cp.s/en "
+              "company/Cp.s/en staff/Cp.s/en) (working/Pc.------.x/en "
+              "(at/T/en (+/B.am/. climate/Cp.s/en ministry/Cp.s/en)))) "
+              "(says/Pd.|f--3s.sr/en (green/Ma/en "
+              "(+/B.am/. party/Cc.s/en mp/Cp.s/en)) "
+              "(have/Pr.|f----.so/en (+/B.aam/. fossil/Ca/en fuel/Cc.s/en "
+              "giants/Cc.p/en) (no/Md/en (there/M/en place/Cc.s/en)))) "
+              "((even/M/en 's/Pd.|f--3s.s/en more/M/en outrageous/Ma/en "
+              "taxpayers/Cc.p/en ((are/Av.|f----/en footing/Pr.|pg---.o/en) "
+              "(the/Md/en bill/Cc.s/en))) it/Ci/en) "
+              "('s/Pd.|f--3s.xsr/en (at/T/en (:/B/. (a/Md/en time/Cc.s/en) "
+              "((are/Av.|f----/en struggling/Pr.|pg---.s/en) "
+              "(+/B.aam/. british/Ca/en gas/Cp.s/en customers/Cc.p/en)))) "
+              "it/Ci/en ((to/Ai/en make/Pc.-i----.ox/en) "
+              "(£/M/en (+/B.am/. 1_4bn/C#/en profits/Cc.p/en)) "
+              "(this/Md/en year/Cc.s/en))))")
+        s3 = ("(title/P/.reddit anutensil/C/reddit.user "
+              "(discovered/Pd.<f----.sr/en (+/B.aam/. energy/Cp.s/en "
+              "company/Cp.s/en staff/Cp.s/en) (working/Pc.------.x/en "
+              "(at/T/en (+/B.am/. climate/Cp.s/en ministry/Cp.s/en)))) "
+              "(says/Pd.|f--3s.sr/en (green/Ma/en "
+              "(+/B.am/. party/Cc.s/en mp/Cp.s/en)) "
+              "(have/Pr.|f----.so/en (+/B.aam/. fossil/Ca/en fuel/Cc.s/en "
+              "giants/Cc.p/en) (no/Md/en (there/M/en place/Cc.s/en)))) "
+              "((even/M/en 's/Pd.|f--3s.s/en more/M/en outrageous/Ma/en "
+              "taxpayers/Cc.p/en ((are/Av.|f----/en footing/Pr.|pg---.o/en) "
+              "(the/Md/en bill/Cc.s/en))) it/Ci/en) "
+              "('s/Pd.|f--3s.xsr/en (at/T/en (:/B/. (a/Md/en time/Cc.s/en) "
+              "((are/Av.|f----/en struggling/Pr.|pg---.s/en) "
+              "(+/B.aam/. british/Ca/en gas/Cp.s/en customers/Cc.p/en)))) "
+              "it/Ci/en ((to/Ai/en make/Pc.-i----.ox/en) "
+              "(£/M/en (+/B.am/. 1_4bn/C#/en profits/Cc.p/en)) "
+              "(these/Md/en years/Cc.p/en))))")
         self.hg.destroy()
         self.hg.add(s1)
         self.hg.add(s2)
@@ -649,22 +649,22 @@ class TestHypergraph(unittest.TestCase):
 
     def test_sequence1(self):
         self.hg.destroy()
-        edge1 = hedge('(is/p this/c (first/m element/c))')
+        edge1 = hedge('(is/P this/C (first/M element/C))')
         self.hg.add_to_sequence('test_seq', 0, edge1)
         self.assertTrue(self.hg.exists((const.sequence_pred, 'test_seq', '0',
                                         edge1)))
 
     def test_sequence2(self):
         self.hg.destroy()
-        edge1 = hedge('(is/p this/c (first/m element/c))')
+        edge1 = hedge('(is/P this/C (first/M element/C))')
         self.hg.add_to_sequence('test_seq', 0, edge1)
         edges = list(self.hg.sequence('test_seq'))
         self.assertEqual(edges, [edge1])
 
     def test_sequence3(self):
         self.hg.destroy()
-        edge1 = hedge('(is/p this/c (first/m element/c))')
-        edge2 = hedge('(is/p this/c (second/m element/c))')
+        edge1 = hedge('(is/P this/C (first/M element/C))')
+        edge2 = hedge('(is/P this/C (second/M element/C))')
         self.hg.add_to_sequence('test_seq', 0, edge1)
         self.hg.add_to_sequence('test_seq', 1, edge2)
         edges = list(self.hg.sequence('test_seq'))
@@ -672,9 +672,9 @@ class TestHypergraph(unittest.TestCase):
 
     def test_sequence4(self):
         self.hg.destroy()
-        edge1 = hedge('(is/p this/c (first/m element/c))')
-        edge2 = hedge('(is/p this/c (second/m element/c))')
-        edge3 = hedge('(is/p this/c (third/m element/c))')
+        edge1 = hedge('(is/P this/C (first/M element/C))')
+        edge2 = hedge('(is/P this/C (second/M element/C))')
+        edge3 = hedge('(is/P this/C (third/M element/C))')
         self.hg.add_to_sequence('test_seq', 0, edge1)
         self.hg.add_to_sequence('test_seq', 1, edge2)
         self.hg.add_to_sequence('test_seq', 2, edge3)

@@ -1,3 +1,4 @@
+import traceback
 from itertools import repeat
 from collections import defaultdict, Counter
 import logging
@@ -12,10 +13,10 @@ from .text import UniqueAtom
 
 def insert_after_predicate(targ, orig):
     targ_type = targ.type()
-    if targ_type[0] == 'p':
+    if targ_type[0] == 'P':
         return hedge((targ, orig))
-    elif targ_type[0] == 'r':
-        if targ_type == 'rm':
+    elif targ_type[0] == 'R':
+        if targ[0].type()[0] == 'J':
             inner_rel = insert_after_predicate(targ[1], orig)
             if inner_rel:
                 return hedge((targ[0], inner_rel) + tuple(targ[2:]))
@@ -32,30 +33,31 @@ def insert_after_predicate(targ, orig):
 
 
 def nest_predicate(inner, outer, before):
-    if inner.type() == 'rm':
+    if not inner.is_atom() and inner[0].type()[0] == 'J':
         first_rel = nest_predicate(inner[1], outer, before)
         return hedge((inner[0], first_rel) + tuple(inner[2:]))
-    elif inner.is_atom() or inner.type()[0] == 'p':
+    elif inner.is_atom() or inner.type()[0] == 'P':
         return hedge((outer, inner))
     else:
         return hedge(((outer, inner[0]),) + inner[1:])
 
 
 def enclose(connector, edge):
-    if edge.is_atom() or edge[0].type() != 'b+':
+    if edge.is_atom() or edge[0].type() != 'J':
         return hedge((connector, edge))
     else:
         return hedge((edge[0], enclose(connector, edge[1])) + edge[2:])
 
 
+# TODO: check this!
 # example:
-# applying (and/b+ bank/cm (credit/cn.s card/cn.s)) to records/cn.p
+# applying (and/B+ bank/Cm (credit/Cn.s card/Cn.s)) to records/Cn.p
 # yields:
-# (and/b+
-#     (+/b.am bank/c records/cn.p)
-#     (+/b.am (credit/cn.s card/cn.s) records/cn.p))
+# (and/B+
+#     (+/B.am bank/C records/Cn.p)
+#     (+/B.am (credit/Cn.s card/Cn.s) records/Cn.p))
 def _apply_aux_concept_list_to_concept(con_list, concept):
-    concepts = tuple([('+/b.am', item, concept) for item in con_list[1:]])
+    concepts = tuple([('+/B.am', item, concept) for item in con_list[1:]])
     return hedge((con_list[0],) + concepts)
 
 
@@ -66,9 +68,9 @@ def _concept_scores(edge, scores=None):
         return scores
     if edge.is_atom():
         et = edge.type()
-        if et == 'cp':
+        if et == 'Cp':
             scores['proper'] += 1
-        elif et == 'cc':
+        elif et == 'Cc':
             scores['common'] += 1
         else:
             scores['misc'] += 1
@@ -168,11 +170,11 @@ class AlphaBeta(Parser):
         text = token.text.lower()
         et = ent_type
 
-        if ent_type[0] == 'p' and ent_type != 'pm':
+        if ent_type[0] == 'P' and ent_type != 'Pm':
             atom = self._build_atom_predicate(token, ent_type, last_token)
-        elif ent_type[0] == 'x':
+        elif ent_type[0] == 'X':
             atom = self._build_atom_subpredicate(token, ent_type)
-        elif ent_type[0] == 'a':
+        elif ent_type[0] == 'A':
             atom = self._build_atom_auxiliary(token, ent_type)
         else:
             atom = build_atom(text, et, self.lang)
@@ -195,10 +197,10 @@ class AlphaBeta(Parser):
                     last_token.tag_ == '.' and
                     last_token.dep_ == 'punct' and
                     last_token.lemma_.strip() == '?'):
-                ent_type = 'p?'
+                ent_type = 'P?'
             # declarative (by default)
             else:
-                ent_type = 'pd'
+                ent_type = 'Pd'
 
         et = '{}..{}'.format(ent_type, verb_features)
 
@@ -211,7 +213,7 @@ class AlphaBeta(Parser):
         if self._is_verb(token):
             # create verb features string
             verb_features = self._verb_features(token)
-            et = 'xv.{}'.format(verb_features)
+            et = 'Xv.{}'.format(verb_features)
 
         return build_atom(text, et, self.lang)
 
@@ -221,21 +223,21 @@ class AlphaBeta(Parser):
         if self._is_verb(token):
             # create verb features string
             verb_features = self._verb_features(token)
-            et = 'av.{}'.format(verb_features)  # verbal subtype
+            et = 'Av.{}'.format(verb_features)  # verbal subtype
         else:
             et = self._auxiliary_type_and_subtype(token)
 
-        if et == 'a':
+        if et == 'A':
             et = ent_type
 
         return build_atom(text, et, self.lang)
 
     def _compose_concepts(self, concepts):
         first = concepts[0]
-        if first.is_atom() or first[0].type()[0] != 'm':
+        if first.is_atom() or first[0].type()[0] != 'M':
             concept_roles = [self._concept_role(concept)
                              for concept in concepts]
-            builder = '+/b.{}/.'.format(''.join(concept_roles))
+            builder = '+/B.{}/.'.format(''.join(concept_roles))
             return hedge(builder).connect(concepts)
         else:
             return hedge((first[0],
@@ -257,48 +259,48 @@ class AlphaBeta(Parser):
             ct = entity.connector_type()
 
             # Multi-noun concept, e.g.: (south america) -> (+ south america)
-            if ct[0] == 'c':
+            if ct[0] == 'C':
                 return self._compose_concepts(entity), temporal
 
             # Assign concept roles where possible
-            # e.g. (on/br referendum/c (gradual/m (nuclear/m phaseout/c))) ->
-            # (on/br.ma referendum/c (gradual/m (nuclear/m phaseout/c)))
-            elif ct[0] == 'b' and len(entity) == 3:
+            # e.g. (on/Br referendum/C (gradual/M (nuclear/M phaseout/C))) ->
+            # (on/Br.ma referendum/C (gradual/M (nuclear/M phaseout/C)))
+            elif ct[0] == 'B' and len(entity) == 3:
                 return self._builder_arg_roles(entity), temporal
 
             # Builders with one argument become modifiers
-            # e.g. (on/b ice) -> (on/m ice)
-            elif ct[0] == 'b' and entity[0].is_atom() and len(entity) == 2:
+            # e.g. (on/B ice) -> (on/M ice)
+            elif ct[0] == 'B' and entity[0].is_atom() and len(entity) == 2:
                 ps = entity[0].parts()
-                ps[1] = 'm' + ct[1:]
+                ps[1] = 'M' + ct[1:]
                 return hedge(('/'.join(ps),) + entity[1:]), temporal
 
-            # A meta-modifier applied to a concept defined my a modifier
+            # A modifier applied to a concept defined my a modifier
             # should apply to the modifier instead.
-            # e.g.: (stricking/w (red/m dress)) -> ((stricking/w red/m) dress)
-            elif (ct[0] == 'w' and
-                    entity[0].is_atom() and
-                    len(entity) == 2 and
-                    not entity[1].is_atom() and
-                    entity[1].connector_type()[0] == 'm'):
-                return (hedge(((entity[0], entity[1][0]),) + entity[1][1:]),
-                        temporal)
+            # e.g.: (stricking/M (red/M dress)) -> ((stricking/M red/M) dress)
+            # elif (ct[0] == 'M' and
+            #         entity[0].is_atom() and
+            #         len(entity) == 2 and
+            #         not entity[1].is_atom() and
+            #         entity[1].connector_type()[0] == 'M'):
+            #     return (hedge(((entity[0], entity[1][0]),) + entity[1][1:]),
+            #             temporal)
 
             # Make sure that specifier arguments are of the specifier type,
             # entities are surrounded by an edge with a trigger connector
-            # if necessary. E.g.: today -> {t/t/. today}
-            elif ct[0] == 'p':
+            # if necessary. E.g.: today -> {t/T/. today}
+            elif ct[0] == 'P':
                 pred = entity.predicate()
                 if pred:
                     role = pred.role()
                     if len(role) > 2:
                         arg_roles = role[2]
-                        if 'x' in arg_roles:
+                        if 'X' in arg_roles:
                             proc_edge = list(entity)
-                            trigger = 't/tt/.' if temporal else 't/t/.'
+                            trigger = 't/Tt/.' if temporal else 't/T/.'
                             for i, arg_role in enumerate(arg_roles):
                                 arg_pos = i + 1
-                                if (arg_role == 'x' and
+                                if (arg_role == 'X' and
                                         arg_pos < len(proc_edge) and
                                         proc_edge[arg_pos].is_atom()):
                                     tedge = (hedge(trigger),
@@ -308,12 +310,12 @@ class AlphaBeta(Parser):
                 return entity, temporal
 
             # Make triggers temporal, if appropriate.
-            # e.g.: (in/t 1976) -> (in/tt 1976)
-            elif ct[0] == 't':
+            # e.g.: (in/T 1976) -> (in/Tt 1976)
+            elif ct[0] == 'T':
                 if temporal:
-                    trigger_atom = entity[0].atom_with_type('t')
+                    trigger_atom = entity[0].atom_with_type('T')
                     triparts = trigger_atom.parts()
-                    newparts = (triparts[0], 'tt')
+                    newparts = (triparts[0], 'Tt')
                     if len(triparts) > 2:
                         newparts += tuple(triparts[2:])
                     new_trigger = hedge('/'.join(newparts))
@@ -368,10 +370,10 @@ class AlphaBeta(Parser):
             return False
         else:
             ct = entity.connector_type()
-            if ct[0] == 'p':
+            if ct[0] == 'P':
                 # Extend predicate atom with argument types
-                if len(ct) < 2 or ct[1] != 'm':
-                    pred = entity.atom_with_type('p')
+                if len(ct) < 2 or ct[1] != 'M':
+                    pred = entity.atom_with_type('P')
                     subparts = pred.parts()[1].split('.')
 
                     if subparts[1] == '':
@@ -385,10 +387,10 @@ class AlphaBeta(Parser):
 
         if self._is_post_parse_token_necessary(entity):
             ct = entity.connector_type()
-            if ct[0] == 'p':
+            if ct[0] == 'P':
                 # Extend predicate atom with argument types
-                if len(ct) < 2 or ct[1] != 'm':
-                    pred = entity.atom_with_type('p')
+                if len(ct) < 2 or ct[1] != 'M':
+                    pred = entity.atom_with_type('P')
                     subparts = pred.parts()[1].split('.')
 
                     if subparts[1] == '':
@@ -450,32 +452,32 @@ class AlphaBeta(Parser):
             logging.debug('entity: [%s] %s', ent_type, entity)
             logging.debug('child: [%s] %s', child_type, child)
 
-            if child_type[0] in {'c', 'r', 'd', 's'}:
-                if ent_type[0] == 'c':
-                    if (child.connector_type() in {'pc', 'pr'} or
+            if child_type[0] in {'C', 'R', 'D', 'S'}:
+                if ent_type[0] == 'C':
+                    if (child.connector_type() in {'Pc', 'Pr'} or
                             self._is_relative_concept(child_token)):
-                        logging.debug('choice: 1')
+                        logging.debug('choice: 1a')
                         # RELATIVE TO CONCEPT
                         relative_to_concept.append(child)
-                    elif child.connector_type()[0] == 'b':
-                        if (child.connector_type() == 'br' and
+                    elif child.connector_type()[0] in {'B', 'J'}:
+                        if (child.connector_type() == 'Br' and
                                 len(child) >= 3 and
-                                'b+' not in [c.type() for c in children]):
+                                'J' not in [c.type() for c in children]):
                             logging.debug('choice: 2a')
                             # RELATIVE TO CONCEPT
                             relative_to_concept.append(child)
-                        elif (child.connector_type() == 'b+' and
-                                child.contains_atom_type('cm')):
+                        elif (child.connector_type()[0] == 'J' and
+                              child.contains_atom_type('Cm')):
                             logging.debug('choice: 2b')
                             # CONCEPT LIST
-                            entity = _apply_aux_concept_list_to_concept(child,
-                                                                        entity)
+                            entity = _apply_aux_concept_list_to_concept(
+                                child, entity)
                         elif (child_up and
-                              child_up.type()[0] == 'c' and
-                              'b+' in [c.type() for c in children[i + 2:]]):
+                              child_up.type()[0] == 'C' and
+                              'J' in [c.type() for c in children[i + 2:]]):
                             logging.debug('choice: 2c')
                             next_child = child_up.nest(child)
-                        elif entity.connector_type()[0] == 'c':
+                        elif entity.connector_type()[0] == 'C':
                             # NEST
                             if len(child) == 2:
                                 logging.debug('choice: 3a')
@@ -491,7 +493,7 @@ class AlphaBeta(Parser):
                         else:
                             logging.debug('choice: 4a')
                             # NEST AROUND ORIGINAL ATOM
-                            if atom.type()[0] == 'c' and len(child) > 2:
+                            if atom.type()[0] == 'C' and len(child) > 2:
                                 new_child = hedge((child[0], child[1:]))
                                 entity = entity.replace_atom(
                                     atom,
@@ -502,17 +504,17 @@ class AlphaBeta(Parser):
                                 entity = entity.replace_atom(
                                     atom,
                                     atom.nest(child, pos))
-                    elif child.connector_type()[0] in {'x', 't'}:
+                    elif child.connector_type()[0] in {'X', 'T'}:
                         logging.debug('choice: 5')
                         # NEST
                         entity = entity.nest(child, pos)
                     else:
-                        if ((atom.type()[0] == 'c' and
-                                child.connector_type()[0] == 'c') or
+                        if ((atom.type()[0] == 'C' and
+                                child.connector_type()[0] == 'C') or
                                 self._is_compound(child_token)):
-                            if entity.connector_type()[0] == 'c':
-                                if (child.connector_type()[0] == 'c' and
-                                        entity.connector_type() != 'cm'):
+                            if entity.connector_type()[0] == 'C':
+                                if (child.connector_type()[0] == 'C' and
+                                        entity.connector_type() != 'Cm'):
                                     logging.debug('choice: 6')
                                     # SEQUENCE
                                     entity = entity.sequence(child, pos)
@@ -521,7 +523,7 @@ class AlphaBeta(Parser):
                                     # FLAT SEQUENCE
                                     entity = entity.sequence(
                                         child, pos, flat=False)
-                            elif (entity.connector_type() == 'br' and
+                            elif (entity.connector_type() == 'Br' and
                                   not self._is_compound(child_token)):
                                 logging.debug('choice: 7b')
                                 # NEST
@@ -536,7 +538,7 @@ class AlphaBeta(Parser):
                             logging.debug('choice: 9')
                             entity = entity.replace_atom(
                                 atom, atom.connect((child,)))
-                elif ent_type[0] in {'p', 'r', 'd', 's'}:
+                elif ent_type[0] in {'P', 'R', 'D', 'S'}:
                     logging.debug('choice: 10')
                     # INSERT AFTER PREDICATE
                     result = insert_after_predicate(entity, child)
@@ -549,42 +551,43 @@ class AlphaBeta(Parser):
                     logging.debug('choice: 11')
                     # INSERT FIRST ARGUMENT
                     entity = entity.insert_first_argument(child)
-            elif child_type[0] == 'b':
-                if entity.connector_type()[0] == 'c':
+            elif child_type[0] == 'B':
+                if entity.connector_type()[0] == 'C':
                     logging.debug('choice: 12')
                     # CONNECT
                     entity = child.connect(entity)
                 else:
                     logging.debug('choice: 13')
                     entity = entity.nest(child, pos)
-            elif child_type[0] == 'p':
-                # TODO: Pathological case
-                # e.g. "Some subspecies of mosquito might be 1s..."
-                if child_type == 'pm':
-                    logging.debug('choice: 14')
-                    # ?
-                    entity = child + entity
-                else:
-                    logging.debug('choice: 15')
-                    # CONNECT
-                    entity = entity.connect((child,))
-            elif child_type[0] in {'m', 'x', 't'}:
+            # TODO: Pathological case
+            # e.g. "Some subspecies of mosquito might be 1s..."
+            elif child_type[0] == 'J':
+                logging.debug('choice: 14')
+                # ?
+                entity = child + entity
+            elif child_type[0] == 'P':
+                logging.debug('choice: 15')
+                # CONNECT
+                entity = entity.connect((child,))
+            elif child_type[0] in {'X', 'T'}:
                 logging.debug('choice: 16')
                 # ?
                 entity = enclose(child, entity)
-            elif child_type[0] == 'a':
+            elif child_type[0] == 'A':
                 logging.debug('choice: 17')
                 # NEST PREDICATE
                 entity = nest_predicate(entity, child, pos)
-            elif child_type == 'w':
-                if ent_type[0] in {'d', 's'}:
+            # TODO: used to be child_type == 'W'
+            elif child_type[0] == 'M':
+                if ent_type[0] in {'D', 'S'}:
                     logging.debug('choice: 18')
                     # NEST PREDICATE
                     entity = nest_predicate(entity, child, pos)
                 else:
                     logging.debug('choice: 19')
                     # NEST
-                    entity = entity.nest(child, pos)
+                    # entity = entity.nest(child, pos)
+                    entity = enclose(child, entity)
             else:
                 logging.warning('Failed to parse token (_parse_token): {}'
                                 .format(token))
@@ -597,7 +600,7 @@ class AlphaBeta(Parser):
 
         if len(relative_to_concept) > 0:
             relative_to_concept.reverse()
-            entity = hedge((':/b/.', entity) + tuple(relative_to_concept))
+            entity = hedge((':/B/.', entity) + tuple(relative_to_concept))
 
         entity = self._post_parse_token(entity, token_dict)
 
@@ -630,13 +633,19 @@ class AlphaBeta(Parser):
                     'atom2word': atom2word,
                     'spacy_sentence': sent}
         except Exception as e:
+            if hasattr(e, 'message'):
+                msg = e.message
+            else:
+                msg = str(e)
             logging.error('Caught exception: {} while parsing: "{}"'.format(
-                str(e), str(sent)))
+                msg, str(sent)))
+            traceback.print_exc()
+            print(self.atom2token)
             return {'main_edge': None,
                     'extra_edges': [],
-                    'text': '',
+                    'text': str(sent).strip(),
                     'atom2word': {},
-                    'spacy_sentence': None}
+                    'spacy_sentence': sent}
 
     def _parse(self, text):
         """Transforms the given text into hyperedges + aditional information.
@@ -746,8 +755,8 @@ class AlphaBeta(Parser):
         elif edge.is_atom():
             return edge
         # e.g. "ihr Hund", "son chien", "her dog", ...
-        # (her/mp dog/cc) -> (poss/bp.am/. mary/cp dog/cc)
-        elif (edge[0].type() == 'mp' and
+        # (her/Mp dog/Cc) -> (poss/Bp.am/. mary/Cp dog/Cc)
+        elif (edge[0].type() == 'Mp' and
               len(edge) == 2 and
               edge[0] in self.edge2coref):
             return hedge(

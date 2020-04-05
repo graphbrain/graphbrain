@@ -1,8 +1,8 @@
 Ich bin Telmo.
-(bin/pd.sc.-f-i---/de ich/ci/de telmo/cp/de)
+(bin/Pd.sc.-f-i---/de ich/Ci/de telmo/Cp/de)
 Kommunikation ist ein Grundbedürfnis des Menschen.
-(ist/pd.sc.-f-i---/de kommunikation/cc/de (ein/md/de (des/bp.ma/de grundbedürfnis/cc/de menschen/cc/de)))
+(ist/Pd.sc.-f-i---/de kommunikation/Cc/de (ein/Md/de (des/Bp.ma/de grundbedürfnis/Cc/de menschen/Cc/de)))
 Berlin ist die Bundeshauptstadt der Bundesrepublik Deutschland und zugleich eines ihrer Länder.
-(ist/pd.sc.-f-i---/de berlin/cp/de (die/md/de (und/b+/de (der/bp.ma/de bundeshauptstadt/cc/de (+/b.mm/. bundesrepublik/cc/de deutschland/cp/de)) (zugleich/x/de (eines/mi/de (ihrer/mp/de länder/cc/de))))))
+(ist/Pd.sc.-f-i---/de berlin/Cp/de (und/J/de (die/Md/de (der/Bp.ma/de bundeshauptstadt/Cc/de (+/B.mm/. bundesrepublik/Cc/de deutschland/Cp/de))) (zugleich/X/de (eines/Mi/de (ihrer/Mp/de länder/Cc/de)))))
 Derzeit stehen 274 Medikamente als nicht lieferbar auf der Internetseite des Bundesinstituts für Arzneimittel und Medizinprodukte.
-((derzeit/a/de stehen/pd.sxx.-f-i---/de) (274/m#/de medikamente/cc/de) (als/t/de (nicht/an/de lieferbar/ca/de)) (auf/t/de (der/md/de (des/bp.ma/de internetseite/cc/de (für/bp.ma/de bundesinstituts/cc/de (und/b+/de arzneimittel/cc/de medizinprodukte/cc/de))))))
+((derzeit/A/de stehen/Pd.sxx.-f-i---/de) (274/M#/de medikamente/Cc/de) (als/T/de (nicht/An/de lieferbar/Ca/de)) (auf/T/de (der/Md/de (des/Bp.ma/de internetseite/Cc/de (für/Bp.ma/de bundesinstituts/Cc/de (und/J/de arzneimittel/Cc/de medizinprodukte/Cc/de))))))

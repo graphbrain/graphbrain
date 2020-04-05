@@ -48,8 +48,8 @@ class CorefsNames(Agent):
 
         for edge in set(self.hg.edges_with_edges([seed])):
             conn = edge[0]
-            if (conn.is_atom() and edge.type()[0] == 'c' and
-                    edge.connector_type() == 'b' and conn.root() == '+' and
+            if (conn.is_atom() and edge.type()[0] == 'C' and
+                    edge.connector_type() == 'B' and conn.root() == '+' and
                     len(edge) > 2):
                 mc = edge.main_concepts()
                 if len(mc) == 1 and mc[0] == seed:
@@ -98,11 +98,11 @@ class CorefsNames(Agent):
         if not edge.is_atom():
             conn = edge[0]
             ct = edge.connector_type()
-            if ct[0] == 'b' and conn.is_atom() and conn.root() == '+':
+            if ct[0] == 'B' and conn.is_atom() and conn.root() == '+':
                 if len(edge) > 2:
                     concepts = edge.main_concepts()
                     if (len(concepts) == 1 and
-                            concepts[0].type()[:2] == 'cp'):
+                            concepts[0].type()[:2] == 'Cp'):
                         self.seeds.add(concepts[0])
 
     def report(self):

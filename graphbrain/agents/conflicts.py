@@ -9,7 +9,7 @@ from graphbrain.agents.agent import Agent
 CONFLICT_PRED_LEMMAS = {'warn', 'kill', 'accuse', 'condemn', 'slam', 'arrest',
                         'clash', 'blame'}
 
-CONFLICT_TOPIC_TRIGGERS = {'of/t/en', 'over/t/en', 'against/t/en', 'for/t/en'}
+CONFLICT_TOPIC_TRIGGERS = {'of/T/en', 'over/T/en', 'against/T/en', 'for/T/en'}
 
 
 class Conflicts(Agent):
@@ -34,14 +34,14 @@ class Conflicts(Agent):
                 if item[0].to_str() in CONFLICT_TOPIC_TRIGGERS:
                     for concept in all_concepts(item[1]):
                         if self.hg.degree(concept) > 1:
-                            self.add(('conflict-topic/p/.', actor_orig,
+                            self.add(('conflict-topic/P/.', actor_orig,
                                       actor_targ, concept, edge))
                             self.conflict_topics += 1
 
     def input_edge(self, edge):
         if not edge.is_atom():
             ct = edge.connector_type()
-            if ct[:2] == 'pd':
+            if ct[:2] == 'Pd':
                 pred = edge[0]
                 if (len(edge) > 2 and
                         deep_lemma(self.hg,
@@ -57,7 +57,7 @@ class Conflicts(Agent):
                             actor_orig = main_coref(self.hg, subject)
                             actor_targ = main_coref(self.hg, obj)
                             conflict_edge = hedge(
-                                ('conflict/p/.', actor_orig, actor_targ, edge))
+                                ('conflict/P/.', actor_orig, actor_targ, edge))
                             if (is_actor(self.hg, actor_orig) and
                                     is_actor(self.hg, actor_targ)):
                                 self.add(conflict_edge)

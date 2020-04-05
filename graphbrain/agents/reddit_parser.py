@@ -42,7 +42,7 @@ class RedditParser(Agent):
     def _parse_title(self, text, author):
         parts = title_parts(text)
 
-        title_edge = ['title/p/.reddit', author]
+        title_edge = ['title/P/.reddit', author]
         tags = []
         for part in parts:
             parse_results = self.parser.parse(part)
@@ -61,7 +61,7 @@ class RedditParser(Agent):
                     for edge in parse['extra_edges']:
                         self.add(edge)
 
-                    if main_edge.type()[0] == 'r':
+                    if main_edge.type()[0] == 'R':
                         title_edge.append(main_edge)
                     else:
                         tags.append(main_edge)
@@ -75,13 +75,13 @@ class RedditParser(Agent):
 
             # add title tags
             if len(tags) > 0:
-                tags_edge = ['tags/p/.reddit', title_edge] + tags
+                tags_edge = ['tags/P/.reddit', title_edge] + tags
                 self.add(tags_edge)
 
         self.titles_parsed += 1
 
     def _parse_post(self, post):
-        author = build_atom(post['author'], 'c', 'reddit.user')
+        author = build_atom(post['author'], 'C', 'reddit.user')
         self._parse_title(post['title'], author)
 
     def input_file(self, file_name):

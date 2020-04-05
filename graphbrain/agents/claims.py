@@ -14,8 +14,8 @@ def _subject_preposition(claim):
     subjects = claim.edges_with_argrole('s')
     if len(subjects) == 1:
         subject = strip_concept(subjects[0])
-        if subject is not None and subject.type() == 'ci':
-            atom = subject.atom_with_type('c')
+        if subject is not None and subject.type() == 'Ci':
+            atom = subject.atom_with_type('C')
             return atom.root()
     return None
 
@@ -55,7 +55,7 @@ class Claims(Agent):
         if edge in self.actors:
             return True
 
-        if self.hg.exists(('actor/p/.', edge)):
+        if self.hg.exists(('actor/P/.', edge)):
             self.actors.add(edge)
             return True
         else:
@@ -100,7 +100,7 @@ class Claims(Agent):
     def input_edge(self, edge):
         if not edge.is_atom():
             ct = edge.connector_type()
-            if ct[:2] == 'pd':
+            if ct[:2] == 'Pd':
                 pred = edge[0]
                 if (len(edge) > 2 and
                         deep_lemma(self.hg, pred).root() in CLAIM_PRED_LEMMAS):
@@ -137,7 +137,7 @@ class Claims(Agent):
 
                 # write gender
                 if gender:
-                    gender_atom = '{}/p/.'.format(gender)
+                    gender_atom = '{}/P/.'.format(gender)
                     self.add((gender_atom, actor))
 
                 i += 1
@@ -174,7 +174,7 @@ class Claims(Agent):
                         self.anaphoras += 1
 
                 # write claim
-                self.add(('claim/p/.', actor, claim, edge))
+                self.add(('claim/P/.', actor, claim, edge))
 
                 i += 1
                 bar.update(i)

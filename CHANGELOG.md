@@ -17,8 +17,11 @@
 - parse() now returns a dictionary that includes inferred edges.
 - parse() now returns a dictionary of edges to text.
 - English parser improved.
+- Hyperedge main type character codes become upercase (apple/C instead of apple/c).
+- Conjunction hyperedge type, character code: "J" (e.g.: and/J).
 
 ### Removed
+- Meta-modifier hyperedge type.
 
 ## [0.3.2] - 10-02-2020
 ### Added

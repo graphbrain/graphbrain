@@ -3,8 +3,8 @@ from graphbrain.meaning.corefs import main_coref
 
 def is_actor(hg, edge):
     """Checks if the edge is a coreference to an actor."""
-    if edge.type()[0] == 'c':
-        return hg.exists(('actor/p/.', main_coref(hg, edge)))
+    if edge.type()[0] == 'C':
+        return hg.exists(('actor/P/.', main_coref(hg, edge)))
     else:
         return False
 
@@ -22,4 +22,4 @@ def find_actors(hg, edge):
 
 def actors(hg):
     """"Returns an iterator over all actors."""
-    return [edge[1] for edge in hg.search('(actor/p/. *)')]
+    return [edge[1] for edge in hg.search('(actor/P/. *)')]

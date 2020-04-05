@@ -130,7 +130,7 @@ class Hypergraph(object):
         -> '...' at the end indicates an open-ended pattern.
 
         The pattern can be a string, that must represent an edge.
-        Examples: '(is/pd graphbrain/c @)'
+        Examples: '(is/Pd graphbrain/C @)'
         '(says/pd * ...)'
 
         Atomic patterns can also be used to match all edges in the
@@ -296,8 +296,7 @@ class Hypergraph(object):
         return sum([self.deep_degree(edge) for edge in edges])
 
     def add_to_sequence(self, name, pos, edge):
-        """Adds 'edge' to sequence 'name' at position 'pos'.
-        """
+        """Adds 'edge' to sequence 'name' at position 'pos'."""
         return self.add((const.sequence_pred, name, str(pos), edge))
 
     def sequence(self, name):

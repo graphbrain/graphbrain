@@ -1,112 +1,112 @@
 The two men conducted a lengthy correspondence and collaborated on an initially joint vision of human psychology.
-(and/pm/en (conducted/pd.so.<f-----/en (the/md/en (two/m#/en men/cc.p/en)) (a/md/en (lengthy/ma/en correspondence/cc.s/en))) (collaborated/pd.x.<f-----/en (on/t/en (an/md/en ((initially/w/en joint/ma/en) (of/br.ma/en vision/cc.s/en (human/ma/en psychology/cc.s/en)))))))
+(and/J/en (conducted/Pd.so.<f-----/en (the/Md/en (two/M#/en men/Cc.p/en)) (a/Md/en (lengthy/Ma/en correspondence/Cc.s/en))) (collaborated/Pd.x.<f-----/en (on/T/en (an/Md/en ((initially/M/en joint/Ma/en) (of/Br.ma/en vision/Cc.s/en (human/Ma/en psychology/Cc.s/en)))))))
 Freud saw in the younger man the potential heir he had been seeking to carry on his "new science" of psychoanalysis.
-(saw/pd.sxo.<f-----/en freud/cp.s/en (in/t/en (the/md/en (younger/mc/en man/cc.s/en))) (:/b/. (the/md/en (potential/ma/en heir/cc.s/en)) ((had/av.<f-----/en (been/av.<pf----/en seeking/pr.sr.|pg----/en)) he/ci/en ((to/ai/en (on/ap/en carry/pc.o.-i-----/en)) (his/mp/en (new/ma/en (of/br.ma/en science/cc.s/en psychoanalysis/cc.s/en)))))))
+(saw/Pd.sxo.<f-----/en freud/Cp.s/en (in/T/en (the/Md/en (younger/Mc/en man/Cc.s/en))) (:/B/. (the/Md/en (potential/Ma/en heir/Cc.s/en)) ((had/Av.<f-----/en (been/Av.<pf----/en seeking/Pr.sr.|pg----/en)) he/Ci/en ((to/Ai/en (on/Ap/en carry/Pc.o.-i-----/en)) (his/Mp/en (new/Ma/en (of/Br.ma/en science/Cc.s/en psychoanalysis/Cc.s/en)))))))
 I will never stop laughing at this.
-((will/am/en (never/an/en stop/pd.sr.-i-----/en)) i/ci/en (laughing/pc.x.|pg----/en (at/t/en this/cd/en)))
+((will/Am/en (never/An/en stop/Pd.sr.-i-----/en)) i/Ci/en (laughing/Pc.x.|pg----/en (at/T/en this/Cd/en)))
 Unknown to most, their brains are a battleground.
-(are/pd.xsc.|f-----/en (unknown/pd.x.-------/en (to/t/en most/ca/en)) (their/mp/en brains/cc.p/en) (a/md/en battleground/cc.s/en))
+(are/Pd.xsc.|f-----/en (unknown/Pd.x.-------/en (to/T/en most/Ca/en)) (their/Mp/en brains/Cc.p/en) (a/Md/en battleground/Cc.s/en))
 Lady shows you the oldest living wolf.
-(shows/pd.sio.|f--3s-/en lady/cp.s/en you/ci/en (the/md/en (oldest/ms/en (living/m/en wolf/cc.s/en))))
+(shows/Pd.sio.|f--3s-/en lady/Cp.s/en you/Ci/en (the/Md/en (oldest/Ms/en (living/M/en wolf/Cc.s/en))))
 Lawyers say they will issue judicial review proceedings if Brexit secretary fails to release 50 studies of effect on industry
-(say/pd.sr.|f-----/en lawyers/cc.p/en ((will/am/en issue/pr.sox.-i-----/en) they/ci/en (judicial/ma/en (+/b.am/. review/cc.s/en proceedings/cc.p/en)) (if/x/en (fails/pd.sr.|f--3s-/en (+/b.am/. brexit/cp.s/en secretary/cc.s/en) ((to/ai/en release/pc.ox.-i-----/en) (50/m#/en (of/br.ma/en studies/cc.p/en effect/cc.s/en)) (on/t/en industry/cc.s/en))))))
+(say/Pd.sr.|f-----/en lawyers/Cc.p/en ((will/Am/en issue/Pr.sox.-i-----/en) they/Ci/en (judicial/Ma/en (+/B.am/. review/Cc.s/en proceedings/Cc.p/en)) (if/X/en (fails/Pd.sr.|f--3s-/en (+/B.am/. brexit/Cp.s/en secretary/Cc.s/en) ((to/Ai/en release/Pc.ox.-i-----/en) (50/M#/en (of/Br.ma/en studies/Cc.p/en effect/Cc.s/en)) (on/T/en industry/Cc.s/en))))))
 The fifth connects to revived E.U. religions and feelings about French teachers demanding business-destroying regulatory limits.
-(connects/pd.sx.|f--3s-/en (the/md/en fifth/ca/en) (to/t/en (and/b+/en (revived/m/en (+/b.am/. e_u_/cp.s/en religions/cc.p/en)) (about/br.ma/en feelings/cc.p/en (:/b/. (french/ma/en teachers/cc.p/en) (demanding/pc.o.|pg----/en ((business/w/en destroying/m/en) (regulatory/ma/en limits/cc.p/en))))))))
+(connects/Pd.sx.|f--3s-/en (the/Md/en fifth/Ca/en) (to/T/en (and/J/en (revived/M/en (+/B.am/. e_u_/Cp.s/en religions/Cc.p/en)) (about/Br.ma/en feelings/Cc.p/en (:/B/. (french/Ma/en teachers/Cc.p/en) (demanding/Pc.o.|pg----/en ((business/M/en destroying/M/en) (regulatory/Ma/en limits/Cc.p/en))))))))
 In September 2016, we learned that the University of New Hampshire was going to use $1 million that an incredibly frugal librarian saved while working as a library cataloger for 50 years to buy a new scoreboard for its stadium.
-(learned/pd.xsr.<f-----/en (in/tt/en (2016/m#/en september/cp.s/en)) we/ci/en (that/x/en ((was/av.<f-----/en going/pr.sr.|pg----/en) (the/md/en (of/br.ma/en university/cp.s/en (+/b.am/. new/cp.s/en hampshire/cp.s/en))) ((to/ai/en use/pc.o.-i-----/en) (:/b/. ($/m/en (1/m#/en million/c#/en)) (saved/pr.osx.<pf----/en that/c/en (an/md/en ((incredibly/w/en frugal/ma/en) librarian/cc.s/en)) (while/x/en (working/pd.xxx.|pg----/en (as/t/en (a/md/en (+/b.am/. library/cc.s/en cataloger/cc.s/en))) (for/tt/en (50/m#/en years/cc.p/en)) ((to/ai/en buy/pd.o.-i-----/en) (a/md/en (new/ma/en (for/br.ma/en scoreboard/cc.s/en (its/mp/en stadium/cc.s/en)))))))))))))
+(learned/Pd.xsr.<f-----/en (in/Tt/en (2016/M#/en september/Cp.s/en)) we/Ci/en (that/X/en ((was/Av.<f-----/en going/Pr.sr.|pg----/en) (the/Md/en (of/Br.ma/en university/Cp.s/en (+/B.am/. new/Cp.s/en hampshire/Cp.s/en))) ((to/Ai/en use/Pc.o.-i-----/en) (:/B/. ($/M/en (1/M#/en million/C#/en)) (saved/Pr.osx.<pf----/en that/C/en (an/Md/en ((incredibly/M/en frugal/Ma/en) librarian/Cc.s/en)) (while/X/en (working/Pd.xxx.|pg----/en (as/T/en (a/Md/en (+/B.am/. library/Cc.s/en cataloger/Cc.s/en))) (for/Tt/en (50/M#/en years/Cc.p/en)) ((to/Ai/en buy/Pd.o.-i-----/en) (a/Md/en (new/Ma/en (for/Br.ma/en scoreboard/Cc.s/en (its/Mp/en stadium/Cc.s/en)))))))))))))
 An anarchist takes on Big Pharma by teaching patients to make their own meds
-((on/ap/en takes/pd.sox.|f--3s-/en) (an/md/en anarchist/cc.s/en) (+/b.am/. big/cp.s/en pharma/cp.s/en) (by/t/en (teaching/pc.or.|pg----/en patients/cc.p/en ((to/ai/en make/pc.o.-i-----/en) (their/mp/en (own/ma/en meds/cc.p/en))))))
+((on/Ap/en takes/Pd.sox.|f--3s-/en) (an/Md/en anarchist/Cc.s/en) (+/B.am/. big/Cp.s/en pharma/Cp.s/en) (by/T/en (teaching/Pc.or.|pg----/en patients/Cc.p/en ((to/Ai/en make/Pc.o.-i-----/en) (their/Mp/en (own/Ma/en meds/Cc.p/en))))))
 That seems both super dangerous, and super awesome.
-(seems/pd.s?.|f--3s-/en that/cd/en (and/b+/en (both/md/en (super/m/en dangerous/ca/en)) (super/m/en awesome/ca/en)))
+(seems/Pd.s?.|f--3s-/en that/Cd/en (and/J/en (both/Md/en (super/M/en dangerous/Ca/en)) (super/M/en awesome/Ca/en)))
 Briton dies in fall from Indian temple while taking selfie
-(dies/pd.sxxx.|f--3s-/en briton/cp.s/en (in/t/en fall/cc.s/en) (from/t/en (indian/ma/en temple/cc.s/en)) (while/x/en (taking/pd.o.|pg----/en selfie/cc.s/en)))
+(dies/Pd.sxxx.|f--3s-/en briton/Cp.s/en (in/T/en fall/Cc.s/en) (from/T/en (indian/Ma/en temple/Cc.s/en)) (while/X/en (taking/Pd.o.|pg----/en selfie/Cc.s/en)))
 I hate everyone in the White House!
-(hate/pd.so.|f-----/en i/ci/en (in/br.ma/en everyone/cc.s/en (the/md/en (+/b.am/. white/cp.s/en house/cp.s/en))))
+(hate/Pd.so.|f-----/en i/Ci/en (in/Br.ma/en everyone/Cc.s/en (the/Md/en (+/B.am/. white/Cp.s/en house/Cp.s/en))))
 There are a few exceptions, but I hate them!
-(but/pm/en ((there/ae/en are/pd.c.|f-----/en) (a/md/en (few/ma/en exceptions/cc.p/en))) (hate/pd.so.|f-----/en i/ci/en them/ci/en))
+(but/J/en ((there/Ae/en are/Pd.c.|f-----/en) (a/Md/en (few/Ma/en exceptions/Cc.p/en))) (hate/Pd.so.|f-----/en i/Ci/en them/Ci/en))
 Tourists taking a picture of the Eiffel Tower get photobombed by a cyclist.
-((get/av.|f-----/en photobombed/pd.pa.<pf----/en) (:/b/. tourists/cc.p/en (taking/pc.o.|pg----/en (a/md/en (of/br.ma/en picture/cc.s/en (the/md/en (+/b.am/. eiffel/cp.s/en tower/cp.s/en)))))) (by/x/en (a/md/en cyclist/cc.s/en)))
+((get/Av.|f-----/en photobombed/Pd.pa.<pf----/en) (:/B/. tourists/Cc.p/en (taking/Pc.o.|pg----/en (a/Md/en (of/Br.ma/en picture/Cc.s/en (the/Md/en (+/B.am/. eiffel/Cp.s/en tower/Cp.s/en)))))) (by/X/en (a/Md/en cyclist/Cc.s/en)))
 Americans are willing to pay $177 a year to avoid climate change
-(are/pd.sc.|f-----/en americans/cp.p/en (:/b/. willing/ca/en ((to/ai/en pay/pc.ox.-i-----/en) ($/m/en (a/bd/en 177/c#/en year/cc.s/en)) ((to/ai/en avoid/pd.o.-i-----/en) (+/b.am/. climate/cc.s/en change/cc.s/en)))))
+(are/Pd.sc.|f-----/en americans/Cp.p/en (:/B/. willing/Ca/en ((to/Ai/en pay/Pc.ox.-i-----/en) ($/M/en (a/Bd/en 177/C#/en year/Cc.s/en)) ((to/Ai/en avoid/Pd.o.-i-----/en) (+/B.am/. climate/Cc.s/en change/Cc.s/en)))))
 This guy should be the new team mascot
-((should/am/en be/pd.sc.-i-----/en) (this/md/en guy/cc.s/en) (the/md/en (new/ma/en (+/b.am/. team/cc.s/en mascot/cc.s/en))))
+((should/Am/en be/Pd.sc.-i-----/en) (this/Md/en guy/Cc.s/en) (the/Md/en (new/Ma/en (+/B.am/. team/Cc.s/en mascot/Cc.s/en))))
 Satellites from NASA and other agencies have been tracking sea ice changes since 1979.
-((have/av.|f-----/en (been/av.<pf----/en tracking/pd.sox.|pg----/en)) (from/br.ma/en satellites/cc.p/en (and/b+/en nasa/cp.s/en (other/ma/en agencies/cc.p/en))) (+/b.aam/. sea/cc.s/en ice/cc.s/en changes/cc.p/en) (since/tt/en 1979/c#/en))
+((have/Av.|f-----/en (been/Av.<pf----/en tracking/Pd.sox.|pg----/en)) (from/Br.ma/en satellites/Cc.p/en (and/J/en nasa/Cp.s/en (other/Ma/en agencies/Cc.p/en))) (+/B.aam/. sea/Cc.s/en ice/Cc.s/en changes/Cc.p/en) (since/Tt/en 1979/C#/en))
 The algorithm can play both black and white.
-((can/am/en play/pd.so.-i-----/en) (the/md/en algorithm/cc.s/en) (and/b+/en (both/md/en black/ca/en) white/ca/en))
+((can/Am/en play/Pd.so.-i-----/en) (the/Md/en algorithm/Cc.s/en) (and/J/en (both/Md/en black/Ca/en) white/Ca/en))
 Britain's hopes of a trade deal with America just suffered a big blow.
-((just/a/en suffered/pd.so.<f-----/en) (of/br.ma/en ('s/bp.am/en britain/cp.s/en hopes/cc.p/en) (a/md/en (with/br.ma/en (+/b.am/. trade/cc.s/en deal/cc.s/en) america/cp.s/en))) (a/md/en (big/ma/en blow/cc.s/en)))
+((just/A/en suffered/Pd.so.<f-----/en) (of/Br.ma/en ('s/Bp.am/en britain/Cp.s/en hopes/Cc.p/en) (a/Md/en (with/Br.ma/en (+/B.am/. trade/Cc.s/en deal/Cc.s/en) america/Cp.s/en))) (a/Md/en (big/Ma/en blow/Cc.s/en)))
 My name is Telmo.
-(is/pd.sc.|f--3s-/en (my/mp/en name/cc.s/en) telmo/cp.s/en)
+(is/Pd.sc.|f--3s-/en (my/Mp/en name/Cc.s/en) telmo/Cp.s/en)
 I admire the fact that you are honest.
-(admire/pd.so.|f-----/en i/ci/en (the/md/en (that/br.ma/en fact/cc.s/en (are/pc.sc.|f-----/en you/ci/en honest/ca/en))))
+(admire/Pd.so.|f-----/en i/Ci/en (the/Md/en (that/Br.ma/en fact/Cc.s/en (are/Pc.sc.|f-----/en you/Ci/en honest/Ca/en))))
 She looks very beautiful.
-(looks/pd.sc.|f--3s-/en she/ci/en (very/m/en beautiful/ca/en))
+(looks/Pd.sc.|f--3s-/en she/Ci/en (very/M/en beautiful/Ca/en))
 Sweden wants to fight our disposable culture with tax breaks for repairing old stuff.
-(wants/pd.sr.|f--3s-/en sweden/cp.s/en ((to/ai/en fight/pc.ox.-i-----/en) (our/mp/en (disposable/ma/en culture/cc.s/en)) (with/t/en (for/br.ma/en (+/b.am/. tax/cc.s/en breaks/cc.p/en) (repairing/pc.o.|pg----/en (old/ma/en stuff/cc.s/en))))))
+(wants/Pd.sr.|f--3s-/en sweden/Cp.s/en ((to/Ai/en fight/Pc.ox.-i-----/en) (our/Mp/en (disposable/Ma/en culture/Cc.s/en)) (with/T/en (for/Br.ma/en (+/B.am/. tax/Cc.s/en breaks/Cc.p/en) (repairing/Pc.o.|pg----/en (old/Ma/en stuff/Cc.s/en))))))
 Loving is the new fighting.
-(is/pd.sc.|f--3s-/en loving/c/en (the/md/en (new/ma/en fighting/cc.s/en)))
+(is/Pd.sc.|f--3s-/en loving/C/en (the/Md/en (new/Ma/en fighting/Cc.s/en)))
 Sweden is the third-largest country in the European Union by area.
-(is/pd.sc.|f--3s-/en sweden/cp.s/en (the/md/en ((third/w/en largest/ms/en) (by/br.ma/en (in/br.ma/en country/cc.s/en (the/md/en (+/b.am/. european/cp.s/en union/cp.s/en))) area/cc.s/en))))
+(is/Pd.sc.|f--3s-/en sweden/Cp.s/en (the/Md/en ((third/M/en largest/Ms/en) (by/Br.ma/en (in/Br.ma/en country/Cc.s/en (the/Md/en (+/B.am/. european/Cp.s/en union/Cp.s/en))) area/Cc.s/en))))
 France's Le Pen says people no longer want the EU
-(says/pd.sr.|f--3s-/en ('s/bp.am/en france/cp.s/en (+/b.am/. le/cp.s/en pen/cp.s/en)) (((no/an/en longer/a/en) want/pr.so.|f-----/en) people/cc.p/en (the/md/en eu/cp.s/en)))
+(says/Pd.sr.|f--3s-/en ('s/Bp.am/en france/Cp.s/en (+/B.am/. le/Cp.s/en pen/Cp.s/en)) (((no/An/en longer/A/en) want/Pr.so.|f-----/en) people/Cc.p/en (the/Md/en eu/Cp.s/en)))
 Wii will fail just like the arcade games of yesteryear.
-((will/am/en fail/pd.sx.-i-----/en) wii/cp.s/en ((just/w/en like/t/en) (the/md/en (of/br.ma/en (+/b.am/. arcade/cc.s/en games/cc.p/en) yesteryear/cc.p/en))))
+((will/Am/en fail/Pd.sx.-i-----/en) wii/Cp.s/en ((just/M/en like/T/en) (the/Md/en (of/Br.ma/en (+/B.am/. arcade/Cc.s/en games/Cc.p/en) yesteryear/Cc.p/en))))
 Mary will come if the weather is good.
-((will/am/en come/pd.sx.-i-----/en) mary/cp.s/en (if/x/en (is/pd.sc.|f--3s-/en (the/md/en weather/cc.s/en) good/ca/en)))
+((will/Am/en come/Pd.sx.-i-----/en) mary/Cp.s/en (if/X/en (is/Pd.sc.|f--3s-/en (the/Md/en weather/Cc.s/en) good/Ca/en)))
 Mary will come if it doesn't rain.
-((will/am/en come/pd.sx.-i-----/en) mary/cp.s/en (if/x/en ((does/av.|f--3s-/en (n't/an/en rain/pd.s.-i-----/en)) it/ci/en)))
+((will/Am/en come/Pd.sx.-i-----/en) mary/Cp.s/en (if/X/en ((does/Av.|f--3s-/en (n't/An/en rain/Pd.s.-i-----/en)) it/Ci/en)))
 US suspects Russian hackers planted fake news behind Qatar crisis.
-(suspects/pd.sr.|f--3s-/en us/cp.s/en (planted/pr.so.<f-----/en (russian/ma/en hackers/cc.p/en) (fake/ma/en (behind/br.ma/en news/cc.s/en (+/b.am/. qatar/cp.s/en crisis/cc.s/en)))))
+(suspects/Pd.sr.|f--3s-/en us/Cp.s/en (planted/Pr.so.<f-----/en (russian/Ma/en hackers/Cc.p/en) (fake/Ma/en (behind/Br.ma/en news/Cc.s/en (+/B.am/. qatar/Cp.s/en crisis/Cc.s/en)))))
 North Korea accuses Trump of being 'selfish' over Paris climate pact
-(accuses/pd.sox.|f--3s-/en (+/b.am/. north/cp.s/en korea/cp.s/en) trump/cp.s/en (of/t/en (being/pc.c.|pg----/en (over/br.ma/en selfish/ca/en (+/b.aam/. paris/cp.s/en climate/cc.s/en pact/cc.s/en)))))
+(accuses/Pd.sox.|f--3s-/en (+/B.am/. north/Cp.s/en korea/Cp.s/en) trump/Cp.s/en (of/T/en (being/Pc.c.|pg----/en (over/Br.ma/en selfish/Ca/en (+/B.aam/. paris/Cp.s/en climate/Cc.s/en pact/Cc.s/en)))))
 What happens when literary novelists experiment with science fiction.
-(happens/pd.sx.|f--3s-/en what/cw/en (when/t/en (experiment/pd.sx.|f-----/en (literary/ma/en novelists/cc.p/en) (with/t/en (+/b.am/. science/cc.s/en fiction/cc.s/en)))))
+(happens/Pd.sx.|f--3s-/en what/Cw/en (when/T/en (experiment/Pd.sx.|f-----/en (literary/Ma/en novelists/Cc.p/en) (with/T/en (+/B.am/. science/Cc.s/en fiction/Cc.s/en)))))
 Exposure to the bacteria in soil can be good for mental health
-((can/am/en be/pd.sc.-i-----/en) (to/br.ma/en exposure/cc.s/en (the/md/en (in/br.ma/en bacteria/cc.p/en soil/cc.s/en))) (for/br.ma/en good/ca/en (mental/ma/en health/cc.s/en)))
+((can/Am/en be/Pd.sc.-i-----/en) (to/Br.ma/en exposure/Cc.s/en (the/Md/en (in/Br.ma/en bacteria/Cc.p/en soil/Cc.s/en))) (for/Br.ma/en good/Ca/en (mental/Ma/en health/Cc.s/en)))
 Some subspecies of mosquito might be 1st to be genetically wiped out.
-((might/am/en be/pd.scr.-i-----/en) (some/md/en (of/br.ma/en subspecies/cc.p/en mosquito/cc.s/en)) 1st/ca/en (to/ai/en (be/av.-i-----/en (genetically/a/en (out/ap/en wiped/pc..<pf----/en)))))
+((might/Am/en be/Pd.scr.-i-----/en) (some/Md/en (of/Br.ma/en subspecies/Cc.p/en mosquito/Cc.s/en)) 1st/Ca/en (to/Ai/en (be/Av.-i-----/en (genetically/A/en (out/Ap/en wiped/Pc..<pf----/en)))))
 Telmo is going to the gym.
-((is/av.|f--3s-/en going/pd.sx.|pg----/en) telmo/cp.s/en (to/t/en (the/md/en gym/cc.s/en)))
+((is/Av.|f--3s-/en going/Pd.sx.|pg----/en) telmo/Cp.s/en (to/T/en (the/Md/en gym/Cc.s/en)))
 Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate.
-((is/av.|f--3s-/en influenced/pd.xpa.<pf----/en) ((to/a/en due/t/en) (its/mp/en (in/br.ma/en location/cc.s/en (the/md/en (+/b.am/. european/cp.s/en plain/cp.s/en))))) berlin/cp.s/en (by/x/en (a/md/en (temperate/ma/en (seasonal/ma/en climate/cc.s/en)))))
+((is/Av.|f--3s-/en influenced/Pd.xpa.<pf----/en) ((to/A/en due/T/en) (its/Mp/en (in/Br.ma/en location/Cc.s/en (the/Md/en (+/B.am/. european/Cp.s/en plain/Cp.s/en))))) berlin/Cp.s/en (by/X/en (a/Md/en (temperate/Ma/en (seasonal/Ma/en climate/Cc.s/en)))))
 Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan.
-(is/pd.sc.|f--3s-/en (:/b/. (+/b.am/. koikuchi/ca/en shoyu/cc.s/en) ((best/as/en known/pc.x.<pf----/en) (as/t/en (+/b.am/. soy/cc.s/en sauce/cc.s/en)))) (the/md/en (of/br.ma/en mother/cc.s/en (all/md/en (in/br.ma/en sauces/cc.p/en japan/cp.s/en)))))
+(is/Pd.sc.|f--3s-/en (:/B/. (+/B.am/. koikuchi/Ca/en shoyu/Cc.s/en) ((best/As/en known/Pc.x.<pf----/en) (as/T/en (+/B.am/. soy/Cc.s/en sauce/Cc.s/en)))) (the/Md/en (of/Br.ma/en mother/Cc.s/en (all/Md/en (in/Br.ma/en sauces/Cc.p/en japan/Cp.s/en)))))
 Carl Gustav Jung was a Swiss psychiatrist and psychoanalyst who founded analytical psychology.
-(was/pd.sc.<f-----/en (+/b.aam/. carl/cp.s/en gustav/cp.s/en jung/cp.s/en) (:/b/. (and/b+/en (a/md/en (swiss/ma/en psychiatrist/cc.s/en)) psychoanalyst/cc.s/en) (founded/pr.so.<f-----/en who/cw/en (analytical/ma/en psychology/cc.s/en))))
+(was/Pd.sc.<f-----/en (+/B.aam/. carl/Cp.s/en gustav/Cp.s/en jung/Cp.s/en) (:/B/. (and/J/en (a/Md/en (swiss/Ma/en psychiatrist/Cc.s/en)) psychoanalyst/Cc.s/en) (founded/Pr.so.<f-----/en who/Cw/en (analytical/Ma/en psychology/Cc.s/en))))
 As a notable research scientist based at the famous Burghölzli hospital, under Eugen Bleuler, he came to the attention of the Viennese founder of psychoanalysis, Sigmund Freud.
-(came/pd.xxsx.<f-----/en (as/t/en (:/b/. (a/md/en (notable/ma/en (+/b.am/. research/cc.s/en scientist/cc.s/en))) (based/pc.x.<pf----/en (at/t/en (the/md/en (famous/ma/en (+/b.am/. burghölzli/cp.s/en hospital/cc.s/en))))))) (under/t/en (+/b.am/. eugen/cp.s/en bleuler/cp.s/en)) he/ci/en (to/t/en (the/md/en (of/br.ma/en attention/cc.s/en (:/b/. (the/md/en (viennese/ma/en (of/br.ma/en founder/cc.s/en psychoanalysis/cc.s/en))) (+/b.am/. sigmund/cp.s/en freud/cp.s/en))))))
+(came/Pd.xxsx.<f-----/en (as/T/en (:/B/. (a/Md/en (notable/Ma/en (+/B.am/. research/Cc.s/en scientist/Cc.s/en))) (based/Pc.x.<pf----/en (at/T/en (the/Md/en (famous/Ma/en (+/B.am/. burghölzli/Cp.s/en hospital/Cc.s/en))))))) (under/T/en (+/B.am/. eugen/Cp.s/en bleuler/Cp.s/en)) he/Ci/en (to/T/en (the/Md/en (of/Br.ma/en attention/Cc.s/en (:/B/. (the/Md/en (viennese/Ma/en (of/Br.ma/en founder/Cc.s/en psychoanalysis/Cc.s/en))) (+/B.am/. sigmund/Cp.s/en freud/Cp.s/en))))))
 Take pictures of your hair after a good haircut.
-(take/p!.ox.-i-----/en (of/br.ma/en pictures/cc.p/en (your/mp/en hair/cc.s/en)) (after/t/en (a/md/en (good/ma/en haircut/cc.s/en))))
+(take/P!.ox.-i-----/en (of/Br.ma/en pictures/Cc.p/en (your/Mp/en hair/Cc.s/en)) (after/T/en (a/Md/en (good/Ma/en haircut/Cc.s/en))))
 I think that's supposed to be difficult.
-(think/pd.sr.|f-----/en i/ci/en (('s/av.|f--3s-/en supposed/pr.pr.<pf----/en) that/cd/en ((to/ai/en be/pc.c.-i-----/en) difficult/ca/en)))
+(think/Pd.sr.|f-----/en i/Ci/en (('s/Av.|f--3s-/en supposed/Pr.pr.<pf----/en) that/Cd/en ((to/Ai/en be/Pc.c.-i-----/en) difficult/Ca/en)))
 The food -- I opined to my wife -- was premium mediocre.
-(was/pd.stc.<f-----/en (the/md/en food/cc.s/en) (opined/pd.sx.<f-----/en i/ci/en (to/t/en (my/mp/en wife/cc.s/en))) (premium/m/en mediocre/cc.s/en))
+(was/Pd.stc.<f-----/en (the/Md/en food/Cc.s/en) (opined/Pd.sx.<f-----/en i/Ci/en (to/T/en (my/Mp/en wife/Cc.s/en))) (premium/M/en mediocre/Cc.s/en))
 Catalonia calls for talks with Madrid but warns against Spanish direct rule
-(but/pm/en (calls/pd.sx.|f--3s-/en catalonia/cp.s/en (for/t/en (with/br.ma/en talks/cc.p/en madrid/cp.s/en))) (warns/pd.x.|f--3s-/en (against/t/en (spanish/ma/en (direct/ma/en rule/cc.s/en)))))
+(but/J/en (calls/Pd.sx.|f--3s-/en catalonia/Cp.s/en (for/T/en (with/Br.ma/en talks/Cc.p/en madrid/Cp.s/en))) (warns/Pd.x.|f--3s-/en (against/T/en (spanish/Ma/en (direct/Ma/en rule/Cc.s/en)))))
 Imagine you want to send a letter anonymously.
-(imagine/p!.r.-i-----/en (want/pr.sr.|f-----/en you/ci/en ((to/ai/en (anonymously/a/en send/pc.o.-i-----/en)) (a/md/en letter/cc.s/en))))
+(imagine/P!.r.-i-----/en (want/Pr.sr.|f-----/en you/Ci/en ((to/Ai/en (anonymously/A/en send/Pc.o.-i-----/en)) (a/Md/en letter/Cc.s/en))))
 Do what I say.
-(do/p!.r.-i-----/en (say/pr.os.|f-----/en what/cw/en i/ci/en))
+(do/P!.r.-i-----/en (say/Pr.os.|f-----/en what/Cw/en i/Ci/en))
 What time is it?
-(is/p?.cs.|f--3s-/en (what/mw/en time/cc.s/en) it/ci/en)
+(is/P?.cs.|f--3s-/en (what/Mw/en time/Cc.s/en) it/Ci/en)
 A new Einstein cross is discovered
-((is/av.|f--3s-/en discovered/pd.p.<pf----/en) (a/md/en (new/ma/en (+/b.am/. einstein/cp.s/en cross/cc.s/en))))
+((is/Av.|f--3s-/en discovered/Pd.p.<pf----/en) (a/Md/en (new/Ma/en (+/B.am/. einstein/Cp.s/en cross/Cc.s/en))))
 An Elusive Whale Is Found All Around the World
-((is/av.|f--3s-/en found/pd.px.<pf----/en) (an/md/en (elusive/ma/en whale/cc.s/en)) ((all/w/en around/t/en) (the/md/en world/cc.s/en)))
+((is/Av.|f--3s-/en found/Pd.px.<pf----/en) (an/Md/en (elusive/Ma/en whale/Cc.s/en)) ((all/M/en around/T/en) (the/Md/en world/Cc.s/en)))
 According to people present, she simply ploughed on with her intention to hold a third vote on her deal this week.
-((simply/a/en (on/ap/en ploughed/pd.xsx.<f-----/en)) (according/t/en (to/mr/en (present/ma/en people/cc.p/en))) she/ci/en (with/tt/en (:/b/. (her/mp/en intention/cc.s/en) ((to/ai/en hold/pc.ox.-i-----/en) (a/md/en (third/ma/en (on/br.ma/en vote/cc.s/en (her/mp/en deal/cc.s/en)))) (this/md/en week/cc.s/en)))))
+((simply/A/en (on/Ap/en ploughed/Pd.xsx.<f-----/en)) (according/T/en (to/Mr/en (present/Ma/en people/Cc.p/en))) she/Ci/en (with/Tt/en (:/B/. (her/Mp/en intention/Cc.s/en) ((to/Ai/en hold/Pc.ox.-i-----/en) (a/Md/en (third/Ma/en (on/Br.ma/en vote/Cc.s/en (her/Mp/en deal/Cc.s/en)))) (this/Md/en week/Cc.s/en)))))
 Our brains are always looking for relative rewards.
-((are/av.|f-----/en (always/a/en looking/pd.sx.|pg----/en)) (our/mp/en brains/cc.p/en) (for/t/en (relative/ma/en rewards/cc.p/en)))
+((are/Av.|f-----/en (always/A/en looking/Pd.sx.|pg----/en)) (our/Mp/en brains/Cc.p/en) (for/T/en (relative/Ma/en rewards/Cc.p/en)))
 Scientists rise up against statistical significance
-((up/ap/en rise/pd.sx.|f-----/en) scientists/cc.p/en (against/t/en (statistical/ma/en significance/cc.s/en)))
+((up/Ap/en rise/Pd.sx.|f-----/en) scientists/Cc.p/en (against/T/en (statistical/Ma/en significance/Cc.s/en)))
 A pretty touch screen is ALL the iPhone has to offer.
-(is/pd.sr.|f--3s-/en (a/md/en (pretty/ma/en (+/b.am/. touch/cc.s/en screen/cc.s/en))) (has/pr.sr.|f--3s-/en (all/m/en (the/md/en iphone/cp.s/en)) (to/ai/en offer/pc..-i-----/en)))
+(is/Pd.sr.|f--3s-/en (a/Md/en (pretty/Ma/en (+/B.am/. touch/Cc.s/en screen/Cc.s/en))) (has/Pr.sr.|f--3s-/en (all/M/en (the/Md/en iphone/Cp.s/en)) (to/Ai/en offer/Pc..-i-----/en)))
 The application must include bank and credit card records.
-((must/am/en include/pd.so.-i-----/en) (the/md/en application/cc.s/en) (and/b+/en (+/b.am bank/cm/en records/cc.p/en) (+/b.am (+/b.am/. credit/cc.s/en card/cc.s/en) records/cc.p/en)))
+((must/Am/en include/Pd.so.-i-----/en) (the/Md/en application/Cc.s/en) (and/J/en (+/B.am bank/Cm/en records/Cc.p/en) (+/B.am (+/B.am/. credit/Cc.s/en card/Cc.s/en) records/Cc.p/en)))
 Berlin is the capital city of Germany and one of its states.
-(is/pd.sc.|f--3s-/en berlin/cp.s/en (and/b+/en (the/md/en (of/br.ma/en (+/b.am/. capital/cc.s/en city/cc.s/en) germany/cp.s/en)) (of/br.ma/en one/c#/en (its/mp/en states/cc.p/en))))
+(is/Pd.sc.|f--3s-/en berlin/Cp.s/en (and/J/en (the/Md/en (of/Br.ma/en (+/B.am/. capital/Cc.s/en city/Cc.s/en) germany/Cp.s/en)) (of/Br.ma/en one/C#/en (its/Mp/en states/Cc.p/en))))
 The population of the planet is over 170 million people.
-(is/pd.sc.|f--3s-/en (the/md/en (of/br.ma/en population/cc.s/en (the/md/en planet/cc.s/en))) ((over/m/en (170/m#/en million/m#/en)) people/cc.p/en))
+(is/Pd.sc.|f--3s-/en (the/Md/en (of/Br.ma/en population/Cc.s/en (the/Md/en planet/Cc.s/en))) ((over/M/en (170/M#/en million/M#/en)) people/Cc.p/en))
 He was given his name by his grandmother.
-((was/av.<f-----/en given/pd.poa.<pf----/en) he/ci/en (his/mp/en name/cc.s/en) (by/x/en (his/mp/en grandmother/cc.s/en)))
+((was/Av.<f-----/en given/Pd.poa.<pf----/en) he/Ci/en (his/Mp/en name/Cc.s/en) (by/X/en (his/Mp/en grandmother/Cc.s/en)))

@@ -5,37 +5,37 @@ from .nlp import token2str
 from .text import UniqueAtom
 
 
-_female = {"she/ci/en", "her/ci/en", "herself/ci/en", "hers/ci/en",
-           "her/mp/en"}
-_male = {"he/ci/en", "him/ci/en", "himself/ci/en", "his/mp/en"}
-_neutral = {"it/ci/en", "itself/ci/en", "its/mp/en"}
+_female = {"she/Ci/en", "her/Ci/en", "herself/Ci/en", "hers/Ci/en",
+           "her/Mp/en"}
+_male = {"he/Ci/en", "him/Ci/en", "himself/Ci/en", "his/Mp/en"}
+_neutral = {"it/Ci/en", "itself/Ci/en", "its/Mp/en"}
 
-_singular = {"it/ci/en", "i/ci/en", "she/ci/en", "he/ci/en", "her/ci/en",
-             "herself/ci/en", "me/ci/en", "him/ci/en", "itself/ci/en",
-             "yourself/ci/en", "myself/ci/en", "himself/ci/en", "one/ci/en",
-             "hers/ci/en", "mine/ci/en", "somebody/ci/en", "oneself/ci/en",
-             "yours/ci/en", "her/mp/en", "his/mp/en", "my/mp/en", "its/mp/en"}
-_plural = {"they/ci/en", "them/ci/en", "we/ci/en", "us/ci/en", "'em/ci/en",
-           "themselves/ci/en", "theirs/ci/en", "ourselves/ci/en",
-           "their/mp/en", "our/mp/en"}
+_singular = {"it/Ci/en", "i/Ci/en", "she/Ci/en", "he/Ci/en", "her/Ci/en",
+             "herself/Ci/en", "me/Ci/en", "him/Ci/en", "itself/Ci/en",
+             "yourself/Ci/en", "myself/Ci/en", "himself/Ci/en", "one/Ci/en",
+             "hers/Ci/en", "mine/Ci/en", "somebody/Ci/en", "oneself/Ci/en",
+             "yours/Ci/en", "her/Mp/en", "his/Mp/en", "my/Mp/en", "its/Mp/en"}
+_plural = {"they/Ci/en", "them/Ci/en", "we/Ci/en", "us/Ci/en", "'em/Ci/en",
+           "themselves/Ci/en", "theirs/Ci/en", "ourselves/Ci/en",
+           "their/Mp/en", "our/Mp/en"}
 
-_animate = {"i/ci/en", "she/ci/en", "you/ci/en", "he/ci/en", "her/ci/en",
-            "herself/ci/en", "me/ci/en", "him/ci/en", "we/ci/en", "us/ci/en",
-            "yourself/ci/en", "myself/ci/en", "himself/ci/en", "one/ci/en",
-            "themselves/ci/en", "hers/ci/en", "mine/ci/en", "somebody/ci/en",
-            "oneself/ci/en", "yours/ci/en", "ourselves/ci/en", "her/mp/en",
-            "his/mp/en", "your/mp/en", "my/mp/en", "our/mp/en", "thy/mp/en"}
-_inanimate = {"it/ci/en", "itself/ci/en", "its/mp/en"}
+_animate = {"i/Ci/en", "she/Ci/en", "you/Ci/en", "he/Ci/en", "her/Ci/en",
+            "herself/Ci/en", "me/Ci/en", "him/Ci/en", "we/Ci/en", "us/Ci/en",
+            "yourself/Ci/en", "myself/Ci/en", "himself/Ci/en", "one/Ci/en",
+            "themselves/Ci/en", "hers/Ci/en", "mine/Ci/en", "somebody/Ci/en",
+            "oneself/Ci/en", "yours/Ci/en", "ourselves/Ci/en", "her/Mp/en",
+            "his/Mp/en", "your/Mp/en", "my/Mp/en", "our/Mp/en", "thy/Mp/en"}
+_inanimate = {"it/Ci/en", "itself/Ci/en", "its/Mp/en"}
 
-_p1 = {"i/ci/en", "me/ci/en", "we/ci/en", "us/ci/en", "myself/ci/en",
-       "mine/ci/en", "oneself/ci/en", "ourselves/ci/en", "my/mp/en",
-       "our/mp/en"}
-_p2 = {"you/ci/en", "yourself/ci/en", "yours/ci/en", "your/mp/en", "thy/mp/en"}
-_p3 = {"it/ci/en", "she/ci/en", "they/ci/en", "he/ci/en", "them/ci/en",
-       "her/ci/en", "herself/ci/en", "him/ci/en", "itself/ci/en",
-       "himself/ci/en", "one/ci/en", "'em/ci/en", "themselves/ci/en",
-       "hers/ci/en", "somebody/ci/en", "theirs/ci/en", "her/mp/en",
-       "his/mp/en", "its/mp/en", "their/mp/en", "whose/mp/en"}
+_p1 = {"i/Ci/en", "me/Ci/en", "we/Ci/en", "us/Ci/en", "myself/Ci/en",
+       "mine/Ci/en", "oneself/Ci/en", "ourselves/Ci/en", "my/Mp/en",
+       "our/Mp/en"}
+_p2 = {"you/Ci/en", "yourself/Ci/en", "yours/Ci/en", "your/Mp/en", "thy/Mp/en"}
+_p3 = {"it/Ci/en", "she/Ci/en", "they/Ci/en", "he/Ci/en", "them/Ci/en",
+       "her/Ci/en", "herself/Ci/en", "him/Ci/en", "itself/Ci/en",
+       "himself/Ci/en", "one/Ci/en", "'em/Ci/en", "themselves/Ci/en",
+       "hers/Ci/en", "somebody/Ci/en", "theirs/Ci/en", "her/Mp/en",
+       "his/Mp/en", "its/Mp/en", "their/Mp/en", "whose/Mp/en"}
 
 
 class ParserEN(AlphaBeta):
@@ -141,25 +141,25 @@ class ParserEN(AlphaBeta):
 
         if dep == 'ROOT':
             if self._is_verb(token):
-                return 'p'
+                return 'P'
             else:
                 return self._concept_type_and_subtype(token)
         elif dep in {'appos', 'attr', 'dative', 'dep', 'dobj', 'nsubj',
                      'nsubjpass', 'oprd', 'pobj', 'meta'}:
             return self._concept_type_and_subtype(token)
         elif dep in {'advcl', 'csubj', 'csubjpass', 'parataxis'}:
-            return 'p'
+            return 'P'
         elif dep in {'relcl', 'ccomp'}:
             if self._is_verb(token):
-                return 'pr'
+                return 'Pr'
             else:
                 return self._concept_type_and_subtype(token)
         elif dep in {'acl', 'pcomp', 'xcomp'}:
             if token.tag_ == 'IN':
-                return 'a'
+                return 'A'
             else:
-                return 'pc'
-        elif dep in {'amod', 'nummod', 'preconj', 'predet'}:
+                return 'Pc'
+        elif dep in {'amod', 'nummod', 'preconj'}:  # , 'predet'}:
             return self._modifier_type_and_subtype(token)
         elif dep == 'det':
             if token.head.dep_ == 'npadvmod':
@@ -167,75 +167,75 @@ class ParserEN(AlphaBeta):
             else:
                 return self._modifier_type_and_subtype(token)
         elif dep in {'aux', 'auxpass', 'expl', 'prt', 'quantmod'}:
-            if head_type in {'c', 'm'}:
-                return 'm'
+            if head_type in {'C', 'M'}:
+                return 'M'
             if token.n_lefts + token.n_rights == 0:
-                return 'a'
+                return 'A'
             else:
-                return 'x'
+                return 'X'
         elif dep in {'nmod', 'npadvmod'}:
             if token.head.dep_ == 'amod':
-                return 'w'
+                return 'M'
             elif self._is_noun(token):
                 return self._concept_type_and_subtype(token)
             else:
                 return self._modifier_type_and_subtype(token)
+        elif dep == 'predet':
+            return 'M'
         if dep == 'compound':
             if token.tag_ == 'CD':
                 return self._modifier_type_and_subtype(token)
             else:
                 return self._concept_type_and_subtype(token)
         elif dep == 'cc':
-            if head_type == 'p':
-                return 'pm'
+            if head_type == 'P':
+                return 'J'
             else:
                 return self._builder_type_and_subtype(token)
         elif dep == 'case':
             if token.head.dep_ == 'poss':
-                return 'bp'
+                return 'Bp'
             else:
                 return self._builder_type_and_subtype(token)
         elif dep == 'neg':
-            return 'an'
+            return 'An'
         elif dep == 'agent':
-            return 'x'
+            return 'X'
         elif dep in {'intj', 'punct'}:
             return ''
         elif dep == 'advmod':
             if token.head.dep_ == 'advcl':
-                return 't'
-            elif head_type == 'p':
-                return 'a'
-            elif head_type in {'m', 'x', 't', 'b'}:
-                return 'w'
+                return 'T'
+            elif head_type == 'P':
+                return 'A'
             else:
-                return self._modifier_type_and_subtype(token)
+                return 'M'
         elif dep == 'poss':
             if self._is_noun(token):
                 return self._concept_type_and_subtype(token)
             else:
-                return 'mp'
+                return 'Mp'
         elif dep == 'prep':
-            if head_type == 'p':
+            if head_type == 'P':
                 if token.n_lefts + token.n_rights == 0:
-                    return 'a'
+                    return 'A'
                 else:
-                    return 't'
+                    return 'T'
             else:
                 return self._builder_type_and_subtype(token)
         elif dep == 'conj':
-            if head_type == 'p' and self._is_verb(token):
-                return 'p'
+            if head_type == 'P' and self._is_verb(token):
+                return 'P'
             else:
                 return self._concept_type_and_subtype(token)
         elif dep == 'mark':
-            if head_type == 'p' and head_subtype != 'c':
-                return 'x'
+            if head_type == 'P' and head_subtype != 'c':
+                return 'X'
             else:
                 return self._builder_type_and_subtype(token)
         elif dep == 'acomp':
             if self._is_verb(token):
-                return 'x'
+                return 'X'
             else:
                 return self._concept_type_and_subtype(token)
         else:
@@ -247,75 +247,74 @@ class ParserEN(AlphaBeta):
         tag = token.tag_
         dep = token.dep_
         if dep == 'nmod':
-            return 'cm'
+            return 'Cm'
         if tag[:2] == 'JJ':
-            return 'ca'
+            return 'Ca'
         elif tag[:2] == 'NN':
             subtype = 'p' if 'P' in tag else 'c'
             sing_plur = 'p' if tag[-1] == 'S' else 's'
-            return 'c{}.{}'.format(subtype, sing_plur)
+            return 'C{}.{}'.format(subtype, sing_plur)
         elif tag == 'CD':
-            return 'c#'
+            return 'C#'
         elif tag == 'DT':
-            return 'cd'
+            return 'Cd'
         elif tag == 'WP':
-            return 'cw'
+            return 'Cw'
         elif tag == 'PRP':
-            return 'ci'
+            return 'Ci'
         else:
-            return 'c'
+            return 'C'
 
     def _modifier_type_and_subtype(self, token):
         tag = token.tag_
         if tag == 'JJ':
-            return 'ma'
+            return 'Ma'
         elif tag == 'JJR':
-            return 'mc'
+            return 'Mc'
         elif tag == 'JJS':
-            return 'ms'
+            return 'Ms'
         elif tag == 'DT':
-            return 'md'
-        # elif tag == 'PDT':
-        #     return 'mp'
+            return 'Md'
         elif tag == 'WDT':
-            return 'mw'
+            return 'Mw'
         elif tag == 'CD':
-            return 'm#'
+            return 'M#'
         else:
-            return 'm'
+            return 'M'
 
     def _builder_type_and_subtype(self, token):
         tag = token.tag_
         if tag == 'IN':
-            return 'br'  # relational (proposition)
+            return 'Br'  # relational (proposition)
+        # TODO: this is ugly, move this case elsewhere...
         elif tag == 'CC':
-            return 'b+'
+            return 'J'
         elif tag == 'DT':
-            return 'bd'
+            return 'Bd'
         else:
-            return 'b'
+            return 'B'
 
     def _auxiliary_type_and_subtype(self, token):
         if token.tag_ == 'MD':
-            return 'am'  # modal
+            return 'Am'  # modal
         elif token.tag_ == 'TO':
-            return 'ai'  # infinitive
+            return 'Ai'  # infinitive
         elif token.tag_ == 'RBR':
-            return 'ac'  # comparative
+            return 'Ac'  # comparative
         elif token.tag_ == 'RBS':
-            return 'as'  # superlative
+            return 'As'  # superlative
         elif token.tag_ == 'RP' or token.dep_ == 'prt':
-            return 'ap'  # particle
+            return 'Ap'  # particle
         elif token.tag_ == 'EX':
-            return 'ae'  # existential
-        return 'a'
+            return 'Ae'  # existential
+        return 'A'
 
     def _predicate_post_type_and_subtype(self, edge, subparts, args_string):
         # detecte imperative
-        if subparts[0] == 'pd':
+        if subparts[0] == 'Pd':
             if subparts[2][1] == 'i' and 's' not in args_string:
-                if hedge('to/ai/en') not in edge[0].atoms():
-                    return 'p!'
+                if hedge('to/Ai/en') not in edge[0].atoms():
+                    return 'P!'
         # keep everything else the same
         return subparts[0]
 
@@ -337,10 +336,10 @@ class ParserEN(AlphaBeta):
         new_connector = connector
         if connector.is_atom():
             ct = connector.type()
-            if ct == 'br':
+            if ct == 'Br':
                 new_connector = connector.replace_atom_part(
                     1, '{}.ma'.format(ct))
-            elif ct == 'bp':
+            elif ct == 'Bp':
                 new_connector = connector.replace_atom_part(
                     1, '{}.am'.format(ct))
         if UniqueAtom(connector) in self.atom2token:

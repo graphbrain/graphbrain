@@ -44,4 +44,4 @@ class Actors(Agent):
     def end(self):
         for actor in self.actor_counter:
             if self.actor_counter[actor] > 0:
-                self.add(('actor/p/.', actor))
+                self.add(('actor/P/.', actor))

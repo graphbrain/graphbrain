@@ -15,26 +15,26 @@ class TestHyperedge(unittest.TestCase):
 
     def test_is_atom(self):
         self.assertTrue(hedge('a').is_atom())
-        self.assertTrue(hedge('graphbrain/c').is_atom())
-        self.assertTrue(hedge('graphbrain/cn.p/1').is_atom())
-        self.assertFalse(hedge('(is/pd.sc graphbrain/cp.s great/c)').is_atom())
+        self.assertTrue(hedge('graphbrain/C').is_atom())
+        self.assertTrue(hedge('graphbrain/Cn.p/1').is_atom())
+        self.assertFalse(hedge('(is/Pd.sc graphbrain/Cp.s great/C)').is_atom())
 
     def test_atom_parts(self):
-        self.assertEqual(hedge('graphbrain/c').parts(), ['graphbrain', 'c'])
+        self.assertEqual(hedge('graphbrain/C').parts(), ['graphbrain', 'C'])
         self.assertEqual(hedge('graphbrain').parts(), ['graphbrain'])
-        self.assertEqual(hedge('go/p.p.so/1').parts(), ['go', 'p.p.so', '1'])
+        self.assertEqual(hedge('go/P.so/1').parts(), ['go', 'P.so', '1'])
 
     def test_root(self):
-        self.assertEqual(hedge('graphbrain/c').root(), 'graphbrain')
-        self.assertEqual(hedge('go/p.p.so/1').root(), 'go')
+        self.assertEqual(hedge('graphbrain/C').root(), 'graphbrain')
+        self.assertEqual(hedge('go/P.so/1').root(), 'go')
 
     def test_build_atom(self):
-        self.assertEqual(build_atom('graphbrain', 'c'), hedge('graphbrain/c'))
-        self.assertEqual(build_atom('go', 'p.p.so', '1'), hedge('go/p.p.so/1'))
+        self.assertEqual(build_atom('graphbrain', 'C'), hedge('graphbrain/C'))
+        self.assertEqual(build_atom('go', 'P.so', '1'), hedge('go/P.so/1'))
 
     def test_replace_atom_part(self):
-        self.assertEqual(hedge('graphbrain/c').replace_atom_part(0, 'x'),
-                         hedge('x/c'))
+        self.assertEqual(hedge('graphbrain/C').replace_atom_part(0, 'x'),
+                         hedge('x/C'))
         self.assertEqual(hedge('xxx/1/yyy').replace_atom_part(1, '77'),
                          hedge('xxx/77/yyy'))
 
@@ -58,43 +58,43 @@ class TestHyperedge(unittest.TestCase):
 
     def test_edges2str(self):
         s = edges2str((hedge('(1 2)'), hedge('xxx'),
-                       hedge('(+/b mary/c john/c)')))
-        self.assertEqual(s, '(1 2) xxx (+/b mary/c john/c)')
+                       hedge('(+/B mary/C john/C)')))
+        self.assertEqual(s, '(1 2) xxx (+/B mary/C john/C)')
 
     def test_edges2str_roots_only(self):
         s = edges2str((hedge('(1 2)'), hedge('xxx'),
-                       hedge('(+/b mary/c john/c)')),
+                       hedge('(+/B mary/C john/C)')),
                       roots_only=True)
         self.assertEqual(s, '(1 2) xxx (+ mary john)')
 
     def test_to_str(self):
         self.assertEqual(
-            hedge('(is graphbrain/c great/c)').to_str(),
-            '(is graphbrain/c great/c)')
+            hedge('(is graphbrain/C great/C)').to_str(),
+            '(is graphbrain/C great/C)')
         self.assertEqual(
-            hedge('(src graphbrain/c (is graphbrain/c great/c))').to_str(),
-            '(src graphbrain/c (is graphbrain/c great/c))')
+            hedge('(src graphbrain/C (is graphbrain/C great/C))').to_str(),
+            '(src graphbrain/C (is graphbrain/C great/C))')
 
     def test_ent2str_roots_only(self):
         self.assertEqual(
-            hedge('(is graphbrain/c great/c)').to_str(roots_only=True),
+            hedge('(is graphbrain/C great/C)').to_str(roots_only=True),
             '(is graphbrain great)')
         self.assertEqual(
-            hedge('(src graphbrain/c '
-                  '(is graphbrain/c great/c))').to_str(roots_only=True),
+            hedge('(src graphbrain/C '
+                  '(is graphbrain/C great/C))').to_str(roots_only=True),
             '(src graphbrain (is graphbrain great))')
 
     def test_label(self):
-        self.assertEqual(hedge('some_thing/cn.s/.').label(), 'some thing')
-        self.assertEqual(hedge('(red/m shoes/c)').label(), 'red shoes')
-        self.assertEqual(hedge('(of/b capital/c germany/c)').label(),
+        self.assertEqual(hedge('some_thing/Cn.s/.').label(), 'some thing')
+        self.assertEqual(hedge('(red/M shoes/C)').label(), 'red shoes')
+        self.assertEqual(hedge('(of/B capital/C germany/C)').label(),
                          'capital of germany')
-        self.assertEqual(hedge('(+/b/. capital/c germany/c)').label(),
+        self.assertEqual(hedge('(+/B/. capital/C germany/C)').label(),
                          'capital germany')
-        self.assertEqual(hedge('(of/b capital/c west/c germany/c)').label(),
+        self.assertEqual(hedge('(of/B capital/C west/C germany/C)').label(),
                          'capital of west germany')
-        self.assertEqual(hedge('(of/b capital/c '
-                               '(and/b belgium/c europe/c))').label(),
+        self.assertEqual(hedge('(of/B capital/C '
+                               '(and/B belgium/C europe/C))').label(),
                          'capital of belgium and europe')
 
     def test_atoms(self):
@@ -107,10 +107,10 @@ class TestHyperedge(unittest.TestCase):
              hedge('src'), hedge('graphbrain/2')})
         self.assertEqual(hedge('graphbrain/1').atoms(),
                          {hedge('graphbrain/1')})
-        edge = hedge('(the/md (of/br mayor/cc (the/md city/cs)))')
+        edge = hedge('(the/Md (of/Br mayor/Cc (the/Md city/Cs)))')
         self.assertEqual(edge.atoms(),
-                         {hedge('the/md'), hedge('of/br'), hedge('mayor/cc'),
-                          hedge('city/cs')})
+                         {hedge('the/Md'), hedge('of/Br'), hedge('mayor/Cc'),
+                          hedge('city/Cs')})
 
     def test_all_atoms(self):
         self.assertEqual(hedge('(is graphbrain/1 great/1)').all_atoms(),
@@ -122,10 +122,10 @@ class TestHyperedge(unittest.TestCase):
              hedge('graphbrain/1'), hedge('great/1')])
         self.assertEqual(hedge('graphbrain/1').all_atoms(),
                          [hedge('graphbrain/1')])
-        edge = hedge('(the/md (of/br mayor/cc (the/md city/cs)))')
+        edge = hedge('(the/Md (of/Br mayor/Cc (the/Md city/Cs)))')
         self.assertEqual(edge.all_atoms(),
-                         [hedge('the/md'), hedge('of/br'), hedge('mayor/cc'),
-                          hedge('the/md'), hedge('city/cs')])
+                         [hedge('the/Md'), hedge('of/Br'), hedge('mayor/Cc'),
+                          hedge('the/Md'), hedge('city/Cs')])
 
     def test_depth(self):
         self.assertEqual(hedge('graphbrain/1').depth(), 0)
@@ -140,21 +140,21 @@ class TestHyperedge(unittest.TestCase):
                          hedge('(is graphbrain (super great))'))
 
     def test_contains(self):
-        edge = hedge('(is/pd.sc piron/c (of/b capital/c piripiri/c))')
-        self.assertTrue(edge.contains(hedge('is/pd.sc')))
-        self.assertTrue(edge.contains(hedge('piron/c')))
-        self.assertTrue(edge.contains(hedge('(of/b capital/c piripiri/c)')))
-        self.assertFalse(edge.contains(hedge('piripiri/c')))
-        self.assertFalse(edge.contains(hedge('1111/c')))
+        edge = hedge('(is/Pd.sc piron/C (of/B capital/C piripiri/C))')
+        self.assertTrue(edge.contains(hedge('is/Pd.sc')))
+        self.assertTrue(edge.contains(hedge('piron/C')))
+        self.assertTrue(edge.contains(hedge('(of/B capital/C piripiri/C)')))
+        self.assertFalse(edge.contains(hedge('piripiri/C')))
+        self.assertFalse(edge.contains(hedge('1111/C')))
 
     def test_contains_deep(self):
-        edge = hedge('(is/pd.sc piron/c (of/b capital/c piripiri/c))')
-        self.assertTrue(edge.contains(hedge('is/pd.sc'), deep=True))
-        self.assertTrue(edge.contains(hedge('piron/c'), deep=True))
-        self.assertTrue(edge.contains(hedge('(of/b capital/c piripiri/c)'),
+        edge = hedge('(is/Pd.sc piron/C (of/B capital/C piripiri/C))')
+        self.assertTrue(edge.contains(hedge('is/Pd.sc'), deep=True))
+        self.assertTrue(edge.contains(hedge('piron/C'), deep=True))
+        self.assertTrue(edge.contains(hedge('(of/B capital/C piripiri/C)'),
                                       deep=True))
-        self.assertTrue(edge.contains(hedge('piripiri/c'), deep=True))
-        self.assertFalse(edge.contains(hedge('1111/c'), deep=True))
+        self.assertTrue(edge.contains(hedge('piripiri/C'), deep=True))
+        self.assertFalse(edge.contains(hedge('1111/C'), deep=True))
 
     def test_subedges(self):
         self.assertEqual(hedge('graphbrain/1').subedges(),
@@ -172,63 +172,63 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(match_pattern('(a b)', '(a a)'), None)
 
     def test_match_pattern_wildcard(self):
-        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s great/c)',
-                                       '(is/pd.sc graphbrain/cp.s *x)'),
-                         {'x': hedge('great/c')})
-        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s great/c)',
-                                       '(is/pd.sc graphbrain/cp.s *)'),
+        self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
+                                       '(is/Pd.sc graphbrain/Cp.s *x)'),
+                         {'x': hedge('great/C')})
+        self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
+                                       '(is/Pd.sc graphbrain/Cp.s *)'),
                          {})
-        self.assertEqual(match_pattern('(was/pd.sc graphbrain /cp.s great/c)',
-                                       '(is/pd.sc graphbrain/cp.s *x)'),
+        self.assertEqual(match_pattern('(was/Pd.sc graphbrain /Cp.s great/C)',
+                                       '(is/Pd.sc graphbrain/Cp.s *x)'),
                          None)
 
     def test_match_pattern_atomic_wildcard(self):
-        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s great/c)',
-                                       '(is/pd.sc graphbrain/cp.s @prop)'),
-                         {'prop': hedge('great/c')})
-        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s great/c)',
-                                       '(is/pd.sc graphbrain/cp.s @)'),
+        self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
+                                       '(is/Pd.sc graphbrain/Cp.s @prop)'),
+                         {'prop': hedge('great/C')})
+        self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
+                                       '(is/Pd.sc graphbrain/Cp.s @)'),
                          {})
-        self.assertEqual(match_pattern('(was/pd.sc graphbrain/cp.s great/c)',
-                                       '(is/pd.sc graphbrain/cp.s @prop)'),
+        self.assertEqual(match_pattern('(was/Pd.sc graphbrain/Cp.s great/C)',
+                                       '(is/Pd.sc graphbrain/Cp.s @prop)'),
                          None)
-        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s '
-                                       '(fairly/m great/c))',
-                                       '(is/pd.sc graphbrain/cp.s @prop)'),
+        self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s '
+                                       '(fairly/M great/C))',
+                                       '(is/Pd.sc graphbrain/Cp.s @prop)'),
                          None)
 
     def test_match_pattern_non_atomic_wildcard(self):
-        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s '
-                                       '(fairly/m great/c))',
-                                       '(is/pd.sc graphbrain/cp.s &prop)'),
-                         {'prop': hedge('(fairly/m great/c)')})
-        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s '
-                                       '(fairly/m great/c))',
-                                       '(is/pd.sc graphbrain/cp.s &)'),
+        self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s '
+                                       '(fairly/M great/C))',
+                                       '(is/Pd.sc graphbrain/Cp.s &prop)'),
+                         {'prop': hedge('(fairly/M great/C)')})
+        self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s '
+                                       '(fairly/M great/C))',
+                                       '(is/Pd.sc graphbrain/Cp.s &)'),
                          {})
-        self.assertEqual(match_pattern('(was/pd.sc graphbrain/cp.s '
-                                       '(fairly/m great/c))',
-                                       '(is/pd.sc graphbrain/cp.s &prop)'),
+        self.assertEqual(match_pattern('(was/Pd.sc graphbrain/Cp.s '
+                                       '(fairly/M great/C))',
+                                       '(is/Pd.sc graphbrain/Cp.s &prop)'),
                          None)
-        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s great/c)',
-                                       '(is/pd.sc graphbrain/cp.s &prop)'),
+        self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
+                                       '(is/Pd.sc graphbrain/Cp.s &prop)'),
                          None)
 
     def test_match_pattern_open_ended(self):
-        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s great/c)',
-                                       '(is/pd.sc graphbrain/cp.s *x ...)'),
-                         {'x': hedge('great/c')})
-        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s great/c)',
-                                       '(is/pd.sc graphbrain/cp.s * ...)'),
+        self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
+                                       '(is/Pd.sc graphbrain/Cp.s *x ...)'),
+                         {'x': hedge('great/C')})
+        self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
+                                       '(is/Pd.sc graphbrain/Cp.s * ...)'),
                          {})
-        self.assertEqual(match_pattern('(was/pd.sc graphbrain /cp.s great/c)',
-                                       '(is/pd.sc graphbrain/cp.s *x ...)'),
+        self.assertEqual(match_pattern('(was/Pd.sc graphbrain /Cp.s great/C)',
+                                       '(is/Pd.sc graphbrain/Cp.s *x ...)'),
                          None)
-        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s great/c)',
-                                       '(is/pd.sc @obj ...)'),
-                         {'obj': hedge('graphbrain/cp.s')})
-        self.assertEqual(match_pattern('(is/pd.sc graphbrain/cp.s great/c)',
-                                       '(is/pd.sc @obj)'),
+        self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
+                                       '(is/Pd.sc @obj ...)'),
+                         {'obj': hedge('graphbrain/Cp.s')})
+        self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
+                                       '(is/Pd.sc @obj)'),
                          None)
 
     def test_edge_matches_pattern_simple(self):
@@ -236,48 +236,48 @@ class TestHyperedge(unittest.TestCase):
         self.assertFalse(edge_matches_pattern(hedge('(a b)'), '(a a)'))
 
     def test_edge_matches_pattern_wildcard(self):
-        self.assertTrue(edge_matches_pattern(hedge('(is/pd.sc graphbrain/cp.s '
-                                                   'great/c)'),
-                                             '(is/pd.sc graphbrain/cp.s *)'))
-        self.assertFalse(edge_matches_pattern(hedge('(was/pd.sc graphbrain'
-                                                    '/cp.s great/c)'),
-                                              '(is/pd.sc graphbrain/cp.s *)'))
+        self.assertTrue(edge_matches_pattern(hedge('(is/Pd.sc graphbrain/Cp.s '
+                                                   'great/C)'),
+                                             '(is/Pd.sc graphbrain/Cp.s *)'))
+        self.assertFalse(edge_matches_pattern(hedge('(was/Pd.sc graphbrain'
+                                                    '/Cp.s great/C)'),
+                                              '(is/Pd.sc graphbrain/Cp.s *)'))
 
     def test_edge_matches_pattern_atomic_wildcard(self):
-        self.assertTrue(edge_matches_pattern(hedge('(is/pd.sc graphbrain/cp.s '
-                                                   'great/c)'),
-                                             '(is/pd.sc graphbrain/cp.s @)'))
-        self.assertFalse(edge_matches_pattern(hedge('(was/pd.sc graphbrain'
-                                                    '/cp.s great/c)'),
-                                              '(is/pd.sc graphbrain/cp.s @)'))
+        self.assertTrue(edge_matches_pattern(hedge('(is/Pd.sc graphbrain/Cp.s '
+                                                   'great/C)'),
+                                             '(is/Pd.sc graphbrain/Cp.s @)'))
+        self.assertFalse(edge_matches_pattern(hedge('(was/Pd.sc graphbrain'
+                                                    '/Cp.s great/C)'),
+                                              '(is/Pd.sc graphbrain/Cp.s @)'))
 
-        self.assertFalse(edge_matches_pattern(hedge('(is/pd.sc graphbrain/cp.s'
-                                                    '(fairly/m great/c))'),
-                                              '(is/pd.sc graphbrain/cp.s @)'))
+        self.assertFalse(edge_matches_pattern(hedge('(is/Pd.sc graphbrain/Cp.s'
+                                                    '(fairly/M great/C))'),
+                                              '(is/Pd.sc graphbrain/Cp.s @)'))
 
     def test_edge_matches_pattern_edge_wildcard(self):
-        self.assertTrue(edge_matches_pattern(hedge('(is/pd.sc graphbrain/cp.s'
-                                                   ' (fairly/m great/c))'),
-                                             '(is/pd.sc graphbrain/cp.s &)'))
+        self.assertTrue(edge_matches_pattern(hedge('(is/Pd.sc graphbrain/Cp.s'
+                                                   ' (fairly/M great/C))'),
+                                             '(is/Pd.sc graphbrain/Cp.s &)'))
 
-        self.assertFalse(edge_matches_pattern(hedge('(is/pd.sc graphbrain/cp.s'
-                                                    ' great/c)'),
-                                              '(is/pd.sc graphbrain/cp.s &)'))
+        self.assertFalse(edge_matches_pattern(hedge('(is/Pd.sc graphbrain/Cp.s'
+                                                    ' great/C)'),
+                                              '(is/Pd.sc graphbrain/Cp.s &)'))
 
     def test_edge_matches_pattern_open_ended(self):
-        self.assertTrue(edge_matches_pattern(hedge('(is/pd.sc graphbrain/cp.s '
-                                                   'great/c)'),
-                                             '(is/pd.sc graphbrain/cp.s '
+        self.assertTrue(edge_matches_pattern(hedge('(is/Pd.sc graphbrain/Cp.s '
+                                                   'great/C)'),
+                                             '(is/Pd.sc graphbrain/Cp.s '
                                              '* ...)'))
 
-        self.assertTrue(edge_matches_pattern(hedge('(is/pd.sc graphbrain/cp.s '
-                                                   'great/c extra/c)'),
-                                             '(is/pd.sc graphbrain/cp.s '
+        self.assertTrue(edge_matches_pattern(hedge('(is/Pd.sc graphbrain/Cp.s '
+                                                   'great/C extra/C)'),
+                                             '(is/Pd.sc graphbrain/Cp.s '
                                              '* ...)'))
 
-        self.assertFalse(edge_matches_pattern(hedge('(is/pd.sc humanity/cp.s '
-                                                    'great/c extra/c)'),
-                                              '(is/pd.sc graphbrain/cp.s '
+        self.assertFalse(edge_matches_pattern(hedge('(is/Pd.sc humanity/Cp.s '
+                                                    'great/C extra/C)'),
+                                              '(is/Pd.sc graphbrain/Cp.s '
                                               '* ...)'))
 
     def test_nest(self):
@@ -320,123 +320,126 @@ class TestHyperedge(unittest.TestCase):
 
     def test_replace_atom(self):
         x = hedge('x')
-        xc = hedge('x/c')
-        self.assertEqual(hedge('x').replace_atom(x, xc).to_str(), 'x/c')
+        xc = hedge('x/C')
+        self.assertEqual(hedge('x').replace_atom(x, xc).to_str(), 'x/C')
         self.assertEqual(hedge('(a b x)').replace_atom(x, xc).to_str(),
-                         '(a b x/c)')
+                         '(a b x/C)')
         self.assertEqual(hedge('(a b c)').replace_atom(x, xc).to_str(),
                          '(a b c)')
         self.assertEqual(hedge('(a x '
                                '(b x))').replace_atom(x, xc).to_str(),
-                         '(a x/c (b x/c))')
+                         '(a x/C (b x/C))')
 
     def test_atom_role(self):
-        self.assertEqual(hedge('graphbrain/cp.s/1').role(), ['cp', 's'])
-        self.assertEqual(hedge('graphbrain').role(), ['c'])
+        self.assertEqual(hedge('graphbrain/Cp.s/1').role(), ['Cp', 's'])
+        self.assertEqual(hedge('graphbrain').role(), ['C'])
 
     def test_atom_simplify_role(self):
-        self.assertEqual(hedge('graphbrain/cp.s/1').simplify_role(),
-                         hedge('graphbrain/c/1'))
+        self.assertEqual(hedge('graphbrain/Cp.s/1').simplify_role(),
+                         hedge('graphbrain/C/1'))
         self.assertEqual(hedge('graphbrain').simplify_role(),
                          hedge('graphbrain'))
-        self.assertEqual(hedge('say/pd.|f----.sr/en').simplify_role(),
-                         hedge('say/p/en'))
+        self.assertEqual(hedge('say/Pd.|f----.sr/en').simplify_role(),
+                         hedge('say/P/en'))
 
     def test_atom_type(self):
-        self.assertEqual(hedge('graphbrain/cp.s/1').type(), 'cp')
-        self.assertEqual(hedge('graphbrain').type(), 'c')
+        self.assertEqual(hedge('graphbrain/Cp.s/1').type(), 'Cp')
+        self.assertEqual(hedge('graphbrain').type(), 'C')
 
     def test_entity_type(self):
-        self.assertEqual(hedge('(is/pd.so graphbrain/cp.s great/c)').type(),
-                         'rd')
-        self.assertEqual(hedge('(red/m shoes/cn.p)').type(), 'cn')
-        self.assertEqual(hedge('(before/tt noon/c)').type(), 'st')
-        self.assertEqual(hedge('(very/w large/m)').type(), 'm')
-        self.assertEqual(hedge('((very/w large/m) shoes/cn.p)').type(), 'cn')
-        self.assertEqual(hedge('(will/a be/pd.sc)').type(), 'pd')
-        self.assertEqual(hedge('((will/a be/pd.sc) john/cp.s rich/c)').type(),
-                         'rd')
-        self.assertEqual(hedge('(play/x piano/cn.s)').type(), 'd')
+        self.assertEqual(hedge('(is/Pd.so graphbrain/Cp.s great/C)').type(),
+                         'Rd')
+        self.assertEqual(hedge('(red/M shoes/Cc.p)').type(), 'Cc')
+        self.assertEqual(hedge('(before/Tt noon/C)').type(), 'St')
+        self.assertEqual(hedge('(very/M large/M)').type(), 'M')
+        self.assertEqual(hedge('((very/M large/M) shoes/Cc.p)').type(), 'Cc')
+        self.assertEqual(hedge('(will/A be/Pd.sc)').type(), 'Pd')
+        self.assertEqual(hedge('((will/A be/Pd.sc) john/Cp.s rich/C)').type(),
+                         'Rd')
+        self.assertEqual(hedge('(play/X piano/Cc.s)').type(), 'D')
+        self.assertEqual(hedge('(and/J meat/Cc.s potatoes/Cc.p)').type(), 'C')
+        self.assertEqual(
+            hedge('(and/J (is/Pd.so graphbrain/Cp.s great/C))').type(), 'R')
 
     def test_connector_type(self):
-        self.assertEqual(hedge('graphbrain/cp.s/1').connector_type(), 'cp')
-        self.assertEqual(hedge('graphbrain').connector_type(), 'c')
-        self.assertEqual(hedge('(is/pd.so graphbrain/cp.s '
-                               'great/c)').connector_type(), 'pd')
-        self.assertEqual(hedge('(red/m shoes/cn.p)').connector_type(), 'm')
-        self.assertEqual(hedge('(before/tt noon/c)').connector_type(), 'tt')
-        self.assertEqual(hedge('(very/w large/m)').connector_type(), 'w')
-        self.assertEqual(hedge('((very/w large/m) '
-                               'shoes/cn.p)').connector_type(), 'm')
-        self.assertEqual(hedge('(will/a be/pd.sc)').connector_type(), 'a')
-        self.assertEqual(hedge('((will/a be/pd.sc) john/cp.s '
-                               'rich/c)').connector_type(), 'pd')
-        self.assertEqual(hedge('(play/x piano/cn.s)').connector_type(), 'x')
+        self.assertEqual(hedge('graphbrain/Cp.s/1').connector_type(), 'Cp')
+        self.assertEqual(hedge('graphbrain').connector_type(), 'C')
+        self.assertEqual(hedge('(is/Pd.so graphbrain/Cp.s '
+                               'great/C)').connector_type(), 'Pd')
+        self.assertEqual(hedge('(red/M shoes/Cn.p)').connector_type(), 'M')
+        self.assertEqual(hedge('(before/Tt noon/C)').connector_type(), 'Tt')
+        self.assertEqual(hedge('(very/M large/M)').connector_type(), 'M')
+        self.assertEqual(hedge('((very/M large/M) '
+                               'shoes/Cn.p)').connector_type(), 'M')
+        self.assertEqual(hedge('(will/A be/Pd.sc)').connector_type(), 'A')
+        self.assertEqual(hedge('((will/A be/Pd.sc) john/Cp.s '
+                               'rich/C)').connector_type(), 'Pd')
+        self.assertEqual(hedge('(play/X piano/Cn.s)').connector_type(), 'X')
 
     def test_atom_with_type(self):
-        self.assertEqual(hedge('(+/b a/cn b/cp)').atom_with_type('c'),
-                         hedge('a/cn'))
-        self.assertEqual(hedge('(+/b a/c b/cp)').atom_with_type('cp'),
-                         hedge('b/cp'))
-        self.assertEqual(hedge('(+/b a/c b/cp)').atom_with_type('p'), None)
-        self.assertEqual(hedge('a/cn').atom_with_type('c'), hedge('a/cn'))
-        self.assertEqual(hedge('a/cn').atom_with_type('cn'), hedge('a/cn'))
-        self.assertEqual(hedge('a/cn').atom_with_type('cp'), None)
-        self.assertEqual(hedge('a/cn').atom_with_type('p'), None)
+        self.assertEqual(hedge('(+/B a/Cn b/Cp)').atom_with_type('C'),
+                         hedge('a/Cn'))
+        self.assertEqual(hedge('(+/B a/C b/Cp)').atom_with_type('Cp'),
+                         hedge('b/Cp'))
+        self.assertEqual(hedge('(+/B a/C b/Cp)').atom_with_type('P'), None)
+        self.assertEqual(hedge('a/Cn').atom_with_type('C'), hedge('a/Cn'))
+        self.assertEqual(hedge('a/Cn').atom_with_type('Cn'), hedge('a/Cn'))
+        self.assertEqual(hedge('a/Cn').atom_with_type('Cp'), None)
+        self.assertEqual(hedge('a/Cn').atom_with_type('P'), None)
 
     def test_contains_atom_type(self):
-        self.assertTrue(hedge('(+/b a/cn b/cp)').contains_atom_type('c'))
-        self.assertTrue(hedge('(+/b a/c b/cp)').contains_atom_type('cp'))
-        self.assertFalse(hedge('(+/b a/c b/cp)').contains_atom_type('p'))
-        self.assertTrue(hedge('a/cn').contains_atom_type('c'))
-        self.assertTrue(hedge('a/cn').contains_atom_type('cn'))
-        self.assertFalse(hedge('a/cn').contains_atom_type('cp'))
-        self.assertFalse(hedge('a/cn').contains_atom_type('p'))
+        self.assertTrue(hedge('(+/B a/Cn b/Cp)').contains_atom_type('C'))
+        self.assertTrue(hedge('(+/B a/C b/Cp)').contains_atom_type('Cp'))
+        self.assertFalse(hedge('(+/B a/C b/Cp)').contains_atom_type('P'))
+        self.assertTrue(hedge('a/Cn').contains_atom_type('C'))
+        self.assertTrue(hedge('a/Cn').contains_atom_type('Cn'))
+        self.assertFalse(hedge('a/Cn').contains_atom_type('Cp'))
+        self.assertFalse(hedge('a/Cn').contains_atom_type('P'))
 
     def test_predicate(self):
-        self.assertEqual(hedge('graphbrain/cp.s/1').predicate(), None)
+        self.assertEqual(hedge('graphbrain/Cp.s/1').predicate(), None)
         self.assertEqual(hedge('graphbrain').predicate(), None)
-        self.assertEqual(hedge('(is/pd.so graphbrain/cp.s '
-                               'great/c)').predicate().to_str(), 'is/pd.so')
-        self.assertEqual(hedge('(red/m shoes/cn.p)').predicate(), None)
-        self.assertEqual(hedge('(before/tt noon/c)').predicate(), None)
-        self.assertEqual(hedge('(very/w large/m)').predicate(), None)
-        self.assertEqual(hedge('((very/w large/m) '
-                               'shoes/cn.p)').predicate(), None)
-        self.assertEqual(hedge('(will/a be/pd.sc)').predicate().to_str(),
-                         'be/pd.sc')
-        self.assertEqual(hedge('((will/a be/pd.sc) john/cp.s '
-                               'rich/c)').predicate().to_str(), 'be/pd.sc')
-        self.assertEqual(hedge('(play/x piano/cn.s)').predicate(), None)
+        self.assertEqual(hedge('(is/Pd.so graphbrain/Cp.s '
+                               'great/C)').predicate().to_str(), 'is/Pd.so')
+        self.assertEqual(hedge('(red/M shoes/Cn.p)').predicate(), None)
+        self.assertEqual(hedge('(before/Tt noon/C)').predicate(), None)
+        self.assertEqual(hedge('(very/M large/M)').predicate(), None)
+        self.assertEqual(hedge('((very/M large/M) '
+                               'shoes/Cn.p)').predicate(), None)
+        self.assertEqual(hedge('(will/A be/Pd.sc)').predicate().to_str(),
+                         'be/Pd.sc')
+        self.assertEqual(hedge('((will/A be/Pd.sc) john/Cp.s '
+                               'rich/C)').predicate().to_str(), 'be/Pd.sc')
+        self.assertEqual(hedge('(play/X piano/Cn.s)').predicate(), None)
 
     def test_rel_arg_role(self):
-        edge = hedge('(is/pd.so graphbrain/cp.s great/c)')
+        edge = hedge('(is/Pd.so graphbrain/Cp.s great/C)')
         self.assertEqual(rel_arg_role(edge, 0), 's')
         self.assertEqual(rel_arg_role(edge, 1), 'o')
         self.assertEqual(rel_arg_role(edge, 2), None)
-        edge = hedge('(is/b graphbrain/cp.s great/c)')
+        edge = hedge('(is/B graphbrain/Cp.s great/C)')
         self.assertEqual(rel_arg_role(edge, 0), None)
 
     def test_is_pattern(self):
-        edge = hedge("('s/bp.am zimbabwe/m economy/cn.s)")
+        edge = hedge("('s/Bp.am zimbabwe/M economy/Cn.s)")
         self.assertFalse(edge.is_pattern())
-        edge = hedge("('s/bp.am * economy/cn.s)")
+        edge = hedge("('s/Bp.am * economy/Cn.s)")
         self.assertTrue(edge.is_pattern())
-        edge = hedge("('s/bp.am * ...)")
+        edge = hedge("('s/Bp.am * ...)")
         self.assertTrue(edge.is_pattern())
-        edge = hedge('thing/c')
+        edge = hedge('thing/C')
         self.assertFalse(edge.is_pattern())
         edge = hedge('&')
         self.assertTrue(edge.is_pattern())
 
     def test_is_full_pattern(self):
-        edge = hedge("('s/bp.am zimbabwe/m economy/cn.s)")
+        edge = hedge("('s/Bp.am zimbabwe/M economy/Cn.s)")
         self.assertFalse(edge.is_full_pattern())
-        edge = hedge("('s/bp.am * economy/cn.s)")
+        edge = hedge("('s/Bp.am * economy/Cn.s)")
         self.assertFalse(edge.is_full_pattern())
-        edge = hedge("('s/bp.am * ...)")
+        edge = hedge("('s/Bp.am * ...)")
         self.assertFalse(edge.is_full_pattern())
-        edge = hedge('thing/c')
+        edge = hedge('thing/C')
         self.assertFalse(edge.is_full_pattern())
         edge = hedge('&')
         self.assertTrue(edge.is_full_pattern())
@@ -448,68 +451,68 @@ class TestHyperedge(unittest.TestCase):
         self.assertTrue(edge.is_full_pattern())
 
     def test_argroles_atom(self):
-        edge = hedge('s/bp.am')
+        edge = hedge('s/Bp.am')
         self.assertEqual(edge.argroles(), 'am')
-        edge = hedge('come/pd.sx.-i----/en')
+        edge = hedge('come/Pd.sx.-i----/en')
         self.assertEqual(edge.argroles(), 'sx')
-        edge = hedge('come/pd')
+        edge = hedge('come/Pd')
         self.assertEqual(edge.argroles(), '')
-        edge = hedge('red/m')
+        edge = hedge('red/M')
         self.assertEqual(edge.argroles(), '')
-        edge = hedge('berlin/cp.s/de')
+        edge = hedge('berlin/Cp.s/de')
         self.assertEqual(edge.argroles(), '')
 
     def test_argroles_edge(self):
-        edge = hedge('(is/av.|f--3s/en influenced/pd.xpa.<pf---/en)')
+        edge = hedge('(is/Av.|f--3s/en influenced/Pd.xpa.<pf---/en)')
         self.assertEqual(edge.argroles(), 'xpa')
-        edge = hedge('(is/av.|f--3s/en influenced/pd)')
+        edge = hedge('(is/Av.|f--3s/en influenced/Pd)')
         self.assertEqual(edge.argroles(), '')
-        edge = hedge('(looks/pd.sc.|f--3s she/ci (very/m beautiful/ca))')
+        edge = hedge('(looks/Pd.sc.|f--3s she/Ci (very/M beautiful/Ca))')
         self.assertEqual(edge.argroles(), '')
 
     def test_replace_argroles_atom(self):
-        edge = hedge('s/bp.am')
-        self.assertEqual(edge.replace_argroles('ma').to_str(), 's/bp.ma')
-        edge = hedge('come/pd.sx.-i----/en')
+        edge = hedge('s/Bp.am')
+        self.assertEqual(edge.replace_argroles('ma').to_str(), 's/Bp.ma')
+        edge = hedge('come/Pd.sx.-i----/en')
         self.assertEqual(edge.replace_argroles('scx').to_str(),
-                         'come/pd.scx.-i----/en')
-        edge = hedge('come/pd/en')
+                         'come/Pd.scx.-i----/en')
+        edge = hedge('come/Pd/en')
         self.assertEqual(edge.replace_argroles('scx').to_str(),
-                         'come/pd.scx/en')
+                         'come/Pd.scx/en')
         edge = hedge('xxx')
         self.assertEqual(edge.replace_argroles('scx').to_str(),
                          'xxx')
 
     def test_insert_argrole_atom(self):
-        edge = hedge('s/bp.am')
-        self.assertEqual(edge.insert_argrole('m', 0).to_str(), 's/bp.mam')
-        edge = hedge('s/bp.am')
-        self.assertEqual(edge.insert_argrole('m', 1).to_str(), 's/bp.amm')
-        edge = hedge('s/bp.am')
-        self.assertEqual(edge.insert_argrole('m', 2).to_str(), 's/bp.amm')
-        edge = hedge('s/bp.am')
-        self.assertEqual(edge.insert_argrole('m', 3).to_str(), 's/bp.amm')
-        edge = hedge('come/pd.sx.-i----/en')
+        edge = hedge('s/Bp.am')
+        self.assertEqual(edge.insert_argrole('m', 0).to_str(), 's/Bp.mam')
+        edge = hedge('s/Bp.am')
+        self.assertEqual(edge.insert_argrole('m', 1).to_str(), 's/Bp.amm')
+        edge = hedge('s/Bp.am')
+        self.assertEqual(edge.insert_argrole('m', 2).to_str(), 's/Bp.amm')
+        edge = hedge('s/Bp.am')
+        self.assertEqual(edge.insert_argrole('m', 3).to_str(), 's/Bp.amm')
+        edge = hedge('come/Pd.sx.-i----/en')
         self.assertEqual(edge.insert_argrole('x', 0).to_str(),
-                         'come/pd.xsx.-i----/en')
-        edge = hedge('come/pd.sx.-i----/en')
+                         'come/Pd.xsx.-i----/en')
+        edge = hedge('come/Pd.sx.-i----/en')
         self.assertEqual(edge.insert_argrole('x', 1).to_str(),
-                         'come/pd.sxx.-i----/en')
-        edge = hedge('come/pd.sx.-i----/en')
+                         'come/Pd.sxx.-i----/en')
+        edge = hedge('come/Pd.sx.-i----/en')
         self.assertEqual(edge.insert_argrole('x', 2).to_str(),
-                         'come/pd.sxx.-i----/en')
-        edge = hedge('come/pd.sx.-i----/en')
+                         'come/Pd.sxx.-i----/en')
+        edge = hedge('come/Pd.sx.-i----/en')
         self.assertEqual(edge.insert_argrole('x', 100).to_str(),
-                         'come/pd.sxx.-i----/en')
-        edge = hedge('come/pd/en')
+                         'come/Pd.sxx.-i----/en')
+        edge = hedge('come/Pd/en')
         self.assertEqual(edge.insert_argrole('s', 0).to_str(),
-                         'come/pd.s/en')
-        edge = hedge('come/pd/en')
+                         'come/Pd.s/en')
+        edge = hedge('come/Pd/en')
         self.assertEqual(edge.insert_argrole('s', 1).to_str(),
-                         'come/pd.s/en')
-        edge = hedge('come/pd/en')
+                         'come/Pd.s/en')
+        edge = hedge('come/Pd/en')
         self.assertEqual(edge.insert_argrole('s', 100).to_str(),
-                         'come/pd.s/en')
+                         'come/Pd.s/en')
         edge = hedge('xxx')
         self.assertEqual(edge.insert_argrole('s', 0).to_str(),
                          'xxx')
@@ -521,92 +524,92 @@ class TestHyperedge(unittest.TestCase):
                          'xxx')
 
     def test_replace_argroles_edge(self):
-        edge = hedge('(s/bp.am x/c y/c)')
+        edge = hedge('(s/Bp.am x/C y/C)')
         self.assertEqual(edge.replace_argroles('ma').to_str(),
-                         '(s/bp.ma x/c y/c)')
-        edge = hedge('(come/pd.sx.-i----/en you/c here/c)')
+                         '(s/Bp.ma x/C y/C)')
+        edge = hedge('(come/Pd.sx.-i----/en you/C here/C)')
         self.assertEqual(edge.replace_argroles('scx').to_str(),
-                         '(come/pd.scx.-i----/en you/c here/c)')
-        edge = hedge('(come/pd/en you/c here/c)')
+                         '(come/Pd.scx.-i----/en you/C here/C)')
+        edge = hedge('(come/Pd/en you/C here/C)')
         self.assertEqual(edge.replace_argroles('scx').to_str(),
-                         '(come/pd.scx/en you/c here/c)')
-        edge = hedge('(come you/c here/c)')
+                         '(come/Pd.scx/en you/C here/C)')
+        edge = hedge('(come you/C here/C)')
         self.assertEqual(edge.replace_argroles('scx').to_str(),
-                         '(come you/c here/c)')
+                         '(come you/C here/C)')
 
     def test_insert_argrole_edge(self):
-        edge = hedge('(s/bp.am x/c y/c)')
+        edge = hedge('(s/Bp.am x/C y/C)')
         self.assertEqual(
-            edge.insert_argrole('m', 0).to_str(), '(s/bp.mam x/c y/c)')
-        edge = hedge('(s/bp.am x/c y/c)')
+            edge.insert_argrole('m', 0).to_str(), '(s/Bp.mam x/C y/C)')
+        edge = hedge('(s/Bp.am x/C y/C)')
         self.assertEqual(
-            edge.insert_argrole('m', 1).to_str(), '(s/bp.amm x/c y/c)')
-        edge = hedge('(s/bp.am x/c y/c)')
+            edge.insert_argrole('m', 1).to_str(), '(s/Bp.amm x/C y/C)')
+        edge = hedge('(s/Bp.am x/C y/C)')
         self.assertEqual(
-            edge.insert_argrole('m', 2).to_str(), '(s/bp.amm x/c y/c)')
-        edge = hedge('(s/bp.am x/c y/c)')
+            edge.insert_argrole('m', 2).to_str(), '(s/Bp.amm x/C y/C)')
+        edge = hedge('(s/Bp.am x/C y/C)')
         self.assertEqual(
-            edge.insert_argrole('m', 3).to_str(), '(s/bp.amm x/c y/c)')
-        edge = hedge('(come/pd.sx.-i----/en you/c here/c)')
+            edge.insert_argrole('m', 3).to_str(), '(s/Bp.amm x/C y/C)')
+        edge = hedge('(come/Pd.sx.-i----/en you/C here/C)')
         self.assertEqual(edge.insert_argrole('x', 0).to_str(),
-                         '(come/pd.xsx.-i----/en you/c here/c)')
-        edge = hedge('(come/pd.sx.-i----/en you/c here/c)')
+                         '(come/Pd.xsx.-i----/en you/C here/C)')
+        edge = hedge('(come/Pd.sx.-i----/en you/C here/C)')
         self.assertEqual(edge.insert_argrole('x', 1).to_str(),
-                         '(come/pd.sxx.-i----/en you/c here/c)')
-        edge = hedge('(come/pd.sx.-i----/en you/c here/c)')
+                         '(come/Pd.sxx.-i----/en you/C here/C)')
+        edge = hedge('(come/Pd.sx.-i----/en you/C here/C)')
         self.assertEqual(edge.insert_argrole('x', 2).to_str(),
-                         '(come/pd.sxx.-i----/en you/c here/c)')
-        edge = hedge('(come/pd.sx.-i----/en you/c here/c)')
+                         '(come/Pd.sxx.-i----/en you/C here/C)')
+        edge = hedge('(come/Pd.sx.-i----/en you/C here/C)')
         self.assertEqual(edge.insert_argrole('x', 100).to_str(),
-                         '(come/pd.sxx.-i----/en you/c here/c)')
-        edge = hedge('(come/pd/en you/c here/c)')
+                         '(come/Pd.sxx.-i----/en you/C here/C)')
+        edge = hedge('(come/Pd/en you/C here/C)')
         self.assertEqual(edge.insert_argrole('s', 0).to_str(),
-                         '(come/pd.s/en you/c here/c)')
-        edge = hedge('(come/pd/en you/c here/c)')
+                         '(come/Pd.s/en you/C here/C)')
+        edge = hedge('(come/Pd/en you/C here/C)')
         self.assertEqual(edge.insert_argrole('s', 1).to_str(),
-                         '(come/pd.s/en you/c here/c)')
-        edge = hedge('(come/pd/en you/c here/c)')
+                         '(come/Pd.s/en you/C here/C)')
+        edge = hedge('(come/Pd/en you/C here/C)')
         self.assertEqual(edge.insert_argrole('s', 100).to_str(),
-                         '(come/pd.s/en you/c here/c)')
-        edge = hedge('(come you/c here/c)')
+                         '(come/Pd.s/en you/C here/C)')
+        edge = hedge('(come you/C here/C)')
         self.assertEqual(edge.insert_argrole('s', 0).to_str(),
-                         '(come you/c here/c)')
-        edge = hedge('(come you/c here/c)')
+                         '(come you/C here/C)')
+        edge = hedge('(come you/C here/C)')
         self.assertEqual(edge.insert_argrole('s', 1).to_str(),
-                         '(come you/c here/c)')
-        edge = hedge('(come you/c here/c)')
+                         '(come you/C here/C)')
+        edge = hedge('(come you/C here/C)')
         self.assertEqual(edge.insert_argrole('s', 100).to_str(),
-                         '(come you/c here/c)')
+                         '(come you/C here/C)')
 
     def test_insert_edge_with_argrole(self):
-        edge = hedge('(is/pd.sc/en sky/c blue/c)')
+        edge = hedge('(is/Pd.sc/en sky/C blue/C)')
         self.assertEqual(
-            edge.insert_edge_with_argrole(hedge('today/c'), 'x', 0),
-            hedge('(is/pd.xsc/en today/c sky/c blue/c)'))
+            edge.insert_edge_with_argrole(hedge('today/C'), 'x', 0),
+            hedge('(is/Pd.xsc/en today/C sky/C blue/C)'))
         self.assertEqual(
-            edge.insert_edge_with_argrole(hedge('today/c'), 'x', 1),
-            hedge('(is/pd.sxc/en sky/c today/c blue/c)'))
+            edge.insert_edge_with_argrole(hedge('today/C'), 'x', 1),
+            hedge('(is/Pd.sxc/en sky/C today/C blue/C)'))
         self.assertEqual(
-            edge.insert_edge_with_argrole(hedge('today/c'), 'x', 2),
-            hedge('(is/pd.scx/en sky/c blue/c today/c)'))
+            edge.insert_edge_with_argrole(hedge('today/C'), 'x', 2),
+            hedge('(is/Pd.scx/en sky/C blue/C today/C)'))
         self.assertEqual(
-            edge.insert_edge_with_argrole(hedge('today/c'), 'x', 100),
-            hedge('(is/pd.scx/en sky/c blue/c today/c)'))
+            edge.insert_edge_with_argrole(hedge('today/C'), 'x', 100),
+            hedge('(is/Pd.scx/en sky/C blue/C today/C)'))
 
     def test_edges_with_argrole(self):
-        edge_str = ("((have/av.|f----/en (been/av.<pf---/en "
-                    "tracking/pd.sox.|pg---/en)) (from/br.ma/en "
-                    "satellites/cc.p/en (and/b+/en nasa/cp.s/en "
-                    "(other/ma/en agencies/cc.p/en))) "
-                    "(+/b.aam/. sea/cc.s/en ice/cc.s/en changes/cc.p/en) "
-                    "(since/tt/en 1979/c#/en))")
+        edge_str = ("((have/Av.|f----/en (been/Av.<pf---/en "
+                    "tracking/Pd.sox.|pg---/en)) (from/Br.ma/en "
+                    "satellites/Cc.p/en (and/B+/en nasa/Cp.s/en "
+                    "(other/Ma/en agencies/Cc.p/en))) "
+                    "(+/B.aam/. sea/Cc.s/en ice/Cc.s/en changes/Cc.p/en) "
+                    "(since/Tt/en 1979/C#/en))")
         edge = hedge(edge_str)
 
-        subj = hedge(("(from/br.ma/en satellites/cc.p/en "
-                      "(and/b+/en nasa/cp.s/en (other/ma/en "
-                      "agencies/cc.p/en)))"))
-        obj = hedge("(+/b.aam/. sea/cc.s/en ice/cc.s/en changes/cc.p/en)")
-        spec = hedge("(since/tt/en 1979/c#/en)")
+        subj = hedge(("(from/Br.ma/en satellites/Cc.p/en "
+                      "(and/B+/en nasa/Cp.s/en (other/Ma/en "
+                      "agencies/Cc.p/en)))"))
+        obj = hedge("(+/B.aam/. sea/Cc.s/en ice/Cc.s/en changes/Cc.p/en)")
+        spec = hedge("(since/Tt/en 1979/C#/en)")
 
         self.assertEqual(edge.edges_with_argrole('s'), [subj])
         self.assertEqual(edge.edges_with_argrole('o'), [obj])
@@ -614,12 +617,12 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(edge.edges_with_argrole('p'), [])
 
     def test_edges_with_argrole_no_roles(self):
-        edge_str = ("((have/av.|f----/en (been/av.<pf---/en "
-                    "tracking/pd)) (from/br.ma/en "
-                    "satellites/cc.p/en (and/b+/en nasa/cp.s/en "
-                    "(other/ma/en agencies/cc.p/en))) "
-                    "(+/b.aam/. sea/cc.s/en ice/cc.s/en changes/cc.p/en) "
-                    "(since/tt/en 1979/c#/en))")
+        edge_str = ("((have/Av.|f----/en (been/Av.<pf---/en "
+                    "tracking/Pd)) (from/Br.ma/en "
+                    "satellites/Cc.p/en (and/B+/en nasa/Cp.s/en "
+                    "(other/Ma/en agencies/Cc.p/en))) "
+                    "(+/B.aam/. sea/Cc.s/en ice/Cc.s/en changes/Cc.p/en) "
+                    "(since/Tt/en 1979/C#/en))")
         edge = hedge(edge_str)
 
         self.assertEqual(edge.edges_with_argrole('s'), [])
@@ -628,7 +631,7 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(edge.edges_with_argrole('p'), [])
 
     def test_edges_with_argrole_atom(self):
-        edge = hedge('tracking/pd.sox.|pg---/en')
+        edge = hedge('tracking/Pd.sox.|pg---/en')
 
         self.assertEqual(edge.edges_with_argrole('s'), [])
         self.assertEqual(edge.edges_with_argrole('o'), [])
@@ -636,17 +639,17 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(edge.edges_with_argrole('p'), [])
 
     def test_main_concepts(self):
-        concept = hedge("('s/bp.am zimbabwe/mp economy/cn.s)")
-        self.assertEqual(concept.main_concepts(), [hedge('economy/cn.s')])
-        concept = hedge("('s/bp zimbabwe/mp economy/cn.s)")
+        concept = hedge("('s/Bp.am zimbabwe/Mp economy/Cn.s)")
+        self.assertEqual(concept.main_concepts(), [hedge('economy/Cn.s')])
+        concept = hedge("('s/Bp zimbabwe/Mp economy/Cn.s)")
         self.assertEqual(concept.main_concepts(), [])
-        concept = hedge('(+/b.am?/. hiv/ca kit/cn.s (testing/m self/cn.s))')
-        self.assertEqual(concept.main_concepts(), [hedge('kit/cn.s')])
-        concept = hedge('(+/b.?a?/. hiv/ca kit/cn.s (testing/m self/cn.s))')
+        concept = hedge('(+/B.am?/. hiv/Ca kit/Cn.s (testing/M self/Cn.s))')
+        self.assertEqual(concept.main_concepts(), [hedge('kit/Cn.s')])
+        concept = hedge('(+/B.?a?/. hiv/Ca kit/Cn.s (testing/M self/Cn.s))')
         self.assertEqual(concept.main_concepts(), [])
-        concept = hedge('(a/m thing/c)')
+        concept = hedge('(a/M thing/C)')
         self.assertEqual(concept.main_concepts(), [])
-        concept = hedge('thing/c')
+        concept = hedge('thing/C')
         self.assertEqual(concept.main_concepts(), [])
 
 

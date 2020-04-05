@@ -2,6 +2,7 @@ import logging
 from graphbrain import *
 from .alpha_beta import AlphaBeta
 from .nlp import token2str
+from .text import UniqueAtom
 
 
 class ParserDE(AlphaBeta):
@@ -45,7 +46,7 @@ class ParserDE(AlphaBeta):
             return self._concept_type_and_subtype(token)
         elif dep == 'ROOT':
             if self._is_verb(token):
-                return 'p'
+                return 'P'
             else:
                 return self._concept_type_and_subtype(token)
         elif dep in {'sb', 'pd', 'ag'}:
@@ -56,11 +57,11 @@ class ParserDE(AlphaBeta):
             return self._builder_type_and_subtype(token)
         elif dep == 'mo':
             if token.tag_ == 'APPR':
-                return 't'
-            elif head_type == 'p':
-                return 'a'
+                return 'T'
+            elif head_type == 'P':
+                return 'A'
             else:
-                return 'x'
+                return 'X'
         elif dep == 'nk':
             if token.head.dep_ == 'ag':
                 return self._builder_type_and_subtype(token)
@@ -69,7 +70,7 @@ class ParserDE(AlphaBeta):
             else:
                 return self._modifier_type_and_subtype(token)
         elif dep == 'ng':
-            return 'an'
+            return 'An'
         else:
             logging.warning('Unknown dependency (token_type): token: {}'
                             .format(token2str(token)))
@@ -78,78 +79,79 @@ class ParserDE(AlphaBeta):
     def _concept_type_and_subtype(self, token):
         tag = token.tag_
         if tag[:3] == 'ADJ':
-            return 'ca'
+            return 'Ca'
         elif tag == 'NN':
-            return 'cc'
+            return 'Cc'
         elif tag in {'NE', 'NNE'}:
-            return 'cp'
+            return 'Cp'
         elif tag == 'CARD':
-            return 'c#'
+            return 'C#'
         # elif tag == 'DT':
-        #     return 'cd'
+        #     return 'Cd'
         # elif tag == 'WP':
-        #     return 'cw'
+        #     return 'Cw'
         elif tag == 'PPER':
-            return 'ci'
+            return 'Ci'
         else:
-            return 'c'
+            return 'C'
 
     def _modifier_type_and_subtype(self, token):
         tag = token.tag_
         if tag == 'ART':
-            return 'md'
+            return 'Md'
         elif tag == 'PPOSAT':
-            return 'mp'
+            return 'Mp'
         elif tag == 'PIS':
-            return 'mi'
+            return 'Mi'
         elif tag == 'CARD':
-            return 'm#'
+            return 'M#'
         else:
-            return 'm'
+            return 'M'
 
     def _builder_type_and_subtype(self, token):
         if token.head:
             if token.head.dep_ == 'ag':
-                return 'bp'
+                return 'Bp'
 
         tag = token.tag_
+        # TODO: this is ugly, move this case elsewhere...
         if tag == 'KON':
-            return 'b+'
+            return 'J'
         # still english below...
         elif tag == 'IN':
-            return 'br'  # relational (proposition)
+            return 'Br'  # relational (proposition)
         elif tag == 'DT':
-            return 'bd'
+            return 'Bd'
         else:
-            return 'b'
+            return 'B'
 
     # TODO
     def _auxiliary_type_and_subtype(self, token):
         if token.tag_ == 'MD':
-            return 'am'  # modal
+            return 'Am'  # modal
         elif token.tag_ == 'TO':
-            return 'ai'  # infinitive
+            return 'Ai'  # infinitive
         elif token.tag_ == 'RBR':
-            return 'ac'  # comparative
+            return 'Ac'  # comparative
         elif token.tag_ == 'RBS':
-            return 'as'  # superlative
+            return 'As'  # superlative
         elif token.tag_ == 'RP' or token.dep_ == 'prt':
-            return 'ap'  # particle
+            return 'Ap'  # particle
         elif token.tag_ == 'EX':
-            return 'ae'  # existential
-        return 'a'
+            return 'Ae'  # existential
+        return 'A'
 
     def _predicate_post_type_and_subtype(self, edge, subparts, args_string):
         # detecte imperative
-        if subparts[0] == 'pd':
+        if subparts[0] == 'Pd':
             if subparts[2][1] == 'i' and 's' not in args_string:
-                return 'p!'
+                return 'P!'
         # keep everything else the same
         return subparts[0]
 
     def _concept_role(self, concept):
         if concept.is_atom():
-            token = self.atom2token[concept]
+            token = self.atom2token[UniqueAtom(concept)]
             if token.dep_ == 'compound':
                 return 'a'
             else:
@@ -164,10 +166,10 @@ class ParserDE(AlphaBeta):
         connector = edge[0]
         if connector.is_atom():
             ct = connector.type()
-            if ct == 'br':
+            if ct == 'Br':
                 connector = connector.replace_atom_part(
                     1, '{}.ma'.format(ct))
-            elif ct == 'bp':
+            elif ct == 'Bp':
                 connector = connector.replace_atom_part(
                     1, '{}.ma'.format(ct))
         return hedge((connector,) + edge[1:])
