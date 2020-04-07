@@ -483,8 +483,9 @@ class Hyperedge(tuple):
             elif inner_type in {'P', 'S', 'D'}:
                 return 'R'
             else:
-                # error
-                pass
+                msg = 'First argument of conjunction has invalid type ({}).'
+                msg = msg.format(inner_type)
+                raise RuntimeError(msg)
         else:
             return 'C'
 
