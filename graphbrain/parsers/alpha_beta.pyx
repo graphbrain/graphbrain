@@ -597,7 +597,7 @@ class AlphaBeta(Parser):
 
         if len(relative_to_concept) > 0:
             relative_to_concept.reverse()
-            entity = hedge((':/B/.', entity) + tuple(relative_to_concept))
+            entity = hedge((':/J/.', entity) + tuple(relative_to_concept))
 
         entity = self._post_parse_token(entity, token_dict)
 

@@ -1,7 +1,7 @@
 The two men conducted a lengthy correspondence and collaborated on an initially joint vision of human psychology.
 (and/J/en (conducted/Pd.so.<f-----/en (the/Md/en (two/M#/en men/Cc.p/en)) (a/Md/en (lengthy/Ma/en correspondence/Cc.s/en))) (collaborated/Pd.x.<f-----/en (on/T/en (an/Md/en ((initially/M/en joint/Ma/en) (of/Br.ma/en vision/Cc.s/en (human/Ma/en psychology/Cc.s/en)))))))
 Freud saw in the younger man the potential heir he had been seeking to carry on his "new science" of psychoanalysis.
-(saw/Pd.sxo.<f-----/en freud/Cp.s/en (in/T/en (the/Md/en (younger/Mc/en man/Cc.s/en))) (:/B/. (the/Md/en (potential/Ma/en heir/Cc.s/en)) ((had/Av.<f-----/en (been/Av.<pf----/en seeking/Pr.sr.|pg----/en)) he/Ci/en ((to/Ai/en (on/Ap/en carry/P.o.-i-----/en)) (his/Mp/en (new/Ma/en (of/Br.ma/en science/Cc.s/en psychoanalysis/Cc.s/en)))))))
+(saw/Pd.sxo.<f-----/en freud/Cp.s/en (in/T/en (the/Md/en (younger/Mc/en man/Cc.s/en))) (:/J/. (the/Md/en (potential/Ma/en heir/Cc.s/en)) ((had/Av.<f-----/en (been/Av.<pf----/en seeking/Pr.sr.|pg----/en)) he/Ci/en ((to/Ai/en (on/Ap/en carry/P.o.-i-----/en)) (his/Mp/en (new/Ma/en (of/Br.ma/en science/Cc.s/en psychoanalysis/Cc.s/en)))))))
 I will never stop laughing at this.
 ((will/Am/en (never/An/en stop/Pd.sr.-i-----/en)) i/Ci/en (laughing/P.x.|pg----/en (at/T/en this/Cd/en)))
 Unknown to most, their brains are a battleground.
@@ -11,9 +11,9 @@ Lady shows you the oldest living wolf.
 Lawyers say they will issue judicial review proceedings if Brexit secretary fails to release 50 studies of effect on industry
 (say/Pd.sr.|f-----/en lawyers/Cc.p/en ((will/Am/en issue/Pr.sox.-i-----/en) they/Ci/en (judicial/Ma/en (+/B.am/. review/Cc.s/en proceedings/Cc.p/en)) (if/X/en (fails/Pd.sr.|f--3s-/en (+/B.am/. brexit/Cp.s/en secretary/Cc.s/en) ((to/Ai/en release/P.ox.-i-----/en) (50/M#/en (of/Br.ma/en studies/Cc.p/en effect/Cc.s/en)) (on/T/en industry/Cc.s/en))))))
 The fifth connects to revived E.U. religions and feelings about French teachers demanding business-destroying regulatory limits.
-(connects/Pd.sx.|f--3s-/en (the/Md/en fifth/Ca/en) (to/T/en (and/J/en (revived/M/en (+/B.am/. e_u_/Cp.s/en religions/Cc.p/en)) (about/Br.ma/en feelings/Cc.p/en (:/B/. (french/Ma/en teachers/Cc.p/en) (demanding/P.o.|pg----/en ((business/M/en destroying/M/en) (regulatory/Ma/en limits/Cc.p/en))))))))
+(connects/Pd.sx.|f--3s-/en (the/Md/en fifth/Ca/en) (to/T/en (and/J/en (revived/M/en (+/B.am/. e_u_/Cp.s/en religions/Cc.p/en)) (about/Br.ma/en feelings/Cc.p/en (:/J/. (french/Ma/en teachers/Cc.p/en) (demanding/P.o.|pg----/en ((business/M/en destroying/M/en) (regulatory/Ma/en limits/Cc.p/en))))))))
 In September 2016, we learned that the University of New Hampshire was going to use $1 million that an incredibly frugal librarian saved while working as a library cataloger for 50 years to buy a new scoreboard for its stadium.
-(learned/Pd.xsr.<f-----/en (in/Tt/en (2016/M#/en september/Cp.s/en)) we/Ci/en (that/X/en ((was/Av.<f-----/en going/Pr.sr.|pg----/en) (the/Md/en (of/Br.ma/en university/Cp.s/en (+/B.am/. new/Cp.s/en hampshire/Cp.s/en))) ((to/Ai/en use/P.o.-i-----/en) (:/B/. ($/M/en (1/M#/en million/C#/en)) (saved/Pr.osx.<pf----/en that/C/en (an/Md/en ((incredibly/M/en frugal/Ma/en) librarian/Cc.s/en)) (while/X/en (working/Pd.xxx.|pg----/en (as/T/en (a/Md/en (+/B.am/. library/Cc.s/en cataloger/Cc.s/en))) (for/Tt/en (50/M#/en years/Cc.p/en)) ((to/Ai/en buy/Pd.o.-i-----/en) (a/Md/en (new/Ma/en (for/Br.ma/en scoreboard/Cc.s/en (its/Mp/en stadium/Cc.s/en)))))))))))))
+(learned/Pd.xsr.<f-----/en (in/Tt/en (2016/M#/en september/Cp.s/en)) we/Ci/en (that/X/en ((was/Av.<f-----/en going/Pr.sr.|pg----/en) (the/Md/en (of/Br.ma/en university/Cp.s/en (+/B.am/. new/Cp.s/en hampshire/Cp.s/en))) ((to/Ai/en use/P.o.-i-----/en) (:/J/. ($/M/en (1/M#/en million/C#/en)) (saved/Pr.osx.<pf----/en that/C/en (an/Md/en ((incredibly/M/en frugal/Ma/en) librarian/Cc.s/en)) (while/X/en (working/Pd.xxx.|pg----/en (as/T/en (a/Md/en (+/B.am/. library/Cc.s/en cataloger/Cc.s/en))) (for/Tt/en (50/M#/en years/Cc.p/en)) ((to/Ai/en buy/Pd.o.-i-----/en) (a/Md/en (new/Ma/en (for/Br.ma/en scoreboard/Cc.s/en (its/Mp/en stadium/Cc.s/en)))))))))))))
 An anarchist takes on Big Pharma by teaching patients to make their own meds
 ((on/Ap/en takes/Pd.sox.|f--3s-/en) (an/Md/en anarchist/Cc.s/en) (+/B.am/. big/Cp.s/en pharma/Cp.s/en) (by/T/en (teaching/P.or.|pg----/en patients/Cc.p/en ((to/Ai/en make/P.o.-i-----/en) (their/Mp/en (own/Ma/en meds/Cc.p/en))))))
 That seems both super dangerous, and super awesome.
@@ -25,9 +25,9 @@ I hate everyone in the White House!
 There are a few exceptions, but I hate them!
 (but/J/en ((there/Ae/en are/Pd.c.|f-----/en) (a/Md/en (few/Ma/en exceptions/Cc.p/en))) (hate/Pd.so.|f-----/en i/Ci/en them/Ci/en))
 Tourists taking a picture of the Eiffel Tower get photobombed by a cyclist.
-((get/Av.|f-----/en photobombed/Pd.pa.<pf----/en) (:/B/. tourists/Cc.p/en (taking/P.o.|pg----/en (a/Md/en (of/Br.ma/en picture/Cc.s/en (the/Md/en (+/B.am/. eiffel/Cp.s/en tower/Cp.s/en)))))) (by/X/en (a/Md/en cyclist/Cc.s/en)))
+((get/Av.|f-----/en photobombed/Pd.pa.<pf----/en) (:/J/. tourists/Cc.p/en (taking/P.o.|pg----/en (a/Md/en (of/Br.ma/en picture/Cc.s/en (the/Md/en (+/B.am/. eiffel/Cp.s/en tower/Cp.s/en)))))) (by/X/en (a/Md/en cyclist/Cc.s/en)))
 Americans are willing to pay $177 a year to avoid climate change
-(are/Pd.sc.|f-----/en americans/Cp.p/en (:/B/. willing/Ca/en ((to/Ai/en pay/P.ox.-i-----/en) ($/M/en (a/Bd/en 177/C#/en year/Cc.s/en)) ((to/Ai/en avoid/Pd.o.-i-----/en) (+/B.am/. climate/Cc.s/en change/Cc.s/en)))))
+(are/Pd.sc.|f-----/en americans/Cp.p/en (:/J/. willing/Ca/en ((to/Ai/en pay/P.ox.-i-----/en) ($/M/en (a/Bd/en 177/C#/en year/Cc.s/en)) ((to/Ai/en avoid/Pd.o.-i-----/en) (+/B.am/. climate/Cc.s/en change/Cc.s/en)))))
 This guy should be the new team mascot
 ((should/Am/en be/Pd.sc.-i-----/en) (this/Md/en guy/Cc.s/en) (the/Md/en (new/Ma/en (+/B.am/. team/Cc.s/en mascot/Cc.s/en))))
 Satellites from NASA and other agencies have been tracking sea ice changes since 1979.
@@ -71,11 +71,11 @@ Telmo is going to the gym.
 Due to its location in the European Plain, Berlin is influenced by a temperate seasonal climate.
 ((is/Av.|f--3s-/en influenced/Pd.xpa.<pf----/en) ((to/A/en due/T/en) (its/Mp/en (in/Br.ma/en location/Cc.s/en (the/Md/en (+/B.am/. european/Cp.s/en plain/Cp.s/en))))) berlin/Cp.s/en (by/X/en (a/Md/en (temperate/Ma/en (seasonal/Ma/en climate/Cc.s/en)))))
 Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan.
-(is/Pd.sc.|f--3s-/en (:/B/. (+/B.am/. koikuchi/Ca/en shoyu/Cc.s/en) ((best/As/en known/P.x.<pf----/en) (as/T/en (+/B.am/. soy/Cc.s/en sauce/Cc.s/en)))) (the/Md/en (of/Br.ma/en mother/Cc.s/en (all/Md/en (in/Br.ma/en sauces/Cc.p/en japan/Cp.s/en)))))
+(is/Pd.sc.|f--3s-/en (:/J/. (+/B.am/. koikuchi/Ca/en shoyu/Cc.s/en) ((best/As/en known/P.x.<pf----/en) (as/T/en (+/B.am/. soy/Cc.s/en sauce/Cc.s/en)))) (the/Md/en (of/Br.ma/en mother/Cc.s/en (all/Md/en (in/Br.ma/en sauces/Cc.p/en japan/Cp.s/en)))))
 Carl Gustav Jung was a Swiss psychiatrist and psychoanalyst who founded analytical psychology.
-(was/Pd.sc.<f-----/en (+/B.aam/. carl/Cp.s/en gustav/Cp.s/en jung/Cp.s/en) (:/B/. (and/J/en (a/Md/en (swiss/Ma/en psychiatrist/Cc.s/en)) psychoanalyst/Cc.s/en) (founded/Pr.so.<f-----/en who/Cw/en (analytical/Ma/en psychology/Cc.s/en))))
+(was/Pd.sc.<f-----/en (+/B.aam/. carl/Cp.s/en gustav/Cp.s/en jung/Cp.s/en) (:/J/. (and/J/en (a/Md/en (swiss/Ma/en psychiatrist/Cc.s/en)) psychoanalyst/Cc.s/en) (founded/Pr.so.<f-----/en who/Cw/en (analytical/Ma/en psychology/Cc.s/en))))
 As a notable research scientist based at the famous Burghölzli hospital, under Eugen Bleuler, he came to the attention of the Viennese founder of psychoanalysis, Sigmund Freud.
-(came/Pd.xxsx.<f-----/en (as/T/en (:/B/. (a/Md/en (notable/Ma/en (+/B.am/. research/Cc.s/en scientist/Cc.s/en))) (based/P.x.<pf----/en (at/T/en (the/Md/en (famous/Ma/en (+/B.am/. burghölzli/Cp.s/en hospital/Cc.s/en))))))) (under/T/en (+/B.am/. eugen/Cp.s/en bleuler/Cp.s/en)) he/Ci/en (to/T/en (the/Md/en (of/Br.ma/en attention/Cc.s/en (:/B/. (the/Md/en (viennese/Ma/en (of/Br.ma/en founder/Cc.s/en psychoanalysis/Cc.s/en))) (+/B.am/. sigmund/Cp.s/en freud/Cp.s/en))))))
+(came/Pd.xxsx.<f-----/en (as/T/en (:/J/. (a/Md/en (notable/Ma/en (+/B.am/. research/Cc.s/en scientist/Cc.s/en))) (based/P.x.<pf----/en (at/T/en (the/Md/en (famous/Ma/en (+/B.am/. burghölzli/Cp.s/en hospital/Cc.s/en))))))) (under/T/en (+/B.am/. eugen/Cp.s/en bleuler/Cp.s/en)) he/Ci/en (to/T/en (the/Md/en (of/Br.ma/en attention/Cc.s/en (:/J/. (the/Md/en (viennese/Ma/en (of/Br.ma/en founder/Cc.s/en psychoanalysis/Cc.s/en))) (+/B.am/. sigmund/Cp.s/en freud/Cp.s/en))))))
 Take pictures of your hair after a good haircut.
 (take/P!.ox.-i-----/en (of/Br.ma/en pictures/Cc.p/en (your/Mp/en hair/Cc.s/en)) (after/T/en (a/Md/en (good/Ma/en haircut/Cc.s/en))))
 I think that's supposed to be difficult.
@@ -95,7 +95,7 @@ A new Einstein cross is discovered
 An Elusive Whale Is Found All Around the World
 ((is/Av.|f--3s-/en found/Pd.px.<pf----/en) (an/Md/en (elusive/Ma/en whale/Cc.s/en)) ((all/M/en around/T/en) (the/Md/en world/Cc.s/en)))
 According to people present, she simply ploughed on with her intention to hold a third vote on her deal this week.
-((simply/A/en (on/Ap/en ploughed/Pd.xsx.<f-----/en)) (according/T/en (to/Mr/en (present/Ma/en people/Cc.p/en))) she/Ci/en (with/Tt/en (:/B/. (her/Mp/en intention/Cc.s/en) ((to/Ai/en hold/P.ox.-i-----/en) (a/Md/en (third/Ma/en (on/Br.ma/en vote/Cc.s/en (her/Mp/en deal/Cc.s/en)))) (this/Md/en week/Cc.s/en)))))
+((simply/A/en (on/Ap/en ploughed/Pd.xsx.<f-----/en)) (according/T/en (to/Mr/en (present/Ma/en people/Cc.p/en))) she/Ci/en (with/Tt/en (:/J/. (her/Mp/en intention/Cc.s/en) ((to/Ai/en hold/P.ox.-i-----/en) (a/Md/en (third/Ma/en (on/Br.ma/en vote/Cc.s/en (her/Mp/en deal/Cc.s/en)))) (this/Md/en week/Cc.s/en)))))
 Our brains are always looking for relative rewards.
 ((are/Av.|f-----/en (always/A/en looking/Pd.sx.|pg----/en)) (our/Mp/en brains/Cc.p/en) (for/T/en (relative/Ma/en rewards/Cc.p/en)))
 Scientists rise up against statistical significance
