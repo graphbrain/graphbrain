@@ -51,9 +51,9 @@ def enclose(connector, edge):
 
 # TODO: check this!
 # example:
-# applying (and/B+ bank/Cm (credit/Cn.s card/Cn.s)) to records/Cn.p
+# applying (and/J bank/Cm (credit/Cn.s card/Cn.s)) to records/Cn.p
 # yields:
-# (and/B+
+# (and/J
 #     (+/B.am bank/C records/Cn.p)
 #     (+/B.am (credit/Cn.s card/Cn.s) records/Cn.p))
 def _apply_aux_concept_list_to_concept(con_list, concept):
@@ -170,7 +170,7 @@ class AlphaBeta(Parser):
         text = token.text.lower()
         et = ent_type
 
-        if ent_type[0] == 'P' and ent_type != 'Pm':
+        if ent_type[0] == 'P':
             atom = self._build_atom_predicate(token, ent_type, last_token)
         elif ent_type[0] == 'X':
             atom = self._build_atom_subpredicate(token, ent_type)
@@ -191,7 +191,7 @@ class AlphaBeta(Parser):
 
         # first naive assignment of predicate subtype
         # (can be revised at post-processing stage)
-        if len(ent_type) == 1:
+        if ent_type == 'Pd':
             # interrogative cases
             if (last_token and
                     last_token.tag_ == '.' and
@@ -372,12 +372,11 @@ class AlphaBeta(Parser):
             ct = entity.connector_type()
             if ct[0] == 'P':
                 # Extend predicate atom with argument types
-                if len(ct) < 2 or ct[1] != 'M':
-                    pred = entity.atom_with_type('P')
-                    subparts = pred.parts()[1].split('.')
+                pred = entity.atom_with_type('P')
+                subparts = pred.parts()[1].split('.')
 
-                    if subparts[1] == '':
-                        return True
+                if subparts[1] == '':
+                    return True
 
             return any([self._is_post_parse_token_necessary(subentity)
                         for subentity in entity])
@@ -386,26 +385,24 @@ class AlphaBeta(Parser):
         new_entity = entity
 
         if self._is_post_parse_token_necessary(entity):
-            ct = entity.connector_type()
-            if ct[0] == 'P':
+            if entity.connector_type()[0] == 'P':
                 # Extend predicate atom with argument types
-                if len(ct) < 2 or ct[1] != 'M':
-                    pred = entity.atom_with_type('P')
-                    subparts = pred.parts()[1].split('.')
+                pred = entity.atom_with_type('P')
+                subparts = pred.parts()[1].split('.')
 
-                    if subparts[1] == '':
-                        args = [self._arg_type(token_dict[param])
-                                for param in entity[1:]]
-                        args_string = ''.join(args)
-                        pt = self._predicate_post_type_and_subtype(
-                            entity, subparts, args_string)
-                        new_part = '{}.{}.{}'.format(pt,
-                                                     args_string,
-                                                     subparts[2])
-                        new_pred = pred.replace_atom_part(1, new_part)
-                        self.atom2token[UniqueAtom(new_pred)] =\
-                            self.atom2token[UniqueAtom(pred)]
-                        new_entity = entity.replace_atom(pred, new_pred)
+                if subparts[1] == '':
+                    args = [self._arg_type(token_dict[param])
+                            for param in entity[1:]]
+                    args_string = ''.join(args)
+                    pt = self._predicate_post_type_and_subtype(
+                        entity, subparts, args_string)
+                    new_part = '{}.{}.{}'.format(pt,
+                                                 args_string,
+                                                 subparts[2])
+                    new_pred = pred.replace_atom_part(1, new_part)
+                    self.atom2token[UniqueAtom(new_pred)] =\
+                        self.atom2token[UniqueAtom(pred)]
+                    new_entity = entity.replace_atom(pred, new_pred)
 
             new_args = [self._post_parse_token(subentity, token_dict)
                         for subentity in new_entity[1:]]
@@ -454,7 +451,7 @@ class AlphaBeta(Parser):
 
             if child_type[0] in {'C', 'R', 'D', 'S'}:
                 if ent_type[0] == 'C':
-                    if (child.connector_type() in {'Pc', 'Pr'} or
+                    if (child.connector_type() in {'P', 'Pr'} or
                             self._is_relative_concept(child_token)):
                         logging.debug('choice: 1a')
                         # RELATIVE TO CONCEPT

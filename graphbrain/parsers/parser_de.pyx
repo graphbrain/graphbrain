@@ -46,7 +46,7 @@ class ParserDE(AlphaBeta):
             return self._concept_type_and_subtype(token)
         elif dep == 'ROOT':
             if self._is_verb(token):
-                return 'P'
+                return 'Pd'
             else:
                 return self._concept_type_and_subtype(token)
         elif dep in {'sb', 'pd', 'ag'}:

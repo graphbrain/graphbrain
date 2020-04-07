@@ -141,14 +141,14 @@ class ParserEN(AlphaBeta):
 
         if dep == 'ROOT':
             if self._is_verb(token):
-                return 'P'
+                return 'Pd'
             else:
                 return self._concept_type_and_subtype(token)
         elif dep in {'appos', 'attr', 'dative', 'dep', 'dobj', 'nsubj',
                      'nsubjpass', 'oprd', 'pobj', 'meta'}:
             return self._concept_type_and_subtype(token)
         elif dep in {'advcl', 'csubj', 'csubjpass', 'parataxis'}:
-            return 'P'
+            return 'Pd'
         elif dep in {'relcl', 'ccomp'}:
             if self._is_verb(token):
                 return 'Pr'
@@ -158,7 +158,7 @@ class ParserEN(AlphaBeta):
             if token.tag_ == 'IN':
                 return 'A'
             else:
-                return 'Pc'
+                return 'P'
         elif dep in {'amod', 'nummod', 'preconj'}:  # , 'predet'}:
             return self._modifier_type_and_subtype(token)
         elif dep == 'det':
@@ -225,11 +225,11 @@ class ParserEN(AlphaBeta):
                 return self._builder_type_and_subtype(token)
         elif dep == 'conj':
             if head_type == 'P' and self._is_verb(token):
-                return 'P'
+                return 'Pd'
             else:
                 return self._concept_type_and_subtype(token)
         elif dep == 'mark':
-            if head_type == 'P' and head_subtype != 'c':
+            if head_type == 'P' and head_subtype != '':
                 return 'X'
             else:
                 return self._builder_type_and_subtype(token)
