@@ -637,7 +637,6 @@ class AlphaBeta(Parser):
             logging.error('Caught exception: {} while parsing: "{}"'.format(
                 msg, str(sent)))
             traceback.print_exc()
-            print(self.atom2token)
             return {'main_edge': None,
                     'extra_edges': [],
                     'text': str(sent).strip(),
