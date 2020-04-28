@@ -1,3 +1,5 @@
+import itertools
+from collections import Counter
 import graphbrain.constants as const
 
 
@@ -92,6 +94,143 @@ def edges2str(edges, roots_only=False):
     return ' '.join(edges_strings)
 
 
+def _matches_wildcard(edge, wildcard):
+    wparts = wildcard.parts()
+
+    # structural match
+    struct_code = wparts[0][0]
+    if struct_code == '@':
+        if not edge.is_atom():
+            return False
+    elif struct_code == '&':
+        if edge.is_atom():
+            return False
+
+    # role match
+    if len(wparts) > 1:
+        # type match
+        wrole = wildcard.role()
+        wtype = wrole[0]
+        etype = edge.type()
+        n = len(wtype)
+        if len(etype) < n or etype[:n] != wtype:
+            return False
+
+        if len(wrole) > 1:
+            # only atoms can have roles with more than one part
+            if not edge.is_atom():
+                return False
+
+            erole = edge.role()
+            # check if edge role has enough parts to satisfy the wildcard
+            # specification
+            if len(erole) < len(wrole):
+                return False
+
+            pos = 1
+
+            # argroles match
+            if wtype[0] in {'B', 'P'}:
+                wargroles = wrole[1]
+                eargroles = erole[1]
+                for argrole in wargroles:
+                    if argrole not in eargroles:
+                        return False
+                pos = 2
+
+            # match rest of role
+            while pos < len(wrole):
+                if erole[pos] != wrole[pos]:
+                    return False
+
+    # match rest of atom
+    if len(wparts) > 2:
+        # only atoms have parts (beyond implicit types, thus the '> 2' above)
+        if not edge.is_atom():
+            return False
+        eparts = edge.parts()
+        # check if edge role has enough parts to satisfy the wildcard
+        # specification
+        if len(eparts) < len(wparts):
+            return False
+
+        while pos < len(wparts):
+            if eparts[pos] != wparts[pos]:
+                return False
+            pos += 1
+
+    return True
+
+
+def _var_name(atom):
+    label = atom.parts()[0]
+    if label[0] in {'*', '@', '&'}:
+        return label[1:]
+    elif label[:3] == '...':
+        return label[3:]
+    else:
+        return label
+
+
+def _match_by_argroles(edge, pattern, role_counts, matched=()):
+    if len(role_counts) == 0:
+        return {}
+
+    argrole, n = role_counts[0]
+
+    # match connector
+    if argrole == 'X':
+        eitems = [edge[0]]
+        pitems = [pattern[0]]
+    # match any argrole
+    elif argrole == '*':
+        eitems = [e for e in edge if e not in matched]
+        pitems = pattern[-n:]
+    # match specific argrole
+    else:
+        eitems = edge.edges_with_argrole(argrole)
+        pitems = pattern.edges_with_argrole(argrole)
+
+    if len(eitems) < n:
+        return None
+
+    perms = tuple(itertools.permutations(eitems, r=n))
+    success = False
+    for perm in perms:
+        vars = {}
+        success = False
+        for i, eitem in enumerate(perm):
+            pitem = pitems[i]
+            if pitem.is_atom():
+                if pitem.is_pattern():
+                    if _matches_wildcard(eitem, pitem):
+                        var_name = _var_name(pitem)
+                        if len(var_name) > 0:
+                            vars[var_name] = eitem
+                    else:
+                        break
+                elif eitem != pitem and argrole != 'X':
+                    break
+            else:
+                if eitem.is_atom():
+                    break
+                else:
+                    sub_vars = match_pattern(eitem, pitem)
+                    if sub_vars:
+                        vars = {**vars, **sub_vars}
+                    elif type(sub_vars) != dict:
+                        break
+            success = True
+        if success:
+            remaining_vars = _match_by_argroles(
+                edge, pattern, role_counts[1:], matched + perm)
+            if remaining_vars is not None:
+                vars = {**vars, **remaining_vars}
+                return vars
+
+    return None
+
+
 def match_pattern(edge, pattern):
     """Matches an edge to a pattern. This means that, if the edge fits the
     pattern, then a dictionary will be returned with the values for each
@@ -115,15 +254,15 @@ def match_pattern(edge, pattern):
     variables are assigned the hyperedge they correspond to. For example,
 
     (1) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
-    applied to the pattern: (is/Pd (my/Mp name/Cn) \*name)
-    produces the result: {'name', mary/Cp}
+    applied to the pattern: (is/Pd (my/Mp name/Cn) \*NAME)
+    produces the result: {'NAME', mary/Cp}
 
     (2) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
-    applied to the pattern: (is/Pd (my/Mp name/Cn) &name)
+    applied to the pattern: (is/Pd (my/Mp name/Cn) &NAME)
     produces the result: {}
 
     (3) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
-    applied to the pattern: (is/Pd @ \*name)
+    applied to the pattern: (is/Pd @ \*NAME)
     produces the result: None
     """
 
@@ -132,7 +271,7 @@ def match_pattern(edge, pattern):
 
     # open ended?
     if not pattern.is_atom() and pattern[-1].to_str() == '...':
-        pattern = pattern[:-1]
+        pattern = hedge(pattern[:-1])
         if len(edge) < len(pattern):
             return None
     else:
@@ -140,40 +279,40 @@ def match_pattern(edge, pattern):
             return None
 
     vars = {}
-    for i, pitem in enumerate(pattern):
-        eitem = edge[i]
-        if pitem.is_atom():
-            if len(pitem.parts()) == 1:
-                pitem_str = pitem.to_str()
-                if pitem_str[0] == '@':
-                    if eitem.is_atom():
-                        if len(pitem_str) > 1:
-                            vars[pitem_str[1:]] = eitem
+    argroles = pattern[0].argroles()
+    if len(argroles) == 0:
+        # match by order
+        for i, pitem in enumerate(pattern):
+            eitem = edge[i]
+            if pitem.is_atom():
+                if pitem.is_pattern():
+                    if _matches_wildcard(eitem, pitem):
+                        var_name = _var_name(pitem)
+                        if len(var_name) > 0:
+                            vars[var_name] = eitem
                     else:
                         return None
-                elif pitem_str[0] == '&':
-                    if eitem.is_atom():
-                        return None
-                    else:
-                        if len(pitem_str) > 1:
-                            vars[pitem_str[1:]] = eitem
-                elif pitem_str[0] == '*':
-                    if len(pitem_str) > 1:
-                        vars[pitem_str[1:]] = eitem
-                else:
-                    if eitem != pitem:
-                        return None
-            elif eitem != pitem:
-                return None
-        else:
-            if eitem.is_atom():
-                return None
-            else:
-                sub_vars = match_pattern(eitem, pitem)
-                if sub_vars:
-                    vars = {**vars, **sub_vars}
-                elif type(sub_vars) != dict:
+                elif eitem != pitem:
                     return None
+            else:
+                if eitem.is_atom():
+                    return None
+                else:
+                    sub_vars = match_pattern(eitem, pitem)
+                    if sub_vars:
+                        vars = {**vars, **sub_vars}
+                    elif type(sub_vars) != dict:
+                        return None
+    else:
+        # match by argroles
+        role_counts = Counter(argroles).most_common()
+        unknown_roles = (len(pattern) - 1) - len(argroles)
+        if unknown_roles > 0:
+            role_counts.append(('*', unknown_roles))
+        # add connector pseudo-argrole
+        role_counts = [('X', 1)] + role_counts
+        return _match_by_argroles(edge, pattern, role_counts)
+
     return vars
 
 
@@ -541,7 +680,8 @@ class Hyperedge(tuple):
         one pattern matcher.
 
         Pattern matchers are:
-        '*', '@', '&'' and '...'
+        '*', '@', '&', '...' and variables (atom label starting with an
+        uppercase letter)
         """
         return any(item.is_pattern() for item in self)
 
@@ -549,7 +689,8 @@ class Hyperedge(tuple):
         """Check if every atom is a pattern matcher.
 
         Pattern matchers are:
-        '*', '@', '&'' and '...'
+        '*', '@', '&', '...' and variables (atom label starting with an
+        uppercase letter)
         """
         return all(item.is_full_pattern() for item in self)
 
@@ -837,16 +978,19 @@ class Atom(Hyperedge):
         one pattern matcher.
 
         Pattern matchers are:
-        '*', '@', '&'' and '...'
+        '*', '@', '&', '...' and variables (atom label starting with an
+        uppercase letter)
         """
-        return (len(self.parts()) == 1 and
-                (self[0][0] in {'*', '@', '&'} or self[0] == '...'))
+        return (self[0][0] in {'*', '@', '&'} or
+                self[0][:3] == '...' or
+                self[0][0].isupper())
 
     def is_full_pattern(self):
         """Check if every atom is a pattern matcher.
 
         Pattern matchers are:
-        '*', '@', '&'' and '...'
+        '*', '@', '&', '...' and variables (atom label starting with an
+        uppercase letter)
         """
         return self.is_pattern()
 

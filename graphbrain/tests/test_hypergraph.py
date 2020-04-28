@@ -236,18 +236,18 @@ class TestHypergraph(unittest.TestCase):
 
     def test_search_non_atomic_pred(self):
         self.hg.destroy()
-        edge = hedge('((is/A playing/Pd.so ) mary/Cp.s '
+        edge = hedge('((is/A playing/Pd ) mary/Cp.s '
                      '(a/Md ((very/M old/Ma) violin/Cn.s)))')
         self.hg.add(edge)
-        self.assertEqual(list(self.hg.search('((is/A playing/Pd.so) ...)')),
+        self.assertEqual(list(self.hg.search('((is/A playing/Pd) ...)')),
                          [edge])
-        self.assertEqual(list(self.hg.search('((is/A playing/Pd.so) * *)')),
+        self.assertEqual(list(self.hg.search('((is/A playing/Pd) * *)')),
                          [edge])
-        self.assertEqual(list(self.hg.search('((is/A playing/Pd.so) @ &)')),
+        self.assertEqual(list(self.hg.search('((is/A playing/Pd) @ &)')),
                          [edge])
-        self.assertEqual(list(self.hg.search('((is/A playing/Pd.so) @ @)')),
+        self.assertEqual(list(self.hg.search('((is/A playing/Pd) @ @)')),
                          [])
-        self.assertEqual(list(self.hg.search('((is/A playing/Pd.so) & &)')),
+        self.assertEqual(list(self.hg.search('((is/A playing/Pd) & &)')),
                          [])
         self.assertEqual(list(self.hg.search('(* mary/Cp.s *)')),
                          [edge])

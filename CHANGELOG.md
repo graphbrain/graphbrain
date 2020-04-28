@@ -12,6 +12,7 @@
 - Function Hyperedge.insert_argrole().
 - Function Hyperedge.insert_edge_with_argrole().
 - Function Hyperedge.all_atoms().
+- Argument role pattern matching.
 
 ### Changed
 - parse() now returns a dictionary that includes inferred edges.
@@ -19,6 +20,7 @@
 - English parser improved.
 - Hyperedge main type character codes become upercase (apple/C instead of apple/c).
 - Conjunction hyperedge type, character code: "J" (e.g.: and/J).
+- Searching patterns can now include types, argument roles and other atom parts.
 
 ### Removed
 - Meta-modifier hyperedge type.
