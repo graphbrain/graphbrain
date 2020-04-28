@@ -223,7 +223,7 @@ def _match_by_argroles(edge, pattern, role_counts, matched=(), curvars={}):
                 if eitem.is_atom():
                     break
                 else:
-                    sub_vars = match_pattern(eitem, pitem, curvars)
+                    sub_vars = match_pattern(eitem, pitem, {**curvars, **vars})
                     if sub_vars:
                         vars = {**vars, **sub_vars}
                     elif type(sub_vars) != dict:
@@ -315,7 +315,7 @@ def match_pattern(edge, pattern, curvars={}):
                 if eitem.is_atom():
                     return None
                 else:
-                    sub_vars = match_pattern(eitem, pitem, curvars)
+                    sub_vars = match_pattern(eitem, pitem, {**curvars, **vars})
                     if sub_vars:
                         vars = {**vars, **sub_vars}
                     elif type(sub_vars) != dict:

@@ -373,6 +373,82 @@ class TestHyperedge(unittest.TestCase):
                 curvars={'PROP': hedge('error/C')}),
             None)
 
+    def test_match_pattern_deep(self):
+        self.assertEqual(
+            match_pattern(
+                '(is/P graphbrain/Cp.s great/C today/C (after/J x/C))',
+                '(is/P graphbrain/Cp.s PROP EXTRA (after/J X))'),
+            {'PROP': hedge('great/C'),
+             'EXTRA': hedge('today/C'),
+             'X': hedge('x/C')})
+        self.assertEqual(
+            match_pattern(
+                '(is/P graphbrain/Cp.s great/C today/C (after/J x/C))',
+                '(is/P graphbrain/Cp.s PROP EXTRA (before/J X))'),
+            None)
+        self.assertEqual(
+            match_pattern(
+                '(is/P graphbrain/Cp.s great/C today/C (after/J x/C))',
+                '(is/P graphbrain/Cp.s PROP EXTRA (after/J EXTRA))'),
+            None)
+        self.assertEqual(
+            match_pattern(
+                '(is/P graphbrain/Cp.s great/C x/C (after/J x/C))',
+                '(is/P graphbrain/Cp.s PROP X (after/J X))'),
+            {'PROP': hedge('great/C'),
+             'X': hedge('x/C')})
+        self.assertEqual(
+            match_pattern(
+                '(is/P graphbrain/Cp.s great/C x/C (after/J x/C))',
+                '(is/P graphbrain/Cp.s PROP X (after/J X))',
+                curvars={'X': hedge('x/C')}),
+            {'PROP': hedge('great/C'),
+             'X': hedge('x/C')})
+        self.assertEqual(
+            match_pattern(
+                '(is/P graphbrain/Cp.s great/C x/C (after/J x/C))',
+                '(is/P graphbrain/Cp.s PROP X (after/J X))',
+                curvars={'X': hedge('y/C')}),
+            None)
+
+    def test_match_pattern_argroles_deep(self):
+        self.assertEqual(
+            match_pattern(
+                '(is/Pd.scx graphbrain/Cp.s great/C today/C (after/J x/C))',
+                '(is/Pd.sc graphbrain/Cp.s PROP EXTRA (after/J X))'),
+            {'PROP': hedge('great/C'),
+             'EXTRA': hedge('today/C'),
+             'X': hedge('x/C')})
+        self.assertEqual(
+            match_pattern(
+                '(is/Pd.scx graphbrain/Cp.s great/C today/C (after/J x/C))',
+                '(is/Pd.sc graphbrain/Cp.s PROP EXTRA (before/J X))'),
+            None)
+        self.assertEqual(
+            match_pattern(
+                '(is/Pd.scx graphbrain/Cp.s great/C today/C (after/J x/C))',
+                '(is/Pd.sc graphbrain/Cp.s PROP EXTRA (after/J EXTRA))'),
+            None)
+        self.assertEqual(
+            match_pattern(
+                '(is/Pd.scx graphbrain/Cp.s great/C x/C (after/J x/C))',
+                '(is/Pd.sc graphbrain/Cp.s PROP X (after/J X))'),
+            {'PROP': hedge('great/C'),
+             'X': hedge('x/C')})
+        self.assertEqual(
+            match_pattern(
+                '(is/Pd.scx graphbrain/Cp.s great/C x/C (after/J x/C))',
+                '(is/Pd.sc graphbrain/Cp.s PROP X (after/J X))',
+                curvars={'X': hedge('x/C')}),
+            {'PROP': hedge('great/C'),
+             'X': hedge('x/C')})
+        self.assertEqual(
+            match_pattern(
+                '(is/Pd.scx graphbrain/Cp.s great/C x/C (after/J x/C))',
+                '(is/Pd.sc graphbrain/Cp.s PROP X (after/J X))',
+                curvars={'X': hedge('y/C')}),
+            None)
+
     def test_edge_matches_pattern_simple(self):
         self.assertTrue(edge_matches_pattern(hedge('(a b)'), '(a b)'))
         self.assertFalse(edge_matches_pattern(hedge('(a b)'), '(a a)'))
