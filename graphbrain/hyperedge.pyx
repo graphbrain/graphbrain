@@ -174,7 +174,7 @@ def _varname(atom):
 
 def _match_by_argroles(edge, pattern, role_counts, matched=(), curvars={}):
     if len(role_counts) == 0:
-        return {}
+        return [{}]
 
     argrole, n = role_counts[0]
 
@@ -192,7 +192,9 @@ def _match_by_argroles(edge, pattern, role_counts, matched=(), curvars={}):
         pitems = pattern.edges_with_argrole(argrole)
 
     if len(eitems) < n:
-        return None
+        return []
+
+    result = []
 
     perms = tuple(itertools.permutations(eitems, r=n))
     for perm in perms:
@@ -219,27 +221,27 @@ def _match_by_argroles(edge, pattern, role_counts, matched=(), curvars={}):
                         break
                 elif eitem != pitem and argrole != 'X':
                     break
+                perm_result = [vars]
             else:
                 if eitem.is_atom():
                     break
                 else:
-                    sub_vars = match_pattern(eitem, pitem, {**curvars, **vars})
-                    if sub_vars:
-                        vars = {**vars, **sub_vars}
-                    elif type(sub_vars) != dict:
-                        break
+                    sresult = match_pattern(eitem, pitem, {**curvars, **vars})
+                    perm_result = [{**vars, **subvars} for subvars in sresult]
             success = True
         if success:
-            remaining_vars = _match_by_argroles(edge,
-                                                pattern,
-                                                role_counts[1:],
-                                                matched + perm,
-                                                {**curvars, **vars})
-            if remaining_vars is not None:
-                vars = {**vars, **remaining_vars}
-                return vars
+            remaining_result = _match_by_argroles(edge,
+                                                  pattern,
+                                                  role_counts[1:],
+                                                  matched + perm,
+                                                  {**curvars, **vars})
+            for vars in perm_result:
+                for remaining_vars in remaining_result:
+                    all_vars = {**vars, **remaining_vars}
+                    if all_vars not in result:
+                        result.append(all_vars)
 
-    return None
+    return result
 
 
 def match_pattern(edge, pattern, curvars={}):
@@ -284,42 +286,43 @@ def match_pattern(edge, pattern, curvars={}):
     if not pattern.is_atom() and pattern[-1].to_str() == '...':
         pattern = hedge(pattern[:-1])
         if len(edge) < len(pattern):
-            return None
+            return []
     else:
         if len(edge) != len(pattern):
-            return None
+            return []
 
-    vars = {}
+    result = [{}]
     argroles = pattern[0].argroles()
     if len(argroles) == 0:
         # match by order
         for i, pitem in enumerate(pattern):
             eitem = edge[i]
-            if pitem.is_atom():
-                if pitem.is_pattern():
-                    varname = _varname(pitem)
-                    if varname in curvars:
-                        if curvars[varname] != eitem:
-                            return None
-                    elif varname in vars:
-                        if vars[varname] != eitem:
-                            return None
-                    elif _matches_wildcard(eitem, pitem):
-                        if len(varname) > 0:
-                            vars[varname] = eitem
-                    else:
-                        return None
-                elif eitem != pitem:
-                    return None
-            else:
-                if eitem.is_atom():
-                    return None
+            _result = []
+            for vars in result:
+                if pitem.is_atom():
+                    if pitem.is_pattern():
+                        varname = _varname(pitem)
+                        if varname in curvars:
+                            if curvars[varname] != eitem:
+                                continue
+                        elif varname in vars:
+                            if vars[varname] != eitem:
+                                continue
+                        elif _matches_wildcard(eitem, pitem):
+                            if len(varname) > 0:
+                                vars[varname] = eitem
+                        else:
+                            continue
+                    elif eitem != pitem:
+                        continue
+                    _result.append(vars)
                 else:
-                    sub_vars = match_pattern(eitem, pitem, {**curvars, **vars})
-                    if sub_vars:
-                        vars = {**vars, **sub_vars}
-                    elif type(sub_vars) != dict:
-                        return None
+                    if not eitem.is_atom():
+                        sresult = match_pattern(
+                            eitem, pitem, {**curvars, **vars})
+                        for subvars in sresult:
+                            _result.append({**vars, **subvars})
+            result = _result
     else:
         # match by argroles
         role_counts = Counter(argroles).most_common()
@@ -328,12 +331,10 @@ def match_pattern(edge, pattern, curvars={}):
             role_counts.append(('*', unknown_roles))
         # add connector pseudo-argrole
         role_counts = [('X', 1)] + role_counts
-        vars = _match_by_argroles(edge, pattern, role_counts, curvars=curvars)
+        result = _match_by_argroles(
+            edge, pattern, role_counts, curvars=curvars)
 
-    if vars is None:
-        return None
-    else:
-        return {**curvars, **vars}
+    return list({**curvars, **vars} for vars in result)
 
 
 def edge_matches_pattern(edge, pattern):
@@ -354,7 +355,8 @@ def edge_matches_pattern(edge, pattern):
     Examples: (is/Pd graphbrain/C @)
     (says/Pd * ...)
     """
-    return match_pattern(edge, pattern) is not None
+    result = match_pattern(edge, pattern)
+    return len(result) > 0
 
 
 def rel_arg_role(relation, position):
