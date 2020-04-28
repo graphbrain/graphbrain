@@ -162,7 +162,7 @@ def _matches_wildcard(edge, wildcard):
     return True
 
 
-def _var_name(atom):
+def _varname(atom):
     label = atom.parts()[0]
     if label[0] in {'*', '@', '&'}:
         return label[1:]
@@ -172,7 +172,7 @@ def _var_name(atom):
         return label
 
 
-def _match_by_argroles(edge, pattern, role_counts, matched=()):
+def _match_by_argroles(edge, pattern, role_counts, matched=(), curvars={}):
     if len(role_counts) == 0:
         return {}
 
@@ -195,18 +195,26 @@ def _match_by_argroles(edge, pattern, role_counts, matched=()):
         return None
 
     perms = tuple(itertools.permutations(eitems, r=n))
-    success = False
     for perm in perms:
-        vars = {}
         success = False
+        vars = {}
         for i, eitem in enumerate(perm):
+            success = False
             pitem = pitems[i]
             if pitem.is_atom():
                 if pitem.is_pattern():
-                    if _matches_wildcard(eitem, pitem):
-                        var_name = _var_name(pitem)
-                        if len(var_name) > 0:
-                            vars[var_name] = eitem
+                    varname = _varname(pitem)
+                    # check if variable is already assigned
+                    if varname in curvars:
+                        if curvars[varname] != eitem:
+                            break
+                    elif varname in vars:
+                        if vars[varname] != eitem:
+                            break
+                    # if not, try to match
+                    elif _matches_wildcard(eitem, pitem):
+                        if len(varname) > 0:
+                            vars[varname] = eitem
                     else:
                         break
                 elif eitem != pitem and argrole != 'X':
@@ -215,15 +223,18 @@ def _match_by_argroles(edge, pattern, role_counts, matched=()):
                 if eitem.is_atom():
                     break
                 else:
-                    sub_vars = match_pattern(eitem, pitem)
+                    sub_vars = match_pattern(eitem, pitem, curvars)
                     if sub_vars:
                         vars = {**vars, **sub_vars}
                     elif type(sub_vars) != dict:
                         break
             success = True
         if success:
-            remaining_vars = _match_by_argroles(
-                edge, pattern, role_counts[1:], matched + perm)
+            remaining_vars = _match_by_argroles(edge,
+                                                pattern,
+                                                role_counts[1:],
+                                                matched + perm,
+                                                {**curvars, **vars})
             if remaining_vars is not None:
                 vars = {**vars, **remaining_vars}
                 return vars
@@ -231,7 +242,7 @@ def _match_by_argroles(edge, pattern, role_counts, matched=()):
     return None
 
 
-def match_pattern(edge, pattern):
+def match_pattern(edge, pattern, curvars={}):
     """Matches an edge to a pattern. This means that, if the edge fits the
     pattern, then a dictionary will be returned with the values for each
     pattern variable. If the pattern specifies no variables but the edge
@@ -286,10 +297,16 @@ def match_pattern(edge, pattern):
             eitem = edge[i]
             if pitem.is_atom():
                 if pitem.is_pattern():
-                    if _matches_wildcard(eitem, pitem):
-                        var_name = _var_name(pitem)
-                        if len(var_name) > 0:
-                            vars[var_name] = eitem
+                    varname = _varname(pitem)
+                    if varname in curvars:
+                        if curvars[varname] != eitem:
+                            return None
+                    elif varname in vars:
+                        if vars[varname] != eitem:
+                            return None
+                    elif _matches_wildcard(eitem, pitem):
+                        if len(varname) > 0:
+                            vars[varname] = eitem
                     else:
                         return None
                 elif eitem != pitem:
@@ -298,7 +315,7 @@ def match_pattern(edge, pattern):
                 if eitem.is_atom():
                     return None
                 else:
-                    sub_vars = match_pattern(eitem, pitem)
+                    sub_vars = match_pattern(eitem, pitem, curvars)
                     if sub_vars:
                         vars = {**vars, **sub_vars}
                     elif type(sub_vars) != dict:
@@ -311,9 +328,12 @@ def match_pattern(edge, pattern):
             role_counts.append(('*', unknown_roles))
         # add connector pseudo-argrole
         role_counts = [('X', 1)] + role_counts
-        return _match_by_argroles(edge, pattern, role_counts)
+        vars = _match_by_argroles(edge, pattern, role_counts, curvars=curvars)
 
-    return vars
+    if vars is None:
+        return None
+    else:
+        return {**curvars, **vars}
 
 
 def edge_matches_pattern(edge, pattern):
