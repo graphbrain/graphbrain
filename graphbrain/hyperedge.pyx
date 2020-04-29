@@ -139,13 +139,13 @@ def _matches_wildcard(edge, wildcard):
                 eargroles = erole[1]
                 for argrole in wargroles:
                     min_count = wposroles.count(argrole)
-                    # if there is a negative case
+                    # if there are argrole exclusions
                     fixed = wnegroles.count(argrole) > 0
 
                     count = eargroles.count(argrole)
                     if count < min_count:
                         return False
-                    # deal with negative case
+                    # deal with exclusions
                     if fixed and count > min_count:
                         return False
                 pos = 2

@@ -464,7 +464,7 @@ class TestHyperedge(unittest.TestCase):
              {'PROP': hedge('great/C'), 'EXTRA': hedge('today/C')},
              {'PROP': hedge('great/C'), 'EXTRA': hedge('x/C')}])
 
-    def test_match_pattern_argroles_negation(self):
+    def test_match_pattern_argroles_exclusions(self):
         self.assertEqual(
             match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
                           '(is/Pd.sc~x graphbrain/Cp.s X ...)'),
