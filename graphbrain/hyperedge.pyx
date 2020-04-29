@@ -141,7 +141,6 @@ def _matches_wildcard(edge, wildcard):
                     min_count = wposroles.count(argrole)
                     # if there are argrole exclusions
                     fixed = wnegroles.count(argrole) > 0
-
                     count = eargroles.count(argrole)
                     if count < min_count:
                         return False
@@ -238,8 +237,10 @@ def _match_by_argroles(edge, pattern, role_counts, matched=(), curvars={}):
                 if eitem.is_atom():
                     break
                 else:
-                    sresult = match_pattern(eitem, pitem, {**curvars, **vars})
-                    perm_result = [{**vars, **subvars} for subvars in sresult]
+                    all_vars = {**curvars, **vars}
+                    sresult = match_pattern(eitem, pitem, all_vars)
+                    perm_result = [{**all_vars, **subvars}
+                                   for subvars in sresult]
             success = True
         if success:
             remaining_result = _match_by_argroles(edge,
@@ -249,7 +250,7 @@ def _match_by_argroles(edge, pattern, role_counts, matched=(), curvars={}):
                                                   {**curvars, **vars})
             for vars in perm_result:
                 for remaining_vars in remaining_result:
-                    all_vars = {**vars, **remaining_vars}
+                    all_vars = {**curvars, **vars, **remaining_vars}
                     if all_vars not in result:
                         result.append(all_vars)
 
