@@ -131,10 +131,22 @@ def _matches_wildcard(edge, wildcard):
 
             # argroles match
             if wtype[0] in {'B', 'P'}:
-                wargroles = wrole[1]
+                wargroles_parts = wrole[1].split('~')
+                if len(wargroles_parts) == 1:
+                    wargroles_parts.append('')
+                wposroles, wnegroles = wargroles_parts
+                wargroles = set(wposroles) | set(wnegroles)
                 eargroles = erole[1]
                 for argrole in wargroles:
-                    if argrole not in eargroles:
+                    min_count = wposroles.count(argrole)
+                    # if there is a negative case
+                    fixed = wnegroles.count(argrole) > 0
+
+                    count = eargroles.count(argrole)
+                    if count < min_count:
+                        return False
+                    # deal with negative case
+                    if fixed and count > min_count:
                         return False
                 pos = 2
 
@@ -292,9 +304,9 @@ def match_pattern(edge, pattern, curvars={}):
             return []
 
     result = [{}]
-    argroles = pattern[0].argroles()
+    argroles = pattern[0].argroles().split('~')[0]
+    # match by order
     if len(argroles) == 0:
-        # match by order
         for i, pitem in enumerate(pattern):
             eitem = edge[i]
             _result = []
@@ -323,16 +335,29 @@ def match_pattern(edge, pattern, curvars={}):
                         for subvars in sresult:
                             _result.append({**vars, **subvars})
             result = _result
+    # match by argroles
     else:
-        # match by argroles
-        role_counts = Counter(argroles).most_common()
-        unknown_roles = (len(pattern) - 1) - len(argroles)
-        if unknown_roles > 0:
-            role_counts.append(('*', unknown_roles))
-        # add connector pseudo-argrole
-        role_counts = [('X', 1)] + role_counts
-        result = _match_by_argroles(
-            edge, pattern, role_counts, curvars=curvars)
+        # match connectors first
+        econn = edge[0]
+        pconn = pattern[0]
+        if _matches_wildcard(econn, pconn):
+            vars = {}
+            if pconn.is_pattern():
+                varname = _varname(pconn)
+                if len(varname) > 0:
+                    vars[varname] = econn
+            role_counts = Counter(argroles).most_common()
+            unknown_roles = (len(pattern) - 1) - len(argroles)
+            if unknown_roles > 0:
+                role_counts.append(('*', unknown_roles))
+            # add connector pseudo-argrole
+            role_counts = [('X', 1)] + role_counts
+            result = _match_by_argroles(edge,
+                                        pattern,
+                                        role_counts,
+                                        curvars={**curvars, **vars})
+        else:
+            result = []
 
     return list({**curvars, **vars} for vars in result)
 
