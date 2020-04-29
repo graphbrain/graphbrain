@@ -260,6 +260,30 @@ class TestHypergraph(unittest.TestCase):
                                              'violin/Cn.s)) * *)')),
                          [])
 
+    def test_search_non_atomic_pred_vars(self):
+        self.hg.destroy()
+        edge = hedge('((is/A playing/Pd ) mary/Cp.s '
+                     '(a/Md ((very/M old/Ma) violin/Cn.s)))')
+        self.hg.add(edge)
+        self.assertEqual(list(self.hg.search('((is/A playing/Pd) *X *Y)')),
+                         [edge])
+        self.assertEqual(list(self.hg.search('((is/A playing/Pd) @X &Y)')),
+                         [edge])
+        self.assertEqual(list(self.hg.search('((is/A playing/Pd) @X @Y)')),
+                         [])
+        self.assertEqual(list(self.hg.search('((is/A playing/Pd) &X &Y)')),
+                         [])
+        self.assertEqual(list(self.hg.search('(* mary/Cp.s X)')),
+                         [edge])
+        self.assertEqual(list(self.hg.search('(mary/Cp.s X Y)')),
+                         [])
+        self.assertEqual(list(self.hg.search('(X Y (a/Md ((very/M old/Ma) '
+                                             'violin/Cn.s)))')),
+                         [edge])
+        self.assertEqual(list(self.hg.search('((a/Md ((very/M old/Ma) '
+                                             'violin/Cn.s)) X Y)')),
+                         [])
+
     def test_star(self):
         self.hg.destroy()
         edge1 = hedge('(is graphbrain/1 great/1)')
