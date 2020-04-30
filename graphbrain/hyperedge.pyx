@@ -111,17 +111,14 @@ def _matches_wildcard(edge, wildcard):
         # type match
         wrole = wildcard.role()
         wtype = wrole[0]
-        etype = edge.type()
+        eatom = edge.atom()
+        etype = eatom.type()
         n = len(wtype)
         if len(etype) < n or etype[:n] != wtype:
             return False
 
         if len(wrole) > 1:
-            # only atoms can have roles with more than one part
-            if not edge.is_atom():
-                return False
-
-            erole = edge.role()
+            erole = eatom.role()
             # check if edge role has enough parts to satisfy the wildcard
             # specification
             if len(erole) < len(wrole):
@@ -156,10 +153,7 @@ def _matches_wildcard(edge, wildcard):
 
     # match rest of atom
     if len(wparts) > 2:
-        # only atoms have parts (beyond implicit types, thus the '> 2' above)
-        if not edge.is_atom():
-            return False
-        eparts = edge.parts()
+        eparts = eatom.parts()
         # check if edge role has enough parts to satisfy the wildcard
         # specification
         if len(eparts) < len(wparts):
@@ -295,8 +289,20 @@ def match_pattern(edge, pattern, curvars={}):
     edge = hedge(edge)
     pattern = hedge(pattern)
 
+    # atomic patterns
+    if pattern.is_atom():
+        if _matches_wildcard(edge, pattern):
+            vars = {}
+            if pattern.is_pattern():
+                varname = _varname(pattern)
+                if len(varname) > 0:
+                    vars[varname] = edge
+            return [{**curvars, **vars}]
+        else:
+            return []
+
     # open ended?
-    if not pattern.is_atom() and pattern[-1].to_str() == '...':
+    if pattern[-1].to_str() == '...':
         pattern = hedge(pattern[:-1])
         if len(edge) < len(pattern):
             return []
@@ -338,27 +344,23 @@ def match_pattern(edge, pattern, curvars={}):
             result = _result
     # match by argroles
     else:
+        result = []
         # match connectors first
         econn = edge[0]
         pconn = pattern[0]
-        if _matches_wildcard(econn, pconn):
-            vars = {}
-            if pconn.is_pattern():
-                varname = _varname(pconn)
-                if len(varname) > 0:
-                    vars[varname] = econn
+        for vars in match_pattern(econn, pconn, curvars):
             role_counts = Counter(argroles).most_common()
             unknown_roles = (len(pattern) - 1) - len(argroles)
             if unknown_roles > 0:
                 role_counts.append(('*', unknown_roles))
             # add connector pseudo-argrole
             role_counts = [('X', 1)] + role_counts
-            result = _match_by_argroles(edge,
-                                        pattern,
-                                        role_counts,
-                                        curvars={**curvars, **vars})
-        else:
-            result = []
+            sresult = _match_by_argroles(edge,
+                                         pattern,
+                                         role_counts,
+                                         curvars={**curvars, **vars})
+            for svars in sresult:
+                result.append({**vars, **svars})
 
     return list({**curvars, **vars} for vars in result)
 
@@ -481,6 +483,9 @@ class Hyperedge(tuple):
         else:
             edge = (self[1], self[0]) + self[2:]
         return ' '.join([item.label() for item in edge])
+
+    def atom(self):
+        return self[1].atom()
 
     def atoms(self):
         """Returns the set of atoms contained in the edge.
@@ -873,6 +878,9 @@ class Atom(Hyperedge):
     def label(self):
         """Generate human-readable label from entity."""
         return self.root().replace('_', ' ')
+
+    def atom(self):
+        return self
 
     def atoms(self):
         """Returns the set of atoms contained in the edge.

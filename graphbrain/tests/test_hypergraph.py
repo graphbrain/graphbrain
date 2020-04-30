@@ -284,6 +284,53 @@ class TestHypergraph(unittest.TestCase):
                                              'violin/Cn.s)) X Y)')),
                          [])
 
+    def test_match(self):
+        self.hg.destroy()
+        edge = hedge('((is/A playing/Pd) mary/Cp.s '
+                     '(a/Md ((very/M old/Ma) violin/Cn.s)))')
+        self.hg.add(edge)
+        self.assertEqual(
+            list(self.hg.match('((is/A playing/Pd) *X *Y)')),
+            [(edge,
+              [{'X': hedge('mary/Cp.s'),
+                'Y': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
+        self.assertEqual(
+            list(self.hg.match('(PRED mary/Cp.s X)')),
+            [(edge,
+              [{'PRED': hedge('(is/A playing/Pd)'),
+                'X': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
+        self.assertEqual(list(self.hg.match('(X Y (a/Md ((very/M old/Ma) '
+                                            'violin/Cn.s)))')),
+                         [(edge,
+                           [{'X': hedge('(is/A playing/Pd)'),
+                             'Y': hedge('mary/Cp.s')}])])
+
+    def test_match_argroles(self):
+        self.hg.destroy()
+        edge = hedge('((is/A playing/Pd.so) mary/Cp.s '
+                     '(a/Md ((very/M old/Ma) violin/Cn.s)))')
+        self.hg.add(edge)
+        self.assertEqual(
+            list(self.hg.match('((is/A playing/Pd.so) *X *Y)')),
+            [(edge,
+              [{'X': hedge('mary/Cp.s'),
+                'Y': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
+        self.assertEqual(
+            list(self.hg.match('(PRED mary/Cp.s X)')),
+            [(edge,
+              [{'PRED': hedge('(is/A playing/Pd.so)'),
+                'X': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
+        self.assertEqual(list(self.hg.match('(X Y (a/Md ((very/M old/Ma) '
+                                            'violin/Cn.s)))')),
+                         [(edge,
+                           [{'X': hedge('(is/A playing/Pd.so)'),
+                             'Y': hedge('mary/Cp.s')}])])
+        self.assertEqual(
+            list(self.hg.match('(*/Pd.so X Y)')),
+            [(edge,
+              [{'X': hedge('mary/Cp.s'),
+                'Y': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
+
     def test_star(self):
         self.hg.destroy()
         edge1 = hedge('(is graphbrain/1 great/1)')

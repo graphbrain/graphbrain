@@ -13,6 +13,8 @@
 - Function Hyperedge.insert_edge_with_argrole().
 - Function Hyperedge.all_atoms().
 - Argument role pattern matching.
+- HG.match().
+- Hyperedge.atom().
 
 ### Changed
 - parse() now returns a dictionary that includes inferred edges.

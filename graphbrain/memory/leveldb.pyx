@@ -136,27 +136,39 @@ class LevelDB(Hypergraph):
         self._set_attribute(edge, 'p', 1 if value else 0)
 
     def _search(self, pattern):
-        nodes = []
-        positions = []
-        for i, node in enumerate(pattern):
-            if not node.is_pattern():
-                nodes.append(node)
-                positions.append(i)
-        start_str = edges2str(nodes)
-        end_str = str_plus_1(start_str)
-        start_key = (''.join(('p', start_str))).encode('utf-8')
-        end_key = (''.join(('p', end_str))).encode('utf-8')
+        for result in self._match(pattern):
+            yield result[0]
 
-        for key, value in self.db.iterator(start=start_key, stop=end_key):
-            perm_str = key.decode('utf-8')
+    def _match_structure(self, pattern):
+        if pattern.is_full_pattern():
+            for edge in self.all():
+                yield edge
+        else:
+            nodes = []
+            positions = []
+            for i, node in enumerate(pattern):
+                if not node.is_pattern():
+                    nodes.append(node)
+                    positions.append(i)
+            start_str = edges2str(nodes)
+            end_str = str_plus_1(start_str)
+            start_key = (''.join(('p', start_str))).encode('utf-8')
+            end_key = (''.join(('p', end_str))).encode('utf-8')
 
-            tokens = split_edge_str(perm_str[1:])
-            nper = int(tokens[-1])
+            for key, value in self.db.iterator(start=start_key, stop=end_key):
+                perm_str = key.decode('utf-8')
 
-            if nper == first_permutation(len(tokens) - 1, positions):
-                edge = perm2edge(perm_str)
-                if edge and edge_matches_pattern(edge, pattern):
-                    yield edge
+                tokens = split_edge_str(perm_str[1:])
+                nper = int(tokens[-1])
+
+                if nper == first_permutation(len(tokens) - 1, positions):
+                    yield perm2edge(perm_str)
+
+    def _match(self, pattern, curvars={}):
+        for edge in self._match_structure(pattern):
+            results = match_pattern(edge, pattern, curvars=curvars)
+            if len(results) > 0:
+                yield (edge, results)
 
     def _star(self, center, limit=None):
         center_str = center.to_str()

@@ -151,6 +151,10 @@ class Hypergraph(object):
         else:
             return self._search(pattern)
 
+    def match(self, pattern, curvars={}):
+        pattern = hedge(pattern)
+        return self._match(pattern, curvars=curvars)
+
     def search_count(self, pattern):
         """Number of edges that match a pattern.
         See search() method for an explanation of patterns.
@@ -335,6 +339,9 @@ class Hypergraph(object):
         raise NotImplementedError()
 
     def _search(self, pattern):
+        raise NotImplementedError()
+
+    def _match(self, pattern, curvars={}):
         raise NotImplementedError()
 
     def _star(self, center, limit=None):
