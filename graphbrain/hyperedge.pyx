@@ -823,6 +823,9 @@ class Hyperedge(tuple):
 
         return self.edges_with_argrole('m')
 
+    def apply_vars(self, vars):
+        return hedge([edge.apply_vars(vars) for edge in self])
+
     def __add__(self, other):
         if type(other) in {tuple, list}:
             return Hyperedge(super(Hyperedge, self).__add__(other))
@@ -1099,6 +1102,13 @@ class Atom(Hyperedge):
         returned.
         """
         return []
+
+    def apply_vars(self, vars):
+        if self.is_pattern():
+            varname = _varname(self)
+            if len(varname) > 0 and varname in vars:
+                return vars[varname]
+        return self
 
     def __add__(self, other):
         if type(other) in {tuple, list}:

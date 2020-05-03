@@ -15,6 +15,7 @@
 - Argument role pattern matching.
 - HG.match().
 - Hyperedge.atom().
+- Logic engine.
 
 ### Changed
 - parse() now returns a dictionary that includes inferred edges.

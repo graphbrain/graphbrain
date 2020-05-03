@@ -923,6 +923,12 @@ class TestHyperedge(unittest.TestCase):
         concept = hedge('thing/C')
         self.assertEqual(concept.main_concepts(), [])
 
+    def test_main_apply_vars(self):
+        edge = hedge('(PRED zimbabwe/C PROP)')
+        nedge = edge.apply_vars({'PRED': hedge('is/P'),
+                                 'PROP': hedge('(sehr/M schön/C)')})
+        self.assertEqual(nedge, hedge('(is/P zimbabwe/C (sehr/M schön/C))'))
+
 
 if __name__ == '__main__':
     unittest.main()

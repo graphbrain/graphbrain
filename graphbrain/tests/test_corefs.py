@@ -23,9 +23,6 @@ class TestCorefs(unittest.TestCase):
     def tearDown(self):
         self.hg.close()
 
-    def test_close(self):
-        self.hg.close()
-
     def test_make_2_corefs(self):
         concepts = self.concepts
 
