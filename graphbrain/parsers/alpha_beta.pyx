@@ -128,9 +128,6 @@ class AlphaBeta(Parser):
     def _builder_type_and_subtype(self, token):
         raise NotImplementedError()
 
-    def _auxiliary_type_and_subtype(self, token):
-        raise NotImplementedError()
-
     def _predicate_post_type_and_subtype(self, edge, subparts, args_string):
         raise NotImplementedError()
 
@@ -174,8 +171,8 @@ class AlphaBeta(Parser):
             atom = self._build_atom_predicate(token, ent_type, last_token)
         elif ent_type[0] == 'X':
             atom = self._build_atom_subpredicate(token, ent_type)
-        elif ent_type[0] == 'A':
-            atom = self._build_atom_auxiliary(token, ent_type)
+        elif ent_type[0] == 'M':
+            atom = self._build_atom_modifier(token, ent_type)
         else:
             atom = build_atom(text, et, self.lang)
 
@@ -217,15 +214,15 @@ class AlphaBeta(Parser):
 
         return build_atom(text, et, self.lang)
 
-    def _build_atom_auxiliary(self, token, ent_type):
+    def _build_atom_modifier(self, token, ent_type):
         text = token.text.lower()
 
         if self._is_verb(token):
             # create verb features string
             verb_features = self._verb_features(token)
-            et = 'Av.{}'.format(verb_features)  # verbal subtype
+            et = 'Mv.{}'.format(verb_features)  # verbal subtype
         else:
-            et = self._auxiliary_type_and_subtype(token)
+            et = self._modifier_type_and_subtype(token)
 
         if et == 'A':
             et = ent_type
@@ -300,9 +297,9 @@ class AlphaBeta(Parser):
                             trigger = 't/Tt/.' if temporal else 't/T/.'
                             for i, arg_role in enumerate(arg_roles):
                                 arg_pos = i + 1
-                                if (arg_role == 'X' and
-                                        arg_pos < len(proc_edge) and
-                                        proc_edge[arg_pos].is_atom()):
+                                if (arg_role == 'X'
+                                        and arg_pos < len(proc_edge)
+                                        and proc_edge[arg_pos].is_atom()):
                                     tedge = (hedge(trigger),
                                              proc_edge[arg_pos])
                                     proc_edge[arg_pos] = hedge(tedge)
@@ -570,20 +567,18 @@ class AlphaBeta(Parser):
                 logging.debug('choice: 16')
                 # ?
                 entity = enclose(child, entity)
-            elif child_type[0] == 'A':
-                logging.debug('choice: 17')
-                # NEST PREDICATE
-                entity = nest_predicate(entity, child, pos)
-            # TODO: used to be child_type == 'W'
+            # elif child_type[0] == 'A':
+            #     logging.debug('choice: 17')
+            #    # NEST PREDICATE
+            #    entity = nest_predicate(entity, child, pos)
             elif child_type[0] == 'M':
-                if ent_type[0] in {'D', 'S'}:
+                if ent_type[0] in {'R', 'D', 'S'}:
                     logging.debug('choice: 18')
                     # NEST PREDICATE
                     entity = nest_predicate(entity, child, pos)
                 else:
                     logging.debug('choice: 19')
                     # NEST
-                    # entity = entity.nest(child, pos)
                     entity = enclose(child, entity)
             else:
                 logging.warning('Failed to parse token (_parse_token): {}'

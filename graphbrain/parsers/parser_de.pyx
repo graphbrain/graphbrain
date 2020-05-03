@@ -59,7 +59,7 @@ class ParserDE(AlphaBeta):
             if token.tag_ == 'APPR':
                 return 'T'
             elif head_type == 'P':
-                return 'A'
+                return 'M'
             else:
                 return 'X'
         elif dep == 'nk':
@@ -70,7 +70,7 @@ class ParserDE(AlphaBeta):
             else:
                 return self._modifier_type_and_subtype(token)
         elif dep == 'ng':
-            return 'An'
+            return self._modifier_type_and_subtype(token)
         else:
             logging.warning('Unknown dependency (token_type): token: {}'
                             .format(token2str(token)))
@@ -97,14 +97,30 @@ class ParserDE(AlphaBeta):
 
     def _modifier_type_and_subtype(self, token):
         tag = token.tag_
-        if tag == 'ART':
+        dep = token.dep_
+        if dep == 'ng':
+            return 'Mn'
+        elif tag == 'ART':
             return 'Md'
         elif tag == 'PPOSAT':
             return 'Mp'
         elif tag == 'PIS':
-            return 'Mi'
+            return 'M_'  # indefinite pronoun
         elif tag == 'CARD':
             return 'M#'
+        # TODO
+        elif tag == 'MD':
+            return 'Mm'  # modal
+        elif tag == 'TO':
+            return 'Mi'  # infinitive
+        elif tag == 'RBR':
+            return 'M='  # comparative
+        elif tag == 'RBS':
+            return 'M^'  # superlative
+        elif tag == 'RP' or token.dep_ == 'prt':
+            return 'M.'  # particle
+        elif tag == 'EX':
+            return 'Me'  # existential
         else:
             return 'M'
 
@@ -124,22 +140,6 @@ class ParserDE(AlphaBeta):
             return 'Bd'
         else:
             return 'B'
-
-    # TODO
-    def _auxiliary_type_and_subtype(self, token):
-        if token.tag_ == 'MD':
-            return 'Am'  # modal
-        elif token.tag_ == 'TO':
-            return 'Ai'  # infinitive
-        elif token.tag_ == 'RBR':
-            return 'Ac'  # comparative
-        elif token.tag_ == 'RBS':
-            return 'As'  # superlative
-        elif token.tag_ == 'RP' or token.dep_ == 'prt':
-            return 'Ap'  # particle
-        elif token.tag_ == 'EX':
-            return 'Ae'  # existential
-        return 'A'
 
     def _predicate_post_type_and_subtype(self, edge, subparts, args_string):
         # detecte imperative

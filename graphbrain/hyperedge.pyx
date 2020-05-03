@@ -662,7 +662,7 @@ class Hyperedge(tuple):
         ptype = self[0].type()
         if ptype[0] == 'P':
             outter_type = 'R'
-        elif ptype[0] in {'A', 'M'}:
+        elif ptype[0] == 'M':
             return self[1].type()
         elif ptype[0] == 'X':
             outter_type = 'D'

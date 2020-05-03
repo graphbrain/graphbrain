@@ -156,7 +156,7 @@ class ParserEN(AlphaBeta):
                 return self._concept_type_and_subtype(token)
         elif dep in {'acl', 'pcomp', 'xcomp'}:
             if token.tag_ == 'IN':
-                return 'A'
+                return self._modifier_type_and_subtype(token)
             else:
                 return 'P'
         elif dep in {'amod', 'nummod', 'preconj'}:  # , 'predet'}:
@@ -168,20 +168,20 @@ class ParserEN(AlphaBeta):
                 return self._modifier_type_and_subtype(token)
         elif dep in {'aux', 'auxpass', 'expl', 'prt', 'quantmod'}:
             if head_type in {'C', 'M'}:
-                return 'M'
+                return self._modifier_type_and_subtype(token)
             if token.n_lefts + token.n_rights == 0:
-                return 'A'
+                return self._modifier_type_and_subtype(token)
             else:
                 return 'X'
         elif dep in {'nmod', 'npadvmod'}:
             if token.head.dep_ == 'amod':
-                return 'M'
+                return self._modifier_type_and_subtype(token)
             elif self._is_noun(token):
                 return self._concept_type_and_subtype(token)
             else:
                 return self._modifier_type_and_subtype(token)
         elif dep == 'predet':
-            return 'M'
+            return self._modifier_type_and_subtype(token)
         if dep == 'compound':
             if token.tag_ == 'CD':
                 return self._modifier_type_and_subtype(token)
@@ -198,7 +198,7 @@ class ParserEN(AlphaBeta):
             else:
                 return self._builder_type_and_subtype(token)
         elif dep == 'neg':
-            return 'An'
+            return self._modifier_type_and_subtype(token)
         elif dep == 'agent':
             return 'X'
         elif dep in {'intj', 'punct'}:
@@ -206,19 +206,17 @@ class ParserEN(AlphaBeta):
         elif dep == 'advmod':
             if token.head.dep_ == 'advcl':
                 return 'T'
-            elif head_type == 'P':
-                return 'A'
             else:
-                return 'M'
+                return self._modifier_type_and_subtype(token)
         elif dep == 'poss':
             if self._is_noun(token):
                 return self._concept_type_and_subtype(token)
             else:
-                return 'Mp'
+                return self._modifier_type_and_subtype(token)
         elif dep == 'prep':
             if head_type == 'P':
                 if token.n_lefts + token.n_rights == 0:
-                    return 'A'
+                    return self._modifier_type_and_subtype(token)
                 else:
                     return 'T'
             else:
@@ -267,7 +265,12 @@ class ParserEN(AlphaBeta):
 
     def _modifier_type_and_subtype(self, token):
         tag = token.tag_
-        if tag == 'JJ':
+        dep = token.dep_
+        if dep == 'neg':
+            return 'Mn'
+        elif dep == 'poss':
+            return 'Mp'
+        elif tag == 'JJ':
             return 'Ma'
         elif tag == 'JJR':
             return 'Mc'
@@ -279,6 +282,18 @@ class ParserEN(AlphaBeta):
             return 'Mw'
         elif tag == 'CD':
             return 'M#'
+        elif tag == 'MD':
+            return 'Mm'  # modal
+        elif tag == 'TO':
+            return 'Mi'  # infinitive
+        elif tag == 'RBR':
+            return 'M='  # comparative
+        elif tag == 'RBS':
+            return 'M^'  # superlative
+        elif tag == 'RP' or token.dep_ == 'prt':
+            return 'M.'  # particle
+        elif tag == 'EX':
+            return 'Me'  # existential
         else:
             return 'M'
 
@@ -294,26 +309,11 @@ class ParserEN(AlphaBeta):
         else:
             return 'B'
 
-    def _auxiliary_type_and_subtype(self, token):
-        if token.tag_ == 'MD':
-            return 'Am'  # modal
-        elif token.tag_ == 'TO':
-            return 'Ai'  # infinitive
-        elif token.tag_ == 'RBR':
-            return 'Ac'  # comparative
-        elif token.tag_ == 'RBS':
-            return 'As'  # superlative
-        elif token.tag_ == 'RP' or token.dep_ == 'prt':
-            return 'Ap'  # particle
-        elif token.tag_ == 'EX':
-            return 'Ae'  # existential
-        return 'A'
-
     def _predicate_post_type_and_subtype(self, edge, subparts, args_string):
         # detecte imperative
         if subparts[0] == 'Pd':
             if subparts[2][1] == 'i' and 's' not in args_string:
-                if hedge('to/Ai/en') not in edge[0].atoms():
+                if hedge('to/Mi/en') not in edge[0].atoms():
                     return 'P!'
         # keep everything else the same
         return subparts[0]

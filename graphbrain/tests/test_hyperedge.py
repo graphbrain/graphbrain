@@ -624,8 +624,8 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(hedge('(before/Tt noon/C)').type(), 'St')
         self.assertEqual(hedge('(very/M large/M)').type(), 'M')
         self.assertEqual(hedge('((very/M large/M) shoes/Cc.p)').type(), 'Cc')
-        self.assertEqual(hedge('(will/A be/Pd.sc)').type(), 'Pd')
-        self.assertEqual(hedge('((will/A be/Pd.sc) john/Cp.s rich/C)').type(),
+        self.assertEqual(hedge('(will/M be/Pd.sc)').type(), 'Pd')
+        self.assertEqual(hedge('((will/M be/Pd.sc) john/Cp.s rich/C)').type(),
                          'Rd')
         self.assertEqual(hedge('(play/X piano/Cc.s)').type(), 'D')
         self.assertEqual(hedge('(and/J meat/Cc.s potatoes/Cc.p)').type(), 'C')
@@ -642,8 +642,8 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(hedge('(very/M large/M)').connector_type(), 'M')
         self.assertEqual(hedge('((very/M large/M) '
                                'shoes/Cn.p)').connector_type(), 'M')
-        self.assertEqual(hedge('(will/A be/Pd.sc)').connector_type(), 'A')
-        self.assertEqual(hedge('((will/A be/Pd.sc) john/Cp.s '
+        self.assertEqual(hedge('(will/M be/Pd.sc)').connector_type(), 'M')
+        self.assertEqual(hedge('((will/M be/Pd.sc) john/Cp.s '
                                'rich/C)').connector_type(), 'Pd')
         self.assertEqual(hedge('(play/X piano/Cn.s)').connector_type(), 'X')
 
@@ -677,9 +677,9 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(hedge('(very/M large/M)').predicate(), None)
         self.assertEqual(hedge('((very/M large/M) '
                                'shoes/Cn.p)').predicate(), None)
-        self.assertEqual(hedge('(will/A be/Pd.sc)').predicate().to_str(),
+        self.assertEqual(hedge('(will/M be/Pd.sc)').predicate().to_str(),
                          'be/Pd.sc')
-        self.assertEqual(hedge('((will/A be/Pd.sc) john/Cp.s '
+        self.assertEqual(hedge('((will/M be/Pd.sc) john/Cp.s '
                                'rich/C)').predicate().to_str(), 'be/Pd.sc')
         self.assertEqual(hedge('(play/X piano/Cn.s)').predicate(), None)
 
@@ -734,9 +734,9 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(edge.argroles(), '')
 
     def test_argroles_edge(self):
-        edge = hedge('(is/Av.|f--3s/en influenced/Pd.xpa.<pf---/en)')
+        edge = hedge('(is/Mv.|f--3s/en influenced/Pd.xpa.<pf---/en)')
         self.assertEqual(edge.argroles(), 'xpa')
-        edge = hedge('(is/Av.|f--3s/en influenced/Pd)')
+        edge = hedge('(is/Mv.|f--3s/en influenced/Pd)')
         self.assertEqual(edge.argroles(), '')
         edge = hedge('(looks/Pd.sc.|f--3s she/Ci (very/M beautiful/Ca))')
         self.assertEqual(edge.argroles(), '')
@@ -868,7 +868,7 @@ class TestHyperedge(unittest.TestCase):
             hedge('(is/Pd.scx/en sky/C blue/C today/C)'))
 
     def test_edges_with_argrole(self):
-        edge_str = ("((have/Av.|f----/en (been/Av.<pf---/en "
+        edge_str = ("((have/Mv.|f----/en (been/Mv.<pf---/en "
                     "tracking/Pd.sox.|pg---/en)) (from/Br.ma/en "
                     "satellites/Cc.p/en (and/B+/en nasa/Cp.s/en "
                     "(other/Ma/en agencies/Cc.p/en))) "
@@ -888,7 +888,7 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(edge.edges_with_argrole('p'), [])
 
     def test_edges_with_argrole_no_roles(self):
-        edge_str = ("((have/Av.|f----/en (been/Av.<pf---/en "
+        edge_str = ("((have/Mv.|f----/en (been/Mv.<pf---/en "
                     "tracking/Pd)) (from/Br.ma/en "
                     "satellites/Cc.p/en (and/B+/en nasa/Cp.s/en "
                     "(other/Ma/en agencies/Cc.p/en))) "

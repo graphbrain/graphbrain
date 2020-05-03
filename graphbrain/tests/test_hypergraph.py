@@ -236,18 +236,18 @@ class TestHypergraph(unittest.TestCase):
 
     def test_search_non_atomic_pred(self):
         self.hg.destroy()
-        edge = hedge('((is/A playing/Pd ) mary/Cp.s '
+        edge = hedge('((is/M playing/Pd ) mary/Cp.s '
                      '(a/Md ((very/M old/Ma) violin/Cn.s)))')
         self.hg.add(edge)
-        self.assertEqual(list(self.hg.search('((is/A playing/Pd) ...)')),
+        self.assertEqual(list(self.hg.search('((is/M playing/Pd) ...)')),
                          [edge])
-        self.assertEqual(list(self.hg.search('((is/A playing/Pd) * *)')),
+        self.assertEqual(list(self.hg.search('((is/M playing/Pd) * *)')),
                          [edge])
-        self.assertEqual(list(self.hg.search('((is/A playing/Pd) @ &)')),
+        self.assertEqual(list(self.hg.search('((is/M playing/Pd) @ &)')),
                          [edge])
-        self.assertEqual(list(self.hg.search('((is/A playing/Pd) @ @)')),
+        self.assertEqual(list(self.hg.search('((is/M playing/Pd) @ @)')),
                          [])
-        self.assertEqual(list(self.hg.search('((is/A playing/Pd) & &)')),
+        self.assertEqual(list(self.hg.search('((is/M playing/Pd) & &)')),
                          [])
         self.assertEqual(list(self.hg.search('(* mary/Cp.s *)')),
                          [edge])
@@ -262,16 +262,16 @@ class TestHypergraph(unittest.TestCase):
 
     def test_search_non_atomic_pred_vars(self):
         self.hg.destroy()
-        edge = hedge('((is/A playing/Pd ) mary/Cp.s '
+        edge = hedge('((is/M playing/Pd ) mary/Cp.s '
                      '(a/Md ((very/M old/Ma) violin/Cn.s)))')
         self.hg.add(edge)
-        self.assertEqual(list(self.hg.search('((is/A playing/Pd) *X *Y)')),
+        self.assertEqual(list(self.hg.search('((is/M playing/Pd) *X *Y)')),
                          [edge])
-        self.assertEqual(list(self.hg.search('((is/A playing/Pd) @X &Y)')),
+        self.assertEqual(list(self.hg.search('((is/M playing/Pd) @X &Y)')),
                          [edge])
-        self.assertEqual(list(self.hg.search('((is/A playing/Pd) @X @Y)')),
+        self.assertEqual(list(self.hg.search('((is/M playing/Pd) @X @Y)')),
                          [])
-        self.assertEqual(list(self.hg.search('((is/A playing/Pd) &X &Y)')),
+        self.assertEqual(list(self.hg.search('((is/M playing/Pd) &X &Y)')),
                          [])
         self.assertEqual(list(self.hg.search('(* mary/Cp.s X)')),
                          [edge])
@@ -286,44 +286,44 @@ class TestHypergraph(unittest.TestCase):
 
     def test_match(self):
         self.hg.destroy()
-        edge = hedge('((is/A playing/Pd) mary/Cp.s '
+        edge = hedge('((is/M playing/Pd) mary/Cp.s '
                      '(a/Md ((very/M old/Ma) violin/Cn.s)))')
         self.hg.add(edge)
         self.assertEqual(
-            list(self.hg.match('((is/A playing/Pd) *X *Y)')),
+            list(self.hg.match('((is/M playing/Pd) *X *Y)')),
             [(edge,
               [{'X': hedge('mary/Cp.s'),
                 'Y': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
         self.assertEqual(
             list(self.hg.match('(PRED mary/Cp.s X)')),
             [(edge,
-              [{'PRED': hedge('(is/A playing/Pd)'),
+              [{'PRED': hedge('(is/M playing/Pd)'),
                 'X': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
         self.assertEqual(list(self.hg.match('(X Y (a/Md ((very/M old/Ma) '
                                             'violin/Cn.s)))')),
                          [(edge,
-                           [{'X': hedge('(is/A playing/Pd)'),
+                           [{'X': hedge('(is/M playing/Pd)'),
                              'Y': hedge('mary/Cp.s')}])])
 
     def test_match_argroles(self):
         self.hg.destroy()
-        edge = hedge('((is/A playing/Pd.so) mary/Cp.s '
+        edge = hedge('((is/M playing/Pd.so) mary/Cp.s '
                      '(a/Md ((very/M old/Ma) violin/Cn.s)))')
         self.hg.add(edge)
         self.assertEqual(
-            list(self.hg.match('((is/A playing/Pd.so) *X *Y)')),
+            list(self.hg.match('((is/M playing/Pd.so) *X *Y)')),
             [(edge,
               [{'X': hedge('mary/Cp.s'),
                 'Y': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
         self.assertEqual(
             list(self.hg.match('(PRED mary/Cp.s X)')),
             [(edge,
-              [{'PRED': hedge('(is/A playing/Pd.so)'),
+              [{'PRED': hedge('(is/M playing/Pd.so)'),
                 'X': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
         self.assertEqual(list(self.hg.match('(X Y (a/Md ((very/M old/Ma) '
                                             'violin/Cn.s)))')),
                          [(edge,
-                           [{'X': hedge('(is/A playing/Pd.so)'),
+                           [{'X': hedge('(is/M playing/Pd.so)'),
                              'Y': hedge('mary/Cp.s')}])])
         self.assertEqual(
             list(self.hg.match('(*/Pd.so X Y)')),
@@ -473,11 +473,11 @@ class TestHypergraph(unittest.TestCase):
 
     def test_deep_degrees(self):
         self.hg.destroy()
-        edge1 = hedge('((is/A going/P) mary/C (to (the/M gym/C)))')
+        edge1 = hedge('((is/M going/P) mary/C (to (the/M gym/C)))')
         self.hg.add(edge1)
         mary = hedge('mary/C')
         gym = hedge('gym/C')
-        is_going = hedge('(is/A going/P)')
+        is_going = hedge('(is/M going/P)')
         self.assertEqual(self.hg.deep_degree(edge1), 0)
         self.assertEqual(self.hg.degree(mary), 1)
         self.assertEqual(self.hg.deep_degree(mary), 1)
@@ -486,7 +486,7 @@ class TestHypergraph(unittest.TestCase):
         self.assertEqual(self.hg.degree(is_going), 1)
         self.assertEqual(self.hg.deep_degree(is_going), 1)
         self.assertEqual(self.hg.deep_degree(gym), 1)
-        edge2 = hedge('((is/A going/P) john/C (to (the/M gym/C)))')
+        edge2 = hedge('((is/M going/P) john/C (to (the/M gym/C)))')
         self.hg.add(edge2)
         self.assertEqual(self.hg.degree(gym), 0)
         self.assertEqual(self.hg.deep_degree(gym), 2)
@@ -547,28 +547,28 @@ class TestHypergraph(unittest.TestCase):
 
     def test_primary_1(self):
         self.hg.destroy()
-        edge1 = hedge('((is/A going/P) mary/C (to (the/M gym/C)))')
+        edge1 = hedge('((is/M going/P) mary/C (to (the/M gym/C)))')
         self.hg.add(edge1)
         self.assertTrue(self.hg.is_primary(edge1))
         self.hg.set_primary(edge1, False)
         self.assertFalse(self.hg.is_primary(edge1))
-        self.assertFalse(self.hg.is_primary(hedge('(is/A going/P)')))
-        self.hg.set_primary(hedge('(is/A going/P)'), True)
-        self.assertTrue(self.hg.is_primary(hedge('(is/A going/P)')))
+        self.assertFalse(self.hg.is_primary(hedge('(is/M going/P)')))
+        self.hg.set_primary(hedge('(is/M going/P)'), True)
+        self.assertTrue(self.hg.is_primary(hedge('(is/M going/P)')))
         self.assertFalse(self.hg.is_primary(hedge('mary/C')))
         self.hg.set_primary(hedge('mary/C'), True)
         self.assertTrue(self.hg.is_primary(hedge('mary/C')))
 
     def test_primary_2(self):
         self.hg.destroy()
-        edge1 = hedge('((is/A going/P) mary/C (to (the/M gym/C)))')
+        edge1 = hedge('((is/M going/P) mary/C (to (the/M gym/C)))')
         self.hg.add(edge1, primary=False)
         self.assertFalse(self.hg.is_primary(edge1))
         self.hg.set_primary(edge1, True)
         self.assertTrue(self.hg.is_primary(edge1))
-        self.assertFalse(self.hg.is_primary(hedge('(is/A going/P)')))
-        self.hg.set_primary(hedge('(is/A going/P)'), True)
-        self.assertTrue(self.hg.is_primary(hedge('(is/A going/P)')))
+        self.assertFalse(self.hg.is_primary(hedge('(is/M going/P)')))
+        self.hg.set_primary(hedge('(is/M going/P)'), True)
+        self.assertTrue(self.hg.is_primary(hedge('(is/M going/P)')))
         self.assertFalse(self.hg.is_primary(hedge('mary/C')))
         self.hg.set_primary(hedge('mary/C'), True)
         self.assertTrue(self.hg.is_primary(hedge('mary/C')))
@@ -583,12 +583,12 @@ class TestHypergraph(unittest.TestCase):
               "(have/P.|f----.so/en (+/B.aam/. fossil/Ca/en fuel/Cc.s/en "
               "giants/Cc.p/en) (no/Md/en (there/M/en place/Cc.s/en)))) "
               "((even/M/en 's/Pd.|f--3s.s/en more/M/en outrageous/Ma/en "
-              "taxpayers/Cc.p/en ((are/Av.|f----/en footing/P.|pg---.o/en) "
+              "taxpayers/Cc.p/en ((are/Mv.|f----/en footing/P.|pg---.o/en) "
               "(the/Md/en bill/Cc.s/en))) it/Ci/en) "
               "('s/Pd.|f--3s.xsr/en (at/T/en (:/J/. (a/Md/en time/Cc.s/en) "
-              "((are/Av.|f----/en struggling/P.|pg---.s/en) "
+              "((are/Mv.|f----/en struggling/P.|pg---.s/en) "
               "(+/B.aam/. british/Ca/en gas/Cp.s/en customers/Cc.p/en)))) "
-              "it/Ci/en ((to/Ai/en make/P.-i----.ox/en) "
+              "it/Ci/en ((to/Mi/en make/P.-i----.ox/en) "
               "(£/M/en (+/B.am/. 1_4bn/C#/en profits/Cc.p/en)) "
               "(this/Md/en year/Cc.s/en))))")
         self.hg.destroy()
@@ -605,12 +605,12 @@ class TestHypergraph(unittest.TestCase):
               "(have/P.|f----.so/en (+/B.aam/. fossil/Ca/en fuel/Cc.s/en "
               "giants/Cc.p/en) (no/Md/en (there/M/en place/Cc.s/en)))) "
               "((even/M/en 's/Pd.|f--3s.s/en more/M/en outrageous/Ma/en "
-              "taxpayers/Cc.p/en ((are/Av.|f----/en footing/P.|pg---.o/en) "
+              "taxpayers/Cc.p/en ((are/Mv.|f----/en footing/P.|pg---.o/en) "
               "(the/Md/en bill/Cc.s/en))) it/Ci/en) "
               "('s/Pd.|f--3s.xsr/en (at/T/en (:/J/. (a/Md/en time/Cc.s/en) "
-              "((are/Av.|f----/en struggling/P.|pg---.s/en) "
+              "((are/Mv.|f----/en struggling/P.|pg---.s/en) "
               "(+/B.aam/. british/Ca/en gas/Cp.s/en customers/Cc.p/en)))) "
-              "it/Ci/en ((to/Ai/en make/P.-i----.ox/en) "
+              "it/Ci/en ((to/Mi/en make/P.-i----.ox/en) "
               "(£/M/en (+/B.am/. 1_4bn/C#/en profits/Cc.p/en)) "
               "(this/Md/en year/Cc.s/en))))")
         s2 = ("(titles/P/.reddit anutensil/C/reddit.user "
@@ -622,12 +622,12 @@ class TestHypergraph(unittest.TestCase):
               "(have/P.|f----.so/en (+/B.aam/. fossil/Ca/en fuel/Cc.s/en "
               "giants/Cc.p/en) (no/Md/en (there/M/en place/Cc.s/en)))) "
               "((even/M/en 's/Pd.|f--3s.s/en more/M/en outrageous/Ma/en "
-              "taxpayers/Cc.p/en ((are/Av.|f----/en footing/P.|pg---.o/en) "
+              "taxpayers/Cc.p/en ((are/Mv.|f----/en footing/P.|pg---.o/en) "
               "(the/Md/en bill/Cc.s/en))) it/Ci/en) "
               "('s/Pd.|f--3s.xsr/en (at/T/en (:/J/. (a/Md/en time/Cc.s/en) "
-              "((are/Av.|f----/en struggling/P.|pg---.s/en) "
+              "((are/Mv.|f----/en struggling/P.|pg---.s/en) "
               "(+/B.aam/. british/Ca/en gas/Cp.s/en customers/Cc.p/en)))) "
-              "it/Ci/en ((to/Ai/en make/P.-i----.ox/en) "
+              "it/Ci/en ((to/Mi/en make/P.-i----.ox/en) "
               "(£/M/en (+/B.am/. 1_4bn/C#/en profits/Cc.p/en)) "
               "(this/Md/en year/Cc.s/en))))")
         s3 = ("(title/P/.reddit anutensil/C/reddit.user "
@@ -639,12 +639,12 @@ class TestHypergraph(unittest.TestCase):
               "(have/P.|f----.so/en (+/B.aam/. fossil/Ca/en fuel/Cc.s/en "
               "giants/Cc.p/en) (no/Md/en (there/M/en place/Cc.s/en)))) "
               "((even/M/en 's/Pd.|f--3s.s/en more/M/en outrageous/Ma/en "
-              "taxpayers/Cc.p/en ((are/Av.|f----/en footing/P.|pg---.o/en) "
+              "taxpayers/Cc.p/en ((are/Mv.|f----/en footing/P.|pg---.o/en) "
               "(the/Md/en bill/Cc.s/en))) it/Ci/en) "
               "('s/Pd.|f--3s.xsr/en (at/T/en (:/J/. (a/Md/en time/Cc.s/en) "
-              "((are/Av.|f----/en struggling/P.|pg---.s/en) "
+              "((are/Mv.|f----/en struggling/P.|pg---.s/en) "
               "(+/B.aam/. british/Ca/en gas/Cp.s/en customers/Cc.p/en)))) "
-              "it/Ci/en ((to/Ai/en make/P.-i----.ox/en) "
+              "it/Ci/en ((to/Mi/en make/P.-i----.ox/en) "
               "(£/M/en (+/B.am/. 1_4bn/C#/en profits/Cc.p/en)) "
               "(these/Md/en years/Cc.p/en))))")
         self.hg.destroy()
@@ -668,12 +668,12 @@ class TestHypergraph(unittest.TestCase):
               "(have/P.|f----.so/en (+/B.aam/. fossil/Ca/en fuel/Cc.s/en "
               "giants/Cc.p/en) (no/Md/en (there/M/en place/Cc.s/en)))) "
               "((even/M/en 's/Pd.|f--3s.s/en more/M/en outrageous/Ma/en "
-              "taxpayers/Cc.p/en ((are/Av.|f----/en footing/P.|pg---.o/en) "
+              "taxpayers/Cc.p/en ((are/Mv.|f----/en footing/P.|pg---.o/en) "
               "(the/Md/en bill/Cc.s/en))) it/Ci/en) "
               "('s/Pd.|f--3s.xsr/en (at/T/en (:/J/. (a/Md/en time/Cc.s/en) "
-              "((are/Av.|f----/en struggling/P.|pg---.s/en) "
+              "((are/Mv.|f----/en struggling/P.|pg---.s/en) "
               "(+/B.aam/. british/Ca/en gas/Cp.s/en customers/Cc.p/en)))) "
-              "it/Ci/en ((to/Ai/en make/P.-i----.ox/en) "
+              "it/Ci/en ((to/Mi/en make/P.-i----.ox/en) "
               "(£/M/en (+/B.am/. 1_4bn/C#/en profits/Cc.p/en)) "
               "(this/Md/en year/Cc.s/en))))")
         s2 = ("(titles/P/.reddit anutensil/C/reddit.user "
@@ -685,12 +685,12 @@ class TestHypergraph(unittest.TestCase):
               "(have/P.|f----.so/en (+/B.aam/. fossil/Ca/en fuel/Cc.s/en "
               "giants/Cc.p/en) (no/Md/en (there/M/en place/Cc.s/en)))) "
               "((even/M/en 's/Pd.|f--3s.s/en more/M/en outrageous/Ma/en "
-              "taxpayers/Cc.p/en ((are/Av.|f----/en footing/P.|pg---.o/en) "
+              "taxpayers/Cc.p/en ((are/Mv.|f----/en footing/P.|pg---.o/en) "
               "(the/Md/en bill/Cc.s/en))) it/Ci/en) "
               "('s/Pd.|f--3s.xsr/en (at/T/en (:/J/. (a/Md/en time/Cc.s/en) "
-              "((are/Av.|f----/en struggling/P.|pg---.s/en) "
+              "((are/Mv.|f----/en struggling/P.|pg---.s/en) "
               "(+/B.aam/. british/Ca/en gas/Cp.s/en customers/Cc.p/en)))) "
-              "it/Ci/en ((to/Ai/en make/P.-i----.ox/en) "
+              "it/Ci/en ((to/Mi/en make/P.-i----.ox/en) "
               "(£/M/en (+/B.am/. 1_4bn/C#/en profits/Cc.p/en)) "
               "(this/Md/en year/Cc.s/en))))")
         s3 = ("(title/P/.reddit anutensil/C/reddit.user "
@@ -702,12 +702,12 @@ class TestHypergraph(unittest.TestCase):
               "(have/P.|f----.so/en (+/B.aam/. fossil/Ca/en fuel/Cc.s/en "
               "giants/Cc.p/en) (no/Md/en (there/M/en place/Cc.s/en)))) "
               "((even/M/en 's/Pd.|f--3s.s/en more/M/en outrageous/Ma/en "
-              "taxpayers/Cc.p/en ((are/Av.|f----/en footing/P.|pg---.o/en) "
+              "taxpayers/Cc.p/en ((are/Mv.|f----/en footing/P.|pg---.o/en) "
               "(the/Md/en bill/Cc.s/en))) it/Ci/en) "
               "('s/Pd.|f--3s.xsr/en (at/T/en (:/J/. (a/Md/en time/Cc.s/en) "
-              "((are/Av.|f----/en struggling/P.|pg---.s/en) "
+              "((are/Mv.|f----/en struggling/P.|pg---.s/en) "
               "(+/B.aam/. british/Ca/en gas/Cp.s/en customers/Cc.p/en)))) "
-              "it/Ci/en ((to/Ai/en make/P.-i----.ox/en) "
+              "it/Ci/en ((to/Mi/en make/P.-i----.ox/en) "
               "(£/M/en (+/B.am/. 1_4bn/C#/en profits/Cc.p/en)) "
               "(these/Md/en years/Cc.p/en))))")
         self.hg.destroy()

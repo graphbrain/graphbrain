@@ -23,10 +23,12 @@
 - English parser improved.
 - Hyperedge main type character codes become upercase (apple/C instead of apple/c).
 - Conjunction hyperedge type, character code: "J" (e.g.: and/J).
+- Modifier hyperedge type can now be applied to predicates.
 - Searching patterns can now include types, argument roles and other atom parts.
 
 ### Removed
 - Meta-modifier hyperedge type.
+- Auxiliary hyperedge type.
 
 ## [0.3.2] - 10-02-2020
 ### Added
