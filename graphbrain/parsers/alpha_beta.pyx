@@ -169,8 +169,8 @@ class AlphaBeta(Parser):
 
         if ent_type[0] == 'P':
             atom = self._build_atom_predicate(token, ent_type, last_token)
-        elif ent_type[0] == 'X':
-            atom = self._build_atom_subpredicate(token, ent_type)
+        elif ent_type[0] == 'T':
+            atom = self._build_atom_trigger(token, ent_type)
         elif ent_type[0] == 'M':
             atom = self._build_atom_modifier(token, ent_type)
         else:
@@ -203,14 +203,14 @@ class AlphaBeta(Parser):
 
         return build_atom(text, et, self.lang)
 
-    def _build_atom_subpredicate(self, token, ent_type):
+    def _build_atom_trigger(self, token, ent_type):
         text = token.text.lower()
         et = ent_type
 
         if self._is_verb(token):
             # create verb features string
             verb_features = self._verb_features(token)
-            et = 'Xv.{}'.format(verb_features)
+            et = 'Tv.{}'.format(verb_features)
 
         return build_atom(text, et, self.lang)
 
@@ -272,16 +272,13 @@ class AlphaBeta(Parser):
                 ps[1] = 'M' + ct[1:]
                 return hedge(('/'.join(ps),) + entity[1:]), temporal
 
-            # A modifier applied to a concept defined my a modifier
-            # should apply to the modifier instead.
-            # e.g.: (stricking/M (red/M dress)) -> ((stricking/M red/M) dress)
-            # elif (ct[0] == 'M' and
-            #         entity[0].is_atom() and
-            #         len(entity) == 2 and
-            #         not entity[1].is_atom() and
-            #         entity[1].connector_type()[0] == 'M'):
-            #     return (hedge(((entity[0], entity[1][0]),) + entity[1][1:]),
-            #             temporal)
+            # In an edge of size 2 with a modifier applied to a predicate or
+            # trigger shouw be reversed
+            # e.g.: (to/T according/M) -> (according/M to/T)
+            elif (len(entity) == 2 and
+                    ct[0] in {'P', 'T'} and
+                    entity[1].type()[0] == 'M'):
+                return hedge((entity[1], entity[0])), temporal
 
             # Make sure that specifier arguments are of the specifier type,
             # entities are surrounded by an edge with a trigger connector
@@ -292,12 +289,12 @@ class AlphaBeta(Parser):
                     role = pred.role()
                     if len(role) > 2:
                         arg_roles = role[2]
-                        if 'X' in arg_roles:
+                        if 'x' in arg_roles:
                             proc_edge = list(entity)
                             trigger = 't/Tt/.' if temporal else 't/T/.'
                             for i, arg_role in enumerate(arg_roles):
                                 arg_pos = i + 1
-                                if (arg_role == 'X'
+                                if (arg_role == 'x'
                                         and arg_pos < len(proc_edge)
                                         and proc_edge[arg_pos].is_atom()):
                                     tedge = (hedge(trigger),
@@ -446,7 +443,7 @@ class AlphaBeta(Parser):
             logging.debug('entity: [%s] %s', ent_type, entity)
             logging.debug('child: [%s] %s', child_type, child)
 
-            if child_type[0] in {'C', 'R', 'D', 'S'}:
+            if child_type[0] in {'C', 'R', 'S'}:
                 if ent_type[0] == 'C':
                     if (child.connector_type() in {'P', 'Pr'} or
                             self._is_relative_concept(child_token)):
@@ -498,7 +495,7 @@ class AlphaBeta(Parser):
                                 entity = entity.replace_atom(
                                     atom,
                                     atom.nest(child, pos))
-                    elif child.connector_type()[0] in {'X', 'T'}:
+                    elif child.connector_type()[0] == 'T':
                         logging.debug('choice: 5')
                         # NEST
                         entity = entity.nest(child, pos)
@@ -532,8 +529,12 @@ class AlphaBeta(Parser):
                             logging.debug('choice: 9')
                             entity = entity.replace_atom(
                                 atom, atom.connect((child,)))
-                elif ent_type[0] in {'P', 'R', 'D', 'S'}:
-                    logging.debug('choice: 10')
+                elif ent_type[0] == 'T' and child.connector_type() == 'Mt':
+                    logging.debug('choice: 10a')
+                    # NEST PREDICATE
+                    entity = nest_predicate(child, entity, pos)
+                elif ent_type[0] in {'P', 'T', 'R', 'S'}:
+                    logging.debug('choice: 10b')
                     # INSERT AFTER PREDICATE
                     result = insert_after_predicate(entity, child)
                     if result:
@@ -563,7 +564,7 @@ class AlphaBeta(Parser):
                 logging.debug('choice: 15')
                 # CONNECT
                 entity = entity.connect((child,))
-            elif child_type[0] in {'X', 'T'}:
+            elif child_type[0] == 'T':
                 logging.debug('choice: 16')
                 # ?
                 entity = enclose(child, entity)
@@ -572,7 +573,7 @@ class AlphaBeta(Parser):
             #    # NEST PREDICATE
             #    entity = nest_predicate(entity, child, pos)
             elif child_type[0] == 'M':
-                if ent_type[0] in {'R', 'D', 'S'}:
+                if ent_type[0] in {'R', 'S'}:
                     logging.debug('choice: 18')
                     # NEST PREDICATE
                     entity = nest_predicate(entity, child, pos)

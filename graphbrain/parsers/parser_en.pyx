@@ -172,7 +172,7 @@ class ParserEN(AlphaBeta):
             if token.n_lefts + token.n_rights == 0:
                 return self._modifier_type_and_subtype(token)
             else:
-                return 'X'
+                return 'T'
         elif dep in {'nmod', 'npadvmod'}:
             if token.head.dep_ == 'amod':
                 return self._modifier_type_and_subtype(token)
@@ -200,7 +200,7 @@ class ParserEN(AlphaBeta):
         elif dep == 'neg':
             return self._modifier_type_and_subtype(token)
         elif dep == 'agent':
-            return 'X'
+            return 'T'
         elif dep in {'intj', 'punct'}:
             return ''
         elif dep == 'advmod':
@@ -219,6 +219,8 @@ class ParserEN(AlphaBeta):
                     return self._modifier_type_and_subtype(token)
                 else:
                     return 'T'
+            elif head_type == 'T':
+                return self._modifier_type_and_subtype(token)
             else:
                 return self._builder_type_and_subtype(token)
         elif dep == 'conj':
@@ -228,12 +230,12 @@ class ParserEN(AlphaBeta):
                 return self._concept_type_and_subtype(token)
         elif dep == 'mark':
             if head_type == 'P' and head_subtype != '':
-                return 'X'
+                return 'T'
             else:
                 return self._builder_type_and_subtype(token)
         elif dep == 'acomp':
             if self._is_verb(token):
-                return 'X'
+                return 'T'
             else:
                 return self._concept_type_and_subtype(token)
         else:
@@ -270,6 +272,8 @@ class ParserEN(AlphaBeta):
             return 'Mn'
         elif dep == 'poss':
             return 'Mp'
+        elif dep == 'prep':
+            return 'Mt'  # preposition
         elif tag == 'JJ':
             return 'Ma'
         elif tag == 'JJR':
@@ -291,7 +295,7 @@ class ParserEN(AlphaBeta):
         elif tag == 'RBS':
             return 'M^'  # superlative
         elif tag == 'RP' or token.dep_ == 'prt':
-            return 'M.'  # particle
+            return 'Ml'  # particle
         elif tag == 'EX':
             return 'Me'  # existential
         else:

@@ -627,7 +627,7 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(hedge('(will/M be/Pd.sc)').type(), 'Pd')
         self.assertEqual(hedge('((will/M be/Pd.sc) john/Cp.s rich/C)').type(),
                          'Rd')
-        self.assertEqual(hedge('(play/X piano/Cc.s)').type(), 'D')
+        self.assertEqual(hedge('(play/T piano/Cc.s)').type(), 'S')
         self.assertEqual(hedge('(and/J meat/Cc.s potatoes/Cc.p)').type(), 'C')
         self.assertEqual(
             hedge('(and/J (is/Pd.so graphbrain/Cp.s great/C))').type(), 'R')
@@ -645,7 +645,7 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(hedge('(will/M be/Pd.sc)').connector_type(), 'M')
         self.assertEqual(hedge('((will/M be/Pd.sc) john/Cp.s '
                                'rich/C)').connector_type(), 'Pd')
-        self.assertEqual(hedge('(play/X piano/Cn.s)').connector_type(), 'X')
+        self.assertEqual(hedge('(play/T piano/Cn.s)').connector_type(), 'T')
 
     def test_atom_with_type(self):
         self.assertEqual(hedge('(+/B a/Cn b/Cp)').atom_with_type('C'),
@@ -681,7 +681,7 @@ class TestHyperedge(unittest.TestCase):
                          'be/Pd.sc')
         self.assertEqual(hedge('((will/M be/Pd.sc) john/Cp.s '
                                'rich/C)').predicate().to_str(), 'be/Pd.sc')
-        self.assertEqual(hedge('(play/X piano/Cn.s)').predicate(), None)
+        self.assertEqual(hedge('(play/T piano/Cn.s)').predicate(), None)
 
     def test_rel_arg_role(self):
         edge = hedge('(is/Pd.so graphbrain/Cp.s great/C)')

@@ -61,7 +61,7 @@ class ParserDE(AlphaBeta):
             elif head_type == 'P':
                 return 'M'
             else:
-                return 'X'
+                return 'T'
         elif dep == 'nk':
             if token.head.dep_ == 'ag':
                 return self._builder_type_and_subtype(token)
@@ -118,7 +118,7 @@ class ParserDE(AlphaBeta):
         elif tag == 'RBS':
             return 'M^'  # superlative
         elif tag == 'RP' or token.dep_ == 'prt':
-            return 'M.'  # particle
+            return 'Ml'  # particle
         elif tag == 'EX':
             return 'Me'  # existential
         else:
