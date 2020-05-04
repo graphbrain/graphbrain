@@ -670,7 +670,7 @@ class Hyperedge(tuple):
             inner_type = self[1].type()[0]
             if inner_type in {'C', 'R'}:
                 return inner_type
-            elif inner_type in {'P', 'S', 'D'}:
+            elif inner_type in {'P', 'S'}:
                 return 'R'
             elif inner_type in {'M', 'B'}:
                 return 'C'
