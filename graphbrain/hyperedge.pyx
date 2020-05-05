@@ -424,7 +424,7 @@ def hedge(source):
     if type(source) in {tuple, list}:
         return Hyperedge(tuple(hedge(item) for item in source))
     elif type(source) is str:
-        edge_str = source.replace('\n', ' ')
+        edge_str = source.strip().replace('\n', ' ')
         edge_inner_str = edge_str
 
         if _edge_str_has_outer_parens(edge_str):

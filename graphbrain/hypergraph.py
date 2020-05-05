@@ -1,5 +1,6 @@
 import graphbrain.constants as const
 from graphbrain.hyperedge import *
+from graphbrain.logic import eval_rule
 
 
 class Hypergraph(object):
@@ -154,6 +155,9 @@ class Hypergraph(object):
     def match(self, pattern, curvars={}):
         pattern = hedge(pattern)
         return self._match(pattern, curvars=curvars)
+
+    def eval(self, rule):
+        return eval_rule(self, rule)
 
     def search_count(self, pattern):
         """Number of edges that match a pattern.
