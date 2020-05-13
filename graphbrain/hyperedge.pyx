@@ -668,17 +668,12 @@ class Hyperedge(tuple):
             outter_type = 'S'
         elif ptype[0] == 'J':
             inner_type = self[1].type()[0]
-            if inner_type in {'C', 'R'}:
-                return inner_type
-            elif inner_type in {'P', 'S'}:
+            if inner_type in {'P', 'S'}:
                 return 'R'
             elif inner_type in {'M', 'B'}:
                 return 'C'
             else:
-                msg = "Hyperedge.type(): First argument of conjunction has " \
-                      "invalid type ({}).\nHyperedge: {}"
-                msg = msg.format(inner_type, self.to_str())
-                raise RuntimeError(msg)
+                return inner_type
         else:
             return 'C'
 
