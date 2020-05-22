@@ -150,6 +150,7 @@ def _matches_wildcard(edge, wildcard):
             while pos < len(wrole):
                 if erole[pos] != wrole[pos]:
                     return False
+                pos += 1
 
     # match rest of atom
     if len(wparts) > 2:

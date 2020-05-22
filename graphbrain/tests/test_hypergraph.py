@@ -284,6 +284,13 @@ class TestHypergraph(unittest.TestCase):
                                              'violin/Cn.s)) X Y)')),
                          [])
 
+    def test_search_pred_with_roles(self):
+        self.hg.destroy()
+        self.hg.add('(says/Pd.so.|f--3s-/en mary/C hello/C)')
+        self.hg.add('(says/Pd.os.|f--3s-/en hello/C mary/C)')
+        self.assertEqual(list(self.hg.search('(says/Pd.so.|f--3s-/en * *)')),
+                         [hedge('(says/Pd.so.|f--3s-/en mary/C hello/C)')])
+
     def test_match(self):
         self.hg.destroy()
         edge = hedge('((is/M playing/Pd) mary/Cp.s '
