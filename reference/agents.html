@@ -223,12 +223,12 @@
 <h3>taxonomy<a class="headerlink" href="#taxonomy" title="Permalink to this headline">¶</a></h3>
 <p><strong>Type</strong>: introspective</p>
 <p><strong>Languages</strong>: agnostic</p>
-<p>Derives a taxonomy from concepts defined with builders of modifiers. For example, <code class="docutils literal notranslate"><span class="pre">(of/br.ma</span> <span class="pre">founder/cc.s</span> <span class="pre">psychoanalysis/cc.s)</span></code> is a type of <code class="docutils literal notranslate"><span class="pre">founder/cc.s</span></code>, so the following hyperedge is added:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">type_of</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="p">(</span><span class="n">of</span><span class="o">/</span><span class="n">br</span><span class="o">.</span><span class="n">ma</span> <span class="n">founder</span><span class="o">/</span><span class="n">cc</span><span class="o">.</span><span class="n">s</span> <span class="n">psychoanalysis</span><span class="o">/</span><span class="n">cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="n">founder</span><span class="o">/</span><span class="n">cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+<p>Derives a taxonomy from concepts defined with builders of modifiers. For example, <code class="docutils literal notranslate"><span class="pre">(of/Br.ma</span> <span class="pre">founder/Cc.s</span> <span class="pre">psychoanalysis/Cc.s)</span></code> is a type of <code class="docutils literal notranslate"><span class="pre">founder/Cc.s</span></code>, so the following hyperedge is added:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">type_of</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="p">(</span><span class="n">of</span><span class="o">/</span><span class="n">Br</span><span class="o">.</span><span class="n">ma</span> <span class="n">founder</span><span class="o">/</span><span class="n">Cc</span><span class="o">.</span><span class="n">s</span> <span class="n">psychoanalysis</span><span class="o">/</span><span class="n">Cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="n">founder</span><span class="o">/</span><span class="n">Cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Or, if we consider modifier-defined concepts such as <code class="docutils literal notranslate"><span class="pre">(black/ma</span> <span class="pre">cat/cc.s)</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">type_of</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="p">(</span><span class="n">black</span><span class="o">/</span><span class="n">ma</span> <span class="n">cat</span><span class="o">/</span><span class="n">cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="n">cat</span><span class="o">/</span><span class="n">cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+<p>Or, if we consider modifier-defined concepts such as <code class="docutils literal notranslate"><span class="pre">(black/Ma</span> <span class="pre">cat/Cc.s)</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">type_of</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="p">(</span><span class="n">black</span><span class="o">/</span><span class="n">Ma</span> <span class="n">cat</span><span class="o">/</span><span class="n">Cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="n">cat</span><span class="o">/</span><span class="n">Cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -258,7 +258,7 @@
 <h3>corefs_unidecode<a class="headerlink" href="#corefs-unidecode" title="Permalink to this headline">¶</a></h3>
 <p><strong>Type</strong>: introspective</p>
 <p><strong>Languages</strong>: agnostic</p>
-<p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> for atoms that become equal after unidecode() is a applied to both labels. For example, it will create a coreference relation between <code class="docutils literal notranslate"><span class="pre">über/c</span></code> and <code class="docutils literal notranslate"><span class="pre">uber/c</span></code>.</p>
+<p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> for atoms that become equal after unidecode() is a applied to both labels. For example, it will create a coreference relation between <code class="docutils literal notranslate"><span class="pre">über/C</span></code> and <code class="docutils literal notranslate"><span class="pre">uber/C</span></code>.</p>
 </div>
 </div>
 <div class="section" id="actors-claims-and-conflicts">
@@ -275,10 +275,10 @@
 <li><p>If coreferences are used, the hyperedge is the main coreference</p></li>
 </ol>
 <p>This agent transverses the entire hypergraph to identify actors, and then adds hyperedges like the following:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">actor</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="n">mary</span><span class="o">/</span><span class="n">cp</span><span class="o">.</span><span class="n">s</span><span class="o">/</span><span class="n">en</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">actor</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="n">mary</span><span class="o">/</span><span class="n">Cp</span><span class="o">.</span><span class="n">s</span><span class="o">/</span><span class="n">en</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The above simply means that <code class="docutils literal notranslate"><span class="pre">mary/cp.s/en</span></code> was identified as an actor.</p>
+<p>The above simply means that <code class="docutils literal notranslate"><span class="pre">mary/Cp.s/en</span></code> was identified as an actor.</p>
 </div>
 <div class="section" id="claim-actors">
 <h3>claim_actors<a class="headerlink" href="#claim-actors" title="Permalink to this headline">¶</a></h3>
@@ -286,7 +286,7 @@
 <p><strong>Languages</strong>: agnostic</p>
 <p><strong>Depends on</strong>: actors, claims</p>
 <p>Creates relations connecting claims to actors mentioned in the claim. For example, consider the sentence: “Mary says that John is nice.” In this case, the claim “John is nice” (which is attributed to Mary), will be connected to John through a claim-actor relation. Claim-actor relations have the form:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">claim</span><span class="o">-</span><span class="n">actor</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="o">*</span><span class="n">main_actor</span><span class="o">*</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span> <span class="o">*</span><span class="n">claim</span><span class="o">*</span> <span class="o">*</span><span class="n">main_edge</span><span class="o">*</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">claim</span><span class="o">-</span><span class="n">actor</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">main_actor</span><span class="o">*</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span> <span class="o">*</span><span class="n">claim</span><span class="o">*</span> <span class="o">*</span><span class="n">main_edge</span><span class="o">*</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -298,28 +298,28 @@
 <p>Identifies hyperedges that represent a claim. Claims are sentences such as: “North Korea says it’s not afraid of US military strike”. The claim is that “North Korea is not afraid of US military strike” and the author of the claim is “North Korea”.</p>
 <p>More specifically, claims are detected according to the following criteria:</p>
 <ol class="arabic simple">
-<li><p>Hyperedge is a relation with predicate of type <code class="docutils literal notranslate"><span class="pre">pd</span></code>.</p></li>
+<li><p>Hyperedge is a relation with predicate of type <code class="docutils literal notranslate"><span class="pre">Pd</span></code>.</p></li>
 <li><p>The deep predicate atom of the predicate hyperedge has a lemma belonging to a predetermined lists of verb lemmas that denote a claim (e.g.: “say”, “claim”).</p></li>
 <li><p>The hyperedge has a subject and a clausal complement. The first is used to identify the actor making the claim, the second the claim itself.</p></li>
 </ol>
 <p>Claim relations follow the format:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">claim</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span> <span class="o">*</span><span class="n">claim</span><span class="o">*</span> <span class="o">*</span><span class="n">edge</span><span class="o">*</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">claim</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span> <span class="o">*</span><span class="n">claim</span><span class="o">*</span> <span class="o">*</span><span class="n">edge</span><span class="o">*</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Furthermore, simple anaphora resolution on the claim is performed (e.g. in “Pink Panther says that she loves pink.”, the hyperedge for “she” is replaced with the hyperedge for “Pink Panther” in the claim). In these cases, pronouns are used to guess gender or nature of actors. Actors can be classified as female:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">female</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">female</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Or as a group:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">group</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">group</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Or as male:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">male</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">male</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Or as non-human:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">non</span><span class="o">-</span><span class="n">human</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">non</span><span class="o">-</span><span class="n">human</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -331,17 +331,17 @@
 <p>Identifies hyperedges that represent a conflict. Conflicts are sentences such as: “Germany warns Russia against military engagement in Syria”. The source of the expression of conflict here is “Germany”, the target is “Russia” and the topic is “military engagement in Syria”.</p>
 <p>More specifically, claims are detected according to the following criteria:</p>
 <ol class="arabic simple">
-<li><p>Hyperedge is a relation with predicate of type <code class="docutils literal notranslate"><span class="pre">pd</span></code>.</p></li>
+<li><p>Hyperedge is a relation with predicate of type <code class="docutils literal notranslate"><span class="pre">Pd</span></code>.</p></li>
 <li><p>The deep predicate atom of the predicate hyperedge has a lemma belonging to a predetermined lists of verb lemmas that denote an expression of conflict (e.g.: “warn”, “kill”).</p></li>
 <li><p>The hyperedge has a subject and an object. The first is used to identify the actor originating the expression of conflict and the second the actor which is the target of this expression.</p></li>
 <li><p>[optional] Beyond subject and object, if any specifier arguments are present, and their trigger atoms belong to a predetermined list (e.g. “over”, “against”), then topics of conflict are extracted from these specifiers.</p></li>
 </ol>
 <p>Conflict relations follow the format:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">conflict</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor_orig</span><span class="o">*</span> <span class="o">*</span><span class="n">actor_targ</span><span class="o">*</span> <span class="o">*</span><span class="n">edge</span><span class="o">*</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">conflict</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor_orig</span><span class="o">*</span> <span class="o">*</span><span class="n">actor_targ</span><span class="o">*</span> <span class="o">*</span><span class="n">edge</span><span class="o">*</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>These conflict relations are connected to their topics by further relations with the format:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">conflict</span><span class="o">-</span><span class="n">topic</span><span class="o">/</span><span class="n">p</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor_orig</span><span class="o">*</span> <span class="o">*</span><span class="n">actor_targ</span><span class="o">*</span> <span class="o">*</span><span class="n">concept</span><span class="o">*</span> <span class="o">*</span><span class="n">edge</span><span class="o">*</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">conflict</span><span class="o">-</span><span class="n">topic</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor_orig</span><span class="o">*</span> <span class="o">*</span><span class="n">actor_targ</span><span class="o">*</span> <span class="o">*</span><span class="n">concept</span><span class="o">*</span> <span class="o">*</span><span class="n">edge</span><span class="o">*</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

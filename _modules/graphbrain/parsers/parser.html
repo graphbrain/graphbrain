@@ -199,11 +199,14 @@
 
 <span class="sd">        -&gt; text: the string of natural language text corresponding to the</span>
 <span class="sd">        main_edge, i.e.: the sentence itself.</span>
+
+<span class="sd">        -&gt; edges_text: a dictionary of all edges and subedges to their</span>
+<span class="sd">        corresponding text.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">parses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">parse_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve_corefs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_corefs</span><span class="p">(</span><span class="n">parses</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">parses</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_corefs</span><span class="p">(</span><span class="n">parse_results</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">parse_results</span></div>
 
     <span class="k">def</span> <span class="nf">atom_gender</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
@@ -232,9 +235,9 @@
     <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_resolve_corefs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parses</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_resolve_corefs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parse_results</span><span class="p">):</span>
         <span class="c1"># do nothing if not implemented in derived classes</span>
-        <span class="k">for</span> <span class="n">parse</span> <span class="ow">in</span> <span class="n">parses</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">parse</span> <span class="ow">in</span> <span class="n">parse_results</span><span class="p">[</span><span class="s1">&#39;parses&#39;</span><span class="p">]:</span>
             <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;resolved_corefs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;main_edge&#39;</span><span class="p">]</span></div>
 </pre></div>
 

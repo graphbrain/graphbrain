@@ -102,7 +102,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#concept">Concept</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#predicate">Predicate</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#builder">Builder</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#auxiliary">Auxiliary</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#modifier">Modifier</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#trigger">Trigger</a></li>
 </ul>
@@ -110,7 +109,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#type-specific-additional-information">Type-specific additional information</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id1">Concept</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id2">Predicate</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id3">Auxiliary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Modifier</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id4">Builder</a></li>
 </ul>
 </li>
@@ -223,73 +222,64 @@
 <tr class="row-even"><td colspan="4" rowspan="2"><p><strong>Atomic or non-atomic</strong></p></td>
 </tr>
 <tr class="row-odd"></tr>
-<tr class="row-even"><td><p>c</p></td>
+<tr class="row-even"><td><p>C</p></td>
 <td><p>concept</p></td>
 <td><p>Define atomic concepts</p></td>
-<td><p><strong>apple/c</strong></p></td>
+<td><p><strong>apple/C</strong></p></td>
 </tr>
-<tr class="row-odd"><td><p>p</p></td>
+<tr class="row-odd"><td><p>P</p></td>
 <td><p>predicate</p></td>
 <td><p>Build relations</p></td>
-<td><p>(<strong>is/p</strong> berlin/c nice/c)</p></td>
+<td><p>(<strong>is/P</strong> berlin/C nice/C)</p></td>
 </tr>
-<tr class="row-even"><td><p>m</p></td>
-<td><p>modifier</p></td>
-<td><p>Modify a concept</p></td>
-<td><p>(<strong>red/m</strong> shoes/c)</p></td>
+<tr class="row-even"><td rowspan="2"><p>M</p></td>
+<td rowspan="2"><p>modifier</p></td>
+<td rowspan="2"><p>Modify concepts, predicates,</p>
+<p>modifiers or triggers</p>
+</td>
+<td rowspan="2"><p>(<strong>red/M</strong> shoes/C)</p></td>
 </tr>
-<tr class="row-odd"><td colspan="4" rowspan="2"><p><strong>Atomic only</strong></p></td>
+<tr class="row-odd"></tr>
+<tr class="row-even"><td colspan="4" rowspan="2"><p><strong>Atomic only</strong></p></td>
 </tr>
-<tr class="row-even"></tr>
-<tr class="row-odd"><td><p>a</p></td>
-<td><p>auxiliary</p></td>
-<td><p>Modify a predicate</p></td>
-<td><p>(<strong>not/a</strong> is/p)</p></td>
-</tr>
-<tr class="row-even"><td><p>b</p></td>
+<tr class="row-odd"></tr>
+<tr class="row-even"><td><p>B</p></td>
 <td><p>builder</p></td>
 <td><p>Build concepts from concepts</p></td>
-<td><p>(<strong>of/b</strong> capital/c germany/c)</p></td>
+<td><p>(<strong>of/B</strong> capital/C germany/C)</p></td>
 </tr>
-<tr class="row-odd"><td><p>w</p></td>
-<td><p>meta-modifier</p></td>
-<td><p>Modify a modifier</p></td>
-<td><p>(<strong>very/w</strong> large/m)</p></td>
-</tr>
-<tr class="row-even"><td><p>x</p></td>
-<td><p>subpredicate</p></td>
-<td><p>Auxiliary predicate</p></td>
-<td><p>(<strong>by/x</strong> john/c)</p></td>
-</tr>
-<tr class="row-odd"><td><p>t</p></td>
+<tr class="row-odd"><td><p>T</p></td>
 <td><p>trigger</p></td>
 <td><p>Build specifications</p></td>
-<td><p>(<strong>in/t</strong> 1994/c)</p></td>
+<td><p>(<strong>in/T</strong> 1994/C)</p></td>
 </tr>
+<tr class="row-even"><td rowspan="2"><p>J</p></td>
+<td rowspan="2"><p>conjunction</p></td>
+<td rowspan="2"><p>Define sequences of concepts</p>
+<p>or relations</p>
+</td>
+<td rowspan="2"><p>(<strong>and/J</strong> meat/C potatoes/C)</p></td>
+</tr>
+<tr class="row-odd"></tr>
 <tr class="row-even"><td colspan="4" rowspan="2"><p><strong>Non-atomic only</strong></p></td>
 </tr>
 <tr class="row-odd"></tr>
-<tr class="row-even"><td rowspan="2"><p>r</p></td>
+<tr class="row-even"><td rowspan="2"><p>R</p></td>
 <td rowspan="2"><p>relation</p></td>
 <td rowspan="2"><p>Express facts, statements,</p>
 <p>questions, orders, …</p>
 </td>
-<td rowspan="2"><p><strong>(is/p berlin/c nice/c)</strong></p></td>
+<td rowspan="2"><p><strong>(is/P berlin/C nice/C)</strong></p></td>
 </tr>
 <tr class="row-odd"></tr>
-<tr class="row-even"><td><p>d</p></td>
-<td><p>dependent</p></td>
-<td><p>Relation argument</p></td>
-<td><p><strong>(by/x scientists/c)</strong></p></td>
-</tr>
-<tr class="row-odd"><td rowspan="2"><p>s</p></td>
+<tr class="row-even"><td rowspan="2"><p>S</p></td>
 <td rowspan="2"><p>specifier</p></td>
 <td rowspan="2"><p>Relation specification</p>
 <p>(e.g. condition, time, …)</p>
 </td>
-<td rowspan="2"><p><strong>(in/t 1976/c)</strong></p></td>
+<td rowspan="2"><p><strong>(in/T 1976/C)</strong></p></td>
 </tr>
-<tr class="row-even"></tr>
+<tr class="row-odd"></tr>
 </tbody>
 </table>
 </div>
@@ -306,30 +296,36 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>(m  c)</p></td>
-<td><p>c</p></td>
+<tr class="row-even"><td><p>(B  C  C+)</p></td>
+<td><p>C</p></td>
 </tr>
-<tr class="row-odd"><td><p>(b  c  c+)</p></td>
-<td><p>c</p></td>
+<tr class="row-odd"><td><p>(M  C)</p></td>
+<td><p>C</p></td>
 </tr>
-<tr class="row-even"><td><p>(w  m)</p></td>
-<td><p>m</p></td>
+<tr class="row-even"><td><p>(M  M)</p></td>
+<td><p>M</p></td>
 </tr>
-<tr class="row-odd"><td><p>(a  p)</p></td>
-<td><p>p</p></td>
+<tr class="row-odd"><td><p>(M  P)</p></td>
+<td><p>P</p></td>
 </tr>
-<tr class="row-even"><td><p>(p  [crds]+)</p></td>
-<td><p>r</p></td>
+<tr class="row-even"><td><p>(M  T)</p></td>
+<td><p>T</p></td>
 </tr>
-<tr class="row-odd"><td><p>(x  [cr]+)</p></td>
-<td><p>d</p></td>
+<tr class="row-odd"><td><p>(P  [CRS]+)</p></td>
+<td><p>R</p></td>
 </tr>
-<tr class="row-even"><td><p>(t  [cr]+)</p></td>
-<td><p>s</p></td>
+<tr class="row-even"><td><p>(T  [CR]+)</p></td>
+<td><p>S</p></td>
+</tr>
+<tr class="row-odd"><td><p>(J  C+)</p></td>
+<td><p>C</p></td>
+</tr>
+<tr class="row-even"><td><p>(J  R+)</p></td>
+<td><p>R</p></td>
 </tr>
 </tbody>
 </table>
-<p>We use the notation of regular expressions: the symbol <code class="docutils literal notranslate"><span class="pre">+</span></code> is used to denote an arbitrary number of entities with the type that precedes it, while square brackets indicate several possibilities (for instance, <code class="docutils literal notranslate"><span class="pre">[cr]+</span></code> means “at least one of any of both <code class="docutils literal notranslate"><span class="pre">c</span></code> or <code class="docutils literal notranslate"><span class="pre">r</span></code> types).</p>
+<p>We use the notation of regular expressions: the symbol <code class="docutils literal notranslate"><span class="pre">+</span></code> is used to denote an arbitrary number of entities with the type that precedes it, while square brackets indicate several possibilities (for instance, <code class="docutils literal notranslate"><span class="pre">[CR]+</span></code> means “at least one of any of both <code class="docutils literal notranslate"><span class="pre">C</span></code> or <code class="docutils literal notranslate"><span class="pre">R</span></code> types).</p>
 </div>
 <div class="section" id="subtypes">
 <h2>Subtypes<a class="headerlink" href="#subtypes" title="Permalink to this headline">¶</a></h2>
@@ -348,25 +344,25 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>cc</p></td>
+<tr class="row-even"><td><p>Cc</p></td>
 <td><p>common</p></td>
-<td><p>apple/cc</p></td>
+<td><p>apple/Cc</p></td>
 </tr>
-<tr class="row-odd"><td><p>cp</p></td>
+<tr class="row-odd"><td><p>Cp</p></td>
 <td><p>proper</p></td>
-<td><p>mary/cp</p></td>
+<td><p>mary/Cp</p></td>
 </tr>
-<tr class="row-even"><td><p>cn</p></td>
+<tr class="row-even"><td><p>Cn</p></td>
 <td><p>number</p></td>
-<td><p>27/cn</p></td>
+<td><p>27/Cn</p></td>
 </tr>
-<tr class="row-odd"><td><p>ci</p></td>
+<tr class="row-odd"><td><p>Ci</p></td>
 <td><p>pronoun</p></td>
-<td><p>she/ci</p></td>
+<td><p>she/Ci</p></td>
 </tr>
-<tr class="row-even"><td><p>cw</p></td>
+<tr class="row-even"><td><p>Cw</p></td>
 <td><p>interrogative</p></td>
-<td><p>who/cw</p></td>
+<td><p>who/Cw</p></td>
 </tr>
 </tbody>
 </table>
@@ -386,25 +382,17 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>pd</p></td>
+<tr class="row-even"><td><p>Pd</p></td>
 <td><p>declarative</p></td>
-<td><p>is/pd</p></td>
+<td><p>is/Pd</p></td>
 </tr>
-<tr class="row-odd"><td><p>p?</p></td>
+<tr class="row-odd"><td><p>P?</p></td>
 <td><p>interrogative</p></td>
-<td><p>is/p?</p></td>
+<td><p>is/P?</p></td>
 </tr>
-<tr class="row-even"><td><p>p!</p></td>
+<tr class="row-even"><td><p>P!</p></td>
 <td><p>imperative</p></td>
-<td><p>go/p!</p></td>
-</tr>
-<tr class="row-odd"><td><p>pc</p></td>
-<td><p>conceptual</p></td>
-<td><p>go/pc</p></td>
-</tr>
-<tr class="row-even"><td><p>pm</p></td>
-<td><p>meta</p></td>
-<td><p>and/pm</p></td>
+<td><p>go/P!</p></td>
 </tr>
 </tbody>
 </table>
@@ -424,39 +412,13 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>bp</p></td>
+<tr class="row-even"><td><p>Bp</p></td>
 <td><p>possessive</p></td>
-<td><p>‘s/bp</p></td>
+<td><p>‘s/Bp</p></td>
 </tr>
-<tr class="row-odd"><td><p>br</p></td>
+<tr class="row-odd"><td><p>Br</p></td>
 <td><p>relational</p></td>
-<td><p>in/br</p></td>
-</tr>
-<tr class="row-even"><td><p>b+</p></td>
-<td><p>enumerative</p></td>
-<td><p>and/b+</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="auxiliary">
-<h3>Auxiliary<a class="headerlink" href="#auxiliary" title="Permalink to this headline">¶</a></h3>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 24%" />
-<col style="width: 40%" />
-<col style="width: 36%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Code</p></th>
-<th class="head"><p>Subtype</p></th>
-<th class="head"><p>Example</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>an</p></td>
-<td><p>negation</p></td>
-<td><p>not/an</p></td>
+<td><p>in/Br</p></td>
 </tr>
 </tbody>
 </table>
@@ -476,21 +438,29 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>ma</p></td>
+<tr class="row-even"><td><p>Ma</p></td>
 <td><p>adjective</p></td>
-<td><p>green/ma</p></td>
+<td><p>green/Ma</p></td>
 </tr>
-<tr class="row-odd"><td><p>mp</p></td>
+<tr class="row-odd"><td><p>Mp</p></td>
 <td><p>possessive</p></td>
-<td><p>my/mp</p></td>
+<td><p>my/Mp</p></td>
 </tr>
-<tr class="row-even"><td><p>md</p></td>
+<tr class="row-even"><td><p>Md</p></td>
 <td><p>determinant</p></td>
-<td><p>the/md</p></td>
+<td><p>the/Md</p></td>
 </tr>
-<tr class="row-odd"><td><p>mn</p></td>
+<tr class="row-odd"><td><p>M#</p></td>
 <td><p>number</p></td>
-<td><p>100/mn</p></td>
+<td><p>100/M#</p></td>
+</tr>
+<tr class="row-even"><td><p>Mn</p></td>
+<td><p>negation</p></td>
+<td><p>not/Mn</p></td>
+</tr>
+<tr class="row-odd"><td><p>Mv</p></td>
+<td><p>verbal</p></td>
+<td><p>will/Mv</p></td>
 </tr>
 </tbody>
 </table>
@@ -510,33 +480,33 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>t?</p></td>
+<tr class="row-even"><td><p>T?</p></td>
 <td><p>conditional</p></td>
-<td><p>if/tc</p></td>
+<td><p>if/Tc</p></td>
 </tr>
-<tr class="row-odd"><td><p>tt</p></td>
+<tr class="row-odd"><td><p>Tt</p></td>
 <td><p>temporal</p></td>
-<td><p>when/tt</p></td>
+<td><p>when/Tt</p></td>
 </tr>
-<tr class="row-even"><td><p>tl</p></td>
+<tr class="row-even"><td><p>Tl</p></td>
 <td><p>local</p></td>
-<td><p>where/tl</p></td>
+<td><p>where/Tl</p></td>
 </tr>
-<tr class="row-odd"><td><p>tm</p></td>
+<tr class="row-odd"><td><p>Tm</p></td>
 <td><p>modal</p></td>
-<td><p>modal/tm</p></td>
+<td><p>modal/Tm</p></td>
 </tr>
-<tr class="row-even"><td><p>t&gt;</p></td>
+<tr class="row-even"><td><p>T&gt;</p></td>
 <td><p>causal</p></td>
-<td><p>because/t&gt;</p></td>
+<td><p>because/T&gt;</p></td>
 </tr>
-<tr class="row-odd"><td><p>t=</p></td>
+<tr class="row-odd"><td><p>T=</p></td>
 <td><p>comparative</p></td>
-<td><p>like/t=</p></td>
+<td><p>like/T=</p></td>
 </tr>
-<tr class="row-even"><td><p>tc</p></td>
+<tr class="row-even"><td><p>Tc</p></td>
 <td><p>concessive</p></td>
-<td><p>although/tc</p></td>
+<td><p>although/Tc</p></td>
 </tr>
 </tbody>
 </table>
@@ -549,8 +519,8 @@
 <h3>Concept<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <p>When present, the first additional information subpart for concepts indicates number, with the following codes:</p>
 <ul class="simple">
-<li><p><strong>s</strong>: singular, example: apple/cc.s</p></li>
-<li><p><strong>p</strong>: plural, example: apples/cc.p</p></li>
+<li><p><strong>s</strong>: singular, example: apple/Cc.s</p></li>
+<li><p><strong>p</strong>: plural, example: apples/Cc.p</p></li>
 </ul>
 </div>
 <div class="section" id="id2">
@@ -569,7 +539,7 @@
 <li><p><strong>r</strong>: clausal complement</p></li>
 </ul>
 <p>These codes are used to build strings, where each character corresponds to the parameter of the relation in the equivalent position. For example, consider the hyperedge:</p>
-<p>(is/pd.sc (the/md sky/cc.s) blue/ca.s)</p>
+<p>(is/Pd.sc (the/Md sky/Cc.s) blue/Ca.s)</p>
 <p>The <em>sc</em> subpart indicates that the first parameter (“the sky”) plays the role of subject, and the second one (“blue”), plays the role of subject complement.</p>
 <p>When present, the second additional information subpart for predicates is used to specify the features of the verb underlying the predicate. The following 7 features are specified:</p>
 <ul class="simple">
@@ -582,13 +552,13 @@
 <li><p><strong>verb type</strong></p></li>
 </ul>
 <p>A string is built in the above order to specify the verb features of a predicate. Any feature can be left unspecified, by using a dash character (-). For example, consider the hyperedge:</p>
-<p>(<strong>is/p?.cs.|f–3s-</strong> (what/mw time/cc.s) it/ci)</p>
+<p>(<strong>is/P?.cs.|f–3s-</strong> (what/Mw time/Cc.s) it/Ci)</p>
 <p>The predicate specifies four verb features: present tense (|), finite form (f), third person (3) and singular number (s).</p>
 </div>
 <div class="section" id="id3">
-<h3>Auxiliary<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
-<p>When present, the first additional information subpart for auxiliaries is used to specify the features of the verb underlying the auxiliary. The notation is exactly the same as the one used for predicates, but in predicates this corresponds to the second additional information subpart. For example, consider the non-atomic predicate:</p>
-<p>(have/av.|f—– (been/av.&lt;pf—- tracking/pd.sox.|pg—-))</p>
+<h3>Modifier<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>When the modifer is verbal, the first additional information subpart is used to specify the features of the underlying verb. The notation is exactly the same as the one used for predicates, but in predicates this corresponds to the second additional information subpart. For example, consider the non-atomic predicate:</p>
+<p>(have/Mv.|f—– (been/Mv.&lt;pf—- tracking/Pd.sox.|pg—-))</p>
 </div>
 <div class="section" id="id4">
 <h3>Builder<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
@@ -598,7 +568,7 @@
 <li><p><strong>a</strong>: auxiliary concept</p></li>
 </ul>
 <p>These codes are used to build strings, where each character corresponds to the parameter of the builder in the equivalent position. For example, consider the hyperedge:</p>
-<p>(of/br.ma founder/cc.s psychoanalysis/cc.s)</p>
+<p>(of/Br.ma founder/Cc.s psychoanalysis/Cc.s)</p>
 <p>The <em>ma</em> subpart indicates that the first concept following the builder should be considered a main concept, and the next one auxiliary. This means that “founder of psychoanalysis” is a type of “founder”. In other words, auxiliary concepts serve the role of making the main ones more specific.</p>
 </div>
 </div>
@@ -610,14 +580,14 @@
 <li><p>To distinguish atoms that have different meanings, but would otherwise correspond to the exact same string.</p></li>
 </ol>
 <p>In the first case, we can specify that an atom corresponds to an English word like this:</p>
-<p>sky/cp.s/en</p>
+<p>sky/Cp.s/en</p>
 <p>Or to a German word like this:</p>
-<p>himmel/cp.s/de</p>
+<p>himmel/Cp.s/de</p>
 <p>Or that it is a special atom defined by Graphbrain:</p>
-<p>+/b/.</p>
+<p>+/B/.</p>
 <p>In the second case, another subparts can be added to provide a distinction. For example, suppose we want to distinguish Cambridge (UK) from Cambridge (Mass., USA). We could use:</p>
-<p>cambridge/cp.s/en.1</p>
-<p>cambridge/cp.s/en.2</p>
+<p>cambridge/Cp.s/en.1</p>
+<p>cambridge/Cp.s/en.2</p>
 </div>
 <div class="section" id="special-atoms">
 <h2>Special atoms<a class="headerlink" href="#special-atoms" title="Permalink to this headline">¶</a></h2>
@@ -634,11 +604,11 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>+/b/.</p></td>
+<tr class="row-even"><td><p>+/B/.</p></td>
 <td><p>Define compound nouns</p></td>
-<td><p>(+/b/. alan/cp.s turing/cp.s)</p></td>
+<td><p>(+/B/. alan/Cp.s turing/Cp.s)</p></td>
 </tr>
-<tr class="row-odd"><td><p>:/b/.</p></td>
+<tr class="row-odd"><td><p>:/B/.</p></td>
 <td><p>Tangential concept</p></td>
 <td></td>
 </tr>

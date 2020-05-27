@@ -219,6 +219,18 @@ and the location_string is the path to the LevelDB folder.</p>
 <em class="property">class </em><code class="sig-prename descclassname">graphbrain.hyperedge.</code><code class="sig-name descname">Atom</code><a class="headerlink" href="#graphbrain.hyperedge.Atom" title="Permalink to this definition">¶</a></dt>
 <dd><p>Atomic hyperedge.</p>
 <dl class="attribute">
+<dt id="graphbrain.hyperedge.Atom.all_atoms">
+<code class="sig-name descname">all_atoms</code><a class="headerlink" href="#graphbrain.hyperedge.Atom.all_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of all the atoms contained in the edge. Unlike
+atoms(), which does not return repeated atoms, all_atoms() does
+return repeated atoms if they are different objects.</p>
+<p>For example, consider the edge:
+(the/Md (of/Br mayor/Cc (the/Md city/Cs)))
+in this case, edge.all_atoms() returns:
+[the/Md, of/Br, mayor/Cc, the/Md, city/Cs]</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="graphbrain.hyperedge.Atom.argroles">
 <code class="sig-name descname">argroles</code><a class="headerlink" href="#graphbrain.hyperedge.Atom.argroles" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the argument roles string of the edge, if it exists.
@@ -231,17 +243,21 @@ Otherwise returns empty string.</p>
 <dd><p>Returns the first atom found in the edge that has the given
 ‘atom_type’, or whose type starts with ‘atom_type’.
 If no such atom is found, returns None.</p>
-<p>For example, given the edge (+/b a/cn b/cp) and the ‘atom_type’
-c, this function returns:
-a/cn
-If the ‘atom_type’ is ‘cp’, the it will return:
-b/cp</p>
+<p>For example, given the edge (+/B a/Cn b/Bp) and the ‘atom_type’
+C, this function returns:
+a/Cn
+If the ‘atom_type’ is ‘Cp’, the it will return:
+b/Cp</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="graphbrain.hyperedge.Atom.atoms">
 <code class="sig-name descname">atoms</code><a class="headerlink" href="#graphbrain.hyperedge.Atom.atoms" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns set of atoms contained in edge.</p>
+<dd><p>Returns the set of atoms contained in the edge.</p>
+<p>For example, consider the edge:
+(the/Md (of/Br mayor/Cc (the/Md city/Cs)))
+in this case, edge.atoms() returns:
+[the/Md, of/Br, mayor/Cc, city/Cs]</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -273,6 +289,13 @@ deep – search recursively (default False)</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="graphbrain.hyperedge.Atom.insert_argrole">
+<code class="sig-name descname">insert_argrole</code><a class="headerlink" href="#graphbrain.hyperedge.Atom.insert_argrole" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an atom with the given argrole inserted at the specified
+position. Same restrictions as in replace_argroles() apply.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="graphbrain.hyperedge.Atom.insert_first_argument">
 <code class="sig-name descname">insert_first_argument</code><a class="headerlink" href="#graphbrain.hyperedge.Atom.insert_first_argument" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns an edge built by placing ‘argument’ as the first item
@@ -297,7 +320,8 @@ returns:
 <code class="sig-name descname">is_full_pattern</code><a class="headerlink" href="#graphbrain.hyperedge.Atom.is_full_pattern" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if every atom is a pattern matcher.</p>
 <p>Pattern matchers are:
-‘*’, ‘&#64;’, ‘&amp;’’ and ‘…’</p>
+‘*’, ‘&#64;’, ‘&amp;’, ‘…’ and variables (atom label starting with an
+uppercase letter)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -306,7 +330,8 @@ returns:
 <dd><p>Check if this edge defines a pattern, i.e. if it includes at least
 one pattern matcher.</p>
 <p>Pattern matchers are:
-‘*’, ‘&#64;’, ‘&amp;’’ and ‘…’</p>
+‘*’, ‘&#64;’, ‘&amp;’, ‘…’ and variables (atom label starting with an
+uppercase letter)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -320,7 +345,7 @@ one pattern matcher.</p>
 <code class="sig-name descname">main_concepts</code><a class="headerlink" href="#graphbrain.hyperedge.Atom.main_concepts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the list of main concepts in an concept edge.
 A main concept is a central concept in a built concept, e.g.:
-in (‘s/bp.am zimbabwe/mp economy/cn.s), economy/cn.s is the main
+in (‘s/Bp.am zimbabwe/Mp economy/Cn.s), economy/Cn.s is the main
 concept.</p>
 <p>If entity is not an edge, or its connector is not of type builder,
 or the builder does not contain concept role annotations, or no
@@ -343,6 +368,13 @@ predicate. Returns None otherwise.</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="graphbrain.hyperedge.Atom.replace_argroles">
+<code class="sig-name descname">replace_argroles</code><a class="headerlink" href="#graphbrain.hyperedge.Atom.replace_argroles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an atom with the argroles replaced with the provided string.
+Returns same atom if the atom does not contain a role part.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="graphbrain.hyperedge.Atom.replace_atom">
 <code class="sig-name descname">replace_atom</code><a class="headerlink" href="#graphbrain.hyperedge.Atom.replace_atom" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns edge built by replacing every instance of ‘old’ in
@@ -361,19 +393,19 @@ this edge with ‘new’.</p>
 <dd><p>Returns the role of this atom as a list of the subrole strings.</p>
 <p>The role of an atom is its second part, right after the root.
 A dot notation is used to separate the subroles. For example,
-the role of graphbrain/cp.s/1 is:</p>
+the role of graphbrain/Cp.s/1 is:</p>
 <blockquote>
-<div><p>cp.s</p>
+<div><p>Cp.s</p>
 </div></blockquote>
 <p>For this case, this function returns:</p>
 <blockquote>
-<div><p>[‘cp’, ‘s’]</p>
+<div><p>[‘Cp’, ‘S’]</p>
 </div></blockquote>
 <p>If the atom only has a root, it is assumed to be a concept.
 In this case, this function returns the role with just the
 generic concept type:</p>
 <blockquote>
-<div><p>[‘c’].</p>
+<div><p>[‘C’].</p>
 </div></blockquote>
 </dd></dl>
 
@@ -381,7 +413,7 @@ generic concept type:</p>
 <dt id="graphbrain.hyperedge.Atom.root">
 <code class="sig-name descname">root</code><a class="headerlink" href="#graphbrain.hyperedge.Atom.root" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extracts the root of an atom
-(e.g. the root of graphbrain/c/1 is graphbrain).</p>
+(e.g. the root of graphbrain/C/1 is graphbrain).</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -418,9 +450,9 @@ the string representation.</p>
 <code class="sig-name descname">type</code><a class="headerlink" href="#graphbrain.hyperedge.Atom.type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the type of the atom.</p>
 <p>The type of an atom is its first subrole. For example, the
-type of graphbrain/cp.s/1 is ‘cp’.</p>
+type of graphbrain/Cp.s/1 is ‘Cp’.</p>
 <p>If the atom only has a root, it is assumed to be a concept.
-In this case, this function returns the generic concept type: ‘c’.</p>
+In this case, this function returns the generic concept type: ‘C’.</p>
 </dd></dl>
 
 </dd></dl>
@@ -429,6 +461,18 @@ In this case, this function returns the generic concept type: ‘c’.</p>
 <dt id="graphbrain.hyperedge.Hyperedge">
 <em class="property">class </em><code class="sig-prename descclassname">graphbrain.hyperedge.</code><code class="sig-name descname">Hyperedge</code><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Non-atomic hyperedge.</p>
+<dl class="attribute">
+<dt id="graphbrain.hyperedge.Hyperedge.all_atoms">
+<code class="sig-name descname">all_atoms</code><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.all_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of all the atoms contained in the edge. Unlike
+atoms(), which does not return repeated atoms, all_atoms() does
+return repeated atoms if they are different objects.</p>
+<p>For example, consider the edge:
+(the/md (of/br mayor/cc (the/md city/cs)))
+in this case, edge.all_atoms() returns:
+[the/md, of/br, mayor/cc, the/md, city/cs]</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="graphbrain.hyperedge.Hyperedge.argroles">
 <code class="sig-name descname">argroles</code><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.argroles" title="Permalink to this definition">¶</a></dt>
@@ -442,17 +486,21 @@ Otherwise returns empty string.</p>
 <dd><p>Returns the first atom found in the edge that has the given
 ‘atom_type’, or whose type starts with ‘atom_type’.
 If no such atom is found, returns None.</p>
-<p>For example, given the edge (+/b a/cn b/cp) and the ‘atom_type’
+<p>For example, given the edge (+/B a/Cn b/Cp) and the ‘atom_type’
 c, this function returns:
-a/cn
-If the ‘atom_type’ is ‘cp’, the it will return:
-b/cp</p>
+a/Cn
+If the ‘atom_type’ is ‘Cp’, the it will return:
+b/Cp</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="graphbrain.hyperedge.Hyperedge.atoms">
 <code class="sig-name descname">atoms</code><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.atoms" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns set of atoms contained in edge.</p>
+<dd><p>Returns the set of atoms contained in the edge.</p>
+<p>For example, consider the edge:
+(the/md (of/br mayor/cc (the/md city/cs)))
+in this case, edge.atoms() returns:
+[the/md, of/br, mayor/cc, city/cs]</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -501,6 +549,21 @@ The edge is searched recursively, so the atom can appear at any depth.</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="graphbrain.hyperedge.Hyperedge.insert_argrole">
+<code class="sig-name descname">insert_argrole</code><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.insert_argrole" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an edge with the given argrole inserted at the specified
+position in the argroles of the connector atom.
+Same restrictions as in replace_argroles() apply.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="graphbrain.hyperedge.Hyperedge.insert_edge_with_argrole">
+<code class="sig-name descname">insert_edge_with_argrole</code><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.insert_edge_with_argrole" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new edge with the provided edge and its argroles inserted
+at the specified position.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="graphbrain.hyperedge.Hyperedge.insert_first_argument">
 <code class="sig-name descname">insert_first_argument</code><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.insert_first_argument" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns an edge built by placing ‘argument’ as the first item
@@ -525,7 +588,8 @@ returns:
 <code class="sig-name descname">is_full_pattern</code><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.is_full_pattern" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if every atom is a pattern matcher.</p>
 <p>Pattern matchers are:
-‘*’, ‘&#64;’, ‘&amp;’’ and ‘…’</p>
+‘*’, ‘&#64;’, ‘&amp;’, ‘…’ and variables (atom label starting with an
+uppercase letter)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -534,7 +598,8 @@ returns:
 <dd><p>Check if this edge defines a pattern, i.e. if it includes at least
 one pattern matcher.</p>
 <p>Pattern matchers are:
-‘*’, ‘&#64;’, ‘&amp;’’ and ‘…’</p>
+‘*’, ‘&#64;’, ‘&amp;’, ‘…’ and variables (atom label starting with an
+uppercase letter)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -548,7 +613,7 @@ one pattern matcher.</p>
 <code class="sig-name descname">main_concepts</code><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.main_concepts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the list of main concepts in an concept edge.
 A main concept is a central concept in a built concept, e.g.:
-in (‘s/bp.am zimbabwe/mp economy/cn.s), economy/cn.s is the main
+in (‘s/Bp.am zimbabwe/Mp economy/Cn.s), economy/Cn.s is the main
 concept.</p>
 <p>If entity is not an edge, or its connector is not of type builder,
 or the builder does not contain concept role annotations, or no
@@ -582,6 +647,14 @@ before – controls how outer edges are handled, as per above.
 <dd><p>Returns predicate atom if this edge is a non-atom of type
 relation or predicate. Returns itself if it is an atom of type
 predicate. Returns None otherwise.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="graphbrain.hyperedge.Hyperedge.replace_argroles">
+<code class="sig-name descname">replace_argroles</code><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.replace_argroles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an edge with the argroles of the connector atom replaced
+with the provided string.
+Returns same edge if the atom does not contain a role part.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -643,9 +716,9 @@ the string representation.</p>
 <p>The type is derived from the type of the
 connector. This applies recursively, as necessary.</p>
 <p>For example:
-(is/pd.so graphbrain/cp.s great/c) has type ‘rd’
-(red/m shoes/cn.p) has type ‘cn’
-(before/tt noon/c) has type ‘st’</p>
+(is/Pd.so graphbrain/Cp.s great/C) has type ‘Rd’
+(red/M shoes/Cn.p) has type ‘Cn’
+(before/Tt noon/C) has type ‘St’</p>
 </dd></dl>
 
 </dd></dl>
@@ -667,8 +740,8 @@ by employing special atoms:</p>
 <p>-&gt; ‘&amp;’ represents an edge wildcard (matches any edge)</p>
 <p>-&gt; ‘…’ at the end indicates an open-ended pattern.</p>
 <p>The pattern can be any valid hyperedge, including the above special atoms.
-Examples: (is/pd graphbrain/c &#64;)
-(says/pd * …)</p>
+Examples: (is/Pd graphbrain/C &#64;)
+(says/Pd * …)</p>
 </dd></dl>
 
 <dl class="function">
@@ -701,14 +774,14 @@ by employing special atoms:</p>
 <p>The three wildcards (‘*’, ‘&#64;’ and ‘&amp;’) can be used to specify variables,
 for example ‘*x’, ‘&amp;claim’ or <a class="reference external" href="mailto:'&#37;&#52;&#48;actor">‘<span>&#64;</span>actor</a>’. In case of a match, these
 variables are assigned the hyperedge they correspond to. For example,</p>
-<p>(1) the edge: (is/pd (my/mp name/cn) mary/cp)
-applied to the pattern: (is/pd (my/mp name/cn) *name)
-produces the result: {‘name’, mary/cp}</p>
-<p>(2) the edge: (is/pd (my/mp name/cn) mary/cp)
-applied to the pattern: (is/pd (my/mp name/cn) &amp;name)
+<p>(1) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
+applied to the pattern: (is/Pd (my/Mp name/Cn) *NAME)
+produces the result: {‘NAME’, mary/Cp}</p>
+<p>(2) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
+applied to the pattern: (is/Pd (my/Mp name/Cn) &amp;NAME)
 produces the result: {}</p>
-<p>(3) the edge: (is/pd (my/mp name/cn) mary/cp)
-applied to the pattern: (is/pd &#64; *name)
+<p>(3) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
+applied to the pattern: (is/Pd &#64; *NAME)
 produces the result: None</p>
 </dd></dl>
 
@@ -719,7 +792,7 @@ produces the result: None</p>
 Returns None if argument role cannot be determined.</p>
 <p>Example:
 The argument role of argument at position 0 in:
-(is/pd.sc graphbrain/c great/c)
+(is/Pd.sc graphbrain/C great/C)
 is:
 s</p>
 </dd></dl>
@@ -958,7 +1031,7 @@ by employing special atoms:
 -&gt; ‘&amp;’ represents a non-atomic wildcard (matches any non-atom)
 -&gt; ‘…’ at the end indicates an open-ended pattern.</p>
 <p>The pattern can be a string, that must represent an edge.
-Examples: ‘(is/pd graphbrain/c &#64;)’
+Examples: ‘(is/Pd graphbrain/C &#64;)’
 ‘(says/pd * …)’</p>
 <p>Atomic patterns can also be used to match all edges in the
 hypergraph (*), all atoms (&#64;), and all non-atoms (&amp;).</p>
@@ -1071,6 +1144,8 @@ same as main_edge if coreference resolution is not performed.</p>
 in the main_edge to their lemmas.</p>
 <p>-&gt; text: the string of natural language text corresponding to the
 main_edge, i.e.: the sentence itself.</p>
+<p>-&gt; edges_text: a dictionary of all edges and subedges to their
+corresponding text.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1128,9 +1203,9 @@ a set that can also contain itself.</p>
 subpredicates, to expose the outmost and leftmost concept that can be
 found. May be the edge itself.</p>
 <p>For example:</p>
-<p>(against/t (the/m (of/b treaty/c paris/c)))</p>
+<p>(against/T (the/M (of/B treaty/C paris/C)))</p>
 <p>becomes</p>
-<p>(the/m (of/b treaty/c paris/c))</p>
+<p>(the/M (of/B treaty/C paris/C))</p>
 </dd></dl>
 
 </div>
@@ -1187,9 +1262,9 @@ found by recursively descending the hyperedge, always choosing the
 subedge immediatly after the connector.</p>
 <p>This is useful, for example, to find the lemma of the central verb
 in a non-atomic predicate edge. For example:</p>
-<p>(not/a (is/a going/p))</p>
+<p>(not/A (is/A going/P))</p>
 <p>could return</p>
-<p>go/p</p>
+<p>go/P</p>
 </dd></dl>
 
 <dl class="function">
@@ -1241,7 +1316,7 @@ some external source of information of by inferring new knowledge from
 what is already contained in the hypregraph.</p>
 <dl class="method">
 <dt id="graphbrain.agents.agent.Agent.add">
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">primary=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/agents/agent.html#Agent.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.add" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">edge</em>, <em class="sig-param">primary=True</em>, <em class="sig-param">count=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/agents/agent.html#Agent.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tell agent to add this edge to the hypergraph.</p>
 </dd></dl>
 

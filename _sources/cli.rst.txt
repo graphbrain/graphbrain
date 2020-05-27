@@ -67,7 +67,7 @@ A knowledge agent is a program that manipulates an hypergraph in some way. It ca
 
 It produces new hyperedges such as::
 
-   (type_of/p/. city/c (of/b city/c berlin/c))
+   (type_of/P/. city/C (of/B city/C berlin/C))
 
 Certain agents use outside sources to introduce knowledge into hypergraphs. For example, the *txt_parser* agent receives as input a simple text file and converters each sentence that it detects in it into an hyperedge. You can run it like this::
 

@@ -97,7 +97,7 @@ For example, with the current hypergraph, executing the below code would produce
 ::
 
     # '...' at the end indicates that the edge may have an arbitrary number of extra entities
-    for edge in hg.search('((is/av.|f--3s-/en playing/pd.so.|pg----/en) ...)'):
+    for edge in hg.search('((is/Mv.|f--3s-/en playing/Pd.so.|pg----/en) ...)'):
         show(edge, style='oneline')
 
 .. raw:: html
