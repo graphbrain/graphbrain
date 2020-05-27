@@ -39,7 +39,18 @@ class TestHyperedge(unittest.TestCase):
                          hedge('xxx/77/yyy'))
 
     def test_str2atom(self):
-        self.assertEqual(str2atom('graph brain/(1).'), 'graph_brain__1__')
+        self.assertEqual(str2atom('abc'), 'abc')
+        self.assertEqual(str2atom('abc%'), 'abc%25')
+        self.assertEqual(str2atom('/abc'), '%2fabc')
+        self.assertEqual(str2atom('a bc'), 'a%20bc')
+        self.assertEqual(str2atom('ab(c'), 'ab%28c')
+        self.assertEqual(str2atom('abc)'), 'abc%29')
+        self.assertEqual(str2atom('.abc'), '%2eabc')
+        self.assertEqual(str2atom('a*bc'), 'a%2abc')
+        self.assertEqual(str2atom('ab&c'), 'ab%26c')
+        self.assertEqual(str2atom('abc@'), 'abc%40')
+        self.assertEqual(
+            str2atom('graph brain/(1).'), 'graph%20brain%2f%281%29%2e')
 
     def test_split_edge_str(self):
         self.assertEqual(split_edge_str('is graphbrain/1 great/1'),
@@ -85,7 +96,8 @@ class TestHyperedge(unittest.TestCase):
             '(src graphbrain (is graphbrain great))')
 
     def test_label(self):
-        self.assertEqual(hedge('some_thing/Cn.s/.').label(), 'some thing')
+        self.assertEqual(hedge('graph%20brain%2f%281%29%2e/Cn.s/.').label(),
+                               'graph brain/(1).')
         self.assertEqual(hedge('(red/M shoes/C)').label(), 'red shoes')
         self.assertEqual(hedge('(of/B capital/C germany/C)').label(),
                          'capital of germany')

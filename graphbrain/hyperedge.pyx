@@ -6,11 +6,17 @@ import graphbrain.constants as const
 def str2atom(s):
     """Converts a string into a valid atom."""
     atom = s.lower()
-    atom = atom.replace('/', '_')
-    atom = atom.replace(' ', '_')
-    atom = atom.replace('(', '_')
-    atom = atom.replace(')', '_')
-    atom = atom.replace('.', '_')
+
+    atom = atom.replace('%', '%25')
+    atom = atom.replace('/', '%2f')
+    atom = atom.replace(' ', '%20')
+    atom = atom.replace('(', '%28')
+    atom = atom.replace(')', '%29')
+    atom = atom.replace('.', '%2e')
+    atom = atom.replace('*', '%2a')
+    atom = atom.replace('&', '%26')
+    atom = atom.replace('@', '%40')
+
     return atom
 
 
@@ -874,7 +880,19 @@ class Atom(Hyperedge):
 
     def label(self):
         """Generate human-readable label from entity."""
-        return self.root().replace('_', ' ')
+        label = self.root()
+
+        label = label.replace('%25', '%')
+        label = label.replace('%2f', '/')
+        label = label.replace('%20', ' ')
+        label = label.replace('%28', '(')
+        label = label.replace('%29', ')')
+        label = label.replace('%2e', '.')
+        label = label.replace('%2a', '*')
+        label = label.replace('%26', '&')
+        label = label.replace('%40', '@')
+
+        return label
 
     def atom(self):
         return self

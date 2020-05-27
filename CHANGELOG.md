@@ -18,6 +18,7 @@
 - Logic engine, HG.eval().
 
 ### Changed
+- Special characters in atoms are now percent-encoded.
 - parse() now returns a dictionary that includes inferred edges.
 - parse() now returns a dictionary of edges to text.
 - English parser improved.
