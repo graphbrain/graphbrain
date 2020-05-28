@@ -117,11 +117,12 @@ def _matches_wildcard(edge, wildcard):
         # type match
         wrole = wildcard.role()
         wtype = wrole[0]
-        eatom = edge.atom()
-        etype = eatom.type()
+        etype = edge.type()
         n = len(wtype)
         if len(etype) < n or etype[:n] != wtype:
             return False
+
+        eatom = edge.atom()
 
         if len(wrole) > 1:
             erole = eatom.role()
