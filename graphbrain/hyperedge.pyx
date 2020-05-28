@@ -203,6 +203,9 @@ def _match_by_argroles(edge, pattern, role_counts, matched=(), curvars={}):
         eitems = edge.edges_with_argrole(argrole)
         pitems = pattern.edges_with_argrole(argrole)
 
+    if len(pitems) == 0:
+        return [{}]
+
     if len(eitems) < n:
         return []
 

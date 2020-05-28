@@ -36,13 +36,13 @@ taxonomy
 
 **Languages**: agnostic
 
-Derives a taxonomy from concepts defined with builders of modifiers. For example, ``(of/br.ma founder/cc.s psychoanalysis/cc.s)`` is a type of ``founder/cc.s``, so the following hyperedge is added::
+Derives a taxonomy from concepts defined with builders of modifiers. For example, ``(of/Br.ma founder/Cc.s psychoanalysis/Cc.s)`` is a type of ``founder/Cc.s``, so the following hyperedge is added::
 
-   (type_of/p/. (of/br.ma founder/cc.s psychoanalysis/cc.s) founder/cc.s)
+   (type_of/P/. (of/Br.ma founder/Cc.s psychoanalysis/Cc.s) founder/Cc.s)
 
-Or, if we consider modifier-defined concepts such as ``(black/ma cat/cc.s)``::
+Or, if we consider modifier-defined concepts such as ``(black/Ma cat/Cc.s)``::
 
-   (type_of/p/. (black/ma cat/cc.s) cat/cc.s)
+   (type_of/P/. (black/Ma cat/Cc.s) cat/Cc.s)
 
 
 Coreference resolution
@@ -84,7 +84,7 @@ corefs_unidecode
 
 **Languages**: agnostic
 
-Performs `coreference resolution <https://graphbrain.net/reference/special-relations.html#coreferences>`_ for atoms that become equal after unidecode() is a applied to both labels. For example, it will create a coreference relation between ``über/c`` and ``uber/c``.
+Performs `coreference resolution <https://graphbrain.net/reference/special-relations.html#coreferences>`_ for atoms that become equal after unidecode() is a applied to both labels. For example, it will create a coreference relation between ``über/C`` and ``uber/C``.
 
 
 Actors, claims and conflicts
@@ -107,9 +107,9 @@ We define actors as specific entities that are capable of acting in some sense. 
 
 This agent transverses the entire hypergraph to identify actors, and then adds hyperedges like the following::
 
-   (actor/p/. mary/cp.s/en)
+   (actor/P/. mary/Cp.s/en)
 
-The above simply means that ``mary/cp.s/en`` was identified as an actor.
+The above simply means that ``mary/Cp.s/en`` was identified as an actor.
 
 claim_actors
 ------------
@@ -122,7 +122,7 @@ claim_actors
 
 Creates relations connecting claims to actors mentioned in the claim. For example, consider the sentence: "Mary says that John is nice." In this case, the claim "John is nice" (which is attributed to Mary), will be connected to John through a claim-actor relation. Claim-actor relations have the form::
 
-   (claim-actor/p/. *main_actor* *actor* *claim* *main_edge*)
+   (claim-actor/P/. *main_actor* *actor* *claim* *main_edge*)
 
 claims
 ------
@@ -137,29 +137,29 @@ Identifies hyperedges that represent a claim. Claims are sentences such as: "Nor
 
 More specifically, claims are detected according to the following criteria:
 
-1. Hyperedge is a relation with predicate of type ``pd``.
+1. Hyperedge is a relation with predicate of type ``Pd``.
 2. The deep predicate atom of the predicate hyperedge has a lemma belonging to a predetermined lists of verb lemmas that denote a claim (e.g.: "say", "claim").
 3. The hyperedge has a subject and a clausal complement. The first is used to identify the actor making the claim, the second the claim itself.
 
 Claim relations follow the format::
 
-   (claim/p/. *actor* *claim* *edge*)
+   (claim/P/. *actor* *claim* *edge*)
 
 Furthermore, simple anaphora resolution on the claim is performed (e.g. in "Pink Panther says that she loves pink.", the hyperedge for "she" is replaced with the hyperedge for "Pink Panther" in the claim). In these cases, pronouns are used to guess gender or nature of actors. Actors can be classified as female::
 
-   (female/p/. *actor*)
+   (female/P/. *actor*)
 
 Or as a group::
 
-   (group/p/. *actor*)
+   (group/P/. *actor*)
 
 Or as male::
 
-   (male/p/. *actor*)
+   (male/P/. *actor*)
 
 Or as non-human::
 
-   (non-human/p/. *actor*)
+   (non-human/P/. *actor*)
 
 conflicts
 ---------
@@ -174,15 +174,15 @@ Identifies hyperedges that represent a conflict. Conflicts are sentences such as
 
 More specifically, claims are detected according to the following criteria:
 
-1. Hyperedge is a relation with predicate of type ``pd``.
+1. Hyperedge is a relation with predicate of type ``Pd``.
 2. The deep predicate atom of the predicate hyperedge has a lemma belonging to a predetermined lists of verb lemmas that denote an expression of conflict (e.g.: "warn", "kill").
 3. The hyperedge has a subject and an object. The first is used to identify the actor originating the expression of conflict and the second the actor which is the target of this expression.
 4. [optional] Beyond subject and object, if any specifier arguments are present, and their trigger atoms belong to a predetermined list (e.g. "over", "against"), then topics of conflict are extracted from these specifiers.
 
 Conflict relations follow the format::
 
-   (conflict/p/. *actor_orig* *actor_targ* *edge*)
+   (conflict/P/. *actor_orig* *actor_targ* *edge*)
 
 These conflict relations are connected to their topics by further relations with the format::
 
-   (conflict-topic/p/. *actor_orig* *actor_targ* *concept* *edge*)
+   (conflict-topic/P/. *actor_orig* *actor_targ* *concept* *edge*)

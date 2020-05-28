@@ -18,33 +18,31 @@ Hyperedge types
 +======+===============+==============================+================================+
 + **Atomic or non-atomic**                                                             +
 +------+---------------+------------------------------+--------------------------------+
-| c    | concept       | Define atomic concepts       | **apple/c**                    |
+| C    | concept       | Define atomic concepts       | **apple/C**                    |
 +------+---------------+------------------------------+--------------------------------+
-| p    | predicate     | Build relations              | (**is/p** berlin/c nice/c)     |
+| P    | predicate     | Build relations              | (**is/P** berlin/C nice/C)     |
 +------+---------------+------------------------------+--------------------------------+
-| m    | modifier      | Modify a concept             | (**red/m** shoes/c)            |
+| M    | modifier      | Modify concepts, predicates, | (**red/M** shoes/C)            |
++      +               +                              +                                +
+|      |               | modifiers or triggers        |                                |
 +------+---------------+------------------------------+--------------------------------+
 + **Atomic only**                                                                      +
 +------+---------------+------------------------------+--------------------------------+
-| a    | auxiliary     | Modify a predicate           | (**not/a** is/p)               |
+| B    | builder       | Build concepts from concepts | (**of/B** capital/C germany/C) |
 +------+---------------+------------------------------+--------------------------------+
-| b    | builder       | Build concepts from concepts | (**of/b** capital/c germany/c) |
+| T    | trigger       | Build specifications         | (**in/T** 1994/C)              |
 +------+---------------+------------------------------+--------------------------------+
-| w    | meta-modifier | Modify a modifier            | (**very/w** large/m)           |
-+------+---------------+------------------------------+--------------------------------+
-| x    | subpredicate  | Auxiliary predicate          | (**by/x** john/c)              |
-+------+---------------+------------------------------+--------------------------------+
-| t    | trigger       | Build specifications         | (**in/t** 1994/c)              |
+| J    | conjunction   | Define sequences of concepts | (**and/J** meat/C potatoes/C)  |
++      +               +                              +                                +
+|      |               | or relations                 |                                |
 +------+---------------+------------------------------+--------------------------------+
 + **Non-atomic only**                                                                  +
 +------+---------------+------------------------------+--------------------------------+
-| r    | relation      | Express facts, statements,   | **(is/p berlin/c nice/c)**     |
+| R    | relation      | Express facts, statements,   | **(is/P berlin/C nice/C)**     |
 +      +               +                              +                                +
 |      |               | questions, orders, ...       |                                |
 +------+---------------+------------------------------+--------------------------------+
-| d    | dependent     | Relation argument            | **(by/x scientists/c)**        |
-+------+---------------+------------------------------+--------------------------------+
-| s    | specifier     | Relation specification       | **(in/t 1976/c)**              |
+| S    | specifier     | Relation specification       | **(in/T 1976/C)**              |
 +      +               +                              +                                +
 |      |               | (e.g. condition, time, ...)  |                                |
 +------+---------------+------------------------------+--------------------------------+
@@ -56,22 +54,26 @@ Type inference rules
 +---------------+----------------+
 | Element types | Resulting type |
 +===============+================+
-| (m  c)        | c              |
+| (B  C  C+)    | C              |
 +---------------+----------------+
-| (b  c  c+)    | c              |
+| (M  C)        | C              |
 +---------------+----------------+
-| (w  m)        | m              |
+| (M  M)        | M              |
 +---------------+----------------+
-| (a  p)        | p              |
+| (M  P)        | P              |
 +---------------+----------------+
-| (p  [crds]+)  | r              |
+| (M  T)        | T              |
 +---------------+----------------+
-| (x  [cr]+)    | d              |
+| (P  [CRS]+)   | R              |
 +---------------+----------------+
-| (t  [cr]+)    | s              |
+| (T  [CR]+)    | S              |
++---------------+----------------+
+| (J  C+)       | C              |
++---------------+----------------+
+| (J  R+)       | R              |
 +---------------+----------------+
 
-We use the notation of regular expressions: the symbol ``+`` is used to denote an arbitrary number of entities with the type that precedes it, while square brackets indicate several possibilities (for instance, ``[cr]+`` means "at least one of any of both ``c`` or ``r`` types).
+We use the notation of regular expressions: the symbol ``+`` is used to denote an arbitrary number of entities with the type that precedes it, while square brackets indicate several possibilities (for instance, ``[CR]+`` means "at least one of any of both ``C`` or ``R`` types).
 
 
 Subtypes
@@ -83,15 +85,15 @@ Concept
 +------+---------------+----------+
 | Code | Subtype       | Example  |
 +======+===============+==========+
-| cc   | common        | apple/cc |
+| Cc   | common        | apple/Cc |
 +------+---------------+----------+
-| cp   | proper        | mary/cp  |
+| Cp   | proper        | mary/Cp  |
 +------+---------------+----------+
-| cn   | number        | 27/cn    |
+| Cn   | number        | 27/Cn    |
 +------+---------------+----------+
-| ci   | pronoun       | she/ci   |
+| Ci   | pronoun       | she/Ci   |
 +------+---------------+----------+
-| cw   | interrogative | who/cw   |
+| Cw   | interrogative | who/Cw   |
 +------+---------------+----------+
 
 Predicate
@@ -100,15 +102,11 @@ Predicate
 +------+---------------+---------+
 | Code | Subtype       | Example |
 +======+===============+=========+
-| pd   | declarative   | is/pd   |
+| Pd   | declarative   | is/Pd   |
 +------+---------------+---------+
-| p?   | interrogative | is/p?   |
+| P?   | interrogative | is/P?   |
 +------+---------------+---------+
-| p!   | imperative    | go/p!   |
-+------+---------------+---------+
-| pc   | conceptual    | go/pc   |
-+------+---------------+---------+
-| pm   | meta          | and/pm  |
+| P!   | imperative    | go/P!   |
 +------+---------------+---------+
 
 Builder
@@ -117,21 +115,11 @@ Builder
 +------+-------------+---------+
 | Code | Subtype     | Example |
 +======+=============+=========+
-| bp   | possessive  | 's/bp   |
+| Bp   | possessive  | 's/Bp   |
 +------+-------------+---------+
-| br   | relational  | in/br   |
-+------+-------------+---------+
-| b+   | enumerative | and/b+  |
+| Br   | relational  | in/Br   |
 +------+-------------+---------+
 
-Auxiliary
----------
-
-+------+----------+---------+
-| Code | Subtype  | Example |
-+======+==========+=========+
-| an   | negation | not/an  |
-+------+----------+---------+
 
 Modifier
 --------
@@ -139,13 +127,17 @@ Modifier
 +------+-------------+----------+
 | Code | Subtype     | Example  |
 +======+=============+==========+
-| ma   | adjective   | green/ma |
+| Ma   | adjective   | green/Ma |
 +------+-------------+----------+
-| mp   | possessive  | my/mp    |
+| Mp   | possessive  | my/Mp    |
 +------+-------------+----------+
-| md   | determinant | the/md   |
+| Md   | determinant | the/Md   |
 +------+-------------+----------+
-| mn   | number      | 100/mn   |
+| M#   | number      | 100/M#   |
++------+-------------+----------+
+| Mn   | negation    | not/Mn   |
++------+-------------+----------+
+| Mv   | verbal      | will/Mv  |
 +------+-------------+----------+
 
 Trigger
@@ -154,19 +146,19 @@ Trigger
 +------+-------------+-------------+
 | Code | Subtype     | Example     |
 +======+=============+=============+
-| t?   | conditional | if/tc       |
+| T?   | conditional | if/Tc       |
 +------+-------------+-------------+
-| tt   | temporal    | when/tt     |
+| Tt   | temporal    | when/Tt     |
 +------+-------------+-------------+
-| tl   | local       | where/tl    |
+| Tl   | local       | where/Tl    |
 +------+-------------+-------------+
-| tm   | modal       | modal/tm    |
+| Tm   | modal       | modal/Tm    |
 +------+-------------+-------------+
-| t>   | causal      | because/t>  |
+| T>   | causal      | because/T>  |
 +------+-------------+-------------+
-| t=   | comparative | like/t=     |
+| T=   | comparative | like/T=     |
 +------+-------------+-------------+
-| tc   | concessive  | although/tc |
+| Tc   | concessive  | although/Tc |
 +------+-------------+-------------+
 
 
@@ -180,8 +172,8 @@ Concept
 
 When present, the first additional information subpart for concepts indicates number, with the following codes:
 
-* **s**: singular, example: apple/cc.s
-* **p**: plural, example: apples/cc.p
+* **s**: singular, example: apple/Cc.s
+* **p**: plural, example: apples/Cc.p
 
 Predicate
 ---------
@@ -201,7 +193,7 @@ When present, the first additional information subpart for predicates is used to
 
 These codes are used to build strings, where each character corresponds to the parameter of the relation in the equivalent position. For example, consider the hyperedge:
 
-(is/pd.sc (the/md sky/cc.s) blue/ca.s)
+(is/Pd.sc (the/Md sky/Cc.s) blue/Ca.s)
 
 The *sc* subpart indicates that the first parameter ("the sky") plays the role of subject, and the second one ("blue"), plays the role of subject complement.
 
@@ -217,16 +209,16 @@ When present, the second additional information subpart for predicates is used t
 
 A string is built in the above order to specify the verb features of a predicate. Any feature can be left unspecified, by using a dash character (-). For example, consider the hyperedge:
 
-(**is/p?.cs.|f--3s-** (what/mw time/cc.s) it/ci)
+(**is/P?.cs.|f--3s-** (what/Mw time/Cc.s) it/Ci)
 
 The predicate specifies four verb features: present tense (|), finite form (f), third person (3) and singular number (s).
 
-Auxiliary
----------
+Modifier
+--------
 
-When present, the first additional information subpart for auxiliaries is used to specify the features of the verb underlying the auxiliary. The notation is exactly the same as the one used for predicates, but in predicates this corresponds to the second additional information subpart. For example, consider the non-atomic predicate:
+When the modifer is verbal, the first additional information subpart is used to specify the features of the underlying verb. The notation is exactly the same as the one used for predicates, but in predicates this corresponds to the second additional information subpart. For example, consider the non-atomic predicate:
 
-(have/av.|f----- (been/av.<pf---- tracking/pd.sox.|pg----))
+(have/Mv.|f----- (been/Mv.<pf---- tracking/Pd.sox.|pg----))
 
 Builder
 -------
@@ -238,7 +230,7 @@ When present, the first additional information subpart for builders is used to d
 
 These codes are used to build strings, where each character corresponds to the parameter of the builder in the equivalent position. For example, consider the hyperedge:
 
-(of/br.ma founder/cc.s psychoanalysis/cc.s)
+(of/Br.ma founder/Cc.s psychoanalysis/Cc.s)
 
 The *ma* subpart indicates that the first concept following the builder should be considered a main concept, and the next one auxiliary. This means that "founder of psychoanalysis" is a type of "founder". In other words, auxiliary concepts serve the role of making the main ones more specific.
 
@@ -252,21 +244,21 @@ Namespaces serve two functions:
 
 In the first case, we can specify that an atom corresponds to an English word like this:
 
-sky/cp.s/en
+sky/Cp.s/en
 
 Or to a German word like this:
 
-himmel/cp.s/de
+himmel/Cp.s/de
 
 Or that it is a special atom defined by Graphbrain:
 
-+/b/.
++/B/.
 
 In the second case, another subparts can be added to provide a distinction. For example, suppose we want to distinguish Cambridge (UK) from Cambridge (Mass., USA). We could use:
 
-cambridge/cp.s/en.1
+cambridge/Cp.s/en.1
 
-cambridge/cp.s/en.2
+cambridge/Cp.s/en.2
 
 Special atoms
 =============
@@ -274,7 +266,7 @@ Special atoms
 +-------+-----------------------+-------------------------------+
 | Atom  | Purpose               | Example                       |
 +=======+=======================+===============================+
-| +/b/. | Define compound nouns | (+/b/. alan/cp.s turing/cp.s) |
+| +/B/. | Define compound nouns | (+/B/. alan/Cp.s turing/Cp.s) |
 +-------+-----------------------+-------------------------------+
-| :/b/. | Tangential concept    |                               |
+| :/B/. | Tangential concept    |                               |
 +-------+-----------------------+-------------------------------+

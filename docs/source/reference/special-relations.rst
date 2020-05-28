@@ -5,23 +5,23 @@ Special relations
 Coreferences
 ============
 
-Coreferences indicate hyperedges that refer to the same thing. They are specified in the hypergraph using hyperedges with the special connector ``coref/p/.``. For example::
+Coreferences indicate hyperedges that refer to the same thing. They are specified in the hypergraph using hyperedges with the special connector ``coref/P/.``. For example::
 
-   (coref/p/. turing/cp.s (+/b/. alan/cp.s turing/cp.s))
+   (coref/P/. turing/Cp.s (+/B/. alan/Cp.s turing/Cp.s))
 
 Coreference pairs such as the above define sets of coreferences that point to the same thing. Naturally, they can have arbitrary sizes. It is useful to specify the hyperedge that acts as the preferred representation for the entire coreference set. An hyperedge can also be connected to its main coreference with hyperedges such as this one::
 
-   (main_coref/p/. (of/b.ma city/cc.s berlin/cp.s) berlin/cp.s)
+   (main_coref/P/. (of/B.ma city/Cc.s berlin/Cp.s) berlin/Cp.s)
 
-In the above case, ``berlin/cp.s`` is the main coreference for the coreference set that ``(of/b.ma city/cc.s berlin/cp.s)`` belongs to.
+In the above case, ``berlin/Cp.s`` is the main coreference for the coreference set that ``(of/B.ma city/Cc.s berlin/Cp.s)`` belongs to.
 
 
 Taxonomies
 ==========
 
-Taxonomies can be built using *type-of* relations between hyperedges, with the help of the special predicate ``type_of/p/.``. For example::
+Taxonomies can be built using *type-of* relations between hyperedges, with the help of the special predicate ``type_of/P/.``. For example::
 
-   (type_of/p/. (of/b.ma city/cc.s berlin/cp.s) city/cc.s)
+   (type_of/P/. (of/B.ma city/Cc.s berlin/Cp.s) city/Cc.s)
 
 
 Lemmas
@@ -31,8 +31,8 @@ In informal and simple terms, *lemma* refers to the root of a word. Words and de
 
 Lemma relations are stored in the hypergraph using the following hyperedge format::
 
-   (lemma/p/. asked/pd.so.<pf----/en ask/p/en)
+   (lemma/P/. asked/Pd.so.<pf----/en ask/P/en)
 
-The last parameter of the hyperedge is the lemma atom. Lemma atoms only have the main type, with no further specification (e.g. ``ask/p/en`` but not ``ask/pd/en`` or ``ask/pd.so.|pf----/en``). The intent is to keep an appropriate level of generality.
+The last parameter of the hyperedge is the lemma atom. Lemma atoms only have the main type, with no further specification (e.g. ``ask/P/en`` but not ``ask/Pd/en`` or ``ask/Pd.so.|pf----/en``). The intent is to keep an appropriate level of generality.
 
 The parsers provided with Graphbrain generate lemma relations by default.
