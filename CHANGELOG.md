@@ -13,7 +13,7 @@
 - Function Hyperedge.insert_edge_with_argrole().
 - Function Hyperedge.all_atoms().
 - Argument role pattern matching.
-- HG.match().
+- Hypergraph.match().
 - Hyperedge.atom().
 - Logic engine, HG.eval().
 
@@ -26,6 +26,7 @@
 - Conjunction hyperedge type, character code: "J" (e.g.: and/J).
 - Modifier hyperedge type can now be applied to predicates.
 - Searching patterns can now include types, argument roles and other atom parts.
+- Hypergraph.search_count() renamed to Hypergraph.count().
 
 ### Removed
 - Meta-modifier hyperedge type.

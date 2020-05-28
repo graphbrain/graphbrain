@@ -159,7 +159,7 @@ class Hypergraph(object):
     def eval(self, rule):
         return eval_rule(self, rule)
 
-    def search_count(self, pattern):
+    def count(self, pattern):
         """Number of edges that match a pattern.
         See search() method for an explanation of patterns.
         """
@@ -176,17 +176,10 @@ class Hypergraph(object):
         if pattern.is_full_pattern():
             return self.edge_count()
         else:
-            nodes = []
-            for i, node in enumerate(pattern):
-                if not node.is_pattern():
-                    nodes.append(node)
-            if len(nodes) == 1:
-                return self.degree(nodes[0])
-            else:
-                n = 0
-                for _ in self._search(pattern):
-                    n += 1
-                return n
+            n = 0
+            for _ in self._search(pattern):
+                n += 1
+            return n
 
     def star(self, center, limit=None):
         """Returns generator of the edges that contain the center.

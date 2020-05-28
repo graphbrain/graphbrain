@@ -66,7 +66,7 @@ class Agent(object):
         search pattern. A typical use is in knowledge inference agents, which
         infer new knowledge from edges already present in the hypergraph.
         """
-        edge_count = self.hg.search_count(self.search_pattern)
+        edge_count = self.hg.count(self.search_pattern)
         i = 0
         with progressbar.ProgressBar(max_value=edge_count) as bar:
             for edge in self.hg.search(self.search_pattern):

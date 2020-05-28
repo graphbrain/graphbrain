@@ -301,6 +301,103 @@ class TestHypergraph(unittest.TestCase):
         self.assertEqual(list(self.hg.search(pattern)),
                          [edge])
 
+    def test_count(self):
+        self.hg.destroy()
+        self.hg.add('(is/Pd graphbrain/Cp great/C)')
+        self.hg.add('(says/Pd mary/Cp)')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C) extra/C)')
+        self.assertEqual(self.hg.count('(* graphbrain/Cp *)'), 1)
+        self.assertEqual(self.hg.count('(is/Pd graphbrain/Cp *)'), 1)
+        self.assertEqual(self.hg.count('(x * *)'), 0)
+        self.assertEqual(self.hg.count('(says/Pd * '
+                                       '(is/Pd graphbrain/Cp great/C))'), 1)
+        self.assertEqual(self.hg.count('(says/Pd * (is/Pd * *))'), 1)
+
+    def test_count_open_ended(self):
+        self.hg.destroy()
+        self.hg.add('(is/Pd graphbrain/Cp great/C)')
+        self.hg.add('(says/Pd mary/Cp)')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C) extra/C)')
+        self.assertEqual(self.hg.count('(* graphbrain/Cp * ...)'), 1)
+        self.assertEqual(self.hg.count('(is/Pd graphbrain/Cp * ...)'), 1)
+        self.assertEqual(self.hg.count('(x * * ...)'), 0)
+        self.assertEqual(
+            self.hg.count('(says/Pd * (is/Pd graphbrain/Cp great/C) ...)'), 2)
+
+    def test_count_star(self):
+        self.hg.destroy()
+        self.hg.add('(is/Pd graphbrain/Cp great/C)')
+        self.hg.add('(says/Pd mary/Cp)')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C) extra/C)')
+        self.assertEqual(self.hg.count('*'), 10)
+
+    def test_count_at(self):
+        self.hg.destroy()
+        self.hg.add('(is/Pd graphbrain/Cp great/C)')
+        self.hg.add('(says/Pd mary/Cp)')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C) extra/C)')
+        self.assertEqual(self.hg.count('@'), 6)
+
+    def test_count_amp(self):
+        self.hg.destroy()
+        self.hg.add('(is/Pd graphbrain/Cp great/C)')
+        self.hg.add('(says/Pd mary/Cp)')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')
+        self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C) extra/C)')
+        self.assertEqual(self.hg.count('&'), 4)
+
+    def test_count_non_atomic_pred(self):
+        self.hg.destroy()
+        edge = hedge('((is/M playing/Pd ) mary/Cp.s '
+                     '(a/Md ((very/M old/Ma) violin/Cn.s)))')
+        self.hg.add(edge)
+        self.assertEqual(self.hg.count('((is/M playing/Pd) ...)'), 1)
+        self.assertEqual(self.hg.count('((is/M playing/Pd) * *)'), 1)
+        self.assertEqual(self.hg.count('((is/M playing/Pd) @ &)'), 1)
+        self.assertEqual(self.hg.count('((is/M playing/Pd) @ @)'), 0)
+        self.assertEqual(self.hg.count('((is/M playing/Pd) & &)'), 0)
+        self.assertEqual(self.hg.count('(* mary/Cp.s *)'), 1)
+        self.assertEqual(self.hg.count('(mary/Cp.s * *)'), 0)
+        self.assertEqual(self.hg.count('(* * (a/Md ((very/M old/Ma) '
+                                       'violin/Cn.s)))'), 1)
+        self.assertEqual(self.hg.count('((a/Md ((very/M old/Ma) '
+                                       'violin/Cn.s)) * *)'), 0)
+
+    def test_count_non_atomic_pred_vars(self):
+        self.hg.destroy()
+        edge = hedge('((is/M playing/Pd ) mary/Cp.s '
+                     '(a/Md ((very/M old/Ma) violin/Cn.s)))')
+        self.hg.add(edge)
+        self.assertEqual(self.hg.count('((is/M playing/Pd) *X *Y)'), 1)
+        self.assertEqual(self.hg.count('((is/M playing/Pd) @X &Y)'), 1)
+        self.assertEqual(self.hg.count('((is/M playing/Pd) @X @Y)'), 0)
+        self.assertEqual(self.hg.count('((is/M playing/Pd) &X &Y)'), 0)
+        self.assertEqual(self.hg.count('(* mary/Cp.s X)'), 1)
+        self.assertEqual(self.hg.count('(mary/Cp.s X Y)'), 0)
+        self.assertEqual(self.hg.count('(X Y (a/Md ((very/M old/Ma) '
+                                       'violin/Cn.s)))'), 1)
+        self.assertEqual(self.hg.count('((a/Md ((very/M old/Ma) '
+                                       'violin/Cn.s)) X Y)'), 0)
+
+    def test_count_pred_with_roles(self):
+        self.hg.destroy()
+        self.hg.add('(says/Pd.so.|f--3s-/en mary/C hello/C)')
+        self.hg.add('(says/Pd.os.|f--3s-/en hello/C mary/C)')
+        self.assertEqual(self.hg.count('(says/Pd.so.|f--3s-/en * *)'), 1)
+
+    def test_count_pred_with_roles_and_ellipsis(self):
+        self.hg.destroy()
+        edge = hedge(('(is/Mv.|f--3s-/en playing/Pd.so.|pg----/en)',
+                      'mary/Cp.s/en',
+                      '(a/Md/en ((very/M/en old/Ma/en) violin/Cc.s/en))'))
+        pattern = hedge('((is/Mv.|f--3s-/en playing/Pd.so.|pg----/en) ...)')
+        self.hg.add(edge)
+        self.assertEqual(self.hg.count(pattern), 1)
+
     def test_match(self):
         self.hg.destroy()
         edge = hedge('((is/M playing/Pd) mary/Cp.s '
