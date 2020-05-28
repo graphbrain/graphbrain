@@ -291,6 +291,16 @@ class TestHypergraph(unittest.TestCase):
         self.assertEqual(list(self.hg.search('(says/Pd.so.|f--3s-/en * *)')),
                          [hedge('(says/Pd.so.|f--3s-/en mary/C hello/C)')])
 
+    def test_search_pred_with_roles_and_ellipsis(self):
+        self.hg.destroy()
+        edge = hedge(('(is/Mv.|f--3s-/en playing/Pd.so.|pg----/en)',
+                      'mary/Cp.s/en',
+                      '(a/Md/en ((very/M/en old/Ma/en) violin/Cc.s/en))'))
+        pattern = hedge('((is/Mv.|f--3s-/en playing/Pd.so.|pg----/en) ...)')
+        self.hg.add(edge)
+        self.assertEqual(list(self.hg.search(pattern)),
+                         [edge])
+
     def test_match(self):
         self.hg.destroy()
         edge = hedge('((is/M playing/Pd) mary/Cp.s '
