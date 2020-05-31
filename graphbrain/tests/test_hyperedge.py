@@ -563,6 +563,19 @@ class TestHyperedge(unittest.TestCase):
                                               '(is/Pd graphbrain/Cp.s '
                                               '* ...)'))
 
+    def test_match_pattern_complex(self):
+        s = ('(says/Pd.rr.|f--3s-/en (calls/Pr.so.|f--3s-/en */C (*/M '
+             '(draconian/Ma/en (+/B.am/. coronavirus/Cc.s/en '
+             'restrictions/Cc.p/en)))) */R)')
+        pattern = hedge(s)
+        s = ("(says/Pd.rr.|f--3s-/en ((+/B.aaa/. ali/Cp.s/en wentworth/Cp.s/en"
+             " tests/Cp.p/en) (+/B.aaa/. ali/Cp.s/en wentworth/Cp.s/en "
+             "tests/Cp.p/en) (for/T/en coronavirus/Cp.s/en)) "
+             "('s/Pr.s.|f--3s-/en (+/B.aaa/. ali/Cp.s/en wentworth/Cp.s/en "
+             "tests/Cp.p/en)))")
+        edge = hedge(s)
+        self.assertEqual(match_pattern(edge, pattern), [])
+
     def test_nest(self):
         self.assertEqual(hedge('a').nest(hedge('b')).to_str(), '(b a)')
         self.assertEqual(hedge('(a b)').nest(hedge('c')).to_str(), '(c (a b))')

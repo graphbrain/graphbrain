@@ -244,6 +244,8 @@ def _match_by_argroles(edge, pattern, role_counts, matched=(), curvars={}):
                 else:
                     all_vars = {**curvars, **vars}
                     sresult = match_pattern(eitem, pitem, all_vars)
+                    if len(sresult) == 0:
+                        break
                     perm_result = [{**all_vars, **subvars}
                                    for subvars in sresult]
             success = True
