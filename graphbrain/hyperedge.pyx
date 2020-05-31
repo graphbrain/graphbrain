@@ -749,7 +749,7 @@ class Hyperedge(tuple):
         '*', '@', '&', '...' and variables (atom label starting with an
         uppercase letter)
         """
-        return all(item.is_full_pattern() for item in self)
+        return all(item.is_pattern() for item in self)
 
     def argroles(self):
         """Returns the argument roles string of the edge, if it exists.

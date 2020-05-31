@@ -147,10 +147,7 @@ class Hypergraph(object):
             elif pattern[0][0] == '&':
                 return self.all_non_atoms()
 
-        if pattern.is_full_pattern():
-            return self.all()
-        else:
-            return self._search(pattern)
+        return self._search(pattern)
 
     def match(self, pattern, curvars={}):
         pattern = hedge(pattern)
@@ -173,13 +170,10 @@ class Hypergraph(object):
             elif pattern[0][0] == '&':
                 return self.edge_count() - self.atom_count()
 
-        if pattern.is_full_pattern():
-            return self.edge_count()
-        else:
-            n = 0
-            for _ in self._search(pattern):
-                n += 1
-            return n
+        n = 0
+        for _ in self._search(pattern):
+            n += 1
+        return n
 
     def star(self, center, limit=None):
         """Returns generator of the edges that contain the center.

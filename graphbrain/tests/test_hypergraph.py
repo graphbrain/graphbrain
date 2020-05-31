@@ -301,6 +301,16 @@ class TestHypergraph(unittest.TestCase):
         self.assertEqual(list(self.hg.search(pattern)),
                          [edge])
 
+    def test_search_pred_with_deep_pattern(self):
+        self.hg.destroy()
+        edge = hedge(('(is/Mv.|f--3s-/en playing/Pd.so.|pg----/en)',
+                      'mary/Cp.s/en',
+                      '(a/Md/en ((very/M/en old/Ma/en) violin/Cc.s/en))'))
+        pattern = hedge('(*/Pd.so */C (*/M ((*/M */M) violin/Cc.s/en)))')
+        self.hg.add(edge)
+        self.assertEqual(list(self.hg.search(pattern)),
+                         [edge])
+
     def test_count(self):
         self.hg.destroy()
         self.hg.add('(is/Pd graphbrain/Cp great/C)')
@@ -395,6 +405,15 @@ class TestHypergraph(unittest.TestCase):
                       'mary/Cp.s/en',
                       '(a/Md/en ((very/M/en old/Ma/en) violin/Cc.s/en))'))
         pattern = hedge('((is/Mv.|f--3s-/en playing/Pd.so.|pg----/en) ...)')
+        self.hg.add(edge)
+        self.assertEqual(self.hg.count(pattern), 1)
+
+    def test_count_pred_with_deep_pattern(self):
+        self.hg.destroy()
+        edge = hedge(('(is/Mv.|f--3s-/en playing/Pd.so.|pg----/en)',
+                      'mary/Cp.s/en',
+                      '(a/Md/en ((very/M/en old/Ma/en) violin/Cc.s/en))'))
+        pattern = hedge('(*/Pd.so */C (*/M ((*/M */M) violin/Cc.s/en)))')
         self.hg.add(edge)
         self.assertEqual(self.hg.count(pattern), 1)
 
