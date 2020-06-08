@@ -138,7 +138,9 @@ def _matches_wildcard(edge, wildcard):
                 wargroles_parts = wrole[1].split('~')
                 if len(wargroles_parts) == 1:
                     wargroles_parts.append('')
-                wposroles, wnegroles = wargroles_parts
+                wnegroles = wargroles_parts[1]
+                wargroles_parts = wargroles_parts[0].split(',')
+                wposroles = wargroles_parts[0]
                 wargroles = set(wposroles) | set(wnegroles)
                 eargroles = erole[1]
                 for argrole in wargroles:
@@ -185,7 +187,8 @@ def _varname(atom):
         return label
 
 
-def _match_by_argroles(edge, pattern, role_counts, matched=(), curvars={}):
+def _match_by_argroles(edge, pattern, role_counts, min_vars,
+                       matched=(), curvars={}):
     if len(role_counts) == 0:
         return [{}]
 
@@ -208,7 +211,10 @@ def _match_by_argroles(edge, pattern, role_counts, matched=(), curvars={}):
         return [{}]
 
     if len(eitems) < n:
-        return []
+        if len(curvars) >= min_vars:
+            return [{}]
+        else:
+            return []
 
     result = []
 
@@ -253,6 +259,7 @@ def _match_by_argroles(edge, pattern, role_counts, matched=(), curvars={}):
             remaining_result = _match_by_argroles(edge,
                                                   pattern,
                                                   role_counts[1:],
+                                                  min_vars,
                                                   matched + perm,
                                                   {**curvars, **vars})
             for vars in perm_result:
@@ -314,17 +321,26 @@ def match_pattern(edge, pattern, curvars={}):
         else:
             return []
 
+    min_len = len(pattern)
+    max_len = min_len
     # open ended?
     if pattern[-1].to_str() == '...':
         pattern = hedge(pattern[:-1])
-        if len(edge) < len(pattern):
-            return []
-    else:
-        if len(edge) != len(pattern):
-            return []
+        min_len -= 1
+        max_len = float('inf')
 
     result = [{}]
-    argroles = pattern[0].argroles().split('~')[0]
+    argroles_opt = pattern[0].argroles().split('~')[0]
+    argroles = argroles_opt.split(',')[0]
+    argroles_opt = argroles_opt.replace(',', '')
+
+    if len(argroles) > 0:
+        min_len = 1 + len(argroles)
+        max_len = float('inf')
+
+    if len(edge) < min_len or len(edge) > max_len:
+        return []
+
     # match by order
     if len(argroles) == 0:
         for i, pitem in enumerate(pattern):
@@ -362,8 +378,8 @@ def match_pattern(edge, pattern, curvars={}):
         econn = edge[0]
         pconn = pattern[0]
         for vars in match_pattern(econn, pconn, curvars):
-            role_counts = Counter(argroles).most_common()
-            unknown_roles = (len(pattern) - 1) - len(argroles)
+            role_counts = Counter(argroles_opt).most_common()
+            unknown_roles = (len(pattern) - 1) - len(argroles_opt)
             if unknown_roles > 0:
                 role_counts.append(('*', unknown_roles))
             # add connector pseudo-argrole
@@ -371,6 +387,7 @@ def match_pattern(edge, pattern, curvars={}):
             sresult = _match_by_argroles(edge,
                                          pattern,
                                          role_counts,
+                                         len(argroles),
                                          curvars={**curvars, **vars})
             for svars in sresult:
                 result.append({**vars, **svars})
@@ -802,7 +819,7 @@ class Hyperedge(tuple):
         edges = []
         connector = self[0]
 
-        for pos, role in enumerate(connector.argroles()):
+        for pos, role in enumerate(connector.argroles().replace(',', '')):
             if role == argrole:
                 if pos < len(self) - 1:
                     edges.append(self[pos + 1])

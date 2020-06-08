@@ -260,7 +260,7 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(match_pattern(
             '(is/Pd.xcs today/C great/C graphbrain/Cp.s)',
             '(is/Pd.sc graphbrain/Cp.s *X)'),
-            [])
+            [{'X': hedge('great/C')}])
         self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
                                        '(is/Pd.sc graphbrain/Cp.s *)'),
                          [{}])
@@ -285,7 +285,7 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(match_pattern(
             '(is/Pd.xcs today/C great/C graphbrain/Cp.s)',
             '(is/Pd.sc graphbrain/Cp.s X)'),
-            [])
+            [{'X': hedge('great/C')}])
         self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
                                        '(is/Pd.sc graphbrain/Cp.s XYZ)'),
                          [{'XYZ': hedge('great/C')}])
@@ -307,7 +307,8 @@ class TestHyperedge(unittest.TestCase):
             match_pattern(
                 '(is/Pd.scx graphbrain/Cp.s great/C today/C (after/J x/C))',
                 '(is/Pd.sc graphbrain/Cp.s PROP EXTRA)'),
-            [])
+            [{'PROP': hedge('great/C'), 'EXTRA': hedge('today/C')},
+             {'PROP': hedge('great/C'), 'EXTRA': hedge('(after/J x/C)')}])
         self.assertEqual(
             match_pattern(
                 '(is/Pd.scx graphbrain/Cp.s great/C today/C (after/J x/C))',
@@ -493,6 +494,18 @@ class TestHyperedge(unittest.TestCase):
             match_pattern('(is/Pd.sc i/Cp.s graphbrain/Cp.s great/C)',
                           '(is/Pd.sc~s graphbrain/Cp.s X ...)'),
             [])
+
+    def test_match_pattern_argroles_optionals(self):
+        self.assertEqual(
+            match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
+                          '(is/Pd.sc,x X Y Z)'),
+            [{'X': hedge('graphbrain/Cp.s'), 'Y': hedge('great/C')}])
+        self.assertEqual(
+            match_pattern('(is/Pd.scx graphbrain/Cp.s great/C today/J)',
+                          '(is/Pd.sc,x X Y Z)'),
+            [{'X': hedge('graphbrain/Cp.s'),
+              'Y': hedge('great/C'),
+              'Z': hedge('today/J')}])
 
     def test_match_pattern_match_connectors(self):
         self.assertEqual(
