@@ -10,11 +10,15 @@ def paragraphs(file_name):
         lines = [line.strip() for line in f.readlines()]
         for line in lines:
             if len(line) == 0:
-                paragraph = ' '.join(cur_paragraph)
-                paragraphs.append(paragraph)
+                if len(cur_paragraph) > 0:
+                    paragraph = ' '.join(cur_paragraph)
+                    paragraphs.append(paragraph)
                 cur_paragraph = []
             else:
                 cur_paragraph.append(line)
+        if len(cur_paragraph) > 0:
+            paragraph = ' '.join(cur_paragraph)
+            paragraphs.append(paragraph)
     return paragraphs
 
 
