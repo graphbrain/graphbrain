@@ -99,8 +99,9 @@ class Hypergraph(object):
                     self.inc_attribute(edge, 'count')
 
                 return edge
-        else:
+        elif edge:
             return self.add(hedge(edge), primary=primary)
+        return None
 
     def remove(self, edge, deep=False):
         """Removes an edge.

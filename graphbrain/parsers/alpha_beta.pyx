@@ -3,7 +3,7 @@ from itertools import repeat
 from collections import defaultdict, Counter
 import logging
 import spacy
-import neuralcoref
+import graphbrain.neuralcoref as neuralcoref
 from graphbrain import *
 import graphbrain.constants as const
 from graphbrain.meaning.concepts import has_common_or_proper_concept

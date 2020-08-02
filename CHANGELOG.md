@@ -2,7 +2,7 @@
 
 ## [0.4.0] - work in progress
 ### Added
-- Coreference resolution in the parser.
+- Coreference resolution in the parser through local fork of neuralcoref.
 - atom_gender(), atom_number(), atom_person(), atom_animacy() in parsers.
 - Coreference inference: gender, number and animacy.
 - Coreference inference:'X is Y' relationships.

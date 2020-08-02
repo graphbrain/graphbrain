@@ -41,7 +41,10 @@ if USE_CYTHON:
         Extension('graphbrain.parsers.parser_en',
                   ['graphbrain/parsers/parser_en.pyx']),
         Extension('graphbrain.parsers.parser_de',
-                  ['graphbrain/parsers/parser_de.pyx'])
+                  ['graphbrain/parsers/parser_de.pyx']),
+        Extension('graphbrain.neuralcoref.neuralcoref',
+                  ['graphbrain/neuralcoref/neuralcoref.pyx'],
+                  language='c++', include_dirs=['include'])
     ]
     ext_modules = cythonize(ext_modules,
                             annotate=CYTHON_ANNOTATE,
@@ -59,7 +62,10 @@ else:
         Extension('graphbrain.parsers.parser_en',
                   ['graphbrain/parsers/parser_en.c']),
         Extension('graphbrain.parsers.parser_de',
-                  ['graphbrain/parsers/parser_de.c'])
+                  ['graphbrain/parsers/parser_de.c']),
+        Extension('graphbrain.neuralcoref.neuralcoref',
+                  ['graphbrain/neuralcoref/neuralcoref.cpp'],
+                  language='c++', include_dirs=['include'])
     ]
 
 
@@ -94,15 +100,16 @@ setup(
     packages=find_packages(),
     install_requires=[
         'numpy',
-        'spacy==2.1',
-        'neuralcoref==4.0.0',
+        'spacy',
         'plyvel',
         'python-igraph',
         'termcolor',
         'asciitree',
         'ipython',
         'progressbar2',
-        'unidecode'
+        'unidecode',
+        # for neurocoref
+        'boto3'
     ],
     extras_require={
         'dev': [

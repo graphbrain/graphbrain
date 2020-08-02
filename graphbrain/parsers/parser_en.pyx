@@ -274,7 +274,9 @@ class ParserEN(AlphaBeta):
             return 'Mp'
         elif dep == 'prep':
             return 'Mt'  # preposition
-        elif tag == 'JJ':
+        elif dep == 'preconj':
+            return 'Mj'  # conjunctional
+        elif tag in {'JJ', 'NNP'}:
             return 'Ma'
         elif tag == 'JJR':
             return 'Mc'
@@ -290,6 +292,8 @@ class ParserEN(AlphaBeta):
             return 'Mm'  # modal
         elif tag == 'TO':
             return 'Mi'  # infinitive
+        elif tag == 'RB': # adverb
+            return 'M'  # quintissential modifier, no subtype needed
         elif tag == 'RBR':
             return 'M='  # comparative
         elif tag == 'RBS':
@@ -316,7 +320,10 @@ class ParserEN(AlphaBeta):
     def _predicate_post_type_and_subtype(self, edge, subparts, args_string):
         # detecte imperative
         if subparts[0] == 'Pd':
-            if subparts[2][1] == 'i' and 's' not in args_string:
+            if ((subparts[2][1] == 'i' or subparts[2][0:2] == '|f') and
+                    subparts[2][5] in {'-', '2'} and
+                    's' not in args_string and
+                    'c' not in args_string):
                 if hedge('to/Mi/en') not in edge[0].atoms():
                     return 'P!'
         # keep everything else the same
