@@ -2,6 +2,7 @@
 
 ## [0.4.0] - work in progress
 ### Added
+- Conjunctions resolution agent.
 - Coreference resolution in the parser through local fork of neuralcoref.
 - atom_gender(), atom_number(), atom_person(), atom_animacy() in parsers.
 - Coreference inference: gender, number and animacy.
@@ -12,9 +13,6 @@
 - Function Hyperedge.insert_argrole().
 - Function Hyperedge.insert_edge_with_argrole().
 - Function Hyperedge.all_atoms().
-- Argument role pattern matching.
-- Hypergraph.match().
-- Hyperedge.atom().
 - Logic engine, HG.eval().
 
 ### Changed
