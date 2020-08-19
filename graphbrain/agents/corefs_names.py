@@ -1,9 +1,9 @@
 from unidecode import unidecode
 from itertools import combinations
 import progressbar
-from igraph import *
-from graphbrain import *
-from graphbrain.meaning.corefs import *
+from igraph import Graph
+from graphbrain import hedge, clean_atom
+from graphbrain.meaning.corefs import make_corefs
 from graphbrain.meaning.lemmas import lemma_degrees
 from graphbrain.agents.agent import Agent
 

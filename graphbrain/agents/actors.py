@@ -1,8 +1,9 @@
 from collections import Counter
-from graphbrain.meaning.concepts import *
+from graphbrain.meaning.concepts import strip_concept, has_proper_concept
 from graphbrain.meaning.lemmas import deep_lemma
 from graphbrain.meaning.corefs import main_coref
 from graphbrain.agents.agent import Agent
+from graphbrain.agents.system import wrap_edge
 
 
 ACTOR_PRED_LEMMAS = {'say', 'claim', 'warn', 'kill', 'accuse', 'condemn',
@@ -44,4 +45,4 @@ class Actors(Agent):
     def end(self):
         for actor in self.actor_counter:
             if self.actor_counter[actor] > 0:
-                self.add(('actor/P/.', actor))
+                yield wrap_edge(('actor/P/.', actor))

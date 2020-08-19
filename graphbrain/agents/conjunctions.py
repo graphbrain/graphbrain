@@ -1,8 +1,9 @@
-from graphbrain import *
+from graphbrain import hedge
 from graphbrain.agents.agent import Agent
+from graphbrain.agents.system import wrap_edge
 
 
-def conjunctions_resolution(edge, atom2word):
+def conjunctions_resolution(edge):
     if edge.is_atom():
         return []
 
@@ -32,15 +33,15 @@ def conjunctions_resolution(edge, atom2word):
                     subedge.type()[0] == 'R' and subedge[0].type() != 'J'):
                 newedge = hedge([cur_pred.replace_atom(cur_pred.predicate(),
                                  subedge[0].predicate())]) + hedge(subedge[1:])
-                old_pred = newedge.predicate()
                 newedge = newedge.insert_edge_with_argrole(
                     cur_subj, cur_role, 0)
-                new_pred = newedge.predicate()
-                if old_pred and new_pred:
-                    old_pred_u = UniqueAtom(old_pred)
-                    new_pred_u = UniqueAtom(new_pred)
-                    atom2word[new_pred_u] = atom2word[old_pred_u]
-            new_edges = conjunctions_resolution(newedge, atom2word)
+                # old_pred = newedge.predicate()
+                # new_pred = newedge.predicate()
+                # if old_pred and new_pred:
+                #     old_pred_u = UniqueAtom(old_pred)
+                #     new_pred_u = UniqueAtom(new_pred)
+                #     atom2word[new_pred_u] = atom2word[old_pred_u]
+            new_edges = conjunctions_resolution(newedge)
             edges += new_edges
         return edges
 
@@ -51,15 +52,14 @@ def conjunctions_resolution(edge, atom2word):
                     subedge.type()[0] == 'C'):
                 edges = []
                 for list_item in subedge[1:]:
-                    subedges = conjunctions_resolution(
-                        hedge([list_item]), atom2word)
+                    subedges = conjunctions_resolution(hedge([list_item]))
                     for se in subedges:
                         newedge = hedge(
                             edge[0:pos]) + se + hedge(edge[pos + 1:])
                         edges.append(newedge)
                 return edges
             else:
-                subedges = conjunctions_resolution(subedge, atom2word)
+                subedges = conjunctions_resolution(subedge)
                 if len(subedges) > 1:
                     edges = []
                     for list_item in subedges:
@@ -71,11 +71,9 @@ def conjunctions_resolution(edge, atom2word):
     return [edge]
 
 
-
 class Conjunctions(Agent):
     def __init__(self, hg, lang, sequence=None):
         super().__init__(hg, lang, sequence)
-        self.corefs = 0
 
     def name(self):
         return 'conjunctions'
@@ -87,10 +85,5 @@ class Conjunctions(Agent):
         pass
 
     def input_edge(self, edge):
-        uedge = unidecode_edge(edge)
-        if uedge != edge and self.hg.exists(uedge):
-            make_corefs(self.hg, edge, uedge)
-            self.corefs += 1
-
-    def report(self):
-        return '{} coreferences were added.'.format(str(self.corefs))
+        for edge in conjunctions_resolution(edge):
+            yield wrap_edge(edge)

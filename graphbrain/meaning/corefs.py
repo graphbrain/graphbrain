@@ -1,6 +1,6 @@
 import random
 import string
-from graphbrain import *
+from graphbrain import hedge
 from graphbrain.constants import coref_pred, coref_set_id_key, main_coref_pred
 
 

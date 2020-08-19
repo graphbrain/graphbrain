@@ -1,5 +1,5 @@
 from unidecode import unidecode
-from graphbrain import *
+from graphbrain import hedge
 from graphbrain.meaning.corefs import make_corefs
 from graphbrain.agents.agent import Agent
 

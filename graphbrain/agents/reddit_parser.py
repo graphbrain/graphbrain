@@ -1,9 +1,10 @@
 import re
 import json
 import progressbar
-from graphbrain import *
-from graphbrain.parsers import *
+from graphbrain import build_atom
+from graphbrain.parsers import create_parser
 from graphbrain.agents.agent import Agent
+from graphbrain.agents.system import wrap_edge
 
 
 def file_lines(filename):
@@ -51,7 +52,7 @@ class RedditParser(Agent):
 
                 # add main edge
                 if main_edge:
-                    self.add(main_edge)
+                    yield wrap_edge(main_edge)
 
                     # attach text to edge
                     text = parse['text']
@@ -59,39 +60,41 @@ class RedditParser(Agent):
 
                     # add extra edges
                     for edge in parse['extra_edges']:
-                        self.add(edge)
+                        yield wrap_edge(edge)
 
                     if main_edge.type()[0] == 'R':
                         title_edge.append(main_edge)
                     else:
                         tags.append(main_edge)
             for edge in parse_results['inferred_edges']:
-                self.add(edge, count=True)
+                yield wrap_edge(edge, count=True)
 
         if len(title_edge) > 2:
             # add title edge
-            self.add(title_edge)
+            yield wrap_edge(title_edge)
             self.titles_added += 1
 
             # add title tags
             if len(tags) > 0:
                 tags_edge = ['tags/P/.reddit', title_edge] + tags
-                self.add(tags_edge)
+                yield wrap_edge(tags_edge)
 
         self.titles_parsed += 1
 
     def _parse_post(self, post):
         author = build_atom(post['author'], 'C', 'reddit.user')
-        self._parse_title(post['title'], author)
+        for wedge in self._parse_title(post['title'], author):
+            yield wedge
 
-    def input_file(self, file_name):
-        lines = file_lines(file_name)
+    def run(self, infile=None):
+        lines = file_lines(infile)
         i = 0
         with progressbar.ProgressBar(max_value=lines) as bar:
-            with open(file_name, 'r') as f:
+            with open(infile, 'r') as f:
                 for line in f:
                     post = json.loads(line)
-                    self._parse_post(post)
+                    for wedge in self._parse_post(post):
+                        yield wedge
                     i += 1
                     bar.update(i)
 

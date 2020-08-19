@@ -31,10 +31,6 @@ class Agent(object):
         """Feeds the agent an edge to process."""
         raise NotImplementedError()
 
-    def input_file(self, file_name):
-        """Feeds the agent a path to a file to process."""
-        raise NotImplementedError()
-
     def start(self):
         """Tell agent that a new cycle of activity is starting. What this
         means in practice depends on the agent. For example, for a
@@ -51,16 +47,6 @@ class Agent(object):
         self.edges_added = 0
         self.edges_existed = 0
 
-    def add(self, edge, primary=True, count=False):
-        """Tell agent to add this edge to the hypergraph."""
-        if self.hg.exists(edge):
-            self.edges_existed += 1
-            if count:
-                return self.hg.add(edge, primary=primary, count=True)
-        else:
-            self.edges_added += 1
-            return self.hg.add(edge, primary=primary, count=count)
-
     def input(self):
         """Input to the agent all the edges corresponding to its current
         search pattern. A typical use is in knowledge inference agents, which
@@ -70,7 +56,8 @@ class Agent(object):
         i = 0
         with progressbar.ProgressBar(max_value=edge_count) as bar:
             for edge in self.hg.search(self.search_pattern):
-                self.input_edge(edge)
+                for wedge in self.input_edge(edge):
+                    yield wedge
                 if i < edge_count:
                     i += 1
                     bar.update(i)
@@ -93,12 +80,7 @@ class Agent(object):
         selected by its internal pattern (defaulting to '*', meaning
         all of them).
         """
-        print('running agent: "{}"'.format(self.name()))
-        self._reset_counters()
-        self.start()
-        if infile:
-            self.input_file(infile)
-        else:
-            self.input()
-        self.end()
-        print(self.report())
+        for wedge in self.input():
+            yield wedge
+        for wedge in self.end():
+            yield wedge

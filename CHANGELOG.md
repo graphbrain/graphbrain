@@ -2,6 +2,7 @@
 
 ## [0.4.0] - work in progress
 ### Added
+- Agents system.
 - Conjunctions resolution agent.
 - Coreference resolution in the parser through local fork of neuralcoref.
 - atom_gender(), atom_number(), atom_person(), atom_animacy() in parsers.

@@ -2,9 +2,9 @@ import re
 import csv
 import sys
 import progressbar
-from graphbrain import *
-from graphbrain.parsers import *
+from graphbrain.parsers import create_parser
 from graphbrain.agents.agent import Agent
+from graphbrain.agents.system import wrap_edge
 
 
 def file_lines(filename):
@@ -46,7 +46,7 @@ class CsvParser(Agent):
 
                 # add main edge
                 if main_edge:
-                    self.add(main_edge)
+                    yield wrap_edge(main_edge)
 
                     # attach text to edge
                     text = parse['text']
@@ -54,15 +54,16 @@ class CsvParser(Agent):
 
                     # add extra edges
                     for edge in parse['extra_edges']:
-                        self.add(edge)
+                        yield wrap_edge(edge)
 
-    def input_file(self, file_name):
-        lines = file_lines(file_name) - 1
+    def run(self, infile=None):
+        lines = file_lines(infile) - 1
         i = 0
         with progressbar.ProgressBar(max_value=lines) as bar:
-            with open(file_name, 'r') as f:
+            with open(infile, 'r') as f:
                 csv_reader = csv.DictReader(f)
                 for row in csv_reader:
-                    self._parse_row(row)
+                    for wedge in self._parse_row(row):
+                        yield wedge
                     i += 1
                     bar.update(i)
