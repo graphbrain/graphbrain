@@ -9,13 +9,12 @@ class Agent(object):
     what is already contained in the hypregraph.
     """
 
-    def __init__(self, hg, lang, sequence=None):
-        self.hg = hg
-        self.lang = lang
-        self.sequence = sequence
+    def __init__(self):
         self.search_pattern = '*'
         self.edges_added = 0
         self.edges_existed = 0
+        self.system = None
+        self.running = False
 
     def name(self):
         """Returns the agent's name."""
@@ -25,23 +24,17 @@ class Agent(object):
         """Returns set of languages supported by the agent, or an empty set
         if the agent is language-agnostic.
         """
-        raise NotImplementedError()
+        return set()
 
     def input_edge(self, edge):
         """Feeds the agent an edge to process."""
         raise NotImplementedError()
 
-    def start(self):
-        """Tell agent that a new cycle of activity is starting. What this
-        means in practice depends on the agent. For example, for a
-        knowledge inference agent this could mean one full pass through all
-        the edges in the hypergraph. For an agent that extracts knowledge
-        from external files, this could mean one pass through an entire
-        file.
-        """
+    def on_start(self):
+        """Called before a cycle of activity is started."""
 
-    def end(self):
-        """End the agent's current cycle of activities."""
+    def on_end(self):
+        """Called at the end of a cycle of activity."""
 
     def _reset_counters(self):
         self.edges_added = 0
@@ -52,10 +45,10 @@ class Agent(object):
         search pattern. A typical use is in knowledge inference agents, which
         infer new knowledge from edges already present in the hypergraph.
         """
-        edge_count = self.hg.count(self.search_pattern)
+        edge_count = self.system.hg.count(self.search_pattern)
         i = 0
         with progressbar.ProgressBar(max_value=edge_count) as bar:
-            for edge in self.hg.search(self.search_pattern):
+            for edge in self.system.hg.search(self.search_pattern):
                 for wedge in self.input_edge(edge):
                     yield wedge
                 if i < edge_count:
@@ -68,19 +61,7 @@ class Agent(object):
         existed_s = '{} edges already existed.'.format(str(self.edges_existed))
         return '{}\n{}'.format(added_s, existed_s)
 
-    def run(self, infile=None):
-        """High-level method to run an agent. It will start a cycle of
-        activities, provide a full set of inputs, end the cycle of activities
-        and print a report.
-
-        Keyword argument:
-
-        infile -- if provided, agent inputs information from a file, otherwise
-        it goes through all the edges present in the hypergraph that are
-        selected by its internal pattern (defaulting to '*', meaning
-        all of them).
-        """
+    def run(self):
+        """High-level method to run an agent."""
         for wedge in self.input():
-            yield wedge
-        for wedge in self.end():
             yield wedge

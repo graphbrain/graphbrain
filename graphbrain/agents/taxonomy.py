@@ -4,14 +4,11 @@ from graphbrain.agents.system import wrap_edge
 
 
 class Taxonomy(Agent):
-    def __init__(self, hg, lang, sequence=None):
-        super().__init__(hg, lang, sequence)
+    def __init__(self):
+        super().__init__()
 
     def name(self):
         return 'taxonomy'
-
-    def languages(self):
-        return set()
 
     def input_edge(self, edge):
         if not edge.is_atom():

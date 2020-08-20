@@ -18,23 +18,22 @@ def unidecode_edge(edge):
 
 
 class CorefsUnidecode(Agent):
-    def __init__(self, hg, lang, sequence=None):
-        super().__init__(hg, lang, sequence)
+    def __init__(self):
+        super().__init__()
         self.corefs = 0
 
     def name(self):
         return 'corefs_unidecode'
 
-    def languages(self):
-        return set()
-
-    def start(self):
+    def on_start(self):
         self.corefs = 0
 
     def input_edge(self, edge):
+        hg = self.system.get_hg(self)
+
         uedge = unidecode_edge(edge)
-        if uedge != edge and self.hg.exists(uedge):
-            make_corefs(self.hg, edge, uedge)
+        if uedge != edge and hg.exists(uedge):
+            make_corefs(hg, edge, uedge)
             self.corefs += 1
 
     def report(self):

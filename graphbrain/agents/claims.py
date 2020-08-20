@@ -32,8 +32,8 @@ def replace_subject(edge, new_subject):
 
 
 class Claims(Agent):
-    def __init__(self, hg, lang, sequence=None):
-        super().__init__(hg, lang, sequence)
+    def __init__(self):
+        super().__init__()
         self.actors = None
         self.female = None
         self.group = None
@@ -52,11 +52,11 @@ class Claims(Agent):
     def languages(self):
         return {'en'}
 
-    def _is_actor(self, edge):
+    def _is_actor(self, hg, edge):
         if edge in self.actors:
             return True
 
-        if self.hg.exists(('actor/P/.', edge)):
+        if hg.exists(('actor/P/.', edge)):
             self.actors.add(edge)
             return True
         else:
@@ -73,7 +73,7 @@ class Claims(Agent):
         else:
             return None
 
-    def start(self):
+    def on_start(self):
         self.actors = set()
         self.female_counter = Counter()
         self.group_counter = Counter()
@@ -99,23 +99,25 @@ class Claims(Agent):
         self.claims.append({'actor': actor, 'claim': claim, 'edge': edge})
 
     def input_edge(self, edge):
+        hg = self.system.get_hg(self)
+
         if not edge.is_atom():
             ct = edge.connector_type()
             if ct[:2] == 'Pd':
                 pred = edge[0]
                 if (len(edge) > 2 and
-                        deep_lemma(self.hg, pred).root() in CLAIM_PRED_LEMMAS):
+                        deep_lemma(hg, pred).root() in CLAIM_PRED_LEMMAS):
                     subjects = edge.edges_with_argrole('s')
                     claims = edge.edges_with_argrole('r')
                     if len(subjects) == 1 and len(claims) >= 1:
                         subject = strip_concept(subjects[0])
                         if subject and has_proper_concept(subject):
-                            actor = main_coref(self.hg, subjects[0])
-                            if self._is_actor(actor):
+                            actor = main_coref(hg, subjects[0])
+                            if self._is_actor(hg, actor):
                                 for claim in claims:
                                     self._process_claim(actor, claim, edge)
 
-    def end(self):
+    def on_end(self):
         # assign genders
         self.female = set()
         self.group = set()

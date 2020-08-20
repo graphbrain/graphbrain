@@ -12,8 +12,8 @@ ACTOR_PRED_LEMMAS = {'say', 'claim', 'warn', 'kill', 'accuse', 'condemn',
 
 
 class Actors(Agent):
-    def __init__(self, hg, lang, sequence=None):
-        super().__init__(hg, lang, sequence)
+    def __init__(self):
+        super().__init__()
         self.actor_counter = None
 
     def name(self):
@@ -22,10 +22,12 @@ class Actors(Agent):
     def languages(self):
         return {'en'}
 
-    def start(self):
+    def on_start(self):
         self.actor_counter = Counter()
 
     def input_edge(self, edge):
+        hg = self.system.get_hg(self)
+
         if not edge.is_atom():
             ct = edge.connector_type()
             if ct[:2] == 'Pd':
@@ -34,15 +36,15 @@ class Actors(Agent):
                     subject = strip_concept(subjects[0])
                     if subject and has_proper_concept(subject):
                         pred = edge[0]
-                        dlemma = deep_lemma(self.hg, pred).root()
+                        dlemma = deep_lemma(hg, pred).root()
                         if dlemma in ACTOR_PRED_LEMMAS:
                             try:
-                                actor = main_coref(self.hg, subject)
+                                actor = main_coref(hg, subject)
                                 self.actor_counter[actor] += 1
                             except Exception as e:
                                 print(str(e))
 
-    def end(self):
+    def on_end(self):
         for actor in self.actor_counter:
             if self.actor_counter[actor] > 0:
                 yield wrap_edge(('actor/P/.', actor))

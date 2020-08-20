@@ -16,8 +16,8 @@ CONFLICT_TOPIC_TRIGGERS = {'of/T/en', 'over/T/en', 'against/T/en', 'for/T/en'}
 
 
 class Conflicts(Agent):
-    def __init__(self, hg, lang, sequence=None):
-        super().__init__(hg, lang, sequence)
+    def __init__(self):
+        super().__init__()
         self.conflicts = 0
         self.conflict_topics = 0
 
@@ -27,27 +27,29 @@ class Conflicts(Agent):
     def languages(self):
         return {'en'}
 
-    def start(self):
+    def on_start(self):
         self.conflicts = 0
         self.conflict_topics = 0
 
-    def _topics(self, actor_orig, actor_targ, edge):
+    def _topics(self, hg, actor_orig, actor_targ, edge):
         for item in edge[1:]:
             if item.type()[0] == 's':
                 if item[0].to_str() in CONFLICT_TOPIC_TRIGGERS:
                     for concept in all_concepts(item[1]):
-                        if self.hg.degree(concept) > 1:
+                        if hg.degree(concept) > 1:
                             yield wrap_edge(('conflict-topic/P/.', actor_orig,
                                              actor_targ, concept, edge))
                             self.conflict_topics += 1
 
     def input_edge(self, edge):
+        hg = self.system.get_hg(self)
+
         if not edge.is_atom():
             ct = edge.connector_type()
             if ct[:2] == 'Pd':
                 pred = edge[0]
                 if (len(edge) > 2 and
-                        deep_lemma(self.hg,
+                        deep_lemma(hg,
                                    pred).root() in CONFLICT_PRED_LEMMAS):
                     subjects = edge.edges_with_argrole('s')
                     objects = edge.edges_with_argrole('o')
@@ -57,15 +59,15 @@ class Conflicts(Agent):
                         if (subject and obj and
                                 has_proper_concept(subject) and
                                 has_proper_concept(obj)):
-                            actor_orig = main_coref(self.hg, subject)
-                            actor_targ = main_coref(self.hg, obj)
+                            actor_orig = main_coref(hg, subject)
+                            actor_targ = main_coref(hg, obj)
                             conflict_edge = hedge(
                                 ('conflict/P/.', actor_orig, actor_targ, edge))
-                            if (is_actor(self.hg, actor_orig) and
-                                    is_actor(self.hg, actor_targ)):
+                            if (is_actor(hg, actor_orig) and
+                                    is_actor(hg, actor_targ)):
                                 yield wrap_edge(conflict_edge)
                                 for wedge in self._topics(
-                                        actor_orig, actor_targ, edge):
+                                        hg, actor_orig, actor_targ, edge):
                                     yield wedge
                                 self.conflicts += 1
 

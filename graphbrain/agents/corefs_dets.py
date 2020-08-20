@@ -4,8 +4,8 @@ from graphbrain.agents.agent import Agent
 
 
 class CorefsDets(Agent):
-    def __init__(self, hg, lang, sequence=None):
-        super().__init__(hg, lang, sequence)
+    def __init__(self):
+        super().__init__()
         self.corefs = 0
 
     def name(self):
@@ -14,16 +14,18 @@ class CorefsDets(Agent):
     def languages(self):
         return {'en'}
 
-    def start(self):
+    def on_start(self):
         self.corefs = 0
 
     def input_edge(self, edge):
+        hg = self.system.get_hg(self)
+
         if (not edge.is_atom() and
                 len(edge) == 2 and
                 edge[0].is_atom() and
                 edge[0].root() == 'the' and
                 has_proper_concept(edge[1])):
-            make_corefs(self.hg, edge, edge[1])
+            make_corefs(hg, edge, edge[1])
             self.corefs += 1
 
     def report(self):

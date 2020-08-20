@@ -72,17 +72,8 @@ def conjunctions_resolution(edge):
 
 
 class Conjunctions(Agent):
-    def __init__(self, hg, lang, sequence=None):
-        super().__init__(hg, lang, sequence)
-
     def name(self):
         return 'conjunctions'
-
-    def languages(self):
-        return set()
-
-    def start(self):
-        pass
 
     def input_edge(self, edge):
         for edge in conjunctions_resolution(edge):

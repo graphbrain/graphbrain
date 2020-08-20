@@ -2,7 +2,6 @@ import re
 import json
 import progressbar
 from graphbrain import build_atom
-from graphbrain.parsers import create_parser
 from graphbrain.agents.agent import Agent
 from graphbrain.agents.system import wrap_edge
 
@@ -21,42 +20,36 @@ def title_parts(title):
 
 
 class RedditParser(Agent):
-    def __init__(self, hg, lang, sequence=None):
-        super().__init__(hg, lang, sequence)
-        # TODO: make parser type configurable
-        self.parser = None
+    def __init__(self):
+        super().__init__()
         self.titles_parsed = 0
         self.titles_added = 0
 
     def name(self):
         return 'reddit_parser'
 
-    def languages(self):
-        return set()
-
-    def start(self):
-        self.parser = create_parser(
-            name='en', lemmas=True, resolve_corefs=True)
+    def on_start(self):
         self.titles_parsed = 0
         self.titles_added = 0
 
     def _parse_title(self, text, author):
+        parser = self.system.get_parser(self)
+
         parts = title_parts(text)
 
         title_edge = ['title/P/.reddit', author]
         tags = []
         for part in parts:
-            parse_results = self.parser.parse(part)
+            parse_results = parser.parse(part)
             for parse in parse_results['parses']:
                 main_edge = parse['resolved_corefs']
 
                 # add main edge
                 if main_edge:
-                    yield wrap_edge(main_edge)
-
                     # attach text to edge
                     text = parse['text']
-                    self.hg.set_attribute(main_edge, 'text', text)
+                    attr = {'text': text}
+                    yield wrap_edge(main_edge, attributes=attr)
 
                     # add extra edges
                     for edge in parse['extra_edges']:
@@ -86,7 +79,8 @@ class RedditParser(Agent):
         for wedge in self._parse_title(post['title'], author):
             yield wedge
 
-    def run(self, infile=None):
+    def run(self):
+        infile = self.system.get_infile(self)
         lines = file_lines(infile)
         i = 0
         with progressbar.ProgressBar(max_value=lines) as bar:

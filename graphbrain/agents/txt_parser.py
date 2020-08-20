@@ -1,4 +1,3 @@
-from graphbrain.parsers import create_parser
 from graphbrain.agents.agent import Agent
 from graphbrain.agents.system import wrap_edge
 
@@ -12,40 +11,38 @@ def paragraphs(file_name):
 
 
 class TxtParser(Agent):
-    def __init__(self, hg, lang, sequence=None):
-        super().__init__(hg, lang, sequence)
-        self.parser = None
+    def __init__(self):
+        super().__init__()
         self.edges = 0
 
     def name(self):
         return 'txt_parser'
 
-    def languages(self):
-        return set()
-
-    def start(self):
+    def on_start(self):
         if not self.sequence:
             raise RuntimeError('Sequence name must be specified.')
 
-        self.parser = create_parser(
-            name=self.lang, lemmas=True, resolve_corefs=True)
+    def run(self):
+        infile = self.system.get_infile(self)
+        parser = self.system.get_parser(self)
+        sequence = self.system.get_sequence(self)
 
-    def input_file(self, file_name):
         pos = 0
-        for paragraph in paragraphs(file_name):
-            parse_results = self.parser.parse(paragraph)
+        for paragraph in paragraphs(infile):
+            parse_results = parser.parse(paragraph)
             for parse in parse_results['parses']:
                 main_edge = parse['resolved_corefs']
 
                 # add main edge
                 if main_edge:
-                    self.hg.add_to_sequence(self.sequence, pos, main_edge)
+                    # attach text to edge
+                    text = parse['text']
+                    attr = {'text': text}
+
+                    yield wrap_edge(main_edge, sequence=sequence, position=pos,
+                                    attributes=attr)
                     self.edges += 1
                     pos += 1
-
-                    # attach text to edge
-                    print('{}\n{}\n'.format(parse['text'], main_edge.to_str()))
-                    self.hg.set_attribute(main_edge, 'text', parse['text'])
 
                     # add extra edges
                     for edge in parse['extra_edges']:

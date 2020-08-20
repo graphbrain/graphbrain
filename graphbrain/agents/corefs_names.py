@@ -32,29 +32,28 @@ def clique_number(edge, cliques):
 
 
 class CorefsNames(Agent):
-    def __init__(self, hg, lang, sequence=None):
-        super().__init__(hg, lang, sequence)
+    def __init__(self):
+        super().__init__()
         self.corefs = 0
         self.seeds = None
 
     def name(self):
         return 'corefs_names'
 
-    def languages(self):
-        return set()
-
     def _corefs_from_seed(self, seed):
+        hg = self.system.get_hg(self)
+
         concepts = []
 
-        for edge in set(self.hg.edges_with_edges([seed])):
+        for edge in set(hg.edges_with_edges([seed])):
             conn = edge[0]
             if (conn.is_atom() and edge.type()[0] == 'C' and
                     edge.connector_type() == 'B' and conn.root() == '+' and
                     len(edge) > 2):
                 mc = edge.main_concepts()
                 if len(mc) == 1 and mc[0] == seed:
-                    d = self.hg.degree(edge)
-                    dd = self.hg.deep_degree(edge)
+                    d = hg.degree(edge)
+                    dd = hg.deep_degree(edge)
                     if d > 2 and dd > 2:
                         concepts.append(edge)
 
@@ -90,7 +89,7 @@ class CorefsNames(Agent):
 
         return coref_sets
 
-    def start(self):
+    def on_start(self):
         self.corefs = 0
         self.seeds = set()
 
@@ -108,7 +107,9 @@ class CorefsNames(Agent):
     def report(self):
         return '{} coreferences were added.'.format(str(self.corefs))
 
-    def end(self):
+    def on_end(self):
+        hg = self.system.get_hg(self)
+
         i = 0
         print('processing seeds')
         with progressbar.ProgressBar(max_value=len(self.seeds)) as bar:
@@ -122,7 +123,7 @@ class CorefsNames(Agent):
                 if len(crefs) > 0:
                     # find set with the highest degree and normalize set
                     # degrees by total degree
-                    cref_degs = [self.hg.sum_degree(cref) for cref in crefs]
+                    cref_degs = [hg.sum_degree(cref) for cref in crefs]
                     total_deg = sum(cref_degs)
                     cref_ratios = [cref_deg / total_deg
                                    for cref_deg in cref_degs]
@@ -134,17 +135,17 @@ class CorefsNames(Agent):
                             best_pos = pos
 
                     # compute some degree-related metrics
-                    sdd = self.hg.sum_deep_degree(crefs[best_pos])
+                    sdd = hg.sum_deep_degree(crefs[best_pos])
                     # print('sdd: {}'.format(sdd))
-                    rd, rdd = self.hg.root_degrees(seed)
+                    rd, rdd = hg.root_degrees(seed)
                     # print('rd: {}'.format(rd))
                     # print('rdd: {}'.format(rdd))
                     cref_to_root_dd = \
                         0. if rdd == 0 else float(sdd) / float(rdd)
-                    d = self.hg.degree(seed)
-                    dd = self.hg.deep_degree(seed)
+                    d = hg.degree(seed)
+                    dd = hg.deep_degree(seed)
                     r = float(d) / float(dd)
-                    ld, ldd = lemma_degrees(self.hg, seed)
+                    ld, ldd = lemma_degrees(hg, seed)
                     lr = float(ld) / float(ldd)
 
                     # print('max_ratio: {}'.format(max_ratio))
@@ -161,7 +162,7 @@ class CorefsNames(Agent):
 
                     for cref in crefs:
                         for edge1, edge2 in combinations(cref, 2):
-                            make_corefs(self.hg, edge1, edge2)
+                            make_corefs(hg, edge1, edge2)
                             self.corefs += 1
                 i += 1
                 bar.update(i)
