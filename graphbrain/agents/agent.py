@@ -33,6 +33,7 @@ class Agent(object):
 
     def on_end(self):
         """Called at the end of a cycle of activity."""
+        return []
 
     def input(self):
         """Input to the agent all the edges corresponding to its current

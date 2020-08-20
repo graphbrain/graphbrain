@@ -1,5 +1,24 @@
+from importlib import import_module
 from collections import defaultdict
 from graphbrain.parsers import create_parser
+
+
+def run_agent(agent_module_str, lang, hg=None, infile=None, sequence=None):
+    system = System(lang=lang, hg=hg, infile=infile, sequence=sequence)
+    agent = create_agent(agent_module_str)
+    system.add(agent_module_str, agent)
+    system.run()
+
+
+def create_agent(agent_module_str):
+    if '.' in agent_module_str:
+        module_str = agent_module_str
+    else:
+        module_str = 'graphbrain.agents.{}'.format(agent_module_str)
+    class_name_parts = module_str.split('.')[-1].split('_')
+    class_name = ''.join([part.title() for part in class_name_parts])
+    class_obj = getattr(import_module(module_str), class_name)
+    return class_obj()
 
 
 def wrap_edge(edge, primary=True, count=False, attributes={}, sequence=None,
@@ -26,7 +45,7 @@ class System(object):
         self.parser = None
         self.counters = {}
 
-    def add_agent(self, name, agent, input=None, depends_on=None):
+    def add(self, name, agent, input=None, depends_on=None):
         agent.system = self
         self.agents[name] = agent
         if input:
