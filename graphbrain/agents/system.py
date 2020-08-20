@@ -50,7 +50,7 @@ class System(object):
     def get_parser(self, agent):
         if self.parser is None:
             self.parser = create_parser(
-                name='en', lemmas=True, resolve_corefs=True)
+                name=self.lang, lemmas=True, resolve_corefs=True)
         return self.parser
 
     def get_infile(self, agent):
