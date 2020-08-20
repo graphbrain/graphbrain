@@ -11,8 +11,6 @@ class Agent(object):
 
     def __init__(self):
         self.search_pattern = '*'
-        self.edges_added = 0
-        self.edges_existed = 0
         self.system = None
         self.running = False
 
@@ -36,10 +34,6 @@ class Agent(object):
     def on_end(self):
         """Called at the end of a cycle of activity."""
 
-    def _reset_counters(self):
-        self.edges_added = 0
-        self.edges_existed = 0
-
     def input(self):
         """Input to the agent all the edges corresponding to its current
         search pattern. A typical use is in knowledge inference agents, which
@@ -57,9 +51,7 @@ class Agent(object):
 
     def report(self):
         """Produce a report of the agent's activities."""
-        added_s = '{} edges were added.'.format(str(self.edges_added))
-        existed_s = '{} edges already existed.'.format(str(self.edges_existed))
-        return '{}\n{}'.format(added_s, existed_s)
+        return ''
 
     def run(self):
         """High-level method to run an agent."""
