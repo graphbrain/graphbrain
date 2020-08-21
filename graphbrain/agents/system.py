@@ -27,8 +27,16 @@ def load_system(system_file, lang, hg=None, infile=None, sequence=None):
             input = system_json[agent_name]['input']
         if 'write' in system_json[agent_name]:
             write = system_json[agent_name]['write']
-        system.add(agent_name, module_str, input=input, depends_on=depends_on,
+        agent = create_agent(module_str)
+        system.add(agent_name, agent, input=input, depends_on=depends_on,
                    write=write)
+    return system
+
+
+def run_system(system_file, lang, hg=None, infile=None, sequence=None):
+    system = load_system(system_file, lang, hg=hg, infile=infile,
+                         sequence=sequence)
+    system.run()
 
 
 def create_agent(agent_module_str):

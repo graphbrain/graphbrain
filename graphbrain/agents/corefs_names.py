@@ -2,7 +2,7 @@ from unidecode import unidecode
 from itertools import combinations
 import progressbar
 from igraph import Graph
-from graphbrain import hedge, clean_atom
+from graphbrain import hedge
 from graphbrain.meaning.corefs import make_corefs
 from graphbrain.meaning.lemmas import lemma_degrees
 from graphbrain.agents.agent import Agent
@@ -19,7 +19,7 @@ def clean_edge(edge):
 
 def belongs_to_clique(edge, clique):
     if edge.is_atom():
-        return clean_atom(edge) in clique
+        return clean_edge(edge) in clique
     else:
         return all([clean_edge(x) in clique for x in edge[1:]])
 

@@ -29,7 +29,9 @@ def wrapper(fun, command=False, text=None):
     parser.add_argument('--lang', type=str, help='language', default='en')
     parser.add_argument('--pattern', type=str, help='edge pattern',
                         default='*')
-    parser.add_argument('--agent', type=str, help='agent name')
+    parser.add_argument('--agent', type=str, help='agent name', default=None)
+    parser.add_argument('--system', type=str, help='agent system file',
+                        default=None)
     parser.add_argument('--sequence', type=str, help='sequence name',
                         default=None)
     parser.add_argument('--text', type=str, help='text identifier',
@@ -58,12 +60,8 @@ def wrapper(fun, command=False, text=None):
 
 def _cli(args):
     command = args.command
-    try:
-        cmd_module = import_module('graphbrain.commands.{}'.format(command))
-        cmd_module.run(args)
-    except ImportError as error:
-        print('unkown command: {}'.format(command))
-        print(error)
+    cmd_module = import_module('graphbrain.commands.{}'.format(command))
+    cmd_module.run(args)
 
 
 def cli():
