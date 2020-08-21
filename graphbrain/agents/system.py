@@ -1,5 +1,6 @@
 from importlib import import_module
 from collections import defaultdict
+import json
 from graphbrain.parsers import create_parser
 
 
@@ -8,6 +9,26 @@ def run_agent(agent_module_str, lang, hg=None, infile=None, sequence=None):
     agent = create_agent(agent_module_str)
     system.add(agent_module_str, agent)
     system.run()
+
+
+def load_system(system_file, lang, hg=None, infile=None, sequence=None):
+    with open(system_file, 'r') as f:
+        json_str = f.read()
+    system_json = json.loads(json_str)
+    system = System(lang=lang, hg=hg, infile=infile, sequence=sequence)
+    for agent_name in system_json:
+        module_str = system_json[agent_name]['agent']
+        depends_on = None
+        input = None
+        write = True
+        if 'depends_on' in system_json[agent_name]:
+            depends_on = system_json[agent_name]['depends_on']
+        if 'input' in system_json[agent_name]:
+            input = system_json[agent_name]['input']
+        if 'write' in system_json[agent_name]:
+            write = system_json[agent_name]['write']
+        system.add(agent_name, module_str, input=input, depends_on=depends_on,
+                   write=write)
 
 
 def create_agent(agent_module_str):
@@ -44,16 +65,20 @@ class System(object):
         self.agent_seq = []
         self.parser = None
         self.counters = {}
+        self.write = {}
 
-    def add(self, name, agent, input=None, depends_on=None):
+    def add(self, name, agent, input=None, depends_on=None, write=True):
         agent.system = self
         self.agents[name] = agent
         if input:
             self.outputs[input].add(name)
         if depends_on:
             self.dependants[depends_on].add(name)
+        # if agent has no inputs and depends on no other agents, then it is
+        # a root agent
         if not (input and depends_on):
             self.roots.add(name)
+        self.write[name] = write
 
     def run(self):
         # start by running the roots
@@ -121,7 +146,8 @@ class System(object):
             self.hg.set_attribute(edge, attribute, attributes[attribute])
 
     def _process_wedge(self, agent_name, wedge):
-        self._add_wedge(agent_name, wedge)
+        if self.write[agent_name]:
+            self._add_wedge(agent_name, wedge)
         for output in self.outputs[agent_name]:
             self._start_agent(output)
             output.input_edge(wedge['edge'])

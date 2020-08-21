@@ -1,0 +1,46 @@
+{
+    'reddit_parser': {
+        'agent': 'reddit_parser'
+    },
+    'taxonomy': {
+        'agent': 'taxonomy',
+        'depends_on': 'reddit_parser'
+    },
+    'corefs_dets': {
+        'agent': 'corefs_dets',
+        'depends_on': 'taxonomy'
+    },
+    'corefs_names': {
+        'agent': 'corefs_names',
+        'depends_on': 'corefs_dets'
+    },
+    'corefs_onto': {
+        'agent': 'corefs_onto',
+        'depends_on': 'corefs_names'
+    },
+    'corefs_unidecode': {
+        'agent': 'corefs_unidecode',
+        'depends_on': 'corefs_onto'
+    },
+    'sequence': {
+        'agent': 'sequence',
+        'depends_on': 'corefs_unidecode'
+    },
+    'conjunctions': {
+        'agent': 'conjunctions',
+        'input': 'sequence',
+        'write': False
+    },
+    'actors': {
+        'agent': 'actors',
+        'input': 'conjunctions'
+    },
+    'claims': {
+        'agent': 'claims',
+        'input': 'conjunctions'
+    },
+    'conflicts': {
+        'agent': 'conflicts',
+        'input': 'conjunctions'
+    }
+}
