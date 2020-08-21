@@ -22,13 +22,13 @@
         'agent': 'corefs_unidecode',
         'depends_on': 'corefs_onto'
     },
-    'sequence': {
-        'agent': 'sequence',
+    'iterator': {
+        'agent': 'iterator',
         'depends_on': 'corefs_unidecode'
     },
     'conjunctions': {
         'agent': 'conjunctions',
-        'input': 'sequence',
+        'input': 'iterator',
         'write': False
     },
     'actors': {
