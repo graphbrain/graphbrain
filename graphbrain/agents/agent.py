@@ -44,8 +44,8 @@ class Agent(object):
         i = 0
         with progressbar.ProgressBar(max_value=edge_count) as bar:
             for edge in self.system.hg.search(self.search_pattern):
-                for wedge in self.input_edge(edge):
-                    yield wedge
+                for op in self.input_edge(edge):
+                    yield op
                 if i < edge_count:
                     i += 1
                     bar.update(i)
@@ -56,5 +56,5 @@ class Agent(object):
 
     def run(self):
         """High-level method to run an agent."""
-        for wedge in self.input():
-            yield wedge
+        for op in self.input():
+            yield op

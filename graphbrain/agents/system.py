@@ -1,6 +1,7 @@
 from importlib import import_module
 from collections import defaultdict
 import json
+from graphbrain.op import apply_op
 from graphbrain.parsers import create_parser
 
 
@@ -50,16 +51,6 @@ def create_agent(agent_module_str):
     return class_obj()
 
 
-def wrap_edge(edge, primary=True, count=False, attributes={}, sequence=None,
-              position=-1):
-    return {'edge': edge,
-            'primary': primary,
-            'count': count,
-            'attributes': attributes,
-            'sequence': sequence,
-            'position': position}
-
-
 class System(object):
     def __init__(self, lang, hg=None, infile=None, sequence=None):
         self.lang = lang
@@ -84,7 +75,7 @@ class System(object):
             self.dependants[depends_on].add(name)
         # if agent has no inputs and depends on no other agents, then it is
         # a root agent
-        if not (input and depends_on):
+        if not (input or depends_on):
             self.roots.add(name)
         self.write[name] = write
 
@@ -96,8 +87,8 @@ class System(object):
         for agent_name in self.agent_seq:
             agent = self.agents[agent_name]
             if agent.running:
-                for wedge in agent.on_end():
-                    self._process_wedge(agent_name, wedge)
+                for op in agent.on_end():
+                    self._process_op(agent_name, op)
             print('\n stopping agent {}'.format(agent_name))
             print('{} edges were added.'.format(self.counters[agent_name][0]))
             print('{} edges already existed.'.format(
@@ -130,45 +121,26 @@ class System(object):
             agent.on_start()
             agent.running = True
 
-    def _add_wedge(self, agent_name, wedge, primary=True, count=False):
-        edge = wedge['edge']
-        primary = wedge['primary']
-        count = wedge['count']
-        attributes = wedge['attributes']
-        sequence = wedge['sequence']
-        if sequence:
-            position = wedge['position']
-            self.hg.add_to_sequence(sequence, position, edge)
-            # TODO: detect already existing edges in this case
-            self.counters[agent_name][0] += 1
-        else:
-            if self.hg.exists(edge):
-                self.counters[agent_name][1] += 1
-                if count:
-                    self.hg.add(edge, primary=primary, count=True)
-            else:
-                self.counters[agent_name][0] += 1
-                self.hg.add(edge, primary=primary, count=count)
-
-        for attribute in attributes:
-            self.hg.set_attribute(edge, attribute, attributes[attribute])
-
-    def _process_wedge(self, agent_name, wedge):
+    def _process_op(self, agent_name, op):
         if self.write[agent_name]:
-            self._add_wedge(agent_name, wedge)
+            if apply_op(self.hg, op):
+                self.counters[agent_name][0] += 1
+            else:
+                self.counters[agent_name][1] += 1
+            self._add_op(agent_name, op)
         for output in self.outputs[agent_name]:
             self._start_agent(output)
-            output.input_edge(wedge['edge'])
+            output.input_edge(op['edge'])
 
     def _run_agent(self, agent_name):
         agent = self.agents[agent_name]
         self._start_agent(agent_name)
 
-        for wedge in agent.run():
-            self._process_wedge(agent_name, wedge)
+        for op in agent.run():
+            self._process_op(agent_name, op)
 
-        for wedge in agent.on_end():
-            self._process_wedge(agent_name, wedge)
+        for op in agent.on_end():
+            self._process_op(agent_name, op)
         agent.running = False
 
         for dependant in self.dependants[agent_name]:
