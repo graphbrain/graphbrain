@@ -36,3 +36,9 @@ Thumbs.db
 # IDE stuff #
 #############
 .idea
+
+# Python bytecode #
+###################
+__pycache__
+*.pyc
+*.pyo
