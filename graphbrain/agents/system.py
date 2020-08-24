@@ -22,13 +22,17 @@ def load_system(system_file, lang, hg=None, infile=None, sequence=None):
         depends_on = None
         input = None
         write = True
+        silent = False
         if 'depends_on' in system_json[agent_name]:
             depends_on = system_json[agent_name]['depends_on']
         if 'input' in system_json[agent_name]:
             input = system_json[agent_name]['input']
+            # agents that depend on other agent's input are kept silent
+            # so that the text output of running systems remains neat
+            # silent = True
         if 'write' in system_json[agent_name]:
             write = system_json[agent_name]['write']
-        agent = create_agent(module_str)
+        agent = create_agent(module_str, silent=silent)
         system.add(agent_name, agent, input=input, depends_on=depends_on,
                    write=write)
     return system
@@ -40,7 +44,7 @@ def run_system(system_file, lang, hg=None, infile=None, sequence=None):
     system.run()
 
 
-def create_agent(agent_module_str):
+def create_agent(agent_module_str, silent=False):
     if '.' in agent_module_str:
         module_str = agent_module_str
     else:
@@ -48,7 +52,9 @@ def create_agent(agent_module_str):
     class_name_parts = module_str.split('.')[-1].split('_')
     class_name = ''.join([part.title() for part in class_name_parts])
     class_obj = getattr(import_module(module_str), class_name)
-    return class_obj()
+    obj = class_obj()
+    obj.silent = silent
+    return obj
 
 
 class System(object):
@@ -89,7 +95,7 @@ class System(object):
             if agent.running:
                 for op in agent.on_end():
                     self._process_op(agent_name, op)
-            print('\n stopping agent {}'.format(agent_name))
+            print('\nagent {} stopped.'.format(agent_name))
             print('{} edges were added.'.format(self.counters[agent_name][0]))
             print('{} edges already existed.'.format(
                 self.counters[agent_name][1]))

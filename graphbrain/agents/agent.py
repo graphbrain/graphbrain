@@ -13,6 +13,7 @@ class Agent(object):
         self.search_pattern = '*'
         self.system = None
         self.running = False
+        self.silent = False
 
     def name(self):
         """Returns the agent's name."""
@@ -42,15 +43,24 @@ class Agent(object):
         """
         edge_count = self.system.hg.count(self.search_pattern)
         i = 0
-        with progressbar.ProgressBar(max_value=edge_count) as bar:
-            for edge in self.system.hg.search(self.search_pattern):
-                ops = self.input_edge(edge)
-                if ops:
-                    for op in ops:
-                        yield op
-                if i < edge_count:
-                    i += 1
-                    bar.update(i)
+
+        if self.silent:
+            pbar = None
+        else:
+            pbar = progressbar.ProgressBar(max_value=edge_count).start()
+
+        for edge in self.system.hg.search(self.search_pattern):
+            ops = self.input_edge(edge)
+            if ops:
+                for op in ops:
+                    yield op
+            if i < edge_count:
+                i += 1
+                if not self.silent:
+                    pbar.update(i)
+
+        if not self.silent:
+            pbar.finish()
 
     def report(self):
         """Produce a report of the agent's activities."""
