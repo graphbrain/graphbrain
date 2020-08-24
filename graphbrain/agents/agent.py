@@ -44,8 +44,10 @@ class Agent(object):
         i = 0
         with progressbar.ProgressBar(max_value=edge_count) as bar:
             for edge in self.system.hg.search(self.search_pattern):
-                for op in self.input_edge(edge):
-                    yield op
+                ops = self.input_edge(edge)
+                if ops:
+                    for op in ops:
+                        yield op
                 if i < edge_count:
                     i += 1
                     bar.update(i)

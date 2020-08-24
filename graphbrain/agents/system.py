@@ -127,20 +127,26 @@ class System(object):
                 self.counters[agent_name][0] += 1
             else:
                 self.counters[agent_name][1] += 1
-            self._add_op(agent_name, op)
         for output in self.outputs[agent_name]:
             self._start_agent(output)
-            output.input_edge(op['edge'])
+            downstream_ops = self.agents[output].input_edge(op['edge'])
+            if downstream_ops:
+                for dop in downstream_ops:
+                    self._process_op(output, dop)
 
     def _run_agent(self, agent_name):
         agent = self.agents[agent_name]
         self._start_agent(agent_name)
 
-        for op in agent.run():
-            self._process_op(agent_name, op)
+        ops = agent.run()
+        if ops:
+            for op in ops:
+                self._process_op(agent_name, op)
 
-        for op in agent.on_end():
-            self._process_op(agent_name, op)
+        ops = agent.on_end()
+        if ops:
+            for op in ops:
+                self._process_op(agent_name, op)
         agent.running = False
 
         for dependant in self.dependants[agent_name]:

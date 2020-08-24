@@ -1,8 +1,11 @@
 import json
 import plyvel
 from graphbrain.hypergraph import Hypergraph
-from graphbrain.hyperedge import *
-from graphbrain.memory.permutations import *
+from graphbrain.hyperedge import (hedge, edges2str, split_edge_str,
+                                  match_pattern)
+from graphbrain.memory.permutations import (str_plus_1, first_permutation,
+                                            perm2edge,
+                                            do_with_edge_permutations)
 
 
 def _edge2key(edge):
@@ -289,13 +292,16 @@ class LevelDB(Hypergraph):
 
     def _set_attribute_key(self, key, attribute, value):
         """Sets the value of an attribute by key."""
-        if self._exists_key(key):
+        exists = self._exists_key(key)
+        if exists:
+            exists = True
             attributes = self._attribute_key(key)
             attributes[attribute] = value
         else:
             attributes = {'p': 0, 'd': 0, 'dd': 0}
             attributes[attribute] = value
         self._add_key(key, attributes)
+        return exists
 
     def _inc_attribute_key(self, key, attribute):
         """Increments an attribute of an edge."""

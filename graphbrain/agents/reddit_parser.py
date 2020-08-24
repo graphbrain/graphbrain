@@ -3,7 +3,7 @@ import json
 import progressbar
 from graphbrain import build_atom
 from graphbrain.agents.agent import Agent
-from graphbrain.agents.system import wrap_edge
+from graphbrain.op import create_op
 
 
 def file_lines(filename):
@@ -49,28 +49,28 @@ class RedditParser(Agent):
                     # attach text to edge
                     text = parse['text']
                     attr = {'text': text}
-                    yield wrap_edge(main_edge, attributes=attr)
+                    yield create_op(main_edge, attributes=attr)
 
                     # add extra edges
                     for edge in parse['extra_edges']:
-                        yield wrap_edge(edge)
+                        yield create_op(edge)
 
                     if main_edge.type()[0] == 'R':
                         title_edge.append(main_edge)
                     else:
                         tags.append(main_edge)
             for edge in parse_results['inferred_edges']:
-                yield wrap_edge(edge, count=True)
+                yield create_op(edge, count=True)
 
         if len(title_edge) > 2:
             # add title edge
-            yield wrap_edge(title_edge)
+            yield create_op(title_edge)
             self.titles_added += 1
 
             # add title tags
             if len(tags) > 0:
                 tags_edge = ['tags/P/.reddit', title_edge] + tags
-                yield wrap_edge(tags_edge)
+                yield create_op(tags_edge)
 
         self.titles_parsed += 1
 

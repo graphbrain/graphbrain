@@ -6,7 +6,7 @@ from graphbrain.meaning.lemmas import deep_lemma
 from graphbrain.meaning.corefs import main_coref
 from graphbrain.meaning.actors import is_actor
 from graphbrain.agents.agent import Agent
-from graphbrain.agents.system import wrap_edge
+from graphbrain.op import create_op
 
 
 CONFLICT_PRED_LEMMAS = {'warn', 'kill', 'accuse', 'condemn', 'slam', 'arrest',
@@ -37,7 +37,7 @@ class Conflicts(Agent):
                 if item[0].to_str() in CONFLICT_TOPIC_TRIGGERS:
                     for concept in all_concepts(item[1]):
                         if hg.degree(concept) > 1:
-                            yield wrap_edge(('conflict-topic/P/.', actor_orig,
+                            yield create_op(('conflict-topic/P/.', actor_orig,
                                              actor_targ, concept, edge))
                             self.conflict_topics += 1
 
@@ -65,7 +65,7 @@ class Conflicts(Agent):
                                 ('conflict/P/.', actor_orig, actor_targ, edge))
                             if (is_actor(hg, actor_orig) and
                                     is_actor(hg, actor_targ)):
-                                yield wrap_edge(conflict_edge)
+                                yield create_op(conflict_edge)
                                 for wedge in self._topics(
                                         hg, actor_orig, actor_targ, edge):
                                     yield wedge

@@ -3,7 +3,7 @@ from itertools import combinations
 import progressbar
 from igraph import Graph
 from graphbrain import hedge
-from graphbrain.meaning.corefs import make_corefs
+from graphbrain.meaning.corefs import make_corefs_ops
 from graphbrain.meaning.lemmas import lemma_degrees
 from graphbrain.agents.agent import Agent
 
@@ -162,7 +162,8 @@ class CorefsNames(Agent):
 
                     for cref in crefs:
                         for edge1, edge2 in combinations(cref, 2):
-                            make_corefs(hg, edge1, edge2)
                             self.corefs += 1
+                            for op in make_corefs_ops(hg, edge1, edge2):
+                                yield op
                 i += 1
                 bar.update(i)

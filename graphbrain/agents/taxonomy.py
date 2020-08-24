@@ -1,6 +1,6 @@
 import graphbrain.constants as const
 from graphbrain.agents.agent import Agent
-from graphbrain.agents.system import wrap_edge
+from graphbrain.op import create_op
 
 
 class Taxonomy(Agent):
@@ -24,4 +24,4 @@ class Taxonomy(Agent):
                     parent = edge[1]
                 if parent:
                     ont_edge = (const.type_of_pred, edge, parent)
-                    yield wrap_edge(ont_edge, primary=False)
+                    yield create_op(ont_edge, primary=False)

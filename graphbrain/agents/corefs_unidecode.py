@@ -1,6 +1,6 @@
 from unidecode import unidecode
 from graphbrain import hedge
-from graphbrain.meaning.corefs import make_corefs
+from graphbrain.meaning.corefs import make_corefs_ops
 from graphbrain.agents.agent import Agent
 
 
@@ -33,8 +33,9 @@ class CorefsUnidecode(Agent):
 
         uedge = unidecode_edge(edge)
         if uedge != edge and hg.exists(uedge):
-            make_corefs(hg, edge, uedge)
             self.corefs += 1
+            for op in make_corefs_ops(hg, edge, uedge):
+                yield op
 
     def report(self):
         return '{} coreferences were added.'.format(str(self.corefs))

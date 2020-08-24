@@ -1,6 +1,7 @@
 import unittest
-from graphbrain import *
-from graphbrain.meaning.corefs import *
+from graphbrain import hedge, hgraph
+from graphbrain.meaning.corefs import (make_corefs, are_corefs, coref_id,
+                                       coref_set, main_coref)
 
 
 class TestCorefs(unittest.TestCase):

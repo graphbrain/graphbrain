@@ -1,5 +1,5 @@
 from graphbrain.agents.agent import Agent
-from graphbrain.agents.system import wrap_edge
+from graphbrain.op import create_op
 
 
 def paragraphs(file_name):
@@ -39,17 +39,17 @@ class TxtParser(Agent):
                     text = parse['text']
                     attr = {'text': text}
 
-                    yield wrap_edge(main_edge, sequence=sequence, position=pos,
+                    yield create_op(main_edge, sequence=sequence, position=pos,
                                     attributes=attr)
                     self.edges += 1
                     pos += 1
 
                     # add extra edges
                     for edge in parse['extra_edges']:
-                        yield wrap_edge(edge)
+                        yield create_op(edge)
             for edge in parse_results['inferred_edges']:
                 print('inferred edge: {}'.format(edge.to_str()))
-                yield wrap_edge(edge, count=True)
+                yield create_op(edge, count=True)
 
     def report(self):
         rep_str = ('edges found: {}'.format(self.edges))

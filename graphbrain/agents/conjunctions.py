@@ -1,6 +1,6 @@
 from graphbrain import hedge
 from graphbrain.agents.agent import Agent
-from graphbrain.agents.system import wrap_edge
+from graphbrain.op import create_op
 
 
 def conjunctions_resolution(edge):
@@ -77,4 +77,4 @@ class Conjunctions(Agent):
 
     def input_edge(self, edge):
         for edge in conjunctions_resolution(edge):
-            yield wrap_edge(edge)
+            yield create_op(edge)

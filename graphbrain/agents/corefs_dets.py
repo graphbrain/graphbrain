@@ -1,4 +1,4 @@
-from graphbrain.meaning.corefs import make_corefs
+from graphbrain.meaning.corefs import make_corefs_ops
 from graphbrain.meaning.concepts import has_proper_concept
 from graphbrain.agents.agent import Agent
 
@@ -25,8 +25,9 @@ class CorefsDets(Agent):
                 edge[0].is_atom() and
                 edge[0].root() == 'the' and
                 has_proper_concept(edge[1])):
-            make_corefs(hg, edge, edge[1])
             self.corefs += 1
+            for op in make_corefs_ops(hg, edge, edge[1]):
+                yield op
 
     def report(self):
         return '{} coreferences were added.'.format(str(self.corefs))

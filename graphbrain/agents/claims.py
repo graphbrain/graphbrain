@@ -5,7 +5,7 @@ from graphbrain.meaning.concepts import strip_concept, has_proper_concept
 from graphbrain.meaning.lemmas import deep_lemma
 from graphbrain.meaning.corefs import main_coref
 from graphbrain.agents.agent import Agent
-from graphbrain.agents.system import wrap_edge
+from graphbrain.op import create_op
 
 
 CLAIM_PRED_LEMMAS = {'say', 'claim'}
@@ -141,7 +141,7 @@ class Claims(Agent):
                 # write gender
                 if gender:
                     gender_atom = '{}/P/.'.format(gender)
-                    yield wrap_edge((gender_atom, actor))
+                    yield create_op((gender_atom, actor))
 
                 i += 1
                 bar.update(i)
@@ -177,7 +177,7 @@ class Claims(Agent):
                         self.anaphoras += 1
 
                 # write claim
-                yield wrap_edge(('claim/P/.', actor, claim, edge))
+                yield create_op(('claim/P/.', actor, claim, edge))
 
                 i += 1
                 bar.update(i)

@@ -1,5 +1,5 @@
 from graphbrain.meaning.ontology import subtypes
-from graphbrain.meaning.corefs import make_corefs
+from graphbrain.meaning.corefs import make_corefs_ops
 from graphbrain.meaning.lemmas import lemma_degrees
 from graphbrain.agents.agent import Agent
 
@@ -52,8 +52,9 @@ class CorefsOnto(Agent):
                         lr >= .05 and sub_to_root_dd >= .1 and
                         (not edge.is_atom() or len(edge.root()) > 2)):
 
-                    make_corefs(hg, edge, subs[best_pos])
                     self.corefs += 1
+                    for op in make_corefs_ops(hg, edge, subs[best_pos]):
+                        yield op
 
     def report(self):
         return '{} coreferences were added.'.format(str(self.corefs))

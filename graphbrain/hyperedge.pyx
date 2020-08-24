@@ -114,6 +114,8 @@ def _matches_wildcard(edge, wildcard):
 
     # role match
     if len(wparts) > 1:
+        pos = 1
+
         # type match
         wrole = wildcard.role()
         wtype = wrole[0]
@@ -130,8 +132,6 @@ def _matches_wildcard(edge, wildcard):
             # specification
             if len(erole) < len(wrole):
                 return False
-
-            pos = 1
 
             # argroles match
             if wtype[0] in {'B', 'P'}:

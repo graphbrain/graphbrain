@@ -3,7 +3,7 @@ import csv
 import sys
 import progressbar
 from graphbrain.agents.agent import Agent
-from graphbrain.agents.system import wrap_edge
+from graphbrain.op import create_op
 
 
 def file_lines(filename):
@@ -47,11 +47,11 @@ class CsvParser(Agent):
                     # attach text to edge
                     text = parse['text']
                     attr = {'text': text}
-                    yield wrap_edge(main_edge, attributes=attr)
+                    yield create_op(main_edge, attributes=attr)
 
                     # add extra edges
                     for edge in parse['extra_edges']:
-                        yield wrap_edge(edge)
+                        yield create_op(edge)
 
     def run(self):
         infile = self.system.get_infile(self)

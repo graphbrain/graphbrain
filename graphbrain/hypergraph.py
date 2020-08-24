@@ -1,5 +1,5 @@
 import graphbrain.constants as const
-from graphbrain.hyperedge import *
+from graphbrain.hyperedge import hedge, Hyperedge
 from graphbrain.logic import eval_rule
 
 
