@@ -46,10 +46,18 @@ def wrapper(fun, command=False, text=None):
 
     if args.hg:
         print('hypergraph: {}'.format(args.hg))
+    if args.sequence:
+        print('sequence: {}'.format(args.sequence))
     if args.infile:
         print('input file: {}'.format(args.infile))
     if args.outfile:
         print('output file: {}'.format(args.outfile))
+    if args.agent:
+        print('agent: {}'.format(args.agent))
+    if args.system:
+        print('system: {}'.format(args.system))
+    if args.lang:
+        print('language: {}'.format(args.lang))
 
     print()
 

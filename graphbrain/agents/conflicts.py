@@ -72,7 +72,5 @@ class Conflicts(Agent):
                                 self.conflicts += 1
 
     def report(self):
-        rep_str = ('conflict edges: {}\n'
-                   'conflict-topic pairs: {}'.format(self.conflicts,
-                                                     self.conflict_topics))
-        return '{}\n\n{}'.format(rep_str, super().report())
+        return 'conflict edges: {}\nconflict-topic pairs: {}'.format(
+            self.conflicts, self.conflict_topics)

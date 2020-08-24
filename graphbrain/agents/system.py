@@ -5,41 +5,39 @@ from graphbrain.op import apply_op
 from graphbrain.parsers import create_parser
 
 
-def run_agent(agent_module_str, lang, hg=None, infile=None, sequence=None):
+def run_agent(agent_module_str, lang=None, hg=None, infile=None,
+              sequence=None):
     system = System(lang=lang, hg=hg, infile=infile, sequence=sequence)
     agent = create_agent(agent_module_str)
     system.add(agent_module_str, agent)
     system.run()
 
 
-def load_system(system_file, lang, hg=None, infile=None, sequence=None):
+def load_system(system_file, lang=None, hg=None, infile=None, sequence=None):
     with open(system_file, 'r') as f:
         json_str = f.read()
     system_json = json.loads(json_str)
-    system = System(lang=lang, hg=hg, infile=infile, sequence=sequence)
+    system = System(name=system_file, lang=lang, hg=hg, infile=infile,
+                    sequence=sequence)
     for agent_name in system_json:
         module_str = system_json[agent_name]['agent']
         depends_on = None
         input = None
         write = True
-        silent = False
         if 'depends_on' in system_json[agent_name]:
             depends_on = system_json[agent_name]['depends_on']
         if 'input' in system_json[agent_name]:
             input = system_json[agent_name]['input']
-            # agents that depend on other agent's input are kept silent
-            # so that the text output of running systems remains neat
-            # silent = True
         if 'write' in system_json[agent_name]:
             write = system_json[agent_name]['write']
-        agent = create_agent(module_str, silent=silent)
+        agent = create_agent(module_str)
         system.add(agent_name, agent, input=input, depends_on=depends_on,
                    write=write)
     return system
 
 
-def run_system(system_file, lang, hg=None, infile=None, sequence=None):
-    system = load_system(system_file, lang, hg=hg, infile=infile,
+def run_system(system_file, lang=None, hg=None, infile=None, sequence=None):
+    system = load_system(system_file, lang=lang, hg=hg, infile=infile,
                          sequence=sequence)
     system.run()
 
@@ -58,7 +56,9 @@ def create_agent(agent_module_str, silent=False):
 
 
 class System(object):
-    def __init__(self, lang, hg=None, infile=None, sequence=None):
+    def __init__(self, name=None, lang=None, hg=None, infile=None,
+                 sequence=None):
+        self.name = name
         self.lang = lang
         self.hg = hg
         self.infile = infile
@@ -92,16 +92,20 @@ class System(object):
         # terminate all agents
         for agent_name in self.agent_seq:
             agent = self.agents[agent_name]
+            print('\nstopping agent "{}"...'.format(agent_name))
             if agent.running:
                 for op in agent.on_end():
                     self._process_op(agent_name, op)
-            print('\nagent {} stopped.'.format(agent_name))
+            print('[*] agent "{}" stopped.'.format(agent_name))
             print('{} edges were added.'.format(self.counters[agent_name][0]))
             print('{} edges already existed.'.format(
                 self.counters[agent_name][1]))
             report = agent.report()
             if len(report) > 0:
                 print(report)
+
+        if self.name:
+            print('\nsystem "{}" stopped.'.format(self.name))
 
     def get_parser(self, agent):
         if self.parser is None:
@@ -122,7 +126,7 @@ class System(object):
         agent = self.agents[agent_name]
         if not agent.running:
             self.agent_seq.append(agent_name)
-            print('starting agent: {}'.format(agent.name()))
+            print('\n[>] agent "{}" started.'.format(agent.name()))
             self._reset_counters(agent_name)
             agent.on_start()
             agent.running = True
