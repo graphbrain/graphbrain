@@ -3,6 +3,7 @@ from collections import defaultdict
 import json
 from graphbrain.op import apply_op
 from graphbrain.parsers import create_parser
+from graphbrain.agents.agent import Agent
 
 
 def run_agent(agent_module_str, lang=None, hg=None, infile=None,
@@ -55,6 +56,36 @@ def create_agent(agent_module_str, silent=False):
     return obj
 
 
+def processor(x, lang=None, hg=None, infile=None, sequence=None):
+    if type(x) == str:
+        if x[-4:] == '.sys':
+            return load_system(
+                x, lang=None, hg=None, infile=None, sequence=None)
+        else:
+            system = System(
+                lang=lang, hg=hg, infile=infile, sequence=sequence)
+            agent = create_agent(x)
+            system.add(x, agent)
+            return system
+    elif isinstance(x, Agent):
+        system = System(
+                lang=lang, hg=hg, infile=infile, sequence=sequence)
+        system.add(x.name(), x)
+        return system
+    elif isinstance(x, System):
+        if lang:
+            x.lang = lang
+        if hg:
+            x.hg = hg
+        if infile:
+            x.infile = infile
+        if sequence:
+            x.sequence = sequence
+        return x
+    else:
+        raise RuntimeError('Trying to create processor with invalid argument.')
+
+
 class System(object):
     def __init__(self, name=None, lang=None, hg=None, infile=None,
                  sequence=None):
@@ -71,6 +102,7 @@ class System(object):
         self.parser = None
         self.counters = {}
         self.write = {}
+        self.silent = False
 
     def add(self, name, agent, input=None, depends_on=None, write=True):
         agent.system = self
@@ -85,27 +117,54 @@ class System(object):
             self.roots.add(name)
         self.write[name] = write
 
+    def _end(self):
+        # terminate all agents
+        for agent_name in self.agent_seq:
+            agent = self.agents[agent_name]
+            if not self.silent:
+                print('\nstopping agent "{}"...'.format(agent_name))
+            if agent.running:
+                for op in agent.on_end():
+                    self._process_op(agent_name, op)
+            if not self.silent:
+                print('[*] agent "{}" stopped.'.format(agent_name))
+                print('{} edges were added.'.format(
+                    self.counters[agent_name][0]))
+                print('{} edges already existed.'.format(
+                    self.counters[agent_name][1]))
+                report = agent.report()
+                if len(report) > 0:
+                    print(report)
+
     def run(self):
         # start by running the roots
         for root in self.roots:
             self._run_agent(root)
-        # terminate all agents
-        for agent_name in self.agent_seq:
-            agent = self.agents[agent_name]
-            print('\nstopping agent "{}"...'.format(agent_name))
-            if agent.running:
-                for op in agent.on_end():
-                    self._process_op(agent_name, op)
-            print('[*] agent "{}" stopped.'.format(agent_name))
-            print('{} edges were added.'.format(self.counters[agent_name][0]))
-            print('{} edges already existed.'.format(
-                self.counters[agent_name][1]))
-            report = agent.report()
-            if len(report) > 0:
-                print(report)
 
-        if self.name:
+        self._end()
+
+        if self.name and not self.silent:
             print('\nsystem "{}" stopped.'.format(self.name))
+
+    def _process(self, agent_name, edge):
+        agent = self.agents[agent_name]
+        self._start_agent(agent)
+
+        ops = agent.input_edge(edge)
+        if ops:
+            for op in ops:
+                opedge = op['edge']
+                if agent_name in self.outputs:
+                    for output in self.outputs[agent_name]:
+                        for outedge in self._process(output, opedge):
+                            yield outedge
+                else:
+                    yield opedge
+
+    def process(self, edge):
+        for root in self.roots:
+            for op in self._procsss(root, edge):
+                yield op['edge']
 
     def get_parser(self, agent):
         if self.parser is None:
@@ -126,7 +185,8 @@ class System(object):
         agent = self.agents[agent_name]
         if not agent.running:
             self.agent_seq.append(agent_name)
-            print('\n[>] agent "{}" started.'.format(agent.name()))
+            if not self.silent:
+                print('\n[>] agent "{}" started.'.format(agent.name()))
             self._reset_counters(agent_name)
             agent.on_start()
             agent.running = True
@@ -146,6 +206,7 @@ class System(object):
 
     def _run_agent(self, agent_name):
         agent = self.agents[agent_name]
+        agent.silent = self.silent
         self._start_agent(agent_name)
 
         ops = agent.run()
@@ -161,3 +222,11 @@ class System(object):
 
         for dependant in self.dependants[agent_name]:
             self._run_agent(dependant)
+
+    def __enter__(self):
+        self.silent = True
+        return self
+
+    def __exit__(self, type, value, traceback):
+        if traceback is None:
+            self._end()

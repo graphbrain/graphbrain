@@ -49,8 +49,7 @@ class Conflicts(Agent):
             if ct[:2] == 'Pd':
                 pred = edge[0]
                 if (len(edge) > 2 and
-                        deep_lemma(hg,
-                                   pred).root() in CONFLICT_PRED_LEMMAS):
+                        deep_lemma(hg, pred).root() in CONFLICT_PRED_LEMMAS):
                     subjects = edge.edges_with_argrole('s')
                     objects = edge.edges_with_argrole('o')
                     if len(subjects) == 1 and len(objects) == 1:
