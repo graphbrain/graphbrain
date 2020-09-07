@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,6 +11,10 @@
   
 
   
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
   
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
   
@@ -19,7 +22,9 @@
   
 
   
-  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -31,10 +36,6 @@
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -73,6 +74,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
     <div>
@@ -100,6 +102,7 @@
           
 
         </div>
+        
       </div>
     </nav>
 
@@ -138,7 +141,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
@@ -169,13 +172,11 @@
 <span class="sd">    what is already contained in the hypregraph.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hg</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="n">sequence</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hg</span> <span class="o">=</span> <span class="n">hg</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lang</span> <span class="o">=</span> <span class="n">lang</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sequence</span> <span class="o">=</span> <span class="n">sequence</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">search_pattern</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">edges_added</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">edges_existed</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">silent</span> <span class="o">=</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="Agent.name"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.agents.agent.Agent.name">[docs]</a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the agent&#39;s name.&quot;&quot;&quot;</span>
@@ -185,83 +186,53 @@
         <span class="sd">&quot;&quot;&quot;Returns set of languages supported by the agent, or an empty set</span>
 <span class="sd">        if the agent is language-agnostic.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Agent.input_edge"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.agents.agent.Agent.input_edge">[docs]</a>    <span class="k">def</span> <span class="nf">input_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Feeds the agent an edge to process.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Agent.input_file"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.agents.agent.Agent.input_file">[docs]</a>    <span class="k">def</span> <span class="nf">input_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Feeds the agent a path to a file to process.&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+<div class="viewcode-block" id="Agent.on_start"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.agents.agent.Agent.on_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Called before a cycle of activity is started.&quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="Agent.start"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.agents.agent.Agent.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Tell agent that a new cycle of activity is starting. What this</span>
-<span class="sd">        means in practice depends on the agent. For example, for a</span>
-<span class="sd">        knowledge inference agent this could mean one full pass through all</span>
-<span class="sd">        the edges in the hypergraph. For an agent that extracts knowledge</span>
-<span class="sd">        from external files, this could mean one pass through an entire</span>
-<span class="sd">        file.</span>
-<span class="sd">        &quot;&quot;&quot;</span></div>
-
-<div class="viewcode-block" id="Agent.end"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.agents.agent.Agent.end">[docs]</a>    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;End the agent&#39;s current cycle of activities.&quot;&quot;&quot;</span></div>
-
-    <span class="k">def</span> <span class="nf">_reset_counters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">edges_added</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">edges_existed</span> <span class="o">=</span> <span class="mi">0</span>
-
-<div class="viewcode-block" id="Agent.add"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.agents.agent.Agent.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">primary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Tell agent to add this edge to the hypergraph.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hg</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">edges_existed</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">if</span> <span class="n">count</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">primary</span><span class="o">=</span><span class="n">primary</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">edges_added</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">primary</span><span class="o">=</span><span class="n">primary</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">count</span><span class="p">)</span></div>
+<div class="viewcode-block" id="Agent.on_end"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.agents.agent.Agent.on_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Called at the end of a cycle of activity.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
 
 <div class="viewcode-block" id="Agent.input"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.agents.agent.Agent.input">[docs]</a>    <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Input to the agent all the edges corresponding to its current</span>
 <span class="sd">        search pattern. A typical use is in knowledge inference agents, which</span>
 <span class="sd">        infer new knowledge from edges already present in the hypergraph.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">edge_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hg</span><span class="o">.</span><span class="n">search_count</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">search_pattern</span><span class="p">)</span>
+        <span class="n">edge_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">hg</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">search_pattern</span><span class="p">)</span>
         <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">with</span> <span class="n">progressbar</span><span class="o">.</span><span class="n">ProgressBar</span><span class="p">(</span><span class="n">max_value</span><span class="o">=</span><span class="n">edge_count</span><span class="p">)</span> <span class="k">as</span> <span class="n">bar</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">search_pattern</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">input_edge</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">edge_count</span><span class="p">:</span>
-                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-                    <span class="n">bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">i</span><span class="p">)</span></div>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span><span class="p">:</span>
+            <span class="n">pbar</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pbar</span> <span class="o">=</span> <span class="n">progressbar</span><span class="o">.</span><span class="n">ProgressBar</span><span class="p">(</span><span class="n">max_value</span><span class="o">=</span><span class="n">edge_count</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">search_pattern</span><span class="p">):</span>
+            <span class="n">ops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_edge</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ops</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">ops</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="n">op</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">edge_count</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span><span class="p">:</span>
+                    <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span><span class="p">:</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Agent.report"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.agents.agent.Agent.report">[docs]</a>    <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Produce a report of the agent&#39;s activities.&quot;&quot;&quot;</span>
-        <span class="n">added_s</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> edges were added.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges_added</span><span class="p">))</span>
-        <span class="n">existed_s</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> edges already existed.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges_existed</span><span class="p">))</span>
-        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">added_s</span><span class="p">,</span> <span class="n">existed_s</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span></div>
 
-<div class="viewcode-block" id="Agent.run"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.agents.agent.Agent.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;High-level method to run an agent. It will start a cycle of</span>
-<span class="sd">        activities, provide a full set of inputs, end the cycle of activities</span>
-<span class="sd">        and print a report.</span>
-
-<span class="sd">        Keyword argument:</span>
-
-<span class="sd">        infile -- if provided, agent inputs information from a file, otherwise</span>
-<span class="sd">        it goes through all the edges present in the hypergraph that are</span>
-<span class="sd">        selected by its internal pattern (defaulting to &#39;*&#39;, meaning</span>
-<span class="sd">        all of them).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;running agent: &quot;</span><span class="si">{}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">()))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_counters</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">infile</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">input_file</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">report</span><span class="p">())</span></div></div>
+<div class="viewcode-block" id="Agent.run"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.agents.agent.Agent.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;High-level method to run an agent.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">op</span></div></div>
 </pre></div>
 
            </div>
@@ -274,6 +245,7 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020 CNRS
 
     </p>
@@ -288,7 +260,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

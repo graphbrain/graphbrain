@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,6 +11,10 @@
   
 
   
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
   
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
   
@@ -19,7 +22,9 @@
   
 
   
-  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -31,10 +36,6 @@
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -73,6 +74,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
     <div>
@@ -100,6 +102,7 @@
           
 
         </div>
+        
       </div>
     </nav>
 
@@ -138,7 +141,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
@@ -160,7 +163,8 @@
   <h1>Source code for graphbrain.meaning.corefs</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">string</span>
-<span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="n">hedge</span>
+<span class="kn">from</span> <span class="nn">graphbrain.op</span> <span class="kn">import</span> <span class="n">create_op</span><span class="p">,</span> <span class="n">apply_ops</span>
 <span class="kn">from</span> <span class="nn">graphbrain.constants</span> <span class="kn">import</span> <span class="n">coref_pred</span><span class="p">,</span> <span class="n">coref_set_id_key</span><span class="p">,</span> <span class="n">main_coref_pred</span>
 
 
@@ -171,16 +175,17 @@
     <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">chars</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_set_coref_id</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">coref_id</span><span class="p">):</span>
-    <span class="n">hg</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">coref_set_id_key</span><span class="p">,</span> <span class="n">coref_id</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_set_coref_id_op</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">coref_id</span><span class="p">):</span>
+    <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="n">coref_set_id_key</span><span class="p">:</span> <span class="n">coref_id</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">create_op</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">optype</span><span class="o">=</span><span class="s1">&#39;set_attributes&#39;</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_change_coref_id</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">coref_id</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_change_coref_id_ops</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">coref_id</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">coref</span> <span class="ow">in</span> <span class="n">coref_set</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
-        <span class="n">_set_coref_id</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">coref</span><span class="p">,</span> <span class="n">coref_id</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">_set_coref_id_op</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">coref</span><span class="p">,</span> <span class="n">coref_id</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_update_main_coref</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_update_main_coref_ops</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
     <span class="n">cref_id</span> <span class="o">=</span> <span class="n">coref_id</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">)</span>
     <span class="n">corefs</span> <span class="o">=</span> <span class="n">coref_set</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">)</span>
 
@@ -196,8 +201,10 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">hg</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">coref_edge</span><span class="p">):</span>
         <span class="n">old</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> *)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">main_coref_pred</span><span class="p">,</span> <span class="n">cref_id</span><span class="p">)))</span>
         <span class="k">for</span> <span class="n">old_edge</span> <span class="ow">in</span> <span class="n">old</span><span class="p">:</span>
-            <span class="n">hg</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">old_edge</span><span class="p">)</span>
-        <span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">coref_edge</span><span class="p">,</span> <span class="n">primary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="c1"># hg.remove(old_edge)</span>
+            <span class="k">yield</span> <span class="n">create_op</span><span class="p">(</span><span class="n">old_edge</span><span class="p">,</span> <span class="n">optype</span><span class="o">=</span><span class="s1">&#39;remove&#39;</span><span class="p">)</span>
+        <span class="c1"># hg.add(coref_edge, primary=False)</span>
+        <span class="k">yield</span> <span class="n">create_op</span><span class="p">(</span><span class="n">coref_edge</span><span class="p">,</span> <span class="n">primary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="coref_set"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.meaning.corefs.coref_set">[docs]</a><span class="k">def</span> <span class="nf">coref_set</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">corefs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -252,13 +259,7 @@
     <span class="k">return</span> <span class="n">main_coref_from_id</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">cref_id</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="make_corefs"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.meaning.corefs.make_corefs">[docs]</a><span class="k">def</span> <span class="nf">make_corefs</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge1</span><span class="p">,</span> <span class="n">edge2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make the two given edges belong to the same corefernce set.</span>
-
-<span class="sd">    This may trigger further updates to maintain consistency, such as</span>
-<span class="sd">    merging existing coreference sets and recomputing the main edge of</span>
-<span class="sd">    a coreference set.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="k">def</span> <span class="nf">make_corefs_ops</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge1</span><span class="p">,</span> <span class="n">edge2</span><span class="p">):</span>
     <span class="n">cref_id_1</span> <span class="o">=</span> <span class="n">coref_id</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge1</span><span class="p">)</span>
     <span class="n">cref_id_2</span> <span class="o">=</span> <span class="n">coref_id</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge2</span><span class="p">)</span>
 
@@ -279,16 +280,30 @@
 
     <span class="n">update</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">if</span> <span class="n">cref_id_1</span> <span class="o">!=</span> <span class="n">new_cref_id</span><span class="p">:</span>
-        <span class="n">_change_coref_id</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge1</span><span class="p">,</span> <span class="n">new_cref_id</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">_change_coref_id_ops</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge1</span><span class="p">,</span> <span class="n">new_cref_id</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">op</span>
         <span class="n">update</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">if</span> <span class="n">cref_id_2</span> <span class="o">!=</span> <span class="n">new_cref_id</span><span class="p">:</span>
-        <span class="n">_change_coref_id</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge2</span><span class="p">,</span> <span class="n">new_cref_id</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">_change_coref_id_ops</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge2</span><span class="p">,</span> <span class="n">new_cref_id</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">op</span>
         <span class="n">update</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">coref_pred</span><span class="p">,</span> <span class="n">edge1</span><span class="p">,</span> <span class="n">edge2</span><span class="p">),</span> <span class="n">primary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># hg.add((coref_pred, edge1, edge2), primary=False)</span>
+    <span class="k">yield</span> <span class="n">create_op</span><span class="p">((</span><span class="n">coref_pred</span><span class="p">,</span> <span class="n">edge1</span><span class="p">,</span> <span class="n">edge2</span><span class="p">),</span> <span class="n">primary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">update</span><span class="p">:</span>
-        <span class="n">_update_main_coref</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge1</span><span class="p">)</span></div>
+        <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">_update_main_coref_ops</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge1</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">op</span>
+
+
+<div class="viewcode-block" id="make_corefs"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.meaning.corefs.make_corefs">[docs]</a><span class="k">def</span> <span class="nf">make_corefs</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge1</span><span class="p">,</span> <span class="n">edge2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make the two given edges belong to the same corefernce set.</span>
+
+<span class="sd">    This may trigger further updates to maintain consistency, such as</span>
+<span class="sd">    merging existing coreference sets and recomputing the main edge of</span>
+<span class="sd">    a coreference set.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">apply_ops</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">make_corefs_ops</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge1</span><span class="p">,</span> <span class="n">edge2</span><span class="p">))</span></div>
 </pre></div>
 
            </div>
@@ -301,6 +316,7 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020 CNRS
 
     </p>
@@ -315,7 +331,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
