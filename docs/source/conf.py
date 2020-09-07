@@ -54,8 +54,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'GraphBrain'
-copyright = '2020 CNRS'
+project = 'Graphbrain'
+copyright = '2021 CNRS'
 author = 'Telmo Menezes et al.'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -107,7 +107,7 @@ html_theme_options = {
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-html_logo = '_static/graphbrain-logo.gif'
+html_logo = '_static/graphbrain-logo.png'
 
 html_favicon = '_static/favicon.png'
 
