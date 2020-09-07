@@ -10,7 +10,7 @@ def create_op(edge, optype='add', primary=True, count=False,
 
 
 def apply_op(hg, op):
-    edge_found = False
+    op_performed = False
 
     edge = op['edge']
     optype = op['optype']
@@ -26,29 +26,30 @@ def apply_op(hg, op):
             hg.add_to_sequence(sequence, position, edge)
         else:
             if hg.exists(edge):
-                edge_found = True
                 if count:
+                    op_performed = True
                     hg.add(edge, primary=primary, count=True)
             else:
+                op_performed = True
                 hg.add(edge, primary=primary, count=count)
 
         for attribute in attributes:
             hg.set_attribute(edge, attribute, attributes[attribute])
     elif optype == 'remove':
         if hg.exists(edge):
-            edge_found = True
+            op_performed = True
             hg.remove(edge)
     elif optype == 'set_attributes':
         first = True
         for attribute in attributes:
             existed = hg.set_attribute(edge, attribute, attributes[attribute])
             if first:
-                edge_found = existed
+                op_performed = existed
                 first = False
     else:
         raise RuntimeError('Unknown operation type: {}'.format(optype))
 
-    return edge_found
+    return op_performed
 
 
 def apply_ops(hg, ops):

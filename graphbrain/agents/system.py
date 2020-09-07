@@ -6,11 +6,16 @@ from graphbrain.parsers import create_parser
 from graphbrain.agents.agent import Agent
 
 
-def run_agent(agent_module_str, lang=None, hg=None, infile=None,
+def run_agent(agent, lang=None, hg=None, infile=None,
               sequence=None):
     system = System(lang=lang, hg=hg, infile=infile, sequence=sequence)
-    agent = create_agent(agent_module_str)
-    system.add(agent_module_str, agent)
+    if isinstance(agent, Agent):
+        agent_obj = agent
+        agent_name = agent.name()
+    else:
+        agent_obj = create_agent(agent)
+        agent_name = agent
+    system.add(agent_name, agent_obj)
     system.run()
 
 
