@@ -27,6 +27,7 @@
 - Searching patterns can now include types, argument roles and other atom parts.
 - Hypergraph.search_count() renamed to Hypergraph.count().
 - corefs_names agent is simplified.
+- corefs_onto agent is simplified.
 
 ### Removed
 - Meta-modifier hyperedge type.
