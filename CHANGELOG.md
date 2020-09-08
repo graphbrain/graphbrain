@@ -26,6 +26,7 @@
 - Modifier hyperedge type can now be applied to predicates.
 - Searching patterns can now include types, argument roles and other atom parts.
 - Hypergraph.search_count() renamed to Hypergraph.count().
+- corefs_names agent is simplified.
 
 ### Removed
 - Meta-modifier hyperedge type.

@@ -4,7 +4,6 @@ import progressbar
 from igraph import Graph
 from graphbrain import hedge
 from graphbrain.meaning.corefs import make_corefs_ops
-from graphbrain.meaning.lemmas import lemma_degrees
 from graphbrain.agents.agent import Agent
 
 
@@ -52,10 +51,7 @@ class CorefsNames(Agent):
                     len(edge) > 2):
                 mc = edge.main_concepts()
                 if len(mc) == 1 and mc[0] == seed:
-                    d = hg.degree(edge)
-                    dd = hg.deep_degree(edge)
-                    if d > 2 and dd > 2:
-                        concepts.append(edge)
+                    concepts.append(edge)
 
         subconcepts = set()
         graph_edges = set()
@@ -116,14 +112,11 @@ class CorefsNames(Agent):
             for seed in self.seeds:
                 crefs = self._corefs_from_seed(seed)
 
-                # print(seed)
-                # print(crefs)
-
                 # check if the seed should be assigned to a synonym set
                 if len(crefs) > 0:
                     # find set with the highest degree and normalize set
                     # degrees by total degree
-                    cref_degs = [hg.sum_degree(cref) for cref in crefs]
+                    cref_degs = [hg.sum_deep_degree(cref) for cref in crefs]
                     total_deg = sum(cref_degs)
                     cref_ratios = [cref_deg / total_deg
                                    for cref_deg in cref_degs]
@@ -134,31 +127,21 @@ class CorefsNames(Agent):
                             max_ratio = ratio
                             best_pos = pos
 
-                    # compute some degree-related metrics
-                    sdd = hg.sum_deep_degree(crefs[best_pos])
-                    # print('sdd: {}'.format(sdd))
-                    rd, rdd = hg.root_degrees(seed)
-                    # print('rd: {}'.format(rd))
-                    # print('rdd: {}'.format(rdd))
-                    cref_to_root_dd = \
-                        0. if rdd == 0 else float(sdd) / float(rdd)
-                    d = hg.degree(seed)
                     dd = hg.deep_degree(seed)
-                    r = float(d) / float(dd)
-                    ld, ldd = lemma_degrees(hg, seed)
-                    lr = float(ld) / float(ldd)
 
-                    # print('max_ratio: {}'.format(max_ratio))
-                    # print('r: {}'.format(r))
-                    # print('lr: {}'.format(lr))
-                    # print('cref_to_root_dd: {}'.format(cref_to_root_dd))
+                    # ensure that the seed is used by itself
+                    if total_deg < dd:
+                        # print('<###>')
+                        # print(seed)
+                        # print(crefs)
+                        # print(set(hg.star(seed)))
+                        # print('max_ratio: {}'.format(max_ratio))
+                        # print('total coref dd: {}'.format(total_deg))
+                        # print('seed dd: {}'.format(dd))
 
-                    # use metric to decide
-                    if (max_ratio >= .7 and r >= .05 and lr >= .05 and
-                            cref_to_root_dd >= .1 and
-                            (not seed.is_atom() or len(seed.root()) > 2)):
-
-                        crefs[best_pos].add(seed)
+                        # add seed if coreference set is sufficiently dominant
+                        if max_ratio >= .7:
+                            crefs[best_pos].add(seed)
 
                     for cref in crefs:
                         for edge1, edge2 in combinations(cref, 2):
