@@ -6,10 +6,10 @@ from graphbrain.constants import coref_pred, coref_set_id_key, main_coref_pred
 
 
 def _new_coref_id():
-    chars = string.ascii_letters + string.digits
+    chars = string.ascii_lowercase + string.digits
     # Note: the size of the id can be increased to reduce the probability
     # of collision.
-    return ''.join(random.choice(chars) for i in range(5))
+    return ''.join(random.choice(chars) for i in range(7))
 
 
 def _set_coref_id_op(hg, edge, coref_id):
@@ -39,6 +39,8 @@ def _update_main_coref_ops(hg, edge):
         old = set(hg.search('({} {} *)'.format(main_coref_pred, cref_id)))
         for old_edge in old:
             # hg.remove(old_edge)
+            # print('&&&')
+            # print(old_edge)
             yield create_op(old_edge, optype='remove')
         # hg.add(coref_edge, primary=False)
         yield create_op(coref_edge, primary=False)
@@ -97,6 +99,7 @@ def main_coref(hg, edge):
 
 
 def make_corefs_ops(hg, edge1, edge2):
+    # print('\n### make_corefs_ops {} {}'.format(edge1, edge2))
     cref_id_1 = coref_id(hg, edge1)
     cref_id_2 = coref_id(hg, edge2)
 
