@@ -38,9 +38,6 @@ class CorefsNames(Agent):
         self.corefs = 0
         self.seeds = None
 
-    def name(self):
-        return 'corefs_names'
-
     def _corefs_from_seed(self, seed):
         hg = self.system.get_hg(self)
 
@@ -110,7 +107,7 @@ class CorefsNames(Agent):
         hg = self.system.get_hg(self)
 
         i = 0
-        print('processing seeds')
+        self.logger.info('processing seeds')
         with progressbar.ProgressBar(max_value=len(self.seeds)) as bar:
             for seed in self.seeds:
                 crefs = self._corefs_from_seed(seed)
@@ -136,13 +133,11 @@ class CorefsNames(Agent):
 
                     # ensure that the seed is used by itself
                     if total_deg < dd:
-                        # print('<###>')
-                        # print(seed)
-                        # print(crefs)
-                        # print(set(hg.star(seed)))
-                        # print('max_ratio: {}'.format(max_ratio))
-                        # print('total coref dd: {}'.format(total_deg))
-                        # print('seed dd: {}'.format(dd))
+                        self.logger.debug('seed: {}'.format(seed))
+                        self.logger.debug('crefs: {}'.format(crefs))
+                        self.logger.debug('max_ratio: {}'.format(max_ratio))
+                        self.logger.debug('total coref dd: {}'.format(total_deg))
+                        self.logger.debug('seed dd: {}'.format(dd))
 
                         # add seed if coreference set is sufficiently dominant
                         if max_ratio >= .7:
@@ -150,6 +145,9 @@ class CorefsNames(Agent):
 
                     for cref in crefs:
                         for edge1, edge2 in combinations(cref, 2):
+                            self.logger.debug(
+                                'are corefs: {} | {}'.format(edge1.to_str(),
+                                                             edge2.to_str()))
                             self.corefs += 1
                             for op in make_corefs_ops(hg, edge1, edge2):
                                 yield op

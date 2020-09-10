@@ -40,17 +40,25 @@ class CorefsOnto(Agent):
 
                 if dd > sdd:
                     sdd_dd = float(sdd) / float(dd)
+
+                    self.logger.debug('concept: {}'.format(edge.to_str()))
+                    self.logger.debug('subconcepts: {}'.format(subs))
+                    self.logger.debug('# subs: {}'.format(len(subs)))
+                    self.logger.debug('max_ratio: {}'.format(max_ratio))
+                    self.logger.debug('sdd: {}'.format(sdd))
+                    self.logger.debug('dd: {}'.format(dd))
+                    self.logger.debug('sdd_dd: {}'.format(sdd_dd))
+
                     if max_ratio >= .7 and sdd_dd < .5:
-                        # print(edge.to_str())
-                        # print(subs)
-                        # print('# subs: {}'.format(len(subs)))
-                        # print('max_ratio: {}'.format(max_ratio))
-                        # print('sdd: {}'.format(sdd))
-                        # print('dd: {}'.format(dd))
-                        # print('sdd_dd: {}'.format(sdd_dd))
+                        edge1 = edge
+                        edge2 = subs[best_pos]
+
+                        self.logger.debug(
+                            'are corefs: {} | {}'.format(edge1.to_str(),
+                                                         edge2.to_str()))
 
                         self.corefs += 1
-                        for op in make_corefs_ops(hg, edge, subs[best_pos]):
+                        for op in make_corefs_ops(hg, edge1, edge2):
                             yield op
 
     def report(self):
