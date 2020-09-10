@@ -72,6 +72,6 @@ def conjunctions_resolution(edge):
 
 
 class Conjunctions(Agent):
-    def input_edge(self, edge):
+    def process_edge(self, edge, depth):
         for edge in conjunctions_resolution(edge):
             yield create_op(edge)

@@ -40,7 +40,7 @@ class Conflicts(Agent):
                                              actor_targ, concept, edge))
                             self.conflict_topics += 1
 
-    def input_edge(self, edge):
+    def process_edge(self, edge, depth):
         hg = self.system.get_hg(self)
 
         if not edge.is_atom():

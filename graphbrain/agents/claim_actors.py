@@ -10,7 +10,7 @@ class ClaimActors(Agent):
             name, progress_bar=progress_bar, logging_level=logging_level)
         self.search_pattern = ('claim/P/.', '*', '*', '*')
 
-    def input_edge(self, edge):
+    def process_edge(self, edge, depth):
         hg = self.hg.get_hg(self)
 
         _, main_actor, claim, main_edge = edge

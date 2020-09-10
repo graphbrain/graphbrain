@@ -13,7 +13,7 @@ class CorefsOnto(Agent):
     def on_start(self):
         self.corefs = 0
 
-    def input_edge(self, edge):
+    def process_edge(self, edge, depth):
         hg = self.system.get_hg(self)
 
         if edge.type()[0] == 'C':

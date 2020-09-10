@@ -97,7 +97,7 @@ class Claims(Agent):
         # record claim
         self.claims.append({'actor': actor, 'claim': claim, 'edge': edge})
 
-    def input_edge(self, edge):
+    def process_edge(self, edge, depth):
         hg = self.system.get_hg(self)
 
         if not edge.is_atom():

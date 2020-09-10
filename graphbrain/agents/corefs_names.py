@@ -89,7 +89,7 @@ class CorefsNames(Agent):
         self.corefs = 0
         self.seeds = set()
 
-    def input_edge(self, edge):
+    def process_edge(self, edge, depth):
         if not edge.is_atom():
             conn = edge[0]
             ct = edge.connector_type()

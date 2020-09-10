@@ -4,7 +4,7 @@ from graphbrain.op import create_op
 
 
 class Taxonomy(Agent):
-    def input_edge(self, edge):
+    def process_edge(self, edge, depth):
         if not edge.is_atom():
             et = edge.type()
             if et[0] == 'C':

@@ -24,7 +24,7 @@ class Actors(Agent):
     def on_start(self):
         self.actor_counter = Counter()
 
-    def input_edge(self, edge):
+    def process_edge(self, edge, depth):
         hg = self.system.get_hg(self)
 
         if not edge.is_atom():

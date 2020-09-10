@@ -18,6 +18,8 @@ class Agent(object):
         self.logger.setLevel(logging_level)
 
         self.search_pattern = '*'
+        self.recursive = True
+
         self.system = None
         self.running = False
 
@@ -27,9 +29,22 @@ class Agent(object):
         """
         return set()
 
-    def input_edge(self, edge):
+    def process_edge(self, edge, depth):
         """Feeds the agent an edge to process."""
         raise NotImplementedError()
+
+    def input_edge(self, edge, depth=0):
+        """Feeds the agent an edge to process."""
+        ops = self.process_edge(edge, depth)
+        if ops:
+            for op in ops:
+                yield op
+        # recursive step
+        if self.recursive:
+            if not edge.is_atom():
+                for subedge in edge:
+                    for op in self.input_edge(subedge, depth + 1):
+                        yield op
 
     def on_start(self):
         """Called before a cycle of activity is started."""
