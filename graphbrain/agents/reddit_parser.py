@@ -1,3 +1,4 @@
+import logging
 import re
 import json
 import progressbar
@@ -20,13 +21,11 @@ def title_parts(title):
 
 
 class RedditParser(Agent):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
+        super().__init__(
+            name, progress_bar=progress_bar, logging_level=logging_level)
         self.titles_parsed = 0
         self.titles_added = 0
-
-    def name(self):
-        return 'reddit_parser'
 
     def on_start(self):
         self.titles_parsed = 0
@@ -93,5 +92,5 @@ class RedditParser(Agent):
                     bar.update(i)
 
     def report(self):
-        return 'titles parsed: {}\ntitles added: {}'.format(
+        return 'titles parsed: {}; titles added: {}'.format(
             self.titles_parsed, self.titles_added)

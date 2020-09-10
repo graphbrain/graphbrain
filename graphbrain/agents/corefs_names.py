@@ -1,3 +1,4 @@
+import logging
 from unidecode import unidecode
 from itertools import combinations
 import progressbar
@@ -31,8 +32,9 @@ def clique_number(edge, cliques):
 
 
 class CorefsNames(Agent):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
+        super().__init__(
+            name, progress_bar=progress_bar, logging_level=logging_level)
         self.corefs = 0
         self.seeds = None
 
@@ -81,7 +83,8 @@ class CorefsNames(Agent):
         coref_sets = tuple(set() for _ in cliques)
         for concept in concepts:
             cliquen = clique_number(concept, cliques)
-            coref_sets[cliquen].add(concept)
+            if cliquen >= 0:
+                coref_sets[cliquen].add(concept)
 
         return coref_sets
 
@@ -118,6 +121,8 @@ class CorefsNames(Agent):
                     # degrees by total degree
                     cref_degs = [hg.sum_deep_degree(cref) for cref in crefs]
                     total_deg = sum(cref_degs)
+                    if total_deg == 0:
+                        continue
                     cref_ratios = [cref_deg / total_deg
                                    for cref_deg in cref_degs]
                     max_ratio = 0.

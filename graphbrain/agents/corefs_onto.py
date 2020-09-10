@@ -1,15 +1,14 @@
+import logging
 from graphbrain.meaning.ontology import subtypes
 from graphbrain.meaning.corefs import make_corefs_ops
 from graphbrain.agents.agent import Agent
 
 
 class CorefsOnto(Agent):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
+        super().__init__(
+            name, progress_bar=progress_bar, logging_level=logging_level)
         self.corefs = 0
-
-    def name(self):
-        return 'corefs_onto'
 
     def on_start(self):
         self.corefs = 0

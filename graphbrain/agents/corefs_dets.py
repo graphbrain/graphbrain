@@ -1,15 +1,14 @@
+import logging
 from graphbrain.meaning.corefs import make_corefs_ops
 from graphbrain.meaning.concepts import has_proper_concept
 from graphbrain.agents.agent import Agent
 
 
 class CorefsDets(Agent):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
+        super().__init__(
+            name, progress_bar=progress_bar, logging_level=logging_level)
         self.corefs = 0
-
-    def name(self):
-        return 'corefs_dets'
 
     def languages(self):
         return {'en'}

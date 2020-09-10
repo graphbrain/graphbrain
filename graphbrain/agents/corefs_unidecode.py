@@ -1,3 +1,4 @@
+import logging
 from unidecode import unidecode
 from graphbrain import hedge
 from graphbrain.meaning.corefs import make_corefs_ops
@@ -18,12 +19,10 @@ def unidecode_edge(edge):
 
 
 class CorefsUnidecode(Agent):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
+        super().__init__(
+            name, progress_bar=progress_bar, logging_level=logging_level)
         self.corefs = 0
-
-    def name(self):
-        return 'corefs_unidecode'
 
     def on_start(self):
         self.corefs = 0

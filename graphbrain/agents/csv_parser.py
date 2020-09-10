@@ -1,3 +1,4 @@
+import logging
 import re
 import csv
 import sys
@@ -20,14 +21,12 @@ def text_parts(title):
 
 
 class CsvParser(Agent):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
+        super().__init__(
+            name, progress_bar=progress_bar, logging_level=logging_level)
         # TODO: make this configurable
         self.text = 'title'
         self.parser = None
-
-    def name(self):
-        return 'csv_parser'
 
     def on_start(self):
         csv.field_size_limit(sys.maxsize)

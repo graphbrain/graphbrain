@@ -1,3 +1,4 @@
+import logging
 from importlib import import_module
 from collections import defaultdict
 import json
@@ -7,24 +8,25 @@ from graphbrain.agents.agent import Agent
 
 
 def run_agent(agent, lang=None, hg=None, infile=None,
-              sequence=None):
-    system = System(lang=lang, hg=hg, infile=infile, sequence=sequence)
+              sequence=None, progress_bar=True, logging_level=logging.INFO):
+    system = System(lang=lang, hg=hg, infile=infile, sequence=sequence,
+                    logging_level=logging_level)
     if isinstance(agent, Agent):
         agent_obj = agent
-        agent_name = agent.name()
     else:
-        agent_obj = create_agent(agent)
-        agent_name = agent
-    system.add(agent_name, agent_obj)
+        agent_obj = create_agent(
+            agent, progress_bar=progress_bar, logging_level=logging_level)
+    system.add(agent_obj)
     system.run()
 
 
-def load_system(system_file, lang=None, hg=None, infile=None, sequence=None):
+def load_system(system_file, lang=None, hg=None, infile=None, sequence=None,
+                progress_bar=True, logging_level=logging.INFO):
     with open(system_file, 'r') as f:
         json_str = f.read()
     system_json = json.loads(json_str)
     system = System(name=system_file, lang=lang, hg=hg, infile=infile,
-                    sequence=sequence)
+                    sequence=sequence, logging_level=logging_level)
     for agent_name in system_json:
         module_str = system_json[agent_name]['agent']
         depends_on = None
@@ -36,19 +38,23 @@ def load_system(system_file, lang=None, hg=None, infile=None, sequence=None):
             input = system_json[agent_name]['input']
         if 'write' in system_json[agent_name]:
             write = system_json[agent_name]['write']
-        agent = create_agent(module_str)
-        system.add(agent_name, agent, input=input, depends_on=depends_on,
-                   write=write)
+        agent = create_agent(module_str, name=agent_name,
+                             progress_bar=progress_bar,
+                             logging_level=logging_level)
+        system.add(agent, input=input, depends_on=depends_on, write=write)
     return system
 
 
-def run_system(system_file, lang=None, hg=None, infile=None, sequence=None):
+def run_system(system_file, lang=None, hg=None, infile=None, sequence=None,
+               progress_bar=True, logging_level=logging.INFO):
     system = load_system(system_file, lang=lang, hg=hg, infile=infile,
-                         sequence=sequence)
+                         sequence=sequence, progress_bar=progress_bar,
+                         logging_level=logging_level)
     system.run()
 
 
-def create_agent(agent_module_str, silent=False):
+def create_agent(agent_module_str, name=None,
+                 progress_bar=True, logging_level=logging.INFO):
     if '.' in agent_module_str:
         module_str = agent_module_str
     else:
@@ -56,9 +62,11 @@ def create_agent(agent_module_str, silent=False):
     class_name_parts = module_str.split('.')[-1].split('_')
     class_name = ''.join([part.title() for part in class_name_parts])
     class_obj = getattr(import_module(module_str), class_name)
-    obj = class_obj()
-    obj.silent = silent
-    return obj
+
+    agent_name = name if name else agent_module_str
+
+    return class_obj(
+        agent_name, progress_bar=progress_bar, logging_level=logging_level)
 
 
 def processor(x, lang=None, hg=None, infile=None, sequence=None):
@@ -69,13 +77,13 @@ def processor(x, lang=None, hg=None, infile=None, sequence=None):
         else:
             system = System(
                 lang=lang, hg=hg, infile=infile, sequence=sequence)
-            agent = create_agent(x)
-            system.add(x, agent)
+            agent = create_agent(x, progress_bar=False)
+            system.add(agent)
             return system
     elif isinstance(x, Agent):
         system = System(
                 lang=lang, hg=hg, infile=infile, sequence=sequence)
-        system.add(x.name(), x)
+        system.add(x)
         return system
     elif isinstance(x, System):
         if lang:
@@ -93,12 +101,16 @@ def processor(x, lang=None, hg=None, infile=None, sequence=None):
 
 class System(object):
     def __init__(self, name=None, lang=None, hg=None, infile=None,
-                 sequence=None):
+                 sequence=None, logging_level=logging.INFO):
         self.name = name
         self.lang = lang
         self.hg = hg
         self.infile = infile
         self.sequence = sequence
+
+        self.logger = logging.getLogger('agent_system')
+        self.logger.setLevel(logging_level)
+
         self.agents = {}
         self.outputs = defaultdict(set)
         self.dependants = defaultdict(set)
@@ -107,39 +119,36 @@ class System(object):
         self.parser = None
         self.counters = {}
         self.write = {}
-        self.silent = False
 
-    def add(self, name, agent, input=None, depends_on=None, write=True):
+    def add(self, agent, input=None, depends_on=None, write=True):
         agent.system = self
-        self.agents[name] = agent
+        self.agents[agent.name] = agent
         if input:
-            self.outputs[input].add(name)
+            self.outputs[input].add(agent.name)
         if depends_on:
-            self.dependants[depends_on].add(name)
+            self.dependants[depends_on].add(agent.name)
         # if agent has no inputs and depends on no other agents, then it is
         # a root agent
         if not (input or depends_on):
-            self.roots.add(name)
-        self.write[name] = write
+            self.roots.add(agent.name)
+        self.write[agent.name] = write
 
     def _end(self):
         # terminate all agents
         for agent_name in self.agent_seq:
             agent = self.agents[agent_name]
-            if not self.silent:
-                print('\nstopping agent "{}"...'.format(agent_name))
+            self.logger.info('\nstopping agent "{}"...'.format(agent_name))
             if agent.running:
                 for op in agent.on_end():
                     self._process_op(agent_name, op)
-            if not self.silent:
-                print('[*] agent "{}" stopped.'.format(agent_name))
-                print('{} edges were added.'.format(
-                    self.counters[agent_name][0]))
-                print('{} edges already existed.'.format(
-                    self.counters[agent_name][1]))
-                report = agent.report()
-                if len(report) > 0:
-                    print(report)
+            self.logger.info('[*] agent "{}" stopped.'.format(agent_name))
+            self.logger.info('{} edges were added.'.format(
+                self.counters[agent_name][0]))
+            self.logger.info('{} edges already existed.'.format(
+                self.counters[agent_name][1]))
+            report = agent.report()
+            if len(report) > 0:
+                self.logger.info(report)
 
     def run(self):
         # start by running the roots
@@ -148,8 +157,8 @@ class System(object):
 
         self._end()
 
-        if self.name and not self.silent:
-            print('\nsystem "{}" stopped.'.format(self.name))
+        if self.name:
+            self.logger.info('\nsystem "{}" stopped.'.format(self.name))
 
     def _process(self, agent_name, edge):
         agent = self.agents[agent_name]
@@ -190,8 +199,7 @@ class System(object):
         agent = self.agents[agent_name]
         if not agent.running:
             self.agent_seq.append(agent_name)
-            if not self.silent:
-                print('\n[>] agent "{}" started.'.format(agent.name()))
+            self.logger.info('\n[>] agent "{}" started.'.format(agent.name))
             self._reset_counters(agent_name)
             agent.on_start()
             agent.running = True
@@ -211,7 +219,6 @@ class System(object):
 
     def _run_agent(self, agent_name):
         agent = self.agents[agent_name]
-        agent.silent = self.silent
         self._start_agent(agent_name)
 
         ops = agent.run()
@@ -229,7 +236,6 @@ class System(object):
             self._run_agent(dependant)
 
     def __enter__(self):
-        self.silent = True
         return self
 
     def __exit__(self, type, value, traceback):

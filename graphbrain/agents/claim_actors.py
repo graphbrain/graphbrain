@@ -1,15 +1,14 @@
+import logging
 from graphbrain.meaning.actors import find_actors
 from graphbrain.agents.agent import Agent
 from graphbrain.op import create_op
 
 
 class ClaimActors(Agent):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
+        super().__init__(
+            name, progress_bar=progress_bar, logging_level=logging_level)
         self.search_pattern = ('claim/P/.', '*', '*', '*')
-
-    def name(self):
-        return 'claim_actors'
 
     def input_edge(self, edge):
         hg = self.hg.get_hg(self)

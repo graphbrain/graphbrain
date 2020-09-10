@@ -1,3 +1,4 @@
+import logging
 import progressbar
 
 
@@ -9,15 +10,16 @@ class Agent(object):
     what is already contained in the hypregraph.
     """
 
-    def __init__(self):
+    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
+        self.name = name
+        self.progress_bar = progress_bar
+
+        self.logger = logging.getLogger(self.name)
+        self.logger.setLevel(logging_level)
+
         self.search_pattern = '*'
         self.system = None
         self.running = False
-        self.silent = False
-
-    def name(self):
-        """Returns the agent's name."""
-        raise NotImplementedError()
 
     def languages(self):
         """Returns set of languages supported by the agent, or an empty set
@@ -44,10 +46,10 @@ class Agent(object):
         edge_count = self.system.hg.count(self.search_pattern)
         i = 0
 
-        if self.silent:
-            pbar = None
-        else:
+        if self.progress_bar:
             pbar = progressbar.ProgressBar(max_value=edge_count).start()
+        else:
+            pbar = None
 
         for edge in self.system.hg.search(self.search_pattern):
             ops = self.input_edge(edge)
@@ -56,10 +58,10 @@ class Agent(object):
                     yield op
             if i < edge_count:
                 i += 1
-                if not self.silent:
+                if self.progress_bar:
                     pbar.update(i)
 
-        if not self.silent:
+        if self.progress_bar:
             pbar.finish()
 
     def report(self):

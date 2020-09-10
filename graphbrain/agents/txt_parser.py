@@ -1,3 +1,4 @@
+import logging
 from graphbrain.agents.agent import Agent
 from graphbrain.op import create_op
 
@@ -11,12 +12,10 @@ def paragraphs(file_name):
 
 
 class TxtParser(Agent):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
+        super().__init__(
+            name, progress_bar=progress_bar, logging_level=logging_level)
         self.edges = 0
-
-    def name(self):
-        return 'txt_parser'
 
     def on_start(self):
         if not self.sequence:

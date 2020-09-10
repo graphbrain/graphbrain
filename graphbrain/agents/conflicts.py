@@ -1,3 +1,4 @@
+import logging
 from graphbrain import hedge
 from graphbrain.meaning.concepts import (all_concepts,
                                          strip_concept,
@@ -16,13 +17,11 @@ CONFLICT_TOPIC_TRIGGERS = {'of/T/en', 'over/T/en', 'against/T/en', 'for/T/en'}
 
 
 class Conflicts(Agent):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
+        super().__init__(
+            name, progress_bar=progress_bar, logging_level=logging_level)
         self.conflicts = 0
         self.conflict_topics = 0
-
-    def name(self):
-        return 'conflicts'
 
     def languages(self):
         return {'en'}
@@ -71,5 +70,5 @@ class Conflicts(Agent):
                                 self.conflicts += 1
 
     def report(self):
-        return 'conflict edges: {}\nconflict-topic pairs: {}'.format(
+        return 'conflict edges: {}; conflict-topic pairs: {}'.format(
             self.conflicts, self.conflict_topics)

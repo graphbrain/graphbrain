@@ -4,12 +4,6 @@ from graphbrain.op import create_op
 
 
 class Taxonomy(Agent):
-    def __init__(self):
-        super().__init__()
-
-    def name(self):
-        return 'taxonomy'
-
     def input_edge(self, edge):
         if not edge.is_atom():
             et = edge.type()

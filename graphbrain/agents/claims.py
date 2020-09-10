@@ -1,3 +1,4 @@
+import logging
 from collections import Counter
 import progressbar
 from graphbrain import hedge
@@ -32,8 +33,9 @@ def replace_subject(edge, new_subject):
 
 
 class Claims(Agent):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
+        super().__init__(
+            name, progress_bar=progress_bar, logging_level=logging_level)
         self.actors = None
         self.female = None
         self.group = None
@@ -45,9 +47,6 @@ class Claims(Agent):
         self.non_human_counter = None
         self.claims = None
         self.anaphoras = 0
-
-    def name(self):
-        return 'claims'
 
     def languages(self):
         return {'en'}
@@ -124,7 +123,7 @@ class Claims(Agent):
         self.male = set()
         self.non_human = set()
 
-        print('assigning genders')
+        self.logger.debug('assigning genders')
         i = 0
         with progressbar.ProgressBar(max_value=len(self.actors)) as bar:
             for actor in self.actors:
@@ -147,7 +146,7 @@ class Claims(Agent):
                 bar.update(i)
 
         # write claims
-        print('writing claims')
+        self.logger.debug('writing claims')
         i = 0
         with progressbar.ProgressBar(max_value=len(self.claims)) as bar:
             for claim_data in self.claims:
@@ -169,11 +168,11 @@ class Claims(Agent):
                         resolve = actor in self.non_human
 
                     if resolve:
-                        # print('ANAPHORA')
-                        # print('actor: {}'.format(actor))
-                        # print('before: {}'.format(claim))
+                        self.logger.debug('ANAPHORA')
+                        self.logger.debug('actor: {}'.format(actor))
+                        self.logger.debug('before: {}'.format(claim))
                         claim = replace_subject(claim, actor)
-                        # print('after: {}'.format(claim))
+                        self.logger.debug('after: {}'.format(claim))
                         self.anaphoras += 1
 
                 # write claim
@@ -189,4 +188,4 @@ class Claims(Agent):
                   len(self.non_human))
         cs = tuple([str(x) for x in counts])
         rep_gen = 'female: {}; group: {}; male: {}; non-human: {}'.format(*cs)
-        return '\n'.join((rep_claims, rep_anaph, rep_gen))
+        return '; '.join((rep_claims, rep_anaph, rep_gen))
