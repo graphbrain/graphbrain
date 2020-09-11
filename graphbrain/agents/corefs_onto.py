@@ -49,7 +49,7 @@ class CorefsOnto(Agent):
                     self.logger.debug('dd: {}'.format(dd))
                     self.logger.debug('sdd_dd: {}'.format(sdd_dd))
 
-                    if max_ratio >= .7 and sdd_dd < .5:
+                    if max_ratio >= .7:  # and sdd_dd < .5:
                         edge1 = edge
                         edge2 = subs[best_pos]
 
