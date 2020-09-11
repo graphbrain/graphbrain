@@ -46,6 +46,28 @@ class Parser(object):
         parse_results = self._parse(text)
         if self.resolve_corefs:
             self._resolve_corefs(parse_results)
+        else:
+            for parse in parse_results['parses']:
+                parse['resolved_corefs'] = parse['main_edge']
+        return parse_results
+
+    def parse_and_write(self, hg, text):
+        parse_results = self.parse(text)
+        for parse in parse_results['parses']:
+            main_edge = parse['resolved_corefs']
+
+            # add main edge
+            if main_edge:
+                # attach text to edge
+                text = parse['text']
+                hg.add(main_edge)
+                hg.set_attribute(main_edge, 'text', text)
+
+                # add extra edges
+                for edge in parse['extra_edges']:
+                    hg.add(edge)
+        for edge in parse_results['inferred_edges']:
+            hg.add(edge, count=True)
         return parse_results
 
     def atom_gender(self, atom):
