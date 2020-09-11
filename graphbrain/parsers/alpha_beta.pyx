@@ -4,7 +4,7 @@ from collections import defaultdict, Counter
 import logging
 import spacy
 import graphbrain.neuralcoref as neuralcoref
-from graphbrain import *
+from graphbrain import hedge, build_atom
 import graphbrain.constants as const
 from graphbrain.meaning.concepts import has_common_or_proper_concept
 from .parser import Parser
@@ -352,12 +352,9 @@ class AlphaBeta(Parser):
 
     def _add_lemmas(self, token, entity, ent_type):
         text = token.lemma_.lower()
-        if text != token.text.lower():
-            lemma = build_atom(text, ent_type[0], self.lang)
-            lemma_edge = hedge((const.lemma_pred,
-                                entity.simplify_role(),
-                                lemma))
-            self.extra_edges.add(lemma_edge)
+        lemma = build_atom(text, ent_type[0], self.lang)
+        lemma_edge = hedge((const.lemma_pred, entity, lemma))
+        self.extra_edges.add(lemma_edge)
 
     def _is_post_parse_token_necessary(self, entity):
         if entity.is_atom():
