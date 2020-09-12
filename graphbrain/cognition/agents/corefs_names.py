@@ -5,7 +5,7 @@ import progressbar
 from igraph import Graph
 from graphbrain import hedge
 from graphbrain.meaning.corefs import make_corefs_ops
-from graphbrain.agents.agent import Agent
+from graphbrain.cognition.agent import Agent
 
 
 def clean_edge(edge):

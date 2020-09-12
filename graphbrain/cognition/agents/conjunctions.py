@@ -1,5 +1,5 @@
 from graphbrain import hedge
-from graphbrain.agents.agent import Agent
+from graphbrain.cognition.agent import Agent
 from graphbrain.op import create_op
 
 

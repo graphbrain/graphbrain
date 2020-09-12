@@ -4,7 +4,7 @@ from collections import defaultdict
 import json
 from graphbrain.op import apply_op
 from graphbrain.parsers import create_parser
-from graphbrain.agents.agent import Agent
+from graphbrain.cognition.agent import Agent
 
 
 def run_agent(agent, lang=None, hg=None, infile=None,
@@ -58,7 +58,7 @@ def create_agent(agent_module_str, name=None,
     if '.' in agent_module_str:
         module_str = agent_module_str
     else:
-        module_str = 'graphbrain.agents.{}'.format(agent_module_str)
+        module_str = 'graphbrain.cognition.agents.{}'.format(agent_module_str)
     class_name_parts = module_str.split('.')[-1].split('_')
     class_name = ''.join([part.title() for part in class_name_parts])
     class_obj = getattr(import_module(module_str), class_name)

@@ -6,7 +6,7 @@ from graphbrain.meaning.concepts import (all_concepts,
 from graphbrain.meaning.lemmas import deep_lemma
 from graphbrain.meaning.corefs import main_coref
 from graphbrain.meaning.actors import is_actor
-from graphbrain.agents.agent import Agent
+from graphbrain.cognition.agent import Agent
 from graphbrain.op import create_op
 
 

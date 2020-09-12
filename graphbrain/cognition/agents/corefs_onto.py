@@ -1,7 +1,7 @@
 import logging
 from graphbrain.meaning.ontology import subtypes
 from graphbrain.meaning.corefs import make_corefs_ops
-from graphbrain.agents.agent import Agent
+from graphbrain.cognition.agent import Agent
 
 
 class CorefsOnto(Agent):

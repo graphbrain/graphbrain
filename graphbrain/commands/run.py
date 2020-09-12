@@ -1,5 +1,5 @@
 from graphbrain import hgraph
-from graphbrain.agents.system import run_agent, run_system
+from graphbrain.cognition.system import run_agent, run_system
 
 
 def run(args):

@@ -1,7 +1,7 @@
 import logging
 from graphbrain.meaning.corefs import make_corefs_ops
 from graphbrain.meaning.concepts import has_proper_concept
-from graphbrain.agents.agent import Agent
+from graphbrain.cognition.agent import Agent
 
 
 class CorefsDets(Agent):
