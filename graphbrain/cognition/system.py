@@ -161,8 +161,7 @@ class System(object):
             self.logger.info('\nsystem "{}" stopped.'.format(self.name))
 
     def _process(self, agent_name, edge):
-        agent = self.agents[agent_name]
-        self._start_agent(agent)
+        agent = self._start_agent(agent_name)
 
         ops = agent.input_edge(edge)
         if ops:
@@ -177,8 +176,8 @@ class System(object):
 
     def process(self, edge):
         for root in self.roots:
-            for op in self._procsss(root, edge):
-                yield op['edge']
+            for edge in self._process(root, edge):
+                yield edge
 
     def get_parser(self, agent):
         if self.parser is None:
@@ -203,6 +202,7 @@ class System(object):
             self._reset_counters(agent_name)
             agent.on_start()
             agent.running = True
+        return agent
 
     def _process_op(self, agent_name, op):
         if self.write[agent_name]:
