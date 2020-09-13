@@ -847,6 +847,20 @@ class Hyperedge(tuple):
 
         return self.edges_with_argrole('m')
 
+    def replace_main_concept(self, new_main):
+        """TODO: document and test"""
+        if self.type()[0] != 'C':
+            return None
+        if self[0].type()[0] == 'M':
+            return hedge((self[0], new_main))
+        elif self[0].type()[0] == 'B':
+            if len(self) == 3:
+                if self[0].argroles() == 'ma':
+                    return hedge((self[0], new_main, self[2]))
+                elif self[0].argroles() == 'am':
+                    return hedge((self[0], self[1], new_main))
+        return None
+
     def apply_vars(self, vars):
         return hedge([edge.apply_vars(vars) for edge in self])
 
@@ -1138,6 +1152,13 @@ class Atom(Hyperedge):
         returned.
         """
         return []
+
+    def replace_main_concept(self, new_main):
+        """TODO: document and test"""
+        if self.type()[0] != 'C':
+            return None
+
+        return new_main
 
     def apply_vars(self, vars):
         if self.is_pattern():

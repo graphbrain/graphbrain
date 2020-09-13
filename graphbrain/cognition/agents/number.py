@@ -1,28 +1,11 @@
 import logging
 from collections import defaultdict
 import progressbar
-from graphbrain import hedge
 import graphbrain.constants as const
 from graphbrain.cognition.agent import Agent
 from graphbrain.meaning.corefs import make_corefs_ops
 from graphbrain.meaning.ontology import subtypes
 from graphbrain.meaning.number import number, make_singular_plural_ops
-
-
-def replace_main(concept, new_main):
-    if concept.type()[0] != 'C':
-        return None
-    if concept.is_atom():
-        return new_main
-    if concept[0].type()[0] == 'M':
-        return hedge((concept[0], new_main))
-    elif concept[0].type()[0] == 'B':
-        if len(concept) == 3:
-            if concept[0].argroles() == 'ma':
-                return hedge((concept[0], new_main, concept[2]))
-            elif concept[0].argroles() == 'am':
-                return hedge((concept[0], concept[1], new_main))
-    return None
 
 
 class Number(Agent):
@@ -46,7 +29,7 @@ class Number(Agent):
         self.corefs += 1
 
         for subtype in subtypes(hg, singular):
-            plural_edge = replace_main(subtype, plural)
+            plural_edge = subtype.replace_main_concept(plural)
             if plural_edge and hg.exists(plural_edge):
                 for op in self._make_singular_plural_relation(subtype,
                                                               plural_edge):
