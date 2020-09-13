@@ -10,6 +10,7 @@ possessive_builder = 'poss/Bp.am/.'
 gender_pred = 'gender/P/.'
 number_pred = 'number/P/.'
 animacy_pred = 'animacy/P/.'
+singular_plural_pred = 'sng_pl/P/.'
 
 # Pre-defined entity keys
 coref_set_id_key = 'coref'

@@ -6,9 +6,13 @@
         "agent": "taxonomy",
         "depends_on": "reddit_parser"
     },
+    "number": {
+        "agent": "number",
+        "depends_on": "taxonomy"
+    },
     "corefs_dets": {
         "agent": "corefs_dets",
-        "depends_on": "taxonomy"
+        "depends_on": "number"
     },
     "corefs_names": {
         "agent": "corefs_names",

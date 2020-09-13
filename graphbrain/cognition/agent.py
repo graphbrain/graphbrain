@@ -31,7 +31,8 @@ class Agent(object):
 
     def process_edge(self, edge, depth):
         """Feeds the agent an edge to process."""
-        raise NotImplementedError()
+        # do nothing by default
+        return None
 
     def input_edge(self, edge, depth=0):
         """Feeds the agent an edge to process."""
