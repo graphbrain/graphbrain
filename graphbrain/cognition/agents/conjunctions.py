@@ -1,12 +1,15 @@
+import logging
 from graphbrain import hedge
 from graphbrain.cognition.agent import Agent
 from graphbrain.op import create_op
 
 
-def conjunctions_resolution(edge):
+# TODO: make concept resolution configurable
+def conjunctions_resolution(edge, concepts=False):
     if edge.is_atom():
         return []
 
+    # relationship conjunctions
     if edge[0].type() == 'J' and edge.type()[0] == 'R':
         cur_subj = None
         cur_pred = None
@@ -35,43 +38,48 @@ def conjunctions_resolution(edge):
                                  subedge[0].predicate())]) + hedge(subedge[1:])
                 newedge = newedge.insert_edge_with_argrole(
                     cur_subj, cur_role, 0)
-                # old_pred = newedge.predicate()
-                # new_pred = newedge.predicate()
-                # if old_pred and new_pred:
-                #     old_pred_u = UniqueAtom(old_pred)
-                #     new_pred_u = UniqueAtom(new_pred)
-                #     atom2word[new_pred_u] = atom2word[old_pred_u]
-            new_edges = conjunctions_resolution(newedge)
+            new_edges = conjunctions_resolution(newedge, concepts=concepts)
             edges += new_edges
         return edges
 
-    for pos, subedge in enumerate(edge):
-        if not subedge.is_atom():
-            if (subedge[0].type() == 'J' and
-                    subedge[0].to_str()[0] != ':' and
-                    subedge.type()[0] == 'C'):
-                edges = []
-                for list_item in subedge[1:]:
-                    subedges = conjunctions_resolution(hedge([list_item]))
-                    for se in subedges:
-                        newedge = hedge(
-                            edge[0:pos]) + se + hedge(edge[pos + 1:])
-                        edges.append(newedge)
-                return edges
-            else:
-                subedges = conjunctions_resolution(subedge)
-                if len(subedges) > 1:
+    # concept conjunctions
+    if concepts:
+        for pos, subedge in enumerate(edge):
+            if not subedge.is_atom():
+                if (subedge[0].type() == 'J' and
+                        subedge[0].to_str()[0] != ':' and
+                        subedge.type()[0] == 'C'):
                     edges = []
-                    for list_item in subedges:
-                        newedge = (hedge(edge[0:pos]) +
-                                   hedge([list_item]) +
-                                   hedge(edge[pos + 1:]))
-                        edges.append(newedge)
+                    for list_item in subedge[1:]:
+                        subedges = conjunctions_resolution(
+                            hedge([list_item]), concepts=concepts)
+                        for se in subedges:
+                            newedge = hedge(
+                                edge[0:pos]) + se + hedge(edge[pos + 1:])
+                            edges.append(newedge)
                     return edges
+                else:
+                    subedges = conjunctions_resolution(
+                        subedge, concepts=concepts)
+                    if len(subedges) > 1:
+                        edges = []
+                        for list_item in subedges:
+                            newedge = (hedge(edge[0:pos]) +
+                                       hedge([list_item]) +
+                                       hedge(edge[pos + 1:]))
+                            edges.append(newedge)
+                        return edges
+
+    # no resolution neeeded
     return [edge]
 
 
 class Conjunctions(Agent):
+    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
+        super().__init__(
+            name, progress_bar=progress_bar, logging_level=logging_level)
+        self.recursive = False
+
     def process_edge(self, edge, depth):
         for edge in conjunctions_resolution(edge):
             yield create_op(edge)
