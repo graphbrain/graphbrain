@@ -119,7 +119,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#agents-package">agents package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id1">package functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.agents.agent">agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agent-module">agent module</a></li>
 </ul>
 </li>
 </ul>
@@ -388,6 +388,12 @@ this edge with ‘new’.</p>
 <dt id="graphbrain.hyperedge.Atom.replace_atom_part">
 <code class="sig-name descname">replace_atom_part</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">part_pos</span></em>, <em class="sig-param"><span class="n">part</span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.replace_atom_part" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build a new atom by replacing an atom part in a given atom.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="graphbrain.hyperedge.Atom.replace_main_concept">
+<code class="sig-name descname">replace_main_concept</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_main</span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.replace_main_concept" title="Permalink to this definition">¶</a></dt>
+<dd><p>TODO: document and test</p>
 </dd></dl>
 
 <dl class="py method">
@@ -665,6 +671,12 @@ Returns same edge if the atom does not contain a role part.</p>
 <code class="sig-name descname">replace_atom</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">old</span></em>, <em class="sig-param"><span class="n">new</span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.replace_atom" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns edge built by replacing every instance of ‘old’ in
 this edge with ‘new’.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="graphbrain.hyperedge.Hyperedge.replace_main_concept">
+<code class="sig-name descname">replace_main_concept</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_main</span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.replace_main_concept" title="Permalink to this definition">¶</a></dt>
+<dd><p>TODO: document and test</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1307,69 +1319,9 @@ the degree and deep degree of that edge.</p>
 <h2>agents package<a class="headerlink" href="#agents-package" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id1">
 <h3>package functions<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
-<span class="target" id="module-graphbrain.agents.__init__"></span></div>
-<div class="section" id="module-graphbrain.agents.agent">
-<span id="agent-module"></span><h3>agent module<a class="headerlink" href="#module-graphbrain.agents.agent" title="Permalink to this headline">¶</a></h3>
-<dl class="py class">
-<dt id="graphbrain.agents.agent.Agent">
-<em class="property">class </em><code class="sig-prename descclassname">graphbrain.agents.agent.</code><code class="sig-name descname">Agent</code><a class="reference internal" href="../_modules/graphbrain/agents/agent.html#Agent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Base class for Graphbrain cognitive agents.</p>
-<p>These agents perform some change to an hypergraph, either by processing
-some external source of information of by inferring new knowledge from
-what is already contained in the hypregraph.</p>
-<dl class="py method">
-<dt id="graphbrain.agents.agent.Agent.input">
-<code class="sig-name descname">input</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/agents/agent.html#Agent.input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.input" title="Permalink to this definition">¶</a></dt>
-<dd><p>Input to the agent all the edges corresponding to its current
-search pattern. A typical use is in knowledge inference agents, which
-infer new knowledge from edges already present in the hypergraph.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="graphbrain.agents.agent.Agent.input_edge">
-<code class="sig-name descname">input_edge</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">edge</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/agents/agent.html#Agent.input_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.input_edge" title="Permalink to this definition">¶</a></dt>
-<dd><p>Feeds the agent an edge to process.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="graphbrain.agents.agent.Agent.languages">
-<code class="sig-name descname">languages</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/agents/agent.html#Agent.languages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.languages" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns set of languages supported by the agent, or an empty set
-if the agent is language-agnostic.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="graphbrain.agents.agent.Agent.name">
-<code class="sig-name descname">name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/agents/agent.html#Agent.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the agent’s name.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="graphbrain.agents.agent.Agent.on_end">
-<code class="sig-name descname">on_end</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/agents/agent.html#Agent.on_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.on_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called at the end of a cycle of activity.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="graphbrain.agents.agent.Agent.on_start">
-<code class="sig-name descname">on_start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/agents/agent.html#Agent.on_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.on_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called before a cycle of activity is started.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="graphbrain.agents.agent.Agent.report">
-<code class="sig-name descname">report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/agents/agent.html#Agent.report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.report" title="Permalink to this definition">¶</a></dt>
-<dd><p>Produce a report of the agent’s activities.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="graphbrain.agents.agent.Agent.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/agents/agent.html#Agent.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.agents.agent.Agent.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>High-level method to run an agent.</p>
-</dd></dl>
-
-</dd></dl>
-
+</div>
+<div class="section" id="agent-module">
+<h3>agent module<a class="headerlink" href="#agent-module" title="Permalink to this headline">¶</a></h3>
 </div>
 </div>
 </div>

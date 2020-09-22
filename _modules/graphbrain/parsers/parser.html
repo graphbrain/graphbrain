@@ -209,7 +209,29 @@
         <span class="n">parse_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve_corefs</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_corefs</span><span class="p">(</span><span class="n">parse_results</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">parse</span> <span class="ow">in</span> <span class="n">parse_results</span><span class="p">[</span><span class="s1">&#39;parses&#39;</span><span class="p">]:</span>
+                <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;resolved_corefs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;main_edge&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">parse_results</span></div>
+
+    <span class="k">def</span> <span class="nf">parse_and_write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hg</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="n">parse_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">parse</span> <span class="ow">in</span> <span class="n">parse_results</span><span class="p">[</span><span class="s1">&#39;parses&#39;</span><span class="p">]:</span>
+            <span class="n">main_edge</span> <span class="o">=</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;resolved_corefs&#39;</span><span class="p">]</span>
+
+            <span class="c1"># add main edge</span>
+            <span class="k">if</span> <span class="n">main_edge</span><span class="p">:</span>
+                <span class="c1"># attach text to edge</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span>
+                <span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">main_edge</span><span class="p">)</span>
+                <span class="n">hg</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="n">main_edge</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+                <span class="c1"># add extra edges</span>
+                <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;extra_edges&#39;</span><span class="p">]:</span>
+                    <span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">parse_results</span><span class="p">[</span><span class="s1">&#39;inferred_edges&#39;</span><span class="p">]:</span>
+            <span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">parse_results</span>
 
     <span class="k">def</span> <span class="nf">atom_gender</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>

@@ -169,10 +169,10 @@
 
 
 <span class="k">def</span> <span class="nf">_new_coref_id</span><span class="p">():</span>
-    <span class="n">chars</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_letters</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span>
+    <span class="n">chars</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span>
     <span class="c1"># Note: the size of the id can be increased to reduce the probability</span>
     <span class="c1"># of collision.</span>
-    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">chars</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">chars</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">))</span>
 
 
 <span class="k">def</span> <span class="nf">_set_coref_id_op</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">coref_id</span><span class="p">):</span>
@@ -202,6 +202,8 @@
         <span class="n">old</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> *)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">main_coref_pred</span><span class="p">,</span> <span class="n">cref_id</span><span class="p">)))</span>
         <span class="k">for</span> <span class="n">old_edge</span> <span class="ow">in</span> <span class="n">old</span><span class="p">:</span>
             <span class="c1"># hg.remove(old_edge)</span>
+            <span class="c1"># print(&#39;&amp;&amp;&amp;&#39;)</span>
+            <span class="c1"># print(old_edge)</span>
             <span class="k">yield</span> <span class="n">create_op</span><span class="p">(</span><span class="n">old_edge</span><span class="p">,</span> <span class="n">optype</span><span class="o">=</span><span class="s1">&#39;remove&#39;</span><span class="p">)</span>
         <span class="c1"># hg.add(coref_edge, primary=False)</span>
         <span class="k">yield</span> <span class="n">create_op</span><span class="p">(</span><span class="n">coref_edge</span><span class="p">,</span> <span class="n">primary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -260,6 +262,7 @@
 
 
 <span class="k">def</span> <span class="nf">make_corefs_ops</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge1</span><span class="p">,</span> <span class="n">edge2</span><span class="p">):</span>
+    <span class="c1"># print(&#39;\n### make_corefs_ops {} {}&#39;.format(edge1, edge2))</span>
     <span class="n">cref_id_1</span> <span class="o">=</span> <span class="n">coref_id</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge1</span><span class="p">)</span>
     <span class="n">cref_id_2</span> <span class="o">=</span> <span class="n">coref_id</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge2</span><span class="p">)</span>
 
