@@ -117,9 +117,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.meaning.ontology">ontology module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#agents-package">agents package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cognition-package">cognition package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id1">package functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agent-module">agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.cognition.system">system module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.cognition.agent">agent module</a></li>
 </ul>
 </li>
 </ul>
@@ -1315,13 +1316,76 @@ the degree and deep degree of that edge.</p>
 
 </div>
 </div>
-<div class="section" id="agents-package">
-<h2>agents package<a class="headerlink" href="#agents-package" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cognition-package">
+<h2>cognition package<a class="headerlink" href="#cognition-package" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id1">
 <h3>package functions<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-graphbrain.cognition.__init__"></span></div>
+<div class="section" id="module-graphbrain.cognition.system">
+<span id="system-module"></span><h3>system module<a class="headerlink" href="#module-graphbrain.cognition.system" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="agent-module">
-<h3>agent module<a class="headerlink" href="#agent-module" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="module-graphbrain.cognition.agent">
+<span id="agent-module"></span><h3>agent module<a class="headerlink" href="#module-graphbrain.cognition.agent" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="graphbrain.cognition.agent.Agent">
+<em class="property">class </em><code class="sig-prename descclassname">graphbrain.cognition.agent.</code><code class="sig-name descname">Agent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">progress_bar</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">logging_level</span><span class="o">=</span><span class="default_value">20</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/cognition/agent.html#Agent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.cognition.agent.Agent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for Graphbrain cognitive agents.</p>
+<p>These agents perform some change to an hypergraph, either by processing
+some external source of information of by inferring new knowledge from
+what is already contained in the hypregraph.</p>
+<dl class="py method">
+<dt id="graphbrain.cognition.agent.Agent.input">
+<code class="sig-name descname">input</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/cognition/agent.html#Agent.input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.cognition.agent.Agent.input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Input to the agent all the edges corresponding to its current
+search pattern. A typical use is in knowledge inference agents, which
+infer new knowledge from edges already present in the hypergraph.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="graphbrain.cognition.agent.Agent.input_edge">
+<code class="sig-name descname">input_edge</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">edge</span></em>, <em class="sig-param"><span class="n">depth</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/cognition/agent.html#Agent.input_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.cognition.agent.Agent.input_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Feeds the agent an edge to process.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="graphbrain.cognition.agent.Agent.languages">
+<code class="sig-name descname">languages</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/cognition/agent.html#Agent.languages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.cognition.agent.Agent.languages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns set of languages supported by the agent, or an empty set
+if the agent is language-agnostic.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="graphbrain.cognition.agent.Agent.on_end">
+<code class="sig-name descname">on_end</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/cognition/agent.html#Agent.on_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.cognition.agent.Agent.on_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called at the end of a cycle of activity.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="graphbrain.cognition.agent.Agent.on_start">
+<code class="sig-name descname">on_start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/cognition/agent.html#Agent.on_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.cognition.agent.Agent.on_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called before a cycle of activity is started.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="graphbrain.cognition.agent.Agent.process_edge">
+<code class="sig-name descname">process_edge</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">edge</span></em>, <em class="sig-param"><span class="n">depth</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/cognition/agent.html#Agent.process_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.cognition.agent.Agent.process_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Feeds the agent an edge to process.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="graphbrain.cognition.agent.Agent.report">
+<code class="sig-name descname">report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/cognition/agent.html#Agent.report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.cognition.agent.Agent.report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce a report of the agent’s activities.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="graphbrain.cognition.agent.Agent.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/cognition/agent.html#Agent.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.cognition.agent.Agent.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>High-level method to run an agent.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 </div>

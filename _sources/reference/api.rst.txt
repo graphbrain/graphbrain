@@ -79,17 +79,23 @@ ontology module
     :members:
 
 
-agents package
-==============
+cognition package
+=================
 
 package functions
 -----------------
 
-.. automodule:: graphbrain.agents.__init__
+.. automodule:: graphbrain.cognition.__init__
+    :members:
+
+system module
+-------------
+
+.. automodule:: graphbrain.cognition.system
     :members:
 
 agent module
 -------------
 
-.. automodule:: graphbrain.agents.agent
+.. automodule:: graphbrain.cognition.agent
     :members:
