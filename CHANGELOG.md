@@ -29,6 +29,7 @@
 - Hypergraph.search_count() renamed to Hypergraph.count().
 - corefs_names agent is simplified.
 - corefs_onto agent is simplified.
+- Tests now run with pytest instead of the deprecated './setup.py test'.
 
 ### Removed
 - Meta-modifier hyperedge type.

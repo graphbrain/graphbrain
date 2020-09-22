@@ -114,6 +114,7 @@ setup(
     extras_require={
         'dev': [
             'cython',
+            'pytest',
             'Sphinx',
             'sphinx_rtd_theme'
         ]
@@ -123,6 +124,5 @@ setup(
         [console_scripts]
         graphbrain=graphbrain.__main__:cli
     ''',
-    ext_modules=ext_modules,
-    test_suite='graphbrain.tests'
+    ext_modules=ext_modules
 )

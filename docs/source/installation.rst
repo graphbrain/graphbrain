@@ -78,8 +78,9 @@ Run tests
 
 From the project's root directory::
 
-  $ ./setup.py test
+  $ pytest graphbrain
 
+Notice that this requires the `pytest` package to be installed. The `pytest` package is included in the above mentioned development dependencies.
 
 Prerequisites
 =============
