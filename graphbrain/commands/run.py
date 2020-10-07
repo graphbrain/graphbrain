@@ -8,12 +8,14 @@ def run(args):
                   lang=args.lang,
                   hg=hgraph(args.hg),
                   infile=args.infile,
+                  url=args.url,
                   sequence=args.sequence)
     elif args.system:
         run_system(args.system,
                    lang=args.lang,
                    hg=hgraph(args.hg),
                    infile=args.infile,
+                   url=args.url,
                    sequence=args.sequence)
     else:
         raise RuntimeError('Either agent or system must be specified.')
