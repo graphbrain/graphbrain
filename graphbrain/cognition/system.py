@@ -100,12 +100,13 @@ def processor(x, lang=None, hg=None, infile=None, sequence=None):
 
 
 class System(object):
-    def __init__(self, name=None, lang=None, hg=None, infile=None,
+    def __init__(self, name=None, lang=None, hg=None, infile=None, url=None,
                  sequence=None, logging_level=logging.INFO):
         self.name = name
         self.lang = lang
         self.hg = hg
         self.infile = infile
+        self.url = url
         self.sequence = sequence
 
         self.logger = logging.getLogger('agent_system')

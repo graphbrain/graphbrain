@@ -23,6 +23,7 @@ def wrapper(fun, command=False, text=None):
     parser.add_argument('--infile', type=str, help='input file', default=None)
     parser.add_argument('--outfile', type=str,
                         help='output file', default=None)
+    parser.add_argument('--url', type=str, help='url', default=None)
     parser.add_argument('--fields', type=str, help='field names', default=None)
     parser.add_argument('--show_namespaces',
                         help='show namespaces', action='store_true')
@@ -52,6 +53,8 @@ def wrapper(fun, command=False, text=None):
         print('input file: {}'.format(args.infile))
     if args.outfile:
         print('output file: {}'.format(args.outfile))
+    if args.url:
+        print('url: {}'.format(args.url))
     if args.agent:
         print('agent: {}'.format(args.agent))
     if args.system:
