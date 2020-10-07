@@ -24,7 +24,7 @@ def apply_op(hg, op):
             position = op['position']
             # TODO: detect already existing edges in this case
             hg.add_to_sequence(sequence, position, edge)
-            hg.set_primary(edge)
+            hg.set_primary(edge, True)
         else:
             if hg.exists(edge):
                 if count:

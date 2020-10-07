@@ -197,6 +197,9 @@ class System(object):
     def get_hg(self, agent):
         return self.hg
 
+    def get_sequence(self, agent):
+        return self.sequence
+
     def _reset_counters(self, agent_name):
         self.counters[agent_name] = [0, 0]
 

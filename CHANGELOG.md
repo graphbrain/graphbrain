@@ -5,6 +5,7 @@
 - Agents system.
 - Conjunctions resolution agent.
 - Number agent (singular/plural relations) and related meaning.number module.
+- Wikipedia agent.
 - Coreference resolution in the parser through local fork of neuralcoref.
 - atom_gender(), atom_number(), atom_person(), atom_animacy() in parsers.
 - Coreference inference: gender, number and animacy.
