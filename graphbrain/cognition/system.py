@@ -47,7 +47,7 @@ def load_system(system_file, lang=None, hg=None, infile=None, url=None,
 
 def run_system(system_file, lang=None, hg=None, infile=None, url=None,
                sequence=None, progress_bar=True, logging_level=logging.INFO):
-    system = load_system(system_file, lang=lang, hg=hg, infile=infile,
+    system = load_system(system_file, lang=lang, hg=hg, infile=infile, url=url,
                          sequence=sequence, progress_bar=progress_bar,
                          logging_level=logging_level)
     system.run()
