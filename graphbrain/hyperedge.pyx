@@ -470,7 +470,7 @@ def hedge(source):
             return Atom(edges[0])
         else:
             return None
-    elif type(source) in {Hyperedge, Atom}:
+    elif type(source) in {Hyperedge, Atom, UniqueAtom}:
         return source
     else:
         return None
@@ -1174,3 +1174,14 @@ class Atom(Hyperedge):
             return Hyperedge((self, other))
         else:
             return Hyperedge((self,) + other)
+
+
+class UniqueAtom(Atom):
+    def __init__(self, atom):
+        self.atom = atom
+
+    def __hash__(self):
+        return id(self.atom)
+
+    def __eq__(self, other):
+        return id(self.atom) == id(other.atom)

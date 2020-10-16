@@ -4,11 +4,10 @@ from collections import defaultdict, Counter
 import logging
 import spacy
 import graphbrain.neuralcoref as neuralcoref
-from graphbrain import hedge, build_atom
+from graphbrain import hedge, build_atom, UniqueAtom
 import graphbrain.constants as const
 from graphbrain.meaning.concepts import has_common_or_proper_concept
 from .parser import Parser
-from .text import UniqueAtom
 
 
 def insert_after_predicate(targ, orig):
@@ -592,7 +591,8 @@ class AlphaBeta(Parser):
             relative_to_concept.reverse()
             entity = hedge((':/J/.', entity) + tuple(relative_to_concept))
 
-        entity = self._post_parse_token(entity, token_dict)
+        # TODO!! TEMPORARY HACK
+        # entity = self._post_parse_token(entity, token_dict)
 
         return entity, self.extra_edges
 
@@ -621,6 +621,8 @@ class AlphaBeta(Parser):
                     'extra_edges': extra_edges,
                     'text': str(sent).strip(),
                     'atom2word': atom2word,
+                    # TODO: HACK TEMPORARY
+                    'atom2token': self.atom2token,
                     'spacy_sentence': sent}
         except Exception as e:
             if hasattr(e, 'message'):

@@ -162,6 +162,8 @@ class ParserEN(AlphaBeta):
         elif dep in {'amod', 'nummod', 'preconj'}:  # , 'predet'}:
             return self._modifier_type_and_subtype(token)
         elif dep == 'det':
+            if token.tag_ == 'DT':
+                return self._modifier_type_and_subtype(token)
             if token.head.dep_ == 'npadvmod':
                 return self._builder_type_and_subtype(token)
             else:
@@ -236,6 +238,8 @@ class ParserEN(AlphaBeta):
         elif dep == 'acomp':
             if self._is_verb(token):
                 return 'T'
+            # elif token.tag_[0] == 'J':
+            #    return self._modifier_type_and_subtype(token)
             else:
                 return self._concept_type_and_subtype(token)
         else:
