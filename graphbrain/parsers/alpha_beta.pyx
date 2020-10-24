@@ -1,65 +1,66 @@
 import traceback
-from itertools import repeat
 from collections import defaultdict, Counter
 import logging
 import spacy
 import graphbrain.neuralcoref as neuralcoref
-from graphbrain import hedge, build_atom, UniqueAtom
+from graphbrain import hedge, build_atom, UniqueAtom, non_unique
 import graphbrain.constants as const
 from graphbrain.meaning.concepts import has_common_or_proper_concept
 from .parser import Parser
 
 
-def insert_after_predicate(targ, orig):
-    targ_type = targ.type()
-    if targ_type[0] == 'P':
-        return hedge((targ, orig))
-    elif targ_type[0] == 'R':
-        if targ[0].type()[0] == 'J':
-            inner_rel = insert_after_predicate(targ[1], orig)
-            if inner_rel:
-                return hedge((targ[0], inner_rel) + tuple(targ[2:]))
+class Rule:
+    def __init__(self, first_type, arg_types, size, connector=None):
+        self.first_type = first_type
+        self.arg_types = arg_types
+        self.size = size
+        self.connector = connector
+
+
+rules = [
+    Rule('C', {'C'}, 2, '+/B/.'),
+    Rule('M', {'C', 'P', 'T', 'R'}, 2),
+    Rule('B', {'C', 'R'}, 3),
+    Rule('T', {'C', 'R'}, 2),
+    Rule('P', {'C', 'R', 'S'}, 5),
+    Rule('P', {'C', 'R', 'S'}, 4),
+    Rule('P', {'C', 'R', 'S'}, 3),
+    Rule('P', {'C', 'R', 'S'}, 2),
+    Rule('J', {'C', 'R'}, 3),
+    Rule('R', {'C', 'R'}, 2, ':/J/.')]
+
+
+def apply_rule(rule, sentence, pos):
+    for pivot_pos in range(rule.size):
+        args = []
+        pivot = None
+        valid = True
+        for i in range(rule.size):
+            edge = sentence[pos - rule.size + i + 1]
+            if i == pivot_pos:
+                if edge.type()[0] == rule.first_type:
+                    if rule.connector:
+                        args.append(edge)
+                    else:
+                        pivot = edge
+                else:
+                    valid = False
+                    break
             else:
-                return None
-        else:
-            return targ.insert_first_argument(orig)
-    else:
-        return targ.insert_first_argument(orig)
-    # else:
-    #     logging.warning(('Wrong target type (insert_after_predicate).'
-    #                      ' orig: {}; targ: {}').format(targ, orig))
-    #     return None
+                if edge.type()[0] in rule.arg_types:
+                    args.append(edge)
+                else:
+                    valid = False
+                    break
+        if valid:
+            if rule.connector:
+                return hedge([rule.connector] + args)
+            else:
+                return hedge([pivot] + args)
+    return None
 
 
-def nest_predicate(inner, outer, before):
-    if not inner.is_atom() and inner[0].type()[0] == 'J':
-        first_rel = nest_predicate(inner[1], outer, before)
-        return hedge((inner[0], first_rel) + tuple(inner[2:]))
-    elif inner.is_atom() or inner.type()[0] == 'P':
-        return hedge((outer, inner))
-    else:
-        return hedge(((outer, inner[0]),) + inner[1:])
-
-
-def enclose(connector, edge):
-    if edge.is_atom() or edge[0].type() != 'J':
-        return hedge((connector, edge))
-    else:
-        return hedge((edge[0], enclose(connector, edge[1])) + edge[2:])
-
-
-# TODO: check this!
-# example:
-# applying (and/J bank/Cm (credit/Cn.s card/Cn.s)) to records/Cn.p
-# yields:
-# (and/J
-#     (+/B.am bank/C records/Cn.p)
-#     (+/B.am (credit/Cn.s card/Cn.s) records/Cn.p))
-def _apply_aux_concept_list_to_concept(con_list, concept):
-    concepts = tuple([('+/B.am', item, concept) for item in con_list[1:]])
-    return hedge((con_list[0],) + concepts)
-
-
+# coref functions
 def _concept_scores(edge, scores=None):
     if scores is None:
         scores = {'proper': 0, 'common': 0, 'misc': 0}
@@ -98,6 +99,9 @@ class AlphaBeta(Parser):
     def __init__(self, model_name, lemmas=False, resolve_corefs=False):
         super().__init__(lemmas=lemmas, resolve_corefs=resolve_corefs)
         self.atom2token = None
+        self.token2atom = None
+        self.depths = None
+        self.connections = None
         self.edge2text = None
         self.coref_clusters = None
         self.edge2coref = None
@@ -174,8 +178,6 @@ class AlphaBeta(Parser):
             atom = self._build_atom_modifier(token, ent_type)
         else:
             atom = build_atom(text, et, self.lang)
-
-        self.atom2token[UniqueAtom(atom)] = token
         return atom
 
     def _build_atom_predicate(self, token, ent_type, last_token):
@@ -320,281 +322,44 @@ class AlphaBeta(Parser):
             else:
                 return entity, temporal
 
-    def _before_parse_sentence(self):
-        self.extra_edges = set()
-
-    def _parse_token_children(self, token):
-        children = []
-        token_dict = {}
-        pos_dict = {}
-
-        child_tokens = (tuple(zip(token.lefts, repeat(True))) +
-                        tuple(zip(token.rights, repeat(False))))
-
-        for child_token, pos in child_tokens:
-            child, _ = self._parse_token(child_token)
-            if child:
-                child_type = child.type()
-                if child_type:
-                    children.append(child)
-                    token_dict[child] = child_token
-                    pos_dict[child] = pos
-
-        children.reverse()
-
-        if len(child_tokens) > 0:
-            last_token = child_tokens[-1][0]
-        else:
-            last_token = None
-
-        return children, token_dict, pos_dict, last_token
-
     def _add_lemmas(self, token, entity, ent_type):
         text = token.lemma_.lower()
         lemma = build_atom(text, ent_type[0], self.lang)
         lemma_edge = hedge((const.lemma_pred, entity, lemma))
         self.extra_edges.add(lemma_edge)
 
-    def _is_post_parse_token_necessary(self, entity):
-        if entity.is_atom():
-            return False
+    def _apply_pred_arg_types(self, edge):
+        if edge.is_atom():
+            return edge
+
+        new_entity = edge
+
+        apply_arg_types = False
+        if edge.type()[0] == 'R':
+            pred = edge.atom_with_type('P')
+            subparts = pred.parts()[1].split('.')
+            apply_arg_types = subparts[1] == ''
         else:
-            ct = entity.connector_type()
-            if ct[0] == 'P':
-                # Extend predicate atom with argument types
-                pred = entity.atom_with_type('P')
-                subparts = pred.parts()[1].split('.')
+            pred = None
+            subparts = None
 
-                if subparts[1] == '':
-                    return True
+        if apply_arg_types:
+            # Extend predicate atom with argument types
+            args = [self._arg_type(param) for param in edge[1:]]
+            args_string = ''.join(args)
+            pt = self._predicate_post_type_and_subtype(
+                edge, subparts, args_string)
+            new_part = '{}.{}.{}'.format(pt, args_string, subparts[2])
+            new_pred = pred.replace_atom_part(1, new_part)
+            self.atom2token[UniqueAtom(new_pred)] =\
+                self.atom2token[UniqueAtom(pred)]
+            new_entity = edge.replace_atom(pred, new_pred)
 
-            return any([self._is_post_parse_token_necessary(subentity)
-                        for subentity in entity])
-
-    def _post_parse_token(self, entity, token_dict):
-        new_entity = entity
-
-        if self._is_post_parse_token_necessary(entity):
-            if entity.connector_type()[0] == 'P':
-                # Extend predicate atom with argument types
-                pred = entity.atom_with_type('P')
-                subparts = pred.parts()[1].split('.')
-
-                if subparts[1] == '':
-                    args = [self._arg_type(token_dict[param])
-                            for param in entity[1:]]
-                    args_string = ''.join(args)
-                    pt = self._predicate_post_type_and_subtype(
-                        entity, subparts, args_string)
-                    new_part = '{}.{}.{}'.format(pt,
-                                                 args_string,
-                                                 subparts[2])
-                    new_pred = pred.replace_atom_part(1, new_part)
-                    self.atom2token[UniqueAtom(new_pred)] =\
-                        self.atom2token[UniqueAtom(pred)]
-                    new_entity = entity.replace_atom(pred, new_pred)
-
-            new_args = [self._post_parse_token(subentity, token_dict)
-                        for subentity in new_entity[1:]]
-            new_entity = hedge([new_entity[0]] + new_args)
+        new_args = [self._apply_pred_arg_types(subentity)
+                    for subentity in new_entity[1:]]
+        new_entity = hedge([new_entity[0]] + new_args)
 
         return new_entity
-
-    def _parse_token(self, token):
-        # check what type token maps to, return None if if maps to nothing
-        ent_type = self._token_type(token)
-        if ent_type == '' or ent_type is None:
-            return None, None
-
-        # parse token children
-        children, token_dict, pos_dict, last_token =\
-            self._parse_token_children(token)
-
-        atom = self._build_atom(token, ent_type, last_token)
-        entity = atom
-        logging.debug('ATOM: {}'.format(atom))
-
-        # lemmas
-        if self.lemmas:
-            self._add_lemmas(token, entity, ent_type)
-
-        # process children
-        relative_to_concept = []
-        next_child = None
-        for i in range(len(children)):
-            child = children[i]
-            child_token = token_dict[child]
-            pos = pos_dict[child]
-            if next_child is not None:
-                child = next_child
-                next_child = None
-
-            if i < len(children) - 1:
-                child_up = children[i + 1]
-            else:
-                child_up = None
-
-            child_type = child.type()
-
-            logging.debug('entity: [%s] %s', ent_type, entity)
-            logging.debug('child: [%s] %s', child_type, child)
-
-            if child_type[0] in {'C', 'R', 'S'}:
-                if ent_type[0] == 'C':
-                    if (child.connector_type() in {'P', 'Pr'} or
-                            self._is_relative_concept(child_token)):
-                        logging.debug('choice: 1a')
-                        # RELATIVE TO CONCEPT
-                        relative_to_concept.append(child)
-                    elif child.connector_type()[0] in {'B', 'J'}:
-                        if (child.connector_type() == 'Br' and
-                                len(child) >= 3 and
-                                'J' not in [c.type() for c in children]):
-                            logging.debug('choice: 2a')
-                            # RELATIVE TO CONCEPT
-                            relative_to_concept.append(child)
-                        elif (child.connector_type()[0] == 'J' and
-                              child.contains_atom_type('Cm')):
-                            logging.debug('choice: 2b')
-                            # CONCEPT LIST
-                            entity = _apply_aux_concept_list_to_concept(
-                                child, entity)
-                        elif (child_up and
-                              child_up.type()[0] == 'C' and
-                              'J' in [c.type() for c in children[i + 2:]]):
-                            logging.debug('choice: 2c')
-                            next_child = child_up.nest(child)
-                        elif entity.connector_type()[0] == 'C':
-                            # NEST
-                            if len(child) == 2:
-                                logging.debug('choice: 3a')
-                                new_child = child
-                                if len(child) > 2:
-                                    new_child = hedge((child[0], child[1:]))
-                                entity = entity.nest(new_child, pos)
-                            # SEQUENCE
-                            else:
-                                logging.debug('choice: 3b')
-                                entity = entity.sequence(child, pos,
-                                                         flat=False)
-                        else:
-                            logging.debug('choice: 4a')
-                            # NEST AROUND ORIGINAL ATOM
-                            if atom.type()[0] == 'C' and len(child) > 2:
-                                new_child = hedge((child[0], child[1:]))
-                                entity = entity.replace_atom(
-                                    atom,
-                                    atom.nest(new_child, pos))
-                            else:
-                                logging.debug('choice: 4b')
-                                # NEST AROUND ORIGINAL ATOM
-                                entity = entity.replace_atom(
-                                    atom,
-                                    atom.nest(child, pos))
-                    elif child.connector_type()[0] == 'T':
-                        logging.debug('choice: 5')
-                        # NEST
-                        entity = entity.nest(child, pos)
-                    else:
-                        if ((atom.type()[0] == 'C' and
-                                child.connector_type()[0] == 'C') or
-                                self._is_compound(child_token)):
-                            if entity.connector_type()[0] == 'C':
-                                if (child.connector_type()[0] == 'C' and
-                                        entity.connector_type() != 'Cm'):
-                                    logging.debug('choice: 6')
-                                    # SEQUENCE
-                                    entity = entity.sequence(child, pos)
-                                else:
-                                    logging.debug('choice: 7')
-                                    # FLAT SEQUENCE
-                                    entity = entity.sequence(
-                                        child, pos, flat=False)
-                            elif (entity.connector_type() == 'Br' and
-                                  not self._is_compound(child_token)):
-                                logging.debug('choice: 7b')
-                                # NEST
-                                entity = child.nest(entity, before=pos)
-                            else:
-                                logging.debug('choice: 8')
-                                # SEQUENCE IN ORIGINAL ATOM
-                                entity = entity.replace_atom(
-                                    atom,
-                                    atom.sequence(child, pos))
-                        else:
-                            logging.debug('choice: 9')
-                            entity = entity.replace_atom(
-                                atom, atom.connect((child,)))
-                elif ent_type[0] == 'T' and child.connector_type() == 'Mt':
-                    logging.debug('choice: 10a')
-                    # NEST PREDICATE
-                    entity = nest_predicate(child, entity, pos)
-                elif ent_type[0] in {'P', 'T', 'R', 'S'}:
-                    logging.debug('choice: 10b')
-                    # INSERT AFTER PREDICATE
-                    result = insert_after_predicate(entity, child)
-                    if result:
-                        entity = result
-                    else:
-                        logging.warning(('insert_after_predicate failed'
-                                         'with: {}').format(self.cur_text))
-                else:
-                    logging.debug('choice: 11')
-                    # INSERT FIRST ARGUMENT
-                    entity = entity.insert_first_argument(child)
-            elif child_type[0] == 'B':
-                if entity.connector_type()[0] == 'C':
-                    logging.debug('choice: 12')
-                    # CONNECT
-                    entity = child.connect(entity)
-                else:
-                    logging.debug('choice: 13')
-                    entity = entity.nest(child, pos)
-            # TODO: Pathological case
-            # e.g. "Some subspecies of mosquito might be 1s..."
-            elif child_type[0] == 'J':
-                logging.debug('choice: 14')
-                # ?
-                entity = child + entity
-            elif child_type[0] == 'P':
-                logging.debug('choice: 15')
-                # CONNECT
-                entity = entity.connect((child,))
-            elif child_type[0] == 'T':
-                logging.debug('choice: 16')
-                # ?
-                entity = enclose(child, entity)
-            # elif child_type[0] == 'A':
-            #     logging.debug('choice: 17')
-            #    # NEST PREDICATE
-            #    entity = nest_predicate(entity, child, pos)
-            elif child_type[0] == 'M':
-                if ent_type[0] in {'R', 'S'}:
-                    logging.debug('choice: 18')
-                    # NEST PREDICATE
-                    entity = nest_predicate(entity, child, pos)
-                else:
-                    logging.debug('choice: 19')
-                    # NEST
-                    entity = enclose(child, entity)
-            else:
-                logging.warning('Failed to parse token (_parse_token): {}'
-                                .format(token))
-                logging.debug('choice: 20')
-                # IGNORE
-                pass
-
-            ent_type = entity.type()
-            logging.debug('result: [%s] %s\n', ent_type, entity)
-
-        if len(relative_to_concept) > 0:
-            relative_to_concept.reverse()
-            entity = hedge((':/J/.', entity) + tuple(relative_to_concept))
-
-        # TODO!! TEMPORARY HACK
-        # entity = self._post_parse_token(entity, token_dict)
-
-        return entity, self.extra_edges
 
     def _generate_atom2word(self, edge):
         atom2word = {}
@@ -607,18 +372,148 @@ class AlphaBeta(Parser):
                 atom2word[uatom] = word
         return atom2word
 
+    def _parse_token(self, token):
+        # check what type token maps to, return None if if maps to nothing
+        ent_type = self._token_type(token)
+        if ent_type == '' or ent_type is None:
+            return None
+
+        # last token is useful to determine predicate subtype
+        tokens = list(token.lefts) + list(token.rights)
+        last_token = tokens[-1] if len(tokens) > 0 else None
+
+        atom = self._build_atom(token, ent_type, last_token)
+        logging.debug('ATOM: {}'.format(atom))
+
+        # lemmas
+        if self.lemmas:
+            self._add_lemmas(token, atom, ent_type)
+
+        return atom
+
+    # from the notebook: build_sentence(parse)
+    def _build_atom_sequence(self, sentence):
+        self.token2atom = {}
+
+        atomseq = []
+        for token in sentence:
+            atom = self._parse_token(token)
+            if atom:
+                uatom = UniqueAtom(atom)
+                self.atom2token[uatom] = token
+                self.token2atom[token] = uatom
+                atomseq.append(uatom)
+        return atomseq
+
+    def _compute_depths_and_connections(self, root, depth=0):
+        if depth == 0:
+            self.depths = {}
+            self.connections = set()
+
+        parent_atom = self.token2atom[root]
+        self.depths[parent_atom] = depth
+        for child in root.children:
+            if child in self.token2atom:
+                child_atom = self.token2atom[child]
+                self.connections.add((parent_atom, child_atom))
+                self.connections.add((child_atom, parent_atom))
+                new_depth = depth + 1
+                self._compute_depths_and_connections(child, depth=new_depth)
+
+    def _is_pair_connected(self, atoms1, atoms2):
+        for atom1 in atoms1:
+            for atom2 in atoms2:
+                if (atom1, atom2) in self.connections:
+                    return True
+        return False
+
+    def _are_connected(self, atom_sets, connector_pos):
+        conn = True
+        for pos, arg in enumerate(atom_sets):
+            if pos != connector_pos:
+                if not self._is_pair_connected(atom_sets[connector_pos], arg):
+                    conn = False
+                    break
+        return conn
+
+    def _score(self, edges):
+        atom_sets = [edge.all_atoms() for edge in edges]
+
+        conn = False
+        for pos in range(len(edges)):
+            if self._are_connected(atom_sets, pos):
+                conn = True
+                break
+
+        mdepth = 99999999
+        for atom_set in atom_sets:
+            for atom in atom_set:
+                if atom in self.depths:
+                    depth = self.depths[atom]
+                    if depth < mdepth:
+                        mdepth = depth
+
+        return (10000000 if conn else 0) + (mdepth * 100)
+
+    def _parse_atom_sequence(self, atom_sequence):
+        if len(atom_sequence) < 2:
+            yield atom_sequence
+        else:
+            result = atom_sequence
+
+            actions = []
+            for rule_number, rule in enumerate(rules):
+                window_start = rule.size - 1
+                for pos in range(window_start, len(result)):
+                    new_edge = apply_rule(rule, result, pos)
+                    if new_edge:
+                        score = self._score(result[pos - window_start:pos + 1])
+                        score -= rule_number
+                        actions.append(
+                            (rule, score, new_edge, window_start, pos))
+
+            # sort by descending score
+            actions.sort(key=lambda tup: tup[1], reverse=True) 
+
+            for action in actions:
+                rule, s, new_edge, window_start, pos = action
+                new_sequence = (result[:pos - window_start] +
+                                [new_edge] +
+                                result[pos + 1:])
+
+                logging.debug('rule: {}'.format(rule))
+                logging.debug('score: {}'.format(score))
+                logging.debug('new_edge: {}'.format(new_edge))
+                logging.debug('new_sequence: {}'.format(new_sequence))
+
+                if new_sequence != result:
+                    for r in self._parse_atom_sequence(new_sequence):
+                        if r and len(r) < 2:
+                            yield r
+
     def _parse_sentence(self, sent):
         try:
-            self._before_parse_sentence()
-            main_edge, extra_edges = self._parse_token(sent.root)
+            self.extra_edges = set()
+
+            atom_sequence = self._build_atom_sequence(sent)
+
+            self._compute_depths_and_connections(sent.root)
+
+            main_edge = None
+            for result in self._parse_atom_sequence(atom_sequence):
+                if result and len(result) == 1:
+                    main_edge = non_unique(result[0])
+                    break
+
             if main_edge:
+                main_edge = self._apply_pred_arg_types(main_edge)
                 main_edge, _ = self._post_process(main_edge)
                 atom2word = self._generate_atom2word(main_edge)
             else:
                 atom2word = {}
 
             return {'main_edge': main_edge,
-                    'extra_edges': extra_edges,
+                    'extra_edges': self.extra_edges,
                     'text': str(sent).strip(),
                     'atom2word': atom2word,
                     # TODO: HACK TEMPORARY

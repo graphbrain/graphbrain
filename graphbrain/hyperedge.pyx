@@ -1185,3 +1185,13 @@ class UniqueAtom(Atom):
 
     def __eq__(self, other):
         return id(self.atom) == id(other.atom)
+
+
+def non_unique(edge):
+    if edge.is_atom():
+        if type(edge) == UniqueAtom:
+            return edge.atom
+        else:
+            return edge
+    else:
+        return hedge([non_unique(subedge) for subedge in edge])

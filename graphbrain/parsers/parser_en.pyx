@@ -1,5 +1,5 @@
 import logging
-from graphbrain import *
+from graphbrain import hedge
 from .alpha_beta import AlphaBeta
 from .nlp import token2str
 from .text import UniqueAtom
@@ -88,36 +88,49 @@ class ParserEN(AlphaBeta):
         else:
             return None
 
-    def _arg_type(self, token):
-        # subject
-        if token.dep_ == 'nsubj':
+    def _head_token(self, edge):
+        atoms = [UniqueAtom(atom) for atom in edge.all_atoms()
+                 if UniqueAtom(atom) in self.atom2token]
+        min_depth = 9999999
+        main_atom = None
+        for atom in atoms:
+            depth = self.depths[atom]
+            if depth < min_depth:
+                min_depth = depth
+                main_atom = atom
+        return self.atom2token[main_atom]
+
+    def _arg_type(self, edge):
+        dep = self._head_token(edge).dep_
+
+        if dep == 'nsubj':
             return 's'
         # passive subject
-        elif token.dep_ == 'nsubjpass':
+        elif dep == 'nsubjpass':
             return 'p'
         # agent
-        elif token.dep_ == 'agent':
+        elif dep == 'agent':
             return 'a'
         # subject complement
-        elif token.dep_ in {'acomp', 'attr'}:
+        elif dep in {'acomp', 'attr'}:
             return 'c'
         # direct object
-        elif token.dep_ in {'dobj', 'pobj', 'prt'}:
+        elif dep in {'dobj', 'pobj', 'prt'}:
             return 'o'
         # indirect object
-        elif token.dep_ == 'dative':
+        elif dep == 'dative':
             return 'i'
         # specifier
-        elif token.dep_ in {'advcl', 'prep', 'npadvmod'}:
+        elif dep in {'advcl', 'prep', 'npadvmod'}:
             return 'x'
         # parataxis
-        elif token.dep_ == 'parataxis':
+        elif dep == 'parataxis':
             return 't'
         # interjection
-        elif token.dep_ == 'intj':
+        elif dep == 'intj':
             return 'j'
         # clausal complement
-        elif token.dep_ in {'xcomp', 'ccomp'}:
+        elif dep in {'xcomp', 'ccomp'}:
             return 'r'
         else:
             return '?'
@@ -296,7 +309,7 @@ class ParserEN(AlphaBeta):
             return 'Mm'  # modal
         elif tag == 'TO':
             return 'Mi'  # infinitive
-        elif tag == 'RB': # adverb
+        elif tag == 'RB':  # adverb
             return 'M'  # quintissential modifier, no subtype needed
         elif tag == 'RBR':
             return 'M='  # comparative
