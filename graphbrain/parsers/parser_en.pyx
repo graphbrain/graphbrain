@@ -88,53 +88,6 @@ class ParserEN(AlphaBeta):
         else:
             return None
 
-    def _head_token(self, edge):
-        atoms = [UniqueAtom(atom) for atom in edge.all_atoms()
-                 if UniqueAtom(atom) in self.atom2token]
-        min_depth = 9999999
-        main_atom = None
-        for atom in atoms:
-            depth = self.depths[atom]
-            if depth < min_depth:
-                min_depth = depth
-                main_atom = atom
-        return self.atom2token[main_atom]
-
-    def _arg_type(self, edge):
-        dep = self._head_token(edge).dep_
-
-        if dep == 'nsubj':
-            return 's'
-        # passive subject
-        elif dep == 'nsubjpass':
-            return 'p'
-        # agent
-        elif dep == 'agent':
-            return 'a'
-        # subject complement
-        elif dep in {'acomp', 'attr'}:
-            return 'c'
-        # direct object
-        elif dep in {'dobj', 'pobj', 'prt'}:
-            return 'o'
-        # indirect object
-        elif dep == 'dative':
-            return 'i'
-        # specifier
-        elif dep in {'advcl', 'prep', 'npadvmod'}:
-            return 'x'
-        # parataxis
-        elif dep == 'parataxis':
-            return 't'
-        # interjection
-        elif dep == 'intj':
-            return 'j'
-        # clausal complement
-        elif dep in {'xcomp', 'ccomp'}:
-            return 'r'
-        else:
-            return '?'
-
     def _token_type(self, token, head=False):
         if token.pos_ == 'PUNCT':
             return None
@@ -346,34 +299,57 @@ class ParserEN(AlphaBeta):
         # keep everything else the same
         return subparts[0]
 
-    def _concept_role(self, concept):
-        if concept.is_atom():
-            token = self.atom2token[UniqueAtom(concept)]
-            if token.dep_ == 'compound':
-                return 'a'
-            else:
-                return 'm'
-        else:
-            for edge in concept[1:]:
-                if self._concept_role(edge) == 'm':
-                    return 'm'
+    def _relation_arg_role(self, edge):
+        dep = self._head_token(edge).dep_
+
+        if dep == 'nsubj':
+            return 's'
+        # passive subject
+        elif dep == 'nsubjpass':
+            return 'p'
+        # agent
+        elif dep == 'agent':
             return 'a'
+        # subject complement
+        elif dep in {'acomp', 'attr'}:
+            return 'c'
+        # direct object
+        elif dep in {'dobj', 'pobj', 'prt'}:
+            return 'o'
+        # indirect object
+        elif dep == 'dative':
+            return 'i'
+        # specifier
+        elif dep in {'advcl', 'prep', 'npadvmod'}:
+            return 'x'
+        # parataxis
+        elif dep == 'parataxis':
+            return 't'
+        # interjection
+        elif dep == 'intj':
+            return 'j'
+        # clausal complement
+        elif dep in {'xcomp', 'ccomp'}:
+            return 'r'
+        else:
+            return '?'
+
+    def _concept_arg_role(self, edge):
+        return 'a' if self._head_token(edge).dep_ == 'compound' else 'm'
 
     def _builder_arg_roles(self, edge):
         connector = edge[0]
-        new_connector = connector
         if connector.is_atom():
-            ct = connector.type()
-            if ct == 'Br':
-                new_connector = connector.replace_atom_part(
-                    1, '{}.ma'.format(ct))
-            elif ct == 'Bp':
-                new_connector = connector.replace_atom_part(
-                    1, '{}.am'.format(ct))
-        if UniqueAtom(connector) in self.atom2token:
-            self.atom2token[UniqueAtom(new_connector)] =\
-                self.atom2token[UniqueAtom(connector)]
-        return hedge((new_connector,) + edge[1:])
+            if connector.to_str() == '+/B/.':
+                args = [self._concept_arg_role(param) for param in edge[1:]]
+                return ''.join(args)
+            elif len(edge) == 3:
+                ct = connector.type()
+                if ct == 'Br':
+                    return 'ma'
+                elif ct == 'Bp':
+                    return 'am'
+        return ''
 
     def _is_noun(self, token):
         return token.tag_[:2] == 'NN'

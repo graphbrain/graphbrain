@@ -22,10 +22,10 @@ rules = [
     Rule('M', {'C', 'P', 'T', 'R'}, 2),
     Rule('B', {'C', 'R'}, 3),
     Rule('T', {'C', 'R'}, 2),
-    Rule('P', {'C', 'R', 'S'}, 5),
-    Rule('P', {'C', 'R', 'S'}, 4),
-    Rule('P', {'C', 'R', 'S'}, 3),
-    Rule('P', {'C', 'R', 'S'}, 2),
+    Rule('P', {'C', 'R', 'S', 'P'}, 5),
+    Rule('P', {'C', 'R', 'S', 'P'}, 4),
+    Rule('P', {'C', 'R', 'S', 'P'}, 3),
+    Rule('P', {'C', 'R', 'S', 'P'}, 2),
     Rule('J', {'C', 'R'}, 3),
     Rule('R', {'C', 'R'}, 2, ':/J/.')]
 
@@ -116,9 +116,6 @@ class AlphaBeta(Parser):
     # Language-specific abstract methods, to be implemented in derived classes
     # ========================================================================
 
-    def _arg_type(self, token):
-        raise NotImplementedError()
-
     def _token_type(self, token):
         raise NotImplementedError()
 
@@ -134,7 +131,7 @@ class AlphaBeta(Parser):
     def _predicate_post_type_and_subtype(self, edge, subparts, args_string):
         raise NotImplementedError()
 
-    def _concept_role(self, concept):
+    def _relation_arg_role(self, token):
         raise NotImplementedError()
 
     def _builder_arg_roles(self, edge):
@@ -158,6 +155,18 @@ class AlphaBeta(Parser):
     # =========================
     # Language-agnostic methods
     # =========================
+
+    def _head_token(self, edge):
+        atoms = [UniqueAtom(atom) for atom in edge.all_atoms()
+                 if UniqueAtom(atom) in self.atom2token]
+        min_depth = 9999999
+        main_atom = None
+        for atom in atoms:
+            depth = self.depths[atom]
+            if depth < min_depth:
+                min_depth = depth
+                main_atom = atom
+        return self.atom2token[main_atom]
 
     def _token_head_type(self, token):
         head = token.head
@@ -230,85 +239,56 @@ class AlphaBeta(Parser):
 
         return build_atom(text, et, self.lang)
 
-    def _compose_concepts(self, concepts):
-        first = concepts[0]
-        if first.is_atom() or first[0].type()[0] != 'M':
-            concept_roles = [self._concept_role(concept)
-                             for concept in concepts]
-            builder = '+/B.{}/.'.format(''.join(concept_roles))
-            return hedge(builder).connect(concepts)
-        else:
-            return hedge((first[0],
-                          self._compose_concepts(first[1:] + concepts[1:])))
-
-    def _post_process(self, entity):
-        if entity.is_atom():
-            token = self.atom2token.get(UniqueAtom(entity))
+    def _is_temporal(self, edge):
+        if edge.is_atom():
+            token = self.atom2token.get(UniqueAtom(edge))
             if token:
-                ent_type = self.atom2token[UniqueAtom(entity)].ent_type_
-                temporal = ent_type in {'DATE', 'TIME'}
-            else:
-                temporal = False
-            return entity, temporal
+                ent_type = self.atom2token[UniqueAtom(edge)].ent_type_
+                if ent_type in {'DATE', 'TIME'}:
+                    return True
+            return False
         else:
-            entity, temps = zip(*[self._post_process(item) for item in entity])
-            entity = hedge(entity)
-            temporal = True in temps
-            ct = entity.connector_type()
+            for subedge in edge:
+                if self._is_temporal(subedge):
+                    return True
+            return False
 
-            # Multi-noun concept, e.g.: (south america) -> (+ south america)
-            if ct[0] == 'C':
-                return self._compose_concepts(entity), temporal
+    def _post_process(self, edge):
+        if not edge.is_atom():
+            edge = hedge([self._post_process(subedge) for subedge in edge])
 
-            # Assign concept roles where possible
-            # e.g. (on/Br referendum/C (gradual/M (nuclear/M phaseout/C))) ->
-            # (on/Br.ma referendum/C (gradual/M (nuclear/M phaseout/C)))
-            elif ct[0] == 'B' and len(entity) == 3:
-                return self._builder_arg_roles(entity), temporal
+            if edge.connector_type()[0] == 'M':
+                # If a modifier is found to be aplied to a relation, then
+                # apply it to the predicate of the relation instead.
+                # (*/M (*/P ...)) -> ((*/M */P) ...))
+                if len(edge) == 2 and edge[1].type()[0] == 'R':
+                    edge = hedge(((edge[0], edge[1][0]),) + edge[1][1:])
 
-            # Builders with one argument become modifiers
-            # e.g. (on/B ice) -> (on/M ice)
-            elif ct[0] == 'B' and entity[0].is_atom() and len(entity) == 2:
-                ps = entity[0].parts()
-                ps[1] = 'M' + ct[1:]
-                return hedge(('/'.join(ps),) + entity[1:]), temporal
+            if edge.connector_type()[0] == 'P':
+                # If a predicate appears outside of the connector position of
+                # a relation, then transform it into the equivalent verbal
+                # concept.
+                # (*/P ... */P ...) -> (*/P ... */C ...)
+                for subedge in edge[1:]:
+                    if subedge.type()[0] == 'P':
+                        pred_atom = subedge.atom_with_type('P')
+                        parts = pred_atom.parts()
+                        role = pred_atom.role()
+                        role = ['Cv'] + role[1:]
+                        newparts = (parts[0], '.'.join(role))
+                        if len(parts) > 2:
+                            newparts += tuple(parts[2:])
+                        new_pred = hedge('/'.join(newparts))
+                        if UniqueAtom(pred_atom) in self.atom2token:
+                            self.atom2token[UniqueAtom(new_pred)] =\
+                                self.atom2token[UniqueAtom(pred_atom)]
+                        edge = edge.replace_atom(pred_atom, new_pred)
 
-            # In an edge of size 2 with a modifier applied to a predicate or
-            # trigger shouw be reversed
-            # e.g.: (to/T according/M) -> (according/M to/T)
-            elif (len(entity) == 2 and
-                    ct[0] in {'P', 'T'} and
-                    entity[1].type()[0] == 'M'):
-                return hedge((entity[1], entity[0])), temporal
-
-            # Make sure that specifier arguments are of the specifier type,
-            # entities are surrounded by an edge with a trigger connector
-            # if necessary. E.g.: today -> {t/T/. today}
-            elif ct[0] == 'P':
-                pred = entity.predicate()
-                if pred:
-                    role = pred.role()
-                    if len(role) > 2:
-                        arg_roles = role[2]
-                        if 'x' in arg_roles:
-                            proc_edge = list(entity)
-                            trigger = 't/Tt/.' if temporal else 't/T/.'
-                            for i, arg_role in enumerate(arg_roles):
-                                arg_pos = i + 1
-                                if (arg_role == 'x'
-                                        and arg_pos < len(proc_edge)
-                                        and proc_edge[arg_pos].is_atom()):
-                                    tedge = (hedge(trigger),
-                                             proc_edge[arg_pos])
-                                    proc_edge[arg_pos] = hedge(tedge)
-                            return hedge(proc_edge), False
-                return entity, temporal
-
-            # Make triggers temporal, if appropriate.
-            # e.g.: (in/T 1976) -> (in/Tt 1976)
-            elif ct[0] == 'T':
-                if temporal:
-                    trigger_atom = entity[0].atom_with_type('T')
+            if edge.connector_type()[0] == 'T':
+                # Make triggers temporal, if appropriate.
+                # e.g.: (in/T 1976) -> (in/Tt 1976)
+                if self._is_temporal(edge):
+                    trigger_atom = edge[0].atom_with_type('T')
                     triparts = trigger_atom.parts()
                     newparts = (triparts[0], 'Tt')
                     if len(triparts) > 2:
@@ -317,10 +297,9 @@ class AlphaBeta(Parser):
                     if UniqueAtom(trigger_atom) in self.atom2token:
                         self.atom2token[UniqueAtom(new_trigger)] =\
                             self.atom2token[UniqueAtom(trigger_atom)]
-                    entity = entity.replace_atom(trigger_atom, new_trigger)
-                return entity, False
-            else:
-                return entity, temporal
+                    edge = edge.replace_atom(trigger_atom, new_trigger)
+
+        return edge
 
     def _add_lemmas(self, token, entity, ent_type):
         text = token.lemma_.lower()
@@ -328,34 +307,46 @@ class AlphaBeta(Parser):
         lemma_edge = hedge((const.lemma_pred, entity, lemma))
         self.extra_edges.add(lemma_edge)
 
-    def _apply_pred_arg_types(self, edge):
+    def _apply_arg_roles(self, edge):
         if edge.is_atom():
             return edge
 
         new_entity = edge
 
-        apply_arg_types = False
-        if edge.type()[0] == 'R':
-            pred = edge.atom_with_type('P')
-            subparts = pred.parts()[1].split('.')
-            apply_arg_types = subparts[1] == ''
-        else:
-            pred = None
-            subparts = None
+        # Extend predicate connectors with argument types
+        if edge.connector_type()[0] == 'P':
+            conn = edge.atom_with_type('P')
+            subparts = conn.parts()[1].split('.')
+            if subparts[1] == '':
+                args = [self._relation_arg_role(param) for param in edge[1:]]
+                args_string = ''.join(args)
+                # TODO: this is done to detect imperative, to refactor
+                pt = self._predicate_post_type_and_subtype(
+                    edge, subparts, args_string)
+                new_part = '{}.{}.{}'.format(pt, args_string, subparts[2])
+                new_pred = conn.replace_atom_part(1, new_part)
+                self.atom2token[UniqueAtom(new_pred)] =\
+                    self.atom2token[UniqueAtom(conn)]
+                new_entity = edge.replace_atom(conn, new_pred)
+        # Extend builder connectors with argument types
+        elif edge.connector_type()[0] == 'B':
+            builder = edge.atom_with_type('B')
+            subparts = builder.parts()[1].split('.')
+            arg_roles = self._builder_arg_roles(edge)
+            if len(arg_roles) > 0:
+                if len(subparts) > 1:
+                    subparts[1] = arg_roles
+                else:
+                    subparts.append(arg_roles)
+                new_part = '.'.join(subparts)
+                new_builder = builder.replace_atom_part(1, new_part)
+                ubuilder = UniqueAtom(builder)
+                if ubuilder in self.atom2token:
+                    self.atom2token[UniqueAtom(new_builder)] =\
+                        self.atom2token[ubuilder]
+                new_entity = edge.replace_atom(builder, new_builder)
 
-        if apply_arg_types:
-            # Extend predicate atom with argument types
-            args = [self._arg_type(param) for param in edge[1:]]
-            args_string = ''.join(args)
-            pt = self._predicate_post_type_and_subtype(
-                edge, subparts, args_string)
-            new_part = '{}.{}.{}'.format(pt, args_string, subparts[2])
-            new_pred = pred.replace_atom_part(1, new_part)
-            self.atom2token[UniqueAtom(new_pred)] =\
-                self.atom2token[UniqueAtom(pred)]
-            new_entity = edge.replace_atom(pred, new_pred)
-
-        new_args = [self._apply_pred_arg_types(subentity)
+        new_args = [self._apply_arg_roles(subentity)
                     for subentity in new_entity[1:]]
         new_entity = hedge([new_entity[0]] + new_args)
 
@@ -506,8 +497,8 @@ class AlphaBeta(Parser):
                     break
 
             if main_edge:
-                main_edge = self._apply_pred_arg_types(main_edge)
-                main_edge, _ = self._post_process(main_edge)
+                main_edge = self._apply_arg_roles(main_edge)
+                main_edge = self._post_process(main_edge)
                 atom2word = self._generate_atom2word(main_edge)
             else:
                 atom2word = {}

@@ -1013,7 +1013,7 @@ class Atom(Hyperedge):
 
         For this case, this function returns:
 
-            ['Cp', 'S']
+            ['Cp', 's']
 
         If the atom only has a root, it is assumed to be a concept.
         In this case, this function returns the role with just the
