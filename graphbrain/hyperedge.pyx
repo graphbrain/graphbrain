@@ -582,35 +582,6 @@ class Hyperedge(tuple):
             edges = edges.union(item.subedges())
         return edges
 
-    def nest(self, outer, before=False):
-        """Returns a new entity built by nesting this edge (inner)
-        inside the given (outer) edge.
-
-        Nesting the 'inner' atom (a) in the 'outer' atom (b) produces:
-        (b a)
-
-        Nesting the 'inner' edge (a b) in the 'outer' atom c produces:
-        (c (a b))
-
-        If the outer entity is an edge, the result depends on the 'before'
-        parameter. Considering the 'inner' entity (a b) and the 'outer'
-        entity (c d), nesting if 'before' is True produces:
-        (c d (a b))
-        If 'before' is False it produces:
-        (c (a b) d)
-
-        Keyword argument:
-        before -- controls how outer edges are handled, as per above.
-        (default: False)
-        """
-        if outer.is_atom():
-            return Hyperedge((outer, self))
-        else:
-            if before:
-                return outer + (self,)
-            else:
-                return Hyperedge((outer[0], self)) + outer[1:]
-
     def insert_first_argument(self, argument):
         """Returns an edge built by placing 'argument' as the first item
         after the connector of this edge. If this edge is an atom, then

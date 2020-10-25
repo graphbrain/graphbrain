@@ -35,6 +35,7 @@
 ### Removed
 - Meta-modifier hyperedge type.
 - Auxiliary, subpredicate and dependency hyperedge types.
+- Obsolete Hyperedge.nest() method.
 
 ## [0.3.2] - 10-02-2020
 ### Added

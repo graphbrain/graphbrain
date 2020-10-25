@@ -328,6 +328,7 @@ class AlphaBeta(Parser):
                 self.atom2token[UniqueAtom(new_pred)] =\
                     self.atom2token[UniqueAtom(conn)]
                 new_entity = edge.replace_atom(conn, new_pred)
+
         # Extend builder connectors with argument types
         elif edge.connector_type()[0] == 'B':
             builder = edge.atom_with_type('B')

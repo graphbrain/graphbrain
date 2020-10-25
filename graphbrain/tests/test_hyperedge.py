@@ -589,16 +589,6 @@ class TestHyperedge(unittest.TestCase):
         edge = hedge(s)
         self.assertEqual(match_pattern(edge, pattern), [])
 
-    def test_nest(self):
-        self.assertEqual(hedge('a').nest(hedge('b')).to_str(), '(b a)')
-        self.assertEqual(hedge('(a b)').nest(hedge('c')).to_str(), '(c (a b))')
-        self.assertEqual(hedge('(a b)').nest(hedge('(c d)'),
-                                             before=True).to_str(),
-                         '(c d (a b))')
-        self.assertEqual(hedge('(a b)').nest(hedge('(c d)'),
-                                             before=False).to_str(),
-                         '(c (a b) d)')
-
     def test_insert_first_argument(self):
         self.assertEqual(hedge('a').insert_first_argument(hedge('b')).to_str(),
                          '(a b)')
