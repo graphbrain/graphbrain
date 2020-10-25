@@ -1,6 +1,6 @@
-from graphbrain import *
+from graphbrain import hedge
 from graphbrain.cli import wrapper
-from graphbrain.parsers import *
+from graphbrain.parsers import create_parser, print_tree
 
 
 def test_parser(args):

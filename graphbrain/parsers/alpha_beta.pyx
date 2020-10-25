@@ -99,6 +99,7 @@ class AlphaBeta(Parser):
     def __init__(self, model_name, lemmas=False, resolve_corefs=False):
         super().__init__(lemmas=lemmas, resolve_corefs=resolve_corefs)
         self.atom2token = None
+        self.orig_atom = None
         self.token2atom = None
         self.depths = None
         self.connections = None
@@ -162,10 +163,12 @@ class AlphaBeta(Parser):
         min_depth = 9999999
         main_atom = None
         for atom in atoms:
-            depth = self.depths[atom]
-            if depth < min_depth:
-                min_depth = depth
-                main_atom = atom
+            if atom in self.orig_atom:
+                oatom = self.orig_atom[atom]
+                depth = self.depths[oatom]
+                if depth < min_depth:
+                    min_depth = depth
+                    main_atom = atom
         return self.atom2token[main_atom]
 
     def _token_head_type(self, token):
@@ -279,9 +282,12 @@ class AlphaBeta(Parser):
                         if len(parts) > 2:
                             newparts += tuple(parts[2:])
                         new_pred = hedge('/'.join(newparts))
-                        if UniqueAtom(pred_atom) in self.atom2token:
-                            self.atom2token[UniqueAtom(new_pred)] =\
-                                self.atom2token[UniqueAtom(pred_atom)]
+                        upred_atom = UniqueAtom(pred_atom)
+                        unew_pred = UniqueAtom(new_pred)
+                        if upred_atom in self.atom2token:
+                            self.atom2token[unew_pred] =\
+                                self.atom2token[upred_atom]
+                        self.orig_atom[unew_pred] = upred_atom
                         edge = edge.replace_atom(pred_atom, new_pred)
 
             if edge.connector_type()[0] == 'T':
@@ -294,9 +300,12 @@ class AlphaBeta(Parser):
                     if len(triparts) > 2:
                         newparts += tuple(triparts[2:])
                     new_trigger = hedge('/'.join(newparts))
-                    if UniqueAtom(trigger_atom) in self.atom2token:
-                        self.atom2token[UniqueAtom(new_trigger)] =\
-                            self.atom2token[UniqueAtom(trigger_atom)]
+                    utrigger_atom = UniqueAtom(trigger_atom)
+                    unew_trigger = UniqueAtom(new_trigger)
+                    if utrigger_atom in self.atom2token:
+                        self.atom2token[unew_trigger] =\
+                            self.atom2token[utrigger_atom]
+                    self.orig_atom[unew_trigger] = utrigger_atom
                     edge = edge.replace_atom(trigger_atom, new_trigger)
 
         return edge
@@ -315,8 +324,8 @@ class AlphaBeta(Parser):
 
         # Extend predicate connectors with argument types
         if edge.connector_type()[0] == 'P':
-            conn = edge.atom_with_type('P')
-            subparts = conn.parts()[1].split('.')
+            pred = edge.atom_with_type('P')
+            subparts = pred.parts()[1].split('.')
             if subparts[1] == '':
                 args = [self._relation_arg_role(param) for param in edge[1:]]
                 args_string = ''.join(args)
@@ -324,10 +333,13 @@ class AlphaBeta(Parser):
                 pt = self._predicate_post_type_and_subtype(
                     edge, subparts, args_string)
                 new_part = '{}.{}.{}'.format(pt, args_string, subparts[2])
-                new_pred = conn.replace_atom_part(1, new_part)
-                self.atom2token[UniqueAtom(new_pred)] =\
-                    self.atom2token[UniqueAtom(conn)]
-                new_entity = edge.replace_atom(conn, new_pred)
+                new_pred = pred.replace_atom_part(1, new_part)
+                unew_pred = UniqueAtom(new_pred)
+                upred = UniqueAtom(pred)
+                self.atom2token[unew_pred] =\
+                    self.atom2token[upred]
+                self.orig_atom[unew_pred] = upred
+                new_entity = edge.replace_atom(pred, new_pred)
 
         # Extend builder connectors with argument types
         elif edge.connector_type()[0] == 'B':
@@ -342,9 +354,11 @@ class AlphaBeta(Parser):
                 new_part = '.'.join(subparts)
                 new_builder = builder.replace_atom_part(1, new_part)
                 ubuilder = UniqueAtom(builder)
+                unew_builder = UniqueAtom(new_builder)
                 if ubuilder in self.atom2token:
-                    self.atom2token[UniqueAtom(new_builder)] =\
+                    self.atom2token[unew_builder] =\
                         self.atom2token[ubuilder]
+                self.orig_atom[unew_builder] = ubuilder
                 new_entity = edge.replace_atom(builder, new_builder)
 
         new_args = [self._apply_arg_roles(subentity)
@@ -394,6 +408,7 @@ class AlphaBeta(Parser):
                 uatom = UniqueAtom(atom)
                 self.atom2token[uatom] = token
                 self.token2atom[token] = uatom
+                self.orig_atom[uatom] = uatom
                 atomseq.append(uatom)
         return atomseq
 
@@ -415,8 +430,10 @@ class AlphaBeta(Parser):
     def _is_pair_connected(self, atoms1, atoms2):
         for atom1 in atoms1:
             for atom2 in atoms2:
-                if (atom1, atom2) in self.connections:
-                    return True
+                if atom1 in self.orig_atom and atom2 in self.orig_atom:
+                    pair = (self.orig_atom[atom1], self.orig_atom[atom2])
+                    if pair in self.connections:
+                        return True
         return False
 
     def _are_connected(self, atom_sets, connector_pos):
@@ -440,10 +457,12 @@ class AlphaBeta(Parser):
         mdepth = 99999999
         for atom_set in atom_sets:
             for atom in atom_set:
-                if atom in self.depths:
-                    depth = self.depths[atom]
-                    if depth < mdepth:
-                        mdepth = depth
+                if atom in self.orig_atom:
+                    oatom = self.orig_atom[atom]
+                    if oatom in self.depths:
+                        depth = self.depths[oatom]
+                        if depth < mdepth:
+                            mdepth = depth
 
         return (10000000 if conn else 0) + (mdepth * 100)
 
@@ -547,6 +566,7 @@ class AlphaBeta(Parser):
         enriched with NLP annotations.
         """
         self.atom2token = {}
+        self.orig_atom = {}
         self.coref_clusters = defaultdict(set)
         self.edge2coref = {}
         self.cur_text = text
@@ -560,8 +580,9 @@ class AlphaBeta(Parser):
             parts = edge.parts()
             if len(parts) > 2 and parts[2] == '.':
                 return clusters
-            if UniqueAtom(edge) in self.atom2token:
-                token = self.atom2token[UniqueAtom(edge)]
+            uatom = UniqueAtom(edge)
+            if uatom in self.atom2token:
+                token = self.atom2token[uatom]
                 clusters = set(token._.coref_clusters)
             if len(clusters) == 0:
                 return {None}
