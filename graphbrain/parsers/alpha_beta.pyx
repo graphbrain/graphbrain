@@ -483,11 +483,12 @@ class AlphaBeta(Parser):
                         if r and len(r) < 2:
                             yield r
 
-    def _parse_sentence(self, sent):
+    def parse_spacy_sentence(self, sent, atom_sequence=None):
         try:
             self.extra_edges = set()
 
-            atom_sequence = self._build_atom_sequence(sent)
+            if atom_sequence is None:
+                atom_sequence = self._build_atom_sequence(sent)
 
             self._compute_depths_and_connections(sent.root)
 
@@ -550,7 +551,7 @@ class AlphaBeta(Parser):
         self.edge2coref = {}
         self.cur_text = text
         doc = self.nlp(text.strip())
-        parses = tuple(self._parse_sentence(sent) for sent in doc.sents)
+        parses = tuple(self.parse_spacy_sentence(sent) for sent in doc.sents)
         return {'parses': parses, 'inferred_edges': []}
 
     def _find_coref_clusters(self, edge):
