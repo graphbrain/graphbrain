@@ -23,6 +23,10 @@ def wrapper(fun, command=False, text=None):
     parser.add_argument('--infile', type=str, help='input file', default=None)
     parser.add_argument('--outfile', type=str,
                         help='output file', default=None)
+    parser.add_argument('--indir', type=str,
+                        help='input directory', default=None)
+    parser.add_argument('--outdir', type=str,
+                        help='output directory', default=None)
     parser.add_argument('--url', type=str, help='url', default=None)
     parser.add_argument('--fields', type=str, help='field names', default=None)
     parser.add_argument('--show_namespaces',
