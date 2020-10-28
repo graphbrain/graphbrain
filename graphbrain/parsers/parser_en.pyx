@@ -2,7 +2,6 @@ import logging
 from graphbrain import hedge
 from .alpha_beta import AlphaBeta
 from .nlp import token2str
-from .text import UniqueAtom
 
 
 _female = {"she/Ci/en", "her/Ci/en", "herself/Ci/en", "hers/Ci/en",
@@ -88,7 +87,7 @@ class ParserEN(AlphaBeta):
         else:
             return None
 
-    def _token_type(self, token, head=False):
+    def token2type(self, token, head=False):
         if token.pos_ == 'PUNCT':
             return None
 
@@ -98,6 +97,8 @@ class ParserEN(AlphaBeta):
             return None
 
         head_type = self._token_head_type(token)
+        if head_type is None:
+            head_type = ''
         if len(head_type) > 1:
             head_subtype = head_type[1]
         else:

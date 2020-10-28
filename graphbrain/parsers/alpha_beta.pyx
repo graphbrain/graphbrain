@@ -15,6 +15,7 @@ class Rule:
         self.arg_types = arg_types
         self.size = size
         self.connector = connector
+        self._branches = 0
 
 
 rules = [
@@ -117,7 +118,7 @@ class AlphaBeta(Parser):
     # Language-specific abstract methods, to be implemented in derived classes
     # ========================================================================
 
-    def _token_type(self, token):
+    def token2type(self, token):
         raise NotImplementedError()
 
     def _concept_type_and_subtype(self, token):
@@ -165,18 +166,22 @@ class AlphaBeta(Parser):
         for atom in atoms:
             if atom in self.orig_atom:
                 oatom = self.orig_atom[atom]
-                depth = self.depths[oatom]
-                if depth < min_depth:
-                    min_depth = depth
-                    main_atom = atom
-        return self.atom2token[main_atom]
+                if oatom in self.depths:
+                    depth = self.depths[oatom]
+                    if depth < min_depth:
+                        min_depth = depth
+                        main_atom = atom
+        if main_atom:
+            return self.atom2token[main_atom]
+        else:
+            return None
 
     def _token_head_type(self, token):
         head = token.head
         if head and head != token:
-            return self._token_type(head)
+            return self.token2type(head)
         else:
-            return ''
+            return None
 
     def _build_atom(self, token, ent_type, last_token):
         text = token.text.lower()
@@ -326,13 +331,16 @@ class AlphaBeta(Parser):
         if edge.connector_type()[0] == 'P':
             pred = edge.atom_with_type('P')
             subparts = pred.parts()[1].split('.')
-            if subparts[1] == '':
+            if len(subparts) < 2 or subparts[1] == '':
                 args = [self._relation_arg_role(param) for param in edge[1:]]
                 args_string = ''.join(args)
                 # TODO: this is done to detect imperative, to refactor
                 pt = self._predicate_post_type_and_subtype(
                     edge, subparts, args_string)
-                new_part = '{}.{}.{}'.format(pt, args_string, subparts[2])
+                if len(subparts) > 2:
+                    new_part = '{}.{}.{}'.format(pt, args_string, subparts[2])
+                else:
+                    new_part = '{}.{}'.format(pt, args_string)
                 new_pred = pred.replace_atom_part(1, new_part)
                 unew_pred = UniqueAtom(new_pred)
                 upred = UniqueAtom(pred)
@@ -380,7 +388,7 @@ class AlphaBeta(Parser):
 
     def _parse_token(self, token):
         # check what type token maps to, return None if if maps to nothing
-        ent_type = self._token_type(token)
+        ent_type = self.token2type(token)
         if ent_type == '' or ent_type is None:
             return None
 
@@ -397,13 +405,18 @@ class AlphaBeta(Parser):
 
         return atom
 
-    # from the notebook: build_sentence(parse)
-    def _build_atom_sequence(self, sentence):
+    def build_atom_sequence(self, sentence, token2atom=None):
         self.token2atom = {}
 
         atomseq = []
         for token in sentence:
-            atom = self._parse_token(token)
+            if token2atom:
+                if token in token2atom:
+                    atom = token2atom[token]
+                else:
+                    atom = None
+            else:
+                atom = self._parse_token(token)
             if atom:
                 uatom = UniqueAtom(atom)
                 self.atom2token[uatom] = token
@@ -417,15 +430,18 @@ class AlphaBeta(Parser):
             self.depths = {}
             self.connections = set()
 
-        parent_atom = self.token2atom[root]
-        self.depths[parent_atom] = depth
+        if root in self.token2atom:
+            parent_atom = self.token2atom[root]
+            self.depths[parent_atom] = depth
+        else:
+            parent_atom = None
+
         for child in root.children:
-            if child in self.token2atom:
+            if parent_atom and child in self.token2atom:
                 child_atom = self.token2atom[child]
                 self.connections.add((parent_atom, child_atom))
                 self.connections.add((child_atom, parent_atom))
-                new_depth = depth + 1
-                self._compute_depths_and_connections(child, depth=new_depth)
+            self._compute_depths_and_connections(child, depth + 1)
 
     def _is_pair_connected(self, atoms1, atoms2):
         for atom1 in atoms1:
@@ -467,55 +483,56 @@ class AlphaBeta(Parser):
         return (10000000 if conn else 0) + (mdepth * 100)
 
     def _parse_atom_sequence(self, atom_sequence):
-        if len(atom_sequence) < 2:
-            yield atom_sequence
-        else:
-            result = atom_sequence
-
-            actions = []
+        sequence = atom_sequence
+        while True:
+            action = None
+            best_score = -999999999
             for rule_number, rule in enumerate(rules):
                 window_start = rule.size - 1
-                for pos in range(window_start, len(result)):
-                    new_edge = apply_rule(rule, result, pos)
+                for pos in range(window_start, len(sequence)):
+                    new_edge = apply_rule(rule, sequence, pos)
                     if new_edge:
-                        score = self._score(result[pos - window_start:pos + 1])
+                        score = self._score(
+                            sequence[pos - window_start:pos + 1])
                         score -= rule_number
-                        actions.append(
-                            (rule, score, new_edge, window_start, pos))
+                        if score > best_score:
+                            action = (rule, score, new_edge, window_start, pos)
+                            best_score = score
 
-            # sort by descending score
-            actions.sort(key=lambda tup: tup[1], reverse=True) 
+            # LOOKY LOOK this is a failure
+            if action is None:
+                return sequence
 
-            for action in actions:
-                rule, s, new_edge, window_start, pos = action
-                new_sequence = (result[:pos - window_start] +
-                                [new_edge] +
-                                result[pos + 1:])
+            rule, s, new_edge, window_start, pos = action
+            new_sequence = (sequence[:pos - window_start] +
+                            [new_edge] +
+                            sequence[pos + 1:])
 
-                logging.debug('rule: {}'.format(rule))
-                logging.debug('score: {}'.format(score))
-                logging.debug('new_edge: {}'.format(new_edge))
-                logging.debug('new_sequence: {}'.format(new_sequence))
+            logging.debug('rule: {}'.format(rule))
+            logging.debug('score: {}'.format(score))
+            logging.debug('new_edge: {}'.format(new_edge))
+            logging.debug('new_sequence: {}'.format(new_sequence))
 
-                if new_sequence != result:
-                    for r in self._parse_atom_sequence(new_sequence):
-                        if r and len(r) < 2:
-                            yield r
+            sequence = new_sequence
+            if len(sequence) < 2:
+                return sequence
 
     def parse_spacy_sentence(self, sent, atom_sequence=None):
         try:
             self.extra_edges = set()
 
             if atom_sequence is None:
-                atom_sequence = self._build_atom_sequence(sent)
+                atom_sequence = self.build_atom_sequence(sent)
 
             self._compute_depths_and_connections(sent.root)
 
             main_edge = None
-            for result in self._parse_atom_sequence(atom_sequence):
-                if result and len(result) == 1:
-                    main_edge = non_unique(result[0])
-                    break
+            self._branches = 0
+            # for result in self._parse_atom_sequence(atom_sequence):
+            result = self._parse_atom_sequence(atom_sequence)
+            if result and len(result) == 1:
+                main_edge = non_unique(result[0])
+                # break
 
             if main_edge:
                 main_edge = self._apply_arg_roles(main_edge)
@@ -545,6 +562,13 @@ class AlphaBeta(Parser):
                     'atom2word': {},
                     'spacy_sentence': sent}
 
+    def reset(self, text):
+        self.atom2token = {}
+        self.orig_atom = {}
+        self.coref_clusters = defaultdict(set)
+        self.edge2coref = {}
+        self.cur_text = text
+
     def _parse(self, text):
         """Transforms the given text into hyperedges + aditional information.
         Returns a sequence of dictionaries, with one dictionary for each
@@ -565,11 +589,7 @@ class AlphaBeta(Parser):
         -> spacy_sentence: the spaCy structure representing the sentence
         enriched with NLP annotations.
         """
-        self.atom2token = {}
-        self.orig_atom = {}
-        self.coref_clusters = defaultdict(set)
-        self.edge2coref = {}
-        self.cur_text = text
+        self.reset(text)
         doc = self.nlp(text.strip())
         parses = tuple(self.parse_spacy_sentence(sent) for sent in doc.sents)
         return {'parses': parses, 'inferred_edges': []}
