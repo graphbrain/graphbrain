@@ -25,7 +25,7 @@ There are a few exceptions, but I hate them!
 Tourists taking a picture of the Eiffel Tower get photobombed by a cyclist.
 ((get/Mv.-i-----/en photobombed/Pd.pa.<pf----/en) (:/J/. tourists/Cc.p/en (taking/P.o.|pg----/en (of/Br.ma/en (a/Md/en picture/Cc.s/en) (the/Md/en (+/B.am/. eiffel/Cp.s/en tower/Cp.s/en))))) (by/T/en (a/Md/en cyclist/Cc.s/en)))
 Americans are willing to pay $177 a year to avoid climate change
-(are/Pd.sc.|f-----/en americans/Cp.p/en (:/J/. willing/Ca/en ((to/Mi/en pay/P.ox.-i-----/en) ($/M/en (+/B.mm/. 177/C#/en (a/Md/en year/Cc.s/en))) ((to/Mi/en avoid/Pd.o.-i-----/en) (+/B.am/. climate/Cc.s/en change/Cc.s/en)))))
+(are/Pd.sc.|f-----/en americans/Cp.p/en (:/J/. willing/Ca/en ((to/Mi/en pay/P.ox.-i-----/en) ($/M/en (+/B.ma/. 177/C#/en (a/Md/en year/Cc.s/en))) ((to/Mi/en avoid/Pd.o.-i-----/en) (+/B.am/. climate/Cc.s/en change/Cc.s/en)))))
 This guy should be the new team mascot
 ((should/Mm/en be/Pd.sc.-i-----/en) (this/Md/en guy/Cc.s/en) (the/Md/en (new/Ma/en (+/B.am/. team/Cc.s/en mascot/Cc.s/en))))
 Satellites from NASA and other agencies have been tracking sea ice changes since 1979.

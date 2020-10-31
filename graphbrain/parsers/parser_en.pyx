@@ -37,6 +37,15 @@ _p3 = {"it/Ci/en", "she/Ci/en", "they/Ci/en", "he/Ci/en", "them/Ci/en",
        "his/Mp/en", "its/Mp/en", "their/Mp/en", "whose/Mp/en"}
 
 
+def _contains_compound(token):
+    for child in token.children:
+        if child.dep_ == 'compound':
+            return True
+        if _contains_compound(child):
+            return True
+    return False
+
+
 class ParserEN(AlphaBeta):
     def __init__(self, lemmas=False, resolve_corefs=False):
         super().__init__('en_core_web_lg', lemmas=lemmas,
@@ -335,14 +344,23 @@ class ParserEN(AlphaBeta):
         else:
             return '?'
 
-    def _concept_arg_role(self, edge):
-        return 'a' if self._head_token(edge).dep_ == 'compound' else 'm'
+    def _concept_arg_role(self, edge, concept):
+        min_depth = min(
+            [self.depths[self.token2atom[self._head_token(subedge)]]
+             for subedge in edge[1:]])
+        depth = self.depths[self.token2atom[self._head_token(concept)]]
+        if depth > min_depth:
+            return 'a'
+        else:
+            return 'm'
 
     def _builder_arg_roles(self, edge):
         connector = edge[0]
         if connector.is_atom():
-            if connector.to_str() == '+/B/.':
-                args = [self._concept_arg_role(param) for param in edge[1:]]
+            parts = connector.parts()
+            if parts[0] == '+' and parts[2] == '.':
+                args = [self._concept_arg_role(edge, param)
+                        for param in edge[1:]]
                 return ''.join(args)
             elif len(edge) == 3:
                 ct = connector.type()
