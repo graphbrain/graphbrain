@@ -1,4 +1,3 @@
-import logging
 from graphbrain import hedge
 from .alpha_beta import AlphaBeta
 from .nlp import token2str
@@ -217,8 +216,8 @@ class ParserEN(AlphaBeta):
             else:
                 return self._concept_type_and_subtype(token)
         else:
-            logging.warning('Unknown dependency (token_type): token: {}'
-                            .format(token2str(token)))
+            print('Unknown dependency (token_type): token: {}'
+                  .format(token2str(token)))
             return None
 
     def _concept_type_and_subtype(self, token):

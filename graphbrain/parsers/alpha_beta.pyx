@@ -1,6 +1,5 @@
 import traceback
 from collections import defaultdict, Counter
-import logging
 import spacy
 import graphbrain.neuralcoref as neuralcoref
 from graphbrain import hedge, build_atom, UniqueAtom, non_unique
@@ -396,7 +395,7 @@ class AlphaBeta(Parser):
         last_token = tokens[-1] if len(tokens) > 0 else None
 
         atom = self._build_atom(token, ent_type, last_token)
-        logging.debug('ATOM: {}'.format(atom))
+        self.debug_msg('ATOM: {}'.format(atom))
 
         # lemmas
         if self.lemmas:
@@ -507,10 +506,10 @@ class AlphaBeta(Parser):
                             [new_edge] +
                             sequence[pos + 1:])
 
-            logging.debug('rule: {}'.format(rule))
-            logging.debug('score: {}'.format(score))
-            logging.debug('new_edge: {}'.format(new_edge))
-            logging.debug('new_sequence: {}'.format(new_sequence))
+            self.debug_msg('rule: {}'.format(rule))
+            self.debug_msg('score: {}'.format(score))
+            self.debug_msg('new_edge: {}'.format(new_edge))
+            self.debug_msg('new_sequence: {}'.format(new_sequence))
 
             sequence = new_sequence
             if len(sequence) < 2:
@@ -552,7 +551,7 @@ class AlphaBeta(Parser):
                 msg = e.message
             else:
                 msg = str(e)
-            logging.error('Caught exception: {} while parsing: "{}"'.format(
+            print('Caught exception: {} while parsing: "{}"'.format(
                 msg, str(sent)))
             traceback.print_exc()
             return {'main_edge': None,

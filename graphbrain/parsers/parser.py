@@ -1,21 +1,19 @@
-import sys
-import logging
-
-
-logging.basicConfig(stream=sys.stderr, level=logging.WARNING)
-
-
 class Parser(object):
     """Defines the common interface for parser objects.
     Parsers transofrm natural text into graphbrain hyperedges.
     """
 
-    def __init__(self, lemmas=False, resolve_corefs=False):
+    def __init__(self, lemmas=False, resolve_corefs=False, debug=False):
         self.lemmas = lemmas
         self.resolve_corefs = resolve_corefs
+        self.debug = debug
 
         # to be created by derived classes
         self.lang = None
+
+    def debug_msg(self, msg):
+        if self.debug:
+            print(msg)
 
     def parse(self, text):
         """Transforms the given text into hyperedges + aditional information.
