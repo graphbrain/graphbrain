@@ -4,10 +4,10 @@ import json
 from termcolor import colored
 from graphbrain import build_atom
 from graphbrain.cli import wrapper
-from graphbrain.parsers import create_parser
+from graphbrain.parsers import create_parser, print_tree
 
 
-# '.' here means that the atom should be discarded
+# 'X' here means that the atom should be discarded
 ATOM_TYPES = ['C', 'P', 'M', 'B', 'J', 'T', 'X']
 
 
@@ -17,25 +17,24 @@ TYPE_COLOR = {
     'M': 'cyan',
     'B': 'green',
     'J': 'yellow',
-    'T': 'magenta',
-    'X': ''
+    'T': 'magenta'
 }
 
 
-def colored_type(atom_type, full_string=None):
-    color = TYPE_COLOR[atom_type[0]]
-    if color == '':
-        return atom_type
-    else:
+def colored_type(atom_type):
+    if atom_type[0] in TYPE_COLOR:
+        color = TYPE_COLOR[atom_type[0]]
         return colored(atom_type, color)
+    else:
+        return atom_type
 
 
 def with_type_color(atom_type, text):
-    color = TYPE_COLOR[atom_type[0]]
-    if color == '':
-        return atom_type
-    else:
+    if atom_type[0] in TYPE_COLOR:
+        color = TYPE_COLOR[atom_type[0]]
         return colored(text, color)
+    else:
+        return text
 
 
 def colored_role(atom):
@@ -52,33 +51,49 @@ def colored_atom(atom):
 
 
 def colored_edge(edge):
-    if edge.is_atom():
+    if edge is None:
+        return None
+    elif edge.is_atom():
         return colored_atom(edge)
     else:
         return '({})'.format(
             ' '.join([colored_edge(subedge) for subedge in edge]))
 
 
-def load_sentences(file_path):
-    sentences = set()
-    try:
-        with open(file_path, 'r') as f:
-            for line in f.readlines():
-                case = json.loads(line)
-                sentences.add(case['sentence'])
-    except FileNotFoundError:
-        pass
-    return sentences
-
-
 class TrainingDataGenerator:
     def __init__(self, lang):
         self.parser = create_parser(name=lang)
+
+        self.sentences = set()
+        self.tokens = 0
+        self.correct_edges = 0
+        self.ignored = 0
+
+        self.input_files = None
+
         self.sentence = None
         self.source = None
         self.atoms = None
+        self.spacy_sentence = None
         self.token2atom = None
-        self.input_files = None
+
+    def update_counts(self, case):
+        self.tokens += len(case['atoms'])
+        if case['ignore']:
+            self.ignored += 1
+        if case['correct']:
+            self.correct_edges += 1
+
+    def load_sentences(self, file_path):
+        try:
+            with open(file_path, 'r') as f:
+                for line in f.readlines():
+                    case = json.loads(line)
+                    self.sentences.add(case['sentence'])
+                    self.update_counts(case)
+        except FileNotFoundError:
+            pass
+        return self.sentences
 
     def print_status(self):
         print()
@@ -87,6 +102,13 @@ class TrainingDataGenerator:
         tokens = ' '.join([colored_atom(atom) for atom in self.atoms])
         print('{} {}'.format(colored('tokens .... > ', 'blue'), tokens))
         print('{} {}'.format(colored('source .... > ', 'blue'), self.source))
+        print()
+
+    def print_counts(self):
+        print()
+        print('{} sentences; {} correct; {} ignored; {} tokens'.format(
+            len(self.sentences), self.correct_edges, self.ignored,
+            self.tokens))
         print()
 
     def annotate_token(self, token):
@@ -122,12 +144,16 @@ class TrainingDataGenerator:
             print(colored_edge(edge))
             yes = colored('y', 'green')
             no = colored('n', 'red')
+            tree = colored('t', 'blue')
             answer = input(
-                'is edge parse correct ({}/{}) [{}] ? '.format(yes, no, yes))
+                'is edge parse correct ({}/{}/{}) [{}] ? '.format(
+                    yes, no, tree, yes))
             if answer in {'', 'y'}:
                 correct = True
             elif answer == 'n':
                 correct = False
+            elif answer == 't':
+                print_tree(self.spacy_sentence.root)
             else:
                 print(colored('Invalid answer. Please try again.', 'red'))
         return correct
@@ -153,14 +179,14 @@ class TrainingDataGenerator:
         self.token2atom = {}
         parse_results = self.parser.parse(sentence)
         parse = parse_results['parses'][0]
-        spacy_sentence = parse['spacy_sentence']
-        for token in spacy_sentence:
+        self.spacy_sentence = parse['spacy_sentence']
+        for token in self.spacy_sentence:
             self.atoms.append(self.annotate_token(token))
 
         self.parser.reset(sentence)
         atom_seq = self.parser.build_atom_sequence(
-            spacy_sentence, self.token2atom)
-        parse = self.parser.parse_spacy_sentence(spacy_sentence, atom_seq)
+            self.spacy_sentence, self.token2atom)
+        parse = self.parser.parse_spacy_sentence(self.spacy_sentence, atom_seq)
 
         edge = parse['main_edge']
         correct = self.edge_correct(edge)
@@ -175,7 +201,7 @@ class TrainingDataGenerator:
         return {'sentence': sentence,
                 'source': self.source,
                 'atoms': list(atom.to_str() for atom in self.atoms),
-                'hyperedge': edge.to_str(),
+                'hyperedge': edge.to_str() if edge else None,
                 'correct': correct,
                 'ignore': ignore}
 
@@ -200,17 +226,19 @@ class TrainingDataGenerator:
     def generate(self, indir, outfile):
         self._open_input_files(indir)
 
-        sentences = load_sentences(outfile)
+        self.load_sentences(outfile)
 
         with open(outfile, 'a') as outfile:
             for sentence, source in self._sentences():
                 sentence = sentence.strip()
-                if sentence not in sentences:
+                if sentence not in self.sentences:
+                    self.print_counts()
                     case = None
                     while case is None:
                         case = self.annotate_sentence(sentence, source)
                     outfile.write('{}\n'.format(json.dumps(case)))
-                    sentences.add(sentence)
+                    self.sentences.add(sentence)
+                    self.update_counts(case)
 
         self._close_input_files()
 

@@ -15,7 +15,7 @@ The fifth connects to revived E.U. religions and feelings about French teachers 
 An anarchist takes on Big Pharma by teaching patients to make their own meds
 (takes/Pd.sox.|f--3s-/en (an/Md/en anarchist/Cc.s/en) (on/T/en (+/B.am/. big/Cp.s/en pharma/Cp.s/en)) (by/T/en (teaching/P.or.|pg----/en patients/Cc.p/en ((to/Mi/en make/P.o.-i-----/en) (their/Mp/en (own/Ma/en meds/Cc.p/en))))))
 That seems both super dangerous, and super awesome.
-(seems/Pd.s?.|f--3s-/en that/Cd/en (and/J/en (both/Md/en (super/M/en dangerous/Ca/en)) (super/M/en awesome/Ca/en)))
+(seems/Pd.si.|f--3s-/en that/Cd/en (and/J/en (both/Md/en (super/M/en dangerous/Ca/en)) (super/M/en awesome/Ca/en)))
 Briton dies in fall from Indian temple while taking selfie
 (dies/Pd.sxxx.|f--3s-/en briton/Cp.s/en (in/T/en fall/Cc.s/en) (from/T/en (indian/Ma/en temple/Cc.s/en)) (while/T/en (taking/Pd.o.|pg----/en selfie/Cc.s/en)))
 I hate everyone in the White House!

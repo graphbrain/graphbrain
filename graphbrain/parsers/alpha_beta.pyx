@@ -20,14 +20,14 @@ class Rule:
 
 rules = [
     Rule('C', {'C'}, 2, '+/B/.'),
-    Rule('M', {'C', 'P', 'T', 'R'}, 2),
+    Rule('M', {'C', 'P', 'T', 'R', 'B'}, 2),
     Rule('B', {'C', 'R'}, 3),
     Rule('T', {'C', 'R'}, 2),
     Rule('P', {'C', 'R', 'S', 'P'}, 5),
     Rule('P', {'C', 'R', 'S', 'P'}, 4),
     Rule('P', {'C', 'R', 'S', 'P'}, 3),
     Rule('P', {'C', 'R', 'S', 'P'}, 2),
-    Rule('J', {'C', 'R'}, 3),
+    Rule('J', {'C', 'R', 'M'}, 3),
     Rule('R', {'C', 'R'}, 2, ':/J/.')]
 
 
@@ -331,23 +331,22 @@ class AlphaBeta(Parser):
         if edge.connector_type()[0] == 'P':
             pred = edge.atom_with_type('P')
             subparts = pred.parts()[1].split('.')
-            if len(subparts) < 2 or subparts[1] == '':
-                args = [self._relation_arg_role(param) for param in edge[1:]]
-                args_string = ''.join(args)
-                # TODO: this is done to detect imperative, to refactor
-                pt = self._predicate_post_type_and_subtype(
-                    edge, subparts, args_string)
-                if len(subparts) > 2:
-                    new_part = '{}.{}.{}'.format(pt, args_string, subparts[2])
-                else:
-                    new_part = '{}.{}'.format(pt, args_string)
-                new_pred = pred.replace_atom_part(1, new_part)
-                unew_pred = UniqueAtom(new_pred)
-                upred = UniqueAtom(pred)
-                self.atom2token[unew_pred] =\
-                    self.atom2token[upred]
-                self.orig_atom[unew_pred] = upred
-                new_entity = edge.replace_atom(pred, new_pred)
+            args = [self._relation_arg_role(param) for param in edge[1:]]
+            args_string = ''.join(args)
+            # TODO: this is done to detect imperative, to refactor
+            pt = self._predicate_post_type_and_subtype(
+                edge, subparts, args_string)
+            if len(subparts) > 2:
+                new_part = '{}.{}.{}'.format(pt, args_string, subparts[2])
+            else:
+                new_part = '{}.{}'.format(pt, args_string)
+            new_pred = pred.replace_atom_part(1, new_part)
+            unew_pred = UniqueAtom(new_pred)
+            upred = UniqueAtom(pred)
+            self.atom2token[unew_pred] =\
+                self.atom2token[upred]
+            self.orig_atom[unew_pred] = upred
+            new_entity = edge.replace_atom(pred, new_pred)
 
         # Extend builder connectors with argument types
         elif edge.connector_type()[0] == 'B':
@@ -535,8 +534,8 @@ class AlphaBeta(Parser):
                 # break
 
             if main_edge:
-                main_edge = self._apply_arg_roles(main_edge)
                 main_edge = self._post_process(main_edge)
+                main_edge = self._apply_arg_roles(main_edge)
                 atom2word = self._generate_atom2word(main_edge)
             else:
                 atom2word = {}

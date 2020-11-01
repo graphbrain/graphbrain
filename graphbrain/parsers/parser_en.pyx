@@ -180,7 +180,7 @@ class ParserEN(AlphaBeta):
         elif dep == 'agent':
             return 'T'
         elif dep in {'intj', 'punct'}:
-            return ''
+            return None
         elif dep == 'advmod':
             if token.head.dep_ == 'advcl':
                 return 'T'
@@ -214,8 +214,6 @@ class ParserEN(AlphaBeta):
         elif dep == 'acomp':
             if self._is_verb(token):
                 return 'T'
-            # elif token.tag_[0] == 'J':
-            #    return self._modifier_type_and_subtype(token)
             else:
                 return self._concept_type_and_subtype(token)
         else:
@@ -327,7 +325,7 @@ class ParserEN(AlphaBeta):
         elif dep in {'dobj', 'pobj', 'prt'}:
             return 'o'
         # indirect object
-        elif dep == 'dative':
+        elif dep in {'dative', 'oprd'}:
             return 'i'
         # specifier
         elif dep in {'advcl', 'prep', 'npadvmod'}:
