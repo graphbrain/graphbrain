@@ -1158,6 +1158,16 @@ class UniqueAtom(Atom):
         return id(self.atom) == id(other.atom)
 
 
+def unique(edge):
+    if edge.is_atom():
+        if type(edge) == UniqueAtom:
+            return edge
+        else:
+            return UniqueAtom(edge)
+    else:
+        return hedge([unique(subedge) for subedge in edge])
+
+
 def non_unique(edge):
     if edge.is_atom():
         if type(edge) == UniqueAtom:

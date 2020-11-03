@@ -1,4 +1,4 @@
-from graphbrain import hedge
+from graphbrain import hedge, UniqueAtom
 from .alpha_beta import AlphaBeta
 from .nlp import token2str
 
@@ -321,10 +321,10 @@ class ParserEN(AlphaBeta):
         elif dep in {'acomp', 'attr'}:
             return 'c'
         # direct object
-        elif dep in {'dobj', 'pobj', 'prt'}:
+        elif dep in {'dobj', 'pobj', 'prt', 'oprd'}:
             return 'o'
         # indirect object
-        elif dep in {'dative', 'oprd'}:
+        elif dep in {'dative'}:
             return 'i'
         # specifier
         elif dep in {'advcl', 'prep', 'npadvmod'}:
@@ -345,8 +345,10 @@ class ParserEN(AlphaBeta):
         min_depth = min(
             [self.depths[self.token2atom[self._head_token(subedge)]]
              for subedge in edge[1:]])
-        depth = self.depths[self.token2atom[self._head_token(concept)]]
-        if depth > min_depth:
+        concept_head = self._head_token(concept)
+        depth = self.depths[self.token2atom[concept_head]]
+        if (depth > min_depth and
+           (concept_head.dep_ == 'compound') or 'mod' in concept_head.dep_):
             return 'a'
         else:
             return 'm'
@@ -416,3 +418,24 @@ class ParserEN(AlphaBeta):
 
         features = (tense, verb_form, aspect, mood, person, number, verb_type)
         return ''.join(features)
+
+    def _adjust_score(self, edges):
+        min_depth = 9999999
+        appos = False
+        min_appos_depth = 9999999
+
+        if all([edge.type()[0] == 'C' for edge in edges]):
+            for edge in edges:
+                token = self._head_token(edge)
+                depth = self.depths[self.token2atom[token]]
+                if depth < min_depth:
+                    min_depth = depth
+                if token and token.dep_ == 'appos':
+                    appos = True
+                    if depth < min_appos_depth:
+                        min_appos_depth = depth
+
+        if appos and min_appos_depth > min_depth:
+            return -99
+        else:
+            return 0

@@ -106,9 +106,15 @@ class TrainingDataGenerator:
 
     def print_counts(self):
         print()
-        print('{} sentences; {} correct; {} ignored; {} tokens'.format(
-            len(self.sentences), self.correct_edges, self.ignored,
-            self.tokens))
+        msg = '{} sentences; {} correct; {} ignored; {} tokens;'
+        msg += ' {} tokens/sentence'
+        msg = msg.format(
+            len(self.sentences),
+            self.correct_edges,
+            self.ignored,
+            self.tokens,
+            int(float(self.tokens) / float(len(self.sentences))))
+        print(msg)
         print()
 
     def annotate_token(self, token):
@@ -121,13 +127,18 @@ class TrainingDataGenerator:
         atom_type = None
         while atom_type is None:
             self.print_status()
+            options = '/'.join([colored_type(atype) for atype in ATOM_TYPES])
+            options += '/u'
             prompt_msg = '{} ({}) [{}] ? '.format(
                 colored(str(token), 'white'),
-                '/'.join([colored_type(atype) for atype in ATOM_TYPES]),
+                options,
                 colored_type(suggested_type))
             atom_type = input(prompt_msg).upper()
             if atom_type == '':
                 atom_type = suggested_type
+            elif atom_type == 'U':
+                self.atoms = self.atoms[:-1]
+                return 'u'
             elif atom_type not in ATOM_TYPES:
                 print(colored('Invalid type. Please try again.', 'red'))
                 atom_type = None
@@ -136,24 +147,35 @@ class TrainingDataGenerator:
             self.token2atom[token] = atom
         return atom
 
-    def edge_correct(self, edge):
+    def edge_correct(self, edge, failed):
         correct = None
         while correct is None:
             print()
             print('Parsed edge:')
             print(colored_edge(edge))
+            if failed:
+                print(colored('Parse failed.', 'red'))
             yes = colored('y', 'green')
             no = colored('n', 'red')
             tree = colored('t', 'blue')
+            debug = colored('d', 'yellow')
+            default = no if failed else yes
             answer = input(
-                'is edge parse correct ({}/{}/{}) [{}] ? '.format(
-                    yes, no, tree, yes))
+                'is edge parse correct ({}/{}/{}/{}) [{}] ? '.format(
+                    yes, no, tree, debug, default))
             if answer in {'', 'y'}:
                 correct = True
             elif answer == 'n':
                 correct = False
             elif answer == 't':
                 print_tree(self.spacy_sentence.root)
+            elif answer == 'd':
+                self.parser.debug = True
+                # run parser again
+                atom_seq = self.parser.build_atom_sequence(
+                    self.spacy_sentence, self.token2atom)
+                self.parser.parse_spacy_sentence(self.spacy_sentence, atom_seq)
+                self.parser.debug = False
             else:
                 print(colored('Invalid answer. Please try again.', 'red'))
         return correct
@@ -180,8 +202,16 @@ class TrainingDataGenerator:
         parse_results = self.parser.parse(sentence)
         parse = parse_results['parses'][0]
         self.spacy_sentence = parse['spacy_sentence']
-        for token in self.spacy_sentence:
-            self.atoms.append(self.annotate_token(token))
+        pos = 0
+        while pos < len(self.spacy_sentence):
+            token = self.spacy_sentence[pos]
+            result = self.annotate_token(token)
+            if result == 'u':
+                if pos > 0:
+                    pos -= 1
+            else:
+                self.atoms.append(result)
+                pos += 1
 
         self.parser.reset(sentence)
         atom_seq = self.parser.build_atom_sequence(
@@ -189,7 +219,7 @@ class TrainingDataGenerator:
         parse = self.parser.parse_spacy_sentence(self.spacy_sentence, atom_seq)
 
         edge = parse['main_edge']
-        correct = self.edge_correct(edge)
+        correct = self.edge_correct(edge, parse['failed'])
 
         air = self.accept_ignore_restart()
         ignore = True
@@ -219,9 +249,10 @@ class TrainingDataGenerator:
             self.input_files[name].close()
 
     def _sentences(self):
-        for name in self.input_files:
-            f = self.input_files[name]
-            yield f.readline(), name
+        while True:
+            for name in self.input_files:
+                f = self.input_files[name]
+                yield f.readline(), name
 
     def generate(self, indir, outfile):
         self._open_input_files(indir)

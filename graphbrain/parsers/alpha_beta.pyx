@@ -2,7 +2,7 @@ import traceback
 from collections import defaultdict, Counter
 import spacy
 import graphbrain.neuralcoref as neuralcoref
-from graphbrain import hedge, build_atom, UniqueAtom, non_unique
+from graphbrain import hedge, build_atom, UniqueAtom, unique, non_unique
 import graphbrain.constants as const
 from graphbrain.meaning.concepts import has_common_or_proper_concept
 from .parser import Parser
@@ -20,14 +20,16 @@ class Rule:
 rules = [
     Rule('C', {'C'}, 2, '+/B/.'),
     Rule('M', {'C', 'P', 'T', 'R', 'B'}, 2),
-    Rule('B', {'C', 'R'}, 3),
+    Rule('B', {'C', 'R', 'M'}, 3),
     Rule('T', {'C', 'R'}, 2),
+    Rule('P', {'C', 'R', 'S', 'P'}, 6),
     Rule('P', {'C', 'R', 'S', 'P'}, 5),
     Rule('P', {'C', 'R', 'S', 'P'}, 4),
     Rule('P', {'C', 'R', 'S', 'P'}, 3),
     Rule('P', {'C', 'R', 'S', 'P'}, 2),
-    Rule('J', {'C', 'R', 'M'}, 3),
-    Rule('R', {'C', 'R'}, 2, ':/J/.')]
+    Rule('J', {'C', 'R', 'M', 'S', 'T', 'P'}, 3),
+    Rule('J', {'C', 'R', 'M', 'S', 'T', 'P'}, 2),
+    Rule('R', {'C', 'R', 'S'}, 2, ':/J/.')]
 
 
 def apply_rule(rule, sentence, pos):
@@ -153,13 +155,16 @@ class AlphaBeta(Parser):
     def _verb_features(self, token):
         raise NotImplementedError()
 
+    def _adjust_score(self, edges):
+        raise NotImplementedError()
+
     # =========================
     # Language-agnostic methods
     # =========================
 
     def _head_token(self, edge):
-        atoms = [UniqueAtom(atom) for atom in edge.all_atoms()
-                 if UniqueAtom(atom) in self.atom2token]
+        atoms = [unique(atom) for atom in edge.all_atoms()
+                 if unique(atom) in self.atom2token]
         min_depth = 9999999
         main_atom = None
         for atom in atoms:
@@ -263,13 +268,6 @@ class AlphaBeta(Parser):
     def _post_process(self, edge):
         if not edge.is_atom():
             edge = hedge([self._post_process(subedge) for subedge in edge])
-
-            if edge.connector_type()[0] == 'M':
-                # If a modifier is found to be aplied to a relation, then
-                # apply it to the predicate of the relation instead.
-                # (*/M (*/P ...)) -> ((*/M */P) ...))
-                if len(edge) == 2 and edge[1].type()[0] == 'R':
-                    edge = hedge(((edge[0], edge[1][0]),) + edge[1][1:])
 
             if edge.connector_type()[0] == 'P':
                 # If a predicate appears outside of the connector position of
@@ -478,7 +476,20 @@ class AlphaBeta(Parser):
                         if depth < mdepth:
                             mdepth = depth
 
-        return (10000000 if conn else 0) + (mdepth * 100)
+        return ((10000000 if conn else 0) + (mdepth * 100) +
+                self._adjust_score(edges))
+
+    def _repair(self, edge):
+        if not edge.is_atom():
+            edge = hedge([self._repair(subedge) for subedge in edge])
+
+            if edge.connector_type()[0] == 'M':
+                # If a modifier is found to be aplied to a relation, then
+                # apply it to the predicate of the relation instead.
+                # (*/M (*/P ...)) -> ((*/M */P) ...))
+                if len(edge) == 2 and edge[1].type()[0] == 'R':
+                    edge = hedge(((edge[0], edge[1][0]),) + edge[1][1:])
+        return edge
 
     def _parse_atom_sequence(self, atom_sequence):
         sequence = atom_sequence
@@ -490,6 +501,7 @@ class AlphaBeta(Parser):
                 for pos in range(window_start, len(sequence)):
                     new_edge = apply_rule(rule, sequence, pos)
                     if new_edge:
+                        new_edge = self._repair(new_edge)
                         score = self._score(
                             sequence[pos - window_start:pos + 1])
                         score -= rule_number
@@ -497,9 +509,12 @@ class AlphaBeta(Parser):
                             action = (rule, score, new_edge, window_start, pos)
                             best_score = score
 
-            # LOOKY LOOK this is a failure
+            # parse failed, make best effort to return something
             if action is None:
-                return sequence
+                if len(sequence) > 0:
+                    return sequence[:1], True
+                else:
+                    return None, True
 
             rule, s, new_edge, window_start, pos = action
             new_sequence = (sequence[:pos - window_start] +
@@ -513,7 +528,7 @@ class AlphaBeta(Parser):
 
             sequence = new_sequence
             if len(sequence) < 2:
-                return sequence
+                return sequence, False
 
     def parse_spacy_sentence(self, sent, atom_sequence=None):
         try:
@@ -526,8 +541,7 @@ class AlphaBeta(Parser):
 
             main_edge = None
             self._branches = 0
-            # for result in self._parse_atom_sequence(atom_sequence):
-            result = self._parse_atom_sequence(atom_sequence)
+            result, failed = self._parse_atom_sequence(atom_sequence)
             if result and len(result) == 1:
                 main_edge = non_unique(result[0])
                 # break
@@ -541,6 +555,7 @@ class AlphaBeta(Parser):
 
             return {'main_edge': main_edge,
                     'extra_edges': self.extra_edges,
+                    'failed': failed,
                     'text': str(sent).strip(),
                     'atom2word': atom2word,
                     # TODO: HACK TEMPORARY
@@ -556,6 +571,7 @@ class AlphaBeta(Parser):
             traceback.print_exc()
             return {'main_edge': None,
                     'extra_edges': [],
+                    'failed': True,
                     'text': str(sent).strip(),
                     'atom2word': {},
                     'spacy_sentence': sent}
