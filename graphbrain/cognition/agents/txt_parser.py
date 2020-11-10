@@ -18,7 +18,7 @@ class TxtParser(Agent):
         self.edges = 0
 
     def on_start(self):
-        if self.system.get_sequence(self):
+        if not self.system.get_sequence(self):
             raise RuntimeError('Sequence name must be specified.')
 
     def run(self):
