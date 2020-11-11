@@ -38,6 +38,7 @@ class TxtParser(Agent):
                     text = parse['text']
                     attr = {'text': text}
 
+                    # print('main edge: {}'.format(main_edge.to_str()))
                     yield create_op(main_edge, sequence=sequence, position=pos,
                                     attributes=attr)
                     self.edges += 1
@@ -47,7 +48,7 @@ class TxtParser(Agent):
                     for edge in parse['extra_edges']:
                         yield create_op(edge)
             for edge in parse_results['inferred_edges']:
-                print('inferred edge: {}'.format(edge.to_str()))
+                # print('inferred edge: {}'.format(edge.to_str()))
                 yield create_op(edge, count=True)
 
     def report(self):
