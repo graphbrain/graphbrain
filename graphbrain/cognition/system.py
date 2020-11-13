@@ -7,9 +7,9 @@ from graphbrain.parsers import create_parser
 from graphbrain.cognition.agent import Agent
 
 
-def run_agent(agent, lang=None, hg=None, infile=None, url=None,
+def run_agent(agent, lang=None, hg=None, infile=None, indir=None, url=None,
               sequence=None, progress_bar=True, logging_level=logging.INFO):
-    system = System(lang=lang, hg=hg, infile=infile, url=url,
+    system = System(lang=lang, hg=hg, infile=infile, indir=indir, url=url,
                     sequence=sequence, logging_level=logging_level)
     if isinstance(agent, Agent):
         agent_obj = agent
@@ -20,13 +20,15 @@ def run_agent(agent, lang=None, hg=None, infile=None, url=None,
     system.run()
 
 
-def load_system(system_file, lang=None, hg=None, infile=None, url=None,
-                sequence=None, progress_bar=True, logging_level=logging.INFO):
+def load_system(system_file, lang=None, hg=None, infile=None, indir=None,
+                url=None, sequence=None, progress_bar=True,
+                logging_level=logging.INFO):
     with open(system_file, 'r') as f:
         json_str = f.read()
     system_json = json.loads(json_str)
-    system = System(name=system_file, lang=lang, hg=hg, infile=infile, url=url,
-                    sequence=sequence, logging_level=logging_level)
+    system = System(name=system_file, lang=lang, hg=hg, infile=infile,
+                    indir=indir, url=url, sequence=sequence,
+                    logging_level=logging_level)
     for agent_name in system_json:
         module_str = system_json[agent_name]['agent']
         depends_on = None
@@ -45,10 +47,12 @@ def load_system(system_file, lang=None, hg=None, infile=None, url=None,
     return system
 
 
-def run_system(system_file, lang=None, hg=None, infile=None, url=None,
-               sequence=None, progress_bar=True, logging_level=logging.INFO):
-    system = load_system(system_file, lang=lang, hg=hg, infile=infile, url=url,
-                         sequence=sequence, progress_bar=progress_bar,
+def run_system(system_file, lang=None, hg=None, infile=None, indir=None,
+               url=None, sequence=None, progress_bar=True,
+               logging_level=logging.INFO):
+    system = load_system(system_file, lang=lang, hg=hg, infile=infile,
+                         indir=indir, url=url, sequence=sequence,
+                         progress_bar=progress_bar,
                          logging_level=logging_level)
     system.run()
 
@@ -69,19 +73,20 @@ def create_agent(agent_module_str, name=None,
         agent_name, progress_bar=progress_bar, logging_level=logging_level)
 
 
-def processor(x, lang=None, hg=None, infile=None, url=None, sequence=None):
+def processor(x, lang=None, hg=None, infile=None, indir=None, url=None,
+              sequence=None):
     if type(x) == str:
         if x[-4:] == '.sys':
-            return load_system(x, lang=lang, hg=hg, infile=infile, url=url,
-                               sequence=sequence)
+            return load_system(x, lang=lang, hg=hg, infile=infile, indir=indir,
+                               url=url, sequence=sequence)
         else:
-            system = System(lang=lang, hg=hg, infile=infile, url=url,
-                            sequence=sequence)
+            system = System(lang=lang, hg=hg, infile=infile, indir=indir,
+                            url=url, sequence=sequence)
             agent = create_agent(x, progress_bar=False)
             system.add(agent)
             return system
     elif isinstance(x, Agent):
-        system = System(lang=lang, hg=hg, infile=infile, url=url,
+        system = System(lang=lang, hg=hg, infile=infile, indir=indir, url=url,
                         sequence=sequence)
         system.add(x)
         return system
@@ -102,12 +107,13 @@ def processor(x, lang=None, hg=None, infile=None, url=None, sequence=None):
 
 
 class System(object):
-    def __init__(self, name=None, lang=None, hg=None, infile=None, url=None,
-                 sequence=None, logging_level=logging.INFO):
+    def __init__(self, name=None, lang=None, hg=None, infile=None, indir=None,
+                 url=None, sequence=None, logging_level=logging.INFO):
         self.name = name
         self.lang = lang
         self.hg = hg
         self.infile = infile
+        self.indir = indir
         self.url = url
         self.sequence = sequence
 
@@ -190,6 +196,9 @@ class System(object):
 
     def get_infile(self, agent):
         return self.infile
+
+    def get_indir(self, agent):
+        return self.indir
 
     def get_url(self, agent):
         return self.url

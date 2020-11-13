@@ -8,6 +8,7 @@ def run(args):
                   lang=args.lang,
                   hg=hgraph(args.hg),
                   infile=args.infile,
+                  indir=args.indir,
                   url=args.url,
                   sequence=args.sequence)
     elif args.system:
@@ -15,6 +16,7 @@ def run(args):
                    lang=args.lang,
                    hg=hgraph(args.hg),
                    infile=args.infile,
+                   indir=args.indir,
                    url=args.url,
                    sequence=args.sequence)
     else:
