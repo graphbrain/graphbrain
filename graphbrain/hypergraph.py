@@ -311,6 +311,13 @@ class Hypergraph(object):
             else:
                 stop = True
 
+    def sequences(self):
+        """Returns an iterator for all the sequence names present in the
+        hypergraph.
+        """
+        for edge in self.search((const.sequence_pred, '*', '0', '*')):
+            yield edge[1]
+
     # ==============================================================
     # Private abstract methods, to be implemented in derived classes
     # ==============================================================

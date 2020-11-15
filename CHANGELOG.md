@@ -12,7 +12,8 @@
 - Coreference inference:'X is Y' relationships.
 - dir_parser agent (looks for text files in directory tree).
 - Function meaning.concepts.has_common_or_proper_concept(edge).
-- Function hypergraph.add() now has optional 'count' parameter.
+- Function Hypergraph.add() now has optional 'count' parameter.
+- Function Hypergraph.sequences().
 - Function Hyperedge.replace_argroles().
 - Function Hyperedge.insert_argrole().
 - Function Hyperedge.insert_edge_with_argrole().
