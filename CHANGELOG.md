@@ -10,6 +10,7 @@
 - atom_gender(), atom_number(), atom_person(), atom_animacy() in parsers.
 - Coreference inference: gender, number and animacy.
 - Coreference inference:'X is Y' relationships.
+- dir_parser agent (looks for text files in directory tree).
 - Function meaning.concepts.has_common_or_proper_concept(edge).
 - Function hypergraph.add() now has optional 'count' parameter.
 - Function Hyperedge.replace_argroles().
