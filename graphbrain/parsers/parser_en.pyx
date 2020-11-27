@@ -1,4 +1,4 @@
-from graphbrain import hedge, UniqueAtom
+from graphbrain import hedge
 from .alpha_beta import AlphaBeta
 from .nlp import token2str
 
