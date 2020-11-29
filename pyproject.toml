@@ -1,0 +1,2 @@
+[build-system]
+requires = ["setuptools", "wheel", "Cython", "spacy >=2.1.0, <3.0.0"]

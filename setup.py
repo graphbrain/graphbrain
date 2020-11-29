@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import sys
+import distutils
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
 
@@ -29,6 +31,39 @@ if USE_CYTHON:
     from Cython.Build import cythonize
 
 
+# this stuff was adapted from neuralcoref's setup -----------------------------
+def is_new_osx():
+    """Check whether we're on OSX >= 10.10"""
+    name = distutils.util.get_platform()
+    if sys.platform != 'darwin':
+        return False
+    elif name.startswith('macosx-10'):
+        minor_version = int(name.split('-')[1].split('.')[1])
+        if minor_version >= 7:
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
+# -fopenmp ?
+COMPILE_OPTIONS = ['-O2', '-Wno-strict-prototypes', '-Wno-unused-function']
+# -fopenmp ?
+LINK_OPTIONS = []
+
+
+if is_new_osx():
+    # On Mac, use libc++ because Apple deprecated use of
+    # libstdc
+    COMPILE_OPTIONS.append('-stdlib=libc++')
+    LINK_OPTIONS.append('-lc++')
+    # g++ (used by unix compiler on mac) links to libstdc++ as a default lib.
+    # See: https://stackoverflow.com/questions/1653047/avoid-linking-to-libstdc
+    LINK_OPTIONS.append('-nodefaultlibs')
+# -----------------------------------------------------------------------------
+
+
 if USE_CYTHON:
     ext_modules = [
         Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.pyx'],),
@@ -44,7 +79,8 @@ if USE_CYTHON:
                   ['graphbrain/parsers/parser_de.pyx']),
         Extension('graphbrain.neuralcoref.neuralcoref',
                   ['graphbrain/neuralcoref/neuralcoref.pyx'],
-                  language='c++', include_dirs=['include'])
+                  language='c++',
+                  include_dirs=['include'])
     ]
     ext_modules = cythonize(ext_modules,
                             annotate=CYTHON_ANNOTATE,
@@ -67,6 +103,11 @@ else:
                   ['graphbrain/neuralcoref/neuralcoref.cpp'],
                   language='c++', include_dirs=['include'])
     ]
+
+
+for ext_module in ext_modules:
+    ext_module.extra_compile_args = COMPILE_OPTIONS
+    ext_module.extra_link_args = LINK_OPTIONS
 
 
 with open('README.md', 'r') as fh:
@@ -96,11 +137,11 @@ setup(
         'Topic :: Scientific/Engineering :: Information Analysis',
         'Topic :: Sociology'
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.6, <3.9',
     packages=find_packages(),
     install_requires=[
         'numpy',
-        'spacy',
+        'spacy >=2.1.0, <3.0.0',
         'plyvel',
         'python-igraph',
         'termcolor',
@@ -113,7 +154,7 @@ setup(
     ],
     extras_require={
         'dev': [
-            'cython',
+            'cython >=0.25',
             'pytest',
             'Sphinx',
             'sphinx_rtd_theme'
