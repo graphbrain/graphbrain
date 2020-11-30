@@ -474,6 +474,13 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">stop</span> <span class="o">=</span> <span class="kc">True</span></div>
 
+<div class="viewcode-block" id="Hypergraph.sequences"><a class="viewcode-back" href="../../reference/api.html#graphbrain.hypergraph.Hypergraph.sequences">[docs]</a>    <span class="k">def</span> <span class="nf">sequences</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns an iterator for all the sequence names present in the</span>
+<span class="sd">        hypergraph.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">sequence_pred</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">)):</span>
+            <span class="k">yield</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
+
     <span class="c1"># ==============================================================</span>
     <span class="c1"># Private abstract methods, to be implemented in derived classes</span>
     <span class="c1"># ==============================================================</span>

@@ -409,7 +409,7 @@ the role of graphbrain/Cp.s/1 is:</p>
 </div></blockquote>
 <p>For this case, this function returns:</p>
 <blockquote>
-<div><p>[‘Cp’, ‘S’]</p>
+<div><p>[‘Cp’, ‘s’]</p>
 </div></blockquote>
 <p>If the atom only has a root, it is assumed to be a concept.
 In this case, this function returns the role with just the
@@ -632,26 +632,6 @@ returned.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="graphbrain.hyperedge.Hyperedge.nest">
-<code class="sig-name descname">nest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">outer</span></em>, <em class="sig-param"><span class="n">before</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.nest" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a new entity built by nesting this edge (inner)
-inside the given (outer) edge.</p>
-<p>Nesting the ‘inner’ atom (a) in the ‘outer’ atom (b) produces:
-(b a)</p>
-<p>Nesting the ‘inner’ edge (a b) in the ‘outer’ atom c produces:
-(c (a b))</p>
-<p>If the outer entity is an edge, the result depends on the ‘before’
-parameter. Considering the ‘inner’ entity (a b) and the ‘outer’
-entity (c d), nesting if ‘before’ is True produces:
-(c d (a b))
-If ‘before’ is False it produces:
-(c (a b) d)</p>
-<p>Keyword argument:
-before – controls how outer edges are handled, as per above.
-(default: False)</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="graphbrain.hyperedge.Hyperedge.predicate">
 <code class="sig-name descname">predicate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.predicate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns predicate atom if this edge is a non-atom of type
@@ -738,6 +718,11 @@ connector. This applies recursively, as necessary.</p>
 </dd></dl>
 
 </dd></dl>
+
+<dl class="py class">
+<dt id="graphbrain.hyperedge.UniqueAtom">
+<em class="property">class </em><code class="sig-prename descclassname">graphbrain.hyperedge.</code><code class="sig-name descname">UniqueAtom</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">edge</span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.UniqueAtom" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt id="graphbrain.hyperedge.build_atom">
@@ -1068,6 +1053,13 @@ of the sequence.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="graphbrain.hypergraph.Hypergraph.sequences">
+<code class="sig-name descname">sequences</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.sequences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.sequences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterator for all the sequence names present in the
+hypergraph.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="graphbrain.hypergraph.Hypergraph.set_attribute">
 <code class="sig-name descname">set_attribute</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">edge</span></em>, <em class="sig-param"><span class="n">attribute</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.set_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.set_attribute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the value of an attribute.</p>
@@ -1140,7 +1132,7 @@ resolve_corefs – if True, coreference resolution is performed.
 <span id="parser-module"></span><h3>parser module<a class="headerlink" href="#module-graphbrain.parsers.parser" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt id="graphbrain.parsers.parser.Parser">
-<em class="property">class </em><code class="sig-prename descclassname">graphbrain.parsers.parser.</code><code class="sig-name descname">Parser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lemmas</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">resolve_corefs</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/parsers/parser.html#Parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.parser.Parser" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">graphbrain.parsers.parser.</code><code class="sig-name descname">Parser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lemmas</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">resolve_corefs</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">debug</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/parsers/parser.html#Parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.parser.Parser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the common interface for parser objects.
 Parsers transofrm natural text into graphbrain hyperedges.</p>
 <dl class="py method">
