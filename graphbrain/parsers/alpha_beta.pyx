@@ -19,7 +19,7 @@ class Rule:
 
 rules = [
     Rule('C', {'C'}, 2, '+/B/.'),
-    Rule('M', {'C', 'P', 'T', 'R', 'B'}, 2),
+    Rule('M', {'C', 'P', 'T', 'R', 'B', 'M'}, 2),
     Rule('B', {'C', 'R', 'M'}, 3),
     Rule('T', {'C', 'R'}, 2),
     Rule('P', {'C', 'R', 'S', 'P'}, 6),

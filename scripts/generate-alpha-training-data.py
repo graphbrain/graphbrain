@@ -30,33 +30,38 @@ def generate_alpha_training_data(args):
                     atom = atoms[i]
                     token = spacy_sentence[i]
 
-                    punct_before = False
-                    punct_after = False
+                    word_before = ''
+                    word_after = ''
                     pos_before = ''
                     pos_after = ''
                     dep_before = ''
                     dep_after = ''
+                    punct_before = False
+                    punct_after = False
                     if i > 0:
+                        word_before = str(spacy_sentence[i - 1])
+                        pos_before = spacy_sentence[i - 1].pos_
+                        dep_before = spacy_sentence[i - 1].dep_
                         if spacy_sentence[i - 1].pos_ == 'PUNCT':
                             punct_before = True
-                            pos_before = spacy_sentence[i - 1].pos_
-                            dep_before = spacy_sentence[i - 1].dep_
                     if i < len(atoms) - 1:
+                        word_after = str(spacy_sentence[i + 1])
+                        pos_after = spacy_sentence[i + 1].pos_
+                        dep_after = spacy_sentence[i + 1].dep_
                         if spacy_sentence[i + 1].pos_ == 'PUNCT':
                             punct_after = True
-                            pos_after = spacy_sentence[i + 1].pos_
-                            dep_after = spacy_sentence[i + 1].dep_
 
                     head = token.head
                     is_root = head is None
                     has_lefts = token.n_lefts > 0
                     has_rights = token.n_rights > 0
-                    outfile.write(('{}' + '\t{}' * 19 + '\n').format(
+                    outfile.write(('{}' + '\t{}' * 23 + '\n').format(
                         hedge(atom).type()[0],
                         str(token),
                         token.pos_,
                         token.tag_,
                         token.dep_,
+                        str(head) if head else '',
                         head.pos_ if head else '',
                         head.tag_ if head else '',
                         head.dep_ if head else '',
@@ -65,13 +70,16 @@ def generate_alpha_training_data(args):
                         has_rights,
                         token.ent_type_,
                         token.shape_[:2],
+                        word_before,
+                        word_after,
                         punct_before,
                         punct_after,
                         pos_before,
                         pos_after,
                         dep_before,
                         dep_after,
-                        case['correct']))
+                        case['correct'],
+                        case['source']))
             else:
                 failed_parses += 1
             print('sentences: {}; ignored: {}; failed: {}; atoms: {}'.format(
