@@ -19,7 +19,7 @@ class Rule:
 
 rules = [
     Rule('C', {'C'}, 2, '+/B/.'),
-    Rule('M', {'C', 'P', 'T', 'R', 'B', 'M'}, 2),
+    Rule('M', {'C', 'P', 'T', 'R', 'B', 'M', 'J'}, 2),
     Rule('B', {'C', 'R', 'M'}, 3),
     Rule('T', {'C', 'R'}, 2),
     Rule('P', {'C', 'R', 'S', 'P'}, 6),
@@ -29,7 +29,8 @@ rules = [
     Rule('P', {'C', 'R', 'S', 'P'}, 2),
     Rule('J', {'C', 'R', 'M', 'S', 'T', 'P'}, 3),
     Rule('J', {'C', 'R', 'M', 'S', 'T', 'P'}, 2),
-    Rule('R', {'C', 'R', 'S'}, 2, ':/J/.')]
+    Rule('R', {'C', 'R', 'S'}, 2, ':/J/.'),
+    Rule('T', {'P'}, 2)]
 
 
 def apply_rule(rule, sentence, pos):
