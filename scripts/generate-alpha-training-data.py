@@ -34,6 +34,8 @@ def generate_alpha_training_data(args):
                     word_after = ''
                     pos_before = ''
                     pos_after = ''
+                    tag_before = ''
+                    tag_after = ''
                     dep_before = ''
                     dep_after = ''
                     punct_before = False
@@ -41,12 +43,14 @@ def generate_alpha_training_data(args):
                     if i > 0:
                         word_before = str(spacy_sentence[i - 1])
                         pos_before = spacy_sentence[i - 1].pos_
+                        tag_before = spacy_sentence[i - 1].tag_
                         dep_before = spacy_sentence[i - 1].dep_
                         if spacy_sentence[i - 1].pos_ == 'PUNCT':
                             punct_before = True
                     if i < len(atoms) - 1:
                         word_after = str(spacy_sentence[i + 1])
                         pos_after = spacy_sentence[i + 1].pos_
+                        tag_after = spacy_sentence[i + 1].tag_
                         dep_after = spacy_sentence[i + 1].dep_
                         if spacy_sentence[i + 1].pos_ == 'PUNCT':
                             punct_after = True
@@ -55,7 +59,7 @@ def generate_alpha_training_data(args):
                     is_root = head is None
                     has_lefts = token.n_lefts > 0
                     has_rights = token.n_rights > 0
-                    outfile.write(('{}' + '\t{}' * 23 + '\n').format(
+                    outfile.write(('{}' + '\t{}' * 25 + '\n').format(
                         hedge(atom).type()[0],
                         str(token),
                         token.pos_,
@@ -76,6 +80,8 @@ def generate_alpha_training_data(args):
                         punct_after,
                         pos_before,
                         pos_after,
+                        tag_before,
+                        tag_after,
                         dep_before,
                         dep_after,
                         case['correct'],
