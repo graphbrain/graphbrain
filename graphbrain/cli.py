@@ -41,6 +41,8 @@ def wrapper(fun, command=False, text=None):
                         default=None)
     parser.add_argument('--text', type=str, help='text identifier',
                         default='title')
+    parser.add_argument('--training_data', type=str,
+                        help='training data for ML tasks', default=None)
 
     args = parser.parse_args()
 
@@ -57,6 +59,8 @@ def wrapper(fun, command=False, text=None):
         print('input file: {}'.format(args.infile))
     if args.outfile:
         print('output file: {}'.format(args.outfile))
+    if args.training_data:
+        print('training data: {}'.format(args.training_data))
     if args.url:
         print('url: {}'.format(args.url))
     if args.agent:

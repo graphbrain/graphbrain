@@ -26,13 +26,12 @@ class Alpha(object):
         X_ = self.encX.transform(X).toarray()
         y_ = self.ency.transform(y).toarray()
 
-        self.clf = RandomForestClassifier(n_estimators=100)
+        self.clf = RandomForestClassifier(
+            n_estimators=150, criterion='entropy', min_samples_split=25,
+            bootstrap=False)
         self.clf.fit(X_, y_)
 
-    def predict(self, tag, dep, hdep):
-        x = (tag, dep, hdep)
-        X = self.encX.transform([x]).toarray()
-        preds = self.ency.inverse_transform(self.clf.predict(X))
-        pred = preds[0]
-        pred = ['C']
-        return pred[0]
+    def predict(self, X):
+        X_ = self.encX.transform(X).toarray()
+        preds = self.ency.inverse_transform(self.clf.predict(X_))
+        return tuple(pred[0] if pred else 'C' for pred in preds)
