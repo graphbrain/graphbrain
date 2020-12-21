@@ -141,6 +141,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'numpy',
+        'scikit-learn',
         'spacy >=2.1.0, <3.0.0',
         'plyvel',
         'python-igraph',
