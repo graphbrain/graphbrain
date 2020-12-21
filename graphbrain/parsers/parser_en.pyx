@@ -1,6 +1,7 @@
+import pkg_resources
 from graphbrain import hedge
-from .alpha_beta import AlphaBeta
-from .nlp import token2str
+from graphbrain.parsers.alpha_beta import AlphaBeta
+from graphbrain.parsers.alpha import Alpha
 
 
 _female = {"she/Ci/en", "her/Ci/en", "herself/Ci/en", "hers/Ci/en",
@@ -36,20 +37,14 @@ _p3 = {"it/Ci/en", "she/Ci/en", "they/Ci/en", "he/Ci/en", "them/Ci/en",
        "his/Mp/en", "its/Mp/en", "their/Mp/en", "whose/Mp/en"}
 
 
-def _contains_compound(token):
-    for child in token.children:
-        if child.dep_ == 'compound':
-            return True
-        if _contains_compound(child):
-            return True
-    return False
-
-
 class ParserEN(AlphaBeta):
     def __init__(self, lemmas=False, resolve_corefs=False):
         super().__init__('en_core_web_lg', lemmas=lemmas,
                          resolve_corefs=resolve_corefs)
         self.lang = 'en'
+        cases_str = pkg_resources.resource_string(
+            'graphbrain', 'data/atoms-en.csv').decode('utf-8')
+        self.alpha = Alpha(cases_str)
 
     # ===========================================
     # Implementation of language-specific methods
@@ -93,131 +88,6 @@ class ParserEN(AlphaBeta):
         elif atom_str in _inanimate:
             return 'inanimate'
         else:
-            return None
-
-    def token2type(self, token, head=False):
-        if token.pos_ == 'PUNCT':
-            return None
-
-        dep = token.dep_
-
-        if dep in {'', 'subtok'}:
-            return None
-
-        head_type = self._token_head_type(token)
-        if head_type is None:
-            head_type = ''
-        if len(head_type) > 1:
-            head_subtype = head_type[1]
-        else:
-            head_subtype = ''
-        if len(head_type) > 0:
-            head_type = head_type[0]
-
-        if dep == 'ROOT':
-            if self._is_verb(token):
-                return 'Pd'
-            else:
-                return self._concept_type_and_subtype(token)
-        elif dep in {'appos', 'attr', 'dative', 'dep', 'dobj', 'nsubj',
-                     'nsubjpass', 'oprd', 'pobj', 'meta'}:
-            return self._concept_type_and_subtype(token)
-        elif dep in {'advcl', 'csubj', 'csubjpass', 'parataxis'}:
-            return 'Pd'
-        elif dep in {'relcl', 'ccomp'}:
-            if self._is_verb(token):
-                return 'Pr'
-            else:
-                return self._concept_type_and_subtype(token)
-        elif dep in {'acl', 'pcomp', 'xcomp'}:
-            if token.tag_ == 'IN':
-                return self._modifier_type_and_subtype(token)
-            else:
-                return 'P'
-        elif dep in {'amod', 'nummod', 'preconj'}:  # , 'predet'}:
-            return self._modifier_type_and_subtype(token)
-        elif dep == 'det':
-            if token.tag_ == 'DT':
-                return self._modifier_type_and_subtype(token)
-            if token.head.dep_ == 'npadvmod':
-                return self._builder_type_and_subtype(token)
-            else:
-                return self._modifier_type_and_subtype(token)
-        elif dep in {'aux', 'auxpass', 'expl', 'prt', 'quantmod'}:
-            if head_type in {'C', 'M'}:
-                return self._modifier_type_and_subtype(token)
-            if token.n_lefts + token.n_rights == 0:
-                return self._modifier_type_and_subtype(token)
-            else:
-                return 'T'
-        elif dep in {'nmod', 'npadvmod'}:
-            if token.head.dep_ == 'amod':
-                return self._modifier_type_and_subtype(token)
-            elif self._is_noun(token):
-                return self._concept_type_and_subtype(token)
-            else:
-                return self._modifier_type_and_subtype(token)
-        elif dep == 'predet':
-            return self._modifier_type_and_subtype(token)
-        if dep == 'compound':
-            if token.tag_ == 'CD':
-                return self._modifier_type_and_subtype(token)
-            else:
-                return self._concept_type_and_subtype(token)
-        elif dep == 'cc':
-            if head_type == 'P':
-                return 'J'
-            else:
-                return self._builder_type_and_subtype(token)
-        elif dep == 'case':
-            if token.head.dep_ == 'poss':
-                return 'Bp'
-            else:
-                return self._builder_type_and_subtype(token)
-        elif dep == 'neg':
-            return self._modifier_type_and_subtype(token)
-        elif dep == 'agent':
-            return 'T'
-        elif dep in {'intj', 'punct'}:
-            return None
-        elif dep == 'advmod':
-            if token.head.dep_ == 'advcl':
-                return 'T'
-            else:
-                return self._modifier_type_and_subtype(token)
-        elif dep == 'poss':
-            if self._is_noun(token):
-                return self._concept_type_and_subtype(token)
-            else:
-                return self._modifier_type_and_subtype(token)
-        elif dep == 'prep':
-            if head_type == 'P':
-                if token.n_lefts + token.n_rights == 0:
-                    return self._modifier_type_and_subtype(token)
-                else:
-                    return 'T'
-            elif head_type == 'T':
-                return self._modifier_type_and_subtype(token)
-            else:
-                return self._builder_type_and_subtype(token)
-        elif dep == 'conj':
-            if head_type == 'P' and self._is_verb(token):
-                return 'Pd'
-            else:
-                return self._concept_type_and_subtype(token)
-        elif dep == 'mark':
-            if head_type == 'P' and head_subtype != '':
-                return 'T'
-            else:
-                return self._builder_type_and_subtype(token)
-        elif dep == 'acomp':
-            if self._is_verb(token):
-                return 'T'
-            else:
-                return self._concept_type_and_subtype(token)
-        else:
-            print('Unknown dependency (token_type): token: {}'
-                  .format(token2str(token)))
             return None
 
     def _concept_type_and_subtype(self, token):
@@ -284,15 +154,27 @@ class ParserEN(AlphaBeta):
 
     def _builder_type_and_subtype(self, token):
         tag = token.tag_
+        dep = token.dep_
         if tag == 'IN':
             return 'Br'  # relational (proposition)
-        # TODO: this is ugly, move this case elsewhere...
-        elif tag == 'CC':
-            return 'J'
+        elif dep == 'case':
+            # if token.head.dep_ == 'poss':
+            return 'Bp'
         elif tag == 'DT':
             return 'Bd'
         else:
             return 'B'
+
+    def _predicate_type_and_subtype(self, token):
+        dep = token.dep_
+        if dep in {'advcl', 'csubj', 'csubjpass', 'parataxis'}:
+            return 'Pd'
+        elif dep in {'relcl', 'ccomp', 'acl', 'pcomp', 'xcomp'}:
+            return 'P'
+        elif self._is_verb(token):
+            return 'Pd'
+        else:
+            return 'P'
 
     def _predicate_post_type_and_subtype(self, edge, subparts, args_string):
         # detecte imperative
@@ -371,12 +253,6 @@ class ParserEN(AlphaBeta):
 
     def _is_noun(self, token):
         return token.tag_[:2] == 'NN'
-
-    def _is_compound(self, token):
-        return token.dep_ == 'compound'
-
-    def _is_relative_concept(self, token):
-        return token.dep_ == 'appos'
 
     def _is_verb(self, token):
         tag = token.tag_

@@ -1,7 +1,7 @@
 The two men conducted a lengthy correspondence and collaborated on an initially joint vision of human psychology.
 (and/J/en (conducted/Pd.so.<f-----/en (the/Md/en (two/M#/en men/Cc.p/en)) (a/Md/en (lengthy/Ma/en correspondence/Cc.s/en))) (collaborated/Pd.x.<f-----/en (on/T/en (of/Br.ma/en (an/Md/en ((initially/M/en joint/Ma/en) vision/Cc.s/en)) (human/Ma/en psychology/Cc.s/en)))))
 Freud saw in the younger man the potential heir he had been seeking to carry on his "new science" of psychoanalysis.
-(saw/Pd.sxo.<f-----/en freud/Cp.s/en (in/T/en (the/Md/en (younger/Mc/en man/Cc.s/en))) (:/J/. (the/Md/en (potential/Ma/en heir/Cc.s/en)) ((had/Mv.<f-----/en (been/Mv.<pf----/en seeking/Pr.sr.|pg----/en)) he/Ci/en ((on/Ml/en (to/Mi/en carry/P.o.-i-----/en)) (of/Br.ma/en (his/Mp/en (new/Ma/en science/Cc.s/en)) psychoanalysis/Cc.s/en)))))
+(saw/Pd.sxo.<f-----/en freud/Cp.s/en (in/T/en (the/Md/en (younger/Mc/en man/Cc.s/en))) (:/J/. (the/Md/en (potential/Ma/en heir/Cc.s/en)) ((had/Mv.<f-----/en (been/Mv.<pf----/en seeking/P.sr.|pg----/en)) he/Ci/en ((on/Ml/en (to/Mi/en carry/P.o.-i-----/en)) (of/Br.ma/en (his/Mp/en (new/Ma/en science/Cc.s/en)) psychoanalysis/Cc.s/en)))))
 I will never stop laughing at this.
 ((will/Mm/en (never/Mn/en stop/Pd.sr.-i-----/en)) i/Ci/en (laughing/P.x.|pg----/en (at/T/en this/Cd/en)))
 Unknown to most, their brains are a battleground.
@@ -9,7 +9,7 @@ Unknown to most, their brains are a battleground.
 Lady shows you the oldest living wolf.
 (shows/Pd.sio.|f--3s-/en lady/Cc.s/en you/Ci/en (the/Md/en (oldest/Ms/en (living/Mv.|pg----/en wolf/Cc.s/en))))
 Lawyers say they will issue judicial review proceedings if Brexit secretary fails to release 50 studies of effect on industry
-(say/Pd.sr.|f-----/en lawyers/Cc.p/en ((will/Mm/en issue/Pr.sox.-i-----/en) they/Ci/en (+/B.am/. (judicial/Ma/en review/Cc.s/en) proceedings/Cc.p/en) (if/T/en (fails/Pd.sr.|f--3s-/en (+/B.am/. brexit/Cp.s/en secretary/Cc.s/en) ((to/Mi/en release/P.o.-i-----/en) (on/Br.ma/en (of/Br.ma/en (50/M#/en studies/Cc.p/en) effect/Cc.s/en) industry/Cc.s/en))))))
+(say/Pd.sr.|f-----/en lawyers/Cc.p/en ((will/Mm/en issue/P.sox.-i-----/en) they/Ci/en (+/B.am/. (judicial/Ma/en review/Cc.s/en) proceedings/Cc.p/en) (if/T/en (fails/Pd.sr.|f--3s-/en (+/B.am/. brexit/Cp.s/en secretary/Cc.s/en) ((to/Mi/en release/P.o.-i-----/en) (on/Br.ma/en (of/Br.ma/en (50/M#/en studies/Cc.p/en) effect/Cc.s/en) industry/Cc.s/en))))))
 The fifth connects to revived E.U. religions and feelings about French teachers demanding business-destroying regulatory limits.
 (connects/Pd.sx.|f--3s-/en (the/Md/en fifth/Ca/en) (to/T/en (about/Br.ma/en (and/J/en (revived/Mv.<pf----/en (+/B.am/. e%2eu%2e/Cp.s/en religions/Cc.p/en)) feelings/Cc.p/en) (:/J/. (french/Ma/en teachers/Cc.p/en) (demanding/P.o.|pg----/en ((business/M/en destroying/Mv.|pg----/en) (regulatory/Ma/en limits/Cc.p/en)))))))
 An anarchist takes on Big Pharma by teaching patients to make their own meds
@@ -47,7 +47,7 @@ Loving is the new fighting.
 Sweden is the third-largest country in the European Union by area.
 (is/Pd.sc.|f--3s-/en sweden/Cp.s/en (by/Br.ma/en (in/Br.ma/en (the/Md/en ((third/M/en largest/Ms/en) country/Cc.s/en)) (the/Md/en (+/B.am/. european/Cp.s/en union/Cp.s/en))) area/Cc.s/en))
 France's Le Pen says people no longer want the EU
-(says/Pd.sr.|f--3s-/en ('s/Bp.am/en france/Cp.s/en (+/B.am/. le/Cp.s/en pen/Cp.s/en)) (((no/Mn/en longer/M/en) want/Pr.so.|f-----/en) people/Cc.p/en (the/Md/en eu/Cp.s/en)))
+(says/Pd.sr.|f--3s-/en ('s/Bp.am/en france/Cp.s/en (+/B.am/. le/Cp.s/en pen/Cp.s/en)) (((no/Mn/en longer/M/en) want/P.so.|f-----/en) people/Cc.p/en (the/Md/en eu/Cp.s/en)))
 Wii will fail just like the arcade games of yesteryear.
 ((will/Mm/en fail/Pd.sx.-i-----/en) wii/Cp.s/en ((just/M/en like/T/en) (of/Br.ma/en (the/Md/en (+/B.am/. arcade/Cc.s/en games/Cc.p/en)) yesteryear/Cc.p/en)))
 Mary will come if the weather is good.
@@ -55,7 +55,7 @@ Mary will come if the weather is good.
 Mary will come if it doesn't rain.
 ((will/Mm/en come/Pd.sx.-i-----/en) mary/Cp.s/en (if/T/en ((does/Mv.|f--3s-/en (n't/Mn/en rain/Pd.s.-i-----/en)) it/Ci/en)))
 US suspects Russian hackers planted fake news behind Qatar crisis.
-(suspects/Pd.sr.|f--3s-/en us/Cp.s/en (planted/Pr.so.<f-----/en (russian/Ma/en hackers/Cc.p/en) (behind/Br.ma/en (fake/Ma/en news/Cc.s/en) (+/B.am/. qatar/Cp.s/en crisis/Cc.s/en))))
+(suspects/Pd.sr.|f--3s-/en us/Cp.s/en (planted/P.so.<f-----/en (russian/Ma/en hackers/Cc.p/en) (behind/Br.ma/en (fake/Ma/en news/Cc.s/en) (+/B.am/. qatar/Cp.s/en crisis/Cc.s/en))))
 North Korea accuses Trump of being 'selfish' over Paris climate pact
 (accuses/Pd.sox.|f--3s-/en (+/B.am/. north/Cp.s/en korea/Cp.s/en) trump/Cp.s/en (of/T/en (being/P.c.|pg----/en (over/Br.ma/en selfish/Ca/en (+/B.am/. paris/Cp.s/en (+/B.am/. climate/Cc.s/en pact/Cc.s/en))))))
 What happens when literary novelists experiment with science fiction.
@@ -71,17 +71,17 @@ Due to its location in the European Plain, Berlin is influenced by a temperate s
 Koikuchi shoyu, best known as soy sauce, is the mother of all sauces in Japan.
 (is/Pd.sc.|f--3s-/en (:/J/. (+/B.am/. koikuchi/Cp.s/en shoyu/Cc.s/en) ((best/M^/en known/P.x.<pf----/en) (as/T/en (+/B.am/. soy/Cc.s/en sauce/Cc.s/en)))) (of/Br.ma/en (the/Md/en mother/Cc.s/en) (in/Br.ma/en (all/Md/en sauces/Cc.p/en) japan/Cp.s/en)))
 Carl Gustav Jung was a Swiss psychiatrist and psychoanalyst who founded analytical psychology.
-(was/Pd.sc.<f-----/en (+/B.am/. carl/Cp.s/en (+/B.am/. gustav/Cp.s/en jung/Cp.s/en)) (:/J/. (and/J/en (a/Md/en (swiss/Ma/en psychiatrist/Cc.s/en)) psychoanalyst/Cc.s/en) (founded/Pr.so.<f-----/en who/Cw/en (analytical/Ma/en psychology/Cc.s/en))))
+(was/Pd.sc.<f-----/en (+/B.am/. carl/Cp.s/en (+/B.am/. gustav/Cp.s/en jung/Cp.s/en)) (:/J/. (and/J/en (a/Md/en (swiss/Ma/en psychiatrist/Cc.s/en)) psychoanalyst/Cc.s/en) (founded/P.so.<f-----/en who/Cw/en (analytical/Ma/en psychology/Cc.s/en))))
 Take pictures of your hair after a good haircut.
 (take/P!.ox.-i-----/en (of/Br.ma/en pictures/Cc.p/en (your/Mp/en hair/Cc.s/en)) (after/T/en (a/Md/en (good/Ma/en haircut/Cc.s/en))))
 I think that's supposed to be difficult.
-(think/Pd.sr.|f-----/en i/Ci/en (('s/Mv.|f--3s-/en supposed/Pr.pr.<pf----/en) that/Cd/en ((to/Mi/en be/P.c.-i-----/en) difficult/Ca/en)))
+(think/Pd.sr.|f-----/en i/Ci/en (('s/Mv.|f--3s-/en supposed/P.pr.<pf----/en) that/Cd/en ((to/Mi/en be/P.c.-i-----/en) difficult/Ca/en)))
 Catalonia calls for talks with Madrid but warns against Spanish direct rule
 (but/J/en (calls/Pd.sx.|f--3s-/en catalonia/Cp.s/en (for/T/en (with/Br.ma/en talks/Cc.p/en madrid/Cp.s/en))) (warns/Pd.x.|f--3s-/en (against/T/en (spanish/Ma/en (direct/Ma/en rule/Cc.s/en)))))
 Imagine you want to send a letter anonymously.
-(imagine/P!.r.|f-----/en (want/Pr.sr.|f-----/en you/Ci/en ((anonymously/M/en (to/Mi/en send/P.o.-i-----/en)) (a/Md/en letter/Cc.s/en))))
+(imagine/P!.r.|f-----/en (want/P.sr.|f-----/en you/Ci/en ((anonymously/M/en (to/Mi/en send/P.o.-i-----/en)) (a/Md/en letter/Cc.s/en))))
 Do what I say.
-(do/P!.r.-i-----/en (say/Pr.os.|f-----/en what/Cw/en i/Ci/en))
+(do/P!.r.-i-----/en (say/P.os.|f-----/en what/Cw/en i/Ci/en))
 What time is it?
 (is/P?.cs.|f--3s-/en (what/Mw/en time/Cc.s/en) it/Ci/en)
 A new Einstein cross is discovered
@@ -95,7 +95,7 @@ Our brains are always looking for relative rewards.
 Scientists rise up against statistical significance
 ((up/Ml/en rise/Pd.sx.|f-----/en) scientists/Cc.p/en (against/T/en (statistical/Ma/en significance/Cc.s/en)))
 A pretty touch screen is ALL the iPhone has to offer.
-(is/Pd.sr.|f--3s-/en (a/Md/en (+/B.am/. (pretty/Ma/en touch/Cc.s/en) screen/Cc.s/en)) (has/Pr.sr.|f--3s-/en (all/M/en (the/Md/en iphone/Cp.s/en)) (to/Mi/en offer/Cv..-i-----/en)))
+(is/Pd.sr.|f--3s-/en (a/Md/en (+/B.am/. (pretty/Ma/en touch/Cc.s/en) screen/Cc.s/en)) (has/P.sr.|f--3s-/en (all/M/en (the/Md/en iphone/Cp.s/en)) (to/Mi/en offer/Cv..-i-----/en)))
 The application must include bank and credit card records.
 ((must/Mm/en include/Pd.so.-i-----/en) (the/Md/en application/Cc.s/en) (+/B.am/. (+/B.am/. (and/J/en bank/Cm/en credit/Cc.s/en) card/Cc.s/en) records/Cc.p/en))
 Berlin is the capital city of Germany and one of its states.

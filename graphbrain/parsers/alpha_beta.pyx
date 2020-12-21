@@ -33,7 +33,7 @@ rules = [
     Rule('T', {'P'}, 2)]
 
 
-def apply_rule(rule, sentence, pos):
+def _apply_rule(rule, sentence, pos):
     for pivot_pos in range(rule.size):
         args = []
         pivot = None
@@ -112,6 +112,7 @@ class AlphaBeta(Parser):
         self.cur_text = None
         self.extra_edges = set()
         self.nlp = spacy.load(model_name)
+        self.alpha = None
         if resolve_corefs:
             coref = neuralcoref.NeuralCoref(self.nlp.vocab)
             self.nlp.add_pipe(coref, name='neuralcoref')
@@ -120,9 +121,6 @@ class AlphaBeta(Parser):
     # Language-specific abstract methods, to be implemented in derived classes
     # ========================================================================
 
-    def token2type(self, token):
-        raise NotImplementedError()
-
     def _concept_type_and_subtype(self, token):
         raise NotImplementedError()
 
@@ -130,6 +128,9 @@ class AlphaBeta(Parser):
         raise NotImplementedError()
 
     def _builder_type_and_subtype(self, token):
+        raise NotImplementedError()
+
+    def _predicate_type_and_subtype(self, token):
         raise NotImplementedError()
 
     def _predicate_post_type_and_subtype(self, edge, subparts, args_string):
@@ -142,12 +143,6 @@ class AlphaBeta(Parser):
         raise NotImplementedError()
 
     def _is_noun(token):
-        raise NotImplementedError()
-
-    def _is_compound(self, token):
-        raise NotImplementedError()
-
-    def _is_relative_concept(self, token):
         raise NotImplementedError()
 
     def _is_verb(self, token):
@@ -178,13 +173,6 @@ class AlphaBeta(Parser):
                         main_atom = atom
         if main_atom:
             return self.atom2token[main_atom]
-        else:
-            return None
-
-    def _token_head_type(self, token):
-        head = token.head
-        if head and head != token:
-            return self.token2type(head)
         else:
             return None
 
@@ -246,9 +234,6 @@ class AlphaBeta(Parser):
             et = 'Mv.{}'.format(verb_features)  # verbal subtype
         else:
             et = self._modifier_type_and_subtype(token)
-
-        if et == 'A':
-            et = ent_type
 
         return build_atom(text, et, self.lang)
 
@@ -383,37 +368,46 @@ class AlphaBeta(Parser):
                 atom2word[uatom] = word
         return atom2word
 
-    def _parse_token(self, token):
-        # check what type token maps to, return None if if maps to nothing
-        ent_type = self.token2type(token)
-        if ent_type == '' or ent_type is None:
+    def _parse_token(self, token, atom_type):
+        if atom_type == 'X':
             return None
+        elif atom_type == 'C':
+            atom_type = self._concept_type_and_subtype(token)
+        elif atom_type == 'M':
+            atom_type = self._modifier_type_and_subtype(token)
+        elif atom_type == 'B':
+            atom_type = self._builder_type_and_subtype(token)
+        elif atom_type == 'P':
+            atom_type = self._predicate_type_and_subtype(token)
 
         # last token is useful to determine predicate subtype
         tokens = list(token.lefts) + list(token.rights)
         last_token = tokens[-1] if len(tokens) > 0 else None
 
-        atom = self._build_atom(token, ent_type, last_token)
+        atom = self._build_atom(token, atom_type, last_token)
         self.debug_msg('ATOM: {}'.format(atom))
 
         # lemmas
         if self.lemmas:
-            self._add_lemmas(token, atom, ent_type)
+            self._add_lemmas(token, atom, atom_type)
 
         return atom
 
-    def build_atom_sequence(self, sentence, token2atom=None):
+    def _build_atom_sequence(self, sentence):
+        features = []
+        for token in sentence:
+            head = token.head
+            tag = token.tag_
+            dep = token.dep_
+            hdep = head.dep_ if head else ''
+            features.append((tag, dep, hdep))
+        atom_types = self.alpha.predict(features)
+
         self.token2atom = {}
 
         atomseq = []
-        for token in sentence:
-            if token2atom:
-                if token in token2atom:
-                    atom = token2atom[token]
-                else:
-                    atom = None
-            else:
-                atom = self._parse_token(token)
+        for token, atom_type in zip(sentence, atom_types):
+            atom = self._parse_token(token, atom_type)
             if atom:
                 uatom = UniqueAtom(atom)
                 self.atom2token[uatom] = token
@@ -500,7 +494,7 @@ class AlphaBeta(Parser):
             for rule_number, rule in enumerate(rules):
                 window_start = rule.size - 1
                 for pos in range(window_start, len(sequence)):
-                    new_edge = apply_rule(rule, sequence, pos)
+                    new_edge = _apply_rule(rule, sequence, pos)
                     if new_edge:
                         new_edge = self._repair(new_edge)
                         score = self._score(
@@ -531,12 +525,12 @@ class AlphaBeta(Parser):
             if len(sequence) < 2:
                 return sequence, False
 
-    def parse_spacy_sentence(self, sent, atom_sequence=None):
+    def _parse_spacy_sentence(self, sent, atom_sequence=None):
         try:
             self.extra_edges = set()
 
             if atom_sequence is None:
-                atom_sequence = self.build_atom_sequence(sent)
+                atom_sequence = self._build_atom_sequence(sent)
 
             self._compute_depths_and_connections(sent.root)
 
@@ -577,7 +571,7 @@ class AlphaBeta(Parser):
                     'atom2word': {},
                     'spacy_sentence': sent}
 
-    def reset(self, text):
+    def _reset(self, text):
         self.atom2token = {}
         self.orig_atom = {}
         self.coref_clusters = defaultdict(set)
@@ -604,9 +598,9 @@ class AlphaBeta(Parser):
         -> spacy_sentence: the spaCy structure representing the sentence
         enriched with NLP annotations.
         """
-        self.reset(text)
+        self._reset(text)
         doc = self.nlp(text.strip())
-        parses = tuple(self.parse_spacy_sentence(sent) for sent in doc.sents)
+        parses = tuple(self._parse_spacy_sentence(sent) for sent in doc.sents)
         return {'parses': parses, 'inferred_edges': []}
 
     def _find_coref_clusters(self, edge):

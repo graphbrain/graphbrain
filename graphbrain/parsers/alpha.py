@@ -3,20 +3,19 @@ from sklearn.preprocessing import OneHotEncoder
 
 
 class Alpha(object):
-    def __init__(self, cases_file):
+    def __init__(self, cases_str):
         X = []
         y = []
 
-        with open(cases_file, 'r') as f:
-            for line in f.readlines():
-                row = line.strip().split('\t')
-                true_value = row[0]
-                tag = row[3]
-                dep = row[4]
-                hdep = row[8]
+        for line in cases_str.strip().split('\n'):
+            row = line.strip().split('\t')
+            true_value = row[0]
+            tag = row[3]
+            dep = row[4]
+            hdep = row[8]
 
-                y.append([true_value])
-                X.append((tag, dep, hdep))
+            y.append([true_value])
+            X.append((tag, dep, hdep))
 
         self.encX = OneHotEncoder(handle_unknown='ignore')
         self.encX.fit(X)
@@ -28,7 +27,7 @@ class Alpha(object):
 
         self.clf = RandomForestClassifier(
             n_estimators=150, criterion='entropy', min_samples_split=25,
-            bootstrap=False)
+            bootstrap=False, random_state=777)
         self.clf.fit(X_, y_)
 
     def predict(self, X):

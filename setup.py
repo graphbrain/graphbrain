@@ -162,6 +162,7 @@ setup(
         ]
     },
     include_package_data=True,
+    package_data={'': ['data/*.csv']},
     entry_points='''
         [console_scripts]
         graphbrain=graphbrain.__main__:cli
