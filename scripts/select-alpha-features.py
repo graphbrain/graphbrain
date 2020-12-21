@@ -1,5 +1,6 @@
 from collections import Counter
 import statistics
+import progressbar
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
@@ -21,17 +22,23 @@ ALL_FEATURES = ['word15', 'word25', 'word50', 'word100', 'pos', 'tag', 'dep',
 
 
 class FeatureSelector(object):
-    def __init__(self, atoms_file):
+    def __init__(self, atoms_file, outfile):
         self.atoms_file = atoms_file
+        self.outfile = outfile
         self.common_words15 = None
         self.common_words25 = None
         self.common_words50 = None
         self.common_words100 = None
         self._find_common_words()
 
+    def _log(self, msg):
+        print(msg)
+        with open(self.outfile, 'at') as f:
+            f.write('{}\n'.format(msg))
+
     def _find_common_words(self):
         words = Counter()
-        with open(self.atoms_file, 'r') as f:
+        with open(self.atoms_file, 'rt') as f:
             for line in f.readlines():
                 row = line.strip().split('\t')
                 word = row[1]
@@ -42,13 +49,13 @@ class FeatureSelector(object):
         self.common_words100 = set(
             [item[0] for item in words.most_common(100)])
 
-    def train_classifier(self, feature_names):
+    def _train_classifier(self, feature_names):
         X = []
         y = []
 
         sources = Counter()
 
-        with open(self.atoms_file, 'r') as f:
+        with open(self.atoms_file, 'rt') as f:
             for line in f.readlines():
                 row = line.strip().split('\t')
 
@@ -130,29 +137,29 @@ class FeatureSelector(object):
 
         return clf, encX, ency, X_test, y_test
 
-    def gen_accs(self, features, n=RUNS):
+    def _gen_accs(self, features, n=RUNS):
         accs = []
-        for _ in range(n):
-            clf, encX, ency, X_test, y_test = self.train_classifier(features)
+        for _ in progressbar.progressbar(range(n)):
+            clf, encX, ency, X_test, y_test = self._train_classifier(features)
             y_pred = clf.predict(X_test)
             accs.append(metrics.accuracy_score(y_test, y_pred))
         return accs
 
-    def gen_accs_ablation(self, features):
+    def _gen_accs_ablation(self, features):
         accs_ablation = {}
 
         for ab_feat in features:
             afeatures = list(feature for feature in features
                              if feature != ab_feat)
-            accs = self.gen_accs(afeatures)
+            accs = self._gen_accs(afeatures)
             accs_ablation[ab_feat] = accs
         return accs_ablation
 
-    def find_worst_feature(self, features, accs_ablation):
-        base_accs = self.gen_accs(features)
+    def _find_worst_feature(self, features, accs_ablation):
+        base_accs = self._gen_accs(features)
         base_acc = statistics.median(base_accs)
 
-        print('base accuracy: {}'.format(base_acc))
+        self._log('base accuracy: {}'.format(base_acc))
 
         max_pvalue = P_VALUE
         max_pvalue_feature = None
@@ -171,14 +178,14 @@ class FeatureSelector(object):
             if damage > max_damage:
                 max_damage = damage
                 max_damage_feature = ab_feat
-            print('{} {} {} [{}] p-value: {}'.format(
+            self._log('{} {} {} [{}] p-value: {}'.format(
                 keep, ab_feat, acc, acc - base_acc, pvalue))
         return max_damage_feature if max_damage_feature else max_pvalue_feature
 
-    def ablate(self, features):
-        accs_ablation = self.gen_accs_ablation(features)
-        worst_feature = self.find_worst_feature(features, accs_ablation)
-        print('FEATURE REMOVED: {}'.format(worst_feature))
+    def _ablate(self, features):
+        accs_ablation = self._gen_accs_ablation(features)
+        worst_feature = self._find_worst_feature(features, accs_ablation)
+        self._log('FEATURE REMOVED: {}'.format(worst_feature))
         return list(feature for feature in features
                     if feature != worst_feature)
 
@@ -187,15 +194,16 @@ class FeatureSelector(object):
         cur_features = None
         i = 1
         while new_features != cur_features:
-            print('\n>>> ITERATION {} <<<'.format(i))
+            self._log('\n>>> ITERATION {} <<<'.format(i))
             i += 1
             cur_features = new_features
-            new_features = self.ablate(cur_features)
+            new_features = self._ablate(cur_features)
 
 
 def select_alpha_features(args):
     infile = args.infile
-    FeatureSelector(infile).run()
+    outfile = args.outfile
+    FeatureSelector(infile, outfile).run()
 
 
 if __name__ == '__main__':
