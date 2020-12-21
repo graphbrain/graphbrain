@@ -24,7 +24,7 @@
 - Special characters in atoms are now percent-encoded.
 - parse() now returns a dictionary that includes inferred edges.
 - parse() now returns a dictionary of edges to text.
-- English parser improved.
+- New parser framework, improved English parser + scripts to help train and test new parsers.
 - Hyperedge main type character codes become upercase (apple/C instead of apple/c).
 - Conjunction hyperedge type, character code: "J" (e.g.: and/J).
 - Modifier hyperedge type can now be applied to predicates.
