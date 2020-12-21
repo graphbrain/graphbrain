@@ -5,8 +5,8 @@ from graphbrain.cli import wrapper
 
 def split_parser_training_data(args):
     infile = args.infile
-    if infile[-5:] != '.json':
-        raise RuntimeError("Input file must have '.json' extension.")
+    if infile[-4:] != '.csv':
+        raise RuntimeError("Input file must have '.csv' extension.")
 
     cases = []
 
@@ -25,8 +25,8 @@ def split_parser_training_data(args):
     test_cases = cases[:n_test]
 
     file_main_name = infile[:-5]
-    train_file_name = '{}-train.json'.format(file_main_name)
-    test_file_name = '{}-test.json'.format(file_main_name)
+    train_file_name = '{}-train.csv'.format(file_main_name)
+    test_file_name = '{}-test.csv'.format(file_main_name)
 
     with open(train_file_name, 'wt') as f:
         for case in train_cases:
