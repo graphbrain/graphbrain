@@ -25,9 +25,7 @@ class Alpha(object):
         X_ = self.encX.transform(X).toarray()
         y_ = self.ency.transform(y).toarray()
 
-        self.clf = RandomForestClassifier(
-            n_estimators=150, criterion='entropy', min_samples_split=25,
-            bootstrap=False, random_state=777)
+        self.clf = RandomForestClassifier(random_state=777)
         self.clf.fit(X_, y_)
 
     def predict(self, X):
