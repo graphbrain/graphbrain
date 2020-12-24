@@ -1,4 +1,3 @@
-from pathlib import Path
 from collections import Counter
 from graphbrain.cli import wrapper
 from graphbrain.parsers.alpha import Alpha
@@ -8,7 +7,8 @@ def test_alpha(args):
     training_data = args.training_data
     infile = args.infile
 
-    cases_str = Path(training_data).read_text()
+    with open(training_data, 'rt') as f:
+        cases_str = f.read()
     alpha = Alpha(cases_str)
 
     n = 0
