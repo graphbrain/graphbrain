@@ -129,10 +129,7 @@ class FeatureSelector(object):
         X_train, X_test, y_train, y_test = train_test_split(
             X_, y_, test_size=0.33)
 
-        clf = RandomForestClassifier(n_estimators=150,
-                                     criterion='entropy',
-                                     min_samples_split=25,
-                                     bootstrap=False)
+        clf = RandomForestClassifier()
         clf.fit(X_train, y_train)
 
         return clf, encX, ency, X_test, y_test
