@@ -152,6 +152,16 @@ class FeatureSelector(object):
             accs_ablation[ab_feat] = accs
         return accs_ablation
 
+    def _gen_accs_regrowth(self, features):
+        accs_regrowth = {}
+
+        for add_feat in [feature for feature in ALL_FEATURES
+                         if feature not in features]:
+            afeatures = features + [add_feat]
+            accs = self._gen_accs(afeatures)
+            accs_regrowth[add_feat] = accs
+        return accs_regrowth
+
     def _find_worst_feature(self, features, accs_ablation):
         base_accs = self._gen_accs(features)
         base_acc = statistics.median(base_accs)
@@ -179,6 +189,29 @@ class FeatureSelector(object):
                 keep, ab_feat, acc, acc - base_acc, pvalue))
         return max_damage_feature if max_damage_feature else max_pvalue_feature
 
+    def _find_best_feature(self, features, accs_regrowth):
+        base_accs = self._gen_accs(features)
+        base_acc = statistics.median(base_accs)
+
+        self._log('base accuracy: {}'.format(base_acc))
+
+        min_pvalue = 1.
+        min_pvalue_feature = None
+        for add_feat in [feature for feature in ALL_FEATURES
+                         if feature not in features]:
+            acc = statistics.median(accs_regrowth[add_feat])
+            pvalue = ks_2samp(base_accs, accs_regrowth[add_feat]).pvalue
+            keep = ''
+            if acc > base_acc:
+                if pvalue < P_VALUE:
+                    keep = '*'
+                if pvalue < min_pvalue:
+                    min_pvalue = pvalue
+                    min_pvalue_feature = add_feat
+            self._log('{} {} {} [{}] p-value: {}'.format(
+                keep, add_feat, acc, acc - base_acc, pvalue))
+        return min_pvalue_feature
+
     def _ablate(self, features):
         accs_ablation = self._gen_accs_ablation(features)
         worst_feature = self._find_worst_feature(features, accs_ablation)
@@ -186,15 +219,34 @@ class FeatureSelector(object):
         return list(feature for feature in features
                     if feature != worst_feature)
 
+    def _regrow(self, features):
+        accs_regrowth = self._gen_accs_regrowth(features)
+        best_feature = self._find_best_feature(features, accs_regrowth)
+        self._log('FEATURE ADDED: {}'.format(best_feature))
+        if best_feature:
+            return features + [best_feature]
+        else:
+            return features
+
     def run(self):
         new_features = ALL_FEATURES
         cur_features = None
         i = 1
+
+        # ablation stage
         while new_features != cur_features:
             self._log('\n>>> ITERATION {} <<<'.format(i))
             i += 1
             cur_features = new_features
             new_features = self._ablate(cur_features)
+
+        # regrowth stage
+        cur_features = None
+        while new_features != cur_features:
+            self._log('\n>>> ITERATION {} <<<'.format(i))
+            i += 1
+            cur_features = new_features
+            new_features = self._regrow(cur_features)
 
 
 def select_alpha_features(args):
