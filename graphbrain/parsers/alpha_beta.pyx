@@ -399,8 +399,9 @@ class AlphaBeta(Parser):
             head = token.head
             tag = token.tag_
             dep = token.dep_
+            hpos = head.pos_ if head else ''
             hdep = head.dep_ if head else ''
-            features.append((tag, dep, hdep))
+            features.append((tag, dep, hpos, hdep))
         atom_types = self.alpha.predict(features)
 
         self.token2atom = {}
