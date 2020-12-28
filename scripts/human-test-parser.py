@@ -61,7 +61,7 @@ def test_beta(args):
     he = HumanEvaluation()
     sources_he = defaultdict(HumanEvaluation)
 
-    with open(args.infile) as f, open(args.outfile) as of:
+    with open(args.infile, 'r') as f, open(args.outfile, 'w') as of:
         for line in f:
             case = json.loads(line)
             if not case['ignore']:
