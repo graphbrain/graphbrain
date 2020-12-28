@@ -62,7 +62,7 @@ def test_beta(args):
     he = HumanEvaluation()
     sources_he = defaultdict(HumanEvaluation)
 
-    with open(args.infile, 'r') as f, open(args.outfile, 'w') as of:
+    with open(args.infile, 'r') as f:
         for line in f:
             case = json.loads(line)
             if not case['ignore']:
@@ -97,7 +97,8 @@ def test_beta(args):
                 sources_he[source].apply_evaluation(answer)
 
                 row_str = '\t'.join((sentence, source, pedge.to_str(), answer))
-                of.write('{}\n'.format(row_str))
+                with open(args.outfile, 'w') as of:
+                    of.write('{}\n'.format(row_str))
 
                 print('GLOBAL:')
                 print(colored(str(he), 'white'))
