@@ -3,6 +3,7 @@ import json
 from termcolor import colored
 from graphbrain import hedge, build_atom
 from graphbrain.cli import wrapper
+from graphbrain.colored import colored_edge, colored_diff
 from graphbrain.parsers import create_parser
 
 
@@ -66,25 +67,29 @@ def test_beta(args):
             case = json.loads(line)
             if not case['ignore']:
                 sentence = case['sentence']
-                tedge = simple_edge(hedge(case['hyperedge']))
+                tedge = hedge(case['hyperedge'])
+                stedge = simple_edge(tedge)
                 source = case['source'][:-1]
-                correct = case['correct']
 
                 parser_output = parser.parse(sentence)
                 parsed_sentence = parser_output['parses'][0]
-                pedge = simple_edge(parsed_sentence['main_edge'])
+                pedge = parsed_sentence['main_edge']
+                spedge = simple_edge(pedge)
 
-                _, dtedge, dpedge = colored_diff(tedge, pedge)
+                _, dtedge, dpedge = colored_diff(stedge, spedge)
 
                 print('\n\nsentence:')
                 print(sentence)
                 print('\ntrue edge:')
-                print(dtedge)
+                print(colored_edge(tedge))
                 print('\nresult:')
+                print(colored_edge(pedge))
+                print('\ndiff:')
+                print(dtedge)
                 print(dpedge)
-                print('\nsource: {}; correct? {}'.format(source, correct))
+                print()
 
-                if tedge == pedge:
+                if stedge == spedge:
                     answer = 'c'
                 else:
                     answer = he.input()
@@ -95,7 +100,7 @@ def test_beta(args):
                 of.write('{}\n'.format(row_str))
 
                 print('GLOBAL:')
-                print(str(he))
+                print(colored(str(he), 'white'))
                 for source in sources_he:
                     print('{}:'.format(source))
                     print(str(sources_he[source]))

@@ -158,6 +158,78 @@ class AlphaBeta(Parser):
     # Language-agnostic methods
     # =========================
 
+    def parse_spacy_sentence(self, sent, atom_sequence=None,
+                              post_process=True):
+        try:
+            self.extra_edges = set()
+
+            if atom_sequence is None:
+                atom_sequence = self._build_atom_sequence(sent)
+
+            self._compute_depths_and_connections(sent.root)
+
+            main_edge = None
+            self._branches = 0
+            result, failed = self._parse_atom_sequence(atom_sequence)
+            if result and len(result) == 1:
+                main_edge = non_unique(result[0])
+                # break
+
+            if main_edge:
+                if post_process:
+                    main_edge = self._post_process(main_edge)
+                main_edge = self._apply_arg_roles(main_edge)
+                atom2word = self._generate_atom2word(main_edge)
+            else:
+                atom2word = {}
+
+            return {'main_edge': main_edge,
+                    'extra_edges': self.extra_edges,
+                    'failed': failed,
+                    'text': str(sent).strip(),
+                    'atom2word': atom2word,
+                    # TODO: HACK TEMPORARY
+                    'atom2token': self.atom2token,
+                    'spacy_sentence': sent}
+        except Exception as e:
+            if hasattr(e, 'message'):
+                msg = e.message
+            else:
+                msg = str(e)
+            print('Caught exception: {} while parsing: "{}"'.format(
+                msg, str(sent)))
+            traceback.print_exc()
+            return {'main_edge': None,
+                    'extra_edges': [],
+                    'failed': True,
+                    'text': str(sent).strip(),
+                    'atom2word': {},
+                    'spacy_sentence': sent}
+
+    def manual_atom_sequence(self, sentence, token2atom):
+        self.token2atom = {}
+
+        atomseq = []
+        for token in sentence:
+            if token in token2atom:
+                atom = token2atom[token]
+            else:
+                atom = None
+            if atom:
+                uatom = UniqueAtom(atom)
+                self.atom2token[uatom] = token
+                self.token2atom[token] = uatom
+                self.orig_atom[uatom] = uatom
+                atomseq.append(uatom)
+        return atomseq
+
+    def reset(self, text):
+        self.atom2token = {}
+        self.orig_atom = {}
+        self.coref_clusters = defaultdict(set)
+        self.edge2coref = {}
+        self.cur_text = text
+
     def _head_token(self, edge):
         atoms = [unique(atom) for atom in edge.all_atoms()
                  if unique(atom) in self.atom2token]
@@ -526,59 +598,6 @@ class AlphaBeta(Parser):
             if len(sequence) < 2:
                 return sequence, False
 
-    def _parse_spacy_sentence(self, sent, atom_sequence=None):
-        try:
-            self.extra_edges = set()
-
-            if atom_sequence is None:
-                atom_sequence = self._build_atom_sequence(sent)
-
-            self._compute_depths_and_connections(sent.root)
-
-            main_edge = None
-            self._branches = 0
-            result, failed = self._parse_atom_sequence(atom_sequence)
-            if result and len(result) == 1:
-                main_edge = non_unique(result[0])
-                # break
-
-            if main_edge:
-                main_edge = self._post_process(main_edge)
-                main_edge = self._apply_arg_roles(main_edge)
-                atom2word = self._generate_atom2word(main_edge)
-            else:
-                atom2word = {}
-
-            return {'main_edge': main_edge,
-                    'extra_edges': self.extra_edges,
-                    'failed': failed,
-                    'text': str(sent).strip(),
-                    'atom2word': atom2word,
-                    # TODO: HACK TEMPORARY
-                    'atom2token': self.atom2token,
-                    'spacy_sentence': sent}
-        except Exception as e:
-            if hasattr(e, 'message'):
-                msg = e.message
-            else:
-                msg = str(e)
-            print('Caught exception: {} while parsing: "{}"'.format(
-                msg, str(sent)))
-            traceback.print_exc()
-            return {'main_edge': None,
-                    'extra_edges': [],
-                    'failed': True,
-                    'text': str(sent).strip(),
-                    'atom2word': {},
-                    'spacy_sentence': sent}
-
-    def _reset(self, text):
-        self.atom2token = {}
-        self.orig_atom = {}
-        self.coref_clusters = defaultdict(set)
-        self.edge2coref = {}
-        self.cur_text = text
-
     def _parse(self, text):
         """Transforms the given text into hyperedges + aditional information.
         Returns a sequence of dictionaries, with one dictionary for each
@@ -599,9 +618,9 @@ class AlphaBeta(Parser):
         -> spacy_sentence: the spaCy structure representing the sentence
         enriched with NLP annotations.
         """
-        self._reset(text)
+        self.reset(text)
         doc = self.nlp(text.strip())
-        parses = tuple(self._parse_spacy_sentence(sent) for sent in doc.sents)
+        parses = tuple(self.parse_spacy_sentence(sent) for sent in doc.sents)
         return {'parses': parses, 'inferred_edges': []}
 
     def _find_coref_clusters(self, edge):

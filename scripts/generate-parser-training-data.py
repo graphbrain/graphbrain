@@ -2,7 +2,7 @@ from os import listdir
 from os.path import isfile, join
 import json
 from termcolor import colored
-from graphbrain import build_atom
+from graphbrain import build_atom, UniqueAtom
 from graphbrain.cli import wrapper
 from graphbrain.colored import colored_type, colored_atom, colored_edge
 from graphbrain.parsers import create_parser, print_tree
@@ -60,21 +60,24 @@ class TrainingDataGenerator:
         print()
         msg = '{} sentences; {} correct; {} ignored; {} tokens;'
         msg += ' {} tokens/sentence'
+        tokens_sentence = 0
+        if len(self.sentences) > 0:
+            tokens_sentence = int(
+                float(self.tokens) / float(len(self.sentences)))
         msg = msg.format(
             len(self.sentences),
             self.correct_edges,
             self.ignored,
             self.tokens,
-            int(float(self.tokens) / float(len(self.sentences))))
+            tokens_sentence)
         print(msg)
         print()
 
     def annotate_token(self, token):
-        token_type = self.parser.token2type(token)
-        if token_type is None:
-            suggested_type = 'X'
+        if token in self.parser.token2atom:
+            suggested_type = self.parser.token2atom[token].atom.type()[0]
         else:
-            suggested_type = token_type[0]
+            suggested_type = 'X'
 
         atom_type = None
         while atom_type is None:
@@ -166,9 +169,10 @@ class TrainingDataGenerator:
                 pos += 1
 
         self.parser.reset(sentence)
-        atom_seq = self.parser.build_atom_sequence(
+        atom_seq = self.parser.manual_atom_sequence(
             self.spacy_sentence, self.token2atom)
-        parse = self.parser.parse_spacy_sentence(self.spacy_sentence, atom_seq)
+        parse = self.parser.parse_spacy_sentence(
+            self.spacy_sentence, atom_sequence=atom_seq, post_process=False)
 
         edge = parse['main_edge']
         correct = self.edge_correct(edge, parse['failed'])
