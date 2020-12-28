@@ -19,6 +19,7 @@
 - Function Hyperedge.insert_edge_with_argrole().
 - Function Hyperedge.all_atoms().
 - Logic engine, HG.eval().
+- Utility functions to show colored edges in the terminal.
 
 ### Changed
 - Special characters in atoms are now percent-encoded.

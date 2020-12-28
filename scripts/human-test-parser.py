@@ -74,12 +74,14 @@ def test_beta(args):
                 parsed_sentence = parser_output['parses'][0]
                 pedge = simple_edge(parsed_sentence['main_edge'])
 
+                _, dtedge, dpedge = colored_diff(tedge, pedge)
+
                 print('\n\nsentence:')
                 print(sentence)
                 print('\ntrue edge:')
-                print(tedge)
+                print(dtedge)
                 print('\nresult:')
-                print(pedge)
+                print(dpedge)
                 print('\nsource: {}; correct? {}'.format(source, correct))
 
                 if tedge == pedge:
