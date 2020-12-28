@@ -97,7 +97,7 @@ def test_beta(args):
                 sources_he[source].apply_evaluation(answer)
 
                 row_str = '\t'.join((sentence, source, pedge.to_str(), answer))
-                with open(args.outfile, 'w') as of:
+                with open(args.outfile, 'a') as of:
                     of.write('{}\n'.format(row_str))
 
                 print('GLOBAL:')
