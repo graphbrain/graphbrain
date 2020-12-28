@@ -7,13 +7,11 @@ from graphbrain.parsers import create_parser
 
 
 def simple_edge(edge):
+    if edge is None:
+        return None
     if edge.is_atom():
-        roles = [edge.type()[0]]
         root = edge.root()
-        argroles = edge.argroles()
-        if argroles:
-            roles.append(argroles)
-        return build_atom(root, '.'.join(roles))
+        return build_atom(root, edge.type()[0])
     else:
         return hedge([simple_edge(subedge) for subedge in edge])
 
@@ -63,13 +61,13 @@ def test_beta(args):
     he = HumanEvaluation()
     sources_he = defaultdict(HumanEvaluation)
 
-    with open(args.infile) as f:
+    with open(args.infile) as f, open(args.outfile) as of:
         for line in f:
             case = json.loads(line)
             if not case['ignore']:
                 sentence = case['sentence']
                 tedge = simple_edge(hedge(case['hyperedge']))
-                source = case['source']
+                source = case['source'][:-1]
                 correct = case['correct']
 
                 parser_output = parser.parse(sentence)
@@ -84,9 +82,15 @@ def test_beta(args):
                 print(pedge)
                 print('\nsource: {}; correct? {}'.format(source, correct))
 
-                answer = he.input()
+                if tedge == pedge:
+                    answer = 'c'
+                else:
+                    answer = he.input()
                 he.apply_evaluation(answer)
                 sources_he[source].apply_evaluation(answer)
+
+                row_str = '\t'.join((sentence, source, pedge.to_str(), answer))
+                of.write('{}\n'.format(row_str))
 
                 print('GLOBAL:')
                 print(str(he))
