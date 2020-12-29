@@ -205,9 +205,9 @@ class FeatureSelector(object):
             if acc > base_acc:
                 if pvalue < P_VALUE:
                     keep = '*'
-                if pvalue < min_pvalue:
-                    min_pvalue = pvalue
-                    min_pvalue_feature = add_feat
+                    if pvalue < min_pvalue:
+                        min_pvalue = pvalue
+                        min_pvalue_feature = add_feat
             self._log('{} {} {} [{}] p-value: {}'.format(
                 keep, add_feat, acc, acc - base_acc, pvalue))
         return min_pvalue_feature
