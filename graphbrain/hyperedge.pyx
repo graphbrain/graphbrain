@@ -547,6 +547,10 @@ class Hyperedge(tuple):
             atoms += item.all_atoms()
         return atoms
 
+    def size(self):
+        """The size of an edge is its total number of atoms, at all depths."""
+        return sum([edge.size() for edge in self])
+
     def depth(self):
         """Returns maximal depth of edge, an atom has depth 0."""
         max_d = 0
@@ -928,7 +932,11 @@ class Atom(Hyperedge):
         """
         return [self]
 
-    def depth(edge):
+    def size(self):
+        """The size of an edge is its total number of atoms, at all depths."""
+        return 1
+
+    def depth(self):
         """Returns maximal depth of edge, an atom has depth 0."""
         return 0
 

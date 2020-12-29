@@ -18,6 +18,7 @@
 - Function Hyperedge.insert_argrole().
 - Function Hyperedge.insert_edge_with_argrole().
 - Function Hyperedge.all_atoms().
+- Function Hyperedge.size().
 - Logic engine, HG.eval().
 - Utility functions to show colored edges in the terminal.
 

@@ -139,6 +139,11 @@ class TestHyperedge(unittest.TestCase):
                          [hedge('the/Md'), hedge('of/Br'), hedge('mayor/Cc'),
                           hedge('the/Md'), hedge('city/Cs')])
 
+    def test_size(self):
+        self.assertEqual(hedge('graphbrain/1').size(), 1)
+        self.assertEqual(hedge('(is graphbrain/1 great/1)').size(), 3)
+        self.assertEqual(hedge('(is graphbrain/1 (super great/1))').size(), 4)
+
     def test_depth(self):
         self.assertEqual(hedge('graphbrain/1').depth(), 0)
         self.assertEqual(hedge('(is graphbrain/1 great/1)').depth(), 1)
