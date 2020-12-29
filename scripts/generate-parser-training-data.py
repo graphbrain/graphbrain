@@ -2,7 +2,7 @@ from os import listdir
 from os.path import isfile, join
 import json
 from termcolor import colored
-from graphbrain import build_atom, UniqueAtom
+from graphbrain import build_atom
 from graphbrain.cli import wrapper
 from graphbrain.colored import colored_type, colored_atom, colored_edge
 from graphbrain.parsers import create_parser, print_tree

@@ -7,7 +7,9 @@ TYPE_COLOR = {
     'M': 'cyan',
     'B': 'green',
     'J': 'yellow',
-    'T': 'magenta'
+    'T': 'magenta',
+    'R': 'red',
+    'S': 'magenta'
 }
 
 
@@ -40,9 +42,11 @@ def colored_atom(atom):
     return '/'.join(parts)
 
 
-def colored_edge(edge):
+def colored_edge(edge, colors=True):
     if edge is None:
         return None
+    if not colors:
+        return edge.to_str()
     elif edge.is_atom():
         return colored_atom(edge)
     else:
@@ -74,3 +78,22 @@ def colored_diff(edge1, edge2):
     dedge1 = '{}{}{}'.format(opar, ' '.join(dedge1), cpar)
     dedge2 = '{}{}{}'.format(opar, ' '.join(dedge2), cpar)
     return False, dedge1, dedge2
+
+
+def indented(edge, colors=True, depth=0):
+    lines = []
+    if edge.is_atom() or all([sedge.is_atom() for sedge in edge[1:]]):
+        lines.append(colored_edge(edge, colors=colors))
+    else:
+        if colors:
+            et = edge.type()[0]
+            opar = colored('(', TYPE_COLOR[et])
+            cpar = colored(')', TYPE_COLOR[et])
+        else:
+            opar = '('
+            cpar = ')'
+        lines.append(opar + colored_edge(edge[0], colors=colors))
+        for sedge in edge[1:]:
+            lines.append(indented(sedge, colors=colors, depth=depth+1))
+        lines[-1] += cpar
+    return '\n'.join('{}{}'.format('  ' * depth, line) for line in lines)
