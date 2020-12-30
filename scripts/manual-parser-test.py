@@ -85,7 +85,7 @@ def input_defects(sentence, edge):
         elif answer == 'i':
             print('\n{}\n'.format(indented(edge)))
         else:
-            edge_strs = answer.split(',')
+            edge_strs = answer.split('&')
             subedges = []
             failed = False
             for edge_str in edge_strs:
@@ -126,7 +126,7 @@ def manual_test(args):
                 defects = []
             he.apply_evaluation(answer, edge, defects)
 
-            defect_str = ','.join([defect.to_str() for defect in defects])
+            defect_str = '&'.join([defect.to_str() for defect in defects])
             row_str = '\t'.join(
                 (sentence, edge.to_str(), answer, defect_str))
             with open(args.outfile, 'a') as of:
