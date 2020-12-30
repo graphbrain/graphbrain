@@ -236,19 +236,18 @@ class ParserEN(AlphaBeta):
             return 'm'
 
     def _builder_arg_roles(self, edge):
-        connector = edge[0]
-        if connector.is_atom():
-            parts = connector.parts()
-            if parts[0] == '+' and parts[2] == '.':
-                args = [self._concept_arg_role(edge, param)
-                        for param in edge[1:]]
-                return ''.join(args)
-            elif len(edge) == 3:
-                ct = connector.type()
-                if ct == 'Br':
-                    return 'ma'
-                elif ct == 'Bp':
-                    return 'am'
+        builder = edge[0].atom_with_type('B')
+        parts = builder.parts()
+        if parts[0] == '+' and parts[2] == '.':
+            args = [self._concept_arg_role(edge, param)
+                    for param in edge[1:]]
+            return ''.join(args)
+        elif len(edge) == 3:
+            ct = builder.type()
+            if ct == 'Br':
+                return 'ma'
+            elif ct == 'Bp':
+                return 'am'
         return ''
 
     def _is_noun(self, token):
