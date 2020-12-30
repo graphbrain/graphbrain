@@ -19,13 +19,14 @@ class ManualEvaluation(object):
         correct = colored('c', 'green')
         minor = colored('d', 'yellow')
         wrong = colored('w', 'red')
-        options_str = '{}/{}/{}'.format(correct, minor, wrong)
-        self.input_msg = 'correct, defect, or wrong ({}) ? '.format(
+        ignore = colored('i', 'blue')
+        options_str = '{}/{}/{}/{}'.format(correct, minor, wrong, ignore)
+        self.input_msg = 'correct, defect, wrong or ignore ({}) ? '.format(
             options_str)
 
     def input(self):
         answer = None
-        while answer not in {'c', 'd', 'w'}:
+        while answer not in {'c', 'd', 'w', 'i'}:
             answer = input(self.input_msg)
         return answer
 
@@ -45,11 +46,11 @@ class ManualEvaluation(object):
 
     def __str__(self):
         n = self.correct + self.defect + self.wrong
-        ratio = float(self.correct) / float(n)
+        ratio = float(self.correct) / float(n) if n > 0 else 0.
         correct_str = '{} ({}/{})'.format(ratio, self.correct, n)
-        ratio = float(self.defect) / float(n)
+        ratio = float(self.defect) / float(n) if n > 0 else 0.
         defect_str = '{} ({}/{})'.format(ratio, self.defect, n)
-        ratio = float(self.wrong) / float(n)
+        ratio = float(self.wrong) / float(n) if n > 0 else 0.
         wrong_str = '{} ({}/{})'.format(ratio, self.wrong, n)
         line1 = 'correct: {}; defect: {}; wrong: {}'.format(
             correct_str, defect_str, wrong_str)
