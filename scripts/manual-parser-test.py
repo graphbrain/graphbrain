@@ -30,15 +30,17 @@ class ManualEvaluation(object):
             answer = input(self.input_msg)
         return answer
 
-    def apply_evaluation(self, he, edge, defect):
+    def apply_evaluation(self, he, edge, defects):
         self.edges.append(edge)
         if he == 'c':
             self.correct += 1
         elif he == 'd':
             self.defect += 1
-            self.defects.append(defect)
+            self.defects.append(defects)
             self.defective_edges.append(edge)
-            rds = float(defect.size())
+            rds = 0.
+            for defect in defects:
+                rds += float(defect.size())
             rds = rds / float(edge.size())
             self.rel_defect_sizes.append(rds)
         elif he == 'w':
@@ -55,16 +57,10 @@ class ManualEvaluation(object):
         line1 = 'correct: {}; defect: {}; wrong: {}'.format(
             correct_str, defect_str, wrong_str)
         if len(self.defects) > 0:
-            mds = statistics.mean([edge.size() for edge in self.defects])
-            mdes = statistics.mean(
-                [edge.size() for edge in self.defective_edges])
             mrds = statistics.mean(self.rel_defect_sizes)
         else:
-            mds = 0.
-            mdes = 0.
             mrds = 0.
-        line2 = 'mds: {}; mdes: {}; mrds: {}'.format(
-            mds, mdes, mrds)
+        line2 = 'mean relative defect size: {}'.format(mrds)
         return '{}\n{}'.format(line1, line2)
 
 
@@ -72,15 +68,15 @@ def error_msg(msg):
     print('\n{} {}\n'.format(colored('Error: ', 'red'), msg))
 
 
-def input_defect(sentence, edge):
+def input_defects(sentence, edge):
     s = colored('s', 'magenta')
     h = colored('h', 'cyan')
     i = colored('i', 'yellow')
     options_str = '{}/{}/{}/subedge'.format(s, h, i)
     input_msg = 'wrong subedge ({}) ? '.format(options_str)
 
-    defect = None
-    while not defect:
+    defects = None
+    while not defects:
         answer = input(input_msg)
         if answer == 's':
             print('\n{}\n'.format(sentence))
@@ -89,16 +85,22 @@ def input_defect(sentence, edge):
         elif answer == 'i':
             print('\n{}\n'.format(indented(edge)))
         else:
-            subedge = hedge(answer)
-            if subedge is None:
-                error_msg('{} did not parse correctly.'.format(
-                    edge.to_str()))
-            elif edge.contains(subedge, deep=True):
-                defect = subedge
-            else:
-                error_msg('{} is not a subedge of {}.'.format(
-                    subedge.to_str(), edge.to_str()))
-    return defect
+            edge_strs = answer.split(',')
+            subedges = []
+            for edge_str in edge_strs:
+                subedge = hedge(edge_str)
+                if subedge is None:
+                    error_msg('{} did not parse correctly.'.format(
+                        edge.to_str()))
+                    return None
+                elif edge.contains(subedge, deep=True):
+                    subedges.append(subedge)
+                else:
+                    error_msg('{} is not a subedge of {}.'.format(
+                        subedge.to_str(), edge.to_str()))
+                    return None
+            defects = subedges
+    return defects
 
 
 def manual_test(args):
@@ -118,13 +120,12 @@ def manual_test(args):
 
             answer = he.input()
             if answer == 'd':
-                defect = input_defect(sentence, edge)
-                defect_str = defect.to_str()
+                defects = input_defects(sentence, edge)
             else:
-                defect = None
-                defect_str = ''
-            he.apply_evaluation(answer, edge, defect)
+                defects = []
+            he.apply_evaluation(answer, edge, defects)
 
+            defect_str = ','.join([defect.to_str() for defect in defects])
             row_str = '\t'.join(
                 (sentence, edge.to_str(), answer, defect_str))
             with open(args.outfile, 'a') as of:
