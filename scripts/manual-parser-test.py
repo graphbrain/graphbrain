@@ -91,8 +91,7 @@ def input_defects(sentence, edge):
             for edge_str in edge_strs:
                 subedge = hedge(edge_str)
                 if subedge is None:
-                    error_msg('{} did not parse correctly.'.format(
-                        subedge.to_str()))
+                    error_msg('{} did not parse correctly.'.format(edge_str))
                     failed = True
                 elif edge.contains(subedge, deep=True):
                     subedges.append(subedge)
