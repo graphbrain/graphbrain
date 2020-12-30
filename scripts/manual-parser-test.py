@@ -87,19 +87,21 @@ def input_defects(sentence, edge):
         else:
             edge_strs = answer.split(',')
             subedges = []
+            failed = False
             for edge_str in edge_strs:
                 subedge = hedge(edge_str)
                 if subedge is None:
                     error_msg('{} did not parse correctly.'.format(
-                        edge.to_str()))
-                    return None
+                        subedge.to_str()))
+                    failed = True
                 elif edge.contains(subedge, deep=True):
                     subedges.append(subedge)
                 else:
                     error_msg('{} is not a subedge of {}.'.format(
                         subedge.to_str(), edge.to_str()))
-                    return None
-            defects = subedges
+                    failed = True
+            if not failed:
+                defects = subedges
     return defects
 
 
