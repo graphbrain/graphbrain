@@ -25,8 +25,9 @@ def test_alpha(args):
             dep = row[4]
             hpos = row[6]
             hdep = row[8]
+            pos_after = row[19]
             source = row[25][:-1]
-            X.append((tag, dep, hpos, hdep))
+            X.append((tag, dep, hpos, hdep, pos_after))
             y.append(true_value)
             sources.append(source)
     preds = alpha.predict(X)

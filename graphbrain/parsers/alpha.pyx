@@ -14,9 +14,10 @@ class Alpha(object):
             dep = row[4]
             hpos = row[6]
             hdep = row[8]
+            pos_after = row[19]
 
             y.append([true_value])
-            X.append((tag, dep, hpos, hdep))
+            X.append((tag, dep, hpos, hdep, pos_after))
 
         self.encX = OneHotEncoder(handle_unknown='ignore')
         self.encX.fit(X)

@@ -467,13 +467,17 @@ class AlphaBeta(Parser):
 
     def _build_atom_sequence(self, sentence):
         features = []
-        for token in sentence:
+        for pos, token in enumerate(sentence):
             head = token.head
             tag = token.tag_
             dep = token.dep_
             hpos = head.pos_ if head else ''
             hdep = head.dep_ if head else ''
-            features.append((tag, dep, hpos, hdep))
+            if pos + 1 < len(sentence):
+                pos_after = sentence[pos + 1].pos_
+            else:
+                pos_after = ''
+            features.append((tag, dep, hpos, hdep, pos_after))
         atom_types = self.alpha.predict(features)
 
         self.token2atom = {}
