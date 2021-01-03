@@ -109,31 +109,54 @@ def manual_test(args):
 
     he = ManualEvaluation()
 
+    sentences = []
+
+    # read existing tests
+    try:
+        with open(args.outfile, 'r') as f:
+            for line in f:
+                parts = line.split('\t')
+                if len(parts) == 4:
+                    sentence = parts[0].strip()
+                    sentences.append(sentence)
+                    edge = hedge(parts[1].strip())
+                    answer = parts[2].strip()
+                    defects = list(
+                        hedge(edge_str) for edge_str in parts[3].split('&'))
+
+                    he.apply_evaluation(answer, edge, defects)
+    except FileNotFoundError:
+        pass
+
     with open(args.infile, 'r') as f:
         for line in f:
-            sentence = line.strip()
-
-            parser_output = parser.parse(sentence)
-            parsed_sentence = parser_output['parses'][0]
-            edge = parsed_sentence['main_edge']
-
-            print('\n{}\n{}\n'.format(sentence, indented(edge)))
-
-            answer = he.input()
-            if answer == 'd':
-                defects = input_defects(sentence, edge)
-            else:
-                defects = []
-            he.apply_evaluation(answer, edge, defects)
-
-            defect_str = '&'.join([defect.to_str() for defect in defects])
-            row_str = '\t'.join(
-                (sentence, edge.to_str(), answer, defect_str))
-            with open(args.outfile, 'a') as of:
-                of.write('{}\n'.format(row_str))
-
             print('GLOBAL:')
             print(colored(str(he), 'white'))
+
+            sentence = line.strip()
+
+            if sentence not in sentences:
+                sentences.append(sentence)
+                parser_output = parser.parse(sentence)
+                parsed_sentence = parser_output['parses'][0]
+                edge = parsed_sentence['main_edge']
+
+                if edge:
+                    print('\n{}\n{}\n'.format(sentence, indented(edge)))
+
+                    answer = he.input()
+                    if answer == 'd':
+                        defects = input_defects(sentence, edge)
+                    else:
+                        defects = []
+                    he.apply_evaluation(answer, edge, defects)
+
+                    defect_str = '&'.join(
+                        [defect.to_str() for defect in defects])
+                    row_str = '\t'.join(
+                        (sentence, edge.to_str(), answer, defect_str))
+                    with open(args.outfile, 'a') as of:
+                        of.write('{}\n'.format(row_str))
 
 
 if __name__ == '__main__':
