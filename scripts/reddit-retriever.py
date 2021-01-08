@@ -1,10 +1,9 @@
 # TODO: this is no longer woring due to recent Reddit API changes
-
-
-import time
+import argparse
 import datetime
 import json
-import argparse
+import time
+
 import praw
 
 

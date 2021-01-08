@@ -1,11 +1,13 @@
-from collections import Counter
 import statistics
+from collections import Counter
+
 import progressbar
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.model_selection import train_test_split
-from sklearn import metrics
 from scipy.stats import ks_2samp
+from sklearn import metrics
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder
+
 from graphbrain.cli import wrapper
 
 

@@ -1,5 +1,6 @@
 import json
 import random
+
 from graphbrain.cli import wrapper
 
 

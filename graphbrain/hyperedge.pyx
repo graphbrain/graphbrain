@@ -1,6 +1,8 @@
 import itertools
-from collections import Counter
+
 import graphbrain.constants as const
+
+from collections import Counter
 
 
 def str2atom(s):

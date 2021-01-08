@@ -1,11 +1,18 @@
 import traceback
-from collections import defaultdict, Counter
+from collections import Counter
+from collections import defaultdict
+
 import spacy
-import graphbrain.neuralcoref as neuralcoref
-from graphbrain import hedge, build_atom, UniqueAtom, unique, non_unique
+
 import graphbrain.constants as const
-from graphbrain.meaning.concepts import has_common_or_proper_concept
+import graphbrain.neuralcoref as neuralcoref
 from .parser import Parser
+from graphbrain import build_atom
+from graphbrain import hedge
+from graphbrain import non_unique
+from graphbrain import unique
+from graphbrain import UniqueAtom
+from graphbrain.meaning.concepts import has_common_or_proper_concept
 
 
 class Rule:

@@ -1,6 +1,8 @@
-from importlib import import_module
 import argparse
+from importlib import import_module
+
 from termcolor import colored
+
 from . import constants as const
 
 

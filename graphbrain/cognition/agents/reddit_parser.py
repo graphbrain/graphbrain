@@ -1,7 +1,9 @@
+import json
 import logging
 import re
-import json
+
 import progressbar
+
 from graphbrain import build_atom
 from graphbrain.cognition.agent import Agent
 from graphbrain.op import create_op

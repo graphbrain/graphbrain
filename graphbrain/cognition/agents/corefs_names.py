@@ -1,11 +1,13 @@
 import logging
-from unidecode import unidecode
 from itertools import combinations
+
 import progressbar
 from igraph import Graph
+from unidecode import unidecode
+
 from graphbrain import hedge
-from graphbrain.meaning.corefs import make_corefs_ops
 from graphbrain.cognition.agent import Agent
+from graphbrain.meaning.corefs import make_corefs_ops
 
 
 def clean_edge(edge):

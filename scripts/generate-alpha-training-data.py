@@ -1,4 +1,5 @@
 import json
+
 from graphbrain import hedge
 from graphbrain.cli import wrapper
 from graphbrain.parsers import create_parser

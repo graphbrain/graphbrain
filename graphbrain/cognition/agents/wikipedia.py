@@ -1,6 +1,8 @@
-import requests
 import logging
 from urllib.parse import urlparse
+
+import requests
+
 from graphbrain.cognition.agent import Agent
 from graphbrain.op import create_op
 

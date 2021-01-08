@@ -1,4 +1,5 @@
 import random
+
 from graphbrain.cli import wrapper
 from graphbrain.parsers import create_parser
 

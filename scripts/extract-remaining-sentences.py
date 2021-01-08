@@ -1,9 +1,12 @@
 import json
 import random
-from collections import Counter, defaultdict
-from graphbrain.cli import wrapper
+from collections import Counter
+from collections import defaultdict
 from os import listdir
-from os.path import isfile, join
+from os.path import isfile
+from os.path import join
+
+from graphbrain.cli import wrapper
 
 
 class SentenceExtractor(object):

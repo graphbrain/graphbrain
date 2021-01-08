@@ -1,4 +1,5 @@
 from collections import Counter
+
 from graphbrain.cli import wrapper
 from graphbrain.parsers.alpha import Alpha
 

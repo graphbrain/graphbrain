@@ -1,4 +1,5 @@
 import logging
+
 from graphbrain.cognition.agent import Agent
 from graphbrain.op import create_op
 

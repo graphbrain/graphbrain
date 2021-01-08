@@ -1,4 +1,5 @@
 import unittest
+
 from graphbrain import *
 from graphbrain.memory.permutations import *
 

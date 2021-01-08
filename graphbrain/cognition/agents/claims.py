@@ -1,11 +1,14 @@
 import logging
 from collections import Counter
+
 import progressbar
+
 from graphbrain import hedge
-from graphbrain.meaning.concepts import strip_concept, has_proper_concept
-from graphbrain.meaning.lemmas import deep_lemma
-from graphbrain.meaning.corefs import main_coref
 from graphbrain.cognition.agent import Agent
+from graphbrain.meaning.concepts import has_proper_concept
+from graphbrain.meaning.concepts import strip_concept
+from graphbrain.meaning.corefs import main_coref
+from graphbrain.meaning.lemmas import deep_lemma
 from graphbrain.op import create_op
 
 

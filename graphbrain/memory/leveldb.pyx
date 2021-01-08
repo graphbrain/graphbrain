@@ -1,11 +1,16 @@
 import json
+
 import plyvel
+
+from graphbrain.hyperedge import edges2str
+from graphbrain.hyperedge import hedge
+from graphbrain.hyperedge import match_pattern
+from graphbrain.hyperedge import split_edge_str
 from graphbrain.hypergraph import Hypergraph
-from graphbrain.hyperedge import (hedge, edges2str, split_edge_str,
-                                  match_pattern)
-from graphbrain.memory.permutations import (str_plus_1, first_permutation,
-                                            perm2edge,
-                                            do_with_edge_permutations)
+from graphbrain.memory.permutations import do_with_edge_permutations
+from graphbrain.memory.permutations import first_permutation
+from graphbrain.memory.permutations import perm2edge
+from graphbrain.memory.permutations import str_plus_1
 
 
 def _edge2key(edge):

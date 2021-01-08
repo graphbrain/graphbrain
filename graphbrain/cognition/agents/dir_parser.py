@@ -1,6 +1,7 @@
+import logging
 import os
 import re
-import logging
+
 from graphbrain.cognition.agent import Agent
 from graphbrain.cognition.agents.txt_parser import parse_text
 

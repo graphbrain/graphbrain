@@ -1,10 +1,11 @@
-import logging
-from importlib import import_module
-from collections import defaultdict
 import json
+import logging
+from collections import defaultdict
+from importlib import import_module
+
+from graphbrain.cognition.agent import Agent
 from graphbrain.op import apply_op
 from graphbrain.parsers import create_parser
-from graphbrain.cognition.agent import Agent
 
 
 def run_agent(agent, lang=None, hg=None, infile=None, indir=None, url=None,

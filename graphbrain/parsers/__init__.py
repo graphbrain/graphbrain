@@ -1,7 +1,7 @@
-from .text import edge_text
 from .nlp import print_tree
-from .parser_en import ParserEN
 from .parser_de import ParserDE
+from .parser_en import ParserEN
+from .text import edge_text
 
 
 def create_parser(name, lemmas=False, resolve_corefs=False):

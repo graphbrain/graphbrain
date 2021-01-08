@@ -1,8 +1,9 @@
 import logging
-from graphbrain import *
+
 from .alpha_beta import AlphaBeta
 from .nlp import token2str
 from .text import UniqueAtom
+from graphbrain import *
 
 
 class ParserDE(AlphaBeta):

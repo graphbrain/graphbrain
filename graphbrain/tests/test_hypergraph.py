@@ -1,6 +1,8 @@
 import unittest
-from graphbrain import hgraph, hedge
+
 import graphbrain.constants as const
+from graphbrain import hedge
+from graphbrain import hgraph
 
 
 class TestHypergraph(unittest.TestCase):

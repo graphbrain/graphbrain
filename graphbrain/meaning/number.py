@@ -1,5 +1,6 @@
 from graphbrain.constants import singular_plural_pred
-from graphbrain.op import create_op, apply_ops
+from graphbrain.op import apply_ops
+from graphbrain.op import create_op
 
 
 def number(atom):

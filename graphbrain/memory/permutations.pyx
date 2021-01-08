@@ -14,10 +14,9 @@
 # (my/m name/cn.s) is/pd.sc mary/cp.s
 #
 # and so on...
-
-
-import math
 import itertools
+import math
+
 from graphbrain.hyperedge import *
 
 

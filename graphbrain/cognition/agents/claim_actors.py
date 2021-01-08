@@ -1,6 +1,7 @@
 import logging
-from graphbrain.meaning.actors import find_actors
+
 from graphbrain.cognition.agent import Agent
+from graphbrain.meaning.actors import find_actors
 from graphbrain.op import create_op
 
 

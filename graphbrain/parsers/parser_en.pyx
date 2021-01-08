@@ -1,7 +1,8 @@
 import pkg_resources
+
 from graphbrain import hedge
-from graphbrain.parsers.alpha_beta import AlphaBeta
 from graphbrain.parsers.alpha import Alpha
+from graphbrain.parsers.alpha_beta import AlphaBeta
 
 
 _female = {"she/Ci/en", "her/Ci/en", "herself/Ci/en", "hers/Ci/en",

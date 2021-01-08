@@ -1,5 +1,8 @@
 from html import escape
-from IPython.core.display import display, HTML
+
+from IPython.core.display import display
+from IPython.core.display import HTML
+
 from graphbrain import *
 
 

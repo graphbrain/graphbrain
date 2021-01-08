@@ -1,8 +1,10 @@
+import csv
 import logging
 import re
-import csv
 import sys
+
 import progressbar
+
 from graphbrain.cognition.agent import Agent
 from graphbrain.op import create_op
 
