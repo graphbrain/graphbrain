@@ -159,7 +159,7 @@ class AlphaBeta(Parser):
     # =========================
 
     def parse_spacy_sentence(self, sent, atom_sequence=None,
-                              post_process=True):
+                             post_process=True):
         try:
             self.extra_edges = set()
 
