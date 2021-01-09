@@ -6,7 +6,6 @@ import sys
 import progressbar
 
 from graphbrain.cognition.agent import Agent
-from graphbrain.op import create_op
 
 
 def file_lines(filename):
@@ -39,20 +38,8 @@ class CsvParser(Agent):
         parts = text_parts(row[self.text])
 
         for part in parts:
-            parse_results = parser.parse(part)
-            for parse in parse_results['parses']:
-                main_edge = parse['main_edge']
-
-                # add main edge
-                if main_edge:
-                    # attach text to edge
-                    text = parse['text']
-                    attr = {'text': text}
-                    yield create_op(main_edge, attributes=attr)
-
-                    # add extra edges
-                    for edge in parse['extra_edges']:
-                        yield create_op(edge)
+            for op in self.system.parse_results2ops(parser.parse(part)):
+                yield op
 
     def run(self):
         infile = self.system.get_infile(self)

@@ -39,39 +39,24 @@ class RedditParser(Agent):
         parts = title_parts(text)
 
         title_edge = ['title/P/.reddit', author]
-        tags = []
         for part in parts:
             parse_results = parser.parse(part)
+            for op in self.parse_results2ops(parse_results):
+                yield op
+
             for parse in parse_results['parses']:
-                main_edge = parse['resolved_corefs']
+                if 'resolved_corefs' in parse:
+                    main_edge = parse['resolved_corefs']
+                else:
+                    main_edge = parse['main_edge']
 
-                # add main edge
                 if main_edge:
-                    # attach text to edge
-                    text = parse['text']
-                    attr = {'text': text}
-                    yield create_op(main_edge, attributes=attr)
-
-                    # add extra edges
-                    for edge in parse['extra_edges']:
-                        yield create_op(edge)
-
-                    if main_edge.type()[0] == 'R':
-                        title_edge.append(main_edge)
-                    else:
-                        tags.append(main_edge)
-            for edge in parse_results['inferred_edges']:
-                yield create_op(edge, count=True)
+                    title_edge.append(main_edge)
 
         if len(title_edge) > 2:
             # add title edge
             yield create_op(title_edge)
             self.titles_added += 1
-
-            # add title tags
-            if len(tags) > 0:
-                tags_edge = ['tags/P/.reddit', title_edge] + tags
-                yield create_op(tags_edge)
 
         self.titles_parsed += 1
 

@@ -29,9 +29,6 @@ class Parser(object):
 
         -> main_edge: the hyperedge corresponding to the sentence.
 
-        -> resolved_corefs: main_edge with coreferences resolved, can be the
-        same as main_edge if coreference resolution is not performed.
-
         -> extra_edges: aditional edges, e.g. connecting atoms that appear
         in the main_edge to their lemmas.
 
@@ -40,13 +37,14 @@ class Parser(object):
 
         -> edges_text: a dictionary of all edges and subedges to their
         corresponding text.
+
+        And optionally:
+
+        -> resolved_corefs: main_edge with coreferences resolved.
         """
         parse_results = self._parse(text)
         if self.resolve_corefs:
             self._resolve_corefs(parse_results)
-        else:
-            for parse in parse_results['parses']:
-                parse['resolved_corefs'] = parse['main_edge']
         return parse_results
 
     def parse_and_write(self, hg, text):

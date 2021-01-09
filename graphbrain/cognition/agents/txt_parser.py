@@ -3,7 +3,6 @@ import logging
 import progressbar
 
 from graphbrain.cognition.agent import Agent
-from graphbrain.op import create_op
 
 
 def read_paragraphs(file_name):
@@ -35,27 +34,10 @@ class TxtParser(Agent):
             pbar = None
 
         for i, paragraph in enumerate(paragraphs):
-            parse_results = parser.parse(paragraph)
-            for parse in parse_results['parses']:
-                main_edge = parse['resolved_corefs']
-
-                # add main edge
-                if main_edge:
-                    # attach text to edge
-                    text = parse['text']
-                    attr = {'text': text}
-
-                    # print('main edge: {}'.format(main_edge.to_str()))
-                    yield create_op(main_edge, sequence=sequence, position=pos,
-                                    attributes=attr)
-                    pos += 1
-
-                    # add extra edges
-                    for edge in parse['extra_edges']:
-                        yield create_op(edge)
-            for edge in parse_results['inferred_edges']:
-                # print('inferred edge: {}'.format(edge.to_str()))
-                yield create_op(edge, count=True)
+            for op in self.system.parse_results2ops(parser.parse(paragraph),
+                                                    sequence=sequence,
+                                                    pos=pos):
+                yield op
             if self.progress_bar:
                 pbar.update(i)
 

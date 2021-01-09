@@ -3,6 +3,7 @@ sequence_pred = 'seq/P/.'
 noun_connector_pred = '+/B/.'
 lemma_pred = 'lemma/P/.'
 coref_pred = 'coref/P/.'
+coref_res_pred = 'coref_res/P/.'
 main_coref_pred = 'main_coref/P/.'
 type_of_pred = 'type_of/P/.'
 is_pred = 'is/P/.'
@@ -16,8 +17,7 @@ singular_plural_pred = 'sng_pl/P/.'
 coref_set_id_key = 'coref'
 
 # Logo
-ascii_logo = """
-
+ascii_logo = r"""
                         _     _               _       
                        | |   | |             (_)      
    __ _ _ __ __ _ _ __ | |__ | |__  _ __ __ _ _ _ __  

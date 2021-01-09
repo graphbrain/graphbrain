@@ -1,10 +1,14 @@
 import json
 import logging
+
+import graphbrain.constants as const
+
 from collections import defaultdict
 from importlib import import_module
 
+from graphbrain import hedge
 from graphbrain.cognition.agent import Agent
-from graphbrain.op import apply_op
+from graphbrain.op import apply_op, create_op
 from graphbrain.parsers import create_parser
 
 
@@ -109,7 +113,8 @@ def processor(x, lang=None, hg=None, infile=None, indir=None, url=None,
 
 class System(object):
     def __init__(self, name=None, lang=None, hg=None, infile=None, indir=None,
-                 url=None, sequence=None, logging_level=logging.INFO):
+                 url=None, sequence=None, corefs='resolve',
+                 logging_level=logging.INFO):
         self.name = name
         self.lang = lang
         self.hg = hg
@@ -117,6 +122,7 @@ class System(object):
         self.indir = indir
         self.url = url
         self.sequence = sequence
+        self.corefs = corefs
 
         self.logger = logging.getLogger('agent_system')
         self.logger.setLevel(logging_level)
@@ -191,8 +197,10 @@ class System(object):
 
     def get_parser(self, agent):
         if self.parser is None:
-            self.parser = create_parser(
-                name=self.lang, lemmas=True, resolve_corefs=True)
+            corefs = self.corefs in {'resolve', 'replace'}
+            self.parser = create_parser(name=self.lang,
+                                        lemmas=True,
+                                        resolve_corefs=corefs)
         return self.parser
 
     def get_infile(self, agent):
@@ -209,6 +217,43 @@ class System(object):
 
     def get_sequence(self, agent):
         return self.sequence
+
+    def parse_results2ops(self, parse_results, sequence=None, pos=-1):
+        for parse in parse_results['parses']:
+            if self.corefs == 'resolve':
+                main_edge = parse['main_edge']
+                resolved_edge = parse['resolved_corefs']
+            elif self.corefs == 'replace':
+                main_edge = parse['resolved_corefs']
+                resolved_edge = None
+            else:
+                main_edge = parse['main_edge']
+                resolved_edge = None
+
+            # add main edge
+            if main_edge:
+                # attach text to edge
+                text = parse['text']
+                attr = {'text': text}
+
+                if sequence:
+                    yield create_op(main_edge, sequence=sequence, position=pos,
+                                    attributes=attr)
+                else:
+                    yield create_op(main_edge, attributes=attr)
+                pos += 1
+
+                if self.corefs == 'resolve':
+                    yield create_op(resolved_edge, attributes=attr)
+                    coref_res_edge = hedge(
+                        (const.coref_res_pred, main_edge, resolved_edge))
+                    yield create_op(coref_res_edge)
+
+                # add extra edges
+                for edge in parse['extra_edges']:
+                    yield create_op(edge)
+        for edge in parse_results['inferred_edges']:
+            yield create_op(edge, count=True)
 
     def _reset_counters(self, agent_name):
         self.counters[agent_name] = [0, 0]

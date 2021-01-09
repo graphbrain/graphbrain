@@ -63,26 +63,10 @@ class Wikipedia(Agent):
             if len(paragraph) == 0:
                 continue
 
-            parse_results = parser.parse(paragraph)
-            for parse in parse_results['parses']:
-                main_edge = parse['resolved_corefs']
-
-                # add main edge
-                if main_edge:
-                    # attach text to edge
-                    text = parse['text']
-                    attr = {'text': text}
-
-                    yield create_op(main_edge, sequence=sequence, position=pos,
-                                    attributes=attr)
-                    self.edges += 1
-                    pos += 1
-
-                    # add extra edges
-                    for edge in parse['extra_edges']:
-                        yield create_op(edge)
-            for edge in parse_results['inferred_edges']:
-                yield create_op(edge, count=True)
+            for op in self.system.parse_results2ops(parser.parse(paragraph),
+                                                    sequence=sequence,
+                                                    pos=pos):
+                yield op
 
     def report(self):
         rep_str = ('edges found: {}'.format(self.edges))
