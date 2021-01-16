@@ -395,7 +395,6 @@ def match_pattern(edge, pattern, curvars={}):
             result = _result
     # match by argroles
     else:
-        print('#5')
         result = []
         # match connectors first
         econn = edge[0]
