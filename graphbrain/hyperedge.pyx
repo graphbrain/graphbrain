@@ -146,10 +146,20 @@ def _matches_wildcard(edge, wildcard):
                 if len(wargroles_parts) == 1:
                     wargroles_parts.append('')
                 wnegroles = wargroles_parts[1]
-                wargroles_parts = wargroles_parts[0].split(',')
+
+                # fixed order?
+                wargroles_posopt = wargroles_parts[0]
+                eargroles = erole[1]
+                if wargroles_posopt[0] == '>':
+                    wargroles_posopt = wargroles_posopt[1:].replace(',', '')
+                    if len(eargroles) > len(wargroles_posopt):
+                        return False
+                    else:
+                        return wargroles_posopt.startswith(eargroles)
+
+                wargroles_parts = wargroles_posopt.split(',')
                 wposroles = wargroles_parts[0]
                 wargroles = set(wposroles) | set(wnegroles)
-                eargroles = erole[1]
                 for argrole in wargroles:
                     min_count = wposroles.count(argrole)
                     # if there are argrole exclusions
@@ -337,9 +347,14 @@ def match_pattern(edge, pattern, curvars={}):
         max_len = float('inf')
 
     result = [{}]
-    argroles_opt = pattern[0].argroles().split('~')[0]
-    argroles = argroles_opt.split(',')[0]
-    argroles_opt = argroles_opt.replace(',', '')
+    argroles_posopt = pattern[0].argroles().split('~')[0]
+    if len(argroles_posopt) > 0 and argroles_posopt[0] == '>':
+        match_by_order = True
+        argroles_posopt = argroles_posopt[1:]
+    else:
+        match_by_order = False
+    argroles = argroles_posopt.split(',')[0]
+    argroles_opt = argroles_posopt.replace(',', '')
 
     if len(argroles) > 0:
         min_len = 1 + len(argroles)
@@ -349,13 +364,13 @@ def match_pattern(edge, pattern, curvars={}):
         return []
 
     # match by order
-    if len(argroles) == 0:
+    if len(argroles) == 0 or match_by_order:
         for i, pitem in enumerate(pattern):
             eitem = edge[i]
             _result = []
             for vars in result:
                 if pitem.is_atom():
-                    if pitem.is_pattern():
+                    if pitem.is_pattern() or match_by_order:
                         varname = _varname(pitem)
                         if varname in curvars:
                             if curvars[varname] != eitem:
@@ -364,7 +379,7 @@ def match_pattern(edge, pattern, curvars={}):
                             if vars[varname] != eitem:
                                 continue
                         elif _matches_wildcard(eitem, pitem):
-                            if len(varname) > 0:
+                            if len(varname) > 0 and varname[0].isupper():
                                 vars[varname] = eitem
                         else:
                             continue
@@ -380,6 +395,7 @@ def match_pattern(edge, pattern, curvars={}):
             result = _result
     # match by argroles
     else:
+        print('#5')
         result = []
         # match connectors first
         econn = edge[0]

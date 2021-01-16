@@ -279,6 +279,34 @@ class TestHyperedge(unittest.TestCase):
                                        '(+/Pd.sc graphbrain/Cp.s *X)'),
                          [])
 
+    def test_match_pattern_argroles_ordered(self):
+        self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
+                                       '(is/Pd.>sc graphbrain/Cp.s *X)'),
+                         [{'X': hedge('great/C')}])
+        self.assertEqual(match_pattern('(is/Pd.cs great/C graphbrain/Cp.s)',
+                                       '(is/Pd.>sc graphbrain/Cp.s *X)'),
+                         [])
+        self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
+                                       '(is/Pd.>scx graphbrain/Cp.s *X *Y)'),
+                         [])
+        self.assertEqual(match_pattern(
+            '(is/Pd.xcs today/C great/C graphbrain/Cp.s)',
+            '(is/Pd.>sc graphbrain/Cp.s *X ...)'),
+            [])
+        self.assertEqual(match_pattern(
+            '(is/Pd.xcs today/C great/C graphbrain/Cp.s)',
+            '(is/Pd.>sc graphbrain/Cp.s *X)'),
+            [])
+        self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
+                                       '(is/Pd.>sc graphbrain/Cp.s *)'),
+                         [{}])
+        self.assertEqual(match_pattern('(was/Pd.sc graphbrain /Cp.s great/C)',
+                                       '(is/Pd.>sc graphbrain/Cp.s *X)'),
+                         [])
+        self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
+                                       '(+/Pd.>sc graphbrain/Cp.s *X)'),
+                         [])
+
     def test_match_pattern_argroles_vars(self):
         self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
                                        '(is/Pd.sc graphbrain/Cp.s PROP)'),
