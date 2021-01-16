@@ -113,6 +113,11 @@ def _matches_wildcard(edge, wildcard):
     elif struct_code == '&':
         if edge.is_atom():
             return False
+    elif struct_code != '*' and not struct_code.isupper():
+        if not edge.is_atom():
+            return False
+        if edge.root() != wildcard.root():
+            return False
 
     # role match
     if len(wparts) > 1:

@@ -1,6 +1,8 @@
 import unittest
 
-from graphbrain.hyperedge import *
+from graphbrain.hyperedge import (hedge, build_atom, str2atom, split_edge_str,
+                                  match_pattern, edge_matches_pattern,
+                                  edges2str, rel_arg_role)
 
 
 class TestHyperedge(unittest.TestCase):
@@ -272,6 +274,9 @@ class TestHyperedge(unittest.TestCase):
                          [{}])
         self.assertEqual(match_pattern('(was/Pd.sc graphbrain /Cp.s great/C)',
                                        '(is/Pd.sc graphbrain/Cp.s *X)'),
+                         [])
+        self.assertEqual(match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
+                                       '(+/Pd.sc graphbrain/Cp.s *X)'),
                          [])
 
     def test_match_pattern_argroles_vars(self):
