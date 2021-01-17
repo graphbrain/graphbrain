@@ -41,7 +41,7 @@ class RedditParser(Agent):
         title_edge = ['title/P/.reddit', author]
         for part in parts:
             parse_results = parser.parse(part)
-            for op in self.parse_results2ops(parse_results):
+            for op in self.system.parse_results2ops(parse_results):
                 yield op
 
             for parse in parse_results['parses']:
