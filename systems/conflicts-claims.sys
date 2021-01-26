@@ -1,0 +1,46 @@
+{
+    "taxonomy": {
+        "agent": "taxonomy"
+    },
+    "number": {
+        "agent": "number",
+        "depends_on": "taxonomy"
+    },
+    "corefs_dets": {
+        "agent": "corefs_dets",
+        "depends_on": "number"
+    },
+    "corefs_names": {
+        "agent": "corefs_names",
+        "depends_on": "corefs_dets"
+    },
+    "corefs_onto": {
+        "agent": "corefs_onto",
+        "depends_on": "corefs_names"
+    },
+    "corefs_unidecode": {
+        "agent": "corefs_unidecode",
+        "depends_on": "corefs_onto"
+    },
+    "iterator": {
+        "agent": "iterator",
+        "depends_on": "corefs_unidecode"
+    },
+    "conjunctions": {
+        "agent": "conjunctions",
+        "input": "iterator",
+        "write": false
+    },
+    "actors": {
+        "agent": "actors",
+        "input": "conjunctions"
+    },
+    "claims": {
+        "agent": "claims",
+        "input": "conjunctions"
+    },
+    "conflicts": {
+        "agent": "conflicts",
+        "input": "conjunctions"
+    }
+}
