@@ -10,6 +10,7 @@ class CorefsOnto(Agent):
         super().__init__(
             name, progress_bar=progress_bar, logging_level=logging_level)
         self.corefs = 0
+        self.done = set()
 
     def on_start(self):
         self.corefs = 0
@@ -17,7 +18,9 @@ class CorefsOnto(Agent):
     def process_edge(self, edge, depth):
         hg = self.system.get_hg(self)
 
-        if edge.type()[0] == 'C':
+        if edge.type()[0] == 'C' and edge not in self.done:
+            self.done.add(edge)
+
             subs = tuple(subtypes(hg, edge))
 
             # check if the concept should be assigned to a synonym set
