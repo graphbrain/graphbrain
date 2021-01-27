@@ -124,6 +124,7 @@ class System(object):
         self.sequence = sequence
         self.corefs = corefs
 
+        logging.basicConfig()
         self.logger = logging.getLogger('agent_system')
         self.logger.setLevel(logging_level)
 
