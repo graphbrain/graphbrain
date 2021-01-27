@@ -16,7 +16,7 @@ CLAIM_PRED_LEMMAS = {'say', 'claim'}
 
 
 def _subject_preposition(claim):
-    subjects = claim.edges_with_argrole('s')
+    subjects = claim.edges_with_argrole('s') + claim.edges_with_argrole('p')
     if len(subjects) == 1:
         subject = strip_concept(subjects[0])
         if subject is not None and subject.type() == 'Ci':
@@ -105,7 +105,7 @@ class Claims(Agent):
 
         if not edge.is_atom():
             ct = edge.connector_type()
-            if ct[:2] == 'Pd':
+            if ct[0] == 'P':
                 pred = edge[0]
                 if (len(edge) > 2 and
                         deep_lemma(hg, pred).root() in CLAIM_PRED_LEMMAS):

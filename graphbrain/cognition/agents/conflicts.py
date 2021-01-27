@@ -46,7 +46,7 @@ class Conflicts(Agent):
 
         if not edge.is_atom():
             ct = edge.connector_type()
-            if ct[:2] == 'Pd':
+            if ct[0] == 'P':
                 pred = edge[0]
                 if (len(edge) > 2 and
                         deep_lemma(hg, pred).root() in CONFLICT_PRED_LEMMAS):

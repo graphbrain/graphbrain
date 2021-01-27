@@ -31,7 +31,7 @@ class Actors(Agent):
 
         if not edge.is_atom():
             ct = edge.connector_type()
-            if ct[:2] == 'Pd':
+            if ct[0] == 'P':
                 subjects = edge.edges_with_argrole('s')
                 if len(subjects) == 1:
                     subject = strip_concept(subjects[0])
