@@ -12,7 +12,7 @@ from graphbrain.meaning.lemmas import deep_lemma
 from graphbrain.op import create_op
 
 
-CLAIM_PRED_LEMMAS = {'say', 'claim'}
+CLAIM_PRED_LEMMAS = {'say', 'claim', 'says', 'claims', 'said', 'claimed'}
 
 
 def _subject_preposition(claim):
@@ -55,6 +55,10 @@ class Claims(Agent):
         return {'en'}
 
     def _is_actor(self, hg, edge):
+        self.actors.add(edge)
+        return True
+        #
+
         if edge in self.actors:
             return True
 
@@ -88,6 +92,7 @@ class Claims(Agent):
         # gender detection
         prep = _subject_preposition(claim)
         if prep:
+            print(prep)
             if prep == 'she':
                 self.female_counter[actor] += 1
             elif prep == 'they':

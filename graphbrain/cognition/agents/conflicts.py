@@ -12,7 +12,11 @@ from graphbrain.op import create_op
 
 
 CONFLICT_PRED_LEMMAS = {'warn', 'kill', 'accuse', 'condemn', 'slam', 'arrest',
-                        'clash', 'blame'}
+                        'clash', 'blame',
+                        'warns', 'kills', 'accuses', 'condemns', 'slams',
+                        'arrests', 'clashes', 'blamees',
+                        'warned', 'killed', 'accused', 'condemned', 'slamed',
+                        'arrestes', 'clashed', 'blamed'}
 
 CONFLICT_TOPIC_TRIGGERS = {'of/T/en', 'over/T/en', 'against/T/en', 'for/T/en'}
 
@@ -33,7 +37,7 @@ class Conflicts(Agent):
 
     def _topics(self, hg, actor_orig, actor_targ, edge):
         for item in edge[1:]:
-            if item.type()[0] == 's':
+            if item.type()[0] == 'S':
                 if item[0].to_str() in CONFLICT_TOPIC_TRIGGERS:
                     for concept in all_concepts(item[1]):
                         if hg.degree(concept) > 1:
