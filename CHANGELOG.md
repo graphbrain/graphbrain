@@ -76,8 +76,8 @@
 - Moved Hypergraph.lemma_degrees() to meaning.lemmas.
 - Argroles location is normalized (first position in both predicates and builders).
 - In the parsers package, create_parser() was moved to __init__ and the factory module was removed.
-- is_proper_concept() renamed to has_proper_concept() (meaning.concepts module)
-- find_concept() renamed to strip_concept() (meaning.concepts module)
+- is_proper_concept() renamed to has_proper_concept() (meaning.concepts module).
+- find_concept() renamed to strip_concept() (meaning.concepts module).
 
 ### Removed
 - graphbrain.funs module.
@@ -123,38 +123,4 @@
 
 ## [0.1.0] - 14-06-2019
 ### Added
-- Hypergraph semantic layer.
-
-### Changed
-- Parser is now deterministic.
-
-### Removed
-- Misc. obsolete code.
-
-## [0.0.7] - 05-01-2019
-
-Experimental release.
-
-## [0.0.6] - 01-01-2019
-
-Experimental release.
-
-## [0.0.5] - 31-12-2018
-
-Experimental release.
-
-## [0.0.4] - 29-12-2018
-
-Experimental release.
-
-## [0.0.3] - 28-12-2018
-
-Experimental release.
-
-## [0.0.2] - 27-12-2018
-
-Experimental release.
-
-## [0.0.1] - 25-12-2018
-
-Experimental release.
+- First release.

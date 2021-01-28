@@ -82,5 +82,5 @@ class Conjunctions(Agent):
         self.recursive = False
 
     def process_edge(self, edge, depth):
-        for edge in conjunctions_resolution(edge):
-            yield create_op(edge)
+        for redge in conjunctions_resolution(edge):
+            yield create_op(redge)

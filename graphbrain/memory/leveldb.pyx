@@ -57,7 +57,9 @@ class LevelDB(Hypergraph):
         end_key = end_str.encode('utf-8')
 
         for key, value in self.db.iterator(start=start_key, stop=end_key):
-            yield hedge(key.decode('utf-8')[1:])
+            edge = hedge(key.decode('utf-8')[1:])
+            if edge is not None:
+                yield edge
 
     def all_attributes(self):
         start_str = 'v'
