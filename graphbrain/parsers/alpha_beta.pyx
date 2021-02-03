@@ -332,48 +332,6 @@ class AlphaBeta(Parser):
         if not edge.is_atom():
             edge = hedge([self._post_process(subedge) for subedge in edge])
 
-            if edge.connector_type()[0] == 'P':
-                # If a predicate appears outside of the connector position of
-                # a relation, then transform it into the equivalent verbal
-                # concept.
-                # (*/P ... */P ...) -> (*/P ... */C ...)
-                for subedge in edge[1:]:
-                    if subedge.type()[0] == 'P':
-                        pred_atom = subedge.atom_with_type('P')
-                        parts = pred_atom.parts()
-                        role = pred_atom.role()
-                        role = ['Cv'] + role[1:]
-                        newparts = (parts[0], '.'.join(role))
-                        if len(parts) > 2:
-                            newparts += tuple(parts[2:])
-                        new_pred = hedge('/'.join(newparts))
-                        upred_atom = UniqueAtom(pred_atom)
-                        unew_pred = UniqueAtom(new_pred)
-                        if upred_atom in self.atom2token:
-                            self.atom2token[unew_pred] =\
-                                self.atom2token[upred_atom]
-                        self.orig_atom[unew_pred] = upred_atom
-                        edge = edge.replace_atom(pred_atom, new_pred)
-
-                # If a connector appears outside of the connector position,
-                # then transform it into a concept
-                for subedge in edge[1:]:
-                    ot = subedge.type()[0]
-                    if ot in {'P', 'M', 'J', 'B', 'T'}:
-                        conn_atom = subedge.atom_with_type(ot)
-                        parts = conn_atom.parts()
-                        newparts = (parts[0], 'C')
-                        if len(parts) > 2:
-                            newparts += tuple(parts[2:])
-                        new_conn = hedge('/'.join(newparts))
-                        uconn_atom = UniqueAtom(conn_atom)
-                        unew_conn = UniqueAtom(new_conn)
-                        if uconn_atom in self.atom2token:
-                            self.atom2token[unew_conn] =\
-                                self.atom2token[uconn_atom]
-                        self.orig_atom[unew_conn] = uconn_atom
-                        edge = edge.replace_atom(conn_atom, new_conn)
-
             if edge.connector_type()[0] == 'T':
                 # Make triggers temporal, if appropriate.
                 # e.g.: (in/T 1976) -> (in/Tt 1976)
@@ -579,12 +537,73 @@ class AlphaBeta(Parser):
         if not edge.is_atom():
             edge = hedge([self._repair(subedge) for subedge in edge])
 
+            if edge.connector_type()[0] in {'P', 'J'}:
+                # If a predicate appears outside of the connector position of
+                # a relation, then transform it into the equivalent verbal
+                # concept.
+                # (*/P ... */P ...) -> (*/P ... */C ...)
+                for subedge in edge[1:]:
+                    if subedge.type()[0] == 'P':
+                        pred_atom = subedge.atom_with_type('P')
+                        parts = pred_atom.parts()
+                        role = pred_atom.role()
+                        role = ['Cv'] + role[1:]
+                        newparts = (parts[0], '.'.join(role))
+                        if len(parts) > 2:
+                            newparts += tuple(parts[2:])
+                        new_pred = hedge('/'.join(newparts))
+                        upred_atom = UniqueAtom(pred_atom)
+                        unew_pred = UniqueAtom(new_pred)
+                        if upred_atom in self.atom2token:
+                            self.atom2token[unew_pred] =\
+                                self.atom2token[upred_atom]
+                        self.orig_atom[unew_pred] = upred_atom
+                        edge = edge.replace_atom(pred_atom, new_pred)
+
+                # If a connector appears outside of the connector position,
+                # then transform it into a concept
+                for subedge in edge[1:]:
+                    ot = subedge.type()[0]
+                    if ot in {'P', 'M', 'J', 'B', 'T'}:
+                        conn_atom = subedge.atom_with_type(ot)
+                        parts = conn_atom.parts()
+                        newparts = (parts[0], 'C')
+                        if len(parts) > 2:
+                            newparts += tuple(parts[2:])
+                        new_conn = hedge('/'.join(newparts))
+                        uconn_atom = UniqueAtom(conn_atom)
+                        unew_conn = UniqueAtom(new_conn)
+                        if uconn_atom in self.atom2token:
+                            self.atom2token[unew_conn] =\
+                                self.atom2token[uconn_atom]
+                        self.orig_atom[unew_conn] = uconn_atom
+                        edge = edge.replace_atom(conn_atom, new_conn)
+
             if edge.connector_type()[0] == 'M':
                 # If a modifier is found to be aplied to a relation, then
                 # apply it to the predicate of the relation instead.
                 # (*/M (*/P ...)) -> ((*/M */P) ...))
                 if len(edge) == 2 and edge[1].type()[0] in {'R', 'S'}:
                     edge = hedge(((edge[0], edge[1][0]),) + edge[1][1:])
+            elif edge.connector_type()[0] == 'J':
+                # Make sure that conjunctions are well-formed
+                if edge[1].type()[0] not in {'C', 'R'}:
+                    found = False
+                    pos = 2
+                    while not found and pos < len(edge):
+                        if edge[pos].type()[0] in {'C', 'R'}:
+                            found = True
+                        else:
+                            pos += 1
+                    if found:
+                        new_edge = list(edge)
+                        a = edge[1]
+                        b = edge[pos]
+                        new_edge[1] = b
+                        new_edge[pos] = a
+                        edge = hedge(new_edge)
+                    else:
+                        return edge[1]
         return edge
 
     def _parse_atom_sequence(self, atom_sequence):
