@@ -695,13 +695,7 @@ class Hyperedge(tuple):
         elif ptype[0] == 'T':
             outter_type = 'S'
         elif ptype[0] == 'J':
-            inner_type = self[1].type()[0]
-            if inner_type in {'P', 'S'}:
-                return 'R'
-            elif inner_type in {'M', 'B'}:
-                return 'C'
-            else:
-                return inner_type
+            return self[1].type()[0]
         else:
             return 'C'
 
