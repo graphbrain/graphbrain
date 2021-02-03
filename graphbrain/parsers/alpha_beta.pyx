@@ -26,18 +26,16 @@ class Rule:
 
 rules = [
     Rule('C', {'C'}, 2, '+/B/.'),
-    Rule('M', {'C', 'P', 'T', 'R', 'B', 'M', 'J'}, 2),
-    Rule('B', {'C', 'R', 'M'}, 3),
+    Rule('M', {'C', 'R', 'M', 'S', 'T', 'P', 'B', 'J'}, 2),
+    Rule('B', {'C'}, 3),
     Rule('T', {'C', 'R'}, 2),
-    Rule('P', {'C', 'R', 'S', 'P'}, 6),
-    Rule('P', {'C', 'R', 'S', 'P'}, 5),
-    Rule('P', {'C', 'R', 'S', 'P'}, 4),
-    Rule('P', {'C', 'R', 'S', 'P'}, 3),
-    Rule('P', {'C', 'R', 'S', 'P'}, 2),
-    Rule('J', {'C', 'R', 'M', 'S', 'T', 'P'}, 3),
-    Rule('J', {'C', 'R', 'M', 'S', 'T', 'P'}, 2),
-    Rule('R', {'C', 'R', 'S'}, 2, ':/J/.'),
-    Rule('T', {'P'}, 2)]
+    Rule('P', {'C', 'R', 'S'}, 6),
+    Rule('P', {'C', 'R', 'S'}, 5),
+    Rule('P', {'C', 'R', 'S'}, 4),
+    Rule('P', {'C', 'R', 'S'}, 3),
+    Rule('P', {'C', 'R', 'S'}, 2),
+    Rule('R', {'C', 'S'}, 2, ':/J/.'),
+    Rule('J', {'C', 'R', 'M', 'S', 'T', 'P', 'B', 'J'}, 3)]
 
 
 def _apply_rule(rule, sentence, pos):
@@ -357,6 +355,25 @@ class AlphaBeta(Parser):
                         self.orig_atom[unew_pred] = upred_atom
                         edge = edge.replace_atom(pred_atom, new_pred)
 
+                # If a connector appears outside of the connector position,
+                # then transform it into a concept
+                for subedge in edge[1:]:
+                    ot = subedge.type()[0]
+                    if ot in {'P', 'M', 'J', 'B', 'T'}:
+                        conn_atom = subedge.atom_with_type(ot)
+                        parts = conn_atom.parts()
+                        newparts = (parts[0], 'C')
+                        if len(parts) > 2:
+                            newparts += tuple(parts[2:])
+                        new_conn = hedge('/'.join(newparts))
+                        uconn_atom = UniqueAtom(conn_atom)
+                        unew_conn = UniqueAtom(new_conn)
+                        if uconn_atom in self.atom2token:
+                            self.atom2token[unew_conn] =\
+                                self.atom2token[uconn_atom]
+                        self.orig_atom[unew_conn] = uconn_atom
+                        edge = edge.replace_atom(conn_atom, new_conn)
+
             if edge.connector_type()[0] == 'T':
                 # Make triggers temporal, if appropriate.
                 # e.g.: (in/T 1976) -> (in/Tt 1976)
@@ -566,7 +583,7 @@ class AlphaBeta(Parser):
                 # If a modifier is found to be aplied to a relation, then
                 # apply it to the predicate of the relation instead.
                 # (*/M (*/P ...)) -> ((*/M */P) ...))
-                if len(edge) == 2 and edge[1].type()[0] == 'R':
+                if len(edge) == 2 and edge[1].type()[0] in {'R', 'S'}:
                     edge = hedge(((edge[0], edge[1][0]),) + edge[1][1:])
         return edge
 
@@ -590,8 +607,9 @@ class AlphaBeta(Parser):
 
             # parse failed, make best effort to return something
             if action is None:
+                # if all else fails...
                 if len(sequence) > 0:
-                    return sequence[:1], True
+                    return [hedge([':/J/.'] + sequence)], False
                 else:
                     return None, True
 
