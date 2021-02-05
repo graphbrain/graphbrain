@@ -734,21 +734,28 @@ class TestHyperedge(unittest.TestCase):
         self.assertFalse(hedge('a/Cn').contains_atom_type('Cp'))
         self.assertFalse(hedge('a/Cn').contains_atom_type('P'))
 
-    def test_predicate(self):
-        self.assertEqual(hedge('graphbrain/Cp.s/1').predicate(), None)
-        self.assertEqual(hedge('graphbrain').predicate(), None)
-        self.assertEqual(hedge('(is/Pd.so graphbrain/Cp.s '
-                               'great/C)').predicate().to_str(), 'is/Pd.so')
-        self.assertEqual(hedge('(red/M shoes/Cn.p)').predicate(), None)
-        self.assertEqual(hedge('(before/Tt noon/C)').predicate(), None)
-        self.assertEqual(hedge('(very/M large/M)').predicate(), None)
+    def test_predicate_atom(self):
+        self.assertEqual(
+            hedge('graphbrain/Cp.s/1').predicate_atom(), None)
+        self.assertEqual(hedge('graphbrain').predicate_atom(), None)
+        self.assertEqual(
+            hedge('(is/Pd.so graphbrain/Cp.s '
+                  'great/C)').predicate_atom().to_str(), 'is/Pd.so')
+        self.assertEqual(
+            hedge('(red/M shoes/Cn.p)').predicate_atom(), None)
+        self.assertEqual(
+            hedge('(before/Tt noon/C)').predicate_atom(), None)
+        self.assertEqual(hedge('(very/M large/M)').predicate_atom(), None)
         self.assertEqual(hedge('((very/M large/M) '
-                               'shoes/Cn.p)').predicate(), None)
-        self.assertEqual(hedge('(will/M be/Pd.sc)').predicate().to_str(),
-                         'be/Pd.sc')
-        self.assertEqual(hedge('((will/M be/Pd.sc) john/Cp.s '
-                               'rich/C)').predicate().to_str(), 'be/Pd.sc')
-        self.assertEqual(hedge('(play/T piano/Cn.s)').predicate(), None)
+                               'shoes/Cn.p)').predicate_atom(), None)
+        self.assertEqual(
+            hedge('(will/M be/Pd.sc)').predicate_atom().to_str(),
+            'be/Pd.sc')
+        self.assertEqual(
+            hedge('((will/M be/Pd.sc) john/Cp.s '
+                  'rich/C)').predicate_atom().to_str(), 'be/Pd.sc')
+        self.assertEqual(
+            hedge('(play/T piano/Cn.s)').predicate_atom(), None)
 
     def test_rel_arg_role(self):
         edge = hedge('(is/Pd.so graphbrain/Cp.s great/C)')

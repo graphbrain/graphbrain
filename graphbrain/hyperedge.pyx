@@ -452,7 +452,7 @@ def rel_arg_role(relation, position):
     if relation.type()[0] != 'R':
         return None
     else:
-        pred = relation.predicate()
+        pred = relation.predicate_atom()
         if pred:
             role = pred.role()
             if len(role) > 1:
@@ -723,22 +723,22 @@ class Hyperedge(tuple):
         """
         return self.atom_with_type(atom_type) is not None
 
-    def predicate(self):
+    def predicate_atom(self):
         """Returns predicate atom if this edge is a non-atom of type
         relation or predicate. Returns itself if it is an atom of type
         predicate. Returns None otherwise.
         """
         ct = self[0].type()[0]
         if ct == 'J':
-            return self[1].predicate()
+            return self[1].predicate_atom()
         et = self.type()[0]
         if et == 'R':
             if ct == 'M':
-                return self[1].predicate()
+                return self[1].predicate_atom()
             else:
-                return self[0].predicate()
+                return self[0].predicate_atom()
         elif et == 'P':
-            return self[1].predicate()
+            return self[1].predicate_atom()
         return None
 
     def is_pattern(self):
@@ -806,6 +806,9 @@ class Hyperedge(tuple):
 
     def edges_with_argrole(self, argrole):
         """Returns the list of edges with the given argument role."""
+        if self.type()[0] == 'R' and self[0].type()[0] == 'M':
+            return self[1].edges_with_argrole(argrole)
+
         edges = []
         connector = self[0]
 
@@ -1066,7 +1069,7 @@ class Atom(Hyperedge):
         else:
             return None
 
-    def predicate(self):
+    def predicate_atom(self):
         """Returns predicate atom if this edge is a non-atom of type
         relation or predicate. Returns itself if it is an atom of type
         predicate. Returns None otherwise.

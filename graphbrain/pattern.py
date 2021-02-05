@@ -1,4 +1,4 @@
-from graphbrain.hyperedge import *
+from graphbrain.hyperedge import hedge, match_pattern
 
 
 def apply_vars(edge, vars):
@@ -12,7 +12,7 @@ def apply_vars(edge, vars):
 
 def eval(edge, vars):
     if edge[0].to_str() == 'inner-atom':
-        return apply_vars(edge[1], vars).predicate()
+        return apply_vars(edge[1], vars).predicate_atom()
     else:
         return edge
 
