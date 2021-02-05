@@ -19,6 +19,8 @@
 - Function Hyperedge.insert_edge_with_argrole().
 - Function Hyperedge.all_atoms().
 - Function Hyperedge.size().
+- Function Hyperedge.predicate().
+- Function Hyperedge.predicate_atom().
 - Logic engine, HG.eval().
 - Utility functions to show colored edges in the terminal.
 
@@ -29,7 +31,7 @@
 - New parser framework, improved English parser + scripts to help train and test new parsers.
 - Hyperedge main type character codes become upercase (apple/C instead of apple/c).
 - Conjunction hyperedge type, character code: "J" (e.g.: and/J).
-- Modifier hyperedge type can now be applied to predicates.
+- Modifier hyperedge type can now be applied to anything.
 - Searching patterns can now include types, argument roles and other atom parts.
 - Hypergraph.search_count() renamed to Hypergraph.count().
 - corefs_names agent is simplified.

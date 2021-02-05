@@ -723,6 +723,20 @@ class Hyperedge(tuple):
         """
         return self.atom_with_type(atom_type) is not None
 
+    def predicate(self):
+        """Returns predicate if this edge is a relation. Returns itself if it
+        is a predicate. Returns None otherwise.
+        """
+        if self.type()[0] == 'R':
+            if self[0].type()[0] == 'P':
+                return self[0]
+            else:
+                return self[1].predicate()
+        elif self.type()[0] == 'P':
+            return self
+        else:
+            return None
+
     def predicate_atom(self):
         """Returns predicate atom if this edge is a non-atom of type
         relation or predicate. Returns itself if it is an atom of type
@@ -1068,6 +1082,14 @@ class Atom(Hyperedge):
             return self
         else:
             return None
+
+    def predicate(self):
+        """Returns predicate if this edge is a relation. Returns itself if it
+        is a predicate. Returns None otherwise.
+        """
+        if self.type()[0] == 'P':
+            return self
+        return None
 
     def predicate_atom(self):
         """Returns predicate atom if this edge is a non-atom of type

@@ -734,6 +734,40 @@ class TestHyperedge(unittest.TestCase):
         self.assertFalse(hedge('a/Cn').contains_atom_type('Cp'))
         self.assertFalse(hedge('a/Cn').contains_atom_type('P'))
 
+    def test_predicate(self):
+        self.assertEqual(
+            hedge('graphbrain/Cp.s/1').predicate(), None)
+        self.assertEqual(hedge('graphbrain').predicate(), None)
+        self.assertEqual(
+            hedge('(is/Pd.so graphbrain/Cp.s '
+                  'great/C)').predicate().to_str(), 'is/Pd.so')
+        self.assertEqual(
+            hedge('(red/M shoes/Cn.p)').predicate(), None)
+        self.assertEqual(
+            hedge('(before/Tt noon/C)').predicate(), None)
+        self.assertEqual(hedge('(very/M large/M)').predicate(), None)
+        self.assertEqual(hedge('((very/M large/M) '
+                               'shoes/Cn.p)').predicate(), None)
+        self.assertEqual(
+            hedge('(will/M be/Pd.sc)').predicate().to_str(),
+            '(will/M be/Pd.sc)')
+        self.assertEqual(
+            hedge('((will/M be/Pd.sc) john/Cp.s '
+                  'rich/C)').predicate().to_str(), '(will/M be/Pd.sc)')
+        self.assertEqual(
+            hedge('(play/T piano/Cn.s)').predicate(), None)
+        self.assertEqual(
+            hedge('(soon/M ((will/M be/Pd.sc) john/Cp.s '
+                  'rich/C))').predicate().to_str(), '(will/M be/Pd.sc)')
+        self.assertEqual(
+            hedge('(and/J ((will/M be/Pd.sc) john/Cp.s '
+                  'rich/C) famous/C)').predicate().to_str(),
+            '(will/M be/Pd.sc)')
+        self.assertEqual(
+            hedge('(soon/M (and/J ((will/M be/Pd.sc) john/Cp.s '
+                  'rich/C) famous/C))').predicate().to_str(),
+            '(will/M be/Pd.sc)')
+
     def test_predicate_atom(self):
         self.assertEqual(
             hedge('graphbrain/Cp.s/1').predicate_atom(), None)
