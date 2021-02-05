@@ -677,16 +677,8 @@ class Hyperedge(tuple):
 
     def type(self):
         """Returns the type of this edge as a string.
-
-        The type is derived from the type of the
-        connector. This applies recursively, as necessary.
-
-        For example:
-        (is/Pd.so graphbrain/Cp.s great/C) has type 'Rd'
-        (red/M shoes/Cn.p) has type 'Cn'
-        (before/Tt noon/C) has type 'St'
+        Type inference is performed.
         """
-        # TODO: verify correctness and throw errors
         ptype = self[0].type()
         if ptype[0] == 'P':
             outter_type = 'R'
@@ -736,9 +728,15 @@ class Hyperedge(tuple):
         relation or predicate. Returns itself if it is an atom of type
         predicate. Returns None otherwise.
         """
+        ct = self[0].type()[0]
+        if ct == 'J':
+            return self[1].predicate()
         et = self.type()[0]
         if et == 'R':
-            return self[0].predicate()
+            if ct == 'M':
+                return self[1].predicate()
+            else:
+                return self[0].predicate()
         elif et == 'P':
             return self[1].predicate()
         return None

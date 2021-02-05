@@ -1,4 +1,6 @@
-from graphbrain import *
+import re
+
+from graphbrain import UniqueAtom
 
 
 def edge_text(atom2word, edge):
@@ -7,4 +9,8 @@ def edge_text(atom2word, edge):
                  for atom in atoms
                  if UniqueAtom(atom) in atom2word)
     words.sort(key=lambda word: word[1])
-    return ' '.join([word[0] for word in words])
+    text = ' '.join([word[0] for word in words])
+    # remove spaces arounf non alpha-numeric characters
+    # e.g.: "passive-aggressive" instead of "passive - aggressive"
+    text = re.sub(' ([^a-zA-Z\\d\\s]) ', '\\g<1>', text)
+    return text
