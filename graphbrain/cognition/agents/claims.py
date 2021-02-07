@@ -54,20 +54,6 @@ class Claims(Agent):
     def languages(self):
         return {'en'}
 
-    def _is_actor(self, hg, edge):
-        self.actors.add(edge)
-        return True
-        #
-
-        if edge in self.actors:
-            return True
-
-        if hg.exists(('actor/P/.', edge)):
-            self.actors.add(edge)
-            return True
-        else:
-            return False
-
     def _gender(self, actor):
         counts = (('female', self.female_counter[actor]),
                   ('group', self.group_counter[actor]),
@@ -120,9 +106,8 @@ class Claims(Agent):
                         subject = strip_concept(subjects[0])
                         if subject and has_proper_concept(subject):
                             actor = main_coref(hg, subjects[0])
-                            if self._is_actor(hg, actor):
-                                for claim in claims:
-                                    self._process_claim(actor, claim, edge)
+                            for claim in claims:
+                                self._process_claim(actor, claim, edge)
 
     def on_end(self):
         # assign genders
