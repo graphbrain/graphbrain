@@ -2,7 +2,6 @@ import logging
 
 from graphbrain import hedge
 from graphbrain.cognition.agent import Agent
-from graphbrain.meaning.actors import is_actor
 from graphbrain.meaning.concepts import all_concepts
 from graphbrain.meaning.concepts import has_proper_concept
 from graphbrain.meaning.concepts import strip_concept
@@ -66,13 +65,11 @@ class Conflicts(Agent):
                             actor_targ = main_coref(hg, obj)
                             conflict_edge = hedge(
                                 ('conflict/P/.', actor_orig, actor_targ, edge))
-                            if (is_actor(hg, actor_orig) and
-                                    is_actor(hg, actor_targ)):
-                                yield create_op(conflict_edge)
-                                for wedge in self._topics(
-                                        hg, actor_orig, actor_targ, edge):
-                                    yield wedge
-                                self.conflicts += 1
+                            yield create_op(conflict_edge)
+                            for wedge in self._topics(
+                                    hg, actor_orig, actor_targ, edge):
+                                yield wedge
+                            self.conflicts += 1
 
     def report(self):
         return 'conflict edges: {}; conflict-topic pairs: {}'.format(
