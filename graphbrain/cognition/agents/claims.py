@@ -19,7 +19,7 @@ def _subject_preposition(claim):
     subjects = claim.edges_with_argrole('s') + claim.edges_with_argrole('p')
     if len(subjects) == 1:
         subject = strip_concept(subjects[0])
-        if subject is not None and subject.type() == 'Ci':
+        if subject: # is not None and subject.type() == 'Ci':
             atom = subject.atom_with_type('C')
             return atom.root()
     return None
@@ -61,6 +61,9 @@ class Claims(Agent):
                   ('non-human', self.non_human_counter[actor]))
         counts = sorted(counts, key=lambda x: x[1], reverse=True)
         if counts[0][1] > 0 and counts[0][1] > counts[1][1]:
+            print('xxx')
+            print(actor)
+            print(counts[0][0])
             return counts[0][0]
         else:
             return None
@@ -78,14 +81,17 @@ class Claims(Agent):
         # gender detection
         prep = _subject_preposition(claim)
         if prep:
-            print(prep)
             if prep == 'she':
+                # print('she {}'.format(actor))
                 self.female_counter[actor] += 1
             elif prep == 'they':
+                # print('they {}'.format(actor))
                 self.group_counter[actor] += 1
             elif prep == 'he':
+                # print('he {}'.format(actor))
                 self.male_counter[actor] += 1
             elif prep == 'it':
+                # print('it {}'.format(actor))
                 self.non_human_counter[actor] += 1
 
         # record claim
@@ -105,7 +111,7 @@ class Claims(Agent):
                     if len(subjects) == 1 and len(claims) >= 1:
                         subject = strip_concept(subjects[0])
                         if subject and has_proper_concept(subject):
-                            actor = main_coref(hg, subjects[0])
+                            actor = main_coref(hg, subject)
                             for claim in claims:
                                 self._process_claim(actor, claim, edge)
 
@@ -121,6 +127,7 @@ class Claims(Agent):
         with progressbar.ProgressBar(max_value=len(self.actors)) as bar:
             for actor in self.actors:
                 gender = self._gender(actor)
+                print(gender)
                 if gender == 'female':
                     self.female.add(actor)
                 elif gender == 'group':
