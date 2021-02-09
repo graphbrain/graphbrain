@@ -61,9 +61,6 @@ class Claims(Agent):
                   ('non-human', self.non_human_counter[actor]))
         counts = sorted(counts, key=lambda x: x[1], reverse=True)
         if counts[0][1] > 0 and counts[0][1] > counts[1][1]:
-            print('xxx')
-            print(actor)
-            print(counts[0][0])
             return counts[0][0]
         else:
             return None
@@ -112,6 +109,7 @@ class Claims(Agent):
                         subject = strip_concept(subjects[0])
                         if subject and has_proper_concept(subject):
                             actor = main_coref(hg, subject)
+                            self.actors.add(actor)
                             for claim in claims:
                                 self._process_claim(actor, claim, edge)
 
@@ -127,7 +125,6 @@ class Claims(Agent):
         with progressbar.ProgressBar(max_value=len(self.actors)) as bar:
             for actor in self.actors:
                 gender = self._gender(actor)
-                print(gender)
                 if gender == 'female':
                     self.female.add(actor)
                 elif gender == 'group':
