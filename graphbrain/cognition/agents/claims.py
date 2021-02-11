@@ -19,7 +19,7 @@ def _subject_preposition(claim):
     subjects = claim.edges_with_argrole('s') + claim.edges_with_argrole('p')
     if len(subjects) == 1:
         subject = strip_concept(subjects[0])
-        if subject: # is not None and subject.type() == 'Ci':
+        if subject:  # is not None and subject.type() == 'Ci':
             atom = subject.atom_with_type('C')
             return atom.root()
     return None

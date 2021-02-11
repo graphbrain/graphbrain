@@ -1,22 +1,23 @@
 import logging
-from itertools import combinations
+import itertools
 
 import progressbar
 from igraph import Graph
 from unidecode import unidecode
 
-from graphbrain import hedge
+from graphbrain import hedge, build_atom
 from graphbrain.cognition.agent import Agent
+from graphbrain.meaning.concepts import has_proper_concept
 from graphbrain.meaning.corefs import make_corefs_ops
 
 
 def clean_edge(edge):
     if not edge.is_atom():
-        return edge
-    catom = edge.root()
-    catom = catom.replace('_', '')
-    catom = unidecode(catom)
-    return hedge(catom)
+        return hedge([clean_edge(subedge) for subedge in edge])
+    root = edge.label()
+    root = unidecode(root)
+    root = root.replace('_', '').replace('.', '')
+    return build_atom(root, *edge.parts()[1:])
 
 
 def belongs_to_clique(edge, clique):
@@ -33,6 +34,45 @@ def clique_number(edge, cliques):
     return -1
 
 
+def edges_with_seed(hg, seed):
+    edges = []
+    for edge in set(hg.edges_with_edges([seed])):
+        conn = edge[0]
+        if conn.type()[0] == 'B' and conn.atom().root() == '+':
+            mc = edge.main_concepts()
+            if len(mc) == 1 and mc[0] == seed and hg.degree(edge) > 3:
+                edges.append(edge)
+                edges += edges_with_seed(hg, edge)
+    return edges
+
+
+def infer_concepts(edge):
+    concepts = set()
+    if edge.type()[0] == 'C':
+        concepts.add(edge)
+    if (not edge.is_atom() and
+            edge[0].type()[0] == 'B' and
+            edge[0].atom().root() == '+'):
+        mc = edge.main_concepts()
+        if len(mc) == 1:
+            concepts.add(mc[0])
+        concept_sets = [infer_concepts(subedge) for subedge in edge[1:]]
+        for product in itertools.product(*concept_sets):
+            concepts.add(hedge((edge[0],) + product))
+    return concepts
+
+
+def extract_concepts(edge):
+    concepts = set()
+    if edge.type()[0] == 'C':
+        concepts |= infer_concepts(edge)
+    if not edge.is_atom():
+        for item in edge:
+            for concept in extract_concepts(item):
+                concepts |= infer_concepts(concept)
+    return concepts
+
+
 class CorefsNames(Agent):
     def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
         super().__init__(
@@ -40,32 +80,24 @@ class CorefsNames(Agent):
         self.corefs = 0
         self.seeds = None
 
-    def _corefs_from_seed(self, seed):
+    def corefs_from_seed(self, seed):
         hg = self.system.get_hg(self)
 
-        concepts = []
-
-        for edge in set(hg.edges_with_edges([seed])):
-            conn = edge[0]
-            if (conn.is_atom() and edge.type()[0] == 'C' and
-                    edge.connector_type() == 'B' and conn.root() == '+' and
-                    len(edge) > 2):
-                mc = edge.main_concepts()
-                if len(mc) == 1 and mc[0] == seed:
-                    concepts.append(edge)
+        concepts = edges_with_seed(hg, seed)
 
         subconcepts = set()
         graph_edges = set()
         for concept in concepts:
             edge_concepts = set()
-            for item in concept[1:]:
+            for item in extract_concepts(concept):
                 if item != seed:
                     edge_concepts.add(clean_edge(item))
-                    subconcepts |= edge_concepts
-                    pairs = set(combinations(edge_concepts, 2))
-                    graph_edges |= pairs
+            subconcepts |= edge_concepts
+            pairs = set(itertools.combinations(edge_concepts, 2))
+            graph_edges |= pairs
 
         subconcepts = tuple(subconcepts)
+
         graph_edges = tuple((subconcepts.index(e[0]), subconcepts.index(e[1]))
                             for e in graph_edges)
 
@@ -95,11 +127,10 @@ class CorefsNames(Agent):
         if not edge.is_atom():
             conn = edge[0]
             ct = edge.connector_type()
-            if ct[0] == 'B' and conn.is_atom() and conn.root() == '+':
+            if ct[0] == 'B' and conn.atom().root() == '+':
                 if len(edge) > 2:
                     concepts = edge.main_concepts()
-                    if (len(concepts) == 1 and
-                            concepts[0].type()[:2] == 'Cp'):
+                    if len(concepts) == 1 and has_proper_concept(concepts[0]):
                         self.seeds.add(concepts[0])
 
     def report(self):
@@ -112,7 +143,7 @@ class CorefsNames(Agent):
         self.logger.info('processing seeds')
         with progressbar.ProgressBar(max_value=len(self.seeds)) as bar:
             for seed in self.seeds:
-                crefs = self._corefs_from_seed(seed)
+                crefs = self.corefs_from_seed(seed)
 
                 # check if the seed should be assigned to a synonym set
                 if len(crefs) > 0:
@@ -138,20 +169,23 @@ class CorefsNames(Agent):
                         self.logger.debug('seed: {}'.format(seed))
                         self.logger.debug('crefs: {}'.format(crefs))
                         self.logger.debug('max_ratio: {}'.format(max_ratio))
-                        self.logger.debug('total coref dd: {}'.format(total_deg))
+                        self.logger.debug('total coref dd: {}'.format(
+                            total_deg))
                         self.logger.debug('seed dd: {}'.format(dd))
 
                         # add seed if coreference set is sufficiently dominant
                         if max_ratio >= .7:
                             crefs[best_pos].add(seed)
+                            self.logger.debug('seed added to cref: {}'.format(
+                                crefs[best_pos]))
 
                     for cref in crefs:
-                        for edge1, edge2 in combinations(cref, 2):
-                            self.logger.debug(
-                                'are corefs: {} | {}'.format(edge1.to_str(),
-                                                             edge2.to_str()))
+                        for edge1, edge2 in itertools.combinations(cref, 2):
+                            self.logger.debug('are corefs: {} | {}'.format(
+                                edge1.to_str(), edge2.to_str()))
                             self.corefs += 1
                             for op in make_corefs_ops(hg, edge1, edge2):
                                 yield op
+
                 i += 1
                 bar.update(i)
