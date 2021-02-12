@@ -27,22 +27,42 @@ def belongs_to_clique(edge, clique):
         return all([clean_edge(x) in clique for x in edge[1:]])
 
 
-def clique_number(edge, cliques):
+def clique_size(clique, concepts):
+    return len(list(x for x in clique if x in concepts))
+    
+    
+def clique_number(edge, cliques, concepts):
+    best_clique_number = -1
+    best_clique_size = -1
+    
     for i, clique in enumerate(cliques):
         if belongs_to_clique(edge, clique):
-            return i
-    return -1
+            if clique_size(clique, concepts) > best_clique_size:
+                best_clique_size = clique_size(clique, concepts)
+                best_clique_number = i
+    return best_clique_number
+
+
+def main_concepts(edge):
+    if not edge.type()[0] == 'C':
+        return []
+    if edge.is_atom():
+        return [edge]
+    conn = edge[0]
+    if conn.type()[0] == 'B':
+        return edge.main_concepts()
+    if conn.type()[0] == 'M':
+        return main_concepts(edge[1])
+    return []
 
 
 def edges_with_seed(hg, seed):
     edges = []
     for edge in set(hg.edges_with_edges([seed])):
-        conn = edge[0]
-        if conn.type()[0] == 'B' and conn.atom().root() == '+':
-            mc = edge.main_concepts()
-            if len(mc) == 1 and mc[0] == seed and hg.degree(edge) > 3:
-                edges.append(edge)
-                edges += edges_with_seed(hg, edge)
+        mc = main_concepts(edge)
+        if len(mc) == 1 and mc[0] == seed and hg.degree(edge) >= 5:
+            edges.append(edge)
+            edges += edges_with_seed(hg, edge)
     return edges
 
 
@@ -50,10 +70,8 @@ def infer_concepts(edge):
     concepts = set()
     if edge.type()[0] == 'C':
         concepts.add(edge)
-    if (not edge.is_atom() and
-            edge[0].type()[0] == 'B' and
-            edge[0].atom().root() == '+'):
-        mc = edge.main_concepts()
+    if not edge.is_atom():
+        mc = main_concepts(edge)
         if len(mc) == 1:
             concepts.add(mc[0])
         concept_sets = [infer_concepts(subedge) for subedge in edge[1:]]
