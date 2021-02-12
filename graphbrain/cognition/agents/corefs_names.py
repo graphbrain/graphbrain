@@ -29,12 +29,12 @@ def belongs_to_clique(edge, clique):
 
 def clique_size(clique, concepts):
     return len(list(x for x in clique if x in concepts))
-    
-    
+
+
 def clique_number(edge, cliques, concepts):
     best_clique_number = -1
     best_clique_size = -1
-    
+
     for i, clique in enumerate(cliques):
         if belongs_to_clique(edge, clique):
             if clique_size(clique, concepts) > best_clique_size:
@@ -131,7 +131,7 @@ class CorefsNames(Agent):
 
         coref_sets = tuple(set() for _ in cliques)
         for concept in concepts:
-            cliquen = clique_number(concept, cliques)
+            cliquen = clique_number(concept, cliques, concepts)
             if cliquen >= 0:
                 coref_sets[cliquen].add(concept)
 
