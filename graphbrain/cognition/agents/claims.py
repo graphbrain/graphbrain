@@ -111,7 +111,11 @@ class Claims(Agent):
                             actor = main_coref(hg, subject)
                             self.actors.add(actor)
                             for claim in claims:
-                                self._process_claim(actor, claim, edge)
+                                # if specificatin, claim is inside
+                                if claim.type()[0] == 'S':
+                                    self._process_claim(actor, claim[1], edge)
+                                else:
+                                    self._process_claim(actor, claim, edge)
 
     def on_end(self):
         # assign genders
