@@ -224,15 +224,12 @@ class System(object):
     def parse_results2ops(self, parse_results, sequence=None, pos=-1):
         for parse in parse_results['parses']:
             if self.corefs == 'resolve':
-                print('#1')
                 main_edge = parse['main_edge']
                 resolved_edge = parse['resolved_corefs']
             elif self.corefs == 'replace':
-                print('#2')
                 main_edge = parse['resolved_corefs']
                 resolved_edge = None
             else:
-                print('#3')
                 main_edge = parse['main_edge']
                 resolved_edge = None
 
@@ -250,7 +247,6 @@ class System(object):
                 pos += 1
 
                 if self.corefs == 'resolve':
-                    print('#4')
                     yield create_op(resolved_edge, attributes=attr)
                     coref_res_edge = hedge(
                         (const.coref_res_pred, main_edge, resolved_edge))
