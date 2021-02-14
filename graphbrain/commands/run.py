@@ -11,7 +11,8 @@ def run(args):
                   infile=args.infile,
                   indir=args.indir,
                   url=args.url,
-                  sequence=args.sequence)
+                  sequence=args.sequence,
+                  corefs=args.corefs)
     elif args.system:
         run_system(args.system,
                    lang=args.lang,
@@ -19,6 +20,7 @@ def run(args):
                    infile=args.infile,
                    indir=args.indir,
                    url=args.url,
-                   sequence=args.sequence)
+                   sequence=args.sequence,
+                   corefs=args.corefs)
     else:
         raise RuntimeError('Either agent or system must be specified.')

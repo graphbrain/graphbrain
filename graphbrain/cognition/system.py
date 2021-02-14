@@ -13,9 +13,11 @@ from graphbrain.parsers import create_parser
 
 
 def run_agent(agent, lang=None, hg=None, infile=None, indir=None, url=None,
-              sequence=None, progress_bar=True, logging_level=logging.INFO):
+              sequence=None, progress_bar=True, corefs='resolve',
+              logging_level=logging.INFO):
     system = System(lang=lang, hg=hg, infile=infile, indir=indir, url=url,
-                    sequence=sequence, logging_level=logging_level)
+                    sequence=sequence, corefs=corefs,
+                    logging_level=logging_level)
     if isinstance(agent, Agent):
         agent_obj = agent
     else:
@@ -26,13 +28,13 @@ def run_agent(agent, lang=None, hg=None, infile=None, indir=None, url=None,
 
 
 def load_system(system_file, lang=None, hg=None, infile=None, indir=None,
-                url=None, sequence=None, progress_bar=True,
+                url=None, sequence=None, progress_bar=True, corefs='resolve',
                 logging_level=logging.INFO):
     with open(system_file, 'r') as f:
         json_str = f.read()
     system_json = json.loads(json_str)
     system = System(name=system_file, lang=lang, hg=hg, infile=infile,
-                    indir=indir, url=url, sequence=sequence,
+                    indir=indir, url=url, sequence=sequence, corefs=corefs,
                     logging_level=logging_level)
     for agent_name in system_json:
         module_str = system_json[agent_name]['agent']
@@ -53,11 +55,11 @@ def load_system(system_file, lang=None, hg=None, infile=None, indir=None,
 
 
 def run_system(system_file, lang=None, hg=None, infile=None, indir=None,
-               url=None, sequence=None, progress_bar=True,
+               url=None, sequence=None, progress_bar=True,  corefs='resolve',
                logging_level=logging.INFO):
     system = load_system(system_file, lang=lang, hg=hg, infile=infile,
                          indir=indir, url=url, sequence=sequence,
-                         progress_bar=progress_bar,
+                         progress_bar=progress_bar,  corefs=corefs,
                          logging_level=logging_level)
     system.run()
 
@@ -79,14 +81,14 @@ def create_agent(agent_module_str, name=None,
 
 
 def processor(x, lang=None, hg=None, infile=None, indir=None, url=None,
-              sequence=None):
+              sequence=None, corefs='resolve'):
     if type(x) == str:
         if x[-4:] == '.sys':
             return load_system(x, lang=lang, hg=hg, infile=infile, indir=indir,
-                               url=url, sequence=sequence)
+                               url=url, sequence=sequence, corefs=corefs)
         else:
             system = System(lang=lang, hg=hg, infile=infile, indir=indir,
-                            url=url, sequence=sequence)
+                            url=url, sequence=sequence, corefs=corefs)
             agent = create_agent(x, progress_bar=False)
             system.add(agent)
             return system
