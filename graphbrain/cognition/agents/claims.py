@@ -16,10 +16,10 @@ CLAIM_PRED_LEMMAS = {'say', 'claim', 'says', 'claims', 'said', 'claimed'}
 
 
 def _subject_preposition(claim):
-    subjects = claim.edges_with_argrole('s') + claim.edges_with_argrole('p')
+    subjects = claim.edges_with_argrole('s')
     if len(subjects) == 1:
         subject = strip_concept(subjects[0])
-        if subject:  # is not None and subject.type() == 'Ci':
+        if subject:
             atom = subject.atom_with_type('C')
             return atom.root()
     return None
@@ -77,7 +77,7 @@ class Claims(Agent):
     def _process_claim(self, actor, claim, edge):
         # gender detection
         prep = _subject_preposition(claim)
-        if prep:
+        if prep and set(edge[0].argroles()) == {'s', 'r'}:
             if prep == 'she':
                 # print('she {}'.format(actor))
                 self.female_counter[actor] += 1
