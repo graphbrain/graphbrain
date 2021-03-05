@@ -1037,6 +1037,93 @@ class TestHyperedge(unittest.TestCase):
                                  'PROP': hedge('(sehr/M schön/C)')})
         self.assertEqual(nedge, hedge('(is/P zimbabwe/C (sehr/M schön/C))'))
 
+    def test_check_correctness_ok(self):
+        edge = hedge('(red/M shoes/C)')
+        output = edge.check_correctness()
+        self.assertEqual(output, {})
+
+        edge = hedge('(+/B john/C smith/C)')
+        output = edge.check_correctness()
+        self.assertEqual(output, {})
+
+        edge = hedge('(in/T 1976/C)')
+        output = edge.check_correctness()
+        self.assertEqual(output, {})
+
+        edge = hedge('(happened/P it/C before/C (in/T 1976/C))')
+        output = edge.check_correctness()
+        self.assertEqual(output, {})
+
+        edge = hedge('(and/J red/C green/C blue/C)')
+        output = edge.check_correctness()
+        self.assertEqual(output, {})
+
+    def test_check_correctness_wrong(self):
+        edge = hedge('x/G')
+        output = edge.check_correctness()
+        self.assertTrue(edge in output)
+
+        edge = hedge('(of/C capital/C mars/C)')
+        output = edge.check_correctness()
+        self.assertTrue(edge in output)
+
+        edge = hedge('(+/B john/C smith/C iii/C)')
+        output = edge.check_correctness()
+        self.assertTrue(edge in output)
+
+        edge = hedge('(of/B capital/C red/M)')
+        output = edge.check_correctness()
+        self.assertTrue(edge in output)
+
+        edge = hedge('(in/T 1976/C 1977/C)')
+        output = edge.check_correctness()
+        self.assertTrue(edge in output)
+
+        edge = hedge('(in/T red/M)')
+        output = edge.check_correctness()
+        self.assertTrue(edge in output)
+
+        edge = hedge('(is/P red/M)')
+        output = edge.check_correctness()
+        self.assertTrue(edge in output)
+
+        edge = hedge('(and/J one/C)')
+        output = edge.check_correctness()
+        self.assertTrue(edge in output)
+
+    def test_check_correctness_wrong_deep(self):
+        edge = hedge('(:/J x/C x/G)')
+        output = edge.check_correctness()
+        self.assertTrue(hedge('x/G') in output)
+
+        edge = hedge('(:/J x/C (of/C capital/C mars/C))')
+        output = edge.check_correctness()
+        self.assertTrue(hedge('(of/C capital/C mars/C)') in output)
+
+        edge = hedge('(:/J x/C (+/B john/C smith/C iii/C))')
+        output = edge.check_correctness()
+        self.assertTrue(hedge('(+/B john/C smith/C iii/C)') in output)
+
+        edge = hedge('(:/J x/C (of/B capital/C red/M))')
+        output = edge.check_correctness()
+        self.assertTrue(hedge('(of/B capital/C red/M)') in output)
+
+        edge = hedge('(:/J x/C (in/T 1976/C 1977/C))')
+        output = edge.check_correctness()
+        self.assertTrue(hedge('(in/T 1976/C 1977/C)') in output)
+
+        edge = hedge('(:/J x/C (in/T red/M))')
+        output = edge.check_correctness()
+        self.assertTrue(hedge('(in/T red/M)') in output)
+
+        edge = hedge('(:/J x/C (is/P red/M))')
+        output = edge.check_correctness()
+        self.assertTrue(hedge('(is/P red/M)') in output)
+
+        edge = hedge('(:/J x/C (and/J one/C))')
+        output = edge.check_correctness()
+        self.assertTrue(hedge('(and/J one/C)') in output)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -870,6 +870,59 @@ class Hyperedge(tuple):
     def apply_vars(self, vars):
         return hedge([edge.apply_vars(vars) for edge in self])
 
+    def check_correctness(self):
+        output = {}
+        errors = []
+
+        ct = self[0].type()[0]
+        # check if connector has valid type
+        if ct not in {'P', 'M', 'B', 'T', 'J'}:
+            errors.append('connector has incorrect type: {}'.format(ct))
+        # check if modifier structure is correct
+        if ct == 'M':
+            if len(self) != 2:
+                errors.append('modifiers can only have one argument')
+        # check if builder structure is correct
+        elif ct == 'B':
+            if len(self) != 3:
+                errors.append('builders can only have two arguments')
+            for arg in self[1:]:
+                at = arg.type()[0]
+                if at != 'C':
+                    e = 'builder argument {} has incorrect type: {}'.format(
+                        arg.to_str(), at)
+                    errors.append(e)
+        # check if trigger structure is correct
+        elif ct == 'T':
+            if len(self) != 2:
+                errors.append('triggers can only have one arguments')
+            for arg in self[1:]:
+                at = arg.type()[0]
+                if at not in {'C', 'R'}:
+                    e = 'trigger argument {} has incorrect type: {}'.format(
+                        arg.to_str(), at)
+                    errors.append(e)
+        # check if predicate structure is correct
+        elif ct == 'P':
+            for arg in self[1:]:
+                at = arg.type()[0]
+                if at not in {'C', 'R', 'S'}:
+                    e = 'predicate argument {} has incorrect type: {}'.format(
+                        arg.to_str(), at)
+                    errors.append(e)
+        # check if conjunction structure is correct
+        elif ct == 'J':
+            if len(self) < 3:
+                errors.append('conjunctions must have at least two arguments')
+
+        if len(errors) > 0:
+            output[self] = errors
+
+        for subedge in self:
+            output.update(subedge.check_correctness())
+
+        return output
+
     def __add__(self, other):
         if type(other) in {tuple, list}:
             return Hyperedge(super(Hyperedge, self).__add__(other))
@@ -1184,6 +1237,19 @@ class Atom(Hyperedge):
             if len(varname) > 0 and varname in vars:
                 return vars[varname]
         return self
+
+    def check_correctness(self):
+        output = {}
+        errors = []
+
+        at = self.type()[0]
+        if at not in {'C', 'P', 'M', 'B', 'T', 'J'}:
+            errors.append('{} is not a valid atom type'.format(at))
+
+        if len(errors) > 0:
+            output[self] = errors
+
+        return output
 
     def __add__(self, other):
         if type(other) in {tuple, list}:
