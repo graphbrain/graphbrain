@@ -118,7 +118,7 @@ def _is_second_concept_better(edge1, edge2):
 
 class AlphaBeta(Parser):
     def __init__(self, model_name, lemmas=False, resolve_corefs=False,
-                 beta='repair'):
+                 beta='repair', normalize=True, post_process=True):
         super().__init__(lemmas=lemmas, resolve_corefs=resolve_corefs)
         self.atom2token = None
         self.orig_atom = None
@@ -142,6 +142,8 @@ class AlphaBeta(Parser):
         else:
             raise RuntimeError('unkown beta stage: {}'.format(beta))
         self.beta = beta
+        self.normalize = normalize
+        self.post_process = post_process
 
     # ========================================================================
     # Language-specific abstract methods, to be implemented in derived classes
@@ -184,8 +186,7 @@ class AlphaBeta(Parser):
     # Language-agnostic methods
     # =========================
 
-    def parse_spacy_sentence(self, sent, atom_sequence=None,
-                             post_process=True):
+    def parse_spacy_sentence(self, sent, atom_sequence=None):
         try:
             self.extra_edges = set()
 
@@ -205,7 +206,9 @@ class AlphaBeta(Parser):
                 main_edge = self._apply_arg_roles(main_edge)
                 if self.beta == 'repair':
                     main_edge = self._repair(main_edge)
-                if post_process:
+                if self.normalize:
+                    main_edge = self._normalize(main_edge)
+                if self.post_process:
                     main_edge = self._post_process(main_edge)
                 atom2word = self._generate_atom2word(main_edge)
             else:
@@ -371,6 +374,19 @@ class AlphaBeta(Parser):
                             self.atom2token[utrigger_atom]
                     self.orig_atom[unew_trigger] = utrigger_atom
                     edge = edge.replace_atom(builder_atom, new_builder)
+
+        return edge
+
+    def _normalize(self, edge):
+        if not edge.is_atom():
+            edge = hedge([self._normalize(subedge) for subedge in edge])
+
+            # Move modifier to internal connector if it is applied to
+            # relations, specifiers or conjunctions
+            if edge.connector_type()[0] == 'M' and not edge[1].is_atom():
+                innner_conn = edge[1].connector_type()[0]
+                if innner_conn in {'P', 'T', 'J'}:
+                    return hedge(((edge[0], edge[1][0]),) + edge[1][1:])
 
         return edge
 
