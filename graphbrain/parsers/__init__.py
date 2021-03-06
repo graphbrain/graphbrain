@@ -1,5 +1,4 @@
 from .nlp import print_tree
-from .parser_de import ParserDE
 from .parser_en import ParserEN
 from .text import edge_text
 
@@ -19,7 +18,5 @@ def create_parser(name, lemmas=False, resolve_corefs=False):
     """
     if name == 'en':
         return ParserEN(lemmas=lemmas, resolve_corefs=resolve_corefs)
-    if name == 'de':
-        return ParserDE(lemmas=lemmas, resolve_corefs=resolve_corefs)
     else:
         raise RuntimeError('Unknown parser: {}'.format(name))
