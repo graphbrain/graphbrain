@@ -39,9 +39,9 @@ _p3 = {"it/Ci/en", "she/Ci/en", "they/Ci/en", "he/Ci/en", "them/Ci/en",
 
 
 class ParserEN(AlphaBeta):
-    def __init__(self, lemmas=False, resolve_corefs=False):
+    def __init__(self, lemmas=False, resolve_corefs=False, beta='repair'):
         super().__init__('en_core_web_lg', lemmas=lemmas,
-                         resolve_corefs=resolve_corefs)
+                         resolve_corefs=resolve_corefs, beta=beta)
         self.lang = 'en'
         cases_str = pkg_resources.resource_string(
             'graphbrain', 'data/atoms-en.csv').decode('utf-8')

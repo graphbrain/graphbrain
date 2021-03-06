@@ -24,7 +24,7 @@ class Rule:
         self._branches = 0
 
 
-rules = [
+strict_rules = [
     Rule('C', {'C'}, 2, '+/B/.'),
     Rule('M', {'C', 'R', 'M', 'S', 'T', 'P', 'B', 'J'}, 2),
     Rule('B', {'C'}, 3),
@@ -35,6 +35,20 @@ rules = [
     Rule('P', {'C', 'R', 'S'}, 3),
     Rule('P', {'C', 'R', 'S'}, 2),
     Rule('J', {'C', 'R', 'M', 'S', 'T', 'P', 'B', 'J'}, 3)]
+
+
+repair_rules = [
+    Rule('C', {'C'}, 2, '+/B/.'),
+    Rule('M', {'C', 'R', 'M', 'S', 'T', 'P', 'B', 'J'}, 2),
+    Rule('B', {'C', 'R'}, 3),
+    Rule('T', {'C', 'R'}, 2),
+    Rule('P', {'C', 'R', 'S'}, 6),
+    Rule('P', {'C', 'R', 'S'}, 5),
+    Rule('P', {'C', 'R', 'S'}, 4),
+    Rule('P', {'C', 'R', 'S'}, 3),
+    Rule('P', {'C', 'R', 'S'}, 2),
+    Rule('J', {'C', 'R', 'M', 'S', 'T', 'P', 'B', 'J'}, 3),
+    Rule('J', {'C', 'R', 'M', 'S', 'T', 'P', 'B', 'J'}, 2)]
 
 
 def _apply_rule(rule, sentence, pos):
@@ -103,7 +117,8 @@ def _is_second_concept_better(edge1, edge2):
 
 
 class AlphaBeta(Parser):
-    def __init__(self, model_name, lemmas=False, resolve_corefs=False):
+    def __init__(self, model_name, lemmas=False, resolve_corefs=False,
+                 beta='repair'):
         super().__init__(lemmas=lemmas, resolve_corefs=resolve_corefs)
         self.atom2token = None
         self.orig_atom = None
@@ -120,6 +135,13 @@ class AlphaBeta(Parser):
         if resolve_corefs:
             coref = neuralcoref.NeuralCoref(self.nlp.vocab)
             self.nlp.add_pipe(coref, name='neuralcoref')
+        if beta == 'strict':
+            self.rules = strict_rules
+        elif beta == 'repair':
+            self.rules = repair_rules
+        else:
+            raise RuntimeError('unkown beta stage: {}'.format(beta))
+        self.beta = beta
 
     # ========================================================================
     # Language-specific abstract methods, to be implemented in derived classes
@@ -180,9 +202,11 @@ class AlphaBeta(Parser):
                 # break
 
             if main_edge:
+                main_edge = self._apply_arg_roles(main_edge)
+                if self.beta == 'repair':
+                    main_edge = self._repair(main_edge)
                 if post_process:
                     main_edge = self._post_process(main_edge)
-                main_edge = self._apply_arg_roles(main_edge)
                 atom2word = self._generate_atom2word(main_edge)
             else:
                 atom2word = {}
@@ -312,6 +336,43 @@ class AlphaBeta(Parser):
             et = self._modifier_type_and_subtype(token)
 
         return build_atom(text, et, self.lang)
+
+    def _repair(self, edge):
+        if not edge.is_atom():
+            edge = hedge([self._repair(subedge) for subedge in edge])
+
+            if edge.connector_type()[0] == 'B':
+                if edge[2].type()[0] == 'R':
+                    builder_atom = edge[0].atom_with_type('B')
+                    builder_parts = builder_atom.parts()
+                    newparts = (builder_parts[0], 'J' + builder_parts[1][1:])
+                    if len(builder_parts) > 2:
+                        newparts += tuple(builder_parts[2:])
+                    new_builder = hedge('/'.join(newparts))
+                    utrigger_atom = UniqueAtom(builder_atom)
+                    unew_trigger = UniqueAtom(new_builder)
+                    if utrigger_atom in self.atom2token:
+                        self.atom2token[unew_trigger] =\
+                            self.atom2token[utrigger_atom]
+                    self.orig_atom[unew_trigger] = utrigger_atom
+                    edge = edge.replace_atom(builder_atom, new_builder)
+            elif edge.connector_type()[0] == 'J':
+                if len(edge) == 2:
+                    builder_atom = edge[0].atom_with_type('J')
+                    builder_parts = builder_atom.parts()
+                    newparts = (builder_parts[0], 'Mj')
+                    if len(builder_parts) > 2:
+                        newparts += tuple(builder_parts[2:])
+                    new_builder = hedge('/'.join(newparts))
+                    utrigger_atom = UniqueAtom(builder_atom)
+                    unew_trigger = UniqueAtom(new_builder)
+                    if utrigger_atom in self.atom2token:
+                        self.atom2token[unew_trigger] =\
+                            self.atom2token[utrigger_atom]
+                    self.orig_atom[unew_trigger] = utrigger_atom
+                    edge = edge.replace_atom(builder_atom, new_builder)
+
+        return edge
 
     def _is_temporal(self, edge):
         if edge.is_atom():
@@ -537,7 +598,7 @@ class AlphaBeta(Parser):
         while True:
             action = None
             best_score = -999999999
-            for rule_number, rule in enumerate(rules):
+            for rule_number, rule in enumerate(self.rules):
                 window_start = rule.size - 1
                 for pos in range(window_start, len(sequence)):
                     new_edge = _apply_rule(rule, sequence, pos)
