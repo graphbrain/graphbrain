@@ -77,8 +77,6 @@ if USE_CYTHON:
                   ['graphbrain/parsers/alpha_beta.pyx']),
         Extension('graphbrain.parsers.parser_en',
                   ['graphbrain/parsers/parser_en.pyx']),
-        Extension('graphbrain.parsers.parser_de',
-                  ['graphbrain/parsers/parser_de.pyx']),
         Extension('graphbrain.neuralcoref.neuralcoref',
                   ['graphbrain/neuralcoref/neuralcoref.pyx'],
                   language='c++',
@@ -101,8 +99,6 @@ else:
                   ['graphbrain/parsers/alpha_beta.c']),
         Extension('graphbrain.parsers.parser_en',
                   ['graphbrain/parsers/parser_en.c']),
-        Extension('graphbrain.parsers.parser_de',
-                  ['graphbrain/parsers/parser_de.c']),
         Extension('graphbrain.neuralcoref.neuralcoref',
                   ['graphbrain/neuralcoref/neuralcoref.cpp'],
                   language='c++', include_dirs=['include'])
