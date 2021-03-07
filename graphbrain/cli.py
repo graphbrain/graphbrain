@@ -30,7 +30,7 @@ def wrapper(fun, command=False, text=None):
     parser.add_argument('--corefs', type=str,
                         help='parser coreference resolution: '
                              '"resolve" (default), "replace" or "no")',
-                        default='resolve')
+                        default='no')
     parser.add_argument('--fields', type=str, help='field names', default=None)
     parser.add_argument('--hg', type=str,
                         help='hypergraph db', default='gb.hg')
