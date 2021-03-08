@@ -479,7 +479,8 @@ def hedge(source):
         edge_str = source.strip().replace('\n', ' ')
         edge_inner_str = edge_str
 
-        if _edge_str_has_outer_parens(edge_str):
+        parens = _edge_str_has_outer_parens(edge_str)
+        if parens:
             edge_inner_str = edge_str[1:-1]
 
         tokens = split_edge_str(edge_inner_str)
@@ -489,7 +490,7 @@ def hedge(source):
         if len(edges) > 1:
             return Hyperedge(edges)
         elif len(edges) > 0:
-            return Atom(edges[0])
+            return Atom(edges[0], parens)
         else:
             return None
     elif type(source) in {Hyperedge, Atom, UniqueAtom}:
@@ -940,8 +941,10 @@ class Hyperedge(tuple):
 
 class Atom(Hyperedge):
     """Atomic hyperedge."""
-    def __new__(cls, edge):
-        return super(Hyperedge, cls).__new__(cls, tuple(edge))
+    def __new__(cls, edge, parens=False):
+        atom = super(Hyperedge, cls).__new__(cls, tuple(edge))
+        atom.parens = parens
+        return atom
 
     def is_atom(self):
         """Checks if edge is an atom."""
@@ -971,9 +974,13 @@ class Atom(Hyperedge):
         the string representation.
         """
         if roots_only:
-            return self.root()
+            atom_str = self.root()
         else:
-            return self[0]
+            atom_str = self[0]
+        if self.parens:
+            return '({})'.format(atom_str)
+        else:
+            return atom_str
 
     def label(self):
         """Generate human-readable label from entity."""

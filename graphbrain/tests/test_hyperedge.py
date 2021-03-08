@@ -15,17 +15,22 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(hedge('((is my) brain/1 (super great/1))').to_str(),
                          '((is my) brain/1 (super great/1))')
         self.assertEqual(hedge('.'), ('.',))
+        self.assertEqual(hedge('(VAR/C)').to_str(), '(VAR/C)')
+        self.assertEqual(hedge('((is my) (brain/1) (super great/1))').to_str(),
+                         '((is my) (brain/1) (super great/1))')
 
     def test_is_atom(self):
         self.assertTrue(hedge('a').is_atom())
         self.assertTrue(hedge('graphbrain/C').is_atom())
         self.assertTrue(hedge('graphbrain/Cn.p/1').is_atom())
+        self.assertTrue(hedge('(X/C)').is_atom())
         self.assertFalse(hedge('(is/Pd.sc graphbrain/Cp.s great/C)').is_atom())
 
     def test_atom_parts(self):
         self.assertEqual(hedge('graphbrain/C').parts(), ['graphbrain', 'C'])
         self.assertEqual(hedge('graphbrain').parts(), ['graphbrain'])
         self.assertEqual(hedge('go/P.so/1').parts(), ['go', 'P.so', '1'])
+        self.assertEqual(hedge('(X/P.so/1)').parts(), ['X', 'P.so', '1'])
 
     def test_root(self):
         self.assertEqual(hedge('graphbrain/C').root(), 'graphbrain')
@@ -40,6 +45,8 @@ class TestHyperedge(unittest.TestCase):
                          hedge('x/C'))
         self.assertEqual(hedge('xxx/1/yyy').replace_atom_part(1, '77'),
                          hedge('xxx/77/yyy'))
+        self.assertEqual(hedge('(XXX/1/yyy)').replace_atom_part(1, '77'),
+                         hedge('(XXX/77/yyy)'))
 
     def test_str2atom(self):
         self.assertEqual(str2atom('abc'), 'abc')
@@ -100,7 +107,7 @@ class TestHyperedge(unittest.TestCase):
 
     def test_label(self):
         self.assertEqual(hedge('graph%20brain%2f%281%29%2e/Cn.s/.').label(),
-                               'graph brain/(1).')
+                         'graph brain/(1).')
         self.assertEqual(hedge('(red/M shoes/C)').label(), 'red shoes')
         self.assertEqual(hedge('(of/B capital/C germany/C)').label(),
                          'capital of germany')
@@ -126,6 +133,9 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(edge.atoms(),
                          {hedge('the/Md'), hedge('of/Br'), hedge('mayor/Cc'),
                           hedge('city/Cs')})
+        self.assertEqual(hedge('(is (X/C) great/1)').atoms(),
+                         {hedge('is'), hedge('(X/C)'),
+                          hedge('great/1')})
 
     def test_all_atoms(self):
         self.assertEqual(hedge('(is graphbrain/1 great/1)').all_atoms(),
@@ -141,9 +151,14 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(edge.all_atoms(),
                          [hedge('the/Md'), hedge('of/Br'), hedge('mayor/Cc'),
                           hedge('the/Md'), hedge('city/Cs')])
+        edge = hedge('(the/Md (of/Br (X/C) (the/Md city/Cs)))')
+        self.assertEqual(edge.all_atoms(),
+                         [hedge('the/Md'), hedge('of/Br'), hedge('(X/C)'),
+                          hedge('the/Md'), hedge('city/Cs')])
 
     def test_size(self):
         self.assertEqual(hedge('graphbrain/1').size(), 1)
+        self.assertEqual(hedge('(X/C)').size(), 1)
         self.assertEqual(hedge('(is graphbrain/1 great/1)').size(), 3)
         self.assertEqual(hedge('(is graphbrain/1 (super great/1))').size(), 4)
 
@@ -151,6 +166,7 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(hedge('graphbrain/1').depth(), 0)
         self.assertEqual(hedge('(is graphbrain/1 great/1)').depth(), 1)
         self.assertEqual(hedge('(is graphbrain/1 (super great/1))').depth(), 2)
+        self.assertEqual(hedge('(is graphbrain/1 (super (X/C)))').depth(), 2)
 
     def test_roots(self):
         self.assertEqual(hedge('graphbrain/1').roots(), hedge('graphbrain'))
@@ -167,6 +183,14 @@ class TestHyperedge(unittest.TestCase):
         self.assertFalse(edge.contains(hedge('piripiri/C')))
         self.assertFalse(edge.contains(hedge('1111/C')))
 
+    def test_contains_pares_atom(self):
+        edge = hedge('(is/Pd.sc (X/C) (of/B capital/C piripiri/C))')
+        self.assertTrue(edge.contains(hedge('is/Pd.sc')))
+        self.assertTrue(edge.contains(hedge('(X/C)')))
+        self.assertTrue(edge.contains(hedge('(of/B capital/C piripiri/C)')))
+        self.assertFalse(edge.contains(hedge('piripiri/C')))
+        self.assertFalse(edge.contains(hedge('1111/C')))
+
     def test_contains_deep(self):
         edge = hedge('(is/Pd.sc piron/C (of/B capital/C piripiri/C))')
         self.assertTrue(edge.contains(hedge('is/Pd.sc'), deep=True))
@@ -174,6 +198,15 @@ class TestHyperedge(unittest.TestCase):
         self.assertTrue(edge.contains(hedge('(of/B capital/C piripiri/C)'),
                                       deep=True))
         self.assertTrue(edge.contains(hedge('piripiri/C'), deep=True))
+        self.assertFalse(edge.contains(hedge('1111/C'), deep=True))
+
+    def test_contains_deep_pares_atom(self):
+        edge = hedge('(is/Pd.sc piron/C (of/B capital/C (XYZ)))')
+        self.assertTrue(edge.contains(hedge('is/Pd.sc'), deep=True))
+        self.assertTrue(edge.contains(hedge('piron/C'), deep=True))
+        self.assertTrue(edge.contains(hedge('(of/B capital/C (XYZ))'),
+                                      deep=True))
+        self.assertTrue(edge.contains(hedge('(XYZ)'), deep=True))
         self.assertFalse(edge.contains(hedge('1111/C'), deep=True))
 
     def test_subedges(self):
@@ -186,6 +219,9 @@ class TestHyperedge(unittest.TestCase):
                          {hedge('is'), hedge('graphbrain/1'), hedge('super'),
                           hedge('great/1'), hedge('(super great/1)'),
                           hedge('(is graphbrain/1 (super great/1))')})
+        self.assertEqual(hedge('(is graphbrain/1 (X/C))').subedges(),
+                         {hedge('is'), hedge('graphbrain/1'), hedge('(X/C)'),
+                          hedge('(is graphbrain/1 (X/C))')})
 
     def test_match_pattern_simple(self):
         self.assertEqual(match_pattern('(a b)', '(a b)'), [{}])
