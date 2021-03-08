@@ -150,8 +150,10 @@ def _matches_wildcard(edge, wildcard):
                 # fixed order?
                 wargroles_posopt = wargroles_parts[0]
                 eargroles = erole[1]
-                if wargroles_posopt[0] == '>':
-                    wargroles_posopt = wargroles_posopt[1:].replace(',', '')
+                if wargroles_posopt[0] == '{':
+                    wargroles_posopt = wargroles_posopt[1:-1]
+                else:
+                    wargroles_posopt = wargroles_posopt.replace(',', '')
                     if len(eargroles) > len(wargroles_posopt):
                         return False
                     else:
@@ -348,11 +350,11 @@ def match_pattern(edge, pattern, curvars={}):
 
     result = [{}]
     argroles_posopt = pattern[0].argroles().split('-')[0]
-    if len(argroles_posopt) > 0 and argroles_posopt[0] == '>':
-        match_by_order = True
-        argroles_posopt = argroles_posopt[1:]
-    else:
+    if len(argroles_posopt) > 0 and argroles_posopt[0] == '{':
         match_by_order = False
+        argroles_posopt = argroles_posopt[1:-1]
+    else:
+        match_by_order = True
     argroles = argroles_posopt.split(',')[0]
     argroles_opt = argroles_posopt.replace(',', '')
 
@@ -827,7 +829,11 @@ class Hyperedge(tuple):
         edges = []
         connector = self[0]
 
-        for pos, role in enumerate(connector.argroles().replace(',', '')):
+        argroles = connector.argroles()
+        if len(argroles) > 0 and argroles[0] == '{':
+            argroles = argroles[1:-1]
+        argroles = argroles.replace(',', '')
+        for pos, role in enumerate(argroles):
             if role == argrole:
                 if pos < len(self) - 1:
                     edges.append(self[pos + 1])
