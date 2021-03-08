@@ -142,7 +142,7 @@ def _matches_wildcard(edge, wildcard):
 
             # argroles match
             if wtype[0] in {'B', 'P'}:
-                wargroles_parts = wrole[1].split('~')
+                wargroles_parts = wrole[1].split('-')
                 if len(wargroles_parts) == 1:
                     wargroles_parts.append('')
                 wnegroles = wargroles_parts[1]
@@ -347,7 +347,7 @@ def match_pattern(edge, pattern, curvars={}):
         max_len = float('inf')
 
     result = [{}]
-    argroles_posopt = pattern[0].argroles().split('~')[0]
+    argroles_posopt = pattern[0].argroles().split('-')[0]
     if len(argroles_posopt) > 0 and argroles_posopt[0] == '>':
         match_by_order = True
         argroles_posopt = argroles_posopt[1:]

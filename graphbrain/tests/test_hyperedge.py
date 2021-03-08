@@ -555,19 +555,19 @@ class TestHyperedge(unittest.TestCase):
     def test_match_pattern_argroles_exclusions(self):
         self.assertEqual(
             match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
-                          '(is/Pd.sc~x graphbrain/Cp.s X ...)'),
+                          '(is/Pd.sc-x graphbrain/Cp.s X ...)'),
             [{'X': hedge('great/C')}])
         self.assertEqual(
             match_pattern('(is/Pd.scx graphbrain/Cp.s great/C today/J)',
-                          '(is/Pd.sc~x graphbrain/Cp.s X ...)'),
+                          '(is/Pd.sc-x graphbrain/Cp.s X ...)'),
             [])
         self.assertEqual(
             match_pattern('(is/Pd.sc graphbrain/Cp.s great/C)',
-                          '(is/Pd.sc~s graphbrain/Cp.s X ...)'),
+                          '(is/Pd.sc-s graphbrain/Cp.s X ...)'),
             [{'X': hedge('great/C')}])
         self.assertEqual(
             match_pattern('(is/Pd.sc i/Cp.s graphbrain/Cp.s great/C)',
-                          '(is/Pd.sc~s graphbrain/Cp.s X ...)'),
+                          '(is/Pd.sc-s graphbrain/Cp.s X ...)'),
             [])
 
     def test_match_pattern_argroles_optionals(self):
