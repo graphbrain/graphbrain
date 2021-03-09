@@ -217,7 +217,7 @@ class TestHypergraph(unittest.TestCase):
         self.hg.add('(says/Pd mary/Cp)')
         self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')
         self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C) extra/C)')
-        self.assertEqual(list(self.hg.search('@')),
+        self.assertEqual(list(self.hg.search('.')),
                          [hedge('extra/C'), hedge('graphbrain/Cp'),
                           hedge('great/C'), hedge('is/Pd'), hedge('mary/Cp'),
                           hedge('says/Pd')])
@@ -245,9 +245,9 @@ class TestHypergraph(unittest.TestCase):
                          [edge])
         self.assertEqual(list(self.hg.search('((is/M playing/Pd) * *)')),
                          [edge])
-        self.assertEqual(list(self.hg.search('((is/M playing/Pd) @ &)')),
+        self.assertEqual(list(self.hg.search('((is/M playing/Pd) . &)')),
                          [edge])
-        self.assertEqual(list(self.hg.search('((is/M playing/Pd) @ @)')),
+        self.assertEqual(list(self.hg.search('((is/M playing/Pd) . .)')),
                          [])
         self.assertEqual(list(self.hg.search('((is/M playing/Pd) & &)')),
                          [])
@@ -269,9 +269,9 @@ class TestHypergraph(unittest.TestCase):
         self.hg.add(edge)
         self.assertEqual(list(self.hg.search('((is/M playing/Pd) *X *Y)')),
                          [edge])
-        self.assertEqual(list(self.hg.search('((is/M playing/Pd) @X &Y)')),
+        self.assertEqual(list(self.hg.search('((is/M playing/Pd) .X &Y)')),
                          [edge])
-        self.assertEqual(list(self.hg.search('((is/M playing/Pd) @X @Y)')),
+        self.assertEqual(list(self.hg.search('((is/M playing/Pd) .X .Y)')),
                          [])
         self.assertEqual(list(self.hg.search('((is/M playing/Pd) &X &Y)')),
                          [])
@@ -352,7 +352,7 @@ class TestHypergraph(unittest.TestCase):
         self.hg.add('(says/Pd mary/Cp)')
         self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')
         self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C) extra/C)')
-        self.assertEqual(self.hg.count('@'), 6)
+        self.assertEqual(self.hg.count('.'), 6)
 
     def test_count_amp(self):
         self.hg.destroy()
@@ -369,8 +369,8 @@ class TestHypergraph(unittest.TestCase):
         self.hg.add(edge)
         self.assertEqual(self.hg.count('((is/M playing/Pd) ...)'), 1)
         self.assertEqual(self.hg.count('((is/M playing/Pd) * *)'), 1)
-        self.assertEqual(self.hg.count('((is/M playing/Pd) @ &)'), 1)
-        self.assertEqual(self.hg.count('((is/M playing/Pd) @ @)'), 0)
+        self.assertEqual(self.hg.count('((is/M playing/Pd) . &)'), 1)
+        self.assertEqual(self.hg.count('((is/M playing/Pd) . .)'), 0)
         self.assertEqual(self.hg.count('((is/M playing/Pd) & &)'), 0)
         self.assertEqual(self.hg.count('(* mary/Cp.s *)'), 1)
         self.assertEqual(self.hg.count('(mary/Cp.s * *)'), 0)
@@ -385,8 +385,8 @@ class TestHypergraph(unittest.TestCase):
                      '(a/Md ((very/M old/Ma) violin/Cn.s)))')
         self.hg.add(edge)
         self.assertEqual(self.hg.count('((is/M playing/Pd) *X *Y)'), 1)
-        self.assertEqual(self.hg.count('((is/M playing/Pd) @X &Y)'), 1)
-        self.assertEqual(self.hg.count('((is/M playing/Pd) @X @Y)'), 0)
+        self.assertEqual(self.hg.count('((is/M playing/Pd) .X &Y)'), 1)
+        self.assertEqual(self.hg.count('((is/M playing/Pd) .X .Y)'), 0)
         self.assertEqual(self.hg.count('((is/M playing/Pd) &X &Y)'), 0)
         self.assertEqual(self.hg.count('(* mary/Cp.s X)'), 1)
         self.assertEqual(self.hg.count('(mary/Cp.s X Y)'), 0)

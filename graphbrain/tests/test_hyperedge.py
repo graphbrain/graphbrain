@@ -240,17 +240,17 @@ class TestHyperedge(unittest.TestCase):
 
     def test_match_pattern_atomic_wildcard(self):
         self.assertEqual(match_pattern('(is/Pd graphbrain/Cp.s great/C)',
-                                       '(is/Pd graphbrain/Cp.s @PROP)'),
+                                       '(is/Pd graphbrain/Cp.s .PROP)'),
                          [{'PROP': hedge('great/C')}])
         self.assertEqual(match_pattern('(is/Pd graphbrain/Cp.s great/C)',
-                                       '(is/Pd graphbrain/Cp.s @)'),
+                                       '(is/Pd graphbrain/Cp.s .)'),
                          [{}])
         self.assertEqual(match_pattern('(was/Pd graphbrain/Cp.s great/C)',
-                                       '(is/Pd graphbrain/Cp.s @PROP)'),
+                                       '(is/Pd graphbrain/Cp.s .PROP)'),
                          [])
         self.assertEqual(match_pattern('(is/Pd graphbrain/Cp.s '
                                        '(fairly/M great/C))',
-                                       '(is/Pd graphbrain/Cp.s @PROP)'),
+                                       '(is/Pd graphbrain/Cp.s .PROP)'),
                          [])
 
     def test_match_pattern_non_atomic_wildcard(self):
@@ -281,10 +281,10 @@ class TestHyperedge(unittest.TestCase):
                                        '(is/Pd graphbrain/Cp.s *X ...)'),
                          [])
         self.assertEqual(match_pattern('(is/Pd graphbrain/Cp.s great/C)',
-                                       '(is/Pd @OBJ ...)'),
+                                       '(is/Pd .OBJ ...)'),
                          [{'OBJ': hedge('graphbrain/Cp.s')}])
         self.assertEqual(match_pattern('(is/Pd graphbrain/Cp.s great/C)',
-                                       '(is/Pd @OBJ)'),
+                                       '(is/Pd .OBJ)'),
                          [])
 
     def test_match_pattern_argroles(self):
@@ -617,14 +617,14 @@ class TestHyperedge(unittest.TestCase):
     def test_edge_matches_pattern_atomic_wildcard(self):
         self.assertTrue(edge_matches_pattern(hedge('(is/Pd graphbrain/Cp.s '
                                                    'great/C)'),
-                                             '(is/Pd graphbrain/Cp.s @)'))
+                                             '(is/Pd graphbrain/Cp.s .)'))
         self.assertFalse(edge_matches_pattern(hedge('(was/Pd graphbrain'
                                                     '/Cp.s great/C)'),
-                                              '(is/Pd.sc graphbrain/Cp.s @)'))
+                                              '(is/Pd.sc graphbrain/Cp.s .)'))
 
         self.assertFalse(edge_matches_pattern(hedge('(is/Pd graphbrain/Cp.s'
                                                     '(fairly/M great/C))'),
-                                              '(is/Pd graphbrain/Cp.s @)'))
+                                              '(is/Pd graphbrain/Cp.s .)'))
 
     def test_edge_matches_pattern_edge_wildcard(self):
         self.assertTrue(edge_matches_pattern(hedge('(is/Pd graphbrain/Cp.s'
@@ -862,7 +862,7 @@ class TestHyperedge(unittest.TestCase):
         self.assertTrue(edge.is_full_pattern())
         edge = hedge('(* * * ...)')
         self.assertTrue(edge.is_full_pattern())
-        edge = hedge('(@ * & ...)')
+        edge = hedge('(. * & ...)')
         self.assertTrue(edge.is_full_pattern())
 
     def test_argroles_atom(self):
