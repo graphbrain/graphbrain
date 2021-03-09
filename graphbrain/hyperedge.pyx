@@ -110,7 +110,7 @@ def _matches_wildcard(edge, wildcard):
     if struct_code == '.':
         if not edge.is_atom():
             return False
-    elif struct_code == '&':
+    elif wildcard.parens:
         if edge.is_atom():
             return False
     elif struct_code != '*' and not struct_code.isupper():
@@ -198,7 +198,7 @@ def _matches_wildcard(edge, wildcard):
 
 def _varname(atom):
     label = atom.parts()[0]
-    if label[0] in {'*', '.', '&'}:
+    if label[0] in {'*', '.'}:
         return label[1:]
     elif label[:3] == '...':
         return label[3:]
@@ -304,12 +304,12 @@ def match_pattern(edge, pattern, curvars={}):
 
     -> '.' represents an atomic wildcard (matches any atom)
 
-    -> '&' represents an edge wildcard (matches any edge)
+    -> '(\*)' represents an edge wildcard (matches any edge)
 
     -> '...' at the end indicates an open-ended pattern.
 
-    The three wildcards ('\*', '.' and '&') can be used to specify variables,
-    for example '\*x', '&claim' or '.actor'. In case of a match, these
+    The wildcards ('\*', '.' and '(\*)') can be used to specify variables,
+    for example '\*x', '(CLAIM)' or '.ACTOR'. In case of a match, these
     variables are assigned the hyperedge they correspond to. For example,
 
     (1) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
@@ -317,7 +317,7 @@ def match_pattern(edge, pattern, curvars={}):
     produces the result: {'NAME', mary/Cp}
 
     (2) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
-    applied to the pattern: (is/Pd (my/Mp name/Cn) &NAME)
+    applied to the pattern: (is/Pd (my/Mp name/Cn) (NAME))
     produces the result: {}
 
     (3) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
@@ -425,11 +425,11 @@ def edge_matches_pattern(edge, pattern):
     Patterns are themselves edges. They can match families of edges
     by employing special atoms:
 
-    -> '*' represents a general wildcard (matches any entity)
+    -> '\*' represents a general wildcard (matches any entity)
 
     -> '.' represents an atomic wildcard (matches any atom)
 
-    -> '&' represents an edge wildcard (matches any edge)
+    -> '(\*)' represents an edge wildcard (matches any edge)
 
     -> '...' at the end indicates an open-ended pattern.
 
@@ -763,7 +763,7 @@ class Hyperedge(tuple):
         one pattern matcher.
 
         Pattern matchers are:
-        '*', '.', '&', '...' and variables (atom label starting with an
+        '\*', '.', '(\*)', '...' and variables (atom label starting with an
         uppercase letter)
         """
         return any(item.is_pattern() for item in self)
@@ -772,7 +772,7 @@ class Hyperedge(tuple):
         """Check if every atom is a pattern matcher.
 
         Pattern matchers are:
-        '*', '.', '&', '...' and variables (atom label starting with an
+        '\*', '.', '(\*)', '...' and variables (atom label starting with an
         uppercase letter)
         """
         return all(item.is_pattern() for item in self)
@@ -1171,10 +1171,11 @@ class Atom(Hyperedge):
         one pattern matcher.
 
         Pattern matchers are:
-        '*', '.', '&', '...' and variables (atom label starting with an
+        '\*', '.', '(\*)', '...' and variables (atom label starting with an
         uppercase letter)
         """
-        return (self[0][0] in {'*', '.', '&'} or
+        return (self.parens or
+                self[0][0] in {'*', '.'} or
                 self[0][:3] == '...' or
                 self[0][0].isupper())
 
@@ -1182,7 +1183,7 @@ class Atom(Hyperedge):
         """Check if every atom is a pattern matcher.
 
         Pattern matchers are:
-        '*', '.', '&', '...' and variables (atom label starting with an
+        '\*', '.', '(\*)', '...' and variables (atom label starting with an
         uppercase letter)
         """
         return self.is_pattern()

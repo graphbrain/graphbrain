@@ -245,11 +245,11 @@ class TestHypergraph(unittest.TestCase):
                          [edge])
         self.assertEqual(list(self.hg.search('((is/M playing/Pd) * *)')),
                          [edge])
-        self.assertEqual(list(self.hg.search('((is/M playing/Pd) . &)')),
+        self.assertEqual(list(self.hg.search('((is/M playing/Pd) . (*))')),
                          [edge])
         self.assertEqual(list(self.hg.search('((is/M playing/Pd) . .)')),
                          [])
-        self.assertEqual(list(self.hg.search('((is/M playing/Pd) & &)')),
+        self.assertEqual(list(self.hg.search('((is/M playing/Pd) (*) (*))')),
                          [])
         self.assertEqual(list(self.hg.search('(* mary/Cp.s *)')),
                          [edge])
@@ -269,11 +269,11 @@ class TestHypergraph(unittest.TestCase):
         self.hg.add(edge)
         self.assertEqual(list(self.hg.search('((is/M playing/Pd) *X *Y)')),
                          [edge])
-        self.assertEqual(list(self.hg.search('((is/M playing/Pd) .X &Y)')),
+        self.assertEqual(list(self.hg.search('((is/M playing/Pd) .X (Y))')),
                          [edge])
         self.assertEqual(list(self.hg.search('((is/M playing/Pd) .X .Y)')),
                          [])
-        self.assertEqual(list(self.hg.search('((is/M playing/Pd) &X &Y)')),
+        self.assertEqual(list(self.hg.search('((is/M playing/Pd) (X) (Y))')),
                          [])
         self.assertEqual(list(self.hg.search('(* mary/Cp.s X)')),
                          [edge])
@@ -369,9 +369,9 @@ class TestHypergraph(unittest.TestCase):
         self.hg.add(edge)
         self.assertEqual(self.hg.count('((is/M playing/Pd) ...)'), 1)
         self.assertEqual(self.hg.count('((is/M playing/Pd) * *)'), 1)
-        self.assertEqual(self.hg.count('((is/M playing/Pd) . &)'), 1)
+        self.assertEqual(self.hg.count('((is/M playing/Pd) . (*))'), 1)
         self.assertEqual(self.hg.count('((is/M playing/Pd) . .)'), 0)
-        self.assertEqual(self.hg.count('((is/M playing/Pd) & &)'), 0)
+        self.assertEqual(self.hg.count('((is/M playing/Pd) (*) (*))'), 0)
         self.assertEqual(self.hg.count('(* mary/Cp.s *)'), 1)
         self.assertEqual(self.hg.count('(mary/Cp.s * *)'), 0)
         self.assertEqual(self.hg.count('(* * (a/Md ((very/M old/Ma) '
@@ -385,9 +385,9 @@ class TestHypergraph(unittest.TestCase):
                      '(a/Md ((very/M old/Ma) violin/Cn.s)))')
         self.hg.add(edge)
         self.assertEqual(self.hg.count('((is/M playing/Pd) *X *Y)'), 1)
-        self.assertEqual(self.hg.count('((is/M playing/Pd) .X &Y)'), 1)
+        self.assertEqual(self.hg.count('((is/M playing/Pd) .X (Y))'), 1)
         self.assertEqual(self.hg.count('((is/M playing/Pd) .X .Y)'), 0)
-        self.assertEqual(self.hg.count('((is/M playing/Pd) &X &Y)'), 0)
+        self.assertEqual(self.hg.count('((is/M playing/Pd) (X) (Y))'), 0)
         self.assertEqual(self.hg.count('(* mary/Cp.s X)'), 1)
         self.assertEqual(self.hg.count('(mary/Cp.s X Y)'), 0)
         self.assertEqual(self.hg.count('(X Y (a/Md ((very/M old/Ma) '
