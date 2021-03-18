@@ -1,5 +1,5 @@
 ============================
-Semantic Hypergraph Notation
+Semantic Hypergraph notation
 ============================
 
 Atom structure
@@ -54,27 +54,18 @@ Type inference rules
 +---------------+----------------+
 | Element types | Resulting type |
 +===============+================+
+| (M x)         | x              |
++---------------+----------------+
 | (B  C  C+)    | C              |
 +---------------+----------------+
-| (M  C)        | C              |
+| (T  [CR])     | S              |
 +---------------+----------------+
-| (M  M)        | M              |
+| (P  [CRS]+)   | P              |
 +---------------+----------------+
-| (M  P)        | P              |
-+---------------+----------------+
-| (M  T)        | T              |
-+---------------+----------------+
-| (P  [CRS]+)   | R              |
-+---------------+----------------+
-| (T  [CR]+)    | S              |
-+---------------+----------------+
-| (J  C+)       | C              |
-+---------------+----------------+
-| (J  R+)       | R              |
+| (J  x  y+)    | x              |
 +---------------+----------------+
 
-We use the notation of regular expressions: the symbol ``+`` is used to denote an arbitrary number of entities with the type that precedes it, while square brackets indicate several possibilities (for instance, ``[CR]+`` means "at least one of any of both ``C`` or ``R`` types).
-
+We use the notation of regular expressions: the symbol ``+`` is used to denote one or more entities with the type that precedes it, while square brackets indicate several possibilities (for instance, ``[CRS]+`` means "at least one of any of C, R or S" types). ``x`` means any type: ``(M x)`` is of type ``x``.
 
 Subtypes
 ========
