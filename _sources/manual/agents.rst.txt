@@ -16,7 +16,19 @@ The philosophy of the Graphbrain agent system is to allow for the definition of 
 Running an agent from the command line
 ======================================
 
+The command line interface provides for a way to run an agent over some hypergraph, using the general 'run' command::
+
    graphbrain --hg <hypergraph> --agent <agent name> run
+
+Optional command line arguments might be required, depending on the agent. For example, let us say that we want to generate parse a text file into a hypergraph, which requires the specification of an input file and a hyperedge sequence::
+
+   graphbrain --hg books --sequence alice-in-wonderland --infile alice.txt --agent txt_parser run 
+
+The --agent argument specifies a module that implements an agent. If the namespace for the module is not specified (i.e. if it contains no dots to specify the package that the module belongs to), then it is assumed that it belongs to the package graphbrain.cognition.agents. In other words, it is assumed to be one of the agents that come with the library.
+
+Suppose that the agent example.molecules was created. Then, it could be executed like so::
+
+   graphbrain --hg chemistry --agent example.molecules run
 
 
 Running an agent programmatically

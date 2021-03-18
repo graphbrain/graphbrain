@@ -215,9 +215,19 @@
 <p>The philosophy of the Graphbrain agent system is to allow for the definition of sophisticated tasks through the interaction of simples parts.</p>
 <div class="section" id="running-an-agent-from-the-command-line">
 <h2>Running an agent from the command line<a class="headerlink" href="#running-an-agent-from-the-command-line" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><p>graphbrain –hg &lt;hypergraph&gt; –agent &lt;agent name&gt; run</p>
-</div></blockquote>
+<p>The command line interface provides for a way to run an agent over some hypergraph, using the general ‘run’ command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">agent</span> <span class="o">&lt;</span><span class="n">agent</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">run</span>
+</pre></div>
+</div>
+<p>Optional command line arguments might be required, depending on the agent. For example, let us say that we want to generate parse a text file into a hypergraph, which requires the specification of an input file and a hyperedge sequence:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="n">books</span> <span class="o">--</span><span class="n">sequence</span> <span class="n">alice</span><span class="o">-</span><span class="ow">in</span><span class="o">-</span><span class="n">wonderland</span> <span class="o">--</span><span class="n">infile</span> <span class="n">alice</span><span class="o">.</span><span class="n">txt</span> <span class="o">--</span><span class="n">agent</span> <span class="n">txt_parser</span> <span class="n">run</span>
+</pre></div>
+</div>
+<p>The –agent argument specifies a module that implements an agent. If the namespace for the module is not specified (i.e. if it contains no dots to specify the package that the module belongs to), then it is assumed that it belongs to the package graphbrain.cognition.agents. In other words, it is assumed to be one of the agents that come with the library.</p>
+<p>Suppose that the agent example.molecules was created. Then, it could be executed like so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="n">chemistry</span> <span class="o">--</span><span class="n">agent</span> <span class="n">example</span><span class="o">.</span><span class="n">molecules</span> <span class="n">run</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="running-an-agent-programmatically">
 <h2>Running an agent programmatically<a class="headerlink" href="#running-an-agent-programmatically" title="Permalink to this headline">¶</a></h2>
