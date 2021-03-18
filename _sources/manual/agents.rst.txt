@@ -34,7 +34,21 @@ Suppose that the agent example.molecules was created. Then, it could be executed
 Running an agent programmatically
 =================================
 
-TODO
+It is naturally useful to be able to run a agents from inside programs. Agents must always run inside an agent system (we will discuss these subsequently), but Graphbrain provides a high-level utility to function that takes abstracts all such details. For example::
+
+   from graphbrain import hgraph
+   from graphbrain.cognition.system import run_agent
+
+   hg = hgraph('test.hg')
+
+   run_agent('conflicts', hg=hg)
+
+
+The ``run_agent()`` function accepts a number of optional parameters, which namely allow for all the specifications that are also available from the command line. The full signature of the function is::
+
+   run_agent(agent, lang=None, hg=None, infile=None, indir=None, url=None,
+             sequence=None, progress_bar=True, corefs='resolve',
+             logging_level=logging.INFO)
 
 
 Defining an agent system

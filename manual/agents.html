@@ -231,7 +231,21 @@
 </div>
 <div class="section" id="running-an-agent-programmatically">
 <h2>Running an agent programmatically<a class="headerlink" href="#running-an-agent-programmatically" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<p>It is naturally useful to be able to run a agents from inside programs. Agents must always run inside an agent system (we will discuss these subsequently), but Graphbrain provides a high-level utility to function that takes abstracts all such details. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="n">hgraph</span>
+<span class="kn">from</span> <span class="nn">graphbrain.cognition.system</span> <span class="kn">import</span> <span class="n">run_agent</span>
+
+<span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;test.hg&#39;</span><span class="p">)</span>
+
+<span class="n">run_agent</span><span class="p">(</span><span class="s1">&#39;conflicts&#39;</span><span class="p">,</span> <span class="n">hg</span><span class="o">=</span><span class="n">hg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">run_agent()</span></code> function accepts a number of optional parameters, which namely allow for all the specifications that are also available from the command line. The full signature of the function is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run_agent</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">infile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">indir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+          <span class="n">sequence</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">progress_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">corefs</span><span class="o">=</span><span class="s1">&#39;resolve&#39;</span><span class="p">,</span>
+          <span class="n">logging_level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="defining-an-agent-system">
 <h2>Defining an agent system<a class="headerlink" href="#defining-an-agent-system" title="Permalink to this headline">¶</a></h2>
