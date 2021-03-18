@@ -8,5 +8,6 @@ Manual
 
    manual/notation.rst
    manual/special-relations.rst
+   manual/patterns.rst
    manual/agents.rst
    manual/api.rst
