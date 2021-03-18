@@ -34,7 +34,6 @@
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -166,7 +165,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for graphbrain.meaning.concepts</h1><div class="highlight"><pre>
-<div class="viewcode-block" id="strip_concept"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.meaning.concepts.strip_concept">[docs]</a><span></span><span class="k">def</span> <span class="nf">strip_concept</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+<div class="viewcode-block" id="strip_concept"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.meaning.concepts.strip_concept">[docs]</a><span></span><span class="k">def</span> <span class="nf">strip_concept</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Strip away nesting edges with connectors such as triggers and</span>
 <span class="sd">    subpredicates, to expose the outmost and leftmost concept that can be</span>
 <span class="sd">    found. May be the edge itself.</span>
@@ -187,7 +186,7 @@
         <span class="k">return</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="has_proper_concept"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.meaning.concepts.has_proper_concept">[docs]</a><span class="k">def</span> <span class="nf">has_proper_concept</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+<div class="viewcode-block" id="has_proper_concept"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.meaning.concepts.has_proper_concept">[docs]</a><span class="k">def</span> <span class="nf">has_proper_concept</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check if the concept either is a proper edge, or contains one.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">edge</span><span class="o">.</span><span class="n">type</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Cp&#39;</span>
@@ -198,7 +197,7 @@
         <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="has_common_or_proper_concept"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.meaning.concepts.has_common_or_proper_concept">[docs]</a><span class="k">def</span> <span class="nf">has_common_or_proper_concept</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+<div class="viewcode-block" id="has_common_or_proper_concept"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.meaning.concepts.has_common_or_proper_concept">[docs]</a><span class="k">def</span> <span class="nf">has_common_or_proper_concept</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check if the concept either is a common/proper edge, or contains one.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">edge</span><span class="o">.</span><span class="n">type</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Cp&#39;</span> <span class="ow">or</span> <span class="n">edge</span><span class="o">.</span><span class="n">type</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Cc&#39;</span>
@@ -209,7 +208,7 @@
         <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="all_concepts"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.meaning.concepts.all_concepts">[docs]</a><span class="k">def</span> <span class="nf">all_concepts</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+<div class="viewcode-block" id="all_concepts"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.meaning.concepts.all_concepts">[docs]</a><span class="k">def</span> <span class="nf">all_concepts</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Recursively search for all concepts contained in the edge, returning</span>
 <span class="sd">    a set that can also contain itself.&quot;&quot;&quot;</span>
     <span class="n">concepts</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>

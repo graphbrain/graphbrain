@@ -34,7 +34,6 @@
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -166,7 +165,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for graphbrain.parsers.parser</h1><div class="highlight"><pre>
-<div class="viewcode-block" id="Parser"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.parsers.parser.Parser">[docs]</a><span></span><span class="k">class</span> <span class="nc">Parser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Parser"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.parsers.parser.Parser">[docs]</a><span></span><span class="k">class</span> <span class="nc">Parser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Defines the common interface for parser objects.</span>
 <span class="sd">    Parsers transofrm natural text into graphbrain hyperedges.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -183,7 +182,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Parser.parse"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.parsers.parser.Parser.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<div class="viewcode-block" id="Parser.parse"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.parsers.parser.Parser.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Transforms the given text into hyperedges + aditional information.</span>
 <span class="sd">        Returns a dictionary with two fields:</span>
 
@@ -197,9 +196,6 @@
 
 <span class="sd">        -&gt; main_edge: the hyperedge corresponding to the sentence.</span>
 
-<span class="sd">        -&gt; resolved_corefs: main_edge with coreferences resolved, can be the</span>
-<span class="sd">        same as main_edge if coreference resolution is not performed.</span>
-
 <span class="sd">        -&gt; extra_edges: aditional edges, e.g. connecting atoms that appear</span>
 <span class="sd">        in the main_edge to their lemmas.</span>
 
@@ -208,13 +204,14 @@
 
 <span class="sd">        -&gt; edges_text: a dictionary of all edges and subedges to their</span>
 <span class="sd">        corresponding text.</span>
+
+<span class="sd">        And optionally:</span>
+
+<span class="sd">        -&gt; resolved_corefs: main_edge with coreferences resolved.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">parse_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve_corefs</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_corefs</span><span class="p">(</span><span class="n">parse_results</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">parse</span> <span class="ow">in</span> <span class="n">parse_results</span><span class="p">[</span><span class="s1">&#39;parses&#39;</span><span class="p">]:</span>
-                <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;resolved_corefs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse</span><span class="p">[</span><span class="s1">&#39;main_edge&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">parse_results</span></div>
 
     <span class="k">def</span> <span class="nf">parse_and_write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hg</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>

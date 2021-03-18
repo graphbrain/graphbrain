@@ -34,7 +34,6 @@
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -167,7 +166,10 @@
             
   <h1>Source code for graphbrain.notebook</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">html</span> <span class="kn">import</span> <span class="n">escape</span>
-<span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
+
+<span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="kn">import</span> <span class="n">display</span>
+<span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="kn">import</span> <span class="n">HTML</span>
+
 <span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="o">*</span>
 
 
@@ -324,7 +326,7 @@
     <span class="k">return</span> <span class="n">_edge2html_r</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">roots_only</span><span class="o">=</span><span class="n">roots_only</span><span class="p">,</span> <span class="n">formatting</span><span class="o">=</span><span class="n">formatting</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="show"><a class="viewcode-back" href="../../reference/api.html#graphbrain.notebook.show">[docs]</a><span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">roots_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;indented&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="show"><a class="viewcode-back" href="../../manual/api.html#graphbrain.notebook.show">[docs]</a><span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">roots_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;indented&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Displays a representation of the edge in the notebook.</span>
 
 <span class="sd">    Keyword arguments:</span>

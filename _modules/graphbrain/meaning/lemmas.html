@@ -34,7 +34,6 @@
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -169,7 +168,7 @@
 <span></span><span class="kn">import</span> <span class="nn">graphbrain.constants</span> <span class="k">as</span> <span class="nn">const</span>
 
 
-<div class="viewcode-block" id="lemma"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.meaning.lemmas.lemma">[docs]</a><span class="k">def</span> <span class="nf">lemma</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">atom</span><span class="p">):</span>
+<div class="viewcode-block" id="lemma"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.meaning.lemmas.lemma">[docs]</a><span class="k">def</span> <span class="nf">lemma</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">atom</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns the lemma of the given atom if it exists, None otherwise.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">is_atom</span><span class="p">():</span>
         <span class="k">for</span> <span class="n">lemma_edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">lemma_pred</span><span class="p">,</span> <span class="n">atom</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">)):</span>
@@ -177,7 +176,7 @@
     <span class="k">return</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="deep_lemma"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.meaning.lemmas.deep_lemma">[docs]</a><span class="k">def</span> <span class="nf">deep_lemma</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+<div class="viewcode-block" id="deep_lemma"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.meaning.lemmas.deep_lemma">[docs]</a><span class="k">def</span> <span class="nf">deep_lemma</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns the lemma of an atomic edge, or the lemma of the first atom</span>
 <span class="sd">    found by recursively descending the hyperedge, always choosing the</span>
 <span class="sd">    subedge immediatly after the connector.</span>
@@ -199,7 +198,7 @@
         <span class="k">return</span> <span class="n">deep_lemma</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
 
 
-<div class="viewcode-block" id="lemma_degrees"><a class="viewcode-back" href="../../../reference/api.html#graphbrain.meaning.lemmas.lemma_degrees">[docs]</a><span class="k">def</span> <span class="nf">lemma_degrees</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+<div class="viewcode-block" id="lemma_degrees"><a class="viewcode-back" href="../../../manual/api.html#graphbrain.meaning.lemmas.lemma_degrees">[docs]</a><span class="k">def</span> <span class="nf">lemma_degrees</span><span class="p">(</span><span class="n">hg</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Finds all the atoms that share the same given lemma</span>
 <span class="sd">    and computes the sum of both their degrees and deep degrees.</span>
 <span class="sd">    These two sums are returned.</span>
