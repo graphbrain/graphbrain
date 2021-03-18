@@ -1,0 +1,305 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>API reference &mdash; Graphbrain 0.4.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Command-line interface" href="../cli.html" />
+    <link rel="prev" title="Knowledge Agents" href="agents.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #333" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/graphbrain-logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    <div>
+    <a href="https://socsemics.huma-num.fr/" style="margin:0px; text-align:center">
+        <img style="width: 75%; height: 75%; border-radius: 0px; margin:0px; padding:5px; background:#ffffff" src="/_static/socsemics.png"/>
+    </a>
+    </div>
+    
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../manual.html">Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="notation.html">Semantic Hypergraph Notation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="special-relations.html">Special relations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agents.html">Knowledge Agents</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">API reference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#main-functions">main functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hyperedge-module">hyperedge module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hypergraph-module">hypergraph module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#notebook-module">notebook module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parsers-package">parsers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#package-functions">package functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parser-module">parser module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#meaning-package">meaning package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#actors-module">actors module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#concepts-module">concepts module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#corefs-module">corefs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lemmas-module">lemmas module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ontology-module">ontology module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#cognition-package">cognition package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">package functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#system-module">system module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agent-module">agent module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command-line interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+</ul>
+
+            
+          
+
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Graphbrain</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../manual.html">Reference</a> &raquo;</li>
+        
+      <li>API reference</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/graphbrain/graphbrain" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api-reference">
+<h1>API reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="main-functions">
+<h2>main functions<a class="headerlink" href="#main-functions" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="hyperedge-module">
+<h2>hyperedge module<a class="headerlink" href="#hyperedge-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="hypergraph-module">
+<h2>hypergraph module<a class="headerlink" href="#hypergraph-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="notebook-module">
+<h2>notebook module<a class="headerlink" href="#notebook-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="parsers-package">
+<h2>parsers package<a class="headerlink" href="#parsers-package" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="package-functions">
+<h3>package functions<a class="headerlink" href="#package-functions" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="parser-module">
+<h3>parser module<a class="headerlink" href="#parser-module" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="meaning-package">
+<h2>meaning package<a class="headerlink" href="#meaning-package" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="actors-module">
+<h3>actors module<a class="headerlink" href="#actors-module" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="concepts-module">
+<h3>concepts module<a class="headerlink" href="#concepts-module" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="corefs-module">
+<h3>corefs module<a class="headerlink" href="#corefs-module" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="lemmas-module">
+<h3>lemmas module<a class="headerlink" href="#lemmas-module" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="ontology-module">
+<h3>ontology module<a class="headerlink" href="#ontology-module" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="cognition-package">
+<h2>cognition package<a class="headerlink" href="#cognition-package" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>package functions<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="system-module">
+<h3>system module<a class="headerlink" href="#system-module" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="agent-module">
+<h3>agent module<a class="headerlink" href="#agent-module" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../cli.html" class="btn btn-neutral float-right" title="Command-line interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="agents.html" class="btn btn-neutral float-left" title="Knowledge Agents" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020 CNRS.
+
+    </p>
+  </div> 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,421 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Knowledge Agents &mdash; Graphbrain 0.4.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API reference" href="api.html" />
+    <link rel="prev" title="Special relations" href="special-relations.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #333" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/graphbrain-logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    <div>
+    <a href="https://socsemics.huma-num.fr/" style="margin:0px; text-align:center">
+        <img style="width: 75%; height: 75%; border-radius: 0px; margin:0px; padding:5px; background:#ffffff" src="/_static/socsemics.png"/>
+    </a>
+    </div>
+    
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../manual.html">Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="notation.html">Semantic Hypergraph Notation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="special-relations.html">Special relations</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Knowledge Agents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#running-an-agent-from-the-command-line">Running an agent from the command line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-an-agent-programmatically">Running an agent programmatically</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#defining-an-agent-system">Defining an agent system</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-an-agent-system-from-the-command-line">Running an agent system from the command line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#defining-and-running-an-agent-system-programmatically">Defining and running an agent system programmatically</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#developing-your-own-agents">Developing your own agents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agent-bestiary">Agent bestiary</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#reddit-parser">reddit_parser</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#txt-parser">txt_parser</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#taxonomy">taxonomy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#corefs-dets">corefs_dets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#corefs-names">corefs_names</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#corefs-onto">corefs_onto</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#corefs-unidecode">corefs_unidecode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#actors">actors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#claim-actors">claim_actors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#claims">claims</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conflicts">conflicts</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html">API reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command-line interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+</ul>
+
+            
+          
+
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Graphbrain</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../manual.html">Reference</a> &raquo;</li>
+        
+      <li>Knowledge Agents</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/graphbrain/graphbrain" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="knowledge-agents">
+<h1>Knowledge Agents<a class="headerlink" href="#knowledge-agents" title="Permalink to this headline">¶</a></h1>
+<p>Graphbrain includes an agent system for the performance of cognitive tasks over Semantic Hypergraphs (SH). These tasks fall into three main categories:</p>
+<ul class="simple">
+<li><p>Generating or extending SHs from natural language or other sources.</p></li>
+<li><p>Inferring new knowledge, extending  from the current contents of a SHDB.</p></li>
+<li><p>Producing outputs from SHs to other formats (e.g. graphs, reports, etc.)</p></li>
+</ul>
+<p>Agents are meant to be single-purpose and collaborative. They conform to an interface that makes it easy to compose them into systems. Systems can be defined by combining agents already provided with Graphbrain, as well as new agents that can be defined by users of the library for their own purposes.</p>
+<p>The philosophy of the Graphbrain agent system is to allow for the definition of sophisticated tasks through the interaction of simples parts.</p>
+<div class="section" id="running-an-agent-from-the-command-line">
+<h2>Running an agent from the command line<a class="headerlink" href="#running-an-agent-from-the-command-line" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>graphbrain –hg &lt;hypergraph&gt; –agent &lt;agent name&gt; run</p>
+</div></blockquote>
+</div>
+<div class="section" id="running-an-agent-programmatically">
+<h2>Running an agent programmatically<a class="headerlink" href="#running-an-agent-programmatically" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="defining-an-agent-system">
+<h2>Defining an agent system<a class="headerlink" href="#defining-an-agent-system" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="running-an-agent-system-from-the-command-line">
+<h2>Running an agent system from the command line<a class="headerlink" href="#running-an-agent-system-from-the-command-line" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="defining-and-running-an-agent-system-programmatically">
+<h2>Defining and running an agent system programmatically<a class="headerlink" href="#defining-and-running-an-agent-system-programmatically" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="developing-your-own-agents">
+<h2>Developing your own agents<a class="headerlink" href="#developing-your-own-agents" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="agent-bestiary">
+<h2>Agent bestiary<a class="headerlink" href="#agent-bestiary" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="reddit-parser">
+<h3>reddit_parser<a class="headerlink" href="#reddit-parser" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: input</p>
+<p><strong>Languages</strong>: all</p>
+<p>Takes a Reddit JSON corpus as input and converts each one of thread titles, and optionally thread comments to hyperedges, adding them to the hypergraph. Titles and comments are attributed to authors.</p>
+</div>
+<div class="section" id="txt-parser">
+<h3>txt_parser<a class="headerlink" href="#txt-parser" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: input</p>
+<p><strong>Languages</strong>: all</p>
+<p>Takes a text file as input and converts each one of its sentences to hyperedges, adding them to the hypergraph.</p>
+<p>This is a very simple but also useful, general-purpose agent.</p>
+</div>
+<div class="section" id="taxonomy">
+<h3>taxonomy<a class="headerlink" href="#taxonomy" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: agnostic</p>
+<p>Derives a taxonomy from concepts defined with builders of modifiers. For example, <code class="docutils literal notranslate"><span class="pre">(of/Br.ma</span> <span class="pre">founder/Cc.s</span> <span class="pre">psychoanalysis/Cc.s)</span></code> is a type of <code class="docutils literal notranslate"><span class="pre">founder/Cc.s</span></code>, so the following hyperedge is added:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">type_of</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="p">(</span><span class="n">of</span><span class="o">/</span><span class="n">Br</span><span class="o">.</span><span class="n">ma</span> <span class="n">founder</span><span class="o">/</span><span class="n">Cc</span><span class="o">.</span><span class="n">s</span> <span class="n">psychoanalysis</span><span class="o">/</span><span class="n">Cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="n">founder</span><span class="o">/</span><span class="n">Cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or, if we consider modifier-defined concepts such as <code class="docutils literal notranslate"><span class="pre">(black/Ma</span> <span class="pre">cat/Cc.s)</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">type_of</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="p">(</span><span class="n">black</span><span class="o">/</span><span class="n">Ma</span> <span class="n">cat</span><span class="o">/</span><span class="n">Cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="n">cat</span><span class="o">/</span><span class="n">Cc</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="corefs-dets">
+<h3>corefs_dets<a class="headerlink" href="#corefs-dets" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: English</p>
+<p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> for specific cases where a determinant can be used with a concept or not (e.g.: “The Beatles” or just “Beatles”).</p>
+</div>
+<div class="section" id="corefs-names">
+<h3>corefs_names<a class="headerlink" href="#corefs-names" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: agnostic</p>
+<p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> for compound proper name concepts, for example detecting that “Barack Obama” and “Obama” refer to the same person but “Michelle Obama” refers to someone else).</p>
+</div>
+<div class="section" id="corefs-onto">
+<h3>corefs_onto<a class="headerlink" href="#corefs-onto" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: agnostic</p>
+<p><strong>Depends on</strong>: taxonomy</p>
+<p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> based on probabilistic reasoning over taxonomies. For example, detecting that “United States” and “United States of America” refer to the same entity.</p>
+</div>
+<div class="section" id="corefs-unidecode">
+<h3>corefs_unidecode<a class="headerlink" href="#corefs-unidecode" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: agnostic</p>
+<p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> for atoms that become equal after unidecode() is a applied to both labels. For example, it will create a coreference relation between <code class="docutils literal notranslate"><span class="pre">über/C</span></code> and <code class="docutils literal notranslate"><span class="pre">uber/C</span></code>.</p>
+</div>
+<div class="section" id="actors">
+<h3>actors<a class="headerlink" href="#actors" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: agnostic</p>
+<p><strong>Depends on</strong>: coreference resolution</p>
+<p>We define actors as specific entities that are capable of acting in some sense. This simple agent identifies hyperedges corresponding to actor by applying the following criteria:</p>
+<ol class="arabic simple">
+<li><p>The hyperedge or one of its coreferences appears at least two times as the subject of a declarative relation</p></li>
+<li><p>The hyperedge is of type concept and subtype proper concept</p></li>
+<li><p>If coreferences are used, the hyperedge is the main coreference</p></li>
+</ol>
+<p>This agent transverses the entire hypergraph to identify actors, and then adds hyperedges like the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">actor</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="n">mary</span><span class="o">/</span><span class="n">Cp</span><span class="o">.</span><span class="n">s</span><span class="o">/</span><span class="n">en</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The above simply means that <code class="docutils literal notranslate"><span class="pre">mary/Cp.s/en</span></code> was identified as an actor.</p>
+</div>
+<div class="section" id="claim-actors">
+<h3>claim_actors<a class="headerlink" href="#claim-actors" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: agnostic</p>
+<p><strong>Depends on</strong>: actors, claims</p>
+<p>Creates relations connecting claims to actors mentioned in the claim. For example, consider the sentence: “Mary says that John is nice.” In this case, the claim “John is nice” (which is attributed to Mary), will be connected to John through a claim-actor relation. Claim-actor relations have the form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">claim</span><span class="o">-</span><span class="n">actor</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">main_actor</span><span class="o">*</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span> <span class="o">*</span><span class="n">claim</span><span class="o">*</span> <span class="o">*</span><span class="n">main_edge</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="claims">
+<h3>claims<a class="headerlink" href="#claims" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: English</p>
+<p><strong>Depends on</strong>: coreference resolution</p>
+<p>Identifies hyperedges that represent a claim. Claims are sentences such as: “North Korea says it’s not afraid of US military strike”. The claim is that “North Korea is not afraid of US military strike” and the author of the claim is “North Korea”.</p>
+<p>More specifically, claims are detected according to the following criteria:</p>
+<ol class="arabic simple">
+<li><p>Hyperedge is a relation with predicate of type <code class="docutils literal notranslate"><span class="pre">Pd</span></code>.</p></li>
+<li><p>The deep predicate atom of the predicate hyperedge has a lemma belonging to a predetermined lists of verb lemmas that denote a claim (e.g.: “say”, “claim”).</p></li>
+<li><p>The hyperedge has a subject and a clausal complement. The first is used to identify the actor making the claim, the second the claim itself.</p></li>
+</ol>
+<p>Claim relations follow the format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">claim</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span> <span class="o">*</span><span class="n">claim</span><span class="o">*</span> <span class="o">*</span><span class="n">edge</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Furthermore, simple anaphora resolution on the claim is performed (e.g. in “Pink Panther says that she loves pink.”, the hyperedge for “she” is replaced with the hyperedge for “Pink Panther” in the claim). In these cases, pronouns are used to guess gender or nature of actors. Actors can be classified as female:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">female</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or as a group:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">group</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or as male:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">male</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or as non-human:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">non</span><span class="o">-</span><span class="n">human</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="conflicts">
+<h3>conflicts<a class="headerlink" href="#conflicts" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: introspective</p>
+<p><strong>Languages</strong>: English</p>
+<p><strong>Depends on</strong>: coreference resolution</p>
+<p>Identifies hyperedges that represent a conflict. Conflicts are sentences such as: “Germany warns Russia against military engagement in Syria”. The source of the expression of conflict here is “Germany”, the target is “Russia” and the topic is “military engagement in Syria”.</p>
+<p>More specifically, claims are detected according to the following criteria:</p>
+<ol class="arabic simple">
+<li><p>Hyperedge is a relation with predicate of type <code class="docutils literal notranslate"><span class="pre">Pd</span></code>.</p></li>
+<li><p>The deep predicate atom of the predicate hyperedge has a lemma belonging to a predetermined lists of verb lemmas that denote an expression of conflict (e.g.: “warn”, “kill”).</p></li>
+<li><p>The hyperedge has a subject and an object. The first is used to identify the actor originating the expression of conflict and the second the actor which is the target of this expression.</p></li>
+<li><p>[optional] Beyond subject and object, if any specifier arguments are present, and their trigger atoms belong to a predetermined list (e.g. “over”, “against”), then topics of conflict are extracted from these specifiers.</p></li>
+</ol>
+<p>Conflict relations follow the format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">conflict</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor_orig</span><span class="o">*</span> <span class="o">*</span><span class="n">actor_targ</span><span class="o">*</span> <span class="o">*</span><span class="n">edge</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>These conflict relations are connected to their topics by further relations with the format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">conflict</span><span class="o">-</span><span class="n">topic</span><span class="o">/</span><span class="n">P</span><span class="o">/.</span> <span class="o">*</span><span class="n">actor_orig</span><span class="o">*</span> <span class="o">*</span><span class="n">actor_targ</span><span class="o">*</span> <span class="o">*</span><span class="n">concept</span><span class="o">*</span> <span class="o">*</span><span class="n">edge</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="api.html" class="btn btn-neutral float-right" title="API reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="special-relations.html" class="btn btn-neutral float-left" title="Special relations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020 CNRS.
+
+    </p>
+  </div> 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,668 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Semantic Hypergraph Notation &mdash; Graphbrain 0.4.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Special relations" href="special-relations.html" />
+    <link rel="prev" title="Reference" href="../manual.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #333" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/graphbrain-logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    <div>
+    <a href="https://socsemics.huma-num.fr/" style="margin:0px; text-align:center">
+        <img style="width: 75%; height: 75%; border-radius: 0px; margin:0px; padding:5px; background:#ffffff" src="/_static/socsemics.png"/>
+    </a>
+    </div>
+    
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../manual.html">Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Semantic Hypergraph Notation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#atom-structure">Atom structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hyperedge-types">Hyperedge types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#type-inference-rules">Type inference rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#subtypes">Subtypes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#concept">Concept</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#predicate">Predicate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#builder">Builder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modifier">Modifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#trigger">Trigger</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#type-specific-additional-information">Type-specific additional information</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Concept</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Predicate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Modifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Builder</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#namespaces">Namespaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#special-atoms">Special atoms</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="special-relations.html">Special relations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agents.html">Knowledge Agents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html">API reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command-line interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+</ul>
+
+            
+          
+
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Graphbrain</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../manual.html">Reference</a> &raquo;</li>
+        
+      <li>Semantic Hypergraph Notation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/graphbrain/graphbrain" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="semantic-hypergraph-notation">
+<h1>Semantic Hypergraph Notation<a class="headerlink" href="#semantic-hypergraph-notation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="atom-structure">
+<h2>Atom structure<a class="headerlink" href="#atom-structure" title="Permalink to this headline">¶</a></h2>
+<img alt="atom structure" class="align-center" src="../_images/atom-structure.png" />
+</div>
+<div class="section" id="hyperedge-types">
+<h2>Hyperedge types<a class="headerlink" href="#hyperedge-types" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 18%" />
+<col style="width: 36%" />
+<col style="width: 39%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Code</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Purpose</p></th>
+<th class="head"><p>Example</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td colspan="4" rowspan="2"><p><strong>Atomic or non-atomic</strong></p></td>
+</tr>
+<tr class="row-odd"></tr>
+<tr class="row-even"><td><p>C</p></td>
+<td><p>concept</p></td>
+<td><p>Define atomic concepts</p></td>
+<td><p><strong>apple/C</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>P</p></td>
+<td><p>predicate</p></td>
+<td><p>Build relations</p></td>
+<td><p>(<strong>is/P</strong> berlin/C nice/C)</p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>M</p></td>
+<td rowspan="2"><p>modifier</p></td>
+<td rowspan="2"><p>Modify concepts, predicates,</p>
+<p>modifiers or triggers</p>
+</td>
+<td rowspan="2"><p>(<strong>red/M</strong> shoes/C)</p></td>
+</tr>
+<tr class="row-odd"></tr>
+<tr class="row-even"><td colspan="4" rowspan="2"><p><strong>Atomic only</strong></p></td>
+</tr>
+<tr class="row-odd"></tr>
+<tr class="row-even"><td><p>B</p></td>
+<td><p>builder</p></td>
+<td><p>Build concepts from concepts</p></td>
+<td><p>(<strong>of/B</strong> capital/C germany/C)</p></td>
+</tr>
+<tr class="row-odd"><td><p>T</p></td>
+<td><p>trigger</p></td>
+<td><p>Build specifications</p></td>
+<td><p>(<strong>in/T</strong> 1994/C)</p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>J</p></td>
+<td rowspan="2"><p>conjunction</p></td>
+<td rowspan="2"><p>Define sequences of concepts</p>
+<p>or relations</p>
+</td>
+<td rowspan="2"><p>(<strong>and/J</strong> meat/C potatoes/C)</p></td>
+</tr>
+<tr class="row-odd"></tr>
+<tr class="row-even"><td colspan="4" rowspan="2"><p><strong>Non-atomic only</strong></p></td>
+</tr>
+<tr class="row-odd"></tr>
+<tr class="row-even"><td rowspan="2"><p>R</p></td>
+<td rowspan="2"><p>relation</p></td>
+<td rowspan="2"><p>Express facts, statements,</p>
+<p>questions, orders, …</p>
+</td>
+<td rowspan="2"><p><strong>(is/P berlin/C nice/C)</strong></p></td>
+</tr>
+<tr class="row-odd"></tr>
+<tr class="row-even"><td rowspan="2"><p>S</p></td>
+<td rowspan="2"><p>specifier</p></td>
+<td rowspan="2"><p>Relation specification</p>
+<p>(e.g. condition, time, …)</p>
+</td>
+<td rowspan="2"><p><strong>(in/T 1976/C)</strong></p></td>
+</tr>
+<tr class="row-odd"></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="type-inference-rules">
+<h2>Type inference rules<a class="headerlink" href="#type-inference-rules" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 48%" />
+<col style="width: 52%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Element types</p></th>
+<th class="head"><p>Resulting type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>(B  C  C+)</p></td>
+<td><p>C</p></td>
+</tr>
+<tr class="row-odd"><td><p>(M  C)</p></td>
+<td><p>C</p></td>
+</tr>
+<tr class="row-even"><td><p>(M  M)</p></td>
+<td><p>M</p></td>
+</tr>
+<tr class="row-odd"><td><p>(M  P)</p></td>
+<td><p>P</p></td>
+</tr>
+<tr class="row-even"><td><p>(M  T)</p></td>
+<td><p>T</p></td>
+</tr>
+<tr class="row-odd"><td><p>(P  [CRS]+)</p></td>
+<td><p>R</p></td>
+</tr>
+<tr class="row-even"><td><p>(T  [CR]+)</p></td>
+<td><p>S</p></td>
+</tr>
+<tr class="row-odd"><td><p>(J  C+)</p></td>
+<td><p>C</p></td>
+</tr>
+<tr class="row-even"><td><p>(J  R+)</p></td>
+<td><p>R</p></td>
+</tr>
+</tbody>
+</table>
+<p>We use the notation of regular expressions: the symbol <code class="docutils literal notranslate"><span class="pre">+</span></code> is used to denote an arbitrary number of entities with the type that precedes it, while square brackets indicate several possibilities (for instance, <code class="docutils literal notranslate"><span class="pre">[CR]+</span></code> means “at least one of any of both <code class="docutils literal notranslate"><span class="pre">C</span></code> or <code class="docutils literal notranslate"><span class="pre">R</span></code> types).</p>
+</div>
+<div class="section" id="subtypes">
+<h2>Subtypes<a class="headerlink" href="#subtypes" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="concept">
+<h3>Concept<a class="headerlink" href="#concept" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 48%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Code</p></th>
+<th class="head"><p>Subtype</p></th>
+<th class="head"><p>Example</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Cc</p></td>
+<td><p>common</p></td>
+<td><p>apple/Cc</p></td>
+</tr>
+<tr class="row-odd"><td><p>Cp</p></td>
+<td><p>proper</p></td>
+<td><p>mary/Cp</p></td>
+</tr>
+<tr class="row-even"><td><p>Cn</p></td>
+<td><p>number</p></td>
+<td><p>27/Cn</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ci</p></td>
+<td><p>pronoun</p></td>
+<td><p>she/Ci</p></td>
+</tr>
+<tr class="row-even"><td><p>Cw</p></td>
+<td><p>interrogative</p></td>
+<td><p>who/Cw</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="predicate">
+<h3>Predicate<a class="headerlink" href="#predicate" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 50%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Code</p></th>
+<th class="head"><p>Subtype</p></th>
+<th class="head"><p>Example</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Pd</p></td>
+<td><p>declarative</p></td>
+<td><p>is/Pd</p></td>
+</tr>
+<tr class="row-odd"><td><p>P?</p></td>
+<td><p>interrogative</p></td>
+<td><p>is/P?</p></td>
+</tr>
+<tr class="row-even"><td><p>P!</p></td>
+<td><p>imperative</p></td>
+<td><p>go/P!</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="builder">
+<h3>Builder<a class="headerlink" href="#builder" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 46%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Code</p></th>
+<th class="head"><p>Subtype</p></th>
+<th class="head"><p>Example</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Bp</p></td>
+<td><p>possessive</p></td>
+<td><p>‘s/Bp</p></td>
+</tr>
+<tr class="row-odd"><td><p>Br</p></td>
+<td><p>relational</p></td>
+<td><p>in/Br</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="modifier">
+<h3>Modifier<a class="headerlink" href="#modifier" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 45%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Code</p></th>
+<th class="head"><p>Subtype</p></th>
+<th class="head"><p>Example</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Ma</p></td>
+<td><p>adjective</p></td>
+<td><p>green/Ma</p></td>
+</tr>
+<tr class="row-odd"><td><p>Mp</p></td>
+<td><p>possessive</p></td>
+<td><p>my/Mp</p></td>
+</tr>
+<tr class="row-even"><td><p>Md</p></td>
+<td><p>determinant</p></td>
+<td><p>the/Md</p></td>
+</tr>
+<tr class="row-odd"><td><p>M#</p></td>
+<td><p>number</p></td>
+<td><p>100/M#</p></td>
+</tr>
+<tr class="row-even"><td><p>Mn</p></td>
+<td><p>negation</p></td>
+<td><p>not/Mn</p></td>
+</tr>
+<tr class="row-odd"><td><p>Mv</p></td>
+<td><p>verbal</p></td>
+<td><p>will/Mv</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="trigger">
+<h3>Trigger<a class="headerlink" href="#trigger" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 41%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Code</p></th>
+<th class="head"><p>Subtype</p></th>
+<th class="head"><p>Example</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>T?</p></td>
+<td><p>conditional</p></td>
+<td><p>if/Tc</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tt</p></td>
+<td><p>temporal</p></td>
+<td><p>when/Tt</p></td>
+</tr>
+<tr class="row-even"><td><p>Tl</p></td>
+<td><p>local</p></td>
+<td><p>where/Tl</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tm</p></td>
+<td><p>modal</p></td>
+<td><p>modal/Tm</p></td>
+</tr>
+<tr class="row-even"><td><p>T&gt;</p></td>
+<td><p>causal</p></td>
+<td><p>because/T&gt;</p></td>
+</tr>
+<tr class="row-odd"><td><p>T=</p></td>
+<td><p>comparative</p></td>
+<td><p>like/T=</p></td>
+</tr>
+<tr class="row-even"><td><p>Tc</p></td>
+<td><p>concessive</p></td>
+<td><p>although/Tc</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="type-specific-additional-information">
+<h2>Type-specific additional information<a class="headerlink" href="#type-specific-additional-information" title="Permalink to this headline">¶</a></h2>
+<p>The type part of the atom can include subparts after the type specifier. The meaning of these subsequent subparts is type-specific.</p>
+<div class="section" id="id1">
+<h3>Concept<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>When present, the first additional information subpart for concepts indicates number, with the following codes:</p>
+<ul class="simple">
+<li><p><strong>s</strong>: singular, example: apple/Cc.s</p></li>
+<li><p><strong>p</strong>: plural, example: apples/Cc.p</p></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h3>Predicate<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>When present, the first additional information subpart for predicates is used to specify the role played in a relation by each of its parameters, with the following codes:</p>
+<ul class="simple">
+<li><p><strong>s</strong>: subject</p></li>
+<li><p><strong>p</strong>: passive subject</p></li>
+<li><p><strong>a</strong>: agent</p></li>
+<li><p><strong>c</strong>: subject complement</p></li>
+<li><p><strong>o</strong>: direct object</p></li>
+<li><p><strong>i</strong>: indirect object</p></li>
+<li><p><strong>x</strong>: specifier</p></li>
+<li><p><strong>t</strong>: parataxis</p></li>
+<li><p><strong>j</strong>: interjection</p></li>
+<li><p><strong>r</strong>: clausal complement</p></li>
+</ul>
+<p>These codes are used to build strings, where each character corresponds to the parameter of the relation in the equivalent position. For example, consider the hyperedge:</p>
+<p>(is/Pd.sc (the/Md sky/Cc.s) blue/Ca.s)</p>
+<p>The <em>sc</em> subpart indicates that the first parameter (“the sky”) plays the role of subject, and the second one (“blue”), plays the role of subject complement.</p>
+<p>When present, the second additional information subpart for predicates is used to specify the features of the verb underlying the predicate. The following 7 features are specified:</p>
+<ul class="simple">
+<li><p><strong>tense</strong>: past (&lt;), present (|) or future (&gt;)</p></li>
+<li><p><strong>verb form</strong>: finite (f) or infinitive (i)</p></li>
+<li><p><strong>aspect</strong>: perfect (f) or progressive (g)</p></li>
+<li><p><strong>mood</strong></p></li>
+<li><p><strong>person</strong>: first (1), second (2) or third (3)</p></li>
+<li><p><strong>number</strong>: singular (s) or plural (p)</p></li>
+<li><p><strong>verb type</strong></p></li>
+</ul>
+<p>A string is built in the above order to specify the verb features of a predicate. Any feature can be left unspecified, by using a dash character (-). For example, consider the hyperedge:</p>
+<p>(<strong>is/P?.cs.|f–3s-</strong> (what/Mw time/Cc.s) it/Ci)</p>
+<p>The predicate specifies four verb features: present tense (|), finite form (f), third person (3) and singular number (s).</p>
+</div>
+<div class="section" id="id3">
+<h3>Modifier<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>When the modifer is verbal, the first additional information subpart is used to specify the features of the underlying verb. The notation is exactly the same as the one used for predicates, but in predicates this corresponds to the second additional information subpart. For example, consider the non-atomic predicate:</p>
+<p>(have/Mv.|f—– (been/Mv.&lt;pf—- tracking/Pd.sox.|pg—-))</p>
+</div>
+<div class="section" id="id4">
+<h3>Builder<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>When present, the first additional information subpart for builders is used to distinguish the main concepts from the auxiliary ones, with the following codes:</p>
+<ul class="simple">
+<li><p><strong>m</strong>: main concept</p></li>
+<li><p><strong>a</strong>: auxiliary concept</p></li>
+</ul>
+<p>These codes are used to build strings, where each character corresponds to the parameter of the builder in the equivalent position. For example, consider the hyperedge:</p>
+<p>(of/Br.ma founder/Cc.s psychoanalysis/Cc.s)</p>
+<p>The <em>ma</em> subpart indicates that the first concept following the builder should be considered a main concept, and the next one auxiliary. This means that “founder of psychoanalysis” is a type of “founder”. In other words, auxiliary concepts serve the role of making the main ones more specific.</p>
+</div>
+</div>
+<div class="section" id="namespaces">
+<h2>Namespaces<a class="headerlink" href="#namespaces" title="Permalink to this headline">¶</a></h2>
+<p>Namespaces serve two functions:</p>
+<ol class="arabic simple">
+<li><p>To identify the language or symbolic space to which an atom belongs;</p></li>
+<li><p>To distinguish atoms that have different meanings, but would otherwise correspond to the exact same string.</p></li>
+</ol>
+<p>In the first case, we can specify that an atom corresponds to an English word like this:</p>
+<p>sky/Cp.s/en</p>
+<p>Or to a German word like this:</p>
+<p>himmel/Cp.s/de</p>
+<p>Or that it is a special atom defined by Graphbrain:</p>
+<p>+/B/.</p>
+<p>In the second case, another subparts can be added to provide a distinction. For example, suppose we want to distinguish Cambridge (UK) from Cambridge (Mass., USA). We could use:</p>
+<p>cambridge/Cp.s/en.1</p>
+<p>cambridge/Cp.s/en.2</p>
+</div>
+<div class="section" id="special-atoms">
+<h2>Special atoms<a class="headerlink" href="#special-atoms" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 38%" />
+<col style="width: 51%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Atom</p></th>
+<th class="head"><p>Purpose</p></th>
+<th class="head"><p>Example</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>+/B/.</p></td>
+<td><p>Define compound nouns</p></td>
+<td><p>(+/B/. alan/Cp.s turing/Cp.s)</p></td>
+</tr>
+<tr class="row-odd"><td><p>:/B/.</p></td>
+<td><p>Tangential concept</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="special-relations.html" class="btn btn-neutral float-right" title="Special relations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../manual.html" class="btn btn-neutral float-left" title="Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020 CNRS.
+
+    </p>
+  </div> 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
