@@ -2,8 +2,55 @@
 Knowledge Agents
 ================
 
-Parsers
-=======
+Graphbrain includes an agent system for the performance of cognitive tasks over Semantic Hypergraphs (SH). These tasks fall into three main categories:
+
+- Generating or extending SHs from natural language or other sources.
+- Inferring new knowledge, extending  from the current contents of a SHDB.
+- Producing outputs from SHs to other formats (e.g. graphs, reports, etc.)
+
+Agents are meant to be single-purpose and collaborative. They conform to an interface that makes it easy to compose them into systems. Systems can be defined by combining agents already provided with Graphbrain, as well as new agents that can be defined by users of the library for their own purposes.
+
+The philosophy of the Graphbrain agent system is to allow for the definition of sophisticated tasks through the interaction of simples parts. 
+
+
+Running an agent from the command line
+======================================
+
+   graphbrain --hg <hypergraph> --agent <agent name> run
+
+
+Running an agent programmatically
+=================================
+
+TODO
+
+
+Defining an agent system
+========================
+
+TODO
+
+
+Running an agent system from the command line
+=============================================
+
+TODO
+
+
+Defining and running an agent system programmatically
+=====================================================
+
+TODO
+
+
+Developing your own agents
+==========================
+
+TODO
+
+
+Agent bestiary
+==============
 
 reddit_parser
 -------------
@@ -25,10 +72,6 @@ Takes a text file as input and converts each one of its sentences to hyperedges,
 
 This is a very simple but also useful, general-purpose agent.
 
-
-Ontologies
-==========
-
 taxonomy
 --------
 
@@ -44,9 +87,6 @@ Or, if we consider modifier-defined concepts such as ``(black/Ma cat/Cc.s)``::
 
    (type_of/P/. (black/Ma cat/Cc.s) cat/Cc.s)
 
-
-Coreference resolution
-======================
 
 corefs_dets
 -----------
@@ -86,9 +126,6 @@ corefs_unidecode
 
 Performs `coreference resolution <https://graphbrain.net/reference/special-relations.html#coreferences>`_ for atoms that become equal after unidecode() is a applied to both labels. For example, it will create a coreference relation between ``über/C`` and ``uber/C``.
 
-
-Actors, claims and conflicts
-============================
 
 actors
 ------
