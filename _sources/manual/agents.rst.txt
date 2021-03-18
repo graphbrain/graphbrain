@@ -2,11 +2,11 @@
 Knowledge Agents
 ================
 
-Graphbrain includes an agent system for the performance of cognitive tasks over Semantic Hypergraphs (SH). These tasks fall into three main categories:
+Graphbrain includes an agent system for the performance of cognitive tasks over Semantic Hypergraphs (SH). There are three types of agents:
 
-- Generating or extending SHs from natural language or other sources.
-- Inferring new knowledge, extending  from the current contents of a SHDB.
-- Producing outputs from SHs to other formats (e.g. graphs, reports, etc.)
+- **Input**: generate or extend SHs from natural language or other sources.
+- **Introspective**: infer new knowledge within a SH.
+- **Output**: produce outputs from SHs to other formats (e.g. charts, conventional graphs, reports, etc.)
 
 Agents are meant to be single-purpose and collaborative. They conform to an interface that makes it easy to compose them into systems. Systems can be defined by combining agents already provided with Graphbrain, as well as new agents that can be defined by users of the library for their own purposes.
 
