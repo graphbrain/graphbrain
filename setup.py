@@ -80,7 +80,7 @@ if USE_CYTHON:
         Extension('graphbrain.neuralcoref.neuralcoref',
                   ['graphbrain/neuralcoref/neuralcoref.pyx'],
                   language='c++',
-                  include_dirs=['include'])
+                  include_dirs=['.', 'include'])
     ]
     ext_modules = cythonize(ext_modules,
                             annotate=CYTHON_ANNOTATE,

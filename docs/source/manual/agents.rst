@@ -2,11 +2,11 @@
 Knowledge Agents
 ================
 
-Graphbrain includes an agent system for the performance of cognitive tasks over Semantic Hypergraphs (SH). These tasks fall into three main categories:
+Graphbrain includes an agent system for the performance of cognitive tasks over Semantic Hypergraphs (SH). There are three types of agents:
 
-- Generating or extending SHs from natural language or other sources.
-- Inferring new knowledge, extending  from the current contents of a SHDB.
-- Producing outputs from SHs to other formats (e.g. graphs, reports, etc.)
+- **Input**: generate or extend SHs from natural language or other sources.
+- **Introspective**: infer new knowledge within a SH.
+- **Output**: produce outputs from SHs to other formats (e.g. charts, conventional graphs, reports, etc.)
 
 Agents are meant to be single-purpose and collaborative. They conform to an interface that makes it easy to compose them into systems. Systems can be defined by combining agents already provided with Graphbrain, as well as new agents that can be defined by users of the library for their own purposes.
 
@@ -16,13 +16,39 @@ The philosophy of the Graphbrain agent system is to allow for the definition of 
 Running an agent from the command line
 ======================================
 
+The command line interface provides for a way to run an agent over some hypergraph, using the general 'run' command::
+
    graphbrain --hg <hypergraph> --agent <agent name> run
+
+Optional command line arguments might be required, depending on the agent. For example, let us say that we want to generate parse a text file into a hypergraph, which requires the specification of an input file and a hyperedge sequence::
+
+   graphbrain --hg books --sequence alice-in-wonderland --infile alice.txt --agent txt_parser run 
+
+The --agent argument specifies a module that implements an agent. If the namespace for the module is not specified (i.e. if it contains no dots to specify the package that the module belongs to), then it is assumed that it belongs to the package graphbrain.cognition.agents. In other words, it is assumed to be one of the agents that come with the library.
+
+Suppose that the agent example.molecules was created. Then, it could be executed like so::
+
+   graphbrain --hg chemistry --agent example.molecules run
 
 
 Running an agent programmatically
 =================================
 
-TODO
+It is naturally useful to be able to run a agents from inside programs. Agents must always run inside an agent system (we will discuss these subsequently), but Graphbrain provides a high-level utility to function that takes abstracts all such details. For example::
+
+   from graphbrain import hgraph
+   from graphbrain.cognition.system import run_agent
+
+   hg = hgraph('test.hg')
+
+   run_agent('conflicts', hg=hg)
+
+
+The ``run_agent()`` function accepts a number of optional parameters, which namely allow for all the specifications that are also available from the command line. The full signature of the function is::
+
+   run_agent(agent, lang=None, hg=None, infile=None, indir=None, url=None,
+             sequence=None, progress_bar=True, corefs='resolve',
+             logging_level=logging.INFO)
 
 
 Defining an agent system
