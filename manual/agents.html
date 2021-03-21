@@ -253,12 +253,24 @@
 </div>
 <div class="section" id="defining-an-agent-system">
 <h2>Defining an agent system<a class="headerlink" href="#defining-an-agent-system" title="Permalink to this headline">¶</a></h2>
-<p>Agents can be organized into systems to perform more complex tasks. The simplest realization of this idea is that of a pipeline, which is prevalent in NLP. Some task is performed, and then another tasks is performed, taking advantage of the outputs of the previous one. In Graphbrain, such sequences can happen in two way:</p>
+<p>Agents can be organized into systems to perform more complex tasks. The simplest realization of this idea is that of a pipeline, which is prevalent in NLP. Some task is performed, and then another tasks is performed, taking advantage of the outputs of the previous one. In Graphbrain, such sequences can happen in two ways:</p>
 <ul class="simple">
 <li><p><strong>Dependency</strong>: if agent A depends on agent B, then agent B will only be triggered to perform its tasks once agent A is finished. Agent A writes its outputs to the hypergraph, and then agent B can take advantage of the information that was stored in the hypergraph by agent A.</p></li>
 <li><p><strong>Input</strong>: if agent B receives and input from agent A, then the hyperedges produced by agent A are not stored in the hypergraph. Instead, they are directly fed to agent B for further processing.</p></li>
 </ul>
 <p>Both dependency and input relationships can be multiplexed, in the sense that several agents can depend on the same one, or several agents can receive an input from the same one.</p>
+<p>Agent systems can be specified in JSON. Let us consider a case where the <code class="docutils literal notranslate"><span class="pre">txt_parser</span></code> agent is used to parse the contents of a book, and then <code class="docutils literal notranslate"><span class="pre">corefs_names</span></code> is used to determine the co-reference sets for character names:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;txt_parser&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;agent&quot;</span><span class="p">:</span> <span class="s2">&quot;txt_parser&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;corefs_names&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;agent&quot;</span><span class="p">:</span> <span class="s2">&quot;corefs_names&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;depends_on&quot;</span><span class="p">:</span> <span class="s2">&quot;txt_parser&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="running-an-agent-system-from-the-command-line">
 <h2>Running an agent system from the command line<a class="headerlink" href="#running-an-agent-system-from-the-command-line" title="Permalink to this headline">¶</a></h2>
