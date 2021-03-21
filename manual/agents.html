@@ -107,8 +107,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Knowledge Agents</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#running-an-agent-from-the-command-line">Running an agent from the command line</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#running-an-agent-programmatically">Running an agent programmatically</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#defining-an-agent-system">Defining an agent system</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#running-an-agent-system-from-the-command-line">Running an agent system from the command line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#defining-an-agent-systems-and-running-them-from-the-command-line">Defining an agent systems and running them from the command line</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#defining-and-running-an-agent-system-programmatically">Defining and running an agent system programmatically</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#developing-your-own-agents">Developing your own agents</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agent-bestiary">Agent bestiary</a><ul>
@@ -251,30 +250,35 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="defining-an-agent-system">
-<h2>Defining an agent system<a class="headerlink" href="#defining-an-agent-system" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="defining-an-agent-systems-and-running-them-from-the-command-line">
+<h2>Defining an agent systems and running them from the command line<a class="headerlink" href="#defining-an-agent-systems-and-running-them-from-the-command-line" title="Permalink to this headline">¶</a></h2>
 <p>Agents can be organized into systems to perform more complex tasks. The simplest realization of this idea is that of a pipeline, which is prevalent in NLP. Some task is performed, and then another tasks is performed, taking advantage of the outputs of the previous one. In Graphbrain, such sequences can happen in two ways:</p>
 <ul class="simple">
 <li><p><strong>Dependency</strong>: if agent A depends on agent B, then agent B will only be triggered to perform its tasks once agent A is finished. Agent A writes its outputs to the hypergraph, and then agent B can take advantage of the information that was stored in the hypergraph by agent A.</p></li>
-<li><p><strong>Input</strong>: if agent B receives and input from agent A, then the hyperedges produced by agent A are not stored in the hypergraph. Instead, they are directly fed to agent B for further processing.</p></li>
+<li><p><strong>Flow</strong>: if agent B receives an input from agent A, then the hyperedges produced by agent A are not stored in the hypergraph. Instead, they are directly fed to agent B for further processing.</p></li>
 </ul>
-<p>Both dependency and input relationships can be multiplexed, in the sense that several agents can depend on the same one, or several agents can receive an input from the same one.</p>
-<p>Agent systems can be specified in JSON. Let us consider a case where the <code class="docutils literal notranslate"><span class="pre">txt_parser</span></code> agent is used to parse the contents of a book, and then <code class="docutils literal notranslate"><span class="pre">corefs_names</span></code> is used to determine the co-reference sets for character names:</p>
+<p>Both dependency and flow relationships can be multiplexed, in the sense that several agents can depend on the same one, or several agents can receive an input from the same one.</p>
+<p>Agent systems can be specified in JSON. Let us consider a case where the <code class="docutils literal notranslate"><span class="pre">wikipedia</span></code> agent is used to retrieve and parse the contents of a wikipedia page, and <code class="docutils literal notranslate"><span class="pre">taxonomy</span></code> is used to derive the taxonomy of concepts, followed by <code class="docutils literal notranslate"><span class="pre">corefs_onto</span></code> to determine the co-reference sets of concepts:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s2">&quot;txt_parser&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;agent&quot;</span><span class="p">:</span> <span class="s2">&quot;txt_parser&quot;</span>
+    <span class="s2">&quot;wikipedia&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;agent&quot;</span><span class="p">:</span> <span class="s2">&quot;wikipedia&quot;</span>
     <span class="p">},</span>
-    <span class="s2">&quot;corefs_names&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;agent&quot;</span><span class="p">:</span> <span class="s2">&quot;corefs_names&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;depends_on&quot;</span><span class="p">:</span> <span class="s2">&quot;txt_parser&quot;</span>
+    <span class="s2">&quot;taxonomy&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;agent&quot;</span><span class="p">:</span> <span class="s2">&quot;taxonomy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;depends_on&quot;</span><span class="p">:</span> <span class="s2">&quot;wikipedia&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;corefs_onto&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;agent&quot;</span><span class="p">:</span> <span class="s2">&quot;corefs_onto&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;depends_on&quot;</span><span class="p">:</span> <span class="s2">&quot;taxonomy&quot;</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
+<p>Let us say we save this file as <code class="docutils literal notranslate"><span class="pre">wikipedia.sys</span></code>. We can then run this system from the command line, for example like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="n">wikipedia</span><span class="o">.</span><span class="n">hg</span> <span class="o">--</span><span class="n">url</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">en</span><span class="o">.</span><span class="n">wikipedia</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">wiki</span><span class="o">/</span><span class="n">Artificial_intelligence</span> <span class="o">--</span><span class="n">system</span> <span class="n">systems</span><span class="o">/</span><span class="n">wikipedia</span><span class="o">.</span><span class="n">sys</span> <span class="n">run</span>
+</pre></div>
 </div>
-<div class="section" id="running-an-agent-system-from-the-command-line">
-<h2>Running an agent system from the command line<a class="headerlink" href="#running-an-agent-system-from-the-command-line" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<p>Notice that the arguments that are specified in the command line are transparently transfered to the agents in the system that make use of them. For example, the <code class="docutils literal notranslate"><span class="pre">wikipedia</span></code> agent requires an input url (<code class="docutils literal notranslate"><span class="pre">--url</span> <span class="pre">https://en.wikipedia.org/wiki/Artificial_intelligence</span></code>) and a hypergraph to write to (<code class="docutils literal notranslate"><span class="pre">--hg</span> <span class="pre">wikipedia.hg</span></code>). Then both <code class="docutils literal notranslate"><span class="pre">taxonomy</span></code> and <code class="docutils literal notranslate"><span class="pre">corefs_names</span></code>, which are introspective, both require a hypergraph to read/write to. The same one is used. Agent systems are meant to operate on a given hypergraph, to which all agents refer to when performing their operations.</p>
 </div>
 <div class="section" id="defining-and-running-an-agent-system-programmatically">
 <h2>Defining and running an agent system programmatically<a class="headerlink" href="#defining-and-running-an-agent-system-programmatically" title="Permalink to this headline">¶</a></h2>

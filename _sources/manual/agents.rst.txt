@@ -51,33 +51,38 @@ The ``run_agent()`` function accepts a number of optional parameters, which name
              logging_level=logging.INFO)
 
 
-Defining an agent system
-========================
+Defining an agent systems and running them from the command line
+================================================================
 
 Agents can be organized into systems to perform more complex tasks. The simplest realization of this idea is that of a pipeline, which is prevalent in NLP. Some task is performed, and then another tasks is performed, taking advantage of the outputs of the previous one. In Graphbrain, such sequences can happen in two ways:
 
 - **Dependency**: if agent A depends on agent B, then agent B will only be triggered to perform its tasks once agent A is finished. Agent A writes its outputs to the hypergraph, and then agent B can take advantage of the information that was stored in the hypergraph by agent A.
-- **Input**: if agent B receives and input from agent A, then the hyperedges produced by agent A are not stored in the hypergraph. Instead, they are directly fed to agent B for further processing.
+- **Flow**: if agent B receives an input from agent A, then the hyperedges produced by agent A are not stored in the hypergraph. Instead, they are directly fed to agent B for further processing.
 
-Both dependency and input relationships can be multiplexed, in the sense that several agents can depend on the same one, or several agents can receive an input from the same one.
+Both dependency and flow relationships can be multiplexed, in the sense that several agents can depend on the same one, or several agents can receive an input from the same one.
 
-Agent systems can be specified in JSON. Let us consider a case where the ``txt_parser`` agent is used to parse the contents of a book, and then ``corefs_names`` is used to determine the co-reference sets for character names::
+Agent systems can be specified in JSON. Let us consider a case where the ``wikipedia`` agent is used to retrieve and parse the contents of a wikipedia page, and ``taxonomy`` is used to derive the taxonomy of concepts, followed by ``corefs_onto`` to determine the co-reference sets of concepts::
 
    {
-       "txt_parser": {
-           "agent": "txt_parser"
+       "wikipedia": {
+           "agent": "wikipedia"
        },
-       "corefs_names": {
-           "agent": "corefs_names",
-           "depends_on": "txt_parser"
+       "taxonomy": {
+           "agent": "taxonomy",
+           "depends_on": "wikipedia"
+       },
+       "corefs_onto": {
+           "agent": "corefs_onto",
+           "depends_on": "taxonomy"
        }
    }
 
 
-Running an agent system from the command line
-=============================================
+Let us say we save this file as ``wikipedia.sys``. We can then run this system from the command line, for example like this::
 
-TODO
+   graphbrain --hg wikipedia.hg --url https://en.wikipedia.org/wiki/Artificial_intelligence --system systems/wikipedia.sys run
+
+Notice that the arguments that are specified in the command line are transparently transfered to the agents in the system that make use of them. For example, the ``wikipedia`` agent requires an input url (``--url https://en.wikipedia.org/wiki/Artificial_intelligence``) and a hypergraph to write to (``--hg wikipedia.hg``). Then both ``taxonomy`` and ``corefs_names``, which are introspective, both require a hypergraph to read/write to. The same one is used. Agent systems are meant to operate on a given hypergraph, to which all agents refer to when performing their operations.
 
 
 Defining and running an agent system programmatically
