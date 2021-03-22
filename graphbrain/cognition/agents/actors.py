@@ -47,5 +47,8 @@ class Actors(Agent):
 
     def on_end(self):
         for actor in self.actor_counter:
-            if self.actor_counter[actor] > 0:
-                yield create_op(('actor/P/.', actor))
+            yield create_op(('actor/P/.', actor))
+
+    def report(self):
+        return 'actors found: {}'.format(
+            len(self.actor_counter))
