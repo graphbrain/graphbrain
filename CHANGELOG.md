@@ -21,7 +21,7 @@
 - Function Hyperedge.size().
 - Function Hyperedge.predicate().
 - Function Hyperedge.predicate_atom().
-- Logic engine, HG.eval().
+- Function Hyperedge.simplify().
 - Utility functions to show colored edges in the terminal.
 
 ### Changed

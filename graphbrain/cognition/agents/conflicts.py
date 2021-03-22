@@ -13,7 +13,7 @@ from graphbrain.op import create_op
 CONFLICT_PRED_LEMMAS = {'warn', 'kill', 'accuse', 'condemn', 'slam', 'arrest',
                         'clash', 'blame',
                         'warns', 'kills', 'accuses', 'condemns', 'slams',
-                        'arrests', 'clashes', 'blamees',
+                        'arrests', 'clashes', 'blames',
                         'warned', 'killed', 'accused', 'condemned', 'slamed',
                         'arrestes', 'clashed', 'blamed'}
 

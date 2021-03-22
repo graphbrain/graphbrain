@@ -708,13 +708,39 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(hedge('graphbrain/Cp.s/1').role(), ['Cp', 's'])
         self.assertEqual(hedge('graphbrain').role(), ['C'])
 
-    def test_atom_simplify_role(self):
-        self.assertEqual(hedge('graphbrain/Cp.s/1').simplify_role(),
+    def test_atom_simplify_atom(self):
+        self.assertEqual(hedge('graphbrain/Cp.s/1').simplify(),
                          hedge('graphbrain/C/1'))
-        self.assertEqual(hedge('graphbrain').simplify_role(),
+        self.assertEqual(hedge('graphbrain').simplify(),
                          hedge('graphbrain'))
-        self.assertEqual(hedge('say/Pd.|f----.sr/en').simplify_role(),
+        self.assertEqual(hedge('say/Pd.sr.|f----/en').simplify(),
                          hedge('say/P/en'))
+        self.assertEqual(hedge('say/Pd.sr.|f----/en').simplify(subtypes=True),
+                         hedge('say/Pd/en'))
+        self.assertEqual(hedge('say/Pd.sr.|f----/en').simplify(argroles=True),
+                         hedge('say/P.sr/en'))
+        self.assertEqual(
+            hedge('say/Pd.sr.|f----/en').simplify(namespaces=False),
+            hedge('say/P'))
+        self.assertEqual(
+            hedge('say/Pd.sr.|f----/en').simplify(subtypes=True,
+                                                  namespaces=False),
+            hedge('say/Pd'))
+
+    def test_atom_simplify_edge(self):
+        edge = hedge('is/Pd.sc.|f----/en mary/Cp.s/en nice/Ca/en')
+        self.assertEqual(
+            edge.simplify(),
+            hedge('is/P/en mary/C/en nice/C/en'))
+        self.assertEqual(
+            edge.simplify(subtypes=True),
+            hedge('is/Pd/en mary/Cp/en nice/Ca/en'))
+        self.assertEqual(
+            edge.simplify(argroles=True),
+            hedge('is/P.sc/en mary/C/en nice/C/en'))
+        self.assertEqual(
+            edge.simplify(argroles=True, namespaces=False),
+            hedge('is/P.sc mary/C nice/C'))
 
     def test_atom_type(self):
         self.assertEqual(hedge('graphbrain/Cp.s/1').type(), 'Cp')

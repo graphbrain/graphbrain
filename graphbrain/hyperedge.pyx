@@ -678,6 +678,20 @@ class Hyperedge(tuple):
         """
         return Hyperedge(tuple(item.replace_atom(old, new) for item in self))
 
+    def simplify(self, subtypes=False, argroles=False, namespaces=True):
+        """Returns a version of the edge with simplified atoms, for example
+        removing subtypes, subroles or namespaces.
+
+        Keyword arguments:
+        subtypes -- include subtypes (default: False).
+        argroles --include argroles (default: False).
+        namespaces -- include namespaces (default: True).
+        """
+        return hedge([subedge.simplify(subtypes=subtypes,
+                                       argroles=argroles,
+                                       namespaces=namespaces)
+                      for subedge in self])
+
     def type(self):
         """Returns the type of this edge as a string.
         Type inference is performed.
@@ -1103,13 +1117,35 @@ class Atom(Hyperedge):
         else:
             return parts[1].split('.')
 
-    def simplify_role(self):
-        """Returns atom with a simplified role part. In the simplified role,
-        only the type is specified.
+    def simplify(self, subtypes=False, argroles=False, namespaces=True):
+        """Returns a simplified version of the atom, for example removing
+        subtypes, subroles or namespaces.
+
+        Keyword arguments:
+        subtypes -- include subtype (default: False).
+        argroles --include argroles (default: False).
+        namespaces -- include namespaces (default: True).
         """
         parts = self.parts()
-        if len(parts) > 1:
-            parts[1] = self.type()[0]
+
+        if len(parts) < 2:
+            return self
+
+        if subtypes:
+            role = self.type()
+        else:
+            role = self.type()[0]
+
+        if argroles:
+            ar = self.argroles()
+            if len(ar) > 0:
+                role = '{}.{}'.format(role, ar)
+
+        parts[1] = role
+
+        if len(parts) > 2 and not namespaces:
+            parts = parts[:2]
+
         atom_str = '/'.join(parts)
         return Atom((atom_str,))
 

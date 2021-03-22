@@ -1,25 +1,13 @@
 {
+    "txt_parser": {
+        "agent": "txt_parser"
+    },
     "taxonomy": {
-        "agent": "taxonomy"
-    },
-    "number": {
-        "agent": "number",
-        "depends_on": "taxonomy"
-    },
-    "corefs_dets": {
-        "agent": "corefs_dets",
-        "depends_on": "number"
-    },
-    "corefs_names": {
-        "agent": "corefs_names",
-        "depends_on": "corefs_dets"
+        "agent": "taxonomy",
+        "depends_on": "txt_parser"
     },
     "corefs_onto": {
         "agent": "corefs_onto",
-        "depends_on": "corefs_names"
-    },
-    "corefs_unidecode": {
-        "agent": "corefs_unidecode",
-        "depends_on": "corefs_onto"
+        "depends_on": "taxonomy"
     }
 }
