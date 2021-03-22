@@ -4,7 +4,8 @@ import graphbrain.constants as const
 def lemma(hg, atom):
     """Returns the lemma of the given atom if it exists, None otherwise."""
     if atom.is_atom():
-        for lemma_edge in hg.search((const.lemma_pred, atom, '*')):
+        satom = atom.simplify()
+        for lemma_edge in hg.search((const.lemma_pred, satom, '*')):
             return lemma_edge[2]
     return None
 
@@ -24,9 +25,7 @@ def deep_lemma(hg, edge):
     go/P
     """
     if edge.is_atom():
-        for lemma_edge in hg.search((const.lemma_pred, edge, '*')):
-            return lemma_edge[2]
-        return edge
+        return lemma(hg, edge)
     else:
         return deep_lemma(hg, edge[1])
 
@@ -43,7 +42,8 @@ def lemma_degrees(hg, edge):
         roots = {edge.root()}
 
         # find lemma
-        for edge in hg.search((const.lemma_pred, edge, '*')):
+        satom = edge.simplify()
+        for edge in hg.search((const.lemma_pred, satom, '*')):
             roots.add(edge[2].root())
 
         # compute degrees

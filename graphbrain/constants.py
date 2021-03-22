@@ -1,7 +1,7 @@
 # Pre-defined system atoms
 sequence_pred = 'seq/P/.'
 noun_connector_pred = '+/B/.'
-lemma_pred = 'lemma/P/.'
+lemma_pred = 'lemma/J/.'
 coref_pred = 'coref/P/.'
 coref_res_pred = 'coref_res/P/.'
 main_coref_pred = 'main_coref/P/.'

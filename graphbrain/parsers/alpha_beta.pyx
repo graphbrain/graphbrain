@@ -431,7 +431,7 @@ class AlphaBeta(Parser):
     def _add_lemmas(self, token, entity, ent_type):
         text = token.lemma_.lower()
         lemma = build_atom(text, ent_type[0], self.lang)
-        lemma_edge = hedge((const.lemma_pred, entity, lemma))
+        lemma_edge = hedge((const.lemma_pred, entity.simplify(), lemma))
         self.extra_edges.add(lemma_edge)
 
     def _apply_arg_roles(self, edge):
