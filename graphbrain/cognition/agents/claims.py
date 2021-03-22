@@ -12,7 +12,7 @@ from graphbrain.meaning.lemmas import deep_lemma
 from graphbrain.op import create_op
 
 
-CLAIM_PRED_LEMMAS = {'say', 'claim', 'says', 'claims', 'said', 'claimed'}
+CLAIM_PRED_LEMMAS = {'say', 'claim'}
 
 
 def _subject_preposition(claim):

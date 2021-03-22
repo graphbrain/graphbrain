@@ -11,11 +11,7 @@ from graphbrain.op import create_op
 
 
 CONFLICT_PRED_LEMMAS = {'warn', 'kill', 'accuse', 'condemn', 'slam', 'arrest',
-                        'clash', 'blame',
-                        'warns', 'kills', 'accuses', 'condemns', 'slams',
-                        'arrests', 'clashes', 'blames',
-                        'warned', 'killed', 'accused', 'condemned', 'slamed',
-                        'arrestes', 'clashed', 'blamed'}
+                        'clash', 'blame'}
 
 CONFLICT_TOPIC_TRIGGERS = {'of/T/en', 'over/T/en', 'against/T/en', 'for/T/en'}
 
