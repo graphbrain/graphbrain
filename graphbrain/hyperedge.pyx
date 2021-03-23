@@ -150,7 +150,7 @@ def _matches_wildcard(edge, wildcard):
                 # fixed order?
                 wargroles_posopt = wargroles_parts[0]
                 eargroles = erole[1]
-                if wargroles_posopt[0] == '{':
+                if len(wargroles_posopt) > 0 and wargroles_posopt[0] == '{':
                     wargroles_posopt = wargroles_posopt[1:-1]
                 else:
                     wargroles_posopt = wargroles_posopt.replace(',', '')

@@ -602,6 +602,12 @@ class TestHyperedge(unittest.TestCase):
                           '(X/Pd.sc graphbrain/Cp.s X ...)'),
             [])
 
+    def test_match_pattern_predicate_singleton(self):
+        self.assertEqual(
+            match_pattern('keep/Pd..-i-----/en',
+                          'keep/Pd..-i-----/en'),
+            [{}])
+
     def test_edge_matches_pattern_simple(self):
         self.assertTrue(edge_matches_pattern(hedge('(a b)'), '(a b)'))
         self.assertFalse(edge_matches_pattern(hedge('(a b)'), '(a a)'))
