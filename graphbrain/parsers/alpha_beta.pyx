@@ -752,7 +752,8 @@ class AlphaBeta(Parser):
     def _resolve_corefs_edge(self, edge):
         if edge is None:
             return None
-        elif edge in self.edge2coref:
+        elif (edge in self.edge2coref and
+              edge.type()[0] == self.edge2coref[edge].type()[0]):
             return self.edge2coref[edge]
         elif edge.is_atom():
             return edge
@@ -760,7 +761,8 @@ class AlphaBeta(Parser):
         # (her/Mp dog/Cc) -> (poss/Bp.am/. mary/Cp dog/Cc)
         elif (edge[0].type() == 'Mp' and
               len(edge) == 2 and
-              edge[0] in self.edge2coref):
+              edge[0] in self.edge2coref and
+              self.edge2coref[edge[0]].type()[0] == 'C'):
             return hedge(
                 (const.possessive_builder, self.edge2coref[edge[0]], edge[1]))
         else:
