@@ -543,6 +543,9 @@ class Hyperedge(tuple):
     def atom(self):
         return self[1].atom()
 
+    def connector_atom(self):
+        return self[0].atom()
+
     def atoms(self):
         """Returns the set of atoms contained in the edge.
 

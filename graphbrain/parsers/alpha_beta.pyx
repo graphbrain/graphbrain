@@ -345,7 +345,7 @@ class AlphaBeta(Parser):
             edge = hedge([self._repair(subedge) for subedge in edge])
 
             if edge.connector_type()[0] == 'B':
-                if edge[2].type()[0] == 'R':
+                if 'R' in set(subedge.type()[0] for subedge in edge[1:]):
                     builder_atom = edge[0].atom_with_type('B')
                     builder_parts = builder_atom.parts()
                     newparts = (builder_parts[0], 'J' + builder_parts[1][1:])
@@ -367,13 +367,14 @@ class AlphaBeta(Parser):
                     if len(builder_parts) > 2:
                         newparts += tuple(builder_parts[2:])
                     new_builder = hedge('/'.join(newparts))
-                    utrigger_atom = UniqueAtom(builder_atom)
-                    unew_trigger = UniqueAtom(new_builder)
-                    if utrigger_atom in self.atom2token:
-                        self.atom2token[unew_trigger] =\
-                            self.atom2token[utrigger_atom]
-                    self.orig_atom[unew_trigger] = utrigger_atom
-                    edge = edge.replace_atom(builder_atom, new_builder)
+                    ubuilder_atom = UniqueAtom(builder_atom)
+                    unew_builder = UniqueAtom(new_builder)
+                    if ubuilder_atom in self.atom2token:
+                        self.atom2token[unew_builder] =\
+                            self.atom2token[ubuilder_atom]
+                    self.orig_atom[unew_builder] = ubuilder_atom
+                    conn = edge[0].replace_atom(builder_atom, new_builder)
+                    edge = hedge((conn,) + edge[1:])
 
         return edge
 

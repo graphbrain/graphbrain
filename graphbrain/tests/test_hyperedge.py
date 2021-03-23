@@ -119,6 +119,20 @@ class TestHyperedge(unittest.TestCase):
                                '(and/B belgium/C europe/C))').label(),
                          'capital of belgium and europe')
 
+    def test_connector_atom(self):
+        edge = hedge('(is/P.sc graphbrain/1 great/1)')
+        self.assertEqual(edge.connector_atom(),
+                         hedge('is/P.sc'))
+        edge = hedge('((not/M is/P.sc) graphbrain/1 great/1)')
+        self.assertEqual(edge.connector_atom(),
+                         hedge('is/P.sc'))
+        edge = hedge('((maybe/M (not/M is/P.sc)) graphbrain/1 great/1)')
+        self.assertEqual(edge.connector_atom(),
+                         hedge('is/P.sc'))
+        edge = hedge('(((and/J not/M nope/M) is/P.sc) graphbrain/1 great/1)')
+        self.assertEqual(edge.connector_atom(),
+                         hedge('is/P.sc'))
+
     def test_atoms(self):
         self.assertEqual(hedge('(is graphbrain/1 great/1)').atoms(),
                          {hedge('is'), hedge('graphbrain/1'),

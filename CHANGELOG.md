@@ -22,6 +22,7 @@
 - Function Hyperedge.predicate().
 - Function Hyperedge.predicate_atom().
 - Function Hyperedge.simplify().
+- Function Hyperedge.connector_atom().
 - Utility functions to show colored edges in the terminal.
 
 ### Changed
