@@ -24,8 +24,6 @@ class TxtParser(Agent):
             raise RuntimeError('Sequence name must be specified.')
 
     def parse_text(self, infile, parser, sequence):
-        pos = 0
-
         paragraphs = list(read_paragraphs(infile))
 
         if self.progress_bar:
@@ -36,7 +34,7 @@ class TxtParser(Agent):
         for i, paragraph in enumerate(paragraphs):
             for op in self.system.parse_results2ops(parser.parse(paragraph),
                                                     sequence=sequence,
-                                                    pos=pos):
+                                                    pos=i):
                 yield op
             if self.progress_bar:
                 pbar.update(i)
