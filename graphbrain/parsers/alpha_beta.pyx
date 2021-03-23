@@ -346,7 +346,7 @@ class AlphaBeta(Parser):
 
             if edge.connector_type()[0] == 'B':
                 if 'R' in set(subedge.type()[0] for subedge in edge[1:]):
-                    builder_atom = edge[0].atom_with_type('B')
+                    builder_atom = edge.connector_atom()
                     builder_parts = builder_atom.parts()
                     newparts = (builder_parts[0], 'J' + builder_parts[1][1:])
                     if len(builder_parts) > 2:
@@ -358,10 +358,11 @@ class AlphaBeta(Parser):
                         self.atom2token[unew_trigger] =\
                             self.atom2token[utrigger_atom]
                     self.orig_atom[unew_trigger] = utrigger_atom
-                    edge = edge.replace_atom(builder_atom, new_builder)
+                    edge = edge.replace_atom(
+                        builder_atom, new_builder, unique=True)
             elif edge.connector_type()[0] == 'J':
                 if len(edge) == 2:
-                    builder_atom = edge[0].atom_with_type('J')
+                    builder_atom = edge.connector_atom()
                     builder_parts = builder_atom.parts()
                     newparts = (builder_parts[0], 'Mj')
                     if len(builder_parts) > 2:
@@ -373,8 +374,8 @@ class AlphaBeta(Parser):
                         self.atom2token[unew_builder] =\
                             self.atom2token[ubuilder_atom]
                     self.orig_atom[unew_builder] = ubuilder_atom
-                    conn = edge[0].replace_atom(builder_atom, new_builder)
-                    edge = hedge((conn,) + edge[1:])
+                    edge = edge.replace_atom(
+                        builder_atom, new_builder, unique=True)
 
         return edge
 
