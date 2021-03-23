@@ -724,6 +724,21 @@ class TestHyperedge(unittest.TestCase):
                                '(b x))').replace_atom(x, xc).to_str(),
                          '(a x/C (b x/C))')
 
+    def test_replace_atom_unique(self):
+        edge = hedge('(a/P x/C x/C)')
+        x1 = edge[1]
+        x2 = edge[2]
+        y = hedge('y/C')
+        self.assertEqual(
+            edge.replace_atom(x1, y, unique=True).to_str(),
+            '(a/P y/C x/C)')
+        self.assertEqual(
+            edge.replace_atom(x2, y, unique=True).to_str(),
+            '(a/P x/C y/C)')
+        self.assertEqual(
+            edge.replace_atom(hedge('x/C'), y, unique=True).to_str(),
+            '(a/P x/C x/C)')
+
     def test_atom_role(self):
         self.assertEqual(hedge('graphbrain/Cp.s/1').role(), ['Cp', 's'])
         self.assertEqual(hedge('graphbrain').role(), ['C'])

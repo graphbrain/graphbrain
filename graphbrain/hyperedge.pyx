@@ -675,11 +675,16 @@ class Hyperedge(tuple):
             else:
                 return Hyperedge((self, entity))
 
-    def replace_atom(self, old, new):
+    def replace_atom(self, old, new, unique=False):
         """Returns edge built by replacing every instance of 'old' in
         this edge with 'new'.
+
+        Keyword argument:
+        unique -- match only the exact same instance of the atom, i.e.
+                  UniqueAtom(self) == UniqueAtom(old) (default: False)
         """
-        return Hyperedge(tuple(item.replace_atom(old, new) for item in self))
+        return Hyperedge(tuple(item.replace_atom(old, new, unique=unique)
+                               for item in self))
 
     def simplify(self, subtypes=False, argroles=False, namespaces=True):
         """Returns a version of the edge with simplified atoms, for example
@@ -1062,7 +1067,7 @@ class Atom(Hyperedge):
         """Checks if 'needle' is contained in edge.
 
         Keyword argument:
-        deep -- search recursively (default False)"""
+        deep -- search recursively (default: False)"""
         return self[0] == needle
 
     def subedges(self):
@@ -1086,14 +1091,21 @@ class Atom(Hyperedge):
         """
         return Hyperedge((self, argument))
 
-    def replace_atom(self, old, new):
+    def replace_atom(self, old, new, unique=False):
         """Returns edge built by replacing every instance of 'old' in
         this edge with 'new'.
+
+        Keyword argument:
+        unique -- match only the exact same instance of the atom, i.e.
+                  UniqueAtom(self) == UniqueAtom(old) (default: False)
         """
-        if self == old:
-            return new
+        if unique:
+            if UniqueAtom(self) == UniqueAtom(old):
+                return new
         else:
-            return self
+            if self == old:
+                return new
+        return self
 
     def role(self):
         """Returns the role of this atom as a list of the subrole strings.

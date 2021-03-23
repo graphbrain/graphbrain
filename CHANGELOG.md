@@ -38,6 +38,7 @@
 - corefs_names agent is simplified.
 - corefs_onto agent is simplified.
 - Tests now run with pytest instead of the deprecated './setup.py test'.
+- Hyperedge.replace_atom() optional unique argument.
 
 ### Removed
 - Meta-modifier hyperedge type.
