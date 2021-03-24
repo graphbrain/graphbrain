@@ -50,7 +50,7 @@ These structures can be arbitrarily nested, for instance "Mary climbs the highes
 
 In these examples we only show the human-friendly labels of atoms. Atoms contain additional annotations, e.g. specifying their type. We leave these details out of this overview, but we provide a full and formal specification of Semantic Hypergraph syntax and semantics elsewhere.
 
-Readers who are familiar with Lisp will likely have noticed that hyperedges are isomophic to *S-expressions*. This is not purely accidental. Lisp is very close to :math:`\lambda`-calculus, a formal and minimalistic model of computation that is based on function abstraction and application. The first item of an s-expression specifics a function, the following ones its arguments. One can think of a function as an association between objects. Although hyperedges do not specify computations, connectors are similar to functions at a very abstract level, in that they define associations. The concepts of "race to space" and "race in space" are both associated to the concepts "race" and "space", but the combination of these two concepts yields different meaning by application of either the connector "in" or "to".
+Readers who are familiar with Lisp will likely have noticed that hyperedges are isomophic to *S-expressions*. This is not purely accidental. Lisp is very close to :math:`\lambda`-calculus, a formal and minimalistic model of computation that is based on function abstraction and application. The first item of an s-expression specifies a function, the following ones its arguments. One can think of a function as an association between objects. Although hyperedges do not specify computations, connectors are similar to functions at a very abstract level, in that they define associations. The concepts of "race to space" and "race in space" are both associated to the concepts "race" and "space", but the combination of these two concepts yields different meaning by application of either the connector "in" or "to".
 
 As knowledge model
 ==================
@@ -58,7 +58,7 @@ As knowledge model
 .. image:: /_static/hyper-vs-graph.png
   :alt: Hypergraph vs. Graph
 
-As cab be seen in the third example above, and thanks to nesting, it is possible to represent facts about facts. for instance, the fact that Mary states that Berlin is nice could be expressed by:
+As cab be seen in the third example above, and thanks to nesting, it is possible to represent facts about facts. For instance, the fact that Mary states that Berlin is nice could be expressed by:
 
 ``(claims mary (is berlin nice))``
 
