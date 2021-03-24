@@ -1,4 +1,16 @@
-from graphbrain.hyperedge import *
+from graphbrain.hyperedge import (str2atom,
+                                  split_edge_str,
+                                  edges2str,
+                                  match_pattern,
+                                  edge_matches_pattern,
+                                  rel_arg_role,
+                                  hedge,
+                                  build_atom,
+                                  Hyperedge,
+                                  Atom,
+                                  UniqueAtom,
+                                  unique,
+                                  non_unique)
 from graphbrain.memory.leveldb import LevelDB
 
 

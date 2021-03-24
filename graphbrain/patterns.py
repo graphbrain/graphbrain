@@ -1,5 +1,6 @@
 from collections import Counter
-from graphbrain import hedge, edge_matches_pattern
+from graphbrain import hedge
+from graphbrain.hyperedge import edge_matches_pattern
 
 
 argrole_order = {
