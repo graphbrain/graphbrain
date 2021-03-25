@@ -1,16 +1,24 @@
 import graphbrain.constants as const
 
 
-def lemma(hg, atom):
-    """Returns the lemma of the given atom if it exists, None otherwise."""
+def lemma(hg, atom, same_if_none=False):
+    """Returns the lemma of the given atom if it exists, None otherwise.
+
+    Keyword argument:
+    same_if_none -- if False, returns None when lemma does not exist. If True,
+    returns atom items when lemma does not exist. (default: False)
+    """
     if atom.is_atom():
         satom = atom.simplify()
         for lemma_edge in hg.search((const.lemma_pred, satom, '*')):
             return lemma_edge[2]
-    return None
+    if same_if_none:
+        return atom
+    else:
+        return None
 
 
-def deep_lemma(hg, edge):
+def deep_lemma(hg, edge, same_if_none=False):
     """Returns the lemma of an atomic edge, or the lemma of the first atom
     found by recursively descending the hyperedge, always choosing the
     subedge immediatly after the connector.
@@ -23,6 +31,10 @@ def deep_lemma(hg, edge):
     could return
 
     go/P
+
+    Keyword argument:
+    same_if_none -- if False, returns None when lemma does not exist. If True,
+    returns atom items when lemma does not exist. (default: False)
     """
     if edge.is_atom():
         return lemma(hg, edge)

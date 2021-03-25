@@ -102,7 +102,10 @@ class Claims(Agent):
             if ct[0] == 'P':
                 pred = edge[0]
                 if (len(edge) > 2 and
-                        deep_lemma(hg, pred).root() in CLAIM_PRED_LEMMAS):
+                        deep_lemma(
+                            hg,
+                            pred,
+                            same_if_none=True).root() in CLAIM_PRED_LEMMAS):
                     subjects = edge.edges_with_argrole('s')
                     claims = edge.edges_with_argrole('r')
                     if len(subjects) == 1 and len(claims) >= 1:
