@@ -14,10 +14,10 @@ All cases below work with both.
 
 Here's an overview of the interface::
 
-   graphbrain [-h] [--hg HG] [--infile INFILE] [--outfile OUTFILE]
-              [--fields FIELDS] [--show_namespaces] [--lang LANG]
-              [--pattern PATTERN] [--agent AGENT]
-              command
+   graphbrain [-h] [--agent AGENT] [--corefs COREFS] [--fields FIELDS] [--hg HG] [--indir INDIR]
+                   [--infile INFILE] [--lang LANG] [--outdir OUTDIR] [--outfile OUTFILE]
+                   [--pattern PATTERN] [--sequence SEQUENCE] [--show_namespaces] [--system SYSTEM] [--text TEXT] [--training_data TRAINING_DATA] [--url URL]
+                   command
 
    positional arguments:
      command               command to execute
