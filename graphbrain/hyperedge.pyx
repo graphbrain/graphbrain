@@ -658,7 +658,7 @@ class Hyperedge(tuple):
 
         Keyword argument:
         unique -- match only the exact same instance of the atom, i.e.
-                  UniqueAtom(self) == UniqueAtom(old) (default: False)
+        UniqueAtom(self) == UniqueAtom(old) (default: False)
         """
         return Hyperedge(tuple(item.replace_atom(old, new, unique=unique)
                                for item in self))
@@ -1074,7 +1074,7 @@ class Atom(Hyperedge):
 
         Keyword argument:
         unique -- match only the exact same instance of the atom, i.e.
-                  UniqueAtom(self) == UniqueAtom(old) (default: False)
+        UniqueAtom(self) == UniqueAtom(old) (default: False)
         """
         if unique:
             if UniqueAtom(self) == UniqueAtom(old):
