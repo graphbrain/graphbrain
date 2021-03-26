@@ -17,7 +17,7 @@
 import itertools
 import math
 
-from graphbrain.hyperedge import *
+from graphbrain.hyperedge import hedge, split_edge_str
 
 
 # maximum permutations of an edge that are written to the database

@@ -7,11 +7,11 @@ import spacy
 import graphbrain.constants as const
 import graphbrain.neuralcoref as neuralcoref
 from .parser import Parser
-from graphbrain import build_atom
-from graphbrain import hedge
-from graphbrain import non_unique
-from graphbrain import unique
-from graphbrain import UniqueAtom
+from graphbrain.hyperedge import build_atom
+from graphbrain.hyperedge import hedge
+from graphbrain.hyperedge import non_unique
+from graphbrain.hyperedge import unique
+from graphbrain.hyperedge import UniqueAtom
 from graphbrain.meaning.concepts import has_common_or_proper_concept
 
 

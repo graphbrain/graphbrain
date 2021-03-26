@@ -1,6 +1,6 @@
 import re
 
-from graphbrain import UniqueAtom
+from graphbrain.hyperedge import UniqueAtom
 
 
 def edge_text(atom2word, edge):
