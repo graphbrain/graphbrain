@@ -9,4 +9,4 @@ def hgraph(locator_string):
     Currently, the only type of hypergraph is based on LevelDB storage,
     and the location_string is the path to the LevelDB folder.
     """
-    return graphbrain.memory.leveldbLevelDB(locator_string)
+    return graphbrain.memory.leveldb.LevelDB(locator_string)

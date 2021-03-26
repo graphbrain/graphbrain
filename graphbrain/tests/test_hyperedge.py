@@ -1,8 +1,12 @@
 import unittest
 
-from graphbrain.hyperedge import (hedge, build_atom, str2atom, split_edge_str,
-                                  match_pattern, edge_matches_pattern,
-                                  edges2str, rel_arg_role)
+from graphbrain.hyperedge import (hedge,
+                                  build_atom,
+                                  str2atom,
+                                  split_edge_str,
+                                  match_pattern,
+                                  edge_matches_pattern,
+                                  edges2str)
 
 
 class TestHyperedge(unittest.TestCase):
