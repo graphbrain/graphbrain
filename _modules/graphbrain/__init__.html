@@ -34,6 +34,7 @@
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -96,7 +97,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../manual.html">Manual</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../cli.html">Command-line interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../team.html">Team</a></li>
 </ul>
 
@@ -165,8 +165,8 @@
            <div itemprop="articleBody">
             
   <h1>Source code for graphbrain.__init__</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">graphbrain.hyperedge</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">graphbrain.memory.leveldb</span> <span class="kn">import</span> <span class="n">LevelDB</span>
+<span></span><span class="kn">from</span> <span class="nn">graphbrain.hyperedge</span> <span class="kn">import</span> <span class="n">hedge</span>
+<span class="kn">import</span> <span class="nn">graphbrain.memory.leveldb</span>
 
 
 <div class="viewcode-block" id="hgraph"><a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.hgraph">[docs]</a><span class="k">def</span> <span class="nf">hgraph</span><span class="p">(</span><span class="n">locator_string</span><span class="p">):</span>
@@ -176,7 +176,7 @@
 <span class="sd">    Currently, the only type of hypergraph is based on LevelDB storage,</span>
 <span class="sd">    and the location_string is the path to the LevelDB folder.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">LevelDB</span><span class="p">(</span><span class="n">locator_string</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">graphbrain</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">leveldb</span><span class="o">.</span><span class="n">LevelDB</span><span class="p">(</span><span class="n">locator_string</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

@@ -196,18 +196,6 @@ This agent transverses the entire hypergraph to identify actors, and then adds h
 
 The above simply means that ``mary/Cp.s/en`` was identified as an actor.
 
-claim_actors
-------------
-
-**Type**: introspective
-
-**Languages**: agnostic
-
-**Depends on**: actors, claims
-
-Creates relations connecting claims to actors mentioned in the claim. For example, consider the sentence: "Mary says that John is nice." In this case, the claim "John is nice" (which is attributed to Mary), will be connected to John through a claim-actor relation. Claim-actor relations have the form::
-
-   (claim-actor/P/. *main_actor* *actor* *claim* *main_edge*)
 
 claims
 ------

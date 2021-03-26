@@ -34,14 +34,15 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Command-line interface" href="../cli.html" />
-    <link rel="prev" title="Knowledge Agents" href="agents.html" /> 
+    <link rel="next" title="Team" href="../team.html" />
+    <link rel="prev" title="Command-line interface" href="cli.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -97,10 +98,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../manual.html">Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="notation.html">Semantic Hypergraph Notation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../manual.html">Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="notation.html">Semantic Hypergraph notation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="special-relations.html">Special relations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hypergraph-operations.html">Hypergraph Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="working-with-hyperedges.html">Working with Hyperedges</a></li>
+<li class="toctree-l2"><a class="reference internal" href="patterns.html">Patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parsing.html">Parsing Natural Language</a></li>
 <li class="toctree-l2"><a class="reference internal" href="agents.html">Knowledge Agents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html">Command-line interface</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">API reference</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.__init__">main functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.hyperedge">hyperedge module</a></li>
@@ -129,7 +135,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command-line interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
 </ul>
 
@@ -182,7 +187,7 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-          <li><a href="../manual.html">Reference</a> &raquo;</li>
+          <li><a href="../manual.html">Manual</a> &raquo;</li>
         
       <li>API reference</li>
     
@@ -281,7 +286,7 @@ type is returned.</p>
 <code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">needle</span></em>, <em class="sig-param"><span class="n">deep</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.contains" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if ‘needle’ is contained in edge.</p>
 <p>Keyword argument:
-deep – search recursively (default False)</p>
+deep – search recursively (default: False)</p>
 </dd></dl>
 
 <dl class="py method">
@@ -391,9 +396,14 @@ Returns same atom if the atom does not contain a role part.</p>
 
 <dl class="py method">
 <dt id="graphbrain.hyperedge.Atom.replace_atom">
-<code class="sig-name descname">replace_atom</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">old</span></em>, <em class="sig-param"><span class="n">new</span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.replace_atom" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">replace_atom</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">old</span></em>, <em class="sig-param"><span class="n">new</span></em>, <em class="sig-param"><span class="n">unique</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.replace_atom" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns edge built by replacing every instance of ‘old’ in
 this edge with ‘new’.</p>
+<p>Keyword argument:
+unique – match only the exact same instance of the atom, i.e.</p>
+<blockquote>
+<div><p>UniqueAtom(self) == UniqueAtom(old) (default: False)</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
@@ -444,10 +454,14 @@ generic concept type:</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="graphbrain.hyperedge.Atom.simplify_role">
-<code class="sig-name descname">simplify_role</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.simplify_role" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns atom with a simplified role part. In the simplified role,
-only the type is specified.</p>
+<dt id="graphbrain.hyperedge.Atom.simplify">
+<code class="sig-name descname">simplify</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">subtypes</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">argroles</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">namespaces</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Atom.simplify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a simplified version of the atom, for example removing
+subtypes, subroles or namespaces.</p>
+<p>Keyword arguments:
+subtypes – include subtype (default: False).
+argroles –include argroles (default: False).
+namespaces – include namespaces (default: True).</p>
 </dd></dl>
 
 <dl class="py method">
@@ -673,9 +687,14 @@ Returns same edge if the atom does not contain a role part.</p>
 
 <dl class="py method">
 <dt id="graphbrain.hyperedge.Hyperedge.replace_atom">
-<code class="sig-name descname">replace_atom</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">old</span></em>, <em class="sig-param"><span class="n">new</span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.replace_atom" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">replace_atom</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">old</span></em>, <em class="sig-param"><span class="n">new</span></em>, <em class="sig-param"><span class="n">unique</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.replace_atom" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns edge built by replacing every instance of ‘old’ in
 this edge with ‘new’.</p>
+<p>Keyword argument:
+unique – match only the exact same instance of the atom, i.e.</p>
+<blockquote>
+<div><p>UniqueAtom(self) == UniqueAtom(old) (default: False)</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
@@ -711,6 +730,17 @@ and if before is False:
 This last example, if ‘flat’ is False, becomes respectively:
 ((c d) (a b))
 ((a b) (c d))</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="graphbrain.hyperedge.Hyperedge.simplify">
+<code class="sig-name descname">simplify</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">subtypes</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">argroles</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">namespaces</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.Hyperedge.simplify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a version of the edge with simplified atoms, for example
+removing subtypes, subroles or namespaces.</p>
+<p>Keyword arguments:
+subtypes – include subtypes (default: False).
+argroles –include argroles (default: False).
+namespaces – include namespaces (default: True).</p>
 </dd></dl>
 
 <dl class="py method">
@@ -809,18 +839,6 @@ produces the result: {}</p>
 <p>(3) the edge: (is/Pd (my/Mp name/Cn) mary/Cp)
 applied to the pattern: (is/Pd . *NAME)
 produces the result: None</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="graphbrain.hyperedge.rel_arg_role">
-<code class="sig-prename descclassname">graphbrain.hyperedge.</code><code class="sig-name descname">rel_arg_role</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.hyperedge.rel_arg_role" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns argument role of argument in a given ‘position’ of ‘relation’.
-Returns None if argument role cannot be determined.</p>
-<p>Example:
-The argument role of argument at position 0 in:
-(is/Pd.sc graphbrain/C great/C)
-is:
-s</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1293,7 +1311,7 @@ a coreference set.</p>
 <span id="lemmas-module"></span><h3>lemmas module<a class="headerlink" href="#module-graphbrain.meaning.lemmas" title="Permalink to this headline">¶</a></h3>
 <dl class="py function">
 <dt id="graphbrain.meaning.lemmas.deep_lemma">
-<code class="sig-prename descclassname">graphbrain.meaning.lemmas.</code><code class="sig-name descname">deep_lemma</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hg</span></em>, <em class="sig-param"><span class="n">edge</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/meaning/lemmas.html#deep_lemma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.lemmas.deep_lemma" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">graphbrain.meaning.lemmas.</code><code class="sig-name descname">deep_lemma</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hg</span></em>, <em class="sig-param"><span class="n">edge</span></em>, <em class="sig-param"><span class="n">same_if_none</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/meaning/lemmas.html#deep_lemma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.lemmas.deep_lemma" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the lemma of an atomic edge, or the lemma of the first atom
 found by recursively descending the hyperedge, always choosing the
 subedge immediatly after the connector.</p>
@@ -1302,12 +1320,18 @@ in a non-atomic predicate edge. For example:</p>
 <p>(not/A (is/A going/P))</p>
 <p>could return</p>
 <p>go/P</p>
+<p>Keyword argument:
+same_if_none – if False, returns None when lemma does not exist. If True,
+returns atom items when lemma does not exist. (default: False)</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="graphbrain.meaning.lemmas.lemma">
-<code class="sig-prename descclassname">graphbrain.meaning.lemmas.</code><code class="sig-name descname">lemma</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hg</span></em>, <em class="sig-param"><span class="n">atom</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/meaning/lemmas.html#lemma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.lemmas.lemma" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">graphbrain.meaning.lemmas.</code><code class="sig-name descname">lemma</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hg</span></em>, <em class="sig-param"><span class="n">atom</span></em>, <em class="sig-param"><span class="n">same_if_none</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/meaning/lemmas.html#lemma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.meaning.lemmas.lemma" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the lemma of the given atom if it exists, None otherwise.</p>
+<p>Keyword argument:
+same_if_none – if False, returns None when lemma does not exist. If True,
+returns atom items when lemma does not exist. (default: False)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1417,8 +1441,8 @@ if the agent is language-agnostic.</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="../cli.html" class="btn btn-neutral float-right" title="Command-line interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="agents.html" class="btn btn-neutral float-left" title="Knowledge Agents" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../team.html" class="btn btn-neutral float-right" title="Team" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cli.html" class="btn btn-neutral float-left" title="Command-line interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
