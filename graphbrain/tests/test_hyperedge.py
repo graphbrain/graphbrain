@@ -888,14 +888,6 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(
             hedge('(play/T piano/Cn.s)').predicate_atom(), None)
 
-    def test_rel_arg_role(self):
-        edge = hedge('(is/Pd.so graphbrain/Cp.s great/C)')
-        self.assertEqual(rel_arg_role(edge, 0), 's')
-        self.assertEqual(rel_arg_role(edge, 1), 'o')
-        self.assertEqual(rel_arg_role(edge, 2), None)
-        edge = hedge('(is/B graphbrain/Cp.s great/C)')
-        self.assertEqual(rel_arg_role(edge, 0), None)
-
     def test_is_pattern(self):
         edge = hedge("('s/Bp.am zimbabwe/M economy/Cn.s)")
         self.assertFalse(edge.is_pattern())

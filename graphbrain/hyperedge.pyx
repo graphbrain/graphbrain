@@ -441,29 +441,6 @@ def edge_matches_pattern(edge, pattern):
     return len(result) > 0
 
 
-def rel_arg_role(relation, position):
-    """Returns argument role of argument in a given 'position' of 'relation'.
-    Returns None if argument role cannot be determined.
-
-    Example:
-    The argument role of argument at position 0 in:
-    (is/Pd.sc graphbrain/C great/C)
-    is:
-    s
-    """
-    if relation.type()[0] != 'R':
-        return None
-    else:
-        pred = relation.predicate_atom()
-        if pred:
-            role = pred.role()
-            if len(role) > 1:
-                arg_roles = role[1]
-                if position < len(arg_roles):
-                    return arg_roles[position]
-        return None
-
-
 def _parsed_token(token):
     if _edge_str_has_outer_parens(token):
         return hedge(token)
