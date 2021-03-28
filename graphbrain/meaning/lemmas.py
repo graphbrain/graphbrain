@@ -37,7 +37,7 @@ def deep_lemma(hg, edge, same_if_none=False):
     returns atom items when lemma does not exist. (default: False)
     """
     if edge.is_atom():
-        return lemma(hg, edge)
+        return lemma(hg, edge,same_if_none)
     else:
         return deep_lemma(hg, edge[1])
 
