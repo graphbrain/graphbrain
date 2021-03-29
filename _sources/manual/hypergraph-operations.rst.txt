@@ -133,7 +133,7 @@ The set ``concepts`` will then contain: ``moon/C``, ``jupiter/C``, ``saturn/C``.
 Searching for hyperedges
 ========================
 
-
+Another fundamental way to query a hyperedge is by search patterns. Search patterns are templates that match hyperedges. Graphbrain provides a sophisticated pattern language that allows for semantically rich modes of matching. This will be discussed in greater detail in the next section. For now, let us just consider the wildcard ``*``, which matches any hyperedge (atomic or not).
 
 
 Degrees, counts and attributes of hyperedges
