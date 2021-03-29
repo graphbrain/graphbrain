@@ -34,14 +34,15 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Knowledge Agents" href="agents.html" />
-    <link rel="prev" title="Special relations" href="special-relations.html" /> 
+    <link rel="next" title="Parsing Natural Language" href="parsing.html" />
+    <link rel="prev" title="Basic hypergraph operations" href="hypergraph-operations.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -100,12 +101,14 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../manual.html">Manual</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="notation.html">Semantic Hypergraph notation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="special-relations.html">Special relations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hypergraph-operations.html">Basic hypergraph operations</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parsing.html">Parsing Natural Language</a></li>
 <li class="toctree-l2"><a class="reference internal" href="agents.html">Knowledge Agents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html">Command-line interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html">API reference</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command-line interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
 </ul>
 
@@ -184,7 +187,24 @@
             
   <div class="section" id="patterns">
 <h1>Patterns<a class="headerlink" href="#patterns" title="Permalink to this headline">¶</a></h1>
-<p>TODO</p>
+<p>In SH representation, an atom label that starts with upper case represents a variable. For example: <code class="docutils literal notranslate"><span class="pre">PLAYER/C</span></code>. One can define perfectly valid hyperedges that include variables, as well as wildcards, so for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="n">so</span> <span class="n">PLAYER</span><span class="o">/</span><span class="n">C</span> <span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is a valid hyperedge, but it is also a pattern that can be used to match other hyperedges. Then the <code class="docutils literal notranslate"><span class="pre">match_pattern(edge,</span> <span class="pre">pattern)</span></code> function can be used to apply patterns to edges. It works like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">graphbrain.hyperedge</span> <span class="kn">import</span> <span class="n">match_pattern</span>
+
+<span class="n">pattern</span> <span class="o">=</span> <span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;(plays/P.so PLAYER/C *)&#39;</span><span class="p">)</span>
+<span class="n">edge</span> <span class="o">=</span> <span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;(plays/P.so mary/C *)&#39;</span><span class="p">)</span>
+<span class="n">match_pattern</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this case, we get:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span><span class="s1">&#39;PLAYER&#39;</span><span class="p">:</span> <span class="n">mary</span><span class="o">/</span><span class="n">C</span><span class="p">}]</span>
+</pre></div>
+</div>
+<p>So, <code class="docutils literal notranslate"><span class="pre">match_pattern</span></code> gives a list of dictionaries (one pattern can match the same edge in several ways). Each dictionary represents a match, and assigns a value to a variable.</p>
 </div>
 
 
@@ -193,8 +213,8 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="agents.html" class="btn btn-neutral float-right" title="Knowledge Agents" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="special-relations.html" class="btn btn-neutral float-left" title="Special relations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="parsing.html" class="btn btn-neutral float-right" title="Parsing Natural Language" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="hypergraph-operations.html" class="btn btn-neutral float-left" title="Basic hypergraph operations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
