@@ -107,6 +107,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#creating-and-populating-hypergraphs">Creating and populating hypergraphs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-neighborhood-of-a-hyperedge">The neighborhood of a hyperedge</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#searching-for-hyperedges">Searching for hyperedges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#degrees-counts-and-attributes-of-hyperedges">Degrees, counts and attributes of hyperedges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#working-with-hyperedge-sequences">Working with hyperedge sequences</a></li>
 </ul>
 </li>
@@ -279,13 +280,32 @@
 <span class="go">False</span>
 </pre></div>
 </div>
+<p>As with <code class="docutils literal notranslate"><span class="pre">Hyperedge</span></code>, the full range of methods of <code class="docutils literal notranslate"><span class="pre">Hypergraph</span></code> is documented in the API reference.</p>
 </div>
 <div class="section" id="the-neighborhood-of-a-hyperedge">
 <h2>The neighborhood of a hyperedge<a class="headerlink" href="#the-neighborhood-of-a-hyperedge" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<p>Hypergraphs are fundamentally about relationships. In an analogous fashion to graphs/networks, the neighborhood of an entity (other entities that it is directly connected to) is a simple but powerful concept. With graphbrain, the <code class="docutils literal notranslate"><span class="pre">star()</span></code> method provides one type of neighborhood that is particularly natural for hypergraphs and has wide applicability: it prodices the set of hyperedges that contain a given hyperedge. For example, let us populate a hypergraph like this:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;(of/B.ma moon/C jupiter/C)&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;(of/B.ma moon/C saturn/C)&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Se let us obtain the star of the atom <code class="docutils literal notranslate"><span class="pre">moon/C</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">star</span><span class="p">(</span><span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;moon/C&#39;</span><span class="p">))</span>
+<span class="go">&lt;generator object at 0x102382d30&gt;</span>
+</pre></div>
+</div>
+<p>It returns a generator, allowing for the iteration through a very large number of hyperedges without exhausting memory. In this case, let us just convert the generator into a list to see the results:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">star</span><span class="p">(</span><span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;moon/C&#39;</span><span class="p">)))</span>
+<span class="go">[(of/B.ma moon/C jupiter/C), (of/B.ma moon/C saturn/C)]</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="searching-for-hyperedges">
 <h2>Searching for hyperedges<a class="headerlink" href="#searching-for-hyperedges" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="degrees-counts-and-attributes-of-hyperedges">
+<h2>Degrees, counts and attributes of hyperedges<a class="headerlink" href="#degrees-counts-and-attributes-of-hyperedges" title="Permalink to this headline">¶</a></h2>
 <p>TODO</p>
 </div>
 <div class="section" id="working-with-hyperedge-sequences">

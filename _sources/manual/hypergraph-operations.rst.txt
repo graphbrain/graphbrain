@@ -98,16 +98,36 @@ It is possible to add an edge as non-primary::
    >>> hg.is_primary(moon)
    False
 
+As with ``Hyperedge``, the full range of methods of ``Hypergraph`` is documented in the API reference.
 
 
 The neighborhood of a hyperedge
 ===============================
 
-TODO
+Hypergraphs are fundamentally about relationships. In an analogous fashion to graphs/networks, the neighborhood of an entity (other entities that it is directly connected to) is a simple but powerful concept. With graphbrain, the ``star()`` method provides one type of neighborhood that is particularly natural for hypergraphs and has wide applicability: it prodices the set of hyperedges that contain a given hyperedge. For example, let us populate a hypergraph like this:
+
+   >>> hg.add(hedge('(of/B.ma moon/C jupiter/C)'))
+   >>> hg.add(hedge('(of/B.ma moon/C saturn/C)'))
+
+Se let us obtain the star of the atom ``moon/C``::
+
+   >>> hg.star(hedge('moon/C'))
+   <generator object at 0x102382d30>
+
+It returns a generator, allowing for the iteration through a very large number of hyperedges without exhausting memory. In this case, let us just convert the generator into a list to see the results::
+
+   >>> list(hg.star(hedge('moon/C')))
+   [(of/B.ma moon/C jupiter/C), (of/B.ma moon/C saturn/C)]
 
 
 Searching for hyperedges
 ========================
+
+TODO
+
+
+Degrees, counts and attributes of hyperedges
+============================================
 
 TODO
 
