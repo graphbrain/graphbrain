@@ -259,6 +259,26 @@
 <span class="go">True</span>
 </pre></div>
 </div>
+<p>Notice that adding a hyperedge to a hypergraph implies the recursive addition of all of the elements of the hyperedge, so it is also the case that:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>A distinction is made with the notion of <em>primary hyperedge</em>. A primary hyperedge is, by default, one that was added directly, while the recursively added ones are considered non-primary. It is possible to check this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">is_primary</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">is_primary</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>It is possible to add an edge as non-primary:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">moon</span> <span class="o">=</span> <span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;(of/B.ma moon/C jupiter/C)&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">moon</span><span class="p">,</span> <span class="n">primary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">(of/B.ma moon/C jupiter/C)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">is_primary</span><span class="p">(</span><span class="n">moon</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="the-neighborhood-of-a-hyperedge">
 <h2>The neighborhood of a hyperedge<a class="headerlink" href="#the-neighborhood-of-a-hyperedge" title="Permalink to this headline">¶</a></h2>

@@ -78,6 +78,27 @@ We can then check if this edge exists in the hypergraph::
    >>> hg.exists(edge)
    True
 
+Notice that adding a hyperedge to a hypergraph implies the recursive addition of all of the elements of the hyperedge, so it is also the case that::
+
+   >>> hg.exists(edge[1])
+   True
+
+A distinction is made with the notion of *primary hyperedge*. A primary hyperedge is, by default, one that was added directly, while the recursively added ones are considered non-primary. It is possible to check this::
+
+   >>> hg.is_primary(edge)
+   True
+   >>> hg.is_primary(edge[1])
+   False
+
+It is possible to add an edge as non-primary::
+
+   >>> moon = hedge('(of/B.ma moon/C jupiter/C)')
+   >>> hg.add(moon, primary=False)
+   (of/B.ma moon/C jupiter/C)
+   >>> hg.is_primary(moon)
+   False
+
+
 
 The neighborhood of a hyperedge
 ===============================
