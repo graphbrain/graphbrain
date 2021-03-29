@@ -60,7 +60,18 @@ Another frequently useful task if that of determining the type of a hyperedge::
 Creating and populating hypergraphs
 ===================================
 
-TODO
+Graphbrain hypergraphs are created and/or opened like this::
+
+   from graphbrain import hgraph
+   hg = hgraph('example.hg')
+
+The argument ``'example.hg'`` corresponds to a local directory in the filesystem, where the hypergraph is persisted. A full path can also be provided, e.g.: ``hgraph('users/alice/books.hg')``. The object returned by this function is of type ``Hypergraph``. Like ``Hyperedge``, it provides a number of general-purpose methods to work with hypergraphs and is not meant to be directly instantiated.
+
+Graphbrain currently only provides one implementation of hypergraph database, which is based on a local filesytem-based high-performance key-value store (LevelDB). By convention, we use the ``.hg`` extension to identify directories containing hypergraph databases of this type. In the future, we expect other hypergraph database types to be included in the library (for example, fully in-memory hypergraphs for even higher performance at relatively small sizes, or distributed hypergraphs for huge datasets, fault-tolerance, etc.). Graphbrain is an open source project, so contributions from people interested in developing such implementations are very welcome!
+
+Adding hyperedges to a hypergraph is simple. For example, let us add the edge that was defined above::
+
+   hg.add(edge)
 
 
 Checking if a hyperedge exists
@@ -77,12 +88,6 @@ TODO
 
 Searching for hyperedges
 ========================
-
-TODO
-
-
-Checking type and atomicity of hyperedges
-=========================================
 
 TODO
 
