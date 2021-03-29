@@ -9,7 +9,6 @@ Manual
    manual/notation.rst
    manual/special-relations.rst
    manual/hypergraph-operations.rst
-   manual/working-with-hyperedges.rst
    manual/patterns.rst
    manual/parsing.rst
    manual/agents.rst

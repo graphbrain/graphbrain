@@ -1,5 +1,5 @@
 ===========================
-Basic Hypergraph Operations
+Basic hypergraph operations
 ===========================
 
 At the heart of Graphbrain lies the Semantic Hypergraph. In practical terms, we will talk simply about *hypergraphs*, and we will treat them as a type of database, which contains a searchable collection of hyperedges.
