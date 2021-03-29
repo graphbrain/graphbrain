@@ -311,7 +311,11 @@
 </div>
 <div class="section" id="searching-for-hyperedges">
 <h2>Searching for hyperedges<a class="headerlink" href="#searching-for-hyperedges" title="Permalink to this headline">¶</a></h2>
-<p>Another fundamental way to query a hyperedge is by search patterns. Search patterns are templates that match hyperedges. Graphbrain provides a sophisticated pattern language that allows for semantically rich modes of matching. This will be discussed in greater detail in the next section. For now, let us just consider the wildcard <code class="docutils literal notranslate"><span class="pre">*</span></code>, which matches any hyperedge (atomic or not).</p>
+<p>Another fundamental way to query a hyperedge is by search patterns. Search patterns are templates that match hyperedges. Graphbrain provides a sophisticated pattern language that allows for semantically rich modes of matching. This will be discussed in greater detail in the next section. For now, let us just consider the wildcard <code class="docutils literal notranslate"><span class="pre">*</span></code>, which matches any hyperedge (atomic or not). For example, the pattern <code class="docutils literal notranslate"><span class="pre">(of/B.ma</span> <span class="pre">*</span> <span class="pre">*)</span></code> matches both of the previously defined hyperedges. The <code class="docutils literal notranslate"><span class="pre">search()</span></code> method of <code class="docutils literal notranslate"><span class="pre">Hypergraph</span></code> allows for search using these patterns. Like <code class="docutils literal notranslate"><span class="pre">star()</span></code>, it returns a generator:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(of/B.ma * *)&#39;</span><span class="p">))</span>
+<span class="go">[(of/B.ma moon/C jupiter/C), (of/B.ma moon/C saturn/C)]</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="degrees-counts-and-attributes-of-hyperedges">
 <h2>Degrees, counts and attributes of hyperedges<a class="headerlink" href="#degrees-counts-and-attributes-of-hyperedges" title="Permalink to this headline">¶</a></h2>
