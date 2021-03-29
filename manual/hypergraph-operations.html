@@ -105,7 +105,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#the-two-central-functions-of-graphbrain-hgraph-and-hedge">The two central functions of Graphbrain: hgraph() and hedge()</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#creating-and-manipulating-hyperedges">Creating and manipulating hyperedges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#creating-and-populating-hypergraphs">Creating and populating hypergraphs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#checking-if-a-hyperedge-exists">Checking if a hyperedge exists</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-neighborhood-of-a-hyperedge">The neighborhood of a hyperedge</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#searching-for-hyperedges">Searching for hyperedges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#working-with-hyperedge-sequences">Working with hyperedge sequences</a></li>
@@ -255,10 +254,11 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>We can then check if this edge exists in the hypergraph:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
 </div>
-<div class="section" id="checking-if-a-hyperedge-exists">
-<h2>Checking if a hyperedge exists<a class="headerlink" href="#checking-if-a-hyperedge-exists" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
 </div>
 <div class="section" id="the-neighborhood-of-a-hyperedge">
 <h2>The neighborhood of a hyperedge<a class="headerlink" href="#the-neighborhood-of-a-hyperedge" title="Permalink to this headline">¶</a></h2>

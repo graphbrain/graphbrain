@@ -73,11 +73,10 @@ Adding hyperedges to a hypergraph is simple. For example, let us add the edge th
 
    hg.add(edge)
 
+We can then check if this edge exists in the hypergraph::
 
-Checking if a hyperedge exists
-==============================
-
-TODO
+   >>> hg.exists(edge)
+   True
 
 
 The neighborhood of a hyperedge
