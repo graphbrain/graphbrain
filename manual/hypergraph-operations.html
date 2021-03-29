@@ -104,7 +104,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Basic hypergraph operations</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#the-two-central-functions-of-graphbrain-hgraph-and-hedge">The two central functions of Graphbrain: hgraph() and hedge()</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#creating-and-manipulating-hyperedges">Creating and manipulating hyperedges</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#adding-hyperedges-to-hypergraphs">Adding hyperedges to hypergraphs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-and-populating-hypergraphs">Creating and populating hypergraphs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#checking-if-a-hyperedge-exists">Checking if a hyperedge exists</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-neighborhood-of-a-hyperedge">The neighborhood of a hyperedge</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#searching-for-hyperedges">Searching for hyperedges</a></li>
@@ -197,7 +197,7 @@
             
   <div class="section" id="basic-hypergraph-operations">
 <h1>Basic hypergraph operations<a class="headerlink" href="#basic-hypergraph-operations" title="Permalink to this headline">¶</a></h1>
-<p>At the heart of Graphbrain lies the Semantic Hypergraph. In practical terms, we will talk simply about <em>hypergraphs</em>, and we will treat them as a type of database, which contains a searchable collection of hyperedges.</p>
+<p>At the heart of Graphbrain lies the Semantic Hypergraph (SH). In practical terms, we will talk simply about <em>hypergraphs</em>, and we will treat them as a type of database, which contains a searchable collection of hyperedges.</p>
 <p>Graphbrain provides abstractions to create, modify and search persistent hypergraph databases, as well as to define and manipulate hyperedges. In this section we introduce these basic operations, upon which all aspects of the library rely on.</p>
 <div class="section" id="the-two-central-functions-of-graphbrain-hgraph-and-hedge">
 <h2>The two central functions of Graphbrain: hgraph() and hedge()<a class="headerlink" href="#the-two-central-functions-of-graphbrain-hgraph-and-hedge" title="Permalink to this headline">¶</a></h2>
@@ -210,11 +210,41 @@
 </div>
 <div class="section" id="creating-and-manipulating-hyperedges">
 <h2>Creating and manipulating hyperedges<a class="headerlink" href="#creating-and-manipulating-hyperedges" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
-<p>(hyerpedges are Python sequences)</p>
+<p>Graphbrain defines the object class <code class="docutils literal notranslate"><span class="pre">Hyperedge</span></code>, which provides a variety of methods to work with hyperedges. The full interface of this class is described in the API reference. However, these objects are not meant to be instantiated directly. Instead, the <code class="docutils literal notranslate"><span class="pre">hedge</span></code> function can be used to create such an object directly from a string representation conforming to the SH notation. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="n">hedge</span>
+<span class="n">edge</span> <span class="o">=</span> <span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;(plays/P.so mary/C chess/C)&#39;</span><span class="p">)</span>
+</pre></div>
 </div>
-<div class="section" id="adding-hyperedges-to-hypergraphs">
-<h2>Adding hyperedges to hypergraphs<a class="headerlink" href="#adding-hyperedges-to-hypergraphs" title="Permalink to this headline">¶</a></h2>
+<p>In the above example, <code class="docutils literal notranslate"><span class="pre">edge</span></code> is an instance of the <code class="docutils literal notranslate"><span class="pre">Hyperedge</span></code> class. Hyerpedges are Python sequences. In fact, the class <code class="docutils literal notranslate"><span class="pre">Hyperedge</span></code> is derived from <code class="docutils literal notranslate"><span class="pre">tuple</span></code>, so it makes it possible to do things such as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">person</span> <span class="o">=</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>In this case, <code class="docutils literal notranslate"><span class="pre">person</span></code> will be assigned the second element of the initial hyperedge, which happens to be the atom <code class="docutils literal notranslate"><span class="pre">mary/C</span></code>. Range selector also work, but they do not automatically produce hyperedges, because subranges of the element of a semantic hyperedge are not guaranteed to be valid semantic hyperedges themselves. Instead, simple tulpes are returned. For example, <code class="docutils literal notranslate"><span class="pre">edge[1:]</span></code> from the example is not a valid hyperedge. Nevertheless, such tuples of hyperedges are often useful:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+<span class="go">(mary/C, chess/C)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+<span class="go">&lt;class &#39;tuple&#39;&gt;</span>
+</pre></div>
+</div>
+<p>It is possible to test a hyperedge for atomicity like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">edge</span><span class="o">.</span><span class="n">is_atom</span><span class="p">()</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">person</span><span class="o">.</span><span class="n">is_atom</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Another frequently useful task if that of determining the type of a hyperedge:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">edge</span><span class="o">.</span><span class="n">type</span><span class="p">()</span>
+<span class="go">&#39;R&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="p">()</span>
+<span class="go">&#39;P&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">person</span><span class="o">.</span><span class="n">type</span><span class="p">()</span>
+<span class="go">&#39;C&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="creating-and-populating-hypergraphs">
+<h2>Creating and populating hypergraphs<a class="headerlink" href="#creating-and-populating-hypergraphs" title="Permalink to this headline">¶</a></h2>
 <p>TODO</p>
 </div>
 <div class="section" id="checking-if-a-hyperedge-exists">
