@@ -2,7 +2,7 @@ import logging
 
 from unidecode import unidecode
 
-from graphbrain import hedge
+from graphbrain.hyperedge import hedge
 from graphbrain.cognition.agent import Agent
 from graphbrain.meaning.corefs import make_corefs_ops
 

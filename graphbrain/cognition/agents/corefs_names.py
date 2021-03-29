@@ -5,7 +5,7 @@ import progressbar
 from igraph import Graph
 from unidecode import unidecode
 
-from graphbrain import hedge, build_atom
+from graphbrain.hyperedge import hedge, build_atom
 from graphbrain.cognition.agent import Agent
 from graphbrain.meaning.concepts import has_proper_concept
 from graphbrain.meaning.corefs import make_corefs_ops
