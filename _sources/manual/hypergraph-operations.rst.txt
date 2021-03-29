@@ -101,10 +101,10 @@ It is possible to add an edge as non-primary::
 As with ``Hyperedge``, the full range of methods of ``Hypergraph`` is documented in the API reference.
 
 
-The neighborhood of a hyperedge
-===============================
+The neighborhood of a hyperedge (star)
+======================================
 
-Hypergraphs are fundamentally about relationships. In an analogous fashion to graphs/networks, the neighborhood of an entity (other entities that it is directly connected to) is a simple but powerful concept. With graphbrain, the ``star()`` method provides one type of neighborhood that is particularly natural for hypergraphs and has wide applicability: it prodices the set of hyperedges that contain a given hyperedge. For example, let us populate a hypergraph like this:
+Hypergraphs are fundamentally about relationships. In an analogous fashion to graphs/networks, the neighborhood of an entity (other entities that it is directly connected to) is a simple but powerful concept. With graphbrain, the ``star()`` method provides one type of neighborhood that is particularly natural for hypergraphs and has wide applicability: it produces the set of hyperedges that contain a given hyperedge. For example, let us populate a hypergraph like this:
 
    >>> hg.add(hedge('(of/B.ma moon/C jupiter/C)'))
    >>> hg.add(hedge('(of/B.ma moon/C saturn/C)'))
@@ -119,11 +119,21 @@ It returns a generator, allowing for the iteration through a very large number o
    >>> list(hg.star(hedge('moon/C')))
    [(of/B.ma moon/C jupiter/C), (of/B.ma moon/C saturn/C)]
 
+Let us combine several of the previous ideas to define a specific type of neighborhood: the set of hyperedges of type concept that are directly connected to ``moon/C``::
+
+   concepts = set()
+   for edge in hg.star(hedge('moon/C')):
+       for subedge in edge:
+           if edge.type() == 'C':
+               concepts.add(subedge)
+
+The set ``concepts`` will then contain: ``moon/C``, ``jupiter/C``, ``saturn/C``.
+
 
 Searching for hyperedges
 ========================
 
-TODO
+
 
 
 Degrees, counts and attributes of hyperedges
