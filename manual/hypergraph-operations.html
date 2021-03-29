@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Hypergraph Operations &mdash; Graphbrain 0.4.0 documentation</title>
+  <title>Basic Hypergraph Operations &mdash; Graphbrain 0.4.0 documentation</title>
   
 
   
@@ -34,6 +34,7 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -100,14 +101,25 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../manual.html">Manual</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="notation.html">Semantic Hypergraph notation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="special-relations.html">Special relations</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Hypergraph Operations</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Basic Hypergraph Operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-two-central-functions-of-graphbrain-hgraph-and-hedge">The two central functions of Graphbrain: hgraph() and hedge()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-and-manipulating-hyperedges">Creating and manipulating hyperedges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adding-hyperedges-to-hypergraphs">Adding hyperedges to hypergraphs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#checking-if-a-hyperedge-exists">Checking if a hyperedge exists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-neighborhood-of-a-hyperedge">The neighborhood of a hyperedge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#searching-for-hyperedges">Searching for hyperedges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#checking-type-and-atomicity-of-hyperedges">Checking type and atomicity of hyperedges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#working-with-hyperedge-sequences">Working with hyperedge sequences</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="working-with-hyperedges.html">Working with Hyperedges</a></li>
 <li class="toctree-l2"><a class="reference internal" href="patterns.html">Patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parsing.html">Parsing Natural Language</a></li>
 <li class="toctree-l2"><a class="reference internal" href="agents.html">Knowledge Agents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html">Command-line interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html">API reference</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command-line interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
 </ul>
 
@@ -162,7 +174,7 @@
         
           <li><a href="../manual.html">Manual</a> &raquo;</li>
         
-      <li>Hypergraph Operations</li>
+      <li>Basic Hypergraph Operations</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -184,9 +196,48 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="hypergraph-operations">
-<h1>Hypergraph Operations<a class="headerlink" href="#hypergraph-operations" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="basic-hypergraph-operations">
+<h1>Basic Hypergraph Operations<a class="headerlink" href="#basic-hypergraph-operations" title="Permalink to this headline">¶</a></h1>
+<p>At the heart of Graphbrain lies the Semantic Hypergraph. In practical terms, we will talk simply about <em>hypergraphs</em>, and we will treat them as a type of database, which contains a searchable collection of hyperedges.</p>
+<p>Graphbrain provides abstractions to create, modify and search persistent hypergraph databases, as well as to define and manipulate hyperedges. In this section we introduce these basic operations, upon which all aspects of the library rely on.</p>
+<div class="section" id="the-two-central-functions-of-graphbrain-hgraph-and-hedge">
+<h2>The two central functions of Graphbrain: hgraph() and hedge()<a class="headerlink" href="#the-two-central-functions-of-graphbrain-hgraph-and-hedge" title="Permalink to this headline">¶</a></h2>
+<p>The root namespace <code class="docutils literal notranslate"><span class="pre">graphbrain</span></code> contains the two most fundamental functions of the library:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hgraph(locator_string)</span></code>, which creates/opens a persistent hypergraph.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hedge(source)</span></code>, which creates a hyperedge from a string or a Python list or tuple.</p></li>
+</ul>
+<p>In fact, the latter is implemented in <code class="docutils literal notranslate"><span class="pre">graphbrain.hyperedge</span></code>, but it is imported to the root namespace by default for convenience. We will see that, with just these two functions, a lot can be achieved.</p>
+</div>
+<div class="section" id="creating-and-manipulating-hyperedges">
+<h2>Creating and manipulating hyperedges<a class="headerlink" href="#creating-and-manipulating-hyperedges" title="Permalink to this headline">¶</a></h2>
 <p>TODO</p>
+<p>(hyerpedges are Python sequences)</p>
+</div>
+<div class="section" id="adding-hyperedges-to-hypergraphs">
+<h2>Adding hyperedges to hypergraphs<a class="headerlink" href="#adding-hyperedges-to-hypergraphs" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="checking-if-a-hyperedge-exists">
+<h2>Checking if a hyperedge exists<a class="headerlink" href="#checking-if-a-hyperedge-exists" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="the-neighborhood-of-a-hyperedge">
+<h2>The neighborhood of a hyperedge<a class="headerlink" href="#the-neighborhood-of-a-hyperedge" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="searching-for-hyperedges">
+<h2>Searching for hyperedges<a class="headerlink" href="#searching-for-hyperedges" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="checking-type-and-atomicity-of-hyperedges">
+<h2>Checking type and atomicity of hyperedges<a class="headerlink" href="#checking-type-and-atomicity-of-hyperedges" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="working-with-hyperedge-sequences">
+<h2>Working with hyperedge sequences<a class="headerlink" href="#working-with-hyperedge-sequences" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
 </div>
 
 

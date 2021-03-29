@@ -1,6 +1,63 @@
-=====================
-Hypergraph Operations
-=====================
+===========================
+Basic Hypergraph Operations
+===========================
 
+At the heart of Graphbrain lies the Semantic Hypergraph. In practical terms, we will talk simply about *hypergraphs*, and we will treat them as a type of database, which contains a searchable collection of hyperedges.
+
+Graphbrain provides abstractions to create, modify and search persistent hypergraph databases, as well as to define and manipulate hyperedges. In this section we introduce these basic operations, upon which all aspects of the library rely on.
+
+
+
+The two central functions of Graphbrain: hgraph() and hedge()
+=============================================================
+
+The root namespace ``graphbrain`` contains the two most fundamental functions of the library:
+
+- ``hgraph(locator_string)``, which creates/opens a persistent hypergraph.
+- ``hedge(source)``, which creates a hyperedge from a string or a Python list or tuple.
+
+In fact, the latter is implemented in ``graphbrain.hyperedge``, but it is imported to the root namespace by default for convenience. We will see that, with just these two functions, a lot can be achieved.
+
+
+Creating and manipulating hyperedges
+====================================
+
+TODO
+
+(hyerpedges are Python sequences)
+
+
+Adding hyperedges to hypergraphs
+================================
+
+TODO
+
+
+Checking if a hyperedge exists
+==============================
+
+TODO
+
+
+The neighborhood of a hyperedge
+===============================
+
+TODO
+
+
+Searching for hyperedges
+========================
+
+TODO
+
+
+Checking type and atomicity of hyperedges
+=========================================
+
+TODO
+
+
+Working with hyperedge sequences
+================================
 
 TODO
