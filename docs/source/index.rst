@@ -52,8 +52,10 @@ Graphbrain is an Artificial Intelligence open-source software library and scient
 
 The ambition of this project is not simply to contribute to advancing the state-of-the-art in AI, but principally to be an effective interdisciplinary research tool. More specifically, we are interested in advancing the possibilities of automated meaning extraction for research in fields such as Computational Social Sciences, Cognitive Science and the Humanities.
 
-.. image:: _static/graphbrain.png
-  :alt: Graphbrain and its modules
+.. image:: _static/hyperedge-blocks.png
+  :width: 75%
+  :alt: Einstein first published the Theory of Relativity in 1905.
+  :align: center
 
 Graphbrain is experimental in nature, but with a unifying concept: the *semantic hypergraph*. It follows a hybrid approach, combining symbolic AI and statistical/connectionist Machine Learning methods. This is for two main reasons: to facilitate understandability and reproducibility for human researchers and to combine the strengths of both approaches.
 

@@ -1,6 +1,151 @@
-=====================
-Hypergraph Operations
-=====================
+===========================
+Basic hypergraph operations
+===========================
 
+At the heart of Graphbrain lies the Semantic Hypergraph (SH). In practical terms, we will talk simply about *hypergraphs*, and we will treat them as a type of database, which contains a searchable collection of hyperedges.
+
+Graphbrain provides abstractions to create, modify and search persistent hypergraph databases, as well as to define and manipulate hyperedges. In this section we introduce these basic operations, upon which all aspects of the library rely on.
+
+
+
+The two central functions of Graphbrain: hgraph() and hedge()
+=============================================================
+
+The root namespace ``graphbrain`` contains the two most fundamental functions of the library:
+
+- ``hgraph(locator_string)``, which creates/opens a persistent hypergraph.
+- ``hedge(source)``, which creates a hyperedge from a string or a Python list or tuple.
+
+In fact, the latter is implemented in ``graphbrain.hyperedge``, but it is imported to the root namespace by default for convenience. We will see that, with just these two functions, a lot can be achieved.
+
+
+Creating and manipulating hyperedges
+====================================
+
+Graphbrain defines the object class ``Hyperedge``, which provides a variety of methods to work with hyperedges. The full interface of this class is described in the API reference. However, these objects are not meant to be instantiated directly. Instead, the ``hedge`` function can be used to create such an object directly from a string representation conforming to the SH notation. For example::
+
+   from graphbrain import hedge
+   edge = hedge('(plays/P.so mary/C chess/C)')
+
+In the above example, ``edge`` is an instance of the ``Hyperedge`` class. Hyerpedges are Python sequences. In fact, the class ``Hyperedge`` is derived from ``tuple``, so it makes it possible to do things such as::
+
+   person = edge[1]
+
+
+In this case, ``person`` will be assigned the second element of the initial hyperedge, which happens to be the atom ``mary/C``. Range selector also work, but they do not automatically produce hyperedges, because subranges of the element of a semantic hyperedge are not guaranteed to be valid semantic hyperedges themselves. Instead, simple tulpes are returned. For example, ``edge[1:]`` from the example is not a valid hyperedge. Nevertheless, such tuples of hyperedges are often useful::
+
+
+   >>> edge[1:]
+   (mary/C, chess/C)
+   >>> type(edge[1:])
+   <class 'tuple'>
+
+It is possible to test a hyperedge for atomicity like this::
+
+   >>> edge.is_atom()
+   False
+   >>> person.is_atom()
+   True
+
+Another frequently useful task if that of determining the type of a hyperedge::
+
+   >>> edge.type()
+   'R'
+   >>> edge[0].type()
+   'P'
+   >>> person.type()
+   'C'
+
+
+Creating and populating hypergraphs
+===================================
+
+Graphbrain hypergraphs are created and/or opened like this::
+
+   from graphbrain import hgraph
+   hg = hgraph('example.hg')
+
+The argument ``'example.hg'`` corresponds to a local directory in the filesystem, where the hypergraph is persisted. A full path can also be provided, e.g.: ``hgraph('users/alice/books.hg')``. The object returned by this function is of type ``Hypergraph``. Like ``Hyperedge``, it provides a number of general-purpose methods to work with hypergraphs and is not meant to be directly instantiated.
+
+Graphbrain currently only provides one implementation of hypergraph database, which is based on a local filesytem-based high-performance key-value store (LevelDB). By convention, we use the ``.hg`` extension to identify directories containing hypergraph databases of this type. In the future, we expect other hypergraph database types to be included in the library (for example, fully in-memory hypergraphs for even higher performance at relatively small sizes, or distributed hypergraphs for huge datasets, fault-tolerance, etc.). Graphbrain is an open source project, so contributions from people interested in developing such implementations are very welcome!
+
+Adding hyperedges to a hypergraph is simple. For example, let us add the edge that was defined above::
+
+   hg.add(edge)
+
+We can then check if this edge exists in the hypergraph::
+
+   >>> hg.exists(edge)
+   True
+
+Notice that adding a hyperedge to a hypergraph implies the recursive addition of all of the elements of the hyperedge, so it is also the case that::
+
+   >>> hg.exists(edge[1])
+   True
+
+A distinction is made with the notion of *primary hyperedge*. A primary hyperedge is, by default, one that was added directly, while the recursively added ones are considered non-primary. It is possible to check this::
+
+   >>> hg.is_primary(edge)
+   True
+   >>> hg.is_primary(edge[1])
+   False
+
+It is possible to add an edge as non-primary::
+
+   >>> moon = hedge('(of/B.ma moon/C jupiter/C)')
+   >>> hg.add(moon, primary=False)
+   (of/B.ma moon/C jupiter/C)
+   >>> hg.is_primary(moon)
+   False
+
+As with ``Hyperedge``, the full range of methods of ``Hypergraph`` is documented in the API reference.
+
+
+The neighborhood of a hyperedge (star)
+======================================
+
+Hypergraphs are fundamentally about relationships. In an analogous fashion to graphs/networks, the neighborhood of an entity (other entities that it is directly connected to) is a simple but powerful concept. With graphbrain, the ``star()`` method provides one type of neighborhood that is particularly natural for hypergraphs and has wide applicability: it produces the set of hyperedges that contain a given hyperedge. For example, let us populate a hypergraph like this:
+
+   >>> hg.add(hedge('(of/B.ma moon/C jupiter/C)'))
+   >>> hg.add(hedge('(of/B.ma moon/C saturn/C)'))
+
+Se let us obtain the star of the atom ``moon/C``::
+
+   >>> hg.star(hedge('moon/C'))
+   <generator object at 0x102382d30>
+
+It returns a generator, allowing for the iteration through a very large number of hyperedges without exhausting memory. In this case, let us just convert the generator into a list to see the results::
+
+   >>> list(hg.star(hedge('moon/C')))
+   [(of/B.ma moon/C jupiter/C), (of/B.ma moon/C saturn/C)]
+
+Let us combine several of the previous ideas to define a specific type of neighborhood: the set of hyperedges of type concept that are directly connected to ``moon/C``::
+
+   concepts = set()
+   for edge in hg.star(hedge('moon/C')):
+       for subedge in edge:
+           if edge.type() == 'C':
+               concepts.add(subedge)
+
+The set ``concepts`` will then contain: ``moon/C``, ``jupiter/C``, ``saturn/C``.
+
+
+Searching for hyperedges
+========================
+
+Another fundamental way to query a hyperedge is by search patterns. Search patterns are templates that match hyperedges. Graphbrain provides a sophisticated pattern language that allows for semantically rich modes of matching. This will be discussed in greater detail in the next section. For now, let us just consider the wildcard ``*``, which matches any hyperedge (atomic or not). For example, the pattern ``(of/B.ma * *)`` matches both of the previously defined hyperedges. The ``search()`` method of ``Hypergraph`` allows for search using these patterns. Like ``star()``, it returns a generator::
+
+   >>> list(hg.search('(of/B.ma * *)'))
+   [(of/B.ma moon/C jupiter/C), (of/B.ma moon/C saturn/C)]
+
+
+Degrees, counts and attributes of hyperedges
+============================================
+
+TODO
+
+
+Working with hyperedge sequences
+================================
 
 TODO
