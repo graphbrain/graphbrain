@@ -55,7 +55,6 @@ The ambition of this project is not simply to contribute to advancing the state-
 .. image:: _static/hyperedge-blocks.png
   :width: 75%
   :alt: Einstein first published the Theory of Relativity in 1905.
-  :style: "text-align: center"
 
 Graphbrain is experimental in nature, but with a unifying concept: the *semantic hypergraph*. It follows a hybrid approach, combining symbolic AI and statistical/connectionist Machine Learning methods. This is for two main reasons: to facilitate understandability and reproducibility for human researchers and to combine the strengths of both approaches.
 
