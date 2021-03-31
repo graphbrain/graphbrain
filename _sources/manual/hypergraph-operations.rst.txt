@@ -176,10 +176,65 @@ Given that hyperedges can contain recursively contain other hyperedges, we can a
    3
 
 
-Counts and attributes of hyperedges
-============================================
+Hyperedge attributes
+====================
 
-TODO
+The hypergraph database allows for the association of attributes to hyperedges. These can be strings, integer or floats, and are identified by a label. For example, one can associate a hyperedge to the text that it corresponds to::
+
+   >>> hg.set_attribute('(in/B alice/C wonderland/C)', 'text', 'Alice in Wonderland')
+   True
+   >>> hg.get_str_attribute('(in/B alice/C wonderland/C)', 'text')
+   'Alice in Wonderland'
+
+Notice that the method ``set_attribute()`` is used to set attributes of any type, but it is up to the programmer to choose the getter method according to the desired output type::
+
+   >>> hg.set_attribute('alice/C', 'age', 7)
+   True
+   >>> hg.get_int_attribute('alice/C', 'age')
+   7
+   >>> hg.set_attribute('alice/C', 'height', 1.2)
+   True
+   >>> hg.get_float_attribute('alice/C', 'height')
+   1.2
+
+In fact, this is how degrees and deep degrees are stored, respectively in the attributes "d" and "dd", so these attribute names should not be used for other purposes. The call ``hg.degree(edge)`` is equivalent to ``hg.get_int_attribute(edge, 'd')``.
+
+Integer attributes can also be incremented and decremented::
+
+   >>> hg.add('(red/M button/C)')
+   (red/M button/C)
+   >>> hg.set_attribute('(red/M button/C)', 'clicks', 0)
+   True
+   >>> hg.inc_attribute('(red/M button/C)', 'clicks')
+   True
+   >>> hg.get_int_attribute('(red/M button/C)', 'clicks')
+   1
+   >>> hg.dec_attribute('(red/M button/C)', 'clicks')
+   True
+   >>> hg.get_int_attribute('(red/M button/C)', 'clicks')
+   0
+
+
+Local and global counters
+=========================
+
+Normally, when adding a hyperedge that already exists, nothing is changed. It is sometimes useful to count occurrences while adding hyperedges, and in this case the ``count=True`` optional argument can be specified when calling ``add()``. This increments the ``count`` integer argument of the hyperedge every time it is added::
+
+   >>> hg.add('(counting/P sheep/C)', count=True)
+   (counting/P sheep/C)
+   >>> hg.get_int_attribute('(counting/P sheep/C)', 'count')
+   1
+   >>> hg.add('(counting/P sheep/C)', count=True)
+   (counting/P sheep/C)
+   >>> hg.get_int_attribute('(counting/P sheep/C)', 'count')
+   2
+
+The hypergraph database also provides the following global counters:
+
+- ``Hypergraph.atom_count()``: total number of atoms
+- ``Hypergraph.edge_count()``: total number of hyperedges
+- ``Hypergraph.primary_atom_count()``: total number of primary atoms
+- ``Hypergraph.primary_edge_count()``: total number of primary hyperedges
 
 
 Working with hyperedge sequences
