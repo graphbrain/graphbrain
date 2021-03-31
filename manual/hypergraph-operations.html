@@ -414,7 +414,26 @@
 </div>
 <div class="section" id="working-with-hyperedge-sequences">
 <h2>Working with hyperedge sequences<a class="headerlink" href="#working-with-hyperedge-sequences" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<p>The hypergraph database provides for a mechanism to organize hyerpedges into sequences. This is useful when storing hyperedges extracted from natural language sources where the order in which they appear can be relevant. For example, we might be interested in parsing every sentence in a book into a hyperedge and then being able to know which hyperedges correspond to the sentence that came before and after.</p>
+<p>A hyperedge can be added to a given sequence in the hypergraph (identified by a string label), at a given position. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add_to_sequence</span><span class="p">(</span><span class="s1">&#39;sentences&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;(is/P this/C (the/M (first/M sentence/C)))&#39;</span><span class="p">)</span>
+<span class="go">(seq/P/. sentences 0 (is/P this/C (the/M (first/M sentence/C))))</span>
+</pre></div>
+</div>
+<p>The outer edge with the special predicate <code class="docutils literal notranslate"><span class="pre">seq/P/.</span></code> assigns the hyperedge to the sequence “sentences” at position 0. Sequences are thus defines using hypergraphic semantics in this very simple way, and can be directly manipulated using basic hypergraph operations. The methods provided to work with them are just a convenience. There is no “safety net” to maintain consistency, it is possible to insert several hyperedges in the same position, or skip positions. This is meant to be a very simple and fast mechanism. The method <code class="docutils literal notranslate"><span class="pre">sequences</span></code> returns a generator for all the sequences contained in the hypergraph:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">sequences</span><span class="p">())</span>
+<span class="go">[sentences]</span>
+</pre></div>
+</div>
+<p>The method <code class="docutils literal notranslate"><span class="pre">sequence</span></code> provides a generator for all the hyperedges contained in a given sequence, in order:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add_to_sequence</span><span class="p">(</span><span class="s1">&#39;sentences&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;(is/P this/C (the/M (second/M sentence/C)))&#39;</span><span class="p">)</span>
+<span class="go">(seq/P/. sentences 1 (is/P this/C (the/M (second/M sentence/C))))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add_to_sequence</span><span class="p">(</span><span class="s1">&#39;sentences&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;(is/P this/C (the/M (third/M sentence/C)))&#39;</span><span class="p">)</span>
+<span class="go">(seq/P/. sentences 2 (is/P this/C (the/M (third/M sentence/C))))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">sequence</span><span class="p">(</span><span class="s1">&#39;sentences&#39;</span><span class="p">))</span>
+<span class="go">[(is/P this/C (the/M (first/M sentence/C))), (is/P this/C (the/M (second/M sentence/C))), (is/P this/C (the/M (third/M sentence/C)))]</span>
+</pre></div>
+</div>
 </div>
 </div>
 
