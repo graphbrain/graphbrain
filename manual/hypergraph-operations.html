@@ -107,7 +107,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#creating-and-populating-hypergraphs">Creating and populating hypergraphs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-neighborhood-of-a-hyperedge-star">The neighborhood of a hyperedge (star)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#searching-for-hyperedges">Searching for hyperedges</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#degrees-counts-and-attributes-of-hyperedges">Degrees, counts and attributes of hyperedges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#degrees-and-deep-degrees">Degrees and deep degrees</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#counts-and-attributes-of-hyperedges">Counts and attributes of hyperedges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#working-with-hyperedge-sequences">Working with hyperedge sequences</a></li>
 </ul>
 </li>
@@ -317,8 +318,43 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="degrees-counts-and-attributes-of-hyperedges">
-<h2>Degrees, counts and attributes of hyperedges<a class="headerlink" href="#degrees-counts-and-attributes-of-hyperedges" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="degrees-and-deep-degrees">
+<h2>Degrees and deep degrees<a class="headerlink" href="#degrees-and-deep-degrees" title="Permalink to this headline">¶</a></h2>
+<p>In conventional graph theory, there is the notion of the degree of a node, which is the number of other nodes that it is directly connected to. This is a simple but generally useful measure of the <em>centrality</em> of a node in the graph. In hypergraphs we can also have the same notion of degree, with the only difference that a single hyperedge can connect one entity to several others. Graphbrain keeps track of the degree of every hyperedge, and the <code class="docutils literal notranslate"><span class="pre">Hypergraph</span></code> class provides a method to obtain it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;example.hg&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="s1">&#39;alice/C&#39;</span><span class="p">)</span>
+<span class="go">0</span>
+</pre></div>
+</div>
+<p>The degree of any hyperedge that does not exist in the hypergraph is 0. Notice also that <code class="docutils literal notranslate"><span class="pre">degree()</span></code>, as well as many other <code class="docutils literal notranslate"><span class="pre">Hypergraph</span></code> methods, conveniently accept the string representation of hyperedge, and transparently perform the conversion.</p>
+<p>Let us add a few hyperedges and check the resulting degrees:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;(in/B alice/C wonderland/C)&#39;</span><span class="p">)</span>
+<span class="go">(in/B alice/C wonderland/C)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="s1">&#39;alice/C&#39;</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="s1">&#39;(in/B alice/C wonderland/C)&#39;</span><span class="p">)</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;(reads/P john/C (in/B alice/C wonderland/C))&#39;</span><span class="p">)</span>
+<span class="go">(reads/P john/C (in/B alice/C wonderland/C))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="s1">&#39;(in/B alice/C wonderland/C)&#39;</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;(plays/P alice/C chess/C)&#39;</span><span class="p">)</span>
+<span class="go">(plays/P alice/C chess/C)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="s1">&#39;alice/C&#39;</span><span class="p">)</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+<p>Given that hyperedges can contain recursively contain other hyperedges, we can also consider the <em>deep degree</em>, which takes into account deep connections. For example, consider the edge <code class="docutils literal notranslate"><span class="pre">(reads/P</span> <span class="pre">john/C</span> <span class="pre">(in/B</span> <span class="pre">alice/C</span> <span class="pre">wonderland/C))</span></code>. For the calculation of degrees, <code class="docutils literal notranslate"><span class="pre">john/C</span></code> is not considered here to be connected to <code class="docutils literal notranslate"><span class="pre">alice/C</span></code>, but such a connection is counter for the deep degree:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="s1">&#39;alice/C&#39;</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">deep_degree</span><span class="p">(</span><span class="s1">&#39;alice/C&#39;</span><span class="p">)</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="counts-and-attributes-of-hyperedges">
+<h2>Counts and attributes of hyperedges<a class="headerlink" href="#counts-and-attributes-of-hyperedges" title="Permalink to this headline">¶</a></h2>
 <p>TODO</p>
 </div>
 <div class="section" id="working-with-hyperedge-sequences">
