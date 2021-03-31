@@ -106,6 +106,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#creating-and-manipulating-hyperedges">Creating and manipulating hyperedges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#creating-and-populating-hypergraphs">Creating and populating hypergraphs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-neighborhood-of-a-hyperedge-star">The neighborhood of a hyperedge (star)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hyperedges-containing-a-given-set-of-hyperedges">Hyperedges containing a given set of hyperedges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#searching-for-hyperedges">Searching for hyperedges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#degrees-and-deep-degrees">Degrees and deep degrees</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#hyperedge-attributes">Hyperedge attributes</a></li>
@@ -310,6 +311,25 @@
 </pre></div>
 </div>
 <p>The set <code class="docutils literal notranslate"><span class="pre">concepts</span></code> will then contain: <code class="docutils literal notranslate"><span class="pre">moon/C</span></code>, <code class="docutils literal notranslate"><span class="pre">jupiter/C</span></code>, <code class="docutils literal notranslate"><span class="pre">saturn/C</span></code>.</p>
+</div>
+<div class="section" id="hyperedges-containing-a-given-set-of-hyperedges">
+<h2>Hyperedges containing a given set of hyperedges<a class="headerlink" href="#hyperedges-containing-a-given-set-of-hyperedges" title="Permalink to this headline">¶</a></h2>
+<p>The hypergraph database provides a very efficient way to query for all hyperedges that include a given set of hyperedges, with the method <code class="docutils literal notranslate"><span class="pre">edges_with_edges()</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;(plays/P mary/C chess/C)&#39;</span><span class="p">)</span>
+<span class="go">(plays/P mary/C chess/C)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;(plays/P john/C chess/C)&#39;</span><span class="p">)</span>
+<span class="go">(plays/P john/C chess/C)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;(plays/P alice/C handball/C)&#39;</span><span class="p">)</span>
+<span class="go">(plays/P alice/C handball/C)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">edges_with_edges</span><span class="p">([</span><span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;plays/P&#39;</span><span class="p">),</span> <span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;chess/C&#39;</span><span class="p">)]))</span>
+<span class="go">[(plays/P john/C chess/C), (plays/P mary/C chess/C)]</span>
+</pre></div>
+</div>
+<p>An optional <code class="docutils literal notranslate"><span class="pre">root</span></code> argument can be added, further requiring the matching edges to contain an atom with that root (at the top level):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">edges_with_edges</span><span class="p">([</span><span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;plays/C&#39;</span><span class="p">),</span> <span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;chess/C&#39;</span><span class="p">)],</span> <span class="n">root</span><span class="o">=</span><span class="s1">&#39;john&#39;</span><span class="p">))</span>
+<span class="go">[(plays/C john/C chess/C)]</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="searching-for-hyperedges">
 <h2>Searching for hyperedges<a class="headerlink" href="#searching-for-hyperedges" title="Permalink to this headline">¶</a></h2>

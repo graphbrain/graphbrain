@@ -130,6 +130,26 @@ Let us combine several of the previous ideas to define a specific type of neighb
 The set ``concepts`` will then contain: ``moon/C``, ``jupiter/C``, ``saturn/C``.
 
 
+Hyperedges containing a given set of hyperedges
+===============================================
+
+The hypergraph database provides a very efficient way to query for all hyperedges that include a given set of hyperedges, with the method ``edges_with_edges()``::
+
+   >>> hg.add('(plays/P mary/C chess/C)')
+   (plays/P mary/C chess/C)
+   >>> hg.add('(plays/P john/C chess/C)')
+   (plays/P john/C chess/C)
+   >>> hg.add('(plays/P alice/C handball/C)')
+   (plays/P alice/C handball/C)
+   >>> list(hg.edges_with_edges([hedge('plays/P'), hedge('chess/C')]))
+   [(plays/P john/C chess/C), (plays/P mary/C chess/C)]
+
+An optional ``root`` argument can be added, further requiring the matching edges to contain an atom with that root (at the top level)::
+
+   >>> list(hg.edges_with_edges([hedge('plays/C'), hedge('chess/C')], root='john'))
+   [(plays/C john/C chess/C)]
+
+
 Searching for hyperedges
 ========================
 
