@@ -139,10 +139,72 @@ Another fundamental way to query a hyperedge is by search patterns. Search patte
    [(of/B.ma moon/C jupiter/C), (of/B.ma moon/C saturn/C)]
 
 
-Degrees, counts and attributes of hyperedges
-============================================
+Degrees and deep degrees
+========================
 
-TODO
+In conventional graph theory, there is the notion of the degree of a node, which is the number of other nodes that it is directly connected to. This is a simple but generally useful measure of the *centrality* of a node in the graph. In hypergraphs we can also have the same notion of degree, with the only difference that a single hyperedge can connect one entity to several others. Graphbrain keeps track of the degree of every hyperedge, and the ``Hypergraph`` class provides a method to obtain it::
+
+   >>> from graphbrain import *
+   >>> hg = hgraph('example.hg')
+   >>> hg.degree('alice/C')
+   0
+
+The degree of any hyperedge that does not exist in the hypergraph is 0. Notice also that ``degree()``, as well as many other ``Hypergraph`` methods, conveniently accept the string representation of hyperedge, and transparently perform the conversion.
+
+Let us add a few hyperedges and check the resulting degrees::
+
+   >>> hg.add('(in/B alice/C wonderland/C)')
+   (in/B alice/C wonderland/C)
+   >>> hg.degree('alice/C')
+   1
+   >>> hg.degree('(in/B alice/C wonderland/C)')
+   0
+   >>> hg.add('(reads/P john/C (in/B alice/C wonderland/C))')
+   (reads/P john/C (in/B alice/C wonderland/C))
+   >>> hg.degree('(in/B alice/C wonderland/C)')
+   1
+   >>> hg.add('(plays/P alice/C chess/C)')
+   (plays/P alice/C chess/C)
+   >>> hg.degree('alice/C')
+   2
+
+Given that hyperedges can contain recursively contain other hyperedges, we can also consider the *deep degree*, which takes into account deep connections. For example, consider the edge ``(reads/P john/C (in/B alice/C wonderland/C))``. For the calculation of degrees, ``john/C`` is not considered here to be connected to ``alice/C``, but such a connection is counter for the deep degree::
+
+   >>> hg.degree('alice/C')
+   2
+   >>> hg.deep_degree('alice/C')
+   3
+
+
+Hyperedge attributes
+====================
+
+The hypergraph database allows for the association of attributes to hyperedges. These can be strings, integer or floats, and are identified by a label. For example, one can associate a hyperedge to the text that it corresponds to::
+
+   >>> hg.set_attribute('(in/B alice/C wonderland/C)', 'text', 'Alice in Wonderland')
+   True
+   >>> hg.get_str_attribute('(in/B alice/C wonderland/C)', 'text')
+   'Alice in Wonderland'
+
+Notice that the method ``set_attribute()`` is used to set attributes of any type, but it is up to the programmer to choose the getter method according to the desired output type::
+
+   >>> hg.set_attribute('alice/C', 'age', 7)
+   True
+   >>> hg.get_int_attribute('alice/C', 'age')
+   7
+   >>> hg.set_attribute('alice/C', 'height', 1.2)
+   True
+   >>> hg.get_float_attribute('alice/C', 'height')
+   1.2
+
+
+Counts
+======
+
+Normally, when adding a hyperedge that already exists, nothing is changed. It is sometimes useful to count occurrences while adding hyperedges, and in this case the ``count=True`` optional argument can be specified when calling ``add()``. This increments the ``count`` integer argument of the hyperedge every time it is added::
+
+   
+
 
 
 Working with hyperedge sequences
