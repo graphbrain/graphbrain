@@ -101,7 +101,7 @@ class Hypergraph(object):
 
                 return edge
         elif edge:
-            return self.add(hedge(edge), primary=primary)
+            return self.add(hedge(edge), primary=primary, count=count)
         return None
 
     def remove(self, edge, deep=False):
