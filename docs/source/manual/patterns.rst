@@ -17,13 +17,10 @@ We can use them to search the hypergraph for matching hyperedges. For example::
 
    >>> from graphbrain import *
    >>> hg = hgraph('example.hg')
-   >>> hg.destroy()
-   >>> hg.add('(plays/Pd.so alice/C chess/C)')
-   (plays/Pd.so alice/C chess/C)
-   >>> list(hg.search('(plays/P * *)'))
-   [(plays/Pd.so alice/C chess/C)]
-
-Notice that the specified atoms, such as ``plays/P``, match atoms in the target hyperedge in the most general way, meaning that, if a subtype or other roles are not specified in the pattern, then any subtypes or argroles will match, as can be seen in the example above.
+   >>> hg.add('(plays/P.so alice/C chess/C)')
+   (plays/P.so alice/C chess/C)
+   >>> list(hg.search('(plays/P.so * *)'))
+   [(plays/P.so alice/C chess/C)]
 
 There are two more wildcard:
 
@@ -43,6 +40,23 @@ does not match::
 but this pattern does::
 
    (plays/P * * ...)
+
+
+Non-strict search
+=================
+
+Non-strict search allows for patterns to match atoms in the most general way, meaning that, if a subtype or other roles are not specified in the pattern, then any subtypes or argroles will match, as can be seen in this example::
+
+   >>> from graphbrain import *
+   >>> hg = hgraph('example.hg')
+   >>> hg.add('(plays/Pd.so alice/Cp.s chess/Cc.s)')
+   (plays/Pd.so alice/Cp.s chess/Cc.s)
+   >>> list(hg.search('(plays/P alice/C *)', strict=False))
+   [(plays/Pd.so alice/Cp.s chess/Cc.s)]
+
+Even though the full type and roles of ``plays/Pd.so`` and ``alice/Cp.s`` are not specified in the pattern, they still match the more general corresponding atoms ``plays/P`` and ``alice/C``.
+
+Non-strict search is semantically more powerful, at the expense of performance. Strict search can take advantage of the structure of the hypergraph database to perform fast queries, while non-strict search iterates through all edges in the hypergraph looking for matches.
 
 
 Matching argroles
@@ -75,6 +89,8 @@ does not match::
 
    (plays/P.sox alice/C chess/C (at/T (the/M club/C)))
 
+When using ``Hypergraph,search()``, order-independent (curly-braces) and argrole exclusions (-) only work in non-strict mode.
+
 
 Patterns with variables for information extraction
 ==================================================
@@ -94,9 +110,17 @@ Then the ``match_pattern(edge, pattern)`` function can be used to apply patterns
 
 So, ``match_pattern`` gives a list of dictionaries (one pattern can match the same edge in several ways). Each dictionary represents a match, and assigns a value to a variable.
 
-The ``Hypergraph`` object provides the ``match()`` method , which is similar to ``search()`` but returns dictionaries with the matched variables::
+The ``Hypergraph`` object provides the ``match()`` method , which is similar to ``search()`` but returns dictionaries with the matched variables. Like search, it offers a non-strict mode with the same trade-offs::
 
-   TODO
+   >>> hg.add('(is/Pd.cs blue/Ca (the/M sky/C))')
+   (is/Pd.cs blue/Ca (the/M sky/C))
+   >>> hg.add('(is/Pd.sc (the/M sky/C) blue/Ca)')
+   (is/Pd.sc (the/M sky/C) blue/Ca)
+   >>> list(hg.match('(is/P.{sc} OBJ/C PROP)', strict=False))
+   [((is/Pd.cs blue/Ca (the/M sky/C)), [{'OBJ': (the/M sky/C), 'PROP': blue/Ca}]),
+    ((is/Pd.sc (the/M sky/C) blue/Ca), [{'OBJ': (the/M sky/C), 'PROP': blue/Ca}])]
+
+The output is a list of tuples, where the first item is the matched hyperedge and the second is a dictionary with variables and their values.
 
 
 Discovering frequent patterns

@@ -55,7 +55,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Graphbrain'
-copyright = '2020 CNRS'
+copyright = '2021 CNRS'
 author = 'Telmo Menezes et al.'
 
 # The version info for the project you're documenting, acts as replacement for
