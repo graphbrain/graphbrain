@@ -130,6 +130,26 @@ Let us combine several of the previous ideas to define a specific type of neighb
 The set ``concepts`` will then contain: ``moon/C``, ``jupiter/C``, ``saturn/C``.
 
 
+Hyperedges containing a given set of hyperedges
+===============================================
+
+The hypergraph database provides a very efficient way to query for all hyperedges that include a given set of hyperedges, with the method ``edges_with_edges()``::
+
+   >>> hg.add('(plays/P mary/C chess/C)')
+   (plays/P mary/C chess/C)
+   >>> hg.add('(plays/P john/C chess/C)')
+   (plays/P john/C chess/C)
+   >>> hg.add('(plays/P alice/C handball/C)')
+   (plays/P alice/C handball/C)
+   >>> list(hg.edges_with_edges([hedge('plays/P'), hedge('chess/C')]))
+   [(plays/P john/C chess/C), (plays/P mary/C chess/C)]
+
+An optional ``root`` argument can be added, further requiring the matching edges to contain an atom with that root (at the top level)::
+
+   >>> list(hg.edges_with_edges([hedge('plays/C'), hedge('chess/C')], root='john'))
+   [(plays/C john/C chess/C)]
+
+
 Searching for hyperedges
 ========================
 
@@ -197,17 +217,66 @@ Notice that the method ``set_attribute()`` is used to set attributes of any type
    >>> hg.get_float_attribute('alice/C', 'height')
    1.2
 
+In fact, this is how degrees and deep degrees are stored, respectively in the attributes "d" and "dd", so these attribute names should not be used for other purposes. The call ``hg.degree(edge)`` is equivalent to ``hg.get_int_attribute(edge, 'd')``.
 
-Counts
-======
+Integer attributes can also be incremented and decremented::
+
+   >>> hg.add('(red/M button/C)')
+   (red/M button/C)
+   >>> hg.set_attribute('(red/M button/C)', 'clicks', 0)
+   True
+   >>> hg.inc_attribute('(red/M button/C)', 'clicks')
+   True
+   >>> hg.get_int_attribute('(red/M button/C)', 'clicks')
+   1
+   >>> hg.dec_attribute('(red/M button/C)', 'clicks')
+   True
+   >>> hg.get_int_attribute('(red/M button/C)', 'clicks')
+   0
+
+
+Local and global counters
+=========================
 
 Normally, when adding a hyperedge that already exists, nothing is changed. It is sometimes useful to count occurrences while adding hyperedges, and in this case the ``count=True`` optional argument can be specified when calling ``add()``. This increments the ``count`` integer argument of the hyperedge every time it is added::
 
-   
+   >>> hg.add('(counting/P sheep/C)', count=True)
+   (counting/P sheep/C)
+   >>> hg.get_int_attribute('(counting/P sheep/C)', 'count')
+   1
+   >>> hg.add('(counting/P sheep/C)', count=True)
+   (counting/P sheep/C)
+   >>> hg.get_int_attribute('(counting/P sheep/C)', 'count')
+   2
 
+The hypergraph database also provides the following global counters:
+
+- ``Hypergraph.atom_count()``: total number of atoms
+- ``Hypergraph.edge_count()``: total number of hyperedges
+- ``Hypergraph.primary_atom_count()``: total number of primary atoms
+- ``Hypergraph.primary_edge_count()``: total number of primary hyperedges
 
 
 Working with hyperedge sequences
 ================================
 
-TODO
+The hypergraph database provides for a mechanism to organize hyerpedges into sequences. This is useful when storing hyperedges extracted from natural language sources where the order in which they appear can be relevant. For example, we might be interested in parsing every sentence in a book into a hyperedge and then being able to know which hyperedges correspond to the sentence that came before and after.
+
+A hyperedge can be added to a given sequence in the hypergraph (identified by a string label), at a given position. For example::
+
+   >>> hg.add_to_sequence('sentences', 0, '(is/P this/C (the/M (first/M sentence/C)))')
+   (seq/P/. sentences 0 (is/P this/C (the/M (first/M sentence/C))))
+
+The outer edge with the special predicate ``seq/P/.`` assigns the hyperedge to the sequence "sentences" at position 0. Sequences are thus defines using hypergraphic semantics in this very simple way, and can be directly manipulated using basic hypergraph operations. The methods provided to work with them are just a convenience. There is no "safety net" to maintain consistency, it is possible to insert several hyperedges in the same position, or skip positions. This is meant to be a very simple and fast mechanism. The method ``sequences`` returns a generator for all the sequences contained in the hypergraph::
+
+   >>> list(hg.sequences())
+   [sentences]
+
+The method ``sequence`` provides a generator for all the hyperedges contained in a given sequence, in order::
+
+  >>> hg.add_to_sequence('sentences', 1, '(is/P this/C (the/M (second/M sentence/C)))')
+  (seq/P/. sentences 1 (is/P this/C (the/M (second/M sentence/C))))
+  >>> hg.add_to_sequence('sentences', 2, '(is/P this/C (the/M (third/M sentence/C)))')
+  (seq/P/. sentences 2 (is/P this/C (the/M (third/M sentence/C))))
+  >>> list(hg.sequence('sentences'))
+  [(is/P this/C (the/M (first/M sentence/C))), (is/P this/C (the/M (second/M sentence/C))), (is/P this/C (the/M (third/M sentence/C)))]

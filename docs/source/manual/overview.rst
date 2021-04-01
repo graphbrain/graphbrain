@@ -1,6 +1,6 @@
-=======================
-The Semantic Hypergraph
-=======================
+========
+Overview
+========
 
 The *Semantic Hypergraph* is central to Graphbrain, both conceptually and functionally. It can be seen from three different perspectives:
 
@@ -10,6 +10,7 @@ The *Semantic Hypergraph* is central to Graphbrain, both conceptually and functi
 
 We will elaborate, but first let us discuss the general concept of *hypergraph*.
 
+
 Hypergraphs
 ===========
 
@@ -18,6 +19,7 @@ The richness of information contained in natural language cannot be fully captur
 While a graph is based on a set of vertices and a set of edges describing dyadic connections, a hypergraph generalizes such structure by allowing :math:`n`-ary connections. 
 
 We further generalize hypergraphs in two ways: hyperedges may be ordered and recursive. Ordering entails that the position in which a vertex participates in the hyperedge is relevant (a similarity can be drawn with the concept of directed graphs). Recursivity means that hyperedges can participate as vertices in other hyperedges, which is to say: relationships between entities can themselves play the role of entities in higher-order relationships.
+
 
 As language: syntactic rules
 ============================
@@ -52,6 +54,7 @@ In these examples we only show the human-friendly labels of atoms. Atoms contain
 
 Readers who are familiar with Lisp will likely have noticed that hyperedges are isomophic to *S-expressions*. This is not purely accidental. Lisp is very close to :math:`\lambda`-calculus, a formal and minimalistic model of computation that is based on function abstraction and application. The first item of an s-expression specifics a function, the following ones its arguments. One can think of a function as an association between objects. Although hyperedges do not specify computations, connectors are similar to functions at a very abstract level, in that they define associations. The concepts of "race to space" and "race in space" are both associated to the concepts "race" and "space", but the combination of these two concepts yields different meaning by application of either the connector "in" or "to".
 
+
 As knowledge model
 ==================
 
@@ -66,6 +69,7 @@ This makes it possible to attribute facts to sources. Sources are themselves hyp
 
 Thus, another relevant concept is that of a *claim*. A claim is an assertion that can be attributed to a source. We thus have a knowledge representation without the need for a notion of ground truth, where instead every assertion can be modeled as a claim by a hyperedge (source) of a hyperedge (fact). This is of particular importance, e.g. for the analysis of discussions on controversial topics, where multiple actors have contradictory views on a same issue.
 
+
 As database
 ===========
 
@@ -78,3 +82,21 @@ The idea is for this database system to guarantee a certain interface (API), and
 3. Search of hyperedges by pattern.
 
 Currently there is a single backend implementation, that is based on LevelDB (a very efficient sorted key-value store that is stored in a local directory). Hypergraphs stored in this format can only be accessed by one process/thread at a time.
+
+
+Knowledge Agents
+================
+
+Knowledge agents are programs that manipulate hypergraphs in some way. They can be introspective, working only on the current contents of the hypergraph to derive new knowledge. For example, the *taxonomy* agent infers simple taxonomies from concepts. It can infer that 'black cat' is a type of 'cat' or that 'city of Berlin' is a type of 'city'.
+
+It produces new hyperedges such as::
+
+   (type_of/P/. city/C (of/B city/C berlin/C))
+
+Certain agents use outside sources to introduce knowledge into hypergraphs. For example, the *txt_parser* agent receives as input a simple text file and converters each sentence that it detects in it into an hyperedge.
+
+You can find the full list of agents that are distributed with Graphbrain here:
+
+https://graphbrain.net/manual/agents.html
+
+

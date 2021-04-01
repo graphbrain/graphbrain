@@ -6,6 +6,7 @@ Manual
    :maxdepth: 2
    :caption: Contents:
 
+   manual/overview.rst
    manual/notation.rst
    manual/special-relations.rst
    manual/hypergraph-operations.rst
