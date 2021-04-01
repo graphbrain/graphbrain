@@ -3,6 +3,9 @@
 /* BEGIN: Cython Metadata
 {
     "distutils": {
+        "include_dirs": [
+            "."
+        ],
         "name": "graphbrain.memory.leveldb",
         "sources": [
             "graphbrain/memory/leveldb.pyx"

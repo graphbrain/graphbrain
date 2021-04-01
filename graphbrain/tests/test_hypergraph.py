@@ -228,7 +228,7 @@ class TestHypergraph(unittest.TestCase):
         self.hg.add('(says/Pd mary/Cp)')
         self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')
         self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C) extra/C)')
-        self.assertEqual(set(self.hg.search('&')),
+        self.assertEqual(set(self.hg.search('(*)')),
                          {hedge('(is/Pd graphbrain/Cp great/C)'),
                           hedge('(says/Pd mary/Cp)'),
                           hedge('(says/Pd mary/Cp '
@@ -360,7 +360,7 @@ class TestHypergraph(unittest.TestCase):
         self.hg.add('(says/Pd mary/Cp)')
         self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')
         self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C) extra/C)')
-        self.assertEqual(self.hg.count('&'), 4)
+        self.assertEqual(self.hg.count('(*)'), 4)
 
     def test_count_non_atomic_pred(self):
         self.hg.destroy()

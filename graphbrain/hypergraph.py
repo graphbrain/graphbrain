@@ -128,26 +128,26 @@ class Hypergraph(object):
         Patterns are themselves edges. They can match families of edges
         by employing special atoms:
         -> '*' represents a general wildcard (matches any edge)
-        -> '@' represents an atomic wildcard (matches any atom)
-        -> '&' represents a non-atomic wildcard (matches any non-atom)
+        -> '.' represents an atomic wildcard (matches any atom)
+        -> '(*)' represents a non-atomic wildcard (matches any non-atom)
         -> '...' at the end indicates an open-ended pattern.
 
         The pattern can be a string, that must represent an edge.
-        Examples: '(is/Pd graphbrain/C @)'
+        Examples: '(is/Pd graphbrain/C .)'
         '(says/pd * ...)'
 
         Atomic patterns can also be used to match all edges in the
-        hypergraph (*), all atoms (@), and all non-atoms (&).
+        hypergraph: *, all atoms: ., and all non-atoms: (*).
         """
         pattern = hedge(pattern)
 
         if pattern.is_atom() and len(pattern.parts()) == 1:
-            if pattern[0][0] == '*':
-                return self.all()
-            elif pattern[0][0] == '@':
-                return self.all_atoms()
-            elif pattern[0][0] == '&':
+            if pattern.parens:
                 return self.all_non_atoms()
+            elif pattern[0][0] == '*':
+                return self.all()
+            elif pattern[0][0] == '.':
+                return self.all_atoms()
 
         return self._search(pattern)
 
@@ -165,12 +165,12 @@ class Hypergraph(object):
         pattern = hedge(pattern)
 
         if pattern.is_atom() and len(pattern.parts()) == 1:
-            if pattern[0][0] == '*':
-                return self.edge_count()
-            elif pattern[0][0] == '@':
-                return self.atom_count()
-            elif pattern[0][0] == '&':
+            if pattern.parens:
                 return self.edge_count() - self.atom_count()
+            elif pattern[0][0] == '*':
+                return self.edge_count()
+            elif pattern[0][0] == '.':
+                return self.atom_count()
 
         n = 0
         for _ in self._search(pattern):
