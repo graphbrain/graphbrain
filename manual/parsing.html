@@ -96,19 +96,24 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../manual.html">Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notation.html">Semantic Hypergraph notation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="special-relations.html">Special relations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hypergraph-operations.html">Basic hypergraph operations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="patterns.html">Patterns</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Parsing Natural Language</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Parsing Natural Language</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#lemmas">Lemmas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parser-level-coreference-resolution">Parser-level coreference resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parser-level-inferences">Parser-level inferences</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="agents.html">Knowledge Agents</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cli.html">Command-line interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html">API reference</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
 </ul>
 
@@ -187,7 +192,56 @@
             
   <div class="section" id="parsing-natural-language">
 <h1>Parsing Natural Language<a class="headerlink" href="#parsing-natural-language" title="Permalink to this headline">¶</a></h1>
+<p>Parsing natural language to semantic hypergraphs is another crucial aspect of Graphbrain. This aspect of the library is covered by the <code class="docutils literal notranslate"><span class="pre">graphbrain.parsers</span></code> package. Let us see how to create a parser, and how to use it to parse a sentence:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">graphbrain.parsers</span> <span class="kn">import</span> <span class="n">create_parser</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span> <span class="o">=</span> <span class="n">create_parser</span><span class="p">(</span><span class="s1">&#39;en&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parse_results</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;Einstein first published the theory of relativity in 1905&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parse_results</span><span class="p">[</span><span class="s1">&#39;parses&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;main_edge&#39;</span><span class="p">]</span>
+<span class="go">((first/M/en published/Pd.sox.&lt;f-----/en) einstein/Cp.s/en (of/Br.ma/en (the/Md/en theory/Cc.s/en) relativity/Cc.s/en) (in/Tt/en 1905/C#/en))</span>
+</pre></div>
+</div>
+<p>Notice that <code class="docutils literal notranslate"><span class="pre">create_parser()</span></code> takes a some time (10 to 20 seconds is normal), because it has to load the underlying language models. Here we pass it the only mandatory parameter, which is the name of the parser to use. This will typically correspond to the language to parse. Currently only one parser for English is provided (“en”), but Graphbrain already comes with auxiliary scripts to help in the development of parsers for other languages.</p>
+<p>We also see that we specify a position in the <code class="docutils literal notranslate"><span class="pre">parse_results</span></code> data structure (at the top-level, it is a dictionary) to directly access the hyperedge that corresponds to the parsed sentence. This is because <code class="docutils literal notranslate"><span class="pre">parse_results</span></code> includes useful additional information about the parsed text, and also because the parsed text can correspond to more than one hyperedge. So let us take a look at the full contents of <code class="docutils literal notranslate"><span class="pre">parse_results</span></code> from the example above:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">parse_results</span>
+<span class="go">{&#39;parses&#39;:</span>
+<span class="go">    ({&#39;main_edge&#39;: ((first/M/en published/Pd.sox.&lt;f-----/en) einstein/Cp.s/en (of/Br.ma/en (the/Md/en theory/Cc.s/en) relativity/Cc.s/en) (in/Tt/en 1905/C#/en)),</span>
+<span class="go">      &#39;extra_edges&#39;: set(),</span>
+<span class="go">      &#39;failed&#39;: False,</span>
+<span class="go">      &#39;text&#39;: &#39;Einstein first published the theory of relativity in 1905&#39;,</span>
+<span class="go">      &#39;atom2word&#39;: {first/M/en: (&#39;first&#39;, 1),</span>
+<span class="go">                    published/Pd.sox.&lt;f-----/en: (&#39;published&#39;, 2),</span>
+<span class="go">                    einstein/Cp.s/en: (&#39;Einstein&#39;, 0),</span>
+<span class="go">                    of/Br.ma/en: (&#39;of&#39;, 5),</span>
+<span class="go">                    the/Md/en: (&#39;the&#39;, 3),</span>
+<span class="go">                    theory/Cc.s/en: (&#39;theory&#39;, 4),</span>
+<span class="go">                    relativity/Cc.s/en: (&#39;relativity&#39;, 6),</span>
+<span class="go">                    in/Tt/en: (&#39;in&#39;, 7),</span>
+<span class="go">                    1905/C#/en: (&#39;1905&#39;, 8)},</span>
+<span class="go">      &#39;atom2token&#39;: {einstein/Cp.s/en: Einstein,</span>
+<span class="go">                     first/M/en: first,</span>
+<span class="go">                     published/Pd.sox.&lt;f-----/en: published: published,</span>
+<span class="go">                     the/Md/en: the,</span>
+<span class="go">                     theory/Cc.s/en: theory,</span>
+<span class="go">                     of/Br.ma/en: of,</span>
+<span class="go">                     relativity/Cc.s/en: relativity,</span>
+<span class="go">                     in/Tt/en: in,</span>
+<span class="go">                     1905/C#/en: 1905},</span>
+<span class="go">      &#39;spacy_sentence&#39;: Einstein first published the theory of relativity in 1905},),</span>
+<span class="go"> &#39;inferred_edges&#39;: []}</span>
+</pre></div>
+</div>
+<div class="section" id="lemmas">
+<h2>Lemmas<a class="headerlink" href="#lemmas" title="Permalink to this headline">¶</a></h2>
 <p>TODO</p>
+</div>
+<div class="section" id="parser-level-coreference-resolution">
+<h2>Parser-level coreference resolution<a class="headerlink" href="#parser-level-coreference-resolution" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="parser-level-inferences">
+<h2>Parser-level inferences<a class="headerlink" href="#parser-level-inferences" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
 </div>
 
 
