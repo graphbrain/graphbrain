@@ -425,6 +425,7 @@ class AlphaBeta(Parser):
                     if utrigger_atom in self.atom2token:
                         self.atom2token[unew_trigger] =\
                             self.atom2token[utrigger_atom]
+                        del self.atom2token[utrigger_atom]
                     self.orig_atom[unew_trigger] = utrigger_atom
                     edge = edge.replace_atom(trigger_atom, new_trigger)
 
@@ -460,6 +461,7 @@ class AlphaBeta(Parser):
             upred = UniqueAtom(pred)
             self.atom2token[unew_pred] =\
                 self.atom2token[upred]
+            del self.atom2token[upred]
             self.orig_atom[unew_pred] = upred
             new_entity = edge.replace_atom(pred, new_pred)
 
@@ -480,6 +482,7 @@ class AlphaBeta(Parser):
                 if ubuilder in self.atom2token:
                     self.atom2token[unew_builder] =\
                         self.atom2token[ubuilder]
+                    del self.atom2token[ubuilder]
                 self.orig_atom[unew_builder] = ubuilder
                 new_entity = edge.replace_atom(builder, new_builder)
 
