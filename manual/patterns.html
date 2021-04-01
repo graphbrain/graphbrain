@@ -96,19 +96,25 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../manual.html">Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notation.html">Semantic Hypergraph notation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="special-relations.html">Special relations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hypergraph-operations.html">Basic hypergraph operations</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Patterns</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Patterns</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#searching-with-wildcards">Searching with wildcards</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#matching-argroles">Matching argroles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#patterns-with-variables-for-information-extraction">Patterns with variables for information extraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#discovering-frequent-patterns">Discovering frequent patterns</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="parsing.html">Parsing Natural Language</a></li>
 <li class="toctree-l2"><a class="reference internal" href="agents.html">Knowledge Agents</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cli.html">Command-line interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html">API reference</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
 </ul>
 
@@ -187,24 +193,94 @@
             
   <div class="section" id="patterns">
 <h1>Patterns<a class="headerlink" href="#patterns" title="Permalink to this headline">¶</a></h1>
-<p>In SH representation, an atom label that starts with upper case represents a variable. For example: <code class="docutils literal notranslate"><span class="pre">PLAYER/C</span></code>. One can define perfectly valid hyperedges that include variables, as well as wildcards, so for example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="n">so</span> <span class="n">PLAYER</span><span class="o">/</span><span class="n">C</span> <span class="o">*</span><span class="p">)</span>
+<p>As briefly discussed before, Graphbrain provides a pattern language to query and match hyperedges in the hypergraph. These patterns are valid hyperedges, and can even be stored in the hypergraph themselves. Patterns are defined with the help of special atoms: <em>wildcards</em> and <em>variables</em>. The former are useful for simply querying and matching, while the latter allow for the extraction of specific parts of a hyperedge.</p>
+<div class="section" id="searching-with-wildcards">
+<h2>Searching with wildcards<a class="headerlink" href="#searching-with-wildcards" title="Permalink to this headline">¶</a></h2>
+<p>The basic wildcard is <code class="docutils literal notranslate"><span class="pre">*</span></code>. It matches any hyperedge. It allows for the definition of patterns like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span> <span class="o">*</span> <span class="o">*</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>This is a valid hyperedge, but it is also a pattern that can be used to match other hyperedges. Then the <code class="docutils literal notranslate"><span class="pre">match_pattern(edge,</span> <span class="pre">pattern)</span></code> function can be used to apply patterns to edges. It works like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">graphbrain.hyperedge</span> <span class="kn">import</span> <span class="n">match_pattern</span>
-
-<span class="n">pattern</span> <span class="o">=</span> <span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;(plays/P.so PLAYER/C *)&#39;</span><span class="p">)</span>
-<span class="n">edge</span> <span class="o">=</span> <span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;(plays/P.so mary/C *)&#39;</span><span class="p">)</span>
-<span class="n">match_pattern</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+<p>We can use them to search the hypergraph for matching hyperedges. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;example.hg&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;(plays/Pd.so alice/C chess/C)&#39;</span><span class="p">)</span>
+<span class="go">(plays/Pd.so alice/C chess/C)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(plays/P * *)&#39;</span><span class="p">))</span>
+<span class="go">[(plays/Pd.so alice/C chess/C)]</span>
 </pre></div>
 </div>
-<p>In this case, we get:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span><span class="s1">&#39;PLAYER&#39;</span><span class="p">:</span> <span class="n">mary</span><span class="o">/</span><span class="n">C</span><span class="p">}]</span>
+<p>Notice that the specified atoms, such as <code class="docutils literal notranslate"><span class="pre">plays/P</span></code>, match atoms in the target hyperedge in the most general way, meaning that, if a subtype or other roles are not specified in the pattern, then any subtypes or argroles will match, as can be seen in the example above.</p>
+<p>There are two more wildcard:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.</span></code>, which only matches atoms.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">(*)</span></code>, which only matches non-atomic hyperedges.</p></li>
+</ul>
+<p>Furthermore, it is possible to specify types and roles in wildcards, as in any other atom. For example <code class="docutils literal notranslate"><span class="pre">*/C</span></code> only matches hyperedges of type concept. <code class="docutils literal notranslate"><span class="pre">(*/C)</span></code> only matches non-atomic hyperedges of type concept, and so on.</p>
+<p>It is possible to specify the optional presence of further arguments with the special atom <a href="#id1"><span class="problematic" id="id2">``</span></a>…’’, which simply indicates that any number (including zero) hyperedges may be present at that point. For instance:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span> <span class="o">*</span> <span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>does not match:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="n">sox</span> <span class="n">alice</span><span class="o">/</span><span class="n">C</span> <span class="n">chess</span><span class="o">/</span><span class="n">C</span> <span class="p">(</span><span class="n">at</span><span class="o">/</span><span class="n">T</span> <span class="p">(</span><span class="n">the</span><span class="o">/</span><span class="n">M</span> <span class="n">club</span><span class="o">/</span><span class="n">C</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>but this pattern does:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span> <span class="o">*</span> <span class="o">*</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="matching-argroles">
+<h2>Matching argroles<a class="headerlink" href="#matching-argroles" title="Permalink to this headline">¶</a></h2>
+<p>If the connector indicates argument roles, then any further arguments may be present, unless indicated otherwise. So:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="n">so</span> <span class="o">*</span> <span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>matches:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="n">sox</span> <span class="n">alice</span><span class="o">/</span><span class="n">C</span> <span class="n">chess</span><span class="o">/</span><span class="n">C</span> <span class="p">(</span><span class="n">at</span><span class="o">/</span><span class="n">T</span> <span class="p">(</span><span class="n">the</span><span class="o">/</span><span class="n">M</span> <span class="n">club</span><span class="o">/</span><span class="n">C</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>When specifying argroles, more often than not this is the behavior that is the most useful.</p>
+<p>It is often desirable to allow the various pattern elements to appear in any order. This is indicated by surrounding the roles of such elements with curly brackets. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="ow">is</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="p">{</span><span class="n">sc</span><span class="p">}</span> <span class="o">*</span> <span class="o">*/</span><span class="n">C</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The above pattern would match both:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="ow">is</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="n">sc</span> <span class="p">(</span><span class="n">the</span><span class="o">/</span><span class="n">M</span> <span class="n">sky</span><span class="o">/</span><span class="n">C</span><span class="p">)</span> <span class="n">blue</span><span class="o">/</span><span class="n">C</span><span class="p">)</span>
+<span class="p">(</span><span class="ow">is</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="n">cs</span> <span class="n">blue</span><span class="o">/</span><span class="n">C</span> <span class="p">(</span><span class="n">the</span><span class="o">/</span><span class="n">M</span> <span class="n">sky</span><span class="o">/</span><span class="n">C</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Sometimes it is also desirable to explicitly forbid certain argument roles. This is achieved by indicating them after ‘-‘ in the argrole sequence. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="p">{</span><span class="n">so</span><span class="p">}</span><span class="o">-</span><span class="n">x</span> <span class="o">*</span> <span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>does not match:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="n">sox</span> <span class="n">alice</span><span class="o">/</span><span class="n">C</span> <span class="n">chess</span><span class="o">/</span><span class="n">C</span> <span class="p">(</span><span class="n">at</span><span class="o">/</span><span class="n">T</span> <span class="p">(</span><span class="n">the</span><span class="o">/</span><span class="n">M</span> <span class="n">club</span><span class="o">/</span><span class="n">C</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="patterns-with-variables-for-information-extraction">
+<h2>Patterns with variables for information extraction<a class="headerlink" href="#patterns-with-variables-for-information-extraction" title="Permalink to this headline">¶</a></h2>
+<p>Let us introduce the concept of <em>variable</em>. Like a wildcard, a variable indicates a placeholder that can match a hyperedge, but can then be used to refer to that matched hyperedge. In SH representation, an atom label that starts with upper case represents a variable. For example: <code class="docutils literal notranslate"><span class="pre">PLAYER/C</span></code>. One can define perfectly valid hyperedges that include variables, as well as wildcards, so for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="p">{</span><span class="n">so</span><span class="p">}</span> <span class="n">PLAYER</span><span class="o">/</span><span class="n">C</span> <span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then the <code class="docutils literal notranslate"><span class="pre">match_pattern(edge,</span> <span class="pre">pattern)</span></code> function can be used to apply patterns to edges. It works like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="n">hedge</span>
+<span class="o">&gt;&gt;</span> <span class="kn">from</span> <span class="nn">graphbrain.hyperedge</span> <span class="kn">import</span> <span class="n">match_pattern</span>
+<span class="o">&gt;&gt;</span> <span class="n">pattern</span> <span class="o">=</span> <span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;(plays/P.</span><span class="si">{so}</span><span class="s1"> PLAYER/C *)&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;</span> <span class="n">edge</span> <span class="o">=</span> <span class="n">hedge</span><span class="p">(</span><span class="s1">&#39;(plays/P.so mary/C *)&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;</span> <span class="n">match_pattern</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+<span class="p">[{</span><span class="s1">&#39;PLAYER&#39;</span><span class="p">:</span> <span class="n">mary</span><span class="o">/</span><span class="n">C</span><span class="p">}]</span>
 </pre></div>
 </div>
 <p>So, <code class="docutils literal notranslate"><span class="pre">match_pattern</span></code> gives a list of dictionaries (one pattern can match the same edge in several ways). Each dictionary represents a match, and assigns a value to a variable.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Hypergraph</span></code> object provides the <code class="docutils literal notranslate"><span class="pre">match()</span></code> method , which is similar to <code class="docutils literal notranslate"><span class="pre">search()</span></code> but returns dictionaries with the matched variables:</p>
+</div>
+<div class="section" id="discovering-frequent-patterns">
+<h2>Discovering frequent patterns<a class="headerlink" href="#discovering-frequent-patterns" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
 </div>
 
 
