@@ -103,6 +103,7 @@
 <li class="toctree-l2"><a class="reference internal" href="hypergraph-operations.html">Basic hypergraph operations</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Patterns</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#searching-with-wildcards">Searching with wildcards</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#non-strict-search">Non-strict search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#matching-argroles">Matching argroles</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#patterns-with-variables-for-information-extraction">Patterns with variables for information extraction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#discovering-frequent-patterns">Discovering frequent patterns</a></li>
@@ -203,14 +204,12 @@
 <p>We can use them to search the hypergraph for matching hyperedges. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;example.hg&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;(plays/Pd.so alice/C chess/C)&#39;</span><span class="p">)</span>
-<span class="go">(plays/Pd.so alice/C chess/C)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(plays/P * *)&#39;</span><span class="p">))</span>
-<span class="go">[(plays/Pd.so alice/C chess/C)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;(plays/P.so alice/C chess/C)&#39;</span><span class="p">)</span>
+<span class="go">(plays/P.so alice/C chess/C)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(plays/P.so * *)&#39;</span><span class="p">))</span>
+<span class="go">[(plays/P.so alice/C chess/C)]</span>
 </pre></div>
 </div>
-<p>Notice that the specified atoms, such as <code class="docutils literal notranslate"><span class="pre">plays/P</span></code>, match atoms in the target hyperedge in the most general way, meaning that, if a subtype or other roles are not specified in the pattern, then any subtypes or argroles will match, as can be seen in the example above.</p>
 <p>There are two more wildcard:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">.</span></code>, which only matches atoms.</p></li>
@@ -229,6 +228,20 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span> <span class="o">*</span> <span class="o">*</span> <span class="o">...</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="non-strict-search">
+<h2>Non-strict search<a class="headerlink" href="#non-strict-search" title="Permalink to this headline">¶</a></h2>
+<p>Non-strict search allows for patterns to match atoms in the most general way, meaning that, if a subtype or other roles are not specified in the pattern, then any subtypes or argroles will match, as can be seen in this example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;example.hg&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;(plays/Pd.so alice/Cp.s chess/Cc.s)&#39;</span><span class="p">)</span>
+<span class="go">(plays/Pd.so alice/Cp.s chess/Cc.s)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(plays/P alice/C *)&#39;</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="go">[(plays/Pd.so alice/Cp.s chess/Cc.s)]</span>
+</pre></div>
+</div>
+<p>Even though the full type and roles of <code class="docutils literal notranslate"><span class="pre">plays/Pd.so</span></code> and <code class="docutils literal notranslate"><span class="pre">alice/Cp.s</span></code> are not specified in the pattern, they still match the more general corresponding atoms <code class="docutils literal notranslate"><span class="pre">plays/P</span></code> and <code class="docutils literal notranslate"><span class="pre">alice/C</span></code>.</p>
+<p>Non-strict search is semantically more powerful, at the expense of performance. Strict search can take advantage of the structure of the hypergraph database to perform fast queries, while non-strict search iterates through all edges in the hypergraph looking for matches.</p>
 </div>
 <div class="section" id="matching-argroles">
 <h2>Matching argroles<a class="headerlink" href="#matching-argroles" title="Permalink to this headline">¶</a></h2>
@@ -258,6 +271,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="n">sox</span> <span class="n">alice</span><span class="o">/</span><span class="n">C</span> <span class="n">chess</span><span class="o">/</span><span class="n">C</span> <span class="p">(</span><span class="n">at</span><span class="o">/</span><span class="n">T</span> <span class="p">(</span><span class="n">the</span><span class="o">/</span><span class="n">M</span> <span class="n">club</span><span class="o">/</span><span class="n">C</span><span class="p">)))</span>
 </pre></div>
 </div>
+<p>When using <code class="docutils literal notranslate"><span class="pre">Hypergraph,search()</span></code>, order-independent (curly-braces) and argrole exclusions (-) only work in non-strict mode.</p>
 </div>
 <div class="section" id="patterns-with-variables-for-information-extraction">
 <h2>Patterns with variables for information extraction<a class="headerlink" href="#patterns-with-variables-for-information-extraction" title="Permalink to this headline">¶</a></h2>
@@ -275,10 +289,17 @@
 </pre></div>
 </div>
 <p>So, <code class="docutils literal notranslate"><span class="pre">match_pattern</span></code> gives a list of dictionaries (one pattern can match the same edge in several ways). Each dictionary represents a match, and assigns a value to a variable.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">Hypergraph</span></code> object provides the <code class="docutils literal notranslate"><span class="pre">match()</span></code> method , which is similar to <code class="docutils literal notranslate"><span class="pre">search()</span></code> but returns dictionaries with the matched variables:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TODO</span>
+<p>The <code class="docutils literal notranslate"><span class="pre">Hypergraph</span></code> object provides the <code class="docutils literal notranslate"><span class="pre">match()</span></code> method , which is similar to <code class="docutils literal notranslate"><span class="pre">search()</span></code> but returns dictionaries with the matched variables. Like search, it offers a non-strict mode with the same trade-offs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;(is/Pd.cs blue/Ca (the/M sky/C))&#39;</span><span class="p">)</span>
+<span class="go">(is/Pd.cs blue/Ca (the/M sky/C))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;(is/Pd.sc (the/M sky/C) blue/Ca)&#39;</span><span class="p">)</span>
+<span class="go">(is/Pd.sc (the/M sky/C) blue/Ca)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">hg</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;(is/P.</span><span class="si">{sc}</span><span class="s1"> OBJ/C PROP)&#39;</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="go">[((is/Pd.cs blue/Ca (the/M sky/C)), [{&#39;OBJ&#39;: (the/M sky/C), &#39;PROP&#39;: blue/Ca}]),</span>
+<span class="go"> ((is/Pd.sc (the/M sky/C) blue/Ca), [{&#39;OBJ&#39;: (the/M sky/C), &#39;PROP&#39;: blue/Ca}])]</span>
 </pre></div>
 </div>
+<p>The output is a list of tuples, where the first item is the matched hyperedge and the second is a dictionary with variables and their values.</p>
 </div>
 <div class="section" id="discovering-frequent-patterns">
 <h2>Discovering frequent patterns<a class="headerlink" href="#discovering-frequent-patterns" title="Permalink to this headline">¶</a></h2>

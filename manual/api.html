@@ -925,7 +925,7 @@ the second is a dictionary of attribute values
 
 <dl class="py method">
 <dt id="graphbrain.hypergraph.Hypergraph.count">
-<code class="sig-name descname">count</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pattern</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.count" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">count</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pattern</span></em>, <em class="sig-param"><span class="n">strict</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of edges that match a pattern.
 See search() method for an explanation of patterns.</p>
 </dd></dl>
@@ -1068,19 +1068,24 @@ the degree and deep degree of that edge.</p>
 
 <dl class="py method">
 <dt id="graphbrain.hypergraph.Hypergraph.search">
-<code class="sig-name descname">search</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pattern</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.search" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">search</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pattern</span></em>, <em class="sig-param"><span class="n">strict</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/hypergraph.html#Hypergraph.search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.hypergraph.Hypergraph.search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns generator for all the edges that match a pattern.</p>
 <p>Patterns are themselves edges. They can match families of edges
 by employing special atoms:
 -&gt; ‘*’ represents a general wildcard (matches any edge)
--&gt; ‘&#64;’ represents an atomic wildcard (matches any atom)
--&gt; ‘&amp;’ represents a non-atomic wildcard (matches any non-atom)
+-&gt; ‘.’ represents an atomic wildcard (matches any atom)
+-&gt; ‘(*)’ represents a non-atomic wildcard (matches any non-atom)
 -&gt; ‘…’ at the end indicates an open-ended pattern.</p>
 <p>The pattern can be a string, that must represent an edge.
-Examples: ‘(is/Pd graphbrain/C &#64;)’
+Examples: ‘(is/Pd graphbrain/C .)’
 ‘(says/pd * …)’</p>
 <p>Atomic patterns can also be used to match all edges in the
-hypergraph (*), all atoms (&#64;), and all non-atoms (&amp;).</p>
+hypergraph: <em>, all atoms: ., and all non-atoms: (</em>).</p>
+<p>Keyword argument:
+strict – strictly match the search pattern, or allow for more general
+atoms to match target atome (e.g. plays/P matches plays/Pd.so in 
+non-strict mode, but only exactl plays/Pd.so matches it in strict mode)
+Non-strict mode is slower. (default True)</p>
 </dd></dl>
 
 <dl class="py method">
