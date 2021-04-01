@@ -32,7 +32,7 @@ There are two more wildcard:
 
 Furthermore, it is possible to specify types and roles in wildcards, as in any other atom. For example ``*/C`` only matches hyperedges of type concept. ``(*/C)`` only matches non-atomic hyperedges of type concept, and so on.
 
-It is possible to specify the optional presence of further arguments with the special atom ``...'', which simply indicates that any number (including zero) hyperedges may be present at that point. For instance::
+It is possible to specify the optional presence of further arguments with the special atom ``...``, which simply indicates that any number (including zero) hyperedges may be present at that point. For instance::
 
    (plays/P * *)
 
@@ -95,6 +95,8 @@ Then the ``match_pattern(edge, pattern)`` function can be used to apply patterns
 So, ``match_pattern`` gives a list of dictionaries (one pattern can match the same edge in several ways). Each dictionary represents a match, and assigns a value to a variable.
 
 The ``Hypergraph`` object provides the ``match()`` method , which is similar to ``search()`` but returns dictionaries with the matched variables::
+
+   TODO
 
 
 Discovering frequent patterns

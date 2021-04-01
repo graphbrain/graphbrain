@@ -217,7 +217,7 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">(*)</span></code>, which only matches non-atomic hyperedges.</p></li>
 </ul>
 <p>Furthermore, it is possible to specify types and roles in wildcards, as in any other atom. For example <code class="docutils literal notranslate"><span class="pre">*/C</span></code> only matches hyperedges of type concept. <code class="docutils literal notranslate"><span class="pre">(*/C)</span></code> only matches non-atomic hyperedges of type concept, and so on.</p>
-<p>It is possible to specify the optional presence of further arguments with the special atom <a href="#id1"><span class="problematic" id="id2">``</span></a>…’’, which simply indicates that any number (including zero) hyperedges may be present at that point. For instance:</p>
+<p>It is possible to specify the optional presence of further arguments with the special atom <code class="docutils literal notranslate"><span class="pre">...</span></code>, which simply indicates that any number (including zero) hyperedges may be present at that point. For instance:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span> <span class="o">*</span> <span class="o">*</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -276,6 +276,9 @@
 </div>
 <p>So, <code class="docutils literal notranslate"><span class="pre">match_pattern</span></code> gives a list of dictionaries (one pattern can match the same edge in several ways). Each dictionary represents a match, and assigns a value to a variable.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">Hypergraph</span></code> object provides the <code class="docutils literal notranslate"><span class="pre">match()</span></code> method , which is similar to <code class="docutils literal notranslate"><span class="pre">search()</span></code> but returns dictionaries with the matched variables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TODO</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="discovering-frequent-patterns">
 <h2>Discovering frequent patterns<a class="headerlink" href="#discovering-frequent-patterns" title="Permalink to this headline">¶</a></h2>
