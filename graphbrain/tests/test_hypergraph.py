@@ -466,6 +466,23 @@ class TestHypergraph(unittest.TestCase):
               [{'X': hedge('mary/Cp.s'),
                 'Y': hedge('(a/Md ((very/M old/Ma) violin/Cn.s))')}])])
 
+    def test_match_argroles_non_strict(self):
+        self.hg.destroy()
+        edge1 = hedge('(is/Pd.cs blue/Ca (the/M sky/C))')
+        edge2 = hedge('(is/Pd.sc (the/M sky/C) blue/Ca)')
+
+        self.hg.add(edge1)
+        self.hg.add(edge2)
+
+        self.assertEqual(
+            list(self.hg.match('(is/P.{sc} OBJ/C PROP)', strict=False)),
+            [(edge1,
+              [{'OBJ': hedge('(the/M sky/C)'),
+                'PROP': hedge('blue/Ca')}]),
+             (edge2,
+              [{'OBJ': hedge('(the/M sky/C)'),
+                'PROP': hedge('blue/Ca')}])])
+
     def test_star(self):
         self.hg.destroy()
         edge1 = hedge('(is graphbrain/1 great/1)')

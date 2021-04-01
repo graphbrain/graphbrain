@@ -122,7 +122,7 @@ class Hypergraph(object):
         """
         self._set_primary(hedge(edge), value)
 
-    def search(self, pattern):
+    def search(self, pattern, strict=True):
         """Returns generator for all the edges that match a pattern.
 
         Patterns are themselves edges. They can match families of edges
@@ -138,6 +138,12 @@ class Hypergraph(object):
 
         Atomic patterns can also be used to match all edges in the
         hypergraph: *, all atoms: ., and all non-atoms: (*).
+
+        Keyword argument:
+        strict -- strictly match the search pattern, or allow for more general
+        atoms to match target atome (e.g. plays/P matches plays/Pd.so in 
+        non-strict mode, but only exactl plays/Pd.so matches it in strict mode)
+        Non-strict mode is slower. (default True)
         """
         pattern = hedge(pattern)
 
@@ -149,16 +155,16 @@ class Hypergraph(object):
             elif pattern[0][0] == '.':
                 return self.all_atoms()
 
-        return self._search(pattern)
+        return self._search(pattern, strict=strict)
 
-    def match(self, pattern, curvars={}):
+    def match(self, pattern, strict=True, curvars={}):
         pattern = hedge(pattern)
-        return self._match(pattern, curvars=curvars)
+        return self._match(pattern, strict=strict, curvars=curvars)
 
     def eval(self, rule):
         return eval_rule(self, rule)
 
-    def count(self, pattern):
+    def count(self, pattern, strict=True):
         """Number of edges that match a pattern.
         See search() method for an explanation of patterns.
         """
@@ -173,7 +179,7 @@ class Hypergraph(object):
                 return self.atom_count()
 
         n = 0
-        for _ in self._search(pattern):
+        for _ in self._search(pattern, strict=strict):
             n += 1
         return n
 
