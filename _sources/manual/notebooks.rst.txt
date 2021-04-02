@@ -12,7 +12,7 @@ The function ``show()`` produces a indented visualization with syntax highlighti
 The optional argument ``style`` specifies layout style. The two possible options are "indented" (the default) and "line".
 
 .. image:: ../_static/show.png
-  :width: 75%
+  :width: 50%
   :alt: Example of hyperedge visualization with show().
   :align: center
 
@@ -21,6 +21,7 @@ The function ``blocks()`` produces a block diagram, also using colors to disting
    blocks('((first/M published/P.sox) einstein/C (the/M (of/B theory/C relativity/C)) (in/T 1905/C))')
 
 .. image:: ../_static/block.png
+  :width: 75%
   :alt: Example of hyperedge visualization with blocks().
   :align: center
 
