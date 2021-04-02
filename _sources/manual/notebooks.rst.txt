@@ -3,3 +3,8 @@ Notebooks and visualizations
 ============================
 
 TODO
+
+.. image:: _static/show.png
+  :width: 516px
+  :alt: Example of hyperedge visualization with show().
+  :align: center
