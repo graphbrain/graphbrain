@@ -26,6 +26,13 @@ The function ``blocks()`` produces a block diagram, also using colors to disting
 
 The function ``vblocks()`` also produces a block diagram similar to ``blocks()``, which is more vertically spread and might thus be preferable for complex hyperedges::
 
+   from graphbrain import hedge
+   edge = hedge("""(reports/Pd.sx wikipedia/C (that/T
+                    (and/J
+                        ((first/M published/Pd.sox) einstein/Cp.s (the/M (of/B theory/C relativity/C)) (in/T 1905/C))
+                        (revolutionized/P.o physics/C))))""")
+   vblocks(edge)
+
 .. image:: ../_static/vblock.png
   :alt: Example of hyperedge visualization with vblocks().
   :align: center

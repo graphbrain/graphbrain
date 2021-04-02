@@ -202,19 +202,15 @@
 </div>
 <img alt="Example of hyperedge visualization with blocks()." class="align-center" src="../_images/block.png" />
 <p>The function <code class="docutils literal notranslate"><span class="pre">vblocks()</span></code> also produces a block diagram similar to <code class="docutils literal notranslate"><span class="pre">blocks()</span></code>, which is more vertically spread and might thus be preferable for complex hyperedges:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">image</span><span class="p">::</span> <span class="o">../</span><span class="n">_static</span><span class="o">/</span><span class="n">vblock</span><span class="o">.</span><span class="n">png</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="n">hedge</span>
+<span class="n">edge</span> <span class="o">=</span> <span class="n">hedge</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;(reports/Pd.sx wikipedia/C (that/T</span>
+<span class="s2">                 (and/J</span>
+<span class="s2">                     ((first/M published/Pd.sox) einstein/Cp.s (the/M (of/B theory/C relativity/C)) (in/T 1905/C))</span>
+<span class="s2">                     (revolutionized/P.o physics/C))))&quot;&quot;&quot;</span><span class="p">)</span>
+<span class="n">vblocks</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
 </pre></div>
 </div>
-<blockquote>
-<div><dl class="field-list simple">
-<dt class="field-odd">alt</dt>
-<dd class="field-odd"><p>Example of hyperedge visualization with vblocks().</p>
-</dd>
-<dt class="field-even">align</dt>
-<dd class="field-even"><p>center</p>
-</dd>
-</dl>
-</div></blockquote>
+<img alt="Example of hyperedge visualization with vblocks()." class="align-center" src="../_images/vblock.png" />
 <p>Both <code class="docutils literal notranslate"><span class="pre">blocks()</span></code> and <code class="docutils literal notranslate"><span class="pre">vblocks()</span></code> accept the optional arguments “subtypes” (default: False), “argroles” (default: True) and “namespaces” (default: False). These are meant to control the level of detail at which atoms are represented.</p>
 </div>
 
