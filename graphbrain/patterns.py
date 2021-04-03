@@ -79,9 +79,8 @@ class PatternCounter:
         first = ledge[0]
         ft = first.type()[0]
         subtype = ft in self.match_subtypes
-        hpats = [edge2pattern(first, subtype=subtype)]
-        if first.is_atom() and ft in self.match_roots:
-            hpats.append(edge2pattern(first, root=True, subtype=subtype))
+        root = first.is_atom() and ft in self.match_roots
+        hpats = [edge2pattern(first, root=root, subtype=subtype)]
         if not first.is_atom() and self._matches_expansions(first):
             hpats += self._list2patterns(list(first), depth + 1)
         if len(ledge) == 1:

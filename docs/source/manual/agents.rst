@@ -111,6 +111,15 @@ Takes a text file as input and converts each one of its sentences to hyperedges,
 
 This is a very simple but also useful, general-purpose agent.
 
+wikipedia
+---------
+
+**Type**: input
+
+**Languages**: all
+
+Takes a wikipedia URL as input, extracts the contents and converts each one of its sentences to hyperedges, adding them to the hypergraph.
+
 reddit_parser
 -------------
 
