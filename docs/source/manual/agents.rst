@@ -100,15 +100,6 @@ TODO
 Agent bestiary
 ==============
 
-reddit_parser
--------------
-
-**Type**: input
-
-**Languages**: all
-
-Takes a Reddit JSON corpus as input and converts each one of thread titles, and optionally thread comments to hyperedges, adding them to the hypergraph. Titles and comments are attributed to authors.
-
 txt_parser
 ----------
 
@@ -119,6 +110,15 @@ txt_parser
 Takes a text file as input and converts each one of its sentences to hyperedges, adding them to the hypergraph.
 
 This is a very simple but also useful, general-purpose agent.
+
+reddit_parser
+-------------
+
+**Type**: input
+
+**Languages**: all
+
+Takes a Reddit JSON corpus as input and converts each one of thread titles, and optionally thread comments to hyperedges, adding them to the hypergraph. Titles and comments are attributed to authors.
 
 taxonomy
 --------

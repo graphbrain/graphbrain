@@ -4,7 +4,6 @@ from urllib.parse import urlparse
 import requests
 
 from graphbrain.cognition.agent import Agent
-from graphbrain.op import create_op
 
 
 def url2title_and_lang(url):
@@ -47,7 +46,6 @@ class Wikipedia(Agent):
     def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
         super().__init__(
             name, progress_bar=progress_bar, logging_level=logging_level)
-        self.edges = 0
 
     def run(self):
         url = self.system.get_url(self)
@@ -67,7 +65,3 @@ class Wikipedia(Agent):
                                                     sequence=sequence,
                                                     pos=pos):
                 yield op
-
-    def report(self):
-        rep_str = ('edges found: {}'.format(self.edges))
-        return '{}\n\n{}'.format(rep_str, super().report())
