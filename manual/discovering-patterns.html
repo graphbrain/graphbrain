@@ -102,7 +102,10 @@
 <li class="toctree-l2"><a class="reference internal" href="special-relations.html">Special relations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hypergraph-operations.html">Basic hypergraph operations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="patterns.html">Patterns</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Discovering patterns</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Discovering patterns</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#a-simple-example">A simple example</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="parsing.html">Parsing Natural Language</a></li>
 <li class="toctree-l2"><a class="reference internal" href="agents.html">Knowledge Agents</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notebooks.html">Notebooks and visualizations</a></li>
@@ -189,7 +192,38 @@
             
   <div class="section" id="discovering-patterns">
 <h1>Discovering patterns<a class="headerlink" href="#discovering-patterns" title="Permalink to this headline">¶</a></h1>
-<p>TODO</p>
+<p>Patterns are useful to identify hyperedge structures from which knowledge can be inferred. To facilitate the discovery of such patterns, Graphbrain provides the <code class="docutils literal notranslate"><span class="pre">PatternCounter</span></code>, a class in the <code class="docutils literal notranslate"><span class="pre">graphbrain.patterns</span></code> module. By creating an instance of this class, one can feed it a collection of hyperedges and then obtain the most frequent patterns inferred from these hyperedges. This way, empirical sources can be used to guide the discovery of knowledge inference methods. We will see that <code class="docutils literal notranslate"><span class="pre">PatternCounter</span></code> can be tuned to focus on specific constructs and to operate at different levels of abstraction.</p>
+<div class="section" id="a-simple-example">
+<h2>A simple example<a class="headerlink" href="#a-simple-example" title="Permalink to this headline">¶</a></h2>
+<p>To exemplify, let us first generate a hypergraph parsed from real text. For this, we will use the “wikipedia” agent. Agents will be discussed in a subsequent section, but for now it is enough to know that the “wikipedia” agent extracts the text from a Wikipedia page identified by it’s URL, and then populates a hypergraph by parsing each sentence of the text into a hyperedge. Let us run the agent from the command line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ graphbrain --hg ai.hg --url https://en.wikipedia.org/wiki/Artificial_intelligence --agent wikipedia run
+</pre></div>
+</div>
+<p>Once it finishes, we will have the <code class="docutils literal notranslate"><span class="pre">ai.hg</span></code> hypergraph database in the current directory. Let us now simply find the most common patterns in this hypergraph:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="n">hgraph</span>
+<span class="kn">from</span> <span class="nn">graphbrain.patterns</span> <span class="kn">import</span> <span class="n">PatternCounter</span>
+
+<span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;ai.hg&#39;</span><span class="p">)</span>
+<span class="n">pc</span> <span class="o">=</span> <span class="n">PatternCounter</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+   <span class="n">pc</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We see above that we create a <code class="docutils literal notranslate"><span class="pre">PatternCounter</span></code> object and then iterate through all the hyperedges in the hypergraph, feeding it to the counter one at a time by way of calling the <code class="docutils literal notranslate"><span class="pre">count(edge)</span></code> method. Let us now query for the 10 most common patterns found:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">pc</span><span class="o">.</span><span class="n">patterns</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="p">[((</span><span class="o">*/</span><span class="n">M</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">10715</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">ma</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">6204</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">J</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">3113</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">M</span> <span class="p">(</span><span class="o">*/</span><span class="n">M</span> <span class="o">*/</span><span class="n">C</span><span class="p">)),</span> <span class="mi">2135</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">T</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">1694</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">ma</span> <span class="p">(</span><span class="o">*/</span><span class="n">M</span> <span class="o">*/</span><span class="n">C</span><span class="p">)</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">1621</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">ma</span> <span class="o">*/</span><span class="n">C</span> <span class="p">(</span><span class="o">*/</span><span class="n">M</span> <span class="o">*/</span><span class="n">C</span><span class="p">)),</span> <span class="mi">1364</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">mm</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">1078</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">M</span> <span class="p">(</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">ma</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span><span class="p">)),</span> <span class="mi">994</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">ma</span> <span class="o">*/</span><span class="n">C</span> <span class="p">(</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">ma</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span><span class="p">)),</span> <span class="mi">796</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
