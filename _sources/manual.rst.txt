@@ -11,6 +11,7 @@ Manual
    manual/special-relations.rst
    manual/hypergraph-operations.rst
    manual/patterns.rst
+   manual/discovering-patterns.rst
    manual/parsing.rst
    manual/agents.rst
    manual/notebooks.rst

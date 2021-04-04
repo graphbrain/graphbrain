@@ -121,9 +121,3 @@ The ``Hypergraph`` object provides the ``match()`` method , which is similar to 
     ((is/Pd.sc (the/M sky/C) blue/Ca), [{'OBJ': (the/M sky/C), 'PROP': blue/Ca}])]
 
 The output is a list of tuples, where the first item is the matched hyperedge and the second is a dictionary with variables and their values.
-
-
-Discovering frequent patterns
-=============================
-
-TODO

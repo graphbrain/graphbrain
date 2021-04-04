@@ -41,7 +41,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Command-line interface" href="cli.html" />
+    <link rel="next" title="Notebooks and visualizations" href="notebooks.html" />
     <link rel="prev" title="Parsing Natural Language" href="parsing.html" /> 
 </head>
 
@@ -102,6 +102,7 @@
 <li class="toctree-l2"><a class="reference internal" href="special-relations.html">Special relations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hypergraph-operations.html">Basic hypergraph operations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="patterns.html">Patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="discovering-patterns.html">Discovering patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parsing.html">Parsing Natural Language</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Knowledge Agents</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#running-an-agent-from-the-command-line">Running an agent from the command line</a></li>
@@ -110,8 +111,9 @@
 <li class="toctree-l3"><a class="reference internal" href="#defining-and-running-an-agent-system-programmatically">Defining and running an agent system programmatically</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#developing-your-own-agents">Developing your own agents</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agent-bestiary">Agent bestiary</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#reddit-parser">reddit_parser</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#txt-parser">txt_parser</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#wikipedia">wikipedia</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reddit-parser">reddit_parser</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#taxonomy">taxonomy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#corefs-dets">corefs_dets</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#corefs-names">corefs_names</a></li>
@@ -124,6 +126,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks.html">Notebooks and visualizations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cli.html">Command-line interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html">API reference</a></li>
 </ul>
@@ -289,18 +292,24 @@
 </div>
 <div class="section" id="agent-bestiary">
 <h2>Agent bestiary<a class="headerlink" href="#agent-bestiary" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="reddit-parser">
-<h3>reddit_parser<a class="headerlink" href="#reddit-parser" title="Permalink to this headline">¶</a></h3>
-<p><strong>Type</strong>: input</p>
-<p><strong>Languages</strong>: all</p>
-<p>Takes a Reddit JSON corpus as input and converts each one of thread titles, and optionally thread comments to hyperedges, adding them to the hypergraph. Titles and comments are attributed to authors.</p>
-</div>
 <div class="section" id="txt-parser">
 <h3>txt_parser<a class="headerlink" href="#txt-parser" title="Permalink to this headline">¶</a></h3>
 <p><strong>Type</strong>: input</p>
 <p><strong>Languages</strong>: all</p>
 <p>Takes a text file as input and converts each one of its sentences to hyperedges, adding them to the hypergraph.</p>
 <p>This is a very simple but also useful, general-purpose agent.</p>
+</div>
+<div class="section" id="wikipedia">
+<h3>wikipedia<a class="headerlink" href="#wikipedia" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: input</p>
+<p><strong>Languages</strong>: all</p>
+<p>Takes a wikipedia URL as input, extracts the contents and converts each one of its sentences to hyperedges, adding them to the hypergraph.</p>
+</div>
+<div class="section" id="reddit-parser">
+<h3>reddit_parser<a class="headerlink" href="#reddit-parser" title="Permalink to this headline">¶</a></h3>
+<p><strong>Type</strong>: input</p>
+<p><strong>Languages</strong>: all</p>
+<p>Takes a Reddit JSON corpus as input and converts each one of thread titles, and optionally thread comments to hyperedges, adding them to the hypergraph. Titles and comments are attributed to authors.</p>
 </div>
 <div class="section" id="taxonomy">
 <h3>taxonomy<a class="headerlink" href="#taxonomy" title="Permalink to this headline">¶</a></h3>
@@ -421,7 +430,7 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="cli.html" class="btn btn-neutral float-right" title="Command-line interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="notebooks.html" class="btn btn-neutral float-right" title="Notebooks and visualizations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="parsing.html" class="btn btn-neutral float-left" title="Parsing Natural Language" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

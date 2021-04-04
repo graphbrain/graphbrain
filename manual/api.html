@@ -102,6 +102,7 @@
 <li class="toctree-l2"><a class="reference internal" href="special-relations.html">Special relations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hypergraph-operations.html">Basic hypergraph operations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="patterns.html">Patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="discovering-patterns.html">Discovering patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parsing.html">Parsing Natural Language</a></li>
 <li class="toctree-l2"><a class="reference internal" href="agents.html">Knowledge Agents</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notebooks.html">Notebooks and visualizations</a></li>
@@ -110,7 +111,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.__init__">main functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.hyperedge">hyperedge module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.hypergraph">hypergraph module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.notebook">notebook module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.patterns">patterns module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#parsers-package">parsers package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.parsers.__init__">package functions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.parsers.parser">parser module</a></li>
@@ -130,6 +131,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.cognition.agent">agent module</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.notebook">notebook module</a></li>
 </ul>
 </li>
 </ul>
@@ -1140,17 +1142,8 @@ parameter.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-graphbrain.notebook">
-<span id="notebook-module"></span><h2>notebook module<a class="headerlink" href="#module-graphbrain.notebook" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="graphbrain.notebook.show">
-<code class="sig-prename descclassname">graphbrain.notebook.</code><code class="sig-name descname">show</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">edge</span></em>, <em class="sig-param"><span class="n">style</span><span class="o">=</span><span class="default_value">'indented'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/notebook.html#show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.notebook.show" title="Permalink to this definition">¶</a></dt>
-<dd><p>Displays a representation of the edge in the notebook.</p>
-<p>Keyword arguments:
-style – render style (‘indented’, ‘line’)
-(default: ‘indented’)</p>
-</dd></dl>
-
+<div class="section" id="module-graphbrain.patterns">
+<span id="patterns-module"></span><h2>patterns module<a class="headerlink" href="#module-graphbrain.patterns" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="parsers-package">
 <h2>parsers package<a class="headerlink" href="#parsers-package" title="Permalink to this headline">¶</a></h2>
@@ -1432,6 +1425,18 @@ if the agent is language-agnostic.</p>
 </dd></dl>
 
 </div>
+</div>
+<div class="section" id="module-graphbrain.notebook">
+<span id="notebook-module"></span><h2>notebook module<a class="headerlink" href="#module-graphbrain.notebook" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="graphbrain.notebook.show">
+<code class="sig-prename descclassname">graphbrain.notebook.</code><code class="sig-name descname">show</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">edge</span></em>, <em class="sig-param"><span class="n">style</span><span class="o">=</span><span class="default_value">'indented'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/notebook.html#show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.notebook.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays a representation of the edge in the notebook.</p>
+<p>Keyword arguments:
+style – render style (‘indented’, ‘line’)
+(default: ‘indented’)</p>
+</dd></dl>
+
 </div>
 </div>
 
