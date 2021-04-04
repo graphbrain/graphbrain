@@ -153,6 +153,6 @@ class PatternCounter:
             if self._matches_expansions(edge):
                 for pattern in self._edge2patterns(edge):
                     self.patterns[hedge(pattern)] += 1
-                if self.count_subedges:
-                    for subedge in edge:
-                        self.count(subedge)
+            if self.count_subedges:
+                for subedge in edge:
+                    self.count(subedge)
