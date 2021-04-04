@@ -22,10 +22,10 @@ hypergraph module
     :members:
 
 
-notebook module
+patterns module
 ===============
 
-.. automodule:: graphbrain.notebook
+.. automodule:: graphbrain.patterns
     :members:
 
 
@@ -98,4 +98,11 @@ agent module
 -------------
 
 .. automodule:: graphbrain.cognition.agent
+    :members:
+
+
+notebook module
+===============
+
+.. automodule:: graphbrain.notebook
     :members:
