@@ -57,7 +57,7 @@ We see that most patterns are related to concept construction. We can set the ``
     ((*/P.so */C */C), 26),
     ((*/J */R */C), 24)]
 
-Here we see that the results become more dominated by relational constructs.
+Here we see that the results become more dominated by conjunctions, and relational constructs come more to the top.
 
 
 Focusing the exploration by controlling expansions
@@ -74,16 +74,16 @@ By default, all hyperedges are expanded. The constructor argument ``expansions``
            pc.count(edge)
 
    >> pc.patterns.most_common(10)
-   [((*/P.so */C */C), 32),
-    ((*/P.o */C), 29),
-    ((*/P.sr */C */R), 25),
-    ((*/P.sx */C */S), 23),
-    ((*/P.sc */C */C), 21),
-    ((*/P.sox */C */C */S), 19),
-    ((*/P.sr */C */S), 19),
-    ((*/P.px */C */S), 11),
-    ((*/P.x */S), 10),
-    ((*/P.ox */C */S), 9)]
+   [((*/P.so */C */C), 146),
+    ((*/P.sc */C */C), 92),
+    ((*/P.sx */C */S), 65),
+    ((*/P.sr */C */R), 57),
+    ((*/P.sox */C */C */S), 54),
+    ((*/P.px */C */S), 37),
+    ((*/P.ox */C */S), 37),
+    ((*/P.sr */C */S), 35),
+    ((*/P.o? */C */R), 27),
+    ((*/P.s? */C */R), 23)]
 
 Any pattern(s) can be used here to control the expansions and focus the exploration.
 
@@ -99,16 +99,16 @@ The examples we have seen so far produce completely abstract patterns. It is als
            pc.count(edge)
 
    >> pc.patterns.most_common(10)
-   [((include/P.so */C */C), 5),
-    ((is/P.sc */C */C), 4),
-    ((are/P.sc */C */C), 4),
-    ((have/P.so */C */C), 2),
-    ((are/P.sx */C */S), 2),
-    ((became/P.scx? */C */C */S */C), 2),
-    ((named/P.so */C */C), 2),
-    (((already/M have/P.so) */C */C), 1),
-    (((also/M opens/P.sox) */C */C */S), 1),
-    (((and/M come/P.sxx) */C */S */S), 1)]
+   [((is/P.sc */C */C), 27),
+    ((are/P.sc */C */C), 17),
+    ((has/P.so */C */C), 6),
+    ((include/P.so */C */C), 6),
+    ((have/P.so */C */C), 5),
+    (((can/M be/P.sc) */C */C), 3),
+    ((developed/P.so */C */C), 3),
+    ((maximize/P.so */C */C), 3),
+    ((perceives/P.so */C */C), 3),
+    (((could/M spell/P.so) */C */C), 2)]
 
 Notice that ``match_roots`` also causes the expansion of the matched expression, even if it does not match any pattern in ``expansions``. We see this case above with ``(*/M */P)`` structures. Exploiting the machinery of patterns, many variations can be achieved. For example, we might be interested in only matching the roots of the predicate atoms, but keep the rest of the predicate abstract. This can be achieved by using ``match_roots={'./P'}`` (remember that the ``.`` wildcard only matched atoms)::
 
@@ -118,13 +118,42 @@ Notice that ``match_roots`` also causes the expansion of the matched expression,
            pc.count(edge)
    
    >> pc.patterns.most_common(10)
-   [((include/P.so */C */C), 5),
-    ((is/P.sc */C */C), 4),
-    ((are/P.sc */C */C), 4),
-    ((have/P.so */C */C), 2),
-    ((are/P.sx */C */S), 2),
-    ((became/P.scx? */C */C */S */C), 2),
-    ((named/P.so */C */C), 2),
-    (((*/M have/P.so) */C */C), 1),
-    (((*/M opens/P.sox) */C */C */S), 1),
-    (((*/M come/P.sxx) */C */S */S), 1)]
+   [((is/P.sc */C */C), 27),
+    ((are/P.sc */C */C), 17),
+    (((*/M be/P.sc) */C */C), 9),
+    ((has/P.so */C */C), 6),
+    ((include/P.so */C */C), 6),
+    (((*/M have/P.so) */C */C), 5),
+    ((have/P.so */C */C), 5),
+    (((*/M is/P.sc) */C */C), 5),
+    ((developed/P.so */C */C), 3),
+    ((maximize/P.so */C */C), 3)]
+
+
+Matching subtypes
+=================
+
+One might also be interested in including subtypes in the patterns. Again, this is achievable by specifying a constructor argument, ``match_subtypes``. Following the same logic of the previous arguments, this is a set of patterns that triggers subtype inclusion in expansions when matched. Let us say, for example, that we are interested in the most common concept modifiers including subtypes::
+
+   pc = PatternCounter(expansions={'(*/M */C)'}, match_roots={'*/M'}, match_subtypes={'*/M'})
+   for edge in hg.all():
+       if hg.is_primary(edge):
+           pc.count(edge)
+   
+   >> pc.patterns.most_common(10)
+   [((the/Md */C), 341),
+    ((a/Md */C), 118),
+    ((human/Ma */C), 53),
+    ((artificial/Ma */C), 45),
+    ((an/Md */C), 36),
+    ((its/Mp */C), 25),
+    ((other/Ma */C), 24),
+    ((this/Md */C), 23),
+    ((some/Md */C), 21),
+    ((intelligent/Ma */C), 18)]
+
+
+Build your own
+==============
+
+The combination of ``PatternCounter`` and the expressiveness of SH patterns allows for countless semantically rich modes of pattern discovery in empirical data. Many more examples could be provided, but we hope that the building blocks that we described are enough to get you started. This is an open-ended exploration tool, certainly capable of being used in ways that the authors did not think of.
