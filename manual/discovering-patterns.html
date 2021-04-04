@@ -104,6 +104,8 @@
 <li class="toctree-l2"><a class="reference internal" href="patterns.html">Patterns</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Discovering patterns</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#a-simple-example">A simple example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#focusing-the-exploration-by-controlling-expansions">Focusing the exploration by controlling expansions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#including-explicit-roots-in-the-patterns">Including explicit roots in the patterns</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="parsing.html">Parsing Natural Language</a></li>
@@ -206,21 +208,107 @@
 <span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;ai.hg&#39;</span><span class="p">)</span>
 <span class="n">pc</span> <span class="o">=</span> <span class="n">PatternCounter</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-   <span class="n">pc</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">hg</span><span class="o">.</span><span class="n">is_primary</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+        <span class="n">pc</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We see above that we create a <code class="docutils literal notranslate"><span class="pre">PatternCounter</span></code> object and then iterate through all the hyperedges in the hypergraph, feeding it to the counter one at a time by way of calling the <code class="docutils literal notranslate"><span class="pre">count(edge)</span></code> method. Let us now query for the 10 most common patterns found:</p>
+<p>We see above that we create a <code class="docutils literal notranslate"><span class="pre">PatternCounter</span></code> object and then iterate through all the primary hyperedges in the hypergraph, feeding it to the counter one at a time by way of calling the <code class="docutils literal notranslate"><span class="pre">count(edge)</span></code> method. By default, the <code class="docutils literal notranslate"><span class="pre">PatternCounter</span></code> recurses into the internal structure of each hyperedge, so inner constructs are also counted. Let us now query for the 10 most common patterns found:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">pc</span><span class="o">.</span><span class="n">patterns</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-<span class="p">[((</span><span class="o">*/</span><span class="n">M</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">10715</span><span class="p">),</span>
- <span class="p">((</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">ma</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">6204</span><span class="p">),</span>
- <span class="p">((</span><span class="o">*/</span><span class="n">J</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">3113</span><span class="p">),</span>
- <span class="p">((</span><span class="o">*/</span><span class="n">M</span> <span class="p">(</span><span class="o">*/</span><span class="n">M</span> <span class="o">*/</span><span class="n">C</span><span class="p">)),</span> <span class="mi">2135</span><span class="p">),</span>
- <span class="p">((</span><span class="o">*/</span><span class="n">T</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">1694</span><span class="p">),</span>
- <span class="p">((</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">ma</span> <span class="p">(</span><span class="o">*/</span><span class="n">M</span> <span class="o">*/</span><span class="n">C</span><span class="p">)</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">1621</span><span class="p">),</span>
- <span class="p">((</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">ma</span> <span class="o">*/</span><span class="n">C</span> <span class="p">(</span><span class="o">*/</span><span class="n">M</span> <span class="o">*/</span><span class="n">C</span><span class="p">)),</span> <span class="mi">1364</span><span class="p">),</span>
- <span class="p">((</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">mm</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">1078</span><span class="p">),</span>
- <span class="p">((</span><span class="o">*/</span><span class="n">M</span> <span class="p">(</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">ma</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span><span class="p">)),</span> <span class="mi">994</span><span class="p">),</span>
- <span class="p">((</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">ma</span> <span class="o">*/</span><span class="n">C</span> <span class="p">(</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">ma</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span><span class="p">)),</span> <span class="mi">796</span><span class="p">)]</span>
+<span class="p">[((</span><span class="o">*/</span><span class="n">M</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">2208</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">J</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">1867</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">ma</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">1315</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">J</span> <span class="o">*/</span><span class="n">M</span> <span class="o">*/</span><span class="n">M</span><span class="p">),</span> <span class="mi">708</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">J</span> <span class="o">*/</span><span class="n">P</span> <span class="o">*/</span><span class="n">P</span><span class="p">),</span> <span class="mi">628</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">M</span> <span class="p">(</span><span class="o">*/</span><span class="n">M</span> <span class="o">*/</span><span class="n">C</span><span class="p">)),</span> <span class="mi">456</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">T</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">448</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">ma</span> <span class="p">(</span><span class="o">*/</span><span class="n">M</span> <span class="o">*/</span><span class="n">C</span><span class="p">)</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">385</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">ma</span> <span class="o">*/</span><span class="n">C</span> <span class="p">(</span><span class="o">*/</span><span class="n">M</span> <span class="o">*/</span><span class="n">C</span><span class="p">)),</span> <span class="mi">315</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">mm</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">266</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>We see that most patterns are related to concept construction. We can set the <code class="docutils literal notranslate"><span class="pre">count_subedges</span></code> argument to <code class="docutils literal notranslate"><span class="pre">False</span></code> to only focus on the top-level structures:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pc</span> <span class="o">=</span> <span class="n">PatternCounter</span><span class="p">(</span><span class="n">count_subedges</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">hg</span><span class="o">.</span><span class="n">is_primary</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+        <span class="n">pc</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;</span> <span class="n">pc</span><span class="o">.</span><span class="n">patterns</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="p">[((</span><span class="o">*/</span><span class="n">J</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">1569</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">J</span> <span class="o">*/</span><span class="n">M</span> <span class="o">*/</span><span class="n">M</span><span class="p">),</span> <span class="mi">708</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">J</span> <span class="o">*/</span><span class="n">P</span> <span class="o">*/</span><span class="n">P</span><span class="p">),</span> <span class="mi">628</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">J</span> <span class="o">*/</span><span class="n">R</span> <span class="o">*/</span><span class="n">R</span><span class="p">),</span> <span class="mi">131</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">J</span> <span class="o">*/</span><span class="n">T</span> <span class="o">*/</span><span class="n">T</span><span class="p">),</span> <span class="mi">55</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">J</span> <span class="o">*/</span><span class="n">B</span> <span class="o">*/</span><span class="n">B</span><span class="p">),</span> <span class="mi">30</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">B</span><span class="o">.</span><span class="n">mm</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">29</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">J</span> <span class="p">(</span><span class="o">*/</span><span class="n">J</span> <span class="o">*/</span><span class="n">R</span> <span class="o">*/</span><span class="n">R</span><span class="p">)</span> <span class="o">*/</span><span class="n">R</span><span class="p">),</span> <span class="mi">29</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">P</span><span class="o">.</span><span class="n">so</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">26</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">J</span> <span class="o">*/</span><span class="n">R</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">24</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>Here we see that the results become more dominated by relational constructs.</p>
+</div>
+<div class="section" id="focusing-the-exploration-by-controlling-expansions">
+<h2>Focusing the exploration by controlling expansions<a class="headerlink" href="#focusing-the-exploration-by-controlling-expansions" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">PatternCounter</span></code> works by recursively expanding the given hyperedge up to a maximum depth is reached (<code class="docutils literal notranslate"><span class="pre">max_depth</span></code> argument with default <code class="docutils literal notranslate"><span class="pre">2</span></code>). Notice that the atom <code class="docutils literal notranslate"><span class="pre">*</span></code> is the most general pattern possible, matching anything. For example, with typing, all relations would generalize to <code class="docutils literal notranslate"><span class="pre">*/R</span></code>. If instead we keep going, and recursively “expand” the hyperedge into its constituent elements, replacing these elements with typed wildcards, we get less general but possibly more useful patterns, as the ones we saw above.</p>
+<p>By default, all hyperedges are expanded. The constructor argument <code class="docutils literal notranslate"><span class="pre">expansions</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">{'*'}</span></code>. It is however possible to have more control, and focus the expansions on more specific things that interest us. This is achieved by specifying patterns. Each hyperedge that is fed to the counter is only expanded (and also recursively) if it happens to match one of the patterns in <code class="docutils literal notranslate"><span class="pre">expansions</span></code>. Let us say that we are interested in relations with at least two arguments:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pc</span> <span class="o">=</span> <span class="n">PatternCounter</span><span class="p">(</span><span class="n">expansions</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;(*/P * * ...)&#39;</span><span class="p">})</span>
+<span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">hg</span><span class="o">.</span><span class="n">is_primary</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+        <span class="n">pc</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;</span> <span class="n">pc</span><span class="o">.</span><span class="n">patterns</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="p">[((</span><span class="o">*/</span><span class="n">P</span><span class="o">.</span><span class="n">so</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">32</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">P</span><span class="o">.</span><span class="n">o</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">29</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">P</span><span class="o">.</span><span class="n">sr</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">R</span><span class="p">),</span> <span class="mi">25</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">P</span><span class="o">.</span><span class="n">sx</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">S</span><span class="p">),</span> <span class="mi">23</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">P</span><span class="o">.</span><span class="n">sc</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span><span class="p">),</span> <span class="mi">21</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">P</span><span class="o">.</span><span class="n">sox</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">S</span><span class="p">),</span> <span class="mi">19</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">P</span><span class="o">.</span><span class="n">sr</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">S</span><span class="p">),</span> <span class="mi">19</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">P</span><span class="o">.</span><span class="n">px</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">S</span><span class="p">),</span> <span class="mi">11</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">P</span><span class="o">.</span><span class="n">x</span> <span class="o">*/</span><span class="n">S</span><span class="p">),</span> <span class="mi">10</span><span class="p">),</span>
+ <span class="p">((</span><span class="o">*/</span><span class="n">P</span><span class="o">.</span><span class="n">ox</span> <span class="o">*/</span><span class="n">C</span> <span class="o">*/</span><span class="n">S</span><span class="p">),</span> <span class="mi">9</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>Any pattern(s) can be used here to control the expansions and focus the exploration.</p>
+</div>
+<div class="section" id="including-explicit-roots-in-the-patterns">
+<h2>Including explicit roots in the patterns<a class="headerlink" href="#including-explicit-roots-in-the-patterns" title="Permalink to this headline">¶</a></h2>
+<p>The examples we have seen so far produce completely abstract patterns. It is also useful to be able to discover patterns where certain hyperedges are not wildcards, but instead contain the roots of the atoms. This is achieved with the <code class="docutils literal notranslate"><span class="pre">match_roots</span></code> constructor argument. Here one can include patterns that, when matched, cause the expansion to produce explicit atoms instead of wildcards. For example, we could be interested in the actual predicates of the most common relations:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>pc = PatternCounter(expansions={&#39;(*/P * * ...)&#39;}, match_roots={&#39;*/P&#39;})
+for edge in hg.all():
+    if hg.is_primary(edge):
+        pc.count(edge)
+
+&gt;&gt; pc.patterns.most_common(10)
+[((include/P.so */C */C), 5),
+ ((is/P.sc */C */C), 4),
+ ((are/P.sc */C */C), 4),
+ ((have/P.so */C */C), 2),
+ ((are/P.sx */C */S), 2),
+ ((became/P.scx? */C */C */S */C), 2),
+ ((named/P.so */C */C), 2),
+ (((already/M have/P.so) */C */C), 1),
+ (((also/M opens/P.sox) */C */C */S), 1),
+ (((and/M come/P.sxx) */C */S */S), 1)]
+</pre></div>
+</div>
+<p>Notice that <code class="docutils literal notranslate"><span class="pre">match_roots</span></code> also causes the expansion of the matched expression, even if it does not match any pattern in <code class="docutils literal notranslate"><span class="pre">expansions</span></code>. We see this case above with <code class="docutils literal notranslate"><span class="pre">(*/M</span> <span class="pre">*/P)</span></code> structures. Exploiting the machinery of patterns, many variations can be achieved. For example, we might be interested in only matching the roots of the predicate atoms, but keep the rest of the predicate abstract. This can be achieved by using <code class="docutils literal notranslate"><span class="pre">match_roots={'./P'}</span></code> (remember that the <code class="docutils literal notranslate"><span class="pre">.</span></code> wildcard only matched atoms):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>pc = PatternCounter(expansions={&#39;(*/P * * ...)&#39;}, match_roots={&#39;./P&#39;})
+for edge in hg.all():
+    if hg.is_primary(edge):
+        pc.count(edge)
+
+&gt;&gt; pc.patterns.most_common(10)
+[((include/P.so */C */C), 5),
+ ((is/P.sc */C */C), 4),
+ ((are/P.sc */C */C), 4),
+ ((have/P.so */C */C), 2),
+ ((are/P.sx */C */S), 2),
+ ((became/P.scx? */C */C */S */C), 2),
+ ((named/P.so */C */C), 2),
+ (((*/M have/P.so) */C */C), 1),
+ (((*/M opens/P.sox) */C */C */S), 1),
+ (((*/M come/P.sxx) */C */S */S), 1)]
 </pre></div>
 </div>
 </div>
