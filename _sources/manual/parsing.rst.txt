@@ -147,3 +147,9 @@ To give the complete example::
     'inferred_edges': [(gender/P/. alice/Cp.s/en female),
                        (number/P/. alice/Cp.s/en singular),
                        (animacy/P/. alice/Cp.s/en animate)]}
+
+
+Creating your own parser
+========================
+
+TODO
