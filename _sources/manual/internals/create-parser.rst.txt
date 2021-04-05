@@ -2,4 +2,27 @@
 Creating and training a new parser
 ==================================
 
+
+Extending the AlphaBeta class
+-----------------------------
+
 TODO
+
+
+Compiling a collection of sample texts
+--------------------------------------
+
+TODO
+
+
+Generating sentences
+--------------------
+
+TODO
+
+
+Generate a dataset to train the parser
+--------------------------------------
+
+For example::
+   python scripts/generate-parser-training-data.py --indir parser-training-data/en/sentences --outfile parser-training-data.csv
