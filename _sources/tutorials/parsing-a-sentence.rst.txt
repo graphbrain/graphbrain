@@ -9,7 +9,7 @@ We start by creating a parser, in this case for the English language:
 ::
 
    from graphbrain.parsers import *
-   parser = create_parser(name='en')
+   parser = create_parser(lang='en')
 
 Initializing the parser requires loading potentially large language models. This can take from a few seconds to a minute. Let's assign some text to a variable, in this case a simple sentence:
 

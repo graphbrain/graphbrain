@@ -42,7 +42,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Hypergraph operations" href="hypergraph-operations.html" />
-    <link rel="prev" title="Tutorials" href="../tutorials.html" /> 
+    <link rel="prev" title="Tutorials and examples" href="../tutorials.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -96,17 +96,18 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../manual.html">Manual</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html">Tutorials</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html">Tutorials and examples</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Parsing a sentence</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#working-with-notebooks">Working with notebooks</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="hypergraph-operations.html">Hypergraph operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conflicts.html">Extracting conflict networks from news headers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parsing-a-book.html">Parsing a book</a></li>
-<li class="toctree-l2"><a class="reference internal" href="claims-and-conflicts.html">Extracting claims and conflicts from news headers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="claims.html">Actors making claims</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../manual.html">Manual</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
 </ul>
 
@@ -159,7 +160,7 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-          <li><a href="../tutorials.html">Tutorials</a> &raquo;</li>
+          <li><a href="../tutorials.html">Tutorials and examples</a> &raquo;</li>
         
       <li>Parsing a sentence</li>
     
@@ -188,7 +189,7 @@
 <p>Transforming a sentence in natural language into an hyperedge is the most fundamental and quintessential task one can perform with Graphbrain.</p>
 <p>We start by creating a parser, in this case for the English language:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain.parsers</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="n">parser</span> <span class="o">=</span> <span class="n">create_parser</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">)</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">create_parser</span><span class="p">(</span><span class="n">lang</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Initializing the parser requires loading potentially large language models. This can take from a few seconds to a minute. Let’s assign some text to a variable, in this case a simple sentence:</p>
@@ -225,7 +226,7 @@
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="hypergraph-operations.html" class="btn btn-neutral float-right" title="Hypergraph operations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="../tutorials.html" class="btn btn-neutral float-left" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../tutorials.html" class="btn btn-neutral float-left" title="Tutorials and examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

@@ -6,7 +6,7 @@ Parsing Natural Language
 Parsing natural language to semantic hypergraphs is another crucial aspect of Graphbrain. This aspect of the library is covered by the ``graphbrain.parsers`` package. Let us see how to create a parser, and how to use it to parse a sentence::
 
    >>> from graphbrain.parsers import create_parser
-   >>> parser = create_parser('en')
+   >>> parser = create_parser(lang='en')
    >>> parse_results = parser.parse('Einstein first published the theory of relativity in 1905')
    >>> parse_results['parses'][0]['main_edge']
    ((first/M/en published/Pd.sox.<f-----/en) einstein/Cp.s/en (of/Br.ma/en (the/Md/en theory/Cc.s/en) relativity/Cc.s/en) (in/Tt/en 1905/C#/en))
@@ -65,7 +65,7 @@ When creating a parser, it is possible to require it to also produce lemma relat
 The special conjunction ``lemma/J/.`` indicates a lemma specification, followed by the atom and its lemma form. Notice that only the main type is considered and other role information is removed, because these are not relevant to the lemma relationship and would reduce generality. Let us see the example above with lemmas enabled::
 
    >>> from graphbrain.parsers import create_parser
-   >>> parser = create_parser('en', lemmas=True)
+   >>> parser = create_parser(lang='en', lemmas=True)
    >>> parser.parse('Einstein first published the theory of relativity in 1905')
    {'parses':
        ({'main_edge': ((first/M/en published/Pd.sox.<f-----/en) einstein/Cp.s/en (of/Br.ma/en (the/Md/en theory/Cc.s/en) relativity/Cc.s/en) (in/Tt/en 1905/C#/en)),
@@ -121,7 +121,7 @@ The correspondences of the pronouns "her" and "she" to "Alice" are also used to 
    (animacy/P/. alice/Cp.s/en animate)
 
 To give the complete example::
-   >>> parser = create_parser('en', resolve_corefs=True)
+   >>> parser = create_parser(lang='en', resolve_corefs=True)
    >>> parser.parse('Alice says that she likes her dog.')
    {'parses':
        ({'main_edge': (says/Pd.sr.|f--3s-/en alice/Cp.s/en (that/T/en (likes/P.so.|f--3s-/en she/Ci/en (her/Mp/en dog/Cc.s/en)))),

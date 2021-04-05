@@ -41,8 +41,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Tutorials" href="../tutorials.html" />
-    <link rel="prev" title="Command-line interface" href="cli.html" /> 
+    <link rel="next" title="Team" href="../team.html" />
+    <link rel="prev" title="Creating and training a new parser" href="internals/create-parser.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -96,6 +96,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials and examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../manual.html">Manual</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notation.html">Semantic Hypergraph notation</a></li>
@@ -107,6 +108,7 @@
 <li class="toctree-l2"><a class="reference internal" href="agents.html">Knowledge Agents</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notebooks.html">Notebooks and visualizations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cli.html">Command-line interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internals.html">Internals and extending Graphbrain</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">API reference</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.__init__">main functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.hyperedge">hyperedge module</a></li>
@@ -136,7 +138,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
 </ul>
 
@@ -1151,13 +1152,15 @@ parameter.</p>
 <span id="package-functions"></span><h3>package functions<a class="headerlink" href="#module-graphbrain.parsers.__init__" title="Permalink to this headline">¶</a></h3>
 <dl class="py function">
 <dt id="graphbrain.parsers.__init__.create_parser">
-<code class="sig-prename descclassname">graphbrain.parsers.__init__.</code><code class="sig-name descname">create_parser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">lemmas</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">resolve_corefs</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">beta</span><span class="o">=</span><span class="default_value">'repair'</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">post_process</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/parsers/__init__.html#create_parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.__init__.create_parser" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">graphbrain.parsers.__init__.</code><code class="sig-name descname">create_parser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lang</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parser_class</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lemmas</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">resolve_corefs</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">beta</span><span class="o">=</span><span class="default_value">'repair'</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">post_process</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphbrain/parsers/__init__.html#create_parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#graphbrain.parsers.__init__.create_parser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates and returns a parser (as an instanceof a subclass of Parser)
-for the language specified in the parameter. Throws exception if language
-is not implemented.</p>
+for the language specified in the parameter. If parser_class is specified,
+then the parser specified by this class is instantiated instead. Throws
+exception if language is not implemented.</p>
 <p>Available parsers:
 ‘en’ – English</p>
 <p>Keyword argument:
+parser_class – specify an external parser class.
 lemmas – if True, lemma edges are generated by the parser.
 resolve_corefs – if True, coreference resolution is performed.
 (default: False)
@@ -1446,8 +1449,8 @@ style – render style (‘indented’, ‘line’)
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="../tutorials.html" class="btn btn-neutral float-right" title="Tutorials" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="cli.html" class="btn btn-neutral float-left" title="Command-line interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../team.html" class="btn btn-neutral float-right" title="Team" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="internals/create-parser.html" class="btn btn-neutral float-left" title="Creating and training a new parser" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
