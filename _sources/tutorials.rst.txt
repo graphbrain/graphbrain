@@ -1,8 +1,8 @@
-=========
-Tutorials
-=========
+======================
+Tutorials and examples
+======================
 
-We provide a sequence of tutorials of increasing complexity, to illustrate how to perform common and useful tasks with Graphbrain.
+We provide a sequence of tutorials and examples of increasing complexity, to illustrate how to perform common and useful tasks with Graphbrain.
 
 .. toctree::
    :maxdepth: 2
@@ -10,5 +10,6 @@ We provide a sequence of tutorials of increasing complexity, to illustrate how t
 
    tutorials/parsing-a-sentence.rst
    tutorials/hypergraph-operations.rst
+   tutorials/conflicts.rst
    tutorials/parsing-a-book.rst
-   tutorials/claims-and-conflicts.rst
+   tutorials/claims.rst

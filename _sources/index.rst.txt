@@ -68,8 +68,8 @@ Graphbrain is written in Python, to both take advantage and facilitate integrati
    :caption: Contents:
 
    installation.rst
-   manual.rst
    tutorials.rst
+   manual.rst
    team.rst
 
 
