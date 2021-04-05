@@ -5,11 +5,11 @@ from os.path import join
 
 from termcolor import colored
 
-from graphbrain import build_atom
 from graphbrain.cli import wrapper
 from graphbrain.colored import colored_atom
 from graphbrain.colored import colored_edge
 from graphbrain.colored import colored_type
+from graphbrain.hyperedge import build_atom
 from graphbrain.parsers import create_parser
 from graphbrain.parsers import print_tree
 
@@ -178,7 +178,7 @@ class TrainingDataGenerator:
         atom_seq = self.parser.manual_atom_sequence(
             self.spacy_sentence, self.token2atom)
         parse = self.parser.parse_spacy_sentence(
-            self.spacy_sentence, atom_sequence=atom_seq, post_process=False)
+            self.spacy_sentence, atom_sequence=atom_seq)
 
         edge = parse['main_edge']
         correct = self.edge_correct(edge, parse['failed'])
