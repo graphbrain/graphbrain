@@ -16,4 +16,5 @@ Manual
    manual/agents.rst
    manual/notebooks.rst
    manual/cli.rst
+   manual/internals.rst
    manual/api.rst
