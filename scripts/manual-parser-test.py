@@ -108,7 +108,7 @@ def input_defects(sentence, edge):
 
 
 def manual_test(args):
-    parser = create_parser(name=args.lang)
+    parser = create_parser(lang=args.lang, parser_class=args.parser)
 
     he = ManualEvaluation()
 

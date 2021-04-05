@@ -4,7 +4,7 @@ from graphbrain.parsers import *
 
 
 def update_tests(args):
-    parser = create_parser(name=args.lang)
+    parser = create_parser(lang=args.lang, parser_class=args.parser)
 
     total = 0
 

@@ -20,7 +20,7 @@ ATOM_TYPES = ['C', 'P', 'M', 'B', 'J', 'T', 'X']
 
 class TrainingDataGenerator:
     def __init__(self, lang):
-        self.parser = create_parser(name=lang)
+        self.parser = create_parser(lang=args.lang, parser_class=args.parser)
 
         self.sentences = set()
         self.tokens = 0

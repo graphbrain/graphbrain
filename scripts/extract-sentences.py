@@ -5,7 +5,7 @@ from graphbrain.parsers import create_parser
 
 
 def extract_sentences(args):
-    parser = create_parser(name=args.lang)
+    parser = create_parser(lang=args.lang, parser_class=args.parser)
     sentences = []
 
     count = 0

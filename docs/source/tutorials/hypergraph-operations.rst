@@ -35,7 +35,7 @@ Let's create a parser to obtain an hyperedge from a sentence, and then add it to
 ::
 
 
-    parser = create_parser(name='en')
+    parser = create_parser(lang='en')
     text = "Mary is playing a very old violin."
 
     parses = parser.parse(text)

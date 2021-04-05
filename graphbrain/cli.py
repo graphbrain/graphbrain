@@ -38,6 +38,7 @@ def wrapper(fun, command=False, text=None):
                         help='input directory', default=None)
     parser.add_argument('--infile', type=str, help='input file', default=None)
     parser.add_argument('--lang', type=str, help='language', default='en')
+    parser.add_argument('--parser', type=str, help='parser', default=None)
     parser.add_argument('--outdir', type=str,
                         help='output directory', default=None)
     parser.add_argument('--outfile', type=str,
@@ -80,6 +81,8 @@ def wrapper(fun, command=False, text=None):
         print('input file: {}'.format(args.infile))
     if args.lang:
         print('language: {}'.format(args.lang))
+    if args.parser:
+        print('parser: {}'.format(args.parser))
     if args.outfile:
         print('output file: {}'.format(args.outfile))
     if args.sequence:

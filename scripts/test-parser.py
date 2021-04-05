@@ -5,7 +5,7 @@ from graphbrain.parsers import print_tree
 
 
 def test_parser(args):
-    parser = create_parser(name=args.lang)
+    parser = create_parser(lang=args.lang, parser_class=args.parser)
 
     total = 0
     wrong = 0

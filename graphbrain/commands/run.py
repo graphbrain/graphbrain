@@ -7,6 +7,7 @@ def run(args):
     if args.agent:
         run_agent(args.agent,
                   lang=args.lang,
+                  parser_class=args.parser,
                   hg=hgraph(args.hg),
                   infile=args.infile,
                   indir=args.indir,
@@ -16,6 +17,7 @@ def run(args):
     elif args.system:
         run_system(args.system,
                    lang=args.lang,
+                   parser_class=args.parser,
                    hg=hgraph(args.hg),
                    infile=args.infile,
                    indir=args.indir,

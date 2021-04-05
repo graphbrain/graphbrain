@@ -11,7 +11,7 @@ def generate_alpha_training_data(args):
     failed_parses = 0
     total_atoms = 0
 
-    parser = create_parser(name=args.lang)
+    parser = create_parser(lang=args.lang, parser_class=args.parser)
 
     with open(args.infile, 'r') as infile, open(args.outfile, 'w') as outfile:
         for line in infile.readlines():
