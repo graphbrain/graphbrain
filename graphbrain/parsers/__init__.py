@@ -31,10 +31,15 @@ def create_parser(lang=None, parser_class=None, lemmas=False,
             'Either "lang" or "parser_class" must be specified.')
 
     if parser_class:
+        package = None
+        if parser_class[0] == '.':
+            parser_class = parser_class[1:]
+            package = '.'
         path_parts = parser_class.split('.')
         module_name = '.'.join(path_parts[:-1])
         class_name = path_parts[-1]
-        class_obj = getattr(import_module(module_name), class_name)
+        class_obj = getattr(import_module(module_name, package=package),
+                            class_name)
         parser = class_obj(lemmas=lemmas, resolve_corefs=resolve_corefs,
                            beta=beta, normalize=normalize,
                            post_process=post_process)
