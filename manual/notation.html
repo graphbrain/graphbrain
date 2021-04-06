@@ -96,12 +96,17 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials and examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../manual.html">Manual</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Semantic Hypergraph notation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#atom-structure">Atom structure</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#hyperedge-types">Hyperedge types</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#type-inference-rules">Type inference rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#argument-roles">Argument roles</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#predicates">Predicates</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#builders">Builders</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#subtypes">Subtypes</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#concept">Concept</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#predicate">Predicate</a></li>
@@ -110,27 +115,29 @@
 <li class="toctree-l4"><a class="reference internal" href="#trigger">Trigger</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#type-specific-additional-information">Type-specific additional information</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id1">Concept</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id2">Predicate</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id3">Modifier</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id4">Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#further-type-specific-additional-information">Further type-specific additional information</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#concepts">Concepts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Predicates</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modifiers">Modifiers</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#namespaces">Namespaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#full-atom-structure">Full atom structure</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#special-atoms">Special atoms</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="special-relations.html">Special relations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hypergraph-operations.html">Basic hypergraph operations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="patterns.html">Patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="discovering-patterns.html">Discovering patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parsing.html">Parsing Natural Language</a></li>
 <li class="toctree-l2"><a class="reference internal" href="agents.html">Knowledge Agents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks.html">Notebooks and visualizations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cli.html">Command-line interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internals.html">Internals and extending Graphbrain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html">API reference</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
 </ul>
 
@@ -209,12 +216,20 @@
             
   <div class="section" id="semantic-hypergraph-notation">
 <h1>Semantic Hypergraph notation<a class="headerlink" href="#semantic-hypergraph-notation" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="atom-structure">
-<h2>Atom structure<a class="headerlink" href="#atom-structure" title="Permalink to this headline">¶</a></h2>
-<img alt="atom structure" class="align-center" src="../_images/atom-structure.png" />
+<p>SH notation is based on two simple principles:</p>
+<ul class="simple">
+<li><p>Every hyperedge belongs to one of eight basic types.</p></li>
+<li><p>The first element of a hyperedge is a connector, followed by arguments that can be atomic or non-atomic hyperedges.</p></li>
+</ul>
+<p>This is enough to define a valid hyperedge that conveys the meaning of a sentence in natural language, for example “The sky is blue”:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="ow">is</span><span class="o">/</span><span class="n">P</span> <span class="p">(</span><span class="n">the</span><span class="o">/</span><span class="n">M</span> <span class="n">sky</span><span class="o">/</span><span class="n">C</span><span class="p">)</span> <span class="n">blue</span><span class="o">/</span><span class="n">C</span><span class="p">)</span>
+</pre></div>
 </div>
+<p>Beyond this, the notation allows for more things: argument roles, subtypes, further type-specific additional information and namespaces. We will introduce these concepts gradually, by order of general usefulness. The two principles above and argument roles already capture a great deal of information contained in natural language, and sophisticated knowledge inference and exploration tasks can be performed at this level, while keeping the notation light and friendly to humans.</p>
+<p>Then, the additional notational devices can be employed when useful. Of course, it is always possible to utilize full notation for machine tasks while presented a simplified version for human-friendliness.</p>
 <div class="section" id="hyperedge-types">
 <h2>Hyperedge types<a class="headerlink" href="#hyperedge-types" title="Permalink to this headline">¶</a></h2>
+<p>All valid semantic hyperedges are of one of the 8 types shown in the table below. The first 6 types can be explicit (directly annotating an atomic hyepredge) of implicit (inferred from the types of the elements of the hyperedge). The last two types are always implicit.</p>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 7%" />
@@ -245,13 +260,10 @@
 </tr>
 <tr class="row-even"><td rowspan="2"><p>M</p></td>
 <td rowspan="2"><p>modifier</p></td>
-<td rowspan="2"><p>Modify concepts, predicates,</p>
-<p>modifiers or triggers</p>
+<td rowspan="2"><p>Modify any other hyperedge</p>
+<p>type, including itself</p>
 </td>
 <td rowspan="2"><p>(<strong>red/M</strong> shoes/C)</p></td>
-</tr>
-<tr class="row-odd"></tr>
-<tr class="row-even"><td colspan="4" rowspan="2"><p><strong>Atomic only</strong></p></td>
 </tr>
 <tr class="row-odd"></tr>
 <tr class="row-even"><td><p>B</p></td>
@@ -266,8 +278,8 @@
 </tr>
 <tr class="row-even"><td rowspan="2"><p>J</p></td>
 <td rowspan="2"><p>conjunction</p></td>
-<td rowspan="2"><p>Define sequences of concepts</p>
-<p>or relations</p>
+<td rowspan="2"><p>Define sequences of</p>
+<p>hyperedges</p>
 </td>
 <td rowspan="2"><p>(<strong>and/J</strong> meat/C potatoes/C)</p></td>
 </tr>
@@ -296,6 +308,7 @@
 </div>
 <div class="section" id="type-inference-rules">
 <h2>Type inference rules<a class="headerlink" href="#type-inference-rules" title="Permalink to this headline">¶</a></h2>
+<p>The table below shows how implicit hyperedge types are inferred.</p>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 48%" />
@@ -325,6 +338,40 @@
 </tbody>
 </table>
 <p>We use the notation of regular expressions: the symbol <code class="docutils literal notranslate"><span class="pre">+</span></code> is used to denote one or more entities with the type that precedes it, while square brackets indicate several possibilities (for instance, <code class="docutils literal notranslate"><span class="pre">[CRS]+</span></code> means “at least one of any of C, R or S” types). <code class="docutils literal notranslate"><span class="pre">x</span></code> means any type: <code class="docutils literal notranslate"><span class="pre">(M</span> <span class="pre">x)</span></code> is of type <code class="docutils literal notranslate"><span class="pre">x</span></code>.</p>
+</div>
+<div class="section" id="argument-roles">
+<h2>Argument roles<a class="headerlink" href="#argument-roles" title="Permalink to this headline">¶</a></h2>
+<p>The type part of the atom can include subparts after the type specifier. The meaning of these subsequent subparts is type-specific. The most useful of those are argument roles in predicates and builders. As the name indicates, they specify the role that the following arguments play in the construct.</p>
+<div class="section" id="predicates">
+<h3>Predicates<a class="headerlink" href="#predicates" title="Permalink to this headline">¶</a></h3>
+<p>When present, the first additional information subpart for predicates is used to specify the role played in a relation by each of its parameters, with the following codes:</p>
+<ul class="simple">
+<li><p><strong>s</strong>: subject</p></li>
+<li><p><strong>p</strong>: passive subject</p></li>
+<li><p><strong>a</strong>: agent</p></li>
+<li><p><strong>c</strong>: subject complement</p></li>
+<li><p><strong>o</strong>: direct object</p></li>
+<li><p><strong>i</strong>: indirect object</p></li>
+<li><p><strong>x</strong>: specifier</p></li>
+<li><p><strong>t</strong>: parataxis</p></li>
+<li><p><strong>j</strong>: interjection</p></li>
+<li><p><strong>r</strong>: clausal complement</p></li>
+</ul>
+<p>These codes are used to build strings, where each character corresponds to the parameter of the relation in the equivalent position. For example, consider the hyperedge:</p>
+<p>(is/P.sc (the/M sky/C) blue/C)</p>
+<p>The <em>sc</em> subpart indicates that the first parameter (“the sky”) plays the role of subject, and the second one (“blue”), plays the role of subject complement.</p>
+</div>
+<div class="section" id="builders">
+<h3>Builders<a class="headerlink" href="#builders" title="Permalink to this headline">¶</a></h3>
+<p>When present, the first additional information subpart for builders is used to distinguish the main concepts from the auxiliary ones, with the following codes:</p>
+<ul class="simple">
+<li><p><strong>m</strong>: main concept</p></li>
+<li><p><strong>a</strong>: auxiliary concept</p></li>
+</ul>
+<p>These codes are used to build strings, where each character corresponds to the parameter of the builder in the equivalent position. For example, consider the hyperedge:</p>
+<p>(of/B.ma founder/C psychoanalysis/C)</p>
+<p>The <em>ma</em> subpart indicates that the first concept following the builder should be considered a main concept, and the next one auxiliary. This means that “founder of psychoanalysis” is a type of “founder”. In other words, auxiliary concepts serve the role of making the main ones more specific.</p>
+</div>
 </div>
 <div class="section" id="subtypes">
 <h2>Subtypes<a class="headerlink" href="#subtypes" title="Permalink to this headline">¶</a></h2>
@@ -511,36 +558,19 @@
 </table>
 </div>
 </div>
-<div class="section" id="type-specific-additional-information">
-<h2>Type-specific additional information<a class="headerlink" href="#type-specific-additional-information" title="Permalink to this headline">¶</a></h2>
-<p>The type part of the atom can include subparts after the type specifier. The meaning of these subsequent subparts is type-specific.</p>
-<div class="section" id="id1">
-<h3>Concept<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="further-type-specific-additional-information">
+<h2>Further type-specific additional information<a class="headerlink" href="#further-type-specific-additional-information" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="concepts">
+<h3>Concepts<a class="headerlink" href="#concepts" title="Permalink to this headline">¶</a></h3>
 <p>When present, the first additional information subpart for concepts indicates number, with the following codes:</p>
 <ul class="simple">
 <li><p><strong>s</strong>: singular, example: apple/Cc.s</p></li>
 <li><p><strong>p</strong>: plural, example: apples/Cc.p</p></li>
 </ul>
 </div>
-<div class="section" id="id2">
-<h3>Predicate<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
-<p>When present, the first additional information subpart for predicates is used to specify the role played in a relation by each of its parameters, with the following codes:</p>
-<ul class="simple">
-<li><p><strong>s</strong>: subject</p></li>
-<li><p><strong>p</strong>: passive subject</p></li>
-<li><p><strong>a</strong>: agent</p></li>
-<li><p><strong>c</strong>: subject complement</p></li>
-<li><p><strong>o</strong>: direct object</p></li>
-<li><p><strong>i</strong>: indirect object</p></li>
-<li><p><strong>x</strong>: specifier</p></li>
-<li><p><strong>t</strong>: parataxis</p></li>
-<li><p><strong>j</strong>: interjection</p></li>
-<li><p><strong>r</strong>: clausal complement</p></li>
-</ul>
-<p>These codes are used to build strings, where each character corresponds to the parameter of the relation in the equivalent position. For example, consider the hyperedge:</p>
-<p>(is/Pd.sc (the/Md sky/Cc.s) blue/Ca.s)</p>
-<p>The <em>sc</em> subpart indicates that the first parameter (“the sky”) plays the role of subject, and the second one (“blue”), plays the role of subject complement.</p>
-<p>When present, the second additional information subpart for predicates is used to specify the features of the verb underlying the predicate. The following 7 features are specified:</p>
+<div class="section" id="id1">
+<h3>Predicates<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>Beyond argument roles, a second additional information subpart for predicates can be used to specify the features of the verb underlying the predicate. The following 7 features are specified:</p>
 <ul class="simple">
 <li><p><strong>tense</strong>: past (&lt;), present (|) or future (&gt;)</p></li>
 <li><p><strong>verb form</strong>: finite (f) or infinitive (i)</p></li>
@@ -554,21 +584,10 @@
 <p>(<strong>is/P?.cs.|f–3s-</strong> (what/Mw time/Cc.s) it/Ci)</p>
 <p>The predicate specifies four verb features: present tense (|), finite form (f), third person (3) and singular number (s).</p>
 </div>
-<div class="section" id="id3">
-<h3>Modifier<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
-<p>When the modifer is verbal, the first additional information subpart is used to specify the features of the underlying verb. The notation is exactly the same as the one used for predicates, but in predicates this corresponds to the second additional information subpart. For example, consider the non-atomic predicate:</p>
+<div class="section" id="modifiers">
+<h3>Modifiers<a class="headerlink" href="#modifiers" title="Permalink to this headline">¶</a></h3>
+<p>When the modifer is verbal, the first additional information subpart can be used to specify the features of the underlying verb. The notation is exactly the same as the one used for predicates, but in predicates this corresponds to the second additional information subpart. For example, consider the non-atomic predicate:</p>
 <p>(have/Mv.|f—– (been/Mv.&lt;pf—- tracking/Pd.sox.|pg—-))</p>
-</div>
-<div class="section" id="id4">
-<h3>Builder<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
-<p>When present, the first additional information subpart for builders is used to distinguish the main concepts from the auxiliary ones, with the following codes:</p>
-<ul class="simple">
-<li><p><strong>m</strong>: main concept</p></li>
-<li><p><strong>a</strong>: auxiliary concept</p></li>
-</ul>
-<p>These codes are used to build strings, where each character corresponds to the parameter of the builder in the equivalent position. For example, consider the hyperedge:</p>
-<p>(of/Br.ma founder/Cc.s psychoanalysis/Cc.s)</p>
-<p>The <em>ma</em> subpart indicates that the first concept following the builder should be considered a main concept, and the next one auxiliary. This means that “founder of psychoanalysis” is a type of “founder”. In other words, auxiliary concepts serve the role of making the main ones more specific.</p>
 </div>
 </div>
 <div class="section" id="namespaces">
@@ -587,6 +606,10 @@
 <p>In the second case, another subparts can be added to provide a distinction. For example, suppose we want to distinguish Cambridge (UK) from Cambridge (Mass., USA). We could use:</p>
 <p>cambridge/Cp.s/en.1</p>
 <p>cambridge/Cp.s/en.2</p>
+</div>
+<div class="section" id="full-atom-structure">
+<h2>Full atom structure<a class="headerlink" href="#full-atom-structure" title="Permalink to this headline">¶</a></h2>
+<img alt="atom structure" class="align-center" src="../_images/atom-structure.png" />
 </div>
 <div class="section" id="special-atoms">
 <h2>Special atoms<a class="headerlink" href="#special-atoms" title="Permalink to this headline">¶</a></h2>
