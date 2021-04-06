@@ -112,8 +112,12 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Creating and training a new parser</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#extending-the-alphabeta-class">Extending the AlphaBeta class</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#collecting-a-corpus-of-sample-texts">Collecting a corpus of sample texts</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#generating-sentences">Generating sentences</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#extracting-sentences">Extracting sentences</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#annotating-sentences-to-generate-a-parser-training-dataset">Annotating sentences to generate a parser training dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#splitting-into-training-and-testing-datasets">Splitting into training and testing datasets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#generating-alpha-training-data">Generating alpha training data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#testing-the-alpha-stage">Testing the alpha stage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#manual-parser-testing">Manual parser testing</a></li>
 </ul>
 </li>
 </ul>
@@ -208,17 +212,70 @@
 <div class="section" id="collecting-a-corpus-of-sample-texts">
 <h2>Collecting a corpus of sample texts<a class="headerlink" href="#collecting-a-corpus-of-sample-texts" title="Permalink to this headline">¶</a></h2>
 <p>TODO</p>
+<p>Files should be named by category and then number. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wikipedia1</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">wikipedia2</span><span class="o">.</span><span class="n">txt</span>
+<span class="o">...</span>
+<span class="n">books1</span><span class="o">.</span><span class="n">txt</span>
+<span class="o">...</span>
+</pre></div>
 </div>
-<div class="section" id="generating-sentences">
-<h2>Generating sentences<a class="headerlink" href="#generating-sentences" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<p>This allows for the generation of balanced training datasets later on, as well as the testing of accuracy by category.</p>
+</div>
+<div class="section" id="extracting-sentences">
+<h2>Extracting sentences<a class="headerlink" href="#extracting-sentences" title="Permalink to this headline">¶</a></h2>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m graphbrain.scripts.extract-sentences --parser .parser_xx.ParserXX --infile parser-training-data/xx/text-samples/wikipedia1.txt --outfile parser-training-data/xx/sentences/wikipedia1.txt
+</pre></div>
+</div>
 </div>
 <div class="section" id="annotating-sentences-to-generate-a-parser-training-dataset">
 <h2>Annotating sentences to generate a parser training dataset<a class="headerlink" href="#annotating-sentences-to-generate-a-parser-training-dataset" title="Permalink to this headline">¶</a></h2>
 <p>For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python scripts/generate-parser-training-data.py --indir parser-training-data/en/sentences --outfile parser-training-data.csv
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m graphbrain.scripts.generate-parser-training-data --parser .parser_xx.ParserXX --indir parser-training-data/de/sentences --outfile parser-training-data/xx/sentence-parses.json
 </pre></div>
 </div>
+</div>
+<div class="section" id="splitting-into-training-and-testing-datasets">
+<h2>Splitting into training and testing datasets<a class="headerlink" href="#splitting-into-training-and-testing-datasets" title="Permalink to this headline">¶</a></h2>
+<p>To split the sentence parses dataset into training (66%) and testing (33%) datasets, the following script can be used:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m graphbrain.scripts.split-parser-training-data --parser .parser_xx.ParserXX --infile parser-training-data/xx/sentence-parses.json
+</pre></div>
+</div>
+<p>The files <code class="docutils literal notranslate"><span class="pre">sentence-parses-train.json</span></code> and <code class="docutils literal notranslate"><span class="pre">sentence-parses-test.json</span></code> will be created in the same directory as the original file, in this case <code class="docutils literal notranslate"><span class="pre">parser-training-data/xx</span></code>.</p>
+</div>
+<div class="section" id="generating-alpha-training-data">
+<h2>Generating alpha training data<a class="headerlink" href="#generating-alpha-training-data" title="Permalink to this headline">¶</a></h2>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m graphbrain.scripts.generate-alpha-training-data --parser .parser_xx.ParserXX --infile parser-training-data/xx/sentence-parses.json --outfile parser-training-data/xx/atoms.csv
+</pre></div>
+</div>
+<p>Notice that <code class="docutils literal notranslate"><span class="pre">atoms-train.csv</span></code> and <code class="docutils literal notranslate"><span class="pre">atoms-test.csv</span></code> can be generated from the previous split.</p>
+</div>
+<div class="section" id="testing-the-alpha-stage">
+<h2>Testing the alpha stage<a class="headerlink" href="#testing-the-alpha-stage" title="Permalink to this headline">¶</a></h2>
+<p>With this script and the two datasets, it is now possible to test the accuracy of the alpha stage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m graphbrain.scripts.test-alpha --parser .parser_xx.ParserXX --infile parser-training-data/xx/atoms-test.csv --training_data parser-training-data/xx/atoms-train.csv
+</pre></div>
+</div>
+<p>Overall results are presented, as well as per category. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">news</span> <span class="n">accuracy</span><span class="p">:</span> <span class="mf">0.962852897473997</span> <span class="p">[</span><span class="mi">648</span> <span class="n">correct</span> <span class="n">out</span> <span class="n">of</span> <span class="mi">673</span><span class="p">]</span>
+<span class="n">science</span> <span class="n">accuracy</span><span class="p">:</span> <span class="mf">0.9427083333333334</span> <span class="p">[</span><span class="mi">543</span> <span class="n">correct</span> <span class="n">out</span> <span class="n">of</span> <span class="mi">576</span><span class="p">]</span>
+<span class="n">fiction</span> <span class="n">accuracy</span><span class="p">:</span> <span class="mf">0.9581881533101045</span> <span class="p">[</span><span class="mi">275</span> <span class="n">correct</span> <span class="n">out</span> <span class="n">of</span> <span class="mi">287</span><span class="p">]</span>
+<span class="n">non</span><span class="o">-</span><span class="n">fiction</span> <span class="n">accuracy</span><span class="p">:</span> <span class="mf">0.9338235294117647</span> <span class="p">[</span><span class="mi">254</span> <span class="n">correct</span> <span class="n">out</span> <span class="n">of</span> <span class="mi">272</span><span class="p">]</span>
+<span class="n">wikipedia</span> <span class="n">accuracy</span><span class="p">:</span> <span class="mf">0.9482288828337875</span> <span class="p">[</span><span class="mi">696</span> <span class="n">correct</span> <span class="n">out</span> <span class="n">of</span> <span class="mi">734</span><span class="p">]</span>
+
+<span class="n">overall</span> <span class="n">accuracy</span><span class="p">:</span> <span class="mf">0.950432730133753</span> <span class="p">[</span><span class="mi">2416</span> <span class="n">correct</span> <span class="n">out</span> <span class="n">of</span> <span class="mi">2542</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="manual-parser-testing">
+<h2>Manual parser testing<a class="headerlink" href="#manual-parser-testing" title="Permalink to this headline">¶</a></h2>
+<p>The full parser can be manually tested. An interactive script is provided for this, that uses as input a sentence file generated by the <code class="docutils literal notranslate"><span class="pre">extract-sentences</span></code> script discussed above. Of course, it is necessary to use a text corpus different from the one used to train the parser to obtain meaninguful results:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m graphbrain.scripts.manual-parser-test --parser .parser_xx.ParserXX --infile parser-training-data/xx/sentences/manual-test-sentences.txt --outfile parser-training-data/de/manual-test-results.csv
+</pre></div>
+</div>
+<p>It also makes sense to create sentence files by text category, to be able to appraise accuracy accross different kinds of text.</p>
 </div>
 </div>
 
