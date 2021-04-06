@@ -376,7 +376,11 @@
 </div>
 <div class="section" id="subtypes">
 <h2>Subtypes<a class="headerlink" href="#subtypes" title="Permalink to this headline">¶</a></h2>
-<p>Subtypes are represented by a lowercase character following the main type code.</p>
+<p>Subtypes are represented by a lowercase character following the main type code. They provide further distinctions, for example that a predicate is declarative (<code class="docutils literal notranslate"><span class="pre">Pd</span></code>), or that a concept is common (<code class="docutils literal notranslate"><span class="pre">Cc</span></code>), or that a modifier is a determinant (<code class="docutils literal notranslate"><span class="pre">Md</span></code>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="ow">is</span><span class="o">/</span><span class="n">Pd</span><span class="o">.</span><span class="n">sc</span> <span class="p">(</span><span class="n">the</span><span class="o">/</span><span class="n">Md</span> <span class="n">sky</span><span class="o">/</span><span class="n">Cc</span><span class="p">)</span> <span class="n">blue</span><span class="o">/</span><span class="n">Cc</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Below we show possible subtypes for several main types.</p>
 <div class="section" id="concept">
 <h3>Concept<a class="headerlink" href="#concept" title="Permalink to this headline">¶</a></h3>
 <table class="docutils align-default">
@@ -562,6 +566,7 @@
 </div>
 <div class="section" id="further-type-specific-additional-information">
 <h2>Further type-specific additional information<a class="headerlink" href="#further-type-specific-additional-information" title="Permalink to this headline">¶</a></h2>
+<p>Beyond argument roles, other forms of type-specific additional information are possible for the various types.</p>
 <div class="section" id="concepts">
 <h3>Concepts<a class="headerlink" href="#concepts" title="Permalink to this headline">¶</a></h3>
 <p>When present, the first additional information subpart for concepts indicates number, with the following codes:</p>
@@ -600,21 +605,31 @@
 <li><p>To distinguish atoms that have different meanings, but would otherwise correspond to the exact same string.</p></li>
 </ol>
 <p>In the first case, we can specify that an atom corresponds to an English word like this:</p>
-<p>sky/Cp.s/en</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sky</span><span class="o">/</span><span class="n">Cp</span><span class="o">.</span><span class="n">s</span><span class="o">/</span><span class="n">en</span>
+</pre></div>
+</div>
 <p>Or to a German word like this:</p>
-<p>himmel/Cp.s/de</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">himmel</span><span class="o">/</span><span class="n">Cp</span><span class="o">.</span><span class="n">s</span><span class="o">/</span><span class="n">de</span>
+</pre></div>
+</div>
 <p>Or that it is a special atom defined by Graphbrain:</p>
-<p>+/B/.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">+/</span><span class="n">B</span><span class="o">/.</span>
+</pre></div>
+</div>
 <p>In the second case, another subparts can be added to provide a distinction. For example, suppose we want to distinguish Cambridge (UK) from Cambridge (Mass., USA). We could use:</p>
-<p>cambridge/Cp.s/en.1</p>
-<p>cambridge/Cp.s/en.2</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cambridge</span><span class="o">/</span><span class="n">Cp</span><span class="o">.</span><span class="n">s</span><span class="o">/</span><span class="n">en</span><span class="o">.</span><span class="mi">1</span>
+<span class="n">cambridge</span><span class="o">/</span><span class="n">Cp</span><span class="o">.</span><span class="n">s</span><span class="o">/</span><span class="n">en</span><span class="o">.</span><span class="mi">2</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="full-atom-structure">
 <h2>Full atom structure<a class="headerlink" href="#full-atom-structure" title="Permalink to this headline">¶</a></h2>
+<p>We show here the full atom structure, including all optional parts.</p>
 <img alt="atom structure" class="align-center" src="../_images/atom-structure.png" />
 </div>
 <div class="section" id="special-atoms">
 <h2>Special atoms<a class="headerlink" href="#special-atoms" title="Permalink to this headline">¶</a></h2>
+<p>The two special atoms below come predefined with Graphbrain and are very frequently useful.</p>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 11%" />

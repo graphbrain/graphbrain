@@ -123,7 +123,11 @@ The *ma* subpart indicates that the first concept following the builder should b
 Subtypes
 ========
 
-Subtypes are represented by a lowercase character following the main type code.
+Subtypes are represented by a lowercase character following the main type code. They provide further distinctions, for example that a predicate is declarative (``Pd``), or that a concept is common (``Cc``), or that a modifier is a determinant (``Md``)::
+
+   (is/Pd.sc (the/Md sky/Cc) blue/Cc)
+
+Below we show possible subtypes for several main types.
 
 Concept
 -------
@@ -211,6 +215,8 @@ Trigger
 Further type-specific additional information
 ============================================
 
+Beyond argument roles, other forms of type-specific additional information are possible for the various types.
+
 Concepts
 --------
 
@@ -254,27 +260,28 @@ Namespaces serve two functions:
 1. To identify the language or symbolic space to which an atom belongs;
 2. To distinguish atoms that have different meanings, but would otherwise correspond to the exact same string.
 
-In the first case, we can specify that an atom corresponds to an English word like this:
+In the first case, we can specify that an atom corresponds to an English word like this::
 
-sky/Cp.s/en
+   sky/Cp.s/en
 
-Or to a German word like this:
+Or to a German word like this::
 
-himmel/Cp.s/de
+   himmel/Cp.s/de
 
-Or that it is a special atom defined by Graphbrain:
+Or that it is a special atom defined by Graphbrain::
 
-+/B/.
+   +/B/.
 
-In the second case, another subparts can be added to provide a distinction. For example, suppose we want to distinguish Cambridge (UK) from Cambridge (Mass., USA). We could use:
+In the second case, another subparts can be added to provide a distinction. For example, suppose we want to distinguish Cambridge (UK) from Cambridge (Mass., USA). We could use::
 
-cambridge/Cp.s/en.1
-
-cambridge/Cp.s/en.2
+   cambridge/Cp.s/en.1
+   cambridge/Cp.s/en.2
 
 
 Full atom structure
 ===================
+
+We show here the full atom structure, including all optional parts.
 
 .. image:: /_static/atom-structure.png
     :align: center
@@ -283,6 +290,8 @@ Full atom structure
 
 Special atoms
 =============
+
+The two special atoms below come predefined with Graphbrain and are very frequently useful.
 
 +-------+-----------------------+----------------------------------+
 | Atom  | Purpose               | Example                          |
