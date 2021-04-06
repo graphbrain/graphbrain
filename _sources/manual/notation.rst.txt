@@ -92,10 +92,11 @@ When present, the first additional information subpart for predicates is used to
 * **c**: subject complement
 * **o**: direct object
 * **i**: indirect object
-* **x**: specifier
+* **x**: specification
 * **t**: parataxis
 * **j**: interjection
-* **r**: clausal complement
+* **r**: relative relation
+* **?**: undetermined
 
 These codes are used to build strings, where each character corresponds to the parameter of the relation in the equivalent position. For example, consider the hyperedge:
 
@@ -121,6 +122,8 @@ The *ma* subpart indicates that the first concept following the builder should b
 
 Subtypes
 ========
+
+Subtypes are represented by a lowercase character following the main type code.
 
 Concept
 -------
