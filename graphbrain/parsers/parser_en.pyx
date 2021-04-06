@@ -5,6 +5,9 @@ from graphbrain.parsers.alpha import Alpha
 from graphbrain.parsers.alpha_beta import AlphaBeta
 
 
+LANG = 'en'
+
+
 _female = {"she/Ci/en", "her/Ci/en", "herself/Ci/en", "hers/Ci/en",
            "her/Mp/en"}
 _male = {"he/Ci/en", "him/Ci/en", "himself/Ci/en", "his/Mp/en"}
@@ -44,7 +47,7 @@ class ParserEN(AlphaBeta):
         super().__init__('en_core_web_lg', lemmas=lemmas,
                          resolve_corefs=resolve_corefs, beta=beta,
                          normalize=normalize, post_process=post_process)
-        self.lang = 'en'
+        self.lang = LANG
         cases_str = pkg_resources.resource_string(
             'graphbrain', 'data/atoms-en.csv').decode('utf-8')
         self.alpha = Alpha(cases_str)

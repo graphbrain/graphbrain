@@ -5,7 +5,8 @@ from importlib import import_module
 
 from termcolor import colored
 
-from . import constants as const
+from graphbrain import constants as const
+from graphbrain.parsers import parser_lang
 
 
 def _show_logo():
@@ -37,7 +38,7 @@ def wrapper(fun, command=False, text=None):
     parser.add_argument('--indir', type=str,
                         help='input directory', default=None)
     parser.add_argument('--infile', type=str, help='input file', default=None)
-    parser.add_argument('--lang', type=str, help='language', default='en')
+    parser.add_argument('--lang', type=str, help='language', default=None)
     parser.add_argument('--parser', type=str, help='parser', default=None)
     parser.add_argument('--outdir', type=str,
                         help='output directory', default=None)
@@ -65,6 +66,21 @@ def wrapper(fun, command=False, text=None):
         msg += '"{}" is not valid.'.format(args.corefs)
         error_msg(msg)
         sys.exit(-1)
+
+    # determine language
+    if args.parser:
+        plang = parser_lang(args.parser)
+        if args.lang:
+            if args.lang != plang:
+                msg = 'specified language ({}) and parser language ({}) do '\
+                      'not match'.format(args.lang, plang)
+                error_msg()
+                sys.exit(-1)
+        else:
+            args.lang = plang
+    # if not lang or parser is specified, default to 'en'
+    elif not args.lang:
+        args.lang = 'en'
 
     if text is None and command:
         text = 'command: {}'.format(args.command)

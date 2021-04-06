@@ -9,7 +9,7 @@ from importlib import import_module
 from graphbrain import hedge
 from graphbrain.cognition.agent import Agent
 from graphbrain.op import apply_op, create_op
-from graphbrain.parsers import create_parser
+from graphbrain.parsers import create_parser, parser_lang
 
 
 def run_agent(agent, lang=None, parser_class=None, hg=None, infile=None,
@@ -122,8 +122,19 @@ class System(object):
                  infile=None, indir=None, url=None, sequence=None,
                  corefs='resolve', logging_level=logging.INFO):
         self.name = name
+
         self.lang = lang
         self.parser_class = parser_class
+        if parser_class:
+            plang = parser_lang(parser_class)
+            if lang:
+                if lang != plang:
+                    msg = 'specified language ({}) and parser language ({}) '\
+                          'do not match'.format(lang, plang)
+                    raise RuntimeError(msg)
+            else:
+                self.lang = plang
+
         self.hg = hg
         self.infile = infile
         self.indir = indir

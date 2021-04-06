@@ -53,3 +53,13 @@ def create_parser(lang=None, parser_class=None, lemmas=False,
                         post_process=post_process)
     else:
         raise RuntimeError('Unknown parser: {}'.format(lang))
+
+
+def parser_lang(parser_class):
+    package = None
+    if parser_class[0] == '.':
+        parser_class = parser_class[1:]
+        package = '.'
+    path_parts = parser_class.split('.')
+    module_name = '.'.join(path_parts[:-1])
+    return getattr(import_module(module_name, package=package), 'LANG')
