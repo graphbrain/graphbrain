@@ -96,6 +96,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials and examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../manual.html">Manual</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Overview</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#hypergraphs">Hypergraphs</a></li>
@@ -109,13 +110,15 @@
 <li class="toctree-l2"><a class="reference internal" href="special-relations.html">Special relations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hypergraph-operations.html">Basic hypergraph operations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="patterns.html">Patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="discovering-patterns.html">Discovering patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parsing.html">Parsing Natural Language</a></li>
 <li class="toctree-l2"><a class="reference internal" href="agents.html">Knowledge Agents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks.html">Notebooks and visualizations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cli.html">Command-line interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internals.html">Internals and extending Graphbrain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html">API reference</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
 </ul>
 
@@ -203,8 +206,8 @@
 <p>We will elaborate, but first let us discuss the general concept of <em>hypergraph</em>.</p>
 <div class="section" id="hypergraphs">
 <h2>Hypergraphs<a class="headerlink" href="#hypergraphs" title="Permalink to this headline">¶</a></h2>
-<p>The richness of information contained in natural language cannot be fully captured and analyzed using traditional graph-based network methods or distributional frameworks.  On one hand, natural language is recursive, allowing for concepts constructed from other concepts as well as statements about statements and, on the other hand, it can express <img class="math" src="../_images/math/5a939c5280da7202ca4531f175a7780ad5e1f80a.png" alt="n"/>-ary relationships.</p>
-<p>While a graph is based on a set of vertices and a set of edges describing dyadic connections, a hypergraph generalizes such structure by allowing <img class="math" src="../_images/math/5a939c5280da7202ca4531f175a7780ad5e1f80a.png" alt="n"/>-ary connections.</p>
+<p>The richness of information contained in natural language cannot be fully captured and analyzed using traditional graph-based network methods or distributional frameworks.  On one hand, natural language is recursive, allowing for concepts constructed from other concepts as well as statements about statements and, on the other hand, it can express n-ary relationships.</p>
+<p>While a graph is based on a set of vertices and a set of edges describing dyadic connections, a hypergraph generalizes such structure by allowing n-ary connections.</p>
 <p>We further generalize hypergraphs in two ways: hyperedges may be ordered and recursive. Ordering entails that the position in which a vertex participates in the hyperedge is relevant (a similarity can be drawn with the concept of directed graphs). Recursivity means that hyperedges can participate as vertices in other hyperedges, which is to say: relationships between entities can themselves play the role of entities in higher-order relationships.</p>
 </div>
 <div class="section" id="as-language-syntactic-rules">
@@ -223,7 +226,7 @@
 <p>These structures can be arbitrarily nested, for instance “Mary climbs the highest mountain in Brazil” yields:</p>
 <p><code class="docutils literal notranslate"><span class="pre">(climbs</span> <span class="pre">mary</span> <span class="pre">(the</span> <span class="pre">(highest</span> <span class="pre">(in</span> <span class="pre">mountain</span> <span class="pre">brazil))))</span></code></p>
 <p>In these examples we only show the human-friendly labels of atoms. Atoms contain additional annotations, e.g. specifying their type. We leave these details out of this overview, but we provide a full and formal specification of Semantic Hypergraph syntax and semantics elsewhere.</p>
-<p>Readers who are familiar with Lisp will likely have noticed that hyperedges are isomophic to <em>S-expressions</em>. This is not purely accidental. Lisp is very close to <img class="math" src="../_images/math/cefc603e5658facb747581f9567192993f21c7ab.png" alt="\lambda"/>-calculus, a formal and minimalistic model of computation that is based on function abstraction and application. The first item of an s-expression specifics a function, the following ones its arguments. One can think of a function as an association between objects. Although hyperedges do not specify computations, connectors are similar to functions at a very abstract level, in that they define associations. The concepts of “race to space” and “race in space” are both associated to the concepts “race” and “space”, but the combination of these two concepts yields different meaning by application of either the connector “in” or “to”.</p>
+<p>Readers who are familiar with Lisp will likely have noticed that hyperedges are isomophic to S-expressions. This is not purely accidental. Lisp is very close to λ-calculus, a formal and minimalistic model of computation that is based on function abstraction and application. The first item of an s-expression specifics a function, the following ones its arguments. One can think of a function as an association between objects. Although hyperedges do not specify computations, connectors are similar to functions at a very abstract level, in that they define associations. The concepts of “race to space” and “race in space” are both associated to the concepts “race” and “space”, but the combination of these two concepts yields different meaning by application of either the connector “in” or “to”.</p>
 </div>
 <div class="section" id="as-knowledge-model">
 <h2>As knowledge model<a class="headerlink" href="#as-knowledge-model" title="Permalink to this headline">¶</a></h2>
