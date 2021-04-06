@@ -20,6 +20,12 @@ While a graph is based on a set of vertices and a set of edges describing dyadic
 
 We further generalize hypergraphs in two ways: hyperedges may be ordered and recursive. Ordering entails that the position in which a vertex participates in the hyperedge is relevant (a similarity can be drawn with the concept of directed graphs). Recursivity means that hyperedges can participate as vertices in other hyperedges, which is to say: relationships between entities can themselves play the role of entities in higher-order relationships.
 
+To illustrate, let us assume that ``(a b c)`` specifies a hyperedge connecting ``a``, ``b`` and ``c``. Since SH hyperedges are ordered, ``(a b c)`` is not the same as ``(c b a)``. Saying that hyperedges can be recursive means that they can connect both atomic and non-atomic hyperedges. For example::
+
+   (a b c (d e f))
+
+The above hyperedge connects the entities ``a``, ``b``, ``c`` and ``(d e f)``. ``(d e f)`` is itself a hyperedge, connecting the entitied ``d``, ``e`` and ``f``.
+
 
 As language: syntactic rules
 ============================
