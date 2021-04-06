@@ -14,11 +14,17 @@ We will elaborate, but first let us discuss the general concept of *hypergraph*.
 Hypergraphs
 ===========
 
-The richness of information contained in natural language cannot be fully captured and analyzed using traditional graph-based network methods or distributional frameworks.  On one hand, natural language is recursive, allowing for concepts constructed from other concepts as well as statements about statements and, on the other hand, it can express :math:`n`-ary relationships.
+The richness of information contained in natural language cannot be fully captured and analyzed using traditional graph-based network methods or distributional frameworks.  On one hand, natural language is recursive, allowing for concepts constructed from other concepts as well as statements about statements and, on the other hand, it can express n-ary relationships.
 
-While a graph is based on a set of vertices and a set of edges describing dyadic connections, a hypergraph generalizes such structure by allowing :math:`n`-ary connections. 
+While a graph is based on a set of vertices and a set of edges describing dyadic connections, a hypergraph generalizes such structure by allowing n-ary connections. 
 
 We further generalize hypergraphs in two ways: hyperedges may be ordered and recursive. Ordering entails that the position in which a vertex participates in the hyperedge is relevant (a similarity can be drawn with the concept of directed graphs). Recursivity means that hyperedges can participate as vertices in other hyperedges, which is to say: relationships between entities can themselves play the role of entities in higher-order relationships.
+
+To illustrate, let us assume that ``(a b c)`` specifies a hyperedge connecting ``a``, ``b`` and ``c``. Since SH hyperedges are ordered, ``(a b c)`` is not the same as ``(c b a)``. Saying that hyperedges can be recursive means that they can connect both atomic and non-atomic hyperedges. For example::
+
+   (a b c (d e f))
+
+The above hyperedge connects the entities ``a``, ``b``, ``c`` and ``(d e f)``. ``(d e f)`` is itself a hyperedge, connecting the entitied ``d``, ``e`` and ``f``.
 
 
 As language: syntactic rules
@@ -50,9 +56,10 @@ These structures can be arbitrarily nested, for instance "Mary climbs the highes
 
 ``(climbs mary (the (highest (in mountain brazil))))``
 
-In these examples we only show the human-friendly labels of atoms. Atoms contain additional annotations, e.g. specifying their type. We leave these details out of this overview, but we provide a full and formal specification of Semantic Hypergraph syntax and semantics elsewhere.
+In these examples we only show the human-friendly labels of atoms. Atoms contain additional annotations, e.g. specifying their type. We leave these details out of this overview, but we provide a full and formal specification of Semantic Hypergraph syntax and semantics `elsewhere
+<https://arxiv.org/abs/1908.10784>`_.
 
-Readers who are familiar with Lisp will likely have noticed that hyperedges are isomophic to *S-expressions*. This is not purely accidental. Lisp is very close to :math:`\lambda`-calculus, a formal and minimalistic model of computation that is based on function abstraction and application. The first item of an s-expression specifics a function, the following ones its arguments. One can think of a function as an association between objects. Although hyperedges do not specify computations, connectors are similar to functions at a very abstract level, in that they define associations. The concepts of "race to space" and "race in space" are both associated to the concepts "race" and "space", but the combination of these two concepts yields different meaning by application of either the connector "in" or "to".
+Readers who are familiar with Lisp will likely have noticed that hyperedges are isomophic to S-expressions. This is not purely accidental. Lisp is very close to λ-calculus, a formal and minimalistic model of computation that is based on function abstraction and application. The first item of an s-expression specifics a function, the following ones its arguments. One can think of a function as an association between objects. Although hyperedges do not specify computations, connectors are similar to functions at a very abstract level, in that they define associations. The concepts of "race to space" and "race in space" are both associated to the concepts "race" and "space", but the combination of these two concepts yields different meaning by application of either the connector "in" or "to".
 
 
 As knowledge model

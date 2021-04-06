@@ -2,16 +2,24 @@
 Semantic Hypergraph notation
 ============================
 
-Atom structure
-==============
+SH notation is based on two simple principles:
 
-.. image:: /_static/atom-structure.png
-    :align: center
-    :alt: atom structure
+- Every hyperedge belongs to one of eight basic types.
+- The first element of a hyperedge is a connector, followed by arguments that can be atomic or non-atomic hyperedges.
+
+This is enough to define a valid hyperedge that conveys the meaning of a sentence in natural language, for example "The sky is blue"::
+
+   (is/P (the/M sky/C) blue/C)
+
+Beyond this, the notation allows for more things: argument roles, subtypes, further type-specific additional information and namespaces. We will introduce these concepts gradually, by order of general usefulness. The two principles above extended with argument roles (which we will yet introduce) already capture a great deal of information contained in natural language, and sophisticated knowledge inference and exploration tasks can be performed at this level, while keeping the notation light and friendly to humans.
+
+Then, the additional notational devices can be employed when useful. Of course, it is always possible to utilize full notation for machine tasks while presented a simplified version for human-friendliness.
 
 
 Hyperedge types
 ===============
+
+All valid semantic hyperedges are of one of the 8 types shown in the table below. The first 6 types can be explicit (directly annotating an atomic hyepredge) of implicit (inferred from the types of the elements of the hyperedge). The last two types are always implicit.
 
 +------+---------------+------------------------------+--------------------------------+
 | Code | Type          | Purpose                      | Example                        |
@@ -22,19 +30,17 @@ Hyperedge types
 +------+---------------+------------------------------+--------------------------------+
 | P    | predicate     | Build relations              | (**is/P** berlin/C nice/C)     |
 +------+---------------+------------------------------+--------------------------------+
-| M    | modifier      | Modify concepts, predicates, | (**red/M** shoes/C)            |
+| M    | modifier      | Modify any other hyperedge   | (**red/M** shoes/C)            |
 +      +               +                              +                                +
-|      |               | modifiers or triggers        |                                |
-+------+---------------+------------------------------+--------------------------------+
-+ **Atomic only**                                                                      +
+|      |               | type, including itself       |                                |
 +------+---------------+------------------------------+--------------------------------+
 | B    | builder       | Build concepts from concepts | (**of/B** capital/C germany/C) |
 +------+---------------+------------------------------+--------------------------------+
 | T    | trigger       | Build specifications         | (**in/T** 1994/C)              |
 +------+---------------+------------------------------+--------------------------------+
-| J    | conjunction   | Define sequences of concepts | (**and/J** meat/C potatoes/C)  |
+| J    | conjunction   | Define sequences of          | (**and/J** meat/C potatoes/C)  |
 +      +               +                              +                                +
-|      |               | or relations                 |                                |
+|      |               | hyperedges                   |                                |
 +------+---------------+------------------------------+--------------------------------+
 + **Non-atomic only**                                                                  +
 +------+---------------+------------------------------+--------------------------------+
@@ -50,6 +56,8 @@ Hyperedge types
 
 Type inference rules
 ====================
+
+The table below shows how implicit hyperedge types are inferred.
 
 +---------------+----------------+
 | Element types | Resulting type |
@@ -67,8 +75,59 @@ Type inference rules
 
 We use the notation of regular expressions: the symbol ``+`` is used to denote one or more entities with the type that precedes it, while square brackets indicate several possibilities (for instance, ``[CRS]+`` means "at least one of any of C, R or S" types). ``x`` means any type: ``(M x)`` is of type ``x``.
 
+
+Argument roles
+==============
+
+The type part of the atom can include subparts after the type specifier. The meaning of these subsequent subparts is type-specific. The most useful of those are argument roles in predicates and builders. As the name indicates, they specify the role that the following arguments play in the construct.
+
+Predicates
+----------
+
+When present, the first additional information subpart for predicates is used to specify the role played in a relation by each of its parameters, with the following codes:
+
+* **s**: subject
+* **p**: passive subject
+* **a**: agent
+* **c**: subject complement
+* **o**: direct object
+* **i**: indirect object
+* **x**: specification
+* **t**: parataxis
+* **j**: interjection
+* **r**: relative relation
+* **?**: undetermined
+
+These codes are used to build strings, where each character corresponds to the parameter of the relation in the equivalent position. For example, consider the hyperedge:
+
+(is/P.sc (the/M sky/C) blue/C)
+
+The *sc* subpart indicates that the first parameter ("the sky") plays the role of subject, and the second one ("blue"), plays the role of subject complement.
+
+
+Builders
+--------
+
+When present, the first additional information subpart for builders is used to distinguish the main concepts from the auxiliary ones, with the following codes:
+
+* **m**: main concept
+* **a**: auxiliary concept
+
+These codes are used to build strings, where each character corresponds to the parameter of the builder in the equivalent position. For example, consider the hyperedge:
+
+(of/B.ma founder/C psychoanalysis/C)
+
+The *ma* subpart indicates that the first concept following the builder should be considered a main concept, and the next one auxiliary. This means that "founder of psychoanalysis" is a type of "founder". In other words, auxiliary concepts serve the role of making the main ones more specific.
+
+
 Subtypes
 ========
+
+Subtypes are represented by a lowercase character following the main type code. They provide further distinctions, for example that a predicate is declarative (``Pd``), or that a concept is common (``Cc``), or that a modifier is a determinant (``Md``)::
+
+   (is/Pd.sc (the/Md sky/Cc) blue/Cc)
+
+Below we show possible subtypes for several main types.
 
 Concept
 -------
@@ -153,42 +212,23 @@ Trigger
 +------+-------------+-------------+
 
 
-Type-specific additional information
-====================================
+Further type-specific additional information
+============================================
 
-The type part of the atom can include subparts after the type specifier. The meaning of these subsequent subparts is type-specific.
+Beyond argument roles, other forms of type-specific additional information are possible for the various types.
 
-Concept
--------
+Concepts
+--------
 
 When present, the first additional information subpart for concepts indicates number, with the following codes:
 
 * **s**: singular, example: apple/Cc.s
 * **p**: plural, example: apples/Cc.p
 
-Predicate
----------
+Predicates
+----------
 
-When present, the first additional information subpart for predicates is used to specify the role played in a relation by each of its parameters, with the following codes:
-
-* **s**: subject
-* **p**: passive subject
-* **a**: agent
-* **c**: subject complement
-* **o**: direct object
-* **i**: indirect object
-* **x**: specifier
-* **t**: parataxis
-* **j**: interjection
-* **r**: clausal complement
-
-These codes are used to build strings, where each character corresponds to the parameter of the relation in the equivalent position. For example, consider the hyperedge:
-
-(is/Pd.sc (the/Md sky/Cc.s) blue/Ca.s)
-
-The *sc* subpart indicates that the first parameter ("the sky") plays the role of subject, and the second one ("blue"), plays the role of subject complement.
-
-When present, the second additional information subpart for predicates is used to specify the features of the verb underlying the predicate. The following 7 features are specified:
+Beyond argument roles, a second additional information subpart for predicates can be used to specify the features of the verb underlying the predicate. The following 7 features are specified:
 
 * **tense**: past (<), present (|) or future (>)
 * **verb form**: finite (f) or infinitive (i)
@@ -204,26 +244,13 @@ A string is built in the above order to specify the verb features of a predicate
 
 The predicate specifies four verb features: present tense (|), finite form (f), third person (3) and singular number (s).
 
-Modifier
---------
+Modifiers
+---------
 
-When the modifer is verbal, the first additional information subpart is used to specify the features of the underlying verb. The notation is exactly the same as the one used for predicates, but in predicates this corresponds to the second additional information subpart. For example, consider the non-atomic predicate:
+When the modifer is verbal, the first additional information subpart can be used to specify the features of the underlying verb. The notation is exactly the same as the one used for predicates, but in predicates this corresponds to the second additional information subpart. For example, consider the non-atomic predicate:
 
 (have/Mv.|f----- (been/Mv.<pf---- tracking/Pd.sox.|pg----))
 
-Builder
--------
-
-When present, the first additional information subpart for builders is used to distinguish the main concepts from the auxiliary ones, with the following codes:
-
-* **m**: main concept
-* **a**: auxiliary concept
-
-These codes are used to build strings, where each character corresponds to the parameter of the builder in the equivalent position. For example, consider the hyperedge:
-
-(of/Br.ma founder/Cc.s psychoanalysis/Cc.s)
-
-The *ma* subpart indicates that the first concept following the builder should be considered a main concept, and the next one auxiliary. This means that "founder of psychoanalysis" is a type of "founder". In other words, auxiliary concepts serve the role of making the main ones more specific.
 
 Namespaces
 ==========
@@ -233,26 +260,38 @@ Namespaces serve two functions:
 1. To identify the language or symbolic space to which an atom belongs;
 2. To distinguish atoms that have different meanings, but would otherwise correspond to the exact same string.
 
-In the first case, we can specify that an atom corresponds to an English word like this:
+In the first case, we can specify that an atom corresponds to an English word like this::
 
-sky/Cp.s/en
+   sky/Cp.s/en
 
-Or to a German word like this:
+Or to a German word like this::
 
-himmel/Cp.s/de
+   himmel/Cp.s/de
 
-Or that it is a special atom defined by Graphbrain:
+Or that it is a special atom defined by Graphbrain::
 
-+/B/.
+   +/B/.
 
-In the second case, another subparts can be added to provide a distinction. For example, suppose we want to distinguish Cambridge (UK) from Cambridge (Mass., USA). We could use:
+In the second case, another subparts can be added to provide a distinction. For example, suppose we want to distinguish Cambridge (UK) from Cambridge (Mass., USA). We could use::
 
-cambridge/Cp.s/en.1
+   cambridge/Cp.s/en.1
+   cambridge/Cp.s/en.2
 
-cambridge/Cp.s/en.2
+
+Full atom structure
+===================
+
+We show here the full atom structure, including all optional parts.
+
+.. image:: /_static/atom-structure.png
+    :align: center
+    :alt: atom structure
+
 
 Special atoms
 =============
+
+The two special atoms below come predefined with Graphbrain and are very frequently useful.
 
 +-------+-----------------------+----------------------------------+
 | Atom  | Purpose               | Example                          |
