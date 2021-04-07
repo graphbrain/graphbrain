@@ -1,6 +1,13 @@
 # Changelog
 
-## [0.4.0] - work in progress
+## [0.4.1] - work in progress
+### Added
+
+### Changed
+
+### Removed
+
+## [0.4.0] - 07-04-2021
 ### Added
 - Agents system.
 - Conjunctions resolution agent.
