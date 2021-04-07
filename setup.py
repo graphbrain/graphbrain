@@ -9,7 +9,7 @@ from setuptools.extension import Extension
 # True to enable building extensions using Cython.
 # False to build extensions from the C files that were previously
 # created by Cython.
-USE_CYTHON = False
+USE_CYTHON = True
 
 # "If True, will produce a HTML file for each of the .pyx or .py files
 # compiled. The HTML file gives an indication of how much Python interaction

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2] - work in progress
+### Added
+
+### Changed
+
+### Removed
+
 ## [0.4.1] - 07-04-2021
 ### Added
 
