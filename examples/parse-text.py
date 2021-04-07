@@ -1,5 +1,4 @@
-from graphbrain import *
-from graphbrain.parsers import *
+from graphbrain.parsers import create_parser, print_tree
 
 
 if __name__ == '__main__':
@@ -8,10 +7,10 @@ if __name__ == '__main__':
     since 1979.
     """
 
-    parser = create_parser('en', lemmas=True)
-    parses = parser.parse(text)
+    parser = create_parser(lang='en', lemmas=True)
+    parse_results = parser.parse(text)
 
-    for parse in parses:
+    for parse in parse_results['parses']:
         print_tree(parse['spacy_sentence'].root)
         print(parse['main_edge'])
         print('>> Extra edges:')
