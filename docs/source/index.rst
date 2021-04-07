@@ -71,6 +71,7 @@ Graphbrain is written in Python, to both take advantage and facilitate integrati
    tutorials.rst
    manual.rst
    team.rst
+   thanks.rst
 
 
 Indices and tables
