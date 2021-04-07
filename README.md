@@ -4,7 +4,10 @@ The ambition of this project is not simply to contribute to advancing the state-
 
 Graphbrain is built around a unifying concept: the Semantic Hypergraph (SH), which makes it possible to represent a natural language sentence such as “Einstein first published the theory of relativity in 1905” as an ordered, recursive hyperlink of the form:
 
-![Graphbrain overview](http://graphbrain.net/_images/hyperedge-blocks.png)
+<p align="center">
+  <img src="http://graphbrain.net/_images/hyperedge-blocks.png" alt="Hyperedge example" width="75%"/>
+</p>
+
 
 The aim of SH and Graphbrain is to enable hybrid approaches, combining symbolic AI and statistical/connectionist Machine Learning methods. This is for two main reasons: to facilitate understandability and reproducibility for human researchers and to combine the strengths of both approaches.
 
