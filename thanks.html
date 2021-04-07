@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Search &mdash; Graphbrain 0.4.0 documentation</title>
+  <title>Thanks &mdash; Graphbrain 0.4.0 documentation</title>
   
 
   
@@ -25,7 +25,6 @@
   
 
   
-    
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -40,10 +39,9 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-    <script type="text/javascript" src="_static/searchtools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="#" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Team" href="team.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -70,7 +68,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="#" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -95,12 +93,17 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials and examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manual.html">Manual</a></li>
 <li class="toctree-l1"><a class="reference internal" href="team.html">Team</a></li>
-<li class="toctree-l1"><a class="reference internal" href="thanks.html">Thanks</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Thanks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#spacy">spaCy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hugging-face-s-neuralcoref">Hugging Face’s NeuralCoref</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#leveldb">LevelDB</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -144,16 +147,25 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Search</li>
+      <li>Thanks</li>
     
     
       <li class="wy-breadcrumbs-aside">
+        
+          
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/graphbrain/graphbrain" class="fa fa-github"> Edit on GitHub</a>
+            
+          
         
       </li>
     
@@ -165,23 +177,36 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <noscript>
-  <div id="fallback" class="admonition warning">
-    <p class="last">
-      Please activate JavaScript to enable the search functionality.
-    </p>
-  </div>
-  </noscript>
+  <div class="section" id="thanks">
+<h1>Thanks<a class="headerlink" href="#thanks" title="Permalink to this headline">¶</a></h1>
+<p>Graphbrain does not exist in a vacuum. We benefit greatly from the work and generosity of others, and are particularly thankful for the following open-source projects:</p>
+<div class="section" id="spacy">
+<h2>spaCy<a class="headerlink" href="#spacy" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://spacy.io/">https://spacy.io/</a>
+Industrial-Strength Natural Language Processing in Python</p>
+</div>
+<div class="section" id="hugging-face-s-neuralcoref">
+<h2>Hugging Face’s NeuralCoref<a class="headerlink" href="#hugging-face-s-neuralcoref" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://github.com/huggingface/neuralcoref">https://github.com/huggingface/neuralcoref</a>
+Coreference Resolution in spaCy with Neural Networks.</p>
+</div>
+<div class="section" id="leveldb">
+<h2>LevelDB<a class="headerlink" href="#leveldb" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://github.com/google/leveldb">https://github.com/google/leveldb</a>
+LevelDB is a fast key-value storage library written at Google that provides an ordered mapping from string keys to string values.</p>
+<p>And its Python interface, Plyvel:
+<a class="reference external" href="https://plyvel.readthedocs.io/en/latest/">https://plyvel.readthedocs.io/en/latest/</a></p>
+</div>
+</div>
 
-  
-  <div id="search-results">
-  
-  </div>
 
            </div>
            
           </div>
           <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="team.html" class="btn btn-neutral float-left" title="Team" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 
@@ -210,14 +235,7 @@
   
   
     
-  
-  <script type="text/javascript">
-    jQuery(function() { Search.loadIndex("searchindex.js"); });
-  </script>
-  
-  <script type="text/javascript" id="searchindexloader"></script>
    
-
 
 </body>
 </html>
