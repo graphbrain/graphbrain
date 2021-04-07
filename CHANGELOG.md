@@ -1,11 +1,10 @@
 # Changelog
 
-## [0.4.1] - work in progress
+## [0.4.1] - 07-04-2021
 ### Added
 
 ### Changed
-
-### Removed
+- Solving issue with inclusion of auxiliary data file in non-binary distributions.
 
 ## [0.4.0] - 07-04-2021
 ### Added
