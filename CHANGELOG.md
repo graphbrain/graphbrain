@@ -1,15 +1,10 @@
 # Changelog
 
-## [0.4.2] - work in progress
-### Added
-
+## [0.4.2] - ongoing work
 ### Changed
-
-### Removed
+- Solving wheel compilation issue.
 
 ## [0.4.1] - 07-04-2021
-### Added
-
 ### Changed
 - Solving issue with inclusion of auxiliary data file in non-binary distributions.
 

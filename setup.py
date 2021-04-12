@@ -94,20 +94,26 @@ if USE_CYTHON:
                             compiler_directives={'language_level': '3'})
 else:
     ext_modules = [
-        Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.c'], ),
+        Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.c'],
+                  include_dirs=['.']),
         Extension('graphbrain.memory.leveldb',
-                  ['graphbrain/memory/leveldb.c']),
+                  ['graphbrain/memory/leveldb.c'],
+                  include_dirs=['.']),
         Extension('graphbrain.memory.permutations',
-                  ['graphbrain/memory/permutations.c']),
+                  ['graphbrain/memory/permutations.c'],
+                  include_dirs=['.']),
         Extension('graphbrain.parsers.alpha',
-                  ['graphbrain/parsers/alpha.c']),
+                  ['graphbrain/parsers/alpha.c'],
+                  include_dirs=['.']),
         Extension('graphbrain.parsers.alpha_beta',
-                  ['graphbrain/parsers/alpha_beta.c']),
+                  ['graphbrain/parsers/alpha_beta.c'],
+                  include_dirs=['.']),
         Extension('graphbrain.parsers.parser_en',
-                  ['graphbrain/parsers/parser_en.c']),
+                  ['graphbrain/parsers/parser_en.c'],
+                  include_dirs=['.']),
         Extension('graphbrain.neuralcoref.neuralcoref',
                   ['graphbrain/neuralcoref/neuralcoref.cpp'],
-                  language='c++', include_dirs=['include'])
+                  language='c++', include_dirs=['.', 'include'])
     ]
 
 
