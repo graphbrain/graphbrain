@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.4.2] - ongoing work
+## [0.4.2] - 12-04-2021
 ### Changed
 - Solving wheel compilation issue.
 
