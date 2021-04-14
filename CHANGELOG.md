@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- Fixed AlphaBeta bug related to temporary atoms being removed too soon from atom2tokens.
 
 ### Removed
 
