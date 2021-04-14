@@ -1,6 +1,5 @@
 import graphbrain.constants as const
-from graphbrain.hyperedge import hedge
-from graphbrain.hyperedge import Hyperedge
+from graphbrain.hyperedge import hedge, Hyperedge, build_atom
 from graphbrain.logic import eval_rule
 
 
@@ -141,7 +140,7 @@ class Hypergraph(object):
 
         Keyword argument:
         strict -- strictly match the search pattern, or allow for more general
-        atoms to match target atome (e.g. plays/P matches plays/Pd.so in 
+        atoms to match target atome (e.g. plays/P matches plays/Pd.so in
         non-strict mode, but only exactl plays/Pd.so matches it in strict mode)
         Non-strict mode is slower. (default True)
         """
@@ -300,7 +299,8 @@ class Hypergraph(object):
 
     def add_to_sequence(self, name, pos, edge):
         """Adds 'edge' to sequence 'name' at position 'pos'."""
-        return self.add((const.sequence_pred, name, str(pos), edge))
+        seq_atom = build_atom(name, [])
+        return self.add((const.sequence_pred, seq_atom, str(pos), edge))
 
     def sequence(self, name):
         """Returns an iterator for a sequence of hyperedges, given the name
