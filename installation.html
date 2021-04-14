@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Installation &mdash; Graphbrain 0.4.1 documentation</title>
+  <title>Installation &mdash; Graphbrain 0.4.3-dev documentation</title>
   
 
   
@@ -107,6 +107,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#windows">Windows</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#plyvel-importerror-on-anaconda-seen-on-macos">Plyvel ImportError on Anaconda (seen on macOS)</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials and examples</a></li>
@@ -188,9 +192,9 @@
             
   <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p>Graphbrain is compatible with 64-bit CPython 3.4+ and runs on macOS, Linux and Windows.</p>
+<p>Graphbrain is compatible with 64-bit CPython &gt;=3.6, &lt;3.9 and runs on macOS, Linux and Windows.</p>
 <p>We currently have binary releases for macOS only. Given a working build environment, installation on Linux should be equally simple. Installation on Windows is at the moment less straightforward, because of our dependency on LevelDB, which in turn requires a bit of effort to install in this OS. <a class="reference external" href="#prerequisites">For such cases or to build from the sources, check the prerequisites for your OS</a>.</p>
-<p>Make sure you are using Python 3.</p>
+<p>Make sure you are using Python 3, with version &gt;=3.6, &lt;3.9.</p>
 <div class="section" id="install-with-pip-recommended">
 <h2>Install with pip (recommended)<a class="headerlink" href="#install-with-pip-recommended" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install graphbrain
@@ -394,6 +398,25 @@ $ include &quot;port/port_win.h&quot;
 <li><p><strong>Cmake</strong></p></li>
 </ul>
 <p>you may also need to install Cmake, please check the official guidance here: <a class="reference external" href="https://cgold.readthedocs.io/en/latest/first-step/installation.html#windows">https://cgold.readthedocs.io/en/latest/first-step/installation.html#windows</a></p>
+</div>
+</div>
+<div class="section" id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="plyvel-importerror-on-anaconda-seen-on-macos">
+<h3>Plyvel ImportError on Anaconda (seen on macOS)<a class="headerlink" href="#plyvel-importerror-on-anaconda-seen-on-macos" title="Permalink to this headline">¶</a></h3>
+<p>We have found cases where the plyvel library that is installed as a dependency by Graphbrain does not work in Anaconda environments. This was observed on macOS Big Sur, on MacBook Pro laptops with the M1 chip. It is unknown if it might apply in other cases.</p>
+<p>You might get error messages such as this one:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">ImportError</span><span class="p">:</span> <span class="n">dlopen</span><span class="p">(</span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">anaconda3</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">8</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">plyvel</span><span class="o">/</span><span class="n">plyvel</span><span class="o">.</span><span class="n">cpython</span><span class="o">-</span><span class="mi">38</span><span class="o">-</span><span class="n">darwin</span><span class="o">.</span><span class="n">so</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span> <span class="n">Symbol</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span> <span class="n">_ZTIN7leveldb10ComparatorE</span>
+<span class="n">Referenced</span> <span class="n">from</span><span class="p">:</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">anaconda3</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">8</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">plyvel</span><span class="o">/</span><span class="n">_plyvel</span><span class="o">.</span><span class="n">cpython</span><span class="o">-</span><span class="mi">38</span><span class="o">-</span><span class="n">darwin</span><span class="o">.</span><span class="n">so</span>
+<span class="n">Expected</span> <span class="ow">in</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">leveldb</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">libleveldb</span><span class="o">.</span><span class="mf">1.</span><span class="n">dylib</span>
+<span class="ow">in</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">anaconda3</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">8</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">plyvel</span><span class="o">/</span><span class="n">_plyvel</span><span class="o">.</span><span class="n">cpython</span><span class="o">-</span><span class="mi">38</span><span class="o">-</span><span class="n">darwin</span><span class="o">.</span><span class="n">so</span>
+</pre></div>
+</div>
+<p>The solution is to replace plyvel with one from the Anaconda repositories:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip uninstall plyvel
+$ conda install -c conda-forge plyvel
+</pre></div>
+</div>
 </div>
 </div>
 </div>

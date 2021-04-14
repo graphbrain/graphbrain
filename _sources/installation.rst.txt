@@ -2,11 +2,11 @@
 Installation
 ============
 
-Graphbrain is compatible with 64-bit CPython 3.4+ and runs on macOS, Linux and Windows. 
+Graphbrain is compatible with 64-bit CPython >=3.6, <3.9 and runs on macOS, Linux and Windows. 
 
 We currently have binary releases for macOS only. Given a working build environment, installation on Linux should be equally simple. Installation on Windows is at the moment less straightforward, because of our dependency on LevelDB, which in turn requires a bit of effort to install in this OS. `For such cases or to build from the sources, check the prerequisites for your OS <#prerequisites>`_.
 
-Make sure you are using Python 3.
+Make sure you are using Python 3, with version >=3.6, <3.9.
 
 Install with pip (recommended)
 ==============================
@@ -222,3 +222,24 @@ modify *setup.py*::
 * **Cmake**
 
 you may also need to install Cmake, please check the official guidance here: https://cgold.readthedocs.io/en/latest/first-step/installation.html#windows
+
+
+Troubleshooting
+===============
+
+Plyvel ImportError on Anaconda (seen on macOS)
+----------------------------------------------
+
+We have found cases where the plyvel library that is installed as a dependency by Graphbrain does not work in Anaconda environments. This was observed on macOS Big Sur, on MacBook Pro laptops with the M1 chip. It is unknown if it might apply in other cases.
+
+You might get error messages such as this one::
+
+   ImportError: dlopen(/opt/anaconda3/lib/python3.8/site-packages/plyvel/plyvel.cpython-38-darwin.so, 2): Symbol not found: _ZTIN7leveldb10ComparatorE
+   Referenced from: /opt/anaconda3/lib/python3.8/site-packages/plyvel/_plyvel.cpython-38-darwin.so
+   Expected in: /usr/local/opt/leveldb/lib/libleveldb.1.dylib
+   in /opt/anaconda3/lib/python3.8/site-packages/plyvel/_plyvel.cpython-38-darwin.so
+
+The solution is to replace plyvel with one from the Anaconda repositories::
+
+   $ pip uninstall plyvel
+   $ conda install -c conda-forge plyvel
