@@ -121,6 +121,7 @@ class AlphaBeta(Parser):
                  beta='repair', normalize=True, post_process=True):
         super().__init__(lemmas=lemmas, resolve_corefs=resolve_corefs)
         self.atom2token = None
+        self.temp_atoms = None
         self.orig_atom = None
         self.token2atom = None
         self.depths = None
@@ -214,13 +215,18 @@ class AlphaBeta(Parser):
             else:
                 atom2word = {}
 
+            atom2token = {}
+            for atom in self.atom2token:
+                if atom not in self.temp_atoms:
+                    atom2token[atom] = self.atom2token[atom]
+
             return {'main_edge': main_edge,
                     'extra_edges': self.extra_edges,
                     'failed': failed,
                     'text': str(sent).strip(),
                     'atom2word': atom2word,
                     # TODO: HACK TEMPORARY
-                    'atom2token': self.atom2token,
+                    'atom2token': atom2token,
                     'spacy_sentence': sent}
         except Exception as e:
             if hasattr(e, 'message'):
@@ -256,6 +262,7 @@ class AlphaBeta(Parser):
 
     def reset(self, text):
         self.atom2token = {}
+        self.temp_atoms = set()
         self.orig_atom = {}
         self.coref_clusters = defaultdict(set)
         self.edge2coref = {}
@@ -425,7 +432,7 @@ class AlphaBeta(Parser):
                     if utrigger_atom in self.atom2token:
                         self.atom2token[unew_trigger] =\
                             self.atom2token[utrigger_atom]
-                        del self.atom2token[utrigger_atom]
+                        self.temp_atoms.add(utrigger_atom)
                     self.orig_atom[unew_trigger] = utrigger_atom
                     edge = edge.replace_atom(trigger_atom, new_trigger)
 
@@ -461,7 +468,7 @@ class AlphaBeta(Parser):
             upred = UniqueAtom(pred)
             self.atom2token[unew_pred] =\
                 self.atom2token[upred]
-            del self.atom2token[upred]
+            self.temp_atoms.add(upred)
             self.orig_atom[unew_pred] = upred
             new_entity = edge.replace_atom(pred, new_pred)
 
@@ -482,7 +489,7 @@ class AlphaBeta(Parser):
                 if ubuilder in self.atom2token:
                     self.atom2token[unew_builder] =\
                         self.atom2token[ubuilder]
-                    del self.atom2token[ubuilder]
+                    self.temp_atoms.add(ubuilder)
                 self.orig_atom[unew_builder] = ubuilder
                 new_entity = edge.replace_atom(builder, new_builder)
 
