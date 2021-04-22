@@ -120,10 +120,7 @@ else:
                   include_dirs=['.']),
         Extension('graphbrain.parsers.parser_en',
                   ['graphbrain/parsers/parser_en.c'],
-                  include_dirs=['.']),
-        Extension('graphbrain.neuralcoref.neuralcoref',
-                  ['graphbrain/neuralcoref/neuralcoref.cpp'],
-                  language='c++', include_dirs=['.', 'include'])
+                  include_dirs=['.'])
     ]
     if NEURALCOREF:
         ext_modules.append(
