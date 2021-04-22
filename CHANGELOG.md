@@ -6,6 +6,7 @@
 ### Changed
 - Fixed AlphaBeta bug related to temporary atoms being removed too soon from atom2tokens.
 - Hypergraph.add_sequence() converts sequence name directly to atom.
+- Parser level coreference resolution (neuralcoref) disabled by default, requires dedicated build.
 
 ### Removed
 

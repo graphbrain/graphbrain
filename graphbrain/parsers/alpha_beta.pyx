@@ -5,7 +5,6 @@ from collections import defaultdict
 import spacy
 
 import graphbrain.constants as const
-import graphbrain.neuralcoref as neuralcoref
 from .parser import Parser
 from graphbrain.hyperedge import build_atom
 from graphbrain.hyperedge import hedge
@@ -13,6 +12,12 @@ from graphbrain.hyperedge import non_unique
 from graphbrain.hyperedge import unique
 from graphbrain.hyperedge import UniqueAtom
 from graphbrain.meaning.concepts import has_common_or_proper_concept
+
+try:
+    import graphbrain.neuralcoref as neuralcoref
+    NEURALCOREF = True
+except ImportError:
+    NEURALCOREF = False
 
 
 class Rule:
@@ -133,7 +138,7 @@ class AlphaBeta(Parser):
         self.extra_edges = set()
         self.nlp = spacy.load(model_name)
         self.alpha = None
-        if resolve_corefs:
+        if NEURALCOREF and resolve_corefs:
             coref = neuralcoref.NeuralCoref(self.nlp.vocab)
             self.nlp.add_pipe(coref, name='neuralcoref')
         if beta == 'strict':
@@ -780,25 +785,29 @@ class AlphaBeta(Parser):
                           for subedge in edge])
 
     def _resolve_corefs(self, parse_results):
-        for parse in parse_results['parses']:
-            if parse['main_edge'] is not None:
-                self._assign_to_coref(parse['main_edge'])
+        if NEURALCOREF:
+            for parse in parse_results['parses']:
+                if parse['main_edge'] is not None:
+                    self._assign_to_coref(parse['main_edge'])
 
-        inferred_edges = []
+            inferred_edges = []
 
-        for cluster in self.coref_clusters:
-            best_concept = None
-            for edge in self.coref_clusters[cluster]:
-                if _is_second_concept_better(best_concept, edge):
-                    best_concept = edge
-            if best_concept is not None:
+            for cluster in self.coref_clusters:
+                best_concept = None
                 for edge in self.coref_clusters[cluster]:
-                    self.edge2coref[edge] = best_concept
-                inferred_edges += self._coref_inferences(
-                    best_concept, self.coref_clusters[cluster])
+                    if _is_second_concept_better(best_concept, edge):
+                        best_concept = edge
+                if best_concept is not None:
+                    for edge in self.coref_clusters[cluster]:
+                        self.edge2coref[edge] = best_concept
+                    inferred_edges += self._coref_inferences(
+                        best_concept, self.coref_clusters[cluster])
 
-        for parse in parse_results['parses']:
-            parse['resolved_corefs'] = self._resolve_corefs_edge(
-                parse['main_edge'])
+            for parse in parse_results['parses']:
+                parse['resolved_corefs'] = self._resolve_corefs_edge(
+                    parse['main_edge'])
 
-        parse_results['inferred_edges'] = inferred_edges
+            parse_results['inferred_edges'] = inferred_edges
+        else:
+            for parse in parse_results['parses']:
+                parse['resolved_corefs'] = parse['main_edge']

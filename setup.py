@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import sys
 import distutils
 from setuptools import setup, find_packages
@@ -20,6 +21,13 @@ CYTHON_ANNOTATE = False
 
 # Force compilation of all Cython code.
 CYTHON_FORCE_COMPILATION = False
+
+# Check for environment variable to include neuralcoref in the build
+# e.g. usage: NEURALCOREF=true pip install -e .
+if os.environ.get("NEURALCOREF", None):
+    NEURALCOREF = True
+else:
+    NEURALCOREF = False
 
 
 # Current Graphbrain version
@@ -82,12 +90,14 @@ if USE_CYTHON:
                   include_dirs=['.']),
         Extension('graphbrain.parsers.parser_en',
                   ['graphbrain/parsers/parser_en.pyx'],
-                  include_dirs=['.']),
-        Extension('graphbrain.neuralcoref.neuralcoref',
-                  ['graphbrain/neuralcoref/neuralcoref.pyx'],
-                  language='c++',
-                  include_dirs=['.', 'include'])
+                  include_dirs=['.'])
     ]
+    if NEURALCOREF:
+        ext_modules.append(
+            Extension('graphbrain.neuralcoref.neuralcoref',
+                      ['graphbrain/neuralcoref/neuralcoref.pyx'],
+                      language='c++',
+                      include_dirs=['.', 'include']))
     ext_modules = cythonize(ext_modules,
                             annotate=CYTHON_ANNOTATE,
                             force=CYTHON_FORCE_COMPILATION,
@@ -115,6 +125,11 @@ else:
                   ['graphbrain/neuralcoref/neuralcoref.cpp'],
                   language='c++', include_dirs=['.', 'include'])
     ]
+    if NEURALCOREF:
+        ext_modules.append(
+            Extension('graphbrain.neuralcoref.neuralcoref',
+                      ['graphbrain/neuralcoref/neuralcoref.cpp'],
+                      language='c++', include_dirs=['.', 'include']))
 
 
 for ext_module in ext_modules:
@@ -124,6 +139,29 @@ for ext_module in ext_modules:
 
 with open('README.md', 'r') as fh:
     long_description = fh.read()
+
+
+python_requires = '>=3.6'
+
+install_requires = [
+        'numpy',
+        'scikit-learn',
+        'plyvel',
+        'python-igraph',
+        'termcolor',
+        'asciitree',
+        'ipython',
+        'progressbar2',
+        'unidecode'
+    ]
+
+
+if NEURALCOREF:
+    python_requires = '>=3.6, <3.9'
+    install_requires.append('spacy >=2.1.0, <3.0.0')
+    install_requires.append('boto3')
+else:
+    install_requires.append('spacy')
 
 
 setup(
@@ -149,22 +187,9 @@ setup(
         'Topic :: Scientific/Engineering :: Information Analysis',
         'Topic :: Sociology'
     ],
-    python_requires='>=3.6, <3.9',
+    python_requires=python_requires,
     packages=find_packages(),
-    install_requires=[
-        'numpy',
-        'scikit-learn',
-        'spacy >=2.1.0, <3.0.0',
-        'plyvel',
-        'python-igraph',
-        'termcolor',
-        'asciitree',
-        'ipython',
-        'progressbar2',
-        'unidecode',
-        # for neurocoref
-        'boto3'
-    ],
+    install_requires=install_requires,
     extras_require={
         'dev': [
             'cython >=0.25',
