@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Parsing Natural Language &mdash; Graphbrain 0.4.3-dev documentation</title>
+  <title>Parsing Natural Language &mdash; Graphbrain 0.4.4-dev documentation</title>
   
 
   
@@ -290,6 +290,8 @@
 </div>
 <div class="section" id="parser-level-coreference-resolution-and-inference-of-gender-number-and-animacy">
 <h2>Parser-level coreference resolution and inference of gender, number and animacy<a class="headerlink" href="#parser-level-coreference-resolution-and-inference-of-gender-number-and-animacy" title="Permalink to this headline">¶</a></h2>
+<p><strong>NOTE:</strong> Currently, the default distribution of Graphbrain does not support parser-level coreference resolution. Please refer to the installation instructions on how to build graphbrain with this feature.</p>
+<p>Currently, parser-level coreference resolution relies on neuralcoref, which requires Python &gt;=3.6, &lt;3.9, and spaCy &gt;=2.1.0, &lt;3.0.0. These restrictions are the reason why we kept it out of the default distribution. Once the successor of neuralcoref is released, we hope to use it to enable parser-level coreference resolution by default in the default distribution.</p>
 <p>Consider the sentence:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;Alice says that she likes her dog.&quot;</span>
 </pre></div>
