@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.4] - ongoing work
+### Added
+
+### Changed
+
+### Removed
+
 ## [0.4.3] - 22-04-2021
 ### Changed
 - Fixed AlphaBeta bug related to temporary atoms being removed too soon from atom2tokens.
