@@ -34,6 +34,7 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -297,11 +298,13 @@ distribution to install the prerequisites.</p>
 </div>
 </li>
 <li><p>The <cite>Homebrew package manager &lt;http://brew.sh/&gt;</cite>.</p></li>
-<li><p>Python 3:</p>
+<li><p>Python 3</p></li>
+</ul>
+<p>If python 3 is not already included with your current version os macOS:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew install python3
 </pre></div>
 </div>
-</li>
+<ul>
 <li><p>pip (Python package manager):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo easy_install pip
 </pre></div>
@@ -312,12 +315,24 @@ distribution to install the prerequisites.</p>
 </pre></div>
 </div>
 </li>
-<li><p>LevelDB (database engine):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew install leveldb
+<li><p>LevelDB (database engine)</p></li>
+</ul>
+<p>LevelDB can also be installed with brew, but currently the latest version is not compatible with the Python wrapper (plyvel). The solution is to install LevelDB version 1.22. With brew, this can be achieved in the following way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew tap bagonyi/homebrew-formulae git@github.com:bagonyi/homebrew-formulae.git
+$ brew extract --version=1.22 leveldb bagonyi/formulae
+$ brew install leveldb@1.22
 </pre></div>
 </div>
-</li>
-</ul>
+<p>(from <a class="reference external" href="https://github.com/bagonyi/homebrew-formulae">https://github.com/bagonyi/homebrew-formulae</a>)</p>
+<p>The first command above might cause an error, but it appears it can be ignored. If a preexisting installation of LevelDB exists, it should be removed first:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew uninstall leveldb
+</pre></div>
+</div>
+<p>Another option is to perform your own custom build of LevelDB 1.23, with the following line removed from its <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">(</span><span class="n">CMAKE_CXX_FLAGS</span> <span class="s2">&quot;$</span><span class="si">{CMAKE_CXX_FLAGS}</span><span class="s2"> -fno-rtti&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For more details: <a class="reference external" href="https://github.com/wbolster/plyvel/issues/114">https://github.com/wbolster/plyvel/issues/114</a>.</p>
 </div>
 <div class="section" id="windows">
 <h3>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h3>

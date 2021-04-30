@@ -121,7 +121,9 @@ macOS
 
 * The `Homebrew package manager <http://brew.sh/>`.
 
-* Python 3::
+* Python 3
+
+If python 3 is not already included with your current version os macOS::
 
    $ brew install python3
 
@@ -134,10 +136,25 @@ macOS
    $ sudo -H pip install virtualenv
 
 
-* LevelDB (database engine)::
+* LevelDB (database engine)
 
-   $ brew install leveldb
+LevelDB can also be installed with brew, but currently the latest version is not compatible with the Python wrapper (plyvel). The solution is to install LevelDB version 1.22. With brew, this can be achieved in the following way::
 
+   $ brew tap bagonyi/homebrew-formulae git@github.com:bagonyi/homebrew-formulae.git
+   $ brew extract --version=1.22 leveldb bagonyi/formulae
+   $ brew install leveldb@1.22
+
+(from https://github.com/bagonyi/homebrew-formulae)
+
+The first command above might cause an error, but it appears it can be ignored. If a preexisting installation of LevelDB exists, it should be removed first::
+
+   $ brew uninstall leveldb
+
+Another option is to perform your own custom build of LevelDB 1.23, with the following line removed from its ``CMakeLists.txt``::
+
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
+
+For more details: https://github.com/wbolster/plyvel/issues/114.
 
 Windows
 -------
