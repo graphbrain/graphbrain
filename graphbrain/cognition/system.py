@@ -140,6 +140,7 @@ class System(object):
         self.indir = indir
         self.url = url
         self.sequence = sequence
+        self.sequence_pos = 0
         self.corefs = corefs
 
         logging.basicConfig()
@@ -238,7 +239,7 @@ class System(object):
     def get_sequence(self, agent):
         return self.sequence
 
-    def parse_results2ops(self, parse_results, sequence=None, pos=-1):
+    def parse_results2ops(self, parse_results):
         for parse in parse_results['parses']:
             if self.corefs == 'resolve':
                 main_edge = parse['main_edge']
@@ -256,12 +257,13 @@ class System(object):
                 text = parse['text']
                 attr = {'text': text}
 
-                if sequence:
-                    yield create_op(main_edge, sequence=sequence, position=pos,
+                if self.sequence:
+                    yield create_op(main_edge, sequence=self.sequence,
+                                    position=self.sequence_pos,
                                     attributes=attr)
+                    self.sequence_pos += 1
                 else:
                     yield create_op(main_edge, attributes=attr)
-                pos += 1
 
                 if self.corefs == 'resolve':
                     yield create_op(resolved_edge, attributes=attr)

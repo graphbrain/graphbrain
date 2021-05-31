@@ -50,18 +50,14 @@ class Wikipedia(Agent):
     def run(self):
         url = self.system.get_url(self)
         parser = self.system.get_parser(self)
-        sequence = self.system.get_sequence(self)
 
         title, lang = url2title_and_lang(url)
         text = read_wikipedia(title, lang)
 
-        pos = 0
         for line in text.split('\n'):
             paragraph = line.strip()
             if len(paragraph) == 0:
                 continue
 
-            for op in self.system.parse_results2ops(parser.parse(paragraph),
-                                                    sequence=sequence,
-                                                    pos=pos):
+            for op in self.system.parse_results2ops(parser.parse(paragraph)):
                 yield op

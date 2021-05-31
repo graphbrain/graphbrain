@@ -22,12 +22,13 @@ CYTHON_ANNOTATE = False
 # Force compilation of all Cython code.
 CYTHON_FORCE_COMPILATION = False
 
+# Check for environment variable to include LevelDB in the build
+# e.g. usage: LEVELDB=true pip install -e .
+LEVELDB = os.environ.get('LEVELDB', None) is not None
+
 # Check for environment variable to include neuralcoref in the build
 # e.g. usage: NEURALCOREF=true pip install -e .
-if os.environ.get("NEURALCOREF", None):
-    NEURALCOREF = True
-else:
-    NEURALCOREF = False
+NEURALCOREF = os.environ.get('NEURALCOREF', None) is not None
 
 
 # Current Graphbrain version
@@ -76,8 +77,8 @@ if USE_CYTHON:
     ext_modules = [
         Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.pyx'],
                   include_dirs=['.']),
-        Extension('graphbrain.memory.leveldb',
-                  ['graphbrain/memory/leveldb.pyx'],
+        Extension('graphbrain.memory.sqlite',
+                  ['graphbrain/memory/sqlite.pyx'],
                   include_dirs=['.']),
         Extension('graphbrain.memory.permutations',
                   ['graphbrain/memory/permutations.pyx'],
@@ -92,6 +93,11 @@ if USE_CYTHON:
                   ['graphbrain/parsers/parser_en.pyx'],
                   include_dirs=['.'])
     ]
+    if LEVELDB:
+        ext_modules.append(
+            Extension('graphbrain.memory.leveldb',
+                      ['graphbrain/memory/leveldb.pyx'],
+                      include_dirs=['.']))
     if NEURALCOREF:
         ext_modules.append(
             Extension('graphbrain.neuralcoref.neuralcoref',
@@ -106,8 +112,8 @@ else:
     ext_modules = [
         Extension('graphbrain.hyperedge', ['graphbrain/hyperedge.c'],
                   include_dirs=['.']),
-        Extension('graphbrain.memory.leveldb',
-                  ['graphbrain/memory/leveldb.c'],
+        Extension('graphbrain.memory.sqlite',
+                  ['graphbrain/memory/sqlite.c'],
                   include_dirs=['.']),
         Extension('graphbrain.memory.permutations',
                   ['graphbrain/memory/permutations.c'],
@@ -122,6 +128,11 @@ else:
                   ['graphbrain/parsers/parser_en.c'],
                   include_dirs=['.'])
     ]
+    if LEVELDB:
+        ext_modules.append(
+            Extension('graphbrain.memory.leveldb',
+                      ['graphbrain/memory/leveldb.c'],
+                      include_dirs=['.']))
     if NEURALCOREF:
         ext_modules.append(
             Extension('graphbrain.neuralcoref.neuralcoref',

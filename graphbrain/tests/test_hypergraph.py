@@ -7,7 +7,7 @@ from graphbrain import hgraph
 
 class TestHypergraph(unittest.TestCase):
     def setUp(self):
-        self.hg = hgraph('test.hg')
+        self.hg = hgraph('test_sqlite.hg')
 
     def tearDown(self):
         self.hg.close()
@@ -16,7 +16,7 @@ class TestHypergraph(unittest.TestCase):
         self.hg.close()
 
     def test_name(self):
-        self.assertEqual(self.hg.name(), 'test.hg')
+        self.assertEqual(self.hg.name(), 'test_sqlite.hg')
 
     def test_destroy(self):
         self.hg.destroy()
@@ -217,10 +217,10 @@ class TestHypergraph(unittest.TestCase):
         self.hg.add('(says/Pd mary/Cp)')
         self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C))')
         self.hg.add('(says/Pd mary/Cp (is/Pd graphbrain/Cp great/C) extra/C)')
-        self.assertEqual(list(self.hg.search('.')),
-                         [hedge('extra/C'), hedge('graphbrain/Cp'),
+        self.assertEqual(set(self.hg.search('.')),
+                         {hedge('extra/C'), hedge('graphbrain/Cp'),
                           hedge('great/C'), hedge('is/Pd'), hedge('mary/Cp'),
-                          hedge('says/Pd')])
+                          hedge('says/Pd')})
 
     def test_search_amp(self):
         self.hg.destroy()

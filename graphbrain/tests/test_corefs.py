@@ -11,7 +11,7 @@ from graphbrain.meaning.corefs import make_corefs
 
 class TestCorefs(unittest.TestCase):
     def setUp(self):
-        self.hg = hgraph('test.hg')
+        self.hg = hgraph('test_sqlite.hg')
         self.hg.destroy()
 
         concepts = []

@@ -1,9 +1,12 @@
 # Changelog
 
-## [0.4.4] - ongoing work
+## [0.5.0] - ongoing work
 ### Added
 
 ### Changed
+- Main hypergraph database backend is now SQLite3.
+- LevelDB backend becomes optional. (disabled by default)
+- Neuralcoref becomes optional. (disabled by default)
 
 ### Removed
 

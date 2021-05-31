@@ -103,7 +103,7 @@ def perm2edge(perm_str):
        into an edge.
     """
     try:
-        tokens = split_edge_str(perm_str[1:])
+        tokens = split_edge_str(perm_str)
         if tokens is None:
             return None
         nper = int(tokens[-1])
