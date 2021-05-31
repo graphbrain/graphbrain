@@ -1,5 +1,3 @@
-import os
-
 from graphbrain.hyperedge import hedge
 import graphbrain.memory.sqlite
 try:
@@ -16,9 +14,9 @@ def hgraph(locator_string):
     Currently, the only type of hypergraph is based on LevelDB storage,
     and the location_string is the path to the LevelDB folder.
     """
-    if os.path.isfile(locator_string): 
+    if locator_string[-3:] == '.db':
         return graphbrain.memory.sqlite.SQLite(locator_string)
-    elif os.path.isdir(locator_string):
+    elif locator_string[-3:] == '.hg':
         if LEVELDB:
             return graphbrain.memory.leveldb.LevelDB(locator_string)
         else:

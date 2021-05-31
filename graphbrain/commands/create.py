@@ -1,4 +1,4 @@
-from graphbrain import *
+from graphbrain import hgraph
 
 
 def run(args):

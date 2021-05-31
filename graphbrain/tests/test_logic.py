@@ -6,7 +6,7 @@ from graphbrain.logic import *
 
 class TestLogic(unittest.TestCase):
     def setUp(self):
-        self.hg = hgraph('test.hg')
+        self.hg = hgraph('test.db')
         self.hg.destroy()
         edge = hedge('(is/Pd.sc (the/M sun/C) red/C)')
         self.hg.add(edge)

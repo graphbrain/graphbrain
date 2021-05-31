@@ -7,7 +7,7 @@ from graphbrain import hgraph
 
 class TestHypergraph(unittest.TestCase):
     def setUp(self):
-        self.hg = hgraph('test_sqlite.hg')
+        self.hg = hgraph('test.db')
 
     def tearDown(self):
         self.hg.close()
@@ -16,7 +16,7 @@ class TestHypergraph(unittest.TestCase):
         self.hg.close()
 
     def test_name(self):
-        self.assertEqual(self.hg.name(), 'test_sqlite.hg')
+        self.assertEqual(self.hg.name(), 'test.db')
 
     def test_destroy(self):
         self.hg.destroy()
