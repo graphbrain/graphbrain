@@ -4,6 +4,7 @@
 ### Added
 - SQLite3 hypergraph database backend.
 - Hypergraph.add_with_attributes().
+- import and export commands.
 
 ### Changed
 - Main hypergraph database backend is now SQLite3.
