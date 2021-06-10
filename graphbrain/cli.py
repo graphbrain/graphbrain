@@ -34,7 +34,7 @@ def wrapper(fun, command=False, text=None):
                         default='no')
     parser.add_argument('--fields', type=str, help='field names', default=None)
     parser.add_argument('--hg', type=str,
-                        help='hypergraph db', default='gb.hg')
+                        help='hypergraph db', default='gb.db')
     parser.add_argument('--indir', type=str,
                         help='input directory', default=None)
     parser.add_argument('--infile', type=str, help='input file', default=None)

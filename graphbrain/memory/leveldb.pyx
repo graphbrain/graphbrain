@@ -72,6 +72,10 @@ class LevelDB(Hypergraph):
             attributes = _decode_attributes(value)
             yield (edge, attributes)
 
+    def add_with_attributes(self, edge, attributes):
+        key = _edge2key(edge)
+        self._add_key(key, attributes)
+
     def atom_count(self):
         return self._read_counter('atom_count')
 

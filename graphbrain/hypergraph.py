@@ -33,6 +33,11 @@ class Hypergraph(object):
            (as strings)."""
         raise NotImplementedError()
 
+    def add_with_attributes(self, edge, attributes):
+        """Adds an edge along with all its attributes, represented as a
+        dictionary of attribute names to values."""
+        raise NotImplementedError()
+
     def atom_count(self):
         """Returns total number of atoms."""
         raise NotImplementedError()

@@ -955,6 +955,27 @@ class TestHypergraph(unittest.TestCase):
         self.assertEqual(
             result, [hedge('(color/P sun/C red/C)')])
 
+    def test_add_with_attributes1(self):
+        self.hg.destroy()
+        edge = hedge('(is graphbrain/1 great/1)')
+        self.hg.add_with_attributes(
+            edge,
+            {'p': 1, 'd': 10, 'dd': 20, 'foo': 777, 'bar': -.77, 'xx': 'def'})
+        self.assertTrue(self.hg.is_primary(edge))
+        self.assertEqual(self.hg.degree(edge), 10)
+        self.assertEqual(self.hg.deep_degree(edge), 20)
+        self.assertEqual(self.hg.get_int_attribute(edge, 'foo'), 777)
+        self.assertEqual(self.hg.get_float_attribute(edge, 'bar'), -.77)
+        self.assertEqual(self.hg.get_str_attribute(edge, 'xx'), 'def')
+
+    def test_add_with_attributes2(self):
+        self.hg.destroy()
+        edge = hedge('(is graphbrain/1 great/1)')
+        self.hg.add_with_attributes(
+            edge,
+            {'p': 0, 'd': 10, 'dd': 20, 'foo': 777, 'bar': -.77, 'xx': 'def'})
+        self.assertFalse(self.hg.is_primary(edge))
+
 
 if __name__ == '__main__':
     unittest.main()

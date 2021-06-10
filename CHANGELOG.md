@@ -2,6 +2,8 @@
 
 ## [0.5.0] - ongoing work
 ### Added
+- SQLite3 hypergraph database backend.
+- Hypergraph.add_with_attributes().
 
 ### Changed
 - Main hypergraph database backend is now SQLite3.
