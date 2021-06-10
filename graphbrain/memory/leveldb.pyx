@@ -76,18 +76,6 @@ class LevelDB(Hypergraph):
         key = _edge2key(edge)
         self._add_key(key, attributes)
 
-    def atom_count(self):
-        return self._read_counter('atom_count')
-
-    def edge_count(self):
-        return self._read_counter('edge_count')
-
-    def primary_atom_count(self):
-        return self._read_counter('primary_atom_count')
-
-    def primary_edge_count(self):
-        return self._read_counter('primary_edge_count')
-
     # ==========================================
     # Implementation of private abstract methods
     # ==========================================
@@ -103,15 +91,8 @@ class LevelDB(Hypergraph):
                 self._inc_degrees(edge)
             else:
                 self._add_key(key, {'p': 0, 'd': 0, 'dd': 0})
-            if edge.is_atom():
-                if primary:
-                    self._inc_counter('primary_atom_count')
-                self._inc_counter('atom_count')
-            else:
+            if not edge.is_atom():
                 self._write_edge_permutations(edge)
-            if primary:
-                self._inc_counter('primary_edge_count')
-            self._inc_counter('edge_count')
         # if an edge is to be added as primary, but it already exists as
         # non-primary, then make it primary and update the degrees
         elif primary and not self._is_primary(edge):
@@ -132,15 +113,8 @@ class LevelDB(Hypergraph):
 
         key = _edge2key(edge)
         if self._exists_key(key):
-            if edge.is_atom():
-                self._dec_counter('atom_count')
-                if primary:
-                    self._dec_counter('primary_atom_count')
-            else:
+            if not edge.is_atom():
                 self._remove_edge_permutations(edge)
-            self._dec_counter('edge_count')
-            if primary:
-                self._dec_counter('primary_edge_count')
             self._remove_key(key)
 
     def _is_primary(self, edge):
@@ -373,39 +347,12 @@ class LevelDB(Hypergraph):
         else:
             return or_else
 
-    def __read_counter_key(self, counter_key):
-        """Reads a counter by key."""
-        value = self.db.get(counter_key)
-        if value is None:
-            return 0
-        else:
-            return int(value.decode('utf-8'))
-
-    def _read_counter(self, counter):
-        """Reads a counter by name."""
-        return self.__read_counter_key(counter.encode('utf-8'))
-
-    def _inc_counter(self, counter, by=1):
-        """Increments a counter."""
-        counter_key = counter.encode('utf-8')
-        value = self.__read_counter_key(counter_key)
-        self.db.put(counter_key, str(value + by).encode('utf-8'))
-
-    def _dec_counter(self, counter, by=1):
-        """Decrements a counter."""
-        counter_key = counter.encode('utf-8')
-        value = self.__read_counter_key(counter_key)
-        self.db.put(counter_key, str(value - by).encode('utf-8'))
-
     def _inc_degrees(self, edge, depth=0):
         if depth > 0:
             key = _edge2key(edge)
             if not self._exists_key(key):
                 d = 1 if depth == 1 else 0
                 self._add_key(key, {'p': 0, 'd': d, 'dd': 1})
-                if edge.is_atom():
-                    self._inc_counter('atom_count')
-                self._inc_counter('edge_count')
             else:
                 if depth == 1:
                     self._inc_attribute_key(key, 'd')

@@ -11,6 +11,10 @@
 - Neuralcoref becomes optional. (disabled by default)
 
 ### Removed
+- Hypergraph.atom_count().
+- Hypergraph.edge_count().
+- Hypergraph.primary_atom_count().
+- Hypergraph.primary_edge_count().
 
 ## [0.4.3] - 22-04-2021
 ### Changed

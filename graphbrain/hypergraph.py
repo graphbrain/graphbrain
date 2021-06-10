@@ -38,22 +38,6 @@ class Hypergraph(object):
         dictionary of attribute names to values."""
         raise NotImplementedError()
 
-    def atom_count(self):
-        """Returns total number of atoms."""
-        raise NotImplementedError()
-
-    def edge_count(self):
-        """Returns total number of edges."""
-        raise NotImplementedError()
-
-    def primary_atom_count(self):
-        """Returns number of primary atoms."""
-        raise NotImplementedError()
-
-    def primary_edge_count(self):
-        """Returns number of primary edges."""
-        raise NotImplementedError()
-
     # ============================
     # High-level interface methods
     # ============================
@@ -173,15 +157,6 @@ class Hypergraph(object):
         See search() method for an explanation of patterns.
         """
         pattern = hedge(pattern)
-
-        if pattern.is_atom() and len(pattern.parts()) == 1:
-            if pattern.parens:
-                return self.edge_count() - self.atom_count()
-            elif pattern[0][0] == '*':
-                return self.edge_count()
-            elif pattern[0][0] == '.':
-                return self.atom_count()
-
         n = 0
         for _ in self._search(pattern, strict=strict):
             n += 1

@@ -88,43 +88,6 @@ class TestHypergraph(unittest.TestCase):
         labels = set(self.hg.all_attributes())
         self.assertEqual(labels, set())
 
-    # atom_count(), edge_count(), primary_atom_count(), primary_edge_count()
-    def test_counters1(self):
-        self.hg.destroy()
-        self.hg.add('(is graphbrain/1 great/1)')
-        self.assertEqual(self.hg.atom_count(), 3)
-        self.assertEqual(self.hg.edge_count(), 4)
-        self.assertEqual(self.hg.primary_atom_count(), 0)
-        self.assertEqual(self.hg.primary_edge_count(), 1)
-
-    # atom_count(), edge_count(), primary_atom_count(), primary_edge_count()
-    def test_counters2(self):
-        self.hg.destroy()
-        self.hg.add('(says mary/C (is graphbrain/C great/C))')
-        self.assertEqual(self.hg.atom_count(), 5)
-        self.assertEqual(self.hg.edge_count(), 7)
-        self.assertEqual(self.hg.primary_atom_count(), 0)
-        self.assertEqual(self.hg.primary_edge_count(), 1)
-        self.hg.remove(hedge('(is graphbrain/C great/C)'))
-        self.assertEqual(self.hg.atom_count(), 5)
-        self.assertEqual(self.hg.edge_count(), 6)
-        self.hg.remove(hedge('(says mary/C (is graphbrain/C great/C))'))
-        self.assertEqual(self.hg.atom_count(), 5)
-        self.assertEqual(self.hg.primary_atom_count(), 0)
-        self.assertEqual(self.hg.edge_count(), 5)
-        self.assertEqual(self.hg.primary_edge_count(), 0)
-
-    # atom_count(), edge_count(), primary_atom_count(), primary_edge_count()
-    def test_counters3_non_deep_removal(self):
-        self.hg.destroy()
-        self.hg.add('(says mary/C (is graphbrain/C great/C))')
-        self.hg.remove(hedge('(says mary/C (is graphbrain/C great/C))'),
-                       deep=False)
-        self.assertEqual(self.hg.atom_count(), 5)
-        self.assertEqual(self.hg.primary_atom_count(), 0)
-        self.assertEqual(self.hg.edge_count(), 6)
-        self.assertEqual(self.hg.primary_edge_count(), 0)
-
     # exists, add, remove
     def test_ops1(self):
         self.hg.destroy()

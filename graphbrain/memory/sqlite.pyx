@@ -35,12 +35,9 @@ class SQLite(Hypergraph):
         self.locator_string = locator_string
         self.conn = sqlite3.connect(self.locator_string, isolation_level=None)
         self.conn.execute(
-            'CREATE TABLE IF NOT EXISTS "v" '
-            '(key TEXT PRIMARY KEY, value TEXT)')
+            'CREATE TABLE IF NOT EXISTS v (key TEXT PRIMARY KEY, value TEXT)')
         self.conn.execute(
-            'CREATE TABLE IF NOT EXISTS "p" (key TEXT PRIMARY KEY)')
-        self.conn.execute(
-            'CREATE TABLE IF NOT EXISTS "c" (key TEXT PRIMARY KEY, value INT)')
+            'CREATE TABLE IF NOT EXISTS p (key TEXT PRIMARY KEY)')
 
     # ============================================
     # Implementation of abstract interface methods
@@ -79,18 +76,6 @@ class SQLite(Hypergraph):
         key = _edge2key(edge)
         self._add_key(key, attributes)
 
-    def atom_count(self):
-        return self._read_counter('atom_count')
-
-    def edge_count(self):
-        return self._read_counter('edge_count')
-
-    def primary_atom_count(self):
-        return self._read_counter('primary_atom_count')
-
-    def primary_edge_count(self):
-        return self._read_counter('primary_edge_count')
-
     # ==========================================
     # Implementation of private abstract methods
     # ==========================================
@@ -106,15 +91,8 @@ class SQLite(Hypergraph):
                 self._inc_degrees(edge)
             else:
                 self._add_key(key, {'p': 0, 'd': 0, 'dd': 0})
-            if edge.is_atom():
-                if primary:
-                    self._inc_counter('primary_atom_count')
-                self._inc_counter('atom_count')
-            else:
+            if not edge.is_atom():
                 self._write_edge_permutations(edge)
-            if primary:
-                self._inc_counter('primary_edge_count')
-            self._inc_counter('edge_count')
         # if an edge is to be added as primary, but it already exists as
         # non-primary, then make it primary and update the degrees
         elif primary and not self._is_primary(edge):
@@ -135,15 +113,8 @@ class SQLite(Hypergraph):
 
         key = _edge2key(edge)
         if self._exists_key(key):
-            if edge.is_atom():
-                self._dec_counter('atom_count')
-                if primary:
-                    self._dec_counter('primary_atom_count')
-            else:
+            if not edge.is_atom():
                 self._remove_edge_permutations(edge)
-            self._dec_counter('edge_count')
-            if primary:
-                self._dec_counter('primary_edge_count')
             self._remove_key(key)
 
     def _is_primary(self, edge):
@@ -390,37 +361,12 @@ class SQLite(Hypergraph):
         else:
             return or_else
 
-    def _read_counter(self, counter):
-        """Reads a counter by name."""
-        cur = self.conn.cursor()
-        for key, value in cur.execute(
-                'SELECT * FROM c WHERE key = ?', (counter,)):
-            return value
-        return 0
-
-    def _inc_counter(self, counter, by=1):
-        """Increments a counter."""
-        cur = self.conn.cursor()
-        cur.execute(
-            'INSERT INTO c (key, value) VALUES(?, ?) '
-            'ON CONFLICT(key) DO UPDATE SET value = value + excluded.value',
-            (counter, by))
-
-    def _dec_counter(self, counter, by=1):
-        """Decrements a counter."""
-        cur = self.conn.cursor()
-        cur.execute(
-            'UPDATE c SET value = value - ? WHERE key = ?', (by, counter))
-
     def _inc_degrees(self, edge, depth=0):
         if depth > 0:
             key = _edge2key(edge)
             if not self._exists_key(key):
                 d = 1 if depth == 1 else 0
                 self._add_key(key, {'p': 0, 'd': d, 'dd': 1})
-                if edge.is_atom():
-                    self._inc_counter('atom_count')
-                self._inc_counter('edge_count')
             else:
                 if depth == 1:
                     self._inc_attribute_key(key, 'd')
