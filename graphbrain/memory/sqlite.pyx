@@ -252,8 +252,7 @@ class SQLite(Hypergraph):
         value = _encode_attributes(attributes)
         cur = self.conn.cursor()
         cur.execute(
-            'INSERT INTO v (key, value) VALUES(?, ?) '
-            'ON CONFLICT(key) DO UPDATE SET value=excluded.value',
+            'INSERT OR REPLACE INTO v (key, value) VALUES(?, ?)',
             (key, value))
 
     def _write_edge_permutation(self, perm):
