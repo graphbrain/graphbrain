@@ -11,6 +11,6 @@ def run(args):
         for edge, attributes in hg.all_attributes():
             row = [edge.to_str(), attributes]
             f.write('{}\n'.format(
-                json.dumps(row, encoding='utf-8', ensure_ascii=False)))
+                json.dumps(row, ensure_ascii=False)))
             n += 1
     print('{} edges exported.'.format(n))
