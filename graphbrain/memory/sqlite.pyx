@@ -1,6 +1,9 @@
 import json
 
-import sqlite3
+try:
+    from pysqlite3 import connect
+except Exception:
+    from sqlite3 import connect
 
 from graphbrain.hyperedge import edges2str
 from graphbrain.hyperedge import hedge
@@ -33,7 +36,7 @@ class SQLite(Hypergraph):
 
     def __init__(self, locator_string):
         self.locator_string = locator_string
-        self.conn = sqlite3.connect(self.locator_string, isolation_level=None)
+        self.conn = connect(self.locator_string, isolation_level=None)
         self.conn.execute(
             'CREATE TABLE IF NOT EXISTS v (key TEXT PRIMARY KEY, value TEXT)')
         self.conn.execute(
