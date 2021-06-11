@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-import platform
 import sys
 import distutils
 from setuptools import setup, find_packages
@@ -162,9 +161,6 @@ install_requires = [
         'progressbar2',
         'unidecode'
     ]
-
-if platform.system() == 'Linux':
-    install_requires.append('pysqlite3-binary')
 
 if LEVELDB:
     install_requires.append('plyvel')

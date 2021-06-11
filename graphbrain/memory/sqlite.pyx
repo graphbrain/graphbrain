@@ -1,9 +1,6 @@
 import json
 
-try:
-    from pysqlite3 import connect
-except Exception:
-    from sqlite3 import connect
+from sqlite3 import connect
 
 from graphbrain.hyperedge import edges2str
 from graphbrain.hyperedge import hedge
