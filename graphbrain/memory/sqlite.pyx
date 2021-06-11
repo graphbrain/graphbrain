@@ -55,7 +55,6 @@ class SQLite(Hypergraph):
         cur = self.conn.cursor()
         cur.execute('DELETE FROM v')
         cur.execute('DELETE FROM p')
-        cur.execute('DELETE FROM c')
 
     def all(self):
         cur = self.conn.cursor()
