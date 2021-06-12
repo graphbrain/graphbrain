@@ -267,7 +267,7 @@ class SQLite(Hypergraph):
         self.cur.execute('BEGIN TRANSACTION')
 
     def _end_transaction(self):
-        self.cur.execute('END TRANSACTION')
+        self.conn.commit()
         self.cur = None
 
     def _add_key(self, key, attributes):
@@ -280,8 +280,7 @@ class SQLite(Hypergraph):
 
     def _write_edge_permutation(self, perm):
         """Writes a given permutation."""
-        cur = self.conn.cursor()
-        cur.execute('INSERT INTO p (key) VALUES(?)', (perm,))
+        self.cur.execute('INSERT INTO p (key) VALUES(?)', (perm,))
 
     def _write_edge_permutations(self, edge):
         """Writes all permutations of the edge."""
@@ -289,8 +288,7 @@ class SQLite(Hypergraph):
 
     def _remove_edge_permutation(self, perm):
         """Removes a given permutation."""
-        cur = self.conn.cursor()
-        cur.execute('DELETE FROM p WHERE key = ?', (perm,))
+        self.cur.execute('DELETE FROM p WHERE key = ?', (perm,))
 
     def _remove_edge_permutations(self, edge):
         """Removes all permutations of the edge."""
@@ -298,8 +296,7 @@ class SQLite(Hypergraph):
 
     def _remove_key(self, key):
         """Removes an edge, given its key."""
-        cur = self.conn.cursor()
-        cur.execute('DELETE FROM v WHERE key = ?', (key,))
+        self.cur.execute('DELETE FROM v WHERE key = ?', (key,))
 
     def _exists_key(self, key):
         """Checks if the given edge exists."""
