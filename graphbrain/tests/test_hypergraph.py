@@ -939,6 +939,15 @@ class TestHypergraph(unittest.TestCase):
             {'p': 0, 'd': 10, 'dd': 20, 'foo': 777, 'bar': -.77, 'xx': 'def'})
         self.assertFalse(self.hg.is_primary(edge))
 
+    def test_add_with_attributes_search(self):
+        self.hg.destroy()
+        edge = hedge('(is graphbrain/1 great/1)')
+        self.hg.add_with_attributes(
+            edge,
+            {'p': 1, 'd': 10, 'dd': 20, 'foo': 777, 'bar': -.77, 'xx': 'def'})
+        results = set(self.hg.search('(is * *)'))
+        self.assertEqual(results, set([edge]))
+
 
 if __name__ == '__main__':
     unittest.main()

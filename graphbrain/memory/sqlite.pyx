@@ -36,8 +36,8 @@ class SQLite(Hypergraph):
         self.conn = connect(self.locator_string, isolation_level=None)
         self.cur = None
 
-        self.conn.execute('PRAGMA synchronous = OFF')
-        self.conn.execute('PRAGMA journal_mode = MEMORY')
+        # self.conn.execute('PRAGMA synchronous = OFF')
+        # self.conn.execute('PRAGMA journal_mode = MEMORY')
 
         self.conn.execute(
             'CREATE TABLE IF NOT EXISTS v (key TEXT PRIMARY KEY, value TEXT)')
@@ -80,6 +80,8 @@ class SQLite(Hypergraph):
         self._begin_transaction()
         key = _edge2key(edge)
         self._add_key(key, attributes)
+        if not edge.is_atom():
+            self._write_edge_permutations(edge)
         self._end_transaction()
         return edge
 
@@ -159,7 +161,6 @@ class SQLite(Hypergraph):
                 key = row[0]
                 tokens = split_edge_str(key)
                 nper = int(tokens[-1])
-                print(nper)
 
                 if nper == first_permutation(len(tokens) - 1, positions):
                     yield perm2edge(key)
@@ -285,7 +286,7 @@ class SQLite(Hypergraph):
 
     def _write_edge_permutation(self, perm):
         """Writes a given permutation."""
-        self.cur.execute('INSERT INTO p (key) VALUES(?)', (perm,))
+        self.cur.execute('INSERT OR IGNORE INTO p (key) VALUES(?)', (perm,))
 
     def _write_edge_permutations(self, edge):
         """Writes all permutations of the edge."""
