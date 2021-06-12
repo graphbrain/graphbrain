@@ -36,6 +36,9 @@ class SQLite(Hypergraph):
         self.conn = connect(self.locator_string, isolation_level=None)
         self.cur = None
 
+        self.conn.execute('PRAGMA synchronous = OFF')
+        self.conn.execute('PRAGMA journal_mode = MEMORY')
+
         self.conn.execute(
             'CREATE TABLE IF NOT EXISTS v (key TEXT PRIMARY KEY, value TEXT)')
         self.conn.execute(
