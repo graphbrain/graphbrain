@@ -74,8 +74,11 @@ class SQLite(Hypergraph):
                 yield (edge, attributes)
 
     def add_with_attributes(self, edge, attributes):
+        self._begin_transaction()
         key = _edge2key(edge)
         self._add_key(key, attributes)
+        self._end_transaction()
+        return edge
 
     # ==========================================
     # Implementation of private abstract methods
@@ -273,8 +276,7 @@ class SQLite(Hypergraph):
     def _add_key(self, key, attributes):
         """Adds the given edge, given its key."""
         value = _encode_attributes(attributes)
-        cur = self.conn.cursor()
-        cur.execute(
+        self.cur.execute(
             'INSERT OR REPLACE INTO v (key, value) VALUES(?, ?)',
             (key, value))
 
