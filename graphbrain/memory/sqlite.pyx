@@ -34,6 +34,8 @@ class SQLite(Hypergraph):
     def __init__(self, locator_string):
         self.locator_string = locator_string
         self.conn = connect(self.locator_string, isolation_level=None)
+        self.cur = None
+
         self.conn.execute(
             'CREATE TABLE IF NOT EXISTS v (key TEXT PRIMARY KEY, value TEXT)')
         self.conn.execute(
@@ -83,6 +85,7 @@ class SQLite(Hypergraph):
         return self._exists_key(_edge2key(edge))
 
     def _add(self, edge, primary):
+        self._begin_transaction()
         key = _edge2key(edge)
         if not self._exists_key(key):
             if primary:
@@ -97,9 +100,11 @@ class SQLite(Hypergraph):
         elif primary and not self._is_primary(edge):
             self._set_attribute(edge, 'p', 1)
             self._inc_degrees(edge)
+        self._end_transaction()
         return edge
 
     def _remove(self, edge, deep):
+        self._begin_transaction()
         primary = self.is_primary(edge)
 
         if not edge.is_atom():
@@ -115,6 +120,7 @@ class SQLite(Hypergraph):
             if not edge.is_atom():
                 self._remove_edge_permutations(edge)
             self._remove_key(key)
+        self._end_transaction()
 
     def _is_primary(self, edge):
         return self._get_int_attribute(edge, 'p') == 1
@@ -214,16 +220,25 @@ class SQLite(Hypergraph):
                     yield(edge)
 
     def _set_attribute(self, edge, attribute, value):
+        self._begin_transaction()
         key = _edge2key(edge)
-        return self._set_attribute_key(key, attribute, value)
+        result = self._set_attribute_key(key, attribute, value)
+        self._end_transaction()
+        return result
 
     def _inc_attribute(self, edge, attribute):
+        self._begin_transaction()
         key = _edge2key(edge)
-        return self._inc_attribute_key(key, attribute)
+        result = self._inc_attribute_key(key, attribute)
+        self._end_transaction()
+        return result
 
     def _dec_attribute(self, edge, attribute):
+        self._begin_transaction()
         key = _edge2key(edge)
-        return self._dec_attribute_key(key, attribute)
+        result = self._dec_attribute_key(key, attribute)
+        self._end_transaction()
+        return result
 
     def _get_str_attribute(self, edge, attribute, or_else=None):
         key = _edge2key(edge)
@@ -246,6 +261,14 @@ class SQLite(Hypergraph):
     # =====================
     # Local private methods
     # =====================
+
+    def _begin_transaction(self):
+        self.cur = self.conn.cursor()
+        self.cur.execute('BEGIN TRANSACTION')
+
+    def _end_transaction(self):
+        self.cur.execute('END TRANSACTION')
+        self.cur = None
 
     def _add_key(self, key, attributes):
         """Adds the given edge, given its key."""
