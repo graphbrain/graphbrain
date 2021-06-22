@@ -106,7 +106,7 @@ class SQLite(Hypergraph):
         # if an edge is to be added as primary, but it already exists as
         # non-primary, then make it primary and update the degrees
         elif primary and not self._is_primary(edge):
-            self._set_attribute(edge, 'p', 1)
+            self._set_attribute_key(key, 'p', 1)
             self._inc_degrees(edge)
         self._end_transaction()
         return edge

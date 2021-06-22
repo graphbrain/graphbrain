@@ -948,6 +948,14 @@ class TestHypergraph(unittest.TestCase):
         results = set(self.hg.search('(is * *)'))
         self.assertEqual(results, set([edge]))
 
+    def test_non_primary_to_primary(self):
+        self.hg.destroy()
+        edge = hedge('(is/P (the/M sun/C) shining/C)')
+        self.hg.add(edge, primary=False)
+        self.assertFalse(self.hg.is_primary(edge))
+        self.hg.add(edge, primary=True)
+        self.assertTrue(self.hg.is_primary(edge))
+
 
 if __name__ == '__main__':
     unittest.main()
