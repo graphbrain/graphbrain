@@ -1,5 +1,8 @@
+from contextlib import contextmanager
+
 from graphbrain.hyperedge import hedge
 import graphbrain.memory.sqlite
+
 try:
     import graphbrain.memory.leveldb
     LEVELDB = True
@@ -23,3 +26,15 @@ def hgraph(locator_string):
             print('LevelDB not supported. Custom build required.')
     else:
         print('Hypergraph database could not be found.')
+
+
+@contextmanager
+def hopen(*args, **kwds):
+    hg = hgraph(*args, **kwds)
+    hg.begin_transaction()
+    hg.batch_mode = True
+    try:
+        yield hg
+    finally:
+        hg.batch_mode = False
+        hg.end_transaction()

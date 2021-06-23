@@ -6,9 +6,12 @@ from graphbrain.logic import eval_rule
 class Hypergraph(object):
     """Hypergraph interface."""
 
-    # ================================================================
-    # Interface abstract methods, to be implemented in derived classes
-    # ================================================================
+    def __init__(self):
+        self.batch_mode = False
+
+    # =======================================================
+    # Interface methods, to be implemented in derived classes
+    # =======================================================
 
     def close(self):
         """Closes the hypergraph."""
@@ -37,6 +40,12 @@ class Hypergraph(object):
         """Adds an edge along with all its attributes, represented as a
         dictionary of attribute names to values."""
         raise NotImplementedError()
+
+    def begin_transaction(self):
+        pass
+
+    def end_transaction(self):
+        pass
 
     # ============================
     # High-level interface methods

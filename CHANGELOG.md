@@ -5,6 +5,7 @@
 - SQLite3 hypergraph database backend.
 - Hypergraph.add_with_attributes().
 - import and export commands.
+- Hypergraph context manager for batch writes (with hopen(hg_locator) as hg ...).
 
 ### Changed
 - Main hypergraph database backend is now SQLite3.

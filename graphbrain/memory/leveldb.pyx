@@ -32,12 +32,14 @@ class LevelDB(Hypergraph):
     """Implements LevelDB hypergraph storage."""
 
     def __init__(self, locator_string):
+        super().__init__()
+
         self.locator_string = locator_string
         self.db = plyvel.DB(self.locator_string, create_if_missing=True)
 
-    # ============================================
-    # Implementation of abstract interface methods
-    # ============================================
+    # ===================================
+    # Implementation of interface methods
+    # ===================================
 
     def close(self):
         self.db.close()

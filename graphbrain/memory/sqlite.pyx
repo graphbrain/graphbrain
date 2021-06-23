@@ -32,6 +32,8 @@ class SQLite(Hypergraph):
     """Implements SQLite hypergraph storage."""
 
     def __init__(self, locator_string):
+        super().__init__()
+
         self.locator_string = locator_string
         self.conn = connect(self.locator_string, isolation_level=None)
         self.cur = None
@@ -44,9 +46,9 @@ class SQLite(Hypergraph):
         self.conn.execute(
             'CREATE TABLE IF NOT EXISTS p (key TEXT PRIMARY KEY)')
 
-    # ============================================
-    # Implementation of abstract interface methods
-    # ============================================
+    # ===================================
+    # Implementation of interface methods
+    # ===================================
 
     def close(self):
         if self.conn:
@@ -77,13 +79,25 @@ class SQLite(Hypergraph):
                 yield (edge, attributes)
 
     def add_with_attributes(self, edge, attributes):
-        self._begin_transaction()
+        self.begin_transaction()
         key = _edge2key(edge)
         self._add_key(key, attributes)
         if not edge.is_atom():
             self._write_edge_permutations(edge)
-        self._end_transaction()
+        self.end_transaction()
         return edge
+
+    def begin_transaction(self):
+        if self.batch_mode:
+            return
+        self.cur = self.conn.cursor()
+        self.cur.execute('BEGIN TRANSACTION')
+
+    def end_transaction(self):
+        if self.batch_mode:
+            return
+        self.conn.commit()
+        self.cur = None
 
     # ==========================================
     # Implementation of private abstract methods
@@ -93,7 +107,7 @@ class SQLite(Hypergraph):
         return self._exists_key(_edge2key(edge))
 
     def _add(self, edge, primary):
-        self._begin_transaction()
+        self.begin_transaction()
         key = _edge2key(edge)
         if not self._exists_key(key):
             if primary:
@@ -108,11 +122,11 @@ class SQLite(Hypergraph):
         elif primary and not self._is_primary(edge):
             self._set_attribute_key(key, 'p', 1)
             self._inc_degrees(edge)
-        self._end_transaction()
+        self.end_transaction()
         return edge
 
     def _remove(self, edge, deep):
-        self._begin_transaction()
+        self.begin_transaction()
         primary = self.is_primary(edge)
 
         if not edge.is_atom():
@@ -128,7 +142,7 @@ class SQLite(Hypergraph):
             if not edge.is_atom():
                 self._remove_edge_permutations(edge)
             self._remove_key(key)
-        self._end_transaction()
+        self.end_transaction()
 
     def _is_primary(self, edge):
         return self._get_int_attribute(edge, 'p') == 1
@@ -227,24 +241,24 @@ class SQLite(Hypergraph):
                     yield(edge)
 
     def _set_attribute(self, edge, attribute, value):
-        self._begin_transaction()
+        self.begin_transaction()
         key = _edge2key(edge)
         result = self._set_attribute_key(key, attribute, value)
-        self._end_transaction()
+        self.end_transaction()
         return result
 
     def _inc_attribute(self, edge, attribute):
-        self._begin_transaction()
+        self.begin_transaction()
         key = _edge2key(edge)
         result = self._inc_attribute_key(key, attribute)
-        self._end_transaction()
+        self.end_transaction()
         return result
 
     def _dec_attribute(self, edge, attribute):
-        self._begin_transaction()
+        self.begin_transaction()
         key = _edge2key(edge)
         result = self._dec_attribute_key(key, attribute)
-        self._end_transaction()
+        self.end_transaction()
         return result
 
     def _get_str_attribute(self, edge, attribute, or_else=None):
@@ -268,14 +282,6 @@ class SQLite(Hypergraph):
     # =====================
     # Local private methods
     # =====================
-
-    def _begin_transaction(self):
-        self.cur = self.conn.cursor()
-        self.cur.execute('BEGIN TRANSACTION')
-
-    def _end_transaction(self):
-        self.conn.commit()
-        self.cur = None
 
     def _add_key(self, key, attributes):
         """Adds the given edge, given its key."""

@@ -2,7 +2,7 @@ import unittest
 
 import graphbrain.constants as const
 from graphbrain import hedge
-from graphbrain import hgraph
+from graphbrain import hgraph, hopen
 
 
 class TestHypergraph(unittest.TestCase):
@@ -955,6 +955,17 @@ class TestHypergraph(unittest.TestCase):
         self.assertFalse(self.hg.is_primary(edge))
         self.hg.add(edge, primary=True)
         self.assertTrue(self.hg.is_primary(edge))
+
+    def test_batch_adds(self):
+        self.hg.destroy()
+        edges = []
+        for i in range(10):
+            edges.append(hedge('(is/P {}/C number/C)'.format(i)))
+        with hopen('test.db') as hg:
+            for edge in edges:
+                hg.add(edge)
+        for edge in edges:
+            self.assertTrue(self.hg.exists(edge))
 
 
 if __name__ == '__main__':
