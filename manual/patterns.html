@@ -7,12 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Patterns &mdash; Graphbrain 0.4.4-dev documentation</title>
+  <title>Patterns &mdash; Graphbrain 0.5.0-dev documentation</title>
   
 
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
 
   
   
@@ -31,6 +33,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -92,7 +95,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials and examples</a></li>
@@ -247,24 +250,32 @@
 </div>
 <div class="section" id="matching-argroles">
 <h2>Matching argroles<a class="headerlink" href="#matching-argroles" title="Permalink to this headline">¶</a></h2>
-<p>If the connector indicates argument roles, then any further arguments may be present, unless indicated otherwise. So:</p>
+<p>Argroles can be specified in patterns. So:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="n">so</span> <span class="o">*</span> <span class="o">*</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>matches:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="n">so</span> <span class="n">alice</span><span class="o">/</span><span class="n">C</span> <span class="n">chess</span><span class="o">/</span><span class="n">C</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>but not:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="n">sox</span> <span class="n">alice</span><span class="o">/</span><span class="n">C</span> <span class="n">chess</span><span class="o">/</span><span class="n">C</span> <span class="p">(</span><span class="n">at</span><span class="o">/</span><span class="n">T</span> <span class="p">(</span><span class="n">the</span><span class="o">/</span><span class="n">M</span> <span class="n">club</span><span class="o">/</span><span class="n">C</span><span class="p">)))</span>
 </pre></div>
 </div>
-<p>When specifying argroles, more often than not this is the behavior that is the most useful.</p>
-<p>It is often desirable to allow the various pattern elements to appear in any order. This is indicated by surrounding the roles of such elements with curly brackets. For example:</p>
+<p>It is often desirable to match for the presence of a given set of argroles, independently of their respective positions, or of the presence of further argroles outside the set. This is indicated by surrounding with curly brackets the set of argroles that is to be matched in this way. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="ow">is</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="p">{</span><span class="n">sc</span><span class="p">}</span> <span class="o">*</span> <span class="o">*/</span><span class="n">C</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The above pattern would match both:</p>
+<p>The above pattern would match both (independently of position):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="ow">is</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="n">sc</span> <span class="p">(</span><span class="n">the</span><span class="o">/</span><span class="n">M</span> <span class="n">sky</span><span class="o">/</span><span class="n">C</span><span class="p">)</span> <span class="n">blue</span><span class="o">/</span><span class="n">C</span><span class="p">)</span>
 <span class="p">(</span><span class="ow">is</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="n">cs</span> <span class="n">blue</span><span class="o">/</span><span class="n">C</span> <span class="p">(</span><span class="n">the</span><span class="o">/</span><span class="n">M</span> <span class="n">sky</span><span class="o">/</span><span class="n">C</span><span class="p">))</span>
 </pre></div>
 </div>
+<p>and also (independently of the presence of further argroles outside the set):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="ow">is</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="n">scx</span> <span class="p">(</span><span class="n">the</span><span class="o">/</span><span class="n">M</span> <span class="n">sky</span><span class="o">/</span><span class="n">C</span><span class="p">)</span> <span class="n">blue</span><span class="o">/</span><span class="n">C</span> <span class="p">(</span><span class="ow">in</span><span class="o">/</span><span class="n">T</span> <span class="p">(</span><span class="n">the</span><span class="o">/</span><span class="n">M</span> <span class="n">morning</span><span class="o">/</span><span class="n">C</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>In fact, when specifying argroles, more often than not this is the behavior that is the most useful, because it allows for the matching of the participants of a relationship purely according to the role they play in it (subject, object, etc.).</p>
 <p>Sometimes it is also desirable to explicitly forbid certain argument roles. This is achieved by indicating them after ‘-‘ in the argrole sequence. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="p">{</span><span class="n">so</span><span class="p">}</span><span class="o">-</span><span class="n">x</span> <span class="o">*</span> <span class="o">*</span><span class="p">)</span>
 </pre></div>

@@ -7,12 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>graphbrain.hypergraph &mdash; Graphbrain 0.4.4-dev documentation</title>
+  <title>graphbrain.hypergraph &mdash; Graphbrain 0.5.0-dev documentation</title>
   
 
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
 
   
   
@@ -31,10 +33,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -91,7 +93,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials and examples</a></li>
@@ -173,9 +175,12 @@
 <div class="viewcode-block" id="Hypergraph"><a class="viewcode-back" href="../../manual/api.html#graphbrain.hypergraph.Hypergraph">[docs]</a><span class="k">class</span> <span class="nc">Hypergraph</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Hypergraph interface.&quot;&quot;&quot;</span>
 
-    <span class="c1"># ================================================================</span>
-    <span class="c1"># Interface abstract methods, to be implemented in derived classes</span>
-    <span class="c1"># ================================================================</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_mode</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># =======================================================</span>
+    <span class="c1"># Interface methods, to be implemented in derived classes</span>
+    <span class="c1"># =======================================================</span>
 
 <div class="viewcode-block" id="Hypergraph.close"><a class="viewcode-back" href="../../manual/api.html#graphbrain.hypergraph.Hypergraph.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Closes the hypergraph.&quot;&quot;&quot;</span>
@@ -200,21 +205,16 @@
 <span class="sd">           (as strings).&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Hypergraph.atom_count"><a class="viewcode-back" href="../../manual/api.html#graphbrain.hypergraph.Hypergraph.atom_count">[docs]</a>    <span class="k">def</span> <span class="nf">atom_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns total number of atoms.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Hypergraph.add_with_attributes"><a class="viewcode-back" href="../../manual/api.html#graphbrain.hypergraph.Hypergraph.add_with_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">add_with_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">attributes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds an edge along with all its attributes, represented as a</span>
+<span class="sd">        dictionary of attribute names to values.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Hypergraph.edge_count"><a class="viewcode-back" href="../../manual/api.html#graphbrain.hypergraph.Hypergraph.edge_count">[docs]</a>    <span class="k">def</span> <span class="nf">edge_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns total number of edges.&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+    <span class="k">def</span> <span class="nf">begin_transaction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
 
-<div class="viewcode-block" id="Hypergraph.primary_atom_count"><a class="viewcode-back" href="../../manual/api.html#graphbrain.hypergraph.Hypergraph.primary_atom_count">[docs]</a>    <span class="k">def</span> <span class="nf">primary_atom_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns number of primary atoms.&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="Hypergraph.primary_edge_count"><a class="viewcode-back" href="../../manual/api.html#graphbrain.hypergraph.Hypergraph.primary_edge_count">[docs]</a>    <span class="k">def</span> <span class="nf">primary_edge_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns number of primary edges.&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+    <span class="k">def</span> <span class="nf">end_transaction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
 
     <span class="c1"># ============================</span>
     <span class="c1"># High-level interface methods</span>
@@ -335,15 +335,6 @@
 <span class="sd">        See search() method for an explanation of patterns.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pattern</span> <span class="o">=</span> <span class="n">hedge</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">is_atom</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">parts</span><span class="p">())</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">parens</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_count</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_count</span><span class="p">()</span>
-            <span class="k">elif</span> <span class="n">pattern</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_count</span><span class="p">()</span>
-            <span class="k">elif</span> <span class="n">pattern</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;.&#39;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_count</span><span class="p">()</span>
-
         <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="n">strict</span><span class="p">):</span>
             <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>

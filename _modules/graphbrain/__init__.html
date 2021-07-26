@@ -7,12 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>graphbrain.__init__ &mdash; Graphbrain 0.4.4-dev documentation</title>
+  <title>graphbrain.__init__ &mdash; Graphbrain 0.5.0-dev documentation</title>
   
 
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
 
   
   
@@ -31,10 +33,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -91,7 +93,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials and examples</a></li>
@@ -165,8 +167,16 @@
            <div itemprop="articleBody">
             
   <h1>Source code for graphbrain.__init__</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">graphbrain.hyperedge</span> <span class="kn">import</span> <span class="n">hedge</span>
-<span class="kn">import</span> <span class="nn">graphbrain.memory.leveldb</span>
+<span></span><span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+
+<span class="kn">from</span> <span class="nn">graphbrain.hyperedge</span> <span class="kn">import</span> <span class="n">hedge</span>
+<span class="kn">import</span> <span class="nn">graphbrain.memory.sqlite</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">graphbrain.memory.leveldb</span>
+    <span class="n">LEVELDB</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">LEVELDB</span> <span class="o">=</span> <span class="kc">False</span>
 
 
 <div class="viewcode-block" id="hgraph"><a class="viewcode-back" href="../../manual/api.html#graphbrain.__init__.hgraph">[docs]</a><span class="k">def</span> <span class="nf">hgraph</span><span class="p">(</span><span class="n">locator_string</span><span class="p">):</span>
@@ -176,7 +186,27 @@
 <span class="sd">    Currently, the only type of hypergraph is based on LevelDB storage,</span>
 <span class="sd">    and the location_string is the path to the LevelDB folder.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">graphbrain</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">leveldb</span><span class="o">.</span><span class="n">LevelDB</span><span class="p">(</span><span class="n">locator_string</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="n">locator_string</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;.db&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">graphbrain</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">sqlite</span><span class="o">.</span><span class="n">SQLite</span><span class="p">(</span><span class="n">locator_string</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">locator_string</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;.hg&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">LEVELDB</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">graphbrain</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">leveldb</span><span class="o">.</span><span class="n">LevelDB</span><span class="p">(</span><span class="n">locator_string</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;LevelDB not supported. Custom build required.&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hypergraph database could not be found.&#39;</span><span class="p">)</span></div>
+
+
+<span class="nd">@contextmanager</span>
+<span class="k">def</span> <span class="nf">hopen</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+    <span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+    <span class="n">hg</span><span class="o">.</span><span class="n">begin_transaction</span><span class="p">()</span>
+    <span class="n">hg</span><span class="o">.</span><span class="n">batch_mode</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">hg</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">hg</span><span class="o">.</span><span class="n">batch_mode</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">hg</span><span class="o">.</span><span class="n">end_transaction</span><span class="p">()</span>
 </pre></div>
 
            </div>
