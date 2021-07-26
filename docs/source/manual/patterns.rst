@@ -62,24 +62,33 @@ Non-strict search is semantically more powerful, at the expense of performance. 
 Matching argroles
 =================
 
-If the connector indicates argument roles, then any further arguments may be present, unless indicated otherwise. So::
+Argroles can be specified in patterns. So::
 
    (plays/P.so * *)
 
 matches::
 
+   (plays/P.so alice/C chess/C)
+
+but not::
+
    (plays/P.sox alice/C chess/C (at/T (the/M club/C)))
 
-When specifying argroles, more often than not this is the behavior that is the most useful. 
-
-It is often desirable to allow the various pattern elements to appear in any order. This is indicated by surrounding the roles of such elements with curly brackets. For example::
+It is often desirable to match for the presence of a given set of argroles, independently of their respective positions, or of the presence of further argroles outside the set. This is indicated by surrounding with curly brackets the set of argroles that is to be matched in this way. For example::
 
    (is/P.{sc} * */C)
 
-The above pattern would match both::
+The above pattern would match both (independently of position)::
 
    (is/P.sc (the/M sky/C) blue/C)
    (is/P.cs blue/C (the/M sky/C))
+
+and also (independently of the presence of further argroles outside the set)::
+
+   (is/P.scx (the/M sky/C) blue/C (in/T (the/M morning/C)))
+
+
+In fact, when specifying argroles, more often than not this is the behavior that is the most useful, because it allows for the matching of the participants of a relationship purely according to the role they play in it (subject, object, etc.). 
 
 Sometimes it is also desirable to explicitly forbid certain argument roles. This is achieved by indicating them after '-' in the argrole sequence. For example::
 
