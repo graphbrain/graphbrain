@@ -107,7 +107,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#the-two-central-functions-of-graphbrain-hgraph-and-hedge">The two central functions of Graphbrain: hgraph() and hedge()</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#creating-and-manipulating-hyperedges">Creating and manipulating hyperedges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#creating-and-populating-hypergraphs">Creating and populating hypergraphs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#adding-many-hyperedges-fast">Adding many hyperedges fast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adding-many-hyperedges-as-a-batch-for-speed">Adding many hyperedges as a batch (for speed)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-neighborhood-of-a-hyperedge-star">The neighborhood of a hyperedge (star)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#hyperedges-containing-a-given-set-of-hyperedges">Hyperedges containing a given set of hyperedges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#searching-for-hyperedges">Searching for hyperedges</a></li>
@@ -261,7 +261,7 @@
 </pre></div>
 </div>
 <p>The argument <code class="docutils literal notranslate"><span class="pre">'example.db'</span></code> corresponds to a local file in the filesystem, where the hypergraph is persisted. A full path can also be provided, e.g.: <code class="docutils literal notranslate"><span class="pre">hgraph('users/alice/books.db')</span></code>. The object returned by this function is of type <code class="docutils literal notranslate"><span class="pre">Hypergraph</span></code>. Like <code class="docutils literal notranslate"><span class="pre">Hyperedge</span></code>, it provides a number of general-purpose methods to work with hypergraphs and is not meant to be directly instantiated.</p>
-<p>Graphbrain comes with a default implementation of hypergraph database based on SQLite 3. This is a nice general-purpose option, because it is available in all popular operating systems and Python comes with native support for it. Files with extensions <code class="docutils literal notranslate"><span class="pre">.db</span></code>, <code class="docutils literal notranslate"><span class="pre">.sqlite</span></code> or <code class="docutils literal notranslate"><span class="pre">.sqlite3</span></code> will be opened as SQLite-based hypergraph databases. For other options, see <a class="reference external" href="/manual/backends.html">the section on hypergraph database backends</a>. One possible disadvantage of SQLite is that it is not very space-efficient. This can become a problem with large hypergraphs, and a better option in this case might be the LevelDB-based hypergraph database. This backend is not included by default because it is currently hard to install outside of Linux. To support LevelDB, you will need to build Graphbrain from source with a special option set, <a class="reference external" href="/installation.html#building-graphbrain-with-support-for-leveldb-hypergraph-databases">as explained in the installation instructions</a>.</p>
+<p>Graphbrain comes with a default implementation of hypergraph database based on SQLite 3. This is a nice general-purpose option, because it is available in all popular operating systems and Python comes with native support for it. Files with extensions <code class="docutils literal notranslate"><span class="pre">.db</span></code>, <code class="docutils literal notranslate"><span class="pre">.sqlite</span></code> or <code class="docutils literal notranslate"><span class="pre">.sqlite3</span></code> will be opened as SQLite-based hypergraph databases. For other options, see <a class="reference external" href="/manual/backends.html">the section on hypergraph database backends</a>. One possible disadvantage of SQLite is that it is not very space-efficient. This can become a problem with large hypergraphs, and a better option in this case might be the LevelDB-based hypergraph database. This backend is not included by default because it is currently hard to install outside of Linux. To support LevelDB, you will need to build Graphbrain from source with a special option, <a class="reference external" href="/installation.html#building-graphbrain-with-support-for-leveldb-hypergraph-databases">as explained in the installation instructions</a>.</p>
 <p>Adding hyperedges to a hypergraph is simple. For example, let us add the edge that was defined above:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
 </pre></div>
@@ -293,9 +293,15 @@
 </div>
 <p>As with <code class="docutils literal notranslate"><span class="pre">Hyperedge</span></code>, the full range of methods of <code class="docutils literal notranslate"><span class="pre">Hypergraph</span></code> is documented in the API reference.</p>
 </div>
-<div class="section" id="adding-many-hyperedges-fast">
-<h2>Adding many hyperedges fast<a class="headerlink" href="#adding-many-hyperedges-fast" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<div class="section" id="adding-many-hyperedges-as-a-batch-for-speed">
+<h2>Adding many hyperedges as a batch (for speed)<a class="headerlink" href="#adding-many-hyperedges-as-a-batch-for-speed" title="Permalink to this headline">¶</a></h2>
+<p>With some hypergraph database backends, as is the case for the default one (SQLite 3), adding a large number of edges can be much faster if done in a batch. To help define such bath operations, Graphbrain includes the <code class="docutils literal notranslate"><span class="pre">hopen()</span></code> context manager, to be used with Python’s <code class="docutils literal notranslate"><span class="pre">with</span></code> statements. This works in a very similarly to the <a href="#id1"><span class="problematic" id="id2">``</span></a>with open…` expressions often used with files:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">hopen</span><span class="p">(</span><span class="s1">&#39;example.db&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">hg</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">large_edge_list</span><span class="p">:</span>
+        <span class="n">hg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Since it never hurts performance, it is advisable to always use <code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">hopen...</span></code> when adding large number of hyperedges to a hypergraph database.</p>
 </div>
 <div class="section" id="the-neighborhood-of-a-hyperedge-star">
 <h2>The neighborhood of a hyperedge (star)<a class="headerlink" href="#the-neighborhood-of-a-hyperedge-star" title="Permalink to this headline">¶</a></h2>
