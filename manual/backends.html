@@ -108,7 +108,15 @@
 <li class="toctree-l2"><a class="reference internal" href="discovering-patterns.html">Discovering patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parsing.html">Parsing natural language</a></li>
 <li class="toctree-l2"><a class="reference internal" href="agents.html">Knowledge agents</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Hypergraph database backends</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Hypergraph database backends</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sqlite-3">SQLite 3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#leveldb">LevelDB</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#macos">macOS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#windows">Windows</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="notebooks.html">Notebooks and visualizations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cli.html">Command-line interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="internals.html">Internals and extending Graphbrain</a></li>
@@ -194,16 +202,134 @@
             
   <div class="section" id="hypergraph-database-backends">
 <h1>Hypergraph database backends<a class="headerlink" href="#hypergraph-database-backends" title="Permalink to this headline">¶</a></h1>
-<p>TODO</p>
-<p>Graphbrain currently comes with a default implementation of hypergraph database based on SQLite 3, and another one based on LevelDB is available but requires a custom build of Graphbrain.</p>
-<p>This is a nice general-purpose option, because it is available in all popular operating systems and Python comes with native support for it. Files with extensions <code class="docutils literal notranslate"><span class="pre">.db</span></code>, <code class="docutils literal notranslate"><span class="pre">.sqlite</span></code> or <code class="docutils literal notranslate"><span class="pre">.sqlite3</span></code> will be opened as SQLite-based hypergraph databases. For other options, see <a class="reference external" href="/manual/backends.html">the section on hypergraph database backends</a>. One possible disadvantage of SQLite is that it is not very space-efficient. This can become a problem with large hypergraphs, and a better option in this case might be the LevelDB-based hypergraph database. This backend is not included by default because it is currently hard to install outside of Linux. To support LevelDB, you will need to build Graphbrain from source with a special option set, <a class="reference external" href="/installation.html#building-graphbrain-with-support-for-leveldb-hypergraph-databases">as explained in the installation instructions</a>.</p>
-<p>Graphbrain currently only provides one implementation of hypergraph database, which is based on a local filesytem-based high-performance key-value store (LevelDB). By convention, we use the <code class="docutils literal notranslate"><span class="pre">.hg</span></code> extension to identify directories containing hypergraph databases of this type. In the future, we expect other hypergraph database types to be included in the library (for example, fully in-memory hypergraphs for even higher performance at relatively small sizes, or distributed hypergraphs for huge datasets, fault-tolerance, etc.). Graphbrain is an open source project, so contributions from people interested in developing such implementations are very welcome!</p>
-<p>SQLite 3</p>
-<p>Pros: universal support, native to Python, very fast, concurrent access, single file storage</p>
-<p>Cons: not space-efficient, possibly not as fast as LevelDB</p>
-<p>LevelDB</p>
-<p>Pros: very space-efficient, very fast</p>
-<p>Cons: no concurrent access; very hard to install outside of Linux, directory structure not as nice as single file</p>
+<p>In the future, we expect other hypergraph database backends to be included in the library (for example, fully in-memory hypergraphs for even higher performance at relatively small sizes, or distributed hypergraphs for huge datasets, fault-tolerance, etc.). Graphbrain is an open source project, so contributions from people interested in developing such implementations are very welcome!</p>
+<div class="section" id="sqlite-3">
+<h2>SQLite 3<a class="headerlink" href="#sqlite-3" title="Permalink to this headline">¶</a></h2>
+<p><a href="#id1"><span class="problematic" id="id2">**</span></a>File extensions: ** <code class="docutils literal notranslate"><span class="pre">.db</span></code>, <code class="docutils literal notranslate"><span class="pre">.sqlite</span></code>, <code class="docutils literal notranslate"><span class="pre">.sqlite3</span></code></p>
+<p><strong>Pros:</strong> universal support; native to Python; very fast; concurrent access; single file storage</p>
+<p><strong>Cons:</strong> not space-efficient; possibly not as fast as LevelDB</p>
+<p>This backend comes with vamilla Graphbrain.</p>
+</div>
+<div class="section" id="leveldb">
+<h2>LevelDB<a class="headerlink" href="#leveldb" title="Permalink to this headline">¶</a></h2>
+<p><a href="#id3"><span class="problematic" id="id4">**</span></a>File extensions: ** <code class="docutils literal notranslate"><span class="pre">.hg</span></code>, <code class="docutils literal notranslate"><span class="pre">.leveldb</span></code></p>
+<p><strong>Pros:</strong> very space-efficient; very fast</p>
+<p><strong>Cons:</strong> no concurrent access; hard to install outside of Linux; directory structure not as nice as single file</p>
+<p>LevelDB is a local filesytem-based high-performance key-value store. To support LevelDB, you will need to build Graphbrain from source with a special option set, <a class="reference external" href="/installation.html#building-graphbrain-with-support-for-leveldb-hypergraph-databases">as explained in the installation instructions</a>.</p>
+<p>The <em>plyvel</em> library is required for LevelDB support. Unfortunately, this library is currently hard to install outsisde of Linux systems. Below is the current best information we have for macOS and Windows.</p>
+<div class="section" id="macos">
+<h3>macOS<a class="headerlink" href="#macos" title="Permalink to this headline">¶</a></h3>
+<p>LevelDB can be installed with brew, but currently the latest version is not compatible with the Python wrapper (plyvel). The solution is to install LevelDB version 1.22. With brew, this can be achieved in the following way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew tap bagonyi/homebrew-formulae git@github.com:bagonyi/homebrew-formulae.git
+$ brew extract --version=1.22 leveldb bagonyi/formulae
+$ brew install leveldb@1.22
+</pre></div>
+</div>
+<p>(from <a class="reference external" href="https://github.com/bagonyi/homebrew-formulae">https://github.com/bagonyi/homebrew-formulae</a>)</p>
+<p>The first command above might cause an error, but it appears it can be ignored. If a preexisting installation of LevelDB exists, it should be removed first:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew uninstall leveldb
+</pre></div>
+</div>
+<p>Another option is to perform your own custom build of LevelDB 1.23, with the following line removed from its <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">(</span><span class="n">CMAKE_CXX_FLAGS</span> <span class="s2">&quot;$</span><span class="si">{CMAKE_CXX_FLAGS}</span><span class="s2"> -fno-rtti&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For more details: <a class="reference external" href="https://github.com/wbolster/plyvel/issues/114">https://github.com/wbolster/plyvel/issues/114</a>.</p>
+</div>
+<div class="section" id="windows">
+<h3>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h3>
+<p>To install <em>plyvel</em>, <em>boost.lib</em> and <em>leveldb.lib</em> must be compiled first.</p>
+<ul class="simple">
+<li><p><strong>boost.lib (x64)</strong></p></li>
+</ul>
+<p><strong>step 1</strong> download and unzip the <em>Boost</em> library:  <a class="reference external" href="https://www.boost.org/">https://www.boost.org/</a></p>
+<p><strong>step 2</strong> make sure <em>cl</em> is the environment variable</p>
+<p><strong>step 3</strong> open <em>x64 Native Tools Command Prompt</em> for <em>VS2017</em>. Get into the directory of the unzipped <em>Boost</em></p>
+<p><strong>step 4</strong> run command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ bootstrap.bat
+</pre></div>
+</div>
+<p><em>b2.exe</em> and <em>bjam.exe</em> will be added after this step.</p>
+<p><strong>step 5</strong> open and modify <em>project-config.jam</em> in the current directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ import option ;
+$ using msvc : 14.1 : “E: \VS2017\VC\Tools\MSVC\14.1-.250117\bin\HostX64\x64\cl.exe” ;
+$ option.set keep-going : false ;
+</pre></div>
+</div>
+<p>Please note that you should: i) use your own VS version number (e.g. 14.1) ii) use your own directory of _cl.exe_.</p>
+<p><strong>step 6</strong> <em>(note: this step may take 1 - 3 hours)</em> create a folder named build in the current directory, then run command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ b2.exe stage --toolset=msvc-14.1 address-model=64 --stagedir=&quot;E:\mylib\boost\bin1.64.0\VC14.
+$ 1&quot; threading=multi --build-type=complete --build-dir=&quot;E:\mylib\boost\boost_1_64_0\build&quot;
+</pre></div>
+</div>
+<p>Please note that you should: i) use your own directory names ii) be careful about the VS version number</p>
+<ul class="simple">
+<li><p><strong>leveldb.lib</strong></p></li>
+</ul>
+<p><strong>step 1</strong> download the source code of <em>LevelDB</em> for windows: <a class="reference external" href="https://github.com/vaskomitanov/leveldb">https://github.com/vaskomitanov/leveldb</a></p>
+<p><strong>step 2</strong> open <em>Visual Studio</em> (2017). Create a project:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>file – new – project from existing code</p></li>
+<li><p>choose the type of project: <em>Visual C++</em></p></li>
+<li><p>project file location: the directory of <em>LevelDB</em></p></li>
+<li><p>project name: <em>LevelDB</em></p></li>
+<li><p>project type: <em>LIB</em></p></li>
+<li><p>preprocessor definition: <em>LEVELDB_PLATFORM_WINDOWS;OS_WIN; WIN32</em></p></li>
+<li><p>include search path: <em>E:LIBleveldb-windows;E:LIBleveldb-windowsinclude</em> (the directory of <em>LevelDB</em> and its <em>include</em>)</p></li>
+<li><p>click <em>finish</em></p></li>
+</ul>
+</div></blockquote>
+<p><strong>step 3</strong> set <em>LevelDB.lib</em>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>project – properties – configuration properties – configuration type: <em>LIB</em></p></li>
+<li><p>configuration properties – C/C++ - General – preprocessor – preprocessor definition: <em>LEVELDB_PLATFORM_WINDOWS;OS_WIN; WIN32</em></p></li>
+<li><p>linker – general – additional library directory: <em>E:LIBboost64stagelib</em> (use your own path)</p></li>
+</ul>
+</div></blockquote>
+<p><strong>step 4</strong> open <em>solution explorer</em>, exclude the following files <em>(tip: you can search and right click on the target files)</em>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>files ends with <em>_test.cc</em> and <em>_bench.cc</em></p></li>
+<li><p><em>port/port_android.cc</em></p></li>
+<li><p><em>port/port_posix.cc</em></p></li>
+<li><p><em>util/env_posix.cc</em></p></li>
+</ul>
+</div></blockquote>
+<p><strong>step 5</strong> modify code:</p>
+<p>in <em>dbc.cc</em>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ delete #include &lt; unistd.h&gt;
+</pre></div>
+</div>
+<p>in <em>portport.h</em> - add the lines below before first <code class="docutils literal notranslate"><span class="pre">#endif</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ elif defined(LEVELDB_PLATFORM_WINDOWS)
+$ include &quot;port/port_win.h&quot;
+</pre></div>
+</div>
+<p><strong>step 6</strong> note: remember to compile as <em>release x64</em></p>
+<ul class="simple">
+<li><p><strong>plyvel</strong></p></li>
+</ul>
+<p>modify <em>setup.py</em>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Extension</span><span class="p">(</span>
+                <span class="o">...</span>
+                <span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;leveldb vaskomitanov-r x64&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;libboost_chrono-vc141-mt-x64-1_69&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;libboost_date_time-vc141-mt-x64-1_69&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;libboost_filesystem-vc141-mt-x64-1_69&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;libboost_system-vc141-mt-x64-1_69&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;libboost_thread-vc141-mt-x64-1_69&#39;</span><span class="p">],</span>
+                <span class="o">...</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Cmake</strong></p></li>
+</ul>
+<p>you may also need to install Cmake, please check the official guidance here: <a class="reference external" href="https://cgold.readthedocs.io/en/latest/first-step/installation.html#windows">https://cgold.readthedocs.io/en/latest/first-step/installation.html#windows</a></p>
+</div>
+</div>
 </div>
 
 
