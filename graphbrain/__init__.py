@@ -14,18 +14,20 @@ def hgraph(locator_string):
     """Returns an instance of Hypergraph identified by the locator_string.
     The hypergraph will be created if it does not exist.
 
-    Currently, the only type of hypergraph is based on LevelDB storage,
-    and the location_string is the path to the LevelDB folder.
+    The location_string can be the path to an SQLite3 file or LevelDB folder.
     """
-    if locator_string[-3:] == '.db':
-        return graphbrain.memory.sqlite.SQLite(locator_string)
-    elif locator_string[-3:] == '.hg':
-        if LEVELDB:
-            return graphbrain.memory.leveldb.LevelDB(locator_string)
-        else:
-            print('LevelDB not supported. Custom build required.')
-    else:
-        print('Hypergraph database could not be found.')
+    filename_parts = locator_string.split('.')
+    if len(filename_parts) > 1:
+        extension = filename_parts[-1]
+        if extension in {'sqlite', 'sqlite3', 'db'}:
+            return graphbrain.memory.sqlite.SQLite(locator_string)
+        elif extension in {'leveldb', 'hg'}:
+            if LEVELDB:
+                return graphbrain.memory.leveldb.LevelDB(locator_string)
+            else:
+                raise RuntimeError(
+                    'LevelDB not supported. Custom build required.')
+    raise RuntimeError('Unknown hypergraph database type.')
 
 
 @contextmanager
