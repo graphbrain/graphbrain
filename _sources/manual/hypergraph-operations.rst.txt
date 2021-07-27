@@ -175,7 +175,7 @@ Degrees and deep degrees
 In conventional graph theory, there is the notion of the degree of a node, which is the number of other nodes that it is directly connected to. This is a simple but generally useful measure of the *centrality* of a node in the graph. In hypergraphs we can also have the same notion of degree, with the only difference that a single hyperedge can connect one entity to several others. Graphbrain keeps track of the degree of every hyperedge, and the ``Hypergraph`` class provides a method to obtain it::
 
    >>> from graphbrain import *
-   >>> hg = hgraph('example.hg')
+   >>> hg = hgraph('example.db')
    >>> hg.degree('alice/C')
    0
 

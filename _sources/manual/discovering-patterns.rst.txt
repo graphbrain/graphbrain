@@ -10,15 +10,15 @@ A simple example
 
 To exemplify, let us first generate a hypergraph parsed from real text. For this, we will use the "wikipedia" agent. Agents will be discussed in a subsequent section, but for now it is enough to know that the "wikipedia" agent extracts the text from a Wikipedia page identified by it's URL, and then populates a hypergraph by parsing each sentence of the text into a hyperedge. Let us run the agent from the command line::
 
-   $ graphbrain --hg ai.hg --url https://en.wikipedia.org/wiki/Artificial_intelligence --agent wikipedia run
+   $ graphbrain --hg ai.db --url https://en.wikipedia.org/wiki/Artificial_intelligence --agent wikipedia run
 
 
-Once it finishes, we will have the ``ai.hg`` hypergraph database in the current directory. Let us now simply find the most common patterns in this hypergraph::
+Once it finishes, we will have the ``ai.db`` hypergraph database in the current directory. Let us now simply find the most common patterns in this hypergraph::
 
    from graphbrain import hgraph
    from graphbrain.patterns import PatternCounter
 
-   hg = hgraph('ai.hg')
+   hg = hgraph('ai.db')
    pc = PatternCounter()
    for edge in hg.all():
        if hg.is_primary(edge):

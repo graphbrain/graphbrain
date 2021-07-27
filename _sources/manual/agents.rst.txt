@@ -39,7 +39,7 @@ It is naturally useful to be able to run a agents from inside programs. Agents m
    from graphbrain import hgraph
    from graphbrain.cognition.system import run_agent
 
-   hg = hgraph('test.hg')
+   hg = hgraph('test.db')
 
    run_agent('conflicts', hg=hg)
 
@@ -80,9 +80,9 @@ Agent systems can be specified in JSON. Let us consider a case where the ``wikip
 
 Let us say we save this file as ``wikipedia.sys``. We can then run this system from the command line, for example like this::
 
-   graphbrain --hg wikipedia.hg --url https://en.wikipedia.org/wiki/Artificial_intelligence --system systems/wikipedia.sys run
+   graphbrain --hg wikipedia.db --url https://en.wikipedia.org/wiki/Artificial_intelligence --system systems/wikipedia.sys run
 
-Notice that the arguments that are specified in the command line are transparently transfered to the agents in the system that make use of them. For example, the ``wikipedia`` agent requires an input url (``--url https://en.wikipedia.org/wiki/Artificial_intelligence``) and a hypergraph to write to (``--hg wikipedia.hg``). Then both ``taxonomy`` and ``corefs_names``, which are introspective, both require a hypergraph to read/write to. The same one is used. Agent systems are meant to operate on a given hypergraph, to which all agents refer to when performing their operations.
+Notice that the arguments that are specified in the command line are transparently transfered to the agents in the system that make use of them. For example, the ``wikipedia`` agent requires an input url (``--url https://en.wikipedia.org/wiki/Artificial_intelligence``) and a hypergraph to write to (``--hg wikipedia.db``). Then both ``taxonomy`` and ``corefs_names``, which are introspective, both require a hypergraph to read/write to. The same one is used. Agent systems are meant to operate on a given hypergraph, to which all agents refer to when performing their operations.
 
 
 Defining and running an agent system programmatically
@@ -144,7 +144,6 @@ Or, if we consider modifier-defined concepts such as ``(black/Ma cat/Cc.s)``::
 
    (type_of/P/. (black/Ma cat/Cc.s) cat/Cc.s)
 
-
 corefs_dets
 -----------
 
@@ -174,16 +173,6 @@ corefs_onto
 
 Performs `coreference resolution <https://graphbrain.net/reference/special-relations.html#coreferences>`_ based on probabilistic reasoning over taxonomies. For example, detecting that "United States" and "United States of America" refer to the same entity.
 
-corefs_unidecode
-----------------
-
-**Type**: introspective
-
-**Languages**: agnostic
-
-Performs `coreference resolution <https://graphbrain.net/reference/special-relations.html#coreferences>`_ for atoms that become equal after unidecode() is a applied to both labels. For example, it will create a coreference relation between ``über/C`` and ``uber/C``.
-
-
 actors
 ------
 
@@ -204,7 +193,6 @@ This agent transverses the entire hypergraph to identify actors, and then adds h
    (actor/P/. mary/Cp.s/en)
 
 The above simply means that ``mary/Cp.s/en`` was identified as an actor.
-
 
 claims
 ------

@@ -43,7 +43,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Parsing Natural Language" href="parsing.html" />
+    <link rel="next" title="Parsing natural language" href="parsing.html" />
     <link rel="prev" title="Patterns" href="patterns.html" /> 
 </head>
 
@@ -113,8 +113,9 @@
 <li class="toctree-l3"><a class="reference internal" href="#build-your-own">Build your own</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="parsing.html">Parsing Natural Language</a></li>
-<li class="toctree-l2"><a class="reference internal" href="agents.html">Knowledge Agents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parsing.html">Parsing natural language</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agents.html">Knowledge agents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backends.html">Hypergraph database backends</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notebooks.html">Notebooks and visualizations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cli.html">Command-line interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="internals.html">Internals and extending Graphbrain</a></li>
@@ -204,14 +205,14 @@
 <div class="section" id="a-simple-example">
 <h2>A simple example<a class="headerlink" href="#a-simple-example" title="Permalink to this headline">¶</a></h2>
 <p>To exemplify, let us first generate a hypergraph parsed from real text. For this, we will use the “wikipedia” agent. Agents will be discussed in a subsequent section, but for now it is enough to know that the “wikipedia” agent extracts the text from a Wikipedia page identified by it’s URL, and then populates a hypergraph by parsing each sentence of the text into a hyperedge. Let us run the agent from the command line:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ graphbrain --hg ai.hg --url https://en.wikipedia.org/wiki/Artificial_intelligence --agent wikipedia run
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ graphbrain --hg ai.db --url https://en.wikipedia.org/wiki/Artificial_intelligence --agent wikipedia run
 </pre></div>
 </div>
-<p>Once it finishes, we will have the <code class="docutils literal notranslate"><span class="pre">ai.hg</span></code> hypergraph database in the current directory. Let us now simply find the most common patterns in this hypergraph:</p>
+<p>Once it finishes, we will have the <code class="docutils literal notranslate"><span class="pre">ai.db</span></code> hypergraph database in the current directory. Let us now simply find the most common patterns in this hypergraph:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="n">hgraph</span>
 <span class="kn">from</span> <span class="nn">graphbrain.patterns</span> <span class="kn">import</span> <span class="n">PatternCounter</span>
 
-<span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;ai.hg&#39;</span><span class="p">)</span>
+<span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;ai.db&#39;</span><span class="p">)</span>
 <span class="n">pc</span> <span class="o">=</span> <span class="n">PatternCounter</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">hg</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">hg</span><span class="o">.</span><span class="n">is_primary</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
@@ -352,7 +353,7 @@ for edge in hg.all():
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="parsing.html" class="btn btn-neutral float-right" title="Parsing Natural Language" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="parsing.html" class="btn btn-neutral float-right" title="Parsing natural language" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="patterns.html" class="btn btn-neutral float-left" title="Patterns" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

@@ -16,7 +16,7 @@ The basic wildcard is ``*``. It matches any hyperedge. It allows for the definit
 We can use them to search the hypergraph for matching hyperedges. For example::
 
    >>> from graphbrain import *
-   >>> hg = hgraph('example.hg')
+   >>> hg = hgraph('example.db')
    >>> hg.add('(plays/P.so alice/C chess/C)')
    (plays/P.so alice/C chess/C)
    >>> list(hg.search('(plays/P.so * *)'))
@@ -48,7 +48,7 @@ Non-strict search
 Non-strict search allows for patterns to match atoms in the most general way, meaning that, if a subtype or other roles are not specified in the pattern, then any subtypes or argroles will match, as can be seen in this example::
 
    >>> from graphbrain import *
-   >>> hg = hgraph('example.hg')
+   >>> hg = hgraph('example.db')
    >>> hg.add('(plays/Pd.so alice/Cp.s chess/Cc.s)')
    (plays/Pd.so alice/Cp.s chess/Cc.s)
    >>> list(hg.search('(plays/P alice/C *)', strict=False))

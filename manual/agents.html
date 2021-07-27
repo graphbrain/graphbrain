@@ -43,7 +43,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Database types" href="databases.html" />
+    <link rel="next" title="Hypergraph database backends" href="backends.html" />
     <link rel="prev" title="Parsing natural language" href="parsing.html" /> 
 </head>
 
@@ -121,7 +121,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#corefs-dets">corefs_dets</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#corefs-names">corefs_names</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#corefs-onto">corefs_onto</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#corefs-unidecode">corefs_unidecode</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#actors">actors</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#claims">claims</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conflicts">conflicts</a></li>
@@ -129,7 +128,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="databases.html">Database types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backends.html">Hypergraph database backends</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notebooks.html">Notebooks and visualizations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cli.html">Command-line interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="internals.html">Internals and extending Graphbrain</a></li>
@@ -245,7 +244,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="n">hgraph</span>
 <span class="kn">from</span> <span class="nn">graphbrain.cognition.system</span> <span class="kn">import</span> <span class="n">run_agent</span>
 
-<span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;test.hg&#39;</span><span class="p">)</span>
+<span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;test.db&#39;</span><span class="p">)</span>
 
 <span class="n">run_agent</span><span class="p">(</span><span class="s1">&#39;conflicts&#39;</span><span class="p">,</span> <span class="n">hg</span><span class="o">=</span><span class="n">hg</span><span class="p">)</span>
 </pre></div>
@@ -282,10 +281,10 @@
 </pre></div>
 </div>
 <p>Let us say we save this file as <code class="docutils literal notranslate"><span class="pre">wikipedia.sys</span></code>. We can then run this system from the command line, for example like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="n">wikipedia</span><span class="o">.</span><span class="n">hg</span> <span class="o">--</span><span class="n">url</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">en</span><span class="o">.</span><span class="n">wikipedia</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">wiki</span><span class="o">/</span><span class="n">Artificial_intelligence</span> <span class="o">--</span><span class="n">system</span> <span class="n">systems</span><span class="o">/</span><span class="n">wikipedia</span><span class="o">.</span><span class="n">sys</span> <span class="n">run</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="n">wikipedia</span><span class="o">.</span><span class="n">db</span> <span class="o">--</span><span class="n">url</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">en</span><span class="o">.</span><span class="n">wikipedia</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">wiki</span><span class="o">/</span><span class="n">Artificial_intelligence</span> <span class="o">--</span><span class="n">system</span> <span class="n">systems</span><span class="o">/</span><span class="n">wikipedia</span><span class="o">.</span><span class="n">sys</span> <span class="n">run</span>
 </pre></div>
 </div>
-<p>Notice that the arguments that are specified in the command line are transparently transfered to the agents in the system that make use of them. For example, the <code class="docutils literal notranslate"><span class="pre">wikipedia</span></code> agent requires an input url (<code class="docutils literal notranslate"><span class="pre">--url</span> <span class="pre">https://en.wikipedia.org/wiki/Artificial_intelligence</span></code>) and a hypergraph to write to (<code class="docutils literal notranslate"><span class="pre">--hg</span> <span class="pre">wikipedia.hg</span></code>). Then both <code class="docutils literal notranslate"><span class="pre">taxonomy</span></code> and <code class="docutils literal notranslate"><span class="pre">corefs_names</span></code>, which are introspective, both require a hypergraph to read/write to. The same one is used. Agent systems are meant to operate on a given hypergraph, to which all agents refer to when performing their operations.</p>
+<p>Notice that the arguments that are specified in the command line are transparently transfered to the agents in the system that make use of them. For example, the <code class="docutils literal notranslate"><span class="pre">wikipedia</span></code> agent requires an input url (<code class="docutils literal notranslate"><span class="pre">--url</span> <span class="pre">https://en.wikipedia.org/wiki/Artificial_intelligence</span></code>) and a hypergraph to write to (<code class="docutils literal notranslate"><span class="pre">--hg</span> <span class="pre">wikipedia.db</span></code>). Then both <code class="docutils literal notranslate"><span class="pre">taxonomy</span></code> and <code class="docutils literal notranslate"><span class="pre">corefs_names</span></code>, which are introspective, both require a hypergraph to read/write to. The same one is used. Agent systems are meant to operate on a given hypergraph, to which all agents refer to when performing their operations.</p>
 </div>
 <div class="section" id="defining-and-running-an-agent-system-programmatically">
 <h2>Defining and running an agent system programmatically<a class="headerlink" href="#defining-and-running-an-agent-system-programmatically" title="Permalink to this headline">¶</a></h2>
@@ -347,12 +346,6 @@
 <p><strong>Languages</strong>: agnostic</p>
 <p><strong>Depends on</strong>: taxonomy</p>
 <p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> based on probabilistic reasoning over taxonomies. For example, detecting that “United States” and “United States of America” refer to the same entity.</p>
-</div>
-<div class="section" id="corefs-unidecode">
-<h3>corefs_unidecode<a class="headerlink" href="#corefs-unidecode" title="Permalink to this headline">¶</a></h3>
-<p><strong>Type</strong>: introspective</p>
-<p><strong>Languages</strong>: agnostic</p>
-<p>Performs <a class="reference external" href="https://graphbrain.net/reference/special-relations.html#coreferences">coreference resolution</a> for atoms that become equal after unidecode() is a applied to both labels. For example, it will create a coreference relation between <code class="docutils literal notranslate"><span class="pre">über/C</span></code> and <code class="docutils literal notranslate"><span class="pre">uber/C</span></code>.</p>
 </div>
 <div class="section" id="actors">
 <h3>actors<a class="headerlink" href="#actors" title="Permalink to this headline">¶</a></h3>
@@ -435,7 +428,7 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="databases.html" class="btn btn-neutral float-right" title="Database types" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="backends.html" class="btn btn-neutral float-right" title="Hypergraph database backends" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="parsing.html" class="btn btn-neutral float-left" title="Parsing natural language" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
