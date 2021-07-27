@@ -3,7 +3,6 @@ import itertools
 
 import networkx as nx
 import progressbar
-from unidecode import unidecode
 
 from graphbrain.hyperedge import hedge, build_atom
 from graphbrain.cognition.agent import Agent
@@ -15,7 +14,6 @@ def clean_edge(edge):
     if not edge.is_atom():
         return hedge([clean_edge(subedge) for subedge in edge])
     root = edge.label()
-    root = unidecode(root)
     root = root.replace('_', '').replace('.', '')
     return build_atom(root, *edge.parts()[1:])
 

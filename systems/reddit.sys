@@ -22,13 +22,9 @@
         "agent": "corefs_onto",
         "depends_on": "corefs_names"
     },
-    "corefs_unidecode": {
-        "agent": "corefs_unidecode",
-        "depends_on": "corefs_onto"
-    },
     "iterator": {
         "agent": "iterator",
-        "depends_on": "corefs_unidecode"
+        "depends_on": "corefs_onto"
     },
     "conjunctions": {
         "agent": "conjunctions",

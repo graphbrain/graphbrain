@@ -158,8 +158,7 @@ install_requires = [
         'termcolor',
         'asciitree',
         'ipython',
-        'progressbar2',
-        'unidecode'
+        'progressbar2'
     ]
 
 if LEVELDB:

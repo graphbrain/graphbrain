@@ -18,6 +18,7 @@
 - Hypergraph.primary_atom_count().
 - Hypergraph.primary_edge_count().
 - info command.
+- corefs_unidecode agent.
 
 ## [0.4.3] - 22-04-2021
 ### Changed
