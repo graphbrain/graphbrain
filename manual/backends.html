@@ -205,14 +205,14 @@
 <p>In the future, we expect other hypergraph database backends to be included in the library (for example, fully in-memory hypergraphs for even higher performance at relatively small sizes, or distributed hypergraphs for huge datasets, fault-tolerance, etc.). Graphbrain is an open source project, so contributions from people interested in developing such implementations are very welcome!</p>
 <div class="section" id="sqlite-3">
 <h2>SQLite 3<a class="headerlink" href="#sqlite-3" title="Permalink to this headline">¶</a></h2>
-<p><a href="#id1"><span class="problematic" id="id2">**</span></a>File extensions: ** <code class="docutils literal notranslate"><span class="pre">.db</span></code>, <code class="docutils literal notranslate"><span class="pre">.sqlite</span></code>, <code class="docutils literal notranslate"><span class="pre">.sqlite3</span></code></p>
+<p><strong>File extensions:</strong> <code class="docutils literal notranslate"><span class="pre">.db</span></code>, <code class="docutils literal notranslate"><span class="pre">.sqlite</span></code>, <code class="docutils literal notranslate"><span class="pre">.sqlite3</span></code></p>
 <p><strong>Pros:</strong> universal support; native to Python; very fast; concurrent access; single file storage</p>
 <p><strong>Cons:</strong> not space-efficient; possibly not as fast as LevelDB</p>
 <p>This backend comes with vamilla Graphbrain.</p>
 </div>
 <div class="section" id="leveldb">
 <h2>LevelDB<a class="headerlink" href="#leveldb" title="Permalink to this headline">¶</a></h2>
-<p><a href="#id3"><span class="problematic" id="id4">**</span></a>File extensions: ** <code class="docutils literal notranslate"><span class="pre">.hg</span></code>, <code class="docutils literal notranslate"><span class="pre">.leveldb</span></code></p>
+<p><strong>File extensions:</strong> <code class="docutils literal notranslate"><span class="pre">.hg</span></code>, <code class="docutils literal notranslate"><span class="pre">.leveldb</span></code></p>
 <p><strong>Pros:</strong> very space-efficient; very fast</p>
 <p><strong>Cons:</strong> no concurrent access; hard to install outside of Linux; directory structure not as nice as single file</p>
 <p>LevelDB is a local filesytem-based high-performance key-value store. To support LevelDB, you will need to build Graphbrain from source with a special option set, <a class="reference external" href="/installation.html#building-graphbrain-with-support-for-leveldb-hypergraph-databases">as explained in the installation instructions</a>.</p>

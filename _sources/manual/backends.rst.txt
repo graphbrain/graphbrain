@@ -8,7 +8,7 @@ In the future, we expect other hypergraph database backends to be included in th
 SQLite 3
 ========
 
-**File extensions: ** ``.db``, ``.sqlite``, ``.sqlite3`` 
+**File extensions:** ``.db``, ``.sqlite``, ``.sqlite3`` 
 
 **Pros:** universal support; native to Python; very fast; concurrent access; single file storage
 
@@ -20,7 +20,7 @@ This backend comes with vamilla Graphbrain.
 LevelDB
 =======
 
-**File extensions: ** ``.hg``, ``.leveldb``
+**File extensions:** ``.hg``, ``.leveldb``
 
 **Pros:** very space-efficient; very fast
 
