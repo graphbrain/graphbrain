@@ -51,6 +51,23 @@ Another option is to perform your own custom build of LevelDB 1.23, with the fol
 
 For more details: https://github.com/wbolster/plyvel/issues/114.
 
+Anaconda on macOS
+-----------------
+
+We have found cases where the plyvel library that is installed as a dependency by Graphbrain does not work in Anaconda environments. This was observed on macOS Big Sur, on MacBook Pro laptops with the M1 chip. It is unknown if it might apply in other cases.
+
+You might get error messages such as this one::
+
+   ImportError: dlopen(/opt/anaconda3/lib/python3.8/site-packages/plyvel/plyvel.cpython-38-darwin.so, 2): Symbol not found: _ZTIN7leveldb10ComparatorE
+   Referenced from: /opt/anaconda3/lib/python3.8/site-packages/plyvel/_plyvel.cpython-38-darwin.so
+   Expected in: /usr/local/opt/leveldb/lib/libleveldb.1.dylib
+   in /opt/anaconda3/lib/python3.8/site-packages/plyvel/_plyvel.cpython-38-darwin.so
+
+The solution is to replace plyvel with one from the Anaconda repositories::
+
+   $ pip uninstall plyvel
+   $ conda install -c conda-forge plyvel
+
 Windows
 -------
 

@@ -111,10 +111,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#macos">macOS</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#plyvel-importerror-on-anaconda-seen-on-macos">Plyvel ImportError on Anaconda (seen on macOS)</a></li>
-</ul>
-</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials and examples</a></li>
@@ -325,25 +321,6 @@ distribution to install the prerequisites.</p>
 </div>
 </li>
 </ul>
-</div>
-</div>
-<div class="section" id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="plyvel-importerror-on-anaconda-seen-on-macos">
-<h3>Plyvel ImportError on Anaconda (seen on macOS)<a class="headerlink" href="#plyvel-importerror-on-anaconda-seen-on-macos" title="Permalink to this headline">¶</a></h3>
-<p>We have found cases where the plyvel library that is installed as a dependency by Graphbrain does not work in Anaconda environments. This was observed on macOS Big Sur, on MacBook Pro laptops with the M1 chip. It is unknown if it might apply in other cases.</p>
-<p>You might get error messages such as this one:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">ImportError</span><span class="p">:</span> <span class="n">dlopen</span><span class="p">(</span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">anaconda3</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.8</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">plyvel</span><span class="o">/</span><span class="n">plyvel</span><span class="o">.</span><span class="n">cpython</span><span class="o">-</span><span class="mi">38</span><span class="o">-</span><span class="n">darwin</span><span class="o">.</span><span class="n">so</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span> <span class="n">Symbol</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span> <span class="n">_ZTIN7leveldb10ComparatorE</span>
-<span class="n">Referenced</span> <span class="n">from</span><span class="p">:</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">anaconda3</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.8</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">plyvel</span><span class="o">/</span><span class="n">_plyvel</span><span class="o">.</span><span class="n">cpython</span><span class="o">-</span><span class="mi">38</span><span class="o">-</span><span class="n">darwin</span><span class="o">.</span><span class="n">so</span>
-<span class="n">Expected</span> <span class="ow">in</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">leveldb</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">libleveldb</span><span class="mf">.1</span><span class="o">.</span><span class="n">dylib</span>
-<span class="ow">in</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">anaconda3</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.8</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">plyvel</span><span class="o">/</span><span class="n">_plyvel</span><span class="o">.</span><span class="n">cpython</span><span class="o">-</span><span class="mi">38</span><span class="o">-</span><span class="n">darwin</span><span class="o">.</span><span class="n">so</span>
-</pre></div>
-</div>
-<p>The solution is to replace plyvel with one from the Anaconda repositories:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip uninstall plyvel
-$ conda install -c conda-forge plyvel
-</pre></div>
-</div>
 </div>
 </div>
 </div>
