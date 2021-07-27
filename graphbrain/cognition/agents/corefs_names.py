@@ -1,8 +1,8 @@
 import logging
 import itertools
 
+import networkx as nx
 import progressbar
-from igraph import Graph
 from unidecode import unidecode
 
 from graphbrain.hyperedge import hedge, build_atom
@@ -119,13 +119,12 @@ class CorefsNames(Agent):
         graph_edges = tuple((subconcepts.index(e[0]), subconcepts.index(e[1]))
                             for e in graph_edges)
 
-        g = Graph()
-        g.add_vertices(range(len(subconcepts)))
-        g.add_edges(graph_edges)
-        maxcliques = g.maximal_cliques()
+        g = nx.Graph()
+        g.add_nodes_from(range(len(subconcepts)))
+        g.add_edges_from(graph_edges)
 
         cliques = []
-        for i, clique in enumerate(maxcliques):
+        for clique in nx.find_cliques(g):
             members = tuple(subconcepts[i] for i in clique)
             cliques.append(members + (clean_edge(seed),))
 

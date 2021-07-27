@@ -154,7 +154,7 @@ python_requires = '>=3.6'
 install_requires = [
         'numpy',
         'scikit-learn',
-        'python-igraph',
+        'networkx',
         'termcolor',
         'asciitree',
         'ipython',
