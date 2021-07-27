@@ -41,29 +41,35 @@ Commands
 create
 ------
 
-Creates an empty hypergraph::
+Creates an empty hypergraph database::
 
-   graphbrain --hg <hypergraph> create
+   graphbrain --hg <hypergraph_database> create
 
 
-info
-----
+export
+------
 
-Displays simple information about an hypergraph::
+Exports a hypergraph database to a JSON file::
 
-   graphbrain --hg <hypergraph> info
+   graphbrain --hg <hypergraph_database> --outfile <json_file> export
 
+import
+------
+
+Imports a hypergraph database from a JSON file::
+
+   graphbrain --hg <hypergraph_database> --infile <json_file> import
 
 run
 ---
 
 Run a knowledge agent::
 
-   graphbrain --hg <hypergraph> --agent <agent name> run
+   graphbrain --hg <hypergraph_database> --agent <agent name> run
 
 A knowledge agent is a program that manipulates an hypergraph in some way. It can be introspective, working only on the current contents of the hypergraph to derive new knowledge. For example, the *taxonomy* agent infers simple taxonomies from concepts. It can infer that 'black cat' is a type of 'cat' or that 'city of Berlin' is a type of 'city'. You can run it like this::
 
-   graphbrain --hg <hypergraph> --agent taxonomy run
+   graphbrain --hg <hypergraph_database> --agent taxonomy run
 
 It produces new hyperedges such as::
 
@@ -71,7 +77,7 @@ It produces new hyperedges such as::
 
 Certain agents use outside sources to introduce knowledge into hypergraphs. For example, the *txt_parser* agent receives as input a simple text file and converters each sentence that it detects in it into an hyperedge. You can run it like this::
 
-   graphbrain --infile some_test_file.txt --hg <hypergraph> --agent txt_parser run
+   graphbrain --infile some_test_file.txt --hg <hypergraph_database> --agent txt_parser run
 
 You can find the full list of agents that are distributed with Graphbrain here:
 

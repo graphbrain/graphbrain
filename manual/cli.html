@@ -106,13 +106,15 @@
 <li class="toctree-l2"><a class="reference internal" href="hypergraph-operations.html">Basic hypergraph operations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="patterns.html">Patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="discovering-patterns.html">Discovering patterns</a></li>
-<li class="toctree-l2"><a class="reference internal" href="parsing.html">Parsing Natural Language</a></li>
-<li class="toctree-l2"><a class="reference internal" href="agents.html">Knowledge Agents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parsing.html">Parsing natural language</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agents.html">Knowledge agents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backends.html">Hypergraph database backends</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notebooks.html">Notebooks and visualizations</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Command-line interface</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#commands">Commands</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#create">create</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#info">info</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#export">export</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#import">import</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#run">run</a></li>
 </ul>
 </li>
@@ -236,26 +238,33 @@
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="create">
 <h3>create<a class="headerlink" href="#create" title="Permalink to this headline">¶</a></h3>
-<p>Creates an empty hypergraph:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph</span><span class="o">&gt;</span> <span class="n">create</span>
+<p>Creates an empty hypergraph database:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph_database</span><span class="o">&gt;</span> <span class="n">create</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="info">
-<h3>info<a class="headerlink" href="#info" title="Permalink to this headline">¶</a></h3>
-<p>Displays simple information about an hypergraph:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph</span><span class="o">&gt;</span> <span class="n">info</span>
+<div class="section" id="export">
+<h3>export<a class="headerlink" href="#export" title="Permalink to this headline">¶</a></h3>
+<p>Exports a hypergraph database to a JSON file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph_database</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">outfile</span> <span class="o">&lt;</span><span class="n">json_file</span><span class="o">&gt;</span> <span class="n">export</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="import">
+<h3>import<a class="headerlink" href="#import" title="Permalink to this headline">¶</a></h3>
+<p>Imports a hypergraph database from a JSON file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph_database</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">infile</span> <span class="o">&lt;</span><span class="n">json_file</span><span class="o">&gt;</span> <span class="kn">import</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="run">
 <h3>run<a class="headerlink" href="#run" title="Permalink to this headline">¶</a></h3>
 <p>Run a knowledge agent:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">agent</span> <span class="o">&lt;</span><span class="n">agent</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">run</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph_database</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">agent</span> <span class="o">&lt;</span><span class="n">agent</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">run</span>
 </pre></div>
 </div>
 <p>A knowledge agent is a program that manipulates an hypergraph in some way. It can be introspective, working only on the current contents of the hypergraph to derive new knowledge. For example, the <em>taxonomy</em> agent infers simple taxonomies from concepts. It can infer that ‘black cat’ is a type of ‘cat’ or that ‘city of Berlin’ is a type of ‘city’. You can run it like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">agent</span> <span class="n">taxonomy</span> <span class="n">run</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph_database</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">agent</span> <span class="n">taxonomy</span> <span class="n">run</span>
 </pre></div>
 </div>
 <p>It produces new hyperedges such as:</p>
@@ -263,7 +272,7 @@
 </pre></div>
 </div>
 <p>Certain agents use outside sources to introduce knowledge into hypergraphs. For example, the <em>txt_parser</em> agent receives as input a simple text file and converters each sentence that it detects in it into an hyperedge. You can run it like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">infile</span> <span class="n">some_test_file</span><span class="o">.</span><span class="n">txt</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">agent</span> <span class="n">txt_parser</span> <span class="n">run</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="o">--</span><span class="n">infile</span> <span class="n">some_test_file</span><span class="o">.</span><span class="n">txt</span> <span class="o">--</span><span class="n">hg</span> <span class="o">&lt;</span><span class="n">hypergraph_database</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">agent</span> <span class="n">txt_parser</span> <span class="n">run</span>
 </pre></div>
 </div>
 <p>You can find the full list of agents that are distributed with Graphbrain here:</p>
