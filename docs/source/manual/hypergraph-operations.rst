@@ -63,11 +63,11 @@ Creating and populating hypergraphs
 Graphbrain hypergraphs are created and/or opened like this::
 
    from graphbrain import hgraph
-   hg = hgraph('example.hg')
+   hg = hgraph('example.db')
 
-The argument ``'example.hg'`` corresponds to a local directory in the filesystem, where the hypergraph is persisted. A full path can also be provided, e.g.: ``hgraph('users/alice/books.hg')``. The object returned by this function is of type ``Hypergraph``. Like ``Hyperedge``, it provides a number of general-purpose methods to work with hypergraphs and is not meant to be directly instantiated.
+The argument ``'example.db'`` corresponds to a local file in the filesystem, where the hypergraph is persisted. A full path can also be provided, e.g.: ``hgraph('users/alice/books.db')``. The object returned by this function is of type ``Hypergraph``. Like ``Hyperedge``, it provides a number of general-purpose methods to work with hypergraphs and is not meant to be directly instantiated.
 
-Graphbrain currently only provides one implementation of hypergraph database, which is based on a local filesytem-based high-performance key-value store (LevelDB). By convention, we use the ``.hg`` extension to identify directories containing hypergraph databases of this type. In the future, we expect other hypergraph database types to be included in the library (for example, fully in-memory hypergraphs for even higher performance at relatively small sizes, or distributed hypergraphs for huge datasets, fault-tolerance, etc.). Graphbrain is an open source project, so contributions from people interested in developing such implementations are very welcome!
+Graphbrain comes with a default implementation of hypergraph database based on SQLite 3. This is a nice general-purpose option, because it is available in all popular operating systems and Python comes with native support for it. Files with extensions ``.db``, ``.sqlite`` or ``.sqlite3`` will be opened as SQLite-based hypergraph databases. For other options, see `the section on hypergraph database backends </manual/backends.html>`_. One possible disadvantage of SQLite is that it is not very space-efficient. This can become a problem with large hypergraphs, and a better option in this case might be the LevelDB-based hypergraph database. This backend is not included by default because it is currently hard to install outside of Linux. To support LevelDB, you will need to build Graphbrain from source with a special option, `as explained in the installation instructions </installation.html#building-graphbrain-with-support-for-leveldb-hypergraph-databases>`_.
 
 Adding hyperedges to a hypergraph is simple. For example, let us add the edge that was defined above::
 
@@ -100,6 +100,16 @@ It is possible to add an edge as non-primary::
 
 As with ``Hyperedge``, the full range of methods of ``Hypergraph`` is documented in the API reference.
 
+Adding many hyperedges as a batch (for speed)
+=============================================
+
+With some hypergraph database backends, as is the case for the default one (SQLite 3), adding a large number of edges can be much faster if done in a batch. To help define such bath operations, Graphbrain includes the ``hopen()`` context manager, to be used with Python's ``with`` statements. This works in a very similarly to the ``with open...`` expressions often used with files::
+
+   with hopen('example.db') as hg:
+       for edge in large_edge_list:
+           hg.add(edge)
+
+Since it never hurts performance, it is advisable to always use ``with hopen...`` when adding large number of hyperedges to a hypergraph database.
 
 The neighborhood of a hyperedge (star)
 ======================================
@@ -165,7 +175,7 @@ Degrees and deep degrees
 In conventional graph theory, there is the notion of the degree of a node, which is the number of other nodes that it is directly connected to. This is a simple but generally useful measure of the *centrality* of a node in the graph. In hypergraphs we can also have the same notion of degree, with the only difference that a single hyperedge can connect one entity to several others. Graphbrain keeps track of the degree of every hyperedge, and the ``Hypergraph`` class provides a method to obtain it::
 
    >>> from graphbrain import *
-   >>> hg = hgraph('example.hg')
+   >>> hg = hgraph('example.db')
    >>> hg.degree('alice/C')
    0
 

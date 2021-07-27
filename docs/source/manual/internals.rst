@@ -7,3 +7,4 @@ Internals and extending Graphbrain
    :caption: Contents:
 
    internals/create-parser.rst
+   internals/create-backend.rst

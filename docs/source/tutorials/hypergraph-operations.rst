@@ -23,9 +23,9 @@ Creating an hypergraph is straightforward:
 
 ::
 
-    hg = hgraph('example.hg')
+    hg = hgraph('example.db')
 
-This assigns a hypergraph instance to ``hg``, which is physically stored as 'example.hg'. If this hypergraph already exists, it is simply opened. If it does not exist, an empty one is created.
+This assigns a hypergraph instance to ``hg``, which is physically stored as 'example.db'. If this hypergraph already exists, it is simply opened. If it does not exist, an empty one is created.
 
 Parse sentence and add hyperedge to hypergraph
 ==============================================
