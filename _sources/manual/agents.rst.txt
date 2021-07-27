@@ -1,5 +1,5 @@
 ================
-Knowledge Agents
+Knowledge agents
 ================
 
 Graphbrain includes an agent system for the performance of cognitive tasks over Semantic Hypergraphs (SH). There are three types of agents:

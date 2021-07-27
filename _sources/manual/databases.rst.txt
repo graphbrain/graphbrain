@@ -1,0 +1,24 @@
+==============
+Database types
+==============
+
+
+TODO
+
+
+
+Graphbrain currently only provides one implementation of hypergraph database, which is based on a local filesytem-based high-performance key-value store (LevelDB). By convention, we use the ``.hg`` extension to identify directories containing hypergraph databases of this type. In the future, we expect other hypergraph database types to be included in the library (for example, fully in-memory hypergraphs for even higher performance at relatively small sizes, or distributed hypergraphs for huge datasets, fault-tolerance, etc.). Graphbrain is an open source project, so contributions from people interested in developing such implementations are very welcome!
+
+
+SQLite 3
+
+Pros: universal support, native to Python, very fast, concurrent access, single file storage
+
+Cons: not space-efficient, possibly not as fast as LevelDB
+
+
+LevelDB
+
+Pros: very space-efficient, very fast
+
+Cons: no concurrent access; very hard to install outside of Linux, directory structure not as nice as single file
