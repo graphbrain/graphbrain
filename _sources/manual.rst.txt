@@ -14,7 +14,7 @@ Manual
    manual/discovering-patterns.rst
    manual/parsing.rst
    manual/agents.rst
-   manual/databases.rst
+   manual/backends.rst
    manual/notebooks.rst
    manual/cli.rst
    manual/internals.rst

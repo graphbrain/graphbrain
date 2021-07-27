@@ -1,0 +1,29 @@
+============================
+Hypergraph database backends
+============================
+
+
+TODO
+
+
+Graphbrain currently comes with a default implementation of hypergraph database based on SQLite 3, and another one based on LevelDB is available but requires a custom build of Graphbrain.
+
+
+This is a nice general-purpose option, because it is available in all popular operating systems and Python comes with native support for it. Files with extensions ``.db``, ``.sqlite`` or ``.sqlite3`` will be opened as SQLite-based hypergraph databases. For other options, see `the section on hypergraph database backends </manual/backends.html>`_. One possible disadvantage of SQLite is that it is not very space-efficient. This can become a problem with large hypergraphs, and a better option in this case might be the LevelDB-based hypergraph database. This backend is not included by default because it is currently hard to install outside of Linux. To support LevelDB, you will need to build Graphbrain from source with a special option set, `as explained in the installation instructions </installation.html#building-graphbrain-with-support-for-leveldb-hypergraph-databases>`_.
+
+
+Graphbrain currently only provides one implementation of hypergraph database, which is based on a local filesytem-based high-performance key-value store (LevelDB). By convention, we use the ``.hg`` extension to identify directories containing hypergraph databases of this type. In the future, we expect other hypergraph database types to be included in the library (for example, fully in-memory hypergraphs for even higher performance at relatively small sizes, or distributed hypergraphs for huge datasets, fault-tolerance, etc.). Graphbrain is an open source project, so contributions from people interested in developing such implementations are very welcome!
+
+
+SQLite 3
+
+Pros: universal support, native to Python, very fast, concurrent access, single file storage
+
+Cons: not space-efficient, possibly not as fast as LevelDB
+
+
+LevelDB
+
+Pros: very space-efficient, very fast
+
+Cons: no concurrent access; very hard to install outside of Linux, directory structure not as nice as single file
