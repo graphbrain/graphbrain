@@ -70,14 +70,14 @@ It is then necessary to download a spaCy language model::
 Building Graphbrain with support for LevelDB hypergraph databases
 -----------------------------------------------------------------
 
-If you want to build graphbrain with support for LevelDB hypergraph databases, you should set the `LEVELDB` environment variable when building::
+If you want to build graphbrain with support for LevelDB hypergraph databases, you should set the ``LEVELDB`` environment variable when building::
 
    $ LEVELDB=true pip install .
 
 Building Graphbrain with parser-level coreference resolution support
 --------------------------------------------------------------------
 
-If you want to build graphbrain with parser-level coreference resolution support through neuralcoref, you should set the `NEURALCOREF` environment variable when building::
+If you want to build graphbrain with parser-level coreference resolution support through neuralcoref, you should set the ``NEURALCOREF`` environment variable when building::
 
    $ NEURALCOREF=true pip install .
 

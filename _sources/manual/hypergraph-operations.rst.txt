@@ -103,7 +103,7 @@ As with ``Hyperedge``, the full range of methods of ``Hypergraph`` is documented
 Adding many hyperedges as a batch (for speed)
 =============================================
 
-With some hypergraph database backends, as is the case for the default one (SQLite 3), adding a large number of edges can be much faster if done in a batch. To help define such bath operations, Graphbrain includes the ``hopen()`` context manager, to be used with Python's ``with`` statements. This works in a very similarly to the ``with open...` expressions often used with files::
+With some hypergraph database backends, as is the case for the default one (SQLite 3), adding a large number of edges can be much faster if done in a batch. To help define such bath operations, Graphbrain includes the ``hopen()`` context manager, to be used with Python's ``with`` statements. This works in a very similarly to the ``with open...`` expressions often used with files::
 
    with hopen('example.db') as hg:
        for edge in large_edge_list:
