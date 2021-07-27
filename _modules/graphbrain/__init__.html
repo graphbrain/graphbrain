@@ -183,18 +183,20 @@
     <span class="sd">&quot;&quot;&quot;Returns an instance of Hypergraph identified by the locator_string.</span>
 <span class="sd">    The hypergraph will be created if it does not exist.</span>
 
-<span class="sd">    Currently, the only type of hypergraph is based on LevelDB storage,</span>
-<span class="sd">    and the location_string is the path to the LevelDB folder.</span>
+<span class="sd">    The location_string can be the path to an SQLite3 file or LevelDB folder.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">locator_string</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;.db&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">graphbrain</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">sqlite</span><span class="o">.</span><span class="n">SQLite</span><span class="p">(</span><span class="n">locator_string</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">locator_string</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;.hg&#39;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">LEVELDB</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">graphbrain</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">leveldb</span><span class="o">.</span><span class="n">LevelDB</span><span class="p">(</span><span class="n">locator_string</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;LevelDB not supported. Custom build required.&#39;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hypergraph database could not be found.&#39;</span><span class="p">)</span></div>
+    <span class="n">filename_parts</span> <span class="o">=</span> <span class="n">locator_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filename_parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">extension</span> <span class="o">=</span> <span class="n">filename_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;sqlite&#39;</span><span class="p">,</span> <span class="s1">&#39;sqlite3&#39;</span><span class="p">,</span> <span class="s1">&#39;db&#39;</span><span class="p">}:</span>
+            <span class="k">return</span> <span class="n">graphbrain</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">sqlite</span><span class="o">.</span><span class="n">SQLite</span><span class="p">(</span><span class="n">locator_string</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;leveldb&#39;</span><span class="p">,</span> <span class="s1">&#39;hg&#39;</span><span class="p">}:</span>
+            <span class="k">if</span> <span class="n">LEVELDB</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">graphbrain</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">leveldb</span><span class="o">.</span><span class="n">LevelDB</span><span class="p">(</span><span class="n">locator_string</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s1">&#39;LevelDB not supported. Custom build required.&#39;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Unknown hypergraph database type.&#39;</span><span class="p">)</span></div>
 
 
 <span class="nd">@contextmanager</span>
