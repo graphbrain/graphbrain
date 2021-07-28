@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.1] - ongoing work
+### Added
+
+### Changed
+
+### Removed
+
+
 ## [0.5.0] - 28-07-2021
 ### Added
 - SQLite3 hypergraph database backend.
