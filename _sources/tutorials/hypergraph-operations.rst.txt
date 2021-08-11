@@ -39,7 +39,7 @@ Let's create a parser to obtain an hyperedge from a sentence, and then add it to
     text = "Mary is playing a very old violin."
 
     parses = parser.parse(text)
-    for parse in parses:
+    for parse in parses['parses']:
         edge = parse['main_edge']
         hg.add(edge)
 
