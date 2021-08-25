@@ -32,9 +32,7 @@ class TxtParser(Agent):
             pbar = None
 
         for i, paragraph in enumerate(paragraphs):
-            for op in self.system.parse_results2ops(parser.parse(paragraph),
-                                                    sequence=sequence,
-                                                    pos=i):
+            for op in self.system.parse_results2ops(parser.parse(paragraph)):
                 yield op
             if self.progress_bar:
                 pbar.update(i)
