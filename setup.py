@@ -152,6 +152,7 @@ with open('README.md', 'r') as fh:
 python_requires = '>=3.6'
 
 install_requires = [
+        'mwparserfromhell',
         'numpy',
         'scikit-learn',
         'networkx',

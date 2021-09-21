@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- Improved wikipedia agent.
 
 ### Removed
 

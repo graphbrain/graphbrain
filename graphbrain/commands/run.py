@@ -11,6 +11,7 @@ def run(args):
                   hg=hgraph(args.hg),
                   infile=args.infile,
                   indir=args.indir,
+                  outfile=args.outfile,
                   url=args.url,
                   sequence=args.sequence,
                   corefs=args.corefs)
@@ -21,6 +22,7 @@ def run(args):
                    hg=hgraph(args.hg),
                    infile=args.infile,
                    indir=args.indir,
+                   outfile=args.outfile,
                    url=args.url,
                    sequence=args.sequence,
                    corefs=args.corefs)

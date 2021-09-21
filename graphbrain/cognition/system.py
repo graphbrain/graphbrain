@@ -13,11 +13,11 @@ from graphbrain.parsers import create_parser, parser_lang
 
 
 def run_agent(agent, lang=None, parser_class=None, hg=None, infile=None,
-              indir=None, url=None, sequence=None, progress_bar=True,
-              corefs='resolve', logging_level=logging.INFO):
+              indir=None, outfile=None, url=None, sequence=None,
+              progress_bar=True, corefs='resolve', logging_level=logging.INFO):
     system = System(lang=lang, parser_class=parser_class, hg=hg, infile=infile,
-                    indir=indir, url=url, sequence=sequence, corefs=corefs,
-                    logging_level=logging_level)
+                    indir=indir, outfile=outfile, url=url, sequence=sequence,
+                    corefs=corefs, logging_level=logging_level)
     if isinstance(agent, Agent):
         agent_obj = agent
     else:
@@ -28,15 +28,15 @@ def run_agent(agent, lang=None, parser_class=None, hg=None, infile=None,
 
 
 def load_system(system_file, lang=None, parser_class=None, hg=None,
-                infile=None, indir=None, url=None, sequence=None,
+                infile=None, indir=None, outfile=None, url=None, sequence=None,
                 progress_bar=True, corefs='resolve',
                 logging_level=logging.INFO):
     with open(system_file, 'r') as f:
         json_str = f.read()
     system_json = json.loads(json_str)
     system = System(name=system_file, lang=lang, parser_class=parser_class,
-                    hg=hg, infile=infile, indir=indir, url=url,
-                    sequence=sequence, corefs=corefs,
+                    hg=hg, infile=infile, indir=indir, outfile=outfile,
+                    url=url, sequence=sequence, corefs=corefs,
                     logging_level=logging_level)
     for agent_name in system_json:
         module_str = system_json[agent_name]['agent']
@@ -57,11 +57,12 @@ def load_system(system_file, lang=None, parser_class=None, hg=None,
 
 
 def run_system(system_file, lang=None, parser_class=None, hg=None, infile=None,
-               indir=None, url=None, sequence=None, progress_bar=True,
-               corefs='resolve', logging_level=logging.INFO):
+               indir=None, outfile=None, url=None, sequence=None,
+               progress_bar=True, corefs='resolve',
+               logging_level=logging.INFO):
     system = load_system(system_file, lang=lang, parser_class=parser_class,
-                         hg=hg, infile=infile, indir=indir, url=url,
-                         sequence=sequence, progress_bar=progress_bar,
+                         hg=hg, infile=infile, indir=indir, outfile=outfile,
+                         url=url, sequence=sequence, progress_bar=progress_bar,
                          corefs=corefs, logging_level=logging_level)
     system.run()
 
@@ -83,22 +84,24 @@ def create_agent(agent_module_str, name=None,
 
 
 def processor(x, lang=None, parser_class=None, hg=None, infile=None,
-              indir=None, url=None, sequence=None, corefs='resolve'):
+              indir=None, outfile=None, url=None, sequence=None,
+              corefs='resolve'):
     if type(x) == str:
         if x[-4:] == '.sys':
             return load_system(x, lang=lang, parser_class=parser_class, hg=hg,
-                               infile=infile, indir=indir, url=url,
-                               sequence=sequence, corefs=corefs)
+                               infile=infile, indir=indir, outfile=outfile,
+                               url=url, sequence=sequence, corefs=corefs)
         else:
             system = System(lang=lang, parser_class=parser_class, hg=hg,
-                            infile=infile, indir=indir, url=url,
-                            sequence=sequence, corefs=corefs)
+                            infile=infile, indir=indir, outfile=outfile,
+                            url=url, sequence=sequence, corefs=corefs)
             agent = create_agent(x, progress_bar=False)
             system.add(agent)
             return system
     elif isinstance(x, Agent):
         system = System(lang=lang, parser_class=parser_class, hg=hg,
-                        infile=infile, indir=indir, url=url, sequence=sequence)
+                        infile=infile, indir=indir, outfile=outfile, url=url,
+                        sequence=sequence)
         system.add(x)
         return system
     elif isinstance(x, System):
@@ -108,6 +111,8 @@ def processor(x, lang=None, parser_class=None, hg=None, infile=None,
             x.hg = hg
         if infile:
             x.infile = infile
+        if outfile:
+            x.outfile = outfile
         if url:
             x.url = url
         if sequence:
@@ -119,8 +124,8 @@ def processor(x, lang=None, parser_class=None, hg=None, infile=None,
 
 class System(object):
     def __init__(self, name=None, lang=None, parser_class=None, hg=None,
-                 infile=None, indir=None, url=None, sequence=None,
-                 corefs='resolve', logging_level=logging.INFO):
+                 infile=None, indir=None, outfile=None, url=None,
+                 sequence=None, corefs='resolve', logging_level=logging.INFO):
         self.name = name
 
         self.lang = lang
@@ -138,6 +143,7 @@ class System(object):
         self.hg = hg
         self.infile = infile
         self.indir = indir
+        self.outfile = outfile
         self.url = url
         self.sequence = sequence
         self.sequence_pos = 0
@@ -229,6 +235,9 @@ class System(object):
 
     def get_indir(self, agent):
         return self.indir
+
+    def get_outfile(self, agent):
+        return self.outfile
 
     def get_url(self, agent):
         return self.url
