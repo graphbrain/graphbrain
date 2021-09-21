@@ -23,7 +23,7 @@ class TxtParser(Agent):
         if not self.system.get_sequence(self):
             raise RuntimeError('Sequence name must be specified.')
 
-    def parse_text(self, infile, parser, sequence):
+    def parse_text(self, infile, parser):
         paragraphs = list(read_paragraphs(infile))
 
         if self.progress_bar:
@@ -43,13 +43,6 @@ class TxtParser(Agent):
     def run(self):
         infile = self.system.get_infile(self)
         parser = self.system.get_parser(self)
-        sequence = self.system.get_sequence(self)
 
-        for op in self.parse_text(infile, parser, sequence):
-            if op['sequence'] == sequence:
-                self.edges += 1
+        for op in self.parse_text(infile, parser):
             yield op
-
-    def report(self):
-        rep_str = ('edges found: {}'.format(self.edges))
-        return '{}\n\n{}'.format(rep_str, super().report())
