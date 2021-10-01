@@ -36,9 +36,18 @@ Thumbs.db
 # IDE stuff #
 #############
 .idea
+.vscode
 
 # Python bytecode #
 ###################
 __pycache__
 *.pyc
 *.pyo
+
+# Cython .c files #
+###################
+*.c
+
+# Python package stuff #
+########################
+*.egg-info
