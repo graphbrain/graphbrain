@@ -14,7 +14,8 @@ IGNORE_SECTIONS = {'See also',
                    'Further reading',
                    'External links',
                    'Sources',
-                   'Selected bibliography'}
+                   'Selected bibliography',
+                   'Awards and recognition'}
 
 
 def url2title_and_lang(url):
@@ -110,7 +111,7 @@ class Wikipedia(Agent):
                 section_stack.append(new_section)
                 level = node.level
             elif type(node) == mwparserfromhell.nodes.text.Text:
-                text = str(node).strip().replace('\n', ' ')
+                text = ' '.join(str(node).split())
                 section_stack[-1].append(text)
 
         sections = clean_sections(sections)
