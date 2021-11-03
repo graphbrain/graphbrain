@@ -14,7 +14,7 @@ from graphbrain.hyperedge import UniqueAtom
 from graphbrain.meaning.concepts import has_common_or_proper_concept
 
 try:
-    import graphbrain.neuralcoref as neuralcoref
+    import neuralcoref
     NEURALCOREF = True
 except Exception:
     NEURALCOREF = False
