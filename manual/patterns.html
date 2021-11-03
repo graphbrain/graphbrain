@@ -1,75 +1,36 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Patterns &mdash; Graphbrain 0.5.1-dev documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-
-  
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../_static/favicon.png"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Discovering patterns" href="discovering-patterns.html" />
     <link rel="prev" title="Basic hypergraph operations" href="hypergraph-operations.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: #333" >
-          
-
-          
             <a href="../index.html">
-          
-
-          
-            
             <img src="../_static/graphbrain-logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -77,24 +38,13 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
     <div>
     <a href="https://socsemics.huma-num.fr/" style="margin:0px; text-align:center">
         <img style="width: 75%; height: 75%; border-radius: 0px; margin:0px; padding:5px; background:#ffffff" src="/_static/socsemics.png"/>
     </a>
     </div>
     
-            
-            
-              
-            
-            
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
@@ -125,84 +75,38 @@
 <li class="toctree-l1"><a class="reference internal" href="../thanks.html">Thanks</a></li>
 </ul>
 
-            
-          
 
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #333" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Graphbrain</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="../manual.html">Manual</a> &raquo;</li>
-        
       <li>Patterns</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
-            
               <!-- User defined GitHub URL -->
               <a href="https://github.com/graphbrain/graphbrain" class="fa fa-github"> Edit on GitHub</a>
-            
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="patterns">
-<h1>Patterns<a class="headerlink" href="#patterns" title="Permalink to this headline">¶</a></h1>
+             
+  <section id="patterns">
+<h1>Patterns<a class="headerlink" href="#patterns" title="Permalink to this headline"></a></h1>
 <p>As briefly discussed before, Graphbrain provides a pattern language to query and match hyperedges in the hypergraph. These patterns are valid hyperedges, and can even be stored in the hypergraph themselves. Patterns are defined with the help of special atoms: <em>wildcards</em> and <em>variables</em>. The former are useful for simply querying and matching, while the latter allow for the extraction of specific parts of a hyperedge.</p>
-<div class="section" id="searching-with-wildcards">
-<h2>Searching with wildcards<a class="headerlink" href="#searching-with-wildcards" title="Permalink to this headline">¶</a></h2>
+<section id="searching-with-wildcards">
+<h2>Searching with wildcards<a class="headerlink" href="#searching-with-wildcards" title="Permalink to this headline"></a></h2>
 <p>The basic wildcard is <code class="docutils literal notranslate"><span class="pre">*</span></code>. It matches any hyperedge. It allows for the definition of patterns like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span> <span class="o">*</span> <span class="o">*</span><span class="p">)</span>
 </pre></div>
@@ -234,9 +138,9 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span> <span class="o">*</span> <span class="o">*</span> <span class="o">...</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="non-strict-search">
-<h2>Non-strict search<a class="headerlink" href="#non-strict-search" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="non-strict-search">
+<h2>Non-strict search<a class="headerlink" href="#non-strict-search" title="Permalink to this headline"></a></h2>
 <p>Non-strict search allows for patterns to match atoms in the most general way, meaning that, if a subtype or other roles are not specified in the pattern, then any subtypes or argroles will match, as can be seen in this example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">graphbrain</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hg</span> <span class="o">=</span> <span class="n">hgraph</span><span class="p">(</span><span class="s1">&#39;example.db&#39;</span><span class="p">)</span>
@@ -248,9 +152,9 @@
 </div>
 <p>Even though the full type and roles of <code class="docutils literal notranslate"><span class="pre">plays/Pd.so</span></code> and <code class="docutils literal notranslate"><span class="pre">alice/Cp.s</span></code> are not specified in the pattern, they still match the more general corresponding atoms <code class="docutils literal notranslate"><span class="pre">plays/P</span></code> and <code class="docutils literal notranslate"><span class="pre">alice/C</span></code>.</p>
 <p>Non-strict search is semantically more powerful, at the expense of performance. Strict search can take advantage of the structure of the hypergraph database to perform fast queries, while non-strict search iterates through all edges in the hypergraph looking for matches.</p>
-</div>
-<div class="section" id="matching-argroles">
-<h2>Matching argroles<a class="headerlink" href="#matching-argroles" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="matching-argroles">
+<h2>Matching argroles<a class="headerlink" href="#matching-argroles" title="Permalink to this headline"></a></h2>
 <p>Argroles can be specified in patterns. So:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="n">so</span> <span class="o">*</span> <span class="o">*</span><span class="p">)</span>
 </pre></div>
@@ -277,7 +181,7 @@
 </pre></div>
 </div>
 <p>In fact, when specifying argroles, more often than not this is the behavior that is the most useful, because it allows for the matching of the participants of a relationship purely according to the role they play in it (subject, object, etc.).</p>
-<p>Sometimes it is also desirable to explicitly forbid certain argument roles. This is achieved by indicating them after ‘-‘ in the argrole sequence. For example:</p>
+<p>Sometimes it is also desirable to explicitly forbid certain argument roles. This is achieved by indicating them after ‘-’ in the argrole sequence. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="p">{</span><span class="n">so</span><span class="p">}</span><span class="o">-</span><span class="n">x</span> <span class="o">*</span> <span class="o">*</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -286,9 +190,9 @@
 </pre></div>
 </div>
 <p>When using <code class="docutils literal notranslate"><span class="pre">Hypergraph,search()</span></code>, order-independent (curly-braces) and argrole exclusions (-) only work in non-strict mode.</p>
-</div>
-<div class="section" id="patterns-with-variables-for-information-extraction">
-<h2>Patterns with variables for information extraction<a class="headerlink" href="#patterns-with-variables-for-information-extraction" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="patterns-with-variables-for-information-extraction">
+<h2>Patterns with variables for information extraction<a class="headerlink" href="#patterns-with-variables-for-information-extraction" title="Permalink to this headline"></a></h2>
 <p>Let us introduce the concept of <em>variable</em>. Like a wildcard, a variable indicates a placeholder that can match a hyperedge, but can then be used to refer to that matched hyperedge. In SH representation, an atom label that starts with upper case represents a variable. For example: <code class="docutils literal notranslate"><span class="pre">PLAYER/C</span></code>. One can define perfectly valid hyperedges that include variables, as well as wildcards, so for example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plays</span><span class="o">/</span><span class="n">P</span><span class="o">.</span><span class="p">{</span><span class="n">so</span><span class="p">}</span> <span class="n">PLAYER</span><span class="o">/</span><span class="n">C</span> <span class="o">*</span><span class="p">)</span>
 </pre></div>
@@ -314,47 +218,35 @@
 </pre></div>
 </div>
 <p>The output is a list of tuples, where the first item is the matched hyperedge and the second is a dictionary with variables and their values.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="discovering-patterns.html" class="btn btn-neutral float-right" title="Discovering patterns" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="hypergraph-operations.html" class="btn btn-neutral float-left" title="Basic hypergraph operations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="discovering-patterns.html" class="btn btn-neutral float-right" title="Discovering patterns" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2021 CNRS.
+    <p>&#169; Copyright 2021 CNRS.</p>
+  </div>
 
-    </p>
-  </div> 
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

@@ -1,75 +1,36 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Parsing natural language &mdash; Graphbrain 0.5.1-dev documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-
-  
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../_static/favicon.png"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Knowledge agents" href="agents.html" />
     <link rel="prev" title="Discovering patterns" href="discovering-patterns.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: #333" >
-          
-
-          
             <a href="../index.html">
-          
-
-          
-            
             <img src="../_static/graphbrain-logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -77,24 +38,13 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
     <div>
     <a href="https://socsemics.huma-num.fr/" style="margin:0px; text-align:center">
         <img style="width: 75%; height: 75%; border-radius: 0px; margin:0px; padding:5px; background:#ffffff" src="/_static/socsemics.png"/>
     </a>
     </div>
     
-            
-            
-              
-            
-            
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
@@ -123,81 +73,35 @@
 <li class="toctree-l1"><a class="reference internal" href="../thanks.html">Thanks</a></li>
 </ul>
 
-            
-          
 
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #333" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Graphbrain</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="../manual.html">Manual</a> &raquo;</li>
-        
       <li>Parsing natural language</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
-            
               <!-- User defined GitHub URL -->
               <a href="https://github.com/graphbrain/graphbrain" class="fa fa-github"> Edit on GitHub</a>
-            
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="parsing-natural-language">
-<h1>Parsing natural language<a class="headerlink" href="#parsing-natural-language" title="Permalink to this headline">¶</a></h1>
+             
+  <section id="parsing-natural-language">
+<h1>Parsing natural language<a class="headerlink" href="#parsing-natural-language" title="Permalink to this headline"></a></h1>
 <p>Parsing natural language to semantic hypergraphs is another crucial aspect of Graphbrain. This aspect of the library is covered by the <code class="docutils literal notranslate"><span class="pre">graphbrain.parsers</span></code> package. Let us see how to create a parser, and how to use it to parse a sentence:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">graphbrain.parsers</span> <span class="kn">import</span> <span class="n">create_parser</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span> <span class="o">=</span> <span class="n">create_parser</span><span class="p">(</span><span class="n">lang</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">)</span>
@@ -247,8 +151,8 @@
 <li><p>‘atom2token’: a dictionary of correspondences from each atom in the main_edge to the spaCy token from which it was derived.</p></li>
 <li><p>‘spacy_sentence’: the spaCy structure representing the sentence.</p></li>
 </ul>
-<div class="section" id="lemmas">
-<h2>Lemmas<a class="headerlink" href="#lemmas" title="Permalink to this headline">¶</a></h2>
+<section id="lemmas">
+<h2>Lemmas<a class="headerlink" href="#lemmas" title="Permalink to this headline"></a></h2>
 <p>When creating a parser, it is possible to require it to also produce lemma relationships. Lemmas are linguistic roots of words, for example the infinitive tense of a verb or the singular form of a known. They are represented by Graphbrain in hyperedges like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">lemma</span><span class="o">/</span><span class="n">J</span><span class="o">/.</span> <span class="n">published</span><span class="o">/</span><span class="n">P</span><span class="o">/</span><span class="n">en</span> <span class="n">publish</span><span class="o">/</span><span class="n">P</span><span class="o">/</span><span class="n">en</span><span class="p">)</span>
 </pre></div>
@@ -291,9 +195,9 @@
 <span class="go"> &#39;inferred_edges&#39;: []}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="parser-level-coreference-resolution-and-inference-of-gender-number-and-animacy">
-<h2>Parser-level coreference resolution and inference of gender, number and animacy<a class="headerlink" href="#parser-level-coreference-resolution-and-inference-of-gender-number-and-animacy" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="parser-level-coreference-resolution-and-inference-of-gender-number-and-animacy">
+<h2>Parser-level coreference resolution and inference of gender, number and animacy<a class="headerlink" href="#parser-level-coreference-resolution-and-inference-of-gender-number-and-animacy" title="Permalink to this headline"></a></h2>
 <p><strong>NOTE:</strong> Currently, the default distribution of Graphbrain does not support parser-level coreference resolution. Please refer to the installation instructions on how to build graphbrain with this feature.</p>
 <p>Currently, parser-level coreference resolution relies on neuralcoref, which requires Python &gt;=3.6, &lt;3.9, and spaCy &gt;=2.1.0, &lt;3.0.0. These restrictions are the reason why we kept it out of the default distribution. Once the successor of neuralcoref is released, we hope to use it to enable parser-level coreference resolution by default in the default distribution.</p>
 <p>Consider the sentence:</p>
@@ -342,47 +246,35 @@
 </div>
 </dd>
 </dl>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="agents.html" class="btn btn-neutral float-right" title="Knowledge agents" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="discovering-patterns.html" class="btn btn-neutral float-left" title="Discovering patterns" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="agents.html" class="btn btn-neutral float-right" title="Knowledge agents" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2021 CNRS.
+    <p>&#169; Copyright 2021 CNRS.</p>
+  </div>
 
-    </p>
-  </div> 
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

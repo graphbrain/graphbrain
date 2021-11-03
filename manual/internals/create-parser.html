@@ -1,75 +1,36 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Creating and training a new parser &mdash; Graphbrain 0.5.1-dev documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-
-  
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/favicon.png"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Creating a new hypergraph database backend" href="create-backend.html" />
     <link rel="prev" title="Internals and extending Graphbrain" href="../internals.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: #333" >
-          
-
-          
             <a href="../../index.html">
-          
-
-          
-            
             <img src="../../_static/graphbrain-logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -77,24 +38,13 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
     <div>
     <a href="https://socsemics.huma-num.fr/" style="margin:0px; text-align:center">
         <img style="width: 75%; height: 75%; border-radius: 0px; margin:0px; padding:5px; background:#ffffff" src="/_static/socsemics.png"/>
     </a>
     </div>
     
-            
-            
-              
-            
-            
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
@@ -133,90 +83,43 @@
 <li class="toctree-l1"><a class="reference internal" href="../../thanks.html">Thanks</a></li>
 </ul>
 
-            
-          
 
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #333" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">Graphbrain</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="../../manual.html">Manual</a> &raquo;</li>
-        
           <li><a href="../internals.html">Internals and extending Graphbrain</a> &raquo;</li>
-        
       <li>Creating and training a new parser</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
-            
               <!-- User defined GitHub URL -->
               <a href="https://github.com/graphbrain/graphbrain" class="fa fa-github"> Edit on GitHub</a>
-            
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="creating-and-training-a-new-parser">
-<h1>Creating and training a new parser<a class="headerlink" href="#creating-and-training-a-new-parser" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="extending-the-alphabeta-class">
-<h2>Extending the AlphaBeta class<a class="headerlink" href="#extending-the-alphabeta-class" title="Permalink to this headline">¶</a></h2>
+             
+  <section id="creating-and-training-a-new-parser">
+<h1>Creating and training a new parser<a class="headerlink" href="#creating-and-training-a-new-parser" title="Permalink to this headline"></a></h1>
+<section id="extending-the-alphabeta-class">
+<h2>Extending the AlphaBeta class<a class="headerlink" href="#extending-the-alphabeta-class" title="Permalink to this headline"></a></h2>
 <p>TODO</p>
 <p>A skeleton for extending the <code class="docutils literal notranslate"><span class="pre">AlphaBeta</span></code> class and defining a new parser class can be found here: <a class="reference external" href="https://github.com/graphbrain/graphbrain/blob/master/skeletons/parser_xx.py">https://github.com/graphbrain/graphbrain/blob/master/skeletons/parser_xx.py</a></p>
-</div>
-<div class="section" id="collecting-a-corpus-of-sample-texts">
-<h2>Collecting a corpus of sample texts<a class="headerlink" href="#collecting-a-corpus-of-sample-texts" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="collecting-a-corpus-of-sample-texts">
+<h2>Collecting a corpus of sample texts<a class="headerlink" href="#collecting-a-corpus-of-sample-texts" title="Permalink to this headline"></a></h2>
 <p>TODO</p>
 <p>Files should be named by category and then number. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wikipedia1</span><span class="o">.</span><span class="n">txt</span>
@@ -227,39 +130,39 @@
 </pre></div>
 </div>
 <p>This allows for the generation of balanced training datasets later on, as well as the testing of accuracy by category.</p>
-</div>
-<div class="section" id="extracting-sentences">
-<h2>Extracting sentences<a class="headerlink" href="#extracting-sentences" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="extracting-sentences">
+<h2>Extracting sentences<a class="headerlink" href="#extracting-sentences" title="Permalink to this headline"></a></h2>
 <p>For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m graphbrain.scripts.extract-sentences --parser .parser_xx.ParserXX --infile parser-training-data/xx/text-samples/wikipedia1.txt --outfile parser-training-data/xx/sentences/wikipedia1.txt
 </pre></div>
 </div>
-</div>
-<div class="section" id="annotating-sentences-to-generate-a-parser-training-dataset">
-<h2>Annotating sentences to generate a parser training dataset<a class="headerlink" href="#annotating-sentences-to-generate-a-parser-training-dataset" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="annotating-sentences-to-generate-a-parser-training-dataset">
+<h2>Annotating sentences to generate a parser training dataset<a class="headerlink" href="#annotating-sentences-to-generate-a-parser-training-dataset" title="Permalink to this headline"></a></h2>
 <p>For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m graphbrain.scripts.generate-parser-training-data --parser .parser_xx.ParserXX --indir parser-training-data/de/sentences --outfile parser-training-data/xx/sentence-parses.json
 </pre></div>
 </div>
-</div>
-<div class="section" id="splitting-into-training-and-testing-datasets">
-<h2>Splitting into training and testing datasets<a class="headerlink" href="#splitting-into-training-and-testing-datasets" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="splitting-into-training-and-testing-datasets">
+<h2>Splitting into training and testing datasets<a class="headerlink" href="#splitting-into-training-and-testing-datasets" title="Permalink to this headline"></a></h2>
 <p>To split the sentence parses dataset into training (66%) and testing (33%) datasets, the following script can be used:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m graphbrain.scripts.split-parser-training-data --parser .parser_xx.ParserXX --infile parser-training-data/xx/sentence-parses.json
 </pre></div>
 </div>
 <p>The files <code class="docutils literal notranslate"><span class="pre">sentence-parses-train.json</span></code> and <code class="docutils literal notranslate"><span class="pre">sentence-parses-test.json</span></code> will be created in the same directory as the original file, in this case <code class="docutils literal notranslate"><span class="pre">parser-training-data/xx</span></code>.</p>
-</div>
-<div class="section" id="generating-alpha-training-data">
-<h2>Generating alpha training data<a class="headerlink" href="#generating-alpha-training-data" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="generating-alpha-training-data">
+<h2>Generating alpha training data<a class="headerlink" href="#generating-alpha-training-data" title="Permalink to this headline"></a></h2>
 <p>For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m graphbrain.scripts.generate-alpha-training-data --parser .parser_xx.ParserXX --infile parser-training-data/xx/sentence-parses.json --outfile parser-training-data/xx/atoms.csv
 </pre></div>
 </div>
 <p>Notice that <code class="docutils literal notranslate"><span class="pre">atoms-train.csv</span></code> and <code class="docutils literal notranslate"><span class="pre">atoms-test.csv</span></code> can be generated from the previous split.</p>
-</div>
-<div class="section" id="testing-the-alpha-stage">
-<h2>Testing the alpha stage<a class="headerlink" href="#testing-the-alpha-stage" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="testing-the-alpha-stage">
+<h2>Testing the alpha stage<a class="headerlink" href="#testing-the-alpha-stage" title="Permalink to this headline"></a></h2>
 <p>With this script and the two datasets, it is now possible to test the accuracy of the alpha stage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m graphbrain.scripts.test-alpha --parser .parser_xx.ParserXX --infile parser-training-data/xx/atoms-test.csv --training_data parser-training-data/xx/atoms-train.csv
 </pre></div>
@@ -274,55 +177,43 @@
 <span class="n">overall</span> <span class="n">accuracy</span><span class="p">:</span> <span class="mf">0.950432730133753</span> <span class="p">[</span><span class="mi">2416</span> <span class="n">correct</span> <span class="n">out</span> <span class="n">of</span> <span class="mi">2542</span><span class="p">]</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="manual-parser-testing">
-<h2>Manual parser testing<a class="headerlink" href="#manual-parser-testing" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="manual-parser-testing">
+<h2>Manual parser testing<a class="headerlink" href="#manual-parser-testing" title="Permalink to this headline"></a></h2>
 <p>The full parser can be manually tested. An interactive script is provided for this, that uses as input a sentence file generated by the <code class="docutils literal notranslate"><span class="pre">extract-sentences</span></code> script discussed above. Of course, it is necessary to use a text corpus different from the one used to train the parser to obtain meaningful results:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m graphbrain.scripts.manual-parser-test --parser .parser_xx.ParserXX --infile parser-training-data/xx/sentences/manual-test-sentences.txt --outfile parser-training-data/de/manual-test-results.csv
 </pre></div>
 </div>
 <p>It also makes sense to create sentence files by text category, to be able to appraise accuracy across different kinds of text.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="create-backend.html" class="btn btn-neutral float-right" title="Creating a new hypergraph database backend" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../internals.html" class="btn btn-neutral float-left" title="Internals and extending Graphbrain" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="create-backend.html" class="btn btn-neutral float-right" title="Creating a new hypergraph database backend" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2021 CNRS.
+    <p>&#169; Copyright 2021 CNRS.</p>
+  </div>
 
-    </p>
-  </div> 
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

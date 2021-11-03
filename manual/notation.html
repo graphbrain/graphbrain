@@ -1,75 +1,36 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Semantic Hypergraph notation &mdash; Graphbrain 0.5.1-dev documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-
-  
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../_static/favicon.png"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Special relations" href="special-relations.html" />
     <link rel="prev" title="Overview" href="overview.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: #333" >
-          
-
-          
             <a href="../index.html">
-          
-
-          
-            
             <img src="../_static/graphbrain-logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -77,24 +38,13 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
     <div>
     <a href="https://socsemics.huma-num.fr/" style="margin:0px; text-align:center">
         <img style="width: 75%; height: 75%; border-radius: 0px; margin:0px; padding:5px; background:#ffffff" src="/_static/socsemics.png"/>
     </a>
     </div>
     
-            
-            
-              
-            
-            
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
@@ -145,81 +95,35 @@
 <li class="toctree-l1"><a class="reference internal" href="../thanks.html">Thanks</a></li>
 </ul>
 
-            
-          
 
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #333" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Graphbrain</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="../manual.html">Manual</a> &raquo;</li>
-        
       <li>Semantic Hypergraph notation</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
-            
               <!-- User defined GitHub URL -->
               <a href="https://github.com/graphbrain/graphbrain" class="fa fa-github"> Edit on GitHub</a>
-            
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="semantic-hypergraph-notation">
-<h1>Semantic Hypergraph notation<a class="headerlink" href="#semantic-hypergraph-notation" title="Permalink to this headline">¶</a></h1>
+             
+  <section id="semantic-hypergraph-notation">
+<h1>Semantic Hypergraph notation<a class="headerlink" href="#semantic-hypergraph-notation" title="Permalink to this headline"></a></h1>
 <p>SH notation is based on two simple principles:</p>
 <ul class="simple">
 <li><p>Every hyperedge belongs to one of eight basic types.</p></li>
@@ -231,8 +135,8 @@
 </div>
 <p>Beyond this, the notation allows for more things: argument roles, subtypes, further type-specific additional information and namespaces. We will introduce these concepts gradually, by order of general usefulness. The two principles above extended with argument roles (which we will yet introduce) already capture a great deal of information contained in natural language, and sophisticated knowledge inference and exploration tasks can be performed at this level, while keeping the notation light and friendly to humans.</p>
 <p>Then, the additional notational devices can be employed when useful. Of course, it is always possible to utilize full notation for machine tasks while presented a simplified version for human-friendliness.</p>
-<div class="section" id="hyperedge-types">
-<h2>Hyperedge types<a class="headerlink" href="#hyperedge-types" title="Permalink to this headline">¶</a></h2>
+<section id="hyperedge-types">
+<h2>Hyperedge types<a class="headerlink" href="#hyperedge-types" title="Permalink to this headline"></a></h2>
 <p>All valid semantic hyperedges are of one of the 8 types shown in the table below. The first 6 types can be explicit (directly annotating an atomic hyepredge) of implicit (inferred from the types of the elements of the hyperedge). The last two types are always implicit.</p>
 <table class="docutils align-default">
 <colgroup>
@@ -309,9 +213,9 @@
 <tr class="row-odd"></tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="type-inference-rules">
-<h2>Type inference rules<a class="headerlink" href="#type-inference-rules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="type-inference-rules">
+<h2>Type inference rules<a class="headerlink" href="#type-inference-rules" title="Permalink to this headline"></a></h2>
 <p>The table below shows how implicit hyperedge types are inferred.</p>
 <table class="docutils align-default">
 <colgroup>
@@ -342,12 +246,12 @@
 </tbody>
 </table>
 <p>We use the notation of regular expressions: the symbol <code class="docutils literal notranslate"><span class="pre">+</span></code> is used to denote one or more entities with the type that precedes it, while square brackets indicate several possibilities (for instance, <code class="docutils literal notranslate"><span class="pre">[CRS]+</span></code> means “at least one of any of C, R or S” types). <code class="docutils literal notranslate"><span class="pre">x</span></code> means any type: <code class="docutils literal notranslate"><span class="pre">(M</span> <span class="pre">x)</span></code> is of type <code class="docutils literal notranslate"><span class="pre">x</span></code>.</p>
-</div>
-<div class="section" id="argument-roles">
-<h2>Argument roles<a class="headerlink" href="#argument-roles" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="argument-roles">
+<h2>Argument roles<a class="headerlink" href="#argument-roles" title="Permalink to this headline"></a></h2>
 <p>The type part of the atom can include subparts after the type specifier. The meaning of these subsequent subparts is type-specific. The most useful of those are argument roles in predicates and builders. As the name indicates, they specify the role that the following arguments play in the construct.</p>
-<div class="section" id="predicates">
-<h3>Predicates<a class="headerlink" href="#predicates" title="Permalink to this headline">¶</a></h3>
+<section id="predicates">
+<h3>Predicates<a class="headerlink" href="#predicates" title="Permalink to this headline"></a></h3>
 <p>When present, the first additional information subpart for predicates is used to specify the role played in a relation by each of its parameters, with the following codes:</p>
 <ul class="simple">
 <li><p><strong>s</strong>: subject</p></li>
@@ -365,9 +269,9 @@
 <p>These codes are used to build strings, where each character corresponds to the parameter of the relation in the equivalent position. For example, consider the hyperedge:</p>
 <p>(is/P.sc (the/M sky/C) blue/C)</p>
 <p>The <em>sc</em> subpart indicates that the first parameter (“the sky”) plays the role of subject, and the second one (“blue”), plays the role of subject complement.</p>
-</div>
-<div class="section" id="builders">
-<h3>Builders<a class="headerlink" href="#builders" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="builders">
+<h3>Builders<a class="headerlink" href="#builders" title="Permalink to this headline"></a></h3>
 <p>When present, the first additional information subpart for builders is used to distinguish the main concepts from the auxiliary ones, with the following codes:</p>
 <ul class="simple">
 <li><p><strong>m</strong>: main concept</p></li>
@@ -376,17 +280,17 @@
 <p>These codes are used to build strings, where each character corresponds to the parameter of the builder in the equivalent position. For example, consider the hyperedge:</p>
 <p>(of/B.ma founder/C psychoanalysis/C)</p>
 <p>The <em>ma</em> subpart indicates that the first concept following the builder should be considered a main concept, and the next one auxiliary. This means that “founder of psychoanalysis” is a type of “founder”. In other words, auxiliary concepts serve the role of making the main ones more specific.</p>
-</div>
-</div>
-<div class="section" id="subtypes">
-<h2>Subtypes<a class="headerlink" href="#subtypes" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="subtypes">
+<h2>Subtypes<a class="headerlink" href="#subtypes" title="Permalink to this headline"></a></h2>
 <p>Subtypes are represented by a lowercase character following the main type code. They provide further distinctions, for example that a predicate is declarative (<code class="docutils literal notranslate"><span class="pre">Pd</span></code>), or that a concept is common (<code class="docutils literal notranslate"><span class="pre">Cc</span></code>), or that a modifier is a determinant (<code class="docutils literal notranslate"><span class="pre">Md</span></code>):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="ow">is</span><span class="o">/</span><span class="n">Pd</span><span class="o">.</span><span class="n">sc</span> <span class="p">(</span><span class="n">the</span><span class="o">/</span><span class="n">Md</span> <span class="n">sky</span><span class="o">/</span><span class="n">Cc</span><span class="p">)</span> <span class="n">blue</span><span class="o">/</span><span class="n">Cc</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Below we show possible subtypes for several main types.</p>
-<div class="section" id="concept">
-<h3>Concept<a class="headerlink" href="#concept" title="Permalink to this headline">¶</a></h3>
+<section id="concept">
+<h3>Concept<a class="headerlink" href="#concept" title="Permalink to this headline"></a></h3>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 19%" />
@@ -422,9 +326,9 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="predicate">
-<h3>Predicate<a class="headerlink" href="#predicate" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="predicate">
+<h3>Predicate<a class="headerlink" href="#predicate" title="Permalink to this headline"></a></h3>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 20%" />
@@ -452,9 +356,9 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="builder">
-<h3>Builder<a class="headerlink" href="#builder" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="builder">
+<h3>Builder<a class="headerlink" href="#builder" title="Permalink to this headline"></a></h3>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 21%" />
@@ -478,9 +382,9 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="modifier">
-<h3>Modifier<a class="headerlink" href="#modifier" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="modifier">
+<h3>Modifier<a class="headerlink" href="#modifier" title="Permalink to this headline"></a></h3>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 21%" />
@@ -520,9 +424,9 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="trigger">
-<h3>Trigger<a class="headerlink" href="#trigger" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="trigger">
+<h3>Trigger<a class="headerlink" href="#trigger" title="Permalink to this headline"></a></h3>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 19%" />
@@ -566,21 +470,21 @@
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="further-type-specific-additional-information">
-<h2>Further type-specific additional information<a class="headerlink" href="#further-type-specific-additional-information" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="further-type-specific-additional-information">
+<h2>Further type-specific additional information<a class="headerlink" href="#further-type-specific-additional-information" title="Permalink to this headline"></a></h2>
 <p>Beyond argument roles, other forms of type-specific additional information are possible for the various types.</p>
-<div class="section" id="concepts">
-<h3>Concepts<a class="headerlink" href="#concepts" title="Permalink to this headline">¶</a></h3>
+<section id="concepts">
+<h3>Concepts<a class="headerlink" href="#concepts" title="Permalink to this headline"></a></h3>
 <p>When present, the first additional information subpart for concepts indicates number, with the following codes:</p>
 <ul class="simple">
 <li><p><strong>s</strong>: singular, example: apple/Cc.s</p></li>
 <li><p><strong>p</strong>: plural, example: apples/Cc.p</p></li>
 </ul>
-</div>
-<div class="section" id="id1">
-<h3>Predicates<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="id1">
+<h3>Predicates<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
 <p>Beyond argument roles, a second additional information subpart for predicates can be used to specify the features of the verb underlying the predicate. The following 7 features are specified:</p>
 <ul class="simple">
 <li><p><strong>tense</strong>: past (&lt;), present (|) or future (&gt;)</p></li>
@@ -594,15 +498,15 @@
 <p>A string is built in the above order to specify the verb features of a predicate. Any feature can be left unspecified, by using a dash character (-). For example, consider the hyperedge:</p>
 <p>(<strong>is/P?.cs.|f–3s-</strong> (what/Mw time/Cc.s) it/Ci)</p>
 <p>The predicate specifies four verb features: present tense (|), finite form (f), third person (3) and singular number (s).</p>
-</div>
-<div class="section" id="modifiers">
-<h3>Modifiers<a class="headerlink" href="#modifiers" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="modifiers">
+<h3>Modifiers<a class="headerlink" href="#modifiers" title="Permalink to this headline"></a></h3>
 <p>When the modifer is verbal, the first additional information subpart can be used to specify the features of the underlying verb. The notation is exactly the same as the one used for predicates, but in predicates this corresponds to the second additional information subpart. For example, consider the non-atomic predicate:</p>
 <p>(have/Mv.|f—– (been/Mv.&lt;pf—- tracking/Pd.sox.|pg—-))</p>
-</div>
-</div>
-<div class="section" id="namespaces">
-<h2>Namespaces<a class="headerlink" href="#namespaces" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="namespaces">
+<h2>Namespaces<a class="headerlink" href="#namespaces" title="Permalink to this headline"></a></h2>
 <p>Namespaces serve two functions:</p>
 <ol class="arabic simple">
 <li><p>To identify the language or symbolic space to which an atom belongs;</p></li>
@@ -625,14 +529,14 @@
 <span class="n">cambridge</span><span class="o">/</span><span class="n">Cp</span><span class="o">.</span><span class="n">s</span><span class="o">/</span><span class="n">en</span><span class="mf">.2</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="full-atom-structure">
-<h2>Full atom structure<a class="headerlink" href="#full-atom-structure" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="full-atom-structure">
+<h2>Full atom structure<a class="headerlink" href="#full-atom-structure" title="Permalink to this headline"></a></h2>
 <p>We show here the full atom structure, including all optional parts.</p>
 <img alt="atom structure" class="align-center" src="../_images/atom-structure.png" />
-</div>
-<div class="section" id="special-atoms">
-<h2>Special atoms<a class="headerlink" href="#special-atoms" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="special-atoms">
+<h2>Special atoms<a class="headerlink" href="#special-atoms" title="Permalink to this headline"></a></h2>
 <p>The two special atoms below come predefined with Graphbrain and are very frequently useful.</p>
 <table class="docutils align-default">
 <colgroup>
@@ -657,47 +561,35 @@
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="special-relations.html" class="btn btn-neutral float-right" title="Special relations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="overview.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="special-relations.html" class="btn btn-neutral float-right" title="Special relations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2021 CNRS.
+    <p>&#169; Copyright 2021 CNRS.</p>
+  </div>
 
-    </p>
-  </div> 
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

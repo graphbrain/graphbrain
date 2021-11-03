@@ -67,25 +67,33 @@ It is then necessary to download a spaCy language model::
    $ python -m spacy download en_core_web_lg
 
 
+Building Graphbrain with parser-level coreference resolution support
+--------------------------------------------------------------------
+
+Graphbrain's parser-level coreference resolution support relies on neuralcoref. This library currently introduces some aditional restrictions on the dependencies:
+
+* Python version == 3.7.*
+* spaCy version >=2.1.0, <3.0.0
+
+To accomodate this, the best solution is to install an appropriate spaCy version first::
+
+   $ pip install spacy==2.3.7
+
+It is still necessary to download a spaCy language model::
+
+   $ python -m spacy download en_core_web_lg
+
+The next step is to install neuralcoref from source, follwing the instructions in the repository:
+https://github.com/huggingface/neuralcoref
+
+Finally, Graphbrain can be installed from source, as per above.
+
 Building Graphbrain with support for LevelDB hypergraph databases
 -----------------------------------------------------------------
 
 If you want to build graphbrain with support for LevelDB hypergraph databases, you should set the ``LEVELDB`` environment variable when building::
 
    $ LEVELDB=true pip install .
-
-Building Graphbrain with parser-level coreference resolution support
---------------------------------------------------------------------
-
-If you want to build graphbrain with parser-level coreference resolution support through neuralcoref, you should set the ``NEURALCOREF`` environment variable when building::
-
-   $ NEURALCOREF=true pip install .
-
-It is still necessary to download a spaCy language model::
-
-   $ python -m spacy download en_core_web_lg
-
-Currently, parser-level coreference resolution relies on neuralcoref, which requires Python >=3.6, <3.9, and spaCy >=2.1.0, <3.0.0. These restrictions are the reason why we kept it out of the default distribution.
 
 For developers
 --------------
