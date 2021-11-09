@@ -270,23 +270,31 @@ The hypergraph database also provides the following global counters:
 Working with hyperedge sequences
 ================================
 
-The hypergraph database provides for a mechanism to organize hyerpedges into sequences. This is useful when storing hyperedges extracted from natural language sources where the order in which they appear can be relevant. For example, we might be interested in parsing every sentence in a book into a hyperedge and then being able to know which hyperedges correspond to the sentence that came before and after.
+The hypergraph database provides for a mechanism to organize hyperedges into sequences. This is useful when storing hyperedges extracted from natural language sources where the order in which they appear can be relevant. For example, we might be interested in parsing every sentence in a book into a hyperedge and then being able to know which hyperedges correspond to the sentence that came before and after.
 
-A hyperedge can be added to a given sequence in the hypergraph (identified by a string label), at a given position. For example::
+A hyperedge can be added to the end of a given sequence in the hypergraph (identified by a string label). For example::
 
-   >>> hg.add_to_sequence('sentences', 0, '(is/P this/C (the/M (first/M sentence/C)))')
+   >>> hg.add_to_sequence('sentences', '(is/P this/C (the/M (first/M sentence/C)))')
    (seq/P/. sentences 0 (is/P this/C (the/M (first/M sentence/C))))
 
-The outer edge with the special predicate ``seq/P/.`` assigns the hyperedge to the sequence "sentences" at position 0. Sequences are thus defines using hypergraphic semantics in this very simple way, and can be directly manipulated using basic hypergraph operations. The methods provided to work with them are just a convenience. There is no "safety net" to maintain consistency, it is possible to insert several hyperedges in the same position, or skip positions. This is meant to be a very simple and fast mechanism. The method ``sequences`` returns a generator for all the sequences contained in the hypergraph::
+The outer edge with the special predicate ``seq/P/.`` assigns the hyperedge to the sequence "sentences" at position 0. Furthermore, for every sequence a special hyperedge is created to store attributes related to the sequence::
+
+   (seq_attrs/P/. sentences)
+
+In its current implementation, this is used only to store the current size of the sequence as an integer under attribute 'size'. This attribute is used and updated by ``hg.add_to_sequence()``, to determine the position at which to insert the next element in the sequence.
+
+The method ``sequences()`` returns a generator for all the sequences contained in the hypergraph::
 
    >>> list(hg.sequences())
    [sentences]
 
-The method ``sequence`` provides a generator for all the hyperedges contained in a given sequence, in order::
+The method ``sequence()`` provides a generator for all the hyperedges contained in a given sequence, in order::
 
-  >>> hg.add_to_sequence('sentences', 1, '(is/P this/C (the/M (second/M sentence/C)))')
+  >>> hg.add_to_sequence('sentences', '(is/P this/C (the/M (second/M sentence/C)))')
   (seq/P/. sentences 1 (is/P this/C (the/M (second/M sentence/C))))
-  >>> hg.add_to_sequence('sentences', 2, '(is/P this/C (the/M (third/M sentence/C)))')
+  >>> hg.add_to_sequence('sentences', '(is/P this/C (the/M (third/M sentence/C)))')
   (seq/P/. sentences 2 (is/P this/C (the/M (third/M sentence/C))))
   >>> list(hg.sequence('sentences'))
   [(is/P this/C (the/M (first/M sentence/C))), (is/P this/C (the/M (second/M sentence/C))), (is/P this/C (the/M (third/M sentence/C)))]
+
+No methods are provided to remove hyperedges from the sequence, or to insert hyperedges somewhere other than the end of the sequence. This is meant to be a very simple and fast mechanism.
