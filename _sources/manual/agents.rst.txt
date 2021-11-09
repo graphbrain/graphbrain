@@ -47,7 +47,7 @@ It is naturally useful to be able to run a agents from inside programs. Agents m
 The ``run_agent()`` function accepts a number of optional parameters, which namely allow for all the specifications that are also available from the command line. The full signature of the function is::
 
    run_agent(agent, lang=None, hg=None, infile=None, indir=None, url=None,
-             sequence=None, progress_bar=True, corefs='resolve',
+             sequence=None, progress_bar=True, corefs=False,
              logging_level=logging.INFO)
 
 

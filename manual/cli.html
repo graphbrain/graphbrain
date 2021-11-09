@@ -117,24 +117,37 @@
 </div>
 <p>All cases below work with both.</p>
 <p>Here’s an overview of the interface:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphbrain</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">agent</span> <span class="n">AGENT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">corefs</span> <span class="n">COREFS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">fields</span> <span class="n">FIELDS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">hg</span> <span class="n">HG</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">indir</span> <span class="n">INDIR</span><span class="p">]</span>
-                <span class="p">[</span><span class="o">--</span><span class="n">infile</span> <span class="n">INFILE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">lang</span> <span class="n">LANG</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">outdir</span> <span class="n">OUTDIR</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">outfile</span> <span class="n">OUTFILE</span><span class="p">]</span>
-                <span class="p">[</span><span class="o">--</span><span class="n">pattern</span> <span class="n">PATTERN</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">sequence</span> <span class="n">SEQUENCE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">show_namespaces</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">system</span> <span class="n">SYSTEM</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">text</span> <span class="n">TEXT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">training_data</span> <span class="n">TRAINING_DATA</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">url</span> <span class="n">URL</span><span class="p">]</span>
-                <span class="n">command</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">graphbrain</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">agent</span> <span class="n">AGENT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">corefs</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">fields</span> <span class="n">FIELDS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">hg</span> <span class="n">HG</span><span class="p">]</span>
+                  <span class="p">[</span><span class="o">--</span><span class="n">indir</span> <span class="n">INDIR</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">infile</span> <span class="n">INFILE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">lang</span> <span class="n">LANG</span><span class="p">]</span>
+                  <span class="p">[</span><span class="o">--</span><span class="n">outdir</span> <span class="n">OUTDIR</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">outfile</span> <span class="n">OUTFILE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">parser</span> <span class="n">PARSER</span><span class="p">]</span>
+                  <span class="p">[</span><span class="o">--</span><span class="n">pattern</span> <span class="n">PATTERN</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">sequence</span> <span class="n">SEQUENCE</span><span class="p">]</span>
+                  <span class="p">[</span><span class="o">--</span><span class="n">show_namespaces</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">system</span> <span class="n">SYSTEM</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">text</span> <span class="n">TEXT</span><span class="p">]</span>
+                  <span class="p">[</span><span class="o">--</span><span class="n">training_data</span> <span class="n">TRAINING_DATA</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">url</span> <span class="n">URL</span><span class="p">]</span>
+                  <span class="n">command</span>
 
 <span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
   <span class="n">command</span>               <span class="n">command</span> <span class="n">to</span> <span class="n">execute</span>
 
 <span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
   <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
-  <span class="o">--</span><span class="n">hg</span> <span class="n">HG</span>               <span class="n">hypergraph</span> <span class="n">db</span> <span class="n">file</span> <span class="n">path</span>
-  <span class="o">--</span><span class="n">infile</span> <span class="n">INFILE</span>       <span class="nb">input</span> <span class="n">file</span>
-  <span class="o">--</span><span class="n">outfile</span> <span class="n">OUTFILE</span>     <span class="n">output</span> <span class="n">file</span>
-  <span class="o">--</span><span class="n">fields</span> <span class="n">FIELDS</span>       <span class="n">field</span> <span class="n">names</span>
-  <span class="o">--</span><span class="n">show_namespaces</span>     <span class="n">show</span> <span class="n">namespaces</span>
-  <span class="o">--</span><span class="n">lang</span> <span class="n">LANG</span>           <span class="n">language</span>
-  <span class="o">--</span><span class="n">pattern</span> <span class="n">PATTERN</span>     <span class="n">hyperedge</span> <span class="n">pattern</span>
   <span class="o">--</span><span class="n">agent</span> <span class="n">AGENT</span>         <span class="n">agent</span> <span class="n">name</span>
+  <span class="o">--</span><span class="n">corefs</span>              <span class="n">perform</span> <span class="n">coreference</span> <span class="n">resolution</span>
+  <span class="o">--</span><span class="n">fields</span> <span class="n">FIELDS</span>       <span class="n">field</span> <span class="n">names</span>
+  <span class="o">--</span><span class="n">hg</span> <span class="n">HG</span>               <span class="n">hypergraph</span> <span class="n">db</span>
+  <span class="o">--</span><span class="n">indir</span> <span class="n">INDIR</span>         <span class="nb">input</span> <span class="n">directory</span>
+  <span class="o">--</span><span class="n">infile</span> <span class="n">INFILE</span>       <span class="nb">input</span> <span class="n">file</span>
+  <span class="o">--</span><span class="n">lang</span> <span class="n">LANG</span>           <span class="n">language</span>
+  <span class="o">--</span><span class="n">outdir</span> <span class="n">OUTDIR</span>       <span class="n">output</span> <span class="n">directory</span>
+  <span class="o">--</span><span class="n">outfile</span> <span class="n">OUTFILE</span>     <span class="n">output</span> <span class="n">file</span>
+  <span class="o">--</span><span class="n">parser</span> <span class="n">PARSER</span>       <span class="n">parser</span>
+  <span class="o">--</span><span class="n">pattern</span> <span class="n">PATTERN</span>     <span class="n">edge</span> <span class="n">pattern</span>
+  <span class="o">--</span><span class="n">sequence</span> <span class="n">SEQUENCE</span>   <span class="n">sequence</span> <span class="n">name</span>
+  <span class="o">--</span><span class="n">show_namespaces</span>     <span class="n">show</span> <span class="n">namespaces</span>
+  <span class="o">--</span><span class="n">system</span> <span class="n">SYSTEM</span>       <span class="n">agent</span> <span class="n">system</span> <span class="n">file</span>
+  <span class="o">--</span><span class="n">text</span> <span class="n">TEXT</span>           <span class="n">text</span> <span class="n">identifier</span>
+  <span class="o">--</span><span class="n">training_data</span> <span class="n">TRAINING_DATA</span>
+                        <span class="n">training</span> <span class="n">data</span> <span class="k">for</span> <span class="n">ML</span> <span class="n">tasks</span>
+  <span class="o">--</span><span class="n">url</span> <span class="n">URL</span>             <span class="n">url</span>
 </pre></div>
 </div>
 <p>The only obligatory argument, command, is used to specify the task to perform. Each command uses a subset of the optional arguments. Presented below are the details for each command.</p>
