@@ -14,24 +14,37 @@ All cases below work with both.
 
 Here's an overview of the interface::
 
-   graphbrain [-h] [--agent AGENT] [--corefs COREFS] [--fields FIELDS] [--hg HG] [--indir INDIR]
-                   [--infile INFILE] [--lang LANG] [--outdir OUTDIR] [--outfile OUTFILE]
-                   [--pattern PATTERN] [--sequence SEQUENCE] [--show_namespaces] [--system SYSTEM] [--text TEXT] [--training_data TRAINING_DATA] [--url URL]
-                   command
+   usage: graphbrain [-h] [--agent AGENT] [--corefs] [--fields FIELDS] [--hg HG]
+                     [--indir INDIR] [--infile INFILE] [--lang LANG]
+                     [--outdir OUTDIR] [--outfile OUTFILE] [--parser PARSER]
+                     [--pattern PATTERN] [--sequence SEQUENCE]
+                     [--show_namespaces] [--system SYSTEM] [--text TEXT]
+                     [--training_data TRAINING_DATA] [--url URL]
+                     command
 
    positional arguments:
      command               command to execute
 
    optional arguments:
      -h, --help            show this help message and exit
-     --hg HG               hypergraph db file path
-     --infile INFILE       input file
-     --outfile OUTFILE     output file
-     --fields FIELDS       field names
-     --show_namespaces     show namespaces
-     --lang LANG           language
-     --pattern PATTERN     hyperedge pattern
      --agent AGENT         agent name
+     --corefs              perform coreference resolution
+     --fields FIELDS       field names
+     --hg HG               hypergraph db
+     --indir INDIR         input directory
+     --infile INFILE       input file
+     --lang LANG           language
+     --outdir OUTDIR       output directory
+     --outfile OUTFILE     output file
+     --parser PARSER       parser
+     --pattern PATTERN     edge pattern
+     --sequence SEQUENCE   sequence name
+     --show_namespaces     show namespaces
+     --system SYSTEM       agent system file
+     --text TEXT           text identifier
+     --training_data TRAINING_DATA
+                           training data for ML tasks
+     --url URL             url
 
 The only obligatory argument, command, is used to specify the task to perform. Each command uses a subset of the optional arguments. Presented below are the details for each command.
 

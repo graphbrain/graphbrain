@@ -20,7 +20,6 @@ def apply_op(hg, op):
 
     if optype == 'add':
         if sequence:
-            # TODO: detect already existing edges in this case
             hg.add_to_sequence(sequence, edge)
         else:
             if hg.exists(edge):

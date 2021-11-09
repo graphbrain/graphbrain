@@ -1,11 +1,16 @@
+import graphbrain.constants as const
+
+from graphbrain import hedge
+
+
 class Parser(object):
     """Defines the common interface for parser objects.
     Parsers transofrm natural text into graphbrain hyperedges.
     """
 
-    def __init__(self, lemmas=False, resolve_corefs=False, debug=False):
+    def __init__(self, lemmas=True, corefs=True, debug=False):
         self.lemmas = lemmas
-        self.resolve_corefs = resolve_corefs
+        self.corefs = corefs
         self.debug = debug
 
         # to be created by derived classes
@@ -38,33 +43,39 @@ class Parser(object):
         -> edges_text: a dictionary of all edges and subedges to their
         corresponding text.
 
-        And optionally:
-
-        -> resolved_corefs: main_edge with coreferences resolved.
+        -> corefs: resolve coreferences.
         """
         parse_results = self._parse(text)
-        if self.resolve_corefs:
+        if self.corefs:
             self._resolve_corefs(parse_results)
         return parse_results
 
-    def parse_and_write(self, hg, text):
+    def parse_and_add(self, text, hg, sequence=None):
         parse_results = self.parse(text)
         for parse in parse_results['parses']:
-            main_edge = parse['resolved_corefs']
-
+            if self.corefs:
+                main_edge = parse['resolved_corefs']
+                unresolved_edge = parse['main_edge']
+            else:
+                main_edge = parse['main_edge']
+                unresolved_edge = None
             # add main edge
             if main_edge:
+                if sequence:
+                    hg.add_to_sequence(sequence, main_edge)
+                else:
+                    hg.add(main_edge)
                 # attach text to edge
-                text = parse['text']
-                hg.add(main_edge)
-                hg.set_attribute(main_edge, 'text', text)
-
+                hg.set_attribute(main_edge, 'text', parse['text'])
+                if self.corefs:
+                    coref_res_edge = hedge(
+                        (const.coref_res_pred, unresolved_edge, main_edge))
+                    hg.add(coref_res_edge)
                 # add extra edges
                 for edge in parse['extra_edges']:
                     hg.add(edge)
         for edge in parse_results['inferred_edges']:
             hg.add(edge, count=True)
-        return parse_results
 
     def atom_gender(self, atom):
         raise NotImplementedError()

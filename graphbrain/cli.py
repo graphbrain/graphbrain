@@ -28,10 +28,8 @@ def wrapper(fun, command=False, text=None):
     if command:
         parser.add_argument('command', type=str, help='command to execute')
     parser.add_argument('--agent', type=str, help='agent name', default=None)
-    parser.add_argument('--corefs', type=str,
-                        help='parser coreference resolution: '
-                             '"resolve" (default), "replace" or "no")',
-                        default='no')
+    parser.add_argument('--corefs', help='perform coreference resolution',
+                        action='store_true')
     parser.add_argument('--fields', type=str, help='field names', default=None)
     parser.add_argument('--hg', type=str,
                         help='hypergraph db', default='gb.db')
@@ -39,11 +37,11 @@ def wrapper(fun, command=False, text=None):
                         help='input directory', default=None)
     parser.add_argument('--infile', type=str, help='input file', default=None)
     parser.add_argument('--lang', type=str, help='language', default=None)
-    parser.add_argument('--parser', type=str, help='parser', default=None)
     parser.add_argument('--outdir', type=str,
                         help='output directory', default=None)
     parser.add_argument('--outfile', type=str,
                         help='output file', default=None)
+    parser.add_argument('--parser', type=str, help='parser', default=None)
     parser.add_argument('--pattern', type=str, help='edge pattern',
                         default='*')
     parser.add_argument('--sequence', type=str, help='sequence name',
@@ -59,13 +57,6 @@ def wrapper(fun, command=False, text=None):
     parser.add_argument('--url', type=str, help='url', default=None)
 
     args = parser.parse_args()
-
-    # check arguments
-    if args.corefs not in {'resolve', 'replace', 'no'}:
-        msg = '--corefs must be either "resolve", "replace" or "no". '
-        msg += '"{}" is not valid.'.format(args.corefs)
-        error_msg(msg)
-        sys.exit(-1)
 
     # determine language
     if args.parser:

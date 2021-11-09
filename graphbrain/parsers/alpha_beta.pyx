@@ -122,9 +122,9 @@ def _is_second_concept_better(edge1, edge2):
 
 
 class AlphaBeta(Parser):
-    def __init__(self, model_name, lemmas=False, resolve_corefs=False,
-                 beta='repair', normalize=True, post_process=True):
-        super().__init__(lemmas=lemmas, resolve_corefs=resolve_corefs)
+    def __init__(self, model_name, lemmas=False, corefs=False, beta='repair',
+                 normalize=True, post_process=True):
+        super().__init__(lemmas=lemmas, corefs=corefs)
         self.atom2token = None
         self.temp_atoms = None
         self.orig_atom = None
@@ -138,7 +138,7 @@ class AlphaBeta(Parser):
         self.extra_edges = set()
         self.nlp = spacy.load(model_name)
         self.alpha = None
-        if NEURALCOREF and resolve_corefs:
+        if NEURALCOREF and corefs:
             coref = neuralcoref.NeuralCoref(self.nlp.vocab)
             self.nlp.add_pipe(coref, name='neuralcoref')
         if beta == 'strict':

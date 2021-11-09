@@ -106,7 +106,7 @@ Parser-level coreference resolution and inference of gender, number and animacy
 
 **NOTE:** Currently, the default distribution of Graphbrain does not support parser-level coreference resolution. Please refer to the installation instructions on how to build graphbrain with this feature.
 
-Currently, parser-level coreference resolution relies on neuralcoref, which requires Python >=3.6, <3.9, and spaCy >=2.1.0, <3.0.0. These restrictions are the reason why we kept it out of the default distribution. Once the successor of neuralcoref is released, we hope to use it to enable parser-level coreference resolution by default in the default distribution.
+Currently, parser-level coreference resolution relies on neuralcoref, which requires Python ==3.7 and spaCy >=2.1.0, <3.0.0. These restrictions are the reason why we kept it out of the default distribution. Once the successor of neuralcoref is released, we hope to use it to enable parser-level coreference resolution by default in the default distribution.
 
 Consider the sentence::
 
@@ -125,7 +125,7 @@ The correspondences of the pronouns "her" and "she" to "Alice" are also used to 
    (animacy/P/. alice/Cp.s/en animate)
 
 To give the complete example::
-   >>> parser = create_parser(lang='en', resolve_corefs=True)
+   >>> parser = create_parser(lang='en', corefs=True)
    >>> parser.parse('Alice says that she likes her dog.')
    {'parses':
        ({'main_edge': (says/Pd.sr.|f--3s-/en alice/Cp.s/en (that/T/en (likes/P.so.|f--3s-/en she/Ci/en (her/Mp/en dog/Cc.s/en)))),

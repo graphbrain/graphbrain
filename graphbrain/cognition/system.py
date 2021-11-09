@@ -14,7 +14,7 @@ from graphbrain.parsers import create_parser, parser_lang
 
 def run_agent(agent, lang=None, parser_class=None, hg=None, infile=None,
               indir=None, outfile=None, url=None, sequence=None,
-              progress_bar=True, corefs='resolve', logging_level=logging.INFO):
+              progress_bar=True, corefs=False, logging_level=logging.INFO):
     system = System(lang=lang, parser_class=parser_class, hg=hg, infile=infile,
                     indir=indir, outfile=outfile, url=url, sequence=sequence,
                     corefs=corefs, logging_level=logging_level)
@@ -29,7 +29,7 @@ def run_agent(agent, lang=None, parser_class=None, hg=None, infile=None,
 
 def load_system(system_file, lang=None, parser_class=None, hg=None,
                 infile=None, indir=None, outfile=None, url=None, sequence=None,
-                progress_bar=True, corefs='resolve',
+                progress_bar=True, corefs=False,
                 logging_level=logging.INFO):
     with open(system_file, 'r') as f:
         json_str = f.read()
@@ -58,7 +58,7 @@ def load_system(system_file, lang=None, parser_class=None, hg=None,
 
 def run_system(system_file, lang=None, parser_class=None, hg=None, infile=None,
                indir=None, outfile=None, url=None, sequence=None,
-               progress_bar=True, corefs='resolve',
+               progress_bar=True, corefs=False,
                logging_level=logging.INFO):
     system = load_system(system_file, lang=lang, parser_class=parser_class,
                          hg=hg, infile=infile, indir=indir, outfile=outfile,
@@ -84,8 +84,7 @@ def create_agent(agent_module_str, name=None,
 
 
 def processor(x, lang=None, parser_class=None, hg=None, infile=None,
-              indir=None, outfile=None, url=None, sequence=None,
-              corefs='resolve'):
+              indir=None, outfile=None, url=None, sequence=None, corefs=False):
     if type(x) == str:
         if x[-4:] == '.sys':
             return load_system(x, lang=lang, parser_class=parser_class, hg=hg,
@@ -125,7 +124,7 @@ def processor(x, lang=None, parser_class=None, hg=None, infile=None,
 class System(object):
     def __init__(self, name=None, lang=None, parser_class=None, hg=None,
                  infile=None, indir=None, outfile=None, url=None,
-                 sequence=None, corefs='resolve', logging_level=logging.INFO):
+                 sequence=None, corefs=False, logging_level=logging.INFO):
         self.name = name
 
         self.lang = lang
@@ -222,11 +221,9 @@ class System(object):
 
     def get_parser(self, agent):
         if self.parser is None:
-            corefs = self.corefs in {'resolve', 'replace'}
             self.parser = create_parser(lang=self.lang,
                                         parser_class=self.parser_class,
-                                        lemmas=True,
-                                        resolve_corefs=corefs)
+                                        lemmas=True, corefs=self.corefs)
         return self.parser
 
     def get_infile(self, agent):
@@ -249,15 +246,12 @@ class System(object):
 
     def parse_results2ops(self, parse_results):
         for parse in parse_results['parses']:
-            if self.corefs == 'resolve':
-                main_edge = parse['main_edge']
-                resolved_edge = parse['resolved_corefs']
-            elif self.corefs == 'replace':
+            if self.corefs:
                 main_edge = parse['resolved_corefs']
-                resolved_edge = None
+                unresolved_edge = parse['main_edge']
             else:
                 main_edge = parse['main_edge']
-                resolved_edge = None
+                unresolved_edge = None
 
             # add main edge
             if main_edge:
@@ -265,16 +259,12 @@ class System(object):
                 text = parse['text']
                 attr = {'text': text}
 
-                if self.sequence:
-                    yield create_op(main_edge, sequence=self.sequence,
+                yield create_op(main_edge, sequence=self.sequence,
                                     attributes=attr)
-                else:
-                    yield create_op(main_edge, attributes=attr)
 
-                if self.corefs == 'resolve':
-                    yield create_op(resolved_edge, attributes=attr)
+                if self.corefs:
                     coref_res_edge = hedge(
-                        (const.coref_res_pred, main_edge, resolved_edge))
+                        (const.coref_res_pred, unresolved_edge, main_edge))
                     yield create_op(coref_res_edge)
 
                 # add extra edges

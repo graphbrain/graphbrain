@@ -72,7 +72,7 @@ Building Graphbrain with parser-level coreference resolution support
 
 Graphbrain's parser-level coreference resolution support relies on neuralcoref. This library currently introduces some aditional restrictions on the dependencies:
 
-* Python version == 3.7.*
+* Python version ==3.7.*
 * spaCy version >=2.1.0, <3.0.0
 
 To accomodate this, the best solution is to install an appropriate spaCy version first::
