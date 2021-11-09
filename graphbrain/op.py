@@ -1,12 +1,11 @@
-def create_op(edge, optype='add', primary=True, count=False,
-              attributes={}, sequence=None, position=-1):
+def create_op(edge, optype='add', primary=True, count=False, attributes={},
+              sequence=None):
     return {'edge': edge,
             'optype': optype,
             'primary': primary,
             'count': count,
             'attributes': attributes,
-            'sequence': sequence,
-            'position': position}
+            'sequence': sequence}
 
 
 def apply_op(hg, op):
@@ -21,10 +20,8 @@ def apply_op(hg, op):
 
     if optype == 'add':
         if sequence:
-            position = op['position']
             # TODO: detect already existing edges in this case
-            hg.add_to_sequence(sequence, position, edge)
-            hg.set_primary(edge, True)
+            hg.add_to_sequence(sequence, edge)
         else:
             if hg.exists(edge):
                 if count:

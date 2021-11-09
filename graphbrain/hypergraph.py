@@ -286,16 +286,22 @@ class Hypergraph(object):
         """
         return sum([self.deep_degree(edge) for edge in edges])
 
-    def add_to_sequence(self, name, pos, edge):
-        """Adds 'edge' to sequence 'name' at position 'pos'."""
-        seq_atom = build_atom(name, [])
-        return self.add((const.sequence_pred, seq_atom, str(pos), edge))
+    def add_to_sequence(self, name, edge, primary=True):
+        """Adds 'edge' to sequence 'name'."""
+        seq_attrs_edge = hedge((const.sequence_attrs_pred, name))
+        pos = self.get_int_attribute(seq_attrs_edge, 'size')
+        if pos is None:
+            pos = 0
+        result = self.add((const.sequence_pred, name, str(pos), edge))
+        self.set_attribute(seq_attrs_edge, 'size', pos + 1)
+        if primary:
+            self.set_primary(edge, True)
+        return result
 
     def sequence(self, name):
         """Returns an iterator for a sequence of hyperedges, given the name
         of the sequence.
         """
-
         pos = 0
         stop = False
         while not stop:

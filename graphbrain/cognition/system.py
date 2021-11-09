@@ -146,7 +146,6 @@ class System(object):
         self.outfile = outfile
         self.url = url
         self.sequence = sequence
-        self.sequence_pos = 0
         self.corefs = corefs
 
         logging.basicConfig()
@@ -268,9 +267,7 @@ class System(object):
 
                 if self.sequence:
                     yield create_op(main_edge, sequence=self.sequence,
-                                    position=self.sequence_pos,
                                     attributes=attr)
-                    self.sequence_pos += 1
                 else:
                     yield create_op(main_edge, attributes=attr)
 

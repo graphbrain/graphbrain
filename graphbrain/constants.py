@@ -1,5 +1,6 @@
 # Pre-defined system atoms
 sequence_pred = 'seq/P/.'
+sequence_attrs_pred = 'seq_attrs/P/.'
 noun_connector_pred = '+/B/.'
 lemma_pred = 'lemma/J/.'
 coref_pred = 'coref/P/.'

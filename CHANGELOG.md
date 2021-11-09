@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- Sequences keep track of their size, no need to specify position when adding edge to sequence.
 - Improved wikipedia agent.
 
 ### Removed
