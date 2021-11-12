@@ -2,11 +2,13 @@
 
 ## [0.5.1] - ongoing work
 ### Added
-- Parser.parse_and_add()
+- Parser.parse_and_add().
+- Parser.sentences().
 
 ### Changed
 - Sequences keep track of their size, no need to specify position when adding edge to sequence.
 - Improved wikipedia agent.
+- Improved coreference resolution.
 
 ### Removed
 

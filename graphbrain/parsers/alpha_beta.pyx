@@ -660,6 +660,10 @@ class AlphaBeta(Parser):
                        for sent in self.doc.sents)
         return {'parses': parses, 'inferred_edges': []}
 
+    def sentences(self, text):
+        doc = self.nlp(text.strip())
+        return [str(sent).strip() for sent in doc.sents]
+
     def _coref_inferences(self, main_edge, edges):
         results = []
 

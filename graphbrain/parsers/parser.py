@@ -78,6 +78,9 @@ class Parser(object):
             hg.add(edge, count=True)
         return parse_results
 
+    def sentences(self, text):
+        raise NotImplementedError()
+
     def atom_gender(self, atom):
         raise NotImplementedError()
 
