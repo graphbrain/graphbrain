@@ -1,13 +1,8 @@
 from contextlib import contextmanager
 
 from graphbrain.hyperedge import hedge
+import graphbrain.memory.leveldb
 import graphbrain.memory.sqlite
-
-try:
-    import graphbrain.memory.leveldb
-    LEVELDB = True
-except ImportError:
-    LEVELDB = False
 
 
 def hgraph(locator_string):
@@ -22,11 +17,7 @@ def hgraph(locator_string):
         if extension in {'sqlite', 'sqlite3', 'db'}:
             return graphbrain.memory.sqlite.SQLite(locator_string)
         elif extension in {'leveldb', 'hg'}:
-            if LEVELDB:
-                return graphbrain.memory.leveldb.LevelDB(locator_string)
-            else:
-                raise RuntimeError(
-                    'LevelDB not supported. Custom build required.')
+            return graphbrain.memory.leveldb.LevelDB(locator_string)
     raise RuntimeError('Unknown hypergraph database type.')
 
 

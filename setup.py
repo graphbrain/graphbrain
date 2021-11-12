@@ -22,10 +22,6 @@ CYTHON_ANNOTATE = False
 # Force compilation of all Cython code.
 CYTHON_FORCE_COMPILATION = False
 
-# Check for environment variable to include LevelDB in the build
-# e.g. usage: LEVELDB=true pip install -e .
-LEVELDB = os.environ.get('LEVELDB', None) is not None
-
 # Current Graphbrain version
 with open('VERSION', 'r') as version_file:
     VERSION = version_file.read()
@@ -42,6 +38,9 @@ if USE_CYTHON:
         Extension('graphbrain.memory.sqlite',
                   ['graphbrain/memory/sqlite.pyx'],
                   include_dirs=['.']),
+        Extension('graphbrain.memory.leveldb',
+                      ['graphbrain/memory/leveldb.pyx'],
+                      include_dirs=['.']),
         Extension('graphbrain.memory.permutations',
                   ['graphbrain/memory/permutations.pyx'],
                   include_dirs=['.']),
@@ -55,11 +54,6 @@ if USE_CYTHON:
                   ['graphbrain/parsers/parser_en.pyx'],
                   include_dirs=['.'])
     ]
-    if LEVELDB:
-        ext_modules.append(
-            Extension('graphbrain.memory.leveldb',
-                      ['graphbrain/memory/leveldb.pyx'],
-                      include_dirs=['.']))
     ext_modules = cythonize(ext_modules,
                             annotate=CYTHON_ANNOTATE,
                             force=CYTHON_FORCE_COMPILATION,
@@ -71,6 +65,9 @@ else:
         Extension('graphbrain.memory.sqlite',
                   ['graphbrain/memory/sqlite.c'],
                   include_dirs=['.']),
+        Extension('graphbrain.memory.leveldb',
+                      ['graphbrain/memory/leveldb.c'],
+                      include_dirs=['.']),
         Extension('graphbrain.memory.permutations',
                   ['graphbrain/memory/permutations.c'],
                   include_dirs=['.']),
@@ -84,11 +81,6 @@ else:
                   ['graphbrain/parsers/parser_en.c'],
                   include_dirs=['.'])
     ]
-    if LEVELDB:
-        ext_modules.append(
-            Extension('graphbrain.memory.leveldb',
-                      ['graphbrain/memory/leveldb.c'],
-                      include_dirs=['.']))
 
 
 with open('README.md', 'r') as fh:
@@ -103,13 +95,11 @@ install_requires = [
         'mwparserfromhell',
         'networkx',
         'numpy',
+        'plyvel',
         'progressbar2',
         'scikit-learn',
         'termcolor'
     ]
-
-if LEVELDB:
-    install_requires.append('plyvel')
 
 setup(
     name='graphbrain',
