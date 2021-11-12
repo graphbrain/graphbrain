@@ -86,41 +86,6 @@ def _apply_rule(rule, sentence, pos):
     return None
 
 
-# coref functions
-def _concept_scores(edge, scores=None):
-    if scores is None:
-        scores = {'proper': 0, 'common': 0, 'misc': 0}
-    if edge is None:
-        return scores
-    if edge.is_atom():
-        et = edge.type()
-        if et == 'Cp':
-            scores['proper'] += 1
-        elif et == 'Cc':
-            scores['common'] += 1
-        else:
-            scores['misc'] += 1
-    else:
-        for subedge in edge:
-            _concept_scores(subedge, scores)
-    return scores
-
-
-def _is_second_concept_better(edge1, edge2):
-    score1 = _concept_scores(edge1)
-    score2 = _concept_scores(edge2)
-    if score1['proper'] < score2['proper']:
-        return True
-    elif score1['proper'] == score2['proper']:
-        if score1['common'] < score2['common']:
-            return True
-        elif score1['common'] == score2['common']:
-            if score1['misc'] < score2['misc']:
-                if score2['proper'] > 0 or score2['common'] > 0:
-                    return True
-    return False
-
-
 class AlphaBeta(Parser):
     def __init__(self, model_name, lemmas=False, corefs=False, beta='repair',
                  normalize=True, post_process=True):
@@ -132,11 +97,13 @@ class AlphaBeta(Parser):
         self.depths = None
         self.connections = None
         self.edge2text = None
-        self.coref_clusters = None
+        self.edge2toks = None
+        self.toks2edge = None
         self.edge2coref = None
         self.cur_text = None
         self.extra_edges = set()
         self.nlp = spacy.load(model_name)
+        self.doc = None
         self.alpha = None
         if NEURALCOREF and corefs:
             coref = neuralcoref.NeuralCoref(self.nlp.vocab)
@@ -269,7 +236,8 @@ class AlphaBeta(Parser):
         self.atom2token = {}
         self.temp_atoms = set()
         self.orig_atom = {}
-        self.coref_clusters = defaultdict(set)
+        self.edge2toks = {}
+        self.toks2edge = {}
         self.edge2coref = {}
         self.cur_text = text
 
@@ -687,41 +655,10 @@ class AlphaBeta(Parser):
         enriched with NLP annotations.
         """
         self.reset(text)
-        doc = self.nlp(text.strip())
-        parses = tuple(self.parse_spacy_sentence(sent) for sent in doc.sents)
+        self.doc = self.nlp(text.strip())
+        parses = tuple(self.parse_spacy_sentence(sent)
+                       for sent in self.doc.sents)
         return {'parses': parses, 'inferred_edges': []}
-
-    def _find_coref_clusters(self, edge):
-        clusters = set()
-        if edge.is_atom():
-            parts = edge.parts()
-            if len(parts) > 2 and parts[2] == '.':
-                return clusters
-            uatom = UniqueAtom(edge)
-            if uatom in self.atom2token:
-                token = self.atom2token[uatom]
-                clusters = set(token._.coref_clusters)
-            if len(clusters) == 0:
-                return {None}
-            else:
-                return clusters
-        else:
-            for subedge in edge:
-                clusters |= self._find_coref_clusters(subedge)
-                if len(clusters) > 1:
-                    return clusters
-            return clusters
-
-    def _assign_to_coref(self, edge):
-        clusters = self._find_coref_clusters(edge)
-        if len(clusters) > 1:
-            if not edge.is_atom():
-                for subedge in edge:
-                    self._assign_to_coref(subedge)
-        else:
-            for cluster in clusters:
-                if cluster is not None:
-                    self.coref_clusters[cluster].add(edge)
 
     def _coref_inferences(self, main_edge, edges):
         results = []
@@ -784,24 +721,45 @@ class AlphaBeta(Parser):
             return hedge([self._resolve_corefs_edge(subedge)
                           for subedge in edge])
 
+    def _edge2toks(self, edge):
+        uatoms = [unique(atom) for atom in edge.all_atoms()]
+        toks = tuple(
+                sorted([self.atom2token[uatom] for uatom in uatoms
+                        if uatom in self.atom2token]))
+        self.edge2toks[edge] = toks
+        self.toks2edge[toks] = edge
+        if not edge.is_atom():
+            for subedge in edge:
+                self._edge2toks(subedge)
+
     def _resolve_corefs(self, parse_results):
         if NEURALCOREF:
             for parse in parse_results['parses']:
                 if parse['main_edge'] is not None:
-                    self._assign_to_coref(parse['main_edge'])
+                    self._edge2toks(parse['main_edge'])
+
+            toks2resolved = {}
+            clusters = {}
+            for cluster in self.doc._.coref_clusters:
+                mtoks = tuple(sorted(list(cluster.main)))
+                if mtoks in self.toks2edge:
+                    redge = self.toks2edge[mtoks]
+                    clusters[redge] = []
+                    for span in cluster:
+                        stoks = tuple(sorted(list(span)))
+                        toks2resolved[stoks] = redge
+                        if stoks in self.toks2edge:
+                            clusters[redge].append(self.toks2edge[stoks])
 
             inferred_edges = []
+            for main_edge, edges in clusters.items():
+                inferred_edges += self._coref_inferences(main_edge, edges)
 
-            for cluster in self.coref_clusters:
-                best_concept = None
-                for edge in self.coref_clusters[cluster]:
-                    if _is_second_concept_better(best_concept, edge):
-                        best_concept = edge
-                if best_concept is not None:
-                    for edge in self.coref_clusters[cluster]:
-                        self.edge2coref[edge] = best_concept
-                    inferred_edges += self._coref_inferences(
-                        best_concept, self.coref_clusters[cluster])
+            for edge, toks in self.edge2toks.items():
+                if toks in toks2resolved:
+                    redge = toks2resolved[toks]
+                    if edge != redge:
+                        self.edge2coref[edge] = redge
 
             for parse in parse_results['parses']:
                 parse['resolved_corefs'] = self._resolve_corefs_edge(

@@ -76,6 +76,7 @@ class Parser(object):
                     hg.add(edge)
         for edge in parse_results['inferred_edges']:
             hg.add(edge, count=True)
+        return parse_results
 
     def atom_gender(self, atom):
         raise NotImplementedError()
