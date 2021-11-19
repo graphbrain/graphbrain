@@ -6,7 +6,9 @@ Graphbrain is compatible with 64-bit CPython >=3.6, <3.9 and runs on macOS, Linu
 
 We currently have binary releases for macOS only. Given a working build environment, installation on Linux should be equally simple. Installation on Windows is at the moment less straightforward, because of our dependency on LevelDB, which in turn requires a bit of effort to install in this OS. `For such cases or to build from the sources, check the prerequisites for your OS <#prerequisites>`_.
 
-Make sure you are using Python 3, with version >=3.6, <3.9.
+Make sure you are using Python 3, with version >=3.6, <3.9. (==3.7 if you want to support parser-level coreference resolution, please read below)
+
+*Important for macOS users:* You will need to install a specific version of LevelDB before installing Graphbrain. Please refer to the prerequisites section below for details.
 
 Install with pip (recommended)
 ==============================
@@ -88,13 +90,6 @@ https://github.com/huggingface/neuralcoref
 
 Finally, Graphbrain can be installed from source, as per above.
 
-Building Graphbrain with support for LevelDB hypergraph databases
------------------------------------------------------------------
-
-If you want to build graphbrain with support for LevelDB hypergraph databases, you should set the ``LEVELDB`` environment variable when building::
-
-   $ LEVELDB=true pip install .
-
 For developers
 --------------
 
@@ -149,3 +144,13 @@ If python 3 is not already included with your current version os macOS::
 * virtualenv (Virtual Python Environment builder)::
 
    $ sudo -H pip install virtualenv
+
+* LevelDB version 1.22
+
+This version of LevelDB is no longer supported by Homebrew, but it is possible to install it using a custom formula that we provide::
+
+   $ brew tap graphbrain/homebrew-formulae git@github.com:graphbrain/homebrew-formulae.git
+   $ brew extract --version=1.22 leveldb graphbrain/formulae
+   $ brew install leveldb@1.22
+
+(this formula was forked from this repository: https://github.com/bagonyi/homebrew-formulae, our thanks to David Bagonyi for creating it!)

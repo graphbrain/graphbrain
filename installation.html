@@ -51,7 +51,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#install-with-pip-recommended">Install with pip (recommended)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#install-from-the-code-repository-github">Install from the code repository (github)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#building-graphbrain-with-parser-level-coreference-resolution-support">Building Graphbrain with parser-level coreference resolution support</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#building-graphbrain-with-support-for-leveldb-hypergraph-databases">Building Graphbrain with support for LevelDB hypergraph databases</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#for-developers">For developers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#run-tests">Run tests</a></li>
 </ul>
@@ -99,7 +98,8 @@
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h1>
 <p>Graphbrain is compatible with 64-bit CPython &gt;=3.6, &lt;3.9 and runs on macOS, Linux and Windows.</p>
 <p>We currently have binary releases for macOS only. Given a working build environment, installation on Linux should be equally simple. Installation on Windows is at the moment less straightforward, because of our dependency on LevelDB, which in turn requires a bit of effort to install in this OS. <a class="reference external" href="#prerequisites">For such cases or to build from the sources, check the prerequisites for your OS</a>.</p>
-<p>Make sure you are using Python 3, with version &gt;=3.6, &lt;3.9.</p>
+<p>Make sure you are using Python 3, with version &gt;=3.6, &lt;3.9. (==3.7 if you want to support parser-level coreference resolution, please read below)</p>
+<p><em>Important for macOS users:</em> You will need to install a specific version of LevelDB before installing Graphbrain. Please refer to the prerequisites section below for details.</p>
 <section id="install-with-pip-recommended">
 <h2>Install with pip (recommended)<a class="headerlink" href="#install-with-pip-recommended" title="Permalink to this headline"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install graphbrain
@@ -169,13 +169,6 @@ $ cd graphbrain
 <a class="reference external" href="https://github.com/huggingface/neuralcoref">https://github.com/huggingface/neuralcoref</a></p>
 <p>Finally, Graphbrain can be installed from source, as per above.</p>
 </section>
-<section id="building-graphbrain-with-support-for-leveldb-hypergraph-databases">
-<h3>Building Graphbrain with support for LevelDB hypergraph databases<a class="headerlink" href="#building-graphbrain-with-support-for-leveldb-hypergraph-databases" title="Permalink to this headline"></a></h3>
-<p>If you want to build graphbrain with support for LevelDB hypergraph databases, you should set the <code class="docutils literal notranslate"><span class="pre">LEVELDB</span></code> environment variable when building:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ LEVELDB=true pip install .
-</pre></div>
-</div>
-</section>
 <section id="for-developers">
 <h3>For developers<a class="headerlink" href="#for-developers" title="Permalink to this headline"></a></h3>
 <p>If you want to help develop graphbrain, you should also install the development dependencies:</p>
@@ -232,7 +225,15 @@ distribution to install the prerequisites.</p>
 </pre></div>
 </div>
 </li>
+<li><p>LevelDB version 1.22</p></li>
 </ul>
+<p>This version of LevelDB is no longer supported by Homebrew, but it is possible to install it using a custom formula that we provide:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew tap graphbrain/homebrew-formulae git@github.com:graphbrain/homebrew-formulae.git
+$ brew extract --version=1.22 leveldb graphbrain/formulae
+$ brew install leveldb@1.22
+</pre></div>
+</div>
+<p>(this formula was forked from this repository: <a class="reference external" href="https://github.com/bagonyi/homebrew-formulae">https://github.com/bagonyi/homebrew-formulae</a>, our thanks to David Bagonyi for creating it!)</p>
 </section>
 </section>
 </section>
