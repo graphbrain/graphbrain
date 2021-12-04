@@ -1,5 +1,5 @@
 import graphbrain.constants as const
-from graphbrain.hyperedge import hedge, Hyperedge, build_atom
+from graphbrain.hyperedge import hedge, Hyperedge, str2atom
 from graphbrain.logic import eval_rule
 
 
@@ -288,11 +288,12 @@ class Hypergraph(object):
 
     def add_to_sequence(self, name, edge, primary=True):
         """Adds 'edge' to sequence 'name'."""
-        seq_attrs_edge = hedge((const.sequence_attrs_pred, name))
+        seq_atom = str2atom(name)
+        seq_attrs_edge = hedge((const.sequence_attrs_pred, seq_atom))
         pos = self.get_int_attribute(seq_attrs_edge, 'size')
         if pos is None:
             pos = 0
-        result = self.add((const.sequence_pred, name, str(pos), edge))
+        result = self.add((const.sequence_pred, seq_atom, str(pos), edge))
         self.set_attribute(seq_attrs_edge, 'size', pos + 1)
         if primary:
             self.set_primary(edge, True)
@@ -302,10 +303,11 @@ class Hypergraph(object):
         """Returns an iterator for a sequence of hyperedges, given the name
         of the sequence.
         """
+        seq_atom = str2atom(name)
         pos = 0
         stop = False
         while not stop:
-            iter = self.search((const.sequence_pred, name, str(pos), '*'))
+            iter = self.search((const.sequence_pred, seq_atom, str(pos), '*'))
             next_edge = next(iter, None)
             if next_edge:
                 yield next_edge[3]
