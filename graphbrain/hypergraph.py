@@ -320,7 +320,7 @@ class Hypergraph(object):
         hypergraph.
         """
         for edge in self.search((const.sequence_pred, '*', '0', '*')):
-            yield edge[1]
+            yield str(edge[1])
 
     # ==============================================================
     # Private abstract methods, to be implemented in derived classes
