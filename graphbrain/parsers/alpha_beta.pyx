@@ -105,9 +105,10 @@ class AlphaBeta(Parser):
         self.nlp = spacy.load(model_name)
         self.doc = None
         self.alpha = None
+        self.coref_component = None
         if NEURALCOREF and corefs:
-            coref = neuralcoref.NeuralCoref(self.nlp.vocab)
-            self.nlp.add_pipe(coref, name='neuralcoref')
+            self.coref_component = neuralcoref.NeuralCoref(self.nlp.vocab)
+            self.nlp.add_pipe(self.coref_component, name='neuralcoref')
         if beta == 'strict':
             self.rules = strict_rules
         elif beta == 'repair':
@@ -661,7 +662,11 @@ class AlphaBeta(Parser):
         return {'parses': parses, 'inferred_edges': []}
 
     def sentences(self, text):
+        if self.coref_component:
+            self.nlp.remove_pipe('neuralcoref')
         doc = self.nlp(text.strip())
+        if self.coref_component:
+            self.nlp.add_pipe(self.coref_component, name='neuralcoref')
         return [str(sent).strip() for sent in doc.sents]
 
     def _coref_inferences(self, main_edge, edges):
