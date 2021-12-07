@@ -303,11 +303,10 @@ class Hypergraph(object):
         """Returns an iterator for a sequence of hyperedges, given the name
         of the sequence.
         """
-        seq_atom = str2atom(name)
         pos = 0
         stop = False
         while not stop:
-            iter = self.search((const.sequence_pred, seq_atom, str(pos), '*'))
+            iter = self.search((const.sequence_pred, name, str(pos), '*'))
             next_edge = next(iter, None)
             if next_edge:
                 yield next_edge[3]
@@ -320,7 +319,7 @@ class Hypergraph(object):
         hypergraph.
         """
         for edge in self.search((const.sequence_pred, '*', '0', '*')):
-            yield str(edge[1])
+            yield edge[1].to_str()
 
     # ==============================================================
     # Private abstract methods, to be implemented in derived classes

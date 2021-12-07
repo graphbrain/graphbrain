@@ -875,7 +875,7 @@ class TestHypergraph(unittest.TestCase):
         self.hg.add_to_sequence('seq0', edge1)
         self.hg.add_to_sequence('seq1', edge2)
         self.hg.add_to_sequence('seq2', edge3)
-        sequences = set([edge.to_str() for edge in self.hg.sequences()])
+        sequences = set(self.hg.sequences())
         self.assertEqual(sequences, {'seq0', 'seq1', 'seq2'})
 
     def test_sequences2(self):
@@ -886,7 +886,7 @@ class TestHypergraph(unittest.TestCase):
         self.hg.add_to_sequence('seq0', edge1)
         self.hg.add_to_sequence('seq1', edge2)
         self.hg.add_to_sequence('seq1', edge3)
-        sequences = set([edge.to_str() for edge in self.hg.sequences()])
+        sequences = set(self.hg.sequences())
         self.assertEqual(sequences, {'seq0', 'seq1'})
 
     def test_sequence5(self):
