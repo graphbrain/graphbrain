@@ -5,6 +5,22 @@ import graphbrain.constants as const
 from collections import Counter
 
 
+argrole_order = {
+    'm': -1,
+    's': 0,
+    'p': 1,
+    'a': 2,
+    'c': 3,
+    'o': 4,
+    'i': 5,
+    't': 6,
+    'j': 7,
+    'x': 8,
+    'r': 9,
+    '?': 10
+}
+
+
 def str2atom(s):
     """Converts a string into a valid atom."""
     atom = s.lower()
@@ -929,6 +945,19 @@ class Hyperedge(tuple):
 
         return output
 
+    def normalized(self):
+        edge = self
+        conn = edge[0]
+        ar = conn.argroles()
+        if ar != '':
+            roles_edges = zip(ar, edge[1:])
+            roles_edges = sorted(
+                roles_edges,
+                key=lambda role_edge: argrole_order[role_edge[0]])
+            edge = hedge([conn] + list(role_edge[1]
+                                       for role_edge in roles_edges))
+        return hedge([subedge.normalized() for subedge in edge])
+
     def __add__(self, other):
         if type(other) in {tuple, list}:
             return Hyperedge(super(Hyperedge, self).__add__(other))
@@ -1292,6 +1321,15 @@ class Atom(Hyperedge):
             output[self] = errors
 
         return output
+
+    def normalized(self):
+        if self.type()[0] in {'B', 'P'}:
+            ar = self.argroles()
+            if len(ar) > 0:
+                ar = ''.join(
+                    sorted(ar, key=lambda argrole: argrole_order[argrole]))
+                return self.replace_argroles(ar)
+        return self
 
     def __add__(self, other):
         if type(other) in {tuple, list}:

@@ -1217,6 +1217,41 @@ class TestHyperedge(unittest.TestCase):
         output = edge.check_correctness()
         self.assertTrue(hedge('(and/J one/C)') in output)
 
+    def test_normalized_1(self):
+        edge =  hedge('(plays/Pd.os chess/C mary/C)')
+        self.assertEqual(
+            edge.normalized(),
+            hedge('(plays/Pd.so mary/C chess/C)'))
+
+    def test_normalized_2(self):
+        edge =  hedge('(plays/Pd chess/C mary/C)')
+        self.assertEqual(
+            edge.normalized(),
+            hedge('(plays/Pd chess/C mary/C)'))
+
+    def test_normalized_3(self):
+        edge =  hedge('(plays/Pd.os (of/B.am chess/C games/C) mary/C)')
+        self.assertEqual(
+            edge.normalized(),
+            hedge('(plays/Pd.so mary/C (of/B.ma games/C chess/C))'))
+
+    def test_normalized_4(self):
+        edge =  hedge('(plays/Pd.os.xxx/en chess/C mary/C)')
+        self.assertEqual(
+            edge.normalized(),
+            hedge('(plays/Pd.so.xxx/en mary/C chess/C)'))
+
+    def test_normalized_5(self):
+        edge =  hedge('plays/Pd.os.xxx/en')
+        self.assertEqual(
+            edge.normalized(),
+            hedge('plays/Pd.so.xxx/en'))
+
+    def test_normalized_6(self):
+        edge =  hedge('of/Br.am/en')
+        self.assertEqual(
+            edge.normalized(),
+            hedge('of/Br.ma/en'))
 
 if __name__ == '__main__':
     unittest.main()

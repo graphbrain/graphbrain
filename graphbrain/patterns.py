@@ -3,39 +3,6 @@ from graphbrain import hedge
 from graphbrain.hyperedge import edge_matches_pattern
 
 
-argrole_order = {
-    'm': -1,
-    's': 0,
-    'p': 1,
-    'a': 2,
-    'c': 3,
-    'o': 4,
-    'i': 5,
-    't': 6,
-    'j': 7,
-    'x': 8,
-    'r': 9,
-    '?': 10
-}
-
-
-def normalize_edge(edge):
-    if edge.is_atom():
-        return edge
-    conn = edge[0]
-    ar = conn.argroles()
-    if ar != '':
-        roles_edges = zip(ar, edge[1:])
-        roles_edges = sorted(roles_edges,
-                             key=lambda role_edge: argrole_order[role_edge[0]])
-        ar = ''.join([role_edge[0] for role_edge in roles_edges])
-        pred = conn.atom()
-        new_pred = hedge('{}/{}.{}'.format(pred.root(), pred.type(), ar))
-        conn = conn.replace_atom(pred, new_pred)
-        edge = hedge([conn] + list(role_edge[1] for role_edge in roles_edges))
-    return hedge([normalize_edge(subedge) for subedge in edge])
-
-
 def edge2pattern(edge, root=False, subtype=False):
     if root and edge.is_atom():
         root_str = edge.root()
@@ -143,7 +110,7 @@ class PatternCounter:
         force_root, _ = self._force_root_expansion(edge)
         return list(hedge(pattern)
                     for pattern
-                    in self._list2patterns(list(normalize_edge(edge)),
+                    in self._list2patterns(list(edge.normalized()),
                                            force_subtypes=force_subtypes,
                                            force_root=force_root,
                                            force_expansion=False))

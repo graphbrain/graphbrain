@@ -4,6 +4,7 @@
 ### Added
 - Parser.parse_and_add().
 - Parser.sentences().
+- Hyperedge.normalized().
 
 ### Changed
 - Sequences keep track of their size, no need to specify position when adding edge to sequence.
@@ -12,7 +13,7 @@
 - LevelDB included by default again.
 
 ### Removed
-
+- graphbrain.patterns.normalize_edge().
 
 ## [0.5.0] - 28-07-2021
 ### Added
