@@ -623,7 +623,19 @@ class TestHyperedge(unittest.TestCase):
     def test_match_pattern_predicate_singleton(self):
         self.assertEqual(
             match_pattern('keep/Pd..-i-----/en',
-                          'keep/Pd..-i-----/en'),
+                          'keep/Pd..-i-----'),
+            [{}])
+
+    def test_match_pattern_debug_case_1(self):
+        self.assertEqual(
+            match_pattern('(said/Pd.sr.<f-----/en entner/Cp.s/en (did/P.so.<f-----/en (of/Br.ma/en all/Cd/en (the/Md/en people/Cc.p/en)) (the/Md/en (right/Ma/en thing/Cc.s/en))))',
+                          '(said/Pd.{sr}.<f----- */C *)'),
+            [{}])
+
+    def test_match_pattern_debug_case_2(self):
+        self.assertEqual(
+            match_pattern('(said/Pd.sxr.<f-----/en (+/B.ma/. providers/Cc.p/en service/Cc.s/en) (on/Tt/en (+/B.ma/. (with/Br.ma/en (a/Md/en call/Cc.s/en) (+/B.ma/. (+/B.ma/. pai/Cp.s/en ajit/Cp.s/en) chairman/Cp.s/en)) (last/Ma/en week/Cc.s/en))) (by/T/en ((up/M/en was/P.s.<f-----/en) (cellular/Ma/en usage/Cc.s/en))))',
+                          '(said/Pd.{sr}.<f----- */C *)'),
             [{}])
 
     def test_edge_matches_pattern_simple(self):
@@ -1252,6 +1264,12 @@ class TestHyperedge(unittest.TestCase):
         self.assertEqual(
             edge.normalized(),
             hedge('of/Br.ma/en'))
+
+    def test_normalized_7(self):
+        edge =  hedge('plays/Pd.{os}.xxx/en')
+        self.assertEqual(
+            edge.normalized(),
+            hedge('plays/Pd.{so}.xxx/en'))
 
 if __name__ == '__main__':
     unittest.main()

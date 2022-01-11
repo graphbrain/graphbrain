@@ -950,6 +950,8 @@ class Hyperedge(tuple):
         conn = edge[0]
         ar = conn.argroles()
         if ar != '':
+            if ar[0] == '{':
+                ar = ar[1:-1]
             roles_edges = zip(ar, edge[1:])
             roles_edges = sorted(
                 roles_edges,
@@ -1326,8 +1328,15 @@ class Atom(Hyperedge):
         if self.type()[0] in {'B', 'P'}:
             ar = self.argroles()
             if len(ar) > 0:
+                if ar[0] == '{':
+                    ar = ar[1:-1]
+                    unordered = True
+                else:
+                    unordered = False
                 ar = ''.join(
                     sorted(ar, key=lambda argrole: argrole_order[argrole]))
+                if unordered:
+                    ar = '{{{}}}'.format(ar)
                 return self.replace_argroles(ar)
         return self
 
