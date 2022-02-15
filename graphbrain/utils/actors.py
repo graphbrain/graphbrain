@@ -1,4 +1,4 @@
-from graphbrain.meaning.corefs import main_coref
+from graphbrain.utils.corefs import main_coref
 
 
 def is_actor(hg, edge):

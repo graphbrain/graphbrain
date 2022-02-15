@@ -6,8 +6,8 @@ import progressbar
 
 from graphbrain.hyperedge import hedge, build_atom
 from graphbrain.cognition.agent import Agent
-from graphbrain.meaning.concepts import has_proper_concept
-from graphbrain.meaning.corefs import make_corefs_ops
+from graphbrain.utils.concepts import has_proper_concept
+from graphbrain.utils.corefs import make_corefs_ops
 
 
 def clean_edge(edge):

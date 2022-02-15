@@ -2,11 +2,11 @@ import unittest
 
 from graphbrain import hedge
 from graphbrain import hgraph
-from graphbrain.meaning.corefs import are_corefs
-from graphbrain.meaning.corefs import coref_id
-from graphbrain.meaning.corefs import coref_set
-from graphbrain.meaning.corefs import main_coref
-from graphbrain.meaning.corefs import make_corefs
+from graphbrain.utils.corefs import are_corefs
+from graphbrain.utils.corefs import coref_id
+from graphbrain.utils.corefs import coref_set
+from graphbrain.utils.corefs import main_coref
+from graphbrain.utils.corefs import make_corefs
 
 
 class TestCorefs(unittest.TestCase):

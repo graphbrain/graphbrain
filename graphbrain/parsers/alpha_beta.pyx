@@ -11,7 +11,7 @@ from graphbrain.hyperedge import hedge
 from graphbrain.hyperedge import non_unique
 from graphbrain.hyperedge import unique
 from graphbrain.hyperedge import UniqueAtom
-from graphbrain.meaning.concepts import has_common_or_proper_concept
+from graphbrain.utils.concepts import has_common_or_proper_concept
 
 try:
     import neuralcoref

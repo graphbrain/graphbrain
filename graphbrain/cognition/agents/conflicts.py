@@ -2,11 +2,11 @@ import logging
 
 from graphbrain import hedge
 from graphbrain.cognition.agent import Agent
-from graphbrain.meaning.concepts import all_concepts
-from graphbrain.meaning.concepts import has_proper_concept
-from graphbrain.meaning.concepts import strip_concept
-from graphbrain.meaning.corefs import main_coref
-from graphbrain.meaning.lemmas import deep_lemma
+from graphbrain.utils.concepts import all_concepts
+from graphbrain.utils.concepts import has_proper_concept
+from graphbrain.utils.concepts import strip_concept
+from graphbrain.utils.corefs import main_coref
+from graphbrain.utils.lemmas import deep_lemma
 from graphbrain.op import create_op
 
 

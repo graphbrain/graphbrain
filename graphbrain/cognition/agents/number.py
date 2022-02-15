@@ -5,10 +5,10 @@ import progressbar
 
 import graphbrain.constants as const
 from graphbrain.cognition.agent import Agent
-from graphbrain.meaning.corefs import make_corefs_ops
-from graphbrain.meaning.number import make_singular_plural_ops
-from graphbrain.meaning.number import number
-from graphbrain.meaning.ontology import subtypes
+from graphbrain.utils.corefs import make_corefs_ops
+from graphbrain.utils.number import make_singular_plural_ops
+from graphbrain.utils.number import number
+from graphbrain.utils.ontology import subtypes
 
 
 class Number(Agent):

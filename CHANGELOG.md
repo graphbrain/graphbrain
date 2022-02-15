@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.5.1] - ongoing work
+## [0.6.0] - ongoing work
 ### Added
 - Parser.parse_and_add().
 - Parser.sentences().
@@ -11,6 +11,7 @@
 - Improved wikipedia agent.
 - Improved coreference resolution.
 - LevelDB included by default again.
+- Package graphbrain.meaning renamed to graphbrain.utils.
 
 ### Removed
 - graphbrain.patterns.normalize_edge().
