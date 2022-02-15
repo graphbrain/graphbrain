@@ -4,7 +4,7 @@ from IPython.core.display import display
 from IPython.core.display import HTML
 
 from graphbrain import hedge
-from graphbrain.extractors.case_generators import InteractiveCaseGenerator
+from graphbrain.meaning.case_generators import InteractiveCaseGenerator
 
 
 TYPE_COLORS = {'C': '#268bd2',
@@ -262,5 +262,5 @@ def blocks(edge, subtypes=False, argroles=True, namespaces=False):
 
 
 def interactive_case_generator(tests, extractor, case=None, keywords=None):
-    InteractiveCaseGenerator(tests, extractor).run(case=case,
-                                                   keywords=keywords)
+    return InteractiveCaseGenerator(tests, extractor).run(case=case,
+                                                          keywords=keywords)

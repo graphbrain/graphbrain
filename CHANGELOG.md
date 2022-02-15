@@ -5,13 +5,14 @@
 - Parser.parse_and_add().
 - Parser.sentences().
 - Hyperedge.normalized().
+- New package graphbrain.meaning, for meaning extractors.
 
 ### Changed
 - Sequences keep track of their size, no need to specify position when adding edge to sequence.
 - Improved wikipedia agent.
 - Improved coreference resolution.
 - LevelDB included by default again.
-- Package graphbrain.meaning renamed to graphbrain.utils.
+- Old package graphbrain.meaning renamed to graphbrain.utils.
 
 ### Removed
 - graphbrain.patterns.normalize_edge().
