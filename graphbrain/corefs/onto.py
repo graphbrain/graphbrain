@@ -1,33 +1,25 @@
-import logging
-
-from graphbrain.cognition.agent import Agent
-from graphbrain.utils.corefs import make_corefs_ops
+from graphbrain.corefs import make_corefs_ops
 from graphbrain.utils.ontology import subtypes
 
 
-class CorefsOnto(Agent):
-    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
-        super().__init__(
-            name, progress_bar=progress_bar, logging_level=logging_level)
+class CorefsOnto:
+    def __init__(self, hg, sequence=None):
+        self.hg = hg
+        self.sequence = sequence
         self.corefs = 0
         self.done = set()
 
-    def on_start(self):
-        self.corefs = 0
-
-    def process_edge(self, edge, depth):
-        hg = self.system.get_hg(self)
-
+    def process_edge(self, edge):
         if edge.type()[0] == 'C' and edge not in self.done:
             self.done.add(edge)
 
-            subs = tuple(subtypes(hg, edge))
+            subs = tuple(subtypes(self.hg, edge))
 
             # check if the concept should be assigned to a synonym set
             if len(subs) > 0:
                 # find set with the highest degree and normalize set
                 # degrees by total degree
-                sub_degs = [hg.deep_degree(sub) for sub in subs]
+                sub_degs = [self.hg.deep_degree(sub) for sub in subs]
                 total_deg = sum(sub_degs)
                 total_deg = 1 if total_deg == 0 else total_deg
                 sub_ratios = [sub_deg / total_deg for sub_deg in sub_degs]
@@ -39,8 +31,8 @@ class CorefsOnto(Agent):
                         best_pos = pos
 
                 # compute some degree-related metrics
-                sdd = hg.deep_degree(subs[best_pos])
-                dd = hg.deep_degree(edge)
+                sdd = self.hg.deep_degree(subs[best_pos])
+                dd = self.hg.deep_degree(edge)
 
                 if dd > sdd:
                     sdd_dd = float(sdd) / float(dd)
@@ -65,5 +57,12 @@ class CorefsOnto(Agent):
                         for op in make_corefs_ops(hg, edge1, edge2):
                             yield op
 
-    def report(self):
-        return '{} coreferences were added.'.format(str(self.corefs))
+    def run(self):
+        print('processing edges...')
+        if self.sequence is None:
+            for edge in self.hg.all():
+                self.process_edge(edge)
+        else:
+            for edge in self.hg.sequence(self.sequence):
+                self.process_edge(edge)
+        print('{} coreferences were added.'.format(str(self.corefs)))

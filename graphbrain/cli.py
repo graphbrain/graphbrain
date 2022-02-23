@@ -6,6 +6,8 @@ from termcolor import colored
 
 import graphbrain.constants as const
 from graphbrain import hgraph, hedge
+from graphbrain.corefs.names import CorefsNames
+from graphbrain.corefs.onto import CorefsOnto
 from graphbrain.parsers import parser_lang
 from graphbrain.readers.txt import TxtReader
 from graphbrain.readers.dir import DirReader
@@ -161,6 +163,10 @@ def cli():
                      sequence=args.sequence,
                      lang=args.lang,
                      corefs=args.corefs).read()
+    elif args.command == 'names':
+        CorefsNames(hg=hgraph(args.hg), sequence=args.sequence)
+    elif args.command == 'onto':
+        CorefsOnto(hg=hgraph(args.hg), sequence=args.sequence)
     else:
         raise RuntimeError('Unknown command: {}'.format(args.command))
 

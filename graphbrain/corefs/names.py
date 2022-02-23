@@ -1,13 +1,11 @@
-import logging
 import itertools
 
 import networkx as nx
 import progressbar
 
+from graphbrain.corefs import make_corefs_ops
 from graphbrain.hyperedge import hedge, build_atom
-from graphbrain.cognition.agent import Agent
 from graphbrain.utils.concepts import has_proper_concept
-from graphbrain.utils.corefs import make_corefs_ops
 
 
 def clean_edge(edge):
@@ -89,17 +87,15 @@ def extract_concepts(edge):
     return concepts
 
 
-class CorefsNames(Agent):
-    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
-        super().__init__(
-            name, progress_bar=progress_bar, logging_level=logging_level)
+class CorefsNames:
+    def __init__(self, hg, sequence=None):
+        self.hg = hg
+        self.sequence = sequence
         self.corefs = 0
-        self.seeds = None
+        self.seeds = set()
 
     def corefs_from_seed(self, seed):
-        hg = self.system.get_hg(self)
-
-        concepts = edges_with_seed(hg, seed)
+        concepts = edges_with_seed(self.hg, seed)
 
         subconcepts = set()
         graph_edges = set()
@@ -134,11 +130,7 @@ class CorefsNames(Agent):
 
         return coref_sets
 
-    def on_start(self):
-        self.corefs = 0
-        self.seeds = set()
-
-    def process_edge(self, edge, depth):
+    def process_edge(self, edge):
         if not edge.is_atom():
             conn = edge[0]
             ct = edge.connector_type()
@@ -148,14 +140,8 @@ class CorefsNames(Agent):
                     if len(concepts) == 1 and has_proper_concept(concepts[0]):
                         self.seeds.add(concepts[0])
 
-    def report(self):
-        return '{} coreferences were added.'.format(str(self.corefs))
-
-    def on_end(self):
-        hg = self.system.get_hg(self)
-
+    def process_seeds(self):
         i = 0
-        self.logger.info('processing seeds')
         with progressbar.ProgressBar(max_value=len(self.seeds)) as bar:
             for seed in self.seeds:
                 crefs = self.corefs_from_seed(seed)
@@ -164,7 +150,8 @@ class CorefsNames(Agent):
                 if len(crefs) > 0:
                     # find set with the highest degree and normalize set
                     # degrees by total degree
-                    cref_degs = [hg.sum_deep_degree(cref) for cref in crefs]
+                    cref_degs = [self.hg.sum_deep_degree(cref)
+                                 for cref in crefs]
                     total_deg = sum(cref_degs)
                     if total_deg == 0:
                         continue
@@ -177,30 +164,41 @@ class CorefsNames(Agent):
                             max_ratio = ratio
                             best_pos = pos
 
-                    dd = hg.deep_degree(seed)
+                    dd = self.hg.deep_degree(seed)
 
                     # ensure that the seed is used by itself
                     if total_deg < dd:
-                        self.logger.debug('seed: {}'.format(seed))
-                        self.logger.debug('crefs: {}'.format(crefs))
-                        self.logger.debug('max_ratio: {}'.format(max_ratio))
-                        self.logger.debug('total coref dd: {}'.format(
-                            total_deg))
-                        self.logger.debug('seed dd: {}'.format(dd))
+                        # print('seed: {}'.format(seed))
+                        # print('crefs: {}'.format(crefs))
+                        # print('max_ratio: {}'.format(max_ratio))
+                        # print('total coref dd: {}'.format(total_deg))
+                        # print('seed dd: {}'.format(dd))
 
                         # add seed if coreference set is sufficiently dominant
                         if max_ratio >= .7:
                             crefs[best_pos].add(seed)
-                            self.logger.debug('seed added to cref: {}'.format(
-                                crefs[best_pos]))
+                            # print('seed added to cref: {}'.format(
+                            #     crefs[best_pos]))
 
                     for cref in crefs:
                         for edge1, edge2 in itertools.combinations(cref, 2):
-                            self.logger.debug('are corefs: {} | {}'.format(
-                                edge1.to_str(), edge2.to_str()))
+                            # print('are corefs: {} | {}'.format(
+                            #     edge1.to_str(), edge2.to_str()))
                             self.corefs += 1
                             for op in make_corefs_ops(hg, edge1, edge2):
                                 yield op
 
                 i += 1
                 bar.update(i)
+
+    def run(self):
+        print('processing edges...')
+        if self.sequence is None:
+            for edge in self.hg.all():
+                self.process_edge(edge)
+        else:
+            for edge in self.hg.sequence(self.sequence):
+                self.process_edge(edge)
+        print('processing seeds...')
+        self.process_seeds()
+        print('{} coreferences were added.'.format(str(self.corefs)))
