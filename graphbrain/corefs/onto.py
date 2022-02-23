@@ -1,4 +1,4 @@
-from graphbrain.corefs import make_corefs_ops
+from graphbrain.corefs import make_corefs
 from graphbrain.utils.ontology import subtypes
 
 
@@ -54,8 +54,7 @@ class CorefsOnto:
                                                          edge2.to_str()))
 
                         self.corefs += 1
-                        for op in make_corefs_ops(hg, edge1, edge2):
-                            yield op
+                        make_corefs(self.hg, edge1, edge2)
 
     def run(self):
         print('processing edges...')

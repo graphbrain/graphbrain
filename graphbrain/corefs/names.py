@@ -3,7 +3,7 @@ import itertools
 import networkx as nx
 import progressbar
 
-from graphbrain.corefs import make_corefs_ops
+from graphbrain.corefs import make_corefs
 from graphbrain.hyperedge import hedge, build_atom
 from graphbrain.utils.concepts import has_proper_concept
 
@@ -185,8 +185,7 @@ class CorefsNames:
                             # print('are corefs: {} | {}'.format(
                             #     edge1.to_str(), edge2.to_str()))
                             self.corefs += 1
-                            for op in make_corefs_ops(hg, edge1, edge2):
-                                yield op
+                            make_corefs(self.hg, edge1, edge2)
 
                 i += 1
                 bar.update(i)

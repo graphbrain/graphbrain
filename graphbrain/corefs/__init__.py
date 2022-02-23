@@ -5,8 +5,6 @@ from graphbrain import hedge
 from graphbrain.constants import coref_pred
 from graphbrain.constants import coref_set_id_key
 from graphbrain.constants import main_coref_pred
-from graphbrain.op import apply_ops
-from graphbrain.op import create_op
 
 
 def _new_coref_id():
@@ -16,17 +14,16 @@ def _new_coref_id():
     return ''.join(random.choice(chars) for i in range(7))
 
 
-def _set_coref_id_op(hg, edge, coref_id):
-    attributes = {coref_set_id_key: coref_id}
-    return create_op(edge, optype='set_attributes', attributes=attributes)
+def _set_coref_id(hg, edge, coref_id):
+    hg.set_attribute(edge, coref_set_id_key, coref_id)
 
 
-def _change_coref_id_ops(hg, edge, coref_id):
+def _change_coref_id(hg, edge, coref_id):
     for coref in coref_set(hg, edge):
-        yield _set_coref_id_op(hg, coref, coref_id)
+        _set_coref_id(hg, coref, coref_id)
 
 
-def _update_main_coref_ops(hg, edge):
+def _update_main_coref(hg, edge):
     cref_id = coref_id(hg, edge)
     corefs = coref_set(hg, edge)
 
@@ -42,12 +39,8 @@ def _update_main_coref_ops(hg, edge):
     if not hg.exists(coref_edge):
         old = set(hg.search('({} {} *)'.format(main_coref_pred, cref_id)))
         for old_edge in old:
-            # hg.remove(old_edge)
-            # print('&&&')
-            # print(old_edge)
-            yield create_op(old_edge, optype='remove')
-        # hg.add(coref_edge, primary=False)
-        yield create_op(coref_edge, primary=False)
+            hg.remove(old_edge)
+        hg.add(coref_edge, primary=False)
 
 
 def coref_set(hg, edge, corefs=None):
@@ -102,8 +95,13 @@ def main_coref(hg, edge):
     return main_coref_from_id(hg, cref_id)
 
 
-def make_corefs_ops(hg, edge1, edge2):
-    # print('\n### make_corefs_ops {} {}'.format(edge1, edge2))
+def make_corefs(hg, edge1, edge2):
+    """Make the two given edges belong to the same corefernce set.
+
+    This may trigger further updates to maintain consistency, such as
+    merging existing coreference sets and recomputing the main edge of
+    a coreference set.
+    """
     cref_id_1 = coref_id(hg, edge1)
     cref_id_2 = coref_id(hg, edge2)
 
@@ -124,27 +122,13 @@ def make_corefs_ops(hg, edge1, edge2):
 
     update = False
     if cref_id_1 != new_cref_id:
-        for op in _change_coref_id_ops(hg, edge1, new_cref_id):
-            yield op
+        _change_coref_id(hg, edge1, new_cref_id)
         update = True
     if cref_id_2 != new_cref_id:
-        for op in _change_coref_id_ops(hg, edge2, new_cref_id):
-            yield op
+        _change_coref_id(hg, edge2, new_cref_id)
         update = True
 
-    # hg.add((coref_pred, edge1, edge2), primary=False)
-    yield create_op((coref_pred, edge1, edge2), primary=False)
+    hg.add((coref_pred, edge1, edge2), primary=False)
 
     if update:
-        for op in _update_main_coref_ops(hg, edge1):
-            yield op
-
-
-def make_corefs(hg, edge1, edge2):
-    """Make the two given edges belong to the same corefernce set.
-
-    This may trigger further updates to maintain consistency, such as
-    merging existing coreference sets and recomputing the main edge of
-    a coreference set.
-    """
-    apply_ops(hg, make_corefs_ops(hg, edge1, edge2))
+        _update_main_coref(hg, edge1)
