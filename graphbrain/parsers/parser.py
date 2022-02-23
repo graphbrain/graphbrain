@@ -48,16 +48,18 @@ class Parser(object):
         parse_results = self._parse(text)
         if self.corefs:
             self._resolve_corefs(parse_results)
+        else:
+            for parse in parse_results['parses']:
+                parse['resolved_corefs'] = parse['main_edge']
         return parse_results
 
     def parse_and_add(self, text, hg, sequence=None):
         parse_results = self.parse(text)
         for parse in parse_results['parses']:
+            main_edge = parse['resolved_corefs']
             if self.corefs:
-                main_edge = parse['resolved_corefs']
                 unresolved_edge = parse['main_edge']
             else:
-                main_edge = parse['main_edge']
                 unresolved_edge = None
             # add main edge
             if main_edge:
