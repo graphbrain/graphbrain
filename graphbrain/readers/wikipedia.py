@@ -1,10 +1,9 @@
-import logging
 from urllib.parse import urlparse
 
 import mwparserfromhell
 import requests
 
-from graphbrain.cognition.agent import Agent
+from graphbrain.readers.reader import Reader
 
 
 IGNORE_SECTIONS = {'See also',
@@ -81,17 +80,15 @@ def sections2texts(sections):
     return paragraphs
 
 
-class Wikipedia(Agent):
-    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
-        super().__init__(
-            name, progress_bar=progress_bar, logging_level=logging_level)
+class WikipediaReader(Reader):
+    def __init__(self, url, hg=None, sequence=None, lang=None, corefs=False,
+                 parser=None, parser_class=None):
+        super().__init__(hg=hg, sequence=sequence, lang=lang, corefs=corefs,
+                         parser=parser, parser_class=parser_class)
+        self.url = url
 
-    def run(self):
-        url = self.system.get_url(self)
-        parser = self.system.get_parser(self)
-        outfile = self.system.get_outfile(self)
-
-        title, lang = url2title_and_lang(url)
+    def read(self):
+        title, lang = url2title_and_lang(self.url)
         text = read_wikipedia(title, lang)
 
         wikicode = mwparserfromhell.parse(text)
@@ -118,10 +115,4 @@ class Wikipedia(Agent):
         texts = sections2texts(sections)
 
         for text in texts:
-            for op in self.system.parse_results2ops(parser.parse(text)):
-                yield op
-
-        if outfile:
-            with open(outfile, 'wt') as f:
-                for text in texts:
-                    f.write('{}\n'.format(text))
+            self.parser.parse_and_add(text, self.hg, sequence=self.sequence)

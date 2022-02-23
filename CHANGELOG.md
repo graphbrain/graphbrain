@@ -6,6 +6,7 @@
 - Parser.sentences().
 - Hyperedge.normalized().
 - New package graphbrain.meaning, for meaning extractors.
+- New package graphbrain.readers, for text readers from various sources.
 
 ### Changed
 - Sequences keep track of their size, no need to specify position when adding edge to sequence.

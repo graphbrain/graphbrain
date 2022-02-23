@@ -1,12 +1,17 @@
 import argparse
+import json
 import sys
-
-from importlib import import_module
 
 from termcolor import colored
 
-from graphbrain import constants as const
+import graphbrain.constants as const
+from graphbrain import hgraph, hedge
 from graphbrain.parsers import parser_lang
+from graphbrain.readers.txt import TxtReader
+from graphbrain.readers.dir import DirReader
+from graphbrain.readers.csv import CsvReader
+from graphbrain.readers.wikipedia import WikipediaReader
+from graphbrain.readers.reddit import RedditReader
 
 
 def _show_logo():
@@ -20,14 +25,14 @@ def error_msg(msg):
     print('{} {}'.format(colored('error:', 'red'), msg))
 
 
-def wrapper(fun, command=False, text=None):
+def cli():
     _show_logo()
 
     parser = argparse.ArgumentParser()
 
-    if command:
-        parser.add_argument('command', type=str, help='command to execute')
+    parser.add_argument('command', type=str, help='command to execute')
     parser.add_argument('--agent', type=str, help='agent name', default=None)
+    parser.add_argument('--col', type=str, help='table column', default=None)
     parser.add_argument('--corefs', help='perform coreference resolution',
                         action='store_true')
     parser.add_argument('--fields', type=str, help='field names', default=None)
@@ -73,13 +78,12 @@ def wrapper(fun, command=False, text=None):
     elif not args.lang:
         args.lang = 'en'
 
-    if text is None and command:
-        text = 'command: {}'.format(args.command)
-    if text:
-        print(colored('{}\n'.format(text), 'white'))
+    print(colored('{}\n'.format( 'command: {}'.format(args.command)), 'white'))
 
     if args.agent:
         print('agent: {}'.format(args.agent))
+    if args.col:
+        print('column: {}'.format(args.col))
     if args.corefs:
         print('coreferences: {}'.format(args.corefs))
     if args.hg:
@@ -103,16 +107,61 @@ def wrapper(fun, command=False, text=None):
 
     print()
 
-    fun(args)
+    if args.command == 'create':
+        hgraph(args.hg)
+        print('Hypergraph database created.')
+    elif args.command == 'export':
+        print('exporting hypergraph...')
+        hg = hgraph(args.hg)
+        n = 0
+        with open(args.outfile, 'w') as f:
+            for edge, attributes in hg.all_attributes():
+                row = [str(edge), attributes]
+                f.write('{}\n'.format(json.dumps(row, ensure_ascii=False)))
+                n += 1
+        print('{} edges exported.'.format(n))
+    elif args.command == 'import':
+        print('importing hypergraph...')
+        hg = hgraph(args.hg)
+        n = 0
+        with open(args.infile, 'r') as f:
+            for line in f:
+                edge_str, attributes = json.loads(line)
+                hg.add_with_attributes(hedge(edge_str), attributes)
+                n += 1
+        print('{} edges imported.'.format(n))
+    elif args.command == 'txt':
+        TxtReader(args.infile,
+                  hg=hgraph(args.hg),
+                  sequence=args.sequence,
+                  lang=args.lang,
+                  corefs=args.corefs).read()
+    elif args.command == 'dir':
+        DirReader(args.indir,
+                  hg=hgraph(args.hg),
+                  sequence=args.sequence,
+                  lang=args.lang,
+                  corefs=args.corefs).read()
+    elif args.command == 'csv':
+        CsvReader(args.infile,
+                  args.col,
+                  hg=hgraph(args.hg),
+                  sequence=args.sequence,
+                  lang=args.lang,
+                  corefs=args.corefs).read()
+    elif args.command == 'wikipedia':
+        WikipediaReader(args.url,
+                        hg=hgraph(args.hg),
+                        sequence=args.sequence,
+                        lang=args.lang,
+                        corefs=args.corefs).read()
+    elif args.command == 'reddit':
+        RedditReader(args.infile,
+                     hg=hgraph(args.hg),
+                     sequence=args.sequence,
+                     lang=args.lang,
+                     corefs=args.corefs).read()
+    else:
+        raise RuntimeError('Unknown command: {}'.format(args.command))
 
     print()
-
-
-def _cli(args):
-    command = args.command
-    cmd_module = import_module('graphbrain.commands.{}'.format(command))
-    cmd_module.run(args)
-
-
-def cli():
-    wrapper(_cli, command=True)
