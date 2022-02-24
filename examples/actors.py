@@ -1,12 +1,10 @@
-import logging
 from collections import Counter
 
-from graphbrain.cognition.agent import Agent
+from graphbrain.corefs import main_coref
+from graphbrain.processor import Processor
 from graphbrain.utils.concepts import has_proper_concept
 from graphbrain.utils.concepts import strip_concept
-from graphbrain.utils.corefs import main_coref
 from graphbrain.utils.lemmas import deep_lemma
-from graphbrain.op import create_op
 
 
 ACTOR_PRED_LEMMAS = {'say', 'claim', 'warn', 'kill', 'accuse', 'condemn',
@@ -14,21 +12,12 @@ ACTOR_PRED_LEMMAS = {'say', 'claim', 'warn', 'kill', 'accuse', 'condemn',
                      'tell'}
 
 
-class Actors(Agent):
-    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
-        super().__init__(
-            name, progress_bar=progress_bar, logging_level=logging_level)
-        self.actor_counter = None
-
-    def languages(self):
-        return {'en'}
-
-    def on_start(self):
+class Actors(Processor):
+    def __init__(self, hg, sequence=None):
+        super().__init__(hg=hg, sequence=sequence)
         self.actor_counter = Counter()
 
-    def process_edge(self, edge, depth):
-        hg = self.system.get_hg(self)
-
+    def process_edge(self, edge):
         if not edge.is_atom():
             ct = edge.connector_type()
             if ct[0] == 'P':
@@ -37,18 +26,18 @@ class Actors(Agent):
                     subject = strip_concept(subjects[0])
                     if subject and has_proper_concept(subject):
                         pred = edge[0]
-                        dlemma = deep_lemma(hg, pred).root()
+                        dlemma = deep_lemma(self.hg, pred).root()
                         if dlemma in ACTOR_PRED_LEMMAS:
                             try:
-                                actor = main_coref(hg, subject)
+                                actor = main_coref(self.hg, subject)
                                 self.actor_counter[actor] += 1
                             except Exception as e:
                                 print(str(e))
 
     def on_end(self):
         for actor in self.actor_counter:
-            yield create_op(('actor/P/.', actor))
+            self.hg.add(('actor/P/.', actor))
 
     def report(self):
-        return 'actors found: {}'.format(
-            len(self.actor_counter))
+        return 'actors found: {}'.format(len(self.actor_counter))
+    

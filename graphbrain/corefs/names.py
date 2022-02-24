@@ -4,6 +4,7 @@ import networkx as nx
 import progressbar
 
 from graphbrain.corefs import make_corefs
+from graphbrain.processor import Processor
 from graphbrain.hyperedge import hedge, build_atom
 from graphbrain.utils.concepts import has_proper_concept
 
@@ -87,10 +88,9 @@ def extract_concepts(edge):
     return concepts
 
 
-class CorefsNames:
+class CorefsNames(Processor):
     def __init__(self, hg, sequence=None):
-        self.hg = hg
-        self.sequence = sequence
+        super().__init__(hg=hg, sequence=sequence)
         self.corefs = 0
         self.seeds = set()
 
@@ -140,7 +140,7 @@ class CorefsNames:
                     if len(concepts) == 1 and has_proper_concept(concepts[0]):
                         self.seeds.add(concepts[0])
 
-    def process_seeds(self):
+    def on_end(self):
         i = 0
         with progressbar.ProgressBar(max_value=len(self.seeds)) as bar:
             for seed in self.seeds:
@@ -190,14 +190,5 @@ class CorefsNames:
                 i += 1
                 bar.update(i)
 
-    def run(self):
-        print('processing edges...')
-        if self.sequence is None:
-            for edge in self.hg.all():
-                self.process_edge(edge)
-        else:
-            for edge in self.hg.sequence(self.sequence):
-                self.process_edge(edge)
-        print('processing seeds...')
-        self.process_seeds()
-        print('{} coreferences were added.'.format(str(self.corefs)))
+    def report(self):
+        return '{} coreferences were added.'.format(str(self.corefs))

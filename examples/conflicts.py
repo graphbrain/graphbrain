@@ -1,13 +1,10 @@
-import logging
-
 from graphbrain import hedge
-from graphbrain.cognition.agent import Agent
+from graphbrain.processor import Processor
+from graphbrain.corefs import main_coref
 from graphbrain.utils.concepts import all_concepts
 from graphbrain.utils.concepts import has_proper_concept
 from graphbrain.utils.concepts import strip_concept
-from graphbrain.utils.corefs import main_coref
 from graphbrain.utils.lemmas import deep_lemma
-from graphbrain.op import create_op
 
 
 CONFLICT_PRED_LEMMAS = {'warn', 'kill', 'accuse', 'condemn', 'slam', 'arrest',
@@ -16,17 +13,9 @@ CONFLICT_PRED_LEMMAS = {'warn', 'kill', 'accuse', 'condemn', 'slam', 'arrest',
 CONFLICT_TOPIC_TRIGGERS = {'of/T/en', 'over/T/en', 'against/T/en', 'for/T/en'}
 
 
-class Conflicts(Agent):
-    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
-        super().__init__(
-            name, progress_bar=progress_bar, logging_level=logging_level)
-        self.conflicts = 0
-        self.conflict_topics = 0
-
-    def languages(self):
-        return {'en'}
-
-    def on_start(self):
+class Conflicts(Processor):
+    def __init__(self, hg, sequence=None):
+        super().__init__(hg=hg, sequence=sequence)
         self.conflicts = 0
         self.conflict_topics = 0
 
@@ -36,8 +25,8 @@ class Conflicts(Agent):
                 if item[0].to_str() in CONFLICT_TOPIC_TRIGGERS:
                     for concept in all_concepts(item[1]):
                         if hg.degree(concept) > 1:
-                            yield create_op(('conflict-topic/P/.', actor_orig,
-                                             actor_targ, concept, edge))
+                            self.hg.add(('conflict-topic/P/.', actor_orig,
+                                        actor_targ, concept, edge))
                             self.conflict_topics += 1
 
     def process_edge(self, edge, depth):
@@ -64,7 +53,7 @@ class Conflicts(Agent):
                             actor_targ = main_coref(hg, obj)
                             conflict_edge = hedge(
                                 ('conflict/P/.', actor_orig, actor_targ, edge))
-                            yield create_op(conflict_edge)
+                            self.hg.add(conflict_edge)
                             for wedge in self._topics(
                                     hg, actor_orig, actor_targ, edge):
                                 yield wedge

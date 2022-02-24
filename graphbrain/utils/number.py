@@ -1,6 +1,4 @@
 from graphbrain.constants import singular_plural_pred
-from graphbrain.op import apply_ops
-from graphbrain.op import create_op
 
 
 def number(atom):
@@ -17,9 +15,5 @@ def number(atom):
         return '?'
 
 
-def make_singular_plural_ops(hg, single, plural):
-    yield create_op((singular_plural_pred, single, plural), primary=False)
-
-
-def make_singular_plural(hg, edge1, edge2):
-    apply_ops(hg, make_singular_plural_ops(hg, edge1, edge2))
+def make_singular_plural(hg, single, plural):
+    hg.add((singular_plural_pred, single, plural), primary=False)

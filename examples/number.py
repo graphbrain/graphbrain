@@ -1,20 +1,18 @@
-import logging
 from collections import defaultdict
 
 import progressbar
 
 import graphbrain.constants as const
-from graphbrain.cognition.agent import Agent
-from graphbrain.utils.corefs import make_corefs_ops
-from graphbrain.utils.number import make_singular_plural_ops
+from graphbrain.corefs import make_corefs
+from graphbrain.processor import Processor
+from graphbrain.utils.number import make_singular_plural
 from graphbrain.utils.number import number
 from graphbrain.utils.ontology import subtypes
 
 
-class Number(Agent):
-    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
-        super().__init__(
-            name, progress_bar=progress_bar, logging_level=logging_level)
+class Number(Processor):
+    def __init__(self, hg, sequence=None):
+        super().__init__(hg=hg, sequence=sequence)
         self.sng_pl = 0
         self.corefs = 0
 
@@ -23,20 +21,17 @@ class Number(Agent):
 
         self.logger.debug('singular: {}; plural: {}'.format(singular, plural))
 
-        for op in make_singular_plural_ops(hg, singular, plural):
-            yield op
+        make_singular_plural(hg, singular, plural)
         self.sng_pl += 1
 
-        for op in make_corefs_ops(hg, singular, plural):
-            yield op
+        make_corefs(hg, singular, plural)
+
         self.corefs += 1
 
         for subtype in subtypes(hg, singular):
             plural_edge = subtype.replace_main_concept(plural)
             if plural_edge and hg.exists(plural_edge):
-                for op in self._make_singular_plural_relation(subtype,
-                                                              plural_edge):
-                    yield op
+                self._make_singular_plural_relation(subtype, plural_edge)
 
     def _check_apply_plural(self, pair):
         numbers = {'s': [], 'p': [], '?': []}
@@ -45,8 +40,7 @@ class Number(Agent):
         if len(numbers['s']) == 1 and len(numbers['p']) == 1:
             singular = numbers['s'][0]
             plural = numbers['p'][0]
-            for op in self._make_singular_plural_relation(singular, plural):
-                yield op
+            self._make_singular_plural_relation(singular, plural)
 
     def on_end(self):
         hg = self.system.get_hg(self)
@@ -69,11 +63,9 @@ class Number(Agent):
                 for atom in lemmas[lemma]:
                     type_atoms[atom.type()].add(atom)
                 if len(type_atoms['Cc']) == 2:
-                    for op in self._check_apply_plural(type_atoms['Cc']):
-                        yield op
+                    self._check_apply_plural(type_atoms['Cc'])
                 if len(type_atoms['Cp']) == 2:
-                    for op in self._check_apply_plural(type_atoms['Cp']):
-                        yield op
+                    self._check_apply_plural(type_atoms['Cp'])
                 i += 1
                 bar.update(i)
 

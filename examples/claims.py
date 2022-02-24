@@ -1,15 +1,13 @@
-import logging
 from collections import Counter
 
 import progressbar
 
 from graphbrain import hedge
-from graphbrain.cognition.agent import Agent
+from graphbrain.corefs import main_coref
+from graphbrain.processor import Processor
 from graphbrain.utils.concepts import has_proper_concept
 from graphbrain.utils.concepts import strip_concept
-from graphbrain.utils.corefs import main_coref
 from graphbrain.utils.lemmas import deep_lemma
-from graphbrain.op import create_op
 
 
 CLAIM_PRED_LEMMAS = {'say', 'claim'}
@@ -35,24 +33,20 @@ def replace_subject(edge, new_subject):
     return hedge(new_edge)
 
 
-class Claims(Agent):
-    def __init__(self, name, progress_bar=True, logging_level=logging.INFO):
-        super().__init__(
-            name, progress_bar=progress_bar, logging_level=logging_level)
-        self.actors = None
+class Claims(Processor):
+    def __init__(self, hg, sequence=None):
+        super().__init__(hg=hg, sequence=sequence)
+        self.actors = set()
         self.female = None
         self.group = None
         self.male = None
         self.non_human = None
-        self.female_counter = None
-        self.group_counter = None
-        self.male_counter = None
-        self.non_human_counter = None
-        self.claims = None
+        self.female_counter = Counter()
+        self.group_counter = Counter()
+        self.male_counter = Counter()
+        self.non_human_counter = Counter()
+        self.claims = []
         self.anaphoras = 0
-
-    def languages(self):
-        return {'en'}
 
     def _gender(self, actor):
         counts = (('female', self.female_counter[actor]),
@@ -64,15 +58,6 @@ class Claims(Agent):
             return counts[0][0]
         else:
             return None
-
-    def on_start(self):
-        self.actors = set()
-        self.female_counter = Counter()
-        self.group_counter = Counter()
-        self.male_counter = Counter()
-        self.non_human_counter = Counter()
-        self.claims = []
-        self.anaphoras = 0
 
     def _process_claim(self, actor, claim, edge):
         # gender detection
@@ -144,7 +129,7 @@ class Claims(Agent):
                 # write gender
                 if gender:
                     gender_atom = '{}/P/.'.format(gender)
-                    yield create_op((gender_atom, actor))
+                    self.hg.add((gender_atom, actor))
 
                 i += 1
                 bar.update(i)
@@ -180,7 +165,7 @@ class Claims(Agent):
                         self.anaphoras += 1
 
                 # write claim
-                yield create_op(('claim/P/.', actor, claim, edge))
+                self.hg.add(('claim/P/.', actor, claim, edge))
 
                 i += 1
                 bar.update(i)
