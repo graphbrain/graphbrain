@@ -36,19 +36,19 @@ processor module
     :members:
 
 
-parsers package
-===============
+corefs package
+==============
 
-package functions
------------------
+names module
+------------
 
-.. automodule:: graphbrain.parsers.__init__
+.. automodule:: graphbrain.corefs.names
     :members:
 
-parser module
--------------
+onto module
+-----------
 
-.. automodule:: graphbrain.parsers.parser
+.. automodule:: graphbrain.corefs.onto
     :members:
 
 
@@ -74,37 +74,43 @@ case_generator module
     :members:
 
 
-utils package
-=============
+memory package
+==============
 
-concepts module
----------------
+leveldb module
+--------------
 
-.. automodule:: graphbrain.utils.concepts
+.. automodule:: graphbrain.memory.leveldb
     :members:
 
-conjunctions module
+
+permutations module
 -------------------
 
-.. automodule:: graphbrain.utils.conjunctions
+.. automodule:: graphbrain.memory.permutations
     :members:
 
-lemmas module
+
+sqlite module
 -------------
 
-.. automodule:: graphbrain.utils.lemmas
+.. automodule:: graphbrain.memory.sqlite
     :members:
 
-number module
+
+parsers package
+===============
+
+package functions
+-----------------
+
+.. automodule:: graphbrain.parsers.__init__
+    :members:
+
+parser module
 -------------
 
-.. automodule:: graphbrain.utils.number
-    :members:
-
-ontology module
----------------
-
-.. automodule:: graphbrain.utils.ontology
+.. automodule:: graphbrain.parsers.parser
     :members:
 
 
@@ -148,17 +154,35 @@ reddit module
     :members:
 
 
-corefs package
-==============
+utils package
+=============
 
-names module
-------------
+concepts module
+---------------
 
-.. automodule:: graphbrain.corefs.names
+.. automodule:: graphbrain.utils.concepts
     :members:
 
-onto module
------------
+conjunctions module
+-------------------
 
-.. automodule:: graphbrain.corefs.onto
+.. automodule:: graphbrain.utils.conjunctions
+    :members:
+
+lemmas module
+-------------
+
+.. automodule:: graphbrain.utils.lemmas
+    :members:
+
+number module
+-------------
+
+.. automodule:: graphbrain.utils.number
+    :members:
+
+ontology module
+---------------
+
+.. automodule:: graphbrain.utils.ontology
     :members:

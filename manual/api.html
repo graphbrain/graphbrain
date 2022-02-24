@@ -70,9 +70,9 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.hypergraph">hypergraph module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.patterns">patterns module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-graphbrain.processor">processor module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#parsers-package">parsers package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.parsers.__init__">package functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.parsers.parser">parser module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#corefs-package">corefs package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.corefs.names">names module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.corefs.onto">onto module</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#meaning-package">meaning package</a><ul>
@@ -81,12 +81,15 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.meaning.case_generators">case_generator module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#utils-package">utils package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.concepts">concepts module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.conjunctions">conjunctions module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.lemmas">lemmas module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.number">number module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.ontology">ontology module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#memory-package">memory package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.memory.leveldb">leveldb module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.memory.permutations">permutations module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.memory.sqlite">sqlite module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#parsers-package">parsers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.parsers.__init__">package functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.parsers.parser">parser module</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#readers-package">readers package</a><ul>
@@ -98,9 +101,12 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.readers.reddit">reddit module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#corefs-package">corefs package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.corefs.names">names module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.corefs.onto">onto module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils-package">utils package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.concepts">concepts module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.conjunctions">conjunctions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.lemmas">lemmas module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.number">number module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-graphbrain.utils.ontology">ontology module</a></li>
 </ul>
 </li>
 </ul>
@@ -1055,6 +1061,164 @@ parameter.</p>
 <section id="module-graphbrain.processor">
 <span id="processor-module"></span><h2>processor module<a class="headerlink" href="#module-graphbrain.processor" title="Permalink to this headline"></a></h2>
 </section>
+<section id="corefs-package">
+<h2>corefs package<a class="headerlink" href="#corefs-package" title="Permalink to this headline"></a></h2>
+<section id="module-graphbrain.corefs.names">
+<span id="names-module"></span><h3>names module<a class="headerlink" href="#module-graphbrain.corefs.names" title="Permalink to this headline"></a></h3>
+</section>
+<section id="module-graphbrain.corefs.onto">
+<span id="onto-module"></span><h3>onto module<a class="headerlink" href="#module-graphbrain.corefs.onto" title="Permalink to this headline"></a></h3>
+</section>
+</section>
+<section id="meaning-package">
+<h2>meaning package<a class="headerlink" href="#meaning-package" title="Permalink to this headline"></a></h2>
+<section id="module-graphbrain.meaning.extractor">
+<span id="extractor-module"></span><h3>extractor module<a class="headerlink" href="#module-graphbrain.meaning.extractor" title="Permalink to this headline"></a></h3>
+</section>
+<section id="module-graphbrain.meaning.tests">
+<span id="tests-module"></span><h3>tests module<a class="headerlink" href="#module-graphbrain.meaning.tests" title="Permalink to this headline"></a></h3>
+</section>
+<section id="module-graphbrain.meaning.case_generators">
+<span id="case-generator-module"></span><h3>case_generator module<a class="headerlink" href="#module-graphbrain.meaning.case_generators" title="Permalink to this headline"></a></h3>
+</section>
+</section>
+<section id="memory-package">
+<h2>memory package<a class="headerlink" href="#memory-package" title="Permalink to this headline"></a></h2>
+<section id="module-graphbrain.memory.leveldb">
+<span id="leveldb-module"></span><h3>leveldb module<a class="headerlink" href="#module-graphbrain.memory.leveldb" title="Permalink to this headline"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphbrain.memory.leveldb.LevelDB">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">graphbrain.memory.leveldb.</span></span><span class="sig-name descname"><span class="pre">LevelDB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locator_string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.leveldb.LevelDB" title="Permalink to this definition"></a></dt>
+<dd><p>Implements LevelDB hypergraph storage.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.memory.leveldb.LevelDB.add_with_attributes">
+<span class="sig-name descname"><span class="pre">add_with_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.leveldb.LevelDB.add_with_attributes" title="Permalink to this definition"></a></dt>
+<dd><p>Adds an edge along with all its attributes, represented as a
+dictionary of attribute names to values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.memory.leveldb.LevelDB.all">
+<span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.leveldb.LevelDB.all" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a generator of all the edges.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.memory.leveldb.LevelDB.all_attributes">
+<span class="sig-name descname"><span class="pre">all_attributes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.leveldb.LevelDB.all_attributes" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a generator with a tuple for each edge.
+The first element of the tuple is the edge itself,
+the second is a dictionary of attribute values
+(as strings).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.memory.leveldb.LevelDB.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.leveldb.LevelDB.close" title="Permalink to this definition"></a></dt>
+<dd><p>Closes the hypergraph.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.memory.leveldb.LevelDB.destroy">
+<span class="sig-name descname"><span class="pre">destroy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.leveldb.LevelDB.destroy" title="Permalink to this definition"></a></dt>
+<dd><p>Erase the entire hypergraph.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.memory.leveldb.LevelDB.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.leveldb.LevelDB.name" title="Permalink to this definition"></a></dt>
+<dd><p>Returns name of the hypergraph.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-graphbrain.memory.permutations">
+<span id="permutations-module"></span><h3>permutations module<a class="headerlink" href="#module-graphbrain.memory.permutations" title="Permalink to this headline"></a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.memory.permutations.do_with_edge_permutations">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.memory.permutations.</span></span><span class="sig-name descname"><span class="pre">do_with_edge_permutations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.permutations.do_with_edge_permutations" title="Permalink to this definition"></a></dt>
+<dd><p>Applies the function f to all permutations of the given edge.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.memory.permutations.perm2edge">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.memory.permutations.</span></span><span class="sig-name descname"><span class="pre">perm2edge</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.permutations.perm2edge" title="Permalink to this definition"></a></dt>
+<dd><p>Transforms a permutation string from a database query
+into an edge.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.memory.permutations.permutate">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.memory.permutations.</span></span><span class="sig-name descname"><span class="pre">permutate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.permutations.permutate" title="Permalink to this definition"></a></dt>
+<dd><p>Reorder the tokens vector to perform a permutation,
+specified by nper.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.memory.permutations.str_plus_1">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.memory.permutations.</span></span><span class="sig-name descname"><span class="pre">str_plus_1</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.permutations.str_plus_1" title="Permalink to this definition"></a></dt>
+<dd><p>Increment a string by one, regaring lexicographical ordering.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphbrain.memory.permutations.unpermutate">
+<span class="sig-prename descclassname"><span class="pre">graphbrain.memory.permutations.</span></span><span class="sig-name descname"><span class="pre">unpermutate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.permutations.unpermutate" title="Permalink to this definition"></a></dt>
+<dd><p>Reorder the tokens vector to revert a permutation,
+specified by nper.</p>
+</dd></dl>
+
+</section>
+<section id="module-graphbrain.memory.sqlite">
+<span id="sqlite-module"></span><h3>sqlite module<a class="headerlink" href="#module-graphbrain.memory.sqlite" title="Permalink to this headline"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphbrain.memory.sqlite.SQLite">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">graphbrain.memory.sqlite.</span></span><span class="sig-name descname"><span class="pre">SQLite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locator_string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.sqlite.SQLite" title="Permalink to this definition"></a></dt>
+<dd><p>Implements SQLite hypergraph storage.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.memory.sqlite.SQLite.add_with_attributes">
+<span class="sig-name descname"><span class="pre">add_with_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.sqlite.SQLite.add_with_attributes" title="Permalink to this definition"></a></dt>
+<dd><p>Adds an edge along with all its attributes, represented as a
+dictionary of attribute names to values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.memory.sqlite.SQLite.all">
+<span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.sqlite.SQLite.all" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a generator of all the edges.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.memory.sqlite.SQLite.all_attributes">
+<span class="sig-name descname"><span class="pre">all_attributes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.sqlite.SQLite.all_attributes" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a generator with a tuple for each edge.
+The first element of the tuple is the edge itself,
+the second is a dictionary of attribute values
+(as strings).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.memory.sqlite.SQLite.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.sqlite.SQLite.close" title="Permalink to this definition"></a></dt>
+<dd><p>Closes the hypergraph.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.memory.sqlite.SQLite.destroy">
+<span class="sig-name descname"><span class="pre">destroy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.sqlite.SQLite.destroy" title="Permalink to this definition"></a></dt>
+<dd><p>Erase the entire hypergraph.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphbrain.memory.sqlite.SQLite.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#graphbrain.memory.sqlite.SQLite.name" title="Permalink to this definition"></a></dt>
+<dd><p>Returns name of the hypergraph.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
 <section id="parsers-package">
 <h2>parsers package<a class="headerlink" href="#parsers-package" title="Permalink to this headline"></a></h2>
 <section id="module-graphbrain.parsers.__init__">
@@ -1111,16 +1275,25 @@ corresponding text.</p>
 
 </section>
 </section>
-<section id="meaning-package">
-<h2>meaning package<a class="headerlink" href="#meaning-package" title="Permalink to this headline"></a></h2>
-<section id="module-graphbrain.meaning.extractor">
-<span id="extractor-module"></span><h3>extractor module<a class="headerlink" href="#module-graphbrain.meaning.extractor" title="Permalink to this headline"></a></h3>
+<section id="readers-package">
+<h2>readers package<a class="headerlink" href="#readers-package" title="Permalink to this headline"></a></h2>
+<section id="module-graphbrain.readers.reader">
+<span id="reader-module"></span><h3>reader module<a class="headerlink" href="#module-graphbrain.readers.reader" title="Permalink to this headline"></a></h3>
 </section>
-<section id="module-graphbrain.meaning.tests">
-<span id="tests-module"></span><h3>tests module<a class="headerlink" href="#module-graphbrain.meaning.tests" title="Permalink to this headline"></a></h3>
+<section id="module-graphbrain.readers.txt">
+<span id="txt-module"></span><h3>txt module<a class="headerlink" href="#module-graphbrain.readers.txt" title="Permalink to this headline"></a></h3>
 </section>
-<section id="module-graphbrain.meaning.case_generators">
-<span id="case-generator-module"></span><h3>case_generator module<a class="headerlink" href="#module-graphbrain.meaning.case_generators" title="Permalink to this headline"></a></h3>
+<section id="module-graphbrain.readers.dir">
+<span id="dir-module"></span><h3>dir module<a class="headerlink" href="#module-graphbrain.readers.dir" title="Permalink to this headline"></a></h3>
+</section>
+<section id="module-graphbrain.readers.csv">
+<span id="csv-module"></span><h3>csv module<a class="headerlink" href="#module-graphbrain.readers.csv" title="Permalink to this headline"></a></h3>
+</section>
+<section id="module-graphbrain.readers.wikipedia">
+<span id="wikipedia-module"></span><h3>wikipedia module<a class="headerlink" href="#module-graphbrain.readers.wikipedia" title="Permalink to this headline"></a></h3>
+</section>
+<section id="module-graphbrain.readers.reddit">
+<span id="reddit-module"></span><h3>reddit module<a class="headerlink" href="#module-graphbrain.readers.reddit" title="Permalink to this headline"></a></h3>
 </section>
 </section>
 <section id="utils-package">
@@ -1217,36 +1390,6 @@ the degree and deep degree of that edge.</p>
 <dd><p>Returns all supertypes of the given edge.</p>
 </dd></dl>
 
-</section>
-</section>
-<section id="readers-package">
-<h2>readers package<a class="headerlink" href="#readers-package" title="Permalink to this headline"></a></h2>
-<section id="module-graphbrain.readers.reader">
-<span id="reader-module"></span><h3>reader module<a class="headerlink" href="#module-graphbrain.readers.reader" title="Permalink to this headline"></a></h3>
-</section>
-<section id="module-graphbrain.readers.txt">
-<span id="txt-module"></span><h3>txt module<a class="headerlink" href="#module-graphbrain.readers.txt" title="Permalink to this headline"></a></h3>
-</section>
-<section id="module-graphbrain.readers.dir">
-<span id="dir-module"></span><h3>dir module<a class="headerlink" href="#module-graphbrain.readers.dir" title="Permalink to this headline"></a></h3>
-</section>
-<section id="module-graphbrain.readers.csv">
-<span id="csv-module"></span><h3>csv module<a class="headerlink" href="#module-graphbrain.readers.csv" title="Permalink to this headline"></a></h3>
-</section>
-<section id="module-graphbrain.readers.wikipedia">
-<span id="wikipedia-module"></span><h3>wikipedia module<a class="headerlink" href="#module-graphbrain.readers.wikipedia" title="Permalink to this headline"></a></h3>
-</section>
-<section id="module-graphbrain.readers.reddit">
-<span id="reddit-module"></span><h3>reddit module<a class="headerlink" href="#module-graphbrain.readers.reddit" title="Permalink to this headline"></a></h3>
-</section>
-</section>
-<section id="corefs-package">
-<h2>corefs package<a class="headerlink" href="#corefs-package" title="Permalink to this headline"></a></h2>
-<section id="module-graphbrain.corefs.names">
-<span id="names-module"></span><h3>names module<a class="headerlink" href="#module-graphbrain.corefs.names" title="Permalink to this headline"></a></h3>
-</section>
-<section id="module-graphbrain.corefs.onto">
-<span id="onto-module"></span><h3>onto module<a class="headerlink" href="#module-graphbrain.corefs.onto" title="Permalink to this headline"></a></h3>
 </section>
 </section>
 </section>
